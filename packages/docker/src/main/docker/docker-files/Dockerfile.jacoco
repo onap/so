@@ -1,0 +1,33 @@
+### Set the base image to Fedora
+FROM ubuntu:14.04
+
+### File Author / Maintainer
+MAINTAINER "Ecomp Opensource Team"
+LABEL Description="This image is used to get jacoco result from a jboss image" Version="1.0"
+
+ARG http_proxy
+ARG https_proxy
+ARG chef_repo_branch_name
+ARG chef_repo_address
+ARG chef_repo_git_name
+ARG chef_repo_git_username
+ENV HTTP_PROXY=$http_proxy
+ENV HTTPS_PROXY=$https_proxy
+ENV http_proxy=$HTTP_PROXY
+ENV https_proxy=$HTTPS_PROXY
+RUN echo "Acquire::http::Proxy \"$http_proxy\";" >> /etc/apt/apt.conf
+
+RUN apt-get update && apt-get install -y openssh-server
+RUN mkdir /var/run/sshd
+RUN echo 'root:screencast' | chpasswd
+RUN sed -i 's/PermitRootLogin without-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+
+# SSH login fix. Otherwise user is kicked off after login
+RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
+
+ENV NOTVISIBLE "in users profile"
+RUN echo "export VISIBLE=now" >> /etc/profile
+
+VOLUME /shared
+
+CMD ["/usr/sbin/sshd", "-D"]

@@ -1,0 +1,99 @@
+heat_template_version: 2013-05-23
+
+description: heat template that creates PCRF Policy Server stack
+
+parameters:
+  pcrf_pps_server_name:
+    type: string
+    label: PCRF PS server name
+    description: PCRF PS server name
+  pcrf_pps_image_name:
+    type: string
+    label: PCRF PS image name
+    description: PCRF PS image name
+  pcrf_pps_flavor_name:
+    type: string
+    label: PCRF PS flavor name
+    description: flavor name of PCRF PS instance
+  availabilityzone_name:
+    type: string
+    label: availabilityzone name
+    description: availabilityzone name
+  pcrf_cps_net_name:
+    type: string
+    label: CPS network name
+    description: CPS network name
+  pcrf_cps_net_ip:
+    type: string
+    label: CPS network ip
+    description: CPS network ip
+  pcrf_cps_net_mask:
+    type: string
+    label: CPS network mask
+    description: CPS network mask
+  pcrf_security_group_name:
+    type: string
+    label: security group name
+    description: the name of security group
+  pcrf_vnf_id:
+    type: string
+    label: PCRF VNF Id
+    description: PCRF VNF Id
+
+resources:
+  script_init:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      group: ungrouped
+      config:
+        str_replace:
+          template: { get_file: cloud-nimbus.sh }
+          params:
+            $vm_name: { get_param: pcrf_pps_server_name }
+  network:
+    type: OS::Heat::CloudConfig
+    properties:
+      cloud_config:
+        write_files:
+          - path: /etc/sysconfig/network-scripts/ifcfg-eth0
+            permissions: "0644"
+            content:
+              str_replace:
+                template: { get_file: nimbus-ethernet }
+                params:
+                  $dev: eth0
+                  $ip: { get_param: pcrf_cps_net_ip }
+                  $netmask: { get_param: pcrf_cps_net_mask }
+        runcmd:
+          - ifdown eth0 && ifup eth0
+
+  pcrf_server_init:
+    type: OS::Heat::MultipartMime
+    properties:
+      parts:
+      - config: { get_resource: network}
+      - config: { get_resource: script_init}
+
+  pcrf_server_pps:
+    type: OS::Nova::Server
+    properties:
+      config_drive: "True"
+      name: { get_param: pcrf_pps_server_name }
+      image: { get_param: pcrf_pps_image_name }
+      flavor: { get_param: pcrf_pps_flavor_name }
+      availability_zone: { get_param: availabilityzone_name }
+      networks:
+        - port: { get_resource: pcrf_pps_port_0}
+      user_data_format: RAW
+      user_data:
+        get_resource: pcrf_server_init
+      metadata:
+        vnf_id: {get_param: pcrf_vnf_id}
+
+  pcrf_pps_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: pcrf_cps_net_name }
+      fixed_ips:
+        - ip_address: { get_param: pcrf_cps_net_ip }
+      security_groups: [{ get_param: pcrf_security_group_name }]

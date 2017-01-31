@@ -1,0 +1,116 @@
+{
+    "serviceName": "test-service",
+    "serviceInvariantUUID": "585822c7-4027-4f84-ba50-e9248606f134",
+    "serviceUUID": "1e34774e-715e-4fd5-bd09-7b654622f35h",
+    "serviceVersion": "4.0",
+    "serviceArtifacts": 
+    [
+ 
+    ],
+
+    "resources": 
+    [
+        {
+            "resourceInstanceName": "resource-1",
+            "resourceInvariantUUID": "585822c7-4027-4f84-ba50-e9248606f134",
+            "resourceName": "resourceName-1",
+            "resourceType": "VF",
+            "resourceUUID": "585822c7-4027-4f84-ba50-e9248606f136",
+            "resourceVersion": "2.0",
+            "artifacts": 
+            [
+                {
+                    "artifactChecksum": "CheckSum",
+                    "artifactDescription": "Meta data for VFModule",
+                    "artifactName": "vnf-module-artifact.json",
+                    
+                    "artifactType": "VF_MODULES_METADATA",
+                    "artifactURL": "vnf-module-artifact.json",
+                    "artifactUUID": "VfArtifact-UUID2",
+                    "artifactVersion": "1.0"
+
+                },
+                {
+                    "artifactChecksum": "CheckSum",
+                    "artifactDescription": "Nimbus Heat OAM",
+                    "artifactName": "hot-nimbus-oam_v1.0.yaml",
+                    "artifactTimeout": 100,
+                    "artifactType": "HEAT",
+                    "artifactURL": "hot-nimbus-oam_v1.0.yaml",
+                    "artifactUUID": "Artifact-UUID1",
+                    "artifactVersion": "1.0",
+                    "generatedArtifact": "EnvArtifact-UUID2",
+                    "relatedArtifact": 
+                    [
+                        "NestedArtifact-UUID3",
+                        "ScriptArtifact-UUID1"
+                    ]
+                },
+
+                {
+                    "artifactChecksum": "CheckSum",
+                    "artifactDescription": "Nimbus Heat ENV OAM",
+                    "artifactName": "hot-nimbus-oam_v1.0.env",
+                    
+                    "artifactType": "HEAT_ENV",
+                    "artifactURL": "hot-nimbus-oam_v1.0.env",
+                    "artifactUUID": "EnvArtifact-UUID2",
+                    "artifactVersion": "1.0"
+                  
+                },
+
+                {
+                    "artifactChecksum": "CheckSum",
+                    "artifactDescription": "Nested OAM",
+                    "artifactName": "nested-oam_v1.0.yaml",
+                    "artifactTimeout": 10,
+                    "artifactType": "HEAT_NESTED",
+                    "artifactURL": "nested-oam_v1.0.yaml",
+                    "artifactUUID": "NestedArtifact-UUID3",
+                    "artifactVersion": "1.0"
+          
+                },
+
+                {
+                    "artifactChecksum": "CheckSum",
+                    "artifactDescription": "Script for OAM",
+                    "artifactName": "mount_iso_script.sh",
+                    
+                    "artifactType": "HEAT_ARTIFACT",
+                    "artifactURL": "mount_iso_script.sh",
+                    "artifactUUID": "ScriptArtifact-UUID1",
+                    "artifactVersion": "1.0"
+          
+                },
+
+                {
+                    "artifactChecksum": "CheckSum",
+                    "artifactDescription": "Heat Vol for OAM",
+                    "artifactName": "hot-nimbus-oam-volumes_v1.0.yaml",
+                    "artifactTimeout": 10,
+                    "artifactType": "HEAT_VOL",
+                    "artifactURL": "hot-nimbus-oam-volumes_v1.0.yaml",
+                    "artifactUUID": "VolumeArtifact-UUID1",
+                    "artifactVersion": "1.0",
+                    "generatedArtifact": "VolumeEnvArtifact-UUID1"
+          
+                },
+
+                {
+                    "artifactChecksum": "CheckSum",
+                    "artifactDescription": "Heat Env Vol for OAM",
+                    "artifactName": "hot-nimbus-oam-volumes_v1.0.env",
+                    
+                    "artifactType": "HEAT_ENV",
+                    "artifactURL": "hot-nimbus-oam-volumes_v1.0.env",
+                    "artifactUUID": "VolumeEnvArtifact-UUID1",
+                    "artifactVersion": "1.0"
+          
+                }
+            ]
+        }
+    ],
+
+    "serviceDescription": "test service for unit testing",
+    "distributionID": "35120a87-1f82-4276-9735-f6de5a244d65"
+}

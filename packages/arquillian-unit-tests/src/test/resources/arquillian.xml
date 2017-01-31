@@ -1,0 +1,102 @@
+<arquillian xmlns="http://jboss.org/schema/arquillian"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://jboss.org/schema/arquillian
+        http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
+
+    <defaultProtocol type="Servlet 3.0" />
+
+	<extension qualifier="cube">
+	  <property name="connectionMode">STARTANDSTOP</property>
+	</extension>
+
+    <extension qualifier="docker">
+
+      <property name="serverVersion">1.23</property>
+     
+      <property name="serverUri">${docker.url}</property> 
+      <property name="definitionFormat">CUBE</property>
+      <property name="dockerContainers">
+         mso:
+           image: ecomp/mso-arquillian:${images.version}
+           beforeStop:
+            - copy:
+                   from: /opt/jboss/standalone/log/
+                   to: ${target.folder}/mso-automated-tests/jboss-logs
+            - copy:
+                   from: /var/log/ecomp/MSO
+                   to: ${target.folder}/mso-automated-tests/mso-logs
+            - copy:
+                   from: /tmp/mso-log-checker.log
+                   to: ${target.folder}/mso-automated-tests/
+           hostName: mso
+           await:
+              strategy: http
+              match: 'regexp:(.*)Welcome to WildFly 10(.*)'
+              responseCode: 200
+              url: http://dockerHost:18080
+              sleepPollingTime: 30 s
+              iterations: 20
+           portBindings: [18080->8080/tcp, 9990/tcp, 9999/tcp]
+           volumes: [/shared]
+           binds:
+            - ${target.folder}/test-classes/docker/mso:/shared
+           links:
+             - mariadb:mariadb
+             - jacoco-shared:jacoco-shared
+         jacoco-shared:
+            image: ecomp/jacoco:1.0
+            beforeStop:
+             - copy:
+                   from: /shared/jacoco-it.exec
+                   to: ${target.folder}/mso-automated-tests/
+            hostName: jacoco
+            volumes: [/shared]
+            binds:
+             - ${target.folder}/test-classes/docker/mso:/shared:ro
+         mariadb:
+            image: mariadb:10.1.11
+            beforeStop:
+                - log:
+                   to: ${target.folder}/mso-automated-tests/db/mariadb.log  
+                   follow: false
+                   stdout: true
+                   stderr: true
+                   timestamps: true
+            exposedPorts: [3306/tcp]
+            await:
+             strategy: polling
+             ports: [3306]
+             sleepPollingTime: 5 s
+             iterations: 24
+            env: [MYSQL_ROOT_PASSWORD=Etoile19_]
+            portBindings: [3306/tcp]
+            hostName: mariadb
+            volumes: [/etc/mysql/conf.d,/docker-entrypoint-initdb.d]
+            binds:
+             - ${target.folder}/test-classes/docker/mariadb/conf1:/etc/mysql/conf.d:ro
+             - ${target.folder}/../../root-pack-extras/config-resources/mariadb:/docker-entrypoint-initdb.d:ro
+  
+        </property>
+        <property name="shouldAllowToConnectToRunningContainers">false</property>
+        <property name="clean">true</property>
+        <property name="removeVolumes">true</property>
+        <property name="autoStartContainers">mso</property>
+    </extension>
+    
+
+    <container qualifier="jboss-as" default="true">
+        <configuration>
+            <property name="managementAddress">${docker.hostname}</property>
+            <property name="managementPort">9990</property>
+            <property name="username">admin</property>
+            <property name="password">Kp8bJ4SXszM0WXlhak3eHlcse2gAw84vaoGGmJvUy2U</property>
+        </configuration>
+        <protocol type="Servlet 3.0">
+        	<property name="host">${docker.hostname}</property>
+        	<property name="port">18080</property>
+    	</protocol>
+    </container>
+
+
+</arquillian>

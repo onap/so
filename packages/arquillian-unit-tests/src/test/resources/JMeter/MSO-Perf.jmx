@@ -1,0 +1,866 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="2.8" jmeter="2.13 r1665067">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Test Plan" enabled="true">
+      <stringProp name="TestPlan.comments"></stringProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+        <collectionProp name="Arguments.arguments"/>
+      </elementProp>
+      <stringProp name="TestPlan.user_define_classpath"></stringProp>
+    </TestPlan>
+    <hashTree>
+      <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="Test variables" enabled="true">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="MSO_HOST" elementType="Argument">
+            <stringProp name="Argument.name">MSO_HOST</stringProp>
+            <stringProp name="Argument.value">localhost</stringProp>
+            <stringProp name="Argument.desc">The host/ip where to send the MSO queries</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="MSO_PORT" elementType="Argument">
+            <stringProp name="Argument.name">MSO_PORT</stringProp>
+            <stringProp name="Argument.value">18080</stringProp>
+            <stringProp name="Argument.desc">The port where to send the mso queries</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="USER_CSI" elementType="Argument">
+            <stringProp name="Argument.name">USER_CSI</stringProp>
+            <stringProp name="Argument.value">CSIClient</stringProp>
+            <stringProp name="Argument.desc">The csi queriy user to use</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="PASSWORD_CSI" elementType="Argument">
+            <stringProp name="Argument.name">PASSWORD_CSI</stringProp>
+            <stringProp name="Argument.value">password1$</stringProp>
+            <stringProp name="Argument.desc">The csi query password to use</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="USER_GUI" elementType="Argument">
+            <stringProp name="Argument.name">USER_GUI</stringProp>
+            <stringProp name="Argument.value">GUIClient</stringProp>
+            <stringProp name="Argument.desc">The gui queriy user to use</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="PASSWORD_GUI" elementType="Argument">
+            <stringProp name="Argument.name">PASSWORD_GUI</stringProp>
+            <stringProp name="Argument.value">password1$</stringProp>
+            <stringProp name="Argument.desc">The gui query password to use</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
+      </Arguments>
+      <hashTree/>
+      <AuthManager guiclass="AuthPanel" testclass="AuthManager" testname="HTTP Authorization Manager" enabled="true">
+        <collectionProp name="AuthManager.auth_list">
+          <elementProp name="" elementType="Authorization">
+            <stringProp name="Authorization.url">http://${MSO_HOST}:${MSO_PORT}/ecomp/mso/v1/services/</stringProp>
+            <stringProp name="Authorization.username">${USER_CSI}</stringProp>
+            <stringProp name="Authorization.password">${PASSWORD_CSI}</stringProp>
+            <stringProp name="Authorization.domain"></stringProp>
+            <stringProp name="Authorization.realm"></stringProp>
+          </elementProp>
+          <elementProp name="" elementType="Authorization">
+            <stringProp name="Authorization.url">http://${MSO_HOST}:${MSO_PORT}/ecomp/mso/v2/services/features/</stringProp>
+            <stringProp name="Authorization.username">${USER_GUI}</stringProp>
+            <stringProp name="Authorization.password">${PASSWORD_GUI}</stringProp>
+            <stringProp name="Authorization.domain"></stringProp>
+            <stringProp name="Authorization.realm"></stringProp>
+          </elementProp>
+          <elementProp name="" elementType="Authorization">
+            <stringProp name="Authorization.url">http://${MSO_HOST}:${MSO_PORT}/ecomp/mso/v1/requests/services/</stringProp>
+            <stringProp name="Authorization.username">${USER_GUI}</stringProp>
+            <stringProp name="Authorization.password">${PASSWORD_GUI}</stringProp>
+            <stringProp name="Authorization.domain"></stringProp>
+            <stringProp name="Authorization.realm"></stringProp>
+          </elementProp>
+          <elementProp name="" elementType="Authorization">
+            <stringProp name="Authorization.url">http://${MSO_HOST}:${MSO_PORT}/ecomp/mso/v1/requests/services/features</stringProp>
+            <stringProp name="Authorization.username">${USER_GUI}</stringProp>
+            <stringProp name="Authorization.password">${PASSWORD_GUI}</stringProp>
+            <stringProp name="Authorization.domain"></stringProp>
+            <stringProp name="Authorization.realm"></stringProp>
+          </elementProp>
+          <elementProp name="" elementType="Authorization">
+            <stringProp name="Authorization.url">http://${MSO_HOST}:${MSO_PORT}/ecomp/mso/v1/requests/</stringProp>
+            <stringProp name="Authorization.username">${USER_GUI}</stringProp>
+            <stringProp name="Authorization.password">${PASSWORD_GUI}</stringProp>
+            <stringProp name="Authorization.domain"></stringProp>
+            <stringProp name="Authorization.realm"></stringProp>
+          </elementProp>
+        </collectionProp>
+      </AuthManager>
+      <hashTree/>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="ApiHandler Thread Group" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">1000</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">1</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">60</stringProp>
+        <longProp name="ThreadGroup.start_time">1448375429000</longProp>
+        <longProp name="ThreadGroup.end_time">1448375429000</longProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+      </ThreadGroup>
+      <hashTree>
+        <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="request-id increment" enabled="true">
+          <stringProp name="CounterConfig.start">0</stringProp>
+          <stringProp name="CounterConfig.end"></stringProp>
+          <stringProp name="CounterConfig.incr">1</stringProp>
+          <stringProp name="CounterConfig.name">REQUEST_ID</stringProp>
+          <stringProp name="CounterConfig.format"></stringProp>
+          <boolProp name="CounterConfig.per_user">false</boolProp>
+        </CounterConfig>
+        <hashTree/>
+        <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="service-id increment" enabled="true">
+          <stringProp name="CounterConfig.start">0</stringProp>
+          <stringProp name="CounterConfig.end"></stringProp>
+          <stringProp name="CounterConfig.incr">1</stringProp>
+          <stringProp name="CounterConfig.name">SERVICE_ID</stringProp>
+          <stringProp name="CounterConfig.format"></stringProp>
+          <boolProp name="CounterConfig.per_user">false</boolProp>
+        </CounterConfig>
+        <hashTree/>
+        <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="feature-id increment" enabled="true">
+          <stringProp name="CounterConfig.start">0</stringProp>
+          <stringProp name="CounterConfig.end"></stringProp>
+          <stringProp name="CounterConfig.incr">1</stringProp>
+          <stringProp name="CounterConfig.name">FEATURE_ID</stringProp>
+          <stringProp name="CounterConfig.format"></stringProp>
+          <boolProp name="CounterConfig.per_user">false</boolProp>
+        </CounterConfig>
+        <hashTree/>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="REST POST Service Request" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">&lt;service-request xmlns=&quot;http://ecomp.att.com/mso/request/layer3serviceactivate/schema/v1&quot; xmlns:msolayer3=&quot;http://ecomp.att.com/mso/request/layer3/schema/v1&quot; xmlns:msoservtypes=&quot;http://ecomp.att.com/mso/request/types/v1&quot;&gt;&#xd;
+&lt;msoservtypes:request-information&gt;&#xd;
+&lt;msoservtypes:request-id&gt;test${REQUEST_ID}-service&lt;/msoservtypes:request-id&gt;&#xd;
+&lt;msoservtypes:request-action&gt;Layer3ServiceActivateRequest&lt;/msoservtypes:request-action&gt;&#xd;
+&lt;msoservtypes:source&gt;OMX&lt;/msoservtypes:source&gt;&#xd;
+&lt;msoservtypes:notification-url&gt;https://csi-tst-q22.it.att.com:22443/Services/com/cingular/csi/sdn/SendManagedNetworkStatusNotification.jws&lt;/msoservtypes:notification-url&gt;&#xd;
+&lt;msoservtypes:order-number&gt;5051560&lt;/msoservtypes:order-number&gt;&#xd;
+&lt;msoservtypes:order-version&gt;1&lt;/msoservtypes:order-version&gt;&#xd;
+&lt;/msoservtypes:request-information&gt;&#xd;
+&lt;msoservtypes:service-information&gt;&#xd;
+&lt;msoservtypes:service-type&gt;SDN-ETHERNET-INTERNET&lt;/msoservtypes:service-type&gt;&#xd;
+&lt;msoservtypes:service-instance-id&gt;serv-id${SERVICE_ID}&lt;/msoservtypes:service-instance-id&gt;&#xd;
+&lt;msoservtypes:subscriber-name&gt;ST E2E Test50565_13000050565&lt;/msoservtypes:subscriber-name&gt;&#xd;
+&lt;/msoservtypes:service-information&gt;&#xd;
+&lt;service-parameters&gt;&#xd;
+&lt;msolayer3:l2-homing-information&gt;&#xd;
+&lt;msolayer3:evc-name&gt;AS/VLXM/003717//SW&lt;/msolayer3:evc-name&gt;&#xd;
+&lt;msolayer3:topology&gt;MultiPoint&lt;/msolayer3:topology&gt;&#xd;
+&lt;msolayer3:preferred-aic-clli&gt;MTSNJA4LCP1&lt;/msolayer3:preferred-aic-clli&gt;&#xd;
+&lt;/msolayer3:l2-homing-information&gt;&#xd;
+&lt;msolayer3:internet-service-information&gt;&#xd;
+&lt;msolayer3:internet-evc-access-information&gt;&#xd;
+&lt;msolayer3:internet-evc-speed-value&gt;8&lt;/msolayer3:internet-evc-speed-value&gt;&#xd;
+&lt;msolayer3:internet-evc-speed-units&gt;Mbps&lt;/msolayer3:internet-evc-speed-units&gt;&#xd;
+&lt;msolayer3:ip-version&gt;ds&lt;/msolayer3:ip-version&gt;&#xd;
+&lt;/msolayer3:internet-evc-access-information&gt;&#xd;
+&lt;msolayer3:vr-lan&gt;&#xd;
+&lt;msolayer3:routing-protocol&gt;none&lt;/msolayer3:routing-protocol&gt;&#xd;
+&lt;msolayer3:vr-lan-interface&gt;&#xd;
+&lt;msolayer3:vr-designation&gt;primary&lt;/msolayer3:vr-designation&gt;&#xd;
+&lt;msolayer3:v4-vr-lan-prefix&gt;10.172.125.0&lt;/msolayer3:v4-vr-lan-prefix&gt;&#xd;
+&lt;msolayer3:v4-vr-lan-prefix-length&gt;28&lt;/msolayer3:v4-vr-lan-prefix-length&gt;&#xd;
+&lt;msolayer3:v6-vr-lan-prefix&gt;2001:112a:86c6:0045:1007:8a5d:0412:9179&lt;/msolayer3:v6-vr-lan-prefix&gt;&#xd;
+&lt;msolayer3:v6-vr-lan-prefix-length&gt;64&lt;/msolayer3:v6-vr-lan-prefix-length&gt;&#xd;
+&lt;msolayer3:v4-public-lan-prefixes&gt;&#xd;
+&lt;msolayer3:t-provided-v4-lan-public-prefixes&gt;&#xd;
+&lt;msolayer3:request-index&gt;1&lt;/msolayer3:request-index&gt;&#xd;
+&lt;msolayer3:v4-lan-public-prefix&gt;18.181.120.12&lt;/msolayer3:v4-lan-public-prefix&gt;&#xd;
+&lt;msolayer3:v4-lan-public-prefix-length&gt;28&lt;/msolayer3:v4-lan-public-prefix-length&gt;&#xd;
+&lt;/msolayer3:t-provided-v4-lan-public-prefixes&gt;&#xd;
+&lt;/msolayer3:v4-public-lan-prefixes&gt;&#xd;
+&lt;msolayer3:v6-public-lan-prefixes&gt;&#xd;
+&lt;msolayer3:t-provided-v6-lan-public-prefixes&gt;&#xd;
+&lt;msolayer3:request-index&gt;1&lt;/msolayer3:request-index&gt;&#xd;
+&lt;msolayer3:v6-lan-public-prefix&gt;2022:0cf7:87a6:0048:1008:8a4c:0373:1048&lt;/msolayer3:v6-lan-public-prefix&gt;&#xd;
+&lt;msolayer3:v6-lan-public-prefix-length&gt;64&lt;/msolayer3:v6-lan-public-prefix-length&gt;&#xd;
+&lt;/msolayer3:t-provided-v6-lan-public-prefixes&gt;&#xd;
+&lt;/msolayer3:v6-public-lan-prefixes&gt;&#xd;
+&#xd;
+&lt;msolayer3:dhcp&gt;&#xd;
+&lt;msolayer3:v4-dhcp-server-enabled&gt;Y&lt;/msolayer3:v4-dhcp-server-enabled&gt;&#xd;
+&lt;msolayer3:v6-dhcp-server-enabled&gt;Y&lt;/msolayer3:v6-dhcp-server-enabled&gt;&#xd;
+&lt;msolayer3:use-v4-default-pool&gt;N&lt;/msolayer3:use-v4-default-pool&gt;&#xd;
+&lt;msolayer3:use-v6-default-pool&gt;N&lt;/msolayer3:use-v6-default-pool&gt;&#xd;
+&lt;/msolayer3:dhcp&gt;&#xd;
+&lt;msolayer3:pat&gt;&#xd;
+&lt;msolayer3:v4-pat-enabled&gt;Y&lt;/msolayer3:v4-pat-enabled&gt;&#xd;
+&lt;msolayer3:use-v4-default-pool&gt;N&lt;/msolayer3:use-v4-default-pool&gt;&#xd;
+&lt;/msolayer3:pat&gt;&#xd;
+&lt;msolayer3:firewall-lite&gt;&#xd;
+&lt;msolayer3:stateful-firewall-lite-v4-enabled&gt;Y&lt;/msolayer3:stateful-firewall-lite-v4-enabled&gt;&#xd;
+&lt;msolayer3:stateful-firewall-lite-v6-enabled&gt;Y&lt;/msolayer3:stateful-firewall-lite-v6-enabled&gt;&#xd;
+&lt;/msolayer3:firewall-lite&gt;&#xd;
+&lt;/msolayer3:vr-lan-interface&gt;&#xd;
+&lt;/msolayer3:vr-lan&gt;&#xd;
+&lt;/msolayer3:internet-service-information&gt;&#xd;
+&lt;/service-parameters&gt;&#xd;
+&lt;/service-request&gt;</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">${MSO_HOST}</stringProp>
+          <stringProp name="HTTPSampler.port">${MSO_PORT}</stringProp>
+          <stringProp name="HTTPSampler.connect_timeout">10000</stringProp>
+          <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+          <stringProp name="HTTPSampler.protocol"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+          <stringProp name="HTTPSampler.path">/ecomp/mso/v1/services/</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.implementation">HttpClient4</stringProp>
+          <boolProp name="HTTPSampler.monitor">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <BeanShellPostProcessor guiclass="TestBeanGUI" testclass="BeanShellPostProcessor" testname="BeanShell PostProcessor" enabled="true">
+            <stringProp name="filename"></stringProp>
+            <stringProp name="parameters"></stringProp>
+            <boolProp name="resetInterpreter">false</boolProp>
+            <stringProp name="script">if (prev.getResponseCode().equals(&quot;500&quot;) == true) { 
+    prev.setResponseOK();  
+
+    /* the same is 
+    prev.setSuccessful(true);
+    prev.setResponseCodeOK();
+    prev.setResponseMessageOK();
+    */
+}</stringProp>
+          </BeanShellPostProcessor>
+          <hashTree/>
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="REST POST Feature Request" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">&lt;feature-request&#xd;
+	xmlns=&quot;http://ecomp.att.com/mso/request/layer3serviceactivate/schema/v1&quot;&#xd;
+	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:msolayer3=&quot;http://ecomp.att.com/mso/request/layer3/schema/v1&quot;&#xd;
+	xmlns:msoservtypes=&quot;http://ecomp.att.com/mso/request/types/v1&quot;&gt;&#xd;
+	&lt;msoservtypes:request-information&gt;&#xd;
+		&lt;msoservtypes:request-id&gt;test${REQUEST_ID}-feature&lt;/msoservtypes:request-id&gt;&#xd;
+		&lt;msoservtypes:request-action&gt;ChangeFeatureActivateRequest&lt;/msoservtypes:request-action&gt;&#xd;
+		&lt;msoservtypes:source&gt;OMX&lt;/msoservtypes:source&gt;&#xd;
+		&lt;msoservtypes:notification-url&gt;https://csi-tst-q22.it.att.com:22443/Services/com/cingular/csi/sdn/SendManagedNetworkStatusNotification.jws&lt;/msoservtypes:notification-url&gt;&#xd;
+		&lt;msoservtypes:order-number&gt;5051560&lt;/msoservtypes:order-number&gt;&#xd;
+		&lt;msoservtypes:order-version&gt;1&lt;/msoservtypes:order-version&gt;&#xd;
+	&lt;/msoservtypes:request-information&gt;&#xd;
+	&lt;msoservtypes:service-information&gt;&#xd;
+		&lt;msoservtypes:service-type&gt;SDN-ETHERNET-INTERNET&lt;/msoservtypes:service-type&gt;&#xd;
+		&lt;msoservtypes:service-instance-id&gt;serv-id${SERVICE_ID}&lt;/msoservtypes:service-instance-id&gt;&#xd;
+		&lt;msoservtypes:subscriber-name&gt;ST E2E Test50565_13000050565&lt;/msoservtypes:subscriber-name&gt;&#xd;
+	&lt;/msoservtypes:service-information&gt;&#xd;
+	&lt;msoservtypes:feature-information&gt;&#xd;
+		&lt;msoservtypes:feature-type&gt;FIREWALL-LITE&lt;/msoservtypes:feature-type&gt;&#xd;
+		&lt;msoservtypes:feature-instance-id&gt;feature-id${FEATURE_ID}&lt;/msoservtypes:feature-instance-id&gt;&#xd;
+		&lt;msoservtypes:feature-yang-model&gt;ST E2E Test50565_13000050565&lt;/msoservtypes:feature-yang-model&gt;&#xd;
+	&lt;/msoservtypes:feature-information&gt;&#xd;
+	&lt;/feature-request&gt;&#xd;
+</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">${MSO_HOST}</stringProp>
+          <stringProp name="HTTPSampler.port">${MSO_PORT}</stringProp>
+          <stringProp name="HTTPSampler.connect_timeout">10000</stringProp>
+          <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+          <stringProp name="HTTPSampler.protocol"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+          <stringProp name="HTTPSampler.path">/ecomp/mso/v2/services/features/</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.implementation">HttpClient4</stringProp>
+          <boolProp name="HTTPSampler.monitor">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <BeanShellPostProcessor guiclass="TestBeanGUI" testclass="BeanShellPostProcessor" testname="BeanShell PostProcessor" enabled="true">
+            <stringProp name="filename"></stringProp>
+            <stringProp name="parameters"></stringProp>
+            <boolProp name="resetInterpreter">false</boolProp>
+            <stringProp name="script">if (prev.getResponseCode().equals(&quot;500&quot;) == true) { 
+    prev.setResponseOK();  
+
+    /* the same is 
+    prev.setSuccessful(true);
+    prev.setResponseCodeOK();
+    prev.setResponseMessageOK();
+    */
+}</stringProp>
+          </BeanShellPostProcessor>
+          <hashTree/>
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="REST GET Service Request on RequestID" enabled="true">
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">${MSO_HOST}</stringProp>
+          <stringProp name="HTTPSampler.port">${MSO_PORT}</stringProp>
+          <stringProp name="HTTPSampler.connect_timeout">10000</stringProp>
+          <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+          <stringProp name="HTTPSampler.protocol"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+          <stringProp name="HTTPSampler.path">/ecomp/mso/v1/requests/test${REQUEST_ID}-service</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.implementation">HttpClient4</stringProp>
+          <boolProp name="HTTPSampler.monitor">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="REST GET Feature Request on RequestID" enabled="true">
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">${MSO_HOST}</stringProp>
+          <stringProp name="HTTPSampler.port">${MSO_PORT}</stringProp>
+          <stringProp name="HTTPSampler.connect_timeout">10000</stringProp>
+          <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+          <stringProp name="HTTPSampler.protocol"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+          <stringProp name="HTTPSampler.path">/ecomp/mso/v1/requests/test${REQUEST_ID}-feature</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.implementation">HttpClient4</stringProp>
+          <boolProp name="HTTPSampler.monitor">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="REST GET Feature Request on ServiceID" enabled="true">
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">${MSO_HOST}</stringProp>
+          <stringProp name="HTTPSampler.port">${MSO_PORT}</stringProp>
+          <stringProp name="HTTPSampler.connect_timeout">10000</stringProp>
+          <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+          <stringProp name="HTTPSampler.protocol"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+          <stringProp name="HTTPSampler.path">/ecomp/mso/v1/requests/services/serv-id${SERVICE_ID}</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.implementation">HttpClient4</stringProp>
+          <boolProp name="HTTPSampler.monitor">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="REST GET Feature Request on FeatureID" enabled="true">
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">${MSO_HOST}</stringProp>
+          <stringProp name="HTTPSampler.port">${MSO_PORT}</stringProp>
+          <stringProp name="HTTPSampler.connect_timeout">10000</stringProp>
+          <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+          <stringProp name="HTTPSampler.protocol"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+          <stringProp name="HTTPSampler.path">/ecomp/mso/v1/requests/services/features/feature-id${FEATURE_ID}</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.implementation">HttpClient4</stringProp>
+          <boolProp name="HTTPSampler.monitor">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="false">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>false</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <threadCounts>true</threadCounts>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+          <boolProp name="ResultCollector.success_only_logging">true</boolProp>
+        </ResultCollector>
+        <hashTree/>
+        <ResultCollector guiclass="StatGraphVisualizer" testclass="ResultCollector" testname="Aggregate Graph" enabled="true">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>true</xml>
+              <fieldNames>false</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <threadCounts>true</threadCounts>
+            </value>
+          </objProp>
+          <stringProp name="filename">/tmp/mso-perf.jtl</stringProp>
+          <boolProp name="ResultCollector.success_only_logging">true</boolProp>
+        </ResultCollector>
+        <hashTree/>
+      </hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="ApiHandler Homing Thread Group" enabled="false">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">1</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">1</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">60</stringProp>
+        <longProp name="ThreadGroup.start_time">1448375429000</longProp>
+        <longProp name="ThreadGroup.end_time">1448375429000</longProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+      </ThreadGroup>
+      <hashTree>
+        <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="service-id increment" enabled="true">
+          <stringProp name="CounterConfig.start">0</stringProp>
+          <stringProp name="CounterConfig.end"></stringProp>
+          <stringProp name="CounterConfig.incr">1</stringProp>
+          <stringProp name="CounterConfig.name">SERVICE_ID</stringProp>
+          <stringProp name="CounterConfig.format"></stringProp>
+          <boolProp name="CounterConfig.per_user">false</boolProp>
+        </CounterConfig>
+        <hashTree/>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="REST Service Request" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">&lt;service-request xmlns=&quot;http://ecomp.att.com/mso/request/layer3serviceactivate/schema/v1&quot; xmlns:msolayer3=&quot;http://ecomp.att.com/mso/request/layer3/schema/v1&quot; xmlns:msoservtypes=&quot;http://ecomp.att.com/mso/request/types/v1&quot;&gt;&#xd;
+&lt;msoservtypes:request-information&gt;&#xd;
+&lt;msoservtypes:request-id&gt;test${SERVICE_ID}-service&lt;/msoservtypes:request-id&gt;&#xd;
+&lt;msoservtypes:request-action&gt;Layer3ServiceActivateRequest&lt;/msoservtypes:request-action&gt;&#xd;
+&lt;msoservtypes:source&gt;OMX&lt;/msoservtypes:source&gt;&#xd;
+&lt;msoservtypes:notification-url&gt;https://csi-tst-q22.it.att.com:22443/Services/com/cingular/csi/sdn/SendManagedNetworkStatusNotification.jws&lt;/msoservtypes:notification-url&gt;&#xd;
+&lt;msoservtypes:order-number&gt;5051560&lt;/msoservtypes:order-number&gt;&#xd;
+&lt;msoservtypes:order-version&gt;1&lt;/msoservtypes:order-version&gt;&#xd;
+&lt;/msoservtypes:request-information&gt;&#xd;
+&lt;msoservtypes:service-information&gt;&#xd;
+&lt;msoservtypes:service-type&gt;SDN-ETHERNET-INTERNET&lt;/msoservtypes:service-type&gt;&#xd;
+&lt;msoservtypes:service-instance-id&gt;serv-id0&lt;/msoservtypes:service-instance-id&gt;&#xd;
+&lt;msoservtypes:subscriber-name&gt;ST E2E Test50565_13000050565&lt;/msoservtypes:subscriber-name&gt;&#xd;
+&lt;/msoservtypes:service-information&gt;&#xd;
+&lt;service-parameters&gt;&#xd;
+&lt;msolayer3:l2-homing-information&gt;&#xd;
+&lt;msolayer3:evc-name&gt;AS/VLXM/003717//SW&lt;/msolayer3:evc-name&gt;&#xd;
+&lt;msolayer3:topology&gt;MultiPoint&lt;/msolayer3:topology&gt;&#xd;
+&lt;msolayer3:preferred-aic-clli&gt;MTSNJA4LCP1&lt;/msolayer3:preferred-aic-clli&gt;&#xd;
+&lt;/msolayer3:l2-homing-information&gt;&#xd;
+&lt;msolayer3:internet-service-information&gt;&#xd;
+&lt;msolayer3:internet-evc-access-information&gt;&#xd;
+&lt;msolayer3:internet-evc-speed-value&gt;8&lt;/msolayer3:internet-evc-speed-value&gt;&#xd;
+&lt;msolayer3:internet-evc-speed-units&gt;Mbps&lt;/msolayer3:internet-evc-speed-units&gt;&#xd;
+&lt;msolayer3:ip-version&gt;ds&lt;/msolayer3:ip-version&gt;&#xd;
+&lt;/msolayer3:internet-evc-access-information&gt;&#xd;
+&lt;msolayer3:vr-lan&gt;&#xd;
+&lt;msolayer3:routing-protocol&gt;none&lt;/msolayer3:routing-protocol&gt;&#xd;
+&lt;msolayer3:vr-lan-interface&gt;&#xd;
+&lt;msolayer3:vr-designation&gt;primary&lt;/msolayer3:vr-designation&gt;&#xd;
+&lt;msolayer3:v4-vr-lan-prefix&gt;10.172.125.0&lt;/msolayer3:v4-vr-lan-prefix&gt;&#xd;
+&lt;msolayer3:v4-vr-lan-prefix-length&gt;28&lt;/msolayer3:v4-vr-lan-prefix-length&gt;&#xd;
+&lt;msolayer3:v6-vr-lan-prefix&gt;2001:112a:86c6:0045:1007:8a5d:0412:9179&lt;/msolayer3:v6-vr-lan-prefix&gt;&#xd;
+&lt;msolayer3:v6-vr-lan-prefix-length&gt;64&lt;/msolayer3:v6-vr-lan-prefix-length&gt;&#xd;
+&lt;msolayer3:v4-public-lan-prefixes&gt;&#xd;
+&lt;msolayer3:t-provided-v4-lan-public-prefixes&gt;&#xd;
+&lt;msolayer3:request-index&gt;1&lt;/msolayer3:request-index&gt;&#xd;
+&lt;msolayer3:v4-lan-public-prefix&gt;18.181.120.12&lt;/msolayer3:v4-lan-public-prefix&gt;&#xd;
+&lt;msolayer3:v4-lan-public-prefix-length&gt;28&lt;/msolayer3:v4-lan-public-prefix-length&gt;&#xd;
+&lt;/msolayer3:t-provided-v4-lan-public-prefixes&gt;&#xd;
+&lt;/msolayer3:v4-public-lan-prefixes&gt;&#xd;
+&lt;msolayer3:v6-public-lan-prefixes&gt;&#xd;
+&lt;msolayer3:t-provided-v6-lan-public-prefixes&gt;&#xd;
+&lt;msolayer3:request-index&gt;1&lt;/msolayer3:request-index&gt;&#xd;
+&lt;msolayer3:v6-lan-public-prefix&gt;2022:0cf7:87a6:0048:1008:8a4c:0373:1048&lt;/msolayer3:v6-lan-public-prefix&gt;&#xd;
+&lt;msolayer3:v6-lan-public-prefix-length&gt;64&lt;/msolayer3:v6-lan-public-prefix-length&gt;&#xd;
+&lt;/msolayer3:t-provided-v6-lan-public-prefixes&gt;&#xd;
+&lt;/msolayer3:v6-public-lan-prefixes&gt;&#xd;
+&#xd;
+&lt;msolayer3:dhcp&gt;&#xd;
+&lt;msolayer3:v4-dhcp-server-enabled&gt;Y&lt;/msolayer3:v4-dhcp-server-enabled&gt;&#xd;
+&lt;msolayer3:v6-dhcp-server-enabled&gt;Y&lt;/msolayer3:v6-dhcp-server-enabled&gt;&#xd;
+&lt;msolayer3:use-v4-default-pool&gt;N&lt;/msolayer3:use-v4-default-pool&gt;&#xd;
+&lt;msolayer3:use-v6-default-pool&gt;N&lt;/msolayer3:use-v6-default-pool&gt;&#xd;
+&lt;/msolayer3:dhcp&gt;&#xd;
+&lt;msolayer3:pat&gt;&#xd;
+&lt;msolayer3:v4-pat-enabled&gt;Y&lt;/msolayer3:v4-pat-enabled&gt;&#xd;
+&lt;msolayer3:use-v4-default-pool&gt;N&lt;/msolayer3:use-v4-default-pool&gt;&#xd;
+&lt;/msolayer3:pat&gt;&#xd;
+&lt;msolayer3:firewall-lite&gt;&#xd;
+&lt;msolayer3:stateful-firewall-lite-v4-enabled&gt;Y&lt;/msolayer3:stateful-firewall-lite-v4-enabled&gt;&#xd;
+&lt;msolayer3:stateful-firewall-lite-v6-enabled&gt;Y&lt;/msolayer3:stateful-firewall-lite-v6-enabled&gt;&#xd;
+&lt;/msolayer3:firewall-lite&gt;&#xd;
+&lt;/msolayer3:vr-lan-interface&gt;&#xd;
+&lt;/msolayer3:vr-lan&gt;&#xd;
+&lt;/msolayer3:internet-service-information&gt;&#xd;
+&lt;/service-parameters&gt;&#xd;
+&lt;/service-request&gt;</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">${MSO_HOST}</stringProp>
+          <stringProp name="HTTPSampler.port">${MSO_PORT}</stringProp>
+          <stringProp name="HTTPSampler.connect_timeout">10000</stringProp>
+          <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+          <stringProp name="HTTPSampler.protocol"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+          <stringProp name="HTTPSampler.path">/ecomp/mso/v1/services/</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.implementation">HttpClient4</stringProp>
+          <boolProp name="HTTPSampler.monitor">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+          <boolProp name="ResultCollector.error_logging">true</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>false</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <threadCounts>true</threadCounts>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
+        <ResultCollector guiclass="StatGraphVisualizer" testclass="ResultCollector" testname="Aggregate Graph" enabled="true">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>false</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <threadCounts>true</threadCounts>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
+        <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
+          <stringProp name="dataSource"></stringProp>
+          <stringProp name="query"></stringProp>
+          <stringProp name="queryArguments"></stringProp>
+          <stringProp name="queryArgumentsTypes"></stringProp>
+          <stringProp name="queryTimeout"></stringProp>
+          <stringProp name="queryType">Select Statement</stringProp>
+          <stringProp name="resultSetHandler">Store as String</stringProp>
+          <stringProp name="resultVariable"></stringProp>
+          <stringProp name="variableNames"></stringProp>
+        </JDBCSampler>
+        <hashTree/>
+      </hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="ApiHandler Infra Thread Group" enabled="false">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">1</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">1</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">60</stringProp>
+        <longProp name="ThreadGroup.start_time">1448375429000</longProp>
+        <longProp name="ThreadGroup.end_time">1448375429000</longProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+      </ThreadGroup>
+      <hashTree>
+        <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="service-id increment" enabled="true">
+          <stringProp name="CounterConfig.start">0</stringProp>
+          <stringProp name="CounterConfig.end"></stringProp>
+          <stringProp name="CounterConfig.incr">1</stringProp>
+          <stringProp name="CounterConfig.name">SERVICE_ID</stringProp>
+          <stringProp name="CounterConfig.format"></stringProp>
+          <boolProp name="CounterConfig.per_user">false</boolProp>
+        </CounterConfig>
+        <hashTree/>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="REST Service Request" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">&lt;service-request xmlns=&quot;http://ecomp.att.com/mso/request/layer3serviceactivate/schema/v1&quot; xmlns:msolayer3=&quot;http://ecomp.att.com/mso/request/layer3/schema/v1&quot; xmlns:msoservtypes=&quot;http://ecomp.att.com/mso/request/types/v1&quot;&gt;&#xd;
+&lt;msoservtypes:request-information&gt;&#xd;
+&lt;msoservtypes:request-id&gt;test${SERVICE_ID}-service&lt;/msoservtypes:request-id&gt;&#xd;
+&lt;msoservtypes:request-action&gt;Layer3ServiceActivateRequest&lt;/msoservtypes:request-action&gt;&#xd;
+&lt;msoservtypes:source&gt;OMX&lt;/msoservtypes:source&gt;&#xd;
+&lt;msoservtypes:notification-url&gt;https://csi-tst-q22.it.att.com:22443/Services/com/cingular/csi/sdn/SendManagedNetworkStatusNotification.jws&lt;/msoservtypes:notification-url&gt;&#xd;
+&lt;msoservtypes:order-number&gt;5051560&lt;/msoservtypes:order-number&gt;&#xd;
+&lt;msoservtypes:order-version&gt;1&lt;/msoservtypes:order-version&gt;&#xd;
+&lt;/msoservtypes:request-information&gt;&#xd;
+&lt;msoservtypes:service-information&gt;&#xd;
+&lt;msoservtypes:service-type&gt;SDN-ETHERNET-INTERNET&lt;/msoservtypes:service-type&gt;&#xd;
+&lt;msoservtypes:service-instance-id&gt;serv-id0&lt;/msoservtypes:service-instance-id&gt;&#xd;
+&lt;msoservtypes:subscriber-name&gt;ST E2E Test50565_13000050565&lt;/msoservtypes:subscriber-name&gt;&#xd;
+&lt;/msoservtypes:service-information&gt;&#xd;
+&lt;service-parameters&gt;&#xd;
+&lt;msolayer3:l2-homing-information&gt;&#xd;
+&lt;msolayer3:evc-name&gt;AS/VLXM/003717//SW&lt;/msolayer3:evc-name&gt;&#xd;
+&lt;msolayer3:topology&gt;MultiPoint&lt;/msolayer3:topology&gt;&#xd;
+&lt;msolayer3:preferred-aic-clli&gt;MTSNJA4LCP1&lt;/msolayer3:preferred-aic-clli&gt;&#xd;
+&lt;/msolayer3:l2-homing-information&gt;&#xd;
+&lt;msolayer3:internet-service-information&gt;&#xd;
+&lt;msolayer3:internet-evc-access-information&gt;&#xd;
+&lt;msolayer3:internet-evc-speed-value&gt;8&lt;/msolayer3:internet-evc-speed-value&gt;&#xd;
+&lt;msolayer3:internet-evc-speed-units&gt;Mbps&lt;/msolayer3:internet-evc-speed-units&gt;&#xd;
+&lt;msolayer3:ip-version&gt;ds&lt;/msolayer3:ip-version&gt;&#xd;
+&lt;/msolayer3:internet-evc-access-information&gt;&#xd;
+&lt;msolayer3:vr-lan&gt;&#xd;
+&lt;msolayer3:routing-protocol&gt;none&lt;/msolayer3:routing-protocol&gt;&#xd;
+&lt;msolayer3:vr-lan-interface&gt;&#xd;
+&lt;msolayer3:vr-designation&gt;primary&lt;/msolayer3:vr-designation&gt;&#xd;
+&lt;msolayer3:v4-vr-lan-prefix&gt;10.172.125.0&lt;/msolayer3:v4-vr-lan-prefix&gt;&#xd;
+&lt;msolayer3:v4-vr-lan-prefix-length&gt;28&lt;/msolayer3:v4-vr-lan-prefix-length&gt;&#xd;
+&lt;msolayer3:v6-vr-lan-prefix&gt;2001:112a:86c6:0045:1007:8a5d:0412:9179&lt;/msolayer3:v6-vr-lan-prefix&gt;&#xd;
+&lt;msolayer3:v6-vr-lan-prefix-length&gt;64&lt;/msolayer3:v6-vr-lan-prefix-length&gt;&#xd;
+&lt;msolayer3:v4-public-lan-prefixes&gt;&#xd;
+&lt;msolayer3:t-provided-v4-lan-public-prefixes&gt;&#xd;
+&lt;msolayer3:request-index&gt;1&lt;/msolayer3:request-index&gt;&#xd;
+&lt;msolayer3:v4-lan-public-prefix&gt;18.181.120.12&lt;/msolayer3:v4-lan-public-prefix&gt;&#xd;
+&lt;msolayer3:v4-lan-public-prefix-length&gt;28&lt;/msolayer3:v4-lan-public-prefix-length&gt;&#xd;
+&lt;/msolayer3:t-provided-v4-lan-public-prefixes&gt;&#xd;
+&lt;/msolayer3:v4-public-lan-prefixes&gt;&#xd;
+&lt;msolayer3:v6-public-lan-prefixes&gt;&#xd;
+&lt;msolayer3:t-provided-v6-lan-public-prefixes&gt;&#xd;
+&lt;msolayer3:request-index&gt;1&lt;/msolayer3:request-index&gt;&#xd;
+&lt;msolayer3:v6-lan-public-prefix&gt;2022:0cf7:87a6:0048:1008:8a4c:0373:1048&lt;/msolayer3:v6-lan-public-prefix&gt;&#xd;
+&lt;msolayer3:v6-lan-public-prefix-length&gt;64&lt;/msolayer3:v6-lan-public-prefix-length&gt;&#xd;
+&lt;/msolayer3:t-provided-v6-lan-public-prefixes&gt;&#xd;
+&lt;/msolayer3:v6-public-lan-prefixes&gt;&#xd;
+&#xd;
+&lt;msolayer3:dhcp&gt;&#xd;
+&lt;msolayer3:v4-dhcp-server-enabled&gt;Y&lt;/msolayer3:v4-dhcp-server-enabled&gt;&#xd;
+&lt;msolayer3:v6-dhcp-server-enabled&gt;Y&lt;/msolayer3:v6-dhcp-server-enabled&gt;&#xd;
+&lt;msolayer3:use-v4-default-pool&gt;N&lt;/msolayer3:use-v4-default-pool&gt;&#xd;
+&lt;msolayer3:use-v6-default-pool&gt;N&lt;/msolayer3:use-v6-default-pool&gt;&#xd;
+&lt;/msolayer3:dhcp&gt;&#xd;
+&lt;msolayer3:pat&gt;&#xd;
+&lt;msolayer3:v4-pat-enabled&gt;Y&lt;/msolayer3:v4-pat-enabled&gt;&#xd;
+&lt;msolayer3:use-v4-default-pool&gt;N&lt;/msolayer3:use-v4-default-pool&gt;&#xd;
+&lt;/msolayer3:pat&gt;&#xd;
+&lt;msolayer3:firewall-lite&gt;&#xd;
+&lt;msolayer3:stateful-firewall-lite-v4-enabled&gt;Y&lt;/msolayer3:stateful-firewall-lite-v4-enabled&gt;&#xd;
+&lt;msolayer3:stateful-firewall-lite-v6-enabled&gt;Y&lt;/msolayer3:stateful-firewall-lite-v6-enabled&gt;&#xd;
+&lt;/msolayer3:firewall-lite&gt;&#xd;
+&lt;/msolayer3:vr-lan-interface&gt;&#xd;
+&lt;/msolayer3:vr-lan&gt;&#xd;
+&lt;/msolayer3:internet-service-information&gt;&#xd;
+&lt;/service-parameters&gt;&#xd;
+&lt;/service-request&gt;</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">${MSO_HOST}</stringProp>
+          <stringProp name="HTTPSampler.port">${MSO_PORT}</stringProp>
+          <stringProp name="HTTPSampler.connect_timeout">10000</stringProp>
+          <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+          <stringProp name="HTTPSampler.protocol"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+          <stringProp name="HTTPSampler.path">/ecomp/mso/v1/services/</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.implementation">HttpClient4</stringProp>
+          <boolProp name="HTTPSampler.monitor">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+          <boolProp name="ResultCollector.error_logging">true</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>false</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <threadCounts>true</threadCounts>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
+        <ResultCollector guiclass="StatGraphVisualizer" testclass="ResultCollector" testname="Aggregate Graph" enabled="true">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>false</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <threadCounts>true</threadCounts>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
+        <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
+          <stringProp name="dataSource"></stringProp>
+          <stringProp name="query"></stringProp>
+          <stringProp name="queryArguments"></stringProp>
+          <stringProp name="queryArgumentsTypes"></stringProp>
+          <stringProp name="queryTimeout"></stringProp>
+          <stringProp name="queryType">Select Statement</stringProp>
+          <stringProp name="resultSetHandler">Store as String</stringProp>
+          <stringProp name="resultVariable"></stringProp>
+          <stringProp name="variableNames"></stringProp>
+        </JDBCSampler>
+        <hashTree/>
+      </hashTree>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>

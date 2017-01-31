@@ -1,0 +1,104 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.openecomp.mso</groupId>
+		<artifactId>adapters</artifactId>
+		<version>0.0.4-SNAPSHOT</version>
+	</parent>
+	<groupId>org.openecomp.mso.adapters</groupId>
+	<artifactId>mso-sdnc-adapter</artifactId>
+	<packaging>war</packaging>
+	<name>mso-sdnc-adapter</name>
+	<description>mso sdnc adapter</description>
+
+	<build>
+		<finalName>${project.artifactId}-${project.version}</finalName>
+		<plugins>
+		
+			<plugin>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<warSourceDirectory>${basedir}/WebContent</warSourceDirectory>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+					<attachClasses>true</attachClasses>
+				</configuration>
+			</plugin>
+<!-- 			<plugin> -->
+<!-- 				<groupId>org.jboss.as.plugins</groupId> -->
+<!-- 				<artifactId>jboss-as-maven-plugin</artifactId> -->
+<!-- 				<version>7.6.Final</version> -->
+<!-- 				<configuration> -->
+<!-- 					<force>true</force> -->
+<!-- 					<port>${jboss.port}</port> -->
+<!-- 					<hostname>${jboss.hostname}</hostname> -->
+<!-- 					<username>${jboss.username}</username> -->
+<!-- 					<password>${jboss.password}</password> -->
+<!-- 					<ignoreMissingDeployment>true</ignoreMissingDeployment> -->
+<!-- 					<domain> -->
+<!-- 						<server-groups> -->
+<!-- 							<server-group>server-group-one</server-group> -->
+<!-- 							<server-group>server-group-two</server-group> -->
+<!-- 						</server-groups> -->
+<!-- 					</domain> -->
+<!-- 					<fileNames> -->
+<!-- 						<fileName>target/${project.build.finalName}.${project.packaging}</fileName> -->
+<!-- 					</fileNames> -->
+<!-- 				</configuration> -->
+<!-- 				<executions> -->
+<!-- 					<execution> -->
+<!-- 						<id>undeploy</id> -->
+<!-- 						<phase>clean</phase> -->
+<!-- 						<goals> -->
+<!-- 							<goal>undeploy</goal> -->
+<!-- 						</goals> -->
+<!-- 					</execution> -->
+<!-- 					<execution> -->
+<!-- 						<id>deploy</id> -->
+<!-- 						<phase>install</phase> -->
+<!-- 						<goals> -->
+<!-- 							<goal>deploy</goal> -->
+<!-- 						</goals> -->
+<!-- 					</execution> -->
+<!-- 				</executions> -->
+<!-- 			</plugin> -->
+		</plugins>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>org.openecomp.mso.adapters</groupId>
+			<artifactId>mso-adapter-utils</artifactId>
+			<version>${project.version}</version>
+			
+		</dependency>
+		<dependency>
+			<groupId>javax</groupId>
+			<artifactId>javaee-web-api</artifactId>
+			<version>6.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.spec.javax.ejb</groupId>
+			<artifactId>jboss-ejb-api_3.2_spec</artifactId>
+			<version>1.0.0.Final</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.ejb3</groupId>
+			<artifactId>jboss-ejb3-ext-api</artifactId>
+			<version>2.2.0.Final</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.openecomp.mso</groupId>
+			<artifactId>status-control</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+        <dependency>
+            <groupId>org.openecomp.mso.adapters</groupId>
+            <artifactId>mso-adapters-rest-interface</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+	</dependencies>
+</project>

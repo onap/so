@@ -1,0 +1,70 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * OPENECOMP - MSO
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+
+package org.openecomp.mso.asdc.installer;
+
+
+import java.io.UnsupportedEncodingException;
+
+import org.openecomp.sdc.api.notification.IArtifactInfo;
+import org.openecomp.sdc.api.results.IDistributionClientDownloadResult;
+
+/**
+ * The structure that contains the artifactInfo and its associated DownloadedResult. 
+ *
+ */
+public final class VfModuleArtifact {
+	private final IArtifactInfo artifactInfo;
+	private int deployedInDb=0;
+	private final String result;
+		
+	private Object catalogObject;	
+		
+	public VfModuleArtifact(IArtifactInfo artifactinfo,IDistributionClientDownloadResult clientResult) throws UnsupportedEncodingException {
+		artifactInfo=artifactinfo;
+		result = new String(clientResult.getArtifactPayload(), "UTF-8");
+		
+	}
+
+	public Object getCatalogObject() {
+		return catalogObject;
+	}
+
+	public void setCatalogObject(Object catalogObject) {
+		this.catalogObject = catalogObject;
+	}
+
+	public IArtifactInfo getArtifactInfo() {
+		return artifactInfo;
+	}
+
+	public String getResult() {
+		return result;
+	}
+
+	public int getDeployedInDb() {
+		return deployedInDb;
+	}
+
+	public void incrementDeployedInDB() {
+		++deployedInDb;
+	}
+	
+}

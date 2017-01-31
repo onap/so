@@ -1,0 +1,13 @@
+[
+  {
+    "vfModuleModelName": "VF_RI1_VFW::module-1",
+    "vfModuleModelInvariantUUID": "585822c7-4027-4f84-ba50-e9248606f134",
+    "vfModuleModelVersion": "1.0",
+    "vfModuleModelUUID": "1e34774e-715e-4fd5-bd08-7b654622f33f.VF_RI1_VFW::module-1::module-1.group",
+    "isBase": true,
+    "artifacts": [
+      "Artifact-UUID3",
+      "EnvArtifact-UUID3"
+    ]
+  }
+]

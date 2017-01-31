@@ -1,0 +1,140 @@
+{
+    "distributionID" : "5v1234d8-5b6d-42c4-7t54-47v95n58qb7",
+    “distributionVersion” : “1607”,
+    "serviceName" : "Nimbus",
+    “serviceInvariantUUID” : “c66232fe-d7b0-40f0-8e5e-9128e694c28b”,
+    “serviceVersion” : “2.0”,
+    "serviceUUID" : "4e0697d8-5b6d-42c4-8c74-46c33d46624c",
+    "serviceDescription" : "Nimbus service description",
+    "serviceArtifacts":[
+        {
+            "artifactName" : "vnf_catalog.xml",
+            "artifactType" : "VNF_CATALOG",
+            "artifactUUID" :"4e1444d8-5b6d-42c4-8c74-46c55d43425b",
+            "artifactVersion" : "1" , 
+            "artifactURL" : "/asdc/v1/catalog/services/Nimbus/2.0/artifacts/vnf_catalog.xml" ,
+            "artifactDescription" : "VNF Catalog Artifact" ,
+            "artifactChecksum" : "14e389rnbvq6tf=="
+        }
+      ],
+    "resources":[
+        {
+            "resourceInstanceName" : "PCRF1",
+            "resourceName" : "PCRF",
+            "resourceInvariantUUID" : "ff420d27-4585-445a-8a86-a6f64333b337",
+            "resourceVersion": "1.0",
+            "resourceUUID" : "4e5555d8-5b6d-42c4-8c74-46c33d8904f",
+            "resourceType" : "VF",
+            "artifacts" : [
+                {
+                    "artifactName" : "license.xml",
+                    "artifactType" : "VF_LICENSE",
+                    "artifactUUID" :"4e1111d8-5b6d-42c4-8c74-46c12d43424c",
+                    "artifactVersion" : "1" , 
+                    "artifactURL" : "/asdc/v1/catalog/services/Nimbus/2.0/resourceInstances/ PCRF1/artifacts/license.xml" ,
+                    "artifactDescription" : "VF License Model Artifact" ,
+                    "artifactChecksum" : "14e389rnbvq8vq=="
+                }
+            ],
+            "vfModules": [
+                {
+                    "vfModuleModelName": "PCRF-module-0",
+                    "vfModuleModelInvariantUUID" : "7ebcc262-2d4a-4131-bfed-32cb92d251ce",
+                    "vfModuleModelVersion": "1",
+                    "vfModuleModelUUID": "9g6666d8-5b6d-42c4-8c74-46c33d8904f",
+                    "vfModuleModelDescription": "PCRF VF Module",
+                    "isBase": TRUE,
+                    "artifacts": [
+                        {
+                            "artifactName": "pcrf-base-module.yaml",
+                            "artifactLabel": "PCRF::base::module-0",
+                            "artifactType": "HEAT",
+                            "artifactUUID": "d1dc0ac0-0b07-11e6-b512-3e1d05defe78",
+                            "artifactVersion": "1",
+                            "artifactURL": "/asdc/v1/catalog/services/Nimbus/2.0/resourceInstances/PCRF1/artifacts/pcrf-base-module.yaml",
+                            "artifactDescription": "PCRF VF Module HEAT base template artifact",
+                            "artifactTimeout": 60,
+                            "artifactChecksum": "dy6389rnbvq8vq=="
+                        },
+                        {
+                            "artifactName": "pcrf-nested.yaml",
+                            "artifactLabel": "PCRF::nested-1",
+                            "artifactType": "HEAT_NESTED",
+                            "artifactUUID": "4e1111d8-5b6d-42c4-8c74-46c12d43424c",
+                            "artifactVersion": "2",
+                            "artifactURL": "/asdc/v1/catalog/services/Nimbus/2.0/resourceInstances/PCRF1/artifacts/pcrf-nested.yaml",
+                            "artifactDescription": "PCRF VF Module HEAT nested template artifact",
+                            "artifactChecksum": "76hd389rnbvq8vq=="
+                        },
+                        {
+                            "artifactName": "pcrf-base-module.env",
+                            "artifactLabel": "PCRF::base::module-0-env",
+                            "artifactType": "HEAT_ENV",
+                            "artifactUUID": "2636916f-aa37-4c79-b3ea-0e68d6e139e6",
+                            "artifactVersion": "3",
+                            "artifactURL": "/asdc/v1/catalog/services/Nimbus/2.0/resourceInstances/PCRF1/pcrf-base-module.env",
+                            "artifactDescription": "PCRF VF Module HEAT environment artifact",
+                            "generatedFromUUID" : “d1dc0ac0-0b07-11e6-b512-3e1d05defe78”,
+                            "artifactChecksum": "3d6555rnbvq3tq=="
+                        },
+                        {
+                            "artifactName": "pcrf-getfile.sh",
+                            "artifactLabel": "PCRF::getfile-1",
+                            "artifactType": "HEAT_ARTIFACT",
+                            "artifactUUID": "c1492a80-0b07-11e6-b512-3e1d05defe78",
+                            "artifactVersion": "3",
+                            "artifactURL": "/asdc/v1/catalog/services/Nimbus/2.0/resourceInstances/PCRF1/artifacts/pcrf-getfile.sh",
+                            "artifactDescription": "HEAT getfile artifact",
+                            "artifactChecksum": "fds3555rnbvq3tq=="
+                        },
+                    ]
+                },                  
+                {
+                    "vfModuleModelName": "PCRF-module-0-vol",
+                    "vfModuleModelInvariantUUID" : "7ebcc262-2d4a-4131-cfed-32cb92d25222",
+                    "vfModuleModelVersion": "1",
+                    "vfModuleModelUUID": "9g6446d8-5b6d-42c4-8c74-46c33d89f50",
+                    "vfModuleModelDescription": "PCRF volume VF Module",
+                    "artifacts": [
+                        {
+                            "artifactName": "pcrf-ppd-pcm-module-volume.yaml",
+                            "artifactLabel": "PCRF::PPD_PCM::module-0-vol",
+                            "artifactType": "HEAT_VOL",
+                            "artifactUUID": "48a0b856-22b9-4362-875c-3c960ee2a336",
+                            "artifactVersion": "1",
+                            "artifactURL": "/asdc/v1/catalog/services/Nimbus/2.0/resourceInstances/PCRF1/artifacts/pcrf-ppd-pcm-module-volume.yaml",
+                            "artifactDescription": "VF Module HEAT Volume base template artifact",
+                            "artifactTimeout": 60,
+                            "artifactChecksum": "zsc389rnbvq8vq=="
+                        },
+                        {
+                            "artifactName": "pcrf-ppd-pcm-module-volume.env",
+                            "artifactLabel": "PCRF::PPD_PCM::module-0-vol-env",
+                            "artifactType": "HEAT_VOL_ENV",
+                            "artifactUUID": "3d6eea53-58f1-4434-aabe-1c92cbaa6936",
+                            "artifactVersion": "1",
+                            "artifactURL": "/asdc/v1/catalog/services/Nimbus/2.0/resourceInstances/PCRF1/artifacts/pcrf-ppd-pcm-module-volume.env",
+                            "artifactDescription": "VF Module HEAT Volume env artifact",
+                            "generatedFromUUID": "48a0b856-22b9-4362-875c-3c960ee2a336",
+                            "artifactChecksum": "g8m389rnbvq8vq=="
+                        }           
+                    ]
+                },
+            ]
+        },  
+        {
+            "resourceInstanceName" : "aaa_2",
+            "resourceName" : "aaa",
+            "resourceInvariantUUID" : "ff420d27-5555-335a-8a77-a6f64999b337",
+            "resourceVersion": "1.0",
+            "resourceUUID" : "4e5555d8-5b6d-42c4-8c74-46c33d8904f",
+            "resourceType" : "VF",
+            "artifacts": [
+                ...
+            ],
+            "vfModules": [
+                ...
+            ]
+        }                     
+    ]
+}

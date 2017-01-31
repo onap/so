@@ -1,0 +1,333 @@
+heat_template_version: 2013-05-23
+
+description: heat template that creates PCRF Policy Director stack
+
+parameters:
+  pcrf_ppd_server_name:
+    type: string
+    label: PCRF PD server name
+    description: PCRF PD server name
+  pcrf_ppd_image_name:
+    type: string
+    label: image name
+    description: PCRF PD image name
+  pcrf_ppd_flavor_name:
+    type: string
+    label: PCRF PD flavor name
+    description: flavor name of PCRF PD instance
+  availabilityzone_name:
+    type: string
+    label: availabilityzone name
+    description: availabilityzone name
+  pcrf_cps_net_name:
+    type: string
+    label: CPS network name
+    description: CPS network name
+  pcrf_cps_net_ip:
+    type: string
+    label: CPS network ip
+    description: CPS network ip
+  pcrf_cps_net_mask:
+    type: string
+    label: CPS network mask
+    description: CPS network mask
+  pcrf_lb_internal_vip:
+    type: string
+    label: CPS Internal LB VIP
+    description: CPS Internal LB VIP
+  pcrf_oam_net_name:
+    type: string
+    label: OAM network name
+    description: OAM network name
+  pcrf_oam_net_ip:
+    type: string
+    label: OAM network ip
+    description: OAM network ip
+  pcrf_oam_net_gw:
+    type: string
+    label: CPS network gateway
+    description: CPS network gateway
+  pcrf_oam_net_mask:
+    type: string
+    label: CPS network mask
+    description: CPS network mask
+  pcrf_lb_management_vip:
+    type: string
+    label: CPS OAM LB VIP
+    description: CPS OAM LB VIP
+  pcrf_gx_net_name:
+    type: string
+    label: Gx network name
+    description: Gx network name
+  pcrf_gx_net_ip:
+    type: string
+    label: Gx network ip
+    description: Gx network ip
+  pcrf_gx_net_mask:
+    type: string
+    label: Gx network mask
+    description: Gx network mask
+  pcrf_sp_net_name:
+    type: string
+    label: Sp network name
+    description: Sp network name
+  pcrf_sp_net_ip:
+    type: string
+    label: Sp network ip
+    description: Sp network ip
+  pcrf_sp_net_mask:
+    type: string
+    label: Sp network mask
+    description: Sp network mask
+  pcrf_sy_net_name:
+    type: string
+    label: Sy network name
+    description: Sy network name
+  pcrf_sy_net_ip:
+    type: string
+    label: Sy network ip
+    description: Sy network ip
+  pcrf_sy_net_mask:
+    type: string
+    label: Sy network mask
+    description: Sy network mask
+  pcrf_rx_net_name:
+    type: string
+    label: Rx network name
+    description: Rx network name
+  pcrf_rx_net_ip:
+    type: string
+    label: Rx network ip
+    description: Rx network ip
+  pcrf_rx_net_mask:
+    type: string
+    label: Rx network mask
+    description: Rx network mask
+  pcrf_sd_net_name:
+    type: string
+    label: Sd network name
+    description: Sd network name
+  pcrf_sd_net_ip:
+    type: string
+    label: Sd network ip
+    description: Sd network ip
+  pcrf_sd_net_mask:
+    type: string
+    label: Sd network mask
+    description: Sd network mask
+  pcrf_sgi_sy_net_name:
+    type: string
+    label: Sgi Sy network name
+    description: Sgi Sy network name
+  pcrf_sgi_sy_net_ip:
+    type: string
+    label: Sgi Sy network ip
+    description: Sgi Sy network ip
+  pcrf_sgi_sy_net_mask:
+    type: string
+    label: Sgi Sy network mask
+    description: Sgi Sy network mask
+  pcrf_security_group_name:
+    type: string
+    label: security group name
+    description: the name of security group
+  pcrf_vnf_id:
+    type: string
+    label: PCRF VNF Id
+    description: PCRF VNF Id
+
+resources:
+  network:
+    type: OS::Heat::CloudConfig
+    properties:
+      cloud_config:
+        write_files:
+          - path: /etc/sysconfig/network-scripts/ifcfg-eth0
+            permissions: "0644"
+            content:
+              str_replace:
+                template: { get_file: nimbus-ethernet }
+                params:
+                  $dev: eth0
+                  $ip: { get_param: pcrf_cps_net_ip }
+                  $netmask: { get_param: pcrf_cps_net_mask }
+          - path: /etc/sysconfig/network-scripts/ifcfg-eth1
+            permissions: "0644"
+            content:
+              str_replace:
+                template: { get_file: nimbus-ethernet-gw }
+                params:
+                  $dev: eth1
+                  $ip: { get_param: pcrf_oam_net_ip }
+                  $netmask: { get_param: pcrf_oam_net_mask }
+                  $gateway: { get_param: pcrf_oam_net_gw }
+          - path: /etc/sysconfig/network-scripts/ifcfg-eth2
+            permissions: "0644"
+            content:
+              str_replace:
+                template: { get_file: nimbus-ethernet }
+                params:
+                  $dev: eth2
+                  $ip: { get_param: pcrf_gx_net_ip }
+                  $netmask: { get_param: pcrf_gx_net_mask }
+          - path: /etc/sysconfig/network-scripts/ifcfg-eth3
+            permissions: "0644"
+            content:
+              str_replace:
+                template: { get_file: nimbus-ethernet }
+                params:
+                  $dev: eth3
+                  $ip: { get_param: pcrf_sp_net_ip }
+                  $netmask: { get_param: pcrf_sp_net_mask }
+          - path: /etc/sysconfig/network-scripts/ifcfg-eth4
+            permissions: "0644"
+            content:
+              str_replace:
+                template: { get_file: nimbus-ethernet }
+                params:
+                  $dev: eth4
+                  $ip: { get_param: pcrf_sy_net_ip }
+                  $netmask: { get_param: pcrf_sy_net_mask }
+          - path: /etc/sysconfig/network-scripts/ifcfg-eth5
+            permissions: "0644"
+            content:
+              str_replace:
+                template: { get_file: nimbus-ethernet }
+                params:
+                  $dev: eth5
+                  $ip: { get_param: pcrf_rx_net_ip }
+                  $netmask: { get_param: pcrf_rx_net_mask }
+          - path: /etc/sysconfig/network-scripts/ifcfg-eth6
+            permissions: "0644"
+            content:
+              str_replace:
+                template: { get_file: nimbus-ethernet }
+                params:
+                  $dev: eth6
+                  $ip: { get_param: pcrf_sd_net_ip }
+                  $netmask: { get_param: pcrf_sd_net_mask }
+          - path: /etc/sysconfig/network-scripts/ifcfg-eth7
+            permissions: "0644"
+            content:
+              str_replace:
+                template: { get_file: nimbus-ethernet }
+                params:
+                  $dev: eth7
+                  $ip: { get_param: pcrf_sgi_sy_net_ip }
+                  $netmask: { get_param: pcrf_sgi_sy_net_mask }
+        runcmd:
+          - ifdown eth0 && ifup eth0
+          - ifdown eth1 && ifup eth1
+          - ifdown eth2 && ifup eth2
+          - ifdown eth3 && ifup eth3
+          - ifdown eth4 && ifup eth4
+          - ifdown eth5 && ifup eth5
+          - ifdown eth6 && ifup eth6
+          - ifdown eth7 && ifup eth7
+  script_init:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      group: ungrouped
+      config:
+        str_replace:
+          template: { get_file: cloud-nimbus.sh }
+          params:
+            $vm_name: { get_param: pcrf_ppd_server_name }
+  pcrf_server_init:
+    type: OS::Heat::MultipartMime
+    properties:
+      parts:
+      - config: { get_resource: network}
+      - config: { get_resource: script_init}
+
+  pcrf_server_ppd: 
+    type: OS::Nova::Server
+    properties:
+      config_drive: "True"
+      name: { get_param: pcrf_ppd_server_name }
+      image: { get_param: pcrf_ppd_image_name }
+      flavor: { get_param: pcrf_ppd_flavor_name }
+      availability_zone: { get_param: availabilityzone_name }
+      networks:
+        - port: { get_resource: pcrf_ppd_port_0}
+        - port: { get_resource: pcrf_ppd_port_1}
+        - port: { get_resource: pcrf_ppd_port_2}
+        - port: { get_resource: pcrf_ppd_port_3}
+        - port: { get_resource: pcrf_ppd_port_4}
+        - port: { get_resource: pcrf_ppd_port_5}
+        - port: { get_resource: pcrf_ppd_port_6}
+        - port: { get_resource: pcrf_ppd_port_7}
+      user_data_format: RAW
+      user_data:
+        get_resource: pcrf_server_init
+      metadata:
+        vnf_id: {get_param: pcrf_vnf_id}
+
+  pcrf_ppd_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: pcrf_cps_net_name }
+      fixed_ips:
+        - ip_address: { get_param: pcrf_cps_net_ip }
+      security_groups: [{ get_param: pcrf_security_group_name }]
+      allowed_address_pairs:
+        - ip_address: { get_param: pcrf_lb_internal_vip }
+
+  pcrf_ppd_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: pcrf_oam_net_name }
+      fixed_ips:
+        - ip_address: { get_param: pcrf_oam_net_ip }
+      security_groups: [{ get_param: pcrf_security_group_name }]
+      allowed_address_pairs:
+        - ip_address: { get_param: pcrf_lb_management_vip } 
+ 
+  pcrf_ppd_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: pcrf_gx_net_name }
+      fixed_ips:
+        - ip_address: { get_param: pcrf_gx_net_ip }
+      security_groups: [{ get_param: pcrf_security_group_name }]
+
+  pcrf_ppd_port_3:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: pcrf_sp_net_name }
+      fixed_ips:
+        - ip_address: { get_param: pcrf_sp_net_ip }
+      security_groups: [{ get_param: pcrf_security_group_name }]
+
+  pcrf_ppd_port_4:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: pcrf_sy_net_name }
+      fixed_ips:
+        - ip_address: { get_param: pcrf_sy_net_ip }
+      security_groups: [{ get_param: pcrf_security_group_name }]
+
+  pcrf_ppd_port_5:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: pcrf_rx_net_name }
+      fixed_ips:
+        - ip_address: { get_param: pcrf_rx_net_ip }
+      security_groups: [{ get_param: pcrf_security_group_name }]
+  
+  pcrf_ppd_port_6:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: pcrf_sd_net_name }
+      fixed_ips:
+        - ip_address: { get_param: pcrf_sd_net_ip }
+      security_groups: [{ get_param: pcrf_security_group_name }]
+
+  pcrf_ppd_port_7:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: pcrf_sgi_sy_net_name }
+      fixed_ips:
+        - ip_address: { get_param: pcrf_sgi_sy_net_ip }
+      security_groups: [{ get_param: pcrf_security_group_name }]
+

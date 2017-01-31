@@ -1,0 +1,199 @@
+heat_template_version: 2013-05-23
+
+description: heat template that creates PCRF Session Manager stack
+
+parameters:
+  pcrf_psm_server_names:
+    type: comma_delimited_list
+    label: PCRF SM server names
+    description: name of the PCRF SM instance
+  pcrf_psm_image_name:
+    type: string
+    label: PCRF SM image name
+    description: PCRF SM image name
+  pcrf_psm_flavor_name:
+    type: string
+    label: PCRF SM flavor name
+    description: flavor name of PCRF SM instance 
+  availabilityzone_name:
+    type: string
+    label: availabilityzone name
+    description: availabilityzone name
+  pcrf_cps_net_name:
+    type: string
+    label: CPS network name
+    description: CPS network name
+  pcrf_cps_net_ips:
+    type: comma_delimited_list
+    label: CPS network ips
+    description: CPS network ips
+  pcrf_cps_net_mask:
+    type: string
+    label: CPS network mask
+    description: CPS network mask
+  pcrf_security_group_name:
+    type: string
+    label: security group name
+    description: the name of security group
+  pcrf_vnf_id:
+    type: string
+    label: PCRF VNF Id
+    description: PCRF VNF Id
+
+resources:
+  server_pcrf_psm_001:
+    type: nested-psm_v1.0.yaml
+    properties:
+      pcrf_psm_server_name: { get_param: [pcrf_psm_server_names, 0] }
+      pcrf_psm_image_name: { get_param: pcrf_psm_image_name }
+      pcrf_psm_flavor_name: { get_param: pcrf_psm_flavor_name }
+      availabilityzone_name: { get_param: availabilityzone_name }
+      pcrf_security_group_name: { get_param: pcrf_security_group_name }
+      pcrf_cps_net_name: { get_param: pcrf_cps_net_name }
+      pcrf_cps_net_ip: { get_param: [pcrf_cps_net_ips, 0] }
+      pcrf_cps_net_mask: { get_param: pcrf_cps_net_mask }
+      pcrf_vnf_id: {get_param: pcrf_vnf_id}
+
+  server_pcrf_psm_002:
+    type: nested-psm_v1.0.yaml
+    properties:
+      pcrf_psm_server_name: { get_param: [pcrf_psm_server_names, 1] }
+      pcrf_psm_image_name: { get_param: pcrf_psm_image_name }
+      pcrf_psm_flavor_name: { get_param: pcrf_psm_flavor_name }
+      availabilityzone_name: { get_param: availabilityzone_name }
+      pcrf_security_group_name: { get_param: pcrf_security_group_name }
+      pcrf_cps_net_name: { get_param: pcrf_cps_net_name }
+      pcrf_cps_net_ip: { get_param: [pcrf_cps_net_ips, 1] }
+      pcrf_cps_net_mask: { get_param: pcrf_cps_net_mask }
+      pcrf_vnf_id: {get_param: pcrf_vnf_id}
+
+  server_pcrf_psm_003:
+    type: nested-psm_v1.0.yaml
+    properties:
+      pcrf_psm_server_name: { get_param: [pcrf_psm_server_names, 2] }
+      pcrf_psm_image_name: { get_param: pcrf_psm_image_name }
+      pcrf_psm_flavor_name: { get_param: pcrf_psm_flavor_name }
+      availabilityzone_name: { get_param: availabilityzone_name }
+      pcrf_security_group_name: { get_param: pcrf_security_group_name }
+      pcrf_cps_net_name: { get_param: pcrf_cps_net_name }
+      pcrf_cps_net_ip: { get_param: [pcrf_cps_net_ips, 2] }
+      pcrf_cps_net_mask: { get_param: pcrf_cps_net_mask }
+      pcrf_vnf_id: {get_param: pcrf_vnf_id}
+
+  server_pcrf_psm_004:
+    type: nested-psm_v1.0.yaml
+    properties:
+      pcrf_psm_server_name: { get_param: [pcrf_psm_server_names, 3] }
+      pcrf_psm_image_name: { get_param: pcrf_psm_image_name }
+      pcrf_psm_flavor_name: { get_param: pcrf_psm_flavor_name }
+      availabilityzone_name: { get_param: availabilityzone_name }
+      pcrf_security_group_name: { get_param: pcrf_security_group_name }
+      pcrf_cps_net_name: { get_param: pcrf_cps_net_name }
+      pcrf_cps_net_ip: { get_param: [pcrf_cps_net_ips, 3] }
+      pcrf_cps_net_mask: { get_param: pcrf_cps_net_mask }
+      pcrf_vnf_id: {get_param: pcrf_vnf_id}
+
+  server_pcrf_psm_005:
+    type: nested-psm_v1.0.yaml
+    properties:
+      pcrf_psm_server_name: { get_param: [pcrf_psm_server_names, 4] }
+      pcrf_psm_image_name: { get_param: pcrf_psm_image_name }
+      pcrf_psm_flavor_name: { get_param: pcrf_psm_flavor_name }
+      availabilityzone_name: { get_param: availabilityzone_name }
+      pcrf_security_group_name: { get_param: pcrf_security_group_name }
+      pcrf_cps_net_name: { get_param: pcrf_cps_net_name }
+      pcrf_cps_net_ip: { get_param: [pcrf_cps_net_ips, 4] }
+      pcrf_cps_net_mask: { get_param: pcrf_cps_net_mask }
+      pcrf_vnf_id: {get_param: pcrf_vnf_id}
+
+  server_pcrf_psm_006:
+    type: nested-psm_v1.0.yaml
+    properties:
+      pcrf_psm_server_name: { get_param: [pcrf_psm_server_names, 5] }
+      pcrf_psm_image_name: { get_param: pcrf_psm_image_name }
+      pcrf_psm_flavor_name: { get_param: pcrf_psm_flavor_name }
+      availabilityzone_name: { get_param: availabilityzone_name }
+      pcrf_security_group_name: { get_param: pcrf_security_group_name }
+      pcrf_cps_net_name: { get_param: pcrf_cps_net_name }
+      pcrf_cps_net_ip: { get_param: [pcrf_cps_net_ips, 5] }
+      pcrf_cps_net_mask: { get_param: pcrf_cps_net_mask }
+      pcrf_vnf_id: {get_param: pcrf_vnf_id}
+
+  server_pcrf_psm_007:
+    type: nested-psm_v1.0.yaml
+    properties:
+      pcrf_psm_server_name: { get_param: [pcrf_psm_server_names, 6] }
+      pcrf_psm_image_name: { get_param: pcrf_psm_image_name }
+      pcrf_psm_flavor_name: { get_param: pcrf_psm_flavor_name }
+      availabilityzone_name: { get_param: availabilityzone_name }
+      pcrf_security_group_name: { get_param: pcrf_security_group_name }
+      pcrf_cps_net_name: { get_param: pcrf_cps_net_name }
+      pcrf_cps_net_ip: { get_param: [pcrf_cps_net_ips, 6] }
+      pcrf_cps_net_mask: { get_param: pcrf_cps_net_mask }
+      pcrf_vnf_id: {get_param: pcrf_vnf_id}
+
+  server_pcrf_psm_008:
+    type: nested-psm_v1.0.yaml
+    properties:
+      pcrf_psm_server_name: { get_param: [pcrf_psm_server_names, 7] }
+      pcrf_psm_image_name: { get_param: pcrf_psm_image_name }
+      pcrf_psm_flavor_name: { get_param: pcrf_psm_flavor_name }
+      availabilityzone_name: { get_param: availabilityzone_name }
+      pcrf_security_group_name: { get_param: pcrf_security_group_name }
+      pcrf_cps_net_name: { get_param: pcrf_cps_net_name }
+      pcrf_cps_net_ip: { get_param: [pcrf_cps_net_ips, 7] }
+      pcrf_cps_net_mask: { get_param: pcrf_cps_net_mask }
+      pcrf_vnf_id: {get_param: pcrf_vnf_id}
+
+  server_pcrf_psm_009:
+    type: nested-psm_v1.0.yaml
+    properties:
+      pcrf_psm_server_name: { get_param: [pcrf_psm_server_names, 8] }
+      pcrf_psm_image_name: { get_param: pcrf_psm_image_name }
+      pcrf_psm_flavor_name: { get_param: pcrf_psm_flavor_name }
+      availabilityzone_name: { get_param: availabilityzone_name }
+      pcrf_security_group_name: { get_param: pcrf_security_group_name }
+      pcrf_cps_net_name: { get_param: pcrf_cps_net_name }
+      pcrf_cps_net_ip: { get_param: [pcrf_cps_net_ips, 8] }
+      pcrf_cps_net_mask: { get_param: pcrf_cps_net_mask }
+      pcrf_vnf_id: {get_param: pcrf_vnf_id}
+
+  server_pcrf_psm_010:
+    type: nested-psm_v1.0.yaml
+    properties:
+      pcrf_psm_server_name: { get_param: [pcrf_psm_server_names, 9] }
+      pcrf_psm_image_name: { get_param: pcrf_psm_image_name }
+      pcrf_psm_flavor_name: { get_param: pcrf_psm_flavor_name }
+      availabilityzone_name: { get_param: availabilityzone_name }
+      pcrf_security_group_name: { get_param: pcrf_security_group_name }
+      pcrf_cps_net_name: { get_param: pcrf_cps_net_name }
+      pcrf_cps_net_ip: { get_param: [pcrf_cps_net_ips, 9] }
+      pcrf_cps_net_mask: { get_param: pcrf_cps_net_mask }
+      pcrf_vnf_id: {get_param: pcrf_vnf_id}
+
+  server_pcrf_psm_011:
+    type: nested-psm_v1.0.yaml
+    properties:
+      pcrf_psm_server_name: { get_param: [pcrf_psm_server_names, 10] }
+      pcrf_psm_image_name: { get_param: pcrf_psm_image_name }
+      pcrf_psm_flavor_name: { get_param: pcrf_psm_flavor_name }
+      availabilityzone_name: { get_param: availabilityzone_name }
+      pcrf_security_group_name: { get_param: pcrf_security_group_name }
+      pcrf_cps_net_name: { get_param: pcrf_cps_net_name }
+      pcrf_cps_net_ip: { get_param: [pcrf_cps_net_ips, 10] }
+      pcrf_cps_net_mask: { get_param: pcrf_cps_net_mask }
+      pcrf_vnf_id: {get_param: pcrf_vnf_id}
+
+  server_pcrf_psm_012:
+    type: nested-psm_v1.0.yaml
+    properties:
+      pcrf_psm_server_name: { get_param: [pcrf_psm_server_names, 11] }
+      pcrf_psm_image_name: { get_param: pcrf_psm_image_name }
+      pcrf_psm_flavor_name: { get_param: pcrf_psm_flavor_name }
+      availabilityzone_name: { get_param: availabilityzone_name }
+      pcrf_security_group_name: { get_param: pcrf_security_group_name }
+      pcrf_cps_net_name: { get_param: pcrf_cps_net_name }
+      pcrf_cps_net_ip: { get_param: [pcrf_cps_net_ips, 11] }
+      pcrf_cps_net_mask: { get_param: pcrf_cps_net_mask }
+      pcrf_vnf_id: {get_param: pcrf_vnf_id}
+ 

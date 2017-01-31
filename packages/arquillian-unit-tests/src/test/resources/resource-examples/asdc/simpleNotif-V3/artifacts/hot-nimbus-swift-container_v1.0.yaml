@@ -1,0 +1,30 @@
+heat_template_version: 2013-05-23
+
+description: heat template that creates PCRF Session Manager stack
+
+parameters:
+   pcrf_swift_container_name_1:
+     type: string
+     label: Swift Container name
+     description: Swift Container Name
+   pcrf_swift_container_purge_on_delete_flag_1:
+     type: boolean
+     label: Purge on Delete Flag
+     description: Purge on Delete Flag
+
+resources:
+  pcrf_swift_container_1:
+    type: OS::Swift::Container
+    properties:
+      name: { get_param: pcrf_swift_container_name_1 }
+      PurgeOnDelete: { get_param: pcrf_swift_container_purge_on_delete_flag_1 }
+      X-Container-Read: ".r:*"
+     
+outputs:
+  pcrf_swift_container_id_1:
+    description: the pcrf_swift_container_1 id
+    value: { get_resource: pcrf_swift_container_1 }
+  pcrf_swift_container_url_1:
+    description: the pcrf_swift_container_1 url
+    value: { get_attr: [ pcrf_swift_container_1, WebsiteURL ] }
+    
