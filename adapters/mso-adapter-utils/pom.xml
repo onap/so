@@ -55,22 +55,22 @@
 		<dependency>
 			<groupId>org.openecomp.mso.libs.openstack-java-sdk</groupId>
 			<artifactId>keystone-client</artifactId>
-			<version>3.2.4</version>
+			<version>1.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openecomp.mso.libs.openstack-java-sdk</groupId>
 			<artifactId>heat-client</artifactId>
-			<version>3.2.4</version>
+			<version>1.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openecomp.mso.libs.openstack-java-sdk</groupId>
 			<artifactId>quantum-client</artifactId>
-			<version>3.2.4</version>
+			<version>1.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openecomp.mso.libs.openstack-java-sdk.client-connectors</groupId>
 			<artifactId>http-connector</artifactId>
-			<version>3.2.4</version>
+			<version>1.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openecomp.mso</groupId>
