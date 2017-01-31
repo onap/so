@@ -48,7 +48,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
 import org.openecomp.mso.adapters.sdnc.SDNCAdapterRequest;
 import org.openecomp.mso.adapters.sdnc.client.CallbackHeader;
 import org.openecomp.mso.adapters.sdnc.client.SDNCAdapterCallbackRequest;
@@ -179,15 +178,16 @@ public class SDNCRestClient implements Runnable {
 			sdncResp.setRespCode(con.getResponseCode());
 			sdncResp.setRespMsg(con.getResponseMessage());
 
-			in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-
-			String inputLine;
-			//Not parsing the response -it contains a responseHdr section and data section
-			while ((inputLine = in.readLine()) != null) {
-				response.append(inputLine);
+			if (con.getResponseCode()>= 200 && con.getResponseCode()<=299) { 
+				in = new BufferedReader(new InputStreamReader(con.getInputStream()));	
+				String inputLine;
+				//Not parsing the response -it contains a responseHdr section and data section
+				while ((inputLine = in.readLine()) != null) {
+					response.append(inputLine);
+				}
+				in.close();
 			}
-			in.close();
-
+			
 			sdncResp.setSdncRespXml(response.toString());
 			msoLogger.info(MessageEnum.RA_RESPONSE_FROM_SDNC, sdncResp.toString(), "SDNC", "");
 			return(sdncResp);
