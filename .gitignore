@@ -1,0 +1,12 @@
+target
+.settings
+.classpath
+.project
+.buildpath
+.idea
+*.iml
+**/logs/
+**/.evosuite/
+**/debug-logs/
+*.log
+*.tmp

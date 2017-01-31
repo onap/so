@@ -1,0 +1,154 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.openecomp.mso</groupId>
+		<artifactId>adapters</artifactId>
+		<version>0.0.4-SNAPSHOT</version>
+	</parent>
+	<groupId>org.openecomp.mso.adapters</groupId>
+	<artifactId>mso-network-adapter</artifactId>
+	<packaging>war</packaging>
+	<name>mso-network-adapter</name>
+	<description>Web service endpoint for Network operations</description>
+
+	<!-- <properties> -->
+	<!-- <project.build.sourceEncoding/> -->
+	<!-- <project.reporting.outputEncoding/> -->
+	<!-- </properties> -->
+
+	<build>
+		<finalName>${project.artifactId}-${project.version}</finalName>
+		<plugins>
+			<plugin>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<warSourceDirectory>WebContent</warSourceDirectory>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+					<attachClasses>true</attachClasses>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.jvnet.jax-ws-commons</groupId>
+				<artifactId>jaxws-maven-plugin</artifactId>
+				<version>2.3</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>wsgen</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<verbose>true</verbose>
+					<sei>org.openecomp.mso.adapters.network.MsoNetworkAdapterImpl</sei>
+					<genWsdl>true</genWsdl>
+					<inlineSchemas>true</inlineSchemas>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>com.sun.xml.ws</groupId>
+						<artifactId>jaxws-tools</artifactId>
+						<version>2.2.7</version>
+					</dependency>
+					<dependency>
+						<groupId>org.openecomp.mso.adapters</groupId>
+						<artifactId>mso-adapter-utils</artifactId>
+						<version>${project.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.jvnet.jax-ws-commons
+										</groupId>
+										<artifactId>
+											jaxws-maven-plugin
+										</artifactId>
+										<versionRange>
+											[2.3,)
+										</versionRange>
+										<goals>
+											<goal>wsgen</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>javax</groupId>
+			<artifactId>javaee-web-api</artifactId>
+			<version>6.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.openecomp.mso.adapters</groupId>
+			<artifactId>mso-adapter-utils</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openecomp.mso.adapters</groupId>
+			<artifactId>mso-network-adapter-async-client</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openecomp.mso.adapters</groupId>
+			<artifactId>mso-adapters-rest-interface</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>1.10.19</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.spec.javax.ejb</groupId>
+			<artifactId>jboss-ejb-api_3.2_spec</artifactId>
+			<version>1.0.0.Final</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.ejb3</groupId>
+			<artifactId>jboss-ejb3-ext-api</artifactId>
+			<version>2.2.0.Final</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.openecomp.mso</groupId>
+			<artifactId>status-control</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+	</dependencies>
+</project>

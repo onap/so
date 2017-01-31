@@ -1,0 +1,33 @@
+FROM ecomp/ubuntu-update:1.0
+
+### File Author / Maintainer
+MAINTAINER "Ecomp Opensource Team"
+LABEL Description="This image contains Ecomp Opensource MSO " Version="1.0"
+
+ARG http_proxy
+ARG https_proxy
+ARG chef_repo_branch_name
+ARG chef_repo_address
+ARG chef_repo_git_name
+ARG chef_repo_git_username
+ENV HTTP_PROXY=$http_proxy
+ENV HTTPS_PROXY=$https_proxy
+ENV http_proxy=$HTTP_PROXY
+ENV https_proxy=$HTTPS_PROXY
+
+### Install OpenJDK
+RUN apt-get -y install openjdk-8-jre-headless
+
+
+
+### Install Wildfly
+ENV JBOSS_HOME=/opt/jboss
+
+RUN WILDFLY=wildfly-10.1.0.Final.tar.gz; apt-get -y install curl; curl -LO http://download.jboss.org/wildfly/10.1.0.Final/$WILDFLY ; tar xvfz $WILDFLY -C /opt/; mv /opt/${WILDFLY%.tar.gz} $JBOSS_HOME; rm $WILDFLY; apt-get remove -y --purge curl; apt-get autoremove -y
+RUN adduser --system --group jboss
+RUN chown -R jboss $JBOSS_HOME
+RUN $JBOSS_HOME/bin/add-user.sh admin Kp8bJ4SXszM0WXlhak3eHlcse2gAw84vaoGGmJvUy2U --silent
+
+USER jboss
+CMD ["/opt/jboss/bin/standalone.sh", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0"]
+

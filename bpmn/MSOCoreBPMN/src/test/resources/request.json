@@ -1,0 +1,28 @@
+{
+  "variables": {
+    "bpmnRequest": {
+      "value": "<aetgt:service-request xmlns:aetgt=\"http://ecomp.att.com/mso/request/layer3serviceactivate/schema/v1\"\n                       xmlns=\"http://ecomp.att.com/mso/request/layer3serviceactivate/schema/v1\"\n                       xmlns:msoservtypes=\"http://ecomp.att.com/mso/request/types/v1\"\n                       xmlns:msolayer3=\"http://ecomp.att.com/mso/request/layer3/schema/v1\"\n                       xmlns:rest=\"http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd\">\n  <msoservtypes:request-information>\n    <msoservtypes:request-id>d00eb185-b1d7-429e-aca3-42a61b459535</msoservtypes:request-id>\n    <msoservtypes:request-action>Layer3ServiceActivateRequest</msoservtypes:request-action>\n    <msoservtypes:source>OMX</msoservtypes:source>\n    <msoservtypes:notification-url>http://localhost:8080/simulada/CSI/SendManagedNetworkStatusNotification</msoservtypes:notification-url>\n    <msoservtypes:order-number>19630501</msoservtypes:order-number>\n    <msoservtypes:order-version>1</msoservtypes:order-version>\n  </msoservtypes:request-information>\n  <msoservtypes:service-information>\n    <msoservtypes:service-type>SDN-ETHERNET-INTERNET</msoservtypes:service-type>\n    <msoservtypes:service-instance-id>AA01|VLXM|003717||SW_INTERNET</msoservtypes:service-instance-id>\n    <msoservtypes:subscriber-name>TEST_4306301</msoservtypes:subscriber-name>\n  </msoservtypes:service-information>\n  <service-parameters>\n      <msolayer3:internet-service-information>\n      <msolayer3:internet-evc-access-information>\n        <msolayer3:internet-evc-speed-value>10</msolayer3:internet-evc-speed-value>\n        <msolayer3:internet-evc-speed-units>Mbps</msolayer3:internet-evc-speed-units>\n        <msolayer3:ip-version>ds</msolayer3:ip-version>\n      </msolayer3:internet-evc-access-information>\n      <msolayer3:vr-lan>\n        <msolayer3:routing-protocol>none</msolayer3:routing-protocol>\n        <msolayer3:vr-lan-interface>\n          <msolayer3:vr-designation>primary</msolayer3:vr-designation>\n          <msolayer3:v4-public-lan-prefixes>\n            <msolayer3:t-provided-v4-lan-public-prefixes>\n              <msolayer3:request-index>1</msolayer3:request-index>\n              <msolayer3:v4-next-hop-address>32.10.30.116</msolayer3:v4-next-hop-address>\n              <msolayer3:v4-lan-public-prefix-length>32</msolayer3:v4-lan-public-prefix-length>\n            </msolayer3:t-provided-v4-lan-public-prefixes>\n          </msolayer3:v4-public-lan-prefixes>\n          <msolayer3:v6-public-lan-prefixes>\n            <msolayer3:t-provided-v6-lan-public-prefixes>\n              <msolayer3:request-index>1</msolayer3:request-index>\n              <msolayer3:v6-next-hop-address>2507:0CB4:85A5:0030:0000:0000:0000:0010</msolayer3:v6-next-hop-address>\n              <msolayer3:v6-lan-public-prefix-length>48</msolayer3:v6-lan-public-prefix-length>\n            </msolayer3:t-provided-v6-lan-public-prefixes>\n          </msolayer3:v6-public-lan-prefixes>\n          <msolayer3:dhcp>\n            <msolayer3:v4-dhcp-server-enabled>Y</msolayer3:v4-dhcp-server-enabled>\n            <msolayer3:v6-dhcp-server-enabled>Y</msolayer3:v6-dhcp-server-enabled>\n            <msolayer3:use-v4-default-pool>Y</msolayer3:use-v4-default-pool>\n            <msolayer3:use-v6-default-pool>Y</msolayer3:use-v6-default-pool>\n          </msolayer3:dhcp>\n          <msolayer3:pat>\n            <msolayer3:v4-pat-enabled>Y</msolayer3:v4-pat-enabled>\n            <msolayer3:use-v4-default-pool>N</msolayer3:use-v4-default-pool>\n          </msolayer3:pat>\n          <msolayer3:firewall-lite>\n            <msolayer3:stateful-firewall-lite-v4-enabled>Y</msolayer3:stateful-firewall-lite-v4-enabled>\n            <msolayer3:stateful-firewall-lite-v6-enabled>Y</msolayer3:stateful-firewall-lite-v6-enabled>\n          </msolayer3:firewall-lite>\n        </msolayer3:vr-lan-interface>\n      </msolayer3:vr-lan>\n    </msolayer3:internet-service-information>\n  </service-parameters>\n</aetgt:service-request>\n",
+      "type": "String"
+    },
+    "host": {
+      "value": "localhost",
+      "type": "String"
+    },
+    "att-mso-schema-version": {
+      "value": "v1",
+      "type": "String"
+    },
+    "att-mso-request-id": {
+      "value": "d00eb185-b1d7-429e-aca3-42a61b459535",
+      "type": "String"
+    },
+    "att-mso-service-instance-id": {
+      "value": "AA01|VLXM|003717||SW_INTERNET",
+      "type": "String"
+    },
+    "att-mso-service-request-timeout": {
+      "value": "180",
+      "type": "String"
+    }
+  }
+}

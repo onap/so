@@ -1,0 +1,132 @@
+<!--
+  ============LICENSE_START=======================================================
+  OpenECOMP MSO
+  ================================================================================
+  Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+  ================================================================================
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  ============LICENSE_END=========================================================
+  ECOMP and OpenECOMP are trademarks
+  and service marks of AT&T Intellectual Property.
+ 
+  -->
+
+<tns:service-request xmlns:p="urn:ietf:params:xml:ns:yang:ietf-inet-types"
+xmlns:tns="http://ecomp.att.com/mso/request/changelayer3activate/schema/v1"
+xmlns:tns1="http://ecomp.att.com/mso/request/types/v1"
+xmlns:msolayer3="http://ecomp.att.com/mso/request/layer3/schema/v1"
+xmlns:tns3="http://ecomp.att.com/mso/layer3/simple/types/v1"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+>
+  <tns1:request-information>
+    <tns1:request-id>ChgActsm519-500</tns1:request-id>
+    <tns1:request-action>ChangeLayer3ServiceActivateRequest</tns1:request-action>
+    <tns1:source>OMX</tns1:source>
+        <tns1:notification-url>https://csi-tst-q22.it.att.com:22443/Services/com/cingular/csi/sdn/SendManagedNetworkStatusNot
+ification.jws</tns1:notification-url>
+    <tns1:order-number>051815-1005</tns1:order-number>
+    <tns1:order-version>2</tns1:order-version>
+  </tns1:request-information>
+  <tns1:service-information>
+    <tns1:service-type>SDN-ETHERNET-INTERNET</tns1:service-type>
+    <tns1:service-instance-id>TL/VLXM/003717//SW_INTERNET</tns1:service-instance-id>
+    <tns1:subscriber-name>Gamma Gamma E2E Test_051815_50</tns1:subscriber-name>
+  </tns1:service-information>
+ <tns:service-parameters>
+            <msolayer3:internet-service-information>
+            <msolayer3:internet-evc-access-information>
+            <msolayer3:internet-evc-speed-value>20</msolayer3:internet-evc-speed-value>
+            <msolayer3:internet-evc-speed-units>Mbps</msolayer3:internet-evc-speed-units>
+            <msolayer3:ip-version>ds</msolayer3:ip-version>
+            </msolayer3:internet-evc-access-information>
+            <msolayer3:vr-lan>
+            <msolayer3:routing-protocol>none</msolayer3:routing-protocol>
+            <msolayer3:vr-lan-interface>
+               <msolayer3:vr-designation>primary</msolayer3:vr-designation>
+               <msolayer3:v4-vr-lan-prefix>10.192.70.254</msolayer3:v4-vr-lan-prefix>
+               <msolayer3:v4-vr-lan-prefix-length>24</msolayer3:v4-vr-lan-prefix-length>
+               <msolayer3:v6-vr-lan-prefix>2620:0:10d0:0:ffff:ffff:ffff:fffe</msolayer3:v6-vr-lan-prefix>
+               <msolayer3:v6-vr-lan-prefix-length>64</msolayer3:v6-vr-lan-prefix-length>
+               <msolayer3:v4-vce-loopback-address>10.189.96.168</msolayer3:v4-vce-loopback-address>
+               <msolayer3:v6-vce-wan-address>2001:1890:12e3:2cb::</msolayer3:v6-vce-wan-address>
+               <msolayer3:v4-public-lan-prefixes>
+                  <msolayer3:t-provided-v4-lan-public-prefixes>
+                     <msolayer3:request-index>1</msolayer3:request-index>
+                     <msolayer3:v4-next-hop-address>10.192.70.252</msolayer3:v4-next-hop-address>
+                     <msolayer3:v4-lan-public-prefix>223.233.247.1</msolayer3:v4-lan-public-prefix>
+                     <msolayer3:v4-lan-public-prefix-length>32</msolayer3:v4-lan-public-prefix-length>
+                  </msolayer3:t-provided-v4-lan-public-prefixes>
+               </msolayer3:v4-public-lan-prefixes>
+               <msolayer3:v6-public-lan-prefixes>
+                  <msolayer3:t-provided-v6-lan-public-prefixes>
+                     <msolayer3:request-index>1</msolayer3:request-index>
+                     <msolayer3:v6-next-hop-address>2620:0:10d0:0:ffff:ffff:ffff:fffc</msolayer3:v6-next-hop-address>
+                     <msolayer3:v6-lan-public-prefix>2057:0eb4:85a5:0047:1002:8a8e:0371:7331</msolayer3:v6-lan-public-prefix>
+                     <msolayer3:v6-lan-public-prefix-length>48</msolayer3:v6-lan-public-prefix-length>
+                  </msolayer3:t-provided-v6-lan-public-prefixes>
+               </msolayer3:v6-public-lan-prefixes>
+  
+    <msolayer3:dhcp>
+                  <msolayer3:v4-dhcp-server-enabled>Y</msolayer3:v4-dhcp-server-enabled>
+                  <msolayer3:v6-dhcp-server-enabled>Y</msolayer3:v6-dhcp-server-enabled>
+                  <msolayer3:use-v4-default-pool>Y</msolayer3:use-v4-default-pool>
+                  <msolayer3:v4-dhcp-default-pool-prefix>10.192.70.254</msolayer3:v4-dhcp-default-pool-prefix>
+                  <msolayer3:v4-dhcp-default-pool-prefix-length>24</msolayer3:v4-dhcp-default-pool-prefix-length>
+                  <msolayer3:excluded-v4-dhcp-addresses-from-default-pool>
+                     <msolayer3:excluded-v4-address>10.192.70.252</msolayer3:excluded-v4-address>
+                  </msolayer3:excluded-v4-dhcp-addresses-from-default-pool>
+                 
+                  <msolayer3:use-v6-default-pool>Y</msolayer3:use-v6-default-pool>
+                  <msolayer3:v6-dhcp-default-pool-prefix>2620:0:10d0:0:ffff:ffff:ffff:fffe</msolayer3:v6-dhcp-default-pool-prefix>
+                  <msolayer3:v6-dhcp-default-pool-prefix-length>64</msolayer3:v6-dhcp-default-pool-prefix-length>
+                  <msolayer3:excluded-v6-dhcp-addresses-from-default-pool>
+                     <msolayer3:excluded-v6-address>2620:0:10d0:0:ffff:ffff:ffff:fffd</msolayer3:excluded-v6-address>
+                  </msolayer3:excluded-v6-dhcp-addresses-from-default-pool>
+                
+               </msolayer3:dhcp>
+               <msolayer3:pat>
+                  <msolayer3:v4-pat-enabled>Y</msolayer3:v4-pat-enabled>
+                  <msolayer3:use-v4-default-pool>N</msolayer3:use-v4-default-pool>
+               </msolayer3:pat>
+               <msolayer3:firewall-lite>
+                  <msolayer3:stateful-firewall-lite-v4-enabled>Y</msolayer3:stateful-firewall-lite-v4-enabled>
+                  <msolayer3:stateful-firewall-lite-v6-enabled>Y</msolayer3:stateful-firewall-lite-v6-enabled>
+               </msolayer3:firewall-lite>
+               <msolayer3:static-routes>
+                  <msolayer3:v4-static-routes>
+                     <msolayer3:v4-static-route-prefix>223.233.247.1</msolayer3:v4-static-route-prefix>
+                     <msolayer3:v4-static-route-prefix-length>32</msolayer3:v4-static-route-prefix-length>
+                     <msolayer3:v4-next-hop-address>10.192.70.252</msolayer3:v4-next-hop-address>
+                  </msolayer3:v4-static-routes>
+                  <msolayer3:v4-static-routes>
+                     <msolayer3:v4-static-route-prefix>223.234.242.1</msolayer3:v4-static-route-prefix>
+                     <msolayer3:v4-static-route-prefix-length>32</msolayer3:v4-static-route-prefix-length>
+                     <msolayer3:v4-next-hop-address>10.192.70.253</msolayer3:v4-next-hop-address>
+                  </msolayer3:v4-static-routes>
+   			 	<msolayer3:v6-static-routes>
+                     <msolayer3:v6-static-route-prefix>2057:0eb4:85a5:0047:1002:8a8e:0371:7331</msolayer3:v6-static-route-prefix>
+                     <msolayer3:v6-static-route-prefix-length>48</msolayer3:v6-static-route-prefix-length>
+                     <msolayer3:v6-next-hop-address>2620:0:10d0:0:ffff:ffff:ffff:fffc</msolayer3:v6-next-hop-address>
+                  </msolayer3:v6-static-routes>
+                  <msolayer3:v6-static-routes>
+                     <msolayer3:v6-static-route-prefix>2057:0eb4:85a5:0047:1002:8a8e:0371:7332</msolayer3:v6-static-route-prefix>
+                     <msolayer3:v6-static-route-prefix-length>48</msolayer3:v6-static-route-prefix-length>
+                     <msolayer3:v6-next-hop-address>2620:0:10d0:0:ffff:ffff:ffff:fffd</msolayer3:v6-next-hop-address>
+                  </msolayer3:v6-static-routes>
+               </msolayer3:static-routes>
+          </msolayer3:vr-lan-interface>
+          </msolayer3:vr-lan>
+        </msolayer3:internet-service-information>
+  </tns:service-parameters>
+</tns:service-request>
+  

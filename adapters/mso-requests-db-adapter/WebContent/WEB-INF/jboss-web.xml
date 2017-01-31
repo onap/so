@@ -1,0 +1,3 @@
+<jboss-web>
+	<context-root>dbadapters</context-root>
+</jboss-web>

@@ -1,0 +1,114 @@
+<!--
+  ============LICENSE_START=======================================================
+  ECOMP MSO
+  ================================================================================
+  Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+  ================================================================================
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  ============LICENSE_END=========================================================
+  -->
+
+<assembly
+	xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.1"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.1 http://maven.apache.org/xsd/assembly-1.1.1.xsd">
+	<id>mso-dev</id>
+
+	<formats>
+		<format>tar.gz</format>
+	</formats>
+	<includeBaseDirectory>false</includeBaseDirectory>
+
+	
+	<fileSets>
+
+		<!-- include config files -->
+
+		<fileSet>
+			<includes>
+				<include>mso-network-adapter*.war</include>
+			</includes>
+			<directory>../../adapters/mso-network-adapter/target/</directory>
+			<outputDirectory>artifacts</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<includes>
+				<include>mso-sdnc-adapter*.war</include>
+			</includes>
+			<directory>../../adapters/mso-sdnc-adapter/target/</directory>
+			<outputDirectory>artifacts</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<includes>
+				<include>mso-tenant-adapter*.war</include>
+			</includes>
+			<directory>../../adapters/mso-tenant-adapter/target/</directory>
+			<outputDirectory>artifacts</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<includes>
+				<include>mso-vnf-adapter*.war</include>
+			</includes>
+			<directory>../../adapters/mso-vnf-adapter/target/</directory>
+			<outputDirectory>artifacts</outputDirectory>
+		</fileSet>
+
+		<fileSet>
+			<includes>
+				<include>mso-api-handler*.war</include>
+			</includes>
+			<directory>../../mso-api-handlers/mso-api-handler-infra/target/</directory>
+			<outputDirectory>artifacts</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<includes>
+				<include>mso-appc-adapter-*.war</include>
+			</includes>
+			<directory>../../adapters/mso-appc-adapter/target/</directory>
+			<outputDirectory>artifacts</outputDirectory>
+		</fileSet>
+
+		<fileSet>
+			<includes>
+				<include>mso-requests-db-adapter*.war</include>
+			</includes>
+			<directory>../../adapters/mso-requests-db-adapter/target/</directory>
+			<outputDirectory>artifacts</outputDirectory>
+		</fileSet>
+		
+		<fileSet>
+			<includes>
+				<include>asdc-controller*.war</include>
+			</includes>
+			<directory>../../asdc-controller/target/</directory>
+			<outputDirectory>artifacts</outputDirectory>
+		</fileSet>
+		
+		<fileSet>
+			<includes>
+				<include>MSOGammaBPMN*.war</include>
+			</includes>
+			<directory>../../bpmn/MSOGammaBPMN/target/</directory>
+			<outputDirectory>artifacts</outputDirectory>
+		</fileSet>
+		<fileSet>
+ 			<includes>
+ 				<include>MSOCockpit*.war</include>
+ 			</includes>
+ 			<directory>../../bpmn/MSOCockpit/target/</directory>
+ 			<outputDirectory>artifacts</outputDirectory>
+ 		</fileSet>
+	
+	</fileSets>
+	
+</assembly>

@@ -1,0 +1,43 @@
+<!--
+  ============LICENSE_START=======================================================
+  ECOMP MSO
+  ================================================================================
+  Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+  ================================================================================
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  ============LICENSE_END=========================================================
+  -->
+
+<feature-request
+	xmlns="http://ecomp.att.com/mso/request/layer3serviceactivate/schema/v1"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:msolayer3="http://ecomp.att.com/mso/request/layer3/schema/v1"
+	xmlns:msoservtypes="http://ecomp.att.com/mso/request/types/v1">
+	<msoservtypes:request-information>
+		<msoservtypes:request-id>155415ab-b4a7-4382-b4c6-d17d950565</msoservtypes:request-id>
+		<msoservtypes:request-action>ChangeFeatureActivateRequest</msoservtypes:request-action>
+		<msoservtypes:source>OMX</msoservtypes:source>
+		<msoservtypes:notification-url>https://csi-tst-q22.it.att.com:22443/Services/com/cingular/csi/sdn/SendManagedNetworkStatusNotification.jws</msoservtypes:notification-url>
+		<msoservtypes:order-number>5051560</msoservtypes:order-number>
+		<msoservtypes:order-version>1</msoservtypes:order-version>
+	</msoservtypes:request-information>
+	<msoservtypes:service-information>
+		<msoservtypes:service-type>SDN-ETHERNET-INTERNET</msoservtypes:service-type>
+		<msoservtypes:service-instance-id>HI/VLXM/003717//SW_INTERNET</msoservtypes:service-instance-id>
+		<msoservtypes:subscriber-name>ST E2E Test50565_13000050565</msoservtypes:subscriber-name>
+	</msoservtypes:service-information>
+	<msoservtypes:feature-information>
+		<msoservtypes:feature-type>FIREWALL-LITE</msoservtypes:feature-type>
+		<msoservtypes:feature-instance-id>HI/VLXM/003717//SW_INTERNET</msoservtypes:feature-instance-id>
+		<msoservtypes:feature-yang-model>ST E2E Test50565_13000050565</msoservtypes:feature-yang-model>
+	</msoservtypes:feature-information>
+	</feature-request>

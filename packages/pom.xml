@@ -1,0 +1,47 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>mso</artifactId>
+		<groupId>org.openecomp</groupId>
+		<version>0.0.4-SNAPSHOT</version>
+	</parent>
+
+	<groupId>org.openecomp.mso</groupId>
+	<artifactId>packages</artifactId>
+	<packaging>pom</packaging>
+	<name>MSO Packages</name>
+
+	
+	<profiles>
+		<!-- DO NOT CHANGE THE *ORDER* IN WHICH THESE PROFILES ARE DEFINED! -->
+
+		<profile>
+			<id>default</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<modules>
+				<module>deliveries</module>
+			</modules>
+		</profile>
+
+		<profile>
+			<id>docker</id>
+			<modules>
+				<module>deliveries</module>
+				<module>docker</module>
+			</modules>
+		</profile>
+
+		<profile>
+			<id>with-integration-tests</id>
+			<modules>
+				<module>deliveries</module>
+				<module>docker</module>
+				<module>arquillian-unit-tests</module>
+			</modules>
+		</profile>
+		
+	</profiles>
+</project>

@@ -1,0 +1,286 @@
+heat_template_version: 2013-05-23
+
+description: heat template that creates PCRF Policy Director stack
+
+parameters:
+  pcrf_ppd_server_names:
+    type: comma_delimited_list
+    label: PCRF PD server names
+    description: name of the PCRF PD instance
+  pcrf_ppd_image_name:
+    type: string
+    label: PCRF PD image name
+    description: PCRF PD image name
+  pcrf_ppd_flavor_name:
+    type: string
+    label: PCRF PD flavor name
+    description: flavor name of PCRF PD instance
+  availabilityzone_name:
+    type: string
+    label: availabilityzone name
+    description: availabilityzone name
+  pcrf_cps_net_name:
+    type: string
+    label: CPS network name
+    description: CPS network name
+  pcrf_cps_net_ips:
+    type: comma_delimited_list
+    label: CPS network ips
+    description: CPS network ips
+  pcrf_cps_net_mask:
+    type: string
+    label: CPS network mask
+    description: CPS network mask
+  pcrf_lb_internal_vip:
+    type: string
+    label: CPS Internal LB VIP
+    description: CPS Internal LB VIP
+  pcrf_oam_net_name:
+    type: string
+    label: OAM network name
+    description: OAM network name
+  pcrf_oam_net_ips:
+    type: comma_delimited_list
+    label: OAM network ips
+    description: OAM network ips
+  pcrf_oam_net_gw:
+    type: string
+    label: CPS network gateway
+    description: CPS network gateway
+  pcrf_oam_net_mask:
+    type: string
+    label: CPS network mask
+    description: CPS network mask
+  pcrf_lb_management_vip:
+    type: string
+    label: CPS OAM LB VIP
+    description: CPS OAM LB VIP
+  pcrf_gx_net_name:
+    type: string
+    label: Gx network name
+    description: Gx network name
+  pcrf_gx_net_ips:
+    type: comma_delimited_list
+    label: Gx network ips
+    description: Gx network ips
+  pcrf_gx_net_mask:
+    type: string
+    label: Gx network mask
+    description: Gx network mask
+  pcrf_sp_net_name:
+    type: string
+    label: Sp network name
+    description: Sp network name
+  pcrf_sp_net_ips:
+    type: comma_delimited_list
+    label: Sp network ips
+    description: Sp network ips
+  pcrf_sp_net_mask:
+    type: string
+    label: Sp network mask
+    description: Sp network mask
+  pcrf_sy_net_name:
+    type: string
+    label: Sy network name
+    description: Sy network name
+  pcrf_sy_net_ips:
+    type: comma_delimited_list
+    label: Sy network ips
+    description: Sy network ips
+  pcrf_sy_net_mask:
+    type: string
+    label: Sy network mask
+    description: Sy network mask
+  pcrf_rx_net_name:
+    type: string
+    label: Rx network name
+    description: Rx network name
+  pcrf_rx_net_ips:
+    type: comma_delimited_list
+    label: Rx network ips
+    description: Rx network ips
+  pcrf_rx_net_mask:
+    type: string
+    label: Rx network mask
+    description: Rx network mask
+  pcrf_sd_net_name:
+    type: string
+    label: Sd network name
+    description: Sd network name
+  pcrf_sd_net_ips:
+    type: comma_delimited_list
+    label: Sd network ips
+    description: Sd network ips
+  pcrf_sd_net_mask:
+    type: string
+    label: Sd network mask
+    description: Sd network mask
+  pcrf_sgi_sy_net_name:
+    type: string
+    label: Sgi Sy network name
+    description: Sgi Sy network name
+  pcrf_sgi_sy_net_ips:
+    type: comma_delimited_list
+    label: Sgi Sy network ips
+    description: Sgi Sy network ips
+  pcrf_sgi_sy_net_mask:
+    type: string
+    label: Sgi Sy network mask
+    description: Sgi Sy network mask
+  pcrf_security_group_name:
+    type: string
+    label: security group name
+    description: the name of security group
+  pcrf_vnf_id:
+    type: string
+    label: PCRF VNF Id
+    description: PCRF VNF Id
+
+resources:
+  server_pcrf_ppd_001:
+    type: nested-ppd_v1.0.yaml
+    properties:
+      pcrf_ppd_server_name: { get_param: [pcrf_ppd_server_names, 0] }
+      pcrf_ppd_image_name: { get_param: pcrf_ppd_image_name }
+      pcrf_ppd_flavor_name: { get_param: pcrf_ppd_flavor_name }
+      availabilityzone_name: { get_param: availabilityzone_name }
+      pcrf_security_group_name: { get_param: pcrf_security_group_name }
+      pcrf_cps_net_name: { get_param: pcrf_cps_net_name }
+      pcrf_cps_net_ip: { get_param: [pcrf_cps_net_ips, 0] }
+      pcrf_cps_net_mask: { get_param: pcrf_cps_net_mask }
+      pcrf_lb_internal_vip: { get_param: pcrf_lb_internal_vip }
+      pcrf_oam_net_name: { get_param: pcrf_oam_net_name }
+      pcrf_oam_net_ip: { get_param: [pcrf_oam_net_ips, 0] }
+      pcrf_oam_net_mask: { get_param: pcrf_oam_net_mask }
+      pcrf_oam_net_gw: { get_param: pcrf_oam_net_gw }
+      pcrf_lb_management_vip: { get_param: pcrf_lb_management_vip }
+      pcrf_gx_net_name: { get_param: pcrf_gx_net_name }
+      pcrf_gx_net_ip: { get_param: [pcrf_gx_net_ips, 0] }
+      pcrf_gx_net_mask: { get_param: pcrf_gx_net_mask }
+      pcrf_sp_net_name: { get_param: pcrf_sp_net_name }
+      pcrf_sp_net_ip: { get_param: [pcrf_sp_net_ips, 0] }
+      pcrf_sp_net_mask: { get_param: pcrf_sp_net_mask }
+      pcrf_sy_net_name: { get_param: pcrf_sy_net_name }
+      pcrf_sy_net_ip: { get_param: [pcrf_sy_net_ips, 0] }
+      pcrf_sy_net_mask: { get_param: pcrf_sy_net_mask }
+      pcrf_rx_net_name: { get_param: pcrf_rx_net_name }
+      pcrf_rx_net_ip: { get_param: [pcrf_rx_net_ips, 0] }
+      pcrf_rx_net_mask: { get_param: pcrf_rx_net_mask }
+      pcrf_sd_net_name: { get_param: pcrf_sd_net_name }
+      pcrf_sd_net_ip: { get_param: [pcrf_sd_net_ips, 0] }
+      pcrf_sd_net_mask: { get_param: pcrf_sd_net_mask }
+      pcrf_sgi_sy_net_name: { get_param: pcrf_sgi_sy_net_name }
+      pcrf_sgi_sy_net_ip: { get_param: [pcrf_sgi_sy_net_ips, 0] }
+      pcrf_sgi_sy_net_mask: { get_param: pcrf_sgi_sy_net_mask }
+      pcrf_vnf_id: {get_param: pcrf_vnf_id}
+
+  server_pcrf_ppd_002:
+    type: nested-ppd_v1.0.yaml
+    properties:
+      pcrf_ppd_server_name: { get_param: [pcrf_ppd_server_names, 1] }
+      pcrf_ppd_image_name: { get_param: pcrf_ppd_image_name }
+      pcrf_ppd_flavor_name: { get_param: pcrf_ppd_flavor_name }
+      availabilityzone_name: { get_param: availabilityzone_name }
+      pcrf_security_group_name: { get_param: pcrf_security_group_name }
+      pcrf_cps_net_name: { get_param: pcrf_cps_net_name }
+      pcrf_cps_net_ip: { get_param: [pcrf_cps_net_ips, 1] }
+      pcrf_cps_net_mask: { get_param: pcrf_cps_net_mask }
+      pcrf_lb_internal_vip: { get_param: pcrf_lb_internal_vip }
+      pcrf_oam_net_name: { get_param: pcrf_oam_net_name }
+      pcrf_oam_net_ip: { get_param: [pcrf_oam_net_ips, 1] }
+      pcrf_oam_net_mask: { get_param: pcrf_oam_net_mask }
+      pcrf_oam_net_gw: { get_param: pcrf_oam_net_gw }
+      pcrf_lb_management_vip: { get_param: pcrf_lb_management_vip }
+      pcrf_gx_net_name: { get_param: pcrf_gx_net_name }
+      pcrf_gx_net_ip: { get_param: [pcrf_gx_net_ips, 1] }
+      pcrf_gx_net_mask: { get_param: pcrf_gx_net_mask }
+      pcrf_sp_net_name: { get_param: pcrf_sp_net_name }
+      pcrf_sp_net_ip: { get_param: [pcrf_sp_net_ips, 1] }
+      pcrf_sp_net_mask: { get_param: pcrf_sp_net_mask }
+      pcrf_sy_net_name: { get_param: pcrf_sy_net_name }
+      pcrf_sy_net_ip: { get_param: [pcrf_sy_net_ips, 1] }
+      pcrf_sy_net_mask: { get_param: pcrf_sy_net_mask }
+      pcrf_rx_net_name: { get_param: pcrf_rx_net_name }
+      pcrf_rx_net_ip: { get_param: [pcrf_rx_net_ips, 1] }
+      pcrf_rx_net_mask: { get_param: pcrf_rx_net_mask }
+      pcrf_sd_net_name: { get_param: pcrf_sd_net_name }
+      pcrf_sd_net_ip: { get_param: [pcrf_sd_net_ips, 1] }
+      pcrf_sd_net_mask: { get_param: pcrf_sd_net_mask }
+      pcrf_sgi_sy_net_name: { get_param: pcrf_sgi_sy_net_name }
+      pcrf_sgi_sy_net_ip: { get_param: [pcrf_sgi_sy_net_ips, 1] }
+      pcrf_sgi_sy_net_mask: { get_param: pcrf_sgi_sy_net_mask }
+      pcrf_vnf_id: {get_param: pcrf_vnf_id}
+
+  server_pcrf_ppd_003:
+    type: nested-ppd_v1.0.yaml
+    properties:
+      pcrf_ppd_server_name: { get_param: [pcrf_ppd_server_names, 2] }
+      pcrf_ppd_image_name: { get_param: pcrf_ppd_image_name }
+      pcrf_ppd_flavor_name: { get_param: pcrf_ppd_flavor_name }
+      availabilityzone_name: { get_param: availabilityzone_name }
+      pcrf_security_group_name: { get_param: pcrf_security_group_name }
+      pcrf_cps_net_name: { get_param: pcrf_cps_net_name }
+      pcrf_cps_net_ip: { get_param: [pcrf_cps_net_ips, 2] }
+      pcrf_cps_net_mask: { get_param: pcrf_cps_net_mask }
+      pcrf_lb_internal_vip: { get_param: pcrf_lb_internal_vip }
+      pcrf_oam_net_name: { get_param: pcrf_oam_net_name }
+      pcrf_oam_net_ip: { get_param: [pcrf_oam_net_ips, 2] }
+      pcrf_oam_net_mask: { get_param: pcrf_oam_net_mask }
+      pcrf_oam_net_gw: { get_param: pcrf_oam_net_gw }
+      pcrf_lb_management_vip: { get_param: pcrf_lb_management_vip }
+      pcrf_gx_net_name: { get_param: pcrf_gx_net_name }
+      pcrf_gx_net_ip: { get_param: [pcrf_gx_net_ips, 2] }
+      pcrf_gx_net_mask: { get_param: pcrf_gx_net_mask }
+      pcrf_sp_net_name: { get_param: pcrf_sp_net_name }
+      pcrf_sp_net_ip: { get_param: [pcrf_sp_net_ips, 2] }
+      pcrf_sp_net_mask: { get_param: pcrf_sp_net_mask }
+      pcrf_sy_net_name: { get_param: pcrf_sy_net_name }
+      pcrf_sy_net_ip: { get_param: [pcrf_sy_net_ips, 2] }
+      pcrf_sy_net_mask: { get_param: pcrf_sy_net_mask }
+      pcrf_rx_net_name: { get_param: pcrf_rx_net_name }
+      pcrf_rx_net_ip: { get_param: [pcrf_rx_net_ips, 2] }
+      pcrf_rx_net_mask: { get_param: pcrf_rx_net_mask }
+      pcrf_sd_net_name: { get_param: pcrf_sd_net_name }
+      pcrf_sd_net_ip: { get_param: [pcrf_sd_net_ips, 2] }
+      pcrf_sd_net_mask: { get_param: pcrf_sd_net_mask }
+      pcrf_sgi_sy_net_name: { get_param: pcrf_sgi_sy_net_name }
+      pcrf_sgi_sy_net_ip: { get_param: [pcrf_sgi_sy_net_ips, 2] }
+      pcrf_sgi_sy_net_mask: { get_param: pcrf_sgi_sy_net_mask }
+      pcrf_vnf_id: {get_param: pcrf_vnf_id}
+
+  server_pcrf_ppd_004:
+    type: nested-ppd_v1.0.yaml
+    properties:
+      pcrf_ppd_server_name: { get_param: [pcrf_ppd_server_names, 3] }
+      pcrf_ppd_image_name: { get_param: pcrf_ppd_image_name }
+      pcrf_ppd_flavor_name: { get_param: pcrf_ppd_flavor_name }
+      availabilityzone_name: { get_param: availabilityzone_name }
+      pcrf_security_group_name: { get_param: pcrf_security_group_name }
+      pcrf_cps_net_name: { get_param: pcrf_cps_net_name }
+      pcrf_cps_net_ip: { get_param: [pcrf_cps_net_ips, 3] }
+      pcrf_cps_net_mask: { get_param: pcrf_cps_net_mask }
+      pcrf_lb_internal_vip: { get_param: pcrf_lb_internal_vip }
+      pcrf_oam_net_name: { get_param: pcrf_oam_net_name }
+      pcrf_oam_net_ip: { get_param: [pcrf_oam_net_ips, 3] }
+      pcrf_oam_net_mask: { get_param: pcrf_oam_net_mask }
+      pcrf_oam_net_gw: { get_param: pcrf_oam_net_gw }
+      pcrf_lb_management_vip: { get_param: pcrf_lb_management_vip }
+      pcrf_gx_net_name: { get_param: pcrf_gx_net_name }
+      pcrf_gx_net_ip: { get_param: [pcrf_gx_net_ips, 3] }
+      pcrf_gx_net_mask: { get_param: pcrf_gx_net_mask }
+      pcrf_sp_net_name: { get_param: pcrf_sp_net_name }
+      pcrf_sp_net_ip: { get_param: [pcrf_sp_net_ips, 3] }
+      pcrf_sp_net_mask: { get_param: pcrf_sp_net_mask }
+      pcrf_sy_net_name: { get_param: pcrf_sy_net_name }
+      pcrf_sy_net_ip: { get_param: [pcrf_sy_net_ips, 3] }
+      pcrf_sy_net_mask: { get_param: pcrf_sy_net_mask }
+      pcrf_rx_net_name: { get_param: pcrf_rx_net_name }
+      pcrf_rx_net_ip: { get_param: [pcrf_rx_net_ips, 3] }
+      pcrf_rx_net_mask: { get_param: pcrf_rx_net_mask }
+      pcrf_sd_net_name: { get_param: pcrf_sd_net_name }
+      pcrf_sd_net_ip: { get_param: [pcrf_sd_net_ips, 3] }
+      pcrf_sd_net_mask: { get_param: pcrf_sd_net_mask }
+      pcrf_sgi_sy_net_name: { get_param: pcrf_sgi_sy_net_name }
+      pcrf_sgi_sy_net_ip: { get_param: [pcrf_sgi_sy_net_ips, 3] }
+      pcrf_sgi_sy_net_mask: { get_param: pcrf_sgi_sy_net_mask }
+      pcrf_vnf_id: {get_param: pcrf_vnf_id}

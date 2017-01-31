@@ -1,0 +1,171 @@
+<!--
+  ============LICENSE_START=======================================================
+  ECOMP MSO
+  ================================================================================
+  Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+  ================================================================================
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  ============LICENSE_END=========================================================
+  -->
+
+<configuration scan="false" debug="true">
+  <!--<jmxConfigurator /> -->
+  <!-- directory path for all other type logs -->
+  <property name="logDir" value="./target" />
+  
+  <!-- directory path for debugging type logs -->
+  <property name="debugDir" value="./target" />
+  
+  <!--  specify the component name 
+    <ECOMP-component-name>::= "MSO" | "DCAE" | "ASDC " | "AAI" |"Policy" | "SDNC" | "AC"  -->
+  <property name="componentName" value="MSO"></property>
+  <property name="subComponentName" value="Test"></property>
+  <!--  log file names -->
+  <property name="errorLogName" value="error" />
+  <property name="metricsLogName" value="metrics" />
+  <property name="auditLogName" value="audit" />
+  <property name="debugLogName" value="debug" />
+
+  <property name="errorPattern" value="%d{&quot;yyyy-MM-dd'T'HH:mm:ss.SSSXXX&quot;, UTC}|%X{RequestId}|%thread|%X{ServiceName}|%X{PartnerName}|%X{TargetEntity}|%X{TargetServiceName}|%.-5level|%X{ErrorCode}|%X{ErrorDesc}|%msg%n" />
+  <property name="debugPattern" value="%d{&quot;yyyy-MM-dd'T'HH:mm:ss.SSSXXX&quot;, UTC}|%X{RequestId}|%msg%n" />
+
+  <property name="auditPattern" value="%X{BeginTimestamp}|%X{EndTimestamp}|%X{RequestId}|%X{ServiceInstanceId}|%thread||%X{ServiceName}|%X{PartnerName}|%X{StatusCode}|%X{ResponseCode}|%X{ResponseDesc}|%X{InstanceUUID}|%.-5level|%X{AlertSeverity}|%X{ServerIPAddress}|%X{Timer}|%X{ServerFQDN}|%X{RemoteHost}||||||||%msg%n" />
+  <property name="metricPattern" value="%X{BeginTimestamp}|%X{EndTimestamp}|%X{RequestId}|%X{ServiceInstanceId}|%thread||%X{ServiceName}|%X{PartnerName}|%X{TargetEntity}|%X{TargetServiceName}|%X{StatusCode}|%X{ResponseCode}|%X{ResponseDesc}|%X{InstanceUUID}|%.-5level|%X{AlertSeverity}|%X{ServerIPAddress}|%X{Timer}|%X{ServerFQDN}|%X{RemoteHost}||||%X{TargetVirtualEntity}|||||%msg%n" />
+
+  <property name="logDirectory" value="${logDir}/${componentName}/${subComponentName}" />
+  <property name="debugLogDirectory" value="${debugDir}/${componentName}/${subComponentName}" />
+  
+
+  <!-- Example evaluator filter applied against console appender -->
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>${defaultPattern}</pattern>
+    </encoder>
+  </appender>
+
+  <!-- ============================================================================ -->
+  <!-- EELF Appenders -->
+  <!-- ============================================================================ -->
+
+  <!-- The EELFAppender is used to record events to the general application 
+    log -->
+  
+  <!-- EELF Audit Appender. This appender is used to record audit engine 
+    related logging events. The audit logger and appender are specializations 
+    of the EELF application root logger and appender. This can be used to segregate 
+    Policy engine events from other components, or it can be eliminated to record 
+    these events as part of the application root log. -->
+    
+  <appender name="EELFAudit"
+    class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${logDirectory}/${auditLogName}${jboss.server.name}.log</file>
+    <rollingPolicy
+      class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${logDirectory}/${auditLogName}${jboss.server.name}.log.%d</fileNamePattern>
+      <!--<maxHistory>30</maxHistory>-->
+    </rollingPolicy>
+    <encoder>
+         <pattern>${auditPattern}</pattern>
+    </encoder>
+  </appender>
+  <appender name="asyncEELFAudit" class="ch.qos.logback.classic.AsyncAppender">
+    <queueSize>500</queueSize>
+    <discardingThreshold>0</discardingThreshold>
+    <appender-ref ref="EELFAudit" />
+  </appender>
+
+<appender name="EELFMetrics"
+    class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${logDirectory}/${metricsLogName}${jboss.server.name}.log</file>
+    <rollingPolicy
+      class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${logDirectory}/${metricsLogName}${jboss.server.name}.log.%d</fileNamePattern>
+      <!--<maxHistory>30</maxHistory>-->
+    </rollingPolicy>
+    <encoder>
+      <!-- <pattern>"%d{HH:mm:ss.SSS} [%thread] %-5level %logger{1024} - 
+        %msg%n"</pattern> -->
+      <pattern>${metricPattern}</pattern>
+    </encoder>
+  </appender>
+  
+  
+  <appender name="asyncEELFMetrics" class="ch.qos.logback.classic.AsyncAppender">
+    <queueSize>500</queueSize>
+    <discardingThreshold>0</discardingThreshold>
+    <appender-ref ref="EELFMetrics"/>
+  </appender>
+   
+  <appender name="EELFError"
+    class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${logDirectory}/${errorLogName}${jboss.server.name}.log</file>
+    <rollingPolicy
+      class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${logDirectory}/${errorLogName}${jboss.server.name}.log.%d</fileNamePattern>
+      <!--<maxHistory>30</maxHistory>-->
+    </rollingPolicy>
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+      <level>INFO</level>
+    </filter>
+    <encoder>
+      <pattern>${errorPattern}</pattern>
+    </encoder>
+  </appender>
+  
+  <appender name="asyncEELFError" class="ch.qos.logback.classic.AsyncAppender">
+    <queueSize>500</queueSize>
+    <discardingThreshold>0</discardingThreshold>
+    <appender-ref ref="EELFError"/>
+  </appender>
+  
+   <appender name="EELFDebug"
+    class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${debugLogDirectory}/${debugLogName}${jboss.server.name}.log</file>
+    <rollingPolicy
+      class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${debugLogDirectory}/${debugLogName}${jboss.server.name}.log.%d</fileNamePattern>
+      <!--<maxHistory>30</maxHistory>-->
+    </rollingPolicy>
+    <encoder>
+      <pattern>${debugPattern}</pattern>
+    </encoder>
+  </appender>
+  
+  <appender name="asyncEELFDebug" class="ch.qos.logback.classic.AsyncAppender">
+    <queueSize>500</queueSize>
+    <discardingThreshold>0</discardingThreshold>
+    <appender-ref ref="EELFDebug" />
+    <includeCallerData>true</includeCallerData>
+  </appender>
+ 
+  
+  <!-- ============================================================================ -->
+  <!--  EELF loggers -->
+  <!-- ============================================================================ -->
+
+  <logger name="com.att.eelf.audit" level="info" additivity="false">
+    <appender-ref ref="asyncEELFAudit" />
+  </logger>
+  
+  <logger name="com.att.eelf.metrics" level="info" additivity="false">
+        <appender-ref ref="asyncEELFMetrics" />
+  </logger>
+
+  <logger name="com.att.eelf.error" level="debug" additivity="false">
+    <appender-ref ref="asyncEELFError" />
+  </logger> 
+  <root level="INFO">
+    <appender-ref ref="asyncEELFDebug" />
+  </root>
+
+</configuration>

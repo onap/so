@@ -1,0 +1,94 @@
+{
+    "serviceName": "dns-service",
+    "serviceInvariantUUID": "585822c8-4027-4f84-ba50-e9248606f111",
+    "serviceUUID": "1e34774e-715e-4fd6-bd09-7b654622f35i",
+    "serviceVersion": "1.0",
+    "serviceArtifacts": 
+    [
+ 
+    ],
+
+    "resources": 
+    [
+        {
+            "resourceInstanceName": "DNSResource-1",
+            "resourceInvariantUUID": "585822c7-4027-4f84-ba50-e9248606f112",
+            "resourceName": "DNSResource",
+            "resourceType": "VF",
+            "resourceUUID": "585822c7-4027-4f84-ba50-e9248606f131",
+            "resourceVersion": "1.0",
+            "artifacts": 
+            [
+                {
+                    "artifactChecksum": "CheckSum",
+                    "artifactDescription": "Meta data for VFModule",
+                    "artifactName": "vnf-module-artifact.json",
+                    
+                    "artifactType": "VF_MODULES_METADATA",
+                    "artifactURL": "vnf-module-artifact.json",
+                    "artifactUUID": "VfArtifact-UUID1",
+                    "artifactVersion": "1.0"
+
+                },
+                {
+                    "artifactChecksum": "CheckSum",
+                    "artifactDescription": "Base VLB Heat",
+                    "artifactName": "base_vlb.yaml",
+                    "artifactTimeout": 300,
+                    "artifactType": "HEAT",
+                    "artifactURL": "base_vlb.yaml",
+                    "artifactUUID": "Artifact-UUID1",
+                    "artifactVersion": "1.0",
+                    "generatedArtifact": "EnvArtifact-UUID1",
+                    "relatedArtifact": 
+                    [
+                       
+                    ]
+                },
+
+                {
+                    "artifactChecksum": "CheckSum",
+                    "artifactDescription": "BASE VLB ENV file",
+                    "artifactName": "base_vlb.env",
+                    
+                    "artifactType": "HEAT_ENV",
+                    "artifactURL": "base_vlb.env",
+                    "artifactUUID": "EnvArtifact-UUID1",
+                    "artifactVersion": "1.0"
+                  
+                },
+            	{
+                    "artifactChecksum": "CheckSum",
+                    "artifactDescription": "DNS Scaling Heat",
+                    "artifactName": "dnsscaling.yaml",
+                    "artifactTimeout": 300,
+                    "artifactType": "HEAT",
+                    "artifactURL": "dnsscaling.yaml",
+                    "artifactUUID": "Artifact-UUID2",
+                    "artifactVersion": "1.0",
+                    "generatedArtifact": "EnvArtifact-UUID2",
+                    "relatedArtifact": 
+                    [
+                       
+                    ]
+                },
+
+                {
+                    "artifactChecksum": "CheckSum",
+                    "artifactDescription": "DNS Scaling ENV file",
+                    "artifactName": "dnsscaling.env",
+                    
+                    "artifactType": "HEAT_ENV",
+                    "artifactURL": "dnsscaling.env",
+                    "artifactUUID": "EnvArtifact-UUID2",
+                    "artifactVersion": "1.0"
+                  
+                }
+
+            ]
+        }
+    ],
+
+    "serviceDescription": "dns service for unit test",
+    "distributionID": "35120a87-1f83-4276-9735-f6de5a244d61"
+}

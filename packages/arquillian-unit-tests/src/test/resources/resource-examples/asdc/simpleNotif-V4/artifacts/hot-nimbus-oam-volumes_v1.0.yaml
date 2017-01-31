@@ -1,0 +1,45 @@
+heat_template_version:  2013-05-23
+
+parameters:
+    pcrf_oam_vol_size:
+     type: number
+     label: Cinder volume size
+     description: the size of the Cinder volume
+    pcrf_oam_vol_name_1:
+     type: string
+     label: OAM volume name 1
+     description: Assigning name to volume
+    pcrf_oam_vol_name_2:
+     type: string
+     label: OAM volume name 2
+     description: Assigning name to volume
+    pcrf_oam_volume_silver-1:
+     type: string
+     label: vm volume type
+     description: the name of the target volume backend for OAM1
+    pcrf_oam_volume_silver-2:
+     type: string
+     label: vm volume type
+     description: the name of the target volume backend for OAM2
+
+resources:
+  pcrf_oam_volume_1:
+    type: OS::Cinder::Volume
+    properties:
+      size: {get_param: pcrf_oam_vol_size}
+      volume_type: {get_param: pcrf_oam_volume_silver-1}
+      name: {get_param: pcrf_oam_vol_name_1}
+
+  pcrf_oam_volume_2:
+    type: OS::Cinder::Volume
+    properties:
+      size: {get_param: pcrf_oam_vol_size}
+      volume_type: {get_param: pcrf_oam_volume_silver-2}
+      name: {get_param: pcrf_oam_vol_name_2}
+outputs:
+  pcrf_oam_volume_id_1:
+    description: the oam 001 volume id
+    value: { get_resource: pcrf_oam_volume_1 }
+  pcrf_oam_volume_id_2:
+    description: the oam 002 volume id
+    value: { get_resource: pcrf_oam_volume_2 }

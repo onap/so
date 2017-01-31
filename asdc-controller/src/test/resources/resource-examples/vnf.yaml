@@ -1,0 +1,1449 @@
+heat_template_version: 2013-05-23
+
+description: >
+  HOT template that creates internal networks, load balancers and servers for vMMSC.
+
+parameters:
+  oam_net_name:
+    type: string
+    description: UID of OAM network
+  oam_network_netmask:
+    type: string
+    label: oam network netmask
+    description: oam network gateway
+  oam_network_gateway:
+    type: string
+    label: oam network gateway
+    description: oam network gateway
+  oam_network_route_1:
+    type: string
+    label: oam network route 1
+    description: oam network route 1
+  oam_network_route_2:
+    type: string
+    label: oam network route 2
+    description:  oam network route 2
+  external_dns:
+    type: string
+    label: dns server
+    description: dns server for MMSC
+  external_ntp:
+    type: string
+    label: ntp server 
+    description: ntp server for MMSC
+  lb1_oam_net_ip:
+    type: string
+    label: management network ip for mmsc
+    description: the ip of the management network for mmsc
+  lb2_oam_net_ip:
+    type: string
+    label: management network ip for mmsc
+    description: the ip of the management network for mmsc
+  dmz_protected_net:
+    type: string
+    description: UID of dmz_protected network
+  dmz_protected_net_local_ip1:
+    type: string
+    label: mmsc dmz protected network local ip1
+    description: the local ip1 of the mmsc dmz protected network
+  dmz_protected_net_local_ip2:
+    type: string
+    label: mmsc dmz protected network local ip2
+    description: the local ip2 of the mmsc dmz protected network
+  dmz_protected_net_floating_ip:
+    type: string
+    label: mmsc dmz protected floating ip
+    description: mmsc dmz direct floating ip
+  cor_direct_net:
+    type: string
+    label: cor direct net UID
+    description: cor direct net
+  cor_direct_net_local_ip1:
+    type: string  
+    label: mmsc cor direct network local ip1
+    description: the local ip1 of the mmsc cor direct network
+  cor_direct_net_local_ip2:
+    type: string
+    label: mmsc cor direct network local ip2
+    description: the local ip2 of the mmsc cor direct network
+  cor_direct_net_floating_ip:
+    type: string
+    label: mmsc cor direct floating ip
+    description: mmsc cor direct floating ip
+  mms_traffic_net_name:
+    type: string
+    description: Name of MMS traffic network
+  mms_traffic_net_cidr:
+    type: string
+    description: MMS traffic network address (CIDR notation)
+  mms_traffic_netmask:
+    type: string
+    description: MMS traffic network subnet mask  
+  mms_traffic_net_gateway:
+    type: string
+    description: MMS traffic network gateway address
+  mms_traffic_start:
+    type: string
+    label: mmsc traffic start IP
+    description: mmsc traffic start IP
+  mms_traffic_end:
+    type: string
+    label: mmsc traffic end IP
+    description: mmsc traffic end IP
+  mms_traffic_net_cidr:
+    type: string
+    label: mmsc traffic cidr
+    description: mmsc traffic cidr
+  mms_traffic_net_local_ip1:
+    type: string
+    label: mmsc traffic network local ip1
+    description: the local ip1 of the mmsc traffic network
+  mms_traffic_net_local_ip2:
+    type: string
+    label: mmsc traffic network local ip2
+    description: the local ip2 of the mmsc traffic network
+  mms_traffic_net_floating_ip:
+    type: string
+    label: mmsc traffic floating ip
+    description: mmsc traffic floating ip
+  nems_internal_name:
+    type: string
+    label: nems internal network name
+    description: nems internal network name
+  nems_internal_start:
+    type: string
+    label: nems internal start
+    description: nems internal start
+  nems_internal_end:
+    type: string
+    label: nems internal end
+    description: nems internal end
+  nems_internal_cidr:
+    type: string
+    label: nems ineternal cidr
+    description: nems internal cidr
+  nems_internal_netmask:
+    type: string
+    description: NEMS internal network subnet mask
+  nems_internal_gateway:
+    type: string
+    label: nems internal gw
+    description: nems internal gw
+  nems_traffic_name:
+    type: string
+    label: nems traffic name
+    description: nems traffic name
+  nems_traffic_start:
+    type: string
+    label: nems traffic start
+    description: nems traffic start
+  nems_traffic_end:
+    type: string
+    label: nems traffic end
+    description: nems traffic end
+  nems_traffic_cidr:
+    type: string
+    label: nems traffic cidr
+    description: nems traffic cidr
+  nems_traffic_netmask:
+    type: string
+    description: NEMS traffic network subnet mask
+  nems_traffic_gateway:
+    type: string
+    description: NEMS traffic network gateway  
+  nems_traffic_net_local_ip1:
+    type: string
+    label: nems traffic network local ip1
+    description: the local ip1 of the nems traffic network
+  nems_traffic_net_local_ip2:
+    type: string
+    label: nems traffic network local ip2
+    description: the local ip2 of the nems traffic network
+  nems_traffic_net_floating_ip:
+    type: string
+    label: nems traffic floating ip
+    description: nems traffic floating ip
+  nems_user_web_name:
+    type: string
+    label: nems user web name
+    description: nems user web name
+  nems_user_web_start:
+    type: string
+    label: nems user web start
+    description: nems user web end
+  nems_user_web_end:
+    type: string
+    label: nems user web end
+    description: nems user web end
+  nems_user_web_cidr:
+    type: string
+    label: nems user web cidr
+    description: nems user web cidr
+  nems_user_web_netmask:
+    type: string
+    description: NEMS user web network subnet mask
+  nems_user_web_gateway:
+    type: string
+    description: NEMS user web network gateway
+  nems_user_web_net_local_ip1:
+    type: string
+    label: nems user web network local ip1
+    description: the local ip1 of the nems user web network
+  nems_user_web_net_local_ip2:
+    type: string
+    label: nems user web network local ip2
+    description: the local ip2 of the nems user web network
+  nems_user_web_net_floating_ip:
+    type: string
+    label: nems user web floating ip
+    description: nems user web floating ip 
+  nems_imap_name:
+    type: string
+    label: nems imap name
+    description: nems imap name
+  nems_imap_netmask:
+    type: string
+    label: nems imap subnet mask
+    description: nems imap subnet mask  
+  nems_imap_start:
+    type: string
+    label: nems imap start
+    description: nems imap start
+  nems_imap_end:
+    type: string
+    label: nems imap end
+    description: nems imap end
+  nems_imap_cidr:
+    type: string
+    label: nems imap cidr
+    description: nems imap cidr
+  nems_imap_gateway:
+    type: string
+    label: nems imap gateway
+    description: nems imap gateway  
+  eca_traffic_name:
+    type: string
+    label: eca traffic name
+    description: eca traffic name
+  eca_traffic_start:
+    type: string
+    label: eca traffic start
+    description: eca traffic start
+  eca_traffic_end:
+    type: string
+    label: eca traffic end
+    description: eca traffic end
+  eca_traffic_cidr:
+    type: string
+    label: eca traffic cidr
+    description: eca traffic cidr
+  eca_traffic_netmask:
+    type: string
+    description: ECA traffic network subnet mask
+  eca_traffic_net_local_ip1:
+    type: string
+    label: eca traffic network local ip1
+    description: the local ip1 of the eca traffic network
+  eca_traffic_net_local_ip2:
+    type: string
+    label: eca traffic network local ip2
+    description: the local ip2 of the eca traffic network
+  eca_traffic_net_floating_ip:
+    type: string
+    label: eca traffic floating ip
+    description: eca traffic floating ip
+  eca_mgmt_name:
+    type: string
+    label: eca management name
+    description: eca management name
+  eca_mgmt_start:
+    type: string
+    label: eca management start
+    description: eca management start
+  eca_mgmt_end:
+    type: string
+    label: eca management end
+    description: eca management end
+  eca_mgmt_cidr:
+    type: string
+    label: eca management cidr
+    description: eca management cidr
+  eca_mgmt_netmask:
+    type: string
+    description: ECA mgmt network subnet mask
+  ha_net_name:
+    type: string
+    label: ha_failover network name
+    description: ha_failover network name
+  ha_net_start:
+    type: string
+    label: ha net start
+    description: ha net start
+  ha_net_end:
+    type: string
+    label: ha net end
+    description: ha net end
+  ha_net_cidr:
+    type: string
+    label: ha net cidr
+    description: ha net cidr
+  ha_net_local_ip1:
+    type: string
+    label: ha net network local ip1
+    description: the local ip1 of the ha network
+  ha_net_local_ip2:
+    type: string
+    label: ha net network local ip2
+    description: the local ip2 of the ha network
+  lb1_name:
+    type: string
+    label: MMSC load balancer instance name
+    description: MMSC load balancer instance name
+  lb_image_name:
+    type: string
+    label: MMSC load balancer image name
+    description: MMSC load balancer image name
+  lb_flavor_name:
+    type: string
+    label: Load balancer flavor name
+    description: the flavor name of MMSC load balancer instance
+  lb1_name:
+    type: string
+    label: MMSC load balancer1 instance name
+    description: MMSC load balancer1 instance name
+  lb2_name:
+    type: string
+    label: MMSC load balancer2 instance name
+    description: MMSC load balancer2 instance name
+  availabilityzone_name:
+    type: string
+    label: MMSC availabilityzone name
+    description: MMSC availabilityzone name
+  security_group_name:
+    type: string
+    label: MMSC security group name
+    description: MMSC security group name
+  mmsc_image:
+    type: string
+    description: Image for MMSC server
+  mmsc_flavor:
+    type: string
+    description: Flavor for MMSC server
+#  mmsc_cinder_volume_size:
+#    type: number
+#    label: MMSC Cinder volume size
+#    description: the size of the MMSC Cinder volume
+  nems_fe_image:
+    type: string
+    description: Image for NEMS FE server
+  nems_fe_flavor:
+    type: string
+    description: Flavor for NEMS FE server
+  nems_be_image:
+    type: string
+    description: Image for NEMS BE server
+  nems_be_flavor:
+    type: string
+    description: Flavor for NEMS BE server
+  eca_trx_image:
+    type: string
+    description: Image for ECA TRX server
+  eca_trx_flavor:
+    type: string
+    description: Flavor for ECA TRX server
+  eca_oam_image:
+    type: string
+    description: Image for ECA OAM server
+  eca_oam_flavor:
+    type: string
+    description: Flavor for ECA OAM server
+  cmaui_name:
+    type: string
+    description: CMAUI server name
+  cmaui_image:
+    type: string
+    description: Image for CMAUI server
+  cmaui_flavor:
+    type: string
+    description: Flavor for CMAUI server  
+#  cmaui_cinder_volume_size:
+#    type: number
+#    label: CMAUI Cinder volume size
+#    description: the size of the CMAUI Cinder volume
+  mmsc1_name:
+    type: string
+    description: MMSC1 server name
+  mmsc1_oam_net_ip:
+    type: string
+    description: OAM_net IP for MMSC1
+  mmsc1_mms_traffic_net_ip:
+    type: string
+    description: mms_traffic_net IP for MMSC1
+  mmsc2_name:
+    type: string
+    description: MMSC2 server name
+  mmsc2_oam_net_ip:
+    type: string
+    description: OAM_net IP for MMSC2
+  mmsc2_mms_traffic_net_ip:
+    type: string
+    description: mms_traffic_net IP for MMSC2
+  mmsc3_name:
+    type: string
+    description: MMSC3 server name
+  mmsc3_oam_net_ip:
+    type: string
+    description: OAM_net IP for MMSC3
+  mmsc3_mms_traffic_net_ip:
+    type: string
+    description: mms_traffic_net IP for MMSC3
+  mmsc4_name:
+    type: string
+    description: MMSC4 server name
+  mmsc4_oam_net_ip:
+    type: string
+    description: OAM_net IP for MMSC4
+  mmsc4_mms_traffic_net_ip:
+    type: string
+    description: mms_traffic_net IP for MMSC4
+  mmsc5_name:
+    type: string
+    description: MMSC5 server name
+  mmsc5_oam_net_ip:
+    type: string
+    description: OAM_net IP for MMSC5
+  mmsc5_mms_traffic_net_ip:
+    type: string
+    description: mms_traffic_net IP for MMSC5
+  nems_fe1_name:
+    type: string
+    description: NEMS_FE1 server name
+  nems_fe1_node_role:
+    type: string
+    label: nems node role
+    description: nems node role
+  nems_fe1_oam_net_ip:
+    type: string
+    description: OAM_net IP for NEMS_FE1
+  nems_fe1_nems_traffic_net_ip:
+    type: string
+    description: nems_traffic_net IP for NEMS_FE1
+  nems_fe1_nems_user_web_net_ip:
+    type: string
+    description: nems_web_user_net IP for NEMS_FE1
+  nems_fe1_nems_internal_net_ip:
+    type: string
+    description: nems_internal_net IP for NEMS_FE1
+  nems_fe1_nems_imap_net_ip:
+    type: string
+    description: nems_imap_net IP for NEMS_FE1  
+  nems_fe2_name:
+    type: string
+    description: NEMS_FE2 server name
+  nems_fe2_node_role:
+    type: string
+    label: nems node role
+    description: nems node role
+  nems_fe2_oam_net_ip:
+    type: string
+    description: OAM_net IP for NEMS_FE2
+  nems_fe2_nems_traffic_net_ip:
+    type: string
+    description: nems_traffic_net IP for NEMS_FE2
+  nems_fe2_nems_user_web_net_ip:
+    type: string
+    description: nems_web_user_net IP for NEMS_FE2
+  nems_fe2_nems_internal_net_ip:
+    type: string
+    description: nems_internal_net IP for NEMS_FE2
+  nems_fe2_nems_internal_net_ip:
+    type: string
+    description: nems_internal_net IP for NEMS_FE2
+  nems_fe2_nems_imap_net_ip:
+    type: string
+    description: nems_imap_net IP for NEMS_FE2  
+  nems_be1_name:
+    type: string
+    description: NEMS_BE2 server name
+  nems_be1_node_role:
+    type: string
+    label: nems node role
+    description: nems node role
+  nems_be1_oam_net_ip:
+    type: string
+    description: OAM_net IP for NEMS_BE1
+  nems_be1_nems_internal_net_ip:
+    type: string
+    description: nems_internal_net IP for NEMS_BE1
+  nems_be1_nems_imap_net_ip:
+    type: string
+    description: nems_imap_net IP for NEMS_BE1  
+  nems_be2_name:
+    type: string
+    description: NEMS_BE2 server name
+  nems_be2_node_role:
+    type: string
+    label: nems node role
+    description: nems node role
+  nems_be2_oam_net_ip:
+    type: string
+    description: OAM_net IP for NEMS_BE2
+  nems_be2_nems_internal_net_ip:
+    type: string
+    description: nems_internal_net IP for NEMS_BE2
+  nems_be2_nems_imap_net_ip:
+    type: string
+    description: nems_imap_net IP for NEMS_BE2
+  eca_oam1_name:
+    type: string
+    description: ECA_OAM1 server name
+  eca_oam1_oam_net_ip:
+    type: string
+    description: OAM_net IP for ECA_OAM1
+  eca_oam1_eca_mgmt_net_ip:
+    type: string
+    description: eca_mgmt_net IP for ECA_OAM1
+  eca_oam2_name:
+    type: string
+    description: ECA_OAM2 server name
+  eca_oam2_oam_net_ip:
+    type: string
+    description: OAM_net IP for ECA_OAM2
+  eca_oam2_eca_mgmt_net_ip:
+    type: string
+    description: eca_mgmt_net IP for ECA_OAM2
+  eca_trx1_name:
+    type: string
+    description: ECA_TRX1 server name
+  eca_trx1_oam_net_ip:
+    type: string
+    description: OAM_net IP for ECA_TRX1
+  eca_trx1_eca_mgmt_net_ip:
+    type: string
+    description: eca_mgmt_net IP for ECA_TRX1
+  eca_trx1_eca_traffic_net_ip:
+    type: string
+    description: eca_traffic_net IP for ECA_TRX1
+  cmaui_oam_net_ip:
+    type: string
+    description: eca_mgmt_net IP for CMAUI
+
+resources:
+  mms_security_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: mmsc security group
+      name: {get_param: security_group_name}
+      rules: [{"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0}
+              ]
+
+  lb1_instance:
+    type: OS::Nova::Server
+    properties:
+      name: {get_param: lb1_name}
+      image: {get_param: lb_image_name}
+      flavor: {get_param: lb_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: lb1_mgmt_port}
+        - port: {get_resource: lb1_dmz_protected_port}
+        - port: {get_resource: lb1_cor_direct_port}
+        - port: {get_resource: lb1_mms_traffic_port}
+        - port: {get_resource: lb1_nems_traffic_port}
+        - port: {get_resource: lb1_nems_user_web_port}
+        - port: {get_resource: lb1_eca_traffic_port}
+        - port: {get_resource: lb1_ha_net_port}
+
+  lb1_mgmt_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: {get_param: oam_net_name}
+      fixed_ips: [{"ip_address": {get_param: lb1_oam_net_ip}}]
+      security_groups: [{get_resource: mms_security_group}]
+
+  lb1_mms_traffic_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: {get_resource: mms_traffic_net}
+      fixed_ips: [{"ip_address": {get_param: mms_traffic_net_local_ip1}}]
+      allowed_address_pairs: [{"ip_address": {get_param: mms_traffic_net_floating_ip} }]
+      security_groups: [{get_resource: mms_security_group}]
+
+  lb1_dmz_protected_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: {get_param: dmz_protected_net}
+      fixed_ips: [{"ip_address": {get_param: dmz_protected_net_local_ip1}}]
+      allowed_address_pairs: [{"ip_address": {get_param: dmz_protected_net_floating_ip} }]
+      security_groups: [{get_resource: mms_security_group}]
+
+  lb1_cor_direct_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: {get_param: cor_direct_net}
+      fixed_ips: [{"ip_address": {get_param: cor_direct_net_local_ip1}}]
+      allowed_address_pairs: [{"ip_address": {get_param: cor_direct_net_floating_ip} }]
+      security_groups: [{get_resource: mms_security_group}]
+
+  lb1_nems_traffic_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: {get_resource: nems_traffic_net}
+      fixed_ips: [{"ip_address": {get_param: nems_traffic_net_local_ip1}}]
+      allowed_address_pairs: [{"ip_address": {get_param: nems_traffic_net_floating_ip} }]
+      security_groups: [{get_resource: mms_security_group}]
+
+  lb1_nems_user_web_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: {get_resource: nems_user_web_net}
+      fixed_ips: [{"ip_address": {get_param: nems_user_web_net_local_ip1}}]
+      allowed_address_pairs: [{"ip_address": {get_param: nems_user_web_net_floating_ip} }]
+      security_groups: [{get_resource: mms_security_group}]
+
+  lb1_ha_net_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: {get_resource: ha_net}
+      fixed_ips: [{"ip_address": {get_param: ha_net_local_ip1}}]
+
+  lb1_eca_traffic_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: {get_resource: eca_traffic_net}
+      fixed_ips: [{"ip_address": {get_param: eca_traffic_net_local_ip1}}]
+      allowed_address_pairs: [{"ip_address": {get_param: eca_traffic_net_floating_ip} }]
+      security_groups: [{get_resource: mms_security_group}]
+
+  lb2_instance:
+    type: OS::Nova::Server
+    properties:
+      name: {get_param: lb2_name}
+      image: {get_param: lb_image_name}
+      flavor: {get_param: lb_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: lb2_mgmt_port}
+        - port: {get_resource: lb2_dmz_protected_port}
+        - port: {get_resource: lb2_cor_direct_port}
+        - port: {get_resource: lb2_mms_traffic_port}
+        - port: {get_resource: lb2_nems_traffic_port}
+        - port: {get_resource: lb2_nems_user_web_port}
+        - port: {get_resource: lb2_eca_traffic_port}
+        - port: {get_resource: lb2_ha_net_port}
+
+  lb2_mgmt_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: {get_param: oam_net_name}
+      fixed_ips: [{"ip_address": {get_param: lb2_oam_net_ip}}]
+      security_groups: [{get_resource: mms_security_group}]
+
+  lb2_mms_traffic_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: {get_resource: mms_traffic_net}
+      fixed_ips: [{"ip_address": {get_param: mms_traffic_net_local_ip2}}]
+      allowed_address_pairs: [{"ip_address": {get_param: mms_traffic_net_floating_ip} }]
+      security_groups: [{get_resource: mms_security_group}]
+
+  lb2_dmz_protected_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: {get_param: dmz_protected_net}
+      fixed_ips: [{"ip_address": {get_param: dmz_protected_net_local_ip2}}]
+      allowed_address_pairs: [{"ip_address": {get_param: dmz_protected_net_floating_ip} }]
+      security_groups: [{get_resource: mms_security_group}]
+
+  lb2_cor_direct_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: {get_param: cor_direct_net}
+      fixed_ips: [{"ip_address": {get_param: cor_direct_net_local_ip2}}]
+      allowed_address_pairs: [{"ip_address": {get_param: cor_direct_net_floating_ip} }]
+      security_groups: [{get_resource: mms_security_group}]
+
+  lb2_nems_traffic_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: {get_resource: nems_traffic_net}
+      fixed_ips: [{"ip_address": {get_param: nems_traffic_net_local_ip2}}]
+      allowed_address_pairs: [{"ip_address": {get_param: nems_traffic_net_floating_ip} }]
+      security_groups: [{get_resource: mms_security_group}]
+
+  lb2_nems_user_web_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: {get_resource: nems_user_web_net}
+      fixed_ips: [{"ip_address": {get_param: nems_user_web_net_local_ip2}}]
+      allowed_address_pairs: [{"ip_address": {get_param: nems_user_web_net_floating_ip} }]
+      security_groups: [{get_resource: mms_security_group}]
+
+  lb2_ha_net_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: {get_resource: ha_net}
+      fixed_ips: [{"ip_address": {get_param: ha_net_local_ip2}}]
+
+  lb2_eca_traffic_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: {get_resource: eca_traffic_net}
+      fixed_ips: [{"ip_address": {get_param: eca_traffic_net_local_ip2}}]
+      allowed_address_pairs: [{"ip_address": {get_param: eca_traffic_net_floating_ip} }]
+      security_groups: [{get_resource: mms_security_group}]
+
+  server_mmsc1:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: mmsc1_name }
+      image: { get_param: mmsc_image }
+      availability_zone: { get_param: availabilityzone_name }
+      flavor: { get_param: mmsc_flavor }
+      networks:
+      - port: { get_resource: mmsc1_port_0 }
+      - port: { get_resource: mmsc1_port_1 }
+      user_data:
+        str_replace:
+          template: |
+            mmsc.mgmt.ip=${mmsc.mgmt.ip}
+            mmsc.mgmt.netmask=${mmsc.mgmt.netmask}
+            mmsc.mgmt.gateway=${mmsc.mgmt.gateway}
+            mmsc.traffic.ip=${mmsc.traffic.ip}
+            mmsc.traffic.netmask=${mmsc.traffic.netmask}
+            mmsc.traffic.gateway=${mmsc.traffic.gateway}
+            mmsc.mgmt.route.1=${mmsc.mgmt.route.1}
+            mmsc.mgmt.route.2=${mmsc.mgmt.route.2}
+            mmsc.external.dns=${mmsc.external.dns}
+            mmsc.external.ntp=${mmsc.external.ntp}
+          params:
+            ${mmsc.mgmt.ip}: {get_param: mmsc1_oam_net_ip}
+            ${mmsc.mgmt.netmask}: {get_param: oam_network_netmask}
+            ${mmsc.mgmt.gateway}: {get_param: oam_network_gateway}
+            ${mmsc.traffic.ip}: {get_param:  mmsc1_mms_traffic_net_ip}
+            ${mmsc.traffic.netmask}: {get_param: mms_traffic_netmask}
+            ${mmsc.traffic.gateway}: {get_param: mms_traffic_net_gateway}
+            ${mmsc.mgmt.route.1}: {get_param: oam_network_route_1}
+            ${mmsc.mgmt.route.2}: {get_param: oam_network_route_2}
+            ${mmsc.external.dns}: {get_param: external_dns}
+            ${mmsc.external.ntp}: {get_param: external_ntp} 
+      user_data_format: RAW
+#  mmsc1_volume:
+#    type: OS::Cinder::Volume
+#    properties:
+#      size: {get_param: mmsc_cinder_volume_size}
+
+#  mmsc1_volume_attachment:
+#    type: OS::Cinder::VolumeAttachment
+#    properties:
+#      volume_id: {get_resource: mmsc1_volume}
+#      instance_uuid: {get_resource: server_mmsc1}
+
+  mmsc1_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_param: oam_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: mmsc1_oam_net_ip }
+      ]
+
+  mmsc1_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: mms_traffic_net }
+      fixed_ips: [
+        "ip_address": { get_param: mmsc1_mms_traffic_net_ip }
+      ]
+
+  server_mmsc2:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: mmsc2_name }
+      image: { get_param: mmsc_image }
+      availability_zone: { get_param: availabilityzone_name }
+      flavor: { get_param: mmsc_flavor }
+      networks:
+      - port: { get_resource: mmsc2_port_0 }
+      - port: { get_resource: mmsc2_port_1 }
+      user_data:
+        str_replace:
+          template: |
+            mmsc.mgmt.ip=${mmsc.mgmt.ip}
+            mmsc.mgmt.netmask=${mmsc.mgmt.netmask}
+            mmsc.mgmt.gateway=${mmsc.mgmt.gateway}
+            mmsc.traffic.ip=${mmsc.traffic.ip}
+            mmsc.traffic.netmask=${mmsc.traffic.netmask}
+            mmsc.traffic.gateway=${mmsc.traffic.gateway}
+            mmsc.mgmt.route.1=${mmsc.mgmt.route.1}
+            mmsc.mgmt.route.2=${mmsc.mgmt.route.2}
+            mmsc.external.dns=${mmsc.external.dns}
+            mmsc.external.ntp=${mmsc.external.ntp}
+          params:
+            ${mmsc.mgmt.ip}: {get_param: mmsc2_oam_net_ip}
+            ${mmsc.mgmt.netmask}: {get_param: oam_network_netmask}
+            ${mmsc.mgmt.gateway}: {get_param: oam_network_gateway}
+            ${mmsc.traffic.ip}: {get_param: mmsc2_mms_traffic_net_ip}
+            ${mmsc.traffic.netmask}: {get_param: mms_traffic_netmask}
+            ${mmsc.traffic.gateway}: {get_param: mms_traffic_net_gateway}
+            ${mmsc.mgmt.route.1}: {get_param: oam_network_route_1}
+            ${mmsc.mgmt.route.2}: {get_param: oam_network_route_2}
+            ${mmsc.external.dns}: {get_param: external_dns}
+            ${mmsc.external.ntp}: {get_param: external_ntp} 
+      user_data_format: RAW
+#  mmsc2_volume:
+#    type: OS::Cinder::Volume
+#    properties:
+#      size: {get_param: mmsc_cinder_volume_size}
+
+#  mmsc2_volume_attachment:
+#    type: OS::Cinder::VolumeAttachment
+#    properties:
+#      volume_id: {get_resource: mmsc2_volume}
+#      instance_uuid: {get_resource: server_mmsc2}
+
+  mmsc2_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_param: oam_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: mmsc2_oam_net_ip }
+      ]
+
+  mmsc2_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: mms_traffic_net }
+      fixed_ips: [
+        "ip_address": { get_param: mmsc2_mms_traffic_net_ip }
+      ]
+
+  server_mmsc3:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: mmsc3_name }
+      image: { get_param: mmsc_image }
+      availability_zone: { get_param: availabilityzone_name }
+      flavor: { get_param: mmsc_flavor }
+      networks:
+      - port: { get_resource: mmsc3_port_0 }
+      - port: { get_resource: mmsc3_port_1 }
+      user_data:
+        str_replace:
+          template: |
+            mmsc.mgmt.ip=${mmsc.mgmt.ip}
+            mmsc.mgmt.netmask=${mmsc.mgmt.netmask}
+            mmsc.mgmt.gateway=${mmsc.mgmt.gateway}
+            mmsc.traffic.ip=${mmsc.traffic.ip}
+            mmsc.traffic.netmask=${mmsc.traffic.netmask}
+            mmsc.traffic.gateway=${mmsc.traffic.gateway}
+            mmsc.mgmt.route.1=${mmsc.mgmt.route.1}
+            mmsc.mgmt.route.2=${mmsc.mgmt.route.2}
+            mmsc.external.dns=${mmsc.external.dns}
+            mmsc.external.ntp=${mmsc.external.ntp}
+          params:
+            ${mmsc.mgmt.ip}: {get_param: mmsc3_oam_net_ip}
+            ${mmsc.mgmt.netmask}: {get_param: oam_network_netmask}
+            ${mmsc.mgmt.gateway}: {get_param: oam_network_gateway}
+            ${mmsc.traffic.ip}: {get_param:  mmsc3_mms_traffic_net_ip}
+            ${mmsc.traffic.netmask}: {get_param: mms_traffic_netmask}
+            ${mmsc.traffic.gateway}: {get_param: mms_traffic_net_gateway}
+            ${mmsc.mgmt.route.1}: {get_param: oam_network_route_1}
+            ${mmsc.mgmt.route.2}: {get_param: oam_network_route_2}
+            ${mmsc.external.dns}: {get_param: external_dns}
+            ${mmsc.external.ntp}: {get_param: external_ntp}
+      user_data_format: RAW
+
+  mmsc3_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_param: oam_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: mmsc3_oam_net_ip }
+      ]
+
+  mmsc3_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: mms_traffic_net }
+      fixed_ips: [
+        "ip_address": { get_param: mmsc3_mms_traffic_net_ip }
+      ]
+
+  server_mmsc4:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: mmsc4_name }
+      image: { get_param: mmsc_image }
+      availability_zone: { get_param: availabilityzone_name }
+      flavor: { get_param: mmsc_flavor }
+      networks:
+      - port: { get_resource: mmsc4_port_0 }
+      - port: { get_resource: mmsc4_port_1 }
+      user_data:
+        str_replace:
+          template: |
+            mmsc.mgmt.ip=${mmsc.mgmt.ip}
+            mmsc.mgmt.netmask=${mmsc.mgmt.netmask}
+            mmsc.mgmt.gateway=${mmsc.mgmt.gateway}
+            mmsc.traffic.ip=${mmsc.traffic.ip}
+            mmsc.traffic.netmask=${mmsc.traffic.netmask}
+            mmsc.traffic.gateway=${mmsc.traffic.gateway}
+            mmsc.mgmt.route.1=${mmsc.mgmt.route.1}
+            mmsc.mgmt.route.2=${mmsc.mgmt.route.2}
+            mmsc.external.dns=${mmsc.external.dns}
+            mmsc.external.ntp=${mmsc.external.ntp}
+          params:
+            ${mmsc.mgmt.ip}: {get_param: mmsc4_oam_net_ip}
+            ${mmsc.mgmt.netmask}: {get_param: oam_network_netmask}
+            ${mmsc.mgmt.gateway}: {get_param: oam_network_gateway}
+            ${mmsc.traffic.ip}: {get_param:  mmsc4_mms_traffic_net_ip}
+            ${mmsc.traffic.netmask}: {get_param: mms_traffic_netmask}
+            ${mmsc.traffic.gateway}: {get_param: mms_traffic_net_gateway}
+            ${mmsc.mgmt.route.1}: {get_param: oam_network_route_1}
+            ${mmsc.mgmt.route.2}: {get_param: oam_network_route_2}
+            ${mmsc.external.dns}: {get_param: external_dns}
+            ${mmsc.external.ntp}: {get_param: external_ntp}
+      user_data_format: RAW
+
+  mmsc4_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_param: oam_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: mmsc4_oam_net_ip }
+      ]
+
+  mmsc4_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: mms_traffic_net }
+      fixed_ips: [
+        "ip_address": { get_param: mmsc4_mms_traffic_net_ip }
+      ]
+
+  server_mmsc5:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: mmsc5_name }
+      image: { get_param: mmsc_image }
+      availability_zone: { get_param: availabilityzone_name }
+      flavor: { get_param: mmsc_flavor }
+      networks:
+      - port: { get_resource: mmsc5_port_0 }
+      - port: { get_resource: mmsc5_port_1 }
+
+  mmsc5_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_param: oam_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: mmsc5_oam_net_ip }
+      ]
+
+  mmsc5_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: mms_traffic_net }
+      fixed_ips: [
+        "ip_address": { get_param: mmsc5_mms_traffic_net_ip }
+      ]
+
+  server_nems_fe1:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: nems_fe1_name }
+      image: { get_param: nems_fe_image }
+      availability_zone: { get_param: availabilityzone_name }
+      flavor: { get_param: nems_fe_flavor }
+      networks:
+      - port: { get_resource: nems_fe1_port_0 }
+      - port: { get_resource: nems_fe1_port_1 }
+      - port: { get_resource: nems_fe1_port_2 }
+      - port: { get_resource: nems_fe1_port_3 }
+      - port: { get_resource: nems_fe1_port_4 }
+      user_data:
+        str_replace:
+          template: |
+            nems.mgmt.ip=${nems.mgmt.ip}
+            nems.mgmt.netmask=${nems.mgmt.netmask}
+            nems.mgmt.gateway=${nems.mgmt.gateway}
+            nems.traffic.ip=${nems.traffic.ip}
+            nems.traffic.netmask=${nems.traffic.netmask}
+            nems.traffic.gateway=${nems.traffic.gateway}
+            nems.fe0.internal.ip=${nems.fe0.internal.ip}
+            nems.fe1.internal.ip=${nems.fe1.internal.ip}
+            nems.internal.netmask=${nems.internal.netmask}
+            nems.internal.gateway=${nems.internal.gateway}
+            nems.userweb.ip=${nems.userweb.ip}
+            nems.userweb.netmask=${nems.userweb.netmask}
+            nems.userweb.gateway=${nems.userweb.gateway}
+            nems.imap.ip=${nems.imap.ip}
+            nems.imap.netmask=${nems.imap.netmask}
+            nems.imap.gateway=${nems.imap.gateway}
+            nems.be.internal.ip=${nems.be.internal.ip}
+            nems.be.imap.ip=${nems.be.imap.ip}
+            nems.mgmt.route.1=${nems.mgmt.route.1}
+            nems.mgmt.route.2=${nems.mgmt.route.2}
+            nems.external.dns=${nems.external.dns}
+            nems.external.ntp=${nems.external.ntp}
+            nems.node=${nems.node}
+          params:
+            ${nems.mgmt.ip}: {get_param: nems_fe1_oam_net_ip}
+            ${nems.mgmt.netmask}: {get_param: oam_network_netmask}
+            ${nems.mgmt.gateway}: {get_param: oam_network_gateway}
+            ${nems.traffic.ip}: {get_param: nems_fe1_nems_traffic_net_ip}
+            ${nems.traffic.netmask}: {get_param: nems_traffic_netmask}
+            ${nems.traffic.gateway}: {get_param: nems_traffic_gateway}
+            ${nems.fe0.internal.ip}: {get_param: nems_fe1_nems_internal_net_ip}
+            ${nems.fe1.internal.ip}: {get_param: nems_fe2_nems_internal_net_ip}
+            ${nems.internal.netmask}: {get_param: nems_internal_netmask}
+            ${nems.internal.gateway}: {get_param: nems_internal_gateway}
+            ${nems.userweb.ip}: {get_param: nems_fe1_nems_user_web_net_ip}
+            ${nems.userweb.netmask}: {get_param: nems_user_web_netmask}
+            ${nems.userweb.gateway}: {get_param: nems_user_web_gateway}
+            ${nems.imap.ip}: {get_param: nems_fe1_nems_imap_net_ip}
+            ${nems.imap.netmask}: {get_param: nems_imap_netmask}
+            ${nems.imap.gateway}: {get_param: nems_imap_gateway}  
+            ${nems.be.internal.ip}: {get_param: nems_be1_nems_internal_net_ip}
+            ${nems.be.imap.ip}: {get_param: nems_be1_nems_imap_net_ip}
+            ${nems.mgmt.route.1}: {get_param: oam_network_route_1}
+            ${nems.mgmt.route.2}: {get_param: oam_network_route_2}
+            ${nems.external.dns}: {get_param: external_dns}
+            ${nems.external.ntp}: {get_param: external_ntp}
+            ${nems.node}: {get_param: nems_fe1_node_role} 
+      user_data_format: RAW
+
+  nems_fe1_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_param: oam_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: nems_fe1_oam_net_ip }
+      ]
+
+  nems_fe_floating_ip:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network_id: {get_param: oam_net_name}
+      port_id: {get_resource: nems_fe1_port_0}
+
+  nems_fe1_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: nems_traffic_net }
+      fixed_ips: [
+        "ip_address": { get_param: nems_fe1_nems_traffic_net_ip }
+      ]
+
+  nems_fe1_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: nems_user_web_net }
+      fixed_ips: [
+        "ip_address": { get_param: nems_fe1_nems_user_web_net_ip }
+      ]
+
+  nems_fe1_port_3:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: nems_internal_net }
+      fixed_ips: [
+        "ip_address": { get_param: nems_fe1_nems_internal_net_ip }
+      ]
+
+  nems_fe1_port_4:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: nems_imap_net }
+      fixed_ips: [
+        "ip_address": { get_param: nems_fe1_nems_imap_net_ip }
+      ]
+
+  server_nems_fe2:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: nems_fe2_name }
+      image: { get_param: nems_fe_image }
+      availability_zone: { get_param: availabilityzone_name }
+      flavor: { get_param: nems_fe_flavor }
+      networks:
+      - port: { get_resource: nems_fe2_port_0 }
+      - port: { get_resource: nems_fe2_port_1 }
+      - port: { get_resource: nems_fe2_port_2 }
+      - port: { get_resource: nems_fe2_port_3 }
+      - port: { get_resource: nems_fe2_port_4 }
+      user_data:
+        str_replace:
+          template: |
+            nems.mgmt.ip=${nems.mgmt.ip}
+            nems.mgmt.netmask=${nems.mgmt.netmask}
+            nems.mgmt.gateway=${nems.mgmt.gateway}
+            nems.traffic.ip=${nems.traffic.ip}
+            nems.traffic.netmask=${nems.traffic.netmask}
+            nems.traffic.gateway=${nems.traffic.gateway}
+            nems.fe0.internal.ip=${nems.fe0.internal.ip}
+            nems.fe1.internal.ip=${nems.fe1.internal.ip}
+            nems.internal.netmask=${nems.internal.netmask}
+            nems.internal.gateway=${nems.internal.gateway}
+            nems.userweb.ip=${nems.userweb.ip}
+            nems.userweb.netmask=${nems.userweb.netmask}
+            nems.userweb.gateway=${nems.userweb.gateway}
+            nems.imap.ip=${nems.imap.ip}
+            nems.imap.netmask=${nems.imap.netmask}
+            nems.imap.gateway=${nems.imap.gateway}
+            nems.be.internal.ip=${nems.be.internal.ip}
+            nems.be.imap.ip=${nems.be.imap.ip}
+            nems.mgmt.route.1=${nems.mgmt.route.1}
+            nems.mgmt.route.2=${nems.mgmt.route.2}
+            nems.external.dns=${nems.external.dns}
+            nems.external.ntp=${nems.external.ntp}
+            nems.node=${nems.node}
+          params:
+            ${nems.mgmt.ip}: {get_param: nems_fe2_oam_net_ip}
+            ${nems.mgmt.netmask}: {get_param: oam_network_netmask}
+            ${nems.mgmt.gateway}: {get_param: oam_network_gateway}
+            ${nems.traffic.ip}: {get_param: nems_fe2_nems_traffic_net_ip}
+            ${nems.traffic.netmask}: {get_param: nems_traffic_netmask}
+            ${nems.traffic.gateway}: {get_param: nems_traffic_gateway}
+            ${nems.fe0.internal.ip}: {get_param: nems_fe1_nems_internal_net_ip}
+            ${nems.fe1.internal.ip}: {get_param: nems_fe2_nems_internal_net_ip}
+            ${nems.internal.netmask}: {get_param: nems_internal_netmask}
+            ${nems.internal.gateway}: {get_param: nems_internal_gateway}
+            ${nems.userweb.ip}: {get_param: nems_fe2_nems_user_web_net_ip}
+            ${nems.userweb.netmask}: {get_param: nems_user_web_netmask}
+            ${nems.userweb.gateway}: {get_param: nems_user_web_gateway}
+            ${nems.imap.ip}: {get_param: nems_fe2_nems_imap_net_ip}
+            ${nems.imap.netmask}: {get_param: nems_imap_netmask}
+            ${nems.imap.gateway}: {get_param: nems_imap_gateway}
+            ${nems.be.internal.ip}: {get_param: nems_be2_nems_internal_net_ip}
+            ${nems.be.imap.ip}: {get_param: nems_be2_nems_imap_net_ip}
+            ${nems.mgmt.route.1}: {get_param: oam_network_route_1}
+            ${nems.mgmt.route.2}: {get_param: oam_network_route_2}
+            ${nems.external.dns}: {get_param: external_dns}
+            ${nems.external.ntp}: {get_param: external_ntp}
+            ${nems.node}: {get_param: nems_fe2_node_role}
+      user_data_format: RAW
+
+  nems_fe2_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_param: oam_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: nems_fe2_oam_net_ip }
+      ]
+
+  nems_fe_floating_ip:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network_id: {get_param: oam_net_name}
+      port_id: {get_resource: nems_fe2_port_0}
+
+  nems_fe2_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: nems_traffic_net }
+      fixed_ips: [
+        "ip_address": { get_param: nems_fe2_nems_traffic_net_ip }
+      ]
+
+  nems_fe2_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: nems_user_web_net }
+      fixed_ips: [
+        "ip_address": { get_param: nems_fe2_nems_user_web_net_ip }
+      ]
+
+  nems_fe2_port_3:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: nems_internal_net }
+      fixed_ips: [
+        "ip_address": { get_param: nems_fe2_nems_internal_net_ip }
+      ]
+
+  nems_fe2_port_4:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: nems_imap_net }
+      fixed_ips: [
+        "ip_address": { get_param: nems_fe2_nems_imap_net_ip }
+      ]
+
+  server_nems_be1:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: nems_be1_name }
+      image: { get_param: nems_be_image }
+      availability_zone: { get_param: availabilityzone_name }
+      flavor: { get_param: nems_be_flavor }
+      networks:
+      - port: { get_resource: nems_be1_port_0 }
+      - port: { get_resource: nems_be1_port_1 }
+      - port: { get_resource: nems_be1_port_2 }
+      user_data:
+        str_replace:
+          template: |
+            nems.be.mgmt.ip=${nems.be.mgmt.ip}
+            nems.mgmt.netmask=${nems.mgmt.netmask}
+            nems.mgmt.gateway=${nems.mgmt.gateway}
+            nems.be.internal.ip=${nems.be.internal.ip}
+            nems.internal.netmask=${nems.internal.netmask}
+            nems.internal.gateway=${nems.internal.gateway}
+            nems.imap.netmask=${nems.imap.netmask}
+            nems.imap.gateway=${nems.imap.gateway}
+            nems.be.internal.ip=${nems.be.internal.ip}
+            nems.be.imap.ip=${nems.be.imap.ip}
+            nems.mgmt.route.1=${nems.mgmt.route.1}
+            nems.mgmt.route.2=${nems.mgmt.route.2}
+            nems.external.dns=${nems.external.dns}
+            nems.external.ntp=${nems.external.ntp}
+            nems.node=${nems.node}
+          params:
+            ${nems.be.mgmt.ip}: {get_param: nems_be1_oam_net_ip}
+            ${nems.mgmt.netmask}: {get_param: oam_network_netmask}
+            ${nems.mgmt.gateway}: {get_param: oam_network_gateway}
+            ${nems.be.internal.ip}: {get_param: nems_be1_nems_internal_net_ip}
+            ${nems.internal.netmask}: {get_param: nems_internal_netmask}
+            ${nems.internal.gateway}: {get_param: nems_internal_gateway}
+            ${nems.imap.netmask}: {get_param: nems_imap_netmask}
+            ${nems.imap.gateway}: {get_param: nems_imap_gateway}  
+            ${nems.be.imap.ip}: {get_param: nems_be1_nems_imap_net_ip}
+            ${nems.mgmt.route.1}: {get_param: oam_network_route_1}
+            ${nems.mgmt.route.2}: {get_param: oam_network_route_2}
+            ${nems.external.dns}: {get_param: external_dns}
+            ${nems.external.ntp}: {get_param: external_ntp}
+            ${nems.node}: {get_param: nems_be1_node_role} 
+      user_data_format: RAW
+
+  nems_be1_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_param: oam_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: nems_be1_oam_net_ip }
+      ]
+
+  nems_be_floating_ip:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network_id: {get_param: oam_net_name}
+      port_id: {get_resource: nems_be1_port_0}
+
+  nems_be1_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: nems_internal_net }
+      fixed_ips: [
+        "ip_address": { get_param: nems_be1_nems_internal_net_ip }
+      ]
+
+  nems_be1_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: nems_imap_net }
+      fixed_ips: [
+        "ip_address": { get_param: nems_be1_nems_imap_net_ip }
+      ]
+
+  server_nems_be2:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: nems_be2_name }
+      image: { get_param: nems_be_image }
+      availability_zone: { get_param: availabilityzone_name }
+      flavor: { get_param: nems_be_flavor }
+      networks:
+      - port: { get_resource: nems_be2_port_0 }
+      - port: { get_resource: nems_be2_port_1 }
+      - port: { get_resource: nems_be2_port_2 }
+      user_data:
+        str_replace:
+          template: |
+            nems.be.mgmt.ip=${nems.be.mgmt.ip}
+            nems.mgmt.netmask=${nems.mgmt.netmask}
+            nems.mgmt.gateway=${nems.mgmt.gateway}
+            nems.be.internal.ip=${nems.be.internal.ip}
+            nems.internal.netmask=${nems.internal.netmask}
+            nems.internal.gateway=${nems.internal.gateway}
+            nems.imap.netmask=${nems.imap.netmask}
+            nems.imap.gateway=${nems.imap.gateway}
+            nems.be.internal.ip=${nems.be.internal.ip}
+            nems.be.imap.ip=${nems.be.imap.ip}
+            nems.mgmt.route.1=${nems.mgmt.route.1}
+            nems.mgmt.route.2=${nems.mgmt.route.2}
+            nems.external.dns=${nems.external.dns}
+            nems.external.ntp=${nems.external.ntp}
+            nems.node=${nems.node}
+          params:
+            ${nems.be.mgmt.ip}: {get_param: nems_be2_oam_net_ip}
+            ${nems.mgmt.netmask}: {get_param: oam_network_netmask}
+            ${nems.mgmt.gateway}: {get_param: oam_network_gateway}
+            ${nems.be.internal.ip}: {get_param: nems_be2_nems_internal_net_ip}
+            ${nems.internal.netmask}: {get_param: nems_internal_netmask}
+            ${nems.internal.gateway}: {get_param: nems_internal_gateway}
+            ${nems.imap.netmask}: {get_param: nems_imap_netmask}
+            ${nems.imap.gateway}: {get_param: nems_imap_gateway}
+            ${nems.be.imap.ip}: {get_param: nems_be2_nems_imap_net_ip}
+            ${nems.mgmt.route.1}: {get_param: oam_network_route_1}
+            ${nems.mgmt.route.2}: {get_param: oam_network_route_2}
+            ${nems.external.dns}: {get_param: external_dns}
+            ${nems.external.ntp}: {get_param: external_ntp}
+            ${nems.node}: {get_param: nems_be1_node_role}
+      user_data_format: RAW
+
+  nems_be2_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_param: oam_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: nems_be2_oam_net_ip }
+      ]
+
+  nems_be_floating_ip:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network_id: {get_param: oam_net_name}
+      port_id: {get_resource: nems_be2_port_0}
+
+  nems_be2_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: nems_internal_net }
+      fixed_ips: [
+        "ip_address": { get_param: nems_be2_nems_internal_net_ip }
+      ]
+
+  nems_be2_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: nems_imap_net }
+      fixed_ips: [
+        "ip_address": { get_param: nems_be2_nems_imap_net_ip }
+      ]
+
+  server_eca_oam1:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: eca_oam1_name }
+      image: { get_param: eca_oam_image }
+      availability_zone: { get_param: availabilityzone_name }
+      flavor: { get_param: eca_oam_flavor }
+      networks:
+      - port: { get_resource: eca_oam1_port_0 }
+      - port: { get_resource: eca_oam1_port_1 }
+
+  eca_oam1_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_param: oam_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: eca_oam1_oam_net_ip }
+      ]
+
+  eca_oam1_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: eca_mgmt_net }
+      fixed_ips: [
+        "ip_address": { get_param: eca_oam1_eca_mgmt_net_ip }
+      ]
+
+  server_eca_oam2:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: eca_oam2_name }
+      image: { get_param: eca_oam_image }
+      availability_zone: { get_param: availabilityzone_name }
+      flavor: { get_param: eca_oam_flavor }
+      networks:
+      - port: { get_resource: eca_oam2_port_0 }
+      - port: { get_resource: eca_oam2_port_1 }
+
+  eca_oam2_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_param: oam_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: eca_oam2_oam_net_ip }
+      ]
+
+  eca_oam2_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: eca_mgmt_net }
+      fixed_ips: [
+        "ip_address": { get_param: eca_oam2_eca_mgmt_net_ip }
+      ]
+
+  server_eca_trx1:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: eca_trx1_name }
+      image: { get_param: eca_trx_image }
+      availability_zone: { get_param: availabilityzone_name }
+      flavor: { get_param: eca_trx_flavor }
+      networks:
+      - port: { get_resource: eca_trx1_port_0 }
+      - port: { get_resource: eca_trx1_port_1 }
+      - port: { get_resource: eca_trx1_port_2 }
+
+
+  eca_trx1_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_param: oam_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: eca_trx1_oam_net_ip }
+      ]
+
+  eca_trx1_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: eca_mgmt_net }
+      fixed_ips: [
+        "ip_address": { get_param: eca_trx1_eca_mgmt_net_ip }
+      ]
+
+  eca_trx1_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: eca_traffic_net }
+      fixed_ips: [
+        "ip_address": { get_param: eca_trx1_eca_traffic_net_ip }
+      ]
+
+  server_cmaui:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: cmaui_name }
+      image: { get_param: cmaui_image }
+      availability_zone: { get_param: availabilityzone_name }
+      flavor: { get_param: cmaui_flavor }
+      networks:
+      - port: { get_resource: cmaui_port_0 }
+
+#  cmaui_volume:
+#    type: OS::Cinder::Volume
+#    properties:
+#      size: {get_param: cmaui_cinder_volume_size}
+
+#  cmaui_volume_attachment:
+#    type: OS::Cinder::VolumeAttachment
+#    properties:
+#      volume_id: {get_resource: cmaui_volume}
+#      instance_uuid: {get_resource: server_cmaui}
+
+  cmaui_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_param: oam_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: cmaui_oam_net_ip }
+      ]
+

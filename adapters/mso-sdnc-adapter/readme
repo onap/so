@@ -1,0 +1,67 @@
+SDNC Adapter is a conduit between MSO BPEL and SDNC
+SOAP requests from BPEL are sent as REST requests to SDNC 
+BPEL get a SYNC response (with no data) right away
+On SDNC SYNC response, BPEL is  sent an ASYNC (callback) response
+On SDNC ASYNC responses/notifications, BPEL is sent ASYNC responses
+Failure to send request to SDNC results in header to BPEL with respCode(4xx,5xx) and msg
+Success in sending requests to SDNC results in header to BPEL with 2xx respCode to BPEL and data received from SDNC 
+SDNC data might have failures or success
+
+SDNCAdapter behaviour on being deployed in JBOSS 
+-------------------------------------------------
+http://host:port/ - JBOSS Default Msg (Welcome to JBoss EAP 6)
+
+http://host:port/adapters/[check.html] - Application Ready
+
+http://host:port/adapters/rest/[anything] - SDNC Adapter Rest Services [: Anything]
+
+http://host:port/adapters/rest/properties/show - Lists all the properties loaded
+	org.openecomp.mso.adapters.sdnc.bpelcauth=avosAdmin:jboss123
+	org.openecomp.mso.adapters.sdnc.sdncconnecttime=2000
+	org.openecomp.mso.adapters.sdnc.myurl=http://192.20.205.182:8380/adapters/rest/SDNCNotify
+	org.openecomp.mso.adapters.sdnc.sdncurl=https://odl.node01.it.app.sdn.labs.att.com:8443/restconf/operations/L3SDN-API:
+	org.openecomp.mso.adapters.sdnc.sdncauth=admin:admin
+	org.openecomp.mso.adapters.sdnc.bpelurl=http://NJCDTL21RA1926.ITServices.sbc.com:8088/mockSDNCCallbackAdapterSoapHttpBinding?wsdl
+	org.openecomp.mso.adapters.sdnc.sdncreadtime=5000
+	
+http://host:port/adapters/rest/properties/reload - Reloads all the properties  
+	from $configDir/$configFile : /etc/ecomp/mso/config/mso.sdnc.properties
+	
+http://host:port/adapters/rest/logging/setLevel//{logContext}/{level}") - changes application loglevel
+ where level is one of (ALL, TRACE, DEBUG, INFO, WARN, ERROR, FATAL, OFF)
+ e.g
+	http://192.20.205.182:8380/adapters/rest/logging/setLevel/ROOT/INFO
+		log Level set to: INFO for 
+	http://192.20.205.182:8380/adapters/rest/logging/setLevel/ROOT/INFO
+		log Level set to: DEBUG for com.att
+	http://192.20.205.182:8380/adapters/rest/logging/setLevel/garbage/DEBUG
+		Unknown logger: garbage
+		
+http://host:port/adapters/rest/logging/loggers - shows all the loggers  
+	:DEBUG (DEBUG)
+	com.att:INFO (INFO)
+	org.openecomp.mso:DEBUG (DEBUG)
+	org.openecomp.mso.adapters.sdnc.impl.SDNCAdapterPortTypeImpl:null (DEBUG)
+	org.openecomp.mso.adapters.sdnc.impl.SDNCRestClient:null (DEBUG)
+	org.openecomp.mso.adapters.sdnc.client.SDNCCallbackAdapterService:null (DEBUG)
+	org.openecomp.mso.adapters.sdnc.client.SDNCAdapterCallbackRequest:null (DEBUG)
+	org.openecomp.mso.adapters.sdnc.SDNCAdapterRequest:null (DEBUG)
+	org.openecomp.mso.adapters.sdnc.notify.SDNCNotifyResource:null (DEBUG)
+	org.openecomp.mso.adapters.vnf.MsoVnfAdapterImpl:null (DEBUG)
+	org.openecomp.mso.adapters.network.MsoNetworkAdapterImpl:null (DEBUG)
+	org.openecomp.mso.logger.MsoLoggingServlet:null (DEBUG)
+	org.openecomp.mso.logger.MsoLogger:null (DEBUG)
+	org.openecomp.mso.properties.MsoProperties:null (DEBUG)
+	org.openecomp.mso.properties.MsoPropertyInitializer:null (DEBUG)
+	org.jboss.resteasy.plugins.providers.YamlProvider:null (DEBUG)
+	org.jboss.resteasy.plugins.providers.RegisterBuiltin:null (DEBUG)
+	org.jboss.resteasy.plugins.providers.DocumentProvider:null (DEBUG)
+	org.jboss.resteasy.plugins.providers.IIOImageProvider:null (DEBUG)
+	org.jboss.resteasy.plugins.server.servlet.ConfigurationBootstrap:null (DEBUG)
+	org.jboss.resteasy.plugins.server.servlet.ServletContainerDispatcher:null (DEBUG)
+	org.jboss.resteasy.spi.ResteasyDeployment:null (DEBUG)
+	org.jboss.resteasy.core.SynchronousDispatcher:null (DEBUG)
+	org.jboss.resteasy.core.ResourceMethodRegistry:null (DEBUG)
+	org.jboss.resteasy.util.PickConstructor:null (DEBUG)
+	
+SDNC Adapter will use ActiveRequests DB to track SDNC_CALLBACK_BPEL_URL
