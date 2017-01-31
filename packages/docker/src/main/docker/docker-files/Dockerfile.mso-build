@@ -1,0 +1,63 @@
+FROM ubuntu:16.04
+
+### File Author / Maintainer
+MAINTAINER "Ecomp Opensource Team"
+LABEL Description="This image builds Ecomp Opensource MSO " Version="1.0"
+
+
+ARG http_proxy
+ARG https_proxy
+
+ARG mso_git_repository
+ARG mso_git_branch
+
+ARG mvn_central_user
+ARG mvn_central_pwd
+
+ENV HTTP_PROXY=$http_proxy
+ENV HTTPS_PROXY=$https_proxy
+ENV http_proxy=$HTTP_PROXY
+ENV https_proxy=$HTTPS_PROXY
+
+
+ENV mso_git_repository=$mso_git_repository
+ENV mso_git_branch=$mso_git_branch
+
+
+ENV mvn_central_user=$mvn_central_user
+ENV mvn_central_pwd=$mvn_central_pwd
+
+ENV JBOSS_HOME=/opt/jboss
+
+USER root
+
+COPY scripts/init-chef.sh /opt/mso/scripts/init-chef.sh
+RUN chmod 755 /opt/mso/scripts/init-chef.sh
+
+COPY scripts/build-and-start.sh /opt/mso/scripts/build-and-start.sh
+RUN chmod 755 /opt/mso/scripts/build-and-start.sh
+
+# should be copied at final destination once jboss user is created
+COPY id_rsa /tmp/id_rsa
+COPY settings.xml /tmp/settings.xml
+
+# should be copied at final destination once jboss is installed
+COPY jboss-configs/module.xml /tmp/jboss-configs/module.xml
+COPY jboss-configs/standalone-full-ha.xml /tmp/jboss-configs/standalone-full-ha.xml
+COPY jboss-configs/modules/mariadb/main/module.xml /tmp/jboss-configs/modules/mariadb/main
+COPY jboss-configs/configuration/standalone-full-ha.xml /tmp/jboss-configs/standalone/configuration/standalone-full-ha-mso.xml
+COPY jboss-configs/configuration/mgmt-users.properties /tmp/jboss-configs/standalone/configuration/mgmt-users.properties
+COPY jboss-configs/configuration/mgmt-groups.properties /tmp/jboss-configs/standalone/configuration/mgmt-groups.properties
+COPY jboss-configs/configuration/application-users.properties /tmp/jboss-configs/standalone/configuration/application-users.properties
+COPY jboss-configs/configuration/application-roles.properties /tmp/jboss-configs/standalone/configuration/application-roles.properties
+
+
+### Open Ports
+EXPOSE 8080
+
+### Start EAP
+VOLUME /shared
+
+
+CMD ["/opt/mso/scripts/build-and-start.sh"]
+

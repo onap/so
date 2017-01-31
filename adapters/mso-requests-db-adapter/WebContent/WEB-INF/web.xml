@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	id="WebApp_ID" version="3.0">
+	<display-name>mso-requests-db-adapter</display-name>
+  	<context-param>
+	    <param-name>resteasy.scan</param-name>
+	    <param-value>true</param-value>
+    </context-param>
+    <context-param>
+    	<param-name>resteasy.scan.providers</param-name>
+    	<param-value>true</param-value>
+  	</context-param>
+  	<context-param>
+	    <param-name>resteasy.scan.resources</param-name>
+	    <param-value>true</param-value>
+	</context-param>
+	<context-param>
+		<param-name>mso.configuration</param-name>
+		<param-value>MSO_PROP_TOPOLOGY=topology.properties</param-value>
+	</context-param>
+
+	<servlet>
+     	<servlet-name>Resteasy</servlet-name>
+    	<servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
+   	</servlet>
+  	<servlet-mapping>
+    	<servlet-name>Resteasy</servlet-name>
+    	<url-pattern>/*</url-pattern>
+  	</servlet-mapping>
+	
+	<filter>
+		<filter-name>LogFilter</filter-name>
+		<filter-class>org.openecomp.mso.logger.LogFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>LogFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+  <context-param>
+  	<param-name>log.configuration</param-name>
+  	<param-value>logback.msorequestsdbadapter.xml</param-value>
+  </context-param>
+  <context-param>
+	<param-name>resteasy.scan</param-name>
+	<param-value>true</param-value>
+	</context-param>
+  <context-param>
+	<param-name>resteasy.scan.providers</param-name>
+	<param-value>true</param-value>
+  </context-param>
+  <context-param>
+	<param-name>resteasy.scan.resources</param-name>
+	<param-value>true</param-value>
+  </context-param>
+
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>SiteStatus</web-resource-name>
+			<description>SiteStatus APIs</description>
+			<url-pattern>/setStatus/*</url-pattern>
+			<http-method>POST</http-method>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>SiteControl-Client</role-name>
+		</auth-constraint>
+	</security-constraint>
+	<login-config>
+		<auth-method>BASIC</auth-method>
+		<realm-name>ApplicationRealm</realm-name>
+	</login-config>
+	<security-role>
+		<role-name>SiteControl-Client</role-name>
+	</security-role>
+</web-app>

@@ -1,0 +1,18 @@
+heat_template_version: 2013-05-23
+
+description: >
+  HOT template that creates one COR network (direct).
+
+resources:
+  cor_direct_net:
+    type: file:///my_test.yaml
+    properties:
+      name: { get_param: cor_direct_net_name }
+      route_targets: [ get_param: cor_direct_net_RT ]
+
+  cor_direct_ip_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      network_id: { get_resource: cor_direct_net }
+      cidr: {get_param: cor_direct_net_cidr}
+      gateway_ip: { get_param: cor_direct_net_gateway }

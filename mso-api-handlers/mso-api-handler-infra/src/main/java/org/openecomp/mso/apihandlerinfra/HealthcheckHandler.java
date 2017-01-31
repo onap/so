@@ -1,0 +1,112 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * OPENECOMP - MSO
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+
+package org.openecomp.mso.apihandlerinfra;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.core.Response;
+import org.openecomp.mso.HealthCheckUtils;
+
+import org.openecomp.mso.logger.MsoLogger;
+import org.openecomp.mso.utils.UUIDChecker;
+
+@Path("/")
+public class HealthcheckHandler {
+
+    public final static String MSO_PROP_APIHANDLER_INFRA = "MSO_PROP_APIHANDLER_INFRA";
+
+    private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH);
+
+    @HEAD
+    @GET
+    @Path("/healthcheck")
+    @Produces("text/html")
+    public Response healthcheck (@QueryParam("requestId") String requestId) {
+        long startTime = System.currentTimeMillis ();
+        MsoLogger.setServiceName ("Healthcheck");
+        UUIDChecker.verifyOldUUID(requestId, msoLogger);
+        HealthCheckUtils healthCheck = new HealthCheckUtils ();
+        if (!healthCheck.siteStatusCheck(msoLogger, startTime)) {
+            return HealthCheckUtils.HEALTH_CHECK_NOK_RESPONSE;
+        }
+
+        if (!healthCheck.configFileCheck(msoLogger, startTime, MSO_PROP_APIHANDLER_INFRA)) {
+            return HealthCheckUtils.NOT_STARTED_RESPONSE;
+        }
+
+        if (!healthCheck.requestDBCheck (msoLogger, startTime)) {
+            return HealthCheckUtils.NOT_STARTED_RESPONSE;
+        }
+        msoLogger.debug("healthcheck - Successful");
+        return HealthCheckUtils.HEALTH_CHECK_RESPONSE;
+    }
+
+    @HEAD
+    @GET
+    @Path("/nodehealthcheck")
+    @Produces("text/html")
+    public Response nodeHealthcheck () {
+        long startTime = System.currentTimeMillis ();
+        MsoLogger.setServiceName ("NodeHealthcheck");
+        // Generate a Request Id
+        String requestId = UUIDChecker.generateUUID(msoLogger);
+        HealthCheckUtils healthCheck = new HealthCheckUtils ();
+        if (!healthCheck.siteStatusCheck (msoLogger, startTime)) {
+            return HealthCheckUtils.HEALTH_CHECK_NOK_RESPONSE;
+        }
+
+        if (healthCheck.verifyNodeHealthCheck(HealthCheckUtils.NodeType.APIH, requestId)) {
+            msoLogger.debug("nodeHealthcheck - Successful");
+            return HealthCheckUtils.HEALTH_CHECK_RESPONSE;
+        } else {
+            msoLogger.debug("nodeHealthcheck - At leaset one of the sub-modules is not available.");
+            return  HealthCheckUtils.HEALTH_CHECK_NOK_RESPONSE;
+        }
+    }
+
+    @HEAD
+    @GET
+    @Path("/globalhealthcheck")
+    @Produces("text/html")
+    public Response globalHealthcheck (@DefaultValue("true") @QueryParam("enableBpmn") boolean enableBpmn) {
+        long startTime = System.currentTimeMillis ();
+        MsoLogger.setServiceName ("GlobalHealthcheck");
+        // Generate a Request Id
+        String requestId = UUIDChecker.generateUUID(msoLogger);
+        HealthCheckUtils healthCheck = new HealthCheckUtils ();
+        if (!healthCheck.siteStatusCheck (msoLogger, startTime)) {
+            return HealthCheckUtils.HEALTH_CHECK_NOK_RESPONSE;
+        }
+
+        if (healthCheck.verifyGlobalHealthCheck(enableBpmn, requestId)) {
+            msoLogger.debug("globalHealthcheck - Successful");
+            return HealthCheckUtils.HEALTH_CHECK_RESPONSE;
+        } else {
+            msoLogger.debug("globalHealthcheck - At leaset one of the sub-modules is not available");
+            return  HealthCheckUtils.HEALTH_CHECK_NOK_RESPONSE;
+        }
+    } 
+
+}

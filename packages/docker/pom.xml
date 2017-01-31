@@ -1,0 +1,148 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.openecomp.mso</groupId>
+		<artifactId>packages</artifactId>
+		<version>0.0.4-SNAPSHOT</version>
+	</parent>
+
+	<packaging>pom</packaging>
+	<groupId>org.att.ecomp</groupId>
+	<artifactId>docker</artifactId>
+
+	<name>MSO Docker Deliveries</name>
+	<description>ECOMP MSO Docker Deliveries</description>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	</properties>
+
+	<build>
+		<finalName>${project.artifactId}-${project.version}</finalName>
+		<plugins>
+			<plugin>
+				<groupId>io.fabric8</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>0.16.5</version>
+
+				<configuration>
+					<verbose>true</verbose>
+					<apiVersion>1.23</apiVersion>
+					
+					<images>
+						<image>
+							<name>ecomp/jacoco:1.0</name>
+							<alias>jacoco</alias>
+							<build>
+								<cleanup>try</cleanup>
+								<dockerFileDir>docker-files</dockerFileDir>
+								<dockerFile>docker-files/Dockerfile.jacoco</dockerFile>
+							
+							</build>
+						</image>
+						<image>
+							<name>ecomp/ubuntu-update:1.0</name>
+							<alias>ubuntu-update</alias>
+							<build>
+
+								<cleanup>try</cleanup>
+								<dockerFileDir>docker-files</dockerFileDir>
+								<dockerFile>docker-files/Dockerfile.ubuntu-16.04-update</dockerFile>
+							
+							</build>
+						</image>
+						<image>
+							<name>ecomp/wildfly:1.0</name>
+							<alias>wildfly</alias>
+							<build>
+
+								<cleanup>try</cleanup>
+								<dockerFileDir>docker-files</dockerFileDir>
+								<dockerFile>docker-files/Dockerfile.wildfly-10</dockerFile>
+							
+							</build>
+						</image>
+						<image>
+							<name>ecomp/mso-arquillian:%l</name>
+							<alias>mso-arquillian</alias>
+							<build>
+
+								<cleanup>try</cleanup>
+								<dockerFileDir>docker-files</dockerFileDir>
+								<dockerFile>docker-files/Dockerfile.mso-arquillian</dockerFile>
+							
+							</build>
+						</image>
+						<image>
+							<name>ecomp/mso:%l</name>
+							<alias>mso</alias>
+							<build>
+
+								<cleanup>try</cleanup>
+								<dockerFileDir>docker-files</dockerFileDir>
+								<dockerFile>docker-files/Dockerfile.mso-chef-final</dockerFile>
+								<assembly>
+									<basedir>/</basedir>
+
+									<user>jboss:jboss:jboss</user>
+									<basedir>/opt/jboss/wildfly/standalone/deployments</basedir>
+									<descriptor>../../../../deliveries/src/main/assembly/war-pack/mso-wars.xml</descriptor>
+								</assembly>
+							</build>
+						</image>
+
+
+					</images>
+				</configuration>
+				<executions>
+					<execution>
+						<id>clean-images</id>
+						<phase>pre-clean</phase>
+						<goals>
+							<goal>remove</goal>
+						</goals>
+						<configuration>
+						        <removeAll>true</removeAll>
+							<image>ecomp/mso-arquillian:%l,ecomp/mso:%l</image>
+						</configuration>
+					</execution>
+				
+					<execution>
+						<id>generate-images</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>build</goal>
+						</goals>
+					</execution>
+
+					<execution>
+						<id>push-images</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>build</goal>
+							<goal>push</goal>
+						</goals>
+						<configuration>
+							<image>ecomp/mso-arquillian:%l,ecomp/mso:%l,ecomp/jacoco:1.0</image>
+						</configuration>
+					</execution>
+				</executions>
+
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>2.8</version>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+
+      </project>

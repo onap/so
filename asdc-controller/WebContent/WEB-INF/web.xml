@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
+  <display-name>ASDC Controller</display-name>
+ 
+ 
+   <!-- enable the Asynchronous Job Service -->
+    <context-param>
+        <param-name>resteasy.async.job.service.enabled</param-name>
+        <param-value>true</param-value>
+    </context-param>
+
+	 <context-param>
+		<param-name>resteasy.jndi.resources</param-name>
+		<param-value>java:module/MsoPropertiesFactory</param-value>
+	 </context-param>
+
+    <!-- The next context parameters are all optional.  
+         Their default values are shown as example param-values -->
+
+    <!-- How many jobs results can be held in memory at once? -->
+    <context-param>
+        <param-name>resteasy.async.job.service.max.job.results</param-name>
+        <param-value>100</param-value>
+    </context-param>
+
+    <!-- Maximum wait time on a job when a client is querying for it -->
+    <context-param>
+        <param-name>resteasy.async.job.service.max.wait</param-name>
+        <param-value>300000</param-value>
+    </context-param>
+
+    <!-- Thread pool size of background threads that run the job -->
+    <context-param>
+        <param-name>resteasy.async.job.service.thread.pool.size</param-name>
+        <param-value>100</param-value>
+    </context-param>
+
+    <!-- Set the base path for the Job uris -->
+    <context-param>
+        <param-name>resteasy.async.job.service.base.path</param-name>
+        <param-value>/asynch/jobs</param-value>
+    </context-param>
+  <context-param>
+    <param-name>resteasy.scan</param-name>
+    <param-value>true</param-value>
+  </context-param>
+ 
+  <!--  
+  <context-param>
+    <param-name>resteasy.servlet.mapping.prefix</param-name>
+    <param-value>/v1</param-value>
+  </context-param>
+  -->
+   <context-param>
+  	<param-name>log.configuration</param-name>
+  	<param-value>logback.asdc.xml</param-value>
+  </context-param>
+  
+  <context-param>
+  	<param-name>mso.configuration</param-name>
+  	<param-value>MSO_PROP_ASDC=mso.asdc.json,MSO_PROP_TOPOLOGY=topology.properties</param-value>
+
+  </context-param>
+  
+  <context-param>
+    <param-name>resteasy.resources</param-name>
+    <param-value>org.openecomp.mso.logger.MsoLoggingServlet,org.openecomp.mso.asdc.healthcheck.HealthCheckHandler</param-value>
+  </context-param>
+  
+  <listener>
+    <listener-class>
+			org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap
+	</listener-class>
+  </listener>
+  <servlet>
+    <servlet-name>asdccontroller-servlet</servlet-name>
+    <servlet-class>
+			org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher
+		</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>asdccontroller-servlet</servlet-name>
+    <url-pattern>/*</url-pattern>
+  </servlet-mapping>
+
+    <filter>
+		<filter-name>LogFilter</filter-name>
+		<filter-class>org.openecomp.mso.logger.LogFilter</filter-class>	
+	</filter>
+      <filter-mapping>
+		<filter-name>LogFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>SiteStatus</web-resource-name>
+            <description>SiteStatus APIs</description>
+            <url-pattern>/setStatus/*</url-pattern>
+            <http-method>POST</http-method>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>SiteControl-Client</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <login-config>
+        <auth-method>BASIC</auth-method>
+        <realm-name>ApplicationRealm</realm-name>
+    </login-config>
+    <security-role>
+        <role-name>SiteControl-Client</role-name>
+    </security-role>
+</web-app>

@@ -1,0 +1,146 @@
+<?xml version="1.0"?>
+<!--
+  ============LICENSE_START=======================================================
+  ECOMP MSO
+  ================================================================================
+  Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+  ================================================================================
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  ============LICENSE_END=========================================================
+  -->
+
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 27, 2015 3:05:00 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="org.openecomp.mso.requestsdb.InfraActiveRequests" table="INFRA_ACTIVE_REQUESTS">
+        <id name="requestId" type="string">
+            <column name="REQUEST_ID" length="45"/>
+            <generator class="assigned"/>
+        </id>
+        <property name="clientRequestId" type="string" unique="true">
+            <column name="CLIENT_REQUEST_ID" length="45" unique="true"/>
+        </property>
+        <property name="action" type="string">
+            <column name="ACTION" length="45" not-null="true"/>
+        </property>
+        <property name="requestStatus" type="string">
+            <column name="REQUEST_STATUS" length="20"/>
+        </property>
+        <property name="statusMessage" type="string">
+            <column name="STATUS_MESSAGE" length="2000"/>
+        </property>
+        <property name="progress" type="java.lang.Long">
+            <column name="PROGRESS" precision="11" scale="0"/>
+        </property>
+        <property name="startTime" type="timestamp">
+            <column name="START_TIME"/>
+        </property>
+        <property name="endTime" type="timestamp">
+            <column name="END_TIME"/>
+        </property>
+        <property name="source" type="string">
+            <column name="SOURCE" length="45"/>
+        </property>
+        <property name="vnfId" type="string">
+            <column name="VNF_ID" length="45"/>
+        </property>
+        <property name="vnfName" type="string">
+            <column name="VNF_NAME" length="80"/>
+        </property>
+        <property name="vnfType" type="string">
+            <column name="VNF_TYPE" length="200"/>
+        </property>
+        <property name="serviceType" type="string">
+            <column name="SERVICE_TYPE" length="45"/>
+        </property>
+        <property name="aicNodeClli" type="string">
+            <column name="AIC_NODE_CLLI" length="11"/>
+        </property>
+        <property name="tenantId" type="string">
+            <column name="TENANT_ID" length="45"/>
+        </property>
+        <property name="provStatus" type="string">
+            <column name="PROV_STATUS" length="20"/>
+        </property>
+        <property name="vnfParams" type="text">
+            <column name="VNF_PARAMS"/>
+        </property>
+        <property name="vnfOutputs" type="text">
+            <column name="VNF_OUTPUTS"/>
+        </property>
+        <property name="requestBody" type="text">
+            <column name="REQUEST_BODY"/>
+        </property>
+        <property name="responseBody" type="text">
+            <column name="RESPONSE_BODY"/>
+        </property>
+        <property name="lastModifiedBy" type="string">
+            <column name="LAST_MODIFIED_BY" length="50"/>
+        </property>
+        <property name="modifyTime" type="timestamp">
+            <column name="MODIFY_TIME"/>
+        </property>
+        <property name="requestType" type="string">
+            <column name="REQUEST_TYPE" length="20"/>
+        </property>
+        <property name="volumeGroupId" type="string">
+            <column name="VOLUME_GROUP_ID" length="45"/>
+        </property>
+        <property name="volumeGroupName" type="string">
+            <column name="VOLUME_GROUP_NAME" length="45"/>
+        </property>
+        <property name="vfModuleId" type="string">
+            <column name="VF_MODULE_ID" length="45"/>
+        </property>
+        <property name="vfModuleName" type="string">
+            <column name="VF_MODULE_NAME" length="200"/>
+        </property>
+        <property name="vfModuleModelName" type="string">
+            <column name="VF_MODULE_MODEL_NAME" length="200"/>
+        </property>
+         <property name="aaiServiceId" type="string">
+            <column name="AAI_SERVICE_ID" length="50"/>
+        </property>
+        <property name="aicCloudRegion" type="string">
+            <column name="AIC_CLOUD_REGION" length="11"/>
+        </property>
+        <property name="callBackUrl" type="string">
+            <column name="CALLBACK_URL" length="200"/>
+        </property>
+        <property name="correlator" type="string">
+            <column name="CORRELATOR" length="80"/>
+        </property>
+        <property name="serviceInstanceId" type="string">
+            <column name="SERVICE_INSTANCE_ID" length="45"/>
+        </property>
+        <property name="serviceInstanceName" type="string">
+            <column name="SERVICE_INSTANCE_NAME" length="80"/>
+        </property>
+        <property name="requestScope" type="string">
+            <column name="REQUEST_SCOPE" length="20"/>
+        </property>
+        <property name="requestAction" type="string">
+            <column name="REQUEST_ACTION" length="45" not-null="true"/>
+        </property>
+        <property name="networkId" type="string">
+            <column name="NETWORK_ID" length="45"/>
+        </property>
+        <property name="networkName" type="string">
+            <column name="NETWORK_NAME" length="80"/>
+        </property>
+        <property name="networkType" type="string">
+            <column name="NETWORK_TYPE" length="80"/>
+        </property>
+    </class>
+</hibernate-mapping>

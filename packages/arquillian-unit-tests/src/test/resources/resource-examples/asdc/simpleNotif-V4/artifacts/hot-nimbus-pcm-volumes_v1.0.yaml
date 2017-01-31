@@ -1,0 +1,28 @@
+heat_template_version:  2013-05-23
+
+parameters:
+   pcrf_pcm_vol_size:
+     type: number
+     label: Cinder volume size
+     description: the size of the Cinder volume
+   pcrf_pcm_vol_name_1:
+     type: string
+     label: PCM volume name
+     description: Assigning name to volume
+   pcrf_pcm_volume_silver:
+     type: string
+     label: vm volume type
+     description: the name of the target volume backend for PCM
+
+resources: 
+  pcrf_pcm_volume_1:
+     type: OS::Cinder::Volume
+     properties:
+      size: { get_param: pcrf_pcm_vol_size }
+      volume_type: { get_param: pcrf_pcm_volume_silver }
+      name: { get_param: pcrf_pcm_vol_name_1 }
+
+outputs:
+  pcrf_pcm_volume_id_1:
+    description: the pcrf_pcm_volume_id
+    value: { get_resource: pcrf_pcm_volume_1 }

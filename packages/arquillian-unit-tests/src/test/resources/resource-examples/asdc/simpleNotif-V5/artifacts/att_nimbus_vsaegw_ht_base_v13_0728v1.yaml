@@ -1,0 +1,3374 @@
+
+heat_template_version: 2013-05-23
+
+
+description: SAEGW (version 20.1.0v) HEAT Template (2CFs and 10SFs) 
+
+parameters:
+#    description: instance name
+  vnf_name:
+    type: string
+    description: Unique name for this VF instance
+#   For manual spinups, value must be in the ENV file. Must be removed from ENV before uploading to ASDC
+  vnf_id:
+    type: string
+    description: Unique ID for this VF instance
+#   For manual spinups, value must be in the ENV file. Must be removed from ENV before uploading to ASDC
+  vf_module_id:
+    type: string
+    description: Unique ID for this VF Module instance
+#   For manual spinups, value must be in the ENV file. Must be removed from ENV before uploading to ASDC
+  admin_password:
+    type: string
+    description: cf instance admin password
+  cf_oam_protected_vip:
+    type: string
+    description: cf instance mgmt vip address
+  cf_vpc_vip_gateway:
+    type: string
+    description: cf instance mgmt gateway address
+  availability_zone_0:
+    type: string
+    description: Availability_zone where the VNF should be created
+  cf_image_name_0:
+    type: string
+    description: instance cf1 image
+  cf_image_name_1:
+    type: string
+    description: instance cf2 image
+  sf_image_name:
+    type: string
+    description: instance sf image
+  cf_flavor_name:
+    type: string
+    description: instance flavor for CFs
+  sf_flavor_name:
+    type: string
+    description: instance flavor for SFs
+  oam_protected_net_name:
+    type: string
+    description: instance oam network
+  oam_calea_net_name:
+    type: string
+    description: network name of service network 5
+  int_icsr_net_name:
+    type: string
+    description: network name of service network 6
+  cgwy_int_di2_net_name:
+    type: string
+    description: network name of DI Internal network
+  cf_oam_protected_ip_0:
+    type: string
+    description: Static IP for CF01 management Neutron port
+  cf_oam_protected_ip_1:
+    type: string
+    description: Static IP for CF02 management Neutron port
+  sf_gn_ips:
+    type: comma_delimited_list
+    description: Static IPs for Gn IPv4 Ports
+  sf_cor_ips:
+    type: comma_delimited_list
+    description: Static IPs for Cor IPv4 Ports
+  sf_sgi_prot_ips:
+    type: comma_delimited_list
+    description: Static IPs for SGi Ports
+  sf_sgi_ims_ips:
+    type: comma_delimited_list
+    description: Static IPs for Sgi IMS Ports
+  sf_oam_calea_ips:
+    type: comma_delimited_list
+    description: Static IPs for OAM Calea Ports
+  sf_int_icsr_ips:
+    type: comma_delimited_list
+    description: Static IPs for icsr Ports
+
+  sf_gn_v6_ips:
+    type: comma_delimited_list
+    description: Static IPs for Gn IPv6 Ports
+  sf_cor_v6_ips:
+    type: comma_delimited_list
+    description: Static IPs for Cor IPv6 Ports
+  sf_sgi_prot_v6_ips:
+    type: comma_delimited_list
+    description: Static IPs for SGi Ports
+  sf_sgi_ims_v6_ips:
+    type: comma_delimited_list
+    description: Static IPs for Sgi IMS Ports
+# Added per AIC team request
+#  srv_grp_sf:
+#    type: string
+#    description: Service Group Description
+
+  cgwy_names:
+    type: comma_delimited_list
+    description: VM hostname
+  cf_name:
+    type: string
+    description: CF GW Cluster Name
+  cf_volume_size_0:
+    type: string
+    description: volume for CF1
+  cf_volume_size_1:
+    type: string
+    description: volume for CF2
+  gn_net_fqdn:
+    type: string
+    description: GN network FQ name
+  sgi_net_fqdn:
+    type: string
+    description: SGI network FQ name
+  ims_net_fqdn:
+    type: string
+    description: IMS network FQ name
+  cor_net_fqdn:
+    type: string
+    description: COR network FQ name
+  vmi_allowed_address_pair_address_mode:  
+    type: string
+    description: allow address paire active-active mode
+  vmi_allowed_address_pair_prefix_lenth:
+    type: string
+    description: IPv4 VIP prefix length
+  sf_gn_rii_v6:
+    type: string
+    description: GN IPv6 VIP loopback
+  sf_cor_rii_v6:
+    type: string
+    description: COR IPv6 VIP loopback
+  sf_sgi_rii_v6:
+    type: string
+    description: SGI IPv6 VIP loopback
+  sf_ims_rii_v6:
+    type: string
+    description: IMS IPv4 VIP loopback
+  vmi_allowed_address_pair_prefix_lenth_v6:
+    type: string
+    description: IPv6 VIP prefix length
+  instance_ip_family_v6:
+    type: string
+    description: iip address family IPv6
+
+
+
+  bgpaas_name:
+    type: comma_delimited_list
+    description: name for the BgpAsAService
+  bgpaas_autonomous_system:
+    type: number
+    description: AS for the BgpAsAService
+    constraints:
+    - range: {min: 0, max: 999999}
+  bgpaas_ip_address:
+    type: comma_delimited_list
+    description: bgpaas peer address for the BgpAsAService
+  bgpaas_session_attributes_passive:
+    type: boolean
+    description: passive mode selection for the BgpAsAService
+  bgpaas_session_attributes_hold_time:
+    type: number
+    description: hold_time for the BgpAsAService
+    constraints:
+    - range: {min: 0, max: 999}
+  bgpaas_session_attributes_admin_down:
+    type: boolean
+    description: admin_down for the BgpAsAService
+  bgpaas_session_attributes_address_families_family_4:
+    type: string
+    description: family for the BgpAsAService
+  bgpaas_session_attributes_address_families_family_6:
+    type: string
+    description: family for the BgpAsAService
+  bgpaas_session_attributes_family_attributes_af_4:
+    type: string
+    description: address_family ipv4 unitcast for the BgpAsAService
+  bgpaas_session_attributes_family_attributes_loop_count_4:
+    type: number
+    description: loop_count ipv4 unitcast for the BgpAsAService
+    constraints:
+    - range: {min: 0, max: 999}
+  bgpaas_session_attributes_family_attributes_prefix_limit_maximum_4:
+    type: number
+    description: maximum prefix ipv4 unicast for the BgpAsAService
+    constraints:
+    - range: {min: 0, max: 9999}
+  bgpaas_session_attributes_family_attributes_af_6:
+    type: string
+    description: address_family v6_ips unicast for the BgpAsAService
+  bgpaas_session_attributes_family_attributes_loop_count_6:
+    type: number
+    description: loop_count v6_ips unicast for the BgpAsAService
+    constraints:
+    - range: {min: 0, max: 999}
+  bgpaas_session_attributes_family_attributes_prefix_limit_maximum_6:
+    type: number
+    description: maximum v6_ips unicast for the BgpAsAService
+    constraints:
+    - range: {min: 0, max: 9999}
+  sf_shc_enabled:
+    type: boolean
+    description: enabled for the ServiceHealthCheck
+  sf_shc_monitor_type:
+    type: string
+    description: monitor_type for the ServiceHealthCheck
+  sf_shc_delay:
+    type: number
+    description: delay for the ServiceHealthCheck
+    constraints:
+    - range: {min: 0, max: 999}
+  sf_shc_timeout:
+    type: number
+    description: timeout for the ServiceHealthCheck
+    constraints:
+    - range: {min: 0, max: 999}
+  sf_shc_max_retries:
+    type: number
+    description: max_retries for the ServiceHealthCheck
+    constraints:
+    - range: {min: 0, max: 999}
+  sf_shc_url_path:
+    type: string
+    description: url for the ServiceHealthCheck
+
+
+resources:
+  # Create anti-affinity Server Group
+  cf_vpc-servergroup:
+    type: OS::Nova::ServerGroup
+    properties:
+      policies:
+        - anti-affinity
+  # Create anti-affinity Server Group
+  sf_vpc-servergroup:
+    type: OS::Nova::ServerGroup
+    properties:
+      policies:
+        - anti-affinity
+
+
+  # Create CF1 and CF2 ports on DI Internal Network DI Management Network
+  cf_int_di2_0_port:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: cgwy_int_di2_net_name}
+
+  cf_mgmt_0_port:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_protected_net_name}
+      fixed_ips: [{"ip_address": {get_param: cf_oam_protected_ip_0}}]
+      allowed_address_pairs: [{"ip_address": {get_param: cf_oam_protected_vip}}]
+
+  cf_int_di2_1_port:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: cgwy_int_di2_net_name}
+
+  cf_mgmt_1_port:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_protected_net_name}
+      fixed_ips: [{"ip_address": {get_param: cf_oam_protected_ip_1}}]
+      allowed_address_pairs: [{"ip_address": {get_param: cf_oam_protected_vip}}]
+  
+  # Create hard drives for CF1 and CF2 to store CDR
+  cf_volume_name_0:
+    type: OS::Cinder::Volume
+    properties:
+      size: { get_param: cf_volume_size_0 }
+  #    volume_type: iscsi
+
+  cf_volume_name_1:
+    type: OS::Cinder::Volume
+    properties:
+      size: { get_param: cf_volume_size_1 }
+  #    volume_type: iscsi
+  
+  # Create CF1 instance
+  cf_server0:
+    type: OS::Nova::Server
+    properties:
+      metadata:
+         vnf_id: { get_param: vnf_id }
+         vnf_name: { get_param: vnf_name }
+         vf_module_id: { get_param: vf_module_id }
+#      name:
+#        str_replace:
+#          template: Z${CZ_ID}CGWY${VF_ID}${VM_TYPE}${VM_NUM}
+#          params:
+#            ${CZ_ID}: {get_param: czid}
+#            ${VF_ID}: {get_param: vf_inst_number}
+#            ${VM_TYPE}: DCF
+#            ${VM_NUM}: "001"
+      name: {get_param: [cgwy_names, 0]}
+      image: {get_param: cf_image_name_0}
+      flavor: {get_param: cf_flavor_name}
+      availability_zone: {get_param: availability_zone_0}
+      config_drive: True
+      networks:
+        - port: {get_resource: cf_int_di2_0_port}
+        - port: {get_resource: cf_mgmt_0_port}
+# Tempoarry comment out for testing 
+      scheduler_hints:
+        group: {get_resource: cf_vpc-servergroup}
+      personality:
+      # Associate VM to slot-1 and identify it is a CF
+        "staros_param.cfg":
+          str_replace:
+            template: |
+              CARDSLOT=${CARD_NUMBER}
+              CARDTYPE=${CARD_TYPE}
+              CPUID=${CPUID}
+            params:
+              ${CARD_NUMBER}: 1
+              ${CARD_TYPE}: CFC
+              ${CPUID}: 0
+      # Day-0 config for CF1
+        "staros_config.txt":
+          str_replace:
+            template: |
+              config
+                  system hostname ${HOSTNAME}
+                  ssh key-gen wait-time 0
+                  context local
+                      administrator admin password ${ADMIN_PASSWD} ftp
+                          interface LOCAL1
+                              ip address ${CF_VIP_ADDR} 255.255.255.0
+                          #exit
+                      ip route 0.0.0.0 0.0.0.0 ${CF_VIP_GATEWAY} LOCAL1
+                      ssh generate key
+                      server sshd
+                          subsystem sftp
+                      #exit
+                  #exit
+                  port ethernet 1/1
+                      bind interface LOCAL1 local
+                      no shutdown
+                  #exit
+                  snmp community public read-only
+              end
+              chassis key value Cisco12345
+            params:
+#                  system hostname Z${CZ_ID}CGWY${VF_ID}${VM_TYPE}${VM_NUM}
+
+#              ${CZ_ID}: {get_param: czid}
+#              ${VF_ID}: {get_param: vf_inst_number}
+#              ${VM_TYPE}: DCF
+              #${VM_NUM}: "01"
+              ${HOSTNAME}: {get_param: cf_name}
+              ${ADMIN_PASSWD}: {get_param: admin_password}
+              ${CF_VIP_ADDR}: {get_param: cf_oam_protected_vip}
+              ${CF_VIP_GATEWAY}: {get_param: cf_vpc_vip_gateway}
+  
+  # Attach hard drive (CDR) to CF1 instance
+  cf_volume_att_0:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      instance_uuid: { get_resource: cf_server0 }
+      volume_id: { get_resource: cf_volume_name_0 }
+
+  # Create CF2 instance
+  cf_server1:
+    type: OS::Nova::Server
+    properties:
+      metadata:
+          vnf_id: { get_param: vnf_id }
+          vnf_name: { get_param: vnf_name }
+          vf_module_id: { get_param: vf_module_id }
+
+#      name:
+#        str_replace:
+#          template: Z${CZ_ID}CGWY${VF_ID}${VM_TYPE}${VM_NUM}
+#          params:
+#            ${CZ_ID}: {get_param: czid}
+#            ${VF_ID}: {get_param: vf_inst_number}
+#            ${VM_TYPE}: DCF
+#            ${VM_NUM}: "002"
+      name: {get_param: [cgwy_names, 1]}
+      image: {get_param: cf_image_name_1}
+      flavor: {get_param: cf_flavor_name}
+      availability_zone: {get_param: availability_zone_0}
+      config_drive: True
+      networks:
+        - port: {get_resource: cf_int_di2_1_port}
+        - port: {get_resource: cf_mgmt_1_port}
+# commented out for testing only
+      scheduler_hints:
+        group: {get_resource: cf_vpc-servergroup}
+      personality:
+      # Associate VM to slot-2 and identify it is a CF
+        "staros_param.cfg":
+          str_replace:
+            template: |
+              CARDSLOT=${CARD_NUMBER}
+              CARDTYPE=${CARD_TYPE}
+              CPUID=${CPUID}
+            params:
+              ${CARD_NUMBER}: 2
+              ${CARD_TYPE}: CFC
+              ${CPUID}: 0
+      # Day-0 config for CF2
+        "staros_config.txt":
+          str_replace:
+            template: |
+              config
+                  system hostname ${HOSTNAME}
+                  ssh key-gen wait-time 0 
+                  context local
+                      administrator admin password ${ADMIN_PASSWD} ftp
+                          interface LOCAL1
+                              ip address ${CF_VIP_ADDR} 255.255.255.0
+                          #exit
+                      ip route 0.0.0.0 0.0.0.0 ${CF_VIP_GATEWAY} LOCAL1
+                      ssh generate key
+                      server sshd
+                          subsystem sftp
+                      #exit
+                  #exit
+                  port ethernet 1/1
+                      bind interface LOCAL1 local
+                      no shutdown
+                  #exit
+                  snmp community public read-only
+              end
+              chassis key value Cisco12345
+            params:
+#                  system hostname Z${CZ_ID}CGWY${VF_ID}${VM_TYPE}${VM_NUM}
+#              ${CZ_ID}: {get_param: czid}
+#              ${VF_ID}: {get_param: vf_inst_number}
+#              ${VM_TYPE}: DCF
+#              ${VM_NUM}: "01"
+              ${HOSTNAME}: {get_param: cf_name}
+              ${ADMIN_PASSWD}: {get_param: admin_password}
+              ${CF_VIP_ADDR}: {get_param: cf_oam_protected_vip}
+              ${CF_VIP_GATEWAY}: {get_param: cf_vpc_vip_gateway}
+
+  # Attach hard drive (CDR) to CF2 instance
+  cf_volume_att_1:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      instance_uuid: { get_resource: cf_server1 }
+      volume_id: { get_resource: cf_volume_name_1 }
+
+  #### SF03 ######
+  # Create port for DI-Internal Network
+  sf_int_di2_2_port:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: cgwy_int_di2_net_name}
+# Create port for Transport Interface in SAEGW Context
+  SF3_GN_10_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs:
+        - {get_param: gn_net_fqdn}
+#      service_health_check_refs: 
+#        - { get_resource: SF3_GN_10_RSHC }
+      virtual_machine_interface_allowed_address_pairs:
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: [bgpaas_ip_address,0] }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth }
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: sf_gn_rii_v6 }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth_v6 }
+
+  SF3_GN_10_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF3_GN_10_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: gn_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF3_GN_10_RVMI
+      instance_ip_address: { get_param: [sf_gn_ips, 0] }
+
+  SF3_GN_10_v6_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF3_GN_10_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: gn_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF3_GN_10_RVMI
+      instance_ip_address: { get_param: [sf_gn_v6_ips, 0] }
+      instance_ip_family: { get_param: instance_ip_family_v6 }
+
+  SF3_GN_10_RSHC:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: SF3_GN_10_RSHC
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: sf_shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: sf_shc_monitor_type }
+        service_health_check_properties_delay: { get_param: sf_shc_delay }
+        service_health_check_properties_timeout: { get_param: sf_shc_timeout }
+        service_health_check_properties_max_retries: { get_param: sf_shc_max_retries }
+        service_health_check_properties_url_path: { get_param: sf_shc_url_path }
+
+  # Create port for Transport interface(SGi-data) in SGi Context
+  SF3_SGI_11_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs:
+        - get_param: sgi_net_fqdn
+#      service_health_check_refs: 
+#        - { get_resource: SF3_SGI_11_RSHC }
+      virtual_machine_interface_allowed_address_pairs:
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: [bgpaas_ip_address,1] }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth }
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: sf_sgi_rii_v6 }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth_v6 }
+
+  SF3_SGI_11_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF3_SGI_11_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: sgi_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF3_SGI_11_RVMI
+      instance_ip_address: { get_param: [sf_sgi_prot_ips, 0] }
+
+  SF3_SGI_11_v6_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF3_SGI_11_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: sgi_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF3_SGI_11_RVMI
+      instance_ip_address: { get_param: [sf_sgi_prot_v6_ips, 0] }
+      instance_ip_family: { get_param: instance_ip_family_v6 }
+
+  SF3_SGI_11_RSHC:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: SF3_SGI_11_RSHC
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: sf_shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: sf_shc_monitor_type }
+        service_health_check_properties_delay: { get_param: sf_shc_delay }
+        service_health_check_properties_timeout: { get_param: sf_shc_timeout }
+        service_health_check_properties_max_retries: { get_param: sf_shc_max_retries }
+        service_health_check_properties_url_path: { get_param: sf_shc_url_path }
+
+  # Create port for Transport interface(SGi-ims) in SGi Context
+  SF3_IMS_12_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs:
+        - get_param: ims_net_fqdn
+#      service_health_check_refs: 
+#        - { get_resource: SF3_IMS_12_RSHC }
+      virtual_machine_interface_allowed_address_pairs:
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: [bgpaas_ip_address,2] }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth }
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: sf_ims_rii_v6 }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth_v6 }
+
+  SF3_IMS_12_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF3_IMS_12_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: ims_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF3_IMS_12_RVMI
+      instance_ip_address: { get_param: [sf_sgi_ims_ips, 0] }
+
+  SF3_IMS_12_v6_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF3_IMS_12_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: ims_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF3_IMS_12_RVMI
+      instance_ip_address: { get_param: [sf_sgi_ims_v6_ips, 0] }
+      instance_ip_family: { get_param: instance_ip_family_v6 }
+
+  SF3_IMS_12_RSHC:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: SF3_IMS_12_RSHC
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: sf_shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: sf_shc_monitor_type }
+        service_health_check_properties_delay: { get_param: sf_shc_delay }
+        service_health_check_properties_timeout: { get_param: sf_shc_timeout }
+        service_health_check_properties_max_retries: { get_param: sf_shc_max_retries }
+        service_health_check_properties_url_path: { get_param: sf_shc_url_path }
+
+  # Create port for Transport Interface in SUPPORT Context
+  SF3_COR_13_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs:
+        - get_param: cor_net_fqdn
+#      service_health_check_refs: 
+#        - { get_resource: SF3_COR_13_RSHC }
+      virtual_machine_interface_allowed_address_pairs:
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: [bgpaas_ip_address,3] }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth }
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: sf_cor_rii_v6 }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth_v6 }
+
+  SF3_COR_13_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF3_COR_13_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: cor_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF3_COR_13_RVMI
+      instance_ip_address: { get_param: [sf_cor_ips, 0] }
+
+  SF3_COR_13_v6_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF3_COR_13_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: cor_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF3_COR_13_RVMI
+      instance_ip_address: { get_param: [sf_cor_v6_ips, 0] }
+      instance_ip_family: { get_param: instance_ip_family_v6 }
+
+  SF3_COR_13_RSHC:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: SF3_COR_13_RSHC
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: sf_shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: sf_shc_monitor_type }
+        service_health_check_properties_delay: { get_param: sf_shc_delay }
+        service_health_check_properties_timeout: { get_param: sf_shc_timeout }
+        service_health_check_properties_max_retries: { get_param: sf_shc_max_retries }
+        service_health_check_properties_url_path: { get_param: sf_shc_url_path }
+
+
+
+
+ # Create port for Transport interface in LI Context 
+  SF3_OAM_CALEA_14_PORT:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_calea_net_name}
+      fixed_ips: [{"ip_address": {get_param: [sf_oam_calea_ips, 0]}}]
+  # Create port for Transport interface in SRP Context 
+  SF3_INT_ICSR_15_PORT:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: int_icsr_net_name}
+      fixed_ips: [{"ip_address": {get_param: [sf_int_icsr_ips, 0]}}]
+
+  # Create VPC SF 03 Instance
+  sf_server_2:
+    type: OS::Nova::Server
+    depends_on: [ SF3_GN_10_RII, SF3_GN_10_v6_RII, SF3_SGI_11_RII, SF3_SGI_11_v6_RII, SF3_IMS_12_RII, SF3_IMS_12_v6_RII, SF3_COR_13_RII, SF3_COR_13_v6_RII ]
+    properties:
+      metadata:
+        vnf_id: { get_param: vnf_id }
+        vnf_name: { get_param: vnf_name }
+        vf_module_id: { get_param: vf_module_id }
+
+#      name:
+#        str_replace:
+#          template: Z${CZ_ID}CGWY${VF_ID}${VM_TYPE}${VM_NUM}
+#          params:
+#            ${CZ_ID}: {get_param: czid}
+#            ${VF_ID}: {get_param: vf_inst_number}
+#            ${VM_TYPE}: DSF
+#            ${VM_NUM}: "003"
+      name: {get_param: [cgwy_names, 2]}
+      config_drive: True
+      image: {get_param: sf_image_name}
+      flavor: {get_param: sf_flavor_name}
+      networks:
+        - port: {get_resource: sf_int_di2_2_port}
+        - port: {get_resource: SF3_GN_10_RVMI}
+        - port: {get_resource: SF3_SGI_11_RVMI}
+        - port: {get_resource: SF3_IMS_12_RVMI}
+        - port: {get_resource: SF3_COR_13_RVMI}
+        - port: {get_resource: SF3_OAM_CALEA_14_PORT}
+        - port: {get_resource: SF3_INT_ICSR_15_PORT}
+      personality:
+        "staros_param.cfg":
+          str_replace:
+            template: |
+              CARDSLOT=$CARD_NUMBER
+              CARDTYPE=$CARD_TYPE
+              CPUID=$CPUID
+            params:
+              $CARD_NUMBER: 3
+              $CARD_TYPE: SFC
+              $CPUID: 0
+      availability_zone: {get_param: availability_zone_0}
+      scheduler_hints:
+        group: {get_resource: sf_vpc-servergroup}
+        
+  #### SF04 ######
+  # Create port for DI-Internal Network
+  sf_int_di2_3_port:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: cgwy_int_di2_net_name}
+# Create port for Transport Interface in SAEGW Context
+  SF4_GN_10_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs:
+        - get_param: gn_net_fqdn
+#      service_health_check_refs: 
+#        - { get_resource: SF4_GN_10_RSHC }
+      virtual_machine_interface_allowed_address_pairs:
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: [bgpaas_ip_address,0] }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth }
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: sf_gn_rii_v6 }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth_v6 }
+
+  SF4_GN_10_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF4_GN_10_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: gn_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF4_GN_10_RVMI
+      instance_ip_address: { get_param: [sf_gn_ips, 1] }
+
+  SF4_GN_10_v6_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF4_GN_10_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: gn_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF4_GN_10_RVMI
+      instance_ip_address: { get_param: [sf_gn_v6_ips, 1] }
+      instance_ip_family: { get_param: instance_ip_family_v6 }
+
+  SF4_GN_10_RSHC:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: SF4_GN_10_RSHC
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: sf_shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: sf_shc_monitor_type }
+        service_health_check_properties_delay: { get_param: sf_shc_delay }
+        service_health_check_properties_timeout: { get_param: sf_shc_timeout }
+        service_health_check_properties_max_retries: { get_param: sf_shc_max_retries }
+        service_health_check_properties_url_path: { get_param: sf_shc_url_path }
+
+  # Create port for Transport interface(SGi-data) in SGi Context
+  SF4_SGI_11_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs:
+        - get_param: sgi_net_fqdn
+#      service_health_check_refs: 
+#        - { get_resource: SF4_SGI_11_RSHC }
+      virtual_machine_interface_allowed_address_pairs:
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: [bgpaas_ip_address,1] }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth }
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: sf_sgi_rii_v6 }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth_v6 }
+
+  SF4_SGI_11_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF4_SGI_11_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: sgi_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF4_SGI_11_RVMI
+      instance_ip_address: { get_param: [sf_sgi_prot_ips, 1] }
+
+  SF4_SGI_11_v6_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF4_SGI_11_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: sgi_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF4_SGI_11_RVMI
+      instance_ip_address: { get_param: [sf_sgi_prot_v6_ips, 1] }
+      instance_ip_family: { get_param: instance_ip_family_v6 }
+
+  SF4_SGI_11_RSHC:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: SF4_SGI_11_RSHC
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: sf_shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: sf_shc_monitor_type }
+        service_health_check_properties_delay: { get_param: sf_shc_delay }
+        service_health_check_properties_timeout: { get_param: sf_shc_timeout }
+        service_health_check_properties_max_retries: { get_param: sf_shc_max_retries }
+        service_health_check_properties_url_path: { get_param: sf_shc_url_path }
+
+  # Create port for Transport interface(SGi-ims) in SGi Context
+  SF4_IMS_12_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs:
+        - get_param: ims_net_fqdn
+#      service_health_check_refs: 
+#        - { get_resource: SF4_IMS_12_RSHC }
+      virtual_machine_interface_allowed_address_pairs:
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: [bgpaas_ip_address,2] }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth }
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: sf_ims_rii_v6 }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth_v6 }
+
+  SF4_IMS_12_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF4_IMS_12_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: ims_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF4_IMS_12_RVMI
+      instance_ip_address: { get_param: [sf_sgi_ims_ips, 1] }
+
+  SF4_IMS_12_v6_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF4_IMS_12_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: ims_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF4_IMS_12_RVMI
+      instance_ip_address: { get_param: [sf_sgi_ims_v6_ips, 1] }
+      instance_ip_family: { get_param: instance_ip_family_v6 }
+
+  SF4_IMS_12_RSHC:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: SF4_IMS_12_RSHC
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: sf_shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: sf_shc_monitor_type }
+        service_health_check_properties_delay: { get_param: sf_shc_delay }
+        service_health_check_properties_timeout: { get_param: sf_shc_timeout }
+        service_health_check_properties_max_retries: { get_param: sf_shc_max_retries }
+        service_health_check_properties_url_path: { get_param: sf_shc_url_path }
+
+  # Create port for Transport Interface in SUPPORT Context
+  SF4_COR_13_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs:
+        - get_param: cor_net_fqdn
+#      service_health_check_refs: 
+#        - { get_resource: SF4_COR_13_RSHC }
+      virtual_machine_interface_allowed_address_pairs:
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: [bgpaas_ip_address,3] }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth }
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: sf_cor_rii_v6 }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth_v6 }
+
+  SF4_COR_13_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF4_COR_13_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: cor_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF4_COR_13_RVMI
+      instance_ip_address: { get_param: [sf_cor_ips, 1] }
+
+  SF4_COR_13_v6_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF4_COR_13_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: cor_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF4_COR_13_RVMI
+      instance_ip_address: { get_param: [sf_cor_v6_ips, 1] }
+      instance_ip_family: { get_param: instance_ip_family_v6 }
+
+  SF4_COR_13_RSHC:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: SF4_COR_13_RSHC
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: sf_shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: sf_shc_monitor_type }
+        service_health_check_properties_delay: { get_param: sf_shc_delay }
+        service_health_check_properties_timeout: { get_param: sf_shc_timeout }
+        service_health_check_properties_max_retries: { get_param: sf_shc_max_retries }
+        service_health_check_properties_url_path: { get_param: sf_shc_url_path }
+
+
+  SF4_OAM_CALEA_14_PORT:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_calea_net_name}
+      fixed_ips: [{"ip_address": {get_param: [sf_oam_calea_ips, 1]}}]
+  # Create port for Transport interface in SRP Context 
+  SF4_INT_ICSR_15_PORT:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: int_icsr_net_name}
+      fixed_ips: [{"ip_address": {get_param: [sf_int_icsr_ips, 1]}}]
+
+  # Create VPC SF 04 Instance
+  sf_server_3:
+    type: OS::Nova::Server
+    depends_on: [ SF4_GN_10_RII, SF4_GN_10_v6_RII, SF4_SGI_11_RII, SF4_SGI_11_v6_RII, SF4_IMS_12_RII, SF4_IMS_12_v6_RII, SF4_COR_13_RII, SF4_COR_13_v6_RII ]
+    properties:
+      metadata:
+          vnf_id: { get_param: vnf_id }
+          vnf_name: { get_param: vnf_name }
+          vf_module_id: { get_param: vf_module_id }
+
+#      name:
+#        str_replace:
+#          template: Z${CZ_ID}CGWY${VF_ID}${VM_TYPE}${VM_NUM}
+#          params:
+#            ${CZ_ID}: {get_param: czid}
+#            ${VF_ID}: {get_param: vf_inst_number}
+#            ${VM_TYPE}: DSF
+#            ${VM_NUM}: "004"
+      name: {get_param: [cgwy_names, 3]}
+      config_drive: True
+      image: {get_param: sf_image_name}
+      flavor: {get_param: sf_flavor_name}
+      networks:
+        - port: {get_resource: sf_int_di2_3_port}
+        - port: {get_resource: SF4_GN_10_RVMI}
+        - port: {get_resource: SF4_SGI_11_RVMI}
+        - port: {get_resource: SF4_IMS_12_RVMI}
+        - port: {get_resource: SF4_COR_13_RVMI}
+        - port: {get_resource: SF4_OAM_CALEA_14_PORT}
+        - port: {get_resource: SF4_INT_ICSR_15_PORT}
+      personality:
+        "staros_param.cfg":
+          str_replace:
+            template: |
+              CARDSLOT=$CARD_NUMBER
+              CARDTYPE=$CARD_TYPE
+              CPUID=$CPUID
+            params:
+              $CARD_NUMBER: 4
+              $CARD_TYPE: SFC
+              $CPUID: 0
+      availability_zone: {get_param: availability_zone_0}
+      scheduler_hints:
+        group: {get_resource: sf_vpc-servergroup}
+
+
+  #### SF05 ######
+  # Create port for DI-Internal Network
+  sf_int_di2_4_port:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: cgwy_int_di2_net_name}
+  # Create port for Transport Interface in SAEGW Context
+  SF5_GN_10_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs:
+        - get_param: gn_net_fqdn
+#      service_health_check_refs: 
+#        - { get_resource: SF5_GN_10_RSHC }
+      virtual_machine_interface_allowed_address_pairs:
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: [bgpaas_ip_address,0] }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth }
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: sf_gn_rii_v6 }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth_v6 }
+
+  SF5_GN_10_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF5_GN_10_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: gn_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF5_GN_10_RVMI
+      instance_ip_address: { get_param: [sf_gn_ips, 2] }
+
+  SF5_GN_10_v6_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF5_GN_10_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: gn_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF5_GN_10_RVMI
+      instance_ip_address: { get_param: [sf_gn_v6_ips, 2] }
+      instance_ip_family: { get_param: instance_ip_family_v6 }
+
+  SF5_GN_10_RSHC:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: SF5_GN_10_RSHC
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: sf_shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: sf_shc_monitor_type }
+        service_health_check_properties_delay: { get_param: sf_shc_delay }
+        service_health_check_properties_timeout: { get_param: sf_shc_timeout }
+        service_health_check_properties_max_retries: { get_param: sf_shc_max_retries }
+        service_health_check_properties_url_path: { get_param: sf_shc_url_path }
+
+  # Create port for Transport interface(SGi-data) in SGi Context
+  SF5_SGI_11_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs:
+        - get_param: sgi_net_fqdn
+#      service_health_check_refs: 
+#        - { get_resource: SF5_SGI_11_RSHC }
+      virtual_machine_interface_allowed_address_pairs:
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: [bgpaas_ip_address,1] }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth }
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: sf_sgi_rii_v6 }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth_v6 }
+
+  SF5_SGI_11_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF5_SGI_11_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: sgi_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF5_SGI_11_RVMI
+      instance_ip_address: { get_param: [sf_sgi_prot_ips, 2] }
+
+  SF5_SGI_11_v6_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF5_SGI_11_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: sgi_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF5_SGI_11_RVMI
+      instance_ip_address: { get_param: [sf_sgi_prot_v6_ips, 2] }
+      instance_ip_family: { get_param: instance_ip_family_v6 }
+
+  SF5_SGI_11_RSHC:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: SF5_SGI_11_RSHC
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: sf_shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: sf_shc_monitor_type }
+        service_health_check_properties_delay: { get_param: sf_shc_delay }
+        service_health_check_properties_timeout: { get_param: sf_shc_timeout }
+        service_health_check_properties_max_retries: { get_param: sf_shc_max_retries }
+        service_health_check_properties_url_path: { get_param: sf_shc_url_path }
+
+  # Create port for Transport interface(SGi-ims) in SGi Context
+  SF5_IMS_12_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs:
+        - get_param: ims_net_fqdn
+#      service_health_check_refs: 
+#        - { get_resource: SF5_IMS_12_RSHC }
+      virtual_machine_interface_allowed_address_pairs:
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: [bgpaas_ip_address,2] }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth }
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: sf_ims_rii_v6 }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth_v6 }
+
+  SF5_IMS_12_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF5_IMS_12_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: ims_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF5_IMS_12_RVMI
+      instance_ip_address: { get_param: [sf_sgi_ims_ips, 2] }
+
+  SF5_IMS_12_v6_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF5_IMS_12_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: ims_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF5_IMS_12_RVMI
+      instance_ip_address: { get_param: [sf_sgi_ims_v6_ips, 2] }
+      instance_ip_family: { get_param: instance_ip_family_v6 }
+
+  SF5_IMS_12_RSHC:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: SF5_IMS_12_RSHC
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: sf_shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: sf_shc_monitor_type }
+        service_health_check_properties_delay: { get_param: sf_shc_delay }
+        service_health_check_properties_timeout: { get_param: sf_shc_timeout }
+        service_health_check_properties_max_retries: { get_param: sf_shc_max_retries }
+        service_health_check_properties_url_path: { get_param: sf_shc_url_path }
+
+  # Create port for Transport Interface in SUPPORT Context
+  SF5_COR_13_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs:
+        - get_param: cor_net_fqdn
+#      service_health_check_refs: 
+#        - { get_resource: SF5_COR_13_RSHC }
+      virtual_machine_interface_allowed_address_pairs:
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: [bgpaas_ip_address,3] }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth }
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: sf_cor_rii_v6 }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth_v6 }
+
+  SF5_COR_13_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF5_COR_13_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: cor_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF5_COR_13_RVMI
+      instance_ip_address: { get_param: [sf_cor_ips, 2] }
+
+  SF5_COR_13_v6_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF5_COR_13_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: cor_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF5_COR_13_RVMI
+      instance_ip_address: { get_param: [sf_cor_v6_ips, 2] }
+      instance_ip_family: { get_param: instance_ip_family_v6 }
+
+  SF5_COR_13_RSHC:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: SF5_COR_13_RSHC
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: sf_shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: sf_shc_monitor_type }
+        service_health_check_properties_delay: { get_param: sf_shc_delay }
+        service_health_check_properties_timeout: { get_param: sf_shc_timeout }
+        service_health_check_properties_max_retries: { get_param: sf_shc_max_retries }
+        service_health_check_properties_url_path: { get_param: sf_shc_url_path }
+
+
+  # Create port for Transport interface in LI Context 
+  SF5_OAM_CALEA_14_PORT:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_calea_net_name}
+      fixed_ips: [{"ip_address": {get_param: [sf_oam_calea_ips, 2]}}]
+  # Create port for Transport interface in SRP Context 
+  SF5_INT_ICSR_15_PORT:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: int_icsr_net_name}
+      fixed_ips: [{"ip_address": {get_param: [sf_int_icsr_ips, 2]}}]
+
+  # Create VPC SF 05 Instance
+  sf_server_4:
+    type: OS::Nova::Server
+    depends_on: [ SF5_GN_10_RII, SF5_GN_10_v6_RII, SF5_SGI_11_RII, SF5_SGI_11_v6_RII, SF5_IMS_12_RII, SF5_IMS_12_v6_RII, SF5_COR_13_RII, SF5_COR_13_v6_RII ]
+    properties:
+      metadata:
+          vnf_id: { get_param: vnf_id }
+          vnf_name: { get_param: vnf_name }
+          vf_module_id: { get_param: vf_module_id }
+
+#      name:
+#        str_replace:
+#          template: Z${CZ_ID}CGWY${VF_ID}${VM_TYPE}${VM_NUM}
+#          params:
+#            ${CZ_ID}: {get_param: czid}
+#            ${VF_ID}: {get_param: vf_inst_number}
+#            ${VM_TYPE}: DSF
+#            ${VM_NUM}: "005"
+      name: {get_param: [cgwy_names, 4]}
+      config_drive: True
+      image: {get_param: sf_image_name}
+      flavor: {get_param: sf_flavor_name}
+      networks:
+        - port: {get_resource: sf_int_di2_4_port}
+        - port: {get_resource: SF5_GN_10_RVMI}
+        - port: {get_resource: SF5_SGI_11_RVMI}
+        - port: {get_resource: SF5_IMS_12_RVMI}
+        - port: {get_resource: SF5_COR_13_RVMI}
+        - port: {get_resource: SF5_OAM_CALEA_14_PORT}
+        - port: {get_resource: SF5_INT_ICSR_15_PORT}
+
+      personality:
+        "staros_param.cfg":
+          str_replace:
+            template: |
+              CARDSLOT=$CARD_NUMBER
+              CARDTYPE=$CARD_TYPE
+              CPUID=$CPUID
+            params:
+              $CARD_NUMBER: 5
+              $CARD_TYPE: SFC
+              $CPUID: 0
+      availability_zone: {get_param: availability_zone_0}
+      scheduler_hints:
+        group: {get_resource: sf_vpc-servergroup}
+        
+
+  #### SF06 ######
+  # Create port for DI-Internal Network
+  sf_int_di2_5_port:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: cgwy_int_di2_net_name}
+  # Create port for Transport Interface in SAEGW Context
+  SF6_GN_10_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs:
+        - get_param: gn_net_fqdn
+#      service_health_check_refs: 
+#        - { get_resource: SF6_GN_10_RSHC }
+      virtual_machine_interface_allowed_address_pairs:
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: [bgpaas_ip_address,0] }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth }
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: sf_gn_rii_v6 }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth_v6 }
+
+  SF6_GN_10_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF6_GN_10_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: gn_net_fqdn
+      virtual_machine_interface_refs: 
+        - get_resource: SF6_GN_10_RVMI
+      instance_ip_address: { get_param: [sf_gn_ips, 3] }
+
+  SF6_GN_10_RSHC:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: SF6_GN_10_RSHC
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: sf_shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: sf_shc_monitor_type }
+        service_health_check_properties_delay: { get_param: sf_shc_delay }
+        service_health_check_properties_timeout: { get_param: sf_shc_timeout }
+        service_health_check_properties_max_retries: { get_param: sf_shc_max_retries }
+        service_health_check_properties_url_path: { get_param: sf_shc_url_path }
+
+  SF6_GN_10_v6_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF6_GN_10_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: gn_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF6_GN_10_RVMI
+      instance_ip_address: { get_param: [sf_gn_v6_ips, 3] }
+      instance_ip_family: { get_param: instance_ip_family_v6 }
+
+  # Create port for Transport interface(SGi-data) in SGi Context
+  SF6_SGI_11_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs:
+        - get_param: sgi_net_fqdn
+#      service_health_check_refs: 
+#        - { get_resource: SF6_SGI_11_RSHC }
+      virtual_machine_interface_allowed_address_pairs:
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: [bgpaas_ip_address,1] }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth }
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: sf_sgi_rii_v6 }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth_v6 }
+
+  SF6_SGI_11_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF6_SGI_11_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: sgi_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF6_SGI_11_RVMI
+      instance_ip_address: { get_param: [sf_sgi_prot_ips, 3] }
+
+  SF6_SGI_11_v6_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF6_SGI_11_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: sgi_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF6_SGI_11_RVMI
+      instance_ip_address: { get_param: [sf_sgi_prot_v6_ips, 3] }
+      instance_ip_family: { get_param: instance_ip_family_v6 }
+
+  SF6_SGI_11_RSHC:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: SF6_SGI_11_RSHC
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: sf_shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: sf_shc_monitor_type }
+        service_health_check_properties_delay: { get_param: sf_shc_delay }
+        service_health_check_properties_timeout: { get_param: sf_shc_timeout }
+        service_health_check_properties_max_retries: { get_param: sf_shc_max_retries }
+        service_health_check_properties_url_path: { get_param: sf_shc_url_path }
+
+  # Create port for Transport interface(SGi-ims) in SGi Context
+  SF6_IMS_12_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs:
+        - get_param: ims_net_fqdn
+#      service_health_check_refs: 
+#        - { get_resource: SF6_IMS_12_RSHC }
+      virtual_machine_interface_allowed_address_pairs:
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: [bgpaas_ip_address,2] }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth }
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: sf_ims_rii_v6 }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth_v6 }
+
+  SF6_IMS_12_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF6_IMS_12_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: ims_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF6_IMS_12_RVMI
+      instance_ip_address: { get_param: [sf_sgi_ims_ips, 3] }
+
+  SF6_IMS_12_v6_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF6_IMS_12_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: ims_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF6_IMS_12_RVMI
+      instance_ip_address: { get_param: [sf_sgi_ims_v6_ips, 3] }
+      instance_ip_family: { get_param: instance_ip_family_v6 }
+
+  SF6_IMS_12_RSHC:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: SF6_IMS_12_RSHC
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: sf_shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: sf_shc_monitor_type }
+        service_health_check_properties_delay: { get_param: sf_shc_delay }
+        service_health_check_properties_timeout: { get_param: sf_shc_timeout }
+        service_health_check_properties_max_retries: { get_param: sf_shc_max_retries }
+        service_health_check_properties_url_path: { get_param: sf_shc_url_path }
+
+  # Create port for Transport Interface in SUPPORT Context
+  SF6_COR_13_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs:
+        - get_param: cor_net_fqdn
+#      service_health_check_refs: 
+#        - { get_resource: SF6_COR_13_RSHC }
+      virtual_machine_interface_allowed_address_pairs:
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: [bgpaas_ip_address,3] }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth }
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: sf_cor_rii_v6 }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth_v6 }
+
+  SF6_COR_13_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF6_COR_13_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: cor_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF6_COR_13_RVMI
+      instance_ip_address: { get_param: [sf_cor_ips, 3] }
+
+  SF6_COR_13_v6_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF6_COR_13_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: cor_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF6_COR_13_RVMI
+      instance_ip_address: { get_param: [sf_cor_v6_ips, 3] }
+      instance_ip_family: { get_param: instance_ip_family_v6 }
+
+  SF6_COR_13_RSHC:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: SF6_COR_13_RSHC
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: sf_shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: sf_shc_monitor_type }
+        service_health_check_properties_delay: { get_param: sf_shc_delay }
+        service_health_check_properties_timeout: { get_param: sf_shc_timeout }
+        service_health_check_properties_max_retries: { get_param: sf_shc_max_retries }
+        service_health_check_properties_url_path: { get_param: sf_shc_url_path }
+
+
+  # Create port for Transport interface in LI Context 
+  SF6_OAM_CALEA_14_PORT:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_calea_net_name}
+      fixed_ips: [{"ip_address": {get_param: [sf_oam_calea_ips, 3]}}]
+  # Create port for Transport interface in SRP Context 
+  SF6_INT_ICSR_15_PORT:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: int_icsr_net_name}
+      fixed_ips: [{"ip_address": {get_param: [sf_int_icsr_ips, 3]}}]
+
+  # Create VPC SF 06 Instance
+  sf_server_5:
+    type: OS::Nova::Server
+    depends_on: [ SF6_GN_10_RII, SF6_GN_10_v6_RII, SF6_SGI_11_RII, SF6_SGI_11_v6_RII, SF6_IMS_12_RII, SF6_IMS_12_v6_RII, SF6_COR_13_RII, SF6_COR_13_v6_RII ]
+    properties:
+      metadata:
+          vnf_id: { get_param: vnf_id }
+          vnf_name: { get_param: vnf_name }
+          vf_module_id: { get_param: vf_module_id }
+
+#      name:
+#        str_replace:
+#          template: Z${CZ_ID}CGWY${VF_ID}${VM_TYPE}${VM_NUM}
+#          params:
+#            ${CZ_ID}: {get_param: czid}
+#            ${VF_ID}: {get_param: vf_inst_number}
+#            ${VM_TYPE}: DSF
+#            ${VM_NUM}: "006"
+      name: {get_param: [cgwy_names, 5]}
+      config_drive: True
+      image: {get_param: sf_image_name}
+      flavor: {get_param: sf_flavor_name}
+      networks:
+        - port: {get_resource: sf_int_di2_5_port}
+        - port: {get_resource: SF6_GN_10_RVMI}
+        - port: {get_resource: SF6_SGI_11_RVMI}
+        - port: {get_resource: SF6_IMS_12_RVMI}
+        - port: {get_resource: SF6_COR_13_RVMI}
+        - port: {get_resource: SF6_OAM_CALEA_14_PORT}
+        - port: {get_resource: SF6_INT_ICSR_15_PORT}
+
+      personality:
+        "staros_param.cfg":
+          str_replace:
+            template: |
+              CARDSLOT=$CARD_NUMBER
+              CARDTYPE=$CARD_TYPE
+              CPUID=$CPUID
+            params:
+              $CARD_NUMBER: 6
+              $CARD_TYPE: SFC
+              $CPUID: 0
+      availability_zone: {get_param: availability_zone_0}
+      scheduler_hints:
+        group: {get_resource: sf_vpc-servergroup}
+  ### SF07 ######
+  # Create port for DI-Internal Network
+  sf_int_di2_6_port:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: cgwy_int_di2_net_name}
+# Create port for Transport Interface in SAEGW Context
+  SF7_GN_10_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs:
+        - get_param: gn_net_fqdn
+#      service_health_check_refs: 
+#        - { get_resource: SF7_GN_10_RSHC }
+      virtual_machine_interface_allowed_address_pairs:
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: [bgpaas_ip_address,0] }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth }
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: sf_gn_rii_v6 }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth_v6 }
+
+  SF7_GN_10_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF7_GN_10_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: gn_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF7_GN_10_RVMI
+      instance_ip_address: { get_param: [sf_gn_ips, 4] }
+
+  SF7_GN_10_v6_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF7_GN_10_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: gn_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF7_GN_10_RVMI
+      instance_ip_address: { get_param: [sf_gn_v6_ips, 4] }
+      instance_ip_family: { get_param: instance_ip_family_v6 }
+
+  SF7_GN_10_RSHC:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: SF7_GN_10_RSHC
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: sf_shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: sf_shc_monitor_type }
+        service_health_check_properties_delay: { get_param: sf_shc_delay }
+        service_health_check_properties_timeout: { get_param: sf_shc_timeout }
+        service_health_check_properties_max_retries: { get_param: sf_shc_max_retries }
+        service_health_check_properties_url_path: { get_param: sf_shc_url_path }
+
+  # Create port for Transport interface(SGi-data) in SGi Context
+  SF7_SGI_11_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs:
+        - get_param: sgi_net_fqdn
+#      service_health_check_refs: 
+#        - { get_resource: SF7_SGI_11_RSHC }
+      virtual_machine_interface_allowed_address_pairs:
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: [bgpaas_ip_address,1] }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth }
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: sf_sgi_rii_v6 }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth_v6 }
+
+  SF7_SGI_11_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF7_SGI_11_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: sgi_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF7_SGI_11_RVMI
+      instance_ip_address: { get_param: [sf_sgi_prot_ips, 4] }
+
+  SF7_SGI_11_v6_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF7_SGI_11_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: sgi_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF7_SGI_11_RVMI
+      instance_ip_address: { get_param: [sf_sgi_prot_v6_ips, 4] }
+      instance_ip_family: { get_param: instance_ip_family_v6 }
+
+  SF7_SGI_11_RSHC:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: SF7_SGI_11_RSHC
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: sf_shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: sf_shc_monitor_type }
+        service_health_check_properties_delay: { get_param: sf_shc_delay }
+        service_health_check_properties_timeout: { get_param: sf_shc_timeout }
+        service_health_check_properties_max_retries: { get_param: sf_shc_max_retries }
+        service_health_check_properties_url_path: { get_param: sf_shc_url_path }
+
+  # Create port for Transport interface(SGi-ims) in SGi Context
+  SF7_IMS_12_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs:
+        - get_param: ims_net_fqdn
+#      service_health_check_refs: 
+#        - { get_resource: SF7_IMS_12_RSHC }
+      virtual_machine_interface_allowed_address_pairs:
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: [bgpaas_ip_address,2] }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth }
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: sf_ims_rii_v6 }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth_v6 }
+
+  SF7_IMS_12_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF7_IMS_12_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: ims_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF7_IMS_12_RVMI
+      instance_ip_address: { get_param: [sf_sgi_ims_ips, 4] }
+
+  SF7_IMS_12_v6_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF7_IMS_12_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: ims_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF7_IMS_12_RVMI
+      instance_ip_address: { get_param: [sf_sgi_ims_v6_ips, 4] }
+      instance_ip_family: { get_param: instance_ip_family_v6 }
+
+  SF7_IMS_12_RSHC:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: SF7_IMS_12_RSHC
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: sf_shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: sf_shc_monitor_type }
+        service_health_check_properties_delay: { get_param: sf_shc_delay }
+        service_health_check_properties_timeout: { get_param: sf_shc_timeout }
+        service_health_check_properties_max_retries: { get_param: sf_shc_max_retries }
+        service_health_check_properties_url_path: { get_param: sf_shc_url_path }
+
+  # Create port for Transport Interface in SUPPORT Context
+  SF7_COR_13_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs:
+        - get_param: cor_net_fqdn
+#      service_health_check_refs: 
+#        - { get_resource: SF7_COR_13_RSHC }
+      virtual_machine_interface_allowed_address_pairs:
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: [bgpaas_ip_address,3] }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth }
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: sf_cor_rii_v6 }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth_v6 }
+
+  SF7_COR_13_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF7_COR_13_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: cor_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF7_COR_13_RVMI
+      instance_ip_address: { get_param: [sf_cor_ips, 4] }
+
+  SF7_COR_13_v6_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF7_COR_13_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: cor_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF7_COR_13_RVMI
+      instance_ip_address: { get_param: [sf_cor_v6_ips, 4] }
+      instance_ip_family: { get_param: instance_ip_family_v6 }
+
+  SF7_COR_13_RSHC:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: SF7_COR_13_RSHC
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: sf_shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: sf_shc_monitor_type }
+        service_health_check_properties_delay: { get_param: sf_shc_delay }
+        service_health_check_properties_timeout: { get_param: sf_shc_timeout }
+        service_health_check_properties_max_retries: { get_param: sf_shc_max_retries }
+        service_health_check_properties_url_path: { get_param: sf_shc_url_path }
+
+  # Create port for Transport interface in LI Context
+  SF7_OAM_CALEA_14_PORT:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_calea_net_name}
+      fixed_ips: [{"ip_address": {get_param: [sf_oam_calea_ips, 4]}}]
+  # Create port for Transport interface in SRP Context
+  SF7_INT_ICSR_15_PORT:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: int_icsr_net_name}
+      fixed_ips: [{"ip_address": {get_param: [sf_int_icsr_ips, 4]}}]
+
+  # Create VPC SF 07 Instance
+  sf_server_6:
+    type: OS::Nova::Server
+    depends_on: [ SF7_GN_10_RII, SF7_GN_10_v6_RII, SF7_SGI_11_RII, SF7_SGI_11_v6_RII, SF7_IMS_12_RII, SF7_IMS_12_v6_RII, SF7_COR_13_RII, SF7_COR_13_v6_RII ]
+    properties:
+      metadata:
+          vnf_id: { get_param: vnf_id }
+          vnf_name: { get_param: vnf_name }
+          vf_module_id: { get_param: vf_module_id }
+
+#      name:
+#        str_replace:
+#          template: Z${CZ_ID}CGWY${VF_ID}${VM_TYPE}${VM_NUM}
+#          params:
+#            ${CZ_ID}: {get_param: czid}
+#            ${VF_ID}: {get_param: vf_inst_number}
+#            ${VM_TYPE}: DSF
+#            ${VM_NUM}: "007"
+      name: {get_param: [cgwy_names, 6]}
+      config_drive: True
+      image: {get_param: sf_image_name}
+      flavor: {get_param: sf_flavor_name}
+      networks:
+        - port: {get_resource: sf_int_di2_6_port}
+        - port: {get_resource: SF7_GN_10_RVMI}
+        - port: {get_resource: SF7_SGI_11_RVMI}
+        - port: {get_resource: SF7_IMS_12_RVMI}
+        - port: {get_resource: SF7_COR_13_RVMI}
+        - port: {get_resource: SF7_OAM_CALEA_14_PORT}
+        - port: {get_resource: SF7_INT_ICSR_15_PORT}
+
+      personality:
+        "staros_param.cfg":
+          str_replace:
+            template: |
+              CARDSLOT=$CARD_NUMBER
+              CARDTYPE=$CARD_TYPE
+              CPUID=$CPUID
+            params:
+              $CARD_NUMBER: 7
+              $CARD_TYPE: SFC
+              $CPUID: 0
+      availability_zone: {get_param: availability_zone_0}
+      scheduler_hints:
+        group: {get_resource: sf_vpc-servergroup}
+
+  ### SF08 ######
+  # Create port for DI-Internal Network
+  sf_int_di2_7_port:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: cgwy_int_di2_net_name}
+# Create port for Transport Interface in SAEGW Context
+  SF8_GN_10_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs:
+        - get_param: gn_net_fqdn
+#      service_health_check_refs: 
+#        - { get_resource: SF8_GN_10_RSHC }
+      virtual_machine_interface_allowed_address_pairs:
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: [bgpaas_ip_address,0] }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth }
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: sf_gn_rii_v6 }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth_v6 }
+
+  SF8_GN_10_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF8_GN_10_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: gn_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF8_GN_10_RVMI
+      instance_ip_address: { get_param: [sf_gn_ips, 5] }
+
+  SF8_GN_10_v6_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF8_GN_10_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: gn_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF8_GN_10_RVMI
+      instance_ip_address: { get_param: [sf_gn_v6_ips, 5] }
+      instance_ip_family: { get_param: instance_ip_family_v6 }
+
+  SF8_GN_10_RSHC:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: SF8_GN_10_RSHC
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: sf_shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: sf_shc_monitor_type }
+        service_health_check_properties_delay: { get_param: sf_shc_delay }
+        service_health_check_properties_timeout: { get_param: sf_shc_timeout }
+        service_health_check_properties_max_retries: { get_param: sf_shc_max_retries }
+        service_health_check_properties_url_path: { get_param: sf_shc_url_path }
+
+  # Create port for Transport interface(SGi-data) in SGi Context
+  SF8_SGI_11_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs:
+        - get_param: sgi_net_fqdn
+#      service_health_check_refs: 
+#        - { get_resource: SF8_SGI_11_RSHC }
+      virtual_machine_interface_allowed_address_pairs:
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: [bgpaas_ip_address,1] }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth }
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: sf_sgi_rii_v6 }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth_v6 }
+
+  SF8_SGI_11_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF8_SGI_11_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: sgi_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF8_SGI_11_RVMI
+      instance_ip_address: { get_param: [sf_sgi_prot_ips, 5] }
+
+  SF8_SGI_11_v6_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF8_SGI_11_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: sgi_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF8_SGI_11_RVMI
+      instance_ip_address: { get_param: [sf_sgi_prot_v6_ips, 5] }
+      instance_ip_family: { get_param: instance_ip_family_v6 }
+
+  SF8_SGI_11_RSHC:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: SF8_SGI_11_RSHC
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: sf_shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: sf_shc_monitor_type }
+        service_health_check_properties_delay: { get_param: sf_shc_delay }
+        service_health_check_properties_timeout: { get_param: sf_shc_timeout }
+        service_health_check_properties_max_retries: { get_param: sf_shc_max_retries }
+        service_health_check_properties_url_path: { get_param: sf_shc_url_path }
+
+  # Create port for Transport interface(SGi-ims) in SGi Context
+  SF8_IMS_12_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs:
+        - get_param: ims_net_fqdn
+#      service_health_check_refs: 
+#        - { get_resource: SF8_IMS_12_RSHC }
+      virtual_machine_interface_allowed_address_pairs:
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: [bgpaas_ip_address,2] }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth }
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: sf_ims_rii_v6 }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth_v6 }
+
+  SF8_IMS_12_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF8_IMS_12_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: ims_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF8_IMS_12_RVMI
+      instance_ip_address: { get_param: [sf_sgi_ims_ips, 5] }
+
+  SF8_IMS_12_v6_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF8_IMS_12_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: ims_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF8_IMS_12_RVMI
+      instance_ip_address: { get_param: [sf_sgi_ims_v6_ips, 5] }
+      instance_ip_family: { get_param: instance_ip_family_v6 }
+
+  SF8_IMS_12_RSHC:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: SF8_IMS_12_RSHC
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: sf_shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: sf_shc_monitor_type }
+        service_health_check_properties_delay: { get_param: sf_shc_delay }
+        service_health_check_properties_timeout: { get_param: sf_shc_timeout }
+        service_health_check_properties_max_retries: { get_param: sf_shc_max_retries }
+        service_health_check_properties_url_path: { get_param: sf_shc_url_path }
+
+  # Create port for Transport Interface in SUPPORT Context
+  SF8_COR_13_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs:
+        - get_param: cor_net_fqdn
+#      service_health_check_refs: 
+#        - { get_resource: SF8_COR_13_RSHC }
+      virtual_machine_interface_allowed_address_pairs:
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: [bgpaas_ip_address,3] }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth }
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: sf_cor_rii_v6 }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth_v6 }
+
+  SF8_COR_13_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF8_COR_13_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: cor_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF8_COR_13_RVMI
+      instance_ip_address: { get_param: [sf_cor_ips, 5] }
+
+  SF8_COR_13_v6_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF8_COR_13_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: cor_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF8_COR_13_RVMI
+      instance_ip_address: { get_param: [sf_cor_v6_ips, 5] }
+      instance_ip_family: { get_param: instance_ip_family_v6 }
+
+  SF8_COR_13_RSHC:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: SF8_COR_13_RSHC
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: sf_shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: sf_shc_monitor_type }
+        service_health_check_properties_delay: { get_param: sf_shc_delay }
+        service_health_check_properties_timeout: { get_param: sf_shc_timeout }
+        service_health_check_properties_max_retries: { get_param: sf_shc_max_retries }
+        service_health_check_properties_url_path: { get_param: sf_shc_url_path }
+
+
+  SF8_OAM_CALEA_14_PORT:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_calea_net_name}
+      fixed_ips: [{"ip_address": {get_param: [sf_oam_calea_ips, 5]}}]
+  # Create port for Transport interface in SRP Context
+  SF8_INT_ICSR_15_PORT:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: int_icsr_net_name}
+      fixed_ips: [{"ip_address": {get_param: [sf_int_icsr_ips, 5]}}]
+
+  # Create VPC SF 08 Instance
+  sf_server_7:
+    type: OS::Nova::Server
+    depends_on: [ SF8_GN_10_RII, SF8_GN_10_v6_RII, SF8_SGI_11_RII, SF8_SGI_11_v6_RII, SF8_IMS_12_RII, SF8_IMS_12_v6_RII, SF8_COR_13_RII, SF8_COR_13_v6_RII ]
+    properties:
+      metadata:
+          vnf_id: { get_param: vnf_id }
+          vnf_name: { get_param: vnf_name }
+          vf_module_id: { get_param: vf_module_id }
+
+#      name:
+#        str_replace:
+#          template: Z${CZ_ID}CGWY${VF_ID}${VM_TYPE}${VM_NUM}
+#          params:
+#            ${CZ_ID}: {get_param: czid}
+#            ${VF_ID}: {get_param: vf_inst_number}
+#            ${VM_TYPE}: DSF
+#            ${VM_NUM}: "008"
+      name: {get_param: [cgwy_names, 7]}
+      config_drive: True
+      image: {get_param: sf_image_name}
+      flavor: {get_param: sf_flavor_name}
+      networks:
+        - port: {get_resource: sf_int_di2_7_port}
+        - port: {get_resource: SF8_GN_10_RVMI}
+        - port: {get_resource: SF8_SGI_11_RVMI}
+        - port: {get_resource: SF8_IMS_12_RVMI}
+        - port: {get_resource: SF8_COR_13_RVMI}
+        - port: {get_resource: SF8_OAM_CALEA_14_PORT}
+        - port: {get_resource: SF8_INT_ICSR_15_PORT}
+      personality:
+        "staros_param.cfg":
+          str_replace:
+            template: |
+              CARDSLOT=$CARD_NUMBER
+              CARDTYPE=$CARD_TYPE
+              CPUID=$CPUID
+            params:
+              $CARD_NUMBER: 8
+              $CARD_TYPE: SFC
+              $CPUID: 0
+      availability_zone: {get_param: availability_zone_0}
+      scheduler_hints:
+        group: {get_resource: sf_vpc-servergroup}
+
+  ### SF09 ######
+  # Create port for DI-Internal Network
+  sf_int_di2_8_port:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: cgwy_int_di2_net_name}
+# Create port for Transport Interface in SAEGW Context
+  SF9_GN_10_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs:
+        - get_param: gn_net_fqdn
+#      service_health_check_refs: 
+#        - { get_resource: SF9_GN_10_RSHC }
+      virtual_machine_interface_allowed_address_pairs:
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: [bgpaas_ip_address,0] }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth }
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: sf_gn_rii_v6 }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth_v6 }
+
+  SF9_GN_10_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF9_GN_10_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: gn_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF9_GN_10_RVMI
+      instance_ip_address: { get_param: [sf_gn_ips, 6] }
+
+  SF9_GN_10_v6_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF9_GN_10_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: gn_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF9_GN_10_RVMI
+      instance_ip_address: { get_param: [sf_gn_v6_ips, 6] }
+      instance_ip_family: { get_param: instance_ip_family_v6 }
+
+  SF9_GN_10_RSHC:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: SF9_GN_10_RSHC
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: sf_shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: sf_shc_monitor_type }
+        service_health_check_properties_delay: { get_param: sf_shc_delay }
+        service_health_check_properties_timeout: { get_param: sf_shc_timeout }
+        service_health_check_properties_max_retries: { get_param: sf_shc_max_retries }
+        service_health_check_properties_url_path: { get_param: sf_shc_url_path }
+
+  # Create port for Transport interface(SGi-data) in SGi Context
+  SF9_SGI_11_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs:
+        - get_param: sgi_net_fqdn
+#      service_health_check_refs: 
+#        - { get_resource: SF9_SGI_11_RSHC }
+      virtual_machine_interface_allowed_address_pairs:
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: [bgpaas_ip_address,1] }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth }
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: sf_sgi_rii_v6 }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth_v6 }
+
+  SF9_SGI_11_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF9_SGI_11_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: sgi_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF9_SGI_11_RVMI
+      instance_ip_address: { get_param: [sf_sgi_prot_ips, 6] }
+
+  SF9_SGI_11_v6_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF9_SGI_11_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: sgi_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF9_SGI_11_RVMI
+      instance_ip_address: { get_param: [sf_sgi_prot_v6_ips, 6] }
+      instance_ip_family: { get_param: instance_ip_family_v6 }
+
+  SF9_SGI_11_RSHC:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: SF9_SGI_11_RSHC
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: sf_shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: sf_shc_monitor_type }
+        service_health_check_properties_delay: { get_param: sf_shc_delay }
+        service_health_check_properties_timeout: { get_param: sf_shc_timeout }
+        service_health_check_properties_max_retries: { get_param: sf_shc_max_retries }
+        service_health_check_properties_url_path: { get_param: sf_shc_url_path }
+
+  # Create port for Transport interface(SGi-ims) in SGi Context
+  SF9_IMS_12_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs:
+        - get_param: ims_net_fqdn
+#      service_health_check_refs: 
+#        - { get_resource: SF9_IMS_12_RSHC }
+      virtual_machine_interface_allowed_address_pairs:
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: [bgpaas_ip_address,2] }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth }
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: sf_ims_rii_v6 }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth_v6 }
+
+  SF9_IMS_12_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF9_IMS_12_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: ims_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF9_IMS_12_RVMI
+      instance_ip_address: { get_param: [sf_sgi_ims_ips, 6] }
+
+  SF9_IMS_12_v6_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF9_IMS_12_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: ims_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF9_IMS_12_RVMI
+      instance_ip_address: { get_param: [sf_sgi_ims_v6_ips, 6] }
+      instance_ip_family: { get_param: instance_ip_family_v6 }
+
+  SF9_IMS_12_RSHC:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: SF9_IMS_12_RSHC
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: sf_shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: sf_shc_monitor_type }
+        service_health_check_properties_delay: { get_param: sf_shc_delay }
+        service_health_check_properties_timeout: { get_param: sf_shc_timeout }
+        service_health_check_properties_max_retries: { get_param: sf_shc_max_retries }
+        service_health_check_properties_url_path: { get_param: sf_shc_url_path }
+
+  # Create port for Transport Interface in SUPPORT Context
+  SF9_COR_13_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs:
+        - get_param: cor_net_fqdn
+#      service_health_check_refs: 
+#        - { get_resource: SF9_COR_13_RSHC }
+      virtual_machine_interface_allowed_address_pairs:
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: [bgpaas_ip_address,3] }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth }
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: sf_cor_rii_v6 }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth_v6 }
+
+  SF9_COR_13_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF9_COR_13_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: cor_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF9_COR_13_RVMI
+      instance_ip_address: { get_param: [sf_cor_ips, 6] }
+
+  SF9_COR_13_v6_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF9_COR_13_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: cor_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF9_COR_13_RVMI
+      instance_ip_address: { get_param: [sf_cor_v6_ips, 6] }
+      instance_ip_family: { get_param: instance_ip_family_v6 }
+
+  SF9_COR_13_RSHC:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: SF9_COR_13_RSHC
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: sf_shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: sf_shc_monitor_type }
+        service_health_check_properties_delay: { get_param: sf_shc_delay }
+        service_health_check_properties_timeout: { get_param: sf_shc_timeout }
+        service_health_check_properties_max_retries: { get_param: sf_shc_max_retries }
+        service_health_check_properties_url_path: { get_param: sf_shc_url_path }
+
+  # Create port for Transport interface in LI Context
+  SF9_OAM_CALEA_14_PORT:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_calea_net_name}
+      fixed_ips: [{"ip_address": {get_param: [sf_oam_calea_ips, 6]}}]
+  # Create port for Transport interface in SRP Context
+  SF9_INT_ICSR_15_PORT:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: int_icsr_net_name}
+      fixed_ips: [{"ip_address": {get_param: [sf_int_icsr_ips, 6]}}]
+
+  # Create VPC SF 09 Instance
+  sf_server_8:
+    type: OS::Nova::Server
+    depends_on: [ SF9_GN_10_RII, SF9_GN_10_v6_RII, SF9_SGI_11_RII, SF9_SGI_11_v6_RII, SF9_IMS_12_RII, SF9_IMS_12_v6_RII, SF9_COR_13_RII, SF9_COR_13_v6_RII ]
+    properties:
+      metadata:
+          vnf_id: { get_param: vnf_id }
+          vnf_name: { get_param: vnf_name }
+          vf_module_id: { get_param: vf_module_id }
+
+#      name:
+#        str_replace:
+#          template: Z${CZ_ID}CGWY${VF_ID}${VM_TYPE}${VM_NUM}
+#          params:
+#            ${CZ_ID}: {get_param: czid}
+#            ${VF_ID}: {get_param: vf_inst_number}
+#            ${VM_TYPE}: DSF
+#            ${VM_NUM}: "009"
+      name: {get_param: [cgwy_names, 8]}
+      config_drive: True
+      image: {get_param: sf_image_name}
+      flavor: {get_param: sf_flavor_name}
+      networks:
+        - port: {get_resource: sf_int_di2_8_port}
+        - port: {get_resource: SF9_GN_10_RVMI}
+        - port: {get_resource: SF9_SGI_11_RVMI}
+        - port: {get_resource: SF9_IMS_12_RVMI}
+        - port: {get_resource: SF9_COR_13_RVMI}
+        - port: {get_resource: SF9_OAM_CALEA_14_PORT}
+        - port: {get_resource: SF9_INT_ICSR_15_PORT}
+      personality:
+        "staros_param.cfg":
+          str_replace:
+            template: |
+              CARDSLOT=$CARD_NUMBER
+              CARDTYPE=$CARD_TYPE
+              CPUID=$CPUID
+            params:
+              $CARD_NUMBER: 9
+              $CARD_TYPE: SFC
+              $CPUID: 0
+      availability_zone: {get_param: availability_zone_0}
+      scheduler_hints:
+        group: {get_resource: sf_vpc-servergroup}
+
+  ### SF10 ######
+  # Create port for DI-Internal Network
+  sf_int_di2_9_port:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: cgwy_int_di2_net_name}
+# Create port for Transport Interface in SAEGW Context
+  SF10_GN_10_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs:
+        - get_param: gn_net_fqdn
+#      service_health_check_refs: 
+#        - { get_resource: SF10_GN_10_RSHC }
+      virtual_machine_interface_allowed_address_pairs:
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: [bgpaas_ip_address,0] }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth }
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: sf_gn_rii_v6 }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth_v6 }
+
+  SF10_GN_10_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF10_GN_10_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: gn_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF10_GN_10_RVMI
+      instance_ip_address: { get_param: [sf_gn_ips, 7] }
+
+  SF10_GN_10_v6_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF10_GN_10_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: gn_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF10_GN_10_RVMI
+      instance_ip_address: { get_param: [sf_gn_v6_ips, 7] }
+      instance_ip_family: { get_param: instance_ip_family_v6 }
+
+  SF10_GN_10_RSHC:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: SF10_GN_10_RSHC
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: sf_shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: sf_shc_monitor_type }
+        service_health_check_properties_delay: { get_param: sf_shc_delay }
+        service_health_check_properties_timeout: { get_param: sf_shc_timeout }
+        service_health_check_properties_max_retries: { get_param: sf_shc_max_retries }
+        service_health_check_properties_url_path: { get_param: sf_shc_url_path }
+
+  # Create port for Transport interface(SGi-data) in SGi Context
+  SF10_SGI_11_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs:
+        - get_param: sgi_net_fqdn
+#      service_health_check_refs: 
+#        - { get_resource: SF10_SGI_11_RSHC }
+      virtual_machine_interface_allowed_address_pairs:
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: [bgpaas_ip_address,1] }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth }
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: sf_sgi_rii_v6 }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth_v6 }
+
+  SF10_SGI_11_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF10_SGI_11_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: sgi_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF10_SGI_11_RVMI
+      instance_ip_address: { get_param: [sf_sgi_prot_ips, 7] }
+
+  SF10_SGI_11_v6_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF10_SGI_11_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: sgi_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF10_SGI_11_RVMI
+      instance_ip_address: { get_param: [sf_sgi_prot_v6_ips, 7] }
+      instance_ip_family: { get_param: instance_ip_family_v6 }
+
+  SF10_SGI_11_RSHC:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: SF10_SGI_11_RSHC
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: sf_shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: sf_shc_monitor_type }
+        service_health_check_properties_delay: { get_param: sf_shc_delay }
+        service_health_check_properties_timeout: { get_param: sf_shc_timeout }
+        service_health_check_properties_max_retries: { get_param: sf_shc_max_retries }
+        service_health_check_properties_url_path: { get_param: sf_shc_url_path }
+
+  # Create port for Transport interface(SGi-ims) in SGi Context
+  SF10_IMS_12_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs:
+        - get_param: ims_net_fqdn
+#      service_health_check_refs: 
+#        - { get_resource: SF10_IMS_12_RSHC }
+      virtual_machine_interface_allowed_address_pairs:
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: [bgpaas_ip_address,2] }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth }
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: sf_ims_rii_v6 }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth_v6 }
+
+  SF10_IMS_12_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF10_IMS_12_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: ims_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF10_IMS_12_RVMI
+      instance_ip_address: { get_param: [sf_sgi_ims_ips, 7] }
+
+  SF10_IMS_12_v6_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF10_IMS_12_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: ims_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF10_IMS_12_RVMI
+      instance_ip_address: { get_param: [sf_sgi_ims_v6_ips, 7] }
+      instance_ip_family: { get_param: instance_ip_family_v6 }
+
+  SF10_IMS_12_RSHC:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: SF10_IMS_12_RSHC
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: sf_shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: sf_shc_monitor_type }
+        service_health_check_properties_delay: { get_param: sf_shc_delay }
+        service_health_check_properties_timeout: { get_param: sf_shc_timeout }
+        service_health_check_properties_max_retries: { get_param: sf_shc_max_retries }
+        service_health_check_properties_url_path: { get_param: sf_shc_url_path }
+
+  # Create port for Transport Interface in SUPPORT Context
+  SF10_COR_13_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs:
+        - get_param: cor_net_fqdn
+#      service_health_check_refs: 
+#        - { get_resource: SF10_COR_13_RSHC }
+      virtual_machine_interface_allowed_address_pairs:
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: [bgpaas_ip_address,3] }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth }
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: sf_cor_rii_v6 }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth_v6 }
+
+  SF10_COR_13_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF10_COR_13_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: cor_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF10_COR_13_RVMI
+      instance_ip_address: { get_param: [sf_cor_ips, 7] }
+
+  SF10_COR_13_v6_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF10_COR_13_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: cor_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF10_COR_13_RVMI
+      instance_ip_address: { get_param: [sf_cor_v6_ips, 7] }
+      instance_ip_family: { get_param: instance_ip_family_v6 }
+
+  SF10_COR_13_RSHC:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: SF10_COR_13_RSHC
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: sf_shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: sf_shc_monitor_type }
+        service_health_check_properties_delay: { get_param: sf_shc_delay }
+        service_health_check_properties_timeout: { get_param: sf_shc_timeout }
+        service_health_check_properties_max_retries: { get_param: sf_shc_max_retries }
+        service_health_check_properties_url_path: { get_param: sf_shc_url_path }
+
+  # Create port for Transport interface in LI Context
+  SF10_OAM_CALEA_14_PORT:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_calea_net_name}
+      fixed_ips: [{"ip_address": {get_param: [sf_oam_calea_ips, 7]}}]
+  # Create port for Transport interface in SRP Context
+  SF10_INT_ICSR_15_PORT:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: int_icsr_net_name}
+      fixed_ips: [{"ip_address": {get_param: [sf_int_icsr_ips, 7]}}]
+
+  # Create VPC SF 10 Instance
+  sf_server_9:
+    type: OS::Nova::Server
+    depends_on: [ SF10_GN_10_RII, SF10_GN_10_v6_RII, SF10_SGI_11_RII, SF10_SGI_11_v6_RII, SF10_IMS_12_RII, SF10_IMS_12_v6_RII, SF10_COR_13_RII, SF10_COR_13_v6_RII ]
+    properties:
+      metadata:
+          vnf_id: { get_param: vnf_id }
+          vnf_name: { get_param: vnf_name }
+          vf_module_id: { get_param: vf_module_id }
+
+#      name:
+#        str_replace:
+#          template: Z${CZ_ID}CGWY${VF_ID}${VM_TYPE}${VM_NUM}
+#          params:
+#            ${CZ_ID}: {get_param: czid}
+#            ${VF_ID}: {get_param: vf_inst_number}
+#            ${VM_TYPE}: DSF
+#            ${VM_NUM}: "010"
+      name: {get_param: [cgwy_names, 9]}
+      config_drive: True
+      image: {get_param: sf_image_name}
+      flavor: {get_param: sf_flavor_name}
+      networks:
+        - port: {get_resource: sf_int_di2_9_port}
+        - port: {get_resource: SF10_GN_10_RVMI}
+        - port: {get_resource: SF10_SGI_11_RVMI}
+        - port: {get_resource: SF10_IMS_12_RVMI}
+        - port: {get_resource: SF10_COR_13_RVMI}
+        - port: {get_resource: SF10_OAM_CALEA_14_PORT}
+        - port: {get_resource: SF10_INT_ICSR_15_PORT}
+      personality:
+        "staros_param.cfg":
+          str_replace:
+            template: |
+              CARDSLOT=$CARD_NUMBER
+              CARDTYPE=$CARD_TYPE
+              CPUID=$CPUID
+            params:
+              $CARD_NUMBER: 10
+              $CARD_TYPE: SFC
+              $CPUID: 0
+      availability_zone: {get_param: availability_zone_0}
+      scheduler_hints:
+        group: {get_resource: sf_vpc-servergroup}
+
+  ### SF11 ######
+  # Create port for DI-Internal Network
+  sf_int_di2_10_port:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: cgwy_int_di2_net_name}
+# Create port for Transport Interface in SAEGW Context
+  SF11_GN_10_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs:
+        - get_param: gn_net_fqdn
+#      service_health_check_refs: 
+#        - { get_resource: SF11_GN_10_RSHC }
+      virtual_machine_interface_allowed_address_pairs:
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: [bgpaas_ip_address,0] }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth }
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: sf_gn_rii_v6 }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth_v6 }
+
+  SF11_GN_10_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF11_GN_10_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: gn_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF11_GN_10_RVMI
+      instance_ip_address: { get_param: [sf_gn_ips, 8] }
+
+  SF11_GN_10_v6_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF11_GN_10_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: gn_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF11_GN_10_RVMI
+      instance_ip_address: { get_param: [sf_gn_v6_ips, 8] }
+      instance_ip_family: { get_param: instance_ip_family_v6 }
+
+  SF11_GN_10_RSHC:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: SF11_GN_10_RSHC
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: sf_shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: sf_shc_monitor_type }
+        service_health_check_properties_delay: { get_param: sf_shc_delay }
+        service_health_check_properties_timeout: { get_param: sf_shc_timeout }
+        service_health_check_properties_max_retries: { get_param: sf_shc_max_retries }
+        service_health_check_properties_url_path: { get_param: sf_shc_url_path }
+
+  # Create port for Transport interface(SGi-data) in SGi Context
+  SF11_SGI_11_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs:
+        - get_param: sgi_net_fqdn
+#      service_health_check_refs: 
+#        - { get_resource: SF11_SGI_11_RSHC }
+      virtual_machine_interface_allowed_address_pairs:
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: [bgpaas_ip_address,1] }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth }
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: sf_sgi_rii_v6 }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth_v6 }
+
+  SF11_SGI_11_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF11_SGI_11_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: sgi_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF11_SGI_11_RVMI
+      instance_ip_address: { get_param: [sf_sgi_prot_ips, 8] }
+
+  SF11_SGI_11_v6_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF11_SGI_11_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: sgi_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF11_SGI_11_RVMI
+      instance_ip_address: { get_param: [sf_sgi_prot_v6_ips, 8] }
+      instance_ip_family: { get_param: instance_ip_family_v6 }
+
+  SF11_SGI_11_RSHC:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: SF11_SGI_11_RSHC
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: sf_shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: sf_shc_monitor_type }
+        service_health_check_properties_delay: { get_param: sf_shc_delay }
+        service_health_check_properties_timeout: { get_param: sf_shc_timeout }
+        service_health_check_properties_max_retries: { get_param: sf_shc_max_retries }
+        service_health_check_properties_url_path: { get_param: sf_shc_url_path }
+
+  # Create port for Transport interface(SGi-ims) in SGi Context
+  SF11_IMS_12_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs:
+        - get_param: ims_net_fqdn
+#      service_health_check_refs: 
+#        - { get_resource: SF11_IMS_12_RSHC }
+      virtual_machine_interface_allowed_address_pairs:
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: [bgpaas_ip_address,2] }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth }
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: sf_ims_rii_v6 }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth_v6 }
+
+  SF11_IMS_12_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF11_IMS_12_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: ims_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF11_IMS_12_RVMI
+      instance_ip_address: { get_param: [sf_sgi_ims_ips, 8] }
+
+  SF11_IMS_12_v6_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF11_IMS_12_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: ims_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF11_IMS_12_RVMI
+      instance_ip_address: { get_param: [sf_sgi_ims_v6_ips, 8] }
+      instance_ip_family: { get_param: instance_ip_family_v6 }
+
+  SF11_IMS_12_RSHC:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: SF11_IMS_12_RSHC
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: sf_shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: sf_shc_monitor_type }
+        service_health_check_properties_delay: { get_param: sf_shc_delay }
+        service_health_check_properties_timeout: { get_param: sf_shc_timeout }
+        service_health_check_properties_max_retries: { get_param: sf_shc_max_retries }
+        service_health_check_properties_url_path: { get_param: sf_shc_url_path }
+
+  # Create port for Transport Interface in SUPPORT Context
+  SF11_COR_13_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs:
+        - get_param: cor_net_fqdn
+#      service_health_check_refs: 
+#        - { get_resource: SF11_COR_13_RSHC }
+      virtual_machine_interface_allowed_address_pairs:
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: [bgpaas_ip_address,3] }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth }
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: sf_cor_rii_v6 }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth_v6 }
+
+  SF11_COR_13_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF11_COR_13_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: cor_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF11_COR_13_RVMI
+      instance_ip_address: { get_param: [sf_cor_ips, 8] }
+
+  SF11_COR_13_v6_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF11_COR_13_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: cor_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF11_COR_13_RVMI
+      instance_ip_address: { get_param: [sf_cor_v6_ips, 8] }
+      instance_ip_family: { get_param: instance_ip_family_v6 }
+
+  SF11_COR_13_RSHC:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: SF11_COR_13_RSHC
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: sf_shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: sf_shc_monitor_type }
+        service_health_check_properties_delay: { get_param: sf_shc_delay }
+        service_health_check_properties_timeout: { get_param: sf_shc_timeout }
+        service_health_check_properties_max_retries: { get_param: sf_shc_max_retries }
+        service_health_check_properties_url_path: { get_param: sf_shc_url_path }
+
+  # Create port for Transport interface in LI Context
+  SF11_OAM_CALEA_14_PORT:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_calea_net_name}
+      fixed_ips: [{"ip_address": {get_param: [sf_oam_calea_ips, 8]}}]
+  # Create port for Transport interface in SRP Context
+  SF11_INT_ICSR_15_PORT:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: int_icsr_net_name}
+      fixed_ips: [{"ip_address": {get_param: [sf_int_icsr_ips, 8]}}]
+
+  # Create VPC SF 11 Instance
+  sf_server_10:
+    type: OS::Nova::Server
+    depends_on: [ SF11_GN_10_RII, SF11_GN_10_v6_RII, SF11_SGI_11_RII, SF11_SGI_11_v6_RII, SF11_IMS_12_RII, SF11_IMS_12_v6_RII, SF11_COR_13_RII, SF11_COR_13_v6_RII ]
+    properties:
+      metadata:
+          vnf_id: { get_param: vnf_id }
+          vnf_name: { get_param: vnf_name }
+          vf_module_id: { get_param: vf_module_id }
+
+#      name:
+#        str_replace:
+#          template: Z${CZ_ID}CGWY${VF_ID}${VM_TYPE}${VM_NUM}
+#          params:
+#            ${CZ_ID}: {get_param: czid}
+#            ${VF_ID}: {get_param: vf_inst_number}
+#            ${VM_TYPE}: DSF
+#            ${VM_NUM}: "011"
+      name: {get_param: [cgwy_names, 10]}
+      config_drive: True
+      image: {get_param: sf_image_name}
+      flavor: {get_param: sf_flavor_name}
+      networks:
+        - port: {get_resource: sf_int_di2_10_port}
+        - port: {get_resource: SF11_GN_10_RVMI}
+        - port: {get_resource: SF11_SGI_11_RVMI}
+        - port: {get_resource: SF11_IMS_12_RVMI}
+        - port: {get_resource: SF11_COR_13_RVMI}
+        - port: {get_resource: SF11_OAM_CALEA_14_PORT}
+        - port: {get_resource: SF11_INT_ICSR_15_PORT}
+      personality:
+        "staros_param.cfg":
+          str_replace:
+            template: |
+              CARDSLOT=$CARD_NUMBER
+              CARDTYPE=$CARD_TYPE
+              CPUID=$CPUID
+            params:
+              $CARD_NUMBER: 11
+              $CARD_TYPE: SFC
+              $CPUID: 0
+      availability_zone: {get_param: availability_zone_0}
+      scheduler_hints:
+        group: {get_resource: sf_vpc-servergroup}
+
+
+  ### SF12 ######
+  # Create port for DI-Internal Network
+  sf_int_di2_11_port:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: cgwy_int_di2_net_name}
+# Create port for Transport Interface in SAEGW Context
+  SF12_GN_10_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs:
+        - get_param: gn_net_fqdn
+#      service_health_check_refs: 
+#        - { get_resource: SF12_GN_10_RSHC }
+      virtual_machine_interface_allowed_address_pairs:
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: [bgpaas_ip_address,0] }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth }
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: sf_gn_rii_v6 }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth_v6 }
+
+  SF12_GN_10_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF12_GN_10_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: gn_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF12_GN_10_RVMI
+      instance_ip_address: { get_param: [sf_gn_ips, 9] }
+
+  SF12_GN_10_v6_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF12_GN_10_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: gn_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF12_GN_10_RVMI
+      instance_ip_address: { get_param: [sf_gn_v6_ips, 9] }
+      instance_ip_family: { get_param: instance_ip_family_v6 }
+
+  SF12_GN_10_RSHC:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: SF12_GN_10_RSHC
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: sf_shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: sf_shc_monitor_type }
+        service_health_check_properties_delay: { get_param: sf_shc_delay }
+        service_health_check_properties_timeout: { get_param: sf_shc_timeout }
+        service_health_check_properties_max_retries: { get_param: sf_shc_max_retries }
+        service_health_check_properties_url_path: { get_param: sf_shc_url_path }
+
+  # Create port for Transport interface(SGi-data) in SGi Context
+  SF12_SGI_11_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs:
+        - get_param: sgi_net_fqdn
+#      service_health_check_refs: 
+#        - { get_resource: SF12_SGI_11_RSHC }
+      virtual_machine_interface_allowed_address_pairs:
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: [bgpaas_ip_address,1] }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth }
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: sf_sgi_rii_v6 }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth_v6 }
+
+  SF12_SGI_11_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF12_SGI_11_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: sgi_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF12_SGI_11_RVMI
+      instance_ip_address: { get_param: [sf_sgi_prot_ips, 9] }
+
+  SF12_SGI_11_v6_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF12_SGI_11_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: sgi_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF12_SGI_11_RVMI
+      instance_ip_address: { get_param: [sf_sgi_prot_v6_ips, 9] }
+      instance_ip_family: { get_param: instance_ip_family_v6 }
+
+  SF12_SGI_11_RSHC:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: SF12_SGI_11_RSHC
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: sf_shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: sf_shc_monitor_type }
+        service_health_check_properties_delay: { get_param: sf_shc_delay }
+        service_health_check_properties_timeout: { get_param: sf_shc_timeout }
+        service_health_check_properties_max_retries: { get_param: sf_shc_max_retries }
+        service_health_check_properties_url_path: { get_param: sf_shc_url_path }
+
+  # Create port for Transport interface(SGi-ims) in SGi Context
+  SF12_IMS_12_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs:
+        - get_param: ims_net_fqdn
+#      service_health_check_refs: 
+#        - { get_resource: SF12_IMS_12_RSHC }
+      virtual_machine_interface_allowed_address_pairs:
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: [bgpaas_ip_address,2] }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth }
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: sf_ims_rii_v6 }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth_v6 }
+
+  SF12_IMS_12_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF12_IMS_12_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: ims_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF12_IMS_12_RVMI
+      instance_ip_address: { get_param: [sf_sgi_ims_ips, 9] }
+
+  SF12_IMS_12_v6_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF12_IMS_12_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: ims_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF12_IMS_12_RVMI
+      instance_ip_address: { get_param: [sf_sgi_ims_v6_ips, 9] }
+      instance_ip_family: { get_param: instance_ip_family_v6 }
+
+  SF12_IMS_12_RSHC:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: SF12_IMS_12_RSHC
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: sf_shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: sf_shc_monitor_type }
+        service_health_check_properties_delay: { get_param: sf_shc_delay }
+        service_health_check_properties_timeout: { get_param: sf_shc_timeout }
+        service_health_check_properties_max_retries: { get_param: sf_shc_max_retries }
+        service_health_check_properties_url_path: { get_param: sf_shc_url_path }
+
+  # Create port for Transport Interface in SUPPORT Context
+  SF12_COR_13_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs:
+        - get_param: cor_net_fqdn
+#      service_health_check_refs: 
+#        - { get_resource: SF12_COR_13_RSHC }
+      virtual_machine_interface_allowed_address_pairs:
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: [bgpaas_ip_address,3] }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth }
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: vmi_allowed_address_pair_address_mode }
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: sf_cor_rii_v6 }
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: vmi_allowed_address_pair_prefix_lenth_v6 }
+
+  SF12_COR_13_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF12_COR_13_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: cor_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF12_COR_13_RVMI
+      instance_ip_address: { get_param: [sf_cor_ips, 9] }
+
+  SF12_COR_13_v6_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ SF12_COR_13_RVMI ]
+    properties:
+      virtual_network_refs:
+        - get_param: cor_net_fqdn
+      virtual_machine_interface_refs:
+        - get_resource: SF12_COR_13_RVMI
+      instance_ip_address: { get_param: [sf_cor_v6_ips, 9] }
+      instance_ip_family: { get_param: instance_ip_family_v6 }
+
+  SF12_COR_13_RSHC:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: SF12_COR_13_RSHC
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: sf_shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: sf_shc_monitor_type }
+        service_health_check_properties_delay: { get_param: sf_shc_delay }
+        service_health_check_properties_timeout: { get_param: sf_shc_timeout }
+        service_health_check_properties_max_retries: { get_param: sf_shc_max_retries }
+        service_health_check_properties_url_path: { get_param: sf_shc_url_path }
+
+  # Create port for Transport interface in LI Context
+  SF12_OAM_CALEA_14_PORT:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_calea_net_name}
+      fixed_ips: [{"ip_address": {get_param: [sf_oam_calea_ips, 9]}}]
+  # Create port for Transport interface in SRP Context
+  SF12_INT_ICSR_15_PORT:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: int_icsr_net_name}
+      fixed_ips: [{"ip_address": {get_param: [sf_int_icsr_ips, 9]}}]
+
+  # Create VPC SF 12 Instance
+  sf_server_11:
+    type: OS::Nova::Server
+    depends_on: [ SF12_GN_10_RII, SF12_GN_10_v6_RII, SF12_SGI_11_RII, SF12_SGI_11_v6_RII, SF12_IMS_12_RII, SF12_IMS_12_v6_RII, SF12_COR_13_RII, SF12_COR_13_v6_RII ]
+    properties:
+      metadata:
+          vnf_id: { get_param: vnf_id }
+          vnf_name: { get_param: vnf_name }
+          vf_module_id: { get_param: vf_module_id }
+
+#      name:
+#        str_replace:
+#          template: Z${CZ_ID}CGWY${VF_ID}${VM_TYPE}${VM_NUM}
+#          params:
+#            ${CZ_ID}: {get_param: czid}
+#            ${VF_ID}: {get_param: vf_inst_number}
+#            ${VM_TYPE}: DSF
+#            ${VM_NUM}: "012"
+      name: {get_param: [cgwy_names, 11]}
+      config_drive: True
+      image: {get_param: sf_image_name}
+      flavor: {get_param: sf_flavor_name}
+      networks:
+        - port: {get_resource: sf_int_di2_11_port}
+        - port: {get_resource: SF12_GN_10_RVMI}
+        - port: {get_resource: SF12_SGI_11_RVMI}
+        - port: {get_resource: SF12_IMS_12_RVMI}
+        - port: {get_resource: SF12_COR_13_RVMI}
+        - port: {get_resource: SF12_OAM_CALEA_14_PORT}
+        - port: {get_resource: SF12_INT_ICSR_15_PORT}
+
+      personality:
+        "staros_param.cfg":
+          str_replace:
+            template: |
+              CARDSLOT=$CARD_NUMBER
+              CARDTYPE=$CARD_TYPE
+              CPUID=$CPUID
+            params:
+              $CARD_NUMBER: 12
+              $CARD_TYPE: SFC
+              $CPUID: 0
+      availability_zone: {get_param: availability_zone_0}
+      scheduler_hints:
+        group: {get_resource: sf_vpc-servergroup}
+
+  BgpAsAService_GN:
+    type: OS::ContrailV2::BgpAsAService
+    depends_on:
+      - SF3_GN_10_RVMI
+      - SF4_GN_10_RVMI
+      - SF5_GN_10_RVMI
+      - SF6_GN_10_RVMI  
+      - SF7_GN_10_RVMI
+      - SF8_GN_10_RVMI
+      - SF9_GN_10_RVMI
+      - SF10_GN_10_RVMI
+      - SF11_GN_10_RVMI
+      - SF12_GN_10_RVMI
+
+    properties:
+      name: { get_param: [bgpaas_name, 0] }
+      autonomous_system: { get_param: bgpaas_autonomous_system }
+      virtual_machine_interface_refs:
+        - { get_resource: SF3_GN_10_RVMI }
+        - { get_resource: SF4_GN_10_RVMI }
+        - { get_resource: SF5_GN_10_RVMI }
+        - { get_resource: SF6_GN_10_RVMI }
+        - { get_resource: SF7_GN_10_RVMI }
+        - { get_resource: SF8_GN_10_RVMI }
+        - { get_resource: SF9_GN_10_RVMI }
+        - { get_resource: SF10_GN_10_RVMI }
+        - { get_resource: SF11_GN_10_RVMI }
+        - { get_resource: SF12_GN_10_RVMI }
+
+      bgpaas_ip_address: { get_param: [bgpaas_ip_address,0] }
+      bgpaas_session_attributes:
+        bgpaas_session_attributes_passive: { get_param: bgpaas_session_attributes_passive }
+        bgpaas_session_attributes_hold_time: { get_param: bgpaas_session_attributes_hold_time }
+        bgpaas_session_attributes_admin_down: { get_param: bgpaas_session_attributes_admin_down }
+        bgpaas_session_attributes_address_families:
+          bgpaas_session_attributes_address_families_family:
+            - { get_param: bgpaas_session_attributes_address_families_family_4 }
+            - { get_param: bgpaas_session_attributes_address_families_family_6 }
+        bgpaas_session_attributes_family_attributes:
+          - bgpaas_session_attributes_family_attributes_address_family: { get_param: bgpaas_session_attributes_family_attributes_af_4 }
+            bgpaas_session_attributes_family_attributes_loop_count: { get_param: bgpaas_session_attributes_family_attributes_loop_count_4 }
+            bgpaas_session_attributes_family_attributes_prefix_limit:
+              bgpaas_session_attributes_family_attributes_prefix_limit_maximum: { get_param: bgpaas_session_attributes_family_attributes_prefix_limit_maximum_4 }
+          - bgpaas_session_attributes_family_attributes_address_family: { get_param: bgpaas_session_attributes_family_attributes_af_6 }
+            bgpaas_session_attributes_family_attributes_loop_count: { get_param: bgpaas_session_attributes_family_attributes_loop_count_6 }
+            bgpaas_session_attributes_family_attributes_prefix_limit:
+              bgpaas_session_attributes_family_attributes_prefix_limit_maximum: { get_param: bgpaas_session_attributes_family_attributes_prefix_limit_maximum_6 }
+
+  BgpAsAService_SGI:
+    type: OS::ContrailV2::BgpAsAService
+    depends_on:
+      - SF3_SGI_11_RVMI
+      - SF4_SGI_11_RVMI
+      - SF5_SGI_11_RVMI
+      - SF6_SGI_11_RVMI 
+      - SF7_SGI_11_RVMI
+      - SF8_SGI_11_RVMI
+      - SF9_SGI_11_RVMI
+      - SF10_SGI_11_RVMI
+      - SF11_SGI_11_RVMI
+      - SF12_SGI_11_RVMI
+ 
+    properties:
+      name: { get_param: [bgpaas_name, 1] }
+      autonomous_system: { get_param: bgpaas_autonomous_system }
+      virtual_machine_interface_refs:
+        - { get_resource: SF3_SGI_11_RVMI }
+        - { get_resource: SF4_SGI_11_RVMI }
+        - { get_resource: SF5_SGI_11_RVMI }
+        - { get_resource: SF6_SGI_11_RVMI }
+        - { get_resource: SF7_SGI_11_RVMI }
+        - { get_resource: SF8_SGI_11_RVMI }
+        - { get_resource: SF9_SGI_11_RVMI }
+        - { get_resource: SF10_SGI_11_RVMI }
+        - { get_resource: SF11_SGI_11_RVMI }
+        - { get_resource: SF12_SGI_11_RVMI }
+
+      bgpaas_ip_address: { get_param: [bgpaas_ip_address,1] }
+      bgpaas_session_attributes:
+        bgpaas_session_attributes_passive: { get_param: bgpaas_session_attributes_passive }
+        bgpaas_session_attributes_hold_time: { get_param: bgpaas_session_attributes_hold_time }
+        bgpaas_session_attributes_admin_down: { get_param: bgpaas_session_attributes_admin_down }
+        bgpaas_session_attributes_address_families:
+          bgpaas_session_attributes_address_families_family:
+            - { get_param: bgpaas_session_attributes_address_families_family_4 }
+            - { get_param: bgpaas_session_attributes_address_families_family_6 }
+        bgpaas_session_attributes_family_attributes:
+          - bgpaas_session_attributes_family_attributes_address_family: { get_param: bgpaas_session_attributes_family_attributes_af_4 }
+            bgpaas_session_attributes_family_attributes_loop_count: { get_param: bgpaas_session_attributes_family_attributes_loop_count_4 }
+            bgpaas_session_attributes_family_attributes_prefix_limit:
+              bgpaas_session_attributes_family_attributes_prefix_limit_maximum: { get_param: bgpaas_session_attributes_family_attributes_prefix_limit_maximum_4 }
+          - bgpaas_session_attributes_family_attributes_address_family: { get_param: bgpaas_session_attributes_family_attributes_af_6 }
+            bgpaas_session_attributes_family_attributes_loop_count: { get_param: bgpaas_session_attributes_family_attributes_loop_count_6 }
+            bgpaas_session_attributes_family_attributes_prefix_limit:
+              bgpaas_session_attributes_family_attributes_prefix_limit_maximum: { get_param: bgpaas_session_attributes_family_attributes_prefix_limit_maximum_6 }
+
+  BgpAsAService_IMS:
+    type: OS::ContrailV2::BgpAsAService
+    depends_on:
+      - SF3_IMS_12_RVMI
+      - SF4_IMS_12_RVMI
+      - SF5_IMS_12_RVMI
+      - SF6_IMS_12_RVMI 
+      - SF7_IMS_12_RVMI
+      - SF8_IMS_12_RVMI
+      - SF9_IMS_12_RVMI
+      - SF10_IMS_12_RVMI
+      - SF11_IMS_12_RVMI
+      - SF12_IMS_12_RVMI
+ 
+    properties:
+      name: { get_param: [bgpaas_name, 2] }
+      autonomous_system: { get_param: bgpaas_autonomous_system }
+      virtual_machine_interface_refs:
+        - { get_resource: SF3_IMS_12_RVMI }
+        - { get_resource: SF4_IMS_12_RVMI }
+        - { get_resource: SF5_IMS_12_RVMI }
+        - { get_resource: SF6_IMS_12_RVMI }
+        - { get_resource: SF7_IMS_12_RVMI }
+        - { get_resource: SF8_IMS_12_RVMI }
+        - { get_resource: SF9_IMS_12_RVMI }
+        - { get_resource: SF10_IMS_12_RVMI }
+        - { get_resource: SF11_IMS_12_RVMI }
+        - { get_resource: SF12_IMS_12_RVMI }
+
+      bgpaas_ip_address: { get_param: [bgpaas_ip_address,2] }
+      bgpaas_session_attributes:
+        bgpaas_session_attributes_passive: { get_param: bgpaas_session_attributes_passive }
+        bgpaas_session_attributes_hold_time: { get_param: bgpaas_session_attributes_hold_time }
+        bgpaas_session_attributes_admin_down: { get_param: bgpaas_session_attributes_admin_down }
+        bgpaas_session_attributes_address_families:
+          bgpaas_session_attributes_address_families_family:
+            - { get_param: bgpaas_session_attributes_address_families_family_4 }
+            - { get_param: bgpaas_session_attributes_address_families_family_6 }
+        bgpaas_session_attributes_family_attributes:
+          - bgpaas_session_attributes_family_attributes_address_family: { get_param: bgpaas_session_attributes_family_attributes_af_4 }
+            bgpaas_session_attributes_family_attributes_loop_count: { get_param: bgpaas_session_attributes_family_attributes_loop_count_4 }
+            bgpaas_session_attributes_family_attributes_prefix_limit:
+              bgpaas_session_attributes_family_attributes_prefix_limit_maximum: { get_param: bgpaas_session_attributes_family_attributes_prefix_limit_maximum_4 }
+          - bgpaas_session_attributes_family_attributes_address_family: { get_param: bgpaas_session_attributes_family_attributes_af_6 }
+            bgpaas_session_attributes_family_attributes_loop_count: { get_param: bgpaas_session_attributes_family_attributes_loop_count_6 }
+            bgpaas_session_attributes_family_attributes_prefix_limit:
+              bgpaas_session_attributes_family_attributes_prefix_limit_maximum: { get_param: bgpaas_session_attributes_family_attributes_prefix_limit_maximum_6 }
+
+  BgpAsAService_COR:
+    type: OS::ContrailV2::BgpAsAService
+    depends_on:
+      - SF3_COR_13_RVMI
+      - SF4_COR_13_RVMI
+      - SF5_COR_13_RVMI
+      - SF6_COR_13_RVMI
+      - SF7_COR_13_RVMI
+      - SF8_COR_13_RVMI
+      - SF9_COR_13_RVMI
+      - SF10_COR_13_RVMI
+      - SF11_COR_13_RVMI
+      - SF12_COR_13_RVMI
+
+    properties:
+      name: { get_param: [bgpaas_name, 3] }
+      autonomous_system: { get_param: bgpaas_autonomous_system }
+      virtual_machine_interface_refs:
+        - { get_resource: SF3_COR_13_RVMI }
+        - { get_resource: SF4_COR_13_RVMI }
+        - { get_resource: SF5_COR_13_RVMI }
+        - { get_resource: SF6_COR_13_RVMI }
+        - { get_resource: SF7_COR_13_RVMI }
+        - { get_resource: SF8_COR_13_RVMI }
+        - { get_resource: SF9_COR_13_RVMI }
+        - { get_resource: SF10_COR_13_RVMI }
+        - { get_resource: SF11_COR_13_RVMI }
+        - { get_resource: SF12_COR_13_RVMI }
+
+      bgpaas_ip_address: { get_param: [bgpaas_ip_address,3] }
+      bgpaas_session_attributes:
+        bgpaas_session_attributes_passive: { get_param: bgpaas_session_attributes_passive }
+        bgpaas_session_attributes_hold_time: { get_param: bgpaas_session_attributes_hold_time }
+        bgpaas_session_attributes_admin_down: { get_param: bgpaas_session_attributes_admin_down }
+        bgpaas_session_attributes_address_families:
+          bgpaas_session_attributes_address_families_family:
+            - { get_param: bgpaas_session_attributes_address_families_family_4 }
+            - { get_param: bgpaas_session_attributes_address_families_family_6 }
+        bgpaas_session_attributes_family_attributes:
+          - bgpaas_session_attributes_family_attributes_address_family: { get_param: bgpaas_session_attributes_family_attributes_af_4 }
+            bgpaas_session_attributes_family_attributes_loop_count: { get_param: bgpaas_session_attributes_family_attributes_loop_count_4 }
+            bgpaas_session_attributes_family_attributes_prefix_limit:
+              bgpaas_session_attributes_family_attributes_prefix_limit_maximum: { get_param: bgpaas_session_attributes_family_attributes_prefix_limit_maximum_4 }
+          - bgpaas_session_attributes_family_attributes_address_family: { get_param: bgpaas_session_attributes_family_attributes_af_6 }
+            bgpaas_session_attributes_family_attributes_loop_count: { get_param: bgpaas_session_attributes_family_attributes_loop_count_6 }
+            bgpaas_session_attributes_family_attributes_prefix_limit:
+              bgpaas_session_attributes_family_attributes_prefix_limit_maximum: { get_param: bgpaas_session_attributes_family_attributes_prefix_limit_maximum_6 }
+

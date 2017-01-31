@@ -1,0 +1,166 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.openecomp</groupId>
+        <artifactId>mso</artifactId>
+        <version>0.0.4-SNAPSHOT</version>
+    </parent>
+
+    <groupId>org.openecomp.mso</groupId>
+    <artifactId>common</artifactId>
+    <name>MSO Common classes</name>
+    <description>MSO Common classes:- Logger</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.att.eelf</groupId>
+            <artifactId>eelf-core</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-jaxrs</artifactId>
+            <version>3.0.19.Final</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpclient</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.spec.javax.ejb</groupId>
+            <artifactId>jboss-ejb-api_3.2_spec</artifactId>
+            <version>1.0.0.Final</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.ejb3</groupId>
+            <artifactId>jboss-ejb3-ext-api</artifactId>
+            <version>2.2.0.Final</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+            <version>1.9.13</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.10.19</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.java</include>
+                </includes>
+            </resource>
+        </resources>
+	<plugins>
+		<plugin>
+			<groupId>com.att.eelf</groupId>
+			<artifactId>eelf-maven-plugin</artifactId>
+			<version>0.0.1</version>
+			<executions>
+				<execution>
+					<id>validate</id>
+					<phase>install</phase>
+					<goals>
+						<goal>ValidateApplicationMsgs</goal>
+					</goals>
+					<configuration>
+						<resources>
+							<resource>
+								<messageClass>org.openecomp.mso.logger.MessageEnum</messageClass>
+							</resource>
+						</resources>
+					</configuration>
+				</execution>
+				<execution>
+					<id>wiki</id>
+					<phase>install</phase>
+					<goals>
+						<goal>WikiMsgGenerator</goal>
+					</goals>
+					<configuration>
+						<outputDirectory>target/messages</outputDirectory>
+						<outputFile>messages.html</outputFile>
+						<wiki>
+							<title>Messages and Codes</title>
+							<space>APP</space>
+							<page>Messages and Codes</page>
+							<principal>test</principal>
+							<credentials>test</credentials>
+							<url>http://wiki.web.att.com</url>
+						</wiki>
+						<resources>
+							<resource>
+								<messageClass>org.openecomp.mso.logger.MessageEnum</messageClass>
+								<header><![CDATA[<p>   <ac:macro ac:name="toc"/> </p>
+<!--                 <p> -->
+<!--         <ac:macro ac:name="anchor"> <ac:default-parameter>Application Messages</ac:default-parameter>  </ac:macro> </p> <h2>Application Messages</h2>]]></header>
+								-->
+							</resource>
+						</resources>
+					</configuration>
+				</execution>
+			</executions>
+			<dependencies>
+				<dependency>
+					<groupId>org.openecomp.mso</groupId>
+					<artifactId>common</artifactId>
+					<version>${project.version}</version>
+				</dependency>
+			</dependencies>
+
+		</plugin>
+	</plugins>
+    </build>
+</project>

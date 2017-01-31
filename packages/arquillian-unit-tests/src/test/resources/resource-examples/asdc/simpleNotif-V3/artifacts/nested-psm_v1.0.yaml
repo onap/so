@@ -1,0 +1,99 @@
+heat_template_version: 2013-05-23
+
+description: heat template that creates PCRF Session Manager stack
+
+parameters:
+  pcrf_psm_server_name:
+    type: string
+    label: PCRF SM server name
+    description: PCRF SM server name
+  pcrf_psm_image_name:
+    type: string
+    label: image name
+    description: PCRF SM image name
+  pcrf_psm_flavor_name:
+    type: string
+    label: PCRF SM flavor name
+    description: flavor name of PCRF SM instance 
+  availabilityzone_name:
+    type: string
+    label: availabilityzone name
+    description: availabilityzone name
+  pcrf_cps_net_name:
+    type: string
+    label: CPS network name
+    description: CPS network name
+  pcrf_cps_net_ip:
+    type: string
+    label: CPS network ip
+    description: CPS network ip
+  pcrf_cps_net_mask:
+    type: string
+    label: CPS network mask
+    description: CPS network mask
+  pcrf_security_group_name:
+    type: string
+    label: security group name
+    description: the name of security group
+  pcrf_vnf_id:
+    type: string
+    label: PCRF VNF Id
+    description: PCRF VNF Id
+
+resources:
+  network:
+    type: OS::Heat::CloudConfig
+    properties:
+      cloud_config:
+        write_files:
+          - path: /etc/sysconfig/network-scripts/ifcfg-eth0
+            permissions: "0644"
+            content:
+              str_replace:
+                template: { get_file: nimbus-ethernet }
+                params:
+                  $dev: eth0
+                  $ip: { get_param: pcrf_cps_net_ip }
+                  $netmask: { get_param: pcrf_cps_net_mask }
+        runcmd:
+          - ifdown eth0 && ifup eth0
+  script_init:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      group: ungrouped
+      config:
+        str_replace:
+          template: { get_file: cloud-nimbus.sh }
+          params:
+            $vm_name: { get_param: pcrf_psm_server_name }
+  pcrf_server_init:
+    type: OS::Heat::MultipartMime
+    properties:
+      parts:
+      - config: { get_resource: network}
+      - config: { get_resource: script_init}
+
+  pcrf_server_psm:
+    type: OS::Nova::Server
+    properties:
+      config_drive: "True"
+      name: { get_param: pcrf_psm_server_name }
+      image: { get_param: pcrf_psm_image_name }
+      flavor: { get_param: pcrf_psm_flavor_name }
+      availability_zone: { get_param: availabilityzone_name }
+      networks:
+        - port: { get_resource: psm01_port_0}
+      user_data_format: RAW
+      user_data:
+        get_resource: pcrf_server_init
+      metadata:
+        vnf_id: {get_param: pcrf_vnf_id}
+      #scheduler_hints: {group: { get_resource: servergroup_nimbus }}
+  
+  psm01_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: pcrf_cps_net_name }
+      fixed_ips:
+        - ip_address: { get_param: pcrf_cps_net_ip }
+      security_groups: [{ get_param: pcrf_security_group_name }]

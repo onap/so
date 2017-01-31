@@ -1,0 +1,78 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.openecomp.mso</groupId>
+		<artifactId>packages</artifactId>
+		<version>0.0.4-SNAPSHOT</version>
+	</parent>
+
+	<groupId>org.openecomp.mso.packages</groupId>
+	<artifactId>mso-deliveries</artifactId>
+	<packaging>pom</packaging>
+
+	<name>MsoDeliveries</name>
+
+	<description>This project is responsible of the final packages</description>
+	<organization>
+		<name>OPENECOMP - MSO</name>
+		<url>http://www.openecomp.org/</url>
+	</organization>
+
+
+	<build>
+
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.6</version>
+				<executions>
+				
+					<!-- MSO DB PACKS -->
+                    <execution>
+                        <configuration>
+
+                            <descriptors>
+                                <descriptor>src/main/assembly/mso-config/mso-db.xml</descriptor>
+                            </descriptors>
+                            <finalName>mso-config/mso-db-${project.version}</finalName>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <attach>false</attach>
+                        </configuration>
+
+                        <id>db-packs-mso</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+
+                    </execution>
+					<!-- DEVELOPER PACKS -->
+					<execution>
+						<configuration>
+
+							<descriptors>
+								<descriptor>src/main/assembly/war-pack/mso-wars.xml</descriptor>
+							</descriptors>
+							<finalName>war-pack/mso-${project.version}</finalName>
+							<appendAssemblyId>false</appendAssemblyId>
+							<attach>false</attach>
+						</configuration>
+
+						<id>war-pack-mso</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+					
+
+				</executions>
+			</plugin>
+
+		</plugins>
+	</build>
+
+</project>

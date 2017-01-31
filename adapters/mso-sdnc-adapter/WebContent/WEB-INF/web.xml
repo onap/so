@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
+  <display-name>mso-sdnc-adapter</display-name>
+  <welcome-file-list>
+    <welcome-file>check.html</welcome-file>
+  </welcome-file-list>
+  
+  <context-param>
+	<param-name>resteasy.jndi.resources</param-name>
+	<param-value>java:module/MsoPropertiesFactory,java:module/CloudConfigFactory</param-value>
+  </context-param>
+  <context-param>
+  	<param-name>log.configuration</param-name>
+  	<param-value>logback.sdnc.xml</param-value>
+  </context-param>
+  <context-param>
+  	<param-name>mso.configuration</param-name>
+  	<param-value>MSO_PROP_SDNC_ADAPTER=mso.sdnc.properties,MSO_PROP_TOPOLOGY=topology.properties</param-value>
+  </context-param>
+  <context-param>
+  	<param-name>mso.cloud_config.configuration</param-name>
+  	<param-value>cloud_config.json=2</param-value>
+  </context-param>
+  <context-param>
+    <param-name>resteasy.resources</param-name>
+    <param-value>org.openecomp.mso.logger.MsoLoggingServlet,org.openecomp.mso.adapters.sdnc.notify.SDNCNotifyResource,org.openecomp.mso.adapters.sdnc.impl.SDNCAdapterRestImpl,org.openecomp.mso.MsoStatusHandler</param-value>
+  </context-param>
+  <context-param>
+    <param-name>resteasy.servlet.mapping.prefix</param-name>
+    <param-value>/rest</param-value>
+  </context-param>
+  <servlet>
+    <display-name>SDNCAdapter</display-name>
+    <servlet-name>SDNCAdapter</servlet-name>
+    <servlet-class>org.openecomp.mso.adapters.sdnc.impl.SDNCAdapterPortTypeImpl</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>SDNCAdapter</servlet-name>
+    <url-pattern>/SDNCAdapter</url-pattern>
+  </servlet-mapping>
+    <servlet>
+        <servlet-name>Resteasy</servlet-name>
+        <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Resteasy</servlet-name>
+        <url-pattern>/rest/*</url-pattern>
+    </servlet-mapping>
+
+    <filter>
+        <filter-name>LogFilter</filter-name>
+        <filter-class>org.openecomp.mso.logger.LogFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>LogFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <listener>
+        <listener-class>org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap</listener-class>
+    </listener>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>RestRequests</web-resource-name>
+            <description>Rest Ingress Requests</description>
+            <url-pattern>/rest/logging/*</url-pattern>
+            <url-pattern>/rest/properties/*</url-pattern>
+            <url-pattern>/rest/MSORequest</url-pattern>
+            <http-method>POST</http-method>
+            <http-method>GET</http-method>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>MSO-Client</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>SDNCNotification</web-resource-name>
+            <description>Rest Async Notification from SDNC</description>
+            <url-pattern>/rest/SDNCNotify</url-pattern>
+            <http-method>POST</http-method>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>SDNC-Client</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>SoapRequests</web-resource-name>
+            <description>Soap Ingress Requests</description>
+            <url-pattern>/SDNCAdapter</url-pattern>
+            <http-method>POST</http-method>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>BPEL-Client</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>SiteStatus</web-resource-name>
+            <description>SiteStatus APIs</description>
+            <url-pattern>/rest/setStatus/*</url-pattern>
+            <http-method>POST</http-method>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>SiteControl-Client</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <login-config>
+        <auth-method>BASIC</auth-method>
+        <realm-name>ApplicationRealm</realm-name>
+    </login-config>
+    <security-role>
+        <role-name>SDNC-Client</role-name>
+    </security-role>
+    <security-role>
+        <role-name>MSO-Client</role-name>
+    </security-role>
+    <security-role>
+        <role-name>BPEL-Client</role-name>
+    </security-role>
+    <security-role>
+        <role-name>SiteControl-Client</role-name>
+    </security-role>
+</web-app>

@@ -1,0 +1,102 @@
+FROM ecomp/wildfly:1.0
+
+
+### File Author / Maintainer
+MAINTAINER "Ecomp Opensource Team"
+LABEL Description="This image contains Ecomp Opensource MSO " Version="1.0"
+
+ARG http_proxy
+ARG https_proxy
+ARG chef_repo_branch_name
+ARG chef_repo_address
+ARG chef_repo_git_name
+ARG chef_repo_git_username
+ENV BRANCH_NAME=$chef_repo_branch_name
+ENV REPO_USERNAME=$chef_repo_git_username
+ENV REPO_ADDRESS=$chef_repo_address
+ENV CHEF_REPO_NAME=$chef_repo_git_name
+ENV HTTP_PROXY=$http_proxy
+ENV HTTPS_PROXY=$https_proxy
+ENV http_proxy=$HTTP_PROXY
+ENV https_proxy=$HTTPS_PROXY
+
+### Downloading dependencies
+
+USER root
+RUN apt-get install -y curl && curl -LO  https://packages.chef.io/stable/ubuntu/12.04/chefdk_0.17.17-1_amd64.deb && curl -LO http://central.maven.org/maven2/org/mariadb/jdbc/mariadb-java-client/1.5.4/mariadb-java-client-1.5.4.jar && apt-get remove --purge -y curl && apt-get autoremove -y
+
+### Install Chef
+RUN dpkg -i chefdk_0.17.17-1_amd64.deb 
+
+COPY scripts/init-chef.sh /opt/mso/scripts/init-chef.sh
+COPY scripts/start-jboss-server.sh /opt/mso/scripts/start-jboss-server.sh
+
+RUN chown jboss:jboss /opt/mso/scripts/*
+RUN chmod u+rx /opt/mso/scripts/*
+
+RUN mkdir /etc/chef
+RUN chown jboss:jboss /etc/chef
+RUN chmod u+xrw /etc/chef
+
+RUN mkdir -p /etc/mso
+RUN chown -R jboss:jboss /etc/mso
+RUN chmod u+xrw /etc/mso
+
+# Setup shared folder
+RUN mkdir /shared
+RUN chown jboss:jboss /shared
+
+# Setup chef folders
+RUN mkdir /var/berks-cookbooks
+RUN chown jboss:jboss /var/berks-cookbooks
+COPY chef-configs/solo.rb /tmp/git/solo.rb
+RUN chown -R jboss:jboss /tmp/git/
+
+COPY id_rsa /home/jboss/user
+RUN chmod 600 /home/jboss/user
+RUN chown -R jboss:jboss /home/jboss
+
+# Start Chef config
+RUN mkdir -p /var/nodes
+RUN chown jboss:jboss /var/nodes
+
+RUN mkdir -p /home/jboss/.chef/nodes
+RUN mkdir /home/jboss/.ssh
+
+
+RUN apt-get install -y git && sed -i "s@jboss:/bin/false@jboss:/bin/bash@g" /etc/passwd && su jboss -c "/opt/mso/scripts/init-chef.sh" && sed -i "s@jboss:/bin/bash@jboss:/bin/false@g" /etc/passwd && apt-get remove --purge -y git  && apt-get autoremove -y
+RUN rm -rf /home/jboss/.ssh
+RUN rm /home/jboss/user
+RUN echo "" > /shared/mso-docker.json
+RUN mv /var/berks-cookbooks/${CHEF_REPO_NAME}/environments/mso-docker.json /var/berks-cookbooks/${CHEF_REPO_NAME}/environments/mso-docker-init.json
+RUN ln -s /shared/mso-docker.json /var/berks-cookbooks/${CHEF_REPO_NAME}/environments/mso-docker.json
+RUN rm -rf /tmp/git
+
+## Create the log folder for MSO
+RUN mkdir -p /var/log/ecomp/MSO/
+RUN chown jboss:jboss /var/log/ecomp/MSO
+
+### Configure Jboss WildFly
+RUN mkdir -p $JBOSS_HOME/modules/mariadb/main
+RUN cp mariadb-java-client-1.5.4.jar $JBOSS_HOME/modules/mariadb/main
+COPY jboss-configs/modules/mariadb/main/module.xml $JBOSS_HOME/modules/mariadb/main
+COPY jboss-configs/configuration/standalone-full-ha.xml $JBOSS_HOME/standalone/configuration/standalone-full-ha-mso.xml
+COPY jboss-configs/configuration/mgmt-users.properties $JBOSS_HOME/standalone/configuration/mgmt-users.properties
+COPY jboss-configs/configuration/mgmt-groups.properties $JBOSS_HOME/standalone/configuration/mgmt-groups.properties
+COPY jboss-configs/configuration/application-users.properties $JBOSS_HOME/standalone/configuration/application-users.properties
+COPY jboss-configs/configuration/application-roles.properties $JBOSS_HOME/standalone/configuration/application-roles.properties
+
+RUN echo "JAVA_OPTS=\"\$JAVA_OPTS -Xms64m -Xmx4g -XX:MetaspaceSize=96M -XX:MaxMetaspaceSize=1g -Djboss.bind.address=0.0.0.0 -Djboss.bind.address.management=0.0.0.0 -Dmso.db=MARIADB -Dmso.config.path=/etc/mso/config.d/\"" >> $JBOSS_HOME/bin/standalone.conf
+RUN echo "LAUNCH_JBOSS_IN_BACKGROUND=true" >> $JBOSS_HOME/bin/standalone.conf
+
+COPY ./maven/artifacts/* $JBOSS_HOME/standalone/deployments/
+
+### Open Ports
+EXPOSE 8080
+
+VOLUME /shared
+
+### Start EAP
+USER root
+CMD ["/opt/mso/scripts/start-jboss-server.sh"]
+

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ============LICENSE_START=======================================================
+  ECOMP MSO
+  ================================================================================
+  Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+  ================================================================================
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  ============LICENSE_END=========================================================
+  -->
+
+<tns:feature-request xmlns:tns="http://ecomp.att.com/mso/request/schema/v1" xmlns:tns1="http://ecomp.att.com/mso/request/types/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ecomp.att.com/mso/request/schema/v1 MsoRequestV1.xsd">
+  <tns1:request-information>
+    <tns1:request-id>tns1:request-id</tns1:request-id>
+    <tns1:request-action>Layer3ServiceActivateRequest</tns1:request-action>
+    <tns1:request-sub-action>CANCEL</tns1:request-sub-action>
+    <tns1:source>tns1:source</tns1:source>
+    <tns1:notification-url>tns1:notification-url</tns1:notification-url>
+    <tns1:order-number>tns1:order-number</tns1:order-number>
+    <tns1:order-version>tns1:order-version</tns1:order-version>
+  </tns1:request-information>
+  <tns1:service-information>
+    <tns1:service-type>SDN-ETHERNET-INTERNET</tns1:service-type>
+    <tns1:service-instance-id>tns1:service-instance-id</tns1:service-instance-id>
+    <tns1:subscriber-name>tns1:subscriber-name</tns1:subscriber-name>
+  </tns1:service-information>
+  <tns1:feature-information>
+    <tns1:feature-type>FIREWALL-LITE</tns1:feature-type>
+    <tns1:feature-instance-id>tns1:feature-instance-id</tns1:feature-instance-id>
+    <tns1:feature-yang-model>tns1:feature-yang-model</tns1:feature-yang-model>
+  </tns1:feature-information>
+  <tns:feature-parameters xsi:type="anyType"/>
+</tns:feature-request>

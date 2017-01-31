@@ -1,0 +1,29 @@
+[
+  {
+    "vfModuleModelName": "VF_RI2_G6_withArtifacts::module-1",
+    "vfModuleModelInvariantUUID": "585822c7-4027-4f84-ba50-e9248606f132",
+    "vfModuleModelVersion": "1.0",
+    "vfModuleModelUUID": "1e34774e-715e-4fd5-bd08-7b654622f33e.VF_RI2_G6_withArtifacts::module-1.group",
+    "isBase": true,
+    "artifacts": [
+      "Artifact-UUID1",
+      "EnvArtifact-UUID2",
+      "NestedArtifact-UUID3",
+      "NestedArtifact-UUID4",
+      "ScriptArtifact-UUID1",
+      "VolumeArtifact-UUID1",
+      "VolumeEnvArtifact-UUID1"
+    ]
+  },
+  {
+    "vfModuleModelName": "VF_RI2_G91_withArtifacts::module-1",
+    "vfModuleModelInvariantUUID": "585822c7-4027-4f84-ba50-e9248606f169",
+    "vfModuleModelVersion": "1.0",
+    "vfModuleModelUUID": "1e34774e-715e-4fd5-bd08-7b654622f63g.VF_RI2_G9_withArtifacts::module-1.group",
+    "isBase": true,
+    "artifacts": [
+      "HeatArtifactE2E-UUIDTest"
+   
+    ]
+  }
+]

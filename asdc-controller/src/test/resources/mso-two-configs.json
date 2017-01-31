@@ -1,0 +1,26 @@
+{
+  "asdc-connections":{
+    "asdc-controller1":{
+        "user": "User1",
+        "consumerGroup": "consumerGroup1",
+        "consumerId": "consumerId1",
+        "environmentName": "environmentName1",
+        "asdcAddress": "hostname1",
+        "password": "1c551b8b5ab91fcd5a0907b11c304199",
+        "pollingInterval":10,
+        "pollingTimeout":30
+        
+    },
+     "asdc-controller2":{
+        "user": "User2",
+        "consumerGroup": "consumerGroup2",
+        "consumerId": "consumerId2",
+        "environmentName": "environmentName2",
+        "asdcAddress": "hostname2",
+        "password": "1c551b8b5ab91fcd5a0907b11c304199",
+        "pollingInterval":10,
+        "pollingTimeout":30
+        
+    }
+  }
+}

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://domain2.att.com/workflow/sdnc/adapter/schema/v1" 
+xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:tns="http://domain2.att.com/workflow/sdnc/adapter/schema/v1" 
+	xmlns:sdncadaptersc="http://domain2.att.com/workflow/sdnc/adapter/schema/v1"	
+	elementFormDefault="qualified">
+
+
+	<!-- ========================= -->
+	<!-- Complex Types             -->
+	<!-- ========================= -->
+	
+	
+	<!-- ========================= -->
+	<!-- Elements             -->
+	<!-- ========================= -->
+	
+	<element  name="RequestHeader">
+		<complexType>
+			<sequence>
+				<element name="RequestId" type="string" minOccurs="1" maxOccurs="1"/>	
+				<element name="SvcInstanceId" type="string" minOccurs="0" maxOccurs="1"/>	
+				<element name="SvcAction" type="string" minOccurs="1" maxOccurs="1"/>	
+				<element name="SvcOperation" type="string" minOccurs="1" maxOccurs="1"/>	
+				<element name="CallbackUrl" type="string" minOccurs="1" maxOccurs="1"/>	
+				<element name="MsoAction" type="string" minOccurs="0" maxOccurs="1"/>			
+			</sequence>
+		</complexType>
+	</element>	
+	
+	<element  name="CallbackHeader">
+		<complexType>
+			<sequence>
+				<element name="RequestId" type="string" minOccurs="1" maxOccurs="1"/>	
+				<element name="ResponseCode" type="string" minOccurs="1" maxOccurs="1"/>	
+				<element name="ResponseMessage" type="string" minOccurs="1" maxOccurs="1"/>	
+			</sequence>
+		</complexType>
+	</element>	
+	
+	<!-- ========================= -->
+	<!-- Requests/Responses        -->
+	<!-- ========================= -->
+	
+	<element name="SDNCAdapterRequest">
+		<complexType>
+			<sequence>
+				<element ref="tns:RequestHeader" minOccurs="1" maxOccurs="1" />
+				<element name="RequestData" type="anyType" minOccurs="1" maxOccurs="1" />				
+			</sequence>
+		</complexType>
+	</element>
+	
+	<!-- Empty Ack -->
+	<element name="SDNCAdapterResponse">	
+		<complexType>
+			
+		</complexType>
+	</element>
+	
+	<!--Used to post Async Status back to workflow, Status Message would be used for any fallouts from SDNC -->
+	<element name="SDNCAdapterCallbackRequest">
+		<complexType>
+			<sequence>
+				<element ref="tns:CallbackHeader" minOccurs="1" maxOccurs="1" />
+				<element name="RequestData" type="anyType" minOccurs="0" maxOccurs="1" />								
+			</sequence>
+		</complexType>
+	</element>	
+	
+	
+</schema>

@@ -1,0 +1,65 @@
+{
+    "serviceName": "vfw-service",
+    "serviceInvariantUUID": "585822c7-4027-4f84-ba50-e9248606f112",
+    "serviceUUID": "2e34774e-715e-4fd5-bd09-7b654622f35i",
+    "serviceVersion": "1.0",
+    "serviceArtifacts": 
+    [
+ 
+    ],
+
+    "resources": 
+    [
+        {
+            "resourceInstanceName": "VFWResource-1",
+            "resourceInvariantUUID": "585822c7-4027-4f84-ba50-e9248606f113",
+            "resourceName": "VFWResource",
+            "resourceType": "VF",
+            "resourceUUID": "685822c7-4027-4f84-ba50-e9248606f132",
+            "resourceVersion": "1.0",
+            "artifacts": 
+            [
+                {
+                    "artifactChecksum": "CheckSum",
+                    "artifactDescription": "Meta data for VFModule",
+                    "artifactName": "vnf-module-artifact.json",
+                    
+                    "artifactType": "VF_MODULES_METADATA",
+                    "artifactURL": "vnf-module-artifact.json",
+                    "artifactUUID": "VfArtifact-UUID2",
+                    "artifactVersion": "1.0"
+
+                },
+                {
+                    "artifactChecksum": "CheckSum",
+                    "artifactDescription": "Base VFW Heat",
+                    "artifactName": "base_vfw.yaml",
+                    "artifactTimeout": 300,
+                    "artifactType": "HEAT",
+                    "artifactURL": "base_vfw.yaml",
+                    "artifactUUID": "Artifact-UUID3",
+                    "artifactVersion": "1.0",
+                    "generatedArtifact": "EnvArtifact-UUID3",
+                    "relatedArtifact": 
+                    [
+                       
+                    ]
+                },
+
+                {
+                    "artifactChecksum": "CheckSum",
+                    "artifactDescription": "base_vfw ENV file",
+                    "artifactName": "base_vfw.env",
+                    
+                    "artifactType": "HEAT_ENV",
+                    "artifactURL": "base_vfw.env",
+                    "artifactUUID": "EnvArtifact-UUID3",
+                    "artifactVersion": "1.0"
+                 }
+            ]
+        }
+    ],
+
+    "serviceDescription": "VFW service",
+    "distributionID": "35120a87-1f82-4276-9735-f6de5a244d62"
+}

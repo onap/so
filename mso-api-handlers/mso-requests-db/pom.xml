@@ -1,0 +1,207 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+ 	<parent>
+		<groupId>org.openecomp.mso</groupId>
+		<artifactId>mso-api-handlers</artifactId>
+		<version>0.0.4-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>mso-requests-db</artifactId>
+
+	<name>mso-requests-db</name>
+	<description>MSO Requests Database definition and Hibernate objects</description>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>4.3.6.Final</version>
+			<exclusions>
+				<!-- Avoid hibernate inclusion as provided in Jboss -->
+				<exclusion>
+					<groupId>org.jboss</groupId>
+					<artifactId>jandex</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.javassist</groupId>
+					<artifactId>javassist</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.jboss.logging</groupId>
+					<artifactId>jboss-logging</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.jboss.logging</groupId>
+					<artifactId>jboss-logging-annotations</artifactId>
+				</exclusion>
+				<exclusion>
+					 <groupId>org.jboss.spec.javax.transaction</groupId>
+  					<artifactId>jboss-transaction-api_1.2_spec</artifactId>
+				</exclusion>
+				<exclusion>
+				 	<groupId>antlr</groupId>
+  					<artifactId>antlr</artifactId>
+				</exclusion>
+				<exclusion>
+				 	<groupId>dom4j</groupId>
+  					<artifactId>dom4j</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+			<version>4.3.6.Final</version>
+			<exclusions>
+				<!-- Avoid hibernate inclusion as provided in Jboss -->
+				<exclusion>
+					<groupId>org.jboss</groupId>
+					<artifactId>jandex</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.javassist</groupId>
+					<artifactId>javassist</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.jboss.logging</groupId>
+					<artifactId>jboss-logging</artifactId>
+				</exclusion>
+				<exclusion>
+			 	 	<groupId>org.jboss.logging</groupId>
+    			  	<artifactId>jboss-logging-annotations</artifactId>
+				</exclusion>
+				<exclusion>
+					 <groupId>org.jboss.spec.javax.transaction</groupId>
+  					<artifactId>jboss-transaction-api_1.2_spec</artifactId>
+				</exclusion>
+				<exclusion>
+				 	<groupId>antlr</groupId>
+  					<artifactId>antlr</artifactId>
+				</exclusion>
+				<exclusion>
+				 	<groupId>dom4j</groupId>
+  					<artifactId>dom4j</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hibernate.javax.persistence</groupId>
+			<artifactId>hibernate-jpa-2.1-api</artifactId>
+			<version>1.0.0.Final</version>
+		</dependency>
+			
+		<dependency>
+			<groupId>org.openecomp.mso</groupId>
+			<artifactId>common</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
+	<packaging>jar</packaging>
+	<build>
+		<finalName>${project.artifactId}</finalName>
+		<plugins>
+		
+			<plugin>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.3</version>
+				<configuration>
+					<warSourceDirectory>WebContent</warSourceDirectory>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>de.juplo</groupId>
+				<artifactId>hibernate4-maven-plugin</artifactId>
+				<version>1.1.0</version>
+				<executions>
+					<!-- MySQL -->
+					<execution>
+						<id>MySQL</id>
+						<goals>
+							<goal>export</goal>
+						</goals>
+						<configuration>
+							<hibernateDialect>org.hibernate.dialect.MySQL5Dialect</hibernateDialect>
+							<hibernateMapping>${project.basedir}/src/main/resources/InfraActiveRequests.hbm.xml,${project.basedir}/src/main/resources/SiteStatus.hbm.xml</hibernateMapping>
+							<target>SCRIPT</target>
+							<skip>false</skip>
+							<force>true</force>
+							<outputFile>${project.build.directory}/MySQL-Requests-schema.sql</outputFile>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+	                <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.0.1</version>
+	                <executions>
+	                  
+	                    <execution>
+	                        <id>copy-sql-file</id>
+	                        <phase>install</phase>
+	                        <goals>
+	                            <goal>copy-resources</goal>
+	                        </goals>
+	                        <configuration>
+	                           <overwrite>true</overwrite>
+	                            
+	                            <outputDirectory>${project.basedir}/../../packages/root-pack-extras/config-resources/mariadb/db-sql-scripts/main-schemas</outputDirectory>
+	                  
+	                            <resources>
+					                <resource>
+					                  <directory>${project.build.directory}</directory>
+					                  <filtering>false</filtering>
+					                  <includes>
+					                       <include>*.sql</include>
+					                  </includes>
+					                </resource>
+					            </resources>              
+	                        </configuration>
+	                    </execution>
+	                </executions>
+                </plugin>
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>de.juplo</groupId>
+										<artifactId>
+											hibernate4-maven-plugin
+										</artifactId>
+										<versionRange>
+											[1.0.3,)
+										</versionRange>
+										<goals>
+											<goal>export</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
+</project>
