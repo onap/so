@@ -1,6 +1,6 @@
 # OpenECOMP MSO
 
-----
+---
 ---
 
 # Introduction
