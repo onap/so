@@ -8,7 +8,7 @@
 		<version>0.0.4-SNAPSHOT</version>
 	</parent>
 	
-	<groupId>com.att.camunda.bpm.cockpit.plugin</groupId>
+	<groupId>org.openecomp.mso</groupId>
 	<artifactId>cockpit-urnmap-plugin</artifactId>
 	
 	<packaging>jar</packaging>
