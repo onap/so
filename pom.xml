@@ -46,17 +46,17 @@
 
 	<distributionManagement>
 		<repository>
-			<id>mso-releases</id>
+			<id>ecomp-releases</id>
 			<name>MSO Release Repository</name>
-			<url>https://ecomp-nexus:8443/repository/maven-releases/</url>
+			<url>https://nexus.openecomp.org/content/repositories/releases/</url>
 		</repository>
 		<snapshotRepository>
-			<id>mso-snapshots</id>
+			<id>ecomp-snapshots</id>
 			<name>MSO Snapshot Repository</name>
-			<url>https://ecomp-nexus:8443/repository/maven-snapshots/</url>
+			<url>https://nexus.openecomp.org/content/repositories/snapshots/</url>
 		</snapshotRepository>
 		<site>
-		  <id>mso-javadoc</id>
+		  <id>ecomp-javadoc</id>
 		  <url>dav:https://ecomp-nexus:8443/repository/mso-javadoc/${project.version}</url>
 		</site>
 	</distributionManagement>
