@@ -116,9 +116,9 @@
 			<url>https://repository.jboss.org/nexus/content/repositories/deprecated/</url>
 		</repository>
 		<repository>
-			<id>mso-releases</id>
+			<id>ecomp-releases</id>
 			<name>MSO Release Repository</name>
-			<url>https://ecomp-nexus:8443/repository/maven-releases/</url>
+			<url>https://nexus.openecomp.org/content/repositories/releases/</url>
 		</repository>
 		
 		<!-- Camunda Web Repository -->
@@ -132,14 +132,7 @@
 			<url>https://app.camunda.com/nexus/content/groups/public</url>
 			<name>Camunda Public repository</name>
 		</repository>
-		
-		<!-- For Cambria Client -->
-		<repository>
-			<id>ecomp-nexus-public</id>
-			<name>ECOMP Nexus Public Repository</name>
-			<url>https://ecomp-nexus:8443/repository/maven-public</url>
-		</repository>
-		
+
 	    <repository>
 			<id>soapUI</id>
 			<url>http://www.soapui.org/repository/maven2/</url>
