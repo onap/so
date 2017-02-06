@@ -52,7 +52,7 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.att.camunda.bpm.cockpit.plugin</groupId>
+			<groupId>org.openecomp.mso</groupId>
 			<artifactId>cockpit-urnmap-plugin</artifactId>
 			<version>${project.version}</version>
 		</dependency>
