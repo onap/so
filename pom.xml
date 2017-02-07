@@ -1,17 +1,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openecomp</groupId>
 	<artifactId>mso</artifactId>
 	<packaging>pom</packaging>
 	<version>0.0.4-SNAPSHOT</version>
 	<name>MSO main project</name>
-	
 	<description>This Maven project is responsible to build and package all child projects - contributions in the MSO project.
 	This build can be configured to run Functional tests and to start/stop a jboss server + Mysql DB.
 	"mvn clean install -P with-integration-tests -Dintegration-tests-user=root -Dintegration-tests-group=root -Dintegration-tests-db-type=MYSQL"
 	</description>
-	
 	<organization>
 		<name>OPENECOMP - MSO</name>
 		<url>http://www.openecomp.org/</url>
@@ -26,7 +24,6 @@
 		<module>bpmn</module>
 		<module>packages</module>
 	</modules>
-
 	<properties>
 		<project.mso.base.folder>.</project.mso.base.folder>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -41,9 +38,8 @@
 		<org.apache.maven.user-settings></org.apache.maven.user-settings>
 		<!-- this is used for Chef mso-code cookbook -->
 		<swm.version>2.19.3-1</swm.version>
-        <evosuiteVersion>1.0.4-alpha2</evosuiteVersion>
+		<evosuiteVersion>1.0.4-alpha2</evosuiteVersion>
 	</properties>
-
 	<distributionManagement>
 		<repository>
 			<id>ecomp-releases</id>
@@ -56,34 +52,31 @@
 			<url>https://nexus.openecomp.org/content/repositories/snapshots/</url>
 		</snapshotRepository>
 		<site>
-		  <id>ecomp-javadoc</id>
-		  <url>dav:https://ecomp-nexus:8443/repository/mso-javadoc/${project.version}</url>
+			<id>ecomp-javadoc</id>
+			<url>dav:https://ecomp-nexus:8443/repository/mso-javadoc/${project.version}</url>
 		</site>
 	</distributionManagement>
-
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.10.4</version>
-                <configuration>
-                    <failOnError>false</failOnError>
-                    <doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
-                    <docletArtifact>
-                        <groupId>org.umlgraph</groupId>
-                        <artifactId>umlgraph</artifactId>
-                        <version>5.6</version>
-                    </docletArtifact>
-                    <additionalparam>-views</additionalparam>
-                    <useStandardDocletOptions>true</useStandardDocletOptions>
-                </configuration>
-            </plugin>
-        </plugins>
-    </reporting>
-
-    <!-- configure build -->
-
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.4</version>
+				<configuration>
+					<failOnError>false</failOnError>
+					<doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
+					<docletArtifact>
+						<groupId>org.umlgraph</groupId>
+						<artifactId>umlgraph</artifactId>
+						<version>5.6</version>
+					</docletArtifact>
+					<additionalparam>-views</additionalparam>
+					<useStandardDocletOptions>true</useStandardDocletOptions>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
+	<!-- configure build -->
 	<!-- *********************************************************************************************************** -->
 	<!-- Plugins and repositories -->
 	<pluginRepositories>
@@ -91,14 +84,12 @@
 			<id>central</id>
 			<url>http://repo1.maven.org/maven2</url>
 		</pluginRepository>
-
-        <pluginRepository>
-            <id>EvoSuite</id>
-            <name>EvoSuite Repository</name>
-            <url>http://www.evosuite.org/m2</url>
-        </pluginRepository>
+		<pluginRepository>
+			<id>EvoSuite</id>
+			<name>EvoSuite Repository</name>
+			<url>http://www.evosuite.org/m2</url>
+		</pluginRepository>
 	</pluginRepositories>
-	
 	<repositories>
 		<repository>
 			<id>central</id>
@@ -109,7 +100,7 @@
 			<id>JBOSS</id>
 			<name>JBoss Repository</name>
 			<url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url>
-		</repository>	
+		</repository>
 		<repository>
 			<id>jboss-deprecated-repository</id>
 			<name>JBoss Deprecated Maven Repository</name>
@@ -120,9 +111,8 @@
 			<name>MSO Release Repository</name>
 			<url>https://nexus.openecomp.org/content/repositories/releases/</url>
 		</repository>
-		
 		<!-- Camunda Web Repository -->
- 		<repository>
+		<repository>
 			<id>CamundaWebRepo</id>
 			<url>https://app.camunda.com/nexus/content/repositories/camunda-bpm/</url>
 			<name>Camunda Web Repository</name>
@@ -132,13 +122,11 @@
 			<url>https://app.camunda.com/nexus/content/groups/public</url>
 			<name>Camunda Public repository</name>
 		</repository>
-
-	    <repository>
+		<repository>
 			<id>soapUI</id>
 			<url>http://www.soapui.org/repository/maven2/</url>
 			<name>SoapUI plugin</name>
 		</repository>
-		
 	</repositories>
 	<!-- *********************************************************************************************************** -->
 	<!-- Build -->
@@ -173,14 +161,14 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.17</version>
 				<configuration>
-			<!--		<forkCount>2C</forkCount>
-					<reuseForks>true</reuseForks> -->
+					<!--		<forkCount>2C</forkCount>
+					    <reuseForks>true</reuseForks> -->
 					<properties>
-                        <property>
-                            <name>listener</name>
-                            <value>org.evosuite.runtime.InitializingListener</value>
-                        </property>
-                    </properties>
+						<property>
+							<name>listener</name>
+							<value>org.evosuite.runtime.InitializingListener</value>
+						</property>
+					</properties>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -197,11 +185,11 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
-<!-- 			<plugin> -->
-<!-- 				<groupId>org.codehaus.mojo</groupId> -->
-<!-- 				<artifactId>sonar-maven-plugin</artifactId> -->
-<!-- 				<version>2.1</version> -->
-<!-- 			</plugin> -->
+			<!--			<plugin> -->
+			<!--				<groupId>org.codehaus.mojo</groupId> -->
+			<!--				<artifactId>sonar-maven-plugin</artifactId> -->
+			<!--				<version>2.1</version> -->
+			<!--			</plugin> -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-ejb-plugin</artifactId>
@@ -236,13 +224,11 @@
 					<xmlOutput>true</xmlOutput>
 				</configuration>
 			</plugin>
-
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>sonar-maven-plugin</artifactId>
 				<version>3.2</version>
 			</plugin>
-
 			<plugin>
 				<artifactId>maven-scm-plugin</artifactId>
 				<version>1.8.1</version>
@@ -256,16 +242,16 @@
 				<version>2.9</version>
 			</plugin>
 			<plugin>
-			        <groupId>org.apache.maven.plugins</groupId>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
-			        <version>3.6</version>
-			        <dependencies>
-				  <dependency>
-				    <groupId>org.apache.maven.wagon</groupId>
-				    <artifactId>wagon-webdav-jackrabbit</artifactId>
-				    <version>2.10</version>
-				  </dependency>
-				</dependencies>				    
+				<version>3.6</version>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.maven.wagon</groupId>
+						<artifactId>wagon-webdav-jackrabbit</artifactId>
+						<version>2.10</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -286,12 +272,11 @@
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>jboss-packaging-maven-plugin</artifactId>
 				<version>2.2</version>
-				<!-- <configuration> <archive> <manifest> <addClasspath>true</addClasspath> 
-					</manifest> </archive> </configuration> Enable 'jboss-sar', etc., as a recoginized 
-					maven packaging type -->
+				<!-- <configuration> <archive> <manifest> <addClasspath>true</addClasspath>
+				     </manifest> </archive> </configuration> Enable 'jboss-sar', etc., as a recoginized
+				     maven packaging type -->
 				<extensions>true</extensions>
 			</plugin>
-
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
@@ -301,10 +286,7 @@
 					<includes>
 						<include>org.openecomp.*</include>
 					</includes>
-
-
 				</configuration>
-
 				<executions>
 					<execution>
 						<id>jacoco-initialize-unit-tests</id>
@@ -314,83 +296,77 @@
 						<configuration>
 							<destFile>${project.build.directory}/coverage-reports/jacoco.exec</destFile>
 							<!-- <append>true</append> -->
-
-
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
 			<plugin>
-                <groupId>com.fortify.ps.maven.plugin</groupId>
-                <artifactId>sca-maven-plugin</artifactId>
-                <version>4.20</version>
-                <configuration>
-                	<buildId>mso-${project.version}</buildId>
-                	<source>1.7</source>
-                </configuration>
-            </plugin>
-
-            <!-- license plugin -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>license-maven-plugin</artifactId>
-                <version>1.10</version>
-                <configuration>
-                    <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
-                    <processStartTag>============LICENSE_START=======================================================</processStartTag>
-                    <processEndTag>============LICENSE_END=========================================================</processEndTag>
-                    <sectionDelimiter>================================================================================</sectionDelimiter>
-                    <licenseName>apache_v2</licenseName>
-                    <inceptionYear>2017</inceptionYear>
-                    <organizationName>AT&amp;T Intellectual Property. All rights reserved.</organizationName>
-                    <projectName>ECOMP MSO</projectName>
-                    <canUpdateCopyright>true</canUpdateCopyright>
-                    <canUpdateDescription>true</canUpdateDescription>
-                    <canUpdateLicense>true</canUpdateLicense>
-                    <emptyLineAfterHeader>true</emptyLineAfterHeader>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>first</id>
-                            <goals>
-                                <goal>update-file-header</goal>
-                            </goals>
-                        <phase>process-sources</phase>
-                        <configuration>
-                            <licenseName>apache_v2</licenseName>
-                            <includes>
-                                <include>*.java</include>
-                                <include>*.groovy</include>
-                            </includes>
-                            <excludes>
-                                <exclude>*.json</exclude>
-                            </excludes>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            
+				<groupId>com.fortify.ps.maven.plugin</groupId>
+				<artifactId>sca-maven-plugin</artifactId>
+				<version>4.20</version>
+				<configuration>
+					<buildId>mso-${project.version}</buildId>
+					<source>1.7</source>
+				</configuration>
+			</plugin>
+			<!-- license plugin -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<version>1.10</version>
+				<configuration>
+					<addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
+					<processStartTag>============LICENSE_START=======================================================</processStartTag>
+					<processEndTag>============LICENSE_END=========================================================</processEndTag>
+					<sectionDelimiter>================================================================================</sectionDelimiter>
+					<licenseName>apache_v2</licenseName>
+					<inceptionYear>2017</inceptionYear>
+					<organizationName>AT&amp;T Intellectual Property. All rights reserved.</organizationName>
+					<projectName>ECOMP MSO</projectName>
+					<canUpdateCopyright>true</canUpdateCopyright>
+					<canUpdateDescription>true</canUpdateDescription>
+					<canUpdateLicense>true</canUpdateLicense>
+					<emptyLineAfterHeader>true</emptyLineAfterHeader>
+				</configuration>
+				<executions>
+					<execution>
+						<id>first</id>
+						<goals>
+							<goal>update-file-header</goal>
+						</goals>
+						<phase>process-sources</phase>
+						<configuration>
+							<licenseName>apache_v2</licenseName>
+							<includes>
+								<include>*.java</include>
+								<include>*.groovy</include>
+							</includes>
+							<excludes>
+								<exclude>*.json</exclude>
+							</excludes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 		<pluginManagement>
 			<plugins>
-			
-                <plugin>
-                    <groupId>org.evosuite.plugins</groupId>
-                    <artifactId>evosuite-maven-plugin</artifactId>
-                    <version>${evosuiteVersion}</version>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>prepare</goal>
-                            </goals>
-                            <phase>process-test-classes</phase>
-                        </execution>
-                    </executions>
-                </plugin>
+				<plugin>
+					<groupId>org.evosuite.plugins</groupId>
+					<artifactId>evosuite-maven-plugin</artifactId>
+					<version>${evosuiteVersion}</version>
+					<executions>
+						<execution>
+							<goals>
+								<goal>prepare</goal>
+							</goals>
+							<phase>process-test-classes</phase>
+						</execution>
+					</executions>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
-
 	<!-- *********************************************************************************************************** -->
 	<!-- Dependencies -->
 	<dependencies>
@@ -400,35 +376,33 @@
 			<version>4.11</version>
 			<scope>test</scope>
 		</dependency>
-        <dependency>
-            <groupId>org.evosuite</groupId>
-            <artifactId>evosuite-standalone-runtime</artifactId>
-            <version>${evosuiteVersion}</version>
-            <scope>test</scope>
-        </dependency>
+		<dependency>
+			<groupId>org.evosuite</groupId>
+			<artifactId>evosuite-standalone-runtime</artifactId>
+			<version>${evosuiteVersion}</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>
-
-
 			<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
 			<!-- force use of version 4.5 everywhere in transient deps, aligned on WildFly 10 version -->
 			<dependency>
-			    <groupId>org.apache.httpcomponents</groupId>
-			    <artifactId>httpclient</artifactId>
-			    <version>4.5</version>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpclient</artifactId>
+				<version>4.5</version>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
-			    <groupId>org.apache.httpcomponents</groupId>
-			    <artifactId>httpcore</artifactId>
-			    <version>4.4.1</version>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpcore</artifactId>
+				<version>4.4.1</version>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
-			    <groupId>commons-codec</groupId>
-			    <artifactId>commons-codec</artifactId>
-			    <version>1.10</version>
+				<groupId>commons-codec</groupId>
+				<artifactId>commons-codec</artifactId>
+				<version>1.10</version>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
