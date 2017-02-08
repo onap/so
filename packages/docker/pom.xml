@@ -9,7 +9,7 @@
 	</parent>
 
 	<packaging>pom</packaging>
-	<groupId>org.att.ecomp</groupId>
+	<groupId>org.openecomp.mso</groupId>
 	<artifactId>docker</artifactId>
 
 	<name>MSO Docker Deliveries</name>
