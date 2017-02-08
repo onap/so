@@ -1,9 +1,8 @@
 FROM ubuntu:16.04
 
 ### File Author / Maintainer
-MAINTAINER "Ecomp Opensource Team"
-LABEL Description="This image builds Ecomp Opensource MSO " Version="1.0"
-
+MAINTAINER "The OpenECOMP Team"
+LABEL Description="This image builds OpenECOMP MSO" Version="1.0"
 
 ARG http_proxy
 ARG https_proxy

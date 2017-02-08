@@ -1,9 +1,9 @@
-FROM ecomp/wildfly:1.0
+FROM openecomp/wildfly:1.0
 
 
 ### File Author / Maintainer
-MAINTAINER "Ecomp Opensource Team"
-LABEL Description="This image contains Ecomp Opensource MSO base for arquillian" Version="1.0"
+MAINTAINER "The OpenECOMP Team"
+LABEL Description="This image contains the OpenECOMP MSO base for arquillian" Version="1.0"
 
 ARG chef_repo_branch_name
 ARG chef_repo_address

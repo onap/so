@@ -1,7 +1,7 @@
 FROM ubuntu:16.04
 
 ### File Author / Maintainer
-MAINTAINER "Ecomp Opensource Team"
+MAINTAINER "The OpenECOMP Team"
 LABEL Description="This image contains an updated version of ubuntu 16.04" Version="1.0"
 
 ARG http_proxy
