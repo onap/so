@@ -13,7 +13,7 @@
 	<artifactId>docker</artifactId>
 
 	<name>MSO Docker Deliveries</name>
-	<description>ECOMP MSO Docker Deliveries</description>
+	<description>OpenECOMP MSO Docker Deliveries</description>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -34,7 +34,7 @@
 
 					<images>
 						<image>
-							<name>ecomp/jacoco:1.0</name>
+							<name>openecomp/jacoco:1.0</name>
 							<alias>jacoco</alias>
 							<build>
 								<cleanup>try</cleanup>
@@ -44,7 +44,7 @@
 							</build>
 						</image>
 						<image>
-							<name>ecomp/ubuntu-update:1.0</name>
+							<name>openecomp/ubuntu-update:1.0</name>
 							<alias>ubuntu-update</alias>
 							<build>
 
@@ -55,7 +55,7 @@
 							</build>
 						</image>
 						<image>
-							<name>ecomp/wildfly:1.0</name>
+							<name>openecomp/wildfly:1.0</name>
 							<alias>wildfly</alias>
 							<build>
 
@@ -66,7 +66,7 @@
 							</build>
 						</image>
 						<image>
-							<name>ecomp/mso-arquillian:%l</name>
+							<name>openecomp/mso-arquillian:%l</name>
 							<alias>mso-arquillian</alias>
 							<build>
 
@@ -77,7 +77,7 @@
 							</build>
 						</image>
 						<image>
-							<name>ecomp/mso:%l</name>
+							<name>openecomp/mso:%l</name>
 							<alias>mso</alias>
 							<build>
 
@@ -105,7 +105,7 @@
 						</goals>
 						<configuration>
 							<removeAll>true</removeAll>
-							<image>ecomp/mso-arquillian:%l,ecomp/mso:%l</image>
+							<image>openecomp/mso-arquillian:%l,openecomp/mso:%l</image>
 						</configuration>
 					</execution>
 
@@ -125,7 +125,7 @@
 							<goal>push</goal>
 						</goals>
 						<configuration>
-							<image>ecomp/mso-arquillian:%l,ecomp/mso:%l,ecomp/jacoco:1.0</image>
+							<image>openecomp/mso-arquillian:%l,openecomp/mso:%l,openecomp/jacoco:1.0</image>
 						</configuration>
 					</execution>
 				</executions>
