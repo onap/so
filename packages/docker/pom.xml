@@ -1,5 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -31,7 +31,7 @@
 				<configuration>
 					<verbose>true</verbose>
 					<apiVersion>1.23</apiVersion>
-					
+
 					<images>
 						<image>
 							<name>ecomp/jacoco:1.0</name>
@@ -40,7 +40,7 @@
 								<cleanup>try</cleanup>
 								<dockerFileDir>docker-files</dockerFileDir>
 								<dockerFile>docker-files/Dockerfile.jacoco</dockerFile>
-							
+
 							</build>
 						</image>
 						<image>
@@ -51,7 +51,7 @@
 								<cleanup>try</cleanup>
 								<dockerFileDir>docker-files</dockerFileDir>
 								<dockerFile>docker-files/Dockerfile.ubuntu-16.04-update</dockerFile>
-							
+
 							</build>
 						</image>
 						<image>
@@ -62,7 +62,7 @@
 								<cleanup>try</cleanup>
 								<dockerFileDir>docker-files</dockerFileDir>
 								<dockerFile>docker-files/Dockerfile.wildfly-10</dockerFile>
-							
+
 							</build>
 						</image>
 						<image>
@@ -73,7 +73,7 @@
 								<cleanup>try</cleanup>
 								<dockerFileDir>docker-files</dockerFileDir>
 								<dockerFile>docker-files/Dockerfile.mso-arquillian</dockerFile>
-							
+
 							</build>
 						</image>
 						<image>
@@ -94,7 +94,6 @@
 							</build>
 						</image>
 
-
 					</images>
 				</configuration>
 				<executions>
@@ -105,11 +104,11 @@
 							<goal>remove</goal>
 						</goals>
 						<configuration>
-						        <removeAll>true</removeAll>
+							<removeAll>true</removeAll>
 							<image>ecomp/mso-arquillian:%l,ecomp/mso:%l</image>
 						</configuration>
 					</execution>
-				
+
 					<execution>
 						<id>generate-images</id>
 						<phase>generate-sources</phase>
@@ -144,5 +143,4 @@
 		</plugins>
 	</build>
 
-
-      </project>
+</project>
