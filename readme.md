@@ -7,11 +7,11 @@
 
 OpenECOMP MSO is delivered with **2 Docker containers**, 1 hosting the **database** (MariaDB) and 1 hosting the **JBoss** application server running all OpenECOMP MSO code.
 
-Both containers runs on the same machine and can be started with a **`docker-compose`**.
+Both containers runs on the same machine and can be started with **`docker-compose`**.
 
 # Compiling MSO
 
-MSO can be compiled easily with a `mvn clean install`. Integration tests are started with the following profile 
+MSO can be compiled with `mvn clean install`. Integration tests are started with the following profile 
 `-P with-integration-tests`
 
 **to be edited for rrelease** 
@@ -20,7 +20,7 @@ Docker containers are build with the following profile
 
 # Getting the containers
 
-***to be changed for rrelease*** OpenECOMP MSO containers are stored on the Rackspace Nexus Docker Registry
+OpenECOMP MSO containers are stored on [here](https://nexus3.openecomp.org:10002) for the releases, and [here](https://nexus3.openecomp.org:10003) for the snapshots
 
 The following Docker images are the actual deployment images used for running MSO
 
@@ -31,43 +31,11 @@ The following Docker images are the actual deployment images used for running MS
 
 # Starting MSO
 
-There are several ways to start OpenECOMP MSO :
-
-### Trough the sample Jenkins Job on the Deployment Jenkins host ***to be changed for rrelease***
-
-A Jenkins instance is available at [Deployment-Jenkins](http://162.242.237.52:8080/login?from=%2F). It provides **job that can run** the containers on a sample host. ***add job link for rrelease**
-
-*** for rrelease all this should go in the job description***
-```
-The VM is running a Docker Engine (1.12) and has the Nexus repository certificate imported, Jenkins will use this host to deploy and run the containers.
-
-It will first **clone** the configuration repository to its local workspace, **transfer needed configuration files**, mount a specific **docker volume** with these files and start up the containers (attached to this volume) so that they can run the startup scripts that is embedded and run openecomp MSO and its database container.
-
-It is important to understand that the Docker containers are using a configuration file (JSON) in order to provision MSO basic configuration, in the above Jenkins Job, Jenkins pulls that JSON file from the MSO repository, any other mean to provide that JSON file (for specific environments) would also work. ***add link on rrelease***more information about configuring MSO.
-Note : the above is just an automation of the container deployment on a sample host, it is perfectly possible to do exactly the same on any host (be it your laptop or any other host that can run Docker 1.12 and reach the Nexus repository, and optionally the MSO gitlab repo to download other configurations)
-```
-
-The database is preloaded with all the basic configuration, it is possible to change the configuration without deploying the containers again (or rebuilding them)
-
-***provide a link on rrelease***
-To get a feel of how the deployment is actually performed, it is best to review the Docker Strategy of MSO and look at the actual Jenkins Job
-
-### Trough the use of `docker-compose` ***to be changed for rrelease***
-
-`docker-compose` can be used to start MSO. The files can be downloaded from the Nexus repository <add-link-to-Docker-Compose>
-
-***to be changed for rrelease**
-
-This job ***add link*** has been created to run the compose file. 
-
-***this info will go in the job description ?***
-```
-It job uses the Sample Docker Host described above as a Jenkins Slave (so when the build is triggered on Jenkins, it runs locally on the remote Docker Host). It pulls the needed information from MSO Git lab repository (deploy.sh and `docker-compose` file)
-```
+You can use `docker-compose` to start MSO.
 
 ### Heat template
 
-a Heat template that can be used on RackSpace to spin up the MSO Host VM and run docker-compose is currently being built by the Demo Team.
+A heat template that can be used on RackSpace to spin up the MSO Host VM and run docker-compose is currently being built by the Demo Team.
 
 # Accessing MSO
 
@@ -79,9 +47,9 @@ JBoss Wildly provides administrative functions through the application [server c
 
 Said console can be used to have a look at the status of MSO. It is providing details on deployed artifacts and gives a remote access to the main server log file
 
-***to be changed for the rrelease*** The UI can be accessed trough http://containerHostName:9990/ or on the sample host below : http://104.130.172.123:52090 (the sample host has port 9990 remapped to 52090 on the Rackspace VM)
+The UI can be accessed trough http://containerHostName:9990/
 
-The configuration preloads a default user (admin) with the standard OpenECOMP UI password ***provide link on rrelease***.
+The configuration preloads a default user (admin) with the standard `placeholder` password.
 
 The configuration of JBoss should not be touched. But it is possible to look at the two following sections for insights on the MSO health :
 
@@ -105,11 +73,12 @@ MSO orchestration processes can be monitored with the [Camunda Engine cockpit UI
 
 #### Accessing the Cockpit 
 
-***to be changed for the rrelease*** The cockpit is available at the following address : http://containerHostname:8080/cockpit or on the Sample host below http://104.130.172.123:52080/cockpit (the sample host has port 8080 remapped to 52080 on the Rackspace VM)
+The cockpit is available at the following address : http://containerHostname:8080/cockpit
 
-When the container is started, as it starts up from a fresh instance, it will create a default admin user (admin) with the default OpenECOMP password for UI***provide link on rrelease***
+When the container is started it will create a default admin user (admin) with the password `placeholder` for UI
 
-The cockpit gives an overview of the available BPMN (orchestration) processes (with a visual representation), it is also possible to trigger them from the UI if you know the parameters that are needed. 
+The cockpit gives an overview of the available BPMN (orchestration) processes (with a visual representation). 
+It is also possible to trigger them from the UI if you know the parameters that are needed. 
 
 ***screenshots to be uploaded when rrelease***
 
