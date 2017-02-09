@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9af53d3f_0277ecd5",
+        "filename": "readme.md",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 5
+      },
+      "writtenOn": "2017-02-09T15:33:21Z",
+      "side": 1,
+      "message": "Should we remove this ?",
+      "revId": "5a14f08dbfd889d261c65175b1edaf85b3544cda",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9af53d3f_e273e8e5",
+        "filename": "readme.md",
+        "patchSetId": 2
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 5
+      },
+      "writtenOn": "2017-02-09T15:33:21Z",
+      "side": 1,
+      "message": "is the container still named ecomp/mso, isn\u0027t openecomp/mso",
+      "revId": "5a14f08dbfd889d261c65175b1edaf85b3544cda",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
