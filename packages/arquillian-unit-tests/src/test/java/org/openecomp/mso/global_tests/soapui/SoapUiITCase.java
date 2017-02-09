@@ -91,7 +91,7 @@ public class SoapUiITCase {
 		System.out.println("Deploying Gamma BPMN WAR on default server");
 		return ArquillianPackagerForITCases.createPackageFromExistingOne("../../bpmn/MSOGammaBPMN/target/", "MSOGammaBPMN*.war", "MSOGammaBPMN.war");
 	}
-/*	
+/*
     @Deployment(name = "SoapUIMocks", testable = false)
     public static Archive <?> createSoapUIMocksWarDeployment () {
 
@@ -141,6 +141,36 @@ public class SoapUiITCase {
         } catch (Exception e) {
             e.printStackTrace ();
             fail("Failure in SOAPUI Healthcheck");
+        }
+    }
+
+    @Test
+    @RunAsClient
+    public void test02ApiHandlerInfra () {
+        SoapUITestCaseRunner runner = new SoapUITestCaseRunner ();
+        runner.setSettingsFile("./src/test/resources/SoapUI/soapui-settings.xml");
+        runner.setJUnitReport(true);
+        runner.setProjectFile ("./src/test/resources/SoapUI/Local-API-Handler-soapui-project.xml");
+        runner.setOutputFolder ("./target/surefire-reports");
+        String[] properties = new String[3];
+        properties[0] = "host="+jbossHost+":"+jbossPort;
+        properties[1] = "user-infraportal=InfraPortalClient";
+        properties[2] = "password-infraportal=password1$";
+
+        runner.setProjectProperties (properties);
+
+        try {
+            runner.setTestSuite ("simple_tests_endpoints");
+            runner.run ();
+            Map<TestAssertion,WsdlTestStepResult> mapResult= runner.getAssertionResults();
+            for(Map.Entry<TestAssertion,WsdlTestStepResult> entry : mapResult.entrySet()) {
+                assertTrue(entry.getValue().getStatus().equals(TestStepStatus.OK));
+            }
+            assertTrue (runner.getFailedTests ().size () == 0);
+
+        } catch (Exception e) {
+            e.printStackTrace ();
+            fail("Failure in SOAPUI ApiHandler Infra");
         }
     }
 

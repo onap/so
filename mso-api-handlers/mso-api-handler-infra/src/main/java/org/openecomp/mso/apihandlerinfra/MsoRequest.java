@@ -513,6 +513,10 @@ public class MsoRequest {
             session = HibernateUtil.getSessionFactory ().openSession ();
             session.beginTransaction ();
 
+			if (null == sir) {
+				sir = new ServiceInstancesRequest ();
+			}
+
             InfraActiveRequests aq = new InfraActiveRequests ();
             aq.setRequestId (requestId);
             
@@ -559,54 +563,58 @@ public class MsoRequest {
             if(sir.getVnfInstanceId() != null){
             	aq.setVnfId(sir.getVnfInstanceId());
             }
-                       
-            
-            if(requestScope.equalsIgnoreCase(ModelType.service.name())){
-              	if(requestInfo.getInstanceName() != null){
-            		aq.setServiceInstanceName(requestInfo.getInstanceName());            	
-            	}       	
-            }
-            
-            if(requestScope.equalsIgnoreCase(ModelType.network.name())){
-            	aq.setNetworkName(requestInfo.getInstanceName());
-            	aq.setNetworkType(networkType);
-            	aq.setNetworkId(sir.getNetworkInstanceId());
-            }
-            
-            if(requestScope.equalsIgnoreCase(ModelType.volumeGroup.name())){
-            	aq.setVolumeGroupId(sir.getVolumeGroupInstanceId());
-            	aq.setVolumeGroupName(requestInfo.getInstanceName());             	
-              	aq.setVnfType(vnfType);
- 
-            }
-            
-            if(requestScope.equalsIgnoreCase(ModelType.vfModule.name())){
-             	aq.setVfModuleName(requestInfo.getInstanceName());
-             	aq.setVfModuleModelName(modelInfo.getModelName());
-             	aq.setVfModuleId(sir.getVfModuleInstanceId()); 
-             	aq.setVolumeGroupId(sir.getVolumeGroupInstanceId());             	
-              	aq.setVnfType(vnfType);
- 
-            }
-            
-            if(requestScope.equalsIgnoreCase(ModelType.vnf.name())){
-              	aq.setVnfName(requestInfo.getInstanceName());
-              	RelatedInstanceList[] instanceList = sir.getRequestDetails().getRelatedInstanceList();
-              	
-              	if (instanceList != null) {
-              	
-	              	for(RelatedInstanceList relatedInstanceList : instanceList){
-	              		
-	              		RelatedInstance relatedInstance = relatedInstanceList.getRelatedInstance();
-	              		if(relatedInstance.getModelInfo().getModelType().equals(ModelType.service)){
-	              			aq.setVnfType(vnfType);
-	              		}
-	              	}	
-              	}
-              	//aq.setVnfType(sir.getRequestDetails().getRelatedInstanceList());
- 
-            }
-                        
+
+			if (null != requestScope) {
+				if (requestScope.equalsIgnoreCase(ModelType.service.name())) {
+					if (requestInfo.getInstanceName() != null) {
+						aq.setServiceInstanceName(requestInfo.getInstanceName());
+					}
+				}
+
+				if (requestScope.equalsIgnoreCase(ModelType.network.name())) {
+					aq.setNetworkName(requestInfo.getInstanceName());
+					aq.setNetworkType(networkType);
+					aq.setNetworkId(sir.getNetworkInstanceId());
+
+				}
+
+				if (requestScope.equalsIgnoreCase(ModelType.volumeGroup.name())) {
+					aq.setVolumeGroupId(sir.getVolumeGroupInstanceId());
+					aq.setVolumeGroupName(requestInfo.getInstanceName());
+					aq.setVnfType(vnfType);
+
+				}
+
+				if (requestScope.equalsIgnoreCase(ModelType.vfModule.name())) {
+					aq.setVfModuleName(requestInfo.getInstanceName());
+					aq.setVfModuleModelName(modelInfo.getModelName());
+					aq.setVfModuleId(sir.getVfModuleInstanceId());
+					aq.setVolumeGroupId(sir.getVolumeGroupInstanceId());
+					aq.setVnfType(vnfType);
+
+				}
+
+				if (requestScope.equalsIgnoreCase(ModelType.vnf.name())) {
+					aq.setVnfName(requestInfo.getInstanceName());
+					if (null != sir.getRequestDetails()) {
+						RelatedInstanceList[] instanceList = sir.getRequestDetails().getRelatedInstanceList();
+
+						if (instanceList != null) {
+
+							for (RelatedInstanceList relatedInstanceList : instanceList) {
+
+								RelatedInstance relatedInstance = relatedInstanceList.getRelatedInstance();
+								if (relatedInstance.getModelInfo().getModelType().equals(ModelType.service)) {
+									aq.setVnfType(vnfType);
+								}
+							}
+						}
+					}
+					//aq.setVnfType(sir.getRequestDetails().getRelatedInstanceList());
+
+				}
+			}
+
             aq.setRequestBody (this.requestJSON);
             
                        
