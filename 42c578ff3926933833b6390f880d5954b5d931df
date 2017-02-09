@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9af53d3f_053a56cd",
+        "filename": "packages/arquillian-unit-tests/src/test/resources/SoapUI/Local-API-Handler-soapui-project.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5
+      },
+      "writtenOn": "2017-02-09T18:48:09Z",
+      "side": 1,
+      "message": "Please remove att.com references in soapui files",
+      "revId": "42c578ff3926933833b6390f880d5954b5d931df",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9af53d3f_e53652e7",
+        "filename": "packages/arquillian-unit-tests/src/test/resources/SoapUI/Local-API-Handler-soapui-project.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 5
+      },
+      "writtenOn": "2017-02-09T18:48:09Z",
+      "side": 1,
+      "message": "here as well check rest of the file",
+      "revId": "42c578ff3926933833b6390f880d5954b5d931df",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
