@@ -7,18 +7,13 @@ LABEL Description="This image contains Ecomp Opensource MSO " Version="1.0"
 
 ARG http_proxy
 ARG https_proxy
-ARG chef_repo_branch_name
-ARG chef_repo_address
-ARG chef_repo_git_name
-ARG chef_repo_git_username
-ENV BRANCH_NAME=$chef_repo_branch_name
-ENV REPO_USERNAME=$chef_repo_git_username
-ENV REPO_ADDRESS=$chef_repo_address
-ENV CHEF_REPO_NAME=$chef_repo_git_name
 ENV HTTP_PROXY=$http_proxy
 ENV HTTPS_PROXY=$https_proxy
 ENV http_proxy=$HTTP_PROXY
 ENV https_proxy=$HTTPS_PROXY
+
+ENV CHEF_REPO_NAME="chef-repo"
+ENV CHEF_CONFIG_NAME="mso-config"
 
 ### Downloading dependencies
 
@@ -28,7 +23,6 @@ RUN apt-get install -y curl && curl -LO  https://packages.chef.io/stable/ubuntu/
 ### Install Chef
 RUN dpkg -i chefdk_0.17.17-1_amd64.deb 
 
-COPY scripts/init-chef.sh /opt/mso/scripts/init-chef.sh
 COPY scripts/start-jboss-server.sh /opt/mso/scripts/start-jboss-server.sh
 
 RUN chown jboss:jboss /opt/mso/scripts/*
@@ -47,30 +41,24 @@ RUN mkdir /shared
 RUN chown jboss:jboss /shared
 
 # Setup chef folders
+RUN mkdir -p /var/chef/nodes
+RUN chown jboss:jboss /var/chef/nodes
 RUN mkdir /var/berks-cookbooks
 RUN chown jboss:jboss /var/berks-cookbooks
-COPY chef-configs/solo.rb /tmp/git/solo.rb
-RUN chown -R jboss:jboss /tmp/git/
+RUN mkdir -p /home/jboss/.chef/nodes
+RUN chown jboss:jboss /home/jboss/.chef/nodes
 
-COPY id_rsa /home/jboss/user
-RUN chmod 600 /home/jboss/user
-RUN chown -R jboss:jboss /home/jboss
+COPY chef-configs/${CHEF_REPO_NAME} /var/berks-cookbooks/${CHEF_REPO_NAME}
+COPY chef-configs/${CHEF_CONFIG_NAME} /var/berks-cookbooks/${CHEF_CONFIG_NAME}
+COPY chef-configs/solo.rb /var/berks-cookbooks/${CHEF_REPO_NAME}/solo.rb
 
 # Start Chef config
-RUN mkdir -p /var/nodes
-RUN chown jboss:jboss /var/nodes
+RUN sed "s/CHEF_REPO_NAME_TO_REPLACE/${CHEF_REPO_NAME}/g" -i /var/berks-cookbooks/${CHEF_REPO_NAME}/solo.rb
+RUN chef-solo -c /var/berks-cookbooks/${CHEF_REPO_NAME}/solo.rb -o recipe[mso-config::apih],recipe[mso-config::bpmn],recipe[mso-config::jra]
 
-RUN mkdir -p /home/jboss/.chef/nodes
-RUN mkdir /home/jboss/.ssh
-
-
-RUN apt-get install -y git && sed -i "s@jboss:/bin/false@jboss:/bin/bash@g" /etc/passwd && su jboss -c "/opt/mso/scripts/init-chef.sh" && sed -i "s@jboss:/bin/bash@jboss:/bin/false@g" /etc/passwd && apt-get remove --purge -y git  && apt-get autoremove -y
-RUN rm -rf /home/jboss/.ssh
-RUN rm /home/jboss/user
-RUN echo "" > /shared/mso-docker.json
 RUN mv /var/berks-cookbooks/${CHEF_REPO_NAME}/environments/mso-docker.json /var/berks-cookbooks/${CHEF_REPO_NAME}/environments/mso-docker-init.json
+RUN echo "" > /shared/mso-docker.json
 RUN ln -s /shared/mso-docker.json /var/berks-cookbooks/${CHEF_REPO_NAME}/environments/mso-docker.json
-RUN rm -rf /tmp/git
 
 ## Create the log folder for MSO
 RUN mkdir -p /var/log/ecomp/MSO/
