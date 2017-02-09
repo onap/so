@@ -30,7 +30,6 @@ ENV JBOSS_HOME=/opt/jboss
 
 USER root
 
-COPY scripts/init-chef.sh /opt/mso/scripts/init-chef.sh
 RUN chmod 755 /opt/mso/scripts/init-chef.sh
 
 COPY scripts/build-and-start.sh /opt/mso/scripts/build-and-start.sh
