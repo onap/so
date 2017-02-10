@@ -248,7 +248,7 @@
 		<msoservtypes:request-id>155415ab-b4a7-4382-b4c6-d17d950565</msoservtypes:request-id>
 		<msoservtypes:request-action>FeatureChangeActivateRequest</msoservtypes:request-action>
 		<msoservtypes:source>OMX</msoservtypes:source>
-		<msoservtypes:notification-url>https://csi-tst-q22.it.att.com:22443/Services/com/cingular/csi/sdn/SendManagedNetworkStatusNotification.jws</msoservtypes:notification-url>
+		<msoservtypes:notification-url>https://localhost:22443/Services/com/cingular/csi/sdn/SendManagedNetworkStatusNotification.jws</msoservtypes:notification-url>
 		<msoservtypes:order-number>5051560</msoservtypes:order-number>
 		<msoservtypes:order-version>1</msoservtypes:order-version>
 	</msoservtypes:request-information>
@@ -327,7 +327,7 @@ declare namespace req='http://com.att.mso/requestsdb';
 		<msoservtypes:request-id>155415ab-b4a7-4382-b4c6-d17d950565</msoservtypes:request-id>
 		<msoservtypes:request-action>FeatureChangeActivateRequest</msoservtypes:request-action>
 		<msoservtypes:source>OMX</msoservtypes:source>
-		<msoservtypes:notification-url>https://csi-tst-q22.it.att.com:22443/Services/com/cingular/csi/sdn/SendManagedNetworkStatusNotification.jws</msoservtypes:notification-url>
+		<msoservtypes:notification-url>https://localhost:22443/Services/com/cingular/csi/sdn/SendManagedNetworkStatusNotification.jws</msoservtypes:notification-url>
 		<msoservtypes:order-number>5051560</msoservtypes:order-number>
 		<msoservtypes:order-version>1</msoservtypes:order-version>
 	</msoservtypes:request-information>
