@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "9af53d3f_423bb4eb",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/openecomp/mso/apihandlerinfra/MsoRequest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 598,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2017-02-10T08:25:38Z",
+      "side": 1,
+      "message": "Looks like tabs everywhere :(",
+      "revId": "42c578ff3926933833b6390f880d5954b5d931df",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9af53d3f_053a56cd",
         "filename": "packages/arquillian-unit-tests/src/test/resources/SoapUI/Local-API-Handler-soapui-project.xml",
         "patchSetId": 1
