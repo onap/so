@@ -17,6 +17,16 @@
             <groupId>com.att.eelf</groupId>
             <artifactId>eelf-core</artifactId>
             <version>0.0.1</version>
+            <exclusions>
+            	<exclusion>
+            		<groupId>org.powermock</groupId>
+            		<artifactId>powermock-module-junit4</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.powermock</groupId>
+            		<artifactId>powermock-api-mockito</artifactId>
+            	</exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
