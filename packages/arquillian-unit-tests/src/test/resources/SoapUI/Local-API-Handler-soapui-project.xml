@@ -402,7 +402,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         <volume-group-id>da9e0bdf-7d88-4111-bcad-8b72e3a5e601</volume-group-id>
     </volume-inputs>
 </volume-request>
-]]></con:request><con:credentials><con:username>${#Project#user-csi}</con:username><con:password>${#Project#user-csi}</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/><con:parameterOrder/></con:request></con:method><con:method name="Getinfo" id="bbad9a54-6630-4679-b6ef-2298202784ac" method="GET"><con:settings/><con:parameters/><con:representation type="FAULT"><con:mediaType>text/html;charset=utf-8</con:mediaType><con:status>404 405</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>*/*</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:v1="http://ecomp.att.com/mso/infra/volume-request/v1">v1:volume-requests</con:element></con:representation><con:request name="Request 1" id="706b2d9c-7802-4160-9fa2-31537f0131fb" mediaType="application/json"><con:settings/><con:endpoint>http://localhost:8080</con:endpoint><con:request/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/><con:parameterOrder><con:entry>tenantId</con:entry><con:entry>vnf-type</con:entry></con:parameterOrder></con:request></con:method></con:resource><con:resource name="VID Create Service" path="/ecomp/mso/infra/serviceInstances/v2" id="bd95b87e-b8ce-488e-9d51-373e0ea1ea91"><con:settings/><con:parameters/><con:method name="create service" id="2fa93fd7-2c2f-481b-981a-9e47d2d2e7ac" method="POST"><con:settings/><con:parameters/><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="FAULT"><con:mediaType>application/json</con:mediaType><con:status>400 409</con:status><con:params/><con:element xmlns:v2="http://localhost/ecomp/mso/infra/serviceInstances/v2">v2:Fault</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>202</con:status><con:params/><con:element xmlns:v2="http://localhost/ecomp/mso/infra/serviceInstances/v2">v2:Response</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="FAULT"><con:mediaType>text/html;charset=UTF-8</con:mediaType><con:status>401</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:request name="Request 1" id="8ca9d822-808a-4955-a4e6-5f56ff813fec" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://${#Project#host}</con:endpoint><con:request>{
+]]></con:request><con:credentials><con:username>${#Project#user-csi}</con:username><con:password>${#Project#user-csi}</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/><con:parameterOrder/></con:request></con:method><con:method name="Getinfo" id="bbad9a54-6630-4679-b6ef-2298202784ac" method="GET"><con:settings/><con:parameters/><con:representation type="FAULT"><con:mediaType>text/html;charset=utf-8</con:mediaType><con:status>404 405</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>*/*</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:v1="http://ecomp.att.com/mso/infra/volume-request/v1">v1:volume-requests</con:element></con:representation><con:request name="Request 1" id="706b2d9c-7802-4160-9fa2-31537f0131fb" mediaType="application/json"><con:settings/><con:endpoint>http://localhost:8080</con:endpoint><con:request/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/><con:parameterOrder><con:entry>tenantId</con:entry><con:entry>vnf-type</con:entry></con:parameterOrder></con:request></con:method></con:resource><con:resource name="VID Create Service" path="/ecomp/mso/infra/serviceInstances/v2" id="bd95b87e-b8ce-488e-9d51-373e0ea1ea91"><con:settings/><con:parameters/><con:method name="create service" id="2fa93fd7-2c2f-481b-981a-9e47d2d2e7ac" method="POST"><con:settings/><con:parameters/><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="FAULT"><con:mediaType>application/json</con:mediaType><con:status>400 409</con:status><con:params/><con:element xmlns:v2="http://localhost/ecomp/mso/infra/serviceInstances/v2">v2:Fault</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>202</con:status><con:params/><con:element xmlns:v2="http://localhost/ecomp/mso/infra/serviceInstances/v2">v2:Response</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="FAULT"><con:mediaType>text/html;charset=UTF-8</con:mediaType><con:status>401</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:request name="Request 1" id="8ca9d822-808a-4955-a4e6-5f56ff813fec" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://${#Project#host}</con:endpoint><con:request>{
   "requestDetails": {
       "modelInfo": {
          "modelType": "service",
@@ -768,7 +768,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       }
   }
 }
-</con:request><con:credentials><con:username>${#Project#user-infraportal}</con:username><con:password>${#Project#user-infraportal}</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/><con:parameterOrder><con:entry>serviceInstanceId</con:entry><con:entry>vnfInstanceId</con:entry><con:entry>volumeGroupInstanceId</con:entry></con:parameterOrder></con:request></con:method></con:resource><con:resource name="VID Create Networks" path="/ecomp/mso/infra/serviceInstances/v2/{serviceInstanceId}/networks" id="cb557811-fc17-45f7-af9b-ea0b2277fb71"><con:settings/><con:parameters><con:parameter><con:name>serviceInstanceId</con:name><con:value>serviceInstanceId</con:value><con:style>TEMPLATE</con:style><con:default>serviceInstanceId</con:default></con:parameter></con:parameters><con:method name="create networks" id="e6ca32c7-f781-43b9-96e2-acc4fb9573ef" method="POST"><con:settings/><con:parameters/><con:representation type="FAULT"><con:mediaType>application/json</con:mediaType><con:status>502 400</con:status><con:params/><con:element xmlns:vnfs="http://localhost/ecomp/mso/infra/serviceInstances/v2/3713d5de-942f-41c4-a1b7-08245bc640cc/vnfs/">vnfs:Fault</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>202</con:status><con:params/><con:element xmlns:vnfs="http://localhost/ecomp/mso/infra/serviceInstances/v2/3713d5de-942f-41c4-a1b7-08245bc640cc/vnfs/">vnfs:Response</con:element></con:representation><con:representation type="FAULT"><con:mediaType>text/html;charset=UTF-8</con:mediaType><con:status>401</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="FAULT"><con:mediaType xsi:nil="true"/><con:status>415</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>application/xml</con:mediaType><con:params/><con:element xmlns:v1="http://ecomp.att.com/mso/infra/vnf-request/v1">v1:network-request</con:element></con:representation><con:request name="Request 1" id="7f7c8648-43aa-4e16-add0-337b0fa084b4" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://${#Project#host}</con:endpoint><con:request>{
+</con:request><con:credentials><con:username>${#Project#user-infraportal}</con:username><con:password>${#Project#user-infraportal}</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/><con:parameterOrder><con:entry>serviceInstanceId</con:entry><con:entry>vnfInstanceId</con:entry><con:entry>volumeGroupInstanceId</con:entry></con:parameterOrder></con:request></con:method></con:resource><con:resource name="VID Create Networks" path="/ecomp/mso/infra/serviceInstances/v2/{serviceInstanceId}/networks" id="cb557811-fc17-45f7-af9b-ea0b2277fb71"><con:settings/><con:parameters><con:parameter><con:name>serviceInstanceId</con:name><con:value>serviceInstanceId</con:value><con:style>TEMPLATE</con:style><con:default>serviceInstanceId</con:default></con:parameter></con:parameters><con:method name="create networks" id="e6ca32c7-f781-43b9-96e2-acc4fb9573ef" method="POST"><con:settings/><con:parameters/><con:representation type="FAULT"><con:mediaType>application/json</con:mediaType><con:status>502 400 404</con:status><con:params/><con:element xmlns:vnfs="http://localhost/ecomp/mso/infra/serviceInstances/v2/3713d5de-942f-41c4-a1b7-08245bc640cc/vnfs/">vnfs:Fault</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>202</con:status><con:params/><con:element xmlns:vnfs="http://localhostecomp/mso/infra/serviceInstances/v2/3713d5de-942f-41c4-a1b7-08245bc640cc/vnfs/">vnfs:Response</con:element></con:representation><con:representation type="FAULT"><con:mediaType>text/html;charset=UTF-8</con:mediaType><con:status>401</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="FAULT"><con:mediaType xsi:nil="true"/><con:status>415</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>application/xml</con:mediaType><con:params/><con:element xmlns:v1="http://ecomp.att.com/mso/infra/vnf-request/v1">v1:network-request</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:request name="Request 1" id="7f7c8648-43aa-4e16-add0-337b0fa084b4" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://${#Project#host}</con:endpoint><con:request>{
   "requestDetails": {
       "modelInfo": {
          "modelType": "vnf",
@@ -1320,7 +1320,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          <serviceInstanceId>${#TestCase#serviceInstanceId}</serviceInstanceId>
       </req:updateInfraRequest>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="Valid HTTP Status Codes" id="5e83a766-cff3-473e-8a6b-7a19fec9bc03" name="Valid HTTP Status Codes"><con:configuration><codes>200</codes></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://com.att.mso/requestsdb/RequestsDbAdapter/updateInfraRequestRequest"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="restrequest" name="Get request by requestId" id="811c65af-f2e5-4612-b370-4d49649c76db"><con:settings/><con:config service="Services" methodName="Method 1" resourcePath="/ecomp/mso/infra/orchestrationRequests/v2/{requestId}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Get request by requestId" id="15b782f7-177b-42b3-9561-60d0462c2243" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#host}</con:endpoint><con:request/><con:originalUri>http://localhost/ecomp/mso/infra/orchestrationRequests/v2/7d28d657-cdad-44eb-b048-7b0bc68b795a</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="fd8b9cb7-2314-413c-b359-c875c5eb7580" name="Valid HTTP Status Codes"><con:configuration><codes>200</codes></con:configuration></con:assertion><con:assertion type="Simple Contains" id="c833a119-2672-4031-809c-a888b4cee98e" name="Contains"><con:configuration><token>"requestScope":"service","requestType":"createInstance","requestDetails":{"modelInfo":{"modelCustomizationName":null,"modelInvariantId":"ff3514e3-5a33-55df-13ab-12abad84e7ff","modelType":"service","modelNameVersionId":"fe6985cd-ea33-3346-ac12-ab121484a3fe","modelName":"dns-servicetest","modelVersion":"1.0"},"requestInfo":{"billingAccountNumber":null,"callbackUrl":null,"correlator":null,"orderNumber":null,"productFamilyId":null,"orderVersion":null,"source":"VID","instanceName":"DNS_TEST","suppressRollback":true},"relatedInstanceList":null,"subscriberInfo":{"globalSubscriberId":"subscriber-1","subscriberName":"testSubscriber"},"cloudConfiguration":null,"requestParameters":{"subscriptionServiceType":"MOG","userParams":[{"name":"someUserParam","value":"someValue"}]}},"instanceReferences":{"serviceInstanceId":"</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="2a9d8fa2-5f71-4cd2-bbea-05321ef6511f"><con:configuration/></con:assertion><con:assertion type="Simple Contains" id="5dc3b70b-2ea1-4787-9782-6df5a2990b29" name="Contains 1"><con:configuration><token>"serviceInstanceName":"DNS_TEST","vnfInstanceId":null,"vnfInstanceName":null,"vfModuleInstanceId":null,"vfModuleInstanceName":null,"volumeGroupInstanceId":null,"volumeGroupInstanceName":null,"networkInstanceId":null,"networkInstanceName":null},"requestStatus":{"requestState":"COMPLETE","statusMessage":"</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>${#Project#user-infraportal}</con:username><con:password>${#Project#password-infraportal}</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="requestId" value="${#TestCase#requestId}" xmlns="http://eviware.com/soapui/config"/></con:parameters></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Get request by non-exist requestId" id="37deb674-64ac-42bf-be9e-3f0c8441ac90"><con:settings/><con:config service="Services" methodName="Method 1" resourcePath="/ecomp/mso/infra/orchestrationRequests/v2/{requestId}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Get request by non-exist requestId" id="15b782f7-177b-42b3-9561-60d0462c2243" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#host}</con:endpoint><con:request/><con:originalUri>http://localhost/ecomp/mso/infra/orchestrationRequests/v2/7d28d657-cdad-44eb-b048-7b0bc68b795a</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="fd8b9cb7-2314-413c-b359-c875c5eb7580" name="Valid HTTP Status Codes"><con:configuration><codes>204</codes></con:configuration></con:assertion><con:credentials><con:username>${#Project#user-infraportal}</con:username><con:password>${#Project#password-infraportal}</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="requestId" value="wrongId" xmlns="http://eviware.com/soapui/config"/></con:parameters></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Create VNF" id="20ce506e-b716-401f-8789-decdf46c7d33"><con:settings/><con:config service="Services" resourcePath="/ecomp/mso/infra/serviceInstances/v2/{serviceInstanceId}/vnfs/" methodName="create vnf" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Create VNF" id="7f7c8648-43aa-4e16-add0-337b0fa084b4" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://${#Project#host}</con:endpoint><con:request>{"requestDetails": {
+</soapenv:Envelope>]]></con:request><con:assertion type="Valid HTTP Status Codes" id="5e83a766-cff3-473e-8a6b-7a19fec9bc03" name="Valid HTTP Status Codes"><con:configuration><codes>200</codes></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://com.att.mso/requestsdb/RequestsDbAdapter/updateInfraRequestRequest"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="restrequest" name="Get request by requestId" id="811c65af-f2e5-4612-b370-4d49649c76db"><con:settings/><con:config service="Services" methodName="Method 1" resourcePath="/ecomp/mso/infra/orchestrationRequests/v2/{requestId}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Get request by requestId" id="15b782f7-177b-42b3-9561-60d0462c2243" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#host}</con:endpoint><con:request/><con:originalUri>http://localhost/ecomp/mso/infra/orchestrationRequests/v2/7d28d657-cdad-44eb-b048-7b0bc68b795a</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="fd8b9cb7-2314-413c-b359-c875c5eb7580" name="Valid HTTP Status Codes"><con:configuration><codes>200</codes></con:configuration></con:assertion><con:assertion type="Simple Contains" id="c833a119-2672-4031-809c-a888b4cee98e" name="Contains"><con:configuration><token>"requestScope":"service","requestType":"createInstance","requestDetails":{"modelInfo":{"modelCustomizationName":null,"modelInvariantId":"ff3514e3-5a33-55df-13ab-12abad84e7ff","modelType":"service","modelNameVersionId":"fe6985cd-ea33-3346-ac12-ab121484a3fe","modelName":"dns-servicetest","modelVersion":"1.0"},"requestInfo":{"billingAccountNumber":null,"callbackUrl":null,"correlator":null,"orderNumber":null,"productFamilyId":null,"orderVersion":null,"source":"VID","instanceName":"DNS_TEST","suppressRollback":true},"relatedInstanceList":null,"subscriberInfo":{"globalSubscriberId":"subscriber-1","subscriberName":"testSubscriber"},"cloudConfiguration":null,"requestParameters":{"subscriptionServiceType":"MOG","userParams":[{"name":"someUserParam","value":"someValue"}]}},"instanceReferences":{"serviceInstanceId":"</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="2a9d8fa2-5f71-4cd2-bbea-05321ef6511f"><con:configuration/></con:assertion><con:assertion type="Simple Contains" id="5dc3b70b-2ea1-4787-9782-6df5a2990b29" name="Contains 1"><con:configuration><token>"serviceInstanceName":"DNS_TEST","vnfInstanceId":null,"vnfInstanceName":null,"vfModuleInstanceId":null,"vfModuleInstanceName":null,"volumeGroupInstanceId":null,"volumeGroupInstanceName":null,"networkInstanceId":null,"networkInstanceName":null},"requestStatus":{"requestState":</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>${#Project#user-infraportal}</con:username><con:password>${#Project#password-infraportal}</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="requestId" value="${#TestCase#requestId}" xmlns="http://eviware.com/soapui/config"/></con:parameters></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Get request by non-exist requestId" id="37deb674-64ac-42bf-be9e-3f0c8441ac90"><con:settings/><con:config service="Services" methodName="Method 1" resourcePath="/ecomp/mso/infra/orchestrationRequests/v2/{requestId}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Get request by non-exist requestId" id="15b782f7-177b-42b3-9561-60d0462c2243" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#host}</con:endpoint><con:request/><con:originalUri>http://localhost/ecomp/mso/infra/orchestrationRequests/v2/7d28d657-cdad-44eb-b048-7b0bc68b795a</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="fd8b9cb7-2314-413c-b359-c875c5eb7580" name="Valid HTTP Status Codes"><con:configuration><codes>204</codes></con:configuration></con:assertion><con:credentials><con:username>${#Project#user-infraportal}</con:username><con:password>${#Project#password-infraportal}</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="requestId" value="wrongId" xmlns="http://eviware.com/soapui/config"/></con:parameters></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Create VNF" id="20ce506e-b716-401f-8789-decdf46c7d33"><con:settings/><con:config service="Services" resourcePath="/ecomp/mso/infra/serviceInstances/v2/{serviceInstanceId}/vnfs/" methodName="create vnf" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Create VNF" id="7f7c8648-43aa-4e16-add0-337b0fa084b4" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://${#Project#host}</con:endpoint><con:request>{"requestDetails": {
    "modelInfo":    {
       "modelNameVersionId": "fe6478e4-ea33-3346-ac12-ab121484a3fe",
       "modelName": "DNSResource",
@@ -1341,7 +1341,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          "modelVersion": "1.0",
          "modelInvariantId": "ff3514e3-5a33-55df-13ab-12abad84e7ff"
       },
-      "instanceId": "90b3a5f7-f7fa-4ac1-b966-becf2ae480cd"
+      "instanceId": "abda8f01-08fc-4d4f-8e57-9eaab06e33e4"
    }}],
    "requestInfo":    {
       "productFamilyId": "a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb",
@@ -1381,7 +1381,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             "modelVersion": "1.0",
             "modelInvariantId": "585822c8-4027-4f84-ba50-e9248606f111"
          },
-         "instanceId": "90b3a5f7-f7fa-4ac1-b966-becf2ae480cd"
+         "instanceId": "abda8f01-08fc-4d4f-8e57-9eaab06e33e4"
       }},
       {"relatedInstance":       {
          "modelInfo":          {
@@ -1392,7 +1392,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             "modelCustomizationName": "DNSResource-1",
             "modelInvariantId": "585822c7-4027-4f84-ba50-e9248606f112"
          },
-         "instanceId": "8c8224b6-ef17-44e1-948b-5783ed0f06d6"
+         "instanceId": "1ac28783-8268-41b0-a653-36d0d09d0695"
       }}
    ],
    "requestInfo":    {
@@ -1435,7 +1435,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             "modelVersion": "1.0",
             "modelInvariantId": "585822c8-4027-4f84-ba50-e9248606f111"
          },
-         "instanceId": "90b3a5f7-f7fa-4ac1-b966-becf2ae480cd"
+         "instanceId": "abda8f01-08fc-4d4f-8e57-9eaab06e33e4"
       }},
       {"relatedInstance":       {
          "modelInfo":          {
@@ -1446,7 +1446,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             "modelCustomizationName": "DNSResource-1",
             "modelInvariantId": "585822c7-4027-4f84-ba50-e9248606f112"
          },
-         "instanceId": "b978e03a-8371-496f-b53a-fa117f24c1d0"
+         "instanceId": "1ac28783-8268-41b0-a653-36d0d09d0695"
       }}
    ],
    "requestInfo":    {
@@ -1563,7 +1563,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             "modelVersion": "1.0",
             "modelInvariantId": "585822c8-4027-4f84-ba50-e9248606f111"
          },
-         "instanceId": "90b3a5f7-f7fa-4ac1-b966-becf2ae480cd"
+         "instanceId": "abda8f01-08fc-4d4f-8e57-9eaab06e33e4"
       }},
       {"relatedInstance":       {
          "modelInfo":          {
@@ -1574,7 +1574,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             "modelCustomizationName": "DNSResource-1",
             "modelInvariantId": "585822c7-4027-4f84-ba50-e9248606f112"
          },
-         "instanceId": "b978e03a-8371-496f-b53a-fa117f24c1d0"
+         "instanceId": "1ac28783-8268-41b0-a653-36d0d09d0695"
       }}
    ],
    "requestInfo":    {
@@ -1616,7 +1616,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             "modelVersion": "1.0",
             "modelInvariantId": "585822c8-4027-4f84-ba50-e9248606f111"
          },
-         "instanceId": "90b3a5f7-f7fa-4ac1-b966-becf2ae480cd"
+         "instanceId": "abda8f01-08fc-4d4f-8e57-9eaab06e33e4"
       }},
       {"relatedInstance":       {
          "modelInfo":          {
@@ -1627,7 +1627,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             "modelCustomizationName": "DNSResource-1",
             "modelInvariantId": "585822c7-4027-4f84-ba50-e9248606f112"
          },
-         "instanceId": "b978e03a-8371-496f-b53a-fa117f24c1d0"
+         "instanceId": "1ac28783-8268-41b0-a653-36d0d09d0695"
       }}
    ],
    "requestInfo":    {
@@ -1684,7 +1684,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          "modelVersion": "1.0",
          "modelInvariantId": "585822c8-4027-4f84-ba50-e9248606f111"
       },
-      "instanceId": "90b3a5f7-f7fa-4ac1-b966-becf2ae480cd"
+      "instanceId": "abda8f01-08fc-4d4f-8e57-9eaab06e33e4"
    }}],
    "requestInfo":    {
       "productFamilyId": "a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb",
@@ -1719,7 +1719,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          "modelVersion": "1.0",
          "modelInvariantId": "585822c8-4027-4f84-ba50-e9248606f111"
       },
-      "instanceId": "90b3a5f7-f7fa-4ac1-b966-becf2ae480cd"
+      "instanceId": "abda8f01-08fc-4d4f-8e57-9eaab06e33e4"
    }}],
    "requestInfo":    {
       "productFamilyId": "a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb",
@@ -1870,7 +1870,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       }
   }
 }</con:request><con:originalUri>http://localhost/ecomp/mso/infra/serviceInstances/v2</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="12d5c872-b42a-4fdf-aee1-4a5b805ed255" name="Valid HTTP Status Codes"><con:configuration><codes>202
-</codes></con:configuration></con:assertion><con:credentials><con:username>${#Project#user-infraportal}</con:username><con:password>${#Project#password-infraportal}</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:testStep type="transfer" name="ServiceInstanceId Property Transfer 2" id="03c6fc5a-5d4c-49f8-aaaf-32b11874e8e7"><con:settings/><con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false"><con:name>transfer-to-create-vnf-url</con:name><con:sourceType>Response</con:sourceType><con:sourceStep>Create Service</con:sourceStep><con:sourcePath>$.requestReferences.instanceId</con:sourcePath><con:targetType>serviceInstanceId</con:targetType><con:targetStep>#TestCase#</con:targetStep><con:targetPath/><con:type>JSONPATH</con:type><con:targetTransferType>JSONPATH</con:targetTransferType><con:upgraded>true</con:upgraded></con:transfers><con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false"><con:name>transfer-to-create-vfmodule-url</con:name><con:sourceType>Response</con:sourceType><con:sourceStep>Create Service</con:sourceStep><con:sourcePath>$.requestReferences.requestId</con:sourcePath><con:targetType>requestId</con:targetType><con:targetStep>#TestCase#</con:targetStep><con:targetPath/><con:type>JSONPATH</con:type><con:targetTransferType>JSONPATH</con:targetTransferType><con:upgraded>true</con:upgraded></con:transfers></con:config></con:testStep><con:testStep type="request" id="3e640c4a-b36c-473c-916a-b243647b9729" name="UpdateInfraRequest - In progress"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>MsoRequestsDbAdapterImplPortBinding</con:interface><con:operation>updateInfraRequest</con:operation><con:request name="UpdateInfraRequest - In progress" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="3345e90e-035c-470b-a4e4-41765ccb8b27"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#host}/dbadapters/RequestsDbAdapter</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:req="http://com.att.mso/requestsdb">
+</codes></con:configuration></con:assertion><con:credentials><con:username>${#Project#user-infraportal}</con:username><con:password>${#Project#password-infraportal}</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:testStep type="transfer" name="ServiceInstanceId Property Transfer 2" id="03c6fc5a-5d4c-49f8-aaaf-32b11874e8e7"><con:settings/><con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false"><con:name>set-serviceInstanceId-property</con:name><con:sourceType>Response</con:sourceType><con:sourceStep>Create Service 2</con:sourceStep><con:sourcePath>$.requestReferences.instanceId</con:sourcePath><con:targetType>serviceInstanceId</con:targetType><con:targetStep>#TestCase#</con:targetStep><con:targetPath/><con:type>JSONPATH</con:type><con:targetTransferType>XQUERY</con:targetTransferType><con:upgraded>true</con:upgraded></con:transfers><con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false"><con:name>set-requestId-property</con:name><con:sourceType>Response</con:sourceType><con:sourceStep>Create Service 2</con:sourceStep><con:sourcePath>$.requestReferences.requestId</con:sourcePath><con:targetType>requestId</con:targetType><con:targetStep>#TestCase#</con:targetStep><con:targetPath/><con:type>JSONPATH</con:type><con:targetTransferType>XQUERY</con:targetTransferType><con:upgraded>true</con:upgraded></con:transfers><con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false"><con:name>transfer-to-create-network-url</con:name><con:sourceType>Response</con:sourceType><con:sourceStep>Create Service 2</con:sourceStep><con:sourcePath>$.requestReferences.instanceId</con:sourcePath><con:targetType>Request</con:targetType><con:targetStep>Create Networks with wrong BPMN script URL</con:targetStep><con:targetPath>$.requestDetails.relatedInstanceList[0].relatedInstance.instanceId</con:targetPath><con:type>JSONPATH</con:type><con:targetTransferType>JSONPATH</con:targetTransferType><con:upgraded>true</con:upgraded></con:transfers><con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false"><con:name>transfer-to-create-network-url</con:name><con:sourceType>Response</con:sourceType><con:sourceStep>Create Service 2</con:sourceStep><con:sourcePath>$.requestReferences.instanceId</con:sourcePath><con:targetType>Request</con:targetType><con:targetStep>Create Networks with no BPMN script</con:targetStep><con:targetPath>$.requestDetails.relatedInstanceList[0].relatedInstance.instanceId</con:targetPath><con:type>JSONPATH</con:type><con:targetTransferType>JSONPATH</con:targetTransferType><con:upgraded>true</con:upgraded></con:transfers></con:config></con:testStep><con:testStep type="delay" name="Delay 5 seconds" id="8571311f-1326-4610-9629-a5e0ecfbe7c1"><con:settings/><con:config><delay>5000</delay></con:config></con:testStep><con:testStep type="request" id="3e640c4a-b36c-473c-916a-b243647b9729" name="UpdateInfraRequest - In progress"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>MsoRequestsDbAdapterImplPortBinding</con:interface><con:operation>updateInfraRequest</con:operation><con:request name="UpdateInfraRequest - In progress" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="3345e90e-035c-470b-a4e4-41765ccb8b27"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#host}/dbadapters/RequestsDbAdapter</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:req="http://com.att.mso/requestsdb">
    <soapenv:Header/>
    <soapenv:Body>
       <req:updateInfraRequest>
@@ -1910,34 +1910,188 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   }
 }</con:request><con:originalUri>http://localhost/ecomp/mso/infra/serviceInstances/v2</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="12d5c872-b42a-4fdf-aee1-4a5b805ed255" name="Valid HTTP Status Codes"><con:configuration><codes>409
 
-</codes></con:configuration></con:assertion><con:assertion type="Simple Contains" id="105dc1c2-1460-4cfe-bf84-a83ef8d17e86" name="Contains"><con:configuration><token>Error: Locked instance</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>${#Project#user-infraportal}</con:username><con:password>${#Project#password-infraportal}</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:testStep type="jdbc" name="JDBC Request" id="654e464a-e447-4689-a987-fb7592d9b81a" disabled="true"><con:settings/><con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:driver>org.mysql.jdbc.Driver</con:driver><con:connectionString>jdbc:mysql://172.17.0.2:3306/mso_catalog?user=catalog&amp;password=catalog123</con:connectionString><con:query>delete from service where id=1;</con:query><con:assertion type="Simple Contains" id="01108ed8-616d-483d-9dd3-c911c0cba5cc" name="Contains"><con:configuration><token>&lt;UpdateCount>1&lt;/UpdateCount></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:properties/></con:config></con:testStep><con:testStep type="restrequest" name="Create Service - ModelType Not existing in DB" id="6b8a8b98-0dc2-479e-9090-e66823f1de21" disabled="true"><con:settings/><con:config service="Services" resourcePath="/ecomp/mso/infra/serviceInstances/v2" methodName="create service" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Create Service - ModelType Not existing in DB" id="8ca9d822-808a-4955-a4e6-5f56ff813fec" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://${#Project#host}</con:endpoint><con:request>{
-  "requestDetails": {
-      "modelInfo": {
+</codes></con:configuration></con:assertion><con:assertion type="Simple Contains" id="105dc1c2-1460-4cfe-bf84-a83ef8d17e86" name="Contains"><con:configuration><token>Error: Locked instance</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>${#Project#user-infraportal}</con:username><con:password>${#Project#password-infraportal}</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:testStep type="groovy" name="Update vnf_recipe table" id="edadefc9-6db0-410a-a6db-7edadbad2537"><con:settings/><con:config><script>import java.sql.Driver
+import java.sql.Connection
+import java.sql.Statement
+import java.sql.ResultSet
+
+def testCaseProperty = testRunner.testCase.testSuite.project.getPropertyValue( "host" )
+def host = testCaseProperty.substring(0,testCaseProperty.lastIndexOf(':'))
+def urlString = testRunner.testCase.testSuite.project.getPropertyValue( "db-driver" )
+
+if (urlString.equals("")) {
+	URL[] urls = ClassLoader.systemClassLoader.getURLs()
+	String urlStr = urls[0].toString()
+	String tempUrl = urlStr.substring(0,urlStr.lastIndexOf('/'))
+	String baseUrl = tempUrl.substring(0,tempUrl.lastIndexOf('/')+1)
+
+ 	urlString = "jar:" + baseUrl +"mariadb-connector/mariadb-java-client-1.5.4.jar!/"
+} else {
+	urlString = "jar:file:" + urlString +"!/"
+}
+
+def url = new URL(urlString)
+URL[] classUrls = [ url ];
+URLClassLoader urlCl = new URLClassLoader(classUrls);
+
+Class mySqlDriver = urlCl.loadClass( "org.mariadb.jdbc.Driver" );
+Driver sqlDriverInstance = ( Driver ) mySqlDriver.newInstance();
+Connection con = null;
+try {
+	String dbUrl = "jdbc:mariadb://" + host + ":3306/mso_catalog";
+      Properties userDbCredentials = new Properties();
+      userDbCredentials.put( "user", "catalog" );
+      userDbCredentials.put( "password", "catalog123" );
+
+      // safely use driver to connect
+      con = sqlDriverInstance.connect( dbUrl, userDbCredentials );
+
+      Statement stmt = con.createStatement();
+      String sql = "update network_recipe set ORCHESTRATION_URI=\"123\" where NETWORK_TYPE=\"VID_DEFAULT\" and ACTION=\"createInstance\"";
+      stmt.executeUpdate( sql );
+} catch( Exception e ) {
+      e.printStackTrace(); // only for quick debug
+} finally {
+      try { if ( con != null ) con.close(); } catch ( Exception ignoreThis ) {}
+}
+</script></con:config></con:testStep><con:testStep type="restrequest" name="Create Networks with wrong BPMN script URL" id="23703e67-797f-4a9c-bd64-7d4b53d660ec"><con:settings/><con:config service="Services" methodName="create networks" resourcePath="/ecomp/mso/infra/serviceInstances/v2/{serviceInstanceId}/networks" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Create Networks with wrong BPMN script URL" id="c91bf79d-4cb5-4ebb-9329-2faf92237fdc" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#host}</con:endpoint><con:request>{"requestDetails": {
+   "cloudConfiguration":    {
+      "tenantId": "cff319d50266491fa744b0d493a51ce0",
+      "lcpCloudRegionId": "rdm3"
+   },
+   "modelInfo":    {
+      "modelName": "CONTRAIL30_BASIC",
+      "modelType": "network"
+   },
+   "relatedInstanceList": [{"relatedInstance":    {
+      "modelInfo":       {
+         "modelNameVersionId": "1e34774e-715e-4fd6-bd09-7b654622f35i",
+         "modelName": "dns-servicetest",
          "modelType": "service",
-         "modelInvariantId": "ff3514e3-5a33-55df-13ab-12abad84e7ff",
-         "modelNameVersionId": "fe6985cd-ea33-3346-ac12-ab121484a3fe",
-         "modelName": "dns-service",
          "modelVersion": "1.0",
-         "Action": "updateInstance"
+         "modelInvariantId": "585822c8-4027-4f84-ba50-e9248606f111"
       },
-      "subscriberInfo": {
-          "globalSubscriberId": "subscriber-1",
-          "subscriberName": "testSubscriber"
+      "instanceId": "f75b1c7d-e878-40a3-8877-bc5605615f4d"
+   }}],
+   "requestInfo":    {
+      "productFamilyId": "a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb",
+      "source": "VID",
+      "instanceName": "MNS-25180-L-06Private_tst_mns_mgmt_net_1"
+   },
+   "requestParameters": {}
+}}</con:request><con:originalUri>http://localhost/ecomp/mso/infra/serviceInstances/v2/serviceInstanceId/networks</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="29a2c44b-0e68-4f1b-832e-d8237f4a7d72" name="Valid HTTP Status Codes"><con:configuration><codes>502</codes></con:configuration></con:assertion><con:assertion type="Simple Contains" id="24c29171-4bd3-4443-b16d-3f6db8599322" name="Contains"><con:configuration><token>Failed calling bpmn</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>${#Project#user-infraportal}</con:username><con:password>${#Project#password-infraportal}</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="serviceInstanceId" value="${#TestCase#serviceInstanceId}" xmlns="http://eviware.com/soapui/config"/></con:parameters></con:restRequest></con:config></con:testStep><con:testStep type="groovy" name="Remove from vnf_recipe" id="81aed2cd-d810-45fb-adba-54371ca94348"><con:settings/><con:config><script>import java.sql.Driver
+import java.sql.Connection
+import java.sql.Statement
+import java.sql.ResultSet
+
+def testCaseProperty = testRunner.testCase.testSuite.project.getPropertyValue( "host" )
+def host = testCaseProperty.substring(0,testCaseProperty.lastIndexOf(':'))
+def urlString = testRunner.testCase.testSuite.project.getPropertyValue( "db-driver" )
+
+if (urlString.equals("")) {
+	URL[] urls = ClassLoader.systemClassLoader.getURLs()
+	String urlStr = urls[0].toString()
+	String tempUrl = urlStr.substring(0,urlStr.lastIndexOf('/'))
+	String baseUrl = tempUrl.substring(0,tempUrl.lastIndexOf('/')+1)
+
+ 	urlString = "jar:" + baseUrl +"mariadb-connector/mariadb-java-client-1.5.4.jar!/"
+} else {
+	urlString = "jar:file:" + urlString +"!/"
+}
+
+def url = new URL(urlString)
+URL[] classUrls = [ url ];
+URLClassLoader urlCl = new URLClassLoader(classUrls);
+
+Class mySqlDriver = urlCl.loadClass( "org.mariadb.jdbc.Driver" );
+Driver sqlDriverInstance = ( Driver ) mySqlDriver.newInstance();
+Connection con = null;
+try {
+	String dbUrl = "jdbc:mariadb://" + host + ":3306/mso_catalog";
+      Properties userDbCredentials = new Properties();
+      userDbCredentials.put( "user", "catalog" );
+      userDbCredentials.put( "password", "catalog123" );
+
+      // safely use driver to connect
+      con = sqlDriverInstance.connect( dbUrl, userDbCredentials );
+
+      Statement stmt = con.createStatement();
+      String sql = "update network_recipe set NETWORK_TYPE=\"VID_DEFAULT1\" where NETWORK_TYPE=\"VID_DEFAULT\" and ACTION=\"createInstance\"";
+	stmt.executeUpdate( sql );
+} catch( Exception e ) {
+      e.printStackTrace(); // only for quick debug
+} finally {
+      try { if ( con != null ) con.close(); } catch ( Exception ignoreThis ) {}
+}
+</script></con:config></con:testStep><con:testStep type="restrequest" name="Create Networks with no BPMN script" id="d2e7f1bc-af93-449d-9ebb-827b5f54cfa8"><con:settings/><con:config service="Services" methodName="create networks" resourcePath="/ecomp/mso/infra/serviceInstances/v2/{serviceInstanceId}/networks" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Create Networks with no BPMN script" id="c91bf79d-4cb5-4ebb-9329-2faf92237fdc" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#host}</con:endpoint><con:request>{"requestDetails": {
+   "cloudConfiguration":    {
+      "tenantId": "cff319d50266491fa744b0d493a51ce0",
+      "lcpCloudRegionId": "rdm3"
+   },
+   "modelInfo":    {
+      "modelName": "CONTRAIL30_BASIC",
+      "modelType": "network"
+   },
+   "relatedInstanceList": [{"relatedInstance":    {
+      "modelInfo":       {
+         "modelNameVersionId": "1e34774e-715e-4fd6-bd09-7b654622f35i",
+         "modelName": "dns-servicetest",
+         "modelType": "service",
+         "modelVersion": "1.0",
+         "modelInvariantId": "585822c8-4027-4f84-ba50-e9248606f111"
       },
-      "requestInfo": {
-          "instanceName": "DNS_TEST",
-          "source": "VID",
-          "suppressRollback": true
-      },
-      "requestParameters": {
-          "subscriptionServiceType": "MOG",
-          "userParams": [
-            {
-              "name": "someUserParam",
-              "value": "someValue"
-            } 
-          ]
-      }
-  }
-}</con:request><con:originalUri>http://localhost/ecomp/mso/infra/serviceInstances/v2</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="12d5c872-b42a-4fdf-aee1-4a5b805ed255" name="Valid HTTP Status Codes"><con:configuration><codes>202
-</codes></con:configuration></con:assertion><con:credentials><con:username>${#Project#user-infraportal}</con:username><con:password>${#Project#password-infraportal}</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:properties><con:property><con:name>requestId</con:name><con:value>7a6e22c6-0f96-4ad8-b696-123e70cc5a67</con:value></con:property><con:property><con:name>serviceInstanceId</con:name><con:value>90b3a5f7-f7fa-4ac1-b966-becf2ae480cd</con:value></con:property><con:property><con:name>vnfInstanceId</con:name><con:value>b978e03a-8371-496f-b53a-fa117f24c1d0</con:value></con:property><con:property><con:name>vfModuleInstanceId</con:name><con:value>a26eaaaa-bce4-4ec0-98f3-f21e43969aab</con:value></con:property><con:property><con:name>vomuleGroupInstanceId</con:name><con:value>f4bd7c69-a525-429a-8c1b-384f1beacd90</con:value></con:property><con:property><con:name>networkId</con:name><con:value>ebdd074d-ba30-4d44-921c-323cec4e78fc</con:value></con:property></con:properties></con:testCase><con:properties/></con:testSuite><con:properties><con:property><con:name>host</con:name><con:value>localhost:8080</con:value></con:property><con:property><con:name>user-infraportal</con:name><con:value>InfraPortalClient</con:value></con:property><con:property><con:name>password-infraportal</con:name><con:value>password1$</con:value></con:property><con:property><con:name>DBhost</con:name><con:value>mariadb</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:oAuth1ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+      "instanceId": "f75b1c7d-e878-40a3-8877-bc5605615f4d"
+   }}],
+   "requestInfo":    {
+      "productFamilyId": "a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb",
+      "source": "VID",
+      "instanceName": "MNS-25180-L-06Private_tst_mns_mgmt_net_1"
+   },
+   "requestParameters": {}
+}}</con:request><con:originalUri>http://localhost/ecomp/mso/infra/serviceInstances/v2/serviceInstanceId/networks</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="29a2c44b-0e68-4f1b-832e-d8237f4a7d72" name="Valid HTTP Status Codes"><con:configuration><codes>404</codes></con:configuration></con:assertion><con:assertion type="Simple Contains" id="c8d50858-a958-4348-9089-2970c81314e0" name="Contains"><con:configuration><token>Recipe does not exist in catalog DB</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>${#Project#user-infraportal}</con:username><con:password>${#Project#password-infraportal}</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="serviceInstanceId" value="${#TestCase#serviceInstanceId}" xmlns="http://eviware.com/soapui/config"/></con:parameters></con:restRequest></con:config></con:testStep><con:testStep type="groovy" name="Restore DB table" id="4cb4cdac-3344-4ac0-ad0d-352bb678a58f"><con:settings/><con:config><script>import java.sql.Driver
+import java.sql.Connection
+import java.sql.Statement
+import java.sql.ResultSet
+
+def testCaseProperty = testRunner.testCase.testSuite.project.getPropertyValue( "host" )
+def host = testCaseProperty.substring(0,testCaseProperty.lastIndexOf(':'))
+def urlString = testRunner.testCase.testSuite.project.getPropertyValue( "db-driver" )
+
+if (urlString.equals("")) {
+	URL[] urls = ClassLoader.systemClassLoader.getURLs()
+	String urlStr = urls[0].toString()
+	String tempUrl = urlStr.substring(0,urlStr.lastIndexOf('/'))
+	String baseUrl = tempUrl.substring(0,tempUrl.lastIndexOf('/')+1)
+
+ 	urlString = "jar:" + baseUrl +"mariadb-connector/mariadb-java-client-1.5.4.jar!/"
+} else {
+	urlString = "jar:file:" + urlString +"!/"
+}
+
+def url = new URL(urlString)
+URL[] classUrls = [ url ];
+URLClassLoader urlCl = new URLClassLoader(classUrls);
+
+Class mySqlDriver = urlCl.loadClass( "org.mariadb.jdbc.Driver" );
+Driver sqlDriverInstance = ( Driver ) mySqlDriver.newInstance();
+Connection con = null;
+try {
+	String dbUrl = "jdbc:mariadb://" + host + ":3306/mso_catalog";
+      Properties userDbCredentials = new Properties();
+      userDbCredentials.put( "user", "catalog" );
+      userDbCredentials.put( "password", "catalog123" );
+
+      // safely use driver to connect
+      con = sqlDriverInstance.connect( dbUrl, userDbCredentials );
+
+      Statement stmt = con.createStatement();
+      String sql1 = "update network_recipe set ORCHESTRATION_URI=\"/mso/async/services/CreateNetworkInstanceInfra\" where NETWORK_TYPE=\"VID_DEFAULT1\" and ACTION=\"createInstance\"";
+	 stmt.executeUpdate( sql1 );
+      String sql2 = "update network_recipe set NETWORK_TYPE=\"VID_DEFAULT\" where NETWORK_TYPE=\"VID_DEFAULT1\" and ACTION=\"createInstance\"";
+	stmt.executeUpdate( sql2 );
+} catch( Exception e ) {
+      e.printStackTrace(); // only for quick debug
+} finally {
+      try { if ( con != null ) con.close(); } catch ( Exception ignoreThis ) {}
+}
+</script></con:config></con:testStep><con:properties><con:property><con:name>requestId</con:name><con:value>76c15633-b6f2-4281-9ba2-73b516734c04</con:value></con:property><con:property><con:name>serviceInstanceId</con:name><con:value>f75b1c7d-e878-40a3-8877-bc5605615f4d</con:value></con:property><con:property><con:name>vnfInstanceId</con:name><con:value>1ac28783-8268-41b0-a653-36d0d09d0695</con:value></con:property><con:property><con:name>vfModuleInstanceId</con:name><con:value>38b74487-c406-47d7-a9eb-530dd89242cc</con:value></con:property><con:property><con:name>vomuleGroupInstanceId</con:name><con:value>20e3e2f9-25a3-494e-8108-cafa3ff992f1</con:value></con:property><con:property><con:name>networkId</con:name><con:value>ebdd074d-ba30-4d44-921c-323cec4e78fc</con:value></con:property></con:properties></con:testCase><con:properties/></con:testSuite><con:properties><con:property><con:name>host</con:name><con:value>localhost:8080</con:value></con:property><con:property><con:name>user-infraportal</con:name><con:value>InfraPortalClient</con:value></con:property><con:property><con:name>password-infraportal</con:name><con:value>password1$</con:value></con:property><con:property><con:name>db-driver</con:name><con:value/></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:oAuth1ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
