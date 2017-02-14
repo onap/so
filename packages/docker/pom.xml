@@ -24,6 +24,43 @@
 		<finalName>${project.artifactId}-${project.version}</finalName>
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-scm-plugin</artifactId>
+				<version>1.9.5</version>
+				<executions>
+					<execution>
+						<id>chef-repo-checkout</id>
+						<goals>
+							<goal>checkout</goal>
+						</goals>
+						<phase>initialize</phase>
+						<configuration>
+							<connectionUrl>scm:git:ssh://gerrit.openecomp.org:29418/mso/chef-repo</connectionUrl>
+							<checkoutDirectory>src/main/docker/docker-files/chef-configs/chef-repo</checkoutDirectory>
+							<scmVersion>master</scmVersion>
+							<scmVersionType>branch</scmVersionType>
+							<skipCheckoutIfExists>true</skipCheckoutIfExists>
+							<pushChanges>false</pushChanges>
+						</configuration>
+					</execution>
+					<execution>
+						<id>mso-config-checkout</id>
+						<goals>
+							<goal>checkout</goal>
+						</goals>
+						<phase>initialize</phase>
+						<configuration>
+							<connectionUrl>scm:git:ssh://gerrit.openecomp.org:29418/mso/mso-config</connectionUrl>
+							<checkoutDirectory>src/main/docker/docker-files/chef-configs/mso-config</checkoutDirectory>
+							<scmVersion>master</scmVersion>
+							<scmVersionType>branch</scmVersionType>
+							<skipCheckoutIfExists>true</skipCheckoutIfExists>
+							<pushChanges>false</pushChanges>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>io.fabric8</groupId>
 				<artifactId>docker-maven-plugin</artifactId>
 				<version>0.16.5</version>
