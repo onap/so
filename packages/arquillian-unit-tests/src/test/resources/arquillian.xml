@@ -13,8 +13,8 @@
     <extension qualifier="docker">
 
       <property name="serverVersion">1.23</property>
-     
-      <property name="serverUri">${docker.url}</property> 
+
+      <property name="serverUri">${docker.url}</property>
       <property name="definitionFormat">CUBE</property>
       <property name="dockerContainers">
          mso:
@@ -58,7 +58,7 @@
             image: mariadb:10.1.11
             beforeStop:
                 - log:
-                   to: ${target.folder}/mso-automated-tests/db/mariadb.log  
+                   to: ${target.folder}/mso-automated-tests/db/mariadb.log
                    follow: false
                    stdout: true
                    stderr: true
@@ -70,20 +70,20 @@
              sleepPollingTime: 5 s
              iterations: 24
             env: [MYSQL_ROOT_PASSWORD=Etoile19_]
-            portBindings: [3306/tcp]
+            portBindings: [3306->3306/tcp]
             hostName: mariadb
             volumes: [/etc/mysql/conf.d,/docker-entrypoint-initdb.d]
             binds:
              - ${target.folder}/test-classes/docker/mariadb/conf1:/etc/mysql/conf.d:ro
              - ${target.folder}/../../root-pack-extras/config-resources/mariadb:/docker-entrypoint-initdb.d:ro
-  
+
         </property>
         <property name="shouldAllowToConnectToRunningContainers">false</property>
         <property name="clean">true</property>
         <property name="removeVolumes">true</property>
         <property name="autoStartContainers">mso</property>
     </extension>
-    
+
 
     <container qualifier="jboss-as" default="true">
         <configuration>
