@@ -39,6 +39,8 @@ import org.slf4j.MDC;
 import org.openecomp.mso.entity.MsoRequest;
 import com.att.eelf.configuration.EELFLogger;
 import com.att.eelf.configuration.EELFManager;
+import com.att.eelf.i18n.EELFResolvableErrorEnum;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -226,7 +228,7 @@ public enum Catalog {APIH, BPEL, RA, ASDC, GENERAL};
      *
      * @param msg The log message to put
      */
-    public void info (MessageEnum msg, String targetEntity, String targetServiceName) {
+    public void info (EELFResolvableErrorEnum msg, String targetEntity, String targetServiceName) {
         prepareErrorMsg (INFO_LEVEL, targetEntity, targetServiceName, null, "");
 
         logger.info (msg);
@@ -240,7 +242,7 @@ public enum Catalog {APIH, BPEL, RA, ASDC, GENERAL};
      * @param msg The log message to put
      * @param arg0 The argument used in the log message
      */
-    public void info (MessageEnum msg, String arg0, String targetEntity, String targetServiceName) {
+    public void info (EELFResolvableErrorEnum msg, String arg0, String targetEntity, String targetServiceName) {
         prepareErrorMsg (INFO_LEVEL, targetEntity, targetServiceName, null, "");
 
         logger.info (msg, normalize(arg0));
@@ -254,7 +256,7 @@ public enum Catalog {APIH, BPEL, RA, ASDC, GENERAL};
      * @param msg The log message to put
      * @param arg0,arg1 The arguments used in the log message
      */
-    public void info (MessageEnum msg, String arg0, String arg1, String targetEntity, String targetServiceName) {
+    public void info (EELFResolvableErrorEnum msg, String arg0, String arg1, String targetEntity, String targetServiceName) {
         prepareErrorMsg (INFO_LEVEL, targetEntity, targetServiceName, null, "");
 
         logger.info (msg, normalize(arg0), normalize(arg1));
@@ -268,7 +270,7 @@ public enum Catalog {APIH, BPEL, RA, ASDC, GENERAL};
      * @param msg The log message to put
      * @param arg0,arg1,arg2 The arguments used in the log message
      */
-    public void info (MessageEnum msg, String arg0, String arg1, String arg2, String targetEntity, String targetServiceName) {
+    public void info (EELFResolvableErrorEnum msg, String arg0, String arg1, String arg2, String targetEntity, String targetServiceName) {
         prepareErrorMsg (INFO_LEVEL, targetEntity, targetServiceName, null, "");
 
         logger.info (msg, normalize(arg0), normalize(arg1), normalize(arg2));
@@ -282,7 +284,7 @@ public enum Catalog {APIH, BPEL, RA, ASDC, GENERAL};
      * @param msg The log message to put
      * @param arg0,arg1,arg2,arg3 The arguments used in the log message
      */
-    public void info (MessageEnum msg, String arg0, String arg1, String arg2, String arg3, String targetEntity, String targetServiceName) {
+    public void info (EELFResolvableErrorEnum msg, String arg0, String arg1, String arg2, String arg3, String targetEntity, String targetServiceName) {
         prepareErrorMsg (INFO_LEVEL, targetEntity, targetServiceName, null, "");
 
         logger.info (msg, normalize(arg0), normalize(arg1), normalize(arg2), normalize(arg3));
@@ -296,7 +298,7 @@ public enum Catalog {APIH, BPEL, RA, ASDC, GENERAL};
      * @param msg The log message to put
      * @param arg0,arg1,arg2,arg3,arg4 The arguments used in the log message
      */
-    public void info (MessageEnum msg, String arg0, String arg1, String arg2, String arg3, String arg4, String targetEntity, String targetServiceName) {
+    public void info (EELFResolvableErrorEnum msg, String arg0, String arg1, String arg2, String arg3, String arg4, String targetEntity, String targetServiceName) {
         prepareErrorMsg (INFO_LEVEL, targetEntity, targetServiceName, null, "");
 
         logger.info (msg, normalize(arg0), normalize(arg1), normalize(arg2), normalize(arg3), normalize(arg4));
@@ -310,7 +312,7 @@ public enum Catalog {APIH, BPEL, RA, ASDC, GENERAL};
      * @param msg The log message to put
      * @param arg0,arg1,arg2,arg3,arg4,arg5 The arguments used in the log message
      */
-    public void info (MessageEnum msg, String arg0, String arg1, String arg2, String arg3, String arg4, String arg5, String targetEntity, String targetServiceName) {
+    public void info (EELFResolvableErrorEnum msg, String arg0, String arg1, String arg2, String arg3, String arg4, String arg5, String targetEntity, String targetServiceName) {
         prepareErrorMsg (INFO_LEVEL, targetEntity, targetServiceName, null, "");
 
         logger.info (msg, normalize(arg0), normalize(arg1), normalize(arg2), normalize(arg3), normalize(arg4), normalize(arg5));
@@ -323,7 +325,7 @@ public enum Catalog {APIH, BPEL, RA, ASDC, GENERAL};
      *
      * @param msg The log message to put
      */
-    public void warn (MessageEnum msg, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc) {
+    public void warn (EELFResolvableErrorEnum msg, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc) {
         prepareErrorMsg (WARN_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
 
         logger.warn (msg);
@@ -337,7 +339,7 @@ public enum Catalog {APIH, BPEL, RA, ASDC, GENERAL};
      * @param msg The log message to put
      * @param t The exception info
      */
-    public void warn (MessageEnum msg, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc, Throwable t) {
+    public void warn (EELFResolvableErrorEnum msg, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc, Throwable t) {
         prepareErrorMsg (WARN_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
         logger.warn (msg);
         logger.warn ("Exception raised: " + getNormalizedStackTrace (t));
@@ -352,7 +354,7 @@ public enum Catalog {APIH, BPEL, RA, ASDC, GENERAL};
      * @param msg The log message to put
      * @param arg The argument used in the log message
      */
-    public void warn (MessageEnum msg, String arg, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc) {
+    public void warn (EELFResolvableErrorEnum msg, String arg, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc) {
         prepareErrorMsg (WARN_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
         logger.warn (msg, arg);
         MDC.remove(TARGETENTITY);
@@ -366,7 +368,7 @@ public enum Catalog {APIH, BPEL, RA, ASDC, GENERAL};
      * @param arg The arguments used in the log message
      * @param t The exception info
      */
-    public void warn (MessageEnum msg, String arg, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc, Throwable t) {
+    public void warn (EELFResolvableErrorEnum msg, String arg, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc, Throwable t) {
         prepareErrorMsg (WARN_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
         logger.warn (msg, arg);
         logger.warn ("Exception raised: " + getNormalizedStackTrace (t));
@@ -381,7 +383,7 @@ public enum Catalog {APIH, BPEL, RA, ASDC, GENERAL};
      * @param msg The log message to put
      * @param arg0,arg1 The arguments used in the log message
      */
-    public void warn (MessageEnum msg, String arg0, String arg1, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc) {
+    public void warn (EELFResolvableErrorEnum msg, String arg0, String arg1, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc) {
         prepareErrorMsg (WARN_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
         logger.warn (msg, normalize(arg0), normalize(arg1));
         MDC.remove(TARGETENTITY);
@@ -395,7 +397,7 @@ public enum Catalog {APIH, BPEL, RA, ASDC, GENERAL};
      * @param arg0,arg1 The arguments used in the log message
      * @param t The exception info
      */
-    public void warn (MessageEnum msg, String arg0, String arg1, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc, Throwable t) {
+    public void warn (EELFResolvableErrorEnum msg, String arg0, String arg1, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc, Throwable t) {
         prepareErrorMsg (WARN_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
         logger.warn (msg, normalize(arg0), normalize(arg1));
         logger.warn ("Exception raised: " + getNormalizedStackTrace (t));
@@ -410,7 +412,7 @@ public enum Catalog {APIH, BPEL, RA, ASDC, GENERAL};
      * @param msg The log message to put
      * @param arg0,arg1,arg2 The arguments used in the log message
      */
-    public void warn (MessageEnum msg, String arg0, String arg1, String arg2, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc) {
+    public void warn (EELFResolvableErrorEnum msg, String arg0, String arg1, String arg2, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc) {
         prepareErrorMsg (WARN_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
         logger.warn (msg, normalize(arg0), normalize(arg1), normalize(arg2));
         MDC.remove(TARGETENTITY);
@@ -424,7 +426,7 @@ public enum Catalog {APIH, BPEL, RA, ASDC, GENERAL};
      * @param arg0,arg1,arg2 The arguments used in the log message
      * @param t The exception info
      */
-    public void warn (MessageEnum msg, String arg0, String arg1, String arg2, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc, Throwable t) {
+    public void warn (EELFResolvableErrorEnum msg, String arg0, String arg1, String arg2, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc, Throwable t) {
         prepareErrorMsg (WARN_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
         logger.warn (msg, normalize(arg0), normalize(arg1), normalize(arg2));
         logger.warn ("Exception raised: " + getNormalizedStackTrace (t));
@@ -439,7 +441,7 @@ public enum Catalog {APIH, BPEL, RA, ASDC, GENERAL};
      * @param msg The log message to put
      * @param arg0,arg1,arg2,arg3 The arguments used in the log message
      */
-    public void warn (MessageEnum msg, String arg0, String arg1, String arg2, String arg3, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc) {
+    public void warn (EELFResolvableErrorEnum msg, String arg0, String arg1, String arg2, String arg3, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc) {
         prepareErrorMsg (WARN_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
         logger.warn (msg, normalize(arg0), normalize(arg1), normalize(arg2), normalize(arg3));
         MDC.remove(TARGETENTITY);
@@ -453,7 +455,7 @@ public enum Catalog {APIH, BPEL, RA, ASDC, GENERAL};
      * @param arg0,arg1,arg2, arg3 The arguments used in the log message
      * @param t The exception info
      */
-    public void warn (MessageEnum msg, String arg0, String arg1, String arg2, String arg3, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc, Throwable t) {
+    public void warn (EELFResolvableErrorEnum msg, String arg0, String arg1, String arg2, String arg3, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc, Throwable t) {
         prepareErrorMsg (WARN_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
         logger.warn (msg, normalize(arg0), normalize(arg1), normalize(arg2), normalize(arg3));
         logger.warn ("Exception raised: " + getNormalizedStackTrace (t));
@@ -468,7 +470,7 @@ public enum Catalog {APIH, BPEL, RA, ASDC, GENERAL};
      * @param msg The log message to put
      * @param arg0,arg1,arg2,arg3,arg4 The arguments used in the log message
      */
-    public void warn (MessageEnum msg, String arg0, String arg1, String arg2, String arg3, String arg4, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc) {
+    public void warn (EELFResolvableErrorEnum msg, String arg0, String arg1, String arg2, String arg3, String arg4, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc) {
         prepareErrorMsg (WARN_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
         logger.warn (msg, normalize(arg0), normalize(arg1), normalize(arg2), normalize(arg3), normalize(arg4));
         MDC.remove(TARGETENTITY);
@@ -482,7 +484,7 @@ public enum Catalog {APIH, BPEL, RA, ASDC, GENERAL};
      * @param arg0,arg1,arg2,arg3,arg4 The arguments used in the log message
      * @param t The exception info
      */
-    public void warn (MessageEnum msg, String arg0, String arg1, String arg2, String arg3, String arg4, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc, Throwable t) {
+    public void warn (EELFResolvableErrorEnum msg, String arg0, String arg1, String arg2, String arg3, String arg4, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc, Throwable t) {
         prepareErrorMsg (WARN_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
         logger.warn (msg, normalize(arg0), normalize(arg1), normalize(arg2), normalize(arg3), normalize(arg4));
         logger.warn ("Exception raised: " + getNormalizedStackTrace (t));
@@ -496,7 +498,7 @@ public enum Catalog {APIH, BPEL, RA, ASDC, GENERAL};
      *
      * @param msg The log message to put
      */
-    public void error (MessageEnum msg, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc) {
+    public void error (EELFResolvableErrorEnum msg, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc) {
         prepareErrorMsg (ERROR_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
         logger.error (msg);
         MDC.remove(TARGETENTITY);
@@ -509,7 +511,7 @@ public enum Catalog {APIH, BPEL, RA, ASDC, GENERAL};
      * @param msg The log message to put
      * @param t The exception info
      */
-    public void error (MessageEnum msg, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc, Throwable t) {
+    public void error (EELFResolvableErrorEnum msg, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc, Throwable t) {
         prepareErrorMsg (ERROR_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
         logger.error (msg);
         logger.error (exceptionArg, getNormalizedStackTrace (t));
@@ -524,7 +526,7 @@ public enum Catalog {APIH, BPEL, RA, ASDC, GENERAL};
      * @param msg The log message to put
      * @param arg0 The arguments used in the log message
      */
-    public void error (MessageEnum msg, String arg0, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc) {
+    public void error (EELFResolvableErrorEnum msg, String arg0, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc) {
         prepareErrorMsg (ERROR_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
         logger.error (msg, normalize(arg0));
         MDC.remove(TARGETENTITY);
@@ -538,7 +540,7 @@ public enum Catalog {APIH, BPEL, RA, ASDC, GENERAL};
      * @param arg0 The arguments used in the log message
      * @param t The exception info
      */
-    public void error (MessageEnum msg, String arg0, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc, Throwable t) {
+    public void error (EELFResolvableErrorEnum msg, String arg0, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc, Throwable t) {
         prepareErrorMsg (ERROR_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
         logger.error (msg, normalize(arg0));
         logger.error (exceptionArg, getNormalizedStackTrace (t));
@@ -553,7 +555,7 @@ public enum Catalog {APIH, BPEL, RA, ASDC, GENERAL};
      * @param msg The log message to put
      * @param arg0,arg1 The arguments used in the log message
      */
-    public void error (MessageEnum msg, String arg0, String arg1, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc) {
+    public void error (EELFResolvableErrorEnum msg, String arg0, String arg1, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc) {
         prepareErrorMsg (ERROR_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
         logger.error (msg, normalize(arg0), normalize(arg1));
         MDC.remove(TARGETENTITY);
@@ -567,7 +569,7 @@ public enum Catalog {APIH, BPEL, RA, ASDC, GENERAL};
      * @param arg0,arg1 The arguments used in the log message
      * @param t The exception info
      */
-    public void error (MessageEnum msg, String arg0, String arg1, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc, Throwable t) {
+    public void error (EELFResolvableErrorEnum msg, String arg0, String arg1, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc, Throwable t) {
         prepareErrorMsg (ERROR_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
         logger.error (msg, normalize(arg0), normalize(arg1));
         logger.error (exceptionArg, getNormalizedStackTrace (t));
@@ -582,7 +584,7 @@ public enum Catalog {APIH, BPEL, RA, ASDC, GENERAL};
      * @param msg The log message to put
      * @param arg0,arg1,arg2 The arguments used in the log message
      */
-    public void error (MessageEnum msg, String arg0, String arg1, String arg2, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc) {
+    public void error (EELFResolvableErrorEnum msg, String arg0, String arg1, String arg2, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc) {
         prepareErrorMsg (ERROR_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
         logger.error (msg, normalize(arg0), normalize(arg1), normalize(arg2));
         MDC.remove(TARGETENTITY);
@@ -596,7 +598,7 @@ public enum Catalog {APIH, BPEL, RA, ASDC, GENERAL};
      * @param arg0,arg1,arg2 The arguments used in the log message
      * @param t The exception info
      */
-    public void error (MessageEnum msg, String arg0, String arg1, String arg2, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc, Throwable t) {
+    public void error (EELFResolvableErrorEnum msg, String arg0, String arg1, String arg2, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc, Throwable t) {
         prepareErrorMsg (ERROR_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
         logger.error (msg, normalize(arg0), normalize(arg1), normalize(arg2));
         logger.error (exceptionArg, getNormalizedStackTrace (t));
@@ -611,7 +613,7 @@ public enum Catalog {APIH, BPEL, RA, ASDC, GENERAL};
      * @param msg The log message to put
      * @param arg0,arg1,arg2,arg3 The arguments used in the log message
      */
-    public void error (MessageEnum msg, String arg0, String arg1, String arg2, String arg3, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc) {
+    public void error (EELFResolvableErrorEnum msg, String arg0, String arg1, String arg2, String arg3, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc) {
         prepareErrorMsg (ERROR_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
         logger.error (msg, normalize(arg0), normalize(arg1), normalize(arg2), normalize(arg3));
         MDC.remove(TARGETENTITY);
@@ -625,7 +627,7 @@ public enum Catalog {APIH, BPEL, RA, ASDC, GENERAL};
      * @param arg0,arg1,arg2,arg3 The arguments used in the log message
      * @param t The exception info
      */
-    public void error (MessageEnum msg, String arg0, String arg1, String arg2, String arg3, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc, Throwable t) {
+    public void error (EELFResolvableErrorEnum msg, String arg0, String arg1, String arg2, String arg3, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc, Throwable t) {
         prepareErrorMsg (ERROR_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
         logger.error (msg, normalize(arg0), normalize(arg1), normalize(arg2), normalize(arg3));
         logger.error (exceptionArg, getNormalizedStackTrace (t));
@@ -640,7 +642,7 @@ public enum Catalog {APIH, BPEL, RA, ASDC, GENERAL};
      * @param msg The log message to put
      * @param arg0,arg1,arg2,arg3,arg4 The arguments used in the log message
      */
-    public void error (MessageEnum msg, String arg0, String arg1, String arg2, String arg3, String arg4, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc) {
+    public void error (EELFResolvableErrorEnum msg, String arg0, String arg1, String arg2, String arg3, String arg4, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc) {
         prepareErrorMsg (ERROR_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
         logger.error (msg, normalize(arg0), normalize(arg1), normalize(arg2), normalize(arg3), normalize(arg4));
         MDC.remove(TARGETENTITY);
@@ -654,7 +656,7 @@ public enum Catalog {APIH, BPEL, RA, ASDC, GENERAL};
      * @param arg0,arg1,arg2,arg3,arg4 The arguments used in the log message
      * @param t The exception info
      */
-    public void error (MessageEnum msg, String arg0, String arg1, String arg2, String arg3, String arg4, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc, Throwable t) {
+    public void error (EELFResolvableErrorEnum msg, String arg0, String arg1, String arg2, String arg3, String arg4, String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc, Throwable t) {
         prepareErrorMsg (ERROR_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
         logger.error (msg, normalize(arg0), normalize(arg1), normalize(arg2), normalize(arg3), normalize(arg4));
         logger.error (exceptionArg, getNormalizedStackTrace (t));
