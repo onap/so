@@ -13,8 +13,8 @@
     <extension qualifier="docker">
 
       <property name="serverVersion">1.23</property>
-     
-      <property name="serverUri">${docker.url}</property> 
+
+      <property name="serverUri">${docker.url}</property>
       <property name="definitionFormat">CUBE</property>
       <property name="dockerContainers">
          mso:
@@ -58,7 +58,7 @@
             image: mariadb:10.1.11
             beforeStop:
                 - log:
-                   to: ${target.folder}/mso-automated-tests/db/mariadb.log  
+                   to: ${target.folder}/mso-automated-tests/db/mariadb.log
                    follow: false
                    stdout: true
                    stderr: true
@@ -83,7 +83,7 @@
         <property name="removeVolumes">true</property>
         <property name="autoStartContainers">mso</property>
     </extension>
-    
+
 
     <container qualifier="jboss-as" default="true">
         <configuration>
