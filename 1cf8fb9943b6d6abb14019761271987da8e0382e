@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9af53d3f_e88507ae",
+        "filename": "common/src/main/java/org/openecomp/mso/logger/MsoLogger.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 673,
+      "author": {
+        "id": 17
+      },
+      "writtenOn": "2017-02-14T13:49:21Z",
+      "side": 1,
+      "message": "Leading spaces",
+      "revId": "1cf8fb9943b6d6abb14019761271987da8e0382e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9af53d3f_c89243f6",
+        "filename": "common/src/main/java/org/openecomp/mso/logger/MsoLogger.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 675,
+      "author": {
+        "id": 17
+      },
+      "writtenOn": "2017-02-14T13:49:21Z",
+      "side": 1,
+      "message": "Wrong tab?",
+      "revId": "1cf8fb9943b6d6abb14019761271987da8e0382e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9af53d3f_48b6338c",
+        "filename": "common/src/main/java/org/openecomp/mso/logger/MsoLogger.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 695,
+      "author": {
+        "id": 17
+      },
+      "writtenOn": "2017-02-14T13:49:21Z",
+      "side": 1,
+      "message": "Misaligned code",
+      "revId": "1cf8fb9943b6d6abb14019761271987da8e0382e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9af53d3f_28bbef73",
+        "filename": "common/src/main/java/org/openecomp/mso/logger/MsoLogger.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 749,
+      "author": {
+        "id": 17
+      },
+      "writtenOn": "2017-02-14T13:49:21Z",
+      "side": 1,
+      "message": "Missing null checking",
+      "revId": "1cf8fb9943b6d6abb14019761271987da8e0382e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9af53d3f_a88fffcb",
+        "filename": "common/src/main/java/org/openecomp/mso/logger/MsoLogger.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 861,
+      "author": {
+        "id": 17
+      },
+      "writtenOn": "2017-02-14T13:49:21Z",
+      "side": 1,
+      "message": "Misaligned function header",
+      "revId": "1cf8fb9943b6d6abb14019761271987da8e0382e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9af53d3f_88bc3b6e",
+        "filename": "common/src/main/java/org/openecomp/mso/logger/MsoLogger.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 876,
+      "author": {
+        "id": 17
+      },
+      "writtenOn": "2017-02-14T13:49:21Z",
+      "side": 1,
+      "message": "Misaligned function header",
+      "revId": "1cf8fb9943b6d6abb14019761271987da8e0382e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9af53d3f_68c1f7e3",
+        "filename": "common/src/main/java/org/openecomp/mso/logger/MsoLogger.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 943,
+      "author": {
+        "id": 17
+      },
+      "writtenOn": "2017-02-14T13:49:21Z",
+      "side": 1,
+      "message": "cat not tested for nullity",
+      "revId": "1cf8fb9943b6d6abb14019761271987da8e0382e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
