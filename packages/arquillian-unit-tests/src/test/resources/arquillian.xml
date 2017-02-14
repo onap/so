@@ -70,7 +70,7 @@
              sleepPollingTime: 5 s
              iterations: 24
             env: [MYSQL_ROOT_PASSWORD=Etoile19_]
-            portBindings: [3306/tcp]
+            portBindings: [3306->3306/tcp]
             hostName: mariadb
             volumes: [/etc/mysql/conf.d,/docker-entrypoint-initdb.d]
             binds:
