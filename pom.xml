@@ -111,6 +111,11 @@
 			<name>MSO Release Repository</name>
 			<url>https://nexus.openecomp.org/content/repositories/releases/</url>
 		</repository>
+		<repository>
+			<id>ecomp-staging</id>
+			<name>MSO Staging Repository</name>
+			<url>https://nexus.openecomp.org/content/repositories/staging/</url>
+		</repository>
 		<!-- Camunda Web Repository -->
 		<repository>
 			<id>CamundaWebRepo</id>
