@@ -76,7 +76,7 @@
             binds:
              - ${target.folder}/test-classes/docker/mariadb/conf1:/etc/mysql/conf.d:ro
              - ${target.folder}/../../root-pack-extras/config-resources/mariadb:/docker-entrypoint-initdb.d:ro
-  
+
         </property>
         <property name="shouldAllowToConnectToRunningContainers">false</property>
         <property name="clean">true</property>

@@ -352,7 +352,7 @@
 			          		project.properties['mso.version']="latest";
 			          	} else {
 			          		project.properties['mso.version']=project.properties['mso.project.version'];
-			          	}			          	
+			          	}
 			          </source>
 			        </configuration>
 			      </execution>
