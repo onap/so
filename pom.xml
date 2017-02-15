@@ -39,17 +39,18 @@
 		<!-- this is used for Chef mso-code cookbook -->
 		<swm.version>2.19.3-1</swm.version>
 		<evosuiteVersion>1.0.4-alpha2</evosuiteVersion>
+		<nexusproxy>https://nexus.openecomp.org</nexusproxy>
 	</properties>
 	<distributionManagement>
 		<repository>
 			<id>ecomp-releases</id>
 			<name>MSO Release Repository</name>
-			<url>https://nexus.openecomp.org/content/repositories/releases/</url>
+			<url>${nexusproxy}/content/repositories/releases/</url>
 		</repository>
 		<snapshotRepository>
 			<id>ecomp-snapshots</id>
 			<name>MSO Snapshot Repository</name>
-			<url>https://nexus.openecomp.org/content/repositories/snapshots/</url>
+			<url>${nexusproxy}/content/repositories/snapshots/</url>
 		</snapshotRepository>
 		<site>
 			<id>ecomp-javadoc</id>
@@ -109,12 +110,12 @@
 		<repository>
 			<id>ecomp-releases</id>
 			<name>MSO Release Repository</name>
-			<url>https://nexus.openecomp.org/content/repositories/releases/</url>
+			<url>${nexusproxy}/content/repositories/releases/</url>
 		</repository>
 		<repository>
 			<id>ecomp-staging</id>
 			<name>MSO Staging Repository</name>
-			<url>https://nexus.openecomp.org/content/repositories/staging/</url>
+			<url>${nexusproxy}/content/repositories/staging/</url>
 		</repository>
 		<!-- Camunda Web Repository -->
 		<repository>
@@ -162,7 +163,7 @@
 				<version>1.6.7</version>
 				<extensions>true</extensions>
 				<configuration>
-					<nexusUrl>http://nexus.openecomp.org/</nexusUrl>
+					<nexusUrl>${nexusproxy}</nexusUrl>
 					<stagingProfileId>176c31dfe190a</stagingProfileId>
 					<serverId>ecomp-staging</serverId>
 				</configuration>
