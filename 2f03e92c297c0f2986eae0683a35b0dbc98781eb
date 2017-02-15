@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9af53d3f_b373f014",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 5
+      },
+      "writtenOn": "2017-02-15T12:20:38Z",
+      "side": 0,
+      "message": "Is this correct ? removing the content part of the URL ?",
+      "range": {
+        "startLine": 47,
+        "startChar": 8,
+        "endLine": 47,
+        "endChar": 43
+      },
+      "revId": "2f03e92c297c0f2986eae0683a35b0dbc98781eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
