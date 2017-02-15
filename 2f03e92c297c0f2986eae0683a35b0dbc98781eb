@@ -22,6 +22,30 @@
       "revId": "2f03e92c297c0f2986eae0683a35b0dbc98781eb",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9af53d3f_535a6484",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1
+      },
+      "writtenOn": "2017-02-15T12:39:25Z",
+      "side": 0,
+      "message": "No it wasn\u0027t supposed to be removed. Initially I had the nexusproxy property include it until I realized that the staging URL wasn\u0027t supposed to include it so I missed putting it back in here. patch2 has the fix.",
+      "parentUuid": "9af53d3f_b373f014",
+      "range": {
+        "startLine": 47,
+        "startChar": 8,
+        "endLine": 47,
+        "endChar": 43
+      },
+      "revId": "2f03e92c297c0f2986eae0683a35b0dbc98781eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
