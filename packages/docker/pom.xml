@@ -35,7 +35,7 @@
 						</goals>
 						<phase>initialize</phase>
 						<configuration>
-							<connectionUrl>scm:git:ssh://gerrit.openecomp.org:29418/mso/chef-repo</connectionUrl>
+							<connectionUrl>scm:git:${env.GIT_NO_PROJECT}/mso/chef-repo</connectionUrl>
 							<checkoutDirectory>src/main/docker/docker-files/chef-configs/chef-repo</checkoutDirectory>
 							<scmVersion>master</scmVersion>
 							<scmVersionType>branch</scmVersionType>
@@ -50,7 +50,7 @@
 						</goals>
 						<phase>initialize</phase>
 						<configuration>
-							<connectionUrl>scm:git:ssh://gerrit.openecomp.org:29418/mso/mso-config</connectionUrl>
+							<connectionUrl>scm:git:${env.GIT_NO_PROJECT}/mso/mso-config</connectionUrl>
 							<checkoutDirectory>src/main/docker/docker-files/chef-configs/mso-config</checkoutDirectory>
 							<scmVersion>master</scmVersion>
 							<scmVersionType>branch</scmVersionType>
