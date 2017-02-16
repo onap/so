@@ -32,19 +32,30 @@ public class HibernateUtil {
     //private static SessionFactory SESSION_FACTORY;
     private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH);
     
-     private static SessionFactory SESSION_FACTORY;
-
+    private static final String hibernateFilename = "hibernate-requests-";
+    
+    private static SessionFactory SESSION_FACTORY;
 
     static {
         try {
 
-         if ("MYSQL".equals (System.getProperty ("mso.db")) || "MARIADB".equals(System.getProperty("mso.db"))) {
-                SESSION_FACTORY = new Configuration ().configure ("hibernate-mysql.cfg.xml").buildSessionFactory ();
+            if (System.getProperty("mso.db") != null) {
+                if ("container-managed".equals(System.getProperty("mso.db").toLowerCase())) {
+                    LOGGER.debug("SessionFactory will be created by the container");
+                } else {
+                    SESSION_FACTORY = new Configuration()
+                            .configure(hibernateFilename + System.getProperty("mso.db").toLowerCase() + ".cfg.xml")
+                            .buildSessionFactory();
+                }
             } else {
-            	LOGGER.error (MessageEnum.APIH_DB_ACCESS_EXC_REASON, "DB Connection not specified to the JVM,choose either:-Dmso.db=MARIADB, -Dmso.db=MYSQL or -Dmso.container=AJSC", "", "", MsoLogger.ErrorCode.DataError , "DB Connection not specified to the JVM,choose either:-Dmso.db=MARIADB, -Dmso.db=MYSQL or -Dmso.container=AJSC");
+                LOGGER.error(MessageEnum.APIH_DB_ACCESS_EXC_REASON,
+                        "MSO DB Connection type not specified to the JVM,you must specify a value to the -Dmso.db param: -Dmso.db=mysql or -Dmso.db=container-managed",
+                        "", "", MsoLogger.ErrorCode.DataError,
+                        "MSO DB Connection type not specified to the JVM,you must specify a value to the -Dmso.db param: -Dmso.db=mysql or -Dmso.db=container-managed");
             }
         } catch (Exception ex) {
-            LOGGER.error (MessageEnum.APIH_DB_ACCESS_EXC_REASON, ex.getMessage (), "", "", MsoLogger.ErrorCode.DataError , "Problem in getting DB connection type", ex);
+            LOGGER.error(MessageEnum.APIH_DB_ACCESS_EXC_REASON, ex.getMessage(), "", "", MsoLogger.ErrorCode.DataError,
+                    "Problem in getting DB connection type", ex);
             throw ex;
         }
     }
