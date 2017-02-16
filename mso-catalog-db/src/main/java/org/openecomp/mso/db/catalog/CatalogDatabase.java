@@ -62,6 +62,8 @@ public class CatalogDatabase implements Closeable {
 
     private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.GENERAL);
 
+    private static final String hibernateFilename = "hibernate-catalog-";
+    
     private Session session = null;
 
     public CatalogDatabase () {
@@ -73,15 +75,17 @@ public class CatalogDatabase implements Closeable {
             LOGGER.debug ("Initializing Catalog Database in Hibernate");
             Configuration configuration = null;
             try {
-            		if ("MYSQL".equals (System.getProperty ("mso.db"))
-                            || "MARIADB".equals (System.getProperty ("mso.db"))) {
-                        configuration = new Configuration ().configure ("hibernate-catalog-mysql.cfg.xml");
-
-                        serviceRegistry = new ServiceRegistryBuilder ().applySettings (configuration.getProperties ()).buildServiceRegistry ();
-
-                        sessionFactory = configuration.buildSessionFactory (serviceRegistry);
+                             
+                    if (System.getProperty ("mso.db") != null) {
+                        if ("container-managed".equals(System.getProperty ("mso.db").toLowerCase())) {
+                            LOGGER.debug("SessionFactory will be created by the container");
+                        } else {   
+                            configuration = new Configuration ().configure (hibernateFilename+System.getProperty("mso.db").toLowerCase()+".cfg.xml");
+                            serviceRegistry = new ServiceRegistryBuilder ().applySettings (configuration.getProperties ()).buildServiceRegistry ();
+                            sessionFactory = configuration.buildSessionFactory (serviceRegistry);
+                        }   
                     } else {
-                    	LOGGER.error (MessageEnum.APIH_DB_ACCESS_EXC_REASON, "DB Connection not specified to the JVM,choose either:-Dmso.db=MARIADB, -Dmso.db=MYSQL or -Dmso.container=AJSC", "", "", MsoLogger.ErrorCode.DataError, "DB Connection not specified to the JVM,choose either:-Dmso.db=MARIADB, -Dmso.db=MYSQL or -Dmso.container=AJSC");
+                        LOGGER.error (MessageEnum.APIH_DB_ACCESS_EXC_REASON, "MSO DB Connection type not specified to the JVM,you must specify a value to the -Dmso.db param: -Dmso.db=mysql or -Dmso.db=container-managed", "", "", MsoLogger.ErrorCode.DataError, "MSO DB Connection type not specified to the JVM,you must specify a value to the -Dmso.db param: -Dmso.db=mysql or -Dmso.db=container-managed");
                     }
             } catch (Exception e) {
                 LOGGER.error (MessageEnum.GENERAL_EXCEPTION_ARG,
@@ -93,16 +97,19 @@ public class CatalogDatabase implements Closeable {
             LOGGER.debug ("Catalog Database initialization complete");
         }
 
-        if (session == null) {
+        if(session==null)
+    
+        {
             try {
-                session = sessionFactory.openSession ();
-                session.beginTransaction ();
+                session = sessionFactory.openSession();
+                session.beginTransaction();
             } catch (HibernateException he) {
-                LOGGER.error (MessageEnum.GENERAL_EXCEPTION_ARG, "Error creating Hibernate Session: " + he, "", "", MsoLogger.ErrorCode.DataError, "Error creating Hibernate Session: " + he);
+                LOGGER.error(MessageEnum.GENERAL_EXCEPTION_ARG, "Error creating Hibernate Session: " + he, "", "",
+                        MsoLogger.ErrorCode.DataError, "Error creating Hibernate Session: " + he);
                 throw he;
             }
         }
-
+    
         return session;
     }
 
