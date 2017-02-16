@@ -48,21 +48,22 @@ import org.openecomp.mso.logger.MsoLogger;
  */
 public class CatalogDatabase implements Closeable {
 
-    private static final String NETWORK_TYPE = "networkType";
-    private static final String ACTION = "action";
-    private static final String VNF_TYPE = "vnfType";
-    private static final String SERVICE_TYPE = "serviceType";
-    private static final String VNF_COMPONENT_TYPE = "vnfComponentType";
-    private static final String MODEL_NAME = "modelName";
-    private static final String TYPE = "type";
-    private static final String VF_MODULE_ID = "vfModuleId";
-    private static boolean initialized = false;
-    private static SessionFactory sessionFactory;
-    private static ServiceRegistry serviceRegistry;
+    protected static final String NETWORK_TYPE = "networkType";
+    protected static final String ACTION = "action";
+    protected static final String VNF_TYPE = "vnfType";
+    protected static final String SERVICE_TYPE = "serviceType";
+    protected static final String VNF_COMPONENT_TYPE = "vnfComponentType";
+    protected static final String MODEL_NAME = "modelName";
+    protected static final String TYPE = "type";
+    protected static final String VF_MODULE_ID = "vfModuleId";
+    protected static boolean initialized = false;
+    protected static SessionFactory sessionFactory;
+    protected static ServiceRegistry serviceRegistry;
+    protected static final String SERVICE_NAME_VERSION_ID= "serviceNameVersionId";
+    
+    protected static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.GENERAL);
 
-    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.GENERAL);
-
-    private Session session = null;
+    protected Session session = null;
 
     public CatalogDatabase () {
     }
@@ -387,6 +388,49 @@ public class CatalogDatabase implements Closeable {
         return resultList.get (0);
     }
 
+    /**
+     * Return a Service recipe that matches a given SERVICE_NAME_VERSION_ID
+     * (MODEL_VERSION_ID) and ACTION
+     *
+     * @param modelVersionId
+     * @param action    
+     * @return ServiceRecipe object or null if none found
+     */
+    public ServiceRecipe getServiceRecipe(String modelVersionId,
+                                       String action) {                     
+
+        long startTime = System.currentTimeMillis();
+        LOGGER.debug("Catalog database - get Service recipe with modeVersionId=" + modelVersionId
+                                      + " and action=" + action);
+
+        try {
+                        String hql;
+
+                        hql = "SELECT new ServiceRecipe(SR.id, SR.serviceId, SR.action, SR.description, " +
+                                        "SR.orchestrationUri, SR.serviceParamXSD, case when SR.recipeTimeout is null then 0 else SR.recipeTimeout end, " +
+                                        "case when SR.serviceTimeoutInterim is null then 0 else SR.serviceTimeoutInterim end, SR.created) " +
+                                        "FROM Service as S RIGHT OUTER JOIN S.recipes SR " +
+                                        "WHERE SR.serviceId = S.id AND S.serviceNameVersionId = :serviceNameVersionId AND SR.action = :action";
+                        Query query = getSession().createQuery(hql);
+                        query.setParameter(SERVICE_NAME_VERSION_ID, modelVersionId);
+                        query.setParameter(ACTION, action);
+
+                        @SuppressWarnings("unchecked")
+                        List<ServiceRecipe> recipeResultList = query.list();
+                        if (recipeResultList.isEmpty()) {
+                                LOGGER.debug("Catalog database - recipeResultList is null");
+                                return null;
+                        }
+                        Collections.sort(recipeResultList, new MavenLikeVersioningComparator());
+                        Collections.reverse(recipeResultList);
+                        LOGGER.debug("Catalog database - recipeResultList contains " + recipeResultList.get(0).toString());
+
+                        return recipeResultList.get(0);
+        } finally {
+            LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getServiceRecipe", null);
+        }
+    }
+    
     /**
      * Return a newest version of Service recipe that matches a given SERVICE_ID and ACTION
      *

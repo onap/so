@@ -39,35 +39,35 @@ import org.hibernate.persister.entity.AbstractEntityPersister;
 
 import org.openecomp.mso.logger.MsoLogger;
 
-public final class RequestsDatabase {
+public class RequestsDatabase {
 
-    private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.GENERAL);
+    protected static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.GENERAL);
 
-    private static final String SOURCE = "source";
-    private static final String START_TIME = "startTime";
-    private static final String REQUEST_TYPE = "requestType";
-    private static final String SERVICE_INSTANCE_ID = "serviceInstanceId";
-    private static final String SERVICE_INSTANCE_NAME = "serviceInstanceName";
-    private static final String VNF_INSTANCE_NAME = "vnfName";
-    private static final String VNF_INSTANCE_ID = "vnfId";
-    private static final String VOLUME_GROUP_INSTANCE_NAME = "volumeGroupName";
-    private static final String VOLUME_GROUP_INSTANCE_ID = "volumeGroupId";
-    private static final String VFMODULE_INSTANCE_NAME = "vfModuleName";
-    private static final String VFMODULE_INSTANCE_ID = "vfModuleId";
-    private static final String NETWORK_INSTANCE_NAME = "networkName";
-    private static final String NETWORK_INSTANCE_ID = "networkId";
-    private static final String GLOBAL_SUBSCRIBER_ID = "globalSubscriberId";
-    private static final String SERVICE_NAME_VERSION_ID = "serviceNameVersionId";
-    private static final String SERVICE_ID = "serviceId";
-    private static final String SERVICE_VERSION = "serviceVersion";
-    private static final String SERVICE_TYPE = "serviceType";
-    private static final String REQUEST_ID = "requestId";
-    private static MockRequestsDatabase mockDB = null;
+    protected static final String         SOURCE                     = "source";
+    protected static final String         START_TIME                 = "startTime";
+    protected static final String         REQUEST_TYPE               = "requestType";
+    protected static final String         SERVICE_INSTANCE_ID        = "serviceInstanceId";
+    protected static final String         SERVICE_INSTANCE_NAME      = "serviceInstanceName";
+    protected static final String         VNF_INSTANCE_NAME          = "vnfName";
+    protected static final String         VNF_INSTANCE_ID            = "vnfId";
+    protected static final String         VOLUME_GROUP_INSTANCE_NAME = "volumeGroupName";
+    protected static final String         VOLUME_GROUP_INSTANCE_ID   = "volumeGroupId";
+    protected static final String         VFMODULE_INSTANCE_NAME     = "vfModuleName";
+    protected static final String         VFMODULE_INSTANCE_ID       = "vfModuleId";
+    protected static final String         NETWORK_INSTANCE_NAME      = "networkName";
+    protected static final String         NETWORK_INSTANCE_ID        = "networkId";
+    protected static final String         GLOBAL_SUBSCRIBER_ID       = "globalSubscriberId";
+    protected static final String         SERVICE_NAME_VERSION_ID    = "serviceNameVersionId";
+    protected static final String         SERVICE_ID                 = "serviceId";
+    protected static final String         SERVICE_VERSION            = "serviceVersion";
+
+    protected static final String         REQUEST_ID                 = "requestId";
+    protected static MockRequestsDatabase mockDB                     = null;
 
     /**
      * Avoids creating an instance of this utility class.
      */
-    private RequestsDatabase () {
+    protected RequestsDatabase () {
     }
 
     public static boolean healthCheck () {
