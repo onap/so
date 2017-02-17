@@ -19,7 +19,7 @@ services:
         max-file: "5"      
       
   mso:
-    image: ecomp/mso
+    image: openecomp/mso
     ports:
       - "3904:3904"
       - "3905:3905"    
