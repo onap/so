@@ -40,17 +40,19 @@
 		<swm.version>2.19.3-1</swm.version>
 		<evosuiteVersion>1.0.4-alpha2</evosuiteVersion>
 		<nexusproxy>https://nexus.openecomp.org</nexusproxy>
+		<snapshotNexusPath>/content/repositories/snapshots/</snapshotNexusPath>
+		<releaseNexusPath>/content/repositories/releases/</releaseNexusPath>
 	</properties>
 	<distributionManagement>
 		<repository>
 			<id>ecomp-releases</id>
 			<name>MSO Release Repository</name>
-			<url>${nexusproxy}/content/repositories/releases/</url>
+			<url>${nexusproxy}/${releaseNexusPath}</url>
 		</repository>
 		<snapshotRepository>
 			<id>ecomp-snapshots</id>
 			<name>MSO Snapshot Repository</name>
-			<url>${nexusproxy}/content/repositories/snapshots/</url>
+			<url>${nexusproxy}/${snapshotNexusPath}</url>
 		</snapshotRepository>
 		<site>
 			<id>ecomp-javadoc</id>
@@ -110,7 +112,7 @@
 		<repository>
 			<id>ecomp-releases</id>
 			<name>MSO Release Repository</name>
-			<url>${nexusproxy}/content/repositories/releases/</url>
+			<url>${nexusproxy}/${releaseNexusPath}</url>
 		</repository>
 		<repository>
 			<id>ecomp-staging</id>
