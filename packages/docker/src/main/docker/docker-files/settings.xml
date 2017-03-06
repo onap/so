@@ -26,11 +26,11 @@ xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.o
      <proxies>
        <proxy>
 	 <id>optional</id>
-	 <active>true</active>
+	 <active>false</active>
 	 <protocol>http</protocol>
-	 <host>one.proxy.att.com</host>
+	 <host></host>
 	 <port>8080</port>
-	 <nonProxyHosts>localhost,127.0.0.1,*.att.com</nonProxyHosts>
+	 <nonProxyHosts>localhost,127.0.0.1</nonProxyHosts>
        </proxy>
      </proxies>
 
