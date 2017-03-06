@@ -4,21 +4,13 @@ FROM openecomp/ubuntu-update:1.0
 MAINTAINER "The OpenECOMP Team"
 LABEL Description="This image contains OpenECOMP MSO ubuntu base" Version="1.0"
 
-ARG http_proxy
-ARG https_proxy
 ARG chef_repo_branch_name
 ARG chef_repo_address
 ARG chef_repo_git_name
 ARG chef_repo_git_username
-ENV HTTP_PROXY=$http_proxy
-ENV HTTPS_PROXY=$https_proxy
-ENV http_proxy=$HTTP_PROXY
-ENV https_proxy=$HTTPS_PROXY
 
 ### Install OpenJDK
 RUN apt-get -y install openjdk-8-jre-headless
-
-
 
 ### Install Wildfly
 ENV JBOSS_HOME=/opt/jboss

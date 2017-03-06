@@ -22,18 +22,6 @@ under the License.
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
-
-     <proxies>
-       <proxy>
-	 <id>optional</id>
-	 <active>true</active>
-	 <protocol>http</protocol>
-	 <host>one.proxy.att.com</host>
-	 <port>8080</port>
-	 <nonProxyHosts>localhost,127.0.0.1,*.att.com</nonProxyHosts>
-       </proxy>
-     </proxies>
-
      <servers>
        <server>
 	 <id>mso-releases</id>

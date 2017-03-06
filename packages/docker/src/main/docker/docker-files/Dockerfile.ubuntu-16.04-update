@@ -4,16 +4,10 @@ FROM ubuntu:16.04
 MAINTAINER "The OpenECOMP Team"
 LABEL Description="This image contains an updated version of ubuntu 16.04" Version="1.0"
 
-ARG http_proxy
-ARG https_proxy
 ARG chef_repo_branch_name
 ARG chef_repo_address
 ARG chef_repo_git_name
 ARG chef_repo_git_username
-ENV HTTP_PROXY=$http_proxy
-ENV HTTPS_PROXY=$https_proxy
-ENV http_proxy=$HTTP_PROXY
-ENV https_proxy=$HTTPS_PROXY
 
 ### update first the image to fix potential security issues 
 RUN apt-get update
