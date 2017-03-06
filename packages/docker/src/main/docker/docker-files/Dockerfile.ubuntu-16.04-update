@@ -10,10 +10,6 @@ ARG chef_repo_branch_name
 ARG chef_repo_address
 ARG chef_repo_git_name
 ARG chef_repo_git_username
-ENV HTTP_PROXY=$http_proxy
-ENV HTTPS_PROXY=$https_proxy
-ENV http_proxy=$HTTP_PROXY
-ENV https_proxy=$HTTPS_PROXY
 
 ### update first the image to fix potential security issues 
 RUN apt-get update
