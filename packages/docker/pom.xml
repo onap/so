@@ -18,6 +18,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<mso.git.url>https://gerrit.openecomp.org/r/mso</mso.git.url>
 	</properties>
 
 	<build>
@@ -35,7 +36,7 @@
 						</goals>
 						<phase>initialize</phase>
 						<configuration>
-							<connectionUrl>scm:git:${env.GIT_NO_PROJECT}/mso/chef-repo</connectionUrl>
+							<connectionUrl>scm:git:${mso.git.url}/chef-repo</connectionUrl>
 							<checkoutDirectory>src/main/docker/docker-files/chef-configs/chef-repo</checkoutDirectory>
 							<scmVersion>master</scmVersion>
 							<scmVersionType>branch</scmVersionType>
@@ -50,7 +51,7 @@
 						</goals>
 						<phase>initialize</phase>
 						<configuration>
-							<connectionUrl>scm:git:${env.GIT_NO_PROJECT}/mso/mso-config</connectionUrl>
+							<connectionUrl>scm:git:${mso.git.url}/mso-config</connectionUrl>
 							<checkoutDirectory>src/main/docker/docker-files/chef-configs/mso-config</checkoutDirectory>
 							<scmVersion>master</scmVersion>
 							<scmVersionType>branch</scmVersionType>
