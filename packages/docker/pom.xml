@@ -18,6 +18,9 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<!-- If the maven profile "docker" is specified the parameter -Dmso.git.url=<MsoGitRepo> must be provided
+		     i.e: mvn clean install -P docker -Dmso.git.url=https://gerrit.openecomp.org/r-->
+		<mso.git.url>${env.GIT_NO_PROJECT}</mso.git.url>
 	</properties>
 
 	<build>
@@ -35,7 +38,7 @@
 						</goals>
 						<phase>initialize</phase>
 						<configuration>
-							<connectionUrl>scm:git:${env.GIT_NO_PROJECT}/mso/chef-repo</connectionUrl>
+							<connectionUrl>scm:git:${mso.git.url}/mso/chef-repo</connectionUrl>
 							<checkoutDirectory>src/main/docker/docker-files/chef-configs/chef-repo</checkoutDirectory>
 							<scmVersion>master</scmVersion>
 							<scmVersionType>branch</scmVersionType>
@@ -50,7 +53,7 @@
 						</goals>
 						<phase>initialize</phase>
 						<configuration>
-							<connectionUrl>scm:git:${env.GIT_NO_PROJECT}/mso/mso-config</connectionUrl>
+							<connectionUrl>scm:git:${mso.git.url}/mso/mso-config</connectionUrl>
 							<checkoutDirectory>src/main/docker/docker-files/chef-configs/mso-config</checkoutDirectory>
 							<scmVersion>master</scmVersion>
 							<scmVersionType>branch</scmVersionType>
