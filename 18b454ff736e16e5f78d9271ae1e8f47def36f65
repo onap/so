@@ -16,6 +16,24 @@
       "revId": "18b454ff736e16e5f78d9271ae1e8f47def36f65",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a014df3_6187c010",
+        "filename": "packages/docker/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 137
+      },
+      "writtenOn": "2017-03-07T12:55:25Z",
+      "side": 1,
+      "message": "When compiling locally, build is failing because it can\u0027t resolve ${env.GIT_NO_PROJECT}, so how should I proceed to fix local build if I can\u0027t hard-code the value in a maven property?",
+      "parentUuid": "1a014df3_e1c4f060",
+      "revId": "18b454ff736e16e5f78d9271ae1e8f47def36f65",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
