@@ -52,6 +52,24 @@
       "revId": "18b454ff736e16e5f78d9271ae1e8f47def36f65",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a014df3_21ce585b",
+        "filename": "packages/docker/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 137
+      },
+      "writtenOn": "2017-03-07T13:54:08Z",
+      "side": 1,
+      "message": "\u003e Now, I understand that you want to provide it as a maven param (with -Dmso.git.url\u003d\u003cGitRepoUrl\u003e in argument).\n\nNo, this is not really what I\u0027m saying. This would mean each time one wants to compile the mso/package/docker project, one will have to pass as argument the `mso.git.url`. This doesn\u0027t make sense as this url will/should never change, so it should be fine hard-coding it.\nI\u0027m still not sure to understand the benefit of this env.GIT_NO_PROJECT variable that Jenkins populate.\n\nI understand this URL might change in the near future to reflect onap instead of ecomp, but this change shouldn\u0027t be the driver of not hard-coding a value that will be sealed in stone afterward.\n\nAm I missing something?\n\n\u003e 1. Rename GERRIT_URL to mso.git.url (to stay in line with the naming convention)\n\nAck.",
+      "parentUuid": "1a014df3_41ca8450",
+      "revId": "18b454ff736e16e5f78d9271ae1e8f47def36f65",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
