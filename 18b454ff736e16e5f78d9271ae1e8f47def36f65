@@ -34,6 +34,24 @@
       "revId": "18b454ff736e16e5f78d9271ae1e8f47def36f65",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a014df3_41ca8450",
+        "filename": "packages/docker/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2017-03-07T13:21:59Z",
+      "side": 1,
+      "message": "As is, you must set the env variable \"GIT_NO_PROJECT\" before starting the mvn command.\n\nNow, I understand that you want to provide it as a maven param (with -Dmso.git.url\u003d\u003cGitRepoUrl\u003e in argument).\n\nTherefore what I suggest is:\n1. Rename GERRIT_URL to mso.git.url (to stay in line with the naming convention)\n2. The default value for this new variable must be set to \"${env.GIT_NO_PROJECT}\". Because this env var is defined in the jenkins jobs to do the release/staging builds.",
+      "parentUuid": "1a014df3_6187c010",
+      "revId": "18b454ff736e16e5f78d9271ae1e8f47def36f65",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
