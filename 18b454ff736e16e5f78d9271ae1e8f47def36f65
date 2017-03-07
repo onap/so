@@ -70,6 +70,24 @@
       "revId": "18b454ff736e16e5f78d9271ae1e8f47def36f65",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a014df3_21f53883",
+        "filename": "packages/docker/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2017-03-07T14:47:54Z",
+      "side": 1,
+      "message": "This would mean each time one wants to compile the mso/package/docker project, one will have to pass as argument the `mso.git.url`. This doesn\u0027t make sense as this url will/should never change, so it should be fine hard-coding it.\n\n--\u003e Yes and I understand very well, that\u0027s annoying :-(\nBut what you are missing is: \nYou break our jenkins build with this(Docker profile enabled). We need to change the jenkins job template if we go there. Currently the var GIT_NO_PROJECT defines a SSH gerrit link with a specific user for jenkins.\nNote that: \n- The jenkins job executed in the Pull Request DOES not execute the docker profile so your change can\u0027t be validated.\n- Openecomp gerrit is not yet public and requires creds to access the code over HTTPS\n\nSo unless we change the jenkins templates for all ECOMP components, the default value must be set to ${env.GIT_NO_PROJECT}\n\nWe could probably add a comment in the pom description:\nIf the maven profile \"docker\" is specified the parameter \n-Dmso.git.url\u003d\u003cMsoGitRepo\u003e must be provided !\ne.g:\nmvn clean install -P docker -Dmso.git.url\u003dhttps://gerrit.openecomp.org/r",
+      "parentUuid": "1a014df3_21ce585b",
+      "revId": "18b454ff736e16e5f78d9271ae1e8f47def36f65",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
