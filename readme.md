@@ -11,11 +11,11 @@ Both containers runs on the same machine and can be started with **`docker-compo
 
 # Compiling MSO
 
-MSO can be compiled with `mvn clean install`. Integration tests are started with the following profile 
+MSO can be compiled with `mvn clean install`. Integration tests are started with the following profile
 `-P with-integration-tests`
 
-**to be edited for rrelease** 
-Docker containers are build with the following profile 
+**to be edited for rrelease**
+Docker containers are build with the following profile
 `-P docker -Ddocker.buildArg.chef_repo_branch_name=bugfix/external_adress -Ddocker.buildArg.chef_repo_git_username=git -Ddocker.buildArg.chef_repo_address=23.253.149.175/mso -Ddocker.buildArg.chef_repo_git_name=chef-repo`
 
 # Getting the containers
@@ -75,14 +75,14 @@ MSO orchestration processes can be monitored with the [Camunda Engine cockpit UI
 
 **IMPORTANT NOTE** : since OpenECOMP MSO only uses Camunda Community version it is not possible to see history of running process as this is an Enterprise feature only.
 
-#### Accessing the Cockpit 
+#### Accessing the Cockpit
 
 The cockpit is available at the following address : http://containerHostname:8080/cockpit
 
 When the container is started it will create a default admin user (admin) with the password `placeholder` for UI
 
-The cockpit gives an overview of the available BPMN (orchestration) processes (with a visual representation). 
-It is also possible to trigger them from the UI if you know the parameters that are needed. 
+The cockpit gives an overview of the available BPMN (orchestration) processes (with a visual representation).
+It is also possible to trigger them from the UI if you know the parameters that are needed.
 
 ***screenshots to be uploaded when rrelease***
 
@@ -94,14 +94,14 @@ The MSO APIs are configured to accept requests having a **basic auth. header** s
 
 All API endpoints are exposed on port **8080**, it is possible to reach all MSO subsystems directly with the proper query (see more information below on how to test MSO functions)
 
-##### Main API endpoints in the first open source release 
+##### Main API endpoints in the first open source release
 
 - ***to be completed*** APIHandler health checks
 - ***to be completed*** VID API
 
 VID endpoint : http://vm1.mso.simpledemo.openecomp.org:8080/ecomp/mso/infra/serviceInstances/v2
 
-The typical easy way to trigger these endpoints is to use a RESTful client or automation framework. 
+The typical easy way to trigger these endpoints is to use a RESTful client or automation framework.
 
 # Configuration of MSO
 
@@ -113,13 +113,13 @@ Change the environment file located here : **/shared/mso-docker.json** then run 
 
 **Important note:** The host mso is mapped automatically to c1.vm1.mso.simpledemo.openecomp.org in /etc/host of the docker image so you can keep mso:8080 when you want to mention the APIH, JRA or Camunda host.
 
-Here are the main parameters you could change: 
+Here are the main parameters you could change:
 
 - mso_config_path: define the path where the configuration files for APIH, JRA and Camunda will be deployed. This parameter should not be changed.
 - In the section mso-bpmn-urn-config, adaptersDbEndpoint: This configuration must point to the APIH hostname. It should have this form: http://mso:8080/dbadapters/RequestsDbAdapter Do not change it if you are not sure.
 - In the section mso-bpmn-urn-config, aaiEndpoint: This parameter should point to the A&AI component. It should be something like: https://c1.vm1.aai.simpledemo.openecomp.org:8443
 - In the section mso-bpmn-urn-config, aaiAuth: This parameter is the encrypted value of login:password to access the A&AI server. The key used to encrypt is defined in the parameter msoKey.
-- In the section asdc-connection, asdcAddresss: Change the values with the value provided by the ASDC team. Possible value: https://c2.vm1.asdc.simpledemo.openecomp.org:8443 The password field may be changed as well.
+- In the section asdc-connection, asdcAddresss: Change the values with the value provided by the ASDC team. Possible value: https://c2.vm1.sdc.simpledemo.openecomp.org:8443 The password field may be changed as well.
 - In the section mso-sdnc-adapter-config, sdncurls: Change all the values with the value provided by the SDNC team. Possible value: https://c1.vm1.sdnc.simpledemo.openecomp.org:8443/... ? The sdncauth field may be changed as well.
 - In the section mso-appc-adapter-config, appc_url: Change the value with the value provided by the APPC team. Possible value: http://c1.vm1.appc.simpledemo.openecomp.org:8080 ? The appc_auth field may be changed as well.
 - In the section mso-po-adapter-config, identity_url: Change the values with the value provided by the PO team. Possible value: https://identity.api.rackspacecloud.com/v2.0 ?
@@ -147,7 +147,7 @@ MSO log files are located the [JBoss log](https://docs.jboss.org/author/display/
 ### EELF
 
 EELF framework is used for **specific logs** (audit, metric and error logs). They are tracking inter component logs (request and response) and allow to follow a complete flow through the MSO subsystem
- 
+
 EELF logs are located at the following location on the MSO JBoss container :
 
 - /var/log/ecomp/MSO (each module has its own folder)
@@ -183,7 +183,7 @@ To help with the testing we are providing here a sample [SoapUI](https://www.soa
 The MariaDB container can load up special SQL scripts that simulates the loading of ASDC components (as if they were received through the ASDC client)
 
 Simply use the load ability embedded to run the 'preload SQL' script for vFirewall or vDNS
- 
+
 ### Once the HEAT artifacts are loaded into MSO
 
 It is also possible to simulate queries to the PO (platform orchestrator) adapter of MSO (thus bypassing BPMN flows and API handler) to verify MSO interaction with Rackspace and verify the behavior of the Adapter (so that it loads HEAT and connect to Rackspace and instantiate elements)
@@ -206,6 +206,6 @@ login/password BPELClient/password1$F
 mso@lists.openecomp.org
 
 MSO Javadoc and Maven site
- 
+
 *** to be completed on rrelease ***
 
