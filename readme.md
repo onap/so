@@ -11,7 +11,7 @@ Both containers runs on the same machine and can be started with **`docker-compo
 
 # Compiling MSO
 
-MSO can be compiled with `mvn clean install`. Integration tests are started with the following profile 
+MSO can be compiled with `mvn clean install`. Integration tests are started with the following profile
 `-P with-integration-tests`
 
 **to be edited for rrelease** 
@@ -119,7 +119,7 @@ Here are the main parameters you could change:
 - In the section mso-bpmn-urn-config, adaptersDbEndpoint: This configuration must point to the APIH hostname. It should have this form: http://mso:8080/dbadapters/RequestsDbAdapter Do not change it if you are not sure.
 - In the section mso-bpmn-urn-config, aaiEndpoint: This parameter should point to the A&AI component. It should be something like: https://c1.vm1.aai.simpledemo.openecomp.org:8443
 - In the section mso-bpmn-urn-config, aaiAuth: This parameter is the encrypted value of login:password to access the A&AI server. The key used to encrypt is defined in the parameter msoKey.
-- In the section asdc-connection, asdcAddresss: Change the values with the value provided by the ASDC team. Possible value: https://c2.vm1.asdc.simpledemo.openecomp.org:8443 The password field may be changed as well.
+- In the section asdc-connection, asdcAddresss: Change the values with the value provided by the ASDC team. Possible value: https://c2.vm1.sdc.simpledemo.openecomp.org:8443 The password field may be changed as well.
 - In the section mso-sdnc-adapter-config, sdncurls: Change all the values with the value provided by the SDNC team. Possible value: https://c1.vm1.sdnc.simpledemo.openecomp.org:8443/... ? The sdncauth field may be changed as well.
 - In the section mso-appc-adapter-config, appc_url: Change the value with the value provided by the APPC team. Possible value: http://c1.vm1.appc.simpledemo.openecomp.org:8080 ? The appc_auth field may be changed as well.
 - In the section mso-po-adapter-config, identity_url: Change the values with the value provided by the PO team. Possible value: https://identity.api.rackspacecloud.com/v2.0 ?
