@@ -16,6 +16,24 @@
       "revId": "9c83a7fc42c615140a61a339c2647b2e8eac9956",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a014df3_fc76d305",
+        "filename": "packages/docker/src/main/docker/docker-files/scripts/start-jboss-server.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 137
+      },
+      "writtenOn": "2017-03-08T15:06:41Z",
+      "side": 0,
+      "message": "Ok, understood. So I added a check on the mso-docker.json file so we start chef only if it has some data.",
+      "parentUuid": "1a014df3_9c17cfa3",
+      "revId": "9c83a7fc42c615140a61a339c2647b2e8eac9956",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
