@@ -12,10 +12,6 @@ update-ca-certificates
 echo 'Running in JBOSS'
 su - jboss
 
-#Start the chef-solo
-chef-solo -c /var/berks-cookbooks/${CHEF_REPO_NAME}/solo.rb -o recipe[mso-config::apih],recipe[mso-config::bpmn],recipe[mso-config::jra]
-
-
 JBOSS_PIDFILE=/tmp/jboss-standalone.pid
 $JBOSS_HOME/bin/standalone.sh -c standalone-full-ha-mso.xml &
 JBOSS_PID=$!
