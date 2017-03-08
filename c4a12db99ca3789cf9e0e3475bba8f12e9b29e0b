@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a014df3_9c658f47",
+        "filename": "packages/docker/src/main/docker/docker-files/scripts/start-jboss-server.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2017-03-08T15:07:48Z",
+      "side": 1,
+      "message": "perfect, thank you",
+      "revId": "c4a12db99ca3789cf9e0e3475bba8f12e9b29e0b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
