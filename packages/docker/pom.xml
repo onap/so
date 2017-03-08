@@ -21,6 +21,7 @@
 		<!-- If the maven profile "docker" is specified the parameter -Dmso.git.url=<MsoGitRepo> must be provided
 		     i.e: mvn clean install -P docker -Dmso.git.url=https://gerrit.openecomp.org/r-->
 		<mso.git.url>${env.GIT_NO_PROJECT}</mso.git.url>
+		<mso.git.commit></mso.git.commit>
 	</properties>
 
 	<build>
@@ -109,7 +110,9 @@
 							<name>openecomp/mso-arquillian:%l</name>
 							<alias>mso-arquillian</alias>
 							<build>
-
+								<tags>
+									<tag>${project.version}-STAGING-${mso.git.commit}</tag>
+								</tags>
 								<cleanup>try</cleanup>
 								<dockerFileDir>docker-files</dockerFileDir>
 								<dockerFile>docker-files/Dockerfile.mso-arquillian</dockerFile>
@@ -120,7 +123,9 @@
 							<name>openecomp/mso:%l</name>
 							<alias>mso</alias>
 							<build>
-
+								<tags>
+									<tag>${project.version}-STAGING-${mso.git.commit}</tag>
+								</tags>
 								<cleanup>try</cleanup>
 								<dockerFileDir>docker-files</dockerFileDir>
 								<dockerFile>docker-files/Dockerfile.mso-chef-final</dockerFile>
