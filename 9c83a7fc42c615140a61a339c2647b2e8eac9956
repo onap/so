@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a014df3_9c17cfa3",
+        "filename": "packages/docker/src/main/docker/docker-files/scripts/start-jboss-server.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2017-03-08T14:50:48Z",
+      "side": 0,
+      "message": "We want an easy way to re-configure the MSO docker container each time you (re)start it, that\u0027s quite convenient when you want to change a MSO config.",
+      "revId": "9c83a7fc42c615140a61a339c2647b2e8eac9956",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
