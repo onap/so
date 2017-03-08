@@ -6,7 +6,7 @@ services:
     ports:
       - "3306"
     volumes:
-      - ./volumes/mariadb/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - ./packages/root-pack-extras/config-resources/mariadb:/docker-entrypoint-initdb.d
       - ./volumes/mariadb/conf.d:/etc/mysql/conf.d
     environment:
       - MYSQL_ROOT_PASSWORD=password
@@ -17,7 +17,7 @@ services:
       options:
         max-size: "30m"
         max-file: "5"      
-      
+
   mso:
     image: openecomp/mso
     ports:
