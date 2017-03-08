@@ -109,7 +109,9 @@
 							<name>openecomp/mso-arquillian:%l</name>
 							<alias>mso-arquillian</alias>
 							<build>
-
+								<tags>
+									<tag>${project.version}-STAGING-${maven.build.timestamp}</tag>
+								</tags>
 								<cleanup>try</cleanup>
 								<dockerFileDir>docker-files</dockerFileDir>
 								<dockerFile>docker-files/Dockerfile.mso-arquillian</dockerFile>
@@ -120,7 +122,9 @@
 							<name>openecomp/mso:%l</name>
 							<alias>mso</alias>
 							<build>
-
+								<tags>
+									<tag>${project.version}-STAGING-${maven.build.timestamp}</tag>
+								</tags>
 								<cleanup>try</cleanup>
 								<dockerFileDir>docker-files</dockerFileDir>
 								<dockerFile>docker-files/Dockerfile.mso-chef-final</dockerFile>
