@@ -12,9 +12,14 @@ update-ca-certificates
 echo 'Running in JBOSS'
 su - jboss
 
-#Start the chef-solo
-chef-solo -c /var/berks-cookbooks/${CHEF_REPO_NAME}/solo.rb -o recipe[mso-config::apih],recipe[mso-config::bpmn],recipe[mso-config::jra]
-
+#Start the chef-solo if mso-docker.json contains some data.
+if [ -s /var/berks-cookbooks/${CHEF_REPO_NAME}/environments/mso-docker.json ] 
+then
+	echo "mso-docker.json has some configuration, replay the recipes."
+	chef-solo -c /var/berks-cookbooks/${CHEF_REPO_NAME}/solo.rb -o recipe[mso-config::apih],recipe[mso-config::bpmn],recipe[mso-config::jra]
+else
+	echo "mso-docker.json is empty, do not replay the recipes."
+fi
 
 JBOSS_PIDFILE=/tmp/jboss-standalone.pid
 $JBOSS_HOME/bin/standalone.sh -c standalone-full-ha-mso.xml &
