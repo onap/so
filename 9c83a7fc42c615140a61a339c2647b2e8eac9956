@@ -16,6 +16,24 @@
       "revId": "9c83a7fc42c615140a61a339c2647b2e8eac9956",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a014df3_1cd85fee",
+        "filename": "docker-compose.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 137
+      },
+      "writtenOn": "2017-03-08T15:17:41Z",
+      "side": 0,
+      "message": "I was indeed missing that repo. Thanks.",
+      "parentUuid": "1a014df3_5c1147ab",
+      "revId": "9c83a7fc42c615140a61a339c2647b2e8eac9956",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
