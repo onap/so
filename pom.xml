@@ -42,6 +42,7 @@
 		<nexusproxy>https://nexus.openecomp.org</nexusproxy>
 		<snapshotNexusPath>/content/repositories/snapshots/</snapshotNexusPath>
 		<releaseNexusPath>/content/repositories/releases/</releaseNexusPath>
+		<maven.build.timestamp.format>yyyyMMdd'T'HHmm</maven.build.timestamp.format>
 	</properties>
 	<distributionManagement>
 		<repository>
