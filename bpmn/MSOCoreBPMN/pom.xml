@@ -4,13 +4,13 @@
 	<parent>
 		<groupId>org.openecomp.mso</groupId>
 		<artifactId>bpmn</artifactId>
-		<version>0.0.4-SNAPSHOT</version>
+		<version>1.1.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openecomp.mso</groupId>
 	<artifactId>MSOCoreBPMN</artifactId>
 	<packaging>jar</packaging>
-	
+
 	<build>
 		<plugins>
 			<!-- Note: test utilities really ought to exist only in the test scope but -->
