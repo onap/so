@@ -52,6 +52,7 @@
 					<!-- DEVELOPER PACKS -->
 					<execution>
 						<configuration>
+							<tarLongFileMode>posix</tarLongFileMode>
 
 							<descriptors>
 								<descriptor>src/main/assembly/war-pack/mso-wars.xml</descriptor>
