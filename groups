@@ -1,3 +1,3 @@
-# UUID                                                               	Group Name
+# UUID                                                              	Group Name
 #
-ldap:cn=ecomp-gerrit-mso-committers,ou=Groups,dc=freestandards,dc=org	ldap/ecomp-gerrit-mso-committers
+ldap:cn=onap-gerrit-mso-committers,ou=Groups,dc=freestandards,dc=org	ldap/onap-gerrit-mso-committers
