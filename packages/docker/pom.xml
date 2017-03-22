@@ -123,7 +123,7 @@
 							<alias>mso</alias>
 							<build>
 								<tags>
-									<tag>${project.version}-STAGING</tag>
+									<tag>1.0-STAGING-latest</tag>
 									<tag>${project.version}-STAGING-${maven.build.timestamp}</tag>
 								</tags>
 								<cleanup>try</cleanup>
