@@ -21,11 +21,41 @@
 		<!-- If the maven profile "docker" is specified the parameter -Dmso.git.url=<MsoGitRepo> must be provided
 		     i.e: mvn clean install -P docker -Dmso.git.url=https://gerrit.openecomp.org/r-->
 		<mso.git.url>${env.GIT_NO_PROJECT}</mso.git.url>
+		<mso.project.version>${project.version}</mso.project.version>
 	</properties>
 
 	<build>
 		<finalName>${project.artifactId}-${project.version}</finalName>
 		<plugins>
+		      <plugin>
+                <groupId>org.codehaus.groovy.maven</groupId>
+                <artifactId>gmaven-plugin</artifactId>
+                <executions>
+                  <execution>
+                    <phase>validate</phase>
+                    <goals>
+                      <goal>execute</goal>
+                    </goals>
+                    <configuration>
+                      <source>
+                        println project.properties['mso.project.version'];
+                        def versionArray;
+                        if ( project.properties['mso.project.version'] != null ) {
+                            versionArray = project.properties['mso.project.version'].split('\\.');
+                        } 
+
+                        if ( project.properties['mso.project.version'].endsWith("-SNAPSHOT") ) {
+                            project.properties['project.docker.latesttag.version']=versionArray[0] + '.' + versionArray[1] + "-SNAPSHOT-latest";
+                        } else {
+                            project.properties['project.docker.latesttag.version']=versionArray[0] + '.' + versionArray[1] + "-STAGING-latest";
+                        }
+
+                        println 'New Tag for docker:' + project.properties['project.docker.latesttag.version'];
+                      </source>
+                    </configuration>
+                  </execution>
+              </executions>
+            </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-scm-plugin</artifactId>
@@ -111,6 +141,7 @@
 							<build>
 								<tags>
 									<tag>${project.version}-STAGING-${maven.build.timestamp}</tag>
+									<tag>${project.docker.latesttag.version}</tag>
 								</tags>
 								<cleanup>try</cleanup>
 								<dockerFileDir>docker-files</dockerFileDir>
@@ -124,6 +155,7 @@
 							<build>
 								<tags>
 									<tag>${project.version}-STAGING-${maven.build.timestamp}</tag>
+									<tag>${project.docker.latesttag.version}</tag>
 								</tags>
 								<cleanup>try</cleanup>
 								<dockerFileDir>docker-files</dockerFileDir>
