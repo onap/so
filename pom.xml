@@ -12,7 +12,7 @@
 	</description>
 	<organization>
 		<name>OPENECOMP - MSO</name>
-		<url>http://www.openecomp.org/</url>
+		<url>http://www.onap.org/</url>
 	</organization>
 	<modules>
 		<module>common</module>
@@ -39,7 +39,7 @@
 		<!-- this is used for Chef mso-code cookbook -->
 		<swm.version>2.19.3-1</swm.version>
 		<evosuiteVersion>1.0.4-alpha2</evosuiteVersion>
-		<nexusproxy>https://nexus.openecomp.org</nexusproxy>
+		<nexusproxy>https://nexus.onap.org</nexusproxy>
 		<snapshotNexusPath>/content/repositories/snapshots/</snapshotNexusPath>
 		<releaseNexusPath>/content/repositories/releases/</releaseNexusPath>
                 <sitePath>/content/sites/site/org/openecomp/mso/${project.version}</sitePath>
