@@ -16,7 +16,7 @@
 	<description>This project is responsible of the final packages</description>
 	<organization>
 		<name>OPENECOMP - MSO</name>
-		<url>http://www.onap.org/</url>
+		<url>http://www.openecomp.org/</url>
 	</organization>
 
 
@@ -49,7 +49,7 @@
                         </goals>
 
                     </execution>
-					<!-- DEVELOPER PACKS -->
+					<!-- WAR PACKS -->
 					<execution>
 						<configuration>
 							<tarLongFileMode>posix</tarLongFileMode>

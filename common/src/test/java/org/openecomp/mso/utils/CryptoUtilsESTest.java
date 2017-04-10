@@ -11,6 +11,8 @@ import static org.evosuite.runtime.EvoAssertions.*;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
+import java.security.InvalidKeyException;
+
 import org.evosuite.runtime.EvoRunner;
 import org.evosuite.runtime.EvoRunnerParameters;
 import org.junit.runner.RunWith;
@@ -65,7 +67,7 @@ public class CryptoUtilsESTest extends CryptoUtilsESTestscaffolding {
         CryptoUtils.decrypt("B20000000000000000000000000000000000000000000000", "B20000000000000000000000000000000000000000000000");
         fail("Expecting exception: IllegalBlockSizeException");
       
-      } catch(IllegalBlockSizeException e) {
+      } catch(IllegalBlockSizeException | InvalidKeyException e) {
       }
   }
 

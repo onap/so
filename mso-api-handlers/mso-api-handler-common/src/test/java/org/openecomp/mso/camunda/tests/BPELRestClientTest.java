@@ -70,8 +70,8 @@ public class BPELRestClientTest {
 	JsonMappingException, IOException {
 
 
-		String responseBody ="<layer3activate:service-response xmlns:layer3activate=\"http://ecomp.att.com/mso/request/layer3serviceactivate/schema/v1\""
-												+ "xmlns:reqtype=\"http://ecomp.att.com/mso/request/types/v1\""
+		String responseBody ="<layer3activate:service-response xmlns:layer3activate=\"http://org.openecomp/mso/request/layer3serviceactivate/schema/v1\""
+												+ "xmlns:reqtype=\"http://org.openecomp/mso/request/types/v1\""
 												+ "xmlns:aetgt=\"http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd\""
 												+ "xmlns:types=\"http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd\">"
 												+ "<reqtype:request-id>req5</reqtype:request-id>"

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -239,7 +239,10 @@ public class BpelRestClient {
 		LOGGER.debug("Sending to BPEL server: "+bpelUrl);
 		LOGGER.debug("Content is: "+toBpelStr);
 
-        //POST
+		//Client 4.3+
+		CloseableHttpClient client = HttpClients.createDefault();
+
+		//POST
 		HttpPost post = new HttpPost(bpelUrl);
 		if (credentials != null && !credentials.isEmpty())
 			post.addHeader("Authorization", "Basic " + DatatypeConverter.printBase64Binary(credentials.getBytes()));
@@ -258,8 +261,8 @@ public class BpelRestClient {
 
         //Client 4.3+
 		//Execute & GetResponse
-		try (CloseableHttpClient client = HttpClients.createDefault();
-             CloseableHttpResponse response = client.execute(post)) {
+		try {
+			CloseableHttpResponse response = client.execute(post);
 			if (response != null) {
 				lastResponseCode = response.getStatusLine().getStatusCode();
 				HttpEntity entity = response.getEntity();
@@ -273,32 +276,15 @@ public class BpelRestClient {
 			LOGGER.error (MessageEnum.RA_SEND_VNF_NOTIF_ERR, error, "Camunda", "", MsoLogger.ErrorCode.AvailabilityError, "Exception sending Bpel notification", e);
 			lastResponseCode = 900;
 			lastResponse = "";
+		} finally {
+			try {
+				client.close();
+			} catch (IOException e) {
+				// ignore
+			}
 		}
 		LOGGER.debug("Response code from BPEL server: "+lastResponseCode);
 		LOGGER.debug("Response body is: "+lastResponse);
 	}
 
-	public static void main(String[] a) throws MsoPropertiesException {
-		final String bpelengine = "http://mtmac1.research.att.com:8080/catch.jsp";
-		final String propfile = "/tmp/mso.vnf.properties";
-		// "/Users/eby/src/mso.rest/mso/packages/mso-config-centralized/mso-po-adapter-config/mso.vnf.properties"
-		final String xml =
-			"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" +
-			"<updateVolumeGroupResponse><volumeGroupId>1464013300723</volumeGroupId><volumeGroupOutputs>" +
-	        "<entry><key>clyde</key><value>10</value></entry>" +
-	        "<entry><key>wayne</key><value>99</value></entry>" +
-	        "<entry><key>mickey</key><value>7</value></entry>" +
-	        "</volumeGroupOutputs></updateVolumeGroupResponse>";
-
-		MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory();
-		msoPropertiesFactory.initializeMsoProperties (MSO_PROP_NETWORK_ADAPTER, propfile);
-
-		BpelRestClient bc = new BpelRestClient();
-		System.out.println(bc.getRetryList());
-		System.out.println(bc.getCredentials()); // poAvos:Domain2.0!
-
-		bc.bpelPost(xml, bpelengine, true);
-		System.out.println("respcode = "+bc.getLastResponseCode());
-		System.out.println("resp = "+bc.getLastResponse());
-	}
 }

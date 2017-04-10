@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,6 +26,9 @@ package org.openecomp.mso.db.catalog.beans;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import org.openecomp.mso.db.catalog.utils.MavenLikeVersioning;
+import java.util.Date;
+import org.openecomp.mso.db.catalog.utils.MavenLikeVersioning;
+import org.openecomp.mso.logger.MsoLogger;
 
 public class ServiceRecipe extends MavenLikeVersioning {
 	private int id;
@@ -36,9 +39,38 @@ public class ServiceRecipe extends MavenLikeVersioning {
 	private String serviceParamXSD;
 	private int recipeTimeout;
 	private Integer serviceTimeoutInterim;
-	
+
 	private Timestamp created;
-	
+
+
+	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.GENERAL);
+
+	// This 'default' CTR is now needed for backward compatibility since a new CTR was added below
+	public ServiceRecipe() {
+		super();
+	}
+
+	// This CTR is needed by the HQL SELECT JOIN between the SERVICE and SERVICE_RECIPE tables
+	// in CatalogDatabase::getServiceRecipe()
+	public ServiceRecipe(int id, int serviceId, String action,
+						 String description, String orchestrationUri,
+						 String serviceParamXSD, int recipeTimeout,
+						 int serviceTimeoutInterim, Date created) {
+		super();
+		LOGGER.debug("ServiceRecipe id=" + id + ", serviceId=" + serviceId + ", action=" + action + ", description=" + description +
+				", orchestrationUri=" + orchestrationUri + ", serviceParamXSD=" + serviceParamXSD +
+				", recipeTimeout=" + recipeTimeout + ", serviceTimeoutInterim=" + serviceTimeoutInterim + ", created=" + created);
+		this.id = id;
+		this.serviceId = serviceId;
+		this.action = action;
+		this.description = description;
+		this.orchestrationUri = orchestrationUri;
+		this.serviceParamXSD = serviceParamXSD;
+		this.recipeTimeout = recipeTimeout;
+		this.serviceTimeoutInterim = serviceTimeoutInterim;
+		long date = created.getTime();
+		this.created = new Timestamp(date);
+	}
 
 	public int getId() {
 		return id;
@@ -96,7 +128,7 @@ public class ServiceRecipe extends MavenLikeVersioning {
 	public void setServiceTimeoutInterim(Integer serviceTimeoutInterim) {
 		this.serviceTimeoutInterim = serviceTimeoutInterim;
 	}
-	
+
 	public Timestamp getCreated() {
 		return created;
 	}

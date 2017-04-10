@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -270,17 +270,17 @@ public class ASDCController {
         this.changeControllerStatus (ASDCControllerStatus.STOPPED);
     }
 
-    private boolean checkResourceAlreadyDeployed (VfResourceStructure vfResource) throws ArtifactInstallerException {
+    private boolean checkResourceAlreadyDeployed (VfResourceStructure resource) throws ArtifactInstallerException {
 
-    	if (this.resourceInstaller.isResourceAlreadyDeployed (vfResource)) {
+        if (this.resourceInstaller.isResourceAlreadyDeployed (resource)) {
             LOGGER.info (MessageEnum.ASDC_ARTIFACT_ALREADY_EXIST,
-            			vfResource.getResourceInstance().getResourceInstanceName(),
-            			vfResource.getResourceInstance().getResourceUUID(),
-            			vfResource.getResourceInstance().getResourceName(), "", "");
-            
-            this.sendDeployNotificationsForResource(vfResource,DistributionStatusEnum.ALREADY_DOWNLOADED,null);
-            this.sendDeployNotificationsForResource(vfResource,DistributionStatusEnum.ALREADY_DEPLOYED,null);
-           
+                    resource.getResourceInstance().getResourceInstanceName(),
+                    resource.getResourceInstance().getResourceUUID(),
+                    resource.getResourceInstance().getResourceName(), "", "");
+
+            this.sendDeployNotificationsForResource(resource,DistributionStatusEnum.ALREADY_DOWNLOADED,null);
+            this.sendDeployNotificationsForResource(resource,DistributionStatusEnum.ALREADY_DEPLOYED,null);
+
             return true;
         } else {
             return false;
@@ -289,7 +289,7 @@ public class ASDCController {
     }
 
     private final static String UUID_PARAM = "(UUID:";
-    
+
     private IDistributionClientDownloadResult downloadTheArtifact (IArtifactInfo artifact,
                                                                    String distributionId) throws ASDCDownloadException {
 
@@ -299,7 +299,7 @@ public class ASDCController {
                       + ")");
         IDistributionClientDownloadResult downloadResult;
 
-       
+
         try {
             downloadResult = distributionClient.download (artifact);
             if (null == downloadResult) {
@@ -366,14 +366,14 @@ public class ASDCController {
 
     }
 
-   
+
     private void sendDeployNotificationsForResource(VfResourceStructure vfResourceStructure,DistributionStatusEnum distribStatus, String errorReason) {
-    
+
     	for (IArtifactInfo artifactInfo : vfResourceStructure.getResourceInstance().getArtifacts()) {
-    	
-    		if (DistributionStatusEnum.DEPLOY_OK.equals(distribStatus) 
+
+    		if (DistributionStatusEnum.DEPLOY_OK.equals(distribStatus)
     				// This could be NULL if the artifact is a VF module artifact, this won't be present in the MAP
-    				&& vfResourceStructure.getArtifactsMapByUUID().get(artifactInfo.getArtifactUUID()) != null 
+    				&& vfResourceStructure.getArtifactsMapByUUID().get(artifactInfo.getArtifactUUID()) != null
     				&& vfResourceStructure.getArtifactsMapByUUID().get(artifactInfo.getArtifactUUID()).getDeployedInDb() == 0) {
     			this.sendASDCNotification (NotificationType.DEPLOY,
 	    				artifactInfo.getArtifactURL (),
@@ -393,26 +393,30 @@ public class ASDCController {
     		}
     	}
     }
-    
-    private void deployResourceStructure (VfResourceStructure vfResourceStructure) throws ArtifactInstallerException {
 
-    	LOGGER.info (MessageEnum.ASDC_START_DEPLOY_ARTIFACT, vfResourceStructure.getResourceInstance().getResourceInstanceName(), vfResourceStructure.getResourceInstance().getResourceUUID(), "ASDC", "deployResourceStructure");
+    private void deployResourceStructure (VfResourceStructure resourceStructure) throws ArtifactInstallerException {
+
+    	LOGGER.info (MessageEnum.ASDC_START_DEPLOY_ARTIFACT, resourceStructure.getResourceInstance().getResourceInstanceName(), resourceStructure.getResourceInstance().getResourceUUID(), "ASDC", "deployResourceStructure");
         try {
-        	vfResourceStructure.createVfModuleStructures();
-        	resourceInstaller.installTheResource (vfResourceStructure);
-        	
+        	String resourceType = resourceStructure.getResourceInstance().getResourceType();
+        	String category = resourceStructure.getResourceInstance().getCategory();
+        	if(resourceType.equals("VF") && !category.equalsIgnoreCase("Allotted Resource")){
+        		resourceStructure.createVfModuleStructures();
+        	}
+        	resourceInstaller.installTheResource (resourceStructure);
+
         } catch (ArtifactInstallerException e) {
-        	
-        	sendDeployNotificationsForResource(vfResourceStructure,DistributionStatusEnum.DEPLOY_ERROR,e.getMessage());
+
+        	sendDeployNotificationsForResource(resourceStructure,DistributionStatusEnum.DEPLOY_ERROR,e.getMessage());
         	throw e;
         }
 
-        if (vfResourceStructure.isDeployedSuccessfully()) {
+        if (resourceStructure.isDeployedSuccessfully()) {
 	        LOGGER.info (MessageEnum.ASDC_ARTIFACT_DEPLOY_SUC,
-	           		vfResourceStructure.getResourceInstance().getResourceName(),
-	          		vfResourceStructure.getResourceInstance().getResourceUUID(),
-	                String.valueOf (vfResourceStructure.getVfModuleStructure().size()), "ASDC", "deployResourceStructure");
-	        sendDeployNotificationsForResource(vfResourceStructure,DistributionStatusEnum.DEPLOY_OK ,null);
+	           		resourceStructure.getResourceInstance().getResourceName(),
+	          		resourceStructure.getResourceInstance().getResourceUUID(),
+	                String.valueOf (resourceStructure.getVfModuleStructure().size()), "ASDC", "deployResourceStructure");
+	        sendDeployNotificationsForResource(resourceStructure,DistributionStatusEnum.DEPLOY_OK ,null);
         }
 
     }
@@ -428,14 +432,14 @@ public class ASDCController {
                                        DistributionStatusEnum status,
                                        String errorReason,
                                        long timestamp) {
-    	
+
         String event = "Sending " + notificationType.name ()
                        + "("
                        + status.name ()
                        + ")"
                        + " notification to ASDC for artifact:"
                        + artifactURL;
-        
+
         if (errorReason != null) {
         	event=event+"("+errorReason+")";
         }
@@ -480,7 +484,7 @@ public class ASDCController {
     }
 
     public void treatNotification (INotificationData iNotif) {
-    	
+
     	int noOfArtifacts = 0;
     	for (IResourceInstance resource : iNotif.getResources ()) {
     		noOfArtifacts += resource.getArtifacts ().size ();
@@ -488,7 +492,7 @@ public class ASDCController {
         LOGGER.info (MessageEnum.ASDC_RECEIVE_CALLBACK_NOTIF,
                      String.valueOf (noOfArtifacts),
                      iNotif.getServiceUUID (), "ASDC", "treatNotification");
-        
+
         try {
         	LOGGER.debug(ASDCNotificationLogging.dumpASDCNotification(iNotif));
 			LOGGER.info(MessageEnum.ASDC_RECEIVE_SERVICE_NOTIF, iNotif.getServiceUUID(), "ASDC", "treatNotification");
@@ -496,14 +500,15 @@ public class ASDCController {
 			// Process only the Resource artifacts in MSO
 			for (IResourceInstance resource : iNotif.getResources()) {
 
+				// We process only VNF(VF) and Network(VL) resources on MSO Side
 				// We process only VNF resource on MSO Side
-				if ("VF".equals(resource.getResourceType())) {
-					this.processResourceNotification(iNotif,resource);		
+				if ("VF".equals(resource.getResourceType()) || "VL".equals(resource.getResourceType())) {
+					this.processResourceNotification(iNotif,resource);
 				}
 			}
-					
-					
-				
+
+
+
         } catch (RuntimeException e) {
             LOGGER.error (MessageEnum.ASDC_GENERAL_EXCEPTION_ARG,
                           "Unexpected exception caught during the notification processing", "ASDC", "treatNotification", MsoLogger.ErrorCode.SchemaError, "RuntimeException in treatNotification",
@@ -513,40 +518,41 @@ public class ASDCController {
         }
     }
 
-        
+
     private void processResourceNotification (INotificationData iNotif,IResourceInstance resource) {
 		// For each artifact, create a structure describing the VFModule in a ordered flat level
-		VfResourceStructure vfResourceStructure = new VfResourceStructure(iNotif,resource);
+    	VfResourceStructure resourceStructure = new VfResourceStructure(iNotif,resource);
+
 		try {
-			
-			if (!this.checkResourceAlreadyDeployed(vfResourceStructure)) {
+
+			if (!this.checkResourceAlreadyDeployed(resourceStructure)) {
 				for (IArtifactInfo artifact : resource.getArtifacts()) {
-					
-						IDistributionClientDownloadResult resultArtifact = this.downloadTheArtifact(artifact, 
+
+						IDistributionClientDownloadResult resultArtifact = this.downloadTheArtifact(artifact,
 								iNotif.getDistributionID());
 
 						if (resultArtifact != null) {
 							if (ASDCConfiguration.VF_MODULES_METADATA.equals(artifact.getArtifactType())) {
 								LOGGER.debug("VF_MODULE_ARTIFACT: "+new String(resultArtifact.getArtifactPayload(),"UTF-8"));
-								LOGGER.debug(ASDCNotificationLogging.dumpVfModuleMetaDataList(distributionClient.decodeVfModuleArtifact(resultArtifact.getArtifactPayload())));
+								LOGGER.debug(ASDCNotificationLogging.dumpVfModuleMetaDataList(resourceStructure.decodeVfModuleArtifact(resultArtifact.getArtifactPayload())));
 							}
-							vfResourceStructure.addArtifactToStructure(distributionClient,artifact, resultArtifact);
-				
-						} 
+							resourceStructure.addArtifactToStructure(distributionClient,artifact, resultArtifact);
+
+						}
 
 				}
-				
-				this.deployResourceStructure(vfResourceStructure);
-				
-			} 
+
+				this.deployResourceStructure(resourceStructure);
+
+			}
 		} catch (ArtifactInstallerException | ASDCDownloadException | UnsupportedEncodingException e) {
 			LOGGER.error(MessageEnum.ASDC_GENERAL_EXCEPTION_ARG,
 					"Exception caught during Installation of artifact", "ASDC", "processResourceNotification", MsoLogger.ErrorCode.BusinessProcesssError, "Exception in processResourceNotification", e);
 		}
     }
-    
+
     private static final String UNKNOWN="Unknown";
-    
+
     /**
      * @return the address of the ASDC we are connected to.
      */

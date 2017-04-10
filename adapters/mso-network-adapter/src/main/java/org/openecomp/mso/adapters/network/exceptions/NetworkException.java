@@ -34,7 +34,7 @@ import org.openecomp.mso.openstack.exceptions.MsoExceptionCategory;
  * 
  *
  */
-@WebFault (name="NetworkException", faultBean="org.openecomp.mso.adapters.network.exceptions.NetworkExceptionBean", targetNamespace="http://com.att.mso/network")
+@WebFault (name="NetworkException", faultBean="org.openecomp.mso.adapters.network.exceptions.NetworkExceptionBean", targetNamespace="http://org.openecomp.mso/network")
 public class NetworkException extends Exception {
 
 	private static final long serialVersionUID = 1L;

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,7 +24,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_DEFAULT)
 public class InstanceReferences {
-	
+
 	protected String serviceInstanceId;
 	protected String serviceInstanceName;
 	protected String vnfInstanceId;
@@ -35,8 +35,9 @@ public class InstanceReferences {
 	protected String volumeGroupInstanceName;
 	protected String networkInstanceId;
 	protected String networkInstanceName;
-	
-	
+	protected String requestorId;
+
+
 	public String getServiceInstanceId() {
 		return serviceInstanceId;
 	}
@@ -97,7 +98,12 @@ public class InstanceReferences {
 	public void setNetworkInstanceName(String networkInstanceName) {
 		this.networkInstanceName = networkInstanceName;
 	}
-	
 
+	public String getRequestorId() {
+		return requestorId;
+	}
 
+	public void setRequestorId(String requestorId) {
+		this.requestorId = requestorId;
+	}
 }

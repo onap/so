@@ -3,11 +3,11 @@
     "description": "MSO Docker Images",
     "chef_type": "environment",
     "json_class": "Chef::Environment",
-    "default_attributes": 
+    "default_attributes":
     {
         "mso_config_path": "/etc/mso/config.d/",
 
-        "mso-api-handler-infra-config": 
+        "mso-api-handler-infra-config":
         {
             "bpelURL": "http://mso:8080",
             "bpelAuth": "786864AA53D0DCD881AED1154230C0C3058D58B9339D2EFB6193A0F0D82530E1",
@@ -15,9 +15,9 @@
             "camundaAuth": "5119D1AF37F671FC01FFAD2151D93EFB2BBB503E879FD07104D024EDDF118FD1"
         },
 
-        "asdc-connections": 
+        "asdc-connections":
         {
-            "asdc-controller1": 
+            "asdc-controller1":
             {
                 "user": "user",
                 "consumerGroup": "mso",
@@ -33,7 +33,7 @@
                 "keyStorePath": ""
             },
 
-            "asdc-controller2": 
+            "asdc-controller2":
             {
                 "user": "user",
                 "consumerGroup": "mso",
@@ -50,9 +50,9 @@
             }
         },
 
-        "mso-sdnc-adapter-config": 
+        "mso-sdnc-adapter-config":
         {
-            "sdncurls": 
+            "sdncurls":
             [
                 "https://localhost:8443/restconf/operations/L3SDN-API:",
                 "https://localhost:8443/restconf/config/L3SDN-API:",
@@ -69,15 +69,15 @@
             "sdncconnecttime": "5000"
         },
 
-        "mso-po-adapter-config": 
+        "mso-po-adapter-config":
         {
-            "identity_services": 
+            "identity_services":
             [
                 {
                     "dcp_clli": "MT_KEYSTONE",
                     "identity_url": "https://localhost:5000/v2.0",
                     "mso_id": "userid",
-                    "mso_pass": "password",
+                    "mso_pass": "313DECE408AF7759D442D7B06DD9A6AA",
                     "admin_tenant": "service",
                     "member_role": "admin",
                     "tenant_metadata": "true",
@@ -89,7 +89,7 @@
                     "dcp_clli": "MT_KEYSTONE2",
                     "identity_url": "https://localhost:5000/v2.0",
                     "mso_id": "userid",
-                    "mso_pass": "password",
+                    "mso_pass": "313DECE408AF7759D442D7B06DD9A6AA",
                     "admin_tenant": "service",
                     "member_role": "admin",
                      "tenant_metadata": "true",
@@ -98,7 +98,7 @@
                 }
             ],
 
-            "cloud_sites": 
+            "cloud_sites":
             [
                 {
                     "id": "MT",
@@ -122,12 +122,12 @@
             "nwbpelauth": "5119D1AF37F671FC01FFAD2151D93EFB2BBB503E879FD07104D024EDDF118FD1"
         },
 
-        "mso-bpmn-config": 
+        "mso-bpmn-config":
         {
             "urnFileSystemLoadingEnabled": "true"
         },
 
-        "mso-bpmn-urn-config": 
+        "mso-bpmn-urn-config":
         {
             "logDebugAsyncQueryAAICustomer": "false",
             "logDebugChangeFeatureActivateV1": "false",
@@ -172,6 +172,7 @@
             "adaptersDbEndpoint": "http://mso:8080/dbadapters/RequestsDbAdapter",
             "adaptersSdncEndpoint": "http://mso:8080/adapters/SDNCAdapter",
             "adaptersTenantEndpoint": "http://mso:8080/tenants/TenantAdapter",
+            "adaptersDbAuth": "6B0E6863FB8EE010AB6F191B3C0489437601E81DC7C86305CB92DB98AFC53D74",
             "workflowSdncadapterCallback": "http://mso:8080/mso/SDNCAdapterCallbackService",
             "msoKey": "07a7159d3bf51a0e53be7a8f89699be7",
             "adaptersPoAuth": "6B0E6863FB8EE010AB6F191B3C0489437601E81DC7C86305CB92DB98AFC53D74",
@@ -208,11 +209,11 @@
         }
     },
 
-    "override_attributes": 
+    "override_attributes":
     {
     },
 
-    "cookbook_versions": 
+    "cookbook_versions":
     {
         "mso-config": "~> 1.0.0"
     }

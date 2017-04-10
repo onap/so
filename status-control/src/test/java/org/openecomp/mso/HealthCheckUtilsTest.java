@@ -229,14 +229,12 @@ public class HealthCheckUtilsTest {
 
         assertTrue (utils.verifyGlobalHealthCheck (true, null));
 
-        // mising server-port parameter
+        // mising server-camunda parameter
         MsoJavaProperties newProperties1 = new MsoJavaProperties();
         Mockito.when(utils.loadTopologyProperties()).thenReturn(newProperties1);
 
         newProperties1.setProperty("apih-load-balancer", ip1);
         newProperties1.setProperty("apih-nodehealthcheck-urn",apihUrl1);
-        newProperties1.setProperty("camunda-load-balancer",ip1);
-        newProperties1.setProperty("camunda-nodehealthcheck-urn",bpmnUrl1);
         newProperties1.setProperty("jra-load-balancer",ip1);
         newProperties1.setProperty("jra-nodehealthcheck-urn",raUrl1);
 
@@ -247,11 +245,11 @@ public class HealthCheckUtilsTest {
         Mockito.when(utils.loadTopologyProperties()).thenReturn(newProperties2);
 
         newProperties2.setProperty("server-port", port);
-        newProperties1.setProperty("apih-nodehealthcheck-urn",apihUrl1);
-        newProperties1.setProperty("camunda-load-balancer",ip1);
-        newProperties1.setProperty("camunda-nodehealthcheck-urn",bpmnUrl1);
-        newProperties1.setProperty("jra-load-balancer",ip1);
-        newProperties1.setProperty("jra-nodehealthcheck-urn",raUrl1);
+        newProperties2.setProperty("apih-nodehealthcheck-urn",apihUrl1);
+        newProperties2.setProperty("camunda-load-balancer",ip1);
+        newProperties2.setProperty("camunda-nodehealthcheck-urn",bpmnUrl1);
+        newProperties2.setProperty("jra-load-balancer",ip1);
+        newProperties2.setProperty("jra-nodehealthcheck-urn",raUrl1);
 
         assertFalse (utils.verifyGlobalHealthCheck (true, null));
 
@@ -260,11 +258,11 @@ public class HealthCheckUtilsTest {
         Mockito.when(utils.loadTopologyProperties()).thenReturn(newProperties3);
 
         newProperties3.setProperty("server-port", port);
-        newProperties1.setProperty("apih-load-balancer", ip1);
-        newProperties1.setProperty("apih-nodehealthcheck-urn",apihUrl1);
-        newProperties1.setProperty("camunda-load-balancer",ip1);
-        newProperties1.setProperty("camunda-nodehealthcheck-urn",bpmnUrl1);
-        newProperties1.setProperty("jra-load-balancer",ip1);
+        newProperties3.setProperty("apih-load-balancer", ip1);
+        newProperties3.setProperty("apih-nodehealthcheck-urn",apihUrl1);
+        newProperties3.setProperty("camunda-load-balancer",ip1);
+        newProperties3.setProperty("camunda-nodehealthcheck-urn",bpmnUrl1);
+        newProperties3.setProperty("jra-load-balancer",ip1);
         newProperties3.setProperty("jra-server-list",ip1);
 
         assertFalse (utils.verifyGlobalHealthCheck (true, null));

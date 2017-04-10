@@ -42,15 +42,15 @@ import org.openecomp.mso.logger.MessageEnum;
 //BPEL SDNCAdapter SOAP WebService
 @WebServiceClient(name = "SDNCAdapterService",
                   wsdlLocation = "main/resources/SDNCAdapter.wsdl",
-                  targetNamespace = "http://domain2.att.com/workflow/sdnc/adapter/wsdl/v1")
+                  targetNamespace = "http://org.openecomp/workflow/sdnc/adapter/wsdl/v1")
 public class SDNCAdapterService extends Service {
 
 	private static MsoLogger logger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
 
     public final static URL WSDL_LOCATION;
 
-    public final static QName SERVICE = new QName("http://domain2.att.com/workflow/sdnc/adapter/wsdl/v1", "SDNCAdapterService");
-    public final static QName SDNCAdapterSoapHttpPort = new QName("http://domain2.att.com/workflow/sdnc/adapter/wsdl/v1", "SDNCAdapterSoapHttpPort");
+    public final static QName SERVICE = new QName("http://org.openecomp/workflow/sdnc/adapter/wsdl/v1", "SDNCAdapterService");
+    public final static QName SDNCAdapterSoapHttpPort = new QName("http://org.openecomp/workflow/sdnc/adapter/wsdl/v1", "SDNCAdapterSoapHttpPort");
     static {
         URL wsdlUrl = null;
         try {

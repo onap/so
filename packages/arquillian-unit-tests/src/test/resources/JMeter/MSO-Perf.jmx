@@ -140,12 +140,12 @@
             <collectionProp name="Arguments.arguments">
               <elementProp name="" elementType="HTTPArgument">
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                <stringProp name="Argument.value">&lt;service-request xmlns=&quot;http://ecomp.att.com/mso/request/layer3serviceactivate/schema/v1&quot; xmlns:msolayer3=&quot;http://ecomp.att.com/mso/request/layer3/schema/v1&quot; xmlns:msoservtypes=&quot;http://ecomp.att.com/mso/request/types/v1&quot;&gt;&#xd;
+                <stringProp name="Argument.value">&lt;service-request xmlns=&quot;http://org.openecomp/mso/request/layer3serviceactivate/schema/v1&quot; xmlns:msolayer3=&quot;http://org.openecomp/mso/request/layer3/schema/v1&quot; xmlns:msoservtypes=&quot;http://org.openecomp/mso/request/types/v1&quot;&gt;&#xd;
 &lt;msoservtypes:request-information&gt;&#xd;
 &lt;msoservtypes:request-id&gt;test${REQUEST_ID}-service&lt;/msoservtypes:request-id&gt;&#xd;
 &lt;msoservtypes:request-action&gt;Layer3ServiceActivateRequest&lt;/msoservtypes:request-action&gt;&#xd;
 &lt;msoservtypes:source&gt;OMX&lt;/msoservtypes:source&gt;&#xd;
-&lt;msoservtypes:notification-url&gt;https://csi-tst-q22.it.att.com:22443/Services/com/cingular/csi/sdn/SendManagedNetworkStatusNotification.jws&lt;/msoservtypes:notification-url&gt;&#xd;
+&lt;msoservtypes:notification-url&gt;https://localhost:22443/Services/com/cingular/csi/sdn/SendManagedNetworkStatusNotification.jws&lt;/msoservtypes:notification-url&gt;&#xd;
 &lt;msoservtypes:order-number&gt;5051560&lt;/msoservtypes:order-number&gt;&#xd;
 &lt;msoservtypes:order-version&gt;1&lt;/msoservtypes:order-version&gt;&#xd;
 &lt;/msoservtypes:request-information&gt;&#xd;
@@ -252,14 +252,14 @@
               <elementProp name="" elementType="HTTPArgument">
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <stringProp name="Argument.value">&lt;feature-request&#xd;
-	xmlns=&quot;http://ecomp.att.com/mso/request/layer3serviceactivate/schema/v1&quot;&#xd;
-	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:msolayer3=&quot;http://ecomp.att.com/mso/request/layer3/schema/v1&quot;&#xd;
-	xmlns:msoservtypes=&quot;http://ecomp.att.com/mso/request/types/v1&quot;&gt;&#xd;
+	xmlns=&quot;http://org.openecomp/mso/request/layer3serviceactivate/schema/v1&quot;&#xd;
+	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:msolayer3=&quot;http://org.openecomp/mso/request/layer3/schema/v1&quot;&#xd;
+	xmlns:msoservtypes=&quot;http://org.openecomp/mso/request/types/v1&quot;&gt;&#xd;
 	&lt;msoservtypes:request-information&gt;&#xd;
 		&lt;msoservtypes:request-id&gt;test${REQUEST_ID}-feature&lt;/msoservtypes:request-id&gt;&#xd;
 		&lt;msoservtypes:request-action&gt;ChangeFeatureActivateRequest&lt;/msoservtypes:request-action&gt;&#xd;
 		&lt;msoservtypes:source&gt;OMX&lt;/msoservtypes:source&gt;&#xd;
-		&lt;msoservtypes:notification-url&gt;https://csi-tst-q22.it.att.com:22443/Services/com/cingular/csi/sdn/SendManagedNetworkStatusNotification.jws&lt;/msoservtypes:notification-url&gt;&#xd;
+		&lt;msoservtypes:notification-url&gt;https://localhost:22443/Services/com/cingular/csi/sdn/SendManagedNetworkStatusNotification.jws&lt;/msoservtypes:notification-url&gt;&#xd;
 		&lt;msoservtypes:order-number&gt;5051560&lt;/msoservtypes:order-number&gt;&#xd;
 		&lt;msoservtypes:order-version&gt;1&lt;/msoservtypes:order-version&gt;&#xd;
 	&lt;/msoservtypes:request-information&gt;&#xd;
@@ -495,12 +495,12 @@
             <collectionProp name="Arguments.arguments">
               <elementProp name="" elementType="HTTPArgument">
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                <stringProp name="Argument.value">&lt;service-request xmlns=&quot;http://ecomp.att.com/mso/request/layer3serviceactivate/schema/v1&quot; xmlns:msolayer3=&quot;http://ecomp.att.com/mso/request/layer3/schema/v1&quot; xmlns:msoservtypes=&quot;http://ecomp.att.com/mso/request/types/v1&quot;&gt;&#xd;
+                <stringProp name="Argument.value">&lt;service-request xmlns=&quot;http://org.openecomp/mso/request/layer3serviceactivate/schema/v1&quot; xmlns:msolayer3=&quot;http://org.openecomp/mso/request/layer3/schema/v1&quot; xmlns:msoservtypes=&quot;http://org.openecomp/mso/request/types/v1&quot;&gt;&#xd;
 &lt;msoservtypes:request-information&gt;&#xd;
 &lt;msoservtypes:request-id&gt;test${SERVICE_ID}-service&lt;/msoservtypes:request-id&gt;&#xd;
 &lt;msoservtypes:request-action&gt;Layer3ServiceActivateRequest&lt;/msoservtypes:request-action&gt;&#xd;
 &lt;msoservtypes:source&gt;OMX&lt;/msoservtypes:source&gt;&#xd;
-&lt;msoservtypes:notification-url&gt;https://csi-tst-q22.it.att.com:22443/Services/com/cingular/csi/sdn/SendManagedNetworkStatusNotification.jws&lt;/msoservtypes:notification-url&gt;&#xd;
+&lt;msoservtypes:notification-url&gt;https://localhost:22443/Services/com/cingular/csi/sdn/SendManagedNetworkStatusNotification.jws&lt;/msoservtypes:notification-url&gt;&#xd;
 &lt;msoservtypes:order-number&gt;5051560&lt;/msoservtypes:order-number&gt;&#xd;
 &lt;msoservtypes:order-version&gt;1&lt;/msoservtypes:order-version&gt;&#xd;
 &lt;/msoservtypes:request-information&gt;&#xd;
@@ -693,12 +693,12 @@
             <collectionProp name="Arguments.arguments">
               <elementProp name="" elementType="HTTPArgument">
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                <stringProp name="Argument.value">&lt;service-request xmlns=&quot;http://ecomp.att.com/mso/request/layer3serviceactivate/schema/v1&quot; xmlns:msolayer3=&quot;http://ecomp.att.com/mso/request/layer3/schema/v1&quot; xmlns:msoservtypes=&quot;http://ecomp.att.com/mso/request/types/v1&quot;&gt;&#xd;
+                <stringProp name="Argument.value">&lt;service-request xmlns=&quot;http://org.openecomp/mso/request/layer3serviceactivate/schema/v1&quot; xmlns:msolayer3=&quot;http://org.openecomp/mso/request/layer3/schema/v1&quot; xmlns:msoservtypes=&quot;http://org.openecomp/mso/request/types/v1&quot;&gt;&#xd;
 &lt;msoservtypes:request-information&gt;&#xd;
 &lt;msoservtypes:request-id&gt;test${SERVICE_ID}-service&lt;/msoservtypes:request-id&gt;&#xd;
 &lt;msoservtypes:request-action&gt;Layer3ServiceActivateRequest&lt;/msoservtypes:request-action&gt;&#xd;
 &lt;msoservtypes:source&gt;OMX&lt;/msoservtypes:source&gt;&#xd;
-&lt;msoservtypes:notification-url&gt;https://csi-tst-q22.it.att.com:22443/Services/com/cingular/csi/sdn/SendManagedNetworkStatusNotification.jws&lt;/msoservtypes:notification-url&gt;&#xd;
+&lt;msoservtypes:notification-url&gt;https://localhost:22443/Services/com/cingular/csi/sdn/SendManagedNetworkStatusNotification.jws&lt;/msoservtypes:notification-url&gt;&#xd;
 &lt;msoservtypes:order-number&gt;5051560&lt;/msoservtypes:order-number&gt;&#xd;
 &lt;msoservtypes:order-version&gt;1&lt;/msoservtypes:order-version&gt;&#xd;
 &lt;/msoservtypes:request-information&gt;&#xd;

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -58,6 +58,7 @@ import com.woorea.openstack.base.client.OpenStackResponseException;
 import com.woorea.openstack.heat.Heat;
 import com.woorea.openstack.heat.model.CreateStackParam;
 import com.woorea.openstack.heat.model.Stack;
+import com.woorea.openstack.heat.model.Stack.Output;
 import com.woorea.openstack.heat.model.Stacks;
 import com.woorea.openstack.keystone.Keystone;
 import com.woorea.openstack.keystone.model.Access;
@@ -69,7 +70,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
 	private MsoPropertiesFactory msoPropertiesFactory;
 
 	private CloudConfigFactory cloudConfigFactory;
-	
+
     private static final String TOKEN_AUTH = "TokenAuth";
 
     private static final String QUERY_ALL_STACKS = "QueryAllStacks";
@@ -103,7 +104,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
     private int deletePollIntervalDefault = 15;
     private int deletePollTimeoutDefault = 300;
     private String msoPropID;
-    
+
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
 
     /**
@@ -127,7 +128,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
 		}
         cloudConfig = cloudConfigFactory.getCloudConfig ();
         LOGGER.debug("MsoHeatUtils:" + msoPropID);
-        
+
     }
 
 
@@ -201,7 +202,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
                                  null,
                                  true);
     }
-    
+
     // This method has environment, files, heatfiles
     public StackInfo createStack (String cloudSiteId,
                                   String tenantId,
@@ -413,6 +414,11 @@ public class MsoHeatUtils extends MsoCommonUtils {
                 try {
                     heatStack = queryHeatStack (heatClient, canonicalName);
                     LOGGER.debug (heatStack.getStackStatus () + " (" + canonicalName + ")");
+                    try {
+                        LOGGER.debug("Current stack " + this.getOutputsAsStringBuilder(heatStack).toString());
+                    } catch (Exception e) {
+                        LOGGER.debug("an error occurred trying to print out the current outputs of the stack");
+                    }
 
                     if ("CREATE_IN_PROGRESS".equals (heatStack.getStackStatus ())) {
                         // Stack creation is still running.
@@ -443,7 +449,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
                 	if (!backout)
                 	{
                 		LOGGER.warn(MessageEnum.RA_CREATE_STACK_ERR, "Create Stack errored, stack deletion suppressed", "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception in Create Stack, stack deletion suppressed");
-                	}	
+                	}
                 	else
                 	{
                 		try {
@@ -451,7 +457,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
                 			OpenStackRequest <Void> request = heatClient.getStacks ().deleteByName (canonicalName);
                 			executeAndRecordOpenstackRequest (request, msoProps);
                 			// this may be a waste of time - if we just got an exception trying to query the stack - we'll just
-                			// get another one, n'est-ce pas? 
+                			// get another one, n'est-ce pas?
                 			boolean deleted = false;
                 			while (!deleted) {
                 				try {
@@ -460,8 +466,8 @@ public class MsoHeatUtils extends MsoCommonUtils {
                     					LOGGER.debug(heatStack.getStackStatus());
                     					if ("DELETE_IN_PROGRESS".equals(heatStack.getStackStatus())) {
                     						if (deletePollTimeout <= 0) {
-                    							LOGGER.error (MessageEnum.RA_CREATE_STACK_TIMEOUT, cloudSiteId, tenantId, stackName, 
-                    									heatStack.getStackStatus (), "", "", MsoLogger.ErrorCode.AvailabilityError, 
+                    							LOGGER.error (MessageEnum.RA_CREATE_STACK_TIMEOUT, cloudSiteId, tenantId, stackName,
+                    									heatStack.getStackStatus (), "", "", MsoLogger.ErrorCode.AvailabilityError,
                     									"Rollback: DELETE stack timeout");
                     							break;
                     						} else {
@@ -486,11 +492,11 @@ public class MsoHeatUtils extends MsoCommonUtils {
                     					deleted = true;
                     					continue;
                 					}
-                					
+
                 				} catch (Exception e3) {
                 					// Just log this one. We will report the original exception.
                 					LOGGER.error (MessageEnum.RA_CREATE_STACK_ERR, "Create Stack: Nested exception rolling back stack: " + e3, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Create Stack: Nested exception rolling back stack on error on query");
-                					
+
                 				}
                 			}
                 		} catch (Exception e2) {
@@ -529,8 +535,8 @@ public class MsoHeatUtils extends MsoCommonUtils {
                 					LOGGER.debug(heatStack.getStackStatus() + " (" + canonicalName + ")");
                 					if ("DELETE_IN_PROGRESS".equals(heatStack.getStackStatus())) {
                 						if (deletePollTimeout <= 0) {
-                							LOGGER.error (MessageEnum.RA_CREATE_STACK_TIMEOUT, cloudSiteId, tenantId, stackName, 
-                									heatStack.getStackStatus (), "", "", MsoLogger.ErrorCode.AvailabilityError, 
+                							LOGGER.error (MessageEnum.RA_CREATE_STACK_TIMEOUT, cloudSiteId, tenantId, stackName,
+                									heatStack.getStackStatus (), "", "", MsoLogger.ErrorCode.AvailabilityError,
                 									"Rollback: DELETE stack timeout");
                 							break;
                 						} else {
@@ -561,13 +567,13 @@ public class MsoHeatUtils extends MsoCommonUtils {
                 					deleted = true;
                 					continue;
                 				}
-                				
+
                 			} catch (MsoException me2) {
                 				// We got an exception on the delete - don't throw this exception - throw the original - just log.
                 				LOGGER.debug("Exception thrown trying to delete " + canonicalName + " on a create->rollback: " + me2.getContextMessage());
                 				LOGGER.warn(MessageEnum.RA_CREATE_STACK_ERR, "Create Stack errored, then stack deletion FAILED - exception thrown", "", "", MsoLogger.ErrorCode.BusinessProcesssError, me2.getContextMessage());
                 			}
-                			
+
                 		} // end while !deleted
                 		StringBuilder errorContextMessage = null;
                 		if (createTimedOut) {
@@ -588,7 +594,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
                 		// shouldn't happen - but handle
                 		LOGGER.error (MessageEnum.RA_CREATE_STACK_ERR, "Create Stack: Nested exception rolling back stack: " + e2, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception in Create Stack: rolling back stack");
                 	}
-                } 
+                }
                 MsoOpenstackException me = new MsoOpenstackException(0, "", stackErrorStatusReason.toString());
                 me.addContext(CREATE_STACK);
                 alarmLogger.sendAlarm(HEAT_ERROR, MsoAlarmLogger.CRITICAL, me.getContextMessage());
@@ -949,10 +955,10 @@ public class MsoHeatUtils extends MsoCommonUtils {
         Access access = null;
         try {
         	Authentication credentials = cloudIdentity.getAuthentication ();
-                	
+
         	OpenStackRequest <Access> request = keystoneTenantClient.tokens ()
                        .authenticate (credentials).withTenantId (tenantId);
-        	
+
             access = executeAndRecordOpenstackRequest (request, msoProps);
         } catch (OpenStackResponseException e) {
             if (e.getStatus () == 401) {
@@ -983,10 +989,6 @@ public class MsoHeatUtils extends MsoCommonUtils {
             String error = "Orchestration service not found: region=" + region + ",cloud=" + cloudIdentity.getId ();
             alarmLogger.sendAlarm ("MsoConfigurationError", MsoAlarmLogger.CRITICAL, error);
             throw new MsoAdapterException (error, e);
-        }
-        // This is needed for testing in the MT cloud
-        if ("MT".equals (cloudId)) {
-            heatUrl = heatUrl.replace ("controller", "mtdnj02bh01wt.bvoip.labs.att.com");
         }
 
         Heat heatClient = new Heat (heatUrl);
@@ -1124,7 +1126,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
     public static void heatCacheReset () {
         heatClientCache = new HashMap <String, HeatCacheEntry> ();
     }
-    
+
 	public Map<String, Object> queryStackForOutputs(String cloudSiteId,
 			String tenantId, String stackName) throws MsoException {
 		LOGGER.debug("MsoHeatUtils.queryStackForOutputs)");
@@ -1213,7 +1215,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
 		}
 		return sb;
 	}
-	
+
 	private String convertNode(final JsonNode node) {
 		try {
 			final Object obj = JSON_MAPPER.treeToValue(node, Object.class);
@@ -1226,4 +1228,53 @@ public class MsoHeatUtils extends MsoCommonUtils {
 		}
 		return "[Error converting json to string]";
 	}
+
+
+    private StringBuilder getOutputsAsStringBuilder(Stack heatStack) {
+        // This should only be used as a utility to print out the stack outputs
+        // to the log
+        StringBuilder sb = new StringBuilder("");
+        if (heatStack == null) {
+            sb.append("(heatStack is null)");
+            return sb;
+        }
+        List<Output> outputList = heatStack.getOutputs();
+        if (outputList == null || outputList.isEmpty()) {
+            sb.append("(outputs is empty)");
+            return sb;
+        }
+        Map<String, Object> outputs = new HashMap<String,Object>();
+        for (Output outputItem : outputList) {
+            outputs.put(outputItem.getOutputKey(), outputItem.getOutputValue());
+        }
+        int counter = 0;
+        sb.append("OUTPUTS:");
+        for (String key : outputs.keySet()) {
+            sb.append("outputs[" + counter++ + "]: " + key + "=");
+            Object obj = outputs.get(key);
+            if (obj instanceof String) {
+                sb.append((String)obj);
+            } else if (obj instanceof JsonNode) {
+                sb.append(this.convertNode((JsonNode)obj));
+            } else if (obj instanceof java.util.LinkedHashMap) {
+                try {
+                    String str = JSON_MAPPER.writeValueAsString(obj);
+                    sb.append(str);
+                } catch (Exception e) {
+                    sb.append("(a LinkedHashMap value that would not convert nicely)");
+                }
+            } else {
+                String str = "";
+                try {
+                    str = (String) obj;
+                } catch (Exception e) {
+                    str = "(a value unable to be cast as a String)";
+                }
+                sb.append(str);
+            }
+            sb.append("; ");
+        }
+        sb.append("[END]");
+        return sb;
+    }
 }

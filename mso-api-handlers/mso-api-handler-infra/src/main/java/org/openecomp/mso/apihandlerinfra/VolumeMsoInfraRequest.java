@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -55,10 +55,11 @@ import org.openecomp.mso.apihandlerinfra.volumebeans.ObjectFactory;
 import org.openecomp.mso.apihandlerinfra.volumebeans.RequestInfo;
 import org.openecomp.mso.apihandlerinfra.volumebeans.RequestStatusType;
 import org.openecomp.mso.apihandlerinfra.volumebeans.VolumeRequest;
+import org.openecomp.mso.db.HibernateUtils;
 import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.properties.MsoJavaProperties;
-import org.openecomp.mso.requestsdb.HibernateUtil;
+import org.openecomp.mso.requestsdb.HibernateUtilsRequestsDb;
 import org.openecomp.mso.requestsdb.InfraActiveRequests;
 import org.openecomp.mso.requestsdb.RequestsDatabase;
 
@@ -77,6 +78,8 @@ public class VolumeMsoInfraRequest {
     private RequestStatusType status;
     private long startTime;
     private long progress = Constants.PROGRESS_REQUEST_RECEIVED;
+
+    protected HibernateUtils hibernateUtils = new HibernateUtilsRequestsDb ();
 
     private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH);
     private static final String NOT_PROVIDED = "not provided";
@@ -135,37 +138,37 @@ public class VolumeMsoInfraRequest {
         action = this.rinfo.getAction ();
         if (action == null) {
             throw new ValidationException ("action");
-        }       
+        }
         this.volumeInputs = volumeReq.getVolumeInputs ();
         if (this.volumeInputs == null) {
             throw new ValidationException ("volume-inputs");
         }
-        
+
         // Verify that the elements correspond to the version
-        
+
         if (version.equals(Constants.SCHEMA_VERSION_V1)) {
-        		if (this.volumeInputs.getBackoutOnFailure() != null || this.volumeInputs.getAicCloudRegion() != null ||
-        				this.volumeInputs.getVfModuleModelName () != null || this.volumeInputs.getAsdcServiceModelVersion () != null ||
-        				this.volumeInputs.getServiceInstanceId () != null || this.volumeInputs.getVnfId () != null) {
-        			throw new ValidationException ("format for v1 version of volume request");
-        		}
-        }
-        else if (version.equals(Constants.SCHEMA_VERSION_V2)) {
-        		if (this.volumeInputs.getServiceType() != null || this.volumeInputs.getAicNodeClli() != null || 
-        				this.volumeInputs.getServiceInstanceId () != null || this.volumeInputs.getVnfId () != null) {
-        			throw new ValidationException ("format for v2 version of volume request");
-        		}
-        }
-        else if (version.equals(Constants.SCHEMA_VERSION_V3)) {
-    		if (this.volumeInputs.getServiceType() != null || this.volumeInputs.getAicNodeClli() != null) {
-    			throw new ValidationException ("format for v3 version of volume request");
+    		if (this.volumeInputs.getBackoutOnFailure() != null || this.volumeInputs.getAicCloudRegion() != null ||
+    				this.volumeInputs.getVfModuleModelName () != null || this.volumeInputs.getAsdcServiceModelVersion () != null ||
+    				this.volumeInputs.getServiceInstanceId () != null || this.volumeInputs.getVnfId () != null) {
+    			throw new ValidationException ("format for v1 version of volume request");
     		}
     }
-        
-        
+    else if (version.equals(Constants.SCHEMA_VERSION_V2)) {
+    		if (this.volumeInputs.getServiceType() != null || this.volumeInputs.getAicNodeClli() != null ||
+    				this.volumeInputs.getServiceInstanceId () != null || this.volumeInputs.getVnfId () != null) {
+    			throw new ValidationException ("format for v2 version of volume request");
+    		}
+    }
+    else if (version.equals(Constants.SCHEMA_VERSION_V3)) {
+		if (this.volumeInputs.getServiceType() != null || this.volumeInputs.getAicNodeClli() != null) {
+			throw new ValidationException ("format for v3 version of volume request");
+		}
+    }
+
+
         if (!InfraUtils.isActionAllowed (props, "volume", version, action.value ())) {
-        	throw new ValidationException ("action allowable for version " + version + " of volume request");        	
-        }    
+        	throw new ValidationException ("action allowable for version " + version + " of volume request");
+        }
 
         switch (action) {
             case UPDATE:
@@ -179,7 +182,7 @@ public class VolumeMsoInfraRequest {
             default:
                 break;
         }
-        
+
         if (ActionType.CREATE.equals (action) || ActionType.CREATE_VF_MODULE_VOL.equals(action)) {
         	if (this.volumeInputs.getVolumeGroupName () == null) {
         		throw new ValidationException ("volume-group-name");
@@ -187,18 +190,18 @@ public class VolumeMsoInfraRequest {
         	if (!InfraUtils.isValidHeatName(this.volumeInputs.getVolumeGroupName ())) {
         		throw new ValidationException ("volume-group-name: no value meeting heat stack name syntax requirements");
         	}
-        }        
-        
-          
+        }
+
+
         if (this.volumeInputs.getVnfType () == null) {
                throw new ValidationException ("vnf-type");
-        }        
-        
-        
+        }
+
+
         switch (action) {
         case CREATE_VF_MODULE_VOL:
         case UPDATE_VF_MODULE_VOL:
-        case DELETE_VF_MODULE_VOL:               
+        case DELETE_VF_MODULE_VOL:
             if (this.volumeInputs.getVfModuleModelName () == null) {
                 throw new ValidationException ("vf-module-model-name");
             }
@@ -206,38 +209,38 @@ public class VolumeMsoInfraRequest {
         default:
             break;
         }
-        
+
         if (!version.equals(Constants.SCHEMA_VERSION_V1) && this.volumeInputs.getServiceId () == null) {
         	throw new ValidationException ("service-id ");
-        }        
-        
+        }
+
         if (version.equals(Constants.SCHEMA_VERSION_V1) && this.volumeInputs.getServiceType () != null && this.volumeInputs.getServiceId () != null) {
         	throw new ValidationException ("service-type or service-id ");
         }
-        
+
         if (version.equals(Constants.SCHEMA_VERSION_V1) && this.volumeInputs.getAicNodeClli () == null) {
         	throw new ValidationException ("aic-node-clli");
         }
-        
+
         if ((version.equals(Constants.SCHEMA_VERSION_V2) || version.equals(Constants.SCHEMA_VERSION_V3)) && (this.volumeInputs.getAicCloudRegion () == null || this.volumeInputs.getAicCloudRegion ().isEmpty())) {
         	throw new ValidationException ("aic-cloud-region");
         }
-        
+
         if (version.equals(Constants.SCHEMA_VERSION_V3) && this.volumeInputs.getServiceInstanceId () == null) {
         	throw new ValidationException ("service-instance-id");
         }
-        
+
         if (version.equals(Constants.SCHEMA_VERSION_V3) && this.volumeInputs.getVnfId () == null && ActionType.CREATE_VF_MODULE_VOL.equals(action)) {
         	throw new ValidationException ("vnf-id");
         }
 
-        if (ActionType.CREATE.equals (action) || ActionType.CREATE_VF_MODULE_VOL.equals(action)) {           
+        if (ActionType.CREATE.equals (action) || ActionType.CREATE_VF_MODULE_VOL.equals(action)) {
             if (this.volumeInputs.getTenantId () == null) {
                 throw new ValidationException ("tenant-id");
             }
         }
 
-       
+
                 Object vpN = volumeReq.getVolumeParams ();
 
                 if (vpN != null) {
@@ -247,7 +250,7 @@ public class VolumeMsoInfraRequest {
                 }
 
                 msoLogger.debug ("VolumeParams: " + this.volumeParams);
-        
+
 
         msoLogger.debug ("Request valid");
 
@@ -269,9 +272,9 @@ public class VolumeMsoInfraRequest {
             msoLogger.debug ("Exception: ", e);
         }
 
-        this.requestXML = stringWriter.toString ().replace("http://ecomp.att.com/mso/infra/volume-request", 
-        		"http://ecomp.att.com/mso/infra/vnf-request");
-        
+        this.requestXML = stringWriter.toString ().replace("http://org.openecomp/mso/infra/volume-request",
+        		"http://org.openecomp/mso/infra/vnf-request");
+
         msoLogger.debug("REQUEST XML to BPEL: " + this.requestXML);
 
     }
@@ -281,7 +284,7 @@ public class VolumeMsoInfraRequest {
         Session session = null;
         try {
 
-            session = HibernateUtil.getSessionFactory ().openSession ();
+            session = hibernateUtils.getSessionFactory ().openSession ();
             session.beginTransaction ();
 
             InfraActiveRequests aq = new InfraActiveRequests ();
@@ -297,7 +300,7 @@ public class VolumeMsoInfraRequest {
             } else {
                 // Set up mandatory parameters
                 aq.setAction (NOT_PROVIDED);
-                aq.setAction (NOT_PROVIDED);
+                aq.setRequestAction (NOT_PROVIDED);
             }
 
             aq.setRequestBody (this.requestXML);
@@ -334,7 +337,7 @@ public class VolumeMsoInfraRequest {
                 if (volumeInputs.getTenantId () != null) {
                     aq.setTenantId (volumeInputs.getTenantId ());
                 }
-               
+
             }
             aq.setStartTime (startTimeStamp);
             aq.setRequestStatus (status.toString ());
@@ -352,10 +355,10 @@ public class VolumeMsoInfraRequest {
 
                 Calendar endTime = Calendar.getInstance ();
                 Timestamp endTimeStamp = new Timestamp (endTime.getTimeInMillis ());
-                aq.setEndTime (endTimeStamp);               
-            } 
+                aq.setEndTime (endTimeStamp);
+            }
             aq.setProgress (this.progress);
-            
+
 
             msoLogger.debug ("About to insert a record");
 
@@ -376,7 +379,7 @@ public class VolumeMsoInfraRequest {
     public void updateFinalStatus (Status status) {
     	int result = 0;
         try {
-        	result = RequestsDatabase.updateInfraFinalStatus(requestId, status.toString (), 
+        	result = RequestsDatabase.updateInfraFinalStatus(requestId, status.toString (),
         		 this.errorMessage, this.progress, this.responseBody, Constants.MODIFIED_BY_APIHANDLER);
         } catch (Exception e) {
         	msoLogger.error(MessageEnum.APIH_DB_UPDATE_EXC, e.getMessage(), "", "", MsoLogger.ErrorCode.DataError, "Exception in updateFinalStatus");
@@ -452,7 +455,7 @@ public class VolumeMsoInfraRequest {
 
         vr.setRequestInfo (ri);
         vr.setVolumeInputs (this.volumeInputs);
-       
+
         StringWriter stringWriter = new StringWriter ();
         try {
             JAXBContext jaxbContext = JAXBContext.newInstance (VolumeRequest.class);
@@ -515,7 +518,7 @@ public class VolumeMsoInfraRequest {
 
         vr.setRequestInfo (ri);
         vr.setVolumeInputs (this.volumeInputs);
-       
+
         StringWriter stringWriter = new StringWriter ();
         try {
             JAXBContext jaxbContext = JAXBContext.newInstance (VolumeRequest.class);
@@ -598,11 +601,11 @@ public class VolumeMsoInfraRequest {
         	break;
         }
     }
-    
+
     public String getServiceType () {
-    	if (this.volumeInputs.getServiceType () != null) 
+    	if (this.volumeInputs.getServiceType () != null)
     		return this.volumeInputs.getServiceType ();
-    	if (this.volumeInputs.getServiceId () != null) 
+    	if (this.volumeInputs.getServiceId () != null)
     		return this.volumeInputs.getServiceId ();
     	return null;
     }
@@ -633,9 +636,9 @@ public class VolumeMsoInfraRequest {
                 	String s = sw.toString ();
                 	return s;
             }
-               
+
                	return null;
-                              
+
             } catch (Exception e) {
             	msoLogger.error (MessageEnum.APIH_DOM2STR_ERROR, "", "", MsoLogger.ErrorCode.AvailabilityError, "Exception in domToStr", e);
             }

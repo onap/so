@@ -8,9 +8,9 @@
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
        http://www.apache.org/licenses/LICENSE-2.0
-  
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,11 +26,11 @@
 		<meta attribute="class-description">
 			This class describes a HEAT template
 		</meta>
-		
+
 		<id name="id" type="int" column="id">
 			<generator class="native"/>
 		</id>
-		
+
 		<properties name="uk_template" unique="true">
 			<property name="templateName" type="string" >
 			     <column name="TEMPLATE_NAME" length="200" not-null="true"/>
@@ -41,21 +41,25 @@
 			<property name="asdcResourceName" type="string" >
 			      <column name="ASDC_RESOURCE_NAME" default="'MANUAL RECORD'" length="100" not-null="true"/>
 			</property>
+			<property name="asdcUuid" type="string" >
+				<column name="ASDC_UUID" length="200" default="'MANUAL RECORD'" not-null="true"/>
+			</property>
 		</properties>
-	
+
 		<property name="templatePath" column="TEMPLATE_PATH" type="string" length="100"/>
 		<property name="templateBody" type="text">
 		   <column name="TEMPLATE_BODY" not-null="true"/>
 		</property>
 		<property name="timeoutMinutes" column="TIMEOUT_MINUTES" type="int"/>
-		<property name="asdcUuid" type="string" >
-		  <column name="ASDC_UUID" length="200" default="'MANUAL RECORD'" not-null="true"/>
-		</property>
 		<property name="description" column="DESCRIPTION" type="string" length="1200"/>
 		<property name="asdcLabel" column="ASDC_LABEL" type="string" length="200"/>
+		<property name="artifactChecksum" type="string">
+			<column name="ARTIFACT_CHECKSUM" length="200" default="'MANUAL RECORD'" not-null="true"/>
+		</property>
 		<property name="created" type="timestamp" generated="insert" update="false" insert="false" >
 		  <column name="CREATION_TIMESTAMP" not-null="true"/>
 		</property>
+
 		<set name="parameters" cascade="all">
 			<key column="HEAT_TEMPLATE_ID"/>
 			<one-to-many class="HeatTemplateParam"/>
@@ -64,14 +68,14 @@
 			<key column="CHILD_TEMPLATE_ID"/>
 			<one-to-many class="HeatTemplate" not-found="ignore"/>
 		</set>
-		
+
 	</class>
-	
+
 	<class name="HeatTemplateParam" table="HEAT_TEMPLATE_PARAMS">
 		<meta attribute="class-description">
 			This class describes an input parameter to a heat template
 		</meta>
-		
+
 		<id name="id" type="int" column="id">
 			<generator class="native"/>
 		</id>

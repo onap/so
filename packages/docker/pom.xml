@@ -19,15 +19,18 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<!-- If the maven profile "docker" is specified the parameter -Dmso.git.url=<MsoGitRepo> must be provided
-		     i.e: mvn clean install -P docker -Dmso.git.url=https://gerrit.onap.org/r-->
-		<mso.git.url>${env.GIT_NO_PROJECT}</mso.git.url>
+		     i.e: mvn clean install -P docker -Dmso.git.url=https://gerrit.openecomp.org/r-->
+		<mso.chef.git.url.prefix>${env.GIT_NO_PROJECT}</mso.chef.git.url.prefix>
+		<mso.chef.git.branchname>master</mso.chef.git.branchname>
+		<mso.chef.git.url.suffix.chef.repo>mso/chef-repo</mso.chef.git.url.suffix.chef.repo>
+		<mso.chef.git.url.suffix.chef.config>mso/mso-config</mso.chef.git.url.suffix.chef.config>
 		<mso.project.version>${project.version}</mso.project.version>
 	</properties>
 
 	<build>
 		<finalName>${project.artifactId}-${project.version}</finalName>
 		<plugins>
-		      <plugin>
+		    <plugin>
                 <groupId>org.codehaus.groovy.maven</groupId>
                 <artifactId>gmaven-plugin</artifactId>
                 <executions>
@@ -56,6 +59,7 @@
                   </execution>
               </executions>
             </plugin>
+            
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-scm-plugin</artifactId>
@@ -68,9 +72,9 @@
 						</goals>
 						<phase>initialize</phase>
 						<configuration>
-							<connectionUrl>scm:git:${mso.git.url}/mso/chef-repo</connectionUrl>
+							<connectionUrl>scm:git:${mso.chef.git.url.prefix}/${mso.chef.git.url.suffix.chef.repo}</connectionUrl>
 							<checkoutDirectory>src/main/docker/docker-files/chef-configs/chef-repo</checkoutDirectory>
-							<scmVersion>master</scmVersion>
+							<scmVersion>${mso.chef.git.branchname}</scmVersion>
 							<scmVersionType>branch</scmVersionType>
 							<skipCheckoutIfExists>true</skipCheckoutIfExists>
 							<pushChanges>false</pushChanges>
@@ -83,9 +87,9 @@
 						</goals>
 						<phase>initialize</phase>
 						<configuration>
-							<connectionUrl>scm:git:${mso.git.url}/mso/mso-config</connectionUrl>
+							<connectionUrl>scm:git:${mso.chef.git.url.prefix}/${mso.chef.git.url.suffix.chef.config}</connectionUrl>
 							<checkoutDirectory>src/main/docker/docker-files/chef-configs/mso-config</checkoutDirectory>
-							<scmVersion>master</scmVersion>
+							<scmVersion>${mso.chef.git.branchname}</scmVersion>
 							<scmVersionType>branch</scmVersionType>
 							<skipCheckoutIfExists>true</skipCheckoutIfExists>
 							<pushChanges>false</pushChanges>
@@ -140,8 +144,8 @@
 							<alias>mso-arquillian</alias>
 							<build>
 								<tags>
+								    <tag>${project.docker.latesttag.version}</tag>
 									<tag>${project.version}-STAGING-${maven.build.timestamp}</tag>
-									<tag>${project.docker.latesttag.version}</tag>
 								</tags>
 								<cleanup>try</cleanup>
 								<dockerFileDir>docker-files</dockerFileDir>
@@ -154,8 +158,8 @@
 							<alias>mso</alias>
 							<build>
 								<tags>
+								    <tag>${project.docker.latesttag.version}</tag>
 									<tag>${project.version}-STAGING-${maven.build.timestamp}</tag>
-									<tag>${project.docker.latesttag.version}</tag>
 								</tags>
 								<cleanup>try</cleanup>
 								<dockerFileDir>docker-files</dockerFileDir>

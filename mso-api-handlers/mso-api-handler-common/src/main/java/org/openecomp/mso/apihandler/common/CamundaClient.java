@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,7 +38,7 @@ public class CamundaClient extends RequestClient{
 	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.APIH);
 
 	public CamundaClient() {
-		super(CommonConstants.CAMUNDA);	
+		super(CommonConstants.CAMUNDA);
 	}
 
 
@@ -141,8 +141,8 @@ public class CamundaClient extends RequestClient{
 		if(schemaVersion == null){
 			schemaVersion = "";
 		}
-		
-		
+
+
 		try{
 			CamundaRequest camundaRequest = new CamundaRequest();
 			CamundaInput camundaInput = new CamundaInput();
@@ -221,7 +221,6 @@ public class CamundaClient extends RequestClient{
 
 		try{
 			CamundaVIDRequest camundaRequest = new CamundaVIDRequest();
-			BpmnRequest bpmnRequest = new BpmnRequest();
 			CamundaInput serviceInput = new CamundaInput();
 			CamundaInput host = new CamundaInput();
 			CamundaInput requestIdInput= new CamundaInput();
@@ -253,26 +252,11 @@ public class CamundaClient extends RequestClient{
 			vfModuleTypeInput.setValue(vfModuleType);
 			networkTypeInput.setValue(networkType);
 
-			bpmnRequest.setRequestId(requestIdInput);
-			bpmnRequest.setIsBaseVfModule(isBaseVfModuleInput);
-			bpmnRequest.setRecipeTimeout(recipeTimeoutInput);
-			bpmnRequest.setRequestAction(requestActionInput);
-			bpmnRequest.setServiceInstanceId(serviceInstanceIdInput);
-			bpmnRequest.setVnfId(vnfIdInput);
-			bpmnRequest.setVfModuleId(vfModuleIdInput);
-			bpmnRequest.setVolumeGroupId(volumeGroupIdInput);
-			bpmnRequest.setNetworkId(networkIdInput);
-			bpmnRequest.setServiceType(serviceTypeInput);
-			bpmnRequest.setVnfType(vnfTypeInput);
-			bpmnRequest.setVfModuleType(vfModuleTypeInput);
-			bpmnRequest.setNetworkType(networkTypeInput);
-			//bpmnRequest.setRequestDetails(requestDetailsInput);
-
 			serviceInput.setValue(requestDetails);
 			camundaRequest.setServiceInput(serviceInput);
 			camundaRequest.setHost(host);
 			camundaRequest.setRequestId(requestIdInput);
-			camundaRequest.setAttMsoRequestId(requestIdInput);
+			camundaRequest.setMsoRequestId(requestIdInput);
 			camundaRequest.setIsBaseVfModule(isBaseVfModuleInput);
 			camundaRequest.setRecipeTimeout(recipeTimeoutInput);
 			camundaRequest.setRequestAction(requestActionInput);

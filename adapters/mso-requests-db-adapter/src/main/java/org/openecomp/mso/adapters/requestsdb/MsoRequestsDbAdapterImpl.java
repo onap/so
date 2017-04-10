@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,12 +34,15 @@ import org.hibernate.Session;
 import org.openecomp.mso.adapters.requestsdb.exceptions.MsoRequestsDbException;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
-import org.openecomp.mso.requestsdb.HibernateUtil;
+import org.openecomp.mso.db.HibernateUtils;
+import org.openecomp.mso.requestsdb.HibernateUtilsRequestsDb;
 import org.openecomp.mso.requestsdb.InfraActiveRequests;
 
-@WebService(serviceName = "RequestsDbAdapter", endpointInterface = "org.openecomp.mso.adapters.requestsdb.MsoRequestsDbAdapter", targetNamespace = "http://com.att.mso/requestsdb")
+@WebService(serviceName = "RequestsDbAdapter", endpointInterface = "org.openecomp.mso.adapters.requestsdb.MsoRequestsDbAdapter", targetNamespace = "http://org.openecomp.mso/requestsdb")
 public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
 
+    protected HibernateUtils hibernateUtils = new HibernateUtilsRequestsDb ();
+    
     private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
 
     @Override
@@ -54,9 +57,10 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
                                     String networkId,
                                     String vnfId,
                                     String vfModuleId,
-                                    String volumeGroupId) throws MsoRequestsDbException {
+                                    String volumeGroupId,
+                                    String serviceInstanceName) throws MsoRequestsDbException {
         MsoLogger.setLogContext (requestId, null);
-        Session session = HibernateUtil.getSessionFactory ().openSession ();
+        Session session = hibernateUtils.getSessionFactory ().openSession ();
         int result = 0;
         long startTime = System.currentTimeMillis ();
         try {
@@ -92,20 +96,23 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
             if (volumeGroupId != null) {
                 queryString += "volumeGroupId = :volumeGroupId, ";
             }
+            if (serviceInstanceName != null) {
+                queryString += "serviceInstanceName = :serviceInstanceName, ";
+            }
             if (requestStatus == RequestStatusType.COMPLETE || requestStatus == RequestStatusType.FAILED) {
                 queryString += "endTime = :endTime, ";
             } else {
                 queryString += "modifyTime = :modifyTime, ";
             }
             queryString += "lastModifiedBy = :lastModifiedBy where requestId = :requestId OR clientRequestId = :requestId";
-            
-            LOGGER.debug("Executing update: " + queryString); 
-            
+
+            LOGGER.debug("Executing update: " + queryString);
+
             Query query = session.createQuery (queryString);
             query.setParameter ("requestId", requestId);
             if (statusMessage != null) {
                 query.setParameter ("statusMessage", statusMessage);
-                LOGGER.debug ("StatusMessage in updateInfraRequest is set to: " + statusMessage);               
+                LOGGER.debug ("StatusMessage in updateInfraRequest is set to: " + statusMessage);
             }
             if (responseBody != null) {
             	query.setParameter ("responseBody", responseBody);
@@ -115,7 +122,7 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
                 query.setParameter ("requestStatus", requestStatus.toString ());
                 LOGGER.debug ("RequestStatus in updateInfraRequest is set to: " + requestStatus.toString());
             }
-            
+
             if (progress != null) {
                 query.setParameter ("progress", Long.parseLong (progress));
                 LOGGER.debug ("Progress in updateInfraRequest is set to: " + progress);
@@ -144,6 +151,10 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
                 query.setParameter ("volumeGroupId", volumeGroupId);
                 LOGGER.debug ("VolumeGroupId in updateInfraRequest is set to: " + volumeGroupId);
             }
+            if (serviceInstanceName != null) {
+                query.setParameter ("serviceInstanceName", serviceInstanceName);
+                LOGGER.debug ("ServiceInstanceName in updateInfraRequest is set to: " + serviceInstanceName);
+            }
             Timestamp nowTimeStamp = new Timestamp (System.currentTimeMillis ());
             if (requestStatus == RequestStatusType.COMPLETE || requestStatus == RequestStatusType.FAILED) {
                 query.setParameter ("endTime", nowTimeStamp);
@@ -156,7 +167,7 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
             LOGGER.debug ("LastModifiedBy in updateInfraRequest is set to: " + lastModifiedBy);
             result = query.executeUpdate ();
             checkIfExists (result, requestId, startTime);
-            session.getTransaction ().commit (); 
+            session.getTransaction ().commit ();
         } catch (HibernateException e) {
             String error = "Unable to update MSO Requests DB: " + e.getMessage ();
             LOGGER.error (MessageEnum.RA_CANT_UPDATE_REQUEST, "infra request parameters", requestId, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "HibernateException - " + error, e);
@@ -184,7 +195,7 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
     public InfraActiveRequests getInfraRequest (String requestId) throws MsoRequestsDbException {
         long startTime = System.currentTimeMillis ();
         MsoLogger.setLogContext (requestId, null);
-        Session session = HibernateUtil.getSessionFactory ().openSession ();
+        Session session = hibernateUtils.getSessionFactory ().openSession ();
 
         LOGGER.debug ("Call to MSO Infra RequestsDb adapter get method with request Id: " + requestId);
 
@@ -218,7 +229,7 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
      */
     public boolean getSiteStatus (String siteName) {
         UUIDChecker.generateUUID (LOGGER);
-        Session session = HibernateUtil.getSessionFactory ().openSession ();
+        Session session = hibernateUtils.getSessionFactory ().openSession ();
 
         long startTime = System.currentTimeMillis ();
         SiteStatus siteStatus = null;

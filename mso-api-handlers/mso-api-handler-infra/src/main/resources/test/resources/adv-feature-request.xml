@@ -19,14 +19,14 @@
   -->
 
 <feature-request
-	xmlns="http://ecomp.att.com/mso/request/layer3serviceactivate/schema/v1"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:msolayer3="http://ecomp.att.com/mso/request/layer3/schema/v1"
-	xmlns:msoservtypes="http://ecomp.att.com/mso/request/types/v1">
+	xmlns="http://org.openecomp/mso/request/layer3serviceactivate/schema/v1"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:msolayer3="http://org.openecomp/mso/request/layer3/schema/v1"
+	xmlns:msoservtypes="http://org.openecomp/mso/request/types/v1">
 	<msoservtypes:request-information>
 		<msoservtypes:request-id>155415ab-b4a7-4382-b4c6-d17d950565</msoservtypes:request-id>
 		<msoservtypes:request-action>ChangeFeatureActivateRequest</msoservtypes:request-action>
 		<msoservtypes:source>OMX</msoservtypes:source>
-		<msoservtypes:notification-url>https://csi-tst-q22.it.att.com:22443/Services/com/cingular/csi/sdn/SendManagedNetworkStatusNotification.jws</msoservtypes:notification-url>
+		<msoservtypes:notification-url>https://localhost:22443/Services/com/cingular/csi/sdn/SendManagedNetworkStatusNotification.jws</msoservtypes:notification-url>
 		<msoservtypes:order-number>5051560</msoservtypes:order-number>
 		<msoservtypes:order-version>1</msoservtypes:order-version>
 	</msoservtypes:request-information>

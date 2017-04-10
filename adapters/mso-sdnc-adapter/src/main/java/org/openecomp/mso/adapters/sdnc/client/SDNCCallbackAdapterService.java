@@ -40,14 +40,14 @@ import org.openecomp.mso.logger.MsoLogger;
 //SDNCAdapter to BPEL Async response WEB Service
 @WebServiceClient(name = "SDNCCallbackAdapterService",
                   wsdlLocation = "main/resources/SDNCCallbackAdapter.wsdl",
-                  targetNamespace = "http://domain2.att.com/workflow/sdnc/adapter/callback/wsdl/v1")
+                  targetNamespace = "http://org.openecomp/workflow/sdnc/adapter/callback/wsdl/v1")
 public class SDNCCallbackAdapterService extends Service {
 
 	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
 
     public final static URL WSDL_LOCATION;
-    public final static QName SERVICE = new QName("http://domain2.att.com/workflow/sdnc/adapter/callback/wsdl/v1", "SDNCCallbackAdapterService");
-    public final static QName SDNCCallbackAdapterSoapHttpPort = new QName("http://domain2.att.com/workflow/sdnc/adapter/callback/wsdl/v1", "SDNCCallbackAdapterSoapHttpPort");
+    public final static QName SERVICE = new QName("http://org.openecomp/workflow/sdnc/adapter/callback/wsdl/v1", "SDNCCallbackAdapterService");
+    public final static QName SDNCCallbackAdapterSoapHttpPort = new QName("http://org.openecomp/workflow/sdnc/adapter/callback/wsdl/v1", "SDNCCallbackAdapterSoapHttpPort");
     static {
         URL wsdlUrl = null;
         try {

@@ -19,7 +19,7 @@
   ============LICENSE_END=========================================================
   -->
 
-<tns:feature-request xmlns:tns="http://ecomp.att.com/mso/request/schema/v1" xmlns:tns1="http://ecomp.att.com/mso/request/types/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ecomp.att.com/mso/request/schema/v1 MsoRequestV1.xsd">
+<tns:feature-request xmlns:tns="http://org.openecomp/mso/request/schema/v1" xmlns:tns1="http://org.openecomp/mso/request/types/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://org.openecomp/mso/request/schema/v1 MsoRequestV1.xsd">
   <tns1:request-information>
     <tns1:request-id>tns1:request-id</tns1:request-id>
     <tns1:request-action>Layer3ServiceActivateRequest</tns1:request-action>

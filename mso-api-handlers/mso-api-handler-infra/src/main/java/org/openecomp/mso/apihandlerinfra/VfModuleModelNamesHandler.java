@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -52,18 +52,18 @@ public class VfModuleModelNamesHandler {
         long startTime = System.currentTimeMillis ();
         String methodName = "getVfModuleModelNames";
         MsoLogger.setServiceName (LOG_SERVICE_NAME + methodName);
-        msoLogger.debug ("Incoming request received for vfModuleModelNames");       
+        msoLogger.debug ("Incoming request received for vfModuleModelNames");
         List <VfModule> vfModules = null;
         try (CatalogDatabase db = new CatalogDatabase()){
             vfModules = db.getAllVfModules ();
         } catch (Exception e) {
-            msoLogger.debug ("No connection to catalog DB", e);            
+            msoLogger.debug ("No connection to catalog DB", e);
             msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError, "no connection to catalog DB");
             msoLogger.debug ("End of the transaction, the final response is: " + e.toString ());
             return Response.status (HttpStatus.SC_NOT_FOUND).entity (e.toString ()).build ();
         }
 
-        if (vfModules == null) {           
+        if (vfModules == null) {
         	msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataNotFound, "VfModule not found");
             msoLogger.debug ("End of the transaction. VfModuleModelName not found the final response status: " + HttpStatus.SC_NOT_FOUND);
             return Response.status (HttpStatus.SC_NOT_FOUND).entity ("").build ();
@@ -74,10 +74,10 @@ public class VfModuleModelNamesHandler {
         for (int i = 0; i < vfModules.size (); i++) {
             VfModuleModelName vfModuleModelName = beansObjectFactory.createVfModuleModelName ();
             VfModule vm = vfModules.get (i);
-            vfModuleModelName.setModelName (vm.getType ());
+            vfModuleModelName.setModelName (vm.getModelName ());
             vfModuleModelName.setModelVersion (vm.getVersion ());
             vfModuleModelName.setModelInvariantUuid (vm.getModelInvariantUuid ());
-            vfModuleModelName.setIsBase(vm.isBase());                 
+            vfModuleModelName.setIsBase(vm.isBase());
             vfModuleModelName.setDescription (vm.getDescription ());
             vfModuleModelName.setId (String.valueOf (vm.getId ()));
             vfModuleModelName.setAsdcServiceModelVersion(vm.getVersion ());
@@ -93,10 +93,10 @@ public class VfModuleModelNamesHandler {
             jaxbMarshaller.marshal (vfModuleModelNames, stringWriter);
 
         } catch (JAXBException e) {
-            msoLogger.debug ("Error marshalling", e);           
+            msoLogger.debug ("Error marshalling", e);
         }
 
-        String response = stringWriter.toString ();        
+        String response = stringWriter.toString ();
         msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successful");
         msoLogger.debug ("End of the transaction, the final response is: " + response);
         return Response.status (HttpStatus.SC_OK).entity (response).build ();

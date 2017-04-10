@@ -30,7 +30,7 @@ import javax.xml.ws.WebFault;
  * 
  *
  */
-@WebFault (name="MsoRequestsDbException", faultBean="org.openecomp.mso.adapters.requestsdb.exceptions.MsoRequestsDbExceptionBean", targetNamespace="http://com.att.mso/requestsdb")
+@WebFault (name="MsoRequestsDbException", faultBean="org.openecomp.mso.adapters.requestsdb.exceptions.MsoRequestsDbExceptionBean", targetNamespace="http://org.openecomp.mso/requestsdb")
 public class MsoRequestsDbException extends Exception {
 
 	private static final long serialVersionUID = 1L;

@@ -399,8 +399,8 @@ public class LoggingAndURNMappingPlugin extends AbstractProcessEnginePlugin {
 							MsoLogger.setServiceName("MSO." + prefix.substring(0,prefix.length()-1));
 						}
 
-						String requestId = (String) execution.getVariable("att-mso-request-id");
-						String svcid = (String) execution.getVariable("att-mso-service-instance-id");
+						String requestId = (String) execution.getVariable("mso-request-id");
+						String svcid = (String) execution.getVariable("mso-service-instance-id");
 						MsoLogger.setLogContext(requestId, svcid);
 						long startTime = startTimes.remove(id);
 

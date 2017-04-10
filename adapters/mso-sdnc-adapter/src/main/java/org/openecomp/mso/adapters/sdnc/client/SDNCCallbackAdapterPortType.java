@@ -37,15 +37,15 @@ import org.openecomp.mso.adapters.sdnc.SDNCAdapterResponse;
  *
  */
 //SDNCAdapter to BPEL Async response WEB Service
-@WebService(targetNamespace = "http://domain2.att.com/workflow/sdnc/adapter/callback/wsdl/v1", name = "SDNCCallbackAdapterPortType")
+@WebService(targetNamespace = "http://org.openecomp/workflow/sdnc/adapter/callback/wsdl/v1", name = "SDNCCallbackAdapterPortType")
 @XmlSeeAlso({ObjectFactory.class})
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
 public interface SDNCCallbackAdapterPortType {
 
-    @WebResult(name = "SDNCAdapterResponse", targetNamespace = "http://domain2.att.com/workflow/sdnc/adapter/schema/v1", partName = "SDNCAdapterCallbackResponse")
+    @WebResult(name = "SDNCAdapterResponse", targetNamespace = "http://org.openecomp/workflow/sdnc/adapter/schema/v1", partName = "SDNCAdapterCallbackResponse")
     @WebMethod(operationName = "SDNCAdapterCallback")
     public SDNCAdapterResponse sdncAdapterCallback(
-        @WebParam(partName = "SDNCAdapterCallbackRequest", name = "SDNCAdapterCallbackRequest", targetNamespace = "http://domain2.att.com/workflow/sdnc/adapter/schema/v1")
+        @WebParam(partName = "SDNCAdapterCallbackRequest", name = "SDNCAdapterCallbackRequest", targetNamespace = "http://org.openecomp/workflow/sdnc/adapter/schema/v1")
         SDNCAdapterCallbackRequest sdncAdapterCallbackRequest
     );
 }

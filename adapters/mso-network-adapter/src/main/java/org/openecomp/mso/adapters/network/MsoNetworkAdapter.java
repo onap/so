@@ -37,7 +37,7 @@ import org.openecomp.mso.openstack.beans.NetworkRollback;
 import org.openecomp.mso.openstack.beans.NetworkStatus;
 import org.openecomp.mso.openstack.beans.Subnet;
 
-@WebService (name="NetworkAdapter", targetNamespace="http://com.att.mso/network")
+@WebService (name="NetworkAdapter", targetNamespace="http://org.openecomp.mso/network")
 public interface MsoNetworkAdapter
 {
 	// TODO:  Rename all of these to include Vlan in the service name?  At least for the

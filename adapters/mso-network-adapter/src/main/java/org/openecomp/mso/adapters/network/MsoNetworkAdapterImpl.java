@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -64,7 +64,7 @@ import org.openecomp.mso.properties.MsoPropertiesFactory;
 
 import static org.openecomp.mso.openstack.utils.MsoCommonUtils.isNullOrEmpty;
 
-@WebService(serviceName = "NetworkAdapter", endpointInterface = "org.openecomp.mso.adapters.network.MsoNetworkAdapter", targetNamespace = "http://com.att.mso/network")
+@WebService(serviceName = "NetworkAdapter", endpointInterface = "org.openecomp.mso.adapters.network.MsoNetworkAdapter", targetNamespace = "http://org.openecomp.mso/network")
 public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 
 	MsoPropertiesFactory msoPropertiesFactory=new MsoPropertiesFactory();
@@ -281,7 +281,11 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         	throw new NetworkException (error, MsoExceptionCategory.USERDATA);
         }
 
-        try (CatalogDatabase db = getCatalogDb()) {
+        // Get a handle to the Catalog Database
+        CatalogDatabase db = getCatalogDB ();
+
+        // Make sure DB connection is always closed
+        try {
             NetworkResource networkResource = networkCheck (db,
                                                             startTime,
                                                             networkType,
@@ -387,7 +391,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 
                 // Use an MsoHeatUtils for all Heat commands
                 MsoHeatUtils heat = new MsoHeatUtils (MSO_PROP_NETWORK_ADAPTER, msoPropertiesFactory,cloudConfigFactory);
-                
+
                 HeatTemplate heatTemplate = db.getHeatTemplate (networkResource.getTemplateId ());
                 if (heatTemplate == null) {
                     String error = "Network error - undefined Heat Template. Network Type = " + networkType;
@@ -401,11 +405,11 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 }
 
                 LOGGER.debug ("Got HEAT Template from DB: " + heatTemplate.toString ());
-                
+
                 // "Fix" the template if it has CR/LF (getting this from Oracle)
                 String template = heatTemplate.getHeatTemplate ();
                 template = template.replaceAll ("\r\n", "\n");
-                
+
                 boolean aic3template=false;
                 String aic3nw = AIC3_NW;
                 try {
@@ -414,10 +418,10 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         			String error = "Unable to get properties:" + MSO_PROP_NETWORK_ADAPTER;
         			LOGGER.error (MessageEnum.RA_CONFIG_EXC, error, "", "", MsoLogger.ErrorCode.DataError, "Exception - Unable to get properties", e);
         		}
-            	
+
                 if (template.contains(aic3nw))
                 	aic3template = true;
-                
+
                 // First, look up to see if the Network already exists (by name).
                 // For HEAT orchestration of networks, the stack name will always match the network name
                 StackInfo heatStack = null;
@@ -466,14 +470,14 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                         if (outputs != null) {
                         	for (String key : outputs.keySet ()) {
                         		if (key != null && key.startsWith ("subnet")) {
-                        			if (aic3template) //one subnet_id output 
+                        			if (aic3template) //one subnet_id output
                         			{
-                        				 Map <String, String> map = getSubnetUUId(key, outputs, subnets); 
+                        				 Map <String, String> map = getSubnetUUId(key, outputs, subnets);
                         				 sMap.putAll(map);
                         			}
                         			else //multiples subnet_%aaid% outputs
                         			{
-                        				String subnetUUId = (String) outputs.get(key); 
+                        				String subnetUUId = (String) outputs.get(key);
                         				sMap.put (key.substring("subnet_id_".length()), subnetUUId);
                         			}
                         		}
@@ -494,7 +498,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                                                                           physicalNetworkName,
                                                                           vlans,
                                                                           routeTargets,
-                                                                          shared, 
+                                                                          shared,
                                                                           external,
                                                                           aic3template);
 
@@ -557,7 +561,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                         throw new NetworkException (me);
                     }
                 }
-                
+
                 if (routeTableFqdns != null && !routeTableFqdns.isEmpty() && aic3template) {
                     try {
                         mergeRouteTableRefs (routeTableFqdns, stackParams);
@@ -624,12 +628,12 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                         if (key != null && key.startsWith ("subnet")) {
                         	if (aic3template) //one subnet output expected
                 			{
-                				 Map <String, String> map = getSubnetUUId(key, outputs, subnets); 
+                				 Map <String, String> map = getSubnetUUId(key, outputs, subnets);
                 				 sMap.putAll(map);
                 			}
                 			else //multiples subnet_%aaid% outputs allowed
                 			{
-                				String subnetUUId = (String) outputs.get(key); 
+                				String subnetUUId = (String) outputs.get(key);
                 				sMap.put (key.substring("subnet_id_".length()), subnetUUId);
                 			}
                         }
@@ -646,6 +650,8 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 
                 LOGGER.debug ("Network " + networkName + " successfully created via HEAT");
             }
+        } finally {
+            db.close ();
         }
         LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.Suc, "Successfully created network");
         return;
@@ -792,295 +798,295 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         	   throw new NetworkException (error, MsoExceptionCategory.USERDATA);
         }
 
-        try(CatalogDatabase db = getCatalogDb()) {
-            NetworkResource networkResource = networkCheck (db,
-                                                            startTime,
-                                                            networkType,
-                                                            networkName,
-                                                            physicalNetworkName,
-                                                            vlans,
-                                                            routeTargets,
-                                                            cloudSite);
-            String mode = networkResource.getOrchestrationMode ();
-            NetworkType neutronNetworkType = NetworkType.valueOf (networkResource.getNeutronNetworkType ());
+        // Get a handle to the Catalog Database
+        CatalogDatabase db = getCatalogDB ();
+
+        // Make sure DB connection is always closed
+        try {
+            NetworkResource networkResource = networkCheck(db,
+                    startTime,
+                    networkType,
+                    networkName,
+                    physicalNetworkName,
+                    vlans,
+                    routeTargets,
+                    cloudSite);
+            String mode = networkResource.getOrchestrationMode();
+            NetworkType neutronNetworkType = NetworkType.valueOf(networkResource.getNeutronNetworkType());
 
             // Use an MsoNeutronUtils for all Neutron commands
-            MsoNeutronUtils neutron = new MsoNeutronUtils (MSO_PROP_NETWORK_ADAPTER, cloudConfigFactory);
+            MsoNeutronUtils neutron = new MsoNeutronUtils(MSO_PROP_NETWORK_ADAPTER, cloudConfigFactory);
 
-            if (NEUTRON_MODE.equals (mode)) {
+            if (NEUTRON_MODE.equals(mode)) {
 
                 // Verify that the Network exists
                 // For Neutron-based orchestration, the networkId is the Neutron Network UUID.
                 NetworkInfo netInfo = null;
-                long queryNetworkStarttime = System.currentTimeMillis ();
+                long queryNetworkStarttime = System.currentTimeMillis();
                 try {
-                    netInfo = neutron.queryNetwork (networkId, tenantId, cloudSiteId);
-                    LOGGER.recordMetricEvent (queryNetworkStarttime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from Open Stack", "OpenStack", "QueryNetwork", null);
+                    netInfo = neutron.queryNetwork(networkId, tenantId, cloudSiteId);
+                    LOGGER.recordMetricEvent(queryNetworkStarttime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from Open Stack", "OpenStack", "QueryNetwork", null);
                 } catch (MsoException me) {
-                    me.addContext (UPDATE_NETWORK_CONTEXT);
-                	String error = "Update Network (neutron): query " + networkId
-                                   + " in "
-                                   + cloudSiteId
-                                   + "/"
-                                   + tenantId
-                                   + ": "
-                                   + me;
-                    LOGGER.recordMetricEvent (queryNetworkStarttime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, "OpenStack", "QueryNetwork", null);
-                    LOGGER.error (MessageEnum.RA_QUERY_NETWORK_EXC, networkId, cloudSiteId, tenantId, "OpenStack", "QueryNetwork", MsoLogger.ErrorCode.BusinessProcesssError, "Exception - queryNetwork", me);
-                    LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
-                    throw new NetworkException (me);
+                    me.addContext(UPDATE_NETWORK_CONTEXT);
+                    String error = "Update Network (neutron): query " + networkId
+                            + " in "
+                            + cloudSiteId
+                            + "/"
+                            + tenantId
+                            + ": "
+                            + me;
+                    LOGGER.recordMetricEvent(queryNetworkStarttime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, "OpenStack", "QueryNetwork", null);
+                    LOGGER.error(MessageEnum.RA_QUERY_NETWORK_EXC, networkId, cloudSiteId, tenantId, "OpenStack", "QueryNetwork", MsoLogger.ErrorCode.BusinessProcesssError, "Exception - queryNetwork", me);
+                    LOGGER.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
+                    throw new NetworkException(me);
                 }
 
                 if (netInfo == null) {
                     String error = "Update Nework: Network " + networkId
-                                   + " does not exist in "
-                                   + cloudSiteId
-                                   + "/"
-                                   + tenantId;
-                    LOGGER.error (MessageEnum.RA_NETWORK_NOT_FOUND, networkId, cloudSiteId, tenantId, "OpenStack", "", MsoLogger.ErrorCode.BusinessProcesssError, "Network not found");
-                    LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.BadRequest, error);
+                            + " does not exist in "
+                            + cloudSiteId
+                            + "/"
+                            + tenantId;
+                    LOGGER.error(MessageEnum.RA_NETWORK_NOT_FOUND, networkId, cloudSiteId, tenantId, "OpenStack", "", MsoLogger.ErrorCode.BusinessProcesssError, "Network not found");
+                    LOGGER.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.BadRequest, error);
                     // Does not exist. Throw an exception (can't update a non-existent network)
                     throw new NetworkException(error, MsoExceptionCategory.USERDATA);
                 }
-                long updateNetworkStarttime = System.currentTimeMillis ();
+                long updateNetworkStarttime = System.currentTimeMillis();
                 try {
-                    netInfo = neutron.updateNetwork (cloudSiteId,
-                                                     tenantId,
-                                                     networkId,
-                                                     neutronNetworkType,
-                                                     physicalNetworkName,
-                                                     vlans);
-                    LOGGER.recordMetricEvent (updateNetworkStarttime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from Open Stack", "OpenStack", "UpdateNetwork", null);
+                    netInfo = neutron.updateNetwork(cloudSiteId,
+                            tenantId,
+                            networkId,
+                            neutronNetworkType,
+                            physicalNetworkName,
+                            vlans);
+                    LOGGER.recordMetricEvent(updateNetworkStarttime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from Open Stack", "OpenStack", "UpdateNetwork", null);
                 } catch (MsoException me) {
-                    me.addContext (UPDATE_NETWORK_CONTEXT);
+                    me.addContext(UPDATE_NETWORK_CONTEXT);
                     String error = "Update Network (neutron): " + networkId
-                                   + " in "
-                                   + cloudSiteId
-                                   + "/"
-                                   + tenantId
-                                   + ": "
-                                   + me;
-                    LOGGER.error (MessageEnum.RA_UPDATE_NETWORK_ERR, networkId, cloudSiteId, tenantId, "Openstack", "updateNetwork", MsoLogger.ErrorCode.DataError, "Exception - updateNetwork", me);
-                    LOGGER.recordMetricEvent (updateNetworkStarttime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, "OpenStack", "UpdateNetwork", null);
-                    LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
-                    throw new NetworkException (me);
+                            + " in "
+                            + cloudSiteId
+                            + "/"
+                            + tenantId
+                            + ": "
+                            + me;
+                    LOGGER.error(MessageEnum.RA_UPDATE_NETWORK_ERR, networkId, cloudSiteId, tenantId, "Openstack", "updateNetwork", MsoLogger.ErrorCode.DataError, "Exception - updateNetwork", me);
+                    LOGGER.recordMetricEvent(updateNetworkStarttime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, "OpenStack", "UpdateNetwork", null);
+                    LOGGER.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
+                    throw new NetworkException(me);
                 }
 
                 // Add the network ID and previously queried vlans to the rollback object
-                networkRollback.setNetworkId (netInfo.getId ());
-                networkRollback.setNeutronNetworkId (netInfo.getId ());
-                networkRollback.setNetworkType (networkType);
+                networkRollback.setNetworkId(netInfo.getId());
+                networkRollback.setNeutronNetworkId(netInfo.getId());
+                networkRollback.setNetworkType(networkType);
                 // Save previous parameters
-                networkRollback.setNetworkName (netInfo.getName ());
-                networkRollback.setPhysicalNetwork (netInfo.getProvider ());
-                networkRollback.setVlans (netInfo.getVlans ());
+                networkRollback.setNetworkName(netInfo.getName());
+                networkRollback.setPhysicalNetwork(netInfo.getProvider());
+                networkRollback.setVlans(netInfo.getVlans());
 
-                LOGGER.debug ("Network " + networkId + " updated, id = " + netInfo.getId ());
-            } else if ("HEAT".equals (mode)) {
+                LOGGER.debug("Network " + networkId + " updated, id = " + netInfo.getId());
+            } else if ("HEAT".equals(mode)) {
 
                 // Use an MsoHeatUtils for all Heat commands
-                MsoHeatUtilsWithUpdate heat = new MsoHeatUtilsWithUpdate (MSO_PROP_NETWORK_ADAPTER, msoPropertiesFactory,cloudConfigFactory);
+                MsoHeatUtilsWithUpdate heat = new MsoHeatUtilsWithUpdate(MSO_PROP_NETWORK_ADAPTER, msoPropertiesFactory, cloudConfigFactory);
 
                 // First, look up to see that the Network already exists.
                 // For Heat-based orchestration, the networkId is the network Stack ID.
                 StackInfo heatStack = null;
-                long queryStackStarttime = System.currentTimeMillis ();
+                long queryStackStarttime = System.currentTimeMillis();
                 try {
-                    heatStack = heat.queryStack (cloudSiteId, tenantId, networkName);
-                    LOGGER.recordMetricEvent (queryStackStarttime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from Open Stack", "OpenStack", "QueryStack", null);
+                    heatStack = heat.queryStack(cloudSiteId, tenantId, networkName);
+                    LOGGER.recordMetricEvent(queryStackStarttime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from Open Stack", "OpenStack", "QueryStack", null);
                 } catch (MsoException me) {
-                    me.addContext (UPDATE_NETWORK_CONTEXT);
+                    me.addContext(UPDATE_NETWORK_CONTEXT);
                     String error = "UpdateNetwork (heat): query " + networkName
-                                   + " in "
-                                   + cloudSiteId
-                                   + "/"
-                                   + tenantId
-                                   + ": "
-                                   + me;
-                    LOGGER.recordMetricEvent (queryStackStarttime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, "OpenStack", "QueryStack", null);
-                    LOGGER.error (MessageEnum.RA_QUERY_NETWORK_EXC, networkId, cloudSiteId, tenantId, "OpenStack", "queryStack", MsoLogger.ErrorCode.DataError, "Exception - QueryStack", me);
-                    LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
-                    throw new NetworkException (me);
+                            + " in "
+                            + cloudSiteId
+                            + "/"
+                            + tenantId
+                            + ": "
+                            + me;
+                    LOGGER.recordMetricEvent(queryStackStarttime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, "OpenStack", "QueryStack", null);
+                    LOGGER.error(MessageEnum.RA_QUERY_NETWORK_EXC, networkId, cloudSiteId, tenantId, "OpenStack", "queryStack", MsoLogger.ErrorCode.DataError, "Exception - QueryStack", me);
+                    LOGGER.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
+                    throw new NetworkException(me);
                 }
 
-                if (heatStack == null || (heatStack.getStatus () == HeatStatus.NOTFOUND)) {
+                if (heatStack == null || (heatStack.getStatus() == HeatStatus.NOTFOUND)) {
                     String error = "UpdateNetwork: Stack " + networkName
-                                   + " does not exist in "
-                                   + cloudSiteId
-                                   + "/"
-                                   + tenantId;
-                    LOGGER.error (MessageEnum.RA_NETWORK_NOT_FOUND, networkId, cloudSiteId, tenantId, "OpenStack", "queryStack", MsoLogger.ErrorCode.DataError, "Network not found");
-                    LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.BadRequest, error);
+                            + " does not exist in "
+                            + cloudSiteId
+                            + "/"
+                            + tenantId;
+                    LOGGER.error(MessageEnum.RA_NETWORK_NOT_FOUND, networkId, cloudSiteId, tenantId, "OpenStack", "queryStack", MsoLogger.ErrorCode.DataError, "Network not found");
+                    LOGGER.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.BadRequest, error);
                     // Network stack does not exist. Return an error
                     throw new NetworkException(error, MsoExceptionCategory.USERDATA);
                 }
 
                 // Get the previous parameters for rollback
-                Map <String, Object> heatParams = heatStack.getParameters ();
+                Map<String, Object> heatParams = heatStack.getParameters();
 
-                String previousNetworkName = (String) heatParams.get ("network_name");
-                String previousPhysicalNetwork = (String) heatParams.get (PHYSICAL_NETWORK);
+                String previousNetworkName = (String) heatParams.get("network_name");
+                String previousPhysicalNetwork = (String) heatParams.get(PHYSICAL_NETWORK);
 
-                List <Integer> previousVlans = new ArrayList <Integer> ();
-                String vlansParam = (String) heatParams.get (VLANS);
+                List<Integer> previousVlans = new ArrayList<Integer>();
+                String vlansParam = (String) heatParams.get(VLANS);
                 if (vlansParam != null) {
-                    for (String vlan : vlansParam.split (",")) {
+                    for (String vlan : vlansParam.split(",")) {
                         try {
-                            previousVlans.add (Integer.parseInt (vlan));
+                            previousVlans.add(Integer.parseInt(vlan));
                         } catch (NumberFormatException e) {
-                            LOGGER.warn (MessageEnum.RA_VLAN_PARSE, networkId, vlansParam, "", "", MsoLogger.ErrorCode.DataError, "Exception - VLAN parse", e);
+                            LOGGER.warn(MessageEnum.RA_VLAN_PARSE, networkId, vlansParam, "", "", MsoLogger.ErrorCode.DataError, "Exception - VLAN parse", e);
                         }
                     }
                 }
-                LOGGER.debug ("Update Stack:  Previous VLANS: " + previousVlans);
+                LOGGER.debug("Update Stack:  Previous VLANS: " + previousVlans);
 
                 // Ready to deploy the updated Network via Heat
 
-                HeatTemplate heatTemplate = db.getHeatTemplate (networkResource.getTemplateId ());
+                HeatTemplate heatTemplate = db.getHeatTemplate(networkResource.getTemplateId());
                 if (heatTemplate == null) {
                     String error = "Network error - undefined Heat Template. Network Type=" + networkType;
-                    LOGGER.error (MessageEnum.RA_PARAM_NOT_FOUND, "Heat Template", "Network Type", networkType, "OpenStack", "getHeatTemplate", MsoLogger.ErrorCode.DataError, "Network error - undefined Heat Template. Network Type=" + networkType);
-                    alarmLogger.sendAlarm (MSO_CONFIGURATION_ERROR, MsoAlarmLogger.CRITICAL, error);
-                    LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.BadRequest, error);
-                    throw new NetworkException (error, MsoExceptionCategory.INTERNAL);
+                    LOGGER.error(MessageEnum.RA_PARAM_NOT_FOUND, "Heat Template", "Network Type", networkType, "OpenStack", "getHeatTemplate", MsoLogger.ErrorCode.DataError, "Network error - undefined Heat Template. Network Type=" + networkType);
+                    alarmLogger.sendAlarm(MSO_CONFIGURATION_ERROR, MsoAlarmLogger.CRITICAL, error);
+                    LOGGER.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.BadRequest, error);
+                    throw new NetworkException(error, MsoExceptionCategory.INTERNAL);
                 }
 
-                LOGGER.debug ("Got HEAT Template from DB: " + heatTemplate.toString ());
-                
+                LOGGER.debug("Got HEAT Template from DB: " + heatTemplate.toString());
+
                 // "Fix" the template if it has CR/LF (getting this from Oracle)
-                String template = heatTemplate.getHeatTemplate ();
-                template = template.replaceAll ("\r\n", "\n");
-                
-                boolean aic3template=false;
+                String template = heatTemplate.getHeatTemplate();
+                template = template.replaceAll("\r\n", "\n");
+
+                boolean aic3template = false;
                 String aic3nw = AIC3_NW;
                 try {
-                	aic3nw = msoPropertiesFactory.getMsoJavaProperties(MSO_PROP_NETWORK_ADAPTER).getProperty(AIC3_NW_PROPERTY, AIC3_NW);
-        		} catch (MsoPropertiesException e) {
-        			String error = "Unable to get properties:" + MSO_PROP_NETWORK_ADAPTER;
-        			LOGGER.error (MessageEnum.RA_CONFIG_EXC, error, "OpenStack", "", MsoLogger.ErrorCode.DataError, "Exception - Unable to get properties", e);
-        		}
+                    aic3nw = msoPropertiesFactory.getMsoJavaProperties(MSO_PROP_NETWORK_ADAPTER).getProperty(AIC3_NW_PROPERTY, AIC3_NW);
+                } catch (MsoPropertiesException e) {
+                    String error = "Unable to get properties:" + MSO_PROP_NETWORK_ADAPTER;
+                    LOGGER.error(MessageEnum.RA_CONFIG_EXC, error, "OpenStack", "", MsoLogger.ErrorCode.DataError, "Exception - Unable to get properties", e);
+                }
                 if (template.contains(aic3nw))
-                	aic3template = true;
+                    aic3template = true;
 
                 // Build the common set of HEAT template parameters
-                Map <String, Object> stackParams = populateNetworkParams (neutronNetworkType,
-                                                                          networkName,
-                                                                          physicalNetworkName,
-                                                                          vlans,
-                                                                          routeTargets,
-                                                                          shared,
-                                                                          external,
-                                                                          aic3template);
+                Map<String, Object> stackParams = populateNetworkParams(neutronNetworkType,
+                        networkName,
+                        physicalNetworkName,
+                        vlans,
+                        routeTargets,
+                        shared,
+                        external,
+                        aic3template);
 
                 // Validate (and update) the input parameters against the DB definition
                 // Shouldn't happen unless DB config is wrong, since all networks use same inputs
                 try {
-                    stackParams = heat.validateStackParams (stackParams, heatTemplate);
+                    stackParams = heat.validateStackParams(stackParams, heatTemplate);
                 } catch (IllegalArgumentException e) {
                     String error = "UpdateNetwork: Configuration Error: Network Type=" + networkType;
-                    LOGGER.error (MessageEnum.RA_CONFIG_EXC, "Network Type=" + networkType, "OpenStack", "", MsoLogger.ErrorCode.DataError, "Exception - UpdateNetwork: Configuration Error");
-                    alarmLogger.sendAlarm (MSO_CONFIGURATION_ERROR, MsoAlarmLogger.CRITICAL, error);
-                    LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.SchemaError, error);
-                    throw new NetworkException (error, MsoExceptionCategory.INTERNAL, e);
+                    LOGGER.error(MessageEnum.RA_CONFIG_EXC, "Network Type=" + networkType, "OpenStack", "", MsoLogger.ErrorCode.DataError, "Exception - UpdateNetwork: Configuration Error");
+                    alarmLogger.sendAlarm(MSO_CONFIGURATION_ERROR, MsoAlarmLogger.CRITICAL, error);
+                    LOGGER.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.SchemaError, error);
+                    throw new NetworkException(error, MsoExceptionCategory.INTERNAL, e);
                 }
 
                 if (subnets != null) {
                     try {
-                    	if (aic3template)
-                		{
-                			template = mergeSubnetsAIC3 (template, subnets, stackParams);
-                		}
-                		else
-                		{
-                			template = mergeSubnets (template, subnets);
-                		}
+                        if (aic3template) {
+                            template = mergeSubnetsAIC3(template, subnets, stackParams);
+                        } else {
+                            template = mergeSubnets(template, subnets);
+                        }
                     } catch (MsoException me) {
-                        me.addContext (UPDATE_NETWORK_CONTEXT);
+                        me.addContext(UPDATE_NETWORK_CONTEXT);
                         String error = "Update Network (heat): type " + neutronNetworkType
-                                       + " in "
-                                       + cloudSiteId
-                                       + "/"
-                                       + tenantId
-                                       + ": "
-                                       + me;
-                        LOGGER.error (MessageEnum.RA_UPDATE_NETWORK_ERR, neutronNetworkType.toString(), cloudSiteId, tenantId, "OpenStack", "", MsoLogger.ErrorCode.DataError, "Exception - UpdateNetwork mergeSubnets ", me);
-                        LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.InternalError, error);
-                        throw new NetworkException (me);
+                                + " in "
+                                + cloudSiteId
+                                + "/"
+                                + tenantId
+                                + ": "
+                                + me;
+                        LOGGER.error(MessageEnum.RA_UPDATE_NETWORK_ERR, neutronNetworkType.toString(), cloudSiteId, tenantId, "OpenStack", "", MsoLogger.ErrorCode.DataError, "Exception - UpdateNetwork mergeSubnets ", me);
+                        LOGGER.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.InternalError, error);
+                        throw new NetworkException(me);
                     }
                 }
 
                 if (policyFqdns != null && aic3template) {
                     try {
-                    	mergePolicyRefs (policyFqdns, stackParams);
+                        mergePolicyRefs(policyFqdns, stackParams);
                     } catch (MsoException me) {
-                        me.addContext (UPDATE_NETWORK_CONTEXT);
-                    	String error = "UpdateNetwork (heat) mergePolicyRefs type " + neutronNetworkType
-                                       + " in "
-                                       + cloudSiteId
-                                       + "/"
-                                       + tenantId
-                                       + ": "
-                                       + me;
-                        LOGGER.error (MessageEnum.RA_UPDATE_NETWORK_ERR, neutronNetworkType.toString(), cloudSiteId, tenantId, "OpenStack", "", MsoLogger.ErrorCode.DataError, "Exception - UpdateNetwork mergePolicyRefs", me);
-                        LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.InternalError, error);
-                        throw new NetworkException (me);
+                        me.addContext(UPDATE_NETWORK_CONTEXT);
+                        String error = "UpdateNetwork (heat) mergePolicyRefs type " + neutronNetworkType
+                                + " in "
+                                + cloudSiteId
+                                + "/"
+                                + tenantId
+                                + ": "
+                                + me;
+                        LOGGER.error(MessageEnum.RA_UPDATE_NETWORK_ERR, neutronNetworkType.toString(), cloudSiteId, tenantId, "OpenStack", "", MsoLogger.ErrorCode.DataError, "Exception - UpdateNetwork mergePolicyRefs", me);
+                        LOGGER.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.InternalError, error);
+                        throw new NetworkException(me);
                     }
-                }
-                
-                if (routeTableFqdns != null && !routeTableFqdns.isEmpty() && aic3template) {
-                    try {
-                        mergeRouteTableRefs (routeTableFqdns, stackParams);
-                    } catch (MsoException me) {
-                        me.addContext (UPDATE_NETWORK_CONTEXT);
-                    	String error = "UpdateNetwork (heat) mergeRouteTableRefs type " + neutronNetworkType
-                                       + " in "
-                                       + cloudSiteId
-                                       + "/"
-                                       + tenantId
-                                       + ": "
-                                       + me;
-                        LOGGER.error (MessageEnum.RA_UPDATE_NETWORK_ERR, neutronNetworkType.toString(), cloudSiteId, tenantId, "Openstack", "", MsoLogger.ErrorCode.DataError, "Exception - UpdateNetwork mergeRouteTableRefs", me);
-                        LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.InternalError, error);
-                        throw new NetworkException (me);
-                    }
-                }
-                
-                // Update the network stack
-                // Ignore MsoStackNotFound exception because we already checked.
-                long updateStackStarttime = System.currentTimeMillis ();
-                try {
-                    heatStack = heat.updateStack (cloudSiteId,
-                                                  tenantId,
-                                                  networkId,
-                                                  template,
-                                                  stackParams,
-                                                  true,
-                                                  heatTemplate.getTimeoutMinutes ());
-                    LOGGER.recordMetricEvent (updateStackStarttime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from Open Stack", "OpenStack", "UpdateStack", null);
-                } catch (MsoException me) {
-                    me.addContext (UPDATE_NETWORK_CONTEXT);
-                    String error = "Update Network: " + networkId + " in " + cloudSiteId + "/" + tenantId + ": " + me;
-                    LOGGER.recordMetricEvent (updateStackStarttime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.CommunicationError, error, "OpenStack", "UpdateStack", null);
-                    LOGGER.error (MessageEnum.RA_UPDATE_NETWORK_ERR, networkId, cloudSiteId, tenantId, "OpenStack", "", MsoLogger.ErrorCode.DataError, "Exception - update network", me);
-                    LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
-                    throw new NetworkException (me);
                 }
 
-                Map <String, Object> outputs = heatStack.getOutputs ();
-                Map <String, String> sMap = new HashMap <String, String> ();
+                if (routeTableFqdns != null && !routeTableFqdns.isEmpty() && aic3template) {
+                    try {
+                        mergeRouteTableRefs(routeTableFqdns, stackParams);
+                    } catch (MsoException me) {
+                        me.addContext(UPDATE_NETWORK_CONTEXT);
+                        String error = "UpdateNetwork (heat) mergeRouteTableRefs type " + neutronNetworkType
+                                + " in "
+                                + cloudSiteId
+                                + "/"
+                                + tenantId
+                                + ": "
+                                + me;
+                        LOGGER.error(MessageEnum.RA_UPDATE_NETWORK_ERR, neutronNetworkType.toString(), cloudSiteId, tenantId, "Openstack", "", MsoLogger.ErrorCode.DataError, "Exception - UpdateNetwork mergeRouteTableRefs", me);
+                        LOGGER.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.InternalError, error);
+                        throw new NetworkException(me);
+                    }
+                }
+
+                // Update the network stack
+                // Ignore MsoStackNotFound exception because we already checked.
+                long updateStackStarttime = System.currentTimeMillis();
+                try {
+                    heatStack = heat.updateStack(cloudSiteId,
+                            tenantId,
+                            networkId,
+                            template,
+                            stackParams,
+                            true,
+                            heatTemplate.getTimeoutMinutes());
+                    LOGGER.recordMetricEvent(updateStackStarttime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from Open Stack", "OpenStack", "UpdateStack", null);
+                } catch (MsoException me) {
+                    me.addContext(UPDATE_NETWORK_CONTEXT);
+                    String error = "Update Network: " + networkId + " in " + cloudSiteId + "/" + tenantId + ": " + me;
+                    LOGGER.recordMetricEvent(updateStackStarttime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.CommunicationError, error, "OpenStack", "UpdateStack", null);
+                    LOGGER.error(MessageEnum.RA_UPDATE_NETWORK_ERR, networkId, cloudSiteId, tenantId, "OpenStack", "", MsoLogger.ErrorCode.DataError, "Exception - update network", me);
+                    LOGGER.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
+                    throw new NetworkException(me);
+                }
+
+                Map<String, Object> outputs = heatStack.getOutputs();
+                Map<String, String> sMap = new HashMap<String, String>();
                 if (outputs != null) {
-                    for (String key : outputs.keySet ()) {
-                        if (key != null && key.startsWith ("subnet")) {
-                        	if (aic3template) //one subnet output expected
-                			{
-                				 Map <String, String> map = getSubnetUUId(key, outputs, subnets); 
-                				 sMap.putAll(map);
-                			}
-                			else //multiples subnet_%aaid% outputs allowed
-                			{
-                				String subnetUUId = (String) outputs.get(key); 
-                				sMap.put (key.substring("subnet_id_".length()), subnetUUId);
-                			}
+                    for (String key : outputs.keySet()) {
+                        if (key != null && key.startsWith("subnet")) {
+                            if (aic3template) //one subnet output expected
+                            {
+                                Map<String, String> map = getSubnetUUId(key, outputs, subnets);
+                                sMap.putAll(map);
+                            } else //multiples subnet_%aaid% outputs allowed
+                            {
+                                String subnetUUId = (String) outputs.get(key);
+                                sMap.put(key.substring("subnet_id_".length()), subnetUUId);
+                            }
                         }
                     }
                 }
@@ -1088,18 +1094,20 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 
                 // Reach this point if createStack is successful.
                 // Populate remaining rollback info and response parameters.
-                networkRollback.setNetworkStackId (heatStack.getCanonicalName ());
-                networkRollback.setNeutronNetworkId ((String) outputs.get (NETWORK_ID));
-                networkRollback.setNetworkType (networkType);
+                networkRollback.setNetworkStackId(heatStack.getCanonicalName());
+                networkRollback.setNeutronNetworkId((String) outputs.get(NETWORK_ID));
+                networkRollback.setNetworkType(networkType);
                 // Save previous parameters
-                networkRollback.setNetworkName (previousNetworkName);
-                networkRollback.setPhysicalNetwork (previousPhysicalNetwork);
-                networkRollback.setVlans (previousVlans);
+                networkRollback.setNetworkName(previousNetworkName);
+                networkRollback.setPhysicalNetwork(previousPhysicalNetwork);
+                networkRollback.setVlans(previousVlans);
 
                 rollback.value = networkRollback;
 
-                LOGGER.debug ("Network " + networkId + " successfully updated via HEAT");
+                LOGGER.debug("Network " + networkId + " successfully updated via HEAT");
             }
+        } finally {
+            db.close ();
         }
         LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully updated network");
         return;
@@ -1138,26 +1146,31 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 
         MavenLikeVersioning aicV = new MavenLikeVersioning();
 		aicV.setVersion(cloudSite.getAic_version());
-		if ((aicV.isMoreRecentThan(networkResource.getAicVersionMin()) || aicV.isTheSameVersion(networkResource.getAicVersionMin())) // aic >= min
-				&& (aicV.isTheSameVersion(networkResource.getAicVersionMax()) || !(aicV.isMoreRecentThan(networkResource.getAicVersionMax())))) //aic <= max
-		{
-			LOGGER.debug ("Network Type:" + networkType 
-				+   " VersionMin:" + networkResource.getAicVersionMin() 
-				+	" VersionMax:" + networkResource.getAicVersionMax() 
-				+	" supported on Cloud:" + cloudSite.getId()
-				+	" with AIC_Version:" + cloudSite.getAic_version());
-		}
-		else
-		{
-			String error = "Network Type:" + networkType
-					+ " Version_Min:" + networkResource.getAicVersionMin() 
-					+ " Version_Max:" + networkResource.getAicVersionMax() 
-					+ " not supported on Cloud:" + cloudSite.getId()
-					+ " with AIC_Version:"  + cloudSite.getAic_version();
-			LOGGER.error (MessageEnum.RA_CONFIG_EXC, error, "OpenStack", "", MsoLogger.ErrorCode.DataError, "Network Type not supported on Cloud");
-            LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataError, error);
-			throw new NetworkException (error, MsoExceptionCategory.USERDATA);
-		}
+		try {
+            if ((aicV.isMoreRecentThan(networkResource.getAicVersionMin()) || aicV.isTheSameVersion(networkResource.getAicVersionMin())) // aic >= min
+                    && (aicV.isTheSameVersion(networkResource.getAicVersionMax()) || !(aicV.isMoreRecentThan(networkResource.getAicVersionMax())))) //aic <= max
+            {
+                LOGGER.debug("Network Type:" + networkType
+                        + " VersionMin:" + networkResource.getAicVersionMin()
+                        + " VersionMax:" + networkResource.getAicVersionMax()
+                        + " supported on Cloud:" + cloudSite.getId()
+                        + " with AIC_Version:" + cloudSite.getAic_version());
+            } else {
+                String error = "Network Type:" + networkType
+                        + " Version_Min:" + networkResource.getAicVersionMin()
+                        + " Version_Max:" + networkResource.getAicVersionMax()
+                        + " not supported on Cloud:" + cloudSite.getId()
+                        + " with AIC_Version:" + cloudSite.getAic_version();
+                LOGGER.error(MessageEnum.RA_CONFIG_EXC, error, "OpenStack", "", MsoLogger.ErrorCode.DataError, "Network Type not supported on Cloud");
+                LOGGER.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataError, error);
+                throw new NetworkException(error, MsoExceptionCategory.USERDATA);
+            }
+        } catch (Exception e) {
+            String error = "Exception during Network version check";
+            LOGGER.error (MessageEnum.RA_GENERAL_EXCEPTION_ARG, e.getMessage(), "", "", MsoLogger.ErrorCode.DataError, error);
+
+            throw new NetworkException (error, MsoExceptionCategory.INTERNAL);
+        }
 
 
         // Validate the Network parameters.
@@ -1317,12 +1330,12 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             	for (String key : outputs.keySet ()) {
             		if (key != null && key.startsWith ("subnet_id_")) //multiples subnet_%aaid% outputs
             		{
-            			String subnetUUId = (String) outputs.get(key); 
+            			String subnetUUId = (String) outputs.get(key);
             			sMap.put (key.substring("subnet_id_".length()), subnetUUId);
             		}
             		else if (key != null && key.startsWith ("subnet")) //one subnet output expected
             		{
-            			Map <String, String> map = getSubnetUUId(key, outputs, null); 
+            			Map <String, String> map = getSubnetUUId(key, outputs, null);
             			sMap.putAll(map);
             		}
 
@@ -1425,7 +1438,11 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         // Will capture execution time for metrics
         long startTime = System.currentTimeMillis ();
 
-        try (CatalogDatabase db = getCatalogDb()) {
+        // Get a handle to the Catalog Database
+        CatalogDatabase db = getCatalogDB ();
+
+        // Make sure DB connection is always closed
+        try {
             if (isNullOrEmpty (cloudSiteId)
                             || isNullOrEmpty(tenantId)
                             || isNullOrEmpty(networkId)) {
@@ -1437,15 +1454,12 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 
             // Retrieve the Network Resource definition
             NetworkResource networkResource = db.getNetworkResource (networkType);
-            if (networkResource == null) {
-                String error = "Unknown Network Type: " + networkType;
-                LOGGER.error (MessageEnum.RA_UNKOWN_PARAM, "Network Type", networkType, "Openstack", "", MsoLogger.ErrorCode.DataError, "Unknown Network Type");
-                LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.BadRequest, error);
-                throw new NetworkException (error, MsoExceptionCategory.USERDATA);
-            }
-            LOGGER.debug ("Got Network definition from Catalog: " + networkResource.toString ());
+            String mode = "";
+            if (networkResource != null) {
+                LOGGER.debug ("Got Network definition from Catalog: " + networkResource.toString ());
 
-            String mode = networkResource.getOrchestrationMode ();
+                mode = networkResource.getOrchestrationMode ();
+            }
 
             if (NEUTRON_MODE.equals (mode)) {
 
@@ -1472,14 +1486,14 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                     LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
                     throw new NetworkException (me);
                 }
-            } else if ("HEAT".equals (mode)) {
+            } else { // DEFAULT to ("HEAT".equals (mode))
                 long deleteStackStarttime = System.currentTimeMillis ();
                 // Use MsoHeatUtils for all HEAT commands
                 MsoHeatUtils heat = new MsoHeatUtils (MSO_PROP_NETWORK_ADAPTER, msoPropertiesFactory,cloudConfigFactory);
 
                 try {
                     // The deleteStack function in MsoHeatUtils returns NOTFOUND if the stack was not found or if the stack was deleted.
-                    //  So query first to report back if stack WAS deleted or just NOTOFUND 
+                    //  So query first to report back if stack WAS deleted or just NOTOFUND
                 	StackInfo heatStack = null;
                 	heatStack = heat.queryStack(cloudSiteId, tenantId, networkId);
                 	if (heatStack != null && heatStack.getStatus() != HeatStatus.NOTFOUND)
@@ -1507,6 +1521,8 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                     throw new NetworkException (me);
                 }
             }
+        } finally {
+            db.close ();
         }
 
         // On success, nothing is returned.
@@ -1514,7 +1530,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         return;
     }
 
-    public CatalogDatabase getCatalogDb() {
+    public CatalogDatabase getCatalogDB() {
         return new CatalogDatabase();
     }
 
@@ -1551,20 +1567,20 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 
         // rollback may be null (e.g. if network already existed when Create was called)
         // Get a handle to the Catalog Database
+        CatalogDatabase db = getCatalogDB ();
 
-        try (CatalogDatabase db = getCatalogDb()){
+        // Make sure DB connection is always closed
+        try {
 
             // Retrieve the Network Resource definition
             NetworkResource networkResource = db.getNetworkResource (networkType);
-            if (networkResource == null) {
-                String error = "Rollback Network: Unknown Network Type: " + networkType;
-                LOGGER.error (MessageEnum.RA_UNKOWN_PARAM, "Network Type", networkType, "Openstack", "", MsoLogger.ErrorCode.DataError, "Rollback Network: Unknown Network Type");
-                LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.BadRequest, error);
-                throw new NetworkException (error, MsoExceptionCategory.USERDATA);
-            }
-            LOGGER.debug ("Got Network definition from Catalog: " + networkResource.toString ());
+            String mode = "";
+            if (networkResource != null) {
 
-            String mode = networkResource.getOrchestrationMode ();
+                LOGGER.debug ("Got Network definition from Catalog: " + networkResource.toString ());
+
+                mode = networkResource.getOrchestrationMode ();
+            }
 
             if (rollback.getNetworkCreated ()) {
                 // Rolling back a newly created network, so delete it.
@@ -1591,7 +1607,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                         LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
                         throw new NetworkException (me);
                     }
-                } else if ("HEAT".equals (mode)) {
+                } else { // DEFAULT to if ("HEAT".equals (mode))
                     // Use MsoHeatUtils for all HEAT commands
                     MsoHeatUtils heat = new MsoHeatUtils (MSO_PROP_NETWORK_ADAPTER, msoPropertiesFactory,cloudConfigFactory);
                     long deleteStackStarttime = System.currentTimeMillis ();
@@ -1615,7 +1631,9 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                         throw new NetworkException (me);
                     }
                 }
-            } 
+            }
+        } finally {
+            db.close ();
         }
         LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully rolled back network");
         return;
@@ -1710,9 +1728,9 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         }
         return stackParams;
     }
-    
 
-    
+
+
     /** policyRef_list structure in stackParams
     [
      {
@@ -1743,11 +1761,11 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 				prlist.add(pr);
 			}
 		}
-		
+
 		JsonNode node = null;
 		try
 		{
-			ObjectMapper mapper = new ObjectMapper(); 
+			ObjectMapper mapper = new ObjectMapper();
 			node = mapper.convertValue(prlist, JsonNode.class);
 			String jsonString = mapper.writeValueAsString(prlist);
 			LOGGER.debug("Json PolicyRefs Data:" + jsonString);
@@ -1778,9 +1796,9 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 		LOGGER.debug ("StackParams updated with policy refs");
 		return;
     }
-    
+
     private void mergeRouteTableRefs(List <String> rtFqdns, Map <String, Object> stackParams) throws MsoException {
-		
+
 		//update parameters
 		if (rtFqdns != null)
 		{
@@ -1801,7 +1819,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 		return;
     }
 
-    
+
     /*** Subnet Output structure from Juniper
      {
     "ipam_subnets": [
@@ -1909,13 +1927,13 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     		/* make these optional
                                + "      ip_version: %ipversion%\n"
                                + "      enable_dhcp: %enabledhcp%\n"
-                               + "      gateway_ip: %gatewayip%\n" 
+                               + "      gateway_ip: %gatewayip%\n"
                                + "      allocation_pools:\n"
                                + "       - start: %poolstart%\n"
                                + "         end: %poolend%\n";
 
     		 */
-    		
+
     		String outputTempl = "  subnet_id_%subnetId%:\n" + "    description: Openstack subnet identifier\n"
     				+ "    value: {get_resource: subnet_%subnetId%}\n";
 
@@ -1934,13 +1952,13 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     				LOGGER.error (MessageEnum.RA_MISSING_PARAM, error, "Openstack", "", MsoLogger.ErrorCode.DataError, "Missing Required AAI ID  for subnet in HEAT Template");
     				throw new MsoAdapterException (error);
     			}
-    			
+
     			if (subnet.getSubnetName () != null) {
     				curR = curR.replace ("%name%", subnet.getSubnetName ());
     			} else {
     				curR = curR.replace ("%name%", subnet.getSubnetId ());
     			}
-    			
+
     			if (subnet.getCidr () != null) {
     				curR = curR.replace ("%cidr%", subnet.getCidr ());
     			} else {
@@ -1957,11 +1975,11 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     			}
     			if (subnet.getGatewayIp () != null && !subnet.getGatewayIp ().isEmpty() ) {
     				curR = curR + "      gateway_ip: " + subnet.getGatewayIp () + "\n";
-    			}  	
+    			}
 
-    			if (subnet.getAllocationPools() != null) { 
+    			if (subnet.getAllocationPools() != null) {
     				curR = curR + "      allocation_pools:\n";
-    				for (Pool pool : subnet.getAllocationPools()) 
+    				for (Pool pool : subnet.getAllocationPools())
     				{
     					if (!isNullOrEmpty(pool.getStart()) && !isNullOrEmpty(pool.getEnd()))
     					{
@@ -2013,10 +2031,10 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     				for (Subnet subnet : subnets)
     				{
     					if ( subnet !=  null && !isNullOrEmpty(subnet.getSubnetName()))
-    					{		
+    					{
     						if (subnet.getSubnetName().equals(name))
     						{
-    							aaiId = subnet.getSubnetId(); 
+    							aaiId = subnet.getSubnetId();
     							break;
     						}
     					}

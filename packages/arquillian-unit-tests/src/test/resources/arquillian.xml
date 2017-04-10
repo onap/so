@@ -18,7 +18,7 @@
       <property name="definitionFormat">CUBE</property>
       <property name="dockerContainers">
          mso:
-           image: ecomp/mso-arquillian:${images.version}
+           image: openecomp/mso-arquillian:${images.version}
            beforeStop:
             - copy:
                    from: /opt/jboss/standalone/log/
@@ -45,7 +45,7 @@
              - mariadb:mariadb
              - jacoco-shared:jacoco-shared
          jacoco-shared:
-            image: ecomp/jacoco:1.0
+            image: openecomp/jacoco:1.0
             beforeStop:
              - copy:
                    from: /shared/jacoco-it.exec

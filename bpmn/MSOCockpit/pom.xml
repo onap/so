@@ -36,16 +36,16 @@
 			</plugin>
 		</plugins>
 	</build>
-
+	
 	<dependencies>
-
+		
 		<dependency>
 			<groupId>org.camunda.bpm.webapp</groupId>
 			<artifactId>camunda-webapp-jboss-standalone</artifactId>
 			<version>${camunda.version}</version>
 			<type>war</type>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>org.openecomp.mso</groupId>
 			<artifactId>common</artifactId>
@@ -61,6 +61,12 @@
 			<artifactId>MSOCoreBPMN</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+             <groupId>org.evosuite</groupId>
+             <artifactId>evosuite-standalone-runtime</artifactId>
+             <version>${evosuiteVersion}</version>
+             <scope>test</scope>
+        </dependency>
 	</dependencies>
-
+	
 </project>

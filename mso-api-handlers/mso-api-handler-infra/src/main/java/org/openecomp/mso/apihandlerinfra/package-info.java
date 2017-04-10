@@ -25,6 +25,6 @@
 // Generated on: 2015.01.08 at 03:50:12 PM EST 
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://ecomp.att.com/mso/request/types/v1", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://org.openecomp/mso/request/types/v1", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.openecomp.mso.apihandlerinfra;
 

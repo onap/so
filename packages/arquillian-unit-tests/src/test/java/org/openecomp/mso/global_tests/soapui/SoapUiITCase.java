@@ -86,11 +86,18 @@ public class SoapUiITCase {
 		return warArchive;
 	}
 	
-	@Deployment(name="gammaBPMN",testable=false)
-	public static Archive<?> createGammaBPMNDeployment () {
-		System.out.println("Deploying Gamma BPMN WAR on default server");
-		return ArquillianPackagerForITCases.createPackageFromExistingOne("../../bpmn/MSOGammaBPMN/target/", "MSOGammaBPMN*.war", "MSOGammaBPMN.war");
+	@Deployment(name="common-bpmn",testable=false)
+	public static Archive<?> createCommonBPMNDeployment () {
+		System.out.println("Deploying Common BPMN WAR on default server");
+		return ArquillianPackagerForITCases.createPackageFromExistingOne("../../bpmn/MSOCommonBPMN/target/", "MSOCommonBPMN*.war", "MSOCommonBPMN.war");
 	}
+	
+        @Deployment(name = "infrastructure-bpmn", testable = false)
+        public static Archive<?> createInfraBPMNDeployment() {
+            System.out.println("Deploying Infrastructure BPMN WAR on default server");
+            return ArquillianPackagerForITCases.createPackageFromExistingOne("../../bpmn/MSOInfrastructureBPMN/target/",
+                    "MSOInfrastructureBPMN*.war", "MSOInfrastructureBPMN.war");
+        }
 /*
     @Deployment(name = "SoapUIMocks", testable = false)
     public static Archive <?> createSoapUIMocksWarDeployment () {

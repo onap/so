@@ -1,7 +1,7 @@
 # OpenECOMP MSO
 
----
----
+----
+----
 
 # Introduction
 
@@ -196,7 +196,7 @@ Header: content-type: application/json
 +Authorization
 login/password BPELClient/password1$F
 
- {"createVfModuleRequest":{"messageId":"ec9537bb-c837-477f-86a5-21c717be96f1-1479156376597","skipAAI":true,"notificationUrl":"http://msobpel-app-st.ecomp.cci.att.com:8080/mso/vnfAdapterRestNotify","cloudSiteId":"RACKSPACE","tenantId":"1015548","vnfId":"5259ba4a-cf0d-4791-9c60-9117faa5cdea","vnfType":"vfw-service/VFWResource-1","vnfVersion":"1.0","vfModuleId":"7d8412bb-b288-44ff-92ef-723018f940fc","vfModuleName":"MSO_VFW_TEST","vfModuleType":"VF_RI1_VFW::module-1","volumeGroupId":"","volumeGroupStackId":"","baseVfModuleId":"","baseVfModuleStackId":"","requestType":"","failIfExists":true,"backout":true,"vfModuleParams":{"vf_module_name":"MSO_VFW_TEST","vnf_name":"vfw-service/VFWResource-1","vnf_id":"5259ba4a-cf0d-4791-9c60-9117faa5cdea","vf_module_id":"7d8412bb-b288-44ff-92ef-723018f940fc"},"msoRequest":{"requestId":"ec9537bb-c837-477f-86a5-21c717be96f1","serviceInstanceId":"369cdf85-1b61-41ff-b637-c6b7dd020326"},"synchronous":false}}
+ {"createVfModuleRequest":{"messageId":"ec9537bb-c837-477f-86a5-21c717be96f1-1479156376597","skipAAI":true,"notificationUrl":"http://bpmnhost:8080/mso/vnfAdapterRestNotify","cloudSiteId":"RACKSPACE","tenantId":"1015548","vnfId":"5259ba4a-cf0d-4791-9c60-9117faa5cdea","vnfType":"vfw-service/VFWResource-1","vnfVersion":"1.0","vfModuleId":"7d8412bb-b288-44ff-92ef-723018f940fc","vfModuleName":"MSO_VFW_TEST","vfModuleType":"VF_RI1_VFW::module-1","volumeGroupId":"","volumeGroupStackId":"","baseVfModuleId":"","baseVfModuleStackId":"","requestType":"","failIfExists":true,"backout":true,"vfModuleParams":{"vf_module_name":"MSO_VFW_TEST","vnf_name":"vfw-service/VFWResource-1","vnf_id":"5259ba4a-cf0d-4791-9c60-9117faa5cdea","vf_module_id":"7d8412bb-b288-44ff-92ef-723018f940fc"},"msoRequest":{"requestId":"ec9537bb-c837-477f-86a5-21c717be96f1","serviceInstanceId":"369cdf85-1b61-41ff-b637-c6b7dd020326"},"synchronous":false}}
 ```
 
 # Getting Help

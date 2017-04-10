@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,12 +30,18 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Base64;
 import java.util.Map;
+import java.util.Properties;
 import java.util.UUID;
 
 import org.openecomp.mso.logger.MsoLogger;
+import org.openecomp.mso.utils.UUIDChecker;
+import org.openecomp.mso.HealthCheckUtils;
 import org.openecomp.mso.logger.MessageEnum;
+import org.openecomp.mso.utils.CryptoUtils;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
 import javax.ws.rs.Path;
@@ -48,10 +54,14 @@ import org.camunda.bpm.engine.ProcessEngines;
 @Path("/")
 public class HealthCheckHandler  {
 
-	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
+    private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
     private static final String SITENAME = "mso.sitename";
     private static final String ADPTER_ENDPOINT = "mso.adapters.db.endpoint";
     private static final String CONFIG = "mso.bpmn.urn.properties";
+    private static final String PENGINE_PROPERTY = "processengine.properties";
+    private static final String PENGINE_PARAM = "processEngineName";
+    private static final String CREDENTIAL = "mso.adapters.db.auth";
+    private static final String MSOKEY = "mso.msoKey";
 
     private static final String CHECK_HTML = "<!DOCTYPE html><html><head><meta charset=\"ISO-8859-1\"><title>Health Check</title></head><body>Application ready</body></html>";
     private static final String NOT_FOUND = "<!DOCTYPE html><html><head><meta charset=\"ISO-8859-1\"><title>Application Not Started</title></head><body>Application not started. Properties file missing or invalid or database Connection failed</body></html>";
@@ -65,6 +75,59 @@ public class HealthCheckHandler  {
     public static final Response NOT_STARTED_RESPONSE = Response.status (HttpStatus.SC_SERVICE_UNAVAILABLE)
             .entity (NOT_FOUND)
             .build ();
+
+    @HEAD
+    @GET
+    @Path("/nodehealthcheck")
+    @Produces("text/html")
+    public Response nodeHealthcheck () {
+        MsoLogger.setServiceName ("NodeHealthcheck");
+        // Generate a Request Id
+        String requestId = UUIDChecker.generateUUID(msoLogger);
+
+        PropertyConfiguration propertyConfiguration = PropertyConfiguration.getInstance();
+        Map<String,String> props = propertyConfiguration.getProperties(CONFIG);
+
+        if (props == null) {
+
+            msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION, "BPMN", MsoLogger.getServiceName(),  MsoLogger.ErrorCode.AvailabilityError, "Unable to load " + CONFIG);
+
+            return NOT_STARTED_RESPONSE;
+        }
+
+        String siteName = props.get(SITENAME);
+        String endpoint = props.get(ADPTER_ENDPOINT);
+
+        if (null == siteName || siteName.length () == 0 || null == endpoint || endpoint.length () == 0) {
+
+            msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.DataError, "Unable to load key attributes (" + SITENAME + " or " + ADPTER_ENDPOINT + ") from the config file:" + CONFIG);
+
+            return NOT_STARTED_RESPONSE;
+        }
+
+        try {
+            if (!this.getSiteStatus (endpoint, siteName, props.get(CREDENTIAL), props.get(MSOKEY))) {
+                msoLogger.debug("This site is currently disabled for maintenance.");
+                return HEALTH_CHECK_NOK_RESPONSE;
+            }
+        } catch (Exception e) {
+
+            msoLogger.error(MessageEnum.GENERAL_EXCEPTION_ARG, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception while getting SiteStatus", e);
+
+            msoLogger.debug("Exception while getting SiteStatus");
+            return NOT_STARTED_RESPONSE;
+        }
+
+
+        HealthCheckUtils healthCheck = new HealthCheckUtils ();
+        if (healthCheck.verifyNodeHealthCheck(HealthCheckUtils.NodeType.BPMN, requestId)) {
+            msoLogger.debug("nodeHealthcheck - Successful");
+            return HealthCheckUtils.HEALTH_CHECK_RESPONSE;
+        } else {
+            msoLogger.debug("nodeHealthcheck - At leaset one of the sub-modules is not available.");
+            return  HealthCheckUtils.HEALTH_CHECK_NOK_RESPONSE;
+        }
+    }
 
     @HEAD
     @GET
@@ -95,7 +158,7 @@ public class HealthCheckHandler  {
         }
 
         try {
-            if (!this.getSiteStatus (endpoint, siteName)) {
+            if (!this.getSiteStatus (endpoint, siteName, props.get(CREDENTIAL), props.get(MSOKEY))) {
                 msoLogger.debug("This site is currently disabled for maintenance.");
                 return HEALTH_CHECK_NOK_RESPONSE;
             }
@@ -108,7 +171,13 @@ public class HealthCheckHandler  {
         }
 
         try {
-            ProcessEngines.getDefaultProcessEngine().getIdentityService().createGroupQuery().list();
+            InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(PENGINE_PROPERTY);
+            Properties prop = new Properties();
+            prop.load(stream);
+            String [] engineNames =  prop.getProperty(PENGINE_PARAM).split(",");
+            for (String engine : engineNames) {
+                ProcessEngines.getProcessEngine(engine).getIdentityService().createGroupQuery().list();
+            }
         } catch (final Exception e) {
 
             msoLogger.error(MessageEnum.GENERAL_EXCEPTION_ARG, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception while verifying Camunda engine", e);
@@ -144,8 +213,18 @@ public class HealthCheckHandler  {
         }
     }
 
-    private boolean getSiteStatus (String url, String site) throws Exception {
-        HttpResponse response;
+    private String decrypt(String encryptedString, String key){
+        try {
+            if (encryptedString != null || !encryptedString.isEmpty() && key != null && !key.isEmpty()) {
+                return CryptoUtils.decrypt(encryptedString, key);
+            }
+        } catch (Exception e) {
+            msoLogger.error(MessageEnum.GENERAL_EXCEPTION_ARG, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Failed to decrypt credentials", e);
+        }
+        return null;
+    }
+
+    private boolean getSiteStatus (String url, String site, String credential, String key) throws Exception {
         // set the connection timeout value to 30 seconds (30000 milliseconds)
         RequestConfig.Builder requestBuilder = RequestConfig.custom();
         requestBuilder = requestBuilder.setConnectTimeout(30000);
@@ -154,12 +233,17 @@ public class HealthCheckHandler  {
         builder.setDefaultRequestConfig (requestBuilder.build ());
 
         HttpPost post = new HttpPost(url);
+
+        String cred = decrypt(credential, key);
+        if (cred != null && !cred.isEmpty()) {
+            post.setHeader("Authorization", "Basic " + Base64.getEncoder().encodeToString(cred.getBytes()));
+        }
         msoLogger.debug("Post url is: " + url);
 
         //now create a soap request message as follows:
         final StringBuffer payload = new StringBuffer();
         payload.append("\n");
-        payload.append("<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:req=\"http://com.att.mso/requestsdb\">\n");
+        payload.append("<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:req=\"http://org.openecomp.mso/requestsdb\">\n");
         payload.append("<soapenv:Header/>\n");
         payload.append("<soapenv:Body>\n");
         payload.append("<req:getSiteStatus>\n");
@@ -173,31 +257,31 @@ public class HealthCheckHandler  {
         HttpEntity entity = new StringEntity(payload.toString(),"UTF-8");
         post.setEntity(entity);
 
-        try (CloseableHttpClient client = builder.build()) {
-            response = client.execute(post);
-            msoLogger.debug("Response received is:" + response);
+        CloseableHttpClient client = builder.build ();
+        HttpResponse response = client.execute(post);
+        msoLogger.debug("Response received is:" + response);
 
-            int statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode != 200) {
+        int statusCode = response.getStatusLine().getStatusCode();
+        if (statusCode != 200) {
 
-                msoLogger.error(MessageEnum.GENERAL_EXCEPTION_ARG, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.DataError,
-                        "Communication with DB Adapter failed, The response received from DB Adapter is with failed status code:" + statusCode);
+            msoLogger.error(MessageEnum.GENERAL_EXCEPTION_ARG, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.DataError,
+                    "Communication with DB Adapter failed, The response received from DB Adapter is with failed status code:" + statusCode);
 
-                Exception e = new Exception("Communication with DB Adapter failed");
-                throw e;
-            }
-            BufferedReader rd = new BufferedReader(
-                    new InputStreamReader(response.getEntity().getContent()));
-
-            StringBuffer result = new StringBuffer();
-            String line = "";
-            while ((line = rd.readLine()) != null) {
-                result.append(line);
-            }
-            msoLogger.debug("Content of the response is:" + result);
-            String status = result.substring(result.indexOf("<return>") + 8, result.indexOf("</return>"));
-
-            return Boolean.valueOf(status);
+            Exception e = new Exception("Communication with DB Adapter failed");
+            throw e;
         }
+        BufferedReader rd = new BufferedReader(
+                new InputStreamReader(response.getEntity().getContent()));
+
+        StringBuffer result = new StringBuffer();
+        String line = "";
+        while ((line = rd.readLine()) != null) {
+            result.append(line);
+        }
+        msoLogger.debug("Content of the response is:" + result);
+        String status = result.substring(result.indexOf("<return>") + 8, result.indexOf("</return>"));
+
+        client.close (); //shut down the connection
+        return Boolean.valueOf(status);
     }
 }

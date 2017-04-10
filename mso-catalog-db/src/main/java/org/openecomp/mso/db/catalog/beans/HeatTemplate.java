@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -46,9 +46,10 @@ public class HeatTemplate extends MavenLikeVersioning {
     private String asdcUuid;
     private String asdcResourceName;
     private String asdcLabel;
-    
+    private String artifactChecksum;
+
     private Timestamp created;
-    
+
     public enum TemplateStatus {
                                 PARENT, CHILD, PARENT_COMPLETE
     }
@@ -103,7 +104,7 @@ public class HeatTemplate extends MavenLikeVersioning {
     public void setParameters (Set <HeatTemplateParam> parameters) {
         this.parameters = parameters;
     }
-    
+
     public String getDescription() {
 		return description;
 	}
@@ -131,7 +132,7 @@ public class HeatTemplate extends MavenLikeVersioning {
         } catch (Exception e) {
             LOGGER.debug ("Error reading template file " + templatePath, e);
         }
-        
+
         return body;
     }
 
@@ -150,7 +151,7 @@ public class HeatTemplate extends MavenLikeVersioning {
 	public void setAsdcUuid(String asdcUuidp) {
 		this.asdcUuid = asdcUuidp;
 	}
-	    
+
     public String getAsdcResourceName() {
 		return asdcResourceName;
 	}
@@ -164,8 +165,15 @@ public class HeatTemplate extends MavenLikeVersioning {
 	public void setAsdcLabel(String asdcLabel) {
 		this.asdcLabel = asdcLabel;
 	}
-	
-	public Timestamp getCreated() {
+
+    public String getArtifactChecksum() {
+        return artifactChecksum;
+    }
+
+    public void setArtifactChecksum(String artifactChecksum) {
+        this.artifactChecksum = artifactChecksum;
+    }
+    public Timestamp getCreated() {
 		return created;
 	}
 
@@ -197,7 +205,7 @@ public class HeatTemplate extends MavenLikeVersioning {
         	sb.append (",created=");
         	sb.append (DateFormat.getInstance().format(created));
         }
-        
+
 
         if (parameters != null && !parameters.isEmpty ()) {
             sb.append (",params=[");

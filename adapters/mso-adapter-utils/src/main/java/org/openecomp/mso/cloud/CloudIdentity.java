@@ -1,32 +1,56 @@
-/*-
- * ============LICENSE_START=======================================================
- * OPENECOMP - MSO
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * ============LICENSE_START==========================================
+ * ===================================================================
+ * Copyright (c) 2017 AT&T Intellectual Property. All rights reserved.
+ * ===================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
+ * ============LICENSE_END============================================
+ *
+ * ECOMP and OpenECOMP are trademarks
+ * and service marks of AT&T Intellectual Property.
+ *
  */
 
 package org.openecomp.mso.cloud;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.security.GeneralSecurityException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.map.JsonSerializer;
+import org.codehaus.jackson.JsonGenerator;
+import org.codehaus.jackson.map.SerializerProvider;
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.codehaus.jackson.JsonProcessingException;
+
+import org.openecomp.mso.openstack.exceptions.MsoAdapterException;
 import org.openecomp.mso.openstack.exceptions.MsoException;
+import org.openecomp.mso.openstack.utils.MsoCommonUtils;
+import org.openecomp.mso.openstack.utils.MsoKeystoneUtils;
+import org.openecomp.mso.openstack.utils.MsoTenantUtils;
+import org.openecomp.mso.openstack.utils.MsoTenantUtilsFactory;
+import org.openecomp.mso.cloud.authentication.AuthenticationMethodFactory;
+import org.openecomp.mso.cloud.authentication.AuthenticationWrapper;
+import org.openecomp.mso.cloud.authentication.models.RackspaceAuthentication;
+import org.openecomp.mso.cloud.authentication.wrappers.RackspaceAPIKeyWrapper;
+import org.openecomp.mso.cloud.authentication.wrappers.UsernamePasswordWrapper;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
-import com.woorea.openstack.keystone.model.authentication.RackspaceAuthentication;
+
 import com.woorea.openstack.keystone.model.authentication.UsernamePassword;
 import org.openecomp.mso.utils.CryptoUtils;
 import com.woorea.openstack.keystone.model.Authentication;
@@ -43,11 +67,39 @@ import com.woorea.openstack.keystone.model.Authentication;
  */
 public class CloudIdentity {
 
+	// This block is needed to trigger the class loader so that static initialization
+	// of both inner static classes occur. This is required when the Json Deserializer
+	// gets called and no access to any of these inner classes happened yet.
+	static {
+		IdentityServerType.bootstrap();
+		IdentityAuthenticationType.bootstrap();
+	}
+	
     private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
-    
-    public enum IdentityServerType {KEYSTONE};
 
-    public enum IdentityAuthenticationType { USERNAME_PASSWORD, RACKSPACE_APIKEY };
+    public final static class IdentityServerType extends IdentityServerTypeAbstract {
+
+    	public static final IdentityServerType KEYSTONE = new IdentityServerType("KEYSTONE", MsoKeystoneUtils.class);
+
+    	public IdentityServerType(String serverType, Class<? extends MsoTenantUtils> utilsClass) {
+    		super(serverType, utilsClass);
+    	}
+
+		public static final void bootstrap() {}
+    }
+
+    public static final class IdentityAuthenticationType extends IdentityAuthenticationTypeAbstract {
+    	
+    	public static final IdentityAuthenticationType USERNAME_PASSWORD = new IdentityAuthenticationType("USERNAME_PASSWORD", UsernamePasswordWrapper.class);
+    	
+    	public static final IdentityAuthenticationType RACKSPACE_APIKEY = new IdentityAuthenticationType("RACKSPACE_APIKEY", RackspaceAPIKeyWrapper.class);
+    	
+    	public IdentityAuthenticationType(String identityType, Class<? extends AuthenticationWrapper> wrapperClass) {
+    		super(identityType, wrapperClass);
+    	}
+
+		public static final void bootstrap() {}
+    }
     
     @JsonProperty
     private String id;
@@ -64,8 +116,12 @@ public class CloudIdentity {
     @JsonProperty("tenant_metadata")
     private Boolean tenantMetadata;
     @JsonProperty("identity_server_type")
+    @JsonSerialize(using=IdentityServerTypeJsonSerializer.class)
+    @JsonDeserialize(using=IdentityServerTypeJsonDeserializer.class)
     private IdentityServerType identityServerType;
     @JsonProperty("identity_authentication_type")
+    @JsonSerialize(using=IdentityAuthenticationTypeJsonSerializer.class)
+    @JsonDeserialize(using=IdentityAuthenticationTypeJsonDeserializer.class)
     private IdentityAuthenticationType identityAuthenticationType;
     
     private static String cloudKey = "aa3871669d893c7fb8abbcda31b88b4f";
@@ -92,26 +148,34 @@ public class CloudIdentity {
     public String getKeystoneUrl (String regionId, String msoPropID) throws MsoException {
     	if (IdentityServerType.KEYSTONE.equals(this.identityServerType)) {
     		return this.identityUrl;
-    	}
-    	else {
-    		return null;
+    	} else {
+    		if (this.identityServerType == null) {
+    			return null;
+    		}
+    		MsoTenantUtils tenantUtils = new MsoTenantUtilsFactory(msoPropID).getTenantUtilsByServerType(this.identityServerType.toString());
+    		if (tenantUtils != null) {
+    			return tenantUtils.getKeystoneUrl(regionId, msoPropID, this);
+    		} else {
+    			return null;
+    		}
     	}
     }
     
     public Authentication getAuthentication () throws MsoException {
-    	if (IdentityAuthenticationType.RACKSPACE_APIKEY.equals(this.identityAuthenticationType)) {
-    		return new RackspaceAuthentication (this.getMsoId (),this.getMsoPass ());
+    	if (this.getIdentityAuthenticationType() != null) {
+			try {
+	    		return AuthenticationMethodFactory.getAuthenticationFor(this);
+			} catch (IllegalAccessException | InstantiationException | ClassNotFoundException | IOException | URISyntaxException e) {
+				throw new MsoAdapterException("Could not retrieve authentication for " + this.identityAuthenticationType, e);
+			}
+    	} else { // Fallback
+    		return new UsernamePassword(this.getMsoId(), this.getMsoPass());
     	}
-    	else {
-    		// Use default case
-    		return new UsernamePassword (this.getMsoId (),this.getMsoPass ());
-    	}
-    		
     }
 
     public void setKeystoneUrl (String url) {
     	if (IdentityServerType.KEYSTONE.equals(this.identityServerType)) {
-    		this.identityUrl = url;	
+    		this.identityUrl = url;
     	}
     }
     

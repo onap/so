@@ -36,15 +36,15 @@ import javax.xml.bind.annotation.XmlSeeAlso;
  *
  */
 //BPEL SDNCAdapter SOAP WebService - impl class in impl pkg
-@WebService(targetNamespace = "http://domain2.att.com/workflow/sdnc/adapter/wsdl/v1", name = "SDNCAdapterPortType")
+@WebService(targetNamespace = "http://org.openecomp/workflow/sdnc/adapter/wsdl/v1", name = "SDNCAdapterPortType")
 @XmlSeeAlso({ObjectFactory.class})
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
 public interface SDNCAdapterPortType {
 
-    @WebResult(name = "SDNCAdapterResponse", targetNamespace = "http://domain2.att.com/workflow/sdnc/adapter/schema/v1", partName = "SDNCAdapterResponse")
+    @WebResult(name = "SDNCAdapterResponse", targetNamespace = "http://org.openecomp/workflow/sdnc/adapter/schema/v1", partName = "SDNCAdapterResponse")
     @WebMethod(operationName = "SDNCAdapter")
     public SDNCAdapterResponse sdncAdapter(
-        @WebParam(partName = "SDNCAdapterRequest", name = "SDNCAdapterRequest", targetNamespace = "http://domain2.att.com/workflow/sdnc/adapter/schema/v1")
+        @WebParam(partName = "SDNCAdapterRequest", name = "SDNCAdapterRequest", targetNamespace = "http://org.openecomp/workflow/sdnc/adapter/schema/v1")
         SDNCAdapterRequest sdncAdapterRequest
     );
 

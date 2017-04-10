@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -173,11 +173,12 @@ public class VnfAdapterRest {
 		public void run() {
 			try {
 				String cloudsite = req.getCloudSiteId();
+				Holder<Map<String, String>> outputs = new Holder <Map <String, String>> ();
 				if (cloudsite != null && !cloudsite.equals(TESTING_KEYWORD)) {
 					//vnfAdapter.deleteVnf (req.getCloudSiteId(), req.getTenantId(), req.getVfModuleStackId(), req.getMsoRequest());
-					vnfAdapter.deleteVfModule (req.getCloudSiteId(), req.getTenantId(), req.getVfModuleStackId(), req.getMsoRequest());
+					vnfAdapter.deleteVfModule (req.getCloudSiteId(), req.getTenantId(), req.getVfModuleStackId(), req.getMsoRequest(), outputs);
 				}
-				response = new DeleteVfModuleResponse(req.getVnfId(), req.getVfModuleId(), Boolean.TRUE, req.getMessageId());
+				response = new DeleteVfModuleResponse(req.getVnfId(), req.getVfModuleId(), Boolean.TRUE, req.getMessageId(), outputs.value);
 			} catch (VnfException e) {
 				LOGGER.error (MessageEnum.RA_DELETE_VNF_ERR, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "VnfException - Delete VNF Module", e);
 				eresp = new VfModuleExceptionResponse(e.getMessage(), MsoExceptionCategory.INTERNAL, Boolean.TRUE, req.getMessageId());
@@ -365,7 +366,7 @@ public class VnfAdapterRest {
 					}
 					vnfRollback.value = new VnfRollback(req.getVnfId(), tenant, cloudsite,
 							true, false, new MsoRequest("reqid", "svcid"),
-							req.getVolumeGroupId(), req.getVolumeGroupId(), req.getRequestType());
+							req.getVolumeGroupId(), req.getVolumeGroupId(), req.getRequestType(), req.getModelCustomizationUuid());
 					vfModuleStackId.value = "479D3D8B-6360-47BC-AB75-21CC91981484";
 					outputs.value = VolumeAdapterRest.testMap();
 				} else {
@@ -392,6 +393,7 @@ public class VnfAdapterRest {
 						req.getRequestType(),
 						req.getVolumeGroupStackId(),
 						req.getBaseVfModuleStackId(),
+						req.getModelCustomizationUuid(),
 						req.getVfModuleParams(),
 						req.getFailIfExists(),
 						req.getBackout(),
@@ -496,7 +498,7 @@ public class VnfAdapterRest {
 						updateReq.getVfModuleParams(),
 						updateReq.getMsoRequest(),
 						outputs,
-						vnfRollback); 
+						vnfRollback);
 						*/
 				vnfAdapter.updateVfModule (req.getCloudSiteId(),
 						req.getTenantId(),
@@ -508,10 +510,11 @@ public class VnfAdapterRest {
 						req.getVolumeGroupStackId(),
 						req.getBaseVfModuleId(),
 						req.getVfModuleStackId(),
+						req.getModelCustomizationUuid(),
 						req.getVfModuleParams(),
 						req.getMsoRequest(),
 						outputs,
-						vnfRollback); 
+						vnfRollback);
 
 				response = new UpdateVfModuleResponse(req.getVnfId(), req.getVfModuleId(),
 						vfModuleStackId.value, outputs.value, req.getMessageId());
@@ -610,7 +613,7 @@ public class VnfAdapterRest {
 				VfModuleRollback vmr = req.getVfModuleRollback();
 				VnfRollback vrb = new VnfRollback(
 						vmr.getVfModuleStackId(), vmr.getTenantId(), vmr.getCloudSiteId(), true, true,
-						vmr.getMsoRequest(), null, null, null);
+						vmr.getMsoRequest(), null, null, null, null);
 				vnfAdapter.rollbackVnf (vrb);
 				response = new RollbackVfModuleResponse(Boolean.TRUE, req.getMessageId());
 			} catch (VnfException e) {

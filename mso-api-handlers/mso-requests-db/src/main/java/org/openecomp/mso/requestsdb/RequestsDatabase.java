@@ -36,13 +36,17 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.persister.entity.AbstractEntityPersister;
-
+import org.openecomp.mso.db.HibernateUtils;
+import org.openecomp.mso.requestsdb.HibernateUtilsRequestsDb;
 import org.openecomp.mso.logger.MsoLogger;
+import org.openecomp.mso.logger.MessageEnum;
 
 public class RequestsDatabase {
 
+    protected static HibernateUtils hibernateUtils = new HibernateUtilsRequestsDb ();
+    
     protected static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.GENERAL);
-
+    
     protected static final String         SOURCE                     = "source";
     protected static final String         START_TIME                 = "startTime";
     protected static final String         REQUEST_TYPE               = "requestType";
@@ -71,7 +75,7 @@ public class RequestsDatabase {
     }
 
     public static boolean healthCheck () {
-        Session session = HibernateUtil.getSessionFactory ().openSession ();
+        Session session = hibernateUtils.getSessionFactory ().openSession ();
         try {
             Query query = session.createSQLQuery (" show tables ");
 
@@ -89,7 +93,7 @@ public class RequestsDatabase {
     public static int updateInfraStatus (String requestId, String requestStatus, String lastModifiedBy) {
         long startTime = System.currentTimeMillis ();
         msoLogger.debug ("Update infra request record " + requestId + " with status " + requestStatus);
-        Session session = HibernateUtil.getSessionFactory ().openSession ();
+        Session session = hibernateUtils.getSessionFactory ().openSession ();
 
         int result = 0;
         try {
@@ -115,7 +119,7 @@ public class RequestsDatabase {
     public static int updateInfraStatus (String requestId, String requestStatus, long progress, String lastModifiedBy) {
         long startTime = System.currentTimeMillis ();
         msoLogger.debug ("Update infra request record " + requestId + " with status " + requestStatus);
-        Session session = HibernateUtil.getSessionFactory ().openSession ();
+        Session session = hibernateUtils.getSessionFactory ().openSession ();
 
         int result = 0;
         try {
@@ -142,7 +146,7 @@ public class RequestsDatabase {
     public static int updateInfraFinalStatus (String requestId, String requestStatus, String statusMessage, long progress, String responseBody, String lastModifiedBy) {
         long startTime = System.currentTimeMillis ();
         msoLogger.debug ("Update infra request record " + requestId + " with status " + requestStatus);
-        Session session = HibernateUtil.getSessionFactory ().openSession ();
+        Session session = hibernateUtils.getSessionFactory ().openSession ();
 
         int result = 0;
         try {
@@ -176,7 +180,7 @@ public class RequestsDatabase {
         
         List <InfraActiveRequests> results = new ArrayList<InfraActiveRequests>();
 
-        Session session = HibernateUtil.getSessionFactory ().openSession ();
+        Session session = hibernateUtils.getSessionFactory ().openSession ();
         try {
             session.beginTransaction ();
             Criteria crit = session.createCriteria (InfraActiveRequests.class);
@@ -201,7 +205,7 @@ public class RequestsDatabase {
         long startTime = System.currentTimeMillis ();
         msoLogger.debug ("Get request " + requestId + " from InfraActiveRequests DB");
 
-        Session session = HibernateUtil.getSessionFactory ().openSession ();
+        Session session = hibernateUtils.getSessionFactory ().openSession ();
         InfraActiveRequests ar = null;
         try {
             session.beginTransaction ();
@@ -318,7 +322,7 @@ public class RequestsDatabase {
         long startTime = System.currentTimeMillis ();
         msoLogger.debug ("Get list of infra requests from DB with " + queryAttributeName + " = " + queryValue);
 
-        Session session = HibernateUtil.getSessionFactory ().openSession ();
+        Session session = hibernateUtils.getSessionFactory ().openSession ();
         try {
             session.beginTransaction ();
             Criteria crit = session.createCriteria (InfraActiveRequests.class)
@@ -346,7 +350,7 @@ public class RequestsDatabase {
         long startTime = System.currentTimeMillis ();
         msoLogger.debug ("Get infra request from DB with id " + requestId);
 
-        Session session = HibernateUtil.getSessionFactory ().openSession ();
+        Session session = hibernateUtils.getSessionFactory ().openSession ();
         InfraActiveRequests ar = null;
         try {
             session.beginTransaction ();
@@ -370,7 +374,7 @@ public class RequestsDatabase {
         msoLogger.debug ("Get infra request from DB for VNF " + vnfName + " and action " + action + " and requestType " + requestType);
 
         InfraActiveRequests ar = null;
-        Session session = HibernateUtil.getSessionFactory ().openSession ();
+        Session session = hibernateUtils.getSessionFactory ().openSession ();
 
         try {
             session.beginTransaction ();
@@ -399,7 +403,7 @@ public class RequestsDatabase {
         msoLogger.debug ("Get list of infra requests from DB for VNF " + vnfId + " and action " + action);
 
         InfraActiveRequests ar = null;
-        Session session = HibernateUtil.getSessionFactory ().openSession ();
+        Session session = hibernateUtils.getSessionFactory ().openSession ();
 
         try {
             session.beginTransaction ();
@@ -433,7 +437,7 @@ public class RequestsDatabase {
      * @return SiteStatus object or null if none found
      */
     public static SiteStatus getSiteStatus (String siteName) {
-        Session session = HibernateUtil.getSessionFactory ().openSession ();
+        Session session = hibernateUtils.getSessionFactory ().openSession ();
 
         long startTime = System.currentTimeMillis ();
         SiteStatus siteStatus = null;
@@ -460,7 +464,7 @@ public class RequestsDatabase {
      * @param status The updated status of the Site
      */
     public static void updateSiteStatus (String siteName, boolean status) {
-        Session session = HibernateUtil.getSessionFactory ().openSession ();
+        Session session = hibernateUtils.getSessionFactory ().openSession ();
         session.beginTransaction ();
 
         long startTime = System.currentTimeMillis ();

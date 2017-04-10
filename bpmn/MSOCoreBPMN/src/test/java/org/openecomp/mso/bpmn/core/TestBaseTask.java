@@ -20,6 +20,8 @@
 
 package org.openecomp.mso.bpmn.core;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,8 +35,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import org.openecomp.mso.bpmn.test.CamundaDBSetup;
-import org.openecomp.mso.bpmn.test.PropertyConfigurationSetup;
 import org.openecomp.mso.logger.MsoLogger;
 
 /**
@@ -61,6 +61,7 @@ public class TestBaseTask {
 		variables.put("lastVisit", (Long)1438270117000L);
 
 		RuntimeService runtimeService = processEngineRule.getRuntimeService();
+		assertNotNull(runtimeService);
 		processEngineRule.getTaskService();
 		runtimeService.startProcessInstanceByKey("BaseTaskTest", variables);
 	}

@@ -60,9 +60,10 @@ import org.openecomp.mso.apihandlerinfra.vnfbeans.VnfRequest;
 import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.properties.MsoJavaProperties;
-import org.openecomp.mso.requestsdb.HibernateUtil;
+import org.openecomp.mso.db.HibernateUtils;
 import org.openecomp.mso.requestsdb.InfraActiveRequests;
 import org.openecomp.mso.requestsdb.RequestsDatabase;
+import org.openecomp.mso.requestsdb.HibernateUtilsRequestsDb;
 
 public class VnfMsoInfraRequest {
 
@@ -84,6 +85,8 @@ public class VnfMsoInfraRequest {
     private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH);
     private static final String NOT_PROVIDED = "not provided";
 
+    protected HibernateUtils hibernateUtils = new HibernateUtilsRequestsDb ();
+    
     VnfMsoInfraRequest (String requestId) {
         this.requestId = requestId;
         Calendar startTimeCalendar = Calendar.getInstance ();
@@ -278,7 +281,7 @@ public class VnfMsoInfraRequest {
         Session session = null;
         try {
 
-            session = HibernateUtil.getSessionFactory ().openSession ();
+            session = hibernateUtils.getSessionFactory ().openSession ();
             session.beginTransaction ();
 
             InfraActiveRequests aq = new InfraActiveRequests ();

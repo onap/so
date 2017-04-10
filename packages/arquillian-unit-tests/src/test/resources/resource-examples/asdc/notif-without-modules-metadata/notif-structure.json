@@ -3,12 +3,12 @@
     "serviceInvariantUUID": "585822c7-4027-4f84-ba50-e9248606f132",
     "serviceUUID": "1e34774e-715e-4fd5-bd09-7b654622f33e",
     "serviceVersion": "1.0",
-    "serviceArtifacts": 
+    "serviceArtifacts":
     [
- 
+
     ],
 
-    "resources": 
+    "resources":
     [
         {
             "resourceInstanceName": "wrong-resource-1",
@@ -17,9 +17,10 @@
             "resourceType": "VF",
             "resourceUUID": "585822c7-4027-4f84-ba50-e9248606f136",
             "resourceVersion": "1.0",
-            "artifacts": 
+            "category":  "category",
+            "artifacts":
             [
-               
+
                 {
                     "artifactChecksum": "CheckSum",
                     "artifactDescription": "Nimbus Heat OAM",
@@ -30,7 +31,7 @@
                     "artifactUUID": "Artifact-UUID1",
                     "artifactVersion": "1.0",
                     "generatedArtifact": "EnvArtifact-UUID2",
-                    "relatedArtifact": 
+                    "relatedArtifact":
                     [
                         "NestedArtifact-UUID3"
                     ]
@@ -45,7 +46,7 @@
                     "artifactURL": "hot-nimbus-oam_v1.0.env",
                     "artifactUUID": "EnvArtifact-UUID2",
                     "artifactVersion": "1.0"
-                  
+
                 },
 
                 {
@@ -57,7 +58,7 @@
                     "artifactURL": "nested-oam_v1.0.yaml",
                     "artifactUUID": "NestedArtifact-UUID3",
                     "artifactVersion": "1.0"
-          
+
                 }
             ]
         }

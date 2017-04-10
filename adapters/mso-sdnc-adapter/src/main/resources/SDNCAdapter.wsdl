@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
-	xmlns:sdncadaptersc="http://domain2.att.com/workflow/sdnc/adapter/schema/v1"
+	xmlns:sdncadaptersc="http://org.openecomp/workflow/sdnc/adapter/schema/v1"
 	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
-	xmlns:tns="http://domain2.att.com/workflow/sdnc/adapter/wsdl/v1"
+	xmlns:tns="http://org.openecomp/workflow/sdnc/adapter/wsdl/v1"
 	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-	targetNamespace="http://domain2.att.com/workflow/sdnc/adapter/wsdl/v1">
+	targetNamespace="http://org.openecomp/workflow/sdnc/adapter/wsdl/v1">
 	<types>
 		<schema xmlns="http://www.w3.org/2001/XMLSchema"
 			elementFormDefault="qualified"
-			targetNamespace="http://domain2.att.com/workflow/sdnc/adapter/wsdl/v1">
-			<import namespace="http://domain2.att.com/workflow/sdnc/adapter/schema/v1"
+			targetNamespace="http://org.openecomp/workflow/sdnc/adapter/wsdl/v1">
+			<import namespace="http://org.openecomp/workflow/sdnc/adapter/schema/v1"
 				schemaLocation="SDNCAdapterSchema.xsd" />
 		</schema>
 	</types>

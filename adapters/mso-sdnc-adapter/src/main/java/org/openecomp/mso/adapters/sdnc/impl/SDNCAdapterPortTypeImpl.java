@@ -35,7 +35,7 @@ import org.openecomp.mso.properties.MsoPropertiesException;
 import org.openecomp.mso.properties.MsoPropertiesFactory;
 
 //BPEL SDNCAdapter SOAP Web Service implementation
-@WebService(serviceName = "SDNCAdapterService", endpointInterface = "org.openecomp.mso.adapters.sdnc.SDNCAdapterPortType", targetNamespace = "http://domain2.att.com/workflow/sdnc/adapter/wsdl/v1")
+@WebService(serviceName = "SDNCAdapterService", endpointInterface = "org.openecomp.mso.adapters.sdnc.SDNCAdapterPortType", targetNamespace = "http://org.openecomp/workflow/sdnc/adapter/wsdl/v1")
 public class SDNCAdapterPortTypeImpl implements SDNCAdapterPortType {
 
 	private MsoPropertiesFactory msoPropertiesFactory=new MsoPropertiesFactory();

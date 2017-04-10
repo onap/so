@@ -19,7 +19,7 @@ http://host:port/adapters/rest/properties/show - Lists all the properties loaded
 	org.openecomp.mso.adapters.sdnc.bpelcauth=avosAdmin:jboss123
 	org.openecomp.mso.adapters.sdnc.sdncconnecttime=2000
 	org.openecomp.mso.adapters.sdnc.myurl=http://192.20.205.182:8380/adapters/rest/SDNCNotify
-	org.openecomp.mso.adapters.sdnc.sdncurl=https://odl.node01.it.app.sdn.labs.att.com:8443/restconf/operations/L3SDN-API:
+	org.openecomp.mso.adapters.sdnc.sdncurl=https://sdnchost:8443/restconf/operations/L3SDN-API:
 	org.openecomp.mso.adapters.sdnc.sdncauth=admin:admin
 	org.openecomp.mso.adapters.sdnc.bpelurl=http://NJCDTL21RA1926.ITServices.sbc.com:8088/mockSDNCCallbackAdapterSoapHttpBinding?wsdl
 	org.openecomp.mso.adapters.sdnc.sdncreadtime=5000

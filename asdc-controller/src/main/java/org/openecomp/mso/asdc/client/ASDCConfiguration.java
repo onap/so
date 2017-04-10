@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -75,8 +75,8 @@ public class ASDCConfiguration implements IConfiguration {
     public static final String HEAT_VOL="HEAT_VOL";
     public static final String OTHER="OTHER";
     public static final String VF_MODULES_METADATA="VF_MODULES_METADATA";
-    
-    
+
+
     private static final String[] SUPPORTED_ARTIFACT_TYPES = {HEAT,
     		HEAT_ARTIFACT,
     		HEAT_ENV,
@@ -84,10 +84,10 @@ public class ASDCConfiguration implements IConfiguration {
     		HEAT_NET,
     		HEAT_VOL,
     		OTHER,
-    		VF_MODULES_METADATA};   
-    
-    public static final List<String>  SUPPORTED_ARTIFACT_TYPES_LIST =  Collections.unmodifiableList(Arrays.asList(SUPPORTED_ARTIFACT_TYPES));   
-    
+    		VF_MODULES_METADATA};
+
+    public static final List<String>  SUPPORTED_ARTIFACT_TYPES_LIST =  Collections.unmodifiableList(Arrays.asList(SUPPORTED_ARTIFACT_TYPES));
+
     /**
      * Default constructor, the mso.properties is searched in the classpath (for testing)
      * Or in /etc/ecomp/mso/config/mso.properties
@@ -97,7 +97,7 @@ public class ASDCConfiguration implements IConfiguration {
      * @throws IOException If the key file has not been loaded properly
      */
     public ASDCConfiguration (String controllerName) throws ASDCParametersException, IOException {
-    	
+
         Properties keyProp = new Properties ();
         this.asdcControllerName = controllerName;
 
@@ -287,7 +287,7 @@ public class ASDCConfiguration implements IConfiguration {
             return 0;
         }
     }
-    
+
 	@Override
 	public boolean activateServerTLSAuth() {
 		JsonNode masterConfigNode = getASDCControllerConfigJsonNode();
@@ -413,6 +413,14 @@ public class ASDCConfiguration implements IConfiguration {
             throw new ASDCParametersException ("Unable to get the JSON Properties in cache:" + MSO_PROP_ASDC, e);
         }
 
+    }
+
+    /**
+     * The flag allows the client to receive metadata for all resources of the service regardless of the artifacts associated to them.
+     * Setting the flag to false will preserve legacy behavior.
+     */
+    public boolean isFilterInEmptyResources() {
+ 	   return true;
     }
 
 }

@@ -25,6 +25,6 @@
 // Generated on: 2015.09.03 at 02:02:13 PM EDT 
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://ecomp.att.com/mso/infra/vnf-request/v1", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://org.openecomp/mso/infra/vnf-request/v1", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.openecomp.mso.apihandlerinfra.vnfbeans;
 

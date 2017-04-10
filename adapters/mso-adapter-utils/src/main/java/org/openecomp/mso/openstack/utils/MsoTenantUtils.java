@@ -28,6 +28,7 @@ import java.util.Map;
 
 import org.openecomp.mso.cloud.CloudConfig;
 import org.openecomp.mso.cloud.CloudConfigFactory;
+import org.openecomp.mso.cloud.CloudIdentity;
 import org.openecomp.mso.logger.MsoAlarmLogger;
 import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.logger.MessageEnum;
@@ -75,5 +76,8 @@ public abstract class MsoTenantUtils extends MsoCommonUtils {
 
     public abstract boolean deleteTenant (String tenantId, String cloudSiteId) 
     		throws MsoException;
-    
+
+    public abstract String getKeystoneUrl (String regionId, String msoPropID, CloudIdentity cloudIdentity)
+    		throws MsoException;
+
 }

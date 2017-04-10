@@ -52,7 +52,7 @@ public class CamundaVIDRequest {
 	private CamundaInput requestId;
 	
 	@JsonProperty(CommonConstants.REQUEST_ID_HEADER)
-	private CamundaInput attMsoRequestId;
+	private CamundaInput msoRequestId;
 	
 	
 	@JsonProperty(CommonConstants.IS_BASE_VF_MODULE_VARIABLE)
@@ -122,13 +122,13 @@ public class CamundaVIDRequest {
 	}
 	
 	@JsonProperty(CommonConstants.REQUEST_ID_HEADER)
-	public CamundaInput getAttMsoRequestId() {
-		return attMsoRequestId;
+	public CamundaInput getMsoRequestId() {
+		return msoRequestId;
 	}
 
 	@JsonProperty(CommonConstants.REQUEST_ID_HEADER)
-	public void setAttMsoRequestId(CamundaInput attMsoRequestId) {
-		this.attMsoRequestId = attMsoRequestId;
+	public void setMsoRequestId(CamundaInput msoRequestIdp) {
+		this.msoRequestId = msoRequestIdp;
 	}
 	
 	@JsonProperty(CommonConstants.IS_BASE_VF_MODULE_VARIABLE)

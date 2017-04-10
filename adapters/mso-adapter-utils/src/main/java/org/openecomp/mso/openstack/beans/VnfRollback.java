@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,13 +42,14 @@ public class VnfRollback {
 	private String baseGroupHeatStackId;
 	private boolean isBase = false;
 	private String vfModuleStackId;
+	private String modelCustomizationUuid; //NOTE: this is the vfModule's modelCustomizationUuid
 
 	public VnfRollback() {}
-	
+
 	public VnfRollback(String vnfId, String tenantId, String cloudSiteId,
 			boolean tenantCreated, boolean vnfCreated,
 			MsoRequest msoRequest,
-			String volumeGroupName, String volumeGroupId, String requestType) {
+			String volumeGroupName, String volumeGroupId, String requestType, String modelCustomizationUuid) {
 		super();
 		this.vnfId = vnfId;
 		this.tenantId = tenantId;
@@ -59,6 +60,7 @@ public class VnfRollback {
 		this.volumeGroupName = volumeGroupName;
 		this.volumeGroupId = volumeGroupId;
 		this.requestType = requestType;
+		this.modelCustomizationUuid = modelCustomizationUuid;
 	}
 
 	public String getVnfId() {
@@ -122,14 +124,14 @@ public class VnfRollback {
 	public void setVolumeGroupHeatStackId(String volumeGroupHeatStackId) {
 		this.volumeGroupHeatStackId = volumeGroupHeatStackId;
 	}
-	
+
 	public String getBaseGroupHeatStackId() {
 		return this.baseGroupHeatStackId;
 	}
 	public void setBaseGroupHeatStackId(String baseGroupHeatStackId) {
 		this.baseGroupHeatStackId = baseGroupHeatStackId;
 	}
-	
+
 	public boolean isBase() {
 		return this.isBase;
 	}
@@ -142,11 +144,17 @@ public class VnfRollback {
 	public void setVfModuleStackId(String vfModuleStackId) {
 		this.vfModuleStackId = vfModuleStackId;
 	}
-
+	public String getModelCustomizationUuid() {
+		return this.modelCustomizationUuid;
+	}
+	public void setModelCustomizationUuid(String modelCustomizationUuid) {
+		this.modelCustomizationUuid = modelCustomizationUuid;
+	}
 	@Override
     public String toString() {
 		return "VnfRollback: cloud=" + cloudSiteId + ", tenant=" + tenantId +
 				", vnf=" + vnfId + ", tenantCreated=" + tenantCreated +
-				", vnfCreated=" + vnfCreated + ", requestType = " + requestType;
+				", vnfCreated=" + vnfCreated + ", requestType = " + requestType
+				+ ", modelCustomizationUuid=" + this.modelCustomizationUuid;
 	}
 }

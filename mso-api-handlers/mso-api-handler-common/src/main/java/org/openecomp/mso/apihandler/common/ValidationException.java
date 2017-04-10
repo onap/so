@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,12 +26,13 @@ public class ValidationException extends Exception {
     /**
      * This class simply extends Exception (without addition additional functionality)
      * to provide an identifier for RequestsDB related exceptions on create, delete, query.
-     * 
+     *
      *
      **/
 
     private static final long serialVersionUID = 1L;
     private static final String validationFailMessage = "No valid $ELEMENT is specified";
+    private static final String invalidElementMessage = "$ELEMENT is not valid in the $VERSION version";
 
     public ValidationException (String msg) {
         super (validationFailMessage.replaceAll ("\\$ELEMENT", msg));
@@ -40,5 +41,7 @@ public class ValidationException extends Exception {
     public ValidationException (String msg, Exception cause) {
         super (validationFailMessage.replaceAll ("\\$ELEMENT", msg), cause);
     }
-
+    public ValidationException(String msg, String version) {
+        super(invalidElementMessage.replaceAll("\\$ELEMENT", msg).replaceAll("\\$VERSION", version));
+    }
 }

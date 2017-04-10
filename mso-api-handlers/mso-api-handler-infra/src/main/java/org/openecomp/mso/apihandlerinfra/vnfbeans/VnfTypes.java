@@ -48,7 +48,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element ref="{http://ecomp.att.com/mso/infra/vnf-request/v1}vnf-type" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element ref="{http://org.openecomp/mso/infra/vnf-request/v1}vnf-type" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>

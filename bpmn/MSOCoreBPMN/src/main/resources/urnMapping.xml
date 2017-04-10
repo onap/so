@@ -32,12 +32,12 @@
 
 	<select id="selectAll" resultMap="urnMapping">
 		select NAME_, VALUE_, REV_
-		from ATT_URN_MAPPING
+		from MSO_URN_MAPPING
 	</select>
 
 	<select id="selectOne" resultMap="urnMapping">
 		select NAME_, VALUE_, REV_
-		from ATT_URN_MAPPING
+		from MSO_URN_MAPPING
 		where name = #{name}
 	</select>
 

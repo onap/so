@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,38 +36,39 @@ public class HeatFiles extends MavenLikeVersioning {
 	private String asdcUuid;
 	private String asdcLabel;
     private String asdcResourceName;
-	
+	private String artifactChecksum;
+
 	public HeatFiles() {}
-	
+
 	public int getId() {
 		return this.id;
 	}
-	
+
 	public void setId(int id) {
 		this.id = id;
 	}
-	
+
 	public String getDescription() {
 		return this.description;
 	}
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
 	public String getFileName() {
 		return this.fileName;
 	}
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
 	}
-	
+
 	public String getFileBody() {
 		return this.fileBody;
 	}
 	public void setFileBody(String fileBody) {
 		this.fileBody = fileBody;
 	}
-	
+
 	public int getVnfResourceId() {
 		return this.vnfResourceId;
 	}
@@ -82,7 +83,7 @@ public class HeatFiles extends MavenLikeVersioning {
 	public void setCreated(Timestamp created) {
 		this.created = created;
 	}
-	
+
 	public String getAsdcUuid() {
 		return this.asdcUuid;
 	}
@@ -101,6 +102,14 @@ public class HeatFiles extends MavenLikeVersioning {
 
 	public void setAsdcResourceName(String asdcResourceName) {
 		this.asdcResourceName = asdcResourceName;
+	}
+
+	public String getArtifactChecksum() {
+		return artifactChecksum;
+	}
+
+	public void setArtifactChecksum(String artifactChecksum) {
+		this.artifactChecksum = artifactChecksum;
 	}
 
 	@Override

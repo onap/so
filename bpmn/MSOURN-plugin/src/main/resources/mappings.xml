@@ -27,6 +27,6 @@
 		<setting name="lazyLoadingEnabled" value="false" />
 	</settings>
 	<mappers>
-        <mapper resource="com/att/camunda/bpm/plugin/urnmap/queries/urnMap.xml" />
+        <mapper resource="org/openecomp/camunda/bpm/plugin/urnmap/queries/urnMap.xml" />
 	</mappers>
 </configuration>

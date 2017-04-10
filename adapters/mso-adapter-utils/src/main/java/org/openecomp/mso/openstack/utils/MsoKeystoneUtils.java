@@ -454,10 +454,6 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
             LOGGER.error(MessageEnum.IDENTITY_SERVICE_NOT_FOUND, region, cloudIdentity.getId(), "Openstack", "", MsoLogger.ErrorCode.DataError, "Exception in findEndpointURL");
             throw new MsoAdapterException (error, e);
         }
-        // The following is needed for the MT lab.
-        if ("MT".equals (cloudSite.getId ())) {
-            adminUrl = adminUrl.replace ("controller", "mtdnj02bh01wt.bvoip.labs.att.com");
-        }
 
         // A new Keystone object is required for the new URL. Use the auth token from above.
         // Note: this doesn't go back to Openstack, it's just a local object.
@@ -681,4 +677,9 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
     public static void adminCacheReset () {
         adminClientCache = new HashMap <String, KeystoneCacheEntry> ();
     }
+
+	@Override
+	public String getKeystoneUrl(String regionId, String msoPropID, CloudIdentity cloudIdentity) throws MsoException {
+		return cloudIdentity.getIdentityUrl();
+	}
 }

@@ -42,7 +42,7 @@ import org.openecomp.mso.logger.MessageEnum;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element ref="{http://domain2.att.com/workflow/sdnc/adapter/schema/v1}CallbackHeader"/>
+ *         &lt;element ref="{http://org.openecomp/workflow/sdnc/adapter/schema/v1}CallbackHeader"/>
  *         &lt;element name="RequestData" type="{http://www.w3.org/2001/XMLSchema}anyType"/>
  *       &lt;/sequence>
  *     &lt;/restriction>

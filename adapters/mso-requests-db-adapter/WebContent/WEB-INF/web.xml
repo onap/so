@@ -56,6 +56,17 @@
 	<param-value>true</param-value>
   </context-param>
 
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>SoapRequests</web-resource-name>
+            <description>Soap Ingress Requests</description>
+            <url-pattern>/RequestsDbAdapter</url-pattern>
+            <http-method>POST</http-method>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>BPEL-Client</role-name>
+        </auth-constraint>
+    </security-constraint>
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>SiteStatus</web-resource-name>

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,6 +21,7 @@
 package org.openecomp.mso.apihandlerinfra.serviceinstancebeans;
 
 import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_DEFAULT)
 public class RequestInfo {
@@ -33,15 +34,17 @@ public class RequestInfo {
     protected Integer orderVersion;
     protected String source;
     protected String instanceName;
+    @JsonSerialize(include=Inclusion.ALWAYS)
     protected boolean suppressRollback;
+    protected String requestorId;
 
     /**
      * Gets the value of the callbackUrl property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getCallbackUrl() {
         return callbackUrl;
@@ -49,11 +52,11 @@ public class RequestInfo {
 
     /**
      * Sets the value of the callbackUrl property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCallbackUrl(String value) {
         this.callbackUrl = value;
@@ -61,11 +64,11 @@ public class RequestInfo {
 
     /**
      * Gets the value of the correlator property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getCorrelator() {
         return correlator;
@@ -73,11 +76,11 @@ public class RequestInfo {
 
     /**
      * Sets the value of the correlator property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCorrelator(String value) {
         this.correlator = value;
@@ -85,11 +88,11 @@ public class RequestInfo {
 
     /**
      * Gets the value of the orderNumber property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getOrderNumber() {
         return orderNumber;
@@ -97,11 +100,11 @@ public class RequestInfo {
 
     /**
      * Sets the value of the orderNumber property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setOrderNumber(String value) {
         this.orderNumber = value;
@@ -109,11 +112,11 @@ public class RequestInfo {
 
     /**
      * Gets the value of the orderVersion property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getOrderVersion() {
         return orderVersion;
@@ -121,11 +124,11 @@ public class RequestInfo {
 
     /**
      * Sets the value of the orderVersion property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setOrderVersion(Integer value) {
         this.orderVersion = value;
@@ -133,11 +136,11 @@ public class RequestInfo {
 
     /**
      * Gets the value of the source property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSource() {
         return source;
@@ -145,11 +148,11 @@ public class RequestInfo {
 
     /**
      * Sets the value of the source property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSource(String value) {
         this.source = value;
@@ -179,13 +182,36 @@ public class RequestInfo {
 		this.productFamilyId = productFamilyId;
 	}
 
-	public boolean isSuppressRollback() {
+	/**
+	 * Required for Marshalers to send the fields.
+	 * @return
+	 */
+	public boolean getSuppressRollback() {
 		return suppressRollback;
 	}
 
 	public void setSuppressRollback(boolean suppressRollback) {
 		this.suppressRollback = suppressRollback;
 	}
-	
+
+	public String getRequestorId() {
+		return requestorId;
+	}
+
+	public void setRequestorId(String requestorId) {
+		this.requestorId = requestorId;
+	}
+
+	@Override
+	public String toString() {
+		return "RequestInfo [billingAccountNumber=" + billingAccountNumber
+				+ ", callbackUrl=" + callbackUrl + ", correlator=" + correlator
+				+ ", orderNumber=" + orderNumber + ", productFamilyId="
+				+ productFamilyId + ", orderVersion=" + orderVersion
+				+ ", source=" + source + ", instanceName=" + instanceName
+				+ ", suppressRollback=" + suppressRollback + ", requestorId="
+				+ requestorId + "]";
+	}
+
 
 }

@@ -41,7 +41,7 @@ import org.openecomp.mso.adapters.sdnc.impl.Utils;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element ref="{http://domain2.att.com/workflow/sdnc/adapter/schema/v1}RequestHeader"/>
+ *         &lt;element ref="{http://org.openecomp/workflow/sdnc/adapter/schema/v1}RequestHeader"/>
  *         &lt;element name="RequestData" type="{http://www.w3.org/2001/XMLSchema}anyType"/>
  *       &lt;/sequence>
  *     &lt;/restriction>

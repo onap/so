@@ -425,10 +425,6 @@ public class MsoNeutronUtils extends MsoCommonUtils
 			alarmLogger.sendAlarm("MsoConfigurationError", MsoAlarmLogger.CRITICAL, error);
 			throw new MsoAdapterException (error, e);
 		}
-		// This is needed for testing in the MT cloud
-		if (cloudId.equals("MT")) {
-            neutronUrl = neutronUrl.replace("controller", "mtdnj02bh01wt.bvoip.labs.att.com");
-        }
 
 		Quantum neutronClient = new Quantum(neutronUrl);
 		neutronClient.token(access.getToken().getId());

@@ -4,7 +4,7 @@
   <welcome-file-list>
     <welcome-file>check.html</welcome-file>
   </welcome-file-list>
-  
+
   <context-param>
 	<param-name>resteasy.jndi.resources</param-name>
 	<param-value>java:module/MsoPropertiesFactory,java:module/CloudConfigFactory</param-value>
@@ -23,7 +23,7 @@
   </context-param>
   <context-param>
     <param-name>resteasy.resources</param-name>
-    <param-value>org.openecomp.mso.logger.MsoLoggingServlet,org.openecomp.mso.adapters.sdnc.notify.SDNCNotifyResource,org.openecomp.mso.adapters.sdnc.impl.SDNCAdapterRestImpl,org.openecomp.mso.MsoStatusHandler</param-value>
+    <param-value>org.openecomp.mso.logger.MsoLoggingServlet,org.openecomp.mso.adapters.sdnc.notify.SDNCNotifyResource,org.openecomp.mso.adapters.sdnc.impl.SDNCAdapterRestImpl,org.openecomp.mso.MsoStatusHandler,org.openecomp.mso.adapters.sdnc.sdncrest.SNIROResponse,org.openecomp.mso.adapters.sdnc.sdncrest.SDNCAdapterRest</param-value>
   </context-param>
   <context-param>
     <param-name>resteasy.servlet.mapping.prefix</param-name>
@@ -78,6 +78,7 @@
             <web-resource-name>SDNCNotification</web-resource-name>
             <description>Rest Async Notification from SDNC</description>
             <url-pattern>/rest/SDNCNotify</url-pattern>
+            <url-pattern>/rest/SDNCNotify/*</url-pattern>
             <http-method>POST</http-method>
         </web-resource-collection>
         <auth-constraint>
@@ -86,9 +87,10 @@
     </security-constraint>
     <security-constraint>
         <web-resource-collection>
-            <web-resource-name>SoapRequests</web-resource-name>
+            <web-resource-name>SDNCRequests</web-resource-name>
             <description>Soap Ingress Requests</description>
             <url-pattern>/SDNCAdapter</url-pattern>
+            <url-pattern>/rest/v1/sdnc/*</url-pattern>
             <http-method>POST</http-method>
         </web-resource-collection>
         <auth-constraint>
