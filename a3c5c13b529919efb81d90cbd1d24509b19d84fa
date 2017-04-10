@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da141535_58f3940a",
+        "filename": "packages/docker/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5
+      },
+      "writtenOn": "2017-04-10T13:08:59Z",
+      "side": 1,
+      "message": "keep onap on URLs",
+      "revId": "a3c5c13b529919efb81d90cbd1d24509b19d84fa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da141535_78ee5824",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5
+      },
+      "writtenOn": "2017-04-10T13:08:59Z",
+      "side": 1,
+      "message": "openstack version should be 1.1.0",
+      "revId": "a3c5c13b529919efb81d90cbd1d24509b19d84fa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da141535_b88cf080",
+        "filename": "readme.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5
+      },
+      "writtenOn": "2017-04-10T13:08:59Z",
+      "side": 1,
+      "message": "rebase with current readme (onap changes)",
+      "revId": "a3c5c13b529919efb81d90cbd1d24509b19d84fa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da141535_98e92c1d",
+        "filename": "version.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5
+      },
+      "writtenOn": "2017-04-10T13:08:59Z",
+      "side": 1,
+      "message": "keep 1.1.0 on LF",
+      "revId": "a3c5c13b529919efb81d90cbd1d24509b19d84fa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
