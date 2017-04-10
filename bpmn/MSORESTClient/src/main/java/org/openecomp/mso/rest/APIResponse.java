@@ -21,6 +21,7 @@
 package org.openecomp.mso.rest;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
@@ -44,7 +45,7 @@ public class APIResponse {
      * @param httpResponse used to create headers
      * @return http headers
      */
-    private HttpHeader[] buildHeaders(final HttpResponse httpResponse) {
+    private static HttpHeader[] buildHeaders(final HttpResponse httpResponse) {
         final Header[] headers = httpResponse.getAllHeaders();
 
         HttpHeader[] httpHeaders = new HttpHeader[headers.length];
@@ -102,7 +103,12 @@ public class APIResponse {
      * @return http response body
      */
     public byte[] getResponseBodyAsByteArray() {
-        return this.responseBody;
+        // avoid exposing internals, create copy
+        if (this.responseBody != null) {
+            return Arrays.copyOf(this.responseBody, this.responseBody.length);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -125,11 +131,7 @@ public class APIResponse {
      */
     public HttpHeader[] getAllHeaders() {
         // avoid exposing internals, create copy
-        HttpHeader[] copy = new HttpHeader[this.headers.length];
-        for (int i = 0; i < this.headers.length; ++i) {
-            copy[i] = headers[i];
-        }
-        return copy;
+        return Arrays.copyOf(this.headers, this.headers.length);
     }
 
     public String getFirstHeader(String name) {
