@@ -22,6 +22,8 @@ package org.openecomp.mso.apihandlerinfra;
 
 
 
+import java.util.Arrays;
+
 import org.openecomp.mso.properties.MsoJavaProperties;
 
 public class InfraUtils {
@@ -29,27 +31,12 @@ public class InfraUtils {
 		 // Check for allowable actions
         String actionsPropertyName = requestType + "." + version + ".ApiAllowableActions";
         String allowableActions = props.getProperty(actionsPropertyName, null);
-        boolean actionAllowed = false;
-        if (allowableActions != null) {
-        	String allowableActionsList[] = allowableActions.split(",");
-        	for (int i=0; i<allowableActionsList.length; i++) {        		
-        		if (action.equals (allowableActionsList[i])) {
-        			actionAllowed = true;
-        			break;
-        		}
-        	}
-        }
-        else {
-        	actionAllowed = true;
-        }
-        return actionAllowed;
+        return allowableActions == null || Arrays.asList(allowableActions.split(",")).contains(action);
 	}
 	
 	// Checks if the name is acceptable for heat stack
 	public static boolean isValidHeatName(String name) {
-		if (name.matches("^[a-zA-Z][a-zA-Z0-9_\\.-]*$"))
-			return true;
-		return false;
+		return name.matches("^[a-zA-Z][a-zA-Z0-9_\\.-]*$");
 	}
 	
 	
