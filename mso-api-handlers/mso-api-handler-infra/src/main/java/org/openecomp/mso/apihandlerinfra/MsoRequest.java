@@ -25,7 +25,6 @@ import java.io.StringWriter;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -116,16 +115,14 @@ public class MsoRequest {
 
     MsoRequest (String requestId) {
         this.requestId = requestId;
-        Calendar startTimeCalendar = Calendar.getInstance ();
-        this.startTime = startTimeCalendar.getTimeInMillis ();
+        this.startTime = System.currentTimeMillis();
         MsoLogger.setLogContext (requestId, null);
 
     } 
     
     MsoRequest () {
 
-        Calendar startTimeCalendar = Calendar.getInstance ();
-        this.startTime = startTimeCalendar.getTimeInMillis ();
+        this.startTime = System.currentTimeMillis();
         MsoLogger.setLogContext (requestId, null);
 
     }
@@ -522,7 +519,7 @@ public class MsoRequest {
             aq.setRequestAction(action.name());
             aq.setAction(action.name());
             
-            Timestamp startTimeStamp = new Timestamp (Calendar.getInstance ().getTimeInMillis ());
+            Timestamp startTimeStamp = new Timestamp (System.currentTimeMillis());
             
             aq.setStartTime (startTimeStamp);
                       
@@ -625,8 +622,7 @@ public class MsoRequest {
                 aq.setResponseBody (this.responseBody);
                 aq.setProgress(new Long(100));
 
-                Calendar endTime = Calendar.getInstance ();
-                Timestamp endTimeStamp = new Timestamp (endTime.getTimeInMillis ());
+                Timestamp endTimeStamp = new Timestamp (System.currentTimeMillis());
                 aq.setEndTime (endTimeStamp);
             }
  

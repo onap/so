@@ -1096,12 +1096,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
                 return true;
             }
 
-            Calendar now = Calendar.getInstance ();
-            if (now.after (expires)) {
-                return true;
-            }
-
-            return false;
+            return System.currentTimeMillis() > expires.getTimeInMillis();
         }
     }
 

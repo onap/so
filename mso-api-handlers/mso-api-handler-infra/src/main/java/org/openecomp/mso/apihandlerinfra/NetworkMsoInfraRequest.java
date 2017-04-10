@@ -24,7 +24,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 import javax.ws.rs.core.Response;
@@ -82,8 +81,7 @@ public class NetworkMsoInfraRequest {
 
     NetworkMsoInfraRequest (String requestId) {
         this.requestId = requestId;
-        Calendar startTimeCalendar = Calendar.getInstance ();
-        this.startTime = startTimeCalendar.getTimeInMillis ();
+        this.startTime = System.currentTimeMillis();
         MsoLogger.setLogContext (requestId, null);
 
     }
@@ -260,7 +258,7 @@ public class NetworkMsoInfraRequest {
             InfraActiveRequests aq = new InfraActiveRequests ();
             aq.setRequestId (requestId);
 
-            Timestamp startTimeStamp = new Timestamp (Calendar.getInstance ().getTimeInMillis ());
+            Timestamp startTimeStamp = new Timestamp (System.currentTimeMillis());
             if (rinfo != null) {
                 if (rinfo.getAction () != null) {
                     aq.setAction (rinfo.getAction ().value ());
@@ -320,8 +318,7 @@ public class NetworkMsoInfraRequest {
                 aq.setStatusMessage (this.errorMessage);
                 aq.setResponseBody (this.responseBody);
 
-                Calendar endTime = Calendar.getInstance ();
-                Timestamp endTimeStamp = new Timestamp (endTime.getTimeInMillis ());
+                Timestamp endTimeStamp = new Timestamp (System.currentTimeMillis());
                 aq.setEndTime (endTimeStamp);                
             } 
             aq.setProgress (this.progress);

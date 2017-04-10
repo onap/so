@@ -22,7 +22,6 @@ package org.openecomp.mso.requestsdb;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -98,8 +97,7 @@ public class RequestsDatabase {
             query.setParameter ("requestStatus", requestStatus);
             query.setParameter (REQUEST_ID, requestId);
             query.setParameter ("lastModifiedBy", lastModifiedBy);
-            Calendar modifyTime = Calendar.getInstance ();
-            Timestamp modifyTimeStamp = new Timestamp (modifyTime.getTimeInMillis ());
+            Timestamp modifyTimeStamp = new Timestamp (System.currentTimeMillis());
             query.setParameter ("modifyTime", modifyTimeStamp);
             result = query.executeUpdate ();
             session.getTransaction ().commit ();
@@ -125,8 +123,7 @@ public class RequestsDatabase {
             query.setParameter (REQUEST_ID, requestId);
             query.setParameter ("progress", progress);
             query.setParameter ("lastModifiedBy", lastModifiedBy);
-            Calendar modifyTime = Calendar.getInstance ();
-            Timestamp modifyTimeStamp = new Timestamp (modifyTime.getTimeInMillis ());
+            Timestamp modifyTimeStamp = new Timestamp (System.currentTimeMillis());
             query.setParameter ("modifyTime", modifyTimeStamp);
             result = query.executeUpdate ();
             session.getTransaction ().commit ();
@@ -150,8 +147,7 @@ public class RequestsDatabase {
             Query query = session.createQuery ("update InfraActiveRequests set requestStatus = :requestStatus, statusMessage = :statusMessage, progress = :progress, endTime = :endTime, responseBody = :responseBody, lastModifiedBy = :lastModifiedBy where id.requestId = :requestId ");
             query.setParameter ("requestStatus", requestStatus);
             query.setParameter ("requestId", requestId);
-            Calendar endTime = Calendar.getInstance ();
-            Timestamp endTimeStamp = new Timestamp (endTime.getTimeInMillis ());
+            Timestamp endTimeStamp = new Timestamp (System.currentTimeMillis());
             query.setParameter ("endTime", endTimeStamp);
             query.setParameter ("statusMessage", statusMessage);
             query.setParameter ("progress", progress);
