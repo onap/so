@@ -104,7 +104,7 @@
 
 					<images>
 						<image>
-							<name>openecomp/jacoco:1.0</name>
+							<name>onap/jacoco:1.0</name>
 							<alias>jacoco</alias>
 							<build>
 								<cleanup>try</cleanup>
@@ -114,7 +114,7 @@
 							</build>
 						</image>
 						<image>
-							<name>openecomp/ubuntu-update:1.0</name>
+							<name>onap/ubuntu-update:1.0</name>
 							<alias>ubuntu-update</alias>
 							<build>
 
@@ -125,7 +125,7 @@
 							</build>
 						</image>
 						<image>
-							<name>openecomp/wildfly:1.0</name>
+							<name>onap/wildfly:1.0</name>
 							<alias>wildfly</alias>
 							<build>
 
@@ -136,7 +136,7 @@
 							</build>
 						</image>
 						<image>
-							<name>openecomp/mso-arquillian:%l</name>
+							<name>onap/mso-arquillian:%l</name>
 							<alias>mso-arquillian</alias>
 							<build>
 								<tags>
@@ -150,7 +150,7 @@
 							</build>
 						</image>
 						<image>
-							<name>openecomp/mso:%l</name>
+							<name>onap/mso:%l</name>
 							<alias>mso</alias>
 							<build>
 								<tags>
