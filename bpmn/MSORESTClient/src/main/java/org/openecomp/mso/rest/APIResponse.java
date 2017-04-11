@@ -24,6 +24,7 @@ import java.io.IOException;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.util.EntityUtils;
 
 /**
@@ -35,7 +36,7 @@ import org.apache.http.util.EntityUtils;
 public class APIResponse {
     private final int statusCode;
     private final byte[] responseBody;
-    private final HttpHeader[] headers;
+    private final BasicHeader[] headers;
 
     /**
      * Internal method used to create http headers using the specified
@@ -44,19 +45,19 @@ public class APIResponse {
      * @param httpResponse used to create headers
      * @return http headers
      */
-    private HttpHeader[] buildHeaders(final HttpResponse httpResponse) {
+    private BasicHeader[] buildHeaders(final HttpResponse httpResponse) {
         final Header[] headers = httpResponse.getAllHeaders();
 
-        HttpHeader[] httpHeaders = new HttpHeader[headers.length];
+        BasicHeader[] BasicHeaders = new BasicHeader[headers.length];
         for (int i = 0; i < headers.length; ++i) {
             final Header header = headers[i];
             final String name = header.getName();
             final String value = header.getValue(); 
-            final HttpHeader httpHeader = new HttpHeader(name, value);
-            httpHeaders[i] = httpHeader;
+            final BasicHeader BasicHeader = new BasicHeader(name, value);
+            BasicHeaders[i] = BasicHeader;
         } 
 
-        return httpHeaders;
+        return BasicHeaders;
     }
 
     /**
@@ -121,11 +122,11 @@ public class APIResponse {
     /**
      * Gets a list of all the headers returned by the API response.
      *
-     * @return an array of all the HttpHeaders 
+     * @return an array of all the BasicHeaders 
      */
-    public HttpHeader[] getAllHeaders() {
+    public BasicHeader[] getAllHeaders() {
         // avoid exposing internals, create copy
-        HttpHeader[] copy = new HttpHeader[this.headers.length];
+        BasicHeader[] copy = new BasicHeader[this.headers.length];
         for (int i = 0; i < this.headers.length; ++i) {
             copy[i] = headers[i];
         }
@@ -133,7 +134,7 @@ public class APIResponse {
     }
 
     public String getFirstHeader(String name) {
-        for (HttpHeader header : headers) {
+        for (BasicHeader header : headers) {
             if (header.getName().equals(name)) {
                 return header.getValue();
             }
