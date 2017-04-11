@@ -1,29 +1,28 @@
-/*- 
- * ============LICENSE_START======================================================= 
- * OPENECOMP - MSO 
- * ================================================================================ 
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved. 
- * ================================================================================ 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and 
- * limitations under the License. 
- * ============LICENSE_END========================================================= 
- */ 
+/*-
+ * ============LICENSE_START=======================================================
+ * OPENECOMP - MSO
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
 
 package org.openecomp.mso.bpmn.common.scripts;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*
 
-import org.openecomp.mso.rest.HttpHeader
 import org.mockito.MockitoAnnotations
 import org.mockito.runners.MockitoJUnitRunner
 import org.mockito.internal.debugging.MockitoDebuggerImpl
@@ -43,7 +42,7 @@ import org.camunda.bpm.engine.repository.ProcessDefinition
 
 @RunWith(MockitoJUnitRunner.class)
 class AaiUtilTest extends MsoGroovyTest {
-	
+
 	@Test
 	public void testGetVersionDefault() {
 		ExecutionEntity mockExecution = setupMock('CreateAAIVfModule')
@@ -54,7 +53,7 @@ class AaiUtilTest extends MsoGroovyTest {
 		def version = aaiUtil.getVersion(mockExecution, 'l3-network', 'CreateAAIVfModule')
 		assertEquals('8', version)
 	}
-	
+
 	@Test
 	public void testGetVersionResourceSpecific() {
 		ExecutionEntity mockExecution = setupMock('CreateAAIVfModule')
@@ -88,20 +87,20 @@ class AaiUtilTest extends MsoGroovyTest {
 		AaiUtil aaiUtil = new AaiUtil(myproc)
 		def version = aaiUtil.getVersion(mockExecution, 'l3-network', 'CreateAAIVfModule')
 	}
-	
+
 	@Test
 	public void testGetUriDefaultVersion() {
 		ExecutionEntity mockExecution = setupMock('CreateAAIVfModule')
 		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn('true')
 		when(mockExecution.getVariable("URN_mso_workflow_default_aai_v8_l3_network_uri")).thenReturn('/aai/v8/network/l3-networks/l3-network')
 		when(mockExecution.getVariable("URN_mso_workflow_global_default_aai_version")).thenReturn('8')
-								
+
 		CreateAAIVfModule myproc = new CreateAAIVfModule()
 		AaiUtil aaiUtil = new AaiUtil(myproc)
 		def uri = aaiUtil.getUri(mockExecution, 'l3-network')
 		assertEquals('/aai/v8/network/l3-networks/l3-network', uri)
 	}
-	
+
 	@Test
 	public void testGetUriFlowAndResourceSpecific() {
 		ExecutionEntity mockExecution = setupMock('CreateAAIVfModule')
@@ -109,13 +108,13 @@ class AaiUtilTest extends MsoGroovyTest {
 		when(mockExecution.getVariable("URN_mso_workflow_CreateAAIVfModule_aai_l3_network_uri")).thenReturn('/aai/v6/network/l3-networks/l3-network')
 		when(mockExecution.getVariable("URN_mso_workflow_default_aai_v8_l3_network_uri")).thenReturn('/aai/v8/network/l3-networks/l3-network')
 		when(mockExecution.getVariable("URN_mso_workflow_global_default_aai_version")).thenReturn('8')
-								
+
 		CreateAAIVfModule myproc = new CreateAAIVfModule()
 		AaiUtil aaiUtil = new AaiUtil(myproc)
 		def uri = aaiUtil.getUri(mockExecution, 'l3-network')
 		assertEquals('/aai/v6/network/l3-networks/l3-network', uri)
 	}
-	
+
 	@Test
 	public void testGetNetworkGenericVnfEndpoint() {
 		ExecutionEntity mockExecution = setupMock('CreateAAIVfModule')
@@ -123,33 +122,33 @@ class AaiUtilTest extends MsoGroovyTest {
 		when(mockExecution.getVariable("URN_mso_workflow_global_default_aai_version")).thenReturn('8')
 		when(mockExecution.getVariable("URN_mso_workflow_default_aai_v8_generic_vnf_uri")).thenReturn('/aai/v8/network/generic-vnfs/generic-vnf')
 		when(mockExecution.getVariable('URN_aai_endpoint')).thenReturn('http://localhost:28090')
-		
+
 		CreateAAIVfModule myproc = new CreateAAIVfModule()
 		AaiUtil aaiUtil = new AaiUtil(myproc)
 		def endpoint = aaiUtil.getNetworkGenericVnfEndpoint(mockExecution)
 		assertEquals('http://localhost:28090/aai/v8/network/generic-vnfs/generic-vnf', endpoint)
 	}
-	
+
 	@Test
 	public void testGetNetworkGenericVnfUri() {
 		ExecutionEntity mockExecution = setupMock('CreateAAIVfModule')
 		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn('true')
 		when(mockExecution.getVariable("URN_mso_workflow_global_default_aai_version")).thenReturn('8')
 		when(mockExecution.getVariable("URN_mso_workflow_default_aai_v8_generic_vnf_uri")).thenReturn('/aai/v8/network/generic-vnfs/generic-vnf')
-				
+
 		CreateAAIVfModule myproc = new CreateAAIVfModule()
 		AaiUtil aaiUtil = new AaiUtil(myproc)
 		def uri = aaiUtil.getNetworkGenericVnfUri(mockExecution)
 		assertEquals('/aai/v8/network/generic-vnfs/generic-vnf', uri)
 	}
-	
+
 	@Test
 	public void testGetNetworkVpnBindingUri() {
 		ExecutionEntity mockExecution = setupMock('CreateAAIVfModule')
 		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn('true')
 		when(mockExecution.getVariable("URN_mso_workflow_global_default_aai_version")).thenReturn('8')
 		when(mockExecution.getVariable("URN_mso_workflow_default_aai_v8_vpn_binding_uri")).thenReturn('/aai/v8/network/vpn-bindings/vpn-binding')
-		
+
 		CreateAAIVfModule myproc = new CreateAAIVfModule()
 		AaiUtil aaiUtil = new AaiUtil(myproc)
 		def uri = aaiUtil.getNetworkVpnBindingUri(mockExecution)
@@ -162,13 +161,13 @@ class AaiUtilTest extends MsoGroovyTest {
 		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn('true')
 		when(mockExecution.getVariable("URN_mso_workflow_global_default_aai_version")).thenReturn('8')
 		when(mockExecution.getVariable("URN_mso_workflow_default_aai_v8_network_policy_uri")).thenReturn('/aai/v8/network/network-policies/network-policy')
-								
+
 		CreateAAIVfModule myproc = new CreateAAIVfModule()
 		AaiUtil aaiUtil = new AaiUtil(myproc)
 		def uri = aaiUtil.getNetworkPolicyUri(mockExecution)
 		assertEquals('/aai/v8/network/network-policies/network-policy', uri)
 	}
-	
+
 	@Test
 	public void testGetNetworkTableReferencesUri() {
 		ExecutionEntity mockExecution = setupMock('CreateAAIVfModule')
@@ -181,7 +180,7 @@ class AaiUtilTest extends MsoGroovyTest {
 		def uri = aaiUtil.getNetworkTableReferencesUri(mockExecution)
 		assertEquals('/aai/v8/network/route-table-references/route-table-reference', uri)
 	}
-	
+
 	@Test
 	public void testGetNetworkVceUri() {
 		ExecutionEntity mockExecution = setupMock('CreateAAIVfModule')
@@ -194,7 +193,7 @@ class AaiUtilTest extends MsoGroovyTest {
 		def uri = aaiUtil.getNetworkVceUri(mockExecution)
 		assertEquals('/aai/v8/network/vces/vce', uri)
 	}
-	
+
 	@Test
 	public void testGetNetworkL3NetworkUri() {
 		ExecutionEntity mockExecution = setupMock('CreateAAIVfModule')
@@ -206,7 +205,7 @@ class AaiUtilTest extends MsoGroovyTest {
 		def uri = aaiUtil.getNetworkL3NetworkUri(mockExecution)
 		assertEquals('/aai/v8/network/l3-networks/l3-network', uri)
 	}
-	
+
 	@Test
 	public void testGetBusinessCustomerUri() {
 		ExecutionEntity mockExecution = setupMock('CreateAAIVfModule')
@@ -218,7 +217,7 @@ class AaiUtilTest extends MsoGroovyTest {
 		def uri = aaiUtil.getBusinessCustomerUri(mockExecution)
 		assertEquals('/aai/v8/business/customers/customer', uri)
 	}
-	
+
 	@Test
 	public void testGetCloudInfrastructureCloudRegionEndpoint() {
 		ExecutionEntity mockExecution = setupMock('CreateAAIVfModule')
@@ -231,7 +230,7 @@ class AaiUtilTest extends MsoGroovyTest {
 		def uri = aaiUtil.getCloudInfrastructureCloudRegionEndpoint(mockExecution)
 		assertEquals('http://localhost:28090/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/att-aic', uri)
 	}
-	
+
 	@Test
 	public void testGetCloudInfrastructureCloudRegionUri() {
 		ExecutionEntity mockExecution = setupMock('CreateAAIVfModule')
@@ -243,7 +242,7 @@ class AaiUtilTest extends MsoGroovyTest {
 		def uri = aaiUtil.getCloudInfrastructureCloudRegionUri(mockExecution)
 		assertEquals('/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/att-aic', uri)
 	}
-	
+
 	@Test
 	public void testGetCloudInfrastructureTenantUri() {
 		ExecutionEntity mockExecution = setupMock('CreateAAIVfModule')
@@ -255,7 +254,7 @@ class AaiUtilTest extends MsoGroovyTest {
 		def uri = aaiUtil.getCloudInfrastructureTenantUri(mockExecution)
 		assertEquals('/aai/v8/cloud-infrastructure/tenants/tenant', uri)
 	}
-	
+
 	@Test
 	public void testGetSearchNodesQueryUri() {
 		ExecutionEntity mockExecution = setupMock('CreateAAIVfModule')
@@ -267,7 +266,7 @@ class AaiUtilTest extends MsoGroovyTest {
 		def uri = aaiUtil.getSearchNodesQueryUri(mockExecution)
 		assertEquals('/aai/v8/search/nodes-query', uri)
 	}
-	
+
 	@Test
 	public void testGetSearchNodesQueryEndpoint() {
 		ExecutionEntity mockExecution = setupMock('CreateAAIVfModule')
@@ -280,7 +279,7 @@ class AaiUtilTest extends MsoGroovyTest {
 		def uri = aaiUtil.getSearchNodesQueryEndpoint(mockExecution)
 		assertEquals('http://localhost:28090/aai/v8/search/nodes-query', uri)
 	}
-	
+
 	@Test
 	public void testGetSearchGenericQueryUri() {
 		ExecutionEntity mockExecution = setupMock('CreateAAIVfModule')
@@ -292,7 +291,7 @@ class AaiUtilTest extends MsoGroovyTest {
 		def uri = aaiUtil.getSearchGenericQueryUri(mockExecution)
 		assertEquals('/aai/v8/search/generic-query', uri)
 	}
-	
+
 	@Test
 	public void testGetNamespaceFromUri() {
 		ExecutionEntity mockExecution = setupMock('CreateAAIVfModule')
@@ -302,5 +301,5 @@ class AaiUtilTest extends MsoGroovyTest {
 		def ns = aaiUtil.getNamespaceFromUri('/aai/v6/search/generic-query')
 		assertEquals('http://org.openecomp.aai.inventory/v6', ns)
 	}
-	
+
 }
