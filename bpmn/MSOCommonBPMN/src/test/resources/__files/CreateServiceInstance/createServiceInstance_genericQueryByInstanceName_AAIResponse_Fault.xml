@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Fault>
+    <requestError>
+        <serviceException>
+            <messageId>SVC3000</messageId>
+            <text>Invalid input performing %1 on %2 (msg=%3) (ec=%4)</text>
+            <variables>
+                <variable>PUT customer</variable>
+                <variable>global-customer-id=global_subscriber_id </variable>
+                <variable>Uniqueness constraint violated:Conflicting Key and Alternate-Key values passed for add of nodeType = customer</variable>
+                <variable>ERR.5.4.6117</variable>
+            </variables>
+        </serviceException>
+    </requestError>
+</Fault>

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,6 +19,8 @@
  */
 
 package org.openecomp.mso.apihandlerinfra.serviceinstancebeans;
+
+import java.util.Arrays;
 
 import org.codehaus.jackson.map.annotate.JsonRootName;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
@@ -36,11 +38,11 @@ public class RequestDetails {
 
     /**
      * Gets the value of the serviceInfo property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ModelInfo }
-     *     
+     *
      */
     public ModelInfo getModelInfo() {
         return modelInfo;
@@ -48,11 +50,11 @@ public class RequestDetails {
 
     /**
      * Sets the value of the serviceInfo property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ModelInfo }
-     *     
+     *
      */
     public void setModelInfo(ModelInfo value) {
         this.modelInfo = value;
@@ -60,11 +62,11 @@ public class RequestDetails {
 
     /**
      * Gets the value of the requestInfo property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RequestInfo }
-     *     
+     *
      */
     public RequestInfo getRequestInfo() {
         return requestInfo;
@@ -72,11 +74,11 @@ public class RequestDetails {
 
     /**
      * Sets the value of the requestInfo property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RequestInfo }
-     *     
+     *
      */
     public void setRequestInfo(RequestInfo value) {
         this.requestInfo = value;
@@ -84,11 +86,11 @@ public class RequestDetails {
 
     /**
      * Gets the value of the subscriberInfo property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SubscriberInfo }
-     *     
+     *
      */
     public SubscriberInfo getSubscriberInfo() {
         return subscriberInfo;
@@ -96,11 +98,11 @@ public class RequestDetails {
 
     /**
      * Sets the value of the subscriberInfo property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SubscriberInfo }
-     *     
+     *
      */
     public void setSubscriberInfo(SubscriberInfo value) {
         this.subscriberInfo = value;
@@ -108,11 +110,11 @@ public class RequestDetails {
 
     /**
      * Gets the value of the cloudConfiguration property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CloudConfiguration }
-     *     
+     *
      */
     public CloudConfiguration getCloudConfiguration() {
         return cloudConfiguration;
@@ -120,11 +122,11 @@ public class RequestDetails {
 
     /**
      * Sets the value of the cloudConfiguration property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CloudConfiguration }
-     *     
+     *
      */
     public void setCloudConfiguration(CloudConfiguration value) {
         this.cloudConfiguration = value;
@@ -132,11 +134,11 @@ public class RequestDetails {
 
     /**
      * Gets the value of the requestParameters property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RequestParameters }
-     *     
+     *
      */
     public RequestParameters getRequestParameters() {
         return requestParameters;
@@ -144,11 +146,11 @@ public class RequestDetails {
 
     /**
      * Sets the value of the requestParameters property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RequestParameters }
-     *     
+     *
      */
     public void setRequestParameters(RequestParameters value) {
         this.requestParameters = value;
@@ -160,6 +162,15 @@ public class RequestDetails {
 
 	public void setRelatedInstanceList(RelatedInstanceList[] relatedInstanceList) {
 		this.relatedInstanceList = relatedInstanceList;
+	}
+
+	@Override
+	public String toString() {
+		return "RequestDetails [modelInfo=" + modelInfo + ", requestInfo="
+				+ requestInfo + ", relatedInstanceList="
+				+ Arrays.toString(relatedInstanceList) + ", subscriberInfo="
+				+ subscriberInfo + ", cloudConfiguration=" + cloudConfiguration
+				+ ", requestParameters=" + requestParameters + "]";
 	}
 
 }

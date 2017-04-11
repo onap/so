@@ -1,0 +1,5 @@
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <soap:Body>
+    <SDNCAdapterResponse xmlns="http://org.openecomp/workflow/sdnc/adapter/schema/v1"/>
+  </soap:Body>
+</soap:Envelope>

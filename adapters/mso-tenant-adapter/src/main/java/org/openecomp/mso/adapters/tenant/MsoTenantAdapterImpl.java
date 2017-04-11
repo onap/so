@@ -41,7 +41,7 @@ import org.openecomp.mso.openstack.exceptions.MsoException;
 import org.openecomp.mso.openstack.utils.MsoTenantUtils;
 import org.openecomp.mso.openstack.utils.MsoTenantUtilsFactory;
 
-@WebService(serviceName = "TenantAdapter", endpointInterface = "org.openecomp.mso.adapters.tenant.MsoTenantAdapter", targetNamespace = "http://com.att.mso/tenant")
+@WebService(serviceName = "TenantAdapter", endpointInterface = "org.openecomp.mso.adapters.tenant.MsoTenantAdapter", targetNamespace = "http://org.openecomp.mso/tenant")
 public class MsoTenantAdapterImpl implements MsoTenantAdapter {
 
 	MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory();

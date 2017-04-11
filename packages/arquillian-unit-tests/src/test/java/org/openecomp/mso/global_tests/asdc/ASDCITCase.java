@@ -10,6 +10,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.LinkedList;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
@@ -30,7 +31,8 @@ import org.junit.runner.RunWith;
 import org.openecomp.sdc.api.consumer.IDistributionStatusMessage;
 import org.openecomp.sdc.api.notification.IArtifactInfo;
 import org.openecomp.sdc.api.notification.IResourceInstance;
-import org.openecomp.sdc.api.notification.IVfModuleMetadata;
+import org.openecomp.mso.asdc.installer.VfModuleMetaData;
+import org.openecomp.mso.asdc.installer.IVfModuleData;
 import org.openecomp.sdc.utils.DistributionStatusEnum;
 import org.openecomp.mso.asdc.client.ASDCConfiguration;
 import org.openecomp.mso.asdc.client.ASDCController;
@@ -64,7 +66,7 @@ public class ASDCITCase {
 		}
 		for (File f : dir.listFiles()) {
 
-			
+
 			if (f.isFile()) {
 				jar.addAsResource(f, destFolder + "/" + f.getName());
 			} else {
@@ -82,16 +84,16 @@ public class ASDCITCase {
 
 		// Add the current test class
 		JavaArchive testclasses = ShrinkWrap.create (JavaArchive.class, "testClasses.jar");
-		
+
 		testclasses.addPackage("org.openecomp.mso.global_tests.asdc.notif_emulator");
-		
+
 		addFiles(testclasses,new File(Thread.currentThread().getContextClassLoader().getResource("resource-examples/asdc").getFile()),"resource-examples/asdc");
-		
+
 		System.out.println(testclasses.toString(true));
 		warArchive.addAsLibraries(testclasses);
-		
-		
-		
+
+
+
 		// BE CAREFUL a settings.xml file must be located in ${home.user}/.m2/settings.xml
 		warArchive.addAsLibraries(Maven.resolver()
 				.resolve("org.mockito:mockito-all:1.10.19")
@@ -100,11 +102,11 @@ public class ASDCITCase {
 
 		//warArchive.addPackage("org.openecomp.mso.global_tests.asdc.notif_emulator");
 		//addFiles(warArchive,new File(ASDCITCase.class.getClassLoader().getResource("resource-examples").getPath()),"resource-examples");
-		
+
 		// Take one war randomly to make arquilian happy
 		Testable.archiveToTest(warArchive);
-		
-		
+
+
 		System.out.println(warArchive.toString(true));
 
 		return warArchive;
@@ -117,7 +119,7 @@ public class ASDCITCase {
 			NoSuchAlgorithmException {
 		System.out.println("Executing " + ASDCITCase.class.getName());
 	}
-	
+
 	@AfterClass
 	public static final void waitAfterStart() throws InterruptedException,
 			IOException,
@@ -126,70 +128,70 @@ public class ASDCITCase {
 		System.out.println("Waiting 60000ms " + ASDCITCase.class.getName());
 		Thread.sleep(60000);
 	}
-	
+
 	/**
 	 * Be careful when using that notification fake structure, the UUID of notif artifacts MUST be different.
 	 * There is a static Map behind the scene.
 	 */
 	private JsonNotificationData notifDataWithoutModuleInfo;
 	private DistributionClientEmulator distribClientWithoutModuleInfo;
-	
+
 	private JsonNotificationData notifDataV1, notifDataV2, notifDataV3, notifDataV4, notifDataV5,notifDataDNS,notifDataVFW;
 	private DistributionClientEmulator distribClientV1, distribClientV2, distribClientV3, distribClientV4, distribClientV5, distribClientV1ForSameNotif, distribClientDNS,distribClientVFW;
-	
-	
+
+
 	@Before
 	public final void beforeEachTest() throws IOException {
 
 		distribClientV1= new DistributionClientEmulator("/resource-examples/asdc/simpleNotif-V1");
 		distribClientV1ForSameNotif= new DistributionClientEmulator("/resource-examples/asdc/simpleNotif-V1");
 		notifDataV1 = JsonNotificationData.instantiateNotifFromJsonFile("/resource-examples/asdc/simpleNotif-V1");
-		
+
 		// This is a duplicate in version 2 of the version 1
 		distribClientV2= new DistributionClientEmulator("/resource-examples/asdc/simpleNotif-V2");
 		notifDataV2 = JsonNotificationData.instantiateNotifFromJsonFile("/resource-examples/asdc/simpleNotif-V2");
-		
+
 		distribClientV3= new DistributionClientEmulator("/resource-examples/asdc/simpleNotif-V3");
 		notifDataV3 = JsonNotificationData.instantiateNotifFromJsonFile("/resource-examples/asdc/simpleNotif-V3");
-		
+
 		// This is a duplicate in version 4 of the version 3
 		distribClientV4= new DistributionClientEmulator("/resource-examples/asdc/simpleNotif-V4");
 		notifDataV4 = JsonNotificationData.instantiateNotifFromJsonFile("/resource-examples/asdc/simpleNotif-V4");
-		
+
 		// This notification is to test the deployment of volume with nested + an artifact not used (should send notification with DEPLOY_ERROR
 		distribClientV5= new DistributionClientEmulator("/resource-examples/asdc/simpleNotif-V5");
 		notifDataV5 = JsonNotificationData.instantiateNotifFromJsonFile("/resource-examples/asdc/simpleNotif-V5");
-		
-		
+
+
 		distribClientWithoutModuleInfo= new DistributionClientEmulator("/resource-examples/asdc/notif-without-modules-metadata");
 		notifDataWithoutModuleInfo = JsonNotificationData.instantiateNotifFromJsonFile("/resource-examples/asdc/notif-without-modules-metadata");
-		
-		
+
+
 		distribClientDNS= new DistributionClientEmulator("/resource-examples/asdc/demo-dns-V1");
 		notifDataDNS = JsonNotificationData.instantiateNotifFromJsonFile("/resource-examples/asdc/demo-dns-V1");
-		
-		
+
+
 		distribClientVFW= new DistributionClientEmulator("/resource-examples/asdc/demo-vfw-V1");
 		notifDataVFW = JsonNotificationData.instantiateNotifFromJsonFile("/resource-examples/asdc/demo-vfw-V1");
-		
-		
+
+
 	}
-	
+
 	@Test
 	@OperateOnDeployment("asdc-controller")
 	public void testNotifWithoutModuleInfo () throws NoSuchAlgorithmException,
 			IOException,
 			URISyntaxException,
 			ArtifactInstallerException, ASDCControllerException, ASDCParametersException {
-		
-	
-		
+
+
+
 		ASDCController asdcController = new ASDCController("asdc-controller1", distribClientWithoutModuleInfo);
 		asdcController.initASDC();
 		asdcController.treatNotification(notifDataWithoutModuleInfo);
-		
+
 		assertTrue(distribClientWithoutModuleInfo.getDistributionMessageReceived().size() > 0);
-		
+
 		int badDeployment=0;
 		for (IDistributionStatusMessage message:distribClientWithoutModuleInfo.getDistributionMessageReceived()) {
 			System.out.println("Message received, URL:"+message.getArtifactURL()+", Value:"+message.getStatus().name());
@@ -198,23 +200,23 @@ public class ASDCITCase {
 			}
 		}
 		assertTrue(badDeployment == 3);
-		
+
 		// Check if something has been recorder in DB, as it should not
 		CatalogDatabase catalogDB = new CatalogDatabase();
-		
+
 		HeatTemplate heatTemplate = catalogDB.getHeatTemplate("Whot-nimbus-oam_v1.0.yaml", "1.0", "resourceName-1");
 		assertNull(heatTemplate);
 	}
-	
-	private void validateVnfResource(JsonNotificationData inputNotification,List<IVfModuleMetadata> moduleList) {
-		
+
+	private void validateVnfResource(JsonNotificationData inputNotification, List<IVfModuleData> moduleList) {
+
 		CatalogDatabase catalogDB = new CatalogDatabase();
-		
-				
+
+
 		for (IResourceInstance resource:inputNotification.getResources()) {
 			VnfResource vnfResourceDB = catalogDB.getVnfResource(inputNotification.getServiceName()+"/"+resource.getResourceInstanceName(), inputNotification.getServiceVersion());
 			assertNotNull(vnfResourceDB);
-			
+
 			assertTrue(vnfResourceDB.getAsdcUuid().equals(resource.getResourceUUID()));
 			assertTrue(vnfResourceDB.getDescription().equals(inputNotification.getServiceDescription()));
 			assertTrue(vnfResourceDB.getModelInvariantUuid().equals(resource.getResourceInvariantUUID()));
@@ -225,19 +227,19 @@ public class ASDCITCase {
 			assertTrue(vnfResourceDB.getModelCustomizationName().equals(resource.getResourceInstanceName()));
 			assertTrue(vnfResourceDB.getModelName().equals(resource.getResourceName()));
 			assertTrue(vnfResourceDB.getServiceModelInvariantUUID().equals(inputNotification.getServiceInvariantUUID()));
-			
-			for (IVfModuleMetadata module:moduleList) {
-				
+
+			for (IVfModuleData module:moduleList) {
+
 				VfModule vfModuleDB = catalogDB.getVfModuleModelName(module.getVfModuleModelName(),inputNotification.getServiceVersion());
 				assertNotNull(vfModuleDB);
 				assertTrue(module.getVfModuleModelName().equals(vfModuleDB.getModelName()));
-				
+
 				assertTrue((inputNotification.getServiceName()+"/"+resource.getResourceInstanceName()+"::"+vfModuleDB.getModelName()).equals(vfModuleDB.getType()));
 				assertTrue(vnfResourceDB.getId()!=0);
 				assertNotNull(vfModuleDB.getVnfResourceId());
-				
+
 				assertTrue(vnfResourceDB.getId()==vfModuleDB.getVnfResourceId().intValue());
-								
+
 				for (String artifactUUID:module.getArtifacts()) {
 					IArtifactInfo artifact = null;
 					for (IArtifactInfo artifactTemp:resource.getArtifacts()) {
@@ -247,7 +249,7 @@ public class ASDCITCase {
 						}
 					}
 					assertNotNull(artifact);
-					
+
 					switch (artifact.getArtifactType()) {
 						case ASDCConfiguration.HEAT:
 							HeatTemplate heatTemplateDB= catalogDB.getHeatTemplate(vfModuleDB.getTemplateId());
@@ -257,63 +259,63 @@ public class ASDCITCase {
 							assertTrue(heatTemplateDB.getDescription().equals(artifact.getArtifactDescription()));
 							assertTrue(heatTemplateDB.getTemplateBody() != null && !heatTemplateDB.getTemplateBody().isEmpty());
 							assertTrue(heatTemplateDB.getParameters().size()>0);
-						
+
 							assertTrue(heatTemplateDB.getTemplateName().equals(artifact.getArtifactName()));
-							
+
 							if (artifact.getArtifactTimeout() != null) {
 								assertTrue(heatTemplateDB.getTimeoutMinutes()== artifact.getArtifactTimeout().intValue());
 							} else {
 								assertTrue(heatTemplateDB.getTimeoutMinutes()== 240);
 							}
 							assertTrue(heatTemplateDB.getVersion().equals(artifact.getArtifactVersion()));
-							
+
 							assertFalse(heatTemplateDB.getTemplateBody().contains("file:///"));
 							break;
 						case ASDCConfiguration.HEAT_ENV:
-							
+
 							HeatEnvironment heatEnvironmentDB = catalogDB.getHeatEnvironment(artifact.getArtifactName(), artifact.getArtifactVersion(), inputNotification.getServiceName()+"/"+resource.getResourceInstanceName());
-							
+
 							assertNotNull(heatEnvironmentDB);
 							assertTrue((vfModuleDB.getVolEnvironmentId() != null && vfModuleDB.getVolEnvironmentId().intValue() == heatEnvironmentDB.getId())
 									|| (vfModuleDB.getEnvironmentId() != null && vfModuleDB.getEnvironmentId() == heatEnvironmentDB.getId()));
-							
+
 							assertTrue(heatEnvironmentDB.getAsdcResourceName().equals(inputNotification.getServiceName()+"/"+resource.getResourceInstanceName()));
-							
+
 							assertTrue(heatEnvironmentDB.getAsdcUuid().equals(artifact.getArtifactUUID()));
 							assertTrue(heatEnvironmentDB.getDescription().equals(artifact.getArtifactDescription()));
 							assertTrue(heatEnvironmentDB.getVersion().equals(artifact.getArtifactVersion()));
 							assertTrue(heatEnvironmentDB.getName().equals(artifact.getArtifactName()));
 							assertTrue(heatEnvironmentDB.getEnvironment() != null);
 							assertFalse(heatEnvironmentDB.getEnvironment().contains("file:///"));
-													
+
 							break;
 						case ASDCConfiguration.HEAT_NESTED:
 							Map<String,Object> listNestedDBMainHeat=new HashMap<String,Object>();
 							Map<String,Object> listNestedDBVolHeat=new HashMap<String,Object>();
-							
+
 							if (vfModuleDB.getTemplateId() != null) {
 								listNestedDBMainHeat = catalogDB.getNestedTemplates(vfModuleDB.getTemplateId());
 							}
 							if (vfModuleDB.getVolTemplateId() != null) {
 								listNestedDBVolHeat = catalogDB.getNestedTemplates(vfModuleDB.getVolTemplateId());
 							}
-					
+
 							assertTrue(listNestedDBMainHeat.size() > 0 || listNestedDBVolHeat.size() > 0);
-							
-							
-							assertTrue(listNestedDBMainHeat.get(artifact.getArtifactName()) != null 
+
+
+							assertTrue(listNestedDBMainHeat.get(artifact.getArtifactName()) != null
 									|| listNestedDBVolHeat.get(artifact.getArtifactName()) != null);
-							
+
 							HeatTemplate rightNestedTemplateDB = catalogDB.getHeatTemplate(artifact.getArtifactName(), artifact.getArtifactVersion(), resource.getResourceName());
 							assertNotNull(rightNestedTemplateDB);
 							assertTrue(catalogDB.getNestedHeatTemplate(vfModuleDB.getTemplateId(), rightNestedTemplateDB.getId()) != null || catalogDB.getNestedHeatTemplate(vfModuleDB.getVolTemplateId(), rightNestedTemplateDB.getId()) != null);
-							
+
 							assertTrue(rightNestedTemplateDB.getAsdcResourceName().equals(resource.getResourceName()));
 							assertTrue(rightNestedTemplateDB.getAsdcUuid().equals(artifact.getArtifactUUID()));
 							assertTrue(rightNestedTemplateDB.getDescription().equals(artifact.getArtifactDescription()));
 							assertTrue(rightNestedTemplateDB.getTemplateBody() != null && !rightNestedTemplateDB.getTemplateBody().isEmpty());
 							assertTrue(rightNestedTemplateDB.getTemplateName().equals(artifact.getArtifactName()));
-							
+
 							if (artifact.getArtifactTimeout() != null) {
 								assertTrue(rightNestedTemplateDB.getTimeoutMinutes()== artifact.getArtifactTimeout().intValue());
 							} else {
@@ -321,18 +323,18 @@ public class ASDCITCase {
 							}
 							assertTrue(rightNestedTemplateDB.getVersion().equals(artifact.getArtifactVersion()));
 							assertFalse(rightNestedTemplateDB.getTemplateBody().contains("file:///"));
-							
+
 							break;
 						case ASDCConfiguration.HEAT_VOL:
 							HeatTemplate heatTemplateVolDB = catalogDB.getHeatTemplate(vfModuleDB.getVolTemplateId());
 							assertNotNull(heatTemplateVolDB);
-							
+
 							assertTrue(heatTemplateVolDB.getAsdcResourceName().equals(resource.getResourceName()));
 							assertTrue(heatTemplateVolDB.getAsdcUuid().equals(artifact.getArtifactUUID()));
 							assertTrue(heatTemplateVolDB.getDescription().equals(artifact.getArtifactDescription()));
 							assertTrue(heatTemplateVolDB.getTemplateBody() != null && !heatTemplateVolDB.getTemplateBody().isEmpty());
 							assertTrue(heatTemplateVolDB.getTemplateName().equals(artifact.getArtifactName()));
-							
+
 							if (artifact.getArtifactTimeout() != null) {
 								assertTrue(heatTemplateVolDB.getTimeoutMinutes()== artifact.getArtifactTimeout().intValue());
 							} else {
@@ -340,32 +342,32 @@ public class ASDCITCase {
 							}
 							assertTrue(heatTemplateVolDB.getVersion().equals(artifact.getArtifactVersion()));
 							assertFalse(heatTemplateVolDB.getTemplateBody().contains("file:///"));
-							
+
 							break;
 						case ASDCConfiguration.HEAT_ARTIFACT:
 							Map<String,HeatFiles> heatFilesDB= catalogDB.getHeatFilesForVfModule(vfModuleDB.getId());
 							assertTrue(heatFilesDB.size()>0);
 							HeatFiles rightHeatFilesDB=heatFilesDB.get( artifact.getArtifactName());
 							assertNotNull(rightHeatFilesDB);
-							
+
 							assertTrue(rightHeatFilesDB.getAsdcResourceName().equals(resource.getResourceName()));
 							assertTrue(rightHeatFilesDB.getAsdcUuid().equals(artifact.getArtifactUUID()));
 							assertTrue(rightHeatFilesDB.getDescription().equals(artifact.getArtifactDescription()));
 							assertTrue(rightHeatFilesDB.getFileBody() != null && !rightHeatFilesDB.getFileBody().isEmpty());
 							assertTrue(rightHeatFilesDB.getFileName().equals( artifact.getArtifactName()));
 							assertTrue(rightHeatFilesDB.getVersion().equals(artifact.getArtifactVersion()));
-							
+
 							break;
 						default:
 							break;
-						
+
 					}
 				}
-			
+
 			}
-	
+
 		}
-		
+
 		Service service = catalogDB.getServiceByUUID(inputNotification.getServiceUUID());
 		assertNotNull(service);
 		assertTrue(service.getCreated() !=null && service.getCreated().getTime()>0);
@@ -377,85 +379,85 @@ public class ASDCITCase {
 		assertTrue(service.getVersion().equals(inputNotification.getServiceVersion()));
 
 	}
-	
+
 	@Test
 	@OperateOnDeployment("asdc-controller")
 	public void testNotifsDeployment () throws NoSuchAlgorithmException,
 			IOException,
 			URISyntaxException,
 			ArtifactInstallerException, ASDCControllerException, ASDCParametersException {
-		
-	
-		
+
+
+
 		ASDCController asdcControllerV1 = new ASDCController("asdc-controller1", distribClientV1);
 		asdcControllerV1.initASDC();
 		asdcControllerV1.treatNotification(notifDataV1);
-		
+
 		assertTrue(distribClientV1.getDistributionMessageReceived().size() > 0);
 		for (IDistributionStatusMessage message:distribClientV1.getDistributionMessageReceived()) {
 			System.out.println("Message received, URL:"+message.getArtifactURL()+", Value:"+message.getStatus().name());
 			assertTrue(message.getStatus().equals(DistributionStatusEnum.DEPLOY_OK) || message.getStatus().equals(DistributionStatusEnum.DOWNLOAD_OK));
 		}
-		
+
 		this.validateVnfResource(notifDataV1,distribClientV1.getListVFModuleMetaData());
-		
-		
-		
+
+
+
 		// Try again to load the same notif
 		ASDCController asdcControllerNewNotif = new ASDCController("asdc-controller1", distribClientV1ForSameNotif);
 		asdcControllerNewNotif.initASDC();
 		asdcControllerNewNotif.treatNotification(notifDataV1);
-		
+
 		for (IDistributionStatusMessage message:distribClientV1ForSameNotif.getDistributionMessageReceived()) {
 			System.out.println("Message received, URL:"+message.getArtifactURL()+", Value:"+message.getStatus().name());
 			assertTrue(message.getStatus().equals(DistributionStatusEnum.ALREADY_DEPLOYED) || message.getStatus().equals(DistributionStatusEnum.ALREADY_DOWNLOADED));
 		}
-		
-		
+
+
 		// Try again to load same notif but in V2
 		ASDCController asdcControllerV2 = new ASDCController("asdc-controller1", distribClientV2);
 		asdcControllerV2.initASDC();
 		asdcControllerV2.treatNotification(notifDataV2);
-		
+
 		for (IDistributionStatusMessage message:distribClientV2.getDistributionMessageReceived()) {
 			System.out.println("Message received, URL:"+message.getArtifactURL()+", Value:"+message.getStatus().name());
 			assertTrue(message.getStatus().equals(DistributionStatusEnum.DEPLOY_OK) || message.getStatus().equals(DistributionStatusEnum.DOWNLOAD_OK));
 		}
-		
+
 		this.validateVnfResource(notifDataV2,distribClientV2.getListVFModuleMetaData());
-		
-		
+
+
 		// Try again to load same notif + Script + Volume artifacts and in service V3
 		ASDCController asdcControllerV3 = new ASDCController("asdc-controller1", distribClientV3);
 		asdcControllerV3.initASDC();
 		asdcControllerV3.treatNotification(notifDataV3);
-		
+
 		for (IDistributionStatusMessage message:distribClientV3.getDistributionMessageReceived()) {
 			System.out.println("Message received, URL:"+message.getArtifactURL()+", Value:"+message.getStatus().name());
 			assertTrue(message.getStatus().equals(DistributionStatusEnum.DEPLOY_OK) || message.getStatus().equals(DistributionStatusEnum.DOWNLOAD_OK));
 		}
-		
+
 		this.validateVnfResource(notifDataV3,distribClientV3.getListVFModuleMetaData());
-		
+
 		// Try again to load same notif + Script + Volume artifacts and in service V4
 		ASDCController asdcControllerV4 = new ASDCController("asdc-controller1", distribClientV4);
 		asdcControllerV4.initASDC();
 		asdcControllerV4.treatNotification(notifDataV4);
-				
+
 		for (IDistributionStatusMessage message:distribClientV4.getDistributionMessageReceived()) {
 			System.out.println("Message received, URL:"+message.getArtifactURL()+", Value:"+message.getStatus().name());
 			assertTrue(message.getStatus().equals(DistributionStatusEnum.DEPLOY_OK) || message.getStatus().equals(DistributionStatusEnum.DOWNLOAD_OK));
 		}
-				
+
 		this.validateVnfResource(notifDataV4,distribClientV4.getListVFModuleMetaData());
-		
-		
-		// Try again with service V5 (Nested template attached to Volume + HEat artifact not used by module), 
+
+
+		// Try again with service V5 (Nested template attached to Volume + HEat artifact not used by module),
 		//this should force the notification DEPLOY_ERROR to be sent for this artifact
 		ASDCController asdcControllerV5 = new ASDCController("asdc-controller1", distribClientV5);
 		asdcControllerV5.initASDC();
 		asdcControllerV5.treatNotification(notifDataV5);
-				
+
 		for (IDistributionStatusMessage message:distribClientV5.getDistributionMessageReceived()) {
 			System.out.println("Message received, URL:"+message.getArtifactURL()+", Value:"+message.getStatus().name());
 			if ("cloud-nimbus.sh".equals(message.getArtifactURL())) {
@@ -464,22 +466,22 @@ public class ASDCITCase {
 				assertTrue(message.getStatus().equals(DistributionStatusEnum.DEPLOY_OK) || message.getStatus().equals(DistributionStatusEnum.DOWNLOAD_OK));
 			}
 		}
-				
+
 		this.validateVnfResource(notifDataV5,distribClientV5.getListVFModuleMetaData());
-		
-		
+
+
 		// Try again with demo DNS
 		ASDCController asdcControllerDNS = new ASDCController("asdc-controller1", distribClientDNS);
 		asdcControllerDNS.initASDC();
 		asdcControllerDNS.treatNotification(notifDataDNS);
-					
+
 		for (IDistributionStatusMessage message:distribClientDNS.getDistributionMessageReceived()) {
 			System.out.println("Message received, URL:"+message.getArtifactURL()+", Value:"+message.getStatus().name());
 				assertTrue(message.getStatus().equals(DistributionStatusEnum.DEPLOY_OK) || message.getStatus().equals(DistributionStatusEnum.DOWNLOAD_OK));
 		}
-						
+
 		this.validateVnfResource(notifDataDNS,distribClientDNS.getListVFModuleMetaData());
-		
+
 		// Try again with demo VFW
 		ASDCController asdcControllerVFW = new ASDCController("asdc-controller1", distribClientVFW);
 		asdcControllerVFW.initASDC();

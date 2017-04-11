@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.4.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+  <bpmn2:process id="CreateNetworkInstance" name="CreateNetworkInstance" isExecutable="true">
+    <bpmn2:startEvent id="createNetwork_startEvent" name="Start Flow">
+      <bpmn2:outgoing>SequenceFlow_0lp2z7l</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:subProcess id="unexpectedErrors_SubProcess" name="Sub-process for UnexpectedErrors" triggeredByEvent="true">
+      <bpmn2:scriptTask id="ScriptTask_1" name="Log / Print Unexpected Error" scriptFormat="groovy">
+        <bpmn2:incoming>SequenceFlow_10</bpmn2:incoming>
+        <bpmn2:outgoing>SequenceFlow_14</bpmn2:outgoing>
+        <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
+def networkMod = new CreateNetworkInstance()
+networkMod.processJavaException(execution)]]></bpmn2:script>
+      </bpmn2:scriptTask>
+      <bpmn2:sequenceFlow id="SequenceFlow_14" name="" sourceRef="ScriptTask_1" targetRef="EndEvent_1" />
+      <bpmn2:startEvent id="StartEvent_1">
+        <bpmn2:outgoing>SequenceFlow_10</bpmn2:outgoing>
+        <bpmn2:errorEventDefinition id="ErrorEventDefinition_2" errorRef="Error_1" />
+      </bpmn2:startEvent>
+      <bpmn2:sequenceFlow id="SequenceFlow_10" name="" sourceRef="StartEvent_1" targetRef="ScriptTask_1" />
+      <bpmn2:endEvent id="EndEvent_1">
+        <bpmn2:incoming>SequenceFlow_14</bpmn2:incoming>
+      </bpmn2:endEvent>
+    </bpmn2:subProcess>
+    <bpmn2:callActivity id="doCreateNetworkInstance_CallActivity" name="DoCreate Network Instance&#10;" calledElement="DoCreateNetworkInstance">
+      <bpmn2:extensionElements>
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+        <camunda:in source="msoRequestId" target="msoRequestId" />
+        <camunda:out source="rollbackData" target="rollbackData" />
+        <camunda:in source="networkId" target="networkId" />
+        <camunda:in source="networkName" target="networkName" />
+        <camunda:in source="networkModelInfo" target="networkModelInfo" />
+        <camunda:in source="lcpCloudRegionId" target="lcpCloudRegionId" />
+        <camunda:in source="tenantId" target="tenantId" />
+        <camunda:in source="productFamilyId" target="productFamilyId" />
+        <camunda:in source="disableRollback" target="disableRollback" />
+        <camunda:in source="serviceInstanceId" target="serviceInstanceId" />
+        <camunda:in source="isDebugLogEnabled" target="isDebugLogEnabled" />
+        <camunda:in source="networkInputParams" target="networkInputParams" />
+        <camunda:out source="rolledBack" target="rolledBack" />
+        <camunda:out source="networkId" target="networkId" />
+        <camunda:out source="networkName" target="networkName" />
+        <camunda:out source="networkOutputParams" target="networkOutputParams" />
+        <camunda:in source="bpmnRequest" target="bpmnRequest" />
+        <camunda:in source="failIfExists" target="failIfExists" />
+        <camunda:in source="sdncVersion" target="sdncVersion" />
+        <camunda:in source="requestId" target="requestId" />
+        <camunda:in source="serviceInstanceId" target="serviceInstanceId" />
+        <camunda:in source="requestAction" target="requestAction" />
+        <camunda:in source="mso-request-id" target="mso-request-id" />
+        <camunda:in source="subscriptionServiceType" target="subscriptionServiceType" />
+        <camunda:in source="globalSubscriberId" target="globalSubscriberId" />
+        <camunda:in source="serviceModelInfo" target="serviceModelInfo" />
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_0eto8sn</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_1lj31zp</bpmn2:outgoing>
+    </bpmn2:callActivity>
+    <bpmn2:endEvent id="EndEvent_0o440av" name="End">
+      <bpmn2:incoming>SequenceFlow_0x3znm5</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:scriptTask id="ScriptTask_09qt0pi" name="CreateNetwork&#10;PostProcess Success&#10;" scriptFormat="groovy">
+      <bpmn2:incoming>SequenceFlow_095crcd</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_0x3znm5</bpmn2:outgoing>
+      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
+def CreateNetworkInstance = new  CreateNetworkInstance()
+CreateNetworkInstance.postProcessResponse(execution)
+]]></bpmn2:script>
+    </bpmn2:scriptTask>
+    <bpmn2:sequenceFlow id="SequenceFlow_1lj31zp" sourceRef="doCreateNetworkInstance_CallActivity" targetRef="ScriptTask_0cihgpv" />
+    <bpmn2:sequenceFlow id="SequenceFlow_0x3znm5" sourceRef="ScriptTask_09qt0pi" targetRef="EndEvent_0o440av" />
+    <bpmn2:scriptTask id="ScriptTask_0pvcr6j" name="PreProcess Incoming Request" scriptFormat="groovy">
+      <bpmn2:incoming>SequenceFlow_0lp2z7l</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_1ablr60</bpmn2:outgoing>
+      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
+def preProcess = new CreateNetworkInstance()
+preProcess.preProcessRequest(execution)]]></bpmn2:script>
+    </bpmn2:scriptTask>
+    <bpmn2:sequenceFlow id="SequenceFlow_0lp2z7l" sourceRef="createNetwork_startEvent" targetRef="ScriptTask_0pvcr6j" />
+    <bpmn2:sequenceFlow id="SequenceFlow_1ablr60" sourceRef="ScriptTask_0pvcr6j" targetRef="Task_19xbdbu" />
+    <bpmn2:scriptTask id="ScriptTask_0cihgpv" name="Prepare Completion Request" scriptFormat="groovy">
+      <bpmn2:incoming>SequenceFlow_1lj31zp</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_0xxvjxq</bpmn2:outgoing>
+      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
+def CreateNetworkInstance = new CreateNetworkInstance()
+CreateNetworkInstance.prepareCompletion(execution)]]></bpmn2:script>
+    </bpmn2:scriptTask>
+    <bpmn2:callActivity id="CallActivity_0sevgre" name="Call CompleteMsoProcess" calledElement="CompleteMsoProcess">
+      <bpmn2:extensionElements>
+        <camunda:in source="CRENI_CompleteMsoProcessRequest" target="CompleteMsoProcessRequest" />
+        <camunda:in source="mso-request-id" target="mso-request-id" />
+        <camunda:in source="mso-service-instance-id" target="mso-service-instance-id" />
+        <camunda:out source="CMSO_ResponseCode" target="CMSO_ResponseCode" />
+        <camunda:out source="CompleteMsoProcessResponse" target="CompleteMsoProcessResponse" />
+        <camunda:out source="CMSO_ErrorResponse" target="CMSO_ErrorResponse" />
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_0xxvjxq</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_095crcd</bpmn2:outgoing>
+    </bpmn2:callActivity>
+    <bpmn2:sequenceFlow id="SequenceFlow_0xxvjxq" sourceRef="ScriptTask_0cihgpv" targetRef="CallActivity_0sevgre" />
+    <bpmn2:subProcess id="SubProcess_1k2112i" name="Sub-process for FalloutHandler and Rollback" triggeredByEvent="true">
+      <bpmn2:startEvent id="StartEvent_110xxgx">
+        <bpmn2:outgoing>SequenceFlow_0n4umjf</bpmn2:outgoing>
+        <bpmn2:errorEventDefinition errorRef="Error_2" />
+      </bpmn2:startEvent>
+      <bpmn2:endEvent id="EndEvent_1rqikib">
+        <bpmn2:incoming>SequenceFlow_1ghqolv</bpmn2:incoming>
+      </bpmn2:endEvent>
+      <bpmn2:scriptTask id="ScriptTask_1akfe0b" name="Prepare DB Infra Error" scriptFormat="groovy">
+        <bpmn2:incoming>SequenceFlow_0n4umjf</bpmn2:incoming>
+        <bpmn2:outgoing>SequenceFlow_1s5niqb</bpmn2:outgoing>
+        <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
+def CreateNetworkInstance = new CreateNetworkInstance()
+CreateNetworkInstance.prepareDBRequestError(execution)]]></bpmn2:script>
+      </bpmn2:scriptTask>
+      <bpmn2:serviceTask id="ServiceTask_0sztuly" name="Call DB Infra Error Update">
+        <bpmn2:extensionElements>
+          <camunda:connector>
+            <camunda:inputOutput>
+              <camunda:inputParameter name="url">${URN_mso_adapters_db_endpoint}</camunda:inputParameter>
+              <camunda:inputParameter name="payload">${CRENI_createDBRequest}</camunda:inputParameter>
+              <camunda:inputParameter name="headers">
+                <camunda:map>
+                  <camunda:entry key="content-type">application/soap+xml</camunda:entry>
+                </camunda:map>
+              </camunda:inputParameter>
+              <camunda:inputParameter name="method">POST</camunda:inputParameter>
+              <camunda:outputParameter name="CRENI_createDBResponse">${response}</camunda:outputParameter>
+              <camunda:outputParameter name="CRENI_dbReturnCode">${statusCode}</camunda:outputParameter>
+            </camunda:inputOutput>
+            <camunda:connectorId>http-connector</camunda:connectorId>
+          </camunda:connector>
+        </bpmn2:extensionElements>
+        <bpmn2:incoming>SequenceFlow_1s5niqb</bpmn2:incoming>
+        <bpmn2:outgoing>SequenceFlow_06s5eu4</bpmn2:outgoing>
+      </bpmn2:serviceTask>
+      <bpmn2:scriptTask id="ScriptTask_1hql91g" name="Prepare FalloutHandler" scriptFormat="groovy">
+        <bpmn2:incoming>SequenceFlow_06s5eu4</bpmn2:incoming>
+        <bpmn2:outgoing>SequenceFlow_1reso2f</bpmn2:outgoing>
+        <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
+def CreateNetworkInstance = new CreateNetworkInstance()
+CreateNetworkInstance.buildErrorResponse(execution)]]></bpmn2:script>
+      </bpmn2:scriptTask>
+      <bpmn2:callActivity id="CallActivity_1ksm1dz" name="Call FalloutHandlerV1" calledElement="FalloutHandler">
+        <bpmn2:extensionElements>
+          <camunda:in source="CRENI_FalloutHandlerRequest" target="FalloutHandlerRequest" />
+          <camunda:in source="mso-request-id" target="mso-request-id" />
+          <camunda:in source="mso-service-instance-id" target="mso-service-instance-id" />
+          <camunda:out source="FH_ResponseCode" target="FH_ResponseCode" />
+          <camunda:out source="FalloutHandlerResponse" target="FalloutHandlerResponse" />
+          <camunda:out source="FH_ErrorResponse" target="FH_ErrorResponse" />
+        </bpmn2:extensionElements>
+        <bpmn2:incoming>SequenceFlow_1reso2f</bpmn2:incoming>
+        <bpmn2:outgoing>SequenceFlow_1ghqolv</bpmn2:outgoing>
+      </bpmn2:callActivity>
+      <bpmn2:sequenceFlow id="SequenceFlow_1s5niqb" sourceRef="ScriptTask_1akfe0b" targetRef="ServiceTask_0sztuly" />
+      <bpmn2:sequenceFlow id="SequenceFlow_06s5eu4" sourceRef="ServiceTask_0sztuly" targetRef="ScriptTask_1hql91g" />
+      <bpmn2:sequenceFlow id="SequenceFlow_1reso2f" sourceRef="ScriptTask_1hql91g" targetRef="CallActivity_1ksm1dz" />
+      <bpmn2:sequenceFlow id="SequenceFlow_1ghqolv" sourceRef="CallActivity_1ksm1dz" targetRef="EndEvent_1rqikib" />
+      <bpmn2:sequenceFlow id="SequenceFlow_0n4umjf" sourceRef="StartEvent_110xxgx" targetRef="ScriptTask_1akfe0b" />
+    </bpmn2:subProcess>
+    <bpmn2:sequenceFlow id="SequenceFlow_095crcd" sourceRef="CallActivity_0sevgre" targetRef="ScriptTask_09qt0pi" />
+    <bpmn2:sequenceFlow id="SequenceFlow_0rt8wax" sourceRef="Task_19xbdbu" targetRef="Task_1nko5zz" />
+    <bpmn2:sequenceFlow id="SequenceFlow_0eto8sn" sourceRef="Task_1nko5zz" targetRef="doCreateNetworkInstance_CallActivity" />
+    <bpmn2:scriptTask id="Task_19xbdbu" name="Get Network Model Info&#10;" scriptFormat="groovy">
+      <bpmn2:incoming>SequenceFlow_1ablr60</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_0rt8wax</bpmn2:outgoing>
+      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
+def CreateNetworkInstance = new CreateNetworkInstance()
+CreateNetworkInstance.getNetworkModelInfo(execution)]]></bpmn2:script>
+    </bpmn2:scriptTask>
+    <bpmn2:scriptTask id="Task_1nko5zz" name="Send Sync Ack Response" scriptFormat="groovy">
+      <bpmn2:incoming>SequenceFlow_0rt8wax</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_0eto8sn</bpmn2:outgoing>
+      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
+def CreateNetworkInstance = new  CreateNetworkInstance()
+CreateNetworkInstance.sendSyncResponse(execution)]]></bpmn2:script>
+    </bpmn2:scriptTask>
+  </bpmn2:process>
+  <bpmn2:error id="Error_2" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
+  <bpmn2:error id="Error_1" name="java.lang.Exception" errorCode="java.lang.Exception" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="CreateNetworkInstance">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_47" bpmnElement="createNetwork_startEvent">
+        <dc:Bounds x="3" y="79" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-3" y="120" width="48" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_SubProcess_28" bpmnElement="unexpectedErrors_SubProcess" isExpanded="true">
+        <dc:Bounds x="-8" y="786" width="394" height="188" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_71" bpmnElement="StartEvent_1">
+        <dc:Bounds x="25" y="863" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="43" y="904" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_ScriptTask_270" bpmnElement="ScriptTask_1">
+        <dc:Bounds x="140" y="841" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_EndEvent_220" bpmnElement="EndEvent_1">
+        <dc:Bounds x="301" y="863" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="319" y="904" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_5" bpmnElement="SequenceFlow_10" sourceElement="_BPMNShape_StartEvent_71" targetElement="_BPMNShape_ScriptTask_270">
+        <di:waypoint xsi:type="dc:Point" x="61" y="881" />
+        <di:waypoint xsi:type="dc:Point" x="140" y="881" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="103" y="881" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_13" bpmnElement="SequenceFlow_14" sourceElement="_BPMNShape_ScriptTask_270" targetElement="_BPMNShape_EndEvent_220">
+        <di:waypoint xsi:type="dc:Point" x="240" y="881" />
+        <di:waypoint xsi:type="dc:Point" x="301" y="881" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="275" y="881" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_CallActivity_72" bpmnElement="doCreateNetworkInstance_CallActivity">
+        <dc:Bounds x="692" y="57" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0o440av_di" bpmnElement="EndEvent_0o440av">
+        <dc:Bounds x="1408" y="79" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1419" y="115" width="19" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_09qt0pi_di" bpmnElement="ScriptTask_09qt0pi">
+        <dc:Bounds x="1253" y="57" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1lj31zp_di" bpmnElement="SequenceFlow_1lj31zp">
+        <di:waypoint xsi:type="dc:Point" x="792" y="97" />
+        <di:waypoint xsi:type="dc:Point" x="907" y="97" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="850" y="82" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0x3znm5_di" bpmnElement="SequenceFlow_0x3znm5">
+        <di:waypoint xsi:type="dc:Point" x="1353" y="97" />
+        <di:waypoint xsi:type="dc:Point" x="1408" y="97" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1381" y="82" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_0pvcr6j_di" bpmnElement="ScriptTask_0pvcr6j">
+        <dc:Bounds x="139" y="57" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0lp2z7l_di" bpmnElement="SequenceFlow_0lp2z7l">
+        <di:waypoint xsi:type="dc:Point" x="39" y="97" />
+        <di:waypoint xsi:type="dc:Point" x="89" y="97" />
+        <di:waypoint xsi:type="dc:Point" x="89" y="97" />
+        <di:waypoint xsi:type="dc:Point" x="139" y="97" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="104" y="97" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ablr60_di" bpmnElement="SequenceFlow_1ablr60">
+        <di:waypoint xsi:type="dc:Point" x="239" y="97" />
+        <di:waypoint xsi:type="dc:Point" x="306" y="97" />
+        <di:waypoint xsi:type="dc:Point" x="306" y="97" />
+        <di:waypoint xsi:type="dc:Point" x="372" y="97" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="321" y="97" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_0cihgpv_di" bpmnElement="ScriptTask_0cihgpv">
+        <dc:Bounds x="907" y="57" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_0sevgre_di" bpmnElement="CallActivity_0sevgre">
+        <dc:Bounds x="1071" y="57" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_1akfe0b_di" bpmnElement="ScriptTask_1akfe0b">
+        <dc:Bounds x="189" y="525" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0sztuly_di" bpmnElement="ServiceTask_0sztuly">
+        <dc:Bounds x="384" y="525" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0xxvjxq_di" bpmnElement="SequenceFlow_0xxvjxq">
+        <di:waypoint xsi:type="dc:Point" x="1007" y="97" />
+        <di:waypoint xsi:type="dc:Point" x="1071" y="97" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1039" y="82" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_1hql91g_di" bpmnElement="ScriptTask_1hql91g">
+        <dc:Bounds x="563" y="525" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_1ksm1dz_di" bpmnElement="CallActivity_1ksm1dz">
+        <dc:Bounds x="738" y="525" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SubProcess_1k2112i_di" bpmnElement="SubProcess_1k2112i" isExpanded="true">
+        <dc:Bounds x="-13" y="353" width="1021" height="404" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_110xxgx_di" bpmnElement="StartEvent_110xxgx">
+        <dc:Bounds x="83" y="547" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="101" y="588" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1rqikib_di" bpmnElement="EndEvent_1rqikib">
+        <dc:Bounds x="913" y="547" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="931" y="588" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1s5niqb_di" bpmnElement="SequenceFlow_1s5niqb">
+        <di:waypoint xsi:type="dc:Point" x="289" y="565" />
+        <di:waypoint xsi:type="dc:Point" x="384" y="565" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="337" y="550" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_06s5eu4_di" bpmnElement="SequenceFlow_06s5eu4">
+        <di:waypoint xsi:type="dc:Point" x="484" y="565" />
+        <di:waypoint xsi:type="dc:Point" x="563" y="565" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="524" y="550" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1reso2f_di" bpmnElement="SequenceFlow_1reso2f">
+        <di:waypoint xsi:type="dc:Point" x="663" y="565" />
+        <di:waypoint xsi:type="dc:Point" x="738" y="565" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="701" y="550" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ghqolv_di" bpmnElement="SequenceFlow_1ghqolv">
+        <di:waypoint xsi:type="dc:Point" x="838" y="565" />
+        <di:waypoint xsi:type="dc:Point" x="913" y="565" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="876" y="550" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_095crcd_di" bpmnElement="SequenceFlow_095crcd">
+        <di:waypoint xsi:type="dc:Point" x="1171" y="97" />
+        <di:waypoint xsi:type="dc:Point" x="1253" y="97" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1212" y="82" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0n4umjf_di" bpmnElement="SequenceFlow_0n4umjf">
+        <di:waypoint xsi:type="dc:Point" x="119" y="565" />
+        <di:waypoint xsi:type="dc:Point" x="189" y="565" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="154" y="550" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0rt8wax_di" bpmnElement="SequenceFlow_0rt8wax">
+        <di:waypoint xsi:type="dc:Point" x="472" y="97" />
+        <di:waypoint xsi:type="dc:Point" x="558" y="97" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="515" y="82" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0eto8sn_di" bpmnElement="SequenceFlow_0eto8sn">
+        <di:waypoint xsi:type="dc:Point" x="658" y="97" />
+        <di:waypoint xsi:type="dc:Point" x="692" y="97" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="675" y="82" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_1gpvlh8_di" bpmnElement="Task_19xbdbu">
+        <dc:Bounds x="372" y="57" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_1rb2dsd_di" bpmnElement="Task_1nko5zz">
+        <dc:Bounds x="558" y="57" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>

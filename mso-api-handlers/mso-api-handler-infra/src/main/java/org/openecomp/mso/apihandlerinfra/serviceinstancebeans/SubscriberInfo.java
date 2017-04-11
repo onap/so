@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,11 +30,11 @@ public class SubscriberInfo {
 
     /**
      * Gets the value of the globalSubscriberId property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getGlobalSubscriberId() {
         return globalSubscriberId;
@@ -42,11 +42,11 @@ public class SubscriberInfo {
 
     /**
      * Sets the value of the globalSubscriberId property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setGlobalSubscriberId(String value) {
         this.globalSubscriberId = value;
@@ -54,11 +54,11 @@ public class SubscriberInfo {
 
     /**
      * Gets the value of the subscriberName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSubscriberName() {
         return subscriberName;
@@ -66,14 +66,20 @@ public class SubscriberInfo {
 
     /**
      * Sets the value of the subscriberName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSubscriberName(String value) {
         this.subscriberName = value;
     }
+
+	@Override
+	public String toString() {
+		return "SubscriberInfo [globalSubscriberId=" + globalSubscriberId
+				+ ", subscriberName=" + subscriberName + "]";
+	}
 
 }

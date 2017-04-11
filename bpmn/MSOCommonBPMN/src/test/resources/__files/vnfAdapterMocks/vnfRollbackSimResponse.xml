@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+	xmlns:v1="http://org.openecomp.mso/vnfNotify">
+	<soapenv:Header />
+	<soapenv:Body>
+	  <ns2:rollbackVnfNotification xmlns:ns2="http://org.openecomp.mso/vnfNotify" >
+        <messageId>b1a82ce6-7f5c-45fd-9273-acaf88fc2137</messageId>
+        <completed>true</completed>
+      </ns2:rollbackVnfNotification>	
+	</soapenv:Body>
+</soapenv:Envelope>

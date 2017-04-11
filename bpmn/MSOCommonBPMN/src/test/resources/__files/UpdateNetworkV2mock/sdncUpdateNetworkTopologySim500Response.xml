@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+	xmlns:v1="http://org.openecomp/workflow/sdnc/adapter/schema/v1">
+	<soapenv:Header />
+	<soapenv:Body>
+	<v1:SDNCAdapterCallback>
+		<SDNCAdapterCallbackRequest xmlns="http://org.openecomp/workflow/sdnc/adapter/schema/v1">
+			<CallbackHeader>
+				<RequestId>testRequestId</RequestId>
+				<ResponseCode>200</ResponseCode>
+				<ResponseMessage>OK</ResponseMessage>
+			</CallbackHeader>
+			<RequestData xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+				xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">&lt;output
+				xmlns="com:att:sdnctl:vnf"&gt;&lt;response-code&gt;500&lt;/response-code&gt;&lt;response-message&gt;'Error
+				retrieving l3-network with network-id=' +
+				$network-topology-operation-input.network-request-information.network-id
+				+ 'from
+				AnAI'&lt;/response-message&gt;&lt;ack-final-indicator&gt;Y&lt;/ack-final-indicator&gt;&lt;svc-request-id&gt;006927ca-f5a3-47fd-880c-dfcbcd81a093&lt;/svc-request-id&gt;&lt;/output&gt;
+			</RequestData>
+		</SDNCAdapterCallbackRequest>
+	</v1:SDNCAdapterCallback>			
+	</soapenv:Body>
+</soapenv:Envelope>
+

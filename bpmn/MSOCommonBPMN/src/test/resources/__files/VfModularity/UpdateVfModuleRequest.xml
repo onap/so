@@ -1,0 +1,35 @@
+<vnf-request xmlns="http://org.openecomp/mso/infra/vnf-request/v1">
+	<request-info>
+		<request-id>DEV-VF-0011</request-id>
+		<action>UPDATE_VF_MODULE</action>
+		<source>PORTAL</source>
+	</request-info>
+	<vnf-inputs>
+		<vnf-id>skask</vnf-id>	 									<!-- Required -->	<!-- with vf-module-id, identifies the vf-module to update -->
+		<vf-module-id>supercool</vf-module-id>						<!-- Required -->	<!-- with vnf-id, identifies the vf-module to update -->
+		<vnf-type>pcrf-capacity</vnf-type>							<!-- Required -->	<!-- not in vf-module; used for recipe selection/filtering;
+																						thus, not used by UpdateVfModule flow -->
+		<vf-module-model-name>PCRF::module-0</vf-module-model-name>	<!-- Required -->	<!-- not in vf-module; used for recipe selection/filtering;
+																						thus, not used by UpdateVfModule flow -->
+		<asdc-service-model-version></asdc-service-model-version>	<!-- Optional -->	<!-- not in vf-module; used for recipe selection;
+																						thus, not used by UpdateVfModule flow -->
+		<service-id>serviceIdUUID</service-id>						<!-- Required -->	<!-- not in vf-module; used for query filtering;
+																						thus, not used by UpdateVfModule flow -->
+		<aic-cloud-region>MDTWNJ21</aic-cloud-region>				<!-- Required -->	<!-- in vf-module as part of volume-group relationship;
+																						however, used for query filtering only; not updatable in AAI -->
+		<tenant-id>fba1bd1e195a404cacb9ce17a9b2b421</tenant-id>		<!-- Required -->	<!-- not in vf-module; used to confirm volume group tenant -->
+		<volume-group-id>78987</volume-group-id>					<!-- Optional -->	<!-- in vf-module as part of volume-group relationship; used
+																						to update VNF adapter; not updatable in AAI -->
+		<persona-model-id>introvert</persona-model-id>				<!-- Optional -->	<!-- Not in AID, in vf-module -->
+		<persona-model-version>3.14</persona-model-version>			<!-- Optional -->	<!-- Not in AID, in vf-module -->
+		<contrail-service-instance-fqdn>myhost.appl.edu</contrail-service-instance-fqdn>	<!-- Optional -->	<!-- Not in AID, in vf-module -->
+		<vnf-persona-model-id>introvert</vnf-persona-model-id>		<!-- Optional -->	<!-- Not in AID, in generic-vnf (as persona-model-id) -->
+		<vnf-persona-model-version>3.14</vnf-persona-model-version>	<!-- Optional -->	<!-- Not in AID, in generic-vnf (as persona-model-version) -->
+	</vnf-inputs>
+	<vnf-params>
+		<param name="oam_network_name">VLAN-OAM-1323</param>
+		<param name="vm_name">slcp34246vbc246ceb</param>
+		<param name="ipag_network">970cd2b9-7f09-4a12-af47-182ea38ba1f0</param>
+		<param name="vpe_network">545cc2c3-1930-4100-b534-5d82d0e12bb6</param>
+	</vnf-params>
+</vnf-request>

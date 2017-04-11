@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<volume-group xmlns="http://org.openecomp.aai.inventory/v7">
+	<volume-group-id>94f0f72f-4be1-49ed-8410-702396797163</volume-group-id>
+	<volume-group-name>MSOTESTVOL103H-vSAMP12_base_vol_module-0</volume-group-name>
+	<heat-stack-id/>
+	<vnf-type>Test/vSAMP12</vnf-type>
+	<orchestration-status>Pending</orchestration-status>
+	<resource-version>1469203133</resource-version>
+	<relationship-list>
+		<relationship>
+			<related-to>tenant</related-to>
+			<related-link>https://aai-ext1.test.com:8443/aai/v7/cloud-infrastructure/cloud-regions/cloud-region/att-aic/mtn6/tenants/tenant/e444c311b27a45dc9522f2370d70f90f/</related-link>
+			<relationship-data>
+				<relationship-key>tenant.tenant-id</relationship-key>
+				<relationship-value>e444c311b27a45dc9522f2370d70f90f</relationship-value>
+			</relationship-data>
+			<relationship-data>
+				<relationship-key>cloud-region.cloud-owner</relationship-key>
+				<relationship-value>att-aic</relationship-value>
+			</relationship-data>
+			<relationship-data>
+				<relationship-key>cloud-region.cloud-region-id</relationship-key>
+				<relationship-value>mtn6</relationship-value>
+			</relationship-data>
+			<related-to-property>
+				<property-key>tenant.tenant-name</property-key>
+				<property-value>MSOCustomer1</property-value>
+			</related-to-property>
+		</relationship>
+	</relationship-list>
+</volume-group>

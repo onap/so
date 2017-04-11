@@ -53,7 +53,7 @@ import org.openecomp.mso.openstack.beans.Subnet;
 import org.openecomp.mso.properties.MsoPropertiesFactory;
 
 
-@WebService(serviceName = "NetworkAdapterAsync", endpointInterface = "org.openecomp.mso.adapters.network.MsoNetworkAdapterAsync", targetNamespace = "http://com.att.mso/networkA")
+@WebService(serviceName = "NetworkAdapterAsync", endpointInterface = "org.openecomp.mso.adapters.network.MsoNetworkAdapterAsync", targetNamespace = "http://org.openecomp.mso/networkA")
 public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
 
 	MsoPropertiesFactory msoPropertiesFactory=new MsoPropertiesFactory();
@@ -584,7 +584,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
         }
 
         NetworkAdapterNotify_Service notifySvc = new NetworkAdapterNotify_Service (warWsdlLoc,
-                                                                                   new QName ("http://com.att.mso/networkNotify",
+                                                                                   new QName ("http://org.openecomp.mso/networkNotify",
                                                                                               "networkAdapterNotify"));
 
         NetworkAdapterNotify notifyPort = notifySvc.getMsoNetworkAdapterAsyncImplPort ();

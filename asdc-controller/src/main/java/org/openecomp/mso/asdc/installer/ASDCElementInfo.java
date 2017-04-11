@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,12 +35,12 @@ import org.openecomp.mso.asdc.client.ASDCConfiguration;
  * A class representing a generic element whose information can be used for example to log artifacts, resource... data.
  */
 public class ASDCElementInfo {
-	
+
 	/**
 	 * A default, empty instance used in case a source element was not correctly provided.
 	 */
 	public static final ASDCElementInfo EMPTY_INSTANCE = new ASDCElementInfo();
-	
+
 	/**
 	 * Used to define the other possible ASDC Element types (usually in addition to existing artifact types, etc.).<br/>
 	 * <br/>
@@ -60,17 +60,17 @@ public class ASDCElementInfo {
 	 * The map of element information fields useful for logging. The complete contents of this list will be concatenated.
 	 */
 	private final Map<String, String> elementInfoMap = new HashMap<>();
-	
+
 	/**
 	 * The type of this element.
 	 */
 	private final String type;
-	
+
 	private ASDCElementInfo () {
 		// Private parameterless constructor. Not visible, only used for EMPTY_INSTANCE.
 		this.type = "";
 	}
-	
+
 	/**
 	 * Artifact-type based constructor. Requires a valid artifact type.
 	 * @param artifactType The artifact type
@@ -79,7 +79,7 @@ public class ASDCElementInfo {
 		// We need the exact type name here...
 		this.type = artifactType;
 	}
-	
+
 	/**
 	 * 'Other element type'-based constructor. Requires a valid element type.
 	 * @param elementType An ASDCElementTypeEnum entry. This will usually contain enumerated types not in the existing
@@ -88,10 +88,10 @@ public class ASDCElementInfo {
 		// We need the exact type name here...
 		this.type = elementType.name();
 	}
-	
+
 	/**
 	 * Add an information entry (name, UUID, etc.) from an artifact/resource/..., once a at time.
-	 * 
+	 *
 	 * @param key The key (name) of the information entry (Artifact UUID, Resource Name, etc.)
 	 * @param value The value bound to the information entry.
 	 */
@@ -100,7 +100,7 @@ public class ASDCElementInfo {
 			this.getElementInfoMap().put(key, value);
 		}
 	}
-	
+
 	/**
 	 * Returns an aggregated, formatted list of the expected details about an ASDC element.
 	 * (non-Javadoc)
@@ -123,7 +123,7 @@ public class ASDCElementInfo {
 		}
 		return sb.toString();
 	}
-	
+
 	/**
 	 * The type that was defined at creation time. This is typically VNF_RESOURCE, VF_MODULE_METADATA, HEAT_ENV, etc.
 	 * @return The type of this element information type. This will usually be either an ArtifactTypeEnum entry name or an ASDCElementTypeEnum entry name.
@@ -150,7 +150,7 @@ public class ASDCElementInfo {
 	 * <li>Resource Instance Name</li>
 	 * <li>Resource Instance UUID</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param vfResourceStructure The VfResourceStructure to use as source of information (see {@link VfResourceStructure}).
 	 * @return an ASDCElementInfo using the information held in the VNF Resource.
 	 */
@@ -173,7 +173,7 @@ public class ASDCElementInfo {
 	 * <li>Module Model Name</li>
 	 * <li>Module Model UUID</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param vfModuleStructure The VfModuleStructure to use as source of information (see {@link VfModuleStructure}).
 	 * @return an ASDCElementInfo using the information held in the VF Module.
 	 */
@@ -182,12 +182,12 @@ public class ASDCElementInfo {
 			return EMPTY_INSTANCE;
 		}
 		ASDCElementInfo elementInfo = new ASDCElementInfo(ASDCConfiguration.VF_MODULES_METADATA);
-		IVfModuleMetadata moduleMetadata = vfModuleStructure.getVfModuleMetadata();
+		IVfModuleData moduleMetadata = vfModuleStructure.getVfModuleMetadata();
 		elementInfo.addElementInfo("Module Model Name", moduleMetadata.getVfModuleModelName());
 		elementInfo.addElementInfo("Module Model Invariant UUID", moduleMetadata.getVfModuleModelInvariantUUID());
 		return elementInfo;
 	}
-	
+
 	/**
 	 * Create an ASDCElementInfo object from an IArtfiactInfo instance.<br/>
 	 * <br/>
@@ -196,7 +196,7 @@ public class ASDCElementInfo {
 	 * <li>IArtifactInfo Name</li>
 	 * <li>IArtifactInfo UUID</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param artifactInfo The VfModuleStructure to use as source of information (see {@link IArtifactInfo}).
 	 * @return an ASDCElementInfo using the information held in the IArtifactInfo instance.
 	 */

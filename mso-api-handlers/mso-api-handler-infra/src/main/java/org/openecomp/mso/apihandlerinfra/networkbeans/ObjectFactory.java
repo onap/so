@@ -52,7 +52,7 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _NetworkParams_QNAME = new QName("http://ecomp.att.com/mso/infra/network-request/v1", "network-params");
+    private final static QName _NetworkParams_QNAME = new QName("http://org.openecomp/mso/infra/network-request/v1", "network-params");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.openecomp.mso.apihandlerinfra.vnfbeans1
@@ -121,7 +121,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://ecomp.att.com/mso/infra/network-request/v1", name = "network-params")
+    @XmlElementDecl(namespace = "http://org.openecomp/mso/infra/network-request/v1", name = "network-params")
     public JAXBElement<Object> createNetworkParams(Object value) {
         return new JAXBElement<Object>(_NetworkParams_QNAME, Object.class, null, value);
     }

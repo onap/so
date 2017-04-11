@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema targetNamespace="http://domain2.att.com/workflow/sdnc/adapter/schema/v1" 
+<schema targetNamespace="http://org.openecomp/workflow/sdnc/adapter/schema/v1" 
 xmlns="http://www.w3.org/2001/XMLSchema" 
-	xmlns:tns="http://domain2.att.com/workflow/sdnc/adapter/schema/v1" 
-	xmlns:sdncadaptersc="http://domain2.att.com/workflow/sdnc/adapter/schema/v1"	
+	xmlns:tns="http://org.openecomp/workflow/sdnc/adapter/schema/v1" 
+	xmlns:sdncadaptersc="http://org.openecomp/workflow/sdnc/adapter/schema/v1"	
 	elementFormDefault="qualified">
 
 

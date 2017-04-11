@@ -1,0 +1,25 @@
+  <volume-group xmlns="http://org.openecomp.aai.inventory/v7">
+         <volume-group-id>78987</volume-group-id>
+         <volume-group-name>Volume_2</volume-group-name>
+         <heat-stack-id>slowburn</heat-stack-id>
+         <vnf-type>pcrf-capacity</vnf-type>
+         <orchestration-status>Active</orchestration-status>
+         <resource-version>0000020</resource-version>
+         <relationship-list>
+            <relationship>
+               <related-to>tenant</related-to>
+               <relationship-data>
+                  <relationship-key>cloud-region.cloud-owner</relationship-key>
+                  <relationship-value>att-aic</relationship-value>
+               </relationship-data>
+               <relationship-data>
+                  <relationship-key>cloud-region.cloud-region-id</relationship-key>
+                  <relationship-value>MDTWNJ21</relationship-value>
+               </relationship-data>
+               <relationship-data>
+                  <relationship-key>tenant.tenant-id</relationship-key>
+                  <relationship-value>fba1bd1e195a404cacb9ce17a9b2b421</relationship-value>
+               </relationship-data>
+            </relationship>
+         </relationship-list>
+      </volume-group>

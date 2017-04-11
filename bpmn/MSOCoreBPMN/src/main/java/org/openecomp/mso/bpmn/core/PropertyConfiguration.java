@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -51,11 +51,11 @@ import org.openecomp.mso.logger.MsoLogger;
 /**
  * Loads the property configuration from file system and refreshes the
  * properties when the property gets changed.
- * 
+ *
  * WARNING: automatic refreshes might not work on network filesystems.
  */
 public class PropertyConfiguration {
-	
+
 	/**
 	 * The base name of the MSO BPMN properties file (mso.bpmn.properties).
 	 */
@@ -65,7 +65,11 @@ public class PropertyConfiguration {
 	 * The base name of the MSO BPMN URN-Mappings properties file (mso.bpmn.urn.properties).
 	 */
 	public static final String MSO_BPMN_URN_PROPERTIES = "mso.bpmn.urn.properties";
-	
+
+	/**
+	 * The base name of the MSO Topology properties file (topology.properties).
+	 */
+	public static final String MSO_TOPOLOGY_PROPERTIES = "topology.properties";
 	/**
 	 * The name of the meta-property holding the time the properties were loaded
 	 * from the file.
@@ -75,7 +79,7 @@ public class PropertyConfiguration {
 	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
 
 	private static final List<String> SUPPORTED_FILES =
-		Arrays.asList(MSO_BPMN_PROPERTIES, MSO_BPMN_URN_PROPERTIES);
+		Arrays.asList(MSO_BPMN_PROPERTIES, MSO_BPMN_URN_PROPERTIES, MSO_TOPOLOGY_PROPERTIES);
 
 	private volatile String msoConfigPath = null;
 
@@ -87,7 +91,7 @@ public class PropertyConfiguration {
 
 	// The key is the file name
 	private Map<String, TimerTask> timerTaskMap = new HashMap<String, TimerTask>();
-	
+
 	/**
 	 * Singleton holder pattern eliminates locking when accessing the instance
 	 * and still provides for lazy initialization.
@@ -116,7 +120,7 @@ public class PropertyConfiguration {
 	private PropertyConfiguration() {
 		startUp();
 	}
-	
+
 	/**
 	 * May be called to restart the PropertyConfiguration if it was previously shut down.
 	 */
@@ -228,7 +232,7 @@ public class PropertyConfiguration {
 
 		return Collections.unmodifiableMap(properties);
 	}
-	
+
 	/**
 	 * Reads properties from the specified file, updates the property file cache, and
 	 * returns the properties in a map.
@@ -270,7 +274,7 @@ public class PropertyConfiguration {
 
 		return properties;
 	}
-	
+
 	/**
 	 * File watcher thread which monitors a directory for file modification.
 	 */

@@ -33,7 +33,7 @@ import org.openecomp.mso.openstack.exceptions.MsoExceptionCategory;
  * 
  *
  */
-@WebFault (name="VnfException", faultBean="org.openecomp.mso.adapters.vnf.exceptions.VnfExceptionBean", targetNamespace="http://com.att.mso/vnf")
+@WebFault (name="VnfException", faultBean="org.openecomp.mso.adapters.vnf.exceptions.VnfExceptionBean", targetNamespace="http://org.openecomp.mso/vnf")
 public class VnfException extends Exception {
 
 	private static final long serialVersionUID = 1L;

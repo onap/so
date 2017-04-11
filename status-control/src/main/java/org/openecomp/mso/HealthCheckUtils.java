@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -59,11 +59,13 @@ public class HealthCheckUtils {
             .entity (NOT_FOUND)
             .build ();
 
-    public enum NodeType {APIH, RA};
+    public enum NodeType {APIH, RA, BPMN};
 
     public boolean catalogDBCheck (MsoLogger subMsoLogger, long startTime) {
-        try (CatalogDatabase catalogDB = new CatalogDatabase ()) {
+        try {
+            CatalogDatabase catalogDB = new CatalogDatabase ();
             catalogDB.healthCheck ();
+            catalogDB.close();
         } catch (Exception e) {
             subMsoLogger.error(MessageEnum.GENERAL_EXCEPTION, "", "HealthCheck", MsoLogger.ErrorCode.DataError, "Failed to check catalog database", e);
             subMsoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError, "Exception during healthcheck");
@@ -129,12 +131,14 @@ public class HealthCheckUtils {
         if (null != requestId) {
             finalUrl = finalUrl + "?requestId=" + requestId;
         }
-        try (CloseableHttpClient client = getHttpClient()) {
+        try {
             HttpResponse response;
+            CloseableHttpClient client = getHttpClient ();
             HttpGet get = new HttpGet(finalUrl);
             msoLogger.debug("Get url is: " + finalUrl);
             response = client.execute(get);
             msoLogger.debug("Get response is: " + response);
+            client.close (); //shut down the connection
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 msoLogger.debug("verifyLocalHealth - Successfully communicate with APIH/BPMN/RA");
                 return true;
@@ -206,6 +210,13 @@ public class HealthCheckUtils {
                 return false;
             }
             apis = apiList.split(",");
+        } else if (NodeType.BPMN.equals (type)){
+            String apiList = topologyProp.getProperty("camunda-healthcheck-urn", null);
+            if (null == apiList) {
+                msoLogger.error (MessageEnum.GENERAL_EXCEPTION_ARG, "Not able to get jra-healthcheck-urn parameter", "", "HealthCheck", MsoLogger.ErrorCode.DataError, "Not able to get jra-healthcheck-urn parameter");
+                return false;
+            }
+            apis = apiList.split(",");
         } else {
             msoLogger.error (MessageEnum.GENERAL_EXCEPTION_ARG, "Unknown NodeType:" + type, "", "HealthCheck", MsoLogger.ErrorCode.DataError, "Unknown NodeType:" + type);
             return false;
@@ -236,7 +247,7 @@ public class HealthCheckUtils {
         String apihLB = topologyProp.getProperty("apih-load-balancer", null);
         String apihApi = topologyProp.getProperty("apih-nodehealthcheck-urn", null);
         String bpmnLB= topologyProp.getProperty("camunda-load-balancer", null);
-        String bpmnApi = topologyProp.getProperty("camunda-healthcheck-urn", null);
+        String bpmnApi = topologyProp.getProperty("camunda-nodehealthcheck-urn", null);
         String jraLB = topologyProp.getProperty("jra-load-balancer", null);
         String jraApi = topologyProp.getProperty("jra-nodehealthcheck-urn", null);
 

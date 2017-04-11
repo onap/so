@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<!--
+  ============LICENSE_START=======================================================
+  ECOMP MSO
+  ================================================================================
+  Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+  ================================================================================
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  ============LICENSE_END=========================================================
+  -->
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="org.openecomp.mso.db.catalog.beans.NetworkResourceCustomization" table="NETWORK_RESOURCE_CUSTOMIZATION">
+
+
+        <composite-id>
+            <key-property name="modelCustomizationUuid"  type="java.lang.String" >
+                <column name="MODEL_CUSTOMIZATION_UUID" length="200" not-null="true"/>
+            </key-property>
+            <key-property name="networkResourceId" type="int" >
+                <column name="NETWORK_RESOURCE_ID" length="11" not-null="false" default="null" />
+            </key-property>
+        </composite-id>
+
+        <property name="modelUuid" type="java.lang.String">
+            <column name="MODEL_UUID" length="200" not-null="true"/>
+        </property>
+        <property name="modelName" type="java.lang.String">
+            <column name="MODEL_NAME" length="200" not-null="true"/>
+        </property>
+        <property name="modelInstanceName" type="java.lang.String">
+            <column name="MODEL_INSTANCE_NAME" length="200" not-null="true"/>
+        </property>
+        <property name="modelVersion" type="java.lang.String">
+            <column name="MODEL_VERSION" length="20" not-null="true"/>
+        </property>
+        <property name="modelInvariantUuid" type="java.lang.String">
+            <column name="MODEL_INVARIANT_UUID" length="200" not-null="true"/>
+        </property>
+
+        <property name="created" type="timestamp" generated="insert" update="false" insert="false" >
+            <column name="CREATION_TIMESTAMP" not-null="true"/>
+        </property>
+        <!-- <property name="created" type="java.sql.Timestamp">
+            <column name="CREATION_TIMESTAMP" />
+        </property> -->
+    </class>
+</hibernate-mapping>

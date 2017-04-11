@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tns:volume-group xmlns:tns="http://com.att.aai.inventory/v6" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://com.att.aai.inventory/v6 aai_schema_v6.xsd ">
+  <tns:volume-group-id>VOLUME_GROUP_ID_1</tns:volume-group-id>
+  <tns:volume-group-name>VOLUME_GROUP_ID_1_NAME</tns:volume-group-name>
+  <tns:heat-stack-id>heat-stack-id</tns:heat-stack-id>
+  <tns:vnf-type>vnf-type</tns:vnf-type>
+  <tns:orchestration-status>OK</tns:orchestration-status>
+  <tns:resource-version>1</tns:resource-version>
+  <tns:relationship-list>
+            <tns:relationship>
+               <tns:related-to>tenant</tns:related-to>
+              	 <tns:relationship-data>
+                  <tns:relationship-key>cloud-region.cloud-owner</tns:relationship-key>
+                  <tns:relationship-value>att-aic</tns:relationship-value>
+               </tns:relationship-data>
+               <tns:relationship-data>
+                  <tns:relationship-key>cloud-region.cloud-region-id</tns:relationship-key>
+                  <tns:relationship-value>pdk1</tns:relationship-value>
+               </tns:relationship-data>
+               <tns:relationship-data>
+                  <tns:relationship-key>tenant.tenant-id</tns:relationship-key>
+                  <tns:relationship-value>cee6d136-e378-4678-a024-2cd15f0ee0cg</tns:relationship-value>
+               </tns:relationship-data>
+              </tns:relationship>
+   </tns:relationship-list>
+ </tns:volume-group>
+ 
+

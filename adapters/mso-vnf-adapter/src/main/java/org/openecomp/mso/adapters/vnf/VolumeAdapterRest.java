@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -166,21 +166,22 @@ public class VolumeAdapterRest {
 //							outputs,
 //							vnfRollback);
 					vnfAdapter.createVfModule(
-							req.getCloudSiteId(), //cloudSiteId, 
-							req.getTenantId(), //tenantId, 
-							//req.getVnfType(), //vnfType, 
+							req.getCloudSiteId(), //cloudSiteId,
+							req.getTenantId(), //tenantId,
+							//req.getVnfType(), //vnfType,
 							completeVnfVfModuleType,
-							req.getVnfVersion(), //vnfVersion, 
-							req.getVolumeGroupName(), //vnfName, 
-							"VOLUME", //requestType, 
-							null, //volumeGroupHeatStackId, 
-							null, //baseVfHeatStackId, 
-							req.getVolumeGroupParams(), //inputs, 
-							req.getFailIfExists(), //failIfExists, 
-							req.getSuppressBackout(), //backout, 
-							req.getMsoRequest(), // msoRequest, 
-							stackId, 
-							outputs, 
+							req.getVnfVersion(), //vnfVersion,
+							req.getVolumeGroupName(), //vnfName,
+							"VOLUME", //requestType,
+							null, //volumeGroupHeatStackId,
+							null, //baseVfHeatStackId,
+							req.getModelCustomizationUuid(),
+							req.getVolumeGroupParams(), //inputs,
+							req.getFailIfExists(), //failIfExists,
+							req.getSuppressBackout(), //backout,
+							req.getMsoRequest(), // msoRequest,
+							stackId,
+							outputs,
 							vnfRollback);
 				}
 				VolumeGroupRollback rb = new VolumeGroupRollback(
@@ -370,7 +371,7 @@ public class VolumeAdapterRest {
 				VolumeGroupRollback vgr = req.getVolumeGroupRollback();
 				VnfRollback vrb = new VnfRollback(
 						vgr.getVolumeGroupStackId(), vgr.getTenantId(), vgr.getCloudSiteId(), true, true,
-						vgr.getMsoRequest(), null, null, null);
+						vgr.getMsoRequest(), null, null, null, null);
 				vnfAdapter.rollbackVnf(vrb);
 				response = new RollbackVolumeGroupResponse(true, req.getMessageId());
 			} catch (VnfException e) {
@@ -383,6 +384,7 @@ public class VolumeAdapterRest {
 			}
 			LOGGER.debug("DeleteVNFVolumesTask exit: code=" + getStatusCode() + ", resp="+ getResponse());
 		}
+
 	}
 
 	@PUT
@@ -487,10 +489,11 @@ public class VolumeAdapterRest {
 							null,
 							null,
 							req.getVolumeGroupStackId(),
+							req.getModelCustomizationUuid(),
 							req.getVolumeGroupParams(),
 							req.getMsoRequest(),
 							outputs,
-							vnfRollback); 
+							vnfRollback);
 				}
 				response = new UpdateVolumeGroupResponse(
 						req.getVolumeGroupId(), req.getVolumeGroupStackId(),

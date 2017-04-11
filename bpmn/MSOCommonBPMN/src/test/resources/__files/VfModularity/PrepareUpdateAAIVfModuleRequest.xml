@@ -1,0 +1,5 @@
+<PrepareUpdateAAIVfModuleRequest>
+	<vnf-id>skask</vnf-id>
+	<vf-module-id>supercool</vf-module-id>
+	<orchestration-status>pending-delete</orchestration-status>
+</PrepareUpdateAAIVfModuleRequest>

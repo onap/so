@@ -45,7 +45,7 @@
 			"identity_server_type": "KEYSTONE",
 			"identity_authentication_type": "USERNAME_PASSWORD"
 		}
-		
+
 	},
 	"cloud_sites":
 	{
@@ -69,12 +69,19 @@
 			"clli": "MTINJVCC101",
 			"aic_version": "2.5",
 			"identity_service_id": "MTINJVCC101_DCP"
+		},
+		"MTSNJA4LCP1":
+		{
+			"region_id": "mtsnjlcp1",
+			"clli": "MTSNJA4LCP1",
+			"aic_version": "2.5",
+			"identity_service_id": "MTSNJA3DCP1"
 		}
-		
+
 	}
 }
 }
-	
 
 
-		
+
+

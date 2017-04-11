@@ -34,7 +34,7 @@ import org.openecomp.mso.openstack.exceptions.MsoExceptionCategory;
  * 
  *
  */
-@WebFault (name="TenantAlreadyExists", faultBean="org.openecomp.mso.adapters.tenant.exceptions.TenantExceptionBean", targetNamespace="http://com.att.mso/tenant")
+@WebFault (name="TenantAlreadyExists", faultBean="org.openecomp.mso.adapters.tenant.exceptions.TenantExceptionBean", targetNamespace="http://org.openecomp.mso/tenant")
 public class TenantAlreadyExists extends TenantException {
 
 	private static final long serialVersionUID = 1L;

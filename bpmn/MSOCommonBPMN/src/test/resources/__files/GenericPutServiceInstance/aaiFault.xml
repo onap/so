@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Fault>
+<requestError>
+<serviceException>
+<messageId>SVC3002</messageId>
+<text>Error writing output performing %1 on %2 (msg=%3) (ec=%4)</text>
+<variables>
+<variable>PUTcustomer</variable>
+<variable>SubName01</variable>
+<variable>Unexpected error reading/updating database:Adding this property for key [service-instance-id] and value [USSTU2CFCNC0101UJZZ01] violates a uniqueness constraint [service-instance-id]</variable>
+<variable>ERR.5.4.5105</variable>
+</variables>
+</serviceException>
+</requestError>
+</Fault>

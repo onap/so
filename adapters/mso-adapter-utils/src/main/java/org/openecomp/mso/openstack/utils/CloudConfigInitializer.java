@@ -27,6 +27,7 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
 import org.openecomp.mso.cloud.CloudConfigFactory;
+import org.openecomp.mso.cloud.CloudConfigIdentityMapper;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
 
@@ -73,6 +74,21 @@ public class CloudConfigInitializer implements ServletContextListener
 					initLogger.error(MessageEnum.RA_CONFIG_EXC, msoPropDecoded[0] + ". MSO Properties failed due to conversion error (in web.xml file)", "", "", MsoLogger.ErrorCode.DataError, "MSO Properties failed due to conversion error (in web.xml file)", ne);
 				}
 			}
+
+			// Second, obtain class name that will register all mappings
+			String msoMapperClassParam = event.getServletContext().getInitParameter("mso.cloud_config.mapper.class");
+			if (msoMapperClassParam != null) {
+			        Class<?> mapperClass = Class.forName(msoMapperClassParam);
+        			if (CloudConfigIdentityMapper.class.isAssignableFrom(mapperClass)) {
+        				((CloudConfigIdentityMapper)mapperClass.newInstance()).registerAllMappings();
+        				initLogger.info(MessageEnum.RA_CONFIG_LOAD,msoMapperClassParam+"(Openstack authentication mapper class)","","");
+        			} else {
+        			    initLogger.info(MessageEnum.RA_CONFIG_LOAD,msoMapperClassParam+"(Openstack authentication mapper class not an implementation of CloudConfigIdentityMapper)","","");
+        			}
+			} else {
+			    initLogger.info(MessageEnum.RA_CONFIG_LOAD,"Openstack authentication mapper class not specified in web.xml (ONLY core authentication mechanisms will be loaded)","","");
+			}
+
 		}
 		catch (Exception e) {
 			initLogger.error(MessageEnum.RA_CONFIG_EXC,  "Unknown. MSO Properties failed to initialize completely", "", "", MsoLogger.ErrorCode.AvailabilityError, "Exception - MSO Properties failed to initialize completely", e);

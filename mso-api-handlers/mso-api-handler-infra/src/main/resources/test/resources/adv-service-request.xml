@@ -22,17 +22,17 @@
   -->
 
 <tns:service-request xmlns:p="urn:ietf:params:xml:ns:yang:ietf-inet-types"
-xmlns:tns="http://ecomp.att.com/mso/request/changelayer3activate/schema/v1"
-xmlns:tns1="http://ecomp.att.com/mso/request/types/v1"
-xmlns:msolayer3="http://ecomp.att.com/mso/request/layer3/schema/v1"
-xmlns:tns3="http://ecomp.att.com/mso/layer3/simple/types/v1"
+xmlns:tns="http://org.openecomp/mso/request/changelayer3activate/schema/v1"
+xmlns:tns1="http://org.openecomp/mso/request/types/v1"
+xmlns:msolayer3="http://org.openecomp/mso/request/layer3/schema/v1"
+xmlns:tns3="http://org.openecomp/mso/layer3/simple/types/v1"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 >
   <tns1:request-information>
     <tns1:request-id>ChgActsm519-500</tns1:request-id>
     <tns1:request-action>ChangeLayer3ServiceActivateRequest</tns1:request-action>
     <tns1:source>OMX</tns1:source>
-        <tns1:notification-url>https://csi-tst-q22.it.att.com:22443/Services/com/cingular/csi/sdn/SendManagedNetworkStatusNot
+        <tns1:notification-url>https://localhost:22443/Services/com/cingular/csi/sdn/SendManagedNetworkStatusNot
 ification.jws</tns1:notification-url>
     <tns1:order-number>051815-1005</tns1:order-number>
     <tns1:order-version>2</tns1:order-version>

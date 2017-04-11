@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+	xmlns:v1="http://org.openecomp/mso/workflow/schema/v1"
+	xmlns:v11="http://org.openecomp/workflow/sdnc/adapter/schema/v1">
+	<soapenv:Header/>
+	<soapenv:Body>
+		<v1:SDNCAdapterWorkflowRequest>
+			<v11:RequestHeader>
+				<v11:RequestId>745b1b50-e39e-4685-9cc8-c71f0bde8bf0</v11:RequestId>
+				<v11:SvcAction>activate</v11:SvcAction>
+				<v11:SvcOperation>service-configuration-operation</v11:SvcOperation>
+				<v11:CallbackUrl>http://127.0.0.1:28080/camunda/services/SDNCAdapterCallback</v11:CallbackUrl>
+			</v11:RequestHeader>
+			<v1:SDNCRequestData>
+				<rest:payload xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd" contentType="text/xml">
+					<tag0:service-request xmlns:tag0="http://org.openecomp/mso/request/details/schema/v1">
+						<tag0:request-information>
+							<tag0:request-id>12570a36-7388-4c0a-bec4-189ce3kg9956</tag0:request-id>
+							<tag0:request-action>Layer3ServiceActivate</tag0:request-action>
+							<tag0:source>OMX</tag0:source>
+						</tag0:request-information>
+						<tag0:service-information>
+							<tag0:service-type>mysvctype</tag0:service-type>
+							<tag0:service-instance-id>PD/VLXM/003717//SW_INTERNET</tag0:service-instance-id>
+						</tag0:service-information>
+					</tag0:service-request>
+				</rest:payload>
+			</v1:SDNCRequestData>
+			<v1:SDNCTimeOutValueInMinutes>1</v1:SDNCTimeOutValueInMinutes>
+			<v1:InterimSDNCTimeOutValueInHours>2</v1:InterimSDNCTimeOutValueInHours>
+		</v1:SDNCAdapterWorkflowRequest>
+	</soapenv:Body>
+</soapenv:Envelope>

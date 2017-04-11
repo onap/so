@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+	xmlns:v1="http://org.openecomp.mso/vnfNotify">
+	<soapenv:Header />
+	<soapenv:Body>
+			<ns2:queryVnfNotification xmlns:ns2="http://org.openecomp.mso/vnfNotify">
+   <messageId>b1a82ce6-7f5c-45fd-9273-acaf88fc2222</messageId>
+   <completed>true</completed>
+   <vnfExists>true</vnfExists>
+   <vnfId>slcp34248vbc/020a112b-a0c8-4143-87a3-698680ba2efe</vnfId>
+   <status>ACTIVE</status>
+	  <outputs>
+	  <entry>
+	  <key>server_ip</key>
+	  <value>135.21.249.144</value>
+	  </entry>
+	  </outputs>
+</ns2:queryVnfNotification>
+	</soapenv:Body>
+</soapenv:Envelope>

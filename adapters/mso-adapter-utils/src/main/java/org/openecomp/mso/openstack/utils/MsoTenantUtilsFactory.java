@@ -20,6 +20,7 @@
 
 package org.openecomp.mso.openstack.utils;
 
+import java.lang.reflect.InvocationTargetException;
 import org.openecomp.mso.cloud.CloudConfig;
 import org.openecomp.mso.cloud.CloudConfigFactory;
 import org.openecomp.mso.cloud.CloudIdentity;
@@ -36,7 +37,7 @@ public class MsoTenantUtilsFactory {
 	protected CloudConfig cloudConfig;
 	protected MsoJavaProperties msoProps = null;
 	private String msoPropID;
-
+	
 	public MsoTenantUtilsFactory (String msoPropID) {
 		this.msoPropID = msoPropID;
 	}
@@ -48,10 +49,20 @@ public class MsoTenantUtilsFactory {
 		cloudConfig = cloudConfigFactory.getCloudConfig();
 		CloudSite cloudSite = cloudConfig.getCloudSite (cloudSiteId);
 
+		return getTenantUtilsByServerType(cloudSite.getIdentityService().getIdentityServerType().toString());
+	}
+
+	public MsoTenantUtils getTenantUtilsByServerType(String serverType) {
+
 		MsoTenantUtils tenantU = null;
-		if (cloudSite.getIdentityService().getIdentityServerType() == CloudIdentity.IdentityServerType.KEYSTONE)
-		{
+		if (CloudIdentity.IdentityServerType.KEYSTONE.equals(serverType)) {
 			tenantU = new MsoKeystoneUtils (msoPropID);
+		} else {
+			try {
+				tenantU = CloudIdentity.IdentityServerType.valueOf(serverType).getMsoTenantUtilsClass().getConstructor(String.class).newInstance(msoPropID);
+			} catch (InvocationTargetException | InstantiationException | NoSuchMethodException | IllegalAccessException e) {
+				throw new RuntimeException("Could not instantiate an MsoTenantUtils class for " + serverType, e);
+			}
 		}
 		return tenantU;
 	}

@@ -100,5 +100,11 @@
             <artifactId>mso-adapters-rest-interface</artifactId>
             <version>${project.version}</version>
         </dependency>
+		<!-- For UriUtils which does URL encoding according to RFC 3986 Section 2 -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>4.3.2.RELEASE</version>
+		</dependency>
 	</dependencies>
 </project>

@@ -11,7 +11,7 @@
 	<packaging>jar</packaging>
 	<name>mso-adapters-rest-interface</name>
 	<description>
-		Java Beans (Requests and Responses) for Network/Tenant/VNF REST Operations
+		Java Beans (Requests and Responses) for Network/Tenant/VNF/SDNC REST Operations
 	</description>
 	<build>
 		<finalName>${project.artifactId}-${project.version}</finalName>

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,24 +31,24 @@ import org.openecomp.mso.asdc.client.exceptions.ArtifactInstallerException;
 import org.openecomp.mso.db.catalog.beans.VfModule;
 
 public final class VfModuleStructure {
-	
-	private final IVfModuleMetadata vfModuleMetadata;
-	
+
+	private final IVfModuleData vfModuleMetadata;
+
 	private final VfResourceStructure parentVfResource;
-	
+
 	private VfModule catalogVfModule;
 	/**
 	 * The list of artifact existing in this resource hashed by artifactType.
 	 */
 	private final Map<String, List<VfModuleArtifact>> artifactsMap;
-	
-	public VfModuleStructure(VfResourceStructure vfParentResource,IVfModuleMetadata vfmoduleMetadata) throws ArtifactInstallerException {
-		
+
+	public VfModuleStructure(VfResourceStructure vfParentResource,IVfModuleData vfmoduleMetadata) throws ArtifactInstallerException {
+
 		vfModuleMetadata = vfmoduleMetadata;
 		parentVfResource = vfParentResource;
-		
+
 		artifactsMap = new HashMap<String, List<VfModuleArtifact>>();
-				
+
 		for (String artifactUUID:this.vfModuleMetadata.getArtifacts()) {
 			if (vfParentResource.getArtifactsMapByUUID().containsKey(artifactUUID)) {
 				this.addToStructure(vfParentResource.getArtifactsMapByUUID().get(artifactUUID));
@@ -57,42 +57,42 @@ public final class VfModuleStructure {
 			}
 		}
 	}
-	
+
 	private void addToStructure(VfModuleArtifact vfModuleArtifact) {
-		
+
 		if (artifactsMap.containsKey(vfModuleArtifact.getArtifactInfo().getArtifactType())) {
 			artifactsMap.get(vfModuleArtifact.getArtifactInfo().getArtifactType()).add(vfModuleArtifact);
-			
+
 		} else {
 			List<VfModuleArtifact> nestedList = new LinkedList<VfModuleArtifact>();
 			nestedList.add(vfModuleArtifact);
-			
+
 			artifactsMap.put(vfModuleArtifact.getArtifactInfo().getArtifactType(), nestedList);
 		}
 	}
-	
+
 	public List<VfModuleArtifact> getOrderedArtifactList() {
-		
+
 		List <VfModuleArtifact> artifactsList = new LinkedList <VfModuleArtifact>();
-		
+
 		artifactsList.addAll(artifactsMap.get(ASDCConfiguration.HEAT));
 		artifactsList.addAll(artifactsMap.get(ASDCConfiguration.HEAT_ENV));
 		artifactsList.addAll(artifactsMap.get(ASDCConfiguration.HEAT_VOL));
-		
+
 		for (VfModuleArtifact artifact:(artifactsMap.get(ASDCConfiguration.HEAT_NESTED))) {
 			artifactsList.add(artifact);
 		}
-		
+
 		for (VfModuleArtifact artifact:(artifactsMap.get(ASDCConfiguration.HEAT_ARTIFACT))) {
 			artifactsList.add(artifact);
 		}
-		
+
 		artifactsList.addAll(artifactsMap.get(ASDCConfiguration.HEAT_VOL));
-		
+
 		return null;
 	}
 
-	public IVfModuleMetadata getVfModuleMetadata() {
+	public IVfModuleData getVfModuleMetadata() {
 		return vfModuleMetadata;
 	}
 
@@ -112,6 +112,6 @@ public final class VfModuleStructure {
 	public void setCatalogVfModule(VfModule catalogVfModule) {
 		this.catalogVfModule = catalogVfModule;
 	}
-	
-	
+
+
 }

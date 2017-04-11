@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -66,6 +66,7 @@ public class CreateVfModuleRequest extends VfRequestCommon {
 	private String volumeGroupStackId;
 	private String baseVfModuleId;
 	private String baseVfModuleStackId;
+	private String modelCustomizationUuid;
 
 	private String requestType;
 	private Boolean failIfExists;
@@ -168,6 +169,14 @@ public class CreateVfModuleRequest extends VfRequestCommon {
 
 	public void setBaseVfModuleStackId(String baseVfModuleStackId) {
 		this.baseVfModuleStackId = baseVfModuleStackId;
+	}
+
+	public String getModelCustomizationUuid() {
+		return this.modelCustomizationUuid;
+	}
+
+	public void setModelCustomizationUuid(String modelCustomizationUuid) {
+		this.modelCustomizationUuid = modelCustomizationUuid;
 	}
 
 	public String getRequestType() {

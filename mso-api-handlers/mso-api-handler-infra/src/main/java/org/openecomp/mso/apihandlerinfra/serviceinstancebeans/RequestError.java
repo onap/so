@@ -45,8 +45,8 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;choice>
- *           &lt;element name="policyException" type="{http://ecomp.att.com/mso/request/types/v1}policyException"/>
- *           &lt;element name="serviceException" type="{http://ecomp.att.com/mso/request/types/v1}serviceException"/>
+ *           &lt;element name="policyException" type="{http://org.openecomp/mso/request/types/v1}policyException"/>
+ *           &lt;element name="serviceException" type="{http://org.openecomp/mso/request/types/v1}serviceException"/>
  *         &lt;/choice>
  *       &lt;/sequence>
  *     &lt;/restriction>

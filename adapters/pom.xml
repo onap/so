@@ -24,9 +24,16 @@
 		<module>mso-vnf-adapter</module>
 		<module>mso-vnf-adapter-async-client</module>
 		<module>mso-requests-db-adapter</module>
+		<module>mso-catalog-db-adapter</module>
 	</modules>
 
 	<dependencies>
+	    <dependency>
+             <groupId>org.evosuite</groupId>
+             <artifactId>evosuite-standalone-runtime</artifactId>
+             <version>${evosuiteVersion}</version>
+             <scope>test</scope>
+        </dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>

@@ -154,13 +154,6 @@ under the License.
      | for inheritance and direct lookup purposes, and must be unique across the set of mirrors.
      |
      -->
-<!--     <mirror> -->
-<!--       <id>att-central</id> -->
-<!--       <mirrorOf>central,jboss,JBOSS,jboss-deprecated-repository</mirrorOf> -->
-<!--       <name>AT&amp;T maven central mirror</name> -->
-<!--       <url>http://mavencentral.it.att.com:8084/nexus/content/groups/public/</url> -->
-<!--     </mirror> -->
-    
 
   </mirrors>
   

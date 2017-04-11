@@ -112,10 +112,10 @@ public class MsoJsonProperties extends AbstractMsoProperties {
 	public synchronized MsoJsonProperties clone() {
 		MsoJsonProperties msoCopy = new MsoJsonProperties();
 		
-		ObjectMapper mapper = new ObjectMapper();
+		ObjectMapper newMapper = new ObjectMapper();
 		try {
-			msoCopy.jsonRootNode = mapper.createObjectNode();
-			msoCopy.jsonRootNode = mapper.readValue(this.jsonRootNode.toString(), JsonNode.class);
+			msoCopy.jsonRootNode = newMapper.createObjectNode();
+			msoCopy.jsonRootNode = newMapper.readValue(this.jsonRootNode.toString(), JsonNode.class);
 		} catch (JsonParseException e) {
 			LOGGER.debug("JsonParseException when cloning the object:" + this.propertiesFileName, e);
 		} catch (JsonMappingException e) {

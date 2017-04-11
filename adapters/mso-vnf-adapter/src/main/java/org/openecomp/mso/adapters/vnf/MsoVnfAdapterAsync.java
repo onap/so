@@ -37,7 +37,7 @@ import java.util.Map;
  * (by the client service WSDL).
  *
  */
-@WebService (name="VnfAdapterAsync", targetNamespace="http://com.att.mso/vnfA")
+@WebService (name="VnfAdapterAsync", targetNamespace="http://org.openecomp.mso/vnfA")
 public interface MsoVnfAdapterAsync
 {
 	/**

@@ -18,6 +18,6 @@
  * ============LICENSE_END=========================================================
  */
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://domain2.att.com/workflow/sdnc/adapter/schema/v1", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://org.openecomp/workflow/sdnc/adapter/schema/v1", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.openecomp.mso.adapters.sdnc.client;
 

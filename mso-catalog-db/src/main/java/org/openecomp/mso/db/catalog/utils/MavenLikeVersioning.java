@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,15 +21,16 @@
 package org.openecomp.mso.db.catalog.utils;
 
 
+import java.io.Serializable;
 
 /**
  * This class is the base class for object that requires a Version in Catalog DB.
  * The version is built on a string as ASDC provides a number like 1.2 or 2.0 ...
  * This class supports also 1.2.3.4...  (Maven like version)
- * 
+ *
  *
  */
-public class MavenLikeVersioning {
+public class MavenLikeVersioning implements Serializable {
 
 	protected String version;
 

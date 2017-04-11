@@ -2,8 +2,8 @@
 
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
   <display-name>ASDC Controller</display-name>
- 
- 
+
+
    <!-- enable the Asynchronous Job Service -->
     <context-param>
         <param-name>resteasy.async.job.service.enabled</param-name>
@@ -15,7 +15,7 @@
 		<param-value>java:module/MsoPropertiesFactory</param-value>
 	 </context-param>
 
-    <!-- The next context parameters are all optional.  
+    <!-- The next context parameters are all optional.
          Their default values are shown as example param-values -->
 
     <!-- How many jobs results can be held in memory at once? -->
@@ -45,8 +45,8 @@
     <param-name>resteasy.scan</param-name>
     <param-value>true</param-value>
   </context-param>
- 
-  <!--  
+
+  <!--
   <context-param>
     <param-name>resteasy.servlet.mapping.prefix</param-name>
     <param-value>/v1</param-value>
@@ -56,18 +56,18 @@
   	<param-name>log.configuration</param-name>
   	<param-value>logback.asdc.xml</param-value>
   </context-param>
-  
+
   <context-param>
   	<param-name>mso.configuration</param-name>
   	<param-value>MSO_PROP_ASDC=mso.asdc.json,MSO_PROP_TOPOLOGY=topology.properties</param-value>
 
   </context-param>
-  
+
   <context-param>
     <param-name>resteasy.resources</param-name>
     <param-value>org.openecomp.mso.logger.MsoLoggingServlet,org.openecomp.mso.asdc.healthcheck.HealthCheckHandler</param-value>
   </context-param>
-  
+
   <listener>
     <listener-class>
 			org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap
@@ -86,7 +86,7 @@
 
     <filter>
 		<filter-name>LogFilter</filter-name>
-		<filter-class>org.openecomp.mso.logger.LogFilter</filter-class>	
+		<filter-class>org.openecomp.mso.logger.LogFilter</filter-class>
 	</filter>
       <filter-mapping>
 		<filter-name>LogFilter</filter-name>

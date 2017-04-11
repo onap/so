@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,11 +23,12 @@ package org.openecomp.mso.adapters.sdnc.impl;
 
 public interface Constants {
 
+		public static final String BPEL_REST_URL_PROP = "org.openecomp.mso.adapters.sdnc.rest.bpelurl";
 		public static final String BPEL_URL_PROP = "org.openecomp.mso.adapters.sdnc.bpelurl";
-		public static final String DEFAULT_BPEL_URL = "http://msobpel.mtcnj.aic.cip.att.com:8080//active-bpel/services/SDNCAdapterCallbackV1";
+		public static final String DEFAULT_BPEL_URL = "http://localhost:8080//active-bpel/services/SDNCAdapterCallbackV1";
 
 		public static final String MY_URL_PROP = "org.openecomp.mso.adapters.sdnc.myurl";
-		public static final String DEFAULT_MY_URL = "https://msojra.mtcnj.aic.cip.att.com:8443/adapters/rest/SDNCNotify";
+		public static final String DEFAULT_MY_URL = "https://localhost:8443/adapters/rest/SDNCNotify";
 
 		public static final String SDNC_AUTH_PROP = "org.openecomp.mso.adapters.sdnc.sdncauth";
 		public static final String DEFAULT_SDNC_AUTH = "406B2AE613211B6FB52466DE6E1769AC";

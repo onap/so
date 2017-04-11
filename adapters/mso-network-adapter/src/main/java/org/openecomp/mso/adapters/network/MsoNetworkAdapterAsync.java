@@ -38,7 +38,7 @@ import java.util.List;
  * (by the client service WSDL).
  *
  */
-@WebService (name="NetworkAdapterAsync", targetNamespace="http://com.att.mso/networkA")
+@WebService (name="NetworkAdapterAsync", targetNamespace="http://org.openecomp.mso/networkA")
 public interface MsoNetworkAdapterAsync
 {
 	/**

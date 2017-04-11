@@ -26,11 +26,11 @@ public final class CommonConstants {
     public static final String DEFAULT_BPEL_AUTH = "admin:admin";
     public static final String ENCRYPTION_KEY = "aa3871669d893c7fb8abbcda31b88b4f";
 
-    public static final String REQUEST_ID_HEADER = "att-mso-request-id";
-    public static final String REQUEST_TIMEOUT_HEADER = "att-mso-service-request-timeout";
-    public static final String SCHEMA_VERSION_HEADER = "att-mso-schema-version";
-    public static final String SERVICE_INSTANCE_ID_HEADER = "att-mso-service-instance-id";
-    public static final String ACTION_HEADER = "att-mso-action";
+    public static final String REQUEST_ID_HEADER = "mso-request-id";
+    public static final String REQUEST_TIMEOUT_HEADER = "mso-service-request-timeout";
+    public static final String SCHEMA_VERSION_HEADER = "mso-schema-version";
+    public static final String SERVICE_INSTANCE_ID_HEADER = "mso-service-instance-id";
+    public static final String ACTION_HEADER = "mso-action";
 
     public static final String CAMUNDA_SERVICE_INPUT = "bpmnRequest";
 	public static final String CAMUNDA_ROOT_INPUT = "variables";
@@ -45,7 +45,7 @@ public final class CommonConstants {
 	public static final int BPEL = 0;
 	public static final int CAMUNDA = 1;
 	public static final String CAMUNDA_HOST = "host";
-	public static final String SDNC_UUID_HEADER = "att-mso-sdnc-request-id";
+	public static final String SDNC_UUID_HEADER = "mso-sdnc-request-id";
 	
 	public static final String REQUEST_ID_VARIABLE = "requestId";
 	public static final String IS_BASE_VF_MODULE_VARIABLE = "isBaseVfModule";

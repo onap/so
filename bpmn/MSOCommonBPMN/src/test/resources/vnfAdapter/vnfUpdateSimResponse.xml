@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+	xmlns:v1="http://org.openecomp.mso/vnfNotify">
+	<soapenv:Header />
+	<soapenv:Body>
+<ns2:updateVnfNotification xmlns:ns2="http://org.openecomp.mso/vnfNotify">
+   <messageId>testRequestId</messageId>
+   <completed>true</completed>
+   <rollback>
+      <cloudSiteId>MTSNJA4LCP1</cloudSiteId>
+      <msoRequest>
+         <requestId>1512_1120-BB11-1</requestId>
+         <serviceInstanceId>BB11/VLXM/003717//SW_INTERNET</serviceInstanceId>
+      </msoRequest>
+      <tenantCreated>false</tenantCreated>
+      <tenantId>e25ac2f1e73d46428de81a6130a6fdad</tenantId>
+      <vnfCreated>true</vnfCreated>
+      <vnfId>slcp34248vbc/020a112b-a0c8-4143-87a3-698680ba2efe</vnfId>
+   </rollback>
+</ns2:updateVnfNotification>
+	</soapenv:Body>
+</soapenv:Envelope>

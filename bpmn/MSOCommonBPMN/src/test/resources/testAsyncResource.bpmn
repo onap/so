@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_l2hJ8CccEeW3d--PaFJMbg" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.4.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+  <bpmn2:process id="testAsyncProcess" name="testAsyncProcess" isExecutable="true">
+    <bpmn2:startEvent id="ReceiveQueryAAIMessage" name="Receive Message">
+      <bpmn2:outgoing>SequenceFlow_1</bpmn2:outgoing>
+      <bpmn2:messageEventDefinition id="_MessageEventDefinition_3" messageRef="Message_2" />
+    </bpmn2:startEvent>
+    <bpmn2:sequenceFlow id="SequenceFlow_1" name="" sourceRef="ReceiveQueryAAIMessage" targetRef="ScriptTask_5" />
+    <bpmn2:scriptTask id="ScriptTask_5" name="Send Response and continue execution" scriptFormat="groovy">
+      <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_9</bpmn2:outgoing>
+      <bpmn2:script><![CDATA[//import java.net.InetAddress;
+import org.openecomp.mso.bpmn.common.workflow.service.*
+
+//def hostname = InetAddress.getLocalHost().getCanonicalHostName()
+//println ("my host name =================" + hostname)
+
+WorkflowCallbackResponse callbackResponse = new WorkflowCallbackResponse()
+callbackResponse.setStatusCode(200)
+callbackResponse.setMessage("Success")
+callbackResponse.setResponse("Received the request, the process is getting executed, request message" + execution.getVariable("testAsyncRequestMsg"))
+
+WorkflowContextHolder.getInstance().processCallback("testAsyncProcess", execution.getProcessInstanceId(), execution.getVariable("mso-request-id"), callbackResponse)
+
+//def callbackUrl = "http://" + hostname  + ":28080/mso/async/services/callback/asyncQueryAAICustomer/"+ execution.getProcessInstanceId() + "/" + execution.getVariable("mso-request-id")
+//println "callback url" + callbackUrl
+//execution.setVariable("callbackUrl", callbackUrl)]]></bpmn2:script>
+    </bpmn2:scriptTask>
+    <bpmn2:scriptTask id="ScriptTask_6" name="Wait Script Task" scriptFormat="groovy">
+      <bpmn2:incoming>SequenceFlow_9</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_11</bpmn2:outgoing>
+      <bpmn2:script><![CDATA[//Just sleep for a second
+Thread.sleep(1000)
+execution.setVariable("completed",true)]]></bpmn2:script>
+    </bpmn2:scriptTask>
+    <bpmn2:sequenceFlow id="SequenceFlow_9" name="" sourceRef="ScriptTask_5" targetRef="ScriptTask_6" />
+    <bpmn2:endEvent id="EndEvent_4">
+      <bpmn2:incoming>SequenceFlow_11</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="SequenceFlow_11" name="" sourceRef="ScriptTask_6" targetRef="EndEvent_4" />
+  </bpmn2:process>
+  <bpmn2:error id="Error_1" name="MSO Workflow Exception" errorCode="MSOWorkflowException" />
+  <bpmn2:message id="Message_2" name="testAsyncRequestMsg" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="testAsyncProcess">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_33" bpmnElement="ReceiveQueryAAIMessage">
+        <dc:Bounds x="182" y="145" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="133" y="186" width="134" height="25" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_EndEvent_88" bpmnElement="EndEvent_4">
+        <dc:Bounds x="708" y="145" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="726" y="186" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_ScriptTask_76" bpmnElement="ScriptTask_5">
+        <dc:Bounds x="372" y="123" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_1" bpmnElement="SequenceFlow_1" sourceElement="_BPMNShape_StartEvent_33" targetElement="_BPMNShape_ScriptTask_76">
+        <di:waypoint xsi:type="dc:Point" x="218" y="163" />
+        <di:waypoint xsi:type="dc:Point" x="372" y="163" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="268" y="163" width="6" height="6" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_ScriptTask_123" bpmnElement="ScriptTask_6">
+        <dc:Bounds x="522" y="123" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_9" bpmnElement="SequenceFlow_9" sourceElement="_BPMNShape_ScriptTask_76" targetElement="_BPMNShape_ScriptTask_123">
+        <di:waypoint xsi:type="dc:Point" x="472" y="163" />
+        <di:waypoint xsi:type="dc:Point" x="522" y="163" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_11" bpmnElement="SequenceFlow_11" sourceElement="_BPMNShape_ScriptTask_123" targetElement="_BPMNShape_EndEvent_88">
+        <di:waypoint xsi:type="dc:Point" x="622" y="163" />
+        <di:waypoint xsi:type="dc:Point" x="708" y="163" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>

@@ -1,0 +1,10 @@
+<UpdateAAIVfModuleRequest>
+	<vnf-id>skask</vnf-id>
+	<vf-module-id>supercool</vf-module-id>
+	<heat-stack-id>slowburn</heat-stack-id>
+	<orchestration-status>complete</orchestration-status>
+	<volume-group-id>78987</volume-group-id>
+	<persona-model-id>introvert</persona-model-id>
+	<persona-model-version>3.14</persona-model-version>
+	<contrail-service-instance-fqdn>myhost.appl.com</contrail-service-instance-fqdn>
+</UpdateAAIVfModuleRequest>

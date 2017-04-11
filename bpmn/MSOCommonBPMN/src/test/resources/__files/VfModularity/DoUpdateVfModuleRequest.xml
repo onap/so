@@ -1,0 +1,29 @@
+<vnf-request xmlns="http://org.openecomp/mso/infra/vnf-request/v1">
+	<request-info>
+		<request-id>DEV-VF-0011</request-id>
+		<action>UPDATE_VF_MODULE</action>
+		<source>PORTAL</source>
+	</request-info>
+	<vnf-inputs>
+ 		<vnf-id>skask</vnf-id>	 									<!-- Required -->
+		<vf-module-id>supercool</vf-module-id>						<!-- Required -->
+ 		<vnf-type>pcrf-capacity</vnf-type>							<!-- Optional -->
+		<vf-module-model-name>PCRF::module-0</vf-module-model-name>	<!-- Required -->
+		<asdc-service-model-version></asdc-service-model-version>	<!-- Optional -->
+		<service-id>serviceIdUUID</service-id>						<!-- Required -->
+		<aic-cloud-region>MDTWNJ21</aic-cloud-region>				<!-- Required -->
+		<tenant-id>fba1bd1e195a404cacb9ce17a9b2b421</tenant-id>		<!-- Required -->
+		<volume-group-id>78987</volume-group-id>					<!-- Optional -->
+		<persona-model-id>introvert</persona-model-id>				<!-- Optional -->
+		<persona-model-version>3.14</persona-model-version>			<!-- Optional -->
+		<contrail-service-instance-fqdn>myhost.appl.edu</contrail-service-instance-fqdn>	<!-- Optional -->
+		<vnf-persona-model-id>introvert</vnf-persona-model-id>		<!-- Optional -->
+		<vnf-persona-model-version>3.14</vnf-persona-model-version>	<!-- Optional -->
+	</vnf-inputs>
+	<vnf-params>
+		<param name="oam_network_name">VLAN-OAM-1323</param>
+		<param name="vm_name">slcp34246vbc246ceb</param>
+		<param name="ipag_network">970cd2b9-7f09-4a12-af47-182ea38ba1f0</param>
+		<param name="vpe_network">545cc2c3-1930-4100-b534-5d82d0e12bb6</param>
+	</vnf-params>
+</vnf-request>

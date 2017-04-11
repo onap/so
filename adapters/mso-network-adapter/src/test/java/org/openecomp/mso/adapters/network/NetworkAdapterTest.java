@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,6 +29,7 @@ import java.util.Map;
 
 import javax.xml.ws.Holder;
 
+import org.evosuite.runtime.System;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -60,7 +61,7 @@ public class NetworkAdapterTest {
         networkResource.setId (1);
         networkResource.setOrchestrationMode ("toto");
         Mockito.when (db.getNetworkResource ("PROVIDER")).thenReturn (networkResource);
-        Mockito.when (adapter.getCatalogDb()).thenReturn (db);
+        Mockito.when (adapter.getCatalogDB()).thenReturn (db);
     }
 
     @Test
@@ -260,7 +261,8 @@ public class NetworkAdapterTest {
         try {
             adapter.deleteNetwork ("toto", "tenant", "PROVIDER", "networkId", msoRequest, networkDeleted);
         } catch (NetworkException e) {
-            assertTrue (e.getMessage ().contains ("Configuration Error"));
+            e.printStackTrace();
+            assertTrue (e.getMessage ().contains ("Cloud Site [toto] not found"));
         }
     }
 }

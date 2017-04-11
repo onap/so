@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,15 +20,19 @@
 
 package org.openecomp.mso.asdc.installer.heat;
 
-
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.exception.LockAcquisitionException;
-
 import org.openecomp.sdc.api.notification.IArtifactInfo;
+
 import org.openecomp.mso.asdc.client.ASDCConfiguration;
 import org.openecomp.mso.asdc.client.exceptions.ArtifactInstallerException;
 import org.openecomp.mso.asdc.installer.ASDCElementInfo;
@@ -43,7 +47,11 @@ import org.openecomp.mso.db.catalog.beans.HeatEnvironment;
 import org.openecomp.mso.db.catalog.beans.HeatFiles;
 import org.openecomp.mso.db.catalog.beans.HeatTemplate;
 import org.openecomp.mso.db.catalog.beans.HeatTemplateParam;
+import org.openecomp.mso.db.catalog.beans.NetworkResourceCustomization;
+import org.openecomp.mso.db.catalog.beans.AllottedResourceCustomization;
 import org.openecomp.mso.db.catalog.beans.Service;
+import org.openecomp.mso.db.catalog.beans.ServiceToAllottedResources;
+import org.openecomp.mso.db.catalog.beans.ServiceToNetworks;
 import org.openecomp.mso.db.catalog.beans.VfModule;
 import org.openecomp.mso.db.catalog.beans.VnfResource;
 import org.openecomp.mso.logger.MessageEnum;
@@ -58,18 +66,26 @@ public class VfResourceInstaller implements IVfResourceInstaller {
 	}
 
 	@Override
-	public boolean isResourceAlreadyDeployed(VfResourceStructure vfResourceStructure)
+	public boolean isResourceAlreadyDeployed(VfResourceStructure vfResourceStruct)
 			throws ArtifactInstallerException {
+
+		CatalogDatabase db = new CatalogDatabase();
 		boolean status = false;
+		VfResourceStructure vfResourceStructure = (VfResourceStructure)vfResourceStruct;
 
-		try (CatalogDatabase db = new CatalogDatabase()) {
+        try {
 
-			logger.info(MessageEnum.ASDC_CHECK_HEAT_TEMPLATE, "VNFResource",
+			String resourceType = vfResourceStruct.getResourceInstance().getResourceType();
+			String category = vfResourceStruct.getResourceInstance().getCategory();
+
+			// Check for duplicate VF Module that is not an Allotted Resource
+			if(resourceType.equals("VF") && !category.equalsIgnoreCase("Allotted Resource")){
+				logger.info(MessageEnum.ASDC_CHECK_HEAT_TEMPLATE, "VNFResource",
 					VfResourceInstaller.createVNFName(vfResourceStructure),
 					BigDecimalVersion.castAndCheckNotificationVersionToString(
 							vfResourceStructure.getNotification().getServiceVersion()), "", "");
 
-			VnfResource vnfResource = db.getVnfResource(
+				VnfResource vnfResource = db.getVnfResource(
 					VfResourceInstaller.createVNFName(vfResourceStructure),
 					BigDecimalVersion.castAndCheckNotificationVersionToString(
 							vfResourceStructure.getNotification().getServiceVersion()));
@@ -79,23 +95,73 @@ public class VfResourceInstaller implements IVfResourceInstaller {
 
 			}
 
+			}
+
+			// Check dup for VF Allotted Resource
+			if(resourceType.equals("VF") && category.equalsIgnoreCase("Allotted Resource")){
+				logger.info(MessageEnum.ASDC_CHECK_HEAT_TEMPLATE, "AllottedResource",
+						vfResourceStruct.getResourceInstance().getResourceInstanceName(),
+						BigDecimalVersion.castAndCheckNotificationVersionToString(
+								vfResourceStructure.getNotification().getServiceVersion()), "", "");
+
+				List<AllottedResourceCustomization> allottedResources = db.getAllAllottedResourcesByServiceModelUuid(vfResourceStruct.getNotification().getServiceUUID());
+
+				if(allottedResources != null && allottedResources.size() > 0){
+					for(AllottedResourceCustomization allottedResource : allottedResources){
+
+						String existingAllottedResource = allottedResource.getModelCustomizationUuid();
+						String notificationAllottedResource = vfResourceStruct.getResourceInstance().getResourceCustomizationUUID();
+
+						if(existingAllottedResource.equals(notificationAllottedResource)){
+							status=true;
+							break;
+						}
+					}
+
+				}
+			}
+
+			// Check Network for duplicates
+			if(resourceType.equals("VL")){
+				logger.info(MessageEnum.ASDC_CHECK_HEAT_TEMPLATE, "NetworkResource",
+						vfResourceStruct.getResourceInstance().getResourceInstanceName(),
+						BigDecimalVersion.castAndCheckNotificationVersionToString(
+								vfResourceStructure.getNotification().getServiceVersion()), "", "");
+
+				List<NetworkResourceCustomization> networkResources = db.getAllNetworksByServiceModelUuid(vfResourceStruct.getNotification().getServiceUUID());
+
+				if(networkResources != null && networkResources.size() > 0){
+					for(NetworkResourceCustomization networkResource : networkResources){
+
+						String existingNetworkResource = networkResource.getModelCustomizationUuid();
+						String notificationNetworkResource = vfResourceStruct.getResourceInstance().getResourceCustomizationUUID();
+
+						if(existingNetworkResource.equals(notificationNetworkResource)){
+							status=true;
+							break;
+						}
+					}
+
+				}
+			}
+
 			if (status) {
 				logger.info(MessageEnum.ASDC_ARTIFACT_ALREADY_DEPLOYED_DETAIL,
 						vfResourceStructure.getResourceInstance().getResourceInstanceName(),
-						vfResourceStructure.getResourceInstance().getResourceUUID(),
+						vfResourceStructure.getResourceInstance().getResourceCustomizationUUID(),
 						vfResourceStructure.getNotification().getServiceName(),
 						BigDecimalVersion.castAndCheckNotificationVersionToString(
 								vfResourceStructure.getNotification().getServiceVersion()),
 						vfResourceStructure.getNotification().getServiceUUID(),
-						vfResourceStructure.getResourceInstance().getResourceName(), "", "");
+						vfResourceStructure.getResourceInstance().getResourceName(),"", "");
 			} else {
 				logger.info(MessageEnum.ASDC_ARTIFACT_NOT_DEPLOYED_DETAIL,
 						vfResourceStructure.getResourceInstance().getResourceInstanceName(),
-						vfResourceStructure.getResourceInstance().getResourceUUID(),
+						vfResourceStructure.getResourceInstance().getResourceCustomizationUUID(),
 						vfResourceStructure.getNotification().getServiceName(),
 						BigDecimalVersion.castAndCheckNotificationVersionToString(
 								vfResourceStructure.getNotification().getServiceVersion()),
-						vfResourceStructure.getNotification().getServiceUUID(), 
+						vfResourceStructure.getNotification().getServiceUUID(),
 						vfResourceStructure.getResourceInstance().getResourceName(),"", "");
 			}
 
@@ -108,12 +174,14 @@ public class VfResourceInstaller implements IVfResourceInstaller {
 	}
 
 	@Override
-	public void installTheResource(VfResourceStructure vfResourceStructure) throws ArtifactInstallerException {
+	public void installTheResource(VfResourceStructure vfResourceStruct) throws ArtifactInstallerException {
 
 		// 1. Add the DB object list (Hashed) to be created from the HashMap
 		// UUID
 		// The DB objects will be stored in each VfModuleArtifact objects
 		// Those objects could be reused by different VfModule
+
+		VfResourceStructure vfResourceStructure = (VfResourceStructure)vfResourceStruct;
 
 		for (VfModuleArtifact vfModuleArtifact : vfResourceStructure.getArtifactsMapByUUID().values()) {
 
@@ -138,26 +206,53 @@ public class VfResourceInstaller implements IVfResourceInstaller {
 
 			}
 		}
-		
+
 		// in case of deployment failure, use a string that will represent the type of artifact that failed...
 		List<ASDCElementInfo> artifactListForLogging = new ArrayList<>();
-		
+
 		CatalogDatabase catalogDB = new CatalogDatabase();
 		// 2. Create the VFModules/VNFResource objects by linking them to the
 		// objects created before and store them in Resource/module structure
 		// Opening a DB transaction, starting from here
 		try {
-			
+
 			VfResourceInstaller.createService(vfResourceStructure);
-			
-			VfResourceInstaller.createVnfResource(vfResourceStructure);
+
+			String resourceType = vfResourceStructure.getResourceInstance().getResourceType();
+			String resourceCategory = vfResourceStructure.getResourceInstance().getCategory();
+
+			if(resourceType.equals("VF")){
+
+				if(resourceCategory.equalsIgnoreCase("Allotted Resource")){
+					VfResourceInstaller.createAllottedResourceCustomization(vfResourceStructure);
+					catalogDB.saveAllottedResourceCustomization(vfResourceStructure.getCatalogResourceCustomization());
+				} else {
+					VfResourceInstaller.createVnfResource(vfResourceStructure);
+					catalogDB.saveOrUpdateVnfResource(vfResourceStructure.getCatalogVnfResource());
+				}
+			}
+
+			if(resourceType.equals("VL")){
+				VfResourceInstaller.createNetworkResourceCustomization(vfResourceStructure);
+				catalogDB.saveNetworkResourceCustomization(vfResourceStructure.getCatalogNetworkResourceCustomization());
+			}
 
 			// Add this one for logging
 			artifactListForLogging.add(ASDCElementInfo.createElementFromVfResourceStructure(vfResourceStructure));
-			
-			catalogDB.saveOrUpdateVnfResource(vfResourceStructure.getCatalogVnfResource());
+
+			//catalogDB.saveOrUpdateVnfResource(vfResourceStructure.getCatalogVnfResource());
 			catalogDB.saveService(vfResourceStructure.getCatalogService());
-			
+
+			// Now that the service has been added we can populate the Service_to_AllottedResources table
+			if(resourceType.equals("VF") && resourceCategory.equalsIgnoreCase("Allotted Resource")){
+				catalogDB.saveServiceToAllottedResources(vfResourceStructure.getCatalogServiceToAllottedResources());
+			}
+
+			// Now that the service has been added we can populate the Service_to_Network table
+			if(resourceType.equals("VL")){
+				catalogDB.saveServiceToNetworks(vfResourceStructure.getCatalogServiceToNetworks());
+			}
+
 			for (VfModuleStructure vfModuleStructure : vfResourceStructure.getVfModuleStructure()) {
 
 				// Here we set the right db structure according to the Catalog
@@ -170,14 +265,14 @@ public class VfResourceInstaller implements IVfResourceInstaller {
 
 				HeatTemplate heatMainTemplate = null;
 				HeatEnvironment heatEnv = null;
-				
+
 				HeatTemplate heatVolumeTemplate = null;
 				HeatEnvironment heatVolumeEnv = null;
-				
+
 				if (vfModuleStructure.getArtifactsMap().containsKey(ASDCConfiguration.HEAT)) {
 					IArtifactInfo mainEnvArtifactInfo = vfModuleStructure.getArtifactsMap().get(ASDCConfiguration.HEAT)
 							.get(0).getArtifactInfo().getGeneratedArtifact();
-					
+
 					// MAIN HEAT
 					heatMainTemplate = (HeatTemplate) vfModuleStructure.getArtifactsMap()
 							.get(ASDCConfiguration.HEAT).get(0).getCatalogObject();
@@ -185,77 +280,77 @@ public class VfResourceInstaller implements IVfResourceInstaller {
 					// Add this one for logging
 					artifactListForLogging.add(ASDCElementInfo
 							.createElementFromVfArtifactInfo(vfModuleStructure.getArtifactsMap().get(ASDCConfiguration.HEAT).get(0).getArtifactInfo()));
-					
+
 					catalogDB.saveHeatTemplate(heatMainTemplate, heatMainTemplate.getParameters());
 					// Indicate we have deployed it in the DB
 					vfModuleStructure.getArtifactsMap().get(ASDCConfiguration.HEAT).get(0).incrementDeployedInDB();
-					
-					
+
+
 					// VOLUME HEAT
 					// We expect only one VOL HEAT per VFMODULE
 					// we can also obtain from it the Env ArtifactInfo, that's why
 					// we get the Volume IArtifactInfo
-				
+
 					if (vfModuleStructure.getArtifactsMap().containsKey(ASDCConfiguration.HEAT_VOL)) {
 						IArtifactInfo volEnvArtifactInfo = vfModuleStructure.getArtifactsMap().get(ASDCConfiguration.HEAT_VOL).get(0)
 								.getArtifactInfo().getGeneratedArtifact();
-		
+
 						heatVolumeTemplate = (HeatTemplate) vfModuleStructure.getArtifactsMap()
 								.get(ASDCConfiguration.HEAT_VOL).get(0).getCatalogObject();
-					
+
 						// Add this one for logging
 						artifactListForLogging.add(ASDCElementInfo.createElementFromVfArtifactInfo(vfModuleStructure.getArtifactsMap().get(ASDCConfiguration.HEAT_VOL).get(0).getArtifactInfo()));
 
 						catalogDB.saveHeatTemplate(heatVolumeTemplate, heatVolumeTemplate.getParameters());
 						// Indicate we have deployed it in the DB
 						vfModuleStructure.getArtifactsMap().get(ASDCConfiguration.HEAT_VOL).get(0).incrementDeployedInDB();
-						
+
 						if (volEnvArtifactInfo != null) {
 							heatVolumeEnv = (HeatEnvironment) vfResourceStructure.getArtifactsMapByUUID()
 									.get(volEnvArtifactInfo.getArtifactUUID()).getCatalogObject();
 
 							// Add this one for logging
 							artifactListForLogging.add(ASDCElementInfo.createElementFromVfArtifactInfo(volEnvArtifactInfo));
-														
+
 							catalogDB.saveHeatEnvironment(heatVolumeEnv);
 							// Indicate we have deployed it in the DB
 							vfResourceStructure.getArtifactsMapByUUID().get(volEnvArtifactInfo.getArtifactUUID()).incrementDeployedInDB();
 						}
-						
+
 					}
-					
+
 					// NESTED HEAT
 					// Here we expect many HEAT_NESTED template to be there
 					// check first if we really have nested heat templates
 					if (vfModuleStructure.getArtifactsMap().containsKey(ASDCConfiguration.HEAT_NESTED)) {
 						for (VfModuleArtifact heatNestedArtifact : vfModuleStructure.getArtifactsMap()
 								.get(ASDCConfiguration.HEAT_NESTED)) {
-	
+
 							// Check if this nested is well referenced by the MAIN HEAT
 							String parentArtifactType = VfResourceInstaller.identifyParentOfNestedTemplate(vfModuleStructure,heatNestedArtifact);
 							HeatTemplate heatNestedTemplate = (HeatTemplate) heatNestedArtifact.getCatalogObject();
-							
+
 							if (parentArtifactType != null) {
-														
+
 								switch (parentArtifactType) {
 									case ASDCConfiguration.HEAT:
-										
+
 										// Add this one for logging
 										artifactListForLogging.add(ASDCElementInfo.createElementFromVfArtifactInfo(heatNestedArtifact.getArtifactInfo()));
-								
+
 										catalogDB.saveNestedHeatTemplate (heatMainTemplate.getId(), heatNestedTemplate, heatNestedTemplate.getTemplateName());
 										// Indicate we have deployed it in the DB
 										heatNestedArtifact.incrementDeployedInDB();
 										break;
 									case ASDCConfiguration.HEAT_VOL:
-										
+
 										// Add this one for logging
 										artifactListForLogging.add(ASDCElementInfo.createElementFromVfArtifactInfo(heatNestedArtifact.getArtifactInfo()));
 										catalogDB.saveNestedHeatTemplate (heatVolumeTemplate.getId(), heatNestedTemplate, heatNestedTemplate.getTemplateName());
 										// Indicate we have deployed it in the DB
 										heatNestedArtifact.incrementDeployedInDB();
 										break;
-										
+
 									default:
 										break;
 
@@ -263,49 +358,49 @@ public class VfResourceInstaller implements IVfResourceInstaller {
 							} else { // Assume it belongs to HEAT MAIN
 								// Add this one for logging
 								artifactListForLogging.add(ASDCElementInfo.createElementFromVfArtifactInfo(heatNestedArtifact.getArtifactInfo()));
-						
+
 								catalogDB.saveNestedHeatTemplate (heatMainTemplate.getId(), heatNestedTemplate, heatNestedTemplate.getTemplateName());
 								// Indicate we have deployed it in the DB
 								heatNestedArtifact.incrementDeployedInDB();
 							}
 						}
 					}
-					
+
 					if (mainEnvArtifactInfo != null) {
 						heatEnv = (HeatEnvironment) vfResourceStructure.getArtifactsMapByUUID()
 								.get(mainEnvArtifactInfo.getArtifactUUID()).getCatalogObject();
 
 						// Add this one for logging
 						artifactListForLogging.add(ASDCElementInfo.createElementFromVfArtifactInfo(mainEnvArtifactInfo));
-												
+
 						catalogDB.saveHeatEnvironment(heatEnv);
 						// Indicate we have deployed it in the DB
 						vfResourceStructure.getArtifactsMapByUUID().get(mainEnvArtifactInfo.getArtifactUUID()).incrementDeployedInDB();
 					}
-					
+
 				}
-		
-					
+
+
 				// here we expect one VFModule to be there
 				VfResourceInstaller.createVfModule(vfModuleStructure,heatMainTemplate, heatVolumeTemplate, heatEnv, heatVolumeEnv);
 				VfModule vfModule = vfModuleStructure.getCatalogVfModule();
 
 				// Add this one for logging
 				artifactListForLogging.add(ASDCElementInfo.createElementFromVfModuleStructure(vfModuleStructure));
-				
+
 				catalogDB.saveOrUpdateVfModule(vfModule);
 
 				// Here we expect many HEAT_TEMPLATE files to be there
 				if (vfModuleStructure.getArtifactsMap().containsKey(ASDCConfiguration.HEAT_ARTIFACT)) {
 					for (VfModuleArtifact heatArtifact : vfModuleStructure.getArtifactsMap()
 							.get(ASDCConfiguration.HEAT_ARTIFACT)) {
-	
+
 						HeatFiles heatFile = (HeatFiles) heatArtifact.getCatalogObject();
-											
+
 						// Add this one for logging
 						artifactListForLogging.add(ASDCElementInfo.createElementFromVfArtifactInfo(heatArtifact.getArtifactInfo()));
-					
-						
+
+
 						catalogDB.saveVfModuleToHeatFiles (vfModule.getId(), heatFile);
 						// Indicate we will deploy it in the DB
 						heatArtifact.incrementDeployedInDB();
@@ -313,10 +408,10 @@ public class VfResourceInstaller implements IVfResourceInstaller {
 				}
 
 			}
-			
+
 			catalogDB.commit();
 			vfResourceStructure.setSuccessfulDeployment();
-			
+
 		} catch (Exception e) {
 
 			Throwable dbExceptionToCapture = e;
@@ -329,12 +424,12 @@ public class VfResourceInstaller implements IVfResourceInstaller {
 				logger.warn(MessageEnum.ASDC_ARTIFACT_ALREADY_DEPLOYED, vfResourceStructure.getResourceInstance().getResourceName(),
 						vfResourceStructure.getNotification().getServiceVersion(), "", "", MsoLogger.ErrorCode.DataError, "Exception - ASCDC Artifact already deployed", e);
 			} else {
-				String endEvent = "Exception caught during installation of the VFResource. Transaction rollback.";
+				String endEvent = "Exception caught during installation of " + vfResourceStructure.getResourceInstance().getResourceName() + ". Transaction rollback.";
 				String elementToLog = (artifactListForLogging.size() > 0 ? artifactListForLogging.get(artifactListForLogging.size()-1).toString() : "No element listed");
-				logger.error(MessageEnum.ASDC_ARTIFACT_INSTALL_EXC, elementToLog, "", "", MsoLogger.ErrorCode.DataError, "Exception caught during installation of the VFResource. Transaction rollback", e);
+				logger.error(MessageEnum.ASDC_ARTIFACT_INSTALL_EXC, elementToLog, "", "", MsoLogger.ErrorCode.DataError, "Exception caught during installation of " + vfResourceStructure.getResourceInstance().getResourceName() + ". Transaction rollback", e);
 				catalogDB.rollback();
 				throw new ArtifactInstallerException(
-						"Exception caught during installation of the VFResource. Transaction rollback.", e);
+						"Exception caught during installation of " + vfResourceStructure.getResourceInstance().getResourceName() + ". Transaction rollback.", e);
 			}
 
 		} finally {
@@ -344,10 +439,10 @@ public class VfResourceInstaller implements IVfResourceInstaller {
 		}
 
 	}
-	
+
 	private static String identifyParentOfNestedTemplate(VfModuleStructure vfModuleStructure,VfModuleArtifact heatNestedArtifact) {
 
-		if (vfModuleStructure.getArtifactsMap().get(ASDCConfiguration.HEAT) != null 
+		if (vfModuleStructure.getArtifactsMap().get(ASDCConfiguration.HEAT) != null
 				&& vfModuleStructure.getArtifactsMap().get(ASDCConfiguration.HEAT).get(0).getArtifactInfo().getRelatedArtifacts() != null) {
 			for (IArtifactInfo unknownArtifact : vfModuleStructure.getArtifactsMap().get(ASDCConfiguration.HEAT).get(0)
 					.getArtifactInfo().getRelatedArtifacts()) {
@@ -356,29 +451,29 @@ public class VfResourceInstaller implements IVfResourceInstaller {
 				}
 
 			}
-		} 
-		
-		if (vfModuleStructure.getArtifactsMap().get(ASDCConfiguration.HEAT_VOL) != null 
+		}
+
+		if (vfModuleStructure.getArtifactsMap().get(ASDCConfiguration.HEAT_VOL) != null
 				&& vfModuleStructure.getArtifactsMap().get(ASDCConfiguration.HEAT_VOL).get(0).getArtifactInfo().getRelatedArtifacts() != null) {
 			for (IArtifactInfo unknownArtifact:vfModuleStructure.getArtifactsMap().get(ASDCConfiguration.HEAT_VOL).get(0).getArtifactInfo().getRelatedArtifacts()) {
 				if (heatNestedArtifact.getArtifactInfo().getArtifactUUID().equals(unknownArtifact.getArtifactUUID())) {
 					return ASDCConfiguration.HEAT_VOL;
 				}
-			
+
 			}
 		}
-		
+
 		// Does not belong to anything
 		return null;
-			
+
 	}
-	
+
 	private static void createVnfResource(VfResourceStructure vfResourceStructure) {
 		VnfResource vnfResource = new VnfResource();
-		
+
 		vnfResource.setAsdcUuid(vfResourceStructure.getResourceInstance().getResourceUUID());
 		vnfResource.setDescription(vfResourceStructure.getNotification().getServiceDescription());
-		
+
 		vnfResource.setOrchestrationMode("HEAT");
 		// Set the version but Version is stored into ASDC_SERVICE_MODEL_VERSION
 		vnfResource.setVersion(BigDecimalVersion
@@ -386,13 +481,57 @@ public class VfResourceInstaller implements IVfResourceInstaller {
 		vnfResource.setVnfType(VfResourceInstaller.createVNFName(vfResourceStructure));
 		vnfResource.setModelVersion(BigDecimalVersion
 				.castAndCheckNotificationVersionToString(vfResourceStructure.getResourceInstance().getResourceVersion()));
-		
+
 		vnfResource.setModelInvariantUuid(vfResourceStructure.getResourceInstance().getResourceInvariantUUID());
 		vnfResource.setModelCustomizationName(vfResourceStructure.getResourceInstance().getResourceInstanceName());
+		vnfResource.setModelCustomizationUuid(vfResourceStructure.getResourceInstance().getResourceCustomizationUUID());
 		vnfResource.setModelName(vfResourceStructure.getResourceInstance().getResourceName());
 		vnfResource.setServiceModelInvariantUUID(vfResourceStructure.getNotification().getServiceInvariantUUID());
-	
+		//vnfResource.setCreated(getCurrentTimeStamp());
+
 		vfResourceStructure.setCatalogVnfResource(vnfResource);
+	}
+
+	private static void createNetworkResourceCustomization(VfResourceStructure vfResourceStructure) {
+		NetworkResourceCustomization networkResourceCustomization = new NetworkResourceCustomization();
+
+		networkResourceCustomization.setModelCustomizationUuid(vfResourceStructure.getResourceInstance().getResourceCustomizationUUID().trim());
+		networkResourceCustomization.setModelName(vfResourceStructure.getResourceInstance().getResourceName().trim());
+		networkResourceCustomization.setModelInstanceName(vfResourceStructure.getResourceInstance().getResourceInstanceName().trim());
+		networkResourceCustomization.setModelInvariantUuid(vfResourceStructure.getResourceInstance().getResourceInvariantUUID().trim());
+		networkResourceCustomization.setModelUuid(vfResourceStructure.getResourceInstance().getResourceUUID().trim());
+		networkResourceCustomization.setModelVersion(vfResourceStructure.getResourceInstance().getResourceVersion().trim());
+		//networkResourceCustomization.setCreated(getCurrentTimeStamp());
+
+		vfResourceStructure.setCatalogNetworkResourceCustomization(networkResourceCustomization);
+
+		ServiceToNetworks serviceNetworks = new ServiceToNetworks();
+		serviceNetworks.setNetworkModelCustomizationUuid(networkResourceCustomization.getModelCustomizationUuid());
+		serviceNetworks.setServiceModelUuid(vfResourceStructure.getNotification().getServiceUUID());
+
+		vfResourceStructure.setCatalogServiceToNetworks(serviceNetworks);
+
+	}
+
+	private static void createAllottedResourceCustomization(VfResourceStructure vfResourceStructure) {
+		AllottedResourceCustomization resourceCustomization = new AllottedResourceCustomization();
+
+		resourceCustomization.setModelCustomizationUuid(vfResourceStructure.getResourceInstance().getResourceCustomizationUUID().trim());
+		resourceCustomization.setModelName(vfResourceStructure.getResourceInstance().getResourceName().trim());
+		resourceCustomization.setModelInstanceName(vfResourceStructure.getResourceInstance().getResourceInstanceName().trim());
+		resourceCustomization.setModelInvariantUuid(vfResourceStructure.getResourceInstance().getResourceInvariantUUID().trim());
+		resourceCustomization.setModelUuid(vfResourceStructure.getResourceInstance().getResourceUUID().trim());
+		resourceCustomization.setVersion(vfResourceStructure.getResourceInstance().getResourceVersion().trim());
+		//resourceCustomization.setCreated(getCurrentTimeStamp());
+
+		vfResourceStructure.setCatalogResourceCustomization(resourceCustomization);
+
+		ServiceToAllottedResources serviceAllottedResources = new ServiceToAllottedResources();
+		serviceAllottedResources.setArModelCustomizationUuid(resourceCustomization.getModelCustomizationUuid());
+		serviceAllottedResources.setServiceModelUuid(vfResourceStructure.getNotification().getServiceUUID());
+
+		vfResourceStructure.setCatalogServiceToAllottedResources(serviceAllottedResources);
+
 	}
 
 	private static void createVfModule(VfModuleStructure vfModuleStructure,HeatTemplate heatMain, HeatTemplate heatVolume,HeatEnvironment heatEnv, HeatEnvironment heatVolumeEnv) {
@@ -407,21 +546,41 @@ public class VfResourceInstaller implements IVfResourceInstaller {
 			vfModule.setIsBase(0);
 		}
 
+		vfModule.setModelCustomizationUuid(vfModuleStructure.getVfModuleMetadata().getVfModuleModelCustomizationUUID());
 		vfModule.setModelInvariantUuid(vfModuleStructure.getVfModuleMetadata().getVfModuleModelInvariantUUID());
 		vfModule.setModelName(vfModuleStructure.getVfModuleMetadata().getVfModuleModelName());
-		
+
 		vfModule.setVersion(BigDecimalVersion.castAndCheckNotificationVersionToString(vfModuleStructure.getParentVfResource().getNotification().getServiceVersion()));
 		vfModule.setModelVersion(BigDecimalVersion.castAndCheckNotificationVersionToString(
 				vfModuleStructure.getVfModuleMetadata().getVfModuleModelVersion()));
-	
+
+		Map<String,String> map = vfModuleStructure.getVfModuleMetadata().getProperties();
+
+		if(map != null){
+
+			if(map.get("vf_module_label") != null){
+				vfModule.setLabel(map.get("vf_module_label"));
+			}
+			if(map.get("initial_count") != null && map.get("initial_count").length() > 0){
+				vfModule.setInitialCount(Integer.parseInt(map.get("initial_count")));
+			}
+			if(map.get("min_vf_module_instances") != null && map.get("min_vf_module_instances").length() > 0){
+				vfModule.setMinInstances(Integer.parseInt(map.get("min_vf_module_instances")));
+			}
+			if(map.get("max_vf_module_instances") != null && map.get("max_vf_module_instances").length() > 0){
+				vfModule.setMaxInstances(Integer.parseInt(map.get("max_vf_module_instances")));
+			}
+
+		}
+
 		vfModuleStructure.setCatalogVfModule(vfModule);
-		
+
 		VfResourceInstaller.createVfModuleLinks(vfModule, vfModuleStructure.getParentVfResource().getCatalogVnfResource(), heatMain,heatVolume, heatEnv,heatVolumeEnv);
 	}
 
 	private static void createVfModuleLinks(VfModule vfModule, VnfResource vnfResource, HeatTemplate heatMain,
 			HeatTemplate heatVolume, HeatEnvironment heatEnv, HeatEnvironment heatVolumeEnv) {
-		
+
 		if (heatMain !=null) {
 			vfModule.setTemplateId(heatMain.getId());
 		}
@@ -434,7 +593,7 @@ public class VfResourceInstaller implements IVfResourceInstaller {
 		if (heatVolumeEnv != null) {
 			vfModule.setVolEnvironmentId(heatVolumeEnv.getId());
 		}
-		
+
 		vfModule.setVnfResourceId(vnfResource.getId());
 
 	}
@@ -448,53 +607,53 @@ public class VfResourceInstaller implements IVfResourceInstaller {
 
 	}
 
-	
+
 	public static String verifyTheFilePrefixInArtifacts(String filebody, VfResourceStructure vfResourceStructure, List<String> listTypes) {
 		String newFileBody = filebody;
 		for (VfModuleArtifact moduleArtifact:vfResourceStructure.getArtifactsMapByUUID().values()) {
-			
+
 			if (listTypes.contains(moduleArtifact.getArtifactInfo().getArtifactType())) {
-				
+
 				newFileBody = verifyTheFilePrefixInString(newFileBody,moduleArtifact.getArtifactInfo().getArtifactName());
 			}
 		}
 		return newFileBody;
 	}
-	
+
 	public static String verifyTheFilePrefixInString(final String body, final String filenameToVerify) {
-		
+
 		String needlePrefix = "file:///";
 		String prefixedFilenameToVerify = needlePrefix+filenameToVerify;
-		
-		if ((body == null) || (body.length() == 0) || (filenameToVerify == null) || (filenameToVerify.length() == 0)) { 
-			return body; 
-		} 
- 
-		StringBuffer sb = new StringBuffer(body.length()); 
- 
-		int currentIndex = 0; 
-		int startIndex = 0; 
- 
-		while (currentIndex != -1) { 
-			startIndex = currentIndex; 
-			currentIndex = body.indexOf(prefixedFilenameToVerify, startIndex); 
- 
-			if (currentIndex == -1) { 
-				break; 
-			} 
- 
-			// We append from the startIndex up to currentIndex (start of File Name) 
-			sb.append(body.substring(startIndex, currentIndex)); 
-			sb.append(filenameToVerify); 
- 
-			currentIndex += prefixedFilenameToVerify.length(); 
-		} 
- 
-		sb.append(body.substring(startIndex)); 
- 
+
+		if ((body == null) || (body.length() == 0) || (filenameToVerify == null) || (filenameToVerify.length() == 0)) {
+			return body;
+		}
+
+		StringBuffer sb = new StringBuffer(body.length());
+
+		int currentIndex = 0;
+		int startIndex = 0;
+
+		while (currentIndex != -1) {
+			startIndex = currentIndex;
+			currentIndex = body.indexOf(prefixedFilenameToVerify, startIndex);
+
+			if (currentIndex == -1) {
+				break;
+			}
+
+			// We append from the startIndex up to currentIndex (start of File Name)
+			sb.append(body.substring(startIndex, currentIndex));
+			sb.append(filenameToVerify);
+
+			currentIndex += prefixedFilenameToVerify.length();
+		}
+
+		sb.append(body.substring(startIndex));
+
 		return sb.toString();
 	}
-	
+
 	private static void createHeatTemplateFromArtifact(VfResourceStructure vfResourceStructure,
 			VfModuleArtifact vfModuleArtifact) {
 		HeatTemplate heatTemplate = new HeatTemplate();
@@ -505,11 +664,11 @@ public class VfResourceInstaller implements IVfResourceInstaller {
 		// reused
 		heatTemplate.setAsdcResourceName(vfResourceStructure.getResourceInstance().getResourceName());
 		heatTemplate.setAsdcUuid(vfModuleArtifact.getArtifactInfo().getArtifactUUID());
-		
+
 		List<String> typeList = new ArrayList<String>();
 		typeList.add(ASDCConfiguration.HEAT_NESTED);
 		typeList.add(ASDCConfiguration.HEAT_ARTIFACT);
-		
+
 		heatTemplate.setTemplateBody(verifyTheFilePrefixInArtifacts(vfModuleArtifact.getResult(),vfResourceStructure,typeList));
 		heatTemplate.setTemplateName(vfModuleArtifact.getArtifactInfo().getArtifactName());
 
@@ -522,6 +681,13 @@ public class VfResourceInstaller implements IVfResourceInstaller {
 		heatTemplate.setDescription(vfModuleArtifact.getArtifactInfo().getArtifactDescription());
 		heatTemplate.setVersion(BigDecimalVersion
 				.castAndCheckNotificationVersionToString(vfModuleArtifact.getArtifactInfo().getArtifactVersion()));
+
+		if(vfModuleArtifact.getArtifactInfo().getArtifactChecksum() != null){
+			heatTemplate.setArtifactChecksum(vfModuleArtifact.getArtifactInfo().getArtifactChecksum());
+		} else {
+			heatTemplate.setArtifactChecksum("MANUAL_RECORD");
+		}
+
 		Set<HeatTemplateParam> heatParam = VfResourceInstaller
 				.extractHeatTemplateParameters(vfModuleArtifact.getResult());
 		heatTemplate.setParameters(heatParam);
@@ -536,11 +702,11 @@ public class VfResourceInstaller implements IVfResourceInstaller {
 		heatEnvironment.setName(vfModuleArtifact.getArtifactInfo().getArtifactName());
 		// TODO Set the label
 		heatEnvironment.setAsdcLabel("Label");
-		
+
 		List<String> typeList = new ArrayList<String>();
 		typeList.add(ASDCConfiguration.HEAT);
 		typeList.add(ASDCConfiguration.HEAT_VOL);
-		
+
 		heatEnvironment.setEnvironment(verifyTheFilePrefixInArtifacts(vfModuleArtifact.getResult(),vfResourceStructure,typeList));
 		heatEnvironment.setAsdcUuid(vfModuleArtifact.getArtifactInfo().getArtifactUUID());
 		heatEnvironment.setDescription(vfModuleArtifact.getArtifactInfo().getArtifactDescription());
@@ -548,8 +714,14 @@ public class VfResourceInstaller implements IVfResourceInstaller {
 				.castAndCheckNotificationVersionToString(vfModuleArtifact.getArtifactInfo().getArtifactVersion()));
 		heatEnvironment.setAsdcResourceName(VfResourceInstaller.createVNFName(vfResourceStructure));
 
+		if(vfModuleArtifact.getArtifactInfo().getArtifactChecksum() != null){
+			heatEnvironment.setArtifactChecksum(vfModuleArtifact.getArtifactInfo().getArtifactChecksum());
+		} else{
+			heatEnvironment.setArtifactChecksum("MANUAL_RECORD");
+		}
+
 		vfModuleArtifact.setCatalogObject(heatEnvironment);
-		
+
 	}
 
 	private static void createHeatFileFromArtifact(VfResourceStructure vfResourceStructure,
@@ -566,31 +738,45 @@ public class VfResourceInstaller implements IVfResourceInstaller {
 				.castAndCheckNotificationVersionToString(vfModuleArtifact.getArtifactInfo().getArtifactVersion()));
 
 		heatFile.setAsdcResourceName(vfResourceStructure.getResourceInstance().getResourceName());
+
+		if(vfModuleArtifact.getArtifactInfo().getArtifactChecksum() != null){
+			heatFile.setArtifactChecksum(vfModuleArtifact.getArtifactInfo().getArtifactChecksum());
+		} else {
+			heatFile.setArtifactChecksum("MANUAL_RECORD");
+		}
+
 		vfModuleArtifact.setCatalogObject(heatFile);
-		
+
 	}
 
 	private static void createService(VfResourceStructure vfResourceStructure) {
-		
+
 		Service service = new Service();
 		service.setDescription(vfResourceStructure.getNotification().getServiceDescription());
 		service.setServiceName(vfResourceStructure.getNotification().getServiceName());
 		service.setServiceNameVersionId(vfResourceStructure.getNotification().getServiceUUID());
 		service.setVersion(vfResourceStructure.getNotification().getServiceVersion());
 		service.setModelInvariantUUID(vfResourceStructure.getNotification().getServiceInvariantUUID());
-				
+
 		vfResourceStructure.setCatalogService(service);
 	}
-	
-	
+
+
 	private static String createVNFName(VfResourceStructure vfResourceStructure) {
 
 		return vfResourceStructure.getNotification().getServiceName() + "/" + vfResourceStructure.getResourceInstance().getResourceInstanceName();
 	}
 
 	private static String createVfModuleName(VfModuleStructure vfModuleStructure) {
-		
+
 		return createVNFName(vfModuleStructure.getParentVfResource())+"::"+vfModuleStructure.getVfModuleMetadata().getVfModuleModelName();
 	}
+
+
+	private static Timestamp getCurrentTimeStamp() {
+
+		return new Timestamp(new Date().getTime());
+	}
+
 
 }

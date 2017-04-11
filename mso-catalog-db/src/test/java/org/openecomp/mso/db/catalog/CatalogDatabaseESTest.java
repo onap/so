@@ -39,7 +39,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.junit.runner.RunWith;
 
-@RunWith(EvoRunner.class) @EvoRunnerParameters(mockJVMNonDeterminism = true, useVFS = true, useVNET = true, resetStaticState = true, useJEE = true) 
+@RunWith(EvoRunner.class) @EvoRunnerParameters(mockJVMNonDeterminism = true, useVFS = true, useVNET = true, resetStaticState = true, useJEE = true)
 public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
 
   @Test(timeout = 4000)
@@ -65,10 +65,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       PrivateAccess.callMethod((Class<CatalogDatabase>) CatalogDatabase.class, catalogDatabase0, "getSession");
       PrivateAccess.callMethod((Class<CatalogDatabase>) CatalogDatabase.class, catalogDatabase0, "getSession");
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.getHeatTemplate((String) null);
         fail("Expecting exception: ClassCastException");
-      
+
       } catch(ClassCastException e) {
          //
          // org.openecomp.mso.db.catalog.beans.VfModuleToHeatFiles$$EnhancerByMockitoWithCGLIB$$309d9392 cannot be cast to org.openecomp.mso.db.catalog.beans.HeatTemplate
@@ -89,10 +89,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       Session session1 = mock(Session.class, new ViolatedAssumptionAnswer());
       HeatTemplate heatTemplate0 = mock(HeatTemplate.class, new ViolatedAssumptionAnswer());
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.getVfModuleType((String) null, (String) null);
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -143,10 +143,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       catalogDatabase0.saveHeatFiles(heatFiles0);
       Set<HeatTemplateParam> set0 = (Set<HeatTemplateParam>) mock(Set.class, new ViolatedAssumptionAnswer());
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.saveHeatTemplate(heatTemplate0, set0);
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
       }
   }
@@ -190,10 +190,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       Set<HeatTemplateParam> set0 = (Set<HeatTemplateParam>) mock(Set.class, new ViolatedAssumptionAnswer());
       doReturn(iterator0).when(set0).iterator();
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.saveHeatTemplate(heatTemplate0, set0);
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -214,10 +214,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       doReturn((Query) null).when(session0).createQuery(anyString());
       PrivateAccess.setVariable((Class<CatalogDatabase>) CatalogDatabase.class, catalogDatabase0, "session", (Object) session0);
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.getService(hashMap0, "Successfully. No template found");
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -234,10 +234,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       doReturn((Query) null).when(session0).createQuery(anyString());
       PrivateAccess.setVariable((Class<CatalogDatabase>) CatalogDatabase.class, catalogDatabase0, "session", (Object) session0);
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.getNestedTemplates(2377);
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -256,10 +256,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       doReturn((Query) null).when(session0).createQuery(anyString());
       PrivateAccess.setVariable((Class<CatalogDatabase>) CatalogDatabase.class, catalogDatabase0, "session", (Object) session0);
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.getVnfComponentsRecipe("Generic exception searching for vnf_id=", (String) null, (String) null, (String) null);
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -287,10 +287,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       PrivateAccess.setVariable((Class<CatalogDatabase>) CatalogDatabase.class, catalogDatabase0, "session", (Object) session1);
       catalogDatabase0.getVnfComponent(187, "");
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.getHeatEnvironment((-1));
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
       }
   }
@@ -299,10 +299,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
   public void test08()  throws Throwable  {
       CatalogDatabase catalogDatabase0 = new CatalogDatabase();
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.getNetworkRecipe("735uWxa&iIbU.4]O$", ",hpGX76\"X~ow4", (String) null);
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -322,10 +322,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       doReturn((Query) null).when(session0).createQuery(anyString());
       PrivateAccess.setVariable((Class<CatalogDatabase>) CatalogDatabase.class, catalogDatabase0, "session", (Object) session0);
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.getVnfComponentsRecipeByVfModuleId("", "(3", "");
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -343,10 +343,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       PrivateAccess.setVariable((Class<CatalogDatabase>) CatalogDatabase.class, catalogDatabase0, "session", (Object) session0);
       PrivateAccess.callMethod((Class<CatalogDatabase>) CatalogDatabase.class, catalogDatabase0, "getSession");
       // Undeclared exception!
-      try { 
-        catalogDatabase0.getVnfComponentsRecipe("B4@1", "v@(U", "", (String) null, "");
+      try {
+        catalogDatabase0.getVnfComponentsRecipe("B4@1", "v@(U", "", (String) null, "", "");
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -363,10 +363,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       doReturn((Query) null).when(session0).createQuery(anyString());
       PrivateAccess.setVariable((Class<CatalogDatabase>) CatalogDatabase.class, catalogDatabase0, "session", (Object) session0);
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.getService((String) null);
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -383,10 +383,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       doReturn((Query) null).when(session0).createQuery(anyString());
       PrivateAccess.setVariable((Class<CatalogDatabase>) CatalogDatabase.class, catalogDatabase0, "session", (Object) session0);
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.getVfModuleModelName("", "RiY");
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -406,10 +406,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       VnfRecipe vnfRecipe0 = mock(VnfRecipe.class, new ViolatedAssumptionAnswer());
       Service service0 = new Service();
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.saveService(service0);
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -426,10 +426,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       doReturn((Query) null).when(session0).createQuery(anyString());
       PrivateAccess.setVariable((Class<CatalogDatabase>) CatalogDatabase.class, catalogDatabase0, "session", (Object) session0);
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.getNetworkRecipe("735uWxa&iIbU.4]O$", ",hpGX76\"X~ow4", "");
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -444,10 +444,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       HeatTemplate heatTemplate0 = mock(HeatTemplate.class, new ViolatedAssumptionAnswer());
       VnfResource vnfResource0 = mock(VnfResource.class, new ViolatedAssumptionAnswer());
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.saveService((Service) null);
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -463,10 +463,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       HeatTemplate heatTemplate0 = new HeatTemplate();
       LinkedHashSet<HeatTemplateParam> linkedHashSet0 = new LinkedHashSet<HeatTemplateParam>();
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.saveHeatTemplate((HeatTemplate) null, (Set<HeatTemplateParam>) linkedHashSet0);
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -482,10 +482,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       doReturn((-1)).when(vnfResource0).getId();
       doReturn("#5|%>JWRPJfP)S@").when(vnfResource0).getVnfType();
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.saveOrUpdateVnfResource(vnfResource0);
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -500,10 +500,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       MsoLogger.StatusCode.values();
       CatalogDatabase catalogDatabase0 = new CatalogDatabase();
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.saveVnfRecipe((VnfRecipe) null);
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -520,10 +520,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       doReturn((String) null, (String) null).when(service0).getServiceNameVersionId();
       doReturn((String) null).when(service0).getServiceVersion();
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.saveService(service0);
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -542,10 +542,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       CatalogDatabase catalogDatabase0 = new CatalogDatabase();
       HeatEnvironment heatEnvironment0 = new HeatEnvironment();
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.saveHeatEnvironment(heatEnvironment0);
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -559,10 +559,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       MessageEnum messageEnum0 = MessageEnum.APIH_GENERAL_METRICS;
       CatalogDatabase catalogDatabase0 = new CatalogDatabase();
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.saveHeatEnvironment((HeatEnvironment) null);
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -575,10 +575,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
   public void test22()  throws Throwable  {
       CatalogDatabase catalogDatabase0 = new CatalogDatabase();
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.getVnfRecipe((String) null, (String) null, (String) null);
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -592,10 +592,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       MsoLogger.ErrorCode.values();
       CatalogDatabase catalogDatabase0 = new CatalogDatabase();
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.rollback();
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -608,10 +608,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
   public void test24()  throws Throwable  {
       CatalogDatabase catalogDatabase0 = new CatalogDatabase();
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.getAllHeatTemplates();
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -624,10 +624,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
   public void test25()  throws Throwable  {
       CatalogDatabase catalogDatabase0 = new CatalogDatabase();
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.getHeatFilesForVfModule((-1539));
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -640,10 +640,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
   public void test26()  throws Throwable  {
       CatalogDatabase catalogDatabase0 = new CatalogDatabase();
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.getHeatEnvironment(0);
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -656,10 +656,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
   public void test27()  throws Throwable  {
       CatalogDatabase catalogDatabase0 = new CatalogDatabase();
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.getAllHeatEnvironment();
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -672,10 +672,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
   public void test28()  throws Throwable  {
       CatalogDatabase catalogDatabase0 = new CatalogDatabase();
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.commit();
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -691,10 +691,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       heatFiles0.setVersion("E0)WE F/LaV~i2U01");
       heatFiles0.setFileName("uIZl|");
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.saveHeatFiles(heatFiles0);
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -707,10 +707,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
   public void test30()  throws Throwable  {
       CatalogDatabase catalogDatabase0 = new CatalogDatabase();
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.saveVnfComponentsRecipe((VnfComponentsRecipe) null);
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -726,10 +726,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       MessageEnum messageEnum2 = MessageEnum.NO_PROPERTIES;
       CatalogDatabase catalogDatabase0 = new CatalogDatabase();
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.healthCheck();
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -743,10 +743,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       CatalogDatabase catalogDatabase0 = new CatalogDatabase();
       catalogDatabase0.close();
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.getHeatTemplate(1197);
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -759,10 +759,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
   public void test33()  throws Throwable  {
       CatalogDatabase catalogDatabase0 = new CatalogDatabase();
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.getAllNetworkResources();
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -775,10 +775,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
   public void test34()  throws Throwable  {
       CatalogDatabase catalogDatabase0 = new CatalogDatabase();
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.getVnfComponentsRecipe("Ikrt3T$WS\"UMs#Q", "Ikrt3T$WS\"UMs#Q", "Ikrt3T$WS\"UMs#Q", "");
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -791,10 +791,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
   public void test35()  throws Throwable  {
       CatalogDatabase catalogDatabase0 = new CatalogDatabase();
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.getHeatTemplate((String) null);
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -807,10 +807,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
   public void test36()  throws Throwable  {
       CatalogDatabase catalogDatabase0 = new CatalogDatabase();
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.getVnfComponent(1987, "R$9=*_j3~I=:_");
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -823,10 +823,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
   public void test37()  throws Throwable  {
       CatalogDatabase catalogDatabase0 = new CatalogDatabase();
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.getHeatFiles(0, "r#j>oJCQI5r'@)jSH", "K6#W1{s", "vRm");
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -839,10 +839,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
   public void test38()  throws Throwable  {
       CatalogDatabase catalogDatabase0 = new CatalogDatabase();
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.getVnfResourcesByRole("");
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -856,10 +856,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       MessageEnum messageEnum0 = MessageEnum.RA_ASYNC_DELETE_VNF;
       CatalogDatabase catalogDatabase0 = new CatalogDatabase();
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.getAllVnfResources();
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -891,10 +891,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       PrivateAccess.callMethod((Class<CatalogDatabase>) CatalogDatabase.class, catalogDatabase0, "getSession");
       catalogDatabase0.getHeatTemplate((String) null);
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.getHeatEnvironment(148);
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
       }
   }
@@ -936,10 +936,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       catalogDatabase0.saveHeatFiles(heatFiles0);
       Set<HeatTemplateParam> set0 = (Set<HeatTemplateParam>) mock(Set.class, new ViolatedAssumptionAnswer());
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.saveHeatTemplate(heatTemplate0, set0);
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -978,10 +978,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       Iterator<HeatTemplateParam> iterator0 = (Iterator<HeatTemplateParam>) mock(Iterator.class, new ViolatedAssumptionAnswer());
       Set<HeatTemplateParam> set0 = (Set<HeatTemplateParam>) mock(Set.class, new ViolatedAssumptionAnswer());
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.saveHeatTemplate(heatTemplate0, set0);
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
       }
   }
@@ -999,10 +999,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       doReturn(query0).when(session1).createQuery(anyString());
       PrivateAccess.setVariable((Class<CatalogDatabase>) CatalogDatabase.class, catalogDatabase0, "session", (Object) session1);
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.getHeatEnvironment((-1));
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
       }
   }
@@ -1017,10 +1017,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       String string2 = "U`9Z8:QQUr-c(T@_/)";
       String string3 = "$q')fpKG]Q&i\"'{x";
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.getNetworkResource("FT>Ri6U\"Ks<.H/g[");
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -1034,10 +1034,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       CatalogDatabase catalogDatabase0 = new CatalogDatabase();
       int int0 = 1030;
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.getAllVfModules();
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -1051,10 +1051,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       MsoLogger.ResponseCode msoLogger_ResponseCode0 = MsoLogger.ResponseCode.DataNotFound;
       CatalogDatabase catalogDatabase0 = new CatalogDatabase();
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.getVfModuleType("serviceVersion", "serviceVersion");
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -1068,10 +1068,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       MsoLogger.ResponseCode msoLogger_ResponseCode0 = MsoLogger.ResponseCode.Conflict;
       CatalogDatabase catalogDatabase0 = new CatalogDatabase();
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.getNestedTemplates(2377);
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -1088,10 +1088,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       CatalogDatabase catalogDatabase0 = new CatalogDatabase();
       String string0 = null;
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.getVnfResource((String) null, (String) null);
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -1105,10 +1105,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       CatalogDatabase catalogDatabase0 = new CatalogDatabase();
       String string0 = ", description=";
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.getServiceRecipe((-1319), ", description=");
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -1124,10 +1124,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       String string1 = "735uWxa&iIbU.4]O$";
       String string2 = "APIH_ERROR_FROM_BPEL_SERVER";
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.getNetworkRecipe("735uWxa&iIbU.4]O$", ",hpGX76\"X~ow4", "");
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -1142,10 +1142,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       String string0 = ",hpGX76\"X~ow4";
       String string1 = "APIH_ERROR_FROM_BPEL_SERVER";
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.getNetworkRecipe("", ",hpGX76\"X~ow4");
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -1162,10 +1162,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       String string2 = "";
       String string3 = null;
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.getVnfResource((String) null);
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -1180,10 +1180,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       String string0 = "Ikrt3T$WS\"UMs#Q";
       String string1 = null;
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.getServiceByUUID("Ikrt3T$WS\"UMs#Q");
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -1197,10 +1197,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       CatalogDatabase catalogDatabase0 = new CatalogDatabase();
       String string0 = "v@(U";
       // Undeclared exception!
-      try { 
-        catalogDatabase0.getVnfComponentsRecipe("!4@@1", "v@(U", "", (String) null, "");
+      try {
+        catalogDatabase0.getVnfComponentsRecipe("!4@@1", "v@(U", "", (String) null, "", "");
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -1217,10 +1217,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       CatalogDatabase catalogDatabase0 = new CatalogDatabase();
       HashMap<String, String> hashMap0 = new HashMap<String, String>();
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.getService(hashMap0, "Successfully. No template found");
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -1235,10 +1235,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       MessageEnum messageEnum1 = MessageEnum.ASDC_ARTIFACT_DOWNLOAD_FAIL;
       CatalogDatabase catalogDatabase0 = new CatalogDatabase();
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.getVnfComponentsRecipeByVfModuleId("", "(3", "");
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -1255,10 +1255,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       String string0 = "";
       String string1 = "RiY";
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.getHeatEnvironment("", "RiY", "RiY");
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -1275,10 +1275,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       HeatTemplate heatTemplate0 = new HeatTemplate();
       LinkedHashSet<HeatTemplateParam> linkedHashSet0 = new LinkedHashSet<HeatTemplateParam>();
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.saveHeatTemplate(heatTemplate0, (Set<HeatTemplateParam>) linkedHashSet0);
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)
@@ -1293,10 +1293,10 @@ public class CatalogDatabaseESTest extends CatalogDatabaseESTestscaffolding {
       MessageEnum messageEnum1 = MessageEnum.RA_SEND_REQUEST_SDNC;
       CatalogDatabase catalogDatabase0 = new CatalogDatabase();
       // Undeclared exception!
-      try { 
+      try {
         catalogDatabase0.getVnfComponentsRecipe("Generic exception searching for vnf_id=", (String) null, (String) null, (String) null);
         fail("Expecting exception: NullPointerException");
-      
+
       } catch(NullPointerException e) {
          //
          // no message in exception (getMessage() returned null)

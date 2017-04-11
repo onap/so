@@ -1,0 +1,19 @@
+<rest:RESTFault xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd"
+                errorType="transport">
+   <rest:errorCode>404</rest:errorCode>
+   <rest:message>HTTP method: GET Not Found </rest:message>
+   <rest:messageDetails>&lt;Fault&gt;
+    &lt;requestError&gt;
+        &lt;serviceException&gt;
+            &lt;messageId&gt;SVC3001&lt;/messageId&gt;
+            &lt;text&gt;Resource not found for %1 using id %2 (msg=%3) (ec=%4)&lt;/text&gt;
+            &lt;variables&gt;
+                &lt;variable&gt;GETl3Networks&lt;/variable&gt;
+                &lt;variable xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/&gt;
+                &lt;variable&gt;Node Not Found:No Node of type l3Network found for properties: (network-id = null)&lt;/variable&gt;
+                &lt;variable&gt;ERR.5.4.6114&lt;/variable&gt;
+            &lt;/variables&gt;
+        &lt;/serviceException&gt;
+    &lt;/requestError&gt;
+&lt;/Fault&gt;</rest:messageDetails>
+</rest:RESTFault>

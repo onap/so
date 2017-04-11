@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd" id="_jPy0EB7JEeaR94RQz1cKqQ" exporter="camunda modeler" exporterVersion="2.7.0" targetNamespace="http://camunda.org/schema/1.0/bpmn">
+  <bpmn2:process id="ConfirmVolumeGroupTenant" name="ConfirmVolumeGroupTenant" isExecutable="true">
+    <bpmn2:scriptTask id="queryAAIForVolumeGroup" name="Query AAI Volume Group" scriptFormat="groovy">
+      <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_2</bpmn2:outgoing>
+      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+ConfirmVolumeGroupTenant volume = new ConfirmVolumeGroupTenant()
+volume.preProcessRequest(execution)]]></bpmn2:script>
+    </bpmn2:scriptTask>
+    <bpmn2:exclusiveGateway id="tenantIdMatchCheck" name="Tenant Ids&#xD;&#xA;Match?" default="idsMatchNo">
+      <bpmn2:incoming>SequenceFlow_2</bpmn2:incoming>
+      <bpmn2:outgoing>idsMatchNo</bpmn2:outgoing>
+      <bpmn2:outgoing>idsMatchYes</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:sequenceFlow id="SequenceFlow_2" name="" sourceRef="queryAAIForVolumeGroup" targetRef="tenantIdMatchCheck"/>
+    <bpmn2:sequenceFlow id="idsMatchNo" name="No" sourceRef="tenantIdMatchCheck" targetRef="assignError"/>
+    <bpmn2:sequenceFlow id="idsMatchYes" name="Yes" sourceRef="tenantIdMatchCheck" targetRef="tenantNamesMatchCheck">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{execution.getVariable("tenantIdsMatch")==true}]]></bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:endEvent id="EndEvent_1">
+      <bpmn2:incoming>SequenceFlow_7</bpmn2:incoming>
+      <bpmn2:terminateEventDefinition id="_TerminateEventDefinition_2"/>
+    </bpmn2:endEvent>
+    <bpmn2:scriptTask id="assignError" name="Assign Workflow Exception" scriptFormat="groovy">
+      <bpmn2:incoming>idsMatchNo</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_8</bpmn2:outgoing>
+      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+ConfirmVolumeGroupTenant volume = new ConfirmVolumeGroupTenant()
+volume.assignWorkflowException(execution, "does not belong to your tenant")]]></bpmn2:script>
+    </bpmn2:scriptTask>
+    <bpmn2:sequenceFlow id="SequenceFlow_8" name="" sourceRef="assignError" targetRef="EndEvent_3"/>
+    <bpmn2:endEvent id="EndEvent_3">
+      <bpmn2:incoming>SequenceFlow_8</bpmn2:incoming>
+      <bpmn2:errorEventDefinition id="_ErrorEventDefinition_75" errorRef="Error_1"/>
+    </bpmn2:endEvent>
+    <bpmn2:scriptTask id="assignVolumeHeatId" name="Assign Volume Heat Id" scriptFormat="groovy">
+      <bpmn2:incoming>groupNamesMatchYes</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_7</bpmn2:outgoing>
+      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+ConfirmVolumeGroupTenant volume = new ConfirmVolumeGroupTenant()
+volume.assignVolumeHeatId(execution)]]></bpmn2:script>
+    </bpmn2:scriptTask>
+    <bpmn2:sequenceFlow id="SequenceFlow_7" name="" sourceRef="assignVolumeHeatId" targetRef="EndEvent_1"/>
+    <bpmn2:scriptTask id="assignErrorNames" name="Assign Workflow Exception" scriptFormat="groovy">
+      <bpmn2:incoming>groupNamesMatchNo</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_9</bpmn2:outgoing>
+      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+ConfirmVolumeGroupTenant volume = new ConfirmVolumeGroupTenant()
+volume.assignWorkflowException(execution, "name does not match")]]></bpmn2:script>
+    </bpmn2:scriptTask>
+    <bpmn2:sequenceFlow id="SequenceFlow_9" name="" sourceRef="assignErrorNames" targetRef="EndEvent_2"/>
+    <bpmn2:endEvent id="EndEvent_2">
+      <bpmn2:incoming>SequenceFlow_9</bpmn2:incoming>
+      <bpmn2:errorEventDefinition id="_ErrorEventDefinition_74" errorRef="Error_1"/>
+    </bpmn2:endEvent>
+    <bpmn2:exclusiveGateway id="tenantNamesMatchCheck" name="Volume Group&#xD;&#xA;Names Match?" default="groupNamesMatchNo">
+      <bpmn2:incoming>idsMatchYes</bpmn2:incoming>
+      <bpmn2:outgoing>groupNamesMatchNo</bpmn2:outgoing>
+      <bpmn2:outgoing>groupNamesMatchYes</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:sequenceFlow id="groupNamesMatchNo" name="No" sourceRef="tenantNamesMatchCheck" targetRef="assignErrorNames"/>
+    <bpmn2:sequenceFlow id="groupNamesMatchYes" name="Yes" sourceRef="tenantNamesMatchCheck" targetRef="assignVolumeHeatId">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{execution.getVariable("groupNamesMatch")==true}]]></bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:startEvent id="StartEvent_1">
+      <bpmn2:outgoing>SequenceFlow_1</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:sequenceFlow id="SequenceFlow_1" name="" sourceRef="StartEvent_1" targetRef="queryAAIForVolumeGroup"/>
+  </bpmn2:process>
+  <bpmn2:error id="Error_1" errorCode="MSOWorkflowException" name="MSO Workflow Exception"/>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="ConfirmVolumeGroupTenant">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_61" bpmnElement="StartEvent_1">
+        <dc:Bounds height="36.0" width="36.0" x="129.0" y="324.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="0.0" width="0.0" x="147.0" y="365.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_ScriptTask_237" bpmnElement="queryAAIForVolumeGroup">
+        <dc:Bounds height="80.0" width="100.0" x="252.0" y="302.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_1" bpmnElement="SequenceFlow_1" sourceElement="_BPMNShape_StartEvent_61" targetElement="_BPMNShape_ScriptTask_237">
+        <di:waypoint xsi:type="dc:Point" x="165.0" y="342.0"/>
+        <di:waypoint xsi:type="dc:Point" x="252.0" y="342.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="6.0" width="6.0" x="179.0" y="342.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_ExclusiveGateway_209" bpmnElement="tenantIdMatchCheck" isMarkerVisible="true">
+        <dc:Bounds height="50.0" width="50.0" x="384.0" y="316.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="38.0" width="76.0" x="414.0" y="347.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_2" bpmnElement="SequenceFlow_2" sourceElement="_BPMNShape_ScriptTask_237" targetElement="_BPMNShape_ExclusiveGateway_209">
+        <di:waypoint xsi:type="dc:Point" x="352.0" y="342.0"/>
+        <di:waypoint xsi:type="dc:Point" x="368.0" y="342.0"/>
+        <di:waypoint xsi:type="dc:Point" x="368.0" y="341.0"/>
+        <di:waypoint xsi:type="dc:Point" x="384.0" y="341.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_ExclusiveGateway_210" bpmnElement="tenantNamesMatchCheck" isMarkerVisible="true">
+        <dc:Bounds height="50.0" width="50.0" x="460.0" y="216.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="38.0" width="99.0" x="494.0" y="246.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_ScriptTask_238" bpmnElement="assignError">
+        <dc:Bounds height="80.0" width="100.0" x="456.0" y="400.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_3" bpmnElement="idsMatchNo" sourceElement="_BPMNShape_ExclusiveGateway_209" targetElement="_BPMNShape_ScriptTask_238">
+        <di:waypoint xsi:type="dc:Point" x="409.0" y="366.0"/>
+        <di:waypoint xsi:type="dc:Point" x="409.0" y="440.0"/>
+        <di:waypoint xsi:type="dc:Point" x="456.0" y="440.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="22.0" width="22.0" x="414.0" y="400.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_4" bpmnElement="idsMatchYes" sourceElement="_BPMNShape_ExclusiveGateway_209" targetElement="_BPMNShape_ExclusiveGateway_210">
+        <di:waypoint xsi:type="dc:Point" x="409.0" y="316.0"/>
+        <di:waypoint xsi:type="dc:Point" x="409.0" y="241.0"/>
+        <di:waypoint xsi:type="dc:Point" x="460.0" y="241.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="22.0" width="29.0" x="411.0" y="266.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_ScriptTask_239" bpmnElement="assignErrorNames">
+        <dc:Bounds height="80.0" width="100.0" x="555.0" y="296.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_5" bpmnElement="groupNamesMatchNo" sourceElement="_BPMNShape_ExclusiveGateway_210" targetElement="_BPMNShape_ScriptTask_239">
+        <di:waypoint xsi:type="dc:Point" x="485.0" y="266.0"/>
+        <di:waypoint xsi:type="dc:Point" x="485.0" y="336.0"/>
+        <di:waypoint xsi:type="dc:Point" x="555.0" y="336.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="22.0" width="22.0" x="491.0" y="296.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_ScriptTask_240" bpmnElement="assignVolumeHeatId">
+        <dc:Bounds height="80.0" width="100.0" x="555.0" y="120.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_6" bpmnElement="groupNamesMatchYes" sourceElement="_BPMNShape_ExclusiveGateway_210" targetElement="_BPMNShape_ScriptTask_240">
+        <di:waypoint xsi:type="dc:Point" x="485.0" y="216.0"/>
+        <di:waypoint xsi:type="dc:Point" x="485.0" y="160.0"/>
+        <di:waypoint xsi:type="dc:Point" x="555.0" y="160.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="22.0" width="29.0" x="487.0" y="173.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_EndEvent_200" bpmnElement="EndEvent_1">
+        <dc:Bounds height="36.0" width="36.0" x="738.0" y="142.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="0.0" width="0.0" x="756.0" y="183.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_7" bpmnElement="SequenceFlow_7" sourceElement="_BPMNShape_ScriptTask_240" targetElement="_BPMNShape_EndEvent_200">
+        <di:waypoint xsi:type="dc:Point" x="655.0" y="160.0"/>
+        <di:waypoint xsi:type="dc:Point" x="738.0" y="160.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="6.0" width="6.0" x="692.0" y="160.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_EndEvent_210" bpmnElement="EndEvent_2">
+        <dc:Bounds height="36.0" width="36.0" x="709.0" y="318.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="0.0" width="0.0" x="727.0" y="359.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_EndEvent_211" bpmnElement="EndEvent_3">
+        <dc:Bounds height="36.0" width="36.0" x="605.0" y="422.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="0.0" width="0.0" x="623.0" y="463.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_8" bpmnElement="SequenceFlow_8" sourceElement="_BPMNShape_ScriptTask_238" targetElement="_BPMNShape_EndEvent_211">
+        <di:waypoint xsi:type="dc:Point" x="556.0" y="440.0"/>
+        <di:waypoint xsi:type="dc:Point" x="605.0" y="440.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="6.0" width="6.0" x="591.0" y="440.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_9" bpmnElement="SequenceFlow_9" sourceElement="_BPMNShape_ScriptTask_239" targetElement="_BPMNShape_EndEvent_210">
+        <di:waypoint xsi:type="dc:Point" x="655.0" y="336.0"/>
+        <di:waypoint xsi:type="dc:Point" x="709.0" y="336.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="6.0" width="6.0" x="680.0" y="336.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>

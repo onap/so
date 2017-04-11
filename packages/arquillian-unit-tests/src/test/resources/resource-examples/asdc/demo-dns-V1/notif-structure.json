@@ -3,12 +3,12 @@
     "serviceInvariantUUID": "585822c8-4027-4f84-ba50-e9248606f111",
     "serviceUUID": "1e34774e-715e-4fd6-bd09-7b654622f35i",
     "serviceVersion": "1.0",
-    "serviceArtifacts": 
+    "serviceArtifacts":
     [
- 
+
     ],
 
-    "resources": 
+    "resources":
     [
         {
             "resourceInstanceName": "DNSResource-1",
@@ -17,13 +17,14 @@
             "resourceType": "VF",
             "resourceUUID": "585822c7-4027-4f84-ba50-e9248606f131",
             "resourceVersion": "1.0",
-            "artifacts": 
+            "category":  "category",
+            "artifacts":
             [
                 {
                     "artifactChecksum": "CheckSum",
                     "artifactDescription": "Meta data for VFModule",
                     "artifactName": "vnf-module-artifact.json",
-                    
+
                     "artifactType": "VF_MODULES_METADATA",
                     "artifactURL": "vnf-module-artifact.json",
                     "artifactUUID": "VfArtifact-UUID1",
@@ -40,9 +41,9 @@
                     "artifactUUID": "Artifact-UUID1",
                     "artifactVersion": "1.0",
                     "generatedArtifact": "EnvArtifact-UUID1",
-                    "relatedArtifact": 
+                    "relatedArtifact":
                     [
-                       
+
                     ]
                 },
 
@@ -50,12 +51,12 @@
                     "artifactChecksum": "CheckSum",
                     "artifactDescription": "BASE VLB ENV file",
                     "artifactName": "base_vlb.env",
-                    
+
                     "artifactType": "HEAT_ENV",
                     "artifactURL": "base_vlb.env",
                     "artifactUUID": "EnvArtifact-UUID1",
                     "artifactVersion": "1.0"
-                  
+
                 },
             	{
                     "artifactChecksum": "CheckSum",
@@ -67,9 +68,9 @@
                     "artifactUUID": "Artifact-UUID2",
                     "artifactVersion": "1.0",
                     "generatedArtifact": "EnvArtifact-UUID2",
-                    "relatedArtifact": 
+                    "relatedArtifact":
                     [
-                       
+
                     ]
                 },
 
@@ -77,12 +78,12 @@
                     "artifactChecksum": "CheckSum",
                     "artifactDescription": "DNS Scaling ENV file",
                     "artifactName": "dnsscaling.env",
-                    
+
                     "artifactType": "HEAT_ENV",
                     "artifactURL": "dnsscaling.env",
                     "artifactUUID": "EnvArtifact-UUID2",
                     "artifactVersion": "1.0"
-                  
+
                 }
 
             ]

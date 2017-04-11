@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,6 +25,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.jboss.resteasy.annotations.providers.NoJackson;
 import org.codehaus.jackson.map.annotate.JsonRootName;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @JsonRootName("deleteVfModuleResponse")
 @XmlRootElement(name = "deleteVfModuleResponse")
 @NoJackson
@@ -32,16 +35,17 @@ public class DeleteVfModuleResponse extends VfResponseCommon {
 	private String vnfId;
 	private String vfModuleId;
 	private Boolean vfModuleDeleted;
-
+	private Map<String,String> vfModuleOutputs = new HashMap<String, String>();
 	public DeleteVfModuleResponse() {
 		super();
 	}
 
-	public DeleteVfModuleResponse(String vnfId, String vfModuleId, Boolean vfModuleDeleted, String messageId) {
+	public DeleteVfModuleResponse(String vnfId, String vfModuleId, Boolean vfModuleDeleted, String messageId, Map<String,String> outputs) {
 		super(messageId);
 		this.vnfId = vnfId;
 		this.vfModuleId = vfModuleId;
 		this.vfModuleDeleted = vfModuleDeleted;
+		this.vfModuleOutputs = outputs;
 	}
 
 	public String getVnfId() {
@@ -66,5 +70,12 @@ public class DeleteVfModuleResponse extends VfResponseCommon {
 
 	public void setVfModuleDeleted(Boolean vfModuleDeleted) {
 		this.vfModuleDeleted = vfModuleDeleted;
+	}
+	public Map<String, String> getVfModuleOutputs() {
+		return vfModuleOutputs;
+	}
+
+	public void setVfModuleOutputs(Map<String, String> vfModuleOutputs) {
+		this.vfModuleOutputs = vfModuleOutputs;
 	}
 }

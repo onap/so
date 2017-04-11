@@ -4,11 +4,14 @@
     "vfModuleModelInvariantUUID": "585822c7-4027-4f84-ba50-e9248606f131",
     "vfModuleModelVersion": "1.0",
     "vfModuleModelUUID": "1e34774e-715e-4fd5-bd08-7b654622f33e.VF_RI2_G6_withArtifacts::module-0.group",
+    "vfModuleModelDescription": "vf Module Description",
+    "vfModuleModelCustomizationUUID": "585822c7-4027-4f84-ba50-e9248606f131",
     "isBase": true,
     "artifacts": [
       "Artifact-UUID1",
       "EnvArtifact-UUID2",
       "NestedArtifact-UUID3"
-    ]
+    ],
+    "properties": {"test":"test"}
   }
 ]

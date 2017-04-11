@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -77,7 +77,7 @@ public class InfraRequests implements java.io.Serializable {
 	private String networkId;
 	private String networkName;
 	private String networkType;
-	
+	private String requestorId;
 
 	public InfraRequests() {
 	}
@@ -273,7 +273,7 @@ public class InfraRequests implements java.io.Serializable {
 	public void setRequestType(String requestType) {
 		this.requestType = requestType;
 	}
-	
+
 	public String getVolumeGroupId() {
 		return this.volumeGroupId;
 	}
@@ -281,7 +281,7 @@ public class InfraRequests implements java.io.Serializable {
 	public void setVolumeGroupId(String volumeGroupId) {
 		this.volumeGroupId = volumeGroupId;
 	}
-	
+
 	public String getVolumeGroupName() {
 		return this.volumeGroupName;
 	}
@@ -289,7 +289,7 @@ public class InfraRequests implements java.io.Serializable {
 	public void setVolumeGroupName(String volumeGroupName) {
 		this.volumeGroupName = volumeGroupName;
 	}
-	
+
 	public String getVfModuleId() {
 		return this.vfModuleId;
 	}
@@ -297,7 +297,7 @@ public class InfraRequests implements java.io.Serializable {
 	public void setVfModuleId(String vfModuleId) {
 		this.vfModuleId = vfModuleId;
 	}
-	
+
 	public String getVfModuleName() {
 		return this.vfModuleName;
 	}
@@ -305,7 +305,7 @@ public class InfraRequests implements java.io.Serializable {
 	public void setVfModuleName(String vfModuleName) {
 		this.vfModuleName = vfModuleName;
 	}
-	
+
 	public String getVfModuleModelName() {
 		return this.vfModuleModelName;
 	}
@@ -313,7 +313,7 @@ public class InfraRequests implements java.io.Serializable {
 	public void setVfModuleModelName(String vfModuleModelName) {
 		this.vfModuleModelName = vfModuleModelName;
 	}
-	
+
 	public String getAaiServiceId() {
 		return this.aaiServiceId;
 	}
@@ -369,7 +369,7 @@ public class InfraRequests implements java.io.Serializable {
 	public void setRequestScope(String requestScope) {
 		this.requestScope = requestScope;
 	}
-	
+
 	public String getRequestAction() {
 		return requestAction;
 	}
@@ -401,5 +401,13 @@ public class InfraRequests implements java.io.Serializable {
 	public void setNetworkType(String networkType) {
 		this.networkType = networkType;
 	}
-	
+
+	public String getRequestorId() {
+		return requestorId;
+	}
+
+	public void setRequestorId(String requestorId) {
+		this.requestorId = requestorId;
+	}
+
 }

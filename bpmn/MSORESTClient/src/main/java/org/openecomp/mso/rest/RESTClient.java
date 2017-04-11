@@ -91,7 +91,6 @@ public class RESTClient {
     private final LinkedHashMap<String, List<String>> parameters;
     
     private HttpEntity httpEntity;
-    private HttpClient unitTestClient;
 
     /**
      * Internal method used to build an APIResponse using the specified 
@@ -583,13 +582,6 @@ public class RESTClient {
         return httpEntity;
     }
 
-	public HttpClient getUnitTestClient() {
-		return unitTestClient;
-	}
-
-	public void setUnitTestClient(HttpClient unitTestClient) {
-		this.unitTestClient = unitTestClient;
-	}    
 	
 	/**
 	 * Allows inclusion of a request body with DELETE.

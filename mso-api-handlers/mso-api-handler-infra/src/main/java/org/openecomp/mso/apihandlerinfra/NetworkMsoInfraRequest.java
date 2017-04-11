@@ -56,9 +56,10 @@ import org.openecomp.mso.apihandlerinfra.networkbeans.RequestStatusType;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.properties.MsoJavaProperties;
-import org.openecomp.mso.requestsdb.HibernateUtil;
+import org.openecomp.mso.db.HibernateUtils;
 import org.openecomp.mso.requestsdb.InfraActiveRequests;
 import org.openecomp.mso.requestsdb.RequestsDatabase;
+import org.openecomp.mso.requestsdb.HibernateUtilsRequestsDb;
 
 public class NetworkMsoInfraRequest {
 
@@ -79,6 +80,8 @@ public class NetworkMsoInfraRequest {
     private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH);
     private static final String NOT_PROVIDED = "not provided";
 
+    protected HibernateUtils hibernateUtils = new HibernateUtilsRequestsDb ();
+    
     NetworkMsoInfraRequest (String requestId) {
         this.requestId = requestId;
         this.startTime = System.currentTimeMillis();
@@ -239,8 +242,8 @@ public class NetworkMsoInfraRequest {
             msoLogger.debug ("Exception: ", e);
         }
 
-        this.requestXML = stringWriter.toString ().replace ("http://ecomp.att.com/mso/infra/network-request",
-                                                            "http://ecomp.att.com/mso/infra/vnf-request");
+        this.requestXML = stringWriter.toString ().replace ("http://org.openecomp/mso/infra/network-request",
+                                                            "http://org.openecomp/mso/infra/vnf-request");
         msoLogger.debug("REQUEST XML to BPEL: " + this.requestXML);
 
     }
@@ -252,7 +255,7 @@ public class NetworkMsoInfraRequest {
         Session session = null;
         try {
 
-            session = HibernateUtil.getSessionFactory ().openSession ();
+            session = hibernateUtils.getSessionFactory ().openSession ();
             session.beginTransaction ();
 
             InfraActiveRequests aq = new InfraActiveRequests ();

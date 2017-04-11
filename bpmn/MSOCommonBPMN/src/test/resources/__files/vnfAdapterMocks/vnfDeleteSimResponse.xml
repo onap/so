@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+	xmlns:v1="http://org.openecomp.mso/vnfNotify">
+	<soapenv:Header />
+	<soapenv:Body>
+	  <ns2:deleteVnfNotification xmlns:ns2="http://org.openecomp.mso/vnfNotify" >
+        <messageId>f5e42814-72c0-4422-b840-e14e757a709b</messageId>
+        <completed>true</completed>
+      </ns2:deleteVnfNotification>	
+	</soapenv:Body>
+</soapenv:Envelope>

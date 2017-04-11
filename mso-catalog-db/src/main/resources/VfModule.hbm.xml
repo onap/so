@@ -8,9 +8,9 @@
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
        http://www.apache.org/licenses/LICENSE-2.0
-  
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,55 +27,66 @@
         <id name="id" type="int" column="id">
         	<generator class="native"/>
         </id>
-        
+        <property name="asdcUuid" type="java.lang.String" >
+            <column name="ASDC_UUID" not-null="false" length="200" default="null"/>
+        </property>
+        <property name="volEnvironmentId" type="java.lang.Integer" >
+            <column name="VOL_ENVIRONMENT_ID" not-null="false" length="11" default="null"/>
+        </property>
         <properties name="uk_vfmodule" unique="true">
             <property name="type" type="string" >
                 <column name="TYPE" not-null="true" length="200"/>
             </property>
-            <property name="version" type="string" >
+            <property name="version" type="string">
                 <column name="ASDC_SERVICE_MODEL_VERSION" not-null="true" length="20"/>
             </property>
         </properties>
-        
+        <property name="modelCustomizationUuid" type="java.lang.String" >
+            <column name="MODEL_CUSTOMIZATION_UUID" not-null="false" length="200"/>
+        </property>
         <property name="modelName" type="string" >
             <column name="MODEL_NAME" not-null="true" length="200"/>
         </property>
         <property name="modelVersion" type="string" >
             <column name="MODEL_VERSION" not-null="true" length="20"/>
         </property>
-        
-        <property name="asdcUuid" type="java.lang.String" >
-            <column name="ASDC_UUID" not-null="false" length="255"/>
-        </property>
-        <property name="volEnvironmentId" type="java.lang.Integer" >
-            <column name="VOL_ENVIRONMENT_ID" not-null="false"/>
-        </property>
-        <property name="templateId" type="java.lang.Integer" >
-            <column name="TEMPLATE_ID" not-null="false"/>
-        </property>
-        <property name="isBase" type="int">
-            <column name="IS_BASE" not-null="true"/>
-        </property>
 
        	<property name="created" type="timestamp" generated="insert" update="false" insert="false" >
        	      <column name="CREATION_TIMESTAMP" not-null="true"/>
        	</property>
-        
         <property name="description" type="java.lang.String" >
-            <column name="DESCRIPTION" not-null="false" length="255"/>
+            <column name="DESCRIPTION" not-null="false" length="255" default="null"/>
         </property>
         <property name="volTemplateId" type="java.lang.Integer" >
-            <column name="VOL_TEMPLATE_ID" not-null="false"/>
+            <column name="VOL_TEMPLATE_ID" not-null="false" default="null" length="11"/>
+        </property>
+        <property name="templateId" type="java.lang.Integer" >
+            <column name="TEMPLATE_ID" not-null="false" length="11" default="null"/>
         </property>
         <property name="vnfResourceId" type="java.lang.Integer" >
-            <column name="VNF_RESOURCE_ID" not-null="true"/>
+            <column name="VNF_RESOURCE_ID" not-null="true" length="11"/>
+        </property>
+        <property name="isBase" type="int">
+            <column name="IS_BASE" not-null="true" length="11"/>
         </property>
         <property name="environmentId" type="java.lang.Integer" >
             <column name="ENVIRONMENT_ID" not-null="false"/>
         </property>
         <property name="modelInvariantUuid" type="java.lang.String" >
-            <column name="MODEL_INVARIANT_UUID" not-null="false" length="255"/>
+            <column name="MODEL_INVARIANT_UUID" not-null="false" length="200" default="null"/>
         </property>
 
+        <property name="minInstances" type="java.lang.Integer" >
+            <column name="MIN_INSTANCES" not-null="false" length="11" default="0"/>
+        </property>
+        <property name="maxInstances" type="java.lang.Integer" >
+            <column name="MAX_INSTANCES" not-null="false" length="11" default="null"/>
+        </property>
+        <property name="initialCount" type="java.lang.Integer" >
+            <column name="INITIAL_COUNT" not-null="false" length="11" default="0"/>
+        </property>
+        <property name="label" type="java.lang.String" >
+            <column name="LABEL" not-null="false" length="200" default="null"/>
+        </property>
     </class>
 </hibernate-mapping>

@@ -35,7 +35,7 @@ import org.openecomp.mso.adapters.tenant.exceptions.TenantException;
 import org.openecomp.mso.adapters.tenantrest.TenantRollback;
 import org.openecomp.mso.entity.MsoRequest;
 
-@WebService (name="TenantAdapter", targetNamespace="http://com.att.mso/tenant")
+@WebService (name="TenantAdapter", targetNamespace="http://org.openecomp.mso/tenant")
 public interface MsoTenantAdapter
 {
 	/**

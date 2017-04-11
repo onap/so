@@ -41,7 +41,7 @@ import javax.xml.bind.annotation.XmlType;
  * <pre>
  * &lt;complexType name="serviceException">
  *   &lt;complexContent>
- *     &lt;extension base="{http://ecomp.att.com/mso/request/types/v1}exceptionType">
+ *     &lt;extension base="{http://org.openecomp/mso/request/types/v1}exceptionType">
  *     &lt;/extension>
  *   &lt;/complexContent>
  * &lt;/complexType>

@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.4.0">
+  <bpmn:process id="DoCreateVnfAndModules" name="DoCreateVnfAndModules" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>SequenceFlow_0o4vuzt</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:scriptTask id="PreProcessRequest" name="PreProcess Request" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0o4vuzt</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1xd3ri5</bpmn:outgoing>
+      <bpmn:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
+def doCreateVnfAndModules = new DoCreateVnfAndModules()
+doCreateVnfAndModules.preProcessRequest(execution)]]></bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:callActivity id="CreateBaseVfModule" name="Create Base VF Module" calledElement="DoCreateVfModule">
+      <bpmn:extensionElements>
+        <camunda:in source="requestId" target="requestId" />
+        <camunda:in source="isDebugLogEnabled" target="isDebugLogEnabled" />
+        <camunda:in source="disableRollback" target="disableRollback" />
+        <camunda:in source="vnfType" target="vnfType" />
+        <camunda:in source="vnfName" target="vnfName" />
+        <camunda:in source="vnfId" target="vnfId" />
+        <camunda:in source="baseVfModuleName" target="vfModuleName" />
+        <camunda:in source="vfModuleType" target="vfModuleType" />
+        <camunda:in source="volumeGroupId" target="volumeGroupId" />
+        <camunda:in source="volumeGroupName" target="volumeGroupName" />
+        <camunda:in source="baseVfModuleId" target="vfModuleId" />
+        <camunda:in source="baseVfModuleModelInfo" target="vfModuleModelInfo" />
+        <camunda:in source="&#34;true&#34;" target="isBaseVfModule" />
+        <camunda:in source="asdcServiceModelVersion" target="asdcServiceModelVersion" />
+        <camunda:out source="vfModuleId" target="createdVfModuleId" />
+        <camunda:out source="vfModuleOutputParams" target="createdVfModuleOutputParams" />
+        <camunda:out source="RollbackData" target="RollbackData" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+        <camunda:in source="serviceInstanceId" target="serviceInstanceId" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1hf7k7q</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_02oe9wx</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="SequenceFlow_0o4vuzt" sourceRef="StartEvent_1" targetRef="PreProcessRequest" />
+    <bpmn:sequenceFlow id="SequenceFlow_1xd3ri5" sourceRef="PreProcessRequest" targetRef="CreateVNF" />
+    <bpmn:callActivity id="CreateAddOnVfModule" name="Create Add-On VF Module" calledElement="DoCreateVfModule">
+      <bpmn:extensionElements>
+        <camunda:in source="requestId" target="requestId" />
+        <camunda:in source="isDebugLogEnabled" target="isDebugLogEnabled" />
+        <camunda:in source="disableRollback" target="disableRollback" />
+        <camunda:in source="vnfType" target="vnfType" />
+        <camunda:in source="vnfName" target="vnfName" />
+        <camunda:in source="vnfId" target="vnfId" />
+        <camunda:in source="addOnVfModuleName" target="vfModuleName" />
+        <camunda:in source="vfModuleType" target="vfModuleType" />
+        <camunda:in source="addOnVfModuleId" target="vfModuleId" />
+        <camunda:in source="volumeGroupId" target="volumeGroupId" />
+        <camunda:in source="volumeGroupName" target="volumeGroupName" />
+        <camunda:in source="addOnVfModuleModelInfo" target="vfModuleModelInfo" />
+        <camunda:in source="&#34;false&#34;" target="isBaseVfModule" />
+        <camunda:in source="asdcServiceModelVersion" target="asdcServiceModelVersion" />
+        <camunda:out source="vfModuleId" target="createdVfModuleId" />
+        <camunda:out source="vfModuleOutputParameters" target="createdVfModuleOutputParameters" />
+        <camunda:out source="RollbackData" target="RollbackData" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+        <camunda:in source="serviceInstanceId" target="serviceInstanceId" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1lh21yl</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1llbx0k</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:scriptTask id="Task_1lfmdks" name="Validate Create Add-On VF Module Response" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1llbx0k</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1mguf2m</bpmn:outgoing>
+      <bpmn:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
+def doCreateVnfAndModules = new DoCreateVnfAndModules()
+doCreateVnfAndModules.validateAddOnModule(execution)]]></bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:endEvent id="EndEvent_0v6povc">
+      <bpmn:incoming>SequenceFlow_132bohl</bpmn:incoming>
+      <bpmn:terminateEventDefinition />
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1llbx0k" sourceRef="CreateAddOnVfModule" targetRef="Task_1lfmdks" />
+    <bpmn:exclusiveGateway id="ExclusiveGateway_1vyqr5o" name="Are there more add-on modules?" default="SequenceFlow_132bohl">
+      <bpmn:extensionElements>
+        <camunda:properties>
+          <camunda:property />
+        </camunda:properties>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_02oe9wx</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_07gl6gw</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_132bohl</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_0jz6bqn</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_132bohl" name="No" sourceRef="ExclusiveGateway_1vyqr5o" targetRef="EndEvent_0v6povc" />
+    <bpmn:callActivity id="CreateVNF" name="Create VNF" calledElement="DoCreateVnf">
+      <bpmn:extensionElements>
+        <camunda:in source="requestId" target="requestId" />
+        <camunda:in source="isDebugLogEnabled" target="isDebugLogEnabled" />
+        <camunda:in source="disableRollback" target="disableRollback" />
+        <camunda:in source="serviceInstanceId" target="serviceInstanceId" />
+        <camunda:in source="vnfModelInfo" target="vnfModelInfo" />
+        <camunda:in source="vnfType" target="vnfType" />
+        <camunda:in source="vnfName" target="vnfName" />
+        <camunda:in source="vnfId" target="vnfId" />
+        <camunda:in source="cloudConfiguration" target="cloudConfiguration" />
+        <camunda:in source="vnfInputParameters" target="vnfInputParameters" />
+        <camunda:in source="productFamilyId" target="productFamilyId" />
+        <camunda:out source="vnfId" target="vnfId" />
+        <camunda:out source="vnfOutputParams" target="vnfOutputParams" />
+        <camunda:out source="RollbackData" target="RollbackData" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1xd3ri5</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_08i3uo6</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:scriptTask id="PreProcessAddOnModule" name="PreProcess Add-On Module" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0jz6bqn</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_12x4dvf</bpmn:outgoing>
+      <bpmn:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
+def doCreateVnfAndModules = new DoCreateVnfAndModules()
+doCreateVnfAndModules.preProcessAddOnModule(execution)]]></bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="QueryCatalogDB" name="Query Catalog DB for VF Modules" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_08i3uo6</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1ifw9tw</bpmn:outgoing>
+      <bpmn:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
+def doCreateVnfAndModules = new DoCreateVnfAndModules()
+doCreateVnfAndModules.queryCatalogDB(execution)]]></bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_08i3uo6" sourceRef="CreateVNF" targetRef="QueryCatalogDB" />
+    <bpmn:exclusiveGateway id="ExclusiveGateway_1hx9s0y" name="Less than initialCount?" default="SequenceFlow_1vrogpr">
+      <bpmn:incoming>SequenceFlow_1mguf2m</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_12x4dvf</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0kld3qt</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_1vrogpr</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_0jz6bqn" name="yes" sourceRef="ExclusiveGateway_1vyqr5o" targetRef="PreProcessAddOnModule">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[![CDATA[#{execution.getVariable("addOnModulesDeployed") <  execution.getVariable("addOnModulesToDeploy")}]]]]></bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_0kld3qt" name="yes" sourceRef="ExclusiveGateway_1hx9s0y" targetRef="GenerateAddOnModuleName">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[![CDATA[#{execution.getVariable("instancesOfThisModuleDeployed") < execution.getVariable("initialCount")}]]]]></bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_1mguf2m" sourceRef="Task_1lfmdks" targetRef="ExclusiveGateway_1hx9s0y" />
+    <bpmn:sequenceFlow id="SequenceFlow_1vrogpr" name="no" sourceRef="ExclusiveGateway_1hx9s0y" targetRef="FinishProcessingInitialCountDeployment" />
+    <bpmn:sequenceFlow id="SequenceFlow_07gl6gw" sourceRef="FinishProcessingInitialCountDeployment" targetRef="ExclusiveGateway_1vyqr5o" />
+    <bpmn:sequenceFlow id="SequenceFlow_1ifw9tw" sourceRef="QueryCatalogDB" targetRef="GenerateBaseModuleName" />
+    <bpmn:sequenceFlow id="SequenceFlow_1hf7k7q" sourceRef="GenerateBaseModuleName" targetRef="CreateBaseVfModule" />
+    <bpmn:callActivity id="GenerateBaseModuleName" name="Generate Base Module Name" calledElement="GenerateVfModuleName">
+      <bpmn:extensionElements>
+        <camunda:in source="vnfId" target="vnfId" />
+        <camunda:in source="vnfName" target="vnfName" />
+        <camunda:in source="baseVfModuleLabel" target="vfModuleLabel" />
+        <camunda:in source="basePersonaModelId" target="personaModelId" />
+        <camunda:out source="vfModuleName" target="baseVfModuleName" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1ifw9tw</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1hf7k7q</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:callActivity id="GenerateAddOnModuleName" name="Generate Add-On Module Name" calledElement="GenerateVfModuleName">
+      <bpmn:extensionElements>
+        <camunda:in source="vnfId" target="vnfId" />
+        <camunda:in source="vnfName" target="vnfName" />
+        <camunda:in source="addOnVfModuleLabel" target="vfModuleLabel" />
+        <camunda:in source="addOnPersonaModelId" target="personaModelId" />
+        <camunda:out source="vfModuleName" target="addOnVfModuleName" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0kld3qt</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1lh21yl</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="SequenceFlow_1lh21yl" sourceRef="GenerateAddOnModuleName" targetRef="CreateAddOnVfModule" />
+    <bpmn:sequenceFlow id="SequenceFlow_02oe9wx" sourceRef="CreateBaseVfModule" targetRef="ExclusiveGateway_1vyqr5o" />
+    <bpmn:sequenceFlow id="SequenceFlow_12x4dvf" sourceRef="PreProcessAddOnModule" targetRef="ExclusiveGateway_1hx9s0y" />
+    <bpmn:scriptTask id="FinishProcessingInitialCountDeployment" name="Finish Processing Initial Count Deployment" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1vrogpr</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_07gl6gw</bpmn:outgoing>
+      <bpmn:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
+def doCreateVnfAndModules = new DoCreateVnfAndModules()
+doCreateVnfAndModules.finisthProcessingInitialCountDeployment(execution)]]></bpmn:script>
+    </bpmn:scriptTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DoCreateVnfAndModules">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="147" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="170" y="183" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_1tco8kw_di" bpmnElement="PreProcessRequest">
+        <dc:Bounds x="256" y="125" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_1sztzw8_di" bpmnElement="CreateBaseVfModule">
+        <dc:Bounds x="888" y="125" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0o4vuzt_di" bpmnElement="SequenceFlow_0o4vuzt">
+        <di:waypoint xsi:type="dc:Point" x="188" y="165" />
+        <di:waypoint xsi:type="dc:Point" x="256" y="165" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="222" y="150" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1xd3ri5_di" bpmnElement="SequenceFlow_1xd3ri5">
+        <di:waypoint xsi:type="dc:Point" x="356" y="165" />
+        <di:waypoint xsi:type="dc:Point" x="430" y="165" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="393" y="150" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="CallActivity_0auiwq0_di" bpmnElement="CreateAddOnVfModule">
+        <dc:Bounds x="1626" y="57" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_1eeaxqn_di" bpmnElement="Task_1lfmdks">
+        <dc:Bounds x="1765" y="57" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1h41bs7_di" bpmnElement="EndEvent_0v6povc">
+        <dc:Bounds x="1888" y="147" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1906" y="183" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1llbx0k_di" bpmnElement="SequenceFlow_1llbx0k">
+        <di:waypoint xsi:type="dc:Point" x="1726" y="97" />
+        <di:waypoint xsi:type="dc:Point" x="1765" y="97" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1746" y="82" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_1vyqr5o_di" bpmnElement="ExclusiveGateway_1vyqr5o" isMarkerVisible="true">
+        <dc:Bounds x="1043" y="140" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1027" y="190" width="84" height="24" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_132bohl_di" bpmnElement="SequenceFlow_132bohl">
+        <di:waypoint xsi:type="dc:Point" x="1068" y="140" />
+        <di:waypoint xsi:type="dc:Point" x="1068" y="36" />
+        <di:waypoint xsi:type="dc:Point" x="1906" y="36" />
+        <di:waypoint xsi:type="dc:Point" x="1906" y="147" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1488" y="21" width="14" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="CallActivity_0zr4ioh_di" bpmnElement="CreateVNF">
+        <dc:Bounds x="430" y="125" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_0tknqn1_di" bpmnElement="PreProcessAddOnModule">
+        <dc:Bounds x="1177" y="125" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_1u6qcio_di" bpmnElement="QueryCatalogDB">
+        <dc:Bounds x="590" y="125" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_08i3uo6_di" bpmnElement="SequenceFlow_08i3uo6">
+        <di:waypoint xsi:type="dc:Point" x="530" y="165" />
+        <di:waypoint xsi:type="dc:Point" x="590" y="165" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="560" y="150" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_1hx9s0y_di" bpmnElement="ExclusiveGateway_1hx9s0y" isMarkerVisible="true">
+        <dc:Bounds x="1370" y="140" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1366" y="190" width="58" height="24" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0jz6bqn_di" bpmnElement="SequenceFlow_0jz6bqn">
+        <di:waypoint xsi:type="dc:Point" x="1093" y="165" />
+        <di:waypoint xsi:type="dc:Point" x="1135" y="165" />
+        <di:waypoint xsi:type="dc:Point" x="1135" y="165" />
+        <di:waypoint xsi:type="dc:Point" x="1175" y="165" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1095" y="147.2226828816689" width="18" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0kld3qt_di" bpmnElement="SequenceFlow_0kld3qt">
+        <di:waypoint xsi:type="dc:Point" x="1395" y="140" />
+        <di:waypoint xsi:type="dc:Point" x="1395" y="89" />
+        <di:waypoint xsi:type="dc:Point" x="1478" y="89" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1411" y="96" width="18" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1mguf2m_di" bpmnElement="SequenceFlow_1mguf2m">
+        <di:waypoint xsi:type="dc:Point" x="1815" y="137" />
+        <di:waypoint xsi:type="dc:Point" x="1815" y="165" />
+        <di:waypoint xsi:type="dc:Point" x="1420" y="165" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1830" y="151" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1vrogpr_di" bpmnElement="SequenceFlow_1vrogpr">
+        <di:waypoint xsi:type="dc:Point" x="1395" y="190" />
+        <di:waypoint xsi:type="dc:Point" x="1395" y="221" />
+        <di:waypoint xsi:type="dc:Point" x="1395" y="221" />
+        <di:waypoint xsi:type="dc:Point" x="1395" y="258" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1404" y="221" width="12" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_07gl6gw_di" bpmnElement="SequenceFlow_07gl6gw">
+        <di:waypoint xsi:type="dc:Point" x="1345" y="298" />
+        <di:waypoint xsi:type="dc:Point" x="1069" y="298" />
+        <di:waypoint xsi:type="dc:Point" x="1068" y="190" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1207" y="283" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ifw9tw_di" bpmnElement="SequenceFlow_1ifw9tw">
+        <di:waypoint xsi:type="dc:Point" x="690" y="165" />
+        <di:waypoint xsi:type="dc:Point" x="740" y="165" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="715" y="150" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1hf7k7q_di" bpmnElement="SequenceFlow_1hf7k7q">
+        <di:waypoint xsi:type="dc:Point" x="840" y="165" />
+        <di:waypoint xsi:type="dc:Point" x="888" y="165" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="864" y="150" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="CallActivity_0rz8zl9_di" bpmnElement="GenerateBaseModuleName">
+        <dc:Bounds x="740" y="125" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_0otq8mo_di" bpmnElement="GenerateAddOnModuleName">
+        <dc:Bounds x="1478" y="57" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1lh21yl_di" bpmnElement="SequenceFlow_1lh21yl">
+        <di:waypoint xsi:type="dc:Point" x="1578" y="97" />
+        <di:waypoint xsi:type="dc:Point" x="1626" y="97" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1602" y="82" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_02oe9wx_di" bpmnElement="SequenceFlow_02oe9wx">
+        <di:waypoint xsi:type="dc:Point" x="988" y="165" />
+        <di:waypoint xsi:type="dc:Point" x="1015" y="165" />
+        <di:waypoint xsi:type="dc:Point" x="1015" y="165" />
+        <di:waypoint xsi:type="dc:Point" x="1043" y="165" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1030" y="165" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_12x4dvf_di" bpmnElement="SequenceFlow_12x4dvf">
+        <di:waypoint xsi:type="dc:Point" x="1277" y="165" />
+        <di:waypoint xsi:type="dc:Point" x="1370" y="165" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1324" y="140" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_144n0mg_di" bpmnElement="FinishProcessingInitialCountDeployment">
+        <dc:Bounds x="1345" y="258" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

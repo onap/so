@@ -1,0 +1,3 @@
+<jboss-web>
+	<context-root>ecomp/mso/catalog</context-root>
+</jboss-web>

@@ -50,7 +50,7 @@ import org.openecomp.mso.properties.MsoPropertiesFactory;
 import org.openecomp.mso.openstack.beans.VnfStatus;
 import org.openecomp.mso.openstack.beans.VnfRollback;
 
-@WebService(serviceName = "VnfAdapterAsync", endpointInterface = "org.openecomp.mso.adapters.vnf.MsoVnfAdapterAsync", targetNamespace = "http://com.att.mso/vnfA")
+@WebService(serviceName = "VnfAdapterAsync", endpointInterface = "org.openecomp.mso.adapters.vnf.MsoVnfAdapterAsync", targetNamespace = "http://org.openecomp.mso/vnfA")
 public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
 
 	MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory();
@@ -611,7 +611,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
         }
 
         VnfAdapterNotify_Service notifySvc = new VnfAdapterNotify_Service (warWsdlLoc,
-                                                                           new QName ("http://com.att.mso/vnfNotify",
+                                                                           new QName ("http://org.openecomp.mso/vnfNotify",
                                                                                       "vnfAdapterNotify"));
 
         VnfAdapterNotify notifyPort = notifySvc.getMsoVnfAdapterAsyncImplPort ();

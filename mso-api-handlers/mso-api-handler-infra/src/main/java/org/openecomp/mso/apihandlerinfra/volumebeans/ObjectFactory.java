@@ -52,7 +52,7 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _VolumeParams_QNAME = new QName("http://ecomp.att.com/mso/infra/volume-request/v1", "volume-params");
+    private final static QName _VolumeParams_QNAME = new QName("http://org.openecomp/mso/infra/volume-request/v1", "volume-params");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.openecomp.mso.apihandlerinfra.vnfbeans1
@@ -107,7 +107,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://ecomp.att.com/mso/infra/volume-request/v1", name = "volume-params")
+    @XmlElementDecl(namespace = "http://org.openecomp/mso/infra/volume-request/v1", name = "volume-params")
     public JAXBElement<Object> createVolumeParams(Object value) {
         return new JAXBElement<Object>(_VolumeParams_QNAME, Object.class, null, value);
     }

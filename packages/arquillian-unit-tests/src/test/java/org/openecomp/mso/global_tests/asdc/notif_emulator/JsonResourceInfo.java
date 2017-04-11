@@ -16,15 +16,15 @@ public class JsonResourceInfo implements IResourceInstance {
 
 	@JsonIgnore
 	private Map<String,Object> attributesMap = new HashMap<>();
-	
+
 	@JsonProperty("artifacts")
 	@JsonDeserialize(using=JsonArtifactInfoDeserializer.class)
 	private List<IArtifactInfo> artifacts;
-	
+
 	public JsonResourceInfo() {
-	
+
 	}
-	
+
 	@Override
 	public List<IArtifactInfo> getArtifacts() {
 		return artifacts;
@@ -59,7 +59,22 @@ public class JsonResourceInfo implements IResourceInstance {
 	public String getResourceVersion() {
 		return (String)attributesMap.get("resourceVersion");
 	}
-	
+
+	@Override
+	public String getResourceCustomizationUUID() {
+		return (String)attributesMap.get("resourceCustomizationUUID");
+	}
+
+	@Override
+	public String getSubcategory() {
+		return (String)attributesMap.get("subCategory");
+	}
+
+	@Override
+	public String getCategory() {
+		return (String)attributesMap.get("category");
+	}
+
 	@SuppressWarnings("unused")
 	@JsonAnySetter
 	public final void setAttribute(String attrName, Object attrValue) {

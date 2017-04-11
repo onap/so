@@ -4,21 +4,27 @@
     "vfModuleModelInvariantUUID": "585822c7-4027-4f84-ba50-e9248606f132",
     "vfModuleModelVersion": "1.0",
     "vfModuleModelUUID": "1e34774e-715e-4fd5-bd08-7b654622f33e.VF_RI1_DNS::module-1::module-1.group",
+    "vfModuleModelDescription": "vf Module Description",
+    "vfModuleModelCustomizationUUID": "585822c7-4027-4f84-ba50-e9248606f132",
     "isBase": true,
     "artifacts": [
       "Artifact-UUID1",
       "EnvArtifact-UUID1"
-    ]
+    ],
+    "properties": {"test":"test"}
   },
   {
     "vfModuleModelName": "VF_RI1_DNS::module-2",
     "vfModuleModelInvariantUUID": "585822c7-4027-4f84-ba50-e9248606f133",
     "vfModuleModelVersion": "1.0",
     "vfModuleModelUUID": "1e34774e-715e-4fd5-bd08-7b654622f33e.VF_RI1_DNS::module-2::module-1.group",
+    "vfModuleModelDescription": "vf Module Description",
+    "vfModuleModelCustomizationUUID": "585822c7-4027-4f84-ba50-e9248606f133",
     "isBase": false,
     "artifacts": [
       "Artifact-UUID2",
       "EnvArtifact-UUID2"
-    ]
+    ],
+    "properties": {"test":"test"}
   }
 ]
