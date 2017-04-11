@@ -23,7 +23,6 @@ package org.openecomp.mso.bpmn.common.scripts;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*
 
-import org.openecomp.mso.rest.HttpHeader
 import org.mockito.MockitoAnnotations
 import org.mockito.runners.MockitoJUnitRunner
 import org.mockito.internal.debugging.MockitoDebuggerImpl
