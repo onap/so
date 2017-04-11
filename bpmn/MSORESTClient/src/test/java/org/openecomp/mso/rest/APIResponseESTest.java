@@ -39,6 +39,7 @@ import org.apache.http.StatusLine;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.EnglishReasonPhraseCatalog;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicStatusLine;
 import org.evosuite.runtime.EvoRunner;
@@ -172,7 +173,7 @@ public class APIResponseESTest extends APIResponseESTestscaffolding {
       BasicHttpResponse basicHttpResponse0 = new BasicHttpResponse((ProtocolVersion) null, 0, "");
       basicHttpResponse0.addHeader("", "");
       APIResponse aPIResponse0 = new APIResponse((HttpResponse) basicHttpResponse0);
-      HttpHeader[] httpHeaderArray0 = aPIResponse0.getAllHeaders();
+      BasicHeader[] httpHeaderArray0 = aPIResponse0.getAllHeaders();
       assertNotNull(httpHeaderArray0);
   }
 
@@ -180,7 +181,7 @@ public class APIResponseESTest extends APIResponseESTestscaffolding {
   public void test11()  throws Throwable  {
       BasicHttpResponse basicHttpResponse0 = new BasicHttpResponse((ProtocolVersion) null, 1471, "0fVXWr>");
       APIResponse aPIResponse0 = new APIResponse((HttpResponse) basicHttpResponse0);
-      HttpHeader[] httpHeaderArray0 = aPIResponse0.getAllHeaders();
+      BasicHeader[] httpHeaderArray0 = aPIResponse0.getAllHeaders();
       assertNotNull(httpHeaderArray0);
   }
 
@@ -211,11 +212,11 @@ public class APIResponseESTest extends APIResponseESTestscaffolding {
       aPIResponse0.getResponseBodyAsString();
       basicHttpResponse0.getStatusLine();
       aPIResponse0.getStatusCode();
-      HttpHeader[] httpHeaderArray0 = new HttpHeader[2];
-      HttpHeader httpHeader0 = mock(HttpHeader.class, new ViolatedAssumptionAnswer());
+      BasicHeader[] httpHeaderArray0 = new BasicHeader[2];
+      BasicHeader httpHeader0 = mock(BasicHeader.class, new ViolatedAssumptionAnswer());
       doReturn((String) null).when(httpHeader0).getName();
       httpHeaderArray0[0] = httpHeader0;
-      HttpHeader httpHeader1 = mock(HttpHeader.class, new ViolatedAssumptionAnswer());
+      BasicHeader httpHeader1 = mock(BasicHeader.class, new ViolatedAssumptionAnswer());
       httpHeaderArray0[1] = httpHeader1;
       PrivateAccess.setVariable((Class<APIResponse>) APIResponse.class, aPIResponse0, "headers", (Object) httpHeaderArray0);
       // Undeclared exception!

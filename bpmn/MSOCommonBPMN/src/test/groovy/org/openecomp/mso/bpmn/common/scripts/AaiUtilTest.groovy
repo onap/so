@@ -23,7 +23,6 @@ package org.openecomp.mso.bpmn.common.scripts;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*
 
-import org.openecomp.mso.rest.HttpHeader
 import org.mockito.MockitoAnnotations
 import org.mockito.runners.MockitoJUnitRunner
 import org.mockito.internal.debugging.MockitoDebuggerImpl
@@ -242,6 +241,18 @@ class AaiUtilTest extends MsoGroovyTest {
 		AaiUtil aaiUtil = new AaiUtil(myproc)
 		def uri = aaiUtil.getCloudInfrastructureCloudRegionUri(mockExecution)
 		assertEquals('/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/att-aic', uri)
+	}
+	
+	@Test
+	public void testGetCloudInfrastructureVolumeGroupUri() {
+		ExecutionEntity mockExecution = setupMock('CreateAAIVfModule')
+		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn('true')
+		when(mockExecution.getVariable("URN_mso_workflow_global_default_aai_version")).thenReturn('8')
+		when(mockExecution.getVariable("URN_mso_workflow_default_aai_v8_volume_group_uri")).thenReturn('/aai/v8/cloud-infrastructure/volume-groups/volume-group')
+		CreateAAIVfModule myproc = new CreateAAIVfModule()
+		AaiUtil aaiUtil = new AaiUtil(myproc)
+		def uri = aaiUtil.getCloudInfrastructureVolumeGroupUri(mockExecution)
+		assertEquals('/aai/v8/cloud-infrastructure/volume-groups/volume-group', uri)
 	}
 	
 	@Test
