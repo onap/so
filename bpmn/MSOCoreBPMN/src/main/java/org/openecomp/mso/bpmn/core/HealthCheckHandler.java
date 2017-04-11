@@ -215,7 +215,7 @@ public class HealthCheckHandler  {
 
     private String decrypt(String encryptedString, String key){
         try {
-            if (encryptedString != null || !encryptedString.isEmpty() && key != null && !key.isEmpty()) {
+            if (encryptedString != null && !encryptedString.isEmpty() && key != null && !key.isEmpty()) {
                 return CryptoUtils.decrypt(encryptedString, key);
             }
         } catch (Exception e) {
