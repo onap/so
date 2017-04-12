@@ -19,7 +19,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<!-- If the maven profile "docker" is specified the parameter -Dmso.git.url=<MsoGitRepo> must be provided
-		     i.e: mvn clean install -P docker -Dmso.git.url=https://gerrit.openecomp.org/r-->
+		     i.e: mvn clean install -P docker -Dmso.git.url=https://gerrit.onap.org/r-->
 		<mso.git.url>${env.GIT_NO_PROJECT}</mso.git.url>
 	</properties>
 
