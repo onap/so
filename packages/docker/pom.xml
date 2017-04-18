@@ -40,7 +40,7 @@
 						<configuration>
 							<connectionUrl>scm:git:${mso.git.url}/mso/chef-repo</connectionUrl>
 							<checkoutDirectory>src/main/docker/docker-files/chef-configs/chef-repo</checkoutDirectory>
-							<scmVersion>master</scmVersion>
+							<scmVersion>release-1.0.0</scmVersion>
 							<scmVersionType>branch</scmVersionType>
 							<skipCheckoutIfExists>true</skipCheckoutIfExists>
 							<pushChanges>false</pushChanges>
@@ -55,7 +55,7 @@
 						<configuration>
 							<connectionUrl>scm:git:${mso.git.url}/mso/mso-config</connectionUrl>
 							<checkoutDirectory>src/main/docker/docker-files/chef-configs/mso-config</checkoutDirectory>
-							<scmVersion>master</scmVersion>
+							<scmVersion>release-1.0.0</scmVersion>
 							<scmVersionType>branch</scmVersionType>
 							<skipCheckoutIfExists>true</skipCheckoutIfExists>
 							<pushChanges>false</pushChanges>
