@@ -43,6 +43,7 @@
 		<nexusproxy>https://nexus.onap.org</nexusproxy>
 		<snapshotNexusPath>/content/repositories/snapshots/</snapshotNexusPath>
 		<releaseNexusPath>/content/repositories/releases/</releaseNexusPath>
+		<stagingNexusPath>/content/repositories/staging/</stagingNexusPath>
         <sitePath>/content/sites/site/org/openecomp/mso/${project.version}</sitePath>
 		<maven.build.timestamp.format>yyyyMMdd'T'HHmm</maven.build.timestamp.format>
 	</properties>
@@ -120,8 +121,13 @@
 		<repository>
 			<id>ecomp-staging</id>
 			<name>MSO Staging Repository</name>
-			<url>${nexusproxy}/content/repositories/staging/</url>
+			<url>${nexusproxy}/${stagingNexusPath}</url>
 		</repository>
+		<repository>
+            <id>ecomp-snapshots</id>
+            <name>MSO Snapshot Repository</name>
+            <url>${nexusproxy}/${snapshotNexusPath}</url>
+        </repository>
 		<!-- Camunda Web Repository -->
 		<repository>
 			<id>CamundaWebRepo</id>
