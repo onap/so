@@ -69,7 +69,7 @@ class NetworkUtils {
 	 * This method returns the string for Network request
 	 * V2 for Contrail 3.x will populate cloud-region data in same cloudSiteId filed
 	 * Network adapter will handle it properly
-	 * @param requestId either 'request-id' or 'openecomp-mso-request-id'
+	 * @param requestId either 'request-id' or 'mso-request-id'
 	 * @param requestInput the request in the process
 	 * @param queryIdResponse the response of REST AAI query by Id
 	 * @param routeCollection the collection
@@ -154,6 +154,7 @@ class NetworkUtils {
 									<networkId>${networkId}</networkId>
 									<networkName>${networkName}</networkName>
 									<networkType>${networkType}</networkType>
+									<modelCustomizationUuid>${modelCustomizationUuid}</modelCustomizationUuid>
 									<networkTechnology>${networkTechnology}</networkTechnology>
 									<providerVlanNetwork>
 										<physicalNetworkName>${physicalNetworkName}</physicalNetworkName >
@@ -182,7 +183,7 @@ class NetworkUtils {
 	 * This method returns the string for Network request
 	 * V2 for Contrail 3.x will populate cloud-region data in same cloudSiteId filed
 	 * Network adapter will handle it properly
-	 * @param requestId either 'request-id' or 'openecomp-mso-request-id'
+	 * @param requestId either 'request-id' or 'mso-request-id'
 	 * @param requestInput the request in the process
 	 * @param queryIdResponse the response of REST AAI query by Id
 	 * @param routeCollection the collection
@@ -216,7 +217,17 @@ class NetworkUtils {
 				// queryIdResponse
 				String networkName = utils.getNodeText1(queryIdResponse, "network-name")
 				String networkId = utils.getNodeText1(queryIdResponse, "network-id")
-				String networkType = utils.getNodeText1(queryIdResponse, "network-type")
+				
+				String networkType = ""
+				String modelCustomizationUuid = ""
+				if (utils.nodeExists(requestInput, "networkModelInfo")) {
+					String networkModelInfo = utils.getNodeXml(requestInput, "networkModelInfo", false).replace("tag0:","").replace(":tag0","")
+					networkType = utils.getNodeText1(networkModelInfo, "modelName")
+					modelCustomizationUuid = utils.getNodeText1(networkModelInfo, "modelCustomizationUuid")
+				} else {
+					networkType = utils.getNodeText1(queryIdResponse, "network-type")
+				}
+
 
 				// rebuild subnets
 				String subnets = ""
@@ -247,6 +258,7 @@ class NetworkUtils {
 						        <networkStackId>${networkStackId}</networkStackId>
 								<networkName>${networkName}</networkName>
 								<networkType>${networkType}</networkType>
+								<modelCustomizationUuid>${modelCustomizationUuid}</modelCustomizationUuid>
 								<networkTypeVersion/>
 								<networkTechnology>CONTRAIL</networkTechnology>
 								<providerVlanNetwork>
@@ -329,7 +341,7 @@ class NetworkUtils {
 					   </relationship-data>
 					   <relationship-data>
 						   <relationship-key>cloud-region.cloud-owner</relationship-key>
-						   <relationship-value>openecomp-aic</relationship-value>
+						   <relationship-value>att-aic</relationship-value>
 					   </relationship-data>
 					   <relationship-data>
 						   <relationship-key>cloud-region.cloud-region-id</relationship-key>
@@ -368,7 +380,7 @@ class NetworkUtils {
 				   </relationship-data>
 				   <relationship-data>
 					   <relationship-key>cloud-region.cloud-owner</relationship-key>
-					   <relationship-value>openecomp-aic</relationship-value>
+					   <relationship-value>att-aic</relationship-value>
 				   </relationship-data>
 				   <relationship-data>
 					   <relationship-key>cloud-region.cloud-region-id</relationship-key>
@@ -758,7 +770,12 @@ class NetworkUtils {
 				   if (utils.getNodeText(relationshipXml, 'related-to') == "generic-vnf") {
 					  def relatedLink = utils.getNodeText1(relationshipXml, 'related-link')
 					  if (relatedLink != null || relatedLink != "") {
-						 rtn.add(relatedLink.substring(relatedLink.indexOf("/generic-vnf/")+13, relatedLink.length()))
+						 if (relatedLink.substring(relatedLink.indexOf("/generic-vnf/")+13, relatedLink.length()).contains('/')) {
+							 rtn.add(relatedLink.substring(relatedLink.indexOf("/generic-vnf/")+13, relatedLink.length()-1))
+						 } else {
+						     rtn.add(relatedLink.substring(relatedLink.indexOf("/generic-vnf/")+13, relatedLink.length()))
+						 }
+
 					  }
 				   }
 				}
@@ -785,7 +802,12 @@ class NetworkUtils {
 				   if (utils.getNodeText(relationshipXml, 'related-to') == "l3-network") {
 					  def relatedLink = utils.getNodeText1(relationshipXml, 'related-link')
 					  if (relatedLink != null || relatedLink != "") {
-						 rtn.add(relatedLink.substring(relatedLink.indexOf("/l3-network/")+12, relatedLink.length()))
+						 if (relatedLink.substring(relatedLink.indexOf("/l3-network/")+12, relatedLink.length()).contains('/')) {
+							 rtn.add(relatedLink.substring(relatedLink.indexOf("/l3-network/")+12, relatedLink.length()-1))
+						 } else {
+						     rtn.add(relatedLink.substring(relatedLink.indexOf("/l3-network/")+12, relatedLink.length()))
+						 }
+
 					  }
 				   }
 				}
@@ -823,9 +845,9 @@ class NetworkUtils {
 				   if (utils.getNodeText(relationshipXml, 'related-to') == "cloud-region") {
 					  def relatedLink = utils.getNodeText1(relationshipXml, 'related-link')
 					  if (relatedLink != null || relatedLink != "") {
-						 lcpCloudRegion = relatedLink.substring(relatedLink.indexOf("/openecomp-aic/")+9, relatedLink.length())
+						 lcpCloudRegion = relatedLink.substring(relatedLink.indexOf("/att-aic/")+9, relatedLink.length())
 						 if (lcpCloudRegion.contains('/')) {
-							 lcpCloudRegion = relatedLink.substring(relatedLink.indexOf("/openecomp-aic/")+9, relatedLink.length()-1)
+							 lcpCloudRegion = relatedLink.substring(relatedLink.indexOf("/att-aic/")+9, relatedLink.length()-1)
 						 }
 					  }
 				   }
@@ -925,8 +947,13 @@ class NetworkUtils {
 				var = xml.'**'.find {it.name() == element}
 				if (var == null) {
 					if (element=="orchestration-status") {
-						xmlNetwork += "<"+element+">"+"active"+"</"+element+">"
-					}
+						if (var.toString() == 'pending-create' || var.toString() == 'PendingCreate') {
+							xmlNetwork += "<"+element+">"+"Created"+"</"+element+">"
+					    } else { //pending-update or PendingUpdate
+							xmlNetwork += "<"+element+">"+"Active"+"</"+element+">"
+					    }
+					}	
+
 					if (element=="heat-stack-id") {
 						if (replaceNetworkId != "") {
 							xmlNetwork += "<"+element+">"+replaceNetworkId+"</"+element+">"
@@ -945,13 +972,19 @@ class NetworkUtils {
 
 				} else {
 			   		if (element=="orchestration-status") {
-						xmlNetwork += "<"+element+">"+"active"+"</"+element+">"
-					} else {
-			    		xmlNetwork += "<"+element+">"+var.toString()+"</"+element+">"
-			        }
-				}
+					   if (element=="orchestration-status") {
+						  if (var.toString() == 'pending-create' || var.toString() == 'PendingCreate') {
+						      xmlNetwork += "<"+element+">"+"Created"+"</"+element+">"
+						  } else { //pending-update or PendingUpdate
+							  xmlNetwork += "<"+element+">"+"Active"+"</"+element+">"
+						  }
+					   }   
+				    } else {
+			    	    xmlNetwork += "<"+element+">"+var.toString()+"</"+element+">"
+					}
+				}	
+			 }
 
-			}
 		}
 		return xmlNetwork
 	}
@@ -969,8 +1002,13 @@ class NetworkUtils {
 				for (i in 0..subnetsSize-1) {
 				   def subnet = subnets[i]
 				   def subnetXml = XmlUtil.serialize(subnet)
-				   def subnetList = ["subnet-id", "neutron-subnet-id", "gateway-address", "network-start-address", "cidr-mask", "ip-version", "orchestration-status", "dhcp-enabled", "dhcp-start", "dhcp-end", "resource-version", "subnet-name"]
-				   rebuildingSubnets += buildSubNetworkElements(subnetXml, createNetworkResponse, subnetList, "subnet")
+				   def orchestrationStatus = utils.getNodeText1(subnetXml, "orchestration-status")
+				   if (orchestrationStatus == "PendingDelete" || orchestrationStatus == "pending-delete") {
+					   // skip, do not include in processing, remove!!!
+				   } else {
+				      def subnetList = ["subnet-id", "neutron-subnet-id", "gateway-address", "network-start-address", "cidr-mask", "ip-version", "orchestration-status", "dhcp-enabled", "dhcp-start", "dhcp-end", "resource-version", "subnet-name"]
+				      rebuildingSubnets += buildSubNetworkElements(subnetXml, createNetworkResponse, subnetList, "subnet")
+				   }
 				}
 				if (utils.nodeExists(subnetsData, 'relationship')) {
 					rebuildingSubnets = rebuildRelationship(requeryIdAAIResponse)
@@ -995,10 +1033,14 @@ class NetworkUtils {
 			for (i in 0..subnetsSize-1) {
 			   def subnet = subnets[i]
 			   def subnetXml = XmlUtil.serialize(subnet)
-			   def subnetList = ["dhcp-start", "dhcp-end", "network-start-address", "cidr-mask", "dhcp-enabled", "gateway-address", "ip-version", "subnet-id", "subnet-name"]
-			   rebuildingSubnets += buildSubNetworkElements(subnetXml, subnetList, "subnets")
-			   //rebuildingSubnets += buildSubNetworkElements(subnetXml, subnetList, "")
-			}
+			   def orchestrationStatus = utils.getNodeText1(subnetXml, "orchestration-status")
+			   if (orchestrationStatus == "pending-delete" || orchestrationStatus == "PendingDelete") {
+				   // skip, do not include in processing, remove!!!
+			   } else {
+			   	  	def subnetList = ["dhcp-start", "dhcp-end", "network-start-address", "cidr-mask", "dhcp-enabled", "gateway-address", "ip-version", "subnet-id", "subnet-name"]
+					rebuildingSubnets += buildSubNetworkElements(subnetXml, subnetList, "subnets")
+			   		//rebuildingSubnets += buildSubNetworkElements(subnetXml, subnetList, "")
+			   }			}
 		} catch (Exception ex) {
 		   //
 		} finally {
@@ -1021,7 +1063,11 @@ class NetworkUtils {
 			  var = xml.'**'.find {it.name() == element}
 			  if (var != null) {
 				 if (element=="orchestration-status") {
-					xmlBuild += "<"+element+">"+"active"+"</"+element+">"
+					if(var.toString() == 'pending-create' || var.toString() == 'PendingCreate') {   
+						xmlBuild += "<"+element+">"+"Created"+"</"+element+">"
+					} else { // pending-update or PendingUpdate'
+					   xmlBuild += "<"+element+">"+"Active"+"</"+element+">"
+					}
 				 } else { // "subnet-id", "neutron-subnet-id"
 					 if (element=="subnet-id") {
 						 if (utils.nodeExists(createNetworkResponse, "subnetMap")) {

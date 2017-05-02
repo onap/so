@@ -56,6 +56,9 @@ public class VnfResource extends MavenLikeVersioning {
     private String serviceModelInvariantUUID = null;
 	private String modelCustomizationUuid = null;
 
+	private String modelUuid = null;
+	private String modelInstanceName = null;
+
 	private ArrayList<VfModule> vfModules;
 
     public VnfResource () {
@@ -213,6 +216,24 @@ public class VnfResource extends MavenLikeVersioning {
 			}
 		}
 	}
+
+	//Placeholders for now until new design is finalized:
+	public void setModelUuid(String modelUuid) {
+		this.modelUuid = modelUuid;
+	}
+	public String getModelUuid() {
+		return this.modelUuid;
+	}
+	public String getModelInvariantId() {
+		return this.modelInvariantUuid;
+	}
+	public void setModelInstanceName(String modelInstanceName) {
+		this.modelInstanceName = modelInstanceName;
+	}
+	public String getModelInstanceName() {
+		return this.modelInstanceName;
+	}
+
 	@Override
 	public String toString () {
 		StringBuffer buf = new StringBuffer();

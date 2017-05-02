@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_Wblj8GyfEeWUWLTvug7ZOg" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.4.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+  <bpmn2:process id="DoCreateVnfAndModulesRollback" name="DoCreateVnfAndModulesRollback" isExecutable="true">
+    <bpmn2:subProcess id="SubProcess_1" name="Rollback Error Handling" triggeredByEvent="true">
+      <bpmn2:startEvent id="CatchExceptions" name="Catch Exceptions">
+        <bpmn2:outgoing>SequenceFlow_12</bpmn2:outgoing>
+        <bpmn2:errorEventDefinition id="ErrorEventDefinition_1" />
+      </bpmn2:startEvent>
+      <bpmn2:endEvent id="EndEvent_1">
+        <bpmn2:incoming>SequenceFlow_22</bpmn2:incoming>
+      </bpmn2:endEvent>
+      <bpmn2:sequenceFlow id="SequenceFlow_12" name="" sourceRef="CatchExceptions" targetRef="LogSaveWorkflowException" />
+      <bpmn2:scriptTask id="LogSaveWorkflowException" name="Log and Save Workflow Exception" scriptFormat="groovy">
+        <bpmn2:incoming>SequenceFlow_12</bpmn2:incoming>
+        <bpmn2:outgoing>SequenceFlow_22</bpmn2:outgoing>
+        <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
+def dcvfmr = new DoCreateVfModuleRollback()
+dcvfmr.logWorkflowException(execution, 'DoCreateVfModuleRollback caught an event')
+dcvfmr.saveWorkflowException(execution, 'DCVFMR_CaughtWorkflowException1')]]></bpmn2:script>
+      </bpmn2:scriptTask>
+      <bpmn2:sequenceFlow id="SequenceFlow_22" name="" sourceRef="LogSaveWorkflowException" targetRef="EndEvent_1" />
+    </bpmn2:subProcess>
+    <bpmn2:boundaryEvent id="BoundaryEvent_1" name="" attachedToRef="SubProcess_1">
+      <bpmn2:outgoing>SequenceFlow_23</bpmn2:outgoing>
+      <bpmn2:errorEventDefinition id="_ErrorEventDefinition_86" />
+    </bpmn2:boundaryEvent>
+    <bpmn2:endEvent id="EndEvent_2">
+      <bpmn2:incoming>SequenceFlow_23</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="SequenceFlow_23" name="" sourceRef="BoundaryEvent_1" targetRef="EndEvent_2" />
+    <bpmn2:startEvent id="StartEvent_1gai4qr">
+      <bpmn2:outgoing>SequenceFlow_1537b7m</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:exclusiveGateway id="ExclusiveGateway_12v8g91" name="Are there VF Modules to roll back?" default="SequenceFlow_1r6wyy6">
+      <bpmn2:incoming>SequenceFlow_0bmsi5h</bpmn2:incoming>
+      <bpmn2:incoming>SequenceFlow_1srw52v</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_1r6wyy6</bpmn2:outgoing>
+      <bpmn2:outgoing>SequenceFlow_0v85t87</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:exclusiveGateway id="ExclusiveGateway_09ajxqr" name="Delete VNF?" default="SequenceFlow_1yas9ol">
+      <bpmn2:incoming>SequenceFlow_1r6wyy6</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_1kr0r4a</bpmn2:outgoing>
+      <bpmn2:outgoing>SequenceFlow_1yas9ol</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:endEvent id="EndEvent_1seag7u">
+      <bpmn2:incoming>SequenceFlow_04yd2yr</bpmn2:incoming>
+      <bpmn2:incoming>SequenceFlow_1yas9ol</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="SequenceFlow_1537b7m" sourceRef="StartEvent_1gai4qr" targetRef="PreProcessRequest" />
+    <bpmn2:scriptTask id="PreProcessRequest" name="PreProcess Request" scriptFormat="groovy">
+      <bpmn2:incoming>SequenceFlow_1537b7m</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_0bmsi5h</bpmn2:outgoing>
+      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
+def dcvamr = new DoCreateVnfAndModulesRollback()
+dcvamr.preProcessRequest(execution)]]></bpmn2:script>
+    </bpmn2:scriptTask>
+    <bpmn2:sequenceFlow id="SequenceFlow_0bmsi5h" sourceRef="PreProcessRequest" targetRef="ExclusiveGateway_12v8g91" />
+    <bpmn2:sequenceFlow id="SequenceFlow_1ycq005" sourceRef="Task_1sbxjc8" targetRef="Task_0ifyxgt" />
+    <bpmn2:scriptTask id="Task_1sbxjc8" name="Prepare Rollback Create VF Module Request" scriptFormat="groovy">
+      <bpmn2:incoming>SequenceFlow_0v85t87</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_1ycq005</bpmn2:outgoing>
+      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
+def dcvamr = new DoCreateVnfAndModulesRollback()
+dcvamr.preProcessCreateVfModuleRollback(execution)]]></bpmn2:script>
+    </bpmn2:scriptTask>
+    <bpmn2:callActivity id="Task_0ifyxgt" name="Rollback Create VF Module " calledElement="DoCreateVfModuleRollback">
+      <bpmn2:extensionElements>
+        <camunda:in source="DCVAMR_RollbackData" target="RollbackData" />
+        <camunda:in source="isDebugLogEnabled" target="isDebugLogEnabled" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+        <camunda:in source="&#34;true&#34;" target="isVidRequest" />
+        <camunda:in source="mso-request-id" target="mso-request-id" />
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_1ycq005</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_181hb2a</bpmn2:outgoing>
+    </bpmn2:callActivity>
+    <bpmn2:sequenceFlow id="SequenceFlow_1r6wyy6" name="no" sourceRef="ExclusiveGateway_12v8g91" targetRef="ExclusiveGateway_09ajxqr" />
+    <bpmn2:sequenceFlow id="SequenceFlow_0v85t87" name="yes" sourceRef="ExclusiveGateway_12v8g91" targetRef="Task_1sbxjc8">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{execution.getVariable("DCVAMR_numOfModulesToDelete") > 0}]]></bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="SequenceFlow_1kr0r4a" name="yes" sourceRef="ExclusiveGateway_09ajxqr" targetRef="Task_0p8fmrm">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{execution.getVariable("DCVAMR_vnfId") != null}]]></bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="SequenceFlow_04yd2yr" sourceRef="Task_0p8fmrm" targetRef="EndEvent_1seag7u" />
+    <bpmn2:sequenceFlow id="SequenceFlow_1yas9ol" name="no" sourceRef="ExclusiveGateway_09ajxqr" targetRef="EndEvent_1seag7u" />
+    <bpmn2:callActivity id="Task_0p8fmrm" name="Delete VNF" calledElement="DoDeleteVnf">
+      <bpmn2:extensionElements>
+        <camunda:in source="DCVAMR_vnfId" target="vnfId" />
+        <camunda:in source="isDebugLogEnabled" target="isDebugLogEnabled" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_1kr0r4a</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_04yd2yr</bpmn2:outgoing>
+    </bpmn2:callActivity>
+    <bpmn2:sequenceFlow id="SequenceFlow_181hb2a" sourceRef="Task_0ifyxgt" targetRef="Task_0kf9oby" />
+    <bpmn2:scriptTask id="Task_0kf9oby" name="PostProcess Rollback Create VF Module" scriptFormat="groovy">
+      <bpmn2:incoming>SequenceFlow_181hb2a</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_1srw52v</bpmn2:outgoing>
+      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
+def dcvamr = new DoCreateVnfAndModulesRollback()
+dcvamr.postProcessCreateVfModuleRollback(execution)]]></bpmn2:script>
+    </bpmn2:scriptTask>
+    <bpmn2:sequenceFlow id="SequenceFlow_1srw52v" sourceRef="Task_0kf9oby" targetRef="ExclusiveGateway_12v8g91" />
+  </bpmn2:process>
+  <bpmn2:error id="Error_1" name="MSO Workflow Exception" errorCode="MSOWorkflowException" />
+  <bpmn2:message id="Message_1" name="DoCreateVfModuleRollbackRequest" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DoCreateVnfAndModulesRollback">
+      <bpmndi:BPMNShape id="_BPMNShape_SubProcess_22" bpmnElement="SubProcess_1" isExpanded="true">
+        <dc:Bounds x="18" y="1012" width="469" height="150" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_59" bpmnElement="CatchExceptions">
+        <dc:Bounds x="36" y="1063" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="42" y="1108" width="85" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_ScriptTask_281" bpmnElement="LogSaveWorkflowException">
+        <dc:Bounds x="174" y="1041" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_EndEvent_188" bpmnElement="EndEvent_1">
+        <dc:Bounds x="349" y="1062" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="367" y="1098" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_BoundaryEvent_55" bpmnElement="BoundaryEvent_1">
+        <dc:Bounds x="469" y="1058" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="487" y="1094" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_EndEvent_189" bpmnElement="EndEvent_2">
+        <dc:Bounds x="593" y="1058" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="611" y="1099" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_12" bpmnElement="SequenceFlow_12" sourceElement="_BPMNShape_StartEvent_59" targetElement="_BPMNShape_ScriptTask_281">
+        <di:waypoint xsi:type="dc:Point" x="72" y="1081" />
+        <di:waypoint xsi:type="dc:Point" x="174" y="1081" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="120" y="1081" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_22" bpmnElement="SequenceFlow_22" sourceElement="_BPMNShape_ScriptTask_281" targetElement="_BPMNShape_EndEvent_188">
+        <di:waypoint xsi:type="dc:Point" x="274" y="1081" />
+        <di:waypoint xsi:type="dc:Point" x="311" y="1081" />
+        <di:waypoint xsi:type="dc:Point" x="311" y="1080" />
+        <di:waypoint xsi:type="dc:Point" x="349" y="1080" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="326" y="1071" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_23" bpmnElement="SequenceFlow_23" sourceElement="_BPMNShape_BoundaryEvent_55" targetElement="_BPMNShape_EndEvent_189">
+        <di:waypoint xsi:type="dc:Point" x="505" y="1076" />
+        <di:waypoint xsi:type="dc:Point" x="593" y="1076" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="550" y="1051" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="StartEvent_1gai4qr_di" bpmnElement="StartEvent_1gai4qr">
+        <dc:Bounds x="7.752742616033771" y="654.7502109704641" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="26" y="690.7502109704641" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_12v8g91_di" bpmnElement="ExclusiveGateway_12v8g91" isMarkerVisible="true">
+        <dc:Bounds x="284.2253164556962" y="648.1721518987342" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="273" y="698" width="73" height="36" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_09ajxqr_di" bpmnElement="ExclusiveGateway_09ajxqr" isMarkerVisible="true">
+        <dc:Bounds x="833.4869198312236" y="648" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="828" y="698" width="62" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1seag7u_di" bpmnElement="EndEvent_1seag7u">
+        <dc:Bounds x="1101.651476793249" y="655" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1120" y="691" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1537b7m_di" bpmnElement="SequenceFlow_1537b7m">
+        <di:waypoint xsi:type="dc:Point" x="44" y="673" />
+        <di:waypoint xsi:type="dc:Point" x="131" y="673" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="88" y="658" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_0fckboe_di" bpmnElement="PreProcessRequest">
+        <dc:Bounds x="131" y="633" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0bmsi5h_di" bpmnElement="SequenceFlow_0bmsi5h">
+        <di:waypoint xsi:type="dc:Point" x="231" y="673" />
+        <di:waypoint xsi:type="dc:Point" x="257" y="673" />
+        <di:waypoint xsi:type="dc:Point" x="257" y="673" />
+        <di:waypoint xsi:type="dc:Point" x="284" y="673" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="272" y="673" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ycq005_di" bpmnElement="SequenceFlow_1ycq005">
+        <di:waypoint xsi:type="dc:Point" x="469" y="509" />
+        <di:waypoint xsi:type="dc:Point" x="502" y="510" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="486" y="494.5" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_1sc2oye_di" bpmnElement="Task_1sbxjc8">
+        <dc:Bounds x="369" y="470" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_1lj1iud_di" bpmnElement="Task_0ifyxgt">
+        <dc:Bounds x="502" y="470" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1r6wyy6_di" bpmnElement="SequenceFlow_1r6wyy6">
+        <di:waypoint xsi:type="dc:Point" x="309" y="698" />
+        <di:waypoint xsi:type="dc:Point" x="309" y="755" />
+        <di:waypoint xsi:type="dc:Point" x="769" y="755" />
+        <di:waypoint xsi:type="dc:Point" x="769" y="673" />
+        <di:waypoint xsi:type="dc:Point" x="833" y="673" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="533" y="740" width="12" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0v85t87_di" bpmnElement="SequenceFlow_0v85t87">
+        <di:waypoint xsi:type="dc:Point" x="309" y="648" />
+        <di:waypoint xsi:type="dc:Point" x="309" y="510" />
+        <di:waypoint xsi:type="dc:Point" x="369" y="510" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="315" y="579" width="18" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1kr0r4a_di" bpmnElement="SequenceFlow_1kr0r4a">
+        <di:waypoint xsi:type="dc:Point" x="858" y="648" />
+        <di:waypoint xsi:type="dc:Point" x="858" y="589" />
+        <di:waypoint xsi:type="dc:Point" x="945" y="589" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="864" y="619" width="18" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_04yd2yr_di" bpmnElement="SequenceFlow_04yd2yr">
+        <di:waypoint xsi:type="dc:Point" x="1045" y="589" />
+        <di:waypoint xsi:type="dc:Point" x="1120" y="589" />
+        <di:waypoint xsi:type="dc:Point" x="1120" y="655" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1083" y="574" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1yas9ol_di" bpmnElement="SequenceFlow_1yas9ol">
+        <di:waypoint xsi:type="dc:Point" x="883" y="673" />
+        <di:waypoint xsi:type="dc:Point" x="1102" y="673" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="987" y="658" width="12" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="CallActivity_01fs058_di" bpmnElement="Task_0p8fmrm">
+        <dc:Bounds x="945" y="549" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_181hb2a_di" bpmnElement="SequenceFlow_181hb2a">
+        <di:waypoint xsi:type="dc:Point" x="602" y="510" />
+        <di:waypoint xsi:type="dc:Point" x="641" y="510" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="622" y="495" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_196e1px_di" bpmnElement="Task_0kf9oby">
+        <dc:Bounds x="641" y="470" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1srw52v_di" bpmnElement="SequenceFlow_1srw52v">
+        <di:waypoint xsi:type="dc:Point" x="691" y="550" />
+        <di:waypoint xsi:type="dc:Point" x="691" y="673" />
+        <di:waypoint xsi:type="dc:Point" x="334" y="673" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="706" y="611.5" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>

@@ -58,17 +58,21 @@ import org.springframework.web.util.UriUtils
  * and "Success where Vnf is NOT found".
  *
  *
- * Incoming Variables:
- * @param - GENDV_vnfId
- * @param - GENDV_type
- * @param (Optional) - GENDV_resourceVersion
+ * Variable Mapping Below
+ *
+ * In Mapping Variables:
+ *   @param - GENDV_vnfId
+ *   @param - GENDV_type
+ *   @param (Optional) - GENDV_resourceVersion
  *
  *
- * Outgoing Variables:
- * @param - GENDV_vnf
- * @param - GENDV_SuccessIndicator
- * @param - GENDV_FoundIndicator
- * @param - WorkflowException
+ * Out Mapping Variables:
+ *   @param - GENDV_vnf
+ *   @param - GENDV_SuccessIndicator
+ *   @param - GENDV_FoundIndicator
+ *   @param - WorkflowException
+ *
+ *
  */
 class GenericDeleteVnf extends AbstractServiceTaskProcessor{
 

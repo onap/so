@@ -81,6 +81,7 @@ public class NetworkAdapterTest {
             adapter.createNetwork ("toto",
                                    "tenant",
                                    "PROVIDER",
+                                    "modelCustUuid",
                                    "networkName",
                                    "physicalNetworkName",
                                    vlans,
@@ -121,6 +122,7 @@ public class NetworkAdapterTest {
             adapter.createNetworkContrail ("toto",
                                            "tenant",
                                            "PROVIDER",
+                                            "modelCustUuid",
                                            "networkName",
                                            routeTargets,
                                            "shared",
@@ -155,6 +157,7 @@ public class NetworkAdapterTest {
             adapter.updateNetwork ("toto",
                                    "tenant",
                                    "PROVIDER",
+                                    "modelCustUuid",
                                    "networkId",
                                    "networkName",
                                    "physicalNetworkName",
@@ -188,6 +191,7 @@ public class NetworkAdapterTest {
             adapter.updateNetworkContrail ("toto",
                                            "tenant",
                                            "PROVIDER",
+                                            "modelCustUuid",
                                            "networkId",
                                            "networkName",
                                            routeTargets,
@@ -259,7 +263,7 @@ public class NetworkAdapterTest {
         Holder <Boolean> networkDeleted = new Holder<> ();
         MsoRequest msoRequest = new MsoRequest ();
         try {
-            adapter.deleteNetwork ("toto", "tenant", "PROVIDER", "networkId", msoRequest, networkDeleted);
+            adapter.deleteNetwork ("toto", "tenant", "PROVIDER", "modelCustUuid","networkId", msoRequest, networkDeleted);
         } catch (NetworkException e) {
             e.printStackTrace();
             assertTrue (e.getMessage ().contains ("Cloud Site [toto] not found"));

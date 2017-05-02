@@ -40,7 +40,7 @@ import org.xml.sax.InputSource
 
 /* Subflow for Delete VF Module. When no DoDeleteVfModuleRequest is specified on input,
  * functions as a building block subflow
- 
+
 * Inputs for building block interface:
 * @param - requestId
 * @param - isDebugLogEnabled
@@ -68,7 +68,7 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 		execution.setVariable("DoDVfMod_contrailNetworkPolicyFqdnList", null)
 		execution.setVariable("DoDVfMod_oamManagementV4Address", null)
 		execution.setVariable("DoDVfMod_oamManagementV6Address", null)
-		
+
 	}
 
 	// parse the incoming DELETE_VF_MODULE request for the Generic Vnf and Vf Module Ids
@@ -76,19 +76,19 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 	public void preProcessRequest(Execution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		initProcessVariables(execution)
-		
+
 		try {
 			def xml = execution.getVariable("DoDeleteVfModuleRequest")
 			String vnfId = ""
 			String vfModuleId = ""
-		
+
 			if (xml == null || xml.isEmpty()) {
 				// Building Block-type request
-				
+
 				// Set mso-request-id to request-id for VNF Adapter interface
 				String requestId = execution.getVariable("requestId")
 				execution.setVariable("mso-request-id", requestId)
-			
+
 				String cloudConfiguration = execution.getVariable("cloudConfiguration")
 				String vfModuleModelInfo = execution.getVariable("vfModuleModelInfo")
 				String tenantId = jsonUtil.getJsonValue(cloudConfiguration, "tenantId")
@@ -114,14 +114,14 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 				//vfModuleModelName
 				def vfModuleModelName = jsonUtil.getJsonValue(vfModuleModelInfo, "modelName")
 				execution.setVariable("vfModuleModelName", vfModuleModelName)
-				
+
 			}
 			else {
-						
+
 				utils.logAudit("DoDeleteVfModule Request: " + xml)
-		
+
 				utils.log("DEBUG", "input request xml: " + xml, isDebugEnabled)
-				
+
 				vnfId = utils.getNodeText1(xml,"vnf-id")
 				execution.setVariable("vnfId", vnfId)
 				vfModuleId = utils.getNodeText1(xml,"vf-module-id")
@@ -141,7 +141,7 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 				execution.setVariable("serviceId", serviceId)
 				String tenantId = utils.getNodeText1(xml, "tenant-id")
 				execution.setVariable("tenantId", tenantId)
-				
+
 				String serviceInstanceIdToSdnc = ""
 				if (xml.contains("service-instance-id")) {
 					serviceInstanceIdToSdnc = utils.getNodeText1(xml, "service-instance-id")
@@ -156,7 +156,7 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 				String cloudSiteId = utils.getNodeText1(xml, "aic-cloud-region")
 				execution.setVariable("cloudSiteId", cloudSiteId)
 			}
-				
+
 			// formulate the request for PrepareUpdateAAIVfModule
 			String request = """<PrepareUpdateAAIVfModuleRequest>
 									<vnf-id>${vnfId}</vnf-id>
@@ -178,7 +178,7 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 	// (note: the action passed is expected to be 'changedelete' or 'delete')
 	public void prepSDNCAdapterRequest(Execution execution, String action) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-				
+
 		def srvInstId = execution.getVariable("srvInstId")
 		def callbackUrl = execution.getVariable("URN_mso_workflow_sdncadapter_callback")
 		String requestId = execution.getVariable("requestId")
@@ -305,7 +305,7 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 	// and formulate the outgoing DeleteAAIVfModuleRequest request
 	public void prepDeleteAAIVfModule(Execution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		
+
 		def vnfId = execution.getVariable("vnfId")
 		def vfModuleId = execution.getVariable("vfModuleId")
 		// formulate the request for UpdateAAIVfModule
@@ -346,7 +346,7 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 			throw new BpmnError("MSOWorkflowException")
 		}
 	}
-	
+
 	public void postProcessVNFAdapterRequest(Execution execution) {
 		def method = getClass().getSimpleName() + '.postProcessVNFAdapterRequest(' +
 			'execution=' + execution.getId() +
@@ -366,15 +366,15 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 			if(vnfResponse.contains("deleteVfModuleResponse")){
 				logDebug("Received a Good Response from VNF Adapter for DELETE_VF_MODULE Call.", isDebugLogEnabled)
 				execution.setVariable("DoDVfMod_vnfVfModuleDeleteCompleted", true)
-				
+
 				// Parse vnfOutputs for contrail network polcy FQDNs
 				if (vnfResponse.contains("vfModuleOutputs")) {
 					def vfModuleOutputsXml = utils.getNodeXml(vnfResponse, "vfModuleOutputs")
 					InputSource source = new InputSource(new StringReader(vfModuleOutputsXml));
-					DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-					docFactory.setNamespaceAware(true)
-					DocumentBuilder docBuilder = docFactory.newDocumentBuilder()
-					Document outputsXml = docBuilder.parse(source)
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			docFactory.setNamespaceAware(true)
+			DocumentBuilder docBuilder = docFactory.newDocumentBuilder()
+			Document outputsXml = docBuilder.parse(source)
 
 					NodeList entries = outputsXml.getElementsByTagNameNS("*", "entry")
 					List contrailNetworkPolicyFqdnList = []
@@ -398,7 +398,7 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 								logDebug("Obtained oamManagementV6Address: " + oamManagementV6Address, isDebugLogEnabled)
 								execution.setVariable(Prefix + "oamManagementV6Address", oamManagementV6Address)
 							}
-						
+
 						}
 					}
 					if (!contrailNetworkPolicyFqdnList.isEmpty()) {
@@ -423,7 +423,7 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 		}
 		logDebug(" *** COMPLETED postProcessVnfAdapterResponse Process*** ", isDebugLogEnabled)
 	}
-	
+
 	public void deleteNetworkPoliciesFromAAI(Execution execution) {
 		def method = getClass().getSimpleName() + '.deleteNetworkPoliciesFromAAI(' +
 		'execution=' + execution.getId() +
@@ -432,7 +432,7 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 		logDebug('Entered ' + method, isDebugLogEnabled)
 		execution.setVariable("prefix", Prefix)
 		logDebug(" ======== STARTED deleteNetworkPoliciesFromAAI ======== ", isDebugLogEnabled)
-	   
+
 		try {
 			// get variables
 			List fqdnList = execution.getVariable("DoDVfMod_contrailNetworkPolicyFqdnList")
@@ -441,34 +441,34 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 				return
 			}
 			int fqdnCount = fqdnList.size()
-		   
+
 			execution.setVariable("DoDVfMod_networkPolicyFqdnCount", fqdnCount)
 			logDebug("DoDVfMod_networkPolicyFqdnCount - " + fqdnCount, isDebugLogEnabled)
- 
+
 			String aai_endpoint = execution.getVariable("URN_aai_endpoint")
 			AaiUtil aaiUriUtil = new AaiUtil(this)
 			String aai_uri = aaiUriUtil.getNetworkPolicyUri(execution)
- 
+
 			if (fqdnCount > 0) {
 				// AII loop call over contrail network policy fqdn list
 				for (i in 0..fqdnCount-1) {
- 
+
 					int counting = i+1
 					String fqdn = fqdnList[i]
- 
+
 					// Query AAI for this network policy FQDN
-				   
+
 					String queryNetworkPolicyByFqdnAAIRequest = "${aai_endpoint}${aai_uri}?network-policy-fqdn=" + UriUtils.encode(fqdn, "UTF-8")
 					utils.logAudit("AAI request endpoint: " + queryNetworkPolicyByFqdnAAIRequest)
 					logDebug("AAI request endpoint: "  + queryNetworkPolicyByFqdnAAIRequest, isDebugLogEnabled)
-					
+
 					APIResponse response = aaiUriUtil.executeAAIGetCall(execution, queryNetworkPolicyByFqdnAAIRequest)
 					int returnCode = response.getStatusCode()
 					execution.setVariable("DCVFM_aaiQueryNetworkPolicyByFqdnReturnCode", returnCode)
 					logDebug(" ***** AAI query network policy Response Code, NetworkPolicy #" + counting + " : " + returnCode, isDebugLogEnabled)
- 
+
 					String aaiResponseAsString = response.getResponseBodyAsString()
- 
+
 					if (isOneOf(returnCode, 200, 201)) {
 						logDebug("The return code is: "  + returnCode, isDebugLogEnabled)
 						// This network policy FQDN exists in AAI - need to delete it now
@@ -478,28 +478,28 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 						// Retrieve the network policy id for this FQDN
 						def networkPolicyId = utils.getNodeText1(aaiResponseAsString, "network-policy-id")
 						logDebug("Deleting network-policy with network-policy-id " + networkPolicyId, isDebugLogEnabled)
-						
+
 						// Retrieve the resource version for this network policy
 						def resourceVersion = utils.getNodeText1(aaiResponseAsString, "resource-version")
 						logDebug("Deleting network-policy with resource-version " + resourceVersion, isDebugLogEnabled)
-												
-						String delNetworkPolicyAAIRequest = "${aai_endpoint}${aai_uri}/" + UriUtils.encode(networkPolicyId, "UTF-8") + 
+
+						String delNetworkPolicyAAIRequest = "${aai_endpoint}${aai_uri}/" + UriUtils.encode(networkPolicyId, "UTF-8") +
 							"?resource-version=" + UriUtils.encode(resourceVersion, "UTF-8")
 						utils.logAudit("AAI request endpoint: " + delNetworkPolicyAAIRequest)
 						logDebug("AAI request endpoint: " + delNetworkPolicyAAIRequest, isDebugLogEnabled)
-						
+
 						logDebug("invoking DELETE call to AAI", isDebugLogEnabled)
 						utils.logAudit("Sending DELETE call to AAI with Endpoint /n" + delNetworkPolicyAAIRequest)
 						APIResponse responseDel = aaiUriUtil.executeAAIDeleteCall(execution, delNetworkPolicyAAIRequest)
 						int returnCodeDel = responseDel.getStatusCode()
 						execution.setVariable("DoDVfMod_aaiDeleteNetworkPolicyReturnCode", returnCodeDel)
 						logDebug(" ***** AAI delete network policy Response Code, NetworkPolicy #" + counting + " : " + returnCodeDel, isDebugLogEnabled)
-	 
+
 						if (isOneOf(returnCodeDel, 200, 201, 204)) {
 							logDebug("The return code from deleting network policy is: "  + returnCodeDel, isDebugLogEnabled)
 							// This network policy was deleted from AAI successfully
 							logDebug(" DelAAINetworkPolicy Success REST Response, , NetworkPolicy #" + counting + " : ", isDebugLogEnabled)
-	 
+
 						} else {
 								// aai all errors
 								String delErrorMessage = "Unable to delete network-policy to AAI deleteNetworkPoliciesFromAAI - " + returnCodeDel
@@ -525,28 +525,28 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 
 						  }
 					}
- 
-					
- 
+
+
+
 				} // end loop
- 
-			   
+
+
 			} else {
 				   logDebug("No contrail network policies to query/create", isDebugLogEnabled)
- 
+
 			}
- 
+
 		} catch (BpmnError e) {
 			throw e;
- 
+
 		} catch (Exception ex) {
 			String exceptionMessage = "Bpmn error encountered in DoDeletVfModule flow. deleteNetworkPoliciesFromAAI() - " + ex.getMessage()
 			logDebug(exceptionMessage, isDebugLogEnabled)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 		}
- 
+
 	}
-	
+
 	/**
 	 * Prepare a Request for invoking the UpdateAAIGenericVnf subflow.
 	 *
@@ -558,23 +558,23 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 			')'
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		logDebug('Entered ' + method, isDebugLogEnabled)
- 
+
 		try {
 			def vnfId = execution.getVariable('vnfId')
 			def oamManagementV4Address = execution.getVariable(Prefix + 'oamManagementV4Address')
 			def oamManagementV6Address = execution.getVariable(Prefix + 'oamManagementV6Address')
 			def ipv4OamAddressElement = ''
 			def managementV6AddressElement = ''
-			
+
 			if (oamManagementV4Address != null) {
 				ipv4OamAddressElement = '<ipv4-oam-address>' + 'DELETE' + '</ipv4-oam-address>'
 			}
-			
+
 			if (oamManagementV6Address != null) {
 				managementV6AddressElement = '<management-v6-address>' + 'DELETE' + '</management-v6-address>'
 			}
-			
-				  
+
+
 			String updateAAIGenericVnfRequest = """
 					<UpdateAAIGenericVnfRequest>
 						<vnf-id>${vnfId}</vnf-id>
@@ -586,14 +586,18 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 				execution.setVariable(Prefix + 'updateAAIGenericVnfRequest', updateAAIGenericVnfRequest)
 				utils.logAudit("updateAAIGenericVnfRequest : " + updateAAIGenericVnfRequest)
 				logDebug('Request for UpdateAAIGenericVnf:\n' + updateAAIGenericVnfRequest, isDebugLogEnabled)
-		 
- 
+
+
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
-			createWorkflowException(execution, 1002, 'Error in prepUpdateAAIGenericVnf(): ' + e.getMessage())
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepUpdateAAIGenericVnf(): ' + e.getMessage())
 		}
 	}
+
+
+
+
 }

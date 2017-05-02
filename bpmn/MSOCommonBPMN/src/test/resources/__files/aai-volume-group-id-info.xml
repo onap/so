@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tns:volume-group xmlns:tns="http://com.att.aai.inventory/v6" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://com.att.aai.inventory/v6 aai_schema_v6.xsd ">
+<tns:volume-group xmlns:tns="http://com.aai.inventory/v6" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://com.aai.inventory/v6 aai_schema_v6.xsd ">
   <tns:volume-group-id>VOLUME_GROUP_ID_1</tns:volume-group-id>
   <tns:volume-group-name>VOLUME_GROUP_ID_1_NAME</tns:volume-group-name>
   <tns:heat-stack-id>heat-stack-id</tns:heat-stack-id>

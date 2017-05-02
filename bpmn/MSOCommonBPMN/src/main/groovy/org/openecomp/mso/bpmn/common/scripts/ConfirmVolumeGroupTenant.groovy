@@ -46,6 +46,7 @@ import org.xml.sax.InputSource
 class ConfirmVolumeGroupTenant extends AbstractServiceTaskProcessor{
 
 	String Prefix="CVGT_"
+	ExceptionUtil exceptionUtil = new ExceptionUtil()
 
 	public void preProcessRequest(Execution execution){
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
@@ -135,14 +136,14 @@ class ConfirmVolumeGroupTenant extends AbstractServiceTaskProcessor{
 				}
 			}else{
 				utils.log("DEBUG", "QueryAAIForVolumeGroup Bad REST Response!", isDebugEnabled)
-				WorkflowException exception = new WorkflowException(processKey, 1, "Error Searching AAI for Volume Group. Received a Bad Response.")
-				execution.setVariable("WorkflowException", exception)
-				throw new BpmnError("MSOWorkflowException")
+				exceptionUtil.buildAndThrowWorkflowException(execution, 1, "Error Searching AAI for Volume Group. Received a Bad Response.")
 			}
 
+		}catch(BpmnError b){
+			throw b
 		}catch(Exception e){
 			utils.log("ERROR", "Exception Occured Processing queryAAIForVolumeGroup. Exception is:\n" + e, isDebugEnabled)
-			throw new BpmnError("MSOWorkflowException")
+			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, "Internal Error - Occured in preProcessRequest.")
 		}
 		utils.log("DEBUG", "=== COMPLETED queryAAIForVolumeGroup Process === ", isDebugEnabled)
 	}
@@ -163,7 +164,7 @@ class ConfirmVolumeGroupTenant extends AbstractServiceTaskProcessor{
 
 		}catch(Exception e){
 		utils.log("ERROR", "Exception Occured Processing assignVolumeHeatId. Exception is:\n" + e, isDebugEnabled)
-		throw new BpmnError("MSOWorkflowException")
+		exceptionUtil.buildAndThrowWorkflowException(execution, 5000, "Internal Error - Occured in assignVolumeHeatId.")
 	}
 	utils.log("DEBUG", "=== COMPLETED assignVolumeHeatId Process === ", isDebugEnabled)
 	utils.log("DEBUG", "======== COMPLETED Confirm Volume Group Tenant Subflow ======== ", isDebugEnabled)
@@ -179,10 +180,7 @@ class ConfirmVolumeGroupTenant extends AbstractServiceTaskProcessor{
 			int errorCode = 1
 			String errorMessage = "Volume Group " + volumeGroupId + " " + message
 
-			WorkflowException exception = new WorkflowException(processKey, errorCode, errorMessage)
-			execution.setVariable("WorkflowException", exception)
-			execution.setVariable("CVGT_ErrorResponse", "") // Setting for Unit Testing Purposes
-
+			exceptionUtil.buildWorkflowException(execution, errorCode, errorMessage)
 		}catch(Exception e){
 			utils.log("ERROR", "Exception Occured Processing assignWorkflowException. Exception is:\n" + e, isDebugEnabled)
 		}

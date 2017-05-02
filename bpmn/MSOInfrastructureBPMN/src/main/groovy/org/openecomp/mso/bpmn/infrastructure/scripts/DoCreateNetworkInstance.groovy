@@ -223,8 +223,6 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			execution.setVariable(Prefix + "networkInputs", networkInputs)
 			utils.log("DEBUG", Prefix + "networkInputs - " + '\n' + networkInputs, isDebugEnabled)
 			
-			
-			
 			// prepare messageId
 			String messageId = execution.getVariable("testMessageId")  // for testing
 			if (messageId == null || messageId == "") {
@@ -491,7 +489,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			String aai_endpoint = execution.getVariable("URN_aai_endpoint")
 			AaiUtil aaiUriUtil = new AaiUtil(this)
 			String aai_uri = aaiUriUtil.getNetworkL3NetworkUri(execution)
-			String queryIdAAIRequest = "${aai_endpoint}${aai_uri}/" + networkId
+			String queryIdAAIRequest = "${aai_endpoint}${aai_uri}/" + networkId + "?depth=1"
 			utils.logAudit(queryIdAAIRequest)
 			execution.setVariable(Prefix + "queryIdAAIRequest", queryIdAAIRequest)
 			utils.log("DEBUG", Prefix + "queryIdAAIRequest - " + "\n" + queryIdAAIRequest, isDebugEnabled)
@@ -570,7 +568,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			String aai_endpoint = execution.getVariable("URN_aai_endpoint")
 			AaiUtil aaiUriUtil = new AaiUtil(this)
 			String aai_uri = aaiUriUtil.getNetworkL3NetworkUri(execution)
-			String requeryIdAAIRequest = "${aai_endpoint}${aai_uri}/" + networkId
+			String requeryIdAAIRequest = "${aai_endpoint}${aai_uri}/" + networkId + "?depth=1"
 			utils.logAudit(requeryIdAAIRequest)
 			execution.setVariable(Prefix + "requeryIdAAIRequest", requeryIdAAIRequest)
 			utils.log("DEBUG", Prefix + "requeryIdAAIRequest - " + "\n" + requeryIdAAIRequest, isDebugEnabled)
@@ -1078,7 +1076,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			String aai_endpoint = execution.getVariable("URN_aai_endpoint")
 			AaiUtil aaiUriUtil = new AaiUtil(this)
 			String aai_uri = aaiUriUtil.getNetworkL3NetworkUri(execution)
-			String updateContrailAAIUrlRequest = "${aai_endpoint}${aai_uri}/" + networkId
+			String updateContrailAAIUrlRequest = "${aai_endpoint}${aai_uri}/" + networkId + "?depth=1"
 
 			utils.logAudit(updateContrailAAIUrlRequest)
 			execution.setVariable(Prefix + "updateContrailAAIUrlRequest", updateContrailAAIUrlRequest)
@@ -1092,18 +1090,11 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			execution.setVariable(Prefix + "updateContrailAAIPayloadRequest", payloadXml)
 			utils.log("DEBUG", " 'payload' to Update Contrail - " + "\n" + payloadXml, isDebugEnabled)
 
-			RESTConfig config = new RESTConfig(updateContrailAAIUrlRequest);
-			RESTClient client = new RESTClient(config).addHeader("X-TransactionId", messageId)
-													  .addHeader("X-FromAppId", "MSO")
-													  .addHeader("Content-Type", "application/xml")
-													  .addHeader("Accept","application/xml");
-
-			APIResponse response = client.httpPut(payload)
+			APIResponse response = aaiUriUtil.executeAAIPutCall(execution, updateContrailAAIUrlRequest, payloadXml)
+						
 			String returnCode = response.getStatusCode()
 			execution.setVariable(Prefix + "aaiUpdateContrailReturnCode", returnCode)
-
 			utils.log("DEBUG", " ***** AAI Update Contrail Response Code  : " + returnCode, isDebugEnabled)
-
 			String aaiUpdateContrailResponseAsString = response.getResponseBodyAsString()
 
 			if (returnCode=='200') {
@@ -1117,7 +1108,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 				} else {
 				   execution.setVariable(Prefix + "isPONR", true)
 				}  
-
+				utils.log("DEBUG", Prefix + "isPONR" + ": " + execution.getVariable(Prefix + "isPONR"), isDebugEnabled)
 			} else {
 				if (returnCode=='404') {
 					String dataErrorMessage = " Response Error from UpdateContrailAAINetwork is 404 (Not Found)."

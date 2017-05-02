@@ -31,12 +31,15 @@ import org.openecomp.mso.bpmn.common.scripts.VfModuleBase
 import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.bpmn.core.json.JsonUtils;
 import org.openecomp.mso.rest.APIResponse
+import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
 
 class UpdateVfModuleVolume extends VfModuleBase {
-	
+
+	ExceptionUtil exceptionUtil = new ExceptionUtil()
+
 	/**
 	 * Initialize the flow's variables.
-	 * 
+	 *
 	 * @param execution The flow's execution instance.
 	 */
 	private void initProcessVariables(Execution execution) {
@@ -56,10 +59,10 @@ class UpdateVfModuleVolume extends VfModuleBase {
 		execution.setVariable('UPDVfModVol_volumeGroupTenantId', null)
 		execution.setVariable('UpdateVfModuleVolumeSuccessIndicator', false)
 	}
-	
+
 	/**
 	 * Check for missing elements in the received request.
-	 * 
+	 *
 	 * @param execution The flow's execution instance.
 	 */
 	@Override
@@ -69,16 +72,16 @@ class UpdateVfModuleVolume extends VfModuleBase {
 			')'
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		logDebug('Entered ' + method, isDebugLogEnabled)
-		
+
 		try {
 			initProcessVariables(execution)
 			String request = validateRequest(execution)
-			
+
 			def requestInfo = getRequiredNodeXml(execution, request, 'request-info')
 			execution.setVariable('UPDVfModVol_requestInfo', requestInfo)
 			execution.setVariable('UPDVfModVol_requestId', getRequiredNodeText(execution, requestInfo, 'request-id'))
 			execution.setVariable('UPDVfModVol_source', getNodeTextForce(requestInfo, 'source'))
-			
+
 			def volumeInputs = getRequiredNodeXml(execution, request, 'volume-inputs')
 			execution.setVariable('UPDVfModVol_volumeInputs', volumeInputs)
 			execution.setVariable('UPDVfModVol_volumeGroupId', getRequiredNodeText(execution, volumeInputs, 'volume-group-id'))
@@ -96,13 +99,13 @@ class UpdateVfModuleVolume extends VfModuleBase {
 			throw bpmnError
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
-			createWorkflowException(execution, 1002, 'Error in preProcessRequest(): ' + e.getMessage())
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in preProcessRequest(): ' + e.getMessage())
 		}
 	}
 
 	/**
 	 * Prepare and send the synchronous response.
-	 * 
+	 *
 	 * @param execution The flow's execution instance.
 	 */
 	public void sendSynchResponse(Execution execution) {
@@ -111,7 +114,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 			')'
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		logDebug('Entered ' + method, isDebugLogEnabled)
-		
+
 		try {
 			def requestInfo = execution.getVariable('UPDVfModVol_requestInfo')
 			def requestId = execution.getVariable('UPDVfModVol_requestId')
@@ -125,7 +128,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 				startTime = System.currentTimeMillis()
 			}
 			def volumeInputs = execution.getVariable('UPDVfModVol_volumeInputs')
-			
+
 			String synchResponse = """
 				<volume-request xmlns="http://org.openecomp/mso/infra/vnf-request/v1">
 					<request-info>
@@ -147,14 +150,14 @@ class UpdateVfModuleVolume extends VfModuleBase {
 			throw e;
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
-			createWorkflowException(execution, 1002, 'Error in sendSynchResponse(): ' + e.getMessage())
-		}		
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in sendSynchResponse(): ' + e.getMessage())
+		}
 	}
-	
+
 	/**
 	 * Prepare a Request for querying AAI for Volume Group information using the
 	 * Volume Group Id and Aic Cloud Region.
-	 * 
+	 *
 	 * @param execution The flow's execution instance.
 	 */
 	public void queryAAIForVolumeGroup(Execution execution) {
@@ -173,7 +176,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 
 			logDebug('Sending GET to AAI endpoint \'' + endPoint + '\'', isDebugLogEnabled)
 			utils.logAudit("UpdateVfModuleVolume sending GET for quering AAI endpoint: " + endPoint)
-			
+
 			AaiUtil aaiUtil = new AaiUtil(this)
 			APIResponse response = aaiUtil.executeAAIGetCall(execution, endPoint)
 			def int statusCode = response.getStatusCode()
@@ -181,7 +184,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 			logDebug('Response code:' + statusCode, isDebugLogEnabled)
 			logDebug('Response:' + System.lineSeparator() + responseData, isDebugLogEnabled)
 			utils.logAudit("UpdateVfModuleVolume response data: " + responseData)
-			
+
 			def volumeGroup = responseData
 			def heatStackId = getNodeTextForce(volumeGroup, 'heat-stack-id')
 			execution.setVariable('UPDVfModVol_volumeGroupHeatStackId', heatStackId)
@@ -205,10 +208,10 @@ class UpdateVfModuleVolume extends VfModuleBase {
 			throw e;
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
-			createWorkflowException(execution, 1002, 'Error in queryAAIForVolumeGroup(): ' + e.getMessage())
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in queryAAIForVolumeGroup(): ' + e.getMessage())
 		}
 	}
-	
+
 	/**
 	 * Prepare a Request for invoking the VnfAdapterRest subflow to do
 	 * a Volume Group update.
@@ -221,22 +224,22 @@ class UpdateVfModuleVolume extends VfModuleBase {
 			')'
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		logDebug('Entered ' + method, isDebugLogEnabled)
-		
+
 		try {
 			def aicCloudRegion = execution.getVariable('UPDVfModVol_aicCloudRegion')
 			def tenantId = execution.getVariable('UPDVfModVol_tenantId')
 			def volumeGroupId = execution.getVariable('UPDVfModVol_volumeGroupId')
 			def volumeGroupHeatStackId = execution.getVariable('UPDVfModVol_volumeGroupHeatStackId')
 			def vnfType = execution.getVariable('UPDVfModVol_vnfType')
-			
+
 			def volumeParamsXml = execution.getVariable('UPDVfModVol_volumeParams')
 			def volumeGroupParams = transformParamsToEntries(volumeParamsXml)
-			
+
 			def requestId = execution.getVariable('UPDVfModVol_requestId')
 			def serviceId = execution.getVariable('UPDVfModVol_serviceId')
-			
+
 			def messageId = execution.getVariable('mso-request-id') + '-' + System.currentTimeMillis()
-			def notificationUrl = createCallbackURL(execution, "VNFAResponse", messageId) 
+			def notificationUrl = createCallbackURL(execution, "VNFAResponse", messageId)
 			def useQualifiedHostName = execution.getVariable("URN_mso_use_qualified_host")
 			if ('true'.equals(useQualifiedHostName)) {
 					notificationUrl = utils.getQualifiedHostNameForCallback(notificationUrl)
@@ -266,17 +269,17 @@ class UpdateVfModuleVolume extends VfModuleBase {
 			vnfAdapterRestRequest = utils.formatXml(vnfAdapterRestRequest)
 			execution.setVariable('UPDVfModVol_vnfAdapterRestRequest', vnfAdapterRestRequest)
 			logDebug('Request for VNFAdapter Rest:\n' + vnfAdapterRestRequest, isDebugLogEnabled)
-			
+
 			utils.logAudit("UpdateVfModuleVolume Request for VNFAdapter Rest: " + vnfAdapterRestRequest)
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
-			createWorkflowException(execution, 1002, 'Error in prepVnfAdapterRest(): ' + e.getMessage())
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepVnfAdapterRest(): ' + e.getMessage())
 		}
 	}
-	
+
 	/**
 	 * Prepare a Request for updating the DB for this Infra request.
 	 *
@@ -291,7 +294,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 
 		try {
 			def requestId = execution.getVariable('UPDVfMod_requestId')
-			
+
 			String updateInfraRequest = """
 				<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
 						xmlns:req="http://org.openecomp.mso/requestsdb">
@@ -310,20 +313,20 @@ class UpdateVfModuleVolume extends VfModuleBase {
 			updateInfraRequest = utils.formatXml(updateInfraRequest)
 			execution.setVariable('UPDVfModVol_updateInfraRequest', updateInfraRequest)
 			logDebug('Request for Update Infra Request:\n' + updateInfraRequest, isDebugLogEnabled)
-			
+
 			utils.logAudit("UpdateVfModuleVolume Request for Updating DB for Infra: " + updateInfraRequest)
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
-			createWorkflowException(execution, 1002, 'Error in prepDbInfraDbRequest(): ' + e.getMessage())
+			exceptionUtil.buildWorkflowException(execution, 1002, 'Error in prepDbInfraDbRequest(): ' + e.getMessage())
 		}
 	}
-	
+
 	/**
 	 * Build a "CompletionHandler" request.
-	 * 
+	 *
 	 * @param execution The flow's execution instance.
 	 */
 	public void prepCompletionHandlerRequest(Execution execution) {
@@ -332,7 +335,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 			')'
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		logDebug('Entered ' + method, isDebugLogEnabled)
-		
+
 		try {
 			def requestInfo = execution.getVariable('UPDVfModVol_requestInfo')
 
@@ -348,19 +351,19 @@ class UpdateVfModuleVolume extends VfModuleBase {
 			logDebug('Request for Completion Handler:\n' + content, isDebugLogEnabled)
 			utils.logAudit("UpdateVfModuleVolume Completion Handler request: " + content)
 			execution.setVariable('UPDVfModVol_CompletionHandlerRequest', content)
-			
+
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
-			createWorkflowException(execution, 1002, 'Error in prepCompletionHandlerRequest(): ' + e.getMessage())
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepCompletionHandlerRequest(): ' + e.getMessage())
 		}
 	}
-	
+
 	/**
 	 * Build a "FalloutHandler" request.
-	 * 
+	 *
 	 * @param execution The flow's execution instance.
 	 */
 	public void prepFalloutHandler(Execution execution) {
@@ -372,7 +375,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 
 		try {
 			def requestInfo = execution.getVariable('UPDVfModVol_requestInfo')
-			
+
 			def WorkflowException workflowException = execution.getVariable("WorkflowException")
 			def errorResponseCode = workflowException.getErrorCode()
 			def errorResponseMsg = workflowException.getErrorMessage()
@@ -390,27 +393,27 @@ class UpdateVfModuleVolume extends VfModuleBase {
 					<sdncadapterworkflow:WorkflowException>
 						<sdncadapterworkflow:ErrorMessage>${encErrorResponseMsg}</sdncadapterworkflow:ErrorMessage>
 						<sdncadapterworkflow:ErrorCode>${errorResponseCode}</sdncadapterworkflow:ErrorCode>
-					</sdncadapterworkflow:WorkflowException>	
+					</sdncadapterworkflow:WorkflowException>
 				</sdncadapterworkflow:FalloutHandlerRequest>
 			"""
 			content = utils.formatXml(content)
 			logDebug('Request for Fallout Handler:\n' + content, isDebugLogEnabled)
 			utils.logAudit("UpdateVfModuleVolume Fallout request: " + content)
 			execution.setVariable('UPDVfModVol_FalloutHandlerRequest', content)
-			
+
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
-			createWorkflowException(execution, 1002, 'Error in prepFalloutHandler(): ' + e.getMessage())
+			exceptionUtil.buildWorkflowException(execution, 1002, 'Error in prepFalloutHandler(): ' + e.getMessage())
 		}
 	}
-	
+
 	/**
 	 * Create a WorkflowException for the error case where the Tenant Id from
 	 * AAI did not match the Tenant Id in the incoming request.
-	 * 
+	 *
 	 * @param execution The flow's execution instance.
 	 */
 	public void handleTenantIdMismatch(Execution execution) {
@@ -419,21 +422,21 @@ class UpdateVfModuleVolume extends VfModuleBase {
 			')'
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		logDebug('Entered ' + method, isDebugLogEnabled)
-		
+
 		String processKey = getProcessKey(execution);
 		def volumeGroupId = execution.getVariable('UPDVfModVol_volumeGroupId')
 		def aicCloudRegion = execution.getVariable('UPDVfModVol_aicCloudRegion')
 		def tenantId = execution.getVariable('UPDVfModVol_tenantId')
 		def volumeGroupTenantId = execution.getVariable('UPDVfModVol_volumeGroupTenantId')
-		
+
 		def String errorMessage = 'TenantId \'' + tenantId + '\' in incoming request does not match Tenant Id \'' + volumeGroupTenantId +
 			'\' retrieved from AAI for Volume Group Id \'' + volumeGroupId + '\', AIC Cloud Region \'' + aicCloudRegion + '\''
-			
+
 		logError('Error in UpdateVfModuleVol: ' + errorMessage)
-		
+
 		WorkflowException exception = new WorkflowException(processKey, 5000, errorMessage);
 		execution.setVariable("WorkflowException", exception);
-		
+
 		logDebug('Exited ' + method, isDebugLogEnabled)
 		utils.logAudit("UpdateVfModuleVolume workflowException in Tenant Mismatch: " + errorMessage)
 	}

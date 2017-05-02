@@ -245,18 +245,6 @@ class AaiUtilTest extends MsoGroovyTest {
 	}
 	
 	@Test
-	public void testGetCloudInfrastructureVolumeGroupUri() {
-		ExecutionEntity mockExecution = setupMock('CreateAAIVfModule')
-		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn('true')
-		when(mockExecution.getVariable("URN_mso_workflow_global_default_aai_version")).thenReturn('8')
-		when(mockExecution.getVariable("URN_mso_workflow_default_aai_v8_volume_group_uri")).thenReturn('/aai/v8/cloud-infrastructure/volume-groups/volume-group')
-		CreateAAIVfModule myproc = new CreateAAIVfModule()
-		AaiUtil aaiUtil = new AaiUtil(myproc)
-		def uri = aaiUtil.getCloudInfrastructureVolumeGroupUri(mockExecution)
-		assertEquals('/aai/v8/cloud-infrastructure/volume-groups/volume-group', uri)
-	}
-	
-	@Test
 	public void testGetCloudInfrastructureTenantUri() {
 		ExecutionEntity mockExecution = setupMock('CreateAAIVfModule')
 		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn('true')

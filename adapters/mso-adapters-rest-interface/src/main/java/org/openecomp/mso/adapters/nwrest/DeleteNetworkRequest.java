@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,10 +39,11 @@ public class DeleteNetworkRequest extends NetworkRequestCommon {
 	private String networkId;
 	private String networkStackId;
 	private String networkType;
+	private String modelCustomizationUuid;
 	private MsoRequest msoRequest = new MsoRequest();
 
 	public DeleteNetworkRequest() {}
-	
+
 	public String getCloudSiteId() {
 		return cloudSiteId;
 	}
@@ -81,6 +82,14 @@ public class DeleteNetworkRequest extends NetworkRequestCommon {
 
 	public void setNetworkType(String networkType) {
 		this.networkType = networkType;
+	}
+
+	public String getModelCustomizationUuid() {
+		return this.modelCustomizationUuid;
+	}
+
+	public void setModelCustomizationUuid(String modelCustomizationUuid) {
+		this.modelCustomizationUuid = modelCustomizationUuid;
 	}
 
 	public MsoRequest getMsoRequest() {

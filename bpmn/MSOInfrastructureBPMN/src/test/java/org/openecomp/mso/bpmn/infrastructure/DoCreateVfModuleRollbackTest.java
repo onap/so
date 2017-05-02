@@ -24,6 +24,8 @@ import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockDeleteGenericVnf;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockDeleteVfModuleId;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetGenericVnfByIdWithDepth;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetVfModuleId;
+import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPatchGenericVnf;
+import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPatchVfModuleId;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPutGenericVnf;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPutVfModuleIdNoResponse;
 import static org.openecomp.mso.bpmn.mock.StubResponseSDNCAdapter.mockSDNCAdapter;
@@ -37,7 +39,6 @@ import java.util.UUID;
 import org.camunda.bpm.engine.test.Deployment;
 import org.junit.Test;
 import org.openecomp.mso.bpmn.common.WorkflowTest;
-import org.openecomp.mso.bpmn.common.WorkflowTest.CallbackSet;
 import org.openecomp.mso.bpmn.core.RollbackData;
 import org.openecomp.mso.bpmn.core.WorkflowException;
 
@@ -100,6 +101,8 @@ public class DoCreateVfModuleRollbackTest extends WorkflowTest {
 		MockPutGenericVnf("a27ce5a9-29c4-4c22-a017-6615ac73c721");
 		MockGetGenericVnfByIdWithDepth("a27ce5a9-29c4-4c22-a017-6615ac73c721", 1, "DoCreateVfModuleRollback/GenericVnf.xml");
 		MockGetVfModuleId("a27ce5a9-29c4-4c22-a017-6615ac73c721", "973ed047-d251-4fb9-bf1a-65b8949e0a73", "DoCreateVfModuleRollback/GenericVnfVfModule.xml", 200);
+		MockPatchGenericVnf("a27ce5a9-29c4-4c22-a017-6615ac73c721");
+		MockPatchVfModuleId("a27ce5a9-29c4-4c22-a017-6615ac73c721", "973ed047-d251-4fb9-bf1a-65b8949e0a73");
 		
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<String, Object>();

@@ -72,23 +72,6 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	}
 
 	/**
-	 * Logs a message at the INFO level.
-	 * @param message the message
-	 */
-	public void logInfo(String message) {
-		log('INFO', message, null, "true")
-	}
-
-	/**
-	 * Logs a message at the INFO level.
-	 * @param message the message
-	 * @param cause the cause (stracktrace will be included in the output)
-	 */
-	public void logInfo(String message, Throwable cause) {
-		log('INFO', message, cause, "true")
-	}
-
-	/**
 	 * Logs a message at the DEBUG level.
 	 * @param message the message
 	 * @param isDebugLogEnabled a flag indicating if DEBUG level is enabled
@@ -168,227 +151,6 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 		execution.setVariable(variable, execution.getVariable("WorkflowException"))
 		execution.setVariable("WorkflowException", null)
 	}
-
-	/**
-	 * Builds a success response from the specified message content and numeric
-	 * response code.  The response code may be an integer or a string representation
-	 * of an integer.  The response is stored in the execution where it may be
-	 * picked up by the Workflow service.
-	 * <p>
-	 * IMPORTANT: the activity that executes this method should have an
-	 * asynchronous continuation after it to ensure the execution variables
-	 * are persisted to the database.
-	 * @param execution the execution
-	 * @param content the message content
-	 * @param responseCode the message response code
-	 */
-	@Deprecated
-	public void buildResponse(Execution execution, String content, Object responseCode) {
-		buildResponse(execution, content, responseCode, true)
-	}
-
-	/**
-	 * Builds a standard error response containing the specified error message and
-	 * numeric response code.  The response code may be an integer or a string
-	 * representation of an integer.  The response is stored in the execution where
-	 * it may be picked up by the Workflow service.
-	 * <p>
-	 * IMPORTANT: the activity that executes this method should have an
-	 * asynchronous continuation after it to ensure the execution variables
-	 * are persisted to the database.
-	 * @param execution the execution
-	 * @param content the message content
-	 * @param errorCode the message response code
-	 */
-	@Deprecated
-	public void buildErrorResponse(Execution execution, String errorMessage, Object errorCode) {
-
-		def encErrorMessage = errorMessage.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-
-		def content = """
-			<aetgt:WorkflowException xmlns:aetgt="http://org.openecomp/mso/workflow/schema/v1">
-			<aetgt:ErrorMessage>${encErrorMessage}</aetgt:ErrorMessage>
-			<aetgt:ErrorCode>${errorCode}</aetgt:ErrorCode>
-			</aetgt:WorkflowException>
-		  """
-
-		buildResponse(execution, content, errorCode, false)
-	}
-
-	// BEGIN LEGACY SUPPORT.  TODO: REMOVE THIS CODE
-	/**
-	 * Builds a standard error response containing the specified error message
-	 * and a numeric response code.  The response code is obtained from the
-	 * prefix+"ResponseCode" execution variable. The response is stored in the
-	 * execution where it may be picked up by the Workflow service.
-	 * <p>
-	 * IMPORTANT: the activity that executes this method should have an
-	 * asynchronous continuation after it to ensure the execution variables
-	 * are persisted to the database.
-	 * <p>
-	 * This method is deprecated. Methods that accept a response code should
-	 * be used instead.
-	 * @param execution the execution
-	 * @param errorMessage the error message for the error response
-	 */
-	@Deprecated
-	public void buildErrorResponse(Execution execution, String errorMessage) {
-		buildErrorResponse(execution, errorMessage, null)
-	}
-	// END LEGACY SUPPORT.  TODO: REMOVE THIS CODE
-
-	/**
-	 * Builds a response from the specified message content and numeric response
-	 * code.  The response code may be an integer or a string representation of
-	 * an integer.  The response is stored in the execution where it may be
-	 * picked up by the Workflow service.
-	 * <p>
-	 * IMPORTANT: the activity that executes this method should have an
-	 * asynchronous continuation after it to ensure the execution variables
-	 * are persisted to the database.
-	 * @param execution the execution
-	 * @param content the message content
-	 * @param responseCode the message response code
-	 * @param isSuccess true if this is a success response
-	 */
-	@Deprecated
-	protected void buildResponse(Execution execution, String content, Object responseCode,
-			boolean isSuccess) {
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-
-		String processKey = getProcessKey(execution);
-		logDebug("Building " + processKey + " response", isDebugLogEnabled)
-
-		Map<String, Object> responseMap = new HashMap<String, Object>()
-
-		if (isSuccess) {
-			responseMap.put("Status", "Success")
-		} else {
-			responseMap.put("Status", "Fail")
-		}
-
-		// BEGIN LEGACY SUPPORT.  TODO: REMOVE THIS CODE
-		def prefix = execution.getVariable("prefix")
-
-		if (responseCode == null) {
-			responseCode = execution.getVariable(prefix+"ResponseCode")
-		} else {
-			execution.setVariable(prefix+"ResponseCode", String.valueOf(responseCode))
-		}
-		// END LEGACY SUPPORT.  TODO: REMOVE THIS CODE
-
-		responseMap.put("ResponseCode", String.valueOf(responseCode))
-
-		if (isSuccess) {
-			responseMap.put("Status", "Success")
-			// TODO: Should deprecate use of processKey+Response variable for the response. Will use "WorkflowResponse" instead
-			execution.setVariable("WorkflowResponse", content)
-			// BEGIN LEGACY SUPPORT.  TODO: REMOVE THIS CODE
-			execution.setVariable(processKey+"Response", content)
-			execution.setVariable(prefix+"ErrorResponse", null)
-			// END LEGACY SUPPORT.  TODO: REMOVE THIS CODE
-		} else {
-			responseMap.put("Status", "Fail")
-			// BEGIN LEGACY SUPPORT.  TODO: REMOVE THIS CODE
-			execution.setVariable(prefix+"ErrorResponse", content)
-			execution.setVariable(prefix+"Response", null)
-			// END LEGACY SUPPORT.  TODO: REMOVE THIS CODE
-		}
-
-		responseMap.put("Response", content)
-
-		logDebug(processKey
-			+ " ResponseCode=" + responseMap.get("ResponseCode")
-			+ " Status=" + responseMap.get("Status")
-			+ " Response=\n" + responseMap.get("Response"),
-			isDebugLogEnabled)
-
-		execution.setVariable(processKey + "ResponseMap", responseMap)
-	}
-
-	/**
-	 * Builds an error response (if one has not already been built) and throws
-	 * a BpmnError of type "MSOWorkflowException" that can be caught as a
-	 * boundary event.
-	 * @param execution the execution
-	 * @param errorMessage the error message for the error response
-	 * @param responseCode the message response code
-	 */
-	@Deprecated
-	public void workflowException(Execution execution, String errorMessage, Object responseCode) {
-		String processKey = getProcessKey(execution);
-
-		buildErrorResponse(execution, errorMessage, responseCode)
-		throw new BpmnError("MSOWorkflowException")
-	}
-
-	/**
-	 * Puts a WorkflowException into the execution
-	 * @param execution the execution
-	 * @param errorCode the error code (normally a 4-digit number)
-	 * @param errorMessage the error message
-	 */
-	@Deprecated
-	public void newWorkflowException(Execution execution, int errorCode, String errorMessage) {
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		String processKey = getProcessKey(execution);
-		logDebug("Building a " + processKey + " WorkflowException", isDebugLogEnabled)
-
-		if (errorCode < 1000) {
-			throw new IllegalArgumentException("ErrorCode must be a number greater than 1000");
-		}
-
-		WorkflowException exception = new WorkflowException(processKey, errorCode, errorMessage);
-		execution.setVariable("WorkflowException", exception);
-	}
-
-	/**
-	 * Puts a WorkflowException into the execution and throws an MSOWorkflowException event.
-	 * @param execution the execution
-	 * @param errorCode the error code (normally a 4-digit number)
-	 * @param errorMessage the error message
-	 */
-	// TODO: rename this method to be throwWorkflowException
-	@Deprecated
-	public void createWorkflowException(Execution execution, int errorCode, String errorMessage) {
-		newWorkflowException(execution, errorCode, errorMessage)
-		throw new BpmnError("MSOWorkflowException", "errorCode:" + errorCode + ", errorMessage:" + errorMessage)
-	}
-
-	/**
-	 * Puts a WorkflowException into the execution and throws an MSOWorkflowException event.
-	 * @param execution the execution
-	 * @param errorCode the error code (normally a 4-digit number)
-	 * @param errorMessage the error message
-	 */
-	@Deprecated
-	public void commonWorkflowException(Execution execution, int errorCode, String errorMessage) {
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		String processKey = getProcessKey(execution);
-		logDebug("Building a " + processKey + " WorkflowException", isDebugLogEnabled)
-		logError(errorMessage)
-		WorkflowException exception = new WorkflowException(processKey, errorCode, errorMessage);
-		execution.setVariable("WorkflowException", exception);
-		throw new BpmnError("MSOWorkflowException","errorCode:" + errorCode + ",errorMessage:" + errorMessage)
-	}
-
-	/**
-	 * Puts a WorkflowException into the execution and throws an MSOWorkflowException event.
-	 * @param execution the execution
-	 * @param errorCode the error code (normally a 4-digit number)
-	 * @param errorMessage the error message
-	 */
-	@Deprecated
-	public void commonWorkflowException(Execution execution, String errorCode, String errorMessage) {
-		int intRespCode
-		try{
-			intRespCode = Integer.parseInt(errorCode)
-		}catch (Exception e){
-			intRespCode = 400
-		}
-		commonWorkflowException(execution, intRespCode, errorMessage)
-	}
-
 
 
 	/**
@@ -528,9 +290,6 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 
 	}
 
-
-
-
 	/**
 	 * Sends a response to the workflow service that invoked the process.  This method
 	 * may only be used by top-level processes that were directly invoked by the
@@ -626,7 +385,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	/**
 	 * Returns the process definition key (i.e. the process name) of the
 	 * current process.
-	 * 
+	 *
 	 * @param execution the execution
 	 */
 	public String getProcessKey(Execution execution) {
@@ -675,11 +434,12 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	 * @return The element node, if found in the xml.
 	 */
 	protected String getRequiredNodeXml(Execution execution, String xml, String elementName) {
+		ExceptionUtil exceptionUtil = new ExceptionUtil()
 		def element = utils.getNodeXml(xml, elementName, false)
 		if (element.trim().isEmpty()) {
 			def msg = 'Required element \'' + elementName + '\' is missing or empty'
 			logError(msg)
-			createWorkflowException(execution, 2000, msg)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 		} else {
 			return element
 		}
@@ -693,19 +453,34 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	 * @param execution The flow's execution.
 	 * @param xml Xml to search.
 	 * @param elementName Name of element to whose value to get.
-	 * @return The value of the element, if found in the xml.
+	 * @return The non-empty value of the element, if found in the xml.
 	 */
 	protected String getRequiredNodeText(Execution execution, String xml, String elementName) {
+		ExceptionUtil exceptionUtil = new ExceptionUtil()
 		def elementText = utils.getNodeText1(xml, elementName)
-		if (elementText == null) {
+		if ((elementText == null) || (elementText.isEmpty())) {
 			def msg = 'Required element \'' + elementName + '\' is missing or empty'
 			logError(msg)
-			createWorkflowException(execution, 2000, msg)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 		} else {
 			return elementText
 		}
 	}
 
+	/**
+	 * Get the text for the specified element from the specified xml.  If
+	 * the element does not exist, return the specified default value.
+	 *
+	 * @param xml Xml from which to get the element's text
+	 * @param elementName Name of element whose text to get
+	 * @param defaultValue the default value
+	 * @return the element's text or the default value if the element does not
+	 * exist in the given xml
+	 */
+	protected String getNodeText(String xml, String elementName, String defaultValue) {
+		def nodeText = utils.getNodeText1(xml, elementName)
+		return (nodeText == null) ? defaultValue : nodeText
+	}
 	/**
 	 * Get the text for the specified element from the specified xml.  If
 	 * the element does not exist, return an empty string.
@@ -716,31 +491,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	 * exist in the given xml.
 	 */
 	protected String getNodeTextForce(String xml, String elementName) {
-		def nodeText = utils.getNodeText1(xml, elementName)
-		return (nodeText == null) ? '' : nodeText
-	}
-
-	/**
-	 * Sends the empty, synchronous response back to the API Handler.
-	 * @param execution the execution
-	 */
-	@Deprecated
-	public void sendResponse(Execution execution) {
-		def method = getClass().getSimpleName() + '.sendResponse(' +
-			'execution=' + execution.getId() +
-			')'
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		logDebug('Entered ' + method, isDebugLogEnabled)
-
-		try {
-			buildResponse(execution, "", 200)
-			logDebug('Exited ' + method, isDebugLogEnabled)
-		} catch (BpmnError e) {
-			throw e;
-		} catch (Exception e) {
-			logError('Caught exception in ' + method, e)
-			workflowException(execution, 'Internal Error', 9999) // TODO: what message and error code?
-		}
+		return getNodeText(xml, elementName, '');
 	}
 
 	/**
@@ -812,10 +563,13 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 				}
 			}
 		}
-
 		return false
 	}
 
+	/**
+	 * Sets flows success indicator variable.
+	 *
+	 */
 	public void setSuccessIndicator(Execution execution, boolean isSuccess) {
 		String prefix = execution.getVariable('prefix')
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
@@ -826,6 +580,10 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	}
 
 
+	/**
+	 * Sends a Error Sync Response
+	 *
+	 */
 	public void sendSyncError(Execution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		String requestId = execution.getVariable("mso-request-id")
@@ -838,7 +596,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 			sendWorkflowResponse(execution, errorCode, errorMessage)
 		}
 	}
-	
+
 	/**
 	 * Create a WorkflowException - uses ExceptionUtil to build a WorkflowException
 	 * @param execution
@@ -854,9 +612,9 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	 * Executes a named groovy script method in the current object
 	 */
 	public void executeMethod(String methodName, Object... args) {
-		
+
 		if (args != null && args.size() > 0) {
-			
+
 			// First argument of method to call is always the execution object
 			Execution execution = (Execution) args[0]
 
@@ -885,7 +643,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 			}
 		}
 	}
-	
+
 	/**
 	 *This method determines and adds the appropriate ending to come
 	 *after a number (-st, -nd, -rd, or -th)
@@ -894,7 +652,6 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	 *
 	 *@return String ending - number with suffix
 	 */
-
 	public static String labelMaker(Object n) {
 		Integer num
 		if(n instanceof String){
@@ -905,15 +662,15 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 
 		String ending = ""; //the end to be added to the number
 		if(num != null){
-			if ((num % 10 == 1) && (num != 11)) {
-				ending = num + "st";
+		if ((num % 10 == 1) && (num != 11)) {
+			ending = num + "st";
 			} else if ((num % 10 == 2) && (num != 12)) {
-				ending = num + "nd";
+			ending = num + "nd";
 			} else if ((num % 10 == 3) && (num != 13)) {
-				ending = num + "rd";
+			ending = num + "rd";
 			} else {
-				ending = num + "th";
-			}
+			ending = num + "th";
+		}
 		}
 		return ending
 	}
@@ -960,5 +717,4 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 			'/' + UriUtils.encodePathSegment(messageType, 'UTF-8') +
 			'/' + UriUtils.encodePathSegment(correlator, 'UTF-8')
 	}
-
 }

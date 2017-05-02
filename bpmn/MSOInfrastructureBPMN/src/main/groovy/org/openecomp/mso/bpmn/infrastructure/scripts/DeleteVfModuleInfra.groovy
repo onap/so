@@ -41,7 +41,7 @@ import org.openecomp.mso.bpmn.core.json.JsonUtils;
 
 
 public class DeleteVfModuleInfra extends AbstractServiceTaskProcessor {
-	
+
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
 	/**
@@ -78,20 +78,20 @@ public class DeleteVfModuleInfra extends AbstractServiceTaskProcessor {
 		logDebug('Entered ' + method, isDebugLogEnabled)
 		execution.setVariable("isVidRequest", "false")
 		initProcessVariables(execution)
-		
+
 		def prefix = execution.getVariable('prefix')
-		
+
 		def incomingRequest = execution.getVariable('bpmnRequest')
-		
+
 		utils.log("DEBUG", "Incoming Infra Request: " + incomingRequest, isDebugLogEnabled)
 		utils.logAudit("DeleteVfModule Infra incoming Request: " + incomingRequest)
-		
+
 		// check if request is xml or json
 		try {
 			def jsonSlurper = new JsonSlurper()
 			Map reqMap = jsonSlurper.parseText(incomingRequest)
 			utils.log("DEBUG", " Request is in JSON format.", isDebugLogEnabled)
-			
+
 			def serviceInstanceId = execution.getVariable('serviceInstanceId')
 			utils.log("DEBUG", "serviceInstanceId is: " + serviceInstanceId, isDebugLogEnabled)
 			def vnfId = execution.getVariable('vnfId')
@@ -100,16 +100,16 @@ public class DeleteVfModuleInfra extends AbstractServiceTaskProcessor {
 			execution.setVariable("cloudConfiguration", cloudConfiguration)
 			utils.log("DEBUG", "CloudConfiguration is: " + cloudConfiguration, isDebugLogEnabled)
 			def vfModuleModelInfo = jsonUtil.getJsonValue(incomingRequest, "requestDetails.modelInfo")
-			
+
 			execution.setVariable("vfModuleModelInfo", vfModuleModelInfo)
 			utils.log("DEBUG", "VfModuleModelInfo is: " + vfModuleModelInfo, isDebugLogEnabled)
-			
+
 			def vidUtils = new VidUtils(this)
-			
+
 			String requestInXmlFormat = vidUtils.createXmlVfModuleRequest(execution, reqMap, 'DELETE_VF_MODULE', serviceInstanceId)
-			
+
 			utils.log("DEBUG", " Request in XML format: " + requestInXmlFormat, isDebugLogEnabled)
-			
+
 			try {
 				// Catalog DB headers Authorization
 				String basicAuthValueDB = execution.getVariable("URN_mso_adapters_db_auth")
@@ -126,31 +126,31 @@ public class DeleteVfModuleInfra extends AbstractServiceTaskProcessor {
 			execution.setVariable(prefix + 'Request', requestInXmlFormat)
 			execution.setVariable(prefix+'vnfId', vnfId)
 			execution.setVariable("isVidRequest", "true")
-			
+
 		}
 		catch(groovy.json.JsonException je) {
 			utils.log("DEBUG", " Request is not in JSON format.", isDebugLogEnabled)
-			workflowException(execution, "Invalid request format", 400)
-			
+			exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Internal Error - During PreProcess Request")
+
 		}
 		catch(Exception e) {
 			String restFaultMessage = e.getMessage()
 			utils.log("ERROR", " Exception Encountered - " + "\n" + restFaultMessage, isDebugLogEnabled)
-			workflowException(execution, restFaultMessage, 400)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Internal Error - During PreProcess Request")
 		}
-		
-	
+
+
 		try {
-			
+
 			String request = validateRequest(execution)
 			execution.setVariable('DeleteVfModuleRequest', request)
 			utils.logAudit("DeleteVfModuleInfra Request: " + request)
-			
+
 			def requestInfo = getRequiredNodeXml(execution, request, 'request-info')
 			execution.setVariable('DELVfModI_requestInfo', requestInfo)
 			execution.setVariable('DELVfModI_requestId', getRequiredNodeText(execution, requestInfo, 'request-id'))
 			execution.setVariable('DELVfModI_source', getNodeTextForce(requestInfo, 'source'))
-			
+
 			def vnfInputs = getRequiredNodeXml(execution, request, 'vnf-inputs')
 			execution.setVariable('DELVfModI_vnfInputs', vnfInputs)
 			execution.setVariable('DELVfModI_vnfId', getRequiredNodeText(execution, vnfInputs, 'vnf-id'))
@@ -158,16 +158,16 @@ public class DeleteVfModuleInfra extends AbstractServiceTaskProcessor {
 			execution.setVariable('DELVfModI_vfModuleName', getNodeTextForce(vnfInputs, 'vf-module-name'))
 			execution.setVariable('DELVfModI_tenantId', getRequiredNodeText(execution, vnfInputs, 'tenant-id'))
 			execution.setVariable('DELVfModI_volumeGroupId', getNodeTextForce(vnfInputs, 'volume-group-id'))
-			
+
 			def vnfParams = utils.getNodeXml(request, 'vnf-params')
 			execution.setVariable('DELVfModI_vnfParams', vnfParams)
-	
+
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
-			createWorkflowException(execution, 1002, 'Error in preProcessRequest(): ' + e.getMessage())
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in preProcessRequest(): ' + e.getMessage())
 		}
 	}
 
@@ -182,7 +182,7 @@ public class DeleteVfModuleInfra extends AbstractServiceTaskProcessor {
 			')'
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		logDebug('Entered ' + method, isDebugLogEnabled)
-	
+
 		try {
 			def requestInfo = execution.getVariable('DELVfModI_requestInfo')
 			def requestId = execution.getVariable('DELVfModI_requestId')
@@ -195,11 +195,11 @@ public class DeleteVfModuleInfra extends AbstractServiceTaskProcessor {
 			if (startTime.isEmpty()) {
 				startTime = System.currentTimeMillis()
 			}
-				
+
 			// RESTResponse (for API Handler (APIH) Reply Task)
 			def vfModuleId = execution.getVariable('DELVfModI_vfModuleId')
 			String synchResponse = """{"requestReferences":{"instanceId":"${vfModuleId}","requestId":"${requestId}"}}""".trim()
-				
+
 			utils.logAudit("DeleteVfModuleInfra Synch Response: " + synchResponse)
 			sendWorkflowResponse(execution, 200, synchResponse)
 
@@ -208,10 +208,10 @@ public class DeleteVfModuleInfra extends AbstractServiceTaskProcessor {
 			throw e;
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
-			createWorkflowException(execution, 1002, 'Error in sendResponse(): ' + e.getMessage())
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in sendResponse(): ' + e.getMessage())
 		}
 	}
-		
+
 	/**
 	 * Currently passing the entire DELETE_VF_MODULE vnf-request to DoDeleteVfModule.
 	 * 'DeleteVfModuleRequest' is now being set in preProcessRequest().
@@ -233,10 +233,10 @@ public class DeleteVfModuleInfra extends AbstractServiceTaskProcessor {
 			throw e;
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
-			createWorkflowException(execution, 1002, 'Error in prepDoDeleteVfModule(): ' + e.getMessage())
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepDoDeleteVfModule(): ' + e.getMessage())
 		}
 	}
-		
+
 	/**
 	 * Prepare the DB update to add an entry for the Vf Module request.
 	 *
@@ -257,19 +257,19 @@ public class DeleteVfModuleInfra extends AbstractServiceTaskProcessor {
 			def volumeGroupId = execution.getVariable('DELVfModI_volumeGroupId')
 
 			String updateInfraRequest = """
-			<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+				<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
 					xmlns:req="http://org.openecomp.mso/requestsdb">
-				<soapenv:Header/>
-				<soapenv:Body>
-					<req:updateInfraRequest>
-						<requestId>${requestId}</requestId>
-						<lastModifiedBy>BPMN</lastModifiedBy>
-						<requestStatus>COMPLETED</requestStatus>
-						<progress>100</progress>
-					</req:updateInfraRequest>
-				</soapenv:Body>
-			</soapenv:Envelope>
-		"""
+					<soapenv:Header/>
+					<soapenv:Body>
+						<req:updateInfraRequest>
+							<requestId>${requestId}</requestId>
+							<lastModifiedBy>BPMN</lastModifiedBy>
+							<requestStatus>COMPLETED</requestStatus>
+							<progress>100</progress>
+						</req:updateInfraRequest>
+					</soapenv:Body>
+				</soapenv:Envelope>
+			"""
 
 			updateInfraRequest = utils.formatXml(updateInfraRequest)
 			execution.setVariable('DELVfModI_updateInfraRequest', updateInfraRequest)
@@ -281,7 +281,7 @@ public class DeleteVfModuleInfra extends AbstractServiceTaskProcessor {
 			throw e;
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
-			createWorkflowException(execution, 1002, 'Error in prepInfraRequest(): ' + e.getMessage())
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepInfraRequest(): ' + e.getMessage())
 		}
 	}
 
@@ -303,18 +303,18 @@ public class DeleteVfModuleInfra extends AbstractServiceTaskProcessor {
 			def request = execution.getVariable("DeleteVfModuleRequest")
 			def requestInfo = utils.getNodeXml(request, 'request-info', false)
 			def action = utils.getNodeText1(requestInfo, "action")
-			
+
 			String content =
 					"""  <aetgt:MsoCompletionRequest xmlns:aetgt="http://org.openecomp/mso/workflow/schema/v1"
 						   xmlns:ns="http://org.openecomp/mso/request/types/v1"
 						   xmlns:ns8="http://org.openecomp/mso/workflow/schema/v1">
 		<request-info xmlns="http://org.openecomp/mso/infra/vnf-request/v1">
-		${requestInfo}
-		</request-info>
-		<ns8:status-message>Vf Module has been deleted successfully.</ns8:status-message>
-		<ns8:mso-bpel-name>BPMN</ns8:mso-bpel-name>
-		</aetgt:MsoCompletionRequest>"""
-			
+			${requestInfo}
+			</request-info>
+			<ns8:status-message>Vf Module has been deleted successfully.</ns8:status-message>
+			<ns8:mso-bpel-name>BPMN</ns8:mso-bpel-name>
+			</aetgt:MsoCompletionRequest>"""
+
 			content = utils.formatXml(content)
 			logDebug(resultVar + ' = ' + System.lineSeparator() + content, isDebugLogEnabled)
 			utils.logAudit("DeleteVfModule Infra Completion Handler Request: " + content)
@@ -325,7 +325,7 @@ public class DeleteVfModuleInfra extends AbstractServiceTaskProcessor {
 			throw e;
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
-			createWorkflowException(execution, 2000, 'Internal Error')
+			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, 'Internal Error')
 		}
 	}
 
@@ -342,7 +342,7 @@ public class DeleteVfModuleInfra extends AbstractServiceTaskProcessor {
 			')'
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		logDebug('Entered ' + method, isDebugLogEnabled)
-		
+
 		try {
 			def prefix = execution.getVariable('prefix')
 			def request = execution.getVariable("DeleteVfModuleRequest")
@@ -360,13 +360,13 @@ public class DeleteVfModuleInfra extends AbstractServiceTaskProcessor {
 					xmlns:reqtype="http://org.openecomp/mso/request/types/v1"
 					xmlns:msoservtypes="http://org.openecomp/mso/request/types/v1"
 					xmlns:structuredtypes="http://org.openecomp/mso/structured/types/v1">
-				${requestInfo}
-				<sdncadapterworkflow:WorkflowException>
-					<sdncadapterworkflow:ErrorMessage>${encErrorResponseMsg}</sdncadapterworkflow:ErrorMessage>
-					<sdncadapterworkflow:ErrorCode>${errorResponseCode}</sdncadapterworkflow:ErrorCode>
-				</sdncadapterworkflow:WorkflowException>
-			</sdncadapterworkflow:FalloutHandlerRequest>
-		"""
+					${requestInfo}
+					<sdncadapterworkflow:WorkflowException>
+						<sdncadapterworkflow:ErrorMessage>${encErrorResponseMsg}</sdncadapterworkflow:ErrorMessage>
+						<sdncadapterworkflow:ErrorCode>${errorResponseCode}</sdncadapterworkflow:ErrorCode>
+					</sdncadapterworkflow:WorkflowException>
+				</sdncadapterworkflow:FalloutHandlerRequest>
+			"""
 			content = utils.formatXml(content)
 			utils.logAudit("DeleteVfModuleInfra Fallout Handler Request: " + content)
 			logDebug(resultVar + ' = ' + System.lineSeparator() + content, isDebugLogEnabled)
@@ -377,7 +377,7 @@ public class DeleteVfModuleInfra extends AbstractServiceTaskProcessor {
 			throw e;
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
-			createWorkflowException(execution, 2000, 'Internal Error')
+			exceptionUtil.buildWorkflowException(execution, 2000, 'Internal Error')
 		}
 	}
 }

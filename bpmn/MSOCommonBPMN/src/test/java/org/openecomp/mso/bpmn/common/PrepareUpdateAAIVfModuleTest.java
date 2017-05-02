@@ -23,6 +23,7 @@ package org.openecomp.mso.bpmn.common;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetGenericVnfByIdWithDepth;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetGenericVnfById_404;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPutGenericVnf;
+import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPatchVfModuleId;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -55,6 +56,7 @@ public class PrepareUpdateAAIVfModuleTest extends WorkflowTest {
 		
 		MockGetGenericVnfByIdWithDepth("skask", 1, "VfModularity/GenericVnf.xml");
 		MockPutGenericVnf("/skask/vf-modules/vf-module/supercool", "PCRF", 200);
+		MockPatchVfModuleId("skask", "supercool");
 		
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<String, Object>();

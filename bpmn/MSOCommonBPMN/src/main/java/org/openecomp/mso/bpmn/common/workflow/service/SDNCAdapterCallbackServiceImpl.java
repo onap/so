@@ -34,6 +34,7 @@ import org.camunda.bpm.BpmPlatform;
 import org.camunda.bpm.engine.MismatchingMessageCorrelationException;
 import org.camunda.bpm.engine.ProcessEngineServices;
 import org.camunda.bpm.engine.RuntimeService;
+import org.camunda.bpm.engine.runtime.ExecutionQuery;
 import org.openecomp.mso.bpmn.common.adapter.sdnc.SDNCAdapterCallbackRequest;
 import org.openecomp.mso.bpmn.common.adapter.sdnc.SDNCAdapterResponse;
 import org.openecomp.mso.bpmn.common.adapter.sdnc.SDNCCallbackAdapterPortType;
@@ -73,20 +74,6 @@ public class SDNCAdapterCallbackServiceImpl implements SDNCCallbackAdapterPortTy
 		SDNCAdapterResponse sdncAdapterResponse;
 		long startTime = System.currentTimeMillis();
 
-		/* Check to make sure the process instance is reay for correlation*/
-		isReadyforCorrelation(runtimeService, receivedRequestId);
-
-		msoLogger.debug(logMarker + "*** Received MSO sdncAdapterCallbackService ******");
-		
-		msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Call to MSO sdncAdapterCallbackService");		
-		
-		msoLogger.debug(logMarker + "Callback response string:\n"  + sdncAdapterCallbackRequest.toString());
-
-		String reqId = receivedRequestId;
-		Map<String,Object> variables = new HashMap<String,Object>();
-		variables.put("SDNCA_requestId", reqId );
-		variables.put("sdncAdapterCallbackRequest", sdncAdapterCallbackRequest.toString());
-
 		/*Correlating the response with the running instance*/
 
 		// NOTE: the following loop is a workaround for problems we've had
@@ -110,12 +97,7 @@ public class SDNCAdapterCallbackServiceImpl implements SDNCCallbackAdapterPortTy
 				msoLogger.debug(logMarker + "mso.callbackRetrySleepTime:" + sleepTime);
 			} catch (Exception ex) {
 				
-				msoLogger.info (MessageEnum.BPMN_SDNC_CALLBACK_EXCEPTION, "BPMN", logMarker 
-						+ "Error parsing mso.callbackRetrySleepTime/mso.callbackRetryAttempts:" 
-						+ sleepTime + ":" 
-						+ maxAttempts);
-				
-				msoLogger.error (MessageEnum.BPMN_SDNC_CALLBACK_EXCEPTION, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, logMarker 
+			msoLogger.debug (logMarker 						
 						+ "Error parsing mso.callbackRetrySleepTime/mso.callbackRetryAttempts:" 
 						+ sleepTime + ":" 
 						+ maxAttempts);
@@ -123,6 +105,39 @@ public class SDNCAdapterCallbackServiceImpl implements SDNCCallbackAdapterPortTy
 			}
 		}
 
+		/* Check to make sure the process instance is reay for correlation*/
+		try{
+			isReadyforCorrelation(runtimeService, receivedRequestId, maxAttempts, sleepTime );
+		}catch(Exception e){
+			String msg =
+				"SDNC Adapter Callback Service received a SDNC Adapter Callback Request with RequestId '"
+						+ receivedRequestId
+						+ "' but that RequestId doesn't exist or has timed out waiting for the callback";
+			sdncAdapterResponse = new SDNCAdapterExceptionResponse(e);
+			
+			msoLogger.error (MessageEnum.BPMN_SDNC_CALLBACK_EXCEPTION, "BPMN", MsoLogger.getServiceName(), 
+					MsoLogger.ErrorCode.UnknownError, logMarker + ":" + msg, e);
+			
+			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, logMarker 
+					+ "Completed the execution of MSO SDNCAdapterCallbackService." );
+			
+			msoLogger.recordMetricEvent ( startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, 
+					logMarker + "Completed the execution of MSO SDNCAdapterCallbackService.", "BPMN", 
+					MsoLogger.getServiceName(), "sdncAdapterCallback");
+			
+			return sdncAdapterResponse;
+		}
+
+		msoLogger.debug(logMarker + "*** Received MSO sdncAdapterCallbackService ******");
+		
+		msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Call to MSO sdncAdapterCallbackService");		
+		
+		msoLogger.debug(logMarker + "Callback response string:\n"  + sdncAdapterCallbackRequest.toString());
+
+		String reqId = receivedRequestId;
+		Map<String,Object> variables = new HashMap<String,Object>();
+		variables.put("SDNCA_requestId", reqId );
+		variables.put("sdncAdapterCallbackRequest", sdncAdapterCallbackRequest.toString());
 		while (true) {
 			try {
 				// sdncAdapterCallbackRequest is the message event name (defined in the bpmn process)
@@ -199,30 +214,41 @@ public class SDNCAdapterCallbackServiceImpl implements SDNCCallbackAdapterPortTy
 	}
 
 	private void isReadyforCorrelation(RuntimeService runtimeService,
-			String receivedRequestId) {
-		long waitingInstances = runtimeService.createExecutionQuery() //
-								.messageEventSubscriptionName("sdncAdapterCallbackRequest")
-								.processVariableValueEquals("SDNCA_requestId", receivedRequestId).count();
-		//Workaround for performance testing, explicit wait for a second for the transactions to be committed
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e1) {
-		}
+			String receivedRequestId, int retries, int sleepTime){
+		ExecutionQuery waitingInstances = null;
+		long waitingInstancesCount = 0;
 
-		int retries = 50;
-		while (waitingInstances==0 && retries > 0) {
-		  try {
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
-			
-			msoLogger.error (MessageEnum.BPMN_SDNC_CALLBACK_EXCEPTION, "BPMN", MsoLogger.getServiceName(), 
-					MsoLogger.ErrorCode.UnknownError, logMarker, e);
-			
-		} // you can still play with the numbers
+		//Workaround for performance testing, explicit wait for a second for the transactions to be committed
+		//Also check to make sure the process didn't timeout before trying to correlate
+		
+		do{
 		  waitingInstances = runtimeService.createExecutionQuery() //
-			  .messageEventSubscriptionName("sdncAdapterCallbackRequest")
-			  .processVariableValueEquals("SDNCA_requestId", receivedRequestId).count();
+					.messageEventSubscriptionName("sdncAdapterCallbackRequest")
+					.processVariableValueEquals("SDNCA_requestId", receivedRequestId);
+		  waitingInstancesCount = waitingInstances.count();
 		  retries--;
+		  msoLogger.debug(logMarker + "waitingInstancesCount: " + waitingInstancesCount);
+		  try {
+				Thread.sleep(sleepTime);
+			  } catch (InterruptedException e) {
+				
+				msoLogger.error (MessageEnum.BPMN_SDNC_CALLBACK_EXCEPTION, "BPMN", MsoLogger.getServiceName(), 
+						MsoLogger.ErrorCode.UnknownError, logMarker, e);
+				
+			  }
+		}while (waitingInstancesCount==0 && retries > 0); 
+		if(waitingInstancesCount > 0){
+			msoLogger.debug(logMarker + "waitingInstancesCount before timeout check: " + waitingInstancesCount);
+			waitingInstancesCount = waitingInstances.processVariableValueEquals("asynchronousResponseTimeout", false).count();
+			msoLogger.debug(logMarker + "waitingInstancesCount after timeout check: " + waitingInstancesCount);
+			if(waitingInstancesCount<=0){
+				msoLogger.debug(logMarker + "detected timeout on flow to correlate");
+				throw new IllegalStateException("process timed out");
+			}
+		}else{
+			//flow may have already ended, so can't check timeout variable. Throw exception?
+			msoLogger.debug(logMarker + "no flow to correlate to");
+			throw new IllegalStateException("no flow to correlate to");
 		}
 	}
 

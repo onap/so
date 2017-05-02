@@ -61,23 +61,27 @@ import org.springframework.web.util.UriUtils
  * "Success where service- is NOT found".
  *
  *
- * Incoming Variables (Service-Instance):
- * @param - GENGS_serviceInstanceId or @param - GENGS_serviceInstanceName
- * @param - GENGS_type
- * @param (Optional) - GENGS_serviceType
- * @param (Optional) - GENGS_globalCustomerId
+ * Variable Mapping Below:
  *
- * Incoming Variables (Service-Subscription):
- * @param - GENGS_type
- * @param - GENGS_serviceType
- * @param - GENGS_globalCustomerId
+ * In Mapping Variables:
+ *   For Service-Instance:
+ *     @param - GENGS_serviceInstanceId or @param - GENGS_serviceInstanceName
+ *     @param - GENGS_type
+ *     @param (Optional) - GENGS_serviceType
+ *     @param (Optional) - GENGS_globalCustomerId
+ *
+ *   For Service-Subscription:
+ *     @param - GENGS_type
+ *     @param - GENGS_serviceType
+ *     @param - GENGS_globalCustomerId
  *
  *
- * Outgoing Variables:
- * @param - GENGS_service
- * @param - GENGS_SuccessIndicator
- * @param - GENGS_FoundIndicator
- * @param - WorkflowException
+ * Out Mapping Variables:
+ *    @param - GENGS_service
+ *    @param - GENGS_FoundIndicator
+ *    @param - WorkflowException
+ *
+ *
  */
 class GenericGetService extends AbstractServiceTaskProcessor{
 

@@ -79,6 +79,19 @@
             <role-name>SiteControl-Client</role-name>
         </auth-constraint>
     </security-constraint>
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>MSO internal Requests</web-resource-name>
+            <description>Internal Requests</description>
+            <url-pattern>/rest/logging/*</url-pattern>
+            <url-pattern>/rest/properties/*</url-pattern>
+            <http-method>POST</http-method>
+            <http-method>GET</http-method>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>MSO-Client</role-name>
+        </auth-constraint>
+    </security-constraint>
     <login-config>
         <auth-method>BASIC</auth-method>
         <realm-name>ApplicationRealm</realm-name>
@@ -88,6 +101,9 @@
     </security-role>
     <security-role>
         <role-name>SiteControl-Client</role-name>
+    </security-role>
+    <security-role>
+        <role-name>MSO-Client</role-name>
     </security-role>
 
     <filter>

@@ -83,7 +83,6 @@ dvfm.completionHandlerPrep(execution, 'DELVfModI_CompletionHandlerRequest')
             <camunda:inputParameter name="method">POST</camunda:inputParameter>
             <camunda:inputParameter name="headers">
               <camunda:map>
-              	<camunda:entry key="Authorization">#{BasicAuthHeaderValueDB}</camunda:entry>
                 <camunda:entry key="content-type">application/soap+xml</camunda:entry>
               </camunda:map>
             </camunda:inputParameter>

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -105,6 +105,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
     public void createNetworkA (String cloudSiteId,
                                 String tenantId,
                                 String networkType,
+                                String modelCustomizationUuid,
                                 String networkName,
                                 String physicalNetworkName,
                                 List <Integer> vlans,
@@ -140,6 +141,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
             networkAdapter.createNetwork (cloudSiteId,
                                           tenantId,
                                           networkType,
+                                          modelCustomizationUuid,
                                           networkName,
                                           physicalNetworkName,
                                           vlans,
@@ -222,6 +224,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
     public void updateNetworkA (String cloudSiteId,
                                 String tenantId,
                                 String networkType,
+                                String modelCustomizationUuid,
                                 String networkId,
                                 String networkName,
                                 String physicalNetworkName,
@@ -255,6 +258,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
             networkAdapter.updateNetwork (cloudSiteId,
                                           tenantId,
                                           networkType,
+                                          modelCustomizationUuid,
                                           networkId,
                                           networkName,
                                           physicalNetworkName,
@@ -416,6 +420,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
     public void deleteNetworkA (String cloudSiteId,
                                 String tenantId,
                                 String networkType,
+                                String modelCustomizationUuid,
                                 String networkId,
                                 String messageId,
                                 MsoRequest msoRequest,
@@ -435,7 +440,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
         Holder <Boolean> networkDeleted = new Holder <Boolean> ();
 
         try {
-            networkAdapter.deleteNetwork (cloudSiteId, tenantId, networkType, networkId, msoRequest, networkDeleted);
+            networkAdapter.deleteNetwork (cloudSiteId, tenantId, networkType, modelCustomizationUuid, networkId, msoRequest, networkDeleted);
             MsoLogger.setServiceName (serviceName);
         } catch (NetworkException e) {
         	MsoLogger.setServiceName (serviceName);

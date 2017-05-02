@@ -31,6 +31,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static org.openecomp.mso.bpmn.common.DeleteAAIVfModuleTest.MockAAIDeleteGenericVnf;
 import static org.openecomp.mso.bpmn.common.DeleteAAIVfModuleTest.MockAAIDeleteVfModule;
 import static org.openecomp.mso.bpmn.common.DeleteAAIVfModuleTest.MockAAIGenericVnfSearch;
+import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPatchVfModuleId;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -41,7 +42,6 @@ import org.camunda.bpm.engine.test.Deployment;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.mso.bpmn.common.WorkflowTest;
-import org.openecomp.mso.bpmn.common.WorkflowTest.CallbackSet;
 import org.openecomp.mso.bpmn.core.WorkflowException;
 
 /**
@@ -123,6 +123,8 @@ public class DoDeleteVfModuleTest extends WorkflowTest {
 		MockAAIVfModulePUT(false);
 		MockAAIDeleteGenericVnf();
 		MockAAIDeleteVfModule();
+		MockPatchVfModuleId("a27ce5a9-29c4-4c22-a017-6615ac73c721", "973ed047-d251-4fb9-bf1a-65b8949e0a73");
+		
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<String, Object>();		
 		variables.put("isDebugLogEnabled","true");
@@ -166,6 +168,8 @@ public class DoDeleteVfModuleTest extends WorkflowTest {
 		MockAAIVfModulePUT(false);
 		MockAAIDeleteGenericVnf();
 		MockAAIDeleteVfModule();
+		MockPatchVfModuleId("a27ce5a9-29c4-4c22-a017-6615ac73c721", "973ed047-d251-4fb9-bf1a-65b8949e0a73");
+		
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<String, Object>();		
 		
@@ -253,6 +257,8 @@ public class DoDeleteVfModuleTest extends WorkflowTest {
 		MockAAIVfModulePUT(false);
 		MockAAIDeleteGenericVnf();
 		MockAAIDeleteVfModule();
+		MockPatchVfModuleId("a27ce5a9-29c4-4c22-a017-6615ac73c721", "973ed047-d251-4fb9-bf1a-65b8949e0a73");
+		
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<String, Object>();		
 		variables.put("isDebugLogEnabled","true");
@@ -322,6 +328,8 @@ public class DoDeleteVfModuleTest extends WorkflowTest {
 		MockAAIVfModulePUT(false);
 		MockAAIDeleteGenericVnf();
 		MockAAIDeleteVfModule();
+		MockPatchVfModuleId("a27ce5a9-29c4-4c22-a017-6615ac73c721", "973ed047-d251-4fb9-bf1a-65b8949e0a73");
+		
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<String, Object>();		
 		variables.put("isDebugLogEnabled","true");
@@ -391,6 +399,8 @@ public class DoDeleteVfModuleTest extends WorkflowTest {
 		MockAAIVfModulePUT(false);
 		MockAAIDeleteGenericVnf();
 		MockAAIDeleteVfModule();
+		MockPatchVfModuleId("a27ce5a9-29c4-4c22-a017-6615ac73c721", "973ed047-d251-4fb9-bf1a-65b8949e0a73");
+		
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<String, Object>();		
 		variables.put("isDebugLogEnabled","true");
@@ -459,6 +469,8 @@ public class DoDeleteVfModuleTest extends WorkflowTest {
 		MockAAIVfModulePUT(false);
 		MockAAIDeleteGenericVnf();
 		MockAAIDeleteVfModule();
+		MockPatchVfModuleId("a27ce5a9-29c4-4c22-a017-6615ac73c721", "973ed047-d251-4fb9-bf1a-65b8949e0a73");
+		
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<String, Object>();		
 		variables.put("isDebugLogEnabled","true");

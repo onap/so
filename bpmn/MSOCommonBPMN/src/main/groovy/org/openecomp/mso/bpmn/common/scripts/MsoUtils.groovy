@@ -37,6 +37,11 @@ class MsoUtils {
 		// use this placeholder to initialize end points, if called independently, this need to be set
 		execution.setVariable("AAIEndPoint","http://localhost:28080/SoapUIMocks")			
 	}
+	
+	/**
+	 * Use getNodeText1 Instead!
+	 */
+	@Deprecated
 	def getNodeText(xmlInput,element){
 		def rtn=null
 		if(xmlInput!=null){
@@ -279,10 +284,12 @@ class MsoUtils {
 		if ("INFO"==logmode) {
 			msoLogger.info(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, logtxt);
 		} else if ("WARN"==logmode) {
-			msoLogger.warn (MessageEnum.BPMN_GENERAL_WARNING, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, logtxt);
+			// to see the warning text displayed in the log entry, the text must also be passed as arg0 (2nd argument) to invoke the correct MsoLogger warn() method
+			msoLogger.warn (MessageEnum.BPMN_GENERAL_WARNING, logtxt, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, logtxt);
 		} else if ("ERROR"==logmode) {
-		    msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, logtxt);
-			
+			// to see the error text displayed in the log entry, the text must also be passed as arg0 (2nd argument) to invoke the correct MsoLogger error() method
+		    msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, logtxt, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, logtxt);
+
 		} else {
 			BPMNLogger.debug(isDebugLogEnabled, logtxt);
 		}

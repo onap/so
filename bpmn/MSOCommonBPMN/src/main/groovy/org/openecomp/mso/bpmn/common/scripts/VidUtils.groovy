@@ -221,7 +221,7 @@ class VidUtils {
 			def tenantId = reqMap.requestDetails.cloudConfiguration.tenantId
 			def serviceId = reqMap.requestDetails.requestInfo.productFamilyId 
 			def suppressRollback = reqMap.requestDetails.requestInfo.suppressRollback.toString()
-			def backoutOnFailure = ""
+			def backoutOnFailure = "true"
 			if(suppressRollback != null){
 				if (suppressRollback == true || suppressRollback == "true") {
 					backoutOnFailure = "false"
@@ -367,11 +367,11 @@ class VidUtils {
 		def serviceId = execution.getVariable("productFamilyId") != null ? execution.getVariable("productFamilyId") : ""
 		def failIfExist = execution.getVariable("failIfExists") != null ? execution.getVariable("failIfExists") : ""
 		def suppressRollback = execution.getVariable("disableRollback")   
-		def backoutOnFailure = ""
+		def backoutOnFailure = "true"
 		if(suppressRollback != null){
 			if (suppressRollback == true || suppressRollback == "true") {
 				backoutOnFailure = "false"
-			} else if (suppressRollback == false || suppressRollback == "'false") {
+			} else if (suppressRollback == false || suppressRollback == "false") {
 				backoutOnFailure = "true"
 			}
 		}

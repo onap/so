@@ -93,6 +93,8 @@ public class AllottedResourceCustomization extends MavenLikeVersioning {
 		this.modelVersion = modelVersion;
 	}
 
+	public String getModelInvariantId() { return "not yet implemented"; }
+
 	@Override
 	public String toString () {
 		StringBuffer sb = new StringBuffer();

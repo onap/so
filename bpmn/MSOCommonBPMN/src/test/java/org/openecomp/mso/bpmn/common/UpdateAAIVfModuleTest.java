@@ -24,6 +24,7 @@ import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetGenericVnfById;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetGenericVnfByIdWithPriority;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetGenericVnfById_404;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPutGenericVnf;
+import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPatchVfModuleId;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -53,6 +54,7 @@ public class UpdateAAIVfModuleTest extends WorkflowTest {
 		String updateAAIVfModuleRequest = FileUtil.readResourceFile("__files/VfModularity/UpdateAAIVfModuleRequest.xml"); 
 		MockGetGenericVnfByIdWithPriority("/skask/vf-modules/vf-module/supercool", 200, "VfModularity/VfModule-supercool.xml");
 		MockPutGenericVnf("/skask/vf-modules/vf-module/supercool", "PCRF", 200);
+		MockPatchVfModuleId("skask", "supercool");
 		
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<String, Object>();

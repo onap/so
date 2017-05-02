@@ -1,4 +1,4 @@
-<vf-module xmlns="http://com.att.aai.inventory/v7">
+<vf-module xmlns="http://com.aai.inventory/v7">
 	<vf-module-id>lukewarm</vf-module-id>
 	<vf-module-name>PCRF::module-1</vf-module-name>
 	<heat-stack-id>slowburn</heat-stack-id>

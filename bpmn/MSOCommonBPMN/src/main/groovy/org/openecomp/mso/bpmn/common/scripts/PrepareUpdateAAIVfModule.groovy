@@ -30,6 +30,7 @@ import org.springframework.web.util.UriUtils
 
 public class PrepareUpdateAAIVfModule extends VfModuleBase {
 	
+	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	/**
 	 * Initialize the flow's variables.
 	 * 
@@ -84,7 +85,7 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 			throw e;
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
-			createWorkflowException(execution, 1002, 'Error in preProcessRequest(): ' + e.getMessage())
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in preProcessRequest(): ' + e.getMessage())
 		}
 	}
 	
@@ -148,7 +149,7 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 			throw e;
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
-			createWorkflowException(execution, 1002, 'Error in getGenericVnf(): ' + e.getMessage())
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in getGenericVnf(): ' + e.getMessage())
 		}
 	}
 	
@@ -201,12 +202,12 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 			throw e;
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
-			createWorkflowException(execution, 1002, 'Error in validateVfModule(): ' + e.getMessage())
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in validateVfModule(): ' + e.getMessage())
 		}
 	}
 	
 	/**
-	 * Construct and send a PUT request to AAI to update the VF Module.
+	 * Construct and send a PATCH request to AAI to update the VF Module.
 	 * 
 	 * @param execution The flow's execution instance.
 	 */
@@ -231,15 +232,19 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 				orchestrationStatusNode.setValue(orchestrationStatus)
 			}
 			def VfModule newVfModule = new VfModule(newVfModuleNode, vfModule.isOnlyVfModule())
-			def payload = utils.nodeToString(newVfModuleNode)
-			
-			utils.logAudit("VfModule payload : " + payload)
-			
+			//def payload = utils.nodeToString(newVfModuleNode)
+					
 			// Construct endpoint
 			def vnfId = execution.getVariable('PUAAIVfMod_vnfId')
 			def vfModuleId = execution.getVariable('PUAAIVfMod_vfModuleId')
 			
+			def payload = """{
+					"vf-module-id": "${vfModuleId}",
+					"orchestration-status": "${orchestrationStatus}"
+				}"""
 			
+			utils.logAudit("VfModule payload : " + payload)
+
 			AaiUtil aaiUriUtil = new AaiUtil(this)
 			def aai_uri = aaiUriUtil.getNetworkGenericVnfUri(execution)
 			logDebug('AAI URI is: ' + aai_uri, isDebugLogEnabled)
@@ -254,15 +259,16 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 				RESTClient client = new RESTClient(config).
 					addHeader('X-TransactionId', aaiRequestId).
 					addHeader('X-FromAppId', 'MSO').
-					addHeader('Content-Type', 'application/xml').
-					addHeader('Accept','application/xml');
+					addHeader('Content-Type', 'application/merge-patch+json').
+					addHeader('Accept','application/json');
 				if (basicAuthCred != null && !"".equals(basicAuthCred)) {
 					client.addAuthorizationHeader(basicAuthCred)
 				}
-				logDebug('sending PUT to AAI endpoint \'' + endPoint + '\'' + 'with payload \n' + payload, isDebugLogEnabled)
-				APIResponse response = client.httpPut(payload)
-				utils.logAudit("PrepareUpdateAAIVfModule: - invoking httpPut to AAI")
-				
+				logDebug('sending PATCH to AAI endpoint \'' + endPoint + '\'' + 'with payload \n' + payload, isDebugLogEnabled)
+				APIResponse response = client.httpPatch(payload)
+				utils.logAudit("PrepareUpdateAAIVfModule: - invoking httpPatch to AAI")
+				utils.logAudit("PrepareUpdateAAIVfModule: - invoking httpPatch to AAI")
+
 				responseData = response.getResponseBodyAsString()
 				execution.setVariable('PUAAIVfMod_updateVfModuleResponseCode', response.getStatusCode())
 				execution.setVariable('PUAAIVfMod_updateVfModuleResponse', responseData)
@@ -286,14 +292,14 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 				ex.printStackTrace()
 				logDebug('Exception occurred while executing AAI PUT:' + ex.getMessage(), isDebugLogEnabled)
 				execution.setVariable('PUAAIVfMod_updateVfModuleResponseCode', 500)
-				execution.setVariable('PUAAIVfMod_updateVfModuleResponse', 'AAI PUT Failed:' + ex.getMessage())
+				execution.setVariable('PUAAIVfMod_updateVfModuleResponse', 'AAI PATCH Failed:' + ex.getMessage())
 			}
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
-			createWorkflowException(execution, 1002, 'Error in updateVfModule(): ' + e.getMessage())
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in updateVfModule(): ' + e.getMessage())
 		}				
 	}
 		

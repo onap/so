@@ -125,7 +125,7 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 		execution.setVariable('DELVfModVol_volumeInputs', volumeInputs)
 		execution.setVariable('DELVfModVol_volumeGroupId', getRequiredNodeText(execution, volumeInputs, 'volume-group-id'))
 		execution.setVariable('DELVfModVol_vnfType', getRequiredNodeText(execution, volumeInputs, 'vnf-type'))
-		execution.setVariable('DELVfModVol_serviceId', getRequiredNodeText(execution, volumeInputs, 'service-id'))
+		execution.setVariable('DELVfModVol_serviceId', utils.getNodeText1(volumeInputs, 'service-id'))
 		execution.setVariable('DELVfModVol_tenantId', getRequiredNodeText(execution, volumeInputs, 'tenant-id'))
 		execution.setVariable('DELVfModVol_messageId', UUID.randomUUID().toString())
 		execution.setVariable('DELVfModVol_volumeOutputs', utils.getNodeXml(request, 'volume-outputs', false))

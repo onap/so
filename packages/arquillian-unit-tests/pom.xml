@@ -384,6 +384,9 @@
 							<goal>integration-test</goal>
 							<goal>verify</goal>
 						</goals>
+						<configuration>
+						  <skipAfterFailureCount>1</skipAfterFailureCount>
+						</configuration>
 					</execution>
 				</executions>
 

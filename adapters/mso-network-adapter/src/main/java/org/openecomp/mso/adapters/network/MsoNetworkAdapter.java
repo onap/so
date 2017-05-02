@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -50,6 +50,7 @@ public interface MsoNetworkAdapter
 	public void createNetwork (@WebParam(name="cloudSiteId") @XmlElement(required=true) String cloudSiteId,
 							@WebParam(name="tenantId") @XmlElement(required=true) String tenantId,
 							@WebParam(name="networkType") @XmlElement(required=true) String networkType,
+							@WebParam(name="modelCustomizationUuid") String modelCustomizationUuid,
 							@WebParam(name="networkName") @XmlElement(required=true) String networkName,
 							@WebParam(name="physicalNetworkName") String physicalNetworkName,
 							@WebParam(name="vlans") List<Integer> vlans,
@@ -67,6 +68,7 @@ public interface MsoNetworkAdapter
 	public void createNetworkContrail (@WebParam(name="cloudSiteId") @XmlElement(required=true) String cloudSiteId,
 							@WebParam(name="tenantId") @XmlElement(required=true) String tenantId,
 							@WebParam(name="networkType") @XmlElement(required=true) String networkType,
+							@WebParam(name="modelCustomizationUuid") String modelCustomizationUuid,
 							@WebParam(name="networkName") @XmlElement(required=true) String networkName,
 							@WebParam(name="routeTargets") List<String> routeTargets,
 							@WebParam(name="shared") String shared,
@@ -92,6 +94,7 @@ public interface MsoNetworkAdapter
 	public void updateNetwork (@WebParam(name="cloudSiteId") @XmlElement(required=true) String cloudSiteId,
 							@WebParam(name="tenantId") @XmlElement(required=true) String tenantId,
 							@WebParam(name="networkType") @XmlElement(required=true) String networkType,
+							@WebParam(name="modelCustomizationUuid") String modelCustomizationUuid,
 							@WebParam(name="networkId") @XmlElement(required=true) String networkId,
 							@WebParam(name="networkName") @XmlElement(required=true) String networkName,
 							@WebParam(name="physicalNetworkName") @XmlElement(required=true) String physicalNetworkName,
@@ -106,6 +109,7 @@ public interface MsoNetworkAdapter
 	public void updateNetworkContrail (@WebParam(name="cloudSiteId") @XmlElement(required=true) String cloudSiteId,
 							@WebParam(name="tenantId") @XmlElement(required=true) String tenantId,
 							@WebParam(name="networkType") @XmlElement(required=true) String networkType,
+							@WebParam(name="modelCustomizationUuid") String modelCustomizationUuid,
 							@WebParam(name="networkId") @XmlElement(required=true) String networkId,
 							@WebParam(name="networkName") @XmlElement(required=true) String networkName,
 							@WebParam(name="routeTargets") List<String> routeTargets,
@@ -199,6 +203,7 @@ public interface MsoNetworkAdapter
 	public void deleteNetwork (@WebParam(name="cloudSiteId") @XmlElement(required=true) String cloudSiteId,
 							@WebParam(name="tenantId") @XmlElement(required=true) String tenantId,
 							@WebParam(name="networkType") @XmlElement(required=true) String networkType,
+							@WebParam(name="modelCustomizationUuid") String modelCustomizationUuid,
 							@WebParam(name="networkId") @XmlElement(required=true) String networkId,
 							@WebParam(name="request") MsoRequest msoRequest,
 							@WebParam(name="networkDeleted", mode=Mode.OUT) Holder<Boolean> networkDeleted)

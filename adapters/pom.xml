@@ -25,6 +25,7 @@
 		<module>mso-vnf-adapter-async-client</module>
 		<module>mso-requests-db-adapter</module>
 		<module>mso-catalog-db-adapter</module>
+		<module>mso-workflow-message-adapter</module>
 	</modules>
 
 	<dependencies>

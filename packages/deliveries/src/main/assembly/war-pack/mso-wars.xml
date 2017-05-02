@@ -107,7 +107,7 @@
             </includes>
             <directory>../../bpmn/MSOInfrastructureBPMN/target/</directory>
             <outputDirectory>artifacts</outputDirectory>
-        </fileSet>		
+        </fileSet>
 		<fileSet>
  			<includes>
  				<include>MSOCockpit*.war</include>
@@ -115,6 +115,13 @@
  			<directory>../../bpmn/MSOCockpit/target/</directory>
  			<outputDirectory>artifacts</outputDirectory>
  		</fileSet>
+		<fileSet>
+			<includes>
+				<include>mso-workflow-message-adapter*.war</include>
+			</includes>
+			<directory>../../adapters/mso-workflow-message-adapter/target/</directory>
+			<outputDirectory>artifacts</outputDirectory>
+		</fileSet>
 
 	</fileSets>
 

@@ -1,4 +1,4 @@
-  <volume-group xmlns="http://com.att.aai.inventory/v7">
+  <volume-group xmlns="http://com.aai.inventory/v7">
          <volume-group-id>78987</volume-group-id>
          <volume-group-name>Volume_2</volume-group-name>
          <heat-stack-id>slowburn</heat-stack-id>

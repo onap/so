@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<l3-network xmlns="http://com.att.aai.inventory/v8">
+<l3-network xmlns="http://com.aai.inventory/v8">
          <network-id>49c86598-f766-46f8-84f8-8d1c1b10f9b4</network-id>
          <network-name>MNS-25180-L-01-dmz_direct_net_1</network-name>
          <network-type>CONTRAIL_EXTERNAL</network-type>
@@ -32,7 +32,7 @@
          <relationship-list>
             <relationship>
                <related-to>vpn-binding</related-to>
-               <related-link>https://aai-app-e2e.test.att.com:8443/aai/v8/network/vpn-bindings/vpn-binding/85f015d0-2e32-4c30-96d2-87a1a27f8017/</related-link>
+               <related-link>https://aai-app-e2e.test.com:8443/aai/v8/network/vpn-bindings/vpn-binding/85f015d0-2e32-4c30-96d2-87a1a27f8017/</related-link>
                <relationship-data>
                   <relationship-key>vpn-binding.vpn-id</relationship-key>
                   <relationship-value>85f015d0-2e32-4c30-96d2-87a1a27f8017</relationship-value>
@@ -40,7 +40,7 @@
             </relationship>
             <relationship>
                <related-to>vpn-binding</related-to>
-               <related-link>https://aai-app-e2e.test.att.com:8443/aai/v8/network/vpn-bindings/vpn-binding/c980a6ef-3b88-49f0-9751-dbad8608d0a6/</related-link>
+               <related-link>https://aai-app-e2e.test.com:8443/aai/v8/network/vpn-bindings/vpn-binding/c980a6ef-3b88-49f0-9751-dbad8608d0a6/</related-link>
                <relationship-data>
                   <relationship-key>vpn-binding.vpn-id</relationship-key>
                   <relationship-value>c980a6ef-3b88-49f0-9751-dbad8608d0a6</relationship-value>
@@ -48,7 +48,7 @@
             </relationship>
             <relationship>
                <related-to>tenant</related-to>
-               <related-link>https://aai-app-e2e.test.att.com:8443/aai/v8/cloud-infrastructure/tenants/tenant/7dd5365547234ee8937416c65507d266/</related-link>
+               <related-link>https://aai-app-e2e.test.com:8443/aai/v8/cloud-infrastructure/tenants/tenant/7dd5365547234ee8937416c65507d266/</related-link>
                <relationship-data>
                   <relationship-key>tenant.tenant-id</relationship-key>
                   <relationship-value>7dd5365547234ee8937416c65507d266</relationship-value>
@@ -56,7 +56,7 @@
             </relationship>
             <relationship>
 				<related-to>network-policy</related-to>
-				<related-link>https://aai-app-e2e.test.att.com:8443/aai/v8/network/network-policies/network-policy/cee6d136-e378-4678-a024-2cd15f0ee0cg</related-link>
+				<related-link>https://aai-app-e2e.test.com:8443/aai/v8/network/network-policies/network-policy/cee6d136-e378-4678-a024-2cd15f0ee0cg</related-link>
 				<relationship-data>
 					<relationship-key>network-policy.network-policy-id</relationship-key>
 					<relationship-value>cee6d136-e378-4678-a024-2cd15f0ee0cg</relationship-value>

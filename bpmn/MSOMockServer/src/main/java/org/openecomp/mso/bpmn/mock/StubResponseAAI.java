@@ -27,6 +27,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.patch;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
@@ -371,7 +372,11 @@ public class StubResponseAAI {
 						.withStatus(statusCode)));
 	}
 
-
+	public static void MockPatchGenericVnf(String vnfId){
+		stubFor(patch(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/" + vnfId))
+				.willReturn(aResponse()
+						.withStatus(200)));
+	}
 	/**
 	 * Vce Mock StubResponses below
 	 */
@@ -503,6 +508,12 @@ public class StubResponseAAI {
 				  .withStatus(statusCode)
 				  .withHeader("Content-Type", "text/xml")
 				  .withBodyFile(responseFile)));
+	}
+	
+	public static void MockPatchVfModuleId(String vnfId, String vfModuleId) {
+		stubFor(patch(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/" + vnfId + "/vf-modules/vf-module/" + vfModuleId))
+				.willReturn(aResponse()
+						.withStatus(200)));
 	}
 	
 

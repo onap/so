@@ -984,6 +984,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
         String heatUrl = null;
         try {
             heatUrl = KeystoneUtils.findEndpointURL (access.getServiceCatalog (), "orchestration", region, "public");
+            LOGGER.debug("heatUrl=" + heatUrl + ", region=" + region);
         } catch (RuntimeException e) {
             // This comes back for not found (probably an incorrect region ID)
             String error = "Orchestration service not found: region=" + region + ",cloud=" + cloudIdentity.getId ();

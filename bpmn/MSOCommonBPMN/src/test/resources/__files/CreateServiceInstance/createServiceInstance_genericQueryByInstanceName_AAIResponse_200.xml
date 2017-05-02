@@ -1,4 +1,4 @@
-<search-results xmlns="http://com.att.aai.inventory">
+<search-results xmlns="http://com.aai.inventory">
       <service-instances> 
 	   <service-instance>
          <service-instance-id>f70e927b-6087-4974-9ef8-c5e4d5847ca4</service-instance-id>

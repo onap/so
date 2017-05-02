@@ -1,4 +1,4 @@
-<vce xmlns="http://com.att.aai.inventory">
+<vce xmlns="http://com.aai.inventory">
          <vnf-id>1936628a-d22f-4943-8587-a57bab2ece7a</vnf-id>
          <vnf-name>testVnfName123</vnf-name>
          <vnf-name2>US0112SLCP1VBRT076</vnf-name2>
@@ -51,7 +51,7 @@
          <relationship-list>
             <relationship>
                <related-to>service-instance</related-to>
-               <related-link>https://aai-ext1.test.att.com:8443/aai/v2/business/customers/customer/011216-1602-SDNC001/service-subscriptions/service-subscription/SDN-ETHERNET-INTERNET/service-instances/service-instance/SDNC%2FVLXM%2F0112001%2F%2FSW_INTERNET/</related-link>
+               <related-link>https://aai-ext1.test.com:8443/aai/v2/business/customers/customer/011216-1602-SDNC001/service-subscriptions/service-subscription/SDN-ETHERNET-INTERNET/service-instances/service-instance/SDNC%2FVLXM%2F0112001%2F%2FSW_INTERNET/</related-link>
                <relationship-data>
                   <relationship-key>service-instance.service-instance-id</relationship-key>
                   <relationship-value>SDNC/VLXM/0112001//SW_INTERNET</relationship-value>
@@ -67,7 +67,7 @@
             </relationship>
             <relationship>
                <related-to>vserver</related-to>
-               <related-link>https://aai-ext1.test.att.com:8443/aai/servers/v2/3d5f3fe23821416fac2b69af65248c74/vservers/ecab47d5-3450-4507-ada9-2b3c58485c51/</related-link>
+               <related-link>https://aai-ext1.test.com:8443/aai/servers/v2/3d5f3fe23821416fac2b69af65248c74/vservers/ecab47d5-3450-4507-ada9-2b3c58485c51/</related-link>
                <relationship-data>
                   <relationship-key>vserver.vserver-id</relationship-key>
                   <relationship-value>ecab47d5-3450-4507-ada9-2b3c58485c51</relationship-value>
@@ -79,7 +79,7 @@
             </relationship>
             <relationship>
                <related-to>complex</related-to>
-               <related-link>https://aai-ext1.test.att.com:8443/aai/v2/cloud-infrastructure/complexes/complex/MDTWNJ21A4/</related-link>
+               <related-link>https://aai-ext1.test.com:8443/aai/v2/cloud-infrastructure/complexes/complex/MDTWNJ21A4/</related-link>
                <relationship-data>
                   <relationship-key>complex.physical-location-id</relationship-key>
                   <relationship-value>MDTWNJ21A4</relationship-value>
@@ -87,7 +87,7 @@
             </relationship>
             <relationship>
                <related-to>availability-zone</related-to>
-               <related-link>https://aai-ext1.test.att.com:8443/aai/v2/cloud-infrastructure/availability-zones/availability-zone/slcp1-esx-az01/</related-link>
+               <related-link>https://aai-ext1.test.com:8443/aai/v2/cloud-infrastructure/availability-zones/availability-zone/slcp1-esx-az01/</related-link>
                <relationship-data>
                   <relationship-key>availability-zone.availability-zone-name</relationship-key>
                   <relationship-value>slcp1-esx-az01</relationship-value>

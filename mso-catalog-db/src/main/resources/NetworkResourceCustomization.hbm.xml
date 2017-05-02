@@ -52,8 +52,5 @@
         <property name="created" type="timestamp" generated="insert" update="false" insert="false" >
             <column name="CREATION_TIMESTAMP" not-null="true"/>
         </property>
-        <!-- <property name="created" type="java.sql.Timestamp">
-            <column name="CREATION_TIMESTAMP" />
-        </property> -->
     </class>
 </hibernate-mapping>

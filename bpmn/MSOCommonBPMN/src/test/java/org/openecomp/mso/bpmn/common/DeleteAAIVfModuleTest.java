@@ -319,7 +319,7 @@ public class DeleteAAIVfModuleTest extends WorkflowTest {
 						.withBody("Generic VNF Not Found")));
 	
 		body =
-			"<generic-vnf xmlns=\"http://com.att.aai.inventory/v7\">" + EOL +
+			"<generic-vnf xmlns=\"http://com.aai.inventory/v7\">" + EOL +
 			"  <vnf-id>a27ce5a9-29c4-4c22-a017-6615ac73c721</vnf-id>" + EOL +
 			"  <vnf-name>STMTN5MMSC21</vnf-name>" + EOL +
 			"  <vnf-type>mmsc-capacity</vnf-type>" + EOL +
@@ -357,7 +357,7 @@ public class DeleteAAIVfModuleTest extends WorkflowTest {
 						.withBody(body)));
 	
 		body =
-			"<generic-vnf xmlns=\"http://com.att.aai.inventory/v7\">" + EOL +
+			"<generic-vnf xmlns=\"http://org.openecomp.aai.inventory/v7\">" + EOL +
 			"  <vnf-id>2f6aee38-1e2a-11e6-82d1-ffc7d9ee8aa4</vnf-id>" + EOL +
 			"  <vnf-name>STMTN5MMSC20</vnf-name>" + EOL +
 			"  <vnf-type>mmsc-capacity</vnf-type>" + EOL +
@@ -419,7 +419,7 @@ public class DeleteAAIVfModuleTest extends WorkflowTest {
 						.withBody("Generic VNF Not Found")));
 	
 		body =
-				"<generic-vnf xmlns=\"http://com.att.aai.inventory/v7\">" + EOL +
+				"<generic-vnf xmlns=\"http://org.openecomp.aai.inventory/v7\">" + EOL +
 				"  <vnf-id>a27ce5a9-29c4-4c22-a017-6615ac73c721</vnf-id>" + EOL +
 				"  <vnf-name>STMTN5MMSC21</vnf-name>" + EOL +
 				"  <vnf-type>mmsc-capacity</vnf-type>" + EOL +
@@ -452,7 +452,7 @@ public class DeleteAAIVfModuleTest extends WorkflowTest {
 						.withBody(body)));
 	
 		body =
-			"<generic-vnf xmlns=\"http://com.att.aai.inventory/v7\">" + EOL +
+			"<generic-vnf xmlns=\"http://org.openecomp.aai.inventory/v7\">" + EOL +
 			"  <vnf-id>a27ce5a9-29c4-4c22-a017-6615ac73c720</vnf-id>" + EOL +
 			"  <vnf-name>STMTN5MMSC20</vnf-name>" + EOL +
 			"  <vnf-type>mmsc-capacity</vnf-type>" + EOL +
@@ -495,7 +495,7 @@ public class DeleteAAIVfModuleTest extends WorkflowTest {
 						.withBody(body)));
 	
 		body =
-			"<generic-vnf xmlns=\"http://com.att.aai.inventory/v7\">" + EOL +
+			"<generic-vnf xmlns=\"http://org.openecomp.aai.inventory/v7\">" + EOL +
 			"  <vnf-id>a27ce5a9-29c4-4c22-a017-6615ac73c719</vnf-id>" + EOL +
 			"  <vnf-name>STMTN5MMSC19</vnf-name>" + EOL +
 			"  <vnf-type>mmsc-capacity</vnf-type>" + EOL +
@@ -538,7 +538,7 @@ public class DeleteAAIVfModuleTest extends WorkflowTest {
 						.withBody(body)));
 	
 		body =
-			"<generic-vnf xmlns=\"http://com.att.aai.inventory/v7\">" + EOL +
+			"<generic-vnf xmlns=\"http://org.openecomp.aai.inventory/v7\">" + EOL +
 			"  <vnf-id>a27ce5a9-29c4-4c22-a017-6615ac73c718</vnf-id>" + EOL +
 			"  <vnf-name>STMTN5MMSC18</vnf-name>" + EOL +
 			"  <vnf-type>mmsc-capacity</vnf-type>" + EOL +
@@ -571,7 +571,7 @@ public class DeleteAAIVfModuleTest extends WorkflowTest {
 						.withBody(body)));
 	
 		body =
-			"<generic-vnf xmlns=\"http://com.att.aai.inventory/v7\">" + EOL +
+			"<generic-vnf xmlns=\"http://org.openecomp.aai.inventory/v7\">" + EOL +
 			"  <vnf-id>a27ce5a9-29c4-4c22-a017-6615ac73c721</vnf-id>" + EOL +
 			"  <vnf-name>STMTN5MMSC21</vnf-name>" + EOL +
 			"  <vnf-type>mmsc-capacity</vnf-type>" + EOL +

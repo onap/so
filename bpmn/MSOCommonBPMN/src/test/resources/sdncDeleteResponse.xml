@@ -199,7 +199,7 @@
         <ipe-id>2</ipe-id>
       </router-list>
     </virtual-datacenter-list>
-    <service-type>ATT-COLLABORATE</service-type>
+    <service-type>COLLABORATE</service-type>
     <interface-status>DISABLE</interface-status>
     <customer-id>custid-888</customer-id>
     <service-instance-id>SII-2016-10-22-001</service-instance-id>

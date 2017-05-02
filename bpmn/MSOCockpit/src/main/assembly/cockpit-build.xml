@@ -54,8 +54,6 @@
 			<outputDirectory>/WEB-INF/lib</outputDirectory>
 			<includes>
 				<!-- The URN Mapping plugin -->
-				<!-- <include>com.att.camunda.bpm.cockpit.plugin:cockpit-urnmap-plugin</include> -->
-
 				<!-- for MSO Logging -->
 				<include>org.openecomp.mso:logger</include>
 				<include>ch.qos.logback:logback-core</include>

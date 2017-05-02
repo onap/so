@@ -45,7 +45,7 @@
                         def versionArray;
                         if ( project.properties['mso.project.version'] != null ) {
                             versionArray = project.properties['mso.project.version'].split('\\.');
-                        } 
+                        }
 
                         if ( project.properties['mso.project.version'].endsWith("-SNAPSHOT") ) {
                             project.properties['project.docker.latesttag.version']=versionArray[0] + '.' + versionArray[1] + "-SNAPSHOT-latest";
@@ -59,7 +59,7 @@
                   </execution>
               </executions>
             </plugin>
-            
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-scm-plugin</artifactId>
@@ -158,8 +158,8 @@
 							<alias>mso</alias>
 							<build>
 								<tags>
-								    <tag>${project.docker.latesttag.version}</tag>
 									<tag>${project.version}-STAGING-${maven.build.timestamp}</tag>
+									<tag>${project.docker.latesttag.version}</tag>
 								</tags>
 								<cleanup>try</cleanup>
 								<dockerFileDir>docker-files</dockerFileDir>

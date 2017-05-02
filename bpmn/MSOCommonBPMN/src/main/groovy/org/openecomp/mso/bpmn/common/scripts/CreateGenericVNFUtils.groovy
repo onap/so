@@ -77,7 +77,7 @@ class CreateGenericVNFUtils{
 
 		String uuid = execution.getVariable('testReqId') // for junits
 		if(uuid==null){
-			uuid = execution.getVariable("att-mso-request-id") + "-" +  	System.currentTimeMillis()
+			uuid = execution.getVariable("mso-request-id") + "-" +  	System.currentTimeMillis()
 		}
 		def callbackURL = execution.getVariable("CRTGVNF_sdncCallbackUrl")
 		def requestId = execution.getVariable("CRTGVNF_requestId")
@@ -96,9 +96,9 @@ class CreateGenericVNFUtils{
 		}
 
 		String sdncRequest =
-		"""<sdncadapterworkflow:SDNCAdapterWorkflowRequest xmlns:ns5="http://ecomp.att.com/mso/request/types/v1"
-													xmlns:sdncadapterworkflow="http://ecomp.att.com/mso/workflow/schema/v1"
-													xmlns:sdncadapter="http://domain2.att.com/workflow/sdnc/adapter/schema/v1">
+		"""<sdncadapterworkflow:SDNCAdapterWorkflowRequest xmlns:ns5="http://org.openecomp/mso/request/types/v1"
+													xmlns:sdncadapterworkflow="http://org.openecomp/mso/workflow/schema/v1"
+													xmlns:sdncadapter="http://org.openecomp/workflow/sdnc/adapter/schema/v1">
 	   <sdncadapter:RequestHeader>
 				<sdncadapter:RequestId>${uuid}</sdncadapter:RequestId>
 				<sdncadapter:SvcInstanceId>${svcInstId}</sdncadapter:SvcInstanceId>
@@ -154,122 +154,6 @@ ${sdncVNFParamsXml}
 			params = sb.append(paramsXml)
 		}
 		return params
-	}
-
-	/**
-	 * Builds a "CompletionHandler" request and stores it in the specified
-	 * execution variable.
-	 * @param execution the execution
-	 */
-	public void buildCompletionHandlerRequest(Execution execution, String flowName) {
-		def method = getClass().getSimpleName() + '.completionHandlerPrep(' +
-			'execution=' + execution.getId() +
-			')'
-		def prefix = execution.getVariable('prefix')
-		def resultVar = prefix + "CompletionHandlerRequest"
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		taskProcessor.logDebug('Entered ' + method, isDebugLogEnabled)
-
-		try {
-			def request = taskProcessor.getVariable(execution, prefix+'Request')
-			def requestInformation = taskProcessor.utils.getNodeXml(request, 'request-information', false)
-			if (requestInformation == null || requestInformation == ""){
-				requestInformation = taskProcessor.utils.getNodeXml(request, 'request-info', false)
-			}
-
-			String content = """
-		<sdncadapterworkflow:MsoCompletionRequest xmlns:sdncadapterworkflow="http://ecomp.att.com/mso/workflow/schema/v1"
-				xmlns:reqtype="http://ecomp.att.com/mso/request/types/v1">
-			${requestInformation}
-			<sdncadapterworkflow:mso-bpel-name>${flowName}</sdncadapterworkflow:mso-bpel-name>
-		</sdncadapterworkflow:MsoCompletionRequest>
-	"""
-
-			content = taskProcessor.utils.removeXmlPreamble(taskProcessor.utils.formatXML(content))
-			taskProcessor.logDebug(resultVar + ' = ' + System.lineSeparator() + content, isDebugLogEnabled)
-			execution.setVariable(resultVar, content)
-
-			taskProcessor.logDebug('Exited ' + method, isDebugLogEnabled)
-		} catch (BpmnError e) {
-			throw e;
-		} catch (Exception e) {
-			taskProcessor.logError('Caught exception in ' + method, e)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, "Internal Error Occured during completion handler request")
-		}
-	}
-
-	/**
-	 * Builds a "FalloutHandler" request and stores it in the specified
-	 * execution variable.
-	 * @param execution the execution
-	 */
-	public void buildfalloutHandlerRequest(Execution execution) {
-		def method = getClass().getSimpleName() + '.falloutHandlerPrep(' +
-			'execution=' + execution.getId() +
-			')'
-		def prefix = execution.getVariable('prefix')
-		def resultVar = prefix + "FalloutHandlerRequest"
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		taskProcessor.logDebug('Entered ' + method, isDebugLogEnabled)
-		try {
-			def request = taskProcessor.getVariable(execution, prefix+'Request')
-
-			def requestInformation = ""
-			if (request != null){
-			 requestInformation = taskProcessor.utils.getNodeXml(request, 'request-information', false)
-			 if (requestInformation == null || requestInformation == ""){
-				 requestInformation = taskProcessor.utils.getNodeXml(request, 'request-info', false)
-			 }
-			}
-			def  errorInformation = ""
-			def encErrorResponseMsg = ""
-			def errorResponseCode = ""
-			String content = ""
-			
-			def WorkflowException workflowException
-			def exception =  execution.getVariable("WorkflowException")
-						
-			if (exception instanceof WorkflowException)
-			 {
-				 workflowException = execution.getVariable("WorkflowException")
-			 }
-			 
-			if (workflowException != null){
-				errorResponseCode = workflowException.getErrorCode()
-				def errorResponseMsg = workflowException.getErrorMessage()
-
-				if (errorResponseMsg != null) {
-					encErrorResponseMsg = errorResponseMsg.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-				}
-
-				errorInformation = """<aetgt:WorkflowException xmlns:aetgt="http://ecomp.att.com/mso/workflow/schema/v1">
-						<aetgt:ErrorMessage>${encErrorResponseMsg}</aetgt:ErrorMessage>
-						<aetgt:ErrorCode>${errorResponseCode}</aetgt:ErrorCode>
-				</aetgt:WorkflowException>"""
-			}
-			else {
-				errorInformation = execution.getVariable(prefix+'ErrorResponse')
-
-				if (errorInformation == null) errorInformation = ""
-			}
-			
-			content = """
-				<wfsch:FalloutHandlerRequest xmlns:wfsch="http://ecomp.att.com/mso/workflow/schema/v1"
-                             xmlns:reqtype="http://ecomp.att.com/mso/request/types/v1">
-				${requestInformation}
-                ${errorInformation}
-				</wfsch:FalloutHandlerRequest>
-			"""
-			 
-			content = taskProcessor.utils.removeXmlPreamble(taskProcessor.utils.formatXML(content))
-		
-			taskProcessor.logDebug(resultVar + ' = ' + System.lineSeparator() + content, isDebugLogEnabled)
-			execution.setVariable(resultVar, content)
-			taskProcessor.logDebug('Exited ' + method, isDebugLogEnabled)
-		} catch (Exception e) {
-			taskProcessor.logError('Caught exception in ' + method, e)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, "Internal Error in buildfalloutHandlerRequest")
-		}
 	}
 	
 }

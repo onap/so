@@ -66,12 +66,20 @@ class VnfAdapterUtils {
 					errorResponse.getErrorMessage(), isDebugLogEnabled)
 				// this is the important part to ensure we hit the Fallout Handler
 				throw new BpmnError("MSOWorkflowException")
+			} else if (errorResponse != null && errorResponse instanceof WorkflowException) {
+				// Not sure the variables with the associated prefix are still used
+				execution.setVariable(prefix + "ErrorResponse", errorResponse.getErrorMessage())
+				execution.setVariable(prefix + "ResponseCode", errorResponse.getErrorCode())
+				taskProcessor.logDebug("Sub Vnf flow Error WorkflowException " + prefix + "ErrorResponse" + " - " +
+					errorResponse.getErrorMessage(), isDebugLogEnabled)
+				// this is the important part to ensure we hit the Fallout Handler
+				throw new BpmnError("MSOWorkflowException")
 			}
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
 			taskProcessor.logError('Caught exception in ' + method, e)
-			taskProcessor.workflowException(execution, 'Internal Error- Unable to validate VNF Response ' + e.getMessage(), 500)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, 'Internal Error- Unable to validate VNF Response ' + e.getMessage())
 		}
 	}
 

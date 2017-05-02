@@ -33,7 +33,7 @@ String falloutHandlerRequest = ex.processMainflowsBPMNException(execution, reque
 execution.setVariable("DELVI_falloutHandlerRequest", falloutHandlerRequest )]]></bpmn2:script>
       </bpmn2:scriptTask>
       <bpmn2:sequenceFlow id="SequenceFlow_16" name="" sourceRef="prepareFalloutHandlerRequest" targetRef="callFalloutHandler" />
-      <bpmn2:callActivity id="callFalloutHandler" name="Fallout&#10;&#10;Handler" calledElement="FalloutHandler">
+      <bpmn2:callActivity id="callFalloutHandler" name="Fallout&#10;Handler" calledElement="FalloutHandler">
         <bpmn2:extensionElements>
           <camunda:in source="DELVI_falloutHandlerRequest" target="FalloutHandlerRequest" />
           <camunda:in source="DELVI_requestId" target="requestId" />
@@ -87,7 +87,7 @@ DeleteVnfInfra deleteVnf = new DeleteVnfInfra()
 deleteVnf.prepareCompletionHandlerRequest(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_6" name="" sourceRef="postProcess" targetRef="callCompletionHandler" />
-    <bpmn2:callActivity id="callCompletionHandler" name="Completion&#10;&#10;Handler" calledElement="CompleteMsoProcess">
+    <bpmn2:callActivity id="callCompletionHandler" name="Completion&#10;Handler" calledElement="CompleteMsoProcess">
       <bpmn2:extensionElements>
         <camunda:in source="DELVI_completionHandlerRequest" target="CompleteMsoProcessRequest" />
         <camunda:in source="DELVI_requestId" target="mso-request-id" />

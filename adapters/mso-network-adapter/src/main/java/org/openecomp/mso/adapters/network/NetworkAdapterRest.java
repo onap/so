@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -162,6 +162,7 @@ public class NetworkAdapterRest {
 						req.getCloudSiteId(),
 						req.getTenantId(),
 						req.getNetworkType(),
+						req.getModelCustomizationUuid(),
 						req.getNetworkName(),
                         req.getContrailNetwork().getRouteTargets(),
                         req.getContrailNetwork().getShared(),
@@ -187,6 +188,7 @@ public class NetworkAdapterRest {
 						req.getCloudSiteId(),
 						req.getTenantId(),
 						req.getNetworkType(),
+						req.getModelCustomizationUuid(),
 						req.getNetworkName(),
 						req.getProviderVlanNetwork().getPhysicalNetworkName(),
 						req.getProviderVlanNetwork().getVlans(),
@@ -298,6 +300,7 @@ public class NetworkAdapterRest {
 						req.getCloudSiteId(),
 						req.getTenantId(),
 						req.getNetworkType(),
+						req.getModelCustomizationUuid(),
 						req.getNetworkStackId(),
 						req.getMsoRequest(),
 						networkDeleted);
@@ -538,6 +541,7 @@ public class NetworkAdapterRest {
 						req.getCloudSiteId(),
 						req.getTenantId(),
 						req.getNetworkType(),
+						req.getModelCustomizationUuid(),
 						req.getNetworkStackId(),
 						req.getNetworkName(),
 						req.getContrailNetwork().getRouteTargets(),
@@ -559,6 +563,7 @@ public class NetworkAdapterRest {
 						req.getCloudSiteId(),
 						req.getTenantId(),
 						req.getNetworkType(),
+						req.getModelCustomizationUuid(),
 						req.getNetworkStackId(),
 						req.getNetworkName(),
 						req.getProviderVlanNetwork().getPhysicalNetworkName(),

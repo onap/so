@@ -118,7 +118,7 @@ class UpdateVfModuleVolumeInfraV1 extends VfModuleBase {
 		execution.setVariable('UPDVfModVol_volumeGroupId', getRequiredNodeText(execution, volumeInputs, 'volume-group-id'))
 		execution.setVariable('UPDVfModVol_vnfType', getRequiredNodeText(execution, volumeInputs, 'vnf-type'))
 		execution.setVariable('UPDVfModVol_vnfVersion', getRequiredNodeText(execution, volumeInputs, 'asdc-service-model-version'))
-		execution.setVariable('UPDVfModVol_serviceId', getRequiredNodeText(execution, volumeInputs, 'service-id'))
+		execution.setVariable('UPDVfModVol_serviceId', utils.getNodeText1(volumeInputs, 'service-id'))
 		execution.setVariable('UPDVfModVol_aicCloudRegion', getRequiredNodeText(execution, volumeInputs, 'aic-cloud-region'))
 		execution.setVariable('UPDVfModVol_tenantId', getRequiredNodeText(execution, volumeInputs, 'tenant-id'))
 		//execution.setVariable('UPDVfModVol_modelCustomizationId', getRequiredNodeText(execution, volumeInputs, 'model-customization-id'))

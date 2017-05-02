@@ -62,7 +62,9 @@ public class FalloutHandlerTest extends WorkflowTest {
 	}	
 	
 	@Test		
-	@Deployment(resources = {"subprocess/FalloutHandler.bpmn"})
+	@Deployment(resources = {"subprocess/FalloutHandler.bpmn",
+			"subprocess/GenericNotificationService.bpmn"
+			})
 	public void msoFalloutHandlerWithNotificationurl_200() throws Exception{
 		String method = getClass().getSimpleName() + "." + new Object() {
 		}.getClass().getEnclosingMethod().getName();
@@ -145,7 +147,9 @@ public class FalloutHandlerTest extends WorkflowTest {
 	}	
 	
 	@Test		
-	@Deployment(resources = {"subprocess/FalloutHandler.bpmn"})
+	@Deployment(resources = {"subprocess/FalloutHandler.bpmn",
+			"subprocess/GenericNotificationService.bpmn"
+			})
 	public void msoFalloutHandlerWithNotificationurlNoRequestId() throws Exception{
 		String method = getClass().getSimpleName() + "." + new Object() {
 		}.getClass().getEnclosingMethod().getName();
@@ -169,7 +173,7 @@ public class FalloutHandlerTest extends WorkflowTest {
 				+ "			<ns7:request-action>Layer3ServiceActivateRequest</ns7:request-action>"
 				+ "			<ns7:request-sub-action>CANCEL</ns7:request-sub-action>"
 				+ "			<ns7:source>OMX</ns7:source>"
-				+ "			<ns7:notification-url>www.att.com</ns7:notification-url>"
+				+ "			<ns7:notification-url>www.test.com</ns7:notification-url>"
 				+ "			<ns7:order-number>10205000</ns7:order-number>"
 				+ "			<ns7:order-version>1</ns7:order-version>"
 				+ "		</ns7:request-information>"

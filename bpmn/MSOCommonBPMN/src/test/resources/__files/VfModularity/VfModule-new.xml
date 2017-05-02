@@ -1,4 +1,4 @@
-<vf-module xmlns="http://com.att.aai.inventory/v7">
+<vf-module xmlns="http://com.aai.inventory/v7">
 	<vf-module-id>b37d96db-7d2c-47ce-bf61-a6c7b82fe161</vf-module-id>
 	<vf-module-name>PCRF::module-0-2</vf-module-name>
 	<persona-model-id>00000000-0000-0000-0000-000000000000</persona-model-id>

@@ -111,6 +111,7 @@ public class NetworkResourceCustomization extends MavenLikeVersioning{
 		this.created = timestamp;
 	}
 
+	public String getModelInvariantId() { return "not yet implemented"; }
 
 	@Override
 	public String toString () {

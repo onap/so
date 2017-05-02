@@ -28,7 +28,25 @@
 						</goals>
 						<configuration>
 							<hibernateDialect>org.hibernate.dialect.MySQL5Dialect</hibernateDialect>
-							<hibernateMapping>${project.basedir}/src/main/resources/HeatEnvironment.hbm.xml,${project.basedir}/src/main/resources/HeatNestedTemplate.hbm.xml,${project.basedir}/src/main/resources/HeatTemplate.hbm.xml,${project.basedir}/src/main/resources/NetworkResource.hbm.xml,${project.basedir}/src/main/resources/NetworkRecipe.hbm.xml,${project.basedir}/src/main/resources/Service.hbm.xml,${project.basedir}/src/main/resources/VnfRecipe.hbm.xml,${project.basedir}/src/main/resources/VnfResource.hbm.xml,${project.basedir}/src/main/resources/VnfComponent.hbm.xml,${project.basedir}/src/main/resources/VnfComponentsRecipe.hbm.xml,${project.basedir}/src/main/resources/VfModule.hbm.xml,${project.basedir}/src/main/resources/VfModuleToHeatFiles.hbm.xml,${project.basedir}/src/main/resources/AllottedResourceCustomization.hbm.xml,${project.basedir}/src/main/resources/ModelRecipe.hbm.xml,${project.basedir}/src/main/resources/NetworkResourceCustomization.hbm.xml,${project.basedir}/src/main/resources/ServiceToAllottedResources.hbm.xml,${project.basedir}/src/main/resources/ServiceToNetworks.hbm.xml</hibernateMapping>
+							<hibernateMapping>
+								${project.basedir}/src/main/resources/AllottedResourceCustomization.hbm.xml,
+								${project.basedir}/src/main/resources/HeatEnvironment.hbm.xml,
+								${project.basedir}/src/main/resources/HeatNestedTemplate.hbm.xml,
+								${project.basedir}/src/main/resources/HeatTemplate.hbm.xml,
+								${project.basedir}/src/main/resources/ModelRecipe.hbm.xml,
+								${project.basedir}/src/main/resources/NetworkRecipe.hbm.xml,
+								${project.basedir}/src/main/resources/NetworkResource.hbm.xml,
+								${project.basedir}/src/main/resources/NetworkResourceCustomization.hbm.xml,
+								${project.basedir}/src/main/resources/Service.hbm.xml,
+								${project.basedir}/src/main/resources/ServiceToAllottedResources.hbm.xml,
+								${project.basedir}/src/main/resources/ServiceToNetworks.hbm.xml,
+								${project.basedir}/src/main/resources/VfModule.hbm.xml,
+								${project.basedir}/src/main/resources/VfModuleToHeatFiles.hbm.xml,
+								${project.basedir}/src/main/resources/VnfComponent.hbm.xml,
+								${project.basedir}/src/main/resources/VnfComponentsRecipe.hbm.xml,
+								${project.basedir}/src/main/resources/VnfRecipe.hbm.xml,
+								${project.basedir}/src/main/resources/VnfResource.hbm.xml
+							</hibernateMapping>
 							<target>SCRIPT</target>
 							<skip>false</skip>
 							<force>true</force>

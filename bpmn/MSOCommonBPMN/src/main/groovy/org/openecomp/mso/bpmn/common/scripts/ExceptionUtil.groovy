@@ -32,74 +32,6 @@ import org.openecomp.mso.bpmn.core.WorkflowException
  */
 class ExceptionUtil extends AbstractServiceTaskProcessor {
 
-	/**
-	 *
-	 * @Deprecated
-	 *
-	 * Instead use <method>MapAAIExceptionToWorkflowException</method>
-	 *
-	 * To Be Removed Once Refactoring Main Flow Error Handling Is Complete
-	 *
-	 *
-	 */
-	@Deprecated
-	String MapAAIExceptionToWorkflowExceptionOld(String response, Execution execution)
-	{
-		def utils=new MsoUtils()
-		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		def prefix=execution.getVariable("prefix")
-		def errorMsg = execution.getVariable(prefix+"ErrorResponse")
-		utils.log("DEBUG","=========== Begin MapAAIExceptionToWorkflowException ===========",isDebugEnabled)
-		String text = null
-		def variables
-		String errorCode = '5000'
-		utils.log("DEBUG","response: " + response, isDebugEnabled)
-		try {
-			//String msg = utils.getNodeXml(response, "Fault")
-			 variables = utils.getMultNodes(response, "variable")
-			 text = utils.getNodeText1(response, "text")
-		} catch (Exception ex) {
-			//Ignore the exception - cases include non xml payload
-			utils.log("DEBUG","error mapping error, ignoring: " + ex,isDebugEnabled)
-		}
-
-		if(text != null) {
-			if(variables.size()>=4){
-				text = text.replaceFirst("%1", variables[0])
-				text = text.replaceFirst("%2", variables[1])
-				text = text.replaceFirst("%3", variables[2])
-				text = text.replaceFirst("%4", variables[3])
-			}
-			String modifiedErrorMessage = 'Received error from A&amp;AI (' + text +')'
-			utils.log("DEBUG", "ModifiedErrorMessage " + modifiedErrorMessage, isDebugEnabled)
-			// let $ModifiedErrorMessage := concat( 'Received error from A',$exceptionaai:ampersand,'AI (' ,functx:replace-multi($ErrorMessage,$from,$Variables ),')')
-			String message = """<aetgt:WorkflowException xmlns:aetgt="http://org.openecomp/mso/workflow/schema/v1">
-				<aetgt:ErrorMessage>$modifiedErrorMessage</aetgt:ErrorMessage>
-				<aetgt:ErrorCode>$errorCode</aetgt:ErrorCode>
-			</aetgt:WorkflowException>"""
-			 execution.setVariable(prefix+"ErrorResponse",message)
-			 utils.log("ERROR","Fault:"+ execution.getVariable(prefix+"ErrorResponse"))
-			 return message
-		} else {
-			try {
-				errorCode = MapErrorCode(errorMsg)
-				String mappedErrorMessage = MapErrorMessage(errorMsg, errorCode)
-
-				String message = """<aetgt:WorkflowException xmlns:aetgt="http://org.openecomp/mso/workflow/schema/v1">
-					<aetgt:ErrorMessage>$mappedErrorMessage</aetgt:ErrorMessage>
-					<aetgt:ErrorCode>$errorCode</aetgt:ErrorCode>
-				</aetgt:WorkflowException>"""
-				utils.log("DEBUG", "mappedErrorMessage " + mappedErrorMessage, isDebugEnabled)
-				 execution.setVariable(prefix+"ErrorResponse",message)
-				 utils.log("ERROR","Fault:"+ execution.getVariable(prefix+"ErrorResponse"))
-				 return message
-			} catch(Exception ex) {
-				utils.log("DEBUG","error mapping error, return null: " + ex,isDebugEnabled)
-				return null
-
-			}
-		}
-	}
 
 	/**
 	 * This error handling method maps an AAI Exception response to a
@@ -124,6 +56,7 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 		String errorCode = '5000'
 		WorkflowException wfex
 		utils.log("DEBUG","response: " + response, isDebugEnabled)
+		try{
 		try {
 			//String msg = utils.getNodeXml(response, "Fault")
 			variables = utils.getMultNodes(response, "variable")
@@ -165,6 +98,10 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 				return null
 
 			}
+		}
+		}catch(Exception e){
+			utils.log("DEBUG", "Exception occured during MapAAIExceptionToWorkflowException: " + e, isDebugEnabled)
+			buildWorkflowException(execution, 5000, "Error mapping AAI Response to WorkflowException")
 		}
 	}
 
@@ -208,60 +145,10 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 	}
 
 	/**
-	 *
-	 *This method build a WorkflowException using the adapters response.
-	 *
-	 *@param String response
-	 *@param String adapter
-	 *
-	 *@return WorkflowException wfex
-	 */
-	WorkflowException MapAdapterExecptionToWorkflowException(String response, Execution execution, String adapter){
-		def utils=new MsoUtils()
-		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		def prefix=execution.getVariable("prefix")
-		utils.log("DEBUG","=========== Start MapAdapterExecptionToWorkflowException Process ===========",isDebugEnabled)
-
-		String errorCode
-		def errorMessage
-		WorkflowException wfex
-		try {
-			errorCode = MapCategoryToErrorCode(utils.getNodeText(response, "category"))
-			errorMessage = MapAdapterErrorMessage(utils.getNodeText(response, "message"), errorCode, adapter)
-
-			int errorCodeInt = Integer.parseInt(errorCode)
-			buildWorkflowException(execution, errorCodeInt, errorMessage)
-		}catch (Exception ex) {
-			utils.log("DEBUG", "Exception Occured during MapAdapterExecptionToWorkflowException: " + ex, isDebugEnabled)
-			buildWorkflowException(execution, 2500, "Internal Error - Occured in MapAdapterExecptionToWorkflowException")
-		}
-		wfex = execution.getVariable("WorkflowException")
-		return wfex
-		utils.log("DEBUG","=========== Completed MapAdapterExecptionToWorkflowException Process ===========",isDebugEnabled)
-	}
-
-
-	/**
-	 *
-	 * @Deprecated
-	 *
-	 * Instead use <method>buildWorkflowException(Execution execution, int errorCode, String errorMessage)</method> method below
-	 *
-	 * To Be Removed Once Refactoring Of Main Flow Error Handling Is Complete
-	 *
-	 */
-	@Deprecated
-	String buildWorkflowExceptionXml(String errorCode, String errorMessage) {
-		return """<aetgt:WorkflowException xmlns:aetgt="http://org.openecomp/mso/workflow/schema/v1">
-					<aetgt:ErrorMessage>${errorMessage}</aetgt:ErrorMessage>
-					<aetgt:ErrorCode>${errorCode}</aetgt:ErrorCode>
-				  </aetgt:WorkflowException>"""
-	}
-
-	/**
 	 * This method takes a WorkflowException Object and builds
 	 * WorkflowException Xml. This method should only be used
-	 * for the purpose of sending an error response.
+	 * for the purpose of sending a sync error response or for
+	 * creating a FalloutHandler request.
 	 *
 	 *@param - WorkflowException Object
 	 *
@@ -295,7 +182,16 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 	5010    Could not communicate with A&AI Asynchronous    During orchestration of the recipe, a connection with A&AI could not be established.
 	5020    No response from A&AI   Asynchronous    During orchestration of the recipe, communication was established with A&AI, but no response was received within the configured timeout.
 	*/
-	String MapErrorCode(String errorMessage)
+	/**
+	 *
+	 * Utility Method for MapAAIExceptionToWorkflowException
+	 *
+	 *@param - String ErrorMessage
+	 *
+	 *@return - String ErrorCode
+	 *
+	 */
+	private String MapErrorCode(String errorMessage)
 	{
 		if(errorMessage==null){
 			return '5000'
@@ -309,46 +205,41 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 			return '5000'
 	}
 
-	String MapErrorMessage(String errorMessage, String errorCode)
+	/**
+	 *
+	 * Utility Method for MapAAIExceptionToWorkflowException
+	 *
+	 *@param - String ErrorMessage
+	 *@param - String ErrorCode
+	 *
+	 *@return - String ErrorMessage
+	 *
+	 */
+	private String MapErrorMessage(String errorMessage, String errorCode)
 	{
 		if(errorMessage == null){
 			errorMessage=""
 		}
-		if( errorCode.equals('5010')) {
-			return 'Could not communicate with A&amp;AI'
-		} else if (errorCode.equals('5020')) {
+		if( errorCode.equals('5010')){
+					return 'Could not communicate with A&amp;AI'
+		}else if (errorCode.equals('5020')){
 			return 'No response from A&amp;AI'
-		} else {
+		}else{
 			errorMessage = errorMessage.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 			return 'Received error from A&amp;AI (' +errorMessage +')'
 		}
 	}
 
-	String MapCategoryToErrorCode(String errorCategory)
-	{
-		if(errorCategory.equals('OPENSTACK'))
-			return '5100'
-		else if (errorCategory.equals('IO'))
-			return '5110'
-		else if (errorCategory.equals('INTERNAL'))
-			return '7020'
-		else if (errorCategory.equals('USERDATA'))
-			return '7020'
-		else
-			return '7020'
-	}
-
-
-	String MapAdapterErrorMessage(String errorMessage, String errorCode, String adapter)
-	{
-		if(errorCode.equals('5100'))
-			return 'Received error from Platform Orchestrator: ' + errorMessage
-		else if(errorCode.equals('5110'))
-		    return 'Could not communicate with Platform Orchestrator'
-		else
-		    return 'Received error from ' + adapter + ': ' + errorMessage
-	}
-
+	/**
+	 *
+	 * Utility Method for Mapping SDNC
+	 * Adapter Response Codes
+	 *
+	 *@param - String sdncResponseCode
+	 *
+	 *@return - String code
+	 *
+	 */
 	String MapSDNCResponseCodeToErrorCode(String sdncResponseCode)
 	{
 		if (sdncResponseCode == '500') {
@@ -472,98 +363,6 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 			return null
 		}
 		utils.log("DEBUG", "Completed ProcessMainflowBPMNException Method", isDebugEnabled)
-	}
-
-	/**
-	 *
-	 * This method should only be used by DHV Flows. This method is
-	 * executed after an MSOWorkflowException is caught by a Mainflow.
-	 * It builds and returns a FalloutHandler Request. It also
-	 * verifies the WorkflowException variable is populated.
-	 *
-	 * @param - execution
-	 * @param - requestInfo
-	 *
-	 * @return - falloutHandlerRequest
-	 *
-	 */
-	public String processMainflowsBPMNExceptionDHV(Execution execution, String requestId, def source, def action, def notificationUrl, def serviceInstanceId, def startTime){
-		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		String processKey = getProcessKey(execution)
-		try{
-			utils.log("DEBUG", "Started ProcessMainflowBPMNExceptionDHV Method", isDebugEnabled)
-
-			def WorkflowException workflowException = execution.getVariable("WorkflowException")
-			int errorResponseCode = 0
-			def errorResponseMsg = ""
-			if(workflowException != null){
-				errorResponseCode = workflowException.getErrorCode()
-				def errorMsg = workflowException.getErrorMessage()
-				if (errorMsg != null) {
-					errorResponseMsg = errorMsg.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-				}
-			}else{
-				errorResponseCode = 2500
-				errorResponseMsg = "Internal Error occured during " + action + ", unable to retrieve error information."
-			}
-
-
-			String request =
-			"""<FalloutHandlerRequest xmlns="http://org.openecomp/mso/workflow/schema/v1">
-					<request-information xmlns="http://org.openecomp/mso/request/types/v1">
-						<request-id>${requestId}</request-id>
-						<request-action>${action}</request-action>
-						<source>${source}</source>
-						<notification-url>${notificationUrl}</notification-url>
-					</request-information>
-					<mso-bpel-name>BPMN</mso-bpel-name>
-					<is-srv-inst-req>true</is-srv-inst-req>
-					<resp-content-type>JSON</resp-content-type>
-					<service-instance-id>${serviceInstanceId}</service-instance-id>
-					<start-time>${startTime}</start-time>
-					<WorkflowException>
-						<ErrorMessage>${errorResponseMsg}</ErrorMessage>
-						<ErrorCode>${errorResponseCode}</ErrorCode>
-					</WorkflowException>
-				</FalloutHandlerRequest>"""
-
-
-			request = utils.formatXml(request)
-			utils.log("DEBUG", processKey + " Outgoing WorkflowException is: " + execution.getVariable("WorkflowException"), isDebugEnabled)
-			utils.log("DEBUG", processKey + " Outgoing FalloutHandler Request is: " + request, isDebugEnabled)
-
-			return request
-
-		}catch(Exception e){
-			utils.log("DEBUG", "Caught Exception during ProcessMainflowBPMNException Method: " + e, isDebugEnabled)
-			return null
-		}
-		utils.log("DEBUG", "Completed ProcessMainflowBPMNExceptionDHV Method", isDebugEnabled)
-	}
-
-	/**
-	 * This method is executed after an Java Exception is caught.
-	 * It sets the WorkflowException variable and throws an MSOWorkflowException.
-	 *
-	 * @param - execution
-	 *
-	 */
-	@Deprecated
-	public void processSubflowsJavaException(Execution execution){
-		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		String processKey = getProcessKey(execution)
-		try{
-			utils.log("DEBUG", "Caught a Java Exception in " + processKey, isDebugEnabled)
-			utils.log("DEBUG", "Started processJavaException Method", isDebugEnabled)
-			buildAndThrowWorkflowException(execution, 2500, "Catch a Java Lang Exception in " + processKey)
-
-		}catch(BpmnError b){
-			throw b
-		}catch(Exception e){
-			utils.log("DEBUG", "Caught Exception during processJavaException Method: " + e, isDebugEnabled)
-			buildAndThrowWorkflowException(execution, 2500, "Internal Error - During Process Java Exception")
-		}
-		utils.log("DEBUG", "Completed processJavaException Method", isDebugEnabled)
 	}
 
 	/**

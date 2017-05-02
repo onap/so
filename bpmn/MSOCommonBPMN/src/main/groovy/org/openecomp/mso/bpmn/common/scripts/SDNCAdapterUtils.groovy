@@ -24,6 +24,7 @@ import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.runtime.Execution
 import org.openecomp.mso.bpmn.core.WorkflowException
+import org.openecomp.mso.bpmn.core.json.JsonUtils;
 import org.springframework.web.util.UriUtils
 
 
@@ -34,6 +35,7 @@ import org.springframework.web.util.UriUtils
 class SDNCAdapterUtils {
 
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
+	JsonUtils jsonUtil = new JsonUtils()
 
 	private AbstractServiceTaskProcessor taskProcessor
 
@@ -53,10 +55,10 @@ class SDNCAdapterUtils {
 
 		def requestId = execution.getVariable('testReqId') // for junits
 		if(requestId==null){
-			requestId = execution.getVariable("openecomp-mso-request-id") + "-" +  	System.currentTimeMillis()
+			requestId = execution.getVariable("mso-request-id") + "-" +  	System.currentTimeMillis()
 		}
 
-		def svcInstanceId = execution.getVariable("openecomp-mso-service-instance-id")
+		def svcInstanceId = execution.getVariable("mso-service-instance-id")
 
 		def nnsRequestInformation = utils.removeXmlNamespaces(requestInformation)
 		def nnsServiceInformation = utils.removeXmlNamespaces(serviceInformation)
@@ -97,10 +99,10 @@ class SDNCAdapterUtils {
 
 		def requestId = execution.getVariable('testReqId') // for junits
 		if(requestId==null){
-			requestId = execution.getVariable("openecomp-mso-request-id") + "-" +  	System.currentTimeMillis()
+			requestId = execution.getVariable("mso-request-id") + "-" +  	System.currentTimeMillis()
 		}
 
-		def svcInstanceId = execution.getVariable("openecomp-mso-service-instance-id")
+		def svcInstanceId = execution.getVariable("mso-service-instance-id")
 
 		def nnsRequestInformation = utils.removeXmlNamespaces(requestInformation)
 		def nnsServiceInformation = utils.removeXmlNamespaces(serviceInformation)
@@ -136,7 +138,7 @@ class SDNCAdapterUtils {
 		def request = taskProcessor.getVariable(execution, prefix+'Request')
 
 		def requestInformation = """<request-information>
-										<request-id>${execution.getVariable("openecomp-mso-request-id")}</request-id>
+										<request-id>${execution.getVariable("mso-request-id")}</request-id>
 										<request-action>torepl</request-action>
 										<source>${execution.getVariable(prefix+"source")}</source>
 										<notification-url>${execution.getVariable(prefix+"notificationUrl")}</notification-url>
@@ -156,10 +158,10 @@ class SDNCAdapterUtils {
 
 		def requestId = execution.getVariable('testReqId') // for junits
 		if(requestId==null){
-			requestId = execution.getVariable("openecomp-mso-request-id") + "-" +  	System.currentTimeMillis()
+			requestId = execution.getVariable("mso-request-id") + "-" +  	System.currentTimeMillis()
 		}
 
-		def svcInstanceId = execution.getVariable("openecomp-mso-service-instance-id")
+		def svcInstanceId = execution.getVariable("mso-service-instance-id")
 
 		//Build Service Information
 		// Send serviceName from CANOPI to sdnc for service-type
@@ -240,10 +242,10 @@ class SDNCAdapterUtils {
 
 			def requestId = execution.getVariable('testReqId') // for junits
 			if(requestId==null){
-				requestId = execution.getVariable("openecomp-mso-request-id") + "-" +  System.currentTimeMillis()
+				requestId = execution.getVariable("mso-request-id") + "-" +  System.currentTimeMillis()
 			}
 
-			def svcInstanceId = execution.getVariable("openecomp-mso-service-instance-id")
+			def svcInstanceId = execution.getVariable("mso-service-instance-id")
 			def msoAction = 'gammainternet'
 
 			def timeoutInMinutes = execution.getVariable('URN_mso_sdnc_timeout_firewall_minutes')
@@ -343,16 +345,16 @@ class SDNCAdapterUtils {
 
 			def requestId = execution.getVariable('testReqId') // for junits
 			if(requestId==null){
-				requestId = execution.getVariable("openecomp-mso-request-id") + "-" +  	System.currentTimeMillis()
+				requestId = execution.getVariable("mso-request-id") + "-" +  	System.currentTimeMillis()
 			}
 
-			def svcInstanceId = execution.getVariable("openecomp-mso-service-instance-id")
+			def svcInstanceId = execution.getVariable("mso-service-instance-id")
 			def msoAction = 'gammainternet'
 
 			def callbackUrl = (String) execution.getVariable('URN_mso_workflow_sdncadapter_callback')
 			if (callbackUrl == null || callbackUrl.trim() == "") {
 				taskProcessor.logError('mso:workflow:sdncadapter:callback URN is not set')
-				taskProcessor.workflowException(execution, 'Internal Error', 9999) // TODO: what message and error code?
+				exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Internal Error - During PreProcess Request")
 			}
 
 			def l2HomingInformation = utils.getNodeXml(request, 'l2-homing-information', false)
@@ -415,7 +417,7 @@ class SDNCAdapterUtils {
 			throw e;
 		} catch (Exception e) {
 			taskProcessor.logError('Caught exception in ' + method, e)
-			taskProcessor.workflowException(execution, 'Internal Error', 9999) // TODO: what message and error code?
+			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, "Internal Error")
 		}
 	}
 
@@ -438,11 +440,11 @@ class SDNCAdapterUtils {
 
 		 String requestId = ""
 		 try {
-			 requestId = execution.getVariable("openecomp-mso-request-id")
+			 requestId = execution.getVariable("mso-request-id")
 		 } catch (Exception ex) {
 			 requestId = utils.getNodeText1(requestXML, "request-id")
 		 }
-		 
+
 		 String aicCloudRegion = cloudRegionId
 		 String tenantId = ""
 		 if (utils.nodeExists(requestXML, "tenant-id")) {
@@ -452,12 +454,12 @@ class SDNCAdapterUtils {
 		 if (utils.nodeExists(requestXML, "network-type")) {
 			 networkType = utils.getNodeText1(requestXML, "network-type")
 		 }
-		 
+
 		 // Replace/Use the value of network-type from aai query (vs input) during Delete Network flows.
 		 if (queryAAIResponse != null) {
-		     networkType = utils.getNodeText1(queryAAIResponse, "network-type")
+			 networkType = utils.getNodeText1(queryAAIResponse, "network-type")
 		 }
-		 	 
+
 		 String serviceId = ""
 		 if (utils.nodeExists(requestXML, "service-id")) {
 			 serviceId = utils.getNodeText1(requestXML, "service-id")
@@ -484,10 +486,10 @@ class SDNCAdapterUtils {
 			 // get subscriber name
 			 int subscriberNameStart = siRelatedLink.indexOf("customers/customer/")
 			 int subscriberNameEnd = siRelatedLink.indexOf("/service-subscriptions/")
-		     subscriberName = siRelatedLink.substring(subscriberNameStart + 19, subscriberNameEnd)
+			 subscriberName = siRelatedLink.substring(subscriberNameStart + 19, subscriberNameEnd)
 			 subscriberName = UriUtils.decode(subscriberName,"UTF-8")
 		 }
-		 
+
 		 String content =
 			"""<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://openecomp.com/mso/workflow/schema/v1"
 		                                  xmlns:sdncadapterworkflow="http://openecomp.com/mso/workflow/schema/v1"
@@ -545,15 +547,27 @@ class SDNCAdapterUtils {
 	  public String sdncTopologyRequestRsrc (Execution execution, String requestXML, String serviceInstanceId, String callbackUrl, String action, String requestAction, String cloudRegionId, networkId, String additionalData) {
 		  def utils=new MsoUtils()
 
-		  // SNDC is expecting requestId as unique each call.
+		  // SNDC is expecting request Id for header as unique each call.
+		  String hdrRequestId = ""
+		  String testHdrRequestId = execution.getVariable("testMessageId")  // for test purposes.
+		  if (testHdrRequestId == null) {
+			  hdrRequestId = UUID.randomUUID()  // generate unique
+		  } else {
+			  hdrRequestId = testHdrRequestId
+		  }
+
 		  String requestId = ""
 		  String testRequestId = execution.getVariable("testMessageId")  // for test purposes.
 		  if (testRequestId == null) {
-		      requestId = UUID.randomUUID()  // generate unique
+			  try {
+				  requestId = execution.getVariable("mso-request-id")
+			  } catch (Exception ex) {
+					requestId = utils.getNodeText1(requestXML, "request-id")
+			  }
 		  } else {
-		      requestId = testRequestId 
-		  }	
-		    
+				requestId = testRequestId
+		  }
+		  
 		  String aicCloudRegion = cloudRegionId
 		  String tenantId = ""
 		  if (utils.nodeExists(requestXML, "tenant-id")) {
@@ -563,12 +577,12 @@ class SDNCAdapterUtils {
 		  if (utils.nodeExists(requestXML, "network-type")) {
 			  networkType = utils.getNodeText1(requestXML, "network-type")
 		  }
-		  
+
 		  String subscriptionServiceType = ""
 		  if (utils.nodeExists(requestXML, "subscription-service-type")) {
 			  subscriptionServiceType = utils.getNodeText1(requestXML, "subscription-service-type")
 		  }
-		  
+
 		  String globalCustomerId = ""
 		  if (utils.nodeExists(requestXML, "global-customer-id")) {
 			  globalCustomerId = utils.getNodeText1(requestXML, "global-customer-id")
@@ -586,7 +600,7 @@ class SDNCAdapterUtils {
 		  if (utils.nodeExists(requestXML, "source")) {
 			  source = utils.getNodeText1(requestXML, "source")
 		  }
- 
+
 		  // get resourceLink from subflow execution variable
 		  String serviceType = ""
 		  String subscriberName = ""
@@ -603,50 +617,50 @@ class SDNCAdapterUtils {
 			  subscriberName = siRelatedLink.substring(subscriberNameStart + 19, subscriberNameEnd)
 			  subscriberName = UriUtils.decode(subscriberName,"UTF-8")
 		  }
-		  
+
 		  // network-information from 'networkModelInfo' // verify the DB Catalog response
 		  String networkModelInfo = utils.getNodeXml(requestXML, "networkModelInfo", false).replace("tag0:","").replace(":tag0","")
-		  String modelInvariantUuid = utils.getNodeText1(networkModelInfo, "modelInvariantUuid") !=null ? 
-		                              utils.getNodeText1(networkModelInfo, "modelInvariantUuid") : ""
+		  String modelInvariantUuid = utils.getNodeText1(networkModelInfo, "modelInvariantUuid") !=null ?
+									  utils.getNodeText1(networkModelInfo, "modelInvariantUuid") : ""
 		  String modelCustomizationUuid = utils.getNodeText1(networkModelInfo, "modelCustomizationUuid")  !=null ?
-		                                  utils.getNodeText1(networkModelInfo, "modelCustomizationUuid")  : ""
-		  String modelUuid = utils.getNodeText1(networkModelInfo, "modelUuid") !=null ? 
-		                     utils.getNodeText1(networkModelInfo, "modelUuid") : "" 
+										  utils.getNodeText1(networkModelInfo, "modelCustomizationUuid")  : ""
+		  String modelUuid = utils.getNodeText1(networkModelInfo, "modelUuid") !=null ?
+							 utils.getNodeText1(networkModelInfo, "modelUuid") : ""
 		  String modelVersion = utils.getNodeText1(networkModelInfo, "modelVersion") !=null ?
-		  	                    utils.getNodeText1(networkModelInfo, "modelVersion") : ""
+								  utils.getNodeText1(networkModelInfo, "modelVersion") : ""
 		  String modelName = utils.getNodeText1(networkModelInfo, "modelName") !=null ?
-		                     utils.getNodeText1(networkModelInfo, "modelName") : ""
-							 
+							 utils.getNodeText1(networkModelInfo, "modelName") : ""
+
 		 // service-information from 'networkModelInfo' // verify the DB Catalog response
 		 String serviceModelInfo = utils.getNodeXml(requestXML, "serviceModelInfo", false).replace("tag0:","").replace(":tag0","")
 		 String serviceModelInvariantUuid = utils.getNodeText1(serviceModelInfo, "modelInvariantUuid")  !=null ?
-										    utils.getNodeText1(serviceModelInfo, "modelInvariantUuid")  : ""
+											utils.getNodeText1(serviceModelInfo, "modelInvariantUuid")  : ""
 		 String serviceModelUuid = utils.getNodeText1(serviceModelInfo, "modelUuid") !=null ?
-							       utils.getNodeText1(serviceModelInfo, "modelUuid") : ""
+								   utils.getNodeText1(serviceModelInfo, "modelUuid") : ""
 		 String serviceModelVersion = utils.getNodeText1(serviceModelInfo, "modelVersion") !=null ?
-							          utils.getNodeText1(serviceModelInfo, "modelVersion") : ""
+									  utils.getNodeText1(serviceModelInfo, "modelVersion") : ""
 		 String serviceModelName = utils.getNodeText1(serviceModelInfo, "modelName") !=null ?
-						           utils.getNodeText1(serviceModelInfo, "modelName") : ""
-							 
-							 
+								   utils.getNodeText1(serviceModelInfo, "modelName") : ""
+
+
 		  String content =
 		  """<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://openecomp.com/mso/workflow/schema/v1"
    				                                    xmlns:sdncadapter="http://domain2.openecomp.com/workflow/sdnc/adapter/schema/v1" 
                                                     xmlns:sdncadapterworkflow="http://openecomp.com/mso/workflow/schema/v1">
 					   <sdncadapter:RequestHeader>
-						  <sdncadapter:RequestId>${requestId}</sdncadapter:RequestId>
+						  <sdncadapter:RequestId>${hdrRequestId}</sdncadapter:RequestId>
 						  <sdncadapter:SvcInstanceId>${serviceInstanceId}</sdncadapter:SvcInstanceId>
 						  <sdncadapter:SvcAction>${action}</sdncadapter:SvcAction>
 						  <sdncadapter:SvcOperation>network-topology-operation</sdncadapter:SvcOperation>
 						  <sdncadapter:CallbackUrl>sdncCallback</sdncadapter:CallbackUrl>
                           <sdncadapter:MsoAction>generic-resource</sdncadapter:MsoAction>
-					   </sdncadapter:RequestHeader>				   
+					   </sdncadapter:RequestHeader>
    					   <sdncadapterworkflow:SDNCRequestData>
 						   <request-information>
 						      <request-id>${requestId}</request-id>
 						      <request-action>${requestAction}</request-action>
-						      <source>${source}</source> 
-						      <notification-url></notification-url> 
+						      <source>${source}</source>
+						      <notification-url></notification-url>
 						      <order-number></order-number>
 						      <order-version></order-version>
 						   </request-information>
@@ -675,18 +689,18 @@ class SDNCAdapterUtils {
 							  </ecomp-model-information>
 						   </network-information>
 						   <network-request-input>
-						     <network-name>${networkName}</network-name> 
+						     <network-name>${networkName}</network-name>
 					         <tenant>${tenantId}</tenant>
-						     <aic-cloud-region>${aicCloudRegion}</aic-cloud-region>  
-						     <aic-clli></aic-clli> 
+						     <aic-cloud-region>${aicCloudRegion}</aic-cloud-region>
+						     <aic-clli></aic-clli>
 						     <network-input-parameters/>
 						   </network-request-input>
 				      </sdncadapterworkflow:SDNCRequestData>
-                   </aetgt:SDNCAdapterWorkflowRequest>""".trim()	
-				   
+                   </aetgt:SDNCAdapterWorkflowRequest>""".trim()
+
 			 return content
 	  }
-	 
+
 			/**
 			 * Validates a workflow response.
 			 * @param execution the execution
@@ -814,7 +828,7 @@ class SDNCAdapterUtils {
 				def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 				taskProcessor.logDebug('Entered ' + method, isDebugLogEnabled)
 				def prefix = execution.getVariable('prefix')
-				CommonExceptionUtil commonExceptionUtil = new CommonExceptionUtil()
+				TrinityExceptionUtil trinityExceptionUtil = new TrinityExceptionUtil()
 
 				try {
 					execution.setVariable(prefix+'sdncResponseSuccess', false)
@@ -881,22 +895,22 @@ class SDNCAdapterUtils {
 						if (intDataResponseCode != 200 &&  intDataResponseCode != 0) {
 							execution.setVariable(prefix+'ResponseCode', intDataResponseCode)
 							execution.setVariable("L3HLAB_rollback", true)
-							def msg = commonExceptionUtil.mapSDNCAdapterExceptionToErrorResponse(response, execution)
-							taskProcessor.commonWorkflowException(execution, intDataResponseCode, "Received error from SDN-C: " + msg)
+							def msg = trinityExceptionUtil.mapSDNCAdapterExceptionToErrorResponse(response, execution)
+							exceptionUtil.buildAndThrowWorkflowException(execution, intDataResponseCode, "Received error from SDN-C: " + msg)
 
 						}
 					}else {
 						taskProcessor.logWarn('sdncAdapter did not complete successfully, sdncAdapter Success Indicator was false ')
 						execution.setVariable("L3HLAB_rollback", true)
-						def msg = commonExceptionUtil.mapSDNCAdapterExceptionToErrorResponse(response, execution)
-						taskProcessor.commonWorkflowException(execution, responseCode, msg)
+						def msg = trinityExceptionUtil.mapSDNCAdapterExceptionToErrorResponse(response, execution)
+						exceptionUtil.buildAndThrowWorkflowException(execution, responseCode, msg)
 					}
 
 					if (response == null || response.trim().equals("")) {
 						taskProcessor.logWarn('sdncAdapter workflow response is empty');
 						execution.setVariable("L3HLAB_rollback", true)
-						def msg = commonExceptionUtil.buildException("Exception occurred while validating SDNC response " , execution)
-						taskProcessor.commonWorkflowException(execution, intResponseCode, msg)
+						def msg = trinityExceptionUtil.buildException("Exception occurred while validating SDNC response " , execution)
+						exceptionUtil.buildAndThrowWorkflowException(execution, intResponseCode, msg)
 					}
 
 					execution.setVariable(prefix+'sdncResponseSuccess', true)
@@ -907,10 +921,35 @@ class SDNCAdapterUtils {
 					taskProcessor.logError('Caught exception in ' + method, e)
 					execution.setVariable(prefix+"ResponseCode",400)
 					execution.setVariable("L3HLAB_rollback", true)
-					def msg = commonExceptionUtil.buildException("Exception occurred while validating SDNC response: " + e.getMessage(), execution)
-					taskProcessor.commonWorkflowException(execution, 400, msg)
+					def msg = trinityExceptionUtil.buildException("Exception occurred while validating SDNC response: " + e.getMessage(), execution)
+					exceptionUtil.buildAndThrowWorkflowException(execution, 400, msg)
 				}
 			}
+			
+	public String modelInfoToEcompModelInformation(String jsonModelInfo) {
+		String modelInvariantId = jsonUtil.getJsonValue(jsonModelInfo, "modelInvariantId")
+		String modelVersionId = jsonUtil.getJsonValue(jsonModelInfo, "modelVersionId")
+		if (modelVersionId == null) {
+			modelVersionId = ""
+		}
+		String modelCustomizationUuid = jsonUtil.getJsonValue(jsonModelInfo, "modelCustomizationId")
+		String modelCustomizationString = ""
+		if (modelCustomizationUuid != null) {
+			modelCustomizationString = "<model-customization-uuid>${modelCustomizationUuid}</model-customization-uuid>"
+		}
+		String modelVersion = jsonUtil.getJsonValue(jsonModelInfo, "modelVersion")
+		String modelName = jsonUtil.getJsonValue(jsonModelInfo, "modelName")
+		String ecompModelInformation =
+				"""<ecomp-model-information>
+						<model-invariant-uuid>${modelInvariantId}</model-invariant-uuid>
+						<model-uuid>${modelVersionId}</model-uuid>
+						${modelCustomizationString}
+						<model-version>${modelVersion}</model-version>
+						<model-name>${modelName}</model-name>
+				</ecomp-model-information>"""
+
+		return ecompModelInformation
+	}
 
 	/**
 	 * Decode XML - replace &amp; &lt; and &gt; with '&', '<' and '>'
@@ -921,5 +960,7 @@ class SDNCAdapterUtils {
 		decodedXml = decodedXml.replaceAll("&lt;", "<")
 		decodedXml = decodedXml.replaceAll("&gt;", ">")
 	}
+	
+	
 
 }

@@ -84,7 +84,7 @@ DoDeleteNetworkInstanceRollback.processJavaException(execution)]]></bpmn:script>
         <camunda:connector>
           <camunda:inputOutput>
             <camunda:inputParameter name="payload">${DELNWKIR_rollbackNetworkRequest}</camunda:inputParameter>
-            <camunda:inputParameter name="url">CRENWKIR_urlRollbackPoNetwork</camunda:inputParameter>
+            <camunda:inputParameter name="url">${URN_mso_adapters_network_rest_endpoint}</camunda:inputParameter>
             <camunda:inputParameter name="headers">
               <camunda:map>
                 <camunda:entry key="Authorization">#{BasicAuthHeaderValuePO}</camunda:entry>

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,7 +37,7 @@ import org.codehaus.jackson.map.annotate.JsonRootName;
 
 /* README
 * 1) Used JAXB/Jettison - see @NoJackson annotation on class to get RootElements REad by RestEasy
-* 2) due to 1) Maps need to use this format 
+* 2) due to 1) Maps need to use this format
 
 "networkParams": {"entry": [
                          	{"key": "network_id",
@@ -47,7 +47,7 @@ import org.codehaus.jackson.map.annotate.JsonRootName;
                          	{"key": "server_name_0",
                          	"value": "RaaNetwork1"}
                          	]},
- * 3) to output json see toJSonString method below which required the @JsonRootName annotation and the WRAP_ROOT feature enabled 
+ * 3) to output json see toJSonString method below which required the @JsonRootName annotation and the WRAP_ROOT feature enabled
  * 4) Tryong to work with RESTEASY JACKSON and JAXB/JETTISON to conform to Json input/output specs
 */
 @JsonRootName("createNetworkRequest")
@@ -60,6 +60,7 @@ public class CreateNetworkRequest extends NetworkRequestCommon {
 	private String networkName;
 	private String networkType;
 	private String networkTypeVersion;
+	private String modelCustomizationUuid;
 	private NetworkTechnology networkTechnology = NetworkTechnology.NEUTRON;
 	private List<Subnet> subnets;
 	private ProviderVlanNetwork providerVlanNetwork;
@@ -111,6 +112,14 @@ public class CreateNetworkRequest extends NetworkRequestCommon {
 
 	public void setNetworkType(String networkType) {
 		this.networkType = networkType;
+	}
+
+	public String getModelCustomizationUuid() {
+		return this.modelCustomizationUuid;
+	}
+
+	public void setModelCustomizationUuid(String modelCustomizationUuid) {
+		this.modelCustomizationUuid = modelCustomizationUuid;
 	}
 
 	public String getNetworkTypeVersion() {

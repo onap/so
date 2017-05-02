@@ -239,7 +239,6 @@ public class DeleteGenericMacroServiceNetworkVnf extends AbstractServiceTaskProc
 				execution.setVariable("DELVAS_networksCount", networksCount)
 				utils.log("DEBUG", " DELVAS_networksCount : " + networksCount, isDebugEnabled)
 				execution.setVariable("DELVAS_relatedNetworkIdList", relatedNetworkIdList)
-				execution.setVariable("relatedNetworkIdListString", relatedNetworkIdList.toString())
 			} else {
 				execution.setVariable("DELVAS_vnfsCount", 0)
 				utils.log("DEBUG", " DELVAS_vnfsCount : " + vnfsCount, isDebugEnabled)
@@ -317,18 +316,11 @@ public class DeleteGenericMacroServiceNetworkVnf extends AbstractServiceTaskProc
 			utils.log("DEBUG", " ***** Inside prepareNetworkDelete of DeleteViprAtmService ***** ", isDebugEnabled)
 
 			List networkList = execution.getVariable("DELVAS_relatedNetworkIdList")
-			utils.log("DEBUG", "array networkList from execution: "+ networkList, isDebugEnabled)
-			
-			if (networkList == null || networkList.size() < 1){
-				networkList = Arrays.asList(execution.getVariable("relatedNetworkIdListString"))
-				utils.log("DEBUG", "array from string networkList: "+ networkList, isDebugEnabled)
-			}
-
 			Integer networksDeletedCount = execution.getVariable("DELVAS_networksDeletedCount")
 
 			String networkId = ""
 			if (networkList.size() > 0) {
-				networkId = (String) networkList.get(networksDeletedCount.intValue())
+				networkId = networkList.get(networksDeletedCount.intValue())
 			}
 							
 			execution.setVariable("networkId", networkId)

@@ -30,6 +30,7 @@ import org.springframework.web.util.UriUtils
 public class UpdateAAIVfModule extends AbstractServiceTaskProcessor {
 
 	private XmlParser xmlParser = new XmlParser()
+	ExceptionUtil exceptionUtil = new ExceptionUtil()
 
 	/**
 	 * Initialize the flow's variables.
@@ -78,7 +79,7 @@ public class UpdateAAIVfModule extends AbstractServiceTaskProcessor {
 			throw e;
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
-			createWorkflowException(execution, 1002, 'Error in preProcessRequest(): ' + e.getMessage())
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in preProcessRequest(): ' + e.getMessage())
 		}
 	}
 
@@ -127,7 +128,7 @@ public class UpdateAAIVfModule extends AbstractServiceTaskProcessor {
 			throw e;
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
-			createWorkflowException(execution, 1002, 'Error in getVfModule(): ' + e.getMessage())
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in getVfModule(): ' + e.getMessage())
 		}
 	}
 
@@ -187,13 +188,22 @@ public class UpdateAAIVfModule extends AbstractServiceTaskProcessor {
 			}
 			
 			// Construct payload
-			updateVfModuleNode(origRequest, vfModuleNode, 'orchestration-status')
-			updateVfModuleNode(origRequest, vfModuleNode, 'heat-stack-id')
+			String orchestrationStatusEntry = updateVfModuleNode(origRequest, vfModuleNode, 'orchestration-status')
+			String heatStackIdEntry = updateVfModuleNode(origRequest, vfModuleNode, 'heat-stack-id')
+			String personaModelVersionEntry = ""
 			if (doPersonaModelVersion) {
-				updateVfModuleNode(origRequest, vfModuleNode, 'persona-model-version')
+				personaModelVersionEntry = updateVfModuleNode(origRequest, vfModuleNode, 'persona-model-version')
 			}
-			updateVfModuleNode(origRequest, vfModuleNode, 'contrail-service-instance-fqdn')
-			def payload = utils.nodeToString(vfModuleNode)
+			String contrailServiceInstanceFqdnEntry = updateVfModuleNode(origRequest, vfModuleNode, 'contrail-service-instance-fqdn')
+			def payload = """
+					{	${orchestrationStatusEntry}
+						${heatStackIdEntry}
+						${personaModelVersionEntry}
+						${contrailServiceInstanceFqdnEntry}
+						"vf-module-id": "${vfModuleId}"						
+					}
+			"""
+
 
 			// Construct endpoint
 			AaiUtil aaiUriUtil = new AaiUtil(this)
@@ -202,10 +212,10 @@ public class UpdateAAIVfModule extends AbstractServiceTaskProcessor {
 			String endPoint = execution.getVariable('URN_aai_endpoint') + aai_uri + '/' + UriUtils.encode(vnfId, "UTF-8") + '/vf-modules/vf-module/' + UriUtils.encode(vfModuleId, "UTF-8")
 
 			try {
-				logDebug('sending PUT to AAI endpoint \'' + endPoint + '\'' + 'with payload \n' + payload, isDebugLogEnabled)
-				utils.logAudit("Sending PUT to AAI endpoint: " + endPoint)
-				
-				APIResponse response = aaiUriUtil.executeAAIPutCall(execution, endPoint, payload)
+				logDebug('sending PATCH to AAI endpoint \'' + endPoint + '\'' + 'with payload \n' + payload, isDebugLogEnabled)
+				utils.logAudit("Sending PATCH to AAI endpoint: " + endPoint)
+
+				APIResponse response = aaiUriUtil.executeAAIPatchCall(execution, endPoint, payload)
 				def responseData = response.getResponseBodyAsString()
 				execution.setVariable('UAAIVfMod_updateVfModuleResponseCode', response.getStatusCode())
 				execution.setVariable('UAAIVfMod_updateVfModuleResponse', responseData)
@@ -214,59 +224,42 @@ public class UpdateAAIVfModule extends AbstractServiceTaskProcessor {
 				logDebug('Response:' + System.lineSeparator() + responseData, isDebugLogEnabled)
 			} catch (Exception ex) {
 				ex.printStackTrace()
-				logDebug('Exception occurred while executing AAI PUT:' + ex.getMessage(),isDebugLogEnabled)
+				logDebug('Exception occurred while executing AAI PATCH:' + ex.getMessage(),isDebugLogEnabled)
 				execution.setVariable('UAAIVfMod_updateVfModuleResponseCode', 500)
-				execution.setVariable('UAAIVfMod_updateVfModuleResponse', 'AAI PUT Failed:' + ex.getMessage())
+				execution.setVariable('UAAIVfMod_updateVfModuleResponse', 'AAI PATCH Failed:' + ex.getMessage())
 			}
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
-			createWorkflowException(execution, 1002, 'Error in updateVfModule(): ' + e.getMessage())
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in updateVfModule(): ' + e.getMessage())
 		}
 	}
 
 	/**
-	 * Insert a new Node, replace the value of an existing Node, or delete an existing Node in the current
-	 * VF Module Node, as necessary.
-	 *
-	 * If the Node with the same name already exists in current VF Module, but is not being updated, then do
-	 * nothing. If the element is being updated and it already exists in the current VF Module, then check
-	 * the value specified in the original request. If the value is 'DELETE', remove that Node from the
-	 * current VF Module.  Otherwise, change the value to the specified new value. If the element is
-	 * being updated but doesn't exist in the current VF Module, and the new value is not 'DELETE', then
-	 * create an appropriate new node and add it to the VF Module.
+	 * Sets up json attributes for PATCH request for Update
 	 *
 	 * @param origRequest Incoming update request with VF Module elements to be updated.
 	 * @param vfModule Current VF Module retrieved from AAI.
 	 * @param element Name of element to be inserted.
-	 */
-	private void updateVfModuleNode(String origRequest, Node vfModuleNode, String elementName) {
+	 */	
+	private String updateVfModuleNode(String origRequest, Node vfModuleNode, String elementName) {
 
 		if (!utils.nodeExists(origRequest, elementName)) {
-			return
+			return "" 
 		}
 		def elementValue = utils.getNodeText(origRequest, elementName)
 
-		def Node childNode = utils.getChildNode(vfModuleNode, elementName)
-		if (childNode == null) {
-			if (elementValue.equals('DELETE')) {
-				// Element doesn't exist but is being deleted, so do nothing
-				return
-			}
-			// Node doesn't exist, create a new Node as a child
-			new Node(vfModuleNode, elementName, elementValue)
-		} else {
-			if (elementValue.equals('DELETE')) {
-				// Node exists, but should be deleted
-				vfModuleNode.remove(childNode)
-			} else {
-				// Node already exists, just give it a new value
-				childNode.setValue(elementValue)
-			}
+		if (elementValue.equals('DELETE')) {
+			// Set the element being deleted to null
+			return """"${elementName}": null,"""
 		}
+		else {
+			return """"${elementName}": "${elementValue}","""
+		}		
 	}
+
 	
 	/**
 	 * Check the Volume Group ID from the incoming update request against the Volume Group ID from the

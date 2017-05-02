@@ -65,7 +65,6 @@ validateSDNCResponse.validateSDNCResponse(execution)
         <bpmn2:incoming>SequenceFlow_1yvnovn</bpmn2:incoming>
       </bpmn2:endEvent>
       <bpmn2:scriptTask id="ScriptTask_00lgy9f" name="PostProcess Response" scriptFormat="groovy">
-        <bpmn2:incoming>SequenceFlow_1loz6nk</bpmn2:incoming>
         <bpmn2:incoming>SequenceFlow_1nl99y6</bpmn2:incoming>
         <bpmn2:outgoing>SequenceFlow_1yvnovn</bpmn2:outgoing>
         <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
@@ -76,7 +75,6 @@ DoDeleteNetworkInstance.postProcessResponse(execution)
       <bpmn2:sequenceFlow id="SequenceFlow_1a51h25" sourceRef="subProcessStart_StartEvent" targetRef="Task_0026x4v" />
       <bpmn2:sequenceFlow id="SequenceFlow_1yvnovn" sourceRef="ScriptTask_00lgy9f" targetRef="EndEvent_2" />
       <bpmn2:scriptTask id="ScriptTask_0n4do0p" name="Prepare SDNC RPC Rollback Deactivate" scriptFormat="groovy">
-        <bpmn2:incoming>SequenceFlow_0jb7rws</bpmn2:incoming>
         <bpmn2:outgoing>SequenceFlow_1wif0e5</bpmn2:outgoing>
         <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
 def DoDeleteNetworkInstance = new DoDeleteNetworkInstance()
@@ -107,20 +105,19 @@ DoDeleteNetworkInstance.prepareRpcSDNCDeactivateRollback(execution)]]></bpmn2:sc
           <camunda:out source="wasDeleted" target="wasDeleted" />
         </bpmn2:extensionElements>
         <bpmn2:incoming>SequenceFlow_147vc14</bpmn2:incoming>
-        <bpmn2:outgoing>SequenceFlow_1loz6nk</bpmn2:outgoing>
       </bpmn2:callActivity>
-      <bpmn2:sequenceFlow id="SequenceFlow_1loz6nk" sourceRef="CallActivity_0lku52d" targetRef="ScriptTask_00lgy9f" />
       <bpmn2:exclusiveGateway id="ExclusiveGateway_1x7o5bo" name="is SDNC Rollback Needed? " default="SequenceFlow_1raa09h">
         <bpmn2:incoming>SequenceFlow_0tiz0kk</bpmn2:incoming>
         <bpmn2:outgoing>SequenceFlow_0jb7rws</bpmn2:outgoing>
         <bpmn2:outgoing>SequenceFlow_1raa09h</bpmn2:outgoing>
       </bpmn2:exclusiveGateway>
-      <bpmn2:sequenceFlow id="SequenceFlow_0jb7rws" name="Yes" sourceRef="ExclusiveGateway_1x7o5bo" targetRef="ScriptTask_0n4do0p">
+      <bpmn2:sequenceFlow id="SequenceFlow_0jb7rws" name="Yes" sourceRef="ExclusiveGateway_1x7o5bo" targetRef="ExclusiveGateway_01xin16">
         <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{execution.getVariable("DELNWKI_isSdncDeactivateRollbackNeeded") == true}]]></bpmn2:conditionExpression>
       </bpmn2:sequenceFlow>
       <bpmn2:inclusiveGateway id="ExclusiveGateway_01xin16">
         <bpmn2:incoming>SequenceFlow_1suj1nc</bpmn2:incoming>
         <bpmn2:incoming>SequenceFlow_1raa09h</bpmn2:incoming>
+        <bpmn2:incoming>SequenceFlow_0jb7rws</bpmn2:incoming>
         <bpmn2:outgoing>SequenceFlow_1nl99y6</bpmn2:outgoing>
       </bpmn2:inclusiveGateway>
       <bpmn2:sequenceFlow id="SequenceFlow_1raa09h" sourceRef="ExclusiveGateway_1x7o5bo" targetRef="ExclusiveGateway_01xin16" />
@@ -142,6 +139,9 @@ DoDeleteNetworkInstance.prepareRollbackData(execution)]]></bpmn2:script>
 def DoDeleteNetworkInstance = new DoDeleteNetworkInstance()
 DoDeleteNetworkInstance.setExceptionFlag(execution)]]></bpmn2:script>
       </bpmn2:scriptTask>
+      <bpmn2:textAnnotation id="TextAnnotation_0i06ryl">      <bpmn2:text>Rollback Not Needed for Delete.</bpmn2:text>
+</bpmn2:textAnnotation>
+      <bpmn2:association id="Association_0gzsxad" sourceRef="CallActivity_0lku52d" targetRef="TextAnnotation_0i06ryl" />
     </bpmn2:subProcess>
     <bpmn2:exclusiveGateway id="isAAIQueryOk_ExclusiveGateway_2" name="Is AAI Query Ok?" default="querySuccessNo_SequenceFlow">
       <bpmn2:incoming>isRelationshipExistNo_SequenceFlow</bpmn2:incoming>
@@ -858,13 +858,6 @@ DoDeleteNetworkInstance.validateRpcSDNCDeactivateResponse(execution)]]></bpmn2:s
       <bpmndi:BPMNShape id="CallActivity_0lku52d_di" bpmnElement="CallActivity_0lku52d">
         <dc:Bounds x="523" y="665" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_1loz6nk_di" bpmnElement="SequenceFlow_1loz6nk">
-        <di:waypoint xsi:type="dc:Point" x="623" y="705" />
-        <di:waypoint xsi:type="dc:Point" x="688" y="705" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="656" y="690" width="0" height="0" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ExclusiveGateway_1x7o5bo_di" bpmnElement="ExclusiveGateway_1x7o5bo" isMarkerVisible="true">
         <dc:Bounds x="270" y="799" width="50" height="50" />
         <bpmndi:BPMNLabel>
@@ -874,10 +867,10 @@ DoDeleteNetworkInstance.validateRpcSDNCDeactivateResponse(execution)]]></bpmn2:s
       <bpmndi:BPMNEdge id="SequenceFlow_0jb7rws_di" bpmnElement="SequenceFlow_0jb7rws">
         <di:waypoint xsi:type="dc:Point" x="295" y="799" />
         <di:waypoint xsi:type="dc:Point" x="295" y="772" />
-        <di:waypoint xsi:type="dc:Point" x="295" y="772" />
-        <di:waypoint xsi:type="dc:Point" x="295" y="745" />
+        <di:waypoint xsi:type="dc:Point" x="437" y="772" />
+        <di:waypoint xsi:type="dc:Point" x="437" y="799" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="300" y="755.74" width="19" height="13" />
+          <dc:Bounds x="312" y="776.0384854424079" width="18" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="InclusiveGateway_17qke2s_di" bpmnElement="ExclusiveGateway_01xin16">
@@ -928,6 +921,13 @@ DoDeleteNetworkInstance.validateRpcSDNCDeactivateResponse(execution)]]></bpmn2:s
       <bpmndi:BPMNShape id="ScriptTask_1gtl61j_di" bpmnElement="Task_0026x4v">
         <dc:Bounds x="124" y="874" width="100" height="80" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0i06ryl_di" bpmnElement="TextAnnotation_0i06ryl">
+        <dc:Bounds x="592" y="596" width="106" height="45" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0gzsxad_di" bpmnElement="Association_0gzsxad">
+        <di:waypoint xsi:type="dc:Point" x="606" y="665" />
+        <di:waypoint xsi:type="dc:Point" x="627" y="641" />
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn2:definitions>

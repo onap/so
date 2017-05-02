@@ -99,7 +99,9 @@ public class SDNCAdapterV1Test extends WorkflowTest {
 	}
 
 	@Test
-	@Deployment(resources = {"subprocess/SDNCAdapterV1.bpmn"})
+	@Deployment(resources = {"subprocess/SDNCAdapterV1.bpmn",
+			"subprocess/GenericNotificationService.bpmn"
+			})
 	public void sunnyDay() throws InterruptedException {
 
 		mockSDNCAdapter(200);
@@ -134,7 +136,9 @@ public class SDNCAdapterV1Test extends WorkflowTest {
 	}
 
 	@Test
-	@Deployment(resources = {"subprocess/SDNCAdapterV1.bpmn"})
+	@Deployment(resources = {"subprocess/SDNCAdapterV1.bpmn",
+			"subprocess/GenericNotificationService.bpmn"
+			})
 	public void nonFinalWithTimeout() throws InterruptedException {
 
 		mockSDNCAdapter(200);
@@ -175,7 +179,9 @@ public class SDNCAdapterV1Test extends WorkflowTest {
 	}
 
 	@Test
-	@Deployment(resources = {"subprocess/SDNCAdapterV1.bpmn"})
+	@Deployment(resources = {"subprocess/SDNCAdapterV1.bpmn",
+			"subprocess/GenericNotificationService.bpmn"
+			})
 	public void nonFinalThenFinal() throws InterruptedException {
 
 		mockSDNCAdapter(200);
@@ -232,7 +238,9 @@ public class SDNCAdapterV1Test extends WorkflowTest {
 	}
 
 	@Test
-	@Deployment(resources = {"subprocess/SDNCAdapterV1.bpmn"})
+	@Deployment(resources = {"subprocess/SDNCAdapterV1.bpmn",
+			"subprocess/GenericNotificationService.bpmn"
+			})
 	public void badCorrelationIdTest() throws InterruptedException {
 
 		mockSDNCAdapter(200);
@@ -260,14 +268,16 @@ public class SDNCAdapterV1Test extends WorkflowTest {
 		//System.out.println("Back from executing process again");
 
 		assertTrue(sdncAdapterResponse instanceof SDNCAdapterExceptionResponse);
-		assertTrue(((SDNCAdapterExceptionResponse) sdncAdapterResponse).getException() instanceof MismatchingMessageCorrelationException);
+		assertTrue(((SDNCAdapterExceptionResponse) sdncAdapterResponse).getException() instanceof IllegalStateException);
 		assertProcessInstanceNotFinished(pid);
 
 		//System.out.println("SDNCAdapter bad RequestId test Completed!");
 	}
 
 	@Test
-	@Deployment(resources = {"subprocess/SDNCAdapterV1.bpmn"})
+	@Deployment(resources = {"subprocess/SDNCAdapterV1.bpmn",
+			"subprocess/GenericNotificationService.bpmn"
+			})
 	public void badSynchronousResponse() throws IOException, InterruptedException {
 
 		mockSDNCAdapter(404);
@@ -287,7 +297,9 @@ public class SDNCAdapterV1Test extends WorkflowTest {
 	}
 
 	@Test
-	@Deployment(resources = {"subprocess/SDNCAdapterV1.bpmn"})
+	@Deployment(resources = {"subprocess/SDNCAdapterV1.bpmn",
+			"subprocess/GenericNotificationService.bpmn"
+			})
 	public void sdncNotFound() throws IOException, InterruptedException {
 		mockSDNCAdapter(200);
 		mockSDNCAdapter("/sdncAdapterMock/404", 400, "sdncCallbackErrorResponse.xml");
@@ -302,7 +314,7 @@ public class SDNCAdapterV1Test extends WorkflowTest {
 		CallbackHeader callbackHeader = new CallbackHeader();
 		callbackHeader.setRequestId(generatedRequestId);
 		callbackHeader.setResponseCode("404");
-		callbackHeader.setResponseMessage("Error processing request to SDNC. Not Found. https://sdncodl.it.us.aic.cip.att.com:8443/restconf/config/L3SDN-API:services/layer3-service-list/AS%2FVLXM%2F000199%2F%2FSB_INTERNET. SDNC Returned-[error-type:application, error-tag:data-missing, error-message:Request could not be completed because the relevant data model content does not exist.]");
+		callbackHeader.setResponseMessage("Error processing request to SDNC. Not Found. https://sdncodl.it.us.aic.cip.com:8443/restconf/config/L3SDN-API:services/layer3-service-list/AS%2FVLXM%2F000199%2F%2FSB_INTERNET. SDNC Returned-[error-type:application, error-tag:data-missing, error-message:Request could not be completed because the relevant data model content does not exist.]");
 		SDNCAdapterCallbackRequest sdncAdapterCallbackRequest = new SDNCAdapterCallbackRequest();
 		sdncAdapterCallbackRequest.setCallbackHeader(callbackHeader);
 		SDNCAdapterCallbackServiceImpl callbackService = new SDNCAdapterCallbackServiceImpl();
@@ -317,7 +329,9 @@ public class SDNCAdapterV1Test extends WorkflowTest {
 	}
 
 	@Test
-	@Deployment(resources = {"subprocess/SDNCAdapterV1.bpmn"})
+	@Deployment(resources = {"subprocess/SDNCAdapterV1.bpmn",
+			"subprocess/GenericNotificationService.bpmn"
+			})
 	public void asynchronousMessageTimeout() throws IOException, InterruptedException {
 		mockSDNCAdapter(200);
 		//System.out.println("SDNCAdapter asynchronous message timeout flow Started!");

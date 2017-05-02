@@ -43,7 +43,7 @@ public class SDNCAdapterTest {
 	public void init()
 	{
 		MockitoAnnotations.initMocks(this)
-		System.setProperty("jboss.qualified.host.name","myhost.att.com")
+		System.setProperty("jboss.qualified.host.name","myhost.com")
 	}
 
 	
@@ -341,13 +341,13 @@ public class SDNCAdapterTest {
 							&lt;request-action&gt;Layer3ServiceActivateRequest&lt;/request-action&gt;
 							&lt;order-number&gt;4281555&lt;/order-number&gt;
 							&lt;request-id&gt;155415ab-b4a7-4382-b4c6-d17d9sm42855&lt;/request-id&gt;
-							&lt;notification-url&gt;https://csi-tst-q22.it.att.com:22443/Services/com/cingular/csi/sdn/SendManagedNetworkStatusNotification.jws&lt;/notification-url&gt;
+							&lt;notification-url&gt;https://csi-tst-q22.it.com:22443/Services/com/cingular/csi/sdn/SendManagedNetworkStatusNotification.jws&lt;/notification-url&gt;
 							&lt;source&gt;OMX&lt;/source&gt;
 							&lt;order-version&gt;1&lt;/order-version&gt;
 						&lt;/request-information&gt;
 						&lt;sdnc-request-header&gt;
 							&lt;svc-action&gt;activate&lt;/svc-action&gt;
-							&lt;svc-notification-url&gt;https://msojra.mtsnjdcp1.aic.cip.att.com:8443/adapters/rest/SDNCNotify&lt;/svc-notification-url&gt;
+							&lt;svc-notification-url&gt;https://msojra.mtsnjdcp1.aic.cip.com:8443/adapters/rest/SDNCNotify&lt;/svc-notification-url&gt;
 							&lt;svc-request-id&gt;5b1f3c5d-cdf9-488d-8a4b-d3f1229d7760&lt;/svc-request-id&gt;
 						&lt;/sdnc-request-header&gt;
 						&lt;l2-homing-information&gt;
@@ -402,7 +402,7 @@ public class SDNCAdapterTest {
 			<sdncadapter:RequestId>745b1b50-e39e-4685-9cc8-c71f0bde8bf0</sdncadapter:RequestId>
 			<sdncadapter:SvcAction>query</sdncadapter:SvcAction>
 			<sdncadapter:SvcOperation>services/layer3-service-list/AS%2FVLXM%2F000199%2F%2FSB_INTERNET</sdncadapter:SvcOperation>
-			<sdncadapter:CallbackUrl>http://myhost.att.com:28080/mso/sdncAdapterCallbackServiceImpl</sdncadapter:CallbackUrl>
+			<sdncadapter:CallbackUrl>http://myhost.com:28080/mso/sdncAdapterCallbackServiceImpl</sdncadapter:CallbackUrl>
 			</sdncadapter:RequestHeader>
 			<sdncadaptersc:RequestData><rest:payload xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd"
               contentType="text/xml">
@@ -425,7 +425,7 @@ def sdncAdapterResponse = """<sdncadapterworkflow:SDNCAdapterWorkflowResponse xm
    <tag0:RequestId>39542e39-ccc3-4d1a-8b79-04ce88526613</tag0:RequestId>
    <tag0:ResponseCode>404</tag0:ResponseCode>
    <tag0:ResponseMessage>Error processing request to SDNC. Not Found.
-			https://sdncodl.us.aic.cip.att.com:8443/restconf/config/L3SDN-API:services/layer3-service-list/MVM%2FVLXP%2F000855%2F%2FShakeout.
+			https://sdncodl.us.aic.cip.com:8443/restconf/config/L3SDN-API:services/layer3-service-list/MVM%2FVLXP%2F000855%2F%2FShakeout.
 			SDNC Returned-[error-type:application, error-tag:data-missing,
 			error-message:Request could not be completed because the relevant
 			data model content does not exist.]</tag0:ResponseMessage>
@@ -436,7 +436,7 @@ def sdncAdapterResponse = """<sdncadapterworkflow:SDNCAdapterWorkflowResponse xm
 
 def workflowErrorResponse = """<aetgt:WorkflowException xmlns:aetgt="http://org.openecomp/mso/workflow/schema/v1">
 								<aetgt:ErrorMessage>Received error from SDN-C: Error processing request to SDNC. Not Found.
-			https://sdncodl.us.aic.cip.att.com:8443/restconf/config/L3SDN-API:services/layer3-service-list/MVM%2FVLXP%2F000855%2F%2FShakeout.
+			https://sdncodl.us.aic.cip.com:8443/restconf/config/L3SDN-API:services/layer3-service-list/MVM%2FVLXP%2F000855%2F%2FShakeout.
 			SDNC Returned-[error-type:application, error-tag:data-missing,
 			error-message:Request could not be completed because the relevant
 			data model content does not exist.]</aetgt:ErrorMessage>
@@ -737,13 +737,13 @@ def     enhancedCallbackRequestData =
 							<request-action>Layer3ServiceActivateRequest</request-action>
 							<order-number>4281555</order-number>
 							<request-id>155415ab-b4a7-4382-b4c6-d17d9sm42855</request-id>
-							<notification-url>https://csi-tst-q22.it.att.com:22443/Services/com/cingular/csi/sdn/SendManagedNetworkStatusNotification.jws</notification-url>
+							<notification-url>https://csi-tst-q22.it.com:22443/Services/com/cingular/csi/sdn/SendManagedNetworkStatusNotification.jws</notification-url>
 							<source>OMX</source>
 							<order-version>1</order-version>
 						</request-information>
 						<sdnc-request-header>
 							<svc-action>activate</svc-action>
-							<svc-notification-url>https://msojra.mtsnjdcp1.aic.cip.att.com:8443/adapters/rest/SDNCNotify</svc-notification-url>
+							<svc-notification-url>https://msojra.mtsnjdcp1.aic.cip.com:8443/adapters/rest/SDNCNotify</svc-notification-url>
 							<svc-request-id>5b1f3c5d-cdf9-488d-8a4b-d3f1229d7760</svc-request-id>
 						</sdnc-request-header>
 						<l2-homing-information>
@@ -802,7 +802,7 @@ def sdncAdapterResponseError =
          <tag0:RequestId>39542e39-ccc3-4d1a-8b79-04ce88526613</tag0:RequestId>
          <tag0:ResponseCode>404</tag0:ResponseCode>
          <tag0:ResponseMessage>Error processing request to SDNC. Not Found.
-			https://sdncodl.us.aic.cip.att.com:8443/restconf/config/L3SDN-API:services/layer3-service-list/MVM%2FVLXP%2F000855%2F%2FShakeout.
+			https://sdncodl.us.aic.cip.com:8443/restconf/config/L3SDN-API:services/layer3-service-list/MVM%2FVLXP%2F000855%2F%2FShakeout.
 			SDNC Returned-[error-type:application, error-tag:data-missing,
 			error-message:Request could not be completed because the relevant
 			data model content does not exist.]</tag0:ResponseMessage>
@@ -909,7 +909,7 @@ def sdncAdapterResponseError =
 		<RequestId>3bb02798-b344-4d28-9bca-1f029954d1c9</RequestId>
 		<ResponseCode>404</ResponseCode>
 		<ResponseMessage>Error processing request to SDNC. Not Found.
-			https://sdncodl.us.infra.aic.att.net:8443/restconf/config/L3SDN-API:services/layer3-service-list/85%2FCSIP%2F141203%2FPT_CSI9999998693.
+			https://sdncodl.us.infra.aic.net:8443/restconf/config/L3SDN-API:services/layer3-service-list/85%2FCSIP%2F141203%2FPT_CSI9999998693.
 			SDNC Returned-[error-type:application, error-tag:data-missing,
 			error-message:Request could not be completed because the relevant
 			data model content does not exist ]</ResponseMessage>
@@ -924,7 +924,7 @@ def sdncAdapterResponseError =
          <tag0:RequestId>3bb02798-b344-4d28-9bca-1f029954d1c9</tag0:RequestId>
          <tag0:ResponseCode>404</tag0:ResponseCode>
          <tag0:ResponseMessage>Error processing request to SDNC. Not Found.
-			https://sdncodl.us.infra.aic.att.net:8443/restconf/config/L3SDN-API:services/layer3-service-list/85%2FCSIP%2F141203%2FPT_CSI9999998693.
+			https://sdncodl.us.infra.aic.net:8443/restconf/config/L3SDN-API:services/layer3-service-list/85%2FCSIP%2F141203%2FPT_CSI9999998693.
 			SDNC Returned-[error-type:application, error-tag:data-missing,
 			error-message:Request could not be completed because the relevant
 			data model content does not exist ]</tag0:ResponseMessage>

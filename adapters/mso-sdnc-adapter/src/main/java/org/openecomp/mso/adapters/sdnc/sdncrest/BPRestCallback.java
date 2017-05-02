@@ -35,7 +35,7 @@ import org.apache.http.util.EntityUtils;
 import javax.xml.bind.DatatypeConverter;
 
 /**
- * Sends asynchronous messages to the BPMN workflow message service.
+ * Sends asynchronous messages to the BPMN WorkflowMessage service.
  */
 public class BPRestCallback {
 	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);

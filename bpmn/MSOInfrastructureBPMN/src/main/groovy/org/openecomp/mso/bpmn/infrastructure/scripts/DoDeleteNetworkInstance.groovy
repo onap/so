@@ -179,7 +179,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 			// lcpCloudRegion or tenantId not sent, will be extracted from query AA&I
 			def lcpCloudRegion = null
 			if (utils.nodeExists(networkInputs, "aic-cloud-region")) {
-				lcpCloudRegion = utils.getNodeText(networkInputs, "aic-cloud-region")
+				lcpCloudRegion = utils.getNodeText1(networkInputs, "aic-cloud-region")
 				if (lcpCloudRegion == 'null') {
 					lcpCloudRegion = null
 				}
@@ -245,7 +245,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 		String aai_endpoint = execution.getVariable("URN_aai_endpoint")
 		AaiUtil aaiUriUtil = new AaiUtil(this)
 		String aai_uri = aaiUriUtil.getNetworkL3NetworkUri(execution)
-		String queryAAIRequest = "${aai_endpoint}${aai_uri}/" + networkId
+		String queryAAIRequest = "${aai_endpoint}${aai_uri}/" + networkId + "?depth=1"
 		utils.logAudit(queryAAIRequest)
 		execution.setVariable(Prefix + "queryAAIRequest", queryAAIRequest)
 		utils.log("DEBUG", Prefix + "AAIRequest - " + "\n" + queryAAIRequest, isDebugEnabled)
@@ -388,7 +388,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 		ExceptionUtil exceptionUtil = new ExceptionUtil()
 		try {
 			// get variables
-			String networkInputs = execution.getVariable(Prefix + "networkInputs")
+			String networkRequest = execution.getVariable(Prefix + "networkRequest")
 			String cloudSiteId = execution.getVariable(Prefix + "cloudRegionPo")
 			String tenantId = execution.getVariable(Prefix + "tenantId")
 
@@ -399,11 +399,16 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 			
 			String networkStackId = ""
 			networkStackId = utils.getNodeText1(queryAAIResponse, "heat-stack-id")
-			if (networkStackId == 'null' || networkStackId == "") {
+			if (networkStackId == 'null' || networkStackId == "" || networkStackId == null) {
 				networkStackId = "force_delete"
 			}
 
-			String requestId = execution.getVariable(Prefix + "requestId")
+			String requestId = execution.getVariable("msoRequestId")
+			if (requestId != null) {
+				execution.setVariable("mso-request-id", requestId)
+			} else {
+				requestId = execution.getVariable("mso-request-id")
+			}
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
 
 			// Added new Elements
@@ -411,6 +416,12 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 			String notificationUrl = ""                                   //TODO - is this coming from URN? What variable/value to use?
 			//String notificationUrl = execution.getVariable("URN_?????") //TODO - is this coming from URN? What variable/value to use?
 
+			String modelCustomizationUuid = ""			
+			if (utils.nodeExists(networkRequest, "networkModelInfo")) {
+				String networkModelInfo = utils.getNodeXml(networkRequest, "networkModelInfo", false).replace("tag0:","").replace(":tag0","")
+				modelCustomizationUuid = utils.getNodeText1(networkModelInfo, "modelCustomizationUuid")
+			}
+			
 			String deleteNetworkRequest = """
 					  <deleteNetworkRequest>
 					    <cloudSiteId>${cloudSiteId}</cloudSiteId>
@@ -418,6 +429,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 					    <networkId>${networkId}</networkId>
 						<networkStackId>${networkStackId}</networkStackId>
 					    <networkType>${networkType}</networkType>
+						<modelCustomizationUuid>${modelCustomizationUuid}</modelCustomizationUuid>
 						<skipAAI>true</skipAAI>
 					    <msoRequest>
 					       <requestId>${requestId}</requestId>
@@ -517,6 +529,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 			} 	
 			execution.setVariable(Prefix + "requestId", requestId)
 			
+			utils.log("DEBUG", Prefix + "requestId " + requestId, isDebugEnabled)
 			String queryAAIResponse = execution.getVariable(Prefix + "queryAAIResponse")
 			
 			SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils()
@@ -847,8 +860,14 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 			       if (execution.getVariable(Prefix + "WorkflowException") != null) {
 				      WorkflowException pwfex = execution.getVariable(Prefix + "WorkflowException")
 				      exceptionMessage = pwfex.getErrorMessage()
-			       }   
+			       } else {
+				      if (execution.getVariable("WorkflowException") != null) {
+					     WorkflowException pwfex = execution.getVariable("WorkflowException")
+					     exceptionMessage = pwfex.getErrorMessage()
+					  }
+			       }
    				}
+				   
 				// going to the Main flow: a-la-carte or macro
 				utils.log("DEBUG", " ***** postProcessResponse(), BAD !!!", isDebugEnabled)
 				exceptionUtil.buildWorkflowException(execution, 7000, exceptionMessage)

@@ -48,6 +48,7 @@ public class VfModule extends MavenLikeVersioning {
 	private Integer maxInstances;
 	private Integer initialCount;
 	private String label;
+	private String modelUuid;
 
     public VfModule() {
 		super();
@@ -189,6 +190,23 @@ public class VfModule extends MavenLikeVersioning {
 	}
 	public void setLabel(String label) {
 		this.label = label;
+	}
+
+	// Will be fixed pending finalizing of 1707 catalog db schema changes
+	public void setModelUuid(String modelUuid) {
+		this.modelUuid = modelUuid;
+	}
+	public String getModelUuid() {
+		return this.modelUuid;
+	}
+	public String getModelInvariantId() {
+		return this.modelInvariantUuid;
+	}
+	public String getVfModuleType() {
+		return this.type;
+	}
+	public String getVfModuleLabel() {
+		return this.label;
 	}
 
 	@Override

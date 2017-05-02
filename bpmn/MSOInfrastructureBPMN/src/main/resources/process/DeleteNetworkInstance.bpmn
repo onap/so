@@ -121,6 +121,7 @@ DeleteNetworkInstance.prepareDBRequestError(execution)]]></bpmn2:script>
               <camunda:inputParameter name="headers">
                 <camunda:map>
                   <camunda:entry key="content-type">application/soap+xml</camunda:entry>
+                  <camunda:entry key="Authorization">#{BasicAuthHeaderValueDB}</camunda:entry>
                 </camunda:map>
               </camunda:inputParameter>
               <camunda:inputParameter name="method">POST</camunda:inputParameter>

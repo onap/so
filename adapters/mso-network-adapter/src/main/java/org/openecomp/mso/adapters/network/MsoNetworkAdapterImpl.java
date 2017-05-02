@@ -117,6 +117,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     public void createNetwork (String cloudSiteId,
                                String tenantId,
                                String networkType,
+                               String modelCustomizationUuid,
                                String networkName,
                                String physicalNetworkName,
                                List <Integer> vlans,
@@ -132,6 +133,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         createNetwork (cloudSiteId,
                        tenantId,
                        networkType,
+                       modelCustomizationUuid,
                        networkName,
                        physicalNetworkName,
                        vlans,
@@ -155,6 +157,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     public void createNetworkContrail (String cloudSiteId,
                                        String tenantId,
                                        String networkType,
+                                       String modelCustomizationUuid,
                                        String networkName,
                                        List <String> routeTargets,
                                        String shared,
@@ -173,6 +176,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         createNetwork (cloudSiteId,
                        tenantId,
                        networkType,
+                       modelCustomizationUuid,
                        networkName,
                        null,
                        null,
@@ -224,6 +228,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     private void createNetwork (String cloudSiteId,
                                String tenantId,
                                String networkType,
+                               String modelCustomizationUuid,
                                String networkName,
                                String physicalNetworkName,
                                List <Integer> vlans,
@@ -260,6 +265,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         networkRollback.setCloudId (cloudSiteId);
         networkRollback.setTenantId (tenantId);
         networkRollback.setMsoRequest (msoRequest);
+        networkRollback.setModelCustomizationUuid(modelCustomizationUuid);
 
         // tenant query is not required here.
         // If the tenant doesn’t exist, the Heat calls will fail anyway (when the HeatUtils try to obtain a token).
@@ -289,6 +295,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             NetworkResource networkResource = networkCheck (db,
                                                             startTime,
                                                             networkType,
+                                                            modelCustomizationUuid,
                                                             networkName,
                                                             physicalNetworkName,
                                                             vlans,
@@ -661,6 +668,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     public void updateNetwork (String cloudSiteId,
                                String tenantId,
                                String networkType,
+                               String modelCustomizationUuid,
                                String networkId,
                                String networkName,
                                String physicalNetworkName,
@@ -672,6 +680,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         updateNetwork (cloudSiteId,
                        tenantId,
                        networkType,
+                       modelCustomizationUuid,
                        networkId,
                        networkName,
                        physicalNetworkName,
@@ -692,6 +701,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     public void updateNetworkContrail (String cloudSiteId,
                                        String tenantId,
                                        String networkType,
+                                       String modelCustomizationUuid,
                                        String networkId,
                                        String networkName,
                                        List <String> routeTargets,
@@ -706,6 +716,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         updateNetwork (cloudSiteId,
                        tenantId,
                        networkType,
+                       modelCustomizationUuid,
                        networkId,
                        networkName,
                        null,
@@ -750,6 +761,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     private void updateNetwork (String cloudSiteId,
                                String tenantId,
                                String networkType,
+                               String modelCustomizationUuid,
                                String networkId,
                                String networkName,
                                String physicalNetworkName,
@@ -806,6 +818,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             NetworkResource networkResource = networkCheck(db,
                     startTime,
                     networkType,
+                    modelCustomizationUuid,
                     networkName,
                     physicalNetworkName,
                     vlans,
@@ -1116,16 +1129,24 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     private NetworkResource networkCheck (CatalogDatabase db,
                                           long startTime,
                                           String networkType,
+                                          String modelCustomizationUuid,
                                           String networkName,
                                           String physicalNetworkName,
                                           List <Integer> vlans,
                                           List <String> routeTargets,
                                           CloudSite cloudSite) throws NetworkException {
         // Retrieve the Network Resource definition
-        NetworkResource networkResource = db.getNetworkResource (networkType);
+        NetworkResource networkResource = null;
+        if (isNullOrEmpty(modelCustomizationUuid)) {
+            networkResource = db.getNetworkResource (networkType);
+        }
+        else
+        {
+            networkResource = db.getNetworkResourceByModelCustUuid(modelCustomizationUuid);
+        }
         if (networkResource == null) {
-            String error = "CreateNetwork: Unknown Network Type: " + networkType;
-            LOGGER.error (MessageEnum.RA_UNKOWN_PARAM, "Network Type", networkType, "OpenStack", "", MsoLogger.ErrorCode.DataError, "CreateNetwork: Unknown Network Type");
+            String error = "Create/UpdateNetwork: Unable to get network resource with NetworkType:" + networkType + " or ModelCustomizationUUID:" + modelCustomizationUuid ;
+            LOGGER.error (MessageEnum.RA_UNKOWN_PARAM, "NetworkType/ModelCustomizationUUID", networkType + "/" + modelCustomizationUuid,  "OpenStack", "", MsoLogger.ErrorCode.DataError, "Create/UpdateNetwork: Unknown NetworkType/ModelCustomizationUUID");
 
             throw new NetworkException (error, MsoExceptionCategory.USERDATA);
         }
@@ -1424,6 +1445,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     public void deleteNetwork (String cloudSiteId,
                                String tenantId,
                                String networkType,
+                               String modelCustomizationUuid,
                                String networkId,
                                MsoRequest msoRequest,
                                Holder <Boolean> networkDeleted) throws NetworkException {
@@ -1453,7 +1475,14 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             }
 
             // Retrieve the Network Resource definition
-            NetworkResource networkResource = db.getNetworkResource (networkType);
+            NetworkResource networkResource = null;
+            if (isNullOrEmpty(modelCustomizationUuid)) {
+                networkResource = db.getNetworkResource (networkType);
+            }
+            else if (!isNullOrEmpty(networkType))
+            {
+                networkResource = db.getNetworkResourceByModelCustUuid(modelCustomizationUuid);
+            }
             String mode = "";
             if (networkResource != null) {
                 LOGGER.debug ("Got Network definition from Catalog: " + networkResource.toString ());
@@ -1562,6 +1591,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         String tenantId = rollback.getTenantId ();
         String networkId = rollback.getNetworkStackId ();
         String networkType = rollback.getNetworkType ();
+        String modelCustomizationUuid = rollback.getModelCustomizationUuid();
 
         LOGGER.debug ("*** ROLLBACK Network " + networkId + " in " + cloudSiteId + "/" + tenantId);
 
@@ -1573,7 +1603,14 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         try {
 
             // Retrieve the Network Resource definition
-            NetworkResource networkResource = db.getNetworkResource (networkType);
+            NetworkResource networkResource = null;
+            if (isNullOrEmpty(modelCustomizationUuid)) {
+                networkResource = db.getNetworkResource (networkType);
+            }
+            else
+            {
+                networkResource = db.getNetworkResourceByModelCustUuid(modelCustomizationUuid);
+            }
             String mode = "";
             if (networkResource != null) {
 

@@ -58,16 +58,19 @@ import org.springframework.web.util.UriUtils
  * and "Success where Vnf is NOT found".
  *
  *
- * Incoming Required Variables:
- * @param - GENGV_vnfId  or  @param - GENGV_vnfName
- * @param - GENGV_type
+ * Variable Mapping Below
+ *
+ * In Mapping Variables:
+ *   @param - GENGV_vnfId  or  @param - GENGV_vnfName
+ *   @param - GENGV_type
+ *
+ * Out Mapping Variables:
+ *   @param - GENGV_vnf
+ *   @param - GENGV_SuccessIndicator
+ *   @param - GENGV_FoundIndicator
+ *   @param - WorkflowException
  *
  *
- * Outgoing Variables:
- * @param - GENGV_vnf
- * @param - GENGV_SuccessIndicator
- * @param - GENGV_FoundIndicator
- * @param - WorkflowException
  */
 class GenericGetVnf extends AbstractServiceTaskProcessor{
 

@@ -70,12 +70,6 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.openecomp.mso.adapters</groupId>
-			<artifactId>mso-adapters-rest-interface</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
-		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-jaxrs</artifactId>
 			<version>3.0.19.Final</version>
@@ -96,10 +90,15 @@
 			</exclusions>
 		</dependency>
 		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-jackson-provider</artifactId>
+			<version>3.0.16.Final</version>
+		</dependency>
+		<!--<dependency>
 			<groupId>org.openecomp.mso</groupId>
 			<artifactId>status-control</artifactId>
 			<version>${project.version}</version>
-		</dependency>
+		</dependency>-->
 	</dependencies>
 
 </project>

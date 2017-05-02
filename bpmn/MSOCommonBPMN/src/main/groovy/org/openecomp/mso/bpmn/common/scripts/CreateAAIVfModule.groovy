@@ -29,7 +29,7 @@ import org.springframework.web.util.UriUtils
 public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 	
 	def Prefix="CAAIVfMod_"
-	
+	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	public void initProcessVariables(Execution execution) {
 		execution.setVariable("prefix",Prefix)
 		execution.setVariable("CAAIVfMod_vnfId",null)
@@ -201,10 +201,9 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 			utils.log("DEBUG", "Response code:" + statusCode, isDebugEnabled)
 			utils.log("DEBUG", "Response:" + System.lineSeparator()+responseData,isDebugEnabled)
 		} catch (Exception ex) {
-			ex.printStackTrace()
 			utils.log("DEBUG", "Exception occurred while executing AAI GET:" + ex.getMessage(),isDebugEnabled)
-			execution.setVariable("CAAIVfMod_queryGenericVnfResponseCode", 500)
-			execution.setVariable("CAAIVfMod_queryGenericVnfResponse", "AAI GET Failed:" + ex.getMessage())
+			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, "Internal Error - Occured in queryAAIForGenericVnf.")
+
 		}
 	}
 	
@@ -283,9 +282,8 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 		} catch (Exception ex) {
 			ex.printStackTrace()
 			utils.log("DEBUG", "Exception occurred while executing AAI PUT:" + ex.getMessage(),isDebugEnabled)
-			execution.setVariable("CAAIVfMod_createGenericVnfResponseCode", 500)
-			execution.setVariable("CAAIVfMod_createGenericVnfResponse", "AAI PUT Failed:" + ex.getMessage())
-		}		
+			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, "Internal Error - Occured in createGenericVnf.")
+		}
 	}
 
 	// construct and send a PUT request to A&AI to create a Base or Add-on VF Module
@@ -302,6 +300,15 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 		// need to append the existing Vnf Id or the one generated in createGenericVnf() to the url
 		endPoint = endPoint + UriUtils.encode(execution.getVariable("CAAIVfMod_vnfId"), "UTF-8") +
 			"/vf-modules/vf-module/" + newModuleId;
+		int moduleIndex = 0
+		if (!isBaseModule) {
+			def aaiVnfResponse = execution.getVariable("CAAIVfMod_queryGenericVnfResponse")
+			AaiUtil aaiUtil = new AaiUtil(this)
+			def personaModelId = execution.getVariable("CAAIVfMod_personaId")
+			moduleIndex = aaiUtil.getLowestUnusedVfModuleIndexFromAAIVnfResponse(execution, aaiVnfResponse, 
+				"persona-model-id", personaModelId)
+		}
+		def moduleIndexString = String.valueOf(moduleIndex)
 
 		// if we get to this point, we may be about to create the Vf Module,
 		// add rollback information about the Generic VNF for this base/add-on module
@@ -322,6 +329,7 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 								<persona-model-customization-id>${execution.getVariable("CAAIVfMod_modelCustomizationId")}</persona-model-customization-id>
 								<is-base-vf-module>${isBaseModule}</is-base-vf-module>
 								<orchestration-status>pending-create</orchestration-status>
+								<module-index>${moduleIndex}</module-index>
 								</vf-module>""" as String
 		execution.setVariable("CAAIVfMod_createVfModulePayload", payload)
 
@@ -358,6 +366,7 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 					responseOut = """<CreateAAIVfModuleResponse>
 											<vnf-id>${execution.getVariable("CAAIVfMod_vnfId")}</vnf-id>
 											<vf-module-id>${newModuleId}</vf-module-id>
+											<vf-module-index>${moduleIndexString}</vf-module-index>
 										</CreateAAIVfModuleResponse>""" as String
 				}
 				else {
@@ -365,6 +374,7 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 											<vnf-name>${execution.getVariable("CAAIVfMod_vnfNameFromAAI")}</vnf-name>
 											<vnf-id>${execution.getVariable("CAAIVfMod_vnfId")}</vnf-id>
 											<vf-module-id>${newModuleId}</vf-module-id>
+											<vf-module-index>${moduleIndexString}</vf-module-index>
 										</CreateAAIVfModuleResponse>""" as String
 				}
 				
@@ -373,11 +383,9 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 				utils.logAudit("CreateAAIVfModule Response /n " + responseOut)
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace()
 			utils.log("DEBUG", "Exception occurred while executing AAI PUT:" + ex.getMessage(),isDebugEnabled)
-			execution.setVariable("CAAIVfMod_createVfModuleResponseCode", 500)
-			execution.setVariable("CAAIVfMod_createVfModuleResponse", "AAI PUT Failed:" + ex.getMessage())
-		}				
+			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, "Internal Error - Occured in createVfModule.")
+		}
 	}
 	
 	// parses the output from the result from queryAAIForGenericVnf() to determine if the vf-module-name
@@ -478,10 +486,9 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 		utils.log("ERROR", "Error occurred attempting to query AAI, Response Code " +
 			execution.getVariable("CAAIVfMod_queryGenericVnfResponseCode") + ", Error Response " +
 			execution.getVariable("CAAIVfMod_queryGenericVnfResponse"), isDebugEnabled)
-		String processKey = getProcessKey(execution);
-		WorkflowException exception = new WorkflowException(processKey, 5000,
-			execution.getVariable("CAAIVfMod_queryGenericVnfResponse"))
-		execution.setVariable("WorkflowException", exception)
+		int code = execution.getVariable("CAAIVfMod_queryGenericVnfResponseCode")
+		exceptionUtil.buildAndThrowWorkflowException(execution, code, "Error occurred attempting to query AAI")
+
 	}
 	
 	// generates a WorkflowException if
@@ -535,9 +542,7 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 		}
 
 		utils.log("ERROR", "Error occurred during CreateAAIVfModule flow: " + errorResponse, isDebugEnabled)
-		String processKey = getProcessKey(execution);
-		WorkflowException exception = new WorkflowException(processKey, errorCode, errorResponse)
-		execution.setVariable("WorkflowException", exception)
+		exceptionUtil.buildAndThrowWorkflowException(execution, errorCode, errorResponse)
 		utils.logAudit("Workflow exception occurred in CreateAAIVfModule: " + errorResponse)
 	}
 

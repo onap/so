@@ -1,4 +1,4 @@
-  <volume-group xmlns="http://com.att.aai.inventory/v6">
+  <volume-group xmlns="http://com.aai.inventory/v6">
          <volume-group-id>a8399879-31b3-4973-be26-0a0cbe776b58</volume-group-id>
          <volume-group-name>MoG_CinderVolumes_2</volume-group-name>
          <heat-stack-id>MoG_CinderVolumes_2/19387dc6-060f-446e-b41f-dcfd29c73845</heat-stack-id>
@@ -8,7 +8,7 @@
          <relationship-list>
             <relationship>
                <related-to>tenant</related-to>
-               <related-link>https://aai-app-e2e.test.att.com:8443/aai/v6/cloud-infrastructure/tenants/tenant/7dd5365547234ee8937416c65507d266/</related-link>
+               <related-link>https://aai-app-e2e.test.com:8443/aai/v6/cloud-infrastructure/tenants/tenant/7dd5365547234ee8937416c65507d266/</related-link>
                <relationship-data>
                   <relationship-key>tenant.tenant-id</relationship-key>
                   <relationship-value>83464847234ee8937416c65507d267</relationship-value>

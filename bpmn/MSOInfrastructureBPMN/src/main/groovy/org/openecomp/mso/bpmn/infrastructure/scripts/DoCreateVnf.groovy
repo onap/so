@@ -20,7 +20,7 @@
 package org.openecomp.mso.bpmn.infrastructure.scripts
 
 import static org.apache.commons.lang3.StringUtils.*
-
+import org.openecomp.mso.bpmn.core.RollbackData
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.runtime.Execution
 import org.openecomp.mso.bpmn.common.scripts.AaiUtil
@@ -44,6 +44,7 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
 	VidUtils vidUtils = new VidUtils(this)
+	SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
 
 	/**
 	 * This method gets and validates the incoming
@@ -56,18 +57,19 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		utils.log("DEBUG", " *** STARTED DoCreateVnf PreProcessRequest Process*** ", isDebugEnabled)
-
+	
 		// DISABLE SDNC INTERACTION FOR NOW
 		execution.setVariable("SDNCInteractionEnabled", false)
-
-
+		
+		
 		/*******************/
 		try{
 			// Get Variables
-
+			
 			String cloudConfiguration = execution.getVariable("cloudConfiguration")
-			String vnfModelInfo = execution.getVariable("vnfModelInfo")
-
+			String vnfModelInfo = execution.getVariable("vnfModelInfo")			
+			String serviceModelInfo = execution.getVariable("serviceModelInfo")
+			
 			String requestId = execution.getVariable("requestId")
 			execution.setVariable("DoCVNF_requestId", requestId)
 			execution.setVariable("mso-request-id", requestId)
@@ -96,11 +98,11 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 			String suppressRollback = execution.getVariable("disableRollback")
 			execution.setVariable("DoCVNF_suppressRollback", suppressRollback)
 			utils.log("DEBUG", "Incoming Suppress Rollback is: " + suppressRollback, isDebugEnabled)
-
+			
 			String modelInvariantId = jsonUtil.getJsonValue(vnfModelInfo, "modelInvariantId")
 			execution.setVariable("DoCVNF_modelInvariantId", modelInvariantId)
 			utils.log("DEBUG", "Incoming Invariant Id is: " + modelInvariantId, isDebugEnabled)
-
+			
 			String modelVersionId = jsonUtil.getJsonValue(vnfModelInfo, "modelVersionId")
 			if (modelVersionId == null) {
 				modelVersionId = ""
@@ -111,25 +113,39 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 			String modelVersion = jsonUtil.getJsonValue(vnfModelInfo, "modelVersion")
 			execution.setVariable("DoCVNF_modelVersion", modelVersion)
 			utils.log("DEBUG", "Incoming Model Version is: " + modelVersion, isDebugEnabled)
-
+			
 			String modelName = jsonUtil.getJsonValue(vnfModelInfo, "modelName")
 			execution.setVariable("DoCVNF_modelName", modelName)
 			utils.log("DEBUG", "Incoming Model Name is: " + modelName, isDebugEnabled)
-
+			
 			String modelCustomizationId = jsonUtil.getJsonValue(vnfModelInfo, "modelCustomizationId")
 			if (modelCustomizationId == null) {
 				modelCustomizationId = ""
 			}
 			execution.setVariable("DoCVNF_modelCustomizationId", modelCustomizationId)
 			utils.log("DEBUG", "Incoming Model Customization Id is: " + modelCustomizationId, isDebugEnabled)
-
+				
 			String cloudSiteId = jsonUtil.getJsonValue(cloudConfiguration, "lcpCloudRegionId")
 			execution.setVariable("DoCVNF_cloudSiteId", cloudSiteId)
 			utils.log("DEBUG", "Incoming Cloud Site Id is: " + cloudSiteId, isDebugEnabled)
-
+				
 			String tenantId = jsonUtil.getJsonValue(cloudConfiguration, "tenantId")
 			execution.setVariable("DoCVNF_tenantId", tenantId)
-			utils.log("DEBUG", "Incoming Tenant Id is: " + tenantId, isDebugEnabled)
+			utils.log("DEBUG", "Incoming Tenant Id is: " + tenantId, isDebugEnabled)			
+			
+			String globalSubscriberId = execution.getVariable("globalSubscriberId")
+			if (globalSubscriberId == null) {
+				globalSubscriberId = ""
+			}
+			execution.setVariable("DoCVNF_globalSubscriberId", globalSubscriberId)
+			utils.log("DEBUG", "Incoming Global Subscriber Id is: " + globalSubscriberId, isDebugEnabled)
+			
+			String sdncVersion = execution.getVariable("sdncVersion")
+			if (sdncVersion == null) {
+				sdncVersion = "1702"
+			}
+			execution.setVariable("DoCVNF_sdncVersion", sdncVersion)
+			utils.log("DEBUG", "Incoming Sdnc Version is: " + sdncVersion, isDebugEnabled)
 
 			//For Completion Handler & Fallout Handler
 			String requestInfo =
@@ -160,7 +176,7 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 			// Setting for Sub Flow Calls
 			execution.setVariable("DoCVNF_type", "generic-vnf")
 			execution.setVariable("GENGS_type", "service-instance")
-
+				
 			String sdncCallbackUrl = (String) execution.getVariable('URN_mso_workflow_sdncadapter_callback')
 			if (sdncCallbackUrl == null || sdncCallbackUrl.trim().isEmpty()) {
 				def msg = 'Required variable \'URN_mso_workflow_sdncadapter_callback\' is missing'
@@ -170,7 +186,14 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 			execution.setVariable("DoCVNF_sdncCallbackUrl", sdncCallbackUrl)
 			utils.logAudit("SDNC Callback URL: " + sdncCallbackUrl)
 			logDebug("SDNC Callback URL is: " + sdncCallbackUrl, isDebugEnabled)
-
+			
+			def rollbackData = execution.getVariable("RollbackData")
+			if (rollbackData == null) {
+				rollbackData = new RollbackData()
+			}
+			
+			execution.setVariable("RollbackData", rollbackData)
+			
 		}catch(BpmnError b){
 			utils.log("DEBUG", "Rethrowing MSOWorkflowException", isDebugEnabled)
 			throw b
@@ -182,7 +205,7 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 		utils.log("DEBUG", "*** COMPLETED DoCreateVnf PreProcessRequest Process ***", isDebugEnabled)
 	}
 
-
+	
 	public void prepareCreateGenericVnf (Execution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
@@ -223,6 +246,7 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 				<vnf-name>${vnfName}</vnf-name>
 				<service-id>${serviceId}</service-id>
 				<vnf-type>${vnfType}</vnf-type>
+				<prov-status>PREPROV</prov-status>
 				<orchestration-status>${orchStatus}</orchestration-status>
 				<persona-model-id>${modelInvariantId}</persona-model-id>
 				<persona-model-version>${modelVersion}</persona-model-version>
@@ -255,7 +279,26 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 		}
 		utils.log("DEBUG", "*** COMPLETED DoCreateVnf PrepareCreateGenericVnf Process ***", isDebugEnabled)
 	}
+	
+	public void postProcessCreateGenericVnf (Execution execution) {
+		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+		execution.setVariable("prefix",Prefix)
 
+		utils.log("DEBUG", " *** STARTED DoCreateVnf PostProcessCreateGenericVnf Process *** ", isDebugEnabled)
+		try {
+			//Get Vnf Info
+			String vnfId = execution.getVariable("DoCVNF_vnfId")
+			def rollbackData = execution.getVariable("RollbackData")
+			rollbackData.put("VNF", "vnfId", vnfId)
+			execution.setVariable("RollbackData", rollbackData)
+		}catch(Exception ex) {
+			utils.log("DEBUG", "Error Occured in DoCreateVnf PostProcessCreateGenericVnf Process " + ex.getMessage(), isDebugEnabled)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured in DoCreateVnf PostProcessCreateGenericVnf Process")
+		}
+		utils.log("DEBUG", "*** COMPLETED DoCreateVnf PostProcessCreateGenericVnf Process ***", isDebugEnabled)
+	}
+	
+	
 	public void preProcessSDNCAssignRequest(Execution execution){
 		def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
@@ -267,7 +310,7 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 
 		try{
 			//Build SDNC Request
-
+			
 			String assignSDNCRequest = buildSDNCRequest(execution, serviceInstanceId, "assign")
 
 			assignSDNCRequest = utils.formatXml(assignSDNCRequest)
@@ -277,11 +320,11 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 
 		}catch(Exception e){
 			utils.log("ERROR", "Exception Occured Processing preProcessSDNCAssignRequest. Exception is:\n" + e, isDebugLogEnabled)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during prepareProvision Method:\n" + e.getMessage())
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during preProcessSDNCAssignRequest Method:\n" + e.getMessage())
 		}
 		logDebug("======== COMPLETED preProcessSDNCAssignRequest ======== ", isDebugLogEnabled)
 	}
-
+	
 	public void preProcessSDNCActivateRequest(Execution execution) {
 		def method = getClass().getSimpleName() + '.preProcessSDNCActivateRequest(' +
 			'execution=' + execution.getId() +
@@ -306,9 +349,9 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 		}
 		logDebug("======== COMPLETED  preProcessSDNCActivateRequest Process ======== ", isDebugLogEnabled)
 	}
-
+	
 	public String buildSDNCRequest(Execution execution, String svcInstId, String action){
-
+		
 				String uuid = execution.getVariable('testReqId') // for junits
 				if(uuid==null){
 					uuid = execution.getVariable("mso-request-id") + "-" +  	System.currentTimeMillis()
@@ -321,20 +364,23 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 				def tenantId = execution.getVariable("DoCVNF_tenantId")
 				def source = execution.getVariable("DoCVNF_source")
 				def vnfId = execution.getVariable("DoCVNF_vnfId")
-				def cloudSiteId = execution.getVariable("DoCVNF_cloudSiteId")
-				def modelInvariantId = execution.getVariable("DoCVNF_modelInvariantId")
-				def modelVersionId = execution.getVariable("DoCVNF_modelVersionId")
-				def modelVersion = execution.getVariable("DoCVNF_modelVersion")
-				def modelName = execution.getVariable("DoCVNF_modelName")
-
+				def cloudSiteId = execution.getVariable("DoCVNF_cloudSiteId")				
+				def modelCustomizationId = execution.getVariable("DoCVNF_modelCustomizationId")
+				def serviceModelInfo = execution.getVariable("serviceModelInfo")
+				def vnfModelInfo = execution.getVariable("vnfModelInfo")
+				String serviceEcompModelInformation = sdncAdapterUtils.modelInfoToEcompModelInformation(serviceModelInfo)
+				String vnfEcompModelInformation = sdncAdapterUtils.modelInfoToEcompModelInformation(vnfModelInfo)				
+				def globalSubscriberId = execution.getVariable("DoCVNF_globalSubscriberId")
+				def sdncVersion = execution.getVariable("DoCVNF_sdncVersion")
+						
 				String sdncVNFParamsXml = ""
-
+		
 				if(execution.getVariable("DoCVNF_vnfParamsExistFlag") == true){
 					sdncVNFParamsXml = buildSDNCParamsXml(execution)
 				}else{
 					sdncVNFParamsXml = ""
 				}
-
+		
 				String sdncRequest =
 				"""<sdncadapterworkflow:SDNCAdapterWorkflowRequest xmlns:ns5="http://org.openecomp/mso/request/types/v1"
 													xmlns:sdncadapterworkflow="http://org.openecomp/mso/workflow/schema/v1"
@@ -345,11 +391,12 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 				<sdncadapter:SvcAction>${action}</sdncadapter:SvcAction>
 				<sdncadapter:SvcOperation>vnf-topology-operation</sdncadapter:SvcOperation>
 				<sdncadapter:CallbackUrl>${callbackURL}</sdncadapter:CallbackUrl>
+				<sdncadapter:MsoAction>generic-resource</sdncadapter:MsoAction>
 		</sdncadapter:RequestHeader>
 	<sdncadapterworkflow:SDNCRequestData>
 		<request-information>
 			<request-id>${requestId}</request-id>
-			<request-action>VNFActivateRequest</request-action>
+			<request-action>CreateVnfInstance</request-action>
 			<source>${source}</source>
 			<notification-url/>
 			<order-number/>
@@ -357,33 +404,30 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 		</request-information>
 		<service-information>
 			<service-id>${serviceId}</service-id>
-			<service-type>${serviceId}</service-type>
+			<subscription-service-type>${serviceId}</subscription-service-type>
+			${serviceEcompModelInformation}			
 			<service-instance-id>${svcInstId}</service-instance-id>
-			<subscriber-name>notsurewecare</subscriber-name>
+			<global-customer-id>${globalSubscriberId}</global-customer-id>			
 		</service-information>
 		<vnf-information>
 			<vnf-id>${vnfId}</vnf-id>
 			<vnf-type>${vnfType}</vnf-type>
-			<ecomp-model-information>
-					         <model-invariant-uuid>${modelInvariantId}</model-invariant-uuid>
-					         <model-uuid>${modelVersionId}</model-uuid>
-					         <model-version>${modelVersion}</model-version>
-					         <model-name>${modelName}</model-name>
-			</ecomp-model-information>
+			${vnfEcompModelInformation}			
 		</vnf-information>
-		<vnf-request-information>		
-			<vnf-name>${vnfName}</vnf-name>			
-			<aic-cloud-region>${cloudSiteId}</aic-cloud-region>
-			<tenant>${tenantId}</tenant>
-		${sdncVNFParamsXml}
-		</vnf-request-information>
+		<vnf-request-input>
+			<request-version>${sdncVersion}</request-version>
+			<vnf-name></vnf-name>
+			<tenant>${tenantId}</tenant>		
+			<aic-cloud-region>${cloudSiteId}</aic-cloud-region>			
+			${sdncVNFParamsXml}
+		</vnf-request-input>
 	</sdncadapterworkflow:SDNCRequestData>
 	</sdncadapterworkflow:SDNCAdapterWorkflowRequest>"""
-
+		
 			utils.logAudit("sdncRequest:  " + sdncRequest)
 			return sdncRequest
 	}
-
+		
 	public void validateSDNCResponse(Execution execution, String response, String method){
 		def isDebugLogEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
@@ -402,7 +446,7 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 		String sdncResponse = response
 		if(execution.getVariable(Prefix + 'sdncResponseSuccess') == true){
 			logDebug("Received a Good Response from SDNC Adapter for " + method + " SDNC Call.  Response is: \n" + sdncResponse, isDebugLogEnabled)
-
+			
 		}else{
 			logDebug("Received a BAD Response from SDNC Adapter for " + method + " SDNC Call.", isDebugLogEnabled)
 			throw new BpmnError("MSOWorkflowException")
@@ -410,5 +454,5 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 		logDebug(" *** COMPLETED ValidateSDNCResponse Process*** ", isDebugLogEnabled)
 	}
 
-
+	
 }

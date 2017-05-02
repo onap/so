@@ -118,13 +118,6 @@ class AaiUtil {
 		return uri
 	}
 
-	public String getCloudInfrastructureVolumeGroupUri(Execution execution) {
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		def uri = getUri(execution, 'volume_group')
-		taskProcessor.logDebug('AaiUtil.getCloudInfrastructureVolumeGroupUri() - AAI URI: ' + uri, isDebugLogEnabled)
-		return uri
-	}
-
 	public String getCloudInfrastructureTenantUri(Execution execution) {
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		def uri = getUri(execution, 'tenant')
@@ -293,6 +286,43 @@ class AaiUtil {
 			return e
 		}
 		taskProcessor.logDebug( "======== Completed Execute AAI Put Process ======== ", isDebugEnabled)
+	}
+	
+	/**
+	 * This reusable method can be used for making AAI httpPatch Calls. The url should
+	 * be passed as a parameter along with the execution and payload.  The method will
+	 * return an APIResponse.
+	 *
+	 * @param execution
+	 * @param url
+	 * @param payload
+	 *
+	 * @return APIResponse
+	 */
+	public APIResponse executeAAIPatchCall(Execution execution, String url, String payload){
+		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
+		taskProcessor.logDebug( " ======== Started Execute AAI Patch Process ======== ", isDebugEnabled)
+		try{
+			String uuid = UUID.randomUUID()
+			taskProcessor.logDebug( "Generated uuid is: " + uuid, isDebugEnabled)
+
+			taskProcessor.logDebug( "URL to be used is: " + url, isDebugEnabled)
+
+			String basicAuthCred = utils.getBasicAuth(execution.getVariable("URN_aai_auth"),execution.getVariable("URN_mso_msoKey"))
+			
+			RESTConfig config = new RESTConfig(url);
+			RESTClient client = new RESTClient(config).addHeader("X-FromAppId", "MSO").addHeader("X-TransactionId", uuid).addHeader("Content-Type", "application/merge-patch+json").addHeader("Accept","application/json");
+			if (basicAuthCred != null && !"".equals(basicAuthCred)) {
+				client.addAuthorizationHeader(basicAuthCred)
+			}
+			APIResponse apiResponse = client.httpPatch(payload)
+
+			return apiResponse
+		}catch(Exception e){
+			taskProcessor.utils.log("ERROR", "Exception occured while executing AAI Patch Call. Exception is: \n" + e, isDebugEnabled)
+			return e
+		}
+		taskProcessor.logDebug( "======== Completed Execute AAI Patch Process ======== ", isDebugEnabled)
 	}
 
 
@@ -480,4 +510,53 @@ class AaiUtil {
 		def ret = xmlInput.'**'.find {it.'service-instance-id' == searchValue}
 		return ret
 	}
+
+	
+	/**
+	 * Get the lowest unused VF Module index from AAI response for a given module type. The criteria for 
+	 * determining module type is specified by "key" parameter (for example, "persona-model-id"),
+	 * the value for filtering is specified in "value" parameter
+	 * 
+	 * @param execution
+	 * @param aaiVnfResponse
+	 * @param key
+	 * @param value
+	 *
+	 * @return moduleIndex
+	 * 
+	 */
+	public int getLowestUnusedVfModuleIndexFromAAIVnfResponse(Execution execution, String aaiVnfResponse, String key, String value) {
+		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
+		if (aaiVnfResponse != null) {
+			String vfModulesText = taskProcessor.utils.getNodeXml(aaiVnfResponse, "vf-modules")
+			if (vfModulesText == null || vfModulesText.isEmpty()) {
+				taskProcessor.utils.log("DEBUG", "There are no VF modules in this VNF yet", isDebugEnabled)
+				return 0				
+			}
+			else {
+				def xmlVfModules= new XmlSlurper().parseText(vfModulesText)
+				def vfModules = xmlVfModules.'**'.findAll {it.name() == "vf-module"}
+				int vfModulesSize = 0
+				if (vfModules != null) {
+					vfModulesSize = vfModules.size()
+				}
+				String matchingVfModules = "<vfModules>"
+				for (i in 0..vfModulesSize-1) {
+					def vfModuleXml = groovy.xml.XmlUtil.serialize(vfModules[i])
+					def keyFromAAI = taskProcessor.utils.getNodeText(vfModuleXml, key)
+					if (keyFromAAI != null && keyFromAAI.equals(value)) {
+						matchingVfModules = matchingVfModules + taskProcessor.utils.removeXmlPreamble(vfModuleXml)
+					}
+				}
+				matchingVfModules = matchingVfModules + "</vfModules>"				
+				taskProcessor.utils.log("DEBUG", "Matching VF Modules: " + matchingVfModules, isDebugEnabled)
+				String lowestUnusedIndex = taskProcessor.utils.getLowestUnusedIndex(matchingVfModules)
+				return Integer.parseInt(lowestUnusedIndex)
+			}			
+		}
+		else {
+			return 0
+		}
+	}
+
 }

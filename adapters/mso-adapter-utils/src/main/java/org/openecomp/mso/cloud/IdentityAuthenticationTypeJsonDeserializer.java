@@ -28,7 +28,6 @@ import org.codehaus.jackson.map.DeserializationContext;
 import org.codehaus.jackson.map.JsonDeserializer;
 import org.openecomp.mso.cloud.CloudIdentity.IdentityServerType;
 
-
 public class IdentityAuthenticationTypeJsonDeserializer extends JsonDeserializer<IdentityAuthenticationTypeAbstract> {
 
 	@Override

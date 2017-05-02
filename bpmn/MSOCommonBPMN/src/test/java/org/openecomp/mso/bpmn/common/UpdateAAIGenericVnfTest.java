@@ -24,6 +24,7 @@ import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetGenericVnfByIdW
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetGenericVnfById_404;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPutGenericVnf;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPutGenericVnf_Bad;
+import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPatchGenericVnf;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -54,6 +55,7 @@ public class UpdateAAIGenericVnfTest extends WorkflowTest {
 		String updateAAIGenericVnfRequest =	FileUtil.readResourceFile("__files/VfModularity/UpdateAAIGenericVnfRequest.xml"); 
 		MockGetGenericVnfByIdWithDepth("skask", 1, "VfModularity/GenericVnf.xml");
 		MockPutGenericVnf("/skask", 200);
+		MockPatchGenericVnf("skask");
 		
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<String, Object>();

@@ -28,8 +28,9 @@ import org.springframework.web.util.UriUtils
 
 
 public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
-
+	
 	private XmlParser xmlParser = new XmlParser()
+	ExceptionUtil exceptionUtil = new ExceptionUtil()
 
 	/**
 	 * Initialize the flow's variables.
@@ -48,7 +49,7 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 		execution.setVariable('UAAIGenVnf_updateGenericVnfResponseCode', null)
 		execution.setVariable('UAAIGenVnf_updateGenericVnfResponse', '')
 	}
-
+	
 	/**
 	 * Check for missing elements in the received request.
 	 *
@@ -74,31 +75,31 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 			if (personaModelId != null && !personaModelId.isEmpty()) {
 				execution.setVariable('UAAIGenVnf_personaModelId', personaModelId)
 			}
-			
+
 			def personaModelVersion = getNodeTextForce(xml,'persona-model-version')
 			if (personaModelVersion != null && !personaModelVersion.isEmpty()) {
 				execution.setVariable('UAAIGenVnf_personaModelVersion', personaModelVersion)
 			}
-			
+
 			def ipv4OamAddress = getNodeTextForce(xml, 'ipv4-oam-address')
 			if (ipv4OamAddress != null && !ipv4OamAddress.isEmpty()) {
 				execution.setVariable('UAAIGenVnf_ipv4OamAddress', ipv4OamAddress)
 			}
-			
+
 			def managementV6Address = getNodeTextForce(xml, 'management-v6-address')
 			if (managementV6Address != null && !managementV6Address.isEmpty()) {
 				execution.setVariable('UAAIGenVnf_managementV6Address', managementV6Address)
 			}
-			
+
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
-			createWorkflowException(execution, 1002, 'Error in preProcessRequest(): ' + e.getMessage())
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in preProcessRequest(): ' + e.getMessage())
 		}
 	}
-
+	
 	/**
 	 * Using the received vnfId, query AAI to get the corresponding Generic VNF.
 	 * A 200 response is expected with the VF Module in the response body.
@@ -124,7 +125,7 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 			try {
 				logDebug('sending GET to AAI endpoint \'' + endPoint + '\'', isDebugLogEnabled)
 				utils.logAudit("Sending GET to AAI endpoint: " + endPoint)
-				
+
 				APIResponse response = aaiUriUtil.executeAAIGetCall(execution, endPoint)
 				def responseData = response.getResponseBodyAsString()
 				execution.setVariable('UAAIGenVnf_getGenericVnfResponseCode', response.getStatusCode())
@@ -143,7 +144,7 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 			throw e;
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
-			createWorkflowException(execution, 1002, 'Error in getGenericVnf(): ' + e.getMessage())
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in getGenericVnf(): ' + e.getMessage())
 		}
 	}
 
@@ -163,7 +164,7 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 			def vnfId = execution.getVariable('UAAIGenVnf_vnfId')
 			def genericVnf = execution.getVariable('UAAIGenVnf_getGenericVnfResponse')
 			def origRequest = execution.getVariable('UpdateAAIGenericVnfRequest')
-			
+
 			utils.logAudit("UpdateGenericVnf Request: " + origRequest)
 			// Confirm resource-version is in retrieved Generic VNF
 			def Node genericVnfNode = xmlParser.parseText(genericVnf)
@@ -172,13 +173,14 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 				logError(msg)
 				throw new Exception(msg)
 			}
-			
+
 			// Handle persona-model-id/persona-model-version
-			
+
 			def String newPersonaModelId = execution.getVariable('UAAIGenVnf_personaModelId')
 			def String newPersonaModelVersion = execution.getVariable('UAAIGenVnf_personaModelVersion')
+			def String personaModelVersionEntry = ""
 			if (newPersonaModelId != null || newPersonaModelVersion != null) {
-			
+
 				// Confirm "new" persona-model-id is same as "current" persona-model-id
 				def Node currPersonaModelIdNode = utils.getChildNode(genericVnfNode, 'persona-model-id')
 				def String currPersonaModelId = ''
@@ -190,26 +192,34 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 					logError(msg)
 					throw new Exception(msg)
 				}
-			
+
 				// Construct payload
-				updateGenericVnfNode(origRequest, genericVnfNode, 'persona-model-version')
+				personaModelVersionEntry = updateGenericVnfNode(origRequest, genericVnfNode, 'persona-model-version')
 			}
-			
+
 			// Handle ipv4-oam-address
 			def String ipv4OamAddress = execution.getVariable('UAAIGenVnf_ipv4OamAddress')
+			def String ipv4OamAddressEntry = ""
 			if (ipv4OamAddress != null) {
 				// Construct payload
-				updateGenericVnfNode(origRequest, genericVnfNode, 'ipv4-oam-address')
+				ipv4OamAddressEntry = updateGenericVnfNode(origRequest, genericVnfNode, 'ipv4-oam-address')
 			}
-			
+
 			// Handle management-v6-address
 			def String managementV6Address = execution.getVariable('UAAIGenVnf_managementV6Address')
+			def String managementV6AddressEntry = ""
 			if (managementV6Address != null) {
 				// Construct payload
-				updateGenericVnfNode(origRequest, genericVnfNode, 'management-v6-address')
+				managementV6AddressEntry = updateGenericVnfNode(origRequest, genericVnfNode, 'management-v6-address')
 			}
-						
-			def payload = utils.nodeToString(genericVnfNode)
+
+			def payload = """
+					{	${personaModelVersionEntry}
+						${ipv4OamAddressEntry}
+						${managementV6AddressEntry}						
+						"vnf-id": "${vnfId}"					
+					}
+			"""
 
 			// Construct endpoint
 			AaiUtil aaiUriUtil = new AaiUtil(this)
@@ -218,10 +228,10 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 			String endPoint = execution.getVariable('URN_aai_endpoint') + aai_uri + '/' + UriUtils.encode(vnfId, "UTF-8")
 
 			try {
-				logDebug('sending PUT to AAI endpoint \'' + endPoint + '\'' + 'with payload \n' + payload, isDebugLogEnabled)
-				utils.logAudit("Sending PUT to AAI endpoint: " + endPoint)
-				
-				APIResponse response = aaiUriUtil.executeAAIPutCall(execution, endPoint, payload)
+				logDebug('sending PATCH to AAI endpoint \'' + endPoint + '\'' + 'with payload \n' + payload, isDebugLogEnabled)
+				utils.logAudit("Sending PATCH to AAI endpoint: " + endPoint)
+
+				APIResponse response = aaiUriUtil.executeAAIPatchCall(execution, endPoint, payload)
 				def responseData = response.getResponseBodyAsString()
 				execution.setVariable('UAAIGenVnf_updateGenericVnfResponseCode', response.getStatusCode())
 				execution.setVariable('UAAIGenVnf_updateGenericVnfResponse', responseData)
@@ -230,58 +240,41 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 				logDebug('Response:' + System.lineSeparator() + responseData, isDebugLogEnabled)
 			} catch (Exception ex) {
 				ex.printStackTrace()
-				logDebug('Exception occurred while executing AAI PUT:' + ex.getMessage(),isDebugLogEnabled)
+				logDebug('Exception occurred while executing AAI PATCH:' + ex.getMessage(),isDebugLogEnabled)
 				execution.setVariable('UAAIGenVnf_updateGenericVnfResponseCode', 500)
-				execution.setVariable('UAAIGenVnf_updateGenericVnfResponse', 'AAI PUT Failed:' + ex.getMessage())
+				execution.setVariable('UAAIGenVnf_updateGenericVnfResponse', 'AAI PATCH Failed:' + ex.getMessage())
 			}
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
-			createWorkflowException(execution, 1002, 'Error in updateGenericVnf(): ' + e.getMessage())
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in updateGenericVnf(): ' + e.getMessage())
 		}
 	}
 
 	/**
-	 * Insert a new Node, replace the value of an existing Node, or delete an existing Node in the current
-	 * Generic VNF Node, as necessary.
-	 *
-	 * If the Node with the same name already exists in current Generic VNF, but is not being updated, then do
-	 * nothing. If the element is being updated and it already exists in the current Generic VNF, then check
-	 * the value specified in the original request. If the value is 'DELETE', remove that Node from the
-	 * current Generic VNF.  Otherwise, change the value to the specified new value. If the element is
-	 * being updated but doesn't exist in the current Generic VNF, and the new value is not 'DELETE', then
-	 * create an appropriate new node and add it to the Generic VNF.
-	 *
+	 * Sets up json attributes for PATCH request for Update
+	 * 
 	 * @param origRequest Incoming update request with Generic VNF element(s) to be updated.
 	 * @param genericVnf Current Generic VNF retrieved from AAI.
 	 * @param element Name of element to be inserted.
 	 */
-	public void updateGenericVnfNode(String origRequest, Node genericVnfNode, String elementName) {
+	public String updateGenericVnfNode(String origRequest, Node genericVnfNode, String elementName) {
 
 		if (!utils.nodeExists(origRequest, elementName)) {
-			return
+			return ""
 		}
 		def elementValue = utils.getNodeText(origRequest, elementName)
 
-		def Node childNode = utils.getChildNode(genericVnfNode, elementName)
-		if (childNode == null) {
-			if (elementValue.equals('DELETE')) {
-				// Element doesn't exist but is being deleted, so do nothing
-				return
-			}
-			// Node doesn't exist, create a new Node as a child
-			new Node(genericVnfNode, elementName, elementValue)
-		} else {
-			if (elementValue.equals('DELETE')) {
-				// Node exists, but should be deleted
-				genericVnfNode.remove(childNode)
-			} else {
-				// Node already exists, just give it a new value
-				childNode.setValue(elementValue)
-			}
+		if (elementValue.equals('DELETE')) {
+			// Set the element being deleted to null
+			return """"${elementName}": null,"""
 		}
+		else {
+			return """"${elementName}": "${elementValue}","""		
+		}
+		
 	}
 
 	/**
@@ -323,7 +316,7 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 		logError('Error occurred attempting to update Generic VNF in AAI, Response Code ' +
 			execution.getVariable('UAAIGenVnf_updateGenericVnfResponseCode') + ', Error Response ' +
 			execution.getVariable('UAAIGenVnf_updateGenericVnfResponse'))
-		
+
 		String processKey = getProcessKey(execution);
 		WorkflowException exception = new WorkflowException(processKey, 5000,
 			execution.getVariable('UAAIGenVnf_updateGenericVnfResponse'))

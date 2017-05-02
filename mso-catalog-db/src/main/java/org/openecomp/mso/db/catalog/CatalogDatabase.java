@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 import org.openecomp.mso.db.catalog.beans.*;
 import org.hibernate.HibernateException;
+import org.hibernate.NonUniqueResultException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -52,7 +53,7 @@ import org.openecomp.mso.logger.MsoLogger;
 public class CatalogDatabase implements Closeable {
 
     protected static HibernateUtils hibernateUtils = new HibernateUtilsCatalogDb ();
-    
+
     private static final String NETWORK_TYPE = "networkType";
     private static final String ACTION = "action";
     private static final String VNF_TYPE = "vnfType";
@@ -66,7 +67,7 @@ public class CatalogDatabase implements Closeable {
     private static final String MODEL_CUSTOMIZATION_UUID = "modelCustomizationUuid";
     private static final String VF_MODULE_ID = "vfModuleId";
     private static final String SERVICE_NAME_VERSION_ID= "serviceNameVersionId";
-    
+
     protected static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.GENERAL);
 
     protected Session session = null;
@@ -76,7 +77,7 @@ public class CatalogDatabase implements Closeable {
 
 
     private Session getSession () {
-    
+
              if (session == null) {
             try {
                 session = hibernateUtils.getSessionFactory ().openSession ();
@@ -276,7 +277,7 @@ public class CatalogDatabase implements Closeable {
 
         return service;
     }
-    
+
     /**
      * Fetch a Service definition
      */
@@ -313,17 +314,17 @@ public class CatalogDatabase implements Closeable {
 
         return service;
     }
-    
+
     /**
      * Fetch the Common Service API definition using Http Method + serviceNameVersionId
      */
     public Service getService(HashMap<String, String> map, String httpMethod) {
-     
+
         String serviceNameVersionId = map.get("serviceNameVersionId");
         Query query;
         String serviceId = "not_set";
         String serviceVersion = "not_set";
-        
+
         if(serviceNameVersionId != null && serviceNameVersionId.length() > 0){
         	LOGGER.debug ("Catalog database - get serviceNameVersionId with id " + serviceNameVersionId);
 
@@ -340,7 +341,7 @@ public class CatalogDatabase implements Closeable {
             query.setParameter ("service_id", serviceId);
             query.setParameter ("service_version", serviceVersion);
          }
-        
+
         query.setParameter ("http_method", httpMethod);
 
         long startTime = System.currentTimeMillis ();
@@ -367,7 +368,7 @@ public class CatalogDatabase implements Closeable {
         }
         return service;
     }
-    
+
     /**
      * Return the newest version of a Service (queried by Name).
      *
@@ -386,7 +387,7 @@ public class CatalogDatabase implements Closeable {
         @SuppressWarnings("unchecked")
         List <Service> resultList = query.list ();
 
-        // See if something came back. 
+        // See if something came back.
         if (resultList.isEmpty ()) {
             LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. Service not found", "CatalogDB", "getServiceByName", null);
             return null;
@@ -430,11 +431,11 @@ public class CatalogDatabase implements Closeable {
      * (MODEL_VERSION_ID) and ACTION
      *
      * @param modelVersionId
-     * @param action    
+     * @param action
      * @return ServiceRecipe object or null if none found
      */
     public ServiceRecipe getServiceRecipe(String modelVersionId,
-                                       String action) {                     
+                                       String action) {
 
         long startTime = System.currentTimeMillis();
         LOGGER.debug("Catalog database - get Service recipe with modeVersionId=" + modelVersionId
@@ -467,12 +468,12 @@ public class CatalogDatabase implements Closeable {
             LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getServiceRecipe", null);
         }
     }
-    
+
     /**
      * Return a newest version of Service recipe that matches a given SERVICE_ID and ACTION
      *
      * @param serviceId
-     * @param action     * 
+     * @param action     *
      * @return ServiceRecipe object or null if none found
      */
     public ServiceRecipe getServiceRecipe (int serviceId, String action) {
@@ -505,7 +506,7 @@ public class CatalogDatabase implements Closeable {
             LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. Service recipe not found", "CatalogDB", "getServiceRecipe", null);
             return null;
         }
-        
+
         Collections.sort (resultList, new MavenLikeVersioningComparator ());
         Collections.reverse (resultList);
 
@@ -721,9 +722,9 @@ public class CatalogDatabase implements Closeable {
         LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVnfResourceById", null);
         return resultList.get (0);
     }
-    
+
     /**
-     * Return the newest version of a vfModule - 1607 
+     * Return the newest version of a vfModule - 1607
      *
      */
     public VfModule getVfModuleModelName (String modelName) {
@@ -749,7 +750,7 @@ public class CatalogDatabase implements Closeable {
         LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVfModuleModelName", null);
         return resultList.get (0);
     }
-    
+
     public VfModule getVfModuleModelName (String modelName, String model_version) {
 
         long startTime = System.currentTimeMillis ();
@@ -759,7 +760,7 @@ public class CatalogDatabase implements Closeable {
         Query query = getSession ().createQuery (hql);
         query.setParameter ("model_name", modelName);
         query.setParameter ("model_version", model_version);
-        
+
         VfModule module = null;
         try {
         	module = (VfModule) query.uniqueResult ();
@@ -783,7 +784,7 @@ public class CatalogDatabase implements Closeable {
         }
         return module;
     }
-   
+
 
     /**
      * Return the newest version of a specific Network resource (queried by Type).
@@ -835,7 +836,7 @@ public class CatalogDatabase implements Closeable {
             hql.append ("AND serviceType = :serviceType ");
             withServiceType = true;
         }
-   
+
         long startTime = System.currentTimeMillis ();
         LOGGER.debug ("Catalog database - get VNF recipe with name " + vnfType
                                       + " and action "
@@ -857,7 +858,7 @@ public class CatalogDatabase implements Closeable {
             LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. VNF recipe not found", "CatalogDB", "getVnfRecipe", null);
             return null;
         }
-        
+
         Collections.sort (resultList, new MavenLikeVersioningComparator ());
         Collections.reverse (resultList);
 
@@ -898,7 +899,7 @@ public class CatalogDatabase implements Closeable {
         LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVnfRecipe", null);
         return resultList.get (0);
     }
-    
+
     /**
      * Return a VNF recipe that matches a given VF_MODULE_ID and ACTION
      *
@@ -907,16 +908,16 @@ public class CatalogDatabase implements Closeable {
      * @return VnfRecipe object or null if none found
      */
     public VnfRecipe getVnfRecipeByVfModuleId (String vnfType, String vfModuleId, String action) {
-    	
+
     	StringBuilder hql = new StringBuilder ("FROM VnfRecipe WHERE vfModuleId = :vfModuleId and action = :action  ");
-        
+
         long startTime = System.currentTimeMillis ();
         LOGGER.debug ("Catalog database - get VNF Recipe with vfModuleId " + vfModuleId);
-           
+
         Query query = getSession ().createQuery (hql.toString ());
         query.setParameter (VF_MODULE_ID, vfModuleId);
         query.setParameter (ACTION, action);
-        
+
         @SuppressWarnings("unchecked")
         List <VnfRecipe> resultList = query.list ();
 
@@ -924,7 +925,7 @@ public class CatalogDatabase implements Closeable {
             LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. VNF recipe Entry not found", "CatalogDB", "getVnfRecipeByVfModuleId", null);
             return null;
         }
-        
+
         Collections.sort (resultList, new MavenLikeVersioningComparator ());
         Collections.reverse (resultList);
 
@@ -967,11 +968,11 @@ public class CatalogDatabase implements Closeable {
     public VfModule getVfModuleType(String type) {
     	long startTime = System.currentTimeMillis();
     	LOGGER.debug("Catalog database - get vfModuleType with type " + type);
-    	
+
     	String hql = "FROM VfModule WHERE type = :type";
     	Query query = getSession().createQuery(hql);
     	query.setParameter("type",  type);
-    	
+
     	@SuppressWarnings("unchecked")
     	List<VfModule> resultList = query.list();
     	if (resultList.isEmpty()) {
@@ -984,9 +985,9 @@ public class CatalogDatabase implements Closeable {
         LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVfModuleType", null);
         return resultList.get (0);
     }
-    
+
     public VfModule getVfModuleType(String type, String version) {
-    	
+
     	long startTime = System.currentTimeMillis();
         LOGGER.debug ("Catalog database - get vfModuleType with type " + type + " and model_version " + version);
 
@@ -1267,7 +1268,7 @@ public class CatalogDatabase implements Closeable {
         List<ServiceToNetworks> resultList1 = query.list();
         if (resultList1 == null || resultList1.size() < 1) {
             LOGGER.debug("Found no matches to the query - FROM ServiceToNetworks WHERE serviceModelUuid = " + serviceModelUuid);
-            return null;
+            return new ArrayList<NetworkResourceCustomization>();
         }
         LOGGER.debug("Found " + resultList1.size() + " entries in ServiceToNetworks with smu=" + serviceModelUuid);
 
@@ -1297,7 +1298,7 @@ public class CatalogDatabase implements Closeable {
 
         if (serviceList.isEmpty()) {
             LOGGER.debug("Could not find Service for " + serviceModelInvariantUuid);
-            return null;
+            return new ArrayList<NetworkResourceCustomization>();
         }
 
         Collections.sort (serviceList, new MavenLikeVersioningComparator ());
@@ -1326,7 +1327,7 @@ public class CatalogDatabase implements Closeable {
 
         if (serviceList.isEmpty()) {
             LOGGER.debug("No Service found with smu=" + serviceModelInvariantUuid + " and smv=" + serviceModelVersion);
-            return null;
+            return new ArrayList<NetworkResourceCustomization>();
         }
 
         Collections.sort (serviceList, new MavenLikeVersioningComparator ());
@@ -1398,7 +1399,7 @@ public class CatalogDatabase implements Closeable {
         List<Service> serviceList = query.list();
 
         if (serviceList.isEmpty()) {
-            return null;
+            return new ArrayList<VnfResource>();
         }
 
         Collections.sort (serviceList, new MavenLikeVersioningComparator ());
@@ -1422,7 +1423,7 @@ public class CatalogDatabase implements Closeable {
         List<Service> resultList = query.list();
 
         if (resultList.isEmpty()) {
-            return null;
+            return new ArrayList<VnfResource>();
         }
         Collections.sort (resultList, new MavenLikeVersioningComparator ());
         Collections.reverse (resultList);
@@ -1443,7 +1444,7 @@ public class CatalogDatabase implements Closeable {
         List<VnfResource> resultList = query.list();
 
         if (resultList.isEmpty()) {
-            return null;
+            return new ArrayList<VnfResource>();
         }
         // so we have a list of VnfResource objects - but we need to add each one's VfModule objects
         for (VnfResource vnfResource : resultList) {
@@ -1547,7 +1548,7 @@ public class CatalogDatabase implements Closeable {
         List<ServiceToAllottedResources> resultList1 = query.list();
         if (resultList1 == null || resultList1.size() < 1) {
             LOGGER.debug("Found no matches to the query " + hql1.toString());
-            return null;
+            return new ArrayList<AllottedResourceCustomization>();
         }
         LOGGER.debug("Found " + resultList1.size() + " entries in ServiceToAllottedResources with smu=" + serviceModelUuid);
 
@@ -1577,7 +1578,7 @@ public class CatalogDatabase implements Closeable {
 
         if (serviceList.isEmpty()) {
             LOGGER.debug("Could not find Service for " + serviceModelInvariantUuid);
-            return null;
+            return new ArrayList<AllottedResourceCustomization>();
         }
 
         Collections.sort (serviceList, new MavenLikeVersioningComparator ());
@@ -1607,7 +1608,7 @@ public class CatalogDatabase implements Closeable {
 
         if (serviceList.isEmpty()) {
             LOGGER.debug("No Service found with smu=" + serviceModelInvariantUuid + " and smv=" + serviceModelVersion);
-            return null;
+            return new ArrayList<AllottedResourceCustomization>();
         }
 
         Collections.sort (serviceList, new MavenLikeVersioningComparator ());
@@ -1648,7 +1649,7 @@ public class CatalogDatabase implements Closeable {
 
         if (serviceList.isEmpty()) {
             LOGGER.debug("Unable to find a Service with serviceModelUuid=" + serviceModelUuid);
-            return null;
+            return new ServiceMacroHolder();
         }
 
         Collections.sort (serviceList, new MavenLikeVersioningComparator ());
@@ -1678,7 +1679,7 @@ public class CatalogDatabase implements Closeable {
 
         if (serviceList.isEmpty()) {
             LOGGER.debug("Unable to find a Service with serviceModelInvariantUuid=" + serviceModelInvariantUuid);
-            return null;
+            return new ServiceMacroHolder();
         }
 
         Collections.sort (serviceList, new MavenLikeVersioningComparator ());
@@ -1711,7 +1712,7 @@ public class CatalogDatabase implements Closeable {
 
         if (serviceList.isEmpty()) {
             LOGGER.debug("Unable to find a Service with serviceModelInvariantUuid=" + serviceModelInvariantUuid + " and serviceModelVersion=" + serviceModelVersion);
-            return null;
+            return new ServiceMacroHolder();
         }
 
         Collections.sort (serviceList, new MavenLikeVersioningComparator ());
@@ -1728,6 +1729,35 @@ public class CatalogDatabase implements Closeable {
 
         LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getAllResourcesByServiceModelUuid with version", null);
         return smh;
+    }
+
+    // 1707 New API queries
+    public NetworkResourceCustomization getSingleNetworkByModelCustomizationUuid(String modelCustomizationUuid) {
+        long startTime = System.currentTimeMillis();
+        LOGGER.debug("Catalog database; getSingleNetworkByModelCustomizationUuid - " + modelCustomizationUuid);
+        List<NetworkResourceCustomization> resultList = this.getAllNetworksByNetworkModelCustomizationUuid(modelCustomizationUuid);
+        if (resultList == null || resultList.size() < 1) {
+            return null;
+        }
+        return resultList.get(0);
+    }
+    public AllottedResourceCustomization getSingleAllottedResourceByModelCustomizationUuid(String modelCustomizationUuid) {
+        long startTime = System.currentTimeMillis();
+        LOGGER.debug("Catalog database; getSingleAllottedResourceByModelCustomizationUuid - " + modelCustomizationUuid);
+        List<AllottedResourceCustomization> resultList = this.getAllAllottedResourcesByArModelCustomizationUuid(modelCustomizationUuid);
+        if (resultList == null || resultList.size() < 1) {
+            return null;
+        }
+        return resultList.get(0);
+    }
+    public VnfResource getSingleVnfResourceByModelCustomizationUuid(String modelCustomizationUuid) {
+        long startTime = System.currentTimeMillis();
+        LOGGER.debug("Catalog database; getSingleVnfResourceByModelCustomizationUuid - " + modelCustomizationUuid);
+        List<VnfResource> resultList = this.getAllVnfsByVnfModelCustomizationUuid(modelCustomizationUuid);
+        if (resultList == null || resultList.size() < 1) {
+            return null;
+        }
+        return resultList.get(0);
     }
 
     private void populateNetworkResourceType(List<NetworkResourceCustomization> resultList) {
@@ -1758,25 +1788,25 @@ public class CatalogDatabase implements Closeable {
 
     /**
      * Return a VNF recipe that matches a given VNF_TYPE, VF_MODULE_MODEL_NAME, and ACTION
-     * first query VF_MODULE table by type, and then use the ID to query 
-     * VNF_RECIPE by VF_MODULE_ID and ACTION 
+     * first query VF_MODULE table by type, and then use the ID to query
+     * VNF_RECIPE by VF_MODULE_ID and ACTION
      *
      * @param vnfType
      * @parm vfModuleModelName
-     * @param action     
+     * @param action
      * @return VnfRecipe object or null if none found
      */
     public VnfRecipe getVfModuleRecipe (String vnfType, String vfModuleModelName, String action) {
     	String vfModuleType = vnfType + "::" + vfModuleModelName;
-    	
+
     	StringBuilder hql = new StringBuilder ("FROM VfModule WHERE type = :type ");
-        
+
         long startTime = System.currentTimeMillis ();
         LOGGER.debug ("Catalog database - get VF MODULE  with type " + vfModuleType);
-           
+
         Query query = getSession ().createQuery (hql.toString ());
         query.setParameter (TYPE, vfModuleType);
-        
+
         @SuppressWarnings("unchecked")
         List <VfModule> resultList = query.list ();
 
@@ -1784,17 +1814,17 @@ public class CatalogDatabase implements Closeable {
             LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. VF Module Entry not found", "CatalogDB", "getVfModuleRecipe", null);
             return null;
         }
-        
+
         Collections.sort (resultList, new MavenLikeVersioningComparator ());
         Collections.reverse (resultList);
 
         VfModule vfMod = resultList.get(0);
-        
+
         int id = vfMod.getId();
-        String vfModuleId = Integer.toString(id);        
-        
+        String vfModuleId = Integer.toString(id);
+
         StringBuilder hql1 = new StringBuilder ("FROM VnfRecipe WHERE vfModuleId = :vfModuleId AND action = :action ");
-          
+
         LOGGER.debug ("Catalog database - get VNF recipe with vf module id " + vfModuleId
                                       + " and action "
                                       + action);
@@ -1802,7 +1832,7 @@ public class CatalogDatabase implements Closeable {
         Query query1 = getSession ().createQuery (hql1.toString ());
         query1.setParameter (VF_MODULE_ID, vfModuleId);
         query1.setParameter (ACTION, action);
-       
+
         @SuppressWarnings("unchecked")
         List <VnfRecipe> resultList1 = query1.list ();
 
@@ -1810,7 +1840,7 @@ public class CatalogDatabase implements Closeable {
             LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. VNF recipe not found", "CatalogDB", "getVfModuleRecipe", null);
             return null;
         }
-        
+
         Collections.sort (resultList1, new MavenLikeVersioningComparator ());
         Collections.reverse (resultList1);
 
@@ -1932,17 +1962,17 @@ public class CatalogDatabase implements Closeable {
             LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. VF Module Entry not found", "CatalogDB", "getVnfComponentsRecipe", null);
             return null;
         }
-        
+
         Collections.sort (resultList, new MavenLikeVersioningComparator ());
         Collections.reverse (resultList);
 
         VfModule vfMod = resultList.get(0);
-        
+
         int id = vfMod.getId();
-        String vfModuleId = Integer.toString(id);        
-        
+        String vfModuleId = Integer.toString(id);
+
         StringBuilder hql1 = new StringBuilder ("FROM VnfComponentsRecipe WHERE vfModuleId = :vfModuleId AND action = :action ");
-          
+
         LOGGER.debug ("Catalog database - get Vnf Components recipe with vf module id " + vfModuleId
                                       + " and action "
                                       + action);
@@ -1950,7 +1980,7 @@ public class CatalogDatabase implements Closeable {
         Query query1 = getSession ().createQuery (hql1.toString ());
         query1.setParameter (VF_MODULE_ID, vfModuleId);
         query1.setParameter (ACTION, action);
-       
+
         @SuppressWarnings("unchecked")
         List <VnfComponentsRecipe> resultList1 = query1.list ();
 
@@ -1958,7 +1988,7 @@ public class CatalogDatabase implements Closeable {
             LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. VNF recipe not found", "CatalogDB", "getVnfComponentsRecipe", null);
             return null;
         }
-        
+
         Collections.sort (resultList1, new MavenLikeVersioningComparator ());
         Collections.reverse (resultList1);
 
@@ -2028,7 +2058,7 @@ public class CatalogDatabase implements Closeable {
         LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getAllNetworkResources", null);
         return result;
     }
-    
+
     /**
      * Return all VF Modules in the Catalog DB
      *
@@ -2179,9 +2209,9 @@ public class CatalogDatabase implements Closeable {
         LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getHeatFiles", null);
         return heatFiles;
     }
-    
+
     // New 1607 - with modularization, use new table to determine which HEAT_FILES entries to attach
-    
+
     public Map <String, HeatFiles> getHeatFilesForVfModule(int vfModuleId) {
         Map <String, HeatFiles> heatFiles = null;
 
@@ -2191,7 +2221,7 @@ public class CatalogDatabase implements Closeable {
 
         Query query = getSession ().createQuery (hql);
         query.setParameter ("vfModuleIdValue", vfModuleId);
-        
+
         List<VfModuleToHeatFiles> mapList = query.list();
         if (mapList.isEmpty()) {
             LOGGER.debug ("No heatFiles found for vfModuleId=" + vfModuleId);
@@ -2231,8 +2261,8 @@ public class CatalogDatabase implements Closeable {
         return heatFiles;
     }
 
-    
-    
+
+
     /**
      * Get the heat template object based on asdc attributes
      *
@@ -2365,7 +2395,7 @@ public class CatalogDatabase implements Closeable {
             if (dbEnv == null) {
 
                 this.getSession ().save (env);
-               
+
             } else {
             	env.setId(dbEnv.getId());
             }
@@ -2409,7 +2439,7 @@ public class CatalogDatabase implements Closeable {
             LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "saveVnfRecipe", null);
         }
     }
-    
+
     public void saveVnfComponentsRecipe (VnfComponentsRecipe vnfComponentsRecipe) {
         long startTime = System.currentTimeMillis ();
         LOGGER.debug ("Catalog database - save VNF Component recipe with VNF type " + vnfComponentsRecipe.getVnfType ());
@@ -2431,7 +2461,7 @@ public class CatalogDatabase implements Closeable {
             } else {
                 this.getSession ().save (vnfResource);
             }
-      
+
         } finally {
             LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "saveOrUpdateVnfResource", null);
         }
@@ -2614,7 +2644,7 @@ public class CatalogDatabase implements Closeable {
           query.setParameter ("version", version);
 
           @SuppressWarnings("unchecked")
-        
+
           HeatFiles heatFilesResult = null;
           try {
         	  heatFilesResult = (HeatFiles) query.uniqueResult ();

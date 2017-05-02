@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -156,6 +156,7 @@ public enum MessageEnum implements EELFResolvableErrorEnum{
 	RA_DB_REQUEST_NOT_EXIST,
 	RA_CONFIG_NOT_FOUND,
 	RA_CONFIG_LOAD,
+	RA_RECEIVE_WORKFLOW_MESSAGE,
 	// BPEL engine Messages
 	BPMN_GENERAL_INFO,
 	BPMN_GENERAL_EXCEPTION_ARG,

@@ -33,7 +33,7 @@
 						<configuration>
                         	<excludes>
 								<exclude>org/openecomp/mso/bpmn/infrastructure/MSOInfrastructureApplication.class</exclude>
-								<exclude>META-INF/</exclude>
+<!-- 								<exclude>META-INF/</exclude> -->
 							</excludes>
 						</configuration>
 					</execution>

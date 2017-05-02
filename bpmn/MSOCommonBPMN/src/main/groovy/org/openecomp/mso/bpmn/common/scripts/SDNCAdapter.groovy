@@ -209,6 +209,7 @@ public class SDNCAdapter extends AbstractServiceTaskProcessor {
 				}
 				execution.setVariable("continueListening", continueListening)
 				utils.log("DEBUG", "Continue Listening: " + continueListening, isDebugEnabled)
+				execution.setVariable("asynchronousResponseTimeout", false)
 			}else{
 				// Timed out waiting for asynchronous message, build error response
 				exceptionUtil.buildWorkflowException(execution, 500, "SDNC Callback Timeout Error")
@@ -293,8 +294,6 @@ public class SDNCAdapter extends AbstractServiceTaskProcessor {
 		utils.log("DEBUG","=========== End Prepare DB Message SDNCAdapter ===========", isDebugEnabled)
 	}
 
-
-
 	public String generateCurrentTimeInUtc(){
 		final  SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -321,6 +320,15 @@ public class SDNCAdapter extends AbstractServiceTaskProcessor {
 		utils.log("DEBUG","Outgoing WorkflowException is: " + execution.getVariable("WorkflowException"), isDebugEnabled)
 		utils.log("DEBUG","=========== End Assign Error ===========", isDebugEnabled)
 	}
-
+	
+	public void setTimeout(Execution execution){
+		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+		utils.log("DEBUG","=========== Started SetTimeout ===========", isDebugEnabled)
+		utils.log("DEBUG", "Timer expired, telling correlation service to stop listening", isDebugEnabled)
+		execution.setVariable("asynchronousResponseTimeout", true)
+		
+		utils.log("DEBUG", "Timed out branch sleeping for one second to give success branch a chance to complete if running", isDebugEnabled)
+		Thread.sleep(1000)
+		utils.log("DEBUG","=========== End SetTimeout ===========", isDebugEnabled)
+	}
 }
-

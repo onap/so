@@ -1094,6 +1094,19 @@ public class UpdateNetworkInstanceInfra extends AbstractServiceTaskProcessor {
 		execution.setVariable("prefix", Prefix)
 
 		try {
+			// Catalog DB headers Authorization
+			String basicAuthValueDB = execution.getVariable("URN_mso_adapters_db_auth")
+			utils.log("DEBUG", " Obtained BasicAuth userid password for Catalog DB adapter: " + basicAuthValueDB, isDebugEnabled)
+			
+			def encodedString = utils.getBasicAuth(basicAuthValueDB, execution.getVariable("URN_mso_msoKey"))
+			execution.setVariable("BasicAuthHeaderValueDB",encodedString)
+		} catch (IOException ex) {
+			String dataErrorMessage = " Unable to encode Catalog DB user/password string - " + ex.getMessage()
+			utils.log("DEBUG", dataErrorMessage, isDebugEnabled)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
+		}
+		
+		try {
 			utils.log("DEBUG", " ***** Inside prepareDBRequest of UpdateNetworkInstanceInfra ***** ", isDebugEnabled)
 
 			String networkOutputs = execution.getVariable("UPDNETI_networkOutputs")
@@ -1152,6 +1165,19 @@ public class UpdateNetworkInstanceInfra extends AbstractServiceTaskProcessor {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 
+		try {
+			// Catalog DB headers Authorization
+			String basicAuthValueDB = execution.getVariable("URN_mso_adapters_db_auth")
+			utils.log("DEBUG", " Obtained BasicAuth userid password for Catalog DB adapter: " + basicAuthValueDB, isDebugEnabled)
+			
+			def encodedString = utils.getBasicAuth(basicAuthValueDB, execution.getVariable("URN_mso_msoKey"))
+			execution.setVariable("BasicAuthHeaderValueDB",encodedString)
+		} catch (IOException ex) {
+			String dataErrorMessage = " Unable to encode Catalog DB user/password string - " + ex.getMessage()
+			utils.log("DEBUG", dataErrorMessage, isDebugEnabled)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
+		}
+		
 		try {
 			utils.log("DEBUG", " ***** Inside prepareDBRequestError of UpdateNetworkInstanceInfra ***** ", isDebugEnabled)
 

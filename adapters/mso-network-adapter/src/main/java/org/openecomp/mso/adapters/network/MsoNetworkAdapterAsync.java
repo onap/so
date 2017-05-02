@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -49,6 +49,7 @@ public interface MsoNetworkAdapterAsync
 	public void createNetworkA (@WebParam(name="cloudSiteId") @XmlElement(required=true) String cloudSiteId,
 							@WebParam(name="tenantId") @XmlElement(required=true) String tenantId,
 							@WebParam(name="networkType") @XmlElement(required=true) String networkType,
+							@WebParam(name="modelCustomizationUuid") String modelCustomizationUuid,
 							@WebParam(name="networkName") @XmlElement(required=true) String networkName,
 							@WebParam(name="physicalNetworkName") String physicalNetworkName,
 							@WebParam(name="vlans") List<Integer> vlans,
@@ -58,12 +59,13 @@ public interface MsoNetworkAdapterAsync
 							@WebParam(name="messageId") @XmlElement(required=true) String messageId,
 							@WebParam(name="request") MsoRequest msoRequest,
 							@WebParam(name="notificationUrl") @XmlElement(required=true) String notificationUrl );
-	
+
 	@WebMethod
 	@Oneway
 	public void updateNetworkA (@WebParam(name="cloudSiteId") @XmlElement(required=true) String cloudSiteId,
 						@WebParam(name="tenantId") @XmlElement(required=true) String tenantId,
 						@WebParam(name="networkType") @XmlElement(required=true) String networkType,
+						@WebParam(name="modelCustomizationUuid") String modelCustomizationUuid,
 						@WebParam(name="networkId") @XmlElement(required=true) String networkId,
 						@WebParam(name="networkName") @XmlElement(required=true) String networkName,
 						@WebParam(name="physicalNetworkName") @XmlElement(required=true) String physicalNetworkName,
@@ -87,6 +89,7 @@ public interface MsoNetworkAdapterAsync
 	public void deleteNetworkA (@WebParam(name="cloudSiteId") @XmlElement(required=true) String cloudSiteId,
 							@WebParam(name="tenantId") @XmlElement(required=true) String tenantId,
 							@WebParam(name="networkType") @XmlElement(required=true) String networkType,
+							@WebParam(name="modelCustomizationUuid") String modelCustomizationUuid,
 							@WebParam(name="networkId") @XmlElement(required=true) String networkId,
 							@WebParam(name="messageId") @XmlElement(required=true) String messageId,
 							@WebParam(name="request") MsoRequest msoRequest,
@@ -97,7 +100,7 @@ public interface MsoNetworkAdapterAsync
 	public void rollbackNetworkA (@WebParam(name="rollback") @XmlElement(required=true) NetworkRollback rollback,
 						@WebParam(name="messageId") @XmlElement(required=true) String messageId,
 						@WebParam(name="notificationUrl") @XmlElement(required=true) String notificationUrl );
-	
+
 	@WebMethod
 	public void healthCheckA ();
 }

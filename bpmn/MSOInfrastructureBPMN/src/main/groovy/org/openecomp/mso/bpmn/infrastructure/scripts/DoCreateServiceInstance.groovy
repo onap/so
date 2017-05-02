@@ -46,7 +46,7 @@ import org.springframework.web.util.UriUtils;
 
 /**
  * This groovy class supports the <class>DoCreateServiceInstance.bpmn</class> process.
- * 
+ *
  * Inputs:
  * @param - msoRequestId
  * @param - globalSubscriberId
@@ -64,7 +64,7 @@ import org.springframework.web.util.UriUtils;
  * @param - rollbackData (localRB->null)
  * @param - rolledBack (no localRB->null, localRB F->false, localRB S->true)
  * @param - WorkflowException
- * @param - serviceInstanceName - TODO (GET from AAI if null in input)
+ * @param - serviceInstanceName - (GET from AAI if null in input)
  *
  */
 public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
@@ -423,7 +423,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 		}
 		utils.log("DEBUG"," *****Exit preProcessSDNCAssignRequest *****", isDebugEnabled)
 	}
-
+	
 	public void postProcessSDNCAssign (Execution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("DEBUG"," ***** postProcessSDNCAssign ***** ", isDebugEnabled)
@@ -459,6 +459,49 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
 		utils.log("DEBUG"," *** Exit postProcessSDNCAssign *** ", isDebugEnabled)
+	}
+	
+	public void postProcessAAIGET2(Execution execution) {
+		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+		utils.log("DEBUG"," ***** postProcessAAIGET2 ***** ", isDebugEnabled)
+		String msg = ""
+
+		try {
+			String serviceInstanceName = execution.getVariable("serviceInstanceName")
+			boolean succInAAI = execution.getVariable("GENGS_SuccessIndicator")
+			if(succInAAI != true){
+				utils.log("DEBUG","Error getting Service-instance from AAI in postProcessAAIGET2", + serviceInstanceName, isDebugEnabled)
+				WorkflowException workflowException = execution.getVariable("WorkflowException")
+				utils.logAudit("workflowException: " + workflowException)
+				if(workflowException != null){
+					exceptionUtil.buildAndThrowWorkflowException(execution, workflowException.getErrorCode(), workflowException.getErrorMessage())
+				}
+				else
+				{
+					msg = "Failure in postProcessAAIGET2 GENGS_SuccessIndicator:" + succInAAI
+					utils.log("DEBUG", msg, isDebugEnabled)
+					exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
+				}
+			}
+			else
+			{
+				boolean foundInAAI = execution.getVariable("GENGS_FoundIndicator")
+				if(foundInAAI == true){
+					String aaiService = execution.getVariable("GENGS_service")
+					if (!isBlank(aaiService) && (utils.nodeExists(aaiService, "service-instance-name"))) {
+						execution.setVariable("serviceInstanceName",  utils.getNodeText1(aaiService, "service-instance-name"))
+						utils.log("DEBUG","Found Service-instance in AAI.serviceInstanceName:" + execution.getVariable("serviceInstanceName"), isDebugEnabled)
+					}
+				}
+			}
+		} catch (BpmnError e) {
+			throw e;
+		} catch (Exception ex) {
+			msg = "Exception in DoCreateServiceInstance.postProcessAAIGET2 " + ex.getMessage()
+			utils.log("DEBUG", msg, isDebugEnabled)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+		}
+		utils.log("DEBUG"," *** Exit postProcessAAIGET2 *** ", isDebugEnabled)
 	}
 
 	public void preProcessRollback (Execution execution) {

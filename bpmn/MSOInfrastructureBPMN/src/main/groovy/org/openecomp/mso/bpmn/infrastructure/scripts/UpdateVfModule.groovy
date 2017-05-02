@@ -28,7 +28,7 @@ import java.io.Serializable;
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.runtime.Execution
-
+import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
 import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.bpmn.core.json.JsonUtils;
 import org.openecomp.mso.rest.APIResponse
@@ -37,10 +37,12 @@ import org.openecomp.mso.bpmn.core.RollbackData
 
 
 public class UpdateVfModule extends AbstractServiceTaskProcessor {
-		
+
+	ExceptionUtil exceptionUtil = new ExceptionUtil()
+
 	/**
 	 * Initialize the flow's variables.
-	 * 
+	 *
 	 * @param execution The flow's execution instance.
 	 */
 	public void initProcessVariables(Execution execution) {
@@ -57,11 +59,11 @@ public class UpdateVfModule extends AbstractServiceTaskProcessor {
 		execution.setVariable('UPDVfMod_vnfParams', null)
 		execution.setVariable('UPDVfMod_updateInfraRequest', null)
 		execution.setVariable('UpdateVfModuleSuccessIndicator', false)
-	}	
-	
+	}
+
 	/**
 	 * Check for missing elements in the received request.
-	 * 
+	 *
 	 * @param execution The flow's execution instance.
 	 */
 	public void preProcessRequest(Execution execution) {
@@ -74,13 +76,13 @@ public class UpdateVfModule extends AbstractServiceTaskProcessor {
 		try {
 			initProcessVariables(execution)
 			String request = validateRequest(execution)
-			
+
 			utils.logAudit("UpdateVfModule request: " + request)
 			def requestInfo = getRequiredNodeXml(execution, request, 'request-info')
 			execution.setVariable('UPDVfMod_requestInfo', requestInfo)
 			execution.setVariable('UPDVfMod_requestId', getRequiredNodeText(execution, requestInfo, 'request-id'))
 			execution.setVariable('UPDVfMod_source', getNodeTextForce(requestInfo, 'source'))
-			
+
 			def vnfInputs = getRequiredNodeXml(execution, request, 'vnf-inputs')
 			execution.setVariable('UPDVfMod_vnfInputs', vnfInputs)
 			execution.setVariable('UPDVfMod_vnfId', getRequiredNodeText(execution, vnfInputs, 'vnf-id'))
@@ -96,13 +98,13 @@ public class UpdateVfModule extends AbstractServiceTaskProcessor {
 			throw e;
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
-			createWorkflowException(execution, 1002, 'Error in preProcessRequest(): ' + e.getMessage())
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in preProcessRequest(): ' + e.getMessage())
 		}
 	}
-	
+
 	/**
 	 * Prepare and send the synchronous response for this flow.
-	 * 
+	 *
 	 * @param execution The flow's execution instance.
 	 */
 	public void sendSynchResponse(Execution execution) {
@@ -125,7 +127,7 @@ public class UpdateVfModule extends AbstractServiceTaskProcessor {
 				startTime = System.currentTimeMillis()
 			}
 			def vnfInputs = execution.getVariable('UPDVfMod_vnfInputs')
-			
+
 			String synchResponse = """
 				<vnf-request xmlns="http://org.openecomp/mso/infra/vnf-request/v1">
 					<request-info>
@@ -142,25 +144,25 @@ public class UpdateVfModule extends AbstractServiceTaskProcessor {
 
 			synchResponse = utils.formatXml(synchResponse)
 			sendWorkflowResponse(execution, 200, synchResponse)
-			
+
 			utils.logAudit("UpdateVfModule Synch Response: " + synchResponse)
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
-			createWorkflowException(execution, 1002, 'Error in sendSynchResponse(): ' + e.getMessage())
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in sendSynchResponse(): ' + e.getMessage())
 		}
 	}
-	
+
 	/**
 	 * Prepare the Request for invoking the DoUpdateVfModule subflow.
-	 * 
+	 *
 	 * NOTE: Currently, the method just logs passing through as the
 	 * incoming Request to this main flow is used as the Request to
 	 * the DoUpdateVfModule subflow. No preparation processing is
 	 * necessary.
-	 * 
+	 *
 	 * @param execution The flow's execution instance.
 	 */
 	public void prepDoUpdateVfModule(Execution execution) {
@@ -171,19 +173,19 @@ public class UpdateVfModule extends AbstractServiceTaskProcessor {
 		logDebug('Entered ' + method, isDebugLogEnabled)
 
 		try {
-			
+
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
-			createWorkflowException(execution, 1002, 'Error in prepDoUpdateVfModule(): ' + e.getMessage())
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepDoUpdateVfModule(): ' + e.getMessage())
 		}
 	}
-	
+
 	/**
 	 * Prepare the Request for updating the DB for this Infra Request.
-	 * 
+	 *
 	 * @param execution The flow's execution instance.
 	 */
 	public void prepUpdateInfraRequest(Execution execution) {
@@ -199,7 +201,7 @@ public class UpdateVfModule extends AbstractServiceTaskProcessor {
 			def vfModuleId = execution.getVariable('UPDVfMod_vfModuleId')
 			def tenantId = execution.getVariable('UPDVfMod_tenantId')
 			def volumeGroupId = execution.getVariable('UPDVfMod_volumeGroupId')
-			
+
 			String updateInfraRequest = """
 				<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
 						xmlns:req="http://org.openecomp.mso/requestsdb">
@@ -231,13 +233,13 @@ public class UpdateVfModule extends AbstractServiceTaskProcessor {
 			throw e;
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
-			createWorkflowException(execution, 1002, 'Error in prepUpdateInfraRequest(): ' + e.getMessage())
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepUpdateInfraRequest(): ' + e.getMessage())
 		}
 	}
-	
+
 	/**
 	 * Builds a "CompletionHandler" request and stores it in the specified execution variable.
-	 * 
+	 *
 	 * @param execution the execution
 	 * @param resultVar the execution variable in which the result will be stored
 	 */
@@ -251,7 +253,7 @@ public class UpdateVfModule extends AbstractServiceTaskProcessor {
 
 		try {
 			def requestInfo = getVariable(execution, 'UPDVfMod_requestInfo')
-			
+
 			String content = """
 				<sdncadapterworkflow:MsoCompletionRequest xmlns:sdncadapterworkflow="http://org.openecomp/mso/workflow/schema/v1"
 						xmlns:reqtype="http://org.openecomp/mso/request/types/v1">
@@ -270,13 +272,13 @@ public class UpdateVfModule extends AbstractServiceTaskProcessor {
 			throw e;
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
-			createWorkflowException(execution, 2000, 'Internal Error')
+			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, 'Internal Error')
 		}
 	}
 
 	/**
 	 * Builds a "FalloutHandler" request and stores it in the specified execution variable.
-	 * 
+	 *
 	 * @param execution the execution
 	 * @param resultVar the execution variable in which the result will be stored
 	 */
@@ -287,12 +289,12 @@ public class UpdateVfModule extends AbstractServiceTaskProcessor {
 			')'
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		logDebug('Entered ' + method, isDebugLogEnabled)
-		
+
 		try {
 			def prefix = execution.getVariable('prefix')
 			def request = getVariable(execution, prefix+'Request')
 			def requestInformation = utils.getNodeXml(request, 'request-information', false)
-			
+
 			def WorkflowException workflowException = execution.getVariable("WorkflowException")
 			def errorResponseCode = workflowException.getErrorCode()
 			def errorResponseMsg = workflowException.getErrorMessage()
@@ -310,7 +312,7 @@ public class UpdateVfModule extends AbstractServiceTaskProcessor {
 					<sdncadapterworkflow:WorkflowException>
 						<sdncadapterworkflow:ErrorMessage>${encErrorResponseMsg}</sdncadapterworkflow:ErrorMessage>
 						<sdncadapterworkflow:ErrorCode>${errorResponseCode}</sdncadapterworkflow:ErrorCode>
-					</sdncadapterworkflow:WorkflowException>	
+					</sdncadapterworkflow:WorkflowException>
 				</sdncadapterworkflow:FalloutHandlerRequest>
 			"""
 			content = utils.formatXml(content)
@@ -323,7 +325,7 @@ public class UpdateVfModule extends AbstractServiceTaskProcessor {
 			throw e;
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
-			createWorkflowException(execution, 2000, 'Internal Error')
+			exceptionUtil.buildWorkflowException(execution, 2000, 'Internal Error')
 		}
 	}
 }

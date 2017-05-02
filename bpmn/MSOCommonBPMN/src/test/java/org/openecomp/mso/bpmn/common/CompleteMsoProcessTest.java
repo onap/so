@@ -51,7 +51,9 @@ public class CompleteMsoProcessTest extends WorkflowTest {
 	}	
 	
 	@Test		
-	@Deployment(resources = {"subprocess/CompleteMsoProcess.bpmn"})
+	@Deployment(resources = {"subprocess/CompleteMsoProcess.bpmn",
+			"subprocess/GenericNotificationService.bpmn"
+			})
 	public void msoCompletionRequestWithNotificationurl_200() throws Exception {
 		logStart();	
 		
@@ -67,7 +69,9 @@ public class CompleteMsoProcessTest extends WorkflowTest {
 	
 	@Test		
 	@Ignore // BROKEN TEST
-	@Deployment(resources = {"subprocess/CompleteMsoProcess.bpmn"})
+	@Deployment(resources = {"subprocess/CompleteMsoProcess.bpmn",
+			"subprocess/GenericNotificationService.bpmn"
+			})
 	public void msoCompletionRequestWithNotificationurl_500() throws Exception {
 		logStart();
 		
@@ -82,7 +86,9 @@ public class CompleteMsoProcessTest extends WorkflowTest {
 	}	
 
 	@Test		
-	@Deployment(resources = {"subprocess/CompleteMsoProcess.bpmn"})
+	@Deployment(resources = {"subprocess/CompleteMsoProcess.bpmn",
+			"subprocess/GenericNotificationService.bpmn"
+			})
 	public void msoCompletionRequestWithNoNotificationurl() throws Exception {
 		logStart();	
 		
@@ -97,7 +103,9 @@ public class CompleteMsoProcessTest extends WorkflowTest {
 	}
 
 	@Test		
-	@Deployment(resources = {"subprocess/CompleteMsoProcess.bpmn"})
+	@Deployment(resources = {"subprocess/CompleteMsoProcess.bpmn",
+			"subprocess/GenericNotificationService.bpmn"
+			})
 	public void msoCompletionRequestWithNotificationurlNoRequestId() throws Exception {
 		logStart();	
 		
@@ -112,7 +120,9 @@ public class CompleteMsoProcessTest extends WorkflowTest {
 	}
 	
 	@Test		
-	@Deployment(resources = {"subprocess/CompleteMsoProcess.bpmn"})
+	@Deployment(resources = {"subprocess/CompleteMsoProcess.bpmn",
+			"subprocess/GenericNotificationService.bpmn"
+			})
 	public void msoCompletionRequestWithNoNotificationurlNoRequestId() throws Exception {
 		logStart();
 		

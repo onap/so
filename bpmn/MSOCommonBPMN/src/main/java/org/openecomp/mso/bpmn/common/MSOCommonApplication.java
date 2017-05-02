@@ -36,7 +36,7 @@ import org.openecomp.mso.logger.MsoLogger;
  * @since Version 1.0
  *
  */
-@ProcessApplication("MSO Common Application")
+@ProcessApplication(name="MSO Common Application", deploymentDescriptors={"../processes.xml"})
 public class MSOCommonApplication extends ServletProcessApplication {
 	
 	private MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);

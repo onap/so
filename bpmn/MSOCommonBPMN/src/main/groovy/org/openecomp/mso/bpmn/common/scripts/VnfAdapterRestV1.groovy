@@ -224,7 +224,7 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 				if (volumeGroupId == null || volumeGroupId.isEmpty()) {
 					String msg = getProcessKey(execution) + ': no volumeGroupId in ' + requestType
 					logError(msg)
-					createWorkflowException(execution, 2000, msg)
+					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 				}
 
 				vnfAdapterMethod = 'DELETE'

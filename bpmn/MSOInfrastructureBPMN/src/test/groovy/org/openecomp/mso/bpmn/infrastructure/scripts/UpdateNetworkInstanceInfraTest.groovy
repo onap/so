@@ -36,6 +36,7 @@ import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.camunda.bpm.engine.repository.ProcessDefinition
 import org.camunda.bpm.engine.runtime.Execution
 import org.junit.Before
+import org.junit.Ignore;
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -1089,6 +1090,7 @@ String expectedNetworkInputs =
    <networkStackId>ST_2Bindings_6006/55288ef0-595c-47d3-819e-cf93aaac6326</networkStackId>
    <networkName>MNS-25180-L-01-dmz_direct_net_1</networkName>
    <networkType>CONTRAIL_EXTERNAL</networkType>
+   <modelCustomizationUuid/>
    <networkTypeVersion/>
    <networkTechnology>CONTRAIL</networkTechnology>
    <providerVlanNetwork>
@@ -1104,30 +1106,6 @@ String expectedNetworkInputs =
       <routeTableFqdns>refFQDN1</routeTableFqdns>
       <routeTableFqdns>refFQDN2</routeTableFqdns>
    </contrailNetwork>
-   <subnets>
-      <allocationPools>
-         <start/>
-         <end/>
-      </allocationPools>
-      <cidr>107.239.52.0/24</cidr>
-      <enableDHCP>true</enableDHCP>
-      <gatewayIp>107.239.52.1</gatewayIp>
-      <ipVersion>4</ipVersion>
-      <subnetId>57e9a1ff-d14f-4071-a828-b19ae98eb2fc</subnetId>
-      <subnetName>subnetName</subnetName>
-   </subnets>
-   <subnets>
-      <allocationPools>
-         <start/>
-         <end/>
-      </allocationPools>
-      <cidr>107.239.52.0/24</cidr>
-      <enableDHCP>true</enableDHCP>
-      <gatewayIp>107.239.52.1</gatewayIp>
-      <ipVersion>4</ipVersion>
-      <subnetId>57e9a1ff-d14f-4071-a828-b19ae98eb2fc</subnetId>
-      <subnetName>subnetName</subnetName>
-   </subnets>
    <skipAAI>true</skipAAI>
    <backout>true</backout>
    <failIfExists>false</failIfExists>
@@ -1155,6 +1133,7 @@ String expectedNetworkInputs =
    <networkStackId>ST_2Bindings_6006/55288ef0-595c-47d3-819e-cf93aaac6326</networkStackId>
    <networkName>MNS-25180-L-01-dmz_direct_net_1</networkName>
    <networkType>CONTRAIL_EXTERNAL</networkType>
+   <modelCustomizationUuid/>
    <networkTypeVersion/>
    <networkTechnology>CONTRAIL</networkTechnology>
    <providerVlanNetwork>
@@ -1168,30 +1147,6 @@ String expectedNetworkInputs =
       <routeTargets>13979:105757</routeTargets>
       <policyFqdns>GN_EVPN_Test</policyFqdns>
    </contrailNetwork>
-   <subnets>
-      <allocationPools>
-         <start/>
-         <end/>
-      </allocationPools>
-      <cidr>107.239.52.0/24</cidr>
-      <enableDHCP>true</enableDHCP>
-      <gatewayIp>107.239.52.1</gatewayIp>
-      <ipVersion>4</ipVersion>
-      <subnetId>57e9a1ff-d14f-4071-a828-b19ae98eb2fc</subnetId>
-      <subnetName>subnetName</subnetName>
-   </subnets>
-   <subnets>
-      <allocationPools>
-         <start/>
-         <end/>
-      </allocationPools>
-      <cidr>107.239.52.0/24</cidr>
-      <enableDHCP>true</enableDHCP>
-      <gatewayIp>107.239.52.1</gatewayIp>
-      <ipVersion>4</ipVersion>
-      <subnetId>57e9a1ff-d14f-4071-a828-b19ae98eb2fc</subnetId>
-      <subnetName>subnetName</subnetName>
-   </subnets>
    <skipAAI>true</skipAAI>
    <backout>true</backout>
    <failIfExists>false</failIfExists>
@@ -1543,7 +1498,7 @@ String expectedNetworkInputs =
 </aetgt:SDNCAdapterWorkflowRequest>"""
 
 String assignResponse =
-"""<sdncadapterworkflow:SDNCAdapterWorkflowResponse xmlns:sdncadapterworkflow="http://org.openecomp/mso/workflow/schema/v1" xmlns:tag0="http://org.openecomp/workflow/sdnc/adapter/schema/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> <sdncadapterworkflow:response-data> <tag0:CallbackHeader> <tag0:RequestId>006927ca-f5a3-47fd-880c-dfcbcd81a093</tag0:RequestId> <tag0:ResponseCode>200</tag0:ResponseCode> <tag0:ResponseMessage>OK</tag0:ResponseMessage> </tag0:CallbackHeader> <tag0:RequestData xsi:type="xs:string"><output xmlns="org:openecomp:sdnctl:vnf"><response-code>200</response-code><svc-request-id>006927ca-f5a3-47fd-880c-dfcbcd81a093</svc-request-id><ack-final-indicator>Y</ack-final-indicator><service-information><subscriber-name>notsurewecare</subscriber-name><service-id>a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb</service-id><service-instance-id>GN_EVPN_direct_net_0_ST_noGW</service-instance-id></service-information><network-information><network-id>8abc633a-810b-4ca5-8b3a-09511d13a2ce</network-id></network-information></output></tag0:RequestData> </sdncadapterworkflow:response-data> </sdncadapterworkflow:SDNCAdapterWorkflowResponse>"""
+"""<sdncadapterworkflow:SDNCAdapterWorkflowResponse xmlns:sdncadapterworkflow="http://org.openecomp/mso/workflow/schema/v1" xmlns:tag0="http://org.openecomp/workflow/sdnc/adapter/schema/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> <sdncadapterworkflow:response-data> <tag0:CallbackHeader> <tag0:RequestId>006927ca-f5a3-47fd-880c-dfcbcd81a093</tag0:RequestId> <tag0:ResponseCode>200</tag0:ResponseCode> <tag0:ResponseMessage>OK</tag0:ResponseMessage> </tag0:CallbackHeader> <tag0:RequestData xsi:type="xs:string"><output xmlns="org:openecomp:sdnctltl:vnf"><response-code>200</response-code><svc-request-id>006927ca-f5a3-47fd-880c-dfcbcd81a093</svc-request-id><ack-final-indicator>Y</ack-final-indicator><service-information><subscriber-name>notsurewecare</subscriber-name><service-id>a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb</service-id><service-instance-id>GN_EVPN_direct_net_0_ST_noGW</service-instance-id></service-information><network-information><network-id>8abc633a-810b-4ca5-8b3a-09511d13a2ce</network-id></network-information></output></tag0:RequestData> </sdncadapterworkflow:response-data> </sdncadapterworkflow:SDNCAdapterWorkflowResponse>"""
 			  
   String sdncRollbackRequest =
 			  """<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://openecomp.com/mso/workflow/schema/v1"
@@ -2059,7 +2014,9 @@ String assignResponse =
 			when(mockExecution.getVariable("UPDNETI_requestId")).thenReturn("88f65519-9a38-4c4b-8445-9eb4a5a5af56")
 			when(mockExecution.getVariable("UPDNETI_orchestrationStatus")).thenReturn("")
 			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
-
+			when(mockExecution.getVariable("URN_mso_adapters_db_auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
+			when(mockExecution.getVariable("URN_mso_msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
+			
 			// preProcessRequest(Execution execution)
 			UpdateNetworkInstanceInfra UpdateNetworkInstanceInfra = new UpdateNetworkInstanceInfra()
 			UpdateNetworkInstanceInfra.prepareDBRequest(mockExecution)
@@ -2085,6 +2042,8 @@ String assignResponse =
 			when(mockExecution.getVariable("UPDNETI_orchestrationStatus")).thenReturn("")
 			when(mockExecution.getVariable("WorkflowException")).thenReturn(sndcWorkflowException)
 			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
+			when(mockExecution.getVariable("URN_mso_adapters_db_auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
+			when(mockExecution.getVariable("URN_mso_msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 
 			// preProcessRequest(Execution execution)
 			UpdateNetworkInstanceInfra UpdateNetworkInstanceInfra = new UpdateNetworkInstanceInfra()
@@ -2106,6 +2065,8 @@ String assignResponse =
 			when(mockExecution.getVariable("UPDNETI_requestId")).thenReturn("88f65519-9a38-4c4b-8445-9eb4a5a5af56")
 			when(mockExecution.getVariable("UPDNETI_orchestrationStatus")).thenReturn("")
 			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
+			when(mockExecution.getVariable("URN_mso_adapters_db_auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
+			when(mockExecution.getVariable("URN_mso_msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 
 			// preProcessRequest(Execution execution)
 			UpdateNetworkInstanceInfra UpdateNetworkInstanceInfra = new UpdateNetworkInstanceInfra()
@@ -2200,7 +2161,7 @@ String assignResponse =
 			when(mockExecution.getVariable("UPDNETI_networkRequest")).thenReturn(expectedNetworkRequest)
 			when(mockExecution.getVariable("UPDNETI_cloudRegionSdnc")).thenReturn("RDM2WAGPLCP")
 			when(mockExecution.getVariable("UPDNETI_serviceInstanceId")).thenReturn("f70e927b-6087-4974-9ef8-c5e4d5847ca4")
-			when(mockExecution.getVariable("openecomp-mso-request-id")).thenReturn("88f65519-9a38-4c4b-8445-9eb4a5a5af56")
+			when(mockExecution.getVariable("mso-request-id")).thenReturn("88f65519-9a38-4c4b-8445-9eb4a5a5af56")
 			when(mockExecution.getVariable("URN_mso_workflow_sdncadapter_callback")).thenReturn("http://localhost:28090/SDNCAdapterCallback")
 			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
 			when(mockExecution.getVariable("GENGSI_siResourceLink")).thenReturn("https://aai-int1.test.com:8443/aai/v8/business/customers/customer/MSO_1610_dev/service-subscriptions/service-subscription/MSO-dev-service-type/service-instances/service-instance/6d4eb22a-82f1-4257-9f80-4176262cfe69/")
@@ -2230,7 +2191,7 @@ String assignResponse =
 			when(mockExecution.getVariable("UPDNETI_cloudRegionSdnc")).thenReturn("RDM2WAGPLCP")
 			when(mockExecution.getVariable("UPDNETI_serviceInstanceId")).thenReturn("f70e927b-6087-4974-9ef8-c5e4d5847ca4")
 			when(mockExecution.getVariable("UPDNETI_changeAssignSDNCResponse")).thenReturn(assignResponse)
-			when(mockExecution.getVariable("openecomp-mso-request-id")).thenReturn("88f65519-9a38-4c4b-8445-9eb4a5a5af56")
+			when(mockExecution.getVariable("mso-request-id")).thenReturn("88f65519-9a38-4c4b-8445-9eb4a5a5af56")
 			when(mockExecution.getVariable("URN_mso_workflow_sdncadapter_callback")).thenReturn("http://localhost:28090/SDNCAdapterCallback")
 			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
 			when(mockExecution.getVariable("GENGSI_siResourceLink")).thenReturn("https://aai-int1.test.com:8443/aai/v8/business/customers/customer/MSO_1610_dev/service-subscriptions/service-subscription/MSO-dev-service-type/service-instances/service-instance/6d4eb22a-82f1-4257-9f80-4176262cfe69/")
@@ -2640,7 +2601,7 @@ String assignResponse =
 		
 
 		@Test
-		//@Ignore
+		@Ignore
 		public void callRESTUpdateContrailAAINetworkREST_200() {
 
 			println "************ callRESTUpdateContrailAAINetwork ************* "

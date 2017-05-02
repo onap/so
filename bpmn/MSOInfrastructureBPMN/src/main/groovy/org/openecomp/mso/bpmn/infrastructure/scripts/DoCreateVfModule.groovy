@@ -52,6 +52,7 @@ public class DoCreateVfModule extends VfModuleBase {
 	String Prefix="DCVFM_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
+	SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
 
 	/**
 	 * Validates the request message and sets up the workflow.
@@ -65,36 +66,40 @@ public class DoCreateVfModule extends VfModuleBase {
 		logDebug('Entered ' + method, isDebugLogEnabled)
 
 		execution.setVariable('prefix', Prefix)
-		try{			
+		try{
 			def rollbackData = execution.getVariable("RollbackData")
 			if (rollbackData == null) {
 				rollbackData = new RollbackData()
 			}
-			
+
 			execution.setVariable("DCVFM_vnfParamsExistFlag", false)
 			execution.setVariable("DCVFM_oamManagementV4Address", "")
 			execution.setVariable("DCVFM_oamManagementV6Address", "")
-								
+
 			String request = execution.getVariable("DoCreateVfModuleRequest")
-				
+
 			if (request == null || request.isEmpty()) {
 				// Building Block-type request
+
+				String vfModuleModelInfo = execution.getVariable("vfModuleModelInfo")		
 				
-				String cloudConfiguration = execution.getVariable("cloudConfiguration")
-				String vfModuleModelInfo = execution.getVariable("vfModuleModelInfo")
+				def serviceModelInfo = execution.getVariable("serviceModelInfo")
+				logDebug("serviceModelInfo: " + serviceModelInfo, isDebugLogEnabled)
+				def vnfModelInfo = execution.getVariable("vnfModelInfo")
 				
+
 				//tenantId
-				def tenantId = jsonUtil.getJsonValue(cloudConfiguration, "cloudConfiguration.tenantId")
+				def tenantId = execution.getVariable("tenantId")
 				execution.setVariable("DCVFM_tenantId", tenantId)
 				rollbackData.put("VFMODULE", "tenantid", tenantId)
 				//volumeGroupId
-				def volumeGroupId = execution.getVariable("volumeGroupId")				
+				def volumeGroupId = execution.getVariable("volumeGroupId")
 				execution.setVariable("DCVFM_volumeGroupId", volumeGroupId)
 				//volumeGroupName
-				def volumeGroupName = execution.getVariable("volumeGroupName")				
+				def volumeGroupName = execution.getVariable("volumeGroupName")
 				execution.setVariable("DCVFM_volumeGroupName", volumeGroupName)
 				//cloudSiteId
-				def cloudSiteId = jsonUtil.getJsonValue(cloudConfiguration, "cloudConfiguration.lcpCloudRegionId")
+				def cloudSiteId = execution.getVariable("lcpCloudRegionId")
 				execution.setVariable("DCVFM_cloudSiteId", cloudSiteId)
 				rollbackData.put("VFMODULE", "aiccloudregion", cloudSiteId)
 				logDebug("cloudSiteId: " + cloudSiteId, isDebugLogEnabled)
@@ -104,50 +109,50 @@ public class DoCreateVfModule extends VfModuleBase {
 				rollbackData.put("VFMODULE", "vnftype", vnfType)
 				logDebug("vnfType: " + vnfType, isDebugLogEnabled)
 				//vnfName
-				def vnfName = execution.getVariable("vnfName")				
+				def vnfName = execution.getVariable("vnfName")
 				execution.setVariable("DCVFM_vnfName", vnfName)
 				rollbackData.put("VFMODULE", "vnfname", vnfName)
 				logDebug("vnfName: " + vnfName, isDebugLogEnabled)
 				//vnfId
-				def vnfId = execution.getVariable("vnfId")				
+				def vnfId = execution.getVariable("vnfId")
 				execution.setVariable("DCVFM_vnfId", vnfId)
 				rollbackData.put("VFMODULE", "vnfid", vnfId)
 				logDebug("vnfId: " + vnfId, isDebugLogEnabled)
 				//vfModuleName
-				def vfModuleName = execution.getVariable("vfModuleName")				
+				def vfModuleName = execution.getVariable("vfModuleName")
 				execution.setVariable("DCVFM_vfModuleName", vfModuleName)
 				rollbackData.put("VFMODULE", "vfmodulename", vfModuleName)
 				logDebug("vfModuleName: " + vfModuleName, isDebugLogEnabled)
 				//vfModuleModelName
-				def vfModuleModelName = jsonUtil.getJsonValue(vfModuleModelInfo, "modelInfo.modelName")				
+				def vfModuleModelName = jsonUtil.getJsonValue(vfModuleModelInfo, "modelName")
 				execution.setVariable("DCVFM_vfModuleModelName", vfModuleModelName)
 				rollbackData.put("VFMODULE", "vfmodulemodelname", vfModuleModelName)
 				logDebug("vfModuleModelName: " + vfModuleModelName, isDebugLogEnabled)
 				//modelCustomizationUuid
-				def modelCustomizationUuid = jsonUtil.getJsonValue(vfModuleModelInfo, "modelInfo.modelCustomizationId")
+				def modelCustomizationUuid = jsonUtil.getJsonValue(vfModuleModelInfo, "modelCustomizationUuid")
 				execution.setVariable("DCVFM_modelCustomizationUuid", modelCustomizationUuid)
 				rollbackData.put("VFMODULE", "modelcustomizationuuid", modelCustomizationUuid)
 				logDebug("modelCustomizationUuid: " + modelCustomizationUuid, isDebugLogEnabled)
 				//vfModuleId
-				def vfModuleId = execution.getVariable("vfModuleId")				
+				def vfModuleId = execution.getVariable("vfModuleId")
 				execution.setVariable("DCVFM_vfModuleId", vfModuleId)
 				logDebug("vfModuleId: " + vfModuleId, isDebugLogEnabled)
-				def requestId = execution.getVariable("requestId")				
+				def requestId = execution.getVariable("msoRequestId")
 				execution.setVariable("DCVFM_requestId", requestId)
 				logDebug("requestId: " + requestId, isDebugLogEnabled)
 				// Set mso-request-id to request-id for VNF Adapter interface				
 				execution.setVariable("mso-request-id", requestId)
 				//serviceId
-				def serviceId = execution.getVariable("serviceId")				
+				def serviceId = execution.getVariable("serviceId")
 				execution.setVariable("DCVFM_serviceId", serviceId)
 				logDebug("serviceId: " + serviceId, isDebugLogEnabled)
 				//serviceInstanceId
-				def serviceInstanceId = execution.getVariable("serviceInstanceId")				
+				def serviceInstanceId = execution.getVariable("serviceInstanceId")
 				execution.setVariable("DCVFM_serviceInstanceId", serviceInstanceId)
 				rollbackData.put("VFMODULE", "serviceInstanceId", serviceInstanceId)
 				logDebug("serviceInstanceId: " + serviceInstanceId, isDebugLogEnabled)
 				//source - HARDCODED
-				def source = "VID"				
+				def source = "VID"
 				execution.setVariable("DCVFM_source", source)
 				rollbackData.put("VFMODULE", "source", source)
 				logDebug("source: " + source, isDebugLogEnabled)
@@ -156,21 +161,27 @@ public class DoCreateVfModule extends VfModuleBase {
 				def backoutOnFailure = true
 				if (disableRollback != null && disableRollback.equals("true")) {
 					backoutOnFailure = false
-				}				
+				}
 				execution.setVariable("DCVFM_backoutOnFailure", backoutOnFailure)
 				logDebug("backoutOnFailure: " + backoutOnFailure, isDebugLogEnabled)
 				//isBaseVfModule
-				def isBaseVfModule = execution.getVariable("isBaseVfModule")				
+				def isBaseVfModule = execution.getVariable("isBaseVfModule")
 				execution.setVariable("DCVFM_isBaseVfModule", isBaseVfModule)
-				logDebug("isBaseVfModule: " + isBaseVfModule, isDebugLogEnabled)		
+				logDebug("isBaseVfModule: " + isBaseVfModule, isDebugLogEnabled)
 				//asdcServiceModelVersion
-				def asdcServiceModelVersion = execution.getVariable("asdcServiceModelVersion")				
+				def asdcServiceModelVersion = execution.getVariable("asdcServiceModelVersion")
 				execution.setVariable("DCVFM_asdcServiceModelVersion", asdcServiceModelVersion)
-				logDebug("asdcServiceModelVersion: " + asdcServiceModelVersion, isDebugLogEnabled)				
+				logDebug("asdcServiceModelVersion: " + asdcServiceModelVersion, isDebugLogEnabled)
 				//personaModelId
-				execution.setVariable("DCVFM_personaModelId", jsonUtil.getJsonValue(vfModuleModelInfo, "modelInfo.modelInvariantId"))
+				execution.setVariable("DCVFM_personaModelId", jsonUtil.getJsonValue(vfModuleModelInfo, "modelInvariantId"))
 				//personaModelVersion
-				execution.setVariable("DCVFM_personaModelVersion", jsonUtil.getJsonValue(vfModuleModelInfo, "modelInfo.modelVersion"))		
+				execution.setVariable("DCVFM_personaModelVersion", jsonUtil.getJsonValue(vfModuleModelInfo, "modelVersion"))
+				//vfModuleLabel
+				def vfModuleLabel = execution.getVariable("vfModuleLabel")
+				if (vfModuleLabel != null) {
+					execution.setVariable("DCVFM_vfModuleLabel", vfModuleLabel)
+					logDebug("vfModuleLabel: " + vfModuleLabel, isDebugLogEnabled)
+				}
 				//Get or Generate UUID
 				String uuid = execution.getVariable("DCVFM_uuid")
 				if(uuid == null){
@@ -185,14 +196,25 @@ public class DoCreateVfModule extends VfModuleBase {
 				if (isVidRequest == null || isVidRequest.isEmpty()) {
 					execution.setVariable("isVidRequest", "true")
 				}
-				
-				String vnfParamsChildNodes = execution.getVariable("vfModuleInputParams")
-				
+				//globalSubscriberId
+				String globalSubscriberId = execution.getVariable("globalSubscriberId")
+				execution.setVariable("DCVFM_globalSubscriberId", globalSubscriberId)
+				logDebug("globalSubsrciberId: " + globalSubscriberId, isDebugLogEnabled)				
+				Map<String,String> vfModuleInputParams = execution.getVariable("vfModuleInputParams")
+				if (vfModuleInputParams != null) {
+					execution.setVariable("DCVFM_vnfParamsMap", vfModuleInputParams)
+					execution.setVariable("DCVFM_vnfParamsExistFlag", true)
+				}
+				//usePreload
+				def usePreload = execution.getVariable("usePreload")
+				execution.setVariable("DCVFM_usePreload", usePreload)
+				logDebug("usePreload: " + usePreload, isDebugLogEnabled)
+
 			}
 			else {
-				// The info is inside the request
+				// The info is inside the request - DEAD CODE
 				utils.logAudit("DoCreateVfModule request: " + request)
-								
+
 				//tenantId
 				def tenantId = ""
 				if (utils.nodeExists(request, "tenant-id")) {
@@ -316,15 +338,15 @@ public class DoCreateVfModule extends VfModuleBase {
 				}
 				execution.setVariable("DCVFM_isBaseVfModule", isBaseVfModule)
 				logDebug("isBaseVfModule: " + isBaseVfModule, isDebugLogEnabled)
-		
+
 				//asdcServiceModelVersion
 				def asdcServiceModelVersion = ""
 				if (utils.nodeExists(request, "asdc-service-model-version")) {
 					asdcServiceModelVersion = utils.getNodeText(request, "asdc-service-model-version")
 				}
 				execution.setVariable("DCVFM_asdcServiceModelVersion", asdcServiceModelVersion)
-				logDebug("asdcServiceModelVersion: " + asdcServiceModelVersion, isDebugLogEnabled)	
-				
+				logDebug("asdcServiceModelVersion: " + asdcServiceModelVersion, isDebugLogEnabled)
+
 				//personaModelId
 				def personaModelId = ""
 				if (utils.nodeExists(request, "persona-model-id")) {
@@ -332,7 +354,7 @@ public class DoCreateVfModule extends VfModuleBase {
 				}
 				execution.setVariable("DCVFM_personaModelId", personaModelId)
 				logDebug("personaModelId: " + personaModelId, isDebugLogEnabled)
-				
+
 				//personaModelVersion
 				def personaModelVersion = ""
 				if (utils.nodeExists(request, "persona-model-version")) {
@@ -340,16 +362,16 @@ public class DoCreateVfModule extends VfModuleBase {
 				}
 				execution.setVariable("DCVFM_personaModelVersion", personaModelVersion)
 				logDebug("personaModelVersion: " + personaModelVersion, isDebugLogEnabled)
-				
+
 				// Process the parameters
-				
+
 						String vnfParamsChildNodes = utils.getChildNodes(request, "vnf-params")
 						if(vnfParamsChildNodes == null || vnfParamsChildNodes.length() < 1){
 								utils.log("DEBUG", "Request contains NO VNF Params", isDebugLogEnabled)
 						}else{
 								utils.log("DEBUG", "Request does contain VNF Params", isDebugLogEnabled)
 								execution.setVariable("DCVFM_vnfParamsExistFlag", true)
-				
+
 								InputSource xmlSource = new InputSource(new StringReader(request));
 								DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 								docFactory.setNamespaceAware(true)
@@ -358,7 +380,7 @@ public class DoCreateVfModule extends VfModuleBase {
 								//Get params, build map
 								Map<String, String> paramsMap = new HashMap<String, String>()
 								NodeList paramsList = xml.getElementsByTagNameNS("*", "param")
-				
+
 								for (int z = 0; z < paramsList.getLength(); z++) {
 									Node node = paramsList.item(z)
 									String paramValue = node.getTextContent()
@@ -369,7 +391,7 @@ public class DoCreateVfModule extends VfModuleBase {
 								execution.setVariable("DCVFM_vnfParamsMap", paramsMap)
 							}
 			}
-			
+
 			//Get or Generate UUID
 			String uuid = execution.getVariable("DCVFM_uuid")
 			if(uuid == null){
@@ -378,6 +400,14 @@ public class DoCreateVfModule extends VfModuleBase {
 			}else{
 				logDebug("Found messageId (UUID) is: " + uuid, isDebugLogEnabled)
 			}
+			// Get sdncVersion, default to empty
+			String sdncVersion = execution.getVariable("sdncVersion")
+			if (sdncVersion == null) {
+				sdncVersion = ""
+			}
+			logDebug("sdncVersion: " + sdncVersion, isDebugLogEnabled)
+			execution.setVariable("DCVFM_sdncVersion", sdncVersion)
+			
 			execution.setVariable("DCVFM_uuid", uuid)
 			execution.setVariable("DCVFM_baseVfModuleId", "")
 			execution.setVariable("DCVFM_baseVfModuleHeatStackId", "")
@@ -386,6 +416,7 @@ public class DoCreateVfModule extends VfModuleBase {
 			execution.setVariable("DCVFM_volumeGroupStackId", "")
 			execution.setVariable("DCVFM_cloudRegionForVolume", "")
 			execution.setVariable("DCVFM_contrailNetworkPolicyFqdnList", "")
+			execution.setVariable("DCVFM_vnfTypeToQuery", "generic-vnf")
 			rollbackData.put("VFMODULE", "rollbackPrepareUpdateVfModule", "false")
 			rollbackData.put("VFMODULE", "rollbackUpdateAAIVfModule", "false")
 			rollbackData.put("VFMODULE", "rollbackVnfAdapterCreate", "false")
@@ -394,7 +425,7 @@ public class DoCreateVfModule extends VfModuleBase {
 			rollbackData.put("VFMODULE", "rollbackCreateAAIVfModule", "false")
 			rollbackData.put("VFMODULE", "rollbackCreateNetworkPoliciesAAI", "false")
 			rollbackData.put("VFMODULE", "rollbackUpdateVnfAAI", "false")
-	
+
 			String sdncCallbackUrl = (String) execution.getVariable('URN_mso_workflow_sdncadapter_callback')
 				if (sdncCallbackUrl == null || sdncCallbackUrl.trim().isEmpty()) {
 					def msg = 'Required variable \'URN_mso_workflow_sdncadapter_callback\' is missing'
@@ -403,9 +434,9 @@ public class DoCreateVfModule extends VfModuleBase {
 				}
 				execution.setVariable("DCVFM_sdncCallbackUrl", sdncCallbackUrl)
 				utils.logAudit("SDNC Callback URL: " + sdncCallbackUrl)
-			    logDebug("SDNC Callback URL is: " + sdncCallbackUrl, isDebugLogEnabled)	
-			
-	
+			    logDebug("SDNC Callback URL is: " + sdncCallbackUrl, isDebugLogEnabled)
+
+
 			execution.setVariable("RollbackData", rollbackData)
 		}catch(BpmnError b){
 			throw b
@@ -442,7 +473,7 @@ public class DoCreateVfModule extends VfModuleBase {
 		logDebug('Entered ' + method, isDebugLogEnabled)
 
 		try {
-			buildResponse(execution, "", 200)
+			sendWorkflowResponse(execution, 200, "")
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
 			throw e;
@@ -483,6 +514,9 @@ public class DoCreateVfModule extends VfModuleBase {
 			String vfModuleId = utils.getNodeText1(createResponse, 'vf-module-id')
 			execution.setVariable('DCVFM_vfModuleId', vfModuleId)
 			logDebug("vfModuleId is: " + vfModuleId, isDebugLogEnabled)
+			String vfModuleIndex= utils.getNodeText1(createResponse, 'vf-module-index')
+			execution.setVariable('DCVFM_vfModuleIndex', vfModuleIndex)
+			logDebug("vfModuleIndex is: " + vfModuleIndex, isDebugLogEnabled)
 			rollbackData.put("VFMODULE", "vnfid", vnfId)
 			rollbackData.put("VFMODULE", "vfmoduleid", vfModuleId)
 			rollbackData.put("VFMODULE", "rollbackCreateAAIVfModule", "true")
@@ -621,30 +655,24 @@ public class DoCreateVfModule extends VfModuleBase {
 		logDebug("======== COMPLETED preProcessSDNCAssignRequest ======== ", isDebugLogEnabled)
 	}
 
-	public void preProcessSDNCGetRequest(Execution execution){
+	public void preProcessSDNCGetRequest(Execution execution, String element){
 		def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
+		String sdncVersion = execution.getVariable("DCVFM_sdncVersion")
 		execution.setVariable("prefix", Prefix)
 		utils.log("DEBUG", " ======== STARTED preProcessSDNCGetRequest Process ======== ", isDebugLogEnabled)
 		try{
-			String response = execution.getVariable("DCVFM_assignSDNCAdapterResponse")
-			utils.logAudit("DCVFM_assignSDNCAdapterResponse is: \n" + response)
-
-			String data = utils.getNodeXml(response, "response-data")
-			data = data.replaceAll("&lt;", "<")
-			data = data.replaceAll("&gt;", ">")
-			String vnfId = utils.getNodeText1(data, "vnf-id")
-			def vfModuleId = execution.getVariable('DCVFM_vfModuleId')
 			def serviceInstanceId = execution.getVariable('DCVFM_serviceInstanceId')
-
+			
 			String uuid = execution.getVariable('testReqId') // for junits
 			if(uuid==null){
-				uuid = execution.getVariable("mso-request-id") + "-" +  	System.currentTimeMillis()
+				uuid = execution.getVariable("mso-request-id") + "-" + System.currentTimeMillis()
 			}
-
-			String serviceOperation = "/VNF-API:vnfs/vnf-list/" + vfModuleId
+					
 			def callbackUrl = execution.getVariable("DCVFM_sdncCallbackUrl")
 			utils.logAudit("callbackUrl:" + callbackUrl)
-
+			
+			def vfModuleId = execution.getVariable('DCVFM_vfModuleId')
+			
 			def svcInstId = ""
 			if (serviceInstanceId == null || serviceInstanceId.isEmpty()) {
 				svcInstId = vfModuleId
@@ -652,6 +680,35 @@ public class DoCreateVfModule extends VfModuleBase {
 			else {
 				svcInstId = serviceInstanceId
 			}
+			// For VNF, serviceOperation (URI for topology GET) will be retrieved from "selflink" element 
+			// in the response from GenericGetVnf
+			// For VF Module, in 1707 serviceOperation will be retrieved from "object-path" element
+			// in SDNC Assign Response
+			// For VF Module for older versions, serviceOperation is constructed using vfModuleId
+			
+			String serviceOperation = ""
+			if (element.equals("vnf")) {
+				def vnfQueryResponse = execution.getVariable("DCVFM_vnfQueryResponse")
+				serviceOperation = utils.getNodeText1(vnfQueryResponse, "selflink")
+				utils.log("DEBUG", "VNF - service operation: " + serviceOperation, isDebugLogEnabled)
+			}
+			else if (element.equals("vfmodule")) {
+				String response = execution.getVariable("DCVFM_assignSDNCAdapterResponse")
+				utils.logAudit("DCVFM_assignSDNCAdapterResponse is: \n" + response)							
+			
+				if (!sdncVersion.equals("1707")) {
+					serviceOperation = "/VNF-API:vnfs/vnf-list/" + vfModuleId
+					utils.log("DEBUG", "VF Module with sdncVersion before 1707 - service operation: " + serviceOperation, isDebugLogEnabled)
+				}
+				else {				
+					String data = utils.getNodeXml(response, "response-data")					
+					data = data.replaceAll("&lt;", "<")
+					data = data.replaceAll("&gt;", ">")
+					utils.log("DEBUG", "responseData: " + data, isDebugLogEnabled)
+					serviceOperation = utils.getNodeText1(data, "object-path")
+					utils.log("DEBUG", "VF Module with sdncVersion of 1707 - service operation: " + serviceOperation, isDebugLogEnabled)
+				}				
+			}		
 
 			//!!!! TEMPORARY WORKAROUND FOR SDNC REPLICATION ISSUE
 			sleep(5000)
@@ -710,6 +767,8 @@ public class DoCreateVfModule extends VfModuleBase {
 		def vfModuleModelName = execution.getVariable("DCVFM_vfModuleModelName")
 		//vfModuleId
 		def vfModuleId = execution.getVariable("DCVFM_vfModuleId")
+		//vfModuleIndex
+		def vfModuleIndex = execution.getVariable("DCVFM_vfModuleIndex")
 		//requestId
 		def requestId = execution.getVariable("DCVFM_requestId")
 		//serviceId
@@ -744,34 +803,14 @@ public class DoCreateVfModule extends VfModuleBase {
 			notificationUrl = utils.getQualifiedHostNameForCallback(notificationUrl)
 		}
 
-		String vnfParams
-			if(execution.getVariable("DCVFM_vnfParamsExistFlag") == true){
-				StringBuilder sbParams = new StringBuilder()
-				Map<String, String> paramsMap = execution.getVariable("DCVFM_vnfParamsMap")
-
-				for (Map.Entry<String, String> entry : paramsMap.entrySet()) {
-					String paramsXml
-					String paramName = entry.getKey();
-					String paramValue = entry.getValue()
-					paramsXml =
-							"""	<entry>
-							<key>${paramName}</key>
-						<value>${paramValue}</value>
-						</entry>
-					"""
-
-					vnfParams = sbParams.append(paramsXml)
-				}
-			}else{
-				vnfParams = ""
-			}
-
+		Map<String, String> vnfParamsMap = execution.getVariable("DCVFM_vnfParamsMap")
+		
 		//Get SDNC Response Data for VnfSubCreate Request
 		String sdncGetResponse = execution.getVariable('DCVFM_getSDNCAdapterResponse')
 		utils.logAudit("sdncGetResponse: " + sdncGetResponse)
 
-		String vfModuleParams = buildVfModuleParams(vnfParams, sdncGetResponse, vnfId, vnfName,
-				vfModuleId, vfModuleName)
+		String vfModuleParams = buildVfModuleParams(vnfParamsMap, sdncGetResponse, vnfId, vnfName,
+				vfModuleId, vfModuleName, vfModuleIndex)
 
 		def svcInstId = ""
 		if (serviceInstanceId == null || serviceInstanceId.isEmpty()) {
@@ -780,7 +819,6 @@ public class DoCreateVfModule extends VfModuleBase {
 		else {
 			svcInstId = serviceInstanceId
 		}
-
 
 		def createVnfARequest = """
 		<createVfModuleRequest>
@@ -864,13 +902,13 @@ public class DoCreateVfModule extends VfModuleBase {
 			def requestId = execution.getVariable("mso-request-id")
 
 			if (requestId == null) {
-				createWorkflowException(execution, 1002, processKey + " request has no mso-request-id")
+				exceptionUtil.buildAndThrowWorkflowException(execution, 1002, processKey + " request has no mso-request-id")
 			}
 
 			def serviceInstanceId = execution.getVariable("mso-service-instance-id")
 
 			if (serviceInstanceId == null) {
-				createWorkflowException(execution, 1002, processKey + " request message has no mso-service-instance-id")
+				exceptionUtil.buildAndThrowWorkflowException(execution, 1002, processKey + " request message has no mso-service-instance-id")
 			}
 
 			utils.logContext(requestId, serviceInstanceId)
@@ -947,6 +985,21 @@ public class DoCreateVfModule extends VfModuleBase {
 		def vfModuleModelName = execution.getVariable("DCVFM_vfModuleModelName")
 		def vnfId = execution.getVariable("DCVFM_vnfId")
 		def cloudSiteId = execution.getVariable("DCVFM_cloudSiteId")
+		def sdncVersion = execution.getVariable("DCVFM_sdncVersion")
+		def serviceModelInfo = execution.getVariable("serviceModelInfo")
+		def vnfModelInfo = execution.getVariable("vnfModelInfo")
+		def vfModuleModelInfo = execution.getVariable("vfModuleModelInfo")
+		String serviceEcompModelInformation = sdncAdapterUtils.modelInfoToEcompModelInformation(serviceModelInfo)
+		String vnfEcompModelInformation = sdncAdapterUtils.modelInfoToEcompModelInformation(vnfModelInfo)
+		String vfModuleEcompModelInformation = sdncAdapterUtils.modelInfoToEcompModelInformation(vfModuleModelInfo)
+		def globalSubscriberId = execution.getVariable("DCVFM_globalSubscriberId")
+		boolean usePreload = execution.getVariable("DCVFM_usePreload")
+		String usePreloadToSDNC = usePreload ? "Y" : "N"
+		def modelCustomizationUuid = execution.getVariable("DCVFM_modelCustomizationUuid")
+		def modelCustomizationUuidString = ""
+		if (!usePreload) {
+			modelCustomizationUuidString = "<modelCustomizationUuid>" + modelCustomizationUuid + "</modelCustomizationUuid>"
+		}
 
 		String sdncVNFParamsXml = ""
 
@@ -955,11 +1008,15 @@ public class DoCreateVfModule extends VfModuleBase {
 		}else{
 			sdncVNFParamsXml = ""
 		}
+		
+		String sdncRequest = ""
+		
+		if (!sdncVersion.equals("1707")) {
 
-		String sdncRequest =
-		"""<sdncadapterworkflow:SDNCAdapterWorkflowRequest xmlns:ns5="http://org.openecomp/mso/request/types/v1"
-													xmlns:sdncadapterworkflow="http://org.openecomp/mso/workflow/schema/v1"
-													xmlns:sdncadapter="http://org.openecomp/workflow/sdnc/adapter/schema/v1">
+			sdncRequest =
+        """<sdncadapterworkflow:SDNCAdapterWorkflowRequest xmlns:ns5="http://org.openecomp/mso/request/types/v1"
+                                                    xmlns:sdncadapterworkflow="http://org.openecomp/mso/workflow/schema/v1"
+                                                    xmlns:sdncadapter="http://org.openecomp/workflow/sdnc/adapter/schema/v1">
 	   <sdncadapter:RequestHeader>
 				<sdncadapter:RequestId>${requestId}</sdncadapter:RequestId>
 				<sdncadapter:SvcInstanceId>${svcInstId}</sdncadapter:SvcInstanceId>
@@ -989,10 +1046,114 @@ public class DoCreateVfModule extends VfModuleBase {
 			<generic-vnf-type>${vnfType}</generic-vnf-type>
 			<aic-cloud-region>${cloudSiteId}</aic-cloud-region>
 			<tenant>${tenantId}</tenant>
+			${modelCustomizationUuidString}
+			<use-preload>${usePreloadToSDNC}</use-preload>
 		${sdncVNFParamsXml}
 		</vnf-request-information>
 	</sdncadapterworkflow:SDNCRequestData>
 	</sdncadapterworkflow:SDNCAdapterWorkflowRequest>"""
+		
+		}
+		else {	
+			
+			sdncRequest =
+        """<sdncadapterworkflow:SDNCAdapterWorkflowRequest xmlns:ns5="http://org.openecomp/mso/request/types/v1"
+                                                    xmlns:sdncadapterworkflow="http://org.openecomp/mso/workflow/schema/v1"
+                                                    xmlns:sdncadapter="http://org.openecomp/workflow/sdnc/adapter/schema/v1">
+	   <sdncadapter:RequestHeader>
+				<sdncadapter:RequestId>${requestId}</sdncadapter:RequestId>
+				<sdncadapter:SvcInstanceId>${svcInstId}</sdncadapter:SvcInstanceId>
+				<sdncadapter:SvcAction>${action}</sdncadapter:SvcAction>
+				<sdncadapter:SvcOperation>vnf-topology-operation</sdncadapter:SvcOperation>
+				<sdncadapter:CallbackUrl>${callbackURL}</sdncadapter:CallbackUrl>
+				<sdncadapter:MsoAction>generic-resource</sdncadapter:MsoAction>
+		</sdncadapter:RequestHeader>
+	<sdncadapterworkflow:SDNCRequestData>
+		<request-information>
+			<request-id>${requestId}</request-id>
+			<request-action>CreateVfModuleInstance</request-action>
+			<source>${source}</source>
+			<notification-url/>
+		</request-information>
+		<service-information>
+			<service-id>${serviceId}</service-id>
+			<subscription-service-type>${serviceId}</subscription-service-type>
+			${serviceEcompModelInformation}
+			<service-instance-id>${svcInstId}</service-instance-id>
+			<global-customer-id>${globalSubscriberId}</global-customer-id>			
+		</service-information>
+		<vnf-request-information>
+			<vnf-type>${vfModuleModelName}</vnf-type>
+		</vnf-request-information>
+		<vnf-information>
+			<vnf-id>${vnfId}</vnf-id>
+			<vnf-type>${vnfType}</vnf-type>
+			${vnfEcompModelInformation}			
+		</vnf-information>
+		<vf-module-information>
+			<vf-module-id>${vfModuleId}</vf-module-id>
+			<vf-module-type>${vfModuleModelName}</vf-module-type>
+			${vfModuleEcompModelInformation}			
+		</vf-module-information>
+		<vf-module-request-input>
+			<request-version>${sdncVersion}</request-version>
+			<vf-module-name>${vfModuleName}</vf-module-name>
+			<tenant>${tenantId}</tenant>
+			<aic-cloud-region>${cloudSiteId}</aic-cloud-region>				
+		${sdncVNFParamsXml}
+		</vf-module-request-input>
+	  </sdncadapterworkflow:SDNCRequestData>
+	</sdncadapterworkflow:SDNCAdapterWorkflowRequest>"""
+			
+			
+			/*
+			sdncRequest =
+			"""<sdncadapterworkflow:SDNCAdapterWorkflowRequest xmlns:ns5="http://org.openecomp/mso/request/types/v1"
+													xmlns:sdncadapterworkflow="http://org.openecomp/mso/workflow/schema/v1"
+													xmlns:sdncadapter="http://org.openecomp/workflow/sdnc/adapter/schema/v1">
+	   <sdncadapter:RequestHeader>
+				<sdncadapter:RequestId>${requestId}</sdncadapter:RequestId>
+				<sdncadapter:SvcInstanceId>${svcInstId}</sdncadapter:SvcInstanceId>
+				<sdncadapter:SvcAction>${action}</sdncadapter:SvcAction>
+				<sdncadapter:SvcOperation>vnf-topology-operation</sdncadapter:SvcOperation>
+				<sdncadapter:CallbackUrl>${callbackURL}</sdncadapter:CallbackUrl>
+		</sdncadapter:RequestHeader>
+	<sdncadapterworkflow:SDNCRequestData>
+		<request-information>
+			<request-id>${requestId}</request-id>
+			<request-action>CreateVfModuleInstance</request-action>
+			<source>${source}</source>
+			<notification-url/>
+		</request-information>
+		<service-information>
+			<service-id>${serviceId}</service-id>
+			<service-type>${serviceId}</service-type>
+			${serviceEcompModelInformation}			
+			<service-instance-id>${svcInstId}</service-instance-id>
+			<global-customer-id>${globalSubscriberId}</global-customer-id>
+		</service-information>
+		<vnf-information>
+			<vnf-id>${vnfId}</vnf-id>
+			<vnf-type>${vnfType}</vnf-type>
+			${vnfEcompModelInformation}			
+		</vnf-information>
+		<vf-module-information>
+			<vf-module-id>${vfModuleId}</vf-module-id>
+			<vf-module-type>${vfModuleModelName}</vf-module-type>
+			${vfModuleEcompModelInformation}			
+		</vf-module-information>
+		<vf-module-request-input>
+			<request-version>${sdncVersion}</request-version>
+			<vf-module-name>${vfModuleName}</vf-module-name>
+			<tenant>${tenantId}</tenant>
+			<aic-cloud-region>${cloudSiteId}</aic-cloud-region>				
+		${sdncVNFParamsXml}
+		</vf-module-request-input>		
+	</sdncadapterworkflow:SDNCRequestData>
+	</sdncadapterworkflow:SDNCAdapterWorkflowRequest>"""
+			*/
+			
+		}
 
 	utils.logAudit("sdncRequest:  " + sdncRequest)
 	return sdncRequest
@@ -1080,20 +1241,20 @@ public class DoCreateVfModule extends VfModuleBase {
 							else if (key.endsWith("contrail_network_policy_fqdn")) {
 								String contrailNetworkPolicyFqdn = element.getElementsByTagNameNS("*", "value").item(0).getTextContent()
 								logDebug("Obtained contrailNetworkPolicyFqdn: " + contrailNetworkPolicyFqdn, isDebugLogEnabled)
-								contrailNetworkPolicyFqdnList.add(contrailNetworkPolicyFqdn)								
+								contrailNetworkPolicyFqdnList.add(contrailNetworkPolicyFqdn)
 							}
 							else if (key.equals("oam_management_v4_address")) {
 								String oamManagementV4Address = element.getElementsByTagNameNS("*", "value").item(0).getTextContent()
 								logDebug("Obtained oamManagementV4Address: " + oamManagementV4Address, isDebugLogEnabled)
-								execution.setVariable("DCVFM_oamManagementV4Address", oamManagementV4Address)							
+								execution.setVariable("DCVFM_oamManagementV4Address", oamManagementV4Address)
 							}
 							else if (key.equals("oam_management_v6_address")) {
 								String oamManagementV6Address = element.getElementsByTagNameNS("*", "value").item(0).getTextContent()
 								logDebug("Obtained oamManagementV6Address: " + oamManagementV6Address, isDebugLogEnabled)
 								execution.setVariable("DCVFM_oamManagementV6Address", oamManagementV6Address)
 							}
-						
-						}						
+
+						}
 					}
 					if (!contrailNetworkPolicyFqdnList.isEmpty()) {
 						execution.setVariable("DCVFM_contrailNetworkPolicyFqdnList", contrailNetworkPolicyFqdnList)
@@ -1435,7 +1596,7 @@ public class DoCreateVfModule extends VfModuleBase {
 		logDebug("======== COMPLETED  prepareCreateAAIVfModuleVolumeGroupRequest ======== ", isDebugLogEnabled)
 
 	}
-   
+
    public void createNetworkPoliciesInAAI(Execution execution) {
 	   def method = getClass().getSimpleName() + '.createNetworkPoliciesInAAI(' +
 	   'execution=' + execution.getId() +
@@ -1444,13 +1605,13 @@ public class DoCreateVfModule extends VfModuleBase {
 	   logDebug('Entered ' + method, isDebugLogEnabled)
 	   execution.setVariable("prefix", Prefix)
 	   logDebug(" ======== STARTED createNetworkPoliciesInAAI ======== ", isDebugLogEnabled)
-	  
+
 	   try {
 		   // get variables
 		   List fqdnList = execution.getVariable("DCVFM_contrailNetworkPolicyFqdnList")
 		   int fqdnCount = fqdnList.size()
 		   def rollbackData = execution.getVariable("RollbackData")
-		  
+
 		   execution.setVariable("DCVFM_networkPolicyFqdnCount", fqdnCount)
 		   logDebug("DCVFM_networkPolicyFqdnCount - " + fqdnCount, isDebugLogEnabled)
 
@@ -1458,8 +1619,8 @@ public class DoCreateVfModule extends VfModuleBase {
 		   AaiUtil aaiUriUtil = new AaiUtil(this)
 		   String aai_uri = aaiUriUtil.getNetworkPolicyUri(execution)
 
-		   if (fqdnCount > 0) {			   		  
-			   
+		   if (fqdnCount > 0) {
+
 			   // AII loop call over contrail network policy fqdn list
 			   for (i in 0..fqdnCount-1) {
 
@@ -1467,10 +1628,10 @@ public class DoCreateVfModule extends VfModuleBase {
 				   String fqdn = fqdnList[i]
 
 				   // Query AAI for this network policy FQDN
-				  
+
 				   String queryNetworkPolicyByFqdnAAIRequest = "${aai_endpoint}${aai_uri}?network-policy-fqdn=" + UriUtils.encode(fqdn, "UTF-8")
 				   utils.logAudit("AAI request endpoint: " + queryNetworkPolicyByFqdnAAIRequest)
-				   
+
 				   def aaiRequestId = UUID.randomUUID().toString()
 				   RESTConfig config = new RESTConfig(queryNetworkPolicyByFqdnAAIRequest);
 				   RESTClient client = new RESTClient(config).addHeader("X-TransactionId", aaiRequestId)
@@ -1489,32 +1650,32 @@ public class DoCreateVfModule extends VfModuleBase {
 					   // This network policy FQDN already exists in AAI
 					   utils.logAudit(aaiResponseAsString)
 					   execution.setVariable("DCVFM_queryNetworkPolicyByFqdnAAIResponse", aaiResponseAsString)
-					   logDebug(" QueryAAINetworkPolicyByFQDN Success REST Response, , NetworkPolicy #" + counting + " : " + "\n" + aaiResponseAsString, isDebugLogEnabled)					  
+					   logDebug(" QueryAAINetworkPolicyByFQDN Success REST Response, , NetworkPolicy #" + counting + " : " + "\n" + aaiResponseAsString, isDebugLogEnabled)
 
 				   } else {
 					   if (returnCode == 404) {
 						   // This network policy FQDN is not in AAI yet. Add it now
 						   logDebug("The return code is: "  + returnCode, isDebugLogEnabled)
 						   logDebug("This network policy FQDN is not in AAI yet: " + fqdn, isDebugLogEnabled)
-						   utils.logAudit("Network policy FQDN is not in AAI yet")						   
+						   utils.logAudit("Network policy FQDN is not in AAI yet")
 						   // Add the network policy with this FQDN to AAI
 						   def networkPolicyId = UUID.randomUUID().toString()
-						   logDebug("Adding network-policy with network-policy-id " + networkPolicyId, isDebugLogEnabled)						
-						   						   
+						   logDebug("Adding network-policy with network-policy-id " + networkPolicyId, isDebugLogEnabled)
+
 						   String aaiNamespace = aaiUriUtil.getNamespaceFromUri(aai_uri)
 						   logDebug('AAI namespace is: ' + aaiNamespace, isDebugLogEnabled)
 						   String payload = """<network-policy xmlns="${aaiNamespace}">
 							   	<network-policy-id>${networkPolicyId}</network-policy-id>
 								<network-policy-fqdn>${fqdn}</network-policy-fqdn>
-								<heat-stack-id>${execution.getVariable("DCVFM_heatStackId")}</heat-stack-id>								
+								<heat-stack-id>${execution.getVariable("DCVFM_heatStackId")}</heat-stack-id>
 								</network-policy>""" as String
-								
+
 						   execution.setVariable("DCVFM_addNetworkPolicyAAIRequestBody", payload)
-						   
+
 						   String addNetworkPolicyAAIRequest = "${aai_endpoint}${aai_uri}/" + UriUtils.encode(networkPolicyId, "UTF-8")
 						   utils.logAudit("AAI request endpoint: " + addNetworkPolicyAAIRequest)
 						   logDebug("AAI request endpoint: " + addNetworkPolicyAAIRequest, isDebugLogEnabled)
-						   
+
 						   def aaiRequestIdPut = UUID.randomUUID().toString()
 						   RESTConfig configPut = new RESTConfig(addNetworkPolicyAAIRequest);
 						   RESTClient clientPut = new RESTClient(configPut).addHeader("X-TransactionId", aaiRequestIdPut)
@@ -1527,8 +1688,8 @@ public class DoCreateVfModule extends VfModuleBase {
 						   int returnCodePut = responsePut.getStatusCode()
 						   execution.setVariable("DCVFM_aaiAddNetworkPolicyReturnCode", returnCodePut)
 						   logDebug(" ***** AAI add network policy Response Code, NetworkPolicy #" + counting + " : " + returnCodePut, isDebugLogEnabled)
-		
-						   String aaiResponseAsStringPut = responsePut.getResponseBodyAsString()	
+
+						   String aaiResponseAsStringPut = responsePut.getResponseBodyAsString()
 						   if (isOneOf(returnCodePut, 200, 201)) {
 							   logDebug("The return code from adding network policy is: "  + returnCodePut, isDebugLogEnabled)
 							   // This network policy was created in AAI successfully
@@ -1538,14 +1699,14 @@ public class DoCreateVfModule extends VfModuleBase {
 							   rollbackData.put("VFMODULE", "rollbackCreateNetworkPoliciesAAI", "true")
 							   rollbackData.put("VFMODULE", "contrailNetworkPolicyFqdn" + i, fqdn)
 							   execution.setVariable("RollbackData", rollbackData)
-							   		
+
 						   } else {
 						   		// aai all errors
 						   		String putErrorMessage = "Unable to add network-policy to AAI createNetworkPoliciesInAAI - " + returnCodePut
 								logDebug(putErrorMessage, isDebugLogEnabled)
-								exceptionUtil.buildAndThrowWorkflowException(execution, 2500, putErrorMessage)					   
+								exceptionUtil.buildAndThrowWorkflowException(execution, 2500, putErrorMessage)
 						   }
-						   						   
+
 					   } else {
 						  if (aaiResponseAsString.contains("RESTFault")) {
 							  WorkflowException exceptionObject = exceptionUtil.MapAAIExceptionToWorkflowException(aaiResponseAsString, execution)
@@ -1564,7 +1725,7 @@ public class DoCreateVfModule extends VfModuleBase {
 
 			   } // end loop
 
-			  
+
 		   } else {
 		   	   logDebug("No contrail network policies to query/create", isDebugLogEnabled)
 
@@ -1580,7 +1741,7 @@ public class DoCreateVfModule extends VfModuleBase {
 	   }
 
    }
-   
+
    /**
 	* Prepare a Request for invoking the UpdateAAIGenericVnf subflow.
 	*
@@ -1600,18 +1761,18 @@ public class DoCreateVfModule extends VfModuleBase {
 		   def oamManagementV6Address = execution.getVariable("DCVFM_oamManagementV6Address")
 		   def ipv4OamAddressElement = ''
 		   def managementV6AddressElement = ''
-		   
+
 		   if (oamManagementV4Address != null && !oamManagementV4Address.isEmpty()) {
-			   ipv4OamAddressElement = '<ipv4-oam-address>' + oamManagementV4Address + '</ipv4-oam-address>'			  
+			   ipv4OamAddressElement = '<ipv4-oam-address>' + oamManagementV4Address + '</ipv4-oam-address>'
 		   }
-		   
+
 		   if (oamManagementV6Address != null && !oamManagementV6Address.isEmpty()) {
 			   managementV6AddressElement = '<management-v6-address>' + oamManagementV6Address + '</management-v6-address>'
 		   }
-		   
+
 		   rollbackData.put("VFMODULE", "oamManagementV4Address", oamManagementV4Address)
-		   
-		  	   
+
+
 		   String updateAAIGenericVnfRequest = """
 					<UpdateAAIGenericVnfRequest>
 						<vnf-id>${vnfId}</vnf-id>
@@ -1623,17 +1784,17 @@ public class DoCreateVfModule extends VfModuleBase {
 			   execution.setVariable('DCVM_updateAAIGenericVnfRequest', updateAAIGenericVnfRequest)
 			   utils.logAudit("updateAAIGenericVnfRequest : " + updateAAIGenericVnfRequest)
 			   logDebug('Request for UpdateAAIGenericVnf:\n' + updateAAIGenericVnfRequest, isDebugLogEnabled)
-		
+
 
 		   logDebug('Exited ' + method, isDebugLogEnabled)
 	   } catch (BpmnError e) {
 		   throw e;
 	   } catch (Exception e) {
 		   logError('Caught exception in ' + method, e)
-		   createWorkflowException(execution, 1002, 'Error in prepUpdateAAIGenericVnf(): ' + e.getMessage())
+		   exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepUpdateAAIGenericVnf(): ' + e.getMessage())
 	   }
    }
-   
+
    /**
 	* Post process a result from invoking the UpdateAAIGenericVnf subflow.
 	*
@@ -1648,31 +1809,33 @@ public class DoCreateVfModule extends VfModuleBase {
 
 	   try {
 		   def rollbackData = execution.getVariable("RollbackData")
-		   
+
 		   rollbackData.put("VFMODULE", "rollbackUpdateVnfAAI", "true")
-		   
+
 		   def vnfId = execution.getVariable('DCVFM_vnfId')
 		   def oamManagementV4Address = execution.getVariable("DCVFM_oamManagementV4Address")
 		   def oamManagementV6Address = execution.getVariable("DCVFM_oamManagementV6Address")
 		   def ipv4OamAddressElement = ''
 		   def managementV6AddressElement = ''
-		   
-		   if (oamManagementV4Address != null && !oamManagementV4Address.isEmpty()) {			   
+
+		   if (oamManagementV4Address != null && !oamManagementV4Address.isEmpty()) {
 			   rollbackData.put("VFMODULE", "oamManagementV4Address", oamManagementV4Address)
 		   }
-		   
+
 		   if (oamManagementV6Address != null && !oamManagementV6Address.isEmpty()) {
-			   rollbackData.put("VFMODULE", "oamManagementV6Address", oamManagementV6Address)			   
+			   rollbackData.put("VFMODULE", "oamManagementV6Address", oamManagementV6Address)
 		   }
-		   
-		   execution.setVariable("RollbackData", rollbackData)		   
-			
+
+		   execution.setVariable("RollbackData", rollbackData)
+
 		   logDebug('Exited ' + method, isDebugLogEnabled)
 	   } catch (BpmnError e) {
 		   throw e;
 	   } catch (Exception e) {
 		   logError('Caught exception in ' + method, e)
-		   createWorkflowException(execution, 1002, 'Error in postProcessUpdateAAIGenericVnf(): ' + e.getMessage())
+		   exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in postProcessUpdateAAIGenericVnf(): ' + e.getMessage())
 	   }
    }
+
+
 }

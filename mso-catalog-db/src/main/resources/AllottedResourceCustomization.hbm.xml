@@ -43,9 +43,6 @@
         <property name="modelInstanceName" type="java.lang.String">
             <column name="MODEL_INSTANCE_NAME" length="200" not-null="true"/>
         </property>
-        <!-- <property name="created" type="java.sql.Timestamp">
-            <column name="CREATION_TIMESTAMP" />
-        </property> -->
         <property name="created" type="timestamp" generated="insert" update="false" insert="false" >
 		    <column name="CREATION_TIMESTAMP" not-null="true"/>
 		</property>

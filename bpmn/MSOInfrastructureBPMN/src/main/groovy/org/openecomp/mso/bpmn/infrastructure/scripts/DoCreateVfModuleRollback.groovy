@@ -32,7 +32,7 @@ import org.springframework.web.util.UriUtils
 
 
 public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
-	
+
 	def Prefix="DCVFMR_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 
@@ -84,9 +84,9 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 			createdNetworkPolicyFqdnList.add(fqdn)
 			logDebug("got fqdn # " + i + ": " + fqdn, isDebugEnabled)
 			i = i + 1
-		
+
 		}
-		
+
 		execution.setVariable("DCVFMR_createdNetworkPolicyFqdnList", createdNetworkPolicyFqdnList)
 		String oamManagementV4Address = rollbackData.get("VFMODULE", "oamManagementV4Address")
 		execution.setVariable("DCVFMR_oamManagementV4Address", oamManagementV4Address)
@@ -105,10 +105,10 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 
 		// formulate the request for PrepareUpdateAAIVfModule
 		String request = """<PrepareUpdateAAIVfModuleRequest>
-							<vnf-id>${vnfId}</vnf-id>
-							<vf-module-id>${vfModuleId}</vf-module-id>
-							<orchestration-status>pending-delete</orchestration-status>
-						</PrepareUpdateAAIVfModuleRequest>""" as String
+								<vnf-id>${vnfId}</vnf-id>
+								<vf-module-id>${vfModuleId}</vf-module-id>
+								<orchestration-status>pending-delete</orchestration-status>
+							</PrepareUpdateAAIVfModuleRequest>""" as String
 		utils.log("DEBUG", "PrepareUpdateAAIVfModuleRequest :" + request, isDebugEnabled)
 		utils.logAudit("DoCreateVfModuleRollback PrepareUpdateAAIVfModule Request: " + request)
 		execution.setVariable("PrepareUpdateAAIVfModuleRequest", request)
@@ -119,7 +119,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 	public void prepSDNCAdapterRequest(Execution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		String srvInstId = execution.getVariable("DCVFMR_serviceInstanceId")
-		
+
 		def callbackUrl = execution.getVariable("URN_mso_workflow_sdncadapter_callback")
 
 		String source = execution.getVariable("DCVFMR_source")
@@ -133,12 +133,12 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 		String vfModuleModelName = execution.getVariable("DCVFMR_vfModuleModelName")
 		String cloudSiteId = execution.getVariable("DCVFMR_cloudSiteId")
 		String requestId = execution.getVariable("DCVFMR_requestId")
-		
+
 		String serviceInstanceIdToSdnc = ""
 		if (srvInstId != null && !srvInstId.isEmpty()) {
 			serviceInstanceIdToSdnc = srvInstId
 		} else {
-			serviceInstanceIdToSdnc = vfModuleId
+		    serviceInstanceIdToSdnc = vfModuleId
 		}
 
 		def doSDNCActivateRollback = execution.getVariable("DCVFMR_rollbackSDNCRequestActivate")
@@ -162,40 +162,40 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 		String request = """<sdncadapterworkflow:SDNCAdapterWorkflowRequest xmlns:ns5="http://org.openecomp/mso/request/types/v1"
 												xmlns:sdncadapterworkflow="http://org.openecomp/mso/workflow/schema/v1"
 												xmlns:sdncadapter="http://org.openecomp/workflow/sdnc/adapter/schema/v1">
-					      <sdncadapter:RequestHeader>
-					         <sdncadapter:RequestId>${requestId}</sdncadapter:RequestId>
-					         <sdncadapter:SvcInstanceId>${vfModuleId}</sdncadapter:SvcInstanceId>
-					         <sdncadapter:SvcAction>${action}</sdncadapter:SvcAction>
-					         <sdncadapter:SvcOperation>vnf-topology-operation</sdncadapter:SvcOperation>
-					         <sdncadapter:CallbackUrl>${callbackUrl}</sdncadapter:CallbackUrl>
-					      </sdncadapter:RequestHeader>
-					      <sdncadapterworkflow:SDNCRequestData>
-					         <request-information>
-					            <request-id>${requestId}</request-id>
-					            <request-action>${requestAction}</request-action>
-					            <source>${source}</source>
-					            <notification-url/>
-					            <order-number/>
-					            <order-version/>
-					         </request-information>
-					         <service-information>
-					            <service-id>${serviceId}</service-id>
-								<service-type>${serviceId}</service-type>
-					            <service-instance-id>${serviceInstanceIdToSdnc}</service-instance-id>
-					            <subscriber-name>notsurewecare</subscriber-name>
-					         </service-information>
-					         <vnf-request-information>
-					         	<vnf-id>${vfModuleId}</vnf-id>
-								<vnf-type>${vfModuleModelName}</vnf-type>
-                                <vnf-name>${vfModuleName}</vnf-name>
-								<generic-vnf-id>${vnfId}</generic-vnf-id>
-                                <generic-vnf-name>${vnfName}</generic-vnf-name>
-								<generic-vnf-type>${vnfType}</generic-vnf-type>
-								<aic-cloud-region>${cloudSiteId}</aic-cloud-region>
-								<tenant>${tenantId}</tenant>
-					         </vnf-request-information>
-					      </sdncadapterworkflow:SDNCRequestData>
-					   </sdncadapterworkflow:SDNCAdapterWorkflowRequest>"""
+						      <sdncadapter:RequestHeader>
+						         <sdncadapter:RequestId>${requestId}</sdncadapter:RequestId>
+						         <sdncadapter:SvcInstanceId>${vfModuleId}</sdncadapter:SvcInstanceId>
+						         <sdncadapter:SvcAction>${action}</sdncadapter:SvcAction>
+						         <sdncadapter:SvcOperation>vnf-topology-operation</sdncadapter:SvcOperation>
+						         <sdncadapter:CallbackUrl>${callbackUrl}</sdncadapter:CallbackUrl>
+						      </sdncadapter:RequestHeader>
+						      <sdncadapterworkflow:SDNCRequestData>
+						         <request-information>
+						            <request-id>${requestId}</request-id>
+						            <request-action>${requestAction}</request-action>
+						            <source>${source}</source>
+						            <notification-url/>
+						            <order-number/>
+						            <order-version/>
+						         </request-information>
+						         <service-information>
+						            <service-id>${serviceId}</service-id>
+									<service-type>${serviceId}</service-type>
+						            <service-instance-id>${serviceInstanceIdToSdnc}</service-instance-id>
+						            <subscriber-name>notsurewecare</subscriber-name>
+						         </service-information>
+						         <vnf-request-information>
+						         	<vnf-id>${vfModuleId}</vnf-id>
+									<vnf-type>${vfModuleModelName}</vnf-type>
+                                    <vnf-name>${vfModuleName}</vnf-name>
+									<generic-vnf-id>${vnfId}</generic-vnf-id>
+                                    <generic-vnf-name>${vnfName}</generic-vnf-name>
+									<generic-vnf-type>${vnfType}</generic-vnf-type>
+									<aic-cloud-region>${cloudSiteId}</aic-cloud-region>
+									<tenant>${tenantId}</tenant>
+						         </vnf-request-information>
+						      </sdncadapterworkflow:SDNCRequestData>
+						   </sdncadapterworkflow:SDNCAdapterWorkflowRequest>"""
 
 		utils.log("DEBUG", "sdncAdapterWorkflowRequest: " + request, isDebugEnabled)
 		utils.logAudit("DoCreateVfModuleRollback sdncAdapterWorkflow Request: " + request)
@@ -223,21 +223,21 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 		}
 
 		String request = """
-		<deleteVfModuleRequest>
-		    <cloudSiteId>${aicCloudRegion}</cloudSiteId>
-		    <tenantId>${tenantId}</tenantId>
-		    <vnfId>${vnfId}</vnfId>
-		    <vfModuleId>${vfModuleId}</vfModuleId>
-		    <vfModuleStackId>${vfModuleStackId}</vfModuleStackId>
-		    <skipAAI>true</skipAAI>
-		    <msoRequest>
-		        <requestId>${origRequestId}</requestId>
-		        <serviceInstanceId>${srvInstId}</serviceInstanceId>
-		    </msoRequest>
-		    <messageId>${messageId}</messageId>
-		    <notificationUrl>${notificationUrl}</notificationUrl>
-		</deleteVfModuleRequest>
-		""" as String
+			<deleteVfModuleRequest>
+			    <cloudSiteId>${aicCloudRegion}</cloudSiteId>
+			    <tenantId>${tenantId}</tenantId>
+			    <vnfId>${vnfId}</vnfId>
+			    <vfModuleId>${vfModuleId}</vfModuleId>
+			    <vfModuleStackId>${vfModuleStackId}</vfModuleStackId>
+			    <skipAAI>true</skipAAI>
+			    <msoRequest>
+			        <requestId>${origRequestId}</requestId>
+			        <serviceInstanceId>${srvInstId}</serviceInstanceId>
+			    </msoRequest>
+			    <messageId>${messageId}</messageId>
+			    <notificationUrl>${notificationUrl}</notificationUrl>
+			</deleteVfModuleRequest>
+			""" as String
 
 		utils.log("DEBUG", "vnfAdapterRestV1Request: " + request, isDebugEnabled)
 		utils.logAudit("PrepareUpdateAAIVfModule vnfAdapterRestV1 Request: " + request)
@@ -252,11 +252,11 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 		String vfModuleId = execution.getVariable("DCVFMR_vfModuleId")
 		// formulate the request for UpdateAAIVfModule
 		String request = """<UpdateAAIVfModuleRequest>
-							<vnf-id>${vnfId}</vnf-id>
-							<vf-module-id>${vfModuleId}</vf-module-id>
-							<heat-stack-id>DELETE</heat-stack-id>
-							<orchestration-status>deleted</orchestration-status>
-						</UpdateAAIVfModuleRequest>""" as String
+								<vnf-id>${vnfId}</vnf-id>
+								<vf-module-id>${vfModuleId}</vf-module-id>
+								<heat-stack-id>DELETE</heat-stack-id>
+								<orchestration-status>deleted</orchestration-status>
+							</UpdateAAIVfModuleRequest>""" as String
 		utils.log("DEBUG", "UpdateAAIVfModuleRequest :" + request, isDebugEnabled)
 		utils.logAudit("UpdateAAIVfModule Request: " + request)
 		execution.setVariable("UpdateAAIVfModuleRequest", request)
@@ -270,9 +270,9 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 		String vfModuleId = execution.getVariable("DCVFMR_vfModuleId")
 		// formulate the request for UpdateAAIVfModule
 		String request = """<DeleteAAIVfModuleRequest>
-							<vnf-id>${vnfId}</vnf-id>
-							<vf-module-id>${vfModuleId}</vf-module-id>
-						</DeleteAAIVfModuleRequest>""" as String
+								<vnf-id>${vnfId}</vnf-id>
+								<vf-module-id>${vfModuleId}</vf-module-id>
+							</DeleteAAIVfModuleRequest>""" as String
 		utils.log("DEBUG", "DeleteAAIVfModuleRequest :" + request, isDebugEnabled)
 		utils.logAudit("DeleteAAIVfModule Request: " + request)
 		execution.setVariable("DeleteAAIVfModuleRequest", request)
@@ -305,7 +305,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 			throw new BpmnError("MSOWorkflowException")
 		}
 	}
-	
+
 	public void deleteNetworkPoliciesFromAAI(Execution execution) {
 		def method = getClass().getSimpleName() + '.deleteNetworkPoliciesFromAAI(' +
 		'execution=' + execution.getId() +
@@ -314,7 +314,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 		logDebug('Entered ' + method, isDebugLogEnabled)
 		execution.setVariable("prefix", Prefix)
 		logDebug(" ======== STARTED deleteNetworkPoliciesFromAAI ======== ", isDebugLogEnabled)
-	   
+
 		try {
 			// get variables
 			List fqdnList = execution.getVariable(Prefix + "createdNetworkPolicyFqdnList")
@@ -323,35 +323,35 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 				return
 			}
 			int fqdnCount = fqdnList.size()
-		   
+
 			execution.setVariable(Prefix + "networkPolicyFqdnCount", fqdnCount)
 			logDebug("networkPolicyFqdnCount - " + fqdnCount, isDebugLogEnabled)
- 
+
 			String aai_endpoint = execution.getVariable("URN_aai_endpoint")
 			AaiUtil aaiUriUtil = new AaiUtil(this)
 			String aai_uri = aaiUriUtil.getNetworkPolicyUri(execution)
- 
+
 			if (fqdnCount > 0) {
 				// AII loop call over contrail network policy fqdn list
 				for (i in 0..fqdnCount-1) {
- 
+
 					int counting = i+1
 					String fqdn = fqdnList[i]
- 
+
 					// Query AAI for this network policy FQDN
-				   
+
 					String queryNetworkPolicyByFqdnAAIRequest = "${aai_endpoint}${aai_uri}?network-policy-fqdn=" + UriUtils.encode(fqdn, "UTF-8")
 					utils.logAudit("AAI request endpoint: " + queryNetworkPolicyByFqdnAAIRequest)
 					logDebug("AAI request endpoint: "  + queryNetworkPolicyByFqdnAAIRequest, isDebugLogEnabled)
-					
+
 					def aaiRequestId = UUID.randomUUID().toString()
 					APIResponse response = aaiUriUtil.executeAAIGetCall(execution, queryNetworkPolicyByFqdnAAIRequest)
 					int returnCode = response.getStatusCode()
 					execution.setVariable(Prefix + "aaiQueryNetworkPolicyByFqdnReturnCode", returnCode)
 					logDebug(" ***** AAI query network policy Response Code, NetworkPolicy #" + counting + " : " + returnCode, isDebugLogEnabled)
- 
+
 					String aaiResponseAsString = response.getResponseBodyAsString()
- 
+
 					if (isOneOf(returnCode, 200, 201)) {
 						logDebug("The return code is: "  + returnCode, isDebugLogEnabled)
 						// This network policy FQDN exists in AAI - need to delete it now
@@ -361,32 +361,32 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 						// Retrieve the network policy id for this FQDN
 						def networkPolicyId = utils.getNodeText1(aaiResponseAsString, "network-policy-id")
 						logDebug("Deleting network-policy with network-policy-id " + networkPolicyId, isDebugLogEnabled)
-						
+
 						// Retrieve the resource version for this network policy
 						def resourceVersion = utils.getNodeText1(aaiResponseAsString, "resource-version")
 						logDebug("Deleting network-policy with resource-version " + resourceVersion, isDebugLogEnabled)
-												
+
 						String delNetworkPolicyAAIRequest = "${aai_endpoint}${aai_uri}/" + UriUtils.encode(networkPolicyId, "UTF-8") +
 							"?resource-version=" + UriUtils.encode(resourceVersion, "UTF-8")
-												
+
 						utils.logAudit("AAI request endpoint: " + delNetworkPolicyAAIRequest)
 						logDebug("AAI request endpoint: " + delNetworkPolicyAAIRequest, isDebugLogEnabled)
-						
+
 						def aaiRequestIdDel = UUID.randomUUID().toString()
 						logDebug("invoking DELETE call to AAI", isDebugLogEnabled)
 						utils.logAudit("Sending DELETE call to AAI with Endpoint /n" + delNetworkPolicyAAIRequest)
-						
+
 						APIResponse responseDel = aaiUriUtil.executeAAIDeleteCall(execution, delNetworkPolicyAAIRequest)
-						
+
 						int returnCodeDel = responseDel.getStatusCode()
 						execution.setVariable(Prefix + "aaiDeleteNetworkPolicyReturnCode", returnCodeDel)
 						logDebug(" ***** AAI delete network policy Response Code, NetworkPolicy #" + counting + " : " + returnCodeDel, isDebugLogEnabled)
-	 
+
 						if (isOneOf(returnCodeDel, 200, 201, 204)) {
 							logDebug("The return code from deleting network policy is: "  + returnCodeDel, isDebugLogEnabled)
 							// This network policy was deleted from AAI successfully
 							logDebug(" DelAAINetworkPolicy Success REST Response, , NetworkPolicy #" + counting + " : ", isDebugLogEnabled)
-	 
+
 						} else {
 								// aai all errors
 								String delErrorMessage = "Unable to delete network-policy to AAI deleteNetworkPoliciesFromAAI - " + returnCodeDel
@@ -412,29 +412,29 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 
 						  }
 					}
- 
-					
- 
+
+
+
 				} // end loop
- 
-			   
+
+
 			} else {
 				   logDebug("No contrail network policies to query/create", isDebugLogEnabled)
- 
+
 			}
- 
+
 		} catch (BpmnError e) {
 			throw e;
- 
+
 		} catch (Exception ex) {
 			String exceptionMessage = "Bpmn error encountered in DoCreateVfModuleRollback flow. deleteNetworkPoliciesFromAAI() - " + ex.getMessage()
 			logDebug(exceptionMessage, isDebugLogEnabled)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 		}
- 
+
 	}
-	
-	
+
+
 	/**
 	 * Prepare a Request for invoking the UpdateAAIGenericVnf subflow.
 	 *
@@ -446,42 +446,42 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 			')'
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		logDebug('Entered ' + method, isDebugLogEnabled)
- 
+
 		try {
 			def vnfId = execution.getVariable('DCVFMR_vnfId')
 			def oamManagementV4Address = execution.getVariable(Prefix + 'oamManagementV4Address')
 			def oamManagementV6Address = execution.getVariable(Prefix + 'oamManagementV6Address')
 			def ipv4OamAddressElement = ''
 			def managementV6AddressElement = ''
-			
+
 			if (oamManagementV4Address != null) {
 				ipv4OamAddressElement = '<ipv4-oam-address>' + 'DELETE' + '</ipv4-oam-address>'
 			}
-			
+
 			if (oamManagementV6Address != null) {
 				managementV6AddressElement = '<management-v6-address>' + 'DELETE' + '</management-v6-address>'
 			}
-			
-				  
+
+
 			String updateAAIGenericVnfRequest = """
-				<UpdateAAIGenericVnfRequest>
-					<vnf-id>${vnfId}</vnf-id>
-					${ipv4OamAddressElement}
-					${managementV6AddressElement}
-				</UpdateAAIGenericVnfRequest>
-			"""
+					<UpdateAAIGenericVnfRequest>
+						<vnf-id>${vnfId}</vnf-id>
+						${ipv4OamAddressElement}
+						${managementV6AddressElement}
+					</UpdateAAIGenericVnfRequest>
+				"""
 				updateAAIGenericVnfRequest = utils.formatXml(updateAAIGenericVnfRequest)
 				execution.setVariable(Prefix + 'updateAAIGenericVnfRequest', updateAAIGenericVnfRequest)
 				utils.logAudit("updateAAIGenericVnfRequest : " + updateAAIGenericVnfRequest)
 				logDebug('Request for UpdateAAIGenericVnf:\n' + updateAAIGenericVnfRequest, isDebugLogEnabled)
-		 
- 
+
+
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
-			createWorkflowException(execution, 1002, 'Error in preProcessUpdateAAIGenericVnf((): ' + e.getMessage())
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in preProcessUpdateAAIGenericVnf((): ' + e.getMessage())
 		}
 	}
 }

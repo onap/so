@@ -522,6 +522,22 @@ public class WorkflowResource {
 	}
 	
 	/**
+	 * Gets a variable value from the specified execution.
+	 * @return the variable value, or null if the variable could not be
+	 * obtained
+	 */
+	private Object getVariableFromExecution(RuntimeService runtimeService,
+			String executionId, String variableName) {
+		try {
+			return runtimeService.getVariable(executionId, variableName);
+		} catch (ProcessEngineException e) {
+			// Most likely cause is that the execution no longer exists.
+			msoLogger.debug("Error retrieving execution " + executionId
+				+ " variable " + variableName + ": " + e);
+			return null;
+		}
+	}
+	/**
 	 * Gets a variable value from specified historical process instance.
 	 * @return the variable value, or null if the variable could not be
 	 * obtained

@@ -22,12 +22,14 @@ package org.openecomp.mso.bpmn.common.scripts
 import org.camunda.bpm.engine.runtime.Execution
 import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.rest.APIResponse
+import org.openecomp.mso.rest.RESTClient;
+import org.openecomp.mso.rest.RESTConfig;
 
 
 public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 	
 	def Prefix="DAAIVfMod_"
-	
+	ExceptionUtil exceptionUtil = new ExceptionUtil()	
 	public void initProcessVariables(Execution execution) {
 		execution.setVariable("prefix",Prefix)
 		execution.setVariable("DAAIVfMod_vnfId",null)
@@ -83,15 +85,21 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 		utils.logAudit("DeleteAAIVfModule endPoint: " + endPoint)
 		def aaiRequestId = UUID.randomUUID().toString()
 
+		RESTConfig config = new RESTConfig(endPoint);
 		utils.log("DEBUG","queryAAIForGenericVnf() endpoint-" + endPoint, isDebugEnabled)
 		def responseData = ""
 		try {
+			RESTClient client = new RESTClient(config).addHeader("X-TransactionId", aaiRequestId).addHeader("X-FromAppId", "MSO").
+				addHeader("Accept","application/xml");
+			String basicAuthCred = utils.getBasicAuth(execution.getVariable("URN_aai_auth"),execution.getVariable("URN_mso_msoKey"))
+				
+			if (basicAuthCred != null && !"".equals(basicAuthCred)) {
+				client.addAuthorizationHeader(basicAuthCred)
+			}
 			utils.log("DEBUG", "invoking GET call to AAI endpoint :"+System.lineSeparator()+endPoint,isDebugEnabled)
+			APIResponse response = client.httpGet()
 			utils.logAudit("DeleteAAIVfModule - invoking httpGet to AAI")
 
-			AaiUtil aaiUtil = new AaiUtil(this)
-			APIResponse response = aaiUtil.executeAAIGetCall(execution, endPoint)
-			
 			responseData = response.getResponseBodyAsString()
 			execution.setVariable("DAAIVfMod_queryGenericVnfResponseCode", response.getStatusCode())
 			execution.setVariable("DAAIVfMod_queryGenericVnfResponse", responseData)
@@ -99,10 +107,10 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 			utils.log("DEBUG", "Response code:" + response.getStatusCode(), isDebugEnabled)
 			utils.log("DEBUG", "Response:" + System.lineSeparator()+responseData,isDebugEnabled)
 		} catch (Exception ex) {
-			ex.printStackTrace()
 			utils.log("DEBUG", "Exception occurred while executing AAI GET:" + ex.getMessage(),isDebugEnabled)
-			execution.setVariable("DAAIVfMod_queryGenericVnfResponseCode", 500)
 			execution.setVariable("DAAIVfMod_queryGenericVnfResponse", "AAI GET Failed:" + ex.getMessage())
+			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, "Internal Error - Occured during queryAAIForGenericVnf")
+
 		}
 	}
 	
@@ -114,11 +122,19 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 		def endPoint = execution.getVariable("URN_aai_endpoint") + execution.getVariable("DAAIVfMod_genericVnfEndpoint") +
 			"/?resource-version=" + execution.getVariable("DAAIVfMod_genVnfRsrcVer")
 		utils.logAudit("AAI endPoint: " + endPoint)
+		RESTConfig config = new RESTConfig(endPoint);
 		utils.log("DEBUG","deleteGenericVnf() endpoint-" + endPoint, isDebugEnabled)
 		def responseData = ""
 		try {
-			AaiUtil aaiUtil = new AaiUtil(this)
-			APIResponse response = aaiUtil.executeAAIDeleteCall(execution, endPoint)
+			RESTClient client = new RESTClient(config).addHeader("X-TransactionId", aaiRequestId).addHeader("X-FromAppId", "MSO").
+				addHeader("Accept","application/xml");
+			
+			String basicAuthCred = utils.getBasicAuth(execution.getVariable("URN_aai_auth"),execution.getVariable("URN_mso_msoKey"))
+					
+			if (basicAuthCred != null && !"".equals(basicAuthCred)) {
+				client.addAuthorizationHeader(basicAuthCred)
+			}
+			APIResponse response = client.httpDelete()
 				
 			responseData = response.getResponseBodyAsString()
 			execution.setVariable("DAAIVfMod_deleteGenericVnfResponseCode", response.getStatusCode())
@@ -128,8 +144,7 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 		} catch (Exception ex) {
 			ex.printStackTrace()
 			utils.log("DEBUG", "Exception occurred while executing AAI DELETE:" + ex.getMessage(),isDebugEnabled)
-			execution.setVariable("DAAIVfMod_deleteGenericVnfResponseCode", 500)
-			execution.setVariable("DAAIVfMod_deleteGenericVnfResponse", "AAI DELETE Failed:" + ex.getMessage())
+			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, "Internal Error - Occured during deleteGenericVnf")
 		}
 	}
 
@@ -140,11 +155,19 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 			"/?resource-version=" + execution.getVariable("DAAIVfMod_vfModRsrcVer")
 		def aaiRequestId = UUID.randomUUID().toString()
 
+		RESTConfig config = new RESTConfig(endPoint);
 		utils.log("DEBUG","deleteVfModule() endpoint-" + endPoint, isDebugEnabled)
 		def responseData = ""
 		try {
-			AaiUtil aaiUtil = new AaiUtil(this)
-			APIResponse response = aaiUtil.executeAAIDeleteCall(execution, endPoint)
+			RESTClient client = new RESTClient(config).addHeader("X-TransactionId", aaiRequestId).addHeader("X-FromAppId", "MSO").
+				addHeader("Accept","application/xml");
+			
+			String basicAuthCred = utils.getBasicAuth(execution.getVariable("URN_aai_auth"),execution.getVariable("URN_mso_msoKey"))
+					
+			if (basicAuthCred != null && !"".equals(basicAuthCred)) {
+				client.addAuthorizationHeader(basicAuthCred)
+			}
+			APIResponse response = client.httpDelete()
 			
 			utils.logAudit("DeleteAAIVfModule - invoking httpDelete to AAI")
 			
@@ -158,8 +181,7 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 		} catch (Exception ex) {
 			ex.printStackTrace()
 			utils.log("DEBUG", "Exception occurred while executing AAI PUT:" + ex.getMessage(),isDebugEnabled)
-			execution.setVariable("DAAIVfMod_deleteVfModuleResponseCode", 500)
-			execution.setVariable("DAAIVfMod_deleteVfModuleResponse", "AAI PUT Failed:" + ex.getMessage())
+			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, "Internal Error - Occured during deleteVfModule")
 		}
 	}
 	
@@ -270,10 +292,7 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 		if (execution.getVariable("DAAIVfMod_queryGenericVnfResponseCode") == 404) {
 			errorCode = 1002
 		}
-		String processKey = getProcessKey(execution);
-		WorkflowException exception = new WorkflowException(processKey, errorCode,
-			execution.getVariable("DAAIVfMod_queryGenericVnfResponse"))
-		execution.setVariable("WorkflowException", exception)
+		exceptionUtil.buildAndThrowWorkflowException(execution, errorCode, execution.getVariable("DAAIVfMod_queryGenericVnfResponse"))
 	}
 	
 	// generates a WorkflowException if
@@ -315,9 +334,8 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 		}
 
 		utils.log("ERROR", "Error occurred during DeleteAAIVfModule flow: " + errorResponse, isDebugEnabled)
-		String processKey = getProcessKey(execution);
-		WorkflowException exception = new WorkflowException(processKey, errorCode, errorResponse)
-		execution.setVariable("WorkflowException", exception)
+		exceptionUtil.buildAndThrowWorkflowException(execution, errorCode, errorResponse)
+
 	}
 
 	// generates a WorkflowException if
@@ -326,9 +344,6 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("ERROR", "AAI error occurred deleting the Generic Vnf: "
 			+ execution.getVariable("DAAIVfMod_deleteGenericVnfResponse"), isDebugEnabled)
-		String processKey = getProcessKey(execution);
-		WorkflowException exception = new WorkflowException(processKey, 5000,
-			execution.getVariable("DAAIVfMod_deleteGenericVnfResponse"))
-		execution.setVariable("WorkflowException", exception)
+		exceptionUtil.buildAndThrowWorkflowException(execution, 5000, execution.getVariable("DAAIVfMod_deleteGenericVnfResponse"))
 	}
 }

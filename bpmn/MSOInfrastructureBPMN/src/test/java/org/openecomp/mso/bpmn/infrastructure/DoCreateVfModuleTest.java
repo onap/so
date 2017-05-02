@@ -38,6 +38,7 @@ import java.util.UUID;
 
 import org.camunda.bpm.engine.test.Deployment;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openecomp.mso.bpmn.common.WorkflowTest;
 import org.openecomp.mso.bpmn.common.WorkflowTest.CallbackSet;
@@ -65,7 +66,7 @@ public class DoCreateVfModuleTest extends WorkflowTest {
 	 * Test the sunny day scenario.
 	 */
 	@Test	
-	
+	@Ignore
 	@Deployment(resources = {
 			"subprocess/DoCreateVfModule.bpmn",
 			"subprocess/SDNCAdapterV1.bpmn",

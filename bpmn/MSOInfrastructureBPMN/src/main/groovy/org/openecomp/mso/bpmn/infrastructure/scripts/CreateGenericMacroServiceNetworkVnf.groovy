@@ -282,6 +282,9 @@ public class CreateGenericMacroServiceNetworkVnf extends AbstractServiceTaskProc
 			execution.setVariable("networkList", networkList)
 			execution.setVariable("networkListString", networkList.toString())
 			
+			networkList = execution.getVariable("networkList");
+			utils.log("DEBUG", "networkList: "+ networkList, isDebugEnabled)
+
 			if (networkList != null && networkList.length() > 0) {
 
 				execution.setVariable("CREVAS_NetworksCount", networkList.length())

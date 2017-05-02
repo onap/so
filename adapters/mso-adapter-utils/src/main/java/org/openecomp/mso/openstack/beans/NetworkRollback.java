@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,6 +43,7 @@ public class NetworkRollback {
 	private String tenantId;
 	private String cloudId;
 	private String networkType;
+	private String modelCustomizationUuid;
 	private boolean networkCreated = false;
 	// Previous values for updates
 	private String networkName = null;
@@ -63,7 +64,7 @@ public class NetworkRollback {
 	public void setNeutronNetworkId(String neutronNetworkId) {
 		this.neutronNetworkId = neutronNetworkId;
 	}
-	
+
 	public String getNetworkStackId() {
 		return networkStackId;
 	}
@@ -89,6 +90,14 @@ public class NetworkRollback {
 	}
 	public void setNetworkType(String networkType) {
 		this.networkType = networkType;
+	}
+
+	public String getModelCustomizationUuid() {
+		return this.modelCustomizationUuid;
+	}
+
+	public void setModelCustomizationUuid(String modelCustomizationUuid) {
+		this.modelCustomizationUuid = modelCustomizationUuid;
 	}
 
 	public boolean getNetworkCreated() {
@@ -125,7 +134,7 @@ public class NetworkRollback {
 	public void setMsoRequest (MsoRequest msoRequest) {
 		this.msoRequest = msoRequest;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "NetworkRollback [networkId=" + networkId
@@ -135,5 +144,5 @@ public class NetworkRollback {
 				+ ", networkCreated=" + networkCreated + ", networkName=" + networkName
 				+ ", physicalNetwork=" + physicalNetwork + "]";
 	}
-    
+
 }

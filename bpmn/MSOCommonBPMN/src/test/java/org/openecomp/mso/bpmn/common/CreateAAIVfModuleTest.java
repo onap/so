@@ -114,8 +114,8 @@ public class CreateAAIVfModuleTest extends WorkflowTest {
 		variables.put("vfModuleModelName", "MMSC::module-0");
 		runtimeService.startProcessInstanceByKey("CreateAAIVfModule", variables);		
 		WorkflowException exception = BPMNUtil.getRawVariable(processEngineRule, "CreateAAIVfModule", "WorkflowException");
-		Assert.assertEquals(5000, exception.getErrorCode());
-		Assert.assertEquals(true, exception.getErrorMessage().contains("<messageId>SVC3002</messageId>"));
+		Assert.assertEquals(500, exception.getErrorCode());
+		Assert.assertEquals(true, exception.getErrorMessage().contains("Error occurred attempting to query AAI"));
 		System.out.println(exception.getErrorMessage());
 	}
 

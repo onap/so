@@ -85,7 +85,7 @@ public class ServiceInstances {
 	@Path("/{serviceInstanceId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response deleteServiceInstance(String request, @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("version") String version) {
+	public Response deleteServiceInstance(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId) {
 
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
 		Response response = serviceInstances(request, Action.deleteInstance, instanceIdMap, version);
@@ -96,8 +96,8 @@ public class ServiceInstances {
 	@Path("/{serviceInstanceId}/vnfs")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response createVnfInstance(String request, @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("version") String version) {
-
+	public Response createVnfInstance(String request,  @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId) {
+        msoLogger.debug ("version is: " + version);
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
 		Response response = serviceInstances(request, Action.createInstance, instanceIdMap, version);
 
@@ -108,9 +108,8 @@ public class ServiceInstances {
 	@Path("/{serviceInstanceId}/vnfs/{vnfInstanceId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response deleteVnfInstance(String request, @PathParam("serviceInstanceId") String serviceInstanceId,
-													  @PathParam("vnfInstanceId") String vnfInstanceId,
-                                                      @PathParam("version") String version) {
+	public Response deleteVnfInstance(String request,  @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
+													  @PathParam("vnfInstanceId") String vnfInstanceId) {
 
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
 		instanceIdMap.put("vnfInstanceId", vnfInstanceId);
@@ -123,10 +122,9 @@ public class ServiceInstances {
 	@Path("/{serviceInstanceId}/vnfs/{vnfInstanceId}/vfModules")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response createVfModuleInstance(String request, @PathParam("serviceInstanceId") String serviceInstanceId,
-														   @PathParam("vnfInstanceId") String vnfInstanceId,
-                                                           @PathParam("version") String version) {
-
+	public Response createVfModuleInstance(String request,  @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
+														   @PathParam("vnfInstanceId") String vnfInstanceId) {
+        msoLogger.debug ("version is: " + version);
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
 		instanceIdMap.put("vnfInstanceId", vnfInstanceId);
 		Response response = serviceInstances(request, Action.createInstance, instanceIdMap, version);
@@ -138,10 +136,9 @@ public class ServiceInstances {
 	@Path("/{serviceInstanceId}/vnfs/{vnfInstanceId}/vfModules/{vfmoduleInstanceId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateVfModuleInstance(String request, @PathParam("serviceInstanceId") String serviceInstanceId,
+	public Response updateVfModuleInstance(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
 														   @PathParam("vnfInstanceId") String vnfInstanceId,
-														   @PathParam("vfmoduleInstanceId") String vfmoduleInstanceId,
-                                                           @PathParam("version") String version) {
+														   @PathParam("vfmoduleInstanceId") String vfmoduleInstanceId) {
 
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
 		instanceIdMap.put("vnfInstanceId", vnfInstanceId);
@@ -155,10 +152,9 @@ public class ServiceInstances {
 	@Path("/{serviceInstanceId}/vnfs/{vnfInstanceId}/vfModules/{vfmoduleInstanceId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response deleteVfModuleInstance(String request, @PathParam("serviceInstanceId") String serviceInstanceId,
+	public Response deleteVfModuleInstance(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
 																		@PathParam("vnfInstanceId") String vnfInstanceId,
-																		@PathParam("vfmoduleInstanceId") String vfmoduleInstanceId,
-                                                                        @PathParam("version") String version) {
+																		@PathParam("vfmoduleInstanceId") String vfmoduleInstanceId) {
 
 
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
@@ -174,9 +170,8 @@ public class ServiceInstances {
 	@Path("/{serviceInstanceId}/vnfs/{vnfInstanceId}/volumeGroups")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response createVolumeGroupInstance(String request, @PathParam("serviceInstanceId") String serviceInstanceId,
-			                                                               @PathParam("vnfInstanceId") String vnfInstanceId,
-                                                                           @PathParam("version") String version) {
+	public Response createVolumeGroupInstance(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
+			                                                               @PathParam("vnfInstanceId") String vnfInstanceId) {
 
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
 		instanceIdMap.put("vnfInstanceId", vnfInstanceId);
@@ -189,10 +184,9 @@ public class ServiceInstances {
 	@Path("/{serviceInstanceId}/vnfs/{vnfInstanceId}/volumeGroups/{volumeGroupInstanceId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateVolumeGroupInstance(String request, @PathParam("serviceInstanceId") String serviceInstanceId,
+	public Response updateVolumeGroupInstance(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
 																		   @PathParam("vnfInstanceId") String vnfInstanceId,
-																		   @PathParam("volumeGroupInstanceId") String volumeGroupInstanceId,
-                                                                           @PathParam("version") String version) {
+																		   @PathParam("volumeGroupInstanceId") String volumeGroupInstanceId) {
 
 
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
@@ -207,10 +201,9 @@ public class ServiceInstances {
 	@Path("/{serviceInstanceId}/vnfs/{vnfInstanceId}/volumeGroups/{volumeGroupInstanceId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response deleteVolumeGroupInstance(String request, @PathParam("serviceInstanceId") String serviceInstanceId,
+	public Response deleteVolumeGroupInstance(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
 																		   @PathParam("vnfInstanceId") String vnfInstanceId,
-																		   @PathParam("volumeGroupInstanceId") String volumeGroupInstanceId,
-                                                                           @PathParam("version") String version) {
+																		   @PathParam("volumeGroupInstanceId") String volumeGroupInstanceId) {
 
 
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
@@ -225,7 +218,7 @@ public class ServiceInstances {
 	@Path("/{serviceInstanceId}/networks")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response createNetworkInstance(String request, @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("version") String version) {
+	public Response createNetworkInstance(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId) {
 
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
 		Response response = serviceInstances(request, Action.createInstance, instanceIdMap, version);
@@ -237,9 +230,8 @@ public class ServiceInstances {
 	@Path("/{serviceInstanceId}/networks/{networkInstanceId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateNetworkInstance(String request, @PathParam("serviceInstanceId") String serviceInstanceId,
-																	   @PathParam("networkInstanceId") String networkInstanceId,
-                                                                       @PathParam("version") String version) {
+	public Response updateNetworkInstance(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
+																	   @PathParam("networkInstanceId") String networkInstanceId) {
 
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
 		instanceIdMap.put("networkInstanceId", networkInstanceId);
@@ -252,9 +244,8 @@ public class ServiceInstances {
 	@Path("/{serviceInstanceId}/networks/{networkInstanceId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response deleteNetworkInstance(String request, @PathParam("serviceInstanceId") String serviceInstanceId,
-																	   @PathParam("networkInstanceId") String networkInstanceId,
-                                                                       @PathParam("version") String version) {
+	public Response deleteNetworkInstance(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
+																	   @PathParam("networkInstanceId") String networkInstanceId) {
 
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
 		instanceIdMap.put("networkInstanceId", networkInstanceId);
@@ -367,11 +358,44 @@ public class ServiceInstances {
 
 	   serviceResponse.setRequestReferences(referencesResponse);
 
-       try (CatalogDatabase db = new CatalogDatabase()){
+        CatalogDatabase db = null;
+        try {
+            db = new CatalogDatabase ();
+        } catch (Exception e) {
+            msoLogger.error (MessageEnum.APIH_DB_ACCESS_EXC, MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.AvailabilityError, "Exception while communciate with Catalog DB", e);
+            msoRequest.setStatus (org.openecomp.mso.apihandlerinfra.vnfbeans.RequestStatusType.FAILED);
+            Response response = msoRequest.buildServiceErrorResponse (HttpStatus.SC_NOT_FOUND,
+                    MsoException.ServiceException,
+                    "No communication to catalog DB " + e.getMessage (),
+                    ErrorNumbers.SVC_NO_SERVER_RESOURCES,
+                    null);
+            alarmLogger.sendAlarm ("MsoDatabaseAccessError",
+                    MsoAlarmLogger.CRITICAL,
+                    Messages.errors.get (ErrorNumbers.NO_COMMUNICATION_TO_CATALOG_DB));
+            msoRequest.createRequestRecord (Status.FAILED,action);
+            msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError, "Exception while communciate with DB");
+            msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
+            return response;
+        }
+
+
 
            RecipeLookupResult recipeLookupResult = null;
            try {
                recipeLookupResult = getServiceInstanceOrchestrationURI (db, msoRequest, action);
+           } catch (ValidationException e) {
+               msoLogger.debug ("Validation failed: ", e);
+               Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_REQUEST, MsoException.ServiceException,
+                       "Error validating request.  " + e.getMessage(),
+                       ErrorNumbers.SVC_BAD_PARAMETER, null);
+               if (msoRequest.getRequestId () != null) {
+                   msoLogger.debug ("Logging failed message to the database");
+                   msoRequest.createRequestRecord (Status.FAILED, action);
+               }
+               msoLogger.error (MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.SchemaError, requestJSON, e);
+               msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.SchemaError, "Validation of the input request failed");
+               msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
+               return response;
            } catch (Exception e) {
                msoLogger.error (MessageEnum.APIH_DB_ACCESS_EXC, MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.DataError, "Exception while querying Catalog DB", e);
                msoRequest.setStatus (org.openecomp.mso.apihandlerinfra.vnfbeans.RequestStatusType.FAILED);
@@ -594,22 +618,6 @@ public class ServiceInstances {
 
            //return Response.status (HttpStatus.SC_ACCEPTED).entity (serviceResponse).build ();
            // return serviceResponse;
-       } catch (Exception e) {
-           msoLogger.error (MessageEnum.APIH_DB_ACCESS_EXC, MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.AvailabilityError, "Exception while communciate with Catalog DB", e);
-           msoRequest.setStatus (org.openecomp.mso.apihandlerinfra.vnfbeans.RequestStatusType.FAILED);
-           Response response = msoRequest.buildServiceErrorResponse (HttpStatus.SC_NOT_FOUND,
-					  											  MsoException.ServiceException,
-					                                              "No communication to catalog DB " + e.getMessage (),
-                                                                  ErrorNumbers.SVC_NO_SERVER_RESOURCES,
-                                                                  null);
-           alarmLogger.sendAlarm ("MsoDatabaseAccessError",
-                                  MsoAlarmLogger.CRITICAL,
-                                  Messages.errors.get (ErrorNumbers.NO_COMMUNICATION_TO_CATALOG_DB));
-           msoRequest.createRequestRecord (Status.FAILED,action);
-           msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError, "Exception while communciate with DB");
-           msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
-           return response;
-       }
 	}
 
     private RecipeLookupResult getServiceInstanceOrchestrationURI (CatalogDatabase db, MsoRequest msoRequest, Action action) throws Exception {

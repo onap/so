@@ -50,24 +50,29 @@ import org.springframework.web.util.UriUtils
  * from AAI at any time this will be considered an acceptable
  * response.
  *
- * Incoming Variables (Service-Instance):
- * @param - GENDS_serviceInstanceId
- * @param - GENDS_serviceType
- * @param - GENDS_globalCustomerId
- * @param - GENDS_type
- * @param (Optional) - GENDS_resourceVersion
  *
- * Incoming Variables (Service-Subscription):
- * @param - GENDS_serviceType
- * @param - GENDS_globalCustomerId
- * @param - GENDS_type
- * @param (Optional) - GENDS_resourceVersion
+ * Variable Mapping Below
+ *
+ * In Mapping Variables:
+ *   For Service-Instance:
+ *     @param - GENDS_serviceInstanceId
+ *     @param - GENDS_serviceType
+ *     @param - GENDS_globalCustomerId
+ *     @param - GENDS_type
+ *     @param (Optional) - GENDS_resourceVersion
+ *
+ *   For Service-Subscription:
+ *     @param - GENDS_serviceType
+ *     @param - GENDS_globalCustomerId
+ *     @param - GENDS_type
+ *     @param (Optional) - GENDS_resourceVersion
  *
  *
- * Outgoing Variables:
- * @param - GENDS_SuccessIndicator
- * @param - GENDS_FoundIndicator
- * @param - WorkflowException
+ * Out Mapping Variables:
+ *    @param - GENDS_FoundIndicator
+ *    @param - WorkflowException
+ *
+ *
  */
 class GenericDeleteService extends AbstractServiceTaskProcessor{
 

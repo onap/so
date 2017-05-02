@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.camunda.bpm.engine.test.Deployment;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openecomp.mso.bpmn.common.WorkflowTest;
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowResponse;
@@ -62,7 +63,7 @@ public class UpdateVfModuleInfraTest extends WorkflowTest {
 	 * @throws Exception
 	 */
 	@Test
-	
+	@Ignore
 	@Deployment(resources = {
 		"process/UpdateVfModuleInfra.bpmn",
 		"subprocess/DoUpdateVfModule.bpmn",

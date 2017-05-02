@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-	xmlns:v1="http://domain2.att.com/workflow/sdnc/adapter/schema/v1">
+	xmlns:v1="http://domain2.openecomp.org/workflow/sdnc/adapter/schema/v1">
 	<soapenv:Header />
 	<soapenv:Body>
 			<SDNCAdapterCallbackRequest
-				xmlns="http://domain2.att.com/workflow/sdnc/adapter/schema/v1">
+				xmlns="http://domain2.openecomp.org/workflow/sdnc/adapter/schema/v1">
 				<CallbackHeader>
 					<RequestId>d325c9a7-84c0-4081-b979-9cc773a0976d</RequestId>
 					<ResponseCode>200</ResponseCode>

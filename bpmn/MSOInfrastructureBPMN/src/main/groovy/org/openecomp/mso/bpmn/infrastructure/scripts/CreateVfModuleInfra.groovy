@@ -35,6 +35,8 @@ import org.openecomp.mso.bpmn.core.WorkflowException
 
 public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 	
+	ExceptionUtil exceptionUtil = new ExceptionUtil()
+	
 	/**
 	 * Validates the request message and sets up the workflow.
 	 * @param execution the execution
@@ -51,68 +53,68 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 		execution.setVariable('prefix', prefix)
 		logDebug('Entered 2' + method, isDebugLogEnabled)
 		execution.setVariable("isVidRequest", "false")
-		
-		logDebug("Set variables", isDebugLogEnabled)	
-		
+
+		logDebug("Set variables", isDebugLogEnabled)
+
 		def rollbackData = execution.getVariable("RollbackData")
 		if (rollbackData == null) {
 			rollbackData = new RollbackData()
 		}
 		execution.setVariable("RollbackData", rollbackData)
-		
+
 		logDebug("Set rollback data", isDebugLogEnabled)
 		def incomingRequest = execution.getVariable('bpmnRequest')
-		
+
 		utils.log("DEBUG", "Incoming Infra Request: " + incomingRequest, isDebugLogEnabled)
 		utils.logAudit("CreateVfModule Infra incoming Request: " + incomingRequest)
-		
+
 		// check if request is xml or json
 		try {
 			def jsonSlurper = new JsonSlurper()
 			Map reqMap = jsonSlurper.parseText(incomingRequest)
 			utils.log("DEBUG", " Request is in JSON format.", isDebugLogEnabled)
-			
+
 			def serviceInstanceId = execution.getVariable('serviceInstanceId')
 			def vnfId = execution.getVariable('vnfId')
-			
+
 			def vidUtils = new VidUtils(this)
-			
+
 			String requestInXmlFormat = vidUtils.createXmlVfModuleRequest(execution, reqMap, 'CREATE_VF_MODULE', serviceInstanceId)
-			
+
 			utils.log("DEBUG", " Request in XML format: " + requestInXmlFormat, isDebugLogEnabled)
-			
+
 			execution.setVariable(prefix + 'Request', requestInXmlFormat)
 			execution.setVariable(prefix+'vnfId', vnfId)
-			execution.setVariable("isVidRequest", "true")			
-			
+			execution.setVariable("isVidRequest", "true")
+
 		}
 		catch(groovy.json.JsonException je) {
 			utils.log("DEBUG", " Request is not in JSON format.", isDebugLogEnabled)
-			workflowException(execution, "Invalid request format", 400)
-			
+			exceptionUtil.buildAndThrowWorkflowException(execution, 400, "Internal Error - During PreProcessRequest")
+
 		}
 		catch(Exception e) {
 			String restFaultMessage = e.getMessage()
 			//execution.setVariable("CVFMODVOL2_RESTFault", restFaultMessage)
 			//execution.setVariable("CVFMODVOL2_isDataOk", false)
 			utils.log("ERROR", " Exception Encountered - " + "\n" + restFaultMessage, isDebugLogEnabled)
-			workflowException(execution, restFaultMessage, 400)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 400, "Internal Error - During PreProcessRequest")
 		}
 
 		try {
 			String request = validateInfraRequest(execution)
-			
+
 			execution.setVariable("CreateVfModuleInfraSuccessIndicator", false)
 			execution.setVariable("RollbackCompleted", false)
 			execution.setVariable("DoCreateVfModuleRequest", request)
 			execution.setVariable("isDebugLogEnabled", isDebugLogEnabled)
-			execution.setVariable("CVFMI_requestInfo",utils.getNodeXml(request,"request-info"))	
+			execution.setVariable("CVFMI_requestInfo",utils.getNodeXml(request,"request-info"))
 			execution.setVariable("CVFMI_requestId",utils.getNodeText1(request,"request-id"))
 			execution.setVariable("CVFMI_source",utils.getNodeText1(request,"source"))
-			execution.setVariable("CVFMI_serviceInstanceId", utils.getNodeText1(request, "service-instance-id"))		
+			execution.setVariable("CVFMI_serviceInstanceId", utils.getNodeText1(request, "service-instance-id"))
 			execution.setVariable("CVFMI_vnfInputs",utils.getNodeXml(request,"vnf-inputs"))
 			//backoutOnFailure
-			
+
 			NetworkUtils networkUtils = new NetworkUtils()
 			execution.setVariable("CVFMI_rollbackEnabled", networkUtils.isRollbackEnabled(execution,request))
 			execution.setVariable("CVFMI_originalWorkflowException", null)
@@ -121,22 +123,21 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 				vnfParams = utils.getNodeXml(request,"vnf-params")
 			}
 			execution.setVariable("CVFMI_vnfParams", vnfParams)
-			
+
 			def newVfModuleId = UUID.randomUUID().toString()
 			execution.setVariable("newVfModuleId", newVfModuleId)
-			
+
 			logDebug('RequestInfo: ' + execution.getVariable("CVFMI_requestInfo"), isDebugLogEnabled)
 			logDebug('VnfInputs: ' + execution.getVariable("CVFMI_vnfInputs"), isDebugLogEnabled)
 			logDebug('VnfParams: ' + execution.getVariable("CVFMI_vnfParams"), isDebugLogEnabled)
 			logDebug('rollbackEnabled: ' + execution.getVariable("CVFMI_rollbackEnabled"), isDebugLogEnabled)
-			
+
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError bpmnError) {
-			buildErrorResponse(execution,bpmnError.getMessage(),"400")
 			throw bpmnError
 		} catch (Exception exception) {
-			workflowException(execution, exception.getMessage(), 400)
-		}		 
+			exceptionUtil.buildAndThrowWorkflowException(execution, 400, "Internal Error - During PreProcessRequest")
+		}
 	}
 
 	/**
@@ -175,40 +176,52 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 			def startTime = getNodeTextForce(requestInfo, 'start-time')
 			if (startTime.isEmpty()) {
 				startTime = System.currentTimeMillis()
-			}			
-				
+			}
+
 			// RESTResponse (for API Handler (APIH) Reply Task)
 			def newVfModuleId = execution.getVariable("newVfModuleId")
 			String synchResponse = """{"requestReferences":{"instanceId":"${newVfModuleId}","requestId":"${requestId}"}}""".trim()
-			
+
 			sendWorkflowResponse(execution, 200, synchResponse)
-			
+
 			utils.logAudit("CreateVfModule Infra Response: " + synchResponse)
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
-			createWorkflowException(execution, 1002, 'Error in sendResponse(): ' + e.getMessage())
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in sendResponse(): ' + e.getMessage())
 		}
 	}
 
 	/**
-	 * 
+	 *
 	 * @param execution the execution
 	 */
 	public void postProcessResponse(Execution execution){
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-		
+
 		utils.log("DEBUG", " ======== STARTED PostProcessResponse Process ======== ", isDebugEnabled)
 		try{
 			def request = execution.getVariable("DoCreateVfModuleRequest")
 			def requestInfo = utils.getNodeXml(request, 'request-info', false)
 			def action = utils.getNodeText1(requestInfo, "action")
-			
-			utils.log("DEBUG", "requestInfo is: " + requestInfo, isDebugEnabled)			
+
+			utils.log("DEBUG", "requestInfo is: " + requestInfo, isDebugEnabled)
 			utils.log("DEBUG", "action is: " + action, isDebugEnabled)
 
+			try {
+				String basicAuthValueDB = execution.getVariable("URN_mso_adapters_db_auth")
+				utils.log("DEBUG", " Obtained BasicAuth userid password for Catalog DB adapter: " + basicAuthValueDB, isDebugEnabled)
+				
+				def encodedString = utils.getBasicAuth(basicAuthValueDB, execution.getVariable("URN_mso_msoKey"))
+				execution.setVariable("BasicAuthHeaderValueDB",encodedString)
+			} catch (IOException ex) {
+				String dataErrorMessage = " Unable to encode Catalog DB user/password string - " + ex.getMessage()
+				utils.log("DEBUG", dataErrorMessage, isDebugEnabled)
+				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
+			}
+			
 			String payload =
 					"""  <aetgt:MsoCompletionRequest xmlns:aetgt="http://org.openecomp/mso/workflow/schema/v1"
                                xmlns:ns="http://org.openecomp/mso/request/types/v1"
@@ -233,10 +246,10 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 		utils.log("DEBUG", "======== COMPLETED PostProcessResponse Process ======== ", isDebugEnabled)
 	}
 
-	
-	
-	
-	
+
+
+
+
 	/**
 	 * Validates the request, request id and service instance id.  If a problem is found,
 	 * a WorkflowException is generated and an MSOWorkflowException event is thrown. This
@@ -255,7 +268,7 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 		def prefix = execution.getVariable("prefix")
 
 		if (prefix == null) {
-			createWorkflowException(execution, 1002, processKey + " prefix is null")
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, processKey + " prefix is null")
 		}
 
 		try {
@@ -263,34 +276,34 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 
 			if (request == null) {
 				request = execution.getVariable(processKey + 'Request')
-	
+
 				if (request == null) {
 					request = execution.getVariable('bpmnRequest')
 				}
-	
+
 				setVariable(execution, processKey + 'Request', null);
 				setVariable(execution, 'bpmnRequest', null);
 				setVariable(execution, prefix + 'Request', request);
 			}
 
 			if (request == null) {
-				createWorkflowException(execution, 1002, processKey + " request is null")
+				exceptionUtil.buildAndThrowWorkflowException(execution, 1002, processKey + " request is null")
 			}
-			
+
 			/*
 
 			def requestId = execution.getVariable("mso-request-id")
-			
+
 			if (requestId == null) {
-				createWorkflowException(execution, 1002, processKey + " request has no mso-request-id")
+				exceptionUtil.buildAndThrowWorkflowException(execution, 1002, processKey + " request has no mso-request-id")
 			}
-			
+
 			setVariable(execution, prefix + 'requestId', requestId)
 
 			def serviceInstanceId = execution.getVariable("mso-service-instance-id")
 
 			if (serviceInstanceId == null) {
-				createWorkflowException(execution, 1002, processKey + " request message has no mso-service-instance-id")
+				exceptionUtil.buildAndThrowWorkflowException(execution, 1002, processKey + " request message has no mso-service-instance-id")
 			}
 
 			utils.logContext(requestId, serviceInstanceId)
@@ -303,14 +316,13 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 			throw e;
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
-			createWorkflowException(execution, 1002, "Invalid Message")
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Invalid Message")
 		}
 	}
-	
+
 	public void prepareUpdateInfraRequest(Execution execution){
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-		ExceptionUtil exceptionUtil = new ExceptionUtil()
-		
+
 		utils.log("DEBUG", " ======== STARTED prepareUpdateInfraRequest Process ======== ", isDebugEnabled)
 		try{
 
@@ -325,7 +337,7 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 			def dbAdapterEndpoint = execution.getVariable("URN_mso_adapters_db_endpoint")
 			execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
 			utils.log("DEBUG", "DB Adapter Endpoint is: " + dbAdapterEndpoint, isDebugEnabled)
-			
+
 			try {
 				String basicAuthValueDB = execution.getVariable("URN_mso_adapters_db_auth")
 				utils.log("DEBUG", " Obtained BasicAuth userid password for Catalog DB adapter: " + basicAuthValueDB, isDebugEnabled)
@@ -352,7 +364,7 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 							<progress>100</progress>
 							<vnfOutputs>&lt;vnf-outputs xmlns="http://org.openecomp/mso/infra/vnf-request/v1" xmlns:aetgt="http://org.openecomp/mso/infra/vnf-request/v1" xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd"&gt;&lt;vnf-id&gt;${vnfId}&lt;/vnf-id&gt;&lt;vf-module-id&gt;${vfModuleId}&lt;/vf-module-id&gt;&lt;/vnf-outputs&gt;</vnfOutputs>
 							<vfModuleId>${vfModuleId}</vfModuleId>
-						</ns:updateInfraRequest> 
+						</ns:updateInfraRequest>
 					</soapenv:Body>
 				</soapenv:Envelope>"""
 
@@ -360,17 +372,17 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 			execution.setVariable("CVFMI_updateInfraRequest", payload)
 			utils.log("DEBUG", "Outgoing UpdateInfraRequest: \n" + payload, isDebugEnabled)
 			utils.logAudit("CreateVfModuleInfra Outgoing UpdateInfra Request: " + payload)
-			
+
 		}catch(Exception e){
 			utils.log("ERROR", "Exception Occured Processing prepareUpdateInfraRequest. Exception is:\n" + e, isDebugEnabled)
 			execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during prepareUpdateInfraRequest Method:\n" + e.getMessage())
 		}
 		utils.log("DEBUG", "======== COMPLETED prepareUpdateInfraRequest Process ======== ", isDebugEnabled)
 	}
-	
+
 	/**
 	 * Builds a "FalloutHandler" request and stores it in the specified execution variable.
-	 * 
+	 *
 	 * @param execution the execution
 	 * @param resultVar the execution variable in which the result will be stored
 	 */
@@ -381,8 +393,8 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 			')'
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		logDebug('Entered ' + method, isDebugLogEnabled)
-		
-		
+
+
 		try {
 			def WorkflowException workflowException = execution.getVariable("WorkflowException")
 			def request = execution.getVariable("DoCreateVfModuleRequest")
@@ -399,14 +411,14 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 						xmlns:reqtype="http://org.openecomp/mso/request/types/v1"
 						xmlns:msoservtypes="http://org.openecomp/mso/request/types/v1"
 						xmlns:structuredtypes="http://org.openecomp/mso/structured/types/v1">
-						${requestInformation}										
+						${requestInformation}
 					<aetgt:WorkflowException>
 						<aetgt:ErrorMessage>${encErrorResponseMsg}</aetgt:ErrorMessage>
 						<aetgt:ErrorCode>${errorResponseCode}</aetgt:ErrorCode>
-					</aetgt:WorkflowException>	
+					</aetgt:WorkflowException>
 				</aetgt:FalloutHandlerRequest>
 			"""
-			
+
 			logDebug("CONTENT before translation: " + content, isDebugLogEnabled)
 			content = utils.formatXml(content)
 			logDebug(resultVar + ' = ' + System.lineSeparator() + content, isDebugLogEnabled)
@@ -418,34 +430,34 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 			throw e;
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
-			createWorkflowException(execution, 2000, 'Internal Error')
+			exceptionUtil.buildWorkflowException(execution, 2000, 'Internal Error')
 		}
 	}
-	
+
 	public void logAndSaveOriginalException(Execution execution) {
 		def method = getClass().getSimpleName() + '.validateRollbackResponse(' +
 			'execution=' + execution.getId() +
 			')'
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		logDebug('Entered ' + method, isDebugLogEnabled)
-		
+
 		logWorkflowException(execution, 'CreateVfModuleInfra caught an event')
 		saveWorkflowException(execution, 'CVFMI_originalWorkflowException')
 	}
-	
+
 	public void validateRollbackResponse(Execution execution) {
 		def method = getClass().getSimpleName() + '.validateRollbackResponse(' +
 			'execution=' + execution.getId() +
 			')'
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		logDebug('Entered ' + method, isDebugLogEnabled)
-		
+
 		def originalException = execution.getVariable("CVFMI_originalWorkflowException")
 		execution.setVariable("WorkflowException", originalException)
-		
+
 		execution.setVariable("RollbackCompleted", true)
-	
+
 	}
-	
-		
+
+
 }

@@ -26,6 +26,8 @@ import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetGenericVnfByIdW
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetGenericVnfByIdWithPriority;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetNetworkPolicyfqdn;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetVolumeGroupById;
+import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPatchGenericVnf;
+import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPatchVfModuleId;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPutGenericVnf;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPutNetwork;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPutVfModuleIdNoResponse;
@@ -96,6 +98,8 @@ public class CreateVfModuleInfraTest extends WorkflowTest {
 		mockSDNCAdapter("/SDNCAdapter", "vnf-type>STMTN", 200, "VfModularity/StandardSDNCSynchResponse.xml");
 		mockSDNCAdapter("/SDNCAdapter", "SvcAction>query", 200, "VfModularity/StandardSDNCSynchResponse.xml");
 		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		MockPatchGenericVnf("skask");
+		MockPatchVfModuleId("skask", ".*");
 		
 		String businessKey = UUID.randomUUID().toString();
 		String createVfModuleRequest =
@@ -186,6 +190,8 @@ public class CreateVfModuleInfraTest extends WorkflowTest {
 			mockSDNCAdapter("/SDNCAdapter", "SvcAction>query", 200, "VfModularity/StandardSDNCSynchResponse.xml");
 			mockVNFPost("", 202, "skask");
 			mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+			MockPatchGenericVnf("skask");
+			MockPatchVfModuleId("skask", ".*");
 			
 			String businessKey = UUID.randomUUID().toString();
 			String createVfModuleRequest =

@@ -49,15 +49,35 @@ class CatalogDbUtils {
 	MsoUtils utils = new MsoUtils()
 	JsonUtils jsonUtils = new JsonUtils()
 	MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
+	static private String defaultDbAdapterVersion = "v2"
 
 	public JSONArray getAllNetworksByServiceModelUuid(String catalogDbEndpoint, String serviceModelUuid) {
 		JSONArray networksList = null
-		String endPoint = catalogDbEndpoint + "/v1/serviceNetworks?serviceModelUuid=" + UriUtils.encode(serviceModelUuid, "UTF-8")
+		String endPoint = catalogDbEndpoint + "/" + defaultDbAdapterVersion + "/serviceNetworks?serviceModelUuid=" + UriUtils.encode(serviceModelUuid, "UTF-8")
 		try {
 			String catalogDbResponse = getResponseFromCatalogDb(endPoint)
 
 			if (catalogDbResponse != null) {
-				networksList = parseNetworksJson(catalogDbResponse, "serviceNetworks")
+				networksList = parseNetworksJson(catalogDbResponse, "serviceNetworks", "v1")
+			}
+
+		}
+		catch (Exception e) {
+			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+		}
+
+		return networksList
+	}
+	
+	public JSONArray getAllNetworksByServiceModelUuid(String catalogDbEndpoint, String serviceModelUuid, String catalogUtilsVersion) {
+		JSONArray networksList = null
+		String endPoint = catalogDbEndpoint + "/" + defaultDbAdapterVersion + "/serviceNetworks?serviceModelUuid=" + UriUtils.encode(serviceModelUuid, "UTF-8")	
+		try {
+			String catalogDbResponse = getResponseFromCatalogDb(endPoint)
+
+			if (catalogDbResponse != null) {
+				networksList = parseNetworksJson(catalogDbResponse, "serviceNetworks", catalogUtilsVersion)
+
 			}
 
 		}
@@ -70,12 +90,31 @@ class CatalogDbUtils {
 
 	public JSONArray getAllNetworksByServiceModelInvariantUuid(String catalogDbEndpoint, String serviceModelInvariantUuid) {
 		JSONArray networksList = null
-		String endPoint = catalogDbEndpoint + "/v1/serviceNetworks?serviceModelInvariantUuid=" + UriUtils.encode(serviceModelInvariantUuid, "UTF-8")
+		String endPoint = catalogDbEndpoint + "/" + defaultDbAdapterVersion + "/serviceNetworks?serviceModelInvariantUuid=" + UriUtils.encode(serviceModelInvariantUuid, "UTF-8")
 		try {
 			String catalogDbResponse = getResponseFromCatalogDb(endPoint)
 
 			if (catalogDbResponse != null) {
-				networksList = parseNetworksJson(catalogDbResponse, "serviceNetworks")
+				networksList = parseNetworksJson(catalogDbResponse, "serviceNetworks", "v1")
+			}
+
+		}
+		catch (Exception e) {
+			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+		}
+
+		return networksList
+	}
+	
+	public JSONArray getAllNetworksByServiceModelInvariantUuid(String catalogDbEndpoint, String serviceModelInvariantUuid, String catalogUtilsVersion) {
+		JSONArray networksList = null
+		String endPoint = catalogDbEndpoint + "/" + defaultDbAdapterVersion + "/serviceNetworks?serviceModelInvariantUuid=" + UriUtils.encode(serviceModelInvariantUuid, "UTF-8")
+
+		try {
+			String catalogDbResponse = getResponseFromCatalogDb(endPoint)
+
+			if (catalogDbResponse != null) {
+				networksList = parseNetworksJson(catalogDbResponse, "serviceNetworks", catalogUtilsVersion)
 			}
 
 		}
@@ -88,12 +127,31 @@ class CatalogDbUtils {
 
 	public JSONArray getAllNetworksByServiceModelInvariantUuidAndServiceModelVersion(String catalogDbEndpoint, String serviceModelInvariantUuid, String serviceModelVersion) {
 		JSONArray networksList = null
-		String endPoint = catalogDbEndpoint + "/v1/serviceNetworks?serviceModelInvariantUuid=" + UriUtils.encode(serviceModelInvariantUuid, "UTF-8") + "&serviceModelVersion=" + UriUtils.encode(serviceModelVersion, "UTF-8")
+		String endPoint = catalogDbEndpoint + "/" + defaultDbAdapterVersion + "/serviceNetworks?serviceModelInvariantUuid=" + UriUtils.encode(serviceModelInvariantUuid, "UTF-8") + "&serviceModelVersion=" + UriUtils.encode(serviceModelVersion, "UTF-8")	
 		try {
 			String catalogDbResponse = getResponseFromCatalogDb(endPoint)
 
 			if (catalogDbResponse != null) {
-				networksList = parseNetworksJson(catalogDbResponse, "serviceNetworks")
+				networksList = parseNetworksJson(catalogDbResponse, "serviceNetworks", "v1")
+			}
+
+		}
+		catch (Exception e) {
+			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+		}
+
+		return networksList
+	}
+	
+	public JSONArray getAllNetworksByServiceModelInvariantUuidAndServiceModelVersion(String catalogDbEndpoint, String serviceModelInvariantUuid, String serviceModelVersion, String catalogUtilsVersion) {
+		JSONArray networksList = null
+		String endPoint = catalogDbEndpoint + "/" + defaultDbAdapterVersion + "/serviceNetworks?serviceModelInvariantUuid=" + UriUtils.encode(serviceModelInvariantUuid, "UTF-8") + "&serviceModelVersion=" + UriUtils.encode(serviceModelVersion, "UTF-8")
+
+		try {
+			String catalogDbResponse = getResponseFromCatalogDb(endPoint)
+
+			if (catalogDbResponse != null) {
+				networksList = parseNetworksJson(catalogDbResponse, "serviceNetworks", catalogUtilsVersion)
 			}
 
 		}
@@ -106,12 +164,31 @@ class CatalogDbUtils {
 
 	public JSONArray getAllNetworksByNetworkModelCustomizationUuid(String catalogDbEndpoint, String networkModelCustomizationUuid) {
 		JSONArray networksList = null
-		String endPoint = catalogDbEndpoint + "/v1/serviceNetworks?networkModelCustomizationUuid=" + UriUtils.encode(networkModelCustomizationUuid, "UTF-8")
+		String endPoint = catalogDbEndpoint + "/" + defaultDbAdapterVersion + "/serviceNetworks?networkModelCustomizationUuid=" + UriUtils.encode(networkModelCustomizationUuid, "UTF-8")
 		try {
 			String catalogDbResponse = getResponseFromCatalogDb(endPoint)
 
 			if (catalogDbResponse != null) {
-				networksList = parseNetworksJson(catalogDbResponse, "serviceNetworks")
+				networksList = parseNetworksJson(catalogDbResponse, "serviceNetworks", "v1")
+			}
+
+		}
+		catch (Exception e) {
+			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+		}
+
+		return networksList
+	}
+	
+	public JSONArray getAllNetworksByNetworkModelCustomizationUuid(String catalogDbEndpoint, String networkModelCustomizationUuid, String catalogUtilsVersion) {
+		JSONArray networksList = null
+		String endPoint = catalogDbEndpoint + "/" + defaultDbAdapterVersion + "/serviceNetworks?networkModelCustomizationUuid=" + UriUtils.encode(networkModelCustomizationUuid, "UTF-8")
+
+		try {
+			String catalogDbResponse = getResponseFromCatalogDb(endPoint)
+
+			if (catalogDbResponse != null) {
+				networksList = parseNetworksJson(catalogDbResponse, "serviceNetworks", catalogUtilsVersion)
 			}
 
 		}
@@ -124,12 +201,31 @@ class CatalogDbUtils {
 
 	public JSONArray getAllNetworksByNetworkType(String catalogDbEndpoint, String networkType) {
 		JSONArray networksList = null
-		String endPoint = catalogDbEndpoint + "/v1/serviceNetworks?networkType=" + UriUtils.encode(networkType, "UTF-8")
+		String endPoint = catalogDbEndpoint + "/" + defaultDbAdapterVersion + "/serviceNetworks?networkType=" + UriUtils.encode(networkType, "UTF-8")
 		try {
 			String catalogDbResponse = getResponseFromCatalogDb(endPoint)
 
 			if (catalogDbResponse != null) {
-				networksList = parseNetworksJson(catalogDbResponse, "serviceNetworks")
+				networksList = parseNetworksJson(catalogDbResponse, "serviceNetworks", "v1")
+			}
+
+		}
+		catch (Exception e) {
+			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+		}
+
+		return networksList
+	}
+	
+	public JSONArray getAllNetworksByNetworkType(String catalogDbEndpoint, String networkType, String catalogUtilsVersion) {
+		JSONArray networksList = null
+		String endPoint = catalogDbEndpoint + "/" + defaultDbAdapterVersion + "/serviceNetworks?networkType=" + UriUtils.encode(networkType, "UTF-8")
+		try {
+			String catalogDbResponse = getResponseFromCatalogDb(endPoint)
+
+			if (catalogDbResponse != null) {
+				networksList = parseNetworksJson(catalogDbResponse, "serviceNetworks", catalogUtilsVersion)
+
 			}
 
 		}
@@ -143,13 +239,33 @@ class CatalogDbUtils {
 
 	public JSONArray getAllVnfsByServiceModelUuid(String catalogDbEndpoint, String serviceModelUuid) {
 		JSONArray vnfsList = null
-		String endPoint = catalogDbEndpoint + "/v1/serviceVnfs?serviceModelUuid=" + UriUtils.encode(serviceModelUuid, "UTF-8")
+		String endPoint = catalogDbEndpoint + "/" + defaultDbAdapterVersion + "/serviceVnfs?serviceModelUuid=" + UriUtils.encode(serviceModelUuid, "UTF-8")
 		try {
 			msoLogger.debug("ENDPOINT: " + endPoint)
 			String catalogDbResponse = getResponseFromCatalogDb(endPoint)
 
 			if (catalogDbResponse != null) {
-				vnfsList = parseVnfsJson(catalogDbResponse, "serviceVnfs")
+				vnfsList = parseVnfsJson(catalogDbResponse, "serviceVnfs", "v1")
+			}
+
+		}
+		catch (Exception e) {
+			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+		}
+
+		return vnfsList
+	}
+	
+	public JSONArray getAllVnfsByServiceModelUuid(String catalogDbEndpoint, String serviceModelUuid, String catalogUtilsVersion) {
+		JSONArray vnfsList = null
+		String endPoint = catalogDbEndpoint + "/" + defaultDbAdapterVersion + "/serviceVnfs?serviceModelUuid=" + UriUtils.encode(serviceModelUuid, "UTF-8")
+		try {
+			msoLogger.debug("ENDPOINT: " + endPoint)
+			String catalogDbResponse = getResponseFromCatalogDb(endPoint)
+
+			if (catalogDbResponse != null) {
+				vnfsList = parseVnfsJson(catalogDbResponse, "serviceVnfs", catalogUtilsVersion)
+
 			}
 
 		}
@@ -162,13 +278,33 @@ class CatalogDbUtils {
 
 	public JSONArray getAllVnfsByServiceModelInvariantUuid(String catalogDbEndpoint, String serviceModelInvariantUuid) {
 		JSONArray vnfsList = null
-		String endPoint = catalogDbEndpoint + "/v1/serviceVnfs?serviceModelInvariantUuid=" + UriUtils.encode(serviceModelInvariantUuid, "UTF-8")
+		String endPoint = catalogDbEndpoint + "/" + defaultDbAdapterVersion + "/serviceVnfs?serviceModelInvariantUuid=" + UriUtils.encode(serviceModelInvariantUuid, "UTF-8")
 		try {
 			msoLogger.debug("ENDPOINT: " + endPoint)
 			String catalogDbResponse = getResponseFromCatalogDb(endPoint)
 
 			if (catalogDbResponse != null) {
-				vnfsList = parseVnfsJson(catalogDbResponse, "serviceVnfs")
+				vnfsList = parseVnfsJson(catalogDbResponse, "serviceVnfs", "v1")
+			}
+
+		}
+		catch (Exception e) {
+			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+		}
+
+		return vnfsList
+	}
+	
+	public JSONArray getAllVnfsByServiceModelInvariantUuid(String catalogDbEndpoint, String serviceModelInvariantUuid, String catalogUtilsVersion) {
+		JSONArray vnfsList = null
+		String endPoint = catalogDbEndpoint + "/" + defaultDbAdapterVersion + "/serviceVnfs?serviceModelInvariantUuid=" + UriUtils.encode(serviceModelInvariantUuid, "UTF-8")
+		try {
+			msoLogger.debug("ENDPOINT: " + endPoint)
+			String catalogDbResponse = getResponseFromCatalogDb(endPoint)
+
+			if (catalogDbResponse != null) {
+				vnfsList = parseVnfsJson(catalogDbResponse, "serviceVnfs", catalogUtilsVersion)
+
 			}
 
 		}
@@ -181,13 +317,33 @@ class CatalogDbUtils {
 
 	public JSONArray getAllVnfsByServiceModelInvariantUuidAndServiceModelVersion(String catalogDbEndpoint, String serviceModelInvariantUuid, String serviceModelVersion) {
 		JSONArray vnfsList = null
-		String endPoint = catalogDbEndpoint + "/v1/serviceVnfs?serviceModelInvariantUuid=" + UriUtils.encode(serviceModelInvariantUuid, "UTF-8") + "&serviceModelVersion=" + UriUtils.encode(serviceModelVersion, "UTF-8")
+		String endPoint = catalogDbEndpoint + "/" + defaultDbAdapterVersion + "/serviceVnfs?serviceModelInvariantUuid=" + UriUtils.encode(serviceModelInvariantUuid, "UTF-8") + "&serviceModelVersion=" + UriUtils.encode(serviceModelVersion, "UTF-8")
 		try {
 			msoLogger.debug("ENDPOINT: " + endPoint)
 			String catalogDbResponse = getResponseFromCatalogDb(endPoint)
 
 			if (catalogDbResponse != null) {
-				vnfsList = parseVnfsJson(catalogDbResponse, "serviceVnfs")
+				vnfsList = parseVnfsJson(catalogDbResponse, "serviceVnfs", "v1")
+			}
+
+		}
+		catch (Exception e) {
+			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+		}
+
+		return vnfsList
+	}
+	
+	public JSONArray getAllVnfsByServiceModelInvariantUuidAndServiceModelVersion(String catalogDbEndpoint, String serviceModelInvariantUuid, String serviceModelVersion, String catalogUtilsVersion) {
+		JSONArray vnfsList = null
+		String endPoint = catalogDbEndpoint + "/" + defaultDbAdapterVersion + "/serviceVnfs?serviceModelInvariantUuid=" + UriUtils.encode(serviceModelInvariantUuid, "UTF-8") + "&serviceModelVersion=" + UriUtils.encode(serviceModelVersion, "UTF-8")
+		try {
+			msoLogger.debug("ENDPOINT: " + endPoint)
+			String catalogDbResponse = getResponseFromCatalogDb(endPoint)
+
+			if (catalogDbResponse != null) {
+				vnfsList = parseVnfsJson(catalogDbResponse, "serviceVnfs", catalogUtilsVersion)
+
 			}
 
 		}
@@ -200,13 +356,33 @@ class CatalogDbUtils {
 
 	public JSONArray getAllVnfsByVnfModelCustomizationUuid(String catalogDbEndpoint, String vnfModelCustomizationUuid) {
 		JSONArray vnfsList = null
-		String endPoint = catalogDbEndpoint + "/v1/serviceVnfs?vnfModelCustomizationUuid=" + UriUtils.encode(vnfModelCustomizationUuid, "UTF-8")
+		String endPoint = catalogDbEndpoint + "/" + defaultDbAdapterVersion + "/serviceVnfs?vnfModelCustomizationUuid=" + UriUtils.encode(vnfModelCustomizationUuid, "UTF-8")
 		try {
 			msoLogger.debug("ENDPOINT: " + endPoint)
 			String catalogDbResponse = getResponseFromCatalogDb(endPoint)
 
 			if (catalogDbResponse != null) {
-				vnfsList = parseVnfsJson(catalogDbResponse, "serviceVnfs")
+				vnfsList = parseVnfsJson(catalogDbResponse, "serviceVnfs", "v1")
+			}
+
+		}
+		catch (Exception e) {
+			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+		}
+
+		return vnfsList
+	}
+	
+	public JSONArray getAllVnfsByVnfModelCustomizationUuid(String catalogDbEndpoint, String vnfModelCustomizationUuid, String catalogUtilsVersion) {
+		JSONArray vnfsList = null
+		String endPoint = catalogDbEndpoint + "/" + defaultDbAdapterVersion + "/serviceVnfs?vnfModelCustomizationUuid=" + UriUtils.encode(vnfModelCustomizationUuid, "UTF-8")
+		try {
+			msoLogger.debug("ENDPOINT: " + endPoint)
+			String catalogDbResponse = getResponseFromCatalogDb(endPoint)
+
+			if (catalogDbResponse != null) {
+				vnfsList = parseVnfsJson(catalogDbResponse, "serviceVnfs", catalogUtilsVersion)
+
 			}
 
 		}
@@ -220,12 +396,31 @@ class CatalogDbUtils {
 
 	public JSONArray getAllottedResourcesByServiceModelUuid(String catalogDbEndpoint, String serviceModelUuid) {
 		JSONArray vnfsList = null
-		String endPoint = catalogDbEndpoint + "/v1/ServiceAllottedResources?serviceModelUuid=" + UriUtils.encode(serviceModelUuid, "UTF-8")
+		String endPoint = catalogDbEndpoint + "/" + defaultDbAdapterVersion + "/ServiceAllottedResources?serviceModelUuid=" + UriUtils.encode(serviceModelUuid, "UTF-8")
 		try {
 			String catalogDbResponse = getResponseFromCatalogDb(endPoint)
 
 			if (catalogDbResponse != null) {
-				vnfsList = parseAllottedResourcesJson(catalogDbResponse, "serviceAllottedResources")
+				vnfsList = parseAllottedResourcesJson(catalogDbResponse, "serviceAllottedResources", "v1")
+			}
+
+		}
+		catch (Exception e) {
+			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+		}
+
+		return vnfsList
+	}
+	
+	public JSONArray getAllottedResourcesByServiceModelUuid(String catalogDbEndpoint, String serviceModelUuid, String catalogUtilsVersion) {
+		JSONArray vnfsList = null
+		String endPoint = catalogDbEndpoint + "/" + defaultDbAdapterVersion + "/ServiceAllottedResources?serviceModelUuid=" + UriUtils.encode(serviceModelUuid, "UTF-8")
+
+		try {
+			String catalogDbResponse = getResponseFromCatalogDb(endPoint)
+
+			if (catalogDbResponse != null) {
+				vnfsList = parseAllottedResourcesJson(catalogDbResponse, "serviceAllottedResources", catalogUtilsVersion)
 			}
 
 		}
@@ -238,12 +433,30 @@ class CatalogDbUtils {
 
 	public JSONArray getAllottedResourcesByServiceModelInvariantUuid(String catalogDbEndpoint, String serviceModelInvariantUuid) {
 		JSONArray vnfsList = null
-		String endPoint = catalogDbEndpoint + "/v1/serviceAllottedResources?serviceModelInvariantUuid=" + UriUtils.encode(serviceModelInvariantUuid, "UTF-8")
+		String endPoint = catalogDbEndpoint + "/" + defaultDbAdapterVersion + "/serviceAllottedResources?serviceModelInvariantUuid=" + UriUtils.encode(serviceModelInvariantUuid, "UTF-8")
 		try {
 			String catalogDbResponse = getResponseFromCatalogDb(endPoint)
 
 			if (catalogDbResponse != null) {
-				vnfsList = parseAllottedResourcesJson(catalogDbResponse, "serviceAllottedResources")
+				vnfsList = parseAllottedResourcesJson(catalogDbResponse, "serviceAllottedResources", "v1")
+			}
+
+		}
+		catch (Exception e) {
+			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+		}
+
+		return vnfsList
+	}
+	
+	public JSONArray getAllottedResourcesByServiceModelInvariantUuid(String catalogDbEndpoint, String serviceModelInvariantUuid, String catalogUtilsVersion) {
+		JSONArray vnfsList = null
+		String endPoint = catalogDbEndpoint + "/" + defaultDbAdapterVersion + "/serviceAllottedResources?serviceModelInvariantUuid=" + UriUtils.encode(serviceModelInvariantUuid, "UTF-8")
+		try {
+			String catalogDbResponse = getResponseFromCatalogDb(endPoint)
+
+			if (catalogDbResponse != null) {
+				vnfsList = parseAllottedResourcesJson(catalogDbResponse, "serviceAllottedResources", catalogUtilsVersion)
 			}
 
 		}
@@ -256,12 +469,31 @@ class CatalogDbUtils {
 
 	public JSONArray getAllottedResourcesByServiceModelInvariantUuidAndServiceModelVersion(String catalogDbEndpoint, String serviceModelInvariantUuid, String serviceModelVersion) {
 		JSONArray vnfsList = null
-		String endPoint = catalogDbEndpoint + "/v1/serviceAllottedResources?serviceModelInvariantUuid=" + UriUtils.encode(serviceModelInvariantUuid, "UTF-8") + "&serviceModelVersion=" + UriUtils.encode(serviceModelVersion, "UTF-8")
+		String endPoint = catalogDbEndpoint + "/" + defaultDbAdapterVersion + "/serviceAllottedResources?serviceModelInvariantUuid=" + UriUtils.encode(serviceModelInvariantUuid, "UTF-8") + "&serviceModelVersion=" + UriUtils.encode(serviceModelVersion, "UTF-8")
 		try {
 			String catalogDbResponse = getResponseFromCatalogDb(endPoint)
 
 			if (catalogDbResponse != null) {
-				vnfsList = parseAllottedResourcesJson(catalogDbResponse, "serviceAllottedResources")
+				vnfsList = parseAllottedResourcesJson(catalogDbResponse, "serviceAllottedResources", "v1")
+			}
+
+		}
+		catch (Exception e) {
+			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+		}
+
+		return vnfsList
+	}
+	
+	public JSONArray getAllottedResourcesByServiceModelInvariantUuidAndServiceModelVersion(String catalogDbEndpoint, String serviceModelInvariantUuid, String serviceModelVersion, String catalogUtilsVersion) {
+		JSONArray vnfsList = null
+		String endPoint = catalogDbEndpoint + "/" + defaultDbAdapterVersion + "/serviceAllottedResources?serviceModelInvariantUuid=" + UriUtils.encode(serviceModelInvariantUuid, "UTF-8") + "&serviceModelVersion=" + UriUtils.encode(serviceModelVersion, "UTF-8")
+
+		try {
+			String catalogDbResponse = getResponseFromCatalogDb(endPoint)
+
+			if (catalogDbResponse != null) {
+				vnfsList = parseAllottedResourcesJson(catalogDbResponse, "serviceAllottedResources", catalogUtilsVersion)
 			}
 
 		}
@@ -274,12 +506,30 @@ class CatalogDbUtils {
 
 	public JSONArray getAllottedResourcesByArModelCustomizationUuid(String catalogDbEndpoint, String arModelCustomizationUuid) {
 		JSONArray vnfsList = null
-		String endPoint = catalogDbEndpoint + "/v1/serviceAllottedResources?serviceModelCustomizationUuid=" + UriUtils.encode(arModelCustomizationUuid, "UTF-8")
+		String endPoint = catalogDbEndpoint + "/" + defaultDbAdapterVersion + "/serviceAllottedResources?serviceModelCustomizationUuid=" + UriUtils.encode(arModelCustomizationUuid, "UTF-8")
 		try {
 			String catalogDbResponse = getResponseFromCatalogDb(endPoint)
 
 			if (catalogDbResponse != null) {
-				vnfsList = parseAllottedResourcesJson(catalogDbResponse, "serviceAllottedResources")
+				vnfsList = parseAllottedResourcesJson(catalogDbResponse, "serviceAllottedResources", "v1")
+			}
+
+		}
+		catch (Exception e) {
+			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+		}
+
+		return vnfsList
+	}
+	
+	public JSONArray getAllottedResourcesByArModelCustomizationUuid(String catalogDbEndpoint, String arModelCustomizationUuid, String catalogUtilsVersion) {
+		JSONArray vnfsList = null
+		String endPoint = catalogDbEndpoint + "/" + defaultDbAdapterVersion + "/serviceAllottedResources?serviceModelCustomizationUuid=" + UriUtils.encode(arModelCustomizationUuid, "UTF-8")
+		try {
+			String catalogDbResponse = getResponseFromCatalogDb(endPoint)
+
+			if (catalogDbResponse != null) {
+				vnfsList = parseAllottedResourcesJson(catalogDbResponse, "serviceAllottedResources", catalogUtilsVersion)
 			}
 
 		}
@@ -292,12 +542,13 @@ class CatalogDbUtils {
 
 	public JSONObject getServiceResourcesByServiceModelInvariantUuid(String catalogDbEndpoint, String serviceModelInvariantUuid) {
 		JSONObject resources = null
-		String endPoint = catalogDbEndpoint + "/v1/serviceResources?serviceModelInvariantUuid=" + UriUtils.encode(serviceModelInvariantUuid, "UTF-8")
+		String endPoint = catalogDbEndpoint + "/" + defaultDbAdapterVersion + "/serviceResources?serviceModelInvariantUuid=" + UriUtils.encode(serviceModelInvariantUuid, "UTF-8")
+
 		try {
 			String catalogDbResponse = getResponseFromCatalogDb(endPoint)
 
 			if (catalogDbResponse != null) {
-				resources = parseServiceResourcesJson(catalogDbResponse)
+				resources = parseServiceResourcesJson(catalogDbResponse, "v1")
 			}
 
 		}
@@ -307,10 +558,29 @@ class CatalogDbUtils {
 
 		return resources
 	}
+	
+	public JSONObject getServiceResourcesByServiceModelInvariantUuid(String catalogDbEndpoint, String serviceModelInvariantUuid, String catalogUtilsVersion) {
+		JSONObject resources = null
+		String endPoint = catalogDbEndpoint + "/" + defaultDbAdapterVersion + "/serviceResources?serviceModelInvariantUuid=" + UriUtils.encode(serviceModelInvariantUuid, "UTF-8")
+		try {
+			String catalogDbResponse = getResponseFromCatalogDb(endPoint)
+
+			if (catalogDbResponse != null) {
+				resources = parseServiceResourcesJson(catalogDbResponse, catalogUtilsVersion)
+			}
+
+		}
+		catch (Exception e) {
+			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+		}
+
+		return resources
+	}	
+	
 
 	public JSONObject getServiceResourcesByServiceModelInvariantUuidAndServiceModelVersion(String catalogDbEndpoint, String serviceModelInvariantUuid, String serviceModelVersion) {
 		JSONObject resources = null
-		String endPoint = catalogDbEndpoint + "/v1/serviceResources?serviceModelInvariantUuid=" + UriUtils.encode(serviceModelInvariantUuid, "UTF-8") + "&serviceModelVersion=" + UriUtils.encode(serviceModelVersion, "UTF-8")
+		String endPoint = catalogDbEndpoint + "/" + defaultDbAdapterVersion + "/serviceResources?serviceModelInvariantUuid=" + UriUtils.encode(serviceModelInvariantUuid, "UTF-8") + "&serviceModelVersion=" + UriUtils.encode(serviceModelVersion, "UTF-8")
 		try {
 			String catalogDbResponse = getResponseFromCatalogDb(endPoint)
 
@@ -325,12 +595,31 @@ class CatalogDbUtils {
 
 		return resources
 	}
+	
+	public JSONObject getServiceResourcesByServiceModelInvariantUuidAndServiceModelVersion(String catalogDbEndpoint, String serviceModelInvariantUuid, String serviceModelVersion, String catalogUtilsVersion) {
+		JSONObject resources = null
+		String endPoint = catalogDbEndpoint + "/" + defaultDbAdapterVersion + "/serviceResources?serviceModelInvariantUuid=" + UriUtils.encode(serviceModelInvariantUuid, "UTF-8") + "&serviceModelVersion=" + UriUtils.encode(serviceModelVersion, "UTF-8")
+		try {
+			String catalogDbResponse = getResponseFromCatalogDb(endPoint)
+
+			if (catalogDbResponse != null) {
+				resources = parseServiceResourcesJson(catalogDbResponse, catalogUtilsVersion)
+			}
+
+		}
+		catch (Exception e) {
+			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+		}
+
+		return resources
+	}
 
 
 
-	private JSONArray parseNetworksJson (String catalogDbResponse, String arrayName) {
+	private JSONArray parseNetworksJson (String catalogDbResponse, String arrayName, String catalogUtilsVersion) {
 		JSONArray modelInfos = null
 
+		msoLogger.debug("parseNetworksJson - catalogUtilsVersion is " + catalogUtilsVersion)
 		try {
 			// Create array of jsons
 
@@ -339,13 +628,28 @@ class CatalogDbUtils {
 			modelInfos = new JSONArray()
 
 			for (int i = 0; i < networks.length(); i++) {
-
+				
 				JSONObject network = networks.getJSONObject(i)
-				JSONObject modelInfo = buildModelInfo("network", network)
 				JSONObject modelJson = new JSONObject()
+				JSONObject modelInfo = buildModelInfo("network", network, catalogUtilsVersion)
 				modelJson.put("modelInfo", modelInfo)
 				String networkType = jsonUtils.getJsonValueForKey(network, "networkType")
 				modelJson.put("networkType", networkType)
+				
+				switch (catalogUtilsVersion) {
+					case "v1":
+						break
+					default:
+						String toscaNodeType = jsonUtils.getJsonValueForKey(network, "toscaNodeType")
+						modelJson.put("toscaNodeType", toscaNodeType)
+						String networkTechnology = jsonUtils.getJsonValueForKey(network, "networkTechnology")
+						modelJson.put("networkTechnology", networkTechnology)
+						String networkRole = jsonUtils.getJsonValueForKey(network, "networkRole")
+						modelJson.put("networkRole", networkRole)
+						String networkScope = jsonUtils.getJsonValueForKey(network, "networkScope")
+						modelJson.put("networkScope", networkScope)
+						break						
+				}
 				modelInfos.put(modelJson)
 			}
 
@@ -359,8 +663,10 @@ class CatalogDbUtils {
 		return modelInfos
 	}
 
-	private JSONArray parseVnfsJson (String catalogDbResponse, String arrayName) {
+	private JSONArray parseVnfsJson (String catalogDbResponse, String arrayName, String catalogUtilsVersion) {
 		JSONArray modelInfos = null
+		
+		msoLogger.debug("parseVnfsJson - catalogUtilsVersion is " + catalogUtilsVersion)
 
 		try {
 			// Create array of jsons
@@ -373,13 +679,28 @@ class CatalogDbUtils {
 				JSONObject vnf = vnfs.getJSONObject(i)
 
 				msoLogger.debug(vnf.toString(2))
-				JSONObject modelInfo = buildModelInfo("vnf", vnf)
+				JSONObject modelInfo = buildModelInfo("vnf", vnf, catalogUtilsVersion)
 				JSONObject modelJson = new JSONObject()
 				modelJson.put("modelInfo", modelInfo)
-
+				switch(catalogUtilsVersion) {
+					case "v1":
+						break
+					default:
+						String toscaNodeType = jsonUtils.getJsonValueForKey(vnf, "toscaNodeType")
+						modelJson.put("toscaNodeType", toscaNodeType)
+						String nfType = jsonUtils.getJsonValueForKey(vnf, "nfType")
+						modelJson.put("nfType", nfType)
+						String nfRole = jsonUtils.getJsonValueForKey(vnf, "nfRole")
+						modelJson.put("nfRole", nfRole)
+						String nfCode = jsonUtils.getJsonValueForKey(vnf, "nfCode")
+						modelJson.put("nfCode", nfCode)
+						break						
+				}
+				
+				JSONObject vnfJson = vnf.getJSONObject("vnf")												
 				JSONArray vfModules = null
 				try {
-					vfModules = vnf.getJSONArray("vfModules")
+					vfModules = vnfJson.getJSONArray("vfModules")
 				} catch (Exception e)
 				{
 					msoLogger.debug("Cannot find VF MODULE ARRAY: " + i + ", exception is " + e.message)
@@ -389,18 +710,26 @@ class CatalogDbUtils {
 					JSONArray vfModuleInfo = new JSONArray()
 					for (int j = 0; j < vfModules.length(); j++) {
 						JSONObject vfModule = vfModules.getJSONObject(j)
-						JSONObject vfModuleModelInfo = buildModelInfo("vfModule", vfModule)
+						JSONObject vfModuleModelInfo = buildModelInfo("vfModule", vfModule, catalogUtilsVersion)
 						JSONObject vfModuleModelJson = new JSONObject()
 						vfModuleModelJson.put("modelInfo", vfModuleModelInfo)
 						String vfModuleType = jsonUtils.getJsonValueForKey(vfModule, "type")
 						vfModuleModelJson.put("vfModuleType", vfModuleType)
-						Integer isBase = jsonUtils.getJsonIntValueForKey(vfModule, "isBase")
-						if (isBase.intValue() == 1) {
-							vfModuleModelJson.put("isBase", "true")
-						}
-						else {
-							vfModuleModelJson.put("isBase", "false")
-						}
+						switch(catalogUtilsVersion) {
+							case "v1":
+								Integer isBase = jsonUtils.getJsonIntValueForKey(vfModule, "isBase")
+								if (isBase.intValue() == 1) {
+									vfModuleModelJson.put("isBase", "true")
+								}
+								else {
+									vfModuleModelJson.put("isBase", "false")
+								}
+								break
+							default:
+								boolean isBase = jsonUtils.getJsonBooleanValueForKey(vfModule, "isBase")
+								vfModuleModelJson.put("isBase", isBase)
+								break
+						}											
 						String vfModuleLabel = jsonUtils.getJsonValueForKey(vfModule, "label")
 						vfModuleModelJson.put("vfModuleLabel", vfModuleLabel)
 						Integer initialCount = jsonUtils.getJsonIntValueForKey(vfModule, "initialCount")
@@ -411,7 +740,7 @@ class CatalogDbUtils {
 				}
 				modelInfos.put(modelJson)
 			}
-
+			
 			String modelInfosString = modelInfos.toString()
 			msoLogger.debug("Returning vnfs JSON: " + modelInfosString)
 
@@ -422,8 +751,10 @@ class CatalogDbUtils {
 		return modelInfos
 	}
 
-	private JSONArray parseAllottedResourcesJson (String catalogDbResponse, String arrayName) {
+	private JSONArray parseAllottedResourcesJson (String catalogDbResponse, String arrayName, String catalogUtilsVersion) {
 		JSONArray modelInfos = null
+		
+		msoLogger.debug("parseAllottedResourcesJson - catalogUtilsVersion is " + catalogUtilsVersion)
 
 		try {
 			// Create array of jsons
@@ -434,9 +765,21 @@ class CatalogDbUtils {
 
 			for (int i = 0; i < allottedResources.length(); i++) {
 				JSONObject allottedResource = allottedResources.getJSONObject(i)
-				JSONObject modelInfo = buildModelInfo("allottedResource", allottedResource)
+				JSONObject modelInfo = buildModelInfo("allottedResource", allottedResource, catalogUtilsVersion)
 				JSONObject modelJson = new JSONObject()
 				modelJson.put("modelInfo", modelInfo)
+				switch(catalogUtilsVersion) {
+					case "v1":
+						break
+					default:
+						String toscaNodeType = jsonUtils.getJsonValueForKey(allottedResource, "toscaNodeType")
+						modelJson.put("toscaNodeType", toscaNodeType)
+						String parentServiceModelUuid = jsonUtils.getJsonValueForKey(allottedResource, "parentServiceModelUuid")
+						modelJson.put("parentServiceModelUuid", parentServiceModelUuid)
+						break
+				}
+						
+				
 				modelInfos.put(modelJson)
 			}
 
@@ -452,17 +795,18 @@ class CatalogDbUtils {
 
 	private JSONObject parseServiceResourcesJson (String catalogDbResponse) {
 		JSONObject serviceResources = new JSONObject()
+		String catalogUtilsVersion = "v1"
 
 		try {
 			// Create array of jsons
 
 			JSONObject responseJson = new JSONObject(catalogDbResponse)
 			JSONObject serviceResourcesRoot = responseJson.getJSONObject("serviceResources")
-			JSONArray vnfsArray = parseVnfsJson(serviceResourcesRoot.toString(), "vnfResources")
+			JSONArray vnfsArray = parseVnfsJson(serviceResourcesRoot.toString(), "vnfResources", catalogUtilsVersion)
 			serviceResources.put("vnfs", vnfsArray)
-			JSONArray networksArray = parseNetworksJson(serviceResourcesRoot.toString(), "networkResourceCustomization")
+			JSONArray networksArray = parseNetworksJson(serviceResourcesRoot.toString(), "networkResourceCustomization", catalogUtilsVersion)
 			serviceResources.put("networks", networksArray)
-			JSONArray allottedResourcesArray = parseAllottedResourcesJson(serviceResourcesRoot.toString(), "allottedResourceCustomization")
+			JSONArray allottedResourcesArray = parseAllottedResourcesJson(serviceResourcesRoot.toString(), "allottedResourceCustomization", catalogUtilsVersion)
 			serviceResources.put("allottedResources", allottedResourcesArray)
 
 			String serviceResourcesString = serviceResources.toString()
@@ -474,8 +818,38 @@ class CatalogDbUtils {
 
 		return serviceResources
 	}
+	
+	private JSONObject parseServiceResourcesJson (String catalogDbResponse, String catalogUtilsVersion) {
+		JSONObject serviceResources = new JSONObject()
+		JSONObject serviceResourcesObject = new JSONObject()
+		String serviceResourcesString = ""		
 
-	private JSONObject buildModelInfo(String modelType, JSONObject modelFromDb) {
+		try {
+			// Create array of jsons
+
+			JSONObject responseJson = new JSONObject(catalogDbResponse)
+			JSONObject serviceResourcesRoot = responseJson.getJSONObject("serviceResources")			
+			JSONObject modelInfo = buildModelInfo("", serviceResourcesRoot, catalogUtilsVersion)
+			serviceResources.put("modelInfo", modelInfo)
+			JSONArray vnfsArray = parseVnfsJson(serviceResourcesRoot.toString(), "serviceVnfs", catalogUtilsVersion)
+			serviceResources.put("serviceVnfs", vnfsArray)
+			JSONArray networksArray = parseNetworksJson(serviceResourcesRoot.toString(), "serviceNetworks", catalogUtilsVersion)
+			serviceResources.put("serviceNetworks", networksArray)
+			JSONArray allottedResourcesArray = parseAllottedResourcesJson(serviceResourcesRoot.toString(), "serviceAllottedResources", catalogUtilsVersion)
+			serviceResources.put("serviceAllottedResources", allottedResourcesArray)
+			serviceResourcesObject.put("serviceResources", serviceResources)
+
+			serviceResourcesString = serviceResourcesObject.toString()
+			msoLogger.debug("Returning serviceResources JSON: " + serviceResourcesString)
+
+		} catch (Exception e) {
+			utils.log("ERROR", "Exception in parsing Catalog DB Response: " + e.message)
+		}
+
+		return serviceResourcesObject
+	}
+
+	private JSONObject buildModelInfo(String modelType, JSONObject modelFromDb, String catalogUtilsVersion) {
 		JSONObject modelInfo = null
 		try {
 			modelInfo = new JSONObject()
@@ -503,7 +877,14 @@ class CatalogDbUtils {
 				modelInfo.put("modelCustomizationName", modelCustomizationName)
 			}
 			String modelCustomizationId = jsonUtils.getJsonValueForKey(modelFromDb, "modelCustomizationUuid")
-			modelInfo.put("modelCustomizationId", modelCustomizationId)
+			switch (catalogUtilsVersion) {
+				case "v1":
+					modelInfo.put("modelCustomizationId", modelCustomizationId)
+					break
+				default:
+					modelInfo.put("modelCustomizationUuid", modelCustomizationId)
+					break
+			}			
 			JSONObject modelJson = new JSONObject()
 			modelJson.put("modelInfo", modelInfo)
 		}

@@ -28,6 +28,7 @@ import org.openecomp.mso.rest.APIResponse
 public class CreateAAIVfModuleVolumeGroup extends AbstractServiceTaskProcessor {
 
 	private XmlParser xmlParser = new XmlParser()
+	ExceptionUtil exceptionUtil = new ExceptionUtil()
 
 	/**
 	 * Initialize the flow's variables.
@@ -81,7 +82,8 @@ public class CreateAAIVfModuleVolumeGroup extends AbstractServiceTaskProcessor {
 			throw e;
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
-			createWorkflowException(execution, 1002, 'Error in preProcessRequest(): ' + e.getMessage())
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in preProcessRequest(): ' + e.getMessage())
+
 		}
 	}
 
@@ -131,7 +133,7 @@ public class CreateAAIVfModuleVolumeGroup extends AbstractServiceTaskProcessor {
 			throw e;
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
-			createWorkflowException(execution, 1002, 'Error in getVfModule(): ' + e.getMessage())
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in getVfModule(): ' + e.getMessage())
 		}
 	}
 
@@ -198,7 +200,7 @@ public class CreateAAIVfModuleVolumeGroup extends AbstractServiceTaskProcessor {
 			throw e;
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
-			createWorkflowException(execution, 1002, 'Error in updateVfModule(): ' + e.getMessage())
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in updateVfModule(): ' + e.getMessage())
 		}
 	}
 

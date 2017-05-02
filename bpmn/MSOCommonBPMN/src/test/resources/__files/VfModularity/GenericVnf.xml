@@ -1,4 +1,4 @@
-<generic-vnf xmlns="http://com.att.aai.inventory/v7">
+<generic-vnf xmlns="http://com.aai.inventory/v7">
 	<vnf-id>skask</vnf-id>
 	<vnf-name>STMTN5MMSC20</vnf-name>
 	<vnf-type>pcrf-capacity</vnf-type>

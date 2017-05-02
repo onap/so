@@ -294,13 +294,13 @@
 							&lt;request-action&gt;Layer3ServiceActivateRequest&lt;/request-action&gt;
 							&lt;order-number&gt;4281555&lt;/order-number&gt;
 							&lt;request-id&gt;155415ab-b4a7-4382-b4c6-d17d9sm42855&lt;/request-id&gt;
-							&lt;notification-url&gt;https://csi-tst-q22.it.att.com:22443/Services/com/cingular/csi/sdn/SendManagedNetworkStatusNotification.jws&lt;/notification-url&gt;
+							&lt;notification-url&gt;https://csi-tst-q22.it.com:22443/Services/com/cingular/csi/sdn/SendManagedNetworkStatusNotification.jws&lt;/notification-url&gt;
 							&lt;source&gt;OMX&lt;/source&gt;
 							&lt;order-version&gt;1&lt;/order-version&gt;
 						&lt;/request-information&gt;
 						&lt;sdnc-request-header&gt;
 							&lt;svc-action&gt;activate&lt;/svc-action&gt;
-							&lt;svc-notification-url&gt;https://msojra.mtsnjdcp1.aic.cip.att.com:8443/adapters/rest/SDNCNotify&lt;/svc-notification-url&gt;
+							&lt;svc-notification-url&gt;https://msojra.mtsnjdcp1.aic.cip.com:8443/adapters/rest/SDNCNotify&lt;/svc-notification-url&gt;
 							&lt;svc-request-id&gt;5b1f3c5d-cdf9-488d-8a4b-d3f1229d7760&lt;/svc-request-id&gt;
 						&lt;/sdnc-request-header&gt;
 						&lt;l2-homing-information&gt;

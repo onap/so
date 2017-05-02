@@ -45,7 +45,7 @@ createVnf.sendSyncResponse(execution)]]></bpmn2:script>
       <bpmn2:scriptTask id="processJavaError" name="Process Error" scriptFormat="groovy">
         <bpmn2:incoming>SequenceFlow_8</bpmn2:incoming>
         <bpmn2:outgoing>SequenceFlow_9</bpmn2:outgoing>
-        <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+        <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.utils.*
 ExceptionUtil exceptionUtil = new ExceptionUtil()
 exceptionUtil.processJavaException(execution)]]></bpmn2:script>
       </bpmn2:scriptTask>
@@ -60,7 +60,7 @@ exceptionUtil.processJavaException(execution)]]></bpmn2:script>
       <bpmn2:sequenceFlow id="SequenceFlow_8" name="" sourceRef="StartEvent_2" targetRef="processJavaError" />
     </bpmn2:subProcess>
     <bpmn2:subProcess id="bpmnErrorHandlingSubProcess" name="Error Handling Sub Process" triggeredByEvent="true">
-      <bpmn2:callActivity id="callFalloutHandler" name="Call&#10;&#10;FalloutHandler" calledElement="FalloutHandler">
+      <bpmn2:callActivity id="callFalloutHandler" name="Call&#10;FalloutHandler" calledElement="FalloutHandler">
         <bpmn2:extensionElements>
           <camunda:in source="CREVI_falloutRequest" target="FalloutHandlerRequest" />
           <camunda:in source="CREVI_requestId" target="requestId" />
@@ -109,7 +109,7 @@ createVnf.prepareCompletionHandlerRequest(execution)]]></bpmn2:script>
       <bpmn2:incoming>SequenceFlow_17</bpmn2:incoming>
       <bpmn2:terminateEventDefinition id="_TerminateEventDefinition_35" />
     </bpmn2:endEvent>
-    <bpmn2:callActivity id="callCompletionHandler" name="Completion&#10;&#10;Handler" calledElement="CompleteMsoProcess">
+    <bpmn2:callActivity id="callCompletionHandler" name="Completion&#10;Handler" calledElement="CompleteMsoProcess">
       <bpmn2:extensionElements>
         <camunda:in source="CREVI_completionHandlerRequest" target="CompleteMsoProcessRequest" />
         <camunda:in source="CREVI_requestId" target="mso-request-id" />

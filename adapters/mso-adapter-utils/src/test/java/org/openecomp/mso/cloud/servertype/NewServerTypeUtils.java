@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.openecomp.mso.cloud.servertype;
 
