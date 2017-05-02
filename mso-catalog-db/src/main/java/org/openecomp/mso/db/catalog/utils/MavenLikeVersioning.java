@@ -50,40 +50,30 @@ public class MavenLikeVersioning implements Serializable {
 	 * @return True if the current object is more recent than the specified version, False otherwise
 	 *
 	 */
-	public Boolean isMoreRecentThan (String versionToCompare) {
+	public boolean isMoreRecentThan (String versionToCompare) {
 		if (versionToCompare == null || this.version == null) {
-			return Boolean.FALSE;
+			return false;
 		}
 		String [] currentVersionArray = this.version.split("\\.");
 		String [] specifiedVersionArray = versionToCompare.split("\\.");
 
-		int smalestStringLength = 0;
-
-		if (currentVersionArray.length > specifiedVersionArray.length) {
-			smalestStringLength = specifiedVersionArray.length;
-		} else {
-			smalestStringLength = currentVersionArray.length;
-		}
+        int smalestStringLength = Math.min(currentVersionArray.length, specifiedVersionArray.length);
 
 		for (int currentVersionIndex=0;currentVersionIndex < smalestStringLength;++currentVersionIndex) {
 
-			if (Integer.valueOf(currentVersionArray[currentVersionIndex]) < Integer.valueOf(specifiedVersionArray[currentVersionIndex])) {
-				return Boolean.FALSE;
-			} else if (Integer.valueOf(currentVersionArray[currentVersionIndex]) > Integer.valueOf(specifiedVersionArray[currentVersionIndex])) {
-				return Boolean.TRUE;
+			if (Integer.parseInt(currentVersionArray[currentVersionIndex]) < Integer.parseInt(specifiedVersionArray[currentVersionIndex])) {
+				return false;
+			} else if (Integer.parseInt(currentVersionArray[currentVersionIndex]) > Integer.parseInt(specifiedVersionArray[currentVersionIndex])) {
+				return true;
 			}
 		}
 
 		// Even if versionToCompare has more digits, it means versionToCompare is more recent
-		if (Integer.valueOf(currentVersionArray[smalestStringLength-1]).intValue () == Integer.valueOf(specifiedVersionArray[smalestStringLength-1]).intValue ()) {
-			if (currentVersionArray.length > specifiedVersionArray.length) {
-				return Boolean.TRUE;
-			} else {
-				return Boolean.FALSE;
-			}
+		if (Integer.parseInt(currentVersionArray[smalestStringLength-1]) == Integer.parseInt(specifiedVersionArray[smalestStringLength-1])) {
+		    return currentVersionArray.length > specifiedVersionArray.length;
 		}
 
-		return Boolean.TRUE;
+		return true;
 	}
 
 	/**
@@ -94,26 +84,26 @@ public class MavenLikeVersioning implements Serializable {
 	 * @return True if the current object is equal to the specified version, False otherwise
 	 *
 	 */
-	public Boolean isTheSameVersion (String versionToCompare) {
+	public boolean isTheSameVersion (String versionToCompare) {
 		if (versionToCompare == null && this.version == null) {
-			return Boolean.TRUE;
+			return true;
 		} else if (versionToCompare == null || this.version == null) {
-			return Boolean.FALSE;
+			return false;
 		}
 		String [] currentVersionArray = this.version.split("\\.");
 		String [] specifiedVersionArray = versionToCompare.split("\\.");
 
 		if (currentVersionArray.length != specifiedVersionArray.length) {
-			return Boolean.FALSE;
+			return false;
 		}
 
 		for (int currentVersionIndex=0;currentVersionIndex < currentVersionArray.length;++currentVersionIndex) {
 
-			if (Integer.valueOf(currentVersionArray[currentVersionIndex]).intValue () != Integer.valueOf(specifiedVersionArray[currentVersionIndex]).intValue ()) {
-				return Boolean.FALSE;
+			if (Integer.parseInt(currentVersionArray[currentVersionIndex]) != Integer.parseInt(specifiedVersionArray[currentVersionIndex])) {
+				return false;
 			}
 		}
 
-		return Boolean.TRUE;
+		return true;
 	}
 }
