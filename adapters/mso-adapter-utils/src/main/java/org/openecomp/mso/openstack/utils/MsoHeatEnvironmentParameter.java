@@ -20,7 +20,7 @@
 
 package org.openecomp.mso.openstack.utils;
 
-
+import java.util.Objects;
 
 public class MsoHeatEnvironmentParameter {
 
@@ -66,20 +66,11 @@ public class MsoHeatEnvironmentParameter {
 		}
 		MsoHeatEnvironmentParameter hep = (MsoHeatEnvironmentParameter) o;	
 		// If the name of the parameter is the same, then they're equal
-		if (hep.getName().equals(this.getName())) {
-			return true;
-		}
-		return false;
+        return hep.getName().equals(this.getName());
 	}
 	
 	public int hashCode() {
-		int result = 0;
-		try {
-			result = this.name.hashCode();
-		} catch (Exception e) {
-			// in case it's null - return zero
-		}
-		return result;
+        return Objects.hashCode(this.name);
 	}
 
 
