@@ -69,11 +69,10 @@ public class VfResourceInstaller implements IVfResourceInstaller {
 	public boolean isResourceAlreadyDeployed(VfResourceStructure vfResourceStruct)
 			throws ArtifactInstallerException {
 
-		CatalogDatabase db = new CatalogDatabase();
 		boolean status = false;
 		VfResourceStructure vfResourceStructure = (VfResourceStructure)vfResourceStruct;
 
-        try {
+        try(CatalogDatabase db = new CatalogDatabase()) {
 
 			String resourceType = vfResourceStruct.getResourceInstance().getResourceType();
 			String category = vfResourceStruct.getResourceInstance().getCategory();

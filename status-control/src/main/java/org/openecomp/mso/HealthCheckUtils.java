@@ -62,10 +62,8 @@ public class HealthCheckUtils {
     public enum NodeType {APIH, RA, BPMN};
 
     public boolean catalogDBCheck (MsoLogger subMsoLogger, long startTime) {
-        try {
-            CatalogDatabase catalogDB = new CatalogDatabase ();
+        try(CatalogDatabase catalogDB = new CatalogDatabase ()) {
             catalogDB.healthCheck ();
-            catalogDB.close();
         } catch (Exception e) {
             subMsoLogger.error(MessageEnum.GENERAL_EXCEPTION, "", "HealthCheck", MsoLogger.ErrorCode.DataError, "Failed to check catalog database", e);
             subMsoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError, "Exception during healthcheck");

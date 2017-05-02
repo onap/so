@@ -124,37 +124,37 @@ public class CatalogDbAdapterRest {
 		String uuid = "";
 		List<VnfResource> ret;
 
-		try {
+        try (CatalogDatabase db = new CatalogDatabase()) {
 
 			if (vnfUuid != null && !vnfUuid.equals("")) {
 				uuid = vnfUuid;
 				LOGGER.debug ("Query serviceVnfs getAllVnfsByVnfModelCustomizationUuid vnfModelCustomizationUuid: " + uuid);
-				ret = (new CatalogDatabase ()).getAllVnfsByVnfModelCustomizationUuid(uuid);
+				ret = db.getAllVnfsByVnfModelCustomizationUuid(uuid);
 			}
 			else if (smUuid != null && !smUuid.equals("")) {
 				uuid = smUuid;
 				LOGGER.debug ("Query serviceVnfs getAllVnfsByServiceModelUuid serviceModelUuid: " + uuid);
-				ret = (new CatalogDatabase ()).getAllVnfsByServiceModelUuid(uuid);
+				ret = db.getAllVnfsByServiceModelUuid(uuid);
 			}
 			else if (smiUuid != null && !smiUuid.equals("")) {
 				uuid = smiUuid;
 				if (smVer != null && !smVer.equals("")) {
 					LOGGER.debug ("Query serviceVnfs getAllNetworksByServiceModelInvariantUuid serviceModelInvariantUuid: " + uuid+ " serviceModelVersion: "+ smVer);
-					ret = (new CatalogDatabase ()).getAllVnfsByServiceModelInvariantUuid(uuid, smVer);
+					ret = db.getAllVnfsByServiceModelInvariantUuid(uuid, smVer);
 				}
 				else {
 					LOGGER.debug ("Query serviceVnfs getAllNetworksByServiceModelInvariantUuid serviceModelUuid: " + uuid);
-					ret = (new CatalogDatabase ()).getAllVnfsByServiceModelInvariantUuid(uuid);
+					ret = db.getAllVnfsByServiceModelInvariantUuid(uuid);
 				}
 			}
 			else if (smName != null && !smName.equals("")) {
 				if (smVer != null && !smVer.equals("")) {
 					LOGGER.debug ("Query serviceVnfs getAllVnfsByServiceName serviceModelInvariantName: " + smName+ " serviceModelVersion: "+ smVer);
-					ret = (new CatalogDatabase ()).getAllVnfsByServiceName(smName, smVer);
+					ret = db.getAllVnfsByServiceName(smName, smVer);
 				}
 				else {
 					LOGGER.debug ("Query serviceVnfs getAllVnfsByServiceName serviceModelName: " + smName);
-					ret = (new CatalogDatabase ()).getAllVnfsByServiceName(smName);
+					ret = db.getAllVnfsByServiceName(smName);
 				}
 			}
 			else {
@@ -203,31 +203,31 @@ public class CatalogDbAdapterRest {
 		String uuid = "";
 		List<NetworkResourceCustomization> ret;
 
-		try {
+        try (CatalogDatabase db = new CatalogDatabase()) {
 			if (nUuid != null && !nUuid.equals("")) {
 				uuid = nUuid;
 				LOGGER.debug ("Query serviceNetworks getAllNetworksByNetworkModelCustomizationUuid networkModelCustomizationUuid: " + uuid);
-				ret = (new CatalogDatabase ()).getAllNetworksByNetworkModelCustomizationUuid(uuid);
+				ret = db.getAllNetworksByNetworkModelCustomizationUuid(uuid);
 			}
 			else if (smUuid != null && !smUuid.equals("")) {
 				uuid = smUuid;
 				LOGGER.debug ("Query serviceNetworks getAllNetworksByServiceModelUuid serviceModelUuid: " + uuid);
-				ret = (new CatalogDatabase ()).getAllNetworksByServiceModelUuid(uuid);
+				ret = db.getAllNetworksByServiceModelUuid(uuid);
 			}
 			else if (nType != null && !nType.equals("")) {
 				uuid = nType;
 				LOGGER.debug ("Query serviceNetworks getAllNetworksByNetworkType serviceModelUuid: " + uuid);
-				ret = (new CatalogDatabase ()).getAllNetworksByNetworkType(uuid);
+				ret = db.getAllNetworksByNetworkType(uuid);
 			}
 			else if (smiUuid != null && !smiUuid.equals("")) {
 				uuid = smiUuid;
 				if (smVer != null && !smVer.equals("")) {
 					LOGGER.debug ("Query serviceNetworks getAllNetworksByServiceModelInvariantUuid serviceModelInvariantUuid: " + uuid+ " serviceModelVersion: "+ smVer);
-					ret = (new CatalogDatabase ()).getAllNetworksByServiceModelInvariantUuid(uuid, smVer);
+					ret = db.getAllNetworksByServiceModelInvariantUuid(uuid, smVer);
 				}
 				else {
 					LOGGER.debug ("Query serviceNetworks getAllNetworksByServiceModelInvariantUuid serviceModelUuid: " + uuid);
-					ret = (new CatalogDatabase ()).getAllNetworksByServiceModelInvariantUuid(uuid);
+					ret = db.getAllNetworksByServiceModelInvariantUuid(uuid);
 				}
 			}
 			else {
@@ -274,22 +274,22 @@ public class CatalogDbAdapterRest {
 		String uuid = "";
 		ServiceMacroHolder ret;
 
-		try {
+        try (CatalogDatabase db = new CatalogDatabase()) {
 
 			if (smUuid != null && !smUuid.equals("")) {
 				uuid = smUuid;
 				LOGGER.debug ("Query serviceMacroHolder getAllResourcesByServiceModelUuid serviceModelUuid: " + uuid);
-				ret = (new CatalogDatabase ()).getAllResourcesByServiceModelUuid(uuid);
+				ret = db.getAllResourcesByServiceModelUuid(uuid);
 			}
 			else if (smiUuid != null && !smiUuid.equals("")) {
 				uuid = smiUuid;
 				if (smVer != null && !smVer.equals("")) {
 					LOGGER.debug ("Query serviceMacroHolder getAllResourcesByServiceModelInvariantUuid serviceModelInvariantUuid: " + uuid+ " serviceModelVersion: "+ smVer);
-					ret = (new CatalogDatabase ()).getAllResourcesByServiceModelInvariantUuid(uuid, smVer);
+					ret = db.getAllResourcesByServiceModelInvariantUuid(uuid, smVer);
 				}
 				else {
 					LOGGER.debug ("Query serviceMacroHolder getAllResourcesByServiceModelInvariantUuid serviceModelUuid: " + uuid);
-					ret = (new CatalogDatabase ()).getAllResourcesByServiceModelInvariantUuid(uuid);
+					ret = db.getAllResourcesByServiceModelInvariantUuid(uuid);
 				}
 			}
 			else {
@@ -337,28 +337,28 @@ public class CatalogDbAdapterRest {
 		String uuid = "";
 		List<AllottedResourceCustomization > ret;
 
-		try {
+        try (CatalogDatabase db = new CatalogDatabase()) {
 
 			if (smUuid != null && !smUuid.equals("")) {
 				uuid = smUuid;
 				LOGGER.debug ("Query AllottedResourceCustomization getAllAllottedResourcesByServiceModelUuid serviceModelUuid: " + uuid);
-				ret = (new CatalogDatabase ()).getAllAllottedResourcesByServiceModelUuid(uuid);
+				ret = db.getAllAllottedResourcesByServiceModelUuid(uuid);
 			}
 			else if (smiUuid != null && !smiUuid.equals("")) {
 				uuid = smiUuid;
 				if (smVer != null && !smVer.equals("")) {
 					LOGGER.debug ("Query AllottedResourceCustomization getAllAllottedResourcesByServiceModelInvariantUuid serviceModelInvariantUuid: " + uuid+ " serviceModelVersion: "+ smVer);
-					ret = (new CatalogDatabase ()).getAllAllottedResourcesByServiceModelInvariantUuid(uuid, smVer);
+					ret = db.getAllAllottedResourcesByServiceModelInvariantUuid(uuid, smVer);
 				}
 				else {
 					LOGGER.debug ("Query AllottedResourceCustomization getAllAllottedResourcesByServiceModelInvariantUuid serviceModelUuid: " + uuid);
-					ret = (new CatalogDatabase ()).getAllAllottedResourcesByServiceModelInvariantUuid(uuid);
+					ret = db.getAllAllottedResourcesByServiceModelInvariantUuid(uuid);
 				}
 			}
 			else if (aUuid != null && !aUuid.equals("")) {
 				uuid = aUuid;
 				LOGGER.debug ("Query AllottedResourceCustomization getAllAllottedResourcesByArModelCustomizationUuid serviceModelUuid: " + uuid);
-				ret = (new CatalogDatabase ()).getAllAllottedResourcesByArModelCustomizationUuid(uuid);
+				ret = db.getAllAllottedResourcesByArModelCustomizationUuid(uuid);
 			}
 			else {
 				throw(new Exception("no matching parameters"));
