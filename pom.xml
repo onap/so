@@ -44,7 +44,7 @@
 		<snapshotNexusPath>/content/repositories/snapshots/</snapshotNexusPath>
 		<releaseNexusPath>/content/repositories/releases/</releaseNexusPath>
 		<stagingNexusPath>/content/repositories/staging/</stagingNexusPath>
-        <sitePath>/content/sites/site/org/openecomp/mso/${project.version}</sitePath>
+		<sitePath>/content/sites/site/org/onap/mso/${project.version}</sitePath>
 		<maven.build.timestamp.format>yyyyMMdd'T'HHmm</maven.build.timestamp.format>
 	</properties>
 	<distributionManagement>
