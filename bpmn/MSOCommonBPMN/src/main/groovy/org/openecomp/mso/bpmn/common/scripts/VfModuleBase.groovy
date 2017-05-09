@@ -40,7 +40,7 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 	
 	/**
 	 * Get the XmlParser.
-	 *
+	 * 
 	 * @return the XmlParser.
 	 */
 	protected XmlParser getXmlParser() {
@@ -50,7 +50,7 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 	/**
 	 * Find the VF Module with specified ID in the specified Generic VF.  If no such
 	 * VF Module is found, null is returned.
-	 *
+	 * 
 	 * @param genericVnf The Generic VNF in which to search for the specified VF Moduel.
 	 * @param vfModuleId The ID of the VF Module for which to search.
 	 * @return a VFModule object for the found VF Module or null if no VF Module is found.
@@ -77,7 +77,7 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 	 * element to a corresponding list of 'vnf-networks' specifications (typically used when
 	 * invoking the VNF Rest Adpater). Each element in '*-params' whose name attribute ends
 	 * with '_network' is used to create an 'vnf-networks' element.
-	 *
+	 * 
 	 * @param paramsNode A Node representing a '*-params' element.
 	 * @return a String of 'vnf-networks' elements, one for each 'param' element whose name
 	 * attribute ends with '_network'.
@@ -189,7 +189,7 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 	
 	/**
 	 * Extract the Tenant Id from the Volume Group information returned by AAI.
-	 *
+	 * 
 	 * @param volumeGroupXml Volume Group XML returned by AAI.
 	 * @return the Tenant Id extracted from the Volume Group information. 'null' is returned if
 	 * the Tenant Id is missing or could not otherwise be extracted.
@@ -233,7 +233,7 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 	 */
 	  
 	 
-	 protected String buildVfModuleParams(String vnfParams, String sdncGetResponse, String vnfId, String vnfName,
+	 protected String buildVfModuleParams(Map<String, String> vnfParamsMap, String sdncGetResponse, String vnfId, String vnfName,
 			String vfModuleId, String vfModuleName, String vfModuleIndex) {
 			
 			//Get SDNC Response Data
@@ -251,36 +251,19 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 			oldVnfId = utils.removeXmlNamespaces(oldVnfId)
 			serviceData = serviceData.replace(oldVnfId, "")
 			def vnfId1 = utils.getNodeText1(serviceData, "vnf-id")
-			String vfModuleIndexParam = ""
+			
+			Map<String, String> paramsMap = new HashMap<String, String>()
 			
 			if (vfModuleIndex != null) {
-				vfModuleIndexParam = """<entry>
-						<key>vf_module_index</key>
-						<value>${vfModuleIndex}</value>
-					</entry>"""
+				paramsMap.put("vf_module_index", "${vfModuleIndex}")
 			}
 
 			// Add-on data
-			String vnfInfo =
-				"""<entry>
-						<key>vnf_id</key>
-						<value>${vnfId}</value>
-					</entry>
-					<entry>
-						<key>vnf_name</key>
-						<value>${vnfName}</value>
-					</entry>
-					<entry>
-						<key>vf_module_id</key>
-						<value>${vfModuleId}</value>
-					</entry>
-					<entry>
-						<key>vf_module_name</key>
-						<value>${vfModuleName}</value>
-					</entry>
-					${vfModuleIndexParam}"""
-
-			utils.logAudit("vnfInfo: " + vnfInfo)
+			paramsMap.put("vnf_id", "${vnfId}")
+			paramsMap.put("vnf_name", "${vnfName}")
+			paramsMap.put("vf_module_id", "${vfModuleId}")
+			paramsMap.put("vf_module_name", "${vfModuleName}")
+			
 			InputSource source = new InputSource(new StringReader(data));
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 			docFactory.setNamespaceAware(true)
@@ -289,8 +272,6 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 
 
 			// Availability Zones Data
-			String aZones = ""
-			StringBuilder sbAZone = new StringBuilder()
 			
 			NodeList aZonesList = responseXml.getElementsByTagNameNS("*", "availability-zones")
 			String aZonePosition = "0"
@@ -300,28 +281,14 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 					Element eElement = (Element) node
 					String aZoneValue = utils.getElementText(eElement, "availability-zone")
 					aZonePosition = z.toString()
-					String aZoneXml =
-							"""<entry>
-						<key>availability_zone_${aZonePosition}</key>
-						<value>${aZoneValue}</value>
-				</entry>"""
-					aZones = sbAZone.append(aZoneXml)
+					paramsMap.put("availability_zone_${aZonePosition}", "${aZoneValue}")
 				}
 			}
 
 			// VNF Networks Data
-			String vnfNetworkNetId = ""
-			String vnfNetworkNetName = ""
-			String vnfNetworkSubNetId = ""
-			String vnfNetworkV6SubNetId = ""
-			String vnfNetworkNetFqdn = ""
-			String vnfNetworksSriovVlanFilters = ""
+			
 			StringBuilder sbNet = new StringBuilder()
-			StringBuilder sbNet2 = new StringBuilder()
-			StringBuilder sbNet3 = new StringBuilder()
-			StringBuilder sbNet4 = new StringBuilder()
-			StringBuilder sbNet5 = new StringBuilder()
-			StringBuilder sbNet6 = new StringBuilder()
+			
 			NodeList vnfNetworkList = responseXml.getElementsByTagNameNS("*", "vnf-networks")
 			for (int x = 0; x < vnfNetworkList.getLength(); x++) {
 				Node node = vnfNetworkList.item(x)
@@ -333,36 +300,11 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 					String vnfNetworkSubNetIdValue = utils.getElementText(eElement, "subnet-id")
 					String vnfNetworkV6SubNetIdValue = utils.getElementText(eElement, "ipv6-subnet-id")
 					String vnfNetworkNetFqdnValue = utils.getElementText(eElement, "contrail-network-fqdn")
-					String vnfNetworkNetIdXml =
-							"""<entry>
-								<key>${vnfNetworkKey}_net_id</key>
-								<value>${vnfNetworkNeutronIdValue}</value>
-							</entry>"""
-					vnfNetworkNetId = sbNet.append(vnfNetworkNetIdXml)
-					String vnfNetworkNetNameXml =
-							"""<entry>
-						<key>${vnfNetworkKey}_net_name</key>
-						<value>${vnfNetworkNetNameValue}</value>
-				</entry>"""
-					vnfNetworkNetName = sbNet2.append(vnfNetworkNetNameXml)
-					String vnfNetworkSubNetIdXml =
-							"""<entry>
-						<key>${vnfNetworkKey}_subnet_id</key>
-						<value>${vnfNetworkSubNetIdValue}</value>
-				</entry>"""
-					vnfNetworkSubNetId = sbNet3.append(vnfNetworkSubNetIdXml)
-					String vnfNetworkV6SubNetIdXml =
-							"""<entry>
-						<key>${vnfNetworkKey}_v6_subnet_id</key>
-						<value>${vnfNetworkV6SubNetIdValue}</value>
-				</entry>"""
-					vnfNetworkV6SubNetId = sbNet5.append(vnfNetworkV6SubNetIdXml)
-					String vnfNetworkNetFqdnXml =
-							"""<entry>
-						<key>${vnfNetworkKey}_net_fqdn</key>
-						<value>${vnfNetworkNetFqdnValue}</value>
-				</entry>"""
-					vnfNetworkNetFqdn = sbNet4.append(vnfNetworkNetFqdnXml)
+					paramsMap.put("${vnfNetworkKey}_net_id", "${vnfNetworkNeutronIdValue}")
+					paramsMap.put("${vnfNetworkKey}_net_name", "${vnfNetworkNetNameValue}")
+					paramsMap.put("${vnfNetworkKey}_subnet_id", "${vnfNetworkSubNetIdValue}")
+					paramsMap.put("${vnfNetworkKey}_v6_subnet_id", "${vnfNetworkV6SubNetIdValue}")
+					paramsMap.put("${vnfNetworkKey}_net_fqdn", "${vnfNetworkNetFqdnValue}")
 					
 					NodeList sriovVlanFilterList = eElement.getElementsByTagNameNS("*","sriov-vlan-filter-list")
 					StringBuffer sriovFilterBuf = new StringBuffer()
@@ -381,23 +323,13 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 						}
 					}
 					if (!values.isEmpty()) {
-							String vnfNetworkSriovVlanFilterXml =
-									"""<entry>
-								<key>${vnfNetworkKey}_ATT_VF_VLAN_FILTER</key>
-								<value>${values}</value>
-							</entry>"""
-							vnfNetworksSriovVlanFilters = sbNet6.append(vnfNetworkSriovVlanFilterXml)
+							paramsMap.put("${vnfNetworkKey}_ATT_VF_VLAN_FILTER", "${values}")
 						}
 					}
 			}
 
 			// VNF-VMS Data
-			String vnfVMS = ""
-			String vnfVMSPositions = ""
-			String vmNetworks = ""
-			String vmNetworksPositions = ""
-			String vmNetworksPositionsV6 = ""
-			String interfaceRoutePrefixes = ""
+			
 			def key
 			def value
 			def networkKey
@@ -407,11 +339,6 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 			def floatingIPV6Key
 			def floatingIPV6KeyValue
 			StringBuilder sb = new StringBuilder()
-			StringBuilder sbPositions = new StringBuilder()
-			StringBuilder sbVmNetworks = new StringBuilder()
-			StringBuilder sbNetworksPositions = new StringBuilder()
-			StringBuilder sbInterfaceRoutePrefixes = new StringBuilder()
-			StringBuilder sbNetworksPositionsV6 = new StringBuilder()
 
 			NodeList vmsList = responseXml.getElementsByTagNameNS("*","vnf-vms")
 			for (int x = 0; x < vmsList.getLength(); x++) {
@@ -436,12 +363,7 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 								values = sb1.append(value);
 							}
 							position = i.toString()
-							String vnfPositionXml =
-									"""<entry>
-								<key>${key}_name_${position}</key>
-								<value>${value}</value>
-							</entry>"""
-							vnfVMSPositions = sbPositions.append(vnfPositionXml)
+							paramsMap.put("${key}_name_${position}", "${value}")
 						}
 					}
 					for(int n = 0; n < vmNetworksList.getLength(); n++){
@@ -459,19 +381,13 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 							networkKey = utils.getElementText(eElementNetworkKey, "network-role")
 							floatingIPKey = key + '_' + networkKey + '_floating_ip'
 							floatingIPKeyValue = utils.getElementText(eElementNetworkKey, "floating-ip")
-							if(!floatingIPKeyValue.isEmpty()){								
-								floatingIpKeyValueStr = """<entry>
-								<key>$floatingIPKey</key>
-								<value>$floatingIPKeyValue</value>
-							</entry>"""
+							if(!floatingIPKeyValue.isEmpty()){
+								paramsMap.put("$floatingIPKey", "$floatingIPKeyValue")
 							}
 							floatingIPV6Key = key + '_' + networkKey + '_floating_v6_ip'
 							floatingIPV6KeyValue = utils.getElementText(eElementNetworkKey, "floating-ip-v6")
-							if(!floatingIPV6KeyValue.isEmpty()){								
-								floatingIpV6KeyValueStr = """<entry>
-								<key>$floatingIPV6Key</key>
-								<value>$floatingIPV6KeyValue</value>
-							</entry>"""
+							if(!floatingIPV6KeyValue.isEmpty()){
+								paramsMap.put("$floatingIPV6Key", "$floatingIPV6KeyValue")
 							}
 							NodeList networkIpsList = eElementNetworkKey.getElementsByTagNameNS("*","network-ips")
 							for(int a = 0; a < networkIpsList.getLength(); a++){
@@ -486,50 +402,34 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 										ipAddressValues = sb2.append(ipAddressValue);
 									}
 									networkPosition = a.toString()
-									String vmNetworksPositionsXml =
-											"""<entry>
-										<key>${key}_${networkKey}_ip_${networkPosition}</key>
-										<value>${ipAddressValue}</value>
-									</entry>"""
-									vmNetworksPositions = sbNetworksPositions.append(vmNetworksPositionsXml)
+									paramsMap.put("${key}_${networkKey}_ip_${networkPosition}", "${ipAddressValue}")
 								}
 							}
-							vmNetworksPositions = sbNetworksPositions.append(floatingIpKeyValueStr).append(floatingIpV6KeyValueStr)
-						
-							String vmNetworksXml =
-									"""<entry>
-								<key>${key}_${networkKey}_ips</key>
-								<value>${ipAddressValues}</value>
-							</entry>"""
-							vmNetworks = sbVmNetworks.append(vmNetworksXml)
+							
+							paramsMap.put("${key}_${networkKey}_ips", "${ipAddressValues}")
 							
 							NodeList interfaceRoutePrefixesList = eElementNetworkKey.getElementsByTagNameNS("*","interface-route-prefixes")
 							String interfaceRoutePrefixValues = sb3.append("[")
 							
-							for(int a = 0; a < interfaceRoutePrefixesList.getLength(); a++){								
-								Node interfaceRoutePrefix = interfaceRoutePrefixesList.item(a)								
+							for(int a = 0; a < interfaceRoutePrefixesList.getLength(); a++){
+								Node interfaceRoutePrefix = interfaceRoutePrefixesList.item(a)
 								if (interfaceRoutePrefix.getNodeType() == Node.ELEMENT_NODE) {
 									Element eElementInterfaceRoutePrefix = (Element) interfaceRoutePrefix
 									String interfaceRoutePrefixValue = utils.getElementText(eElementInterfaceRoutePrefix, "interface-route-prefix-cidr")
 									if (interfaceRoutePrefixValue == null || interfaceRoutePrefixValue.isEmpty()) {
 										interfaceRoutePrefixValue = utils.getElementText(eElementInterfaceRoutePrefix, "interface-route-prefix")
 									}
-									if (a != interfaceRoutePrefixesList.getLength() - 1) {									
+									if (a != interfaceRoutePrefixesList.getLength() - 1) {
 										interfaceRoutePrefixValues = sb3.append("{\"interface_route_table_routes_route_prefix\": \"" + interfaceRoutePrefixValue + "\"}" + ",")
 									}
 									else {
 										interfaceRoutePrefixValues = sb3.append("{\"interface_route_table_routes_route_prefix\": \"" + interfaceRoutePrefixValue + "\"}")
-									}									
+									}
 								}
 							}
 							interfaceRoutePrefixValues = sb3.append("]")
 							if (interfaceRoutePrefixesList.getLength() > 0) {
-								String interfaceRoutePrefixesXml = 
-												"""<entry>
-											<key>${key}_${networkKey}_route_prefixes</key>
-											<value>${interfaceRoutePrefixValues}</value>
-										</entry>"""					
-								interfaceRoutePrefixes = sbInterfaceRoutePrefixes.append(interfaceRoutePrefixesXml)
+								paramsMap.put("${key}_${networkKey}_route_prefixes", "${interfaceRoutePrefixValues}")
 							}
 							
 							NodeList networkIpsV6List = eElementNetworkKey.getElementsByTagNameNS("*","network-ips-v6")
@@ -545,28 +445,13 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 										ipV6AddressValues = sb4.append(ipV6AddressValue);
 									}
 									networkPosition = a.toString()
-									String vmNetworksPositionsV6Xml =
-											"""<entry>
-										<key>${key}_${networkKey}_v6_ip_${networkPosition}</key>
-										<value>${ipV6AddressValue}</value>
-									</entry>"""
-									vmNetworksPositionsV6 = sbNetworksPositionsV6.append(vmNetworksPositionsV6Xml)
+									paramsMap.put("${key}_${networkKey}_v6_ip_${networkPosition}", "${ipV6AddressValue}")
 								}
 							}
-							String vmNetworksV6Xml =
-									"""<entry>
-								<key>${key}_${networkKey}_v6_ips</key>
-								<value>${ipV6AddressValues}</value>
-							</entry>"""
-							vmNetworks = sbVmNetworks.append(vmNetworksV6Xml)
+							paramsMap.put("${key}_${networkKey}_v6_ips", "${ipV6AddressValues}")
 						}
 					}
-					String vnfXml =
-							"""<entry>
-				<key>${key}_names</key>
-				<value>${values}</value>
-					</entry>"""
-					vnfVMS = sb.append(vnfXml)
+					paramsMap.put("${key}_names", "${values}")
 				}
 			}
 		//SDNC Response Params
@@ -575,7 +460,7 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 			String vnfParamsChildNodes = utils.getChildNodes(data, "vnf-parameters")
 			if(vnfParamsChildNodes == null || vnfParamsChildNodes.length() < 1){
 				// No SDNC params
-			}else{				
+			}else{
 				NodeList paramsList = responseXml.getElementsByTagNameNS("*", "vnf-parameters")
 				for (int z = 0; z < paramsList.getLength(); z++) {
 					Node node = paramsList.item(z)
@@ -583,34 +468,35 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 					String vnfParameterName = utils.getElementText(eElement, "vnf-parameter-name")
 					if (!sdncResponseParamsToSkip.contains(vnfParameterName)) {
 						String vnfParameterValue = utils.getElementText(eElement, "vnf-parameter-value")
-						String paraEntry =
-						"""<entry>
-							<key>${vnfParameterName}</key>
-							<value>${vnfParameterValue}</value>
-						</entry>"""
-						sdncResponseParams = sb.append(paraEntry)
+						paramsMap.put("${vnfParameterName}", "${vnfParameterValue}")
 					}
 				}
 			}
+			
+		// Parameters received from the request should overwrite any parameters received from SDNC
+		if (vnfParamsMap != null) {
+			for (Map.Entry<String, String> entry : vnfParamsMap.entrySet()) {
+				String vnfKey = entry.getKey()
+				String vnfValue = entry.getValue()
+				paramsMap.put("$vnfKey", "$vnfValue")
+			}
+		}
+		
+		StringBuilder sbParams = new StringBuilder()
+		def vfModuleParams = ""
+		for (Map.Entry<String, String> entry : paramsMap.entrySet()) {
+			String paramsXml
+			String paramName = entry.getKey()
+			String paramValue = entry.getValue()
+			paramsXml =
+					"""<entry>
+						<key>${paramName}</key>
+						<value>${paramValue}</value>
+					</entry>
+					"""
 
-
-		def vfModuleParams = """
-		${vnfInfo}
-		${aZones}
-		${vnfNetworkNetId}
-		${vnfNetworkNetName}
-		${vnfNetworkSubNetId}
-		${vnfNetworkV6SubNetId}
-		${vnfNetworkNetFqdn}
-		${vnfNetworksSriovVlanFilters}
-        ${vnfVMS}
-        ${vnfVMSPositions}
-		${vmNetworks}
-		${vmNetworksPositions}
-		${vmNetworksPositionsV6}
-		${interfaceRoutePrefixes}
-		${vnfParams}
-		${sdncResponseParams}"""
+			vfModuleParams = sbParams.append(paramsXml)
+		}
 		
 		return vfModuleParams
 		
@@ -618,7 +504,7 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 	
 
 	/*
-	 * VBNG specific method that parses VNF parameters passed in on the
+	 * VBNG specific method that parses VNF parameters passed in on the 
 	 * incoming requests and SDNC parameters returned from SDNC get response
 	 * and puts them into the format expected by VNF adapter.
 	 * @param vnfParamsMap -  map of VNF parameters passed in the request body

@@ -82,8 +82,8 @@ public class SDNCAdapterRest {
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response service(
 			SDNCServiceRequest request,
-			@HeaderParam(value="att-mso-request-id") String msoRequestId,
-			@HeaderParam(value="att-mso-service-instance-id") String msoServiceInstanceId) {
+			@HeaderParam(value="mso-request-id") String msoRequestId,
+			@HeaderParam(value="mso-service-instance-id") String msoServiceInstanceId) {
 
 		MsoLogger.setLogContext(msoRequestId, msoServiceInstanceId);
 

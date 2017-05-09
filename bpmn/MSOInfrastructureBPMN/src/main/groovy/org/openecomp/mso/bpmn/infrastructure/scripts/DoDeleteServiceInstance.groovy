@@ -220,11 +220,13 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 				</sdncadapterworkflow:SDNCRequestData>
 				</sdncadapterworkflow:SDNCAdapterWorkflowRequest>"""
 
-			utils.log("DEBUG","sdncDelete:\n" + sdncDelete, isDebugEnabled)
 			sdncDelete = utils.formatXml(sdncDelete)
+			def sdncRequestId2 = UUID.randomUUID().toString()
+			String sdncDeactivate = sdncDelete.replace(">delete<", ">deactivate<").replace(">${sdncRequestId}<", ">${sdncRequestId2}<")
 			execution.setVariable("sdncDelete", sdncDelete)
-			utils.logAudit("sdncDelete:  " + sdncDelete)
-
+			execution.setVariable("sdncDeactivate", sdncDeactivate)
+			utils.log("DEBUG","sdncDeactivate:\n" + sdncDeactivate, isDebugEnabled)
+			utils.log("DEBUG","sdncDelete:\n" + sdncDelete, isDebugEnabled)
 
 		} catch (BpmnError e) {
 			throw e;
@@ -236,39 +238,37 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 		utils.log("DEBUG"," *****Exit preProcessSDNCDelete *****", isDebugEnabled)
 	}
 
-	public void postProcessSDNCDelete(Execution execution) {
+	public void postProcessSDNCDelete(Execution execution, String response, String method) {
 
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		utils.log("DEBUG"," ***** postProcessSDNCDelete ***** ", isDebugEnabled)
+		utils.log("DEBUG"," ***** postProcessSDNC " + method + " *****", isDebugEnabled)
 		String msg = ""
 
 		try {
 			WorkflowException workflowException = execution.getVariable("WorkflowException")
-			utils.logAudit("workflowException: " + workflowException)
-
 			boolean successIndicator = execution.getVariable("SDNCA_SuccessIndicator")
-			String response = execution.getVariable("sdncAdapterResponse")
-			utils.logAudit("SDNCResponse: " + response)
-
+			utils.log("DEBUG", "SDNCResponse: " + response, isDebugEnabled)
+			utils.log("DEBUG", "workflowException: " + workflowException, isDebugEnabled)
+			
 			SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
 			sdncAdapterUtils.validateSDNCResponse(execution, response, workflowException, successIndicator)
 
 			if(execution.getVariable(Prefix + 'sdncResponseSuccess') == true){
-				utils.log("DEBUG","Good response from SDNC Adapter for service-instance  topology assign: \n" + response, isDebugEnabled)
+				utils.log("DEBUG","Good response from SDNC Adapter for service-instance " + method + "response:\n" + response, isDebugEnabled)
 
 			}else{
-				msg = "Bad Response from SDNC Adapter for service-instance delete"
+				msg = "Bad Response from SDNC Adapter for service-instance " + method
 				utils.log("DEBUG", msg, isDebugEnabled)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 3500, msg)
 			}
 		} catch (BpmnError e) {
 			throw e;
 		} catch(Exception ex) {
-			msg = "Exception in postProcessSDNCDelete. " + ex.getMessage()
+			msg = "Exception in postProcessSDNC " + method + " Exception:" + ex.getMessage()
 			utils.log("DEBUG", msg, isDebugEnabled)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "Exception Occured in preProcessSDNCDelete.\n" + ex.getMessage())
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		utils.log("DEBUG"," *** Exit postProcessSDNCDelete *** ", isDebugEnabled)
+		utils.log("DEBUG"," *** Exit postProcessSDNC " + method + " ***", isDebugEnabled)
 	}
 
 	public void postProcessAAIGET(Execution execution) {

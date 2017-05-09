@@ -20,26 +20,18 @@
 
 package org.openecomp.mso.bpmn.infrastructure;
 
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetCloudRegion;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetGenericVnfById;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetGenericVnfByIdWithDepth;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetGenericVnfByIdWithPriority;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetNetworkPolicyfqdn;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetVolumeGroupById;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPatchGenericVnf;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPatchVfModuleId;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPutGenericVnf;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPutNetwork;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPutVfModuleIdNoResponse;
-import static org.openecomp.mso.bpmn.mock.StubResponseDatabase.mockUpdateRequestDB;
-import static org.openecomp.mso.bpmn.mock.StubResponseSDNCAdapter.mockSDNCAdapter;
-import static org.openecomp.mso.bpmn.mock.StubResponseVNFAdapter.mockVNFPost;
+import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockAAIVfModule;
+import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockSDNCAdapterVfModule;
+import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockVNFAdapterRestVfModule;
+import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockDBUpdateVfModule;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
+import org.junit.Ignore;
 import org.camunda.bpm.engine.test.Deployment;
 import org.junit.Test;
 import org.openecomp.mso.bpmn.common.WorkflowTest;
@@ -66,7 +58,7 @@ public class CreateVfModuleInfraTest extends WorkflowTest {
 	
 	
 	/**
-	 * Sunny day VID scenario.
+	 * Sunny day VID scenario with preloads.
 	 * 
 	 * @throws Exception
 	 */
@@ -74,7 +66,9 @@ public class CreateVfModuleInfraTest extends WorkflowTest {
 	@Deployment(resources = {
 			"process/CreateVfModuleInfra.bpmn",
 			"subprocess/DoCreateVfModule.bpmn",
+			"subprocess/GenericGetVnf.bpmn",
 			"subprocess/SDNCAdapterV1.bpmn",
+			"subprocess/GenericNotificationService.bpmn",
 			"subprocess/VnfAdapterRestV1.bpmn",
 			"subprocess/ConfirmVolumeGroupTenant.bpmn",
 			"subprocess/ConfirmVolumeGroupName.bpmn",
@@ -84,28 +78,80 @@ public class CreateVfModuleInfraTest extends WorkflowTest {
 			"subprocess/CompleteMsoProcess.bpmn",
 			"subprocess/FalloutHandler.bpmn"
 		})
-	public void sunnyDayVID() throws Exception {
+	public void sunnyDayVIDWithPreloads() throws Exception {
 				
 		logStart();
 		
-		MockGetGenericVnfByIdWithDepth("skask", 1, "VfModularity/GenericVnf.xml");
-		MockGetGenericVnfByIdWithPriority("skask", ".*", 200, "VfModularity/VfModule-new.xml", 5);
-		MockGetGenericVnfById("skask", "VfModularity/GenericVnf.xml", 200);
-		MockPutVfModuleIdNoResponse("skask", "PCRF", ".*");
-		MockPutNetwork(".*", "VfModularity/AddNetworkPolicy_AAIResponse_Success.xml", 200);
-		MockPutGenericVnf("skask");
-		mockVNFPost("", 202, "skask");
-		mockSDNCAdapter("/SDNCAdapter", "vnf-type>STMTN", 200, "VfModularity/StandardSDNCSynchResponse.xml");
-		mockSDNCAdapter("/SDNCAdapter", "SvcAction>query", 200, "VfModularity/StandardSDNCSynchResponse.xml");
-		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		MockAAIVfModule();
 		MockPatchGenericVnf("skask");
 		MockPatchVfModuleId("skask", ".*");
+		MockSDNCAdapterVfModule();		
+		MockVNFAdapterRestVfModule();
+		MockDBUpdateVfModule();
 		
 		String businessKey = UUID.randomUUID().toString();
 		String createVfModuleRequest =
 			FileUtil.readResourceFile("__files/CreateVfModule_VID_request.json");
 		
-		Map<String, Object> variables = setupVariablesSunnyDayVID();
+		Map<String, Object> variables = setupVariablesSunnyDayVID();		
+		
+		TestAsyncResponse asyncResponse = invokeAsyncProcess("CreateVfModuleInfra",
+			"v1", businessKey, createVfModuleRequest, variables);
+				
+		WorkflowResponse response = receiveResponse(businessKey, asyncResponse, 10000);
+		
+		String responseBody = response.getResponse();
+		System.out.println("Workflow (Synch) Response:\n" + responseBody);
+		
+		injectSDNCCallbacks(callbacks, "assign, query");
+		injectVNFRestCallbacks(callbacks, "vnfCreate");
+		injectSDNCCallbacks(callbacks, "activate");
+		
+		// TODO add appropriate assertions
+
+		waitForProcessEnd(businessKey, 10000);
+		checkVariable(businessKey, "CreateVfModuleSuccessIndicator", true);
+		
+		logEnd();
+	}
+	
+	/**
+	 * Sunny day VID scenario with no preloads.
+	 * 
+	 * @throws Exception
+	 */
+	@Test	
+	@Deployment(resources = {
+			"process/CreateVfModuleInfra.bpmn",
+			"subprocess/DoCreateVfModule.bpmn",
+			"subprocess/GenericGetVnf.bpmn",
+			"subprocess/SDNCAdapterV1.bpmn",
+			"subprocess/VnfAdapterRestV1.bpmn",
+			"subprocess/ConfirmVolumeGroupTenant.bpmn",
+			"subprocess/GenericNotificationService.bpmn",
+			"subprocess/ConfirmVolumeGroupName.bpmn",
+			"subprocess/CreateAAIVfModule.bpmn",
+			"subprocess/UpdateAAIVfModule.bpmn",
+			"subprocess/UpdateAAIGenericVnf.bpmn",
+			"subprocess/CompleteMsoProcess.bpmn",
+			"subprocess/FalloutHandler.bpmn"
+		})
+	public void sunnyDayVIDNoPreloads() throws Exception {
+				
+		logStart();
+		
+		MockAAIVfModule();
+		MockPatchGenericVnf("skask");
+		MockPatchVfModuleId("skask", ".*");
+		MockSDNCAdapterVfModule();		
+		MockVNFAdapterRestVfModule();
+		MockDBUpdateVfModule();
+		
+		String businessKey = UUID.randomUUID().toString();
+		String createVfModuleRequest =
+			FileUtil.readResourceFile("__files/CreateVfModule_VID_request_noPreloads.json");
+		
+		Map<String, Object> variables = setupVariablesSunnyDayVID();		
 		
 		TestAsyncResponse asyncResponse = invokeAsyncProcess("CreateVfModuleInfra",
 			"v1", businessKey, createVfModuleRequest, variables);
@@ -131,7 +177,7 @@ public class CreateVfModuleInfraTest extends WorkflowTest {
 		private Map<String, Object> setupVariablesSunnyDayVID() {
 			Map<String, Object> variables = new HashMap<String, Object>();
 			//try {
-			//	variables.put("bpmnRequest", FileUtil.readResourceFile("__files/CreateVfModule_VID_request.json"));
+				//variables.put("bpmnRequest", FileUtil.readResourceFile("__files/CreateVfModule_VID_request.json"));
 			//}
 			//catch (Exception e) {
 				
@@ -159,39 +205,35 @@ public class CreateVfModuleInfraTest extends WorkflowTest {
 		 * @throws Exception
 		 */
 		@Test
+		@Ignore
 		@Deployment(resources = {
 				"process/CreateVfModuleInfra.bpmn",
 				"subprocess/DoCreateVfModule.bpmn",
+				"subprocess/GenericGetVnf.bpmn",
 				"subprocess/SDNCAdapterV1.bpmn",
 				"subprocess/VnfAdapterRestV1.bpmn",
 				"subprocess/ConfirmVolumeGroupTenant.bpmn",
 				"subprocess/ConfirmVolumeGroupName.bpmn",
 				"subprocess/CreateAAIVfModule.bpmn",
 				"subprocess/CreateAAIVfModuleVolumeGroup.bpmn",
+				"subprocess/GenericNotificationService.bpmn",
 				"subprocess/UpdateAAIVfModule.bpmn",
 				"subprocess/UpdateAAIGenericVnf.bpmn",
 				"subprocess/CompleteMsoProcess.bpmn",
 				"subprocess/FalloutHandler.bpmn"
 			})
+		
 		public void sunnyDayVIDWithVolumeGroupAttach() throws Exception {
 					
 			logStart();
 			
-			MockGetVolumeGroupById("AAIAIC25", "78987", "VfModularity/VolumeGroup.xml");
-			MockGetGenericVnfByIdWithDepth("skask", 1, "VfModularity/GenericVnf.xml");
-			MockGetCloudRegion("MDTWNJ21", 200, "CreateNetworkV2/cloudRegion30_AAIResponse_Success.xml");
-			MockGetVolumeGroupById("RDM2WAGPLCP", "78987", "DeleteVfModuleVolumeInfraV1/queryVolumeId_AAIResponse_Success.xml");
-			MockPutVfModuleIdNoResponse("skask", "PCRF", ".*");
-			mockVNFPost("", 202, "skask");
-			MockGetNetworkPolicyfqdn(".*", "VfModularity/QueryNetworkPolicy_AAIResponse_Success.xml", 200);
-			MockPutGenericVnf("skask");
-			MockGetGenericVnfByIdWithPriority("skask", ".*", 200, "VfModularity/VfModule-new.xml", 5);
-			mockSDNCAdapter("/SDNCAdapter", "vnf-type>STMTN", 200, "VfModularity/StandardSDNCSynchResponse.xml");
-			mockSDNCAdapter("/SDNCAdapter", "SvcAction>query", 200, "VfModularity/StandardSDNCSynchResponse.xml");
-			mockVNFPost("", 202, "skask");
-			mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+
+			MockAAIVfModule();
 			MockPatchGenericVnf("skask");
 			MockPatchVfModuleId("skask", ".*");
+			MockSDNCAdapterVfModule();		
+			MockVNFAdapterRestVfModule();
+			MockDBUpdateVfModule();
 			
 			String businessKey = UUID.randomUUID().toString();
 			String createVfModuleRequest =

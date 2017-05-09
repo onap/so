@@ -20,9 +20,6 @@
 
 package org.openecomp.mso.bpmn.common.workflow.service;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.jws.Oneway;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -32,10 +29,6 @@ import javax.xml.ws.Action;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.WebServiceContext;
 
-import org.camunda.bpm.BpmPlatform;
-import org.camunda.bpm.engine.MismatchingMessageCorrelationException;
-import org.camunda.bpm.engine.ProcessEngineServices;
-import org.camunda.bpm.engine.RuntimeService;
 import org.openecomp.mso.bpmn.common.adapter.vnf.CreateVnfNotification;
 import org.openecomp.mso.bpmn.common.adapter.vnf.DeleteVnfNotification;
 import org.openecomp.mso.bpmn.common.adapter.vnf.MsoExceptionCategory;
@@ -45,16 +38,13 @@ import org.openecomp.mso.bpmn.common.adapter.vnf.UpdateVnfNotification;
 import org.openecomp.mso.bpmn.common.adapter.vnf.VnfAdapterNotify;
 import org.openecomp.mso.bpmn.common.adapter.vnf.VnfRollback;
 import org.openecomp.mso.bpmn.common.adapter.vnf.VnfStatus;
-import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
 
 /**
- * This is the service class for VnfAdapterNotify
- * TODO: Add addition VnfAdapterNotify Methods for remaining VnfAdapterNotify operations.
+ * Implementation of the VnfAdapterNotify service.
  */
-
 @WebService(serviceName = "vnfAdapterNotify", targetNamespace = "http://org.openecomp.mso/vnfNotify")
-public class VnfAdapterNotifyServiceImpl implements VnfAdapterNotify{
+public class VnfAdapterNotifyServiceImpl extends AbstractCallbackService implements VnfAdapterNotify{
 
 	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
 
@@ -62,15 +52,6 @@ public class VnfAdapterNotifyServiceImpl implements VnfAdapterNotify{
 
 	@Context WebServiceContext wsContext;
 
-	private volatile ProcessEngineServices pes4junit = null;
-
-    /**
-     *
-     * @param errorMessage
-     * @param exception
-     * @param messageId
-     * @param completed
-     */
     @WebMethod(operationName = "rollbackVnfNotification")
     @Oneway
     @RequestWrapper(localName = "rollbackVnfNotification", targetNamespace = "http://org.openecomp.mso/vnfNotify", className = "org.openecomp.mso.adapters.vnf.async.client.RollbackVnfNotification")
@@ -85,8 +66,6 @@ public class VnfAdapterNotifyServiceImpl implements VnfAdapterNotify{
         @WebParam(name = "errorMessage", targetNamespace = "")
         String errorMessage) {
 
-
-
 		RollbackVnfNotification rollbackVnfNotification = new RollbackVnfNotification();
 
 		rollbackVnfNotification.setMessageId(messageId);
@@ -94,69 +73,17 @@ public class VnfAdapterNotifyServiceImpl implements VnfAdapterNotify{
 		rollbackVnfNotification.setException(exception);
 		rollbackVnfNotification.setErrorMessage(errorMessage);
 
-		ProcessEngineServices pes = getProcessEngineServices();
-		RuntimeService runtimeService = pes.getRuntimeService();
+		String method = "rollbackVnfNotification";
+		Object message = rollbackVnfNotification;
+		String messageEventName = "rollbackVnfNotificationCallback";
+		String messageVariable = "rollbackVnfNotificationCallback";
+		String correlationVariable = "VNFRB_messageId";
+		String correlationValue = messageId;
 
-		MsoLogger.setServiceName("MSO." + "vnfAdapterRollback");
-		MsoLogger.setLogContext(messageId, "N/A");
-		msoLogger.debug(logMarker + "Received RollbackVnfNotification" + rollbackVnfNotification.toString());
+		handleCallback(method, message, messageEventName, messageVariable,
+			correlationVariable, correlationValue, logMarker);
+    }
 
-		long startTime = System.currentTimeMillis();
-		try {
-
-			/* Check to make sure the process instance is ready for correlation*/
-			isReadyforCorrelation(runtimeService, messageId, "rollbackVnfNotificationCallback", "VNFRB_messageId");
-
-			msoLogger.debug(logMarker + "*** Received MSO rollbackVnfNotification Callback ******");			
-			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Call to MSO VnfAdapterNotifyService ");			
-			msoLogger.debug(logMarker + "Rollback VNF Notification string:\n"  + rollbackVnfNotification.toString());
-
-			System.out.println("testing ROllbackVnfNotification : " + rollbackVnfNotification.toString());
-
-			Map<String,Object> variables = new HashMap<String,Object>();
-			variables.put("VNFRB_messageId", messageId );
-			variables.put("rollbackVnfNotificationCallback", rollbackVnfNotification.toString());
-
-			/*Correlating the response with the running instance*/
-
-			runtimeService.createMessageCorrelation("rollbackVnfNotificationCallback").setVariables(variables)
-				  .processInstanceVariableEquals("VNFRB_messageId", messageId).correlate();
-
-			msoLogger.debug(logMarker + "***** Completed processing of MSO VnfAdapterNotifyService ******");
-		} catch(MismatchingMessageCorrelationException e) {
-			msoLogger.debug(logMarker + "[CORM]correlation id mismatch");
-			String msg =
-				"VNF Adapter Notify Service received a Create VNF Notification request with RequestId '"
-				+ messageId
-				+ "' but that RequestId could not be correlated to any active process - ignoring the request";
-			
-			msoLogger.error (MessageEnum.BPMN_GENERAL_EXCEPTION, "BPMN", MsoLogger.getServiceName(), 
-					MsoLogger.ErrorCode.UnknownError, logMarker + ":" + msg);
-			
-		}		
-		msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, 
-				logMarker + "Completed the execution of MSO Vnf Adapter Notify for Rollback VNF Notification.");
-		
-		msoLogger.recordMetricEvent ( startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, 
-				logMarker + "Completed the execution of MSO Vnf Adapter Notify for Rollback VNF Notification.", "BPMN", 
-				MsoLogger.getServiceName(), "rollbackVnfNotification");
-		
-		return;
-	 }
-
-
-
-    /**
-     *
-     * @param errorMessage
-     * @param vnfExists
-     * @param status
-     * @param exception
-     * @param outputs
-     * @param messageId
-     * @param vnfId
-     * @param completed
-     */
     @WebMethod(operationName = "queryVnfNotification")
     @Oneway
     @RequestWrapper(localName = "queryVnfNotification", targetNamespace = "http://org.openecomp.mso/vnfNotify", className = "org.openecomp.mso.adapters.vnf.async.client.QueryVnfNotification")
@@ -177,79 +104,32 @@ public class VnfAdapterNotifyServiceImpl implements VnfAdapterNotify{
         @WebParam(name = "status", targetNamespace = "")
         VnfStatus status,
         @WebParam(name = "outputs", targetNamespace = "")
-        org.openecomp.mso.bpmn.common.adapter.vnf.QueryVnfNotification.Outputs outputs){
+        QueryVnfNotification.Outputs outputs){
 
-    	QueryVnfNotification queryVnfNotification = new QueryVnfNotification();
+		String method = "queryVnfNotification";
+		String messageEventName = "queryVnfNotificationCallback";
+		String messageVariable = "queryVnfNotificationCallback";
+		String correlationVariable = "VNFQ_messageId";
+		String correlationValue = messageId;
 
-    	queryVnfNotification.setMessageId(messageId);
-    	queryVnfNotification.setCompleted(completed);
-    	queryVnfNotification.setException(exception);
-    	queryVnfNotification.setErrorMessage(errorMessage);
-    	queryVnfNotification.setVnfExists(vnfExists);
-    	queryVnfNotification.setVnfId(vnfId);
-    	queryVnfNotification.setStatus(status);
-    	queryVnfNotification.setOutputs(outputs);
+		MsoLogger.setServiceName("MSO." + method);
+		MsoLogger.setLogContext(correlationValue, "N/A");
 
+    	QueryVnfNotification message = new QueryVnfNotification();
 
-    	ProcessEngineServices pes = getProcessEngineServices();
-		RuntimeService runtimeService = pes.getRuntimeService();
+    	message.setMessageId(messageId);
+    	message.setCompleted(completed);
+    	message.setException(exception);
+    	message.setErrorMessage(errorMessage);
+    	message.setVnfExists(vnfExists);
+    	message.setVnfId(vnfId);
+    	message.setStatus(status);
+    	message.setOutputs(outputs);
 
-		MsoLogger.setServiceName("MSO." + "vnf Adapter Query");
-		MsoLogger.setLogContext(messageId, "N/A");
-		msoLogger.debug(logMarker + "Received QueryVnfNotification" + queryVnfNotification.toString());
+		handleCallback(method, message, messageEventName, messageVariable,
+			correlationVariable, correlationValue, logMarker);
+    }
 
-		System.out.println("Received QueryVnfNotification : " + queryVnfNotification.toString());
-
-		long startTime = System.currentTimeMillis();
-		try {
-
-			/* Check to make sure the process instance is ready for correlation*/
-			isReadyforCorrelation(runtimeService, messageId, "queryVnfNotificationCallback", "VNFQ_messageId");
-
-			msoLogger.debug(logMarker + "*** Received MSO queryVnfNotification Callback ******");
-			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Call to MSO VnfAdapterNotifyService ");
-			msoLogger.debug(logMarker + "Query VNF Notification string:\n"  + queryVnfNotification.toString());
-
-			Map<String,Object> variables = new HashMap<String,Object>();
-			variables.put("VNFQ_messageId", messageId );
-			variables.put("queryVnfNotificationCallback", queryVnfNotification.toString());
-
-			/*Correlating the response with the running instance*/
-
-			runtimeService.createMessageCorrelation("queryVnfNotificationCallback").setVariables(variables)
-				  .processInstanceVariableEquals("VNFQ_messageId", messageId).correlate();
-
-			msoLogger.debug(logMarker + "***** Completed processing of MSO VnfAdapterNotifyService ******");
-		} catch(MismatchingMessageCorrelationException e) {
-			msoLogger.debug(logMarker + "[CORM]correlation id mismatch");
-			String msg =
-				"VNF Adapter Notify Service received a Query VNF Notification request with RequestId '"
-				+ messageId
-				+ "' but that RequestId could not be correlated to any active process - ignoring the request";
-			
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION, "BPMN", MsoLogger.getServiceName(), 
-					MsoLogger.ErrorCode.UnknownError, logMarker + ":" + msg, e);
-		}
-
-		msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, 
-				logMarker + "Completed the execution of MSO Vnf Adapter Notify for Query VNF Notification.");
-		
-		return;
-	 }
-
-
-
-
-    /**
-     *
-     * @param errorMessage
-     * @param exception
-     * @param rollback
-     * @param outputs
-     * @param messageId
-     * @param vnfId
-     * @param completed
-     */
 	@WebMethod(operationName = "createVnfNotification")
     @Oneway
     @RequestWrapper(localName = "createVnfNotification", targetNamespace = "http://org.openecomp.mso/vnfNotify", className = "org.openecomp.mso.adapters.vnf.async.client.CreateVnfNotification")
@@ -266,78 +146,33 @@ public class VnfAdapterNotifyServiceImpl implements VnfAdapterNotify{
 	        @WebParam(name = "vnfId", targetNamespace = "")
 	        String vnfId,
 	        @WebParam(name = "outputs", targetNamespace = "")
-	        org.openecomp.mso.bpmn.common.adapter.vnf.CreateVnfNotification.Outputs outputs,
+	        CreateVnfNotification.Outputs outputs,
 	        @WebParam(name = "rollback", targetNamespace = "")
 	        VnfRollback rollback){
 
-		CreateVnfNotification createVnfNotification = new CreateVnfNotification();
+		String method = "createVnfNotification";
+		String messageEventName = "createVnfNotificationCallback";
+		String messageVariable = "createVnfNotificationCallback";
+		String correlationVariable = "VNFC_messageId";
+		String correlationValue = messageId;
 
-		createVnfNotification.setMessageId(messageId);
-		createVnfNotification.setCompleted(completed);
-		createVnfNotification.setException(exception);
-		createVnfNotification.setErrorMessage(errorMessage);
-		createVnfNotification.setVnfId(vnfId);
-		createVnfNotification.setOutputs(outputs);
-		createVnfNotification.setRollback(rollback);
+		MsoLogger.setServiceName("MSO." + method);
+		MsoLogger.setLogContext(correlationValue, "N/A");
 
-		ProcessEngineServices pes = getProcessEngineServices();
-		RuntimeService runtimeService = pes.getRuntimeService();
+		CreateVnfNotification message = new CreateVnfNotification();
 
-		MsoLogger.setServiceName("MSO." + "vnf Adapter Create");
-		MsoLogger.setLogContext(messageId, "N/A");
-		msoLogger.debug(logMarker + "Received CreateVnfNotification - " + createVnfNotification.toString());
+		message.setMessageId(messageId);
+		message.setCompleted(completed);
+		message.setException(exception);
+		message.setErrorMessage(errorMessage);
+		message.setVnfId(vnfId);
+		message.setOutputs(outputs);
+		message.setRollback(rollback);
 
-		long startTime = System.currentTimeMillis();
-		try {
-
-			/* Check to make sure the process instance is ready for correlation*/
-			isReadyforCorrelation(runtimeService, messageId, "createVnfNotificationCallback", "VNFC_messageId");
-
-			msoLogger.debug(logMarker + "*** Received MSO createVnfNotification Callback ******");
-			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Call to MSO VnfAdapterNotifyService ");
-			
-			msoLogger.debug(logMarker + "Create VNF Notification string:\n"  + createVnfNotification.toString());
-
-			Map<String,Object> variables = new HashMap<String,Object>();
-			variables.put("VNFC_messageId", messageId );
-			variables.put("createVnfNotificationCallback", createVnfNotification.toString());
-
-			/*Correlating the response with the running instance*/
-
-			runtimeService.createMessageCorrelation("createVnfNotificationCallback").setVariables(variables)
-				  .processInstanceVariableEquals("VNFC_messageId", messageId).correlate();
-
-			msoLogger.debug(logMarker + "***** Completed processing of MSO VnfAdapterNotifyService ******");
-		} catch(MismatchingMessageCorrelationException e) {
-			msoLogger.debug(logMarker + "[CORM]correlation id mismatch");
-			String msg =
-				"VNF Adapter Notify Service received a Create VNF Notification request with RequestId '"
-				+ messageId
-				+ "' but that RequestId could not be correlated to any active process - ignoring the request";
-			
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION, "BPMN", MsoLogger.getServiceName(), 
-					MsoLogger.ErrorCode.UnknownError, logMarker + ":" + msg, e);
-			
-		}
-		msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, 
-				logMarker + "Completed the execution of MSO Vnf Adapter Notify for Query VNF Notification.");
-		
-		msoLogger.recordMetricEvent ( startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, 
-				logMarker + "Completed the execution of MSO Vnf Adapter Notify for Query VNF Notification.", "BPMN", 
-				MsoLogger.getServiceName(), "createVnfNotification");
-		
-		return;
+		handleCallback(method, message, messageEventName, messageVariable,
+			correlationVariable, correlationValue, logMarker);
 	 }
 
-    /**
-     *
-     * @param errorMessage
-     * @param exception
-     * @param rollback
-     * @param outputs
-     * @param messageId
-     * @param completed
-     */
 	@WebMethod(operationName = "updateVnfNotification")
     @Oneway
     @RequestWrapper(localName = "updateVnfNotification", targetNamespace = "http://org.openecomp.mso/vnfNotify", className = "org.openecomp.mso.adapters.vnf.async.client.UpdateVnfNotification")
@@ -352,77 +187,32 @@ public class VnfAdapterNotifyServiceImpl implements VnfAdapterNotify{
         @WebParam(name = "errorMessage", targetNamespace = "")
         String errorMessage,
         @WebParam(name = "outputs", targetNamespace = "")
-        org.openecomp.mso.bpmn.common.adapter.vnf.UpdateVnfNotification.Outputs outputs,
+        UpdateVnfNotification.Outputs outputs,
         @WebParam(name = "rollback", targetNamespace = "")
         VnfRollback rollback){
 
-    	UpdateVnfNotification updateVnfNotification = new UpdateVnfNotification();
+		String method = "updateVnfNotification";
+		String messageEventName = "updateVnfNotificationCallback";
+		String messageVariable = "updateVnfNotificationCallback";
+		String correlationVariable = "VNFU_messageId";
+		String correlationValue = messageId;
 
-    	updateVnfNotification.setMessageId(messageId);
-    	updateVnfNotification.setCompleted(completed);
-    	updateVnfNotification.setException(exception);
-    	updateVnfNotification.setErrorMessage(errorMessage);
-    	updateVnfNotification.setOutputs(outputs);
-    	updateVnfNotification.setRollback(rollback);
+		MsoLogger.setServiceName("MSO." + method);
+		MsoLogger.setLogContext(correlationValue, "N/A");
 
-		ProcessEngineServices pes = getProcessEngineServices();
-		RuntimeService runtimeService = pes.getRuntimeService();
+    	UpdateVnfNotification message = new UpdateVnfNotification();
 
-		MsoLogger.setServiceName("MSO." + "vnf Adapter Update");
-		MsoLogger.setLogContext(messageId, "N/A");
-		msoLogger.debug(logMarker + "Received UpdateVnfNotification - " + updateVnfNotification.toString());
+    	message.setMessageId(messageId);
+    	message.setCompleted(completed);
+    	message.setException(exception);
+    	message.setErrorMessage(errorMessage);
+    	message.setOutputs(outputs);
+    	message.setRollback(rollback);
 
-		long startTime = System.currentTimeMillis();
-		try {
-
-			// Check to make sure the process instance is ready for correlation
-			isReadyforCorrelation(runtimeService, messageId, "updateVnfNotificationCallback", "VNFU_messageId");
-
-			msoLogger.debug(logMarker + "*** Received MSO updateVnfNotification Callback ******");
-			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Call to MSO VnfAdapterNotifyService ");
-			
-			msoLogger.debug(logMarker + "Update VNF Notification string:\n"  + updateVnfNotification.toString());
-
-			Map<String,Object> variables = new HashMap<String,Object>();
-			variables.put("VNFU_messageId", messageId );
-			variables.put("updateVnfNotificationCallback", updateVnfNotification.toString());
-
-			//Correlating the response with the running instance
-			runtimeService.createMessageCorrelation("updateVnfNotificationCallback").setVariables(variables)
-				  .processInstanceVariableEquals("VNFU_messageId", messageId).correlate();
-
-			msoLogger.debug(logMarker + "***** Completed processing of MSO VnfAdapterNotifyService ******");
-			
-		} catch(MismatchingMessageCorrelationException e) {
-			msoLogger.debug(logMarker + "[CORM]correlation id mismatch");
-			String msg =
-				"VNF Adapter Notify Service received a Update VNF Notification request with RequestId '"
-				+ messageId
-				+ "' but that RequestId could not be correlated to any active process - ignoring the request";
-			
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION, "BPMN", MsoLogger.getServiceName(), 
-					MsoLogger.ErrorCode.UnknownError, logMarker + ":" + msg, e);
-			
-		}
-		msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, 
-				logMarker + "Completed the execution of MSO Vnf Adapter Notify for Update VNF Notification.");
-		
-		msoLogger.recordMetricEvent ( startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, 
-				logMarker + "Completed the execution of MSO Vnf Adapter Notify for Update VNF Notification.", "BPMN", 
-				MsoLogger.getServiceName(), "updateVnfNotification");
-		
-		return;
+		handleCallback(method, message, messageEventName, messageVariable,
+			correlationVariable, correlationValue, logMarker);
 	 }
 
-    /**
-     *
-     * @param errorMessage
-     * @param exception
-     * @param messageId
-     * @param completed
-     */
-
-    //@WebService(serviceName="VNFAdapterDeleteCallbackV1", targetNamespace="http://org.openecomp.mso/vnfNotify")
     @WebMethod(operationName = "deleteVnfNotification")
     @Oneway
     @RequestWrapper(localName = "deleteVnfNotification", targetNamespace = "http://org.openecomp.mso/vnfNotify", className = "org.openecomp.mso.adapters.vnf.async.client.DeleteVnfNotification")
@@ -437,100 +227,23 @@ public class VnfAdapterNotifyServiceImpl implements VnfAdapterNotify{
         @WebParam(name = "errorMessage", targetNamespace = "")
         String errorMessage) {
 
-		//Callback URL to use http://localhost:28080/mso/services/VNFAdapterDeleteCallbackV1
+		String method = "deleteVnfNotification";
+		String messageEventName = "deleteVnfACallback";
+		String messageVariable = "deleteVnfACallback";
+		String correlationVariable = "VNFDEL_uuid";
+		String correlationValue = messageId;
 
-    	//DeleteVnfNotification Class
-    	DeleteVnfNotification deleteVnfNotification = new DeleteVnfNotification();
-    	deleteVnfNotification.setMessageId(messageId);
-    	deleteVnfNotification.setCompleted(completed);
-    	deleteVnfNotification.setException(exception);
-    	deleteVnfNotification.setErrorMessage(errorMessage);
+		MsoLogger.setServiceName("MSO." + method);
+		MsoLogger.setLogContext(correlationValue, "N/A");
 
-		ProcessEngineServices pes = getProcessEngineServices();
-		RuntimeService runtimeService = pes.getRuntimeService();
+    	DeleteVnfNotification message = new DeleteVnfNotification();
 
-		MsoLogger.setServiceName("MSO." + "vnfAdapterDelete");
-		MsoLogger.setLogContext(messageId, "N/A");
-		msoLogger.debug(logMarker + "Received DeleteVnfNotification callback: " + deleteVnfNotification.toString());
+    	message.setMessageId(messageId);
+    	message.setCompleted(completed);
+    	message.setException(exception);
+    	message.setErrorMessage(errorMessage);
 
-		long startTime = System.currentTimeMillis();
-		try {
-
-			/* Check to make sure the process instance is ready for correlation*/
-			//isReadyforCorrelation(runtimeService, messageId, "deleteVnfACallback", "VNFDEL_uuid");
-
-			msoLogger.debug(logMarker + " *** Received MSO deleteVnfACallback ******");			
-			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Call to MSO deleteVnfACallback ");		
-			msoLogger.debug(logMarker + " Callback response string:\n"  + deleteVnfNotification.toString());
-
-			Map<String,Object> variables = new HashMap<String,Object>();
-			variables.put("VNFDEL_uuid", messageId);
-			variables.put("deleteVnfACallback", deleteVnfNotification.toString());
-
-			/*Correlating the response with the running instance*/
-
-			runtimeService.createMessageCorrelation("deleteVnfACallback")
-				  .setVariables(variables)
-				  .processInstanceVariableEquals("VNFDEL_uuid", messageId).correlate();
-
-			msoLogger.debug(logMarker + "***** Completed processing of MSO deleteVnfACallback ******");
-
-		} catch(MismatchingMessageCorrelationException e) {
-
-			msoLogger.debug(logMarker + " [CORM]correlation id mismatch");
-			// Couldn't correlate requestId to any active flow
-			//MsoLogger logger = MsoLogger.getMsoLogger("SDNCAdapterCallbackService");
-
-			String msg =
-				"Vnf Adapter Callback Service received a Vnf Adapter Callback with messageId '"
-				+ messageId
-				+ "' but that messageId could not be correlated to any active process - ignoring the Request";
-			
-			msoLogger.error(MessageEnum.BPMN_SDNC_CALLBACK_EXCEPTION, "BPMN", MsoLogger.getServiceName(), 
-					MsoLogger.ErrorCode.UnknownError, logMarker + ":" + msg, e);
-
-		}
-		msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, 
-				logMarker + "Completed the execution of MSO VNFAdapterDeleteCallbackV1.");
-		
-		msoLogger.recordMetricEvent ( startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, 
-				logMarker + "Completed the execution of MSO VNFAdapterDeleteCallbackV1.", "BPMN", 
-				MsoLogger.getServiceName(), "deleteVnfNotification");
-		
-		return;
-	}
-
-	private void isReadyforCorrelation(RuntimeService runtimeService, String requestId, String responseName, String correlationValue) {
-
-		long waitingInstances = runtimeService.createExecutionQuery().messageEventSubscriptionName(responseName).processVariableValueEquals(correlationValue, requestId).count();
-		int retries = 50;
-		while (waitingInstances==0 && retries > 0) {
-		  try {
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-            // should I add new exception Message to MessageEnum???
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, logMarker, e);
-			
-		} // you can still play with the numbers
-		  waitingInstances = runtimeService.createExecutionQuery() //
-			  .messageEventSubscriptionName(responseName)
-			  .processVariableValueEquals(correlationValue, requestId).count();
-		  retries--;
-		}
-	}
-
-
-	private ProcessEngineServices getProcessEngineServices() {
-		if (pes4junit == null) {
-			return BpmPlatform.getDefaultProcessEngine();
-		} else {
-			return pes4junit;
-		}
-	}
-
-	@WebMethod(exclude=true)
-	public void setProcessEngineServices4junit(ProcessEngineServices pes) {
-		pes4junit = pes;
+		handleCallback(method, message, messageEventName, messageVariable,
+			correlationVariable, correlationValue, logMarker);
 	}
 }

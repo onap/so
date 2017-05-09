@@ -138,7 +138,6 @@ class CreateVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 
 
 	public void prepareDbInfraSuccessRequest(Execution execution, isDebugEnabled) {
-		ExceptionUtil exceptionUtil = new ExceptionUtil()
 		def dbVnfOutputs = execution.getVariable(prefix+'volumeOutputs')
 		def requestId = execution.getVariable('mso-request-id')
 		def statusMessage = "VolumeGroup successfully created."

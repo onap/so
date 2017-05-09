@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,19 +25,18 @@ import java.util.Arrays;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
-import org.apache.http.message.BasicHeader;
 import org.apache.http.util.EntityUtils;
 
 /**
  * An immutable class that encapsulates an API response.
- *
+ * 
  * @version 1.0
  * @since 1.0
  */
 public class APIResponse {
     private final int statusCode;
     private final byte[] responseBody;
-    private final BasicHeader[] headers;
+    private final HttpHeader[] headers;
 
     /**
      * Internal method used to create http headers using the specified
@@ -46,17 +45,17 @@ public class APIResponse {
      * @param httpResponse used to create headers
      * @return http headers
      */
-    private static BasicHeader[] buildHeaders(final HttpResponse httpResponse) {
+    private static HttpHeader[] buildHeaders(final HttpResponse httpResponse) {
         final Header[] headers = httpResponse.getAllHeaders();
 
-        BasicHeader[] httpHeaders = new BasicHeader[headers.length];
+        HttpHeader[] httpHeaders = new HttpHeader[headers.length];
         for (int i = 0; i < headers.length; ++i) {
             final Header header = headers[i];
             final String name = header.getName();
-            final String value = header.getValue();
-            final BasicHeader httpHeader = new BasicHeader(name, value);
+            final String value = header.getValue(); 
+            final HttpHeader httpHeader = new HttpHeader(name, value);
             httpHeaders[i] = httpHeader;
-        }
+        } 
 
         return httpHeaders;
     }
@@ -90,7 +89,7 @@ public class APIResponse {
     /**
      * Gets the http status code returned by the api server.
      * <p>
-     * For example, status code 200 represents 'OK.'
+     * For example, status code 200 represents 'OK.' 
      *
      * @return status code
      */
@@ -128,15 +127,15 @@ public class APIResponse {
     /**
      * Gets a list of all the headers returned by the API response.
      *
-     * @return an array of all the BasicHeaders
+     * @return an array of all the HttpHeaders 
      */
-    public BasicHeader[] getAllHeaders() {
+    public HttpHeader[] getAllHeaders() {
         // avoid exposing internals, create copy
         return Arrays.copyOf(this.headers, this.headers.length);
     }
 
     public String getFirstHeader(String name) {
-        for (BasicHeader header : headers) {
+        for (HttpHeader header : headers) {
             if (header.getName().equals(name)) {
                 return header.getValue();
             }

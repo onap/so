@@ -106,8 +106,12 @@ public class DoCreateServiceInstanceRollback extends AbstractServiceTaskProcesso
 						execution.setVariable("skipRollback", true)
 					}
 
-					def sdncRollbackRequest = rollbackData.get("SERVICEINSTANCE", "sdncRollbackRequest")
-					execution.setVariable("sdncRollbackRequest", sdncRollbackRequest)
+					def sdncDelete = rollbackData.get("SERVICEINSTANCE", "sdncDelete")
+					execution.setVariable("sdncDelete", sdncDelete)
+					def sdncDeactivate = rollbackData.get("SERVICEINSTANCE", "sdncDeactivate")
+					execution.setVariable("sdncDeactivate", sdncDeactivate)
+					utils.log("DEBUG","sdncDeactivate:\n" + sdncDeactivate, isDebugEnabled)
+					utils.log("DEBUG","sdncDelete:\n" + sdncDelete, isDebugEnabled)
 				}
 				else {
 					execution.setVariable("skipRollback", true)
@@ -131,31 +135,33 @@ public class DoCreateServiceInstanceRollback extends AbstractServiceTaskProcesso
 		utils.log("DEBUG"," ***** Exit preProcessRequest *****",  isDebugEnabled)
 	}
 
-	public void validateSDNCResponse(Execution execution) {
+	public void validateSDNCResponse(Execution execution, String response, String method) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("DEBUG"," ***** validateSDNCResponse ***** ", isDebugEnabled)
 		String msg = ""
 		try {
 			WorkflowException workflowException = execution.getVariable("WorkflowException")
-
 			boolean successIndicator = execution.getVariable("SDNCA_SuccessIndicator")
-			String response = execution.getVariable("sdncAdapterResponse")
-
+			utils.log("DEBUG", "SDNCResponse: " + response, isDebugEnabled)
+			utils.log("DEBUG", "workflowException: " + workflowException, isDebugEnabled)
+			
 			SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
 			sdncAdapterUtils.validateSDNCResponse(execution, response, workflowException, successIndicator)
 
 			if(execution.getVariable(Prefix + 'sdncResponseSuccess') == true){
-				utils.log("DEBUG", "SDNC Adapter for service-instance delete for rollback successful. response", isDebugEnabled)
+				msg = "SDNC Adapter service-instance rollback successful for " + method
+				utils.log("DEBUG", msg, isDebugEnabled)
 			}else{
 				execution.setVariable("rolledBack", false)
-				execution.setVariable("rollbackError", "Error Response from SDNC Adapter for service-instance delete for rollback")
-				utils.log("DEBUG","Error Response from SDNC Adapter for service-instance delete for rollback", isDebugEnabled)
+				msg =  "Error Response from SDNC Adapter service-instance rollback for " + method
+				execution.setVariable("rollbackError", msg)
+				utils.log("DEBUG", msg, isDebugEnabled)
 				throw new BpmnError("MSOWorkflowException")
 			}
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception ex){
-			msg = "Exception in Create ServiceInstance Rollback validateSDNCResponse " + ex.getMessage()
+			msg = "Exception in Create ServiceInstance rollback for "  + method  + " Exception:" + ex.getMessage()
 			utils.log("DEBUG", msg, isDebugEnabled)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
@@ -187,7 +193,7 @@ public class DoCreateServiceInstanceRollback extends AbstractServiceTaskProcesso
 			utils.log("DEBUG","*** Exit postProcessRequest ***", isDebugEnabled)
 
 		} catch (BpmnError e) {
-			msg = "Exception in Create ServiceInstance Rollback postProcessRequest. " + ex.getMessage()
+			msg = "Exception in Create ServiceInstance Rollback postProcessRequest. " + e.getMessage()
 			utils.log("DEBUG", msg, isDebugEnabled)
 		} catch (Exception ex) {
 			msg = "Exception in Create ServiceInstance Rollback postProcessRequest. " + ex.getMessage()

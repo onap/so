@@ -1,4 +1,3 @@
--- Fix for https://itrack.web.att.com/browse/AJSCCMDA-90 --
 use camundabpmn;
 /* 
 Drop a archive tables

@@ -27,6 +27,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.patch;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
@@ -516,6 +517,129 @@ public class StubResponseAAI {
 						.withStatus(200)));
 	}
 	
+	/////////////
+	
+	public static void MockVNFAdapterRestVfModule() {
+		stubFor(put(urlEqualTo("/vnfs/v1/vnfs/skask/vf-modules/supercool"))
+			.willReturn(aResponse()
+				.withStatus(202)
+				.withHeader("Content-Type", "application/xml")));
+		stubFor(post(urlMatching("/vnfs/v1/vnfs/.*/vf-modules"))
+				.willReturn(aResponse()
+					.withStatus(202)
+					.withHeader("Content-Type", "application/xml")));
+		stubFor(post(urlEqualTo("/vnfs/v1/vnfs/skask/vf-modules"))
+			.willReturn(aResponse()
+				.withStatus(202)
+				.withHeader("Content-Type", "application/xml")));
+		stubFor(put(urlEqualTo("/vnfs/v1/volume-groups/78987"))
+			.willReturn(aResponse()
+				.withStatus(202)
+				.withHeader("Content-Type", "application/xml")));
+	}
+	
+	public static void MockDBUpdateVfModule(){
+		stubFor(post(urlEqualTo("/dbadapters/RequestsDbAdapter"))
+			.willReturn(aResponse()
+				.withStatus(200)
+			    .withHeader("Content-Type", "text/xml")
+				.withBodyFile("VfModularity/DBUpdateResponse.xml")));
+	}
+	
+	// start of mocks used locally and by other VF Module unit tests
+	public static void MockSDNCAdapterVfModule() {
+		// simplified the implementation to return "success" for all requests
+		stubFor(post(urlEqualTo("/SDNCAdapter"))
+//			.withRequestBody(containing("SvcInstanceId><"))
+			.willReturn(aResponse()
+				.withStatus(200)
+				.withHeader("Content-Type", "text/xml")
+				.withBodyFile("VfModularity/StandardSDNCSynchResponse.xml")));
+
+	}
+	
+	// start of mocks used locally and by other VF Module unit tests
+	public static void MockAAIVfModule() {
+		stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/skask/vf-modules/vf-module/supercool"))
+			.atPriority(1)
+			.willReturn(aResponse()
+				.withStatus(200)
+				.withHeader("Content-Type", "text/xml")
+				.withBodyFile("VfModularity/VfModule-supercool.xml")));		
+		stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/skask/vf-modules/vf-module/lukewarm"))
+			.atPriority(2)
+			.willReturn(aResponse()
+				.withStatus(200)
+				.withHeader("Content-Type", "text/xml")
+				.withBodyFile("VfModularity/VfModule-lukewarm.xml")));
+		stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/skask/vf-modules/vf-module/.*"))
+			.atPriority(5)
+			.willReturn(aResponse()
+				.withStatus(200)
+				.withHeader("Content-Type", "text/xml")
+				.withBodyFile("VfModularity/VfModule-new.xml")));
+		stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/skask[?]depth=1"))
+			.willReturn(aResponse()
+				.withStatus(200)
+				.withHeader("Content-Type", "text/xml")
+				.withBodyFile("VfModularity/GenericVnf.xml")));
+		stubFor(patch(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/skask/vf-modules/vf-module/supercool"))
+//			.withRequestBody(containing("PCRF"))
+			.willReturn(aResponse()
+				.withStatus(200)));
+		stubFor(patch(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/skask/vf-modules/vf-module/.*"))
+//				.withRequestBody(containing("PCRF"))
+				.willReturn(aResponse()
+					.withStatus(200)));
+		// HTTP PUT stub still used by CreateAAIvfModuleVolumeGroup
+		stubFor(put(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/skask/vf-modules/vf-module/.*"))
+				.withRequestBody(containing("PCRF"))
+				.willReturn(aResponse()
+					.withStatus(200)));
+		// HTTP PUT stub still used by DoCreateVfModuleTest
+		stubFor(put(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/skask/vf-modules/vf-module/.*"))
+				.withRequestBody(containing("MODULELABEL"))
+				.willReturn(aResponse()
+					.withStatus(200)));
+		stubFor(get(urlMatching("/aai/v[0-9]+/cloud-infrastructure/volume-groups/volume-group[?]volume-group-id=78987"))
+			.willReturn(aResponse()
+				.withStatus(200)
+				.withHeader("Content-Type", "text/xml")
+				.withBodyFile("VfModularity/ConfirmVolumeGroupTenantResponse.xml")));
+		stubFor(get(urlMatching("/aai/v[0-9]+/cloud-infrastructure/volume-groups/volume-group[?]volume-group-id=78987"))
+				.willReturn(aResponse()
+				.withStatus(200)
+				.withHeader("Content-Type", "text/xml")
+				.withBodyFile("VfModularity/ConfirmVolumeGroupTenantResponse.xml")));
+		stubFor(get(urlMatching("/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/att-aic/MDTWNJ21/volume-groups/volume-group/78987"))
+			.willReturn(aResponse()
+				.withStatus(200)
+				.withHeader("Content-Type", "text/xml")
+				.withBodyFile("VfModularity/VolumeGroup.xml")));
+		stubFor(get(urlMatching("/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/att-aic/AAIAIC25/volume-groups/volume-group/78987"))
+				.willReturn(aResponse()
+					.withStatus(200)
+					.withHeader("Content-Type", "text/xml")
+					.withBodyFile("VfModularity/VolumeGroup.xml")));
+		stubFor(delete(urlMatching("/aai/v[0-9]+/cloud-infrastructure/volume-groups/volume-group/78987[?]resource-version=0000020"))
+			     .willReturn(aResponse()
+			     .withStatus(200)
+			     .withHeader("Content-Type", "text/xml")
+			     .withBodyFile("DeleteCinderVolumeV1/DeleteVolumeId_AAIResponse_Success.xml")));
+		stubFor(put(urlMatching("/aai/v[0-9]+/network/network-policies/network-policy/.*"))
+				  .willReturn(aResponse()
+				  .withStatus(200)
+				  .withHeader("Content-Type", "text/xml")
+				  .withBodyFile("VfModularity/AddNetworkPolicy_AAIResponse_Success.xml")));
+		stubFor(patch(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/skask/vf-modules/vf-module/NEWvBNGModuleId"))
+				.withRequestBody(containing("NEWvBNGModuleId"))
+				.willReturn(aResponse()
+					.withStatus(200)));
+	}
+
+	
+	
+	//////////////
 
 	/**
 	 * Cloud infrastructure below
@@ -607,6 +731,12 @@ public class StubResponseAAI {
 						.withStatus(returnCode)));
 	}
 
+	public static void MockAAIVfModuleBadPatch(String endpoint, int statusCode) {
+		stubFor(patch(urlMatching(endpoint))
+			.willReturn(aResponse()
+				.withStatus(statusCode)));
+	}
+	
 	//// Deprecated Stubs below - to be deleted once unit test that reference them are refactored to use common ones above ////
 	@Deprecated
 	public static void MockGetVceById(){

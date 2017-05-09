@@ -27,17 +27,19 @@ import org.openecomp.mso.rest.RESTClient
 import org.openecomp.mso.rest.RESTConfig
 
 class AaiUtil {
-	
+
 	public MsoUtils utils = new MsoUtils()
-	public static final String AAI_NAMESPACE_STRING = 'http://org.openecomp.aai.inventory/'
+	public static final String AAI_NAMESPACE_STRING_KEY = 'URN_mso_workflow_global_default_aai_namespace'
 	public static final String DEFAULT_VERSION_KEY = 'URN_mso_workflow_global_default_aai_version'
-	
+
+	private String aaiNamespace = null;
+	 
 	private AbstractServiceTaskProcessor taskProcessor
 
 	public AaiUtil(AbstractServiceTaskProcessor taskProcessor) {
 		this.taskProcessor = taskProcessor
 	}
-	
+
 	public String getNetworkGenericVnfEndpoint(Execution execution) {
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		String endpoint = execution.getVariable("URN_aai_endpoint")
@@ -52,7 +54,7 @@ class AaiUtil {
 		taskProcessor.logDebug('AaiUtil.getNetworkGenericVnfUri() - AAI URI: ' + uri, isDebugLogEnabled)
 		return uri
 	}
-		
+
 	public String getNetworkVpnBindingUri(Execution execution) {
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		def uri = getUri(execution, 'vpn_binding')
@@ -73,7 +75,7 @@ class AaiUtil {
 		taskProcessor.logDebug('AaiUtil.getNetworkTableReferencesUri() - AAI URI: ' + uri, isDebugLogEnabled)
 		return uri
 	}
-	
+
 	public String getNetworkVceUri(Execution execution) {
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		def uri = getUri(execution, 'vce')
@@ -110,7 +112,7 @@ class AaiUtil {
 		taskProcessor.logDebug('AaiUtil.getCloudInfrastructureCloudRegionEndpoint() - AAI endpoint: ' + endpoint + uri, isDebugLogEnabled)
 		return endpoint + uri
 	}
-	
+
 	public String getCloudInfrastructureCloudRegionUri(Execution execution) {
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		def uri = getUri(execution, 'cloud_region')
@@ -131,7 +133,7 @@ class AaiUtil {
 		taskProcessor.logDebug('AaiUtil.getSearchNodesQueryUri() - AAI URI: ' + uri, isDebugLogEnabled)
 		return uri
 	}
-	
+
 	public String getSearchNodesQueryEndpoint(Execution execution) {
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		String endpoint = execution.getVariable("URN_aai_endpoint")
@@ -139,7 +141,7 @@ class AaiUtil {
 		taskProcessor.logDebug('AaiUtil.getSearchNodesQueryEndpoint() - AAI endpoint: ' + endpoint + uri, isDebugLogEnabled)
 		return endpoint + uri
 	}
-	
+
 	public String getSearchGenericQueryUri(Execution execution) {
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		def uri = getUri(execution, 'generic_query')
@@ -151,37 +153,39 @@ class AaiUtil {
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 
 		resourceName = resourceName.replaceAll('-', '_')
-		
+
 		def versionWithResourceKey = "URN_mso_workflow_default_aai_${resourceName}_version"
 		def versionWithProcessKey = "URN_mso_workflow_custom_${processKey}_aai_version"
 
 		def version = execution.getVariable(versionWithProcessKey)
 		if (version) {
 			taskProcessor.logDebug("AaiUtil.getVersion() - using flow specific ${versionWithProcessKey}=${version}", isDebugLogEnabled)
-			return version 
+			return version
 		}
-		
+
 		version = execution.getVariable(versionWithResourceKey)
 		if (version) {
 			taskProcessor.logDebug("AaiUtil.getVersion() - using resource specific ${versionWithResourceKey}=${version}", isDebugLogEnabled)
 			return version
 		}
-		
+
 		version = execution.getVariable(DEFAULT_VERSION_KEY)
 		if (version) {
 			taskProcessor.logDebug("AaiUtil.getVersion() - using default version ${DEFAULT_VERSION_KEY}=${version}", isDebugLogEnabled)
 			return version
 		}
-		
+
 		(new ExceptionUtil()).buildAndThrowWorkflowException(execution, 9999, "Internal Error: One of the following should be defined in MSO URN properties file: ${versionWithResourceKey}, ${versionWithProcessKey}, ${DEFAULT_VERSION_KEY}")
 	}
-	
+
 	public String getUri(Execution execution, resourceName) {
 
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		def processKey = taskProcessor.getMainProcessKey(execution)
-		
 		resourceName = resourceName.replaceAll('-', '_')
+
+		//set namespace
+		setNamespace(execution)
 		
 		// Check for flow+resource specific first
 		def key = "URN_mso_workflow_${processKey}_aai_${resourceName}_uri"
@@ -190,7 +194,7 @@ class AaiUtil {
 			taskProcessor.logDebug("AaiUtil.getUri() - using flow+resource specific key: ${key}=${uri}", isDebugLogEnabled)
 			return uri
 		}
-		
+
 		// Check for versioned key
 		def version = getVersion(execution, resourceName, processKey)
 		key = "URN_mso_workflow_default_aai_v${version}_${resourceName}_uri"
@@ -204,17 +208,80 @@ class AaiUtil {
 		(new ExceptionUtil()).buildAndThrowWorkflowException(execution, 9999, 'Internal Error: AAI URI entry for ' + key + ' not defined in the MSO URN properties file')
 	}
 
+	public String setNamespace(Execution execution) {
+		def key = AAI_NAMESPACE_STRING_KEY
+		aaiNamespace = execution.getVariable(key)
+		if (aaiNamespace == null ) {
+			(new ExceptionUtil()).buildAndThrowWorkflowException(execution, 9999, 'Internal Error: AAI URI entry for ' + key + ' not defined in the MSO URN properties file')
+		}
+	}
+	
+	/**
+	 * This method can be used for getting the building namespace out of uri.
+	 *  NOTE: A getUri() method needs to be invoked first.
+	 *        Alternative method is the getNamespaceFromUri(Execution execution, String uri)
+	 * return namespace (plus version from uri)
+	 *
+	 * @param url
+	 *
+	 * @return namespace
+	 */
+	
 	public String getNamespaceFromUri(String uri) {
-		String namespace = AAI_NAMESPACE_STRING
+		 if (aaiNamespace == null) {
+			throw new Exception('Internal Error: AAI Namespace has not been set yet. A getUri() method needs to be invoked first.')
+		}
+		String namespace = aaiNamespace
 		if(uri!=null){
-			return namespace + uri.substring(uri.indexOf("v"),  uri.indexOf("v")+2)
+			String version = getVersionFromUri(uri)
+			return namespace + "v"+version
 		}else{
 			return namespace
 		}
 	}
 
-
+	/**
+	 * This method can be used for building namespace with aai version out of uri.
+	 *   NOTE: 2 arguments: Execution execution & String uri
+	 * @param execution
+	 * @param url
+	 *
+	 * @return namespace
+	 */
+	public String getNamespaceFromUri(Execution execution, String uri) {
+	   String namespace = execution.getVariable(AAI_NAMESPACE_STRING_KEY)
+	   if (namespace == null ) {
+		   (new ExceptionUtil()).buildAndThrowWorkflowException(execution, 9999, 'Internal Error: AAI URI entry for ' + AAI_NAMESPACE_STRING_KEY + ' not defined in the MSO URN properties file')
+	   }
+	   if(uri!=null){
+		   String version = getVersionFromUri(uri)
+		   return namespace + "v"+version
+	   }else{
+		   return namespace
+	   }
+   }
 	
+	/**
+	 * This is used to extract the version from uri.
+	 *
+	 * @param uri
+	 *
+	 * @return version
+	 */
+	private String getVersionFromUri(String uri) {
+		def version = ""
+		def savedVersion = ""
+		for (int x=2; x<6; x++) {
+			version = uri.substring(uri.indexOf("v")+1,  uri.indexOf("v")+x)
+			if (!Character.isDigit(version.charAt(version.size()-1))) {
+				break
+			}
+			savedVersion = version
+		}
+		return savedVersion
+	}
+	
+
 	/**
 	 * This reusable method can be used for making AAI Get Calls. The url should
 	 * be passed as a parameter along with the execution.  The method will
@@ -232,16 +299,16 @@ class AaiUtil {
 			String uuid = UUID.randomUUID()
 			taskProcessor.logDebug( "Generated uuid is: " + uuid, isDebugEnabled)
 			taskProcessor.logDebug( "URL to be used is: " + url, isDebugEnabled)
-					
+			
 			String basicAuthCred = utils.getBasicAuth(execution.getVariable("URN_aai_auth"),execution.getVariable("URN_mso_msoKey"))
 
 			RESTConfig config = new RESTConfig(url);
 			RESTClient client = new RESTClient(config).addHeader("X-FromAppId", "MSO").addHeader("X-TransactionId", uuid).addHeader("Accept","application/xml");
-
+			
 			if (basicAuthCred != null && !"".equals(basicAuthCred)) {
 				client.addAuthorizationHeader(basicAuthCred)
 			}
-
+			
 			APIResponse apiResponse = client.get()
 			return apiResponse
 
@@ -251,6 +318,7 @@ class AaiUtil {
 		}
 		taskProcessor.logDebug( "======== COMPLETED Execute AAI Get Process ======== ", isDebugEnabled)
 	}
+
 
 	/**
 	 * This reusable method can be used for making AAI httpPut Calls. The url should
@@ -287,7 +355,7 @@ class AaiUtil {
 		}
 		taskProcessor.logDebug( "======== Completed Execute AAI Put Process ======== ", isDebugEnabled)
 	}
-	
+
 	/**
 	 * This reusable method can be used for making AAI httpPatch Calls. The url should
 	 * be passed as a parameter along with the execution and payload.  The method will
@@ -345,7 +413,7 @@ class AaiUtil {
 			taskProcessor.logDebug( "URL to be used is: " + url, isDebugEnabled)
 
 			String basicAuthCred = utils.getBasicAuth(execution.getVariable("URN_aai_auth"),execution.getVariable("URN_mso_msoKey"))
-			
+
 			RESTConfig config = new RESTConfig(url);
 			RESTClient client = new RESTClient(config).addHeader("X-FromAppId", "MSO").addHeader("X-TransactionId", uuid).addHeader("Accept","application/xml");
 			if (basicAuthCred != null && !"".equals(basicAuthCred)) {
@@ -379,8 +447,9 @@ class AaiUtil {
 		try{
 			String uuid = UUID.randomUUID()
 			taskProcessor.logDebug( "Generated uuid is: " + uuid, isDebugEnabled)
+
 			taskProcessor.logDebug( "URL to be used is: " + url, isDebugEnabled)
-			
+
 			String basicAuthCred = utils.getBasicAuth(execution.getVariable("URN_aai_auth"),execution.getVariable("URN_mso_msoKey"))
 			RESTConfig config = new RESTConfig(url);
 			RESTClient client = new RESTClient(config).addHeader("X-FromAppId", "MSO").addHeader("X-TransactionId", uuid).addHeader("Accept","application/xml").addAuthorizationHeader(authHeader);
@@ -398,11 +467,11 @@ class AaiUtil {
 		}
 		taskProcessor.logDebug( "======== Completed Execute AAI Delete Process ======== ", isDebugEnabled)
 	}
-	
+
 	/**
-	 * This reusable method can be used for making AAI Post Calls. The url should
-	 * be passed as a parameter along with the execution.  The method will
-	 * return an APIResponse.
+	 * This reusable method can be used for making AAI Post Calls. The url
+	 * and payload should be passed as a parameters along with the execution.
+	 * The method will return an APIResponse.
 	 *
 	 * @param execution
 	 * @param url
@@ -421,6 +490,7 @@ class AaiUtil {
 			String basicAuthCred = utils.getBasicAuth(execution.getVariable("URN_aai_auth"),execution.getVariable("URN_mso_msoKey"))
 			RESTConfig config = new RESTConfig(url);
 			RESTClient client = new RESTClient(config).addHeader("X-FromAppId", "MSO").addHeader("X-TransactionId", uuid).addHeader("Accept","application/xml");
+			
 			if (basicAuthCred != null && !"".equals(basicAuthCred)) {
 				client.addAuthorizationHeader(basicAuthCred)
 			}
@@ -435,7 +505,49 @@ class AaiUtil {
 		taskProcessor.logDebug( "======== Completed Execute AAI Post Process ======== ", isDebugEnabled)
 	}
 
-	/** Utilitty to get the Cloud Region from AAI
+	/**
+	 * This reusable method can be used for making AAI Post Calls. The url
+	 * and payload should be passed as a parameters along with the execution.
+	 * The method will return an APIResponse.
+	 *
+	 * @param execution
+	 * @param url
+	 * @param payload
+	 * @param authenticationHeader - addAuthenticationHeader value
+	 * @param headerName - name of header you want to add, i.e. addHeader(headerName, headerValue)
+	 * @param headerValue - the header's value, i.e. addHeader(headerName, headerValue)
+	 *
+	 * @return APIResponse
+	 */
+	public APIResponse executeAAIPostCall(Execution execution, String url, String payload, String authenticationHeaderValue, String headerName, String headerValue){
+		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
+		taskProcessor.logDebug( " ======== Started Execute AAI Post Process ======== ", isDebugEnabled)
+		try{
+			taskProcessor.logDebug( "URL to be used is: " + url, isDebugEnabled)
+
+			String basicAuthCred = utils.getBasicAuth(execution.getVariable("URN_aai_auth"),execution.getVariable("URN_mso_msoKey"))
+			
+			RESTConfig config = new RESTConfig(url);
+			RESTClient client = new RESTClient(config).addAuthorizationHeader(authenticationHeaderValue).addHeader(headerName, headerValue)
+			if (basicAuthCred != null && !"".equals(basicAuthCred)) {
+				client.addAuthorizationHeader(basicAuthCred)
+			}
+			APIResponse apiResponse = client.httpPost(payload)
+
+			return apiResponse
+
+		}catch(Exception e){
+			taskProcessor.utils.log("ERROR", "Exception occured while executing AAI Post Call. Exception is: \n" + e, isDebugEnabled)
+			return e
+		}
+		taskProcessor.logDebug( "======== Completed Execute AAI Post Process ======== ", isDebugEnabled)
+	}
+
+
+	
+
+
+	/* Utility to get the Cloud Region from AAI
 	 * Returns String cloud region id, (ie, cloud-region-id)
 	 * @param execution
 	 * @param url  - url for AAI get cloud region
@@ -479,7 +591,7 @@ class AaiUtil {
 				  return "ERROR"
 			 }
 		  } else { // not 200
-		      if (returnCode == "404") {
+			  if (returnCode == "404") {
 				 if (backend == "PO") {
 					  regionId = inputCloudRegion
 				 } else  {  // backend not "PO"
@@ -487,10 +599,10 @@ class AaiUtil {
 				 }
 				 taskProcessor.utils.log("DEBUG", "Cloud Region value for code='404' of " + backend + " is: " + regionId, isDebugEnabled)
 				  return regionId
-		      } else {
-			      taskProcessor.utils.log("ERROR", "Call AAI Cloud Region is NOT Successful.", isDebugEnabled)
-			      return "ERROR"
-		      }
+			  } else {
+				  taskProcessor.utils.log("ERROR", "Call AAI Cloud Region is NOT Successful.", isDebugEnabled)
+				  return "ERROR"
+			  }
 		  }
 		}catch(Exception e) {
 		   taskProcessor.utils.log("ERROR", "Exception occured while getting the Cloud Reqion. Exception is: \n" + e, isDebugEnabled)
@@ -511,19 +623,18 @@ class AaiUtil {
 		return ret
 	}
 
-	
 	/**
-	 * Get the lowest unused VF Module index from AAI response for a given module type. The criteria for 
+	 * Get the lowest unused VF Module index from AAI response for a given module type. The criteria for
 	 * determining module type is specified by "key" parameter (for example, "persona-model-id"),
 	 * the value for filtering is specified in "value" parameter
-	 * 
+	 *
 	 * @param execution
 	 * @param aaiVnfResponse
 	 * @param key
 	 * @param value
 	 *
 	 * @return moduleIndex
-	 * 
+	 *
 	 */
 	public int getLowestUnusedVfModuleIndexFromAAIVnfResponse(Execution execution, String aaiVnfResponse, String key, String value) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
@@ -531,7 +642,7 @@ class AaiUtil {
 			String vfModulesText = taskProcessor.utils.getNodeXml(aaiVnfResponse, "vf-modules")
 			if (vfModulesText == null || vfModulesText.isEmpty()) {
 				taskProcessor.utils.log("DEBUG", "There are no VF modules in this VNF yet", isDebugEnabled)
-				return 0				
+				return 0
 			}
 			else {
 				def xmlVfModules= new XmlSlurper().parseText(vfModulesText)
@@ -548,15 +659,14 @@ class AaiUtil {
 						matchingVfModules = matchingVfModules + taskProcessor.utils.removeXmlPreamble(vfModuleXml)
 					}
 				}
-				matchingVfModules = matchingVfModules + "</vfModules>"				
+				matchingVfModules = matchingVfModules + "</vfModules>"
 				taskProcessor.utils.log("DEBUG", "Matching VF Modules: " + matchingVfModules, isDebugEnabled)
 				String lowestUnusedIndex = taskProcessor.utils.getLowestUnusedIndex(matchingVfModules)
 				return Integer.parseInt(lowestUnusedIndex)
-			}			
+			}
 		}
 		else {
 			return 0
 		}
 	}
-
 }

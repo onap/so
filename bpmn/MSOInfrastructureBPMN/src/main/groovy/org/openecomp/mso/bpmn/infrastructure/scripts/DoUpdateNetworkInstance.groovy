@@ -365,7 +365,6 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 			String networkId   = utils.getNodeText1(networkRequest, "network-id")
 			networkId = UriUtils.encode(networkId,"UTF-8")
 			execution.setVariable(Prefix + "networkId", networkId)
-			String messageId = execution.getVariable(Prefix + "messageId")
 
 			// Prepare AA&I url
 			String aai_endpoint = execution.getVariable("URN_aai_endpoint")
@@ -433,7 +432,6 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 			String networkRequest = execution.getVariable(Prefix + "networkRequest")
 			String networkId   = utils.getNodeText1(networkRequest, "network-id")
 			networkId = UriUtils.encode(networkId,"UTF-8")
-			String messageId = execution.getVariable(Prefix + "messageId")
 
 			// Prepare AA&I url
 			String aai_endpoint = execution.getVariable("URN_aai_endpoint")
@@ -509,7 +507,6 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 		try {
 
 			// get variables
-			String messageId = execution.getVariable(Prefix + "messageId")
 			String queryIdAAIResponse   = execution.getVariable(Prefix + "requeryIdAAIResponse").replace('<?xml version="1.0" encoding="UTF-8"?>', "")
 			String relationship = networkUtils.getFirstNodeXml(queryIdAAIResponse, "relationship-list").trim().replace("tag0:","").replace(":tag0","")
 			utils.log("DEBUG", " relationship - " + relationship, isDebugEnabled)
@@ -609,7 +606,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 				// reset return code to success
 				execution.setVariable(Prefix + "aaiQqueryVpnBindingReturnCode", "200")
 				String aai_uri = aaiUriUtil.getNetworkL3NetworkUri(execution)
-				String schemaVersion = aaiUriUtil.getNamespaceFromUri(aai_uri)
+				String schemaVersion = aaiUriUtil.getNamespaceFromUri(execution, aai_uri)
 			    String aaiStubResponse =
 					"""	<rest:payload contentType="text/xml" xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd">
 							<vpn-binding xmlns="${schemaVersion}">
@@ -643,7 +640,6 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 
 		try {
 			// get variables
-			String messageId = execution.getVariable(Prefix + "messageId")
 			String queryIdAAIResponse   = execution.getVariable(Prefix + "requeryIdAAIResponse").replace('<?xml version="1.0" encoding="UTF-8"?>', "")
 			String relationship = networkUtils.getFirstNodeXml(queryIdAAIResponse, "relationship-list").trim().replace("tag0:","").replace(":tag0","")
 			utils.log("DEBUG", " relationship - " + relationship, isDebugEnabled)
@@ -746,7 +742,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 				// reset return code to success
 				execution.setVariable(Prefix + "aaiQqueryNetworkPolicyReturnCode", "200")
 				String aai_uri = aaiUriUtil.getNetworkL3NetworkUri(execution)
-				String schemaVersion = aaiUriUtil.getNamespaceFromUri(aai_uri)
+				String schemaVersion = aaiUriUtil.getNamespaceFromUri(execution, aai_uri)
 				String aaiStubResponse =
 					"""	<rest:payload contentType="text/xml" xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd">
 							<network-policy xmlns="${schemaVersion}">
@@ -780,7 +776,6 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 
 		try {
 			// get variables
-			String messageId = execution.getVariable(Prefix + "messageId")
 			String queryIdAAIResponse   = execution.getVariable(Prefix + "requeryIdAAIResponse").replace('<?xml version="1.0" encoding="UTF-8"?>', "")
 			String relationship = networkUtils.getFirstNodeXml(queryIdAAIResponse, "relationship-list").trim().replace("tag0:","").replace(":tag0","")
 			utils.log("DEBUG", " relationship - " + relationship, isDebugEnabled)
@@ -883,7 +878,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 				// reset return code to success
 				execution.setVariable(Prefix + "aaiQqueryNetworkTableRefReturnCode", "200")
 				String aai_uri = aaiUriUtil.getNetworkL3NetworkUri(execution)
-				String schemaVersion = aaiUriUtil.getNamespaceFromUri(aai_uri)
+				String schemaVersion = aaiUriUtil.getNamespaceFromUri(execution, aai_uri)
 				String aaiStubResponse =
 					"""	<rest:payload contentType="text/xml" xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd">
 							<route-table-references xmlns="${schemaVersion}">
@@ -922,7 +917,6 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 			networkId = UriUtils.encode(networkId,"UTF-8")
 			String requeryIdAAIResponse   = execution.getVariable(Prefix + "requeryIdAAIResponse")
 			String updateNetworkResponse   = execution.getVariable(Prefix + "updateNetworkResponse")
-			String messageId = execution.getVariable(Prefix + "messageId")
 
 			// Prepare url
 			String aai_endpoint = execution.getVariable("URN_aai_endpoint")
@@ -935,7 +929,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 			utils.log("DEBUG", " UPDNETI_updateContrailAAIUrlRequest - " + "\n" + updateContrailAAIUrlRequest, isDebugEnabled)
 
 			//Prepare payload (PUT)
-			String schemaVersion = aaiUriUtil.getNamespaceFromUri(aai_uri)
+			String schemaVersion = aaiUriUtil.getNamespaceFromUri(execution, aai_uri)
 			String payload = networkUtils.ContrailNetworkCreatedUpdate(requeryIdAAIResponse, updateNetworkResponse, schemaVersion)
 			String payloadXml = utils.formatXml(payload)
 			utils.logAudit(payloadXml)
@@ -973,7 +967,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 							// aai all errors
 							String errorMessage = "Unexpected Response from UpdateContrailAAINetwork - " + returnCode
 							utils.log("DEBUG", errorMessage, isDebugEnabled)
-							exceptionUtil.buildAndThrowWorkflowException(execution, "2500", errorMessage)
+							exceptionUtil.buildAndThrowWorkflowException(execution, 2500, errorMessage)
 					  }
 				}
 			}

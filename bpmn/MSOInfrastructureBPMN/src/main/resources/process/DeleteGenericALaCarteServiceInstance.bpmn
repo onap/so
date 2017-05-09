@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.4.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
-  <bpmn2:process id="DelServiceInstance" name="DelServiceInstance" isExecutable="true">
+  <bpmn2:process id="DeleteGenericALaCarteServiceInstance" name="DeleteGenericALaCarteServiceInstance" isExecutable="true">
     <bpmn2:startEvent id="deleteSI_startEvent" name="Delete SI Start Flow">
       <bpmn2:outgoing>SequenceFlow_0lp2z7l</bpmn2:outgoing>
     </bpmn2:startEvent>
@@ -8,7 +8,7 @@
       <bpmn2:scriptTask id="ScriptTask_1" name="Handle Unexpected Error" scriptFormat="groovy">
         <bpmn2:incoming>SequenceFlow_10</bpmn2:incoming>
         <bpmn2:outgoing>SequenceFlow_14</bpmn2:outgoing>
-        <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.utils.*
+        <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
 ExceptionUtil ex = new ExceptionUtil()
 ex.processJavaException(execution)]]></bpmn2:script>
       </bpmn2:scriptTask>
@@ -48,7 +48,7 @@ ex.processJavaException(execution)]]></bpmn2:script>
       <bpmn2:incoming>SequenceFlow_0lp2z7l</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0ktadna</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
-def csi= new DelServiceInstance()
+def csi= new DeleteGenericALaCarteServiceInstance()
 csi.preProcessRequest(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_0lp2z7l" sourceRef="deleteSI_startEvent" targetRef="ScriptTask_0pvcr6j" />
@@ -56,7 +56,7 @@ csi.preProcessRequest(execution)]]></bpmn2:script>
       <bpmn2:incoming>SequenceFlow_1qjygj5</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0xxvjxq</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
-def csi = new DelServiceInstance()
+def csi = new DeleteGenericALaCarteServiceInstance()
 csi.prepareCompletionRequest(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:callActivity id="CallActivity_0sevgre" name="Call CompleteMsoProcess" calledElement="CompleteMsoProcess">
@@ -84,7 +84,7 @@ csi.prepareCompletionRequest(execution)]]></bpmn2:script>
         <bpmn2:incoming>SequenceFlow_14eadeb</bpmn2:incoming>
         <bpmn2:outgoing>SequenceFlow_1reso2f</bpmn2:outgoing>
         <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
-def csi = new DelServiceInstance()
+def csi = new DeleteGenericALaCarteServiceInstance()
 csi.prepareFalloutRequest(execution)]]></bpmn2:script>
       </bpmn2:scriptTask>
       <bpmn2:callActivity id="CallActivity_1ksm1dz" name="Call FalloutHandler" calledElement="FalloutHandler">
@@ -106,7 +106,7 @@ csi.prepareFalloutRequest(execution)]]></bpmn2:script>
         <bpmn2:incoming>SequenceFlow_0n4umjf</bpmn2:incoming>
         <bpmn2:outgoing>SequenceFlow_14eadeb</bpmn2:outgoing>
         <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
-def csi = new  DelServiceInstance()
+def csi = new  DeleteGenericALaCarteServiceInstance()
 csi.sendSyncError(execution)]]></bpmn2:script>
       </bpmn2:scriptTask>
       <bpmn2:sequenceFlow id="SequenceFlow_14eadeb" sourceRef="ScriptTask_0o4smqp" targetRef="ScriptTask_1hql91g" />
@@ -117,7 +117,7 @@ csi.sendSyncError(execution)]]></bpmn2:script>
       <bpmn2:incoming>SequenceFlow_0ktadna</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0eto8sn</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
-def csi = new  DelServiceInstance()
+def csi = new  DeleteGenericALaCarteServiceInstance()
 csi.sendSyncResponse(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_0ktadna" sourceRef="ScriptTask_0pvcr6j" targetRef="Task_1nko5zz" />
@@ -138,7 +138,7 @@ csi.sendSyncResponse(execution)]]></bpmn2:script>
   <bpmn2:error id="Error_2" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
   <bpmn2:error id="Error_1" name="java.lang.Exception" errorCode="java.lang.Exception" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DelServiceInstance">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DeleteGenericALaCarteServiceInstance">
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_47" bpmnElement="deleteSI_startEvent">
         <dc:Bounds x="117" y="79" width="36" height="36" />
         <bpmndi:BPMNLabel>

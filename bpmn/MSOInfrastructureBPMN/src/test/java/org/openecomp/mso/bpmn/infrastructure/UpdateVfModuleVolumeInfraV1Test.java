@@ -59,6 +59,7 @@ public class UpdateVfModuleVolumeInfraV1Test extends WorkflowTest {
 		"process/UpdateVfModuleVolumeInfraV1.bpmn",
 		"subprocess/VnfAdapterRestV1.bpmn",
 		"subprocess/CompleteMsoProcess.bpmn",
+		"subprocess/GenericNotificationService.bpmn",
 		"subprocess/FalloutHandler.bpmn"
 		})
 	public void happyPath() throws Exception {
@@ -104,6 +105,7 @@ public class UpdateVfModuleVolumeInfraV1Test extends WorkflowTest {
 		"process/UpdateVfModuleVolumeInfraV1.bpmn",
 		"subprocess/VnfAdapterRestV1.bpmn",
 		"subprocess/CompleteMsoProcess.bpmn",
+		"subprocess/GenericNotificationService.bpmn",
 		"subprocess/FalloutHandler.bpmn"
 		})
 	public void testPersonaModelIdNotMatch() throws Exception {

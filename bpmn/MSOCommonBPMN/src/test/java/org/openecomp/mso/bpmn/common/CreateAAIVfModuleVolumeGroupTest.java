@@ -109,13 +109,13 @@ public class CreateAAIVfModuleVolumeGroupTest extends WorkflowTest {
 	@Deployment(resources = {
 			"subprocess/CreateAAIVfModuleVolumeGroup.bpmn"
 		})
-	public void badPut() throws IOException {
+	public void badPatch() throws IOException {
 		
 		logStart();
 		
 		String updateAAIVfModuleRequest = FileUtil.readResourceFile("__files/VfModularity/CreateAAIVfModuleVolumeGroupRequest.xml"); 
 		MockGetVfModuleId("skask", "lukewarm", "VfModularity/VfModule-lukewarm.xml", 200);
-		
+
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<String, Object>();
 		variables.put("mso-request-id", "999-99-9999");

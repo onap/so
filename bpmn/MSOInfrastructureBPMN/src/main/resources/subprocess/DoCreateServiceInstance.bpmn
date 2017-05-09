@@ -49,12 +49,12 @@ dcsi.postProcessSDNCAssign(execution)]]></bpmn2:script>
       <bpmn2:outgoing>SequenceFlow_9</bpmn2:outgoing>
     </bpmn2:callActivity>
     <bpmn2:endEvent id="EndEvent_3">
-      <bpmn2:incoming>SequenceFlow_10</bpmn2:incoming>
+      <bpmn2:incoming>SequenceFlow_01q6pl4</bpmn2:incoming>
     </bpmn2:endEvent>
     <bpmn2:sequenceFlow id="SequenceFlow_2" name="" sourceRef="preProcessRequest_ScriptTask" targetRef="getAAICustomerById_scriptTask" />
     <bpmn2:sequenceFlow id="SequenceFlow_14" name="" sourceRef="PreProcessSDNCAssignRequest" targetRef="CallSDNCAdapterServiceTopologyAssign" />
     <bpmn2:sequenceFlow id="SequenceFlow_9" name="" sourceRef="CallSDNCAdapterServiceTopologyAssign" targetRef="PostProcessSDNCAssignRequest" />
-    <bpmn2:sequenceFlow id="SequenceFlow_10" name="" sourceRef="PostProcessSDNCAssignRequest" targetRef="EndEvent_3" />
+    <bpmn2:sequenceFlow id="SequenceFlow_10" name="" sourceRef="PostProcessSDNCAssignRequest" targetRef="CallActivity_1707jgc" />
     <bpmn2:callActivity id="callGenericGetService" name="Call GenericGetService" calledElement="GenericGetService">
       <bpmn2:extensionElements>
         <camunda:in source="serviceInstanceName" target="GENGS_serviceInstanceName" />
@@ -160,6 +160,29 @@ def ddsi = new DoCreateServiceInstance()
 ddsi.postProcessAAIPUT(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_1dd86x8" sourceRef="ScriptTask_0q37vn9" targetRef="ExclusiveGateway_1nk6aol" />
+    <bpmn2:callActivity id="CallActivity_1707jgc" name="Call GenericGetService2" calledElement="GenericGetService">
+      <bpmn2:extensionElements>
+        <camunda:in source="serviceInstanceId" target="GENGS_serviceInstanceId" />
+        <camunda:in sourceExpression="service-instance" target="GENGS_type" />
+        <camunda:in source="globalSubscriberId" target="GENGS_globalCustomerId" />
+        <camunda:in source="subscriptionServiceType" target="GENGS_serviceType" />
+        <camunda:out source="GENGS_FoundIndicator" target="GENGS_FoundIndicator" />
+        <camunda:out source="GENGS_SuccessIndicator" target="GENGS_SuccessIndicator" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+        <camunda:out source="GENGS_service" target="GENGS_service" />
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_10</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_0tx5frq</bpmn2:outgoing>
+    </bpmn2:callActivity>
+    <bpmn2:sequenceFlow id="SequenceFlow_0tx5frq" sourceRef="CallActivity_1707jgc" targetRef="ScriptTask_1tp0fcx" />
+    <bpmn2:sequenceFlow id="SequenceFlow_01q6pl4" sourceRef="ScriptTask_1tp0fcx" targetRef="EndEvent_3" />
+    <bpmn2:scriptTask id="ScriptTask_1tp0fcx" name="Post Process AAI GET2" scriptFormat="groovy">
+      <bpmn2:incoming>SequenceFlow_0tx5frq</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_01q6pl4</bpmn2:outgoing>
+      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
+def dcsi = new DoCreateServiceInstance()
+dcsi.postProcessAAIGET2(execution)]]></bpmn2:script>
+    </bpmn2:scriptTask>
   </bpmn2:process>
   <bpmn2:error id="Error_2" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
   <bpmn2:error id="Error_1" name="java.lang.Exception" errorCode="java.lang.Exception" />
@@ -192,9 +215,9 @@ ddsi.postProcessAAIPUT(execution)]]></bpmn2:script>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="_BPMNShape_EndEvent_177" bpmnElement="EndEvent_3">
-        <dc:Bounds x="1142" y="886" width="36" height="36" />
+        <dc:Bounds x="1115" y="1165" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1160" y="927" width="0" height="0" />
+          <dc:Bounds x="1133" y="1206" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_10" bpmnElement="SequenceFlow_4">
@@ -239,12 +262,10 @@ ddsi.postProcessAAIPUT(execution)]]></bpmn2:script>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_12" bpmnElement="SequenceFlow_10" sourceElement="_BPMNShape_ScriptTask_335">
-        <di:waypoint xsi:type="dc:Point" x="1072" y="904" />
-        <di:waypoint xsi:type="dc:Point" x="1111" y="904" />
-        <di:waypoint xsi:type="dc:Point" x="1111" y="904" />
-        <di:waypoint xsi:type="dc:Point" x="1142" y="904" />
+        <di:waypoint xsi:type="dc:Point" x="1024" y="944" />
+        <di:waypoint xsi:type="dc:Point" x="1024" y="994" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1126" y="904" width="0" height="0" />
+          <dc:Bounds x="1039" y="969" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="CallActivity_1md4kyb_di" bpmnElement="callGenericGetService">
@@ -385,6 +406,26 @@ ddsi.postProcessAAIPUT(execution)]]></bpmn2:script>
           <dc:Bounds x="808" y="626" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="CallActivity_1707jgc_di" bpmnElement="CallActivity_1707jgc">
+        <dc:Bounds x="972" y="994" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0tx5frq_di" bpmnElement="SequenceFlow_0tx5frq">
+        <di:waypoint xsi:type="dc:Point" x="1022" y="1074" />
+        <di:waypoint xsi:type="dc:Point" x="1022" y="1143" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1037" y="1108.5" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_01q6pl4_di" bpmnElement="SequenceFlow_01q6pl4">
+        <di:waypoint xsi:type="dc:Point" x="1072" y="1183" />
+        <di:waypoint xsi:type="dc:Point" x="1115" y="1183" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1094" y="1168" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_1tp0fcx_di" bpmnElement="ScriptTask_1tp0fcx">
+        <dc:Bounds x="972" y="1143" width="100" height="80" />
+      </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn2:definitions>

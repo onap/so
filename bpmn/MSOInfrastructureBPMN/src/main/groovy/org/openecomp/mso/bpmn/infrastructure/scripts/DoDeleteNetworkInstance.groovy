@@ -239,7 +239,6 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 		String networkInputs  = execution.getVariable(Prefix + "networkInputs")
 		String networkId   = utils.getNodeText(networkInputs, "network-id")
 		networkId = UriUtils.encode(networkId,"UTF-8")
-		String messageId = execution.getVariable(Prefix + "messageId")
 
 		// Prepare AA&I url
 		String aai_endpoint = execution.getVariable("URN_aai_endpoint")
@@ -255,11 +254,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 		ExceptionUtil exceptionUtil = new ExceptionUtil()
 		Boolean isVfRelationshipExist = false
 		try {
-			RESTClient client = new RESTClient(config).addHeader("X-TransactionId", messageId)
-													  .addHeader("X-FromAppId", "MSO")
-													  .addHeader("Content-Type", "application/xml")
-													  .addHeader("Accept","application/xml");
-			APIResponse response = client.get()
+			APIResponse response = aaiUriUtil.executeAAIGetCall(execution, queryAAIRequest)
 			String returnCode = response.getStatusCode()
 			execution.setVariable(Prefix + "aaiReturnCode", returnCode)
 
@@ -528,7 +523,6 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 			    requestId = execution.getVariable("mso-request-id")
 			} 	
 			execution.setVariable(Prefix + "requestId", requestId)
-			
 			utils.log("DEBUG", Prefix + "requestId " + requestId, isDebugEnabled)
 			String queryAAIResponse = execution.getVariable(Prefix + "queryAAIResponse")
 			

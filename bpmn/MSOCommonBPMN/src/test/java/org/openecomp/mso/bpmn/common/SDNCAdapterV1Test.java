@@ -33,7 +33,6 @@ import java.util.Map;
 
 import javax.ws.rs.core.Response;
 
-import org.camunda.bpm.engine.MismatchingMessageCorrelationException;
 import org.camunda.bpm.engine.impl.cfg.ProcessEngineConfigurationImpl;
 import org.camunda.bpm.engine.runtime.Job;
 import org.camunda.bpm.engine.test.Deployment;
@@ -44,9 +43,10 @@ import org.openecomp.mso.bpmn.common.adapter.sdnc.CallbackHeader;
 import org.openecomp.mso.bpmn.common.adapter.sdnc.SDNCAdapterCallbackRequest;
 import org.openecomp.mso.bpmn.common.adapter.sdnc.SDNCAdapterResponse;
 import org.openecomp.mso.bpmn.common.workflow.service.SDNCAdapterCallbackServiceImpl;
-import org.openecomp.mso.bpmn.common.workflow.service.SDNCAdapterCallbackServiceImpl.SDNCAdapterExceptionResponse;
+import org.openecomp.mso.bpmn.common.workflow.service.SDNCAdapterCallbackServiceImpl.SDNCAdapterErrorResponse;
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowResource;
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowResponse;
+import org.openecomp.mso.bpmn.core.PropertyConfigurationSetup;
 import org.openecomp.mso.bpmn.mock.FileUtil;
 
 /**
@@ -129,7 +129,7 @@ public class SDNCAdapterV1Test extends WorkflowTest {
 		SDNCAdapterResponse sdncAdapterResponse = callbackService.sdncAdapterCallback(sdncAdapterCallbackRequest);
 		//System.out.println("Back from executing process again");
 
-		assertFalse(sdncAdapterResponse instanceof SDNCAdapterExceptionResponse);
+		assertFalse(sdncAdapterResponse instanceof SDNCAdapterErrorResponse);
 		assertProcessInstanceFinished(pid);
 
 		//System.out.println("SDNCAdapter sunny day flow Completed!");
@@ -167,7 +167,7 @@ public class SDNCAdapterV1Test extends WorkflowTest {
 		SDNCAdapterResponse sdncAdapterResponse = callbackService.sdncAdapterCallback(sdncAdapterCallbackRequest);
 		//System.out.println("Back from executing process again");
 
-		assertFalse(sdncAdapterResponse instanceof SDNCAdapterExceptionResponse);
+		assertFalse(sdncAdapterResponse instanceof SDNCAdapterErrorResponse);
 		assertProcessInstanceNotFinished(pid);
 
 		checkForTimeout(pid);
@@ -212,7 +212,7 @@ public class SDNCAdapterV1Test extends WorkflowTest {
 		SDNCAdapterResponse sdncAdapterResponse = callbackService.sdncAdapterCallback(sdncAdapterCallbackRequest);
 		//System.out.println("Back from executing process again");
 
-		assertFalse(sdncAdapterResponse instanceof SDNCAdapterExceptionResponse);
+		assertFalse(sdncAdapterResponse instanceof SDNCAdapterErrorResponse);
 		assertProcessInstanceNotFinished(pid);
 		assertEquals(true, (Boolean) (getVariable(pid, "continueListening")));
 
@@ -221,7 +221,7 @@ public class SDNCAdapterV1Test extends WorkflowTest {
 		sdncAdapterResponse = callbackService.sdncAdapterCallback(sdncAdapterCallbackRequest);
 		//System.out.println("Back from executing process again");
 
-		assertFalse(sdncAdapterResponse instanceof SDNCAdapterExceptionResponse);
+		assertFalse(sdncAdapterResponse instanceof SDNCAdapterErrorResponse);
 		assertProcessInstanceFinished(pid);
 		assertEquals(false, (Boolean) (getVariable(pid, "continueListening")));
 
@@ -241,9 +241,13 @@ public class SDNCAdapterV1Test extends WorkflowTest {
 	@Deployment(resources = {"subprocess/SDNCAdapterV1.bpmn",
 			"subprocess/GenericNotificationService.bpmn"
 			})
-	public void badCorrelationIdTest() throws InterruptedException {
+	public void badCorrelationIdTest() throws InterruptedException, IOException {
 
 		mockSDNCAdapter(200);
+
+		Map<String, String> urnProperties = PropertyConfigurationSetup.createBpmnUrnProperties();
+		urnProperties.put("mso.correlation.timeout", "5");
+		PropertyConfigurationSetup.addProperties(urnProperties, 10000);
 
 		//System.out.println("SDNCAdapter bad RequestId test Started!");
 
@@ -267,8 +271,8 @@ public class SDNCAdapterV1Test extends WorkflowTest {
 		SDNCAdapterResponse sdncAdapterResponse = callbackService.sdncAdapterCallback(sdncAdapterCallbackRequest);
 		//System.out.println("Back from executing process again");
 
-		assertTrue(sdncAdapterResponse instanceof SDNCAdapterExceptionResponse);
-		assertTrue(((SDNCAdapterExceptionResponse) sdncAdapterResponse).getException() instanceof IllegalStateException);
+		assertTrue(sdncAdapterResponse instanceof SDNCAdapterErrorResponse);
+		assertTrue(((SDNCAdapterErrorResponse) sdncAdapterResponse).getError().contains("No process is waiting for sdncAdapterCallbackRequest"));
 		assertProcessInstanceNotFinished(pid);
 
 		//System.out.println("SDNCAdapter bad RequestId test Completed!");
