@@ -56,13 +56,13 @@ public class DeleteGenericMacroServiceNetworkVnf extends AbstractServiceTaskProc
 	NetworkUtils networkUtils = new NetworkUtils()
 
 	/**
-	 * This method is executed during the preProcessRequest task of the <class>DeleteViprAtmService.bpmn</class> process.
+	 * This method is executed during the preProcessRequest task of the <class>DeleteGenericMacroServiceNetworkVnf.bpmn</class> process.
 	 * @param execution
 	 */
 	public InitializeProcessVariables(Execution execution){
 		/* Initialize all the process variables in this block */
 
-		execution.setVariable("deleteViprAtmServiceRequest", "")
+		execution.setVariable("DeleteGenericMacroServiceNetworkVnfRequest", "")
 		execution.setVariable("msoRequestId", "")
 		execution.setVariable("DELVAS_vnfsDeletedCount", 0)
 		execution.setVariable("DELVAS_vnfsCount", 0)
@@ -81,17 +81,17 @@ public class DeleteGenericMacroServiceNetworkVnf extends AbstractServiceTaskProc
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 
-		utils.log("DEBUG", " ***** Inside preProcessRequest DeleteViprAtmService Request ***** ", isDebugEnabled)
+		utils.log("DEBUG", " ***** Inside preProcessRequest DeleteGenericMacroServiceNetworkVnf Request ***** ", isDebugEnabled)
 
 		try {
 			// initialize flow variables
 			InitializeProcessVariables(execution)
 
 			// check for incoming json message/input
-			String deleteViprAtmServiceRequest = execution.getVariable("bpmnRequest")
-			utils.logAudit(deleteViprAtmServiceRequest)
-			execution.setVariable("deleteViprAtmServiceRequest", deleteViprAtmServiceRequest);
-			println 'deleteViprAtmServiceRequest - ' + deleteViprAtmServiceRequest
+			String DeleteGenericMacroServiceNetworkVnfRequest = execution.getVariable("bpmnRequest")
+			utils.logAudit(DeleteGenericMacroServiceNetworkVnfRequest)
+			execution.setVariable("DeleteGenericMacroServiceNetworkVnfRequest", DeleteGenericMacroServiceNetworkVnfRequest);
+			println 'DeleteGenericMacroServiceNetworkVnfRequest - ' + DeleteGenericMacroServiceNetworkVnfRequest
 
 			// extract requestId
 			String requestId = execution.getVariable("mso-request-id")
@@ -106,7 +106,7 @@ public class DeleteGenericMacroServiceNetworkVnf extends AbstractServiceTaskProc
 			String requestAction = execution.getVariable("requestAction")
 			execution.setVariable("requestAction", requestAction)
 
-			String source = jsonUtil.getJsonValue(deleteViprAtmServiceRequest, "requestDetails.requestInfo.source")
+			String source = jsonUtil.getJsonValue(DeleteGenericMacroServiceNetworkVnfRequest, "requestDetails.requestInfo.source")
 			if ((source == null) || (source.isEmpty())) {
 				execution.setVariable("source", "VID")
 			} else {
@@ -114,35 +114,35 @@ public class DeleteGenericMacroServiceNetworkVnf extends AbstractServiceTaskProc
 			}
 
 			// extract globalSubscriberId
-			String globalSubscriberId = jsonUtil.getJsonValue(deleteViprAtmServiceRequest, "requestDetails.subscriberInfo.globalSubscriberId")
+			String globalSubscriberId = jsonUtil.getJsonValue(DeleteGenericMacroServiceNetworkVnfRequest, "requestDetails.subscriberInfo.globalSubscriberId")
 
 			// global-customer-id is optional on Delete
 
 			execution.setVariable("globalSubscriberId", globalSubscriberId)
 			execution.setVariable("globalCustomerId", globalSubscriberId)
 			
-			String suppressRollback = jsonUtil.getJsonValue(deleteViprAtmServiceRequest, "requestDetails.requestInfo.suppressRollback")
+			String suppressRollback = jsonUtil.getJsonValue(DeleteGenericMacroServiceNetworkVnfRequest, "requestDetails.requestInfo.suppressRollback")
 			execution.setVariable("disableRollback", suppressRollback)
 			utils.log("DEBUG", "Incoming Suppress/Disable Rollback is: " + suppressRollback, isDebugEnabled)
 			
-			String productFamilyId = jsonUtil.getJsonValue(deleteViprAtmServiceRequest, "requestDetails.requestInfo.productFamilyId")
+			String productFamilyId = jsonUtil.getJsonValue(DeleteGenericMacroServiceNetworkVnfRequest, "requestDetails.requestInfo.productFamilyId")
 			execution.setVariable("productFamilyId", productFamilyId)
 			utils.log("DEBUG", "Incoming productFamilyId is: " + productFamilyId, isDebugEnabled)
 			
 			// extract subscriptionServiceType
-			String subscriptionServiceType = jsonUtil.getJsonValue(deleteViprAtmServiceRequest, "requestDetails.requestParameters.subscriptionServiceType")
+			String subscriptionServiceType = jsonUtil.getJsonValue(DeleteGenericMacroServiceNetworkVnfRequest, "requestDetails.requestParameters.subscriptionServiceType")
 			execution.setVariable("subscriptionServiceType", subscriptionServiceType)
 			utils.log("DEBUG", "Incoming subscriptionServiceType is: " + subscriptionServiceType, isDebugEnabled)
 			
 			// extract cloud configuration
-			String lcpCloudRegionId = jsonUtil.getJsonValue(deleteViprAtmServiceRequest, "requestDetails.cloudConfiguration.lcpCloudRegionId")
+			String lcpCloudRegionId = jsonUtil.getJsonValue(DeleteGenericMacroServiceNetworkVnfRequest, "requestDetails.cloudConfiguration.lcpCloudRegionId")
 			execution.setVariable("lcpCloudRegionId", lcpCloudRegionId)
 			utils.log("DEBUG","lcpCloudRegionId: "+ lcpCloudRegionId, isDebugEnabled)
-			String tenantId = jsonUtil.getJsonValue(deleteViprAtmServiceRequest, "requestDetails.cloudConfiguration.tenantId")
+			String tenantId = jsonUtil.getJsonValue(DeleteGenericMacroServiceNetworkVnfRequest, "requestDetails.cloudConfiguration.tenantId")
 			execution.setVariable("tenantId", tenantId)
 			utils.log("DEBUG","tenantId: "+ tenantId, isDebugEnabled)
 
-			String sdncVersion = "1702"
+			String sdncVersion = "1707"
 			execution.setVariable("sdncVersion", sdncVersion)
 			utils.log("DEBUG","sdncVersion: "+ sdncVersion, isDebugEnabled)
 			
@@ -159,12 +159,12 @@ public class DeleteGenericMacroServiceNetworkVnf extends AbstractServiceTaskProc
 			//Setting for Generic Sub Flows
 			execution.setVariable("GENGS_type", "service-instance")
 			
-			utils.log("DEBUG", " ***** Completed preProcessRequest DeleteViprAtmService Request ***** ", isDebugEnabled)
+			utils.log("DEBUG", " ***** Completed preProcessRequest DeleteGenericMacroServiceNetworkVnf Request ***** ", isDebugEnabled)
 
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception ex){
-			String exceptionMessage = "Bpmn error encountered in DeleteViprAtmService flow. Unexpected from method preProcessRequest() - " + ex.getMessage()
+			String exceptionMessage = "Bpmn error encountered in DeleteGenericMacroServiceNetworkVnf flow. Unexpected from method preProcessRequest() - " + ex.getMessage()
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 		}
 	}
@@ -172,7 +172,7 @@ public class DeleteGenericMacroServiceNetworkVnf extends AbstractServiceTaskProc
 	public void sendSyncResponse (Execution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 
-		utils.log("DEBUG", " ***** Inside sendSyncResponse of DeleteViprAtmService ***** ", isDebugEnabled)
+		utils.log("DEBUG", " ***** Inside sendSyncResponse of DeleteGenericMacroServiceNetworkVnf ***** ", isDebugEnabled)
 
 		try {
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
@@ -184,14 +184,14 @@ public class DeleteGenericMacroServiceNetworkVnf extends AbstractServiceTaskProc
 			utils.log("DEBUG", " sendSynchResponse: xmlSyncResponse - " + "\n" + syncResponse, isDebugEnabled)
 			sendWorkflowResponse(execution, 202, syncResponse)
 		} catch (Exception ex) {
-			String exceptionMessage = "Bpmn error encountered in DeleteViprAtmService flow. Unexpected from method sendSyncResponse() - " + ex.getMessage()
+			String exceptionMessage = "Bpmn error encountered in DeleteGenericMacroServiceNetworkVnf flow. Unexpected from method sendSyncResponse() - " + ex.getMessage()
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 		}
 	}
 
 	public void prepareServiceInstanceDelete (Execution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		utils.log("DEBUG", " ***** Inside prepareServiceInstanceDelete() of DeleteViprAtmService ***** ", isDebugEnabled)
+		utils.log("DEBUG", " ***** Inside prepareServiceInstanceDelete() of DeleteGenericMacroServiceNetworkVnf ***** ", isDebugEnabled)
 		
 		try {
 			
@@ -200,12 +200,12 @@ public class DeleteGenericMacroServiceNetworkVnf extends AbstractServiceTaskProc
 			// confirm if ServiceInstance was found
 			if ( !execution.getVariable("GENGS_FoundIndicator") )
 			{
-				String exceptionMessage = "Bpmn error encountered in DeleteViprAtmService flow. Service Instance was not found in AAI by id: " + serviceInstanceId
+				String exceptionMessage = "Bpmn error encountered in DeleteGenericMacroServiceNetworkVnf flow. Service Instance was not found in AAI by id: " + serviceInstanceId
 				exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 			}
 			
 			// get variable within incoming json
-			String deleteViprAtmServiceRequest = execution.getVariable("deleteViprAtmServiceRequest");
+			String DeleteGenericMacroServiceNetworkVnfRequest = execution.getVariable("DeleteGenericMacroServiceNetworkVnfRequest");
 			
 			// get SI extracted by GenericGetService
 			String serviceInstanceAaiRecord = execution.getVariable("GENGS_service");
@@ -246,10 +246,10 @@ public class DeleteGenericMacroServiceNetworkVnf extends AbstractServiceTaskProc
 				utils.log("DEBUG", " DELVAS_networksCount : " + networksCount, isDebugEnabled)
 			}
 			
-			utils.log("DEBUG", " ***** Completed prepareServiceInstanceDelete() of DeleteViprAtmService ***** ", isDebugEnabled)
+			utils.log("DEBUG", " ***** Completed prepareServiceInstanceDelete() of DeleteGenericMacroServiceNetworkVnf ***** ", isDebugEnabled)
 		} catch (Exception ex) {
 			sendSyncError(execution)
-		   String exceptionMessage = "Bpmn error encountered in DeleteViprAtmService flow. prepareServiceInstanceDelete() - " + ex.getMessage()
+		   String exceptionMessage = "Bpmn error encountered in DeleteGenericMacroServiceNetworkVnf flow. prepareServiceInstanceDelete() - " + ex.getMessage()
 		   utils.log("DEBUG", exceptionMessage, isDebugEnabled)
 		   exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 		}
@@ -291,17 +291,17 @@ public class DeleteGenericMacroServiceNetworkVnf extends AbstractServiceTaskProc
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 
 		try {
-			utils.log("DEBUG", " ***** Inside validateVnfDelete of DeleteViprAtmService ***** ", isDebugEnabled)
+			utils.log("DEBUG", " ***** Inside validateVnfDelete of DeleteGenericMacroServiceNetworkVnf ***** ", isDebugEnabled)
 
 			String vnfsDeletedCount = execution.getVariable("DELVAS_vnfsDeletedCount")
 			vnfsDeletedCount++
 			
 			execution.setVariable("DELVAS_vnfsDeletedCount", vnfsDeletedCount)
 			
-			utils.log("DEBUG", " ***** Completed validateVnfDelete of DeleteViprAtmService ***** "+" vnf # "+vnfsDeletedCount, isDebugEnabled)
+			utils.log("DEBUG", " ***** Completed validateVnfDelete of DeleteGenericMacroServiceNetworkVnf ***** "+" vnf # "+vnfsDeletedCount, isDebugEnabled)
 		} catch (Exception ex) {
 			// try error in method block
-			String exceptionMessage = "Bpmn error encountered in DeleteViprAtmService flow. Unexpected Error from method validateVnfDelete() - " + ex.getMessage()
+			String exceptionMessage = "Bpmn error encountered in DeleteGenericMacroServiceNetworkVnf flow. Unexpected Error from method validateVnfDelete() - " + ex.getMessage()
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 		}
 	 }
@@ -313,7 +313,7 @@ public class DeleteGenericMacroServiceNetworkVnf extends AbstractServiceTaskProc
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 
 		try {
-			utils.log("DEBUG", " ***** Inside prepareNetworkDelete of DeleteViprAtmService ***** ", isDebugEnabled)
+			utils.log("DEBUG", " ***** Inside prepareNetworkDelete of DeleteGenericMacroServiceNetworkVnf ***** ", isDebugEnabled)
 
 			List networkList = execution.getVariable("DELVAS_relatedNetworkIdList")
 			Integer networksDeletedCount = execution.getVariable("DELVAS_networksDeletedCount")
@@ -326,10 +326,10 @@ public class DeleteGenericMacroServiceNetworkVnf extends AbstractServiceTaskProc
 			execution.setVariable("networkId", networkId)
 			utils.log("DEBUG", "need to delete networkId:" + networkId, isDebugEnabled)
 			
-			utils.log("DEBUG", " ***** Completed prepareNetworkDelete of DeleteViprAtmService ***** ", isDebugEnabled)
+			utils.log("DEBUG", " ***** Completed prepareNetworkDelete of DeleteGenericMacroServiceNetworkVnf ***** ", isDebugEnabled)
 		} catch (Exception ex) {
 			// try error in method block
-			String exceptionMessage = q"Bpmn error encountered in DeleteViprAtmService flow. Unexpected Error from method prepareNetworkDelete() - " + ex.getMessage()
+			String exceptionMessage = q"Bpmn error encountered in DeleteGenericMacroServiceNetworkVnf flow. Unexpected Error from method prepareNetworkDelete() - " + ex.getMessage()
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 		}
 	 }
@@ -341,17 +341,17 @@ public class DeleteGenericMacroServiceNetworkVnf extends AbstractServiceTaskProc
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 
 		try {
-			utils.log("DEBUG", " ***** Inside validateNetworkDelete of DeleteViprAtmService ***** ", isDebugEnabled)
+			utils.log("DEBUG", " ***** Inside validateNetworkDelete of DeleteGenericMacroServiceNetworkVnf ***** ", isDebugEnabled)
 
 			Integer networksDeletedCount = execution.getVariable("DELVAS_networksDeletedCount")
 			networksDeletedCount++
 			
 			execution.setVariable("DELVAS_networksDeletedCount", networksDeletedCount)
 			
-			utils.log("DEBUG", " ***** Completed validateNetworkDelete of DeleteViprAtmService ***** ", isDebugEnabled)
+			utils.log("DEBUG", " ***** Completed validateNetworkDelete of DeleteGenericMacroServiceNetworkVnf ***** ", isDebugEnabled)
 		} catch (Exception ex) {
 			// try error in method block
-			String exceptionMessage = "Bpmn error encountered in DeleteViprAtmService flow. Unexpected Error from method validateNetworkDelete() - " + ex.getMessage()
+			String exceptionMessage = "Bpmn error encountered in DeleteGenericMacroServiceNetworkVnf flow. Unexpected Error from method validateNetworkDelete() - " + ex.getMessage()
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 		}
 	 }
@@ -362,7 +362,7 @@ public class DeleteGenericMacroServiceNetworkVnf extends AbstractServiceTaskProc
 	// *****************************************
 	public void postProcessResponse (Execution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		utils.log("DEBUG", " ***** Inside postProcessResponse of DeleteViprAtmService ***** ", isDebugEnabled)
+		utils.log("DEBUG", " ***** Inside postProcessResponse of DeleteGenericMacroServiceNetworkVnf ***** ", isDebugEnabled)
 
 		try {
 			String source = execution.getVariable("source")
@@ -399,7 +399,7 @@ public class DeleteGenericMacroServiceNetworkVnf extends AbstractServiceTaskProc
 
 	public void prepareFalloutRequest(Execution execution){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		utils.log("DEBUG", " *** STARTED DeleteViprAtmService prepareFalloutRequest Process *** ", isDebugEnabled)
+		utils.log("DEBUG", " *** STARTED DeleteGenericMacroServiceNetworkVnf prepareFalloutRequest Process *** ", isDebugEnabled)
 
 		try {
 			WorkflowException wfex = execution.getVariable("WorkflowException")
@@ -411,10 +411,10 @@ public class DeleteGenericMacroServiceNetworkVnf extends AbstractServiceTaskProc
 
 			execution.setVariable("DELVAS_falloutRequest", falloutRequest)
 		} catch (Exception ex) {
-			utils.log("DEBUG", "Error Occured in DeleteViprAtmService prepareFalloutRequest Process " + ex.getMessage(), isDebugEnabled)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured in DeleteViprAtmService prepareFalloutRequest Process")
+			utils.log("DEBUG", "Error Occured in DeleteGenericMacroServiceNetworkVnf prepareFalloutRequest Process " + ex.getMessage(), isDebugEnabled)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured in DeleteGenericMacroServiceNetworkVnf prepareFalloutRequest Process")
 		}
-		utils.log("DEBUG", "*** COMPLETED DeleteViprAtmService prepareFalloutRequest Process ***", isDebugEnabled)
+		utils.log("DEBUG", "*** COMPLETED DeleteGenericMacroServiceNetworkVnf prepareFalloutRequest Process ***", isDebugEnabled)
 	}
 
 

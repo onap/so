@@ -28,7 +28,7 @@ import org.springframework.web.util.UriUtils
 
 
 public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
-	
+
 	private XmlParser xmlParser = new XmlParser()
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 
@@ -44,12 +44,13 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 		execution.setVariable('UAAIGenVnf_personaModelVersion', null)
 		execution.setVariable("UAAIGenVnf_ipv4OamAddress", null)
 		execution.setVariable('UAAIGenVnf_managementV6Address', null)
+		execution.setVariable('UAAIGenVnf_orchestrationStatus', null)
 		execution.setVariable('UAAIGenVnf_getGenericVnfResponseCode' ,null)
 		execution.setVariable('UAAIGenVnf_getGenericVnfResponse', '')
 		execution.setVariable('UAAIGenVnf_updateGenericVnfResponseCode', null)
 		execution.setVariable('UAAIGenVnf_updateGenericVnfResponse', '')
 	}
-	
+
 	/**
 	 * Check for missing elements in the received request.
 	 *
@@ -90,6 +91,11 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 			if (managementV6Address != null && !managementV6Address.isEmpty()) {
 				execution.setVariable('UAAIGenVnf_managementV6Address', managementV6Address)
 			}
+			
+			def orchestrationStatus = getNodeTextForce(xml, 'orchestration-status')
+			if (orchestrationStatus != null && !orchestrationStatus.isEmpty()) {
+				execution.setVariable('UAAIGenVnf_orchestrationStatus', orchestrationStatus)
+			}
 
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
@@ -99,7 +105,7 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in preProcessRequest(): ' + e.getMessage())
 		}
 	}
-	
+
 	/**
 	 * Using the received vnfId, query AAI to get the corresponding Generic VNF.
 	 * A 200 response is expected with the VF Module in the response body.
@@ -182,7 +188,11 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 			if (newPersonaModelId != null || newPersonaModelVersion != null) {
 
 				// Confirm "new" persona-model-id is same as "current" persona-model-id
-				def Node currPersonaModelIdNode = utils.getChildNode(genericVnfNode, 'persona-model-id')
+				def Node currPersonaModelIdNode = utils.getChildNode(genericVnfNode, 'model-invariant-id')
+				if (currPersonaModelIdNode == null) {
+					// check the old attribute name
+					currPersonaModelIdNode = utils.getChildNode(genericVnfNode, 'persona-model-id')
+				}
 				def String currPersonaModelId = ''
 				if (currPersonaModelIdNode != null) {
 					currPersonaModelId = currPersonaModelIdNode.text()
@@ -194,7 +204,7 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 				}
 
 				// Construct payload
-				personaModelVersionEntry = updateGenericVnfNode(origRequest, genericVnfNode, 'persona-model-version')
+				personaModelVersionEntry = updateGenericVnfNode(origRequest, genericVnfNode, 'model-version-id')
 			}
 
 			// Handle ipv4-oam-address
@@ -212,11 +222,20 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 				// Construct payload
 				managementV6AddressEntry = updateGenericVnfNode(origRequest, genericVnfNode, 'management-v6-address')
 			}
+			
+			// Handle orchestration-status
+			def String orchestrationStatus = execution.getVariable('UAAIGenVnf_orchestrationStatus')
+			def String orchestrationStatusEntry = ""
+			if (orchestrationStatus != null) {
+				// Construct payload
+				orchestrationStatusEntry = updateGenericVnfNode(origRequest, genericVnfNode, 'orchestration-status')
+			}
 
 			def payload = """
 					{	${personaModelVersionEntry}
 						${ipv4OamAddressEntry}
-						${managementV6AddressEntry}						
+						${managementV6AddressEntry}
+						${orchestrationStatusEntry}
 						"vnf-id": "${vnfId}"					
 					}
 			"""

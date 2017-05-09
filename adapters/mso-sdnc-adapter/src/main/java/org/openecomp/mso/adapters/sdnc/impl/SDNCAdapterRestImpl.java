@@ -78,9 +78,9 @@ public class SDNCAdapterRestImpl {
 		String operation = "";
 	    try {
 
-	    	reqId = headers.getRequestHeader("att-mso-request-id").get(0);
-	    	action = headers.getRequestHeader("att-mso-request-action").get(0);
-	    	operation = headers.getRequestHeader("att-mso-request-operation").get(0);
+	    	reqId = headers.getRequestHeader("mso-request-id").get(0);
+	    	action = headers.getRequestHeader("mso-request-action").get(0);
+	    	operation = headers.getRequestHeader("mso-request-operation").get(0);
 
 	    	MsoLogger.setLogContext(reqId, "");
 

@@ -159,7 +159,7 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 		AaiUtil aaiUriUtil = new AaiUtil(this)
 		def aai_uri = aaiUriUtil.getNetworkGenericVnfUri(execution)
 		logDebug('AAI URI is: ' + aai_uri, isDebugEnabled)
-		String aaiNamespace = aaiUriUtil.getNamespaceFromUri(aai_uri)
+		String aaiNamespace = aaiUriUtil.getNamespaceFromUri(execution, aai_uri)
 		logDebug('AAI namespace is: ' + aaiNamespace, isDebugEnabled)
 		
 		execution.setVariable("CAAIVfMod_aaiNamespace","${aaiNamespace}")		
@@ -258,8 +258,8 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 								<vnf-type>${execution.getVariable("CAAIVfMod_vnfType")}</vnf-type>
 								<service-id>${execution.getVariable("CAAIVfMod_serviceId")}</service-id>
 								<orchestration-status>active</orchestration-status>
-								<persona-model-id>${execution.getVariable("CAAIVfMod_vnfPersonaId")}</persona-model-id>
-								<persona-model-version>${execution.getVariable("CAAIVfMod_vnfPersonaVer")}</persona-model-version>
+								<model-invariant-id>${execution.getVariable("CAAIVfMod_vnfPersonaId")}</model-invariant-id>
+								<model-version-id>${execution.getVariable("CAAIVfMod_vnfPersonaVer")}</model-version-id>
 							</generic-vnf>""" as String
 		execution.setVariable("CAAIVfMod_createGenericVnfPayload", payload)
 
@@ -305,8 +305,19 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 			def aaiVnfResponse = execution.getVariable("CAAIVfMod_queryGenericVnfResponse")
 			AaiUtil aaiUtil = new AaiUtil(this)
 			def personaModelId = execution.getVariable("CAAIVfMod_personaId")
+			
+			// Check if the response includes model-invariant-id or persona-model-id
+			// note: getRequiredNodeText() throws an exception if the field is missing
+			// need to retun a null for the subsequent "either/or" logic to work properly
+//			def modelInvariantId = getRequiredNodeText(execution, aaiVnfResponse,'model-invariant-id')
+			def modelInvariantId = getNodeText(aaiVnfResponse,'model-invariant-id', null)
+			def fieldToCheck = 'model-invariant-id'
+			if (!modelInvariantId) {
+				fieldToCheck = 'persona-model-id'
+			}
+			
 			moduleIndex = aaiUtil.getLowestUnusedVfModuleIndexFromAAIVnfResponse(execution, aaiVnfResponse, 
-				"persona-model-id", personaModelId)
+				fieldToCheck, personaModelId)
 		}
 		def moduleIndexString = String.valueOf(moduleIndex)
 
@@ -324,11 +335,11 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 		String payload = """<vf-module xmlns="${execution.getVariable("CAAIVfMod_aaiNamespace")}">
 								<vf-module-id>${newModuleId}</vf-module-id>
 								<vf-module-name>${execution.getVariable("CAAIVfMod_moduleName")}</vf-module-name>
-								<persona-model-id>${execution.getVariable("CAAIVfMod_personaId")}</persona-model-id>
-								<persona-model-version>${execution.getVariable("CAAIVfMod_personaVer")}</persona-model-version>
-								<persona-model-customization-id>${execution.getVariable("CAAIVfMod_modelCustomizationId")}</persona-model-customization-id>
+								<model-invariant-id>${execution.getVariable("CAAIVfMod_personaId")}</model-invariant-id>
+								<model-version-id>${execution.getVariable("CAAIVfMod_personaVer")}</model-version-id>
+								<model-customization-id>${execution.getVariable("CAAIVfMod_modelCustomizationId")}</model-customization-id>
 								<is-base-vf-module>${isBaseModule}</is-base-vf-module>
-								<orchestration-status>pending-create</orchestration-status>
+								<orchestration-status>PendingCreate</orchestration-status>
 								<module-index>${moduleIndex}</module-index>
 								</vf-module>""" as String
 		execution.setVariable("CAAIVfMod_createVfModulePayload", payload)

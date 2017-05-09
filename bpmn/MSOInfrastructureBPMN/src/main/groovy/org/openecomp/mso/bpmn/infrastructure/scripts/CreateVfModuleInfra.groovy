@@ -21,6 +21,7 @@
 package org.openecomp.mso.bpmn.infrastructure.scripts;
 
 import groovy.json.JsonSlurper
+import groovy.json.JsonOutput
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.runtime.Execution
@@ -32,11 +33,13 @@ import org.openecomp.mso.bpmn.common.scripts.SDNCAdapterUtils;
 import org.openecomp.mso.bpmn.common.scripts.VidUtils;
 import org.openecomp.mso.bpmn.core.RollbackData
 import org.openecomp.mso.bpmn.core.WorkflowException
+import org.openecomp.mso.bpmn.core.json.JsonUtils
 
 public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
-	
+
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
-	
+	JsonUtils jsonUtil = new JsonUtils()
+
 	/**
 	 * Validates the request message and sets up the workflow.
 	 * @param execution the execution
@@ -71,27 +74,151 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 		// check if request is xml or json
 		try {
 			def jsonSlurper = new JsonSlurper()
+			def jsonOutput = new JsonOutput()
 			Map reqMap = jsonSlurper.parseText(incomingRequest)
 			utils.log("DEBUG", " Request is in JSON format.", isDebugLogEnabled)
 
 			def serviceInstanceId = execution.getVariable('serviceInstanceId')
 			def vnfId = execution.getVariable('vnfId')
-
-			def vidUtils = new VidUtils(this)
-
-			String requestInXmlFormat = vidUtils.createXmlVfModuleRequest(execution, reqMap, 'CREATE_VF_MODULE', serviceInstanceId)
-
-			utils.log("DEBUG", " Request in XML format: " + requestInXmlFormat, isDebugLogEnabled)
-
-			execution.setVariable(prefix + 'Request', requestInXmlFormat)
+			
+			execution.setVariable(prefix + 'serviceInstanceId', serviceInstanceId)
 			execution.setVariable(prefix+'vnfId', vnfId)
 			execution.setVariable("isVidRequest", "true")
+			
+			def vnfName = ''
+			def asdcServiceModelVersion = ''
+			def serviceModelInfo = null
+			def vnfModelInfo = null
+			
+			def relatedInstanceList = reqMap.requestDetails?.relatedInstanceList
+						
+			if (relatedInstanceList != null) {
+				relatedInstanceList.each {
+					if (it.relatedInstance.modelInfo?.modelType == 'service') {
+						asdcServiceModelVersion = it.relatedInstance.modelInfo?.modelVersion
+						serviceModelInfo = jsonOutput.toJson(it.relatedInstance.modelInfo)
+						
+					}
+					if (it.relatedInstance.modelInfo.modelType == 'vnf') {
+						vnfName = it.relatedInstance.instanceName ?: ''
+						vnfModelInfo = jsonOutput.toJson(it.relatedInstance.modelInfo)
+					}
+				}
+			}
+			
+			execution.setVariable(prefix + 'vnfName', vnfName)
+			execution.setVariable(prefix + 'asdcServiceModelVersion', asdcServiceModelVersion)
+			execution.setVariable(prefix + 'serviceModelInfo', serviceModelInfo)
+			execution.setVariable(prefix + 'vnfModelInfo', vnfModelInfo)
+			
+			
+			def vnfType = execution.getVariable('vnfType')
+			execution.setVariable(prefix + 'vnfType', vnfType)	
+			def vfModuleId = execution.getVariable('vfModuleId')
+			execution.setVariable(prefix + 'vfModuleId', vfModuleId)
+			def volumeGroupId = execution.getVariable('volumeGroupId')
+			execution.setVariable(prefix + 'volumeGroupId', volumeGroupId)
+			def userParams = reqMap.requestDetails?.requestParameters?.userParams					
+			
+			Map<String, String> userParamsMap = [:]
+			if (userParams != null) {
+				userParams.each { userParam ->
+					userParamsMap.put(userParam.name, userParam.value)
+				}							
+			}		
+						
+			utils.log("DEBUG", 'Processed user params: ' + userParamsMap, isDebugLogEnabled)		
+			
+			execution.setVariable(prefix + 'vfModuleInputParams', userParamsMap)
+			
+			def isBaseVfModule = "false"
+			if (execution.getVariable('isBaseVfModule') == true) {
+				isBaseVfModule = "true"
+			}			
+			
+			execution.setVariable(prefix + 'isBaseVfModule', isBaseVfModule)
+						
+			def requestId = execution.getVariable("mso-request-id")
+			execution.setVariable(prefix + 'requestId', requestId)
+			
+			def vfModuleModelInfo = jsonOutput.toJson(reqMap.requestDetails?.modelInfo)
+			execution.setVariable(prefix + 'vfModuleModelInfo', vfModuleModelInfo)
+			
+			def suppressRollback = reqMap.requestDetails?.requestInfo?.suppressRollback
+			
+			
+			def backoutOnFailure = ""
+			if(suppressRollback != null){
+				if ( suppressRollback == true) {
+					backoutOnFailure = "false"
+				} else if ( suppressRollback == false) {
+					backoutOnFailure = "true"
+				}
+			}
+			
+			execution.setVariable(prefix + 'disableRollback', suppressRollback)
+			
+			def vfModuleName = reqMap.requestDetails?.requestInfo?.instanceName ?: null
+			execution.setVariable(prefix + 'vfModuleName', vfModuleName)
+			
+			def serviceId = reqMap.requestDetails?.requestParameters?.serviceId ?: ''
+			execution.setVariable(prefix + 'serviceId', serviceId)
+			
+			def usePreload = reqMap.requestDetails?.requestParameters?.usePreload
+			execution.setVariable(prefix + 'usePreload', usePreload)
+			
+			def cloudConfiguration = reqMap.requestDetails?.cloudConfiguration
+			def lcpCloudRegionId	= cloudConfiguration.lcpCloudRegionId
+			execution.setVariable(prefix + 'lcpCloudRegionId', lcpCloudRegionId)
+			def tenantId = cloudConfiguration.tenantId
+			execution.setVariable(prefix + 'tenantId', tenantId)
+			
+			def globalSubscriberId = reqMap.requestDetails?.subscriberInfo?.globalSubscriberId ?: ''
+			execution.setVariable(prefix + 'globalSubscriberId', globalSubscriberId)
+			
+			execution.setVariable(prefix + 'sdncVersion', '1702')
 
+			execution.setVariable("CreateVfModuleInfraSuccessIndicator", false)
+			execution.setVariable("RollbackCompleted", false)
+			
+			execution.setVariable("isDebugLogEnabled", isDebugLogEnabled)
+			
+			
+			def source = reqMap.requestDetails?.requestInfo?.source
+			execution.setVariable("CVFMI_source", source)
+			
+			//For Completion Handler & Fallout Handler
+			String requestInfo =
+			"""<request-info xmlns="http://org.openecomp/mso/infra/vnf-request/v1">
+					<request-id>${requestId}</request-id>
+					<action>CREATE</action>
+					<source>${source}</source>
+				   </request-info>"""
+			
+			execution.setVariable("CVFMI_requestInfo", requestInfo)
+			
+			//backoutOnFailure
+
+			//NetworkUtils networkUtils = new NetworkUtils()
+			//execution.setVariable("CVFMI_rollbackEnabled", networkUtils.isRollbackEnabled(execution,request))
+			execution.setVariable("CVFMI_originalWorkflowException", null)
+			
+
+			def newVfModuleId = UUID.randomUUID().toString()
+			execution.setVariable("newVfModuleId", newVfModuleId)
+			execution.setVariable(prefix + 'vfModuleId', newVfModuleId)
+
+			logDebug('RequestInfo: ' + execution.getVariable("CVFMI_requestInfo"), isDebugLogEnabled)			
+			
+			logDebug('rollbackEnabled: ' + execution.getVariable("CVFMI_rollbackEnabled"), isDebugLogEnabled)
+
+			logDebug('Exited ' + method, isDebugLogEnabled)
+		} catch (BpmnError bpmnError) {
+			throw bpmnError
 		}
 		catch(groovy.json.JsonException je) {
 			utils.log("DEBUG", " Request is not in JSON format.", isDebugLogEnabled)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 400, "Internal Error - During PreProcessRequest")
-
 		}
 		catch(Exception e) {
 			String restFaultMessage = e.getMessage()
@@ -101,43 +228,6 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 400, "Internal Error - During PreProcessRequest")
 		}
 
-		try {
-			String request = validateInfraRequest(execution)
-
-			execution.setVariable("CreateVfModuleInfraSuccessIndicator", false)
-			execution.setVariable("RollbackCompleted", false)
-			execution.setVariable("DoCreateVfModuleRequest", request)
-			execution.setVariable("isDebugLogEnabled", isDebugLogEnabled)
-			execution.setVariable("CVFMI_requestInfo",utils.getNodeXml(request,"request-info"))
-			execution.setVariable("CVFMI_requestId",utils.getNodeText1(request,"request-id"))
-			execution.setVariable("CVFMI_source",utils.getNodeText1(request,"source"))
-			execution.setVariable("CVFMI_serviceInstanceId", utils.getNodeText1(request, "service-instance-id"))
-			execution.setVariable("CVFMI_vnfInputs",utils.getNodeXml(request,"vnf-inputs"))
-			//backoutOnFailure
-
-			NetworkUtils networkUtils = new NetworkUtils()
-			execution.setVariable("CVFMI_rollbackEnabled", networkUtils.isRollbackEnabled(execution,request))
-			execution.setVariable("CVFMI_originalWorkflowException", null)
-			def vnfParams = ""
-			if (utils.nodeExists(request, "vnf-params")) {
-				vnfParams = utils.getNodeXml(request,"vnf-params")
-			}
-			execution.setVariable("CVFMI_vnfParams", vnfParams)
-
-			def newVfModuleId = UUID.randomUUID().toString()
-			execution.setVariable("newVfModuleId", newVfModuleId)
-
-			logDebug('RequestInfo: ' + execution.getVariable("CVFMI_requestInfo"), isDebugLogEnabled)
-			logDebug('VnfInputs: ' + execution.getVariable("CVFMI_vnfInputs"), isDebugLogEnabled)
-			logDebug('VnfParams: ' + execution.getVariable("CVFMI_vnfParams"), isDebugLogEnabled)
-			logDebug('rollbackEnabled: ' + execution.getVariable("CVFMI_rollbackEnabled"), isDebugLogEnabled)
-
-			logDebug('Exited ' + method, isDebugLogEnabled)
-		} catch (BpmnError bpmnError) {
-			throw bpmnError
-		} catch (Exception exception) {
-			exceptionUtil.buildAndThrowWorkflowException(execution, 400, "Internal Error - During PreProcessRequest")
-		}
 	}
 
 	/**
@@ -168,16 +258,8 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 		try {
 			def requestInfo = execution.getVariable('CVFMI_requestInfo')
 			def requestId = execution.getVariable('CVFMI_requestId')
-			def source = execution.getVariable('CVFMI_source')
-			def progress = getNodeTextForce(requestInfo, 'progress')
-			if (progress.isEmpty()) {
-				progress = '0'
-			}
-			def startTime = getNodeTextForce(requestInfo, 'start-time')
-			if (startTime.isEmpty()) {
-				startTime = System.currentTimeMillis()
-			}
-
+			def source = execution.getVariable('CVFMI_source')			
+			
 			// RESTResponse (for API Handler (APIH) Reply Task)
 			def newVfModuleId = execution.getVariable("newVfModuleId")
 			String synchResponse = """{"requestReferences":{"instanceId":"${newVfModuleId}","requestId":"${requestId}"}}""".trim()
@@ -202,9 +284,8 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 
 		utils.log("DEBUG", " ======== STARTED PostProcessResponse Process ======== ", isDebugEnabled)
-		try{
-			def request = execution.getVariable("DoCreateVfModuleRequest")
-			def requestInfo = utils.getNodeXml(request, 'request-info', false)
+		try{			
+			def requestInfo = execution.getVariable("CVFMI_requestInfo")
 			def action = utils.getNodeText1(requestInfo, "action")
 
 			utils.log("DEBUG", "requestInfo is: " + requestInfo, isDebugEnabled)
@@ -325,14 +406,16 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 
 		utils.log("DEBUG", " ======== STARTED prepareUpdateInfraRequest Process ======== ", isDebugEnabled)
 		try{
-
-			String vnfInputs = execution.getVariable("CVFMI_vnfInputs")
-			String requestInfo = execution.getVariable("CVFMI_requestInfo")
-			def aicCloudRegion	= utils.getNodeText1(vnfInputs, "aic-cloud-region")
-			def tenantId = utils.getNodeText1(vnfInputs, "tenant-id")
+			
+			
+			String requestInfo = execution.getVariable("CVFMI_requestInfo")			
+			def aicCloudRegion	= execution.getVariable("CVFMI_lcpCloudRegionId")
+			def tenantId = execution.getVariable("CVFMI_tenantId")
 			def requestId = utils.getNodeText1(requestInfo, "request-id")
 			def vnfId = execution.getVariable("CVFMI_vnfId")
 			def vfModuleId = execution.getVariable("CVFMI_vfModuleId")
+			// vfModuleName may be generated by DoCreateVfModule subprocess if it is not specified on the input
+			def vfModuleName = execution.getVariable("CVFMI_vfModuleName")
 
 			def dbAdapterEndpoint = execution.getVariable("URN_mso_adapters_db_endpoint")
 			execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
@@ -364,6 +447,7 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 							<progress>100</progress>
 							<vnfOutputs>&lt;vnf-outputs xmlns="http://org.openecomp/mso/infra/vnf-request/v1" xmlns:aetgt="http://org.openecomp/mso/infra/vnf-request/v1" xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd"&gt;&lt;vnf-id&gt;${vnfId}&lt;/vnf-id&gt;&lt;vf-module-id&gt;${vfModuleId}&lt;/vf-module-id&gt;&lt;/vnf-outputs&gt;</vnfOutputs>
 							<vfModuleId>${vfModuleId}</vfModuleId>
+							<vfModuleName>${vfModuleName}</vfModuleName>
 						</ns:updateInfraRequest>
 					</soapenv:Body>
 				</soapenv:Envelope>"""
@@ -396,9 +480,8 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 
 
 		try {
-			def WorkflowException workflowException = execution.getVariable("WorkflowException")
-			def request = execution.getVariable("DoCreateVfModuleRequest")
-			def requestInformation = utils.getNodeXml(request, 'request-info', false)
+			def WorkflowException workflowException = execution.getVariable("WorkflowException")			
+			def requestInformation = execution.getVariable("CVFMI_requestInfo")
 			def errorResponseCode = workflowException.getErrorCode()
 			def errorResponseMsg = workflowException.getErrorMessage()
 			def encErrorResponseMsg = ""
@@ -458,6 +541,8 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 		execution.setVariable("RollbackCompleted", true)
 
 	}
+	
+	
 
 
 }

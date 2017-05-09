@@ -62,7 +62,7 @@ public class GenericGetServiceTest extends WorkflowTest {
 		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_SuccessIndicator");
 		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_FoundIndicator");
-		String obtainUrl = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainServiceInstanceUrl");
+		String obtainUrl = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainObjectsUrl");
 		String byName = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainServiceInstanceUrlByName");
 		String response = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "WorkflowResponse");
 		String workflowException = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "WorkflowException");
@@ -89,7 +89,7 @@ public class GenericGetServiceTest extends WorkflowTest {
 
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_SuccessIndicator");
 		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_FoundIndicator");
-		String obtainUrl = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainServiceInstanceUrl");
+		String obtainUrl = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainObjectsUrl");
 		String byName = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainServiceInstanceUrlByName");
 		String response = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "WorkflowResponse");
 		String workflowException = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "WorkflowException");
@@ -117,7 +117,7 @@ public class GenericGetServiceTest extends WorkflowTest {
 
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_SuccessIndicator");
 		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_FoundIndicator");
-		String obtainUrl = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainServiceInstanceUrl");
+		String obtainUrl = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainObjectsUrl");
 		String byName = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainServiceInstanceUrlByName");
 		String response = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "WorkflowResponse");
 		String workflowException = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "WorkflowException");
@@ -147,11 +147,11 @@ public class GenericGetServiceTest extends WorkflowTest {
 
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_SuccessIndicator");
 		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_FoundIndicator");
-		String obtainUrl = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainServiceInstanceUrl");
+		String obtainUrl = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainObjectsUrl");
 		String byName = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainServiceInstanceUrlByName");
 		String response = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "WorkflowResponse");
 		String workflowException = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "WorkflowException");
-		String siUrlResponseCode = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainSIUrlResponseCode");
+		String siUrlResponseCode = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_genericQueryResponseCode");
 
 		assertEquals("true", successIndicator);
 		assertEquals("true", found);
@@ -176,7 +176,7 @@ public class GenericGetServiceTest extends WorkflowTest {
 
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_SuccessIndicator");
 		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_FoundIndicator");
-		String obtainUrl = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainServiceInstanceUrl");
+		String obtainUrl = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainObjectsUrl");
 		String byName = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainServiceInstanceUrlByName");
 		String workflowException = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "WorkflowException");
 
@@ -200,7 +200,7 @@ public class GenericGetServiceTest extends WorkflowTest {
 
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_SuccessIndicator");
 		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_FoundIndicator");
-		String obtainUrl = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainServiceInstanceUrl");
+		String obtainUrl = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainObjectsUrl");
 		String byName = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainServiceInstanceUrlByName");
 		String response = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "WorkflowResponse");
 		String workflowException = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "WorkflowException");
@@ -227,7 +227,7 @@ public class GenericGetServiceTest extends WorkflowTest {
 
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_SuccessIndicator");
 		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_FoundIndicator");
-		String obtainUrl = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainServiceInstanceUrl");
+		String obtainUrl = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainObjectsUrl");
 		String byName = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainServiceInstanceUrlByName");
 		String workflowException = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "WorkflowException");
 		String siUrlResponseCode = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainSIUrlResponseCode");
@@ -254,10 +254,10 @@ public class GenericGetServiceTest extends WorkflowTest {
 
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_SuccessIndicator");
 		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_FoundIndicator");
-		String obtainUrl = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainServiceInstanceUrl");
+		String obtainUrl = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainObjectsUrl");
 		String byName = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainServiceInstanceUrlByName");
 		String workflowException = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "WorkflowException");
-		String siUrlResponseCode = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainSIUrlResponseCode");
+		String siUrlResponseCode = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_genericQueryResponseCode");
 
 		assertEquals("true", successIndicator);
 		assertEquals("false", found);
@@ -281,7 +281,7 @@ public class GenericGetServiceTest extends WorkflowTest {
 
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_SuccessIndicator");
 		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_FoundIndicator");
-		String obtainUrl = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainServiceInstanceUrl");
+		String obtainUrl = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainObjectsUrl");
 		String byName = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainServiceInstanceUrlByName");
 		String workflowException = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "WorkflowException");
 
@@ -305,7 +305,7 @@ public class GenericGetServiceTest extends WorkflowTest {
 
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_SuccessIndicator");
 		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_FoundIndicator");
-		String obtainUrl = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainServiceInstanceUrl");
+		String obtainUrl = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainObjectsUrl");
 		String byName = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainServiceInstanceUrlByName");
 		String workflowException = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "WorkflowException");
 		String siUrlResponseCode = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainSIUrlResponseCode");
@@ -332,10 +332,10 @@ public class GenericGetServiceTest extends WorkflowTest {
 
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_SuccessIndicator");
 		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_FoundIndicator");
-		String obtainUrl = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainServiceInstanceUrl");
+		String obtainUrl = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainObjectsUrl");
 		String byName = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainServiceInstanceUrlByName");
 		String workflowException = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "WorkflowException");
-		String siUrlResponseCode = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainSIUrlResponseCode");
+		String siUrlResponseCode = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_genericQueryResponseCode");
 
 		assertEquals("true", successIndicator);
 		assertEquals("false", found);
@@ -359,7 +359,7 @@ public class GenericGetServiceTest extends WorkflowTest {
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_SuccessIndicator");
 		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_FoundIndicator");
 		String workflowException = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "WorkflowException");
-		String obtainUrl = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainServiceInstanceUrl");
+		String obtainUrl = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainObjectsUrl");
 		String byName = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainServiceInstanceUrlByName");
 
 		String expectedWorkflowException = "WorkflowException[processKey=GenericGetService,errorCode=500,errorMessage=Incoming serviceInstanceId and serviceInstanceName are null. ServiceInstanceId or ServiceInstanceName is required to Get a service-instance.]";
@@ -383,7 +383,7 @@ public class GenericGetServiceTest extends WorkflowTest {
 
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_SuccessIndicator");
 		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_FoundIndicator");
-		String obtainUrl = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainServiceInstanceUrl");
+		String obtainUrl = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainObjectsUrl");
 		String byName = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainServiceInstanceUrlByName");
 		String workflowException = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "WorkflowException");
 
@@ -412,7 +412,7 @@ public class GenericGetServiceTest extends WorkflowTest {
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_SuccessIndicator");
 		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_FoundIndicator");
 		String workflowException = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "WorkflowException");
-		String obtainUrl = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainServiceInstanceUrl");
+		String obtainUrl = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainObjectsUrl");
 		String byName = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainServiceInstanceUrlByName");
 
 		String expectedWorkflowException = "WorkflowException[processKey=GenericGetService,errorCode=500,errorMessage=Received a bad response from AAI]";
@@ -439,9 +439,9 @@ public class GenericGetServiceTest extends WorkflowTest {
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_SuccessIndicator");
 		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_FoundIndicator");
 		String workflowException = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "WorkflowException");
-		String obtainUrl = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainServiceInstanceUrl");
+		String obtainUrl = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainObjectsUrl");
 		String byName = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainServiceInstanceUrlByName");
-		String siUrlResponseCode = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainSIUrlResponseCode");
+		String siUrlResponseCode = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_genericQueryResponseCode");
 
 		String expectedWorkflowException = "WorkflowException[processKey=GenericGetService,errorCode=500,errorMessage=Received a bad response from AAI]";
 
@@ -468,7 +468,7 @@ public class GenericGetServiceTest extends WorkflowTest {
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_SuccessIndicator");
 		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_FoundIndicator");
 		String workflowException = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "WorkflowException");
-		String obtainUrl = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainServiceInstanceUrl");
+		String obtainUrl = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainObjectsUrl");
 		String byName = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainServiceInstanceUrlByName");
 		String siUrlResponseCode = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainSIUrlResponseCode");
 

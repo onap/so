@@ -130,11 +130,13 @@ DeleteGenericMacroServiceNetworkVnf.prepareNetworkDelete(execution)]]></bpmn2:sc
         <camunda:in source="disableRollback" target="disableRollback" />
         <camunda:in source="isDebugLogEnabled" target="isDebugLogEnabled" />
         <camunda:in source="serviceInstanceId" target="serviceInstanceId" />
-        <camunda:in source="vnftId" target="vnftId" />
+        <camunda:in source="vnfId" target="vnfId" />
         <camunda:in source="sdncVersion" target="sdncVersion" />
         <camunda:out source="rollbackData" target="rollbackData" />
         <camunda:out source="WorkflowException" target="WorkflowException" />
         <camunda:out source="rolledBack" target="rolledBack" />
+        <camunda:in source="lcpCloudRegionId" target="lcpCloudRegionId" />
+        <camunda:in source="tenantId" target="tenantId" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_1h77psn</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_1dmn40p</bpmn2:outgoing>

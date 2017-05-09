@@ -932,7 +932,7 @@ class SDNCAdapterUtils {
 		if (modelVersionId == null) {
 			modelVersionId = ""
 		}
-		String modelCustomizationUuid = jsonUtil.getJsonValue(jsonModelInfo, "modelCustomizationId")
+		String modelCustomizationUuid = jsonUtil.getJsonValue(jsonModelInfo, "modelCustomizationUuid")
 		String modelCustomizationString = ""
 		if (modelCustomizationUuid != null) {
 			modelCustomizationString = "<model-customization-uuid>${modelCustomizationUuid}</model-customization-uuid>"

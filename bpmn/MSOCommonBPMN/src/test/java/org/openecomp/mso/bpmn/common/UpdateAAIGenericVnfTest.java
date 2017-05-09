@@ -20,11 +20,12 @@
 
 package org.openecomp.mso.bpmn.common;
 
+import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockAAIVfModuleBadPatch;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetGenericVnfByIdWithDepth;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetGenericVnfById_404;
+import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPatchGenericVnf;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPutGenericVnf;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPutGenericVnf_Bad;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPatchGenericVnf;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -144,7 +145,7 @@ public class UpdateAAIGenericVnfTest extends WorkflowTest {
 	@Deployment(resources = {
 			"subprocess/UpdateAAIGenericVnf.bpmn"
 		})
-	public void badPut() throws IOException {
+	public void badPatch() throws IOException {
 		
 		logStart();
 		
@@ -152,6 +153,7 @@ public class UpdateAAIGenericVnfTest extends WorkflowTest {
 		
 		MockGetGenericVnfByIdWithDepth("skask", 1, "VfModularity/GenericVnf.xml");
 		MockPutGenericVnf_Bad("skask", 404);
+		MockAAIVfModuleBadPatch("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/skask", 404);
 		
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<String, Object>();

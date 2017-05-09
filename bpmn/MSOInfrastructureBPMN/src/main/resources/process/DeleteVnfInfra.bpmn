@@ -129,7 +129,7 @@ deleteVnf.prepareCompletionHandlerRequest(execution)]]></bpmn2:script>
     <bpmn2:callActivity id="Task_0ob25pp" name="Delete VNF and Modules" calledElement="DoDeleteVnfAndModules">
       <bpmn2:extensionElements>
         <camunda:in source="isDebugLogEnabled" target="isDebugLogEnabled" />
-        <camunda:in source="DELVI_requestId" target="requestId" />
+        <camunda:in source="DELVI_requestId" target="msoRequestId" />
         <camunda:in source="DELVI_vnfId" target="vnfId" />
         <camunda:in source="DELVI_serviceInstanceId" target="serviceInstanceId" />
         <camunda:in source="DELVI_cloudConfiguration" target="cloudConfiguration" />

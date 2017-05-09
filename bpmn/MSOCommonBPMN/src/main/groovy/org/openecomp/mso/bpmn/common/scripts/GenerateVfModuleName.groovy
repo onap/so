@@ -120,7 +120,11 @@ public class GenerateVfModuleName extends AbstractServiceTaskProcessor{
 							String matchingVfModules = "<vfModules>"
 							for (i in 0..vfModulesSize-1) {
 								def vfModuleXml = groovy.xml.XmlUtil.serialize(vfModules[i])
-								def personaModelIdFromAAI = utils.getNodeText(vfModuleXml, "persona-model-id")
+								def personaModelIdFromAAI = utils.getNodeText(vfModuleXml, "model-invariant-id")
+								if (!personaModelIdFromAAI) {
+									// check old attribute name
+								   personaModelIdFromAAI = utils.getNodeText(vfModuleXml, "persona-model-id")								  
+								}
 								if (personaModelIdFromAAI != null && personaModelIdFromAAI.equals(personaModelId)) {
 									matchingVfModules = matchingVfModules + utils.removeXmlPreamble(vfModuleXml)
 								}							

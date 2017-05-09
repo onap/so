@@ -133,7 +133,7 @@ public class UpdateAAIVfModule extends AbstractServiceTaskProcessor {
 	}
 
 	/**
-	 * Construct and send a PUT request to AAI to update the VF Module.
+	 * Construct and send a PATCH request to AAI to update the VF Module.
 	 *
 	 * @param execution The flow's execution instance.
 	 */
@@ -176,7 +176,11 @@ public class UpdateAAIVfModule extends AbstractServiceTaskProcessor {
 				doPersonaModelVersion = false
 			} else {
 				// Confirm "new" persona-model-id is same as "current" persona-model-id
-				def String currPersonaModelId = utils.getChildNodeText(vfModuleNode, 'persona-model-id')
+				def String currPersonaModelId = utils.getChildNodeText(vfModuleNode, 'model-invariant-id')
+				if (currPersonaModelId == null) {
+					// check the old attribute name
+					currPersonaModelId = utils.getChildNodeText(vfModuleNode, 'model-version-id')
+				}
 				if (currPersonaModelId == null) {
 					currPersonaModelId = ''
 				}

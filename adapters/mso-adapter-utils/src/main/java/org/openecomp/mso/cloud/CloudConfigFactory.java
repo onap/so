@@ -41,6 +41,7 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 
 import org.openecomp.mso.logger.MsoLogger;
+import org.openecomp.mso.openstack.exceptions.MsoCloudIdentityNotFound;
 import org.openecomp.mso.openstack.utils.MsoHeatUtils;
 import org.openecomp.mso.openstack.utils.MsoKeystoneUtils;
 import org.openecomp.mso.openstack.utils.MsoNeutronUtils;
@@ -77,7 +78,7 @@ public class CloudConfigFactory implements Serializable {
         }
     }
 
-    public void initializeCloudConfig (String filePath, int refreshTimer) {
+    public void initializeCloudConfig (String filePath, int refreshTimer) throws MsoCloudIdentityNotFound {
 
         rwl.writeLock ().lock ();
         try {
@@ -94,7 +95,7 @@ public class CloudConfigFactory implements Serializable {
         }
     }
 
-    public void changeMsoPropertiesFilePath (String newMsoPropPath) throws MsoPropertiesException {
+    public void changeMsoPropertiesFilePath (String newMsoPropPath) {
         rwl.writeLock ().lock ();
         try {
             CloudConfigFactory.cloudConfigCache.configFilePath = prefixMsoPropertiesPath + newMsoPropPath;
@@ -109,7 +110,11 @@ public class CloudConfigFactory implements Serializable {
     public CloudConfig getCloudConfig () {
         rwl.readLock ().lock ();
         try {
-            return cloudConfigCache.clone ();
+            if (cloudConfigCache.isValidCloudConfig()) {
+                return cloudConfigCache.clone ();
+            } else {
+                return new CloudConfig();
+            }
         } finally {
             rwl.readLock ().unlock ();
         }
@@ -139,7 +144,10 @@ public class CloudConfigFactory implements Serializable {
             try {
 
                 if (refreshTimer <= 1) {
-                	CloudConfig oldCloudConfig = cloudConfigCache.clone();
+                    CloudConfig oldCloudConfig = null;
+                    if (cloudConfigCache.isValidCloudConfig()) {
+                        oldCloudConfig = cloudConfigCache.clone();
+                    }
                     cloudConfigCache.reloadPropertiesFile ();
                     refreshTimer = cloudConfigCache.refreshTimerInMinutes;
                     if (!cloudConfigCache.equals(oldCloudConfig)) {
@@ -173,19 +181,22 @@ public class CloudConfigFactory implements Serializable {
     @Produces("text/plain")
     public Response showCloudConfig () {
         CloudConfig cloudConfig = this.getCloudConfig ();
-
-        StringBuffer response = new StringBuffer ();
-        response.append ("Cloud Sites:\n");
-        for (CloudSite site : cloudConfig.getCloudSites ().values ()) {
-            response.append (site.toString () + "\n");
+        if (cloudConfig != null) {
+            StringBuffer response = new StringBuffer ();
+            response.append ("Cloud Sites:\n");
+            for (CloudSite site : cloudConfig.getCloudSites ().values ()) {
+                response.append (site.toString () + "\n");
+            }
+    
+            response.append ("\n\nCloud Identity Services:\n");
+            for (CloudIdentity identity : cloudConfig.getIdentityServices ().values ()) {
+                response.append (identity.toString () + "\n");
+            }
+    
+            return Response.status (200).entity (response).build ();
+        } else {
+            return Response.status (500).entity ("Cloud Config has not been loaded properly, this could be due to a bad JSON structure (Check the logs for additional details)").build ();
         }
-
-        response.append ("\n\nCloud Identity Services:\n");
-        for (CloudIdentity identity : cloudConfig.getIdentityServices ().values ()) {
-            response.append (identity.toString () + "\n");
-        }
-
-        return Response.status (200).entity (response).build ();
     }
 
     @GET

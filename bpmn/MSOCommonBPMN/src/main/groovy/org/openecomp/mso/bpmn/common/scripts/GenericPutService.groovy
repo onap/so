@@ -49,6 +49,7 @@ import org.springframework.web.util.UriUtils
  *
  *
  * Incoming Required Variables:
+ * @param - GENPS_requestId
  * @param - GENPS_type - Required field. This will be required field populated as service-instance or service-subscription
  * @param - GENPS_globalSubscriberId - Required field
  * @param - GENPS_serviceType - Required Field
@@ -58,8 +59,7 @@ import org.springframework.web.util.UriUtils
  * @param - GENPS_allottedResourceId - Conditional Field. Required for allotted-resource.
  * @param - GENPS_tunnelXconnectId - Conditional Field. Required for tunnel-xconnect.
  *
- * @param - GENPS_requestId to trace the request id
- * @param - GENPS_serviceResourceVersion optional needs to be provided only in case of update for both service-instance and service subscription. The calling flows
+ * @param - GENPS_serviceResourceVersion - Conditional Field. Needs to be provided only in case of update for both service-instance and service subscription. The calling flows
  *          should check if a service-instance or servic-subscription exists by calling the subflow GenericGetService. if it exists then resourceversion should be
  *          obtained from aai and sent as an input parameter.
  *
@@ -183,7 +183,7 @@ class GenericPutService extends AbstractServiceTaskProcessor{
 			AaiUtil aaiUriUtil = new AaiUtil(this)
 			String aai_uri = aaiUriUtil.getBusinessCustomerUri(execution)
 			logDebug('AAI URI is: ' + aai_uri, isDebugEnabled)
-			String namespace = aaiUriUtil.getNamespaceFromUri(aai_uri)
+			String namespace = aaiUriUtil.getNamespaceFromUri(execution, aai_uri)
 			logDebug('AAI namespace is: ' + namespace, isDebugEnabled)
 
 			String aai_endpoint = execution.getVariable("URN_aai_endpoint")
