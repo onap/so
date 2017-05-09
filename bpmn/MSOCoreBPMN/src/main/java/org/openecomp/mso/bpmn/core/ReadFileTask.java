@@ -24,11 +24,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.stream.Collectors;
 
 import org.camunda.bpm.engine.ProcessEngineException;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.Expression;
-
 import org.openecomp.mso.logger.MsoLogger;
 
 /**
@@ -66,45 +66,21 @@ public class ReadFileTask extends BaseTask {
 				+ "file = " + theFile);
 		}
 
-		Boolean shouldFail = (Boolean) execution.getVariable("shouldFail");
-
-		if (shouldFail != null && shouldFail) {
-			throw new ProcessEngineException(getClass().getSimpleName() + " Failed");
-		}
+        if (shouldFail(execution)) {
+            throw new ProcessEngineException(getTaskName() + " Failed");
+        }
 
 		Object value = execution.getVariable(theInputVariable);
 
 		if (value == null) {
-			InputStream xmlStream = null;
-
-			try {
-				xmlStream = getClass().getResourceAsStream(theFile);
+			try(InputStream xmlStream = getClass().getResourceAsStream(theFile)) {
 
 				if (xmlStream == null) {
 					throw new IOException("Resource not found: " + theFile);
 				}
 
 				BufferedReader reader = new BufferedReader(new InputStreamReader(xmlStream));
-				StringBuilder output = new StringBuilder();
-				String line;
-
-				while ((line = reader.readLine()) != null) {
-					output.append(line);
-				}
-
-				xmlStream.close();
-				xmlStream = null;
-
-				value = output.toString();
-
-			} finally {
-				if (xmlStream != null) {
-					try {
-						xmlStream.close();
-					} catch (Exception e) {
-						// Do nothing
-					}
-				}
+				value = reader.lines().collect(Collectors.joining());
 			}
 		}
 		execution.setVariable(theInputVariable, value);
