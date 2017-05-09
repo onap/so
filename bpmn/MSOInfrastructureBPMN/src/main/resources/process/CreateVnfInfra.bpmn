@@ -23,7 +23,7 @@ createVnf.sendSyncResponse(execution)]]></bpmn2:script>
     <bpmn2:sequenceFlow id="SequenceFlow_3" name="" sourceRef="sendResponse" targetRef="CreateVNF" />
     <bpmn2:callActivity id="CreateVNF" name="Create VNF" calledElement="DoCreateVnf">
       <bpmn2:extensionElements>
-        <camunda:in source="CREVI_requestId" target="requestId" />
+        <camunda:in source="CREVI_requestId" target="msoRequestId" />
         <camunda:in source="isDebugLogEnabled" target="isDebugLogEnabled" />
         <camunda:in source="CREVI_serviceInstanceId" target="serviceInstanceId" />
         <camunda:in source="CREVI_suppressRollback" target="disableRollback" />
@@ -31,12 +31,13 @@ createVnf.sendSyncResponse(execution)]]></bpmn2:script>
         <camunda:in source="CREVI_vnfType" target="vnfType" />
         <camunda:in source="CREVI_vnfName" target="vnfName" />
         <camunda:in source="CREVI_vnfId" target="vnfId" />
-        <camunda:in source="CREVI_cloudConfiguration" target="cloudConfiguration" />
         <camunda:in source="CREVI_serviceId" target="productFamilyId" />
         <camunda:in source="CREVI_vnfInputParameters" target="vnfInputParameters" />
         <camunda:out source="vnfId" target="CREVI_vnfId" />
         <camunda:out source="vnfOutputParameters" target="CREVI_vnfOutputParameters" />
         <camunda:out source="WorkflowException" target="WorkflowException" />
+        <camunda:in source="CREVI_lcpCloudRegionId" target="lcpCloudRegionId" />
+        <camunda:in source="CREVI_tenantId" target="tenandId" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_3</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0lso26t</bpmn2:outgoing>

@@ -24,13 +24,17 @@ package org.openecomp.mso.adapter_utils.tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import org.junit.BeforeClass;
+
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import java.util.Map;
 import org.openecomp.mso.cloud.CloudConfig;
 import org.openecomp.mso.cloud.CloudConfigFactory;
 import org.openecomp.mso.cloud.CloudIdentity;
 import org.openecomp.mso.cloud.CloudSite;
+import org.openecomp.mso.openstack.exceptions.MsoCloudIdentityNotFound;
+
 
 
 /**
@@ -50,9 +54,10 @@ public class CloudConfigTest {
 	/**
     * This method is called before any test occurs.
     * It creates a fake tree from scratch
+	 * @throws MsoCloudIdentityNotFound 
     */
-   @BeforeClass
-   public static final void prepare () {
+   @Before
+   public final void prepare () throws MsoCloudIdentityNotFound {
 	   ClassLoader classLoader = CloudConfigTest.class.getClassLoader();
 	   String config = classLoader.getResource("cloud_config.json").toString().substring(5);
 
@@ -167,6 +172,36 @@ public class CloudConfigTest {
 
 	   CloudIdentity identity2  = con.getIdentityService("Test");
 	   assertNull(identity2);
+   }
+   
+   @Test (expected = MsoCloudIdentityNotFound.class)
+   public final void testLoadWithWrongFile () throws MsoCloudIdentityNotFound {
+       ClassLoader classLoader = CloudConfigTest.class.getClassLoader();
+       String config = classLoader.getResource("cloud_config_bad.json").toString().substring(5);
+
+       cloudConfigFactory.initializeCloudConfig(config,1);
+   }
+   
+   @Test
+   public final void testReloadWithWrongFile () {
+       ClassLoader classLoader = CloudConfigTest.class.getClassLoader();
+       String config = classLoader.getResource("cloud_config_bad.json").toString().substring(5);
+
+       try {
+           cloudConfigFactory.initializeCloudConfig(config,1);
+           Assert.fail("MsoCloudIdentityNotFound was expected");
+       } catch (MsoCloudIdentityNotFound e) {
+           
+       }
+       Assert.assertTrue("Should be an empty CloudConfig", cloudConfigFactory.getCloudConfig().getCloudSites().isEmpty());
+       Assert.assertTrue("Should be an empty CloudConfig", cloudConfigFactory.getCloudConfig().getIdentityServices().isEmpty());
+       
+       // Now reload the right config
+       config = classLoader.getResource("cloud_config.json").toString().substring(5);
+       cloudConfigFactory.changeMsoPropertiesFilePath(config);
+       cloudConfigFactory.reloadCloudConfig();
+       Assert.assertTrue("Flag valid Config should be true now that the cloud_config is correct", cloudConfigFactory.getCloudConfig().isValidCloudConfig());
+
    }
 
 }

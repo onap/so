@@ -67,7 +67,6 @@ import org.springframework.web.util.UriUtils
  *
  *
  * Out Mapping Variables:
- *   @param - GENDV_vnf
  *   @param - GENDV_SuccessIndicator
  *   @param - GENDV_FoundIndicator
  *   @param - WorkflowException

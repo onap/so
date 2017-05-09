@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_Wblj8GyfEeWUWLTvug7ZOg" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.4.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
   <bpmn2:process id="DoDeleteVfModule" name="DoDeleteVfModule" isExecutable="true">
-    <bpmn2:scriptTask id="UpdateAAIVfModulePrep" name="UpdateAAIVfModule
-&#10;Prep" scriptFormat="groovy">
+    <bpmn2:scriptTask id="UpdateAAIVfModulePrep" name="UpdateAAIVfModule&#10;Prep" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_0fp1wqz</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_28</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
@@ -10,8 +9,7 @@ def dvm = new DoDeleteVfModule()
 dvm.prepUpdateAAIVfModule(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_28" name="" sourceRef="UpdateAAIVfModulePrep" targetRef="InvokeUpdateAAIVfModule" />
-    <bpmn2:callActivity id="InvokeUpdateAAIVfModule" name="Invoke
-&#10;UpdateAAIVfModule" calledElement="UpdateAAIVfModule">
+    <bpmn2:callActivity id="InvokeUpdateAAIVfModule" name="Invoke&#10;UpdateAAIVfModule" calledElement="UpdateAAIVfModule">
       <bpmn2:extensionElements>
         <camunda:out source="WorkflowException" target="WorkflowException" />
         <camunda:in source="UpdateAAIVfModuleRequest" target="UpdateAAIVfModuleRequest" />
@@ -21,8 +19,7 @@ dvm.prepUpdateAAIVfModule(execution)]]></bpmn2:script>
       <bpmn2:outgoing>SequenceFlow_31</bpmn2:outgoing>
     </bpmn2:callActivity>
     <bpmn2:sequenceFlow id="SequenceFlow_31" name="" sourceRef="InvokeUpdateAAIVfModule" targetRef="SDNCAdapterPrep2" />
-    <bpmn2:callActivity id="InvokePrepareUpdateAAIVfModule" name="Invoke
-&#10;PrepareUpdateAAIVfModule" calledElement="PrepareUpdateAAIVfModule">
+    <bpmn2:callActivity id="InvokePrepareUpdateAAIVfModule" name="Invoke&#10;PrepareUpdateAAIVfModule" calledElement="PrepareUpdateAAIVfModule">
       <bpmn2:extensionElements>
         <camunda:in source="PrepareUpdateAAIVfModuleRequest" target="PrepareUpdateAAIVfModuleRequest" />
         <camunda:out source="WorkflowException" target="WorkflowException" />
@@ -34,8 +31,7 @@ dvm.prepUpdateAAIVfModule(execution)]]></bpmn2:script>
       <bpmn2:outgoing>SequenceFlow_1j9dvfx</bpmn2:outgoing>
     </bpmn2:callActivity>
     <bpmn2:sequenceFlow id="SequenceFlow_4" name="" sourceRef="VNFAdapterPrep" targetRef="InvokeVNFAdapterRestV1" />
-    <bpmn2:callActivity id="InvokeSDNCAdapterV1_2" name="Invoke
-&#10;SDNCAdapterV1" calledElement="sdncAdapter">
+    <bpmn2:callActivity id="InvokeSDNCAdapterV1_2" name="Invoke&#10;SDNCAdapterV1" calledElement="sdncAdapter">
       <bpmn2:extensionElements>
         <camunda:out source="WorkflowException" target="WorkflowException" />
         <camunda:in source="sdncAdapterWorkflowRequest" target="sdncAdapterWorkflowRequest" />
@@ -49,16 +45,14 @@ dvm.prepUpdateAAIVfModule(execution)]]></bpmn2:script>
       <bpmn2:outgoing>SequenceFlow_33</bpmn2:outgoing>
     </bpmn2:callActivity>
     <bpmn2:sequenceFlow id="SequenceFlow_33" name="" sourceRef="InvokeSDNCAdapterV1_2" targetRef="validateSDNCResponse" />
-    <bpmn2:scriptTask id="VNFAdapterPrep" name="VNFAdapter
-&#10;Prep" scriptFormat="groovy">
+    <bpmn2:scriptTask id="VNFAdapterPrep" name="VNFAdapter&#10;Prep" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_1j9dvfx</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_4</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
 def dvm = new DoDeleteVfModule()
 dvm.prepVNFAdapterRequest(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
-    <bpmn2:scriptTask id="SDNCAdapterPrep2" name="SDNCAdapter
-&#10;Prep" scriptFormat="groovy">
+    <bpmn2:scriptTask id="SDNCAdapterPrep2" name="SDNCAdapter&#10;Prep" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_31</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_32</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
@@ -66,8 +60,7 @@ def dvm = new DoDeleteVfModule()
 dvm.prepSDNCAdapterRequest(execution, "delete")]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_32" name="" sourceRef="SDNCAdapterPrep2" targetRef="InvokeSDNCAdapterV1_2" />
-    <bpmn2:callActivity id="InvokeVNFAdapterRestV1" name="Invoke
-&#10;VNFAdapterRestV1" calledElement="vnfAdapterRestV1">
+    <bpmn2:callActivity id="InvokeVNFAdapterRestV1" name="Invoke&#10;VNFAdapterRestV1" calledElement="vnfAdapterRestV1">
       <bpmn2:extensionElements>
         <camunda:out source="WorkflowException" target="WorkflowException" />
         <camunda:in source="vnfAdapterRestV1Request" target="vnfAdapterRestV1Request" />
@@ -82,8 +75,7 @@ dvm.prepSDNCAdapterRequest(execution, "delete")]]></bpmn2:script>
     <bpmn2:endEvent id="EndEvent_9">
       <bpmn2:incoming>SequenceFlow_35</bpmn2:incoming>
     </bpmn2:endEvent>
-    <bpmn2:callActivity id="InvokeDeleteAAIVfModule" name="Invoke
-&#10;DeleteAAIVfModule" calledElement="DeleteAAIVfModule">
+    <bpmn2:callActivity id="InvokeDeleteAAIVfModule" name="Invoke&#10;DeleteAAIVfModule" calledElement="DeleteAAIVfModule">
       <bpmn2:extensionElements>
         <camunda:in source="DeleteAAIVfModuleRequest" target="DeleteAAIVfModuleRequest" />
         <camunda:in source="isVidRequest" target="isVidRequest" />
@@ -94,8 +86,7 @@ dvm.prepSDNCAdapterRequest(execution, "delete")]]></bpmn2:script>
       <bpmn2:outgoing>SequenceFlow_35</bpmn2:outgoing>
     </bpmn2:callActivity>
     <bpmn2:sequenceFlow id="SequenceFlow_35" name="" sourceRef="InvokeDeleteAAIVfModule" targetRef="EndEvent_9" />
-    <bpmn2:scriptTask id="DeleteAAIVfModulePrep" name="DeleteAAIVfModule
-&#10;Prep" scriptFormat="groovy">
+    <bpmn2:scriptTask id="DeleteAAIVfModulePrep" name="DeleteAAIVfModule&#10;Prep" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_2</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_34</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*

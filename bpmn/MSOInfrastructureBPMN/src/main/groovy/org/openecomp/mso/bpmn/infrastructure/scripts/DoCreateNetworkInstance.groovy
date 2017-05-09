@@ -322,7 +322,6 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 		String networkInputs  = execution.getVariable(Prefix + "networkInputs")
 		String networkName   = utils.getNodeText1(networkInputs, "network-name")
 		networkName = UriUtils.encode(networkName,"UTF-8")
-		String messageId = execution.getVariable("messageId")
 
 		// Prepare AA&I url with network-name
 		String aai_endpoint = execution.getVariable("URN_aai_endpoint")
@@ -333,14 +332,8 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 		execution.setVariable(Prefix + "queryNameAAIRequest", queryAAINameRequest)
 		utils.log("DEBUG", Prefix + "queryNameAAIRequest - " + "\n" + queryAAINameRequest, isDebugEnabled)
 
-		RESTConfig config = new RESTConfig(queryAAINameRequest);
-
 		try {
-			RESTClient client = new RESTClient(config).addHeader("X-TransactionId", messageId)
-													  .addHeader("X-FromAppId", "MSO")
-													  .addHeader("Content-Type", "application/xml")
-													  .addHeader("Accept","application/xml");
-			APIResponse response = client.get()
+			APIResponse response = aaiUriUtil.executeAAIGetCall(execution, queryAAINameRequest)
 			String returnCode = response.getStatusCode()
 			execution.setVariable(Prefix + "aaiNameReturnCode", returnCode)
 			utils.log("DEBUG", " ***** AAI Query Name Response Code  : " + returnCode, isDebugEnabled)
@@ -483,7 +476,6 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			execution.setVariable(Prefix + "networkName", networkName)
 			
 			networkId = UriUtils.encode(networkId,"UTF-8")
-			String messageId = execution.getVariable(Prefix + "messageId")
 
 			// Prepare AA&I url
 			String aai_endpoint = execution.getVariable("URN_aai_endpoint")
@@ -494,12 +486,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			execution.setVariable(Prefix + "queryIdAAIRequest", queryIdAAIRequest)
 			utils.log("DEBUG", Prefix + "queryIdAAIRequest - " + "\n" + queryIdAAIRequest, isDebugEnabled)
 
-			RESTConfig config = new RESTConfig(queryIdAAIRequest);
-			RESTClient client = new RESTClient(config).addHeader("X-TransactionId", messageId)
-													  .addHeader("X-FromAppId", "MSO")
-													  .addHeader("Content-Type", "application/xml")
-													  .addHeader("Accept","application/xml");
-			APIResponse response = client.get()
+			APIResponse response = aaiUriUtil.executeAAIGetCall(execution, queryIdAAIRequest)
 			String returnCode = response.getStatusCode()
 			execution.setVariable(Prefix + "aaiIdReturnCode", returnCode)
 
@@ -562,7 +549,6 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			String networkId   = execution.getVariable(Prefix + "networkId")
 			String netId = networkId 
 			networkId = UriUtils.encode(networkId,"UTF-8")
-			String messageId = execution.getVariable(Prefix + "messageId")
 
 			// Prepare AA&I url
 			String aai_endpoint = execution.getVariable("URN_aai_endpoint")
@@ -573,12 +559,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			execution.setVariable(Prefix + "requeryIdAAIRequest", requeryIdAAIRequest)
 			utils.log("DEBUG", Prefix + "requeryIdAAIRequest - " + "\n" + requeryIdAAIRequest, isDebugEnabled)
 
-			RESTConfig config = new RESTConfig(requeryIdAAIRequest);
-			RESTClient client = new RESTClient(config).addHeader("X-TransactionId", messageId)
-													  .addHeader("X-FromAppId", "MSO")
-													  .addHeader("Content-Type", "application/xml")
-													  .addHeader("Accept","application/xml");
-			APIResponse response = client.get()
+			APIResponse response = aaiUriUtil.executeAAIGetCall(execution, requeryIdAAIRequest)
 			String returnCode = response.getStatusCode()
 			execution.setVariable(Prefix + "aaiRequeryIdReturnCode", returnCode)
 			utils.log("DEBUG", " ***** AAI ReQuery Response Code  : " + returnCode, isDebugEnabled)
@@ -642,7 +623,6 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 		try {
 
 			// get variables
-			String messageId = execution.getVariable(Prefix + "messageId")
 			String queryIdAAIResponse   = execution.getVariable(Prefix + "queryIdAAIResponse").replace('<?xml version="1.0" encoding="UTF-8"?>', "")
 			String relationship = networkUtils.getFirstNodeXml(queryIdAAIResponse, "relationship-list").trim().replace("tag0:","").replace(":tag0","")
 			utils.log("DEBUG", " relationship - " + relationship, isDebugEnabled)
@@ -693,12 +673,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 					execution.setVariable(Prefix + "queryVpnBindingAAIRequest", queryVpnBindingAAIRequest)
 					utils.log("DEBUG", Prefix + "queryVpnBindingAAIRequest, , vpnBinding #" + counting + " : " + "\n" + queryVpnBindingAAIRequest, isDebugEnabled)
 
-					RESTConfig config = new RESTConfig(queryVpnBindingAAIRequest);
-					RESTClient client = new RESTClient(config).addHeader("X-TransactionId", messageId)
-															  .addHeader("X-FromAppId", "MSO")
-															  .addHeader("Content-Type", "application/xml")
-															  .addHeader("Accept","application/xml");
-					APIResponse response = client.get()
+					APIResponse response = aaiUriUtil.executeAAIGetCall(execution, queryVpnBindingAAIRequest)
 					String returnCode = response.getStatusCode()
 					execution.setVariable(Prefix + "aaiQqueryVpnBindingReturnCode", returnCode)
 					utils.log("DEBUG", " ***** AAI query vpn binding Response Code, vpnBinding #" + counting + " : " + returnCode, isDebugEnabled)
@@ -747,7 +722,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 				// reset return code to success
 				execution.setVariable(Prefix + "aaiQqueryVpnBindingReturnCode", "200")
 			    String aai_uri = aaiUriUtil.getNetworkL3NetworkUri(execution)
-				String schemaVersion = aaiUriUtil.getNamespaceFromUri(aai_uri)
+				String schemaVersion = aaiUriUtil.getNamespaceFromUri(execution, aai_uri)
 			    String aaiStubResponse =
 					"""	<rest:payload contentType="text/xml" xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd">
 							<vpn-binding xmlns="${schemaVersion}">
@@ -781,7 +756,6 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 
 		try {
 			// get variables
-			String messageId = execution.getVariable(Prefix + "messageId")
 			String queryIdAAIResponse   = execution.getVariable(Prefix + "queryIdAAIResponse").replace('<?xml version="1.0" encoding="UTF-8"?>', "")
 			String relationship = networkUtils.getFirstNodeXml(queryIdAAIResponse, "relationship-list").trim().replace("tag0:","").replace(":tag0","")
 			utils.log("DEBUG", " relationship - " + relationship, isDebugEnabled)
@@ -835,12 +809,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 					execution.setVariable(Prefix + "queryNetworkPolicyAAIRequest", queryNetworkPolicyAAIRequest)
 					utils.log("DEBUG", Prefix + "queryNetworkPolicyAAIRequest, , NetworkPolicy #" + counting + " : " + "\n" + queryNetworkPolicyAAIRequest, isDebugEnabled)
 
-					RESTConfig config = new RESTConfig(queryNetworkPolicyAAIRequest);
-					RESTClient client = new RESTClient(config).addHeader("X-TransactionId", messageId)
-															  .addHeader("X-FromAppId", "MSO")
-															  .addHeader("Content-Type", "application/xml")
-															  .addHeader("Accept","application/xml");
-					APIResponse response = client.get()
+					APIResponse response = aaiUriUtil.executeAAIGetCall(execution, queryNetworkPolicyAAIRequest)
 					String returnCode = response.getStatusCode()
 					execution.setVariable(Prefix + "aaiQqueryNetworkPolicyReturnCode", returnCode)
 					utils.log("DEBUG", " ***** AAI query network policy Response Code, NetworkPolicy #" + counting + " : " + returnCode, isDebugEnabled)
@@ -889,7 +858,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 				// reset return code to success
 				execution.setVariable(Prefix + "aaiQqueryNetworkPolicyReturnCode", "200")
 				String aai_uri = aaiUriUtil.getNetworkL3NetworkUri(execution)
-				String schemaVersion = aaiUriUtil.getNamespaceFromUri(aai_uri)
+				String schemaVersion = aaiUriUtil.getNamespaceFromUri(execution, aai_uri)
 				String aaiStubResponse =
 					"""	<rest:payload contentType="text/xml" xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd">
 							<network-policy xmlns="${schemaVersion}">
@@ -923,7 +892,6 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 
 		try {
 			// get variables
-			String messageId = execution.getVariable(Prefix + "messageId")
 			String queryIdAAIResponse   = execution.getVariable(Prefix + "queryIdAAIResponse").replace('<?xml version="1.0" encoding="UTF-8"?>', "")
 			String relationship = networkUtils.getFirstNodeXml(queryIdAAIResponse, "relationship-list").trim().replace("tag0:","").replace(":tag0","")
 			utils.log("DEBUG", " relationship - " + relationship, isDebugEnabled)
@@ -977,12 +945,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 					execution.setVariable(Prefix + "queryNetworkTableRefAAIRequest", queryNetworkTableRefAAIRequest)
 					utils.log("DEBUG", Prefix + "queryNetworkTableRefAAIRequest, , NetworkTableRef #" + counting + " : " + "\n" + queryNetworkTableRefAAIRequest, isDebugEnabled)
 
-					RESTConfig config = new RESTConfig(queryNetworkTableRefAAIRequest);
-					RESTClient client = new RESTClient(config).addHeader("X-TransactionId", messageId)
-															  .addHeader("X-FromAppId", "MSO")
-															  .addHeader("Content-Type", "application/xml")
-															  .addHeader("Accept","application/xml");
-					APIResponse response = client.get()
+					APIResponse response = aaiUriUtil.executeAAIGetCall(execution, queryNetworkTableRefAAIRequest)
 					String returnCode = response.getStatusCode()
 					execution.setVariable(Prefix + "aaiQqueryNetworkTableRefReturnCode", returnCode)
 					utils.log("DEBUG", " ***** AAI query network Table Reference Response Code, NetworkTableRef #" + counting + " : " + returnCode, isDebugEnabled)
@@ -1031,7 +994,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 				// reset return code to success
 				execution.setVariable(Prefix + "aaiQqueryNetworkTableRefReturnCode", "200")
 				String aai_uri = aaiUriUtil.getNetworkL3NetworkUri(execution)
-				String schemaVersion = aaiUriUtil.getNamespaceFromUri(aai_uri)
+				String schemaVersion = aaiUriUtil.getNamespaceFromUri(execution, aai_uri)
 				String aaiStubResponse =
 					"""	<rest:payload contentType="text/xml" xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd">
 							<route-table-references xmlns="${schemaVersion}">
@@ -1070,7 +1033,6 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			networkId = UriUtils.encode(networkId,"UTF-8")
 			String requeryIdAAIResponse   = execution.getVariable(Prefix + "requeryIdAAIResponse")
 			String createNetworkResponse   = execution.getVariable(Prefix + "createNetworkResponse")
-			String messageId = execution.getVariable(Prefix + "messageId")
 
 			// Prepare url
 			String aai_endpoint = execution.getVariable("URN_aai_endpoint")
@@ -1083,7 +1045,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			utils.log("DEBUG", Prefix + "updateContrailAAIUrlRequest - " + "\n" + updateContrailAAIUrlRequest, isDebugEnabled)
 
 			//Prepare payload (PUT)
-			String schemaVersion = aaiUriUtil.getNamespaceFromUri(aai_uri)
+			String schemaVersion = aaiUriUtil.getNamespaceFromUri(execution, aai_uri)
 			String payload = networkUtils.ContrailNetworkCreatedUpdate(requeryIdAAIResponse, createNetworkResponse, schemaVersion)
 			String payloadXml = utils.formatXml(payload)
 			utils.logAudit(payloadXml)
@@ -1096,7 +1058,6 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			execution.setVariable(Prefix + "aaiUpdateContrailReturnCode", returnCode)
 			utils.log("DEBUG", " ***** AAI Update Contrail Response Code  : " + returnCode, isDebugEnabled)
 			String aaiUpdateContrailResponseAsString = response.getResponseBodyAsString()
-
 			if (returnCode=='200') {
 				utils.logAudit(aaiUpdateContrailResponseAsString)
 				execution.setVariable(Prefix + "updateContrailAAIResponse", aaiUpdateContrailResponseAsString)
@@ -1125,7 +1086,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 							// aai all errors
 							String errorMessage = "Unexpected Response from UpdateContrailAAINetwork - " + returnCode
 							utils.log("DEBUG", errorMessage, isDebugEnabled)
-							exceptionUtil.buildAndThrowWorkflowException(execution, "2500", errorMessage)
+							exceptionUtil.buildAndThrowWorkflowException(execution, 2500, errorMessage)
 					  }
 				}
 			}

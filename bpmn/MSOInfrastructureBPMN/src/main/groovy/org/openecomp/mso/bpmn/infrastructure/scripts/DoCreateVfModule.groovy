@@ -140,7 +140,7 @@ public class DoCreateVfModule extends VfModuleBase {
 				def requestId = execution.getVariable("msoRequestId")
 				execution.setVariable("DCVFM_requestId", requestId)
 				logDebug("requestId: " + requestId, isDebugLogEnabled)
-				// Set mso-request-id to request-id for VNF Adapter interface				
+				// Set mso-request-id to request-id for VNF Adapter interface
 				execution.setVariable("mso-request-id", requestId)
 				//serviceId
 				def serviceId = execution.getVariable("serviceId")
@@ -175,7 +175,7 @@ public class DoCreateVfModule extends VfModuleBase {
 				//personaModelId
 				execution.setVariable("DCVFM_personaModelId", jsonUtil.getJsonValue(vfModuleModelInfo, "modelInvariantId"))
 				//personaModelVersion
-				execution.setVariable("DCVFM_personaModelVersion", jsonUtil.getJsonValue(vfModuleModelInfo, "modelVersion"))
+				execution.setVariable("DCVFM_personaModelVersion", jsonUtil.getJsonValue(vfModuleModelInfo, "modelVersionId"))
 				//vfModuleLabel
 				def vfModuleLabel = execution.getVariable("vfModuleLabel")
 				if (vfModuleLabel != null) {
@@ -665,7 +665,7 @@ public class DoCreateVfModule extends VfModuleBase {
 			
 			String uuid = execution.getVariable('testReqId') // for junits
 			if(uuid==null){
-				uuid = execution.getVariable("mso-request-id") + "-" + System.currentTimeMillis()
+				uuid = execution.getVariable("mso-request-id") + "-" +  System.currentTimeMillis()
 			}
 					
 			def callbackUrl = execution.getVariable("DCVFM_sdncCallbackUrl")
@@ -679,6 +679,14 @@ public class DoCreateVfModule extends VfModuleBase {
 			}
 			else {
 				svcInstId = serviceInstanceId
+			}
+			
+			def msoAction = ""
+			if (!sdncVersion.equals("1707")) {
+				msoAction = "mobility"
+			}
+			else {
+				msoAction = "vfmodule"
 			}
 			// For VNF, serviceOperation (URI for topology GET) will be retrieved from "selflink" element 
 			// in the response from GenericGetVnf
@@ -723,7 +731,7 @@ public class DoCreateVfModule extends VfModuleBase {
 					<sdncadapter:SvcAction>query</sdncadapter:SvcAction>
 					<sdncadapter:SvcOperation>${serviceOperation}</sdncadapter:SvcOperation>
 					<sdncadapter:CallbackUrl>${callbackUrl}</sdncadapter:CallbackUrl>
-					<sdncadapter:MsoAction>mobility</sdncadapter:MsoAction>
+					<sdncadapter:MsoAction>${msoAction}</sdncadapter:MsoAction>
 				</sdncadapter:RequestHeader>
 					<sdncadapterworkflow:SDNCRequestData></sdncadapterworkflow:SDNCRequestData>
 				</sdncadapterworkflow:SDNCAdapterWorkflowRequest>"""
@@ -1014,9 +1022,9 @@ public class DoCreateVfModule extends VfModuleBase {
 		if (!sdncVersion.equals("1707")) {
 
 			sdncRequest =
-        """<sdncadapterworkflow:SDNCAdapterWorkflowRequest xmlns:ns5="http://org.openecomp/mso/request/types/v1"
-                                                    xmlns:sdncadapterworkflow="http://org.openecomp/mso/workflow/schema/v1"
-                                                    xmlns:sdncadapter="http://org.openecomp/workflow/sdnc/adapter/schema/v1">
+		"""<sdncadapterworkflow:SDNCAdapterWorkflowRequest xmlns:ns5="http://org.openecomp/mso/request/types/v1"
+													xmlns:sdncadapterworkflow="http://org.openecomp/mso/workflow/schema/v1"
+													xmlns:sdncadapter="http://org.openecomp/workflow/sdnc/adapter/schema/v1">
 	   <sdncadapter:RequestHeader>
 				<sdncadapter:RequestId>${requestId}</sdncadapter:RequestId>
 				<sdncadapter:SvcInstanceId>${svcInstId}</sdncadapter:SvcInstanceId>
@@ -1057,14 +1065,14 @@ public class DoCreateVfModule extends VfModuleBase {
 		else {	
 			
 			sdncRequest =
-        """<sdncadapterworkflow:SDNCAdapterWorkflowRequest xmlns:ns5="http://org.openecomp/mso/request/types/v1"
-                                                    xmlns:sdncadapterworkflow="http://org.openecomp/mso/workflow/schema/v1"
-                                                    xmlns:sdncadapter="http://org.openecomp/workflow/sdnc/adapter/schema/v1">
+			"""<sdncadapterworkflow:SDNCAdapterWorkflowRequest xmlns:ns5="http://org.openecomp/mso/request/types/v1"
+													xmlns:sdncadapterworkflow="http://org.openecomp/mso/workflow/schema/v1"
+													xmlns:sdncadapter="http://org.openecomp/workflow/sdnc/adapter/schema/v1">
 	   <sdncadapter:RequestHeader>
 				<sdncadapter:RequestId>${requestId}</sdncadapter:RequestId>
 				<sdncadapter:SvcInstanceId>${svcInstId}</sdncadapter:SvcInstanceId>
 				<sdncadapter:SvcAction>${action}</sdncadapter:SvcAction>
-				<sdncadapter:SvcOperation>vnf-topology-operation</sdncadapter:SvcOperation>
+				<sdncadapter:SvcOperation>vf-module-topology-operation</sdncadapter:SvcOperation>
 				<sdncadapter:CallbackUrl>${callbackURL}</sdncadapter:CallbackUrl>
 				<sdncadapter:MsoAction>generic-resource</sdncadapter:MsoAction>
 		</sdncadapter:RequestHeader>
@@ -1081,10 +1089,7 @@ public class DoCreateVfModule extends VfModuleBase {
 			${serviceEcompModelInformation}
 			<service-instance-id>${svcInstId}</service-instance-id>
 			<global-customer-id>${globalSubscriberId}</global-customer-id>			
-		</service-information>
-		<vnf-request-information>
-			<vnf-type>${vfModuleModelName}</vnf-type>
-		</vnf-request-information>
+		</service-information>		
 		<vnf-information>
 			<vnf-id>${vnfId}</vnf-id>
 			<vnf-type>${vnfType}</vnf-type>
@@ -1095,11 +1100,10 @@ public class DoCreateVfModule extends VfModuleBase {
 			<vf-module-type>${vfModuleModelName}</vf-module-type>
 			${vfModuleEcompModelInformation}			
 		</vf-module-information>
-		<vf-module-request-input>
-			<request-version>${sdncVersion}</request-version>
+		<vf-module-request-input>			
 			<vf-module-name>${vfModuleName}</vf-module-name>
 			<tenant>${tenantId}</tenant>
-			<aic-cloud-region>${cloudSiteId}</aic-cloud-region>				
+			<aic-cloud-region>${cloudSiteId}</aic-cloud-region>			
 		${sdncVNFParamsXml}
 		</vf-module-request-input>
 	  </sdncadapterworkflow:SDNCRequestData>
@@ -1142,8 +1146,7 @@ public class DoCreateVfModule extends VfModuleBase {
 			<vf-module-type>${vfModuleModelName}</vf-module-type>
 			${vfModuleEcompModelInformation}			
 		</vf-module-information>
-		<vf-module-request-input>
-			<request-version>${sdncVersion}</request-version>
+		<vf-module-request-input>			
 			<vf-module-name>${vfModuleName}</vf-module-name>
 			<tenant>${tenantId}</tenant>
 			<aic-cloud-region>${cloudSiteId}</aic-cloud-region>				
@@ -1662,7 +1665,7 @@ public class DoCreateVfModule extends VfModuleBase {
 						   def networkPolicyId = UUID.randomUUID().toString()
 						   logDebug("Adding network-policy with network-policy-id " + networkPolicyId, isDebugLogEnabled)
 
-						   String aaiNamespace = aaiUriUtil.getNamespaceFromUri(aai_uri)
+						   String aaiNamespace = aaiUriUtil.getNamespaceFromUri(execution, aai_uri)
 						   logDebug('AAI namespace is: ' + aaiNamespace, isDebugLogEnabled)
 						   String payload = """<network-policy xmlns="${aaiNamespace}">
 							   	<network-policy-id>${networkPolicyId}</network-policy-id>

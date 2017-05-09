@@ -36,7 +36,6 @@ import org.springframework.web.util.UriUtils
 public class DoUpdateVfModule extends VfModuleBase {
 
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
-	JsonUtils jsonUtil = new JsonUtils()
 
 	/**
 	 * Initialize the flow's variables.
@@ -220,16 +219,18 @@ public class DoUpdateVfModule extends VfModuleBase {
 				String vnfQueryPath = execution.getVariable("vnfQueryPath")
 				execution.setVariable("DOUPVfMod_vnfQueryPath", vnfQueryPath)
 				logDebug("vnfQueryPath: " + vnfQueryPath, isDebugLogEnabled)
-
-				String vnfParamsChildNodes = execution.getVariable("vfModuleInputParams")
-				execution.setVariable('DOUPVfMod_vnfParams', vnfParamsChildNodes)
+				
+				Map<String,String> vfModuleInputParams = execution.getVariable("vfModuleInputParams")
+				if (vfModuleInputParams != null) {
+					execution.setVariable("DOUPVfMod_vnfParamsMap", vfModuleInputParams)					
+				}				
 			}
 			else {
 
 				def requestInfo = getRequiredNodeXml(execution, xml, 'request-info')
 				execution.setVariable('DOUPVfMod_requestInfo', requestInfo)
 				execution.setVariable('DOUPVfMod_requestId', getRequiredNodeText(execution, requestInfo, 'request-id'))
-			def serviceInstanceId = execution.getVariable('mso-service-instance-id')
+				def serviceInstanceId = execution.getVariable('mso-service-instance-id')
 				if (serviceInstanceId == null) {
 					serviceInstanceId = ''
 				}
@@ -523,20 +524,19 @@ public class DoUpdateVfModule extends VfModuleBase {
 			def asdcServiceModelVersion = execution.getVariable('DOUPVfMod_asdcServiceModelVersion')
 			def modelCustomizationUuid = execution.getVariable('DOUPVfMod_modelCustomizationUuid')
 			def backoutOnFailure = execution.getVariable("DOUPVfMod_backoutOnFailure")
-
-			def vnfParamsXml = execution.getVariable('DOUPVfMod_vnfParams')
-			def vfModuleParamsEntries = transformParamsToEntries(vnfParamsXml)
-
+			
 			def messageId = execution.getVariable('mso-request-id') + '-' + System.currentTimeMillis()
 			def notificationUrl = createCallbackURL(execution, "VNFAResponse", messageId)
 			def useQualifiedHostName = execution.getVariable("URN_mso_use_qualified_host")
 			if ('true'.equals(useQualifiedHostName)) {
 					notificationUrl = utils.getQualifiedHostNameForCallback(notificationUrl)
 			}
+			
+			Map<String, String> vnfParamsMap = execution.getVariable("DOUPVfMod_vnfParamsMap")
 
 			String sdncGetResponse = execution.getVariable('DOUPVfMod_sdncTopologyResponse')
 
-			String vfModuleParams = buildVfModuleParams(vfModuleParamsEntries, sdncGetResponse, vnfId, vnfName,
+			String vfModuleParams = buildVfModuleParams(vnfParamsMap, sdncGetResponse, vnfId, vnfName,
 					vfModuleId, vfModuleName, null)
 
 
@@ -605,8 +605,8 @@ public class DoUpdateVfModule extends VfModuleBase {
 					' because either \'vnf-persona-model-id\' or \'vnf-persona-model-version\' is absent', isDebugLogEnabled)
 				execution.setVariable('DOUPVfMod_skipUpdateGenericVnf', true)
 			} else {
-				def personaModelIdElement = '<persona-model-id>' + personaModelId + '</persona-model-id>'
-				def personaModelVersionElement = '<persona-model-version>' + personaModelVersion + '</persona-model-version>'
+				def personaModelIdElement = '<model-invariant-id>' + personaModelId + '</model-invariant-id>'
+				def personaModelVersionElement = '<model-version-id>' + personaModelVersion + '</model-version-id>'
 
 				String updateAAIGenericVnfRequest = """
 					<UpdateAAIGenericVnfRequest>
@@ -656,12 +656,12 @@ public class DoUpdateVfModule extends VfModuleBase {
 			def personaModelIdElement = ''
 			def personaModelId = utils.getNodeText1(vnfInputs, 'persona-model-id')
 			if (personaModelId != null) {
-				personaModelIdElement = '<persona-model-id>' + personaModelId + '</persona-model-id>'
+				personaModelIdElement = '<model-invariant-id>' + personaModelId + '</model-invariant-id>'
 			}
 			def personaModelVersionElement = ''
 			def personaModelVersion = utils.getNodeText1(vnfInputs, 'persona-model-version')
 			if (personaModelVersion != null) {
-				personaModelVersionElement = '<persona-model-version>' + personaModelVersion + '</persona-model-version>'
+				personaModelVersionElement = '<model-version-id>' + personaModelVersion + '</model-version-id>'
 			}
 			def contrailServiceInstanceFqdnElement = ''
 			def contrailServiceInstanceFqdn = utils.getNodeText1(vnfInputs, 'contrail-service-instance-fqdn')
@@ -686,6 +686,8 @@ public class DoUpdateVfModule extends VfModuleBase {
 					${personaModelCustomizationIdElement}
 				</UpdateAAIVfModuleRequest>
 			"""
+			
+			logDebug('Unformatted updateAAIVfModuleRequest: ' + updateAAIVfModuleRequest, isDebugLogEnabled)
 			updateAAIVfModuleRequest = utils.formatXml(updateAAIVfModuleRequest)
 			execution.setVariable('DOUPVfMod_updateAAIVfModuleRequest', updateAAIVfModuleRequest)
 			utils.logAudit("updateAAIVfModuleRequest : " + updateAAIVfModuleRequest)

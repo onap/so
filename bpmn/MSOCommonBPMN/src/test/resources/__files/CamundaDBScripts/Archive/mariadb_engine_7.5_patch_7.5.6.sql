@@ -1,4 +1,3 @@
--- Fix for https://itrack.web.att.com/browse/AJSCCMDA-90 --
 use camundabpmn;
 /*
  1.  Add some Camunda Indexes to history schema part (for Archiving)

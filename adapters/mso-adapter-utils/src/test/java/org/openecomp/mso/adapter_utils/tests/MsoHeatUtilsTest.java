@@ -27,6 +27,7 @@ import org.junit.Test;
 
 import org.openecomp.mso.cloud.CloudConfigFactory;
 import org.openecomp.mso.openstack.exceptions.MsoAdapterException;
+import org.openecomp.mso.openstack.exceptions.MsoCloudIdentityNotFound;
 import org.openecomp.mso.openstack.exceptions.MsoCloudSiteNotFound;
 import org.openecomp.mso.openstack.exceptions.MsoException;
 import org.openecomp.mso.openstack.exceptions.MsoIOException;
@@ -49,7 +50,7 @@ public class MsoHeatUtilsTest extends MsoCommonUtils {
 	public static MsoHeatUtils msoHeatUtils;
 
 	@BeforeClass
-	public static final void loadClasses() {
+	public static final void loadClasses() throws MsoCloudIdentityNotFound {
 		ClassLoader classLoader = CloudConfigTest.class.getClassLoader();
 		String config = classLoader.getResource("cloud_config.json").toString().substring(5);
 		cloudConfigFactory.initializeCloudConfig(config, 1);

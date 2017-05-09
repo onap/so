@@ -72,7 +72,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 		execution.setVariable("DCVFMR_cloudSiteId", cloudSiteId)
 		String heatStackId = rollbackData.get("VFMODULE", "heatstackid")
 		execution.setVariable("DCVFMR_heatStackId", heatStackId)
-		String requestId = rollbackData.get("VFMODULE", "msorequestid")
+		String requestId = rollbackData.get("VFMODULE", "attmsorequestid")
 		execution.setVariable("DCVFMR_requestId", requestId)
 		List createdNetworkPolicyFqdnList = []
 		int i = 0
@@ -92,7 +92,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 		execution.setVariable("DCVFMR_oamManagementV4Address", oamManagementV4Address)
 		String oamManagementV6Address = rollbackData.get("VFMODULE", "oamManagementV6Address")
 		execution.setVariable("DCVFMR_oamManagementV6Address", oamManagementV6Address)
-		//String serviceInstanceId = rollbackData.get("VFMODULE", "msoserviceinstanceid")
+		//String serviceInstanceId = rollbackData.get("VFMODULE", "attmsoserviceinstanceid")
 		//execution.setVariable("DCVFMR_serviceInstanceId", serviceInstanceId)
 		execution.setVariable("DCVFMR_rollbackPrepareUpdateVfModule", rollbackData.get("VFMODULE", "rollbackPrepareUpdateVfModule"))
 		execution.setVariable("DCVFMR_rollbackUpdateAAIVfModule", rollbackData.get("VFMODULE", "rollbackUpdateAAIVfModule"))
@@ -160,8 +160,8 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 
 
 		String request = """<sdncadapterworkflow:SDNCAdapterWorkflowRequest xmlns:ns5="http://org.openecomp/mso/request/types/v1"
-												xmlns:sdncadapterworkflow="http://org.openecomp/mso/workflow/schema/v1"
-												xmlns:sdncadapter="http://org.openecomp/workflow/sdnc/adapter/schema/v1">
+													xmlns:sdncadapterworkflow="http://org.openecomp/mso/workflow/schema/v1"
+													xmlns:sdncadapter="http://org.openecomp/workflow/sdnc/adapter/schema/v1">
 						      <sdncadapter:RequestHeader>
 						         <sdncadapter:RequestId>${requestId}</sdncadapter:RequestId>
 						         <sdncadapter:SvcInstanceId>${vfModuleId}</sdncadapter:SvcInstanceId>

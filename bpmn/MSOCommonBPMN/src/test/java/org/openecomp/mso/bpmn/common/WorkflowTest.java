@@ -110,6 +110,16 @@ public class WorkflowTest {
 	public final WireMockRule wireMockRule;
 
 	/**
+	 * Content-Type for XML.
+	 */
+	protected static final String XML = "application/xml";
+
+	/**
+	 * Content-Type for JSON.
+	 */
+	protected static final String JSON = "application/json; charset=UTF-8";
+
+	/**
 	 * Constructor.
 	 */
 	public WorkflowTest() throws RuntimeException {
@@ -197,15 +207,15 @@ public class WorkflowTest {
 	 * @param businessKey a unique key that will identify the process instance
 	 * @param injectedVariables variables to inject into the process
 	 */
-	protected void invokeSubProcess(String processKey, String businessKey,
-			Map<String, Object> injectedVariables) {
+	protected void invokeSubProcess(String processKey, String businessKey, Map<String, Object> injectedVariables) {
 		RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
 		List<String> arguments = runtimeMxBean.getInputArguments();
 		System.out.println("JVM args = " + arguments);
 
 		msoRequestId = (String) injectedVariables.get("mso-request-id");
+		String requestId = (String) injectedVariables.get("msoRequestId");
 
-		if (msoRequestId == null) {
+		if (msoRequestId == null && requestId == null) {
 			String msg = "mso-request-id variable was not provided";
 			System.out.println(msg);
 			fail(msg);
@@ -242,7 +252,7 @@ public class WorkflowTest {
 	 * @param injectedVariables optional variables to inject into the process
 	 * @return a TestAsyncResponse object associated with the test
 	 */
-	public TestAsyncResponse invokeAsyncProcess(String processKey,
+	protected TestAsyncResponse invokeAsyncProcess(String processKey,
 			String schemaVersion, String businessKey, String request,
 			Map<String, Object> injectedVariables) {
 
@@ -438,7 +448,7 @@ public class WorkflowTest {
 	 * @param timeout the timeout in milliseconds
 	 * @return the WorkflowResponse
 	 */
-	public WorkflowResponse receiveResponse(String businessKey,
+	protected WorkflowResponse receiveResponse(String businessKey,
 			TestAsyncResponse asyncResponse, long timeout) {
 		System.out.println("Waiting " + timeout + "ms for process with business key " + businessKey
 			+ " to send a response");
@@ -512,24 +522,34 @@ public class WorkflowTest {
 			}
 
 			String content = null;
+			String contentType = null;
 
 			if ("STD".equals(modifier)) {
-				content = callbacks.get(action);
+				CallbackData callbackData = callbacks.get(action);
 
-				if (content == null) {
+				if (callbackData == null) {
 					String msg = "No callback defined for '" + action + "' SDNC request";
 					System.out.println(msg);
 					fail(msg);
 				}
+
+				content = callbackData.getContent();
+				contentType = callbackData.getContentType();
 			} else if ("ERR".equals(modifier)) {
 				content = "{\"SDNCServiceError\":{\"sdncRequestId\":\"((REQUEST-ID))\",\"responseCode\":\"500\",\"responseMessage\":\"SIMULATED ERROR FROM SDNC ADAPTER\",\"ackFinalIndicator\":\"Y\"}}";
+				contentType = JSON;
 			} else {
 				String msg = "Invalid SDNC program modifier: '" + modifier + "'";
 				System.out.println(msg);
 				fail(msg);
 			}
 
-			if (!injectSDNCRestCallback(content, 10000)) {
+			if (contentType == null) {
+				// Default for backward compatibility with existing tests.
+				contentType = JSON;
+			}
+
+			if (!injectSDNCRestCallback(contentType, content, 10000)) {
 				fail("Failed to inject SDNC '" + action + "' callback");
 			}
 
@@ -548,67 +568,14 @@ public class WorkflowTest {
 	 * <pre>
 	 *     event1, event2
 	 * </pre>
+	 * NOTE: Each callback must have a message type associated with it, e.g.
+	 * "SDNCAEvent".
 	 * Errors are handled with junit assertions and will cause the test to fail.
-	 * Defaults the Event Type to "SDNCAEvent" for backward compatibility.
 	 * @param callbacks an object containing event data for the program
 	 * @param program the program to execute
 	 */
 	protected void injectSDNCEvents(CallbackSet callbacks, String program) {
-		injectSDNCEvents(callbacks, program, "SDNCAEvent");
-	}
-
-	/**
-	 * Runs a program to inject SDNC events into the test environment.
-	 * A program is essentially just a list of keys that identify event data
-	 * to be injected, in sequence. An example program:
-	 * <pre>
-	 *     event1, event2
-	 * </pre>
-	 * Errors are handled with junit assertions and will cause the test to fail.
-	 * @param callbacks an object containing event data for the program
-	 * @param program the program to execute
-	 * @param eventType (i.e. "SDNCAEvent", "SNIROResponse", etc.)
-	 */
-	protected void injectSDNCEvents(CallbackSet callbacks, String program, String eventType) {
-
-		String[] cmds = program.replaceAll("\\s+", "").split(",");
-
-		for (String cmd : cmds) {
-			String action = cmd;
-			String modifier = "STD";
-
-			if (cmd.contains(":")) {
-				String[] parts = cmd.split(":");
-				action = parts[0];
-				modifier = parts[1];
-			}
-
-			String content = null;
-
-			if ("STD".equals(modifier)) {
-				content = callbacks.get(action);
-
-				if (content == null) {
-					String msg = "No SDNC event callback defined for '" + action + "'";
-					System.out.println(msg);
-					fail(msg);
-				}
-			} else {
-				String msg = "Invalid SDNC program modifier: '" + modifier + "'";
-				System.out.println(msg);
-				fail(msg);
-			}
-
-			if (!injectWorkflowMessage(eventType, content, 10000)) {
-				fail("Failed to inject SDNC '" + action + "' event");
-			}
-
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				fail("Interrupted after injection of SDNC '" + action + "' event");
-			}
-		}
+		injectWorkflowMessages(callbacks, program);
 	}
 
 	/**
@@ -622,7 +589,7 @@ public class WorkflowTest {
 	 * @param callbacks an object containing callback data for the program
 	 * @param program the program to execute
 	 */
-	public void injectSDNCCallbacks(CallbackSet callbacks, String program) {
+	protected void injectSDNCCallbacks(CallbackSet callbacks, String program) {
 
 		String[] cmds = program.replaceAll("\\s+", "").split(",");
 
@@ -641,14 +608,15 @@ public class WorkflowTest {
 			String respMsg = "OK";
 
 			if ("STD".equals(modifier)) {
-				content = callbacks.get(action);
+				CallbackData callbackData = callbacks.get(action);
 
-				if (content == null) {
+				if (callbackData == null) {
 					String msg = "No callback defined for '" + action + "' SDNC request";
 					System.out.println(msg);
 					fail(msg);
 				}
 
+				content = callbackData.getContent();
 				respCode = 200;
 				respMsg = "OK";
 			} else if ("ERR".equals(modifier)) {
@@ -684,7 +652,7 @@ public class WorkflowTest {
 	 * @param callbacks an object containing callback data for the program
 	 * @param program the program to execute
 	 */
-	public void injectVNFRestCallbacks(CallbackSet callbacks, String program) {
+	protected void injectVNFRestCallbacks(CallbackSet callbacks, String program) {
 
 		String[] cmds = program.replaceAll("\\s+", "").split(",");
 
@@ -699,24 +667,34 @@ public class WorkflowTest {
 			}
 
 			String content = null;
+			String contentType = null;
 
 			if ("STD".equals(modifier)) {
-				content = callbacks.get(action);
+				CallbackData callbackData = callbacks.get(action);
 
-				if (content == null) {
+				if (callbackData == null) {
 					String msg = "No callback defined for '" + action + "' VNF REST request";
 					System.out.println(msg);
 					fail(msg);
 				}
+
+				content = callbackData.getContent();
+				contentType = callbackData.getContentType();
 			} else if ("ERR".equals(modifier)) {
 				content = "SIMULATED ERROR FROM VNF ADAPTER";
+				contentType = "text/plain";
 			} else {
 				String msg = "Invalid VNF REST program modifier: '" + modifier + "'";
 				System.out.println(msg);
 				fail(msg);
 			}
 
-			if (!injectVnfAdapterRestCallback(content, 10000)) {
+			if (contentType == null) {
+				// Default for backward compatibility with existing tests.
+				contentType = XML;
+			}
+
+			if (!injectVnfAdapterRestCallback(contentType, content, 10000)) {
 				fail("Failed to inject VNF REST '" + action + "' callback");
 			}
 
@@ -756,14 +734,15 @@ public class WorkflowTest {
 			String content = null;
 
 			if ("STD".equals(modifier)) {
-				content = callbacks.get(action);
+				CallbackData callbackData = callbacks.get(action);
 
-				if (content == null) {
+				if (callbackData == null) {
 					String msg = "No callback defined for '" + action + "' VNF request";
 					System.out.println(msg);
 					fail(msg);
 				}
 
+				content = callbackData.getContent();
 			} else if ("ERR".equals(modifier)) {
 				String msg = "Currently unsupported VNF program modifier: '" + modifier + "'";
 				System.out.println(msg);
@@ -805,7 +784,7 @@ public class WorkflowTest {
 	 * @param count the desired count
 	 * @param timeout the timeout in milliseconds
 	 */
-	public void waitForRunningProcessCount(String processKey, int count, long timeout) {
+	protected void waitForRunningProcessCount(String processKey, int count, long timeout) {
 		System.out.println("Waiting " + timeout + "ms for there to be " + count + " "
 			+ processKey + " instances");
 
@@ -916,11 +895,12 @@ public class WorkflowTest {
 	 * may contain the placeholder string ((REQUEST-ID)) which is replaced with
 	 * the actual SDNC request ID. Note: this is not the requestId in the original
 	 * MSO request.
+	 * @param contentType the HTTP content type for the callback
 	 * @param content the content of the callback
 	 * @param timeout the timeout in milliseconds
 	 * @return true if the callback could be injected, false otherwise
 	 */
-	protected boolean injectSDNCRestCallback(String content, long timeout) {
+	protected boolean injectSDNCRestCallback(String contentType, String content, long timeout) {
 		String sdncRequestId = (String) getProcessVariable("SDNCAdapterRestV1",
 			"SDNCAResponse_CORRELATOR", timeout);
 
@@ -935,7 +915,7 @@ public class WorkflowTest {
 		System.out.println("Injecting SDNC adapter callback");
 		WorkflowMessageResource workflowMessageResource = new WorkflowMessageResource();
 		workflowMessageResource.setProcessEngineServices4junit(processEngineRule);
-		Response response = workflowMessageResource.deliver("SDNCAResponse", sdncRequestId, content);
+		Response response = workflowMessageResource.deliver(contentType, "SDNCAResponse", sdncRequestId, content);
 		System.out.println("Workflow response to SDNC adapter callback: " + response);
 		return true;
 	}
@@ -986,11 +966,12 @@ public class WorkflowTest {
 	 * may contain the placeholder string ((MESSAGE-ID)) which is replaced with
 	 * the actual message ID. Note: this is not the requestId in the original
 	 * MSO request.
+	 * @param contentType the HTTP content type for the callback
 	 * @param content the content of the callback
 	 * @param timeout the timeout in milliseconds
 	 * @return true if the callback could be injected, false otherwise
 	 */
-	protected boolean injectVnfAdapterRestCallback(String content, long timeout) {
+	protected boolean injectVnfAdapterRestCallback(String contentType, String content, long timeout) {
 		String messageId = (String) getProcessVariable("vnfAdapterRestV1",
 			"VNFAResponse_CORRELATOR", timeout);
 
@@ -1005,7 +986,7 @@ public class WorkflowTest {
 		System.out.println("Injecting VNF adapter callback");
 		WorkflowMessageResource workflowMessageResource = new WorkflowMessageResource();
 		workflowMessageResource.setProcessEngineServices4junit(processEngineRule);
-		Response response = workflowMessageResource.deliver("VNFAResponse", messageId, content);
+		Response response = workflowMessageResource.deliver(contentType, "VNFAResponse", messageId, content);
 		System.out.println("Workflow response to VNF adapter callback: " + response);
 		return true;
 	}
@@ -1308,15 +1289,83 @@ public class WorkflowTest {
 	}
 
 	/**
+	 * Runs a program to inject workflow messages into the test environment.
+	 * A program is essentially just a list of keys that identify event data
+	 * to be injected, in sequence. An example program:
+	 * <pre>
+	 *     event1, event2
+	 * </pre>
+	 * Errors are handled with junit assertions and will cause the test to fail.
+	 * NOTE: Each callback must have a workflow message type associated with it.
+	 * @param callbacks an object containing event data for the program
+	 * @param program the program to execute
+	 */
+	protected void injectWorkflowMessages(CallbackSet callbacks, String program) {
+
+		String[] cmds = program.replaceAll("\\s+", "").split(",");
+
+		for (String cmd : cmds) {
+			String action = cmd;
+			String modifier = "STD";
+
+			if (cmd.contains(":")) {
+				String[] parts = cmd.split(":");
+				action = parts[0];
+				modifier = parts[1];
+			}
+
+			String messageType = null;
+			String content = null;
+			String contentType = null;
+
+			if ("STD".equals(modifier)) {
+				CallbackData callbackData = callbacks.get(action);
+
+				if (callbackData == null) {
+					String msg = "No '" + action + "' workflow message callback is defined";
+					System.out.println(msg);
+					fail(msg);
+				}
+
+				messageType = callbackData.getMessageType();
+
+				if (messageType == null || messageType.trim().equals("")) {
+					String msg = "No workflow message type is defined in the '" + action + "' callback";
+					System.out.println(msg);
+					fail(msg);
+				}
+
+				content = callbackData.getContent();
+				contentType = callbackData.getContentType();
+			} else {
+				String msg = "Invalid workflow message program modifier: '" + modifier + "'";
+				System.out.println(msg);
+				fail(msg);
+			}
+
+			if (!injectWorkflowMessage(contentType, messageType, content, 10000)) {
+				fail("Failed to inject '" + action + "' workflow message");
+			}
+
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				fail("Interrupted after injection of '" + action + "' workflow message");
+			}
+		}
+	}
+
+	/**
 	 * Injects a workflow message. The specified callback data may contain the
 	 * placeholder string ((CORRELATOR)) which is replaced with the actual
 	 * correlator value.
-	 * @param content the message type
-	 * @param content the message content
+	 * @param contentType the HTTP contentType for the message (possibly null)
+	 * @param messageType the message type
+	 * @param content the message content (possibly null)
 	 * @param timeout the timeout in milliseconds
-	 * @return true if the event could be injected, false otherwise
+	 * @return true if the message could be injected, false otherwise
 	 */
-	protected boolean injectWorkflowMessage(String messageType, String content, long timeout) {
+	protected boolean injectWorkflowMessage(String contentType, String messageType, String content, long timeout) {
 		String correlator = (String) getProcessVariable("ReceiveWorkflowMessage",
 			messageType + "_CORRELATOR", timeout);
 
@@ -1324,12 +1373,14 @@ public class WorkflowTest {
 			return false;
 		}
 
-		content = content.replace("((CORRELATOR))", correlator);
+		if (content != null) {
+			content = content.replace("((CORRELATOR))", correlator);
+		}
 
 		System.out.println("Injecting " + messageType + " message");
 		WorkflowMessageResource workflowMessageResource = new WorkflowMessageResource();
 		workflowMessageResource.setProcessEngineServices4junit(processEngineRule);
-		Response response = workflowMessageResource.deliver(messageType, correlator, content);
+		Response response = workflowMessageResource.deliver(contentType, messageType, correlator, content);
 		System.out.println("Workflow response to " + messageType + " message: " + response);
 		return true;
 	}
@@ -1339,7 +1390,7 @@ public class WorkflowTest {
 	 * @param businessKey the process business key
 	 * @param timeout the amount of time to wait, in milliseconds
 	 */
-	public void waitForProcessEnd(String businessKey, long timeout) {
+	protected void waitForProcessEnd(String businessKey, long timeout) {
 		System.out.println("Waiting " + timeout + "ms for process with business key " +
 			businessKey + " to end");
 
@@ -1377,7 +1428,7 @@ public class WorkflowTest {
 	 * @param variable the variable name
 	 * @param value the expected variable value
 	 */
-	public void checkVariable(String businessKey, String variable, Object value) {
+	protected void checkVariable(String businessKey, String variable, Object value) {
 		if (!isProcessEnded(businessKey)) {
 			fail("Cannot get historic variable " + variable + " because process with business key " +
 				businessKey + " has not ended");
@@ -1405,7 +1456,7 @@ public class WorkflowTest {
 	 * @return the variable value, or null if the variable could not be
 	 * obtained
 	 */
-	public Object getVariableFromHistory(String businessKey, String variableName) {
+	protected Object getVariableFromHistory(String businessKey, String variableName) {
 		try {
 			HistoricProcessInstance processInstance = processEngineRule.getHistoryService()
 				.createHistoricProcessInstanceQuery().processInstanceBusinessKey(businessKey).singleResult();
@@ -1426,6 +1477,8 @@ public class WorkflowTest {
 	}
 
 	/**
+	 * @author cb645j
+	 *
 	 * Gets the value of a subflow variable from the specified subflow's
 	 * historical process instance.
 	 *
@@ -1440,6 +1493,10 @@ public class WorkflowTest {
 			List<HistoricProcessInstance> processInstanceList = processEngineRule.getHistoryService()
 					.createHistoricProcessInstanceQuery().processDefinitionName(subflowName).list();
 
+			if (processInstanceList == null) {
+				return null;
+			}
+
 			Collections.sort(processInstanceList, new Comparator<HistoricProcessInstance>() {
 			    public int compare(HistoricProcessInstance m1, HistoricProcessInstance m2) {
 			        return m1.getStartTime().compareTo(m2.getStartTime());
@@ -1447,10 +1504,6 @@ public class WorkflowTest {
 			});
 
 			HistoricProcessInstance processInstance = processInstanceList.get(0);
-
-			if (processInstanceList == null) {
-				return null;
-			}
 
 			HistoricVariableInstance v = processEngineRule.getHistoryService()
 				.createHistoricVariableInstanceQuery().processInstanceId(processInstance.getId())
@@ -1464,6 +1517,8 @@ public class WorkflowTest {
 	}
 
 	/**
+	 * @author cb645j
+	 *
 	 * Gets the value of a subflow variable from the subflow's
 	 * historical process x instance.
 	 *
@@ -1478,6 +1533,10 @@ public class WorkflowTest {
 			List<HistoricProcessInstance> processInstanceList = processEngineRule.getHistoryService()
 					.createHistoricProcessInstanceQuery().processDefinitionName(subflowName).list();
 
+			if (processInstanceList == null) {
+				return null;
+			}
+
 			Collections.sort(processInstanceList, new Comparator<HistoricProcessInstance>() {
 			    public int compare(HistoricProcessInstance m1, HistoricProcessInstance m2) {
 			        return m1.getStartTime().compareTo(m2.getStartTime());
@@ -1485,10 +1544,6 @@ public class WorkflowTest {
 			});
 
 			HistoricProcessInstance processInstance = processInstanceList.get(subflowInstanceIndex);
-
-			if (processInstanceList == null) {
-				return null;
-			}
 
 			HistoricVariableInstance v = processEngineRule.getHistoryService()
 				.createHistoricVariableInstanceQuery().processInstanceId(processInstance.getId())
@@ -1594,15 +1649,36 @@ public class WorkflowTest {
 	 * An object that contains callback data for a "program".
 	 */
 	public class CallbackSet {
-		private final Map<String, String> map = new HashMap<String, String>();
+		private final Map<String, CallbackData> map = new HashMap<String, CallbackData>();
 
 		/**
-		 * Add callback data to the set.
+		 * Add untyped callback data to the set.
 		 * @param action the action with which the data is associated
 		 * @param content the callback data
 		 */
 		public void put(String action, String content) {
-			map.put(action, content);
+			map.put(action, new CallbackData(null, null, content));
+		}
+
+		/**
+		 * Add callback data to the set.
+		 * @param action the action with which the data is associated
+		 * @param messageType the callback message type
+		 * @param content the callback data
+		 */
+		public void put(String action, String messageType, String content) {
+			map.put(action, new CallbackData(null, messageType, content));
+		}
+
+		/**
+		 * Add callback data to the set.
+		 * @param action the action with which the data is associated
+		 * @param contentType the callback HTTP content type
+		 * @param messageType the callback message type
+		 * @param content the callback data
+		 */
+		public void put(String action, String contentType, String messageType, String content) {
+			map.put(action, new CallbackData(contentType, messageType, content));
 		}
 
 		/**
@@ -1610,8 +1686,50 @@ public class WorkflowTest {
 		 * @param action the action with which the data is associated
 		 * @return the callback data, or null if there is none for the specified operation
 		 */
-		public String get(String action) {
+		public CallbackData get(String action) {
 			return map.get(action);
+		}
+	}
+
+	/**
+	 * Represents a callback data item.
+	 */
+	public class CallbackData {
+		private final String contentType;
+		private final String messageType;
+		private final String content;
+
+		/**
+		 * Constructor
+		 * @param contentType the HTTP content type (optional)
+		 * @param type the callback message type (optional)
+		 * @param content the content
+		 */
+		public CallbackData(String contentType, String messageType, String content) {
+			this.contentType = contentType;
+			this.messageType = messageType;
+			this.content = content;
+		}
+
+		/**
+		 * Gets the callback HTTP content type, possibly null.
+		 */
+		public String getContentType() {
+			return contentType;
+		}
+
+		/**
+		 * Gets the callback message type, possibly null.
+		 */
+		public String getMessageType() {
+			return messageType;
+		}
+
+		/**
+		 * Gets the callback content.
+		 */
+		public String getContent() {
+			return content;
 		}
 	}
 
@@ -1772,7 +1890,7 @@ public class WorkflowTest {
 	 * Helper class to make it easier to create this type.
 	 */
 	private static class CreateVnfNotificationOutputs
-			extends org.openecomp.mso.bpmn.common.adapter.vnf.CreateVnfNotification.Outputs {
+			extends CreateVnfNotification.Outputs {
 		public void add(String key, String value) {
 			Entry entry = new Entry();
 			entry.setKey(key);
@@ -1785,7 +1903,7 @@ public class WorkflowTest {
 	 * Helper class to make it easier to create this type.
 	 */
 	private static class UpdateVnfNotificationOutputs
-			extends org.openecomp.mso.bpmn.common.adapter.vnf.UpdateVnfNotification.Outputs {
+			extends UpdateVnfNotification.Outputs {
 		public void add(String key, String value) {
 			Entry entry = new Entry();
 			entry.setKey(key);

@@ -38,7 +38,7 @@ CreateGenericMacroServiceNetworkVnf.postProcessResponse(execution)]]></bpmn2:scr
       <bpmn2:extensionElements>
         <camunda:in variables="all" />
         <camunda:out variables="all" />
-        <camunda:in source="CREVAS_CompleteMsoProcessRequest" target="CompleteMsoProcessRequest" />
+        <camunda:in source="CGMSNV_CompleteMsoProcessRequest" target="CompleteMsoProcessRequest" />
         <camunda:in source="mso-request-id" target="requestId" />
         <camunda:in source="serviceInstanceId" target="serviceInstanceId" />
         <camunda:out source="CMSO_ResponseCode" target="CMSO_ResponseCode" />
@@ -156,6 +156,9 @@ CreateGenericMacroServiceNetworkVnf.prepareNetworkCreate(execution)]]></bpmn2:sc
         <camunda:out source="vnfName" target="vnfName" />
         <camunda:out source="vnfOutputParams" target="vnfOutputParams" />
         <camunda:out source="rolledBack" target="rolledBack" />
+        <camunda:in source="serviceModelInfo" target="serviceModelInfo" />
+        <camunda:in source="globalSubscriberId" target="globalSubscriberId" />
+        <camunda:in source="serviceDecomposition" target="serviceDecomposition" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_1h77psn</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0qi5uxg</bpmn2:outgoing>
@@ -203,7 +206,7 @@ CreateGenericMacroServiceNetworkVnf.prepareVnfAndModulesCreate(execution)]]></bp
       </bpmn2:exclusiveGateway>
       <bpmn2:callActivity id="CallActivity_0jw5tqa" name="Call FalloutHandlerV1" calledElement="FalloutHandler">
         <bpmn2:extensionElements>
-          <camunda:in source="CREVAS_falloutRequest" target="FalloutHandlerRequest" />
+          <camunda:in source="CGMSNV_falloutRequest" target="FalloutHandlerRequest" />
           <camunda:in source="msoRequestId" target="mso-request-id" />
           <camunda:in source="serviceInstanceId" target="mso-service-instance-id" />
           <camunda:out source="FH_ResponseCode" target="FH_ResponseCode" />
@@ -241,7 +244,7 @@ CreateGenericMacroServiceNetworkVnf.prepareFalloutRequest(execution)]]></bpmn2:s
         <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{execution.getVariable("DCVM_rollbackData") != null }]]></bpmn2:conditionExpression>
       </bpmn2:sequenceFlow>
       <bpmn2:sequenceFlow id="SequenceFlow_19mxskt" name="No" sourceRef="ExclusiveGateway_1kvn1pz" targetRef="InclusiveGateway_1pqjttt" />
-      <bpmn2:callActivity id="DoRollbackVNFandModules_CallActivity" name="DoRollback&#10;VNF and Modules&#10;" calledElement="DoCreateVnfAndModules">
+      <bpmn2:callActivity id="DoRollbackVNFandModules_CallActivity" name="DoRollback&#10;VNF and Modules&#10;" calledElement="DoCreateVnfAndModulesRollback">
         <bpmn2:extensionElements>
           <camunda:in source="msoRequestId" target="msoRequestId" />
           <camunda:in source="DCVAM_rollbackData" target="rollbackData" />
@@ -310,7 +313,7 @@ CreateGenericMacroServiceNetworkVnf.validateNetworkRollback(execution)]]></bpmn2
       <bpmn2:sequenceFlow id="SequenceFlow_1dmsx0d" sourceRef="DoRollbackNetwork_CallActivity" targetRef="ScriptTask_184teky" />
       <bpmn2:sequenceFlow id="SequenceFlow_1otyild" sourceRef="ScriptTask_184teky" targetRef="ExclusiveGateway_1c386z9" />
       <bpmn2:sequenceFlow id="SequenceFlow_0136s37" name="Yes" sourceRef="ExclusiveGateway_1c386z9" targetRef="DoRollbackNetwork_CallActivity">
-        <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{execution.getVariable("CREVAS_NetworksCreatedCount")  > 0 }]]></bpmn2:conditionExpression>
+        <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{execution.getVariable("CGMSNV_NetworksCreatedCount")  > 0 }]]></bpmn2:conditionExpression>
       </bpmn2:sequenceFlow>
       <bpmn2:sequenceFlow id="SequenceFlow_12u8ufr" name="No" sourceRef="ExclusiveGateway_1c386z9" targetRef="ExclusiveGateway_05indeh" />
       <bpmn2:exclusiveGateway id="ExclusiveGateway_1bts0nw" name="VNF rolled back OK?" default="SequenceFlow_1brxd2r">
@@ -361,21 +364,20 @@ CreateGenericMacroServiceNetworkVnf.postProcessRollback(execution)]]></bpmn2:scr
       <bpmn2:sequenceFlow id="SequenceFlow_0f4u373" sourceRef="InclusiveGateway_0m9f5ka" targetRef="ScriptTask_0wyub4x" />
       <bpmn2:sequenceFlow id="SequenceFlow_1rabks0" sourceRef="ScriptTask_0wyub4x" targetRef="InclusiveGateway_0foywso" />
     </bpmn2:subProcess>
-    <bpmn2:scriptTask id="callDbCatalog_scriptTask" name="Get Models Info&#10; for Service (DB Catalog)&#10;" scriptFormat="groovy">
+    <bpmn2:scriptTask id="callDbCatalog_scriptTask" name="Get Models Info&#10;for Service&#10;" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_1vwssu7</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_19etqmx</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
 def CreateGenericMacroServiceNetworkVnf= new CreateGenericMacroServiceNetworkVnf()
-CreateGenericMacroServiceNetworkVnf.callDBCatalog(execution)]]></bpmn2:script>
+CreateGenericMacroServiceNetworkVnf.getDataFromDecomposition(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:scriptTask id="prepareCreateService_scriptTask" name="Prepare&#10;Create&#10;Service&#10;" scriptFormat="groovy">
-      <bpmn2:incoming>SequenceFlow_10o22u2</bpmn2:incoming>
+      <bpmn2:incoming>SequenceFlow_0hvcwa1</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0j6sjye</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
 def CreateGenericMacroServiceNetworkVnf = new CreateGenericMacroServiceNetworkVnf()
 CreateGenericMacroServiceNetworkVnf.prepareCreateServiceInstance(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
-    <bpmn2:sequenceFlow id="SequenceFlow_10o22u2" sourceRef="IntermediateCatchEvent_3" targetRef="prepareCreateService_scriptTask" />
     <bpmn2:scriptTask id="setPONR_ScriptTask" name="set PONR">
       <bpmn2:incoming>SequenceFlow_12ilko1</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0afe2pg</bpmn2:outgoing>
@@ -405,10 +407,10 @@ CreateGenericMacroServiceNetworkVnf.prepareCreateServiceInstance(execution)]]></
       <bpmn2:outgoing>SequenceFlow_0dfkfh1</bpmn2:outgoing>
     </bpmn2:exclusiveGateway>
     <bpmn2:sequenceFlow id="SequenceFlow_0dfkfh1" name="Yes" sourceRef="ExclusiveGateway_0fe690i" targetRef="ScriptTask_PrepareNetworkCreate">
-      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{execution.getVariable("CREVAS_NetworksCreatedCount") < execution.getVariable("CREVAS_NetworksCount")}]]></bpmn2:conditionExpression>
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{execution.getVariable("CGMSNV_NetworksCreatedCount") < execution.getVariable("CGMSNV_NetworksCount")}]]></bpmn2:conditionExpression>
     </bpmn2:sequenceFlow>
     <bpmn2:sequenceFlow id="SequenceFlow_0cmebdc" name="Yes" sourceRef="ExclusiveGateway_0b9wd4f" targetRef="ScriptTask_PrepareNetworkCreate">
-      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{execution.getVariable("CREVAS_NetworksCount") > 0}]]></bpmn2:conditionExpression>
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{execution.getVariable("CGMSNV_NetworksCount") > 0}]]></bpmn2:conditionExpression>
     </bpmn2:sequenceFlow>
     <bpmn2:exclusiveGateway id="ExclusiveGateway_1os8cm5">
       <bpmn2:incoming>SequenceFlow_1n7r495</bpmn2:incoming>
@@ -439,7 +441,7 @@ CreateGenericMacroServiceNetworkVnf.prepareCreateServiceInstance(execution)]]></
     </bpmn2:exclusiveGateway>
     <bpmn2:sequenceFlow id="SequenceFlow_10tbv62" sourceRef="IntermediateCatchEvent_0rlqdvq" targetRef="ExclusiveGateway_1nlocis" />
     <bpmn2:sequenceFlow id="SequenceFlow_0bvecvm" name="Yes" sourceRef="ExclusiveGateway_1nlocis" targetRef="ScriptTask_3">
-      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{execution.getVariable("CREVAS_VNFsCount") >0}]]></bpmn2:conditionExpression>
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{execution.getVariable("CGMSNV_VNFsCount") >0}]]></bpmn2:conditionExpression>
     </bpmn2:sequenceFlow>
     <bpmn2:sequenceFlow id="SequenceFlow_0qi5uxg" name="in 1702 scope only one VNF will be created - if needed" sourceRef="doCreateVNFandModules_CallActivity" targetRef="ExclusiveGateway_04q1qud">
       <bpmn2:documentation>in 1702 scope only one VNF will be created</bpmn2:documentation>
@@ -461,7 +463,7 @@ CreateGenericMacroServiceNetworkVnf.validateNetworkCreate(execution)]]></bpmn2:s
         <camunda:connector>
           <camunda:inputOutput>
             <camunda:inputParameter name="url">${URN_mso_adapters_db_endpoint}</camunda:inputParameter>
-            <camunda:inputParameter name="payload"><![CDATA[${execution.getVariable("CREVAS_setUpdateDbInstancePayload")}]]></camunda:inputParameter>
+            <camunda:inputParameter name="payload"><![CDATA[${execution.getVariable("CGMSNV_setUpdateDbInstancePayload")}]]></camunda:inputParameter>
             <camunda:inputParameter name="headers">
               <camunda:map>
                 <camunda:entry key="content-type">application/soap+xml</camunda:entry>
@@ -485,6 +487,28 @@ CreateGenericMacroServiceNetworkVnf.postProcessServiceInstanceCreate(execution)]
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_1ky2sv9" sourceRef="doCreateServiceInstance_CallActivity" targetRef="ScriptTask_1qd3uwb" />
     <bpmn2:sequenceFlow id="SequenceFlow_0vj46ej" sourceRef="ScriptTask_1qd3uwb" targetRef="updateInfraRequest" />
+    <bpmn2:sequenceFlow id="SequenceFlow_0hvcwa1" sourceRef="DecomposeService" targetRef="prepareCreateService_scriptTask" />
+    <bpmn2:callActivity id="DecomposeService" name="DecomposeService" calledElement="DecomposeService">
+      <bpmn2:extensionElements>
+        <camunda:in source="msoRequestId" target="msoRequestId" />
+        <camunda:in source="serviceInstanceId" target="serviceInstanceId" />
+        <camunda:in source="serviceModelInfo" target="serviceModelInfo" />
+        <camunda:in source="isDebugLogEnabled" target="isDebugLogEnabled" />
+        <camunda:out source="serviceDecomposition" target="serviceDecomposition" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_00h6hmd</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_0hvcwa1</bpmn2:outgoing>
+    </bpmn2:callActivity>
+    <bpmn2:scriptTask id="ScriptTask_0cdtchu" name="Prepare&#10;Decompose&#10;Service&#10;" scriptFormat="groovy">
+      <bpmn2:incoming>SequenceFlow_1eu60rt</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_00h6hmd</bpmn2:outgoing>
+      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
+def CreateGenericMacroServiceNetworkVnf = new CreateGenericMacroServiceNetworkVnf()
+CreateGenericMacroServiceNetworkVnf.prepareDecomposeService(execution)]]></bpmn2:script>
+    </bpmn2:scriptTask>
+    <bpmn2:sequenceFlow id="SequenceFlow_1eu60rt" sourceRef="IntermediateCatchEvent_3" targetRef="ScriptTask_0cdtchu" />
+    <bpmn2:sequenceFlow id="SequenceFlow_00h6hmd" sourceRef="ScriptTask_0cdtchu" targetRef="DecomposeService" />
   </bpmn2:process>
   <bpmn2:error id="Error_2" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
   <bpmn2:error id="Error_1" name="java.lang.Exception" errorCode="java.lang.Exception" />
@@ -577,7 +601,7 @@ CreateGenericMacroServiceNetworkVnf.postProcessServiceInstanceCreate(execution)]
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="_BPMNShape_CallActivity_75" bpmnElement="doCreateServiceInstance_CallActivity">
-        <dc:Bounds x="476" y="223" width="100" height="80" />
+        <dc:Bounds x="610" y="223" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_2" bpmnElement="SequenceFlow_3" sourceElement="_BPMNShape_ScriptTask_127">
         <di:waypoint xsi:type="dc:Point" x="576" y="108" />
@@ -740,15 +764,8 @@ CreateGenericMacroServiceNetworkVnf.postProcessServiceInstanceCreate(execution)]
         <dc:Bounds x="184" y="533" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ScriptTask_1gacz45_di" bpmnElement="prepareCreateService_scriptTask">
-        <dc:Bounds x="285" y="223" width="100" height="80" />
+        <dc:Bounds x="456" y="223" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_10o22u2_di" bpmnElement="SequenceFlow_10o22u2">
-        <di:waypoint xsi:type="dc:Point" x="132" y="263" />
-        <di:waypoint xsi:type="dc:Point" x="285" y="262" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="209" y="247.5" width="0" height="0" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_11b4gmn_di" bpmnElement="setPONR_ScriptTask">
         <dc:Bounds x="228" y="1115" width="100" height="80" />
       </bpmndi:BPMNShape>
@@ -870,9 +887,9 @@ CreateGenericMacroServiceNetworkVnf.postProcessServiceInstanceCreate(execution)]
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="IntermediateThrowEvent_0prlju0_di" bpmnElement="IntermediateThrowEvent_0prlju0">
-        <dc:Bounds x="905" y="245" width="36" height="36" />
+        <dc:Bounds x="1065" y="245" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="888" y="286" width="70" height="24" />
+          <dc:Bounds x="1048" y="286" width="70" height="24" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ExclusiveGateway_0b9wd4f_di" bpmnElement="ExclusiveGateway_0b9wd4f" isMarkerVisible="true">
@@ -1023,10 +1040,10 @@ CreateGenericMacroServiceNetworkVnf.postProcessServiceInstanceCreate(execution)]
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0j6sjye_di" bpmnElement="SequenceFlow_0j6sjye">
-        <di:waypoint xsi:type="dc:Point" x="385" y="263" />
-        <di:waypoint xsi:type="dc:Point" x="476" y="263" />
+        <di:waypoint xsi:type="dc:Point" x="556" y="263" />
+        <di:waypoint xsi:type="dc:Point" x="610" y="263" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="431" y="248" width="0" height="0" />
+          <dc:Bounds x="583" y="248" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_184teky_di" bpmnElement="ScriptTask_184teky">
@@ -1126,34 +1143,30 @@ CreateGenericMacroServiceNetworkVnf.postProcessServiceInstanceCreate(execution)]
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ServiceTask_16yhzej_di" bpmnElement="updateInfraRequest">
-        <dc:Bounds x="764" y="223" width="100" height="80" />
+        <dc:Bounds x="921" y="223" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_13uceka_di" bpmnElement="SequenceFlow_13uceka">
-        <di:waypoint xsi:type="dc:Point" x="864" y="263" />
-        <di:waypoint xsi:type="dc:Point" x="905" y="263" />
+        <di:waypoint xsi:type="dc:Point" x="1021" y="263" />
+        <di:waypoint xsi:type="dc:Point" x="1065" y="263" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="885" y="248" width="0" height="0" />
+          <dc:Bounds x="1043" y="248" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_1qd3uwb_di" bpmnElement="ScriptTask_1qd3uwb">
-        <dc:Bounds x="618" y="226" width="100" height="80" />
+        <dc:Bounds x="772" y="223" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1ky2sv9_di" bpmnElement="SequenceFlow_1ky2sv9">
-        <di:waypoint xsi:type="dc:Point" x="576" y="263" />
-        <di:waypoint xsi:type="dc:Point" x="597" y="263" />
-        <di:waypoint xsi:type="dc:Point" x="597" y="266" />
-        <di:waypoint xsi:type="dc:Point" x="618" y="266" />
+        <di:waypoint xsi:type="dc:Point" x="710" y="263" />
+        <di:waypoint xsi:type="dc:Point" x="772" y="263" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="612" y="254.5" width="0" height="0" />
+          <dc:Bounds x="741" y="248" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0vj46ej_di" bpmnElement="SequenceFlow_0vj46ej">
-        <di:waypoint xsi:type="dc:Point" x="718" y="266" />
-        <di:waypoint xsi:type="dc:Point" x="741" y="266" />
-        <di:waypoint xsi:type="dc:Point" x="741" y="263" />
-        <di:waypoint xsi:type="dc:Point" x="764" y="263" />
+        <di:waypoint xsi:type="dc:Point" x="872" y="263" />
+        <di:waypoint xsi:type="dc:Point" x="921" y="263" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="756" y="254.5" width="0" height="0" />
+          <dc:Bounds x="897" y="248" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_17doerz_di" bpmnElement="ScriptTask_17doerz">
@@ -1196,6 +1209,33 @@ CreateGenericMacroServiceNetworkVnf.postProcessServiceInstanceCreate(execution)]
         <di:waypoint xsi:type="dc:Point" x="763" y="1935" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="778" y="1911" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0hvcwa1_di" bpmnElement="SequenceFlow_0hvcwa1">
+        <di:waypoint xsi:type="dc:Point" x="407" y="263" />
+        <di:waypoint xsi:type="dc:Point" x="456" y="263" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="432" y="248" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="CallActivity_0w2alah_di" bpmnElement="DecomposeService">
+        <dc:Bounds x="307" y="223" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_0cdtchu_di" bpmnElement="ScriptTask_0cdtchu">
+        <dc:Bounds x="171" y="223" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1eu60rt_di" bpmnElement="SequenceFlow_1eu60rt">
+        <di:waypoint xsi:type="dc:Point" x="132" y="263" />
+        <di:waypoint xsi:type="dc:Point" x="171" y="263" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="152" y="238" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_00h6hmd_di" bpmnElement="SequenceFlow_00h6hmd">
+        <di:waypoint xsi:type="dc:Point" x="271" y="263" />
+        <di:waypoint xsi:type="dc:Point" x="307" y="263" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="289" y="238" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>

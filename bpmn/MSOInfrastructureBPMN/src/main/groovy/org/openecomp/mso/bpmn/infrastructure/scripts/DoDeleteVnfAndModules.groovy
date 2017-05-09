@@ -37,6 +37,7 @@ import org.openecomp.mso.bpmn.common.scripts.AaiUtil
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.openecomp.mso.bpmn.common.scripts.CatalogDbUtils
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
+import org.openecomp.mso.bpmn.common.scripts.SDNCAdapterUtils
 import org.openecomp.mso.bpmn.common.scripts.VidUtils
 import org.openecomp.mso.bpmn.core.RollbackData
 import org.openecomp.mso.bpmn.core.WorkflowException
@@ -50,7 +51,8 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 	String Prefix="DDVAM_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
-	VidUtils vidUtils = new VidUtils(this)	
+	VidUtils vidUtils = new VidUtils(this)
+	SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
 
 	/**
 	 * This method gets and validates the incoming
@@ -69,7 +71,8 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 			
 			String cloudConfiguration = execution.getVariable("cloudConfiguration")			
 			
-			String requestId = execution.getVariable("requestId")
+			String requestId = execution.getVariable("msoRequestId")
+			execution.setVariable("requestId", requestId)			
 			execution.setVariable("mso-request-id", requestId)
 			utils.log("DEBUG", "Incoming Request Id is: " + requestId, isDebugEnabled)
 
@@ -80,9 +83,76 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 			utils.log("DEBUG", "Incoming Vnf Id is: " + vnfId, isDebugEnabled)			
 			
 			String source = "VID"
-			execution.setVariable("source", source)
+			execution.setVariable("DDVAM_source", source)
 			utils.log("DEBUG", "Incoming Source is: " + source, isDebugEnabled)
 			
+			String sdncVersion = execution.getVariable("sdncVersion")
+			if (sdncVersion == null) {
+				sdncVersion = "1702"
+			}
+			execution.setVariable("DDVAM_sdncVersion", sdncVersion)
+			utils.log("DEBUG", "Incoming Sdnc Version is: " + sdncVersion, isDebugEnabled)
+			
+			String sdncCallbackUrl = (String) execution.getVariable('URN_mso_workflow_sdncadapter_callback')
+			if (sdncCallbackUrl == null || sdncCallbackUrl.trim().isEmpty()) {
+				def msg = 'Required variable \'URN_mso_workflow_sdncadapter_callback\' is missing'
+				logError(msg)
+				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
+			}
+			execution.setVariable("sdncCallbackUrl", sdncCallbackUrl)
+			utils.logAudit("SDNC Callback URL: " + sdncCallbackUrl)
+			logDebug("SDNC Callback URL is: " + sdncCallbackUrl, isDebugEnabled)
+			
+			if (!sdncVersion.equals("1702")) {
+				//String vnfModelInfo = execution.getVariable("vnfModelInfo")
+				//String serviceModelInfo = execution.getVariable("serviceModelInfo")
+				
+				String serviceId = execution.getVariable("productFamilyId")
+				execution.setVariable("DDVAM_serviceId", serviceId)
+				utils.log("DEBUG", "Incoming Service Id is: " + serviceId, isDebugEnabled)
+				
+					
+				//String modelInvariantId = jsonUtil.getJsonValue(vnfModelInfo, "modelInvariantId")
+				//execution.setVariable("DDVAM_modelInvariantId", modelInvariantId)
+				//utils.log("DEBUG", "Incoming Invariant Id is: " + modelInvariantId, isDebugEnabled)
+				
+				//String modelVersionId = jsonUtil.getJsonValue(vnfModelInfo, "modelVersionId")
+				//if (modelVersionId == null) {
+				//	modelVersionId = ""
+				//}
+				//execution.setVariable("DDVAM_modelVersionId", modelVersionId)
+				//utils.log("DEBUG", "Incoming Version Id is: " + modelVersionId, isDebugEnabled)
+	
+				//String modelVersion = jsonUtil.getJsonValue(vnfModelInfo, "modelVersion")
+				//execution.setVariable("DDVAM_modelVersion", modelVersion)
+				//utils.log("DEBUG", "Incoming Model Version is: " + modelVersion, isDebugEnabled)
+				
+				//String modelName = jsonUtil.getJsonValue(vnfModelInfo, "modelName")
+				//execution.setVariable("DDVAM_modelName", modelName)
+				//utils.log("DEBUG", "Incoming Model Name is: " + modelName, isDebugEnabled)
+				
+				//String modelCustomizationId = jsonUtil.getJsonValue(vnfModelInfo, "modelCustomizationId")
+				//if (modelCustomizationId == null) {
+				//	modelCustomizationId = ""
+				//}
+				//execution.setVariable("DDVAM_modelCustomizationId", modelCustomizationId)
+				//utils.log("DEBUG", "Incoming Model Customization Id is: " + modelCustomizationId, isDebugEnabled)
+					
+				String cloudSiteId = execution.getVariable("lcpCloudRegionId")
+				execution.setVariable("DDVAM_cloudSiteId", cloudSiteId)
+				utils.log("DEBUG", "Incoming Cloud Site Id is: " + cloudSiteId, isDebugEnabled)
+					
+				String tenantId = execution.getVariable("tenantId")
+				execution.setVariable("DDVAM_tenantId", tenantId)
+				utils.log("DEBUG", "Incoming Tenant Id is: " + tenantId, isDebugEnabled)
+				
+				String globalSubscriberId = execution.getVariable("globalSubscriberId")
+				if (globalSubscriberId == null) {
+					globalSubscriberId = ""
+				}
+				execution.setVariable("DDVAM_globalSubscriberId", globalSubscriberId)
+				utils.log("DEBUG", "Incoming Global Subscriber Id is: " + globalSubscriberId, isDebugEnabled)
+			}
 			execution.setVariable("DDVAM_moduleCount", 0)
 			execution.setVariable("DDVAM_nextModule", 0)
 			
@@ -148,7 +218,7 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 		logDebug('Entered ' + method, isDebugLogEnabled)
 
 		try {
-			def vnfId = execution.getVariable('DvnfId')
+			def vnfId = execution.getVariable('vnfId')
 			
 			AaiUtil aaiUriUtil = new AaiUtil(this)
 			String  aai_uri = aaiUriUtil.getNetworkGenericVnfUri(execution)
@@ -184,30 +254,46 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 				logDebug('Response code:' + response.getStatusCode(), isDebugLogEnabled)
 				logDebug('Response:' + System.lineSeparator() + responseData, isDebugLogEnabled)
 				//Map<String, String>[] vfModules = new HashMap<String,String>[]
-				List<Map<String,String>> vfModulesList = new ArrayList<Map<String,String>>();
+				def vfModulesList = new ArrayList<Map<String,String>>()
+				def vfModules = null
+				def vfModuleBaseEntry = null
 				if (response.getStatusCode() == 200) {
 					// Parse the VNF record from A&AI to find base module info
 					logDebug('Parsing the VNF data to find base module info', isDebugLogEnabled)
 					if (responseData != null) {
 						def vfModulesText = utils.getNodeXml(responseData, "vf-modules")
-						def xmlVfModules= new XmlSlurper().parseText(vfModulesText)
-						def vfModules = xmlVfModules.'**'.findAll {it.name() == "vf-module"}
-						execution.setVariable("DDVAM_moduleCount", vfModules.size())
-						int vfModulesSize = 0
-						for (i in 0..vfModules.size()-1) {
-							def vfModuleXml = groovy.xml.XmlUtil.serialize(vfModules[i])
+						logDebug("vModulesText: " + vfModulesText, isDebugLogEnabled)
+						if (vfModulesText != null && !vfModulesText.trim().isEmpty()) {
+							def xmlVfModules= new XmlSlurper().parseText(vfModulesText)
+							vfModules = xmlVfModules.'**'.findAll {it.name() == "vf-module"}
+							execution.setVariable("DDVAM_moduleCount", vfModules.size())
+							int vfModulesSize = 0
+							for (i in 0..vfModules.size()-1) {
+								def vfModuleXml = groovy.xml.XmlUtil.serialize(vfModules[i])
 							
-							Map<String, String> vfModuleEntry = new HashMap<String, String>()
-							def vfModuleId = utils.getNodeText1(vfModuleXml, "vf-module-id")
-							vfModuleEntry.put("vfModuleId", vfModuleName)
-							def vfModuleName = utils.getNodeText1(vfModuleXml, "vf-module-name")
-							vfModuleEntry.put("vfModuleName", vfModuleName)		
-							vfModulesList.add(vfModuleEntry)					
+								Map<String, String> vfModuleEntry = new HashMap<String, String>()
+								def vfModuleId = utils.getNodeText1(vfModuleXml, "vf-module-id")
+								vfModuleEntry.put("vfModuleId", vfModuleId)
+								def vfModuleName = utils.getNodeText1(vfModuleXml, "vf-module-name")
+								vfModuleEntry.put("vfModuleName", vfModuleName)
+								
+								def isBaseVfModule = utils.getNodeText(vfModuleXml, "is-base-vf-module")
+								// Save base vf module for last
+								if (isBaseVfModule == "true") {
+									vfModuleBaseEntry = vfModuleEntry
+								}
+								else {						
+									vfModulesList.add(vfModuleEntry)
+								}
+							}
+							if (vfModuleBaseEntry != null) {
+								vfModulesList.add(vfModuleBaseEntry)
+							}					
 						}
 						
 					}					
 				}
-				execution.setVariable("DDVAM_vfModules", vfModules)
+				execution.setVariable("DDVAM_vfModules", vfModulesList)
 			} catch (Exception ex) {
 				ex.printStackTrace()
 				logDebug('Exception occurred while executing AAI GET:' + ex.getMessage(),isDebugLogEnabled)
@@ -245,10 +331,152 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 			
 		}catch(Exception e){
 			utils.log("ERROR", "Exception Occured Processing preProcessAddOnModule. Exception is:\n" + e, isDebugLogEnabled)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during preProcessAddOnModule Method:\n" + e.getMessage())
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during prepareNextModuleToDelete Method:\n" + e.getMessage())
 		}
-		logDebug("======== COMPLETED preProcessSDNCAssignRequest ======== ", isDebugLogEnabled)
+		logDebug("======== COMPLETED prepareNextModuleToDelete ======== ", isDebugLogEnabled)
 	}
+	
+	public void preProcessSDNCDeactivateRequest(Execution execution){
+		def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
+		execution.setVariable("prefix", Prefix)
+		logDebug(" ======== STARTED preProcessSDNCDeactivateRequest ======== ", isDebugLogEnabled)
+		def vnfId = execution.getVariable("vnfId")
+		def serviceInstanceId = execution.getVariable("serviceInstanceId")		
+
+		try{
+			//Build SDNC Request
+			
+			String deactivateSDNCRequest = buildSDNCRequest(execution, serviceInstanceId, "deactivate")
+
+			deactivateSDNCRequest = utils.formatXml(deactivateSDNCRequest)
+			execution.setVariable("DDVAM_deactivateSDNCRequest", deactivateSDNCRequest)
+			logDebug("Outgoing DeactivateSDNCRequest is: \n" + deactivateSDNCRequest, isDebugLogEnabled)
+			utils.logAudit("Outgoing DeactivateSDNCRequest is: \n" + deactivateSDNCRequest)
+
+		}catch(Exception e){
+			utils.log("ERROR", "Exception Occured Processing preProcessSDNCDeactivateRequest. Exception is:\n" + e, isDebugLogEnabled)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during preProcessSDNCDeactivateRequest Method:\n" + e.getMessage())
+		}
+		logDebug("======== COMPLETED preProcessSDNCDeactivateRequest ======== ", isDebugLogEnabled)
+	}
+	
+	public void preProcessSDNCUnassignRequest(Execution execution) {
+		def method = getClass().getSimpleName() + '.preProcessSDNCUnassignRequest(' +
+			'execution=' + execution.getId() +
+			')'
+		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
+		logDebug('Entered ' + method, isDebugLogEnabled)
+		execution.setVariable("prefix", Prefix)
+		logDebug(" ======== STARTED preProcessSDNCUnassignRequest Process ======== ", isDebugLogEnabled)
+		try{
+			String vnfId = execution.getVariable("vnfId")
+			String serviceInstanceId = execution.getVariable("serviceInstanceId")
+
+			String unassignSDNCRequest = buildSDNCRequest(execution, serviceInstanceId, "unassign")
+
+			execution.setVariable("DDVAM_unassignSDNCRequest", unassignSDNCRequest)
+			logDebug("Outgoing UnassignSDNCRequest is: \n" + unassignSDNCRequest, isDebugLogEnabled)
+			utils.logAudit("Outgoing UnassignSDNCRequest is: \n"  + unassignSDNCRequest)
+
+		}catch(Exception e){
+			log.debug("Exception Occured Processing preProcessSDNCUnassignRequest. Exception is:\n" + e, isDebugLogEnabled)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occured during  preProcessSDNCUnassignRequest Method:\n" + e.getMessage())
+		}
+		logDebug("======== COMPLETED  preProcessSDNCUnassignRequest Process ======== ", isDebugLogEnabled)
+	}
+	
+	public String buildSDNCRequest(Execution execution, String svcInstId, String action){
+		
+				String uuid = execution.getVariable('testReqId') // for junits
+				if(uuid==null){
+					uuid = execution.getVariable("mso-request-id") + "-" +  	System.currentTimeMillis()
+				}
+				def callbackURL = execution.getVariable("sdncCallbackUrl")
+				def requestId = execution.getVariable("msoRequestId")
+				def serviceId = execution.getVariable("DDVAM_serviceId")				
+				def tenantId = execution.getVariable("DDVAM_tenantId")
+				def source = execution.getVariable("DDVAM_source")
+				def vnfId = execution.getVariable("vnfId")
+				def serviceInstanceId = execution.getVariable("serviceInstanceId")
+				def cloudSiteId = execution.getVariable("DDVAM_cloudSiteId")				
+				def modelCustomizationId = execution.getVariable("DDVAM_modelCustomizationId")
+				//def serviceModelInfo = execution.getVariable("serviceModelInfo")
+				//def vnfModelInfo = execution.getVariable("vnfModelInfo")
+				//String serviceEcompModelInformation = sdncAdapterUtils.modelInfoToEcompModelInformation(serviceModelInfo)
+				//String vnfEcompModelInformation = sdncAdapterUtils.modelInfoToEcompModelInformation(vnfModelInfo)				
+				def globalSubscriberId = execution.getVariable("DDVAM_globalSubscriberId")
+				def sdncVersion = execution.getVariable("DDVAM_sdncVersion")						
+				
+				String sdncRequest =
+				"""<sdncadapterworkflow:SDNCAdapterWorkflowRequest xmlns:ns5="http://org.openecomp/mso/request/types/v1"
+													xmlns:sdncadapterworkflow="http://org.openecomp/mso/workflow/schema/v1"
+													xmlns:sdncadapter="http://org.openecomp/workflow/sdnc/adapter/schema/v1">
+	   <sdncadapter:RequestHeader>
+				<sdncadapter:RequestId>${requestId}</sdncadapter:RequestId>
+				<sdncadapter:SvcInstanceId>${svcInstId}</sdncadapter:SvcInstanceId>
+				<sdncadapter:SvcAction>${action}</sdncadapter:SvcAction>
+				<sdncadapter:SvcOperation>vnf-topology-operation</sdncadapter:SvcOperation>
+				<sdncadapter:CallbackUrl>${callbackURL}</sdncadapter:CallbackUrl>
+				<sdncadapter:MsoAction>generic-resource</sdncadapter:MsoAction>
+		</sdncadapter:RequestHeader>
+	<sdncadapterworkflow:SDNCRequestData>
+		<request-information>
+			<request-id>${requestId}</request-id>
+			<request-action>DeleteVnfInstance</request-action>
+			<source>${source}</source>
+			<notification-url/>
+			<order-number/>
+			<order-version/>
+		</request-information>
+		<service-information>
+			<service-id/>
+			<subscription-service-type/>			
+			<service-instance-id>${serviceInstanceId}</service-instance-id>
+			<global-customer-id/>
+		</service-information>
+		<vnf-information>
+			<vnf-id>${vnfId}</vnf-id>
+			<vnf-type/>			
+		</vnf-information>
+		<vnf-request-input>			
+			<vnf-name/>
+			<tenant>${tenantId}</tenant>
+			<aic-cloud-region>${cloudSiteId}</aic-cloud-region>			
+		</vnf-request-input>
+	</sdncadapterworkflow:SDNCRequestData>
+	</sdncadapterworkflow:SDNCAdapterWorkflowRequest>"""
+		
+			utils.logAudit("sdncRequest:  " + sdncRequest)
+			return sdncRequest
+	}
+		
+	public void validateSDNCResponse(Execution execution, String response, String method){
+		def isDebugLogEnabled=execution.getVariable("isDebugLogEnabled")
+		execution.setVariable("prefix",Prefix)
+		logDebug(" *** STARTED ValidateSDNCResponse Process*** ", isDebugLogEnabled)
+
+		WorkflowException workflowException = execution.getVariable("WorkflowException")
+		boolean successIndicator = execution.getVariable("SDNCA_SuccessIndicator")
+
+		utils.logAudit("workflowException: " + workflowException)
+
+		SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
+		sdncAdapterUtils.validateSDNCResponse(execution, response, workflowException, successIndicator)
+
+		utils.logAudit("SDNCResponse: " + response)
+
+		String sdncResponse = response
+		if(execution.getVariable(Prefix + 'sdncResponseSuccess') == true){
+			logDebug("Received a Good Response from SDNC Adapter for " + method + " SDNC Call.  Response is: \n" + sdncResponse, isDebugLogEnabled)			
+		}else{
+			logDebug("Received a BAD Response from SDNC Adapter for " + method + " SDNC Call.", isDebugLogEnabled)
+			throw new BpmnError("MSOWorkflowException")
+		}
+		logDebug(" *** COMPLETED ValidateSDNCResponse Process*** ", isDebugLogEnabled)
+	}
+	
+	
+	
 	
 	
 	

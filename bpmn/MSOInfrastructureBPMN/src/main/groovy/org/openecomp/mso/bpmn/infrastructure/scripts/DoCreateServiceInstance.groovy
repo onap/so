@@ -134,14 +134,14 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 			execution.setVariable("sdncCallbackUrl", sdncCallbackUrl)
 			utils.log("DEBUG","SDNC Callback URL: " + sdncCallbackUrl, isDebugEnabled)
 
-			String personaModelId = jsonUtil.getJsonValue(serviceModelInfo, "modelInvariantId")
-			String personaModelVersion = jsonUtil.getJsonValue(serviceModelInfo, "modelVersion")
+			String modelInvariantId = jsonUtil.getJsonValue(serviceModelInfo, "modelInvariantId")
+			String modelVersionId = jsonUtil.getJsonValue(serviceModelInfo, "modelVersionId")
 			
-			if (personaModelId == null) {
-				personaModelId = ""
+			if (modelInvariantId == null) {
+				modelInvariantId = ""
 			}
-			if (personaModelVersion == null) {
-				personaModelVersion = ""
+			if (modelVersionId == null) {
+				modelVersionId = ""
 			}
 			if (serviceInstanceName == null) {
 				execution.setVariable("serviceInstanceName", "")
@@ -155,9 +155,9 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 			String serviceInstanceData =
 					"""<service-instance xmlns=\"${namespace}\">
 					<service-instance-name>${serviceInstanceName}</service-instance-name>
-					<orchestration-status>active</orchestration-status>
-				    <persona-model-id>${personaModelId}</persona-model-id>
-				    <persona-model-version>${personaModelVersion}</persona-model-version>
+					<orchestration-status>Active</orchestration-status>
+				    <model-invariant-id>${modelInvariantId}</model-invariant-id>
+				    <model-version-id>${modelVersionId}</model-version-id>
 					</service-instance>""".trim()
 
 			execution.setVariable("serviceInstanceData", serviceInstanceData)
@@ -406,12 +406,14 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 			utils.logAudit("sdncAssignRequest:  " + sdncAssignRequest)
 
 			def sdncRequestId2 = UUID.randomUUID().toString()
-			String sdncRollbackRequest = sdncAssignRequest.replace(">assign<", ">delete<").replace(">CreateServiceInstance<", ">DeleteServiceInstance<").replace(">${sdncRequestId}<", ">${sdncRequestId2}<")
+			String sdncDelete = sdncAssignRequest.replace(">assign<", ">delete<").replace(">CreateServiceInstance<", ">DeleteServiceInstance<").replace(">${sdncRequestId}<", ">${sdncRequestId2}<")
+			def sdncRequestId3 = UUID.randomUUID().toString()
+			String sdncDeactivate = sdncDelete.replace(">delete<", ">deactivate<").replace(">${sdncRequestId2}<", ">${sdncRequestId3}<")
 			def rollbackData = execution.getVariable("rollbackData")
-			rollbackData.put("SERVICEINSTANCE", "sdncRollbackRequest", sdncRollbackRequest)
+			rollbackData.put("SERVICEINSTANCE", "sdncDeactivate", sdncDeactivate)
+			rollbackData.put("SERVICEINSTANCE", "sdncDelete", sdncDelete)
 			execution.setVariable("rollbackData", rollbackData)
 			
-			utils.log("DEBUG","sdncRollbackRequest:\n" + sdncRollbackRequest, isDebugEnabled)
 			utils.log("DEBUG","rollbackData:\n" + rollbackData.toString(), isDebugEnabled)
 
 		} catch (BpmnError e) {

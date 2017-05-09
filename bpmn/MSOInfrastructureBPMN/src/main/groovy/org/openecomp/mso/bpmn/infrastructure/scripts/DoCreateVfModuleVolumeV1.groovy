@@ -303,7 +303,7 @@ class DoCreateVfModuleVolumeV1 extends VfModuleBase {
 		def vnfId = utils.getNodeText1(aaiGenericVnfResponse, 'vnf-id')
 		def vnfName = utils.getNodeText1(aaiGenericVnfResponse, 'vnf-name')
 		def modelCustomizationId = getNodeTextForce(volumeRequest, "model-customization-id")
-		
+				
 		String messageId = UUID.randomUUID()
 		utils.log("DEBUG", "messageId to be used is generated: " + messageId, isDebugEnabled)
 
@@ -502,6 +502,9 @@ class DoCreateVfModuleVolumeV1 extends VfModuleBase {
 		utils.logAudit("AAI query generic vnf return code: " + returnCode)
 		utils.logAudit("AAI query generic vnf response: " + aaiResponseAsString)
 
+		//utils.log("DEBUG", "AAI query generic vnf return code: " + returnCode, isDebugEnabled)
+		//utils.log("DEBUG", "AAI query generic vnf response: " + aaiResponseAsString, isDebugEnabled)
+		
 		ExceptionUtil exceptionUtil = new ExceptionUtil()
 		
 		if (returnCode=='200') {

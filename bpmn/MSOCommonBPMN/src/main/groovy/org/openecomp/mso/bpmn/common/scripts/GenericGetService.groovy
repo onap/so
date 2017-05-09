@@ -64,6 +64,13 @@ import org.springframework.web.util.UriUtils
  * Variable Mapping Below:
  *
  * In Mapping Variables:
+ *   For Allotted-Resource:
+ *     @param - GENGS_allottedResourceId
+ *     @param - GENGS_type
+ *     @param (Optional) - GENGS_serviceInstanceId
+ *     @param (Optional) - GENGS_serviceType
+ *     @param (Optional) - GENGS_globalCustomerId
+ *
  *   For Service-Instance:
  *     @param - GENGS_serviceInstanceId or @param - GENGS_serviceInstanceName
  *     @param - GENGS_type
@@ -82,6 +89,7 @@ import org.springframework.web.util.UriUtils
  *    @param - WorkflowException
  *
  *
+ * @author cb645j
  */
 class GenericGetService extends AbstractServiceTaskProcessor{
 
@@ -94,20 +102,24 @@ class GenericGetService extends AbstractServiceTaskProcessor{
 	 * variables the calling flow provided.
 	 *
 	 * @param - execution
+	 *
+	 * @author cb645j
 	 */
 	public void preProcessRequest(Execution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		utils.log("DEBUG", " *** STARTED GenericGetService PreProcessRequest Process*** ", isDebugEnabled)
 
-		execution.setVariable("GENGS_obtainServiceInstanceUrl", false)
+		execution.setVariable("GENGS_obtainObjectsUrl", false)
 		execution.setVariable("GENGS_obtainServiceInstanceUrlByName", false)
 		execution.setVariable("GENGS_SuccessIndicator", false)
 		execution.setVariable("GENGS_FoundIndicator", false)
+		execution.setVariable("GENGS_resourceLink", null)
 		execution.setVariable("GENGS_siResourceLink", null)
 
 		try{
 			// Get Variables
+			String allottedResourceId = execution.getVariable("GENGS_allottedResourceId")
 			String serviceInstanceId = execution.getVariable("GENGS_serviceInstanceId")
 			String serviceInstanceName = execution.getVariable("GENGS_serviceInstanceName")
 			String serviceType = execution.getVariable("GENGS_serviceType")
@@ -116,7 +128,21 @@ class GenericGetService extends AbstractServiceTaskProcessor{
 
 			if(type != null){
 				utils.log("DEBUG", "Incoming GENGS_type is: " + type, isDebugEnabled)
-				if(type.equalsIgnoreCase("service-instance")){
+				if(type.equalsIgnoreCase("allotted-resource")){
+					if(isBlank(allottedResourceId)){
+						utils.log("DEBUG", "Incoming allottedResourceId is null. Allotted Resource Id is required to Get an allotted-resource.", isDebugEnabled)
+						exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Incoming allottedResourceId is null. Allotted Resource Id is required to Get an allotted-resource.")
+					}else{
+						utils.log("DEBUG", "Incoming Allotted Resource Id is: " + allottedResourceId, isDebugEnabled)
+						if(isBlank(globalCustomerId) || isBlank(serviceType) || isBlank(serviceInstanceId)){
+							execution.setVariable("GENGS_obtainObjectsUrl", true)
+						}else{
+							utils.log("DEBUG", "Incoming Service Instance Id is: " + serviceInstanceId, isDebugEnabled)
+							utils.log("DEBUG", "Incoming Service Type is: " + serviceType, isDebugEnabled)
+							utils.log("DEBUG", "Incoming Global Customer Id is: " + globalCustomerId, isDebugEnabled)
+						}
+					}
+				}else if(type.equalsIgnoreCase("service-instance")){
 					if(isBlank(serviceInstanceId) && isBlank(serviceInstanceName)){
 						utils.log("DEBUG", "Incoming serviceInstanceId and serviceInstanceName are null. ServiceInstanceId or ServiceInstanceName is required to Get a service-instance.", isDebugEnabled)
 						exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Incoming serviceInstanceId and serviceInstanceName are null. ServiceInstanceId or ServiceInstanceName is required to Get a service-instance.")
@@ -124,7 +150,7 @@ class GenericGetService extends AbstractServiceTaskProcessor{
 						utils.log("DEBUG", "Incoming Service Instance Id is: " + serviceInstanceId, isDebugEnabled)
 						utils.log("DEBUG", "Incoming Service Instance Name is: " + serviceInstanceName, isDebugEnabled)
 						if(isBlank(globalCustomerId) || isBlank(serviceType)){
-							execution.setVariable("GENGS_obtainServiceInstanceUrl", true)
+							execution.setVariable("GENGS_obtainObjectsUrl", true)
 							if(isBlank(serviceInstanceId)){
 								execution.setVariable("GENGS_obtainServiceInstanceUrlByName", true)
 							}
@@ -170,49 +196,64 @@ class GenericGetService extends AbstractServiceTaskProcessor{
 		execution.setVariable("prefix",Prefix)
 		utils.log("DEBUG", " *** STARTED GenericGetService ObtainServiceInstanceUrlById Process*** ", isDebugEnabled)
 		try {
-			String serviceInstanceId = execution.getVariable("GENGS_serviceInstanceId")
-			utils.log("DEBUG", " Querying Node for Service-Instance URL by using Service-Instance Id: " + serviceInstanceId, isDebugEnabled)
-
 			AaiUtil aaiUriUtil = new AaiUtil(this)
 			String aai_uri = aaiUriUtil.getSearchNodesQueryEndpoint(execution)
 			String aai_endpoint = execution.getVariable("URN_aai_endpoint")
-			
-			utils.logAudit("GenericGetService AAI Endpoint: " + aai_endpoint)
-			String path = "${aai_uri}?search-node-type=service-instance&filter=service-instance-id:EQUALS:${serviceInstanceId}"
+
+			String type = execution.getVariable("GENGS_type")
+			String path = ""
+			if(type.equalsIgnoreCase("service-instance")){
+				String serviceInstanceId = execution.getVariable("GENGS_serviceInstanceId")
+				utils.log("DEBUG", " Querying Node for Service-Instance URL by using Service-Instance Id: " + serviceInstanceId, isDebugEnabled)
+				path = "${aai_uri}?search-node-type=service-instance&filter=service-instance-id:EQUALS:${serviceInstanceId}"
+				utils.logAudit("Service Instance Node Query Url is: " + path)
+				utils.log("DEBUG", "Service Instance Node Query Url is: " + path, isDebugEnabled)
+			}else if(type.equalsIgnoreCase("allotted-resource")){
+				String allottedResourceId = execution.getVariable("GENGS_allottedResourceId")
+				utils.log("DEBUG", " Querying Node for Service-Instance URL by using Allotted Resource Id: " + allottedResourceId, isDebugEnabled)
+				path = "${aai_uri}?search-node-type=allotted-resource&filter=id:EQUALS:${allottedResourceId}"
+				utils.logAudit("Allotted Resource Node Query Url is: " + path)
+				utils.log("DEBUG", "Allotted Resource Node Query Url is: " + path, isDebugEnabled)
+			}
 
 			//String url = "${aai_endpoint}${path}"  host name needs to be removed from property
 			String url = "${path}"
-			execution.setVariable("GENGS_obtainSIUrlPath", url)
+			execution.setVariable("GENGS_genericQueryPath", url)
 
 			APIResponse response = aaiUriUtil.executeAAIGetCall(execution, url)
 			int responseCode = response.getStatusCode()
-			execution.setVariable("GENGS_obtainSIUrlResponseCode", responseCode)
+			execution.setVariable("GENGS_genericQueryResponseCode", responseCode)
 			utils.log("DEBUG", "  GET Service Instance response code is: " + responseCode, isDebugEnabled)
 			utils.logAudit("GenericGetService AAI GET Response Code: " + responseCode)
 
 			String aaiResponse = response.getResponseBodyAsString()
+			execution.setVariable("GENGS_obtainSIUrlResponseBeforeUnescaping", aaiResponse)
+			utils.log("DEBUG", "GenericGetService AAI Response before unescaping: " + aaiResponse, isDebugEnabled)
 			aaiResponse = StringEscapeUtils.unescapeXml(aaiResponse)
-			execution.setVariable("GENGS_obtainSIUrlResponse", aaiResponse)
+			execution.setVariable("GENGS_genericQueryResponse", aaiResponse)
 			utils.logAudit("GenericGetService AAI Response: " + aaiResponse)
+			utils.log("DEBUG", "GenericGetService AAI Response: " + aaiResponse, isDebugEnabled)
+
 			//Process Response
 			if(responseCode == 200){
-				utils.log("DEBUG", "  Query for Service Instance Url Received a Good Response Code", isDebugEnabled)
+				utils.log("DEBUG", "Generic Query Received a Good Response Code", isDebugEnabled)
 				execution.setVariable("GENGS_SuccessIndicator", true)
 				if(utils.nodeExists(aaiResponse, "result-data")){
-					utils.log("DEBUG", "Query for Service Instance Url Response Does Contain Data" , isDebugEnabled)
+					utils.log("DEBUG", "Generic Query Response Does Contain Data" , isDebugEnabled)
 					execution.setVariable("GENGS_FoundIndicator", true)
 					String resourceLink = utils.getNodeText1(aaiResponse, "resource-link")
+					execution.setVariable("GENGS_resourceLink", resourceLink)
 					execution.setVariable("GENGS_siResourceLink", resourceLink)
 				}else{
-					utils.log("DEBUG", "Query for Service Instance Url Response Does NOT Contains Data" , isDebugEnabled)
+					utils.log("DEBUG", "Generic Query Response Does NOT Contains Data" , isDebugEnabled)
 					execution.setVariable("WorkflowResponse", "  ") //for junits
 				}
 			}else if(responseCode == 404){
-				utils.log("DEBUG", "  Query for Service Instance Received a Not Found (404) Response", isDebugEnabled)
+				utils.log("DEBUG", "Generic Query Received a Not Found (404) Response", isDebugEnabled)
 				execution.setVariable("GENGS_SuccessIndicator", true)
 				execution.setVariable("WorkflowResponse", "  ") //for junits
 			}else{
-				utils.log("DEBUG", "Query for Service Instance Received a BAD REST Response: \n" + aaiResponse, isDebugEnabled)
+				utils.log("DEBUG", "Generic Query Received a BAD REST Response: \n" + aaiResponse, isDebugEnabled)
 				exceptionUtil.MapAAIExceptionToWorkflowExceptionGeneric(execution, aaiResponse, responseCode)
 				throw new BpmnError("MSOWorkflowException")
 			}
@@ -255,11 +296,11 @@ class GenericGetService extends AbstractServiceTaskProcessor{
 			execution.setVariable("GENGS_obtainSIUrlResponseCode", responseCode)
 			utils.log("DEBUG", "  GET Service Instance response code is: " + responseCode, isDebugEnabled)
 			utils.logAudit("GenericGetService AAI Response Code: " + responseCode)
-			
+
 			String aaiResponse = response.getResponseBodyAsString()
 			aaiResponse = StringEscapeUtils.unescapeXml(aaiResponse)
 			execution.setVariable("GENGS_obtainSIUrlResponse", aaiResponse)
-			utils.logAudit("GenericGetService AAI Response: " + aaiResponse) 
+			utils.logAudit("GenericGetService AAI Response: " + aaiResponse)
 			//Process Response
 			if(responseCode == 200){
 				utils.log("DEBUG", "  Query for Service Instance Url Received a Good Response Code", isDebugEnabled)
@@ -268,6 +309,7 @@ class GenericGetService extends AbstractServiceTaskProcessor{
 					utils.log("DEBUG", "Query for Service Instance Url Response Does Contain Data" , isDebugEnabled)
 					execution.setVariable("GENGS_FoundIndicator", true)
 					String resourceLink = utils.getNodeText1(aaiResponse, "resource-link")
+					execution.setVariable("GENGS_resourceLink", resourceLink)
 					execution.setVariable("GENGS_siResourceLink", resourceLink)
 				}else{
 					utils.log("DEBUG", "Query for Service Instance Url Response Does NOT Contains Data" , isDebugEnabled)
@@ -308,10 +350,10 @@ class GenericGetService extends AbstractServiceTaskProcessor{
 			AaiUtil aaiUriUtil = new AaiUtil(this)
 			String aai_endpoint = execution.getVariable("URN_aai_endpoint")
 			String serviceEndpoint = ""
-			
+
 			utils.logAudit("GenericGetService getServiceObject AAI Endpoint: " + aai_endpoint)
 			if(type.equalsIgnoreCase("service-instance")){
-				String siResourceLink = execution.getVariable("GENGS_siResourceLink")
+				String siResourceLink = execution.getVariable("GENGS_resourceLink")
 				if(isBlank(siResourceLink)){
 					String serviceInstanceId = execution.getVariable("GENGS_serviceInstanceId")
 					utils.log("DEBUG", " Incoming GENGS_serviceInstanceId is: " + serviceInstanceId, isDebugEnabled)
@@ -324,7 +366,27 @@ class GenericGetService extends AbstractServiceTaskProcessor{
 					logDebug('AAI URI is: ' + aai_uri, isDebugEnabled)
 					serviceEndpoint = "${aai_uri}/" + UriUtils.encode(globalCustomerId,"UTF-8") + "/service-subscriptions/service-subscription/" + UriUtils.encode(serviceType,"UTF-8") + "/service-instances/service-instance/" + UriUtils.encode(serviceInstanceId,"UTF-8")
 				}else{
-					utils.log("DEBUG", "Incoming Service Instance Resource Link is: " + siResourceLink, isDebugEnabled)
+					utils.log("DEBUG", "Incoming Service Instance Url is: " + siResourceLink, isDebugEnabled)
+					String[] split = siResourceLink.split("/aai/")
+					serviceEndpoint = "/aai/" + split[1]
+				}
+			}else if(type.equalsIgnoreCase("allotted-resource")){
+				String siResourceLink = execution.getVariable("GENGS_resourceLink")
+				if(isBlank(siResourceLink)){
+					String allottedResourceId = execution.getVariable("GENGS_allottedResourceId")
+					utils.log("DEBUG", " Incoming GENGS_allottedResourceId is: " + allottedResourceId, isDebugEnabled)
+					String serviceInstanceId = execution.getVariable("GENGS_serviceInstanceId")
+					utils.log("DEBUG", " Incoming GENGS_serviceInstanceId is: " + serviceInstanceId, isDebugEnabled)
+					String serviceType = execution.getVariable("GENGS_serviceType")
+					utils.log("DEBUG", " Incoming GENGS_serviceType is: " + serviceType, isDebugEnabled)
+					String globalCustomerId = execution.getVariable("GENGS_globalCustomerId")
+					utils.log("DEBUG", "Incoming Global Customer Id is: " + globalCustomerId, isDebugEnabled)
+
+					String aai_uri = aaiUriUtil.getBusinessCustomerUri(execution)
+					logDebug('AAI URI is: ' + aai_uri, isDebugEnabled)
+					serviceEndpoint = "${aai_uri}/" + UriUtils.encode(globalCustomerId,"UTF-8") + "/service-subscriptions/service-subscription/" + UriUtils.encode(serviceType,"UTF-8") + "/service-instances/service-instance/" + UriUtils.encode(serviceInstanceId,"UTF-8") +  "/allotted-resources/allotted-resource/" + UriUtils.encode(allottedResourceId,"UTF-8")
+				}else{
+					utils.log("DEBUG", "Incoming Allotted-Resource Url is: " + siResourceLink, isDebugEnabled)
 					String[] split = siResourceLink.split("/aai/")
 					serviceEndpoint = "/aai/" + split[1]
 				}
@@ -345,12 +407,11 @@ class GenericGetService extends AbstractServiceTaskProcessor{
 			execution.setVariable("GENGS_getServiceResponseCode", responseCode)
 			utils.log("DEBUG", "  GET Service response code is: " + responseCode, isDebugEnabled)
 			utils.logAudit("GenericGetService AAI Response Code: " + responseCode)
-			
+
 			String aaiResponse = response.getResponseBodyAsString()
 			aaiResponse = StringEscapeUtils.unescapeXml(aaiResponse)
 			execution.setVariable("GENGS_getServiceResponse", aaiResponse)
 			utils.logAudit("GenericGetService AAI Response: " + aaiResponse)
-			
 			//Process Response
 			if(responseCode == 200 || responseCode == 202){
 				utils.log("DEBUG", "GET Service Received a Good Response Code", isDebugEnabled)

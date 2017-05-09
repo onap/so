@@ -1,12 +1,12 @@
-<vf-module xmlns="http://org.openecomp.aai.inventory/v7">
+<vf-module xmlns="http://com.att.aai.inventory/v7">
 	<vf-module-id>supercool</vf-module-id>
 	<vf-module-name>PCRF::module-2</vf-module-name>
 	<heat-stack-id>fastburn</heat-stack-id>
 	<orchestration-status>pending-create</orchestration-status>
 	<is-base-vf-module>false</is-base-vf-module>
 	<resource-version>330-89</resource-version>
-	<persona-model-id>introvert</persona-model-id>
-	<persona-model-version>2.0</persona-model-version>
+	<model-invariant-id>introvert</model-invariant-id>
+	<model-version-id>2.0</model-version-id>
 	<relationship-list>
 		<relationship>
 			<related-to>volume-group</related-to>
