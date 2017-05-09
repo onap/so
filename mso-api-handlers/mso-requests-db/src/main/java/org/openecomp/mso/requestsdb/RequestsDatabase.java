@@ -22,23 +22,20 @@ package org.openecomp.mso.requestsdb;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.http.HttpStatus;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.persister.entity.AbstractEntityPersister;
 import org.openecomp.mso.db.HibernateUtils;
-import org.openecomp.mso.requestsdb.HibernateUtilsRequestsDb;
 import org.openecomp.mso.logger.MsoLogger;
-import org.openecomp.mso.logger.MessageEnum;
 
 public class RequestsDatabase {
 
@@ -66,6 +63,31 @@ public class RequestsDatabase {
 
     protected static final String         REQUEST_ID                 = "requestId";
     protected static MockRequestsDatabase mockDB                     = null;
+
+    protected static enum Scope {
+        //
+        SERVICE("service", SERVICE_INSTANCE_NAME, SERVICE_INSTANCE_ID, "serviceInstanceId"),
+        //
+        VNF_INSTANCE("vnf", VNF_INSTANCE_NAME, VNF_INSTANCE_ID, "vnfInstanceId"),
+        //
+        VOLUME_GROUP("volumeGroup", VOLUME_GROUP_INSTANCE_NAME, VOLUME_GROUP_INSTANCE_ID, "volumeGroupInstanceId"),
+        //
+        VFMODULE("vfModule", VFMODULE_INSTANCE_NAME, VFMODULE_INSTANCE_ID, "vfModuleInstanceId"),
+        //
+        NETWORK("network", NETWORK_INSTANCE_NAME, NETWORK_INSTANCE_ID, "networkInstanceId");
+
+        public final String type;
+        public final String nameColumn;
+        public final String idColumn;
+        public final String idMapKey;
+
+        private Scope(String type, String nameColumn, String idColumn, String idMapKey) {
+            this.type = type;
+            this.nameColumn = nameColumn;
+            this.idColumn = idColumn;
+            this.idMapKey = idMapKey;
+        }
+    }
 
     /**
      * Avoids creating an instance of this utility class.
@@ -221,44 +243,20 @@ public class RequestsDatabase {
 
         List <Criterion> criteria = new LinkedList <> ();
        
-        if(instanceName != null && !instanceName.equals("")) {
-        	
-        	if(requestScope.equals("service")){
-        		criteria.add (Restrictions.eq (SERVICE_INSTANCE_NAME, instanceName));
-        	} else if(requestScope.equals("vnf")){
-        		criteria.add (Restrictions.eq (VNF_INSTANCE_NAME, instanceName));
-        	} else if(requestScope.equals("volumeGroup")){
-        		criteria.add (Restrictions.eq (VOLUME_GROUP_INSTANCE_NAME, instanceName));
-        	} else if(requestScope.equals("vfModule")){
-        		criteria.add (Restrictions.eq (VFMODULE_INSTANCE_NAME, instanceName));
-        	} else if(requestScope.equals("network")){
-        		criteria.add (Restrictions.eq (NETWORK_INSTANCE_NAME, instanceName));
-        	}
-        
-        } else {
-            if(instanceIdMap != null){
-            	if(requestScope.equals("service") && instanceIdMap.get("serviceInstanceId") != null){
-            		criteria.add (Restrictions.eq (SERVICE_INSTANCE_ID, instanceIdMap.get("serviceInstanceId")));
-             	}
-            
-            	if(requestScope.equals("vnf") && instanceIdMap.get("vnfInstanceId") != null){
-            		criteria.add (Restrictions.eq (VNF_INSTANCE_ID, instanceIdMap.get("vnfInstanceId")));
-             	}
-            
-            	if(requestScope.equals("vfModule") && instanceIdMap.get("vfModuleInstanceId") != null){
-            		criteria.add (Restrictions.eq (VFMODULE_INSTANCE_ID, instanceIdMap.get("vfModuleInstanceId")));
-             	}
-            
-            	if(requestScope.equals("volumeGroup") && instanceIdMap.get("volumeGroupInstanceId") != null){
-            		criteria.add (Restrictions.eq (VOLUME_GROUP_INSTANCE_ID, instanceIdMap.get("volumeGroupInstanceId")));
-             	}
-            
-            	if(requestScope.equals("network") && instanceIdMap.get("networkInstanceId") != null){
-            		criteria.add (Restrictions.eq (NETWORK_INSTANCE_ID, instanceIdMap.get("networkInstanceId")));
-            	}
-            }
+        if (instanceName != null && !instanceName.equals("")) {
+
+            Arrays.stream(Scope.values()) //
+                    .filter(scope -> scope.type.equals(requestScope)) //
+                    .forEach(scope -> criteria.add(Restrictions.eq(scope.nameColumn, instanceName)));
+
+        } else if (instanceIdMap != null) {
+
+            Arrays.stream(Scope.values()) //
+                    .filter(scope -> scope.type.equals(requestScope) && instanceIdMap.get(scope.idMapKey) != null) //
+                    .forEach(scope -> criteria.add(Restrictions.eq(scope.idColumn, instanceIdMap.get(scope.idMapKey))));
+
         }
-        
+
         criteria.add (Restrictions.in ("requestStatus", new String[] { "PENDING", "IN_PROGRESS", "TIMEOUT" }));
         
         Order order = Order.desc (START_TIME);
