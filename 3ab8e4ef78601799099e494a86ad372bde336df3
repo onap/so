@@ -16,6 +16,24 @@
       "revId": "3ab8e4ef78601799099e494a86ad372bde336df3",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da141535_865d3dec",
+        "filename": "mso-api-handlers/mso-requests-db/src/main/java/org/openecomp/mso/requestsdb/RequestsDatabase.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 35
+      },
+      "writtenOn": "2017-05-15T15:13:22Z",
+      "side": 1,
+      "message": "Those were just to force the code formatter to break lines a certain way, instead of putting the various Enums on the same line.",
+      "parentUuid": "da141535_532249ba",
+      "revId": "3ab8e4ef78601799099e494a86ad372bde336df3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
