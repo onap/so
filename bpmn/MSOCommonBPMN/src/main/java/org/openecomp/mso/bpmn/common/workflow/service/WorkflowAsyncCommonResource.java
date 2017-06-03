@@ -26,11 +26,7 @@ import org.camunda.bpm.engine.ProcessEngines;
 
 public class WorkflowAsyncCommonResource extends WorkflowAsyncResource {
 
-	protected ProcessEngineServices getProcessEngineServices() {
-		if (pes4junit == null) {
-			return ProcessEngines.getProcessEngine("common");
-		} else {
-			return pes4junit;
-		}
-	}
+    protected ProcessEngineServices getProcessEngineServices() {
+        return pes4junit.orElse(ProcessEngines.getProcessEngine("common"));
+    }
 }

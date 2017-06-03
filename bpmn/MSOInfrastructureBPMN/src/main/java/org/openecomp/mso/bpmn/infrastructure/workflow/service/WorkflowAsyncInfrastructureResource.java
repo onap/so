@@ -40,11 +40,7 @@ import org.openecomp.mso.bpmn.common.workflow.service.WorkflowAsyncResource;
 @Path("/async")
 public class WorkflowAsyncInfrastructureResource extends WorkflowAsyncResource {
 	
-	protected ProcessEngineServices getProcessEngineServices() {
-		if (pes4junit == null) {
-			return ProcessEngines.getProcessEngine("infrastructure");
-		} else {
-			return pes4junit;
-		}
-	}
+    protected ProcessEngineServices getProcessEngineServices() {
+        return pes4junit.orElse(ProcessEngines.getProcessEngine("infrastructure"));
+    }
 }
