@@ -20,6 +20,9 @@
 
 package org.openecomp.mso.bpmn.core;
 
+import java.util.Objects;
+
+import org.camunda.bpm.engine.ProcessEngineException;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.Expression;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
@@ -185,13 +188,7 @@ public abstract class BaseTask implements JavaDelegate {
 	protected String getOptionalStringField(Expression expression,
 			DelegateExecution execution, String fieldName) {
 		Object o = getFieldImpl(expression, execution, fieldName, true);
-		if (o instanceof String) {
-			return (String) o;
-		} else if (o == null) {
-			return null;
-		} else {
-			return o.toString();
-		}
+		return Objects.toString(o, null);
 	}
 	
 	/**
@@ -526,4 +523,15 @@ public abstract class BaseTask implements JavaDelegate {
 	public String getTaskName() {
 		return getClass().getSimpleName();
 	}
+
+
+	/**
+	 * Check if shouldFail variable is set to true.
+	 * @param execution
+	 * @return
+	 */
+    protected boolean shouldFail(DelegateExecution execution) {
+        Boolean shouldFail = (Boolean) execution.getVariable("shouldFail");
+        return shouldFail != null && shouldFail;
+    }
 }
