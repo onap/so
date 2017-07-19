@@ -105,30 +105,4 @@ public class PropertyConfigurationTest {
 		Assert.assertEquals("testValue", props.get("testKey"));
 		props.put("newKey", "newvalue");
 	}
-	
-	@Test
-	public void testNotAllowedPropertyReloading() throws IOException {
-		Path msoConfigPath = Paths.get(System.getProperty("mso.config.path"));
-		Path backupPropFilePath = msoConfigPath.resolve("backup-" + PropertyConfiguration.MSO_BPMN_PROPERTIES);
-
-		try {
-			// Create a new file... a backup file
-			Files.createFile(backupPropFilePath);
-
-			// Load properties
-			PropertyConfiguration propertyConfiguration = PropertyConfiguration.getInstance();
-			Map<String,String> props = propertyConfiguration.getProperties(PropertyConfiguration.MSO_BPMN_PROPERTIES);
-			Assert.assertNotNull(props);
-			Assert.assertEquals("testValue", props.get("testKey"));
-
-			// Update the backup file
-			Path bpmnPropertiesSourcePath = Paths.get("src", "test", "resources", "mso.bpmn.properties");
-			Files.copy(bpmnPropertiesSourcePath, backupPropFilePath, StandardCopyOption.REPLACE_EXISTING);
-
-			// Cache size should remain the same
-			Assert.assertEquals(1, PropertyConfiguration.getInstance().cacheSize());
-		} finally {
-			backupPropFilePath.toFile().delete();
-		}
-	}
 }
