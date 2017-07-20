@@ -22,8 +22,8 @@
 		     i.e: mvn clean install -P docker -Dmso.git.url=https://gerrit.openecomp.org/r-->
 		<mso.chef.git.url.prefix>${env.GIT_NO_PROJECT}</mso.chef.git.url.prefix>
 		<mso.chef.git.branchname>master</mso.chef.git.branchname>
-		<mso.chef.git.url.suffix.chef.repo>mso/chef-repo</mso.chef.git.url.suffix.chef.repo>
-		<mso.chef.git.url.suffix.chef.config>mso/mso-config</mso.chef.git.url.suffix.chef.config>
+		<mso.chef.git.url.suffix.chef.repo>so/chef-repo</mso.chef.git.url.suffix.chef.repo>
+		<mso.chef.git.url.suffix.chef.config>so/so-config</mso.chef.git.url.suffix.chef.config>
 		<mso.project.version>${project.version}</mso.project.version>
 	</properties>
 
