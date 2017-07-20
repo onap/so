@@ -2,8 +2,8 @@ FROM openecomp/wildfly:1.0
 
 
 ### File Author / Maintainer
-MAINTAINER "The OpenECOMP Team"
-LABEL Description="This image contains the OpenECOMP MSO base for arquillian" Version="1.0"
+MAINTAINER "The ONAP Team"
+LABEL Description="This image contains the ONAP SO base for arquillian" Version="1.0"
 
 ENV CHEF_REPO_NAME="chef-repo"
 ENV CHEF_CONFIG_NAME="mso-config"

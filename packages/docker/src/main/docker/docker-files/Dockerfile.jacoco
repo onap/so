@@ -2,7 +2,7 @@
 FROM ubuntu:14.04
 
 ### File Author / Maintainer
-MAINTAINER "The OpenECOMP Team"
+MAINTAINER "The ONAP Team"
 LABEL Description="This image is used to get jacoco result from a jboss image" Version="1.0"
 
 ARG http_proxy
