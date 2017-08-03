@@ -1,4 +1,5 @@
-# UUID                                                              	Group Name
+# UUID                                                                 	Group Name
 #
-ldap:cn=lf-gerrit-transfer,ou=Groups,dc=freestandards,dc=org        	ldap/lf-gerrit-transfer
-ldap:cn=onap-gerrit-mso-committers,ou=Groups,dc=freestandards,dc=org	ldap/onap-gerrit-mso-committers
+ldap:cn=lf-gerrit-transfer,ou=Groups,dc=freestandards,dc=org           	ldap/lf-gerrit-transfer
+ldap:cn=onap-gerrit-holmes-committers,ou=Groups,dc=freestandards,dc=org	ldap/onap-gerrit-holmes-committers
+ldap:cn=onap-gerrit-mso-committers,ou=Groups,dc=freestandards,dc=org   	ldap/onap-gerrit-mso-committers
