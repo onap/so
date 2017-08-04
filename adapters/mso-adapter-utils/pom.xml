@@ -2,11 +2,11 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>org.openecomp.so.framework</groupId>
+		<groupId>org.openecomp.so</groupId>
 		<artifactId>adapters</artifactId>
 		<version>1.1.0-SNAPSHOT</version>
 	</parent>
-	<groupId>org.openecomp.so.framework.adapters</groupId>
+	<groupId>org.openecomp.so.adapters</groupId>
 	<artifactId>mso-adapter-utils</artifactId>
 	<name>mso-adapter-utils</name>
 	<description>Common MSO utilities, including Openstack client wrappers.</description>
@@ -64,12 +64,12 @@
 			<version>${openstack.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.openecomp.so.framework</groupId>
+			<groupId>org.openecomp.so</groupId>
 			<artifactId>common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.openecomp.so.framework</groupId>
+			<groupId>org.openecomp.so</groupId>
 			<artifactId>mso-catalog-db</artifactId>
 			<version>${project.version}</version>
 		</dependency>
