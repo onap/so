@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a1a2d67_c84a3b55",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 25
+      },
+      "writtenOn": "2017-08-04T16:19:17Z",
+      "side": 1,
+      "message": "This is an invalid statement. Artifact can be anything. The only thing that is enforced is groupId must be your project\u0027s assigned group ID. So PROJECT_DOMAIN.SUBPROJECT. For example:\n\n PROJECT_DOMAIN\u003dorg.onap\n SUBPROJECT\u003dso\n\nHow a Maven repository structure is setup is by GROUP_ID/ARTIFACT_ID/VERSION this is also referred to Maven as a GAV object and also affects the file system level folder structure that is created by Maven (and subsequently uploaded to Nexus).\n\nIn Nexus we restrict that each project publishes to their assigned namespace so \"org/onap/so\" Maven translates the GROUP_ID to \"org/onap/so\" and then copies the artifacts into that path.\n\nAgain to be clear ARTIFACT can be anything as it will be placed after the GROUP_ID in a Maven path.",
+      "range": {
+        "startLine": 27,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 34
+      },
+      "revId": "ca7d213bcdd477e485b6172a1e9f0c0b551d6a32",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a1a2d67_e83df7bc",
+        "filename": "adapters/mso-adapter-utils/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 25
+      },
+      "writtenOn": "2017-08-04T16:19:17Z",
+      "side": 1,
+      "message": "If you remove the groupId here it will be inherited from the parent above. Less places to update in the future.",
+      "revId": "ca7d213bcdd477e485b6172a1e9f0c0b551d6a32",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
