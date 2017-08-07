@@ -1,0 +1,78 @@
+{
+  "context": {
+    "resources": {
+      "management_keypair": {
+        "name": "p2_cloudify-manager-kp-ilya",
+        "id": "p2_cloudify-manager-kp-ilya",
+        "type": "keypair",
+        "external_resource": true
+      },
+      "router": {
+        "name": "p2_cloudify-router",
+        "id": "856f9fb8-6676-4b99-b64d-b76874b30abf",
+        "type": "router",
+        "external_resource": true
+      },
+      "subnet": {
+        "name": "p2_cloudify-admin-network-subnet",
+        "id": "dd193491-d728-4e3e-8199-27eec0ba18e4",
+        "type": "subnet",
+        "external_resource": true
+      },
+      "int_network": {
+        "name": "p2_cloudify-admin-network",
+        "id": "27ef2770-5219-4bb1-81d4-14ed450c5181",
+        "type": "network",
+        "external_resource": true
+      },
+      "management_server": {
+        "name": "p2_cfy-mgr-ilya-2014-06-01-11:59",
+        "id": "be9991da-9c34-4f7c-9c33-5e04ad2d5b3e",
+        "type": "server",
+        "external_resource": false
+      },
+      "agents_security_group": {
+        "name": "p2_cloudify-sg-agents",
+        "id": "d52280aa-0e79-4697-bd08-baf3f84e2a10",
+        "type": "neutron security group",
+        "external_resource": true
+      },
+      "agents_keypair": {
+        "name": "p2_cloudify-agents-kp-ilya",
+        "id": "p2_cloudify-agents-kp-ilya",
+        "type": "keypair",
+        "external_resource": true
+      },
+      "management_security_group": {
+        "name": "p2_cloudify-sg-management",
+        "id": "5862e0d2-8f28-472e-936b-d2da9cb935b3",
+        "type": "neutron security group",
+        "external_resource": true
+      },
+      "floating_ip": {
+        "external_resource": true,
+        "id": "None",
+        "type": "floating ip",
+        "ip": "CENSORED"
+      },
+      "ext_network": {
+        "name": "Ext-Net",
+        "id": "7da74520-9d5e-427b-a508-213c84e69616",
+        "type": "network",
+        "external_resource": true
+      }
+    },
+    "cloudify": {
+      "resources_prefix": "p2_",
+      "cloudify_agent": {
+        "user": "ubuntu",
+        "agent_key_path": "/PATH/CENSORED/p2_cloudify-agents-kp-ilya.pem",
+        "min_workers": 2,
+        "max_workers": 5,
+        "remote_execution_port": 22
+      }
+    }
+  },
+  "name": "cloudify_openstack"
+}
+

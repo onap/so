@@ -1,0 +1,30 @@
+
+tosca_definitions_version: cloudify_dsl_1_3
+
+imports:
+  - https://raw.githubusercontent.com/cloudify-cosmo/cloudify-manager/4.1/resources/rest-service/cloudify/types/types.yaml
+  - plugin.yaml
+
+inputs:
+  use_password:
+    type: boolean
+    default: false
+
+node_templates:
+  image:
+    type: cloudify.openstack.nodes.Image
+    properties:
+      image:
+        disk_format: test_format
+        container_format: test_format
+        data: test_path
+      openstack_config:
+        username: aaa
+        password: aaa
+        tenant_name: aaa
+        auth_url: aaa
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        start:
+          inputs:
+            start_retry_interval: 1

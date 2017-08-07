@@ -1,0 +1,31 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+imports:
+  - https://raw.githubusercontent.com/cloudify-cosmo/cloudify-manager/4.1/resources/rest-service/cloudify/types/types.yaml
+  - plugin.yaml
+
+inputs:
+  use_password:
+    type: boolean
+    default: false
+
+node_templates:
+
+  security_group:
+    type: cloudify.openstack.nodes.SecurityGroup
+
+  server:
+    type: cloudify.openstack.nodes.Server
+    properties:
+      install_agent: false
+      use_password: { get_input: use_password }
+      openstack_config:
+        username: aaa
+        password: aaa
+        tenant_name: aaa
+        auth_url: aaa
+      server:
+        key_name: 'aa'
+    relationships:
+      - type: cloudify.openstack.server_connected_to_security_group
+        target: security_group

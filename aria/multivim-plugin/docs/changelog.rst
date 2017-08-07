@@ -1,0 +1,7 @@
+
+
+Changelog
+=========
+
+.. include:: ../CHANGELOG.txt
+
