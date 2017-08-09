@@ -103,7 +103,7 @@ public class MsoLogger {
     public enum ResponseCode {
         Suc(0), PermissionError(100), DataError(300), DataNotFound(301), BadRequest(302), SchemaError(
                 400), BusinessProcesssError(500), ServiceNotAvailable(501), InternalError(
-                        502), Conflict(503), DBAccessError(504), CommunicationError(505), UnknownError(900);
+                502), Conflict(503), DBAccessError(504), CommunicationError(505), UnknownError(900);
 
         private int value;
 
@@ -131,7 +131,7 @@ public class MsoLogger {
         }
     };
 
-    private EELFLogger          logger, auditLogger, metricsLogger;
+    private EELFLogger          debugLogger, errorLogger, auditLogger, metricsLogger;
     private static final String CONFIG_FILE = System.getProperty("jboss.home.dir") + "/mso-config/uuid/uuid_"
             + System.getProperty("jboss.server.name");
     private static String       instanceUUID, serverIP, serverName;
@@ -141,7 +141,8 @@ public class MsoLogger {
     private static final Logger LOGGER      = Logger.getLogger(MsoLogger.class.getName());
 
     private MsoLogger(MsoLogger.Catalog cat) {
-        this.logger = EELFManager.getInstance().getErrorLogger();
+        this.debugLogger = EELFManager.getInstance().getDebugLogger();
+        this.errorLogger = EELFManager.getInstance().getErrorLogger();
         this.auditLogger = EELFManager.getInstance().getAuditLogger();
         this.metricsLogger = EELFManager.getInstance().getMetricsLogger();
         MsoLogger.initialization();
@@ -168,7 +169,7 @@ public class MsoLogger {
 
     /**
      * Get the MsoLogger based on the catalog
-     * 
+     *
      * @param cat
      *            Catalog of the logger
      * @return the MsoLogger
@@ -179,7 +180,7 @@ public class MsoLogger {
 
     /**
      * Record the Metrics event with no argument
-     * 
+     *
      * @param startTime
      *            Transaction starting time in millieseconds
      * @param statusCode
@@ -196,7 +197,7 @@ public class MsoLogger {
      *            Target VNF or VM acted opon by the component, if available
      */
     public void recordMetricEvent(Long startTime, StatusCode statusCode, ResponseCode responseCode, String responseDesc,
-            String targetEntity, String targetServiceName, String targetVEntity) {
+                                  String targetEntity, String targetServiceName, String targetVEntity) {
         prepareMetricMsg(startTime, statusCode, responseCode.getValue(), responseDesc, targetEntity, targetServiceName,
                 targetVEntity);
         metricsLogger.info("");
@@ -218,7 +219,7 @@ public class MsoLogger {
      *            Human redable description of the application response code
      */
     public void recordAuditEvent(Long startTime, StatusCode statusCode, ResponseCode responseCode,
-            String responseDesc) {
+                                 String responseDesc) {
         prepareAuditMsg(startTime, statusCode, responseCode.getValue(), responseDesc);
         auditLogger.info("");
         MDC.remove(TIMER);
@@ -233,7 +234,7 @@ public class MsoLogger {
      */
     public void debug(String msg) {
         prepareMsg(DEBUG_LEVEL);
-        logger.debug(msg);
+        debugLogger.debug(msg);
     }
 
     /**
@@ -246,7 +247,7 @@ public class MsoLogger {
      */
     public void debug(String msg, Throwable t) {
         prepareMsg(DEBUG_LEVEL);
-        logger.debug(msg, t);
+        debugLogger.debug(msg, t);
     }
 
     // Info methods
@@ -259,7 +260,7 @@ public class MsoLogger {
     public void info(EELFResolvableErrorEnum msg, String targetEntity, String targetServiceName) {
         prepareErrorMsg(INFO_LEVEL, targetEntity, targetServiceName, null, "");
 
-        logger.info(msg);
+        debugLogger.info(msg);
         MDC.remove(TARGETENTITY);
         MDC.remove(TARGETSERVICENAME);
     }
@@ -275,7 +276,7 @@ public class MsoLogger {
     public void info(EELFResolvableErrorEnum msg, String arg0, String targetEntity, String targetServiceName) {
         prepareErrorMsg(INFO_LEVEL, targetEntity, targetServiceName, null, "");
 
-        logger.info(msg, normalize(arg0));
+        debugLogger.info(msg, normalize(arg0));
         MDC.remove(TARGETENTITY);
         MDC.remove(TARGETSERVICENAME);
     }
@@ -289,10 +290,10 @@ public class MsoLogger {
      *            The arguments used in the log message
      */
     public void info(EELFResolvableErrorEnum msg, String arg0, String arg1, String targetEntity,
-            String targetServiceName) {
+                     String targetServiceName) {
         prepareErrorMsg(INFO_LEVEL, targetEntity, targetServiceName, null, "");
 
-        logger.info(msg, normalize(arg0), normalize(arg1));
+        debugLogger.info(msg, normalize(arg0), normalize(arg1));
         MDC.remove(TARGETENTITY);
         MDC.remove(TARGETSERVICENAME);
     }
@@ -306,10 +307,10 @@ public class MsoLogger {
      *            The arguments used in the log message
      */
     public void info(EELFResolvableErrorEnum msg, String arg0, String arg1, String arg2, String targetEntity,
-            String targetServiceName) {
+                     String targetServiceName) {
         prepareErrorMsg(INFO_LEVEL, targetEntity, targetServiceName, null, "");
 
-        logger.info(msg, normalize(arg0), normalize(arg1), normalize(arg2));
+        debugLogger.info(msg, normalize(arg0), normalize(arg1), normalize(arg2));
         MDC.remove(TARGETENTITY);
         MDC.remove(TARGETSERVICENAME);
     }
@@ -323,10 +324,10 @@ public class MsoLogger {
      *            The arguments used in the log message
      */
     public void info(EELFResolvableErrorEnum msg, String arg0, String arg1, String arg2, String arg3,
-            String targetEntity, String targetServiceName) {
+                     String targetEntity, String targetServiceName) {
         prepareErrorMsg(INFO_LEVEL, targetEntity, targetServiceName, null, "");
 
-        logger.info(msg, normalize(arg0), normalize(arg1), normalize(arg2), normalize(arg3));
+        debugLogger.info(msg, normalize(arg0), normalize(arg1), normalize(arg2), normalize(arg3));
         MDC.remove(TARGETENTITY);
         MDC.remove(TARGETSERVICENAME);
     }
@@ -340,10 +341,10 @@ public class MsoLogger {
      *            The arguments used in the log message
      */
     public void info(EELFResolvableErrorEnum msg, String arg0, String arg1, String arg2, String arg3, String arg4,
-            String targetEntity, String targetServiceName) {
+                     String targetEntity, String targetServiceName) {
         prepareErrorMsg(INFO_LEVEL, targetEntity, targetServiceName, null, "");
 
-        logger.info(msg, normalize(arg0), normalize(arg1), normalize(arg2), normalize(arg3), normalize(arg4));
+        debugLogger.info(msg, normalize(arg0), normalize(arg1), normalize(arg2), normalize(arg3), normalize(arg4));
         MDC.remove(TARGETENTITY);
         MDC.remove(TARGETSERVICENAME);
     }
@@ -357,10 +358,10 @@ public class MsoLogger {
      *            The arguments used in the log message
      */
     public void info(EELFResolvableErrorEnum msg, String arg0, String arg1, String arg2, String arg3, String arg4,
-            String arg5, String targetEntity, String targetServiceName) {
+                     String arg5, String targetEntity, String targetServiceName) {
         prepareErrorMsg(INFO_LEVEL, targetEntity, targetServiceName, null, "");
 
-        logger.info(msg, normalize(arg0), normalize(arg1), normalize(arg2), normalize(arg3), normalize(arg4),
+        debugLogger.info(msg, normalize(arg0), normalize(arg1), normalize(arg2), normalize(arg3), normalize(arg4),
                 normalize(arg5));
         MDC.remove(TARGETENTITY);
         MDC.remove(TARGETSERVICENAME);
@@ -374,10 +375,10 @@ public class MsoLogger {
      *            The log message to put
      */
     public void warn(EELFResolvableErrorEnum msg, String targetEntity, String targetServiceName, ErrorCode errorCode,
-            String errorDesc) {
+                     String errorDesc) {
         prepareErrorMsg(WARN_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
 
-        logger.warn(msg);
+        errorLogger.warn(msg);
         MDC.remove(TARGETENTITY);
         MDC.remove(TARGETSERVICENAME);
     }
@@ -391,11 +392,11 @@ public class MsoLogger {
      *            The exception info
      */
     public void warn(EELFResolvableErrorEnum msg, String targetEntity, String targetServiceName, ErrorCode errorCode,
-            String errorDesc, Throwable t) {
+                     String errorDesc, Throwable t) {
         prepareErrorMsg(WARN_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
-        logger.warn(msg);
-        logger.warn("Exception raised: " + getNormalizedStackTrace(t));
-        logger.debug("Exception raised", t);
+        errorLogger.warn(msg);
+        errorLogger.warn("Exception raised: " + getNormalizedStackTrace(t));
+        debugLogger.debug("Exception raised", t);
         MDC.remove(TARGETENTITY);
         MDC.remove(TARGETSERVICENAME);
     }
@@ -409,9 +410,9 @@ public class MsoLogger {
      *            The argument used in the log message
      */
     public void warn(EELFResolvableErrorEnum msg, String arg, String targetEntity, String targetServiceName,
-            ErrorCode errorCode, String errorDesc) {
+                     ErrorCode errorCode, String errorDesc) {
         prepareErrorMsg(WARN_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
-        logger.warn(msg, arg);
+        errorLogger.warn(msg, arg);
         MDC.remove(TARGETENTITY);
         MDC.remove(TARGETSERVICENAME);
     }
@@ -427,11 +428,11 @@ public class MsoLogger {
      *            The exception info
      */
     public void warn(EELFResolvableErrorEnum msg, String arg, String targetEntity, String targetServiceName,
-            ErrorCode errorCode, String errorDesc, Throwable t) {
+                     ErrorCode errorCode, String errorDesc, Throwable t) {
         prepareErrorMsg(WARN_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
-        logger.warn(msg, arg);
-        logger.warn("Exception raised: " + getNormalizedStackTrace(t));
-        logger.debug("Exception raised", t);
+        errorLogger.warn(msg, arg);
+        errorLogger.warn("Exception raised: " + getNormalizedStackTrace(t));
+        debugLogger.debug("Exception raised", t);
         MDC.remove(TARGETENTITY);
         MDC.remove(TARGETSERVICENAME);
     }
@@ -445,9 +446,9 @@ public class MsoLogger {
      *            The arguments used in the log message
      */
     public void warn(EELFResolvableErrorEnum msg, String arg0, String arg1, String targetEntity,
-            String targetServiceName, ErrorCode errorCode, String errorDesc) {
+                     String targetServiceName, ErrorCode errorCode, String errorDesc) {
         prepareErrorMsg(WARN_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
-        logger.warn(msg, normalize(arg0), normalize(arg1));
+        errorLogger.warn(msg, normalize(arg0), normalize(arg1));
         MDC.remove(TARGETENTITY);
         MDC.remove(TARGETSERVICENAME);
     }
@@ -463,11 +464,11 @@ public class MsoLogger {
      *            The exception info
      */
     public void warn(EELFResolvableErrorEnum msg, String arg0, String arg1, String targetEntity,
-            String targetServiceName, ErrorCode errorCode, String errorDesc, Throwable t) {
+                     String targetServiceName, ErrorCode errorCode, String errorDesc, Throwable t) {
         prepareErrorMsg(WARN_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
-        logger.warn(msg, normalize(arg0), normalize(arg1));
-        logger.warn("Exception raised: " + getNormalizedStackTrace(t));
-        logger.debug("Exception raised", t);
+        errorLogger.warn(msg, normalize(arg0), normalize(arg1));
+        errorLogger.warn("Exception raised: " + getNormalizedStackTrace(t));
+        debugLogger.debug("Exception raised", t);
         MDC.remove(TARGETENTITY);
         MDC.remove(TARGETSERVICENAME);
     }
@@ -481,9 +482,9 @@ public class MsoLogger {
      *            The arguments used in the log message
      */
     public void warn(EELFResolvableErrorEnum msg, String arg0, String arg1, String arg2, String targetEntity,
-            String targetServiceName, ErrorCode errorCode, String errorDesc) {
+                     String targetServiceName, ErrorCode errorCode, String errorDesc) {
         prepareErrorMsg(WARN_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
-        logger.warn(msg, normalize(arg0), normalize(arg1), normalize(arg2));
+        errorLogger.warn(msg, normalize(arg0), normalize(arg1), normalize(arg2));
         MDC.remove(TARGETENTITY);
         MDC.remove(TARGETSERVICENAME);
     }
@@ -499,11 +500,11 @@ public class MsoLogger {
      *            The exception info
      */
     public void warn(EELFResolvableErrorEnum msg, String arg0, String arg1, String arg2, String targetEntity,
-            String targetServiceName, ErrorCode errorCode, String errorDesc, Throwable t) {
+                     String targetServiceName, ErrorCode errorCode, String errorDesc, Throwable t) {
         prepareErrorMsg(WARN_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
-        logger.warn(msg, normalize(arg0), normalize(arg1), normalize(arg2));
-        logger.warn("Exception raised: " + getNormalizedStackTrace(t));
-        logger.debug("Exception raised", t);
+        errorLogger.warn(msg, normalize(arg0), normalize(arg1), normalize(arg2));
+        errorLogger.warn("Exception raised: " + getNormalizedStackTrace(t));
+        debugLogger.debug("Exception raised", t);
         MDC.remove(TARGETENTITY);
         MDC.remove(TARGETSERVICENAME);
     }
@@ -517,9 +518,9 @@ public class MsoLogger {
      *            The arguments used in the log message
      */
     public void warn(EELFResolvableErrorEnum msg, String arg0, String arg1, String arg2, String arg3,
-            String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc) {
+                     String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc) {
         prepareErrorMsg(WARN_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
-        logger.warn(msg, normalize(arg0), normalize(arg1), normalize(arg2), normalize(arg3));
+        errorLogger.warn(msg, normalize(arg0), normalize(arg1), normalize(arg2), normalize(arg3));
         MDC.remove(TARGETENTITY);
         MDC.remove(TARGETSERVICENAME);
     }
@@ -535,11 +536,11 @@ public class MsoLogger {
      *            The exception info
      */
     public void warn(EELFResolvableErrorEnum msg, String arg0, String arg1, String arg2, String arg3,
-            String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc, Throwable t) {
+                     String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc, Throwable t) {
         prepareErrorMsg(WARN_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
-        logger.warn(msg, normalize(arg0), normalize(arg1), normalize(arg2), normalize(arg3));
-        logger.warn("Exception raised: " + getNormalizedStackTrace(t));
-        logger.debug("Exception raised", t);
+        errorLogger.warn(msg, normalize(arg0), normalize(arg1), normalize(arg2), normalize(arg3));
+        errorLogger.warn("Exception raised: " + getNormalizedStackTrace(t));
+        debugLogger.debug("Exception raised", t);
         MDC.remove(TARGETENTITY);
         MDC.remove(TARGETSERVICENAME);
     }
@@ -553,9 +554,9 @@ public class MsoLogger {
      *            The arguments used in the log message
      */
     public void warn(EELFResolvableErrorEnum msg, String arg0, String arg1, String arg2, String arg3, String arg4,
-            String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc) {
+                     String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc) {
         prepareErrorMsg(WARN_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
-        logger.warn(msg, normalize(arg0), normalize(arg1), normalize(arg2), normalize(arg3), normalize(arg4));
+        errorLogger.warn(msg, normalize(arg0), normalize(arg1), normalize(arg2), normalize(arg3), normalize(arg4));
         MDC.remove(TARGETENTITY);
         MDC.remove(TARGETSERVICENAME);
     }
@@ -571,11 +572,11 @@ public class MsoLogger {
      *            The exception info
      */
     public void warn(EELFResolvableErrorEnum msg, String arg0, String arg1, String arg2, String arg3, String arg4,
-            String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc, Throwable t) {
+                     String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc, Throwable t) {
         prepareErrorMsg(WARN_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
-        logger.warn(msg, normalize(arg0), normalize(arg1), normalize(arg2), normalize(arg3), normalize(arg4));
-        logger.warn("Exception raised: " + getNormalizedStackTrace(t));
-        logger.debug("Exception raised", t);
+        errorLogger.warn(msg, normalize(arg0), normalize(arg1), normalize(arg2), normalize(arg3), normalize(arg4));
+        errorLogger.warn("Exception raised: " + getNormalizedStackTrace(t));
+        debugLogger.debug("Exception raised", t);
         MDC.remove(TARGETENTITY);
         MDC.remove(TARGETSERVICENAME);
     }
@@ -588,9 +589,9 @@ public class MsoLogger {
      *            The log message to put
      */
     public void error(EELFResolvableErrorEnum msg, String targetEntity, String targetServiceName, ErrorCode errorCode,
-            String errorDesc) {
+                      String errorDesc) {
         prepareErrorMsg(ERROR_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
-        logger.error(msg);
+        errorLogger.error(msg);
         MDC.remove(TARGETENTITY);
         MDC.remove(TARGETSERVICENAME);
     }
@@ -604,11 +605,11 @@ public class MsoLogger {
      *            The exception info
      */
     public void error(EELFResolvableErrorEnum msg, String targetEntity, String targetServiceName, ErrorCode errorCode,
-            String errorDesc, Throwable t) {
+                      String errorDesc, Throwable t) {
         prepareErrorMsg(ERROR_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
-        logger.error(msg);
-        logger.error(exceptionArg, getNormalizedStackTrace(t));
-        logger.debug("Exception raised", t);
+        errorLogger.error(msg);
+        errorLogger.error(exceptionArg, getNormalizedStackTrace(t));
+        debugLogger.debug("Exception raised", t);
         MDC.remove(TARGETENTITY);
         MDC.remove(TARGETSERVICENAME);
     }
@@ -622,9 +623,9 @@ public class MsoLogger {
      *            The arguments used in the log message
      */
     public void error(EELFResolvableErrorEnum msg, String arg0, String targetEntity, String targetServiceName,
-            ErrorCode errorCode, String errorDesc) {
+                      ErrorCode errorCode, String errorDesc) {
         prepareErrorMsg(ERROR_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
-        logger.error(msg, normalize(arg0));
+        errorLogger.error(msg, normalize(arg0));
         MDC.remove(TARGETENTITY);
         MDC.remove(TARGETSERVICENAME);
     }
@@ -640,11 +641,11 @@ public class MsoLogger {
      *            The exception info
      */
     public void error(EELFResolvableErrorEnum msg, String arg0, String targetEntity, String targetServiceName,
-            ErrorCode errorCode, String errorDesc, Throwable t) {
+                      ErrorCode errorCode, String errorDesc, Throwable t) {
         prepareErrorMsg(ERROR_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
-        logger.error(msg, normalize(arg0));
-        logger.error(exceptionArg, getNormalizedStackTrace(t));
-        logger.debug("Exception raised", t);
+        errorLogger.error(msg, normalize(arg0));
+        errorLogger.error(exceptionArg, getNormalizedStackTrace(t));
+        debugLogger.debug("Exception raised", t);
         MDC.remove(TARGETENTITY);
         MDC.remove(TARGETSERVICENAME);
     }
@@ -658,9 +659,9 @@ public class MsoLogger {
      *            The arguments used in the log message
      */
     public void error(EELFResolvableErrorEnum msg, String arg0, String arg1, String targetEntity,
-            String targetServiceName, ErrorCode errorCode, String errorDesc) {
+                      String targetServiceName, ErrorCode errorCode, String errorDesc) {
         prepareErrorMsg(ERROR_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
-        logger.error(msg, normalize(arg0), normalize(arg1));
+        errorLogger.error(msg, normalize(arg0), normalize(arg1));
         MDC.remove(TARGETENTITY);
         MDC.remove(TARGETSERVICENAME);
     }
@@ -676,11 +677,11 @@ public class MsoLogger {
      *            The exception info
      */
     public void error(EELFResolvableErrorEnum msg, String arg0, String arg1, String targetEntity,
-            String targetServiceName, ErrorCode errorCode, String errorDesc, Throwable t) {
+                      String targetServiceName, ErrorCode errorCode, String errorDesc, Throwable t) {
         prepareErrorMsg(ERROR_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
-        logger.error(msg, normalize(arg0), normalize(arg1));
-        logger.error(exceptionArg, getNormalizedStackTrace(t));
-        logger.debug("Exception raised", t);
+        errorLogger.error(msg, normalize(arg0), normalize(arg1));
+        errorLogger.error(exceptionArg, getNormalizedStackTrace(t));
+        debugLogger.debug("Exception raised", t);
         MDC.remove(TARGETENTITY);
         MDC.remove(TARGETSERVICENAME);
     }
@@ -694,9 +695,9 @@ public class MsoLogger {
      *            The arguments used in the log message
      */
     public void error(EELFResolvableErrorEnum msg, String arg0, String arg1, String arg2, String targetEntity,
-            String targetServiceName, ErrorCode errorCode, String errorDesc) {
+                      String targetServiceName, ErrorCode errorCode, String errorDesc) {
         prepareErrorMsg(ERROR_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
-        logger.error(msg, normalize(arg0), normalize(arg1), normalize(arg2));
+        errorLogger.error(msg, normalize(arg0), normalize(arg1), normalize(arg2));
         MDC.remove(TARGETENTITY);
         MDC.remove(TARGETSERVICENAME);
     }
@@ -712,11 +713,11 @@ public class MsoLogger {
      *            The exception info
      */
     public void error(EELFResolvableErrorEnum msg, String arg0, String arg1, String arg2, String targetEntity,
-            String targetServiceName, ErrorCode errorCode, String errorDesc, Throwable t) {
+                      String targetServiceName, ErrorCode errorCode, String errorDesc, Throwable t) {
         prepareErrorMsg(ERROR_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
-        logger.error(msg, normalize(arg0), normalize(arg1), normalize(arg2));
-        logger.error(exceptionArg, getNormalizedStackTrace(t));
-        logger.debug("Exception raised", t);
+        errorLogger.error(msg, normalize(arg0), normalize(arg1), normalize(arg2));
+        errorLogger.error(exceptionArg, getNormalizedStackTrace(t));
+        debugLogger.debug("Exception raised", t);
         MDC.remove(TARGETENTITY);
         MDC.remove(TARGETSERVICENAME);
     }
@@ -730,9 +731,9 @@ public class MsoLogger {
      *            The arguments used in the log message
      */
     public void error(EELFResolvableErrorEnum msg, String arg0, String arg1, String arg2, String arg3,
-            String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc) {
+                      String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc) {
         prepareErrorMsg(ERROR_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
-        logger.error(msg, normalize(arg0), normalize(arg1), normalize(arg2), normalize(arg3));
+        errorLogger.error(msg, normalize(arg0), normalize(arg1), normalize(arg2), normalize(arg3));
         MDC.remove(TARGETENTITY);
         MDC.remove(TARGETSERVICENAME);
     }
@@ -748,11 +749,11 @@ public class MsoLogger {
      *            The exception info
      */
     public void error(EELFResolvableErrorEnum msg, String arg0, String arg1, String arg2, String arg3,
-            String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc, Throwable t) {
+                      String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc, Throwable t) {
         prepareErrorMsg(ERROR_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
-        logger.error(msg, normalize(arg0), normalize(arg1), normalize(arg2), normalize(arg3));
-        logger.error(exceptionArg, getNormalizedStackTrace(t));
-        logger.debug("Exception raised", t);
+        errorLogger.error(msg, normalize(arg0), normalize(arg1), normalize(arg2), normalize(arg3));
+        errorLogger.error(exceptionArg, getNormalizedStackTrace(t));
+        debugLogger.debug("Exception raised", t);
         MDC.remove(TARGETENTITY);
         MDC.remove(TARGETSERVICENAME);
     }
@@ -766,9 +767,9 @@ public class MsoLogger {
      *            The arguments used in the log message
      */
     public void error(EELFResolvableErrorEnum msg, String arg0, String arg1, String arg2, String arg3, String arg4,
-            String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc) {
+                      String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc) {
         prepareErrorMsg(ERROR_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
-        logger.error(msg, normalize(arg0), normalize(arg1), normalize(arg2), normalize(arg3), normalize(arg4));
+        errorLogger.error(msg, normalize(arg0), normalize(arg1), normalize(arg2), normalize(arg3), normalize(arg4));
         MDC.remove(TARGETENTITY);
         MDC.remove(TARGETSERVICENAME);
     }
@@ -784,17 +785,17 @@ public class MsoLogger {
      *            The exception info
      */
     public void error(EELFResolvableErrorEnum msg, String arg0, String arg1, String arg2, String arg3, String arg4,
-            String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc, Throwable t) {
+                      String targetEntity, String targetServiceName, ErrorCode errorCode, String errorDesc, Throwable t) {
         prepareErrorMsg(ERROR_LEVEL, targetEntity, targetServiceName, errorCode, errorDesc);
-        logger.error(msg, normalize(arg0), normalize(arg1), normalize(arg2), normalize(arg3), normalize(arg4));
-        logger.error(exceptionArg, getNormalizedStackTrace(t));
-        logger.debug("Exception raised", t);
+        errorLogger.error(msg, normalize(arg0), normalize(arg1), normalize(arg2), normalize(arg3), normalize(arg4));
+        errorLogger.error(exceptionArg, getNormalizedStackTrace(t));
+        debugLogger.debug("Exception raised", t);
         MDC.remove(TARGETENTITY);
         MDC.remove(TARGETSERVICENAME);
     }
 
     public boolean isDebugEnabled() {
-        return logger.isDebugEnabled();
+        return debugLogger.isDebugEnabled();
     }
 
     private void prepareMsg(String loggingLevel) {
@@ -835,7 +836,7 @@ public class MsoLogger {
     }
 
     private void prepareAuditMetricMsg(long startTime, long endTime, StatusCode statusCode, int responseCode,
-            String responseDesc) {
+                                       String responseDesc) {
         Date startDate = new Date(startTime);
         Date endDate = new Date(endTime);
         DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
@@ -848,7 +849,7 @@ public class MsoLogger {
     }
 
     private void prepareErrorMsg(String loggingLevel, String targetEntity, String targetServiceName,
-            ErrorCode errorCode, String errorDesc) {
+                                 ErrorCode errorCode, String errorDesc) {
         MDC.put(ALERT_SEVERITY, getSeverityLevel(loggingLevel));
         MDC.put(ERRORCODE, String.valueOf(errorCode));
         MDC.put(ERRORDESC, errorDesc);
@@ -858,7 +859,7 @@ public class MsoLogger {
     }
 
     private void prepareMetricMsg(long startTime, StatusCode statusCode, int responseCode, String responseDesc,
-            String targetEntity, String targetServiceName, String targetVEntity) {
+                                  String targetEntity, String targetServiceName, String targetVEntity) {
         long endTime = System.currentTimeMillis();
         prepareMsg(INFO_LEVEL, null, String.valueOf(endTime - startTime));
         prepareAuditMetricMsg(startTime, endTime, statusCode, responseCode, responseDesc);
@@ -996,7 +997,7 @@ public class MsoLogger {
 
     /**
      * Set the requestId and serviceInstanceId
-     * 
+     *
      * @param reqId
      *            The requestId
      * @param svcId
@@ -1014,7 +1015,7 @@ public class MsoLogger {
 
     /**
      * Set the remoteIp and the basic HTTP Authentication user
-     * 
+     *
      * @param remoteIpp
      *            The remote ip address
      * @param userp
@@ -1031,7 +1032,7 @@ public class MsoLogger {
 
     /**
      * Set the serviceName
-     * 
+     *
      * @param serviceNamep
      *            The service name
      */
@@ -1044,7 +1045,7 @@ public class MsoLogger {
 
     /**
      * Get the serviceName
-     * 
+     *
      * @return The service name
      */
     public static String getServiceName() {
@@ -1060,7 +1061,7 @@ public class MsoLogger {
 
     /**
      * Set the requestId and serviceInstanceId based on the mso request
-     * 
+     *
      * @param msoRequest
      *            The mso request
      */
