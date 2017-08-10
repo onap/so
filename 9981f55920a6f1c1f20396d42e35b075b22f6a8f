@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a1a2d67_01cec95a",
+        "filename": "aria/multivim-plugin/openstack_plugin_common/tests/test.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2017-08-10T06:48:00Z",
+      "side": 1,
+      "message": "No copyright info added",
+      "revId": "9981f55920a6f1c1f20396d42e35b075b22f6a8f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a1a2d67_21d1c5fb",
+        "filename": "aria/multivim-plugin/system_tests/openstack_nova_net_handler.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2017-08-10T06:48:00Z",
+      "side": 1,
+      "message": "PLease correct the copyright and the Year.",
+      "range": {
+        "startLine": 2,
+        "startChar": 3,
+        "endLine": 2,
+        "endChar": 16
+      },
+      "revId": "9981f55920a6f1c1f20396d42e35b075b22f6a8f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
