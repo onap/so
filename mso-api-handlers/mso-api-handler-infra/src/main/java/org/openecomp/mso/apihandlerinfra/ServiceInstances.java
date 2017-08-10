@@ -654,33 +654,35 @@ public class ServiceInstances {
         // SERVICE REQUEST
         // Construct the default service name
         // TODO need to make this a configurable property
-        String defaultServiceName = msoRequest.getRequestInfo().getSource() + "_DEFAULT";
+        String sourceDefaultServiceName = msoRequest.getRequestInfo().getSource() + "_DEFAULT";
+        String defaultService = "*";
 
         Service serviceRecord = null;
-        if(msoRequest.getALaCarteFlag()){
-            serviceRecord = db.getServiceByName(defaultServiceName);
-        }else{
-            serviceRecord = db.getServiceByVersionAndInvariantId(msoRequest.getModelInfo().getModelInvariantId(), msoRequest.getModelInfo().getModelVersion());
-        }
         int serviceId;
         ServiceRecipe recipe = null;
-        if(serviceRecord !=null){
-            serviceId = serviceRecord.getId();
-            recipe = db.getServiceRecipe(serviceId, action.name());
+
+        //if an aLaCarte flag was Not sent in the request, look first if there is a custom recipe for the specific model version
+        if(!msoRequest.getALaCarteFlag()){
+            serviceRecord = db.getServiceByVersionAndInvariantId(msoRequest.getModelInfo().getModelInvariantId(), msoRequest.getModelInfo().getModelVersion());
+            if(serviceRecord !=null){
+                serviceId = serviceRecord.getId();
+                recipe = db.getServiceRecipe(serviceId, action.name());
+            }
         }
-        //if an aLaCarte flag was sent in the request, throw an error if the recipe was not found
-        RequestParameters reqParam = msoRequest.getServiceInstancesRequest().getRequestDetails().getRequestParameters();
-        if(reqParam!=null && reqParam.isALaCarteSet() && recipe==null){
-            return null;
-        }else if (recipe == null) {  //aLaCarte wasn't sent, so we'll try the default
-            serviceRecord = db.getServiceByName(defaultServiceName);
-            serviceId = serviceRecord.getId();
-            recipe = db.getServiceRecipe(serviceId, action.name());
+
+        if (recipe == null) {
+            //find source(initiator) default recipe
+            recipe = db.getServiceRecipeByServiceNameAndAction(sourceDefaultServiceName, action.name());
+        }
+        if (recipe == null) {
+            //find default recipe
+            recipe = db.getServiceRecipeByServiceNameAndAction(defaultService, action.name());
         }
         if(recipe==null){
             return null;
         }
         return new RecipeLookupResult (recipe.getOrchestrationUri (), recipe.getRecipeTimeout ());
+
     }
 
 
@@ -787,27 +789,38 @@ public class ServiceInstances {
 
     private RecipeLookupResult getNetworkUri (CatalogDatabase db, MsoRequest msoRequest, Action action) throws Exception {
 
-        String defaultNetworkType = msoRequest.getRequestInfo().getSource() + "_DEFAULT";
+        String sourceDefaultNetworkType = msoRequest.getRequestInfo().getSource() + "_DEFAULT";
+        String defaultNetworkType = "*";
 
         String modelName = msoRequest.getModelInfo().getModelName();
         Recipe recipe = null;
-        if(msoRequest.getALaCarteFlag()){
-            recipe = db.getNetworkRecipe(defaultNetworkType, action.name());
-        }else{
+        //if an aLaCarte flag was Not sent in the request, look first if there is a custom recipe for the specific ModelCustomizationId
+        if(!msoRequest.getALaCarteFlag()){
+            String networkType = null;
+
             if(msoRequest.getModelInfo().getModelCustomizationId()!=null){
                 NetworkResource networkResource = db.getNetworkResourceByModelCustUuid(msoRequest.getModelInfo().getModelCustomizationId());
                 if(networkResource!=null){
-                    recipe = db.getNetworkRecipe(networkResource.getNetworkType(), action.name());
+                    networkType = networkResource.getNetworkType();
                 }else{
                     throw new ValidationException("no catalog entry found");
                 }
             }else{
                 //ok for version < 3
-                recipe = db.getNetworkRecipe(modelName, action.name());
+                networkType = modelName;
             }
-            if(recipe == null){
-                recipe = db.getNetworkRecipe(defaultNetworkType, action.name());
-            }
+
+            //find latest version Recipe for the given networkType and action
+            recipe = db.getNetworkRecipe(networkType, action.name());
+        }
+
+        if(recipe == null){
+            //find source(initiator) default recipe
+            recipe = db.getNetworkRecipe(sourceDefaultNetworkType, action.name());
+        }
+        if(recipe == null){
+            //find default recipe
+            recipe = db.getNetworkRecipe(defaultNetworkType, action.name());
         }
         if (recipe == null) {
             return null;

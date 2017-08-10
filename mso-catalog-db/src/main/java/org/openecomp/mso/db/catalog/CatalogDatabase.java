@@ -514,6 +514,19 @@ public class CatalogDatabase implements Closeable {
         return resultList.get (0);
     }
 
+    /**
+     * @param serviceName
+     * @param action
+     * @return ServiceRecipe object or null if none found. returns a newest version of Service recipe that matches a given serviceName, action and for the newest service version
+     */
+    public ServiceRecipe getServiceRecipeByServiceNameAndAction(String serviceName, String action) {
+        Service service = getServiceByName(serviceName);
+        if (service != null ){
+            return getServiceRecipe(service.getId(),action);
+        }
+        return null;
+    }
+
     public List<ServiceRecipe> getServiceRecipes (int serviceId) {
 
         StringBuilder hql = null;
