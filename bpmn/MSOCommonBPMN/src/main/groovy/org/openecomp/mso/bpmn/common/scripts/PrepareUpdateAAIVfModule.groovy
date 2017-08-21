@@ -31,6 +31,7 @@ import org.springframework.web.util.UriUtils
 public class PrepareUpdateAAIVfModule extends VfModuleBase {
 	
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
+	private MsoUtils utils = new MsoUtils()
 	/**
 	 * Initialize the flow's variables.
 	 * 
@@ -116,7 +117,7 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 			try {
 				RESTConfig config = new RESTConfig(endPoint);
 				def responseData = ''
-				def aaiRequestId = UUID.randomUUID().toString()
+				String aaiRequestId = utils.getRequestID()
 				RESTClient client = new RESTClient(config).
 					addHeader('X-TransactionId', aaiRequestId).
 					addHeader('X-FromAppId', 'MSO').
@@ -255,7 +256,7 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 			try {
 				RESTConfig config = new RESTConfig(endPoint);
 				def responseData = ''
-				def aaiRequestId = UUID.randomUUID().toString()
+                def aaiRequestId = utils.getRequestID()
 				RESTClient client = new RESTClient(config).
 					addHeader('X-TransactionId', aaiRequestId).
 					addHeader('X-FromAppId', 'MSO').
