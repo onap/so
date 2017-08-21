@@ -29,7 +29,8 @@ import org.openecomp.mso.rest.RESTConfig;
 public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 	
 	def Prefix="DAAIVfMod_"
-	ExceptionUtil exceptionUtil = new ExceptionUtil()	
+	ExceptionUtil exceptionUtil = new ExceptionUtil()
+    private MsoUtils utils = new MsoUtils()
 	public void initProcessVariables(Execution execution) {
 		execution.setVariable("prefix",Prefix)
 		execution.setVariable("DAAIVfMod_vnfId",null)
@@ -83,7 +84,7 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 		def delModuleId = execution.getVariable("DAAIVfMod_vfModuleId")
 		def endPoint = execution.getVariable("URN_aai_endpoint") + execution.getVariable("DAAIVfMod_genericVnfEndpoint") + "?depth=1"
 		utils.logAudit("DeleteAAIVfModule endPoint: " + endPoint)
-		def aaiRequestId = UUID.randomUUID().toString()
+		def aaiRequestId = utils.getRequestID(execution)
 
 		RESTConfig config = new RESTConfig(endPoint);
 		utils.log("DEBUG","queryAAIForGenericVnf() endpoint-" + endPoint, isDebugEnabled)
@@ -118,7 +119,7 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 	// note: to get here, all the modules associated with the Generic Vnf must already be deleted
 	public void deleteGenericVnf(Execution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		def aaiRequestId = UUID.randomUUID().toString()
+		def aaiRequestId = utils.getRequestID(execution)
 		def endPoint = execution.getVariable("URN_aai_endpoint") + execution.getVariable("DAAIVfMod_genericVnfEndpoint") +
 			"/?resource-version=" + execution.getVariable("DAAIVfMod_genVnfRsrcVer")
 		utils.logAudit("AAI endPoint: " + endPoint)
@@ -153,7 +154,7 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		def endPoint = execution.getVariable("URN_aai_endpoint") + execution.getVariable("DAAIVfMod_vfModuleEndpoint") +
 			"/?resource-version=" + execution.getVariable("DAAIVfMod_vfModRsrcVer")
-		def aaiRequestId = UUID.randomUUID().toString()
+		def aaiRequestId = utils.getRequestID(execution)
 
 		RESTConfig config = new RESTConfig(endPoint);
 		utils.log("DEBUG","deleteVfModule() endpoint-" + endPoint, isDebugEnabled)

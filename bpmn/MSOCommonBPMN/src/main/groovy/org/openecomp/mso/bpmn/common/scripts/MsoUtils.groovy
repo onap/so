@@ -25,11 +25,13 @@ import groovy.xml.XmlUtil
 import java.text.SimpleDateFormat
 
 import org.apache.commons.codec.binary.Base64
+import org.camunda.bpm.engine.runtime.Execution
 import org.openecomp.mso.bpmn.core.BPMNLogger
 import org.openecomp.mso.bpmn.core.xml.XmlTool
 import org.openecomp.mso.logger.MessageEnum
 import org.openecomp.mso.logger.MsoLogger
 import org.openecomp.mso.utils.CryptoUtils
+import org.slf4j.MDC
 import org.w3c.dom.Element
 
 class MsoUtils {
@@ -948,4 +950,25 @@ class MsoUtils {
 		 return sortedModuleIndexList.size().toString()
 	 }
 
+	public String getRequestID(Execution execution)
+	{
+		//EELFLogger logger =  EELFManager.getInstance().getDebugLogger()
+		//String msoRequestId = execution.getVariable("mso-request-id")
+		//logger.info( "MsoUtils - MSO Request ID from execution : " + msoRequestId)
+		String requestId = MDC.get("RequestId")
+		if(requestId == null || requestId.isEmpty())
+		{
+			requestId = java.util.UUID.randomUUID()
+			MDC.put("RequestId",requestId)
+			//logger.info( "MsoUtils - Created new RequestId: " + requestId)
+			log("DEBUG","MsoUtils - Created new RequestId: " + requestId)
+		}
+		else
+		{
+			//logger.info("MsoUtils - Using existing RequestId: " + requestId)
+			log("DEBUG","MsoUtils - Using existing RequestId: " + requestId)
+		}
+
+		return requestId
+	}
 }
