@@ -61,7 +61,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
 	CloudConfigFactory cloudConfigFactory=new CloudConfigFactory();
 
 	public static final String MSO_PROP_NETWORK_ADAPTER="MSO_PROP_NETWORK_ADAPTER";
-    private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
+    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
     private static MsoAlarmLogger alarmLogger = new MsoAlarmLogger ();
     private static final String BPEL_AUTH_PROP = "org.openecomp.mso.adapters.network.bpelauth";
     private static final String ENCRYPTION_KEY = "aa3871669d893c7fb8abbcda31b88b4f";
@@ -116,8 +116,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
                                 MsoRequest msoRequest,
                                 String notificationUrl) {
         String error;
-        // Will capture execution time for metrics
-        long startTime = System.currentTimeMillis ();
+
         MsoLogger.setLogContext (msoRequest);
         MsoLogger.setServiceName ("CreateNetworkA");
         LOGGER.debug ("Async Create Network: " + networkName
@@ -234,8 +233,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
                                 MsoRequest msoRequest,
                                 String notificationUrl) {
         String error;
-        // Will capture execution time for metrics
-        long startTime = System.currentTimeMillis ();
+
         String serviceName = "UpdateNetworkA";
         MsoLogger.setServiceName (serviceName);
         MsoLogger.setLogContext (msoRequest);
@@ -251,8 +249,8 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
         MsoNetworkAdapter networkAdapter = new MsoNetworkAdapterImpl (msoPropertiesFactory,cloudConfigFactory);
 
         // Synchronous Web Service Outputs
-        Holder <NetworkRollback> networkRollback = new Holder <NetworkRollback> ();
-        Holder <Map <String, String>> subnetIdMap = new Holder <Map <String, String>> ();
+        Holder <NetworkRollback> networkRollback = new Holder <> ();
+        Holder <Map <String, String>> subnetIdMap = new Holder <> ();
 
         try {
             networkAdapter.updateNetwork (cloudSiteId,
@@ -323,8 +321,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
                                MsoRequest msoRequest,
                                String notificationUrl) {
         String error;
-        // Will capture execution time for metrics
-        long startTime = System.currentTimeMillis ();
+
         MsoLogger.setLogContext (msoRequest);
         String serviceName = "QueryNetworkA";
         MsoLogger.setServiceName (serviceName);
@@ -334,12 +331,12 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
         MsoNetworkAdapter networkAdapter = new MsoNetworkAdapterImpl (msoPropertiesFactory,cloudConfigFactory);
 
         // Synchronous Web Service Outputs
-        Holder <Boolean> networkExists = new Holder <Boolean> ();
-        Holder <String> networkId = new Holder <String> ();
-        Holder <String> neutronNetworkId = new Holder <String> ();
-        Holder <NetworkStatus> status = new Holder <NetworkStatus> ();
-        Holder <List <Integer>> vlans = new Holder <List <Integer>> ();
-        Holder <Map <String, String>> subnetIdMap = new Holder <Map <String, String>> ();
+        Holder <Boolean> networkExists = new Holder <> ();
+        Holder <String> networkId = new Holder <> ();
+        Holder <String> neutronNetworkId = new Holder <> ();
+        Holder <NetworkStatus> status = new Holder <> ();
+        Holder <List <Integer>> vlans = new Holder <> ();
+        Holder <Map <String, String>> subnetIdMap = new Holder <> ();
 
         try {
             networkAdapter.queryNetwork (cloudSiteId,
