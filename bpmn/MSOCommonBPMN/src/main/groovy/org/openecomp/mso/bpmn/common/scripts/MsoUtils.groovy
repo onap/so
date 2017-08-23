@@ -30,6 +30,7 @@ import org.openecomp.mso.bpmn.core.xml.XmlTool
 import org.openecomp.mso.logger.MessageEnum
 import org.openecomp.mso.logger.MsoLogger
 import org.openecomp.mso.utils.CryptoUtils
+import org.slf4j.MDC
 import org.w3c.dom.Element
 
 class MsoUtils {
@@ -947,5 +948,25 @@ class MsoUtils {
 		 }
 		 return sortedModuleIndexList.size().toString()
 	 }
+	/**
+	 * This utility checks if there is transaction id already present in MDC.
+	 * If found, it returns same else creates new, sets in MDC for future use before returning
+	 * @return String RequestId in UUID format.
+	 */
+	public String getRequestID()
+	{
+		String requestId = MDC.get("RequestId")
+		if(requestId == null || requestId.isEmpty())
+		{
+			requestId = java.util.UUID.randomUUID()
+			MDC.put("RequestId",requestId)
+			log("DEBUG","MsoUtils - Created new RequestId: " + requestId)
+		}
+		else
+		{
+			log("DEBUG","MsoUtils - Using existing RequestId: " + requestId)
+		}
 
+		return requestId
+	}
 }
