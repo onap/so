@@ -296,7 +296,7 @@ class AaiUtil {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		taskProcessor.logDebug(" ======== STARTED Execute AAI Get Process ======== ", isDebugEnabled)
 		try{
-			String uuid = UUID.randomUUID()
+			String uuid = utils.getRequestID()
 			taskProcessor.logDebug( "Generated uuid is: " + uuid, isDebugEnabled)
 			taskProcessor.logDebug( "URL to be used is: " + url, isDebugEnabled)
 			
@@ -335,7 +335,7 @@ class AaiUtil {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		taskProcessor.logDebug( " ======== Started Execute AAI Put Process ======== ", isDebugEnabled)
 		try{
-			String uuid = UUID.randomUUID()
+			String uuid = utils.getRequestID()
 			taskProcessor.logDebug( "Generated uuid is: " + uuid, isDebugEnabled)
 			taskProcessor.logDebug( "URL to be used is: " + url, isDebugEnabled)
 			
@@ -371,7 +371,7 @@ class AaiUtil {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		taskProcessor.logDebug( " ======== Started Execute AAI Patch Process ======== ", isDebugEnabled)
 		try{
-			String uuid = UUID.randomUUID()
+			String uuid = utils.getRequestID()
 			taskProcessor.logDebug( "Generated uuid is: " + uuid, isDebugEnabled)
 
 			taskProcessor.logDebug( "URL to be used is: " + url, isDebugEnabled)
@@ -408,7 +408,7 @@ class AaiUtil {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		taskProcessor.logDebug( " ======== Started Execute AAI Delete Process ======== ", isDebugEnabled)
 		try{
-			String uuid = UUID.randomUUID()
+			String uuid = utils.getRequestID()
 			taskProcessor.logDebug( "Generated uuid is: " + uuid, isDebugEnabled)
 			taskProcessor.logDebug( "URL to be used is: " + url, isDebugEnabled)
 
@@ -445,7 +445,7 @@ class AaiUtil {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		taskProcessor.logDebug( " ======== Started Execute AAI Delete Process ======== ", isDebugEnabled)
 		try{
-			String uuid = UUID.randomUUID()
+			String uuid = utils.getRequestID()
 			taskProcessor.logDebug( "Generated uuid is: " + uuid, isDebugEnabled)
 
 			taskProcessor.logDebug( "URL to be used is: " + url, isDebugEnabled)
@@ -483,7 +483,7 @@ class AaiUtil {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		taskProcessor.logDebug( " ======== Started Execute AAI Post Process ======== ", isDebugEnabled)
 		try{
-			String uuid = UUID.randomUUID()
+			String uuid = utils.getRequestID()
 			taskProcessor.logDebug( "Generated uuid is: " + uuid, isDebugEnabled)
 			taskProcessor.logDebug( "URL to be used is: " + url, isDebugEnabled)
 
