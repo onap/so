@@ -40,7 +40,7 @@ INFINITE_RESOURCE_QUOTA = -1
 # properties
 USE_EXTERNAL_RESOURCE_PROPERTY = 'use_external_resource'
 CREATE_IF_MISSING_PROPERTY = 'create_if_missing'
-CONFIG_PROPERTY = 'openstack_config'
+CONFIG_PROPERTY = 'multivim_config'
 
 # runtime properties
 OPENSTACK_AZ_PROPERTY = 'availability_zone'
