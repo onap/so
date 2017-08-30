@@ -24,7 +24,7 @@ setup(
     name='aria-rest',
     version='0.1',
     author='dewayne',
-    author_email='dewayne@gigaspaces.com',
+    author_email='dewayne@cloudify.co',
     packages=[
         'aria_rest'
     ],
@@ -36,6 +36,6 @@ setup(
     install_requires=[
         'Flask==0.12.2',
         'flask-autodoc==0.1.2',
-        'apache-ariatosca==0.1.0'
+        'apache-ariatosca==0.2.0'
     ]
 )
