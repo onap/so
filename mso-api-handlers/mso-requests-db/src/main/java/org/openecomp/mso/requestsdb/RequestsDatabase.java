@@ -23,7 +23,6 @@ package org.openecomp.mso.requestsdb;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -484,4 +483,205 @@ public class RequestsDatabase {
         }
     }
 
+    /**
+     * get the operation progress
+     * <br>
+     * 
+     * @param serviceId the serviceId
+     * @param operationId the operation id 
+     * @return current progress of the operation
+     * @since ONAP Amsterdam Release
+     */
+    public static OperationStatus getOperationStatus(String serviceId, String operationId) {
+
+        long startTime = System.currentTimeMillis();
+        msoLogger.debug("Execute query on infra active request table");
+
+        OperationStatus operStatus = null;
+        Session session = hibernateUtils.getSessionFactory().openSession();
+        try {
+            session.beginTransaction();
+            String hql = "FROM OperationStatus WHERE SERVICE_ID = :service_id and OPERATION_ID = :operation_id";
+            Query query = session.createQuery(hql);
+            query.setParameter("service_id", serviceId);
+            query.setParameter("operation_id", operationId);
+            operStatus = (OperationStatus)query.uniqueResult();
+
+        } finally {
+            if(session != null && session.isOpen()) {
+                session.close();
+            }
+            msoLogger.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
+                    "Successfully", "RequestDB", "getOperationStatus", null);
+        }
+        return operStatus;
+    }
+    
+    /**
+     * update the operation status
+     * <br>
+     * 
+     * @param operstatus the operation object
+     * @since ONAP Amsterdam Release
+     */
+    public static void updateOperationStatus(OperationStatus operstatus) {
+        Session session = hibernateUtils.getSessionFactory().openSession();
+        session.beginTransaction();
+
+        long startTime = System.currentTimeMillis();
+        msoLogger.debug("Request database - save Operation Status with service Id:" + operstatus.getServiceId()
+                + ", operationId:" + operstatus.getOperationId());
+        try {
+            String hql =
+                    "FROM OperationStatus WHERE SERVICE_ID = :service_id and OPERATION_ID = :operation_id";
+            Query query = session.createQuery(hql);
+            query.setParameter("service_id", operstatus.getServiceId());
+            query.setParameter("operation_id", operstatus.getOperationId());
+            OperationStatus exsitingStatus = (OperationStatus)query.uniqueResult();
+            if(exsitingStatus == null) {
+                session.save(operstatus);
+            } else {
+                session.merge(operstatus);
+            }
+            session.getTransaction().commit();
+        } finally {
+            if(session != null && session.isOpen()) {
+                session.close();
+            }
+            msoLogger.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
+                    "Successfully", "RequestDB", "updateOperationStatus", null);
+        }
+    }
+
+    /**
+     * get a operation status of a resource
+     * <br>
+     * 
+     * @param serviceId the service Id
+     * @param operationId the operation id
+     * @param resourceTemplateUUID the resource template uuid
+     * @return the progress status of a resource
+     * @since ONAP Amsterdam Release
+     */
+    public static ResourceOperationStatus getResourceOperationStatus(String serviceId, String operationId,
+            String resourceTemplateUUID) {
+        long startTime = System.currentTimeMillis();
+        msoLogger.debug("Execute query on infra active request table");
+
+        ResourceOperationStatus operStatus = null;
+        Session session = hibernateUtils.getSessionFactory().openSession();
+        try {
+            session.beginTransaction();
+            String hql =
+                    "FROM ResourceOperationStatus WHERE serviceId = :service_id and operationId = :operation_id and resourceTemplateUUID= :uuid";
+            Query query = session.createQuery(hql);
+            query.setParameter("service_id", serviceId);
+            query.setParameter("operation_id", operationId);
+            query.setParameter("uuid", resourceTemplateUUID);
+            operStatus = (ResourceOperationStatus)query.uniqueResult();
+
+        } finally {
+            if(session != null && session.isOpen()) {
+                session.close();
+            }
+            msoLogger.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
+                    "Successfully", "RequestDB", "getOperationStatus", null);
+        }
+        return operStatus;
+    }
+
+    /**
+     * update the resource operation
+     * <br>
+     * 
+     * @param operstatus the resource operation object
+     * @since ONAP Amsterdam Release
+     */
+    public static void updateResOperStatus(ResourceOperationStatus operStatus) {
+        Session session = hibernateUtils.getSessionFactory().openSession();
+        session.beginTransaction();
+
+        long startTime = System.currentTimeMillis();
+        msoLogger.debug("Request database - save Resource Operation Status with service Id:" + operStatus.getServiceId()
+                + ", operationId:" + operStatus.getOperationId() + ", resourceUUId:"
+                + operStatus.getResourceTemplateUUID());
+        try {
+            String hql =
+                    "FROM ResourceOperationStatus WHERE SERVICE_ID = :service_id and OPERATION_ID = :operation_id and RESOURCE_TEMPLATE_UUID = : res_uuid";
+            Query query = session.createQuery(hql);
+            query.setParameter("service_id", operStatus.getServiceId());
+            query.setParameter("operation_id", operStatus.getOperationId());
+            query.setParameter("res_uuid", operStatus.getResourceTemplateUUID());
+            ResourceOperationStatus exsitingStatus = (ResourceOperationStatus)query.uniqueResult();
+            if(exsitingStatus == null) {
+                session.save(operStatus);
+            } else {
+                session.merge(operStatus);
+            }
+            session.getTransaction().commit();
+        } finally {
+            if(session != null && session.isOpen()) {
+                session.close();
+            }
+            msoLogger.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
+                    "Successfully", "RequestDB", "updateResOperStatus", null);
+        }
+        updateOperationStatusBasedOnResourceStatus(operStatus);
+    }
+
+    /**
+     * update service operation status when a operation resource status updated
+     * <br>
+     * 
+     * @param operStatus the resource operation status
+     * @since ONAP Amsterdam Release
+     */
+    private static void updateOperationStatusBasedOnResourceStatus(ResourceOperationStatus operStatus) {
+        Session session = hibernateUtils.getSessionFactory().openSession();
+        session.beginTransaction();
+
+        long startTime = System.currentTimeMillis();
+        msoLogger.debug("Request database - query Resource Operation Status with service Id:"
+                + operStatus.getServiceId() + ", operationId:" + operStatus.getOperationId());
+        try {
+            // query all resources of the service
+            String hql = "FROM ResourceOperationStatus WHERE SERVICE_ID = :service_id and OPERATION_ID = :operation_id";
+            Query query = session.createQuery(hql);
+            query.setParameter("service_id", operStatus.getServiceId());
+            query.setParameter("operation_id", operStatus.getOperationId());
+            @SuppressWarnings("unchecked")
+            List<ResourceOperationStatus> lstResourceStatus = (List<ResourceOperationStatus>)query.list();
+            // count the total progress
+            int resourceCount = lstResourceStatus.size();
+            int progress = 0;
+            boolean isFinished = true;
+            for(int i = 0; i < resourceCount; i++) {
+                progress = progress + Integer.valueOf(lstResourceStatus.get(i).getProgress()) / resourceCount;
+                if(RequestsDbConstant.Status.PROCESSING.equals(lstResourceStatus.get(i).getStatus())) {
+                    isFinished = false;
+                }
+            }
+            OperationStatus serviceOperStatus =
+                    getOperationStatus(operStatus.getServiceId(), operStatus.getOperationId());
+            progress = progress > 100 ? 100 : progress;
+            serviceOperStatus.setProgress(String.valueOf(progress));
+            serviceOperStatus.setOperationContent(operStatus.getStatusDescription());
+            // if current resource failed. service failed.
+            if(RequestsDbConstant.Status.ERROR.equals(operStatus.getStatus())) {
+                serviceOperStatus.setResult(RequestsDbConstant.Status.ERROR);
+                serviceOperStatus.setReason(operStatus.getStatusDescription());
+            } else if(isFinished) {
+                // if finished
+                serviceOperStatus.setResult(RequestsDbConstant.Status.FINISHED);
+                serviceOperStatus.setProgress(RequestsDbConstant.Progress.ONE_HUNDRED);
+            }
+            updateOperationStatus(serviceOperStatus);
+        } finally {
+            if(session != null && session.isOpen()) {
+                session.close();
+            }
+            msoLogger.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
+                    "Successfully", "RequestDB", "updateResOperStatus", null);
+        }
+    }
 }
