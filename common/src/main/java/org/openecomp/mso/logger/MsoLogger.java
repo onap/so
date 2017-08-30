@@ -71,6 +71,9 @@ public class MsoLogger {
     private static final String USER                        = "User";
     private static final String DUMMY_VALUE                 = "trace-#";
     public static final String  UNKNOWN                     = "UNKNOWN";
+    //For getting an identity of calling application
+    public static final String HEADER_FROM_APP_ID           = "X-FromAppId";
+    public static final String FROM_APP_ID                  = "FromAppId";
     // Audit/Metric log specific
     private static final String BEGINTIME                   = "BeginTimestamp";
     private static final String ENDTIME                     = "EndTimestamp";

@@ -53,6 +53,11 @@ public class LogFilter implements Filter {
 		if (null != userPrincipal) {
 			MDC.put (MsoLogger.PARTNERNAME, userPrincipal.getName ());
 		}
+		//Set identity of calling application / component
+		String fromAppId = httpRequest.getHeader(MsoLogger.HEADER_FROM_APP_ID);
+		if(fromAppId != null && !fromAppId.isEmpty()) {
+			MDC.put (MsoLogger.FROM_APP_ID, fromAppId);
+		}
 		chain.doFilter(httpRequest, httpResponse);
 	}
 	
