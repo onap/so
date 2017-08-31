@@ -1,0 +1,3 @@
+<jboss-web>
+	<context-root>vfc</context-root>
+</jboss-web>
