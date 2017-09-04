@@ -1,0 +1,159 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a437d4f_2c888170",
+        "filename": "adapters/mso-vfc-adapter/src/main/java/org/openecomp/mso/adapters/vfc/AaiAdapter.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2017-09-04T06:52:27Z",
+      "side": 1,
+      "message": "rename to aaiUtil",
+      "range": {
+        "startLine": 33,
+        "startChar": 13,
+        "endLine": 33,
+        "endChar": 23
+      },
+      "revId": "f5d4308cb3d5d61f35827e80c7fc02617aefbc8a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_0cf49df0",
+        "filename": "adapters/mso-vfc-adapter/src/main/java/org/openecomp/mso/adapters/vfc/VfcManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 328,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2017-09-04T06:52:27Z",
+      "side": 1,
+      "message": "Step 1 and 3 are missing :)",
+      "revId": "f5d4308cb3d5d61f35827e80c7fc02617aefbc8a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_6ce4493b",
+        "filename": "adapters/mso-vfc-adapter/src/main/java/org/openecomp/mso/adapters/vfc/VfcManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 373,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2017-09-04T06:52:27Z",
+      "side": 1,
+      "message": "add a logger saying this is empty build",
+      "range": {
+        "startLine": 373,
+        "startChar": 10,
+        "endLine": 373,
+        "endChar": 25
+      },
+      "revId": "f5d4308cb3d5d61f35827e80c7fc02617aefbc8a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_ccc45594",
+        "filename": "adapters/mso-vfc-adapter/src/main/java/org/openecomp/mso/adapters/vfc/constant/DriverExceptionID.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2017-09-04T06:52:27Z",
+      "side": 1,
+      "message": "remove the GSO",
+      "range": {
+        "startLine": 48,
+        "startChar": 45,
+        "endLine": 48,
+        "endChar": 51
+      },
+      "revId": "f5d4308cb3d5d61f35827e80c7fc02617aefbc8a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_acc11182",
+        "filename": "adapters/mso-vfc-adapter/src/main/java/org/openecomp/mso/adapters/vfc/constant/HttpCode.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2017-09-04T06:52:27Z",
+      "side": 1,
+      "message": "remove the GSO and since",
+      "range": {
+        "startLine": 75,
+        "startChar": 14,
+        "endLine": 75,
+        "endChar": 21
+      },
+      "revId": "f5d4308cb3d5d61f35827e80c7fc02617aefbc8a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_4c3865a0",
+        "filename": "adapters/mso-vfc-adapter/src/main/java/org/openecomp/mso/adapters/vfc/model/NSResourceInputParameter.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2017-09-04T06:52:27Z",
+      "side": 1,
+      "message": "This should not be domain, should be VFC adapter",
+      "range": {
+        "startLine": 23,
+        "startChar": 28,
+        "endLine": 23,
+        "endChar": 34
+      },
+      "revId": "f5d4308cb3d5d61f35827e80c7fc02617aefbc8a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_ec46f922",
+        "filename": "adapters/mso-vfc-adapter/src/main/java/org/openecomp/mso/adapters/vfc/model/RestfulResponse.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2017-09-04T06:52:27Z",
+      "side": 1,
+      "message": "class comments",
+      "range": {
+        "startLine": 23,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 18
+      },
+      "revId": "f5d4308cb3d5d61f35827e80c7fc02617aefbc8a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
