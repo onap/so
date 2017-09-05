@@ -1,0 +1,229 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * ONAP - SO
+ * ================================================================================
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+package org.openecomp.mso.adapters.vfc.util;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.conn.ConnectTimeoutException;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
+import org.openecomp.mso.adapters.vfc.model.RestfulResponse;
+import org.openecomp.mso.logger.MessageEnum;
+import org.openecomp.mso.logger.MsoAlarmLogger;
+import org.openecomp.mso.logger.MsoLogger;
+
+/**
+ * <br>
+ * <p>
+ * </p>
+ * utility to invoke restclient
+ * 
+ * @author
+ * @version GSO 0.5 2016/9/3
+ */
+public class RestfulUtil {
+
+    /**
+     * Log service
+     */
+    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
+
+    private static final MsoAlarmLogger ALARMLOGGER = new MsoAlarmLogger();
+
+    private static final int DEFAULT_TIME_OUT = 60;
+
+    private RestfulUtil() {
+
+    }
+
+    public static RestfulResponse send(String url, String methodType, String content) {
+        LOGGER.info(MessageEnum.RA_NS_EXC, url, "VFC", "");
+        LOGGER.debug("VFC Request Body:\n" + content);
+
+        HttpRequestBase method = null;
+        HttpResponse httpResponse = null;
+
+        try {
+            int timeout = DEFAULT_TIME_OUT;
+
+            RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(timeout).setConnectTimeout(timeout)
+                    .setConnectionRequestTimeout(timeout).build();
+
+            HttpClient client = HttpClientBuilder.create().build();
+
+            if("POST".equals(methodType)) {
+                HttpPost httpPost = new HttpPost(url);
+                httpPost.setConfig(requestConfig);
+                httpPost.setEntity(new StringEntity(content, ContentType.APPLICATION_JSON));
+                method = httpPost;
+            } else if("PUT".equals(methodType)) {
+                HttpPut httpPut = new HttpPut(url);
+                httpPut.setConfig(requestConfig);
+                httpPut.setEntity(new StringEntity(content, ContentType.APPLICATION_JSON));
+                method = httpPut;
+            } else if("GET".equals(methodType)) {
+                HttpGet httpGet = new HttpGet(url);
+                httpGet.setConfig(requestConfig);
+                method = httpGet;
+            } else if("DELETE".equals(methodType)) {
+                HttpDelete httpDelete = new HttpDelete(url);
+                httpDelete.setConfig(requestConfig);
+                method = httpDelete;
+            }
+
+            // now VFC have no auth
+            // String userCredentials =
+            // SDNCAdapterProperties.getEncryptedProperty(Constants.SDNC_AUTH_PROP,
+            // Constants.DEFAULT_SDNC_AUTH, Constants.ENCRYPTION_KEY);
+            // String authorization = "Basic " +
+            // DatatypeConverter.printBase64Binary(userCredentials.getBytes());
+            // method.setHeader("Authorization", authorization);
+
+            httpResponse = client.execute(method);
+
+            String responseContent = null;
+            if(httpResponse.getEntity() != null) {
+                responseContent = EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
+            }
+
+            int statusCode = httpResponse.getStatusLine().getStatusCode();
+            String statusMessage = httpResponse.getStatusLine().getReasonPhrase();
+
+            LOGGER.debug("VFC Response: " + statusCode + " " + statusMessage
+                    + (responseContent == null ? "" : System.lineSeparator() + responseContent));
+
+            if(httpResponse.getStatusLine().getStatusCode() >= 300) {
+                String errMsg = "VFC returned " + statusCode + " " + statusMessage;
+                logError(errMsg);
+                return CreateResponse(statusCode, errMsg);
+            }
+
+            httpResponse = null;
+
+            method.reset();
+            method = null;
+
+            LOGGER.info(MessageEnum.RA_RESPONSE_FROM_SDNC, responseContent, "SDNC", "");
+            return CreateResponse(statusCode, responseContent);
+
+        } catch(SocketTimeoutException e) {
+            String errMsg = "Request to SDNC timed out";
+            logError(errMsg, e);
+            return CreateResponse(HttpURLConnection.HTTP_CLIENT_TIMEOUT, errMsg);
+
+        } catch(ConnectTimeoutException e) {
+            String errMsg = "Request to SDNC timed out";
+            logError(errMsg, e);
+            return CreateResponse(HttpURLConnection.HTTP_CLIENT_TIMEOUT, errMsg);
+
+        } catch(Exception e) {
+            String errMsg = "Error processing request to SDNC";
+            logError(errMsg, e);
+            return CreateResponse(HttpURLConnection.HTTP_INTERNAL_ERROR, errMsg);
+
+        } finally {
+            if(httpResponse != null) {
+                try {
+                    EntityUtils.consume(httpResponse.getEntity());
+                } catch(Exception e) {
+                    // Ignore
+                }
+            }
+
+            if(method != null) {
+                try {
+                    method.reset();
+                } catch(Exception e) {
+                    // Ignore
+                }
+            }
+        }
+    }
+
+    private static void logError(String errMsg, Throwable t) {
+        LOGGER.error(MessageEnum.RA_NS_EXC, "VFC", "", MsoLogger.ErrorCode.AvailabilityError, errMsg, t);
+        ALARMLOGGER.sendAlarm("MsoInternalError", MsoAlarmLogger.CRITICAL, errMsg);
+    }
+
+    private static void logError(String errMsg) {
+        LOGGER.error(MessageEnum.RA_NS_EXC, "VFC", "", MsoLogger.ErrorCode.AvailabilityError, errMsg);
+        ALARMLOGGER.sendAlarm("MsoInternalError", MsoAlarmLogger.CRITICAL, errMsg);
+    }
+
+    private static RestfulResponse CreateResponse(int statusCode, String content) {
+        RestfulResponse rsp = new RestfulResponse();
+        rsp.setStatus(statusCode);
+        rsp.setResponseContent(content);
+        return rsp;
+    }
+
+    /**
+     * @param request
+     * @return
+     */
+    public static String getRequestBody(HttpServletRequest request) {
+        String body = null;
+        StringBuilder stringBuilder = new StringBuilder();
+        BufferedReader bufferedReader = null;
+        try {
+            InputStream inputStream = request.getInputStream();
+            if(inputStream != null) {
+                bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                char[] charBuffer = new char[128];
+                int bytesRead = -1;
+                while((bytesRead = bufferedReader.read(charBuffer)) > 0)
+                    stringBuilder.append(charBuffer, 0, bytesRead);
+            }
+        } catch(IOException ex) {
+            LOGGER.error(MessageEnum.RA_NS_EXC, "VFC", "", MsoLogger.ErrorCode.AvailabilityError,
+                    "read inputStream buffer catch exception:", ex);
+        } finally {
+            if(bufferedReader != null) {
+                try {
+                    bufferedReader.close();
+                } catch(IOException ex) {
+                    LOGGER.error(MessageEnum.RA_NS_EXC, "VFC", "", MsoLogger.ErrorCode.AvailabilityError,
+                            "close buffer catch exception:", ex);
+                }
+            }
+        }
+
+        body = stringBuilder.toString();
+        return body;
+    }
+
+}

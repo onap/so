@@ -26,6 +26,7 @@
 		<module>mso-requests-db-adapter</module>
 		<module>mso-catalog-db-adapter</module>
 		<module>mso-workflow-message-adapter</module>
+		<module>mso-vfc-adapter</module>
 	</modules>
 
 	<dependencies>
