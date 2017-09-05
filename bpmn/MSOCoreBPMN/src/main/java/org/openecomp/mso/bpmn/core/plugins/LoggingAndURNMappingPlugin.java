@@ -412,7 +412,7 @@ public class LoggingAndURNMappingPlugin extends AbstractProcessEnginePlugin {
 						}
 					}
 				} catch(Exception e) {
-					// Do nothing
+					LOGGER.error("Exception at notify: " + e);
 				}
 			}
 		}
