@@ -84,8 +84,7 @@ public class URNResource extends AbstractCockpitPluginResource{
 			
 		} catch (Exception e) 
 		{
-			
-			e.printStackTrace();
+			msoLogger.debug("Exception in getUrnDataMap " + e);			
 		}
      
     for(URNData d: list)
@@ -130,8 +129,7 @@ public class URNResource extends AbstractCockpitPluginResource{
 			
 		} catch (Exception e) 
 		{
-			
-			e.printStackTrace();
+			msoLogger.debug("Exception in DBConnection " + e);
 		}
 	  
 	  return conn;
@@ -174,8 +172,7 @@ public class URNResource extends AbstractCockpitPluginResource{
 			
 		} catch (Exception e) 
 		{
-			
-			e.printStackTrace();
+			msoLogger.debug("Exception in insertNewRow " + e);
 		}
  	// getQueryService().executeQuery("cockpit.urnMap.insertNewRow", nRow, URNData.class);
    }
@@ -197,8 +194,7 @@ public class URNResource extends AbstractCockpitPluginResource{
 				conn.close();
 		} catch (Exception e) 
 		{
-			
-			e.printStackTrace();
+			msoLogger.debug("Exception in PersistData " + e);
 		}
 	 
   	}

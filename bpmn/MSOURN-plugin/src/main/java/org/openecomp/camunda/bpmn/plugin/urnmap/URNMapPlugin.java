@@ -32,14 +32,15 @@ import org.openecomp.camunda.bpmn.plugin.urnmap.resources.URNMapPluginRootResour
 
 public class URNMapPlugin  extends AbstractCockpitPlugin{
 	public static final String ID = "urnMap-plugin";
-
+	  
+	  @Override
 	  public String getId() {
 	    return ID;
 	  }
 
 	  @Override
 	  public Set<Class<?>> getResourceClasses() {
-	    Set<Class<?>> classes = new HashSet<Class<?>>();
+	    Set<Class<?>> classes = new HashSet<>();
 
 	    classes.add(URNMapPluginRootResource.class);
 
