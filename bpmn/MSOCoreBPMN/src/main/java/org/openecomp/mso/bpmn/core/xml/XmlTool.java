@@ -1,6 +1,6 @@
 /*-
  * ============LICENSE_START=======================================================
- * OPENECOMP - MSO
+ * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
@@ -46,6 +46,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.openecomp.mso.logger.MsoLogger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -58,7 +59,7 @@ import org.xml.sax.SAXException;
 public final class XmlTool {
 
 	private static final Map<String, Integer> ENTITIES = new HashMap<String, Integer>();
-
+	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.BPEL);
 	static {
 		ENTITIES.put("amp", new Integer(38));
 		ENTITIES.put("quot", new Integer(34));
@@ -276,6 +277,7 @@ public final class XmlTool {
 	 */
 	public static String removeNamespaces(Object xml) {
 		if (xml == null) {
+		LOGGER.debug("removeNamespaces input object is null , returning null");
 			return null;
 		}
 
@@ -326,7 +328,7 @@ public final class XmlTool {
 				try {
 					stream.close();
 				} catch (Exception e) {
-					// Ignore
+					LOGGER.debug("Exception at readResourceFile close stream: " + e);
 				}
 			}
 		}

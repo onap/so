@@ -1,6 +1,6 @@
 /*-
  * ============LICENSE_START=======================================================
- * OPENECOMP - MSO
+ * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
@@ -28,6 +28,7 @@ import java.sql.SQLException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -60,11 +61,11 @@ public class URNResource extends AbstractCockpitPluginResource{
   public List<URNData> getUrnDataMap() 
   {  
 	  List<URNData> list = new ArrayList();
-	  
+	  PreparedStatement psData = null;
 	  try {
 			
 		    conn = getDBConnection();
-			    PreparedStatement psData = conn
+			psData = conn
 						.prepareStatement("select * from MSO_URN_MAPPING order by NAME_");
 			    
 			    ResultSet r = psData.executeQuery();
@@ -79,13 +80,25 @@ public class URNResource extends AbstractCockpitPluginResource{
 					list.add(d);					
 				}
 				
-			    psData.close();
-				conn.close();
-			
 		} catch (Exception e) 
 		{
-			
-			e.printStackTrace();
+			msoLogger.debug("Exception in getUrnDataMap " + e);			
+		} finally {
+			if(psData != null){
+				try {
+					psData.close();
+					conn.close();
+				} catch (SQLException e) {
+					msoLogger.debug("Exception while closing the PreparedStatement: " + e);
+				}
+			}
+			if(conn != null){
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					msoLogger.debug("Exception while closing the connection: " + e);
+				}
+			}
 		}
      
     for(URNData d: list)
@@ -130,8 +143,7 @@ public class URNResource extends AbstractCockpitPluginResource{
 			
 		} catch (Exception e) 
 		{
-			
-			e.printStackTrace();
+			msoLogger.debug("Exception in DBConnection " + e);
 		}
 	  
 	  return conn;
@@ -158,24 +170,36 @@ public class URNResource extends AbstractCockpitPluginResource{
  	  nRow.setVer_("1"); 	
  	  final String myKey = key_;
  	  final String myValue = value_;
- 	  
+ 	  PreparedStatement psData = null;
+	  
 		msoLogger.debug("----------- START ----------------------");
 		try {
 			
   		    conn = getDBConnection();
-			    PreparedStatement psData = conn
+			psData = conn
 						.prepareStatement("Insert into MSO_URN_MAPPING values ('" + key_ + "', '" + value_  + "', '1')");
 			    
-			    psData.executeUpdate();
-			    
-			    psData.close();
-				conn.close();
-			//}			 
+			    psData.executeUpdate();		 
 			
 		} catch (Exception e) 
 		{
-			
-			e.printStackTrace();
+			msoLogger.debug("Exception in insertNewRow " + e);
+		}finally {
+			if(psData != null){
+				try {
+					psData.close();
+					conn.close();
+				} catch (SQLException e) {
+					msoLogger.debug("Exception while closing the PreparedStatement: " + e);
+				}
+			}
+			if(conn != null){
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					msoLogger.debug("Exception while closing the connection: " + e);
+				}
+			}
 		}
  	// getQueryService().executeQuery("cockpit.urnMap.insertNewRow", nRow, URNData.class);
    }
@@ -184,21 +208,34 @@ public class URNResource extends AbstractCockpitPluginResource{
   public void getPersistData(URNData d) {  
 	  
 	    	//getQueryService().executeQuery("cockpit.urnMap.persistURNData", d, URNData.class);
- 	    
+ 	    PreparedStatement psData = null;
 	  try {
 			
 		    conn = getDBConnection();
-			PreparedStatement psData = conn
+			psData = conn
 						.prepareStatement("UPDATE MSO_URN_MAPPING set VALUE_ ='"+ d.getURNValue() + "' WHERE NAME_='" + d.getURNName() + "'");
 			    
 			    psData.executeUpdate();
-			    
-			    psData.close();
-				conn.close();
+			   
 		} catch (Exception e) 
 		{
-			
-			e.printStackTrace();
+			msoLogger.debug("Exception in PersistData " + e);
+		}finally {
+			if(psData != null){
+				try {
+					psData.close();
+					conn.close();
+				} catch (SQLException e) {
+					msoLogger.debug("Exception while closing the PreparedStatement: " + e);
+				}
+			}
+			if(conn != null){
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					msoLogger.debug("Exception while closing the connection: " + e);
+				}
+			}
 		}
 	 
   	}

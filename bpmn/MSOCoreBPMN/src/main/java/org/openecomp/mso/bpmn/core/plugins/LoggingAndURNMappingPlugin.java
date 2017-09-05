@@ -1,6 +1,6 @@
 /*-
  * ============LICENSE_START=======================================================
- * OPENECOMP - MSO
+ * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
@@ -412,7 +412,7 @@ public class LoggingAndURNMappingPlugin extends AbstractProcessEnginePlugin {
 						}
 					}
 				} catch(Exception e) {
-					// Do nothing
+					LOGGER.debug("Exception at notify: " + e);
 				}
 			}
 		}
