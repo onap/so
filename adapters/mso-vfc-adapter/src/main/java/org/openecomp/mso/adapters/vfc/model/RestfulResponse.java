@@ -21,12 +21,24 @@ package org.openecomp.mso.adapters.vfc.model;
 
 import java.util.Map;
 
+/**
+ * The Unified Restful Reponse Class
+ * <br>
+ * <p>
+ * </p>
+ * 
+ * @author
+ * @version     ONAP Amsterdam Release  2017-09-06
+ */
 public class RestfulResponse {
 
+    // the response content
     private String responseContent;
 
+    //the response status
     private int status;
 
+    //the response header
     private Map<String, String> respHeaderMap;
 
     public RestfulResponse() {

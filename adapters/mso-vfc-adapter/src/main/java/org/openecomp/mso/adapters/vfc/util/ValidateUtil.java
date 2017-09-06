@@ -36,7 +36,7 @@ public class ValidateUtil {
      * <p>
      * </p>
      * 
-     * @since GSO 0.5
+     * @since ONAP Amsterdam Release 2017-9-6
      */
     private ValidateUtil() {
 
@@ -47,7 +47,7 @@ public class ValidateUtil {
      * 
      * @param paramValue parameter data
      * @param name of parameter
-     * @since GSO 0.5
+     * @since ONAP Amsterdam Release 2017-9-6
      */
     public static void assertStringNotNull(String paramValue, String paramName) {
         if(null != paramValue && !paramValue.isEmpty()) {
@@ -62,7 +62,7 @@ public class ValidateUtil {
      * Assert object is null.<br/>
      * 
      * @param object data object
-     * @since GSO 0.5
+     * @since ONAP Amsterdam Release 2017-9-6
      */
     public static void assertObjectNotNull(Object object) {
         if(null == object) {

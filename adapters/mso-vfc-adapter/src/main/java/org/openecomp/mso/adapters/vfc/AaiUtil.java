@@ -30,7 +30,7 @@ import org.openecomp.mso.adapters.vfc.model.RestfulResponse;
  * @author
  * @version     ONAP Amsterdam Release  2017-08-28
  */
-public class AaiAdapter {
+public class AaiUtil {
 
     public static RestfulResponse addRelation(String serviceInstanceID, String resourceInstanceID)
     {

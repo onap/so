@@ -27,7 +27,7 @@ import java.util.Map;
  * </p>
  * 
  * @author
- * @version GSO 0.5 2017/2/21
+ * @version ONAP Amsterdam Release 2017-9-6
  */
 public class LocationConstraint {
 

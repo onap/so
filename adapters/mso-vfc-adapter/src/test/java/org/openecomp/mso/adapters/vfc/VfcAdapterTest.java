@@ -108,7 +108,7 @@ public class VfcAdapterTest {
      * Mock to get request body.<br/>
      * 
      * @param file json file path.
-     * @since GSO 0.5
+     * @since ONAP Amsterdam Release 2017-9-6
      */
     private void mockGetRequestBody(final String file) {
         new MockUp<RestfulUtil>() {
@@ -126,7 +126,7 @@ public class VfcAdapterTest {
      * @param file the path of file
      * @return json string
      * @throws IOException when fail to read
-     * @since GSO 0.5
+     * @since ONAP Amsterdam Release 2017-9-6
      */
     private String getJsonString(final String file) {
         if(ValidateUtil.isStrEmpty(file)) {

@@ -36,7 +36,7 @@ import org.openecomp.mso.logger.MsoLogger;
  * </p>
  * 
  * @author
- * @version GSO 0.5 2016/9/1
+ * @version ONAP Amsterdam Release 2017-9-6
  */
 public class JsonUtil {
 
@@ -61,7 +61,7 @@ public class JsonUtil {
      * <p>
      * </p>
      * 
-     * @since GSO 0.5
+     * @since ONAP Amsterdam Release 2017-9-6
      */
     private JsonUtil() {
 
@@ -73,7 +73,7 @@ public class JsonUtil {
      * @param jsonstr json string.
      * @param type that convert json string to
      * @return model object
-     * @since GSO 0.5
+     * @since ONAP Amsterdam Release 2017-9-6
      */
     public static <T> T unMarshal(String jsonstr, Class<T> type) {
         try {
@@ -90,7 +90,7 @@ public class JsonUtil {
      * @param jsonstr json string.
      * @param type that convert json string to
      * @return model object
-     * @since GSO 0.5
+     * @since ONAP Amsterdam Release 2017-9-6
      */
     public static <T> T unMarshal(String jsonstr, TypeReference<T> type) {
         try {
@@ -106,7 +106,7 @@ public class JsonUtil {
      * 
      * @param srcObj data object
      * @return json string
-     * @since GSO 0.5
+     * @since ONAP Amsterdam Release 2017-9-6
      */
     public static String marshal(Object srcObj) {
         try {
@@ -121,7 +121,7 @@ public class JsonUtil {
      * Get mapper.<br/>
      * 
      * @return mapper
-     * @since GSO 0.5
+     * @since ONAP Amsterdam Release 2017-9-6
      */
     public static ObjectMapper getMapper() {
         return MAPPER;

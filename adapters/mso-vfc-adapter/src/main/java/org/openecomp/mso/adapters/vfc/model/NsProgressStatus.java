@@ -28,7 +28,7 @@ import java.util.List;
  * response model of query operation status
  * 
  * @author
- * @version GSO 0.5 2016/9/3
+ * @version ONAP Amsterdam Release 2017-9-6
  */
 public class NsProgressStatus {
 

@@ -32,18 +32,6 @@ public class CommonConstant {
     
     public static final String STR_EMPTY = "";
 
-    public static final String CATALOGUE_QUERY_SVC_TMPL_NODETYPE_URL = "/openoapi/catalog/v1/servicetemplates/nesting";
-
-    public static final String SDNO_CREATE_URL = "/openoapi/sdnonslcm/v1/ns";
-
-    public static final String SDNO_INSTANTIATE_URL = "/openoapi/sdnonslcm/v1/ns/%s/instantiate";
-
-    public static final String SDNO_TERMINATE_URL = "/openoapi/sdnonslcm/v1/ns/%s/terminate";
-
-    public static final String SDNO_DELETE_URL = "/openoapi/sdnonslcm/v1/ns/%s";
-
-    public static final String SDNO_QUERY_URL = "/openoapi/sdnonslcm/v1/jobs/%s";
-
     public static final String NFVO_CREATE_URL = "/openoapi/nslcm/v1/ns";
 
     public static final String NFVO_INSTANTIATE_URL = "/openoapi/nslcm/v1/ns/%s/instantiate";
@@ -54,11 +42,6 @@ public class CommonConstant {
 
     public static final String NFVO_QUERY_URL = "/openoapi/nslcm/v1/jobs/%s";
 
-    public static final String GSO_CREATE_URL = "/openoapi/gso/v1/services";
-
-    public static final String GSO_DELETE_URL = "/openoapi/gso/v1/services/%s";
-
-    public static final String GSO_QUERY_URL = "/openoapi/gso/v1/services/%s/operations/%s";
 
     public static final String LEFT_QUOTE_LEFT_BRACE = "\"\\{";
 

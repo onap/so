@@ -37,7 +37,7 @@ public class ApplicationException extends WebApplicationException {
      * 
      * @param errorCode error status
      * @param errorDetail error detail
-     * @since GSO 0.5
+     * @since  ONAP Amsterdam Release 2017-9-6
      */
     public ApplicationException(int errorCode, Object errorDetail) {
         super(Response.status(errorCode).entity(errorDetail).type(MediaType.APPLICATION_JSON).build());

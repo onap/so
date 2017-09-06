@@ -114,7 +114,7 @@ public class VfcManager {
         LOGGER.info("create ns -> end");
         LOGGER.info("save segment and operaton info -> begin");
         // Step 5: add relation between service and NS
-        AaiAdapter.addRelation(segInput.getNsOperationKey().getServiceId(), nsInstanceId);
+        AaiUtil.addRelation(segInput.getNsOperationKey().getServiceId(), nsInstanceId);
 
         // Step 6: save resource operation information
         ResourceOperationStatus nsOperInfo = RequestsDatabase.getResourceOperationStatus(
@@ -168,7 +168,7 @@ public class VfcManager {
         }
 
         // Step3: remove relation info between service and ns
-        AaiAdapter.removeRelation(nsOperationKey.getServiceId(), nsInstanceId);
+        AaiUtil.removeRelation(nsOperationKey.getServiceId(), nsInstanceId);
         LOGGER.info("delete segment information -> end");
 
         // Step4: update service segment operation status
@@ -322,6 +322,7 @@ public class VfcManager {
     public RestfulResponse getNsProgress(NsOperationKey nsOperationKey, String jobId) {
 
         ValidateUtil.assertObjectNotNull(jobId);
+        // Step 1: query the current resource operation status
         ResourceOperationStatus nsOperInfo = RequestsDatabase.getResourceOperationStatus(nsOperationKey.getServiceId(),
                 nsOperationKey.getOperationId(), nsOperationKey.getNodeTemplateId());
 
@@ -334,6 +335,7 @@ public class VfcManager {
         ValidateUtil.assertObjectNotNull(rsp);
         LOGGER.info("query ns progress response status is : {}", rsp.getStatus());
         LOGGER.info("query ns progress response content is : {}", rsp.getResponseContent());
+        //Step 3:check the response staus
         if(!HttpCode.isSucess(rsp.getStatus())) {
             LOGGER.info("fail to query job status");
             nsOperInfo.setErrorCode(String.valueOf(rsp.getStatus()));
@@ -370,7 +372,7 @@ public class VfcManager {
             RequestsDatabase.updateResOperStatus(nsOperInfo);
             throw new ApplicationException(HttpCode.INTERNAL_SERVER_ERROR, DriverExceptionID.JOB_STATUS_ERROR);
         } else {
-            // do nothing
+            LOGGER.error("unexcepted response status");
         }
         LOGGER.info("query ns status -> end");
 

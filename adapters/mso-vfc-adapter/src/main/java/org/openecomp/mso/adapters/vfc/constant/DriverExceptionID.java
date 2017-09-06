@@ -26,7 +26,7 @@ package org.openecomp.mso.adapters.vfc.constant;
  * identification of adapter exception
  * 
  * @author
- * @version GSO 0.5 2016/9/3
+ * @version ONAP Amsterdam Release 2017-9-6
  */
 public class DriverExceptionID {
 
@@ -45,13 +45,9 @@ public class DriverExceptionID {
 
     public static final String FAIL_TO_CREATE_NS = "Fail to create ns";
 
-    public static final String FAIL_TO_CREATE_GSO_NS = "Fail to create gso ns";
-
     public static final String INVALID_RESPONSEE_FROM_DELETE_OPERATION = "Invalid response from delete operation";
 
     public static final String INVALID_RESPONSE_FROM_TERMINATE_OPERATION = "Invalid response from terminate operation";
-
-    public static final String FAIL_TO_DELETE_GSO_NS = "Fail to delete gso ns";
 
     public static final String FAIL_TO_DELETE_NS = "Fail to delete ns";
 

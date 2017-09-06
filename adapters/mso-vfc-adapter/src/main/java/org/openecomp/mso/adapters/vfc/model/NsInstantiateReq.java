@@ -26,7 +26,7 @@ package org.openecomp.mso.adapters.vfc.model;
  * request model for instatiate
  * 
  * @author
- * @version GSO 0.5 2016/9/3
+ * @version ONAP Amsterdam Release 2017-9-6
  */
 public class NsInstantiateReq extends NsParameters {
 

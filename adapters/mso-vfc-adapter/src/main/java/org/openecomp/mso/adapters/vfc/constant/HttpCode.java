@@ -72,7 +72,7 @@ public class HttpCode {
      * <p>
      * </p>
      * 
-     * @since GSO 0.5
+     * @since ONAP Amsterdam Release 2017-9-6
      */
     private HttpCode() {
 
@@ -83,7 +83,7 @@ public class HttpCode {
      * 
      * @param httpCode response code
      * @return true or false
-     * @since GSO 0.5
+     * @since ONAP Amsterdam Release 2017-9-6
      */
     public static boolean isSucess(int httpCode) {
         return httpCode / 100 == 2;
