@@ -1,6 +1,6 @@
 /*-
  * ============LICENSE_START=======================================================
- * OPENECOMP - MSO
+ * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
@@ -176,7 +176,7 @@ public class BpelRestClient {
 			try {
 				s.add(Integer.parseInt(t));
 			} catch (NumberFormatException x) {
-				// ignore
+				LOGGER.debug("Exception while parsing", x);
 			}
 		}
 		this.retryList = s;
@@ -227,7 +227,7 @@ public class BpelRestClient {
 			try {
 				Thread.sleep(sleepinterval * 1000L);
 			} catch (InterruptedException e) {
-				// ignore
+				LOGGER.debug("Exception while Thread sleep", e);
 			}
 		}
 	}
@@ -240,7 +240,7 @@ public class BpelRestClient {
 		LOGGER.debug("Content is: "+toBpelStr);
 
 		//Client 4.3+
-		CloseableHttpClient client = HttpClients.createDefault();
+		CloseableHttpClient client = null;
 
 		//POST
 		HttpPost post = new HttpPost(bpelUrl);
@@ -262,6 +262,7 @@ public class BpelRestClient {
         //Client 4.3+
 		//Execute & GetResponse
 		try {
+		    client = HttpClients.createDefault();
 			CloseableHttpResponse response = client.execute(post);
 			if (response != null) {
 				lastResponseCode = response.getStatusLine().getStatusCode();
@@ -277,10 +278,12 @@ public class BpelRestClient {
 			lastResponseCode = 900;
 			lastResponse = "";
 		} finally {
-			try {
-				client.close();
-			} catch (IOException e) {
-				// ignore
+			if(client != null){
+				try {
+					client.close();
+				} catch (IOException e) {
+					LOGGER.debug("Exception while closing client", e);
+				}
 			}
 		}
 		LOGGER.debug("Response code from BPEL server: "+lastResponseCode);
