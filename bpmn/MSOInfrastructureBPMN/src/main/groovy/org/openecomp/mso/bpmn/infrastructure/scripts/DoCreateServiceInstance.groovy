@@ -17,32 +17,18 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.openecomp.mso.bpmn.infrastructure.scripts;
-
-import static org.apache.commons.lang3.StringUtils.*;
-import groovy.xml.XmlUtil
-import groovy.json.*
-
-import org.openecomp.mso.bpmn.core.json.JsonUtils
-import org.openecomp.mso.bpmn.common.scripts.AaiUtil
-import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
-import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
-import org.openecomp.mso.bpmn.common.scripts.SDNCAdapterUtils
-import org.openecomp.mso.bpmn.common.scripts.VidUtils
-import org.openecomp.mso.bpmn.core.RollbackData
-import org.openecomp.mso.bpmn.core.WorkflowException
-import org.openecomp.mso.rest.APIResponse;
-import org.openecomp.mso.rest.RESTClient
-import org.openecomp.mso.rest.RESTConfig
-
-import java.util.UUID;
+package org.openecomp.mso.bpmn.infrastructure.scripts
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.runtime.Execution
-import org.json.JSONObject;
-import org.apache.commons.lang3.*
-import org.apache.commons.codec.binary.Base64;
-import org.springframework.web.util.UriUtils;
+import org.openecomp.mso.bpmn.common.scripts.*
+import org.openecomp.mso.bpmn.core.RollbackData
+import org.openecomp.mso.bpmn.core.WorkflowException
+import org.openecomp.mso.bpmn.core.json.JsonUtils
+import org.openecomp.mso.rest.APIResponse
+import org.springframework.web.util.UriUtils
+
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  * This groovy class supports the <class>DoCreateServiceInstance.bpmn</class> process.
@@ -58,6 +44,7 @@ import org.springframework.web.util.UriUtils;
  * @param - disableRollback
  * @param - failExists - TODO
  * @param - serviceInputParams - Deferred/TODO
+ * @param - initialStatus - optional
  * @param - sdncVersion ("1610")
  *
  * Outputs:
@@ -124,7 +111,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 			if (productFamilyId == null) {
 				execution.setVariable("productFamilyId", "")
 			}
-			
+
 			String sdncCallbackUrl = execution.getVariable('URN_mso_workflow_sdncadapter_callback')
 			if (isBlank(sdncCallbackUrl)) {
 				msg = "URN_mso_workflow_sdncadapter_callback is null"
@@ -136,7 +123,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 
 			String modelInvariantId = jsonUtil.getJsonValue(serviceModelInfo, "modelInvariantId")
 			String modelVersionId = jsonUtil.getJsonValue(serviceModelInfo, "modelVersionId")
-			
+
 			if (modelInvariantId == null) {
 				modelInvariantId = ""
 			}
@@ -147,7 +134,10 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 				execution.setVariable("serviceInstanceName", "")
 				serviceInstanceName = ""
 			}
-			
+
+			String initStatus = execution.getVariable("initialStatus") ?: ""
+			String statusLine = isBlank(initStatus) ? "" : "<orchestration-status>${initStatus}</orchestration-status>"
+
 			//AAI PUT
 			AaiUtil aaiUriUtil = new AaiUtil(this)
 			String aai_uri = aaiUriUtil.getBusinessCustomerUri(execution)
@@ -155,7 +145,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 			String serviceInstanceData =
 					"""<service-instance xmlns=\"${namespace}\">
 					<service-instance-name>${serviceInstanceName}</service-instance-name>
-					<orchestration-status>Active</orchestration-status>
+					${statusLine}
 				    <model-invariant-id>${modelInvariantId}</model-invariant-id>
 				    <model-version-id>${modelVersionId}</model-version-id>
 					</service-instance>""".trim()
@@ -347,7 +337,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 			def modelUUId = jsonUtil.getJsonValue(serviceModelInfo, "modelVersionId")
 			def modelName = jsonUtil.getJsonValue(serviceModelInfo, "modelName")
 			def sdncRequestId = UUID.randomUUID().toString()
-			
+
 			if (modelInvariantId == null) {
 				modelInvariantId = ""
 			}
@@ -413,7 +403,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 			rollbackData.put("SERVICEINSTANCE", "sdncDeactivate", sdncDeactivate)
 			rollbackData.put("SERVICEINSTANCE", "sdncDelete", sdncDelete)
 			execution.setVariable("rollbackData", rollbackData)
-			
+
 			utils.log("DEBUG","rollbackData:\n" + rollbackData.toString(), isDebugEnabled)
 
 		} catch (BpmnError e) {
@@ -425,7 +415,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 		}
 		utils.log("DEBUG"," *****Exit preProcessSDNCAssignRequest *****", isDebugEnabled)
 	}
-	
+
 	public void postProcessSDNCAssign (Execution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("DEBUG"," ***** postProcessSDNCAssign ***** ", isDebugEnabled)
@@ -462,7 +452,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 		}
 		utils.log("DEBUG"," *** Exit postProcessSDNCAssign *** ", isDebugEnabled)
 	}
-	
+
 	public void postProcessAAIGET2(Execution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("DEBUG"," ***** postProcessAAIGET2 ***** ", isDebugEnabled)
@@ -510,7 +500,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("DEBUG"," ***** preProcessRollback ***** ", isDebugEnabled)
 		try {
-			
+
 			Object workflowException = execution.getVariable("WorkflowException");
 
 			if (workflowException instanceof WorkflowException) {
