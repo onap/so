@@ -600,8 +600,9 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
             LOGGER.error (MessageEnum.RA_INIT_NOTIF_EXC, "", "", MsoLogger.ErrorCode.DataError, "Exception - init notification", e1);
         }
 
-        LOGGER.debug ("Notification Endpoint URL: " + epUrl.toExternalForm ());
-
+        if(null != epUrl) {
+            LOGGER.debug ("Notification Endpoint URL: " + epUrl.toExternalForm ());
+        }
         bp.getRequestContext ().put (BindingProvider.ENDPOINT_ADDRESS_PROPERTY, epUrl.toExternalForm ());
 
         // authentication

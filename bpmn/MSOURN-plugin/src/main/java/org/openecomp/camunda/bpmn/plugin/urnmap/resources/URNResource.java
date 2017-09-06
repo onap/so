@@ -82,21 +82,21 @@ public class URNResource extends AbstractCockpitPluginResource{
 				
 		} catch (Exception e) 
 		{
-			msoLogger.debug("Exception in getUrnDataMap " + e);			
+			msoLogger.debug("Exception in getUrnDataMap ", e);			
 		} finally {
 			if(psData != null){
 				try {
 					psData.close();
 					conn.close();
 				} catch (SQLException e) {
-					msoLogger.debug("Exception while closing the PreparedStatement: " + e);
+					msoLogger.debug("Exception while closing the PreparedStatement: ", e);
 				}
 			}
 			if(conn != null){
 				try {
 					conn.close();
 				} catch (SQLException e) {
-					msoLogger.debug("Exception while closing the connection: " + e);
+					msoLogger.debug("Exception while closing the connection: ", e);
 				}
 			}
 		}
@@ -143,7 +143,7 @@ public class URNResource extends AbstractCockpitPluginResource{
 			
 		} catch (Exception e) 
 		{
-			msoLogger.debug("Exception in DBConnection " + e);
+			msoLogger.debug("Exception in DBConnection ", e);
 		}
 	  
 	  return conn;
@@ -183,21 +183,21 @@ public class URNResource extends AbstractCockpitPluginResource{
 			
 		} catch (Exception e) 
 		{
-			msoLogger.debug("Exception in insertNewRow " + e);
+			msoLogger.debug("Exception in insertNewRow ", e);
 		}finally {
 			if(psData != null){
 				try {
 					psData.close();
 					conn.close();
 				} catch (SQLException e) {
-					msoLogger.debug("Exception while closing the PreparedStatement: " + e);
+					msoLogger.debug("Exception while closing the PreparedStatement: ", e);
 				}
 			}
 			if(conn != null){
 				try {
 					conn.close();
 				} catch (SQLException e) {
-					msoLogger.debug("Exception while closing the connection: " + e);
+					msoLogger.debug("Exception while closing the connection: ", e);
 				}
 			}
 		}
@@ -219,21 +219,21 @@ public class URNResource extends AbstractCockpitPluginResource{
 			   
 		} catch (Exception e) 
 		{
-			msoLogger.debug("Exception in PersistData " + e);
+			msoLogger.debug("Exception in PersistData ", e);
 		}finally {
 			if(psData != null){
 				try {
 					psData.close();
 					conn.close();
 				} catch (SQLException e) {
-					msoLogger.debug("Exception while closing the PreparedStatement: " + e);
+					msoLogger.debug("Exception while closing the PreparedStatement: ", e);
 				}
 			}
 			if(conn != null){
 				try {
 					conn.close();
 				} catch (SQLException e) {
-					msoLogger.debug("Exception while closing the connection: " + e);
+					msoLogger.debug("Exception while closing the connection: ", e);
 				}
 			}
 		}
