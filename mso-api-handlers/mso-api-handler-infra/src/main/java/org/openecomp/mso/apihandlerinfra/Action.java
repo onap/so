@@ -27,5 +27,8 @@ public enum Action {
 	createInstance,
 	updateInstance,
 	deleteInstance,
-	configureInstance
+	configureInstance,
+	replaceInstance,
+	activateInstance,
+	deactivateInstance
 }

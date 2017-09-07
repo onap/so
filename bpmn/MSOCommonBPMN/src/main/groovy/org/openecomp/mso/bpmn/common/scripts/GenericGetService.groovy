@@ -87,9 +87,6 @@ import org.springframework.web.util.UriUtils
  *    @param - GENGS_service
  *    @param - GENGS_FoundIndicator
  *    @param - WorkflowException
- *
- *
- * @author cb645j
  */
 class GenericGetService extends AbstractServiceTaskProcessor{
 
@@ -103,7 +100,6 @@ class GenericGetService extends AbstractServiceTaskProcessor{
 	 *
 	 * @param - execution
 	 *
-	 * @author cb645j
 	 */
 	public void preProcessRequest(Execution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")

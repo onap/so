@@ -72,7 +72,7 @@ public class WorkflowContext implements Delayed {
 	@Override
 	public long getDelay(TimeUnit unit) {
 		// 0 or negative means this object is considered to be expired
-		return unit.convert(startTime + timeout - System.currentTimeMillis(), TimeUnit.MILLISECONDS);
+		return unit.convert(startTime + timeout - System.currentTimeMillis(), unit);
 	}
 
 	/**

@@ -126,6 +126,27 @@ public class DeleteGenericALaCarteServiceInstance extends AbstractServiceTaskPro
 			} else {
 				execution.setVariable("subscriptionServiceType", subscriptionServiceType)
 			}
+			
+			/*
+			 * Extracting User Parameters from incoming Request and converting into a Map
+			 */
+			def jsonSlurper = new JsonSlurper()
+			def jsonOutput = new JsonOutput()
+
+			Map reqMap = jsonSlurper.parseText(siRequest)
+
+			//InputParams
+			def userParams = reqMap.requestDetails?.requestParameters?.userParams
+
+			Map<String, String> inputMap = [:]
+			if (userParams) {
+				userParams.each {
+					userParam -> inputMap.put(userParam.name, userParam.value)
+				}
+			}
+			
+			utils.log("DEBUG", "User Input Parameters map: " + userParams.toString(), isDebugEnabled)
+			execution.setVariable("serviceInputParams", inputMap)
 
 		} catch (BpmnError e) {
 			throw e;

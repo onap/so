@@ -56,17 +56,13 @@ class CompleteMsoProcessTest {
 				</sdncadapterworkflow:MsoCompletionRequest>
 		"""
 
-
-	private String completeMsoProcessResponse = """<sdncadapterworkflow:MsoCompletionResponse xmlns:sdncadapterworkflow="http://org.openecomp/mso/workflow/schema/v1">
-  <sdncadapterworkflow:out>BPEL UCPELayer3ServiceActivateV1 completed</sdncadapterworkflow:out>
-</sdncadapterworkflow:MsoCompletionResponse>"""
-
-
 	@Test
 	public void testPreProcessRequest() {
 
 		ExecutionEntity mockExecution = mock(ExecutionEntity.class)
 		when(mockExecution.getVariable("CompleteMsoProcessRequest")).thenReturn(completeMsoProcessRequest)
+		when(mockExecution.getVariable("URN_mso_adapters_db_auth")).thenReturn("757A94191D685FD2092AC1490730A4FC");
+		when(mockExecution.getVariable("URN_mso_msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7");
 
 		CompleteMsoProcess completeMsoProcess = new CompleteMsoProcess()
 		completeMsoProcess.preProcessRequest(mockExecution)
@@ -107,48 +103,6 @@ class CompleteMsoProcessTest {
 		verify(mockExecution).setVariable("CMSO_request_action","Layer3ServiceActivateRequest")
 		verify(mockExecution).setVariable("CMSO_source","OMX")
 
-	}
-
-	@Test
-	public void testpostProcessResponse(){
-
-		ExecutionEntity mockExecution = mock(ExecutionEntity.class)
-
-		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
-		when(mockExecution.getVariable("CMSO_mso-bpel-name")).thenReturn("UCPELayer3ServiceActivateV1")
-
-		CompleteMsoProcess completeMsoProcess = new CompleteMsoProcess()
-		completeMsoProcess.postProcessResponse(mockExecution)
-
-		verify(mockExecution).setVariable("CompleteMsoProcessResponse", completeMsoProcessResponse)
-		verify(mockExecution).setVariable("CMSO_ResponseCode","200")
-	}
-
-	private String updateDBStatusToSuccessPayload = """
-			<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:req="http://org.openecomp.mso/requestsdb">
-			<soapenv:Header/>
-			<soapenv:Body>
-			   <req:updateStatus>
-				  <requestId>testReqId</requestId>
-				  <lastModifiedBy>BPEL</lastModifiedBy>
-				  <status>COMPLETED</status>
-			   </req:updateStatus>
-			</soapenv:Body>
-		 </soapenv:Envelope>
-		"""
-
-	@Test
-	public void testupdateDBStatusToSuccessPayload(){
-
-		ExecutionEntity mockExecution = mock(ExecutionEntity.class)
-		when(mockExecution.getVariable("CMSO_request_id")).thenReturn("testReqId")
-		when(mockExecution.getVariable("URN_mso_adapters_db_auth")).thenReturn("757A94191D685FD2092AC1490730A4FC");
-		when(mockExecution.getVariable("URN_mso_msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7");
-
-		CompleteMsoProcess completeMsoProcess = new CompleteMsoProcess()
-		completeMsoProcess.updateDBStatusToSuccessPayload(mockExecution)
-
-		verify(mockExecution).setVariable("CMSO_updateDBStatusToSuccessPayload",updateDBStatusToSuccessPayload)
 	}
 
 	private String setUpdateDBstatustoSuccessPayload = """

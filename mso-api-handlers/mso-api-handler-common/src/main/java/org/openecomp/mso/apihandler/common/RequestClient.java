@@ -78,6 +78,9 @@ public abstract class RequestClient {
 			String requestDetails)
 					throws ClientProtocolException, IOException;
 	
+	public abstract HttpResponse get() 
+					throws ClientProtocolException, IOException;
+	
 	protected String getEncryptedPropValue (String prop, String defaultValue, String encryptionKey) {
 		 try {
 			 String result = CryptoUtils.decrypt(prop, encryptionKey);

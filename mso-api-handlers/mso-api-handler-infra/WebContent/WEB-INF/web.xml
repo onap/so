@@ -2,20 +2,23 @@
 
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
   <display-name>MSO API Handler Infra</display-name>
-
-
-   <context-param>
-	<param-name>resteasy.jndi.resources</param-name>
-	<param-value>java:module/MsoPropertiesFactory</param-value>
+  	
+  	<listener>
+    	<listener-class>org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap</listener-class>
+  	</listener>
+  
+	<context-param>
+		<param-name>resteasy.jndi.resources</param-name>
+		<param-value>java:module/MsoPropertiesFactory</param-value>
    </context-param>
-
+ 
    <!-- enable the Asynchronous Job Service -->
     <context-param>
         <param-name>resteasy.async.job.service.enabled</param-name>
         <param-value>true</param-value>
     </context-param>
 
-    <!-- The next context parameters are all optional.
+    <!-- The next context parameters are all optional.  
          Their default values are shown as example param-values -->
 
     <!-- How many jobs results can be held in memory at once? -->
@@ -23,12 +26,17 @@
         <param-name>resteasy.async.job.service.max.job.results</param-name>
         <param-value>100</param-value>
     </context-param>
-
-    <!-- Maximum wait time on a job when a client is querying for it -->
+	
+ 	<!-- Maximum wait time on a job when a client is querying for it -->
     <context-param>
         <param-name>resteasy.async.job.service.max.wait</param-name>
         <param-value>300000</param-value>
     </context-param>
+    
+    <context-param>
+    	<param-name>resteasy.scan</param-name>
+    	<param-value>true</param-value>
+ 	</context-param>
 
     <!-- Thread pool size of background threads that run the job -->
     <context-param>
@@ -41,55 +49,52 @@
         <param-name>resteasy.async.job.service.base.path</param-name>
         <param-value>/asynch/jobs</param-value>
     </context-param>
-  <context-param>
-    <param-name>resteasy.scan</param-name>
-    <param-value>true</param-value>
-  </context-param>
+  
+  	<context-param>
+  		<param-name>log.configuration</param-name>
+  		<param-value>logback.apihandler-infra.xml</param-value>
+  	</context-param>
+  
+  	<context-param>
+  		<param-name>mso.configuration</param-name>
+  		<param-value>MSO_PROP_APIHANDLER_INFRA=mso.apihandler-infra.properties,MSO_PROP_TOPOLOGY=topology.properties</param-value>
+  	</context-param>
+  
+	  <context-param>
+	    <param-name>resteasy.resources</param-name>
+	    <param-value>org.openecomp.mso.logger.MsoLoggingServlet</param-value>
+	  </context-param>
+  
+  	<servlet>
+    	<servlet-name>resteasy-servlet</servlet-name>
+    	<servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
+  	</servlet>
 
-  <!--
-  <context-param>
-    <param-name>resteasy.servlet.mapping.prefix</param-name>
-    <param-value>/v1</param-value>
-  </context-param>
-  -->
-   <context-param>
-  	<param-name>log.configuration</param-name>
-  	<param-value>logback.apihandler-infra.xml</param-value>
-  </context-param>
-
-  <context-param>
-  	<param-name>mso.configuration</param-name>
-  	<param-value>MSO_PROP_APIHANDLER_INFRA=mso.apihandler-infra.properties,MSO_PROP_TOPOLOGY=topology.properties</param-value>
-  </context-param>
-
-  <context-param>
-    <param-name>resteasy.resources</param-name>
-    <param-value>org.openecomp.mso.logger.MsoLoggingServlet</param-value>
-  </context-param>
-
-  <listener>
-    <listener-class>
-			org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap
-	</listener-class>
-  </listener>
-  <servlet>
-    <servlet-name>msoapihandler-infra-servlet</servlet-name>
-    <servlet-class>
-			org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher
-		</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>msoapihandler-infra-servlet</servlet-name>
-    <url-pattern>/*</url-pattern>
-  </servlet-mapping>
-
+  	<servlet-mapping>
+	    <servlet-name>resteasy-servlet</servlet-name>
+	    <url-pattern>/serviceInstances/*</url-pattern>
+	    <url-pattern>/orchestrationRequests/*</url-pattern>
+	    <url-pattern>/nodehealthcheck</url-pattern>
+	    <url-pattern>/v1/*</url-pattern>
+	    <url-pattern>/v2/*</url-pattern>
+	    <url-pattern>/v3/*</url-pattern>
+	    <url-pattern>/logging/*</url-pattern>
+	    <url-pattern>/globalhealthcheck/*</url-pattern>
+	    <url-pattern>/healthcheck/*</url-pattern>
+	    <url-pattern>/setStatus/*</url-pattern>
+	    <url-pattern>/properties/*</url-pattern>
+		<url-pattern>/api-docs/*</url-pattern>
+		<url-pattern>/tasks/*</url-pattern>
+  	</servlet-mapping>
+  
+  <!-- To be replaced by AAF in the future, when Camunda scripts replacing the BPEL scripts completely -->
   <security-constraint>
     <web-resource-collection>
       <web-resource-name>HealthcheckNoAuth</web-resource-name>
       <description>No Authentication for Healthcheck</description>
-      <url-pattern>/healthcheck</url-pattern>
-        <url-pattern>/nodehealthcheck</url-pattern>
+      	<url-pattern>/healthcheck</url-pattern>
         <url-pattern>/globalhealthcheck</url-pattern>
+        <url-pattern>/nodehealthcheck</url-pattern>
       <http-method>GET</http-method>
       <http-method>POST</http-method>
       </web-resource-collection>
@@ -105,9 +110,9 @@
             <role-name>SiteControl-Client</role-name>
         </auth-constraint>
     </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>MSO internal Requests</web-resource-name>
+   <security-constraint>
+ 	 <web-resource-collection>
+ 	 <web-resource-name>MSO internal Requests</web-resource-name>
             <description>Internal Requests</description>
             <url-pattern>/logging/*</url-pattern>
             <url-pattern>/properties/*</url-pattern>
@@ -130,7 +135,7 @@
        <role-name>InfraPortal-Client</role-name>
      </auth-constraint>
   </security-constraint>
-
+ 
   <login-config>
   	<auth-method>BASIC</auth-method>
     <realm-name>ApplicationRealm</realm-name>
@@ -140,11 +145,11 @@
   </security-role>
     <security-role>
         <role-name>SiteControl-Client</role-name>
-    </security-role>
-    <security-role>
+    </security-role> 
+  	<security-role>
         <role-name>MSO-Client</role-name>
     </security-role>
-
+  
     <filter>
 		<filter-name>LogFilter</filter-name>
 		<filter-class>org.openecomp.mso.logger.LogFilter</filter-class>
@@ -152,6 +157,6 @@
     <filter-mapping>
 		<filter-name>LogFilter</filter-name>
 		<url-pattern>/*</url-pattern>
-	</filter-mapping>
-
+	</filter-mapping>  
+  
 </web-app>

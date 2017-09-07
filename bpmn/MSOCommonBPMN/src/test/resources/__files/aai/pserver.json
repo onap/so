@@ -1,0 +1,14 @@
+{
+	"results": [
+		{
+			"pserver": {
+				"hostname": "test"
+			}
+		},
+		{
+			"pserver": {
+				"hostname": "test2"
+			}
+		}
+	]
+}

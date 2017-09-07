@@ -26,21 +26,24 @@ import java.util.List;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import org.apache.http.HttpStatus;
-
 import org.openecomp.mso.apihandlerinfra.vnfbeans.VfModuleModelName;
 import org.openecomp.mso.apihandlerinfra.vnfbeans.VfModuleModelNames;
 import org.openecomp.mso.apihandlerinfra.vnfbeans.ObjectFactory;
 import org.openecomp.mso.db.catalog.CatalogDatabase;
 import org.openecomp.mso.db.catalog.beans.VfModule;
 import org.openecomp.mso.logger.MsoLogger;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
 
 @Path(Constants.VF_MODULE_MODEL_NAMES_PATH)
+@Api(value="/{version: v2|v3}/vf-module-model-names",description="API Requests to find Vf Module model names")
 public class VfModuleModelNamesHandler {
 
     private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH);
@@ -48,13 +51,14 @@ public class VfModuleModelNamesHandler {
     private static final String LOG_REPLY_NAME = "MSO-APIH:InfrastructurePortal.";
 
     @GET
-    public Response getVfModuleModelNames () {
+    @ApiOperation(value="Finds Vf Module Model Names",response=Response.class)
+    public Response getVfModuleModelNames (@PathParam("version") String version) {
         long startTime = System.currentTimeMillis ();
         String methodName = "getVfModuleModelNames";
         MsoLogger.setServiceName (LOG_SERVICE_NAME + methodName);
         msoLogger.debug ("Incoming request received for vfModuleModelNames");
         List <VfModule> vfModules = null;
-        try (CatalogDatabase db = new CatalogDatabase()){
+        try (CatalogDatabase db = CatalogDatabase.getInstance()){
             vfModules = db.getAllVfModules ();
         } catch (Exception e) {
             msoLogger.debug ("No connection to catalog DB", e);
@@ -79,7 +83,7 @@ public class VfModuleModelNamesHandler {
             vfModuleModelName.setModelInvariantUuid (vm.getModelInvariantUuid ());
             vfModuleModelName.setIsBase(vm.isBase());
             vfModuleModelName.setDescription (vm.getDescription ());
-            vfModuleModelName.setId (String.valueOf (vm.getId ()));
+            vfModuleModelName.setId (String.valueOf (vm.getModelUUID()));
             vfModuleModelName.setAsdcServiceModelVersion(vm.getVersion ());
             vfModuleModelNames.getVfModuleModelName ().add (vfModuleModelName);
         }

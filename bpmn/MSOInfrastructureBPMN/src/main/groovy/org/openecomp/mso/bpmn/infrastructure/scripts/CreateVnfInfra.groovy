@@ -26,6 +26,9 @@ import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.runtime.Execution;
 
 import static org.apache.commons.lang3.StringUtils.*;
+import org.openecomp.mso.bpmn.common.scripts.CatalogDbUtils;
+import org.json.JSONObject;
+import org.json.JSONArray;
 
 import org.openecomp.mso.bpmn.common.scripts.AaiUtil;
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor;
@@ -33,6 +36,7 @@ import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil;
 import org.openecomp.mso.bpmn.common.scripts.SDNCAdapterUtils;
 import org.openecomp.mso.bpmn.common.scripts.VidUtils;
 import org.openecomp.mso.bpmn.core.WorkflowException
+import org.openecomp.mso.bpmn.core.domain.VnfResource
 import org.openecomp.mso.bpmn.core.json.JsonUtils;
 
 
@@ -47,6 +51,7 @@ class CreateVnfInfra extends AbstractServiceTaskProcessor {
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
 	VidUtils vidUtils = new VidUtils(this)
+	CatalogDbUtils cutils = new CatalogDbUtils()
 
 	/**
 	 * This method gets and validates the incoming
@@ -59,7 +64,8 @@ class CreateVnfInfra extends AbstractServiceTaskProcessor {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		utils.log("DEBUG", " *** STARTED CreateVnfInfra PreProcessRequest Process*** ", isDebugEnabled)
-
+		
+		setBasicDBAuthHeader(execution, isDebugEnabled)
 		execution.setVariable("CREVI_sentSyncResponse", false)
 
 		try{
@@ -101,7 +107,7 @@ class CreateVnfInfra extends AbstractServiceTaskProcessor {
 				def vnfModelInfo = jsonUtil.getJsonValue(createVnfRequest, "requestDetails.modelInfo")
 				execution.setVariable("CREVI_vnfModelInfo", vnfModelInfo)
 
-				String modelInvariantId = jsonUtil.getJsonValue(createVnfRequest, "requestDetails.modelInfo.modelInvariantId")
+				String modelInvariantId = jsonUtil.getJsonValue(createVnfRequest, "requestDetails.modelInfo.modelInvariantUuid")
 				execution.setVariable("CREVI_modelInvariantId", modelInvariantId)
 				utils.log("DEBUG", "Incoming Invariant Id is: " + modelInvariantId, isDebugEnabled)
 
@@ -157,7 +163,13 @@ class CreateVnfInfra extends AbstractServiceTaskProcessor {
 				}
 				execution.setVariable("CREVI_sdncCallbackUrl", sdncCallbackUrl)
 				
-				def vnfInputParameters = jsonUtil.getJsonValue(createVnfRequest, "requestParameters.userParams")
+				def vnfInputParameters = null
+				try {
+					vnfInputParameters = jsonUtil.getJsonValue(createVnfRequest, "requestDetails.requestParameters.userParams")
+				}
+				catch (Exception e) {
+					utils.log("DEBUG", "userParams are not present in the request", isDebugEnabled)
+				}
 				execution.setVariable("CREVI_vnfInputParameters", vnfInputParameters)
 				
 				
@@ -429,4 +441,56 @@ class CreateVnfInfra extends AbstractServiceTaskProcessor {
 		utils.log("DEBUG", "*** COMPLETED CreateVnfInfra prepareFalloutRequest Process ***", isDebugEnabled)
 	}
 
+	
+	public void queryCatalogDB (Execution execution) {
+		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+		execution.setVariable("prefix",Prefix)
+
+		utils.log("DEBUG", " *** STARTED CreateVnfInfra QueryCatalogDB Process *** ", isDebugEnabled)
+		try {
+			//Get Vnf Info
+			String vnfModelInfo = execution.getVariable("CREVI_vnfModelInfo")
+			String vnfModelCustomizationUuid = jsonUtil.getJsonValueForKey(vnfModelInfo, "modelCustomizationUuid")
+			utils.log("DEBUG", "querying Catalog DB by vnfModelCustomizationUuid: " + vnfModelCustomizationUuid, isDebugEnabled)
+						
+			JSONArray vnfs = cutils.getAllVnfsByVnfModelCustomizationUuid(execution,
+							vnfModelCustomizationUuid, "v2")
+			utils.log("DEBUG", "obtained VNF list: " + vnfs, isDebugEnabled)			
+			execution.setVariable("CREVI_vnfs", vnfs)
+			
+			if (vnfs == null) {
+				utils.log("ERROR", "No matching VNFs in Catalog DB for vnfModelCustomizationUuid=" + vnfModelCustomizationUuid, isDebugEnabled)
+				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "No matching VNFs in Catalog DB for vnfModelCustomizationUuid=" + vnfModelCustomizationUuid)
+			}
+			
+			// Only one match here
+			JSONObject vnf = vnfs.get(0)
+			
+			if (vnf == null) {
+				utils.log("ERROR", "No matching VNF in Catalog DB for vnfModelCustomizationUuid=" + vnfModelCustomizationUuid, isDebugEnabled)
+				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "No matching VNF in Catalog DB for vnfModelCustomizationUuid=" + vnfModelCustomizationUuid)
+			}			
+			
+			VnfResource vnfResource = new VnfResource()
+			String nfType = jsonUtil.getJsonValueForKey(vnf, "nfType")
+			vnfResource.setNfType(nfType)
+			String nfRole = jsonUtil.getJsonValueForKey(vnf, "nfRole")
+			vnfResource.setNfRole(nfRole)
+			String nfFunction = jsonUtil.getJsonValueForKey(vnf, "nfFunction")
+			vnfResource.setNfFunction(nfFunction)
+			String nfNamingCode = jsonUtil.getJsonValueForKey(vnf, "nfNamingCode")
+			vnfResource.setNfNamingCode(nfNamingCode)
+			
+			execution.setVariable("CREVI_vnfResourceDecomposition", vnfResource)
+			
+		}catch(BpmnError e) {
+			throw e;			
+		}catch(Exception ex) {
+			utils.log("DEBUG", "Error Occurred in CreateVnfInfra QueryCatalogDB Process " + ex.getMessage(), isDebugEnabled)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occurred in CreateVnfInfra QueryCatalogDB Process")
+		}
+		
+		
+		utils.log("DEBUG", "*** COMPLETED CreateVnfInfra QueryCatalogDb Process ***", isDebugEnabled)
+	}
 }

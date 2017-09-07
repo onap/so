@@ -97,7 +97,8 @@ public class VnfRequestHandler {
     private static final Response NOT_STARTED_RESPONSE = Response.status (HttpStatus.SC_SERVICE_UNAVAILABLE)
             .entity (NOT_FOUND)
             .build ();
-
+    private RequestsDatabase requestDB = RequestsDatabase.getInstance();
+    
     @GET
     public Response queryFilters (@QueryParam("vnf-type") String vnfType,
                                   @QueryParam("service-type") String serviceType,
@@ -285,7 +286,7 @@ public class VnfRequestHandler {
 
         String responseString = null;
 
-        InfraActiveRequests activeReq = RequestsDatabase.getRequestFromInfraActive (requestId, getRequestType ());
+        InfraActiveRequests activeReq = requestDB.getRequestFromInfraActive (requestId, getRequestType ());
         if (activeReq != null) {
             // build response for active
             responseString = infraRequestsResponse (activeReq, version);
@@ -302,7 +303,7 @@ public class VnfRequestHandler {
 
         getMsoLogger ().debug ("getRequest based on " + queryAttribute + ": " + queryValue);
 
-        List <InfraActiveRequests> activeReqList = RequestsDatabase.getRequestListFromInfraActive (queryAttribute,
+        List <InfraActiveRequests> activeReqList = requestDB.getRequestListFromInfraActive (queryAttribute,
                                                                                                    queryValue,
                                                                                                    getRequestType ());
 
@@ -471,7 +472,7 @@ public class VnfRequestHandler {
             msoLogger.debug ("Checking for a duplicate with the same vnf-name");
             InfraActiveRequests dup = null;
             try {
-                dup = RequestsDatabase.checkDuplicateByVnfName (msoRequest.getVnfInputs ().getVnfName (),
+                dup = requestDB.checkDuplicateByVnfName (msoRequest.getVnfInputs ().getVnfName (),
                                                                 msoRequest.getRequestInfo ().getAction ().value (),
                                                                 "VNF");
 
@@ -508,7 +509,7 @@ public class VnfRequestHandler {
             InfraActiveRequests dup = null;
             msoLogger.debug ("Checking for a duplicate with the same vnf-id");
             try {
-                dup = RequestsDatabase.checkDuplicateByVnfId (msoRequest.getVnfInputs ().getVnfId (),
+                dup = requestDB.checkDuplicateByVnfId (msoRequest.getVnfInputs ().getVnfId (),
                                                               msoRequest.getRequestInfo ().getAction ().value (),
                                                               "VNF");
 
@@ -548,7 +549,7 @@ public class VnfRequestHandler {
         String orchestrationURI = "";
 
         // Query MSO Catalog DB
-        try (CatalogDatabase db = new CatalogDatabase()){
+        try (CatalogDatabase db = CatalogDatabase.getInstance()){
 
             Recipe recipe = null;
 
@@ -755,7 +756,7 @@ public class VnfRequestHandler {
                 String bpelXMLResponseBody = respHandler.getResponseBody ();
                 msoLogger.debug ("Received from BPEL: " + bpelXMLResponseBody);
                 msoRequest.setStatus (org.openecomp.mso.apihandlerinfra.vnfbeans.RequestStatusType.IN_PROGRESS);
-                RequestsDatabase.updateInfraStatus (msoRequest.getRequestId (),
+                requestDB.updateInfraStatus (msoRequest.getRequestId (),
                         Status.IN_PROGRESS.toString (),
                         Constants.PROGRESS_REQUEST_IN_PROGRESS,
                         Constants.MODIFIED_BY_APIHANDLER);

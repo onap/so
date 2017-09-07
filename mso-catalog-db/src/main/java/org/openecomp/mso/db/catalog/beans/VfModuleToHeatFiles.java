@@ -26,58 +26,33 @@ import java.io.Serializable;
 
 public class VfModuleToHeatFiles implements Serializable {
 	
-    private int vfModuleId;
-    private int heatFilesId;
+    private String vfModuleModelUuid;
+    private String heatFilesArtifactUuid;
     public static final long serialVersionUID = -1322322139926390329L;
 
 	public VfModuleToHeatFiles() {
 		super();
 	}
 	
-	public int getVfModuleId() {
-		return this.vfModuleId;
+	public String getVfModuleModelUuid() {
+		return this.vfModuleModelUuid;
 	}
-	public void setVfModuleId(int vfModuleId) {
-		this.vfModuleId = vfModuleId;
+	public void setVfModuleModelUuid(String vfModuleModelUuid) {
+		this.vfModuleModelUuid = vfModuleModelUuid;
 	}
-	
-	public int getHeatFilesId() {
-		return this.heatFilesId;
+	public String getHeatFilesArtifactUuid() {
+		return this.heatFilesArtifactUuid;
 	}
-	public void setHeatFilesId(int heatFilesId) {
-		this.heatFilesId = heatFilesId;
+	public void setHeatFilesArtifactUuid(String heatFilesArtifactUuid) {
+		this.heatFilesArtifactUuid = heatFilesArtifactUuid;
 	}
 	
     @Override
     public String toString () {
         StringBuilder sb = new StringBuilder ();
-        sb.append ("VF_MODULE_ID=" + this.vfModuleId);
-        sb.append (", HEAT_FILES_ID=" + this.heatFilesId);
+        sb.append ("vfModuleModelUuid=" + this.vfModuleModelUuid);
+        sb.append (", heatFilesArtifactUuid=" + this.heatFilesArtifactUuid);
         return sb.toString ();
-    }
-
-    @Override
-    public boolean equals (Object o) {
-        if (!(o instanceof VfModuleToHeatFiles)) {
-            return false;
-        }
-        if (this == o) {
-            return true;
-        }
-        VfModuleToHeatFiles vmthf = (VfModuleToHeatFiles) o;
-        if (vmthf.getVfModuleId() == this.getVfModuleId() && vmthf.getVfModuleId() == this.getVfModuleId()) {
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode () {
-        // hash code does not have to be a unique result - only that two objects that should be treated as equal
-        // return the same value. so this should work.
-        int result = 0;
-        result = this.vfModuleId + this.heatFilesId;
-        return result;
     }
 
 }

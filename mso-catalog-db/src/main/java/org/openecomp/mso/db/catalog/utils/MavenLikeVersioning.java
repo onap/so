@@ -51,7 +51,7 @@ public class MavenLikeVersioning implements Serializable {
 	 *
 	 */
 	public boolean isMoreRecentThan (String versionToCompare) {
-		if (versionToCompare == null || this.version == null) {
+		if (versionToCompare == null || versionToCompare.trim().equals("") || this.version == null || this.version.trim().equals("")) {
 			return false;
 		}
 		String [] currentVersionArray = this.version.split("\\.");
@@ -87,7 +87,7 @@ public class MavenLikeVersioning implements Serializable {
 	public boolean isTheSameVersion (String versionToCompare) {
 		if (versionToCompare == null && this.version == null) {
 			return true;
-		} else if (versionToCompare == null || this.version == null) {
+		} else if (versionToCompare == null || versionToCompare.trim().equals("") || this.version == null || this.version.trim().equals("")) {
 			return false;
 		}
 		String [] currentVersionArray = this.version.split("\\.");

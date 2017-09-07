@@ -33,15 +33,23 @@ import java.util.Map;
 public class QueryServiceNetworks extends CatalogQuery {
 	private List<NetworkResourceCustomization> serviceNetworks;
 	private final String template =
-		"\t{ \"network\"                : {\n"+
-			"\t\t\"modelName\"              : <MODEL_NAME>,\n"+
-			"\t\t\"modelUuid\"              : <MODEL_UUID>,\n"+
-			"\t\t\"modelInvariantUuid\"     : <MODEL_INVARIANT_ID>,\n"+
-			"\t\t\"modelVersion\"           : <MODEL_VERSION>,\n"+
-			"\t\t\"modelCustomizationUuid\" : <MODEL_CUSTOMIZATION_UUID>,\n"+
-			"\t\t\"modelInstanceName\"      : <MODEL_INSTANCE_NAME>,\n"+
-			"\t\t\"networkType\"            : <NETWORK_TYPE>\n"+
-		"\t}}";
+		"\t{\n"+
+//		"\t{ \"networkResource\"            : {\n"+
+			"\t\t\"modelInfo\"                : {\n"+
+			"\t\t\t\"modelName\"              : <MODEL_NAME>,\n"+
+			"\t\t\t\"modelUuid\"              : <MODEL_UUID>,\n"+
+			"\t\t\t\"modelInvariantUuid\"     : <MODEL_INVARIANT_ID>,\n"+
+			"\t\t\t\"modelVersion\"           : <MODEL_VERSION>,\n"+
+			"\t\t\t\"modelCustomizationUuid\" : <MODEL_CUSTOMIZATION_UUID>,\n"+
+			"\t\t\t\"modelInstanceName\"      : <MODEL_INSTANCE_NAME>\n"+
+		"\t},\n"+
+			"\t\t\"toscaNodeType\"            : <TOSCA_NODE_TYPE>,\n"+
+			"\t\t\"networkType\"              : <NETWORK_TYPE>,\n"+
+			"\t\t\"networkTechnology\"        : <NETWORK_TECHNOLOGY>,\n"+
+			"\t\t\"networkRole\"              : <NETWORK_ROLE>,\n"+
+			"\t\t\"networkScope\"             : <NETWORK_SCOPE>\n"+
+		"\t}";
+//		"\t}}";
 
 	public QueryServiceNetworks() { super(); serviceNetworks = new ArrayList<NetworkResourceCustomization>(); }
 	public QueryServiceNetworks(List<NetworkResourceCustomization> vlist) {
@@ -76,20 +84,25 @@ public class QueryServiceNetworks extends CatalogQuery {
 		StringBuffer buf = new StringBuffer();
 		if (!isEmbed && isArray) buf.append("{ ");
 		if (isArray) buf.append("\"serviceNetworks\": [");
+		//if (isArray) buf.append("[");
 		Map<String, String> valueMap = new HashMap<String, String>();
 		String sep = "";
 		boolean first = true;
 
 		for (NetworkResourceCustomization o : serviceNetworks) {
 			if (first) buf.append("\n"); first = false;
-
-		    put(valueMap, "MODEL_NAME",               o.getModelName());
-		    put(valueMap, "MODEL_UUID",               o.getModelUuid());
-		    put(valueMap, "MODEL_INVARIANT_ID",       o.getModelInvariantId());
-		    put(valueMap, "MODEL_VERSION",            o.getModelVersion());
+			boolean nrNull = o.getNetworkResource() == null ? true : false;
+		    put(valueMap, "MODEL_NAME",               nrNull ? null : o.getNetworkResource().getModelName());
+		    put(valueMap, "MODEL_UUID",               nrNull ? null : o.getNetworkResource().getModelUUID());
+		    put(valueMap, "MODEL_INVARIANT_ID",       nrNull ? null : o.getNetworkResource().getModelInvariantUUID());
+		    put(valueMap, "MODEL_VERSION",            nrNull ? null : o.getNetworkResource().getVersion());
 		    put(valueMap, "MODEL_CUSTOMIZATION_UUID", o.getModelCustomizationUuid());
 		    put(valueMap, "MODEL_INSTANCE_NAME",      o.getModelInstanceName());
+		    put(valueMap, "TOSCA_NODE_TYPE",             nrNull ? null : o.getNetworkResource().getToscaNodeType());
 		    put(valueMap, "NETWORK_TYPE",             o.getNetworkType());
+		    put(valueMap, "NETWORK_ROLE",             o.getNetworkRole());
+		    put(valueMap, "NETWORK_SCOPE",             o.getNetworkScope());
+		    put(valueMap, "NETWORK_TECHNOLOGY",             o.getNetworkTechnology());
 
             buf.append(sep+ this.setTemplate(template, valueMap));
             sep = ",\n";

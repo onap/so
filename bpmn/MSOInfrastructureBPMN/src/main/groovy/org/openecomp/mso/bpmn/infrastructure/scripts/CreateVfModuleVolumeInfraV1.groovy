@@ -26,7 +26,9 @@ import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil;
 import org.openecomp.mso.bpmn.common.scripts.VidUtils;
 import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.rest.APIResponse
+import java.util.Map;
 
+import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 
 import org.camunda.bpm.engine.delegate.BpmnError
@@ -43,6 +45,7 @@ class CreateVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 	 */
 	public void preProcessRequest (Execution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+		setBasicDBAuthHeader(execution, isDebugEnabled)
 		preProcessRequest(execution, isDebugEnabled)
 	}
 
@@ -64,47 +67,96 @@ class CreateVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 		try {
 			def jsonSlurper = new JsonSlurper()
 			Map reqMap = jsonSlurper.parseText(createVolumeIncoming)
-
-			def serviceInstanceId = execution.getVariable('serviceInstanceId')
-			def vnfId = execution.getVariable('vnfId')
-
-			def vidUtils = new VidUtils(this)
-			createVolumeIncoming = vidUtils.createXmlVolumeRequest(reqMap, 'CREATE_VF_MODULE_VOL', serviceInstanceId)
-
-			execution.setVariable(prefix+'Request', createVolumeIncoming)
-			execution.setVariable(prefix+'vnfId', vnfId)
-			execution.setVariable(prefix+'isVidRequest', true)
-
+			setupVariables(execution, reqMap, isDebugEnabled)
 			utils.log("DEBUG", "XML request:\n" + createVolumeIncoming, isDebugEnabled)
-
 		}
 		catch(groovy.json.JsonException je) {
 			(new ExceptionUtil()).buildAndThrowWorkflowException(execution, 2500, 'Request is not a valid JSON document')
 		}
 
-		execution.setVariable(prefix+'source', utils.getNodeText1(createVolumeIncoming, "source"))
-		execution.setVariable(prefix+'volumeGroupName', utils.getNodeText1(createVolumeIncoming, 'volume-group-name'))
-		execution.setVariable(prefix+'volumeOutputs', utils.getNodeXml(createVolumeIncoming, 'volume-outputs', false))
-
-		execution.setVariable(prefix+'serviceType', 'service-instance')
-		execution.setVariable(prefix+'serviceInstanceId', utils.getNodeText1(createVolumeIncoming, "service-instance-id"))
-
-		// Generate volume group id
-		String volumeGroupId = UUID.randomUUID()
-		utils.log("DEBUG", "Generated volume group id: " + volumeGroupId, isDebugEnabled)
-
-		def testGroupId = execution.getVariable('test-volume-group-id')
-		if (testGroupId != null && testGroupId.trim() != '') {
-			volumeGroupId = testGroupId
-		}
-
-		execution.setVariable(prefix+'volumeGroupId', volumeGroupId)
-
+		// For rollback in this flow
+		setBasicDBAuthHeader(execution, isDebugEnabled)
+		setRollbackEnabled(execution, isDebugEnabled)
 	}
 
+	
+	/**
+	 * Set up variables that will be passed to the BB DoCreatevfModuleVolume flow 
+	 * @param execution
+	 * @param requestMap
+	 * @param serviceInstanceId
+	 * @param isDebugLogEnabled
+	 */
+	public void setupVariables(Execution execution, Map requestMap, isDebugLogEnabled) {
+		
+		def jsonOutput = new JsonOutput()
+		
+		// volumeGroupId - is generated
+		String volumeGroupId = UUID.randomUUID()
+		execution.setVariable('volumeGroupId', volumeGroupId)
+		utils.log("DEBUG", "Generated volumeGroupId: " + volumeGroupId, isDebugLogEnabled)
+		
+		// volumeGroupName
+		def volGrpName = requestMap.requestDetails.requestInfo?.instanceName ?: ''
+		execution.setVariable('volumeGroupName', volGrpName)
 
+		// vfModuleModelInfo
+		def vfModuleModelInfo = jsonOutput.toJson(requestMap.requestDetails?.modelInfo)
+		execution.setVariable('vfModuleModelInfo', vfModuleModelInfo)
+		
+		// lcpCloudRegonId
+		def lcpCloudRegionId = requestMap.requestDetails.cloudConfiguration.lcpCloudRegionId
+		execution.setVariable('lcpCloudRegionId', lcpCloudRegionId)
+		
+		// tenant
+		def tenantId = requestMap.requestDetails.cloudConfiguration.tenantId
+		execution.setVariable('tenantId', tenantId)
+		
+		// source
+		def source = requestMap.requestDetails.requestInfo.source
+		execution.setVariable(prefix+'source', source)
+		
+		// vnfType and asdcServiceModelVersion
+		
+		def serviceName = ''
+		def asdcServiceModelVersion = ''
+		def modelCustomizationName = ''
+		
+		def relatedInstanceList = requestMap.requestDetails.relatedInstanceList
+		relatedInstanceList.each {
+			if (it.relatedInstance.modelInfo?.modelType == 'service') {
+				serviceName = it.relatedInstance.modelInfo?.modelName
+				asdcServiceModelVersion = it.relatedInstance.modelInfo?.modelVersion
+			}
+			if (it.relatedInstance.modelInfo?.modelType == 'vnf') {
+				modelCustomizationName = it.relatedInstance.modelInfo?.modelCustomizationName
+			}
+		}
+		
+		def vnfType = serviceName + '/' + modelCustomizationName
+		execution.setVariable('vnfType', vnfType)
+		execution.setVariable('asdcServiceModelVersion', asdcServiceModelVersion)
+		
+		// vfModuleInputParams
+		def userParams = requestMap.requestDetails?.requestParameters?.userParams
+		Map<String, String> vfModuleInputMap = [:]
+		
+		userParams.each { userParam ->
+			vfModuleInputMap.put(userParam.name, userParam.value)
+		}
+		execution.setVariable('vfModuleInputParams', vfModuleInputMap)
+
+		// disableRollback (true or false)
+		def disableRollback = requestMap.requestDetails.requestInfo.suppressRollback
+		execution.setVariable('disableRollback', disableRollback)
+		utils.log("DEBUG", 'disableRollback (suppressRollback) from request: ' + disableRollback, isDebugLogEnabled)
+		
+	}
+
+	
+	
 	public void sendSyncResponse (Execution execution, isDebugEnabled) {
-		def volumeGroupId = execution.getVariable(prefix+'volumeGroupId')
+		def volumeGroupId = execution.getVariable('volumeGroupId')
 		def requestId = execution.getVariable("mso-request-id")
 		def serviceInstanceId = execution.getVariable("serviceInstanceId")
 
@@ -137,24 +189,17 @@ class CreateVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 	}
 
 
+	/**
+	 * Build Infra DB Request
+	 * @param execution
+	 * @param isDebugEnabled
+	 */
 	public void prepareDbInfraSuccessRequest(Execution execution, isDebugEnabled) {
 		def dbVnfOutputs = execution.getVariable(prefix+'volumeOutputs')
 		def requestId = execution.getVariable('mso-request-id')
 		def statusMessage = "VolumeGroup successfully created."
 		def requestStatus = "COMPLETED"
 		def progress = "100"
-
-		try {
-			String basicAuthValueDB = execution.getVariable("URN_mso_adapters_db_auth")
-			utils.log("DEBUG", " Obtained BasicAuth userid password for Catalog DB adapter: " + basicAuthValueDB, isDebugEnabled)
-			
-			def encodedString = utils.getBasicAuth(basicAuthValueDB, execution.getVariable("URN_mso_msoKey"))
-			execution.setVariable("BasicAuthHeaderValueDB",encodedString)
-		} catch (IOException ex) {
-			String dataErrorMessage = " Unable to encode Catalog DB user/password string - " + ex.getMessage()
-			utils.log("DEBUG", dataErrorMessage, isDebugEnabled)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
-		}
 		
 		/*
 		from: $gVolumeGroup/aai:volume-group-id/text()
@@ -180,16 +225,18 @@ class CreateVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 			   	</soapenv:Body>
 			   </soapenv:Envelope>"""
 
-		String buildDeleteDBRequestAsString = utils.formatXml(dbRequest)
-		execution.setVariable(prefix+"createDBRequest", buildDeleteDBRequestAsString)
-
-		utils.logAudit(buildDeleteDBRequestAsString)
+		String buildDBRequestAsString = utils.formatXml(dbRequest)
+		execution.setVariable(prefix+"createDBRequest", buildDBRequestAsString)
+		utils.log("DEBUG", "DB Infra Request: " + buildDBRequestAsString, isDebugEnabled)
+		utils.logAudit(buildDBRequestAsString)
 	}
 
 
-
-
-
+	/**
+	 * Build CommpleteMsoProcess request
+	 * @param execution
+	 * @param isDebugEnabled
+	 */
 	public void postProcessResponse (Execution execution, isDebugEnabled) {
 
 		def dbReturnCode = execution.getVariable(prefix+'dbReturnCode')
@@ -299,5 +346,18 @@ class CreateVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 				throw new BpmnError("MSOWorkflowException")
 			}
 		}
+	}
+	
+	public void logAndSaveOriginalException(Execution execution, isDebugLogEnabled) {
+		logWorkflowException(execution, 'CreateVfModuleVolumeInfraV1 caught an event')
+		saveWorkflowException(execution, 'CVMVINFRAV1_originalWorkflowException')
+	}
+	
+	public void validateRollbackResponse(Execution execution, isDebugLogEnabled) {
+
+		def originalException = execution.getVariable("CVMVINFRAV1_originalWorkflowException")
+		execution.setVariable("WorkflowException", originalException)
+		execution.setVariable("RollbackCompleted", true)
+
 	}
 }

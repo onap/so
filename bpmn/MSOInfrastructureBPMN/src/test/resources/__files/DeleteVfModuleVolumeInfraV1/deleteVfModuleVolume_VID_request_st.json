@@ -2,7 +2,7 @@
 	"requestDetails": {
 		"modelInfo": {
 			"modelType": "volumeGroup",
-			"modelInvariantId": "0b01b8c2-8416-11e6-ae22-56b6b6499611",
+			"modelInvariantUuid": "0b01b8c2-8416-11e6-ae22-56b6b6499611",
 			"modelName": "vSAMP12::base::module-0",
 			"modelVersion": "1.0"
 		},

@@ -858,6 +858,8 @@ class MsoUtils {
 	 * @return base 64 encoded basic auth credentials
 	 */
 	def getBasicAuth(encryptedAuth, msoKey){
+		if ((encryptedAuth == null || encryptedAuth.isEmpty()) || (msoKey == null || msoKey.isEmpty()))
+			return null
 		try {
 			def auth = decrypt(encryptedAuth, msoKey)
 			byte[] encoded = Base64.encodeBase64(auth.getBytes())

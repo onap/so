@@ -23,12 +23,14 @@ import static org.apache.commons.lang3.StringUtils.*
 import org.openecomp.mso.bpmn.core.RollbackData
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.runtime.Execution
+import org.springframework.web.util.UriUtils
 import org.openecomp.mso.bpmn.common.scripts.AaiUtil
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
 import org.openecomp.mso.bpmn.common.scripts.SDNCAdapterUtils
 import org.openecomp.mso.bpmn.common.scripts.VidUtils
 import org.openecomp.mso.bpmn.core.WorkflowException
+import org.openecomp.mso.bpmn.core.domain.VnfResource
 import org.openecomp.mso.bpmn.core.json.JsonUtils
 
 
@@ -64,7 +66,12 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 		
 		/*******************/
 		try{
-			// Get Variables
+			// Get Variables			
+			
+			def rollbackData = execution.getVariable("rollbackData")
+			if (rollbackData == null) {
+				rollbackData = new RollbackData()
+			}
 						
 			String vnfModelInfo = execution.getVariable("vnfModelInfo")			
 			String serviceModelInfo = execution.getVariable("serviceModelInfo")
@@ -76,6 +83,7 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
 			execution.setVariable("DoCVNF_serviceInstanceId", serviceInstanceId)
+			rollbackData.put("VNF", "serviceInstanceId", serviceInstanceId)
 			utils.log("DEBUG", "Incoming Service Instance Id is: " + serviceInstanceId, isDebugEnabled)
 
 			String vnfType = execution.getVariable("vnfType")
@@ -95,17 +103,18 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 
 			String source = "VID"
 			execution.setVariable("DoCVNF_source", source)
+			rollbackData.put("VNF", "source", source)
 			utils.log("DEBUG", "Incoming Source is: " + source, isDebugEnabled)
 
 			String suppressRollback = execution.getVariable("disableRollback")
 			execution.setVariable("DoCVNF_suppressRollback", suppressRollback)
 			utils.log("DEBUG", "Incoming Suppress Rollback is: " + suppressRollback, isDebugEnabled)
 			
-			String modelInvariantId = jsonUtil.getJsonValue(vnfModelInfo, "modelInvariantId")
+			String modelInvariantId = jsonUtil.getJsonValue(vnfModelInfo, "modelInvariantUuid")
 			execution.setVariable("DoCVNF_modelInvariantId", modelInvariantId)
 			utils.log("DEBUG", "Incoming Invariant Id is: " + modelInvariantId, isDebugEnabled)
 			
-			String modelVersionId = jsonUtil.getJsonValue(vnfModelInfo, "modelVersionId")
+			String modelVersionId = jsonUtil.getJsonValue(vnfModelInfo, "modelUuid")
 			if (modelVersionId == null) {
 				modelVersionId = ""
 			}
@@ -120,19 +129,21 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 			execution.setVariable("DoCVNF_modelName", modelName)
 			utils.log("DEBUG", "Incoming Model Name is: " + modelName, isDebugEnabled)
 			
-			String modelCustomizationId = jsonUtil.getJsonValue(vnfModelInfo, "modelCustomizationId")
-			if (modelCustomizationId == null) {
-				modelCustomizationId = ""
+			String modelCustomizationId = jsonUtil.getJsonValue(vnfModelInfo, "modelCustomizationUuid")
+			if (modelCustomizationId == null) {				
+				modelCustomizationId = ""				
 			}
 			execution.setVariable("DoCVNF_modelCustomizationId", modelCustomizationId)
 			utils.log("DEBUG", "Incoming Model Customization Id is: " + modelCustomizationId, isDebugEnabled)
 				
 			String cloudSiteId = execution.getVariable("lcpCloudRegionId")
 			execution.setVariable("DoCVNF_cloudSiteId", cloudSiteId)
+			rollbackData.put("VNF", "cloudSiteId", cloudSiteId)
 			utils.log("DEBUG", "Incoming Cloud Site Id is: " + cloudSiteId, isDebugEnabled)
 				
 			String tenantId = execution.getVariable("tenantId")
 			execution.setVariable("DoCVNF_tenantId", tenantId)
+			rollbackData.put("VNF", "tenantId", tenantId)
 			utils.log("DEBUG", "Incoming Tenant Id is: " + tenantId, isDebugEnabled)			
 			
 			String globalSubscriberId = execution.getVariable("globalSubscriberId")
@@ -186,15 +197,33 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 			}
 			execution.setVariable("DoCVNF_sdncCallbackUrl", sdncCallbackUrl)
+			rollbackData.put("VNF", "sdncCallbackUrl", sdncCallbackUrl)
 			utils.logAudit("SDNC Callback URL: " + sdncCallbackUrl)
 			logDebug("SDNC Callback URL is: " + sdncCallbackUrl, isDebugEnabled)
 			
-			def rollbackData = execution.getVariable("RollbackData")
-			if (rollbackData == null) {
-				rollbackData = new RollbackData()
-			}
+			VnfResource vnfResource = (VnfResource) execution.getVariable("vnfResourceDecomposition")
 			
-			execution.setVariable("RollbackData", rollbackData)
+			String nfRole = vnfResource.getNfRole()
+			execution.setVariable("DoCVNF_nfRole", nfRole)
+			logDebug("NF Role is: " + nfRole, isDebugEnabled)
+			
+			String nfNamingCode = vnfResource.getNfNamingCode()
+			execution.setVariable("DoCVNF_nfNamingCode", nfNamingCode)
+			logDebug("NF Naming Code is: " + nfNamingCode, isDebugEnabled)
+			
+			String nfType = vnfResource.getNfType()
+			execution.setVariable("DoCVNF_nfType", nfType)
+			logDebug("NF Type is: " + nfType, isDebugEnabled)
+			
+			String nfFunction = vnfResource.getNfFunction()
+			execution.setVariable("DoCVNF_nfFunction", nfFunction)
+			logDebug("NF Function is: " + nfFunction, isDebugEnabled)			
+			
+			rollbackData.put("VNF", "rollbackSDNCAssign", "false")
+			rollbackData.put("VNF", "rollbackSDNCActivate", "false")
+			rollbackData.put("VNF", "rollbackVnfCreate", "false")
+			
+			execution.setVariable("rollbackData", rollbackData)
 			
 		}catch(BpmnError b){
 			utils.log("DEBUG", "Rethrowing MSOWorkflowException", isDebugEnabled)
@@ -229,6 +258,10 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 			def modelCustomizationId = execution.getVariable("DoCVNF_modelCustomizationId")
 			// TODO: 1702 Variable
 			def equipmentRole = execution.getVariable("DoCVNF_equipmentRole")
+			def nfType = execution.getVariable("DoCVNF_nfType")
+			def nfRole = execution.getVariable("DoCVNF_nfRole")
+			def nfFunction = execution.getVariable("DoCVNF_nfFunction")
+			def nfNamingCode = execution.getVariable("DoCVNF_nfNamingCode")
 
 			//Get Service Instance Info
 			def serviceInstanceId = execution.getVariable("DoCVNF_serviceInstanceId")
@@ -240,6 +273,7 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 			int serviceStart = siRelatedLink.indexOf("service-subscription/")
 			int serviceEnd = siRelatedLink.indexOf("/service-instances/")
 			String serviceType = siRelatedLink.substring(serviceStart + 21, serviceEnd)
+			serviceType = UriUtils.decode(serviceType,"UTF-8")
 
 			//Get Namespace
 			AaiUtil aaiUtil = new AaiUtil(this)
@@ -257,6 +291,10 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 				<model-invariant-id>${modelInvariantId}</model-invariant-id>
 				<model-version-id>${modelVersionId}</model-version-id>
 				<model-customization-id>${modelCustomizationId}</model-customization-id>
+				<nf-type>${nfType}</nf-type>
+				<nf-role>${nfRole}</nf-role>
+				<nf-function>${nfFunction}</nf-function>
+				<nf-naming-code>${nfNamingCode}</nf-naming-code>
 				<relationship-list>
 					<relationship>
                		<related-to>service-instance</related-to>
@@ -294,9 +332,10 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 		try {
 			//Get Vnf Info
 			String vnfId = execution.getVariable("DoCVNF_vnfId")
-			def rollbackData = execution.getVariable("RollbackData")
+			def rollbackData = execution.getVariable("rollbackData")
 			rollbackData.put("VNF", "vnfId", vnfId)
-			execution.setVariable("RollbackData", rollbackData)
+			rollbackData.put("VNF", "rollbackVnfCreate", "true")
+			execution.setVariable("rollbackData", rollbackData)
 		}catch(Exception ex) {
 			utils.log("DEBUG", "Error Occured in DoCreateVnf PostProcessCreateGenericVnf Process " + ex.getMessage(), isDebugEnabled)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured in DoCreateVnf PostProcessCreateGenericVnf Process")
@@ -360,7 +399,7 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 		
 				String uuid = execution.getVariable('testReqId') // for junits
 				if(uuid==null){
-					uuid = execution.getVariable("mso-request-id") + "-" +  	System.currentTimeMillis()
+					uuid = execution.getVariable("DoCVNF_requestId") + "-" +  	System.currentTimeMillis()
 				}
 				def callbackURL = execution.getVariable("DoCVNF_sdncCallbackUrl")
 				def requestId = execution.getVariable("DoCVNF_requestId")
@@ -397,7 +436,7 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 													xmlns:sdncadapterworkflow="http://org.openecomp/mso/workflow/schema/v1"
 													xmlns:sdncadapter="http://org.openecomp/workflow/sdnc/adapter/schema/v1">
 	   <sdncadapter:RequestHeader>
-				<sdncadapter:RequestId>${requestId}</sdncadapter:RequestId>
+				<sdncadapter:RequestId>${uuid}</sdncadapter:RequestId>
 				<sdncadapter:SvcInstanceId>${svcInstId}</sdncadapter:SvcInstanceId>
 				<sdncadapter:SvcAction>${action}</sdncadapter:SvcAction>
 				<sdncadapter:SvcOperation>vnf-topology-operation</sdncadapter:SvcOperation>
@@ -467,6 +506,15 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 				execution.setVariable("vnfName", vnfName)
 				execution.setVariable("DoCVNF_vnfName", vnfName)
 			}
+			def rollbackData = execution.getVariable("rollbackData")
+			if (method.equals("assign")) {
+				rollbackData.put("VNF", "rollbackSDNCAssign", "true")
+			}
+			else if (method.equals("activate")) {
+				rollbackData.put("VNF", "rollbackSDNCActivate", "true")
+			}
+			execution.setVariable("rollbackData", rollbackData)
+
 			
 		}else{
 			logDebug("Received a BAD Response from SDNC Adapter for " + method + " SDNC Call.", isDebugLogEnabled)

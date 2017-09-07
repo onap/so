@@ -83,6 +83,9 @@ public class CompleteMsoProcess extends AbstractServiceTaskProcessor {
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 //		utils.log("DEBUG", "*** Started CompleteMsoProcess preProcessRequest Method ***", isDebugLogEnabled);
 		logDebug('Entered ' + method, isDebugLogEnabled)
+		
+		setBasicDBAuthHeader(execution, isDebugLogEnabled)
+		
 		try {
 			def xml = execution.getVariable("CompleteMsoProcessRequest")
 
@@ -167,107 +170,12 @@ public class CompleteMsoProcess extends AbstractServiceTaskProcessor {
 //		utils.log("DEBUG", "*** Completed CompleteMsoProcess preProcessRequest Method ***", isDebugLogEnabled);
 	}
 
-	public void postProcessResponse (Execution execution) {
-
-		def method = getClass().getSimpleName() + '.postProcessResponse(' +'execution=' + execution.getId() +')'
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		logDebug('Entered ' + method, isDebugLogEnabled)
-//		utils.log("DEBUG", "*** Started CompleteMsoProcess PostProcessRequest Method ***", isDebugLogEnabled);
-		try {
-
-			def msoCompletionResponse = """
-			<sdncadapterworkflow:MsoCompletionResponse xmlns:sdncadapterworkflow="http://org.openecomp/mso/workflow/schema/v1">
-			   <sdncadapterworkflow:out>BPEL ${execution.getVariable("CMSO_mso-bpel-name")} completed</sdncadapterworkflow:out>
-			</sdncadapterworkflow:MsoCompletionResponse>
-			""".trim()
-
-			// Format Response
-			def xmlMsoCompletionResponse = utils.formatXML(msoCompletionResponse)
-			String buildMsoCompletionResponseAsString = xmlMsoCompletionResponse.drop(38).trim()
-			// TODO: Should deprecate use of processKey+Response variable for the response. Will use "WorkflowResponse" instead
-			execution.setVariable("WorkflowResponse", buildMsoCompletionResponseAsString)
-			utils.logAudit("CompleteMsoProcess Response: " + buildMsoCompletionResponseAsString)
-			execution.setVariable("CompleteMsoProcessResponse", buildMsoCompletionResponseAsString)
-			execution.setVariable("CMSO_ResponseCode", "200")
-
-			setSuccessIndicator(execution, true)
-
-			utils.log("DEBUG", "@@ CompleteMsoProcess Response @@ " + "\n" + execution.getVariable("CompleteMsoProcessResponse"), isDebugLogEnabled)
-
-			logDebug('Exited ' + method, isDebugLogEnabled)
-		} catch (BpmnError e) {
-			throw e;
-		} catch (Exception e) {
-			logError('Caught exception in ' + method, e)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, "Internal Error - Occured in" + method)
-		}
-//		utils.log("DEBUG", "*** Completed CompleteMsoProcess PostProcessRequest Method ***", isDebugLogEnabled);
-
-	}
-
-	public void updateDBStatusToSuccessPayload (Execution execution){
-		def method = getClass().getSimpleName() + '.updateDBStatusToSuccessPayload(' +'execution=' + execution.getId() +')'
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		logDebug('Entered ' + method, isDebugLogEnabled)
-		
-		try {
-			// Catalog DB headers Authorization
-			String basicAuthValueDB = execution.getVariable("URN_mso_adapters_db_auth")
-			utils.log("DEBUG", " Obtained BasicAuth userid password for Catalog DB adapter: " + basicAuthValueDB, isDebugLogEnabled)
-			
-			def encodedString = utils.getBasicAuth(basicAuthValueDB, execution.getVariable("URN_mso_msoKey"))
-			execution.setVariable("BasicAuthHeaderValueDB",encodedString)
-		} catch (IOException ex) {
-			String dataErrorMessage = " Unable to encode Catalog DB user/password string - " + ex.getMessage()
-			utils.log("DEBUG", dataErrorMessage, isDebugLogEnabled)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
-		}
-		
-		try {
-
-			String payload = """
-			<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:req="http://org.openecomp.mso/requestsdb">
-			<soapenv:Header/>
-			<soapenv:Body>
-			   <req:updateStatus>
-				  <requestId>${execution.getVariable("CMSO_request_id")}</requestId>
-				  <lastModifiedBy>BPEL</lastModifiedBy>
-				  <status>COMPLETED</status>
-			   </req:updateStatus>
-			</soapenv:Body>
-		 </soapenv:Envelope>
-		"""
-			execution.setVariable("CMSO_updateDBStatusToSuccessPayload", payload)
-			utils.logAudit("updateDBStatusToSuccessPayload: " + payload)
-			logDebug('Exited ' + method, isDebugLogEnabled)
-			//println("CMSO_updateDBStatusToSuccessPayload --> " + execution.getVariable("CMSO_updateDBStatusToSuccessPayload"))
-
-		} catch (BpmnError e) {
-			throw e;
-		} catch (Exception e) {
-			logError('Caught exception in ' + method, e)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, "Internal Error - Occured in" + method)
-		}
-	}
-
 	public void setUpdateDBstatustoSuccessPayload (Execution execution){
 
 		def method = getClass().getSimpleName() + '.setUpdateDBstatustoSuccessPayload(' +'execution=' + execution.getId() +')'
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		logDebug('Entered ' + method, isDebugLogEnabled)
-		
-		try {
-			String basicAuthValueDB = execution.getVariable("URN_mso_adapters_db_auth")
-			utils.log("DEBUG", " Obtained BasicAuth userid password for Catalog DB adapter: " + basicAuthValueDB, isDebugLogEnabled)
-			
-			def encodedString = utils.getBasicAuth(basicAuthValueDB, execution.getVariable("URN_mso_msoKey"))
-			execution.setVariable("BasicAuthHeaderValueDB",encodedString)
-		} catch (IOException ex) {
-			String dataErrorMessage = " Unable to encode Catalog DB user/password string - " + ex.getMessage()
-			utils.log("DEBUG", dataErrorMessage, isDebugLogEnabled)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
-		} 
-		
+
 		try {
 
 			def xml = execution.getVariable("CompleteMsoProcessRequest")
@@ -357,5 +265,44 @@ public class CompleteMsoProcess extends AbstractServiceTaskProcessor {
 		}
 
 	}
+	
+	public void postProcessResponse (Execution execution) {
+		
+				def method = getClass().getSimpleName() + '.postProcessResponse(' +'execution=' + execution.getId() +')'
+				def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
+				logDebug('Entered ' + method, isDebugLogEnabled)
+		//		utils.log("DEBUG", "*** Started CompleteMsoProcess PostProcessRequest Method ***", isDebugLogEnabled);
+				try {
+		
+					def msoCompletionResponse = """
+			<sdncadapterworkflow:MsoCompletionResponse xmlns:sdncadapterworkflow="http://ecomp.com/mso/workflow/schema/v1">
+			   <sdncadapterworkflow:out>BPEL ${execution.getVariable("CMSO_mso-bpel-name")} completed</sdncadapterworkflow:out>
+			</sdncadapterworkflow:MsoCompletionResponse>
+			""".trim()
+		
+					// Format Response
+					def xmlMsoCompletionResponse = utils.formatXML(msoCompletionResponse)
+					String buildMsoCompletionResponseAsString = xmlMsoCompletionResponse.drop(38).trim()
+					// TODO: Should deprecate use of processKey+Response variable for the response. Will use "WorkflowResponse" instead
+					execution.setVariable("WorkflowResponse", buildMsoCompletionResponseAsString)
+					utils.logAudit("CompleteMsoProcess Response: " + buildMsoCompletionResponseAsString)
+					execution.setVariable("CompleteMsoProcessResponse", buildMsoCompletionResponseAsString)
+					execution.setVariable("CMSO_ResponseCode", "200")
+		
+					setSuccessIndicator(execution, true)
+		
+					utils.log("DEBUG", "@@ CompleteMsoProcess Response @@ " + "\n" + execution.getVariable("CompleteMsoProcessResponse"), isDebugLogEnabled)
+		
+					logDebug('Exited ' + method, isDebugLogEnabled)
+				} catch (BpmnError e) {
+					throw e;
+				} catch (Exception e) {
+					logError('Caught exception in ' + method, e)
+					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, "Internal Error - Occured in" + method)
+				}
+		//		utils.log("DEBUG", "*** Completed CompleteMsoProcess PostProcessRequest Method ***", isDebugLogEnabled);
+		
+	}
+			
 
 }

@@ -29,12 +29,6 @@
 	</build>
 
 	<dependencies>
-		<dependency>
-             <groupId>org.evosuite</groupId>
-             <artifactId>evosuite-standalone-runtime</artifactId>
-             <version>${evosuiteVersion}</version>
-             <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-mapper-asl</artifactId>
@@ -71,18 +65,51 @@
 				<version>3.1.0</version>
 				<scope>test</scope>
 		</dependency>
-
+		
+	<!-- 	<dependency>
+  				<groupId>org.openecomp.sdc.sdc-distribution-client</groupId>
+  				<artifactId>sdc-distribution-client</artifactId>
+  				<version>1.1.16</version>
+  				<exclusions>
+       		 		<exclusion>  
+	         	 		<groupId>org.slf4j</groupId>
+	         	 		<artifactId>slf4j-log4j12</artifactId>
+       		 		</exclusion>
+    	  		</exclusions> 
+		</dependency>  -->
+		
 		<dependency>
-			<groupId>org.openecomp.sdc.sdc-distribution-client</groupId>
-            <artifactId>sdc-distribution-client</artifactId>
-            <version>1.1.6-SNAPSHOT</version>
-			<exclusions>
-       		 <exclusion>  <!-- declare the exclusion here -->
-	         	 <groupId>org.slf4j</groupId>
-	         	 <artifactId>slf4j-log4j12</artifactId>
-       		 </exclusion>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpclient</artifactId>
+				<version>4.4.1</version>
+				<scope>compile</scope>
+				<exclusions>
+       		 		<exclusion>  
+	         	 		<groupId>org.apache.httpcomponents</groupId>
+	         	 		<artifactId>httpclient</artifactId>
+       		 		</exclusion>
+    	  		</exclusions>
+		</dependency>
+		
+	 	<dependency>
+  			<groupId>org.openecomp.sdc.sdc-distribution-client</groupId>
+  			<artifactId>sdc-distribution-client</artifactId>
+ 			 <version>1.1.32-SNAPSHOT</version>
+ 			<exclusions>
+       		 	<exclusion>  
+	         	 	<groupId>org.slf4j</groupId>
+	         	 	<artifactId>slf4j-log4j12</artifactId>
+       		 	</exclusion>
     	  </exclusions>
 		</dependency>
+
+
+		<dependency>
+  			<groupId>org.openecomp.sdc.sdc-tosca</groupId>
+  			<artifactId>sdc-tosca</artifactId>
+			<version>1.1.32-SNAPSHOT</version>
+		</dependency> 
+		
 
 		<dependency>
 		    <groupId>org.apache.httpcomponents</groupId>

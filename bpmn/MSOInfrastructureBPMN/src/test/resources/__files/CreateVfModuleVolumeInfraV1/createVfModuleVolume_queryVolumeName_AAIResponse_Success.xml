@@ -29,6 +29,7 @@
 		 <heat-stack-id/>
 		 <vnf-type>simple_cinder_master</vnf-type>
 		 <orchestration-status>Pending</orchestration-status>
+		 <vf-module-model-customization-id>ee6478e5-ea33-3346-ac12-ab121484a3fe</vf-module-model-customization-id>
 		 <resource-version>1460134360</resource-version>
 		 <relationship-list>
 			<relationship>

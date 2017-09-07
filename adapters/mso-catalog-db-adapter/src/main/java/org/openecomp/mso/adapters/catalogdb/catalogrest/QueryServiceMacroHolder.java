@@ -33,11 +33,14 @@ public class QueryServiceMacroHolder extends CatalogQuery {
 	private ServiceMacroHolder serviceMacroHolder;
 	private final String template =
 		"{ \"serviceResources\"    : {\n"+
-            "\t\"modelName\"          : <SERVICE_MODEL_NAME>,\n"+
-            "\t\"modelUuid\"          : <SERVICE_MODEL_UUID>,\n"+
-            "\t\"modelInvariantUuid\" : <SERVICE_MODEL_INVARIANT_ID>,\n"+
-            "\t\"modelVersion\"       : <SERVICE_MODEL_VERSION>,\n"+
-
+			"\t\"modelInfo\"       : {\n"+
+            "\t\t\"modelName\"          : <SERVICE_MODEL_NAME>,\n"+
+            "\t\t\"modelUuid\"          : <SERVICE_MODEL_UUID>,\n"+
+            "\t\t\"modelInvariantUuid\" : <SERVICE_MODEL_INVARIANT_ID>,\n"+
+            "\t\t\"modelVersion\"       : <SERVICE_MODEL_VERSION>\n"+	
+            "\t},\n"+
+            "\t\"serviceType\" : <SERVICE_TYPE>,\n"+
+            "\t\"serviceRole\" : <SERVICE_ROLE>,\n"+
             "<_SERVICEVNFS_>,\n"+
             "<_SERVICENETWORKS_>,\n"+
             "<_SERVICEALLOTTEDRESOURCES_>\n"+
@@ -60,13 +63,15 @@ public class QueryServiceMacroHolder extends CatalogQuery {
 		StringBuffer buf = new StringBuffer();
 		Map<String, String> valueMap = new HashMap<String, String>();
 
-		put(valueMap, "SERVICE_MODEL_NAME",         service.getServiceName()); //getServiceModelName());
-		put(valueMap, "SERVICE_MODEL_UUID",         service.getServiceNameVersionId()); //getServiceModelUuid());
+		put(valueMap, "SERVICE_MODEL_NAME",         service.getModelName()); //getServiceModelName());
+		put(valueMap, "SERVICE_MODEL_UUID",         service.getModelUUID()); //getServiceModelUuid());
 		put(valueMap, "SERVICE_MODEL_INVARIANT_ID", service.getModelInvariantUUID()); //getServiceModelInvariantId());
-		put(valueMap, "SERVICE_MODEL_VERSION",      service.getServiceVersion()); //getServiceModelVersion());
+		put(valueMap, "SERVICE_MODEL_VERSION",      service.getVersion()); //getServiceModelVersion());
+		put(valueMap, "SERVICE_TYPE",      service.getServiceType());
+		put(valueMap, "SERVICE_ROLE",      service.getServiceRole());
 
 	    String subitem;
-	    subitem = new QueryServiceVnfs(serviceMacroHolder.getVnfResources()).JSON2(true, true);
+	    subitem = new QueryServiceVnfs(serviceMacroHolder.getVnfResourceCustomizations()).JSON2(true, true); 
 	    valueMap.put("_SERVICEVNFS_",               subitem.replaceAll("(?m)^", "\t"));
 
 		subitem = new QueryServiceNetworks(serviceMacroHolder.getNetworkResourceCustomization()).JSON2(true, true);

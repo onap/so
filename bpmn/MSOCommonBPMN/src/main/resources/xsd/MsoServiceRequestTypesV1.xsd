@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+		=========================================================================
+		AT&T Proprietary (Internal Use Only) Not for use or disclosure outside
+		the AT&T companies except under written agreement (c) 2015 AT&T
+		Intellectual Property. All rights reserved. AT&T and the AT&T logo are
+		trademarks of AT&T Intellectual Property.
+		=======================================================================
+	-->
+<!--
+		================================================================
+		Description: This is the schema for MSO Request data
+
+		================================================================
+		Change Log: Version Author Comments 
+		=========== ======= ====== ========
+		0.10 ss835w 2014-12-22. First draft
+		0.20 dr695h 2014-01-09. Second draft
+
+		================================  ================================
+	-->
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ecomp.att.com/mso/request/types/v1" targetNamespace="http://ecomp.att.com/mso/request/types/v1" elementFormDefault="qualified">
+	<complexType name="response-type">
+		<sequence>
+			<element name="request-id" type="string" minOccurs="1" maxOccurs="1"/>
+			<element name="request-action" type="tns:request-action-type" minOccurs="1" maxOccurs="1"/>
+			<element name="source" type="string" minOccurs="1" maxOccurs="1"/>
+			<element name="request-id-in-progress" type="string" minOccurs="0" maxOccurs="1"/>
+			<element name="error-code" type="int" minOccurs="0" maxOccurs="1"/>
+			<element name="error-message" type="string" minOccurs="0" maxOccurs="1"/>
+			<element name="ack-final-indicator" type="tns:y-or-n-type" minOccurs="1" maxOccurs="1"/>
+		</sequence>
+	</complexType>
+	<annotation>
+		<documentation xml:lang="en">order-number is required if service-type equals SDN-ETHERNET-INTERNET. order-version is required if service-type equals 
+  		SDN-ETHERNET-INTERNET, source=OMX,  and request-action=Layer3ServiceActivateRequest or ChangeLayer3ServiceProvRequest</documentation>
+	</annotation>
+	<element name="request-information">
+		<complexType>
+			<sequence>
+				<element name="request-id" type="string" minOccurs="1" maxOccurs="1"/>
+				<element name="request-action" type="tns:request-action-type" minOccurs="1" maxOccurs="1"/>
+				<element name="request-sub-action" type="tns:request-sub-action-type" minOccurs="0" maxOccurs="1"/>
+				<element name="source" type="string" minOccurs="1" maxOccurs="1"/>
+				<element name="notification-url" type="string" minOccurs="0" maxOccurs="1"/>
+				<element name="order-number" type="string" minOccurs="0" maxOccurs="1"/>
+				<element name="order-version" type="string" minOccurs="0" maxOccurs="1"/>
+			</sequence>
+		</complexType>
+	</element>
+	<annotation>
+		<documentation xml:lang="en">subscriber-name required if request-action=Layer3ServiceActivateRequest</documentation>
+	</annotation>
+	<element name="service-information">
+		<complexType>
+			<sequence>
+				<element name="service-type" type="tns:service-type" minOccurs="1" maxOccurs="1"/>
+				<element name="service-instance-id" type="string" minOccurs="1" maxOccurs="1"/>
+				<element name="subscriber-name" type="string" minOccurs="0" maxOccurs="1"/>
+			</sequence>
+		</complexType>
+	</element>
+	<element name="feature-information">
+		<complexType>
+			<sequence>
+				<element name="feature-type" type="tns:feature-type"/>
+				<element name="feature-instance-id" type="string"/>
+				<element name="feature-yang-model" type="string"/>
+				<element name="feature-yang-model-version" type="string"/>
+			</sequence>
+		</complexType>
+	</element>
+	<simpleType name="request-action-type">
+		<restriction base="string">
+			<enumeration value="Layer3ServiceActivateRequest"/>
+			<enumeration value="Layer3ServiceTestAndTurnupRequest"/>
+			<enumeration value="ChangeLayer3ServiceActivateRequest"/>
+			<enumeration value="ChangeLayer3ServiceProvRequest"/>
+			<enumeration value="DisconnectLayer3ServiceRequest"/>
+			<enumeration value="GetLayer3ServiceDetailsRequest"/>
+			<enumeration value="ChangeFeatureActivateRequest"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="request-sub-action-type">
+		<restriction base="string">
+			<enumeration value="CANCEL"/>
+			<enumeration value="SUPP"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="service-type">
+		<restriction base="string">
+			<enumeration value="SDN-ETHERNET-INTERNET"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="y-or-n-type">
+		<restriction base="string">
+			<enumeration value="Y"/>
+			<enumeration value="N"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="feature-type">
+		<restriction base="string">
+			<enumeration value="FIREWALL-LITE"/>
+		</restriction>
+	</simpleType>
+</schema>

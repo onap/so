@@ -50,15 +50,10 @@ min and initial counts can be 0. max can be null to indicate no maximum.
 Once the network-level distribution artifacts are defined, similar updates can be made to the NETWORK_RESOURCE table.
 */
 
-import java.util.Map;
+import java.util.ArrayList;
 import java.util.List;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -67,8 +62,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-import javax.xml.ws.Holder;
-
 import org.apache.http.HttpStatus;
 
 import org.openecomp.mso.logger.MessageEnum;
@@ -80,8 +73,10 @@ import org.openecomp.mso.adapters.catalogdb.catalogrest.QueryServiceVnfs;
 import org.openecomp.mso.adapters.catalogdb.catalogrest.QueryServiceNetworks;
 import org.openecomp.mso.adapters.catalogdb.catalogrest.QueryServiceMacroHolder;
 import org.openecomp.mso.adapters.catalogdb.catalogrest.QueryAllottedResourceCustomization;
+import org.openecomp.mso.adapters.catalogdb.catalogrest.QueryVfModule;
 import org.openecomp.mso.db.catalog.CatalogDatabase;
-import org.openecomp.mso.db.catalog.beans.VnfResource;
+import org.openecomp.mso.db.catalog.beans.VnfResourceCustomization;
+import org.openecomp.mso.db.catalog.beans.VfModuleCustomization;
 import org.openecomp.mso.db.catalog.beans.NetworkResourceCustomization;
 import org.openecomp.mso.db.catalog.beans.ServiceMacroHolder;
 import org.openecomp.mso.db.catalog.beans.AllottedResourceCustomization;
@@ -116,15 +111,8 @@ public class CatalogDbAdapterRest {
 		return Response.ok().entity(CHECK_HTML).build();
 	}
 
-	/*
-	 * GET {http-catalog-adapter-root}/v1/serviceVnfs?vnfModelCustomizationUuid=<vnf-model-customization-uuid>
-	 * URL:http://localhost:8080/ecomp/mso/catalog/v1/getVfModuleType?vnfType=Test/vSAMP10&vfModuleType=vSAMP10::base::module-0
-	 * RESP:
-	 * {"queryVfModule":{"version":1,"asdcUuid":"MANUAL RECORD","created":{"nanos":0},"description":"vSAMP10","environmentId":15184,"id":2312,"isBase":1,"modelName":"vSAMP10::base::module-0","modelVersion":1,"templateId":15123,"type":"Test\/vSAMP10::vSAMP10::base::module-0","vnfResourceId":15187}}
-	 */
-
 	@GET
-	@Path("vnfs/{vnfModelCustomizationUuid}")
+	@Path("vnfResources/{vnfModelCustomizationUuid}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response serviceVnfs (
 			@PathParam("version") String version,
@@ -151,9 +139,9 @@ public class CatalogDbAdapterRest {
 		QueryServiceVnfs qryResp;
 		int respStatus = HttpStatus.SC_OK;
 		String uuid = "";
-		List<VnfResource> ret;
+		List<VnfResourceCustomization> ret;
 
-		try (CatalogDatabase db = new CatalogDatabase()) {
+		try (CatalogDatabase db = CatalogDatabase.getInstance()) {
 			if (vnfUuid != null && !vnfUuid.equals("")) {
 				uuid = vnfUuid;
 				LOGGER.debug ("Query serviceVnfs getAllVnfsByVnfModelCustomizationUuid vnfModelCustomizationUuid: " + uuid);
@@ -173,16 +161,6 @@ public class CatalogDbAdapterRest {
 				else {
 					LOGGER.debug ("Query serviceVnfs getAllNetworksByServiceModelInvariantUuid serviceModelUuid: " + uuid);
 					ret = db.getAllVnfsByServiceModelInvariantUuid(uuid);
-				}
-			}
-			else if (smName != null && !smName.equals("")) {
-				if (smVer != null && !smVer.equals("")) {
-					LOGGER.debug ("Query serviceVnfs getAllVnfsByServiceName serviceModelInvariantName: " + smName+ " serviceModelVersion: "+ smVer);
-					ret = db.getAllVnfsByServiceName(smName, smVer);
-				}
-				else {
-					LOGGER.debug ("Query serviceVnfs getAllVnfsByServiceName serviceModelName: " + smName);
-					ret = db.getAllVnfsByServiceName(smName);
 				}
 			}
 			else if (smName != null && !smName.equals("")) {
@@ -221,7 +199,7 @@ public class CatalogDbAdapterRest {
 	}
 
 	@GET
-	@Path("networks/{networkModelCustomizationUuid}")
+	@Path("networkResources/{networkModelCustomizationUuid}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response serviceNetworks (
 			@PathParam("version") String version,
@@ -237,10 +215,15 @@ public class CatalogDbAdapterRest {
 			@PathParam("version") String version,
 			@QueryParam("networkModelCustomizationUuid") String nUuid,
 			@QueryParam("networkType") String nType,
+		@QueryParam("networkModelName") String nModelName,
 			@QueryParam("serviceModelUuid") String smUuid,
 			@QueryParam("serviceModelInvariantUuid") String smiUuid,
-			@QueryParam("serviceModelVersion") String smVer
+		@QueryParam("serviceModelVersion") String smVer,
+		@QueryParam("networkModelVersion") String nmVer
 	) {
+		if (nModelName != null && !nModelName.equals("")) {
+			nType = nModelName;
+		}
 		return serviceNetworksImpl (version, IS_ARRAY, nUuid, nType, smUuid, smiUuid, smVer);
 	}
 
@@ -250,7 +233,7 @@ public class CatalogDbAdapterRest {
 		String uuid = "";
 		List<NetworkResourceCustomization> ret;
 
-		try (CatalogDatabase db = new CatalogDatabase()) {
+		try (CatalogDatabase db = CatalogDatabase.getInstance()) {
 			if (nUuid != null && !nUuid.equals("")) {
 				uuid = nUuid;
 				LOGGER.debug ("Query serviceNetworks getAllNetworksByNetworkModelCustomizationUuid networkModelCustomizationUuid: " + uuid);
@@ -315,7 +298,7 @@ public class CatalogDbAdapterRest {
 		String uuid = "";
 		ServiceMacroHolder ret;
 
-		try (CatalogDatabase db = new CatalogDatabase()) {
+		try (CatalogDatabase db = CatalogDatabase.getInstance()) {
 			if (smUuid != null && !smUuid.equals("")) {
 				uuid = smUuid;
 				LOGGER.debug ("Query serviceMacroHolder getAllResourcesByServiceModelUuid serviceModelUuid: " + uuid);
@@ -386,7 +369,7 @@ public class CatalogDbAdapterRest {
 		String uuid = "";
 		List<AllottedResourceCustomization > ret;
 
-		try (CatalogDatabase db = new CatalogDatabase()) {
+		try (CatalogDatabase db = CatalogDatabase.getInstance()) {
 			if (smUuid != null && !smUuid.equals("")) {
 				uuid = smUuid;
 				LOGGER.debug ("Query AllottedResourceCustomization getAllAllottedResourcesByServiceModelUuid serviceModelUuid: " + uuid);
@@ -432,4 +415,55 @@ public class CatalogDbAdapterRest {
 				.build();
 		}
 	}
+	
+	// Added for DHV in 1702.  Might be a temporary solution!
+	// Changing to use QueryVfModule so the modelCustomizationUuid is included in response
+	@GET
+	@Path("vfModules")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response vfModules(@QueryParam("vfModuleModelName") String vfModuleModelName) {
+		QueryVfModule qryResp;
+		int respStatus = HttpStatus.SC_OK;
+		List<VfModuleCustomization> ret = null;
+		CatalogDatabase db = CatalogDatabase.getInstance();
+
+		try{
+			if(vfModuleModelName != null && !vfModuleModelName.equals("")){
+				LOGGER.debug ("Query vfModules by vfModuleModuleName: " + vfModuleModelName);
+				VfModuleCustomization vfModule = db.getVfModuleCustomizationByModelName(vfModuleModelName);
+				if(vfModule != null){
+					ret = new ArrayList<VfModuleCustomization>(1);
+					ret.add(vfModule);
+				}
+			}else{
+				throw(new Exception("Incoming parameter is null or blank"));
+			}
+			if(ret == null || ret.isEmpty()){
+				LOGGER.debug ("vfModules not found");
+				respStatus = HttpStatus.SC_NOT_FOUND;
+				qryResp = new QueryVfModule();
+			}else{
+				LOGGER.debug ("vfModules found");
+				qryResp = new QueryVfModule(ret);
+				LOGGER.debug ("vfModules query Results is: "+ qryResp);
+				LOGGER.debug ("vfModules tojsonstring is: "+ qryResp.JSON2(false, false));
+			}
+			LOGGER.debug ("Query vfModules exit");
+			return Response
+					.status(respStatus)
+					.entity(qryResp.JSON2(false, false)) 
+					.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+					.build();
+		}catch(Exception e){
+			LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR,  vfModuleModelName, "", "queryVfModules", MsoLogger.ErrorCode.BusinessProcesssError, "Exception during query VfModules by vfModuleModuleName: ", e);
+			CatalogQueryException excResp = new CatalogQueryException(e.getMessage(), CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
+			return Response
+					.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
+					.entity(new GenericEntity<CatalogQueryException>(excResp) {})
+					.build();
+		}finally {
+			db.close();
+		}
+	}
+
 }

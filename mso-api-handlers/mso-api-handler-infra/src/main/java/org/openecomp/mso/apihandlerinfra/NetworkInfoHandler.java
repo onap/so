@@ -39,8 +39,6 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.sax.SAXSource;
 
 import org.apache.http.HttpStatus;
-import org.xml.sax.InputSource;
-
 import org.openecomp.mso.apihandler.common.ValidationException;
 import org.openecomp.mso.apihandlerinfra.networkbeans.ActionType;
 import org.openecomp.mso.apihandlerinfra.networkbeans.NetworkInputs;
@@ -55,8 +53,13 @@ import org.openecomp.mso.requestsdb.InfraActiveRequests;
 import org.openecomp.mso.requestsdb.InfraRequests;
 import org.openecomp.mso.requestsdb.RequestsDatabase;
 import org.openecomp.mso.utils.UUIDChecker;
+import org.xml.sax.InputSource;
+
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
 
 @Path("/{version: v1|v2|v3}/network-request")
+@Api(value="/{version: v1|v2|v3}/network-request",description="API Requests for network requests")
 public class NetworkInfoHandler {
 
     protected ObjectFactory beansObjectFactory = new ObjectFactory ();
@@ -64,6 +67,7 @@ public class NetworkInfoHandler {
     private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH);
 
     @GET
+    @ApiOperation(value="Finds Network Requests",response=Response.class)
     public Response queryFilters (@QueryParam("network-type") String networkType,
                                   @QueryParam("service-type") String serviceType,
                                   @QueryParam("aic-node-clli") String aicNodeClli,
@@ -94,6 +98,7 @@ public class NetworkInfoHandler {
 
     @GET
     @Path(Constants.REQUEST_ID_PATH)
+    @ApiOperation(value="Add a Network Outputs from requestId and version",response=Response.class)
     public Response getRequest (@PathParam("request-id") String requestId, @PathParam("version") String version) {
         // Check INFRA_ACTIVE_REQUESTS table to find info
         // on this request
@@ -213,7 +218,7 @@ public class NetworkInfoHandler {
 
         String responseString = null;
 
-        InfraActiveRequests activeReq = RequestsDatabase.getRequestFromInfraActive (requestId, "NETWORK");
+        InfraActiveRequests activeReq = (RequestsDatabase.getInstance()).getRequestFromInfraActive (requestId, "NETWORK");
         if (activeReq != null) {
             // build response for active
             responseString = infraRequestsResponse (activeReq, version);
@@ -230,7 +235,7 @@ public class NetworkInfoHandler {
 
         getMsoLogger ().debug ("getRequest based on " + queryAttribute + ": " + queryValue);
 
-        List <InfraActiveRequests> activeReqList = RequestsDatabase.getRequestListFromInfraActive (queryAttribute,
+        List <InfraActiveRequests> activeReqList = (RequestsDatabase.getInstance()).getRequestListFromInfraActive (queryAttribute,
                                                                                                    queryValue,
                                                                                                    "NETWORK");
 

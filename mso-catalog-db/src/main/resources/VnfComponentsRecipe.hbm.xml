@@ -32,16 +32,14 @@
 		</id>
 		<properties name="uk_vnf_component_recipe" unique="true">
 			<property name="vnfType" column="VNF_TYPE" type="string" length="200"/>
+			<property name="vfModuleModelUUId" column="VF_MODULE_MODEL_UUID" type="string" length="100" not-null="false"/>
 			<property name="vnfComponentType" type="string">
 				<column name="VNF_COMPONENT_TYPE" not-null="true" length="45"/>
 			</property>
-			<property name="vfModuleId" column="VF_MODULE_ID" type="string" length="100" not-null="false"/>
 			<property name="action" type="string">
 			     <column name="ACTION" not-null="true" length="20"/>
 			</property>
-			<property name="serviceType" type="string">
-				<column name="SERVICE_TYPE" not-null="false" length="45" default="null"/>
-			</property>
+			<property name="serviceType" column="SERVICE_TYPE" type="string" length="45"/>
 			<property name="version" column="VERSION" type="string" length="20"/>
 		</properties>
 		<property name="description" column="DESCRIPTION" type="string" length="1200"/>

@@ -21,15 +21,12 @@
 package org.openecomp.mso.apihandlerinfra.serviceinstancebeans;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
-
-import org.openecomp.mso.apihandlerinfra.MsoRequest;
 
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_DEFAULT)
 public class RequestParameters {
@@ -44,6 +41,10 @@ public class RequestParameters {
 	private boolean autoBuildVfModules = false;
 	@JsonSerialize(include=Inclusion.ALWAYS)
 	private boolean cascadeDelete = false;
+	@JsonSerialize(include=Inclusion.ALWAYS)
+	private boolean usePreload=true; // usePreload would always be true for Update
+	@JsonSerialize(include=Inclusion.ALWAYS)
+	private boolean rebuildVolumeGroups = false;
 
 
 	public String getSubscriptionServiceType() {
@@ -107,12 +108,30 @@ public class RequestParameters {
 		this.cascadeDelete = cascadeDelete;
 	}
 
+	public boolean isUsePreload() {
+		return usePreload;
+	}
+
+	public void setUsePreload(boolean usePreload) {
+		this.usePreload = usePreload;
+	}
+	
+	public boolean rebuildVolumeGroups() {
+		return rebuildVolumeGroups;
+	}
+
+	public void setRebuildVolumeGroups(boolean rebuildVolumeGroups) {
+		this.rebuildVolumeGroups = rebuildVolumeGroups;
+	}
+
 	@Override
 	public String toString() {
 		return "RequestParameters [subscriptionServiceType="
 				+ subscriptionServiceType + ", userParams=" + userParams
 				+ ", aLaCarte=" + aLaCarte + ", autoBuildVfModules="
-				+ autoBuildVfModules + "]";
+				+ autoBuildVfModules + ", usePreload="
+				+ usePreload + ", rebuildVolumeGroups="
+				+ rebuildVolumeGroups +"]";
 	}
 
 

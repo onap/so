@@ -48,7 +48,8 @@ public interface MsoRequestsDbAdapter {
                                     @WebParam(name = "vnfId") @XmlElement(required = false) String vnfId,
                                     @WebParam(name = "vfModuleId") @XmlElement(required = false) String vfModuleId,
                                     @WebParam(name = "volumeGroupId") @XmlElement(required = false) String volumeGroupId,
-                                    @WebParam(name = "serviceInstanceName") @XmlElement(required = false) String serviceInstanceName) throws MsoRequestsDbException;
+                                    @WebParam(name = "serviceInstanceName") @XmlElement(required = false) String serviceInstanceName,
+                                    @WebParam(name = "vfModuleName") @XmlElement(required = false) String vfModuleName) throws MsoRequestsDbException;
 
     @WebMethod
     public InfraActiveRequests getInfraRequest (@WebParam(name="requestId") @XmlElement(required = true) String requestId) throws MsoRequestsDbException;

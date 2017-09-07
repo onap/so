@@ -20,6 +20,7 @@
 package org.openecomp.mso.adapters.catalogdb.catalogrest;
 
 import org.openecomp.mso.db.catalog.beans.VfModule;
+import org.openecomp.mso.db.catalog.beans.VfModuleCustomization;
 import org.jboss.resteasy.annotations.providers.NoJackson;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -31,34 +32,40 @@ import java.util.Map;
 @XmlRootElement(name = "vfModules")
 @NoJackson
 public class QueryVfModule extends CatalogQuery {
-	private List<VfModule> vfModules;
+	private List<VfModuleCustomization> vfModules;
 	private final String template =
-		"\t{ \"vfModule\"               : { \n"+
-			"\t\t\"modelName\"              : <MODEL_NAME>,\n"+
-			"\t\t\"modelUuid\"              : <MODEL_UUID>,\n"+
-			"\t\t\"modelInvariantUuid\"     : <MODEL_INVARIANT_ID>,\n"+
-			"\t\t\"modelVersion\"           : <MODEL_VERSION>,\n"+
-			"\t\t\"modelCustomizationUuid\" : <MODEL_CUSTOMIZATION_UUID>,\n"+
-			"\t\t\"vfModuleType\"           : <VF_MODULE_TYPE>,\n"+
+		"\t{\n"+
+//		"\t{ \"vfModule\"               : { \n"+
+		"\t\t\"modelInfo\"               : { \n"+
+			"\t\t\t\"modelName\"              : <MODEL_NAME>,\n"+
+			"\t\t\t\"modelUuid\"              : <MODEL_UUID>,\n"+
+			"\t\t\t\"modelInvariantUuid\"     : <MODEL_INVARIANT_ID>,\n"+
+			"\t\t\t\"modelVersion\"           : <MODEL_VERSION>,\n"+
+			"\t\t\t\"modelCustomizationUuid\" : <MODEL_CUSTOMIZATION_UUID>\n"+
+			"\t\t},"+
 			"\t\t\"isBase\"                 : <IS_BASE>,\n"+
 			"\t\t\"vfModuleLabel\"          : <VF_MODULE_LABEL>,\n"+
-			"\t\t\"initialCount\"           : <INITIAL_COUNT>\n"+
-		"\t}}";
+			"\t\t\"initialCount\"           : <INITIAL_COUNT>,\n"+
+			"\t\t\"hasVolumeGroup\"           : <HAS_VOLUME_GROUP>\n"+
+		"\t}";
+//		"\t}}";
 
-	public QueryVfModule() { super(); vfModules = new ArrayList<VfModule>(); }
-	public QueryVfModule(List<VfModule> vlist) {
+	public QueryVfModule() { super(); vfModules = new ArrayList<VfModuleCustomization>(); }
+	public QueryVfModule(List<VfModuleCustomization> vlist) { 
 		LOGGER.debug ("QueryVfModule:");
-		vfModules = new ArrayList<VfModule>();
-		for (VfModule o : vlist) {
+		vfModules = new ArrayList<VfModuleCustomization>();
+		if (vlist != null) {
+			for (VfModuleCustomization o : vlist) {
 			LOGGER.debug ("-- o is a  vfModules ----");
 			LOGGER.debug (o.toString());
 			vfModules.add(o);
 			LOGGER.debug ("-------------------");
 		}
 	}
+	}
 
-	public List<VfModule> getVfModule(){ return this.vfModules; }
-	public void setVfModule(List<VfModule> v) { this.vfModules = v; }
+	public List<VfModuleCustomization> getVfModule(){ return this.vfModules; }
+	public void setVfModule(List<VfModuleCustomization> v) { this.vfModules = v; }
 
 	@Override
 	public String toString () {
@@ -66,7 +73,7 @@ public class QueryVfModule extends CatalogQuery {
 
 		boolean first = true;
 		int i = 1;
-		for (VfModule o : vfModules) {
+		for (VfModuleCustomization o : vfModules) {
 			buf.append(i+"\t");
 			if (!first) buf.append("\n"); first = false;
 			buf.append(o);
@@ -82,18 +89,25 @@ public class QueryVfModule extends CatalogQuery {
 		String sep = "";
 		boolean first = true;
 
-		for (VfModule o : vfModules) {
+		for (VfModuleCustomization o : vfModules) {
 			if (first) buf.append("\n"); first = false;
 
-		    put(valueMap, "MODEL_NAME",               o.getModelName());
-		    put(valueMap, "MODEL_UUID",               o.getModelUuid());
-		    put(valueMap, "MODEL_INVARIANT_ID",       o.getModelInvariantId());
-		    put(valueMap, "MODEL_VERSION",            o.getModelVersion());
+			boolean vfNull = o.getVfModule() == null ? true : false;
+			boolean hasVolumeGroup = false;
+			String envt = o.getHeatEnvironmentArtifactUuid();
+			if (envt != null && !envt.equals("")) {
+				hasVolumeGroup = true;
+			}
+
+		    put(valueMap, "MODEL_NAME",               vfNull ? null : o.getVfModule().getModelName());
+		    put(valueMap, "MODEL_UUID",               vfNull ? null : o.getVfModule().getModelUUID());
+		    put(valueMap, "MODEL_INVARIANT_ID",       vfNull ? null : o.getVfModule().getModelInvariantUuid());
+		    put(valueMap, "MODEL_VERSION",            vfNull ? null : o.getVfModule().getVersion());
 		    put(valueMap, "MODEL_CUSTOMIZATION_UUID", o.getModelCustomizationUuid());
-		    put(valueMap, "VF_MODULE_TYPE",           o.getVfModuleType());
-		    put(valueMap, "IS_BASE",                  new Boolean(o.isBase()? true: false));
-		    put(valueMap, "VF_MODULE_LABEL",          o.getVfModuleLabel());
+		    put(valueMap, "IS_BASE",                  vfNull ? false : new Boolean(o.getVfModule().isBase()? true: false));
+		    put(valueMap, "VF_MODULE_LABEL",          o.getLabel());
 		    put(valueMap, "INITIAL_COUNT",            o.getInitialCount());
+		    put(valueMap, "HAS_VOLUME_GROUP",           new Boolean(hasVolumeGroup));
 
             buf.append(sep+ this.setTemplate(template, valueMap));
             sep = ",\n";

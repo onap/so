@@ -153,10 +153,11 @@ public class DeleteNetworkInstance extends AbstractServiceTaskProcessor {
 		
 		try {
 			
-			// "networkModelInfo" is expected to be sent
-			String networkModelInfo = execution.getVariable("networkModelInfo")
-			utils.log("DEBUG", " networkModelInfo - " + networkModelInfo, isDebugEnabled)
-						 
+			// For Ala-Carte (sdnc = 1610): 
+			// 1. the Network ModelInfo is expected to be sent 
+			//     via requestDetails.modelInfo (modelType = network), ex: modelCustomizationId.
+			// 2. the Service ModelInfo is expected to be sent but will be IGNORE 
+			//     via requestDetails.relatedInstanceList.relatedInstance.modelInfo (modelType = service)
 										 
 		} catch (Exception ex) {
 			sendSyncError(execution)
@@ -241,7 +242,10 @@ public class DeleteNetworkInstance extends AbstractServiceTaskProcessor {
 
 		try {
 			utils.log("DEBUG", " ***** Inside prepareDBRequestError of DeleteNetworkInstance ***** ", isDebugEnabled)
-
+			
+			// set DB Header Authorization 
+			setBasicDBAuthHeader(execution, isDebugEnabled)
+			
 			WorkflowException wfe = execution.getVariable("WorkflowException")
 			String statusMessage = wfe.getErrorMessage()
 			String requestId = execution.getVariable(Prefix +"requestId")

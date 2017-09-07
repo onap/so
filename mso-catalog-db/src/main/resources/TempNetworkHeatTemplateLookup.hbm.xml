@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ============LICENSE_START=======================================================
+  ECOMP MSO
+  ================================================================================
+  Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+  ================================================================================
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  ============LICENSE_END=========================================================
+  -->
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+<hibernate-mapping package="org.openecomp.mso.db.catalog.beans">
+	<class name="TempNetworkHeatTemplateLookup" table="TEMP_NETWORK_HEAT_TEMPLATE_LOOKUP">
+		<meta attribute="class-description">
+			This class describes a VF Module to HEAT Files Entry
+		</meta>
+		
+		<id name="networkResourceModelName" column="NETWORK_RESOURCE_MODEL_NAME" type="java.lang.String"  length="200"/>
+		
+		<property name="heatTemplateArtifactUuid" column="HEAT_TEMPLATE_ARTIFACT_UUID" type="java.lang.String" length="200" not-null="true"/>
+		<property name="aicVersionMin" type="string" >
+		  <column name="AIC_VERSION_MIN" not-null="true" length="20"/>
+		</property>
+		<property name="aicVersionMax" type="string" >
+		  <column name="AIC_VERSION_MAX" not-null="false" length="20"/>
+		</property>
+		
+				
+	</class>
+	
+</hibernate-mapping>

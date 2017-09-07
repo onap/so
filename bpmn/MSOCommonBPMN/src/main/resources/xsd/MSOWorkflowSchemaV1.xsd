@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<!--
+		=========================================================================
+		AT&T Proprietary (Internal Use Only) Not for use or disclosure outside
+		the AT&T companies except under written agreement (c) 2015 AT&T
+		Intellectual Property. All rights reserved. AT&T and the AT&T logo are
+		trademarks of AT&T Intellectual Property.
+		=======================================================================
+	-->
+	<!--
+		================================================================
+		Description: This is the schema for LPP Configuration Component
+
+		================================================================
+		Change Log: Version Author Comments 
+		=========== ======= ====== ========
+		0.10 ss835w 2011-4-13. First draft
+
+
+		================================================================
+	-->
+	
+<schema targetNamespace="http://ecomp.att.com/mso/workflow/schema/v1" 
+xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:tns="http://ecomp.att.com/mso/workflow/schema/v1" 
+	xmlns:sdncadapterworkflow="http://ecomp.att.com/mso/workflow/schema/v1"	
+	xmlns:msoservtypes="http://ecomp.att.com/mso/request/types/v1"
+	xmlns:msolayer3="http://ecomp.att.com/mso/request/layer3/schema/v1"	
+	xmlns:sdncadapter="http://domain2.att.com/workflow/sdnc/adapter/schema/v1"
+	xmlns:aai="http://com.att.aai.inventory"
+	elementFormDefault="qualified">
+	
+	<import namespace="http://ecomp.att.com/mso/request/types/v1" schemaLocation="MsoServiceRequestTypesV1.xsd"/>
+
+
+	<!-- ========================= -->
+	<!-- Simple Types  - enum      -->   
+	<!-- ========================= -->	
+	
+	<simpleType name="PortGroupNameType">
+		<restriction base="string">
+			<enumeration value="IPAG-VCE" />
+			<enumeration value="VCE-VPE" />			
+		</restriction>
+	</simpleType>
+	
+	<simpleType name="SDNCActionType">
+		<restriction base="string">
+			<enumeration value="AssignVNFNetworkResources" />
+			<enumeration value="ConfigureService" />
+			<enumeration value="DeprovisionService" />
+			<enumeration value="ReleaseVNFNetworkResources" />
+			<enumeration value="UpdateService" />
+			<enumeration value="TestService" />
+			<enumeration value="ReserveService" />
+			<enumeration value="ActivateService" />
+			<enumeration value="GetServiceDetails" />
+		</restriction>
+	</simpleType>
+
+	<!-- ========================= -->
+	<!-- Complex Types             -->
+	<!-- ========================= -->
+	
+	
+	<!-- ========================= -->
+	<!-- Elements             -->
+	<!-- ========================= -->
+	
+
+	
+	<!-- ========================= -->
+	<!-- Requests/Responses        -->
+	<!-- ========================= -->
+	
+
+	
+	
+	
+	
+	<element name="WorkflowException">
+		<complexType>
+			<sequence>				
+				<element name="ErrorMessage" type="string" minOccurs="1" maxOccurs="1" />				
+				<element name="ErrorCode" type="string" minOccurs="1" maxOccurs="1" />	
+				<element name="SourceSystemErrorCode" type="string" minOccurs="0" maxOccurs="1" />				
+			</sequence>
+		</complexType>
+	</element>
+	
+	
+	<!-- Error handler -->
+	<element name="FalloutHandlerRequest">
+		<complexType>
+			<sequence>
+				<element ref="msoservtypes:request-information" minOccurs="1" maxOccurs="1" />
+				<element ref="sdncadapterworkflow:WorkflowException" minOccurs="1" maxOccurs="1" />
+				<element name="is-srv-inst-req" type="boolean" minOccurs="0" maxOccurs="1" />
+				<element name="resp-content-type" type="string" minOccurs="0" maxOccurs="1" />
+				<element name="service-instance-id" type="string" minOccurs="0" maxOccurs="1"/>
+				<element name="start-time" type="string" minOccurs="0" maxOccurs="1"/>
+			</sequence>
+		</complexType>
+	</element>
+	
+	<element name="FalloutHandlerResponse">
+		<complexType>
+			<sequence>
+				<element name="out" type="string"></element>
+			</sequence>
+		</complexType>
+	</element>	
+
+	<!-- Completion handler -->
+	<element name="MsoCompletionRequest">
+		<complexType>
+			<sequence>
+				<element ref="msoservtypes:request-information" minOccurs="1" maxOccurs="1" />
+				<element name="mso-bpel-name" type="string" minOccurs="1" maxOccurs="1" />
+				<element name="is-srv-inst-req" type="boolean" minOccurs="0" maxOccurs="1" />
+				<element name="resp-content-type" type="string" minOccurs="0" maxOccurs="1" />
+				<element name="service-instance-id" type="string" minOccurs="0" maxOccurs="1"/>
+				<element name="start-time" type="string" minOccurs="0" maxOccurs="1"/>
+			</sequence>
+		</complexType>
+	</element>
+	
+	<element name="MsoCompletionResponse">
+		<complexType>
+			<sequence>
+				<element name="out" type="string"></element>
+			</sequence>
+		</complexType>
+	</element>	
+	
+
+</schema>

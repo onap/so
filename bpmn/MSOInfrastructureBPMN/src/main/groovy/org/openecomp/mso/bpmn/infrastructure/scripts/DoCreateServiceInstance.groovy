@@ -23,12 +23,14 @@ import static org.apache.commons.lang3.StringUtils.*;
 import groovy.xml.XmlUtil
 import groovy.json.*
 
+import org.openecomp.mso.bpmn.core.domain.ServiceDecomposition
+import org.openecomp.mso.bpmn.core.domain.ServiceInstance
+import org.openecomp.mso.bpmn.core.domain.ModelInfo
 import org.openecomp.mso.bpmn.core.json.JsonUtils
 import org.openecomp.mso.bpmn.common.scripts.AaiUtil
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
 import org.openecomp.mso.bpmn.common.scripts.SDNCAdapterUtils
-import org.openecomp.mso.bpmn.common.scripts.VidUtils
 import org.openecomp.mso.bpmn.core.RollbackData
 import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.rest.APIResponse;
@@ -57,8 +59,10 @@ import org.springframework.web.util.UriUtils;
  * @param - productFamilyId
  * @param - disableRollback
  * @param - failExists - TODO
- * @param - serviceInputParams - Deferred/TODO
+ * @param - serviceInputParams (should contain aic_zone for serviceTypes TRANSPORT,ATM)
  * @param - sdncVersion ("1610")
+ * @param - serviceDecomposition - Decomposition for R1710 
+ * (if macro provides serviceDecompsition then serviceModelInfo, serviceInstanceId & serviceInstanceName will be ignored)
  *
  * Outputs:
  * @param - rollbackData (localRB->null)
@@ -72,7 +76,6 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 	String Prefix="DCRESI_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
-	VidUtils vidUtils = new VidUtils()
 
 	public void preProcessRequest (Execution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
@@ -82,18 +85,10 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 		try {
 			String requestId = execution.getVariable("msoRequestId")
 			execution.setVariable("prefix", Prefix)
-
+			
 			//Inputs
 			//requestDetails.subscriberInfo. for AAI GET & PUT & SDNC assignToplology
 			String globalSubscriberId = execution.getVariable("globalSubscriberId") //globalCustomerId
-
-			//requestDetails.requestInfo. for AAI GET/PUT serviceInstanceData & SDNC assignToplology
-			String serviceInstanceName = execution.getVariable("serviceInstanceName")
-			//Generated in parent for AAI PUT
-			String serviceInstanceId = execution.getVariable("serviceInstanceId")
-
-			//requestDetails.modelInfo. for AAI PUT servieInstanceData & SDNC assignTopology
-			String serviceModelInfo = execution.getVariable("serviceModelInfo")
 
 			//requestDetails.requestParameters. for AAI PUT & SDNC assignTopology
 			String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
@@ -106,21 +101,13 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 				utils.log("DEBUG", msg, isDebugEnabled)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
-			if (isBlank(serviceInstanceId)){
-				msg = "Input serviceInstanceId is null"
-				utils.log("DEBUG", msg, isDebugEnabled)
-				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-			}
-			if (isBlank(serviceModelInfo)) {
-				msg = "Input serviceModelInfo is null"
-				utils.log("DEBUG", msg, isDebugEnabled)
-				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-			}
+			
 			if (isBlank(subscriptionServiceType)) {
 				msg = "Input subscriptionServiceType is null"
 				utils.log("DEBUG", msg, isDebugEnabled)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
+			
 			if (productFamilyId == null) {
 				execution.setVariable("productFamilyId", "")
 			}
@@ -134,30 +121,152 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 			execution.setVariable("sdncCallbackUrl", sdncCallbackUrl)
 			utils.log("DEBUG","SDNC Callback URL: " + sdncCallbackUrl, isDebugEnabled)
 
-			String modelInvariantId = jsonUtil.getJsonValue(serviceModelInfo, "modelInvariantId")
-			String modelVersionId = jsonUtil.getJsonValue(serviceModelInfo, "modelVersionId")
+			//requestDetails.modelInfo.for AAI PUT servieInstanceData & SDNC assignTopology
+			String modelInvariantUuid = ""
+			String modelVersion = ""
+			String modelUuid = ""
+			String modelName = ""
+			String serviceInstanceName = "" 
+			//Generated in parent.for AAI PUT
+			String serviceInstanceId = ""
+			String serviceType = ""
+			String serviceRole = ""
 			
-			if (modelInvariantId == null) {
-				modelInvariantId = ""
+			ServiceDecomposition serviceDecomp = (ServiceDecomposition) execution.getVariable("serviceDecomposition")
+			if (serviceDecomp != null)
+			{
+				serviceType = serviceDecomp.getServiceType()
+				if (serviceType == null)
+				{
+					utils.log("DEBUG", "null serviceType", isDebugEnabled)
+					serviceType = ""
+				}
+				else
+				{
+					utils.log("DEBUG", "serviceType:" + serviceType, isDebugEnabled)
+				}
+				serviceRole = serviceDecomp.getServiceRole()
+				if (serviceRole == null)
+				{
+					serviceRole = ""
+				}
+				
+				ServiceInstance serviceInstance = serviceDecomp.getServiceInstance()
+				if (serviceInstance != null)
+				{
+					serviceInstanceId = serviceInstance.getInstanceId()
+					serviceInstanceName = serviceInstance.getInstanceName()
+					execution.setVariable("serviceInstanceId", serviceInstanceId)
+					execution.setVariable("serviceInstanceName", serviceInstanceName)
+				}
+				
+				ModelInfo modelInfo = serviceDecomp.getModelInfo()
+				if (modelInfo != null)
+				{
+					modelInvariantUuid = modelInfo.getModelInvariantUuid()
+					modelVersion = modelInfo.getModelVersion()
+					modelUuid = modelInfo.getModelUuid()
+					modelName = modelInfo.getModelName()
+				}
+				else 
+				{
+					msg = "Input serviceModelInfo is null"
+					utils.log("DEBUG", msg, isDebugEnabled)
+					exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+				}
 			}
-			if (modelVersionId == null) {
-				modelVersionId = ""
+			else
+			{
+				//requestDetails.requestInfo. for AAI GET/PUT serviceInstanceData & SDNC assignToplology
+				serviceInstanceName = execution.getVariable("serviceInstanceName")
+				serviceInstanceId = execution.getVariable("serviceInstanceId")
+				
+				String serviceModelInfo = execution.getVariable("serviceModelInfo")
+				if (isBlank(serviceModelInfo)) {
+					msg = "Input serviceModelInfo is null"
+					utils.log("DEBUG", msg, isDebugEnabled)
+					exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+				}
+				modelInvariantUuid = jsonUtil.getJsonValue(serviceModelInfo, "modelInvariantUuid")
+				modelVersion = jsonUtil.getJsonValue(serviceModelInfo, "modelVersion")
+				modelUuid = jsonUtil.getJsonValue(serviceModelInfo, "modelUuid")
+				modelName = jsonUtil.getJsonValue(serviceModelInfo, "modelName")
+				//modelCustomizationUuid NA for SI
+	
 			}
+			execution.setVariable("serviceType", serviceType)
+			execution.setVariable("serviceRole", serviceRole)
+			
 			if (serviceInstanceName == null) {
 				execution.setVariable("serviceInstanceName", "")
 				serviceInstanceName = ""
 			}
+			if (isBlank(serviceInstanceId)){
+				msg = "Input serviceInstanceId is null"
+				utils.log("DEBUG", msg, isDebugEnabled)
+				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+			}
 			
+			if (modelInvariantUuid == null) {
+				modelInvariantUuid = ""
+			}
+			if (modelUuid == null) {
+				modelUuid = ""
+			}
+			if (modelVersion == null) {
+				modelVersion = ""
+			}
+			if (modelName == null) {
+				modelName = ""
+			}
+			
+			execution.setVariable("modelInvariantUuid", modelInvariantUuid)
+			execution.setVariable("modelVersion", modelVersion)
+			execution.setVariable("modelUuid", modelUuid)
+			execution.setVariable("modelName", modelName)
+			
+			StringBuilder sbParams = new StringBuilder()
+			Map<String, String> paramsMap = execution.getVariable("serviceInputParams")
+			if (paramsMap != null)
+			{
+				sbParams.append("<service-input-parameters>")
+				for (Map.Entry<String, String> entry : paramsMap.entrySet()) {
+					String paramsXml
+					String paramName = entry.getKey()
+					String paramValue = entry.getValue()
+					paramsXml =
+							"""	<param>
+							<name>${paramName}</name>
+							<value>${paramValue}</value>
+							</param>
+							"""
+					sbParams.append(paramsXml)
+				}
+				sbParams.append("</service-input-parameters>")
+			}
+			String siParamsXml = sbParams.toString()
+			if (siParamsXml == null)
+				siParamsXml = ""
+			execution.setVariable("siParamsXml", siParamsXml)
+	
 			//AAI PUT
+			String oStatus= "Active"
+			if ("TRANSPORT".equalsIgnoreCase(serviceType))
+			{
+				oStatus = "Created"
+			}
+				
 			AaiUtil aaiUriUtil = new AaiUtil(this)
 			String aai_uri = aaiUriUtil.getBusinessCustomerUri(execution)
 			String namespace = aaiUriUtil.getNamespaceFromUri(aai_uri)
 			String serviceInstanceData =
 					"""<service-instance xmlns=\"${namespace}\">
 					<service-instance-name>${serviceInstanceName}</service-instance-name>
-					<orchestration-status>Active</orchestration-status>
-				    <model-invariant-id>${modelInvariantId}</model-invariant-id>
-				    <model-version-id>${modelVersionId}</model-version-id>
+					<service-type>${serviceType}</service-type>
+					<service-role>${serviceRole}</service-role>
+					<orchestration-status>${oStatus}</orchestration-status>
+				    <model-invariant-id>${modelInvariantUuid}</model-invariant-id>
+				    <model-version-id>${modelUuid}</model-version-id>
 					</service-instance>""".trim()
 
 			execution.setVariable("serviceInstanceData", serviceInstanceData)
@@ -340,27 +449,17 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 			def serviceId = execution.getVariable("productFamilyId")
 			def subscriptionServiceType = execution.getVariable("subscriptionServiceType")
 			def globalSubscriberId = execution.getVariable("globalSubscriberId") //globalCustomerId
+			def serviceType = execution.getVariable("serviceType")
 
-			String serviceModelInfo = execution.getVariable("serviceModelInfo")
-			def modelInvariantId = jsonUtil.getJsonValue(serviceModelInfo, "modelInvariantId")
-			def modelVersion = jsonUtil.getJsonValue(serviceModelInfo, "modelVersion")
-			def modelUUId = jsonUtil.getJsonValue(serviceModelInfo, "modelVersionId")
-			def modelName = jsonUtil.getJsonValue(serviceModelInfo, "modelName")
+			def modelInvariantUuid = execution.getVariable("modelInvariantUuid")
+			def modelVersion = execution.getVariable("modelVersion")
+			def modelUuid = execution.getVariable("modelUuid")
+			def modelName = execution.getVariable("modelName")
+			
 			def sdncRequestId = UUID.randomUUID().toString()
 			
-			if (modelInvariantId == null) {
-				modelInvariantId = ""
-			}
-			if (modelVersion == null) {
-				modelVersion = ""
-			}
-			if (modelUUId == null) {
-				modelUUId = ""
-			}
-			if (modelName == null) {
-				modelName = ""
-			}
-
+			def siParamsXml = execution.getVariable("siParamsXml")
+			
 			String sdncAssignRequest =
 					"""<sdncadapterworkflow:SDNCAdapterWorkflowRequest xmlns:ns5="http://org.openecomp/mso/request/types/v1"
 													xmlns:sdncadapterworkflow="http://org.openecomp/mso/workflow/schema/v1"
@@ -371,6 +470,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 							<sdncadapter:SvcAction>assign</sdncadapter:SvcAction>
 							<sdncadapter:SvcOperation>service-topology-operation</sdncadapter:SvcOperation>
 							<sdncadapter:CallbackUrl>${callbackURL}</sdncadapter:CallbackUrl>
+							<sdncadapter:MsoAction>${serviceType}</sdncadapter:MsoAction>
 					</sdncadapter:RequestHeader>
 				<sdncadapterworkflow:SDNCRequestData>
 					<request-information>
@@ -385,8 +485,8 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 						<service-id>${serviceId}</service-id>
 						<subscription-service-type>${subscriptionServiceType}</subscription-service-type>
 						<ecomp-model-information>
-					         <model-invariant-uuid>${modelInvariantId}</model-invariant-uuid>
-					         <model-uuid>${modelUUId}</model-uuid>
+					         <model-invariant-uuid>${modelInvariantUuid}</model-invariant-uuid>
+					         <model-uuid>${modelUuid}</model-uuid>
 					         <model-version>${modelVersion}</model-version>
 					         <model-name>${modelName}</model-name>
 					    </ecomp-model-information>
@@ -396,6 +496,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 					</service-information>
 					<service-request-input>
 						<service-instance-name>${serviceInstanceName}</service-instance-name>
+						${siParamsXml}
 					</service-request-input>
 				</sdncadapterworkflow:SDNCRequestData>
 				</sdncadapterworkflow:SDNCAdapterWorkflowRequest>"""

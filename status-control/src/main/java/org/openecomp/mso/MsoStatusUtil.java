@@ -34,7 +34,7 @@ public class MsoStatusUtil {
         // Query DB for the value
        
         try {
-            SiteStatus siteStatus = RequestsDatabase.getSiteStatus(siteName);
+            SiteStatus siteStatus = (RequestsDatabase.getInstance()).getSiteStatus(siteName);
             if (null != siteStatus) {
                 return siteStatus.getStatus();
             } else {

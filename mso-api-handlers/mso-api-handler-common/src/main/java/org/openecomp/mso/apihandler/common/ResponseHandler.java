@@ -51,12 +51,14 @@ public class ResponseHandler {
 
 	private void parseResponse() {
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
-		msoLogger.debug("Returned status  is: " + statusCode);
+		msoLogger.debug("Returned status  is: " + statusCode);		
 		status = setStatus(statusCode);
 		msoLogger.debug("Parsed status  is: " + status);
 		if(type==CommonConstants.CAMUNDA){
 			parseCamunda();
-		}else{
+		}else if(type==CommonConstants.CAMUNDATASK){
+			parseCamundaTask();
+		}else {
 			parseBpel();
 		}
 		
@@ -109,14 +111,30 @@ public class ResponseHandler {
 		}
 	}
 	
+	private void parseCamundaTask(){
 
+		HttpEntity camundataskEntity = httpResponse.getEntity();
 
+		try {
+			if (camundataskEntity!=null) {
+				responseBody = EntityUtils.toString(camundataskEntity);
+				msoLogger.debug("response body is: " + responseBody);
+
+			}
+			if(status!=HttpStatus.SC_NO_CONTENT && status != HttpStatus.SC_ACCEPTED){
+				msoLogger.error(MessageEnum.APIH_ERROR_FROM_BPEL_SERVER, "CAMUNDATASK", String.valueOf(status), responseBody, "CAMUNDATASK", "parseCamundaTask", MsoLogger.ErrorCode.BusinessProcesssError, "Error in APIH from Camunda Task");
+			}
+		} 
+		catch (IOException e) {
+			msoLogger.debug("IOException getting Camunda Task response body", e);
+		}
+	}
 
 	private int setStatus(int statusCode){
 		int status = 0;
 		switch(statusCode) {
 		case HttpStatus.SC_ACCEPTED:
-		case HttpStatus.SC_OK:
+		case HttpStatus.SC_OK:		
 			status = HttpStatus.SC_ACCEPTED;
 			break;
 		case HttpStatus.SC_BAD_REQUEST:
@@ -134,6 +152,9 @@ public class ResponseHandler {
 			break;
 		case HttpStatus.SC_SERVICE_UNAVAILABLE:
 			status = HttpStatus.SC_SERVICE_UNAVAILABLE;
+			break;
+		case HttpStatus.SC_NO_CONTENT:
+			status = HttpStatus.SC_NO_CONTENT;
 			break;
 		default:
 			status = HttpStatus.SC_INTERNAL_SERVER_ERROR;
@@ -166,8 +187,5 @@ public class ResponseHandler {
 	public int getStatus() {
 		return status;
 	}
-
-
-
 
 }

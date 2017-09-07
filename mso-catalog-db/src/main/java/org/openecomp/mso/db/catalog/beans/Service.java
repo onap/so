@@ -20,40 +20,37 @@
 
 package org.openecomp.mso.db.catalog.beans;
 
-
-
 import org.openecomp.mso.db.catalog.utils.MavenLikeVersioning;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.util.Map;
+import java.util.Set;
 
-public class Service extends MavenLikeVersioning {
-	private int id;
-	private String serviceName;
-	private String description;
-	private String httpMethod;
-	private String serviceNameVersionId;
-	private String serviceVersion;
-	private Map<String,ServiceRecipe> recipes;
+public class Service extends MavenLikeVersioning implements Serializable {
 	
+	private static final long serialVersionUID = 768026109321305392L;
+
+	private String modelName;
+	private String description;
+	private String modelUUID;
 	private String modelInvariantUUID;
 	private Timestamp created;
+	private String toscaCsarArtifactUUID;
+	private String modelVersion;
+	private String serviceType;
+	private String serviceRole;
+	private Map<String,ServiceRecipe> recipes;
+	private Set<ServiceToResourceCustomization> serviceResourceCustomizations;
 	
 	public Service() {}
 	
-	public int getId() {
-		return id;
+	public String getModelName() {
+		return modelName;
 	}
-	public void setId(int id) {
-		this.id = id;
-	}
-	
-	public String getServiceName() {
-		return serviceName;
-	}
-	public void setServiceName(String serviceName) {
-		this.serviceName = serviceName;
+	public void setModelName(String modelName) {
+		this.modelName = modelName;
 	}
 	
 	public String getDescription() {
@@ -78,30 +75,14 @@ public class Service extends MavenLikeVersioning {
 		this.created = created;
 	}
 		
-	public String getHttpMethod() {
-		return httpMethod;
+	public String getModelUUID() {
+		return modelUUID;
 	}
 
-	public void setHttpMethod(String httpMethod) {
-		this.httpMethod = httpMethod;
+	public void setModelUUID(String modelUUID) {
+		this.modelUUID = modelUUID;
 	}
 
-	public String getServiceNameVersionId() {
-		return serviceNameVersionId;
-	}
-
-	public void setServiceNameVersionId(String serviceNameVersionId) {
-		this.serviceNameVersionId = serviceNameVersionId;
-	}
-
-	public String getServiceVersion() {
-		return serviceVersion;
-	}
-
-	public void setServiceVersion(String serviceVersion) {
-		this.serviceVersion = serviceVersion;
-	}
-	
 	public String getModelInvariantUUID() {
 		return modelInvariantUUID;
 	}
@@ -110,13 +91,58 @@ public class Service extends MavenLikeVersioning {
 		this.modelInvariantUUID = modelInvariantUUID;
 	}
 
+	public String getToscaCsarArtifactUUID() {
+		return toscaCsarArtifactUUID;
+	}
+
+	public void setToscaCsarArtifactUUID(String toscaCsarArtifactUUID) {
+		this.toscaCsarArtifactUUID = toscaCsarArtifactUUID;
+	}
+
+	public Set<ServiceToResourceCustomization> getServiceResourceCustomizations() {
+		return serviceResourceCustomizations;
+	}
+
+	public void setServiceResourceCustomizations(Set<ServiceToResourceCustomization> serviceResourceCustomizations) {
+		this.serviceResourceCustomizations = serviceResourceCustomizations;
+	}
+	
+	public String getModelVersion() {
+		return modelVersion;
+	}
+
+	public void setModelVersion(String modelVersion) {
+		this.modelVersion = modelVersion;
+	}
+
+	
+	public String getServiceType() {
+		return serviceType;
+	}
+
+	public void setServiceType(String serviceType) {
+		this.serviceType = serviceType;
+	}
+
+	public String getServiceRole() {
+		return serviceRole;
+	}
+
+	public void setServiceRole(String serviceRole) {
+		this.serviceRole = serviceRole;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SERVICE: id=" + id + ",name=" + serviceName + ",version=" + version + ",description=" + description+",modelInvariantUUID="+modelInvariantUUID);
+		sb.append("SERVICE: name=" + modelName + ",modelVersion=" + modelVersion + ",description=" + description+",modelInvariantUUID="+modelInvariantUUID+",toscaCsarArtifactUUID="+toscaCsarArtifactUUID+",serviceType="+serviceType+",serviceRole="+serviceRole);
 		for (String recipeAction : recipes.keySet()) {
 			ServiceRecipe recipe = recipes.get(recipeAction);
 			sb.append ("\n" + recipe.toString());
+		}
+		
+		for(ServiceToResourceCustomization serviceResourceCustomization : serviceResourceCustomizations) {
+			sb.append("\n" + serviceResourceCustomization.toString());
 		}
 		if (created != null) {
 		        sb.append (",created=");

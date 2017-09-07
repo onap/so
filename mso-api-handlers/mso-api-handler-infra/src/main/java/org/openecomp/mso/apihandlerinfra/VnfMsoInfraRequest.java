@@ -59,10 +59,10 @@ import org.openecomp.mso.apihandlerinfra.vnfbeans.VnfRequest;
 import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.properties.MsoJavaProperties;
-import org.openecomp.mso.db.HibernateUtils;
+import org.openecomp.mso.db.AbstractSessionFactoryManager;
 import org.openecomp.mso.requestsdb.InfraActiveRequests;
 import org.openecomp.mso.requestsdb.RequestsDatabase;
-import org.openecomp.mso.requestsdb.HibernateUtilsRequestsDb;
+import org.openecomp.mso.requestsdb.RequestsDbSessionFactoryManager;
 
 public class VnfMsoInfraRequest {
 
@@ -84,7 +84,7 @@ public class VnfMsoInfraRequest {
     private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH);
     private static final String NOT_PROVIDED = "not provided";
 
-    protected HibernateUtils hibernateUtils = new HibernateUtilsRequestsDb ();
+    protected AbstractSessionFactoryManager requestsDbSessionFactoryManager = new RequestsDbSessionFactoryManager ();
     
     VnfMsoInfraRequest (String requestId) {
         this.requestId = requestId;
@@ -279,7 +279,7 @@ public class VnfMsoInfraRequest {
         Session session = null;
         try {
 
-            session = hibernateUtils.getSessionFactory ().openSession ();
+            session = requestsDbSessionFactoryManager.getSessionFactory ().openSession ();
             session.beginTransaction ();
 
             InfraActiveRequests aq = new InfraActiveRequests ();
@@ -399,7 +399,7 @@ public class VnfMsoInfraRequest {
     public void updateFinalStatus (Status status) {
         int result = 0;
         try {
-            result = RequestsDatabase.updateInfraFinalStatus (requestId,
+            result = (RequestsDatabase.getInstance()).updateInfraFinalStatus (requestId,
                                                               status.toString (),
                                                               this.errorMessage,
                                                               this.progress,

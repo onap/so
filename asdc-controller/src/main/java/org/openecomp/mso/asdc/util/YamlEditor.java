@@ -96,7 +96,7 @@ public class YamlEditor {
     // Based on the email from Ella Kvetny:
     // Within Heat Template, under parameters catalog, it might indicate the default value of the parameter
     // If default value exist, the parameter is not mandatory, otherwise its value should be set
-    public synchronized Set <HeatTemplateParam> getParameterList () {
+    public synchronized Set <HeatTemplateParam> getParameterList (String artifactUUID) {
         Set <HeatTemplateParam> paramSet = new HashSet <HeatTemplateParam> ();
         @SuppressWarnings("unchecked")
         Map <String, Object> resourceMap = (Map <String, Object>) yml.get ("parameters");
@@ -118,6 +118,8 @@ public class YamlEditor {
             // Now set the type
             String value = resourceEntry.get ("type");
             param.setParamType (value);
+            
+            param.setHeatTemplateArtifactUuid(artifactUUID);
 
             paramSet.add (param);
 

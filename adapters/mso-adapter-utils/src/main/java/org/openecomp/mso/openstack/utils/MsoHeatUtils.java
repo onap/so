@@ -21,11 +21,15 @@
 package org.openecomp.mso.openstack.utils;
 
 import java.io.Serializable;
+import java.rmi.server.ObjID;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.JsonNode;
@@ -310,9 +314,13 @@ public class MsoHeatUtils extends MsoCommonUtils {
         if (cloudSite == null) {
             throw new MsoCloudSiteNotFound (cloudSiteId);
         }
+        LOGGER.debug("Found: " + cloudSite.toString());
         // Get a Heat client. They are cached between calls (keyed by tenantId:cloudId)
         // This could throw MsoTenantNotFound or MsoOpenstackException (both propagated)
         Heat heatClient = getHeatClient (cloudSite, tenantId);
+        if (heatClient != null) {
+        	LOGGER.debug("Found: " + heatClient.toString());
+        }
 
         LOGGER.debug ("Ready to Create Stack (" + heatTemplate + ") with input params: " + stackInputs);
 
@@ -629,11 +637,15 @@ public class MsoHeatUtils extends MsoCommonUtils {
         if (cloudSite == null) {
             throw new MsoCloudSiteNotFound (cloudSiteId);
         }
+        LOGGER.debug("Found: " + cloudSite.toString());
 
         // Get a Heat client. They are cached between calls (keyed by tenantId:cloudId)
         Heat heatClient = null;
         try {
             heatClient = getHeatClient (cloudSite, tenantId);
+            if (heatClient != null) {
+            	LOGGER.debug("Found: " + heatClient.toString());
+            }
         } catch (MsoTenantNotFound e) {
             // Tenant doesn't exist, so stack doesn't either
             LOGGER.debug ("Tenant with id " + tenantId + "not found.", e);
@@ -689,11 +701,15 @@ public class MsoHeatUtils extends MsoCommonUtils {
         if (cloudSite == null) {
             throw new MsoCloudSiteNotFound (cloudSiteId);
         }
+        LOGGER.debug("Found: " + cloudSite.toString());
 
         // Get a Heat client. They are cached between calls (keyed by tenantId:cloudId)
         Heat heatClient = null;
         try {
             heatClient = getHeatClient (cloudSite, tenantId);
+            if (heatClient != null) {
+            	LOGGER.debug("Found: " + heatClient.toString());
+            }
         } catch (MsoTenantNotFound e) {
             // Tenant doesn't exist, so stack doesn't either
             LOGGER.debug ("Tenant with id " + tenantId + "not found.", e);
@@ -950,7 +966,9 @@ public class MsoHeatUtils extends MsoCommonUtils {
 
         // Obtain an MSO token for the tenant
         CloudIdentity cloudIdentity = cloudSite.getIdentityService ();
+        LOGGER.debug("Found: " + cloudIdentity.toString());
         String keystoneUrl = cloudIdentity.getKeystoneUrl (cloudId, msoPropID);
+        LOGGER.debug("keystoneUrl=" + keystoneUrl);
         Keystone keystoneTenantClient = new Keystone (keystoneUrl);
         Access access = null;
         try {
@@ -1160,7 +1178,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
 						String str = this.convertNode((JsonNode) obj);
 						inputs.put(key, str);
 					} catch (Exception e) {
-						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value for "+ key);
+						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value for JsonNode "+ key);
 						//effect here is this value will not have been copied to the inputs - and therefore will error out downstream
 					}
 				} else if (obj instanceof java.util.LinkedHashMap) {
@@ -1169,15 +1187,21 @@ public class MsoHeatUtils extends MsoCommonUtils {
 						String str = JSON_MAPPER.writeValueAsString(obj);
 						inputs.put(key, str);
 					} catch (Exception e) {
-						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value for "+ key);
+						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value for LinkedHashMap "+ key);
 					}
-				} else {
-					// just try to cast it - could be an integer or some such
+				} else if (obj instanceof Integer) {
 					try {
-						String str = (String) obj;
+						String str = "" + obj;
 						inputs.put(key, str);
 					} catch (Exception e) {
-						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value for "+ key);
+						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value for Integer "+ key);
+					}
+				} else {
+					try {
+						String str = obj.toString();
+						inputs.put(key, str);
+					} catch (Exception e) {
+						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value for Other "+ key +" (" + e.getMessage() + ")");
 						//effect here is this value will not have been copied to the inputs - and therefore will error out downstream
 					}
 				}
@@ -1196,16 +1220,25 @@ public class MsoHeatUtils extends MsoCommonUtils {
 		sb.append("\tParameters:\n");
 		Map<String, Object> params = stack.getParameters();
 		if (params == null || params.size() < 1) {
-			sb.append("\tNONE");
+			sb.append("\nNONE");
 		} else {
 			for (String key : params.keySet()) {
 				if (params.get(key) instanceof String) {
-					sb.append("\t" + key + "=" + (String) params.get(key));
+					sb.append("\n" + key + "=" + (String) params.get(key));
 				} else if (params.get(key) instanceof JsonNode) {
 					String jsonStringOut = this.convertNode((JsonNode)params.get(key));
-					sb.append("\t" + key + "=" + jsonStringOut);
+					sb.append("\n" + key + "=" + jsonStringOut);
+				} else if (params.get(key) instanceof Integer) {
+					String integerOut = "" + params.get(key);
+					sb.append("\n" + key + "=" + integerOut);
+
 				} else {
-					sb.append("\t" + key + "= [some non-string/non-json]");
+					try {
+						String str = params.get(key).toString();
+						sb.append("\n" + key + "=" + str);
+					} catch (Exception e) {
+						//non fatal
+					}
 				}
 			}
 		}
@@ -1226,51 +1259,312 @@ public class MsoHeatUtils extends MsoCommonUtils {
 	}
 
 
-    private StringBuilder getOutputsAsStringBuilder(Stack heatStack) {
-        // This should only be used as a utility to print out the stack outputs
-        // to the log
-        StringBuilder sb = new StringBuilder("");
-        if (heatStack == null) {
-            sb.append("(heatStack is null)");
-            return sb;
-        }
-        List<Output> outputList = heatStack.getOutputs();
-        if (outputList == null || outputList.isEmpty()) {
-            sb.append("(outputs is empty)");
-            return sb;
-        }
-        Map<String, Object> outputs = new HashMap<String,Object>();
-        for (Output outputItem : outputList) {
-            outputs.put(outputItem.getOutputKey(), outputItem.getOutputValue());
-        }
-        int counter = 0;
-        sb.append("OUTPUTS:");
-        for (String key : outputs.keySet()) {
-            sb.append("outputs[" + counter++ + "]: " + key + "=");
-            Object obj = outputs.get(key);
-            if (obj instanceof String) {
-                sb.append((String)obj);
-            } else if (obj instanceof JsonNode) {
-                sb.append(this.convertNode((JsonNode)obj));
-            } else if (obj instanceof java.util.LinkedHashMap) {
-                try {
-                    String str = JSON_MAPPER.writeValueAsString(obj);
-                    sb.append(str);
-                } catch (Exception e) {
-                    sb.append("(a LinkedHashMap value that would not convert nicely)");
-                }
-            } else {
-                String str = "";
-                try {
-                    str = (String) obj;
-                } catch (Exception e) {
-                    str = "(a value unable to be cast as a String)";
-                }
-                sb.append(str);
-            }
-            sb.append("; ");
-        }
-        sb.append("[END]");
-        return sb;
-    }
+	private StringBuilder getOutputsAsStringBuilder(Stack heatStack) {
+		// This should only be used as a utility to print out the stack outputs
+		// to the log
+		StringBuilder sb = new StringBuilder("");
+		if (heatStack == null) {
+			sb.append("(heatStack is null)");
+			return sb;
+		}
+		List<Output> outputList = heatStack.getOutputs();
+		if (outputList == null || outputList.isEmpty()) {
+			sb.append("(outputs is empty)");
+			return sb;
+		}
+		Map<String, Object> outputs = new HashMap<String,Object>();
+		for (Output outputItem : outputList) {
+			outputs.put(outputItem.getOutputKey(), outputItem.getOutputValue());
+		}
+		int counter = 0;
+		sb.append("OUTPUTS:\n");
+		for (String key : outputs.keySet()) {
+			sb.append("outputs[" + counter++ + "]: " + key + "=");
+			Object obj = outputs.get(key);
+			if (obj instanceof String) {
+				sb.append((String)obj +" (a string)");
+			} else if (obj instanceof JsonNode) {
+				sb.append(this.convertNode((JsonNode)obj) + " (a JsonNode)");
+			} else if (obj instanceof java.util.LinkedHashMap) {
+				try {
+					String str = JSON_MAPPER.writeValueAsString(obj);
+					sb.append(str + " (a java.util.LinkedHashMap)");
+				} catch (Exception e) {
+					sb.append("(a LinkedHashMap value that would not convert nicely)");
+				}				
+			} else if (obj instanceof Integer) {
+				String str = "";
+				try {
+					str = obj.toString() + " (an Integer)\n";
+				} catch (Exception e) {
+					str = "(an Integer unable to call .toString() on)";
+				}
+				sb.append(str);
+			} else if (obj instanceof ArrayList) {
+				String str = "";
+				try {
+					str = obj.toString() + " (an ArrayList)";
+				} catch (Exception e) {
+					str = "(an ArrayList unable to call .toString() on?)";
+				}
+				sb.append(str);
+			} else if (obj instanceof Boolean) {
+				String str = "";
+				try {
+					str = obj.toString() + " (a Boolean)";
+				} catch (Exception e) {
+					str = "(an Boolean unable to call .toString() on?)";
+				}
+				sb.append(str);
+			}
+			else {
+				String str = "";
+				try {
+					str = obj.toString() + " (unknown Object type)";
+				} catch (Exception e) {
+					str = "(a value unable to call .toString() on?)";
+				}
+				sb.append(str);
+			}
+			sb.append("\n");
+		}
+		sb.append("[END]");
+		return sb;
+	}
+	
+	
+	public void copyBaseOutputsToInputs(Map<String, Object> inputs,
+			Map<String, Object> otherStackOutputs, ArrayList<String> paramNames, HashMap<String, String> aliases) {
+		if (inputs == null || otherStackOutputs == null)
+			return;
+		for (String key : otherStackOutputs.keySet()) {
+			if (paramNames != null) {
+				if (!paramNames.contains(key) && !aliases.containsKey(key)) {
+					LOGGER.debug("\tParameter " + key + " is NOT defined to be in the template - do not copy to inputs");
+					continue;
+				}
+				if (aliases.containsKey(key)) {
+					LOGGER.debug("Found an alias! Will move " + key + " to " + aliases.get(key));
+					Object obj = otherStackOutputs.get(key);
+					key = aliases.get(key);
+					otherStackOutputs.put(key, obj);
+				}
+			}
+			if (!inputs.containsKey(key)) {
+				Object obj = otherStackOutputs.get(key);
+				LOGGER.debug("\t**Adding " + key + " to inputs (.toString()=" + obj.toString());
+				if (obj instanceof String) {
+					LOGGER.debug("\t\t**A String");
+					inputs.put(key, obj);
+				} else if (obj instanceof Integer) {
+					LOGGER.debug("\t\t**An Integer");
+					inputs.put(key, obj);
+				} else if (obj instanceof JsonNode) {
+					LOGGER.debug("\t\t**A JsonNode");
+					inputs.put(key, obj);
+				} else if (obj instanceof Boolean) {
+					LOGGER.debug("\t\t**A Boolean");
+					inputs.put(key, obj);
+				} else if (obj instanceof java.util.LinkedHashMap) {
+					LOGGER.debug("\t\t**A java.util.LinkedHashMap **");
+					//Object objJson = this.convertObjectToJsonNode(obj.toString());
+					//if (objJson == null) {
+					//	LOGGER.debug("\t\tFAILED!! Will just put LinkedHashMap on the inputs");
+					inputs.put(key, obj);
+					//}
+					//else {
+					//	LOGGER.debug("\t\tSuccessfully converted to JsonNode: " + objJson.toString());
+					//	inputs.put(key, objJson);
+					//}
+				} else if (obj instanceof java.util.ArrayList) {
+					LOGGER.debug("\t\t**An ArrayList");
+					inputs.put(key, obj);
+				} else {
+					LOGGER.debug("\t\t**UNKNOWN OBJECT TYPE");
+					inputs.put(key, obj);
+				}
+			} else {
+				LOGGER.debug("key=" + key + " is already in the inputs - will not overwrite");
+			}
+		}
+		return;
+	}
+	
+	public JsonNode convertObjectToJsonNode(Object lhm) {
+		if (lhm == null) {
+			return null;
+		}
+		JsonNode jsonNode = null;
+		try {
+			String jsonString = lhm.toString();
+			jsonNode = new ObjectMapper().readTree(jsonString);
+		} catch (Exception e) {
+			LOGGER.debug("Unable to convert " + lhm.toString() + " to a JsonNode " + e.getMessage());
+			jsonNode = null;
+		}
+		return jsonNode;
+	}
+	
+	public ArrayList<String> convertCdlToArrayList(String cdl) {
+		String cdl2 = cdl.trim();
+		String cdl3;
+		if (cdl2.startsWith("[") && cdl2.endsWith("]")) {
+			cdl3 = cdl2.substring(1, cdl2.lastIndexOf("]"));
+		} else {
+			cdl3 = cdl2;
+		}
+		ArrayList<String> list = new ArrayList<String>(Arrays.asList(cdl3.split(",")));
+		return list;
+	}
+	
+    /**
+     * New with 1707 - this method will convert all the String *values* of the inputs
+     * to their "actual" object type (based on the param type: in the db - which comes from the template):
+     * (heat variable type) -> java Object type
+     * string -> String
+     * number -> Integer
+     * json -> JsonNode
+     * comma_delimited_list -> ArrayList
+     * boolean -> Boolean
+     * if any of the conversions should fail, we will default to adding it to the inputs
+     * as a string - see if Openstack can handle it.
+     * Also, will remove any params that are extra.
+     * Any aliases will be converted to their appropriate name (anyone use this feature?)
+     * @param inputs - the Map<String, String> of the inputs received on the request
+     * @param template the HeatTemplate object - this is so we can also verify if the param is valid for this template
+     * @return HashMap<String, Object> of the inputs, cleaned and converted
+     */
+	public HashMap<String, Object> convertInputMap(Map<String, String> inputs, HeatTemplate template) {
+		HashMap<String, Object> newInputs = new HashMap<String, Object>();
+		HashMap<String, HeatTemplateParam> params = new HashMap<String, HeatTemplateParam>();
+		HashMap<String, HeatTemplateParam> paramAliases = new HashMap<String, HeatTemplateParam>();
+		
+		if (inputs == null) {
+			LOGGER.debug("convertInputMap - inputs is null - nothing to do here");
+			return new HashMap<String, Object>();
+		}
+		
+		LOGGER.debug("convertInputMap in MsoHeatUtils called, with " + inputs.size() + " inputs, and template " + template.getArtifactUuid());
+		try {
+			LOGGER.debug(template.toString());
+			Set<HeatTemplateParam> paramSet = template.getParameters();
+			LOGGER.debug("paramSet has " + paramSet.size() + " entries");
+		} catch (Exception e) {
+			LOGGER.debug("Exception occurred in convertInputMap:" + e.getMessage());
+		}
+		
+		for (HeatTemplateParam htp : template.getParameters()) {
+			LOGGER.debug("Adding " + htp.getParamName());
+			params.put(htp.getParamName(), htp);
+			if (htp.getParamAlias() != null && !htp.getParamAlias().equals("")) {
+				LOGGER.debug("\tFound ALIAS " + htp.getParamName() + "->" + htp.getParamAlias());
+				paramAliases.put(htp.getParamAlias(), htp);
+			}
+		}
+		LOGGER.debug("Now iterate through the inputs...");
+		for (String key : inputs.keySet()) {
+			LOGGER.debug("key=" + key);
+			boolean alias = false;
+			String realName = null;
+			if (!params.containsKey(key)) {
+				LOGGER.debug(key + " is not a parameter in the template! - check for an alias");
+				// add check here for an alias
+				if (!paramAliases.containsKey(key)) {
+					LOGGER.debug("The parameter " + key + " is in the inputs, but it's not a parameter for this template - omit");
+					continue;
+				} else {
+					alias = true;
+					realName = paramAliases.get(key).getParamName();
+					LOGGER.debug("FOUND AN ALIAS! Will use " + realName + " in lieu of give key/alias " + key);
+				}
+			}
+			String type = params.get(key).getParamType();
+			if (type == null || type.equals("")) {
+				LOGGER.debug("**PARAM_TYPE is null/empty for " + key + ", will default to string");
+				type = "string";
+			}
+			LOGGER.debug("Parameter: " + key + " is of type " + type);
+			if (type.equalsIgnoreCase("string")) {
+				// Easiest!
+				String str = inputs.get(key);
+				if (alias) 
+					newInputs.put(realName, str);
+				else 
+					newInputs.put(key, str);
+			} else if (type.equalsIgnoreCase("number")) {
+				String integerString = inputs.get(key).toString();
+				Integer anInteger = null;
+				try {
+					anInteger = Integer.parseInt(integerString);
+				} catch (Exception e) {
+					LOGGER.debug("Unable to convert " + integerString + " to an integer!!");
+					anInteger = null;
+				}
+				if (anInteger != null) {
+					if (alias)
+						newInputs.put(realName, anInteger);
+					else
+						newInputs.put(key, anInteger);
+				}
+				else {
+					if (alias)
+						newInputs.put(realName, integerString);
+					else
+						newInputs.put(key, integerString);
+				}
+			} else if (type.equalsIgnoreCase("json")) {
+				String jsonString = inputs.get(key).toString();
+    			JsonNode jsonNode = null;
+    			try {
+    				jsonNode = new ObjectMapper().readTree(jsonString);
+    			} catch (Exception e) {
+					LOGGER.debug("Unable to convert " + jsonString + " to a JsonNode!!");
+					jsonNode = null;
+    			}
+    			if (jsonNode != null) {
+    				if (alias)
+    					newInputs.put(realName, jsonNode);
+    				else
+    					newInputs.put(key, jsonNode);
+    			}
+    			else {
+    				if (alias)
+    					newInputs.put(realName, jsonString);
+    				else
+    					newInputs.put(key, jsonString);
+    			}
+			} else if (type.equalsIgnoreCase("comma_delimited_list")) {
+				String commaSeparated = inputs.get(key).toString();
+				try {
+					ArrayList<String> anArrayList = this.convertCdlToArrayList(commaSeparated);
+					if (alias)
+						newInputs.put(realName, anArrayList);
+					else
+						newInputs.put(key, anArrayList);
+				} catch (Exception e) {
+					LOGGER.debug("Unable to convert " + commaSeparated + " to an ArrayList!!");
+					if (alias)
+						newInputs.put(realName, commaSeparated);
+					else
+						newInputs.put(key, commaSeparated);
+				}
+			} else if (type.equalsIgnoreCase("boolean")) {
+				String booleanString = inputs.get(key).toString();
+				Boolean aBool = new Boolean(booleanString);
+				if (alias)
+					newInputs.put(realName, aBool);
+				else
+					newInputs.put(key, aBool);
+			} else {
+				// it's null or something undefined - just add it back as a String
+				String str = inputs.get(key);
+				if (alias)
+					newInputs.put(realName, str);
+				else
+					newInputs.put(key, str);
+			}
+		}
+		return newInputs;
+	}
+
 }

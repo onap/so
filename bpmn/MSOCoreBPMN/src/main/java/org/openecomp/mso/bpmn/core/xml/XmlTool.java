@@ -29,6 +29,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -48,6 +49,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.openecomp.mso.logger.MsoLogger;
 import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -334,6 +336,48 @@ public final class XmlTool {
 		}
 	}
 	
+	/**
+	 * Parses the XML document String for the first occurrence of the specified element tag.
+	 * If found, the value associated with that element tag is replaced with the new value
+	 * and a String containing the modified XML document is returned. If the XML passed is
+	 * null or the element tag is not found in the document, null will be returned.
+	 * @param xml String containing the original XML document.
+	 * @param elementTag String containing the tag of the element to be modified.
+	 * @param newValue String containing the new value to be used to modify the corresponding element.
+	 * @return the contents of the modified XML document as a String or null/empty if the modification failed.
+	 * @throws IOException, TransformerException, ParserConfigurationException, SAXException
+	 */
+	public static Optional<String> modifyElement(String xml, String elementTag, String newValue) throws IOException, TransformerException,
+	ParserConfigurationException, SAXException {
+
+		if (xml == null || xml.isEmpty()) {
+			// no XML content to be modified, return empty
+			return Optional.empty();
+		}
+		
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		dbFactory.setNamespaceAware(true);
+		DocumentBuilder db = dbFactory.newDocumentBuilder();
+		InputSource source = new InputSource(new StringReader(xml));
+		Document doc = db.parse(source);
+		
+		Node modNode = doc.getElementsByTagName(elementTag).item(0);
+		if (modNode == null) {
+			// did not find the specified element to be modified, return empty
+			//System.out.println("Did not find element tag " + elementTag + " in XML");
+			return Optional.empty();
+		} else {
+			modNode.setTextContent(newValue);			
+		}
+		
+		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+		Transformer transformer = transformerFactory.newTransformer();
+		StringWriter writer = new StringWriter();
+		transformer.transform(new DOMSource(doc), new StreamResult(writer));
+		// return the modified String representation of the XML
+		return Optional.of(writer.toString().trim());
+	}
+
 	/**
 	 * Instantiation is not allowed.
 	 */

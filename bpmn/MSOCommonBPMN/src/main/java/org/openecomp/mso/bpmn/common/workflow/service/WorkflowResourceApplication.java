@@ -41,7 +41,7 @@ public class WorkflowResourceApplication extends Application {
 
     public WorkflowResourceApplication() {
         singletons.add(new WorkflowResource());
-        singletons.add(new WorkflowAsyncCommonResource());
+        singletons.add(new WorkflowAsyncResource());
         singletons.add(new WorkflowMessageResource());
     }
 

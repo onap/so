@@ -27,8 +27,8 @@
 		</meta>
 		
 		<composite-id>
-			<key-property name="vfModuleId" column="VF_MODULE_ID" type="int" />
-			<key-property name="heatFilesId" column="HEAT_FILES_ID" type="int" />
+			<key-property name="vfModuleModelUuid" column="VF_MODULE_MODEL_UUID" type="java.lang.String" length="200"/>
+			<key-property name="heatFilesArtifactUuid" column="HEAT_FILES_ARTIFACT_UUID" type="java.lang.String" length="200"/>
 		</composite-id> 
 				
 	</class>

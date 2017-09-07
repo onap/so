@@ -255,7 +255,11 @@ public class WorkflowResource {
 	 */
 	private boolean isProcessEnded(String processInstanceId) {
 		ProcessEngineServices pes = getProcessEngineServices();
-		return pes.getRuntimeService().createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult() == null ? true : false ;        
+		try {
+			return pes.getRuntimeService().createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult() == null ? true : false ;
+		} catch (Exception e) {
+			return true;
+		}        
 	}
 
 	private void processResponseMap(WorkflowResponse workflowResponse, Map<String, Object> responseMap) {

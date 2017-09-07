@@ -33,6 +33,10 @@
     <url-pattern>/*</url-pattern>
   </servlet-mapping>
   <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>/WEB-INF/applicationContext.xml</param-value>
+  </context-param>
+  <context-param>
     <param-name>mso.configuration</param-name>
     <param-value>MSO_PROP_TOPOLOGY=topology.properties</param-value>
   </context-param>
@@ -44,6 +48,9 @@
     <param-name>resteasy.resources</param-name>
     <param-value>org.openecomp.mso.logger.MsoLoggingServlet,org.openecomp.mso.bpmn.core.HealthCheckHandler</param-value>
   </context-param>
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
   <filter>
     <filter-name>LogFilter</filter-name>
     <filter-class>org.openecomp.mso.logger.LogFilter</filter-class>

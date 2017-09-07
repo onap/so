@@ -27,17 +27,40 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.openecomp.mso.db.catalog.beans.*;
+
 import org.hibernate.HibernateException;
-import org.hibernate.NonUniqueResultException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
-import org.hibernate.service.ServiceRegistry;
-import org.hibernate.service.ServiceRegistryBuilder;
-
-import org.openecomp.mso.db.HibernateUtils;
+import org.openecomp.mso.db.AbstractSessionFactoryManager;
+import org.openecomp.mso.db.catalog.beans.AllottedResource;
+import org.openecomp.mso.db.catalog.beans.AllottedResourceCustomization;
+import org.openecomp.mso.db.catalog.beans.HeatEnvironment;
+import org.openecomp.mso.db.catalog.beans.HeatFiles;
+import org.openecomp.mso.db.catalog.beans.HeatNestedTemplate;
+import org.openecomp.mso.db.catalog.beans.HeatTemplate;
+import org.openecomp.mso.db.catalog.beans.HeatTemplateParam;
+import org.openecomp.mso.db.catalog.beans.Model;
+import org.openecomp.mso.db.catalog.beans.ModelRecipe;
+import org.openecomp.mso.db.catalog.beans.NetworkRecipe;
+import org.openecomp.mso.db.catalog.beans.NetworkResource;
+import org.openecomp.mso.db.catalog.beans.NetworkResourceCustomization;
+import org.openecomp.mso.db.catalog.beans.Service;
+import org.openecomp.mso.db.catalog.beans.ServiceMacroHolder;
+import org.openecomp.mso.db.catalog.beans.ServiceRecipe;
+import org.openecomp.mso.db.catalog.beans.ServiceToAllottedResources;
+import org.openecomp.mso.db.catalog.beans.ServiceToNetworks;
+import org.openecomp.mso.db.catalog.beans.ServiceToResourceCustomization;
+import org.openecomp.mso.db.catalog.beans.TempNetworkHeatTemplateLookup;
+import org.openecomp.mso.db.catalog.beans.ToscaCsar;
+import org.openecomp.mso.db.catalog.beans.VfModule;
+import org.openecomp.mso.db.catalog.beans.VfModuleCustomization;
+import org.openecomp.mso.db.catalog.beans.VfModuleToHeatFiles;
+import org.openecomp.mso.db.catalog.beans.VnfComponent;
+import org.openecomp.mso.db.catalog.beans.VnfComponentsRecipe;
+import org.openecomp.mso.db.catalog.beans.VnfRecipe;
+import org.openecomp.mso.db.catalog.beans.VnfResCustomToVfModuleCustom;
+import org.openecomp.mso.db.catalog.beans.VnfResource;
+import org.openecomp.mso.db.catalog.beans.VnfResourceCustomization;
 import org.openecomp.mso.db.catalog.utils.MavenLikeVersioningComparator;
 import org.openecomp.mso.db.catalog.utils.RecordNotFoundException;
 import org.openecomp.mso.logger.MessageEnum;
@@ -52,12 +75,14 @@ import org.openecomp.mso.logger.MsoLogger;
  */
 public class CatalogDatabase implements Closeable {
 
-    protected static HibernateUtils hibernateUtils = new HibernateUtilsCatalogDb ();
+    protected final AbstractSessionFactoryManager sessionFactoryCatalogDB;
 
     private static final String NETWORK_TYPE = "networkType";
     private static final String ACTION = "action";
     private static final String VNF_TYPE = "vnfType";
     private static final String SERVICE_TYPE = "serviceType";
+    private static final String SERVICE_ID= "serviceId";
+    private static final String MODEL_UUID= "modelUUID";
     private static final String VNF_COMPONENT_TYPE = "vnfComponentType";
     private static final String MODEL_ID = "modelId";
     private static final String MODEL_NAME = "modelName";
@@ -65,22 +90,26 @@ public class CatalogDatabase implements Closeable {
     private static final String MODEL_TYPE = "modelType";
     private static final String MODEL_VERSION_ID = "modelVersionId";
     private static final String MODEL_CUSTOMIZATION_UUID = "modelCustomizationUuid";
+	private static final String VF_MODULE_MODEL_UUID = "vfModuleModelUUId";
     private static final String VF_MODULE_ID = "vfModuleId";
-    private static final String SERVICE_NAME_VERSION_ID= "serviceNameVersionId";
 
     protected static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.GENERAL);
 
     protected Session session = null;
 
-    public CatalogDatabase () {
+    protected CatalogDatabase (AbstractSessionFactoryManager sessionFactoryCatalog) {
+        sessionFactoryCatalogDB = sessionFactoryCatalog;
     }
-
-
+    
+    public static CatalogDatabase getInstance() {
+        return new CatalogDatabase(new CatalogDbSessionFactoryManager ());
+    }
+    
     private Session getSession () {
 
              if (session == null) {
             try {
-                session = hibernateUtils.getSessionFactory ().openSession ();
+                session = sessionFactoryCatalogDB.getSessionFactory ().openSession ();
                 session.beginTransaction ();
             } catch (HibernateException he) {
                 LOGGER.error (MessageEnum.GENERAL_EXCEPTION_ARG, "Error creating Hibernate Session: " + he, "", "", MsoLogger.ErrorCode.DataError, "Error creating Hibernate Session: " + he);
@@ -143,6 +172,7 @@ public class CatalogDatabase implements Closeable {
      * @param templateId
      * @return HeatTemplate object or null if none found
      */
+    @Deprecated
     public HeatTemplate getHeatTemplate (int templateId) {
         long startTime = System.currentTimeMillis ();
         LOGGER.debug ("Catalog database - get Heat template with id " + templateId);
@@ -215,6 +245,114 @@ public class CatalogDatabase implements Closeable {
     }
 
     /**
+     * Return a specific Heat Template by ARTIFACT_UUID).
+     *
+     * @param artifactUuid
+     * @return HeatTemplate object or null if none found
+     */    
+    
+    public HeatTemplate getHeatTemplateByArtifactUuid(String artifactUuid) {
+        long startTime = System.currentTimeMillis ();
+        LOGGER.debug ("Catalog database - get Heat template with artifactUuid " + artifactUuid);
+
+        // Will this work if the id is a string? 
+        HeatTemplate template = (HeatTemplate) getSession ().get (HeatTemplate.class, artifactUuid);
+        LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getHeatTemplate", null);
+        return template;
+    }
+    
+    /**
+     * Return a specific Heat Template by ARTIFACT_UUID using standard query method. unique record expected.
+     *
+     * @param artifactUuid
+     * @return HeatTemplate object or null if none found
+     */    
+    public HeatTemplate getHeatTemplateByArtifactUuidRegularQuery(String artifactUuid) {
+       long startTime = System.currentTimeMillis ();
+        LOGGER.debug ("Catalog database - get Heat template (regular query) with artifactUuid " + artifactUuid);
+
+        String hql = "FROM HeatTemplate WHERE artifactUuid = :artifactUuidValue";
+        HashMap<String, String> variables = new HashMap<String, String>();
+        variables.put("artifactUuidValue", artifactUuid);
+        //Query query = getSession().createQuery(hql);
+        //query.setParameter ("artifactUuidValue", artifactUuid);
+        HeatTemplate template = (HeatTemplate) this.executeQuerySingleRow(hql.toString(), variables, true);
+
+        if (template == null) {
+        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "NotFound", "CatalogDB", "getHeatTemplateByArtifactUuidRegularQuery", null);
+        } else {
+        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getHeatTemplateByArtifactUuidRegularQuery", null);
+        }
+        return template;
+    }
+    
+    public List<HeatTemplateParam> getParametersForHeatTemplate(String heatTemplateArtifactUuid) {
+        long startTime = System.currentTimeMillis ();
+        LOGGER.debug ("Catalog database - getParametersForHeatTemplate with artifactUuid " + heatTemplateArtifactUuid);
+
+        String hql = "FROM HeatTemplateParams WHERE artifactUuid = :artifactUuidValue";
+        Query query = getSession().createQuery(hql);
+        query.setParameter ("artifactUuidValue", heatTemplateArtifactUuid);
+        List<HeatTemplateParam> resultList = null;
+        try {
+        	resultList = query.list ();
+        } catch (org.hibernate.HibernateException he) {
+        	LOGGER.debug("Hibernate Exception - while searching HeatTemplateParams for: heatTemplateArtifactUuid='" + heatTemplateArtifactUuid + "'" + he.getMessage());
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception searching HeatTemplateParams for artifactUuid=" + heatTemplateArtifactUuid, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching for artifactUuid=" + heatTemplateArtifactUuid);
+        	resultList = new ArrayList<HeatTemplateParam>();
+        	throw he;
+        } catch (Exception e) {
+        	LOGGER.debug("Generic Exception - while searching HeatTemplateParam for: artifactUuid='" + heatTemplateArtifactUuid + "'" + e.getMessage());
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Generic exception searching HeatTemplate for artifactUuid=" + heatTemplateArtifactUuid, "", "", MsoLogger.ErrorCode.DataError, "Generic exception searching for artifactUuid=" + heatTemplateArtifactUuid);
+        	resultList = new ArrayList<HeatTemplateParam>();
+        	throw e;
+        }
+        
+        return resultList;
+    	
+    }
+    
+    /**
+     * Return a specific Heat Environment by ARTIFACT_UUID using standard query method. unique record expected.
+     *
+     * @param artifactUuid
+     * @return HeatEnvironment object or null if none found
+     */    
+    public HeatEnvironment getHeatEnvironmentByArtifactUuid(String artifactUuid) {
+        long startTime = System.currentTimeMillis ();
+        LOGGER.debug ("Catalog database - get Heat Environment with artifactUuid " + artifactUuid);
+
+        String hql = "FROM HeatEnvironment WHERE artifactUuid = :artifactUuidValue";
+        Query query = getSession().createQuery(hql);
+        query.setParameter ("artifactUuidValue", artifactUuid);
+        HeatEnvironment environment = null;
+        try {
+        	environment = (HeatEnvironment) query.uniqueResult ();
+        } catch (org.hibernate.NonUniqueResultException nure) {
+        	LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row for Envt - data integrity error: artifactUuid='" + artifactUuid +"'");
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for heatEnvironment artifactUuid=" + artifactUuid, "", "", MsoLogger.ErrorCode.DataError, "Non unique result for artifactUuid==" + artifactUuid);
+        	environment = null;
+        } catch (org.hibernate.HibernateException he) {
+        	LOGGER.debug("Hibernate Exception - while searching for envt: artifactUuid='" + artifactUuid + "' " + he.getMessage());
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception searching envt for artifactUuid=" + artifactUuid, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching envt for artifactUuid=" + artifactUuid);
+        	environment = null;
+        	throw he;
+        } catch (Exception e) {
+        	LOGGER.debug("Generic Exception - while searching for: artifactUuid='" + artifactUuid + "' " + e.getMessage());
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Generic exception searching envt for artifactUuid=" + artifactUuid, "", "", MsoLogger.ErrorCode.DataError, "Generic exception searching envt for artifactUuid=" + artifactUuid);
+        	environment = null;
+        	throw e;
+        }
+
+        if (environment == null) {
+        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "NotFound", "CatalogDB", "getHeatEnvironmentByArtifactUuid", null);
+        } else {
+        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getHeatEnvironmentByArtifactUuid", null);
+        }
+        return environment;
+    }
+    
+    /**
      * Fetch a Service definition by InvariantUUID
      */
     public Service getServiceByInvariantUUID (String modelInvariantUUID) {
@@ -244,30 +382,30 @@ public class CatalogDatabase implements Closeable {
     /**
      * Fetch a Service definition
      */
-    public Service getService (String serviceName) {
+    public Service getService (String modelName) {
 
         long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - get service with name " + serviceName);
+        LOGGER.debug ("Catalog database - get service with name " + modelName);
 
-        String hql = "FROM Service WHERE serviceName = :service_name";
+        String hql = "FROM Service WHERE modelName = :MODEL_NAME";
         Query query = getSession ().createQuery (hql);
-        query.setParameter ("service_name", serviceName);
+        query.setParameter ("MODEL_NAME", modelName);
 
         Service service = null;
         try {
         	service = (Service) query.uniqueResult ();
         } catch (org.hibernate.NonUniqueResultException nure) {
-        	LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row - data integrity error: serviceName='" + serviceName + "'");
-        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for serviceName=" + serviceName, "", "", MsoLogger.ErrorCode.DataError, "Non unique result for serviceName=" + serviceName);
-        	return null;
+        	LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row - data integrity error: modelName='" + modelName + "'");
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for modelName=" + modelName, "", "", MsoLogger.ErrorCode.DataError, "Non unique result for modelName=" + modelName);
+        	throw nure;
         } catch (org.hibernate.HibernateException he) {
-        	LOGGER.debug("Hibernate Exception - while searching for: serviceName='" + serviceName + "'");
-        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception searching for serviceName=" + serviceName, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching for serviceName=" + serviceName);
-        	return null;
+        	LOGGER.debug("Hibernate Exception - while searching for: modelName='" + modelName + "' " + he.getMessage());
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception searching for modelName=" + modelName, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching for modelName=" + modelName);
+        	throw he;
         } catch (Exception e) {
-        	LOGGER.debug("Generic Exception - while searching for: serviceName='" + serviceName);
-        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Generic exception searching for serviceName=" + serviceName, "", "", MsoLogger.ErrorCode.DataError, "Generic exception searching for serviceName=" + serviceName);
-        	return null;
+        	LOGGER.debug("Generic Exception - while searching for: modelName='" + modelName + " " + e.getMessage());
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Generic exception searching for modelName=" + modelName, "", "", MsoLogger.ErrorCode.DataError, "Generic exception searching for modelName=" + modelName);
+        	throw e;
         }
         if (service == null) {
         	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "NotFound", "CatalogDB", "getService", null);
@@ -278,38 +416,39 @@ public class CatalogDatabase implements Closeable {
         return service;
     }
 
-    /**
-     * Fetch a Service definition
-     */
-    public Service getServiceByUUID (String serviceNameVersionId) {
+    public Service getServiceByModelUUID (String modelUUID) {
 
         long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - get service with UUID " + serviceNameVersionId);
+        LOGGER.debug ("Catalog database - get service with Model UUID " + modelUUID);
 
-        String hql = "FROM Service WHERE serviceNameVersionId = :service_id";
-        Query query = getSession ().createQuery (hql);
-        query.setParameter ("service_id", serviceNameVersionId);
+        String hql = "FROM Service WHERE modelUUID = :MODEL_UUID";
+        HashMap<String, String> parameters = new HashMap<String, String>();
+        parameters.put("MODEL_UUID", modelUUID);
 
-        Service service = null;
+        
+        Service service = this.executeQuerySingleRow(hql, parameters, true);
+
+        /*
         try {
         	service = (Service) query.uniqueResult ();
         } catch (org.hibernate.NonUniqueResultException nure) {
-        	LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row - data integrity error: serviceNameVersionId='" + serviceNameVersionId + "'");
-        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for serviceNameVersionId=" + serviceNameVersionId, "", "", MsoLogger.ErrorCode.DataError, "Non unique result for serviceNameVersionId=" + serviceNameVersionId);
-        	return null;
+        	LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row - data integrity error: modelUUID='" + modelUUID + "'");
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for modelUUID=" + modelUUID, "", "", MsoLogger.ErrorCode.DataError, "Non unique result for modelUUID=" + modelUUID);
+        	throw nure;
         } catch (org.hibernate.HibernateException he) {
-        	LOGGER.debug("Hibernate Exception - while searching for: serviceName='" + serviceNameVersionId + "'");
-        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception searching for serviceNameVersionId=" + serviceNameVersionId, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching for serviceNameVersionId=" + serviceNameVersionId);
-        	return null;
+        	LOGGER.debug("Hibernate Exception - while searching for: modelUUID='" + modelUUID + "' " + he.getMessage());
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception searching for modelUUID=" + modelUUID, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching for modelUUID=" + modelUUID);
+        	throw he;
         } catch (Exception e) {
-        	LOGGER.debug("Generic Exception - while searching for: serviceName='" + serviceNameVersionId);
-        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Generic exception searching for serviceNameVersionId=" + serviceNameVersionId, "", "", MsoLogger.ErrorCode.DataError, "Generic exception searching for serviceNameVersionId=" + serviceNameVersionId);
-        	return null;
+        	LOGGER.debug("Generic Exception - while searching for: modelUUID='" + modelUUID + " " + e.getMessage());
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Generic exception searching for modelUUID=" + modelUUID, "", "", MsoLogger.ErrorCode.DataError, "Generic exception searching for modelUUID=" + modelUUID);
+        	throw e;
         }
+        */
         if (service == null) {
-        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "NotFound", "CatalogDB", "getService", null);
+        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "NotFound", "CatalogDB", "getServiceByModelUUID", null);
         } else {
-        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getService", null);
+        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getServiceByModelUUID", null);
         }
 
         return service;
@@ -326,11 +465,11 @@ public class CatalogDatabase implements Closeable {
         String serviceVersion = "not_set";
 
         if(serviceNameVersionId != null && serviceNameVersionId.length() > 0){
-        	LOGGER.debug ("Catalog database - get serviceNameVersionId with id " + serviceNameVersionId);
+        	LOGGER.debug ("Catalog database - get service modelUUID with id " + serviceNameVersionId);
 
-        	String hql = "FROM Service WHERE service_name_version_id = :service_name_version_id and http_method = :http_method";
+        	String hql = "FROM Service WHERE MODEL_UUID = :MODEL_UUID and http_method = :http_method";
         	query = getSession ().createQuery (hql);
-            query.setParameter ("service_name_version_id", serviceNameVersionId);
+            query.setParameter ("MODEL_UUID", serviceNameVersionId);
          } else {
         	serviceId = map.get("serviceId");
         	serviceVersion = map.get("serviceVersion");
@@ -352,14 +491,17 @@ public class CatalogDatabase implements Closeable {
         	LOGGER.debug("Non Unique Result Exception - data integrity error: service_id='" + serviceId + "', serviceVersion='" + serviceVersion + "'");
         	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for service_id=" + serviceId + " and serviceVersion=" + serviceVersion, "", "", MsoLogger.ErrorCode.DataError, "Non unique result for service_id=" + serviceId);
         	service = null;
+        	throw nure;
         } catch (org.hibernate.HibernateException he) {
-        	LOGGER.debug("Hibernate Exception - while searching for: service_id='" + serviceId + "', serviceVersion='" + serviceVersion + "'");
+        	LOGGER.debug("Hibernate Exception - while searching for: service_id='" + serviceId + "', serviceVersion='" + serviceVersion + "' " + he.getMessage());
         	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception searching for service_id=" + serviceId + " and serviceVersion=" + serviceVersion, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching for service_id=" + serviceId);
         	service = null;
+        	throw he;
         } catch (Exception e) {
-        	LOGGER.debug("Generic Exception - while searching for: service_id='" + serviceId + "', serviceVersion='" + serviceVersion + "'");
+        	LOGGER.debug("Generic Exception - while searching for: service_id='" + serviceId + "', serviceVersion='" + serviceVersion + "' " + e.getMessage());
         	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Generic exception searching for service_id=" + serviceId + " and serviceVersion=" + serviceVersion, "", "", MsoLogger.ErrorCode.DataError, "Generic exception searching for service_id=" + serviceId);
         	service = null;
+        	throw e;
         }
         if (service == null) {
         	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "NotFound", "CatalogDB", "getService", null);
@@ -372,30 +514,30 @@ public class CatalogDatabase implements Closeable {
     /**
      * Return the newest version of a Service (queried by Name).
      *
-     * @param serviceName
+     * @param modelName
      * @return Service object or null if none found
      */
-    public Service getServiceByName (String serviceName) {
+    public Service getServiceByModelName (String modelName){
 
         long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - get service with name " + serviceName);
+        LOGGER.debug ("Catalog database - get service with name " + modelName);
 
-        String hql = "FROM Service WHERE serviceName = :service_name";
+        String hql = "FROM Service WHERE modelName = :MODEL_NAME";
         Query query = getSession ().createQuery (hql);
-        query.setParameter ("service_name", serviceName);
+        query.setParameter ("MODEL_NAME", modelName);
 
         @SuppressWarnings("unchecked")
         List <Service> resultList = query.list ();
 
         // See if something came back.
         if (resultList.isEmpty ()) {
-            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. Service not found", "CatalogDB", "getServiceByName", null);
+            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. Service not found", "CatalogDB", "getServiceByModelName", null);
             return null;
         }
         Collections.sort (resultList, new MavenLikeVersioningComparator ());
         Collections.reverse (resultList);
 
-        LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getServiceByName", null);
+        LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getServiceByModelName", null);
         return resultList.get (0);
     }
 
@@ -427,74 +569,75 @@ public class CatalogDatabase implements Closeable {
     }
 
     /**
-     * Return a Service recipe that matches a given SERVICE_NAME_VERSION_ID
-     * (MODEL_VERSION_ID) and ACTION
-     *
-     * @param modelVersionId
-     * @param action
-     * @return ServiceRecipe object or null if none found
-     */
-    public ServiceRecipe getServiceRecipe(String modelVersionId,
-                                       String action) {
-
-        long startTime = System.currentTimeMillis();
-        LOGGER.debug("Catalog database - get Service recipe with modeVersionId=" + modelVersionId
-                                      + " and action=" + action);
-
-        try {
-                        String hql;
-
-                        hql = "SELECT new ServiceRecipe(SR.id, SR.serviceId, SR.action, SR.description, " +
-                                        "SR.orchestrationUri, SR.serviceParamXSD, case when SR.recipeTimeout is null then 0 else SR.recipeTimeout end, " +
-                                        "case when SR.serviceTimeoutInterim is null then 0 else SR.serviceTimeoutInterim end, SR.created) " +
-                                        "FROM Service as S RIGHT OUTER JOIN S.recipes SR " +
-                                        "WHERE SR.serviceId = S.id AND S.serviceNameVersionId = :serviceNameVersionId AND SR.action = :action";
-                        Query query = getSession().createQuery(hql);
-                        query.setParameter(SERVICE_NAME_VERSION_ID, modelVersionId);
-                        query.setParameter(ACTION, action);
-
-                        @SuppressWarnings("unchecked")
-                        List<ServiceRecipe> recipeResultList = query.list();
-                        if (recipeResultList.isEmpty()) {
-                                LOGGER.debug("Catalog database - recipeResultList is null");
-                                return null;
-                        }
-                        Collections.sort(recipeResultList, new MavenLikeVersioningComparator());
-                        Collections.reverse(recipeResultList);
-                        LOGGER.debug("Catalog database - recipeResultList contains " + recipeResultList.get(0).toString());
-
-                        return recipeResultList.get(0);
-        } finally {
-            LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getServiceRecipe", null);
-        }
-    }
-
-    /**
      * Return a newest version of Service recipe that matches a given SERVICE_ID and ACTION
      *
-     * @param serviceId
-     * @param action     *
+     * @param serviceModelUUID
+     * @param action     * 
      * @return ServiceRecipe object or null if none found
      */
-    public ServiceRecipe getServiceRecipe (int serviceId, String action) {
+    @Deprecated
+    public ServiceRecipe getServiceRecipe (int serviceModelUUID, String action) {
+       
+        StringBuilder hql = null;
 
-        StringBuilder hql =  null;
-
-        if(action == null){
-            hql = new StringBuilder ("FROM ServiceRecipe WHERE serviceId = :serviceId");
+    	if(action == null){
+        	hql = new StringBuilder ("FROM ServiceRecipe WHERE serviceModelUUID = :serviceModelUUID");
         }else {
-            hql = new StringBuilder ("FROM ServiceRecipe WHERE serviceId = :serviceId AND action = :action ");
+        	hql = new StringBuilder ("FROM ServiceRecipe WHERE serviceModelUUID = :serviceModelUUID AND action = :action ");
         }
 
         long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - get Service recipe with serviceId " + Integer.toString(serviceId)
+        LOGGER.debug ("Catalog database - get Service recipe with serviceModelUUID " + Integer.toString(serviceModelUUID)
                                       + " and action "
                                       + action
                                       );
 
         Query query = getSession ().createQuery (hql.toString ());
-        query.setParameter ("serviceId", serviceId);
-        query.setParameter (ACTION, action);
+        query.setParameter ("serviceModelUUID", serviceModelUUID);
+        if(action != null){
+        	query.setParameter (ACTION, action);
+        }
+
+                        @SuppressWarnings("unchecked")
+        List <ServiceRecipe> resultList = query.list ();
+
+        if (resultList.isEmpty ()) {
+            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. Service recipe not found", "CatalogDB", "getServiceRecipe", null);
+                                return null;
+                        }
+
+        Collections.sort (resultList, new MavenLikeVersioningComparator ());
+        Collections.reverse (resultList);
+
+        LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getServiceRecipe", null);
+        return resultList.get (0);
+    }
+
+    /**
+     * Return a newest version of Service recipe that matches a given SERVICE_MODEL_UUID and ACTION
+     *
+     * @param serviceModelUuid
+     * @param action     *
+     * @return ServiceRecipe object or null if none found
+     */
+    public ServiceRecipe getServiceRecipeByServiceModelUuid (String serviceModelUuid, String action) {
+
+        StringBuilder hql =  null;
+
+        if(action == null){
+        	hql = new StringBuilder ("FROM ServiceRecipe WHERE serviceModelUuid = :serviceModelUuid");
+        }else {
+        	hql = new StringBuilder ("FROM ServiceRecipe WHERE serviceModelUuid = :serviceModelUuid AND action = :action ");
+        }
+
+        long startTime = System.currentTimeMillis ();
+        LOGGER.debug ("Catalog database - get Service recipe with serviceModelUuid " + serviceModelUuid 
+                                      + " and action "
+                                      + action
+                                      );
+
+        Query query = getSession ().createQuery (hql.toString ());
+        query.setParameter ("serviceModelUuid", serviceModelUuid);
         if(action != null){
             query.setParameter (ACTION, action);
         }
@@ -514,30 +657,17 @@ public class CatalogDatabase implements Closeable {
         return resultList.get (0);
     }
 
-    /**
-     * @param serviceName
-     * @param action
-     * @return ServiceRecipe object or null if none found. returns a newest version of Service recipe that matches a given serviceName, action and for the newest service version
-     */
-    public ServiceRecipe getServiceRecipeByServiceNameAndAction(String serviceName, String action) {
-        Service service = getServiceByName(serviceName);
-        if (service != null ){
-            return getServiceRecipe(service.getId(),action);
-        }
-        return null;
-    }
-
-    public List<ServiceRecipe> getServiceRecipes (int serviceId) {
+    public List<ServiceRecipe> getServiceRecipes (String serviceModelUuid) {
 
         StringBuilder hql = null;
 
-        hql = new StringBuilder ("FROM ServiceRecipe WHERE serviceId = :serviceId");
+       	hql = new StringBuilder ("FROM ServiceRecipe WHERE serviceModelUUID = :serviceModelUUID");
 
         long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - get Service recipe with serviceId " + Integer.toString(serviceId));
+        LOGGER.debug ("Catalog database - get Service recipe with serviceModelUUID " + serviceModelUuid);
 
         Query query = getSession ().createQuery (hql.toString ());
-        query.setParameter ("serviceId", serviceId);
+        query.setParameter ("serviceModelUUID", serviceModelUuid);
 
         @SuppressWarnings("unchecked")
         List <ServiceRecipe> resultList = query.list ();
@@ -554,6 +684,7 @@ public class CatalogDatabase implements Closeable {
         return resultList;
     }
 
+    
     /**
      * Return the VNF component data - queried by the VNFs ID and the component type.
      *
@@ -561,6 +692,7 @@ public class CatalogDatabase implements Closeable {
      * @param type
      * @return VnfComponent object or null if none found
      */
+    @Deprecated
     public VnfComponent getVnfComponent (int vnfId, String type) {
 
     	long startTime = System.currentTimeMillis();
@@ -578,14 +710,17 @@ public class CatalogDatabase implements Closeable {
         	LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row - data integrity error: vnf_id='" + vnfId + "', componentType='" + type + "'");
         	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for vnf_id=" + vnfId + " and componentType=" + type, "", "", MsoLogger.ErrorCode.DataError, "Non unique result for vnf_id=" + vnfId);
         	result = null;
+        	throw nure;
         } catch (org.hibernate.HibernateException he) {
-        	LOGGER.debug("Hibernate Exception - while searching for: vnf_id='" + vnfId + "', componentType='" + type + "'");
+        	LOGGER.debug("Hibernate Exception - while searching for: vnf_id='" + vnfId + "', componentType='" + type + "' " + he.getMessage());
         	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception searching for vnf_id=" + vnfId + " and componentType=" + type, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching for vnf_id=" + vnfId);
         	result = null;
+        	throw he;
         } catch (Exception e) {
-        	LOGGER.debug("Generic Exception - while searching for: vnf_id='" + vnfId + "', componentType='" + type + "'");
+        	LOGGER.debug("Generic Exception - while searching for: vnf_id='" + vnfId + "', componentType='" + type + "' " + e.getMessage());
         	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Generic exception searching for vnf_id=" + vnfId + " and componentType=" + type, "", "", MsoLogger.ErrorCode.DataError, "Generic exception searching for vnf_id=" + vnfId);
         	result = null;
+        	throw e;
         }
 
     	//LOGGER.debug("Found VNF Component: " + result.toString());
@@ -606,9 +741,9 @@ public class CatalogDatabase implements Closeable {
     public VnfResource getVnfResource (String vnfType) {
 
         long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - get vnf resource with name " + vnfType);
+        LOGGER.debug ("Catalog database - get vnf resource with model_name " + vnfType);
 
-        String hql = "FROM VnfResource WHERE vnfType = :vnf_name";
+        String hql = "FROM VnfResource WHERE modelName = :vnf_name";
         Query query = getSession ().createQuery (hql);
         query.setParameter ("vnf_name", vnfType);
 
@@ -637,9 +772,9 @@ public class CatalogDatabase implements Closeable {
     public VnfResource getVnfResource (String vnfType, String serviceVersion) {
 
         long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - get VNF resource with name " + vnfType);
+        LOGGER.debug ("Catalog database - get VNF resource with model_name " + vnfType + " and version=" + serviceVersion);
 
-        String hql = "FROM VnfResource WHERE vnfType = :vnfName and version = :serviceVersion";
+        String hql = "FROM VnfResource WHERE modelName = :vnfName and version = :serviceVersion";
         Query query = getSession ().createQuery (hql);
         query.setParameter ("vnfName", vnfType);
         query.setParameter ("serviceVersion", serviceVersion);
@@ -651,14 +786,19 @@ public class CatalogDatabase implements Closeable {
         	LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row - data integrity error: vnfType='" + vnfType + "', serviceVersion='" + serviceVersion + "'");
         	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for vnfType=" + vnfType + " and serviceVersion=" + serviceVersion, "", "", MsoLogger.ErrorCode.DataError, "Non unique result for vnfType=" + vnfType);
         	resource = null;
+        	throw nure;
         } catch (org.hibernate.HibernateException he) {
-        	LOGGER.debug("Hibernate Exception - while searching for: vnfType='" + vnfType + "', asdc_service_model_version='" + serviceVersion + "'");
+        	LOGGER.debug("Hibernate Exception - while searching for: vnfType='" + vnfType + "', asdc_service_model_version='" + serviceVersion + "' " + he.getMessage());
+        	LOGGER.debug(he.getStackTrace().toString());
         	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception searching for vnfType=" + vnfType + " and serviceVersion=" + serviceVersion, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching for vnfType=" + vnfType);
         	resource = null;
+        	throw he;
         } catch (Exception e) {
-        	LOGGER.debug("Generic Exception - while searching for: vnfType='" + vnfType + "', serviceVersion='" + serviceVersion + "'");
+        	LOGGER.debug("Generic Exception - while searching for: vnfType='" + vnfType + "', serviceVersion='" + serviceVersion + "' " + e.getMessage());
+        	LOGGER.debug(e.getStackTrace().toString());
         	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Generic exception searching for vnfType=" + vnfType + " and serviceVersion=" + serviceVersion, "", "", MsoLogger.ErrorCode.DataError, "Generic exception searching for vnfType=" + vnfType);
         	resource = null;
+        	throw e;
         }
         if (resource == null) {
         	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "NotFound", "CatalogDB", "getVnfResource", null);
@@ -669,37 +809,120 @@ public class CatalogDatabase implements Closeable {
     }
 
     /**
-     * Return the newest version of a specific VNF resource (queried by modelCustomizationId).
+     * Return VnfResource (queried by modelCustomizationId).
      *
-     * @param vnfType
-     * @param version
+     * @param modelCustomizationId
      * @return VnfResource object or null if none found
      */
-    public VnfResource getVnfResourceByModelCustomizationId (String modelCustomizationId, String serviceVersion) {
+    public VnfResource getVnfResourceByModelCustomizationId (String modelCustomizationId) {
 
         long startTime = System.currentTimeMillis ();
         LOGGER.debug ("Catalog database - get VNF resource with modelCustomizationId " + modelCustomizationId);
 
-        String hql = "FROM VnfResource WHERE modelCustomizationUuid = :modelCustomizationId and version = :serviceVersion";
+        String hql = "SELECT vr "
+					+ "FROM VnfResource as vr JOIN vr.vnfResourceCustomizations as vrc "
+					+ "WHERE vrc.modelCustomizationUuid = :modelCustomizationId";
+		
         Query query = getSession ().createQuery (hql);
         query.setParameter ("modelCustomizationId", modelCustomizationId);
-        query.setParameter ("serviceVersion", serviceVersion);
 
         VnfResource resource = null;
         try {
             resource = (VnfResource) query.uniqueResult ();
         } catch (org.hibernate.NonUniqueResultException nure) {
-            LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row - data integrity error: modelCustomizationUuid='" + modelCustomizationId + "', serviceVersion='" + serviceVersion + "'");
-            LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for modelCustomizationUuid=" + modelCustomizationId + " and serviceVersion=" + serviceVersion, "", "", MsoLogger.ErrorCode.DataError, "Non unique result for modelCustomizationId=" + modelCustomizationId);
-            resource = null;
+        	LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row - data integrity error: modelCustomizationUuid='" + modelCustomizationId + "'");
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for modelCustomizationUuid=" + modelCustomizationId, "", "", MsoLogger.ErrorCode.DataError, "Non unique result for modelCustomizationId=" + modelCustomizationId);
+        	resource = null;
+        	throw nure;
         } catch (org.hibernate.HibernateException he) {
-            LOGGER.debug("Hibernate Exception - while searching for: modelCustomizationId='" + modelCustomizationId + "', asdc_service_model_version='" + serviceVersion + "'");
-            LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception searching for modelCustomizationId=" + modelCustomizationId + " and serviceVersion=" + serviceVersion, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching for modelCustomizationId=" + modelCustomizationId);
-            resource = null;
+        	LOGGER.debug("Hibernate Exception - while searching for: modelCustomizationId='" + modelCustomizationId + "' " + he.getMessage());
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception searching for modelCustomizationId=" + modelCustomizationId, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching for modelCustomizationId=" + modelCustomizationId);
+        	resource = null;
+        	throw he;
         } catch (Exception e) {
-            LOGGER.debug("Generic Exception - while searching for: modelCustomizationId='" + modelCustomizationId + "', serviceVersion='" + serviceVersion + "'");
-            LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Generic exception searching for modelCustomizationId=" + modelCustomizationId + " and serviceVersion=" + serviceVersion, "", "", MsoLogger.ErrorCode.DataError, "Generic exception searching for modelCustomizationId=" + modelCustomizationId);
+        	LOGGER.debug("Generic Exception - while searching for: modelCustomizationId='" + modelCustomizationId + "' " + e.getMessage());
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Generic exception searching for modelCustomizationId=" + modelCustomizationId, "", "", MsoLogger.ErrorCode.DataError, "Generic exception searching for modelCustomizationId=" + modelCustomizationId);
+        	resource = null;
+        	throw e;
+        }
+        if (resource == null) {
+        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "NotFound", "CatalogDB", "getVnfResourceByModelCustomizationId", null);
+        } else {
+        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVnfResourceByModelCustomizationId", null);
+        }
+        return resource;
+    }
+    
+    
+    /**
+     * Return the newest version of a specific VNF resource Customization (queried by modelCustomizationName and modelVersionId).
+     *
+     * @return {@link VnfResourceCustomization} object or null if none found
+     */
+    public VnfResourceCustomization getVnfResourceCustomizationByModelCustomizationName (String modelCustomizationName, String modelVersionId) {
+
+        long startTime = System.currentTimeMillis ();
+        LOGGER.debug ("Catalog database - get VNF resource Customization with modelCustomizationName " + modelCustomizationName + " serviceModelUUID " + modelVersionId);
+
+        String hql = "SELECT vrc FROM VnfResourceCustomization as vrc WHERE vrc.modelCustomizationUuid IN "
+					+ "(SELECT src.resourceModelCustomizationUUID FROM ServiceToResourceCustomization src "
+					+ "WHERE src.serviceModelUUID = :modelVersionId)"
+					+ "AND vrc.modelInstanceName = :modelCustomizationName";
+		
+        Query query = getSession ().createQuery (hql);
+        query.setParameter ("modelCustomizationName", modelCustomizationName);
+        query.setParameter ("modelVersionId", modelVersionId);
+
+        @SuppressWarnings("unchecked")
+        List <VnfResourceCustomization> resultList = query.list ();
+
+        if (resultList.isEmpty ()) {
+            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. VnfResourceCustomization not found", "CatalogDB", "getVnfResourceCustomizationByModelCustomizationName", null);
+            return null;
+        }
+        
+        Collections.sort (resultList, new MavenLikeVersioningComparator ());
+        Collections.reverse (resultList);
+
+        LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVnfResourceCustomizationByModelCustomizationName", null);
+        return resultList.get (0);
+    }
+    
+    
+    /**
+     * Return the newest version of a specific VNF resource (queried by modelInvariantId).
+     *
+     * @param version
+     * @return VnfResource object or null if none found
+     */
+    public VnfResource getVnfResourceByModelInvariantId(String modelInvariantUuid, String modelVersion) {
+
+        long startTime = System.currentTimeMillis ();
+        LOGGER.debug ("Catalog database - get VNF resource with modelInvariantUuid " + modelInvariantUuid);
+
+        String hql = "FROM VnfResource WHERE modelInvariantUuid = :modelInvariantUuid and version = :serviceVersion";
+        Query query = getSession ().createQuery (hql);
+        query.setParameter ("modelInvariantUuid", modelInvariantUuid);
+        query.setParameter ("serviceVersion", modelVersion);
+
+        VnfResource resource = null;
+        try {
+        	resource = (VnfResource) query.uniqueResult ();
+        } catch (org.hibernate.NonUniqueResultException nure) {
+        	LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row - data integrity error: modelInvariantUuid='" + modelInvariantUuid + "', serviceVersion='" + modelVersion + "'");
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for modelInvariantUuid=" + modelInvariantUuid + " and serviceVersion=" + modelVersion, "", "", MsoLogger.ErrorCode.DataError, "Non unique result for modelInvariantUuid=" + modelInvariantUuid);
             resource = null;
+        	throw nure;
+        } catch (org.hibernate.HibernateException he) {
+        	LOGGER.debug("Hibernate Exception - while searching for: modelInvariantUuid='" + modelInvariantUuid + "', asdc_service_model_version='" + modelVersion + "' " + he.getMessage());
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception searching for modelInvariantUuid=" + modelInvariantUuid + " and serviceVersion=" + modelVersion, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching for modelInvariantUuid=" + modelInvariantUuid);
+            resource = null;
+        	throw he;
+        } catch (Exception e) {
+        	LOGGER.debug("Generic Exception - while searching for: modelInvariantUuid='" + modelInvariantUuid + "', serviceVersion='" + modelVersion + "' " + e.getMessage());
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Generic exception searching for modelInvariantUuid=" + modelInvariantUuid + " and serviceVersion=" + modelVersion, "", "", MsoLogger.ErrorCode.DataError, "Generic exception searching for modelInvariantUuid=" + modelInvariantUuid);
+            resource = null;
+        	throw e;
         }
         if (resource == null) {
             LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "NotFound", "CatalogDB", "getVnfResource", null);
@@ -715,6 +938,7 @@ public class CatalogDatabase implements Closeable {
      * @param id The vnf id
      * @return VnfResource object or null if none found
      */
+    @Deprecated
     public VnfResource getVnfResourceById (int id) {
 
         long startTime = System.currentTimeMillis ();
@@ -745,7 +969,7 @@ public class CatalogDatabase implements Closeable {
         long startTime = System.currentTimeMillis ();
         LOGGER.debug ("Catalog database - get vfModuleModelName with name " + modelName);
 
-        String hql = "FROM VfModule WHERE model_name = :model_name";
+        String hql = "FROM VfModule WHERE modelName = :model_name";
         Query query = getSession ().createQuery (hql);
         query.setParameter ("model_name", modelName);
 
@@ -769,9 +993,9 @@ public class CatalogDatabase implements Closeable {
         long startTime = System.currentTimeMillis ();
         LOGGER.debug ("Catalog database - get vfModuleModelName with type='" + modelName + "' and asdc_service_model_version='" + model_version + "'");
 
-        String hql = "FROM VfModule WHERE model_name = :model_name and version = :model_version";
+        String hql = "FROM VfModule WHERE Name = :model_name and version = :model_version";
         Query query = getSession ().createQuery (hql);
-        query.setParameter ("model_name", modelName);
+        query.setParameter ("modelName", modelName);
         query.setParameter ("model_version", model_version);
 
         VfModule module = null;
@@ -781,14 +1005,17 @@ public class CatalogDatabase implements Closeable {
         	LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row - data integrity error: type='" + modelName + "', asdc_service_model_version='" + model_version + "'");
         	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for type=" + modelName + " and version=" + model_version, "", "", MsoLogger.ErrorCode.DataError, "Non unique result for type=" + modelName);
         	module = null;
+        	throw nure;
         } catch (org.hibernate.HibernateException he) {
-        	LOGGER.debug("Hibernate Exception - while searching for: type='" + modelName + "', asdc_service_model_version='" + model_version + "'");
+        	LOGGER.debug("Hibernate Exception - while searching for: type='" + modelName + "', asdc_service_model_version='" + model_version + "' " + he.getMessage());
         	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception searching for type=" + modelName + " and version=" + model_version, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching for type=" + modelName);
         	module = null;
+        	throw he;
         } catch (Exception e) {
-        	LOGGER.debug("Generic Exception - while searching for: type='" + modelName + "', asdc_service_model_version='" + model_version + "'");
+        	LOGGER.debug("Generic Exception - while searching for: type='" + modelName + "', asdc_service_model_version='" + model_version + "' " + e.getMessage());
         	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Generic exception searching for type=" + modelName + " and version=" + model_version, "", "", MsoLogger.ErrorCode.DataError, "Generic exception searching for type=" + modelName);
         	module = null;
+        	throw e;
         }
         if (module == null) {
         	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "NotFound", "CatalogDB", "getVfModuleModelName", null);
@@ -796,6 +1023,35 @@ public class CatalogDatabase implements Closeable {
         	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVfModuleModelName", null);
         }
         return module;
+    }
+    
+    /**
+     * Need this for 1707 DHV. This may be a temporary solution. May
+     * change it to get resources using service's model name.
+     * 
+     *@author cb645j
+     *
+     */
+    public VfModuleCustomization getVfModuleCustomizationByModelName (String modelName) {
+
+        long startTime = System.currentTimeMillis ();
+        LOGGER.debug ("Catalog database - get VfModuleCustomization By VfModule's ModelName: " + modelName);
+
+        String hql = "SELECT VfModuleCustomization FROM VfModuleCustomization as vfmc LEFT OUTER JOIN VfModule as vfm on vfm.modelUUID = vfmc.vfModuleModelUuid where vfm.modelName = :model_name";
+        Query query = getSession ().createQuery (hql);
+        query.setParameter ("model_name", modelName);
+
+        @SuppressWarnings("unchecked")
+        List<VfModuleCustomization> resultList = query.list();
+
+        // See if something came back. Name is unique, so
+        if (resultList.isEmpty ()) {
+            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successful query but Vf module NOT found", "CatalogDB", "getVfModuleCustomizationByModelName", null);
+            return null;
+        }
+
+        LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successful query ", "CatalogDB", "getVfModuleCustomizationByModelName", null);
+        return resultList.get(0);
     }
 
 
@@ -810,7 +1066,7 @@ public class CatalogDatabase implements Closeable {
         long startTime = System.currentTimeMillis ();
         LOGGER.debug ("Catalog database - get network resource with type " + networkType);
 
-        String hql = "FROM NetworkResource WHERE networkType = :network_type";
+        String hql = "FROM NetworkResource WHERE model_name = :network_type";
         Query query = getSession ().createQuery (hql);
         query.setParameter ("network_type", networkType);
 
@@ -928,7 +1184,7 @@ public class CatalogDatabase implements Closeable {
         LOGGER.debug ("Catalog database - get VNF Recipe with vfModuleId " + vfModuleId);
 
         Query query = getSession ().createQuery (hql.toString ());
-        query.setParameter (VF_MODULE_ID, vfModuleId);
+        query.setParameter (VF_MODULE_MODEL_UUID, vfModuleId);
         query.setParameter (ACTION, action);
 
         @SuppressWarnings("unchecked")
@@ -961,14 +1217,17 @@ public class CatalogDatabase implements Closeable {
             LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row - data integrity error: modelCustomizationUuid='" + modelCustomizationUuid + "'");
             LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for modelCustomizationUuid=" + modelCustomizationUuid, "", "", MsoLogger.ErrorCode.DataError, "Non unique result for modelCustomizationUuid==" + modelCustomizationUuid);
             module = null;
+        	throw nure;
         } catch (org.hibernate.HibernateException he) {
-            LOGGER.debug("Hibernate Exception - while searching for: modelCustomizationUuid='" + modelCustomizationUuid + "'");
+        	LOGGER.debug("Hibernate Exception - while searching for: modelCustomizationUuid='" + modelCustomizationUuid + "' " + he.getMessage());
             LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception searching for modelCustomizationUuid=" + modelCustomizationUuid, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching for modelCustomizationUuid=" + modelCustomizationUuid);
             module = null;
+        	throw he;
         } catch (Exception e) {
-            LOGGER.debug("Generic Exception - while searching for: modelCustomizationUuid='" + modelCustomizationUuid + "'");
+        	LOGGER.debug("Generic Exception - while searching for: modelCustomizationUuid='" + modelCustomizationUuid + "' " + e.getMessage());
             LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Generic exception searching for modelCustomizationUuid=" + modelCustomizationUuid, "", "", MsoLogger.ErrorCode.DataError, "Generic exception searching for modelCustomizationUuid=" + modelCustomizationUuid);
             module = null;
+        	throw e;
         }
         if (module == null) {
             LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "NotFound", "CatalogDB", "getVfModuleTypeByUuid", null);
@@ -978,6 +1237,7 @@ public class CatalogDatabase implements Closeable {
         return module;
     }
 
+    @Deprecated
     public VfModule getVfModuleType(String type) {
     	long startTime = System.currentTimeMillis();
     	LOGGER.debug("Catalog database - get vfModuleType with type " + type);
@@ -999,6 +1259,7 @@ public class CatalogDatabase implements Closeable {
         return resultList.get (0);
     }
 
+    @Deprecated
     public VfModule getVfModuleType(String type, String version) {
 
     	long startTime = System.currentTimeMillis();
@@ -1015,14 +1276,17 @@ public class CatalogDatabase implements Closeable {
         	LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row - data integrity error: type='" + type + "', asdc_service_model_version='" + version + "'");
         	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for type=" + type + " and version=" + version, "", "", MsoLogger.ErrorCode.DataError, "Non unique result for type==" + type);
         	module = null;
+        	throw nure;
         } catch (org.hibernate.HibernateException he) {
-        	LOGGER.debug("Hibernate Exception - while searching for: type='" + type + "', asdc_service_model_version='" + version + "'");
+        	LOGGER.debug("Hibernate Exception - while searching for: type='" + type + "', asdc_service_model_version='" + version + "' " + he.getMessage());
         	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception searching for type=" + type + " and version=" + version, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching for type=" + type);
         	module = null;
+        	throw he;
         } catch (Exception e) {
-        	LOGGER.debug("Generic Exception - while searching for: type='" + type + "', asdc_service_model_version='" + version + "'");
+        	LOGGER.debug("Generic Exception - while searching for: type='" + type + "', asdc_service_model_version='" + version + "' " + e.getMessage());
         	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Generic exception searching for type=" + type + " and version=" + version, "", "", MsoLogger.ErrorCode.DataError, "Generic exception searching for type=" + type);
         	module = null;
+        	throw e;
         }
         if (module == null) {
         	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "NotFound", "CatalogDB", "getVfModuleType", null);
@@ -1046,14 +1310,17 @@ public class CatalogDatabase implements Closeable {
             LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row - data integrity error: serviceModelInvariantUuid='" + serviceModelInvariantUuid);
             LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for serviceModelInvariantUuid=" + serviceModelInvariantUuid, "", "", MsoLogger.ErrorCode.DataError, "Non unique result for serviceModelInvariantUuid==" + serviceModelInvariantUuid);
             vnfResource = null;
+        	throw nure;
         } catch (org.hibernate.HibernateException he) {
-            LOGGER.debug("Hibernate Exception - while searching for: serviceModelInvariantUuid='" + serviceModelInvariantUuid + "'");
+        	LOGGER.debug("Hibernate Exception - while searching for: serviceModelInvariantUuid='" + serviceModelInvariantUuid + "' " + he.getMessage());
             LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception searching for serviceModelInvariantUuid=" + serviceModelInvariantUuid, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching for serviceModelInvariantUuid=" + serviceModelInvariantUuid);
             vnfResource = null;
+        	throw he;
         } catch (Exception e) {
-            LOGGER.debug("Generic Exception - while searching for: serviceModelInvariantUuid='" + serviceModelInvariantUuid + "'");
+        	LOGGER.debug("Generic Exception - while searching for: serviceModelInvariantUuid='" + serviceModelInvariantUuid + "' " + e.getMessage());
             LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Generic exception searching for serviceModelInvariantUuid=" + serviceModelInvariantUuid, "", "", MsoLogger.ErrorCode.DataError, "Generic exception searching for serviceModelInvariantUuid=" + serviceModelInvariantUuid);
             vnfResource = null;
+        	throw e;
         }
         if (vnfResource == null) {
             LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "NotFound", "CatalogDB", "getVfModuleType", null);
@@ -1077,14 +1344,17 @@ public class CatalogDatabase implements Closeable {
             LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row - data integrity error: vnfResourceModelInvariantUuid='" + vnfResourceModelInvariantUuid);
             LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for vnfResourceModelInvariantUuid=" + vnfResourceModelInvariantUuid, "", "", MsoLogger.ErrorCode.DataError, "Non unique result for vnfResourceModelInvariantUuid==" + vnfResourceModelInvariantUuid);
             vnfResource = null;
+        	throw nure;
         } catch (org.hibernate.HibernateException he) {
-            LOGGER.debug("Hibernate Exception - while searching for: vnfResourceModelInvariantUuid='" + vnfResourceModelInvariantUuid + "'");
+        	LOGGER.debug("Hibernate Exception - while searching for: vnfResourceModelInvariantUuid='" + vnfResourceModelInvariantUuid + "' " + he.getMessage());
             LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception searching for vnfResourceModelInvariantUuid=" + vnfResourceModelInvariantUuid, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching for vnfResourceModelInvariantUuid=" + vnfResourceModelInvariantUuid);
             vnfResource = null;
+        	throw he;
         } catch (Exception e) {
-            LOGGER.debug("Generic Exception - while searching for: vnfResourceModelInvariantUuid='" + vnfResourceModelInvariantUuid + "'");
+        	LOGGER.debug("Generic Exception - while searching for: vnfResourceModelInvariantUuid='" + vnfResourceModelInvariantUuid + "' " + e.getMessage());
             LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Generic exception searching for vnfResourceModelInvariantUuid=" + vnfResourceModelInvariantUuid, "", "", MsoLogger.ErrorCode.DataError, "Generic exception searching for vnfResourceModelInvariantUuid=" + vnfResourceModelInvariantUuid);
             vnfResource = null;
+        	throw e;
         }
         if (vnfResource == null) {
             LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "NotFound", "CatalogDB", "getVfModuleType", null);
@@ -1098,29 +1368,22 @@ public class CatalogDatabase implements Closeable {
         return this.getVnfResource(vnfType);
     }
 
-    public VfModule getVfModuleByModelInvariantUuid(String vfModuleModelInvariantUuid) {
+    public VfModule getVfModuleByModelInvariantUuid(String modelInvariantUUID) {
         long startTime = System.currentTimeMillis();
-        LOGGER.debug ("Catalog database - get vfModuleTypeByUuid with uuid " + vfModuleModelInvariantUuid);
+        LOGGER.debug ("Catalog database - get vfModuleTypeByModelInvariantUuid with uuid " + modelInvariantUUID);
 
-        String hql = "FROM VfModule WHERE vfModuleModelInvariantUuid = :vfModuleModelInvariantUuid ";
-        Query query = getSession().createQuery(hql);
-        query.setParameter ("vfModuleModelInvariantUuid", vfModuleModelInvariantUuid);
+        String hql = "FROM VfModule WHERE modelInvariantUUID = :modelInvariantUUID ";
+        HashMap<String, String> parameters = new HashMap<String, String>();
+        parameters.put("modelInvariantUUID", modelInvariantUUID);
+        List<VfModule> modules = this.executeQueryMultipleRows(hql.toString(), parameters, true);
         VfModule module = null;
-        try {
-            module = (VfModule) query.uniqueResult ();
-        } catch (org.hibernate.NonUniqueResultException nure) {
-            LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row - data integrity error: vfModuleModelInvariantUuid='" + vfModuleModelInvariantUuid + "'");
-            LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for vfModuleModelInvariantUuid=" + vfModuleModelInvariantUuid , "", "", MsoLogger.ErrorCode.DataError, "Non unique result for vfModuleModelInvariantUuid==" + vfModuleModelInvariantUuid);
-            module = null;
-        } catch (org.hibernate.HibernateException he) {
-            LOGGER.debug("Hibernate Exception - while searching for: vfModuleModelInvariantUuid='" + vfModuleModelInvariantUuid + "'");
-            LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception searching for vfModuleModelInvariantUuid=" + vfModuleModelInvariantUuid, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching for vfModuleModelInvariantUuid=" + vfModuleModelInvariantUuid);
-            module = null;
-        } catch (Exception e) {
-            LOGGER.debug("Generic Exception - while searching for: vfModuleModelInvariantUuid='" + vfModuleModelInvariantUuid + "'");
-            LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Generic exception searching for vfModuleModelInvariantUuid=" + vfModuleModelInvariantUuid, "", "", MsoLogger.ErrorCode.DataError, "Generic exception searching for vfModuleModelInvariantUuid=" + vfModuleModelInvariantUuid);
-            module = null;
+        
+        if (modules != null && modules.size() > 0) {
+        	Collections.sort (modules, new MavenLikeVersioningComparator ());
+        	Collections.reverse (modules);
+        	module =  modules.get(0);
         }
+  
         if (module == null) {
             LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "NotFound", "CatalogDB", "getVfModuleByModelInvariantUuid", null);
         } else {
@@ -1129,28 +1392,31 @@ public class CatalogDatabase implements Closeable {
         return module;
     }
 
-    public VfModule getVfModuleByModelCustomizationUuid(String modelCustomizationUuid) {
+    public VfModuleCustomization getVfModuleByModelCustomizationUuid(String modelCustomizationUuid) {
         long startTime = System.currentTimeMillis();
         LOGGER.debug ("Catalog database - get vfModuleTypeByModelCustomizationUuid with uuid " + modelCustomizationUuid);
 
-        String hql = "FROM VfModule WHERE modelCustomizationUuid = :modelCustomizationUuid ";
+        String hql = "FROM VfModuleCustomization WHERE modelCustomizationUuid = :modelCustomizationUuid ";
         Query query = getSession().createQuery(hql);
         query.setParameter ("modelCustomizationUuid", modelCustomizationUuid);
-        VfModule module = null;
+        VfModuleCustomization module = null;
         try {
-            module = (VfModule) query.uniqueResult ();
+        	module = (VfModuleCustomization) query.uniqueResult ();
         } catch (org.hibernate.NonUniqueResultException nure) {
             LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row - data integrity error: modelCustomizationUuid='" + modelCustomizationUuid + "'");
             LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for vfModuleModelInvariantUuid=" + modelCustomizationUuid , "", "", MsoLogger.ErrorCode.DataError, "Non unique result for modelCustomizationUuid==" + modelCustomizationUuid);
             module = null;
+        	throw nure;
         } catch (org.hibernate.HibernateException he) {
-            LOGGER.debug("Hibernate Exception - while searching for: modelCustomizationUuid='" + modelCustomizationUuid + "'");
+        	LOGGER.debug("Hibernate Exception - while searching for: modelCustomizationUuid='" + modelCustomizationUuid + "' " + he.getMessage());
             LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception searching for modelCustomizationUuid=" + modelCustomizationUuid, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching for modelCustomizationUuid=" + modelCustomizationUuid);
             module = null;
+        	throw he;
         } catch (Exception e) {
-            LOGGER.debug("Generic Exception - while searching for: modelCustomizationUuid='" + modelCustomizationUuid + "'");
+        	LOGGER.debug("Generic Exception - while searching for: modelCustomizationUuid='" + modelCustomizationUuid + "' " + e.getMessage());
             LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Generic exception searching for modelCustomizationUuid=" + modelCustomizationUuid, "", "", MsoLogger.ErrorCode.DataError, "Generic exception searching for modelCustomizationUuid=" + modelCustomizationUuid);
             module = null;
+        	throw e;
         }
         if (module == null) {
             LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "NotFound", "CatalogDB", "getVfModuleByModelCustomizationUuid", null);
@@ -1160,28 +1426,545 @@ public class CatalogDatabase implements Closeable {
         return module;
     }
 
-    public VfModule getVfModuleByType(String vfModuleType) {
-        return this.getVfModuleType(vfModuleType);
+    
+    public VfModule getVfModuleByModelInvariantUuidAndModelVersion(String modelInvariantUuid, String modelVersion) {
+    	long startTime = System.currentTimeMillis();
+        LOGGER.debug ("Catalog database - get getVfModuleByModelInvariantUuidAndModelVersion with modelInvariantUuid: " + modelInvariantUuid + ", modelVersion: " + modelVersion);
+
+        String hql = "FROM VfModule WHERE modelInvariantUUID = :modelInvariantUuid and version = :modelVersion";
+        Query query = getSession().createQuery(hql);
+        query.setParameter ("modelInvariantUuid", modelInvariantUuid);
+        query.setParameter("modelVersion", modelVersion);
+        VfModule module = null;
+        try {
+        	module = (VfModule) query.uniqueResult ();
+        } catch (org.hibernate.NonUniqueResultException nure) {
+        	LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row - data integrity error: modelInvariantUuid='" + modelInvariantUuid + "', modelVersion='" +modelVersion + "'");
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for vfModule ModelInvariantUuid=" + modelInvariantUuid + " modelVersion=" + modelVersion, "", "", MsoLogger.ErrorCode.DataError, "Non unique result for ModelInvariantUuid==" + modelInvariantUuid + " modelVersion==" + modelVersion);
+        	module = null;
+        	throw nure;
+        } catch (org.hibernate.HibernateException he) {
+        	LOGGER.debug("Hibernate Exception - while searching for: modelInvariantUuid='" + modelInvariantUuid + "', modelVersion='" +modelVersion + "' " + he.getMessage());
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception searching for modelInvariantUuid=" + modelInvariantUuid + " modelVersion=" + modelVersion, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching for modelInvariantUuid=" + modelInvariantUuid + " modelVersion=" + modelVersion);
+        	module = null;
+        	throw he;
+        } catch (Exception e) {
+        	LOGGER.debug("Generic Exception - while searching for: modelInvariantUuid='" + modelInvariantUuid + "', modelVersion='" +modelVersion + "' " + e.getMessage());
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Generic exception searching for modelInvariantUuid=" + modelInvariantUuid + " modelVersion=" + modelVersion, "", "", MsoLogger.ErrorCode.DataError, "Generic exception searching for modelInvariantUuid=" + modelInvariantUuid + " modelVersion=" + modelVersion);
+        	module = null;
+        	throw e;
+        }
+        if (module == null) {
+        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "NotFound", "CatalogDB", "getVfModuleByModelInvariantUuidAndModelVersion", null);
+        } else {
+        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVfModuleByModelInvariantUuidAndModelVersion", null);
+        }
+        return module;
+    }
+    
+    /**
+     * Return the VfModuleCustomization object identified by the given modelCustomizationUuid 1707
+     *
+     * @param modelCustomizationUuid
+     * @return VfModuleCustomization or null if not found
+     */
+    public VfModuleCustomization getVfModuleCustomizationByModelCustomizationId(String modelCustomizationUuid) {
+    	long startTime = System.currentTimeMillis();
+        LOGGER.debug ("Catalog database - get getVfModuleCustomizationByModelCustomizationId with modelCustomizationUuid: " + modelCustomizationUuid);
+
+        String hql = "FROM VfModuleCustomization WHERE modelCustomizationUuid = :modelCustomizationUuid";
+        Query query = getSession().createQuery(hql);
+        query.setParameter ("modelCustomizationUuid", modelCustomizationUuid);
+        VfModuleCustomization VfModuleCustomization = null;
+        try {
+        	VfModuleCustomization = (VfModuleCustomization) query.uniqueResult ();
+        } catch (org.hibernate.NonUniqueResultException nure) {
+        	LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row - data integrity error: modelCustomizationUuid='" + modelCustomizationUuid +"'");
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for vfModuleCustomization modelCustomizationUuid=" + modelCustomizationUuid, "", "", MsoLogger.ErrorCode.DataError, "Non unique result for modelCustomizationUuid==" + modelCustomizationUuid);
+        	VfModuleCustomization = null;
+        	throw nure;
+        } catch (org.hibernate.HibernateException he) {
+        	LOGGER.debug("Hibernate Exception - while searching for: modelCustomizationUuid='" + modelCustomizationUuid + "' " + he.getMessage());
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception searching for modelCustomizationUuid=" + modelCustomizationUuid, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching for modelCustomizationUuid=" + modelCustomizationUuid);
+        	VfModuleCustomization = null;
+        	throw he;
+        } catch (Exception e) {
+        	LOGGER.debug("Generic Exception - while searching for: modelCustomizationUuid='" + modelCustomizationUuid + "' " + e.getMessage());
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Generic exception searching for modelCustomizationUuid=" + modelCustomizationUuid, "", "", MsoLogger.ErrorCode.DataError, "Generic exception searching for modelCustomizationUuid=" + modelCustomizationUuid);
+        	VfModuleCustomization = null;
+        	throw e;
+        }
+        if (VfModuleCustomization != null) {
+        	LOGGER.debug("Found VMC of " + VfModuleCustomization.getModelCustomizationUuid() + ", now looking for vfModule=" + VfModuleCustomization.getVfModuleModelUuid());
+        	VfModuleCustomization.setVfModule(this.getVfModuleByModelUuid(VfModuleCustomization.getVfModuleModelUuid()));
+        }
+
+        if (VfModuleCustomization == null) {
+        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "NotFound", "CatalogDB", "getVfModuleCustomizationByModelCustomizationId", null);
+        } else {
+        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVfModuleCustomizationByModelCustomizationId", null);
+        }
+        return VfModuleCustomization;
+    }
+    
+    /**
+     * Return the VfModule object identified by the given modelUuid 1707
+     * per Mike Z. - this may return more than one row - and even if it does, 
+     * the heat template will be the same - so just return any of the rows.
+     *
+     * @param modelUuid
+     * @return VfModule or null if not found
+     */
+    public VfModule getVfModuleByModelUuid(String modelUuid) {
+    	long startTime = System.currentTimeMillis();
+        LOGGER.debug ("Catalog database - get getVfModuleByModelUuid with modelUuid: " + modelUuid);
+
+        String hql = "FROM VfModule WHERE modelUUID = :modelUuidValue";
+        Query query = getSession().createQuery(hql);
+        query.setParameter ("modelUuidValue", modelUuid);
+        //VfModule vfModule = null;
+        List<VfModule> vfModules = null;
+        try {
+        	vfModules = query.list ();
+        } catch (org.hibernate.HibernateException he) {
+        	LOGGER.debug("Hibernate Exception - while searching VfModule for: modelUuid='" + modelUuid + "' " + he.getMessage());
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception searching VfModule for modelUuid=" + modelUuid, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching for modelUuid=" + modelUuid);
+        	vfModules = null;
+        	throw he;
+        } catch (Exception e) {
+        	LOGGER.debug("Generic Exception - while searching VfModule for: modelUuid='" + modelUuid + "' " + e.getMessage());
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Generic exception searching for modelUuid=" + modelUuid, "", "", MsoLogger.ErrorCode.DataError, "Generic exception searching for modelUuid=" + modelUuid);
+        	vfModules = null;
+        	throw e;
+        }
+
+        if (vfModules == null || vfModules.size() < 1) {
+        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "NotFound", "CatalogDB", "getVfModuleByModelUuid", null);
+        	return null;
+        } else {
+        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVfModuleByModelUuid", null);
+        }
+        return vfModules.get(0);
+    }
+    /**
+     * Return the VnfResourceCustomization object identified by the given modelCustomizationUuid 1707
+     * Note that the corresponding VnfResource Object will be put in the VnfResourceCustomization bean
+     *
+     * @param modelCustomizationUuid
+     * @return VnfResourceCustomization or null if not found
+     */
+    public VnfResourceCustomization getVnfResourceCustomizationByModelCustomizationUuid(String modelCustomizationUuid) {
+    	long startTime = System.currentTimeMillis();
+        LOGGER.debug ("Catalog database - get getVnfResourceByModelCustomizatonUuid with modelCustomizationUuid: " + modelCustomizationUuid);
+
+        String hql = "FROM VnfResourceCustomization WHERE modelCustomizationUuid = :modelCustomizationUuid";
+        Query query = getSession().createQuery(hql);
+        query.setParameter ("modelCustomizationUuid", modelCustomizationUuid);
+        VnfResourceCustomization vnfResourceCustomization = null;
+        try {
+        	vnfResourceCustomization = (VnfResourceCustomization) query.uniqueResult ();
+        } catch (org.hibernate.NonUniqueResultException nure) {
+        	LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row in VRC - data integrity error: modelCustomizationUuid='" + modelCustomizationUuid +"'");
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for vnfResourceCustomization modelCustomizationUuid=" + modelCustomizationUuid, "", "", MsoLogger.ErrorCode.DataError, "Non unique result for modelCustomizationUuid==" + modelCustomizationUuid);
+        	vnfResourceCustomization = null;
+        	throw nure;
+        } catch (org.hibernate.HibernateException he) {
+        	LOGGER.debug("Hibernate Exception - while searching VRC for: modelCustomizationUuid='" + modelCustomizationUuid + "' " + he.getMessage());
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception searching VRC for modelCustomizationUuid=" + modelCustomizationUuid, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching for modelCustomizationUuid=" + modelCustomizationUuid);
+        	vnfResourceCustomization = null;
+        	throw he;
+        } catch (Exception e) {
+        	LOGGER.debug("Generic Exception - while searching VRC for: modelCustomizationUuid='" + modelCustomizationUuid + "' " + e.getMessage());
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Generic exception searching VRC for modelCustomizationUuid=" + modelCustomizationUuid, "", "", MsoLogger.ErrorCode.DataError, "Generic exception searching for modelCustomizationUuid=" + modelCustomizationUuid);
+        	vnfResourceCustomization = null;
+        	throw e;
+        }
+        if (vnfResourceCustomization != null) {
+        	LOGGER.debug("Found VRC of " + vnfResourceCustomization.getModelCustomizationUuid() + ", now looking for vnfResource=" + vnfResourceCustomization.getVnfResourceModelUuid() );
+        	vnfResourceCustomization.setVnfResource(this.getVnfResourceByModelUuid(vnfResourceCustomization.getVnfResourceModelUuid()));
+        	LOGGER.debug("Now looking for vfModules for " + vnfResourceCustomization.getModelCustomizationUuid());
+        	vnfResourceCustomization.setVfModuleCustomizations(this.getAllVfModuleCustomizations(vnfResourceCustomization.getModelCustomizationUuid()));
+        }
+
+        if (vnfResourceCustomization == null) {
+        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "NotFound", "CatalogDB", "getVnfResourceCustomizationByModelCustomizationUuid", null);
+        } else {
+        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVnfResourceCustomizationByModelCustomizationUuid", null);
+        }
+        return vnfResourceCustomization;
+    }
+    
+    /**
+     * Return the VnfResourceCustomization object identified by the given modelCustomizationUuid 1707
+     * Note that the corresponding VnfResource Object will be put in the VnfResourceCustomization bean
+     *
+     * @param getVnfResourceCustomizationByModelVersionId
+     * @return VnfResourceCustomization or null if not found
+     */
+    public VnfResourceCustomization getVnfResourceCustomizationByModelVersionId(String modelVersionId) {
+    	long startTime = System.currentTimeMillis();
+        LOGGER.debug ("Catalog database - get getVnfResourceCustomizationByModelVersionId with modelVersionId: " + modelVersionId);
+
+        String hql = "FROM VnfResourceCustomization WHERE vnfResourceModelUuid = :modelVersionId";
+        Query query = getSession().createQuery(hql);
+        query.setParameter ("modelVersionId", modelVersionId);
+        VnfResourceCustomization vnfResourceCustomization = null;
+        try {
+        	vnfResourceCustomization = (VnfResourceCustomization) query.uniqueResult ();
+        } catch (org.hibernate.NonUniqueResultException nure) {
+        	LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row in VRC - data integrity error: modelVersionId='" + modelVersionId +"'");
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for vnfResourceCustomization modelVersionId=" + modelVersionId, "", "", MsoLogger.ErrorCode.DataError, "Non unique result for modelVersionId==" + modelVersionId);
+        	vnfResourceCustomization = null;
+        	throw nure;
+        } catch (org.hibernate.HibernateException he) {
+        	LOGGER.debug("Hibernate Exception - while searching VRC for: modelVersionId='" + modelVersionId + "' " + he.getMessage());
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception searching VRC for modelVersionId=" + modelVersionId, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching for modelVersionId=" + modelVersionId);
+        	vnfResourceCustomization = null;
+        	throw he;
+        } catch (Exception e) {
+        	LOGGER.debug("Generic Exception - while searching VRC for: modelVersionId='" + modelVersionId + "' " + e.getMessage());
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Generic exception searching VRC for modelVersionId=" + modelVersionId, "", "", MsoLogger.ErrorCode.DataError, "Generic exception searching for modelVersionId=" + modelVersionId);
+        	vnfResourceCustomization = null;
+        	throw e;
+        }
+        if (vnfResourceCustomization != null) {
+        	LOGGER.debug("Found VRC of " + vnfResourceCustomization.getModelCustomizationUuid() + ", now looking for vnfResource=" + vnfResourceCustomization.getVnfResourceModelUuid() );
+        	vnfResourceCustomization.setVnfResource(this.getVnfResourceByModelUuid(vnfResourceCustomization.getVnfResourceModelUuid()));
+        	LOGGER.debug("Now looking for vfModules for " + vnfResourceCustomization.getModelCustomizationUuid());
+        	vnfResourceCustomization.setVfModuleCustomizations(this.getAllVfModuleCustomizations(vnfResourceCustomization.getModelCustomizationUuid()));
+        }
+
+        if (vnfResourceCustomization == null) {
+        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "NotFound", "CatalogDB", "getVnfResourceCustomizationByModelVersionId", null);
+        } else {
+        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVnfResourceCustomizationByModelVersionId", null);
+        }
+        return vnfResourceCustomization;
+    }
+    
+    /**
+     * Return the VfModule object identified by the given modelCustomizationId, modelVersionId 1707
+     *
+     * @param modelVersionId, modelCustomizationId
+     * @return VfModule or null if not found
+     */
+    public VfModule getVfModuleByModelCustomizationIdAndVersion(String modelCustomizationId, String modelVersionId) {
+    	long startTime = System.currentTimeMillis();
+        LOGGER.debug ("Catalog database - get getVfModuleByModelCustomizationIdAndVersion with modelVersionId: " + modelVersionId + " modelCustomizationId: " + modelCustomizationId);
+
+//      select * from vf_module vfm where vfm.MODEL_UUID IN (
+//      select vfmc.VF_MODULE_MODEL_UUID from vf_module_customization vfmc where vfmc.MODEL_CUSTOMIZATION_UUID='222bd8f2-341d-4419-aa0e-98398fa34050')
+//      and vfm.MODEL_UUID = 'fa1c8558-006c-4fb6-82f2-4fc0646d6b06';
+        
+        String hql = "Select vfm FROM VfModule as vfm WHERE vfm.modelUUID IN ("
+        		+ "SELECT vfmc.vfModuleModelUuid FROM VfModuleCustomization as vfmc "
+        		+ "WHERE vfmc.modelCustomizationUuid = :modelCustomizationId) "
+        		+ "AND vfm.modelUUID = :modelVersionId";
+        Query query = getSession().createQuery(hql);
+        query.setParameter ("modelVersionId", modelVersionId);
+        query.setParameter ("modelCustomizationId", modelCustomizationId);
+        VfModule vfModule = null;
+        try {
+        	vfModule = (VfModule) query.uniqueResult ();
+        } catch (org.hibernate.NonUniqueResultException nure) {
+        	LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row in VRC - data integrity error: modelVersionId='" + modelVersionId +"' modelCustomizationId='" + modelCustomizationId + "'");
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for vnfResourceCustomization modelVersionId=" + modelVersionId, "", "", MsoLogger.ErrorCode.DataError, "Non unique result for modelVersionId=" + modelVersionId + " modelCustomizationId=" + modelCustomizationId);
+        	vfModule = null;
+        	throw nure;
+        } catch (org.hibernate.HibernateException he) {
+        	LOGGER.debug("Hibernate Exception - while searching VRC for: modelVersionId='" + modelVersionId + "' modelCustomizationId='" + modelCustomizationId + "' " + he.getMessage());
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception searching VRC for modelVersionId=" + modelVersionId, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching for modelVersionId=" + modelVersionId + " modelCustomizationId=" + modelCustomizationId);
+        	vfModule = null;
+        	throw he;
+        } catch (Exception e) {
+        	LOGGER.debug("Generic Exception - while searching VRC for: modelVersionId='" + modelVersionId + "' modelCustomizationId='" + modelCustomizationId + "' " + e.getMessage());
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Generic exception searching VRC for modelVersionId=" + modelVersionId, "", "", MsoLogger.ErrorCode.DataError, "Generic exception searching for modelVersionId=" + modelVersionId + " modelCustomizationId=" + modelCustomizationId);
+        	vfModule = null;
+        	throw e;
+        }
+
+        if (vfModule == null) {
+        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "NotFound", "CatalogDB", "getVfModuleByModelCustomizationIdAndVersion", null);
+        } else {
+        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVfModuleByModelCustomizationIdAndVersion", null);
+        }
+        return vfModule;
+    }
+    
+    /**
+     * Return the VfModule object identified by the given modelCustomizationId, modelVersion, modelInvariantId 1707
+     *
+     * @param modelCustomizationId, modelVersion, modelInvariantId
+     * @return VfModule or null if not found
+     */
+    public VfModule getVfModuleByModelCustomizationIdModelVersionAndModelInvariantId(String modelCustomizationId, String modelVersion, String modelInvariantId) {
+    	long startTime = System.currentTimeMillis();
+        LOGGER.debug ("Catalog database - get getVfModuleByModelCustomizationIdModelVersionAndModelInvariantId with modelVersionId: " + modelVersion);
+
+        //select * from vf_module vfm left outer join vf_module_customization vfmc on vfmc.VF_MODULE_MODEL_UUID = vfm.MODEL_UUID 
+//        where vfmc.MODEL_CUSTOMIZATION_UUID='52643a8e-7953-4e48-8eab-97165b2b3a4b' and vfm.MODEL_UUID = ''
+        
+        String hql = "Select vfm FROM VfModule as vfm LEFT OUTER JOIN VfModuleCustomization as vfmc on vfmc.vfModuleModelUuid = vfm.modelUUID"
+        		+ "WHERE vfmc.modelCustomizationUuid = :modelCustomizationId AND vfm.modelInvariantUUID = :modelInvariantId AND vfm.modelVersion = :modelVersion";
+        Query query = getSession().createQuery(hql);
+        query.setParameter ("modelInvariantId", modelInvariantId);
+        query.setParameter ("modelCustomizationId", modelCustomizationId);
+        query.setParameter ("modelVersion", modelVersion);
+        VfModule vfModule = null;
+        try {
+        	vfModule = (VfModule) query.uniqueResult ();
+        } catch (org.hibernate.NonUniqueResultException nure) {
+        	LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row in VRC - data integrity error: modelInvariantId='" + modelInvariantId +"' modelVersion='" + modelVersion + "' modelCustomizationId='" + modelCustomizationId +"'");
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for vnfResourceCustomization modelInvariantId=" + modelInvariantId, "", "", MsoLogger.ErrorCode.DataError, "Non unique result for modelInvariantId=" + modelInvariantId + " modelVersion=" + modelVersion + " modelCustomizationId=" + modelCustomizationId);
+        	vfModule = null;
+        	throw nure;
+        } catch (org.hibernate.HibernateException he) {
+        	LOGGER.debug("Hibernate Exception - while searching VRC for: modelInvariantId='" + modelInvariantId + "' modelVersion='" + modelVersion + "' modelCustomizationId='" + modelCustomizationId + "' " + he.getMessage());
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception searching VRC for modelInvariantId=" + modelInvariantId, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching for modelInvariantId=" + modelInvariantId + " modelVersion=" + modelVersion + " modelCustomizationId=" + modelCustomizationId);
+        	vfModule = null;
+        	throw he;
+        } catch (Exception e) {
+        	LOGGER.debug("Generic Exception - while searching VRC for: modelInvariantId='" + modelInvariantId + "' modelVersion='" + modelVersion + "' modelCustomizationId='" + modelCustomizationId + "' " + e.getMessage());
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Generic exception searching VRC for modelInvariantId=" + modelInvariantId, "", "", MsoLogger.ErrorCode.DataError, "Generic exception searching for modelInvariantId=" + modelInvariantId + " modelVersion=" + modelVersion + " modelCustomizationId=" + modelCustomizationId);
+        	vfModule = null;
+        	throw e;
+        }
+
+        if (vfModule == null) {
+        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "NotFound", "CatalogDB", "getVfModuleByModelCustomizationIdModelVersionAndModelInvariantId", null);
+        } else {
+        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVfModuleByModelCustomizationIdModelVersionAndModelInvariantId", null);
+        }
+        return vfModule;
+    }
+    
+    /**
+     * Return the VnfResourceCustomization object identified by the given modelCustomizationName, modelInvariantId and modelVersion 1707
+     *
+     * @param modelInvariantId, modelVersion, modelCustomizationName
+     * @return VnfResourceCustomization or null if not found
+     */
+    public VnfResourceCustomization getVnfResourceCustomizationByModelInvariantId(String modelInvariantId, String modelVersion, String modelCustomizationName) {
+    	long startTime = System.currentTimeMillis();
+    	LOGGER.debug ("Catalog database - get getVnfResourceCustomizationByModelInvariantId with modelInvariantId: " + modelInvariantId + ", modelVersion: " 
+						+ modelVersion + ", modelCustomizationName: " + modelCustomizationName);
+        
+        String hql = "SELECT VnfResourceCustomization FROM VnfResourceCustomization as vrc "
+        			+ "LEFT OUTER JOIN VnfResource as vr "
+        			+ "on vr.modelUuid =vrc.vnfResourceModelUuid "
+        			+ "WHERE vr.modelInvariantUuid = :modelInvariantId AND vr.modelVersion = :modelVersion AND vrc.modelInstanceName = :modelCustomizationName";
+        
+        Query query = getSession().createQuery(hql);
+        query.setParameter ("modelInvariantId", modelInvariantId);
+        query.setParameter("modelVersion", modelVersion);
+        query.setParameter("modelCustomizationName", modelCustomizationName);
+        VnfResourceCustomization vnfResourceCustomization = null;
+        try {
+        	vnfResourceCustomization = (VnfResourceCustomization) query.uniqueResult ();
+        } catch (org.hibernate.NonUniqueResultException nure) {
+        	LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row in VRC - data integrity error: modelInvariantId='" + modelInvariantId +"' and modelVersion='" + modelVersion + "' modelCustomizationName='" + modelCustomizationName + "'");
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for vnfResourceCustomization modelInvariantId=" + modelInvariantId, "", "", MsoLogger.ErrorCode.DataError, "Non unique result for modelInvariantId==" + modelInvariantId+"' and modelVersion='" + modelVersion + "'modelCustomizationName='" + modelCustomizationName + "'");
+        	vnfResourceCustomization = null;
+        	throw nure;
+        } catch (org.hibernate.HibernateException he) {
+        	LOGGER.debug("Hibernate Exception - while searching VRC for: modelInvariantId='" + modelInvariantId +"' and modelVersion='" + modelVersion + "'modelCustomizationName='" + modelCustomizationName + "' " + he.getMessage());
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception searching VRC for modelInvariantId=" + modelInvariantId, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching for modelInvariantId=" + modelInvariantId+"' and modelVersion='" + modelVersion + "'modelCustomizationName='" + modelCustomizationName + "'");
+        	vnfResourceCustomization = null;
+        	throw he;
+        } catch (Exception e) {
+        	LOGGER.debug("Generic Exception - while searching VRC for: modelInvariantId='" + modelInvariantId +"' and modelVersion='" + modelVersion + "' " + e.getMessage());
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Generic exception searching VRC for modelInvariantId=" + modelInvariantId, "", "", MsoLogger.ErrorCode.DataError, "Generic exception searching for modelInvariantId=" + modelInvariantId+"' and modelVersion='" + modelVersion + "'modelCustomizationName='" + modelCustomizationName + "'");
+        	vnfResourceCustomization = null;
+        	throw e;
+        }
+        if (vnfResourceCustomization != null) {
+        	LOGGER.debug("Found VRC of " + vnfResourceCustomization.getModelCustomizationUuid() + ", now looking for vnfResource=" + vnfResourceCustomization.getVnfResourceModelUuid() );
+        	vnfResourceCustomization.setVnfResource(this.getVnfResourceByModelUuid(vnfResourceCustomization.getVnfResourceModelUUID()));
+        	LOGGER.debug("Now looking for vfModules for " + vnfResourceCustomization.getModelCustomizationUuid());
+        	vnfResourceCustomization.setVfModuleCustomizations(this.getAllVfModuleCustomizations(vnfResourceCustomization.getModelCustomizationUuid()));
+        }
+
+        if (vnfResourceCustomization == null) {
+        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "NotFound", "CatalogDB", "getVnfResourceCustomizationByModelInvariantId", null);
+        } else {
+        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVnfResourceCustomizationByModelInvariantId", null);
+        }
+        return vnfResourceCustomization;
+    }
+    
+    /**
+     * Return list of VnfResourceCustomization objects identified by the given modelCustomizationUuid 1707
+     *
+     * @param modelCustomizationUuid
+     * @return List<VfModuleCustomization> or null if not found
+     */
+    public List<VfModuleCustomization> getVfModuleCustomizationByVnfModuleCustomizationUuid(String modelCustomizationUuid) {
+    	long startTime = System.currentTimeMillis();
+        LOGGER.debug ("Catalog database - get getVfModuleCustomizationByVnfModuleCustomizationUuid with modelCustomizationUuid: " + modelCustomizationUuid);
+        
+//      select * from vf_module_customization as vfmc where vfmc.MODEL_CUSTOMIZATION_UUID IN(
+//      select vrcmc.VF_MODULE_CUST_MODEL_CUSTOMIZATION_UUID from vnf_res_custom_to_vf_module_custom as vrcmc
+//      where vrcmc.VNF_RESOURCE_CUST_MODEL_CUSTOMIZATION_UUID = 'd279139c-4b85-48ff-8ac4-9b83a6fc6da7') 
+        
+        String hql = "SELECT vfmc FROM VfModuleCustomization as vfmc where vfmc.modelCustomizationUuid "
+        			+ "IN(select vrcmc.vfModuleCustModelCustomizationUuid from VnfResCustomToVfModuleCustom as vrcmc "
+        					+ "WHERE vrcmc.vnfResourceCustModelCustomizationUuid = :modelCustomizationUuid)";
+        
+        Query query = getSession().createQuery(hql);
+        query.setParameter ("modelCustomizationUuid", modelCustomizationUuid);
+        List<VfModuleCustomization> resultList = null;
+        try {
+        	resultList = query.list();
+        } catch (org.hibernate.HibernateException he) {
+        	LOGGER.debug("Hibernate Exception - getVfModuleCustomizationByVnfModuleCustomizationUuid - while searching for: modelCustomizationUuid='" + modelCustomizationUuid + " " + he.getMessage());
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception - getVfModuleCustomizationByVnfModuleCustomizationUuid - searching for modelCustomizationUuid=" + modelCustomizationUuid, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching for modelCustomizationUuid=" + modelCustomizationUuid);
+        	throw he;
+    	} catch (Exception e) {
+        	LOGGER.debug("Exception - getVfModuleCustomizationByVnfModuleCustomizationUuid - while searching for: modelCustomizationUuid='" + modelCustomizationUuid + " " + e.getMessage());
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception - getVfModuleCustomizationByVnfModuleCustomizationUuid - searching for modelCustomizationUuid=" + modelCustomizationUuid, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching for modelCustomizationUuid=" + modelCustomizationUuid);
+        	throw e;
+    	}
+
+        if (resultList == null) {
+    		resultList = new ArrayList<VfModuleCustomization>();
+    	}
+        LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVfModuleCustomizationByVnfModuleCustomizationUuid", null);
+    	return resultList;
+    }
+    
+    /**
+     * Return the newest version of a specific VNF resource Customization (queried by modelCustomizationName and modelVersionId).
+     *
+     * @return {@link VnfResourceCustomization} object or null if none found
+     */
+    public VnfResourceCustomization getVnfResourceCustomizationByVnfModelCustomizationNameAndModelVersionId (String modelCustomizationName, String modelVersionId) {
+
+        long startTime = System.currentTimeMillis ();
+        LOGGER.debug ("Catalog database - get VNF resource Customization with modelCustomizationName " + modelCustomizationName + " modelUUID " + modelVersionId);
+
+        //select vrc.* from vnf_resource_customization vrc where vrc.MODEL_CUSTOMIZATION_UUID IN (select src.RESOURCE_MODEL_CUSTOMIZATION_UUID from service_to_resource_customizations src);
+        String hql = "SELECT vrc FROM VnfResourceCustomization as vrc WHERE vrc.vnfResourceModelUuid IN "
+					+ "(SELECT vr.modelUuid FROM VnfResource vr "
+					+ "WHERE vr.modelUuid = :modelVersionId)"
+					+ "AND vrc.modelInstanceName = :modelCustomizationName";
+		
+        Query query = getSession ().createQuery (hql);
+        query.setParameter ("modelCustomizationName", modelCustomizationName);
+        query.setParameter ("modelVersionId", modelVersionId);
+
+        @SuppressWarnings("unchecked")
+        List <VnfResourceCustomization> resultList = query.list ();
+
+        if (resultList.isEmpty ()) {
+            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. VnfResourceCustomization not found", "CatalogDB", "getVnfResourceCustomizationByVnfModelCustomizationNameAndModelVersionId", null);
+            return null;
+        }
+        
+        Collections.sort (resultList, new MavenLikeVersioningComparator ());
+        Collections.reverse (resultList);
+
+        LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVnfResourceCustomizationByVnfModelCustomizationNameAndModelVersionId", null);
+        return resultList.get (0);
+    }
+    
+    public ArrayList<VfModuleCustomization> getAllVfModuleCustomizations(String vnfResourceCustomizationMCU) {
+    	long startTime = System.currentTimeMillis();
+        LOGGER.debug ("Catalog database - getAllVfModuleCustomizations with vnfResourceCustomizationMCU " + vnfResourceCustomizationMCU);
+        
+        List<VnfResCustomToVfModuleCustom> matches = this.getVRCtoVFMC(vnfResourceCustomizationMCU, null); 
+        if (matches == null || matches.size() < 1) {
+        	LOGGER.debug("Found no vf modules for " + vnfResourceCustomizationMCU);
+        	return new ArrayList<VfModuleCustomization>();
+        }
+        ArrayList<VfModuleCustomization> list = new ArrayList<VfModuleCustomization>();
+        for (VnfResCustomToVfModuleCustom v : matches) {
+        	String m = v.getVfModuleCustModelCustomizationUuid();
+        	LOGGER.debug("VfModule to match: " + m);
+        	VfModuleCustomization c = this.getVfModuleCustomizationByModelCustomizationId(m);
+        	if (c != null) {
+        		list.add(c);
+        	} else {
+        		LOGGER.debug("**UNABLE to find vfModule " + m);
+        	}
+        }
+        return list;
+    }
+    
+    /**
+     * Return the VnfResourceCustomization object identified by the given modelCustomizationUuid 1707
+     * Note that the corresponding VnfResource Object will be put in the VnfResourceCustomization bean
+     *
+     * @param modelCustomizationUuid
+     * @return VnfResourceCustomization or null if not found
+     */
+    public VnfResource getVnfResourceByModelUuid(String modelUuid) {
+    	long startTime = System.currentTimeMillis();
+        LOGGER.debug ("Catalog database - get VnfResource with modelUuid " + modelUuid);
+
+        String hql = "FROM VnfResource WHERE modelUuid = :modelUuid";
+        Query query = getSession().createQuery(hql);
+        query.setParameter ("modelUuid", modelUuid);
+        VnfResource vnfResource = null;
+        try {
+        	vnfResource = (VnfResource) query.uniqueResult ();
+        } catch (org.hibernate.NonUniqueResultException nure) {
+        	LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique Vnf_Resource row - data integrity error: modelUuid='" + modelUuid);
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for Vnf Resource modelUuid=" + modelUuid, "", "", MsoLogger.ErrorCode.DataError, "Non unique result for vnfResource modelUuid==" + modelUuid);
+        	vnfResource = null;
+        	throw nure;
+        } catch (org.hibernate.HibernateException he) {
+        	LOGGER.debug("Hibernate Exception - while searching for: VnfResource modelUuid='" + modelUuid + "' " + he.getMessage());
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception searching for vnfResource ModelUuid=" + modelUuid, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching for vnfResource modelUuid=" + modelUuid);
+        	vnfResource = null;
+        	throw he;
+        } catch (Exception e) {
+        	LOGGER.debug("Generic Exception - while searching for: vnfResource ModelUuid='" + modelUuid + "'");
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Generic exception searching for vnfResource ModelUuid=" + modelUuid, "", "", MsoLogger.ErrorCode.DataError, "Generic exception searching for vnfResource modelUuid=" + modelUuid);
+        	vnfResource = null;
+        	throw e;
+        }
+        if (vnfResource == null) {
+        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "NotFound", "CatalogDB", "getVnfResourceByModelUuid", null);
+        } else {
+        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVnfResourceByModelUuid", null);
+        }
+        return vnfResource;	
+    }
+    
+    public VnfResCustomToVfModuleCustom getVnfResCustomToVfModule(String vnfId, String vfId) {
+    	long startTime = System.currentTimeMillis();
+    	LOGGER.debug("Catalog database - getVnfResCustomToVfModule - vnfResourceCustModelCustUuid: " + vnfId + ", vfModuleCustModelCustomUuid=" + vfId);
+    	StringBuilder hql = new StringBuilder("FROM VnfResCustomToVfModuleCustom where vnfResourceCustModelCustomizationUuid = :vnfIdValue and vfModuleCustModelCustomizationUuid = :vfIdValue"); 	
+    	HashMap<String, String> parameters = new HashMap<String, String>();
+    	parameters.put("vnfIdValue", vnfId);
+    	parameters.put("vfIdValue", vfId);
+    	VnfResCustomToVfModuleCustom vrctvmc = this.executeQuerySingleRow(hql.toString(), parameters, true);
+        if (vrctvmc == null) {
+        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "NotFound", "CatalogDB", "getVnfResCustomToVfModule", null);
+        } else {
+        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVnfResCustomToVfModule", null);
+        }
+        return vrctvmc;
     }
 
     public List<VfModule> getVfModulesForVnfResource(VnfResource vnfResource) {
         if (vnfResource == null)
             return null;
-        int vnfResourceId = vnfResource.getId();
+    	String vnfResourceModelUuid = vnfResource.getModelUuid();
 
         long startTime = System.currentTimeMillis();
         LOGGER.debug("Catalog database - getVfModulesForVnfResource - vnfResource: " + vnfResource.toString());
 
-        return this.getVfModulesForVnfResource(vnfResourceId);
+    	return this.getVfModulesForVnfResource(vnfResourceModelUuid);
 
     }
 
-    public List<VfModule> getVfModulesForVnfResource(int vnfResourceId) {
+    public List<VfModule> getVfModulesForVnfResource(String vnfResourceModelUuid) {
         long startTime = System.currentTimeMillis();
-        LOGGER.debug("Catalog database - getVfModulesForVnfResource - vnfResourceId: " + vnfResourceId);
-        StringBuilder hql = new StringBuilder("FROM VfModule where vnfResourceId = :vnfResourceId");
+    	LOGGER.debug("Catalog database - getVfModulesForVnfResource - vnfResourceModelUuid: " + vnfResourceModelUuid);
+    	StringBuilder hql = new StringBuilder("FROM VfModule where vnfResourceModelUUId = :vnfResourceModelUUId");
         Query query = getSession().createQuery(hql.toString());
-        query.setParameter("vnfResourceId", vnfResourceId);
+    	query.setParameter("vnfResourceModelUUId", vnfResourceModelUuid);
         List<VfModule> resultList = null;
         try {
             resultList = query.list();
@@ -1190,11 +1973,13 @@ public class CatalogDatabase implements Closeable {
             else
                 LOGGER.debug("\tQuery found no records.");
         } catch (org.hibernate.HibernateException he) {
-            LOGGER.debug("Hibernate Exception - getVfModulesForVnfResource - while searching for: vnfResourceId='" + vnfResourceId + " " + he.getMessage());
-            LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception - getVfModulesForVnfResource - searching for vnfResourceId=" + vnfResourceId, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching for vnfResourceId=" + vnfResourceId);
+        	LOGGER.debug("Hibernate Exception - getVfModulesForVnfResource - while searching for: vnfResourceModelUUId='" + vnfResourceModelUuid + " " + he.getMessage());
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception - getVfModulesForVnfResource - searching for vnfResourceModelUUId=" + vnfResourceModelUuid, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching for vnfResourceModelUUId=" + vnfResourceModelUuid);
+        	throw he;
         } catch (Exception e) {
-            LOGGER.debug("Exception - getVfModulesForVnfResource - while searching for: vnfResourceId='" + vnfResourceId + " " + e.getMessage());
-            LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception - getVfModulesForVnfResource - searching for vnfResourceId=" + vnfResourceId, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching for vnfResourceId=" + vnfResourceId);
+        	LOGGER.debug("Exception - getVfModulesForVnfResource - while searching for: vnfResourceModelUUId='" + vnfResourceModelUuid + " " + e.getMessage());
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception - getVfModulesForVnfResource - searching for vnfResourceModelUUId=" + vnfResourceModelUuid, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching for vnfResourceModelUUId=" + vnfResourceModelUuid);
+        	throw e;
         }
         if (resultList == null) {
             resultList = new ArrayList<VfModule>();
@@ -1218,15 +2003,15 @@ public class CatalogDatabase implements Closeable {
         } catch (org.hibernate.NonUniqueResultException nure) {
             LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row - data integrity error: serviceModelInvariantUuid='" + serviceModelInvariantUuid + "'");
             LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for serviceModelInvariantUuid=" + serviceModelInvariantUuid, "", "", MsoLogger.ErrorCode.DataError, "Non unique result for serviceModelInvariantUuid=" + serviceModelInvariantUuid);
-            return null;
+        	throw nure;
         } catch (org.hibernate.HibernateException he) {
-            LOGGER.debug("Hibernate Exception - while searching for: serviceName='" + serviceModelInvariantUuid + "'");
+        	LOGGER.debug("Hibernate Exception - while searching for: serviceName='" + serviceModelInvariantUuid + "' " + he.getMessage());
             LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception searching for serviceModelInvariantUuid=" + serviceModelInvariantUuid, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching for serviceModelInvariantUuid=" + serviceModelInvariantUuid);
-            return null;
+        	throw he;
         } catch (Exception e) {
-            LOGGER.debug("Generic Exception - while searching for: serviceModelInvariantUuid='" + serviceModelInvariantUuid);
+        	LOGGER.debug("Generic Exception - while searching for: serviceModelInvariantUuid='" + serviceModelInvariantUuid + " " + e.getMessage());
             LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Generic exception searching for serviceModelInvariantUuid=" + serviceModelInvariantUuid, "", "", MsoLogger.ErrorCode.DataError, "Generic exception searching for serviceModelInvariantUuid=" + serviceModelInvariantUuid);
-            return null;
+        	throw e;
         }
         if (service == null) {
             LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "NotFound", "CatalogDB", "getService", null);
@@ -1251,15 +2036,15 @@ public class CatalogDatabase implements Closeable {
         } catch (org.hibernate.NonUniqueResultException nure) {
             LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row - data integrity error: NETWORK_RESOURCE.id='" + id + "'");
             LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for NETWORK_RESOURCE.id=" + id, "", "", MsoLogger.ErrorCode.DataError, "Non unique result for NETWORK_RESOURCE.id=" + id);
-            return null;
+        	throw nure;
         } catch (org.hibernate.HibernateException he) {
-            LOGGER.debug("Hibernate Exception - while searching for: NETWORK_RESOURCE.id='" + id + "'");
+        	LOGGER.debug("Hibernate Exception - while searching for: NETWORK_RESOURCE.id='" + id + "' " + he.getMessage());
             LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception searching for NETWORK_RESOURCE.id=" + id, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching for NETWORK_RESOURCE.id=" + id);
-            return null;
+        	throw he;
         } catch (Exception e) {
-            LOGGER.debug("Generic Exception - while searching for: NETWORK_RESOURCE.id='" + id);
+        	LOGGER.debug("Generic Exception - while searching for: NETWORK_RESOURCE.id='" + id + " " + e.getMessage());
             LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Generic exception searching for NETWORK_RESOURCE.id=" + id, "", "", MsoLogger.ErrorCode.DataError, "Generic exception searching for NETWORK_RESOURCE.id=" + id);
-            return null;
+        	throw e;
         }
 
         LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getNetworkResourceById", null);
@@ -1267,27 +2052,156 @@ public class CatalogDatabase implements Closeable {
 
     }
 
+    public NetworkResource getNetworkResourceById(String id) {
+        long startTime = System.currentTimeMillis ();
+        LOGGER.debug ("Catalog database - getNetworkResource with model_uuid " + id);
+
+        String hql = "FROM NetworkResource WHERE modelUUID = :model_uuid";
+        Query query = getSession ().createQuery (hql);
+        query.setParameter ("model_uuid", id);
+        
+        List<NetworkResource> networkResources = null;
+        try {
+        	networkResources = query.list ();
+    	} catch (org.hibernate.HibernateException he) {
+        	LOGGER.debug("Hibernate Exception - while searching for: NETWORK_RESOURCE.id='" + id + "' " + he.getMessage());
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception searching for NETWORK_RESOURCE.model_uuid=" + id, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching for NETWORK_RESOURCE.model_uuid=" + id);
+        	throw he;
+        } catch (Exception e) {
+        	LOGGER.debug("Generic Exception - while searching for: NETWORK_RESOURCE.id='" + id + " " + e.getMessage());
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Generic exception searching for NETWORK_RESOURCE.model_uuid=" + id, "", "", MsoLogger.ErrorCode.DataError, "Generic exception searching for NETWORK_RESOURCE.model_uuid=" + id);
+        	throw e;
+        }
+        
+        LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getNetworkResourceById", null);
+        if (networkResources == null || networkResources.isEmpty())
+        	return null;
+        else
+        	return networkResources.get(0);
+    }
+    
+    // 1707 API Spec
+    
+    public static boolean isEmptyOrNull(String str) {
+    	if (str == null) 
+    		return true;
+    	if (str.equals("null"))
+    		return true;
+    	if (str.equals(""))
+    		return true;
+    	return false;
+    }
+    
+    public List<ServiceToResourceCustomization> getSTR(String serviceModelUuid, String resourceModelCustomizationUuid, String modelType) {
+    	long startTime = System.currentTimeMillis();
+    	LOGGER.debug("Catalog database: getSTR - smu=" + serviceModelUuid + ", rmcu=" + resourceModelCustomizationUuid + ", modelType = " + modelType);
+    	
+    	if (isEmptyOrNull(serviceModelUuid) && isEmptyOrNull(resourceModelCustomizationUuid) && isEmptyOrNull(modelType)) 
+    		return null;
+    	
+    	StringBuilder hql = new StringBuilder("FROM ServiceToResourceCustomization WHERE ");
+    	boolean first = true;
+    	if (serviceModelUuid != null && !serviceModelUuid.equals("")) {
+    		hql.append("serviceModelUUID = :smu");
+    		first = false;
+    	}
+    	if (resourceModelCustomizationUuid != null && !resourceModelCustomizationUuid.equals("")) {
+    		if (!first) {
+    			hql.append(" AND ");
+    		}
+    		hql.append("resourceModelCustomizationUUID = :rmcu");
+    		first = false;
+    	}
+    	if (modelType != null && !modelType.equals("")) {
+    		if (!first) {
+    			hql.append(" AND ");
+    			first = false;
+    		}
+    		hql.append("modelType = :modelType");
+    		first = false;
+    	}
+    	Query query = getSession().createQuery(hql.toString());
+    	if (hql.toString().contains(":smu")) 
+    		query.setParameter("smu", serviceModelUuid);
+    	if (hql.toString().contains(":rmcu")) 
+    		query.setParameter("rmcu", resourceModelCustomizationUuid);
+    	if (hql.toString().contains(":modelType")) 
+    		query.setParameter("modelType", modelType);
+        LOGGER.debug("query - " + hql.toString());
+    	
+    	@SuppressWarnings("unchecked")
+    	List<ServiceToResourceCustomization> resultList = query.list();
+        if (resultList == null || resultList.size() < 1) {
+        	LOGGER.debug("Found no matches to the query - " + hql.toString());
+        	return new ArrayList<ServiceToResourceCustomization>();
+        }
+    	return resultList;
+    }
+    
+    public List<VnfResCustomToVfModuleCustom> getVRCtoVFMC (String vrc_mcu, String vfmc_mcu) {
+    	long startTime = System.currentTimeMillis();
+    	LOGGER.debug("Catalog database: getVRCtoVFMC - vrc_mcu=" + vrc_mcu + ", vfmc_mcu=" + vfmc_mcu);
+    	
+    	if (isEmptyOrNull(vrc_mcu) && isEmptyOrNull(vfmc_mcu))
+    		return null;
+    	
+    	StringBuilder hql = new StringBuilder("FROM VnfResCustomToVfModuleCustom WHERE ");
+    	boolean first = true;
+    	if (vrc_mcu != null && !vrc_mcu.equals("")) {
+    		hql.append("vnfResourceCustModelCustomizationUuid = :vrc_mcu");
+    		first = false;
+    	}
+    	if (vfmc_mcu != null && !vfmc_mcu.equals("")) {
+    		if (!first) {
+    			hql.append(" AND ");
+    		}
+    		hql.append("vfModuleCustModelCustomizationUuid = :vfmc_mcu");
+    		first = false;
+    	}
+    	Query query = getSession().createQuery(hql.toString());
+    	if (hql.toString().contains(":vrc_mcu")) 
+    		query.setParameter("vrc_mcu", vrc_mcu);
+    	if (hql.toString().contains(":vfmc_mcu")) 
+    		query.setParameter("vfmc_mcu", vfmc_mcu);
+    	@SuppressWarnings("unchecked")
+    	List<VnfResCustomToVfModuleCustom> resultList = query.list();
+        if (resultList == null || resultList.size() < 1) {
+        	LOGGER.debug("Found no matches to the query - " + hql.toString());
+        	return new ArrayList<VnfResCustomToVfModuleCustom>();
+        }
+    	return resultList;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List <TempNetworkHeatTemplateLookup> getTempNetworkHeatTemplateLookup (String networkResourceModelName) {
+
+        long startTime = System.currentTimeMillis ();
+        LOGGER.debug ("Catalog database - GetTempNetworkHeatTemplateLookup for Network Name " + networkResourceModelName);
+
+        String hql = "FROM TempNetworkHeatTemplateLookup where networkResourceModelName = :networkResourceModelName";
+        Query query = getSession ().createQuery (hql);
+        query.setParameter ("networkResourceModelName", networkResourceModelName);
+
+        List <TempNetworkHeatTemplateLookup> result = query.list ();
+        LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getTempNetworkHeatTemplateLookup", null);
+        return result;
+    }
+    
     // 1702 API Spec - Query for all networks in a Service:
     public List<NetworkResourceCustomization> getAllNetworksByServiceModelUuid(String serviceModelUuid) {
         long startTime = System.currentTimeMillis();
         LOGGER.debug("Catalog database: getServiceNetworksByServiceModelUuid - " + serviceModelUuid);
 
-        // This is a 2-step process (3 really) - 1) query ServiceToNetworks, 2) query NetworkResourceCustomization, 3) populate the networkType
-
-        StringBuilder hql1 = new StringBuilder("FROM ServiceToNetworks WHERE serviceModelUuid = :serviceModelUuid");
-        Query query = getSession().createQuery(hql1.toString());
-        query.setParameter("serviceModelUuid", serviceModelUuid);
-        @SuppressWarnings("unchecked")
-        List<ServiceToNetworks> resultList1 = query.list();
-        if (resultList1 == null || resultList1.size() < 1) {
-            LOGGER.debug("Found no matches to the query - FROM ServiceToNetworks WHERE serviceModelUuid = " + serviceModelUuid);
+    	List<ServiceToResourceCustomization> strMappings = this.getSTR(serviceModelUuid, null, "network");
+    	if (strMappings == null || strMappings.size() < 1) {
+    		LOGGER.debug("Found NO matches for NRC with ServiceModelUuid=" + serviceModelUuid);
             return new ArrayList<NetworkResourceCustomization>();
         }
-        LOGGER.debug("Found " + resultList1.size() + " entries in ServiceToNetworks with smu=" + serviceModelUuid);
+        LOGGER.debug("Found " + strMappings.size() + " entries in ServiceToResourceCustomizations.network with smu=" + serviceModelUuid); 
 
         ArrayList<NetworkResourceCustomization> masterList = new ArrayList<NetworkResourceCustomization>();
-        for (ServiceToNetworks stn : resultList1) {
-            String networkModelCustomizationUuid = stn.getNetworkModelCustomizationUuid();
+        for (ServiceToResourceCustomization stn : strMappings) {
+        	String networkModelCustomizationUuid = stn.getResourceModelCustomizationUUID();
             LOGGER.debug("Now searching for NetworkResourceCustomization for " + networkModelCustomizationUuid);
             List<NetworkResourceCustomization> resultSet = this.getAllNetworksByNetworkModelCustomizationUuid(networkModelCustomizationUuid);
             for (NetworkResourceCustomization nrc : resultSet) {
@@ -1297,7 +2211,6 @@ public class CatalogDatabase implements Closeable {
         LOGGER.debug("Returning " + masterList.size() + " NRC records");
         LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getAllNetworksByServiceModelUuid", null);
         return masterList;
-
     }
     public List<NetworkResourceCustomization> getAllNetworksByServiceModelInvariantUuid(String serviceModelInvariantUuid) {
         long startTime = System.currentTimeMillis();
@@ -1318,7 +2231,7 @@ public class CatalogDatabase implements Closeable {
         Collections.reverse (serviceList);
         Service service = serviceList.get(0);
 
-        String serviceNameVersionId = service.getServiceNameVersionId();
+        String serviceNameVersionId = service.getModelUUID();
         LOGGER.debug("The highest version for the Service " + serviceModelInvariantUuid + " is " + serviceNameVersionId);
 
         // Service.serviceNameVersionId == ServiceToNetworks.serviceModelUuid
@@ -1347,7 +2260,7 @@ public class CatalogDatabase implements Closeable {
         Collections.reverse (serviceList);
         Service service = serviceList.get(0);
 
-        String serviceNameVersionId = service.getServiceNameVersionId();
+        String serviceNameVersionId = service.getModelUUID();
 
         // Service.serviceNameVersionId == ServiceToNetworks.serviceModelUuid
         return this.getAllNetworksByServiceModelUuid(serviceNameVersionId);
@@ -1358,17 +2271,32 @@ public class CatalogDatabase implements Closeable {
         LOGGER.debug("Catalog database: getAllNetworksByNetworkModelCustomizationUuid - " + networkModelCustomizationUuid);
 
         StringBuilder hql = new StringBuilder("FROM NetworkResourceCustomization WHERE modelCustomizationUuid = :networkModelCustomizationUuid");
-        Query query = getSession().createQuery(hql.toString());
-        query.setParameter("networkModelCustomizationUuid", networkModelCustomizationUuid);
+    	//Query query = getSession().createQuery(hql.toString());
+    	//query.setParameter("networkModelCustomizationUuid", networkModelCustomizationUuid);
+    	//LOGGER.debug("QUERY: " + hql.toString() + ", networkModelCustomizationUuid=" + networkModelCustomizationUuid);
+    	
+    	//@SuppressWarnings("unchecked")
+    	//List<NetworkResourceCustomization> resultList = query.list();
+    	
+    	HashMap<String, String> params = new HashMap<String, String>();
+    	params.put("networkModelCustomizationUuid", networkModelCustomizationUuid);
 
-        @SuppressWarnings("unchecked")
-        List<NetworkResourceCustomization> resultList = query.list();
+    	List<NetworkResourceCustomization> resultList = this.executeQueryMultipleRows(hql.toString(), params, true);
 
-        this.populateNetworkResourceType(resultList);
+    	if (resultList.isEmpty()) {
+    		LOGGER.debug("Unable to find an NMC with nmcu=" + networkModelCustomizationUuid);
+    		return new ArrayList<NetworkResourceCustomization>();
+    	}
+    	for (NetworkResourceCustomization nrc : resultList) {
+    		nrc.setNetworkResource(this.getNetworkResourceById(nrc.getNetworkResourceModelUuid()));
+    	}
+     	
+    	//this.populateNetworkResourceType(resultList);
 
         LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getAllNetworksByNetworkModelCustomizationUuid", null);
         return resultList;
     }
+    
     public List<NetworkResourceCustomization> getAllNetworksByNetworkType(String networkType) {
         long startTime = System.currentTimeMillis();
         LOGGER.debug("Catalog database: getServiceNetworksByNetworkType - " + networkType);
@@ -1377,10 +2305,10 @@ public class CatalogDatabase implements Closeable {
         if (nr == null) {
             return new ArrayList<NetworkResourceCustomization>();
         }
-        Integer networkResourceId = nr.getId();
+    	String networkResourceId = nr.getModelUUID();
 
         LOGGER.debug("Now searching for NRC's with networkResourceId = " + networkResourceId);
-        StringBuilder hql = new StringBuilder("FROM NetworkResourceCustomization WHERE networkResourceId = :networkResourceId");
+    	StringBuilder hql = new StringBuilder("FROM NetworkResourceCustomization WHERE networkResourceModelUuid = :networkResourceId");
 
         Query query = getSession().createQuery(hql.toString());
         query.setParameter("networkResourceId", networkResourceId);
@@ -1399,33 +2327,65 @@ public class CatalogDatabase implements Closeable {
 
         return resultList;
     }
+    public ArrayList<VfModuleCustomization> getAllVfmcForVrc(VnfResourceCustomization vrc) {
+    	long startTime = System.currentTimeMillis();
+    	LOGGER.debug("Catalog database: getAllVfmcForVrc - " + vrc.getModelCustomizationUuid());
+    	
+    	List<VnfResCustomToVfModuleCustom> vfmcs = this.getVRCtoVFMC(vrc.getModelCustomizationUuid(), null);
+    	if (vfmcs == null || vfmcs.size() < 1) {
+    		return null;
+    	}
+    	ArrayList<VfModuleCustomization> vfModuleCusts = new ArrayList<VfModuleCustomization>();
+    	for (VnfResCustomToVfModuleCustom vfmc : vfmcs) {
+    		VfModuleCustomization vfmcust = this.getVfModuleCustomizationByModelCustomizationId(vfmc.getVfModuleCustModelCustomizationUuid());
+    		if (vfmcust != null) {
+    			vfModuleCusts.add(vfmcust);
+    		}
+    	}
+    	return vfModuleCusts;
+    }
 
     //1702 API Spec cont'd - Query for all VnfResources in a Service:
-    public List<VnfResource> getAllVnfsByServiceModelUuid(String serviceModelUuid) {
+    //1707 modified for db refactoring
+    public List<VnfResourceCustomization> getAllVnfsByServiceModelUuid(String serviceModelUuid) {
         long startTime = System.currentTimeMillis();
         LOGGER.debug("Catalog database: getAllVnfsByServiceModelUuid - " + serviceModelUuid);
 
-        StringBuilder hql = new StringBuilder("FROM Service WHERE serviceNameVersionId = :serviceModelUuid");
+    	StringBuilder hql = new StringBuilder("FROM Service WHERE modelUUID = :serviceModelUuid");
         Query query = getSession().createQuery(hql.toString());
         query.setParameter("serviceModelUuid", serviceModelUuid);
         @SuppressWarnings("unchecked")
         List<Service> serviceList = query.list();
 
         if (serviceList.isEmpty()) {
-            return new ArrayList<VnfResource>();
+    		LOGGER.debug("Unable to find a service with modelUuid=" + serviceModelUuid);
+    		return new ArrayList<VnfResourceCustomization>();
         }
 
         Collections.sort (serviceList, new MavenLikeVersioningComparator ());
         Collections.reverse (serviceList);
         Service service = serviceList.get(0);
 
-        String serviceModelInvariantUuid = service.getModelInvariantUUID();
-        String serviceModelVersion = service.getVersion();
+        // Step 2 - Now query to get the related VnfResourceCustomizations
 
-        return this.getAllVnfsByServiceModelInvariantUuid(serviceModelInvariantUuid, serviceModelVersion);
+        List<ServiceToResourceCustomization> strcs = this.getSTR(serviceModelUuid, null, "vnf");
 
+        if (strcs.isEmpty()) {
+    		LOGGER.debug("Unable to find any related vnfs to a service with modelUuid=" + serviceModelUuid);
+        	return new ArrayList<VnfResourceCustomization>();
     }
-    public List<VnfResource> getAllVnfsByServiceModelInvariantUuid(String serviceModelInvariantUuid) {
+        
+        ArrayList<VnfResourceCustomization> allVrcs = new ArrayList<VnfResourceCustomization>();
+        for (ServiceToResourceCustomization strc : strcs) {
+        	LOGGER.debug("Try to find VRC for mcu=" + strc.getResourceModelCustomizationUUID());
+        	VnfResourceCustomization vrc = this.getVnfResourceCustomizationByModelCustomizationUuid(strc.getResourceModelCustomizationUUID());
+        	if (vrc != null)
+        		allVrcs.add(vrc);
+        }
+        return allVrcs;
+    	
+    }
+    public List<VnfResourceCustomization> getAllVnfsByServiceModelInvariantUuid(String serviceModelInvariantUuid) {
         long startTime = System.currentTimeMillis();
         LOGGER.debug("Catalog database: getAllVnfsByServiceModelInvariantUuid - " + serviceModelInvariantUuid);
 
@@ -1436,50 +2396,44 @@ public class CatalogDatabase implements Closeable {
         List<Service> resultList = query.list();
 
         if (resultList.isEmpty()) {
-            return new ArrayList<VnfResource>();
+    		return new ArrayList<VnfResourceCustomization>();
         }
         Collections.sort (resultList, new MavenLikeVersioningComparator ());
         Collections.reverse (resultList);
         Service service = resultList.get(0);
         //now just call the method that takes the version - the service object will have the highest version
-        return this.getAllVnfsByServiceModelInvariantUuid(serviceModelInvariantUuid, service.getVersion());
+    	return this.getAllVnfsByServiceModelUuid(service.getModelUUID());
     }
-    public List<VnfResource> getAllVnfsByServiceModelInvariantUuid(String serviceModelInvariantUuid, String serviceModelVersion) {
+    public List<VnfResourceCustomization> getAllVnfsByServiceModelInvariantUuid(String serviceModelInvariantUuid, String serviceModelVersion) {
         long startTime = System.currentTimeMillis();
         LOGGER.debug("Catalog database: getAllVnfsByServiceModelInvariantUuid - " + serviceModelInvariantUuid + ", version=" + serviceModelVersion);
 
-        StringBuilder hql = new StringBuilder("FROM VnfResource WHERE serviceModelInvariantUUID = :serviceModelInvariantUuid and version = :serviceModelVersion");
+    	StringBuilder hql = new StringBuilder("FROM Service WHERE modelInvariantUUID = :serviceModelInvariantUuid and version = :serviceModelVersion");
         Query query = getSession().createQuery(hql.toString());
         query.setParameter("serviceModelInvariantUuid", serviceModelInvariantUuid);
         query.setParameter("serviceModelVersion", serviceModelVersion);
 
         @SuppressWarnings("unchecked")
-        List<VnfResource> resultList = query.list();
+    	List<Service> resultList = query.list();
 
         if (resultList.isEmpty()) {
-            return new ArrayList<VnfResource>();
-        }
-        // so we have a list of VnfResource objects - but we need to add each one's VfModule objects
-        for (VnfResource vnfResource : resultList) {
-            List<VfModule> vfModules = this.getVfModulesForVnfResource(vnfResource);
-            if (vfModules != null && !vfModules.isEmpty()) {
-                for (VfModule vfm : vfModules) {
-                    vnfResource.addVfModule(vfm);
+    		return new ArrayList<VnfResourceCustomization>();
                 }
-            }
-        }
+        Collections.sort (resultList, new MavenLikeVersioningComparator ());
+        Collections.reverse (resultList);
+        Service service = resultList.get(0);
         LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getAllVnfsByServiceModelInvariantUuid", null);
-        return resultList;
+    	return this.getAllVnfsByServiceModelUuid(service.getModelUUID());
+            }
 
-    }
-    public List<VnfResource> getAllVnfsByServiceName(String serviceName, String serviceVersion)  {
+    public List<VnfResourceCustomization> getAllVnfsByServiceName(String serviceName, String serviceVersion)  {
         long startTime = System.currentTimeMillis();
         LOGGER.debug("Catalog database: getAllVnfsByServiceName - " + serviceName + ", version=" + serviceVersion);
         if (serviceVersion == null || serviceVersion.equals("")) {
             return this.getAllVnfsByServiceName(serviceName);
         }
 
-        StringBuilder hql = new StringBuilder("FROM Service WHERE serviceName = :serviceName and version = :serviceVersion");
+    	StringBuilder hql = new StringBuilder("FROM Service WHERE modelName = :serviceName and version = :serviceVersion");
         Query query = getSession().createQuery(hql.toString());
         query.setParameter("serviceName", serviceName);
         query.setParameter("serviceVersion", serviceVersion);
@@ -1490,16 +2444,14 @@ public class CatalogDatabase implements Closeable {
         if (resultList.isEmpty()) {
             return null;
         }
-
         Service service = resultList.get(0);
-
-        return this.getAllVnfsByServiceModelInvariantUuid(service.getModelInvariantUUID(), service.getVersion());
+    	return this.getAllVnfsByServiceModelUuid(service.getModelUUID());
     }
-    public List<VnfResource> getAllVnfsByServiceName(String serviceName) {
+    public List<VnfResourceCustomization> getAllVnfsByServiceName(String serviceName) {
         long startTime = System.currentTimeMillis();
         LOGGER.debug("Catalog database: getAllVnfsByServiceName - " + serviceName);
 
-        StringBuilder hql = new StringBuilder("FROM Service WHERE serviceName = :serviceName");
+    	StringBuilder hql = new StringBuilder("FROM Service WHERE modelName = :serviceName");
         Query query = getSession().createQuery(hql.toString());
         query.setParameter("serviceName", serviceName);
 
@@ -1513,37 +2465,33 @@ public class CatalogDatabase implements Closeable {
         Collections.reverse (resultList);
         Service service = resultList.get(0);
 
-        return this.getAllVnfsByServiceModelInvariantUuid(service.getModelInvariantUUID(), service.getVersion());
+    	return this.getAllVnfsByServiceModelUuid(service.getModelUUID());
     }
-    public List<VnfResource> getAllVnfsByVnfModelCustomizationUuid(String vnfModelCustomizationUuid) {
+
+    public List<VnfResourceCustomization> getAllVnfsByVnfModelCustomizationUuid(String vnfModelCustomizationUuid) {
         long startTime = System.currentTimeMillis();
         LOGGER.debug("Catalog database: getAllVnfsByVnfModelCustomizationUuid - " + vnfModelCustomizationUuid);
 
-        StringBuilder hql = new StringBuilder("FROM VnfResource WHERE modelCustomizationUuid = :vnfModelCustomizationUuid");
-        Query query = getSession().createQuery(hql.toString());
-        query.setParameter("vnfModelCustomizationUuid", vnfModelCustomizationUuid);
-
+    	StringBuilder hql1 = new StringBuilder("FROM VnfResourceCustomization WHERE modelCustomizationUuid = :vrcmcu");
+    	Query query1 = getSession().createQuery(hql1.toString());
+    	query1.setParameter("vrcmcu", vnfModelCustomizationUuid);
         @SuppressWarnings("unchecked")
-        List<VnfResource> resultList = query.list();
+    	List<VnfResourceCustomization> resultList1 = query1.list();
 
-        if (resultList.isEmpty()) {
+    	if (resultList1.isEmpty()) {
             LOGGER.debug("Found no records matching " + vnfModelCustomizationUuid);
             return null;
         }
-        // so we have a list of VnfResource objects - but we need to add each one's VfModule objects
-        for (VnfResource vnfResource : resultList) {
-            LOGGER.debug("Finding vfModules for vnfResource.id=" + vnfResource.getId());
-            List<VfModule> vfModules = this.getVfModulesForVnfResource(vnfResource);
-            if (vfModules != null && !vfModules.isEmpty()) {
-                LOGGER.debug("\tFound " + vfModules.size() + " vf modules");
-                for (VfModule vfm : vfModules) {
-                    vnfResource.addVfModule(vfm);
+    	
+    	for (VnfResourceCustomization vrc : resultList1) {
+    		VnfResource vr = this.getVnfResourceByModelUuid(vrc.getVnfResourceModelUuid());
+    		vrc.setVnfResource(vr);
+    		vrc.setVfModuleCustomizations(this.getAllVfmcForVrc(vrc));
                 }
-            }
-        }
-        LOGGER.debug("Returning " + resultList + " vnf modules");
+
+    	LOGGER.debug("Returning " + resultList1.size() + " vnf modules");
         LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getAllVnfsByVnfModelCustomizationUuid", null);
-        return resultList;
+    	return resultList1;
     }
 
     //1702 API Spec cont'd - Query for all allotted resources in a Service
@@ -1552,22 +2500,16 @@ public class CatalogDatabase implements Closeable {
         long startTime = System.currentTimeMillis();
         LOGGER.debug("Catalog database: getAllAllottedResourcesByServiceModelUuid - " + serviceModelUuid);
 
-        // This is a 2-step process (3 really) - 1) query ServiceToAllottedResources, 2) query AllottedResourceCustomization
-
-        StringBuilder hql1 = new StringBuilder("FROM ServiceToAllottedResources WHERE serviceModelUuid = :serviceModelUuid");
-        Query query = getSession().createQuery(hql1.toString());
-        query.setParameter("serviceModelUuid", serviceModelUuid);
-        @SuppressWarnings("unchecked")
-        List<ServiceToAllottedResources> resultList1 = query.list();
-        if (resultList1 == null || resultList1.size() < 1) {
-            LOGGER.debug("Found no matches to the query " + hql1.toString());
+    	List<ServiceToResourceCustomization> strcs = this.getSTR(serviceModelUuid, null, "allottedResource");
+    	if (strcs == null || strcs.size() < 1) {
+    		LOGGER.debug("No AR entries found for " + serviceModelUuid);
             return new ArrayList<AllottedResourceCustomization>();
         }
-        LOGGER.debug("Found " + resultList1.size() + " entries in ServiceToAllottedResources with smu=" + serviceModelUuid);
+        LOGGER.debug("Found " + strcs.size() + " entries in ServiceToResourceCustomizations with smu=" + serviceModelUuid + ", allottedResource"); 
 
         ArrayList<AllottedResourceCustomization> masterList = new ArrayList<AllottedResourceCustomization>();
-        for (ServiceToAllottedResources star : resultList1) {
-            String arModelCustomizationUuid = star.getArModelCustomizationUuid();
+        for (ServiceToResourceCustomization star : strcs) {
+        	String arModelCustomizationUuid = star.getResourceModelCustomizationUUID();
             LOGGER.debug("Now searching for AllottedResourceCustomization for " + arModelCustomizationUuid);
             List<AllottedResourceCustomization> resultSet = this.getAllAllottedResourcesByArModelCustomizationUuid(arModelCustomizationUuid);
             for (AllottedResourceCustomization arc : resultSet) {
@@ -1598,11 +2540,10 @@ public class CatalogDatabase implements Closeable {
         Collections.reverse (serviceList);
         Service service = serviceList.get(0);
 
-        String serviceNameVersionId = service.getServiceNameVersionId();
-        LOGGER.debug("The highest version for the Service " + serviceModelInvariantUuid + " is " + serviceNameVersionId);
+        String serviceModelUuid = service.getModelUUID();
+        LOGGER.debug("The highest version for the Service " + serviceModelInvariantUuid + " is " + serviceModelUuid);
 
-        // Service.serviceNameVersionId == ServiceToAllottedResources.serviceModelUuid
-        return this.getAllAllottedResourcesByServiceModelUuid(serviceNameVersionId);
+        return this.getAllAllottedResourcesByServiceModelUuid(serviceModelUuid);
     }
 
     public List<AllottedResourceCustomization> getAllAllottedResourcesByServiceModelInvariantUuid(String serviceModelInvariantUuid, String serviceModelVersion) {
@@ -1614,8 +2555,6 @@ public class CatalogDatabase implements Closeable {
         query.setParameter("serviceModelInvariantUuid", serviceModelInvariantUuid);
         query.setParameter("serviceModelVersion", serviceModelVersion);
 
-        //TODO
-        //can fix this later - no time - could do a unique query here - but this should work
         @SuppressWarnings("unchecked")
         List<Service> serviceList = query.list();
 
@@ -1628,10 +2567,9 @@ public class CatalogDatabase implements Closeable {
         Collections.reverse (serviceList);
         Service service = serviceList.get(0);
 
-        String serviceNameVersionId = service.getServiceNameVersionId();
+        String serviceModelUuid = service.getModelUUID();
 
-        // Service.serviceNameVersionId == ServiceToNetworks.serviceModelUuid
-        return this.getAllAllottedResourcesByServiceModelUuid(serviceNameVersionId);
+        return this.getAllAllottedResourcesByServiceModelUuid(serviceModelUuid);
     }
 
     public List<AllottedResourceCustomization> getAllAllottedResourcesByArModelCustomizationUuid(String arModelCustomizationUuid) {
@@ -1645,18 +2583,50 @@ public class CatalogDatabase implements Closeable {
         @SuppressWarnings("unchecked")
         List<AllottedResourceCustomization> resultList = query.list();
 
+    	if (resultList.isEmpty()) {
+    		LOGGER.debug("No ARC found with arc_mcu=" + arModelCustomizationUuid);
+    		return new ArrayList<AllottedResourceCustomization>();
+    	}
+    	// There should only be one - but we'll handle if multiple
+    	for (AllottedResourceCustomization arc : resultList) {
+    		AllottedResource ar = this.getAllottedResourceByModelUuid(arc.getArModelUuid());
+    		arc.setAllottedResource(ar);
+    	}
+    	
         LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getAllAllottedResourcesByArModelCustomizationUuid", null);
         return resultList;
     }
 
+    public AllottedResource getAllottedResourceByModelUuid(String arModelUuid) {
+        long startTime = System.currentTimeMillis ();
+        LOGGER.debug ("Catalog database - get Allotted Resource with modelUuid= " + arModelUuid);
+
+        String hql = "FROM AllottedResource WHERE modelUuid = :arModelUuid";
+        Query query = getSession ().createQuery (hql);
+        query.setParameter ("arModelUuid", arModelUuid);
+
+        @SuppressWarnings("unchecked")
+        List <AllottedResource> resultList = query.list ();
+
+        // See if something came back. Name is unique, so
+        if (resultList.isEmpty ()) {
+            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. AllottedResource not found", "CatalogDB", "getAllottedResourceByModelUuid", null);
+            return null;
+        }
+        LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getAllottedResourceByModelUuid", null);
+        return resultList.get (0);
+    	
+    }
+    
     //1702 API Spec cont'd - Query for all resources in a Service:
     public ServiceMacroHolder getAllResourcesByServiceModelUuid(String serviceModelUuid) {
         long startTime = System.currentTimeMillis();
         LOGGER.debug("Catalog database: getAllResourcesByServiceModelUuid - " + serviceModelUuid);
 
-        StringBuilder hql = new StringBuilder("FROM Service WHERE serviceNameVersionId = :serviceModelUuid");
+    	StringBuilder hql = new StringBuilder("FROM Service WHERE modelUUID = :serviceModelUuid");
         Query query = getSession().createQuery(hql.toString());
         query.setParameter("serviceModelUuid", serviceModelUuid);
+    	LOGGER.debug("Query: " + hql.toString() + ", smu=" + serviceModelUuid);
         @SuppressWarnings("unchecked")
         List<Service> serviceList = query.list();
 
@@ -1674,8 +2644,8 @@ public class CatalogDatabase implements Closeable {
         smh.setNetworkResourceCustomization(nrcList);
         ArrayList<AllottedResourceCustomization> arcList = (ArrayList<AllottedResourceCustomization>) this.getAllAllottedResourcesByServiceModelUuid(serviceModelUuid);
         smh.setAllottedResourceCustomization(arcList);
-        ArrayList<VnfResource> vnfList = (ArrayList<VnfResource>) this.getAllVnfsByServiceModelInvariantUuid(service.getModelInvariantUUID(), service.getVersion());
-        smh.setVnfResources(vnfList);
+        ArrayList<VnfResourceCustomization> vnfList = (ArrayList<VnfResourceCustomization>) this.getAllVnfsByServiceModelUuid(serviceModelUuid);
+        smh.setVnfResourceCustomizations(vnfList);
 
         LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getAllResourcesByServiceModelUuid", null);
         return smh;
@@ -1700,12 +2670,12 @@ public class CatalogDatabase implements Closeable {
         Service service = serviceList.get(0);
 
         ServiceMacroHolder smh = new ServiceMacroHolder(service);
-        ArrayList<NetworkResourceCustomization> nrcList = (ArrayList<NetworkResourceCustomization>) this.getAllNetworksByServiceModelUuid(service.getServiceNameVersionId());
+        ArrayList<NetworkResourceCustomization> nrcList = (ArrayList<NetworkResourceCustomization>) this.getAllNetworksByServiceModelUuid(service.getModelUUID());
         smh.setNetworkResourceCustomization(nrcList);
-        ArrayList<AllottedResourceCustomization> arcList = (ArrayList<AllottedResourceCustomization>) this.getAllAllottedResourcesByServiceModelUuid(service.getServiceNameVersionId());
+        ArrayList<AllottedResourceCustomization> arcList = (ArrayList<AllottedResourceCustomization>) this.getAllAllottedResourcesByServiceModelUuid(service.getModelUUID());
         smh.setAllottedResourceCustomization(arcList);
-        ArrayList<VnfResource> vnfList = (ArrayList<VnfResource>) this.getAllVnfsByServiceModelInvariantUuid(service.getModelInvariantUUID(), service.getVersion());
-        smh.setVnfResources(vnfList);
+        ArrayList<VnfResourceCustomization> vnfList = (ArrayList<VnfResourceCustomization>) this.getAllVnfsByServiceModelUuid(service.getModelUUID());
+        smh.setVnfResourceCustomizations(vnfList);
 
         LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getAllResourcesByServiceModelInvariantUuid", null);
         return smh;
@@ -1733,12 +2703,12 @@ public class CatalogDatabase implements Closeable {
         Service service = serviceList.get(0);
 
         ServiceMacroHolder smh = new ServiceMacroHolder(service);
-        ArrayList<NetworkResourceCustomization> nrcList = (ArrayList<NetworkResourceCustomization>) this.getAllNetworksByServiceModelUuid(service.getServiceNameVersionId());
+        ArrayList<NetworkResourceCustomization> nrcList = (ArrayList<NetworkResourceCustomization>) this.getAllNetworksByServiceModelUuid(service.getModelUUID());
         smh.setNetworkResourceCustomization(nrcList);
-        ArrayList<AllottedResourceCustomization> arcList = (ArrayList<AllottedResourceCustomization>) this.getAllAllottedResourcesByServiceModelUuid(service.getServiceNameVersionId());
+        ArrayList<AllottedResourceCustomization> arcList = (ArrayList<AllottedResourceCustomization>) this.getAllAllottedResourcesByServiceModelUuid(service.getModelUUID());
         smh.setAllottedResourceCustomization(arcList);
-        ArrayList<VnfResource> vnfList = (ArrayList<VnfResource>) this.getAllVnfsByServiceModelInvariantUuid(service.getModelInvariantUUID(), service.getVersion());
-        smh.setVnfResources(vnfList);
+        ArrayList<VnfResourceCustomization> vnfList = (ArrayList<VnfResourceCustomization>) this.getAllVnfsByServiceModelUuid(service.getModelUUID());
+        smh.setVnfResourceCustomizations(vnfList);
 
         LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getAllResourcesByServiceModelUuid with version", null);
         return smh;
@@ -1763,7 +2733,9 @@ public class CatalogDatabase implements Closeable {
         }
         return resultList.get(0);
     }
+    @Deprecated
     public VnfResource getSingleVnfResourceByModelCustomizationUuid(String modelCustomizationUuid) {
+    	/*
         long startTime = System.currentTimeMillis();
         LOGGER.debug("Catalog database; getSingleVnfResourceByModelCustomizationUuid - " + modelCustomizationUuid);
         List<VnfResource> resultList = this.getAllVnfsByVnfModelCustomizationUuid(modelCustomizationUuid);
@@ -1771,13 +2743,16 @@ public class CatalogDatabase implements Closeable {
             return null;
         }
         return resultList.get(0);
+    	*/
+    	return null;
     }
 
     private void populateNetworkResourceType(List<NetworkResourceCustomization> resultList) {
-        HashMap<Integer, NetworkResource> networkResources = new HashMap<Integer, NetworkResource>();
+        HashMap<String, NetworkResource> networkResources = new HashMap<String, NetworkResource>();
 
         for (NetworkResourceCustomization nrc : resultList) {
-            Integer network_id = nrc.getNetworkResourceId();
+        	//Integer network_id = nrc.getNetworkResourceId();
+        	String network_id = nrc.getNetworkResourceModelUuid();
             if (network_id == null) {
                 nrc.setNetworkResource(null);
                 nrc.setNetworkType("UNKNOWN_NETWORK_ID_NULL");
@@ -1785,13 +2760,13 @@ public class CatalogDatabase implements Closeable {
             }
             if (networkResources.containsKey(network_id)) {
                 nrc.setNetworkResource(networkResources.get(network_id));
-                nrc.setNetworkType(networkResources.get(network_id).getNetworkType());
+        		nrc.setNetworkType(networkResources.get(network_id).getModelName());
             } else {
                 NetworkResource nr = this.getNetworkResourceById(network_id);
                 if (nr == null) {
                     nrc.setNetworkType("INVALID_NETWORK_TYPE_ID_NOT_FOUND");
                 } else {
-                    nrc.setNetworkType(nr.getNetworkType());
+        			nrc.setNetworkType(nr.getModelName());
                     nrc.setNetworkResource(nr);
                     networkResources.put(network_id, nr);
                 }
@@ -1833,8 +2808,7 @@ public class CatalogDatabase implements Closeable {
 
         VfModule vfMod = resultList.get(0);
 
-        int id = vfMod.getId();
-        String vfModuleId = Integer.toString(id);
+        String vfModuleId = vfMod.getModelUUID();
 
         StringBuilder hql1 = new StringBuilder ("FROM VnfRecipe WHERE vfModuleId = :vfModuleId AND action = :action ");
 
@@ -1843,7 +2817,7 @@ public class CatalogDatabase implements Closeable {
                                       + action);
 
         Query query1 = getSession ().createQuery (hql1.toString ());
-        query1.setParameter (VF_MODULE_ID, vfModuleId);
+        query1.setParameter (VF_MODULE_MODEL_UUID, vfModuleId);
         query1.setParameter (ACTION, action);
 
         @SuppressWarnings("unchecked")
@@ -1899,9 +2873,10 @@ public class CatalogDatabase implements Closeable {
         return resultList;
     }
 
+    
     /**
      * Return a VNF COMPONENTSrecipe that matches a given VNF_TYPE, VF_MODULE_MODEL_NAME,
-     * ASDC_SERVICE_MODEL_VERSION, MODEL_VERSION, and ACTION
+     * MODEL_CUSTOMIZATION_UUID, ASDC_SERVICE_MODEL_VERSION, MODEL_VERSION, and ACTION
      * first query VF_MODULE table by type, and then use the ID to query
      * VNF_COMPONENTS_RECIPE by VF_MODULE_ID and ACTION
      *
@@ -1925,8 +2900,7 @@ public class CatalogDatabase implements Closeable {
 
         VfModule vfMod = resultList.get(0);
 
-        int id = vfMod.getId();
-        String vfModuleId = Integer.toString(id);
+        String vfModuleId = vfMod.getModelUUID();
 
         StringBuilder hql1 = new StringBuilder ("FROM VnfComponentsRecipe WHERE vfModuleId = :vfModuleId AND action = :action ");
 
@@ -1935,7 +2909,7 @@ public class CatalogDatabase implements Closeable {
                 + action);
 
         Query query1 = getSession ().createQuery (hql1.toString ());
-        query1.setParameter (VF_MODULE_ID, vfModuleId);
+        query1.setParameter (VF_MODULE_MODEL_UUID, vfModuleId);
         query1.setParameter (ACTION, action);
 
         @SuppressWarnings("unchecked")
@@ -1981,8 +2955,7 @@ public class CatalogDatabase implements Closeable {
 
         VfModule vfMod = resultList.get(0);
 
-        int id = vfMod.getId();
-        String vfModuleId = Integer.toString(id);
+        String vfModuleId = vfMod.getModelName();      
 
         StringBuilder hql1 = new StringBuilder ("FROM VnfComponentsRecipe WHERE vfModuleId = :vfModuleId AND action = :action ");
 
@@ -1991,7 +2964,7 @@ public class CatalogDatabase implements Closeable {
                                       + action);
 
         Query query1 = getSession ().createQuery (hql1.toString ());
-        query1.setParameter (VF_MODULE_ID, vfModuleId);
+        query1.setParameter (VF_MODULE_MODEL_UUID, vfModuleId);
         query1.setParameter (ACTION, action);
 
         @SuppressWarnings("unchecked")
@@ -2039,6 +3012,7 @@ public class CatalogDatabase implements Closeable {
      * @return A list of VnfResource objects
      */
     @SuppressWarnings("unchecked")
+    @Deprecated // vnfRole is no longer in VnfResource
     public List <VnfResource> getVnfResourcesByRole (String vnfRole) {
 
         long startTime = System.currentTimeMillis ();
@@ -2050,6 +3024,25 @@ public class CatalogDatabase implements Closeable {
 
         List <VnfResource> resources = query.list ();
         LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVnfResourcesByRole", null);
+        return resources;
+    }
+
+    /**
+     * Return VNF Resources in the Catalog DB that match a given VNF role
+     *
+     * @return A list of VnfResource objects
+     */
+    @SuppressWarnings("unchecked")
+    public List<VnfResourceCustomization> getVnfResourceCustomizationsByRole(String vnfRole) {
+        long startTime = System.currentTimeMillis ();
+        LOGGER.debug ("Catalog database - get all VNF resource customizations for role " + vnfRole);
+
+        String hql = "FROM VnfResourceCustomization WHERE nfRole = :vnfRole";
+        Query query = getSession ().createQuery (hql);
+        query.setParameter ("vnfRole", vnfRole);
+
+        List <VnfResourceCustomization> resources = query.list ();
+        LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVnfResourceCustomizationsByRole", null);
         return resources;
     }
 
@@ -2072,6 +3065,19 @@ public class CatalogDatabase implements Closeable {
         return result;
     }
 
+    @SuppressWarnings("unchecked")
+    public List<NetworkResourceCustomization> getAllNetworkResourceCustomizations() {
+        long startTime = System.currentTimeMillis ();
+        LOGGER.debug ("Catalog database - get all network resource customizations");
+
+        String hql = "FROM NetworkResourceCustomization";
+        Query query = getSession ().createQuery (hql);
+
+        List <NetworkResourceCustomization> result = query.list ();
+        LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getAllNetworkResourceCustomizations", null);
+        return result;	
+    }
+    
     /**
      * Return all VF Modules in the Catalog DB
      *
@@ -2090,6 +3096,21 @@ public class CatalogDatabase implements Closeable {
         LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getAllVfModules", null);
         return result;
     }
+
+   @SuppressWarnings("unchecked")
+   public List <VfModuleCustomization> getAllVfModuleCustomizations () {
+
+       long startTime = System.currentTimeMillis ();
+       LOGGER.debug ("Catalog database - get all vf module customizations");
+
+       String hql = "FROM VfModuleCustomization";
+       Query query = getSession ().createQuery (hql);
+
+       List <VfModuleCustomization> result = query.list ();
+       LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getAllVfModuleCustomizations", null);
+       return result;
+   }
+    
 
     /**
      * Return all HeatEnvironment in the Catalog DB
@@ -2113,6 +3134,7 @@ public class CatalogDatabase implements Closeable {
     /**
      * Fetch the Environment by Environment ID - 1510
      */
+    @Deprecated // no longer in heat envt table
     public HeatEnvironment getHeatEnvironment (int id) {
 
         long startTime = System.currentTimeMillis ();
@@ -2141,6 +3163,7 @@ public class CatalogDatabase implements Closeable {
      * Fetch the nested templates - 1510
      */
 
+    @Deprecated
     public Map <String, Object> getNestedTemplates (int templateId) {
         Map <String, Object> nestedTemplates = null;
         long startTime = System.currentTimeMillis ();
@@ -2185,10 +3208,61 @@ public class CatalogDatabase implements Closeable {
         LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getNestedTemplate", null);
         return nestedTemplates;
     }
+    /**
+     * Return a Map<String, Object> for returning the child templates and their contents
+     * 
+     * @param parentHeatTemplateId
+     * @return Map<String,Object> or null if none found
+     */
+    public Map <String, Object> getNestedTemplates (String parentHeatTemplateId) {
+        Map <String, Object> nestedTemplates = null;
+        long startTime = System.currentTimeMillis ();
+        LOGGER.debug ("Catalog database - getNestedTemplates called with parentTemplateId " + parentHeatTemplateId);
+
+        String hql = "FROM HeatNestedTemplate where parentTemplateId = :parentHeatTemplateId";
+
+        Query query = getSession ().createQuery (hql);
+        query.setParameter ("parentHeatTemplateId", parentHeatTemplateId);
+
+        @SuppressWarnings("unchecked")
+        List <HeatNestedTemplate> resultList = query.list ();
+        // If nothing comes back, there are no nested templates
+        if (resultList.isEmpty ()) {
+            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. No nestedTemplate found", "CatalogDB", "getNestedTemplates", null);
+            LOGGER.debug ("No nestedTemplates found for templateId=" + parentHeatTemplateId + ", " + hql);
+            return null;
+        }
+        // Now, for each entry in NESTED_HEAT_TEMPLATES, we need to grab the template body from HEAT_TEMPLATE
+        nestedTemplates = new HashMap <String, Object> ();
+        for (HeatNestedTemplate hnt : resultList) {
+            LOGGER.debug ("Querying for " + hnt);
+            HeatTemplate ht = this.getHeatTemplateByArtifactUuid (hnt.getChildTemplateId ());
+            if (ht == null) {
+                LOGGER.debug ("No template found matching childTemplateId=" + hnt.getChildTemplateId ());
+                continue;
+            }
+            String providerResourceFile = hnt.getProviderResourceFile ();
+            String heatTemplateBody = ht.getTemplateBody ();
+            if (providerResourceFile != null && heatTemplateBody != null) {
+                nestedTemplates.put (providerResourceFile, heatTemplateBody);
+            } else {
+                LOGGER.debug ("providerResourceFile or heatTemplateBody were null - do not add to HashMap!");
+            }
+        }
+        // Make sure we're not returning an empty map - if so, just return null
+        if (nestedTemplates.isEmpty ()) {
+            LOGGER.debug ("nestedTemplates is empty - just return null");
+            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. Nested template is empty", "CatalogDB", "getNestedTemplate", null);
+            return null;
+        }
+        LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getNestedTemplate", null);
+        return nestedTemplates;
+    }
 
     /*
      * Fetch any files in the HEAT_FILES table 1510
      */
+    @Deprecated
     public Map <String, HeatFiles> getHeatFiles (int vnfResourceId) {
        Map <String, HeatFiles> heatFiles = null;
 
@@ -2224,8 +3298,9 @@ public class CatalogDatabase implements Closeable {
     }
 
     // New 1607 - with modularization, use new table to determine which HEAT_FILES entries to attach
-
+    @Deprecated
     public Map <String, HeatFiles> getHeatFilesForVfModule(int vfModuleId) {
+    	/*
         Map <String, HeatFiles> heatFiles = null;
 
         long startTime = System.currentTimeMillis ();
@@ -2242,7 +3317,6 @@ public class CatalogDatabase implements Closeable {
             return null;
         }
         //Now the fun part - we have a list of the heat files we need to get - could clean this up with a join
-        //TODO - convert this all with one join - brute force for now due to time
         heatFiles = new HashMap<String, HeatFiles>();
         for (VfModuleToHeatFiles vmthf : mapList) {
         	int heatFilesId = vmthf.getHeatFilesId();
@@ -2272,9 +3346,119 @@ public class CatalogDatabase implements Closeable {
         }
         LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getHeatFilesForVfModule", null);
         return heatFiles;
+        */
+    	return null;
+    }
+    
+    /**
+     * Return a VfModuleToHeatFiles object 
+     * 
+     * @param vfModuleModelUuid, heatFilesArtifactUuid
+     * @return VfModuleToHeatFiles or null if none found
+     */ 
+    public VfModuleToHeatFiles getVfModuleToHeatFilesEntry(String vfModuleModelUuid, String heatFilesArtifactUuid) {
+
+        long startTime = System.currentTimeMillis ();
+        LOGGER.debug ("Catalog database - getVfModuleToHeatFilesEntry with vfModuleModelUuid " + vfModuleModelUuid + ", heatFilesArtifactUuid=" + heatFilesArtifactUuid);
+        String hql = "FROM VfModuleToHeatFiles where vfModuleModelUuid = :vfModuleModelUuidValue and heatFilesArtifactUuid = :heatFilesArtifactUuidValue";
+        
+        HashMap<String, String> parameters = new HashMap<String, String>();
+        parameters.put("vfModuleModelUuidValue", vfModuleModelUuid);
+        parameters.put("heatFilesArtifactUuidValue", heatFilesArtifactUuid);
+        
+        VfModuleToHeatFiles vmthf = null;
+        
+        try {
+        	vmthf = this.executeQuerySingleRow(hql.toString(), parameters, true);
+        } catch (Exception e) {
+        	throw e;
+        }
+        return vmthf;
     }
 
+    
+    /**
+     * Return a ServiceToResourceCustomization object 
+     * 
+     * @param vfModuleModelUuid, heatFilesArtifactUuid
+     * @return VfModuleToHeatFiles or null if none found
+     */ 
+    public ServiceToResourceCustomization getServiceToResourceCustomization(String serviceModelUuid, String resourceModelCustomizationUuid, String modelType) {
 
+        long startTime = System.currentTimeMillis ();
+        LOGGER.debug ("Catalog database - getServiceToResourceCustomization with serviceModelUuid=" + serviceModelUuid + ", resourceModelCustomizationUuid=" + resourceModelCustomizationUuid + ", modelType=" + modelType);
+        String hql = "FROM ServiceToResourceCustomization where serviceModelUUID = :serviceModelUuidValue and resourceModelCustomizationUUID = :resourceModelCustomizationUuidValue and modelType = :modelTypeValue ";
+        
+        HashMap<String, String> parameters = new HashMap<String, String>();
+        parameters.put("serviceModelUuidValue", serviceModelUuid);
+        parameters.put("resourceModelCustomizationUuidValue", resourceModelCustomizationUuid);
+        parameters.put("modelTypeValue", modelType);
+        
+        ServiceToResourceCustomization strc = null;
+        
+        try {
+        	strc = this.executeQuerySingleRow(hql.toString(), parameters, true);
+        } catch (Exception e) {
+        	throw e;
+        }
+        return strc;
+    }
+
+    /**
+     * Return a Map<String, HeatFiles> for returning the heat files associated with a vfModule 1707
+     * 
+     * @param parentHeatTemplateId
+     * @return Map<String,Object> or null if none found
+     */ 
+    public Map <String, HeatFiles> getHeatFilesForVfModule(String vfModuleModelUuid) {
+        Map <String, HeatFiles> heatFiles = null;
+
+        long startTime = System.currentTimeMillis ();
+        LOGGER.debug ("Catalog database - getHeatFilesForVfModule called with vfModuleModelUuid " + vfModuleModelUuid);
+        String hql = "FROM VfModuleToHeatFiles where vfModuleModelUuid = :vfModuleModelUuidValue";
+
+        Query query = getSession ().createQuery (hql);
+        query.setParameter ("vfModuleModelUuidValue", vfModuleModelUuid);
+       
+        @SuppressWarnings("unchecked")
+        List<VfModuleToHeatFiles> mapList = query.list();
+        if (mapList.isEmpty()) {
+            LOGGER.debug ("No heatFiles found for vfModuleModelUuid=" + vfModuleModelUuid);
+            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. No heatfiles found for vfModule", "CatalogDB", "getHeatFilesForVfModule", null);
+            return null;
+        }
+        //Now the fun part - we have a list of the heat files we need to get - could clean this up with a join
+        heatFiles = new HashMap<String, HeatFiles>();
+        for (VfModuleToHeatFiles vmthf : mapList) {
+        	String heatFilesUuid = vmthf.getHeatFilesArtifactUuid();
+        	hql = "FROM HeatFiles where artifactUuid = :heatFilesUuidValue";
+        	query = getSession().createQuery(hql);
+        	query.setParameter("heatFilesUuidValue", heatFilesUuid);
+        	@SuppressWarnings("unchecked")
+        	List<HeatFiles> fileList = query.list();
+        	if (fileList.isEmpty()) {
+        		// Should this throw an exception??
+        		LOGGER.debug("Unable to find a HEAT_FILES entry at " + heatFilesUuid);
+                String errorString = "_ERROR|" + heatFilesUuid;
+        		// The receiving code needs to know to throw an exception for this - or ignore it.
+        		heatFiles.put(errorString, null);
+        	} else {
+        		// Should only ever have 1 result - add it to our Map
+        		LOGGER.debug("Retrieved " + fileList.size() + " heat file entry at " + heatFilesUuid);
+        		for (HeatFiles hf : fileList) {
+        			LOGGER.debug("Adding " + hf.getFileName() + "->" + hf.getFileBody());
+        			heatFiles.put(hf.getFileName(), hf);
+        		}
+        	}
+        }
+        if (heatFiles.isEmpty()) {
+            LOGGER.debug ("heatFiles is empty - just return null");
+            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. HeatFiles is empty", "CatalogDB", "getHeatFilesForVfModule", null);
+            return null;
+        }
+        LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getHeatFilesForVfModule", null);
+        return heatFiles;	
+    }
 
     /**
      * Get the heat template object based on asdc attributes
@@ -2285,6 +3469,7 @@ public class CatalogDatabase implements Closeable {
      *
      * @return The HeatTemplate
      */
+    @Deprecated // asdcResourceName is no longer in heatTeamplate
     public HeatTemplate getHeatTemplate (String templateName, String version, String asdcResourceName) {
 
         long startTime = System.currentTimeMillis ();
@@ -2313,6 +3498,7 @@ public class CatalogDatabase implements Closeable {
         return resultList.get (0);
     }
 
+
     /**
      * Save the Heat Template
      *
@@ -2322,29 +3508,75 @@ public class CatalogDatabase implements Closeable {
     public void saveHeatTemplate (HeatTemplate heat, Set <HeatTemplateParam> paramSet) {
 
         long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - save Heat Template with name " + heat.getTemplateName());
+        LOGGER.debug ("Catalog database - save Heat Template with name " + heat.getTemplateName() + ", artifactUUID=" + heat.getArtifactUuid());
 
         heat.setParameters(null);
         try {
-            HeatTemplate heatTemp = this.getHeatTemplate (heat.getTemplateName (),
-                                                          heat.getVersion (),
-                                                          heat.getAsdcResourceName ());
+           // HeatTemplate heatTemp = this.getHeatTemplate (heat.getTemplateName (),
+           //                                               heat.getVersion ());
+            
+            HeatTemplate heatTemp = this.getHeatTemplateByArtifactUuidRegularQuery(heat.getArtifactUuid());
+            
             if (heatTemp == null) {
                 this.getSession ().save (heat);
 
                 if (paramSet != null) {
+                	StringBuilder sb = new StringBuilder("Parameters: ");
                     for (HeatTemplateParam param : paramSet) {
-                        param.setHeatTemplateId (heat.getId ());
+                        param.setHeatTemplateArtifactUuid(heat.getArtifactUuid());
+                        sb.append(param.getParamName() + ", ");
                     }
+                    LOGGER.debug(sb.toString());
                     heat.setParameters (paramSet);
-                    this.getSession ().merge (heat);
+                    try {
+                    	Session session = this.getSession();
+                    	if (!(session.isConnected() && session.isOpen())) {
+                    		LOGGER.debug("Initial session is not connected or open - get another");
+                    		session = this.getSession();
+                    	}
+                    	//session.merge(heat);
+                    	session.save(heat);
+                    } catch (HibernateException he1) {
+                    	LOGGER.debug("Hibernate Exception encountered on first attempt at save(heat) - try again..." + he1.getMessage());
+                    	LOGGER.debug(he1.getStackTrace().toString());
+                    	try {
+                    		Session session = this.getSession();
+                    		//session.merge(heat);
+                    		session.save(heat);
+                    	} catch (HibernateException he2) {
+                    		LOGGER.debug("Hibernate Exception encountered on second attempt at save(heat)" + he2.getMessage());
+                    		LOGGER.debug(he2.getStackTrace().toString());
+                    		throw he2;
+                    	} catch (Exception e2) {
+                    		LOGGER.debug("General Exception encountered on second attempt at save(heat)..." + e2.getMessage());
+                    		LOGGER.debug(e2.getStackTrace().toString());
+                    		throw e2;
+                    	}
+                    	
+                    } catch (Exception e1) {
+                    	LOGGER.debug("General Exception encountered on first attempt at save(heat) - try again..." + e1.getMessage());
+                    	LOGGER.debug(e1.getStackTrace().toString());
+                    	try {
+                    		Session session = this.getSession();
+                    		//session.merge(heat);
+                    		session.save(heat);
+                    	} catch (HibernateException he2) {
+                    		LOGGER.debug("General Exception encountered on second attempt at save(heat)" + he2.getMessage());
+                    		LOGGER.debug(he2.getStackTrace().toString());
+                    		throw he2;
+                    	} catch (Exception e2) {
+                    		LOGGER.debug("General Exception encountered on second attempt at save(heat)..." + e2.getMessage());
+                    		LOGGER.debug(e2.getStackTrace().toString());
+                    		throw e2;
+                    	}
+                    }
                 }
 
             } else {
-            	heat.setId(heatTemp.getId());
+            	heat.setArtifactUuid(heatTemp.getArtifactUuid());
             }
         } finally {
-        	heat.setParameters(paramSet);
+        	//heat.setParameters(paramSet);
             LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "saveHeatTemplate", null);
         }
     }
@@ -2357,6 +3589,7 @@ public class CatalogDatabase implements Closeable {
      * @param asdcResourceName the environment resource name
      * @return the heat environment from DB or null if not found
      */
+    @Deprecated
     public HeatEnvironment getHeatEnvironment (String name, String version, String asdcResourceName) {
         long startTime = System.currentTimeMillis ();
         LOGGER.debug ("Catalog database - get Heat environment with name " + name
@@ -2395,6 +3628,50 @@ public class CatalogDatabase implements Closeable {
     }
 
     /**
+     * Retrieves a Heat environment from DB based on its unique key. 1707
+     *
+     * @param name the environment artifact name
+     * @param version the environment resource version
+     * @return the heat environment from DB or null if not found
+     */
+    public HeatEnvironment getHeatEnvironment (String artifactUuid, String version) {
+        long startTime = System.currentTimeMillis ();
+        LOGGER.debug ("Catalog database - get Heat environment with uuid " + artifactUuid
+                                      + " and version "
+                                      + version);
+
+        String hql = "FROM HeatEnvironment WHERE artifactUuid=:artifactUuid AND version=:version";
+        Query query = getSession ().createQuery (hql);
+        query.setParameter ("artifactUuid", artifactUuid);
+        query.setParameter ("version", version);
+        HeatEnvironment env = null;
+        try {
+        	env = (HeatEnvironment) query.uniqueResult ();
+        } catch (org.hibernate.NonUniqueResultException nure) {
+        	LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row - data integrity error: envName='" + artifactUuid + "', version='" + version);
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for artifactUUID=" + artifactUuid + " and version=" + version, "", "", MsoLogger.ErrorCode.DataError, "non unique result for ArtifactUUID=" + artifactUuid);
+        	env = null;
+        	throw nure;
+        } catch (org.hibernate.HibernateException he) {
+        	LOGGER.debug("Hibernate Exception - while searching for: artifactUUID='" + artifactUuid + "', asdc_service_model_version='" + version + " " + he.getMessage() );
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception searching for artifactUUID=" + artifactUuid + " and version=" + version , "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching for artifactUUID=" + artifactUuid);
+        	env = null;
+        	throw he;
+        } catch (Exception e) {
+        	LOGGER.debug("Generic Exception - while searching for: artifactUUID='" + artifactUuid + "', asdc_service_model_version='" + version  + " " + e.getMessage());
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Generic exception searching for artifactUUID=" + artifactUuid + " and version=" + version, "", "", MsoLogger.ErrorCode.DataError, "Generic exception searching for artifactUUID=" + artifactUuid);
+        	env = null;
+        	throw e;
+        }
+        if (env == null) {
+        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "NotFound", "CatalogDB", "getHeatTemplate", null);
+        } else {
+        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getHeatTemplate", null);
+        }
+        return env;
+    }
+
+    /**
      * Save the HeatEnvironment
      *
      * @param env The Environment
@@ -2402,15 +3679,15 @@ public class CatalogDatabase implements Closeable {
     public void saveHeatEnvironment (HeatEnvironment env) {
         long startTime = System.currentTimeMillis ();
         LOGGER.debug ("Catalog database - save Heat environment with name "
-                                      + env.getEnvironment());
+                                      + env.getEnvironment() + " and ArtifactUUID " + env.getArtifactUuid());
         try {
-            HeatEnvironment dbEnv = getHeatEnvironment (env.getName (), env.getVersion (), env.getAsdcResourceName ());
+            HeatEnvironment dbEnv = getHeatEnvironment (env.getArtifactUuid(), env.getVersion ());
             if (dbEnv == null) {
 
                 this.getSession ().save (env);
 
             } else {
-            	env.setId(dbEnv.getId());
+            	env.setArtifactUuid(dbEnv.getArtifactUuid());
             }
 
         } finally {
@@ -2466,13 +3743,17 @@ public class CatalogDatabase implements Closeable {
 
     public void saveOrUpdateVnfResource (VnfResource vnfResource) {
         long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - save VNF Resource with VNF type " + vnfResource.getVnfType ());
+        LOGGER.debug ("Catalog database - save VNF Resource with VNF type " + vnfResource.getModelName());
+        //LOGGER.debug(vnfResource.toString());
         try {
 
-            if (vnfResource.getId() != 0) {
-                this.getSession ().merge (vnfResource);
-            } else {
+        	VnfResource existing = this.getVnfResourceByModelUuid(vnfResource.getModelUuid());
+        	if (existing == null) {
+        		LOGGER.debug("No existing entry found - attempting to save...");
                 this.getSession ().save (vnfResource);
+        	} else {
+        		//LOGGER.debug("Existing vnf resource found!" + existing.toString());
+        		LOGGER.debug("Existing vnf resource found!");
             }
 
         } finally {
@@ -2480,9 +3761,47 @@ public class CatalogDatabase implements Closeable {
         }
     }
 
+    public boolean saveVnfResourceCustomization (VnfResourceCustomization vnfResourceCustomization) {
+        long startTime = System.currentTimeMillis ();
+        LOGGER.debug ("Catalog database - save VNF Resource Customization with Name " + vnfResourceCustomization.getModelInstanceName());
+        try {
+        	LOGGER.debug(vnfResourceCustomization.toString());
+        } catch (Exception e) {
+        	LOGGER.debug("Unable to print VRC " + e.getMessage());
+        }
+        try {
+        		 // Check if NetworkResourceCustomzation record already exists.  If so, skip saving it.
+        		// List<NetworkResource> networkResourceList = getAllNetworksByNetworkModelCustomizationUuid(networkResourceCustomization.getModelCustomizationUuid());
+        		 // Do any matching customization records exist?
+        		// if(networkResourceList.size() == 0){
+         		        		 
+        			// networkResourceCustomization.setNetworkResourceModelUuid(networkResource.getModelUuid());
+        //	this.getSession().flush();
+        //	this.getSession().clear();
+        	
+        	VnfResourceCustomization existing = this.getVnfResourceCustomizationByModelCustomizationUuid(vnfResourceCustomization.getModelCustomizationUuid());
+        	
+        	if (existing == null) {
+        		LOGGER.debug("No existing entry found...attempting to save...");
+            		this.getSession ().save (vnfResourceCustomization);
+        		return true;
+        	}else {
+        		try {
+        			LOGGER.debug("Existing VRC entry found\n" + existing.toString());
+        		} catch (Exception e) {
+        			LOGGER.debug("Unable to print VRC2 " + e.getMessage());
+        		}
+        		return false;
+            	}
+        		         		 
+        } finally {
+            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "saveVnfResourceCustomization", null);
+        }
+    }
+    
     public void saveAllottedResourceCustomization (AllottedResourceCustomization resourceCustomization) {
         long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - save Allotted Resource with Name " + resourceCustomization.getModelName());
+        LOGGER.debug ("Catalog database - save Allotted Resource with Name " + resourceCustomization.getModelInstanceName());
         try {
             List<AllottedResourceCustomization> allottedResourcesList = getAllAllottedResourcesByArModelCustomizationUuid(resourceCustomization.getModelCustomizationUuid());
 
@@ -2495,9 +3814,145 @@ public class CatalogDatabase implements Closeable {
         }
     }
 
+    public void saveAllottedResource (AllottedResource allottedResource) {
+        long startTime = System.currentTimeMillis ();
+        LOGGER.debug ("Catalog database - save Allotted Resource with Name " + allottedResource.getModelName());
+        try { 
+        	AllottedResource existing = this.getAllottedResourceByModelUuid(allottedResource.getModelUuid());
+        	if (existing == null) {
+        		this.getSession ().save (allottedResource);
+        	} else {
+        		LOGGER.debug("Found existing allottedResource with this modelUuid - no need to save");
+        	}
+         
+        } finally {
+            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "saveOrUpdateAllottedResourceCustomization", null);
+        }
+    }
+    
+    public void saveNetworkResource (NetworkResource networkResource) throws RecordNotFoundException {
+        long startTime = System.currentTimeMillis ();
+        LOGGER.debug ("Catalog database - save Network Resource with Network Name " + networkResource.getModelName());
+        try {
+        		 // Check if NetworkResourceCustomzation record already exists.  If so, skip saving it.
+        		// List<NetworkResource> networkResourceList = getAllNetworksByNetworkModelCustomizationUuid(networkResourceCustomization.getModelCustomizationUuid());
+        		 // Do any matching customization records exist?
+			if(getNetworkResourceByModelUuid(networkResource.getModelUUID()) == null){
+        			 this.getSession ().save(networkResource);
+			}
+  
+        
+        } finally {
+            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "saveNetworkResourceCustomization", null);
+        }
+    }
+    
+    public void saveToscaCsar (ToscaCsar toscaCsar) throws RecordNotFoundException {
+    	
+
+        long startTime = System.currentTimeMillis ();
+        LOGGER.debug ("Catalog database - save Tosca Csar with Name " + toscaCsar.getName());
+        try {
+        	
+        	if(getToscaCsar(toscaCsar.getArtifactChecksum()) == null){
+        		this.getSession ().save (toscaCsar);
+        	}
+        	//if (toscaCsar.getArtifactUUID() != null) {
+        	//	this.getSession ().merge (toscaCsar);
+        	//} else {
+        	//	this.getSession ().save (toscaCsar);
+        	LOGGER.debug("Temporarily disabling saveToscaCsar pending further investigation 2017-06-02");
+        	//}
+        
+        } finally {
+            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "saveToscaCsar", null);
+        }
+    }
+    
+
+    /**
+     * Return the newest version of a specific Tosca CSAR Record resource (queried by Name).
+     *
+     * @param ToscaCsar
+     * @return ToscaCsar object or null if none found
+     */
+    public ToscaCsar getToscaCsar (String artifactChecksum) {
+
+        long startTime = System.currentTimeMillis ();
+        LOGGER.debug ("Catalog database - get Tosca CSAR record with artifactChecksum " + artifactChecksum);
+
+        String hql = "FROM ToscaCsar WHERE artifactChecksum = :artifactChecksum";
+        Query query = getSession ().createQuery (hql);
+        query.setParameter ("artifactChecksum", artifactChecksum);
+
+        @SuppressWarnings("unchecked")
+        List <ToscaCsar> resultList = query.list ();
+
+        // See if something came back. Name is unique, so
+        if (resultList.isEmpty ()) {
+            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. Tosca Csar not found", "CatalogDB", "getToscaCsar", null);
+            return null;
+        }
+       // Collections.sort (resultList, new MavenLikeVersioningComparator ());
+       // Collections.reverse (resultList);
+
+        LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getToscaCsar", null);
+        return resultList.get (0);
+    }
+
+    
+    public void saveTempNetworkHeatTemplateLookup (TempNetworkHeatTemplateLookup tempNetworkHeatTemplateLookup) {
+        long startTime = System.currentTimeMillis ();
+        LOGGER.debug ("Catalog database - save TempNetworkHeatTemplateLookup with Network Model Name " + tempNetworkHeatTemplateLookup.getNetworkResourceModelName() +
+        		      " and Heat Template Artifact UUID " + tempNetworkHeatTemplateLookup.getHeatTemplateArtifactUuid());
+        try {
+                 this.getSession ().save (tempNetworkHeatTemplateLookup);
+      
+        } finally {
+            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "saveTempNetworkHeatTemplateLookup", null); 
+        }
+    }
+    
+    public void saveVfModuleToHeatFiles (VfModuleToHeatFiles vfModuleToHeatFiles) {
+        long startTime = System.currentTimeMillis ();
+        LOGGER.debug ("Catalog database - save VfModuleToHeatFiles with VF Module UUID " + vfModuleToHeatFiles.getVfModuleModelUuid() +
+        		      " and Heat Files Artifact UUID " + vfModuleToHeatFiles.getHeatFilesArtifactUuid());
+        try {
+        	
+                this.getSession ().save (vfModuleToHeatFiles);
+      
+        } finally {
+            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "saveVFModuleToHeatFiles", null); 
+        }
+    }
+    
+    public void saveVnfResourceToVfModuleCustomization(VnfResourceCustomization vnfResourceCustomizationUUID, VfModuleCustomization vfModuleCustomizationUUID) throws RecordNotFoundException {
+        long startTime = System.currentTimeMillis ();
+        VnfResCustomToVfModuleCustom vnfResCustomToVfModuleCustom = new VnfResCustomToVfModuleCustom();
+        
+        if(vnfResourceCustomizationUUID != null && vfModuleCustomizationUUID != null){
+        	vnfResCustomToVfModuleCustom.setVnfResourceCustModelCustomizationUuid(vnfResourceCustomizationUUID.getModelCustomizationUuid());
+        	vnfResCustomToVfModuleCustom.setVfModuleCustModelCustomizationUuid(vfModuleCustomizationUUID.getModelCustomizationUuid());
+        	String vnfId = vnfResourceCustomizationUUID.getModelCustomizationUuid();
+        	String vfId = vfModuleCustomizationUUID.getModelCustomizationUuid();
+        	LOGGER.debug ("Catalog database - save VnfResCustomToVfModuleCustom with vnf=" + vnfId + ", vf=" + vfId);
+        	try {
+        		VnfResCustomToVfModuleCustom existing = this.getVnfResCustomToVfModule(vnfId, vfId);
+        		if (existing == null) {
+        			LOGGER.debug("No existing entry found - will now try to save");
+        			this.getSession ().save (vnfResCustomToVfModuleCustom);
+        		} else {
+        			LOGGER.debug("Existing entry already found - no save needed");
+        		}
+        	} finally {
+        		LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "saveVnfResourceToVfModuleCustomization", null);
+        	}
+        }
+    }
+    
     public void saveNetworkResourceCustomization (NetworkResourceCustomization networkResourceCustomization) throws RecordNotFoundException {
         long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - save Network Resource Customization with Network Name " + networkResourceCustomization.getModelName());
+        LOGGER.debug ("Catalog database - save Network Resource Customization with Network Name " + networkResourceCustomization.getModelInstanceName());
         try {
             // Check if NetworkResourceCustomzation record already exists.  If so, skip saving it.
             List<NetworkResourceCustomization> networkResourceCustomizationList = getAllNetworksByNetworkModelCustomizationUuid(networkResourceCustomization.getModelCustomizationUuid());
@@ -2505,13 +3960,14 @@ public class CatalogDatabase implements Closeable {
             if(networkResourceCustomizationList.size() == 0){
 
                 // Retreive the record from the Network_Resource table associated to the Customization record based on ModelName
-                NetworkResource networkResource = getNetworkResource(networkResourceCustomization.getModelName());
+        		// ?? is it modelInstanceName with 1707?
+        		NetworkResource networkResource = getNetworkResource(networkResourceCustomization.getModelInstanceName());
 
                 if(networkResource == null){
-                    throw new RecordNotFoundException("No record found in NETWORK_RESOURCE table for model name " + networkResourceCustomization.getModelName());
+        			throw new RecordNotFoundException("No record found in NETWORK_RESOURCE table for model name " + networkResourceCustomization.getModelInstanceName());
                 }
 
-                networkResourceCustomization.setNetworkResourceId(networkResource.getId());
+        		networkResourceCustomization.setNetworkResourceModelUuid(networkResource.getModelUUID());
 
                 this.getSession ().save(networkResourceCustomization);
             }
@@ -2522,6 +3978,7 @@ public class CatalogDatabase implements Closeable {
         }
     }
 
+    @Deprecated  // table is gone - mapped to ServiceToResource
     public void saveServiceToNetworks (ServiceToNetworks serviceToNetworks) {
         long startTime = System.currentTimeMillis ();
         LOGGER.debug ("Catalog database - save to ServiceToNetworks table with NetworkModelCustomizationUUID of " + serviceToNetworks.getNetworkModelCustomizationUuid() + " and ServiceModelUUID of " + serviceToNetworks.getServiceModelUuid());
@@ -2533,6 +3990,22 @@ public class CatalogDatabase implements Closeable {
         }
     }
 
+    public void saveServiceToResourceCustomization(ServiceToResourceCustomization serviceToResource) {
+        long startTime = System.currentTimeMillis ();
+        LOGGER.debug ("Catalog database - save to ServiceToResourceCustomization table with ServiceModelUuid of " + serviceToResource.getServiceModelUUID() + ", ResourceModelUUID of " + serviceToResource.getResourceModelCustomizationUUID() + " and model_type=" + serviceToResource.getModelType());
+        ServiceToResourceCustomization strc = this.getServiceToResourceCustomization(serviceToResource.getServiceModelUUID(), serviceToResource.getResourceModelCustomizationUUID(), serviceToResource.getModelType());
+        try {
+        	if (strc != null) {
+        		LOGGER.debug("**This ServiceToResourceCustomization record already exists - no need to save");
+        	} else {
+        	 this.getSession ().save(serviceToResource);
+        	}
+        } finally {
+            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "saveServiceToResourceCustomization", null);
+        }
+    }
+    
+    @Deprecated // table is gone - mapped to ServiceToResourceCustomization
     public void saveServiceToAllottedResources (ServiceToAllottedResources serviceToAllottedResources) {
         long startTime = System.currentTimeMillis ();
         LOGGER.debug ("Catalog database - save to serviceToAllottedResources table with ARModelCustomizationUUID of " + serviceToAllottedResources.getArModelCustomizationUuid() + " and ServiceModelUUID of " + serviceToAllottedResources.getServiceModelUuid());
@@ -2546,11 +4019,11 @@ public class CatalogDatabase implements Closeable {
 
     public void saveService (Service service) {
         long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - save Service with ServiceName/Version/serviceUUID(SERVICE_NAME_VERSION_ID)" + service.getServiceName()+"/"+service.getVersion()+"/"+service.getServiceNameVersionId());
+        LOGGER.debug ("Catalog database - save Service with ServiceName/Version/serviceUUID(SERVICE_NAME_VERSION_ID)" + service.getModelName()+"/"+service.getVersion()+"/"+service.getModelUUID());
         try {
             Service serviceInvariantDB = null;
             // Retrieve existing service record by nameVersionId
-            Service serviceDB = this.getServiceByUUID(service.getServiceNameVersionId());
+        	Service serviceDB = this.getServiceByModelUUID(service.getModelUUID());
             if (serviceDB == null) {
                 // Check to see if a record with the same modelInvariantId already exists.  This tells us that a previous version exists and we can copy its recipe Record for the new service record.
                 serviceInvariantDB = this.getServiceByInvariantUUID(service.getModelInvariantUUID());
@@ -2560,13 +4033,13 @@ public class CatalogDatabase implements Closeable {
 
             if(serviceInvariantDB != null){  // existing modelInvariantId was found.
                 // copy the recipe record with the matching invariant id.  We will duplicate this for the new service record
-                List<ServiceRecipe> serviceRecipes = getServiceRecipes(serviceInvariantDB.getId());
+            	List<ServiceRecipe> serviceRecipes = getServiceRecipes(serviceInvariantDB.getModelUUID());
 
                 if(serviceRecipes != null && serviceRecipes.size() > 0){
                     for(ServiceRecipe serviceRecipe : serviceRecipes){
                         if(serviceRecipe != null){
                             // Fetch the service record that we just added.  We do this so we can extract its Id column value, this will be the foreign key we use in the service recipe table.
-                            Service newService = this.getServiceByUUID(service.getServiceNameVersionId());
+            				Service newService = this.getServiceByModelUUID(service.getModelUUID());
                             // Create a new ServiceRecipe record based on the existing one we just copied from the DB.
                             ServiceRecipe newServiceRecipe = new ServiceRecipe();
                             newServiceRecipe.setAction(serviceRecipe.getAction());
@@ -2574,16 +4047,20 @@ public class CatalogDatabase implements Closeable {
                             newServiceRecipe.setOrchestrationUri(serviceRecipe.getOrchestrationUri());
                             newServiceRecipe.setRecipeTimeout(serviceRecipe.getRecipeTimeout());
                             newServiceRecipe.setServiceParamXSD(serviceRecipe.getServiceParamXSD());
-                            newServiceRecipe.setServiceId(newService.getId());
+            				newServiceRecipe.setServiceModelUUID(newService.getModelUUID());
                             newServiceRecipe.setVersion(serviceRecipe.getVersion());
+            				// Check recipe does not exist before inserting
+            				ServiceRecipe recipe = getServiceRecipeByModelUUID(newServiceRecipe.getServiceModelUUID(), newServiceRecipe.getAction());
                             // Save the new recipe record in the service_recipe table and associate it to the new service record that we just added.
+            				if(recipe == null){
                             this.getSession ().save (newServiceRecipe);
                         }
                     }
-                }
-
+            	}
+              }
             }
 
+               
         } finally {
             LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "saveOrUpdateService", null);
         }
@@ -2591,26 +4068,118 @@ public class CatalogDatabase implements Closeable {
 
     public void saveOrUpdateVfModule (VfModule vfModule) {
         long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - save VNF Module with VF Model Name " + vfModule.getModelName());
+        LOGGER.debug ("Catalog database - save or update VF Module with VF Model Name " + vfModule.getModelName());
+        VfModule vfModuleInvariantDB = null;
         try {
-
-            if (vfModule.getId() != 0) {
-                this.getSession ().merge (vfModule);
-            } else {
+        	LOGGER.debug("heat template id = " + vfModule.getHeatTemplateArtifactUUId() + ", vol template id = "+ vfModule.getVolHeatTemplateArtifactUUId());
+        	LOGGER.debug(vfModule.toString());
+        } catch (Exception e) {
+        	LOGGER.debug("unable to print vfmodule " + e.getMessage());
+        }
+        try {
+        	VfModule existing = this.getVfModuleByModelUUID(vfModule.getModelUUID());
+        	if (existing == null) {
+        		// Check to see if a record with the same modelInvariantId already exists.  This tells us that a previous version exists and we can copy its recipe Record for the new service record.
+        		vfModuleInvariantDB = this.getVfModuleByModelInvariantUuid(vfModule.getModelInvariantUUID());
+        		LOGGER.debug("No existing entry found, attempting to save...");
                 this.getSession ().save (vfModule);
+        	} else {
+        		try {
+        			LOGGER.debug("Found an existing vf module!\n" + existing.toString());
+        		} catch (Exception e) {
+        			LOGGER.debug("unable to print vfmodule2 " + e.getMessage());
             }
+        	}
+        	
+            if(vfModuleInvariantDB != null){  // existing modelInvariantId was found.
+                // copy the recipe record with the matching invariant id.  We will duplicate this for the new service record             	
+             	List<VnfComponentsRecipe> vfRecipes = getVnfComponentRecipes(vfModuleInvariantDB.getModelUUID());
+
+             	
+             	if(vfRecipes != null && vfRecipes.size() > 0){
+             		for(VnfComponentsRecipe vfRecipe : vfRecipes){
+             			if(vfRecipe != null){
+             				// Fetch the service record that we just added.  We do this so we can extract its Id column value, this will be the foreign key we use in the service recipe table.
+             				VfModule newRecipe = this.getVfModuleByModelUUID(vfModule.getModelUUID());
+             				// Create a new ServiceRecipe record based on the existing one we just copied from the DB.
+             				VnfComponentsRecipe newVnfRecipe = new VnfComponentsRecipe();
+             				newVnfRecipe.setAction(vfRecipe.getAction());
+             				newVnfRecipe.setDescription(vfRecipe.getDescription());
+             				newVnfRecipe.setOrchestrationUri(vfRecipe.getOrchestrationUri());
+             				newVnfRecipe.setRecipeTimeout(vfRecipe.getRecipeTimeout());
+             				newVnfRecipe.setVnfComponentParamXSD(vfRecipe.getVnfComponentParamXSD());
+             				newVnfRecipe.setVfModuleModelUUId(newRecipe.getModelUUID());
+             				newVnfRecipe.setVersion(vfRecipe.getVersion());
+             				newVnfRecipe.setVnfComponentType(vfRecipe.getVnfComponentType());
+             				newVnfRecipe.setVnfType(vfRecipe.getVnfType());
+             				// Check recipe does not exist before inserting
+         //    				VnfComponentsRecipe recipe = getVnfComponentRecipes(newVnfRecipe.getVfModuleModelUUId());
+             				List<VnfComponentsRecipe> recipe = getVnfComponentRecipes(newVnfRecipe.getVfModuleModelUUId());
+             				// Save the new recipe record in the service_recipe table and associate it to the new service record that we just added.
+        //     				if(recipe == null){
+            					this.getSession ().save (newVnfRecipe);
+        //     				}
+             			}
+             		}
+             	}
+  
+             }
 
         } finally {
             LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "saveOrUpdateVfModule", null);
         }
     }
 
+    public void saveOrUpdateVfModuleCustomization (VfModuleCustomization vfModuleCustomization) {
+        long startTime = System.currentTimeMillis ();
+        LOGGER.debug ("Catalog database - save VF Module Customization with VF Customization Model Name UUID " + vfModuleCustomization.getVfModuleModelUuid());
+        try {
+        	LOGGER.debug("env id = " + vfModuleCustomization.getHeatEnvironmentArtifactUuid() + ", vol Env=" + vfModuleCustomization.getVolEnvironmentArtifactUuid());
+        	LOGGER.debug(vfModuleCustomization.toString());
+        } catch (Exception e) {
+        	LOGGER.debug("unable to print vfmodulecust " + e.getMessage());
+        }
+        try {
+        	VfModuleCustomization existing = this.getVfModuleCustomizationByModelCustomizationId(vfModuleCustomization.getModelCustomizationUuid());
+        	if (existing == null) {
+        		LOGGER.debug("No existing entry found, attempting to save...");
+                this.getSession ().save (vfModuleCustomization);
+        	} else {
+        		try {
+        			LOGGER.debug("Found an existing vf module customization entry\n" + existing.toString());
+        		} catch (Exception e) {
+        			LOGGER.debug("unable to print vfmodulecust2 " + e.getMessage());
+            	}
+        	}
+      
+        } finally {
+            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "saveOrUpdateVfModuleCustomization", null); 
+        }
+    }
+
+    @Deprecated
     public HeatNestedTemplate getNestedHeatTemplate(int parentTemplateId, int childTemplateId) {
     	  long startTime = System.currentTimeMillis ();
           LOGGER.debug ("Catalog database - get nested Heat template with PerentId-Child Id "
                                         + parentTemplateId +"-"+childTemplateId);
           try {
               HeatNestedTemplate nestedTemplate = new HeatNestedTemplate ();
+//              nestedTemplate.setParentTemplateId (parentTemplateId);
+//              nestedTemplate.setChildTemplateId (childTemplateId);
+              
+              return (HeatNestedTemplate)session.get (HeatNestedTemplate.class,nestedTemplate);
+          } finally {
+              LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getNestedHeatTemplate", null);
+          }
+    }
+    
+    // 1707 version
+    public HeatNestedTemplate getNestedHeatTemplate(String parentTemplateId, String childTemplateId) {
+  	  long startTime = System.currentTimeMillis ();
+        LOGGER.debug ("Catalog database - get nested Heat template with PerentId="
+                                      + parentTemplateId +", ChildId="+childTemplateId);
+        try {
+            HeatNestedTemplate nestedTemplate = new HeatNestedTemplate ();
               nestedTemplate.setParentTemplateId (parentTemplateId);
               nestedTemplate.setChildTemplateId (childTemplateId);
 
@@ -2620,7 +4189,9 @@ public class CatalogDatabase implements Closeable {
           }
     }
 
+    @Deprecated
     public void saveNestedHeatTemplate (int parentTemplateId, HeatTemplate childTemplate, String yamlFile) {
+    	/*
         long startTime = System.currentTimeMillis ();
         LOGGER.debug ("Catalog database - save nested Heat template with name "
                                       + childTemplate.getTemplateName ());
@@ -2637,8 +4208,31 @@ public class CatalogDatabase implements Closeable {
         } finally {
             LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "saveNestedHeatTemplate", null);
         }
+        */
+    }
+    
+    // 1707
+    public void saveNestedHeatTemplate (String parentTemplateId, HeatTemplate childTemplate, String yamlFile) {
+        long startTime = System.currentTimeMillis ();
+        LOGGER.debug ("Catalog database - save nested Heat template with name "
+                                      + childTemplate.getTemplateName () + ",parentId=" + parentTemplateId + ",childId=" + childTemplate.getArtifactUuid() + ", providerResourceFile=" + yamlFile);
+        try {
+      
+	        saveHeatTemplate(childTemplate, childTemplate.getParameters());
+	        if (getNestedHeatTemplate(parentTemplateId,childTemplate.getArtifactUuid()) == null) { 
+	            HeatNestedTemplate nestedTemplate = new HeatNestedTemplate ();
+	            nestedTemplate.setParentTemplateId (parentTemplateId);
+	            nestedTemplate.setChildTemplateId (childTemplate.getArtifactUuid ());
+	            nestedTemplate.setProviderResourceFile (yamlFile);
+	            session.flush();
+	            session.save (nestedTemplate);
+        	}
+        } finally {
+            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "saveNestedHeatTemplate", null);
+        }
     }
 
+    @Deprecated
     public HeatFiles getHeatFiles(int vnfResourceId,String fileName,String asdcResourceName, String version) {
     	  long startTime = System.currentTimeMillis ();
           LOGGER.debug ("Catalog database - getHeatFiles with name " + fileName
@@ -2665,14 +4259,17 @@ public class CatalogDatabase implements Closeable {
           	LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row - data integrity error: fileName='" + fileName + "', vnfResourceId='" + vnfResourceId + "' and asdcResourceName=" + asdcResourceName + " and version=" + version);
           	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for fileName=" + fileName + " and vnfResourceId=" + vnfResourceId + " and asdcResourceName=" + asdcResourceName + " and version=" + version, "", "", MsoLogger.ErrorCode.DataError, "Non unique result for fileName=" + fileName);
           	heatFilesResult = null;
+          	throw nure;
           } catch (org.hibernate.HibernateException he) {
-          	LOGGER.debug("Hibernate Exception - while searching for: fileName='" + fileName + "', vnfResourceId='" + vnfResourceId + "' and asdcResourceName=" + asdcResourceName + " and version=" + version);
+          	LOGGER.debug("Hibernate Exception - while searching for: fileName='" + fileName + "', vnfResourceId='" + vnfResourceId + "' and asdcResourceName=" + asdcResourceName + " and version=" + version + " " + he.getMessage());
           	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception searching for fileName=" + fileName + " and vnfResourceId=" + vnfResourceId + " and asdcResourceName=" + asdcResourceName + " and version=" + version, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching for fileName=" + fileName);
           	heatFilesResult = null;
+          	throw he;
           } catch (Exception e) {
-          	LOGGER.debug("Generic Exception - while searching for: fileName='" + fileName + "', vnfResourceId='" + vnfResourceId + "' and asdcResourceName=" + asdcResourceName + " and version=" + version);
+          	LOGGER.debug("Generic Exception - while searching for: fileName='" + fileName + "', vnfResourceId='" + vnfResourceId + "' and asdcResourceName=" + asdcResourceName + " and version=" + version + " " + e.getMessage());
           	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Generic exception searching for fileName=" + fileName + " and vnfResourceId=" + vnfResourceId + " and asdcResourceName=" + asdcResourceName + " and version=" + version, "", "", MsoLogger.ErrorCode.DataError, "Generic exception searching for fileName=" + fileName);
           	heatFilesResult = null;
+          	throw e;
           }
 
           // See if something came back.
@@ -2685,12 +4282,53 @@ public class CatalogDatabase implements Closeable {
           return heatFilesResult;
     }
 
+    public HeatFiles getHeatFiles(String artifactUuid) {
+  	  long startTime = System.currentTimeMillis ();
+        LOGGER.debug ("Catalog database - getHeatFiles with artifactUuid " + artifactUuid);
+
+        String hql = "FROM HeatFiles WHERE artifactUuid = :artifactUuid";
+        Query query = getSession ().createQuery (hql);
+        query.setParameter ("artifactUuid", artifactUuid);
+
+        @SuppressWarnings("unchecked")
+      
+        HeatFiles heatFilesResult = null;
+        try {
+      	  heatFilesResult = (HeatFiles) query.uniqueResult ();
+        } catch (org.hibernate.NonUniqueResultException nure) {
+        	LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row - data integrity error: artifactUuid='" + artifactUuid );
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for artifactUuid=" + artifactUuid, "", "", MsoLogger.ErrorCode.DataError, "Non unique result for artifactUuid=" + artifactUuid);
+        	heatFilesResult = null;
+        	throw nure;
+        } catch (org.hibernate.HibernateException he) {
+        	LOGGER.debug("Hibernate Exception - while searching for: artifactUuid='" + artifactUuid + " " + he.getMessage());
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception searching for artifactUuid=" + artifactUuid, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching for artifactUuid=" + artifactUuid);
+        	heatFilesResult = null;
+        	throw he;
+        } catch (Exception e) {
+        	LOGGER.debug("Generic Exception - while searching for: artifactUuid='" + artifactUuid  + " " + e.getMessage());
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Generic exception searching for artifactUuid=" + artifactUuid , "", "", MsoLogger.ErrorCode.DataError, "Generic exception searching for artifactUuid=" + artifactUuid);
+        	heatFilesResult = null;
+        	throw e;
+        } 
+        
+        // See if something came back.
+        if (heatFilesResult == null) {
+            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. HeatFiles not found", "CatalogDB", "getHeatFiles", null);
+            return null;
+        }
+        // Name + Version is unique, so should only be one element
+        LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getHeatFiles", null);
+        return heatFilesResult;
+  }
+    
     public void saveHeatFiles (HeatFiles childFile) {
     	 long startTime = System.currentTimeMillis ();
          LOGGER.debug ("Catalog database - save Heat File with name "
                                        + childFile.getFileName());
          try {
-             HeatFiles heatFiles = getHeatFiles (childFile.getVnfResourceId(), childFile.getFileName(), childFile.getAsdcResourceName (),childFile.getVersion());
+//             HeatFiles heatFiles = getHeatFiles (childFile.getVnfResourceId(), childFile.getFileName(), childFile.getAsdcResourceName (),childFile.getVersion());
+             HeatFiles heatFiles = getHeatFiles (childFile.getArtifactUuid());
              if (heatFiles == null) {
 
             	 // asdc_heat_files_save
@@ -2701,7 +4339,7 @@ public class CatalogDatabase implements Closeable {
             	    Based on following comment:
 					It must be childFile.setId instead of heatFiles.setId, we must return the ID if it exists in DB.
 				 */
-            	 childFile.setId(heatFiles.getId());
+            	 childFile.setArtifactUuid(heatFiles.getArtifactUuid());
              }
 
          } finally {
@@ -2709,7 +4347,9 @@ public class CatalogDatabase implements Closeable {
          }
     }
 
+    @Deprecated
     public void saveVfModuleToHeatFiles (int parentVfModuleId, HeatFiles childFile) {
+    	/*
         long startTime = System.currentTimeMillis ();
         LOGGER.debug ("Catalog database - save Heat File to VFmodule link "
                                       + childFile.getFileName());
@@ -2724,6 +4364,67 @@ public class CatalogDatabase implements Closeable {
         } finally {
             LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "saveVfModuleToHeatFiles", null);
         }
+        */
+    }
+    
+    public void saveVfModuleToHeatFiles (String parentVfModuleId, HeatFiles childFile) {
+        long startTime = System.currentTimeMillis ();
+        LOGGER.debug ("Catalog database - save Heat File to VFmodule link "
+                                      + childFile.getFileName());
+        try {
+            saveHeatFiles (childFile);
+            VfModuleToHeatFiles checkExistingEntry = this.getVfModuleToHeatFilesEntry(parentVfModuleId, childFile.getArtifactUuid());
+            if (checkExistingEntry == null) {
+            	VfModuleToHeatFiles vfModuleToHeatFile = new VfModuleToHeatFiles ();
+	        	vfModuleToHeatFile.setVfModuleModelUuid(parentVfModuleId);
+	        	vfModuleToHeatFile.setHeatFilesArtifactUuid(childFile.getArtifactUuid());
+	        	session.flush();
+	        	session.save (vfModuleToHeatFile);
+            } else {
+            	LOGGER.debug("**Found existing VfModuleToHeatFiles entry for " + checkExistingEntry.toString());
+            	LOGGER.debug("No need to save...");
+            }
+          
+        } finally {
+            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "saveVfModuleToHeatFiles", null);
+        }
+    }
+
+    /**
+     * Return a Network Resource that matches the Network Customization defined by given MODEL_CUSTOMIZATION_UUID
+     *
+     * @param networkType
+     * @param action
+     * @param serviceType
+     * @return NetworkRecipe object or null if none found
+     */
+    public NetworkResource getNetworkResourceByModelUuid(String modelUUID) {
+
+        long startTime = System.currentTimeMillis ();
+        LOGGER.debug ("Catalog database - get network resource with modelUUID " + modelUUID);
+
+        try {
+            String hql =  "FROM NetworkResource WHERE modelUUID=:modelUUID";
+            Query query = getSession ().createQuery (hql);
+            query.setParameter (MODEL_UUID, modelUUID);
+
+            @SuppressWarnings("unchecked")
+            List <NetworkResource> resultList = query.list ();
+
+            if (resultList.isEmpty ()) {
+                return null;
+            }
+            
+            Collections.sort (resultList, new MavenLikeVersioningComparator ());
+            Collections.reverse (resultList);
+            
+            return resultList.get (0);
+        } catch (Exception e) {
+        	LOGGER.debug("Error trying to find Network Resource with " + modelUUID +", " + e.getMessage());
+        } finally {
+            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getNetworkResourceByModelUuid", null);
+        }
+        return null;
     }
 
 
@@ -2774,26 +4475,27 @@ public class CatalogDatabase implements Closeable {
         }
     }
 
+    
     /**
-     * Return a Network recipe that matches a given NETWORK_TYPE and ACTION
+     * Return a Network recipe that matches a given MODEL_NAME and ACTION
      *
-     * @param networkType
+     * @param modelName
      * @param action
      * @return NetworkRecipe object or null if none found
      */
-    public NetworkRecipe getNetworkRecipe (String networkType, String action) {
+    public NetworkRecipe getNetworkRecipe (String modelName, String action) {
 
         long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - get network recipe with network type " + networkType
+        LOGGER.debug ("Catalog database - get network recipe with network model name " + modelName
                                       + " and action "
                                       + action
                                       );
 
         try {
-            String hql = "FROM NetworkRecipe WHERE networkType = :networkType AND action = :action";
+            String hql = "FROM NetworkRecipe WHERE modelName = :modelName AND action = :action";
 
             Query query = getSession ().createQuery (hql);
-            query.setParameter (NETWORK_TYPE, networkType);
+            query.setParameter (MODEL_NAME, modelName);
             query.setParameter (ACTION, action);
 
             @SuppressWarnings("unchecked")
@@ -2826,7 +4528,7 @@ public class CatalogDatabase implements Closeable {
         LOGGER.debug ("Catalog database - get network resource with modelCustomizationUuid " + modelCustomizationUuid);
 
         try {
-            String hql =  "select n FROM NetworkResource n, NetworkResourceCustomization c WHERE n.id=c.networkResourceId and c.modelCustomizationUuid = :modelCustomizationUuid";
+            String hql =  "select n FROM NetworkResource n, NetworkResourceCustomization c WHERE n.modelUUID=c.networkResourceModelUuid and c.modelCustomizationUuid = :modelCustomizationUuid";
             Query query = getSession ().createQuery (hql);
             query.setParameter (MODEL_CUSTOMIZATION_UUID, modelCustomizationUuid);
 
@@ -2841,9 +4543,12 @@ public class CatalogDatabase implements Closeable {
             Collections.reverse (resultList);
 
             return resultList.get (0);
+        } catch (Exception e) {
+        	LOGGER.debug("Error trying to find Network Resource with " + modelCustomizationUuid +", " + e.getMessage());
         } finally {
-            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getNetworkResourceBySvcNtwkRsrc", null);
+            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getNetworkResourceByModelCustUuid", null);
         }
+        return null;
     }
 
     /**
@@ -2908,12 +4613,12 @@ public class CatalogDatabase implements Closeable {
      * @param action
      * @return VnfComponentsRecipe object or null if none found
      */
-    public VnfComponentsRecipe getVnfComponentsRecipeByVfModuleId (String vfModuleId,
+    public VnfComponentsRecipe getVnfComponentsRecipeByVfModuleModelUUId (String vfModuleModelUUId,
                                                        String vnfComponentType,
                                                        String action) {
 
         long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - get Vnf Component recipe with vfModuleId " + vfModuleId
+        LOGGER.debug ("Catalog database - get Vnf Component recipe with vfModuleModelUUId " + vfModuleModelUUId
                                       + " and component type "
                                       + vnfComponentType
                                       + " and action "
@@ -2921,10 +4626,10 @@ public class CatalogDatabase implements Closeable {
 
         try {
             String hql;
-            hql = "FROM VnfComponentsRecipe WHERE vfModuleId = :vfModuleId AND vnfComponentType = :vnfComponentType AND action = :action ";
+            hql = "FROM VnfComponentsRecipe WHERE vfModuleModelUUId = :vfModuleModelUUId AND vnfComponentType = :vnfComponentType AND action = :action ";
 
             Query query = getSession ().createQuery (hql);
-            query.setParameter (VF_MODULE_ID, vfModuleId);
+            query.setParameter (VF_MODULE_MODEL_UUID, vfModuleModelUUId);
             query.setParameter (VNF_COMPONENT_TYPE, vnfComponentType);
             query.setParameter (ACTION, action);
 
@@ -2939,8 +4644,35 @@ public class CatalogDatabase implements Closeable {
 
             return resultList.get (0);
         } finally {
-            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVnfComponentsRecipeByVfModuleId", null);
+            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVnfComponentsRecipeByVfModuleModelUUId", null);
         }
+    }
+    
+    public List<VnfComponentsRecipe> getVnfComponentRecipes (String vfModuleModelUUId) {
+        
+        StringBuilder hql = null;
+    	
+       	hql = new StringBuilder ("FROM VnfComponentsRecipe WHERE vfModuleModelUUId = :vfModuleModelUUId");
+    	
+        long startTime = System.currentTimeMillis ();
+        LOGGER.debug ("Catalog database - get Service recipe with vfModuleModelUUId " + vfModuleModelUUId);
+
+        Query query = getSession ().createQuery (hql.toString ());
+        query.setParameter ("vfModuleModelUUId", vfModuleModelUUId);
+        
+        @SuppressWarnings("unchecked")
+        List <VnfComponentsRecipe> resultList = query.list ();
+
+        if (resultList.isEmpty ()) {
+            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. Service recipe not found", "CatalogDB", "getVfModuleRecipes", null);
+            return null;
+        }
+        
+        Collections.sort (resultList, new MavenLikeVersioningComparator ());
+        Collections.reverse (resultList);
+
+        LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVfModuleRecipes", null);
+        return resultList;
     }
 
 
@@ -2954,11 +4686,11 @@ public class CatalogDatabase implements Closeable {
 
         try {
 
-            if (vnfComponentDb != null) {
-                this.getSession ().merge (vnfComponent);
-            } else {
+            //if (vnfComponentDb != null) {
+            //    this.getSession ().merge (vnfComponent);
+            //} else {
                 this.getSession ().save (vnfComponent);
-            }
+            //}
 
         } finally {
             LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "saveOrUpdateVnfComponent", null);
@@ -2996,6 +4728,154 @@ public class CatalogDatabase implements Closeable {
             return resultList.get (0);
         } finally {
             LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVfModule", null);
+        }
+    }
+
+    /**
+     * Return a VfModule record that matches a given MODEL_NAME
+     *
+     * @param modelName
+     * @return VfModule object or null if none found
+     */
+    public VfModule getVfModuleByModelUUID (String modelUUID) {
+
+        long startTime = System.currentTimeMillis ();
+        LOGGER.debug ("Catalog database - get vf module with modelUUID " + modelUUID);
+
+        try {
+            String hql;
+
+            hql = "FROM VfModule WHERE modelUUID = :modelUUID";
+
+            Query query = getSession ().createQuery (hql);
+            query.setParameter (MODEL_UUID, modelUUID);
+
+            @SuppressWarnings("unchecked")
+            List <VfModule> resultList = query.list ();
+
+            if (resultList.isEmpty ()) {
+                return null;
+            }
+            Collections.sort (resultList, new MavenLikeVersioningComparator ());
+            Collections.reverse (resultList);
+
+            return resultList.get (0);
+        } finally {
+            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVfModuleByModelUUID", null);
+        }
+    }
+    
+    /**
+     * Return a Service recipe that matches a given service ModelUUID and action
+     * (modelUUID) and ACTION
+     *
+     * @param modelUUID
+     * @param action    
+     * @return ServiceRecipe object or null if none found
+     */
+    public ServiceRecipe getServiceRecipeByModelUUID(String modelUUID, String action) {                     
+
+        long startTime = System.currentTimeMillis();
+        LOGGER.debug("Catalog database - get Service recipe with modelUUID=" + modelUUID + " and action=" + action);
+
+        try {
+			String hql;
+			// based on the new SERVICE_RECIPE schema where SERVICE_MODEL_UUID == MODEL_UUID, a JOIN with the SERVICE table is no longer needed
+//			hql = "SELECT new ServiceRecipe(SR.id, SR.serviceModelUUID, SR.action, SR.description, " +
+//					"SR.orchestrationUri, SR.serviceParamXSD, case when SR.recipeTimeout is null then 0 else SR.recipeTimeout end, " +
+//					"case when SR.serviceTimeoutInterim is null then 0 else SR.serviceTimeoutInterim end, SR.created) " +
+//					"FROM Service as S RIGHT OUTER JOIN S.recipes SR " +
+//					"WHERE SR.serviceModelUUID = :modelUUID AND SR.action = :action";
+			hql = "FROM ServiceRecipe WHERE serviceModelUUID = :modelUUID AND action = :action";
+			Query query = getSession().createQuery(hql);
+			query.setParameter(MODEL_UUID, modelUUID);
+			query.setParameter(ACTION, action);
+
+			@SuppressWarnings("unchecked")
+			List<ServiceRecipe> recipeResultList = query.list();
+			if (recipeResultList.isEmpty()) {
+				LOGGER.debug("Catalog database - recipeResultList is null");
+				return null;
+			}
+			Collections.sort(recipeResultList, new MavenLikeVersioningComparator());
+			Collections.reverse(recipeResultList);
+			LOGGER.debug("Catalog database - recipeResultList contains " + recipeResultList.get(0).toString());
+
+			return recipeResultList.get(0);
+        } finally {
+            LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getServiceRecipeByModelUUID", null);
+        }
+    }
+    
+    /**
+     * Return a Service recipe that matches a given SERVICE_NAME_VERSION_ID
+     * (MODEL_VERSION_ID) and ACTION
+     *
+     * @param modelVersionId
+     * @param action    
+     * @return ServiceRecipe object or null if none found
+     */
+    @Deprecated
+    public ServiceRecipe getServiceRecipe(String modelVersionId,
+                                       String action) {                     
+
+        long startTime = System.currentTimeMillis();
+        LOGGER.debug("Catalog database - get Service recipe with modeVersionId=" + modelVersionId
+                                      + " and action=" + action);
+
+        try {
+			String hql;
+			// Note: Even with the implementation of the HQL JOIN below, the code for the two separate
+			//       SELECTs will be retained/commented for now in the event some subsequent JOIN issue arises
+			// 1st query to get the Service record for the given SERVICE_NAME_VERSION_ID (MODEL_VERSION_ID)
+/*			hql = "FROM Service WHERE serviceNameVersionId = :serviceNameVersionId";
+			Query query = getSession().createQuery(hql);
+			query.setParameter(SERVICE_NAME_VERSION_ID, modelVersionId);
+
+			@SuppressWarnings("unchecked")
+			List<Service> serviceResultList = query.list();
+			if (serviceResultList.isEmpty()) {
+				LOGGER.debug("Catalog database - serviceResultList is null");
+				return null;
+			}
+			Collections.sort(serviceResultList, new MavenLikeVersioningComparator());
+			Collections.reverse(serviceResultList);
+			LOGGER.debug("Catalog database - serviceResultList contains " + serviceResultList.get(0).toString());
+
+			// 2nd query to get the ServiceRecipe record corresponding to the Service from the 1st query
+			hql = "FROM ServiceRecipe WHERE serviceModelUUID = :serviceModelUUID AND action = :action";
+			query = getSession().createQuery(hql);
+			// The SERVICE table 'id' field maps to the SERVICE_RECIPE table 'SERVICE_ID' field
+			query.setParameter(SERVICE_ID, serviceResultList.get(0).getId());
+			query.setParameter(ACTION, action);
+*/
+			// The following SELECT performs a JOIN across the SERVICE and SERVICE_RECIPE tables. It required a new
+			// CTR in the ServiceRecipe Class to populate that object (the other option was to parse the Object[]
+			// returned by createQuery() and manually populate the ServiceRecipe object). Two of the 'int' fields in the
+			// SERVICE_RECIPE DB schema (the timeouts) permit NULL values which required some additional code in the
+			// SELECT to generate a default of 0 (needed by the CTR) in the cases where the value is NULL.
+			hql = "SELECT new ServiceRecipe(SR.id, SR.serviceModelUUID, SR.action, SR.description, " +
+					"SR.orchestrationUri, SR.serviceParamXSD, case when SR.recipeTimeout is null then 0 else SR.recipeTimeout end, " +
+					"case when SR.serviceTimeoutInterim is null then 0 else SR.serviceTimeoutInterim end, SR.created) " +
+					"FROM Service as S RIGHT OUTER JOIN S.recipes SR " +
+					"WHERE SR.serviceModelUUID = S.id AND S.serviceNameVersionId = :serviceNameVersionId AND SR.action = :action";
+			Query query = getSession().createQuery(hql);
+			query.setParameter(MODEL_UUID, modelVersionId);
+			query.setParameter(ACTION, action);
+
+			@SuppressWarnings("unchecked")
+			List<ServiceRecipe> recipeResultList = query.list();
+			if (recipeResultList.isEmpty()) {
+				LOGGER.debug("Catalog database - recipeResultList is null");
+				return null;
+			}
+			Collections.sort(recipeResultList, new MavenLikeVersioningComparator());
+			Collections.reverse(recipeResultList);
+			LOGGER.debug("Catalog database - recipeResultList contains " + recipeResultList.get(0).toString());
+
+			return recipeResultList.get(0);
+        } finally {
+            LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getServiceRecipe", null);
         }
     }
 
@@ -3074,10 +4954,118 @@ public class CatalogDatabase implements Closeable {
         long startTime = System.currentTimeMillis ();
         Session session = this.getSession ();
 
+        // Query query = session.createQuery (" from ActiveRequests ");
         Query query = session.createSQLQuery (" show tables ");
 
         List<?> list = query.list();
         LOGGER.debug("healthCheck CatalogDB - Successful");
         return true;
+    }
+    
+    public < E > E executeQuerySingleRow(String hql, HashMap<String, String> variables, boolean retry) {
+        long startTime = System.currentTimeMillis ();
+        LOGGER.debug("Catalog database - executeQuery: " + hql + (retry ? ", retry=true" : ", retry=false"));
+        Query query = getSession().createQuery(hql);
+
+        StringBuffer sb = new StringBuffer();
+        if (variables != null) {
+        	for (String key : variables.keySet()) {
+        		sb.append(key + "=" + variables.get(key) + "\n");
+        		query.setParameter(key, variables.get(key));
+        	}
+        }
+        LOGGER.debug("Variables:\n" + sb.toString());
+
+        E theObject = null;
+        try {
+        	theObject = (E) query.uniqueResult ();
+        } catch (org.hibernate.NonUniqueResultException nure) {
+        	LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row");
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for " + hql, "", "", MsoLogger.ErrorCode.DataError, "Non unique result for " + hql );
+        	theObject = null;
+        	throw nure;
+        } catch (org.hibernate.HibernateException he) {
+        	LOGGER.debug("Hibernate Exception - while performing " + hql + "; he message:" + he.getMessage());
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception while performing hql=" + hql, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching for hql=" + hql);
+        	theObject = null;
+        	if (retry) {
+        		LOGGER.debug("***WILL RETRY***");
+        		return this.executeQuerySingleRow(hql, variables, false);
+        	} else {
+        		throw he;
+        	}
+        } catch (Exception e) {
+        	LOGGER.debug("Generic Exception - while performing '" + hql + "'");
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Generic exception performing " + hql, "", "", MsoLogger.ErrorCode.DataError, "Generic exception performing " + hql);
+        	theObject = null;
+        	if (retry) {
+        		LOGGER.debug("***WILL RETRY***");
+        		return this.executeQuerySingleRow(hql, variables, false);
+        	} else {
+        		throw e;
+        	}
+        }
+
+        if (theObject == null) {
+        	LOGGER.debug("Returning null");
+        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "NotFound", "CatalogDB", "executeQuerySingleRow", null);
+        } else {
+        	LOGGER.debug("Returning an Object");
+        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "executeQuerySingleRow", null);
+        }
+        return theObject;
+    }
+    
+    public < E > List<E> executeQueryMultipleRows(String hql, HashMap<String, String> variables, boolean retry) {
+        long startTime = System.currentTimeMillis ();
+        LOGGER.debug("Catalog database - executeQuery: " + hql + (retry ? ", retry=true" : ", retry=false"));
+        Query query = getSession().createQuery(hql);
+
+        StringBuffer sb = new StringBuffer();
+        if (variables != null) {
+        	for (String key : variables.keySet()) {
+        		sb.append(key + "=" + variables.get(key) + "\n");
+        		query.setParameter(key, variables.get(key));
+        	}
+        }
+        LOGGER.debug("Variables:\n" + sb.toString());
+
+        List<E> theObjects = null;
+        try {
+        	theObjects = (List<E>) query.list ();
+        } catch (org.hibernate.HibernateException he) {
+        	LOGGER.debug("Hibernate Exception - while performing " + hql + "; he message:" + he.getMessage());
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception while performing hql=" + hql, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching for hql=" + hql);
+        	theObjects = null;
+        	if (retry) {
+        		LOGGER.debug("***WILL RETRY***");
+        		return this.executeQuerySingleRow(hql, variables, false);
+        	} else {
+        		throw he;
+        	}
+        } catch (Exception e) {
+        	LOGGER.debug("Generic Exception - while performing '" + hql + "'");
+        	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Generic exception performing " + hql, "", "", MsoLogger.ErrorCode.DataError, "Generic exception performing " + hql);
+        	theObjects = null;
+        	if (retry) {
+        		LOGGER.debug("***WILL RETRY***");
+        		return this.executeQuerySingleRow(hql, variables, false);
+        	} else {
+        		throw e;
+        	}
+        }
+
+        if (theObjects == null) {
+        	LOGGER.debug("Returning null");
+        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "NotFound", "CatalogDB", "executeQuerySingleRow", null);
+        } else {
+        	try {
+        		LOGGER.debug("Returning theObjects:" + theObjects.size());
+        	} catch (Exception e) {
+        		LOGGER.debug("Returning theObjects");
+        	}
+        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "executeQuerySingleRow", null);
+        }
+        return theObjects;
     }
 }

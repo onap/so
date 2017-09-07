@@ -40,6 +40,14 @@ public class StubResponseDatabase {
 
 	}
 
+	public static void MockUpdateRequestDB(String fileName){
+		stubFor(post(urlEqualTo("/dbadapters/RequestsDbAdapter"))
+				.willReturn(aResponse()
+				.withStatus(200)
+			    .withHeader("Content-Type", "text/xml")
+				.withBodyFile(fileName)));
+	}	
+	
 	public static void mockUpdateRequestDB(int statusCode, String reponseFile) {
 		stubFor(post(urlEqualTo("/dbadapters/RequestsDbAdapter"))
 				.willReturn(aResponse()
@@ -61,5 +69,39 @@ public class StubResponseDatabase {
 				.willReturn(aResponse()
 				.withStatus(500)));
 	}
+	
+	public static void MockGetVnfCatalogDataCustomizationUuid(String vnfModelCustomizationUuid,  String responseFile){
+		stubFor(get(urlEqualTo("/v2/serviceVnfs?vnfModelCustomizationUuid=" + vnfModelCustomizationUuid))
+				  .willReturn(aResponse()
+				  .withStatus(200)
+				  .withHeader("Content-Type", "application/json")
+				  .withBodyFile(responseFile)));
+	}
+
+	public static void MockGetVfModuleByModelNameCatalogData(String vfModuleModelName, String responseFile){
+		stubFor(get(urlEqualTo("/v2/vfModules?vfModuleModelName=" + vfModuleModelName))
+				  .willReturn(aResponse()
+				  .withStatus(200)
+				  .withHeader("Content-Type", "application/json")
+				  .withBodyFile(responseFile)));
+	}
+	
+	public static void MockGetServiceResourcesCatalogData(String serviceModelInvariantUuid, String serviceModelVersion, String responseFile){
+		stubFor(get(urlEqualTo("/v2/serviceResources?serviceModelInvariantUuid=" + serviceModelInvariantUuid + 
+				"&serviceModelVersion=" + serviceModelVersion))
+				  .willReturn(aResponse()
+				  .withStatus(200)
+				  .withHeader("Content-Type", "application/json")
+				  .withBodyFile(responseFile)));
+	}
+	
+	public static void MockGetServiceResourcesCatalogData(String serviceModelInvariantUuid, String responseFile){
+		stubFor(get(urlEqualTo("/v2/serviceResources?serviceModelInvariantUuid=" + serviceModelInvariantUuid))
+				  .willReturn(aResponse()
+				  .withStatus(200)
+				  .withHeader("Content-Type", "application/json")
+				  .withBodyFile(responseFile)));
+	}	
+	
 
 }

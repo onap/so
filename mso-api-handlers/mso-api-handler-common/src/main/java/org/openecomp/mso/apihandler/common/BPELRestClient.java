@@ -92,4 +92,9 @@ public class BPELRestClient extends RequestClient {
                              String requestDetails) {
         return null;
     }
+    
+    @Override
+    public HttpResponse get() {
+        return null;
+    }
 }

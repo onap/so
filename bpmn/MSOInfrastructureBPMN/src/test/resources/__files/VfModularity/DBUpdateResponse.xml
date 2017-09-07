@@ -1,4 +1,4 @@
 
 
-<ns2:updateRequestResponse xmlns:ns2="http://com.att.mso/requestsdb"
+<ns2:updateRequestResponse xmlns:ns2="http://org.openecomp.mso/requestsdb"
                            xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"/>

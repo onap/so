@@ -31,18 +31,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-
-import org.apache.http.HttpStatus;
-
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.sax.SAXSource;
 
-import org.xml.sax.InputSource;
-
+import org.apache.http.HttpStatus;
 import org.openecomp.mso.apihandler.common.ValidationException;
 import org.openecomp.mso.apihandlerinfra.volumebeans.ActionType;
 import org.openecomp.mso.apihandlerinfra.volumebeans.ObjectFactory;
@@ -53,12 +48,17 @@ import org.openecomp.mso.apihandlerinfra.volumebeans.VolumeOutputs;
 import org.openecomp.mso.apihandlerinfra.volumebeans.VolumeRequest;
 import org.openecomp.mso.apihandlerinfra.volumebeans.VolumeRequests;
 import org.openecomp.mso.logger.MsoLogger;
-import org.openecomp.mso.requestsdb.InfraRequests;
 import org.openecomp.mso.requestsdb.InfraActiveRequests;
+import org.openecomp.mso.requestsdb.InfraRequests;
 import org.openecomp.mso.requestsdb.RequestsDatabase;
 import org.openecomp.mso.utils.UUIDChecker;
+import org.xml.sax.InputSource;
+
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
 
 @Path("/{version: v1|v2|v3}/volume-request")
+@Api(value="/{version: v1|v2|v3}/volume-request",description="API Requests for volumeRequest")
 public class VolumeInfoHandler {
 	
 	protected ObjectFactory beansObjectFactory = new ObjectFactory ();
@@ -66,6 +66,7 @@ public class VolumeInfoHandler {
 	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.APIH);
 
     @GET
+    @ApiOperation(value="Finds Volume Requests",response=Response.class)
     public Response queryFilters (@QueryParam("vnf-type") String vnfType,
                                   @QueryParam("service-type") String serviceType,
                                   @QueryParam("aic-node-clli") String aicNodeClli,
@@ -96,6 +97,7 @@ public class VolumeInfoHandler {
 
     @GET
     @Path(Constants.REQUEST_ID_PATH)
+    @ApiOperation(value="Find Volume Outputs by requestId and verison",response=Response.class)
     public Response getRequest (@PathParam("request-id") String requestId, @PathParam("version") String version) {
     	
     	// Check INFRA_ACTIVE_REQUESTS table to find info
@@ -233,7 +235,7 @@ public class VolumeInfoHandler {
 
         String responseString = null;
 
-        InfraActiveRequests activeReq = RequestsDatabase.getRequestFromInfraActive (requestId,
+        InfraActiveRequests activeReq = (RequestsDatabase.getInstance()).getRequestFromInfraActive (requestId,
                                                                                     "VOLUME");
         if (activeReq != null) {
             // build response for active
@@ -251,7 +253,7 @@ public class VolumeInfoHandler {
 
         getMsoLogger ().debug ("getRequest based on " + queryAttribute + ": " + queryValue);
 
-        List <InfraActiveRequests> activeReqList = RequestsDatabase.getRequestListFromInfraActive (queryAttribute,
+        List <InfraActiveRequests> activeReqList = (RequestsDatabase.getInstance()).getRequestListFromInfraActive (queryAttribute,
                                                                                                    queryValue,
                                                                                                    "VOLUME");
   

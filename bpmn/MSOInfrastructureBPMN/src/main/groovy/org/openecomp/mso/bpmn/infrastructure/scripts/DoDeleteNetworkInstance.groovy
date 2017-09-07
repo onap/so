@@ -415,6 +415,8 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 			if (utils.nodeExists(networkRequest, "networkModelInfo")) {
 				String networkModelInfo = utils.getNodeXml(networkRequest, "networkModelInfo", false).replace("tag0:","").replace(":tag0","")
 				modelCustomizationUuid = utils.getNodeText1(networkModelInfo, "modelCustomizationUuid")
+			} else {
+			    modelCustomizationUuid = utils.getNodeText1(networkRequest, "modelCustomizationId")
 			}
 			
 			String deleteNetworkRequest = """
@@ -772,10 +774,10 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 			String serviceInstanceId = utils.getNodeText1(deleteNetworkInput, "service-instance-id")
 
 			// 2. prepare rollback topology via SDNC Adapter SUBFLOW call
-			String sndcTopologyRollbackRpcRequest = sdncAdapterUtils.sdncTopologyRequestRsrc(execution, deleteNetworkInput, serviceInstanceId, sdncCallback, "activate", "ActivateNetworkInstance", cloudRegionId, networkId, null)
+			String sndcTopologyRollbackRpcRequest = sdncAdapterUtils.sdncTopologyRequestRsrc(execution, deleteNetworkInput, serviceInstanceId, sdncCallback, "activate", "CreateNetworkInstance", cloudRegionId, networkId, null)
 			String sndcTopologyRollbackRpcRequestAsString = utils.formatXml(sndcTopologyRollbackRpcRequest)
 			execution.setVariable(Prefix + "rollbackDeactivateSDNCRequest", sndcTopologyRollbackRpcRequestAsString)
-			utils.log("DEBUG", " Preparing request for RPC SDNC Topology 'activate-ActivateNetworkInstance' rollback . . . - " + "\n" +  sndcTopologyRollbackRpcRequestAsString, isDebugEnabled)
+			utils.log("DEBUG", " Preparing request for RPC SDNC Topology 'activate-CreateNetworkInstance' rollback . . . - " + "\n" +  sndcTopologyRollbackRpcRequestAsString, isDebugEnabled)
 
 
 		} catch (Exception ex) {
@@ -892,7 +894,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 		
 		try {
 			
-			if (execution.getVariable("sdncVersion") == '1702') {
+			if (execution.getVariable("sdncVersion") != '1610') {
 				prepareRpcSDNCDeactivateRollback(execution)
 				prepareRpcSDNCUnassignRollback(execution)
 			} else {

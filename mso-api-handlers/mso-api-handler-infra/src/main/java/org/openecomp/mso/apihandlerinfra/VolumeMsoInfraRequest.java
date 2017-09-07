@@ -54,11 +54,11 @@ import org.openecomp.mso.apihandlerinfra.volumebeans.ObjectFactory;
 import org.openecomp.mso.apihandlerinfra.volumebeans.RequestInfo;
 import org.openecomp.mso.apihandlerinfra.volumebeans.RequestStatusType;
 import org.openecomp.mso.apihandlerinfra.volumebeans.VolumeRequest;
-import org.openecomp.mso.db.HibernateUtils;
+import org.openecomp.mso.db.AbstractSessionFactoryManager;
 import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.properties.MsoJavaProperties;
-import org.openecomp.mso.requestsdb.HibernateUtilsRequestsDb;
+import org.openecomp.mso.requestsdb.RequestsDbSessionFactoryManager;
 import org.openecomp.mso.requestsdb.InfraActiveRequests;
 import org.openecomp.mso.requestsdb.RequestsDatabase;
 
@@ -78,7 +78,7 @@ public class VolumeMsoInfraRequest {
     private long startTime;
     private long progress = Constants.PROGRESS_REQUEST_RECEIVED;
 
-    protected HibernateUtils hibernateUtils = new HibernateUtilsRequestsDb ();
+    protected AbstractSessionFactoryManager requestsDbSessionFactoryManager = new RequestsDbSessionFactoryManager ();
 
     private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH);
     private static final String NOT_PROVIDED = "not provided";
@@ -282,7 +282,7 @@ public class VolumeMsoInfraRequest {
         Session session = null;
         try {
 
-            session = hibernateUtils.getSessionFactory ().openSession ();
+            session = requestsDbSessionFactoryManager.getSessionFactory ().openSession ();
             session.beginTransaction ();
 
             InfraActiveRequests aq = new InfraActiveRequests ();
@@ -376,7 +376,7 @@ public class VolumeMsoInfraRequest {
     public void updateFinalStatus (Status status) {
     	int result = 0;
         try {
-        	result = RequestsDatabase.updateInfraFinalStatus(requestId, status.toString (),
+        	result = (RequestsDatabase.getInstance()).updateInfraFinalStatus(requestId, status.toString (),
         		 this.errorMessage, this.progress, this.responseBody, Constants.MODIFIED_BY_APIHANDLER);
         } catch (Exception e) {
         	msoLogger.error(MessageEnum.APIH_DB_UPDATE_EXC, e.getMessage(), "", "", MsoLogger.ErrorCode.DataError, "Exception in updateFinalStatus");

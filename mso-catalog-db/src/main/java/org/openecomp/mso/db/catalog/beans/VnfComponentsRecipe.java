@@ -20,13 +20,16 @@
 
 package org.openecomp.mso.db.catalog.beans;
 
+import java.io.Serializable;
 
-public class VnfComponentsRecipe extends Recipe {
+public class VnfComponentsRecipe extends Recipe implements Serializable {
+	
+	private static final long serialVersionUID = 768026109321305392L;
 
 	private String vnfType;
 	private String vnfComponentParamXSD;
 	private String vnfComponentType;
-	private String vfModuleId; 
+	private String vfModuleModelUUId; 
 
 	public VnfComponentsRecipe() {}
 
@@ -51,12 +54,12 @@ public class VnfComponentsRecipe extends Recipe {
 		this.vnfComponentType = vnfComponentType;
 	}
 	
-    public String getVfModuleId() {
-		return vfModuleId;
+    public String getVfModuleModelUUId() {
+		return vfModuleModelUUId;
 	}
 
-	public void setVfModuleId(String vfModuleId) {
-		this.vfModuleId = vfModuleId;
+	public void setVfModuleModelUUId(String vfModuleModelUUId) {
+		this.vfModuleModelUUId = vfModuleModelUUId;
 	}
 
 	@Override
@@ -66,7 +69,7 @@ public class VnfComponentsRecipe extends Recipe {
 		sb.append (",vnfComponentParamXSD=" + vnfComponentParamXSD);
 		sb.append (",serviceType=" + getServiceType ());
 		sb.append (",vnfComponentType=" + getVnfComponentType ());
-		sb.append (",vfModuleId=" + getVfModuleId ());
+		sb.append (",vfModuleId=" + getVfModuleModelUUId());
 		return sb.toString();
 	}
 }

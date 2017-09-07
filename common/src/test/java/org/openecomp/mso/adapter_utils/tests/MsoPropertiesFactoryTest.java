@@ -28,16 +28,16 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import org.codehaus.jackson.JsonNode;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import org.openecomp.mso.properties.MsoJavaProperties;
 import org.openecomp.mso.properties.MsoJsonProperties;
 import org.openecomp.mso.properties.MsoPropertiesException;
 import org.openecomp.mso.properties.MsoPropertiesFactory;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * This class implements test methods of the MsoPropertiesFactory features.

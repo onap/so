@@ -21,16 +21,19 @@
 package org.openecomp.mso.db.catalog.beans;
 
 
-public class NetworkRecipe extends Recipe {
-	private String networkType;
+import java.io.Serializable;
+
+public class NetworkRecipe extends Recipe implements Serializable {
+	private static final long serialVersionUID = 768026109321305392L;
+	private String modelName;
 	private String networkParamXSD;
 	public NetworkRecipe() {}
 
-	public String getNetworkType() {
-		return networkType;
+	public String getModelName() {
+		return modelName;
 	}
-	public void setNetworkType(String networkType) {
-		this.networkType = networkType;
+	public void setModelName(String modelName) {
+		this.modelName = modelName;
 	}
 
 	public String getNetworkParamXSD() {
@@ -44,7 +47,7 @@ public class NetworkRecipe extends Recipe {
 	public String toString () {
 		StringBuffer sb = new StringBuffer();
 		sb.append(super.toString());
-		sb.append (",networkType=" + networkType);
+		sb.append (",modelName=" + modelName);
 		sb.append (",networkParamXSD=" + networkParamXSD);
 		return sb.toString();
 	}

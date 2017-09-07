@@ -36,6 +36,8 @@ import org.springframework.web.util.UriUtils
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.xml.sax.InputSource
+import org.w3c.dom.Node
+import org.w3c.dom.NodeList;
 
 
 /* Subflow for Delete VF Module. When no DoDeleteVfModuleRequest is specified on input,
@@ -51,6 +53,7 @@ import org.xml.sax.InputSource
 * @param - vfModuleModelInfo
 * @param - cloudConfiguration*
 * @param - sdncVersion ("1610")
+* @param - retainResources 
 *
 * Outputs:
 * @param - WorkflowException
@@ -114,7 +117,12 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 				//vfModuleModelName
 				def vfModuleModelName = jsonUtil.getJsonValue(vfModuleModelInfo, "modelName")
 				execution.setVariable("vfModuleModelName", vfModuleModelName)
-
+				// retainResources
+				def retainResources = execution.getVariable("retainResources")			
+				if (retainResources == null) {
+					retainResources  = false
+				}
+				execution.setVariable("retainResources", retainResources)
 			}
 			else {
 
@@ -179,6 +187,11 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 	public void prepSDNCAdapterRequest(Execution execution, String action) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 
+		String uuid = execution.getVariable('testReqId') // for junits
+		if(uuid==null){
+			uuid = execution.getVariable("requestId") + "-" +  	System.currentTimeMillis()
+		}
+		
 		def srvInstId = execution.getVariable("srvInstId")
 		def callbackUrl = execution.getVariable("URN_mso_workflow_sdncadapter_callback")
 		String requestId = execution.getVariable("requestId")
@@ -198,11 +211,16 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 		}
 		String vfModuleModelName = execution.getVariable("vfModuleModelName")
 		String cloudSiteId = execution.getVariable("cloudSiteId")
+		boolean retainResources = execution.getVariable("retainResources")
+		String requestSubActionString = ""
+		if (retainResources) {
+			requestSubActionString = "<request-sub-action>RetainResource</request-sub-action>"			
+		}
 		String request = """<sdncadapterworkflow:SDNCAdapterWorkflowRequest xmlns:ns5="http://org.openecomp/mso/request/types/v1"
 													xmlns:sdncadapterworkflow="http://org.openecomp/mso/workflow/schema/v1"
 													xmlns:sdncadapter="http://org.openecomp/workflow/sdnc/adapter/schema/v1">
 						      <sdncadapter:RequestHeader>
-						         <sdncadapter:RequestId>${requestId}</sdncadapter:RequestId>
+						         <sdncadapter:RequestId>${uuid}</sdncadapter:RequestId>
 						         <sdncadapter:SvcInstanceId>${vfModuleId}</sdncadapter:SvcInstanceId>
 						         <sdncadapter:SvcAction>${action}</sdncadapter:SvcAction>
 						         <sdncadapter:SvcOperation>vnf-topology-operation</sdncadapter:SvcOperation>
@@ -212,6 +230,7 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 						         <request-information>
 						            <request-id>${requestId}</request-id>
 						            <request-action>DisconnectVNFRequest</request-action>
+									${requestSubActionString}
 						            <source>${source}</source>
 						            <notification-url/>
 						            <order-number/>

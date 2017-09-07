@@ -20,28 +20,12 @@
 
 package org.openecomp.mso.bpmn.core;
 
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-
 import java.io.BufferedReader;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Base64;
 import java.util.Map;
-import java.util.Properties;
 import java.util.UUID;
 
-import org.openecomp.mso.logger.MsoLogger;
-import org.openecomp.mso.utils.UUIDChecker;
-import org.openecomp.mso.HealthCheckUtils;
-import org.openecomp.mso.logger.MessageEnum;
-import org.openecomp.mso.utils.CryptoUtils;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
 import javax.ws.rs.Path;
@@ -49,19 +33,32 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.camunda.bpm.engine.ProcessEngines;
+import org.openecomp.mso.HealthCheckUtils;
+import org.openecomp.mso.logger.MessageEnum;
+import org.openecomp.mso.logger.MsoLogger;
+import org.openecomp.mso.utils.CryptoUtils;
+import org.openecomp.mso.utils.UUIDChecker;
 
 @Path("/")
 public class HealthCheckHandler  {
 
     private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
     private static final String SITENAME = "mso.sitename";
-    private static final String ADPTER_ENDPOINT = "mso.adapters.db.endpoint";
+    private static final String ADPTER_ENDPOINT = "mso.openecomp.adapters.db.endpoint";
+    private static final String OPENECOMP_ADAPTER_NAMESPACE = "mso.openecomp.adapter.namespace";
     private static final String CONFIG = "mso.bpmn.urn.properties";
-    private static final String PENGINE_PROPERTY = "processengine.properties";
-    private static final String PENGINE_PARAM = "processEngineName";
     private static final String CREDENTIAL = "mso.adapters.db.auth";
     private static final String MSOKEY = "mso.msoKey";
+    private String healthcheckDebugEnabled = "mso.healthcheck.log.debug";
 
     private static final String CHECK_HTML = "<!DOCTYPE html><html><head><meta charset=\"ISO-8859-1\"><title>Health Check</title></head><body>Application ready</body></html>";
     private static final String NOT_FOUND = "<!DOCTYPE html><html><head><meta charset=\"ISO-8859-1\"><title>Application Not Started</title></head><body>Application not started. Properties file missing or invalid or database Connection failed</body></html>";
@@ -106,7 +103,7 @@ public class HealthCheckHandler  {
         }
 
         try {
-            if (!this.getSiteStatus (endpoint, siteName, props.get(CREDENTIAL), props.get(MSOKEY))) {
+            if (!this.getSiteStatus (endpoint, siteName, props.get(CREDENTIAL), props.get(MSOKEY), props.get(OPENECOMP_ADAPTER_NAMESPACE))) {
                 msoLogger.debug("This site is currently disabled for maintenance.");
                 return HEALTH_CHECK_NOK_RESPONSE;
             }
@@ -158,7 +155,7 @@ public class HealthCheckHandler  {
         }
 
         try {
-            if (!this.getSiteStatus (endpoint, siteName, props.get(CREDENTIAL), props.get(MSOKEY))) {
+            if (!this.getSiteStatus (endpoint, siteName, props.get(CREDENTIAL), props.get(MSOKEY), props.get(OPENECOMP_ADAPTER_NAMESPACE))) {
                 msoLogger.debug("This site is currently disabled for maintenance.");
                 return HEALTH_CHECK_NOK_RESPONSE;
             }
@@ -171,13 +168,7 @@ public class HealthCheckHandler  {
         }
 
         try {
-            InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(PENGINE_PROPERTY);
-            Properties prop = new Properties();
-            prop.load(stream);
-            String [] engineNames =  prop.getProperty(PENGINE_PARAM).split(",");
-            for (String engine : engineNames) {
-                ProcessEngines.getProcessEngine(engine).getIdentityService().createGroupQuery().list();
-            }
+        	ProcessEngines.getDefaultProcessEngine().getIdentityService().createGroupQuery().list();
         } catch (final Exception e) {
 
             msoLogger.error(MessageEnum.GENERAL_EXCEPTION_ARG, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception while verifying Camunda engine", e);
@@ -224,7 +215,7 @@ public class HealthCheckHandler  {
         return null;
     }
 
-    private boolean getSiteStatus (String url, String site, String credential, String key) throws Exception {
+    private boolean getSiteStatus (String url, String site, String credential, String key, String adapterNamespace) throws Exception {
         // set the connection timeout value to 30 seconds (30000 milliseconds)
         RequestConfig.Builder requestBuilder = RequestConfig.custom();
         requestBuilder = requestBuilder.setConnectTimeout(30000);
@@ -238,12 +229,15 @@ public class HealthCheckHandler  {
         if (cred != null && !cred.isEmpty()) {
             post.setHeader("Authorization", "Basic " + Base64.getEncoder().encodeToString(cred.getBytes()));
         }
-        msoLogger.debug("Post url is: " + url);
+        if(healthcheckDebugEnabled == null){
+        	healthcheckDebugEnabled = "false";
+        }
+        BPMNLogger.debug(healthcheckDebugEnabled, "Post url is: " + url);
 
         //now create a soap request message as follows:
         final StringBuffer payload = new StringBuffer();
         payload.append("\n");
-        payload.append("<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:req=\"http://org.openecomp.mso/requestsdb\">\n");
+        payload.append("<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:req=\"" + adapterNamespace + "/requestsdb\">\n");
         payload.append("<soapenv:Header/>\n");
         payload.append("<soapenv:Body>\n");
         payload.append("<req:getSiteStatus>\n");
@@ -252,14 +246,14 @@ public class HealthCheckHandler  {
         payload.append("</soapenv:Body>\n");
         payload.append("</soapenv:Envelope>\n");
 
-        msoLogger.debug ("Initialize SOAP request to url:" + url);
-        msoLogger.debug ("The payload of the request is:" + payload);
+        BPMNLogger.debug(healthcheckDebugEnabled, "Initialize SOAP request to url:" + url);
+        BPMNLogger.debug(healthcheckDebugEnabled, "The payload of the request is:" + payload);
         HttpEntity entity = new StringEntity(payload.toString(),"UTF-8");
         post.setEntity(entity);
 
         CloseableHttpClient client = builder.build ();
         HttpResponse response = client.execute(post);
-        msoLogger.debug("Response received is:" + response);
+        BPMNLogger.debug(healthcheckDebugEnabled, "Response received is:" + response);
 
         int statusCode = response.getStatusLine().getStatusCode();
         if (statusCode != 200) {
@@ -278,7 +272,7 @@ public class HealthCheckHandler  {
         while ((line = rd.readLine()) != null) {
             result.append(line);
         }
-        msoLogger.debug("Content of the response is:" + result);
+        BPMNLogger.debug(healthcheckDebugEnabled, "Content of the response is:" + result);
         String status = result.substring(result.indexOf("<return>") + 8, result.indexOf("</return>"));
 
         client.close (); //shut down the connection

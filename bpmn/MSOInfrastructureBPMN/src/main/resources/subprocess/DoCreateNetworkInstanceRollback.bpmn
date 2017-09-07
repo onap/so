@@ -97,7 +97,7 @@ DoCreateNetworkInstanceRollback.validateRollbackResponses(execution)]]></bpmn:sc
     <bpmn:sequenceFlow id="SequenceFlow_17o4w67" sourceRef="ServiceTask_0bqh5yl" targetRef="ExclusiveGateway_1n5jck8" />
     <bpmn:sequenceFlow id="SequenceFlow_101y57s" name="No" sourceRef="ExclusiveGateway_17g4q5c" targetRef="CallActivity_1xilevb" />
     <bpmn:sequenceFlow id="SequenceFlow_0mw0dgd" name="Yes" sourceRef="ExclusiveGateway_17g4q5c" targetRef="CallActivity_0kbwa1x">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[#{execution.getVariable("sdncVersion") == '1702'} ]]></bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[#{execution.getVariable("sdncVersion") != '1610'} ]]></bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:endEvent id="EndEvent_1fvr7ad">
       <bpmn:incoming>SequenceFlow_0yto4gz</bpmn:incoming>

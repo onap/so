@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,7 +33,7 @@ class AaiUtil {
 	public static final String DEFAULT_VERSION_KEY = 'URN_mso_workflow_global_default_aai_version'
 
 	private String aaiNamespace = null;
-	 
+
 	private AbstractServiceTaskProcessor taskProcessor
 
 	public AaiUtil(AbstractServiceTaskProcessor taskProcessor) {
@@ -186,7 +186,7 @@ class AaiUtil {
 
 		//set namespace
 		setNamespace(execution)
-		
+
 		// Check for flow+resource specific first
 		def key = "URN_mso_workflow_${processKey}_aai_${resourceName}_uri"
 		def uri = execution.getVariable(key)
@@ -215,7 +215,7 @@ class AaiUtil {
 			(new ExceptionUtil()).buildAndThrowWorkflowException(execution, 9999, 'Internal Error: AAI URI entry for ' + key + ' not defined in the MSO URN properties file')
 		}
 	}
-	
+
 	/**
 	 * This method can be used for getting the building namespace out of uri.
 	 *  NOTE: A getUri() method needs to be invoked first.
@@ -226,7 +226,7 @@ class AaiUtil {
 	 *
 	 * @return namespace
 	 */
-	
+
 	public String getNamespaceFromUri(String uri) {
 		 if (aaiNamespace == null) {
 			throw new Exception('Internal Error: AAI Namespace has not been set yet. A getUri() method needs to be invoked first.')
@@ -260,7 +260,7 @@ class AaiUtil {
 		   return namespace
 	   }
    }
-	
+
 	/**
 	 * This is used to extract the version from uri.
 	 *
@@ -280,7 +280,7 @@ class AaiUtil {
 		}
 		return savedVersion
 	}
-	
+
 
 	/**
 	 * This reusable method can be used for making AAI Get Calls. The url should
@@ -291,32 +291,33 @@ class AaiUtil {
 	 * @param url
 	 *
 	 * @return APIResponse
+	 *
 	 */
 	public APIResponse executeAAIGetCall(Execution execution, String url){
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		taskProcessor.logDebug(" ======== STARTED Execute AAI Get Process ======== ", isDebugEnabled)
+		APIResponse apiResponse = null
 		try{
 			String uuid = utils.getRequestID()
 			taskProcessor.logDebug( "Generated uuid is: " + uuid, isDebugEnabled)
 			taskProcessor.logDebug( "URL to be used is: " + url, isDebugEnabled)
-			
+
 			String basicAuthCred = utils.getBasicAuth(execution.getVariable("URN_aai_auth"),execution.getVariable("URN_mso_msoKey"))
 
 			RESTConfig config = new RESTConfig(url);
 			RESTClient client = new RESTClient(config).addHeader("X-FromAppId", "MSO").addHeader("X-TransactionId", uuid).addHeader("Accept","application/xml");
-			
+
 			if (basicAuthCred != null && !"".equals(basicAuthCred)) {
 				client.addAuthorizationHeader(basicAuthCred)
 			}
-			
-			APIResponse apiResponse = client.get()
-			return apiResponse
+			apiResponse = client.get()
 
+			taskProcessor.logDebug( "======== COMPLETED Execute AAI Get Process ======== ", isDebugEnabled)
 		}catch(Exception e){
 			taskProcessor.logDebug("Exception occured while executing AAI Get Call. Exception is: \n" + e, isDebugEnabled)
-			return e
+			throw new BpmnError("MSOWorkflowException")
 		}
-		taskProcessor.logDebug( "======== COMPLETED Execute AAI Get Process ======== ", isDebugEnabled)
+		return apiResponse
 	}
 
 
@@ -330,15 +331,17 @@ class AaiUtil {
 	 * @param payload
 	 *
 	 * @return APIResponse
+	 *
 	 */
 	public APIResponse executeAAIPutCall(Execution execution, String url, String payload){
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		taskProcessor.logDebug( " ======== Started Execute AAI Put Process ======== ", isDebugEnabled)
+		APIResponse apiResponse = null
 		try{
 			String uuid = utils.getRequestID()
 			taskProcessor.logDebug( "Generated uuid is: " + uuid, isDebugEnabled)
 			taskProcessor.logDebug( "URL to be used is: " + url, isDebugEnabled)
-			
+
 			String basicAuthCred = utils.getBasicAuth(execution.getVariable("URN_aai_auth"),execution.getVariable("URN_mso_msoKey"))
 
 			RESTConfig config = new RESTConfig(url);
@@ -346,14 +349,14 @@ class AaiUtil {
 			if (basicAuthCred != null && !"".equals(basicAuthCred)) {
 				client.addAuthorizationHeader(basicAuthCred)
 			}
-			APIResponse apiResponse = client.httpPut(payload)
+			apiResponse = client.httpPut(payload)
 
-			return apiResponse
+			taskProcessor.logDebug( "======== Completed Execute AAI Put Process ======== ", isDebugEnabled)
 		}catch(Exception e){
 			taskProcessor.utils.log("ERROR", "Exception occured while executing AAI Put Call. Exception is: \n" + e, isDebugEnabled)
-			return e
+			throw new BpmnError("MSOWorkflowException")
 		}
-		taskProcessor.logDebug( "======== Completed Execute AAI Put Process ======== ", isDebugEnabled)
+		return apiResponse
 	}
 
 	/**
@@ -366,10 +369,12 @@ class AaiUtil {
 	 * @param payload
 	 *
 	 * @return APIResponse
+	 *
 	 */
 	public APIResponse executeAAIPatchCall(Execution execution, String url, String payload){
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		taskProcessor.logDebug( " ======== Started Execute AAI Patch Process ======== ", isDebugEnabled)
+		APIResponse apiResponse = null
 		try{
 			String uuid = utils.getRequestID()
 			taskProcessor.logDebug( "Generated uuid is: " + uuid, isDebugEnabled)
@@ -377,20 +382,20 @@ class AaiUtil {
 			taskProcessor.logDebug( "URL to be used is: " + url, isDebugEnabled)
 
 			String basicAuthCred = utils.getBasicAuth(execution.getVariable("URN_aai_auth"),execution.getVariable("URN_mso_msoKey"))
-			
+
 			RESTConfig config = new RESTConfig(url);
 			RESTClient client = new RESTClient(config).addHeader("X-FromAppId", "MSO").addHeader("X-TransactionId", uuid).addHeader("Content-Type", "application/merge-patch+json").addHeader("Accept","application/json");
 			if (basicAuthCred != null && !"".equals(basicAuthCred)) {
 				client.addAuthorizationHeader(basicAuthCred)
 			}
-			APIResponse apiResponse = client.httpPatch(payload)
+			apiResponse = client.httpPatch(payload)
 
-			return apiResponse
+			taskProcessor.logDebug( "======== Completed Execute AAI Patch Process ======== ", isDebugEnabled)
 		}catch(Exception e){
 			taskProcessor.utils.log("ERROR", "Exception occured while executing AAI Patch Call. Exception is: \n" + e, isDebugEnabled)
-			return e
+			throw new BpmnError("MSOWorkflowException")
 		}
-		taskProcessor.logDebug( "======== Completed Execute AAI Patch Process ======== ", isDebugEnabled)
+		return apiResponse
 	}
 
 
@@ -403,10 +408,12 @@ class AaiUtil {
 	 * @param url
 	 *
 	 * @return APIResponse
+	 *
 	 */
 	public APIResponse executeAAIDeleteCall(Execution execution, String url){
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		taskProcessor.logDebug( " ======== Started Execute AAI Delete Process ======== ", isDebugEnabled)
+		APIResponse apiResponse = null
 		try{
 			String uuid = utils.getRequestID()
 			taskProcessor.logDebug( "Generated uuid is: " + uuid, isDebugEnabled)
@@ -419,15 +426,14 @@ class AaiUtil {
 			if (basicAuthCred != null && !"".equals(basicAuthCred)) {
 				client.addAuthorizationHeader(basicAuthCred)
 			}
-			APIResponse apiResponse = client.delete()
+			apiResponse = client.delete()
 
-			return apiResponse
-
+			taskProcessor.logDebug( "======== Completed Execute AAI Delete Process ======== ", isDebugEnabled)
 		}catch(Exception e){
 			taskProcessor.utils.log("ERROR", "Exception occured while executing AAI Delete Call. Exception is: \n" + e, isDebugEnabled)
-			return e
+			throw new BpmnError("MSOWorkflowException")
 		}
-		taskProcessor.logDebug( "======== Completed Execute AAI Delete Process ======== ", isDebugEnabled)
+		return apiResponse
 	}
 
 	/**
@@ -440,10 +446,12 @@ class AaiUtil {
 	 * @param payload
 	 *
 	 * @return APIResponse
+	 *
 	 */
 	public APIResponse executeAAIDeleteCall(Execution execution, String url, String payload, String authHeader){
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		taskProcessor.logDebug( " ======== Started Execute AAI Delete Process ======== ", isDebugEnabled)
+		APIResponse apiResponse = null
 		try{
 			String uuid = utils.getRequestID()
 			taskProcessor.logDebug( "Generated uuid is: " + uuid, isDebugEnabled)
@@ -456,16 +464,14 @@ class AaiUtil {
 			if (basicAuthCred != null && !"".equals(basicAuthCred)) {
 				client.addAuthorizationHeader(basicAuthCred)
 			}
-			
-			APIResponse apiResponse = client.httpDelete(payload)
+			apiResponse = client.httpDelete(payload)
 
-			return apiResponse
-
+			taskProcessor.logDebug( "======== Completed Execute AAI Delete Process ======== ", isDebugEnabled)
 		}catch(Exception e){
 			taskProcessor.utils.log("ERROR", "Exception occured while executing AAI Delete Call. Exception is: \n" + e, isDebugEnabled)
-			return e
+			throw new BpmnError("MSOWorkflowException")
 		}
-		taskProcessor.logDebug( "======== Completed Execute AAI Delete Process ======== ", isDebugEnabled)
+		return apiResponse
 	}
 
 	/**
@@ -478,10 +484,12 @@ class AaiUtil {
 	 * @param payload
 	 *
 	 * @return APIResponse
+	 *
 	 */
 	public APIResponse executeAAIPostCall(Execution execution, String url, String payload){
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		taskProcessor.logDebug( " ======== Started Execute AAI Post Process ======== ", isDebugEnabled)
+		APIResponse apiResponse = null
 		try{
 			String uuid = utils.getRequestID()
 			taskProcessor.logDebug( "Generated uuid is: " + uuid, isDebugEnabled)
@@ -490,19 +498,18 @@ class AaiUtil {
 			String basicAuthCred = utils.getBasicAuth(execution.getVariable("URN_aai_auth"),execution.getVariable("URN_mso_msoKey"))
 			RESTConfig config = new RESTConfig(url);
 			RESTClient client = new RESTClient(config).addHeader("X-FromAppId", "MSO").addHeader("X-TransactionId", uuid).addHeader("Accept","application/xml");
-			
+
 			if (basicAuthCred != null && !"".equals(basicAuthCred)) {
 				client.addAuthorizationHeader(basicAuthCred)
 			}
-			APIResponse apiResponse = client.httpPost(payload)
+			apiResponse = client.httpPost(payload)
 
-			return apiResponse
-
+			taskProcessor.logDebug( "======== Completed Execute AAI Post Process ======== ", isDebugEnabled)
 		}catch(Exception e){
 			taskProcessor.utils.log("ERROR", "Exception occured while executing AAI Post Call. Exception is: \n" + e, isDebugEnabled)
-			return e
+			throw new BpmnError("MSOWorkflowException")
 		}
-		taskProcessor.logDebug( "======== Completed Execute AAI Post Process ======== ", isDebugEnabled)
+		return apiResponse
 	}
 
 	/**
@@ -518,33 +525,31 @@ class AaiUtil {
 	 * @param headerValue - the header's value, i.e. addHeader(headerName, headerValue)
 	 *
 	 * @return APIResponse
+	 *
 	 */
 	public APIResponse executeAAIPostCall(Execution execution, String url, String payload, String authenticationHeaderValue, String headerName, String headerValue){
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		taskProcessor.logDebug( " ======== Started Execute AAI Post Process ======== ", isDebugEnabled)
+		APIResponse apiResponse = null
 		try{
 			taskProcessor.logDebug( "URL to be used is: " + url, isDebugEnabled)
 
 			String basicAuthCred = utils.getBasicAuth(execution.getVariable("URN_aai_auth"),execution.getVariable("URN_mso_msoKey"))
-			
+
 			RESTConfig config = new RESTConfig(url);
 			RESTClient client = new RESTClient(config).addAuthorizationHeader(authenticationHeaderValue).addHeader(headerName, headerValue)
 			if (basicAuthCred != null && !"".equals(basicAuthCred)) {
 				client.addAuthorizationHeader(basicAuthCred)
 			}
-			APIResponse apiResponse = client.httpPost(payload)
+			apiResponse = client.httpPost(payload)
 
-			return apiResponse
-
+			taskProcessor.logDebug( "======== Completed Execute AAI Post Process ======== ", isDebugEnabled)
 		}catch(Exception e){
 			taskProcessor.utils.log("ERROR", "Exception occured while executing AAI Post Call. Exception is: \n" + e, isDebugEnabled)
-			return e
+			throw new BpmnError("MSOWorkflowException")
 		}
-		taskProcessor.logDebug( "======== Completed Execute AAI Post Process ======== ", isDebugEnabled)
+		return apiResponse
 	}
-
-
-	
 
 
 	/* Utility to get the Cloud Region from AAI
@@ -554,60 +559,50 @@ class AaiUtil {
 	 * @param backend - "PO" - real region, or "SDNC" - v2.5 (fake region).
 	 */
 
-	//TODO: We should refactor this method to return WorkflowException instead of Error. Also to throw MSOWorkflowException which the calling flow will then catch.
-
 	public String getAAICloudReqion(Execution execution, String url, String backend, inputCloudRegion){
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
+		String regionId = ""
+		try{
+			APIResponse apiResponse = executeAAIGetCall(execution, url)
+			String returnCode = apiResponse.getStatusCode()
+			String aaiResponseAsString = apiResponse.getResponseBodyAsString()
+			taskProcessor.utils.log("DEBUG", "Call AAI Cloud Region Return code: " + returnCode, isDebugEnabled)
+			execution.setVariable(execution.getVariable("prefix")+"queryCloudRegionReturnCode", returnCode)
 
-		try {
-		  APIResponse apiResponse = executeAAIGetCall(execution, url)
-		  String returnCode = apiResponse.getStatusCode()
-		  String aaiResponseAsString = apiResponse.getResponseBodyAsString()
-		  taskProcessor.utils.log("DEBUG", "Call AAI Cloud Region Return code: " + returnCode, isDebugEnabled)
-		  execution.setVariable(execution.getVariable("prefix")+"queryCloudRegionReturnCode", returnCode)
-		  //taskProcessor.utils.log("DEBUG", "Call AAI Cloud Region Response: " + aaiResponseAsString, isDebugEnabled)
-		  //execution.setVariable(execution.getVariable("prefix")+"queryCloudRegionResponse", aaiResponseAsString)
-		  String regionId = ""
-		  if (returnCode == "200") {
-			 taskProcessor.utils.log("DEBUG", "Call AAI Cloud Region is Successful.", isDebugEnabled)
-			   try {
-			   String regionVersion = taskProcessor.utils.getNodeText(aaiResponseAsString, "cloud-region-version")
-			   taskProcessor.utils.log("DEBUG", "Cloud Region Version from AAI for " + backend + " is: " + regionVersion, isDebugEnabled)
-			   if (backend == "PO") {
-				  regionId = taskProcessor.utils.getNodeText(aaiResponseAsString, "cloud-region-id")
-			   } else { // backend not "PO"
-				  if (regionVersion == "2.5" ) {
-					  regionId = "AAIAIC25"
-				  } else {
-					  regionId = taskProcessor.utils.getNodeText(aaiResponseAsString, "cloud-region-id")
-				  }
-			   }
+			if(returnCode == "200"){
+				taskProcessor.utils.log("DEBUG", "Call AAI Cloud Region is Successful.", isDebugEnabled)
 
-			   taskProcessor.utils.log("DEBUG", "Cloud Region Id from AAI " + backend + " is: " + regionId, isDebugEnabled)
-			   return regionId
-
-			 } catch (Exception e) {
-				  taskProcessor.utils.log("ERROR", "Exception occured while getting the Cloud Reqion. Exception is: \n" + e, isDebugEnabled)
-				  return "ERROR"
-			 }
-		  } else { // not 200
-			  if (returnCode == "404") {
-				 if (backend == "PO") {
-					  regionId = inputCloudRegion
-				 } else  {  // backend not "PO"
-					  regionId = "AAIAIC25"
-				 }
-				 taskProcessor.utils.log("DEBUG", "Cloud Region value for code='404' of " + backend + " is: " + regionId, isDebugEnabled)
-				  return regionId
-			  } else {
-				  taskProcessor.utils.log("ERROR", "Call AAI Cloud Region is NOT Successful.", isDebugEnabled)
-				  return "ERROR"
-			  }
-		  }
+				String regionVersion = taskProcessor.utils.getNodeText1(aaiResponseAsString, "cloud-region-version")
+				taskProcessor.utils.log("DEBUG", "Cloud Region Version from AAI for " + backend + " is: " + regionVersion, isDebugEnabled)
+				if (backend == "PO") {
+					regionId = taskProcessor.utils.getNodeText1(aaiResponseAsString, "cloud-region-id")
+				} else { // backend not "PO"
+					if (regionVersion == "2.5" ) {
+						regionId = "AAIAIC25"
+					} else {
+						regionId = taskProcessor.utils.getNodeText1(aaiResponseAsString, "cloud-region-id")
+					}
+				}
+				if(regionId == null){
+					throw new BpmnError("MSOWorkflowException")
+				}
+				taskProcessor.utils.log("DEBUG", "Cloud Region Id from AAI " + backend + " is: " + regionId, isDebugEnabled)
+			}else if (returnCode == "404"){ // not 200
+				if (backend == "PO") {
+					regionId = inputCloudRegion
+				}else{  // backend not "PO"
+					regionId = "AAIAIC25"
+				}
+				taskProcessor.utils.log("DEBUG", "Cloud Region value for code='404' of " + backend + " is: " + regionId, isDebugEnabled)
+			}else{
+				taskProcessor.utils.log("ERROR", "Call AAI Cloud Region is NOT Successful.", isDebugEnabled)
+				throw new BpmnError("MSOWorkflowException")
+			}
 		}catch(Exception e) {
-		   taskProcessor.utils.log("ERROR", "Exception occured while getting the Cloud Reqion. Exception is: \n" + e, isDebugEnabled)
-		   return "ERROR"
+			taskProcessor.utils.log("ERROR", "Exception occured while getting the Cloud Reqion. Exception is: \n" + e, isDebugEnabled)
+			throw new BpmnError("MSOWorkflowException")
 		}
+		return regionId
 	}
 
 	/* returns xml Node with service-type of searchValue */

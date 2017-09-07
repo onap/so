@@ -1,4 +1,4 @@
-<generic-vnf xmlns="http://com.att.aai.inventory/v7">
+<generic-vnf xmlns="http://org.openecomp.aai.inventory/v7">
 	<vnf-id>12345678-f41f-4822-9323-b75962763d74</vnf-id>
 	<vnf-name>STMTN5MMSC20</vnf-name>
 	<vnf-type>pcrf-capacity</vnf-type>

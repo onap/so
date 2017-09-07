@@ -27,35 +27,24 @@
 		<meta attribute="class-description">
 			This class describes a HEAT Environment
 		</meta>
-
-		<id name="id" type="int" column="id">
-			<generator class="native"/>
+		<id name="artifactUuid" type="string" column="ARTIFACT_UUID" length="200">
+		    <generator class="assigned" />
 		</id>
-		<properties name="uk_heatenv" unique="true">
 			<property name="name" type="string" >
 			     <column name="NAME" length="100" not-null="true"/>
 			</property>
 			<property name="version" type="string" >
 			      <column name="VERSION" length="20" not-null="true"/>
 			</property>
-			<property name="asdcResourceName" type="string" >
-			      <column name="ASDC_RESOURCE_NAME" length="100" default="'MANUAL RECORD'" not-null="true"/>
-			</property>
-			<property name="asdcUuid" type="string">
-				<column name="ASDC_UUID" length="200" default="'MANUAL RECORD'" not-null="true"/>
-			</property>
-		</properties>
 		<property name="description" column="DESCRIPTION" type="string" length="1200"/>
 		<property name="environment" type="text">
-		      <column name="ENVIRONMENT" not-null="true"/>
+		      <column name="BODY" not-null="true"/>
 		</property>
 		<property name="created" type="timestamp" generated="insert" insert="false" update="false">
 		    <column name="CREATION_TIMESTAMP" not-null="true"/>
 		</property>
-		<property name="asdcLabel" column="ASDC_LABEL" type="string" length="200"/>
 		<property name="artifactChecksum" type="string">
-			<column name="ARTIFACT_CHECKSUM" length="200" default="'MANUAL RECORD'" not-null="true"/>
+		  <column name="ARTIFACT_CHECKSUM" length="200" default="'MANUAL RECORD'" not-null="false"/>
 		</property>
-
     </class>
 </hibernate-mapping>

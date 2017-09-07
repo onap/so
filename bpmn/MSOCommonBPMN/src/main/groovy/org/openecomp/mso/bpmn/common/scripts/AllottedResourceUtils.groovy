@@ -6,8 +6,17 @@ import org.camunda.bpm.engine.runtime.Execution;
 import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.rest.APIResponse;
 
+
+import org.apache.commons.lang3.*
+import org.camunda.bpm.engine.delegate.BpmnError
+import org.camunda.bpm.engine.runtime.Execution;
+
+import groovy.util.XmlParser
+import groovy.util.Node
+import static org.apache.commons.lang3.StringUtils.*;
+
 class AllottedResourceUtils {
-	
+
 	private AbstractServiceTaskProcessor taskProcessor
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	MsoUtils utils;
@@ -83,6 +92,18 @@ class AllottedResourceUtils {
 		}
 		utils.log("DEBUG", " ***** Exit GetARbyId ***** AR:" + ar, isDebugEnabled)
 		return ar;
+	}
+	
+	public String getPSIFmARLink(Execution execution, String arLink)
+	{
+		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+		// Path: /aai/{version}/business/customers/customer/{cust}/service-subscriptions/service-subscription/{subs}/service-instances/service-instance/{psiid}/allotted-resources/allotted-resource/{arid}
+		utils.log("DEBUG", " ***** getPSIFmARLink ***** path:" + arLink, isDebugEnabled)
+		String[] split = arLink.split("/service-instance/")
+		String[] splitB =  split[1].split("/allotted-resources/")
+		String siId = splitB[0]
+		utils.log("DEBUG", " ***** Exit getARLinkbyId ***** parentServiceInstanceId:" + siId , isDebugEnabled)
+		return siId
 	}
 
 	// get Allotted Resource Link by AllottedResourceId using Nodes Query
@@ -222,10 +243,10 @@ class AllottedResourceUtils {
 		try{
 
 			String updateReq =	"""
-				{
-				"orchestration-status": "Created""
-				}
-				"""
+					{
+					"orchestration-status": "${status}"
+					}
+					"""
 
 			utils.log("DEBUG", 'AAI AR URI: ' + aaiARPath, isDebugEnabled)
 

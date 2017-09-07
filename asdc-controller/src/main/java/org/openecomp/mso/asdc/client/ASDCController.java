@@ -21,8 +21,12 @@
 package org.openecomp.mso.asdc.client;
 
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
+
 import org.openecomp.sdc.api.IDistributionClient;
 import org.openecomp.sdc.api.consumer.IDistributionStatusMessage;
 import org.openecomp.sdc.api.consumer.INotificationCallback;
@@ -39,7 +43,9 @@ import org.openecomp.mso.asdc.client.exceptions.ASDCDownloadException;
 import org.openecomp.mso.asdc.client.exceptions.ASDCParametersException;
 import org.openecomp.mso.asdc.client.exceptions.ArtifactInstallerException;
 import org.openecomp.mso.asdc.installer.IVfResourceInstaller;
+import org.openecomp.mso.asdc.installer.ToscaResourceStructure;
 import org.openecomp.mso.asdc.installer.VfResourceStructure;
+import org.openecomp.mso.asdc.installer.heat.ToscaResourceInstaller;
 import org.openecomp.mso.asdc.installer.heat.VfResourceInstaller;
 import org.openecomp.mso.asdc.util.ASDCNotificationLogging;
 import org.openecomp.mso.logger.MessageEnum;
@@ -56,6 +62,9 @@ public class ASDCController {
     protected boolean isAsdcClientAutoManaged = false;
 
     protected String controllerName;
+
+    protected ToscaResourceInstaller toscaInstaller;
+    
 
     /**
      * Inner class for Notification callback
@@ -135,6 +144,7 @@ public class ASDCController {
         isAsdcClientAutoManaged = true;
         this.controllerName = controllerConfigName;
         this.resourceInstaller = new VfResourceInstaller();
+        toscaInstaller = new ToscaResourceInstaller();
     }
 
     public ASDCController (String controllerConfigName, IDistributionClient asdcClient, IVfResourceInstaller resourceinstaller) {
@@ -148,6 +158,7 @@ public class ASDCController {
         distributionClient = asdcClient;
         this.controllerName = controllerConfigName;
         this.resourceInstaller = new VfResourceInstaller();
+        toscaInstaller = new ToscaResourceInstaller();
     }
 
     /**
@@ -272,7 +283,7 @@ public class ASDCController {
 
     private boolean checkResourceAlreadyDeployed (VfResourceStructure resource) throws ArtifactInstallerException {
 
-        if (this.resourceInstaller.isResourceAlreadyDeployed (resource)) {
+    	if (toscaInstaller.isResourceAlreadyDeployed (resource)) {
             LOGGER.info (MessageEnum.ASDC_ARTIFACT_ALREADY_EXIST,
                     resource.getResourceInstance().getResourceInstanceName(),
                     resource.getResourceInstance().getResourceUUID(),
@@ -366,6 +377,36 @@ public class ASDCController {
 
     }
 
+    private void writeArtifactToFile (IArtifactInfo artifact,
+    		IDistributionClientDownloadResult resultArtifact) throws ASDCDownloadException {
+
+    	LOGGER.debug ("Trying to download the artifact : " + artifact.getArtifactURL ()
+    			+ UUID_PARAM
+    			+ artifact.getArtifactUUID ()
+    			+ ")");
+    	
+    	File spoolFile = new File(System.getProperty("mso.config.path") + "/ASDC" + "/" + artifact.getArtifactName()); 
+    	  	
+    	
+    	byte[] payloadBytes = resultArtifact.getArtifactPayload();
+    	
+    	try {
+    		LOGGER.info(MessageEnum.ASDC_RECEIVE_SERVICE_NOTIF, "***WRITE FILE ARTIFACT NAME", "ASDC", artifact.getArtifactName());
+
+    		FileOutputStream outFile = new FileOutputStream(System.getProperty("mso.config.path") + "/ASDC" + "/" + artifact.getArtifactName());
+    		outFile.write(payloadBytes, 0, payloadBytes.length);
+    		outFile.close();
+    		} catch (Exception e) { 
+            	e.printStackTrace();
+                LOGGER.error(MessageEnum.ASDC_ARTIFACT_DOWNLOAD_FAIL,
+        				artifact.getArtifactName (),
+        				artifact.getArtifactURL (),
+        				artifact.getArtifactUUID (),
+        				resultArtifact.getDistributionMessageResult (), "", "", MsoLogger.ErrorCode.DataError, "ASDC write to file failed"); 
+            } 
+    	
+    }
+
 
     private void sendDeployNotificationsForResource(VfResourceStructure vfResourceStructure,DistributionStatusEnum distribStatus, String errorReason) {
 
@@ -394,7 +435,7 @@ public class ASDCController {
     	}
     }
 
-    private void deployResourceStructure (VfResourceStructure resourceStructure) throws ArtifactInstallerException {
+    private void deployResourceStructure (VfResourceStructure resourceStructure, ToscaResourceStructure toscaResourceStructure) throws ArtifactInstallerException {
 
     	LOGGER.info (MessageEnum.ASDC_START_DEPLOY_ARTIFACT, resourceStructure.getResourceInstance().getResourceInstanceName(), resourceStructure.getResourceInstance().getResourceUUID(), "ASDC", "deployResourceStructure");
         try {
@@ -403,10 +444,27 @@ public class ASDCController {
         	if(resourceType.equals("VF") && !category.equalsIgnoreCase("Allotted Resource")){
         		resourceStructure.createVfModuleStructures();
         	}
-        	resourceInstaller.installTheResource (resourceStructure);
+        	//resourceInstaller.installTheResource (resourceStructure);
+				
+			//ToscaResourceInstaller tri = new ToscaResourceInstaller();
+        	toscaInstaller.installTheResource(toscaResourceStructure, resourceStructure);
+			
+		/*	if(toscaResourceStructure.isVnfAlreadyInstalled()){
+	            LOGGER.info (MessageEnum.ASDC_ARTIFACT_ALREADY_EXIST,
+	            		toscaResourceStructure.getCatalogVnfResource().getModelName(),
+	            		toscaResourceStructure.getCatalogVnfResource().getModelUuid(),
+	            		toscaResourceStructure.getCatalogVnfResource().getModelUuid(),"","");
+
+            
+	            this.sendDeployNotificationsForResource(resourceStructure,DistributionStatusEnum.ALREADY_DOWNLOADED,null);
+	            this.sendDeployNotificationsForResource(resourceStructure,DistributionStatusEnum.ALREADY_DEPLOYED,null);
+			} */
 
         } catch (ArtifactInstallerException e) {
-
+        	LOGGER.info (MessageEnum.ASDC_ARTIFACT_DOWNLOAD_FAIL,
+	           		resourceStructure.getResourceInstance().getResourceName(),
+	          		resourceStructure.getResourceInstance().getResourceUUID(),
+	                String.valueOf (resourceStructure.getVfModuleStructure().size()), "ASDC", "deployResourceStructure");
         	sendDeployNotificationsForResource(resourceStructure,DistributionStatusEnum.DEPLOY_ERROR,e.getMessage());
         	throw e;
         }
@@ -497,6 +555,9 @@ public class ASDCController {
         	LOGGER.debug(ASDCNotificationLogging.dumpASDCNotification(iNotif));
 			LOGGER.info(MessageEnum.ASDC_RECEIVE_SERVICE_NOTIF, iNotif.getServiceUUID(), "ASDC", "treatNotification");
 			this.changeControllerStatus(ASDCControllerStatus.BUSY);
+			
+			
+						
 			// Process only the Resource artifacts in MSO
 			for (IResourceInstance resource : iNotif.getResources()) {
 
@@ -505,6 +566,7 @@ public class ASDCController {
 				if ("VF".equals(resource.getResourceType()) || "VL".equals(resource.getResourceType())) {
 					this.processResourceNotification(iNotif,resource);
 				}
+
 			}
 
 
@@ -522,6 +584,7 @@ public class ASDCController {
     private void processResourceNotification (INotificationData iNotif,IResourceInstance resource) {
 		// For each artifact, create a structure describing the VFModule in a ordered flat level
     	VfResourceStructure resourceStructure = new VfResourceStructure(iNotif,resource);
+    	ToscaResourceStructure toscaResourceStructure = new ToscaResourceStructure();
 
 		try {
 
@@ -542,7 +605,9 @@ public class ASDCController {
 
 				}
 
-				this.deployResourceStructure(resourceStructure);
+				this.processCsarServiceArtifacts(iNotif, toscaResourceStructure);
+				
+				this.deployResourceStructure(resourceStructure, toscaResourceStructure);
 
 			}
 		} catch (ArtifactInstallerException | ASDCDownloadException | UnsupportedEncodingException e) {
@@ -551,6 +616,39 @@ public class ASDCController {
 		}
     }
 
+    private void processCsarServiceArtifacts (INotificationData iNotif, ToscaResourceStructure toscaResourceStructure) {
+    	
+    	List<IArtifactInfo> serviceArtifacts = iNotif.getServiceArtifacts();
+    	
+    		for(IArtifactInfo artifact : serviceArtifacts){
+    		
+    			if(artifact.getArtifactType().equals(ASDCConfiguration.TOSCA_CSAR)){
+ 				
+    				try{
+    					
+    					toscaResourceStructure.setToscaArtifact(artifact);
+    					
+    					IDistributionClientDownloadResult resultArtifact = this.downloadTheArtifact(artifact,iNotif.getDistributionID());
+    					
+    					writeArtifactToFile(artifact, resultArtifact);
+    					
+    					toscaResourceStructure.updateResourceStructure(artifact);
+    					
+    					toscaResourceStructure.setServiceVersion(iNotif.getServiceVersion());
+    					
+    					LOGGER.debug(ASDCNotificationLogging.dumpCSARNotification(iNotif, toscaResourceStructure));
+    					
+
+    				} catch(Exception e){
+    					System.out.println("Whats the error " + e.getMessage());
+    					LOGGER.error(MessageEnum.ASDC_GENERAL_EXCEPTION_ARG,
+    							"Exception caught during processCsarServiceArtifacts", "ASDC", "processCsarServiceArtifacts", MsoLogger.ErrorCode.BusinessProcesssError, "Exception in processCsarServiceArtifacts", e);
+    				}
+    			}
+    				
+    		}
+    }
+    
     private static final String UNKNOWN="Unknown";
 
     /**

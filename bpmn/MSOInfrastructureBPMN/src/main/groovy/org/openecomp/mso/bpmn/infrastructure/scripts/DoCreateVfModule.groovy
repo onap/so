@@ -67,7 +67,7 @@ public class DoCreateVfModule extends VfModuleBase {
 
 		execution.setVariable('prefix', Prefix)
 		try{
-			def rollbackData = execution.getVariable("RollbackData")
+			def rollbackData = execution.getVariable("rollbackData")
 			if (rollbackData == null) {
 				rollbackData = new RollbackData()
 			}
@@ -140,6 +140,7 @@ public class DoCreateVfModule extends VfModuleBase {
 				def requestId = execution.getVariable("msoRequestId")
 				execution.setVariable("DCVFM_requestId", requestId)
 				logDebug("requestId: " + requestId, isDebugLogEnabled)
+				rollbackData.put("VFMODULE", "msorequestid", requestId)
 				// Set mso-request-id to request-id for VNF Adapter interface
 				execution.setVariable("mso-request-id", requestId)
 				//serviceId
@@ -159,7 +160,7 @@ public class DoCreateVfModule extends VfModuleBase {
 				//backoutOnFailure
 				def disableRollback = execution.getVariable("disableRollback")
 				def backoutOnFailure = true
-				if (disableRollback != null && disableRollback.equals("true")) {
+				if (disableRollback != null && disableRollback == true) {
 					backoutOnFailure = false
 				}
 				execution.setVariable("DCVFM_backoutOnFailure", backoutOnFailure)
@@ -173,9 +174,9 @@ public class DoCreateVfModule extends VfModuleBase {
 				execution.setVariable("DCVFM_asdcServiceModelVersion", asdcServiceModelVersion)
 				logDebug("asdcServiceModelVersion: " + asdcServiceModelVersion, isDebugLogEnabled)
 				//personaModelId
-				execution.setVariable("DCVFM_personaModelId", jsonUtil.getJsonValue(vfModuleModelInfo, "modelInvariantId"))
+				execution.setVariable("DCVFM_personaModelId", jsonUtil.getJsonValue(vfModuleModelInfo, "modelInvariantUuid"))
 				//personaModelVersion
-				execution.setVariable("DCVFM_personaModelVersion", jsonUtil.getJsonValue(vfModuleModelInfo, "modelVersionId"))
+				execution.setVariable("DCVFM_personaModelVersion", jsonUtil.getJsonValue(vfModuleModelInfo, "modelUuid"))
 				//vfModuleLabel
 				def vfModuleLabel = execution.getVariable("vfModuleLabel")
 				if (vfModuleLabel != null) {
@@ -437,7 +438,7 @@ public class DoCreateVfModule extends VfModuleBase {
 			    logDebug("SDNC Callback URL is: " + sdncCallbackUrl, isDebugLogEnabled)
 
 
-			execution.setVariable("RollbackData", rollbackData)
+			execution.setVariable("rollbackData", rollbackData)
 		}catch(BpmnError b){
 			throw b
 		}catch(Exception e){
@@ -501,7 +502,7 @@ public class DoCreateVfModule extends VfModuleBase {
 			def createResponse = execution.getVariable('DCVFM_createVfModuleResponse')
 			utils.logAudit("createVfModule Response: " + createResponse)
 
-			def rollbackData = execution.getVariable("RollbackData")
+			def rollbackData = execution.getVariable("rollbackData")
 			String vnfName = utils.getNodeText1(createResponse, 'vnf-name')
 			if (vnfName != null) {
 				execution.setVariable('DCVFM_vnfName', vnfName)
@@ -521,7 +522,7 @@ public class DoCreateVfModule extends VfModuleBase {
 			rollbackData.put("VFMODULE", "vfmoduleid", vfModuleId)
 			rollbackData.put("VFMODULE", "rollbackCreateAAIVfModule", "true")
 			rollbackData.put("VFMODULE", "rollbackPrepareUpdateVfModule", "true")
-			execution.setVariable("RollbackData", rollbackData)
+			execution.setVariable("rollbackData", rollbackData)
 		} catch (Exception ex) {
 				ex.printStackTrace()
 				logDebug('Exception occurred while postProcessing CreateAAIVfModule request:' + ex.getMessage(),isDebugLogEnabled)
@@ -812,13 +813,25 @@ public class DoCreateVfModule extends VfModuleBase {
 		}
 
 		Map<String, String> vnfParamsMap = execution.getVariable("DCVFM_vnfParamsMap")
+		String vfModuleParams = ""
+		//Get SDNC Response Data for VF Module Topology
+		String vfModuleSdncGetResponse = execution.getVariable('DCVFM_getSDNCAdapterResponse')
+		utils.logAudit("sdncGetResponse: " + vfModuleSdncGetResponse)
+		def sdncVersion = execution.getVariable("sdncVersion")
 		
-		//Get SDNC Response Data for VnfSubCreate Request
-		String sdncGetResponse = execution.getVariable('DCVFM_getSDNCAdapterResponse')
-		utils.logAudit("sdncGetResponse: " + sdncGetResponse)
-
-		String vfModuleParams = buildVfModuleParams(vnfParamsMap, sdncGetResponse, vnfId, vnfName,
+		if (!sdncVersion.equals("1707")) {
+						
+			vfModuleParams = buildVfModuleParams(vnfParamsMap, vfModuleSdncGetResponse, vnfId, vnfName,
 				vfModuleId, vfModuleName, vfModuleIndex)
+		}
+		else {
+			//Get SDNC Response Data for Vnf Topology
+			String vnfSdncGetResponse = execution.getVariable('DCVFM_getVnfSDNCAdapterResponse')
+			utils.logAudit("vnfSdncGetResponse: " + vnfSdncGetResponse)
+			
+			vfModuleParams = buildVfModuleParamsFromCombinedTopologies(vnfParamsMap, vnfSdncGetResponse, vfModuleSdncGetResponse, vnfId, vnfName,
+				vfModuleId, vfModuleName, vfModuleIndex)			
+		}
 
 		def svcInstId = ""
 		if (serviceInstanceId == null || serviceInstanceId.isEmpty()) {
@@ -1006,7 +1019,7 @@ public class DoCreateVfModule extends VfModuleBase {
 		def modelCustomizationUuid = execution.getVariable("DCVFM_modelCustomizationUuid")
 		def modelCustomizationUuidString = ""
 		if (!usePreload) {
-			modelCustomizationUuidString = "<modelCustomizationUuid>" + modelCustomizationUuid + "</modelCustomizationUuid>"
+			modelCustomizationUuidString = "<model-customization-uuid>" + modelCustomizationUuid + "</model-customization-uuid>"
 		}
 
 		String sdncVNFParamsXml = ""
@@ -1026,7 +1039,7 @@ public class DoCreateVfModule extends VfModuleBase {
 													xmlns:sdncadapterworkflow="http://org.openecomp/mso/workflow/schema/v1"
 													xmlns:sdncadapter="http://org.openecomp/workflow/sdnc/adapter/schema/v1">
 	   <sdncadapter:RequestHeader>
-				<sdncadapter:RequestId>${requestId}</sdncadapter:RequestId>
+				<sdncadapter:RequestId>${uuid}</sdncadapter:RequestId>
 				<sdncadapter:SvcInstanceId>${svcInstId}</sdncadapter:SvcInstanceId>
 				<sdncadapter:SvcAction>${action}</sdncadapter:SvcAction>
 				<sdncadapter:SvcOperation>vnf-topology-operation</sdncadapter:SvcOperation>
@@ -1069,7 +1082,7 @@ public class DoCreateVfModule extends VfModuleBase {
 													xmlns:sdncadapterworkflow="http://org.openecomp/mso/workflow/schema/v1"
 													xmlns:sdncadapter="http://org.openecomp/workflow/sdnc/adapter/schema/v1">
 	   <sdncadapter:RequestHeader>
-				<sdncadapter:RequestId>${requestId}</sdncadapter:RequestId>
+				<sdncadapter:RequestId>${uuid}</sdncadapter:RequestId>
 				<sdncadapter:SvcInstanceId>${svcInstId}</sdncadapter:SvcInstanceId>
 				<sdncadapter:SvcAction>${action}</sdncadapter:SvcAction>
 				<sdncadapter:SvcOperation>vf-module-topology-operation</sdncadapter:SvcOperation>
@@ -1210,7 +1223,7 @@ public class DoCreateVfModule extends VfModuleBase {
 		logDebug("VNF Adapter Response is: " + vnfResponse, isDebugLogEnabled)
 		utils.logAudit("createVnfAResponse is: \n"  + vnfResponse)
 
-		RollbackData rollbackData = execution.getVariable("RollbackData")
+		RollbackData rollbackData = execution.getVariable("rollbackData")
 		if(vnfResponse != null){
 
 			if(vnfResponse.contains("createVfModuleResponse")){
@@ -1273,7 +1286,7 @@ public class DoCreateVfModule extends VfModuleBase {
 		}
 
 		rollbackData.put("VFMODULE", "rollbackVnfAdapterCreate", "true")
-		execution.setVariable("RollbackData", rollbackData)
+		execution.setVariable("rollbackData", rollbackData)
 
 		}catch(BpmnError b){
 			throw b
@@ -1364,7 +1377,7 @@ public class DoCreateVfModule extends VfModuleBase {
 		String sdncResponse = response
 		if(execution.getVariable(Prefix + 'sdncResponseSuccess') == true){
 			logDebug("Received a Good Response from SDNC Adapter for " + method + " SDNC Call.  Response is: \n" + sdncResponse, isDebugLogEnabled)
-			RollbackData rollbackData = execution.getVariable("RollbackData")
+			RollbackData rollbackData = execution.getVariable("rollbackData")
 
 			if(method.equals("assign")){
 				rollbackData.put("VFMODULE", "rollbackSDNCRequestAssign", "true")
@@ -1373,7 +1386,7 @@ public class DoCreateVfModule extends VfModuleBase {
 			else if (method.equals("activate")) {
 				rollbackData.put("VFMODULE", "rollbackSDNCRequestActivate", "true")
 			}
-			execution.setVariable("RollbackData", rollbackData)
+			execution.setVariable("rollbackData", rollbackData)
 		}else{
 			logDebug("Received a BAD Response from SDNC Adapter for " + method + " SDNC Call.", isDebugLogEnabled)
 			throw new BpmnError("MSOWorkflowException")
@@ -1613,7 +1626,7 @@ public class DoCreateVfModule extends VfModuleBase {
 		   // get variables
 		   List fqdnList = execution.getVariable("DCVFM_contrailNetworkPolicyFqdnList")
 		   int fqdnCount = fqdnList.size()
-		   def rollbackData = execution.getVariable("RollbackData")
+		   def rollbackData = execution.getVariable("rollbackData")
 
 		   execution.setVariable("DCVFM_networkPolicyFqdnCount", fqdnCount)
 		   logDebug("DCVFM_networkPolicyFqdnCount - " + fqdnCount, isDebugLogEnabled)
@@ -1701,7 +1714,7 @@ public class DoCreateVfModule extends VfModuleBase {
 							   logDebug(" AddAAINetworkPolicy Success REST Response, , NetworkPolicy #" + counting + " : " + "\n" + aaiResponseAsStringPut, isDebugLogEnabled)
 							   rollbackData.put("VFMODULE", "rollbackCreateNetworkPoliciesAAI", "true")
 							   rollbackData.put("VFMODULE", "contrailNetworkPolicyFqdn" + i, fqdn)
-							   execution.setVariable("RollbackData", rollbackData)
+							   execution.setVariable("rollbackData", rollbackData)
 
 						   } else {
 						   		// aai all errors
@@ -1758,7 +1771,7 @@ public class DoCreateVfModule extends VfModuleBase {
 	   logDebug('Entered ' + method, isDebugLogEnabled)
 
 	   try {
-		   def rollbackData = execution.getVariable("RollbackData")
+		   def rollbackData = execution.getVariable("rollbackData")
 		   def vnfId = execution.getVariable('DCVFM_vnfId')
 		   def oamManagementV4Address = execution.getVariable("DCVFM_oamManagementV4Address")
 		   def oamManagementV6Address = execution.getVariable("DCVFM_oamManagementV6Address")
@@ -1839,6 +1852,47 @@ public class DoCreateVfModule extends VfModuleBase {
 		   exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in postProcessUpdateAAIGenericVnf(): ' + e.getMessage())
 	   }
    }
+   
+   public void preProcessRollback (Execution execution) {
+	   def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+	   utils.log("DEBUG"," ***** preProcessRollback ***** ", isDebugEnabled)
+	   try {
+		   
+		   Object workflowException = execution.getVariable("WorkflowException");
 
+		   if (workflowException instanceof WorkflowException) {
+			   utils.log("DEBUG", "Prev workflowException: " + workflowException.getErrorMessage(), isDebugEnabled)
+			   execution.setVariable("prevWorkflowException", workflowException);
+			   //execution.setVariable("WorkflowException", null);
+		   }
+	   } catch (BpmnError e) {
+		   utils.log("DEBUG", "BPMN Error during preProcessRollback", isDebugEnabled)
+	   } catch(Exception ex) {
+		   String msg = "Exception in preProcessRollback. " + ex.getMessage()
+		   utils.log("DEBUG", msg, isDebugEnabled)
+	   }
+	   utils.log("DEBUG"," *** Exit preProcessRollback *** ", isDebugEnabled)
+   }
+
+   public void postProcessRollback (Execution execution) {
+	   def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+	   utils.log("DEBUG"," ***** postProcessRollback ***** ", isDebugEnabled)
+	   String msg = ""
+	   try {
+		   Object workflowException = execution.getVariable("prevWorkflowException");
+		   if (workflowException instanceof WorkflowException) {
+			   utils.log("DEBUG", "Setting prevException to WorkflowException: ", isDebugEnabled)
+			   execution.setVariable("WorkflowException", workflowException);
+		   }
+		   execution.setVariable("rollbackData", null)
+	   } catch (BpmnError b) {
+		   utils.log("DEBUG", "BPMN Error during postProcessRollback", isDebugEnabled)
+		   throw b;
+	   } catch(Exception ex) {
+		   msg = "Exception in postProcessRollback. " + ex.getMessage()
+		   utils.log("DEBUG", msg, isDebugEnabled)
+	   }
+	   utils.log("DEBUG"," *** Exit postProcessRollback *** ", isDebugEnabled)
+   }
 
 }

@@ -66,7 +66,7 @@ exceptionUtil.processJavaException(execution)]]></bpmn2:script>
         <camunda:in source="DDVAM_vfModuleModelInfo" target="vfModuleModelInfo" />
         <camunda:in source="cloudConfiguration" target="cloudConfiguration" />
         <camunda:in source="DDVAM_sdncVersion" target="sdncVersion" />
-        <camunda:in source="&#34;true&#34;" target="isVidRequest" />
+        <camunda:in source="DDVAM_isVidRequest" target="isVidRequest" />
         <camunda:out source="WorkflowException" target="WorkflowException" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_1xujrk5</bpmn2:incoming>

@@ -26,6 +26,7 @@ import static org.mockito.Mockito.*
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.MockitoAnnotations
@@ -121,11 +122,14 @@ class DeleteVfModuleVolumeInfraV1Test extends MsoGroovyTest {
 	}
 	
 	@Test
+	//@Ignore
 	public void testPrepareDbRequest() {
 		
 		ExecutionEntity mockExecution = setupMock('DeleteVfModuleVolumeInfraV1')
 		when(mockExecution.getVariable("DELVfModVol_requestId")).thenReturn('TEST-REQUEST-ID-0123')
 		when(mockExecution.getVariable("DELVfModVol_volumeOutputs")).thenReturn('')
+		when(mockExecution.getVariable("URN_mso_adapters_db_auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
+		when(mockExecution.getVariable("URN_mso_msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 		
 		DeleteVfModuleVolumeInfraV1 myproc = new DeleteVfModuleVolumeInfraV1()
 		myproc.prepareDBRequest(mockExecution, 'true')

@@ -20,8 +20,11 @@
 
 package org.openecomp.mso.db.catalog.beans;
 
+import java.io.Serializable;
 
-public class VnfRecipe extends Recipe {
+public class VnfRecipe extends Recipe implements Serializable {
+	
+	private static final long serialVersionUID = 768026109321305392L;
 
 	private String vnfType;
 	private String vnfParamXSD;

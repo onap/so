@@ -47,6 +47,7 @@ import org.openecomp.mso.bpmn.common.workflow.service.SDNCAdapterCallbackService
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowResource;
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowResponse;
 import org.openecomp.mso.bpmn.core.PropertyConfigurationSetup;
+import org.openecomp.mso.bpmn.core.xml.XmlTool;
 import org.openecomp.mso.bpmn.mock.FileUtil;
 
 /**
@@ -173,6 +174,7 @@ public class SDNCAdapterV1Test extends WorkflowTest {
 		checkForTimeout(pid);
 
 		assertEquals(true, (Boolean) (getVariable(pid, "continueListening")));
+		assertEquals(false, (Boolean) (getVariable(pid, "SDNCA_InterimNotify")));
 
 
 		//System.out.println("SDNCAdapter interim status processing flow Completed!");
@@ -215,6 +217,7 @@ public class SDNCAdapterV1Test extends WorkflowTest {
 		assertFalse(sdncAdapterResponse instanceof SDNCAdapterErrorResponse);
 		assertProcessInstanceNotFinished(pid);
 		assertEquals(true, (Boolean) (getVariable(pid, "continueListening")));
+		assertEquals(false, (Boolean) (getVariable(pid, "SDNCA_InterimNotify")));
 
 		// Inject a "final" SDNC Adapter asynchronous callback message
 		sdncAdapterCallbackRequest.setRequestData(sdncAdapterCallbackRequestData);
@@ -224,11 +227,74 @@ public class SDNCAdapterV1Test extends WorkflowTest {
 		assertFalse(sdncAdapterResponse instanceof SDNCAdapterErrorResponse);
 		assertProcessInstanceFinished(pid);
 		assertEquals(false, (Boolean) (getVariable(pid, "continueListening")));
+		assertEquals(false, (Boolean) (getVariable(pid, "SDNCA_InterimNotify")));
 
 		//System.out.println("SDNCAdapter non-final then final processing flow Completed!");
 	}
 
-	
+
+	@Test
+	@Deployment(resources = {"subprocess/SDNCAdapterV1.bpmn",
+			"subprocess/GenericNotificationService.bpmn"
+			})
+	public void nonFinalThenFinalWithNotify() throws InterruptedException {
+
+		mockSDNCAdapter(200);
+		mockUpdateRequestDB(200, "Database/DBAdapter.xml");
+
+		//System.out.println("SDNCAdapter non-final then final processing flow Started!");
+
+		String modSdncAdapterWorkflowRequestAct = sdncAdapterWorkflowRequestAct;
+		try {
+			// only service-type "uCPE-VMS" is applicable to notification, so modify the test request
+			modSdncAdapterWorkflowRequestAct = XmlTool.modifyElement(sdncAdapterWorkflowRequestAct, "tag0:service-type", "uCPE-VMS").get();
+			System.out.println("modified request: " + modSdncAdapterWorkflowRequestAct);
+		} catch (Exception e) {
+			System.out.println("request modification failed");
+			//e.printStackTrace();
+		}
+
+		// Start the flow
+		ProcessExecutionThread thread = new ProcessExecutionThread(modSdncAdapterWorkflowRequestAct);
+		thread.start();
+		waitForExecutionToStart("sdncAdapter", 3);
+		String pid = getPid();
+
+		assertProcessInstanceNotFinished(pid);
+
+		// Inject a "non-final" SDNC Adapter asynchronous callback message
+		//System.out.println("Injecting SDNC Adapter asynchronous callback message to continue processing");
+		String generatedRequestId = (String) processEngineRule.getRuntimeService().getVariable(pid, "SDNCA_requestId");
+		CallbackHeader callbackHeader = new CallbackHeader();
+		callbackHeader.setRequestId(generatedRequestId);
+		callbackHeader.setResponseCode("200");
+		callbackHeader.setResponseMessage("OK");
+		SDNCAdapterCallbackRequest sdncAdapterCallbackRequest = new SDNCAdapterCallbackRequest();
+		sdncAdapterCallbackRequest.setCallbackHeader(callbackHeader);
+		sdncAdapterCallbackRequest.setRequestData(sdncAdapterCallbackRequestDataNonfinal);
+		SDNCAdapterCallbackServiceImpl callbackService = new SDNCAdapterCallbackServiceImpl();
+		callbackService.setProcessEngineServices4junit(processEngineRule);
+		SDNCAdapterResponse sdncAdapterResponse = callbackService.sdncAdapterCallback(sdncAdapterCallbackRequest);
+		//System.out.println("Back from executing process again");
+
+		assertFalse(sdncAdapterResponse instanceof SDNCAdapterErrorResponse);
+		assertProcessInstanceNotFinished(pid);
+		assertEquals(true, (Boolean) (getVariable(pid, "continueListening")));
+		assertEquals(true, (Boolean) (getVariable(pid, "SDNCA_InterimNotify")));
+
+		// Inject a "final" SDNC Adapter asynchronous callback message
+		sdncAdapterCallbackRequest.setRequestData(sdncAdapterCallbackRequestData);
+		sdncAdapterResponse = callbackService.sdncAdapterCallback(sdncAdapterCallbackRequest);
+		//System.out.println("Back from executing process again");
+
+		assertFalse(sdncAdapterResponse instanceof SDNCAdapterErrorResponse);
+		assertProcessInstanceFinished(pid);
+		assertEquals(false, (Boolean) (getVariable(pid, "continueListening")));
+		assertEquals(false, (Boolean) (getVariable(pid, "SDNCA_InterimNotify")));
+
+		//System.out.println("SDNCAdapter non-final then final processing flow Completed!");
+	}
+
 
 	private void waitForExecutionToStart(String processDefintion, int count) throws InterruptedException {
 		//System.out.println(processEngineRule.getRuntimeService().createExecutionQuery().processDefinitionKey(processDefintion).count());

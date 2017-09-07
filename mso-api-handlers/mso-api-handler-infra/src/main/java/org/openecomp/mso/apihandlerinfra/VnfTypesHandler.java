@@ -27,27 +27,35 @@ import org.openecomp.mso.apihandlerinfra.vnfbeans.VnfTypes;
 import org.openecomp.mso.db.catalog.CatalogDatabase;
 import org.openecomp.mso.db.catalog.beans.VnfResource;
 import org.openecomp.mso.logger.MsoLogger;
+import org.openecomp.mso.requestsdb.RequestsDatabase;
 import org.openecomp.mso.utils.UUIDChecker;
 import org.apache.http.HttpStatus;
 
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+
 import java.io.StringWriter;
 import java.util.List;
 
 @Path(Constants.VNF_TYPES_PATH)
+@Api(value="/{version: v1|v2|v3}/vnf-types",description="API Requests of vnfTypes")
 public class VnfTypesHandler {
 
     private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH);
 
 
     @GET
-    public Response getVnfTypes (@QueryParam("vnf-role") String vnfRole) {
+    @ApiOperation(value="Finds Vnf Types",response=Response.class)
+    public Response getVnfTypes (@QueryParam("vnf-role") String vnfRole, @PathParam("version") String version) {
 
         long startTime = System.currentTimeMillis ();
         MsoLogger.setServiceName ("GetVnfTypes");
@@ -56,7 +64,7 @@ public class VnfTypesHandler {
         msoLogger.debug ("Incoming request received for getVnfTypes with vnf-role:" + vnfRole);
 
         List <VnfResource> vnfResources = null;
-        try(CatalogDatabase db = new CatalogDatabase ()) {
+        try(CatalogDatabase db = CatalogDatabase.getInstance()) {
             if (vnfRole != null) {
                 vnfResources = db.getVnfResourcesByRole (vnfRole);
             } else {
@@ -80,9 +88,8 @@ public class VnfTypesHandler {
         for (int i = 0; i < vnfResources.size (); i++) {
             VnfType vnfType = beansObjectFactory.createVnfType ();
             VnfResource vr = vnfResources.get (i);
-            vnfType.setType (vr.getVnfType ());
             vnfType.setDescription (vr.getDescription ());
-            vnfType.setId (String.valueOf (vr.getId ()));
+            vnfType.setId (String.valueOf (vr.getModelUuid()));
             vnfTypes.getVnfType ().add (vnfType);
         }
 

@@ -257,7 +257,7 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 								<vnf-name>${execution.getVariable("CAAIVfMod_vnfName")}</vnf-name>
 								<vnf-type>${execution.getVariable("CAAIVfMod_vnfType")}</vnf-type>
 								<service-id>${execution.getVariable("CAAIVfMod_serviceId")}</service-id>
-								<orchestration-status>active</orchestration-status>
+								<orchestration-status>Active</orchestration-status>
 								<model-invariant-id>${execution.getVariable("CAAIVfMod_vnfPersonaId")}</model-invariant-id>
 								<model-version-id>${execution.getVariable("CAAIVfMod_vnfPersonaVer")}</model-version-id>
 							</generic-vnf>""" as String

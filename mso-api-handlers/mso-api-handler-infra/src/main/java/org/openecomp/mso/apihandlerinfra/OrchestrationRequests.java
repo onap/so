@@ -24,7 +24,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
@@ -33,16 +38,26 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.http.HttpStatus;
 import org.codehaus.jackson.map.ObjectMapper;
-
 import org.openecomp.mso.apihandler.common.ErrorNumbers;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.*;
+import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.GetOrchestrationListResponse;
+import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.GetOrchestrationResponse;
+import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.InstanceReferences;
+import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.Request;
+import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.RequestDetails;
+import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.RequestList;
+import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.RequestStatus;
+import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.ServiceInstancesRequest;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoAlarmLogger;
 import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.requestsdb.InfraActiveRequests;
 import org.openecomp.mso.requestsdb.RequestsDatabase;
 
-@Path("/")
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+
+@Path("/orchestrationRequests")
+@Api(value="/orchestrationRequests",description="API Requests for Orchestration requests")
 public class OrchestrationRequests {
 
     public final static String MSO_PROP_APIHANDLER_INFRA = "MSO_PROP_APIHANDLER_INFRA";
@@ -51,6 +66,8 @@ public class OrchestrationRequests {
 
     private static MsoAlarmLogger alarmLogger = new MsoAlarmLogger ();
 
+    private RequestsDatabase requestsDB = RequestsDatabase.getInstance();
+    
 	/**
 	 *
 	 */
@@ -59,9 +76,10 @@ public class OrchestrationRequests {
 	}
 
 	@GET
-	@Path("/orchestrationRequests/{version:[vV][2-3]}/{requestId}")
+	@Path("/{version:[vV][2-5]}/{requestId}")
+	@ApiOperation(value="Find Orchestrated Requests for a given requestId",response=Response.class)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getOrchestrationRequest(@PathParam("requestId") String requestId) {
+	public Response getOrchestrationRequest(@PathParam("requestId") String requestId, @PathParam("version") String version) {
 
 		GetOrchestrationResponse orchestrationResponse = new GetOrchestrationResponse();
 
@@ -72,7 +90,7 @@ public class OrchestrationRequests {
 		InfraActiveRequests requestDB = null;
 
         try {
-       		 requestDB = RequestsDatabase.getRequestFromInfraActive(requestId);
+       		 requestDB = requestsDB.getRequestFromInfraActive(requestId);
 
             } catch (Exception e) {
                 msoLogger.error (MessageEnum.APIH_DB_ACCESS_EXC, MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.AvailabilityError, "Exception while communciate with Request DB - Infra Request Lookup", e);
@@ -112,9 +130,10 @@ public class OrchestrationRequests {
 	}
 
 	@GET
-	@Path("/orchestrationRequests/{version:[vV][2-3]}")
+	@Path("/{version:[vV][2-5]}")
+	@ApiOperation(value="Find Orchestrated Requests for a URI Information",response=Response.class)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getOrchestrationRequest(@Context UriInfo ui) {
+	public Response getOrchestrationRequest(@Context UriInfo ui, @PathParam("version") String version) {
 
 		long startTime = System.currentTimeMillis ();
 
@@ -131,7 +150,7 @@ public class OrchestrationRequests {
 
 			Map<String, List<String>> orchestrationMap = msoRequest.getOrchestrationFilters(queryParams);
 
-			activeRequests = RequestsDatabase.getOrchestrationFiltersFromInfraActive(orchestrationMap);
+			activeRequests = requestsDB.getOrchestrationFiltersFromInfraActive(orchestrationMap);
 
 			orchestrationList = new GetOrchestrationListResponse();
 
@@ -166,10 +185,11 @@ public class OrchestrationRequests {
 
 
 	@POST
-	@Path("/orchestrationRequests/v3/{requestId}/unlock")
+	@Path("/{version: [vV][3-5]}/{requestId}/unlock")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response unlockOrchestrationRequest(String requestJSON, @PathParam("requestId") String requestId) {
+	@ApiOperation(value="Unlock Orchestrated Requests for a given requestId",response=Response.class)
+	public Response unlockOrchestrationRequest(String requestJSON, @PathParam("requestId") String requestId, @PathParam("version") String version) {
 
 		MsoRequest msoRequest = new MsoRequest (requestId);
 
@@ -218,7 +238,7 @@ public class OrchestrationRequests {
 		}
 
 		try {
-			requestDB = RequestsDatabase.getRequestFromInfraActive(requestId);
+			requestDB = requestsDB.getRequestFromInfraActive(requestId);
 
 			if(requestDB == null) {
 				Response resp = msoRequest.buildServiceErrorResponse (HttpStatus.SC_NOT_FOUND,
@@ -238,7 +258,7 @@ public class OrchestrationRequests {
 				if(status == Status.IN_PROGRESS || status == Status.PENDING){
 					msoRequest.setStatus (org.openecomp.mso.apihandlerinfra.vnfbeans.RequestStatusType.UNLOCKED);
 					reqStatus.setRequestState(Status.UNLOCKED.toString ());
-					RequestsDatabase.updateInfraStatus (requestId,
+					requestsDB.updateInfraStatus (requestId,
 							Status.UNLOCKED.toString (),
 							Constants.MODIFIED_BY_APIHANDLER);
 

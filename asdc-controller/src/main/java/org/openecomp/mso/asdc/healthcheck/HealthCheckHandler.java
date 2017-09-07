@@ -21,22 +21,20 @@
 package org.openecomp.mso.asdc.healthcheck;
 
 
-import org.openecomp.mso.MsoStatusUtil;
-import org.openecomp.mso.db.catalog.CatalogDatabase;
-import org.openecomp.mso.logger.MessageEnum;
-import org.openecomp.mso.logger.MsoLogger;
-import org.openecomp.mso.properties.MsoJsonProperties;
-import org.openecomp.mso.properties.MsoPropertiesFactory;
-import org.openecomp.mso.HealthCheckUtils;
-import org.openecomp.mso.utils.UUIDChecker;
-import org.apache.http.HttpStatus;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
+
+import org.apache.http.HttpStatus;
+import org.openecomp.mso.HealthCheckUtils;
+import org.openecomp.mso.logger.MessageEnum;
+import org.openecomp.mso.logger.MsoLogger;
+import org.openecomp.mso.properties.MsoJsonProperties;
+import org.openecomp.mso.properties.MsoPropertiesFactory;
+import org.openecomp.mso.utils.UUIDChecker;
 
 
 @Path("/")
@@ -87,7 +85,7 @@ import javax.ws.rs.core.Response;
 				return null;
 			}
 
-			if (msoProperties !=null && msoProperties.getJsonRootNode().getElements().hasNext()) {
+			if (msoProperties !=null && msoProperties.getJsonRootNode().elements().hasNext()) {
 				return msoProperties;
 			} else {
 				msoLogger.error (MessageEnum.ASDC_PROPERTIES_NOT_FOUND , MSO_PROP_ASDC, "", "", MsoLogger.ErrorCode.DataError, "ASDC properties not found");

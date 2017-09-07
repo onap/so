@@ -20,12 +20,14 @@
 
 package org.openecomp.mso.requestsdb;
 
+import java.util.Date;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -33,12 +35,13 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.openecomp.mso.db.HibernateUtils;
+import org.openecomp.mso.db.AbstractSessionFactoryManager;
+import org.openecomp.mso.requestsdb.RequestsDbSessionFactoryManager;
 import org.openecomp.mso.logger.MsoLogger;
 
 public class RequestsDatabase {
 
-    protected static HibernateUtils hibernateUtils = new HibernateUtilsRequestsDb ();
+    protected final AbstractSessionFactoryManager sessionFactoryRequestDB;
     
     protected static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.GENERAL);
     
@@ -63,34 +66,16 @@ public class RequestsDatabase {
     protected static final String         REQUEST_ID                 = "requestId";
     protected static MockRequestsDatabase mockDB                     = null;
 
-    protected static enum Scope {
-        SERVICE("service", SERVICE_INSTANCE_NAME, SERVICE_INSTANCE_ID, "serviceInstanceId"),
-        VNF_INSTANCE("vnf", VNF_INSTANCE_NAME, VNF_INSTANCE_ID, "vnfInstanceId"),
-        VOLUME_GROUP("volumeGroup", VOLUME_GROUP_INSTANCE_NAME, VOLUME_GROUP_INSTANCE_ID, "volumeGroupInstanceId"),
-        VFMODULE("vfModule", VFMODULE_INSTANCE_NAME, VFMODULE_INSTANCE_ID, "vfModuleInstanceId"),
-        NETWORK("network", NETWORK_INSTANCE_NAME, NETWORK_INSTANCE_ID, "networkInstanceId");
-
-        public final String type;
-        public final String nameColumn;
-        public final String idColumn;
-        public final String idMapKey;
-
-        private Scope(String type, String nameColumn, String idColumn, String idMapKey) {
-            this.type = type;
-            this.nameColumn = nameColumn;
-            this.idColumn = idColumn;
-            this.idMapKey = idMapKey;
-        }
+    public static RequestsDatabase getInstance() {
+        return new RequestsDatabase(new RequestsDbSessionFactoryManager ());
     }
 
-    /**
-     * Avoids creating an instance of this utility class.
-     */
-    protected RequestsDatabase () {
+    protected RequestsDatabase (AbstractSessionFactoryManager sessionFactoryRequest) {
+        sessionFactoryRequestDB = sessionFactoryRequest;
     }
 
-    public static boolean healthCheck () {
-        Session session = hibernateUtils.getSessionFactory ().openSession ();
+    public boolean healthCheck () {
+        Session session = sessionFactoryRequestDB.getSessionFactory ().openSession ();
         try {
             Query query = session.createSQLQuery (" show tables ");
 
@@ -105,10 +90,10 @@ public class RequestsDatabase {
     }
 
 
-    public static int updateInfraStatus (String requestId, String requestStatus, String lastModifiedBy) {
+    public int updateInfraStatus (String requestId, String requestStatus, String lastModifiedBy) {
         long startTime = System.currentTimeMillis ();
         msoLogger.debug ("Update infra request record " + requestId + " with status " + requestStatus);
-        Session session = hibernateUtils.getSessionFactory ().openSession ();
+        Session session = sessionFactoryRequestDB.getSessionFactory ().openSession ();
 
         int result = 0;
         try {
@@ -130,10 +115,10 @@ public class RequestsDatabase {
         return result;
     }
 
-    public static int updateInfraStatus (String requestId, String requestStatus, long progress, String lastModifiedBy) {
+    public int updateInfraStatus (String requestId, String requestStatus, long progress, String lastModifiedBy) {
         long startTime = System.currentTimeMillis ();
         msoLogger.debug ("Update infra request record " + requestId + " with status " + requestStatus);
-        Session session = hibernateUtils.getSessionFactory ().openSession ();
+        Session session = sessionFactoryRequestDB.getSessionFactory ().openSession ();
 
         int result = 0;
         try {
@@ -156,10 +141,10 @@ public class RequestsDatabase {
         return result;
     }
 
-    public static int updateInfraFinalStatus (String requestId, String requestStatus, String statusMessage, long progress, String responseBody, String lastModifiedBy) {
+    public int updateInfraFinalStatus (String requestId, String requestStatus, String statusMessage, long progress, String responseBody, String lastModifiedBy) {
         long startTime = System.currentTimeMillis ();
         msoLogger.debug ("Update infra request record " + requestId + " with status " + requestStatus);
-        Session session = hibernateUtils.getSessionFactory ().openSession ();
+        Session session = sessionFactoryRequestDB.getSessionFactory ().openSession ();
 
         int result = 0;
         try {
@@ -185,14 +170,14 @@ public class RequestsDatabase {
     }
 
     
-    private static List<InfraActiveRequests> executeInfraQuery (List <Criterion> criteria, Order order) {
+    private List<InfraActiveRequests> executeInfraQuery (List <Criterion> criteria, Order order) {
 
         long startTime = System.currentTimeMillis ();
         msoLogger.debug ("Execute query on infra active request table");
         
         List <InfraActiveRequests> results = new ArrayList<InfraActiveRequests>();
 
-        Session session = hibernateUtils.getSessionFactory ().openSession ();
+        Session session = sessionFactoryRequestDB.getSessionFactory ().openSession ();
         try {
             session.beginTransaction ();
             Criteria crit = session.createCriteria (InfraActiveRequests.class);
@@ -213,11 +198,11 @@ public class RequestsDatabase {
         return results;
     }
     
-    public static InfraActiveRequests getRequestFromInfraActive (String requestId) {
+    public InfraActiveRequests getRequestFromInfraActive (String requestId) {
         long startTime = System.currentTimeMillis ();
         msoLogger.debug ("Get request " + requestId + " from InfraActiveRequests DB");
 
-        Session session = hibernateUtils.getSessionFactory ().openSession ();
+        Session session = sessionFactoryRequestDB.getSessionFactory ().openSession ();
         InfraActiveRequests ar = null;
         try {
             session.beginTransaction ();
@@ -233,24 +218,48 @@ public class RequestsDatabase {
         return ar;
     }
     
-    public static InfraActiveRequests checkInstanceNameDuplicate (Map<String,String> instanceIdMap, String instanceName, String requestScope) {
+    public InfraActiveRequests checkInstanceNameDuplicate (HashMap<String,String> instanceIdMap, String instanceName, String requestScope) {
 
         List <Criterion> criteria = new LinkedList <> ();
        
-        if (instanceName != null && !instanceName.equals("")) {
-
-            Arrays.stream(Scope.values()) //
-                    .filter(scope -> scope.type.equals(requestScope)) //
-                    .forEach(scope -> criteria.add(Restrictions.eq(scope.nameColumn, instanceName)));
-
-        } else if (instanceIdMap != null) {
-
-            Arrays.stream(Scope.values()) //
-                    .filter(scope -> scope.type.equals(requestScope) && instanceIdMap.get(scope.idMapKey) != null) //
-                    .forEach(scope -> criteria.add(Restrictions.eq(scope.idColumn, instanceIdMap.get(scope.idMapKey))));
-
+        if(instanceName != null && !instanceName.equals("")) {
+        	
+        	if(requestScope.equals("service")){
+        		criteria.add (Restrictions.eq (SERVICE_INSTANCE_NAME, instanceName));
+        	} else if(requestScope.equals("vnf")){
+        		criteria.add (Restrictions.eq (VNF_INSTANCE_NAME, instanceName));
+        	} else if(requestScope.equals("volumeGroup")){
+        		criteria.add (Restrictions.eq (VOLUME_GROUP_INSTANCE_NAME, instanceName));
+        	} else if(requestScope.equals("vfModule")){
+        		criteria.add (Restrictions.eq (VFMODULE_INSTANCE_NAME, instanceName));
+        	} else if(requestScope.equals("network")){
+        		criteria.add (Restrictions.eq (NETWORK_INSTANCE_NAME, instanceName));
+        	}
+        
+        } else {
+            if(instanceIdMap != null){
+            	if(requestScope.equals("service") && instanceIdMap.get("serviceInstanceId") != null){
+            		criteria.add (Restrictions.eq (SERVICE_INSTANCE_ID, instanceIdMap.get("serviceInstanceId")));
+             	}
+            
+            	if(requestScope.equals("vnf") && instanceIdMap.get("vnfInstanceId") != null){
+            		criteria.add (Restrictions.eq (VNF_INSTANCE_ID, instanceIdMap.get("vnfInstanceId")));
+             	}
+            
+            	if(requestScope.equals("vfModule") && instanceIdMap.get("vfModuleInstanceId") != null){
+            		criteria.add (Restrictions.eq (VFMODULE_INSTANCE_ID, instanceIdMap.get("vfModuleInstanceId")));
+             	}
+            
+            	if(requestScope.equals("volumeGroup") && instanceIdMap.get("volumeGroupInstanceId") != null){
+            		criteria.add (Restrictions.eq (VOLUME_GROUP_INSTANCE_ID, instanceIdMap.get("volumeGroupInstanceId")));
+             	}
+            
+            	if(requestScope.equals("network") && instanceIdMap.get("networkInstanceId") != null){
+            		criteria.add (Restrictions.eq (NETWORK_INSTANCE_ID, instanceIdMap.get("networkInstanceId")));
+            	}
+            }
         }
-
+        
         criteria.add (Restrictions.in ("requestStatus", new String[] { "PENDING", "IN_PROGRESS", "TIMEOUT" }));
         
         Order order = Order.desc (START_TIME);
@@ -266,15 +275,18 @@ public class RequestsDatabase {
         return infraActiveRequests; 
     }
       
-    public static List<InfraActiveRequests> getOrchestrationFiltersFromInfraActive (Map<String, List<String>> orchestrationMap) {
+    public List<InfraActiveRequests> getOrchestrationFiltersFromInfraActive (Map<String, List<String>> orchestrationMap) {
         
     	
     	List <Criterion> criteria = new LinkedList <> ();
     	for (Map.Entry<String, List<String>> entry : orchestrationMap.entrySet())
     	{
     		String mapKey = entry.getKey();
-
-    	    if(mapKey.equalsIgnoreCase("vnfInstanceId")){
+    		if(mapKey.equalsIgnoreCase("serviceInstanceId")) {
+    			mapKey = "serviceInstanceId";
+    		} else if(mapKey.equalsIgnoreCase("serviceInstanceName")) {
+    			mapKey = "serviceInstanceName";
+    		} else if(mapKey.equalsIgnoreCase("vnfInstanceId")){
     	    	mapKey = "vnfId";
      	    } else if(mapKey.equalsIgnoreCase("vnfInstanceName")) {
     	    	mapKey = "vnfName";
@@ -292,9 +304,41 @@ public class RequestsDatabase {
     	    	mapKey = "networkName";
     	    } else if(mapKey.equalsIgnoreCase("lcpCloudRegionId")) {
     	    	mapKey = "aicCloudRegion";
-    	    } 
+    	    } else if(mapKey.equalsIgnoreCase("tenantId")) {
+    	    	mapKey = "tenantId";
+    	    } else if(mapKey.equalsIgnoreCase("modelType")) {
+    	    	mapKey = "requestScope";
+    	    } else if(mapKey.equalsIgnoreCase("requestorId")) {
+    	    	mapKey = "requestorId";
+    	    } else if(mapKey.equalsIgnoreCase("requestExecutionDate")) {    	    	
+    	    	mapKey = "startTime";
+    	    }
     	    
-    	    criteria.add(Restrictions.eq(mapKey, entry.getValue().get(1)));  	    
+    		String propertyValue = entry.getValue().get(1);
+    		if (mapKey.equals("startTime")) {    			
+    			SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy");    	        
+    			try {
+	    	        Date thisDate = format.parse(propertyValue);
+	    	        Timestamp minTime = new Timestamp(thisDate.getTime());	    	        
+	    	        Timestamp maxTime = new Timestamp(thisDate.getTime() + TimeUnit.DAYS.toMillis(1));
+	    	        
+	    	        if("DOES_NOT_EQUAL".equalsIgnoreCase(entry.getValue().get(0))) {
+	    	        	criteria.add(Restrictions.or(Restrictions.lt(mapKey, minTime),
+	    	        			Restrictions.ge(mapKey, maxTime)));	        			
+	        		} else {	        			
+	        			criteria.add(Restrictions.between(mapKey, minTime, maxTime));        		       			
+	        		}    
+    			}
+    			catch (Exception e){
+    				msoLogger.debug("Exception in getOrchestrationFiltersFromInfraActive(): + " + e.getMessage());
+    				return null;
+    			}
+    		}
+    		else if("DOES_NOT_EQUAL".equalsIgnoreCase(entry.getValue().get(0))) {
+    			criteria.add(Restrictions.ne(mapKey, propertyValue));
+    		} else {
+    			criteria.add(Restrictions.eq(mapKey, propertyValue));
+    		}
     	    
     	}
     	
@@ -304,13 +348,12 @@ public class RequestsDatabase {
     }
 
 
-    public static List <InfraActiveRequests> getRequestListFromInfraActive (String queryAttributeName,
+    public List <InfraActiveRequests> getRequestListFromInfraActive (String queryAttributeName,
                                                                             String queryValue,
                                                                             String requestType) {
-        long startTime = System.currentTimeMillis ();
         msoLogger.debug ("Get list of infra requests from DB with " + queryAttributeName + " = " + queryValue);
 
-        Session session = hibernateUtils.getSessionFactory ().openSession ();
+        Session session = sessionFactoryRequestDB.getSessionFactory ().openSession ();
         try {
             session.beginTransaction ();
             Criteria crit = session.createCriteria (InfraActiveRequests.class)
@@ -334,11 +377,11 @@ public class RequestsDatabase {
     }
 
 
-    public static InfraActiveRequests getRequestFromInfraActive (String requestId, String requestType) {
+    public InfraActiveRequests getRequestFromInfraActive (String requestId, String requestType) {
         long startTime = System.currentTimeMillis ();
         msoLogger.debug ("Get infra request from DB with id " + requestId);
 
-        Session session = hibernateUtils.getSessionFactory ().openSession ();
+        Session session = sessionFactoryRequestDB.getSessionFactory ().openSession ();
         InfraActiveRequests ar = null;
         try {
             session.beginTransaction ();
@@ -356,13 +399,13 @@ public class RequestsDatabase {
     }
 
 
-    public static InfraActiveRequests checkDuplicateByVnfName (String vnfName, String action, String requestType) {
+    public InfraActiveRequests checkDuplicateByVnfName (String vnfName, String action, String requestType) {
 
         long startTime = System.currentTimeMillis ();
         msoLogger.debug ("Get infra request from DB for VNF " + vnfName + " and action " + action + " and requestType " + requestType);
 
         InfraActiveRequests ar = null;
-        Session session = hibernateUtils.getSessionFactory ().openSession ();
+        Session session = sessionFactoryRequestDB.getSessionFactory ().openSession ();
 
         try {
             session.beginTransaction ();
@@ -385,13 +428,13 @@ public class RequestsDatabase {
         return ar;
     }
 
-    public static InfraActiveRequests checkDuplicateByVnfId (String vnfId, String action, String requestType) {
+    public InfraActiveRequests checkDuplicateByVnfId (String vnfId, String action, String requestType) {
 
         long startTime = System.currentTimeMillis ();
         msoLogger.debug ("Get list of infra requests from DB for VNF " + vnfId + " and action " + action);
 
         InfraActiveRequests ar = null;
-        Session session = hibernateUtils.getSessionFactory ().openSession ();
+        Session session = sessionFactoryRequestDB.getSessionFactory ().openSession ();
 
         try {
             session.beginTransaction ();
@@ -414,7 +457,7 @@ public class RequestsDatabase {
         return ar;
     }
 
-    public static void setMockDB(MockRequestsDatabase mockDB) {
+    public void setMockDB(MockRequestsDatabase mockDB) {
         RequestsDatabase.mockDB = mockDB;
     }
 
@@ -424,10 +467,9 @@ public class RequestsDatabase {
      * @param siteName The unique name of the site
      * @return SiteStatus object or null if none found
      */
-    public static SiteStatus getSiteStatus (String siteName) {
-        Session session = hibernateUtils.getSessionFactory ().openSession ();
+    public SiteStatus getSiteStatus (String siteName) {
+        Session session = sessionFactoryRequestDB.getSessionFactory ().openSession ();
 
-        long startTime = System.currentTimeMillis ();
         SiteStatus siteStatus = null;
         msoLogger.debug ("Request database - get Site Status with Site name:" + siteName);
         try {
@@ -451,8 +493,8 @@ public class RequestsDatabase {
      * @param siteName The unique name of the site
      * @param status The updated status of the Site
      */
-    public static void updateSiteStatus (String siteName, boolean status) {
-        Session session = hibernateUtils.getSessionFactory ().openSession ();
+    public void updateSiteStatus (String siteName, boolean status) {
+        Session session = sessionFactoryRequestDB.getSessionFactory ().openSession ();
         session.beginTransaction ();
 
         long startTime = System.currentTimeMillis ();

@@ -129,7 +129,7 @@ public class SDNCServiceRequestConnector extends SDNCConnector {
 
 			// ack-final-indicator is optional: default to "Y".
 
-			if (ackFinalIndicator == null) {
+			if (ackFinalIndicator == null || ackFinalIndicator.trim().isEmpty()) {
 				ackFinalIndicator = "Y";
 			}
 
@@ -184,6 +184,7 @@ public class SDNCServiceRequestConnector extends SDNCConnector {
 
                 response.addParam(tagName, tagValue);
             }
+
 			return response;
 		} catch (ParseException e) {
 			throw e;

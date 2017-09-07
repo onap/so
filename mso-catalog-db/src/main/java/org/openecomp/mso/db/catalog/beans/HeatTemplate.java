@@ -20,32 +20,28 @@
 
 package org.openecomp.mso.db.catalog.beans;
 
-
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.text.DateFormat;
-import java.util.Date;
 import java.util.Set;
 
 import org.openecomp.mso.db.catalog.utils.MavenLikeVersioning;
 import org.openecomp.mso.logger.MsoLogger;
 
-public class HeatTemplate extends MavenLikeVersioning {
+public class HeatTemplate extends MavenLikeVersioning implements Serializable {
+	
+	private static final long serialVersionUID = 768026109321305392L;
 
     private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.GENERAL);
 
-    private int id;
+    private String artifactUuid;
     private String templateName;
-    private String templatePath = null;
     private String templateBody = null;
     private int timeoutMinutes;
     private Set <HeatTemplateParam> parameters;
     private Set <HeatNestedTemplate> files;
     private String description;
     private String asdcUuid;
-    private String asdcResourceName;
-    private String asdcLabel;
     private String artifactChecksum;
 
     private Timestamp created;
@@ -57,12 +53,12 @@ public class HeatTemplate extends MavenLikeVersioning {
     public HeatTemplate () {
     }
 
-    public int getId () {
-        return id;
+    public String getArtifactUuid() {
+        return this.artifactUuid;
     }
 
-    public void setId (int id) {
-        this.id = id;
+    public void setArtifactUuid (String artifactUuid) {
+        this.artifactUuid = artifactUuid;
     }
 
     public String getTemplateName () {
@@ -71,14 +67,6 @@ public class HeatTemplate extends MavenLikeVersioning {
 
     public void setTemplateName (String templateName) {
         this.templateName = templateName;
-    }
-
-    public String getTemplatePath () {
-        return templatePath;
-    }
-
-    public void setTemplatePath (String templatePath) {
-        this.templatePath = templatePath;
     }
 
     public String getTemplateBody () {
@@ -114,26 +102,7 @@ public class HeatTemplate extends MavenLikeVersioning {
 	}
 
 	public String getHeatTemplate () {
-        if (templateBody != null && !templateBody.isEmpty ()) {
-            // The template body is in the DB table. Just return it.
-            return templateBody;
-        }
-
-        String body = null;
-
-        try (BufferedReader reader = new BufferedReader (new FileReader (templatePath)))
-        {
-            String line = null;
-            StringBuilder stringBuilder = new StringBuilder ();
-            while ((line = reader.readLine ()) != null) {
-                stringBuilder.append (line);
-            }
-            body = stringBuilder.toString ();
-        } catch (Exception e) {
-            LOGGER.debug ("Error reading template file " + templatePath, e);
-        }
-
-        return body;
+		return this.templateBody;
     }
 
     public void setFiles (Set <HeatNestedTemplate> files) {
@@ -152,20 +121,6 @@ public class HeatTemplate extends MavenLikeVersioning {
 		this.asdcUuid = asdcUuidp;
 	}
 
-    public String getAsdcResourceName() {
-		return asdcResourceName;
-	}
-
-	public void setAsdcResourceName(String asdcResourceName) {
-		this.asdcResourceName = asdcResourceName;
-	}
-	public String getAsdcLabel() {
-		return this.asdcLabel;
-	}
-	public void setAsdcLabel(String asdcLabel) {
-		this.asdcLabel = asdcLabel;
-	}
-
     public String getArtifactChecksum() {
         return artifactChecksum;
     }
@@ -173,6 +128,7 @@ public class HeatTemplate extends MavenLikeVersioning {
     public void setArtifactChecksum(String artifactChecksum) {
         this.artifactChecksum = artifactChecksum;
     }
+
     public Timestamp getCreated() {
 		return created;
 	}
@@ -189,16 +145,12 @@ public class HeatTemplate extends MavenLikeVersioning {
           .append (templateName)
           .append (",version=")
           .append (version)
-          .append (",path=")
-          .append (templatePath)
           .append (",body=")
           .append (body)
           .append (",timeout=")
           .append (timeoutMinutes)
           .append (",asdcUuid=")
           .append (asdcUuid)
-          .append (",asdcResourceName=")
-          .append (asdcResourceName)
           .append (",description=")
           .append (description);
         if (created != null) {

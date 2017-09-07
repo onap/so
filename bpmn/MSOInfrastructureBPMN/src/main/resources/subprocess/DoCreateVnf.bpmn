@@ -155,9 +155,8 @@ createVnf.preProcessSDNCAssignRequest(execution)]]></bpmn2:script>
     </bpmn2:callActivity>
     <bpmn2:scriptTask id="postProcessSDNCAssignRequest" name="PostProcess SDNC Assign Request" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_15knw0q</bpmn2:incoming>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
       <bpmn2:outgoing>SequenceFlow_0lnh79j</bpmn2:outgoing>
-
+      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
 String response = execution.getVariable("DoCVNF_assignSDNCAdapterResponse")
 
 def createVnfInfra = new DoCreateVnf()

@@ -20,47 +20,37 @@
 
 package org.openecomp.mso.db.catalog.beans;
 
-
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 
 import org.openecomp.mso.db.catalog.utils.MavenLikeVersioning;
 
-public class HeatEnvironment extends MavenLikeVersioning {
-	private int id;
+public class HeatEnvironment extends MavenLikeVersioning implements Serializable {
+	
+	private static final long serialVersionUID = 768026109321305392L;
+
+	private String artifactUuid;
 	private String name = null;
 	private String description = null;
 	private String environment = null;
-
-	private String asdcUuid;
-	private String asdcResourceName;
-	private String asdcLabel;
 	private String artifactChecksum;
 
 	private Timestamp created;
 
 	public HeatEnvironment() {}
 
-	public int getId() {
-		return this.id;
+	public String getArtifactUuid() {
+		return this.artifactUuid;
+	}
+	public void setArtifactUuid(String artifactUuid) {
+		this.artifactUuid = artifactUuid;
 	}
 
-	public void setId(int id) {
-		this.id = id;
-	}
-
-
-    /**
-     * @return the name
-     */
     public String getName () {
         return name;
     }
 
-
-    /**
-     * @param name the name to set
-     */
     public void setName (String name) {
         this.name = name;
     }
@@ -79,20 +69,6 @@ public class HeatEnvironment extends MavenLikeVersioning {
 		this.environment = environment;
 	}
 
-	public String getAsdcUuid() {
-		return asdcUuid;
-	}
-
-	public void setAsdcUuid(String asdcUuid) {
-		this.asdcUuid = asdcUuid;
-	}
-	public String getAsdcLabel() {
-		return this.asdcLabel;
-	}
-	public void setAsdcLabel(String asdcLabel) {
-		this.asdcLabel = asdcLabel;
-	}
-
 	public String getArtifactChecksum() {
 		return artifactChecksum;
 	}
@@ -100,21 +76,6 @@ public class HeatEnvironment extends MavenLikeVersioning {
 	public void setArtifactChecksum(String artifactChecksum) {
 		this.artifactChecksum = artifactChecksum;
 	}
-
-	/**
-     * @return the asdcResourceName
-     */
-    public String getAsdcResourceName () {
-        return asdcResourceName;
-    }
-
-
-    /**
-     * @param asdcResourceName the asdcResourceName to set
-     */
-    public void setAsdcResourceName (String asdcResourceName) {
-        this.asdcResourceName = asdcResourceName;
-    }
 
 	public Timestamp getCreated() {
 		return created;
@@ -127,22 +88,18 @@ public class HeatEnvironment extends MavenLikeVersioning {
     @Override
 	public String toString () {
 		StringBuffer sb = new StringBuffer();
-		sb.append ("ID=" + this.id);
+		sb.append ("Artifact UUID=" + this.artifactUuid);
         sb.append (", name=");
         sb.append (name);
         sb.append (", version=");
         sb.append (version);
         sb.append(", description=");
-        sb.append (description == null ? "null" : description);
-        sb.append(", environment=");
-        sb.append (environment == null ? "null" : environment);
-        sb.append(", asdcUuid=");
-        sb.append (asdcUuid == null ? "null" : asdcUuid);
-		sb.append (", asdcResourceName=");
-		sb.append (asdcResourceName == null ? "null" : asdcResourceName);
-		if (created != null) {
-	        sb.append (",created=");
-	        sb.append (DateFormat.getInstance().format(created));
+        sb.append (this.description == null ? "null" : this.description);
+        sb.append(", body=");
+        sb.append (this.environment == null ? "null" : this.environment);
+		if (this.created != null) {
+	        sb.append (",creationTimestamp=");
+	        sb.append (DateFormat.getInstance().format(this.created));
 	    }
 		return sb.toString();
 	}

@@ -268,7 +268,7 @@ DoDeleteNetworkInstance.postProcessResponse(execution)
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_1pbgnr2" sourceRef="ScriptTask_01xjfhu" targetRef="EndEvent_3" />
     <bpmn2:sequenceFlow id="SequenceFlow_1pdp4d2" sourceRef="prepareSDNCTopoRequest_ScriptTask" targetRef="callDeleteSDNCAdapter_CallActivity" />
-    <bpmn2:exclusiveGateway id="ExclusiveGateway_02t94x3" name="is &#39;1702&#39; SNDC Call?" default="SequenceFlow_0r3pvf8">
+    <bpmn2:exclusiveGateway id="ExclusiveGateway_02t94x3" name="is not &#39;1610&#39; SNDC Call?" default="SequenceFlow_0r3pvf8">
       <bpmn2:incoming>SequenceFlow_20</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0r3pvf8</bpmn2:outgoing>
       <bpmn2:outgoing>SequenceFlow_0kqnddy</bpmn2:outgoing>
@@ -298,7 +298,7 @@ prepareSDNCRequest.prepareRpcSDNCRequest(execution)
     <bpmn2:sequenceFlow id="SequenceFlow_1jnva78" sourceRef="CallActivity_03wzdas" targetRef="validateSDNCResponse_ScriptTask" />
     <bpmn2:sequenceFlow id="SequenceFlow_0zlbzad" sourceRef="ScriptTask_0iqzbz6" targetRef="CallActivity_03wzdas" />
     <bpmn2:sequenceFlow id="SequenceFlow_0kqnddy" name="Yes" sourceRef="ExclusiveGateway_02t94x3" targetRef="ScriptTask_1wf192s">
-      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{execution.getVariable("sdncVersion") == '1702'} ]]></bpmn2:conditionExpression>
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{execution.getVariable("sdncVersion") != '1610'} ]]></bpmn2:conditionExpression>
     </bpmn2:sequenceFlow>
     <bpmn2:scriptTask id="ScriptTask_01w2cd9" name="PreProcess Incoming Request" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
@@ -699,7 +699,7 @@ DoDeleteNetworkInstance.validateRpcSDNCDeactivateResponse(execution)]]></bpmn2:s
       <bpmndi:BPMNShape id="ExclusiveGateway_02t94x3_di" bpmnElement="ExclusiveGateway_02t94x3" isMarkerVisible="true">
         <dc:Bounds x="1156" y="648" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1143" y="707" width="76" height="24" />
+          <dc:Bounds x="1150" y="707" width="61" height="24" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0r3pvf8_di" bpmnElement="SequenceFlow_0r3pvf8">

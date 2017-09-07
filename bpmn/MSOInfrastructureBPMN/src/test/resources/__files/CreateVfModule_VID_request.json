@@ -2,8 +2,8 @@
 "requestDetails": {
 "modelInfo": {
 "modelType": "vfModule",
-"modelInvariantId": "ff5256d2-5a33-55df-13ab-12abad84e7ff",
-"modelNameVersionId": "fe6478e5-ea33-3346-ac12-ab121484a3fe",
+"modelInvariantUuid": "ff5256d2-5a33-55df-13ab-12abad84e7ff",
+"modelUuid": "fe6478e5-ea33-3346-ac12-ab121484a3fe",
 "modelName": "STMTN5MMSC21-MMSC::model-1-0",
 "modelVersion": "1",
 "modelCustomizationUuid": "ee6478e5-ea33-3346-ac12-ab121484a3fe"
@@ -28,8 +28,8 @@
 "instanceName": "MSOTESTVOL103a-vSAMP12_base_module-0_vol",
 "modelInfo": {
 "modelType": "volumeGroup",
-"modelInvariantId": "ff5256d2-5a33-55df-13ab-12abad84e7ff",
-"modelNameVersionId": "fe6478e5-ea33-3346-ac12-ab121484a3fe",
+"modelInvariantUuid": "ff5256d2-5a33-55df-13ab-12abad84e7ff",
+"modelUuid": "fe6478e5-ea33-3346-ac12-ab121484a3fe",
 "modelName": "vSAMP12..base..module-0",
 "modelVersion": "1"
 }
@@ -40,8 +40,8 @@
 "instanceId": "123456",
 "modelInfo": {
 "modelType": "service",
-"modelInvariantId": "ff3514e3-5a33-55df-13ab-12abad84e7ff",
-"modelNameVersionId": "fe6985cd-ea33-3346-ac12-ab121484a3fe",
+"modelInvariantUuid": "ff3514e3-5a33-55df-13ab-12abad84e7ff",
+"modelUuid": "fe6985cd-ea33-3346-ac12-ab121484a3fe",
 "modelName": "SERVICE_MODEL_NAME",
 "modelVersion": "1.0"
 }
@@ -53,11 +53,11 @@
 "instanceName": "skask-test",
 "modelInfo": {
 "modelType": "vnf",
-"modelInvariantId": "skask",
-"modelNameVersionId": "fe6478e4-ea33-3346-ac12-ab121484a3fe",
+"modelInvariantUuid": "skask",
+"modelUuid": "fe6478e4-ea33-3346-ac12-ab121484a3fe",
 "modelName": "vSAMP12",
 "modelVersion": "1.0",
-"modelCustomizationName": "vSAMP12 1"
+"modelInstanceName": "vSAMP12 1"
 }
 }
 }

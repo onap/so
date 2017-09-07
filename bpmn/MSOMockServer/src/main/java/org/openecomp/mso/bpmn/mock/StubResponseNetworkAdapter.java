@@ -64,6 +64,15 @@ public class StubResponseNetworkAdapter {
 			.withStatus(500)));
 	}
 
+	public static void MockNetworkAdapterPost(String responseFile, String requestContaining) {
+		stubFor(post(urlEqualTo("/networks/NetworkAdapter"))
+			.withRequestBody(containing(requestContaining))				
+			.willReturn(aResponse()
+			.withStatus(200)
+			.withHeader("Content-Type", "text/xml")
+			.withBodyFile(responseFile)));
+	}	
+	
 	public static void MockNetworkAdapter(String networkId, int statusCode, String responseFile) {
 		stubFor(delete(urlEqualTo("/networks/NetworkAdapter/" + networkId))
 				  .willReturn(aResponse()
@@ -89,5 +98,21 @@ public class StubResponseNetworkAdapter {
 				  .withHeader("Content-Type", "text/xml")
 				  .withBodyFile(responseFile)));
 	}
-	 
+	
+	public static void MockNetworkAdapterRestRollbackDelete(String responseFile, String networkId) {
+		stubFor(delete(urlEqualTo("/networks/NetworkAdapter/"+networkId+"/rollback"))
+			.willReturn(aResponse()
+			.withStatus(200)
+			.withHeader("Content-Type", "text/xml")
+			.withBodyFile(responseFile)));
+	}	
+
+	public static void MockNetworkAdapterRestPut(String responseFile, String networkId) {
+		stubFor(put(urlEqualTo("/networks/NetworkAdapter/"+networkId))
+			.willReturn(aResponse()
+			.withStatus(200)
+			.withHeader("Content-Type", "text/xml")
+			.withBodyFile(responseFile)));
+	}		
+	
 }
