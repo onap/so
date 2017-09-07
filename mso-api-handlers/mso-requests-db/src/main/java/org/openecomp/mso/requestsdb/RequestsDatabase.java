@@ -24,6 +24,7 @@ import java.util.Date;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -534,13 +535,13 @@ public class RequestsDatabase {
      * @return current progress of the operation
      * @since ONAP Amsterdam Release
      */
-    public static OperationStatus getOperationStatus(String serviceId, String operationId) {
+    public OperationStatus getOperationStatus(String serviceId, String operationId) {
 
         long startTime = System.currentTimeMillis();
         msoLogger.debug("Execute query on infra active request table");
 
         OperationStatus operStatus = null;
-        Session session = hibernateUtils.getSessionFactory().openSession();
+        Session session = sessionFactoryRequestDB.getSessionFactory().openSession();
         try {
             session.beginTransaction();
             String hql = "FROM OperationStatus WHERE SERVICE_ID = :service_id and OPERATION_ID = :operation_id";
@@ -566,8 +567,8 @@ public class RequestsDatabase {
      * @param operstatus the operation object
      * @since ONAP Amsterdam Release
      */
-    public static void updateOperationStatus(OperationStatus operstatus) {
-        Session session = hibernateUtils.getSessionFactory().openSession();
+    public void updateOperationStatus(OperationStatus operstatus) {
+        Session session = sessionFactoryRequestDB.getSessionFactory().openSession();
         session.beginTransaction();
 
         long startTime = System.currentTimeMillis();
@@ -605,13 +606,13 @@ public class RequestsDatabase {
      * @return the progress status of a resource
      * @since ONAP Amsterdam Release
      */
-    public static ResourceOperationStatus getResourceOperationStatus(String serviceId, String operationId,
+    public ResourceOperationStatus getResourceOperationStatus(String serviceId, String operationId,
             String resourceTemplateUUID) {
         long startTime = System.currentTimeMillis();
         msoLogger.debug("Execute query on infra active request table");
 
         ResourceOperationStatus operStatus = null;
-        Session session = hibernateUtils.getSessionFactory().openSession();
+        Session session = sessionFactoryRequestDB.getSessionFactory().openSession();
         try {
             session.beginTransaction();
             String hql =
@@ -639,8 +640,8 @@ public class RequestsDatabase {
      * @param operstatus the resource operation object
      * @since ONAP Amsterdam Release
      */
-    public static void updateResOperStatus(ResourceOperationStatus operStatus) {
-        Session session = hibernateUtils.getSessionFactory().openSession();
+    public void updateResOperStatus(ResourceOperationStatus operStatus) {
+        Session session = sessionFactoryRequestDB.getSessionFactory().openSession();
         session.beginTransaction();
 
         long startTime = System.currentTimeMillis();
@@ -678,8 +679,8 @@ public class RequestsDatabase {
      * @param operStatus the resource operation status
      * @since ONAP Amsterdam Release
      */
-    private static void updateOperationStatusBasedOnResourceStatus(ResourceOperationStatus operStatus) {
-        Session session = hibernateUtils.getSessionFactory().openSession();
+    private void updateOperationStatusBasedOnResourceStatus(ResourceOperationStatus operStatus) {
+        Session session = sessionFactoryRequestDB.getSessionFactory().openSession();
         session.beginTransaction();
 
         long startTime = System.currentTimeMillis();
