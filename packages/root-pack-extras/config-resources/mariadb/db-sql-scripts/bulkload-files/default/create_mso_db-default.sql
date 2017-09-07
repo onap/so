@@ -1,5 +1,4 @@
-SOURCE ../../camunda/mariadb_engine_7.6.0.sql
-SOURCE ../../camunda/mariadb_identity_7.6.0.sql
+SOURCE ../../camunda/mariadb_engine_7.7.3-ee.sql
 
 --
 -- Create an admin user automatically for the cockpit
