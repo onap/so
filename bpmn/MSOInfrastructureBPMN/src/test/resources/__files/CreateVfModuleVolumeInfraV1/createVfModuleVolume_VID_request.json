@@ -2,11 +2,11 @@
 	"requestDetails": {
 		"modelInfo": {
 			"modelType": "volumeGroup",
-			"modelId": "ff5256d2-5a33-55df-13ab-12abad84e7ff",
-			"modelNameVersionId": "fe6478e5-ea33-3346-ac12-ab121484a3fe",
+			"modelInvariantUuid": "ff5256d2-5a33-55df-13ab-12abad84e7ff",
+			"modelUuid": "fe6478e5-ea33-3346-ac12-ab121484a3fe",
 			"modelName": "vSAMP12::base::module-0",
 			"modelVersion": "1",
-			"modelCustomizationId": "ee6478e5-ea33-3346-ac12-ab121484a3fe"
+			"modelCustomizationUuid": "ee6478e5-ea33-3346-ac12-ab121484a3fe"
 		},
 		"cloudConfiguration": {
 			"lcpCloudRegionId": "mdt1",
@@ -23,8 +23,8 @@
 					"instanceId": "{service-instance-id}",
 					"modelInfo": {
 						"modelType": "service",
-						"modelId": "ff3514e3-5a33-55df-13ab-12abad84e7ff",
-						"modelNameVersionId": "fe6985cd-ea33-3346-ac12-ab121484a3fe",
+						"modelInvariantUuid": "ff3514e3-5a33-55df-13ab-12abad84e7ff",
+						"modelUuid": "fe6985cd-ea33-3346-ac12-ab121484a3fe",
 						"modelName": "Test",
 						"modelVersion": "2.0"
 					}
@@ -34,11 +34,11 @@
 					"instanceId": "{vnf-instance-id}",
 					"modelInfo": {
 						"modelType": "vnf",
-						"modelId": "ff5256d1-5a33-55df-13ab-12abad84e7ff",
-						"modelNameVersionId": "fe6478e4-ea33-3346-ac12-ab121484a3fe",
+						"modelInvariantUuid": "ff5256d1-5a33-55df-13ab-12abad84e7ff",
+						"modelUuid": "fe6478e4-ea33-3346-ac12-ab121484a3fe",
 						"modelName": "vSAMP12",
 						"modelVersion": "1",
-						"modelCustomizationName": "vSAMP12"
+						"modelInstanceName": "vSAMP12"
 					}
 				}
 			}

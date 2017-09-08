@@ -20,26 +20,26 @@
 package org.openecomp.mso.bpmn.infrastructure.scripts
 
 import java.util.UUID;
+import java.util.List
 
 import org.json.JSONObject;
 import org.json.JSONArray;
-
-import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution;
-
-import static org.apache.commons.lang3.StringUtils.*;
-
-import org.openecomp.mso.bpmn.core.json.JsonUtils
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.openecomp.mso.bpmn.common.scripts.CatalogDbUtils
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
 import org.openecomp.mso.bpmn.common.scripts.VidUtils
 import org.openecomp.mso.bpmn.core.RollbackData
 import org.openecomp.mso.bpmn.core.WorkflowException
-import org.openecomp.mso.bpmn.core.decomposition.ModelInfo
-import org.openecomp.mso.bpmn.core.decomposition.ModuleResource
-import org.openecomp.mso.bpmn.core.decomposition.ServiceDecomposition
-import org.openecomp.mso.bpmn.core.decomposition.VnfResource
+import org.openecomp.mso.bpmn.core.domain.ModelInfo
+import org.openecomp.mso.bpmn.core.domain.ModuleResource
+import org.openecomp.mso.bpmn.core.domain.ServiceDecomposition
+import org.openecomp.mso.bpmn.core.domain.VnfResource
+import org.openecomp.mso.bpmn.core.json.DecomposeJsonUtil
+import org.openecomp.mso.bpmn.core.json.JsonUtils
+import org.camunda.bpm.engine.delegate.BpmnError
+import org.camunda.bpm.engine.runtime.Execution;
+
+import static org.apache.commons.lang3.StringUtils.*;
 
 
 
@@ -54,6 +54,7 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
    JsonUtils jsonUtil = new JsonUtils()
    VidUtils vidUtils = new VidUtils(this)
    CatalogDbUtils cutils = new CatalogDbUtils()
+   DecomposeJsonUtil decomposeJsonUtil = new DecomposeJsonUtil()
 
    /**
 	* This method gets and validates the incoming
@@ -65,7 +66,8 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 	   def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 	   execution.setVariable("prefix",Prefix)
 	   utils.log("DEBUG", " *** STARTED DoCreateVnfAndModules PreProcessRequest Process*** ", isDebugEnabled)
-
+	   
+	   setBasicDBAuthHeader(execution, isDebugLogEnabled)
 	   try{
 		   // Get Variables
 
@@ -80,9 +82,6 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 
 		   String serviceInstanceId = execution.getVariable("serviceInstanceId")
 		   utils.log("DEBUG", "Incoming Service Instance Id is: " + serviceInstanceId, isDebugEnabled)
-
-		   String vnfType = execution.getVariable("vnfType")
-		   utils.log("DEBUG", "Incoming Vnf Type is: " + vnfType, isDebugEnabled)
 
 		   String vnfName = execution.getVariable("vnfName")
 		   execution.setVariable("CREVI_vnfName", vnfName)
@@ -117,15 +116,20 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 		   }
 		   execution.setVariable("vnfId", vnfId)
 
-		   def rollbackData = execution.getVariable("RollbackData")
+		   def rollbackData = execution.getVariable("rollbackData")
 		   if (rollbackData == null) {
 			   rollbackData = new RollbackData()
 		   }
-
+		   
+		   def isTest = execution.getVariable("isTest")
+		   
+			if (isTest == null || isTest == false) {
+				execution.setVariable("isBaseVfModule", "true")
+			}
 		   execution.setVariable("numOfCreatedAddOnModules", 0)
 
 		   rollbackData.put("VNFANDMODULES", "numOfCreatedAddOnModules", "0")
-		   execution.setVariable("RollbackData", rollbackData)
+		   execution.setVariable("rollbackData", rollbackData)
 
 		   sleep (20000)
 
@@ -148,6 +152,7 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 
 	   utils.log("DEBUG", " *** STARTED DoCreateVnfAndModules QueryCatalogDB Process *** ", isDebugEnabled)
 	   try {
+		   VnfResource vnf = null
 		   ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
 		   // if serviceDecomposition is specified, get info from serviceDecomposition
 		   if (serviceDecomposition != null) {
@@ -158,87 +163,77 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 				   utils.log("DEBUG", "Error - vnfs are empty in serviceDecomposition object", isDebugEnabled)
 				   exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured in DoCreateVnf queryCatalogDB, vnfs are empty")
 			   }
-			   VnfResource vnf = vnfs[0]
-			   utils.log("DEBUG", "Read vnfResource", isDebugEnabled)
-			   if (vnf == null) {
-				   utils.log("DEBUG", "Error - vnf is empty in serviceDecomposition object", isDebugEnabled)
-				   exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured in DoCreateVnf queryCatalogDB, vnf is null")
+			   vnf = vnfs[0]
+			   String serviceModelName = serviceDecomposition.getModelInfo().getModelName()
+			   vnf.constructVnfType(serviceModelName)
+			   String vnfType = vnf.getVnfType()
+			   utils.log("DEBUG", "Incoming Vnf Type is: " + vnfType, isDebugEnabled)
+			   execution.setVariable("vnfType", vnfType)
+		   }
+		   else {
+			   //Get Vnf Info
+			   String vnfModelInfo = execution.getVariable("vnfModelInfo")
+			   utils.log("DEBUG", "vnfModelInfo: " + vnfModelInfo, isDebugEnabled)
+			   String vnfModelCustomizationUuid = jsonUtil.getJsonValueForKey(vnfModelInfo, "modelCustomizationUuid")
+			   if (vnfModelCustomizationUuid == null) {
+					   vnfModelCustomizationUuid = ""
 			   }
+			   utils.log("DEBUG", "querying Catalog DB by vnfModelCustomizationUuid: " + vnfModelCustomizationUuid, isDebugEnabled)
+			  
+			   JSONArray vnfs = cutils.getAllVnfsByVnfModelCustomizationUuid(execution,
+							   vnfModelCustomizationUuid)
+			   utils.log("DEBUG", "obtained VNF list")
+			   // Only one match here
+			   JSONObject vnfObject = vnfs[0]
+			   vnf = decomposeJsonUtil.JsonToVnfResource(vnfObject.toString())			   
+		   }
+		   utils.log("DEBUG", "Read vnfResource", isDebugEnabled)
+		   if (vnf == null) {
+			   utils.log("DEBUG", "Error - vnf is empty in serviceDecomposition object", isDebugEnabled)
+			   exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured in DoCreateVnf queryCatalogDB, vnf is null")
+		   }
+		   execution.setVariable("vnfResourceDecomposition", vnf)
 
-			   List<ModuleResource> vfModules = vnf.getAllVfModuleObjects()
-			   utils.log("DEBUG", "Read vfModules", isDebugEnabled)
-			   if (vfModules == null) {
-				   utils.log("DEBUG", "Error - vfModules are empty in serviceDecomposition object", isDebugEnabled)
-				   exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured in DoCreateVnf queryCatalogDB, vf modules are empty")
-			   }
-			   JSONArray addOnModules = new JSONArray()
+		   List<ModuleResource> vfModules = vnf.getAllVfModuleObjects()
+		   utils.log("DEBUG", "Read vfModules", isDebugEnabled)
+		   if (vfModules == null) {
+			   utils.log("DEBUG", "Error - vfModules are empty in serviceDecomposition object", isDebugEnabled)
+			   exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured in DoCreateVnf queryCatalogDB, vf modules are empty")
+		   }
+			   			  
+		   ModuleResource baseVfModule = null
 
-			   for (int i = 0; i < vfModules.size; i++) {
-				   utils.log("DEBUG", "handling VF Module ", isDebugEnabled)
-				   ModuleResource vfModule = vfModules[i]
-				   boolean isBase = vfModule.getIsBase()
-				   if (isBase) {
+		   for (int i = 0; i < vfModules.size; i++) {
+			   utils.log("DEBUG", "handling VF Module ", isDebugEnabled)
+			   ModuleResource vfModule = vfModules[i]
+			   boolean isBase = vfModule.getIsBase()
+			   if (isBase) {
 					   ModelInfo baseVfModuleModelInfoObject = vfModule.getModelInfo()
 					   String baseVfModuleModelInfoWithRoot = baseVfModuleModelInfoObject.toString()
 					   String baseVfModuleModelInfo = jsonUtil.getJsonValue(baseVfModuleModelInfoWithRoot, "modelInfo")
 					   execution.setVariable("baseVfModuleModelInfo", baseVfModuleModelInfo)
 					   String baseVfModuleLabel = vfModule.getVfModuleLabel()
 					   execution.setVariable("baseVfModuleLabel", baseVfModuleLabel)
-					   String basePersonaModelId = baseVfModuleModelInfoObject.getModelInvariantId()
+					   String basePersonaModelId = baseVfModuleModelInfoObject.getModelInvariantUuid()
 					   execution.setVariable("basePersonaModelId", basePersonaModelId)
-				   }
-				   else {
-					   addOnModules.put(vfModules[i])
-				   }
-			   }
+					   baseVfModule = vfModule
+					   break
+			   }		   
+				
+			}
+			   
+			List<ModuleResource>addOnModules = vfModules - baseVfModule
+			   
+			int addOnModulesToDeploy = 0
+			if (addOnModules != null) {				
+				   addOnModulesToDeploy = addOnModules.size
+			}
+			   
+			utils.log("DEBUG", "AddOnModulesToDeploy: " + addOnModulesToDeploy)
 
-			   execution.setVariable("addOnModules", addOnModules)
-			   execution.setVariable("addOnModulesToDeploy", addOnModules.length())
-			   execution.setVariable("addOnModulesDeployed", 0)
-
-		   }
-		   else {
-			   //Get Vnf Info
-			   String vnfModelInfo = execution.getVariable("vnfModelInfo")
-			   utils.log("DEBUG", "vnfModelInfo: " + vnfModelInfo, isDebugEnabled)
-			   String vnfModelCustomizationUuid = jsonUtil.getJsonValueForKey(vnfModelInfo, "modelCustomizationId")
-			   if (vnfModelCustomizationUuid == null) {
-				   vnfModelCustomizationUuid = jsonUtil.getJsonValueForKey(vnfModelInfo, "modelCustomizationUuid")
-			   }
-			   utils.log("DEBUG", "querying Catalog DB by vnfModelCustomizationUuid: " + vnfModelCustomizationUuid, isDebugEnabled)
-			   String catalogDbEndpoint = execution.getVariable("URN_mso_catalog_db_endpoint")
-
-			   JSONArray vnfs = cutils.getAllVnfsByVnfModelCustomizationUuid(catalogDbEndpoint,
-							   vnfModelCustomizationUuid)
-			   utils.log("DEBUG", "obtained VNF list")
-			   // Only one match here
-			   JSONObject vnf = vnfs[0]
-			   JSONArray vfModules = vnf.getJSONArray("vfModules")
-			   JSONArray addOnModules = new JSONArray()
-
-			   // Set up base Vf Module info
-			   for (int i = 0; i < vfModules.length(); i++) {
-				   utils.log("DEBUG", "handling VF Module ")
-				   JSONObject vfModule = vfModules[i]
-				   String isBase = jsonUtil.getJsonValueForKey(vfModule, "isBase")
-				   if (isBase.equals("true")) {
-					   JSONObject baseVfModuleModelInfoObject = vfModule.getJSONObject("modelInfo")
-					   String baseVfModuleModelInfo = baseVfModuleModelInfoObject.toString()					  
-					   execution.setVariable("baseVfModuleModelInfo", baseVfModuleModelInfo)
-					   String baseVfModuleLabel = jsonUtil.getJsonValueForKey(vfModule, "vfModuleLabel")
-					   execution.setVariable("baseVfModuleLabel", baseVfModuleLabel)
-					   String basePersonaModelId = jsonUtil.getJsonValueForKey(baseVfModuleModelInfoObject, "modelInvariantId")
-					   execution.setVariable("basePersonaModelId", basePersonaModelId)
-				   }
-				   else {
-					   addOnModules.put(vfModules[i])
-				   }
-			   }
-
-			   execution.setVariable("addOnModules", addOnModules)
-			   execution.setVariable("addOnModulesToDeploy", addOnModules.length())
-			   execution.setVariable("addOnModulesDeployed", 0)
-		   }
+			execution.setVariable("addOnModules", addOnModules)
+			execution.setVariable("addOnModulesToDeploy", addOnModulesToDeploy)
+			execution.setVariable("addOnModulesDeployed", 0)	  
 
 	   }catch(Exception ex) {
 		   utils.log("DEBUG", "Error Occured in DoCreateVnfAndModules QueryCatalogDB Process " + ex.getMessage(), isDebugEnabled)
@@ -254,7 +249,7 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 		   execution.setVariable("vnfId", "skask")
 	   }
 
-	   utils.log("DEBUG", "*** COMPLETED CreateVnfInfra PrepareCreateGenericVnf Process ***", isDebugEnabled)
+	   utils.log("DEBUG", "*** COMPLETED DoCreateVnfAndModules QueryCatalogDB Process ***", isDebugEnabled)
    }
 
    public void preProcessAddOnModule(Execution execution){
@@ -263,25 +258,28 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 	   logDebug(" ======== STARTED preProcessAddOnModule ======== ", isDebugLogEnabled)
 
 	   try {
-		   JSONArray addOnModules = (JSONArray) execution.getVariable("addOnModules")
+		   List<ModuleResource>addOnModules = execution.getVariable("addOnModules")
 		   int addOnIndex = (int) execution.getVariable("addOnModulesDeployed")
 
-		   JSONObject addOnModule = addOnModules[addOnIndex]
+		   ModuleResource addOnModule = addOnModules[addOnIndex]
+		   
+		   utils.log("DEBUG", "Got addon module", isDebugLogEnabled)
 
 		   def newVfModuleId = UUID.randomUUID().toString()
 		   execution.setVariable("addOnVfModuleId", newVfModuleId)
+		   execution.setVariable("isBaseVfModule", "false")
+		   
+		   execution.setVariable("instancesOfThisModuleDeployed", 0)
 
-		   execution.setVariable("instancesOfThisModelDeployed", 0)
-
-		   JSONObject addOnVfModuleModelInfoObject = jsonUtil.getJsonValueForKey(addOnModule, "modelInfo")
-		   String addOnVfModuleModelInfoWithRoot = addOnVfModuleModelInfoObject.toString()		   
+		   ModelInfo addOnVfModuleModelInfoObject = addOnModule.getModelInfo()		  
+		   String addOnVfModuleModelInfoWithRoot = addOnVfModuleModelInfoObject.toString()
 		   String addOnVfModuleModelInfo = jsonUtil.getJsonValue(addOnVfModuleModelInfoWithRoot, "modelInfo")
 		   execution.setVariable("addOnVfModuleModelInfo", addOnVfModuleModelInfo)
-		   String addOnVfModuleLabel = jsonUtil.getJsonValueForKey(addOnModule, "vfModuleLabel")
+		   String addOnVfModuleLabel = addOnModule.getVfModuleLabel()
 		   execution.setVariable("addOnVfModuleLabel", addOnVfModuleLabel)
-		   String addOnPersonaModelId = jsonUtil.getJsonValueForKey(addOnVfModuleModelInfoObject, "modelInvariantId")
+		   String addOnPersonaModelId = addOnVfModuleModelInfoObject.getModelInvariantUuid()
 		   execution.setVariable("addOnPersonaModelId", addOnPersonaModelId)
-		   String addOnInitialCount = jsonUtil.getJsonValueForKey(addOnModule, "initialCount")
+		   int addOnInitialCount = addOnModule.getInitialCount()
 		   execution.setVariable("initialCount", addOnInitialCount)
 
 
@@ -289,9 +287,25 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 		   utils.log("ERROR", "Exception Occured Processing preProcessAddOnModule. Exception is:\n" + e, isDebugLogEnabled)
 		   exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during preProcessAddOnModule Method:\n" + e.getMessage())
 	   }
-	   logDebug("======== COMPLETED preProcessSDNCAssignRequest ======== ", isDebugLogEnabled)
+	   logDebug("======== COMPLETED preProcessAddOnModule ======== ", isDebugLogEnabled)
    }
 
+   public void postProcessAddOnModule(Execution execution){
+	   def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
+	   execution.setVariable("prefix", Prefix)
+	   logDebug(" ======== STARTED postProcessAddOnModule ======== ", isDebugLogEnabled)
+
+	   try {
+		   int addOnModulesDeployed = execution.getVariable("addOnModulesDeployed")
+		   execution.setVariable("addOnModulesDeployed", addOnModulesDeployed + 1)
+
+	   }catch(Exception e){
+		   utils.log("ERROR", "Exception Occured Processing postProcessAddOnModule. Exception is:\n" + e, isDebugLogEnabled)
+		   exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during postProcessAddOnModule Method:\n" + e.getMessage())
+	   }
+	   logDebug("======== COMPLETED postProcessAddOnModule ======== ", isDebugLogEnabled)
+   }
+   
    public void validateBaseModule(Execution execution){
 	   def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
 	   execution.setVariable("prefix", Prefix)
@@ -299,11 +313,11 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 
 	   try {
 		   def baseRollbackData = execution.getVariable("DCVAM_baseRollbackData")
-		   def rollbackData = execution.getVariable("RollbackData")
+		   def rollbackData = execution.getVariable("rollbackData")
 
 		   def baseModuleMap = baseRollbackData.get("VFMODULE")
 		   baseModuleMap.each{ k, v -> rollbackData.put("VFMODULE_BASE", "${k}","${v}") }
-		   execution.setVariable("RollbackData", rollbackData)
+		   execution.setVariable("rollbackData", rollbackData)
 		   logDebug("addOnModulesDeployed: " + execution.getVariable("addOnModulesDeployed"), isDebugLogEnabled)
 		   logDebug("addOnModulesToDeploy: " + execution.getVariable("addOnModulesToDeploy"), isDebugLogEnabled)
 		   if (execution.getVariable("addOnModulesDeployed") <  execution.getVariable("addOnModulesToDeploy")) {
@@ -329,7 +343,7 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 		   int instancesOfThisModuleDeployed = execution.getVariable("instancesOfThisModuleDeployed")
 		   int numOfCreatedAddOnModules = execution.getVariable("numOfCreatedAddOnModules")
 		   def addOnRollbackData = execution.getVariable("DCVAM_addOnRollbackData")
-		   def rollbackData = execution.getVariable("RollbackData")
+		   def rollbackData = execution.getVariable("rollbackData")
 
 		   def addOnModuleMap = addOnRollbackData.get("VFMODULE")
 		   numOfCreatedAddOnModules = numOfCreatedAddOnModules + 1
@@ -341,29 +355,55 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 
 		   execution.setVariable("numOfCreatedAddOnModules", numOfCreatedAddOnModules)
 		   rollbackData.put("VNFANDMODULES", "numOfCreatedAddOnModules", "${numOfCreatedAddOnModules}")
-		   execution.setVariable("RollbackData", rollbackData)
+		   execution.setVariable("rollbackData", rollbackData)
 	   }catch(Exception e){
 		   utils.log("ERROR", "Exception Occured Processing preProcessAddOnModule. Exception is:\n" + e, isDebugLogEnabled)
 		   exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during preProcessAddOnModule Method:\n" + e.getMessage())
 	   }
-	   logDebug("======== COMPLETED preProcessSDNCAssignRequest ======== ", isDebugLogEnabled)
-   }
-
-   public void finishProcessingInitialCountDeployment(Execution execution){
-	   def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
-	   execution.setVariable("prefix", Prefix)
-	   logDebug(" ======== STARTED finishProcessingInitialCountDeployment ======== ", isDebugLogEnabled)
-
+	   logDebug("======== COMPLETED validateAddOnModule ======== ", isDebugLogEnabled)
+   }   
+   
+   public void preProcessRollback (Execution execution) {
+	   def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+	   utils.log("DEBUG"," ***** preProcessRollback ***** ", isDebugEnabled)
 	   try {
-		   int addOnModulesDeployed = execution.getVariable("addOnModulesDeployed")
-		   execution.setVariable("addOnModulesDeployed", addOnModulesDeployed + 1)
-	   }catch(Exception e){
-		   utils.log("ERROR", "Exception Occured Processing preProcessAddOnModule. Exception is:\n" + e, isDebugLogEnabled)
-		   exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during preProcessAddOnModule Method:\n" + e.getMessage())
+		   
+		   Object workflowException = execution.getVariable("WorkflowException");
+
+		   if (workflowException instanceof WorkflowException) {
+			   utils.log("DEBUG", "Prev workflowException: " + workflowException.getErrorMessage(), isDebugEnabled)
+			   execution.setVariable("prevWorkflowException", workflowException);
+			   //execution.setVariable("WorkflowException", null);
+		   }
+	   } catch (BpmnError e) {
+		   utils.log("DEBUG", "BPMN Error during preProcessRollback", isDebugEnabled)
+	   } catch(Exception ex) {
+		   String msg = "Exception in preProcessRollback. " + ex.getMessage()
+		   utils.log("DEBUG", msg, isDebugEnabled)
 	   }
-	   logDebug("======== COMPLETED preProcessSDNCAssignRequest ======== ", isDebugLogEnabled)
+	   utils.log("DEBUG"," *** Exit preProcessRollback *** ", isDebugEnabled)
    }
 
+   public void postProcessRollback (Execution execution) {
+	   def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+	   utils.log("DEBUG"," ***** postProcessRollback ***** ", isDebugEnabled)
+	   String msg = ""
+	   try {
+		   Object workflowException = execution.getVariable("prevWorkflowException");
+		   if (workflowException instanceof WorkflowException) {
+			   utils.log("DEBUG", "Setting prevException to WorkflowException: ", isDebugEnabled)
+			   execution.setVariable("WorkflowException", workflowException);
+		   }
+		   execution.setVariable("rollbackData", null)
+	   } catch (BpmnError b) {
+		   utils.log("DEBUG", "BPMN Error during postProcessRollback", isDebugEnabled)
+		   throw b;
+	   } catch(Exception ex) {
+		   msg = "Exception in postProcessRollback. " + ex.getMessage()
+		   utils.log("DEBUG", msg, isDebugEnabled)
+	   }
+	   utils.log("DEBUG"," *** Exit postProcessRollback *** ", isDebugEnabled)
+   }
 
 
 }

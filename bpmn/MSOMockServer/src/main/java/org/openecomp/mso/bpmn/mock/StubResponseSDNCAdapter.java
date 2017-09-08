@@ -38,6 +38,19 @@ public class StubResponseSDNCAdapter {
 
 	}
 
+	public static void mockSDNCAdapter_500() {
+		stubFor(post(urlEqualTo("/SDNCAdapter"))
+				.willReturn(aResponse()
+						.withStatus(500)));
+	}		
+	
+	public static void mockSDNCAdapter_500(String requestContaining) {
+		stubFor(post(urlEqualTo("/SDNCAdapter"))
+		  .withRequestBody(containing(requestContaining))
+		  .willReturn(aResponse()
+		  .withStatus(500)));
+	}		
+	
 	public static void mockSDNCAdapter(int statusCode) {
 		stubFor(post(urlEqualTo("/SDNCAdapter"))
 				.willReturn(aResponse()

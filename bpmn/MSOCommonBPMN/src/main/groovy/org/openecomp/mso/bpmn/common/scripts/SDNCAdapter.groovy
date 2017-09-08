@@ -50,7 +50,8 @@ public class SDNCAdapter extends AbstractServiceTaskProcessor {
 			execution.setVariable("asynchronousResponseTimeout", false)
 			execution.setVariable("continueListening", false)
 			execution.setVariable("SDNCA_SuccessIndicator", false)
-
+			execution.setVariable("SDNCA_InterimNotify", false)
+			
 			// Authorization Info
 			String basicAuthValue = execution.getVariable("URN_mso_adapters_po_auth")
 			utils.log("DEBUG", "Obtained BasicAuth userid password for sdnc adapter:" + basicAuthValue, isDebugEnabled)

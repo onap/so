@@ -51,7 +51,7 @@ public class MsoStatusHandler {
 
         // Query DB for the value
         try {
-        	RequestsDatabase.updateSiteStatus(siteName, enable);
+            (RequestsDatabase.getInstance()).updateSiteStatus(siteName, enable);
 
         } catch (Exception e) {
             logger.error (MessageEnum.GENERAL_EXCEPTION, "", "setSiteStatus", MsoLogger.ErrorCode.DataError, "Failed to set site status", e);

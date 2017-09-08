@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_3SPHsLr9EeWak-hhutJWuQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.6.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_3SPHsLr9EeWak-hhutJWuQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.8.2" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
   <bpmn2:process id="FalloutHandler" name="Fallout Handler" isExecutable="true">
     <bpmn2:parallelGateway id="ParallelGateway_1">
       <bpmn2:incoming>SequenceFlow_12</bpmn2:incoming>
@@ -133,7 +133,7 @@ falloutHandler.buildDBWorkflowException(execution, "FH_updateRequestInfraRespons
       <bpmn2:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
-            <camunda:inputParameter name="url">${URN_mso_adapters_db_endpoint}</camunda:inputParameter>
+            <camunda:inputParameter name="url">${URN_mso_openecomp_adapters_db_endpoint}</camunda:inputParameter>
             <camunda:inputParameter name="method">POST</camunda:inputParameter>
             <camunda:inputParameter name="headers">
               <camunda:map>
@@ -207,7 +207,7 @@ execution.setVariable("FH_WorkflowException", wfe)]]></bpmn2:script>
       <bpmn2:terminateEventDefinition />
     </bpmn2:endEvent>
     <bpmn2:sequenceFlow id="SequenceFlow_0m7gwor" sourceRef="Task_0ixuwt5" targetRef="ParallelGateway_4" />
-    <bpmn2:callActivity id="Task_0ixuwt5" name="Call Notification Service" calledElement="${URN_mso_workflow_notification_name}" camunda:calledElementBinding="deployment">
+    <bpmn2:callActivity id="Task_0ixuwt5" name="Call Notification Service" calledElement="${URN_mso_workflow_notification_name}">
       <bpmn2:extensionElements>
         <camunda:in source="mso-request-id" target="mso-request-id" />
         <camunda:in source="mso-service-instance-id" target="mso-service-instance-id" />

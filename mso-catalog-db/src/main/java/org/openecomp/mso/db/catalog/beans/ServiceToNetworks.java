@@ -57,6 +57,31 @@ public class ServiceToNetworks implements Serializable {
 	}
 
 	@Override
+	public boolean equals(Object o) {
+        if (!(o instanceof ServiceToNetworks)) {
+            return false;
+        }
+        if (this == o) {
+            return true;
+        }
+        ServiceToNetworks stn = (ServiceToNetworks) o;
+        if (stn.getNetworkModelCustomizationUuid().equals(this.getNetworkModelCustomizationUuid())
+        		&& stn.getServiceModelUuid().equals(this.getServiceModelUuid())) {
+            return true;
+        } 
+        return false;
+	}
+	
+	@Override 
+	public int hashCode() {
+		
+		int code = this.networkModelCustomizationUuid == null ? 0 : this.networkModelCustomizationUuid.hashCode();
+		code += this.serviceModelUuid == null ? 0 : this.serviceModelUuid.hashCode();
+		
+		return code;
+	}
+	
+	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("ServiceToNetworks mapping: ");

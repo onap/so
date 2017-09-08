@@ -385,7 +385,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	/**
 	 * Returns the process definition key (i.e. the process name) of the
 	 * current process.
-	 *
+	 * 
 	 * @param execution the execution
 	 */
 	public String getProcessKey(Execution execution) {
@@ -481,6 +481,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 		def nodeText = utils.getNodeText1(xml, elementName)
 		return (nodeText == null) ? defaultValue : nodeText
 	}
+
 	/**
 	 * Get the text for the specified element from the specified xml.  If
 	 * the element does not exist, return an empty string.
@@ -579,7 +580,6 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 		logDebug('Outgoing SuccessIndicator is: ' + execution.getVariable(prefix+'SuccessIndicator') + '', isDebugLogEnabled)
 	}
 
-
 	/**
 	 * Sends a Error Sync Response
 	 *
@@ -597,17 +597,6 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 		}
 	}
 
-	/**
-	 * Create a WorkflowException - uses ExceptionUtil to build a WorkflowException
-	 * @param execution
-	 * @param errorCode
-	 * @param errorMessage
-	 * @param isDebugEnabled
-	 */
-	public void buildWorkflowException(Execution execution, int errorCode, String errorMessage, boolean isDebugEnabled) {
-		(new ExceptionUtil()).buildWorkflowException(execution, errorCode, errorMessage)
-	}
-	
 	/**
 	 * Executes a named groovy script method in the current object
 	 */
@@ -721,7 +710,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 			'/' + UriUtils.encodePathSegment(messageType, 'UTF-8') +
 			'/' + UriUtils.encodePathSegment(correlator, 'UTF-8')
 	}
-	
+
 	/**
 	 *
 	 * Constructs a workflow message callback URL for the specified message type and correlator.
@@ -746,5 +735,53 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 		return endpoint +
 			'/' + UriUtils.encodePathSegment(messageType, 'UTF-8') +
 			'/' + UriUtils.encodePathSegment(correlator, 'UTF-8')
+	}
+	
+	public void setRollbackEnabled(Execution execution, isDebugLogEnabled) {
+		
+		// Rollback settings
+		def prefix = execution.getVariable('prefix')
+		def disableRollback = execution.getVariable("disableRollback")
+		def defaultRollback = execution.getVariable("URN_mso_rollback").toBoolean()
+		
+		logDebug('disableRollback: ' + disableRollback, isDebugLogEnabled)
+		logDebug('defaultRollback: ' + defaultRollback, isDebugLogEnabled)
+		
+		def rollbackEnabled
+		
+		if(disableRollback == null || disableRollback == '' ) {
+			// get from default urn settings for mso_rollback
+			disableRollback = !defaultRollback
+			rollbackEnabled = defaultRollback
+			logDebug('disableRollback is null or empty!', isDebugLogEnabled)
+		}
+		else {
+			if(disableRollback == true) {
+				rollbackEnabled = false
+			}
+			else if(disableRollback == false){
+				rollbackEnabled = true
+			}
+			else {
+				rollbackEnabled = defaultRollback
+			}
+		}
+		
+		execution.setVariable(prefix+"backoutOnFailure", rollbackEnabled)
+		logDebug('rollbackEnabled (aka backoutOnFailure): ' + rollbackEnabled, isDebugLogEnabled)
+	}
+	
+	public void setBasicDBAuthHeader(Execution execution, isDebugLogEnabled) {
+		try {
+			String basicAuthValueDB = execution.getVariable("URN_mso_adapters_db_auth")
+			utils.log("DEBUG", " Obtained BasicAuth userid password for Catalog DB adapter: " + basicAuthValueDB, isDebugLogEnabled)
+			
+			def encodedString = utils.getBasicAuth(basicAuthValueDB, execution.getVariable("URN_mso_msoKey"))
+			execution.setVariable("BasicAuthHeaderValueDB",encodedString)
+		} catch (IOException ex) {
+			String dataErrorMessage = " Unable to encode Catalog DB user/password string - " + ex.getMessage()
+			utils.log("DEBUG", dataErrorMessage, isDebugLogEnabled)
+			(new ExceptionUtil()).buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
+		}
 	}
 }

@@ -46,9 +46,9 @@ import org.openecomp.mso.entity.MsoRequest;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoAlarmLogger;
 import org.openecomp.mso.logger.MsoLogger;
-import org.openecomp.mso.properties.MsoPropertiesFactory;
-import org.openecomp.mso.openstack.beans.VnfStatus;
 import org.openecomp.mso.openstack.beans.VnfRollback;
+import org.openecomp.mso.openstack.beans.VnfStatus;
+import org.openecomp.mso.properties.MsoPropertiesFactory;
 
 @WebService(serviceName = "VnfAdapterAsync", endpointInterface = "org.openecomp.mso.adapters.vnf.MsoVnfAdapterAsync", targetNamespace = "http://org.openecomp.mso/vnfA")
 public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {

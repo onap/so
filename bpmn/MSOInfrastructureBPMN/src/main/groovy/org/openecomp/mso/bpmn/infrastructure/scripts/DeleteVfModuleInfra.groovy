@@ -110,18 +110,7 @@ public class DeleteVfModuleInfra extends AbstractServiceTaskProcessor {
 
 			utils.log("DEBUG", " Request in XML format: " + requestInXmlFormat, isDebugLogEnabled)
 
-			try {
-				// Catalog DB headers Authorization
-				String basicAuthValueDB = execution.getVariable("URN_mso_adapters_db_auth")
-				utils.log("DEBUG", " Obtained BasicAuth userid password for Catalog DB adapter: " + basicAuthValueDB, isDebugLogEnabled)
-				
-				def encodedString = utils.getBasicAuth(basicAuthValueDB, execution.getVariable("URN_mso_msoKey"))
-				execution.setVariable("BasicAuthHeaderValueDB",encodedString)
-			} catch (IOException ex) {
-				String dataErrorMessage = " Unable to encode Catalog DB user/password string - " + ex.getMessage()
-				utils.log("DEBUG", dataErrorMessage, isDebugLogEnabled)
-				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
-			}
+			setBasicDBAuthHeader(execution, isDebugLogEnabled)
 			
 			execution.setVariable(prefix + 'Request', requestInXmlFormat)
 			execution.setVariable(prefix+'vnfId', vnfId)

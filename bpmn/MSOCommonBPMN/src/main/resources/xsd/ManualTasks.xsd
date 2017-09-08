@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="http://www.example.org/mso" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.example.org/mso">
+	<xs:element name="taskList">
+	  <xs:complexType>
+		<xs:sequence>
+			<xs:element type="xs:string" name="taskId"/>
+			<xs:element type="xs:string" name="type"/>
+			<xs:element type="xs:string" name="nfRole"/>
+			<xs:element type="xs:string" name="subscriptionServiceType"/>
+			<xs:element type="xs:string" name="originalRequestId"/>
+			<xs:element type="xs:string" name="originalRequestorId"/>
+			<xs:element type="xs:string" name="errorSource"/>
+			<xs:element type="xs:string" name="errorCode"/>
+			<xs:element type="xs:string" name="errorMessage"/>
+			<xs:element type="xs:string" name="buildingBlockName"/>
+			<xs:element type="xs:string" name="buildingBlockStep"/>
+			<xs:element name="validResponses">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element minOccurs="0" maxOccurs="unbounded" name="action" type="xs:string"/>       
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	  </xs:complexType>
+	</xs:element>
+	<xs:element name="requestDetails">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="requestInfo">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element type="xs:string" name="source"/>
+							<xs:element type="xs:string" name="responseValue"/>
+							<xs:element type="xs:string" name="requestorId"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name ="taskRequestReference">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element type="xs:string" name="taskId"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

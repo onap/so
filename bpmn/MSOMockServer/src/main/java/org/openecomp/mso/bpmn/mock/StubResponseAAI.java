@@ -161,6 +161,12 @@ public class StubResponseAAI {
 				  .withHeader("Content-Type", "text/xml")));
 	}
 	
+	public static void MockDeleteServiceInstance(String customer, String serviceSubscription, String serviceInstanceId, String resourceVersion, int statusCode){
+		stubFor(delete(urlMatching("/aai/v[0-9]+/business/customers/customer/" + customer + "/service-subscriptions/service-subscription/" + serviceSubscription + "/service-instances/service-instance/" + serviceInstanceId + "[?]resource-version=" + resourceVersion))
+				.willReturn(aResponse()
+						.withStatus(statusCode)));
+	}
+	
 	public static void MockDeleteServiceInstance(String customer, String serviceSubscription, String resourceVersion, int statusCode){
 		stubFor(delete(urlMatching("/aai/v[0-9]+/business/customers/customer/" + customer + "/service-subscriptions/service-subscription/" + serviceSubscription + "[?]resource-version=" +1234))
 				  .willReturn(aResponse()
@@ -262,6 +268,15 @@ public class StubResponseAAI {
 	/**
 	 * Generic-Vnf Mock StubResponses below
 	 */
+	
+	public static void MockGetGenericVnfById(String vnfId, String responseFile){
+		stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/" + vnfId + "[?]depth=1"))
+				.willReturn(aResponse()
+						.withStatus(200)
+						.withHeader("Content-Type", "text/xml")
+						.withBodyFile(responseFile)));
+	}
+	
 	public static void MockGetGenericVnfById(String vnfId, String responseFile, int statusCode){
 		stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf" + vnfId))
 				.willReturn(aResponse()
@@ -454,6 +469,44 @@ public class StubResponseAAI {
 						.withHeader("Content-Type", "text/xml")
 						.withBodyFile(responseFile)));
 	}
+	
+	public static void MockGetNetworkByIdWithDepth(String networkId, String responseFile, String depth) {
+		stubFor(get(urlMatching("/aai/v[0-9]+/network/l3-networks/l3-network/" + networkId + "[?]depth=" + depth))
+				.willReturn(aResponse()
+						.withStatus(200)
+						.withHeader("Content-Type", "text/xml")
+						.withBodyFile(responseFile)));
+	}
+	
+	public static void MockGetNetworkCloudRegion(String responseFile, String cloudRegion) {
+		stubFor(get(urlMatching("/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/att-aic/"+cloudRegion))
+				.willReturn(aResponse()
+						.withStatus(200)
+						.withHeader("Content-Type", "text/xml")
+						.withBodyFile(responseFile)));
+	}
+	
+	public static void MockGetNetworkByName(String networkName, String responseFile) {
+		   stubFor(get(urlMatching("/aai/v[0-9]+/network/l3-networks/l3-network[?]network-name="+networkName))
+					.willReturn(aResponse()
+							.withStatus(200)
+							.withHeader("Content-Type", "text/xml")
+							.withBodyFile(responseFile)));
+	}
+
+	public static void MockGetNetworkByName_404(String responseFile, String networkName) {
+ 	stubFor(get(urlMatching("/aai/v[0-9]+/network/l3-networks/l3-network[?]network-name="+networkName))
+				.willReturn(aResponse()
+						.withStatus(404)
+						.withHeader("Content-Type", "text/xml")
+						.withBodyFile(responseFile)));
+	}
+	
+	public static void MockGetNetworkCloudRegion_404(String cloudRegion) {
+		stubFor(get(urlMatching("/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/att-aic/"+cloudRegion))
+				.willReturn(aResponse()
+						.withStatus(404)));
+	}
 
 	public static void MockPutNetwork(String networkId, int statusCode, String responseFile) {
 		stubFor(put(urlMatching("/aai/v[0-9]+/network/l3-networks/l3-network/" + networkId))
@@ -478,6 +531,22 @@ public class StubResponseAAI {
 				  .withHeader("Content-Type", "text/xml")
 				  .withBodyFile(responseFile)));
 	}
+
+	public static void MockGetNetworkVpnBinding(String responseFile, String vpnBinding) {
+		stubFor(get(urlMatching("/aai/v[0-9]+/network/vpn-bindings/vpn-binding/"+vpnBinding + "[?]depth=all"))
+				.willReturn(aResponse()
+						.withStatus(200)
+						.withHeader("Content-Type", "text/xml")
+						.withBodyFile(responseFile)));
+	}	
+	
+	public static void MockGetNetworkPolicy(String responseFile, String policy) {
+		stubFor(get(urlMatching("/aai/v[0-9]+/network/network-policies/network-policy/"+policy + "[?]depth=all"))
+				.willReturn(aResponse()
+						.withStatus(200)
+						.withHeader("Content-Type", "text/xml")
+						.withBodyFile(responseFile)));
+	}
 	
 	public static void MockGetNetworkVpnBinding(String networkBindingId, String responseFile, int statusCode) {
 		stubFor(get(urlMatching("/aai/v[0-9]+/network/vpn-bindings/vpn-binding/" + networkBindingId))
@@ -493,6 +562,22 @@ public class StubResponseAAI {
 				  .withStatus(statusCode)
 				  .withHeader("Content-Type", "text/xml")
 				  .withBodyFile(responseFile)));
+	}
+	
+	public static void MockGetNetworkTableReference(String responseFile, String tableReference) {
+		stubFor(get(urlMatching("/aai/v[0-9]+/network/route-table-references/route-table-reference/"+tableReference + "[?]depth=all"))
+				.willReturn(aResponse()
+						.withStatus(200)
+						.withHeader("Content-Type", "text/xml")
+						.withBodyFile(responseFile)));
+	}
+	
+	public static void MockPutNetworkIdWithDepth(String responseFile, String networkId, String depth) {
+		stubFor(put(urlMatching("/aai/v[0-9]+/network/l3-networks/l3-network/"+networkId+"[?]depth="+depth ))
+				.willReturn(aResponse()
+						.withStatus(200)
+						.withHeader("Content-Type", "text/xml")
+						.withBodyFile(responseFile)));
 	}
 	
 	public static void MockGetNetworkPolicyfqdn(String networkPolicy, String responseFile, int statusCode) {
@@ -686,6 +771,18 @@ public class StubResponseAAI {
 				  .withStatus(statusCode)));
 	}
 
+	public static void MockGetVolumeGroupByName_404(String cloudRegionId, String volumeGroupName) {
+		stubFor(get(urlMatching("/aai/v9/cloud-infrastructure/cloud-regions/cloud-region/att-aic/" + cloudRegionId + "/volume-groups[?]volume-group-name=" + volumeGroupName))
+				.willReturn(aResponse()
+				.withStatus(404)));
+	}
+	
+	public static void MockDeleteVolumeGroup(String cloudRegionId, String volumeGroupId, String resourceVersion) {
+		stubFor(delete(urlMatching("/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/att-aic/" + cloudRegionId + "/volume-groups/volume-group/" + volumeGroupId + "[?]resource-version=" + resourceVersion))
+				.willReturn(aResponse()
+				.withStatus(200)));
+	}
+	
 	/**
 	 * VF-Module StubResponse below
 	 * @param statusCode TODO
@@ -735,6 +832,30 @@ public class StubResponseAAI {
 		stubFor(patch(urlMatching(endpoint))
 			.willReturn(aResponse()
 				.withStatus(statusCode)));
+	}
+	
+	/* AAI Pserver Queries */
+	public static void MockGetPserverByVnfId(String vnfId, String responseFile, int statusCode) {
+		stubFor(put(urlMatching("/v10/query.*"))
+				.willReturn(aResponse()
+						.withStatus(statusCode)
+						.withHeader("Content-Type", "application/json")
+						.withBodyFile(responseFile)));
+	}
+	
+	public static void MockGetGenericVnfsByVnfId(String vnfId, String responseFile, int statusCode) {
+		stubFor(get(urlMatching("/v10/network/generic-vnfs/.*"))
+				.willReturn(aResponse()
+						.withStatus(statusCode)
+						.withHeader("Content-Type", "application/json; charset=utf-8")
+						.withBodyFile(responseFile)));
+	}
+	
+	public static void MockSetInMaintFlagByVnfId(String vnfId, int statusCode) {
+		stubFor(patch(urlMatching("/v10/network/generic-vnfs/.*"))
+				.willReturn(aResponse()
+						.withStatus(statusCode)
+						));
 	}
 	
 	//// Deprecated Stubs below - to be deleted once unit test that reference them are refactored to use common ones above ////

@@ -1,22 +1,22 @@
-/*- 
- * ============LICENSE_START======================================================= 
- * OPENECOMP - MSO 
- * ================================================================================ 
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved. 
- * ================================================================================ 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and 
- * limitations under the License. 
- * ============LICENSE_END========================================================= 
- */ 
+/*-
+ * ============LICENSE_START=======================================================
+ * OPENECOMP - MSO
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
 
 package org.openecomp.mso.bpmn.common;
 
@@ -60,6 +60,8 @@ import org.camunda.bpm.engine.variable.impl.VariableMapImpl;
 import org.custommonkey.xmlunit.DetailedDiff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.jboss.resteasy.spi.AsynchronousResponse;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Rule;
 import org.openecomp.mso.bpmn.common.adapter.sdnc.CallbackHeader;
@@ -73,11 +75,15 @@ import org.openecomp.mso.bpmn.common.adapter.vnf.UpdateVnfNotification;
 import org.openecomp.mso.bpmn.common.adapter.vnf.VnfRollback;
 import org.openecomp.mso.bpmn.common.workflow.service.SDNCAdapterCallbackServiceImpl;
 import org.openecomp.mso.bpmn.common.workflow.service.VnfAdapterNotifyServiceImpl;
-import org.openecomp.mso.bpmn.common.workflow.service.WorkflowAsyncCommonResource;
+import org.openecomp.mso.bpmn.common.workflow.service.WorkflowAsyncResource;
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowMessageResource;
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowResponse;
 import org.openecomp.mso.bpmn.core.CamundaDBSetup;
 import org.openecomp.mso.bpmn.core.PropertyConfigurationSetup;
+import org.openecomp.mso.bpmn.core.domain.Resource;
+import org.openecomp.mso.bpmn.core.domain.ServiceDecomposition;
+
+import static org.openecomp.mso.bpmn.core.json.JsonUtils.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -118,6 +124,7 @@ public class WorkflowTest {
 	 * Content-Type for JSON.
 	 */
 	protected static final String JSON = "application/json; charset=UTF-8";
+
 
 	/**
 	 * Constructor.
@@ -265,7 +272,7 @@ public class WorkflowTest {
 		VariableMapImpl variableMapImpl = createVariableMapImpl(variables);
 
 		System.out.println("Sending " + request + " to " + processKey + " process");
-		WorkflowAsyncCommonResource workflowResource = new WorkflowAsyncCommonResource();
+		WorkflowAsyncResource workflowResource = new WorkflowAsyncResource();
 		workflowResource.setProcessEngineServices4junit(processEngineRule);
 
 		TestAsyncResponse asyncResponse = new TestAsyncResponse();
@@ -298,7 +305,7 @@ public class WorkflowTest {
 		VariableMapImpl variableMapImpl = createVariableMapImpl(variables);
 
 		System.out.println("Sending " + request + " to " + processKey + " process");
-		WorkflowAsyncCommonResource workflowResource = new WorkflowAsyncCommonResource();
+		WorkflowAsyncResource workflowResource = new WorkflowAsyncResource();
 		workflowResource.setProcessEngineServices4junit(processEngineRule);
 
 		TestAsyncResponse asyncResponse = new TestAsyncResponse();
@@ -619,6 +626,18 @@ public class WorkflowTest {
 				content = callbackData.getContent();
 				respCode = 200;
 				respMsg = "OK";
+			} else if ("CREATED".equals(modifier)) {
+				CallbackData callbackData = callbacks.get(action);
+
+				if (callbackData == null) {
+					String msg = "No callback defined for '" + action + "' SDNC request";
+					System.out.println(msg);
+					fail(msg);
+				}
+
+				content = callbackData.getContent();
+				respCode = 201;
+				respMsg = "Created";
 			} else if ("ERR".equals(modifier)) {
 				content = "<svc-request-id>((REQUEST-ID))</svc-request-id><response-code>500</response-code><response-message>SIMULATED ERROR FROM SDNC ADAPTER</response-message>";
 				respCode = 500;
@@ -1386,6 +1405,127 @@ public class WorkflowTest {
 	}
 
 	/**
+	 * Runs a program to inject sniro workflow messages into the test environment.
+	 * A program is essentially just a list of keys that identify event data
+	 * to be injected, in sequence. For more details, see
+	 * injectSNIROCallbacks(String contentType, String messageType, String content, long timeout)
+	 *
+	 * Errors are handled with junit assertions and will cause the test to fail.
+	 * NOTE: Each callback must have a workflow message type associated with it.
+	 *
+	 * @param callbacks an object containing event data for the program
+	 * @param program the program to execute
+	 */
+	protected void injectSNIROCallbacks(CallbackSet callbacks, String program) {
+
+		String[] cmds = program.replaceAll("\\s+", "").split(",");
+
+		for (String cmd : cmds) {
+			String action = cmd;
+			String modifier = "STD";
+
+			if (cmd.contains(":")) {
+				String[] parts = cmd.split(":");
+				action = parts[0];
+				modifier = parts[1];
+			}
+
+			String messageType = null;
+			String content = null;
+			String contentType = null;
+
+			if ("STD".equals(modifier)) {
+				CallbackData callbackData = callbacks.get(action);
+
+				if (callbackData == null) {
+					String msg = "No '" + action + "' workflow message callback is defined";
+					System.out.println(msg);
+					fail(msg);
+				}
+
+				messageType = callbackData.getMessageType();
+
+				if (messageType == null || messageType.trim().equals("")) {
+					String msg = "No workflow message type is defined in the '" + action + "' callback";
+					System.out.println(msg);
+					fail(msg);
+				}
+
+				content = callbackData.getContent();
+				contentType = callbackData.getContentType();
+			} else {
+				String msg = "Invalid workflow message program modifier: '" + modifier + "'";
+				System.out.println(msg);
+				fail(msg);
+			}
+
+			if (!injectSNIROCallbacks(contentType, messageType, content, 10000)) {
+				fail("Failed to inject '" + action + "' workflow message");
+			}
+
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				fail("Interrupted after injection of '" + action + "' workflow message");
+			}
+		}
+	}
+
+	/**
+	 * Injects a sniro workflow message. The specified callback response may
+	 * contain the placeholder strings ((CORRELATOR)) and ((SERVICE_RESOURCE_ID))
+	 * The ((CORRELATOR)) is replaced with the actual correlator value from the
+	 * request. The ((SERVICE_RESOURCE_ID)) is replaced with the actual serviceResourceId
+	 * value from the sniro request. Currently this only works with sniro request
+	 * that contain only 1 resource.
+	 *
+	 * @param contentType the HTTP contentType for the message (possibly null)
+	 * @param messageType the message type
+	 * @param content the message content (possibly null)
+	 * @param timeout the timeout in milliseconds
+	 * @return true if the message could be injected, false otherwise
+	 */
+	protected boolean injectSNIROCallbacks(String contentType, String messageType, String content, long timeout) {
+		String correlator = (String) getProcessVariable("ReceiveWorkflowMessage",
+			messageType + "_CORRELATOR", timeout);
+
+		if (correlator == null) {
+			return false;
+		}
+		if (content != null) {
+			content = content.replace("((CORRELATOR))", correlator);
+			if(messageType.equalsIgnoreCase("SNIROResponse")){
+				//TODO figure out a solution for when there is more than 1 resource being homed (i.e. more than 1 reason in the placement list)
+				ServiceDecomposition decomp = (ServiceDecomposition) getProcessVariable("Homing", "serviceDecomposition", timeout);
+				List<Resource> resourceList = decomp.getServiceResources();
+				if(resourceList.size() == 1){
+					String resourceId = "";
+					for(Resource resource:resourceList){
+						resourceId = resource.getResourceId();
+					}
+					String homingList = getJsonValue(content, "solutionInfo.placement");
+					JSONArray placementArr = new JSONArray(homingList);
+					if(placementArr.length() == 1){
+						content = content.replace("((SERVICE_RESOURCE_ID))", resourceId);
+					}
+					String licenseInfoList = getJsonValue(content, "solutionInfo.licenseInfo");
+					JSONArray licenseArr = new JSONArray(licenseInfoList);
+					if(licenseArr.length() == 1){
+						content = content.replace("((SERVICE_RESOURCE_ID))", resourceId);
+					}
+				}
+			}
+		}
+		System.out.println("Injecting " + messageType + " message");
+		WorkflowMessageResource workflowMessageResource = new WorkflowMessageResource();
+		workflowMessageResource.setProcessEngineServices4junit(processEngineRule);
+		Response response = workflowMessageResource.deliver(contentType, messageType, correlator, content);
+		System.out.println("Workflow response to " + messageType + " message: " + response);
+		return true;
+	}
+
+
+	/**
 	 * Wait for the process to end.
 	 * @param businessKey the process business key
 	 * @param timeout the amount of time to wait, in milliseconds
@@ -1477,8 +1617,6 @@ public class WorkflowTest {
 	}
 
 	/**
-	 * @author cb645j
-	 *
 	 * Gets the value of a subflow variable from the specified subflow's
 	 * historical process instance.
 	 *
@@ -1517,8 +1655,6 @@ public class WorkflowTest {
 	}
 
 	/**
-	 * @author cb645j
-	 *
 	 * Gets the value of a subflow variable from the subflow's
 	 * historical process x instance.
 	 *

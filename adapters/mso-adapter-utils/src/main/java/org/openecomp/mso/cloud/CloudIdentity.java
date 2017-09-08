@@ -270,9 +270,9 @@ public class CloudIdentity {
                      .append (", tenantMetadata=")
                      .append (tenantMetadata)
                      .append (", identityServerType=")
-                     .append (identityServerType.toString())
+                     .append (identityServerType == null ? "null" : identityServerType.toString())
                      .append (", identityAuthenticationType=")
-                     .append (identityAuthenticationType.toString());
+                     .append (identityAuthenticationType == null ? "null" : identityAuthenticationType.toString());
         
         return stringBuilder.toString ();
     }

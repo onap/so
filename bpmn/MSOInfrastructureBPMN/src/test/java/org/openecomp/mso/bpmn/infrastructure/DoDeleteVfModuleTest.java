@@ -43,6 +43,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.mso.bpmn.common.WorkflowTest;
 import org.openecomp.mso.bpmn.core.WorkflowException;
+import org.openecomp.mso.bpmn.mock.FileUtil;
 
 /**
  * Unit test for DoDeleteVfModule.bpmn.
@@ -77,7 +78,8 @@ public class DoDeleteVfModuleTest extends WorkflowTest {
 	public DoDeleteVfModuleTest() throws IOException {
 		callbacks.put("sdncChangeDelete", sdncAdapterDeleteCallback);
 		callbacks.put("sdncDelete", sdncAdapterDeleteCallback);
-		callbacks.put("vnfDelete", vnfAdapterDeleteCallback);
+		callbacks.put("vnfDelete", FileUtil.readResourceFile(
+				"__files/DeleteVfModuleCallbackResponse.xml"));
 		callbacks.put("vnfDeleteFail", vnfAdapterDeleteCallbackFail);
 	}
 	
@@ -182,12 +184,13 @@ public class DoDeleteVfModuleTest extends WorkflowTest {
 		variables.put("vfModuleName", "STMTN5MMSC21-MMSC::module-0-0");
 		variables.put("sdncVersion", "1610");
 		variables.put("isVidRequest", "true");
+		variables.put("retainResources", false);
 		String vfModuleModelInfo = "{" + "\"modelType\": \"vnf\"," +
-				"\"modelInvariantId\": \"ff5256d2-5a33-55df-13ab-12abad84e7ff\"," + 
-				"\"modelNameVersionId\": \"fe6478e5-ea33-3346-ac12-ab121484a3fe\"," +
+				"\"modelInvariantUuid\": \"ff5256d2-5a33-55df-13ab-12abad84e7ff\"," + 
+				"\"modelUuid\": \"fe6478e5-ea33-3346-ac12-ab121484a3fe\"," +
 				"\"modelName\": \"vSAMP12\"," +
 				"\"modelVersion\": \"1.0\"," + 
-				"\"modelCustomizationId\": \"MODEL-ID-1234\"," + 
+				"\"modelCustomizationUuid\": \"MODEL-ID-1234\"," + 
 				"}";
 		variables.put("vfModuleModelInfo", vfModuleModelInfo);
 			

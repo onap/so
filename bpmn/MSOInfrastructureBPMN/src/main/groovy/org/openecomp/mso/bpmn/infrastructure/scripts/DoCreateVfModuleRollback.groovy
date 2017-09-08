@@ -47,71 +47,96 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 
 		initProcessVariables(execution)
 
-		def rollbackData = execution.getVariable("RollbackData")
-		String vnfId = rollbackData.get("VFMODULE", "vnfid")
-		execution.setVariable("DCVFMR_vnfId", vnfId)
-		String vfModuleId = rollbackData.get("VFMODULE", "vfmoduleid")
-		execution.setVariable("DCVFMR_vfModuleId", vfModuleId)
-		String source = rollbackData.get("VFMODULE", "source")
-		execution.setVariable("DCVFMR_source", source)
-		String serviceInstanceId = rollbackData.get("VFMODULE", "serviceInstanceId")
-		execution.setVariable("DCVFMR_serviceInstanceId", serviceInstanceId)
-		String serviceId = rollbackData.get("VFMODULE", "service-id")
-		execution.setVariable("DCVFMR_serviceId", serviceId)
-		String vnfType = rollbackData.get("VFMODULE", "vnftype")
-		execution.setVariable("DCVFMR_vnfType", vnfType)
-		String vnfName = rollbackData.get("VFMODULE", "vnfname")
-		execution.setVariable("DCVFMR_vnfName", vnfName)
-		String tenantId = rollbackData.get("VFMODULE", "tenantid")
-		execution.setVariable("DCVFMR_tenantId", tenantId)
-		String vfModuleName = rollbackData.get("VFMODULE", "vfmodulename")
-		execution.setVariable("DCVFMR_vfModuleName", vfModuleName)
-		String vfModuleModelName = rollbackData.get("VFMODULE", "vfmodulemodelname")
-		execution.setVariable("DCVFMR_vfModuleModelName", vfModuleModelName)
-		String cloudSiteId = rollbackData.get("VFMODULE", "aiccloudregion")
-		execution.setVariable("DCVFMR_cloudSiteId", cloudSiteId)
-		String heatStackId = rollbackData.get("VFMODULE", "heatstackid")
-		execution.setVariable("DCVFMR_heatStackId", heatStackId)
-		String requestId = rollbackData.get("VFMODULE", "attmsorequestid")
-		execution.setVariable("DCVFMR_requestId", requestId)
-		List createdNetworkPolicyFqdnList = []
-		int i = 0
-		while (i < 100) {
-			String fqdn = rollbackData.get("VFMODULE", "contrailNetworkPolicyFqdn" + i)
-			if (fqdn == null) {
-				break
+		try {
+
+			execution.setVariable("rolledBack", null)
+			execution.setVariable("rollbackError", null)
+			
+			def rollbackData = execution.getVariable("rollbackData")
+			utils.log("DEBUG", "RollbackData:" + rollbackData, isDebugEnabled)
+			
+			if (rollbackData != null) {
+			String vnfId = rollbackData.get("VFMODULE", "vnfid")
+			execution.setVariable("DCVFMR_vnfId", vnfId)
+			String vfModuleId = rollbackData.get("VFMODULE", "vfmoduleid")
+			execution.setVariable("DCVFMR_vfModuleId", vfModuleId)
+			String source = rollbackData.get("VFMODULE", "source")
+			execution.setVariable("DCVFMR_source", source)
+			String serviceInstanceId = rollbackData.get("VFMODULE", "serviceInstanceId")
+			execution.setVariable("DCVFMR_serviceInstanceId", serviceInstanceId)
+			String serviceId = rollbackData.get("VFMODULE", "service-id")
+			execution.setVariable("DCVFMR_serviceId", serviceId)
+			String vnfType = rollbackData.get("VFMODULE", "vnftype")
+			execution.setVariable("DCVFMR_vnfType", vnfType)
+			String vnfName = rollbackData.get("VFMODULE", "vnfname")
+			execution.setVariable("DCVFMR_vnfName", vnfName)
+			String tenantId = rollbackData.get("VFMODULE", "tenantid")
+			execution.setVariable("DCVFMR_tenantId", tenantId)
+			String vfModuleName = rollbackData.get("VFMODULE", "vfmodulename")
+			execution.setVariable("DCVFMR_vfModuleName", vfModuleName)
+			String vfModuleModelName = rollbackData.get("VFMODULE", "vfmodulemodelname")
+			execution.setVariable("DCVFMR_vfModuleModelName", vfModuleModelName)
+			String cloudSiteId = rollbackData.get("VFMODULE", "aiccloudregion")
+			execution.setVariable("DCVFMR_cloudSiteId", cloudSiteId)
+			String heatStackId = rollbackData.get("VFMODULE", "heatstackid")
+			execution.setVariable("DCVFMR_heatStackId", heatStackId)
+			String requestId = rollbackData.get("VFMODULE", "msorequestid")
+			execution.setVariable("DCVFMR_requestId", requestId)
+			// Set mso-request-id to request-id for VNF Adapter interface
+			execution.setVariable("mso-request-id", requestId)
+			List createdNetworkPolicyFqdnList = []
+			int i = 0
+			while (i < 100) {
+				String fqdn = rollbackData.get("VFMODULE", "contrailNetworkPolicyFqdn" + i)
+				if (fqdn == null) {
+					break
+				}
+				createdNetworkPolicyFqdnList.add(fqdn)
+				logDebug("got fqdn # " + i + ": " + fqdn, isDebugEnabled)
+				i = i + 1
+	
 			}
-			createdNetworkPolicyFqdnList.add(fqdn)
-			logDebug("got fqdn # " + i + ": " + fqdn, isDebugEnabled)
-			i = i + 1
-
+	
+			execution.setVariable("DCVFMR_createdNetworkPolicyFqdnList", createdNetworkPolicyFqdnList)
+			String oamManagementV4Address = rollbackData.get("VFMODULE", "oamManagementV4Address")
+			execution.setVariable("DCVFMR_oamManagementV4Address", oamManagementV4Address)
+			String oamManagementV6Address = rollbackData.get("VFMODULE", "oamManagementV6Address")
+			execution.setVariable("DCVFMR_oamManagementV6Address", oamManagementV6Address)
+			//String serviceInstanceId = rollbackData.get("VFMODULE", "msoserviceinstanceid")
+			//execution.setVariable("DCVFMR_serviceInstanceId", serviceInstanceId)
+			execution.setVariable("DCVFMR_rollbackPrepareUpdateVfModule", rollbackData.get("VFMODULE", "rollbackPrepareUpdateVfModule"))
+			execution.setVariable("DCVFMR_rollbackUpdateAAIVfModule", rollbackData.get("VFMODULE", "rollbackUpdateAAIVfModule"))
+			execution.setVariable("DCVFMR_rollbackVnfAdapterCreate", rollbackData.get("VFMODULE", "rollbackVnfAdapterCreate"))
+			execution.setVariable("DCVFMR_rollbackSDNCRequestAssign", rollbackData.get("VFMODULE", "rollbackSDNCRequestAssign"))
+			execution.setVariable("DCVFMR_rollbackSDNCRequestActivate", rollbackData.get("VFMODULE", "rollbackSDNCRequestActivate"))
+			execution.setVariable("DCVFMR_rollbackCreateAAIVfModule", rollbackData.get("VFMODULE", "rollbackCreateAAIVfModule"))
+			execution.setVariable("DCVFMR_rollbackCreateNetworkPoliciesAAI", rollbackData.get("VFMODULE", "rollbackCreateNetworkPoliciesAAI"))
+			execution.setVariable("DCVFMR_rollbackUpdateVnfAAI", rollbackData.get("VFMODULE", "rollbackUpdateVnfAAI"))
+	
+			// formulate the request for PrepareUpdateAAIVfModule
+			String request = """<PrepareUpdateAAIVfModuleRequest>
+									<vnf-id>${vnfId}</vnf-id>
+									<vf-module-id>${vfModuleId}</vf-module-id>
+									<orchestration-status>pending-delete</orchestration-status>
+								</PrepareUpdateAAIVfModuleRequest>""" as String
+			utils.log("DEBUG", "PrepareUpdateAAIVfModuleRequest :" + request, isDebugEnabled)
+			utils.logAudit("DoCreateVfModuleRollback PrepareUpdateAAIVfModule Request: " + request)
+			execution.setVariable("PrepareUpdateAAIVfModuleRequest", request)
+		} else {
+			execution.setVariable("skipRollback", true)
 		}
-
-		execution.setVariable("DCVFMR_createdNetworkPolicyFqdnList", createdNetworkPolicyFqdnList)
-		String oamManagementV4Address = rollbackData.get("VFMODULE", "oamManagementV4Address")
-		execution.setVariable("DCVFMR_oamManagementV4Address", oamManagementV4Address)
-		String oamManagementV6Address = rollbackData.get("VFMODULE", "oamManagementV6Address")
-		execution.setVariable("DCVFMR_oamManagementV6Address", oamManagementV6Address)
-		//String serviceInstanceId = rollbackData.get("VFMODULE", "attmsoserviceinstanceid")
-		//execution.setVariable("DCVFMR_serviceInstanceId", serviceInstanceId)
-		execution.setVariable("DCVFMR_rollbackPrepareUpdateVfModule", rollbackData.get("VFMODULE", "rollbackPrepareUpdateVfModule"))
-		execution.setVariable("DCVFMR_rollbackUpdateAAIVfModule", rollbackData.get("VFMODULE", "rollbackUpdateAAIVfModule"))
-		execution.setVariable("DCVFMR_rollbackVnfAdapterCreate", rollbackData.get("VFMODULE", "rollbackVnfAdapterCreate"))
-		execution.setVariable("DCVFMR_rollbackSDNCRequestAssign", rollbackData.get("VFMODULE", "rollbackSDNCRequestAssign"))
-		execution.setVariable("DCVFMR_rollbackSDNCRequestActivate", rollbackData.get("VFMODULE", "rollbackSDNCRequestActivate"))
-		execution.setVariable("DCVFMR_rollbackCreateAAIVfModule", rollbackData.get("VFMODULE", "rollbackCreateAAIVfModule"))
-		execution.setVariable("DCVFMR_rollbackCreateNetworkPoliciesAAI", rollbackData.get("VFMODULE", "rollbackCreateNetworkPoliciesAAI"))
-		execution.setVariable("DCVFMR_rollbackUpdateVnfAAI", rollbackData.get("VFMODULE", "rollbackUpdateVnfAAI"))
-
-		// formulate the request for PrepareUpdateAAIVfModule
-		String request = """<PrepareUpdateAAIVfModuleRequest>
-								<vnf-id>${vnfId}</vnf-id>
-								<vf-module-id>${vfModuleId}</vf-module-id>
-								<orchestration-status>pending-delete</orchestration-status>
-							</PrepareUpdateAAIVfModuleRequest>""" as String
-		utils.log("DEBUG", "PrepareUpdateAAIVfModuleRequest :" + request, isDebugEnabled)
-		utils.logAudit("DoCreateVfModuleRollback PrepareUpdateAAIVfModule Request: " + request)
-		execution.setVariable("PrepareUpdateAAIVfModuleRequest", request)
+		
+		if (execution.getVariable("disableRollback").equals("true" )) {
+			execution.setVariable("skipRollback", true)
+		}
+		
+		} catch (BpmnError e) {
+			throw e;
+		} catch (Exception ex){
+			def msg = "Exception in DoCreateVfModuleRollback preProcessRequest " + ex.getMessage()
+			utils.log("DEBUG", msg, isDebugEnabled)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+		}
 	}
 
 	// build a SDNC vnf-topology-operation request for the specified action
@@ -120,6 +145,11 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		String srvInstId = execution.getVariable("DCVFMR_serviceInstanceId")
 
+		String uuid = execution.getVariable('testReqId') // for junits
+		if(uuid==null){
+			uuid = execution.getVariable("DCVFMR_requestId") + "-" +  	System.currentTimeMillis()
+		}
+		
 		def callbackUrl = execution.getVariable("URN_mso_workflow_sdncadapter_callback")
 
 		String source = execution.getVariable("DCVFMR_source")
@@ -163,7 +193,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 													xmlns:sdncadapterworkflow="http://org.openecomp/mso/workflow/schema/v1"
 													xmlns:sdncadapter="http://org.openecomp/workflow/sdnc/adapter/schema/v1">
 						      <sdncadapter:RequestHeader>
-						         <sdncadapter:RequestId>${requestId}</sdncadapter:RequestId>
+						         <sdncadapter:RequestId>${uuid}</sdncadapter:RequestId>
 						         <sdncadapter:SvcInstanceId>${vfModuleId}</sdncadapter:SvcInstanceId>
 						         <sdncadapter:SvcAction>${action}</sdncadapter:SvcAction>
 						         <sdncadapter:SvcOperation>vnf-topology-operation</sdncadapter:SvcOperation>
@@ -202,6 +232,112 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 		execution.setVariable("sdncAdapterWorkflowRequest", request)
 	}
 
+	public void preProcessSDNCDeactivateRequest(Execution execution){
+		def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
+		execution.setVariable("prefix", Prefix)
+		logDebug(" ======== STARTED preProcessSDNCDeactivateRequest ======== ", isDebugLogEnabled)
+		
+		def serviceInstanceId = execution.getVariable("DCVFMR_serviceInstanceId")
+	
+		try{
+			//Build SDNC Request
+			
+			String deactivateSDNCRequest = buildSDNCRequest(execution, serviceInstanceId, "deactivate")
+	
+			deactivateSDNCRequest = utils.formatXml(deactivateSDNCRequest)
+			execution.setVariable("DCVFMR_deactivateSDNCRequest", deactivateSDNCRequest)
+			logDebug("Outgoing DeactivateSDNCRequest is: \n" + deactivateSDNCRequest, isDebugLogEnabled)
+			utils.logAudit("Outgoing DeactivateSDNCRequest is: \n" + deactivateSDNCRequest)
+	
+		}catch(Exception e){
+			utils.log("ERROR", "Exception Occured Processing preProcessSDNCDeactivateRequest. Exception is:\n" + e, isDebugLogEnabled)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during preProcessSDNCDeactivateRequest Method:\n" + e.getMessage())
+		}
+		logDebug("======== COMPLETED preProcessSDNCDeactivateRequest ======== ", isDebugLogEnabled)
+	}
+
+	public void preProcessSDNCUnassignRequest(Execution execution) {
+		def method = getClass().getSimpleName() + '.preProcessSDNCUnassignRequest(' +
+			'execution=' + execution.getId() +
+			')'
+		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
+		logDebug('Entered ' + method, isDebugLogEnabled)
+		execution.setVariable("prefix", Prefix)
+		logDebug(" ======== STARTED preProcessSDNCUnassignRequest Process ======== ", isDebugLogEnabled)
+		try{
+			String serviceInstanceId = execution.getVariable("DCVFMR_serviceInstanceId")
+	
+			String unassignSDNCRequest = buildSDNCRequest(execution, serviceInstanceId, "unassign")
+	
+			execution.setVariable("DCVFMR_unassignSDNCRequest", unassignSDNCRequest)
+			logDebug("Outgoing UnassignSDNCRequest is: \n" + unassignSDNCRequest, isDebugLogEnabled)
+			utils.logAudit("Outgoing UnassignSDNCRequest is: \n"  + unassignSDNCRequest)
+	
+		}catch(Exception e){
+			log.debug("Exception Occured Processing preProcessSDNCUnassignRequest. Exception is:\n" + e, isDebugLogEnabled)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occured during  preProcessSDNCUnassignRequest Method:\n" + e.getMessage())
+		}
+		logDebug("======== COMPLETED  preProcessSDNCUnassignRequest Process ======== ", isDebugLogEnabled)
+	}
+
+	public String buildSDNCRequest(Execution execution, String svcInstId, String action){
+	
+			String uuid = execution.getVariable('testReqId') // for junits
+			if(uuid==null){
+				uuid = execution.getVariable("DCVFMR_requestId") + "-" +  	System.currentTimeMillis()
+			}
+			def callbackURL = execution.getVariable("URN_mso_workflow_sdncadapter_callback")
+			def requestId = execution.getVariable("DCVFMR_requestId")
+			def serviceId = execution.getVariable("DCVFMR_serviceId")
+			def serviceInstanceId = execution.getVariable("DCVFMR_serviceInstanceId")
+			def vfModuleId = execution.getVariable("DCVFMR_vfModuleId")
+			def source = execution.getVariable("DCVFMR_source")
+			def vnfId = execution.getVariable("DCVFMR_vnfId")
+				
+			def sdncVersion = execution.getVariable("sdncVersion")
+			
+			String sdncRequest =
+			"""<sdncadapterworkflow:SDNCAdapterWorkflowRequest xmlns:ns5="http://org.openecomp/mso/request/types/v1"
+													xmlns:sdncadapterworkflow="http://org.openecomp/mso/workflow/schema/v1"
+													xmlns:sdncadapter="http://org.openecomp.mso/workflow/sdnc/adapter/schema/v1">
+	   <sdncadapter:RequestHeader>
+				<sdncadapter:RequestId>${uuid}</sdncadapter:RequestId>
+				<sdncadapter:SvcInstanceId>${svcInstId}</sdncadapter:SvcInstanceId>
+				<sdncadapter:SvcAction>${action}</sdncadapter:SvcAction>
+				<sdncadapter:SvcOperation>vf-module-topology-operation</sdncadapter:SvcOperation>
+				<sdncadapter:CallbackUrl>${callbackURL}</sdncadapter:CallbackUrl>
+				<sdncadapter:MsoAction>generic-resource</sdncadapter:MsoAction>
+		</sdncadapter:RequestHeader>
+	<sdncadapterworkflow:SDNCRequestData>
+		<request-information>
+			<request-id>${requestId}</request-id>
+			<request-action>DeleteVfModuleInstance</request-action>
+			<source>${source}</source>
+			<notification-url/>
+			<order-number/>
+			<order-version/>
+		</request-information>
+		<service-information>
+			<service-id/>
+			<subscription-service-type/>			
+			<service-instance-id>${serviceInstanceId}</service-instance-id>
+			<global-customer-id/>
+		</service-information>
+		<vnf-information>
+			<vnf-id>${vnfId}</vnf-id>
+			<vnf-type/>			
+		</vnf-information>
+		<vf-module-information>
+			<vf-module-id>${vfModuleId}</vf-module-id>
+		</vf-module-information>
+		<vf-module-request-input/>		
+	</sdncadapterworkflow:SDNCRequestData>
+	</sdncadapterworkflow:SDNCAdapterWorkflowRequest>"""
+	
+		utils.logAudit("sdncRequest:  " + sdncRequest)
+		return sdncRequest
+	}
+	
 	// parse the incoming DELETE_VF_MODULE request
 	// and formulate the outgoing VnfAdapterDeleteV1 request
 	public void prepVNFAdapterRequest(Execution execution) {
@@ -483,5 +619,40 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in preProcessUpdateAAIGenericVnf((): ' + e.getMessage())
 		}
+	}
+	
+	public void setSuccessfulRollbackStatus (Execution execution){
+		def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
+		execution.setVariable("prefix", Prefix)
+		logDebug(" ======== STARTED setSuccessfulRollbackStatus ======== ", isDebugLogEnabled)
+	
+		try{
+			// Set rolledBack to true, rollbackError to null
+			execution.setVariable("rolledBack", true)
+			execution.setVariable("rollbackError", null)
+	
+		}catch(Exception e){
+			utils.log("ERROR", "Exception Occured Processing setSuccessfulRollbackStatus. Exception is:\n" + e, isDebugLogEnabled)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during setSuccessfulRollbackStatus Method:\n" + e.getMessage())
+		}
+		logDebug("======== COMPLETED setSuccessfulRollbackStatus ======== ", isDebugLogEnabled)
+	}
+	
+	public void setFailedRollbackStatus (Execution execution){
+		def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
+		execution.setVariable("prefix", Prefix)
+		logDebug(" ======== STARTED setFailedRollbackStatus ======== ", isDebugLogEnabled)
+	
+		try{
+			// Set rolledBack to false, rollbackError to actual value, rollbackData to null
+			execution.setVariable("rolledBack", false)
+			execution.setVariable("rollbackError", 'Caught exception in DoCreateVfModuleRollback')
+			execution.setVariable("rollbackData", null)
+	
+		}catch(Exception e){
+			utils.log("ERROR", "Exception Occured Processing setFailedRollbackStatus. Exception is:\n" + e, isDebugLogEnabled)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during setFailedRollbackStatus Method:\n" + e.getMessage())
+		}
+		logDebug("======== COMPLETED setFailedRollbackStatus ======== ", isDebugLogEnabled)
 	}
 }

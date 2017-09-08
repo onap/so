@@ -22,73 +22,55 @@ package org.openecomp.mso.db.catalog.beans;
 
 
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 
 import org.openecomp.mso.db.catalog.utils.MavenLikeVersioning;
 
-public class VfModule extends MavenLikeVersioning {
+public class VfModule extends MavenLikeVersioning implements Serializable {
+	
+	private static final long serialVersionUID = 768026109321305392L;
 
-	private int id;
-	private Integer vnfResourceId;
-	private String type;
+	private String modelInvariantUUID;
 	private String modelName;
-	private int isBase;
-	private Integer templateId;
-	private Integer environmentId;
-	private Integer volTemplateId;
-	private Integer volEnvironmentId;
+	private String modelVersion;
 	private String description;
-	private String asdcUuid;
+	private int isBase;
+	private String heatTemplateArtifactUUId;
+	private String volHeatTemplateArtifactUUId;
     private Timestamp created;
-    private String modelInvariantUuid;
-    private String modelVersion;
-	private String modelCustomizationUuid = null;
-	private Integer minInstances;
-	private Integer maxInstances;
-	private Integer initialCount;
-	private String label;
-	private String modelUuid;
+	private String modelUUID;
+	private String vnfResourceModelUUId;
 
     public VfModule() {
 		super();
 	}
 
-	public int getId(){
-		return this.id;
-	}
-	public void setId(int id) {
-		this.id = id;
+	public String getVnfResourceModelUUId() {
+		return this.vnfResourceModelUUId;
 	}
 
-	public Integer getVnfResourceId() {
-		return this.vnfResourceId;
-	}
-	public void setVnfResourceId(Integer vnfResourceId) {
-		this.vnfResourceId = vnfResourceId;
+	public void setVnfResourceModelUUId(String vnfResourceModelUUId) {
+		this.vnfResourceModelUUId = vnfResourceModelUUId;
 	}
 
 	public String getModelName() {
 		return this.modelName;
 	}
+	
 	public void setModelName(String modelName) {
 		this.modelName = modelName;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
 	}
 
 	public int getIsBase() {
 		return this.isBase;
 	}
+	
 	public void setIsBase(int isBase) {
 		this.isBase = isBase;
 	}
+	
 	public boolean isBase() {
 		if (this.isBase == 0) {
 			return false;
@@ -97,47 +79,20 @@ public class VfModule extends MavenLikeVersioning {
 		}
 	}
 
-	public Integer getTemplateId() {
-		return this.templateId;
-	}
-	public void setTemplateId(Integer templateId) {
-		this.templateId = templateId;
+	public String getHeatTemplateArtifactUUId() {
+		return this.heatTemplateArtifactUUId;
 	}
 
-	public Integer getEnvironmentId() {
-		return this.environmentId;
-	}
-	public void setEnvironmentId(Integer environmentId) {
-		this.environmentId = environmentId;
-	}
-
-	public Integer getVolTemplateId() {
-		return this.volTemplateId;
-	}
-	public void setVolTemplateId(Integer volTemplateId) {
-		this.volTemplateId = volTemplateId;
-	}
-
-	public Integer getVolEnvironmentId() {
-		return this.volEnvironmentId;
-	}
-	public void setVolEnvironmentId(Integer volEnvironmentId) {
-		this.volEnvironmentId = volEnvironmentId;
+	public void setHeatTemplateArtifactUUId(String heatTemplateArtifactUUId) {
+		this.heatTemplateArtifactUUId = heatTemplateArtifactUUId;
 	}
 
 	public String getDescription() {
 		return this.description;
 	}
+	
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public String getAsdcUuid() {
-		return asdcUuid;
-	}
-
-	public void setAsdcUuid(String asdcUuidp) {
-		this.asdcUuid = asdcUuidp;
 	}
 
 	public Timestamp getCreated() {
@@ -147,111 +102,73 @@ public class VfModule extends MavenLikeVersioning {
 	public void setCreated(Timestamp created) {
 		this.created = created;
 	}
+	
 	public String getModelInvariantUuid() {
-		return this.modelInvariantUuid;
+		return this.modelInvariantUUID;
 	}
 	public void setModelInvariantUuid(String modelInvariantUuid) {
-		this.modelInvariantUuid = modelInvariantUuid;
+		this.modelInvariantUUID = modelInvariantUuid;
+	}
+	public String getModelInvariantUUID() {
+		return this.modelInvariantUUID;
+	}
+	public void setModelInvariantUUID(String modelInvariantUuid) {
+		this.modelInvariantUUID = modelInvariantUuid;
+	}
+	
+	public String getVolHeatTemplateArtifactUUId() {
+		return this.volHeatTemplateArtifactUUId;
+	}
+	
+	public void setVolHeatTemplateArtifactUUId(String volHeatTemplateArtifactUUId) {
+		this.volHeatTemplateArtifactUUId = volHeatTemplateArtifactUUId;
 	}
 
+    public String getModelUUID() {
+		return modelUUID;
+	}
+
+	public void setModelUUID(String modelUUID) {
+		this.modelUUID = modelUUID;
+	}
 
 	public String getModelVersion() {
-		return this.modelVersion;
-	}
-	public void setModelVersion(String modelVersion) {
-		this.modelVersion = modelVersion;
-	}
-	public String getModelCustomizationUuid() {
-		return this.modelCustomizationUuid;
-	}
-	public void setModelCustomizationUuid(String modelCustomizationUuid) {
-		this.modelCustomizationUuid = modelCustomizationUuid;
-	}
-	public Integer getMinInstances() {
-		return this.minInstances;
-	}
-	public void setMinInstances(Integer minInstances) {
-		this.minInstances = minInstances;
-	}
-	public Integer getMaxInstances() {
-		return this.maxInstances;
-	}
-	public void setMaxInstances(Integer maxInstances) {
-		this.maxInstances = maxInstances;
-	}
-	public Integer getInitialCount() {
-		return this.initialCount;
-	}
-	public void setInitialCount(Integer initialCount) {
-		this.initialCount = initialCount;
-	}
-	public String getLabel() {
-		return this.label;
-	}
-	public void setLabel(String label) {
-		this.label = label;
+		return modelVersion;
 	}
 
-	// Will be fixed pending finalizing of 1707 catalog db schema changes
-	public void setModelUuid(String modelUuid) {
-		this.modelUuid = modelUuid;
-	}
-	public String getModelUuid() {
-		return this.modelUuid;
-	}
-	public String getModelInvariantId() {
-		return this.modelInvariantUuid;
-	}
-	public String getVfModuleType() {
-		return this.type;
-	}
-	public String getVfModuleLabel() {
-		return this.label;
+	public void setModelVersion(String modelVersion) {
+		this.modelVersion = modelVersion;
 	}
 
 	@Override
 	public String toString () {
        StringBuffer buf = new StringBuffer();
 
-       buf.append("VF=");
-       buf.append(this.type);
-       buf.append(",modelName=");
+       buf.append("VFModule:");
+       buf.append("modelName=");
        buf.append(modelName);
-       buf.append(",version=");
-       buf.append(version);
-       buf.append(",id=");
-       buf.append(this.id);
-       buf.append(",vnfResourceId=");
-       buf.append(this.vnfResourceId);
-       buf.append(",templateId=");
-       buf.append(this.templateId);
-       buf.append(",envtId=");
-       buf.append(this.environmentId);
-       buf.append(",volTemplateId=");
-       buf.append(this.volTemplateId);
-       buf.append(",volEnvtId=");
-       buf.append(this.volEnvironmentId);
+       buf.append(",modelVersion=");
+       buf.append(modelVersion);
+       buf.append(",vnfResourceModelUUId=");
+       buf.append(this.vnfResourceModelUUId);
+       buf.append(",heatTemplateArtifactUUId=");
+       buf.append(this.heatTemplateArtifactUUId);
        buf.append(", description=");
        buf.append(this.description);
-       buf.append(",asdcUuid=");
-       buf.append(asdcUuid);
-       buf.append(",modelVersion=");
-       buf.append(this.modelVersion);
-       buf.append(",modelCustomizationUuid=");
-       buf.append(this.modelCustomizationUuid);
-       buf.append(",minInstances=");
-       buf.append(this.minInstances);
-       buf.append(",maxInstances=");
-       buf.append(this.maxInstances);
-       buf.append(",initialCount=");
-       buf.append(this.initialCount);
-       buf.append(",label=");
-       buf.append(this.label);
+       buf.append(",volHeatTemplateArtifactUUId=");
+       buf.append(this.volHeatTemplateArtifactUUId);
+       buf.append(",isBase=");
+       buf.append(this.isBase);
+       buf.append(",modelInvariantUUID=");
+       buf.append(this.modelInvariantUUID);
+       buf.append(",modelUUID=");
+       buf.append(this.modelUUID);
 
     	 if (this.created != null) {
     		 buf.append (",created=");
     		 buf.append (DateFormat.getInstance().format(this.created));
          }
+		 
     	return buf.toString();
     }
 

@@ -19,18 +19,24 @@
  */
 package org.openecomp.mso.apihandlerinfra;
 
-import org.openecomp.mso.apihandler.common.ValidationException;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.ServiceInstancesRequest;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 import java.util.HashMap;
 
-import static org.junit.Assert.*;
+import org.openecomp.mso.apihandler.common.ValidationException;
+import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.ServiceInstancesRequest;
 
 public class MsoRequestTest {
 
@@ -232,4 +238,64 @@ public class MsoRequestTest {
 
 	}
 
+	@Test
+	public void testVfModuleV4UsePreLoad() throws JsonParseException, JsonMappingException, IOException, ValidationException {
+		String requestJSON;
+		 try {
+			  requestJSON = IOUtils.toString (ClassLoader.class.getResourceAsStream ("/v4CreateVfModule.json"));
+	           
+	        } catch (IOException e) {
+	            fail ("Exception caught");
+	            e.printStackTrace ();
+	            return;
+	        }
+		 
+			ObjectMapper mapper = new ObjectMapper();
+			HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+			instanceIdMap.put("serviceInstanceId", "3eecada1-83a4-4f33-9ed2-7937e7b8dbbc");
+			instanceIdMap.put("vnfInstanceId", "3eecada1-83a4-4f33-9ed2-7937e7b8dbbc");
+			ServiceInstancesRequest sir  = mapper.readValue(requestJSON, ServiceInstancesRequest.class);
+			MsoRequest msoRequest = new MsoRequest ("1234");
+			msoRequest.parse(sir, instanceIdMap, Action.createInstance, "v4");
+			
+			
+			
+		 try {
+			  requestJSON = IOUtils.toString (ClassLoader.class.getResourceAsStream ("/v4CreateVfModuleNoCustomizationId.json"));
+	           
+	        } catch (IOException e) {
+	            fail ("Exception caught");
+	            e.printStackTrace ();
+	            return;
+	        }
+		 
+			mapper = new ObjectMapper();
+			instanceIdMap = new HashMap<String,String>();
+			instanceIdMap.put("serviceInstanceId", "3eecada1-83a4-4f33-9ed2-7937e7b8dbbc");
+			instanceIdMap.put("vnfInstanceId", "3eecada1-83a4-4f33-9ed2-7937e7b8dbbc");
+			sir  = mapper.readValue(requestJSON, ServiceInstancesRequest.class);
+			msoRequest = new MsoRequest ("1234");
+			msoRequest.parse(sir, instanceIdMap, Action.createInstance, "v4");
+	}
+	
+	@Test(expected = ValidationException.class)
+	public void testV4UsePreLoadMissingModelCustomizationId() throws JsonParseException, JsonMappingException, IOException, ValidationException {
+		String requestJSON;
+		 try {
+			  requestJSON = IOUtils.toString (ClassLoader.class.getResourceAsStream ("/v4CreateVfModuleMissingModelCustomizationId.json"));
+	           
+	        } catch (IOException e) {
+	            fail ("Exception caught");
+	            e.printStackTrace ();
+	            return;
+	        }
+		 
+			ObjectMapper mapper = new ObjectMapper();
+			HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+			instanceIdMap.put("serviceInstanceId", "3eecada1-83a4-4f33-9ed2-7937e7b8dbbc");
+			instanceIdMap.put("vnfInstanceId", "3eecada1-83a4-4f33-9ed2-7937e7b8dbbc");
+			ServiceInstancesRequest sir  = mapper.readValue(requestJSON, ServiceInstancesRequest.class);
+			MsoRequest msoRequest = new MsoRequest ("1234");
+			msoRequest.parse(sir, instanceIdMap, Action.createInstance, "v4");
+	}
 }

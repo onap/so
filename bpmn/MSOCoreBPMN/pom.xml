@@ -53,12 +53,6 @@
     </build>
 
     <dependencies>
-    <dependency>
-             <groupId>org.evosuite</groupId>
-             <artifactId>evosuite-standalone-runtime</artifactId>
-             <version>${evosuiteVersion}</version>
-             <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.camunda.bpm</groupId>
             <artifactId>camunda-engine</artifactId>

@@ -539,9 +539,9 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 					if (aai_uri == null || aai_uri == "") {
 						// using value of 'related-link' from response
 						if (vpnBindingUri[i].charAt(vpnBindingUri[i].length()-1) == '/') {
-						    queryVpnBindingAAIRequest = "${aai_endpoint}" + vpnBindingUri[i].substring(0, vpnBindingUri[i].length()-1)
+						    queryVpnBindingAAIRequest = "${aai_endpoint}" + vpnBindingUri[i].substring(0, vpnBindingUri[i].length()-1) + "?depth=all"
 						} else {
-						    queryVpnBindingAAIRequest = "${aai_endpoint}" + vpnBindingUri[i]
+						    queryVpnBindingAAIRequest = "${aai_endpoint}" + vpnBindingUri[i] + "?depth=all"
 						}
 
 					} else {
@@ -550,7 +550,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 						if (vpnBindingId.charAt(vpnBindingId.length()-1) == '/') {
 							vpnBindingId = vpnBindingId.substring(0, vpnBindingId.length()-1)
 						}
-					    queryVpnBindingAAIRequest = "${aai_endpoint}${aai_uri}/" + vpnBindingId
+					    queryVpnBindingAAIRequest = "${aai_endpoint}${aai_uri}/" + vpnBindingId + "?depth=all"
 					}
 
 					utils.logAudit(queryVpnBindingAAIRequest)
@@ -673,9 +673,9 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 					if (aai_uri == null || aai_uri == "") {
 						// using value of 'related-link' from response
 						if (networkPolicyUriList[i].charAt(networkPolicyUriList[i].length()-1) == '/') {
-							queryNetworkPolicyAAIRequest = "${aai_endpoint}" + networkPolicyUriList[i].substring(0, networkPolicyUriList[i].length()-1)
+							queryNetworkPolicyAAIRequest = "${aai_endpoint}" + networkPolicyUriList[i].substring(0, networkPolicyUriList[i].length()-1) + "?depth=all"
 						} else {
-							queryNetworkPolicyAAIRequest = "${aai_endpoint}" + networkPolicyUriList[i]
+							queryNetworkPolicyAAIRequest = "${aai_endpoint}" + networkPolicyUriList[i] + "?depth=all"
 						}
 					} else {
 						// using uri value in URN mapping
@@ -684,7 +684,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 						if (networkPolicyId.charAt(networkPolicyId.length()-1) == '/') {
 							networkPolicyId = networkPolicyId.substring(0, networkPolicyId.length()-1)
 						}
-						queryNetworkPolicyAAIRequest = "${aai_endpoint}${aai_uri}/" + networkPolicyId
+						queryNetworkPolicyAAIRequest = "${aai_endpoint}${aai_uri}/" + networkPolicyId + "?depth=all"
 
 					}
 
@@ -809,9 +809,9 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 					if (aai_uri == null || aai_uri == "") {
 						// using value of 'related-link' from response
 						if (networkTableRefUriList[i].charAt(networkTableRefUriList[i].length()-1) == '/') {
-							queryNetworkTableRefAAIRequest = "${aai_endpoint}" + networkTableRefUriList[i].substring(0, networkTableRefUriList[i].length()-1)
+							queryNetworkTableRefAAIRequest = "${aai_endpoint}" + networkTableRefUriList[i].substring(0, networkTableRefUriList[i].length()-1) + "?depth=all"
 						} else {
-							queryNetworkTableRefAAIRequest = "${aai_endpoint}" + networkTableRefUriList[i]
+							queryNetworkTableRefAAIRequest = "${aai_endpoint}" + networkTableRefUriList[i] + "?depth=all"
 						}
 					} else {
 						// using uri value in URN mapping
@@ -820,7 +820,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 						if (networkTableRefId.charAt(networkTableRefId.length()-1) == '/') {
 							networkTableRefId = networkTableRefId.substring(0, networkTableRefId.length()-1)
 						}
-						queryNetworkTableRefAAIRequest = "${aai_endpoint}${aai_uri}/" + networkTableRefId
+						queryNetworkTableRefAAIRequest = "${aai_endpoint}${aai_uri}/" + networkTableRefId + "?depth=all"
 
 					}
 
@@ -1308,7 +1308,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 		
 		try {
 			
-			if (execution.getVariable("sdncVersion") == '1702') {
+			if (execution.getVariable("sdncVersion") != '1610') {
 				// skip: 1702 for 'changeassign' or equivalent not yet defined in SNDC, so no rollback.
 			} else {
 				prepareSDNCRollbackRequest(execution)

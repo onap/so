@@ -21,8 +21,14 @@
 package org.openecomp.mso.openstack.utils;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.ObjectMapper;
 
 import org.openecomp.mso.cloud.CloudConfigFactory;
 import org.openecomp.mso.cloud.CloudSite;
@@ -41,6 +47,7 @@ import com.woorea.openstack.base.client.OpenStackRequest;
 import com.woorea.openstack.heat.Heat;
 import com.woorea.openstack.heat.model.Stack;
 import com.woorea.openstack.heat.model.UpdateStackParam;
+import com.woorea.openstack.heat.model.Stack.Output;
 
 public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
 
@@ -48,6 +55,8 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
     private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
 
     protected MsoJavaProperties msoProps = null;
+
+    private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
 
     public MsoHeatUtilsWithUpdate (String msoPropID, MsoPropertiesFactory msoPropertiesFactory, CloudConfigFactory cloudConfFactory) {
         super (msoPropID,msoPropertiesFactory,cloudConfFactory);
@@ -268,7 +277,13 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
             while (loopAgain) {
                 try {
                     updateStack = queryHeatStack (heatClient, canonicalName);
-                    LOGGER.debug (updateStack.getStackStatus ());
+                    LOGGER.debug (updateStack.getStackStatus () + " (" + canonicalName + ")");
+                    try {
+                    	LOGGER.debug("Current stack " + this.getOutputsAsStringBuilder(heatStack).toString());
+                    } catch (Exception e) {
+                    	LOGGER.debug("an error occurred trying to print out the current outputs of the stack");
+                    }
+
 
                     if ("UPDATE_IN_PROGRESS".equals (updateStack.getStackStatus ())) {
                         // Stack update is still running.
@@ -289,6 +304,7 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
                             }
                         }
                         pollTimeout -= createPollInterval;
+                        LOGGER.debug("pollTimeout remaining: " + pollTimeout);
                     } else {
                         loopAgain = false;
                     }
@@ -330,4 +346,91 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
         }
         return new StackInfo (updateStack);
     }
+    
+	private StringBuilder getOutputsAsStringBuilder(Stack heatStack) {
+		// This should only be used as a utility to print out the stack outputs
+		// to the log
+		StringBuilder sb = new StringBuilder("");
+		if (heatStack == null) {
+			sb.append("(heatStack is null)");
+			return sb;
+		}
+		List<Output> outputList = heatStack.getOutputs();
+		if (outputList == null || outputList.isEmpty()) {
+			sb.append("(outputs is empty)");
+			return sb;
+		}
+		Map<String, Object> outputs = new HashMap<String,Object>();
+		for (Output outputItem : outputList) {
+			outputs.put(outputItem.getOutputKey(), outputItem.getOutputValue());
+		}
+		int counter = 0;
+		sb.append("OUTPUTS:\n");
+		for (String key : outputs.keySet()) {
+			sb.append("outputs[" + counter++ + "]: " + key + "=");
+			Object obj = outputs.get(key);
+			if (obj instanceof String) {
+				sb.append((String)obj +" (a string)");
+			} else if (obj instanceof JsonNode) {
+				sb.append(this.convertNode((JsonNode)obj) + " (a JsonNode)");
+			} else if (obj instanceof java.util.LinkedHashMap) {
+				try {
+					String str = JSON_MAPPER.writeValueAsString(obj);
+					sb.append(str + " (a java.util.LinkedHashMap)");
+				} catch (Exception e) {
+					sb.append("(a LinkedHashMap value that would not convert nicely)");
+				}				
+			} else if (obj instanceof Integer) {
+				String str = "";
+				try {
+					str = obj.toString() + " (an Integer)\n";
+				} catch (Exception e) {
+					str = "(an Integer unable to call .toString() on)";
+				}
+				sb.append(str);
+			} else if (obj instanceof ArrayList) {
+				String str = "";
+				try {
+					str = obj.toString() + " (an ArrayList)";
+				} catch (Exception e) {
+					str = "(an ArrayList unable to call .toString() on?)";
+				}
+				sb.append(str);
+			} else if (obj instanceof Boolean) {
+				String str = "";
+				try {
+					str = obj.toString() + " (a Boolean)";
+				} catch (Exception e) {
+					str = "(an Boolean unable to call .toString() on?)";
+				}
+				sb.append(str);
+			}
+			else {
+				String str = "";
+				try {
+					str = obj.toString() + " (unknown Object type)";
+				} catch (Exception e) {
+					str = "(a value unable to call .toString() on?)";
+				}
+				sb.append(str);
+			}
+			sb.append("\n");
+		}
+		sb.append("[END]");
+		return sb;
+	}
+	
+	private String convertNode(final JsonNode node) {
+		try {
+			final Object obj = JSON_MAPPER.treeToValue(node, Object.class);
+			final String json = JSON_MAPPER.writeValueAsString(obj);
+			return json;
+		} catch (JsonParseException jpe) {
+			LOGGER.debug("Error converting json to string " + jpe.getMessage());
+		} catch (Exception e) {
+			LOGGER.debug("Error converting json to string " + e.getMessage());
+		}
+		return "[Error converting json to string]";
+	}
+	
 }

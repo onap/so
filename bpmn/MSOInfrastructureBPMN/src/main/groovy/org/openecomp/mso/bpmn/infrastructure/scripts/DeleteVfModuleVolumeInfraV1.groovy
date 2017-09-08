@@ -132,18 +132,7 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 		execution.setVariable('DELVfModVol_volumeParams', utils.getNodeXml(request, 'volume-params'))
 		execution.setVariable('DELVfModVol_cloudRegion', utils.getNodeText1(request, 'aic-cloud-region'))
 
-		try {
-			// Catalog DB headers Authorization
-			String basicAuthValueDB = execution.getVariable("URN_mso_adapters_db_auth")
-			utils.log("DEBUG", " Obtained BasicAuth userid password for Catalog DB adapter: " + basicAuthValueDB, isDebugLogEnabled)
-			
-			def encodedString = utils.getBasicAuth(basicAuthValueDB, execution.getVariable("URN_mso_msoKey"))
-			execution.setVariable("BasicAuthHeaderValueDB",encodedString)
-		} catch (IOException ex) {
-			String dataErrorMessage = " Unable to encode Catalog DB user/password string - " + ex.getMessage()
-			utils.log("DEBUG", dataErrorMessage, isDebugLogEnabled)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
-		}
+		setBasicDBAuthHeader(execution, isDebugLogEnabled)
 		
 		logDebug('Request: ' + createVolumeIncoming, isDebugLogEnabled)
 	}
@@ -436,7 +425,7 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 	public void prepareDBRequest (Execution execution, isDebugLogEnabled) {
 
 		WorkflowException workflowExceptionObj = execution.getVariable("WorkflowException")
-
+		ExceptionUtil exceptionUtil = new ExceptionUtil();
 		def requestId = execution.getVariable('DELVfModVol_requestId')
 		def volOutputs = execution.getVariable('DELVfModVol_volumeOutputs')
 		def statusMessage = "VolumeGroup successfully deleted"
@@ -450,7 +439,7 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 			requestStatus = "FAILURE"
 			progress = ""
 		}
-
+		
 		String updateInfraRequest = """
 			<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
 					xmlns:req="http://org.openecomp.mso/requestsdb">

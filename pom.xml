@@ -39,7 +39,6 @@
 		<!-- this is used for Chef mso-code cookbook -->
 		<swm.version>2.19.3-1</swm.version>
 		<openstack.version>1.1.0-SNAPSHOT</openstack.version>
-		<evosuiteVersion>1.0.4-alpha2</evosuiteVersion>
 		<nexusproxy>https://nexus.onap.org</nexusproxy>
 		<snapshotNexusPath>/content/repositories/snapshots/</snapshotNexusPath>
 		<releaseNexusPath>/content/repositories/releases/</releaseNexusPath>
@@ -91,10 +90,11 @@
 			<id>central</id>
 			<url>http://repo1.maven.org/maven2</url>
 		</pluginRepository>
+
 		<pluginRepository>
-			<id>EvoSuite</id>
-			<name>EvoSuite Repository</name>
-			<url>http://www.evosuite.org/m2</url>
+			<id>Restlet</id>
+			<name>Restlet Repository</name>
+			<url>http://maven.restlet.com</url>
 		</pluginRepository>
 	</pluginRepositories>
 	<repositories>
@@ -118,6 +118,7 @@
 			<name>MSO Release Repository</name>
 			<url>${nexusproxy}/${releaseNexusPath}</url>
 		</repository>
+
 		<repository>
 			<id>ecomp-staging</id>
 			<name>MSO Staging Repository</name>
@@ -194,12 +195,6 @@
 				<configuration>
 					<!--		<forkCount>2C</forkCount>
 					    <reuseForks>true</reuseForks> -->
-					<properties>
-						<property>
-							<name>listener</name>
-							<value>org.evosuite.runtime.InitializingListener</value>
-						</property>
-					</properties>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -380,23 +375,6 @@
 				</executions>
 			</plugin>
 		</plugins>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.evosuite.plugins</groupId>
-					<artifactId>evosuite-maven-plugin</artifactId>
-					<version>${evosuiteVersion}</version>
-					<executions>
-						<execution>
-							<goals>
-								<goal>prepare</goal>
-							</goals>
-							<phase>process-test-classes</phase>
-						</execution>
-					</executions>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 	</build>
 	<!-- *********************************************************************************************************** -->
 	<!-- Dependencies -->

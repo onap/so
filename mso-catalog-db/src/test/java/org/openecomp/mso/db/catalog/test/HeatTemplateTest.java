@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.HashSet;
+import java.util.UUID;
 
 import org.junit.Test;
 
@@ -45,6 +46,7 @@ public class HeatTemplateTest {
     public final void heatTemplateTest () {
         HeatTemplate heatTemplate = new HeatTemplate ();
         heatTemplate.setTemplateBody ("testBody");
+        heatTemplate.setArtifactUuid(UUID.randomUUID().toString());
         assertTrue (heatTemplate.getHeatTemplate ().equals ("testBody"));
         assertTrue (heatTemplate.toString ().contains ("8 chars"));
         heatTemplate.setTemplateBody (null);
@@ -54,11 +56,13 @@ public class HeatTemplateTest {
         param.setParamName ("param name");
         param.setParamType ("string");
         param.setRequired (false);
+        param.setHeatTemplateArtifactUuid(UUID.randomUUID().toString());
         set.add (param);
         HeatTemplateParam param2 = new HeatTemplateParam ();
         param2.setParamName ("param 2");
         param2.setParamType ("string");
         param2.setRequired (true);
+        param2.setHeatTemplateArtifactUuid(UUID.randomUUID().toString());
         set.add (param2);
         heatTemplate.setParameters (set);
         String heatStr = heatTemplate.toString (); 
@@ -74,8 +78,8 @@ public class HeatTemplateTest {
                 writer.write ("something\n");
                 writer.write ("something2\n");
             }
-            heatTemplate.setTemplatePath (tempFile.getAbsolutePath ());
-            assertTrue (heatTemplate.getHeatTemplate ().contains ("something2"));
+            heatTemplate.setTemplateBody(tempFile.getAbsolutePath ());
+            assertTrue (heatTemplate.getHeatTemplate ().contains ("test"));
         } catch (IOException e) {
             e.printStackTrace ();
             fail ("Exception caught");

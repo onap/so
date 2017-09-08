@@ -5,8 +5,8 @@
    <orchestration-status>active</orchestration-status>
    <is-base-vf-module>true</is-base-vf-module>
    <resource-version>1475077639</resource-version>
-   <persona-model-id>ff5256d2-5a33-55df-13ab-12abad84e7ff</persona-model-id>
-   <persona-model-version>1.0</persona-model-version>
+   <model-invariant-id>ff5256d2-5a33-55df-13ab-12abad84e7ff</model-invariant-id>
+   <model-version-id>1.0</model-version-id>
    <relationship-list>
       <relationship>
          <related-to>volume-group</related-to>

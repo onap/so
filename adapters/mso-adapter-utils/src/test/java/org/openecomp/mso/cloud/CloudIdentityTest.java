@@ -39,6 +39,9 @@ public class CloudIdentityTest {
         id.setMsoId ("msoId");
         id.setMsoPass (CloudIdentity.encryptPassword ("password"));
         id.setTenantMetadata (true);
+        id.setIdentityServerType(null);
+        id.setIdentityAuthenticationType(null);
+        
 
         assertTrue (id.getAdminTenant ().equals ("AdminTenant"));
         assertTrue (id.getId ().equals ("id"));
@@ -48,6 +51,7 @@ public class CloudIdentityTest {
         assertTrue (id.getMsoPass ().equals ("password"));
         assertTrue (id.hasTenantMetadata ());
 //        assertTrue (id.toString ().contains ("keystone"));
+        assertTrue(id.toString().contains("null"));
     }
 
     @Test
@@ -56,4 +60,5 @@ public class CloudIdentityTest {
         assertTrue (encrypted != null);
         assertTrue (!encrypted.equals ("password"));
     }
+    
 }

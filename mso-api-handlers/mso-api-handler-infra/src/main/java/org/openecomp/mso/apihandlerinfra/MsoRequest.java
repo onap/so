@@ -64,13 +64,14 @@ import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.RequestInfo;
 import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.RequestParameters;
 import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.ServiceException;
 import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.ServiceInstancesRequest;
+import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.SubscriberInfo;
 import org.openecomp.mso.apihandlerinfra.vnfbeans.RequestStatusType;
 import org.openecomp.mso.apihandlerinfra.vnfbeans.VnfInputs;
 import org.openecomp.mso.apihandlerinfra.vnfbeans.VnfRequest;
-import org.openecomp.mso.db.HibernateUtils;
+import org.openecomp.mso.db.AbstractSessionFactoryManager;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
-import org.openecomp.mso.requestsdb.HibernateUtilsRequestsDb;
+import org.openecomp.mso.requestsdb.RequestsDbSessionFactoryManager;
 import org.openecomp.mso.requestsdb.InfraActiveRequests;
 import org.openecomp.mso.requestsdb.RequestsDatabase;
 import org.openecomp.mso.utils.UUIDChecker;
@@ -109,7 +110,7 @@ public class MsoRequest {
     private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH);
     private static final String NOT_PROVIDED = "not provided";
 
-    protected HibernateUtils hibernateUtils = new HibernateUtilsRequestsDb ();
+    protected AbstractSessionFactoryManager requestsDbSessionFactoryManager = new RequestsDbSessionFactoryManager ();
 
     MsoRequest (String requestId) {
         this.requestId = requestId;
@@ -287,10 +288,31 @@ public class MsoRequest {
 
         this.requestScope = modelInfo.getModelType().name();
 
+        // modelCustomizationId is required when usePreLoad is false for v4 and higher for VF Module Create
+        if(requestParameters != null && reqVersion > 3 && requestScope.equalsIgnoreCase(ModelType.vfModule.name()) && action == Action.createInstance && !requestParameters.isUsePreload()) {
+        	if(!UUIDChecker.isValidUUID(modelInfo.getModelCustomizationId())) {
+        		throw new ValidationException("modelCustomizationId");
+        	}
+        }
+        
+        // modelCustomizationId is required when usePreLoad is false for v5 and higher for VF Module Replace
+        if(requestParameters != null && reqVersion > 4 && requestScope.equalsIgnoreCase(ModelType.vfModule.name()) && action == Action.replaceInstance && !requestParameters.isUsePreload()) {
+        	if(!UUIDChecker.isValidUUID(modelInfo.getModelCustomizationId())) {
+        		throw new ValidationException("modelCustomizationId");
+        	}
+        }
+        
+        // modelCustomizationId or modelCustomizationName are required when usePreLoad is false for v5 and higher for VNF Replace
+        if(requestParameters != null && reqVersion > 4 && requestScope.equalsIgnoreCase(ModelType.vnf.name()) && action == Action.replaceInstance && !requestParameters.isUsePreload()) {
+        	if(!UUIDChecker.isValidUUID(modelInfo.getModelCustomizationId()) && modelInfo.getModelCustomizationName() == null) {
+        		throw new ValidationException("modelCustomizationId or modelCustomizationName");
+        	}
+        }
+
         //is required for serviceInstance delete macro when aLaCarte=false (v3)
-        //create and updates except for network
+        //create and updates except for network (except v4)
         if (empty (modelInfo.getModelInvariantId ()) && ((this.reqVersion >2 && !this.aLaCarteFlag && requestScope.equalsIgnoreCase(ModelType.service.name()) && action == Action.deleteInstance) ||
-        		!(requestScope.equalsIgnoreCase (ModelType.network.name ())) && (action == Action.createInstance || action == Action.updateInstance))) {
+                !(this.reqVersion < 4 && requestScope.equalsIgnoreCase (ModelType.network.name ())) && (action == Action.createInstance || action == Action.updateInstance))) {
         	throw new ValidationException ("modelInvariantId");
         }
 
@@ -307,11 +329,17 @@ public class MsoRequest {
         	throw new ValidationException ("modelName");
         }
 
-        if (empty (modelInfo.getModelVersion ()) && ((this.reqVersion >2 && !this.aLaCarteFlag && requestScope.equalsIgnoreCase(ModelType.service.name()) && action == Action.deleteInstance) ||
-        		!(requestScope.equalsIgnoreCase (ModelType.network.name ())) && (action == Action.createInstance || action == Action.updateInstance))) {
+        if (empty (modelInfo.getModelVersion ()) && ((this.reqVersion == 3 && !this.aLaCarteFlag && requestScope.equalsIgnoreCase(ModelType.service.name()) && action == Action.deleteInstance) || 
+        		!(this.reqVersion < 4 && requestScope.equalsIgnoreCase (ModelType.network.name ())) && (action == Action.createInstance || action == Action.updateInstance))) {
         	throw new ValidationException ("modelVersion");
         }
 
+        // modelVersionId doesn't exist in v2, not required field in v3, is required for serviceInstance delete macro when aLaCarte=false in v4
+        if (this.reqVersion > 3 && empty (modelInfo.getModelVersionId()) && ((!this.aLaCarteFlag && requestScope.equalsIgnoreCase(ModelType.service.name()) && action == Action.deleteInstance) ||
+        		(action == Action.createInstance || action == Action.updateInstance))) {
+        	throw new ValidationException ("modelVersionId");
+        }
+        
         if(requestScope.equalsIgnoreCase(ModelType.vnf.name()) && action != Action.deleteInstance && empty (modelInfo.getModelCustomizationName ())) {
         	if(this.reqVersion<=2){
         		throw new ValidationException ("modelCustomizationName");
@@ -328,12 +356,9 @@ public class MsoRequest {
         if(!empty(modelInfo.getModelNameVersionId())){
         	modelInfo.setModelVersionId(modelInfo.getModelNameVersionId());
         }
-        if(!empty(modelInfo.getModelVersionId())){
-        	modelInfo.setModelNameVersionId(modelInfo.getModelVersionId());
-        }
 
         this.cloudConfiguration = sir.getRequestDetails ().getCloudConfiguration ();
-        if ( (((!this.aLaCarteFlag && requestScope.equalsIgnoreCase (ModelType.service.name ())) ||
+        if ( (((!this.aLaCarteFlag && requestScope.equalsIgnoreCase (ModelType.service.name ()) && this.reqVersion < 5) ||
         		(!requestScope.equalsIgnoreCase (ModelType.service.name ())) && action != Action.updateInstance))
         		&& cloudConfiguration == null) {
         	throw new ValidationException ("cloudConfiguration");
@@ -349,13 +374,22 @@ public class MsoRequest {
         }
 
 
-
         if (requestScope.equalsIgnoreCase (ModelType.service.name ()) && action == Action.createInstance) {
         	if (requestParameters == null) {
         		throw new ValidationException ("requestParameters");
         	}
         	if (empty (requestParameters.getSubscriptionServiceType ())) {
         		throw new ValidationException ("subscriptionServiceType");
+        	}
+        }
+        
+        if (this.reqVersion > 4 && requestScope.equalsIgnoreCase (ModelType.service.name ()) && action == Action.createInstance) {
+        	SubscriberInfo subscriberInfo = sir.getRequestDetails ().getSubscriberInfo();
+        	if (subscriberInfo == null) {
+        		throw new ValidationException ("subscriberInfo");
+        	}
+        	if (empty (subscriberInfo.getGlobalSubscriberId ())) {
+        		throw new ValidationException ("globalSubscriberId");
         	}
         }
 
@@ -378,9 +412,19 @@ public class MsoRequest {
         	}
         }
 
-        if (empty (requestInfo.getProductFamilyId ()) && ((requestScope.equalsIgnoreCase (ModelType.vnf.name ()) && action == Action.createInstance) ||
-        		(requestScope.equalsIgnoreCase (ModelType.network.name ()) && (action == Action.createInstance || action == Action.updateInstance)))) {
+        if (empty (requestInfo.getProductFamilyId ()))  {
+        	// Mandatory for vnf Create(aLaCarte=true), Network Create(aLaCarte=true) and network update
+        	//Mandatory for macro request create service instance
+        	if((requestScope.equalsIgnoreCase (ModelType.vnf.name ()) && action == Action.createInstance) || 
+        		(requestScope.equalsIgnoreCase (ModelType.network.name ()) && (action == Action.createInstance || action == Action.updateInstance)) ||
+        		(this.reqVersion > 3 && !this.aLaCarteFlag && requestScope.equalsIgnoreCase(ModelType.service.name()) && action == Action.createInstance)) {
         	throw new ValidationException ("productFamilyId");
+        }
+        }
+       
+        //required for all operations in V4
+        if(empty(requestInfo.getRequestorId()) && this.reqVersion > 3) {
+        	throw new ValidationException ("requestorId");
         }
 
         if (empty (requestInfo.getSource ())) {
@@ -401,11 +445,12 @@ public class MsoRequest {
 	       	for(RelatedInstanceList relatedInstanceList : instanceList){
 	        	RelatedInstance relatedInstance = relatedInstanceList.getRelatedInstance();
 
-	        	if (relatedInstance.getModelInfo () == null) {
+	        	ModelInfo relatedInstanceModelInfo = relatedInstance.getModelInfo ();
+				if (relatedInstanceModelInfo == null) {
 	          		throw new ValidationException ("modelInfo in relatedInstance");
 	          	}
 
-	          	if (relatedInstance.getModelInfo ().getModelType () == null) {
+	          	if (relatedInstanceModelInfo.getModelType () == null) {
 	          		throw new ValidationException ("modelType in relatedInstance");
 	          	}
 
@@ -426,50 +471,47 @@ public class MsoRequest {
 
 
 	          	if (action != Action.deleteInstance) {
+	          		if(!relatedInstanceModelInfo.getModelType().equals(ModelType.volumeGroup)) {
 
-	          		// ModelInvariantId is not required in volumeGroup relatedInstance
-	          		if(!(relatedInstance.getModelInfo ().getModelType ().equals(ModelType.volumeGroup)) &&
-	          			empty (relatedInstance.getModelInfo ().getModelInvariantId ())) {
+	          			if(empty (relatedInstanceModelInfo.getModelInvariantId ())) {
 	          			throw new ValidationException ("modelInvariantId in relatedInstance");
+	          			} else if(this.reqVersion > 3 && empty(relatedInstanceModelInfo.getModelVersionId ())) {
+	          				throw new ValidationException("modelVersionId in relatedInstance");
+	          			} else if(empty(relatedInstanceModelInfo.getModelName ())) {
+	          				throw new ValidationException ("modelName in relatedInstance");
+	          			} else if (empty (relatedInstanceModelInfo.getModelVersion ())) {
+	          				throw new ValidationException ("modelVersion in relatedInstance");
+	          			}
 	          		}
 
-		          	if (!empty (relatedInstance.getModelInfo ().getModelInvariantId ()) &&
-		          			!UUIDChecker.isValidUUID (relatedInstance.getModelInfo ().getModelInvariantId ())) {
+		          	if (!empty (relatedInstanceModelInfo.getModelInvariantId ()) &&
+		          			!UUIDChecker.isValidUUID (relatedInstanceModelInfo.getModelInvariantId ())) {
 		          		throw new ValidationException ("modelInvariantId format in relatedInstance");
 		          	}
-
-		          	if (empty(relatedInstance.getModelInfo ().getModelName ()) &&
-		          			!(relatedInstance.getModelInfo ().getModelType ().equals (ModelType.volumeGroup))) {
-		          		throw new ValidationException ("modelName in relatedInstance");
 		          	}
 
-		          	if (empty (relatedInstance.getModelInfo ().getModelVersion ())  &&
-		          			!(relatedInstance.getModelInfo ().getModelType ().equals (ModelType.volumeGroup))) {
-		          		throw new ValidationException ("modelVersion in relatedInstance");
-		          	}
+	          	if (empty (relatedInstanceModelInfo.getModelCustomizationName ()) && relatedInstanceModelInfo.getModelType ().equals (ModelType.vnf) ) {
+	          		if(this.reqVersion >=3 && empty (relatedInstanceModelInfo.getModelCustomizationId()) && action != Action.deleteInstance) {
+	          			throw new ValidationException ("modelCustomizationName or modelCustomizationId in relatedInstance of vnf");
+	          		} else if(this.reqVersion < 3) {
+	          			throw new ValidationException ("modelCustomizationName in relatedInstance");
+	          	}
 	          	}
 
-	          	if (empty (relatedInstance.getModelInfo ().getModelCustomizationName ()) &&
-	          			relatedInstance.getModelInfo ().getModelType ().equals (ModelType.vnf)) {
-	          		throw new ValidationException ("modelCustomizationName in relatedInstance");
-	          	}
-
-	          	if(relatedInstance.getModelInfo().getModelType().equals(ModelType.service)) {
+	          	if(relatedInstanceModelInfo.getModelType().equals(ModelType.service)) {
 	          		isRelatedServiceInstancePresent = true;
 	          		if (!relatedInstance.getInstanceId ().equals (this.sir.getServiceInstanceId ())) {
 	          			throw new ValidationException ("serviceInstanceId matching the serviceInstanceId in request URI");
 	          		}
-	          		serviceModelName = relatedInstance.getModelInfo ().getModelName ();
-	          		asdcServiceModelVersion = relatedInstance.getModelInfo().getModelVersion ();
-	          	}
-	          	else if(relatedInstance.getModelInfo().getModelType().equals(ModelType.vnf)) {
+	          		serviceModelName = relatedInstanceModelInfo.getModelName ();
+	          		asdcServiceModelVersion = relatedInstanceModelInfo.getModelVersion ();
+	          	} else if(relatedInstanceModelInfo.getModelType().equals(ModelType.vnf)) {
 	          		isRelatedVnfInstancePresent = true;
 	          		if (!relatedInstance.getInstanceId ().equals (this.sir.getVnfInstanceId ())) {
 	          			throw new ValidationException ("vnfInstanceId matching the vnfInstanceId in request URI");
 	          		}
-	          		vnfModelName = relatedInstance.getModelInfo().getModelCustomizationName();
-	          	}
-	          	else if(relatedInstance.getModelInfo().getModelType().equals(ModelType.volumeGroup)) {
+	          		vnfModelName = relatedInstanceModelInfo.getModelCustomizationName();
+	          	} else if(relatedInstanceModelInfo.getModelType().equals(ModelType.volumeGroup)) {	          		
 	           		volumeGroupId = relatedInstance.getInstanceId ();
 	          	}
           	}
@@ -556,21 +598,22 @@ public class MsoRequest {
 
             try{
           	  if(queryParam.equalsIgnoreCase("filter")){
-
-          		  StringTokenizer st = new StringTokenizer(entry.getValue().get(0), ":");
-
-          		  int counter=0;
-          		  String mapKey=null;
-          		  List<String> orchestrationList = new ArrayList<String>();
-          		  while (st.hasMoreElements()) {
-          			  if(counter == 0){
-          				  mapKey = st.nextElement() + "";
-          			  } else{
-          				  orchestrationList.add(st.nextElement() + "");
-          			  }
-          			 counter++;
-        		  }
-          		orchestrationFilterParams.put(mapKey, orchestrationList);
+          		  for(String value : entry.getValue()) {
+	          		  StringTokenizer st = new StringTokenizer(value, ":");
+	
+	          		  int counter=0;
+	          		  String mapKey=null;
+	          		  List<String> orchestrationList = new ArrayList<String>();
+	          		  while (st.hasMoreElements()) {
+	          			  if(counter == 0){
+	          				  mapKey = st.nextElement() + "";
+	          			  } else{
+	          				  orchestrationList.add(st.nextElement() + "");
+	          			  }
+	          			 counter++;
+	        		  }
+	          		  orchestrationFilterParams.put(mapKey, orchestrationList);
+          		  }
           	  }
 
             }catch(Exception e){
@@ -590,7 +633,7 @@ public class MsoRequest {
         Session session = null;
         try {
 
-            session = hibernateUtils.getSessionFactory ().openSession ();
+            session = requestsDbSessionFactoryManager.getSessionFactory ().openSession ();
             session.beginTransaction ();
 
             if (null == sir) {
@@ -727,7 +770,7 @@ public class MsoRequest {
     public void updateFinalStatus (Status status) {
         int result = 0;
         try {
-            result = RequestsDatabase.updateInfraFinalStatus (requestId,
+            result = (RequestsDatabase.getInstance()).updateInfraFinalStatus (requestId,
                                                               status.toString (),
                                                               this.errorMessage,
                                                               this.progress,
@@ -939,6 +982,20 @@ public class MsoRequest {
     	//mapper.configure(Feature.WRAP_ROOT_VALUE, true);
     	msoLogger.debug ("building sir from object " + sir);
     	requestJSON = mapper.writeValueAsString(sir);
+    	
+    	// Perform mapping from VID-style modelInfo fields to ASDC-style modelInfo fields
+    	
+    	msoLogger.debug("REQUEST JSON before mapping: " + requestJSON);
+    	// modelUuid = modelVersionId
+    	requestJSON = requestJSON.replaceAll("\"modelVersionId\":","\"modelUuid\":");
+    	// modelCustomizationUuid = modelCustomizationId
+    	requestJSON = requestJSON.replaceAll("\"modelCustomizationId\":","\"modelCustomizationUuid\":");
+    	// modelInstanceName = modelCustomizationName
+    	requestJSON = requestJSON.replaceAll("\"modelCustomizationName\":","\"modelInstanceName\":");
+    	// modelInvariantUuid = modelInvariantId 
+    	requestJSON = requestJSON.replaceAll("\"modelInvariantId\":","\"modelInvariantUuid\":");    	
+    	msoLogger.debug("REQUEST JSON after mapping: " + requestJSON);
+    	
     	return requestJSON;
     }
 

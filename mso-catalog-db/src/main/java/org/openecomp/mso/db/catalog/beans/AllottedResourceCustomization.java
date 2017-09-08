@@ -19,20 +19,29 @@
  */
 package org.openecomp.mso.db.catalog.beans;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 import org.openecomp.mso.db.catalog.utils.MavenLikeVersioning;
+import org.openecomp.mso.db.catalog.beans.AllottedResource;
 
-public class AllottedResourceCustomization extends MavenLikeVersioning {
+public class AllottedResourceCustomization extends MavenLikeVersioning implements Serializable {
+	
+	private static final long serialVersionUID = 768026109321305392L;
 
 	private String modelCustomizationUuid;
-	private String modelUuid;
-	private String modelInvariantUuid;
-	private String modelVersion = null; // duplicate of version kept in parent class
-	private String modelName;
-	private String description;
+	private String arModelUuid;
 	private Timestamp created;
 	private String modelInstanceName;
+	private String providingServiceModelInvariantUuid;
+	private String targetNetworkRole;
+	private String nfFunction;
+	private String nfType;
+	private String nfRole;
+	private String nfNamingCode;
+	private Integer minInstances;
+	private Integer maxInstances;
+	private AllottedResource ar = null;
 
 	public AllottedResourceCustomization() {
 		super();
@@ -45,32 +54,11 @@ public class AllottedResourceCustomization extends MavenLikeVersioning {
 		this.modelCustomizationUuid = modelCustomizationUuid;
 	}
 
-	public String getModelUuid() {
-		return this.modelUuid;
+	public String getArModelUuid() {
+		return this.arModelUuid;
 	}
-	public void setModelUuid(String modelUuid) {
-		this.modelUuid = modelUuid;
-	}
-
-	public String getModelInvariantUuid() {
-		return this.modelInvariantUuid;
-	}
-	public void setModelInvariantUuid(String modelInvariantUuid) {
-		this.modelInvariantUuid = modelInvariantUuid;
-	}
-
-	public String getModelName() {
-		return this.modelName;
-	}
-	public void setModelName(String modelName) {
-		this.modelName = modelName;
-	}
-
-	public String getDescription() {
-		return this.description;
-	}
-	public void setDescription(String description) {
-		this.description = description;
+	public void setArModelUuid(String arModelUuid) {
+		this.arModelUuid = arModelUuid;
 	}
 
 	public Timestamp getCreated() {
@@ -86,38 +74,74 @@ public class AllottedResourceCustomization extends MavenLikeVersioning {
 	public void setModelInstanceName(String modelInstanceName) {
 		this.modelInstanceName = modelInstanceName;
 	}
-	public String getModelVersion() {
-		return this.modelVersion;
+	public AllottedResource getAllottedResource() {
+		return this.ar;
 	}
-	public void setModelVersion(String modelVersion) {
-		this.modelVersion = modelVersion;
+	public void setAllottedResource(AllottedResource ar) {
+		this.ar = ar;
 	}
-
-	public String getModelInvariantId() { return "not yet implemented"; }
+	public String getProvidingServiceModelInvariantUuid() {
+		return this.providingServiceModelInvariantUuid;
+	}
+	public void setProvidingServiceModelInvariantUuid(String providingServiceModelInvariantUuid) {
+		this.providingServiceModelInvariantUuid = providingServiceModelInvariantUuid;
+	}
+	public String getTargetNetworkRole() {
+		return this.targetNetworkRole;
+	}
+	public void setTargetNetworkRole(String targetNetworkRole) {
+		this.targetNetworkRole = targetNetworkRole;
+	}
+	public String getNfFunction() {
+		return this.nfFunction;
+	}
+	public void setNfFunction(String nfFunction) {
+		this.nfFunction = nfFunction;
+	}
+	public String getNfType() {
+		return this.nfType;
+	}
+	public void setNfType(String nfType) {
+		this.nfType = nfType;
+	}
+	public String getNfRole() {
+		return this.nfRole;
+	}
+	public void setNfRole(String nfRole) {
+		this.nfRole = nfRole;
+	}
+	public String getNfNamingCode() {
+		return this.nfNamingCode;
+	}
+	public void setNfNamingCode(String nfNamingCode) {
+		this.nfNamingCode = nfNamingCode;
+	}
+	public Integer getMinInstances() {
+		return this.minInstances;
+	}
+	public void setMinInstances(Integer minInstances) {
+		this.minInstances = minInstances;
+	}
+	public Integer getMaxInstances() {
+		return this.maxInstances;
+	}
+	public void setMaxInstances(Integer maxInstances) {
+		this.maxInstances = maxInstances;
+	}
 
 	@Override
 	public String toString () {
 		StringBuffer sb = new StringBuffer();
-		sb.append("modelName=");
-		sb.append(this.modelName);
-		sb.append(",modelVersion=");
-		sb.append(this.modelVersion);
-		sb.append(",version=");
-		sb.append(this.version);
-		sb.append(",modelUuid=");
-		sb.append(this.modelUuid);
-		sb.append(",modelInvariantUuid=");
-		sb.append(this.modelInvariantUuid);
-		sb.append(",modelCustomizationUuid=");
+		sb.append("modelCustomizationUuid=");
 		sb.append(this.modelCustomizationUuid);
 		sb.append(",modelInstanceName=");
 		sb.append(this.modelInstanceName);
-		sb.append(",description=");
-		sb.append(this.description);
 		sb.append(",modelInstanceName=");
 		sb.append(this.modelInstanceName);
 		sb.append(",created=");
 		sb.append(this.created);
+		sb.append(",ar=");
+		sb.append(this.ar);
 
 		return sb.toString();
 	}

@@ -102,11 +102,11 @@ public class DoCreateVnfTest extends WorkflowTest {
 		variables.put("vnfType", "STMTN");
 		variables.put("productFamilyId", "a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb");
 		String vnfModelInfo = "{ "+ "\"modelType\": \"vnf\"," +
-				"\"modelInvariantId\": \"ff5256d2-5a33-55df-13ab-12abad84e7ff\"," +
-				"\"modelNameVersionId\": \"fe6478e5-ea33-3346-ac12-ab121484a3fe\"," +
+				"\"modelInvariantUuid\": \"ff5256d2-5a33-55df-13ab-12abad84e7ff\"," +
+				"\"modelUuid\": \"fe6478e5-ea33-3346-ac12-ab121484a3fe\"," +
 				"\"modelName\": \"vSAMP12\"," +
 				"\"modelVersion\": \"1.0\"," +
-				"\"modelCustomizationId\": \"MODEL-ID-1234\"," +
+				"\"modelCustomizationUuid\": \"MODEL-ID-1234\"," +
 				"}";
 		variables.put("vnfModelInfo", vnfModelInfo);
 
@@ -114,6 +114,15 @@ public class DoCreateVnfTest extends WorkflowTest {
 				"\"lcpCloudRegionId\": \"mdt1\"," +
 				"\"tenantId\": \"88a6ca3ee0394ade9403f075db23167e\"" + "}";
 		variables.put("cloudConfiguration", cloudConfiguration);
+		
+		String serviceModelInfo = "{ "+ "\"modelType\": \"service\"," +
+				"\"modelInvariantUuid\": \"995256d2-5a33-55df-13ab-12abad84e7ff\"," +
+				"\"modelUuid\": \"ab6478e5-ea33-3346-ac12-ab121484a3fe\"," +
+				"\"modelName\": \"ServicevSAMP12\"," +
+				"\"modelVersion\": \"1.0\"," +
+				"}";
+		variables.put("serviceModelInfo", serviceModelInfo);
+		variables.put("globalSubscriberId", "MSO-1610");
 	}
 
 }

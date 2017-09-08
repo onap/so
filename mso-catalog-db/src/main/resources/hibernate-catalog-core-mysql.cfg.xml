@@ -35,18 +35,31 @@
 		<property name="hibernate.c3p0.max_statements">50</property>
 		
 <!-- 		<property name="hibernate.hbm2ddl.auto">create</property> -->
-		
-		<mapping resource="VnfResource.hbm.xml"/>
-		<mapping resource="VnfRecipe.hbm.xml"/>
-		<mapping resource="HeatTemplate.hbm.xml"/>
-		<mapping resource="Service.hbm.xml"/>
-		<mapping resource="NetworkResource.hbm.xml"/>
-		<mapping resource="NetworkRecipe.hbm.xml"/>
+		<mapping resource="AllottedResource.hbm.xml"/>
+		<mapping resource="AllottedResourceCustomization.hbm.xml"/>
 		<mapping resource="HeatEnvironment.hbm.xml"/>
+		<mapping resource="HeatFiles.hbm.xml"/>
 		<mapping resource="HeatNestedTemplate.hbm.xml"/>
+		<mapping resource="HeatTemplate.hbm.xml"/>
+		<mapping resource="ModelRecipe.hbm.xml"/>
+		<mapping resource="NetworkRecipe.hbm.xml"/>
+		<mapping resource="NetworkResource.hbm.xml"/>
+		<mapping resource="NetworkResourceCustomization.hbm.xml"/>
+		<mapping resource="Service.hbm.xml"/>
+		<mapping resource="ServiceRecipe.hbm.xml"/>
+		<mapping resource="ServiceToAllottedResources.hbm.xml"/>
+		<mapping resource="ServiceToNetworks.hbm.xml"/>
+		<mapping resource="ServiceToResourceCustomization.hbm.xml"/>
+		<mapping resource="TempNetworkHeatTemplateLookup.hbm.xml"/>
+		<mapping resource="ToscaCsar.hbm.xml"/>
+		<mapping resource="VfModule.hbm.xml"/>
+		<mapping resource="VfModuleCustomization.hbm.xml"/>
+		<mapping resource="VfModuleToHeatFiles.hbm.xml"/>
 		<mapping resource="VnfComponent.hbm.xml"/>
 		<mapping resource="VnfComponentsRecipe.hbm.xml"/>
-		<mapping resource="VfModule.hbm.xml"/>
-		<mapping resource="VfModuleToHeatFiles.hbm.xml"/>
+		<mapping resource="VnfRecipe.hbm.xml"/>
+		<mapping resource="VnfResCustomToVfModuleCustom.hbm.xml"/>
+		<mapping resource="VnfResource.hbm.xml"/>
+		<mapping resource="VnfResourceCustomization.hbm.xml"/>
 	</session-factory>
 </hibernate-configuration>

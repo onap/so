@@ -186,14 +186,11 @@ public class CreateNetworkInstance extends AbstractServiceTaskProcessor {
 		
 		try {
 			
-			// "networkModelInfo" is expected to be sent 
-			String networkModelInfo = execution.getVariable("networkModelInfo")
-			utils.log("DEBUG", " networkModelInfo - " + networkModelInfo, isDebugEnabled)
-			
-			// "serviceModelInfo" is expected to be sent
-			String serviceModelInfo = execution.getVariable("serviceModelInfo")
-			utils.log("DEBUG", " serviceModelInfo - " + serviceModelInfo, isDebugEnabled)
-						 
+			// For Ala-Carte (sdnc = 1610): 
+			// 1. the Network ModelInfo is expected to be sent 
+			//     via requestDetails.modelInfo (modelType = network).
+			// 2. the Service ModelInfo is expected to be sent but will be IGNORE 
+			//     via requestDetails.relatedInstanceList.relatedInstance.modelInfo (modelType = service)
 										 
 		} catch (Exception ex) {
 			sendSyncError(execution)
@@ -234,6 +231,9 @@ public class CreateNetworkInstance extends AbstractServiceTaskProcessor {
 		try {
 			utils.log("DEBUG", " ***** Inside prepareDBRequestError() of CreateNetworkInstance ***** ", isDebugEnabled)
 
+			// set DB Header Authorization
+			setBasicDBAuthHeader(execution, isDebugEnabled)
+			
 			String statusMessage = ""
 			WorkflowException wfe = null
 			if (execution.getVariable("WorkflowException") instanceof WorkflowException) {
@@ -379,12 +379,16 @@ public class CreateNetworkInstance extends AbstractServiceTaskProcessor {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 
+		utils.log("DEBUG", "DB updateInfraRequest ResponseCode: " + execution.getVariable(Prefix + "dbReturnCode"), isDebugEnabled)
+		utils.log("DEBUG", "DB updateInfraRequest Response: " + execution.getVariable(Prefix + "createDBResponse"), isDebugEnabled)
+		
 		utils.log("DEBUG", " ***** Prepare for FalloutHandler. FAILURE - prepare request for sub-process FalloutHandler. *****", isDebugEnabled)
 
 		String falloutHandlerRequest = ""
 		String requestId = execution.getVariable("mso-request-id")
 
 		try {
+			
 			WorkflowException wfe = execution.getVariable("WorkflowException")
 			String errorCode = String.valueOf(wfe.getErrorCode())
 			String errorMessage = wfe.getErrorMessage()
@@ -408,8 +412,8 @@ public class CreateNetworkInstance extends AbstractServiceTaskProcessor {
 			utils.log("DEBUG", "  Overall Error Response going to FalloutHandler: " + "\n" + falloutHandlerRequest, isDebugEnabled)
 
 		} catch (Exception ex) {
-			String errorException = "  Bpmn error encountered in CreateNetworkInstance flow. FalloutHandlerRequest,  buildErrorResponse() - " + ex.getMessage()
-			utils.log("DEBUG", errorException, isDebugEnabled)
+			String errorException = "  Bpmn error encountered in CreateNetworkInstance flow. FalloutHandlerRequest,  buildErrorResponse()"
+			utils.log("DEBUG", "Exception error in CreateNetworkInstance flow,  buildErrorResponse(): "  + ex.getMessage(), isDebugEnabled)
 			falloutHandlerRequest =
 			"""<aetgt:FalloutHandlerRequest xmlns:aetgt="http://org.openecomp/mso/workflow/schema/v1"
 					                             xmlns:ns="http://org.openecomp/mso/request/types/v1"

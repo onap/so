@@ -61,12 +61,6 @@
 			<artifactId>MSOCoreBPMN</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<dependency>
-             <groupId>org.evosuite</groupId>
-             <artifactId>evosuite-standalone-runtime</artifactId>
-             <version>${evosuiteVersion}</version>
-             <scope>test</scope>
-        </dependency>
 	</dependencies>
 	
 </project>

@@ -30,6 +30,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 
 /**
  * Please describe the StubResponseVNF.java class
@@ -121,10 +122,42 @@ public class StubResponseVNFAdapter {
 					.withHeader("Content-Type", "application/xml")));
 	}
 	
+	public static void mockPutVNFVolumeGroupRollback(String volumeGroupId, int statusCode) {
+		stubFor(delete(urlMatching("/vnfs/v1/volume-groups/" + volumeGroupId + "/rollback"))
+				.willReturn(aResponse()
+				.withStatus(statusCode)
+				.withHeader("Content-Type", "application/xml")));
+	}
 	public static void mockPostVNFVolumeGroup(int statusCode) {
 		stubFor(post(urlEqualTo("/vnfs/v1/volume-groups"))
 				.willReturn(aResponse()
 					.withStatus(statusCode)
 					.withHeader("Content-Type", "application/xml")));
+	}
+	
+	public static void mockVNFAdapterRest(String vnfId) {
+		stubFor(post(urlEqualTo("/vnfs/v1/vnfs/" + vnfId + "/vf-modules"))
+				.willReturn(aResponse()
+						.withStatus(200)));
+	}
+
+	public static void mockVNFAdapterRest_500(String vnfId) {
+		stubFor(post(urlEqualTo("/vnfs/v1/vnfs/" + vnfId + "/vf-modules"))
+				.willReturn(aResponse()
+						.withStatus(500)));
+	}
+	
+	public static void mockVfModuleDelete(String volumeGroupId) {
+		stubFor(delete(urlMatching("/vnfs/v1/volume-groups/"+ volumeGroupId))
+				.willReturn(aResponse()
+				.withStatus(202)
+				.withHeader("Content-Type", "application/xml")));
+	}
+	
+	public static void mockVfModuleDelete(String volumeGroupId, int statusCode) {
+		stubFor(delete(urlMatching("/vnfs/v1/volume-groups/78987"))
+				.willReturn(aResponse()
+				.withStatus(statusCode)
+				.withHeader("Content-Type", "application/xml")));
 	}
 }

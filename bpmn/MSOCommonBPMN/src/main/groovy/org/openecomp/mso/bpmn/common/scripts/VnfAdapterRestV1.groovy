@@ -269,6 +269,7 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 		} catch (Exception e) {
 			String msg = 'Caught exception in ' + method + ": " + e
 			logError(msg)
+			logDebug(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 		}
 	}

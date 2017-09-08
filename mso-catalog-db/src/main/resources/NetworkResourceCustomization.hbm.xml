@@ -21,34 +21,24 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-    <class name="org.openecomp.mso.db.catalog.beans.NetworkResourceCustomization" table="NETWORK_RESOURCE_CUSTOMIZATION">
-
-
-        <composite-id>
-            <key-property name="modelCustomizationUuid"  type="java.lang.String" >
-                <column name="MODEL_CUSTOMIZATION_UUID" length="200" not-null="true"/>
-            </key-property>
-            <key-property name="networkResourceId" type="int" >
-                <column name="NETWORK_RESOURCE_ID" length="11" not-null="false" default="null" />
-            </key-property>
-        </composite-id>
-
-        <property name="modelUuid" type="java.lang.String">
-            <column name="MODEL_UUID" length="200" not-null="true"/>
+    <class name="org.openecomp.mso.db.catalog.beans.NetworkResourceCustomization" table="NETWORK_RESOURCE_CUSTOMIZATION"> 
+		<id name="modelCustomizationUuid" column="MODEL_CUSTOMIZATION_UUID" type="java.lang.String" length="200"/>
+		<property name="networkResourceModelUuid" column="NETWORK_RESOURCE_MODEL_UUID" type="java.lang.String" length="200" not-null="true"/>
+        <property name="modelInstanceName" type="java.lang.String" length="200" not-null="true">
+            <column name="MODEL_INSTANCE_NAME" />
         </property>
-        <property name="modelName" type="java.lang.String">
-            <column name="MODEL_NAME" length="200" not-null="true"/>
+        <property name="networkTechnology" type="java.lang.String" length="45">
+            <column name="NETWORK_TECHNOLOGY" />
         </property>
-        <property name="modelInstanceName" type="java.lang.String">
-            <column name="MODEL_INSTANCE_NAME" length="200" not-null="true"/>
+        <property name="networkType" type="java.lang.String" length="45">
+            <column name="NETWORK_TYPE" />
         </property>
-        <property name="modelVersion" type="java.lang.String">
-            <column name="MODEL_VERSION" length="20" not-null="true"/>
+        <property name="networkScope" type="java.lang.String" length="45">
+            <column name="NETWORK_SCOPE" />
         </property>
-        <property name="modelInvariantUuid" type="java.lang.String">
-            <column name="MODEL_INVARIANT_UUID" length="200" not-null="true"/>
+        <property name="networkRole" type="java.lang.String" length="200">
+            <column name="NETWORK_ROLE" />
         </property>
-
         <property name="created" type="timestamp" generated="insert" update="false" insert="false" >
             <column name="CREATION_TIMESTAMP" not-null="true"/>
         </property>

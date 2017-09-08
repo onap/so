@@ -25,14 +25,17 @@ import javax.ws.rs.HEAD;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.core.Response;
-import org.openecomp.mso.HealthCheckUtils;
 
+import org.openecomp.mso.HealthCheckUtils;
 import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.utils.UUIDChecker;
 
-@Path("/")
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+
+@Path("/healthcheck")
+@Api(value="/healthcheck",description="API Handler Infra Health Check")
 public class HealthcheckHandler {
 
     public final static String MSO_PROP_APIHANDLER_INFRA = "MSO_PROP_APIHANDLER_INFRA";
@@ -41,8 +44,8 @@ public class HealthcheckHandler {
 
     @HEAD
     @GET
-    @Path("/healthcheck")
     @Produces("text/html")
+    @ApiOperation(value="Perform Health Check",response=Response.class)
     public Response healthcheck (@QueryParam("requestId") String requestId) {
         long startTime = System.currentTimeMillis ();
         MsoLogger.setServiceName ("Healthcheck");
@@ -62,51 +65,4 @@ public class HealthcheckHandler {
         msoLogger.debug("healthcheck - Successful");
         return HealthCheckUtils.HEALTH_CHECK_RESPONSE;
     }
-
-    @HEAD
-    @GET
-    @Path("/nodehealthcheck")
-    @Produces("text/html")
-    public Response nodeHealthcheck () {
-        long startTime = System.currentTimeMillis ();
-        MsoLogger.setServiceName ("NodeHealthcheck");
-        // Generate a Request Id
-        String requestId = UUIDChecker.generateUUID(msoLogger);
-        HealthCheckUtils healthCheck = new HealthCheckUtils ();
-        if (!healthCheck.siteStatusCheck (msoLogger, startTime)) {
-            return HealthCheckUtils.HEALTH_CHECK_NOK_RESPONSE;
-        }
-
-        if (healthCheck.verifyNodeHealthCheck(HealthCheckUtils.NodeType.APIH, requestId)) {
-            msoLogger.debug("nodeHealthcheck - Successful");
-            return HealthCheckUtils.HEALTH_CHECK_RESPONSE;
-        } else {
-            msoLogger.debug("nodeHealthcheck - At leaset one of the sub-modules is not available.");
-            return  HealthCheckUtils.HEALTH_CHECK_NOK_RESPONSE;
-        }
-    }
-
-    @HEAD
-    @GET
-    @Path("/globalhealthcheck")
-    @Produces("text/html")
-    public Response globalHealthcheck (@DefaultValue("true") @QueryParam("enableBpmn") boolean enableBpmn) {
-        long startTime = System.currentTimeMillis ();
-        MsoLogger.setServiceName ("GlobalHealthcheck");
-        // Generate a Request Id
-        String requestId = UUIDChecker.generateUUID(msoLogger);
-        HealthCheckUtils healthCheck = new HealthCheckUtils ();
-        if (!healthCheck.siteStatusCheck (msoLogger, startTime)) {
-            return HealthCheckUtils.HEALTH_CHECK_NOK_RESPONSE;
-        }
-
-        if (healthCheck.verifyGlobalHealthCheck(enableBpmn, requestId)) {
-            msoLogger.debug("globalHealthcheck - Successful");
-            return HealthCheckUtils.HEALTH_CHECK_RESPONSE;
-        } else {
-            msoLogger.debug("globalHealthcheck - At leaset one of the sub-modules is not available");
-            return  HealthCheckUtils.HEALTH_CHECK_NOK_RESPONSE;
-        }
-    } 
-
 }

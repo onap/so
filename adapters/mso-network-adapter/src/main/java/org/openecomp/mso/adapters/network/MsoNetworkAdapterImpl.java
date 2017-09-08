@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.xml.ws.Holder;
 
@@ -54,7 +53,6 @@ import org.openecomp.mso.openstack.beans.Subnet;
 import org.openecomp.mso.openstack.exceptions.MsoAdapterException;
 import org.openecomp.mso.openstack.exceptions.MsoException;
 import org.openecomp.mso.openstack.exceptions.MsoExceptionCategory;
-import org.openecomp.mso.openstack.utils.MsoCommonUtils;
 import org.openecomp.mso.openstack.utils.MsoHeatUtils;
 import org.openecomp.mso.openstack.utils.MsoHeatUtilsWithUpdate;
 import org.openecomp.mso.openstack.utils.MsoNeutronUtils;
@@ -399,7 +397,8 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 // Use an MsoHeatUtils for all Heat commands
                 MsoHeatUtils heat = new MsoHeatUtils (MSO_PROP_NETWORK_ADAPTER, msoPropertiesFactory,cloudConfigFactory);
 
-                HeatTemplate heatTemplate = db.getHeatTemplate (networkResource.getTemplateId ());
+                //HeatTemplate heatTemplate = db.getHeatTemplate (networkResource.getTemplateId ());
+                HeatTemplate heatTemplate = db.getHeatTemplateByArtifactUuidRegularQuery (networkResource.getHeatTemplateArtifactUUID());
                 if (heatTemplate == null) {
                     String error = "Network error - undefined Heat Template. Network Type = " + networkType;
                     LOGGER.error (MessageEnum.RA_PARAM_NOT_FOUND, "Heat Template", "Network Type", networkType, "Openstack", "", MsoLogger.ErrorCode.DataError, "Network error - undefined Heat Template. Network Type = " + networkType);
@@ -959,7 +958,8 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 
                 // Ready to deploy the updated Network via Heat
 
-                HeatTemplate heatTemplate = db.getHeatTemplate(networkResource.getTemplateId());
+                //HeatTemplate heatTemplate = db.getHeatTemplate (networkResource.getTemplateId ());
+                HeatTemplate heatTemplate = db.getHeatTemplateByArtifactUuidRegularQuery (networkResource.getHeatTemplateArtifactUUID());
                 if (heatTemplate == null) {
                     String error = "Network error - undefined Heat Template. Network Type=" + networkType;
                     LOGGER.error(MessageEnum.RA_PARAM_NOT_FOUND, "Heat Template", "Network Type", networkType, "OpenStack", "getHeatTemplate", MsoLogger.ErrorCode.DataError, "Network error - undefined Heat Template. Network Type=" + networkType);
@@ -1137,75 +1137,91 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                                           CloudSite cloudSite) throws NetworkException {
         // Retrieve the Network Resource definition
         NetworkResource networkResource = null;
-        if (isNullOrEmpty(modelCustomizationUuid)) {
-            networkResource = db.getNetworkResource (networkType);
-        }
-        else
-        {
-            networkResource = db.getNetworkResourceByModelCustUuid(modelCustomizationUuid);
-        }
-        if (networkResource == null) {
-            String error = "Create/UpdateNetwork: Unable to get network resource with NetworkType:" + networkType + " or ModelCustomizationUUID:" + modelCustomizationUuid ;
-            LOGGER.error (MessageEnum.RA_UNKOWN_PARAM, "NetworkType/ModelCustomizationUUID", networkType + "/" + modelCustomizationUuid,  "OpenStack", "", MsoLogger.ErrorCode.DataError, "Create/UpdateNetwork: Unknown NetworkType/ModelCustomizationUUID");
-
-            throw new NetworkException (error, MsoExceptionCategory.USERDATA);
-        }
-        LOGGER.debug ("Got Network definition from Catalog: " + networkResource.toString ());
-
-        String mode = networkResource.getOrchestrationMode ();
-        NetworkType neutronNetworkType = NetworkType.valueOf (networkResource.getNeutronNetworkType ());
-
-        // All Networks are orchestrated via HEAT or Neutron
-        if (!("HEAT".equals (mode) || NEUTRON_MODE.equals (mode))) {
-            String error = "CreateNetwork: Configuration Error: Network Type = " + networkType;
-            LOGGER.error (MessageEnum.RA_NETWORK_ORCHE_MODE_NOT_SUPPORT, mode, "OpenStack", "", MsoLogger.ErrorCode.DataError, "CreateNetwork: Configuration Error");
-            // Alarm on this error, configuration must be fixed
-            alarmLogger.sendAlarm (MSO_CONFIGURATION_ERROR, MsoAlarmLogger.CRITICAL, error);
-
-            throw new NetworkException (error, MsoExceptionCategory.INTERNAL);
-        }
-
-        MavenLikeVersioning aicV = new MavenLikeVersioning();
-		aicV.setVersion(cloudSite.getAic_version());
 		try {
-            if ((aicV.isMoreRecentThan(networkResource.getAicVersionMin()) || aicV.isTheSameVersion(networkResource.getAicVersionMin())) // aic >= min
-                    && (aicV.isTheSameVersion(networkResource.getAicVersionMax()) || !(aicV.isMoreRecentThan(networkResource.getAicVersionMax())))) //aic <= max
-            {
-                LOGGER.debug("Network Type:" + networkType
-                        + " VersionMin:" + networkResource.getAicVersionMin()
-                        + " VersionMax:" + networkResource.getAicVersionMax()
-                        + " supported on Cloud:" + cloudSite.getId()
-                        + " with AIC_Version:" + cloudSite.getAic_version());
-            } else {
-                String error = "Network Type:" + networkType
-                        + " Version_Min:" + networkResource.getAicVersionMin()
-                        + " Version_Max:" + networkResource.getAicVersionMax()
-                        + " not supported on Cloud:" + cloudSite.getId()
-                        + " with AIC_Version:" + cloudSite.getAic_version();
-                LOGGER.error(MessageEnum.RA_CONFIG_EXC, error, "OpenStack", "", MsoLogger.ErrorCode.DataError, "Network Type not supported on Cloud");
-                LOGGER.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataError, error);
-                throw new NetworkException(error, MsoExceptionCategory.USERDATA);
-            }
-        } catch (Exception e) {
-            String error = "Exception during Network version check";
-            LOGGER.error (MessageEnum.RA_GENERAL_EXCEPTION_ARG, e.getMessage(), "", "", MsoLogger.ErrorCode.DataError, error);
+			if (isNullOrEmpty(modelCustomizationUuid)) {
+				networkResource = db.getNetworkResource(networkType);
+			} else {
+				networkResource = db
+						.getNetworkResourceByModelCustUuid(modelCustomizationUuid);
+			}
+			if (networkResource == null) {
+				String error = "Create/UpdateNetwork: Unable to get network resource with NetworkType:"
+						+ networkType
+						+ " or ModelCustomizationUUID:"
+						+ modelCustomizationUuid;
+				LOGGER.error(MessageEnum.RA_UNKOWN_PARAM,
+						"NetworkType/ModelCustomizationUUID", networkType + "/"
+								+ modelCustomizationUuid, "OpenStack", "",
+						MsoLogger.ErrorCode.DataError,
+						"Create/UpdateNetwork: Unknown NetworkType/ModelCustomizationUUID");
 
-            throw new NetworkException (error, MsoExceptionCategory.INTERNAL);
-        }
+				throw new NetworkException(error, MsoExceptionCategory.USERDATA);
+			}
+			LOGGER.debug("Got Network definition from Catalog: "
+					+ networkResource.toString());
 
+			String mode = networkResource.getOrchestrationMode();
+			NetworkType neutronNetworkType = NetworkType
+					.valueOf(networkResource.getNeutronNetworkType());
 
-        // Validate the Network parameters.
-        String missing = validateNetworkParams (neutronNetworkType,
-                                                networkName,
-                                                physicalNetworkName,
-                                                vlans,
-                                                routeTargets);
-        if (!missing.isEmpty ()) {
-            String error = "Create Network: Missing parameters: " + missing;
-            LOGGER.error (MessageEnum.RA_MISSING_PARAM, missing, "OpenStack", "", MsoLogger.ErrorCode.DataError, "Create Network: Missing parameters");
+			// All Networks are orchestrated via HEAT or Neutron
+			if (!("HEAT".equals(mode) || NEUTRON_MODE.equals(mode))) {
+				String error = "CreateNetwork: Configuration Error: Network Type = "
+						+ networkType;
+				LOGGER.error(MessageEnum.RA_NETWORK_ORCHE_MODE_NOT_SUPPORT,
+						mode, "OpenStack", "", MsoLogger.ErrorCode.DataError,
+						"CreateNetwork: Configuration Error");
+				// Alarm on this error, configuration must be fixed
+				alarmLogger.sendAlarm(MSO_CONFIGURATION_ERROR,
+						MsoAlarmLogger.CRITICAL, error);
 
-            throw new NetworkException (error, MsoExceptionCategory.USERDATA);
-        }
+				throw new NetworkException(error, MsoExceptionCategory.INTERNAL);
+			}
+
+			MavenLikeVersioning aicV = new MavenLikeVersioning();
+			aicV.setVersion(cloudSite.getAic_version());
+			if ((aicV.isMoreRecentThan(networkResource.getAicVersionMin()) || aicV
+					.isTheSameVersion(networkResource.getAicVersionMin())) // aic
+																			// >=
+																			// min
+					&& (aicV.isTheSameVersion(networkResource
+							.getAicVersionMax()) || !(aicV
+							.isMoreRecentThan(networkResource
+									.getAicVersionMax())))) // aic <= max
+			{
+				LOGGER.debug("Network Type:" + networkType + " VersionMin:"
+						+ networkResource.getAicVersionMin() + " VersionMax:"
+						+ networkResource.getAicVersionMax()
+						+ " supported on Cloud:" + cloudSite.getId()
+						+ " with AIC_Version:" + cloudSite.getAic_version());
+			} else {
+				String error = "Network Type:" + networkType + " Version_Min:"
+						+ networkResource.getAicVersionMin() + " Version_Max:"
+						+ networkResource.getAicVersionMax()
+						+ " not supported on Cloud:" + cloudSite.getId()
+						+ " with AIC_Version:" + cloudSite.getAic_version();
+				LOGGER.error(MessageEnum.RA_CONFIG_EXC, error, "OpenStack", "",
+						MsoLogger.ErrorCode.DataError,
+						"Network Type not supported on Cloud");
+				LOGGER.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR,
+						MsoLogger.ResponseCode.DataError, error);
+				throw new NetworkException(error, MsoExceptionCategory.USERDATA);
+			}
+
+			// Validate the Network parameters.
+			String missing = validateNetworkParams(neutronNetworkType,
+					networkName, physicalNetworkName, vlans, routeTargets);
+			if (!missing.isEmpty()) {
+				String error = "Create Network: Missing parameters: " + missing;
+				LOGGER.error(MessageEnum.RA_MISSING_PARAM, missing,
+						"OpenStack", "", MsoLogger.ErrorCode.DataError,
+						"Create Network: Missing parameters");
+
+				throw new NetworkException(error, MsoExceptionCategory.USERDATA);
+			}
+		} finally {
+			db.close();
+		}
         return networkResource;
     }
 
@@ -1560,7 +1576,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     }
 
     public CatalogDatabase getCatalogDB() {
-        return new CatalogDatabase();
+        return CatalogDatabase.getInstance();
     }
 
     /**

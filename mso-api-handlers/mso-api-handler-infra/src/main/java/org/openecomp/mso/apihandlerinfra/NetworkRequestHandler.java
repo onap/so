@@ -94,6 +94,8 @@ public class NetworkRequestHandler {
             .entity (NOT_FOUND)
             .build ();
 
+    private RequestsDatabase requestDB = RequestsDatabase.getInstance();
+    
     @GET
     public Response queryFilters (@QueryParam("network-type") String networkType,
                                   @QueryParam("service-type") String serviceType,
@@ -244,7 +246,7 @@ public class NetworkRequestHandler {
 
         String responseString = null;
 
-        InfraActiveRequests activeReq = RequestsDatabase.getRequestFromInfraActive (requestId, "NETWORK");
+        InfraActiveRequests activeReq = requestDB.getRequestFromInfraActive (requestId, "NETWORK");
         if (activeReq != null) {
             // build response for active
             responseString = infraRequestsResponse (activeReq, version);
@@ -261,7 +263,7 @@ public class NetworkRequestHandler {
 
         getMsoLogger ().debug ("getRequest based on " + queryAttribute + ": " + queryValue);
 
-        List <InfraActiveRequests> activeReqList = RequestsDatabase.getRequestListFromInfraActive (queryAttribute,
+        List <InfraActiveRequests> activeReqList = requestDB.getRequestListFromInfraActive (queryAttribute,
                                                                                                    queryValue,
                                                                                                    "NETWORK");
 
@@ -433,7 +435,7 @@ public class NetworkRequestHandler {
             InfraActiveRequests dup = null;
             try {
 
-                dup = RequestsDatabase.checkDuplicateByVnfName (msoRequest.getNetworkInputs ().getNetworkName (),
+                dup = requestDB.checkDuplicateByVnfName (msoRequest.getNetworkInputs ().getNetworkName (),
                                                                 msoRequest.getRequestInfo ().getAction ().value (),
                                                                 "NETWORK");
 
@@ -471,7 +473,7 @@ public class NetworkRequestHandler {
             InfraActiveRequests dup = null;
             msoLogger.debug ("Checking for a duplicate with the same network-id");
             try {
-                dup = RequestsDatabase.checkDuplicateByVnfId (msoRequest.getNetworkInputs ().getNetworkId (),
+                dup = requestDB.checkDuplicateByVnfId (msoRequest.getNetworkInputs ().getNetworkId (),
                                                               msoRequest.getRequestInfo ().getAction ().value (),
                                                               "NETWORK");
 
@@ -511,7 +513,7 @@ public class NetworkRequestHandler {
         String orchestrationURI = "";
 
         // Query MSO Catalog DB
-        try (CatalogDatabase db = new CatalogDatabase()) {
+        try (CatalogDatabase db = CatalogDatabase.getInstance()) {
 
             Recipe recipe = null;
 
@@ -618,7 +620,7 @@ public class NetworkRequestHandler {
                 String bpelXMLResponseBody = respHandler.getResponseBody ();
                 msoLogger.debug ("Received from BPEL: " + bpelXMLResponseBody);
                 msoRequest.setStatus (org.openecomp.mso.apihandlerinfra.networkbeans.RequestStatusType.IN_PROGRESS);
-                RequestsDatabase.updateInfraStatus (msoRequest.getRequestId (),
+                requestDB.updateInfraStatus (msoRequest.getRequestId (),
                         Status.IN_PROGRESS.toString (),
                         Constants.PROGRESS_REQUEST_IN_PROGRESS,
                         Constants.MODIFIED_BY_APIHANDLER);

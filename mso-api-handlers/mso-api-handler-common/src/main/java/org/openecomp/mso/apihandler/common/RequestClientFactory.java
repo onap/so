@@ -29,7 +29,7 @@ import org.openecomp.mso.properties.MsoJavaProperties;
 
 public class RequestClientFactory {
 	
-	//based on URI, returns BPEL or Camunda client
+	//based on URI, returns BPEL, CamundaTask or Camunda client
 	public static RequestClient getRequestClient(String orchestrationURI, MsoJavaProperties props) throws IllegalStateException{
 		RequestClient retClient;
 		if(props ==null){
@@ -40,7 +40,11 @@ public class RequestClientFactory {
 			url = props.getProperty(CommonConstants.BPEL_URL,null) + orchestrationURI;
 			retClient= new BPELRestClient();
 			
-		}else{
+		}else if(orchestrationURI.contains(CommonConstants.TASK_SEARCH_STR)){
+			url = props.getProperty(CommonConstants.CAMUNDA_URL,null) + orchestrationURI;
+			retClient = new CamundaTaskClient();
+		}
+		else{
 			url = props.getProperty(CommonConstants.CAMUNDA_URL,null) + orchestrationURI;
 			retClient = new CamundaClient();
 		}

@@ -108,7 +108,7 @@ public abstract class AbstractCallbackService {
 	protected boolean correlate(String messageEventName, String correlationVariable,
 			String correlationValue, Map<String, Object> variables, String logMarker)
 			throws Exception {
-
+	try{
 		LOGGER.debug(logMarker + " Attempting to find process waiting"
 			+ " for " + messageEventName + " with " + correlationVariable
 			+ " = '" + correlationValue + "'");
@@ -240,6 +240,16 @@ public abstract class AbstractCallbackService {
 			LOGGER.error(MessageEnum.BPMN_GENERAL_EXCEPTION, "BPMN", MsoLogger.getServiceName(),
 				MsoLogger.ErrorCode.UnknownError, msg, e);
 		}
+	}  catch (Exception e) {
+		// This must be an exception from the flow itself.  Log it, but don't
+		// report it back to the client.
+		String msg = "Caught " + e.getClass().getSimpleName() + " after receiving " + messageEventName
+			+ " with " + correlationVariable + " = '" + correlationValue
+			+ "': " + e;
+		LOGGER.debug(msg);
+		LOGGER.error(MessageEnum.BPMN_GENERAL_EXCEPTION, "BPMN CORRELATION ERROR -", MsoLogger.getServiceName(),
+			MsoLogger.ErrorCode.UnknownError, msg, e);
+	}	
 
 		return true;
 	}

@@ -20,7 +20,7 @@
 		</service-information>
 		<sdnc-request-header>
 			<svc-request-id>5e168556-a5c6-4813-bff3-cc03007afbbc</svc-request-id>
-			<svc-notification-url>http://mtanjv9moja01-eth1-0.aic.cip.att.com:8080/adapters/rest/SDNCNotify</svc-notification-url>
+			<svc-notification-url>http://mtanjv9moja01-eth1-0.aic.cip.com:8080/adapters/rest/SDNCNotify</svc-notification-url>
 			<svc-action>assign</svc-action>
 		</sdnc-request-header>
 		<vnf-request-information>

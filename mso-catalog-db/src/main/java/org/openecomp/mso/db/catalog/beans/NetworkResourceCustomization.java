@@ -20,54 +20,26 @@
 package org.openecomp.mso.db.catalog.beans;
 
 import java.sql.Timestamp;
+import java.io.Serializable;
 
-import org.openecomp.mso.db.catalog.utils.MavenLikeVersioning;
+public class NetworkResourceCustomization implements Serializable{
 
-public class NetworkResourceCustomization extends MavenLikeVersioning{
-
-	private String modelCustomizationUuid;
-	private String modelName;
+	// modelCustomizationUuid and networkResourceModelUuid form a composite primary key
+	private String modelCustomizationUuid = null;
+	private String networkResourceModelUuid = null;
+	public static final long serialVersionUID = -1322322139926390329L;
 	private String modelInstanceName;
-	private String modelUuid;
-	private String modelVersion;
-	private String modelInvariantUuid;
-	private int networkResourceId = 0;
 	private Timestamp created;
+	private String networkTechnology;
+	private String networkType = null;
+	private String networkScope;
+	private String networkRole;
 
 	// These fields are not in the table directly - but I'm adding them here for storage in the objects we're dealing with
 	private NetworkResource networkResource = null;
-	private String networkType = null;
 
 	public NetworkResourceCustomization() {
 		super();
-	}
-
-	public int getNetworkResourceId() {
-		return this.networkResourceId;
-	}
-	public void setNetworkResourceId(int networkResourceId) {
-		this.networkResourceId = networkResourceId;
-	}
-
-	public String getModelUuid() {
-		return this.modelUuid;
-	}
-	public void setModelUuid(String modelUuid) {
-		this.modelUuid = modelUuid;
-	}
-
-	public String getModelInvariantUuid() {
-		return this.modelInvariantUuid;
-	}
-	public void setModelInvariantUuid(String modelInvariantUuid) {
-		this.modelInvariantUuid = modelInvariantUuid;
-	}
-
-	public String getModelVersion() {
-		return this.modelVersion;
-	}
-	public void setModelVersion(String modelVersion) {
-		this.modelVersion = modelVersion;
 	}
 
 	public String getModelCustomizationUuid() {
@@ -77,18 +49,18 @@ public class NetworkResourceCustomization extends MavenLikeVersioning{
 		this.modelCustomizationUuid = modelCustomizationUuid;
 	}
 
+	public String getNetworkResourceModelUuid() {
+		return this.networkResourceModelUuid;
+	}
+	public void setNetworkResourceModelUuid(String networkResourceModelUuid) {
+		this.networkResourceModelUuid = networkResourceModelUuid;
+	}
+
 	public String getModelInstanceName() {
 		return  this.modelInstanceName;
 	}
 	public void setModelInstanceName(String modelInstanceName) {
 		this.modelInstanceName = modelInstanceName;
-	}
-
-	public String getModelName() {
-		return  this.modelName;
-	}
-	public void setModelName(String modelName) {
-		this.modelName = modelName;
 	}
 
 	public NetworkResource getNetworkResource() {
@@ -107,35 +79,73 @@ public class NetworkResourceCustomization extends MavenLikeVersioning{
 	public Timestamp getCreated() {
 		return this.created;
 	}
-	public void setCreated(Timestamp timestamp) {
+	public void setCreated(java.sql.Timestamp timestamp) {
 		this.created = timestamp;
 	}
 
-	public String getModelInvariantId() { return "not yet implemented"; }
+	public String getNetworkTechnology() {
+		return this.networkTechnology;
+	}
+	public void setNetworkTechnology(String networkTechnology) {
+		this.networkTechnology = networkTechnology;
+	}
+	public String getNetworkScope() {
+		return this.networkScope;
+	}
+	public void setNetworkScope(String networkScope) {
+		this.networkScope = networkScope;
+	}
+	public void setNetworkRole(String networkRole) {
+		this.networkRole = networkRole;
+	}
+	public String getNetworkRole() {
+		return this.networkRole;
+	}
 
 	@Override
 	public String toString () {
 		StringBuffer sb = new StringBuffer();
-		sb.append("modelName=");
-		sb.append(this.modelName);
-		sb.append("modelUuid=");
-		sb.append(this.modelUuid);
-		sb.append("modelUuid=");
-		sb.append(this.modelUuid);
-		sb.append("modelInvariantUuid=");
-		sb.append(this.modelInvariantUuid);
-		sb.append("modelVersion=");
-		sb.append(this.modelVersion);
 		sb.append("modelCustomizationUuid=");
 		sb.append(this.modelCustomizationUuid);
+		sb.append("networkResourceModelUuid=");
+		sb.append(this.networkResourceModelUuid);
 		sb.append("modelInstanceName=");
 		sb.append(this.modelInstanceName);
-		sb.append("networkResourceId=");
-		sb.append(this.networkResourceId);
 		sb.append("networkType=");
 		sb.append(this.networkType);
+		sb.append("networkTechnology=");
+		sb.append(this.networkTechnology);
+		sb.append("networkScope=");
+		sb.append(this.networkScope);
+		sb.append("networkRole=");
+		sb.append(this.networkRole);
 
 		return sb.toString();
 	}
+
+    @Override
+    public boolean equals (Object o) {
+        if (!(o instanceof NetworkResourceCustomization)) {
+            return false;
+        }
+        if (this == o) {
+            return true;
+        }
+        NetworkResourceCustomization nrc = (NetworkResourceCustomization) o;
+        if (nrc.getModelCustomizationUuid().equals(this.getModelCustomizationUuid()) 
+        		&& nrc.getNetworkResourceModelUuid().equals(this.getNetworkResourceModelUuid())) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode () {
+        // hash code does not have to be a unique result - only that two objects that should be treated as equal
+        // return the same value. so this should work.
+        int result = 0;
+        result = (this.modelCustomizationUuid != null ? this.modelCustomizationUuid.hashCode() : 0) + (this.networkResourceModelUuid != null ? this.networkResourceModelUuid.hashCode() : 0);
+        return result;
+    }
 
 }

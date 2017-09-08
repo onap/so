@@ -44,6 +44,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.camunda.bpm.engine.test.Deployment;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openecomp.mso.bpmn.common.BPMNUtil;
 import org.openecomp.mso.bpmn.common.WorkflowTest;
@@ -134,6 +135,7 @@ public class CreateVnfInfraTest extends WorkflowTest {
 	}
 
 	@Test
+	@Ignore
 	@Deployment(resources = {"subprocess/DoCreateVnf.bpmn", "subprocess/GenericGetService.bpmn", "subprocess/GenericGetVnf.bpmn", "subprocess/GenericPutVnf.bpmn", "process/CreateVnfInfra.bpmn", "subprocess/FalloutHandler.bpmn", "subprocess/CompleteMsoProcess.bpmn"})
 	public void testCreateVnfInfra_error_siNotFound() throws Exception{
 
@@ -151,6 +153,7 @@ public class CreateVnfInfraTest extends WorkflowTest {
 	}
 
 	@Test
+	@Ignore
 	@Deployment(resources = {"subprocess/DoCreateVnf.bpmn", 
 							"subprocess/GenericGetService.bpmn", 
 							"subprocess/GenericGetVnf.bpmn", 

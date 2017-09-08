@@ -99,7 +99,7 @@ class VidUtils {
 				asdcServiceModelVersion = it.relatedInstance.modelInfo?.modelVersion
 			}
 			if (it.relatedInstance.modelInfo?.modelType == 'vnf') {
-				modelCustomizationName = it.relatedInstance.modelInfo?.modelCustomizationName
+				modelCustomizationName = it.relatedInstance.modelInfo?.modelInstanceName
 			}
 		}
 		
@@ -110,7 +110,7 @@ class VidUtils {
 		if(userParams != null) {
 			userParamsNode = buildUserParams(userParams)
 		}
-		def modelCustomizationId = requestMap.requestDetails?.modelInfo?.modelCustomizationId ?: ''
+		def modelCustomizationId = requestMap.requestDetails?.modelInfo?.modelCustomizationUuid ?: ''
 		
 		def xmlReq = """
 		<volume-request xmlns="http://www.w3.org/2001/XMLSchema">
@@ -205,6 +205,7 @@ class VidUtils {
 	 * @return
 	 * Note: See latest version: createXmlNetworkRequestInstance()
 	 */
+
 	public String createXmlNetworkRequestInfra(execution, def networkJsonIncoming) {
 	
 		def requestId = execution.getVariable("requestId")
@@ -216,6 +217,11 @@ class VidUtils {
 		try {
 			Map reqMap = jsonSlurper.parseText(networkJsonIncoming)
 			def instanceName =  reqMap.requestDetails.requestInfo.instanceName
+			def modelCustomizationId =  reqMap.requestDetails.modelInfo.modelCustomizationId
+			if (modelCustomizationId == null) {
+				modelCustomizationId =  reqMap.requestDetails.modelInfo.modelCustomizationUuid !=null ?  
+				                        reqMap.requestDetails.modelInfo.modelCustomizationUuid : ""
+			}
 			def modelName = reqMap.requestDetails.modelInfo.modelName
 			def lcpCloudRegionId = reqMap.requestDetails.cloudConfiguration.lcpCloudRegionId
 			def tenantId = reqMap.requestDetails.cloudConfiguration.tenantId
@@ -253,6 +259,7 @@ class VidUtils {
 			 	<network-id>${networkId}</network-id> 
 			 	<network-name>${instanceName}</network-name> 
 			 	<network-type>${modelName}</network-type>
+				<modelCustomizationId>${modelCustomizationId}</modelCustomizationId> 
 			 	<aic-cloud-region>${lcpCloudRegionId}</aic-cloud-region> 
 			 	<tenant-id>${tenantId}</tenant-id>
 			 	<service-id>${serviceId}</service-id> 
@@ -279,12 +286,11 @@ class VidUtils {
 	 */
 	public String createXmlNetworkRequestInstance(execution) {
 
-		def networkModelVersionId = ""
+		def networkModelUuid = ""
 		def networkModelName = ""
-		def networkModelType = ""
 		def networkModelVersion = ""
-		def networkModelCustomizationId = ""
-		def networkModelInvariantId = ""
+		def networkModelCustomizationUuid = ""
+		def networkModelInvariantUuid = ""
 		
 		// verify the DB Catalog response JSON structure
 		def networkModelInfo = execution.getVariable("networkModelInfo")
@@ -293,23 +299,20 @@ class VidUtils {
 			try {
 				Map modelMap = jsonSlurper.parseText(networkModelInfo)
 				if (modelMap != null) {
-					if (networkModelInfo.contains("modelVersionId")) {
-						networkModelVersionId = modelMap.modelVersionId !=null ? modelMap.modelVersionId : ""
+					if (networkModelInfo.contains("modelUuid")) {
+						networkModelUuid = modelMap.modelUuid !=null ? modelMap.modelUuid : ""
 					}
 					if (networkModelInfo.contains("modelName")) {
 						networkModelName = modelMap.modelName !=null ? modelMap.modelName : ""
 					}
-					if (networkModelInfo.contains("modelType")) {
-						networkModelType = modelMap.modelType !=null ? modelMap.modelType : ""
-					}
 					if (networkModelInfo.contains("modelVersion")) {
 						networkModelVersion = modelMap.modelVersion !=null ? modelMap.modelVersion : ""
 					}
-					if (networkModelInfo.contains("modelCustomizationId")) {
-					    networkModelCustomizationId = modelMap.modelCustomizationId !=null ? modelMap.modelCustomizationId : ""
+					if (networkModelInfo.contains("modelCustomizationUuid")) {
+						networkModelCustomizationUuid = modelMap.modelCustomizationUuid !=null ? modelMap.modelCustomizationUuid : ""
 					}
-					if (networkModelInfo.contains("modelInvariantId")) {
-						networkModelInvariantId = modelMap.modelInvariantId !=null ? modelMap.modelInvariantId : ""
+					if (networkModelInfo.contains("modelInvariantUuid")) {
+						networkModelInvariantUuid = modelMap.modelInvariantUuid !=null ? modelMap.modelInvariantUuid : ""
 					}
 				}
 			} catch (Exception ex) {
@@ -317,12 +320,11 @@ class VidUtils {
 			}
 		}		
 		
-		def serviceModelVersionId = ""
+		def serviceModelUuid = ""
 		def serviceModelName = ""
-		def serviceModelType = ""
 		def serviceModelVersion = ""
-		def serviceModelCustomizationId = ""
-		def serviceModelInvariantId = ""
+		def serviceModelCustomizationUuid = ""
+		def serviceModelInvariantUuid = ""
 		
 		// verify the DB Catalog response JSON structure
 		def serviceModelInfo = execution.getVariable("serviceModelInfo")
@@ -331,23 +333,20 @@ class VidUtils {
 			try {
 				Map modelMap = jsonServiceSlurper.parseText(serviceModelInfo)
 				if (modelMap != null) {
-					if (serviceModelInfo.contains("modelVersionId")) {
-						serviceModelVersionId = modelMap.modelVersionId !=null ? modelMap.modelVersionId : ""
+					if (serviceModelInfo.contains("modelUuid")) {
+						serviceModelUuid = modelMap.modelUuid !=null ? modelMap.modelUuid : ""
 					}
 					if (serviceModelInfo.contains("modelName")) {
 						serviceModelName = modelMap.modelName !=null ? modelMap.modelName : ""
 					}
-					if (serviceModelInfo.contains("modelType")) {
-						serviceModelType = modelMap.modelType !=null ? modelMap.modelType : ""
-					}
 					if (serviceModelInfo.contains("modelVersion")) {
 						serviceModelVersion = modelMap.modelVersion !=null ? modelMap.modelVersion : ""
 					}
-					if (serviceModelInfo.contains("modelCustomizationId")) {
-						serviceModelCustomizationId = modelMap.modelCustomizationId !=null ? modelMap.modelCustomizationId : ""
+					if (serviceModelInfo.contains("modelCustomizationUuid")) {
+						serviceModelCustomizationUuid = modelMap.modelCustomizationUuid !=null ? modelMap.modelCustomizationUuid : ""
 					}
-					if (serviceModelInfo.contains("modelInvariantId")) {
-						serviceModelInvariantId = modelMap.modelInvariantId !=null ? modelMap.modelInvariantId : ""
+					if (serviceModelInfo.contains("modelInvariantUuid")) {
+						serviceModelInvariantUuid = modelMap.modelInvariantUuid !=null ? modelMap.modelInvariantUuid : ""
 					}
 				}
 			} catch (Exception ex) {
@@ -399,7 +398,7 @@ class VidUtils {
 		 <network-inputs> 
 		 	<network-id>${networkId}</network-id> 
 		 	<network-name>${networkName}</network-name> 
-		 	<network-type>${networkModelType}</network-type>
+		 	<network-type>${networkModelName}</network-type>
 		 	<subscription-service-type>${subscriptionServiceType}</subscription-service-type>
             <global-customer-id>${globalSubscriberId}</global-customer-id>
 		 	<aic-cloud-region>${aicCloudReqion}</aic-cloud-region> 
@@ -409,19 +408,18 @@ class VidUtils {
 			<failIfExist>${failIfExist}</failIfExist>
             <networkModelInfo>
               <modelName>${networkModelName}</modelName>
-              <modelUuid>${networkModelVersionId}</modelUuid>
-              <modelInvariantUuid>${networkModelInvariantId}</modelInvariantUuid>            
+              <modelUuid>${networkModelUuid}</modelUuid>
+              <modelInvariantUuid>${networkModelInvariantUuid}</modelInvariantUuid>            
               <modelVersion>${networkModelVersion}</modelVersion>
-              <modelCustomizationUuid>${networkModelCustomizationId}</modelCustomizationUuid>
-              <modelType>${networkModelType}</modelType>              
+              <modelCustomizationUuid>${networkModelCustomizationUuid}</modelCustomizationUuid>
 		    </networkModelInfo>
             <serviceModelInfo>
               <modelName>${serviceModelName}</modelName>
-              <modelUuid>${serviceModelVersionId}</modelUuid>
-              <modelInvariantUuid>${serviceModelInvariantId}</modelInvariantUuid>            
+              <modelUuid>${serviceModelUuid}</modelUuid>
+              <modelInvariantUuid>${serviceModelInvariantUuid}</modelInvariantUuid>            
               <modelVersion>${serviceModelVersion}</modelVersion>
-              <modelCustomizationUuid>${serviceModelCustomizationId}</modelCustomizationUuid>
-              <modelType>${serviceModelType}</modelType>              
+              <modelCustomizationUuid>${serviceModelCustomizationUuid}</modelCustomizationUuid>
+             
 		    </serviceModelInfo>										      			
             <sdncVersion>${sdncVersion}</sdncVersion>                    
 		 </network-inputs>
@@ -504,9 +502,9 @@ class VidUtils {
 		def serviceId = requestMap.requestDetails?.requestParameters?.serviceId ?: ''
 		def aicCloudRegion = requestMap.requestDetails?.cloudConfiguration?.lcpCloudRegionId ?: ''
 		def tenantId = requestMap.requestDetails?.cloudConfiguration?.tenantId ?: ''
-		def personaModelId = requestMap.requestDetails?.modelInfo?.modelInvariantId ?: ''
-		def personaModelVersion = requestMap.requestDetails?.modelInfo?.modelVersion ?: ''
-		def modelCustomizationId = requestMap.requestDetails?.modelInfo?.modelCustomizationId ?: ''
+		def personaModelId = requestMap.requestDetails?.modelInfo?.modelInvariantUuid ?: ''
+		def personaModelVersion = requestMap.requestDetails?.modelInfo?.modelUuid ?: ''
+		def modelCustomizationId = requestMap.requestDetails?.modelInfo?.modelCustomizationUuid ?: ''
 		
 		def xmlReq = """
 		<vnf-request>

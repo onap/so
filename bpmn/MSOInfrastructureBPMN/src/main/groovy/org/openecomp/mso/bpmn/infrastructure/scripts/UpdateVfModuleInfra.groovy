@@ -20,6 +20,7 @@
 
 package org.openecomp.mso.bpmn.infrastructure.scripts
 
+import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import groovy.util.Node
 import groovy.util.XmlParser;
@@ -69,40 +70,148 @@ public class UpdateVfModuleInfra extends AbstractServiceTaskProcessor {
 	 * @param execution The flow's execution instance.
 	 */
 	public void preProcessRequest(Execution execution) {
+		
 		def method = getClass().getSimpleName() + '.preProcessRequest(' +
-			'execution=' + execution.getId() +
-			')'
+		'execution=' + execution.getId() +
+		')'
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		logDebug('Entered ' + method, isDebugLogEnabled)
 
 		initProcessVariables(execution)
 
-		def prefix = "UPDVfModI_"
-
-		execution.setVariable("isVidRequest", "false")
+		def prefix = "UPDVfModI_"		
 
 		def incomingRequest = execution.getVariable('bpmnRequest')
 
 		utils.log("DEBUG", "Incoming Infra Request: " + incomingRequest, isDebugLogEnabled)
-
-		// check if request is xml or json
 		try {
 			def jsonSlurper = new JsonSlurper()
+			def jsonOutput = new JsonOutput()
 			Map reqMap = jsonSlurper.parseText(incomingRequest)
 			utils.log("DEBUG", " Request is in JSON format.", isDebugLogEnabled)
 
 			def serviceInstanceId = execution.getVariable('serviceInstanceId')
 			def vnfId = execution.getVariable('vnfId')
-
-			def vidUtils = new VidUtils(this)
-
-			String requestInXmlFormat = vidUtils.createXmlVfModuleRequest(execution, reqMap, 'UPDATE_VF_MODULE', serviceInstanceId)
-
-			utils.log("DEBUG", " Request in XML format: " + requestInXmlFormat, isDebugLogEnabled)
-
-			execution.setVariable(prefix + 'Request', requestInXmlFormat)
+			
+			execution.setVariable(prefix + 'serviceInstanceId', serviceInstanceId)
 			execution.setVariable(prefix+'vnfId', vnfId)
 			execution.setVariable("isVidRequest", "true")
+			
+			def vnfName = ''
+			def asdcServiceModelVersion = ''
+			def serviceModelInfo = null
+			def vnfModelInfo = null
+			
+			def relatedInstanceList = reqMap.requestDetails?.relatedInstanceList
+						
+			if (relatedInstanceList != null) {
+				relatedInstanceList.each {
+					if (it.relatedInstance.modelInfo?.modelType == 'service') {
+						asdcServiceModelVersion = it.relatedInstance.modelInfo?.modelVersion
+						serviceModelInfo = jsonOutput.toJson(it.relatedInstance.modelInfo)
+						
+					}
+					if (it.relatedInstance.modelInfo.modelType == 'vnf') {
+						vnfName = it.relatedInstance.instanceName ?: ''
+						vnfModelInfo = jsonOutput.toJson(it.relatedInstance.modelInfo)
+					}
+				}
+			}
+			
+			execution.setVariable(prefix + 'vnfName', vnfName)
+			execution.setVariable(prefix + 'asdcServiceModelVersion', asdcServiceModelVersion)
+			execution.setVariable(prefix + 'serviceModelInfo', serviceModelInfo)
+			execution.setVariable(prefix + 'vnfModelInfo', vnfModelInfo)			
+			
+			def vnfType = execution.getVariable('vnfType')
+			execution.setVariable(prefix + 'vnfType', vnfType)	
+			def vfModuleId = execution.getVariable('vfModuleId')
+			execution.setVariable(prefix + 'vfModuleId', vfModuleId)
+			def volumeGroupId = execution.getVariable('volumeGroupId')
+			execution.setVariable(prefix + 'volumeGroupId', volumeGroupId)
+			def userParams = reqMap.requestDetails?.requestParameters?.userParams					
+			
+			Map<String, String> userParamsMap = [:]
+			if (userParams != null) {
+				userParams.each { userParam ->
+					userParamsMap.put(userParam.name, userParam.value)
+				}							
+			}		
+						
+			utils.log("DEBUG", 'Processed user params: ' + userParamsMap, isDebugLogEnabled)		
+			
+			execution.setVariable(prefix + 'vfModuleInputParams', userParamsMap)
+			
+			def isBaseVfModule = "false"
+			if (execution.getVariable('isBaseVfModule') == true) {
+				isBaseVfModule = "true"
+			}			
+			
+			execution.setVariable(prefix + 'isBaseVfModule', isBaseVfModule)
+						
+			def requestId = execution.getVariable("mso-request-id")
+			execution.setVariable(prefix + 'requestId', requestId)
+			
+			def vfModuleModelInfo = jsonOutput.toJson(reqMap.requestDetails?.modelInfo)
+			execution.setVariable(prefix + 'vfModuleModelInfo', vfModuleModelInfo)
+			
+			def suppressRollback = reqMap.requestDetails?.requestInfo?.suppressRollback
+			
+			
+			def backoutOnFailure = ""
+			if(suppressRollback != null){
+				if ( suppressRollback == true) {
+					backoutOnFailure = "false"
+				} else if ( suppressRollback == false) {
+					backoutOnFailure = "true"
+				}
+			}
+			
+			execution.setVariable('disableRollback', suppressRollback)
+			
+			def vfModuleName = reqMap.requestDetails?.requestInfo?.instanceName ?: null
+			execution.setVariable(prefix + 'vfModuleName', vfModuleName)
+			
+			def serviceId = reqMap.requestDetails?.requestParameters?.serviceId ?: ''
+			execution.setVariable(prefix + 'serviceId', serviceId)
+			
+			def usePreload = reqMap.requestDetails?.requestParameters?.usePreload
+			execution.setVariable(prefix + 'usePreload', usePreload)
+			
+			def cloudConfiguration = reqMap.requestDetails?.cloudConfiguration
+			def lcpCloudRegionId	= cloudConfiguration.lcpCloudRegionId
+			execution.setVariable(prefix + 'lcpCloudRegionId', lcpCloudRegionId)
+			def tenantId = cloudConfiguration.tenantId
+			execution.setVariable(prefix + 'tenantId', tenantId)
+			
+			def globalSubscriberId = reqMap.requestDetails?.subscriberInfo?.globalSubscriberId ?: ''
+			execution.setVariable(prefix + 'globalSubscriberId', globalSubscriberId)
+			
+			execution.setVariable(prefix + 'sdncVersion', '1702')
+
+			execution.setVariable("UpdateVfModuleInfraSuccessIndicator", false)
+						
+			execution.setVariable("isDebugLogEnabled", isDebugLogEnabled)
+			
+			
+			def source = reqMap.requestDetails?.requestInfo?.source
+			execution.setVariable(prefix + "source", source)
+			
+			//For Completion Handler & Fallout Handler
+			String requestInfo =
+			"""<request-info xmlns="http://org.openecomp/mso/infra/vnf-request/v1">
+					<request-id>${requestId}</request-id>
+					<action>UPDATE</action>
+					<source>${source}</source>
+				   </request-info>"""
+			
+			execution.setVariable(prefix + "requestInfo", requestInfo)
+			
+			//backoutOnFailure			
+
+			logDebug('RequestInfo: ' + execution.getVariable(prefix + "requestInfo"), isDebugLogEnabled)			
+						
+			logDebug('Exited ' + method, isDebugLogEnabled)
 
 		}
 		catch(groovy.json.JsonException je) {
@@ -114,35 +223,7 @@ public class UpdateVfModuleInfra extends AbstractServiceTaskProcessor {
 			String restFaultMessage = e.getMessage()
 			utils.log("ERROR", " Exception Encountered - " + "\n" + restFaultMessage, isDebugLogEnabled)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, restFaultMessage)
-		}
-
-
-		try {
-
-			String request = validateInfraRequest(execution)
-
-			def requestInfo = getRequiredNodeXml(execution, request, 'request-info')
-			execution.setVariable('UPDVfModI_requestInfo', requestInfo)
-			execution.setVariable('UPDVfModI_requestId', getRequiredNodeText(execution, requestInfo, 'request-id'))
-			execution.setVariable('UPDVfModI_source', getNodeTextForce(requestInfo, 'source'))
-
-			def vnfInputs = getRequiredNodeXml(execution, request, 'vnf-inputs')
-			execution.setVariable('UPDVfModI_vnfInputs', vnfInputs)
-			execution.setVariable('UPDVfModI_vnfId', getRequiredNodeText(execution, vnfInputs, 'vnf-id'))
-			execution.setVariable('UPDVfModI_vfModuleId', getRequiredNodeText(execution, vnfInputs, 'vf-module-id'))
-			execution.setVariable('UPDVfModI_tenantId', getRequiredNodeText(execution, vnfInputs, 'tenant-id'))
-			execution.setVariable('UPDVfModI_volumeGroupId', getNodeTextForce(vnfInputs, 'volume-group-id'))
-
-			def vnfParams = utils.getNodeXml(request, 'vnf-params')
-			execution.setVariable('UPDVfModI_vnfParams', vnfParams)
-
-			logDebug('Exited ' + method, isDebugLogEnabled)
-		} catch (BpmnError e) {
-			throw e;
-		} catch (Exception e) {
-			logError('Caught exception in ' + method, e)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in preProcessRequest(): ' + e.getMessage())
-		}
+		}	
 	}
 
 	/**
@@ -322,7 +403,7 @@ public class UpdateVfModuleInfra extends AbstractServiceTaskProcessor {
 		try {
 			def prefix = execution.getVariable('prefix')
 			def request = getVariable(execution, prefix+'Request')
-			def requestInformation = utils.getNodeXml(request, 'request-info', false)
+			def requestInformation = execution.getVariable(prefix + "requestInfo")
 
 			def WorkflowException workflowException = execution.getVariable("WorkflowException")
 			def errorResponseCode = workflowException.getErrorCode()

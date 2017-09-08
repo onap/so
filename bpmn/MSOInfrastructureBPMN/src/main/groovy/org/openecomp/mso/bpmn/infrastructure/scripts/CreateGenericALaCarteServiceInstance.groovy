@@ -39,7 +39,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.springframework.web.util.UriUtils
 
 /**
- * This groovy class supports the <class>CreateServiceInstance.bpmn</class> process.
+ * This groovy class supports the <class>CreateGenericALaCarteServiceInstance.bpmn</class> process.
  * AlaCarte flow for 1702 ServiceInstance Create
  *
  */
@@ -118,8 +118,29 @@ public class CreateGenericALaCarteServiceInstance extends AbstractServiceTaskPro
 				execution.setVariable("subscriptionServiceType", subscriptionServiceType)
 			}
 
+			
+			/*
+			 * Extracting User Parameters from incoming Request and converting into a Map
+			 */
+			def jsonSlurper = new JsonSlurper()
+			def jsonOutput = new JsonOutput()
+
+			Map reqMap = jsonSlurper.parseText(siRequest)
+
+			//InputParams
+			def userParams = reqMap.requestDetails?.requestParameters?.userParams
+
+			Map<String, String> inputMap = [:]
+			if (userParams) {
+				userParams.each {
+					userParam -> inputMap.put(userParam.name, userParam.value)
+				}
+			}
+			
+			utils.log("DEBUG", "User Input Parameters map: " + userParams.toString(), isDebugEnabled)
+			execution.setVariable("serviceInputParams", inputMap)
+			
 			//TODO
-			//execution.setVariable("serviceInputParams", jsonUtil.getJsonValue(siRequest, "requestDetails.requestParameters.userParams"))
 			//execution.setVariable("failExists", true)
 
 		} catch (BpmnError e) {

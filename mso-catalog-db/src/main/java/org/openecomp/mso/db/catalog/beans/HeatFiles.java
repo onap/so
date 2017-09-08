@@ -20,32 +20,31 @@
 
 package org.openecomp.mso.db.catalog.beans;
 
-
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 
 import org.openecomp.mso.db.catalog.utils.MavenLikeVersioning;
 
-public class HeatFiles extends MavenLikeVersioning {
-	private int id;
+public class HeatFiles extends MavenLikeVersioning implements Serializable {
+	
+	private static final long serialVersionUID = 768026109321305392L;
+
+	private String artifactUuid;
 	private String description = null;
 	private String fileName;
 	private String fileBody;
-	private int vnfResourceId;
 	private Timestamp created;
-	private String asdcUuid;
-	private String asdcLabel;
-    private String asdcResourceName;
+	private String version;
 	private String artifactChecksum;
 
 	public HeatFiles() {}
 
-	public int getId() {
-		return this.id;
+	public String getArtifactUuid() {
+		return this.artifactUuid;
 	}
-
-	public void setId(int id) {
-		this.id = id;
+	public void setArtifactUuid(String artifactUuid) {
+		this.artifactUuid = artifactUuid;
 	}
 
 	public String getDescription() {
@@ -69,13 +68,6 @@ public class HeatFiles extends MavenLikeVersioning {
 		this.fileBody = fileBody;
 	}
 
-	public int getVnfResourceId() {
-		return this.vnfResourceId;
-	}
-	public void setVnfResourceId(int vnfResourceId) {
-		this.vnfResourceId = vnfResourceId;
-	}
-
 	public Timestamp getCreated() {
 		return created;
 	}
@@ -85,29 +77,22 @@ public class HeatFiles extends MavenLikeVersioning {
 	}
 
 	public String getAsdcUuid() {
-		return this.asdcUuid;
+		return this.artifactUuid;
 	}
-	public void setAsdcUuid(String asdcUuid) {
-		this.asdcUuid = asdcUuid;
+	public void setAsdcUuid(String artifactUuid) {
+		this.artifactUuid = artifactUuid;
 	}
-	public String getAsdcLabel() {
-		return this.asdcLabel;
-	}
-	public void setAsdcLabel(String asdcLabel) {
-		this.asdcLabel = asdcLabel;
-	}
-	public String getAsdcResourceName() {
-		return asdcResourceName;
+	public String getVersion() {
+		return version;
 	}
 
-	public void setAsdcResourceName(String asdcResourceName) {
-		this.asdcResourceName = asdcResourceName;
+	public void setVersion(String version) {
+		this.version = version;
 	}
 
 	public String getArtifactChecksum() {
 		return artifactChecksum;
 	}
-
 	public void setArtifactChecksum(String artifactChecksum) {
 		this.artifactChecksum = artifactChecksum;
 	}
@@ -115,7 +100,7 @@ public class HeatFiles extends MavenLikeVersioning {
 	@Override
 	public String toString () {
 		StringBuffer sb = new StringBuffer();
-		sb.append ("ID=" + this.id);
+		sb.append ("artifactUuid=" + this.artifactUuid);
 		if (this.description == null) {
 			sb.append(", description=null");
 		} else {
@@ -131,16 +116,11 @@ public class HeatFiles extends MavenLikeVersioning {
 		} else {
 			sb.append(",fileBody=" + this.fileBody);
 		}
-		if (this.asdcResourceName == null) {
-			sb.append(", asdcResourceName=null");
-		} else {
-			sb.append(",asdcResourceName=" + this.asdcResourceName);
-		}
+		sb.append(", artifactChecksum=" + this.artifactChecksum);
 		if (created != null) {
 	        sb.append (",created=");
 	        sb.append (DateFormat.getInstance().format(created));
 	    }
-		sb.append(", vnfResourceId=" + this.vnfResourceId);
 		return sb.toString();
 	}
 }

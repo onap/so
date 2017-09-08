@@ -129,6 +129,11 @@ public class CamundaClient extends RequestClient{
 
 		return response;
 	}
+	
+	@Override
+    public HttpResponse get() {
+        return null;
+    }
 
 	private String wrapRequest(String reqXML, String requestId, String serviceInstanceId, String requestTimeout, String schemaVersion){
 		String jsonReq = null;

@@ -136,7 +136,8 @@ public class DoCreateVfModuleRollbackTest extends WorkflowTest {
 		variables.put("mso-service-instance-id", "a27ce5a9-29c4-4c22-a017-6615ac73c721");
 		rollbackData.put("VFMODULE", "msorequestid", "a27ce5a9-29c4-4c22-a017-6615ac73c721");
 		rollbackData.put("VFMODULE", "serviceinstanceid", "a27ce5a9-29c4-4c22-a017-6615ac73c721");
-		variables.put("RollbackData", rollbackData);
+		variables.put("rollbackData", rollbackData);
+		variables.put("sdncVersion", "1702");
 		invokeSubProcess("DoCreateVfModuleRollback", businessKey, variables);
 
 		// "changedelete" operation not required for deleting a Vf Module

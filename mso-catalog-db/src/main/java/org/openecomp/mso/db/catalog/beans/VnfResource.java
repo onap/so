@@ -21,66 +21,37 @@
 package org.openecomp.mso.db.catalog.beans;
 
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.text.DateFormat;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.List;
 import java.util.ArrayList;
-import java.util.Map;
 
 import org.openecomp.mso.db.catalog.utils.MavenLikeVersioning;
 
-public class VnfResource extends MavenLikeVersioning {
+public class VnfResource extends MavenLikeVersioning implements Serializable {
+	
+	private static final long serialVersionUID = 768026109321305392L;
 
-    private int id;
-    private String vnfType;
-
-    private String orchestrationMode = null;
-    private String description = null;
-    private Integer templateId;
-    private Integer environmentId = null;
-
-    private Map <String, HeatFiles> heatFiles;
-
-    private String asdcUuid;
-
+	private String modelUuid;
+	private String modelInvariantUuid;
+	private String modelName;
+    private String toscaNodeType;
+    private String description;
+    private String orchestrationMode;
+    private String aicVersionMin;
+    private String aicVersionMax;
+    private String heatTemplateArtifactUUId;
     private Timestamp created;
+    private String modelVersion;
+    private Set<VnfResourceCustomization> vnfResourceCustomizations;
+    private Set<VfModule> vfModules;
+    private List<VfModule> vfModuleList;
+    private List<VfModuleCustomization> vfModuleCustomizations;
 
-    private String aicVersionMin = null;
-    private String aicVersionMax = null;
-
-    private String modelInvariantUuid = null;
-    private String modelVersion = null;
-
-    private String modelCustomizationName = null;
-
-    private String modelName = null;
-    private String serviceModelInvariantUUID = null;
-	private String modelCustomizationUuid = null;
-
-	private String modelUuid = null;
-	private String modelInstanceName = null;
-
-	private ArrayList<VfModule> vfModules;
-
-    public VnfResource () {
-		super();
-		this.vfModules = new ArrayList<VfModule>();
-    }
-
-    public int getId () {
-        return id;
-    }
-
-    public void setId (int id) {
-        this.id = id;
-    }
-
-    public String getVnfType () {
-        return vnfType;
-    }
-
-    public void setVnfType (String vnfType) {
-        this.vnfType = vnfType;
-    }
+    public VnfResource () { }
 
     public String getOrchestrationMode () {
         return orchestrationMode;
@@ -98,36 +69,19 @@ public class VnfResource extends MavenLikeVersioning {
         this.description = description;
     }
 
-    public Integer getTemplateId () {
-        return templateId;
+    public String getTemplateId () {
+        return heatTemplateArtifactUUId;
     }
 
-    public void setTemplateId (Integer templateId) {
-        this.templateId = templateId;
+    public void setTemplateId (String heatTemplateArtifactUUId) {
+        this.heatTemplateArtifactUUId = heatTemplateArtifactUUId;
+    }
+    public String getHeatTemplateArtifactUUId () {
+        return heatTemplateArtifactUUId;
     }
 
-    public Integer getEnvironmentId () {
-        return this.environmentId;
-    }
-
-    public void setEnvironmentId (Integer environmentId) {
-        this.environmentId = environmentId;
-    }
-
-    public Map <String, HeatFiles> getHeatFiles () {
-        return this.heatFiles;
-    }
-
-    public void setHeatFiles (Map <String, HeatFiles> heatFiles) {
-        this.heatFiles = heatFiles;
-    }
-
-	public String getAsdcUuid() {
-		return asdcUuid;
-	}
-
-	public void setAsdcUuid(String asdcUuidp) {
-		this.asdcUuid = asdcUuidp;
+    public void setHeatTemplateArtifactUUId (String heatTemplateArtifactUUId) {
+        this.heatTemplateArtifactUUId = heatTemplateArtifactUUId;
 	}
 
 	public Timestamp getCreated() {
@@ -162,21 +116,6 @@ public class VnfResource extends MavenLikeVersioning {
 		this.modelInvariantUuid = modelInvariantUuid;
 	}
 
-	public String getModelVersion() {
-		return this.modelVersion;
-	}
-	public void setModelVersion(String modelVersion) {
-		this.modelVersion = modelVersion;
-	}
-
-	public String getModelCustomizationName() {
-		return modelCustomizationName;
-	}
-
-	public void setModelCustomizationName(String modelCustomizationName) {
-		this.modelCustomizationName = modelCustomizationName;
-	}
-
 	public String getModelName() {
 		return modelName;
 	}
@@ -185,53 +124,86 @@ public class VnfResource extends MavenLikeVersioning {
 		this.modelName = modelName;
 	}
 
-	public String getServiceModelInvariantUUID() {
-		return serviceModelInvariantUUID;
+	public String getModelUuid() {
+		return modelUuid;
 	}
 
-	public void setServiceModelInvariantUUID(String serviceModelInvariantUUID) {
-		this.serviceModelInvariantUUID = serviceModelInvariantUUID;
+	public void setModelUuid(String modelUuid) {
+		this.modelUuid = modelUuid;
 	}
 
-	public String getModelCustomizationUuid() {
-		return this.modelCustomizationUuid;
-	}
-	public void setModelCustomizationUuid(String modelCustomizationUuid) {
-		this.modelCustomizationUuid = modelCustomizationUuid;
+	public String getModelInvariantId() {
+		return this.modelInvariantUuid;
 	}
 
-	public ArrayList<VfModule> getVfModules() {
-		return this.vfModules;
+	public String getToscaNodeType() {
+		return toscaNodeType;
 	}
-	public void setVfModules(ArrayList<VfModule> vfModules) {
+
+	public void setToscaNodeType(String toscaNodeType) {
+		this.toscaNodeType = toscaNodeType;
+	}
+
+	public Set<VnfResourceCustomization> getVnfResourceCustomizations() {
+		return vnfResourceCustomizations;
+	}
+
+	public void setVnfResourceCustomizations(Set<VnfResourceCustomization> vnfResourceCustomizations) {
+		this.vnfResourceCustomizations = vnfResourceCustomizations;
+	}
+
+	public Set<VfModule> getVfModules() {
+		return vfModules;
+	}
+
+	public void setVfModules(Set<VfModule> vfModules) {
 		this.vfModules = vfModules;
 	}
+
+	public List<VfModuleCustomization> getVfModuleCustomizations() {
+		return this.vfModuleCustomizations == null ? new ArrayList<VfModuleCustomization>() : this.vfModuleCustomizations;
+	}
+	public void setVfModuleCustomizations(ArrayList<VfModuleCustomization> vfModuleCustomizations) {
+		this.vfModuleCustomizations = vfModuleCustomizations;
+	}
+	public void addVfModuleCustomization(VfModuleCustomization vfmc) {
+		if (vfmc != null) {
+			if (this.vfModuleCustomizations != null) {
+				this.vfModuleCustomizations.add(vfmc);
+			} else {
+				this.vfModuleCustomizations = new ArrayList<VfModuleCustomization>();
+				this.vfModuleCustomizations.add(vfmc);
+			}
+	}
+	}
+
 	public void addVfModule(VfModule vfm) {
 		if (vfm != null) {
 			if (this.vfModules != null) {
 				this.vfModules.add(vfm);
 			} else {
-				this.vfModules = new ArrayList<VfModule>();
+				this.vfModules = new HashSet<VfModule>();
 				this.vfModules.add(vfm);
 			}
 		}
 	}
+	public ArrayList<VfModule> getVfModuleList() {
+		if (this.vfModules == null || this.vfModules.size() < 1) {
+			return null;
+	}
+		ArrayList<VfModule> list = new ArrayList<VfModule>();
+		for (VfModule vfm : this.vfModules) {
+			list.add(vfm);
+	}
+		return list;
+	}
+	
+	public String getModelVersion() {
+		return modelVersion;
+	}
 
-	//Placeholders for now until new design is finalized:
-	public void setModelUuid(String modelUuid) {
-		this.modelUuid = modelUuid;
-	}
-	public String getModelUuid() {
-		return this.modelUuid;
-	}
-	public String getModelInvariantId() {
-		return this.modelInvariantUuid;
-	}
-	public void setModelInstanceName(String modelInstanceName) {
-		this.modelInstanceName = modelInstanceName;
-	}
-	public String getModelInstanceName() {
-		return this.modelInstanceName;
+	public void setModelVersion(String modelVersion) {
+		this.modelVersion = modelVersion;
 	}
 
 	@Override
@@ -239,17 +211,14 @@ public class VnfResource extends MavenLikeVersioning {
 		StringBuffer buf = new StringBuffer();
 
 		buf.append("VNF=");
-		buf.append(vnfType);
-		buf.append(",version=");
-		buf.append(version);
+		buf.append(",modelVersion=");
+		buf.append(modelVersion);
 		buf.append(",mode=");
 		buf.append(orchestrationMode);
-		buf.append(",template=");
-		buf.append(templateId);
+		buf.append(",heatTemplateArtifactUUId=");
+		buf.append(heatTemplateArtifactUUId);
 		buf.append(",envtId=");
-		buf.append(environmentId);
 		buf.append(",asdcUuid=");
-		buf.append(asdcUuid);
 		buf.append(",aicVersionMin=");
 		buf.append(this.aicVersionMin);
 		buf.append(",aicVersionMax=");
@@ -257,28 +226,25 @@ public class VnfResource extends MavenLikeVersioning {
         buf.append(",modelInvariantUuid=");
         buf.append(this.modelInvariantUuid);
         buf.append(",modelVersion=");
-        buf.append(this.modelVersion);
         buf.append(",modelCustomizationName=");
-        buf.append(this.modelCustomizationName);
         buf.append(",modelName=");
         buf.append(this.modelName);
         buf.append(",serviceModelInvariantUUID=");
-        buf.append(this.serviceModelInvariantUUID);
 		buf.append(",modelCustomizationUuid=");
-		buf.append(this.modelCustomizationUuid);
+        buf.append(",toscaNodeType=");
+        buf.append(toscaNodeType);
 
 		if (created != null) {
 			buf.append(",created=");
 			buf.append(DateFormat.getInstance().format(created));
 		}
-		if (this.vfModules != null && this.vfModules.size() > 0) {
-			buf.append("VfModules:");
-			int i=0;
-			for (VfModule vfm : this.vfModules) {
-				buf.append("vfModule[" + i++ + "]:" + vfm.toString());
+		
+		for(VnfResourceCustomization vrc : vnfResourceCustomizations) {
+			buf.append("/n" + vrc.toString());
 			}
-		} else {
-			buf.append("VfModules: NONE");
+		
+		for(VfModule vfm : vfModules) {
+			buf.append("/n" + vfm.toString());
 		}
 		return buf.toString();
     }

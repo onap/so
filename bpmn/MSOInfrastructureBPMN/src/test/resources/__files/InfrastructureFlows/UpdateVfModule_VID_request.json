@@ -2,11 +2,11 @@
 "requestDetails": {
 "modelInfo": {
 "modelType": "vfModule",
-"modelInvariantId": "introvert",
-"modelNameVersionId": "fe6478e5-ea33-3346-ac12-ab121484a3fe",
+"modelInvariantUuid": "introvert",
+"modelUuid": "fe6478e5-ea33-3346-ac12-ab121484a3fe",
 "modelName": "STMTN5MMSC21-MMSC::model-1-0",
 "modelVersion": "1",
-"modelCustomizationId": "MODEL12345"
+"modelCustomizationUuid": "MODEL12345"
 },
 "cloudConfiguration": {
 "lcpCloudRegionId": "MDTWNJ21",
@@ -24,8 +24,8 @@
 "instanceId": "123456",
 "modelInfo": {
 "modelType": "service",
-"modelInvariantId": "ff3514e3-5a33-55df-13ab-12abad84e7ff",
-"modelNameVersionId": "fe6985cd-ea33-3346-ac12-ab121484a3fe",
+"modelInvariantUuid": "ff3514e3-5a33-55df-13ab-12abad84e7ff",
+"modelUuid": "fe6985cd-ea33-3346-ac12-ab121484a3fe",
 "modelName": "SERVICE_MODEL_NAME",
 "modelVersion": "1.0"
 }
@@ -36,16 +36,26 @@
 "instanceId": "skask",
 "modelInfo": {
 "modelType": "vnf",
-"modelInvariantId": "skask",
-"modelNameVersionId": "fe6478e4-ea33-3346-ac12-ab121484a3fe",
+"modelInvariantUuid": "skask",
+"modelUuid": "fe6478e4-ea33-3346-ac12-ab121484a3fe",
 "modelName": "vSAMP12",
 "modelVersion": "1.0",
-"modelCustomizationName": "vSAMP12 1"
+"modelInstanceName": "vSAMP12 1"
 }
 }
 }
 ],
 "requestParameters": {
-"userParams": {}
+"usePreload": false,
+"userParams" : [
+	{
+		"name" : "someUserParam",
+		"value" : "someValue"
+	},
+	{ 
+		"name": "sgi_protected_subnet_id", 
+		"value": "thisissomefakevalue" 
+	}
+]
 }
 }

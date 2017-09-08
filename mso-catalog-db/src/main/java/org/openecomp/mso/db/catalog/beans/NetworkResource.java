@@ -20,44 +20,35 @@
 
 package org.openecomp.mso.db.catalog.beans;
 
-
-import org.openecomp.mso.db.catalog.utils.MavenLikeVersioning;
-
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 
-public class NetworkResource extends MavenLikeVersioning {
-	private int id;
-	private String networkType;
+import org.openecomp.mso.db.catalog.utils.MavenLikeVersioning;
+
+public class NetworkResource extends MavenLikeVersioning implements Serializable {
+	
+	private static final long serialVersionUID = 768026109321305392L;
+
 	private String orchestrationMode = null;
 	private String description = null;
-	private int templateId;
 	private String neutronNetworkType = null;
 	private String aicVersionMin = null;
 	private String aicVersionMax = null;
-	
+	private String modelName;
+	private String modelInvariantUUID;
+	private String modelVersion;
+	private String toscaNodeType;
 	private Timestamp created;
+	private String modelUUID;
+	private String heatTemplateArtifactUUID;
 	
 	public NetworkResource() {}
-	
-	public int getId() {
-		return id;
-	}
-	
-	public void setId(int id) {
-		this.id = id;
-	}
-	
-	public String getNetworkType() {
-		return networkType;
-	}
-	public void setNetworkType(String networkType) {
-		this.networkType = networkType;
-	}
 	
 	public String getOrchestrationMode() {
 		return orchestrationMode;
 	}
+	
 	public void setOrchestrationMode(String orchestrationMode) {
 		this.orchestrationMode = orchestrationMode;
 	}
@@ -67,14 +58,6 @@ public class NetworkResource extends MavenLikeVersioning {
 	}
 	public void setDescription(String description) {
 		this.description = description;
-	}
-	
-	public int getTemplateId () {
-		return templateId;
-	}
-	
-	public void setTemplateId (int templateId) {
-		this.templateId = templateId;
 	}
 	
 	public String getNeutronNetworkType() {
@@ -109,31 +92,84 @@ public class NetworkResource extends MavenLikeVersioning {
 		this.aicVersionMax = aicVersionMax;
 	}
 
+	public String getModelName() {
+		return modelName;
+	}
+
+	public void setModelName(String modelName) {
+		this.modelName = modelName;
+	}
+
+	public String getModelInvariantUUID() {
+		return modelInvariantUUID;
+	}
+
+	public void setModelInvariantUUID(String modelInvariantUUID) {
+		this.modelInvariantUUID = modelInvariantUUID;
+	}
+
+	public String getToscaNodeType() {
+		return toscaNodeType;
+	}
+
+	public void setToscaNodeType(String toscaNodeType) {
+		this.toscaNodeType = toscaNodeType;
+	}
+
+	public String getModelUUID() {
+		return modelUUID;
+	}
+
+	public void setModelUUID(String modelUUID) {
+		this.modelUUID = modelUUID;
+	}
+
+	public String getHeatTemplateArtifactUUID() {
+		return heatTemplateArtifactUUID;
+	}
+
+	public void setHeatTemplateArtifactUUID(String heatTemplateArtifactUUID) {
+		this.heatTemplateArtifactUUID = heatTemplateArtifactUUID;
+	}
+
+	public String getModelVersion() {
+		return modelVersion;
+	}
+
+	public void setModelVersion(String modelVersion) {
+		this.modelVersion = modelVersion;
+	}
+
 	@Override
 	public String toString () {
 		StringBuffer sb = new StringBuffer();
-		sb.append("NETWORK=");
-		sb.append(networkType);
-		sb.append(",version=");
-		sb.append(version);
+		sb.append("NETWORK Resource:");
+		sb.append("modelVersion=");
+		sb.append(modelVersion);
 		sb.append(",mode=");
 		sb.append(orchestrationMode);
-		sb.append(",template=");
-		sb.append(templateId);
 		sb.append(",neutronType=");
 		sb.append(neutronNetworkType);
 		sb.append(",aicVersionMin=");
 		sb.append(aicVersionMin);
 		sb.append(",aicVersionMax=");
 		sb.append(aicVersionMax);
-		
-		sb.append("id=");
-		sb.append(id);
+		sb.append(",modelName=");
+		sb.append(modelName);
+		sb.append(",modelInvariantUUID=");
+		sb.append(modelInvariantUUID);
+		sb.append(",toscaNodeType=");
+		sb.append(toscaNodeType);
+		sb.append(",modelUUID=");
+		sb.append(modelUUID);
+		sb.append(",heatTemplateArtifactUUID=");
+		sb.append(heatTemplateArtifactUUID);
 		
 		if (created != null) {
 	        sb.append (",created=");
 	        sb.append (DateFormat.getInstance().format(created));
 	    }
+		
 		return sb.toString();
 	}
 }

@@ -30,12 +30,6 @@
 	</modules>
 
 	<dependencies>
-	    <dependency>
-             <groupId>org.evosuite</groupId>
-             <artifactId>evosuite-standalone-runtime</artifactId>
-             <version>${evosuiteVersion}</version>
-             <scope>test</scope>
-        </dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>

@@ -20,7 +20,9 @@
 
 package org.openecomp.mso.bpmn.core.json;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.StringTokenizer;
@@ -95,9 +97,11 @@ public class JsonUtils {
 		try {
 			JSONObject jsonObj = new JSONObject(jsonStr);
 			if (pretty) {
-				//	use the local class method which properly handles certain JSONArray content
+//				return XmlTool.normalize(XML.toString(jsonObj));
+//				use the local class method which properly handles certain JSONArray content
 				return XmlTool.normalize(toXMLString(jsonObj, null));
 			} else {
+//				return XML.toString(jsonObj);
 //				use the local class method which properly handles certain JSONArray content
 				return toXMLString(jsonObj, null);
 			}
@@ -106,7 +110,7 @@ public class JsonUtils {
 				return null;
 		}
 	}
-	
+
 	/**
 	 * Uses a modified version of the org.json.XML toString() algorithm
 	 * to convert a JSONObject to an XML Doc. The intent of this is to
@@ -173,7 +177,7 @@ public class JsonUtils {
 						curObj = jsonArr.get(i);
 						if (curObj instanceof JSONArray) {
 //							The XML tags for the nested array should be generated below when this method
-//							is called recursively and the JSONArray object is passed							
+//							is called recursively and the JSONArray object is passed
 //							strBuf.append("<");
 //							strBuf.append(key);
 //							strBuf.append(">");
@@ -237,7 +241,17 @@ public class JsonUtils {
 							+ tagName + ">" + str + "</" + tagName + ">";
 		}
 	}
-	
+
+	/**
+	 * Invokes json2xml(String, Boolean) defaulting to 'pretty' output.
+	 *
+	 * @param  jsonStr	String containing the XML doc
+	 * @return String containing the JSON translation
+	 */
+	public static String json2xml(String jsonStr) {
+		return json2xml(jsonStr, true);
+	}
+
 	/**
 	 * Formats the JSON String using the value of MSOJsonIndentFactor.
 	 *
@@ -254,17 +268,7 @@ public class JsonUtils {
 			return null;
 		}
 	}
-	
-	/**
-	 * Invokes json2xml(String, Boolean) defaulting to 'pretty' output.
-	 *
-	 * @param  jsonStr	String containing the XML doc
-	 * @return String containing the JSON translation
-	 */
-	public static String json2xml(String jsonStr) {
-		return json2xml(jsonStr, true);
-	}
-	
+
 	/**
 	 * Returns an Iterator over the JSON keys in the specified JSON doc.
 	 *
@@ -275,7 +279,7 @@ public class JsonUtils {
 	public static Iterator <String> getJsonIterator(String jsonStr) throws JSONException {
 		return new JSONObject(jsonStr).keys();
 	}
-	
+
 	/**
 	 * Returns the name of the "root" property in the specified JSON doc. The
 	 * "root" property is the single top-level property in the JSON doc. An
@@ -306,7 +310,7 @@ public class JsonUtils {
 	/**
 	 * Invokes the getJsonRawValue() method and returns the String equivalent of
 	 * the object returned.
-	 * 
+	 *
 	 * TBD: May need separate methods for boolean, float, and integer fields if the
 	 * String representation is not sufficient to meet client needs.
 	 *
@@ -334,8 +338,7 @@ public class JsonUtils {
 		}
 		return null;
 	}
-	
-	
+
 	/**
 	 * Invokes the getJsonRawValue() method with the wrap flag set to true
 	 * and returns the String equivalent of the json node object returned.
@@ -368,7 +371,7 @@ public class JsonUtils {
 	/**
 	 * Invokes the getJsonRawValue() method and returns the String equivalent of
 	 * the object returned.
-	 * 
+	 *
 	 * TBD: May need separate methods for boolean, float, and integer fields if the
 	 * String representation is not sufficient to meet client needs.
 	 *
@@ -398,8 +401,37 @@ public class JsonUtils {
 	}
 
 	/**
+	 * Invokes the getJsonRawValue() method and returns the boolean equivalent of
+	 * the object returned.
+	 *
+	 * @param  jsonStr	String containing the JSON doc
+	 * @param  keys		full key path to the target value in the format of "key1.key2.key3..."
+	 * @return boolean field value associated with keys - default is false
+	 */
+	public static boolean getJsonBooleanValue(String jsonStr, String keys) {
+		String isDebugLogEnabled = "true";
+		try {
+				Object rawValue = getJsonRawValue(jsonStr, keys);
+				if (rawValue == null) {
+					return false;
+				} else {
+					if (rawValue instanceof Boolean) {
+						msoLogger.debug("getJsonValue(): the raw value is a Boolean Object=" + ((String) rawValue).toString());
+						return (Boolean) rawValue;
+					} else {
+						msoLogger.debug("getJsonValue(): the raw value is NOT an Boolean Object=" + rawValue.toString());
+						return false;
+					}
+				}
+		} catch (Exception e) {
+				msoLogger.debug("getJsonValue(): unable to parse json to retrieve value for field=" + keys + ". Exception was: " + e.toString());
+		}
+		return false;
+	}
+
+	/**
 	 * Invokes the getJsonParamValue() method to obtain the JSONArray associated with
-	  * the specified keys. The JSONArray is then walked to retrieve the first array
+	 * the specified keys. The JSONArray is then walked to retrieve the first array
 	 * value associated with the specified field name (index=0).
 	 *
 	 * @param  jsonStr	String containing the JSON doc
@@ -414,7 +446,7 @@ public class JsonUtils {
 	/**
 	 * Invokes the getJsonRawValue() method to obtain the JSONArray associated with
 	 * the specified keys. The JSONArray is then walked to retrieve the nth array
-	 * value associated with the specified field name and index
+	 * value associated with the specified field name and index.
 	 *
 	 * @param  jsonStr	String containing the JSON doc
 	 * @param  keys		full key path to the target value in the format of "key1.key2.key3..."
@@ -510,7 +542,11 @@ public class JsonUtils {
 		try {
 			if (jsonObj.has(key)) {
 				msoLogger.debug("getJsonValueForKey(): found value for key=" + key);
-				return ((String) jsonObj.get(key));
+				Object value = jsonObj.get(key);
+				if (value == null)
+					return null;
+				else
+					return ((String) value);
 			} else {
 				msoLogger.debug("getJsonValueForKey(): iterating over the keys");
 				Iterator <String> itr = jsonObj.keys();
@@ -538,7 +574,7 @@ public class JsonUtils {
 		}
 		return keyValue;
 	}
-	
+
 	/**
 	 * Walks the JSONObject (and sub-objects recursively), searching for the first value associated with the
 	 * single key/field name specified. Returns the associated value if found or null if the key is not found
@@ -581,7 +617,50 @@ public class JsonUtils {
 		}
 		return keyValue;
 	}
-	
+
+	/**
+	 * Walks the JSONObject (and sub-objects recursively), searching for the first value associated with the
+	 * single key/field name specified. Returns the associated value if found or null if the key is not found
+	 *
+	 * @param  jsonObj	JSONObject representation of the the JSON doc
+	 * @param  key		key to the target value
+	 * @return String field value associated with key
+	 */
+	public static Boolean getJsonBooleanValueForKey(JSONObject jsonObj, String key) {
+		String isDebugLogEnabled = "true";
+		Boolean keyValue = false;
+		try {
+			if (jsonObj.has(key)) {
+				msoLogger.debug("getJsonBooleanValueForKey(): found value for key=" + key);
+				return ((Boolean) jsonObj.get(key));
+			} else {
+				msoLogger.debug("getJsonBooleanValueForKey(): iterating over the keys");
+				Iterator <String> itr = jsonObj.keys();
+				while (itr.hasNext()) {
+					String nextKey = (String) itr.next();
+					Object obj = jsonObj.get(nextKey);
+					if (obj instanceof JSONObject) {
+						msoLogger.debug("getJsonBooleanValueForKey(): key=" + nextKey + ", points to JSONObject, recursive call");
+						keyValue = getJsonBooleanValueForKey((JSONObject) obj, key);
+						if (keyValue != null) {
+							msoLogger.debug("getJsonBooleanValueForKey(): found value=" + keyValue + ", for key=" + key);
+							break;
+						}
+					} else {
+						msoLogger.debug("getJsonBooleanValueForKey(): key=" + nextKey + ", does not point to a JSONObject, next key");
+					}
+				}
+			}
+		} catch (JSONException je) {
+				// JSONObject::get() throws this exception if one of the specified keys is not found
+				msoLogger.debug("getJsonBooleanValueForKey(): caught JSONException attempting to retrieve value for key=" + key);
+				keyValue = null;
+		} catch (Exception e) {
+				msoLogger.debug("getJsonBooleanValueForKey(): unable to parse json to retrieve value for field=" + key + ". Exception was: " + e.toString());
+		}
+		return keyValue;
+	}
+
 	/**
 	 * Boolean method to determine if a key path is valid for the JSON doc. Invokes
 	 * getJsonValue().
@@ -597,7 +676,7 @@ public class JsonUtils {
 			return true;
 		}
 	}
-	
+
 	/**
 	 * Inserts the new key/value pair at the appropriate location in the JSON
 	 * document after first determining if keyed field already exists. If
@@ -673,7 +752,7 @@ public class JsonUtils {
 	 */
 	private static Object getJsonRawValue(String jsonStr, String keys) {
 		return getJsonRawValue(jsonStr, keys, false);
-	}	
+	}
 
 	/**
 	 * Walks the JSON doc using the full key path to retrieve the associated
@@ -683,8 +762,8 @@ public class JsonUtils {
 	 *
 	 * @param  jsonStr	String containing the JSON doc
 	 * @param  keys		full key path to the target value in the format of "key1.key2.key3..."
-	 * * @param  wrap	Boolean which determines if returned JSONObjects sould be "wrapped"
-	 *                  Note: wrap does not apply to returned scalar values 
+	 * @param  wrap		Boolean which determines if returned JSONObjects sould be "wrapped"
+	 *                  Note: wrap does not apply to returned scalar values
 	 * @return Object field value associated with keys
 	 */
 	private static Object getJsonRawValue(String jsonStr, String keys, Boolean wrap) {
@@ -735,7 +814,7 @@ public class JsonUtils {
 	 * @param  keys		full key path to the value to be deleted in the format of "key1.key2.key3..."
 	 * @return String containing the updated JSON doc
 	 */
-	private static String putJsonValue(String jsonStr, String keys, String value) {		
+	private static String putJsonValue(String jsonStr, String keys, String value) {
 //		String isDebugLogEnabled = "true";
 		String keyStr = "";
 		try {
@@ -760,7 +839,7 @@ public class JsonUtils {
 			}
 			// should not hit this point if the key points to a valid key value
 			return null;
-			
+
 		} catch (JSONException je) {
 				// JSONObject::get() throws this exception if one of the specified keys is not found
 				msoLogger.debug("putJsonValue(): caught JSONException attempting to retrieve value for key=" + keyStr);
@@ -772,14 +851,13 @@ public class JsonUtils {
 	}
 
 	/**
-	 * This json util method converts a json "Key" and "Value"
-	 * entry Array to a Java map.
+	 * This json util method converts a json array of Key Value
+	 * pair objects into a Java Map.
 	 *
 	 * @param execution
-	 * @param entryArray - the json value of the entry Array
+	 * @param entryArray - the getJsonValue of a json Array of key/value pairs
 	 *
-	 * @return map - a Map containing the entries
-	 *
+	 * @return Map - a Map containing the entries
 	 */
 	public Map<String, String> entryArrayToMap(Execution execution, String entryArray) {
 		msoLogger.debug("Started Entry Array To Map Util Method");
@@ -801,8 +879,68 @@ public class JsonUtils {
 		return map;
 	}
 
+	/**
+	 * This json util method converts a json array of Key Value
+	 * pair objects into a Java Map.
+	 *
+	 * @param execution
+	 * @param entryArray - the getJsonValue of a json Array of key/value pairs
+	 * @param keyNode - the name of the node that represents the key
+	 * @param valueNode - the name of the node that represents the value
+	 *
+	 * @return Map - a Map containing the entries
+	 *
+	 */
+	public Map<String, String> entryArrayToMap(Execution execution, String entryArray, String keyNode, String valueNode) {
+		msoLogger.debug("Started Entry Array To Map Util Method");
+
+		Map<String, String> map = new HashMap<String, String>();
+		//Populate Map
+		String entryListJson = "{ \"entry\":" + entryArray + "}";
+		JSONObject obj = new JSONObject(entryListJson);
+		JSONArray arr = obj.getJSONArray("entry");
+		for (int i = 0; i < arr.length(); i++){
+			JSONObject jo = arr.getJSONObject(i);
+			String key = jo.getString(keyNode);
+			String value =jo.getString(valueNode);
+			map.put(key, value);
+		}
+		msoLogger.debug("Outgoing Map is: " + map);
+		msoLogger.debug("Completed Entry Array To Map Util Method");
+		return map;
+	}
 
 	/**
+	 * This json util method converts a json Array of Strings
+	 * to a Java List. It takes each String in the json Array
+	 * and puts it in a Java List<String>.
+	 *
+	 * @param execution
+	 * @param stringArray - the getJsonValue of a json array of strings
+	 *
+	 * @return List - a java list containing the strings
+	 *
+	 *
+	 */
+	public List<String> StringArrayToList(Execution execution, String jsonArrayOfStrings) {
+		msoLogger.debug("Started  String Array To List Util Method");
+
+		List<String> list = new ArrayList<String>();
+		//Populate List
+		String stringListJson = "{ \"strings\":" + jsonArrayOfStrings + "}";
+		JSONObject obj = new JSONObject(stringListJson);
+		JSONArray arr = obj.getJSONArray("strings");
+		for (int i = 0; i < arr.length(); i++){
+			String s = arr.getString(i);
+			list.add(s);
+		}
+		msoLogger.debug("Outgoing List is: " + list);
+		msoLogger.debug("Completed String Array To List Util Method");
+		return list;
+	}
+
+	/**
+	 *
 	 * Invokes the getJsonRawValue() method to determine if the
 	 * json element/variable exist. Returns true if the
 	 * json element exist
@@ -810,6 +948,8 @@ public class JsonUtils {
 	 * @param  jsonStr	String containing the JSON doc
 	 * @param  keys		full key path to the target value in the format of "key1.key2.key3..."
 	 * @return boolean field value associated with keys
+	 *
+	 *
 	 */
 	public static boolean jsonElementExist(String jsonStr, String keys) {
 
@@ -827,4 +967,3 @@ public class JsonUtils {
 	}
 
 }
-

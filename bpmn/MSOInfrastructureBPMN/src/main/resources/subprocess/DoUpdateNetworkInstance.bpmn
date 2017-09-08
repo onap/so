@@ -155,7 +155,7 @@ DoUpdateNetworkInstance.postProcessResponse(execution)]]></bpmn2:script>
       </bpmn2:exclusiveGateway>
       <bpmn2:sequenceFlow id="SequenceFlow_0nrc66n" name="No" sourceRef="ExclusiveGateway_1kjh92x" targetRef="sdncOk_ExclusiveGateway" />
       <bpmn2:sequenceFlow id="SequenceFlow_0srdlf3" name="Yes" sourceRef="ExclusiveGateway_1kjh92x" targetRef="InclusiveGateway_6">
-        <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{execution.getVariable("sdncVersion") == '1702'} ]]></bpmn2:conditionExpression>
+        <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{execution.getVariable("sdncVersion") != '1610'} ]]></bpmn2:conditionExpression>
       </bpmn2:sequenceFlow>
       <bpmn2:scriptTask id="ScriptTask_1gedbow" name="Set Exception Flag" scriptFormat="groovy">
         <bpmn2:incoming>SequenceFlow_23</bpmn2:incoming>
@@ -238,18 +238,12 @@ def DoUpdateNetworkInstance = new DoUpdateNetworkInstance()
 DoUpdateNetworkInstance.callRESTQueryAAINetworkId(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_24" name="" sourceRef="callRESTQueryNetworkId_ScriptTask" targetRef="callRESTQueryCloudRegion_ScriptTask" />
-    <bpmn2:endEvent id="EndEvent_2">
-      <bpmn2:incoming>SequenceFlow_30</bpmn2:incoming>
-      <bpmn2:errorEventDefinition id="_ErrorEventDefinition_97" errorRef="Error_2" />
-    </bpmn2:endEvent>
     <bpmn2:scriptTask id="workflowExceptionSINotFound" name="Create Workflow Exception" scriptFormat="groovy">
       <bpmn2:incoming>siFoundNo</bpmn2:incoming>
-      <bpmn2:outgoing>SequenceFlow_30</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.utils.*
+      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
 ExceptionUtil exceptionUtil = new ExceptionUtil()
-exceptionUtil.buildWorkflowException(execution, 404, "Service Instance Not Found")]]></bpmn2:script>
+exceptionUtil.buildAndThrowWorkflowException(execution, 404, "Service Instance Not Found")]]></bpmn2:script>
     </bpmn2:scriptTask>
-    <bpmn2:sequenceFlow id="SequenceFlow_30" name="" sourceRef="workflowExceptionSINotFound" targetRef="EndEvent_2" />
     <bpmn2:exclusiveGateway id="siFoundCheck" name="is SI Found?" default="siFoundNo">
       <bpmn2:incoming>SequenceFlow_3</bpmn2:incoming>
       <bpmn2:outgoing>siFoundYes</bpmn2:outgoing>
@@ -259,7 +253,7 @@ exceptionUtil.buildWorkflowException(execution, 404, "Service Instance Not Found
       <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{execution.getVariable("GENGSI_FoundIndicator" ) == true && execution.getVariable("GENGSI_SuccessIndicator" ) == true}]]></bpmn2:conditionExpression>
     </bpmn2:sequenceFlow>
     <bpmn2:sequenceFlow id="siFoundNo" name="No" sourceRef="siFoundCheck" targetRef="workflowExceptionSINotFound" />
-    <bpmn2:callActivity id="callGetServiceInstance" name="Get&#10;Service&#10;Instance" calledElement="GenericGetService">
+    <bpmn2:callActivity id="callGetServiceInstance" name="Get&#10;Service&#10;Instance" calledElement="GenericGetService">
       <bpmn2:extensionElements>
         <camunda:in source="UPDNETI_serviceInstanceId" target="GENGS_serviceInstanceId" />
         <camunda:out source="GENGS_serviceInstance" target="UPDNETI_serviceInstanceId" />
@@ -714,12 +708,6 @@ DoUpdateNetworkInstance.callRESTQueryAAINetworkPolicy(execution)]]></bpmn2:scrip
           <dc:Bounds x="868" y="157" width="29" height="22" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="_BPMNShape_EndEvent_247" bpmnElement="EndEvent_2">
-        <dc:Bounds x="1155" y="278" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1173" y="319" width="0" height="0" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="_BPMNShape_ScriptTask_331" bpmnElement="workflowExceptionSINotFound">
         <dc:Bounds x="984" y="256" width="100" height="80" />
       </bpmndi:BPMNShape>
@@ -729,13 +717,6 @@ DoUpdateNetworkInstance.callRESTQueryAAINetworkPolicy(execution)]]></bpmn2:scrip
         <di:waypoint xsi:type="dc:Point" x="984" y="296" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="871" y="233" width="22" height="22" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_21" bpmnElement="SequenceFlow_30" sourceElement="_BPMNShape_ScriptTask_331" targetElement="_BPMNShape_EndEvent_247">
-        <di:waypoint xsi:type="dc:Point" x="1084" y="296" />
-        <di:waypoint xsi:type="dc:Point" x="1155" y="296" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1103" y="296" width="6" height="6" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_22" bpmnElement="SequenceFlow_24" sourceElement="_BPMNShape_ScriptTask_133" targetElement="_BPMNShape_ScriptTask_245">

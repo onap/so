@@ -56,10 +56,10 @@ import org.openecomp.mso.apihandlerinfra.networkbeans.RequestStatusType;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.properties.MsoJavaProperties;
-import org.openecomp.mso.db.HibernateUtils;
+import org.openecomp.mso.db.AbstractSessionFactoryManager;
 import org.openecomp.mso.requestsdb.InfraActiveRequests;
 import org.openecomp.mso.requestsdb.RequestsDatabase;
-import org.openecomp.mso.requestsdb.HibernateUtilsRequestsDb;
+import org.openecomp.mso.requestsdb.RequestsDbSessionFactoryManager;
 
 public class NetworkMsoInfraRequest {
 
@@ -80,7 +80,7 @@ public class NetworkMsoInfraRequest {
     private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH);
     private static final String NOT_PROVIDED = "not provided";
 
-    protected HibernateUtils hibernateUtils = new HibernateUtilsRequestsDb ();
+    protected AbstractSessionFactoryManager requestsDbSessionFactoryManager = new RequestsDbSessionFactoryManager ();
     
     NetworkMsoInfraRequest (String requestId) {
         this.requestId = requestId;
@@ -255,7 +255,7 @@ public class NetworkMsoInfraRequest {
         Session session = null;
         try {
 
-            session = hibernateUtils.getSessionFactory ().openSession ();
+            session = requestsDbSessionFactoryManager.getSessionFactory ().openSession ();
             session.beginTransaction ();
 
             InfraActiveRequests aq = new InfraActiveRequests ();
@@ -348,7 +348,7 @@ public class NetworkMsoInfraRequest {
 
     public void updateFinalStatus (Status status) {
         try {
-            RequestsDatabase.updateInfraFinalStatus (requestId,
+            (RequestsDatabase.getInstance()).updateInfraFinalStatus (requestId,
                                                      status.toString (),
                                                      this.errorMessage,
                                                      this.progress,

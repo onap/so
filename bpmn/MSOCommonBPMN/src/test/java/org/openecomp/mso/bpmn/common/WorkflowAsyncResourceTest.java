@@ -31,7 +31,7 @@ import org.camunda.bpm.engine.test.Deployment;
 import org.camunda.bpm.engine.variable.impl.VariableMapImpl;
 import org.jboss.resteasy.spi.AsynchronousResponse;
 import org.junit.Test;
-import org.openecomp.mso.bpmn.common.workflow.service.WorkflowAsyncCommonResource;
+import org.openecomp.mso.bpmn.common.workflow.service.WorkflowAsyncResource;
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowResponse;
 
 public class WorkflowAsyncResourceTest extends WorkflowTest {
@@ -53,7 +53,7 @@ public class WorkflowAsyncResourceTest extends WorkflowTest {
 	}
 
 	private void executeWorkflow(String request, String requestId, AsynchronousResponse asyncResponse, String processKey) {
-		WorkflowAsyncCommonResource workflowResource = new WorkflowAsyncCommonResource();
+		WorkflowAsyncResource workflowResource = new WorkflowAsyncResource();
 		VariableMapImpl variableMap = new VariableMapImpl();
 
 		Map<String, Object> variableValueType = new HashMap<String, Object>();

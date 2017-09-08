@@ -25,11 +25,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.openecomp.mso.utils.CryptoUtils;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 public class MsoJsonProperties extends AbstractMsoProperties {

@@ -25,32 +25,41 @@
     <class name="org.openecomp.mso.db.catalog.beans.AllottedResourceCustomization"
     table="ALLOTTED_RESOURCE_CUSTOMIZATION">
         <id name="modelCustomizationUuid" type="java.lang.String">
-            <column name="MODEL_CUSTOMIZATION_UUID" length="200" not-null="true"/>
+            <column name="MODEL_CUSTOMIZATION_UUID" length="200"/>
             <generator class="assigned" />
         </id>
-        <property name="version">
-            <column name="MODEL_VERSION" length="20" not-null="true"/>
+        <property name="modelInstanceName" type="java.lang.String" length="200" not-null="true">
+            <column name="MODEL_INSTANCE_NAME" />
         </property>
-        <property name="modelVersion" update="false" insert="false">
-            <column name="MODEL_VERSION" />
+        <property name="arModelUuid" type="java.lang.String" length="200" not-null="true">
+            <column name="AR_MODEL_UUID" />
         </property>
-        <property name="modelUuid" type="java.lang.String">
-            <column name="MODEL_UUID" length="200" not-null="true"/>
+        <property name="providingServiceModelInvariantUuid" type="java.lang.String" length="200">
+            <column name="PROVIDING_SERVICE_MODEL_INVARIANT_UUID" />
         </property>
-        <property name="modelName" type="java.lang.String">
-            <column name="MODEL_NAME" length="200" not-null="true"/>
+        <property name="targetNetworkRole" type="java.lang.String" length="200">
+            <column name="TARGET_NETWORK_ROLE" />
         </property>
-        <property name="modelInstanceName" type="java.lang.String">
-            <column name="MODEL_INSTANCE_NAME" length="200" not-null="true"/>
+        <property name="nfFunction" type="java.lang.String" length="200">
+            <column name="NF_FUNCTION" />
+        </property>
+        <property name="nfType" type="java.lang.String" length="200">
+            <column name="NF_TYPE" />
+        </property>
+        <property name="nfRole" type="java.lang.String" length="200">
+            <column name="NF_ROLE" />
+        </property>
+        <property name="nfNamingCode" type="java.lang.String" length="200">
+            <column name="NF_NAMING_CODE" />
+        </property>
+        <property name="minInstances" type="java.lang.Integer">
+            <column name="MIN_INSTANCES" />
+        </property>
+        <property name="maxInstances" type="java.lang.Integer">
+            <column name="MAX_INSTANCES" />
         </property>
         <property name="created" type="timestamp" generated="insert" update="false" insert="false" >
 		    <column name="CREATION_TIMESTAMP" not-null="true"/>
 		</property>
-        <property name="description" type="java.lang.String">
-            <column name="DESCRIPTION" length="200" not-null="false" default="null"/>
-        </property>
-        <property name="modelInvariantUuid" type="java.lang.String">
-            <column name="MODEL_INVARIANT_UUID" length="200" not-null="true"/>
-        </property>
     </class>
 </hibernate-mapping>

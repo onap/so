@@ -27,6 +27,7 @@ import java.util.Properties;
 import org.camunda.bpm.engine.ProcessEngineException;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.Expression;
+
 import org.openecomp.mso.logger.MsoLogger;
 
 /**
@@ -56,20 +57,38 @@ public class ReadConfigTask extends BaseTask {
 			msoLogger.debug("propertiesFile = " + thePropertiesFile);
 		}
 
-        if (shouldFail(execution)) {
-            throw new ProcessEngineException(getTaskName() + " Failed");
-        }
+		Boolean shouldFail = (Boolean) execution.getVariable("shouldFail");
+
+		if (shouldFail != null && shouldFail) {
+			throw new ProcessEngineException(getClass().getSimpleName() + " Failed");
+		}
 
 		synchronized (ReadConfigTask.class) {
 			if (properties == null) {
 				properties = new Properties();
 
-				try(InputStream stream = getClass().getResourceAsStream(thePropertiesFile)) {
+				InputStream stream = null;
+
+				try {
+					stream = getClass().getResourceAsStream(thePropertiesFile);
+
 					if (stream == null) {
 						throw new IOException("Resource not found: " + thePropertiesFile);
 					}
 
 					properties.load(stream);
+
+					stream.close();
+					stream = null;
+
+				} finally {
+					if (stream != null) {
+						try {
+							stream.close();
+						} catch (Exception e) {
+							// Do nothing
+						}
+					}
 				}
 			}
 		}

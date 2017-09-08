@@ -26,28 +26,34 @@ import java.util.List;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import org.apache.http.HttpStatus;
-
 import org.openecomp.mso.apihandlerinfra.networkbeans.NetworkType;
 import org.openecomp.mso.apihandlerinfra.networkbeans.NetworkTypes;
 import org.openecomp.mso.apihandlerinfra.networkbeans.ObjectFactory;
 import org.openecomp.mso.db.catalog.CatalogDatabase;
 import org.openecomp.mso.db.catalog.beans.NetworkResource;
 import org.openecomp.mso.logger.MsoLogger;
+import org.openecomp.mso.requestsdb.RequestsDatabase;
 import org.openecomp.mso.utils.UUIDChecker;
 
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+
 @Path(Constants.NETWORK_TYPES_PATH)
+@Api(value="/{version: v1|v2|v3}/network-types",description="API Requests to find Network Types")
 public class NetworkTypesHandler {
 
     private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH);
 
     @GET
-    public Response getNetworkTypes () {
+    @ApiOperation(value="Finds Network Types",response=Response.class)
+    public Response getNetworkTypes (@PathParam("version") String version) {
         long startTime = System.currentTimeMillis ();
         MsoLogger.setServiceName ("getNetworkTypes");
         // Generate a Request Id
@@ -55,7 +61,7 @@ public class NetworkTypesHandler {
         msoLogger.debug ("Incoming request received for getNetworkTypes");
 
         List <NetworkResource> networkResources = null;
-        try (CatalogDatabase db = new CatalogDatabase()){
+        try (CatalogDatabase db = CatalogDatabase.getInstance()){
             networkResources = db.getAllNetworkResources ();
         } catch (Exception e) {
             msoLogger.debug ("No connection to catalog DB", e);
@@ -75,9 +81,9 @@ public class NetworkTypesHandler {
         for (int i = 0; i < networkResources.size (); i++) {
             NetworkType networkType = beansObjectFactory.createNetworkType ();
             NetworkResource vr = networkResources.get (i);
-            networkType.setType (vr.getNetworkType ());
+            networkType.setType (vr.getModelName());
             networkType.setDescription (vr.getDescription ());
-            networkType.setId (String.valueOf (vr.getId ()));
+            networkType.setId (String.valueOf (vr.getModelUUID()));
             networkTypes.getNetworkType ().add (networkType);
         }
 

@@ -58,11 +58,11 @@ class VidUtilsTest {
   "requestDetails": {
     "modelInfo": {
       "modelType": "vfModule",
-      "modelInvariantId": "ff5256d2-5a33-55df-13ab-12abad84e7ff",
+      "modelInvariantUuid": "ff5256d2-5a33-55df-13ab-12abad84e7ff",
       "modelNameVersionId": "fe6478e5-ea33-3346-ac12-ab121484a3fe",
       "modelName": "STMTN5MMSC21-MMSC::model-1-0",
       "modelVersion": "1",
-      "modelCustomizationId": "ee6478e5-ea33-3346-ac12-ab121484a3fe"
+      "modelCustomizationUuid": "ee6478e5-ea33-3346-ac12-ab121484a3fe"
     },
     "cloudConfiguration": {
       "lcpCloudRegionId": "MDTWNJ21",
@@ -80,7 +80,7 @@ class VidUtilsTest {
           "instanceName": "MSOTESTVOL103a-vSAMP12_base_module-0_vol",
           "modelInfo": {
             "modelType": "volumeGroup",
-            "modelInvariantId": "ff5256d2-5a33-55df-13ab-12abad84e7ff",
+            "modelInvariantUuid": "ff5256d2-5a33-55df-13ab-12abad84e7ff",
             "modelNameVersionId": "fe6478e5-ea33-3346-ac12-ab121484a3fe",
             "modelName": "vSAMP12..base..module-0",
             "modelVersion": "1"
@@ -92,7 +92,7 @@ class VidUtilsTest {
           "instanceId": "123456",
           "modelInfo": {
             "modelType": "service",
-            "modelInvariantId": "ff3514e3-5a33-55df-13ab-12abad84e7ff",
+            "modelInvariantUuid": "ff3514e3-5a33-55df-13ab-12abad84e7ff",
             "modelNameVersionId": "fe6985cd-ea33-3346-ac12-ab121484a3fe",
             "modelName": "SERVICE_MODEL_NAME",
             "modelVersion": "1.0"
@@ -105,11 +105,11 @@ class VidUtilsTest {
           "instanceName": "skask-test",
           "modelInfo": {
             "modelType": "vnf",
-            "modelInvariantId": "skask",
+            "modelInvariantUuid": "skask",
             "modelNameVersionId": "fe6478e4-ea33-3346-ac12-ab121484a3fe",
             "modelName": "vSAMP12",
             "modelVersion": "1.0",
-            "modelCustomizationName": "vSAMP12 1"
+            "modelInstanceName": "vSAMP12 1"
           }
         }
       }
@@ -193,7 +193,7 @@ class VidUtilsTest {
 						"modelNameVersionId": "fe6478e4-ea33-3346-ac12-ab121484a3fe",
 						"modelName": "vSAMP12",
 						"modelVersion": "1",
-						"modelCustomizationName": "vSAMP12"
+						"modelInstanceName": "vSAMP12"
 					}
 				}
 			}
@@ -262,7 +262,7 @@ class VidUtilsTest {
 		"modelInfo": {
 			"modelType": "volumeGroup",
 			"modelId": "ff5256d2-5a33-55df-13ab-12abad84e7ff",
-			"modelNameVersionId": "fe6478e5-ea33-3346-ac12-ab121484a3fe",
+			"modelUuid": "fe6478e5-ea33-3346-ac12-ab121484a3fe",
 			"modelName": "vSAMP12::base::module-0",
 			"modelVersion": "1"
 		},
@@ -282,7 +282,7 @@ class VidUtilsTest {
 					"modelInfo": {
 						"modelType": "service",
 						"modelId": "ff3514e3-5a33-55df-13ab-12abad84e7ff",
-						"modelNameVersionId": "fe6985cd-ea33-3346-ac12-ab121484a3fe",
+						"modelUuid": "fe6985cd-ea33-3346-ac12-ab121484a3fe",
 						"modelName": "Test",
 						"modelVersion": "2.0"
 					}
@@ -293,10 +293,10 @@ class VidUtilsTest {
 					"modelInfo": {
 						"modelType": "vnf",
 						"modelId": "ff5256d1-5a33-55df-13ab-12abad84e7ff",
-						"modelNameVersionId": "fe6478e4-ea33-3346-ac12-ab121484a3fe",
+						"modelUuid": "fe6478e4-ea33-3346-ac12-ab121484a3fe",
 						"modelName": "vSAMP12",
 						"modelVersion": "1",
-						"modelCustomizationName": "vSAMP12"
+						"modelInstanceName": "vSAMP12"
 					}
 				}
 			}
@@ -311,7 +311,7 @@ class VidUtilsTest {
 		"modelInfo": {
 			"modelType": "volumeGroup",
 			"modelId": "ff5256d2-5a33-55df-13ab-12abad84e7ff",
-			"modelNameVersionId": "fe6478e5-ea33-3346-ac12-ab121484a3fe",
+			"modelUuid": "fe6478e5-ea33-3346-ac12-ab121484a3fe",
 			"modelName": "vSAMP12::base::module-0",
 			"modelVersion": "1"
 		},
@@ -331,7 +331,7 @@ class VidUtilsTest {
 					"modelInfo": {
 						"modelType": "service",
 						"modelId": "ff3514e3-5a33-55df-13ab-12abad84e7ff",
-						"modelNameVersionId": "fe6985cd-ea33-3346-ac12-ab121484a3fe",
+						"modelUuid": "fe6985cd-ea33-3346-ac12-ab121484a3fe",
 						"modelName": "Test",
 						"modelVersion": "2.0"
 					}
@@ -342,10 +342,10 @@ class VidUtilsTest {
 					"modelInfo": {
 						"modelType": "vnf",
 						"modelId": "ff5256d1-5a33-55df-13ab-12abad84e7ff",
-						"modelNameVersionId": "fe6478e4-ea33-3346-ac12-ab121484a3fe",
+						"modelUuid": "fe6478e4-ea33-3346-ac12-ab121484a3fe",
 						"modelName": "vSAMP12",
 						"modelVersion": "1",
-						"modelCustomizationName": "vSAMP12"
+						"modelInstanceName": "vSAMP12"
 					}
 				}
 			}
@@ -360,7 +360,7 @@ def bpmnReqJsonVolumeSuppressRollbackFalse = """
 		"modelInfo": {
 			"modelType": "volumeGroup",
 			"modelId": "ff5256d2-5a33-55df-13ab-12abad84e7ff",
-			"modelNameVersionId": "fe6478e5-ea33-3346-ac12-ab121484a3fe",
+			"modelUuid": "fe6478e5-ea33-3346-ac12-ab121484a3fe",
 			"modelName": "vSAMP12::base::module-0",
 			"modelVersion": "1"
 		},
@@ -380,7 +380,7 @@ def bpmnReqJsonVolumeSuppressRollbackFalse = """
 					"modelInfo": {
 						"modelType": "service",
 						"modelId": "ff3514e3-5a33-55df-13ab-12abad84e7ff",
-						"modelNameVersionId": "fe6985cd-ea33-3346-ac12-ab121484a3fe",
+						"modelUuid": "fe6985cd-ea33-3346-ac12-ab121484a3fe",
 						"modelName": "Test",
 						"modelVersion": "2.0"
 					}
@@ -391,10 +391,10 @@ def bpmnReqJsonVolumeSuppressRollbackFalse = """
 					"modelInfo": {
 						"modelType": "vnf",
 						"modelId": "ff5256d1-5a33-55df-13ab-12abad84e7ff",
-						"modelNameVersionId": "fe6478e4-ea33-3346-ac12-ab121484a3fe",
+						"modelUuid": "fe6478e4-ea33-3346-ac12-ab121484a3fe",
 						"modelName": "vSAMP12",
 						"modelVersion": "1",
-						"modelCustomizationName": "vSAMP12"
+						"modelInstanceName": "vSAMP12"
 					}
 				}
 			}
@@ -409,7 +409,7 @@ def bpmnReqJsonVolumeSuppressRollbackNone = """
 		"modelInfo": {
 			"modelType": "volumeGroup",
 			"modelId": "ff5256d2-5a33-55df-13ab-12abad84e7ff",
-			"modelNameVersionId": "fe6478e5-ea33-3346-ac12-ab121484a3fe",
+			"modelUuid": "fe6478e5-ea33-3346-ac12-ab121484a3fe",
 			"modelName": "vSAMP12::base::module-0",
 			"modelVersion": "1"
 		},
@@ -428,7 +428,7 @@ def bpmnReqJsonVolumeSuppressRollbackNone = """
 					"modelInfo": {
 						"modelType": "service",
 						"modelId": "ff3514e3-5a33-55df-13ab-12abad84e7ff",
-						"modelNameVersionId": "fe6985cd-ea33-3346-ac12-ab121484a3fe",
+						"modelUuid": "fe6985cd-ea33-3346-ac12-ab121484a3fe",
 						"modelName": "Test",
 						"modelVersion": "2.0"
 					}
@@ -439,10 +439,10 @@ def bpmnReqJsonVolumeSuppressRollbackNone = """
 					"modelInfo": {
 						"modelType": "vnf",
 						"modelId": "ff5256d1-5a33-55df-13ab-12abad84e7ff",
-						"modelNameVersionId": "fe6478e4-ea33-3346-ac12-ab121484a3fe",
+						"modelUuid": "fe6478e4-ea33-3346-ac12-ab121484a3fe",
 						"modelName": "vSAMP12",
 						"modelVersion": "1",
-						"modelCustomizationName": "vSAMP12"
+						"modelInstanceName": "vSAMP12"
 					}
 				}
 			}
@@ -456,8 +456,8 @@ def bpmnReqJsonVolumeSuppressRollbackNone = """
 "requestDetails": {
 "modelInfo": {
 "modelType": "vfModule",
-"modelInvariantId": "ff5256d2-5a33-55df-13ab-12abad84e7ff",
-"modelNameVersionId": "fe6478e5-ea33-3346-ac12-ab121484a3fe",
+"modelInvariantUuid": "ff5256d2-5a33-55df-13ab-12abad84e7ff",
+"modelUuid": "fe6478e5-ea33-3346-ac12-ab121484a3fe",
 "modelName": "STMTN5MMSC21-MMSC::model-1-0",
 "modelVersion": "1"
 },
@@ -477,8 +477,8 @@ def bpmnReqJsonVolumeSuppressRollbackNone = """
 "instanceName": "MSOTESTVOL103a-vSAMP12_base_module-0_vol",
 "modelInfo": {
 "modelType": "volumeGroup",
-"modelInvariantId": "ff5256d2-5a33-55df-13ab-12abad84e7ff",
-"modelNameVersionId": "fe6478e5-ea33-3346-ac12-ab121484a3fe",
+"modelInvariantUuid": "ff5256d2-5a33-55df-13ab-12abad84e7ff",
+"modelUuid": "fe6478e5-ea33-3346-ac12-ab121484a3fe",
 "modelName": "vSAMP12..base..module-0",
 "modelVersion": "1"
 }
@@ -489,8 +489,8 @@ def bpmnReqJsonVolumeSuppressRollbackNone = """
 "instanceId": "123456",
 "modelInfo": {
 "modelType": "service",
-"modelInvariantId": "ff3514e3-5a33-55df-13ab-12abad84e7ff",
-"modelNameVersionId": "fe6985cd-ea33-3346-ac12-ab121484a3fe",
+"modelInvariantUuid": "ff3514e3-5a33-55df-13ab-12abad84e7ff",
+"modelUuid": "fe6985cd-ea33-3346-ac12-ab121484a3fe",
 "modelName": "SERVICE_MODEL_NAME",
 "modelVersion": "1.0"
 }
@@ -502,11 +502,11 @@ def bpmnReqJsonVolumeSuppressRollbackNone = """
 "instanceName": "skask-test",
 "modelInfo": {
 "modelType": "vnf",
-"modelInvariantId": "skask",
-"modelNameVersionId": "fe6478e4-ea33-3346-ac12-ab121484a3fe",
+"modelInvariantUuid": "skask",
+"modelUuid": "fe6478e4-ea33-3346-ac12-ab121484a3fe",
 "modelName": "vSAMP12",
 "modelVersion": "1.0",
-"modelCustomizationName": "vSAMP12 1"
+"modelInstanceName": "vSAMP12 1"
 }
 }
 }
@@ -523,8 +523,8 @@ def bpmnReqJsonVfModuleSuppressRollbackFalse = """
 "requestDetails": {
 "modelInfo": {
 "modelType": "vfModule",
-"modelInvariantId": "ff5256d2-5a33-55df-13ab-12abad84e7ff",
-"modelNameVersionId": "fe6478e5-ea33-3346-ac12-ab121484a3fe",
+"modelInvariantUuid": "ff5256d2-5a33-55df-13ab-12abad84e7ff",
+"modelUuid": "fe6478e5-ea33-3346-ac12-ab121484a3fe",
 "modelName": "STMTN5MMSC21-MMSC::model-1-0",
 "modelVersion": "1"
 },
@@ -544,8 +544,8 @@ def bpmnReqJsonVfModuleSuppressRollbackFalse = """
 "instanceName": "MSOTESTVOL103a-vSAMP12_base_module-0_vol",
 "modelInfo": {
 "modelType": "volumeGroup",
-"modelInvariantId": "ff5256d2-5a33-55df-13ab-12abad84e7ff",
-"modelNameVersionId": "fe6478e5-ea33-3346-ac12-ab121484a3fe",
+"modelInvariantUuid": "ff5256d2-5a33-55df-13ab-12abad84e7ff",
+"modelUuid": "fe6478e5-ea33-3346-ac12-ab121484a3fe",
 "modelName": "vSAMP12..base..module-0",
 "modelVersion": "1"
 }
@@ -556,8 +556,8 @@ def bpmnReqJsonVfModuleSuppressRollbackFalse = """
 "instanceId": "123456",
 "modelInfo": {
 "modelType": "service",
-"modelInvariantId": "ff3514e3-5a33-55df-13ab-12abad84e7ff",
-"modelNameVersionId": "fe6985cd-ea33-3346-ac12-ab121484a3fe",
+"modelInvariantUuid": "ff3514e3-5a33-55df-13ab-12abad84e7ff",
+"modelUuid": "fe6985cd-ea33-3346-ac12-ab121484a3fe",
 "modelName": "SERVICE_MODEL_NAME",
 "modelVersion": "1.0"
 }
@@ -569,11 +569,11 @@ def bpmnReqJsonVfModuleSuppressRollbackFalse = """
 "instanceName": "skask-test",
 "modelInfo": {
 "modelType": "vnf",
-"modelInvariantId": "skask",
-"modelNameVersionId": "fe6478e4-ea33-3346-ac12-ab121484a3fe",
+"modelInvariantUuid": "skask",
+"modelUuid": "fe6478e4-ea33-3346-ac12-ab121484a3fe",
 "modelName": "vSAMP12",
 "modelVersion": "1.0",
-"modelCustomizationName": "vSAMP12 1"
+"modelInstanceName": "vSAMP12 1"
 }
 }
 }
@@ -590,8 +590,8 @@ def bpmnReqJsonVfModuleSuppressRollbackNone = """
 "requestDetails": {
 "modelInfo": {
 "modelType": "vfModule",
-"modelInvariantId": "ff5256d2-5a33-55df-13ab-12abad84e7ff",
-"modelNameVersionId": "fe6478e5-ea33-3346-ac12-ab121484a3fe",
+"modelInvariantUuid": "ff5256d2-5a33-55df-13ab-12abad84e7ff",
+"modelUuid": "fe6478e5-ea33-3346-ac12-ab121484a3fe",
 "modelName": "STMTN5MMSC21-MMSC::model-1-0",
 "modelVersion": "1"
 },
@@ -610,8 +610,8 @@ def bpmnReqJsonVfModuleSuppressRollbackNone = """
 "instanceName": "MSOTESTVOL103a-vSAMP12_base_module-0_vol",
 "modelInfo": {
 "modelType": "volumeGroup",
-"modelInvariantId": "ff5256d2-5a33-55df-13ab-12abad84e7ff",
-"modelNameVersionId": "fe6478e5-ea33-3346-ac12-ab121484a3fe",
+"modelInvariantUuid": "ff5256d2-5a33-55df-13ab-12abad84e7ff",
+"modelUuid": "fe6478e5-ea33-3346-ac12-ab121484a3fe",
 "modelName": "vSAMP12..base..module-0",
 "modelVersion": "1"
 }
@@ -622,8 +622,8 @@ def bpmnReqJsonVfModuleSuppressRollbackNone = """
 "instanceId": "123456",
 "modelInfo": {
 "modelType": "service",
-"modelInvariantId": "ff3514e3-5a33-55df-13ab-12abad84e7ff",
-"modelNameVersionId": "fe6985cd-ea33-3346-ac12-ab121484a3fe",
+"modelInvariantUuid": "ff3514e3-5a33-55df-13ab-12abad84e7ff",
+"modelUuid": "fe6985cd-ea33-3346-ac12-ab121484a3fe",
 "modelName": "SERVICE_MODEL_NAME",
 "modelVersion": "1.0"
 }
@@ -635,11 +635,11 @@ def bpmnReqJsonVfModuleSuppressRollbackNone = """
 "instanceName": "skask-test",
 "modelInfo": {
 "modelType": "vnf",
-"modelInvariantId": "skask",
-"modelNameVersionId": "fe6478e4-ea33-3346-ac12-ab121484a3fe",
+"modelInvariantUuid": "skask",
+"modelUuid": "fe6478e4-ea33-3346-ac12-ab121484a3fe",
 "modelName": "vSAMP12",
 "modelVersion": "1.0",
-"modelCustomizationName": "vSAMP12 1"
+"modelInstanceName": "vSAMP12 1"
 }
 }
 }
@@ -762,7 +762,7 @@ def vidUtilVfModuleRespBackoutOnFailureFalse = """<vnf-request>
       <service-id/>
       <backout-on-failure>false</backout-on-failure>
       <persona-model-id>ff5256d2-5a33-55df-13ab-12abad84e7ff</persona-model-id>
-      <persona-model-version>1</persona-model-version>
+      <persona-model-version>fe6478e5-ea33-3346-ac12-ab121484a3fe</persona-model-version>
    </vnf-inputs>
    <vnf-params/>
 </vnf-request>
@@ -792,7 +792,7 @@ def vidUtilVfModuleRespBackoutOnFailureTrue = """<vnf-request>
       <service-id/>
       <backout-on-failure>true</backout-on-failure>
       <persona-model-id>ff5256d2-5a33-55df-13ab-12abad84e7ff</persona-model-id>
-      <persona-model-version>1</persona-model-version>
+      <persona-model-version>fe6478e5-ea33-3346-ac12-ab121484a3fe</persona-model-version>
    </vnf-inputs>
    <vnf-params/>
 </vnf-request>
@@ -822,7 +822,7 @@ def vidUtilVfModuleRespBackoutOnFailureEmpty = """<vnf-request>
       <service-id/>
       <backout-on-failure/>
       <persona-model-id>ff5256d2-5a33-55df-13ab-12abad84e7ff</persona-model-id>
-      <persona-model-version>1</persona-model-version>
+      <persona-model-version>fe6478e5-ea33-3346-ac12-ab121484a3fe</persona-model-version>
    </vnf-inputs>
    <vnf-params/>
 </vnf-request>

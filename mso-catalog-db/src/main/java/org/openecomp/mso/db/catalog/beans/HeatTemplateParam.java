@@ -20,29 +20,26 @@
 
 package org.openecomp.mso.db.catalog.beans;
 
+import java.io.Serializable;
 
-public class HeatTemplateParam {
-	private int id;
-	private int heatTemplateId;
+public class HeatTemplateParam implements Serializable {
+
+	private String heatTemplateArtifactUuid;
 	private String paramName;
 	private boolean required;
 	private String paramType;
 	private String paramAlias;
+    public static final long serialVersionUID = -1322322139926390329L;
 	
 	public HeatTemplateParam() {}
 	
-	public int getId() {
-		return id;
+	public String getHeatTemplateArtifactUuid() {
+		return this.heatTemplateArtifactUuid;
 	}
-	public void setId(int id) {
-		this.id = id;
+	public void setHeatTemplateArtifactUuid(String heatTemplateArtifactUuid) {
+		this.heatTemplateArtifactUuid = heatTemplateArtifactUuid;
 	}
-	public int getHeatTemplateId() {
-		return heatTemplateId;
-	}
-	public void setHeatTemplateId(int heatTemplateId) {
-		this.heatTemplateId = heatTemplateId;
-	}
+
 	public String getParamName() {
 		return paramName;
 	}
@@ -65,7 +62,6 @@ public class HeatTemplateParam {
 	public String getParamType() {
 	    return paramType;
 	}
-	
 	public void setParamType (String paramType) {
 	    this.paramType = paramType;
 	}
@@ -73,6 +69,28 @@ public class HeatTemplateParam {
 	
 	@Override
 	public String toString () {
-		return "Param=" + paramName + ",type=" + paramType + ",required=" + required + ",paramAlias=" + paramAlias;
+		return "Param=" + paramName + ",type=" + paramType + ",required=" + required + ",paramAlias=" + paramAlias + ", heatTemplateArtifactUuid=" + this.heatTemplateArtifactUuid;
+	}
+	
+    @Override
+    public boolean equals (Object o) {
+        if (!(o instanceof HeatTemplateParam)) {
+            return false;
+        }
+        if (this == o) {
+            return true;
+        }
+        HeatTemplateParam htp = (HeatTemplateParam) o;
+        if (htp.getHeatTemplateArtifactUuid().equals(this.heatTemplateArtifactUuid) && htp.getParamName().equalsIgnoreCase(this.paramName)) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode () {
+        int result = 0;
+        result = this.paramName == null ? 0 : this.paramName.hashCode() + this.heatTemplateArtifactUuid == null ? 0 : this.heatTemplateArtifactUuid.hashCode();
+        return result;
 	}
 }

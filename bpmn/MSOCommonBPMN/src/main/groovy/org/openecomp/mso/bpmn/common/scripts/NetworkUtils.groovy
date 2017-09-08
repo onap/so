@@ -73,7 +73,7 @@ class NetworkUtils {
 	 * @param requestInput the request in the process
 	 * @param queryIdResponse the response of REST AAI query by Id
 	 * @param routeCollection the collection
-	 * @param policyFqdns the policy 
+	 * @param policyFqdns the policy
 	 * @param tableCollection the collection
 	 * @param cloudRegionId the cloud-region-region
 	 * @return String request
@@ -84,12 +84,12 @@ class NetworkUtils {
 				String serviceInstanceId = ""
 				String sharedValue = ""
 				String externalValue = ""
-			
+
 				if (source == "VID") {
 					sharedValue = utils.getNodeText1(queryIdResponse, "is-shared-network") != null ? utils.getNodeText1(queryIdResponse, "is-shared-network") : "false"
 					externalValue = utils.getNodeText1(queryIdResponse, "is-external-network") != null ? utils.getNodeText1(queryIdResponse, "is-external-network") : "false"
 					serviceInstanceId = utils.getNodeText1(requestInput, "service-instance-id")
-					
+
 				} else { // source = 'PORTAL'
 					sharedValue = getParameterValue(requestInput, "shared")
 					externalValue = getParameterValue(requestInput, "external")
@@ -101,24 +101,28 @@ class NetworkUtils {
 					String netParams = utils.getNodeXml(requestInput, "network-params", false).replace("tag0:","").replace(":tag0","")
 					networkParams = buildParams(netParams)
 				}
-									
+
 				String failIfExists = "false"
 				// requestInput
 				String cloudRegion = cloudRegionId
 				String tenantId = utils.getNodeText1(requestInput, "tenant-id")
+
 				String networkType = ""
+				String modelCustomizationUuid = ""
 				if (utils.nodeExists(requestInput, "networkModelInfo")) {
 					String networkModelInfo = utils.getNodeXml(requestInput, "networkModelInfo", false).replace("tag0:","").replace(":tag0","")
 					networkType = utils.getNodeText1(networkModelInfo, "modelName")
+					modelCustomizationUuid = utils.getNodeText1(networkModelInfo, "modelCustomizationUuid")
 				} else {
-				    networkType = utils.getNodeText1(queryIdResponse, "network-type")
+					networkType = utils.getNodeText1(queryIdResponse, "network-type")
+					modelCustomizationUuid = utils.getNodeText1(requestInput, "modelCustomizationId")
 				}
-				
+
 				// queryIdResponse
 				String networkName = utils.getNodeText1(queryIdResponse, "network-name")
 				String networkId = utils.getNodeText1(queryIdResponse, "network-id")
 				String networkTechnology = utils.getNodeText1(queryIdResponse, "network-technology")
-				
+
 				// contrailNetwork - networkTechnology = 'Contrail' vs. 'AIC_SR_IOV')
 				String contrailNetwork = ""
 				if (networkTechnology.contains('Contrail') || networkTechnology.contains('contrail') || networkTechnology.contains('CONTRAIL')) {
@@ -131,7 +135,7 @@ class NetworkUtils {
 				                         </contrailNetwork>"""
 					networkTechnology = "CONTRAIL"    // replace
 			    }
-								
+
 				// rebuild subnets
 				String subnets = ""
 				if (utils.nodeExists(queryIdResponse, "subnets")) {
@@ -140,10 +144,10 @@ class NetworkUtils {
 				}
 
 				String physicalNetworkName = ""
-				physicalNetworkName = utils.getNodeText1(queryIdResponse, "physical-network-name") 
-				
+				physicalNetworkName = utils.getNodeText1(queryIdResponse, "physical-network-name")
+
 				String vlansCollection = buildVlans(queryIdResponse)
-				
+
 				String notificationUrl = ""                                   //TODO - is this coming from URN? What variable/value to use?
 				//String notificationUrl = execution.getVariable("URN_?????") //TODO - is this coming from URN? What variable/value to use?
 
@@ -165,7 +169,7 @@ class NetworkUtils {
 									<skipAAI>true</skipAAI>
 									<backout>${backoutOnFailure}</backout>
 									<failIfExists>${failIfExists}</failIfExists>
-									${networkParams}	
+									${networkParams}
 									<msoRequest>
 										<requestId>${requestId}</requestId>
 										<serviceInstanceId>${serviceInstanceId}</serviceInstanceId>
@@ -176,9 +180,9 @@ class NetworkUtils {
 								""".trim()
 		}
 		return createNetworkRequest
-		
+
 	}
-	
+
 	/**
 	 * This method returns the string for Network request
 	 * V2 for Contrail 3.x will populate cloud-region data in same cloudSiteId filed
@@ -197,18 +201,18 @@ class NetworkUtils {
 				String serviceInstanceId = ""
 				String sharedValue = ""
 				String externalValue = ""
-			
+
 				if (source == "VID") {
 					sharedValue = utils.getNodeText1(queryIdResponse, "is-shared-network") != null ? utils.getNodeText1(queryIdResponse, "is-shared-network") : "false"
 					externalValue = utils.getNodeText1(queryIdResponse, "is-external-network") != null ? utils.getNodeText1(queryIdResponse, "is-external-network") : "false"
 					serviceInstanceId = utils.getNodeText1(requestInput, "service-instance-id")
-					
+
 				} else { // source = 'PORTAL'
 					sharedValue = getParameterValue(requestInput, "shared")
 					externalValue = getParameterValue(requestInput, "external")
 					serviceInstanceId = utils.getNodeText1(requestInput, "service-instance-id") != null ? utils.getNodeText1(requestInput, "service-instance-id") : ""
 				}
-								
+
 				String failIfExists = "false"
 				// requestInput
 				String cloudRegion = cloudRegionId
@@ -226,8 +230,8 @@ class NetworkUtils {
 					modelCustomizationUuid = utils.getNodeText1(networkModelInfo, "modelCustomizationUuid")
 				} else {
 					networkType = utils.getNodeText1(queryIdResponse, "network-type")
+					modelCustomizationUuid = utils.getNodeText1(requestInput, "modelCustomizationId")
 				}
-
 
 				// rebuild subnets
 				String subnets = ""
@@ -241,16 +245,16 @@ class NetworkUtils {
 					String netParams = utils.getNodeXml(requestInput, "network-params", false).replace("tag0:","").replace(":tag0","")
 					networkParams = buildParams(netParams)
 				}
-					
+
 				String networkStackId = utils.getNodeText1(queryIdResponse, "heat-stack-id")
 				if (networkStackId == 'null' || networkStackId == "" || networkStackId == null) {
 					networkStackId = "force_update"
 				}
-				
+
 				String physicalNetworkName = utils.getNodeText1(queryIdResponse, "physical-network-name")
 				String vlansCollection = buildVlans(queryIdResponse)
-				
-				updateNetworkRequest = 
+
+				updateNetworkRequest =
                          """<updateNetworkRequest>
 								<cloudSiteId>${cloudRegion}</cloudSiteId>
 								<tenantId>${tenantId}</tenantId>
@@ -276,7 +280,7 @@ class NetworkUtils {
 								<skipAAI>true</skipAAI>
 								<backout>${backoutOnFailure}</backout>
 								<failIfExists>${failIfExists}</failIfExists>
-									${networkParams}	
+									${networkParams}
 
 								<msoRequest>
 								  <requestId>${requestId}</requestId>
@@ -285,10 +289,10 @@ class NetworkUtils {
 						 		<messageId>${messageId}</messageId>
 						 		<notificationUrl></notificationUrl>
  							</updateNetworkRequest>""".trim()
-						   
+
 		}
 		return updateNetworkRequest
-		
+
 	}
 
 	/**
@@ -331,7 +335,7 @@ class NetworkUtils {
 				<heat-stack-id></heat-stack-id>
 				<vnf-type>${vnfType}</vnf-type>
 				<orchestration-status>Pending</orchestration-status>
-				<vf-module-persona-model-customization-id>${modelCustomizationId}</vf-module-persona-model-customization-id>
+				<vf-module-model-customization-id>${modelCustomizationId}</vf-module-model-customization-id>
 				<relationship-list>
 				   <relationship>
 					   <related-to>tenant</related-to>
@@ -353,9 +357,9 @@ class NetworkUtils {
 
 				return requestPayload
 			}
-	
+
 	def String createCloudRegionVolumeRequest(groupId, volumeName, vnfType, vnfId, tenantId, cloudRegion, namespace, modelCustomizationId) {
-		
+
 		String requestPayload =
 		"""<volume-group xmlns="${namespace}">
 			<volume-group-id>${groupId}</volume-group-id>
@@ -363,7 +367,7 @@ class NetworkUtils {
 			<heat-stack-id></heat-stack-id>
 			<vnf-type>${vnfType}</vnf-type>
 			<orchestration-status>Pending</orchestration-status>
-			<vf-module-persona-model-customization-id>${modelCustomizationId}</vf-module-persona-model-customization-id>
+			<vf-module-model-customization-id>${modelCustomizationId}</vf-module-model-customization-id>
 			<relationship-list>
 				<relationship>
 				   <related-to>generic-vnf</related-to>
@@ -389,7 +393,7 @@ class NetworkUtils {
 			   </relationship>
 		   </relationship-list>
 		</volume-group>"""
-	
+
 		return requestPayload
 	}
 
@@ -420,7 +424,7 @@ class NetworkUtils {
 					<vnf-type>${vnfType}</vnf-type>
 					<orchestration-status>Active</orchestration-status>
 					<resource-version>${resourceVersion}</resource-version>
-					<vf-module-persona-model-customization-id>${modelCustomizationId}</vf-module-persona-model-customization-id>
+					<vf-module-model-customization-id>${modelCustomizationId}</vf-module-model-customization-id>
 					${relationshipList}
 				 </volume-group>"""
 		}
@@ -480,7 +484,7 @@ class NetworkUtils {
 			} else {
 			   createNetworkContrailResponse = utils.getNodeXml(createNetworkResponse, "updateNetworkContrailResponse", false).replace("tag0:","").replace(":tag0","")
 			}
-			   
+
 			// rebuild network
 			def networkList = ["network-id", "network-name", "network-type", "network-role", "network-technology", "neutron-network-id", "is-bound-to-vpn", "service-id", "network-role-instance", "resource-version", "resource-model-uuid", "orchestration-status", "heat-stack-id", "mso-catalog-key", "contrail-network-fqdn",
 				                             "physical-network-name", "is-provider-network", "is-shared-network", "is-external-network"]
@@ -495,10 +499,14 @@ class NetworkUtils {
 			// rebuild 'segmentation-assignments'
 			def rebuildSegmentationAssignments = ""
 			if (utils.nodeExists(requeryIdAAIResponse, 'segmentation-assignments')) {
-				List elementList = ["segmentation-id"]  
-				rebuildSegmentationAssignments =  buildXMLElements(requeryIdAAIResponse, "", "segmentation-assignments", elementList)
+				List elementList = ["segmentation-id", "resource-version"]
+				if (utils.nodeExists(requeryIdAAIResponse, 'segmentation-assignment')) {  // new tag
+				    rebuildSegmentationAssignments =  buildXMLElements(requeryIdAAIResponse, "segmentation-assignments", "segmentation-assignment", elementList)
+				} else {
+				   rebuildSegmentationAssignments =  buildXMLElements(requeryIdAAIResponse, "", "segmentation-assignments", elementList)
+				}   
 			}
-			
+
 			// rebuild 'ctag-assignments' / rebuildCtagAssignments
 			def rebuildCtagAssignmentsList = ""
 			if (utils.nodeExists(requeryIdAAIResponse, 'ctag-assignment')) {
@@ -538,8 +546,8 @@ class NetworkUtils {
 			return contrailNetworkCreatedUpdate
 	}
 
-	
-	
+
+
 	/**
 	 * This method returns the value for the name paramName.
 	 *   Ex:   <network-params>
@@ -594,20 +602,20 @@ class NetworkUtils {
 
 	/**
 	 * This method returns the networkParams xml string.
-	 *   Ex: input:  
+	 *   Ex: input:
 	 *         <network-params>
 	 *            <param name="shared">1</param>
 	 *            <param name="external">0</external>
 	 *         </network-params>
-	 *         
+	 *
 	 *   Sample result:
 	 *         <networkParams>
      *            <shared>1</shared>
      *            <external>0</external>
      *         </networkParams>
-     *           
+     *
 	 */
-	
+
 	def buildParams(networkParams) {
 		def build = ""
 			def netParams = new XmlParser().parseText(networkParams)
@@ -621,15 +629,15 @@ class NetworkUtils {
 						build += "<${name}>${value}</${name}>"
 					}
 					build += "</networkParams>"
-				}	
-			   
+				}
+
 			} catch (Exception ex) {
 				println ' buildParams error - ' + ex.getMessage()
 				build = ""
-			}	
+			}
 		return build
 	}
-	
+
 	def getVlans(xmlInput) {
 		def rtn = ""
 		if (xmlInput!=null) {
@@ -751,7 +759,7 @@ class NetworkUtils {
 		}
 		return rtn
 	}
-	
+
 	/**
 	 * similar to network policymethod
 	* @param xmlInput the XML document
@@ -775,7 +783,6 @@ class NetworkUtils {
 						 } else {
 						     rtn.add(relatedLink.substring(relatedLink.indexOf("/generic-vnf/")+13, relatedLink.length()))
 						 }
-
 					  }
 				   }
 				}
@@ -783,7 +790,7 @@ class NetworkUtils {
 		}
 		return rtn
 	}
-	
+
 	/**
 	 * similar to network policymethod
 	* @param xmlInput the XML document
@@ -807,7 +814,6 @@ class NetworkUtils {
 						 } else {
 						     rtn.add(relatedLink.substring(relatedLink.indexOf("/l3-network/")+12, relatedLink.length()))
 						 }
-
 					  }
 				   }
 				}
@@ -815,7 +821,7 @@ class NetworkUtils {
 		}
 		return rtn
 	}
-	
+
 	def isVfRelationshipExist(xmlInput) {
 		Boolean rtn = false
 		if (xmlInput!=null) {
@@ -824,7 +830,7 @@ class NetworkUtils {
 			if (relationshipListSize > 0) {
 				for (i in 0..relationshipListSize-1) {
 				   def relationshipXml = XmlUtil.serialize(relationshipList[i])
-				   if (utils.getNodeText(relationshipXml, 'related-to') == "vf-module") { 
+				   if (utils.getNodeText(relationshipXml, 'related-to') == "vf-module") {
 					     rtn = true
 				   }
 				}
@@ -856,7 +862,7 @@ class NetworkUtils {
 		}
 		return lcpCloudRegion
 	}
-	
+
 	def getTenantId(xmlInput) {
 		String tenantId = ""
 		if (xmlInput!=null) {
@@ -879,27 +885,27 @@ class NetworkUtils {
 		}
 		return tenantId
 	}
-	
+
 	def isInstanceValueMatch(linkResource, globalSubscriberId, serviceType) {
 		Boolean rtn = false
 		try {
 			String globalSubscriberIdLink = linkResource.substring(linkResource.indexOf("/customer/")+10, linkResource.indexOf("/service-subscriptions"))
 			String serviceTypeLink = linkResource.substring(linkResource.indexOf("/service-subscription/")+22, linkResource.indexOf("/service-instances"))
-			if (globalSubscriberIdLink == globalSubscriberId) { 
+			if (globalSubscriberIdLink == globalSubscriberId) {
 					rtn = true
 			} else {
 				if (serviceTypeLink == serviceType) {
 					rtn = true
 				}
 			}
-			
+
 		} catch (Exception ex) {
 		    println 'Exception - ' + ex.getMessage()
 			return false
 		}
         return rtn
 	}
-	
+
 	def getListWithElements(xmlInput, groupName) {
 		def rtn = ""
 		if (xmlInput != null) {
@@ -953,7 +959,6 @@ class NetworkUtils {
 							xmlNetwork += "<"+element+">"+"Active"+"</"+element+">"
 					    }
 					}	
-
 					if (element=="heat-stack-id") {
 						if (replaceNetworkId != "") {
 							xmlNetwork += "<"+element+">"+replaceNetworkId+"</"+element+">"
@@ -984,7 +989,6 @@ class NetworkUtils {
 					}
 				}	
 			 }
-
 		}
 		return xmlNetwork
 	}
@@ -1008,7 +1012,7 @@ class NetworkUtils {
 				   } else {
 				      def subnetList = ["subnet-id", "neutron-subnet-id", "gateway-address", "network-start-address", "cidr-mask", "ip-version", "orchestration-status", "dhcp-enabled", "dhcp-start", "dhcp-end", "resource-version", "subnet-name"]
 				      rebuildingSubnets += buildSubNetworkElements(subnetXml, createNetworkResponse, subnetList, "subnet")
-				   }
+				   }	  
 				}
 				if (utils.nodeExists(subnetsData, 'relationship')) {
 					rebuildingSubnets = rebuildRelationship(requeryIdAAIResponse)
@@ -1040,7 +1044,8 @@ class NetworkUtils {
 			   	  	def subnetList = ["dhcp-start", "dhcp-end", "network-start-address", "cidr-mask", "dhcp-enabled", "gateway-address", "ip-version", "subnet-id", "subnet-name"]
 					rebuildingSubnets += buildSubNetworkElements(subnetXml, subnetList, "subnets")
 			   		//rebuildingSubnets += buildSubNetworkElements(subnetXml, subnetList, "")
-			   }			}
+			   }	
+			}
 		} catch (Exception ex) {
 		   //
 		} finally {
@@ -1062,7 +1067,7 @@ class NetworkUtils {
 			  def xml= new XmlSlurper().parseText(subnetXml)
 			  var = xml.'**'.find {it.name() == element}
 			  if (var != null) {
-				 if (element=="orchestration-status") {
+			  	 if (element=="orchestration-status") {
 					if(var.toString() == 'pending-create' || var.toString() == 'PendingCreate') {   
 						xmlBuild += "<"+element+">"+"Created"+"</"+element+">"
 					} else { // pending-update or PendingUpdate'
@@ -1136,7 +1141,8 @@ class NetworkUtils {
 					xmlBuild += "<gatewayIp>"+var.toString()+"</gatewayIp>"
 				}
 				if (element == "ip-version") {
-					xmlBuild += "<ipVersion>"+var.toString()+"</ipVersion>"
+					String ipVersion = getIpvVersion(var.toString())
+					xmlBuild += "<ipVersion>"+ipVersion+"</ipVersion>"
 				}
 				if (element == "subnet-id") {
 					xmlBuild += "<subnetId>"+var.toString()+"</subnetId>"
@@ -1219,7 +1225,7 @@ class NetworkUtils {
 		}
 		return rebuildingSubnets
 	}
-	
+
 	def buildVlans(queryIdResponse) {
 		def rebuildingSubnets = "<vlans>"
 		def subnetsData = new XmlSlurper().parseText(queryIdResponse)
@@ -1230,7 +1236,7 @@ class NetworkUtils {
 			for (i in 0..subnetsSize-1) {
 			   def subnet = subnets[i]
 			   def subnetXml = XmlUtil.serialize(subnet)
-			   
+
 			   String vlan = utils.getNodeText1(subnetXml, "segmentation-id")
 			   if (i>0){
 				   rebuildingSubnets += ","
@@ -1465,7 +1471,7 @@ class NetworkUtils {
 			}
 
 	public boolean isRollbackEnabled (Execution execution, String payloadXml) {
-		
+
 		def rollbackEnabled = false
 		def rollbackValueSet = false
 		if (utils.nodeExists(payloadXml, "backout-on-failure")) {
@@ -1480,12 +1486,31 @@ class NetworkUtils {
 				rollbackValueSet = true;
 			}
 		}
-		
+
 		if (!rollbackValueSet) {
 			if (execution.getVariable("URN_mso_rollback") != null) {
 			    rollbackEnabled = execution.getVariable("URN_mso_rollback").toBoolean()
-			}   
+			}
 		}
 		return rollbackEnabled
+	}
+	
+	
+	/**
+	 * This method extracts the version for the the given ip-version.
+	 *
+	 * @param String ipvVersion - IP protocols version (ex: ipv4 or ipv6)
+	 * @return String version - digit version (ex: 4 or 6)
+	 */
+	
+	public String getIpvVersion (String ipvVersion) {
+		
+		String version = ""
+		if (ipvVersion.isNumber()) {
+			version = ipvVersion
+		} else {
+			version = ipvVersion.substring(ipvVersion.indexOf("ipv")+3)
+		}
+		return version
 	}
 }

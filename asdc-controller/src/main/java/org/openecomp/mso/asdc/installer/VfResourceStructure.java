@@ -86,6 +86,8 @@ public final class VfResourceStructure {
 
 	private Service catalogService;
 
+	private List<String> vfArtifactUUIDList;
+	
 	/**
 	 * The list of artifacts existing in this resource hashed by UUID.
 	 */
@@ -118,6 +120,13 @@ public final class VfResourceStructure {
 
 			case ASDCConfiguration.VF_MODULES_METADATA:
 				vfModulesMetadataList = this.decodeVfModuleArtifact(clientResult.getArtifactPayload());
+				
+				for(IVfModuleData moduleData : vfModulesMetadataList){
+					
+				}
+				
+				//vfArtifactUUIDList.add(artifactinfo.getArtifactUUID());
+				//vfModulesMetadataList = distributionClient.decodeVfModuleArtifact(clientResult.getArtifactPayload());
 				break;
 
 			default:

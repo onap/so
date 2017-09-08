@@ -15,12 +15,6 @@
     <description>Contains classes to update and query the MSO status per site</description>
 
     <dependencies>
-    <dependency>
-             <groupId>org.evosuite</groupId>
-             <artifactId>evosuite-standalone-runtime</artifactId>
-             <version>${evosuiteVersion}</version>
-             <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.openecomp.so</groupId>
             <artifactId>common</artifactId>

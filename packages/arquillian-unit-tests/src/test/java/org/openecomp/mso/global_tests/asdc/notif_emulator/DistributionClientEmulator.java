@@ -1,5 +1,7 @@
 package org.openecomp.mso.global_tests.asdc.notif_emulator;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
@@ -16,14 +18,13 @@ import org.openecomp.sdc.api.consumer.IDistributionStatusMessage;
 import org.openecomp.sdc.api.consumer.INotificationCallback;
 import org.openecomp.sdc.api.notification.IArtifactInfo;
 import org.openecomp.sdc.api.notification.IVfModuleMetadata;
-import org.openecomp.mso.asdc.installer.IVfModuleData;
-import org.openecomp.mso.asdc.installer.VfModuleMetaData;
-import org.openecomp.mso.asdc.client.ASDCConfiguration;
 import org.openecomp.sdc.api.results.IDistributionClientDownloadResult;
 import org.openecomp.sdc.api.results.IDistributionClientResult;
 import org.openecomp.sdc.impl.DistributionClientDownloadResultImpl;
 import org.openecomp.sdc.impl.DistributionClientResultImpl;
 import org.openecomp.sdc.utils.DistributionActionResultEnum;
+
+import org.openecomp.mso.asdc.installer.IVfModuleData;
 
 public class DistributionClientEmulator implements IDistributionClient {
 
@@ -41,12 +42,27 @@ public class DistributionClientEmulator implements IDistributionClient {
 	public List<IDistributionStatusMessage> getDistributionMessageReceived() {
 		return distributionMessageReceived;
 	}
-	@Deprecated
+	
+	@Override
 	public List<IVfModuleMetadata> decodeVfModuleArtifact(byte[] arg0) {
-
-
 		return null;
 	}
+
+	/* @Override
+	public List<IVfModuleData> decodeVfModuleArtifact(byte[] arg0) {
+		try {
+			listVFModuleMetaData = new ObjectMapper().readValue(arg0, new TypeReference<List<JsonVfModuleMetaData>>(){});
+			return listVFModuleMetaData;
+
+		} catch (JsonParseException e) {
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	} */
 
 	public List<IVfModuleData> getListVFModuleMetaData() {
 		return listVFModuleMetaData;
@@ -55,25 +71,35 @@ public class DistributionClientEmulator implements IDistributionClient {
     @Override
 	public IDistributionClientDownloadResult download (IArtifactInfo arg0) {
 
+		
 		//String filename = resourcePath+"/artifacts/"+arg0.getArtifactURL();
 		String filename = arg0.getArtifactURL();
 		System.out.println("Emulating the download from resources files:"+filename);
-		InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourcePath+"/artifacts/"+filename);
+		
+		InputStream inputStream = null;
+		
+		if(arg0.getArtifactName().equals("service_Rg516VmmscSrvc_csar.csar")){
+			try{
+				inputStream = new FileInputStream(System.getProperty("java.io.tmpdir") + File.separator + "service_Rg516VmmscSrvc_csar.csar");
+			}catch(Exception e){
+				System.out.println("Error " + e.getMessage());
+			}
+		}else{
+		
+			inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourcePath + filename);
+		}
 
 		if (inputStream == null) {
 			System.out.println("InputStream is NULL for:"+filename);
 		}
 		try {
-			byte[] bytes = IOUtils.toByteArray(inputStream);
-			if (arg0.getArtifactType().equals(ASDCConfiguration.VF_MODULES_METADATA)) {
-				listVFModuleMetaData = new ObjectMapper().readValue(bytes, new TypeReference<List<VfModuleMetaData>>() {
-				});
-			}
-			return new DistributionClientDownloadResultImpl(DistributionActionResultEnum.SUCCESS, DistributionActionResultEnum.SUCCESS.name(),arg0.getArtifactName(),bytes);
+			return new DistributionClientDownloadResultImpl(DistributionActionResultEnum.SUCCESS, DistributionActionResultEnum.SUCCESS.name(),arg0.getArtifactName(),IOUtils.toByteArray(inputStream));
 		} catch (IOException e) {
+			
+			e.printStackTrace();
+			}
 				return null;
 		}
-	}
 
 	@Override
 	public IConfiguration getConfiguration() {

@@ -6,7 +6,7 @@
 		<sdnc-request-header>
 			<svc-request-id>9ddf628a-9eca-430e-8974-22d520a31be1</svc-request-id>
 			<svc-action>assign</svc-action>
-			<svc-notification-url>https://msojra.infra.aic.att.net:8443/adapters/rest/SDNCNotify</svc-notification-url>
+			<svc-notification-url>https://msojra.infra.aic.net:8443/adapters/rest/SDNCNotify</svc-notification-url>
 		</sdnc-request-header>
 		<service-information>
 			<subscriber-name>notsurewecare</subscriber-name>

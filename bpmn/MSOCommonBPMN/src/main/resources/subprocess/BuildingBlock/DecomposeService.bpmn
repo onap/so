@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.4.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+  <bpmn2:process id="DecomposeService" name="DecomposeService" isExecutable="true">
+    <bpmn2:startEvent id="createSI_startEvent" name="Start Flow">
+      <bpmn2:outgoing>SequenceFlow_1</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:sequenceFlow id="SequenceFlow_1" name="" sourceRef="createSI_startEvent" targetRef="preProcessRequest_ScriptTask" />
+    <bpmn2:endEvent id="EndEvent_3">
+      <bpmn2:incoming>SequenceFlow_0tj2l1j</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:subProcess id="SubProcess_06d8lk8" name="Java Exception Handling Sub Process" triggeredByEvent="true">
+      <bpmn2:startEvent id="StartEvent_0yljq9y">
+        <bpmn2:outgoing>SequenceFlow_0tgrn11</bpmn2:outgoing>
+        <bpmn2:errorEventDefinition />
+      </bpmn2:startEvent>
+      <bpmn2:endEvent id="EndEvent_117lkk3">
+        <bpmn2:incoming>SequenceFlow_0g4aus9</bpmn2:incoming>
+      </bpmn2:endEvent>
+      <bpmn2:sequenceFlow id="SequenceFlow_0tgrn11" sourceRef="StartEvent_0yljq9y" targetRef="processJavaError" />
+      <bpmn2:scriptTask id="processJavaError" name="Process Error" scriptFormat="groovy">
+        <bpmn2:incoming>SequenceFlow_0tgrn11</bpmn2:incoming>
+        <bpmn2:outgoing>SequenceFlow_0g4aus9</bpmn2:outgoing>
+        <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+ExceptionUtil exceptionUtil = new ExceptionUtil()
+exceptionUtil.processJavaException(execution)]]></bpmn2:script>
+      </bpmn2:scriptTask>
+      <bpmn2:sequenceFlow id="SequenceFlow_0g4aus9" sourceRef="processJavaError" targetRef="EndEvent_117lkk3" />
+    </bpmn2:subProcess>
+    <bpmn2:scriptTask id="decomposeService_ScriptTask" name="Decompose Service" scriptFormat="groovy">
+      <bpmn2:incoming>SequenceFlow_12vj619</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_0tj2l1j</bpmn2:outgoing>
+      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+def dds = new DecomposeService()
+dds.actuallyDecomposeService(execution)]]></bpmn2:script>
+    </bpmn2:scriptTask>
+    <bpmn2:sequenceFlow id="SequenceFlow_0tj2l1j" sourceRef="decomposeService_ScriptTask" targetRef="EndEvent_3" />
+    <bpmn2:scriptTask id="preProcessRequest_ScriptTask" name="PreProcess Incoming Request" scriptFormat="groovy">
+      <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_0yxffj2</bpmn2:outgoing>
+      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+def dds = new DecomposeService()
+dds.preProcessRequest(execution)
+]]></bpmn2:script>
+    </bpmn2:scriptTask>
+    <bpmn2:sequenceFlow id="SequenceFlow_0yxffj2" sourceRef="preProcessRequest_ScriptTask" targetRef="queryCatalogDB_ScriptTask" />
+    <bpmn2:sequenceFlow id="SequenceFlow_12vj619" sourceRef="queryCatalogDB_ScriptTask" targetRef="decomposeService_ScriptTask" />
+    <bpmn2:scriptTask id="queryCatalogDB_ScriptTask" name="Query Catalog DB" scriptFormat="groovy">
+      <bpmn2:incoming>SequenceFlow_0yxffj2</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_12vj619</bpmn2:outgoing>
+      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+def dds = new DecomposeService()
+dds.queryCatalogDb(execution)]]></bpmn2:script>
+    </bpmn2:scriptTask>
+  </bpmn2:process>
+  <bpmn2:error id="Error_2" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
+  <bpmn2:error id="Error_1" name="java.lang.Exception" errorCode="java.lang.Exception" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DecomposeService">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_47" bpmnElement="createSI_startEvent">
+        <dc:Bounds x="152" y="79" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="147" y="120" width="48" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_1" bpmnElement="SequenceFlow_1" sourceElement="_BPMNShape_StartEvent_47" targetElement="_BPMNShape_ScriptTask_61">
+        <di:waypoint xsi:type="dc:Point" x="188" y="97" />
+        <di:waypoint xsi:type="dc:Point" x="301" y="97" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="245" y="82" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_EndEvent_177" bpmnElement="EndEvent_3">
+        <dc:Bounds x="898" y="79" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="916" y="120" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SubProcess_06d8lk8_di" bpmnElement="SubProcess_06d8lk8" isExpanded="true">
+        <dc:Bounds x="142" y="243" width="417" height="161" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_0yljq9y_di" bpmnElement="StartEvent_0yljq9y">
+        <dc:Bounds x="179" y="310" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="197" y="351" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_117lkk3_di" bpmnElement="EndEvent_117lkk3">
+        <dc:Bounds x="465" y="310" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="483" y="351" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0tgrn11_di" bpmnElement="SequenceFlow_0tgrn11">
+        <di:waypoint xsi:type="dc:Point" x="215" y="328" />
+        <di:waypoint xsi:type="dc:Point" x="290" y="328" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="253" y="313" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_0twd3su_di" bpmnElement="decomposeService_ScriptTask">
+        <dc:Bounds x="708" y="57" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0tj2l1j_di" bpmnElement="SequenceFlow_0tj2l1j">
+        <di:waypoint xsi:type="dc:Point" x="808" y="97" />
+        <di:waypoint xsi:type="dc:Point" x="898" y="97" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="853" y="82" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_ScriptTask_61" bpmnElement="preProcessRequest_ScriptTask">
+        <dc:Bounds x="301" y="57" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0yxffj2_di" bpmnElement="SequenceFlow_0yxffj2">
+        <di:waypoint xsi:type="dc:Point" x="401" y="97" />
+        <di:waypoint xsi:type="dc:Point" x="513" y="97" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="457" y="82" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_0b5155c_di" bpmnElement="processJavaError">
+        <dc:Bounds x="290" y="288" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0g4aus9_di" bpmnElement="SequenceFlow_0g4aus9">
+        <di:waypoint xsi:type="dc:Point" x="390" y="328" />
+        <di:waypoint xsi:type="dc:Point" x="465" y="328" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="428" y="313" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_12vj619_di" bpmnElement="SequenceFlow_12vj619">
+        <di:waypoint xsi:type="dc:Point" x="613" y="97" />
+        <di:waypoint xsi:type="dc:Point" x="708" y="97" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="661" y="82" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_17xngtx_di" bpmnElement="queryCatalogDB_ScriptTask">
+        <dc:Bounds x="513" y="57" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>

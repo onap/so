@@ -27,7 +27,6 @@ import org.openecomp.mso.bpmn.core.json.JsonUtils
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
 import org.openecomp.mso.bpmn.common.scripts.SDNCAdapterUtils
-import org.openecomp.mso.bpmn.common.scripts.VidUtils
 import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.rest.APIResponse;
 import org.openecomp.mso.rest.RESTClient
@@ -60,6 +59,7 @@ import org.xml.sax.InputSource
  * @param - serviceInstanceName - O
  * @param - serviceModelInfo - O
  * @param - productFamilyId
+ * @param - serviceInputParams (should contain aic_zone for serviceTypes TRANSPORT,ATM)
  * @param - sdncVersion 
  * @param - failNotFound - TODO
  * @param - serviceInputParams - TODO
@@ -74,7 +74,6 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 	String Prefix="DDELSI_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
-	VidUtils vidUtils = new VidUtils()
 
 	public void preProcessRequest (Execution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
@@ -117,6 +116,30 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 			execution.setVariable("sdncCallbackUrl", sdncCallbackUrl)
 			utils.log("DEBUG","SDNC Callback URL: " + sdncCallbackUrl, isDebugEnabled)
 
+			StringBuilder sbParams = new StringBuilder()
+			Map<String, String> paramsMap = execution.getVariable("serviceInputParams")
+			if (paramsMap != null)
+			{
+				sbParams.append("<service-input-parameters>")
+				for (Map.Entry<String, String> entry : paramsMap.entrySet()) {
+					String paramsXml
+					String paramName = entry.getKey()
+					String paramValue = entry.getValue()
+					paramsXml =
+							"""	<param>
+							<name>${paramName}</name>
+							<value>${paramValue}</value>
+							</param>
+							"""
+					sbParams.append(paramsXml)
+				}
+				sbParams.append("</service-input-parameters>")
+			}
+			String siParamsXml = sbParams.toString()
+			if (siParamsXml == null)
+				siParamsXml = ""
+			execution.setVariable("siParamsXml", siParamsXml)
+
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception ex){
@@ -133,12 +156,6 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 		String msg = ""
 
 		try {
-			/*
-			 String uuid = execution.getVariable('testReqId') // for junits
-			 if(uuid==null){
-			 uuid = execution.getVariable("msoRequestId") + "-" +  	System.currentTimeMillis()
-			 }
-			 */
 			def serviceInstanceId = execution.getVariable("serviceInstanceId")
 			def serviceInstanceName = execution.getVariable("serviceInstanceName")
 			def callbackURL = execution.getVariable("sdncCallbackUrl")
@@ -148,25 +165,25 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 			def globalSubscriberId = execution.getVariable("globalSubscriberId") //globalCustomerId
 
 			String serviceModelInfo = execution.getVariable("serviceModelInfo")
-			def modelInvariantId = ""
+			def modelInvariantUuid = ""
 			def modelVersion = ""
-			def modelUUId = ""
+			def modelUuid = ""
 			def modelName = ""
 			if (!isBlank(serviceModelInfo))
 			{
-				modelInvariantId = jsonUtil.getJsonValue(serviceModelInfo, "modelInvariantId")
+				modelInvariantUuid = jsonUtil.getJsonValue(serviceModelInfo, "modelInvariantUuid")
 				modelVersion = jsonUtil.getJsonValue(serviceModelInfo, "modelVersion")
-				modelUUId = jsonUtil.getJsonValue(serviceModelInfo, "modelVersionId")
+				modelUuid = jsonUtil.getJsonValue(serviceModelInfo, "modelUuid")
 				modelName = jsonUtil.getJsonValue(serviceModelInfo, "modelName")
-				
-				if (modelInvariantId == null) {
-					modelInvariantId = ""
+
+				if (modelInvariantUuid == null) {
+					modelInvariantUuid = ""
 				}
 				if (modelVersion == null) {
 					modelVersion = ""
 				}
-				if (modelUUId == null) {
-					modelUUId = ""
+				if (modelUuid == null) {
+					modelUuid = ""
 				}
 				if (modelName == null) {
 					modelName = ""
@@ -178,11 +195,18 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 			if (serviceId == null) {
 				serviceId = ""
 			}
-			
+
+			def siParamsXml = execution.getVariable("siParamsXml")
+			def serviceType = execution.getVariable("serviceType")
+			if (serviceType == null)
+			{
+				serviceType = ""
+			}
+
 			def sdncRequestId = UUID.randomUUID().toString()
 
 			String sdncDelete =
-			"""<sdncadapterworkflow:SDNCAdapterWorkflowRequest xmlns:ns5="http://org.openecomp/mso/request/types/v1"
+					"""<sdncadapterworkflow:SDNCAdapterWorkflowRequest xmlns:ns5="http://org.openecomp/mso/request/types/v1"
 													xmlns:sdncadapterworkflow="http://org.openecomp/mso/workflow/schema/v1"
 													xmlns:sdncadapter="http://org.openecomp/workflow/sdnc/adapter/schema/v1">
 				   <sdncadapter:RequestHeader>
@@ -191,6 +215,7 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 							<sdncadapter:SvcAction>delete</sdncadapter:SvcAction>
 							<sdncadapter:SvcOperation>service-topology-operation</sdncadapter:SvcOperation>
 							<sdncadapter:CallbackUrl>${callbackURL}</sdncadapter:CallbackUrl>
+							<sdncadapter:MsoAction>${serviceType}</sdncadapter:MsoAction>
 					</sdncadapter:RequestHeader>
 				<sdncadapterworkflow:SDNCRequestData>
 					<request-information>
@@ -205,8 +230,8 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 						<service-id>${serviceId}</service-id>
 						<subscription-service-type>${subscriptionServiceType}</subscription-service-type>
 						<ecomp-model-information>
-					         <model-invariant-uuid>${modelInvariantId}</model-invariant-uuid>
-					         <model-uuid>${modelUUId}</model-uuid>
+					         <model-invariant-uuid>${modelInvariantUuid}</model-invariant-uuid>
+					         <model-uuid>${modelUuid}</model-uuid>
 					         <model-version>${modelVersion}</model-version>
 					         <model-name>${modelName}</model-name>
 					    </ecomp-model-information>
@@ -216,6 +241,7 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 					</service-information>
 					<service-request-input>
 						<service-instance-name>${serviceInstanceName}</service-instance-name>
+						${siParamsXml}
 					</service-request-input>
 				</sdncadapterworkflow:SDNCRequestData>
 				</sdncadapterworkflow:SDNCAdapterWorkflowRequest>"""
@@ -249,7 +275,7 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 			boolean successIndicator = execution.getVariable("SDNCA_SuccessIndicator")
 			utils.log("DEBUG", "SDNCResponse: " + response, isDebugEnabled)
 			utils.log("DEBUG", "workflowException: " + workflowException, isDebugEnabled)
-			
+
 			SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
 			sdncAdapterUtils.validateSDNCResponse(execution, response, workflowException, successIndicator)
 
@@ -280,6 +306,7 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
 			boolean foundInAAI = execution.getVariable("GENGS_FoundIndicator")
+			String serviceType = ""
 
 			if(foundInAAI == true){
 				utils.log("DEBUG","Found Service-instance in AAI", isDebugEnabled)
@@ -304,18 +331,18 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 					}
 
 					//Extract Service Type if not provided on request
-					String serviceType = execution.getVariable("subscriptionServiceType")
-					if(isBlank(serviceType)){
+					String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
+					if(isBlank(subscriptionServiceType)){
 						int serviceStart = siRelatedLink.indexOf("service-subscription/")
 						int serviceEnd = siRelatedLink.indexOf("/service-instances/")
 						String serviceTypeEncoded = siRelatedLink.substring(serviceStart + 21, serviceEnd)
-						serviceType = UriUtils.decode(serviceTypeEncoded, "UTF-8")
-						execution.setVariable("subscriptionServiceType", serviceType)
+						subscriptionServiceType = UriUtils.decode(serviceTypeEncoded, "UTF-8")
+						execution.setVariable("subscriptionServiceType", subscriptionServiceType)
 					}
 
-					if (isBlank(globalSubscriberId) || isBlank(serviceType))
+					if (isBlank(globalSubscriberId) || isBlank(subscriptionServiceType))
 					{
-						msg = "Could not retrive global-customer-id & service-type from AAI to delete id:" + serviceInstanceId
+						msg = "Could not retrive global-customer-id & subscription-service-type from AAI to delete id:" + serviceInstanceId
 						utils.log("DEBUG", msg, isDebugEnabled)
 						exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 					}
@@ -332,6 +359,11 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 				else
 				{
 					utils.log("DEBUG", "SI Data" + siData, isDebugEnabled)
+					serviceType = utils.getNodeText1(siData,"service-type")
+					execution.setVariable("serviceType", serviceType)
+					execution.setVariable("serviceRole", utils.getNodeText1(siData,"service-role"))
+					String orchestrationStatus =  utils.getNodeText1(siData,"orchestration-status")
+
 					//Confirm there are no related service instances (vnf/network or volume)
 					if (utils.nodeExists(siData, "relationship-list")) {
 						utils.log("DEBUG", "SI Data relationship-list exists:", isDebugEnabled)
@@ -346,8 +378,8 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 							if (node.getNodeType() == Node.ELEMENT_NODE) {
 								Element eElement = (Element) node
 								def e = eElement.getElementsByTagName("related-to").item(0).getTextContent()
-								if(e.equals("generic-vnf") || e.equals("l3-network")){
-									utils.log("DEBUG", "ServiceInstance still has relationship(s) to generic-vnfs or l3-networks", isDebugEnabled)
+								if(e.equals("generic-vnf") || e.equals("l3-network") || e.equals("allotted-resource") ){
+									utils.log("DEBUG", "ServiceInstance still has relationship(s) to generic-vnfs, l3-networks or allotted-resources", isDebugEnabled)
 									execution.setVariable("siInUse", true)
 									//there are relationship dependencies to this Service Instance
 									msg = " Stopped deleting Service Instance, it has dependencies. Service instance id: " + serviceInstanceId
@@ -358,6 +390,21 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 								}
 							}
 						}
+					}
+
+					if ("TRANSPORT".equalsIgnoreCase(serviceType))
+					{
+						if ("PendingDelete".equals(orchestrationStatus))
+						{
+							execution.setVariable("skipDeactivate", true)
+						}
+						else
+						{
+							msg = "ServiceInstance of type TRANSPORT must in PendingDelete status to allow Delete. Orchestration-status:" + orchestrationStatus
+							utils.log("DEBUG", msg, isDebugEnabled)
+							exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+						}
+
 					}
 				}
 			}else{
@@ -376,6 +423,7 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 						exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
 					}
 				}
+
 				utils.log("DEBUG","Service-instance NOT found in AAI. Silent Success", isDebugEnabled)
 			}
 		} catch (BpmnError e) {
@@ -387,7 +435,7 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 		}
 		utils.log("DEBUG"," *** Exit postProcessAAIGET *** ", isDebugEnabled)
 	}
-	
+
 	public void postProcessAAIDEL(Execution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("DEBUG"," ***** postProcessAAIDEL ***** ", isDebugEnabled)

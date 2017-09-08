@@ -19,27 +19,42 @@
  */
 package org.openecomp.mso.db.catalog.beans;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
-public class VnfResourceCustomization {
+import org.openecomp.mso.db.catalog.utils.MavenLikeVersioning;
 
-	private String modelCustomizationUuid;
+public class VnfResourceCustomization extends MavenLikeVersioning implements Serializable {
+
+	private static final long serialVersionUID = 768026109321305392L;
+	
+	private String modelCustomizationUuid = null;
 	private String modelInstanceName;
-	private Integer ecompHomed;
-	private String homingPolicy;
-	private Timestamp creationTimestamp;
-	private String vnfResourceModelUuid;
+	private Timestamp created;
+	private String vnfResourceModelUuid = null;
+	private String vnfResourceModelUUID;
 	private Integer minInstances;
 	private Integer maxInstances;
 	private Integer availabilityZoneMaxCount;
 	private VnfResource vnfResource;
+	private String nfFunction;
+	private String nfType;
+	private String nfRole;
+	private String nfNamingCode;
+    private List<VfModuleCustomization> vfModuleCustomizations;
+    private Set<ServiceToResourceCustomization> serviceResourceCustomizations;
 
 	public VnfResourceCustomization() {
 	}
 
+
 	public String getModelCustomizationUuid() {
-		return this.modelCustomizationUuid;
+		return modelCustomizationUuid;
 	}
+
 	public void setModelCustomizationUuid(String modelCustomizationUuid) {
 		this.modelCustomizationUuid = modelCustomizationUuid;
 	}
@@ -51,32 +66,24 @@ public class VnfResourceCustomization {
 		this.modelInstanceName = modelInstanceName;
 	}
 
-	public Integer getEcompHomed() {
-		return this.ecompHomed;
-	}
-	public void setEcompHomed(Integer ecompHomed) {
-		this.ecompHomed = ecompHomed;
-	}
-
-	public String getHomingPolicy() {
-		return this.homingPolicy;
-	}
-	public void setHomingPolicy(String homingPolicy) {
-		this.homingPolicy = homingPolicy;
-	}
-
 	public Timestamp getCreationTimestamp() {
-		return this.creationTimestamp;
+		return this.created;
 	}
-	public void setCreationTimestamp(Timestamp creationTimestamp) {
-		this.creationTimestamp = creationTimestamp;
+	public void setCreationTimestamp(Timestamp created) {
+		this.created = created;
 	}
 
 	public String getVnfResourceModelUuid() {
-		return this.vnfResourceModelUuid;
+		return this.vnfResourceModelUuid == null ? this.vnfResourceModelUUID : this.vnfResourceModelUuid;
 	}
 	public void setVnfResourceModelUuid(String vnfResourceModelUuid) {
 		this.vnfResourceModelUuid = vnfResourceModelUuid;
+	}
+	public String getVnfResourceModelUUID() {
+		return this.vnfResourceModelUUID;
+	}
+	public void setVnfResourceModelUUID(String vnfResourceModelUUID) {
+		this.vnfResourceModelUUID = vnfResourceModelUUID;
 	}
 	public Integer getMinInstances() {
 		return this.minInstances;
@@ -106,22 +113,87 @@ public class VnfResourceCustomization {
 		this.vnfResource = vnfResource;
 	}
 
+	public String getNfFunction() {
+		return nfFunction;
+	}
+
+	public void setNfFunction(String nfFunction) {
+		this.nfFunction = nfFunction;
+	}
+
+	public String getNfType() {
+		return nfType;
+	}
+
+	public void setNfType(String nfType) {
+		this.nfType = nfType;
+	}
+
+	public String getNfRole() {
+		return nfRole;
+	}
+
+	public void setNfRole(String nfRole) {
+		this.nfRole = nfRole;
+	}
+
+	public String getNfNamingCode() {
+		return nfNamingCode;
+	}
+
+	public void setNfNamingCode(String nfNamingCode) {
+		this.nfNamingCode = nfNamingCode;
+	}
+	public List<VfModuleCustomization> getVfModuleCustomizations() {
+		return this.vfModuleCustomizations;
+	}
+	public void setVfModuleCustomizations(ArrayList<VfModuleCustomization> vfModuleCustomizations) {
+		this.vfModuleCustomizations = vfModuleCustomizations;
+	}
+	public void addVfModuleCustomization(VfModuleCustomization vfmc) {
+		if (vfmc != null) {
+			if (this.vfModuleCustomizations != null) {
+				this.vfModuleCustomizations.add(vfmc);
+			} else {
+				this.vfModuleCustomizations = new ArrayList<VfModuleCustomization>();
+				this.vfModuleCustomizations.add(vfmc);
+			}
+		}
+	}
+	public Timestamp getCreated() {
+		return created;
+	}
+
+	public void setCreated(Timestamp created) {
+		this.created = created;
+	}
+
+	public Set<ServiceToResourceCustomization> getServiceResourceCustomizations() {
+		return serviceResourceCustomizations;
+	}
+
+	public void setServiceResourceCustomizations(
+			Set<ServiceToResourceCustomization> serviceResourceCustomizations) {
+		this.serviceResourceCustomizations = serviceResourceCustomizations;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder("VnfResourceCustomization: ");
-		sb.append("ModelCustUuid=" + this.modelCustomizationUuid);
+		sb.append("ModelCustUuid=" + this.modelCustomizationUuid ); 
 		sb.append(", ModelInstanceName=" + this.modelInstanceName);
-		sb.append(", ecompHomed=" + this.ecompHomed);
-		sb.append(", homingPolicy=" + this.homingPolicy);
-		sb.append(", vnfResourceModelUuid=" + this.vnfResourceModelUuid);
-		sb.append(", creationTimestamp=" + this.creationTimestamp);
+		sb.append(", vnfResourceModelUuid=" + this.vnfResourceModelUUID); 
+		sb.append(", creationTimestamp=" + this.created); 
 		sb.append(", minInstances=" + this.minInstances);
 		sb.append(", maxInstances=" + this.maxInstances);
 		sb.append(", availabilityZoneMaxCount=" + this.availabilityZoneMaxCount);
-		sb.append(", vnfResource:\n" + this.vnfResource.toString());
+//		sb.append(", vnfResource:\n" + this.vnfResource == null ? "null" : this.vnfResource.toString());
+		sb.append(", nfFunction=" + this.nfFunction); 
+		sb.append(", nfType=" + this.nfType);
+		sb.append(", nfRole=" + this.nfRole);
+		sb.append(", nfNamingCode=" + this.nfNamingCode);
+		
 		return sb.toString();
 	}
-
-
 
 }

@@ -117,17 +117,17 @@ public class VfcManager {
         AaiUtil.addRelation(segInput.getNsOperationKey().getServiceId(), nsInstanceId);
 
         // Step 6: save resource operation information
-        ResourceOperationStatus nsOperInfo = RequestsDatabase.getResourceOperationStatus(
+        ResourceOperationStatus nsOperInfo = (RequestsDatabase.getInstance()).getResourceOperationStatus(
                 segInput.getNsOperationKey().getServiceId(), segInput.getNsOperationKey().getOperationId(),
                 segInput.getNsOperationKey().getNodeTemplateId());
         nsOperInfo.setStatus(RequestsDbConstant.Status.PROCESSING);
-        RequestsDatabase.updateResOperStatus(nsOperInfo);
+        (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
 
         if(!HttpCode.isSucess(createRsp.getStatus())) {
             LOGGER.error("update segment operation status : fail to create ns");
             nsOperInfo.setStatus(RequestsDbConstant.Status.ERROR);
             nsOperInfo.setErrorCode(String.valueOf(createRsp.getStatus()));
-            RequestsDatabase.updateResOperStatus(nsOperInfo);
+            (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
             throw new ApplicationException(HttpCode.INTERNAL_SERVER_ERROR, DriverExceptionID.FAIL_TO_CREATE_NS);
         }
         LOGGER.info("save segment and operation info -> end");
@@ -155,7 +155,7 @@ public class VfcManager {
         LOGGER.info("delete ns response status is : {}", deleteRsp.getStatus());
         LOGGER.info("delete ns response content is : {}", deleteRsp.getResponseContent());
         LOGGER.info("delete ns -> end");
-        ResourceOperationStatus nsOperInfo = RequestsDatabase.getResourceOperationStatus(nsOperationKey.getServiceId(),
+        ResourceOperationStatus nsOperInfo = (RequestsDatabase.getInstance()).getResourceOperationStatus(nsOperationKey.getServiceId(),
                 nsOperationKey.getOperationId(), nsOperationKey.getNodeTemplateId());
         if(!HttpCode.isSucess(deleteRsp.getStatus())) {
             LOGGER.error("fail to delete ns");
@@ -163,7 +163,7 @@ public class VfcManager {
             nsOperInfo.setStatus(RequestsDbConstant.Status.ERROR);
             nsOperInfo.setErrorCode(String.valueOf(deleteRsp.getStatus()));
             nsOperInfo.setStatusDescription(CommonConstant.StatusDesc.TERMINATE_NS_FAILED);
-            RequestsDatabase.updateResOperStatus(nsOperInfo);
+            (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
             throw new ApplicationException(HttpCode.INTERNAL_SERVER_ERROR, DriverExceptionID.FAIL_TO_DELETE_NS);
         }
 
@@ -174,7 +174,7 @@ public class VfcManager {
         // Step4: update service segment operation status
         nsOperInfo.setStatus(RequestsDbConstant.Status.FINISHED);
         nsOperInfo.setErrorCode(String.valueOf(deleteRsp.getStatus()));
-        RequestsDatabase.updateResOperStatus(nsOperInfo);
+        (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
         LOGGER.info("update segment operaton status for delete -> end");
 
         return deleteRsp;
@@ -213,7 +213,7 @@ public class VfcManager {
         @SuppressWarnings("unchecked")
         Map<String, String> rsp = JsonUtil.unMarshal(instRsp.getResponseContent(), Map.class);
         String jobId = rsp.get(CommonConstant.JOB_ID);
-        ResourceOperationStatus nsOperInfo = RequestsDatabase.getResourceOperationStatus(
+        ResourceOperationStatus nsOperInfo = (RequestsDatabase.getInstance()).getResourceOperationStatus(
                 segInput.getNsOperationKey().getServiceId(), segInput.getNsOperationKey().getOperationId(),
                 segInput.getNsOperationKey().getNodeTemplateId());
         if(ValidateUtil.isStrEmpty(jobId)) {
@@ -221,7 +221,7 @@ public class VfcManager {
             nsOperInfo.setStatus(RequestsDbConstant.Status.ERROR);
             nsOperInfo.setErrorCode(String.valueOf(instRsp.getStatus()));
             nsOperInfo.setStatusDescription(CommonConstant.StatusDesc.INSTANTIATE_NS_FAILED);
-            RequestsDatabase.updateResOperStatus(nsOperInfo);
+            (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
             throw new ApplicationException(HttpCode.INTERNAL_SERVER_ERROR,
                     DriverExceptionID.INVALID_RESPONSE_FROM_INSTANTIATE_OPERATION);
         }
@@ -232,14 +232,14 @@ public class VfcManager {
             nsOperInfo.setStatus(RequestsDbConstant.Status.ERROR);
             nsOperInfo.setErrorCode(String.valueOf(instRsp.getStatus()));
             nsOperInfo.setStatusDescription(CommonConstant.StatusDesc.INSTANTIATE_NS_FAILED);
-            RequestsDatabase.updateResOperStatus(nsOperInfo);
+            (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
             throw new ApplicationException(HttpCode.INTERNAL_SERVER_ERROR, DriverExceptionID.FAIL_TO_INSTANTIATE_NS);
         }
 
         // Step 3: update segment operation job id
         LOGGER.info("update resource operation status job id -> begin");
         nsOperInfo.setJobId(jobId);
-        RequestsDatabase.updateResOperStatus(nsOperInfo);
+        (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
         LOGGER.info("update segment operation job id -> end");
 
         return instRsp;
@@ -257,10 +257,10 @@ public class VfcManager {
     public RestfulResponse terminateNs(NsOperationKey nsOperationKey, String nsInstanceId) {
         // Step1: save segment operation info for delete process
         LOGGER.info("save segment operation for delete process");
-        ResourceOperationStatus nsOperInfo = RequestsDatabase.getResourceOperationStatus(nsOperationKey.getServiceId(),
+        ResourceOperationStatus nsOperInfo = (RequestsDatabase.getInstance()).getResourceOperationStatus(nsOperationKey.getServiceId(),
                 nsOperationKey.getOperationId(), nsOperationKey.getNodeTemplateId());
         nsOperInfo.setStatus(RequestsDbConstant.Status.PROCESSING);
-        RequestsDatabase.updateResOperStatus(nsOperInfo);
+        (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
 
         LOGGER.info("terminate ns -> begin");
         // Step2: prepare url and method type
@@ -286,7 +286,7 @@ public class VfcManager {
             nsOperInfo.setStatus(RequestsDbConstant.Status.ERROR);
             nsOperInfo.setErrorCode(String.valueOf(terminateRsp.getStatus()));
             nsOperInfo.setStatusDescription(CommonConstant.StatusDesc.TERMINATE_NS_FAILED);
-            RequestsDatabase.updateResOperStatus(nsOperInfo);
+            (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
             throw new ApplicationException(HttpCode.INTERNAL_SERVER_ERROR,
                     DriverExceptionID.INVALID_RESPONSE_FROM_TERMINATE_OPERATION);
         }
@@ -298,13 +298,13 @@ public class VfcManager {
             nsOperInfo.setStatus(RequestsDbConstant.Status.ERROR);
             nsOperInfo.setErrorCode(String.valueOf(terminateRsp.getStatus()));
             nsOperInfo.setStatusDescription(CommonConstant.StatusDesc.TERMINATE_NS_FAILED);
-            RequestsDatabase.updateResOperStatus(nsOperInfo);
+            (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
 
             throw new ApplicationException(HttpCode.INTERNAL_SERVER_ERROR, DriverExceptionID.FAIL_TO_TERMINATE_NS);
         }
         LOGGER.info("update segment job id -> begin");
         nsOperInfo.setJobId(jobId);
-        RequestsDatabase.updateResOperStatus(nsOperInfo);
+        (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
         LOGGER.info("update segment job id -> end");
 
         return terminateRsp;
@@ -323,7 +323,7 @@ public class VfcManager {
 
         ValidateUtil.assertObjectNotNull(jobId);
         // Step 1: query the current resource operation status
-        ResourceOperationStatus nsOperInfo = RequestsDatabase.getResourceOperationStatus(nsOperationKey.getServiceId(),
+        ResourceOperationStatus nsOperInfo = (RequestsDatabase.getInstance()).getResourceOperationStatus(nsOperationKey.getServiceId(),
                 nsOperationKey.getOperationId(), nsOperationKey.getNodeTemplateId());
 
         // Step 2: start query
@@ -341,7 +341,7 @@ public class VfcManager {
             nsOperInfo.setErrorCode(String.valueOf(rsp.getStatus()));
             nsOperInfo.setStatus(RequestsDbConstant.Status.ERROR);
             nsOperInfo.setStatusDescription(CommonConstant.StatusDesc.QUERY_JOB_STATUS_FAILED);
-            RequestsDatabase.updateResOperStatus(nsOperInfo);
+            (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
             throw new ApplicationException(HttpCode.INTERNAL_SERVER_ERROR, DriverExceptionID.FAIL_TO_QUERY_JOB_STATUS);
         }
         // Step 4: Process Network Service Instantiate Response
@@ -351,7 +351,7 @@ public class VfcManager {
 
         nsOperInfo.setProgress(rspDesc.getProgress());
         nsOperInfo.setStatusDescription(rspDesc.getStatusDescription());
-        RequestsDatabase.updateResOperStatus(nsOperInfo);
+        (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
 
         // Step 6: update segment operation status
         if(RequestsDbConstant.Progress.ONE_HUNDRED.equals(rspDesc.getProgress())
@@ -363,13 +363,13 @@ public class VfcManager {
             if(RequestsDbConstant.OperationType.CREATE.equals(nsOperInfo.getOperType())) {
                 nsOperInfo.setStatus(RequestsDbConstant.Status.FINISHED);
             }
-            RequestsDatabase.updateResOperStatus(nsOperInfo);
+            (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
         } else if(RequestsDbConstant.Status.ERROR.equals(rspDesc.getStatus())) {
             LOGGER.error("job result is failed, operType is {}", nsOperInfo.getOperType());
             nsOperInfo.setErrorCode(String.valueOf(rsp.getStatus()));
             nsOperInfo.setStatusDescription(CommonConstant.StatusDesc.QUERY_JOB_STATUS_FAILED);
             nsOperInfo.setStatus(RequestsDbConstant.Status.ERROR);
-            RequestsDatabase.updateResOperStatus(nsOperInfo);
+            (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
             throw new ApplicationException(HttpCode.INTERNAL_SERVER_ERROR, DriverExceptionID.JOB_STATUS_ERROR);
         } else {
             LOGGER.error("unexcepted response status");

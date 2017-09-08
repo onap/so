@@ -487,19 +487,6 @@ public class VnfAdapterRest {
 				String completeVnfVfModuleType = req.getVnfType() + "::" + req.getVfModuleType();
 				LOGGER.debug("in updateVf - completeVnfVfModuleType=" + completeVnfVfModuleType);
 
-				/*
-				vnfAdapter.updateVnf (updateReq.getCloudSiteId(),
-						updateReq.getTenantId(),
-						updateReq.getVnfType(),
-						updateReq.getVnfVersion(),
-						updateReq.getVfModuleName(),
-						updateReq.getRequestType(),
-						updateReq.getVolumeGroupStackId(),
-						updateReq.getVfModuleParams(),
-						updateReq.getMsoRequest(),
-						outputs,
-						vnfRollback);
-						*/
 				vnfAdapter.updateVfModule (req.getCloudSiteId(),
 						req.getTenantId(),
 						//req.getVnfType(),
@@ -508,7 +495,7 @@ public class VnfAdapterRest {
 						req.getVfModuleName(),
 						req.getRequestType(),
 						req.getVolumeGroupStackId(),
-						req.getBaseVfModuleId(),
+						req.getBaseVfModuleStackId(),
 						req.getVfModuleStackId(),
 						req.getModelCustomizationUuid(),
 						req.getVfModuleParams(),

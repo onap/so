@@ -62,7 +62,7 @@ public class HealthCheckUtils {
     public enum NodeType {APIH, RA, BPMN};
 
     public boolean catalogDBCheck (MsoLogger subMsoLogger, long startTime) {
-        try(CatalogDatabase catalogDB = new CatalogDatabase ()) {
+        try(CatalogDatabase catalogDB = CatalogDatabase.getInstance()) {
             catalogDB.healthCheck ();
         } catch (Exception e) {
             subMsoLogger.error(MessageEnum.GENERAL_EXCEPTION, "", "HealthCheck", MsoLogger.ErrorCode.DataError, "Failed to check catalog database", e);
@@ -74,7 +74,7 @@ public class HealthCheckUtils {
 
     public boolean requestDBCheck (MsoLogger subMsoLogger, long startTime) {
         try {
-            RequestsDatabase.healthCheck ();
+            (RequestsDatabase.getInstance()).healthCheck ();
         } catch (Exception e) {
             subMsoLogger.error(MessageEnum.GENERAL_EXCEPTION, "", "HealthCheck", MsoLogger.ErrorCode.DataError, "Failed to check request database", e);
             subMsoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.ServiceNotAvailable, "Exception during local healthcheck");

@@ -20,6 +20,10 @@
 
 package org.openecomp.mso.bpmn.infrastructure;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockDeleteVolumeGroupById;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetGenericVnfById;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetVolumeGroupByName;
@@ -27,6 +31,7 @@ import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockNodeQueryServiceIn
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPutVolumeGroupById;
 import static org.openecomp.mso.bpmn.mock.StubResponseDatabase.mockUpdateRequestDB;
 import static org.openecomp.mso.bpmn.mock.StubResponseVNFAdapter.mockPostVNFVolumeGroup;
+import static org.openecomp.mso.bpmn.mock.StubResponseVNFAdapter.mockPutVNFVolumeGroupRollback;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -34,10 +39,12 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.camunda.bpm.engine.test.Deployment;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openecomp.mso.bpmn.common.WorkflowTest;
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowResponse;
 import org.openecomp.mso.bpmn.mock.FileUtil;
+import org.openecomp.mso.bpmn.mock.StubResponseAAI;
 
 public class CreateVfModuleVolumeInfraV1Test extends WorkflowTest {
 
@@ -48,6 +55,8 @@ public class CreateVfModuleVolumeInfraV1Test extends WorkflowTest {
 	public CreateVfModuleVolumeInfraV1Test() throws IOException {
 		callbacks.put("volumeGroupCreate", FileUtil.readResourceFile(
 				"__files/CreateVfModuleVolumeInfraV1/CreateVfModuleVolumeCallbackResponse.xml"));
+		callbacks.put("volumeGroupDelete", FileUtil.readResourceFile(
+				"__files/DeleteVfModuleVolumeInfraV1/DeleteVfModuleVolumeCallbackResponse.xml"));
 		callbacks.put("volumeGroupException", FileUtil.readResourceFile(
 				"__files/CreateVfModuleVolumeInfraV1/CreateVfModuleCallbackException.xml"));
 		callbacks.put("volumeGroupRollback", FileUtil.readResourceFile(
@@ -58,9 +67,10 @@ public class CreateVfModuleVolumeInfraV1Test extends WorkflowTest {
 	 * Happy path scenario for VID
 	 *****************************/
 	@Test
+	//@Ignore
 	@Deployment(resources = {"process/CreateVfModuleVolumeInfraV1.bpmn",
 			"subprocess/GenericGetService.bpmn",
-			"subprocess/DoCreateVfModuleVolumeV1.bpmn",
+			"subprocess/DoCreateVfModuleVolumeV2.bpmn",
             "subprocess/FalloutHandler.bpmn",
             "subprocess/CompleteMsoProcess.bpmn",
             "subprocess/VnfAdapterRestV1.bpmn"})
@@ -100,9 +110,61 @@ public class CreateVfModuleVolumeInfraV1Test extends WorkflowTest {
 	}
 	
 	/**
+	 * Fail - trigger rollback
+	 *****************************/
+	@Test
+	//@Ignore
+	@Deployment(resources = {"process/CreateVfModuleVolumeInfraV1.bpmn",
+			"subprocess/GenericGetService.bpmn",
+			"subprocess/DoCreateVfModuleVolumeV2.bpmn",
+			"subprocess/DoCreateVfModuleVolumeRollback.bpmn",
+            "subprocess/FalloutHandler.bpmn",
+            "subprocess/CompleteMsoProcess.bpmn",
+            "subprocess/VnfAdapterRestV1.bpmn"})
+	public void TestRollback() throws Exception {
+
+		logStart();
+		
+		MockNodeQueryServiceInstanceById("test-service-instance-id", "CreateVfModuleVolumeInfraV1/getSIUrlById.xml");
+		MockGetGenericVnfById("/TEST-VNF-ID-0123", "CreateVfModuleVolumeInfraV1/GenericVnf.xml", 200);
+		MockPutVolumeGroupById("AAIAIC25", "TEST-VOLUME-GROUP-ID-0123", "CreateVfModuleVolumeInfraV1/createVfModuleVolume_createVolumeName_AAIResponse_Success.xml", 201);
+		mockPostVNFVolumeGroup(202);
+		mockPutVNFVolumeGroupRollback("TEST-VOLUME-GROUP-ID-0123", 202);
+		MockDeleteVolumeGroupById("AAIAIC25", "8424bb3c-c3e7-4553-9662-469649ed9379", "1460134360", 202);
+		StubResponseAAI.MockGetVolumeGroupByName_404("AAIAIC25", "TEST-MSOTESTVOL101a-vSAMP12_base_vol_module-0");
+		StubResponseAAI.MockGetVolumeGroupByName("AAIAIC25", "MSOTESTVOL101a-vSAMP12_base_vol_module-0", "CreateVfModuleVolumeInfraV1/createVfModuleVolume_queryVolumeName_AAIResponse_Success.xml", 200);
+		StubResponseAAI.MockDeleteVolumeGroup("AAIAIC25", "8424bb3c-c3e7-4553-9662-469649ed9379", "1460134360");
+		
+		String businessKey = UUID.randomUUID().toString();
+		String createVfModuleVolRequest = FileUtil.readResourceFile("__files/CreateVfModuleVolumeInfraV1/createVfModuleVolume_VID_request.json");
+		
+		Map<String, Object> testVariables = new HashMap<String, Object>();
+		testVariables.put("requestId", "TEST-REQUEST-ID-0123");
+		testVariables.put("serviceInstanceId", "test-service-instance-id");
+		testVariables.put("vnfId", "TEST-VNF-ID-0123");
+		testVariables.put("test-volume-group-name", "TEST-MSOTESTVOL101a-vSAMP12_base_vol_module-0");
+		testVariables.put("test-volume-group-id", "TEST-VOLUME-GROUP-ID-0123");
+				
+		TestAsyncResponse asyncResponse = invokeAsyncProcess("CreateVfModuleVolumeInfraV1", "v1", businessKey, createVfModuleVolRequest, testVariables);
+		WorkflowResponse response = receiveResponse(businessKey, asyncResponse, 1000000);
+
+		String responseBody = response.getResponse();
+		System.out.println("Workflow (Synch) Response:\n" + responseBody);
+		
+		injectVNFRestCallbacks(callbacks, "volumeGroupCreate");
+		injectVNFRestCallbacks(callbacks, "volumeGroupDelete");
+		
+		waitForProcessEnd(businessKey, 100000);
+		checkVariable(businessKey, "CVMVINFRAV1_SuccessIndicator", false);
+		
+		logEnd();
+	}
+	
+	/**
 	 * Happy path scenario for VID
 	 *****************************/
 	@Test
+	@Ignore
 	@Deployment(resources = {"process/CreateVfModuleVolumeInfraV1.bpmn",
 			"subprocess/GenericGetService.bpmn",
 			"subprocess/DoCreateVfModuleVolumeV1.bpmn",
@@ -145,7 +207,7 @@ public class CreateVfModuleVolumeInfraV1Test extends WorkflowTest {
 	 *Vnf Create fail
 	 *****************************/
 	@Test
-	//@Ignore
+	@Ignore
 	@Deployment(resources = {"process/CreateVfModuleVolumeInfraV1.bpmn",
 			"subprocess/GenericGetService.bpmn",
 			"subprocess/DoCreateVfModuleVolumeV1.bpmn",
@@ -193,7 +255,7 @@ public class CreateVfModuleVolumeInfraV1Test extends WorkflowTest {
 	 * Error scenario - vnf not found
 	 ********************************/
 	@Test
-	//@Ignore
+	@Ignore
 	@Deployment(resources = {"process/CreateVfModuleVolumeInfraV1.bpmn",
 			"subprocess/GenericGetService.bpmn",
 			"subprocess/DoCreateVfModuleVolumeV1.bpmn",
@@ -233,7 +295,7 @@ public class CreateVfModuleVolumeInfraV1Test extends WorkflowTest {
 	 * Error scenario - error in validation
 	 **************************************/
 	@Test
-	//@Ignore
+	@Ignore
 	@Deployment(resources = {"process/CreateVfModuleVolumeInfraV1.bpmn",
 			"subprocess/GenericGetService.bpmn",
 			"subprocess/DoCreateVfModuleVolumeV1.bpmn",
@@ -270,7 +332,7 @@ public class CreateVfModuleVolumeInfraV1Test extends WorkflowTest {
 	 * Error scenario - service instance not found
 	 *********************************************/
 	@Test
-	//@Ignore
+	@Ignore
 	@Deployment(resources = {"process/CreateVfModuleVolumeInfraV1.bpmn",
 			"subprocess/GenericGetService.bpmn",
 			"subprocess/DoCreateVfModuleVolumeV1.bpmn",

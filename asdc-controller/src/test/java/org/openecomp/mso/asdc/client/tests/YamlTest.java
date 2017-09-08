@@ -53,7 +53,7 @@ public class YamlTest {
   
 		    	InputStream input = new FileInputStream(new File("src/test/resources/resource-examples/simpleTest.yaml"));
 		    	YamlEditor decoder = new YamlEditor (IOUtils.toByteArray(input));
-		    	Set <HeatTemplateParam> paramSet = decoder.getParameterList();
+		    	Set <HeatTemplateParam> paramSet = decoder.getParameterList("123456");
 			    
 		    	assertTrue(paramSet.size() == 5);
 
@@ -79,12 +79,12 @@ public class YamlTest {
 		    	Set <HeatTemplateParam> newParamSet = new HashSet <HeatTemplateParam> (); 
 		    	
 		    	HeatTemplateParam heatParam1 = new HeatTemplateParam();
-		    	heatParam1.setId(1);
+		    	heatParam1.setHeatTemplateArtifactUuid("1");
 		    	heatParam1.setParamName("testos1");
 		    	heatParam1.setParamType("string");
 		    	
 		    	HeatTemplateParam heatParam2 = new HeatTemplateParam();
-		    	heatParam2.setId(2);
+		    	heatParam2.setHeatTemplateArtifactUuid("2");
 		    	heatParam2.setParamName("testos2");
 		    	heatParam2.setParamType("number");
 		    	
@@ -93,7 +93,7 @@ public class YamlTest {
 		    	
 		    	decoder.addParameterList(newParamSet);
 			    
-		    	Set <HeatTemplateParam> paramSet = decoder.getParameterList();
+		    	Set <HeatTemplateParam> paramSet = decoder.getParameterList("123456");
 		    	assertTrue(paramSet.size() == 2);
 		    	
 		    	assertTrue(decoder.encode().contains("testos1"));
@@ -111,12 +111,12 @@ public class YamlTest {
 		    	Set <HeatTemplateParam> newParamSet = new HashSet <HeatTemplateParam> (); 
 		    	
 		    	HeatTemplateParam heatParam1 = new HeatTemplateParam();
-		    	heatParam1.setId(1);
+		    	heatParam1.setHeatTemplateArtifactUuid("1");
 		    	heatParam1.setParamName("testos1");
 		    	heatParam1.setParamType("string");
 		    	
 		    	HeatTemplateParam heatParam2 = new HeatTemplateParam();
-		    	heatParam2.setId(2);
+		    	heatParam2.setHeatTemplateArtifactUuid("2");
 		    	heatParam2.setParamName("testos2");
 		    	heatParam2.setParamType("number");
 		    	
@@ -125,7 +125,7 @@ public class YamlTest {
 		    	
 		    	decoder.addParameterList(newParamSet);
 			    
-		    	Set <HeatTemplateParam> paramSet = decoder.getParameterList();
+		    	Set <HeatTemplateParam> paramSet = decoder.getParameterList("123456");
 		    	
 		    	assertTrue(paramSet.size() == 7);
 		    	

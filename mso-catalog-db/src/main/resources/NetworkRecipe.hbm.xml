@@ -26,14 +26,14 @@
 		<meta attribute="class-description">
 			This class describes a Network recipe
 		</meta>
-
+		
 		<id name="id" type="int" column="id">
 			<generator class="native"/>
 		</id>
 
 		<properties name="uk_network_recipe" unique="true">
-			<property name="networkType" type="string" >
-			     <column name="NETWORK_TYPE" not-null="true" length="20"/>
+			<property name="modelName" type="string" >
+			     <column name="MODEL_NAME" not-null="true" length="20"/>
 			</property>
 			<property name="action" type="string" >
 			     <column name="ACTION" not-null="true" length="20"/>
@@ -41,21 +41,21 @@
 			<property name="version" type="string">
 			     <column name="VERSION_STR" not-null="true" length="20"/>
 			</property>
-
+			
 		</properties>
-
+		
+		<property name="serviceType" type="string" length="45">
+                 <column name="SERVICE_TYPE" not-null="false" length="45"/>
+        </property>
 		<property name="description" column="DESCRIPTION" type="string" length="1200"/>
 		<property name="orchestrationUri" type="string">
 		  <column name="ORCHESTRATION_URI" not-null="true" length="256"/>
 		</property>
 		<property name="networkParamXSD" column="NETWORK_PARAM_XSD" type="string" length="2048"/>
 		<property name="recipeTimeout" column="RECIPE_TIMEOUT" type="int"/>
-		<property name="serviceType" type="string" >
-			<column name="SERVICE_TYPE" not-null="false" length="45" default="null"/>
-		</property>
 		<property name="created" type="timestamp" generated="insert" update="false" insert="false" >
 		    <column name="CREATION_TIMESTAMP" not-null="true"/>
 		</property>
 	</class>
-
+	
 </hibernate-mapping>

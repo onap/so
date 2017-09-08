@@ -27,8 +27,8 @@
 		</meta>
 		
 		<composite-id>
-			<key-property name="parentTemplateId" column="PARENT_TEMPLATE_ID" type="int" />
-			<key-property name="childTemplateId" column="CHILD_TEMPLATE_ID" type="int" />
+			<key-property name="parentTemplateId" column="PARENT_HEAT_TEMPLATE_UUID" type="string" length="200"/>
+			<key-property name="childTemplateId" column="CHILD_HEAT_TEMPLATE_UUID" type="string" length="200"/>
 		</composite-id> 
 				
 		<property name="providerResourceFile" column="PROVIDER_RESOURCE_FILE" type="string" length="100"/>

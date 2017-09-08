@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URI;
+import java.util.Iterator;
 
 import javax.xml.transform.stream.StreamSource;
 
@@ -32,6 +33,7 @@ import org.camunda.bpm.engine.ProcessEngineException;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 //import java.util.logging.Logger;
 import org.camunda.bpm.engine.delegate.Expression;
+
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
 
@@ -95,9 +97,11 @@ public class XQueryScriptTask extends BaseTask {
 		String[] atomicInputVariableArray = (theAtomicInputVariables == null)
 			? new String[0] : theAtomicInputVariables.split(",[ ]*");
 
-        if (shouldFail(execution)) {
-            throw new ProcessEngineException(getTaskName() + " Failed");
-        }
+		Boolean shouldFail = (Boolean) execution.getVariable("shouldFail");
+
+		if (shouldFail != null && shouldFail) {
+			throw new ProcessEngineException(getClass().getSimpleName() + " Failed");
+		}
 
 		// The script could be compiled once and reused, but we are reading it
 		// and compiling it every time.
@@ -186,7 +190,9 @@ public class XQueryScriptTask extends BaseTask {
 
 		// Evaluate the query and collect the output.
 		StringBuilder output = new StringBuilder();
-		for(XdmItem item : evaluator) {
+		Iterator<XdmItem> xdmItems = evaluator.iterator();
+		while (xdmItems.hasNext()) {
+			XdmItem item = xdmItems.next();
 			
 			if (msoLogger.isDebugEnabled()) {
 				msoLogger.debug("XQuery result item = " + item);
@@ -212,13 +218,26 @@ public class XQueryScriptTask extends BaseTask {
 	 */
 	private XQueryExecutable compile(XQueryCompiler compiler, String resource)
 			throws Exception {
-		try(InputStream xqStream = getClass().getResourceAsStream(resource)) {
+		InputStream xqStream = null;
+		try {
+			xqStream = getClass().getResourceAsStream(resource);
 
 			if (xqStream == null) {
 				throw new IOException("Resource not found: " + resource);
 			}
 
-			return compiler.compile(xqStream);
+			XQueryExecutable executable = compiler.compile(xqStream);
+			xqStream.close();
+			xqStream = null;
+			return executable;
+		} finally {
+			if (xqStream != null) {
+				try {
+					xqStream.close();
+				} catch (Exception e) {
+					// Do nothing
+				}
+			}
 		}
 	}
 }

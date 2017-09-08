@@ -29,8 +29,10 @@
 						<configuration>
 							<hibernateDialect>org.hibernate.dialect.MySQL5Dialect</hibernateDialect>
 							<hibernateMapping>
+								${project.basedir}/src/main/resources/AllottedResource.hbm.xml,
 								${project.basedir}/src/main/resources/AllottedResourceCustomization.hbm.xml,
 								${project.basedir}/src/main/resources/HeatEnvironment.hbm.xml,
+								${project.basedir}/src/main/resources/HeatFiles.hbm.xml,
 								${project.basedir}/src/main/resources/HeatNestedTemplate.hbm.xml,
 								${project.basedir}/src/main/resources/HeatTemplate.hbm.xml,
 								${project.basedir}/src/main/resources/ModelRecipe.hbm.xml,
@@ -38,14 +40,21 @@
 								${project.basedir}/src/main/resources/NetworkResource.hbm.xml,
 								${project.basedir}/src/main/resources/NetworkResourceCustomization.hbm.xml,
 								${project.basedir}/src/main/resources/Service.hbm.xml,
+								${project.basedir}/src/main/resources/ServiceRecipe.hbm.xml,
 								${project.basedir}/src/main/resources/ServiceToAllottedResources.hbm.xml,
 								${project.basedir}/src/main/resources/ServiceToNetworks.hbm.xml,
+								${project.basedir}/src/main/resources/ServiceToResourceCustomization.hbm.xml,
+								${project.basedir}/src/main/resources/TempNetworkHeatTemplateLookup.hbm.xml,
+								${project.basedir}/src/main/resources/ToscaCsar.hbm.xml,
 								${project.basedir}/src/main/resources/VfModule.hbm.xml,
+								${project.basedir}/src/main/resources/VfModuleCustomization.hbm.xml,
 								${project.basedir}/src/main/resources/VfModuleToHeatFiles.hbm.xml,
 								${project.basedir}/src/main/resources/VnfComponent.hbm.xml,
 								${project.basedir}/src/main/resources/VnfComponentsRecipe.hbm.xml,
 								${project.basedir}/src/main/resources/VnfRecipe.hbm.xml,
-								${project.basedir}/src/main/resources/VnfResource.hbm.xml
+								${project.basedir}/src/main/resources/VnfResCustomToVfModuleCustom.hbm.xml,
+								${project.basedir}/src/main/resources/VnfResource.hbm.xml,
+								${project.basedir}/src/main/resources/VnfResourceCustomization.hbm.xml
 							</hibernateMapping>
 							<target>SCRIPT</target>
 							<skip>false</skip>
@@ -157,12 +166,6 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<dependency>
-             <groupId>org.evosuite</groupId>
-             <artifactId>evosuite-standalone-runtime</artifactId>
-             <version>${evosuiteVersion}</version>
-             <scope>test</scope>
-        </dependency>
 		<dependency>
 			<groupId>org.openecomp.so</groupId>
 			<artifactId>common</artifactId>

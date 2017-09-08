@@ -95,9 +95,10 @@ class UpdateVfModuleVolumeInfraV1 extends VfModuleBase {
 			
 			//need to get persona-model-id aka model-invariantId to use later to validate vf-module relation in AAI
 			
-			def modelInvariantId = reqMap.requestDetails.modelInfo.modelInvariantId ?: ''
+			def modelInvariantId = reqMap.requestDetails.modelInfo.modelInvariantUuid ?: ''
 			execution.setVariable('UPDVfModVol_modelInvariantId', modelInvariantId)
 		
+			utils.log("DEBUG", "modelInvariantId from request: " + modelInvariantId, isDebugLogEnabled)
 			utils.log("DEBUG", "XML request:\n" + request, isDebugLogEnabled)
 		}
 		catch(groovy.json.JsonException je) {
@@ -123,18 +124,8 @@ class UpdateVfModuleVolumeInfraV1 extends VfModuleBase {
 		execution.setVariable('UPDVfModVol_tenantId', getRequiredNodeText(execution, volumeInputs, 'tenant-id'))
 		//execution.setVariable('UPDVfModVol_modelCustomizationId', getRequiredNodeText(execution, volumeInputs, 'model-customization-id'))
 
-		try {
-			// Catalog DB headers Authorization
-			String basicAuthValueDB = execution.getVariable("URN_mso_adapters_db_auth")
-			utils.log("DEBUG", " Obtained BasicAuth userid password for Catalog DB adapter: " + basicAuthValueDB, isDebugLogEnabled)
-			
-			def encodedString = utils.getBasicAuth(basicAuthValueDB, execution.getVariable("URN_mso_msoKey"))
-			execution.setVariable("BasicAuthHeaderValueDB",encodedString)
-		} catch (IOException ex) {
-			String dataErrorMessage = " Unable to encode Catalog DB user/password string - " + ex.getMessage()
-			utils.log("DEBUG", dataErrorMessage, isDebugLogEnabled)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
-		}
+		setBasicDBAuthHeader(execution, isDebugLogEnabled)
+		
 		def volumeParams = utils.getNodeXml(request, 'volume-params')
 		execution.setVariable('UPDVfModVol_volumeParams', volumeParams)
 	}
@@ -303,7 +294,13 @@ class UpdateVfModuleVolumeInfraV1 extends VfModuleBase {
 			utils.logAudit('Query AAI VF Module: ' + queryAAIVfModuleRequest)
 			logDebug('Query AAI VF Module: ' + queryAAIVfModuleRequest, isDebugLogEnabled)
 			
-			APIResponse response = aaiUtil.executeAAIGetCall(execution, queryAAIVfModuleRequest)
+			def aaiUrl = execution.getVariable("URN_aai_endpoint")
+			logDebug('A&AI URL: ' + aaiUrl, isDebugLogEnabled)
+			
+			def requestEndpoint = aaiUrl + queryAAIVfModuleRequest
+			logDebug('A&AI request endpoint: ' + requestEndpoint, isDebugLogEnabled)
+			
+			APIResponse response = aaiUtil.executeAAIGetCall(execution, requestEndpoint)
 			
 			String returnCode = response.getStatusCode()
 			String aaiResponseAsString = response.getResponseBodyAsString()
@@ -318,7 +315,12 @@ class UpdateVfModuleVolumeInfraV1 extends VfModuleBase {
 			ExceptionUtil exceptionUtil = new ExceptionUtil()
 			
 			if ((returnCode == '200') || (returnCode == '204')) {
-				def personaModelId =  utils.getNodeText1(aaiResponseAsString, 'persona-model-id')
+				def personaModelId =  utils.getNodeText1(aaiResponseAsString, 'model-invariant-id')
+				if(personaModelId == null) {
+					//check old attribute name
+					personaModelId =  utils.getNodeText1(aaiResponseAsString, 'persona-model-id')
+				}
+				logDebug("vfModule personaModelId: " + personaModelId, isDebugLogEnabled)
 				execution.setVariable('UPDVfModVol_personaModelId', personaModelId)
 			}
 			else if (returnCode == '404') {
@@ -353,7 +355,11 @@ class UpdateVfModuleVolumeInfraV1 extends VfModuleBase {
 		def aaiVolumeGroupResponse = execution.getVariable('UPDVfModVol_aaiVolumeGroupResponse')
 		def volumeGroupHeatStackId = getNodeTextForce(aaiVolumeGroupResponse, 'heat-stack-id')
 		def volumeGroupName = getNodeTextForce(aaiVolumeGroupResponse, 'volume-group-name')
-		def modelCustomizationId = getNodeTextForce(aaiVolumeGroupResponse, 'vf-module-persona-model-customization-id')
+		def modelCustomizationId = getNodeTextForce(aaiVolumeGroupResponse, 'vf-module-model-customization-id')
+		if(modelCustomizationId == null) {
+			// Check old attribute name
+			modelCustomizationId = getNodeTextForce(aaiVolumeGroupResponse, 'vf-module-persona-model-customization-id')
+		}
 		
 		def vnfType = execution.getVariable('UPDVfModVol_vnfType')
 		def vnfVersion = execution.getVariable('UPDVfModVol_vnfVersion')
@@ -430,6 +436,7 @@ class UpdateVfModuleVolumeInfraV1 extends VfModuleBase {
 	public void prepDbInfraDbRequest(Execution execution, isDebugLogEnabled) {
 
 		def requestId = execution.getVariable('UPDVfModVol_requestId')
+		ExceptionUtil exceptionUtil = new ExceptionUtil();
 		
 		String updateInfraRequest = """
 			<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
@@ -462,7 +469,7 @@ class UpdateVfModuleVolumeInfraV1 extends VfModuleBase {
 					xmlns:ns="http://org.openecomp/mso/request/types/v1">
 			<request-info xmlns="http://org.openecomp/mso/infra/vnf-request/v1">
 				<request-id>${requestId}</request-id>
-				<action>CREATE</action>
+				<action>UPDATE</action>
 				<source>${source}</source>
    			</request-info>
    			<aetgt:mso-bpel-name>BPMN VF Module Volume action: UPDATE</aetgt:mso-bpel-name>
@@ -480,8 +487,15 @@ class UpdateVfModuleVolumeInfraV1 extends VfModuleBase {
 	 * @param execution The flow's execution instance.
 	 */
 	public void prepFalloutHandler(Execution execution, isDebugLogEnabled) {
+		def requestId = execution.getVariable('UPDVfModVol_requestId')
+		def source = execution.getVariable('UPDVfModVol_source')
 		
-		def requestInfo = execution.getVariable('UPDVfModVol_requestInfo')
+		String requestInfo = """
+		<request-info xmlns="http://org.openecomp/mso/infra/vnf-request/v1">
+		<request-id>${requestId}</request-id>
+		<action>UPDATE</action>
+		<source>${source}</source>
+	   </request-info>"""
 		
 		def WorkflowException workflowException = execution.getVariable("WorkflowException")
 		def errorResponseCode = workflowException.getErrorCode()
@@ -495,7 +509,7 @@ class UpdateVfModuleVolumeInfraV1 extends VfModuleBase {
 			<sdncadapterworkflow:FalloutHandlerRequest xmlns:sdncadapterworkflow="http://org.openecomp/mso/workflow/schema/v1"
 					xmlns:reqtype="http://org.openecomp/mso/request/types/v1"
 					xmlns:msoservtypes="http://org.openecomp/mso/request/types/v1"
-					xmlns:structuredtypes="http://org.openecomp/mso/structured/types/v1">
+					xmlns:structuredtypes="http://org.openecomp/mso/structured/types/v1">				
 				${requestInfo}
 				<sdncadapterworkflow:WorkflowException>
 					<sdncadapterworkflow:ErrorMessage>${encErrorResponseMsg}</sdncadapterworkflow:ErrorMessage>

@@ -97,6 +97,8 @@ public class VolumeRequestHandler {
             .entity (NOT_FOUND)
             .build ();
 
+    private RequestsDatabase requestDB = RequestsDatabase.getInstance();
+    
     @GET
     public Response queryFilters (@QueryParam("vnf-type") String vnfType,
                                   @QueryParam("service-type") String serviceType,
@@ -265,7 +267,7 @@ public class VolumeRequestHandler {
 
         String responseString = null;
 
-        InfraActiveRequests activeReq = RequestsDatabase.getRequestFromInfraActive (requestId,
+        InfraActiveRequests activeReq = requestDB.getRequestFromInfraActive (requestId,
                                                                                     "VOLUME");
         if (activeReq != null) {
             // build response for active
@@ -283,7 +285,7 @@ public class VolumeRequestHandler {
 
         getMsoLogger ().debug ("getRequest based on " + queryAttribute + ": " + queryValue);
 
-        List <InfraActiveRequests> activeReqList = RequestsDatabase.getRequestListFromInfraActive (queryAttribute,
+        List <InfraActiveRequests> activeReqList = requestDB.getRequestListFromInfraActive (queryAttribute,
                                                                                                    queryValue,
                                                                                                    "VOLUME");
   
@@ -468,7 +470,7 @@ public class VolumeRequestHandler {
             InfraActiveRequests dup = null;
             try {
 
-                dup = RequestsDatabase.checkDuplicateByVnfName (msoRequest.getVolumeInputs ().getVolumeGroupName (),
+                dup = requestDB.checkDuplicateByVnfName (msoRequest.getVolumeInputs ().getVolumeGroupName (),
                                                                 msoRequest.getRequestInfo ().getAction ().value (),
                                                                 "VOLUME");
 
@@ -506,7 +508,7 @@ public class VolumeRequestHandler {
             InfraActiveRequests dup = null;
             msoLogger.debug ("Checking for a duplicate with the same volume-group-id");
             try {
-                dup = RequestsDatabase.checkDuplicateByVnfId (msoRequest.getVolumeInputs ().getVolumeGroupId (),
+                dup = requestDB.checkDuplicateByVnfId (msoRequest.getVolumeInputs ().getVolumeGroupId (),
                                                               msoRequest.getRequestInfo ().getAction ().value (),
                                                               "VOLUME");
 
@@ -545,7 +547,7 @@ public class VolumeRequestHandler {
         String orchestrationURI = "";
 
         // Query MSO Catalog DB
-        try(CatalogDatabase db = new CatalogDatabase ()) {
+        try(CatalogDatabase db = CatalogDatabase.getInstance()) {
             Recipe recipe = null;
 
             if (version.equals(Constants.SCHEMA_VERSION_V1)) {
@@ -597,7 +599,7 @@ public class VolumeRequestHandler {
 
                         // If no recipe for the vnf type is found, look for generic recipe with "*" in vf module id
                         if (recipe == null) {
-                            recipe = db.getVnfComponentsRecipeByVfModuleId (Constants.VNF_TYPE_WILDCARD,
+                        	recipe = db.getVnfComponentsRecipeByVfModuleModelUUId (Constants.VNF_TYPE_WILDCARD,
                                     Constants.VOLUME_GROUP_COMPONENT_TYPE,
                                     msoRequest.getRequestInfo ().getAction ().value ());
                         }
@@ -695,7 +697,7 @@ public class VolumeRequestHandler {
                 String bpelXMLResponseBody = respHandler.getResponseBody ();
                 msoLogger.debug ("Received from BPEL: " + bpelXMLResponseBody);
                 msoRequest.setStatus (org.openecomp.mso.apihandlerinfra.volumebeans.RequestStatusType.IN_PROGRESS);
-                RequestsDatabase.updateInfraStatus (msoRequest.getRequestId (),
+                requestDB.updateInfraStatus (msoRequest.getRequestId (),
                         Status.IN_PROGRESS.toString (),
                         Constants.PROGRESS_REQUEST_IN_PROGRESS,
                         Constants.MODIFIED_BY_APIHANDLER);

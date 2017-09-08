@@ -20,11 +20,15 @@
 package org.openecomp.mso.db.catalog.beans;
 
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import org.openecomp.mso.db.catalog.utils.MavenLikeVersioning;
 
-public class ModelRecipe extends MavenLikeVersioning {
+public class ModelRecipe extends MavenLikeVersioning implements Serializable {
+	
+	private static final long serialVersionUID = 768026109321305392L;
+	
 	private int id;
 	private Integer modelId;
 	private String action;

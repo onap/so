@@ -23,7 +23,6 @@ import java.util.UUID;
 
 import org.json.JSONObject;
 import org.json.JSONArray;
-
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.runtime.Execution;
 
@@ -35,12 +34,12 @@ import org.openecomp.mso.rest.RESTClient
 import org.openecomp.mso.rest.RESTConfig
 import org.openecomp.mso.bpmn.common.scripts.AaiUtil
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
-import org.openecomp.mso.bpmn.common.scripts.CatalogDbUtils
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
 import org.openecomp.mso.bpmn.common.scripts.SDNCAdapterUtils
 import org.openecomp.mso.bpmn.common.scripts.VidUtils
 import org.openecomp.mso.bpmn.core.RollbackData
 import org.openecomp.mso.bpmn.core.WorkflowException
+import org.springframework.web.util.UriUtils;
 
 /**
  * This class supports the macro VID Flow
@@ -69,7 +68,8 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 		try{
 			// Get Variables				
 			
-			String cloudConfiguration = execution.getVariable("cloudConfiguration")			
+			String cloudConfiguration = execution.getVariable("cloudConfiguration")		
+			utils.log("DEBUG", "Cloud Configuration: " + cloudConfiguration, isDebugEnabled)	
 			
 			String requestId = execution.getVariable("msoRequestId")
 			execution.setVariable("requestId", requestId)			
@@ -85,6 +85,8 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 			String source = "VID"
 			execution.setVariable("DDVAM_source", source)
 			utils.log("DEBUG", "Incoming Source is: " + source, isDebugEnabled)
+			
+			execution.setVariable("DDVAM_isVidRequest", "true")
 			
 			String sdncVersion = execution.getVariable("sdncVersion")
 			if (sdncVersion == null) {
@@ -165,7 +167,7 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured in DoCreateVnf PreProcessRequest")
 
 		}
-		utils.log("DEBUG", "*** COMPLETED DoCreateVnfAndModules PreProcessRequest Process ***", isDebugEnabled)
+		utils.log("DEBUG", "*** COMPLETED DoDeleteVnfAndModules PreProcessRequest Process ***", isDebugEnabled)
 	}	
 
 	
@@ -191,7 +193,7 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 			execution.setVariable("addOnVfModuleModelInfo", addOnVfModuleModelInfo)
 			String addOnVfModuleLabel = jsonUtil.getJsonValueForKey(addOnModule, "vfModuleLabel")
 			execution.setVariable("addOnVfModuleLabel", addOnVfModuleLabel)
-			String addOnPersonaModelId = jsonUtil.getJsonValueForKey(addOnVfModuleModelInfoObject, "modelInvariantId")
+			String addOnPersonaModelId = jsonUtil.getJsonValueForKey(addOnVfModuleModelInfoObject, "modelInvariantUuid")
 			execution.setVariable("addOnPersonaModelId", addOnPersonaModelId)
 			String addOnInitialCount = jsonUtil.getJsonValueForKey(addOnModule, "initialCount")
 			execution.setVariable("initialCount", addOnInitialCount)
@@ -389,7 +391,7 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 		
 				String uuid = execution.getVariable('testReqId') // for junits
 				if(uuid==null){
-					uuid = execution.getVariable("mso-request-id") + "-" +  	System.currentTimeMillis()
+					uuid = execution.getVariable("msoRequestId") + "-" +  	System.currentTimeMillis()
 				}
 				def callbackURL = execution.getVariable("sdncCallbackUrl")
 				def requestId = execution.getVariable("msoRequestId")
@@ -399,7 +401,7 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 				def vnfId = execution.getVariable("vnfId")
 				def serviceInstanceId = execution.getVariable("serviceInstanceId")
 				def cloudSiteId = execution.getVariable("DDVAM_cloudSiteId")				
-				def modelCustomizationId = execution.getVariable("DDVAM_modelCustomizationId")
+				def modelCustomizationId = execution.getVariable("DDVAM_modelCustomizationId")				
 				//def serviceModelInfo = execution.getVariable("serviceModelInfo")
 				//def vnfModelInfo = execution.getVariable("vnfModelInfo")
 				//String serviceEcompModelInformation = sdncAdapterUtils.modelInfoToEcompModelInformation(serviceModelInfo)
@@ -412,7 +414,7 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 													xmlns:sdncadapterworkflow="http://org.openecomp/mso/workflow/schema/v1"
 													xmlns:sdncadapter="http://org.openecomp/workflow/sdnc/adapter/schema/v1">
 	   <sdncadapter:RequestHeader>
-				<sdncadapter:RequestId>${requestId}</sdncadapter:RequestId>
+				<sdncadapter:RequestId>${uuid}</sdncadapter:RequestId>
 				<sdncadapter:SvcInstanceId>${svcInstId}</sdncadapter:SvcInstanceId>
 				<sdncadapter:SvcAction>${action}</sdncadapter:SvcAction>
 				<sdncadapter:SvcOperation>vnf-topology-operation</sdncadapter:SvcOperation>

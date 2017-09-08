@@ -1,0 +1,72 @@
+    {
+       
+       "result":  [{   
+            
+        "hostname": "8862-PserverHOSTNAME-LB1113",
+        "equipType": "JUNIPER UCPE", 
+        "equipVendor": "JUNIPER", 
+        "equipModel": "QFX51010-PNF",        
+        "ipv4OamAddress": "190.8.5.199",
+        "serialNumber": "VX986001PNF",
+        "pserverId": "5715CE4F-8600-58E103FE60C79",
+        "internetTopology": "WAN",
+        "inMaint": false,
+        "resourceVersion": "1500495668780",
+        "pserverName2": "test81600",
+        "relationshipList": {
+          "relationship": [
+            {
+              "relatedTo": "vserver",
+              "relatedLink": "/aai/v10/cloud-infrastructure/cloud-regions/cloud-region/att-aic/AAIAIC25/tenants/tenant/8862-tenantl-LB1113/vservers/vserver/8862-Lvserver-LB1113",
+              "relationshipData": [
+                {
+                  "relationshipKey": "cloud-region.cloud-owner",
+                  "relationshipValue": "att-aic"
+                },
+                {
+                  "relationshipKey": "cloud-region.cloud-region-id",
+                  "relationshipValue": "AAIAIC25"
+                },
+                {
+                  "relationshipKey": "tenant.tenant-id",
+                  "relationshipValue": "8862-tenantl-LB1113"
+                },
+                {
+                  "relationshipKey": "vserver.vserver-id",
+                  "relationshipValue": "8862-Lvserver-LB1113"
+                }
+              ],
+              "relatedToProperty": [
+                {
+                  "propertyKey": "vserver.vserver-name",
+                  "propertyValue": "hjZAYKyl5LO"
+                }
+              ]
+            }
+          ]
+        },
+        "pinterfaces": {
+          "pinterface": [
+            {
+              "interfaceName": "ge-0/5/8",
+              "speedValue": "1",
+              "speedUnits": "GBPS",
+              "resourceVersion": "1500495668784",
+              "inMaint": false
+            },
+            {
+              "interfaceName": "ge-1/5/8",
+              "speedValue": "1",
+              "speedUnits": "GBPS",
+              "resourceVersion": "1500495668788",
+              "inMaint": false
+            }
+          ]
+        }
+      }
+      
+     
+   
+   ]
+}    
+ 

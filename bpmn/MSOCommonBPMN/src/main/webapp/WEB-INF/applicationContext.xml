@@ -1,0 +1,14 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+  <!-- Spring bean to be invoked through the ApplicationContextElResolver -->
+  <bean id="urnMappingTaskBean" class="org.openecomp.mso.bpmn.core.URNMappingsTask" />
+  <bean id="logTaskBean" class="org.openecomp.mso.bpmn.core.LogTask" />
+  <bean id="readConfigBean" class="org.openecomp.mso.bpmn.core.ReadConfigTask" />
+  <bean id="readFileBean" class="org.openecomp.mso.bpmn.core.ReadFileTask" />
+  <bean id="xqueryScriptBean" class="org.openecomp.mso.bpmn.core.XQueryScriptTask"/>
+  
+
+</beans>

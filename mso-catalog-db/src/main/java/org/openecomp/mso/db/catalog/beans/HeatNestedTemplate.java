@@ -25,8 +25,8 @@ import java.io.Serializable;
 
 public class HeatNestedTemplate implements Serializable {
 
-    private int parentTemplateId;
-    private int childTemplateId;
+    private String parentTemplateId;
+    private String childTemplateId;
     private String providerResourceFile;
     public static final long serialVersionUID = -1322322139926390329L;
 
@@ -34,19 +34,19 @@ public class HeatNestedTemplate implements Serializable {
         super ();
     }
 
-    public void setParentTemplateId (int parentTemplateId) {
+    public void setParentTemplateId (String parentTemplateId) {
         this.parentTemplateId = parentTemplateId;
     }
 
-    public int getParentTemplateId () {
+    public String getParentTemplateId () {
         return this.parentTemplateId;
     }
 
-    public void setChildTemplateId (int childTemplateId) {
+    public void setChildTemplateId (String childTemplateId) {
         this.childTemplateId = childTemplateId;
     }
 
-    public int getChildTemplateId () {
+    public String getChildTemplateId () {
         return this.childTemplateId;
     }
 
@@ -91,7 +91,7 @@ public class HeatNestedTemplate implements Serializable {
         // hash code does not have to be a unique result - only that two objects that should be treated as equal
         // return the same value. so this should work.
         int result = 0;
-        result = this.parentTemplateId + this.childTemplateId;
+        result = this.parentTemplateId.hashCode() + this.childTemplateId.hashCode();
         return result;
     }
 }

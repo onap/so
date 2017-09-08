@@ -43,6 +43,7 @@ public class RequestActionMap {
         actionMap.put("createInstance", "createInstance");
         actionMap.put("deleteInstance", "deleteInstance");
         actionMap.put("updateInstance", "updateInstance");
+        actionMap.put("replaceInstance", "replaceInstance");
 
     }
 

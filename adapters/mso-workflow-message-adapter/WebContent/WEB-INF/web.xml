@@ -34,7 +34,7 @@
   </servlet-mapping>
   <filter>
     <filter-name>LogFilter</filter-name>
-    <filter-class>com.att.ecomp.mso.logger.LogFilter</filter-class>
+    <filter-class>org.openecomp.mso.logger.LogFilter</filter-class>
   </filter>
   <filter-mapping>
     <filter-name>LogFilter</filter-name>

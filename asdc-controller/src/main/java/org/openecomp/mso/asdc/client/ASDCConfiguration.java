@@ -30,13 +30,13 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
 
-import org.codehaus.jackson.JsonNode;
-
-import org.openecomp.sdc.api.consumer.IConfiguration;
 import org.openecomp.mso.asdc.client.exceptions.ASDCParametersException;
 import org.openecomp.mso.properties.MsoJsonProperties;
 import org.openecomp.mso.properties.MsoPropertiesException;
 import org.openecomp.mso.properties.MsoPropertiesFactory;
+import org.openecomp.sdc.api.consumer.IConfiguration;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class ASDCConfiguration implements IConfiguration {
 
@@ -74,6 +74,7 @@ public class ASDCConfiguration implements IConfiguration {
     public static final String HEAT_NET="HEAT_NET";
     public static final String HEAT_VOL="HEAT_VOL";
     public static final String OTHER="OTHER";
+    public static final String TOSCA_CSAR="TOSCA_CSAR";
     public static final String VF_MODULES_METADATA="VF_MODULES_METADATA";
 
 
@@ -84,6 +85,7 @@ public class ASDCConfiguration implements IConfiguration {
     		HEAT_NET,
     		HEAT_VOL,
     		OTHER,
+    		TOSCA_CSAR,
     		VF_MODULES_METADATA};
 
     public static final List<String>  SUPPORTED_ARTIFACT_TYPES_LIST =  Collections.unmodifiableList(Arrays.asList(SUPPORTED_ARTIFACT_TYPES));
@@ -109,6 +111,10 @@ public class ASDCConfiguration implements IConfiguration {
 
         refreshASDCConfig ();
 
+    }
+    
+    public java.lang.Boolean isUseHttpsWithDmaap() {
+    	return false;
     }
 
     public String getAsdcControllerName () {
@@ -399,7 +405,7 @@ public class ASDCConfiguration implements IConfiguration {
             if (msoProp.getJsonRootNode ().get (PARAMETER_PATTERN) != null) {
                 Iterator <Entry <String, JsonNode>> it = msoProp.getJsonRootNode ()
                                                                 .get (PARAMETER_PATTERN)
-                                                                .getFields ();
+                                                                .fields();
 
                 Entry <String, JsonNode> entry;
                 while (it.hasNext ()) {

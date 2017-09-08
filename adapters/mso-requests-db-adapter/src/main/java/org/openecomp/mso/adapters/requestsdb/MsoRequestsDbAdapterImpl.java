@@ -34,14 +34,14 @@ import org.hibernate.Session;
 import org.openecomp.mso.adapters.requestsdb.exceptions.MsoRequestsDbException;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
-import org.openecomp.mso.db.HibernateUtils;
-import org.openecomp.mso.requestsdb.HibernateUtilsRequestsDb;
+import org.openecomp.mso.db.AbstractSessionFactoryManager;
+import org.openecomp.mso.requestsdb.RequestsDbSessionFactoryManager;
 import org.openecomp.mso.requestsdb.InfraActiveRequests;
 
 @WebService(serviceName = "RequestsDbAdapter", endpointInterface = "org.openecomp.mso.adapters.requestsdb.MsoRequestsDbAdapter", targetNamespace = "http://org.openecomp.mso/requestsdb")
 public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
 
-    protected HibernateUtils hibernateUtils = new HibernateUtilsRequestsDb ();
+    protected AbstractSessionFactoryManager requestsDbSessionFactoryManager = new RequestsDbSessionFactoryManager ();
     
     private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
 
@@ -58,9 +58,10 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
                                     String vnfId,
                                     String vfModuleId,
                                     String volumeGroupId,
-                                    String serviceInstanceName) throws MsoRequestsDbException {
+                                    String serviceInstanceName,
+                                    String vfModuleName) throws MsoRequestsDbException {
         MsoLogger.setLogContext (requestId, null);
-        Session session = hibernateUtils.getSessionFactory ().openSession ();
+        Session session = requestsDbSessionFactoryManager.getSessionFactory ().openSession ();
         int result = 0;
         long startTime = System.currentTimeMillis ();
         try {
@@ -98,6 +99,9 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
             }
             if (serviceInstanceName != null) {
                 queryString += "serviceInstanceName = :serviceInstanceName, ";
+            }
+            if (vfModuleName != null) {
+                queryString += "vfModuleName = :vfModuleName, ";
             }
             if (requestStatus == RequestStatusType.COMPLETE || requestStatus == RequestStatusType.FAILED) {
                 queryString += "endTime = :endTime, ";
@@ -155,6 +159,10 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
                 query.setParameter ("serviceInstanceName", serviceInstanceName);
                 LOGGER.debug ("ServiceInstanceName in updateInfraRequest is set to: " + serviceInstanceName);
             }
+            if (vfModuleName != null) {
+                query.setParameter ("vfModuleName", vfModuleName);
+                LOGGER.debug ("vfModuleName in updateInfraRequest is set to: " + vfModuleName);
+            }
             Timestamp nowTimeStamp = new Timestamp (System.currentTimeMillis ());
             if (requestStatus == RequestStatusType.COMPLETE || requestStatus == RequestStatusType.FAILED) {
                 query.setParameter ("endTime", nowTimeStamp);
@@ -195,7 +203,7 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
     public InfraActiveRequests getInfraRequest (String requestId) throws MsoRequestsDbException {
         long startTime = System.currentTimeMillis ();
         MsoLogger.setLogContext (requestId, null);
-        Session session = hibernateUtils.getSessionFactory ().openSession ();
+        Session session = requestsDbSessionFactoryManager.getSessionFactory ().openSession ();
 
         LOGGER.debug ("Call to MSO Infra RequestsDb adapter get method with request Id: " + requestId);
 
@@ -229,7 +237,7 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
      */
     public boolean getSiteStatus (String siteName) {
         UUIDChecker.generateUUID (LOGGER);
-        Session session = hibernateUtils.getSessionFactory ().openSession ();
+        Session session = requestsDbSessionFactoryManager.getSessionFactory ().openSession ();
 
         long startTime = System.currentTimeMillis ();
         SiteStatus siteStatus = null;

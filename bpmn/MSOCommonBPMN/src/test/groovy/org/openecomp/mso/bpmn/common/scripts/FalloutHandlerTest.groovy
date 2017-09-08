@@ -259,6 +259,7 @@ class FalloutHandlerTest {
 			when(mockExecution.getVariable("FH_request_id")).thenReturn("testReqId")
 			when(mockExecution.getVariable("FH_ErrorMessage")).thenReturn("ErrorMessage")
 			when(mockExecution.getVariable("FH_ErrorCode")).thenReturn("ErrorCode")
+			when(mockExecution.getVariable("URN_mso_default_adapter_namespace")).thenReturn("http://org.openecomp.mso");
 
 			FalloutHandler falloutHandler = new FalloutHandler()
 			falloutHandler.updateRequestGammaPayload(mockExecution)

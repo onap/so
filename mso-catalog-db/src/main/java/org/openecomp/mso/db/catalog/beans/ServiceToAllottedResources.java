@@ -54,6 +54,31 @@ public class ServiceToAllottedResources implements Serializable {
 	}
 
 	@Override
+	public boolean equals(Object o) {
+        if (!(o instanceof ServiceToAllottedResources)) {
+            return false;
+        }
+        if (this == o) {
+            return true;
+        }
+        ServiceToAllottedResources star = (ServiceToAllottedResources) o;
+        if (star.getArModelCustomizationUuid().equals(this.getArModelCustomizationUuid())
+        		&& star.getServiceModelUuid().equals(this.getServiceModelUuid())) {
+            return true;
+        } 
+        return false;
+	}
+	
+	@Override 
+	public int hashCode() {
+		
+		int code = this.arModelCustomizationUuid == null ? 0 : this.arModelCustomizationUuid.hashCode();
+		code += this.serviceModelUuid == null ? 0 : this.serviceModelUuid.hashCode();
+		
+		return code;
+	}
+	
+	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("serviceModelUuid=");

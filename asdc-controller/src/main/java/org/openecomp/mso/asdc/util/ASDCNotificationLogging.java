@@ -27,8 +27,13 @@ import java.util.Map;
 import org.openecomp.sdc.api.notification.IArtifactInfo;
 import org.openecomp.sdc.api.notification.INotificationData;
 import org.openecomp.sdc.api.notification.IResourceInstance;
-
+import org.openecomp.sdc.tosca.parser.api.ISdcCsarHelper;
+import org.openecomp.sdc.tosca.parser.impl.SdcPropertyNames;
+import org.openecomp.sdc.toscaparser.api.Group;
+import org.openecomp.sdc.toscaparser.api.NodeTemplate;
+import org.openecomp.sdc.toscaparser.api.elements.Metadata;
 import org.openecomp.mso.asdc.installer.IVfModuleData;
+import org.openecomp.mso.asdc.installer.ToscaResourceStructure;
 
 public class ASDCNotificationLogging {
 
@@ -84,6 +89,198 @@ public class ASDCNotificationLogging {
 		return buffer.toString();
 	}
 
+	public static String dumpCSARNotification(INotificationData asdcNotification, ToscaResourceStructure toscaResourceStructure) {
+		
+		if (asdcNotification == null) {
+			return "NULL";
+		}
+		
+
+		StringBuffer buffer = new StringBuffer("CSAR Notification:");
+		buffer.append(System.lineSeparator());
+		buffer.append(System.lineSeparator());
+		
+		
+		ISdcCsarHelper csarHelper = toscaResourceStructure.getSdcCsarHelper();
+
+	
+		buffer.append("Service Level Properties:");
+		buffer.append(System.lineSeparator());
+		buffer.append("Name:");
+		buffer.append(testNull(csarHelper.getServiceMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_NAME)));
+		buffer.append(System.lineSeparator());
+		buffer.append("Description:");
+		buffer.append(testNull(csarHelper.getServiceMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION)));
+		buffer.append(System.lineSeparator());
+		buffer.append("Model UUID:");
+		buffer.append(testNull(csarHelper.getServiceMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_UUID)));
+		buffer.append(System.lineSeparator());
+		buffer.append("Model Version:");
+		buffer.append(testNull(csarHelper.getServiceMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_VERSION)));
+		buffer.append(System.lineSeparator());
+		buffer.append("Model InvariantUuid:");
+		buffer.append(testNull(csarHelper.getServiceMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID)));
+		
+		buffer.append(System.lineSeparator());
+		buffer.append(System.lineSeparator());
+		buffer.append("VNF Level Properties:");
+		buffer.append(System.lineSeparator());
+		
+        List<NodeTemplate> vfNodeTemplatesList = toscaResourceStructure.getSdcCsarHelper().getServiceVfList();
+        for (NodeTemplate vfNodeTemplate :  vfNodeTemplatesList) {
+        	
+    		buffer.append("Model Name:");
+    		buffer.append(testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_NAME).trim()));
+    		buffer.append(System.lineSeparator());
+       		buffer.append("Description:");
+    		buffer.append(testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION).trim()));
+    		buffer.append(System.lineSeparator());
+       		buffer.append("Version:");
+    		buffer.append(testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_VERSION).trim()));
+    		buffer.append(System.lineSeparator());
+      		buffer.append("Type:");
+    		buffer.append(testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_TYPE).trim()));
+    		buffer.append(System.lineSeparator());
+      		buffer.append("InvariantUuid:");
+    		buffer.append(testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID).trim()));
+    		buffer.append(System.lineSeparator());
+      		buffer.append("Max Instances:");
+    		buffer.append(testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_MAXINSTANCES).trim()));
+    		buffer.append(System.lineSeparator());
+      		buffer.append("Min Instances:");
+    		buffer.append(testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_MININSTANCES).trim()));
+    		buffer.append(System.lineSeparator());
+    		
+    		buffer.append(System.lineSeparator());
+    		buffer.append("VNF Customization Properties:");
+    		buffer.append(System.lineSeparator());
+    		
+      		buffer.append("Customization UUID:");
+    		buffer.append(testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID).trim()));
+    		buffer.append(System.lineSeparator());
+      		buffer.append("NFFunction:");
+    		buffer.append(testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_NFFUNCTION).trim()));
+    		buffer.append(System.lineSeparator());
+      		buffer.append("NFCode:");
+    		buffer.append(testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_NFCODE).trim()));
+    		buffer.append(System.lineSeparator());
+      		buffer.append("NFRole:");
+    		buffer.append(testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_NFROLE).trim()));
+    		buffer.append(System.lineSeparator());
+      		buffer.append("NFType:");
+    		buffer.append(testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_NFTYPE).trim()));
+    		buffer.append(System.lineSeparator());      
+    		
+    		buffer.append(System.lineSeparator());
+    		buffer.append("VF Module Properties:");
+    		buffer.append(System.lineSeparator());
+    		List<Group> vfGroups = toscaResourceStructure.getSdcCsarHelper().getVfModulesByVf(testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID).trim()));
+    		
+    		for(Group group : vfGroups){
+        		
+    			Metadata vfMetadata = group.getMetadata();
+    			
+          		buffer.append("ModelInvariantUuid:");
+        		buffer.append(testNull(toscaResourceStructure.getSdcCsarHelper().getMetadataPropertyValue(vfMetadata, SdcPropertyNames.PROPERTY_NAME_VFMODULEMODELINVARIANTUUID).trim()));
+        		buffer.append(System.lineSeparator());
+         		buffer.append("ModelName:");
+        		buffer.append(testNull(toscaResourceStructure.getSdcCsarHelper().getMetadataPropertyValue(vfMetadata, SdcPropertyNames.PROPERTY_NAME_VFMODULEMODELNAME).trim()));
+        		buffer.append(System.lineSeparator()); 
+         		buffer.append("ModelUuid:");
+        		buffer.append(testNull(toscaResourceStructure.getSdcCsarHelper().getMetadataPropertyValue(vfMetadata, SdcPropertyNames.PROPERTY_NAME_VFMODULEMODELUUID).trim()));
+        		buffer.append(System.lineSeparator());
+         		buffer.append("ModelVersion:");
+        		buffer.append(testNull(toscaResourceStructure.getSdcCsarHelper().getMetadataPropertyValue(vfMetadata, SdcPropertyNames.PROPERTY_NAME_VFMODULEMODELVERSION).trim()));
+        		buffer.append(System.lineSeparator()); 
+         		buffer.append("Description:");
+        		buffer.append(testNull(toscaResourceStructure.getSdcCsarHelper().getMetadataPropertyValue(vfMetadata, SdcPropertyNames.PROPERTY_NAME_DESCRIPTION).trim()));
+        		buffer.append(System.lineSeparator());     
+    		}
+  
+        }
+        
+		
+		List<NodeTemplate> nodeTemplatesVLList = toscaResourceStructure.getSdcCsarHelper().getServiceVlList();
+					
+    	if(nodeTemplatesVLList != null){
+    		
+    		buffer.append(System.lineSeparator());
+    		buffer.append("NETWORK Level Properties:");
+    		buffer.append(System.lineSeparator());
+    		
+    		for(NodeTemplate vlNode : nodeTemplatesVLList){
+			
+    			buffer.append("Model Name:");
+    			buffer.append(testNull(vlNode.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_NAME).trim()));
+    			buffer.append(System.lineSeparator()); 
+    			buffer.append("Model InvariantUuid:");
+    			buffer.append(testNull(vlNode.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID).trim()));
+    			buffer.append(System.lineSeparator());   
+    			buffer.append("Model UUID:");
+    			buffer.append(testNull(vlNode.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_UUID).trim()));
+    			buffer.append(System.lineSeparator()); 
+    			buffer.append("Model Version:");
+    			buffer.append(testNull(vlNode.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_VERSION).trim()));
+    			buffer.append(System.lineSeparator());   
+    			buffer.append("AIC Max Version:");
+    			buffer.append(testNull(vlNode.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_MAXINSTANCES).trim()));
+    			buffer.append(System.lineSeparator()); 
+       			buffer.append("AIC Min Version:");
+    			buffer.append(testNull(vlNode.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_MININSTANCES).trim()));
+    			buffer.append(System.lineSeparator());  
+       			buffer.append("Tosca Node Type:");
+    			buffer.append(testNull(vlNode.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_TYPE).trim()));
+    			buffer.append(System.lineSeparator());  
+       			buffer.append("Description:");
+    			buffer.append(testNull(vlNode.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION).trim()));
+    			buffer.append(System.lineSeparator());  
+    		
+    		}
+    			
+    	}
+    	
+        List<NodeTemplate> allottedResourceList = toscaResourceStructure.getSdcCsarHelper().getAllottedResources();
+    	
+    		if(allottedResourceList != null){
+    			
+    			buffer.append(System.lineSeparator());
+    			buffer.append("Allotted Resource Properties:");
+    			buffer.append(System.lineSeparator());
+    		
+    			for(NodeTemplate allottedNode : allottedResourceList){
+    				
+           			buffer.append("Model Name:");
+        			buffer.append(testNull(allottedNode.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_NAME).trim()));
+        			buffer.append(System.lineSeparator());
+           			buffer.append("Model Name:");
+        			buffer.append(testNull(allottedNode.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_NAME).trim()));
+        			buffer.append(System.lineSeparator()); 
+           			buffer.append("Model InvariantUuid:");
+        			buffer.append(testNull(allottedNode.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID).trim()));
+        			buffer.append(System.lineSeparator());  
+           			buffer.append("Model Version:");
+        			buffer.append(testNull(allottedNode.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_VERSION).trim()));
+        			buffer.append(System.lineSeparator()); 
+           			buffer.append("Model UUID:");
+        			buffer.append(testNull(allottedNode.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_UUID).trim()));
+        			buffer.append(System.lineSeparator());
+        			
+    				
+        			buffer.append("Allotted Resource Customization Properties:");
+        			buffer.append(System.lineSeparator());
+        		
+           			buffer.append("Model Cutomization UUID:");
+        			buffer.append(testNull(allottedNode.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID).trim()));
+        			buffer.append(System.lineSeparator());
+    				
+				
+    			}
+    		}
+		
+		
+		return buffer.toString();
+	}
+	
 	public static String dumpVfModuleMetaDataList(List<IVfModuleData> moduleMetaDataList) {
 		if (moduleMetaDataList == null ) {
 			return null;

@@ -102,17 +102,7 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 		initializeProcessVariables(execution)
 		setSuccessIndicator(execution, false)
 	
-		try {
-			String basicAuthValueDB = execution.getVariable("URN_mso_adapters_db_auth")
-			utils.log("DEBUG", " Obtained BasicAuth userid password for Catalog DB adapter: " + basicAuthValueDB, isDebugLogEnabled)
-			
-			def encodedString = utils.getBasicAuth(basicAuthValueDB, execution.getVariable("URN_mso_msoKey"))
-			execution.setVariable("BasicAuthHeaderValueDB",encodedString)
-		} catch (IOException ex) {
-			String dataErrorMessage = " Unable to encode Catalog DB user/password string - " + ex.getMessage()
-			utils.log("DEBUG", dataErrorMessage, isDebugLogEnabled)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
-		} 
+		setBasicDBAuthHeader(execution, isDebugLogEnabled)
 		
 		try {
 			def xml = execution.getVariable("FalloutHandlerRequest")
@@ -285,7 +275,7 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 	
 		try {
 			String payload = """
-					<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:req="http://org.openecomp.mso/requestsdb">
+					<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:req="${execution.getVariable("URN_mso_default_adapter_namespace")}/requestsdb">
 					<soapenv:Header/>
 					<soapenv:Body>
 						<req:updateRequest>

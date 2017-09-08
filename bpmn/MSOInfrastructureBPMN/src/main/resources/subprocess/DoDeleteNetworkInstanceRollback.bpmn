@@ -121,7 +121,7 @@ DoDeleteNetworkInstanceRollback.processJavaException(execution)]]></bpmn:script>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_1wy1aba" name="No" sourceRef="ExclusiveGateway_1ga27si" targetRef="Task_00chyig" />
     <bpmn:sequenceFlow id="SequenceFlow_1yltkyg" name="Yes" sourceRef="ExclusiveGateway_1ga27si" targetRef="Task_1iuumxi">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[#{execution.getVariable("sdncVersion") == '1702'} ]]></bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[#{execution.getVariable("sdncVersion") != '1610'} ]]></bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_1hcmrh9" sourceRef="Task_1iuumxi" targetRef="ExclusiveGateway_0798yby" />
     <bpmn:sequenceFlow id="SequenceFlow_1pi168e" sourceRef="Task_00chyig" targetRef="ExclusiveGateway_0798yby" />
