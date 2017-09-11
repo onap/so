@@ -60,9 +60,6 @@ public class CamundaDBSetup {
 			stmt.close();
 			stmt = null;
 
-			connection.close();
-			connection = null;
-
 			isDBConfigured = true;
 		} catch (SQLException e) {
 			System.out.println("CamundaDBSetup caught " + e.getClass().getSimpleName());
@@ -79,6 +76,7 @@ public class CamundaDBSetup {
 			if (connection != null) {
 				try {
 					connection.close();
+					connection = null;
 				} catch (Exception e) {
 					// Ignore
 				}
