@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,9 +24,11 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.openecomp.mso.cloud.authentication.AuthenticationWrapper;
+import org.openecomp.mso.logger.MsoLogger;
 
 public abstract class IdentityAuthenticationTypeAbstract {
 
+	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.APIH);
 	// This map will prevent duplicates (as if it was an Enum).
 	// Without this, using an instance specific field for the class could allow
 	// different classes bound to the same entry name.
@@ -42,7 +45,7 @@ public abstract class IdentityAuthenticationTypeAbstract {
 			entries.put(identityType, this);
 			AuthenticationWrapper.register(this.toString(), wrapperClass);
 		} catch (IllegalAccessException | InstantiationException e) {
-			// Do not add the class if an exception occurs as we won't get the class anyway
+			LOGGER.debug("Exception in Identity Authentication",e);
 		}
 	}
 
@@ -70,6 +73,14 @@ public abstract class IdentityAuthenticationTypeAbstract {
 	@Override
 	public final boolean equals(Object other) {
 		return ((this.identityType != null) && (other != null) && (other instanceof IdentityAuthenticationTypeAbstract) && (this.identityType.equals(other.toString())));
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((identityType == null) ? 0 : identityType.hashCode());
+		return result;
 	}
 
 }

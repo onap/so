@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -519,9 +520,7 @@ public class RequestsDatabase {
             }
             session.getTransaction ().commit ();
         } finally {
-            if (session != null && session.isOpen ()) {
-                session.close ();
-            }
+            session.close ();
             msoLogger.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "RequestDB", "updateSiteStatus", null);
         }
     }
@@ -588,9 +587,7 @@ public class RequestsDatabase {
             }
             session.getTransaction().commit();
         } finally {
-            if(session != null && session.isOpen()) {
-                session.close();
-            }
+            session.close();
             msoLogger.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
                     "Successfully", "RequestDB", "updateOperationStatus", null);
         }
@@ -663,9 +660,7 @@ public class RequestsDatabase {
             }
             session.getTransaction().commit();
         } finally {
-            if(session != null && session.isOpen()) {
-                session.close();
-            }
+            session.close();
             msoLogger.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
                     "Successfully", "RequestDB", "updateResOperStatus", null);
         }
@@ -720,9 +715,7 @@ public class RequestsDatabase {
             }
             updateOperationStatus(serviceOperStatus);
         } finally {
-            if(session != null && session.isOpen()) {
-                session.close();
-            }
+            session.close();
             msoLogger.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
                     "Successfully", "RequestDB", "updateResOperStatus", null);
         }

@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,4 +75,11 @@ public abstract class IdentityServerTypeAbstract {
 		return ((this.serverType != null) && (other != null) && (other instanceof IdentityServerTypeAbstract) && (this.serverType.equals(other.toString())));
 	}
 
+	@Override
+	public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((serverType == null) ? 0 : serverType.hashCode());
+        return result;
+    }
 }
