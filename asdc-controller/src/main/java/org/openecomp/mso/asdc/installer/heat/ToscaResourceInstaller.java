@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -97,12 +98,12 @@ public class ToscaResourceInstaller {// implements IVfResourceInstaller {
 	//@Override
 	public boolean isResourceAlreadyDeployed(VfResourceStructure vfResourceStruct)
 			throws ArtifactInstallerException {
-		CatalogDatabase db = CatalogDatabase.getInstance();
+		CatalogDatabase db = null;
 		boolean status = false;
 		VfResourceStructure vfResourceStructure = (VfResourceStructure)vfResourceStruct;
 		
 		try {
-			
+			db = CatalogDatabase.getInstance();
 			String serviceUUID = vfResourceStruct.getNotification().getServiceUUID();			
 
 			if (status) {
@@ -130,6 +131,10 @@ public class ToscaResourceInstaller {// implements IVfResourceInstaller {
 		} catch (Exception e) {
 			logger.error(MessageEnum.ASDC_ARTIFACT_CHECK_EXC, "", "", MsoLogger.ErrorCode.SchemaError, "Exception - isResourceAlreadyDeployed");
 			throw new ArtifactInstallerException("Exception caught during checking existence of the VNF Resource.", e);
+		} finally {
+			if( null != db) {
+			    db.close();
+			}
 		}
 	}
 
@@ -170,7 +175,7 @@ public class ToscaResourceInstaller {// implements IVfResourceInstaller {
 		// PCLO: in case of deployment failure, use a string that will represent the type of artifact that failed...
 		List<ASDCElementInfo> artifactListForLogging = new ArrayList<>();
 		
-		CatalogDatabase catalogDB = CatalogDatabase.getInstance();
+		CatalogDatabase catalogDB = null;
 		// 2. Create the VFModules/VNFResource objects by linking them to the
 		// objects created before and store them in Resource/module structure
 		// Opening a DB transaction, starting from here
@@ -180,7 +185,7 @@ public class ToscaResourceInstaller {// implements IVfResourceInstaller {
 			String vfModuleModelUUID = null;
 			
 			createToscaCsar(toscaResourceStruct);
-			
+			catalogDB = CatalogDatabase.getInstance();
 			catalogDB.saveToscaCsar(toscaResourceStruct.getCatalogToscaCsar());
 			
 			ToscaResourceInstaller.createService(toscaResourceStruct);
@@ -579,6 +584,8 @@ public class ToscaResourceInstaller {// implements IVfResourceInstaller {
 						"Exception caught during installation of " + vfResourceStructure.getResourceInstance().getResourceName() + ". Transaction rollback.", e);
 			}
 
+		} finally {
+			catalogDB.close();
 		}
 				
 	}		

@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,7 +67,11 @@ import org.openecomp.mso.openstack.beans.NetworkRollback;
 import org.openecomp.mso.openstack.beans.NetworkStatus;
 import org.openecomp.mso.openstack.exceptions.MsoExceptionCategory;
 import org.openecomp.mso.properties.MsoPropertiesFactory;
-
+/**
+ * 
+ * 
+ *
+ */
 @Path("/v1/networks")
 public class NetworkAdapterRest {
 	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
@@ -211,6 +216,7 @@ public class NetworkAdapterRest {
 						rollback.value,
 						req.getMessageId());
 			} catch (NetworkException e) {
+				LOGGER.debug("Exception :",e);
 				eresp = new CreateNetworkError(
 					e.getMessage(), MsoExceptionCategory.INTERNAL, true, req.getMessageId());
 			}
@@ -307,6 +313,7 @@ public class NetworkAdapterRest {
 				}
 				response = new DeleteNetworkResponse(req.getNetworkId(), networkDeleted.value, req.getMessageId());
 			} catch (NetworkException e) {
+				LOGGER.debug("Exception :",e);
 				eresp = new DeleteNetworkError(e.getMessage(), MsoExceptionCategory.INTERNAL, true, req.getMessageId());
 			}
 			if (!req.isSynchronous()) {
@@ -441,6 +448,7 @@ public class NetworkAdapterRest {
 				adapter.rollbackNetwork(nwr);
 				response = new RollbackNetworkResponse(true, req.getMessageId());
 			} catch (NetworkException e) {
+				LOGGER.debug("Exception :",e);
 				eresp = new RollbackNetworkError(e.getMessage(), MsoExceptionCategory.INTERNAL, true, req.getMessageId());
 			}
 			if (!req.isSynchronous()) {
@@ -579,6 +587,7 @@ public class NetworkAdapterRest {
 					subnetIdMap.value,
 					req.getMessageId());
 			} catch (NetworkException e) {
+				LOGGER.debug("Exception :",e);
 				eresp = new UpdateNetworkError(e.getMessage(), MsoExceptionCategory.INTERNAL, true, req.getMessageId());
 			}
 			if (!req.isSynchronous()) {

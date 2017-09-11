@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +27,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.ClosedWatchServiceException;
+import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.WatchEvent;
@@ -131,10 +133,13 @@ public class PropertyConfiguration {
 			LOGGER.debug("mso.config.path JVM system property is not set");
 			return;
 		}
-
+		FileSystem dfs = null;
+		FileSystem wfs = null;
 		try {
-			Path directory = FileSystems.getDefault().getPath(msoConfigPath);
-			WatchService watchService = FileSystems.getDefault().newWatchService();
+			dfs = FileSystems.getDefault();
+			Path directory = dfs.getPath(msoConfigPath);
+			wfs = FileSystems.getDefault();
+			WatchService watchService = wfs.newWatchService();
 			directory.register(watchService, ENTRY_MODIFY);
 
 			LOGGER.info(MessageEnum.BPMN_GENERAL_INFO, "BPMN", "Starting FileWatcherThread");
@@ -149,6 +154,17 @@ public class PropertyConfiguration {
 				"Property Configuration",
 				MsoLogger.ErrorCode.UnknownError,
 				"Error occurred while starting FileWatcherThread:" + e);
+		} finally {
+			try {
+			    if(null != dfs){
+				    dfs.close();
+			    }
+			    if(null != wfs){
+				    wfs.close();
+			    }
+			} catch(IOException ex){
+				LOGGER.debug("unable to close FileSystem",ex);
+			}
 		}
 	}
 
