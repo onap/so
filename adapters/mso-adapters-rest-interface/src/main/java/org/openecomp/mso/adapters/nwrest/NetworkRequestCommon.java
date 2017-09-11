@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +28,8 @@ import java.io.ByteArrayOutputStream;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
+import org.openecomp.mso.logger.MsoLogger;
+
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 
@@ -34,6 +37,8 @@ import org.codehaus.jackson.map.SerializationConfig;
  * Everything that is common between all Network Requests.
  */
 public abstract class NetworkRequestCommon {
+	
+	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
 	private Boolean skipAAI = false;
 	private String messageId;
 	private String notificationUrl;
@@ -73,7 +78,7 @@ public abstract class NetworkRequestCommon {
 			mapper.enable(SerializationConfig.Feature.WRAP_ROOT_VALUE);
 			jsonString = mapper.writeValueAsString(this);
 		} catch (Exception e) {
-			// ignore
+			LOGGER.debug("Exception :",e);
 		}
 		return jsonString;
 	}
@@ -87,8 +92,8 @@ public abstract class NetworkRequestCommon {
 			marshaller.marshal(this, bs);
 			return bs.toString();
 		} catch (Exception e) {
-			// Shouldn't happen...
-			e.printStackTrace();
+			
+			LOGGER.debug("Exception :",e);
 			return "";
 		}
 	}
