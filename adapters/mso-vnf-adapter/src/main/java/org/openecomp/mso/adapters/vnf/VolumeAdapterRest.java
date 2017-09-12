@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -200,6 +201,7 @@ public class VolumeAdapterRest {
 						rb,
 						req.getMessageId());
 			} catch (VnfException e) {
+				LOGGER.debug("Exception :",e);
 				eresp = new VolumeGroupExceptionResponse(
 					e.getMessage(), MsoExceptionCategory.INTERNAL, true, req.getMessageId());
 			}
@@ -287,6 +289,7 @@ public class VolumeAdapterRest {
 				}
 				response = new DeleteVolumeGroupResponse(true, req.getMessageId());
 			} catch (VnfException e) {
+				LOGGER.debug("Exception :",e);
 				eresp = new VolumeGroupExceptionResponse(e.getMessage(), MsoExceptionCategory.INTERNAL, true, req.getMessageId());
 			}
 			if (!req.isSynchronous()) {
@@ -375,6 +378,7 @@ public class VolumeAdapterRest {
 				vnfAdapter.rollbackVnf(vrb);
 				response = new RollbackVolumeGroupResponse(true, req.getMessageId());
 			} catch (VnfException e) {
+				LOGGER.debug("Exception :",e);
 				eresp = new VolumeGroupExceptionResponse(e.getMessage(), MsoExceptionCategory.INTERNAL, true, req.getMessageId());
 			}
 			if (!req.isSynchronous()) {
@@ -499,6 +503,7 @@ public class VolumeAdapterRest {
 						req.getVolumeGroupId(), req.getVolumeGroupStackId(),
 						outputs.value, req.getMessageId());
 			} catch (VnfException e) {
+				LOGGER.debug("Exception :",e);
 				eresp = new VolumeGroupExceptionResponse(e.getMessage(), MsoExceptionCategory.INTERNAL, true, req.getMessageId());
 			}
 			if (!req.isSynchronous()) {

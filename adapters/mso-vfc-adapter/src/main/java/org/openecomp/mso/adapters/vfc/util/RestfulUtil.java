@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -160,7 +161,7 @@ public class RestfulUtil {
                 try {
                     EntityUtils.consume(httpResponse.getEntity());
                 } catch(Exception e) {
-                    // Ignore
+                	LOGGER.debug("Exception :",e);
                 }
             }
 
@@ -168,7 +169,7 @@ public class RestfulUtil {
                 try {
                     method.reset();
                 } catch(Exception e) {
-                    // Ignore
+                	LOGGER.debug("Exception :",e);
                 }
             }
         }

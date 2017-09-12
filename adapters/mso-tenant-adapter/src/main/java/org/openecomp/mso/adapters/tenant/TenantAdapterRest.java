@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -137,14 +138,17 @@ public class TenantAdapterRest {
 //												tenantRollback);
 		}
 		catch (TenantAlreadyExists tae) {
+			LOGGER.debug("Exception :",tae);
 			CreateTenantError exc = new CreateTenantError(tae.getMessage(), tae.getFaultInfo().getCategory(), Boolean.TRUE);
 			return Response.status(HttpServletResponse.SC_NOT_IMPLEMENTED).entity(exc).build();
 		}
 		catch (TenantException te) {
+			LOGGER.debug("Exception :",te);
 			CreateTenantError exc = new CreateTenantError(te.getFaultInfo().getMessage(), te.getFaultInfo().getCategory(), Boolean.TRUE);
 			return Response.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).entity(exc).build();
 		}
 		catch (Exception e) {
+			LOGGER.debug("Exception :",e);
 			CreateTenantError exc = new CreateTenantError(e.getMessage(), MsoExceptionCategory.INTERNAL, Boolean.TRUE);
 			return Response.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).entity(exc).build();
 		}
@@ -189,10 +193,12 @@ public class TenantAdapterRest {
 		    tenantDeleted = deleted.value;
 		}
 		catch (TenantException te) {
+			LOGGER.debug("Exception :",te);
 			DeleteTenantError exc = new DeleteTenantError(te.getFaultInfo().getMessage(), te.getFaultInfo().getCategory(), Boolean.TRUE);
 			return Response.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).entity(exc).build();
 		}
 		catch (Exception e) {
+			LOGGER.debug("Exception :",e);
 			DeleteTenantError exc = new DeleteTenantError(e.getMessage(), MsoExceptionCategory.INTERNAL, Boolean.TRUE);
 			return Response.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).entity(exc).build();
 		}
@@ -243,10 +249,12 @@ public class TenantAdapterRest {
 //			tenant = TAImpl.queryTenant (cloudSiteId, tenantId, msoReq);
 		}
 		catch (TenantException te) {
+			LOGGER.debug("Exception :",te);
 			QueryTenantError exc = new QueryTenantError(te.getFaultInfo().getMessage(), te.getFaultInfo().getCategory());
 			return Response.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).entity(exc).build();
 		}
 		catch (Exception e) {
+			LOGGER.debug("Exception :",e);
 			QueryTenantError exc = new QueryTenantError(e.getMessage(), MsoExceptionCategory.INTERNAL);
 			return Response.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).entity(exc).build();
 		}
@@ -282,10 +290,12 @@ public class TenantAdapterRest {
 		    impl.rollbackTenant(req.getTenantRollback());
 		}
 		catch (TenantException te) {
+			LOGGER.debug("Exception :",te);
 			RollbackTenantError exc = new RollbackTenantError(te.getFaultInfo().getMessage(), te.getFaultInfo().getCategory(), Boolean.TRUE);
 			return Response.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).entity(exc).build();
 		}
 		catch (Exception e) {
+			LOGGER.debug("Exception :",e);
 			RollbackTenantError exc = new RollbackTenantError(e.getMessage(), MsoExceptionCategory.INTERNAL, Boolean.TRUE);
 			return Response.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).entity(exc).build();
 		}

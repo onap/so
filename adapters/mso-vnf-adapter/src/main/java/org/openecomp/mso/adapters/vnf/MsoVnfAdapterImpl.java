@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -176,7 +177,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
     				}
     			} catch (Exception e) {
     				// might be ok - both are just blank
-    				LOGGER.debug("ERROR trying to parse the volumeGroupHeatStackId " + volumeGroupHeatStackId);
+    				LOGGER.debug("ERROR trying to parse the volumeGroupHeatStackId " + volumeGroupHeatStackId,e);
     			}
     			this.createVfModule(cloudSiteId,
     					tenantId,
@@ -434,28 +435,28 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             		String str = "" + stackOutputs.get(key);
             		stringOutputs.put(key, str);
             	} catch (Exception e) {
-            		LOGGER.debug("Unable to add " + key + " to outputs");
+            		LOGGER.debug("Unable to add " + key + " to outputs",e);
             	}
             } else if (stackOutputs.get(key) instanceof JsonNode) {
             	try {
             		String str = this.convertNode((JsonNode) stackOutputs.get(key));
             		stringOutputs.put(key, str);
             	} catch (Exception e) {
-            		LOGGER.debug("Unable to add " + key + " to outputs - exception converting JsonNode");
+            		LOGGER.debug("Unable to add " + key + " to outputs - exception converting JsonNode",e);
             	}
             } else if (stackOutputs.get(key) instanceof java.util.LinkedHashMap) {
             	try {
 					String str = JSON_MAPPER.writeValueAsString(stackOutputs.get(key));
             		stringOutputs.put(key, str);
             	} catch (Exception e) {
-            		LOGGER.debug("Unable to add " + key + " to outputs - exception converting LinkedHashMap");
+            		LOGGER.debug("Unable to add " + key + " to outputs - exception converting LinkedHashMap",e);
             	}
             } else {
             	try {
             		String str = stackOutputs.get(key).toString();
             		stringOutputs.put(key, str);
             	} catch (Exception e) {
-            		LOGGER.debug("Unable to add " + key + " to outputs - unable to call .toString() " + e.getMessage());
+            		LOGGER.debug("Unable to add " + key + " to outputs - unable to call .toString() " + e.getMessage(),e);
             	}
             }
         }
@@ -553,6 +554,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
     			try {
     				outputString = inputs.get(str).toString();
     			} catch (Exception e) {
+    				LOGGER.debug("Exception :",e);
     				outputString = "Unable to call toString() on the value for " + str;
     			}
     			sb.append("\t\nitem " + i++ + ": '" + str + "'='" + outputString + "'");
@@ -585,9 +587,9 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             final String json = JSON_MAPPER.writeValueAsString(obj);
             return json;
         } catch (JsonParseException jpe) {
-            LOGGER.debug("Error converting json to string " + jpe.getMessage());
+            LOGGER.debug("Error converting json to string " + jpe.getMessage(),jpe);
         } catch (Exception e) {
-            LOGGER.debug("Error converting json to string " + e.getMessage());
+            LOGGER.debug("Error converting json to string " + e.getMessage(),e);
         }
         return "[Error converting json to string]";
     }
@@ -609,7 +611,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                         String str = this.convertNode((JsonNode) obj);
                         stringMap.put(key, str);
                     } catch (Exception e) {
-						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value for JsonNode "+ key);
+						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value for JsonNode "+ key,e);
                         //okay in this instance - only string values (fqdn) are expected to be needed
                     }
                 } else if (obj instanceof java.util.LinkedHashMap) {
@@ -618,21 +620,21 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                         String str = JSON_MAPPER.writeValueAsString(obj);
                         stringMap.put(key, str);
                     } catch (Exception e) {
-						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value for LinkedHashMap "+ key);
+						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value for LinkedHashMap "+ key,e);
 					}
 				}  else if (obj instanceof Integer) {
 					try {
 						String str = "" + obj;
 						stringMap.put(key, str);
 					} catch (Exception e) {
-						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value for Integer "+ key);
+						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value for Integer "+ key,e);
                     }
                 } else {
                     try {
 						String str = obj.toString();
                         stringMap.put(key, str);
                     } catch (Exception e) {
-						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value "+ key + " (" + e.getMessage() + ")");
+						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value "+ key + " (" + e.getMessage() + ")",e);
                     }
                 }
             }
@@ -985,7 +987,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             		minVersionVnf = vnfResource.getAicVersionMin();
             		maxVersionVnf = vnfResource.getAicVersionMax();
             	} catch (Exception e) {
-            		LOGGER.debug("Unable to pull min/max version for this VNF Resource entry");
+            		LOGGER.debug("Unable to pull min/max version for this VNF Resource entry",e);
             		minVersionVnf = null;
             		maxVersionVnf = null;
             	}
@@ -1020,7 +1022,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 							moreThanMax = aicV.isMoreRecentThan(maxVersionVnf);
 							equalToMax = aicV.isTheSameVersion(maxVersionVnf);
 						} catch (Exception e) {
-							LOGGER.debug("An exception occured while trying to test AIC Version " + e.getMessage() + " - will default to not check");
+							LOGGER.debug("An exception occured while trying to test AIC Version " + e.getMessage() + " - will default to not check",e);
 							doNotTest = true;
 						}						
 						if (!doNotTest) {
@@ -1282,7 +1284,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             	}
             	LOGGER.debug(sb.toString());
             } catch (Exception e) {
-            	LOGGER.debug("??An exception occurred trying to go through Parameter Names " + e.getMessage());
+            	LOGGER.debug("??An exception occurred trying to go through Parameter Names " + e.getMessage(),e);
             }
             // Step 1 - convert what we got as inputs (Map<String, String>) to a 
             // Map<String, Object> - where the object matches the param type identified in the template
@@ -1386,12 +1388,12 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                 throw new VnfException ("NullPointerException during heat.createStack");
             } catch (Exception e) {
                 LOGGER.recordMetricEvent (createStackStarttime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, "Exception while creating stack with OpenStack", "OpenStack", "CreateStack", vfModuleName);
-                LOGGER.debug("unhandled exception at heat.createStack");
+                LOGGER.debug("unhandled exception at heat.createStack",e);
                 LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, "Exception while creating stack with OpenStack");
             	throw new VnfException("Exception during heat.createStack! " + e.getMessage());
             }
         } catch (Exception e) {
-        	LOGGER.debug("unhandled exception in create VF");
+        	LOGGER.debug("unhandled exception in create VF",e);
         	throw new VnfException("Exception during create VF " + e.getMessage());
 
         } finally {
@@ -1737,7 +1739,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             		minVersionVnf = vnfResource.getAicVersionMin();
             		maxVersionVnf = vnfResource.getAicVersionMax();
             	} catch (Exception e) {
-            		LOGGER.debug("Unable to pull min/max version for this VNF Resource entry");
+            		LOGGER.debug("Unable to pull min/max version for this VNF Resource entry",e);
             		minVersionVnf = null;
             		maxVersionVnf = null;
             		}
@@ -1993,12 +1995,12 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                 			//TODO - what to do here?
                 			//for now - send the error to debug, but just leave it as a String
                 			String errorMessage = jpe.getMessage();
-                			LOGGER.debug("Json Error Converting " + parm.getParamName() + " - " + errorMessage);
+                			LOGGER.debug("Json Error Converting " + parm.getParamName() + " - " + errorMessage,jpe);
                 			hasJson = false;
                 			jsonNode = null;
                 		} catch (Exception e) {
                 			// or here?
-                			LOGGER.debug("Json Error Converting " + parm.getParamName() + " " + e.getMessage());
+                			LOGGER.debug("Json Error Converting " + parm.getParamName() + " " + e.getMessage(),e);
                 			hasJson = false;
                 			jsonNode = null;
                 		}
@@ -2015,12 +2017,12 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                 			//TODO - what to do here?
                 			//for now - send the error to debug, but just leave it as a String
                 			String errorMessage = jpe.getMessage();
-                			LOGGER.debug("Json Error Converting " + parm.getParamName() + " - " + errorMessage);
+                			LOGGER.debug("Json Error Converting " + parm.getParamName() + " - " + errorMessage,jpe);
                 			hasJson = false;
                 			jsonNode = null;
                 		} catch (Exception e) {
                 			// or here?
-                			LOGGER.debug("Json Error Converting " + parm.getParamName() + " " + e.getMessage());
+                			LOGGER.debug("Json Error Converting " + parm.getParamName() + " " + e.getMessage(),e);
                 			hasJson = false;
                 			jsonNode = null;
                 		}
@@ -2184,6 +2186,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
     	try {
     		vfModuleName = vfModuleStackId.substring(0, index);
     	} catch (Exception e) {
+    		LOGGER.debug("Exception", e);
     		vfModuleName = null;
     	}
     	return vfModuleName;

@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +30,10 @@ import javax.xml.bind.Marshaller;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 
+import org.openecomp.mso.logger.MsoLogger;
+
 public class TenantRequestCommon {
+	private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
 	public String toJsonString() {
 		try {
 			String jsonString = null;
@@ -38,8 +42,7 @@ public class TenantRequestCommon {
 			jsonString = mapper.writeValueAsString(this);
 			return jsonString;
 		} catch (Exception e) {
-			// Shouldn't happen...
-			e.printStackTrace();
+			LOGGER.debug("Exception :",e);
 			return "";
 		}
 	}
@@ -53,8 +56,7 @@ public class TenantRequestCommon {
 			marshaller.marshal(this, bs);
 			return bs.toString();
 		} catch (Exception e) {
-			// Shouldn't happen...
-			e.printStackTrace();
+			LOGGER.debug("Exception :",e);
 			return "";
 		}
 	}

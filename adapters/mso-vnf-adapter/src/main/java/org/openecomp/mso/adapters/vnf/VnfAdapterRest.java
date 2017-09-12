@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -406,6 +407,7 @@ public class VnfAdapterRest {
 				response = new CreateVfModuleResponse(req.getVnfId(), req.getVfModuleId(),
 						vfModuleStackId.value, Boolean.TRUE, outputs.value, modRollback, req.getMessageId());
 			} catch (VnfException e) {
+				LOGGER.debug("Exception :",e);
 				eresp = new VfModuleExceptionResponse(e.getMessage(), MsoExceptionCategory.INTERNAL, Boolean.TRUE, req.getMessageId());
 			}
 			if (!req.isSynchronous()) {
@@ -506,6 +508,7 @@ public class VnfAdapterRest {
 				response = new UpdateVfModuleResponse(req.getVnfId(), req.getVfModuleId(),
 						vfModuleStackId.value, outputs.value, req.getMessageId());
 			} catch (VnfException e) {
+				LOGGER.debug("Exception :",e);
 				eresp = new VfModuleExceptionResponse(e.getMessage(), MsoExceptionCategory.INTERNAL, Boolean.TRUE, req.getMessageId());
 			}
 			if (!req.isSynchronous()) {
