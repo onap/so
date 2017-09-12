@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -281,7 +282,7 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
                     try {
                     	LOGGER.debug("Current stack " + this.getOutputsAsStringBuilder(heatStack).toString());
                     } catch (Exception e) {
-                    	LOGGER.debug("an error occurred trying to print out the current outputs of the stack");
+                    	LOGGER.debug("an error occurred trying to print out the current outputs of the stack", e);
                     }
 
 
@@ -378,6 +379,7 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
 					String str = JSON_MAPPER.writeValueAsString(obj);
 					sb.append(str + " (a java.util.LinkedHashMap)");
 				} catch (Exception e) {
+					LOGGER.debug("Exception :", e);
 					sb.append("(a LinkedHashMap value that would not convert nicely)");
 				}				
 			} else if (obj instanceof Integer) {
@@ -385,6 +387,7 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
 				try {
 					str = obj.toString() + " (an Integer)\n";
 				} catch (Exception e) {
+					LOGGER.debug("Exception :", e);
 					str = "(an Integer unable to call .toString() on)";
 				}
 				sb.append(str);
@@ -393,6 +396,7 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
 				try {
 					str = obj.toString() + " (an ArrayList)";
 				} catch (Exception e) {
+					LOGGER.debug("Exception :", e);
 					str = "(an ArrayList unable to call .toString() on?)";
 				}
 				sb.append(str);
@@ -401,6 +405,7 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
 				try {
 					str = obj.toString() + " (a Boolean)";
 				} catch (Exception e) {
+					LOGGER.debug("Exception :", e);
 					str = "(an Boolean unable to call .toString() on?)";
 				}
 				sb.append(str);
@@ -410,6 +415,7 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
 				try {
 					str = obj.toString() + " (unknown Object type)";
 				} catch (Exception e) {
+					LOGGER.debug("Exception :", e);
 					str = "(a value unable to call .toString() on?)";
 				}
 				sb.append(str);
@@ -426,9 +432,9 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
 			final String json = JSON_MAPPER.writeValueAsString(obj);
 			return json;
 		} catch (JsonParseException jpe) {
-			LOGGER.debug("Error converting json to string " + jpe.getMessage());
+			LOGGER.debug("Error converting json to string " + jpe.getMessage(), jpe);
 		} catch (Exception e) {
-			LOGGER.debug("Error converting json to string " + e.getMessage());
+			LOGGER.debug("Error converting json to string " + e.getMessage(), e);
 		}
 		return "[Error converting json to string]";
 	}
