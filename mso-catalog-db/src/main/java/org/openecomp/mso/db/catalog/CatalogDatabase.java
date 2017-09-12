@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -329,7 +330,7 @@ public class CatalogDatabase implements Closeable {
         try {
         	environment = (HeatEnvironment) query.uniqueResult ();
         } catch (org.hibernate.NonUniqueResultException nure) {
-        	LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row for Envt - data integrity error: artifactUuid='" + artifactUuid +"'");
+        	LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row for Envt - data integrity error: artifactUuid='" + artifactUuid +"'", nure);
         	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for heatEnvironment artifactUuid=" + artifactUuid, "", "", MsoLogger.ErrorCode.DataError, "Non unique result for artifactUuid==" + artifactUuid);
         	environment = null;
         } catch (org.hibernate.HibernateException he) {
@@ -554,7 +555,7 @@ public class CatalogDatabase implements Closeable {
         try {
             result = (Service) query.uniqueResult();
         } catch (org.hibernate.NonUniqueResultException nure) {
-            LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row - data integrity error: modelInvariantId='" + modelInvariantId + "', modelVersion='" + modelVersion + "'");
+            LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row - data integrity error: modelInvariantId='" + modelInvariantId + "', modelVersion='" + modelVersion + "'", nure);
             LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for modelInvariantId=" + modelInvariantId + " and modelVersion=" + modelVersion, "", "", MsoLogger.ErrorCode.DataError, "Non unique result for modelInvariantId=" + modelInvariantId);
             throw new Exception("Non Unique Result Exception - the Catalog Database does not match a unique row - data integrity error: modelInvariantId='" + modelInvariantId + "', modelVersion='" + modelVersion + "'");
         }
@@ -3537,8 +3538,7 @@ public class CatalogDatabase implements Closeable {
                     	//session.merge(heat);
                     	session.save(heat);
                     } catch (HibernateException he1) {
-                    	LOGGER.debug("Hibernate Exception encountered on first attempt at save(heat) - try again..." + he1.getMessage());
-                    	LOGGER.debug(he1.getStackTrace().toString());
+                    	LOGGER.debug("Hibernate Exception encountered on first attempt at save(heat) - try again..." + he1.getMessage(), he1);
                     	try {
                     		Session session = this.getSession();
                     		//session.merge(heat);
@@ -3548,24 +3548,24 @@ public class CatalogDatabase implements Closeable {
                     		LOGGER.debug(he2.getStackTrace().toString());
                     		throw he2;
                     	} catch (Exception e2) {
-                    		LOGGER.debug("General Exception encountered on second attempt at save(heat)..." + e2.getMessage());
+                    		LOGGER.debug("General Exception encountered on second attempt at save(heat)..." + e2.getMessage(),e2);
                     		LOGGER.debug(e2.getStackTrace().toString());
                     		throw e2;
                     	}
                     	
                     } catch (Exception e1) {
-                    	LOGGER.debug("General Exception encountered on first attempt at save(heat) - try again..." + e1.getMessage());
+                    	LOGGER.debug("General Exception encountered on first attempt at save(heat) - try again..." + e1.getMessage(), e1);
                     	LOGGER.debug(e1.getStackTrace().toString());
                     	try {
                     		Session session = this.getSession();
                     		//session.merge(heat);
                     		session.save(heat);
                     	} catch (HibernateException he2) {
-                    		LOGGER.debug("General Exception encountered on second attempt at save(heat)" + he2.getMessage());
+                    		LOGGER.debug("General Exception encountered on second attempt at save(heat)" + he2.getMessage(), he2);
                     		LOGGER.debug(he2.getStackTrace().toString());
                     		throw he2;
                     	} catch (Exception e2) {
-                    		LOGGER.debug("General Exception encountered on second attempt at save(heat)..." + e2.getMessage());
+                    		LOGGER.debug("General Exception encountered on second attempt at save(heat)..." + e2.getMessage(), e2);
                     		LOGGER.debug(e2.getStackTrace().toString());
                     		throw e2;
                     	}
@@ -3607,15 +3607,15 @@ public class CatalogDatabase implements Closeable {
         try {
         	env = (HeatEnvironment) query.uniqueResult ();
         } catch (org.hibernate.NonUniqueResultException nure) {
-        	LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row - data integrity error: envName='" + name + "', version='" + version + "' and asdcResourceName=" + asdcResourceName);
+        	LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row - data integrity error: envName='" + name + "', version='" + version + "' and asdcResourceName=" + asdcResourceName, nure);
         	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for envName=" + name + " and version=" + version + " and asdcResourceName=" + asdcResourceName, "", "", MsoLogger.ErrorCode.DataError, "non unique result for envName=" + name);
         	env = null;
         } catch (org.hibernate.HibernateException he) {
-        	LOGGER.debug("Hibernate Exception - while searching for: envName='" + name + "', asdc_service_model_version='" + version + "' and asdcResourceName=" + asdcResourceName);
+        	LOGGER.debug("Hibernate Exception - while searching for: envName='" + name + "', asdc_service_model_version='" + version + "' and asdcResourceName=" + asdcResourceName, he);
         	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception searching for envName=" + name + " and version=" + version + " and asdcResourceName=" + asdcResourceName, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching for envName=" + name);
         	env = null;
         } catch (Exception e) {
-        	LOGGER.debug("Generic Exception - while searching for: envName='" + name + "', asdc_service_model_version='" + version + "' and asdcResourceName=" + asdcResourceName);
+        	LOGGER.debug("Generic Exception - while searching for: envName='" + name + "', asdc_service_model_version='" + version + "' and asdcResourceName=" + asdcResourceName, e);
         	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Generic exception searching for envName=" + name + " and version=" + version + " and asdcResourceName=" + asdcResourceName, "", "", MsoLogger.ErrorCode.DataError, "Generic exception searching for envName=" + name);
         	env = null;
         }
@@ -3767,7 +3767,7 @@ public class CatalogDatabase implements Closeable {
         try {
         	LOGGER.debug(vnfResourceCustomization.toString());
         } catch (Exception e) {
-        	LOGGER.debug("Unable to print VRC " + e.getMessage());
+        	LOGGER.debug("Unable to print VRC " + e.getMessage(), e);
         }
         try {
         		 // Check if NetworkResourceCustomzation record already exists.  If so, skip saving it.
@@ -3789,7 +3789,7 @@ public class CatalogDatabase implements Closeable {
         		try {
         			LOGGER.debug("Existing VRC entry found\n" + existing.toString());
         		} catch (Exception e) {
-        			LOGGER.debug("Unable to print VRC2 " + e.getMessage());
+        			LOGGER.debug("Unable to print VRC2 " + e.getMessage(), e);
         		}
         		return false;
             	}
@@ -4074,7 +4074,7 @@ public class CatalogDatabase implements Closeable {
         	LOGGER.debug("heat template id = " + vfModule.getHeatTemplateArtifactUUId() + ", vol template id = "+ vfModule.getVolHeatTemplateArtifactUUId());
         	LOGGER.debug(vfModule.toString());
         } catch (Exception e) {
-        	LOGGER.debug("unable to print vfmodule " + e.getMessage());
+        	LOGGER.debug("unable to print vfmodule " + e.getMessage(), e);
         }
         try {
         	VfModule existing = this.getVfModuleByModelUUID(vfModule.getModelUUID());
@@ -4087,7 +4087,7 @@ public class CatalogDatabase implements Closeable {
         		try {
         			LOGGER.debug("Found an existing vf module!\n" + existing.toString());
         		} catch (Exception e) {
-        			LOGGER.debug("unable to print vfmodule2 " + e.getMessage());
+        			LOGGER.debug("unable to print vfmodule2 " + e.getMessage(), e);
             }
         	}
         	
@@ -4137,7 +4137,7 @@ public class CatalogDatabase implements Closeable {
         	LOGGER.debug("env id = " + vfModuleCustomization.getHeatEnvironmentArtifactUuid() + ", vol Env=" + vfModuleCustomization.getVolEnvironmentArtifactUuid());
         	LOGGER.debug(vfModuleCustomization.toString());
         } catch (Exception e) {
-        	LOGGER.debug("unable to print vfmodulecust " + e.getMessage());
+        	LOGGER.debug("unable to print vfmodulecust " + e.getMessage(), e);
         }
         try {
         	VfModuleCustomization existing = this.getVfModuleCustomizationByModelCustomizationId(vfModuleCustomization.getModelCustomizationUuid());
@@ -4148,7 +4148,7 @@ public class CatalogDatabase implements Closeable {
         		try {
         			LOGGER.debug("Found an existing vf module customization entry\n" + existing.toString());
         		} catch (Exception e) {
-        			LOGGER.debug("unable to print vfmodulecust2 " + e.getMessage());
+        			LOGGER.debug("unable to print vfmodulecust2 " + e.getMessage(), e);
             	}
         	}
       
@@ -4420,7 +4420,7 @@ public class CatalogDatabase implements Closeable {
             
             return resultList.get (0);
         } catch (Exception e) {
-        	LOGGER.debug("Error trying to find Network Resource with " + modelUUID +", " + e.getMessage());
+        	LOGGER.debug("Error trying to find Network Resource with " + modelUUID +", " + e.getMessage(),e);
         } finally {
             LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getNetworkResourceByModelUuid", null);
         }
@@ -4544,7 +4544,7 @@ public class CatalogDatabase implements Closeable {
 
             return resultList.get (0);
         } catch (Exception e) {
-        	LOGGER.debug("Error trying to find Network Resource with " + modelCustomizationUuid +", " + e.getMessage());
+        	LOGGER.debug("Error trying to find Network Resource with " + modelCustomizationUuid +", " + e.getMessage(),e);
         } finally {
             LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getNetworkResourceByModelCustUuid", null);
         }
@@ -5062,7 +5062,7 @@ public class CatalogDatabase implements Closeable {
         	try {
         		LOGGER.debug("Returning theObjects:" + theObjects.size());
         	} catch (Exception e) {
-        		LOGGER.debug("Returning theObjects");
+        		LOGGER.debug("Returning theObjects",e);
         	}
         	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "executeQuerySingleRow", null);
         }

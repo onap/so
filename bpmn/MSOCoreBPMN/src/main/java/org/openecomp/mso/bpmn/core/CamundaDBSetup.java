@@ -5,12 +5,14 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import org.openecomp.mso.logger.MsoLogger;
+
 /**
  * Sets up the unit test (H2) database for Camunda.
  */
 public class CamundaDBSetup {
 	private static boolean isDBConfigured = false;
-
+	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
 	public static synchronized void configure() throws SQLException {
 		if (isDBConfigured) {
 			return;
@@ -66,13 +68,13 @@ public class CamundaDBSetup {
 			isDBConfigured = true;
 		} catch (SQLException e) {
 			System.out.println("CamundaDBSetup caught " + e.getClass().getSimpleName());
-			e.printStackTrace();
+			LOGGER.debug("SQLException :",e);
 		} finally {
 			if (stmt != null) {
 				try {
 					stmt.close();
 				} catch (Exception e) {
-					// Ignore
+					LOGGER.debug("Exception :",e);
 				}
 			}
 
@@ -80,7 +82,7 @@ public class CamundaDBSetup {
 				try {
 					connection.close();
 				} catch (Exception e) {
-					// Ignore
+					LOGGER.debug("Exception :",e);
 				}
 			}
 		}

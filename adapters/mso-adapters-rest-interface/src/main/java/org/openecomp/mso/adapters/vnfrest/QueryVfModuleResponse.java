@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +21,8 @@
 
 package org.openecomp.mso.adapters.vnfrest;
 
+import org.openecomp.mso.logger.MsoLogger;
+
 
 import java.util.Map;
 
@@ -27,12 +30,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.jboss.resteasy.annotations.providers.NoJackson;
-
+import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.openstack.beans.VnfStatus;
 
 @XmlRootElement(name = "queryVfModuleResponse")
 @NoJackson
 public class QueryVfModuleResponse {
+	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
 	private String vnfId;
 	private String vfModuleId;
 	private String vfModuleStackId;
@@ -100,7 +104,9 @@ public class QueryVfModuleResponse {
 			ObjectMapper mapper = new ObjectMapper();
 			jsonString = mapper.writeValueAsString(this);
 		}
-		catch (Exception e) {}
+		catch (Exception e) {
+			LOGGER.debug("Exception :",e);
+		}
 		return jsonString;
 	}
 }

@@ -2,7 +2,8 @@
  * ============LICENSE_START======================================================= 
  * ONAP - SO 
  * ================================================================================ 
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved. 
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved. 
  * ================================================================================ 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -29,8 +30,12 @@ import com.github.tomakehurst.wiremock.extension.ResponseTransformer;
 import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 
+import org.openecomp.mso.logger.MsoLogger;
+
 public class SDNCAdapterNetworkTopologyMockTransformer extends ResponseTransformer {
 
+	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
+	
 	private String callbackResponse;
 	private String requestId;
 	
@@ -110,7 +115,7 @@ public class SDNCAdapterNetworkTopologyMockTransformer extends ResponseTransform
 				sleep(delay);
 			} catch (InterruptedException e1) {
 				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				LOGGER.debug("Exception :",e1);
 			}
 			System.out.println("Sending callback response to url: " + callbackUrl);
 			ClientRequest request = new ClientRequest(callbackUrl);
@@ -122,7 +127,7 @@ public class SDNCAdapterNetworkTopologyMockTransformer extends ResponseTransform
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				System.out.println("catch error in - request.post() ");
-				e.printStackTrace();
+				LOGGER.debug("Exception :",e);
 			}
 		}
 		
