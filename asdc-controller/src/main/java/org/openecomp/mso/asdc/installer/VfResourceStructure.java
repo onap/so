@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,11 +48,14 @@ import org.openecomp.mso.db.catalog.beans.ServiceToAllottedResources;
 import org.openecomp.mso.db.catalog.beans.ServiceToNetworks;
 import org.openecomp.mso.db.catalog.beans.VnfResource;
 
+import org.openecomp.mso.logger.MsoLogger;
 /**
  * This structure exists to avoid having issues if the order of the vfResource/vfmodule artifact is not good (tree structure).
  *
  */
 public final class VfResourceStructure {
+	
+	protected static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.ASDC);
 
 	private boolean isDeployedSuccessfully=false;
 	/**
@@ -231,11 +235,11 @@ public final class VfResourceStructure {
 			return listVFModuleMetaData;
 
 		} catch (JsonParseException e) {
-			e.printStackTrace();
+			LOGGER.debug("JsonParseException : ",e);
 		} catch (JsonMappingException e) {
-			e.printStackTrace();
+			LOGGER.debug("JsonMappingException : ",e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.debug("IOException : ",e);
 		}
 		return null;
 	}

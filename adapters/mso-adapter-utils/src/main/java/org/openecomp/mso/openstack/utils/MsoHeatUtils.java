@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -425,7 +426,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
                     try {
                         LOGGER.debug("Current stack " + this.getOutputsAsStringBuilder(heatStack).toString());
                     } catch (Exception e) {
-                        LOGGER.debug("an error occurred trying to print out the current outputs of the stack");
+                        LOGGER.debug("an error occurred trying to print out the current outputs of the stack", e);
                     }
 
                     if ("CREATE_IN_PROGRESS".equals (heatStack.getStackStatus ())) {
@@ -578,7 +579,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
 
                 			} catch (MsoException me2) {
                 				// We got an exception on the delete - don't throw this exception - throw the original - just log.
-                				LOGGER.debug("Exception thrown trying to delete " + canonicalName + " on a create->rollback: " + me2.getContextMessage());
+                				LOGGER.debug("Exception thrown trying to delete " + canonicalName + " on a create->rollback: " + me2.getContextMessage(), me2);
                 				LOGGER.warn(MessageEnum.RA_CREATE_STACK_ERR, "Create Stack errored, then stack deletion FAILED - exception thrown", "", "", MsoLogger.ErrorCode.BusinessProcesssError, me2.getContextMessage());
                 			}
 
@@ -1178,7 +1179,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
 						String str = this.convertNode((JsonNode) obj);
 						inputs.put(key, str);
 					} catch (Exception e) {
-						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value for JsonNode "+ key);
+						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value for JsonNode "+ key, e);
 						//effect here is this value will not have been copied to the inputs - and therefore will error out downstream
 					}
 				} else if (obj instanceof java.util.LinkedHashMap) {
@@ -1187,21 +1188,21 @@ public class MsoHeatUtils extends MsoCommonUtils {
 						String str = JSON_MAPPER.writeValueAsString(obj);
 						inputs.put(key, str);
 					} catch (Exception e) {
-						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value for LinkedHashMap "+ key);
+						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value for LinkedHashMap "+ key, e);
 					}
 				} else if (obj instanceof Integer) {
 					try {
 						String str = "" + obj;
 						inputs.put(key, str);
 					} catch (Exception e) {
-						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value for Integer "+ key);
+						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value for Integer "+ key, e);
 					}
 				} else {
 					try {
 						String str = obj.toString();
 						inputs.put(key, str);
 					} catch (Exception e) {
-						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value for Other "+ key +" (" + e.getMessage() + ")");
+						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value for Other "+ key +" (" + e.getMessage() + ")", e);
 						//effect here is this value will not have been copied to the inputs - and therefore will error out downstream
 					}
 				}
@@ -1237,7 +1238,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
 						String str = params.get(key).toString();
 						sb.append("\n" + key + "=" + str);
 					} catch (Exception e) {
-						//non fatal
+						LOGGER.debug("Exception :",e);
 					}
 				}
 			}
@@ -1251,9 +1252,9 @@ public class MsoHeatUtils extends MsoCommonUtils {
 			final String json = JSON_MAPPER.writeValueAsString(obj);
 			return json;
 		} catch (JsonParseException jpe) {
-			LOGGER.debug("Error converting json to string " + jpe.getMessage());
+			LOGGER.debug("Error converting json to string " + jpe.getMessage(), jpe);
 		} catch (Exception e) {
-			LOGGER.debug("Error converting json to string " + e.getMessage());
+			LOGGER.debug("Error converting json to string " + e.getMessage(), e);
 		}
 		return "[Error converting json to string]";
 	}
@@ -1290,6 +1291,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
 					String str = JSON_MAPPER.writeValueAsString(obj);
 					sb.append(str + " (a java.util.LinkedHashMap)");
 				} catch (Exception e) {
+					LOGGER.debug("Exception :",e);
 					sb.append("(a LinkedHashMap value that would not convert nicely)");
 				}				
 			} else if (obj instanceof Integer) {
@@ -1297,6 +1299,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
 				try {
 					str = obj.toString() + " (an Integer)\n";
 				} catch (Exception e) {
+					LOGGER.debug("Exception :",e);
 					str = "(an Integer unable to call .toString() on)";
 				}
 				sb.append(str);
@@ -1305,6 +1308,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
 				try {
 					str = obj.toString() + " (an ArrayList)";
 				} catch (Exception e) {
+					LOGGER.debug("Exception :",e);
 					str = "(an ArrayList unable to call .toString() on?)";
 				}
 				sb.append(str);
@@ -1313,6 +1317,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
 				try {
 					str = obj.toString() + " (a Boolean)";
 				} catch (Exception e) {
+					LOGGER.debug("Exception :",e);
 					str = "(an Boolean unable to call .toString() on?)";
 				}
 				sb.append(str);
@@ -1322,6 +1327,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
 				try {
 					str = obj.toString() + " (unknown Object type)";
 				} catch (Exception e) {
+					LOGGER.debug("Exception :",e);
 					str = "(a value unable to call .toString() on?)";
 				}
 				sb.append(str);
@@ -1399,7 +1405,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
 			String jsonString = lhm.toString();
 			jsonNode = new ObjectMapper().readTree(jsonString);
 		} catch (Exception e) {
-			LOGGER.debug("Unable to convert " + lhm.toString() + " to a JsonNode " + e.getMessage());
+			LOGGER.debug("Unable to convert " + lhm.toString() + " to a JsonNode " + e.getMessage(), e);
 			jsonNode = null;
 		}
 		return jsonNode;
@@ -1450,7 +1456,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
 			Set<HeatTemplateParam> paramSet = template.getParameters();
 			LOGGER.debug("paramSet has " + paramSet.size() + " entries");
 		} catch (Exception e) {
-			LOGGER.debug("Exception occurred in convertInputMap:" + e.getMessage());
+			LOGGER.debug("Exception occurred in convertInputMap:" + e.getMessage(), e);
 		}
 		
 		for (HeatTemplateParam htp : template.getParameters()) {
@@ -1497,7 +1503,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
 				try {
 					anInteger = Integer.parseInt(integerString);
 				} catch (Exception e) {
-					LOGGER.debug("Unable to convert " + integerString + " to an integer!!");
+					LOGGER.debug("Unable to convert " + integerString + " to an integer!!", e);
 					anInteger = null;
 				}
 				if (anInteger != null) {
@@ -1518,7 +1524,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
     			try {
     				jsonNode = new ObjectMapper().readTree(jsonString);
     			} catch (Exception e) {
-					LOGGER.debug("Unable to convert " + jsonString + " to a JsonNode!!");
+					LOGGER.debug("Unable to convert " + jsonString + " to a JsonNode!!", e);
 					jsonNode = null;
     			}
     			if (jsonNode != null) {
@@ -1542,7 +1548,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
 					else
 						newInputs.put(key, anArrayList);
 				} catch (Exception e) {
-					LOGGER.debug("Unable to convert " + commaSeparated + " to an ArrayList!!");
+					LOGGER.debug("Unable to convert " + commaSeparated + " to an ArrayList!!", e);
 					if (alias)
 						newInputs.put(realName, commaSeparated);
 					else

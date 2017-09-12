@@ -164,7 +164,7 @@ public class TasksHandler {
 			msoRequest.updateFinalStatus (Status.FAILED);
 			msoLogger.error (MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.AvailabilityError, "Exception while communicate with BPMN engine");
 			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, "Exception while communicate with BPMN engine");
-			msoLogger.debug ("End of the transaction, the final response is: " + (String) resp.getEntity ());
+			msoLogger.debug ("End of the transaction, the final response is: " + (String) resp.getEntity (),e);
 			return resp;
 		}
 		TasksGetResponse trr = new TasksGetResponse();
@@ -206,7 +206,7 @@ public class TasksHandler {
 						
 						msoLogger.error (MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.AvailabilityError, "Exception while communicate with BPMN engine");
 						msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, "Exception while communicate with BPMN engine");
-						msoLogger.debug ("End of the transaction, the final response is: " + (String) resp.getEntity ());
+						msoLogger.debug ("End of the transaction, the final response is: " + (String) resp.getEntity (),e);
 						return resp;
 					}
 					taskList.add(taskListEntry);				
@@ -235,7 +235,7 @@ public class TasksHandler {
 			jsonResponse = mapper.writeValueAsString(trr);
 		}
 		catch (Exception e) {
-			msoLogger.debug("Unable to format response");
+			msoLogger.debug("Unable to format response",e);
 			Response resp = msoRequest.buildServiceErrorResponse(500,
 					MsoException.ServiceException,
 					"Request Failed due to bad response format" ,

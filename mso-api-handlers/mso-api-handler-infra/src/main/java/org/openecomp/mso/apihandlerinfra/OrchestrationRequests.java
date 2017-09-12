@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -343,7 +344,7 @@ public class OrchestrationRequests {
        	requestDetails = mapper.readValue(requestBody, RequestDetails.class);
 
        }catch(Exception e){
-       	msoLogger.debug("Exception caught mapping requestBody to RequestDetails");
+       	msoLogger.debug("Exception caught mapping requestBody to RequestDetails",e);
        }
 
        request.setRequestDetails(requestDetails);

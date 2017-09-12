@@ -76,6 +76,7 @@ public abstract class AbstractCallbackService {
 			logCallbackSuccess(method, startTime);
 			return new CallbackSuccess();
 		} catch (Exception e) {
+			LOGGER.debug("Exception :",e);
 			String msg = "Caught " + e.getClass().getSimpleName()
 				+ " processing " + messageEventName + " with " + correlationVariable
 				+ " = '" + correlationValue + "'";

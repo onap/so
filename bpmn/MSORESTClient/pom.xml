@@ -35,6 +35,11 @@
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+            <groupId>org.openecomp.so</groupId>
+            <artifactId>common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 		</dependencies>
 		<build>
 		<finalName>MSORESTClient</finalName>

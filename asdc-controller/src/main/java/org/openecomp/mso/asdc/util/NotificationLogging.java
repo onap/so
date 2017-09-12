@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.sdc.api.notification.INotificationData;
 
 
@@ -40,6 +42,8 @@ public class NotificationLogging implements InvocationHandler {
 	
 	private static Map<Object, List<Method>> objectMethodsToLog = new HashMap<>();
 
+	protected static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.ASDC);
+	
 	private static InvocationHandler handler = new InvocationHandler() {
 		@Override
 		public Object invoke(Object arg0, Method arg1, Object[] arg2)
@@ -93,6 +97,7 @@ public class NotificationLogging implements InvocationHandler {
 					buffer.append(testNull(m.invoke(iNotif, (Object[])null)));
 				} catch (IllegalAccessException | IllegalArgumentException
 						| InvocationTargetException e) {
+					LOGGER.debug("Exception :"+e);
 					buffer.append("UNREADABLE");
 				}
 				buffer.append(System.lineSeparator());

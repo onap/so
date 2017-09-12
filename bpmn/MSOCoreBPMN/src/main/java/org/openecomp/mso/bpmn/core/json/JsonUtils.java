@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,7 +68,7 @@ public class JsonUtils {
 				return jsonObj.toString(MSOJsonIndentFactor);
 			}
 		} catch (Exception e){
-				msoLogger.debug("xml2json(): unable to parse xml and convert to json. Exception was: " + e.toString());
+				msoLogger.debug("xml2json(): unable to parse xml and convert to json. Exception was: " + e.toString(), e);
 				return null;
 		}
 	}
@@ -106,7 +107,7 @@ public class JsonUtils {
 				return toXMLString(jsonObj, null);
 			}
 		} catch (Exception e){
-				msoLogger.debug("json2xml(): unable to parse json and convert to xml. Exception was: " + e.toString());
+				msoLogger.debug("json2xml(): unable to parse json and convert to xml. Exception was: " + e.toString(), e);
 				return null;
 		}
 	}
@@ -264,7 +265,7 @@ public class JsonUtils {
 			JSONObject jsonObj = new JSONObject(jsonStr);
 			return jsonObj.toString(MSOJsonIndentFactor);
 		} catch (Exception e){
-			msoLogger.debug("prettyJson(): unable to parse/format json input. Exception was: " + e.toString());
+			msoLogger.debug("prettyJson(): unable to parse/format json input. Exception was: " + e.toString(), e);
 			return null;
 		}
 	}
@@ -334,7 +335,7 @@ public class JsonUtils {
 					}
 				}
 		} catch (Exception e) {
-				msoLogger.debug("getJsonValue(): unable to parse json to retrieve value for field=" + keys + ". Exception was: " + e.toString());
+				msoLogger.debug("getJsonValue(): unable to parse json to retrieve value for field=" + keys + ". Exception was: " + e.toString(),e);
 		}
 		return null;
 	}
@@ -363,7 +364,7 @@ public class JsonUtils {
 					}
 				}
 		} catch (Exception e) {
-				msoLogger.debug("getJsonNodeValue(): unable to parse json to retrieve node for field=" + keys + ". Exception was: " + e.toString());
+				msoLogger.debug("getJsonNodeValue(): unable to parse json to retrieve node for field=" + keys + ". Exception was: " + e.toString(), e);
 		}
 		return null;
 	}
@@ -395,7 +396,7 @@ public class JsonUtils {
 					}
 				}
 		} catch (Exception e) {
-				msoLogger.debug("getJsonValue(): unable to parse json to retrieve value for field=" + keys + ". Exception was: " + e.toString());
+				msoLogger.debug("getJsonValue(): unable to parse json to retrieve value for field=" + keys + ". Exception was: " + e.toString(), e);
 		}
 		return 0;
 	}
@@ -424,7 +425,7 @@ public class JsonUtils {
 					}
 				}
 		} catch (Exception e) {
-				msoLogger.debug("getJsonValue(): unable to parse json to retrieve value for field=" + keys + ". Exception was: " + e.toString());
+				msoLogger.debug("getJsonValue(): unable to parse json to retrieve value for field=" + keys + ". Exception was: " + e.toString(),e);
 		}
 		return false;
 	}
@@ -500,9 +501,9 @@ public class JsonUtils {
 			}
 		} catch (JSONException je) {
 				// JSONObject::get() throws this exception if one of the specified keys is not found
-				msoLogger.debug("getJsonParamValue(): caught JSONException attempting to retrieve param value for keys:" + keys + ", name=" + name);
+				msoLogger.debug("getJsonParamValue(): caught JSONException attempting to retrieve param value for keys:" + keys + ", name=" + name, je);
 		} catch (Exception e) {
-				msoLogger.debug("getJsonParamValue(): unable to parse json to retrieve value for field=" + keys + ". Exception was: " + e.toString());
+				msoLogger.debug("getJsonParamValue(): unable to parse json to retrieve value for field=" + keys + ". Exception was: " + e.toString(), e);
 		}
 		return null;
 	}
@@ -523,7 +524,7 @@ public class JsonUtils {
 				return getJsonValueForKey(jsonObj, key);
 			}
 		} catch (Exception e) {
-				msoLogger.debug("getJsonValueForKey(): unable to parse json to retrieve value for field=" + key + ". Exception was: " + e.toString());
+				msoLogger.debug("getJsonValueForKey(): unable to parse json to retrieve value for field=" + key + ". Exception was: " + e.toString(), e);
 		}
 		return null;
 	}
@@ -567,10 +568,10 @@ public class JsonUtils {
 			}
 		} catch (JSONException je) {
 				// JSONObject::get() throws this exception if one of the specified keys is not found
-				msoLogger.debug("getJsonValueForKey(): caught JSONException attempting to retrieve value for key=" + key);
+				msoLogger.debug("getJsonValueForKey(): caught JSONException attempting to retrieve value for key=" + key, je);
 				keyValue = null;
 		} catch (Exception e) {
-				msoLogger.debug("getJsonValueForKey(): unable to parse json to retrieve value for field=" + key + ". Exception was: " + e.toString());
+				msoLogger.debug("getJsonValueForKey(): unable to parse json to retrieve value for field=" + key + ". Exception was: " + e.toString(), e);
 		}
 		return keyValue;
 	}
@@ -610,10 +611,10 @@ public class JsonUtils {
 			}
 		} catch (JSONException je) {
 				// JSONObject::get() throws this exception if one of the specified keys is not found
-				msoLogger.debug("getJsonValueForKey(): caught JSONException attempting to retrieve value for key=" + key);
+				msoLogger.debug("getJsonValueForKey(): caught JSONException attempting to retrieve value for key=" + key, je);
 				keyValue = null;
 		} catch (Exception e) {
-				msoLogger.debug("getJsonValueForKey(): unable to parse json to retrieve value for field=" + key + ". Exception was: " + e.toString());
+				msoLogger.debug("getJsonValueForKey(): unable to parse json to retrieve value for field=" + key + ". Exception was: " + e.toString(),e);
 		}
 		return keyValue;
 	}
@@ -653,10 +654,10 @@ public class JsonUtils {
 			}
 		} catch (JSONException je) {
 				// JSONObject::get() throws this exception if one of the specified keys is not found
-				msoLogger.debug("getJsonBooleanValueForKey(): caught JSONException attempting to retrieve value for key=" + key);
+				msoLogger.debug("getJsonBooleanValueForKey(): caught JSONException attempting to retrieve value for key=" + key,je);
 				keyValue = null;
 		} catch (Exception e) {
-				msoLogger.debug("getJsonBooleanValueForKey(): unable to parse json to retrieve value for field=" + key + ". Exception was: " + e.toString());
+				msoLogger.debug("getJsonBooleanValueForKey(): unable to parse json to retrieve value for field=" + key + ". Exception was: " + e.toString(),e);
 		}
 		return keyValue;
 	}
@@ -800,9 +801,9 @@ public class JsonUtils {
 
 		} catch (JSONException je) {
 				// JSONObject::get() throws this exception if one of the specified keys is not found
-				msoLogger.debug("getJsonRawValue(): caught JSONException attempting to retrieve raw value for key=" + keyStr);
+				msoLogger.debug("getJsonRawValue(): caught JSONException attempting to retrieve raw value for key=" + keyStr,je);
 		} catch (Exception e) {
-				msoLogger.debug("getJsonRawValue(): unable to parse json to retrieve value for field=" + keys + ". Exception was: " + e.toString());
+				msoLogger.debug("getJsonRawValue(): unable to parse json to retrieve value for field=" + keys + ". Exception was: " + e.toString(),e);
 		}
 		return null;
 	}
@@ -842,10 +843,10 @@ public class JsonUtils {
 
 		} catch (JSONException je) {
 				// JSONObject::get() throws this exception if one of the specified keys is not found
-				msoLogger.debug("putJsonValue(): caught JSONException attempting to retrieve value for key=" + keyStr);
+				msoLogger.debug("putJsonValue(): caught JSONException attempting to retrieve value for key=" + keyStr,je);
 				return null;
 		} catch (Exception e) {
-				msoLogger.debug("putJsonValue(): unable to parse json to put value for key=" + keys + ". Exception was: " + e.toString());
+				msoLogger.debug("putJsonValue(): unable to parse json to put value for key=" + keys + ". Exception was: " + e.toString(),e);
 		}
 		return null;
 	}
@@ -961,7 +962,7 @@ public class JsonUtils {
 				return true;
 			}
 		} catch (Exception e) {
-				msoLogger.debug("jsonElementExist(): unable to determine if json element exist. Exception is: " + e.toString());
+				msoLogger.debug("jsonElementExist(): unable to determine if json element exist. Exception is: " + e.toString(),e);
 		}
 		return true;
 	}
