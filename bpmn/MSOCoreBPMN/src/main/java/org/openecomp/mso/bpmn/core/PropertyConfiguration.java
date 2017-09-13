@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -167,7 +168,7 @@ public class PropertyConfiguration {
 				fileWatcherThread.join(waitInSeconds * 1000);
 			} catch (InterruptedException e) {
 				LOGGER.debug("FileWatcherThread " + System.identityHashCode(fileWatcherThread)
-					+ " shutdown did not occur within " + waitInSeconds + " seconds");
+					+ " shutdown did not occur within " + waitInSeconds + " seconds",e);
 			}
 
 			LOGGER.debug("Finished shutting down FileWatcherThread " + System.identityHashCode(fileWatcherThread));
@@ -257,7 +258,7 @@ public class PropertyConfiguration {
 					reader.close();
 					LOGGER.debug("Closed " + fileName);
 				} catch (Exception e) {
-					// Ignore
+					LOGGER.debug("Exception :",e);
 				}
 			}
 		}
@@ -351,12 +352,14 @@ public class PropertyConfiguration {
 							}
 						}
 					} catch (InterruptedException e) {
+						LOGGER.debug("InterruptedException :",e);
 						break;
 					} catch (ClosedWatchServiceException e) {
 						LOGGER.info(
 								MessageEnum.BPMN_GENERAL_INFO,
 								"BPMN",
 								"FileWatcherThread shut down because the watch service was closed");
+						LOGGER.debug("ClosedWatchServiceException :",e);
 						break;
 					} catch (Exception e) {
 						LOGGER.error(
@@ -379,7 +382,7 @@ public class PropertyConfiguration {
 					watchService.close();
 				} catch (IOException e) {
 					LOGGER.debug("FileWatcherThread caught " + e.getClass().getSimpleName()
-						+ " while closing the watch service");
+						+ " while closing the watch service",e);
 				}
 
 				LOGGER.info(MessageEnum.BPMN_GENERAL_INFO, "BPMN",

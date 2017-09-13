@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -99,6 +100,7 @@ public class WMAdapterRest {
 				contentType = ContentType.parse(contentTypeHeader);
 			} catch (Exception e) {
 				// If we don't get a valid one, we handle it below.
+				LOGGER.debug("Exception :",e);
 			}
 		}
 

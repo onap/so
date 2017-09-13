@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -397,7 +398,7 @@ public class ASDCController {
     		outFile.write(payloadBytes, 0, payloadBytes.length);
     		outFile.close();
     		} catch (Exception e) { 
-            	e.printStackTrace();
+    			LOGGER.debug("Exception :",e);
                 LOGGER.error(MessageEnum.ASDC_ARTIFACT_DOWNLOAD_FAIL,
         				artifact.getArtifactName (),
         				artifact.getArtifactURL (),

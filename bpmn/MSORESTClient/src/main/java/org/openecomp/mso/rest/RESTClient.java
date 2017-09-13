@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,6 +55,7 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.AbstractHttpMessage;
 import org.apache.http.util.EntityUtils;
 
+import org.openecomp.mso.logger.MsoLogger;
 /**
  * Client used to send RESTFul requests.
  * <p>
@@ -82,6 +84,8 @@ import org.apache.http.util.EntityUtils;
  * @since 1.0
  */
 public class RESTClient {
+	
+	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
     private final String proxyHost;
     private final int proxyPort;
 
@@ -166,8 +170,7 @@ public class RESTClient {
                 }
             }
         } catch (UnsupportedEncodingException e) {
-            // should not occur
-            e.printStackTrace();
+            LOGGER.debug("Exception :", e);
         }
         return sb.toString();
     }
@@ -197,6 +200,7 @@ public class RESTClient {
 			clientBuilder = HttpClientBuilder.create().setConnectionManager(
 					manager);
 		} catch (Exception ex) {
+			LOGGER.debug("Exception :", ex);
 			throw new RESTException(ex.getMessage());
 		}
 		clientBuilder.disableRedirectHandling();

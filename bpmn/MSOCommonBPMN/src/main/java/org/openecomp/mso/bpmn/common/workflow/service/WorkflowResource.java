@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -183,8 +184,7 @@ public class WorkflowResource {
 			workflowResponse.setMessageCode(500);
 			return Response.status(500).entity(workflowResponse).build();
 		} catch (Exception ex) {
-			msoLogger.debug(LOGMARKER + "Exception in startProcessInstance by key");
-			ex.printStackTrace();
+			msoLogger.debug(LOGMARKER + "Exception in startProcessInstance by key",ex);
 			workflowResponse.setMessage("Fail" );
 			workflowResponse.setResponse("Error occurred while executing the process: " + ex.getMessage());
 			if (processInstance != null) workflowResponse.setProcessInstanceID(processInstance.getId());
@@ -258,6 +258,7 @@ public class WorkflowResource {
 		try {
 			return pes.getRuntimeService().createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult() == null ? true : false ;
 		} catch (Exception e) {
+			msoLogger.debug("Exception :",e);
 			return true;
 		}        
 	}
@@ -601,7 +602,7 @@ public class WorkflowResource {
 					+ processKey 
 					+ " with response: " 
 					+ response.getResponse());
-			
+			msoLogger.debug("Exception :",ex);
 		}
 		
 		msoLogger.recordMetricEvent ( startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, 

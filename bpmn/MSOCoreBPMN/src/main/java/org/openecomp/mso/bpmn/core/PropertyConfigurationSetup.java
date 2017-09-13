@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.openecomp.mso.logger.MsoLogger;
+
 import org.openecomp.mso.bpmn.core.PropertyConfiguration;
 
 /**
@@ -22,6 +24,8 @@ public class PropertyConfigurationSetup {
 	private static Path bpmnPropertiesPath = null;
 	private static Path bpmnUrnPropertiesPath = null;
 	private static boolean modifiedConfiguration = false;
+	
+	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
 
 	/**
 	 * Ensures that the the PropertyConfiguration is initialized and that the
@@ -232,7 +236,7 @@ public class PropertyConfigurationSetup {
 				try {
 					fileReader.close();
 				} catch (IOException e) {
-					// Ignore
+					LOGGER.debug("Exception :",e);
 				}
 			}
 
@@ -240,7 +244,7 @@ public class PropertyConfigurationSetup {
 				try {
 					outputStream.close();
 				} catch (IOException e) {
-					// Ignore
+					LOGGER.debug("Exception :",e);
 				}
 			}
 		}
@@ -279,7 +283,7 @@ public class PropertyConfigurationSetup {
 				try {
 					fileReader.close();
 				} catch (IOException e) {
-					// Ignore
+					LOGGER.debug("Exception :",e);
 				}
 			}
 
@@ -287,7 +291,7 @@ public class PropertyConfigurationSetup {
 				try {
 					outputStream.close();
 				} catch (IOException e) {
-					// Ignore
+					LOGGER.debug("Exception :",e);
 				}
 			}
 		}
