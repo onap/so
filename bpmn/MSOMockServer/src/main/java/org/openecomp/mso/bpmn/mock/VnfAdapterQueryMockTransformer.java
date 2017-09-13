@@ -2,7 +2,8 @@
  * ============LICENSE_START======================================================= 
  * ONAP - SO 
  * ================================================================================ 
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved. 
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================ 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -25,6 +26,7 @@ import com.github.tomakehurst.wiremock.extension.ResponseTransformer;
 
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.ClientResponse;
+import org.openecomp.mso.logger.MsoLogger;
 
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.common.FileSource;
@@ -32,6 +34,7 @@ import com.github.tomakehurst.wiremock.extension.ResponseTransformer;
 import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 
+import org.openecomp.mso.logger.MsoLogger;
 /**
  * Please describe the VnfAdapterQueryMockTransformer.java class
  *
@@ -39,6 +42,8 @@ import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 
 
 public class VnfAdapterQueryMockTransformer extends ResponseTransformer{
+	
+	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
 	
 	private String notifyCallbackResponse;
 	private String ackResponse;
@@ -84,6 +89,7 @@ public class VnfAdapterQueryMockTransformer extends ResponseTransformer{
 			responseMessageId = ackResponse.substring(ackResponse.indexOf("<messageId>")+11, ackResponse.indexOf("</messageId>"));
 		    updatedResponse = ackResponse.replace(responseMessageId, messageId); 
 		} catch (Exception ex) {
+			LOGGER.debug("Exception :",ex);
 			System.out.println(" ******* Use default response file in '__files/vnfAdapterMocks/vnfQuerySimResponse.xml'");
 		    responseMessageId = notifyCallbackResponse.substring(notifyCallbackResponse.indexOf("<messageId>")+11, notifyCallbackResponse.indexOf("</messageId>"));
 			updatedResponse = notifyCallbackResponse.replace(responseMessageId, messageId);
@@ -139,8 +145,7 @@ public class VnfAdapterQueryMockTransformer extends ResponseTransformer{
 				//Delay sending callback response
 				sleep(delay);
 			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				LOGGER.debug("Exception :",e1);
 			}
 			ClientRequest request = new ClientRequest(callbackUrl);
 			request.body("text/xml", payLoad);
@@ -149,8 +154,7 @@ public class VnfAdapterQueryMockTransformer extends ResponseTransformer{
 				ClientResponse result = request.post();
 				//System.err.println("Successfully posted callback:" + result.getStatus());
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LOGGER.debug("Exception :",e);
 			}
 		}
 

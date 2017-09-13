@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -200,6 +201,7 @@ public class HealthCheckHandler  {
             UUID uuid = UUID.fromString(id);
             return uuid.toString().equalsIgnoreCase(id);
         } catch (IllegalArgumentException iae) {
+        	msoLogger.debug("IllegalArgumentException :",iae);
             return false;
         }
     }

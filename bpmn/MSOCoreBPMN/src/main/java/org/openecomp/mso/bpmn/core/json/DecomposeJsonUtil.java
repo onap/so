@@ -14,8 +14,10 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.openecomp.mso.logger.MsoLogger;
+
 public class DecomposeJsonUtil implements Serializable {
-	
+	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
 	/**
 	 * 
 	 */
@@ -40,14 +42,11 @@ public class DecomposeJsonUtil implements Serializable {
 		try {
 			serviceDecomposition = om.readValue(jsonString, ServiceDecomposition.class);
 		} catch (JsonParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.debug("JsonParseException :",e);
 		} catch (JsonMappingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.debug("JsonMappingException :",e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.debug("IOException :",e);
 		}
 		
 		return serviceDecomposition;
@@ -72,14 +71,11 @@ public class DecomposeJsonUtil implements Serializable {
 		try {
 			vnfResource = om.readValue(jsonString, VnfResource.class);
 		} catch (JsonParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.debug("JsonParseException :",e);
 		} catch (JsonMappingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.debug("JsonMappingException :",e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.debug("IOException :",e);
 		}
 		return vnfResource;
 	}
@@ -103,14 +99,11 @@ public class DecomposeJsonUtil implements Serializable {
 		try {
 			networkResource = om.readValue(jsonString, NetworkResource.class);
 		} catch (JsonParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.debug("Exception :",e);
 		} catch (JsonMappingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.debug("Exception :",e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.debug("Exception :",e);
 		}
 		return networkResource;
 	}
@@ -134,14 +127,11 @@ public class DecomposeJsonUtil implements Serializable {
 		try {
 			allottedResource = om.readValue(jsonString, AllottedResource.class);
 		} catch (JsonParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.debug("Exception :",e);
 		} catch (JsonMappingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.debug("Exception :",e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.debug("Exception :",e);
 		}
 		return allottedResource;
 	}

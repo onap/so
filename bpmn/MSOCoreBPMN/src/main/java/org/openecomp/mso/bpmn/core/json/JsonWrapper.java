@@ -15,12 +15,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import org.openecomp.mso.logger.MsoLogger;
+
 @JsonInclude(Include.NON_NULL)
 public abstract class JsonWrapper implements Serializable  {
 	
 
 	private static final long serialVersionUID = 8633550139273639875L;
 
+	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
 	@JsonInclude(Include.NON_NULL)
 	public String toJsonString(){
 		
@@ -45,7 +48,7 @@ public abstract class JsonWrapper implements Serializable  {
 //		}
 		} catch (Exception e){
 
-			e.printStackTrace();
+			LOGGER.debug("Exception :",e);
 		}
 		return jsonString;
 	}
@@ -63,17 +66,13 @@ public abstract class JsonWrapper implements Serializable  {
          try {
 			json = new JSONObject(mapper.writeValueAsString(this));
 		} catch (JsonGenerationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.debug("Exception :",e);
 		} catch (JsonMappingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.debug("Exception :",e);
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.debug("Exception :",e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.debug("Exception :",e);
 		}		
          return json; 
 	}
@@ -86,14 +85,11 @@ public abstract class JsonWrapper implements Serializable  {
 		try {
 			jsonString = mapper.writeValueAsString(list);
 		} catch (JsonGenerationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.debug("Exception :",e);
 		} catch (JsonMappingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.debug("Exception :",e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.debug("Exception :",e);
 		}
 		return jsonString;
 	}
@@ -111,7 +107,7 @@ public abstract class JsonWrapper implements Serializable  {
 			jsonString = ow.writeValueAsString(this);
 		} catch (Exception e){
 
-			e.printStackTrace();
+			LOGGER.debug("Exception :",e);
 		}
 		return jsonString;
 	}
