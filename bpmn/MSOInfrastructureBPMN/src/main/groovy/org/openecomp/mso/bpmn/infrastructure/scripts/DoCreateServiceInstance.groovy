@@ -248,13 +248,15 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 			if (siParamsXml == null)
 				siParamsXml = ""
 			execution.setVariable("siParamsXml", siParamsXml)
-	
+
 			//AAI PUT
-			String oStatus= "Active"
+			String oStatus = execution.getVariable("initialStatus") ?: ""
 			if ("TRANSPORT".equalsIgnoreCase(serviceType))
 			{
 				oStatus = "Created"
 			}
+
+			String statusLine = isBlank(oStatus) ? "" : "<orchestration-status>${oStatus}</orchestration-status>"
 				
 			AaiUtil aaiUriUtil = new AaiUtil(this)
 			String aai_uri = aaiUriUtil.getBusinessCustomerUri(execution)
@@ -264,7 +266,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 					<service-instance-name>${serviceInstanceName}</service-instance-name>
 					<service-type>${serviceType}</service-type>
 					<service-role>${serviceRole}</service-role>
-					<orchestration-status>${oStatus}</orchestration-status>
+					${statusLine}
 				    <model-invariant-id>${modelInvariantUuid}</model-invariant-id>
 				    <model-version-id>${modelUuid}</model-version-id>
 					</service-instance>""".trim()
