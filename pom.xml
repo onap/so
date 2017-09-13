@@ -335,45 +335,6 @@
 					<source>1.8</source>
 				</configuration>
 			</plugin>
-			<!-- license plugin -->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>license-maven-plugin</artifactId>
-				<version>1.10</version>
-				<configuration>
-					<addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
-					<processStartTag>============LICENSE_START=======================================================</processStartTag>
-					<processEndTag>============LICENSE_END=========================================================</processEndTag>
-					<sectionDelimiter>================================================================================</sectionDelimiter>
-					<licenseName>apache_v2</licenseName>
-					<inceptionYear>2017</inceptionYear>
-					<organizationName>AT&amp;T Intellectual Property. All rights reserved.</organizationName>
-					<projectName>ECOMP MSO</projectName>
-					<canUpdateCopyright>true</canUpdateCopyright>
-					<canUpdateDescription>true</canUpdateDescription>
-					<canUpdateLicense>true</canUpdateLicense>
-					<emptyLineAfterHeader>true</emptyLineAfterHeader>
-				</configuration>
-				<executions>
-					<execution>
-						<id>first</id>
-						<goals>
-							<goal>update-file-header</goal>
-						</goals>
-						<phase>process-sources</phase>
-						<configuration>
-							<licenseName>apache_v2</licenseName>
-							<includes>
-								<include>*.java</include>
-								<include>*.groovy</include>
-							</includes>
-							<excludes>
-								<exclude>*.json</exclude>
-							</excludes>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 	</build>
 	<!-- *********************************************************************************************************** -->
