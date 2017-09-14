@@ -1,0 +1,10 @@
+{
+  "jobId": "1",
+  "responseDescriptor": {
+    "progress": "100",
+    "status": "finished",
+    "statusDescription": "OMC VMs are decommissioned in VIM",
+    "errorCode": "",
+    "responseId": "22"
+  }
+}
