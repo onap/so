@@ -33,12 +33,12 @@ public class E2ELocationConstraints {
 	@JsonProperty("vimId")
 	private String vimId;
 	@JsonIgnore
-	private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+	private Map<String, Object> additionalProperties = new HashMap<>();
 
 	public String getVimId() {
 		return vimId;
 	}
-
+	
 	public void setVimId(String vimId) {
 		this.vimId = vimId;
 	}

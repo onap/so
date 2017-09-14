@@ -337,8 +337,7 @@ public class E2EServiceInstances {
 		// BPEL accepted the request, the request is in progress
 		if (bpelStatus == HttpStatus.SC_ACCEPTED) {
 			String camundaJSONResponseBody = respHandler.getResponseBody();
-			msoLogger
-					.debug("Received from Camunda: " + camundaJSONResponseBody);
+			msoLogger.debug("Received from Camunda: " + camundaJSONResponseBody);
 			(RequestsDatabase.getInstance()).updateInfraStatus(requestId,
 					Status.IN_PROGRESS.toString(),
 					Constants.PROGRESS_REQUEST_IN_PROGRESS,

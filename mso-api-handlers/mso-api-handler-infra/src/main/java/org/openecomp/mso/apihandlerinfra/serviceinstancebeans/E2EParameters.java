@@ -28,7 +28,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 
-@JsonIgnoreProperties({ "segments", "nsParameters", "additionalProperties" })
+@JsonIgnoreProperties({ "additionalProperties" })
 public class E2EParameters {
 
 	@JsonProperty("domainHost")
@@ -42,7 +42,7 @@ public class E2EParameters {
 	@JsonProperty("nsParameters")
 	private E2ENsParameters_ nsParameters;
 	@JsonIgnore
-	private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+	private Map<String, Object> additionalProperties = new HashMap<>();
 
 	public String getDomainHost() {
 		return domainHost;

@@ -35,7 +35,7 @@ public class E2EAdditionalParamForNs_ {
 	@JsonProperty("E2EService.param2")
 	private String e2EServiceParam2;
 	@JsonIgnore
-	private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+	private Map<String, Object> additionalProperties = new HashMap<>();
 
 	public String getE2EServiceParam1() {
 		return e2EServiceParam1;

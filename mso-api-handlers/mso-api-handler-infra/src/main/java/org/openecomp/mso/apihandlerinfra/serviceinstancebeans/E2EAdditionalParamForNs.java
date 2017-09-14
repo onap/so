@@ -49,7 +49,7 @@ public class E2EAdditionalParamForNs {
 	@JsonProperty("sdncontroller")
 	private String sdncontroller;
 	@JsonIgnore
-	private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+	private Map<String, Object> additionalProperties = new HashMap<>();
 
 	public String getExternalDataNetworkName() {
 		return externalDataNetworkName;

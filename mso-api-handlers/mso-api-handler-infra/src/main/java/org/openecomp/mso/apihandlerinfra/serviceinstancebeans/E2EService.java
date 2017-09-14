@@ -27,7 +27,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 
-@JsonIgnoreProperties({ "parameters", "additionalProperties" })
+@JsonIgnoreProperties({ "additionalProperties" })
 public class E2EService {
 
 	@JsonProperty("name")
@@ -41,7 +41,7 @@ public class E2EService {
 	@JsonProperty("parameters")
 	private E2EParameters parameters;
 	@JsonIgnore
-	private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+	private Map<String, Object> additionalProperties = new HashMap<>();
 
 	public String getName() {
 		return name;

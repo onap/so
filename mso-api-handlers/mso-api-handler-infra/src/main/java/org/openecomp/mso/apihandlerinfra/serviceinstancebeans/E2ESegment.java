@@ -42,7 +42,7 @@ public class E2ESegment {
 	@JsonProperty("nsParameters")
 	private E2ENsParameters nsParameters;
 	@JsonIgnore
-	private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+	private Map<String, Object> additionalProperties = new HashMap<>();
 
 	public String getDomainHost() {
 		return domainHost;
