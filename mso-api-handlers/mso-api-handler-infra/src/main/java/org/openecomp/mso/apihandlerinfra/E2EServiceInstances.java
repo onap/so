@@ -106,8 +106,7 @@ public class E2EServiceInstances {
 		MsoRequest msoRequest = new MsoRequest(requestId);
 		ObjectMapper mapper = new ObjectMapper();
 		try {
-			sir = mapper
-					.readValue(requestJSON, E2EServiceInstanceRequest.class);
+			sir = mapper.readValue(requestJSON, E2EServiceInstanceRequest.class);
 		} catch (Exception e) {
 
 			msoLogger.debug("Mapping of request to JSON object failed : ", e);
@@ -220,10 +219,8 @@ public class E2EServiceInstances {
 		RecipeLookupResult recipeLookupResult = null;
 
 		try {
-			recipeLookupResult = getServiceInstanceOrchestrationURI(db, sir,
-					action);
-			// recipeLookupResult = new
-			// RecipeLookupResult("/mso/async/services/CreateGenericALaCarteServiceInstance",180);
+			recipeLookupResult = getServiceInstanceOrchestrationURI(db, sir, action);
+		
 		} catch (Exception e) {
 			msoLogger.error(MessageEnum.APIH_DB_ACCESS_EXC,
 					MSO_PROP_APIHANDLER_INFRA, "", "",
