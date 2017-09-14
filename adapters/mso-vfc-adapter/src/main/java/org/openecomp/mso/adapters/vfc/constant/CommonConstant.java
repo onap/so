@@ -32,15 +32,15 @@ public class CommonConstant {
     
     public static final String STR_EMPTY = "";
 
-    public static final String NFVO_CREATE_URL = "/openoapi/nslcm/v1/ns";
+    public static final String NFVO_CREATE_URL = "/api/nslcm/v1/ns";
 
-    public static final String NFVO_INSTANTIATE_URL = "/openoapi/nslcm/v1/ns/%s/instantiate";
+    public static final String NFVO_INSTANTIATE_URL = "/api/nslcm/v1/ns/%s/instantiate";
 
-    public static final String NFVO_TERMINATE_URL = "/openoapi/nslcm/v1/ns/%s/terminate";
+    public static final String NFVO_TERMINATE_URL = "/api/nslcm/v1/ns/%s/terminate";
 
-    public static final String NFVO_DELETE_URL = "/openoapi/nslcm/v1/ns/%s";
+    public static final String NFVO_DELETE_URL = "/api/nslcm/v1/ns/%s";
 
-    public static final String NFVO_QUERY_URL = "/openoapi/nslcm/v1/jobs/%s";
+    public static final String NFVO_QUERY_URL = "/api/nslcm/v1/jobs/%s";
 
 
     public static final String LEFT_QUOTE_LEFT_BRACE = "\"\\{";
