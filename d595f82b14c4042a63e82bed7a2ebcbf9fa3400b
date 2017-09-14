@@ -1,0 +1,9 @@
+Code-Review+1: Dan Smith <ds611h@att.com>
+Code-Review+2: Rob Daugherty <rd472p@att.com>
+Verified+1: Rob Daugherty <rd472p@att.com>
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Submitted-by: Rob Daugherty <rd472p@att.com>
+Submitted-at: Thu, 14 Sep 2017 01:21:49 +0000
+Reviewed-on: http://gerrit.onap.org/r/12299
+Project: so
+Branch: refs/heads/master
