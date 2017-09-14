@@ -28,7 +28,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 
-@JsonIgnoreProperties({ "additionalProperties" })
+@JsonIgnoreProperties({ "additionalParamForNs", "additionalProperties" })
 public class E2ENsParameters {
 
 	@JsonProperty("locationConstraints")
@@ -36,7 +36,7 @@ public class E2ENsParameters {
 	@JsonProperty("additionalParamForNs")
 	private E2EAdditionalParamForNs additionalParamForNs;
 	@JsonIgnore
-	private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+	private Map<String, Object> additionalProperties = new HashMap<>();
 
 	public List<E2ELocationConstraint> getLocationConstraints() {
 		return locationConstraints;

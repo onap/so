@@ -33,7 +33,7 @@ public class E2EServiceInstanceRequest {
 	@JsonProperty("service")
 	private E2EService service;
 	@JsonIgnore
-	private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+	private Map<String, Object> additionalProperties = new HashMap<>();
 
 	public E2EService getService() {
 		return service;

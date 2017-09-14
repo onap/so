@@ -35,7 +35,7 @@ public class E2ELocationConstraint {
 	@JsonProperty("locationConstraints")
 	private E2ELocationConstraints locationConstraints;
 	@JsonIgnore
-	private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+	private Map<String, Object> additionalProperties = new HashMap<>();
 
 	public String getVnfProfileId() {
 		return vnfProfileId;
