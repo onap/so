@@ -17,17 +17,29 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.mso.adapters.vfc;
 
-
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.io.IOUtils;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
+import org.openecomp.mso.adapters.vfc.constant.CommonConstant;
+import org.openecomp.mso.adapters.vfc.constant.HttpCode;
+import org.openecomp.mso.adapters.vfc.model.RestfulResponse;
 import org.openecomp.mso.adapters.vfc.util.RestfulUtil;
 import org.openecomp.mso.adapters.vfc.util.ValidateUtil;
-import org.openecomp.mso.db.catalog.CatalogDatabase;
+import org.openecomp.mso.requestsdb.RequestsDatabase;
+import org.openecomp.mso.requestsdb.ResourceOperationStatus;
 
+import mockit.Mock;
 import mockit.MockUp;
 
 /**
@@ -37,89 +49,150 @@ import mockit.MockUp;
  * </p>
  * 
  * @author
- * @version     ONAP Amsterdam Release  2017-08-31
+ * @version ONAP Amsterdam Release 2017-08-31
  */
 public class VfcAdapterTest {
 
-    @Mock
-    private static CatalogDatabase db;
+    private VfcAdapterRest vfcAdapter = new VfcAdapterRest();
 
     /**
      * File path
      */
     private static final String FILE_PATH = "src/test/resources/json/";
 
-    @Test
-    public void createTest () {
-//        // get request
-//        mockGetRequestBody(FILE_PATH + "createNfvoNsReq.json");
-//        // get service template
-//        ServiceTemplate svcTmpl = new ServiceTemplate();
-//        svcTmpl.setId("id");
-//        svcTmpl.setServiceTemplateId("svcTmplId");
-//        new MockUp<CatalogProxyImpl>() {
-//            @Mock
-//            public ServiceTemplate getSvcTmplByNodeType(String nodeType, String domainHost){
-//                return svcTmpl;
-//            }
-//        };
-//        // get response
-//        RestfulResponse restRsp = new RestfulResponse();
-//        restRsp.setStatus(HttpStatus.SC_OK);
-//        restRsp.setResponseJson(getJsonString(FILE_PATH + "createNfvoNsRsp.json"));
-//        mockGetRestfulRsp(restRsp);
-//        // insert data
-//        new MockUp<ServiceSegmentDaoImpl>() {
-//            @Mock
-//            public void insertSegment(ServiceSegmentModel serviceSegment) {
-//                // do nothing
-//            }
-//            @Mock
-//            public void insertSegmentOper(ServiceSegmentOperation svcSegmentOper) {
-//                // do nothing
-//            }
-//        };
-//        Response rsp = impl.createNfvoNs(servletReq);
-//        JSONObject obj = JSONObject.fromObject(rsp.getEntity());
-//        Assert.assertEquals(null, "1", obj.getString("nsInstanceId"));
-    }
-
-    @Test
-    public void deleteTest () {
-        
-    }
-
-    @Test
-    public void instantiateTest () {
-
-    }
-
-    @Test
-    public void terminateTest () {
-        
-    }
-
-    @Test
-    public void queryJobTest () {
-
-    }
-    
     /**
-     * Mock to get request body.<br/>
+     * Mock the request body form a file
+     * <br>
      * 
-     * @param file json file path.
-     * @since ONAP Amsterdam Release 2017-9-6
+     * @param fileName
+     * @since ONAP Amsterdam Release
      */
-    private void mockGetRequestBody(final String file) {
+    private void mockRestfulUtil(String fileName) {
         new MockUp<RestfulUtil>() {
 
-//            @Mock
-//            public String getRequestBody(HttpServletRequest request) {
-//                return getJsonString(file);
-//            }
+            /**
+             * mock get request body
+             * <br>
+             * 
+             * @param request
+             * @return
+             * @since ONAP Amsterdam Release
+             */
+            @Mock
+            public String getRequestBody(HttpServletRequest request) {
+                return getJsonString(fileName);
+            }
+
+            /**
+             * mock get send method
+             * <br>
+             * 
+             * @param url
+             * @param methodType
+             * @param content
+             * @return
+             * @since ONAP Amsterdam Release
+             */
+            @Mock
+            public RestfulResponse send(String url, String methodType, String content) {
+                if(url.contains(CommonConstant.NFVO_CREATE_URL) && methodType.equals(CommonConstant.MethodType.POST)) {
+                    return getResponse("createNsRsp.json");
+                } else {
+                    return null;
+                }
+            }
         };
     }
-    
+
+    /**
+     * Mock the request body form a file
+     * <br>
+     * 
+     * @param fileName
+     * @since ONAP Amsterdam Release
+     */
+    private void mockRequestDatabase() {
+        new MockUp<RequestsDatabase>() {
+
+            /**
+             * mock get resource operation status
+             * <br>
+             * 
+             * @param request
+             * @return
+             * @since ONAP Amsterdam Release
+             */
+            @Mock
+            public ResourceOperationStatus getResourceOperationStatus(String serviceId, String operationId,
+                    String resourceTemplateUUID) {
+                ResourceOperationStatus resStatus = new ResourceOperationStatus();
+                resStatus.setServiceId("111");
+                resStatus.setOperationId("111");
+                return resStatus;
+            }
+
+            /**
+             * Mock update Res Oper Status
+             * <br>
+             * 
+             * @param operStatus
+             * @since ONAP Amsterdam Release
+             */
+            @Mock
+            public void updateResOperStatus(ResourceOperationStatus operStatus) {
+
+            }
+        };
+    }
+
+    /**
+     * Before executing UT, start mock requst database
+     * <br>
+     * 
+     * @since ONAP Amsterdam Release
+     */
+    @Before
+    public void start() {
+        mockRequestDatabase();
+    }
+
+    /**
+     * After executing UT, close session<br/>
+     * 
+     * @since ONAP Amsterdam Release
+     */
+    @After
+    public void stop() {
+
+    }
+
+    @Test
+    public void createTest() {
+        // get request
+        mockRestfulUtil(FILE_PATH + "createNsReq.json");
+        vfcAdapter.createNfvoNs(null);
+    }
+
+    @Test
+    public void deleteTest() {
+
+    }
+
+    @Test
+    public void instantiateTest() {
+
+    }
+
+    @Test
+    public void terminateTest() {
+
+    }
+
+    @Test
+    public void queryJobTest() {
+
+    }
+
     /**
      * Get json string from file.<br/>
      * 
@@ -128,19 +201,37 @@ public class VfcAdapterTest {
      * @throws IOException when fail to read
      * @since ONAP Amsterdam Release 2017-9-6
      */
+    @SuppressWarnings("deprecation")
     private String getJsonString(final String file) {
         if(ValidateUtil.isStrEmpty(file)) {
             return "";
         }
 
         String json = null;
-//        try {
-//            FileInputStream fileStream = new FileInputStream(new File(file));
-//            json = IOUtils.toString(fileStream);
-//        } catch(Exception e) {
-//            Assert.fail(e.getMessage());
-//        }
-
+        try {
+            FileInputStream fileStream = new FileInputStream(new File(file));
+            json = IOUtils.toString(fileStream);
+        } catch(Exception e) {
+            Assert.fail(e.getMessage());
+        }
         return json;
+    }
+
+    /**
+     * get the response from file
+     * <br>
+     * 
+     * @param fileName
+     * @return
+     * @since ONAP Amsterdam Release
+     */
+    private RestfulResponse getResponse(String fileName) {
+        RestfulResponse responseSuccess = new RestfulResponse();
+        responseSuccess.setStatus(HttpCode.RESPOND_OK);
+        if(null != fileName) {
+            String jsonStr = getJsonString(FILE_PATH + fileName);
+            responseSuccess.setResponseContent(jsonStr);
+        }
+        return responseSuccess;
     }
 }
