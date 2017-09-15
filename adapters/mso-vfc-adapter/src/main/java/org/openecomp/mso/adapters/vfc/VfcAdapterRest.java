@@ -17,6 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.mso.adapters.vfc;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +30,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
+import org.openecomp.mso.adapters.vfc.exceptions.ApplicationException;
 import org.openecomp.mso.adapters.vfc.model.NSResourceInputParameter;
 import org.openecomp.mso.adapters.vfc.model.NsOperationKey;
 import org.openecomp.mso.adapters.vfc.model.RestfulResponse;
@@ -44,7 +46,7 @@ import org.openecomp.mso.logger.MsoLogger;
  * </p>
  * 
  * @author
- * @version     ONAP Amsterdam Release  2017-08-28
+ * @version ONAP Amsterdam Release 2017-08-28
  */
 @Path("/v1/vfcdrivers")
 public class VfcAdapterRest {
@@ -52,6 +54,10 @@ public class VfcAdapterRest {
     private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
 
     private final VfcManager driverMgr = new VfcManager();
+
+    public VfcAdapterRest() {
+
+    }
 
     /**
      * Create a NS
@@ -67,12 +73,16 @@ public class VfcAdapterRest {
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response createNfvoNs(HttpServletRequest servletReq) {
         // Step 1: get parameters from request for current node
-        String body = RestfulUtil.getRequestBody(servletReq);
-        ValidateUtil.assertObjectNotNull(body);
-        LOGGER.debug("body from request is {}" + body);
-        NSResourceInputParameter nsInput = JsonUtil.unMarshal(body, NSResourceInputParameter.class);
-        RestfulResponse rsp = driverMgr.createNs(nsInput);
-        return buildResponse(rsp);
+        try {
+            String body = RestfulUtil.getRequestBody(servletReq);
+            ValidateUtil.assertObjectNotNull(body);
+            LOGGER.debug("body from request is {}" + body);
+            NSResourceInputParameter nsInput = JsonUtil.unMarshal(body, NSResourceInputParameter.class);
+            RestfulResponse rsp = driverMgr.createNs(nsInput);
+            return buildResponse(rsp);
+        } catch(ApplicationException e) {
+            return e.buildErrorResponse();
+        }
     }
 
     /**
@@ -87,14 +97,17 @@ public class VfcAdapterRest {
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response deleteNfvoNs(HttpServletRequest servletReq, @PathParam("nsInstanceId") String nsInstanceId) {
-        // Step 1: get parameters from request for current node
-        String body = RestfulUtil.getRequestBody(servletReq);
-        ValidateUtil.assertObjectNotNull(body);
-        LOGGER.debug("body from request is {}" + body);
-        NsOperationKey nsOperationKey = JsonUtil.unMarshal(body, NsOperationKey.class);
-
-        RestfulResponse rsp = driverMgr.deleteNs(nsOperationKey, nsInstanceId);
-        return buildResponse(rsp);
+        try {
+            // Step 1: get parameters from request for current node
+            String body = RestfulUtil.getRequestBody(servletReq);
+            ValidateUtil.assertObjectNotNull(body);
+            LOGGER.debug("body from request is {}" + body);
+            NsOperationKey nsOperationKey = JsonUtil.unMarshal(body, NsOperationKey.class);
+            RestfulResponse rsp = driverMgr.deleteNs(nsOperationKey, nsInstanceId);
+            return buildResponse(rsp);
+        } catch(ApplicationException e) {
+            return e.buildErrorResponse();
+        }
     }
 
     /**
@@ -102,7 +115,7 @@ public class VfcAdapterRest {
      * <br>
      * 
      * @param servletReq The Http Request
-     * @param jobId The job id 
+     * @param jobId The job id
      * @return
      * @since ONAP Amsterdam Release
      */
@@ -111,15 +124,19 @@ public class VfcAdapterRest {
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response queryNfvoJobStatus(HttpServletRequest servletReq, @PathParam("jobId") String jobId) {
-        ValidateUtil.assertObjectNotNull(jobId);
-        String body = RestfulUtil.getRequestBody(servletReq);
-        ValidateUtil.assertObjectNotNull(body);
-        LOGGER.debug("body from request is {}" + body);
-        NsOperationKey nsOperationKey = JsonUtil.unMarshal(body, NsOperationKey.class);
-        RestfulResponse rsp = driverMgr.getNsProgress(nsOperationKey, jobId);
-        return buildResponse(rsp);
-    }
+        try {
+            ValidateUtil.assertObjectNotNull(jobId);
+            String body = RestfulUtil.getRequestBody(servletReq);
+            ValidateUtil.assertObjectNotNull(body);
+            LOGGER.debug("body from request is {}" + body);
+            NsOperationKey nsOperationKey = JsonUtil.unMarshal(body, NsOperationKey.class);
 
+            RestfulResponse rsp = driverMgr.getNsProgress(nsOperationKey, jobId);
+            return buildResponse(rsp);
+        } catch(ApplicationException e) {
+            return e.buildErrorResponse();
+        }
+    }
 
     /**
      * Instantiate NS instance
@@ -136,11 +153,15 @@ public class VfcAdapterRest {
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response instantiateNfvoNs(HttpServletRequest servletReq, @PathParam("nsInstanceId") String nsInstanceId) {
         String body = RestfulUtil.getRequestBody(servletReq);
-        ValidateUtil.assertObjectNotNull(body);
-        LOGGER.debug("body from request is {}" + body);
-        NSResourceInputParameter nsInput = JsonUtil.unMarshal(body, NSResourceInputParameter.class);
-        RestfulResponse rsp = driverMgr.instantiateNs(nsInstanceId, nsInput);
-        return buildResponse(rsp);
+        try {
+            ValidateUtil.assertObjectNotNull(body);
+            LOGGER.debug("body from request is {}" + body);
+            NSResourceInputParameter nsInput = JsonUtil.unMarshal(body, NSResourceInputParameter.class);
+            RestfulResponse rsp = driverMgr.instantiateNs(nsInstanceId, nsInput);
+            return buildResponse(rsp);
+        } catch(ApplicationException e) {
+            return e.buildErrorResponse();
+        }
     }
 
     /**
@@ -157,15 +178,18 @@ public class VfcAdapterRest {
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response terminateNfvoNs(HttpServletRequest servletReq, @PathParam("nsInstanceId") String nsInstanceId) {
-        ValidateUtil.assertObjectNotNull(nsInstanceId);
-        String body = RestfulUtil.getRequestBody(servletReq);
-        ValidateUtil.assertObjectNotNull(body);
-        LOGGER.debug("body from request is {}" + body);
-        NsOperationKey nsOperationKey = JsonUtil.unMarshal(body, NsOperationKey.class);
-        RestfulResponse rsp = driverMgr.terminateNs(nsOperationKey, nsInstanceId);
-        return buildResponse(rsp);
+        try {
+            ValidateUtil.assertObjectNotNull(nsInstanceId);
+            String body = RestfulUtil.getRequestBody(servletReq);
+            ValidateUtil.assertObjectNotNull(body);
+            LOGGER.debug("body from request is {}" + body);
+            NsOperationKey nsOperationKey = JsonUtil.unMarshal(body, NsOperationKey.class);
+            RestfulResponse rsp = driverMgr.terminateNs(nsOperationKey, nsInstanceId);
+            return buildResponse(rsp);
+        } catch(ApplicationException e) {
+            return e.buildErrorResponse();
+        }
     }
-
 
     /**
      * build response from restful response

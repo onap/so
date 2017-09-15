@@ -71,6 +71,9 @@ public class VfcManager {
         nfvoUrlMap.put(Step.QUERY, CommonConstant.NFVO_QUERY_URL);
     }
 
+    public VfcManager(){
+        
+    }
     /**
      * create network service
      * <br>
@@ -79,7 +82,7 @@ public class VfcManager {
      * @return
      * @since ONAP Amsterdam Release
      */
-    public RestfulResponse createNs(NSResourceInputParameter segInput) {
+    public RestfulResponse createNs(NSResourceInputParameter segInput) throws ApplicationException {
 
         // Step1: get service template by node type
         String nsdId = segInput.getNsOperationKey().getNodeTemplateId();
@@ -143,7 +146,7 @@ public class VfcManager {
      * @return
      * @since ONAP Amsterdam Release
      */
-    public RestfulResponse deleteNs(NsOperationKey nsOperationKey, String nsInstanceId) {
+    public RestfulResponse deleteNs(NsOperationKey nsOperationKey, String nsInstanceId)  throws ApplicationException{
         LOGGER.info("delete ns -> begin");
         // Step1: prepare url and methodType
         String url = getUrl(nsInstanceId, CommonConstant.Step.DELETE);
@@ -190,7 +193,7 @@ public class VfcManager {
      * @return
      * @since ONAP Amsterdam Release
      */
-    public RestfulResponse instantiateNs(String nsInstanceId, NSResourceInputParameter segInput) {
+    public RestfulResponse instantiateNs(String nsInstanceId, NSResourceInputParameter segInput)  throws ApplicationException{
         // Call the NFVO or SDNO service to instantiate service
         LOGGER.info("instantiate ns -> begin");
 
@@ -254,7 +257,7 @@ public class VfcManager {
      * @return
      * @since ONAP Amsterdam Release
      */
-    public RestfulResponse terminateNs(NsOperationKey nsOperationKey, String nsInstanceId) {
+    public RestfulResponse terminateNs(NsOperationKey nsOperationKey, String nsInstanceId) throws ApplicationException{
         // Step1: save segment operation info for delete process
         LOGGER.info("save segment operation for delete process");
         ResourceOperationStatus nsOperInfo = (RequestsDatabase.getInstance()).getResourceOperationStatus(nsOperationKey.getServiceId(),
@@ -319,7 +322,7 @@ public class VfcManager {
      * @return
      * @since ONAP Amsterdam Release
      */
-    public RestfulResponse getNsProgress(NsOperationKey nsOperationKey, String jobId) {
+    public RestfulResponse getNsProgress(NsOperationKey nsOperationKey, String jobId)  throws ApplicationException{
 
         ValidateUtil.assertObjectNotNull(jobId);
         // Step 1: query the current resource operation status

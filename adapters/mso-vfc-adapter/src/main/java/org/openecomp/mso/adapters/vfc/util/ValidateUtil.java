@@ -17,6 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.mso.adapters.vfc.util;
 
 import org.openecomp.mso.adapters.vfc.constant.HttpCode;
@@ -49,7 +50,7 @@ public class ValidateUtil {
      * @param name of parameter
      * @since ONAP Amsterdam Release 2017-9-6
      */
-    public static void assertStringNotNull(String paramValue, String paramName) {
+    public static void assertStringNotNull(String paramValue, String paramName) throws ApplicationException {
         if(null != paramValue && !paramValue.isEmpty()) {
             return;
         }
@@ -64,7 +65,7 @@ public class ValidateUtil {
      * @param object data object
      * @since ONAP Amsterdam Release 2017-9-6
      */
-    public static void assertObjectNotNull(Object object) {
+    public static void assertObjectNotNull(Object object) throws ApplicationException {
         if(null == object) {
             LOGGER.error("Object is null.");
             throw new ApplicationException(HttpCode.BAD_REQUEST, "Object is null.");
