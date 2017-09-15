@@ -42,53 +42,6 @@ public class CommonConstant {
 
     public static final String NFVO_QUERY_URL = "/api/nslcm/v1/jobs/%s";
 
-
-    public static final String LEFT_QUOTE_LEFT_BRACE = "\"\\{";
-
-    public static final String LEFT_BRACE = "\\{";
-
-    public static final String RIGHT_BRACE_RIGHT_QUOTE = "\\}\"";
-
-    public static final String RIGHT_BRACE = "\\}";
-
-    public static final String LEFT_QUOTE_LEFT_BRACKET = "\"\\[";
-
-    public static final String LEFT_BRACKET = "\\[";
-
-    public static final String RIGHT_BRACKET_RIGHT_QUOTE = "\\]\"";
-
-    public static final String RIGHT_BRACKET = "\\]";
-
-    /**
-     * HttpContext constant
-     * <br>
-     * <p>
-     * </p>
-     * 
-     * @author
-     * @version     ONAP Amsterdam Release  2017-08-28
-     */
-    public static class HttpContext {
-
-        public static final String CONTENT_TYPE = "Content-Type";
-
-        public static final String MEDIA_TYPE_JSON = "application/json;charset=UTF-8";
-
-        public static final String URL = "url";
-
-        public static final String METHOD_TYPE = "methodType";
-
-        public static final String IP = "ip";
-
-        public static final String PORT = "port";
-
-        public static final String RAW_DATA = "rawData";
-
-        private HttpContext() {
-
-        }
-    }
-
     /**
      * 
      * <br>
