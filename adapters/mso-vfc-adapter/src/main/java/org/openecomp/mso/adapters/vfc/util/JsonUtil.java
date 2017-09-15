@@ -17,6 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.mso.adapters.vfc.util;
 
 import java.io.IOException;
@@ -28,7 +29,6 @@ import org.openecomp.mso.adapters.vfc.constant.HttpCode;
 import org.openecomp.mso.adapters.vfc.exceptions.ApplicationException;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
-
 
 /**
  * Interface for json analyzing.<br/>
@@ -43,7 +43,7 @@ public class JsonUtil {
     /**
      * Log service
      */
-    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
+    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
 
     /**
      * Mapper.
@@ -75,11 +75,12 @@ public class JsonUtil {
      * @return model object
      * @since ONAP Amsterdam Release 2017-9-6
      */
-    public static <T> T unMarshal(String jsonstr, Class<T> type) {
+    public static <T> T unMarshal(String jsonstr, Class<T> type) throws ApplicationException {
         try {
             return MAPPER.readValue(jsonstr, type);
         } catch(IOException e) {
-        	LOGGER.error(MessageEnum.RA_NS_EXC, "","", MsoLogger.ErrorCode.BusinessProcesssError, "fail to unMarshal json", e);
+            LOGGER.error(MessageEnum.RA_NS_EXC, "", "", MsoLogger.ErrorCode.BusinessProcesssError,
+                    "fail to unMarshal json", e);
             throw new ApplicationException(HttpCode.BAD_REQUEST, "fail to unMarshal json");
         }
     }
@@ -92,11 +93,12 @@ public class JsonUtil {
      * @return model object
      * @since ONAP Amsterdam Release 2017-9-6
      */
-    public static <T> T unMarshal(String jsonstr, TypeReference<T> type) {
+    public static <T> T unMarshal(String jsonstr, TypeReference<T> type) throws ApplicationException {
         try {
             return MAPPER.readValue(jsonstr, type);
         } catch(IOException e) {
-            LOGGER.error(MessageEnum.RA_NS_EXC, "","", MsoLogger.ErrorCode.BusinessProcesssError, "fail to unMarshal json", e);
+            LOGGER.error(MessageEnum.RA_NS_EXC, "", "", MsoLogger.ErrorCode.BusinessProcesssError,
+                    "fail to unMarshal json", e);
             throw new ApplicationException(HttpCode.BAD_REQUEST, "fail to unMarshal json");
         }
     }
@@ -108,11 +110,12 @@ public class JsonUtil {
      * @return json string
      * @since ONAP Amsterdam Release 2017-9-6
      */
-    public static String marshal(Object srcObj) {
+    public static String marshal(Object srcObj) throws ApplicationException {
         try {
             return MAPPER.writeValueAsString(srcObj);
         } catch(IOException e) {
-        	LOGGER.error(MessageEnum.RA_NS_EXC, "","", MsoLogger.ErrorCode.BusinessProcesssError, "fail to marshal json", e);
+            LOGGER.error(MessageEnum.RA_NS_EXC, "", "", MsoLogger.ErrorCode.BusinessProcesssError,
+                    "fail to marshal json", e);
             throw new ApplicationException(HttpCode.BAD_REQUEST, "srcObj marshal failed!");
         }
     }

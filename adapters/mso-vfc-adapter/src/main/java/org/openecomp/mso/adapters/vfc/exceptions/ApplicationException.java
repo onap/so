@@ -17,18 +17,21 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.mso.adapters.vfc.exceptions;
 
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response;;
 
-public class ApplicationException extends WebApplicationException {
+public class ApplicationException extends Exception {
 
     /**
      * Serial number.
      */
     private static final long serialVersionUID = 1L;
+
+    private int errorCode;
+
+    private String errorMsg;
 
     /**
      * Constructor<br/>
@@ -37,9 +40,37 @@ public class ApplicationException extends WebApplicationException {
      * 
      * @param errorCode error status
      * @param errorDetail error detail
-     * @since  ONAP Amsterdam Release 2017-9-6
+     * @since ONAP Amsterdam Release 2017-9-6
      */
-    public ApplicationException(int errorCode, Object errorDetail) {
-        super(Response.status(errorCode).entity(errorDetail).type(MediaType.APPLICATION_JSON).build());
+    public ApplicationException(int errorCode, String errorMsg) {
+        this.errorCode = errorCode;
+        this.errorMsg = errorMsg;
+    }
+
+    public int getErrorCode() {
+        return errorCode;
+    }
+
+    public void setErrorCode(int errorCode) {
+        this.errorCode = errorCode;
+    }
+
+    public String getErrorMsg() {
+        return errorMsg;
+    }
+
+    public void setErrorMsg(String errorMsg) {
+        this.errorMsg = errorMsg;
+    }
+
+    /**
+     * build error Response
+     * <br>
+     * 
+     * @return
+     * @since ONAP Amsterdam Release
+     */
+    public Response buildErrorResponse() {
+        return Response.status(errorCode).entity(errorMsg).build();
     }
 }
