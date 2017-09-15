@@ -19,41 +19,94 @@
  */
 package org.openecomp.mso.adapters.vfc.model;
 
-
+/**
+ * The operation key object for NS
+ * <br>
+ * <p>
+ * </p>
+ * 
+ * @author
+ * @version     ONAP Amsterdam Release  2017-09-15
+ */
 public class NsOperationKey {
     
+    /**
+     * The service ID
+     */
     private String serviceId;
 
+    /**
+     * The Operation ID
+     */
     private String operationId;
     
+    /**
+     * the NS template uuid
+     */
     private String nodeTemplateId;
 
-    
+    /**
+     * 
+     * <br>
+     * 
+     * @return
+     * @since ONAP Amsterdam Release
+     */
     public String getServiceId() {
         return serviceId;
     }
 
-    
+    /**
+     *     
+     * <br>
+     * 
+     * @param serviceId
+     * @since ONAP Amsterdam Release
+     */
     public void setServiceId(String serviceId) {
         this.serviceId = serviceId;
     }
 
-    
+    /**
+     * 
+     * <br>
+     * 
+     * @return
+     * @since ONAP Amsterdam Release
+     */
     public String getOperationId() {
         return operationId;
     }
 
-    
+    /**
+     * 
+     * <br>
+     * 
+     * @param operationId
+     * @since ONAP Amsterdam Release
+     */
     public void setOperationId(String operationId) {
         this.operationId = operationId;
     }
 
-    
+    /**
+     * 
+     * <br>
+     * 
+     * @return
+     * @since ONAP Amsterdam Release
+     */
     public String getNodeTemplateId() {
         return nodeTemplateId;
     }
 
-    
+    /**
+     * 
+     * <br>
+     * 
+     * @param nodeTemplateId
+     * @since ONAP Amsterdam Release
+     */
     public void setNodeTemplateId(String nodeTemplateId) {
         this.nodeTemplateId = nodeTemplateId;
     }
