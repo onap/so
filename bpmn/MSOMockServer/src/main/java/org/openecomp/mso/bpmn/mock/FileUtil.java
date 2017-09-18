@@ -2,7 +2,8 @@
  * ============LICENSE_START======================================================= 
  * ONAP - SO 
  * ================================================================================ 
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved. 
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved. 
  * ================================================================================ 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -22,9 +23,26 @@ package org.openecomp.mso.bpmn.mock;
 
 import java.io.IOException;
 import java.io.InputStream;
+import org.openecomp.mso.logger.MsoLogger;
 
+/**
+ * 
+ * File utility class.<br/>
+ * <p>
+ * </p>
+ * 
+ * @author
+ * @version     ONAP  Sep 15, 2017
+ */
 public class FileUtil {
 
+    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
+    
+    private FileUtil() {
+        /**
+         * Constructor.
+         */
+    }
 	/**
 	 * Read the specified resource file and return the contents as a String.
 	 * 
@@ -42,6 +60,7 @@ public class FileUtil {
 			stream.close();
 			return new String(bytes);
 		} catch (IOException e) {
+		    LOGGER.debug("Exception:", e);
 			return "";
 		}
 	}

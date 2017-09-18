@@ -37,9 +37,12 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import org.openecomp.mso.logger.MsoLogger;
 
 public class ApplicationControllerClient {
 
+    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
+    
 	private static final int ACCEPT_SERIES = 100;
 	private static final int ERROR_SERIES = 200;
 	private static final int REJECT_SERIES = 300;
@@ -113,6 +116,7 @@ public class ApplicationControllerClient {
 			requestObject.getClass().getDeclaredMethod("setActionIdentifiers", ActionIdentifiers.class)
 					.invoke(requestObject, identifier);
 		} catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+		    LOGGER.debug("Exception:", e);
 			throw new Exception("Error Building AppC Request: " + e.getMessage());
 		}
 		return requestObject;

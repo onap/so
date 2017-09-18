@@ -85,14 +85,21 @@ public class PropertyConfiguration {
 	private volatile String msoConfigPath = null;
 
 	private final ConcurrentHashMap<String, Map<String, String>> propFileCache =
-		new ConcurrentHashMap<String, Map<String, String>>();
+		new ConcurrentHashMap<>();
 
 	private final Object CACHELOCK = new Object();
 	private FileWatcherThread fileWatcherThread = null;
 
 	// The key is the file name
-	private Map<String, TimerTask> timerTaskMap = new HashMap<String, TimerTask>();
+	private Map<String, TimerTask> timerTaskMap = new HashMap<>();
 
+	/**
+     * Private Constructor.
+     */
+    private PropertyConfiguration() {
+        startUp();
+    }
+	   		
 	/**
 	 * Singleton holder pattern eliminates locking when accessing the instance
 	 * and still provides for lazy initialization.
@@ -112,14 +119,7 @@ public class PropertyConfiguration {
 	 * Returns the list of supported files.
 	 */
 	public static List<String> supportedFiles() {
-		return new ArrayList<String>(SUPPORTED_FILES);
-	}
-
-	/**
-	 * Private Constructor.
-	 */
-	private PropertyConfiguration() {
-		startUp();
+		return new ArrayList<>(SUPPORTED_FILES);
 	}
 
 	/**
@@ -245,7 +245,7 @@ public class PropertyConfiguration {
 		String fileName = file.getName();
 		LOGGER.debug("Reading " + fileName);
 
-		Map<String, String> properties = new HashMap<String, String>();
+		Map<String, String> properties = new HashMap<>();
 		Properties newProperties = new Properties();
 
 		FileReader reader = null;

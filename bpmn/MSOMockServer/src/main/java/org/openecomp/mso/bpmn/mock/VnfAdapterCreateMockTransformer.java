@@ -132,18 +132,18 @@ public class VnfAdapterCreateMockTransformer extends ResponseTransformer {
 				// TODO Auto-generated catch block
 				LOGGER.debug("Exception :",e1);
 			}
-			System.out.println("Sending callback response to url: " + callbackUrl);
+			LOGGER.debug("Sending callback response to url: " + callbackUrl);
 			ClientRequest request = new ClientRequest(callbackUrl);
 			request.body("text/xml", payLoad);
 			//System.out.println("payLoad: " + payLoad);
 
 			try {
 				ClientResponse result = request.post();
-				System.out.println("Successfully posted callback? Status: " + result.getStatus());
+				LOGGER.debug("Successfully posted callback? Status: " + result.getStatus());
 				//System.err.println("Successfully posted callback:" + result.getStatus());
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				System.out.println("catch error in - request.post() ");
+			    LOGGER.debug("catch error in - request.post() ");
 				LOGGER.debug("Exception :",e);
 			}
 		}

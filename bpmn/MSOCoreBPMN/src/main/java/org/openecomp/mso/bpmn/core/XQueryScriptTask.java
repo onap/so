@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,7 +86,7 @@ public class XQueryScriptTask extends BaseTask {
 			getStringField(outputVariable, execution, "outputVariable");
 
 		if (msoLogger.isDebugEnabled()) {
-			System.out.println("scriptFile = " + theScriptFile
+		    msoLogger.debug ("scriptFile = " + theScriptFile
 				+ " xmlInputVariables = " + theXmlInputVariables
 				+ " atomicInputVariables = " + theAtomicInputVariables
 				+ "outputVariable = " + theOutputVariable);
@@ -141,7 +142,7 @@ public class XQueryScriptTask extends BaseTask {
 		for (String atomicInputVariable : atomicInputVariableArray) {
 			
 			if (msoLogger.isDebugEnabled()) {
-				System.out.println("Injecting object variable '"
+			    msoLogger.debug ("Injecting object variable '"
 					+ atomicInputVariable + "'");
 			}
 
@@ -235,7 +236,7 @@ public class XQueryScriptTask extends BaseTask {
 				try {
 					xqStream.close();
 				} catch (Exception e) {
-					// Do nothing
+				    msoLogger.debug ("Exception:", e);
 				}
 			}
 		}

@@ -13,12 +13,19 @@ import org.openecomp.mso.logger.MsoLogger;
 public class CamundaDBSetup {
 	private static boolean isDBConfigured = false;
 	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
+	
+	private CamundaDBSetup() {
+	    /**
+	     * Constructor.
+	     */
+	}
+	
 	public static synchronized void configure() throws SQLException {
 		if (isDBConfigured) {
 			return;
 		}
 
-		System.out.println("Configuring the Camunda H2 database for MSO");
+		LOGGER.debug ("Configuring the Camunda H2 database for MSO");
 
 		Connection connection = null;
 		PreparedStatement stmt = null;
@@ -67,7 +74,7 @@ public class CamundaDBSetup {
 
 			isDBConfigured = true;
 		} catch (SQLException e) {
-			System.out.println("CamundaDBSetup caught " + e.getClass().getSimpleName());
+		    LOGGER.debug ("CamundaDBSetup caught " + e.getClass().getSimpleName());
 			LOGGER.debug("SQLException :",e);
 		} finally {
 			if (stmt != null) {
