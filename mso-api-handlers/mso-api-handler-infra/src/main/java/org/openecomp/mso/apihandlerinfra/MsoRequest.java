@@ -149,7 +149,7 @@ public class MsoRequest {
 
     	RequestError re = new RequestError();
 
-    	if(exceptionType.name().equals("PolicyException")){
+    	if("PolicyException".equals(exceptionType.name())){
 
     		PolicyException pe = new PolicyException();
     		pe.setMessageId(messageId);

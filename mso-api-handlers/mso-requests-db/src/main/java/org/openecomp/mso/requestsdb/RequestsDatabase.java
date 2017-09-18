@@ -332,7 +332,7 @@ public class RequestsDatabase {
 	        		}    
     			}
     			catch (Exception e){
-    				msoLogger.debug("Exception in getOrchestrationFiltersFromInfraActive(): + " + e.getMessage());
+    				msoLogger.debug("Exception in getOrchestrationFiltersFromInfraActive(): + " + e.getMessage(), e);
     				return null;
     			}
     		}
