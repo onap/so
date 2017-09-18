@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,9 +27,12 @@ import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.Set;
 import org.openecomp.mso.db.catalog.beans.HeatTemplateParam;
+import org.openecomp.mso.logger.MsoLogger;
 
 public class MsoHeatEnvironmentEntry {
 
+    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
+    
 	private Set<MsoHeatEnvironmentParameter> parameters = null;
 	private Set<MsoHeatEnvironmentResource> resources = null;
 	private StringBuilder rawEntry = null;
@@ -48,7 +52,7 @@ public class MsoHeatEnvironmentEntry {
 	
 	private void processRawEntry() {
 		try {
-			if (this.rawEntry == null || this.rawEntry.equals(""))
+			if (this.rawEntry == null || "".equals(this.rawEntry))
 				return;
 			byte[] b = this.rawEntry.toString().getBytes();
 			MsoYamlEditorWithEnvt yaml = new MsoYamlEditorWithEnvt(b);
@@ -61,6 +65,7 @@ public class MsoHeatEnvironmentEntry {
 				this.resourceRegistryEntryRaw = sb;
 			}
 		} catch (Exception e) {
+		    LOGGER.debug("Exception:", e);
 			this.valid = false;
 			this.errorString = e.getMessage();
 			//e.printStackTrace();
@@ -97,13 +102,13 @@ public class MsoHeatEnvironmentEntry {
 	
 	public void addParameter(MsoHeatEnvironmentParameter hep) {
 		if (this.parameters == null) {
-			this.parameters = new HashSet<MsoHeatEnvironmentParameter>();
+			this.parameters = new HashSet<>();
 		}
 		this.parameters.add(hep);
 	}
 	public void addResource(MsoHeatEnvironmentResource her) {
 		if (this.resources == null) {
-			this.resources = new HashSet<MsoHeatEnvironmentResource>();
+			this.resources = new HashSet<>();
 		}
 		this.resources.add(her);
 	}

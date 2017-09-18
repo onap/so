@@ -36,9 +36,12 @@ import java.util.LinkedHashMap;
 
 import org.yaml.snakeyaml.Yaml;
 
+import org.openecomp.mso.logger.MsoLogger;
 
 public class MsoYamlEditorWithEnvt {
 
+    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
+    
     private Map <String, Object> yml;
     private Yaml yaml = new Yaml ();
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
@@ -65,6 +68,7 @@ public class MsoYamlEditorWithEnvt {
     	try {
     		resourceMap = (Map<String,Object>) yml.get("parameters");
     	} catch (Exception e) {
+    	    LOGGER.debug("Exception:", e);
     		return paramSet;
     	}
     	if (resourceMap == null) {
@@ -90,6 +94,7 @@ public class MsoYamlEditorWithEnvt {
     			try {
     				value = JSON_MAPPER.writeValueAsString(obj);
     			} catch (Exception e) {
+    			    LOGGER.debug("Exception:", e);
     				value = "_BAD_JSON_MAPPING";
     			}
     		} else {
@@ -104,7 +109,7 @@ public class MsoYamlEditorWithEnvt {
     }
     public synchronized Set <MsoHeatEnvironmentResource> getResourceListFromEnvt() {
     	try {
-    		Set<MsoHeatEnvironmentResource> resourceList = new HashSet<MsoHeatEnvironmentResource>();
+    		Set<MsoHeatEnvironmentResource> resourceList = new HashSet<>();
     		@SuppressWarnings("unchecked")
     		Map<String, Object> resourceMap = (Map<String,Object>) yml.get("resource_registry");
     		Iterator<Entry <String,Object>> it = resourceMap.entrySet().iterator();
@@ -118,12 +123,12 @@ public class MsoYamlEditorWithEnvt {
     		}
     		return resourceList;
     	} catch (Exception e) {
-    		
+    	    LOGGER.debug("Exception:", e);
     	}
     	return null;
     }
     public synchronized Set <HeatTemplateParam> getParameterList () {
-        Set <HeatTemplateParam> paramSet = new HashSet <HeatTemplateParam> ();
+        Set <HeatTemplateParam> paramSet = new HashSet <> ();
         @SuppressWarnings("unchecked")
         Map <String, Object> resourceMap = (Map <String, Object>) yml.get ("parameters");
         Iterator <Entry <String, Object>> it = resourceMap.entrySet ().iterator ();
@@ -137,6 +142,7 @@ public class MsoYamlEditorWithEnvt {
             try {
             	value = resourceEntry.get ("default");
             } catch (java.lang.ClassCastException cce) {
+                LOGGER.debug("Exception:", cce);
             	// This exception only - the value is an integer. For what we're doing
             	// here - we don't care - so set value to something - and it will 
             	// get marked as not being required - which is correct.

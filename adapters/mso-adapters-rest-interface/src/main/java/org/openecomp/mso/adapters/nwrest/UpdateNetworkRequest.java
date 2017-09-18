@@ -32,6 +32,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.jboss.resteasy.annotations.providers.NoJackson;
 import org.codehaus.jackson.map.annotate.JsonRootName;
+import org.openecomp.mso.logger.MsoLogger;
 
 @JsonRootName("updateNetworkRequest")
 @XmlRootElement(name = "updateNetworkRequest")
@@ -50,9 +51,10 @@ public class UpdateNetworkRequest extends NetworkRequestCommon {
 	private ProviderVlanNetwork providerVlanNetwork;
 	private ContrailNetwork contrailNetwork;
 	private Boolean backout = true;
-	private Map<String,String> networkParams = new HashMap<String, String>();
+	private Map<String,String> networkParams = new HashMap<>();
 	private MsoRequest msoRequest = new MsoRequest();
-
+	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
+	
 	public UpdateNetworkRequest() {
 		super();
 	}
@@ -129,7 +131,7 @@ public class UpdateNetworkRequest extends NetworkRequestCommon {
 		try {
 			this.networkTechnology = NetworkTechnology.valueOf(networkTechnology.toUpperCase());
 		} catch (IllegalArgumentException e) {
-			// ignore
+		    LOGGER.debug("Exception:", e);
 		}
 	}
 

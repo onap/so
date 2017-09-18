@@ -28,12 +28,15 @@ import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 import javax.xml.bind.annotation.XmlElement;
 import java.io.IOException;
 import java.io.Serializable;
+import org.openecomp.mso.logger.MsoLogger;
 
 /**
  * Base class for all SDNC adapter requests.
  */
 public abstract class SDNCRequestCommon implements Serializable {
 	private static final long serialVersionUID = 1L;
+	
+	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
 
 	// Endpoint on which BPMN can receive notifications from the SDNC adapter.
 	private String bpNotificationUrl;
@@ -101,7 +104,7 @@ public abstract class SDNCRequestCommon implements Serializable {
 			mapper.setSerializationInclusion(Inclusion.NON_NULL);
 			return mapper.writeValueAsString(this);
 		} catch (IOException e) {
-			e.printStackTrace();
+		    LOGGER.debug("Exception:", e);
 			throw new UnsupportedOperationException("Cannot convert "
 				+ getClass().getSimpleName() + " to JSON", e);
 		}

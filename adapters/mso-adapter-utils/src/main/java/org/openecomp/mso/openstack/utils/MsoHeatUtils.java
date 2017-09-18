@@ -91,12 +91,12 @@ public class MsoHeatUtils extends MsoCommonUtils {
     // token will be used until it expires.
     //
     // The cache key is "tenantId:cloudId"
-    private static Map <String, HeatCacheEntry> heatClientCache = new HashMap <String, HeatCacheEntry> ();
+    private static Map <String, HeatCacheEntry> heatClientCache = new HashMap <> ();
 
     // Fetch cloud configuration each time (may be cached in CloudConfig class)
     protected CloudConfig cloudConfig;
 
-    private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
+    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
 
     protected MsoJavaProperties msoProps = null;
 
@@ -343,7 +343,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
         if (haveFiles && haveHeatFiles) {
             // Let's do this here - not in the bean
             LOGGER.debug ("Found files AND heatFiles - combine and add!");
-            Map <String, Object> combinedFiles = new HashMap <String, Object> ();
+            Map <String, Object> combinedFiles = new HashMap <> ();
             for (String keyString : files.keySet ()) {
                 combinedFiles.put (keyString, files.get (keyString));
             }
@@ -584,7 +584,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
                 			}
 
                 		} // end while !deleted
-                		StringBuilder errorContextMessage = null;
+                		StringBuilder errorContextMessage;
                 		if (createTimedOut) {
                 			errorContextMessage = new StringBuilder("Stack Creation Timeout");
                 		} else {
@@ -737,7 +737,14 @@ public class MsoHeatUtils extends MsoCommonUtils {
         String canonicalName = heatStack.getStackName () + "/" + heatStack.getId ();
 
         try {
-            OpenStackRequest <Void> request = heatClient.getStacks ().deleteByName (canonicalName);
+            OpenStackRequest <Void> request = null;
+            if(null != heatClient) {
+                request = heatClient.getStacks ().deleteByName (canonicalName);
+            }
+            else {
+                LOGGER.debug ("Heat Client is NULL" );
+            }
+            
             executeAndRecordOpenstackRequest (request, msoProps);
         } catch (OpenStackResponseException e) {
             if (e.getStatus () == 404) {
@@ -845,7 +852,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
             OpenStackRequest <Stacks> request = heatClient.getStacks ().list ();
             Stacks stacks = executeAndRecordOpenstackRequest (request, msoProps);
 
-            List <StackInfo> stackList = new ArrayList <StackInfo> ();
+            List <StackInfo> stackList = new ArrayList <> ();
 
             // Not sure if returns an empty list or null if no stacks exist
             if (stacks != null) {
@@ -859,7 +866,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
             if (e.getStatus () == 404) {
                 // Not sure if this can happen, but return an empty list
                 LOGGER.debug ("queryAllStacks - stack not found: ");
-                return new ArrayList <StackInfo> ();
+                return new ArrayList <> ();
             } else {
                 // Convert the OpenStackResponseException to an MsoOpenstackException
                 throw heatExceptionToMsoException (e, QUERY_ALL_STACKS);
@@ -891,7 +898,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
                                                      HeatTemplate heatTemplate) throws IllegalArgumentException {
         // Check that required parameters have been supplied for this template type
         String missingParams = null;
-        List <String> paramList = new ArrayList <String> ();
+        List <String> paramList = new ArrayList <> ();
 
         // TODO: Enhance DB to support defaults for Heat Template parameters
 
@@ -913,8 +920,8 @@ public class MsoHeatUtils extends MsoCommonUtils {
         }
 
         // Remove any extraneous parameters (don't throw an error)
-        Map <String, Object> updatedParams = new HashMap <String, Object> ();
-        List <String> extraParams = new ArrayList <String> ();
+        Map <String, Object> updatedParams = new HashMap <> ();
+        List <String> extraParams = new ArrayList <> ();
         for (String key : inputParams.keySet ()) {
             if (!paramList.contains (key)) {
                 // This is not a valid parameter for this template
@@ -1139,7 +1146,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
      * This may be useful if cached credentials get out of sync.
      */
     public static void heatCacheReset () {
-        heatClientCache = new HashMap <String, HeatCacheEntry> ();
+        heatClientCache = new HashMap <> ();
     }
 
 	public Map<String, Object> queryStackForOutputs(String cloudSiteId,
@@ -1273,7 +1280,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
 			sb.append("(outputs is empty)");
 			return sb;
 		}
-		Map<String, Object> outputs = new HashMap<String,Object>();
+		Map<String, Object> outputs = new HashMap<>();
 		for (Output outputItem : outputList) {
 			outputs.put(outputItem.getOutputKey(), outputItem.getOutputValue());
 		}
@@ -1419,7 +1426,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
 		} else {
 			cdl3 = cdl2;
 		}
-		ArrayList<String> list = new ArrayList<String>(Arrays.asList(cdl3.split(",")));
+		ArrayList<String> list = new ArrayList<>(Arrays.asList(cdl3.split(",")));
 		return list;
 	}
 	
@@ -1441,9 +1448,9 @@ public class MsoHeatUtils extends MsoCommonUtils {
      * @return HashMap<String, Object> of the inputs, cleaned and converted
      */
 	public HashMap<String, Object> convertInputMap(Map<String, String> inputs, HeatTemplate template) {
-		HashMap<String, Object> newInputs = new HashMap<String, Object>();
-		HashMap<String, HeatTemplateParam> params = new HashMap<String, HeatTemplateParam>();
-		HashMap<String, HeatTemplateParam> paramAliases = new HashMap<String, HeatTemplateParam>();
+		HashMap<String, Object> newInputs = new HashMap<>();
+		HashMap<String, HeatTemplateParam> params = new HashMap<>();
+		HashMap<String, HeatTemplateParam> paramAliases = new HashMap<>();
 		
 		if (inputs == null) {
 			LOGGER.debug("convertInputMap - inputs is null - nothing to do here");
@@ -1462,7 +1469,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
 		for (HeatTemplateParam htp : template.getParameters()) {
 			LOGGER.debug("Adding " + htp.getParamName());
 			params.put(htp.getParamName(), htp);
-			if (htp.getParamAlias() != null && !htp.getParamAlias().equals("")) {
+			if (htp.getParamAlias() != null && !"".equals(htp.getParamAlias())) {
 				LOGGER.debug("\tFound ALIAS " + htp.getParamName() + "->" + htp.getParamAlias());
 				paramAliases.put(htp.getParamAlias(), htp);
 			}
@@ -1485,20 +1492,20 @@ public class MsoHeatUtils extends MsoCommonUtils {
 				}
 			}
 			String type = params.get(key).getParamType();
-			if (type == null || type.equals("")) {
+			if (type == null || "".equals(type)) {
 				LOGGER.debug("**PARAM_TYPE is null/empty for " + key + ", will default to string");
 				type = "string";
 			}
 			LOGGER.debug("Parameter: " + key + " is of type " + type);
-			if (type.equalsIgnoreCase("string")) {
+			if ("string".equalsIgnoreCase(type)) {
 				// Easiest!
 				String str = inputs.get(key);
 				if (alias) 
 					newInputs.put(realName, str);
 				else 
 					newInputs.put(key, str);
-			} else if (type.equalsIgnoreCase("number")) {
-				String integerString = inputs.get(key).toString();
+			} else if ("number".equalsIgnoreCase(type)) {
+				String integerString = inputs.get(key);
 				Integer anInteger = null;
 				try {
 					anInteger = Integer.parseInt(integerString);
@@ -1518,8 +1525,8 @@ public class MsoHeatUtils extends MsoCommonUtils {
 					else
 						newInputs.put(key, integerString);
 				}
-			} else if (type.equalsIgnoreCase("json")) {
-				String jsonString = inputs.get(key).toString();
+			} else if ("json".equalsIgnoreCase(type)) {
+				String jsonString = inputs.get(key);
     			JsonNode jsonNode = null;
     			try {
     				jsonNode = new ObjectMapper().readTree(jsonString);
@@ -1539,8 +1546,8 @@ public class MsoHeatUtils extends MsoCommonUtils {
     				else
     					newInputs.put(key, jsonString);
     			}
-			} else if (type.equalsIgnoreCase("comma_delimited_list")) {
-				String commaSeparated = inputs.get(key).toString();
+			} else if ("comma_delimited_list".equalsIgnoreCase(type)) {
+				String commaSeparated = inputs.get(key);
 				try {
 					ArrayList<String> anArrayList = this.convertCdlToArrayList(commaSeparated);
 					if (alias)
@@ -1554,8 +1561,8 @@ public class MsoHeatUtils extends MsoCommonUtils {
 					else
 						newInputs.put(key, commaSeparated);
 				}
-			} else if (type.equalsIgnoreCase("boolean")) {
-				String booleanString = inputs.get(key).toString();
+			} else if ("boolean".equalsIgnoreCase(type)) {
+				String booleanString = inputs.get(key);
 				Boolean aBool = new Boolean(booleanString);
 				if (alias)
 					newInputs.put(realName, aBool);
