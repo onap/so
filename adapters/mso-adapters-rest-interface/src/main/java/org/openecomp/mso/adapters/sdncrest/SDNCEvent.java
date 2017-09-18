@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +37,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.openecomp.mso.logger.MsoLogger;
 
 // NOTE: the JAXB (XML) annotations are required with JBoss AS7 and RESTEasy,
 //       even though we are using JSON exclusively.  The @NoJackson annotation
@@ -61,6 +63,8 @@ import java.util.Map;
 @NoJackson
 public class SDNCEvent implements Serializable {
 	private static final long serialVersionUID = 1L;
+	
+	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
 
 	// Event type
 	private String eventType;
@@ -143,7 +147,7 @@ public class SDNCEvent implements Serializable {
 			mapper.setSerializationInclusion(Inclusion.NON_NULL);
 			return mapper.writeValueAsString(this);
 		} catch (IOException e) {
-			e.printStackTrace();
+		    LOGGER.debug("Exception:", e);
 			throw new UnsupportedOperationException("Cannot convert "
 				+ getClass().getSimpleName() + " to JSON", e);
 		}

@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +21,12 @@
 
 package org.openecomp.mso.openstack.utils;
 
-
+import org.openecomp.mso.logger.MsoLogger;
 
 public class MsoHeatEnvironmentResource {
 
+    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
+    
 	private String name;
 	private String value;
 	
@@ -77,7 +80,7 @@ public class MsoHeatEnvironmentResource {
 		try {
 			result = this.name.hashCode();
 		} catch (Exception e) {
-			// in case it's null - return zero
+		    LOGGER.debug("Exception:", e);
 		}
 		return result;
 	}

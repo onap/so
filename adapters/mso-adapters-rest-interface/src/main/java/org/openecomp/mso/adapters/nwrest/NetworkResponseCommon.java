@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,12 +30,13 @@ import javax.xml.bind.Marshaller;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
-
+import org.openecomp.mso.logger.MsoLogger;
 /**
  * Everything that is common between all Volume Group Responses, except for QueryVolumeGroupResponse.
  */
 public abstract class NetworkResponseCommon {
 	private String messageId;
+	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
 
 	public NetworkResponseCommon() {
 		messageId = null;
@@ -59,7 +61,7 @@ public abstract class NetworkResponseCommon {
 			mapper.enable(SerializationConfig.Feature.WRAP_ROOT_VALUE);
 			jsonString = mapper.writeValueAsString(this);
 		} catch (Exception e) {
-			// ignore
+		    LOGGER.debug("Exception:", e);
 		}
 		return jsonString;
 	}
@@ -73,8 +75,7 @@ public abstract class NetworkResponseCommon {
 			marshaller.marshal(this, bs);
 			return bs.toString();
 		} catch (Exception e) {
-			// Shouldn't happen...
-			e.printStackTrace();
+		    LOGGER.debug("Exception:", e);
 			return "";
 		}
 	}
