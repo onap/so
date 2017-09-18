@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -271,7 +272,7 @@ public class SDNCRestClient implements Runnable {
 
 			msoLogger.error(MessageEnum.RA_EXCEPTION_COMMUNICATE_SDNC, "SDNC", "", MsoLogger.ErrorCode.AvailabilityError, "Exception while communicate with SDNC", e);
 			alarmLogger.sendAlarm("MsoInternalError", MsoAlarmLogger.CRITICAL, respMsg);
-			return(sdncResp);
+			return sdncResp;
 		}
 		finally
 		{
@@ -308,18 +309,23 @@ public class SDNCRestClient implements Runnable {
 			SDNCCallbackAdapterPortType cbPort = cbSvc.getSDNCCallbackAdapterSoapHttpPort();
 
 			BindingProvider bp = (BindingProvider)cbPort;
-
+			
+			if(null != wsdlUrl) {
 			bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, wsdlUrl.toExternalForm());
+			}
+			else {
+			    msoLogger.debug("wsdlUrl is NULL:");
+			}
 
 			//authentication
 			try
 			{
-				Map<String, Object> req_ctx = bp.getRequestContext();
-				Map<String, List<String>> headers = new HashMap<String, List<String>>();
+				Map<String, Object> reqCtx = bp.getRequestContext();
+				Map<String, List<String>> headers = new HashMap<>();
 				String userCredentials = msoPropertiesFactoryp.getMsoJavaProperties(MSO_PROP_SDNC_ADAPTER).getEncryptedProperty(Constants.BPEL_AUTH_PROP, Constants.DEFAULT_BPEL_AUTH, Constants.ENCRYPTION_KEY);
 
 				String basicAuth = "Basic " + DatatypeConverter.printBase64Binary(userCredentials.getBytes());
-				req_ctx.put(MessageContext.HTTP_REQUEST_HEADERS, headers);
+				reqCtx.put(MessageContext.HTTP_REQUEST_HEADERS, headers);
 				headers.put ("Authorization", Collections.singletonList(basicAuth));
 			}
 			catch (Exception e2) {

@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +21,7 @@
 package org.openecomp.mso.adapters.sdnc.sdncrest;
 
 import org.openecomp.mso.adapters.sdncrest.SDNCEvent;
+import org.openecomp.mso.logger.MsoLogger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
@@ -33,7 +35,13 @@ import java.text.ParseException;
  * SDNCConnector for "agnostic" API services.
  */
 public class SDNCEventParser {
-	/**
+    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
+    
+ // Instantiation is not allowed.
+    private SDNCEventParser() {
+    }
+    
+    /**
 	 * Parses SDNC event XML. If the content can be parsed and contains all required
 	 * elements, then an object is returned. Otherwise, a ParseException is thrown.
 	 * This method performs no logging or alarming.
@@ -79,7 +87,7 @@ public class SDNCEventParser {
 				} else if ("event-correlator".equals(child.getNodeName())) {
 					eventCorrelator = child.getTextContent();
 				} else if ("event-parameters".equals(child.getNodeName())) {
-					eventParameters = (Element) child;
+					eventParameters = child;
 				}
 			}
 
@@ -146,11 +154,8 @@ public class SDNCEventParser {
 		} catch (ParseException e) {
 			throw e;
 		} catch (Exception e) {
-			throw new ParseException("Failed to parse SDNC event", 0);
+		    LOGGER.debug("Exception:", e);
+			throw new ParseException("Failed to parse SDNC event:", 0 );
 		}
-	}
-
-	// Instantiation is not allowed.
-	private SDNCEventParser() {
 	}
 }

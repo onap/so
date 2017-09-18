@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -127,7 +128,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                                Holder <String> neutronNetworkId,
                                Holder <Map <String, String>> subnetIdMap,
                                Holder <NetworkRollback> rollback) throws NetworkException {
-    	Holder <String> networkFqdn = new Holder <String> ();
+    	Holder <String> networkFqdn = new Holder <> ();
         createNetwork (cloudSiteId,
                        tenantId,
                        networkType,
@@ -315,13 +316,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                     LOGGER.recordMetricEvent (queryNetworkStarttime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Response successfully received from OpenStack", "OpenStack", "QueryNetwork", null);
                 } catch (MsoException me) {
                     LOGGER.recordMetricEvent (queryNetworkStarttime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, "Exception while querying network from OpenStack", "OpenStack", "QueryNetwork", null);
-                    String error = "Create Network (neutron): query network " + networkName
-                                   + " in "
-                                   + cloudSiteId
-                                   + "/"
-                                   + tenantId
-                                   + ": "
-                                   + me;
                     LOGGER.error (MessageEnum.RA_QUERY_NETWORK_EXC, networkName, cloudSiteId, tenantId, "OpenStack", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception while querying network from OpenStack", me);
                     me.addContext (CREATE_NETWORK_CONTEXT);
                     LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, "Exception while querying network from OpenStack");
@@ -472,7 +466,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                         	networkFqdn.value = (String) heatStack.getOutputs().get(NETWORK_FQDN);
                         }
                         Map <String, Object> outputs = heatStack.getOutputs ();
-                        Map <String, String> sMap = new HashMap <String, String> ();
+                        Map <String, String> sMap = new HashMap <> ();
                         if (outputs != null) {
                         	for (String key : outputs.keySet ()) {
                         		if (key != null && key.startsWith ("subnet")) {
@@ -490,7 +484,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                         	}
                         }
                         subnetIdMap.value = sMap;
-                        String msg = "Found Existing network stack, status=" + heatStack.getStatus () + " for Heat mode";
                         LOGGER.warn (MessageEnum.RA_NETWORK_ALREADY_EXIST, networkName, cloudSiteId, tenantId, "", "", MsoLogger.ErrorCode.DataError, "Found Existing network stack, status=" + heatStack.getStatus ());
                         LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.Suc, "Found Existing network stack");
                     }
@@ -588,7 +581,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 
                 // Deploy the network stack
                 // Ignore MsoStackAlreadyExists exception because we already checked.
-                long createStackStartTime = System.currentTimeMillis ();
                 try {
                 	if (backout == null)
                 		backout = true;
@@ -628,7 +620,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 	networkFqdn.value = (String) heatStack.getOutputs().get(NETWORK_FQDN);
                 }
                 Map <String, Object> outputs = heatStack.getOutputs ();
-                Map <String, String> sMap = new HashMap <String, String> ();
+                Map <String, String> sMap = new HashMap <> ();
                 if (outputs != null) {
                     for (String key : outputs.keySet ()) {
                         if (key != null && key.startsWith ("subnet")) {
@@ -943,7 +935,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 String previousNetworkName = (String) heatParams.get("network_name");
                 String previousPhysicalNetwork = (String) heatParams.get(PHYSICAL_NETWORK);
 
-                List<Integer> previousVlans = new ArrayList<Integer>();
+                List<Integer> previousVlans = new ArrayList<>();
                 String vlansParam = (String) heatParams.get(VLANS);
                 if (vlansParam != null) {
                     for (String vlan : vlansParam.split(",")) {
@@ -1087,7 +1079,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 }
 
                 Map<String, Object> outputs = heatStack.getOutputs();
-                Map<String, String> sMap = new HashMap<String, String>();
+                Map<String, String> sMap = new HashMap<>();
                 if (outputs != null) {
                     for (String key : outputs.keySet()) {
                         if (key != null && key.startsWith("subnet")) {
@@ -1108,7 +1100,12 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 // Reach this point if createStack is successful.
                 // Populate remaining rollback info and response parameters.
                 networkRollback.setNetworkStackId(heatStack.getCanonicalName());
-                networkRollback.setNeutronNetworkId((String) outputs.get(NETWORK_ID));
+                if(null != outputs) {
+                    networkRollback.setNeutronNetworkId((String) outputs.get(NETWORK_ID));
+                }
+                else {
+                    LOGGER.debug("outputs is NULL");
+                }
                 networkRollback.setNetworkType(networkType);
                 // Save previous parameters
                 networkRollback.setNetworkName(previousNetworkName);
@@ -1332,8 +1329,8 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         MsoHeatUtils heat = new MsoHeatUtils (MSO_PROP_NETWORK_ADAPTER,msoPropertiesFactory,cloudConfigFactory);
         MsoNeutronUtils neutron = new MsoNeutronUtils (MSO_PROP_NETWORK_ADAPTER, cloudConfigFactory);
 
-        String mode = null;
-        String neutronId = null;
+        String mode;
+        String neutronId;
         // Try Heat first, since networks may be named the same as the Heat stack
         StackInfo heatStack = null;
         long queryStackStarttime = System.currentTimeMillis ();
@@ -1362,7 +1359,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             neutronId = (String) outputs.get (NETWORK_ID);
             mode = "HEAT";
 
-            Map <String, String> sMap = new HashMap <String, String> ();
+            Map <String, String> sMap = new HashMap <> ();
             if (outputs != null) {
             	for (String key : outputs.keySet ()) {
             		if (key != null && key.startsWith ("subnet_id_")) //multiples subnet_%aaid% outputs
@@ -1726,7 +1723,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                                                         String external,
                                                         boolean aic3template) {
         // Build the common set of HEAT template parameters
-        Map <String, Object> stackParams = new HashMap <String, Object> ();
+        Map <String, Object> stackParams = new HashMap <> ();
         stackParams.put ("network_name", networkName);
 
         if (neutronNetworkType == NetworkType.PROVIDER) {
@@ -1758,9 +1755,9 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             	if (!isNullOrEmpty(rt))
             	{
             		if (aic3template)
-            			buf.append (sep).append ("target:" + rt.toString ());
+            			buf.append (sep).append ("target:" + rt);
             		else
-            			buf.append (sep).append (rt.toString ());
+            			buf.append (sep).append (rt);
 
             		sep = ",";
             	}
@@ -1802,7 +1799,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     **/
     private void mergePolicyRefs(List <String> pFqdns, Map <String, Object> stackParams) throws MsoException {
 		//Resource Property
-		List<ContrailPolicyRef> prlist =  new ArrayList <ContrailPolicyRef> ();
+		List<ContrailPolicyRef> prlist =  new ArrayList <> ();
 		int index = 1;
 		for (String pf : pFqdns) {
 			if (!isNullOrEmpty(pf))
@@ -1837,7 +1834,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 			for (String pf : pFqdns) {
 				if (!isNullOrEmpty(pf))
 				{
-					buf.append (sep).append (pf.toString ());
+					buf.append (sep).append (pf);
 					sep = ",";
 				}
 			}
@@ -1860,7 +1857,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 			for (String rtf : rtFqdns) {
 				if (!isNullOrEmpty(rtf))
 				{
-					buf.append (sep).append (rtf.toString ());
+					buf.append (sep).append (rtf);
 					sep = ",";
 				}
 			}
@@ -1929,7 +1926,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     private String mergeSubnetsAIC3 (String heatTemplate, List <Subnet> subnets, Map <String, Object> stackParams) throws MsoException {
 
 		//Resource Property
-		List<ContrailSubnet> cslist =  new ArrayList <ContrailSubnet> ();
+		List<ContrailSubnet> cslist =  new ArrayList <> ();
 		for (Subnet subnet : subnets) {
 			ContrailSubnet cs = new ContrailSubnet();
 			LOGGER.debug("Input Subnet:" + subnet.toString());
@@ -1990,8 +1987,8 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     		String outputTempl = "  subnet_id_%subnetId%:\n" + "    description: Openstack subnet identifier\n"
     				+ "    value: {get_resource: subnet_%subnetId%}\n";
 
-    		String curR = "";
-    		String curO = "";
+    		String curR;
+    		String curO;
     		StringBuilder resourcesBuf = new StringBuilder ();
     		StringBuilder outputsBuf = new StringBuilder ();
     		for (Subnet subnet : subnets) {
@@ -2063,7 +2060,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 
     private Map <String, String> getSubnetUUId(String key,  Map <String, Object> outputs, List <Subnet> subnets) {
 
-    	Map <String, String> sMap = new HashMap <String, String> ();
+    	Map <String, String> sMap = new HashMap <> ();
 
     	try{
     		Object obj = outputs.get(key);
@@ -2107,7 +2104,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 
     private static String insertStr (String template, String snippet, int index) {
 
-        String updatedTemplate = "";
+        String updatedTemplate;
 
         LOGGER.debug ("Index:" + index + " Snippet:" + snippet);
 

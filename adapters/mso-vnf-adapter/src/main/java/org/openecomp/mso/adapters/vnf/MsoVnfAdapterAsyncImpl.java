@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,7 +59,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
 	CloudConfigFactory cloudConfigFactory=new CloudConfigFactory();
 
 	public static final String MSO_PROP_VNF_ADAPTER="MSO_PROP_VNF_ADAPTER";
-    private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
+    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
     private static MsoAlarmLogger alarmLogger = new MsoAlarmLogger ();
     private static final String BPEL_AUTH_PROP = "org.openecomp.mso.adapters.vnf.bpelauth";
     private static final String ENCRYPTION_KEY = "aa3871669d893c7fb8abbcda31b88b4f";
@@ -129,15 +130,13 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
         MsoLogger.setLogContext (msoRequest);
         MsoLogger.setServiceName (serviceName);
         LOGGER.info (MessageEnum.RA_ASYNC_CREATE_VNF, vnfName, vnfType, cloudSiteId, tenantId, "", "createVnfA");
-        // Will capture execution time for metrics
-        long startTime = System.currentTimeMillis ();
         // Use the synchronous method to perform the actual Create
         MsoVnfAdapter vnfAdapter = new MsoVnfAdapterImpl (msoPropertiesFactory, cloudConfigFactory);
 
         // Synchronous Web Service Outputs
-        Holder <String> vnfId = new Holder <String> ();
-        Holder <Map <String, String>> outputs = new Holder <Map <String, String>> ();
-        Holder <VnfRollback> vnfRollback = new Holder <VnfRollback> ();
+        Holder <String> vnfId = new Holder <> ();
+        Holder <Map <String, String>> outputs = new Holder <> ();
+        Holder <VnfRollback> vnfRollback = new Holder <> ();
 
         try {
             vnfAdapter.createVnf (cloudSiteId,
@@ -216,17 +215,15 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
         String serviceName = "UpdateVnfA";
         MsoLogger.setServiceName (serviceName);
         MsoLogger.setLogContext (msoRequest);
-        // Will capture execution time for metrics
-        long startTime = System.currentTimeMillis ();
         LOGGER.info (MessageEnum.RA_ASYNC_UPDATE_VNF, vnfName, vnfType, cloudSiteId, tenantId, "", "UpdateVnfA");
 
         // Use the synchronous method to perform the actual Create
         MsoVnfAdapter vnfAdapter = new MsoVnfAdapterImpl (msoPropertiesFactory,cloudConfigFactory);
 
         // Synchronous Web Service Outputs
-        Holder <String> vnfId = new Holder <String> ();
-        Holder <Map <String, String>> outputs = new Holder <Map <String, String>> ();
-        Holder <VnfRollback> vnfRollback = new Holder <VnfRollback> ();
+        Holder <String> vnfId = new Holder <> ();
+        Holder <Map <String, String>> outputs = new Holder <> ();
+        Holder <VnfRollback> vnfRollback = new Holder <> ();
 
         try {
             vnfAdapter.updateVnf (cloudSiteId, tenantId, vnfType,vnfVersion, vnfName, requestType, volumeGroupHeatStackId, inputs, msoRequest, outputs, vnfRollback);
@@ -299,18 +296,16 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
         String serviceName = "QueryVnfA";
         MsoLogger.setServiceName (serviceName);
         MsoLogger.setLogContext (msoRequest);
-        // Will capture execution time for metrics
-        long startTime = System.currentTimeMillis ();
         LOGGER.info (MessageEnum.RA_ASYNC_QUERY_VNF, vnfName, cloudSiteId, tenantId);
 
         // Use the synchronous method to perform the actual query
         MsoVnfAdapter vnfAdapter = new MsoVnfAdapterImpl (msoPropertiesFactory,cloudConfigFactory);
 
         // Synchronous Web Service Outputs
-        Holder <Boolean> vnfExists = new Holder <Boolean> ();
-        Holder <String> vnfId = new Holder <String> ();
-        Holder <VnfStatus> status = new Holder <VnfStatus> ();
-        Holder <Map <String, String>> outputs = new Holder <Map <String, String>> ();
+        Holder <Boolean> vnfExists = new Holder <> ();
+        Holder <String> vnfId = new Holder <> ();
+        Holder <VnfStatus> status = new Holder <> ();
+        Holder <Map <String, String>> outputs = new Holder <> ();
 
         try {
             vnfAdapter.queryVnf (cloudSiteId, tenantId, vnfName, msoRequest, vnfExists, vnfId, status, outputs);
@@ -391,8 +386,6 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
         String serviceName = "DeleteVnfA";
         MsoLogger.setServiceName (serviceName);
         MsoLogger.setLogContext (msoRequest);
-        // Will capture execution time for metrics
-        long startTime = System.currentTimeMillis ();
         LOGGER.info (MessageEnum.RA_ASYNC_DELETE_VNF, vnfName, cloudSiteId, tenantId);
 
         // Use the synchronous method to perform the actual delete
@@ -453,8 +446,6 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
     public void rollbackVnfA (VnfRollback rollback, String messageId, String notificationUrl) {
         String serviceName = "RollbackVnfA";
         MsoLogger.setServiceName (serviceName);
-        // Will capture execution time for metrics
-        long startTime = System.currentTimeMillis ();
         String error;
         // rollback may be null (e.g. if stack already existed when Create was called)
         if (rollback == null) {
@@ -542,7 +533,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
         CreateVnfNotification.Outputs outputs = new CreateVnfNotification.Outputs ();
 
         if (hMap != null && hMap.value != null) {
-            Map <String, String> sMap = new HashMap <String, String> ();
+            Map <String, String> sMap = new HashMap <> ();
             sMap = hMap.value;
             CreateVnfNotification.Outputs.Entry entry = new CreateVnfNotification.Outputs.Entry ();
 
@@ -560,7 +551,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
         UpdateVnfNotification.Outputs outputs = new UpdateVnfNotification.Outputs ();
 
         if (hMap != null && hMap.value != null) {
-            Map <String, String> sMap = new HashMap <String, String> ();
+            Map <String, String> sMap = new HashMap <> ();
             sMap = hMap.value;
             UpdateVnfNotification.Outputs.Entry entry = new UpdateVnfNotification.Outputs.Entry ();
 
@@ -578,7 +569,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
         QueryVnfNotification.Outputs outputs = new QueryVnfNotification.Outputs ();
 
         if (hMap != null && hMap.value != null) {
-            Map <String, String> sMap = new HashMap <String, String> ();
+            Map <String, String> sMap = new HashMap <> ();
             sMap = hMap.value;
 
             QueryVnfNotification.Outputs.Entry entry = new QueryVnfNotification.Outputs.Entry ();
@@ -625,21 +616,25 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
             LOGGER.error (MessageEnum.RA_INIT_NOTIF_EXC, "", "getNotifyEP", MsoLogger.ErrorCode.BusinessProcesssError, "MalformedURLException", e1);
         }
 
-        LOGGER.debug ("Notification Endpoint URL: " + epUrl.toExternalForm ());
-
-        bp.getRequestContext ().put (BindingProvider.ENDPOINT_ADDRESS_PROPERTY, epUrl.toExternalForm ());
+        if(null != epUrl) {
+            LOGGER.debug ("Notification Endpoint URL: " + epUrl.toExternalForm ());
+            bp.getRequestContext ().put (BindingProvider.ENDPOINT_ADDRESS_PROPERTY, epUrl.toExternalForm ());
+        }
+        else {
+            LOGGER.debug ("epUrl is NULL:");
+        }
 
         // authentication
         try {
-            Map <String, Object> req_ctx = bp.getRequestContext ();
-            Map <String, List <String>> headers = new HashMap <String, List <String>> ();
+            Map <String, Object> reqCtx = bp.getRequestContext ();
+            Map <String, List <String>> headers = new HashMap <> ();
 
             String userCredentials = msoPropertiesFactory.getMsoJavaProperties (MSO_PROP_VNF_ADAPTER).getEncryptedProperty (BPEL_AUTH_PROP,
                                                                                              "",
                                                                                              ENCRYPTION_KEY);
 
             String basicAuth = "Basic " + DatatypeConverter.printBase64Binary (userCredentials.getBytes ());
-            req_ctx.put (MessageContext.HTTP_REQUEST_HEADERS, headers);
+            reqCtx.put (MessageContext.HTTP_REQUEST_HEADERS, headers);
             headers.put ("Authorization", Collections.singletonList (basicAuth));
         } catch (Exception e) {
             LOGGER.error (MessageEnum.RA_SET_CALLBACK_AUTH_EXC, "", "getNotifyEP", MsoLogger.ErrorCode.BusinessProcesssError, "Exception - Unable to set authorization in callback request", e);

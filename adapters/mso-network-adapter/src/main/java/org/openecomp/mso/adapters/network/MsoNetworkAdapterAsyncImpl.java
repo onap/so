@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -131,10 +132,10 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
         MsoNetworkAdapter networkAdapter = new MsoNetworkAdapterImpl (msoPropertiesFactory,cloudConfigFactory);
 
         // Synchronous Web Service Outputs
-        Holder <String> networkId = new Holder <String> ();
-        Holder <String> neutronNetworkId = new Holder <String> ();
-        Holder <NetworkRollback> networkRollback = new Holder <NetworkRollback> ();
-        Holder <Map <String, String>> subnetIdMap = new Holder <Map <String, String>> ();
+        Holder <String> networkId = new Holder <> ();
+        Holder <String> neutronNetworkId = new Holder <> ();
+        Holder <NetworkRollback> networkRollback = new Holder <> ();
+        Holder <Map <String, String>> subnetIdMap = new Holder <> ();
 
         try {
             networkAdapter.createNetwork (cloudSiteId,
@@ -423,8 +424,6 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
                                 MsoRequest msoRequest,
                                 String notificationUrl) {
         String error;
-        // Will capture execution time for metrics
-        long startTime = System.currentTimeMillis ();
         MsoLogger.setLogContext (msoRequest);
         String serviceName = "DeleteNetworkA";
         MsoLogger.setServiceName (serviceName);
@@ -434,7 +433,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
         MsoNetworkAdapter networkAdapter = new MsoNetworkAdapterImpl (msoPropertiesFactory,cloudConfigFactory);
 
         // Synchronous Web Service Outputs
-        Holder <Boolean> networkDeleted = new Holder <Boolean> ();
+        Holder <Boolean> networkDeleted = new Holder <> ();
 
         try {
             networkAdapter.deleteNetwork (cloudSiteId, tenantId, networkType, modelCustomizationUuid, networkId, msoRequest, networkDeleted);
@@ -488,8 +487,6 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
         String error;
         String serviceName = "RollbackNetworkA";
         MsoLogger.setServiceName (serviceName);
-        // Will capture execution time for metrics
-        long startTime = System.currentTimeMillis ();
         // rollback may be null (e.g. if network already existed when Create was called)
         if (rollback == null) {
             LOGGER.warn (MessageEnum.RA_ROLLBACK_NULL, "", "", MsoLogger.ErrorCode.SchemaError, "Rollback is null");
@@ -602,13 +599,16 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
 
         if(null != epUrl) {
             LOGGER.debug ("Notification Endpoint URL: " + epUrl.toExternalForm ());
+            bp.getRequestContext ().put (BindingProvider.ENDPOINT_ADDRESS_PROPERTY, epUrl.toExternalForm ());
         }
-        bp.getRequestContext ().put (BindingProvider.ENDPOINT_ADDRESS_PROPERTY, epUrl.toExternalForm ());
+        else {
+        	LOGGER.debug ("Notification Endpoint URL is NULL: ");
+        }
 
         // authentication
         try {
             Map <String, Object> reqCtx = bp.getRequestContext ();
-            Map <String, List <String>> headers = new HashMap <String, List <String>> ();
+            Map <String, List <String>> headers = new HashMap <> ();
 
             String userCredentials = msoPropertiesFactory.getMsoJavaProperties (MSO_PROP_NETWORK_ADAPTER).getEncryptedProperty (BPEL_AUTH_PROP,
                                                                                              "",
@@ -631,7 +631,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
         CreateNetworkNotification.SubnetIdMap subnetIdMap = new CreateNetworkNotification.SubnetIdMap ();
 
         if (hMap != null && hMap.value != null) {
-            Map <String, String> sMap = new HashMap <String, String> ();
+            Map <String, String> sMap = new HashMap <> ();
             sMap = hMap.value;
             CreateNetworkNotification.SubnetIdMap.Entry entry = new CreateNetworkNotification.SubnetIdMap.Entry ();
 
@@ -649,7 +649,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
         UpdateNetworkNotification.SubnetIdMap subnetIdMap = new UpdateNetworkNotification.SubnetIdMap ();
 
         if (hMap != null && hMap.value != null) {
-            Map <String, String> sMap = new HashMap <String, String> ();
+            Map <String, String> sMap = new HashMap <> ();
             sMap = hMap.value;
             UpdateNetworkNotification.SubnetIdMap.Entry entry = new UpdateNetworkNotification.SubnetIdMap.Entry ();
 
@@ -667,7 +667,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
         QueryNetworkNotification.SubnetIdMap subnetIdMap = new QueryNetworkNotification.SubnetIdMap ();
 
         if (hMap != null && hMap.value != null) {
-            Map <String, String> sMap = new HashMap <String, String> ();
+            Map <String, String> sMap = new HashMap <> ();
             sMap = hMap.value;
             QueryNetworkNotification.SubnetIdMap.Entry entry = new QueryNetworkNotification.SubnetIdMap.Entry ();
 

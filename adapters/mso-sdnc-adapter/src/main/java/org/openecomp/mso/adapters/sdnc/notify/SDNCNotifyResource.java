@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -171,7 +172,7 @@ public class SDNCNotifyResource {
             msoLogger.error (MessageEnum.RA_MISSING_PARAM, Constants.SDNC_SVCCFGRESP_ROOT + Constants.SDNC_RESP_MSG, "SDNC", "SDNCNotify", MsoLogger.ErrorCode.DataError, "Exception - Missing param", e);
         }
 
-        String bpelUrl = null;
+        String bpelUrl;
         /*
          * TODO Hibernate
          * try {
@@ -182,8 +183,10 @@ public class SDNCNotifyResource {
          * logger.error("Unable to get SDNC_CALLBACK_URL from ActiveRequests, using default for reqid:" + reqId, e);
          * }
          */
+        
+        bpelUrl = SDNCAdapterPortTypeImpl.getProperty (Constants.BPEL_URL_PROP, Constants.DEFAULT_BPEL_URL,msoPropertiesFactory);
         if (bpelUrl == null) {
-            bpelUrl = SDNCAdapterPortTypeImpl.getProperty (Constants.BPEL_URL_PROP, Constants.DEFAULT_BPEL_URL,msoPropertiesFactory);
+            msoLogger.debug("bpelUrl is NULL:");
         }
 
         SDNCResponse sdncResp = new SDNCResponse (reqId);

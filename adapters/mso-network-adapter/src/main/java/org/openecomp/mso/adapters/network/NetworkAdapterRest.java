@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -135,11 +136,11 @@ public class NetworkAdapterRest {
 			LOGGER.debug ("CreateNetworkTask start");
 			try {
 				// Synchronous Web Service Outputs
-				Holder<String> networkId = new Holder<String>();
-				Holder<String> neutronNetworkId = new Holder<String>();
-				Holder<String> networkFqdn = new Holder<String>();
-				Holder<Map<String, String>> subnetIdMap = new Holder<Map<String, String>>();
-				Holder<NetworkRollback> rollback = new Holder<NetworkRollback>();
+				Holder<String> networkId = new Holder<>();
+				Holder<String> neutronNetworkId = new Holder<>();
+				Holder<String> networkFqdn = new Holder<>();
+				Holder<Map<String, String>> subnetIdMap = new Holder<>();
+				Holder<NetworkRollback> rollback = new Holder<>();
 
 				String cloudsite = req.getCloudSiteId();
 				if (cloudsite != null && cloudsite.equals(TESTING_KEYWORD)) {
@@ -211,6 +212,7 @@ public class NetworkAdapterRest {
 						rollback.value,
 						req.getMessageId());
 			} catch (NetworkException e) {
+			    LOGGER.debug ("Exception:", e);
 				eresp = new CreateNetworkError(
 					e.getMessage(), MsoExceptionCategory.INTERNAL, true, req.getMessageId());
 			}
@@ -292,7 +294,7 @@ public class NetworkAdapterRest {
 		public void run() {
 			LOGGER.debug("DeleteNetworkTask start");
 			try {
-				Holder<Boolean> networkDeleted = new Holder<Boolean>();
+				Holder<Boolean> networkDeleted = new Holder<>();
 				if (req.getCloudSiteId().equals(TESTING_KEYWORD)) {
 					networkDeleted.value = true;
 				} else {
@@ -307,6 +309,7 @@ public class NetworkAdapterRest {
 				}
 				response = new DeleteNetworkResponse(req.getNetworkId(), networkDeleted.value, req.getMessageId());
 			} catch (NetworkException e) {
+			    LOGGER.debug ("Exception:", e);
 				eresp = new DeleteNetworkError(e.getMessage(), MsoExceptionCategory.INTERNAL, true, req.getMessageId());
 			}
 			if (!req.isSynchronous()) {
@@ -337,12 +340,12 @@ public class NetworkAdapterRest {
 		try {
 			int respStatus = HttpStatus.SC_OK;
 			QueryNetworkResponse resp = new QueryNetworkResponse(networkStackId, null, networkStackId, null, null);
-			Holder<Boolean> networkExists = new Holder<Boolean>();
-            Holder<String> networkId = new Holder<String>();
-            Holder<String> neutronNetworkId = new Holder<String>();
-            Holder<NetworkStatus> status = new Holder<NetworkStatus>();
-            Holder<List<String>> routeTargets = new Holder<List<String>>();
-            Holder<Map<String, String>> subnetIdMap = new Holder<Map<String, String>>();
+			Holder<Boolean> networkExists = new Holder<>();
+            Holder<String> networkId = new Holder<>();
+            Holder<String> neutronNetworkId = new Holder<>();
+            Holder<NetworkStatus> status = new Holder<>();
+            Holder<List<String>> routeTargets = new Holder<>();
+            Holder<Map<String, String>> subnetIdMap = new Holder<>();
 
 			adapter.queryNetworkContrail(cloudSiteId,  tenantId, aaiNetworkId,  msoRequest,
 				networkExists, networkId, neutronNetworkId, status, routeTargets, subnetIdMap);
@@ -441,6 +444,7 @@ public class NetworkAdapterRest {
 				adapter.rollbackNetwork(nwr);
 				response = new RollbackNetworkResponse(true, req.getMessageId());
 			} catch (NetworkException e) {
+			    LOGGER.debug ("Exception:", e);
 				eresp = new RollbackNetworkError(e.getMessage(), MsoExceptionCategory.INTERNAL, true, req.getMessageId());
 			}
 			if (!req.isSynchronous()) {
@@ -521,8 +525,8 @@ public class NetworkAdapterRest {
 		public void run() {
 			LOGGER.debug("UpdateNetworkTask start");
 			try {
-				Holder<Map<String, String>> subnetIdMap = new Holder<Map<String, String>>();
-				Holder<NetworkRollback> rollback = new Holder<NetworkRollback> ();
+				Holder<Map<String, String>> subnetIdMap = new Holder<>();
+				Holder<NetworkRollback> rollback = new Holder<> ();
 
 				if (req.getCloudSiteId().equals(TESTING_KEYWORD)) {
 					subnetIdMap.value = testMap();
@@ -579,6 +583,7 @@ public class NetworkAdapterRest {
 					subnetIdMap.value,
 					req.getMessageId());
 			} catch (NetworkException e) {
+			    LOGGER.debug ("Exception:", e);
 				eresp = new UpdateNetworkError(e.getMessage(), MsoExceptionCategory.INTERNAL, true, req.getMessageId());
 			}
 			if (!req.isSynchronous()) {
@@ -591,7 +596,7 @@ public class NetworkAdapterRest {
 	}
 
 	public static Map<String, String> testMap() {
-		Map<String, String> m = new HashMap<String, String>();
+		Map<String, String> m = new HashMap<>();
 		m.put("mickey", "7");
 		m.put("clyde", "10");
 		m.put("wayne", "99");
