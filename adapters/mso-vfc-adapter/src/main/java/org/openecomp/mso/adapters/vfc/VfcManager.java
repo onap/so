@@ -85,7 +85,7 @@ public class VfcManager {
     public RestfulResponse createNs(NSResourceInputParameter segInput) throws ApplicationException {
 
         // Step1: get service template by node type
-        String nsdId = segInput.getNsOperationKey().getNodeTemplateId();
+        String nsdId = segInput.getNsOperationKey().getNodeTemplateUUID();
         // nsdId for NFVO is "id" in the response, while for SDNO is "servcice template id"
         LOGGER.info("serviceTemplateId is {}, id is {}", nsdId);
 
@@ -97,8 +97,8 @@ public class VfcManager {
         // Step3: Prepare restful parameters and options
         NsCreateReq oRequest = new NsCreateReq();
         oRequest.setNsdId(nsdId);
-        oRequest.setNsName(segInput.getSubServiceName());
-        oRequest.setDescription(segInput.getSubServiceDesc());
+        oRequest.setNsName(segInput.getNsServiceName());
+        oRequest.setDescription(segInput.getNsServiceDescription());
         String createReq = JsonUtil.marshal(oRequest);
 
         // Step4: Call NFVO or SDNO lcm to create ns
@@ -122,7 +122,7 @@ public class VfcManager {
         // Step 6: save resource operation information
         ResourceOperationStatus nsOperInfo = (RequestsDatabase.getInstance()).getResourceOperationStatus(
                 segInput.getNsOperationKey().getServiceId(), segInput.getNsOperationKey().getOperationId(),
-                segInput.getNsOperationKey().getNodeTemplateId());
+                segInput.getNsOperationKey().getNodeTemplateUUID());
         nsOperInfo.setStatus(RequestsDbConstant.Status.PROCESSING);
         (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
 
@@ -159,7 +159,7 @@ public class VfcManager {
         LOGGER.info("delete ns response content is : {}", deleteRsp.getResponseContent());
         LOGGER.info("delete ns -> end");
         ResourceOperationStatus nsOperInfo = (RequestsDatabase.getInstance()).getResourceOperationStatus(nsOperationKey.getServiceId(),
-                nsOperationKey.getOperationId(), nsOperationKey.getNodeTemplateId());
+                nsOperationKey.getOperationId(), nsOperationKey.getNodeTemplateUUID());
         if(!HttpCode.isSucess(deleteRsp.getStatus())) {
             LOGGER.error("fail to delete ns");
 
@@ -218,7 +218,7 @@ public class VfcManager {
         String jobId = rsp.get(CommonConstant.JOB_ID);
         ResourceOperationStatus nsOperInfo = (RequestsDatabase.getInstance()).getResourceOperationStatus(
                 segInput.getNsOperationKey().getServiceId(), segInput.getNsOperationKey().getOperationId(),
-                segInput.getNsOperationKey().getNodeTemplateId());
+                segInput.getNsOperationKey().getNodeTemplateUUID());
         if(ValidateUtil.isStrEmpty(jobId)) {
             LOGGER.error("Invalid jobId from instantiate operation");
             nsOperInfo.setStatus(RequestsDbConstant.Status.ERROR);
@@ -261,7 +261,7 @@ public class VfcManager {
         // Step1: save segment operation info for delete process
         LOGGER.info("save segment operation for delete process");
         ResourceOperationStatus nsOperInfo = (RequestsDatabase.getInstance()).getResourceOperationStatus(nsOperationKey.getServiceId(),
-                nsOperationKey.getOperationId(), nsOperationKey.getNodeTemplateId());
+                nsOperationKey.getOperationId(), nsOperationKey.getNodeTemplateUUID());
         nsOperInfo.setStatus(RequestsDbConstant.Status.PROCESSING);
         (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
 
@@ -327,7 +327,7 @@ public class VfcManager {
         ValidateUtil.assertObjectNotNull(jobId);
         // Step 1: query the current resource operation status
         ResourceOperationStatus nsOperInfo = (RequestsDatabase.getInstance()).getResourceOperationStatus(nsOperationKey.getServiceId(),
-                nsOperationKey.getOperationId(), nsOperationKey.getNodeTemplateId());
+                nsOperationKey.getOperationId(), nsOperationKey.getNodeTemplateUUID());
 
         // Step 2: start query
         LOGGER.info("query ns status -> begin");

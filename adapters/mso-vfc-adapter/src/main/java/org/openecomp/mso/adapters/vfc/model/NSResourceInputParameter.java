@@ -30,38 +30,44 @@ public class NSResourceInputParameter {
 
     private NsOperationKey nsOperationKey;
 
-    private String subServiceName;
+    private String nsServiceName;
 
-    private String subServiceDesc;
+    private String nsServiceDescription;
 
     private NsParameters nsParameters;
 
+
+
+    
     /**
-     * @return Returns the subServiceName.
+     * @return Returns the nsServiceName.
      */
-    public String getSubServiceName() {
-        return subServiceName;
+    public String getNsServiceName() {
+        return nsServiceName;
     }
 
+    
     /**
-     * @param subServiceName The subServiceName to set.
+     * @param nsServiceName The nsServiceName to set.
      */
-    public void setSubServiceName(String subServiceName) {
-        this.subServiceName = subServiceName;
+    public void setNsServiceName(String nsServiceName) {
+        this.nsServiceName = nsServiceName;
     }
 
+    
     /**
-     * @return Returns the subServiceDesc.
+     * @return Returns the nsServiceDescription.
      */
-    public String getSubServiceDesc() {
-        return subServiceDesc;
+    public String getNsServiceDescription() {
+        return nsServiceDescription;
     }
 
+    
     /**
-     * @param subServiceDesc The subServiceDesc to set.
+     * @param nsServiceDescription The nsServiceDescription to set.
      */
-    public void setSubServiceDesc(String subServiceDesc) {
-        this.subServiceDesc = subServiceDesc;
+    public void setNsServiceDescription(String nsServiceDescription) {
+        this.nsServiceDescription = nsServiceDescription;
     }
 
     /**

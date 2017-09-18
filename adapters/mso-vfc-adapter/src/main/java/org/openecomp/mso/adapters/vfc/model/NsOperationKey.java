@@ -43,7 +43,7 @@ public class NsOperationKey {
     /**
      * the NS template uuid
      */
-    private String nodeTemplateId;
+    private String nodeTemplateUUID;
 
     /**
      * 
@@ -89,26 +89,20 @@ public class NsOperationKey {
         this.operationId = operationId;
     }
 
+    
     /**
-     * 
-     * <br>
-     * 
-     * @return
-     * @since ONAP Amsterdam Release
+     * @return Returns the nodeTemplateUUID.
      */
-    public String getNodeTemplateId() {
-        return nodeTemplateId;
+    public String getNodeTemplateUUID() {
+        return nodeTemplateUUID;
     }
 
-    /**
-     * 
-     * <br>
-     * 
-     * @param nodeTemplateId
-     * @since ONAP Amsterdam Release
-     */
-    public void setNodeTemplateId(String nodeTemplateId) {
-        this.nodeTemplateId = nodeTemplateId;
-    }
     
+    /**
+     * @param nodeTemplateUUID The nodeTemplateUUID to set.
+     */
+    public void setNodeTemplateUUID(String nodeTemplateUUID) {
+        this.nodeTemplateUUID = nodeTemplateUUID;
+    }
+
 }
