@@ -50,6 +50,13 @@ public class CreateGenericE2EServiceInstance extends AbstractServiceTaskProcesso
 
     VidUtils vidUtils = new VidUtils()
 
+    /**
+     * Pre Process the BPMN Flow Request
+     * Inclouds:
+     * Deal with the parameters
+     * generate the service instance id
+     * generate the operation id
+     */
     public void preProcessRequest (Execution execution) {
 	   def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
        String msg = ""
@@ -70,10 +77,19 @@ public class CreateGenericE2EServiceInstance extends AbstractServiceTaskProcesso
            utils.log("DEBUG", "Generated new Service Instance:" + serviceInstanceId, isDebugEnabled)
            serviceInstanceId = UriUtils.encode(serviceInstanceId,"UTF-8")
            execution.setVariable("serviceInstanceId", serviceInstanceId)
-
+           
+           String operationId = execution.getVariable("operationId")
+           if (isBlank(operationId)) {
+               operationId = UUID.randomUUID().toString()
+           }
+           utils.log("DEBUG", "Generated new Service Instance Operation:" + operationId, isDebugEnabled)
+           serviceInstanceId = UriUtils.encode(operationId,"UTF-8")
+           execution.setVariable("operationId", operationId)
            //subscriberInfo, TBD , there is no globalSubscriberId in R1 for E2E Service.
            //requestInfo TBD , there is no requestDetails for R1 E2E service
 
+           //TBD need to insert operationInfo to RequestDb
+           
            //set service Instance Name
            execution.setVariable("serviceInstanceName", jsonUtil.getJsonValue(siRequest, "service.name"))
            execution.setVariable("serviceDescription", jsonUtil.getJsonValue(siRequest, "service.description"))
@@ -101,7 +117,30 @@ public class CreateGenericE2EServiceInstance extends AbstractServiceTaskProcesso
        utils.log("DEBUG"," ***** Exit preProcessRequest *****",  isDebugEnabled)
 	}
 
+    /**
+     * send the sync response
+     * the response incloudes the instance id and the operation id
+     */
     public void sendSyncResponse(Execution execution) {
+        def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+        utils.log("DEBUG", " *** sendSyncResponse *** ", isDebugEnabled)
+
+        try {
+            String requestId = execution.getVariable("msoRequestId")
+            String serviceInstanceId = execution.getVariable("serviceInstanceId")
+            String operationId = execution.getVariable("operationId")
+            // RESTResponse for API Handler (APIH) Reply Task
+            String createServiceRestResponse = """{"service":{"serviceId":"${serviceInstanceId}","operationId":"${operationId}"}}""".trim()
+            utils.log("DEBUG", " sendSyncResponse to APIH:" + "\n" + createServiceRestResponse, isDebugEnabled)
+            sendWorkflowResponse(execution, 202, createServiceRestResponse)
+            execution.setVariable("sentSyncResponse", true)
+
+        } catch (Exception ex) {
+            String msg = "Exceptuion in sendSyncResponse:" + ex.getMessage()
+            utils.log("DEBUG", msg, isDebugEnabled)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+        }
+        utils.log("DEBUG"," ***** Exit sendSyncResopnse *****",  isDebugEnabled)
     }
 
     public void preCreateRequest(Execution execution) {
