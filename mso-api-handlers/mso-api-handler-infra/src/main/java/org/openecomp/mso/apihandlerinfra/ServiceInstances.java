@@ -73,10 +73,10 @@ import com.wordnik.swagger.annotations.ApiOperation;
 @Api(value="/serviceInstances",description="API Requests for Service Instances")
 public class ServiceInstances {
 
-	private HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+	private HashMap<String, String> instanceIdMap = new HashMap<>();
 	private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH);
 	private static MsoAlarmLogger alarmLogger = new MsoAlarmLogger ();
-	public final static String MSO_PROP_APIHANDLER_INFRA = "MSO_PROP_APIHANDLER_INFRA";
+	public static final  String MSO_PROP_APIHANDLER_INFRA = "MSO_PROP_APIHANDLER_INFRA";
 
 	@POST
 	@Path("/{version:[vV][3-5]}")
@@ -404,7 +404,7 @@ public class ServiceInstances {
 		String instanceName = sir.getRequestDetails().getRequestInfo().getInstanceName();
 		String requestScope = sir.getRequestDetails().getModelInfo().getModelType().name();
 		try {
-			if(!(instanceName==null && requestScope.equals("service") && (action == Action.createInstance || action == Action.activateInstance))){
+			if(!(instanceName==null && "service".equals(requestScope) && (action == Action.createInstance || action == Action.activateInstance))){
 				dup = (RequestsDatabase.getInstance()).checkInstanceNameDuplicate (instanceIdMap, instanceName, requestScope);
 			}
 		} catch (Exception e) {
@@ -423,7 +423,7 @@ public class ServiceInstances {
 
 		if (dup != null) {
 			// Found the duplicate record. Return the appropriate error.
-			String instance = null;
+			String instance;
 			if(instanceName != null){
 				instance = instanceName;
 			}else{
@@ -533,7 +533,7 @@ public class ServiceInstances {
 			String asdcServiceModelVersion = msoRequest.getAsdcServiceModelVersion ();
 
 			// Get VF Module-specific base module indicator
-			VfModule vfm = null;
+			VfModule vfm;
 
 			String modelVersionId = msoRequest.getModelInfo().getModelVersionId();
 
@@ -627,7 +627,7 @@ public class ServiceInstances {
 			// Capture audit event
 			msoLogger.debug ("MSO API Handler Posting call to BPEL engine for url: " + requestClient.getUrl ());
 
-			System.out.println("URL : " + requestClient.getUrl ());
+			msoLogger.debug ("URL : " + requestClient.getUrl ());
 
 			response = requestClient.post(requestId, isBaseVfModule, recipeLookupResult.getRecipeTimeout (), action.name (),
 					serviceInstanceId, vnfId, vfModuleId, volumeGroupId, networkId,
@@ -684,7 +684,7 @@ public class ServiceInstances {
 			msoLogger.debug ("End of the transaction, the final response is: " + (String) camundaJSONResponseBody);
 			return Response.status (HttpStatus.SC_ACCEPTED).entity (camundaJSONResponseBody).build ();
 		} else {
-			List<String> variables = new ArrayList<String>();
+			List<String> variables = new ArrayList<>();
 			variables.add(bpelStatus + "");
 			String camundaJSONResponseBody = respHandler.getResponseBody ();
 			if (camundaJSONResponseBody != null && !camundaJSONResponseBody.isEmpty ()) {
@@ -754,7 +754,7 @@ public class ServiceInstances {
 		// TODO need to make this a configurable property
 		String defaultServiceModelName = msoRequest.getRequestInfo().getSource() + "_DEFAULT";
 
-		Service serviceRecord = null;
+		Service serviceRecord;
 		ModelInfo modelInfo = msoRequest.getModelInfo();
 		if(msoRequest.getALaCarteFlag()){
 			serviceRecord = db.getServiceByModelName(defaultServiceModelName);
@@ -840,7 +840,7 @@ public class ServiceInstances {
 				//    				1.	If modelCustomizationName is NOT provided on a vnf/vfModule request, use modelCustomizationId to look it up in our catalog to construct vnf-type value to pass to BPMN.
 
 				VnfResource vnfResource = null;
-				VnfResourceCustomization vrc = null;
+				VnfResourceCustomization vrc;
 				// Validation for vnfResource
 
 				if(modelCustomizationId!=null) {
@@ -893,7 +893,7 @@ public class ServiceInstances {
 
 				if(!msoRequest.getALaCarteFlag()) {
 					VfModuleCustomization vfmc = null;
-					VnfResourceCustomization vnfrc = null;
+					VnfResourceCustomization vnfrc;
 					VfModule vfModule = null;
 
 					if( modelInfo.getModelCustomizationId() != null) {
@@ -971,7 +971,7 @@ public class ServiceInstances {
 
 		ModelInfo modelInfo = msoRequest.getModelInfo();
 		String modelName = modelInfo.getModelName();
-		Recipe recipe = null;
+		Recipe recipe;
 		if(msoRequest.getALaCarteFlag()){
 			recipe = db.getNetworkRecipe(defaultNetworkType, action.name());
 		}else{

@@ -87,8 +87,6 @@ public class ToscaResourceInstaller {// implements IVfResourceInstaller {
 
 	private MsoLogger logger;
 	
-	private Service catalogService;
-	
 	private static final Pattern lastDigit = Pattern.compile("(\\d+)$");
 
 	public ToscaResourceInstaller()  {
@@ -98,7 +96,6 @@ public class ToscaResourceInstaller {// implements IVfResourceInstaller {
 	//@Override
 	public boolean isResourceAlreadyDeployed(VfResourceStructure vfResourceStruct)
 			throws ArtifactInstallerException {
-		CatalogDatabase db = CatalogDatabase.getInstance();
 		boolean status = false;
 		VfResourceStructure vfResourceStructure = (VfResourceStructure)vfResourceStruct;
 		
@@ -178,8 +175,6 @@ public class ToscaResourceInstaller {// implements IVfResourceInstaller {
 		try {
 
 			
-			String vfModuleModelUUID = null;
-			
 			createToscaCsar(toscaResourceStruct);
 			
 			catalogDB.saveToscaCsar(toscaResourceStruct.getCatalogToscaCsar());
@@ -225,10 +220,10 @@ public class ToscaResourceInstaller {// implements IVfResourceInstaller {
 				// get the Main IArtifactInfo
 
 				HeatTemplate heatMainTemplate = null;
-				HeatEnvironment heatEnv = null;
+				HeatEnvironment heatEnv;
 				
 				HeatTemplate heatVolumeTemplate = null;
-				HeatEnvironment heatVolumeEnv = null;
+				HeatEnvironment heatVolumeEnv;
 				
 				
 				IVfModuleData vfMetadata = vfModuleStructure.getVfModuleMetadata();
@@ -571,8 +566,7 @@ public class ToscaResourceInstaller {// implements IVfResourceInstaller {
 				logger.warn(MessageEnum.ASDC_ARTIFACT_ALREADY_DEPLOYED, vfResourceStructure.getResourceInstance().getResourceName(),
 						vfResourceStructure.getNotification().getServiceVersion(), "", "", MsoLogger.ErrorCode.DataError, "Exception - ASCDC Artifact already deployed", e);
 			} else {
-				String endEvent = "Exception caught during installation of " + vfResourceStructure.getResourceInstance().getResourceName() + ". Transaction rollback.";
-				String elementToLog = (artifactListForLogging.size() > 0 ? artifactListForLogging.get(artifactListForLogging.size()-1).toString() : "No element listed");
+			    String elementToLog = (artifactListForLogging.size() > 0 ? artifactListForLogging.get(artifactListForLogging.size()-1).toString() : "No element listed");
 				logger.error(MessageEnum.ASDC_ARTIFACT_INSTALL_EXC, elementToLog, "", "", MsoLogger.ErrorCode.DataError, "Exception caught during installation of " + vfResourceStructure.getResourceInstance().getResourceName() + ". Transaction rollback", e);
 				catalogDB.rollback();
 				throw new ArtifactInstallerException(
@@ -642,7 +636,7 @@ public class ToscaResourceInstaller {// implements IVfResourceInstaller {
 //		heatTemplate.setAsdcResourceName(vfResourceStructure.getResourceInstance().getResourceName());
 		heatTemplate.setAsdcUuid(vfModuleArtifact.getArtifactInfo().getArtifactUUID());
 		
-		List<String> typeList = new ArrayList<String>();
+		List<String> typeList = new ArrayList<>();
 		typeList.add(ASDCConfiguration.HEAT_NESTED);
 		typeList.add(ASDCConfiguration.HEAT_ARTIFACT);
 		
@@ -684,7 +678,7 @@ public class ToscaResourceInstaller {// implements IVfResourceInstaller {
 		// TODO Set the label
 //		heatEnvironment.setAsdcLabel("Label");
 		
-		List<String> typeList = new ArrayList<String>();
+		List<String> typeList = new ArrayList<>();
 		typeList.add(ASDCConfiguration.HEAT);
 		typeList.add(ASDCConfiguration.HEAT_VOL);
 		
@@ -835,7 +829,6 @@ public class ToscaResourceInstaller {// implements IVfResourceInstaller {
 	
 	private static void createVFModule(Group group, NodeTemplate nodeTemplate, ToscaResourceStructure toscaResourceStructure, VfResourceStructure vfResourceStructure, IVfModuleData vfModuleData) {
 		VfModule vfModule = new VfModule();
-		boolean isBase = false;
 		
 		Metadata vfMetadata = group.getMetadata();
 		
@@ -895,7 +888,7 @@ public class ToscaResourceInstaller {// implements IVfResourceInstaller {
 			vfModule.setVnfResourceModelUUId(toscaResourceStructure.getCatalogVnfResource().getModelUuid());		
 			
 			String vfModuleType = toscaResourceStructure.getSdcCsarHelper().getGroupPropertyLeafValue(group, SdcPropertyNames.PROPERTY_NAME_VFMODULETYPE);
-			if(vfModuleType != null && vfModuleType.equalsIgnoreCase("Base")){
+			if(vfModuleType != null && "Base".equalsIgnoreCase(vfModuleType)){
 				vfModule.setIsBase(1);	
 			}else {
 				vfModule.setIsBase(0);
@@ -1100,7 +1093,7 @@ public class ToscaResourceInstaller {// implements IVfResourceInstaller {
 	private static String testNull(Object object) {
 		if (object == null) {
 			return "";
-		} else if (object.equals("null")) {
+		} else if ("null".equals(object)) {
 			return null;
 		}else if (object instanceof Integer) {
 			return object.toString();
