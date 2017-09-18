@@ -130,31 +130,37 @@ public class RestfulUtil {
             if(httpResponse.getStatusLine().getStatusCode() >= 300) {
                 String errMsg = "VFC returned " + statusCode + " " + statusMessage;
                 logError(errMsg);
-                return CreateResponse(statusCode, errMsg);
+                return createResponse(statusCode, errMsg);
             }
 
             httpResponse = null;
 
-            method.reset();
+            if(null != method) {
+                method.reset();
+            }
+            else {
+                LOGGER.debug("method is NULL:");
+            }
+            
             method = null;
 
             LOGGER.info(MessageEnum.RA_RESPONSE_FROM_SDNC, responseContent, "SDNC", "");
-            return CreateResponse(statusCode, responseContent);
+            return createResponse(statusCode, responseContent);
 
         } catch(SocketTimeoutException e) {
             String errMsg = "Request to SDNC timed out";
             logError(errMsg, e);
-            return CreateResponse(HttpURLConnection.HTTP_CLIENT_TIMEOUT, errMsg);
+            return createResponse(HttpURLConnection.HTTP_CLIENT_TIMEOUT, errMsg);
 
         } catch(ConnectTimeoutException e) {
             String errMsg = "Request to SDNC timed out";
             logError(errMsg, e);
-            return CreateResponse(HttpURLConnection.HTTP_CLIENT_TIMEOUT, errMsg);
+            return createResponse(HttpURLConnection.HTTP_CLIENT_TIMEOUT, errMsg);
 
         } catch(Exception e) {
             String errMsg = "Error processing request to SDNC";
             logError(errMsg, e);
-            return CreateResponse(HttpURLConnection.HTTP_INTERNAL_ERROR, errMsg);
+            return createResponse(HttpURLConnection.HTTP_INTERNAL_ERROR, errMsg);
 
         } finally {
             if(httpResponse != null) {
@@ -185,7 +191,7 @@ public class RestfulUtil {
         ALARMLOGGER.sendAlarm("MsoInternalError", MsoAlarmLogger.CRITICAL, errMsg);
     }
 
-    private static RestfulResponse CreateResponse(int statusCode, String content) {
+    private static RestfulResponse createResponse(int statusCode, String content) {
         RestfulResponse rsp = new RestfulResponse();
         rsp.setStatus(statusCode);
         rsp.setResponseContent(content);

@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -103,9 +104,15 @@ public abstract class SDNCConnector {
 			String userCredentials = SDNCAdapterProperties.getEncryptedProperty(Constants.SDNC_AUTH_PROP,
 				Constants.DEFAULT_SDNC_AUTH, Constants.ENCRYPTION_KEY);
 			String authorization = "Basic " + DatatypeConverter.printBase64Binary(userCredentials.getBytes());
-			method.setHeader("Authorization", authorization);
+			if(null != method) {
+			    method.setHeader("Authorization", authorization);
+			    method.setHeader("Accept", "application/yang.data+xml");
+			}
+			else {
+			    LOGGER.debug("method is NULL:");
+			}
 
-			method.setHeader("Accept", "application/yang.data+xml");
+			
 
 			httpResponse = client.execute(method);
 
@@ -134,8 +141,14 @@ public abstract class SDNCConnector {
 			}
 
 			httpResponse = null;
+			
+			if(null != method) {
+	            method.reset();
+			}
+            else {
+                LOGGER.debug("method is NULL:");
+            }
 
-			method.reset();
 			method = null;
 
 			LOGGER.info(MessageEnum.RA_RESPONSE_FROM_SDNC, responseContent, "SDNC", "");
@@ -161,7 +174,7 @@ public abstract class SDNCConnector {
 				try {
 					EntityUtils.consume(httpResponse.getEntity());
 				} catch (Exception e) {
-					// Ignore
+				    LOGGER.debug("Exception:", e);
 				}
 			}
 
@@ -169,7 +182,7 @@ public abstract class SDNCConnector {
 				try {
 					method.reset();
 				} catch (Exception e) {
-					// Ignore
+				    LOGGER.debug("Exception:", e);
 				}
 			}
 		}

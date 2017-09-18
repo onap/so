@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,12 +35,14 @@ import java.net.HttpURLConnection;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import org.openecomp.mso.logger.MsoLogger;
 
 /**
  * SDNCConnector for "agnostic" API services.
  */
 public class SDNCServiceRequestConnector extends SDNCConnector {
 
+    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
 	@Override
 	protected SDNCResponseCommon createResponseFromContent(int statusCode, String statusMessage,
 			String responseContent, TypedRequestTunables rt) {
@@ -99,7 +102,7 @@ public class SDNCServiceRequestConnector extends SDNCConnector {
 			String responseMessage = null;
 			String svcRequestId = null;
 			String ackFinalIndicator = null;
-			List<Element> responseParameters = new ArrayList<Element>();
+			List<Element> responseParameters = new ArrayList<>();
 
 			for (Element child : SDNCAdapterUtils.childElements(configurationResponseCommon)) {
 				if ("response-code".equals(child.getNodeName())) {
@@ -133,7 +136,7 @@ public class SDNCServiceRequestConnector extends SDNCConnector {
 				ackFinalIndicator = "Y";
 			}
 
-			if (!ackFinalIndicator.equals("Y") && !ackFinalIndicator.equals("N")) {
+			if (!ackFinalIndicator.equals("Y") && !"N".equals(ackFinalIndicator)) {
 				throw new ParseException("Invalid ack-final-indicator in SDNC response: '" + ackFinalIndicator + "'", 0);
 			}
 
@@ -189,6 +192,7 @@ public class SDNCServiceRequestConnector extends SDNCConnector {
 		} catch (ParseException e) {
 			throw e;
 		} catch (Exception e) {
+		    LOGGER.debug("Exception:", e);
 			throw new ParseException("Failed to parse SDNC response", 0);
 		}
 	}

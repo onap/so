@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,16 +28,24 @@ import org.w3c.dom.NodeList;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import org.openecomp.mso.logger.MsoLogger;
 
 /**
  * Utility methods used by SDNCAdapterRest.
  */
 public final class SDNCAdapterUtils {
-	/**
+    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
+    /**
+     * Instantiation is not allowed.
+     */
+    private SDNCAdapterUtils() {
+    }
+    
+    /**
 	 * Returns a node's child elements in a list.
 	 */
 	public static List<Element> childElements(Node node) {
-		List<Element> elements = new ArrayList<Element>();
+		List<Element> elements = new ArrayList<>();
 
 		NodeList nodeList = node.getChildNodes();
 		for (int i = 0; i < nodeList.getLength(); i++) {
@@ -58,13 +67,8 @@ public final class SDNCAdapterUtils {
 		try {
 			return UriUtils.encodePathSegment(pathSegment, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
+		    LOGGER.debug("Exception:", e);
 			throw new RuntimeException("UTF-8 encoding is not supported");
 		}
-	}
-
-	/**
-	 * Instantiation is not allowed.
-	 */
-	private SDNCAdapterUtils() {
 	}
 }
