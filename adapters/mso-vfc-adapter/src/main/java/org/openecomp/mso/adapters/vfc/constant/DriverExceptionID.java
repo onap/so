@@ -17,6 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.mso.adapters.vfc.constant;
 
 /**
@@ -30,12 +31,6 @@ package org.openecomp.mso.adapters.vfc.constant;
  */
 public class DriverExceptionID {
 
-    public static final String INVALID_PARAM = "Invalid parameter";
-
-    public static final String INTERNAL_ERROR = "Internal error";
-
-    public static final String FAILED_TO_SVCTMPL_CATALOGUE = "Failed to get service template from catalogue";
-
     public static final String INVALID_RESPONSE_FROM_INSTANTIATE_OPERATION =
             "Invalid response from instantiate operation";
 
@@ -44,8 +39,6 @@ public class DriverExceptionID {
     public static final String FAIL_TO_INSTANTIATE_NS = "Fail to instantiate ns";
 
     public static final String FAIL_TO_CREATE_NS = "Fail to create ns";
-
-    public static final String INVALID_RESPONSEE_FROM_DELETE_OPERATION = "Invalid response from delete operation";
 
     public static final String INVALID_RESPONSE_FROM_TERMINATE_OPERATION = "Invalid response from terminate operation";
 
