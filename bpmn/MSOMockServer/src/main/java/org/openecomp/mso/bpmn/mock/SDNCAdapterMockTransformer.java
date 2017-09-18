@@ -127,7 +127,7 @@ public class SDNCAdapterMockTransformer extends ResponseTransformer {
 			} catch (InterruptedException e1) {
 				LOGGER.debug("Exception :",e1);
 			}
-			System.out.println("Sending callback response:" + callbackUrl);
+			LOGGER.debug("Sending callback response:" + callbackUrl);
 			ClientRequest request = new ClientRequest(callbackUrl);
 			request.body("text/xml", payLoad);
 			System.err.println(payLoad);

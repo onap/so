@@ -144,7 +144,7 @@ public class JsonUtils {
 			jsonObj = (JSONObject) obj;
 			keys = jsonObj.keys();
 			while (keys.hasNext()) {
-				key = keys.next().toString();
+				key = keys.next();
 				// msoLogger.debug("toXMLString(): key is " + k);
 				curObj = jsonObj.opt(key);
 				if (curObj == null) {
@@ -327,7 +327,7 @@ public class JsonUtils {
 					return null;
 				} else {
 					if (rawValue instanceof String) {
-						msoLogger.debug("getJsonValue(): the raw value is a String Object=" + ((String) rawValue).toString());
+						msoLogger.debug("getJsonValue(): the raw value is a String Object=" + ((String) rawValue));
 						return (String) rawValue;
 					} else {
 						msoLogger.debug("getJsonValue(): the raw value is NOT a String Object=" + rawValue.toString());
@@ -356,7 +356,7 @@ public class JsonUtils {
 					return null;
 				} else {
 					if (rawValue instanceof String) {
-						msoLogger.debug("getJsonNodeValue(): the raw value is a String Object=" + ((String) rawValue).toString());
+						msoLogger.debug("getJsonNodeValue(): the raw value is a String Object=" + ((String) rawValue));
 						return (String) rawValue;
 					} else {
 						msoLogger.debug("getJsonNodeValue(): the raw value is NOT a String Object=" + rawValue.toString());
@@ -410,14 +410,13 @@ public class JsonUtils {
 	 * @return boolean field value associated with keys - default is false
 	 */
 	public static boolean getJsonBooleanValue(String jsonStr, String keys) {
-		String isDebugLogEnabled = "true";
 		try {
 				Object rawValue = getJsonRawValue(jsonStr, keys);
 				if (rawValue == null) {
 					return false;
 				} else {
 					if (rawValue instanceof Boolean) {
-						msoLogger.debug("getJsonValue(): the raw value is a Boolean Object=" + ((String) rawValue).toString());
+						msoLogger.debug("getJsonValue(): the raw value is a Boolean Object=" + ((String) rawValue));
 						return (Boolean) rawValue;
 					} else {
 						msoLogger.debug("getJsonValue(): the raw value is NOT an Boolean Object=" + rawValue.toString());
@@ -590,7 +589,7 @@ public class JsonUtils {
 		try {
 			if (jsonObj.has(key)) {
 				msoLogger.debug("getJsonValueForKey(): found value for key=" + key);
-				return ((Integer) jsonObj.get(key));
+				return (Integer) jsonObj.get(key);
 			} else {
 				msoLogger.debug("getJsonValueForKey(): iterating over the keys");
 				Iterator <String> itr = jsonObj.keys();
@@ -628,12 +627,11 @@ public class JsonUtils {
 	 * @return String field value associated with key
 	 */
 	public static Boolean getJsonBooleanValueForKey(JSONObject jsonObj, String key) {
-		String isDebugLogEnabled = "true";
 		Boolean keyValue = false;
 		try {
 			if (jsonObj.has(key)) {
 				msoLogger.debug("getJsonBooleanValueForKey(): found value for key=" + key);
-				return ((Boolean) jsonObj.get(key));
+				return (Boolean) jsonObj.get(key);
 			} else {
 				msoLogger.debug("getJsonBooleanValueForKey(): iterating over the keys");
 				Iterator <String> itr = jsonObj.keys();
@@ -863,7 +861,7 @@ public class JsonUtils {
 	public Map<String, String> entryArrayToMap(Execution execution, String entryArray) {
 		msoLogger.debug("Started Entry Array To Map Util Method");
 
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, String> map = new HashMap<>();
 
 		//Populate Map
 		String entryListJson = "{ \"entry\":" + entryArray + "}";
@@ -895,7 +893,7 @@ public class JsonUtils {
 	public Map<String, String> entryArrayToMap(Execution execution, String entryArray, String keyNode, String valueNode) {
 		msoLogger.debug("Started Entry Array To Map Util Method");
 
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, String> map = new HashMap<>();
 		//Populate Map
 		String entryListJson = "{ \"entry\":" + entryArray + "}";
 		JSONObject obj = new JSONObject(entryListJson);
@@ -926,7 +924,7 @@ public class JsonUtils {
 	public List<String> StringArrayToList(Execution execution, String jsonArrayOfStrings) {
 		msoLogger.debug("Started  String Array To List Util Method");
 
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		//Populate List
 		String stringListJson = "{ \"strings\":" + jsonArrayOfStrings + "}";
 		JSONObject obj = new JSONObject(stringListJson);

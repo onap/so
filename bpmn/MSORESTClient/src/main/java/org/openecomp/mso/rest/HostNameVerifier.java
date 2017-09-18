@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +24,7 @@ package org.openecomp.mso.rest;
 import javax.net.ssl.SSLException;
 
 import org.apache.http.conn.ssl.AbstractVerifier;
+import org.openecomp.mso.logger.MsoLogger;
 
 /**
  * @version 1.0
@@ -31,6 +33,8 @@ import org.apache.http.conn.ssl.AbstractVerifier;
  */
 public class HostNameVerifier extends AbstractVerifier {
 
+    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
+    
     public final void verify(
             final String host,
             final String[] cns,
@@ -38,7 +42,7 @@ public class HostNameVerifier extends AbstractVerifier {
     	try {
     		verify(host, cns, subjectAlts, true);
     	} catch (SSLException sex) {
-    		
+    	    LOGGER.debug("Exception:", sex);
     	}
     }
 	

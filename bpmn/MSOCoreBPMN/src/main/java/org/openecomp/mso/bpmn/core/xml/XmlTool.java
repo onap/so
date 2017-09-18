@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,7 +61,7 @@ import org.xml.sax.SAXException;
  */
 public final class XmlTool {
 
-	private static final Map<String, Integer> ENTITIES = new HashMap<String, Integer>();
+	private static final Map<String, Integer> ENTITIES = new HashMap<>();
 	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.BPEL);
 	static {
 		ENTITIES.put("amp", new Integer(38));
@@ -69,6 +70,12 @@ public final class XmlTool {
 		ENTITIES.put("gt", new Integer(62));
 	}
 
+	/**
+     * Instantiation is not allowed.
+     */
+    private XmlTool() {
+    }
+    
 	/**
 	 * Normalizes and formats XML.  This method consolidates and moves all namespace
 	 * declarations to the root element.  The result will not have an XML prolog or
@@ -376,11 +383,5 @@ public final class XmlTool {
 		transformer.transform(new DOMSource(doc), new StreamResult(writer));
 		// return the modified String representation of the XML
 		return Optional.of(writer.toString().trim());
-	}
-
-	/**
-	 * Instantiation is not allowed.
-	 */
-	private XmlTool() {
 	}
 }
