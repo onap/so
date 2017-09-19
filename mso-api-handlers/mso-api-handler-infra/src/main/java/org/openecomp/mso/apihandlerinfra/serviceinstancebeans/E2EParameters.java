@@ -38,9 +38,8 @@ public class E2EParameters {
 	@JsonProperty("nodeType")
 	private String nodeType;
 	@JsonProperty("segments")
-	private List<E2ESegment> segments = null;
-	@JsonProperty("nsParameters")
-	private E2ENsParameters_ nsParameters;
+	
+	
 	@JsonIgnore
 	private Map<String, Object> additionalProperties = new HashMap<>();
 
@@ -68,21 +67,6 @@ public class E2EParameters {
 		this.nodeType = nodeType;
 	}
 
-	public List<E2ESegment> getSegments() {
-		return segments;
-	}
-
-	public void setSegments(List<E2ESegment> segments) {
-		this.segments = segments;
-	}
-
-	public E2ENsParameters_ getNsParameters() {
-		return nsParameters;
-	}
-
-	public void setNsParameters(E2ENsParameters_ nsParameters) {
-		this.nsParameters = nsParameters;
-	}
 
 	public Map<String, Object> getAdditionalProperties() {
 		return additionalProperties;
