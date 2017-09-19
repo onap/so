@@ -22,6 +22,7 @@ package org.openecomp.mso.adapters.vfc;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -92,7 +93,7 @@ public class VfcAdapterRest {
      * @return response
      * @since ONAP Amsterdam Release
      */
-    @POST
+    @DELETE
     @Path("/ns/{nsInstanceId}")
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})

@@ -101,7 +101,10 @@ public class VfcAdapterTest {
                     return getResponse("instantiateNsRsp.json");
                 } else if(methodType.equals(CommonConstant.MethodType.DELETE)) {
                     return getResponse(null);
-                }else {
+                } else if(url.contains("terminate") && methodType.equals(CommonConstant.MethodType.POST)) {
+                    return getResponse("terminateNsRsp.json");
+                }
+                else {
                     return null;
                 }
             }
@@ -193,7 +196,8 @@ public class VfcAdapterTest {
 
     @Test
     public void terminateTest() {
-
+        mockRestfulUtil(FILE_PATH + "terminateNsReq.json");
+        vfcAdapter.terminateNfvoNs(null, "9b9f02c0-298b-458a-bc9c-be3692e4f354");
     }
 
     @Test
