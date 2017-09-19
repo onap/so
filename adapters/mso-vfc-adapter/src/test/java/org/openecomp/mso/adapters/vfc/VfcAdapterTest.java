@@ -95,8 +95,10 @@ public class VfcAdapterTest {
              */
             @Mock
             public RestfulResponse send(String url, String methodType, String content) {
-                if(url.contains(CommonConstant.NFVO_CREATE_URL) && methodType.equals(CommonConstant.MethodType.POST)) {
+                if(url.equals(CommonConstant.NFVO_CREATE_URL) && methodType.equals(CommonConstant.MethodType.POST)) {
                     return getResponse("createNsRsp.json");
+                } else if(url.contains("instantiate") && methodType.equals(CommonConstant.MethodType.POST)) {
+                    return getResponse("instantiateNsRsp.json");
                 } else {
                     return null;
                 }
@@ -180,7 +182,9 @@ public class VfcAdapterTest {
 
     @Test
     public void instantiateTest() {
-
+        // get request
+        mockRestfulUtil(FILE_PATH + "instantiateNsReq.json");
+        vfcAdapter.instantiateNfvoNs(null, "9b9f02c0-298b-458a-bc9c-be3692e4f354");
     }
 
     @Test
