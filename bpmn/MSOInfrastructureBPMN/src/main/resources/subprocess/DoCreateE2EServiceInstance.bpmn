@@ -21,10 +21,10 @@ def dcsi = new DoCreateE2EServiceInstance()
 dcsi.preProcessRequest(execution)
 ]]></bpmn2:script>
     </bpmn2:scriptTask>
-    <bpmn2:sequenceFlow id="SequenceFlow_4" name="" sourceRef="callCustomE2EGetService" targetRef="ScriptTask_0i8cqdy" />
+    <bpmn2:sequenceFlow id="SequenceFlow_4" name="" sourceRef="CustomE2EGetService" targetRef="ScriptTask_0i8cqdy" />
     <bpmn2:endEvent id="EndEvent_3" />
     <bpmn2:sequenceFlow id="SequenceFlow_2" name="" sourceRef="preProcessRequest_ScriptTask" targetRef="getAAICustomerById_scriptTask" />
-    <bpmn2:callActivity id="callCustomE2EGetService" name="Call Custom E2E Get Service" calledElement="CustomE2EGetService">
+    <bpmn2:callActivity id="CustomE2EGetService" name="Call Custom E2E Get Service" calledElement="CustomE2EGetService">
       <bpmn2:extensionElements>
         <camunda:in source="serviceInstanceName" target="GENGS_serviceInstanceName" />
         <camunda:in source="globalSubscriberId" target="GENGS_globalCustomerId" />
@@ -36,7 +36,7 @@ dcsi.preProcessRequest(execution)
       <bpmn2:incoming>SequenceFlow_11fnnkb</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_4</bpmn2:outgoing>
     </bpmn2:callActivity>
-    <bpmn2:callActivity id="callCustomE2EPutService" name="Call Custom E2E Put Service" calledElement="CustomE2EPutService">
+    <bpmn2:callActivity id="CustomE2EPutService" name="Call Custom E2E Put Service" calledElement="CustomE2EPutService">
       <bpmn2:extensionElements>
         <camunda:in source="globalSubscriberId" target="GENPS_globalSubscriberId" />
         <camunda:in source="serviceInstanceId" target="GENPS_serviceInstanceId" />
@@ -51,16 +51,16 @@ dcsi.preProcessRequest(execution)
       <bpmn2:incoming>SequenceFlow_1w01tqs</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_129ih1g</bpmn2:outgoing>
     </bpmn2:callActivity>
-    <bpmn2:sequenceFlow id="SequenceFlow_129ih1g" sourceRef="callCustomE2EPutService" targetRef="ScriptTask_0q37vn9" />
+    <bpmn2:sequenceFlow id="SequenceFlow_129ih1g" sourceRef="CustomE2EPutService" targetRef="ScriptTask_0q37vn9" />
     <bpmn2:exclusiveGateway id="ExclusiveGateway_09wkav2" name="sdncVersion is 1610 or serviceInstance name is populated?" default="SequenceFlow_1uw2p9a">
       <bpmn2:incoming>SequenceFlow_3</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_11fnnkb</bpmn2:outgoing>
       <bpmn2:outgoing>SequenceFlow_1uw2p9a</bpmn2:outgoing>
     </bpmn2:exclusiveGateway>
-    <bpmn2:sequenceFlow id="SequenceFlow_11fnnkb" name="yes" sourceRef="ExclusiveGateway_09wkav2" targetRef="callCustomE2EGetService">
+    <bpmn2:sequenceFlow id="SequenceFlow_11fnnkb" name="yes" sourceRef="ExclusiveGateway_09wkav2" targetRef="CustomE2EGetService">
       <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{(execution.getVariable("serviceInstanceName" )  != null && execution.getVariable("serviceInstanceName" )  != "" ) || execution.getVariable("sdncVersion" )   == "1610" }]]></bpmn2:conditionExpression>
     </bpmn2:sequenceFlow>
-    <bpmn2:sequenceFlow id="SequenceFlow_1uw2p9a" name="no" sourceRef="ExclusiveGateway_09wkav2" targetRef="callCustomE2EPutService" />
+    <bpmn2:sequenceFlow id="SequenceFlow_1uw2p9a" name="no" sourceRef="ExclusiveGateway_09wkav2" targetRef="CustomE2EPutService" />
     <bpmn2:subProcess id="SubProcess_06d8lk8" name="Sub-process for Application Errors" triggeredByEvent="true">
       <bpmn2:startEvent id="StartEvent_0yljq9y">
         <bpmn2:outgoing>SequenceFlow_0tgrn11</bpmn2:outgoing>
@@ -120,7 +120,7 @@ dcsi.postProcessRollback(execution)
 def dcsi = new DoCreateE2EServiceInstance()
 dcsi.postProcessAAIGET(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
-    <bpmn2:sequenceFlow id="SequenceFlow_1w01tqs" sourceRef="ScriptTask_0i8cqdy" targetRef="callCustomE2EPutService" />
+    <bpmn2:sequenceFlow id="SequenceFlow_1w01tqs" sourceRef="ScriptTask_0i8cqdy" targetRef="CustomE2EPutService" />
     <bpmn2:scriptTask id="ScriptTask_0q37vn9" name="Post Process AAI PUT" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_129ih1g</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_1dd86x8</bpmn2:outgoing>
@@ -265,10 +265,10 @@ csi.postConfigRequest(execution)]]></bpmn2:script>
           <dc:Bounds x="369" y="82" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="CallActivity_1md4kyb_di" bpmnElement="callCustomE2EGetService">
+      <bpmndi:BPMNShape id="CallActivity_1md4kyb_di" bpmnElement="CustomE2EGetService">
         <dc:Bounds x="739" y="57" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="CallActivity_0khp0qc_di" bpmnElement="callCustomE2EPutService">
+      <bpmndi:BPMNShape id="CallActivity_0khp0qc_di" bpmnElement="CustomE2EPutService">
         <dc:Bounds x="972" y="206" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_129ih1g_di" bpmnElement="SequenceFlow_129ih1g">
