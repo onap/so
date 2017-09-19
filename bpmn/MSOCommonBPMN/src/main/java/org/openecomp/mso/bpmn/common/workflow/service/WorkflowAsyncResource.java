@@ -21,6 +21,8 @@ package org.openecomp.mso.bpmn.common.workflow.service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.ws.rs.Consumes;
@@ -31,7 +33,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import org.camunda.bpm.engine.ProcessEngineServices;
-import org.camunda.bpm.engine.ProcessEngines;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.variable.impl.VariableMapImpl;
@@ -52,15 +53,15 @@ import org.slf4j.MDC;
  * For asynchronous process - the activity may send a acknowledgement response and then proceed further on executing the process
  */
 @Path("/async")
-public class WorkflowAsyncResource {
+public abstract class WorkflowAsyncResource {
 
-	private WorkflowContextHolder contextHolder = WorkflowContextHolder.getInstance();
-	protected ProcessEngineServices pes4junit = null;
+	private static final WorkflowContextHolder contextHolder = WorkflowContextHolder.getInstance();
+	protected Optional<ProcessEngineServices> pes4junit = Optional.empty();
 
-	private MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
+	private final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
 
 	private static final String logMarker = "[WRKFLOW-RESOURCE]";
-	private static final int DEFAULT_WAIT_TIME = 30000;	//default wait time
+	private static final long DEFAULT_WAIT_TIME = 30000;	//default wait time
 	
 	/**
 	 * Asynchronous JAX-RS method that starts a process instance.
@@ -75,7 +76,6 @@ public class WorkflowAsyncResource {
 	public void startProcessInstanceByKey(final @Suspend(180000) AsynchronousResponse asyncResponse,
 			@PathParam("processKey") String processKey, VariableMapImpl variableMap) {
 	
-		WorkflowResponse response = new WorkflowResponse();
 		long startTime = System.currentTimeMillis();
 		Map<String, Object> inputVariables = null;
 		WorkflowContext workflowContext = null;
@@ -107,6 +107,7 @@ public class WorkflowAsyncResource {
 			}
 
 			msoLogger.debug(logMarker + "Exception in startProcessInstance by key");
+	        WorkflowResponse response = new WorkflowResponse();
 			response.setMessage("Fail" );
 			response.setResponse("Error occurred while executing the process: " + e);
 			response.setMessageCode(500);
@@ -205,29 +206,28 @@ public class WorkflowAsyncResource {
 		return contextHolder.processCallback(processKey, processInstanceId, requestId, callbackResponse);
 	}
 	
+    private static String getOrCreate(Map<String, Object> inputVariables, String key) {
+        String value = Objects.toString(inputVariables.get(key), null);
+        if (value == null) {
+            value = UUID.randomUUID().toString();
+            inputVariables.put(key, value);
+        }
+        return value;
+    }
+	
 	// Note: the business key is used to identify the process in unit tests
-	private String getBusinessKey(Map<String, Object> inputVariables) {
-		Object businessKey = inputVariables.get("mso-business-key");
-		if (businessKey == null ) {
-			businessKey = UUID.randomUUID().toString();
-			inputVariables.put("mso-business-key",  businessKey);
-		}
-		return businessKey.toString();
+	private static String getBusinessKey(Map<String, Object> inputVariables) {
+        return getOrCreate(inputVariables, "mso-business-key");
 	}
 
-	private String getRequestId(Map<String, Object> inputVariables) {
-		Object requestId = inputVariables.get("mso-request-id");
-		if (requestId == null ) {
-			requestId = UUID.randomUUID().toString();
-			inputVariables.put("mso-request-id",  requestId);
-		} 
-		return requestId.toString();
+	private static String getRequestId(Map<String, Object> inputVariables) {
+        return getOrCreate(inputVariables, "mso-request-id");
 	}
 
 	private long getWaitTime(Map<String, Object> inputVariables)
 	{
-		String timeout = inputVariables.get("mso-service-request-timeout") == null
-				? null : inputVariables.get("mso-service-request-timeout").toString();		
+	    
+		String timeout = Objects.toString(inputVariables.get("mso-service-request-timeout"), null);
 
 		if (timeout != null) {
 			try {
@@ -252,7 +252,7 @@ public class WorkflowAsyncResource {
 		
 	}
 
-	private void setLogContext(String processKey,
+	private static void setLogContext(String processKey,
 			Map<String, Object> inputVariables) {
 		MsoLogger.setServiceName("MSO." + processKey);
 		if (inputVariables != null) {
@@ -260,32 +260,24 @@ public class WorkflowAsyncResource {
 		}
 	}
 
-	private String getKeyValueFromInputVariables(Map<String,Object> inputVariables, String key) {
+	private static String getKeyValueFromInputVariables(Map<String,Object> inputVariables, String key) {
 		if (inputVariables == null) return "";
-		Object requestId = inputVariables.get(key);
-		if (requestId != null) return requestId.toString();
-		return "N/A";
+		return Objects.toString(inputVariables.get(key), "N/A");
 	}
 
 	private boolean isProcessEnded(String processInstanceId) {
 		ProcessEngineServices pes = getProcessEngineServices();
-		return pes.getRuntimeService().createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult() == null ? true : false ;		
+		return pes.getRuntimeService().createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult() == null;
 	}
 	
 	
-	protected ProcessEngineServices getProcessEngineServices() {
-		if (pes4junit == null) {
-			return ProcessEngines.getDefaultProcessEngine();
-		} else {
-			return pes4junit;
-		}
-	}
+	protected abstract ProcessEngineServices getProcessEngineServices();
 	
 	public void setProcessEngineServices4junit(ProcessEngineServices pes) {
-		pes4junit = pes;
+		pes4junit = Optional.ofNullable(pes);
 	}
 
-	private Map<String, Object> getInputVariables(VariableMapImpl variableMap) {
+	private static Map<String, Object> getInputVariables(VariableMapImpl variableMap) {
 		Map<String, Object> inputVariables = new HashMap<String,Object>();
 		@SuppressWarnings("unchecked")
 		Map<String, Object> vMap = (Map<String, Object>) variableMap.get("variables");

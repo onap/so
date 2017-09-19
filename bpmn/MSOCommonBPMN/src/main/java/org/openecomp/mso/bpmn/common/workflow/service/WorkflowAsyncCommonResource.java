@@ -20,38 +20,13 @@
 
 package org.openecomp.mso.bpmn.common.workflow.service;
 
-import java.util.HashSet;
-import java.util.Set;
+import org.camunda.bpm.engine.ProcessEngineServices;
+import org.camunda.bpm.engine.ProcessEngines;
 
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
 
-import org.openecomp.mso.bpmn.common.workflow.service.WorkflowMessageResource;
-import org.openecomp.mso.bpmn.common.workflow.service.WorkflowResource;
+public class WorkflowAsyncCommonResource extends WorkflowAsyncResource {
 
-/**
- * @version 1.0
- * RESTeasy workflow application which wires synchronous and asynchronous response
- *
- */
-@ApplicationPath("/")
-public class WorkflowResourceApplication extends Application {
-    private Set<Object> singletons = new HashSet<Object>();
-    private Set<Class<?>> classes = new HashSet<Class<?>>();
-
-    public WorkflowResourceApplication() {
-        singletons.add(new WorkflowResource());
-        singletons.add(new WorkflowAsyncCommonResource());
-        singletons.add(new WorkflowMessageResource());
-    }
-
-    @Override
-    public Set<Class<?>> getClasses() {
-        return classes;
-    }
-
-    @Override
-    public Set<Object> getSingletons() {
-        return singletons;
+    protected ProcessEngineServices getProcessEngineServices() {
+        return pes4junit.orElse(ProcessEngines.getProcessEngine("common"));
     }
 }

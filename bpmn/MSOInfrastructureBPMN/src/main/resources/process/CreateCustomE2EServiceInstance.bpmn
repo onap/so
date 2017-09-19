@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0">
-  <bpmn:process id="Process_1" isExecutable="true">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.6.0">
+  <bpmn:process id="Process_1" name="CreateCustomE2EServiceInstance" isExecutable="true">
     <bpmn:startEvent id="StartEvent_00qj6ro" name="Create SI Start Flow">
       <bpmn:outgoing>SequenceFlow_0s2spoq</bpmn:outgoing>
     </bpmn:startEvent>
@@ -126,7 +126,7 @@ csi.sendSyncResponse(execution)]]></bpmn:script>
     </bpmn:exclusiveGateway>
     <bpmn:endEvent id="EndEvent_07uk5iy">
       <bpmn:incoming>SequenceFlow_1fueo69</bpmn:incoming>
-      <bpmn:errorEventDefinition />
+      <bpmn:errorEventDefinition errorRef="Error_0nbdy47" />
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="SequenceFlow_0s2spoq" sourceRef="StartEvent_00qj6ro" targetRef="ScriptTask_1s09c7d" />
     <bpmn:sequenceFlow id="SequenceFlow_19eilro" sourceRef="ScriptTask_0xupxj9" targetRef="CallActivity_0rhljy8" />
@@ -141,6 +141,7 @@ csi.sendSyncResponse(execution)]]></bpmn:script>
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[#{execution.getVariable("WorkflowException") != null}]]></bpmn:conditionExpression>
     </bpmn:sequenceFlow>
   </bpmn:process>
+  <bpmn:error id="Error_0nbdy47" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_1">
       <bpmndi:BPMNShape id="StartEvent_00qj6ro_di" bpmnElement="StartEvent_00qj6ro">
