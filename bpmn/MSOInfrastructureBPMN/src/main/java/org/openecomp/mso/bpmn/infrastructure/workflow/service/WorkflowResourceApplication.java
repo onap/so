@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.mso.bpmn.common.workflow.service;
+package org.openecomp.mso.bpmn.infrastructure.workflow.service;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -41,7 +41,7 @@ public class WorkflowResourceApplication extends Application {
 
     public WorkflowResourceApplication() {
         singletons.add(new WorkflowResource());
-        singletons.add(new WorkflowAsyncCommonResource());
+        singletons.add(new WorkflowAsyncInfrastructureResource());
         singletons.add(new WorkflowMessageResource());
     }
 
