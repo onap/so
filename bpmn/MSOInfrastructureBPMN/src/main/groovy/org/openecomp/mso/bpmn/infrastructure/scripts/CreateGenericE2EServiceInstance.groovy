@@ -84,8 +84,16 @@ public class CreateGenericE2EServiceInstance extends AbstractServiceTaskProcesso
            }
            utils.log("DEBUG", "Generated new Service Instance Operation:" + operationId, isDebugEnabled)
            serviceInstanceId = UriUtils.encode(operationId,"UTF-8")
-           execution.setVariable("operationId", operationId)
-           //subscriberInfo, TBD , there is no globalSubscriberId in R1 for E2E Service.
+           execution.setVariable("operationId", operationId)          
+           //subscriberInfo, only subscriber id needed, name is only for msg, not used in aai api.
+           String globalSubscriberId = jsonUtil.getJsonValue(siRequest, "service.parameters.globalSubscriberId")
+           if (isBlank(globalSubscriberId)) {
+               msg = "Input globalSubscriberId' is null"
+               exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+           } else {
+               execution.setVariable("globalSubscriberId", globalSubscriberId)
+           }
+
            //requestInfo TBD , there is no requestDetails for R1 E2E service
 
            //TBD need to insert operationInfo to RequestDb
