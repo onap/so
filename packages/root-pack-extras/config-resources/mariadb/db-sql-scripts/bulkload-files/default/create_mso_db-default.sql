@@ -96,3 +96,10 @@ INSERT INTO vnf_components_recipe (VNF_COMPONENT_TYPE, ACTION, VERSION, DESCRIPT
 INSERT INTO network_recipe (NETWORK_TYPE, ACTION, VERSION_STR, DESCRIPTION, ORCHESTRATION_URI, RECIPE_TIMEOUT) VALUES ('VID_DEFAULT', 'createInstance', '1.0', 'VID_DEFAULT recipe to create network if no custom BPMN flow is found', '/mso/async/services/CreateNetworkInstance', '180');
 INSERT INTO network_recipe (NETWORK_TYPE, ACTION, VERSION_STR, DESCRIPTION, ORCHESTRATION_URI, RECIPE_TIMEOUT) VALUES ('VID_DEFAULT', 'updateInstance', '1.0', 'VID_DEFAULT recipe to update network if no custom BPMN flow is found', '/mso/async/services/UpdateNetworkInstance', '180');
 INSERT INTO network_recipe (NETWORK_TYPE, ACTION, VERSION_STR, DESCRIPTION, ORCHESTRATION_URI, RECIPE_TIMEOUT) VALUES ('VID_DEFAULT', 'deleteInstance', '1.0', 'VID_DEFAULT recipe to delete network if no custom BPMN flow is found', '/mso/async/services/DeleteNetworkInstance', '180');
+
+--
+-- Custom Reciepe for the E2E service
+--
+INSERT INTO service (id, SERVICE_NAME, VERSION_STR, DESCRIPTION, SERVICE_NAME_VERSION_ID) VALUES ('20', 'UUI_DEFAULT', '1.0', 'Default service for UUI to use for infra APIH orchestration', 'MANUAL_RECORD');
+INSERT INTO service_recipe (SERVICE_ID, ACTION, VERSION_STR, DESCRIPTION, ORCHESTRATION_URI, RECIPE_TIMEOUT) VALUES ('20', 'createInstance', '1', 'UUI_DEFAULT recipe to create service-instance if no custom BPMN flow is found', '/mso/async/services/CreateCustomE2EServiceInstance', '180');
+INSERT INTO service_recipe (SERVICE_ID, ACTION, VERSION_STR, DESCRIPTION, ORCHESTRATION_URI, RECIPE_TIMEOUT) VALUES ('20', 'deleteInstance', '1', 'UUI_DEFAULT recipe to delete service-instance if no custom BPMN flow is found', '/mso/async/services/DeleteCustomE2EServiceInstance', '180');
