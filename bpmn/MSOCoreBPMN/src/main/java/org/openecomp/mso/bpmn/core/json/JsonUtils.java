@@ -519,9 +519,7 @@ public class JsonUtils {
 //		String isDebugLogEnabled = "true";
 		try {
 			JSONObject jsonObj = new JSONObject(jsonStr);
-			if (jsonObj != null) {
-				return getJsonValueForKey(jsonObj, key);
-			}
+			return getJsonValueForKey(jsonObj, key);
 		} catch (Exception e) {
 				msoLogger.debug("getJsonValueForKey(): unable to parse json to retrieve value for field=" + key + ". Exception was: " + e.toString(), e);
 		}
