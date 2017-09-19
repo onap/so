@@ -32,13 +32,13 @@ import org.openecomp.mso.adapters.vfc.model.RestfulResponse;
  */
 public class AaiUtil {
 
-    public static RestfulResponse addRelation(String serviceInstanceID, String resourceInstanceID)
+    public static RestfulResponse addRelation(String globalSubsriberId, String serviceType,  String serviceInstanceId, String resourceInstanceId)
     {
         //sent rest to aai to add relation for service and ns.
         return null;
     }
     
-    public static RestfulResponse removeRelation(String serviceInstanceID ,String resourceInstanceID)
+    public static RestfulResponse removeRelation(String globalSubsriberId,  String serviceType, String serviceInstanceId ,String resourceInstanceId)
     {
         //sent rest to aai to remove relation between service an ns.
         return null;
