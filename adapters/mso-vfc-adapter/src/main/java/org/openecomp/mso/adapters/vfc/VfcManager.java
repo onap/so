@@ -17,6 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.mso.adapters.vfc;
 
 import java.util.HashMap;
@@ -51,7 +52,7 @@ import org.slf4j.LoggerFactory;
  * </p>
  * 
  * @author
- * @version     ONAP Amsterdam Release  2017-08-28
+ * @version ONAP Amsterdam Release 2017-08-28
  */
 public class VfcManager {
 
@@ -71,14 +72,15 @@ public class VfcManager {
         nfvoUrlMap.put(Step.QUERY, CommonConstant.NFVO_QUERY_URL);
     }
 
-    public VfcManager(){
-        
+    public VfcManager() {
+
     }
+
     /**
      * create network service
      * <br>
      * 
-     * @param segInput input parameters for current node from http request 
+     * @param segInput input parameters for current node from http request
      * @return
      * @since ONAP Amsterdam Release
      */
@@ -117,7 +119,9 @@ public class VfcManager {
         LOGGER.info("create ns -> end");
         LOGGER.info("save segment and operaton info -> begin");
         // Step 5: add relation between service and NS
-        AaiUtil.addRelation(segInput.getNsOperationKey().getServiceId(), nsInstanceId);
+        AaiUtil.addRelation(segInput.getNsOperationKey().getGlobalSubscriberId(),
+                segInput.getNsOperationKey().getServiceType(), segInput.getNsOperationKey().getServiceId(),
+                nsInstanceId);
 
         // Step 6: save resource operation information
         ResourceOperationStatus nsOperInfo = (RequestsDatabase.getInstance()).getResourceOperationStatus(
@@ -146,7 +150,7 @@ public class VfcManager {
      * @return
      * @since ONAP Amsterdam Release
      */
-    public RestfulResponse deleteNs(NsOperationKey nsOperationKey, String nsInstanceId)  throws ApplicationException{
+    public RestfulResponse deleteNs(NsOperationKey nsOperationKey, String nsInstanceId) throws ApplicationException {
         LOGGER.info("delete ns -> begin");
         // Step1: prepare url and methodType
         String url = getUrl(nsInstanceId, CommonConstant.Step.DELETE);
@@ -158,8 +162,8 @@ public class VfcManager {
         LOGGER.info("delete ns response status is : {}", deleteRsp.getStatus());
         LOGGER.info("delete ns response content is : {}", deleteRsp.getResponseContent());
         LOGGER.info("delete ns -> end");
-        ResourceOperationStatus nsOperInfo = (RequestsDatabase.getInstance()).getResourceOperationStatus(nsOperationKey.getServiceId(),
-                nsOperationKey.getOperationId(), nsOperationKey.getNodeTemplateUUID());
+        ResourceOperationStatus nsOperInfo = (RequestsDatabase.getInstance()).getResourceOperationStatus(
+                nsOperationKey.getServiceId(), nsOperationKey.getOperationId(), nsOperationKey.getNodeTemplateUUID());
         if(!HttpCode.isSucess(deleteRsp.getStatus())) {
             LOGGER.error("fail to delete ns");
 
@@ -171,7 +175,8 @@ public class VfcManager {
         }
 
         // Step3: remove relation info between service and ns
-        AaiUtil.removeRelation(nsOperationKey.getServiceId(), nsInstanceId);
+        AaiUtil.removeRelation(nsOperationKey.getGlobalSubscriberId(), nsOperationKey.getServiceType(),
+                nsOperationKey.getServiceId(), nsInstanceId);
         LOGGER.info("delete segment information -> end");
 
         // Step4: update service segment operation status
@@ -188,12 +193,13 @@ public class VfcManager {
      * instantiate network service
      * <br>
      * 
-     * @param nsInstanceId The NS instance id 
+     * @param nsInstanceId The NS instance id
      * @param segInput input parameters for current node from http request
      * @return
      * @since ONAP Amsterdam Release
      */
-    public RestfulResponse instantiateNs(String nsInstanceId, NSResourceInputParameter segInput)  throws ApplicationException{
+    public RestfulResponse instantiateNs(String nsInstanceId, NSResourceInputParameter segInput)
+            throws ApplicationException {
         // Call the NFVO or SDNO service to instantiate service
         LOGGER.info("instantiate ns -> begin");
 
@@ -257,11 +263,11 @@ public class VfcManager {
      * @return
      * @since ONAP Amsterdam Release
      */
-    public RestfulResponse terminateNs(NsOperationKey nsOperationKey, String nsInstanceId) throws ApplicationException{
+    public RestfulResponse terminateNs(NsOperationKey nsOperationKey, String nsInstanceId) throws ApplicationException {
         // Step1: save segment operation info for delete process
         LOGGER.info("save segment operation for delete process");
-        ResourceOperationStatus nsOperInfo = (RequestsDatabase.getInstance()).getResourceOperationStatus(nsOperationKey.getServiceId(),
-                nsOperationKey.getOperationId(), nsOperationKey.getNodeTemplateUUID());
+        ResourceOperationStatus nsOperInfo = (RequestsDatabase.getInstance()).getResourceOperationStatus(
+                nsOperationKey.getServiceId(), nsOperationKey.getOperationId(), nsOperationKey.getNodeTemplateUUID());
         nsOperInfo.setStatus(RequestsDbConstant.Status.PROCESSING);
         (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
 
@@ -322,12 +328,12 @@ public class VfcManager {
      * @return
      * @since ONAP Amsterdam Release
      */
-    public RestfulResponse getNsProgress(NsOperationKey nsOperationKey, String jobId)  throws ApplicationException{
+    public RestfulResponse getNsProgress(NsOperationKey nsOperationKey, String jobId) throws ApplicationException {
 
         ValidateUtil.assertObjectNotNull(jobId);
         // Step 1: query the current resource operation status
-        ResourceOperationStatus nsOperInfo = (RequestsDatabase.getInstance()).getResourceOperationStatus(nsOperationKey.getServiceId(),
-                nsOperationKey.getOperationId(), nsOperationKey.getNodeTemplateUUID());
+        ResourceOperationStatus nsOperInfo = (RequestsDatabase.getInstance()).getResourceOperationStatus(
+                nsOperationKey.getServiceId(), nsOperationKey.getOperationId(), nsOperationKey.getNodeTemplateUUID());
 
         // Step 2: start query
         LOGGER.info("query ns status -> begin");
@@ -338,7 +344,7 @@ public class VfcManager {
         ValidateUtil.assertObjectNotNull(rsp);
         LOGGER.info("query ns progress response status is : {}", rsp.getStatus());
         LOGGER.info("query ns progress response content is : {}", rsp.getResponseContent());
-        //Step 3:check the response staus
+        // Step 3:check the response staus
         if(!HttpCode.isSucess(rsp.getStatus())) {
             LOGGER.info("fail to query job status");
             nsOperInfo.setErrorCode(String.valueOf(rsp.getStatus()));

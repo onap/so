@@ -31,6 +31,16 @@ package org.openecomp.mso.adapters.vfc.model;
 public class NsOperationKey {
     
     /**
+     * The subscriber id
+     */
+    private String globalSubscriberId;
+    
+    /**
+     * The serviceType
+     */
+    private String serviceType;
+    
+    /**
      * The service ID
      */
     private String serviceId;
@@ -44,6 +54,41 @@ public class NsOperationKey {
      * the NS template uuid
      */
     private String nodeTemplateUUID;
+
+    
+    
+    
+    /**
+     * @return Returns the globalSubscriberId.
+     */
+    public String getGlobalSubscriberId() {
+        return globalSubscriberId;
+    }
+
+    
+    /**
+     * @param globalSubscriberId The globalSubscriberId to set.
+     */
+    public void setGlobalSubscriberId(String globalSubscriberId) {
+        this.globalSubscriberId = globalSubscriberId;
+    }
+    
+    /**
+     * @return Returns the serviceType.
+     */
+    public String getServiceType() {
+        return serviceType;
+    }
+
+
+    
+    /**
+     * @param serviceType The serviceType to set.
+     */
+    public void setServiceType(String serviceType) {
+        this.serviceType = serviceType;
+    }
+
 
     /**
      * 
