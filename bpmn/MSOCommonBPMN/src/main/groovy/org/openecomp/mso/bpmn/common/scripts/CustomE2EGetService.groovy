@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -124,21 +124,7 @@ class CustomE2EGetService extends AbstractServiceTaskProcessor{
 
 			if(type != null){
 				utils.log("DEBUG", "Incoming GENGS_type is: " + type, isDebugEnabled)
-				if(type.equalsIgnoreCase("allotted-resource")){
-					if(isBlank(allottedResourceId)){
-						utils.log("DEBUG", "Incoming allottedResourceId is null. Allotted Resource Id is required to Get an allotted-resource.", isDebugEnabled)
-						exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Incoming allottedResourceId is null. Allotted Resource Id is required to Get an allotted-resource.")
-					}else{
-						utils.log("DEBUG", "Incoming Allotted Resource Id is: " + allottedResourceId, isDebugEnabled)
-						if(isBlank(globalCustomerId) || isBlank(serviceType) || isBlank(serviceInstanceId)){
-							execution.setVariable("GENGS_obtainObjectsUrl", true)
-						}else{
-							utils.log("DEBUG", "Incoming Service Instance Id is: " + serviceInstanceId, isDebugEnabled)
-							utils.log("DEBUG", "Incoming Service Type is: " + serviceType, isDebugEnabled)
-							utils.log("DEBUG", "Incoming Global Customer Id is: " + globalCustomerId, isDebugEnabled)
-						}
-					}
-				}else if(type.equalsIgnoreCase("service-instance")){
+				if(type.equalsIgnoreCase("service-instance")){
 					if(isBlank(serviceInstanceId) && isBlank(serviceInstanceName)){
 						utils.log("DEBUG", "Incoming serviceInstanceId and serviceInstanceName are null. ServiceInstanceId or ServiceInstanceName is required to Get a service-instance.", isDebugEnabled)
 						exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Incoming serviceInstanceId and serviceInstanceName are null. ServiceInstanceId or ServiceInstanceName is required to Get a service-instance.")
@@ -204,12 +190,6 @@ class CustomE2EGetService extends AbstractServiceTaskProcessor{
 				path = "${aai_uri}?search-node-type=service-instance&filter=service-instance-id:EQUALS:${serviceInstanceId}"
 				utils.logAudit("Service Instance Node Query Url is: " + path)
 				utils.log("DEBUG", "Service Instance Node Query Url is: " + path, isDebugEnabled)
-			}else if(type.equalsIgnoreCase("allotted-resource")){
-				String allottedResourceId = execution.getVariable("GENGS_allottedResourceId")
-				utils.log("DEBUG", " Querying Node for Service-Instance URL by using Allotted Resource Id: " + allottedResourceId, isDebugEnabled)
-				path = "${aai_uri}?search-node-type=allotted-resource&filter=id:EQUALS:${allottedResourceId}"
-				utils.logAudit("Allotted Resource Node Query Url is: " + path)
-				utils.log("DEBUG", "Allotted Resource Node Query Url is: " + path, isDebugEnabled)
 			}
 
 			//String url = "${aai_endpoint}${path}"  host name needs to be removed from property
@@ -270,7 +250,7 @@ class CustomE2EGetService extends AbstractServiceTaskProcessor{
 	 * @param - execution
 	 */
 	public void obtainServiceInstanceUrlByName(Execution execution){
-		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		utils.log("DEBUG", " *** STARTED GenericGetService ObtainServiceInstanceUrlByName Process*** ", isDebugEnabled)
 		try {
@@ -363,26 +343,6 @@ class CustomE2EGetService extends AbstractServiceTaskProcessor{
 					serviceEndpoint = "${aai_uri}/" + UriUtils.encode(globalCustomerId,"UTF-8") + "/service-subscriptions/service-subscription/" + UriUtils.encode(serviceType,"UTF-8") + "/service-instances/service-instance/" + UriUtils.encode(serviceInstanceId,"UTF-8")
 				}else{
 					utils.log("DEBUG", "Incoming Service Instance Url is: " + siResourceLink, isDebugEnabled)
-					String[] split = siResourceLink.split("/aai/")
-					serviceEndpoint = "/aai/" + split[1]
-				}
-			}else if(type.equalsIgnoreCase("allotted-resource")){
-				String siResourceLink = execution.getVariable("GENGS_resourceLink")
-				if(isBlank(siResourceLink)){
-					String allottedResourceId = execution.getVariable("GENGS_allottedResourceId")
-					utils.log("DEBUG", " Incoming GENGS_allottedResourceId is: " + allottedResourceId, isDebugEnabled)
-					String serviceInstanceId = execution.getVariable("GENGS_serviceInstanceId")
-					utils.log("DEBUG", " Incoming GENGS_serviceInstanceId is: " + serviceInstanceId, isDebugEnabled)
-					String serviceType = execution.getVariable("GENGS_serviceType")
-					utils.log("DEBUG", " Incoming GENGS_serviceType is: " + serviceType, isDebugEnabled)
-					String globalCustomerId = execution.getVariable("GENGS_globalCustomerId")
-					utils.log("DEBUG", "Incoming Global Customer Id is: " + globalCustomerId, isDebugEnabled)
-
-					String aai_uri = aaiUriUtil.getBusinessCustomerUri(execution)
-					logDebug('AAI URI is: ' + aai_uri, isDebugEnabled)
-					serviceEndpoint = "${aai_uri}/" + UriUtils.encode(globalCustomerId,"UTF-8") + "/service-subscriptions/service-subscription/" + UriUtils.encode(serviceType,"UTF-8") + "/service-instances/service-instance/" + UriUtils.encode(serviceInstanceId,"UTF-8") +  "/allotted-resources/allotted-resource/" + UriUtils.encode(allottedResourceId,"UTF-8")
-				}else{
-					utils.log("DEBUG", "Incoming Allotted-Resource Url is: " + siResourceLink, isDebugEnabled)
 					String[] split = siResourceLink.split("/aai/")
 					serviceEndpoint = "/aai/" + split[1]
 				}

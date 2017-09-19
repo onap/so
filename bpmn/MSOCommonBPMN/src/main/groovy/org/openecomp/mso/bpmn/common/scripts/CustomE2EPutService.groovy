@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -115,20 +115,6 @@ class CustomE2EPutService extends AbstractServiceTaskProcessor{
 						utils.log("DEBUG", "Incoming Service Type is: " + serviceType, isDebugEnabled)
 						utils.log("DEBUG", "Incoming Global Subscriber Id is: " + globalSubscriberId, isDebugEnabled)
 					}
-				}else if(type.equalsIgnoreCase("allotted-resource")){
-					if(isBlank(globalSubscriberId) || isBlank(serviceType) || isBlank(serviceInstanceId) || isBlank(allottedResourceId)){
-						utils.log("DEBUG", "Incoming Global Subscriber Id is: " + globalSubscriberId, isDebugEnabled)
-						utils.log("DEBUG", "Incoming Service Instance Id is: " + serviceInstanceId, isDebugEnabled)
-						utils.log("DEBUG", "Incoming Service Type is: " + serviceType, isDebugEnabled)
-						utils.log("DEBUG", "Incoming Allotted Resource Id is: " + allottedResourceId, isDebugEnabled)
-						utils.log("DEBUG", "Incoming Required Variable is missing or null!", isDebugEnabled)
-						exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Incoming Required Variable is Missing or Null!")
-					}else{
-						utils.log("DEBUG", "Incoming Global Subscriber Id is: " + globalSubscriberId, isDebugEnabled)
-						utils.log("DEBUG", "Incoming Service Instance Id is: " + serviceInstanceId, isDebugEnabled)
-						utils.log("DEBUG", "Incoming Service Type is: " + serviceType, isDebugEnabled)
-						utils.log("DEBUG", "Incoming Allotted Resource Id is: " + allottedResourceId, isDebugEnabled)
-					}
 				}else if(type.equalsIgnoreCase("tunnel-xconnect")){
 					if(isBlank(globalSubscriberId) || isBlank(serviceType) || isBlank(serviceInstanceId) || isBlank(allottedResourceId) || isBlank(tunnelXconnectId)){
 						utils.log("DEBUG", "Incoming Global Subscriber Id is: " + globalSubscriberId, isDebugEnabled)
@@ -211,15 +197,6 @@ class CustomE2EPutService extends AbstractServiceTaskProcessor{
 
 				//	serviceAaiPath = "${aai_endpoint}${aai_uri}/"  + URLEncoder.encode(globalSubscriberId,"UTF-8") + "/service-subscriptions/service-subscription/" + URLEncoder.encode(serviceType,"UTF-8")
 				serviceAaiPath = "${aai_endpoint}${aai_uri}/"  + UriUtils.encode(globalSubscriberId,"UTF-8") + "/service-subscriptions/service-subscription/" + UriUtils.encode(serviceType,"UTF-8")
-			}else if(type.equalsIgnoreCase("allotted-resource")){
-
-				String serviceInstanceId = execution.getVariable("GENPS_serviceInstanceId")
-				utils.log("DEBUG", " Incoming GENPS_serviceInstanceId is: " + serviceInstanceId, isDebugEnabled)
-				String allottedResourceId = execution.getVariable("GENPS_allottedResourceId")
-				utils.log("DEBUG", " Incoming GENPS_allottedResourceId is: " + allottedResourceId, isDebugEnabled)
-
-				//	serviceAaiPath = "${aai_endpoint}${aai_uri}/"  + URLEncoder.encode(globalSubscriberId,"UTF-8") + "/service-subscriptions/service-subscription/" + URLEncoder.encode(serviceType,"UTF-8")
-				serviceAaiPath = "${aai_endpoint}${aai_uri}/"  + UriUtils.encode(globalSubscriberId,"UTF-8") + "/service-subscriptions/service-subscription/" + UriUtils.encode(serviceType,"UTF-8") + "/service-instances/service-instance/" + UriUtils.encode(serviceInstanceId,"UTF-8") + "/allotted-resources/allotted-resource/" + UriUtils.encode(allottedResourceId,"UTF-8")
 			}else if(type.equalsIgnoreCase("tunnel-xconnect")){
 
 				String serviceInstanceId = execution.getVariable("GENPS_serviceInstanceId")
