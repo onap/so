@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved. 
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -132,68 +133,22 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 			String serviceType = ""
 			String serviceRole = ""
 			
-			ServiceDecomposition serviceDecomp = (ServiceDecomposition) execution.getVariable("serviceDecomposition")
-			if (serviceDecomp != null)
-			{
-				serviceType = serviceDecomp.getServiceType()
-				if (serviceType == null)
-				{
-					utils.log("DEBUG", "null serviceType", isDebugEnabled)
-					serviceType = ""
-				}
-				else
-				{
-					utils.log("DEBUG", "serviceType:" + serviceType, isDebugEnabled)
-				}
-				serviceRole = serviceDecomp.getServiceRole()
-				if (serviceRole == null)
-				{
-					serviceRole = ""
-				}
-				
-				ServiceInstance serviceInstance = serviceDecomp.getServiceInstance()
-				if (serviceInstance != null)
-				{
-					serviceInstanceId = serviceInstance.getInstanceId()
-					serviceInstanceName = serviceInstance.getInstanceName()
-					execution.setVariable("serviceInstanceId", serviceInstanceId)
-					execution.setVariable("serviceInstanceName", serviceInstanceName)
-				}
-				
-				ModelInfo modelInfo = serviceDecomp.getModelInfo()
-				if (modelInfo != null)
-				{
-					modelInvariantUuid = modelInfo.getModelInvariantUuid()
-					modelVersion = modelInfo.getModelVersion()
-					modelUuid = modelInfo.getModelUuid()
-					modelName = modelInfo.getModelName()
-				}
-				else 
-				{
-					msg = "Input serviceModelInfo is null"
-					utils.log("DEBUG", msg, isDebugEnabled)
-					exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-				}
+			//requestDetails.requestInfo. for AAI GET/PUT serviceInstanceData & SDNC assignToplology
+			serviceInstanceName = execution.getVariable("serviceInstanceName")
+			serviceInstanceId = execution.getVariable("serviceInstanceId")
+			
+			String serviceModelInfo = execution.getVariable("serviceModelInfo")
+			if (isBlank(serviceModelInfo)) {
+				msg = "Input serviceModelInfo is null"
+				utils.log("DEBUG", msg, isDebugEnabled)
+				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
-			else
-			{
-				//requestDetails.requestInfo. for AAI GET/PUT serviceInstanceData & SDNC assignToplology
-				serviceInstanceName = execution.getVariable("serviceInstanceName")
-				serviceInstanceId = execution.getVariable("serviceInstanceId")
-				
-				String serviceModelInfo = execution.getVariable("serviceModelInfo")
-				if (isBlank(serviceModelInfo)) {
-					msg = "Input serviceModelInfo is null"
-					utils.log("DEBUG", msg, isDebugEnabled)
-					exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-				}
-				modelInvariantUuid = jsonUtil.getJsonValue(serviceModelInfo, "modelInvariantUuid")
-				modelVersion = jsonUtil.getJsonValue(serviceModelInfo, "modelVersion")
-				modelUuid = jsonUtil.getJsonValue(serviceModelInfo, "modelUuid")
-				modelName = jsonUtil.getJsonValue(serviceModelInfo, "modelName")
-				//modelCustomizationUuid NA for SI
+			modelInvariantUuid = jsonUtil.getJsonValue(serviceModelInfo, "modelInvariantUuid")
+			modelVersion = jsonUtil.getJsonValue(serviceModelInfo, "modelVersion")
+			modelUuid = jsonUtil.getJsonValue(serviceModelInfo, "modelUuid")
+			modelName = jsonUtil.getJsonValue(serviceModelInfo, "modelName")
+			//modelCustomizationUuid NA for SI
 	
-			}
 			execution.setVariable("serviceType", serviceType)
 			execution.setVariable("serviceRole", serviceRole)
 			
@@ -285,14 +240,14 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		utils.log("DEBUG"," ***** Exit preProcessRequest *****",  isDebugEnabled)
 	}
 
-	//TODO: Will be able to replace with call to GenericGetService
+	//TODO: Will be able to replace with call to CustomE2EGetService as per the GenericGetService
 	public void getAAICustomerById (Execution execution) {
 		// https://{aaiEP}/aai/v8/business/customers/customer/{globalCustomerId}
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		String msg = ""
 		try {
 
-			String globalCustomerId = execution.getVariable("globalSubscriberId") //VID to AAI name map
+			String globalCustomerId = execution.getVariable("globalSubscriberId") //UUI to AAI name map
 			utils.log("DEBUG"," ***** getAAICustomerById ***** globalCustomerId:" + globalCustomerId, isDebugEnabled)
 
 			String aai_endpoint = execution.getVariable("URN_aai_endpoint")
