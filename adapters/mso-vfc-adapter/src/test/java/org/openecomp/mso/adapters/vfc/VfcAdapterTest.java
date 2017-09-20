@@ -103,6 +103,8 @@ public class VfcAdapterTest {
                     return getResponse(null);
                 } else if(url.contains("terminate") && methodType.equals(CommonConstant.MethodType.POST)) {
                     return getResponse("terminateNsRsp.json");
+                } else if(url.contains("/api/nslcm/v1/jobs") && methodType.equals(CommonConstant.MethodType.GET)) {
+                    return getResponse("queryJobRsp.json");
                 }
                 else {
                     return null;
@@ -202,7 +204,8 @@ public class VfcAdapterTest {
 
     @Test
     public void queryJobTest() {
-
+        mockRestfulUtil(FILE_PATH + "queryJobReq.json");
+        vfcAdapter.queryNfvoJobStatus(null, "1");
     }
 
     /**
