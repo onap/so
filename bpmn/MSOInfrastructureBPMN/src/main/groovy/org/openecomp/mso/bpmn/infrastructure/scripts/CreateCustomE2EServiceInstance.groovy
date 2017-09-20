@@ -1,8 +1,9 @@
 /*-
  * ============LICENSE_START=======================================================
- * OPENECOMP - MSO
+ * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved. 
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +26,7 @@ import groovy.xml.XmlUtil
 import groovy.json.*
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
-import org.openecomp.mso.bpmn.common.scripts.VidUtils
+
 import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.bpmn.core.json.JsonUtils
 import org.openecomp.mso.rest.APIResponse
@@ -47,7 +48,7 @@ public class CreateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 	String Prefix="CRESI_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
-	VidUtils vidUtils = new VidUtils()
+
 
 	public void preProcessRequest (Execution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
@@ -71,71 +72,6 @@ public class CreateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			utils.log("DEBUG", "Generated new Service Instance:" + serviceInstanceId, isDebugEnabled)
 			serviceInstanceId = UriUtils.encode(serviceInstanceId,"UTF-8")
 			execution.setVariable("serviceInstanceId", serviceInstanceId)
-
-			//parameters
-			String p_domainHost = jsonUtil.getJsonValue(siRequest, "service.parameters.domainHost")
-			if (isBlank(p_domainHost)) {
-				msg = "Input parameters domainHost is null"
-				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-			} else {
-				execution.setVariable("p_domainHost", p_domainHost)
-			}
-
-			String p_nodeTemplateName = jsonUtil.getJsonValue(siRequest, "service.parameters.nodeTemplateName")
-			if (isBlank(p_nodeTemplateName)) {
-				msg = "Input parameters nodeTemplateName is null"
-				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-			} else {
-				execution.setVariable("p_nodeTemplateName", p_nodeTemplateName)
-			}
-			
-			String p_nodeType = jsonUtil.getJsonValue(siRequest, "service.parameters.nodeType")
-			if (isBlank(p_nodeType)) {
-				msg = "Input parameters nodeType is null"
-				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-			} else {
-				execution.setVariable("p_nodeType", p_nodeType)
-			}
-
-			//segments
-			def jsonSlurper = new JsonSlurper()
-			//def jsonOutput = new JsonOutput()
-
-			Map reqMap = jsonSlurper.parseText(siRequest)		
-			
-			def p_segments = reqMap.service?.parameters?.segments
-			
-			//List<Segment> segList = []
-			//if (p_segments) {
-			//    p_segments.each {
-			//		p_segment -> segList.add(p_segment)
-			//		//p_segment.domainHost
-			//	}
-			//}
-			//execution.setVariable("segments", segList)
-			
-			//location Constraints
-			def p_locationConstraints = reqMap.service?.parameters?.nsParameters?.locationConstraints
-			if(p_locationConstraints){
-			//Copy data. no data available now so ignoring
-			}
-			
-			//additionalParamForNs
-			String p_param1 = jsonUtil.getJsonValue(siRequest, "service.parameters.nsParameters.additionalParamForNs.E2EServcie.param1")
-			if (isBlank(p_param1)) {
-				msg = "Input parameters p_param1 is null"
-				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-			} else {
-				execution.setVariable("p_param1", p_param1)
-			}
-			
-			String p_param2 = jsonUtil.getJsonValue(siRequest, "service.parameters.nsParameters.additionalParamForNs.E2EServcie.param2")
-			if (isBlank(p_param2)) {
-				msg = "Input parameters p_param2 is null"
-				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-			} else {
-				execution.setVariable("p_param2", p_param2)
-			}
 
 			//subscriberInfo
 			String globalSubscriberId = jsonUtil.getJsonValue(siRequest, "requestDetails.subscriberInfo.globalSubscriberId")
@@ -183,6 +119,28 @@ public class CreateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 				execution.setVariable("subscriptionServiceType", subscriptionServiceType)
 			}
 
+			
+			/*
+			 * Extracting User Parameters from incoming Request and converting into a Map
+			 */
+			def jsonSlurper = new JsonSlurper()
+			def jsonOutput = new JsonOutput()
+
+			Map reqMap = jsonSlurper.parseText(siRequest)
+
+			//InputParams
+			def userParams = reqMap.requestDetails?.requestParameters?.userParams
+
+			Map<String, String> inputMap = [:]
+			if (userParams) {
+				userParams.each {
+					userParam -> inputMap.put(userParam.name, userParam.value)
+				}
+			}
+			
+			utils.log("DEBUG", "User Input Parameters map: " + userParams.toString(), isDebugEnabled)
+			execution.setVariable("serviceInputParams", inputMap)
+			
 			//TODO
 			//execution.setVariable("serviceInputParams", jsonUtil.getJsonValue(siRequest, "requestDetails.requestParameters.userParams"))
 			//execution.setVariable("failExists", true)
@@ -312,7 +270,7 @@ public class CreateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 					   <request-info xmlns="http://org.openecomp/mso/infra/vnf-request/v1">
 					      <request-id>${requestId}</request-id>
 					      <action>CREATE</action>
-					      <source>VID</source>
+					      <source>UUI</source>
 					   </request-info>
 						<aetgt:WorkflowException xmlns:aetgt="http://org.openecomp/mso/workflow/schema/v1">
 							<aetgt:ErrorMessage>${errorException}</aetgt:ErrorMessage>
