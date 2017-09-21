@@ -79,6 +79,8 @@ RUN echo "LAUNCH_JBOSS_IN_BACKGROUND=true" >> $JBOSS_HOME/bin/standalone.conf
 
 COPY ./maven/artifacts/* $JBOSS_HOME/standalone/deployments/
 
+RUN mkdir -p /etc/mso/config.d/ASDC && chown -R jboss:jboss /etc/mso/config.d/ASDC && chmod u+xrw /etc/mso/config.d/ASDC
+
 ### Open Ports
 EXPOSE 8080
 

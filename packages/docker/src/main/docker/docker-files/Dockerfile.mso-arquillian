@@ -77,6 +77,8 @@ COPY jboss-configs/configuration/application-roles.properties $JBOSS_HOME/standa
 RUN echo "JAVA_OPTS=\"\$JAVA_OPTS -Xms64m -Xmx4g -XX:MetaspaceSize=96M -XX:MaxMetaspaceSize=1g -Djboss.bind.address=0.0.0.0 -Djboss.bind.address.management=0.0.0.0 -Dmso.db=MARIADB -Dmso.config.path=/etc/mso/config.d/ -javaagent:/tmp/jacoco/lib/jacocoagent.jar=destfile=/shared/jacoco-it.exec,dumponexit=true,append=false,includes=com.att.*:org.openecomp.*\"" >> $JBOSS_HOME/bin/standalone.conf
 RUN echo "LAUNCH_JBOSS_IN_BACKGROUND=true" >> $JBOSS_HOME/bin/standalone.conf
 
+RUN mkdir -p /etc/mso/config.d/ASDC && chown -R jboss:jboss /etc/mso/config.d/ASDC && chmod u+xrw /etc/mso/config.d/ASDC
+
 ### Open Ports
 EXPOSE 8080 9990
 
