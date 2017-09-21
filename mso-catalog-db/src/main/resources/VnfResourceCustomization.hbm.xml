@@ -40,9 +40,9 @@
 		
 		<property name="created" type="timestamp" generated="insert" update="false" insert="false" column="CREATION_TIMESTAMP" not-null="true"/>
 		
-		<set name="serviceResourceCustomizations" inverse="true" cascade="all">
-            <key column="SERVICE_MODEL_UUID" not-null="true" />
-            <one-to-many class="ServiceToResourceCustomization" />
+		<set name="vfModuleCustomizations" inverse="true" cascade="all">
+            <key column="VNF_RESOURCE_MODEL_UUID" not-null="true" />
+            <one-to-many class="VnfResCustomToVfModuleCustom" />
         </set>
 	</class>
 </hibernate-mapping>
