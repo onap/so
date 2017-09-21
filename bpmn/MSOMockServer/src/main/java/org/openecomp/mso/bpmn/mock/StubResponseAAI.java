@@ -34,6 +34,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 
+
 /**
  * Reusable Mock StubResponses for AAI Endpoints
  *
@@ -58,6 +59,14 @@ public class StubResponseAAI {
 	/**
 	 * Allotted Resource Mock StubResponses below
 	 */
+	public static void MockGetAllottedResource(String globalCustId, String subscriptionType, String serviceInstanceId, String allottedResourceId, String responseFile) {
+		stubFor(get(urlMatching("/aai/v[0-9]+/business/customers/customer/" + globalCustId + "/service-subscriptions/service-subscription/" + subscriptionType + "/service-instances/service-instance/" + serviceInstanceId + "/allotted-resources/allotted-resource/" + allottedResourceId))
+				.willReturn(aResponse()
+						.withStatus(200)
+						.withHeader("Content-Type", "text/xml")
+						.withBodyFile(responseFile)));
+	}
+	
 	public static void MockPutAllottedResource(String globalCustId, String subscriptionType, String serviceInstanceId, String allottedResourceId) {
 		stubFor(put(urlMatching("/aai/v[0-9]+/business/customers/customer/" + globalCustId + "/service-subscriptions/service-subscription/" + subscriptionType + "/service-instances/service-instance/" + serviceInstanceId + "/allotted-resources/allotted-resource/" + allottedResourceId))
 				.willReturn(aResponse()
@@ -68,6 +77,26 @@ public class StubResponseAAI {
 		stubFor(put(urlMatching("/aai/v[0-9]+/business/customers/customer/" + globalCustId + "/service-subscriptions/service-subscription/" + subscriptionType + "/service-instances/service-instance/" + serviceInstanceId + "/allotted-resources/allotted-resource/" + allottedResourceId))
 				.willReturn(aResponse()
 						.withStatus(500)));
+	}
+	
+	public static void MockDeleteAllottedResource(String globalCustId, String subscriptionType, String serviceInstanceId, String allottedResourceId, String resourceVersion) {
+		stubFor(delete(urlMatching("/aai/v[0-9]+/business/customers/customer/" + globalCustId + "/service-subscriptions/service-subscription/" + subscriptionType + "/service-instances/service-instance/" + serviceInstanceId + "/allotted-resources/allotted-resource/" + allottedResourceId + "[?]resource-version=" + resourceVersion))
+				.willReturn(aResponse()
+						.withStatus(204)));
+	}
+	
+	public static void MockPatchAllottedResource(String globalCustId, String subscriptionType, String serviceInstanceId, String allottedResourceId) {
+		stubFor(patch(urlMatching("/aai/v[0-9]+/business/customers/customer/" + globalCustId + "/service-subscriptions/service-subscription/" + subscriptionType + "/service-instances/service-instance/" + serviceInstanceId + "/allotted-resources/allotted-resource/" + allottedResourceId))
+				.willReturn(aResponse()
+						.withStatus(200)));
+	}
+
+	public static void MockQueryAllottedResourceById(String allottedResourceId, String responseFile){
+		stubFor(get(urlMatching("/aai/v[0-9]+/search/nodes-query[?]search-node-type=allotted-resource[&]filter=id:EQUALS:" + allottedResourceId))
+				.willReturn(aResponse()
+						.withStatus(200)
+						.withHeader("Content-Type", "text/xml")
+						.withBodyFile(responseFile)));
 	}
 
 
@@ -198,7 +227,6 @@ public class StubResponseAAI {
 				.willReturn(aResponse()
 						.withStatus(500)));
 	}
-
 
 	/**
 	 * Service-Subscription Mock StubResponses below
@@ -789,6 +817,14 @@ public class StubResponseAAI {
 	 */
 	public static void MockGetVfModuleId(String vnfId, String vfModuleId, String responseFile, int statusCode) {
 		stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/" + vnfId + "/vf-modules/vf-module/" + vfModuleId))
+				.willReturn(aResponse()
+						.withStatus(statusCode)
+						.withHeader("Content-Type", "text/xml")
+						.withBodyFile(responseFile)));
+	}
+	
+	public static void MockGetVfModuleByNameWithDepth(String vnfId, String vfModuleName, int depth, String responseFile, int statusCode) {
+		stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/" + vnfId + "/vf-modules/vf-module[?]vf-module-name=" + vfModuleName + "[?]depth=" + depth))
 				.willReturn(aResponse()
 						.withStatus(statusCode)
 						.withHeader("Content-Type", "text/xml")
