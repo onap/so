@@ -28,6 +28,7 @@ import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -44,7 +45,12 @@ import org.openecomp.mso.apihandler.common.RequestClientFactory;
 import org.openecomp.mso.apihandler.common.ResponseHandler;
 import org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans.E2EServiceInstanceRequest;
 import org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans.E2EUserParam;
+import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.ModelInfo;
+import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.RequestDetails;
+import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.RequestInfo;
+import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.RequestParameters;
 import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.ServiceInstancesRequest;
+import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.SubscriberInfo;
 import org.openecomp.mso.db.catalog.CatalogDatabase;
 import org.openecomp.mso.db.catalog.beans.Service;
 import org.openecomp.mso.db.catalog.beans.ServiceRecipe;
@@ -55,7 +61,11 @@ import org.openecomp.mso.requestsdb.InfraActiveRequests;
 import org.openecomp.mso.requestsdb.RequestsDatabase;
 import org.openecomp.mso.utils.UUIDChecker;
 
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+
 @Path("/e2eServiceInstances")
+@Api(value="/e2eServiceInstances",description="API Requests for E2E Service Instances")
 public class E2EServiceInstances {
 
 	private HashMap<String, String> instanceIdMap = new HashMap<String,String>();
@@ -65,11 +75,16 @@ public class E2EServiceInstances {
 
 	public E2EServiceInstances() {
 	}
+	
+	/**
+     *POST Requests for E2E Service create Instance on a version provided
+     */
 
 	@POST
 	@Path("/{version:[vV][3-5]}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value="Create a E2E Service Instance on a version provided",response=Response.class)
 	public Response createE2EServiceInstance(String request, @PathParam("version") String version) {
 
 		Response response = E2EserviceInstances(request, Action.createInstance,	null, version);
@@ -77,17 +92,23 @@ public class E2EServiceInstances {
 		return response;
 	}
 
+	/**
+     *DELETE Requests for E2E Service delete Instance on a specified version and serviceId
+     */
+	
 	@DELETE
 	@Path("/{version:[vV][3-5]}/{serviceId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response deleteE2EServiceInstance(String request, @PathParam("version") String version) {
+	@ApiOperation(value="Delete E2E Service Instance on a specified version and serviceId",response=Response.class)
+	public Response deleteE2EServiceInstance(String request, @PathParam("version") String version, @PathParam("serviceId") String serviceId) {
 
+		instanceIdMap.put("serviceId", serviceId);
 		Response response = E2EserviceInstances(request, Action.deleteInstance,	null, version);
 
 		return response;
 	}
-
+	
 	private Response E2EserviceInstances(String requestJSON, Action action,
 			HashMap<String, String> instanceIdMap, String version) {
 
@@ -239,7 +260,7 @@ public class E2EServiceInstances {
 
 
 
-		String serviceInstanceId = "";
+		String serviceId = "";
 
 		RequestClient requestClient = null;
 		HttpResponse response = null;
@@ -255,7 +276,7 @@ public class E2EServiceInstances {
 
 			response = requestClient.post(requestId, false,
 					recipeLookupResult.getRecipeTimeout(),
-					action.name(), serviceInstanceId, null, null, null, null, serviceInstanceType,
+					action.name(), serviceId, null, null, null, null, serviceInstanceType,
 					null, null, null, sirRequestJson);
 
 			msoLogger.recordMetricEvent(subStartTime,
@@ -413,48 +434,63 @@ public class E2EServiceInstances {
 		ServiceInstancesRequest sir = new ServiceInstancesRequest();
 
 		String returnString = null;
-
+		RequestDetails requestDetails = new RequestDetails();
+		ModelInfo modelInfo = new ModelInfo();
+		
 		//ModelInvariantId
-		sir.getRequestDetails().getModelInfo().setModelInvariantId(e2eSir.getService().getServiceDefId());
-
+		modelInfo.setModelInvariantId(e2eSir.getService().getServiceDefId());
+		
 		//modelNameVersionId
-		sir.getRequestDetails().getModelInfo().setModelNameVersionId(e2eSir.getService().getTemplateId());
-
-		String modelInfo = e2eSir.getService().getParameters().getNodeTemplateName();
-		String[] arrayOfInfo = modelInfo.split(":");
+		modelInfo.setModelNameVersionId(e2eSir.getService().getTemplateId());
+		
+		String modelInfoValue = e2eSir.getService().getParameters().getNodeTemplateName();
+		String[] arrayOfInfo = modelInfoValue.split(":");
 		String modelName = arrayOfInfo[0];
-		String modelVersion = arrayOfInfo[0];
-
+		String modelVersion = arrayOfInfo[1];
+		
 		//modelName
-		sir.getRequestDetails().getModelInfo().setModelName(modelName);
-
+		modelInfo.setModelName(modelName);
+		
 		//modelVersion
-		sir.getRequestDetails().getModelInfo().setModelVersion(modelVersion);
-
+		modelInfo.setModelVersion(modelVersion);
+		
 		//modelType
-		if(ModelType.service.equals(e2eSir.getService().getParameters().getNodeType())){
-			sir.getRequestDetails().getModelInfo().setModelType(ModelType.service);
-		}
-
-		sir.getRequestDetails().getModelInfo().getModelType();
+		//if(ModelType.service.equals(e2eSir.getService().getParameters().getNodeType())){
+			modelInfo.setModelType(ModelType.service);
+		//}
+		
+		//setting modelInfo to requestDetails
+		requestDetails.setModelInfo(modelInfo);
+		
+		SubscriberInfo subscriberInfo = new SubscriberInfo();
 
 		//globalsubscriberId
-		sir.getRequestDetails().getSubscriberInfo().setGlobalSubscriberId(e2eSir.getService().getParameters().getGlobalSubscriberId());
+		subscriberInfo.setGlobalSubscriberId(e2eSir.getService().getParameters().getGlobalSubscriberId());
 
 		//subscriberName
-		sir.getRequestDetails().getSubscriberInfo().setSubscriberName(e2eSir.getService().getParameters().getSubscriberName());
-
+		subscriberInfo.setSubscriberName(e2eSir.getService().getParameters().getSubscriberName());
+		
+		//setting subscriberInfo to requestDetails
+		requestDetails.setSubscriberInfo(subscriberInfo);
+		
+		RequestInfo requestInfo = new RequestInfo();
+		
 		//instanceName
-		sir.getRequestDetails().getRequestInfo().setInstanceName(e2eSir.getService().getName());
+		requestInfo.setInstanceName(e2eSir.getService().getName());
 
 		//source
-		sir.getRequestDetails().getRequestInfo().setSource("UUI");
+		requestInfo.setSource("UUI");
 
 		//suppressRollback
-		sir.getRequestDetails().getRequestInfo().setSuppressRollback(true);
+		requestInfo.setSuppressRollback(true);
 
+		//setting requestInfo to requestDetails
+		requestDetails.setRequestInfo(requestInfo);
+		
+		RequestParameters requestParameters = new RequestParameters();
+		
 		//subscriptionServiceType
-		sir.getRequestDetails().getRequestParameters().setSubscriptionServiceType("MOG");
+		requestParameters.setSubscriptionServiceType("MOG");
 
 		//Userparams
 		List<E2EUserParam> userParams = new ArrayList<>(); 
@@ -466,7 +502,12 @@ public class E2EServiceInstances {
 			userParamList.add(userParamMap);
 		}
 
-		sir.getRequestDetails().getRequestParameters().setUserParams(userParamList);
+		requestParameters.setUserParams(userParamList);
+		
+		//setting requestParameters to requestDetails
+		requestDetails.setRequestParameters(requestParameters);
+		
+		sir.setRequestDetails(requestDetails);
 
 		//converting to string
 		ObjectMapper mapper = new ObjectMapper();
