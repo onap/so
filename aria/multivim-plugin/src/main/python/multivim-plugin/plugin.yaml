@@ -1,41 +1,385 @@
-##################################################################################
-# Multi-vim built in types and plugins definitions.
-##################################################################################
+#
+# Copyright (c) 2017 GigaSpaces Technologies Ltd. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+#
+tosca_definitions_version: tosca_simple_yaml_1_0
 
-plugins:
-  multivim:
-    executor: central_deployment_agent
-    #source: https://github.com/cloudify-cosmo/onap-multivim-plugin/archive/2.2.0.zip
-    source: 
-    package_name: onap-multivim-plugin
-    package_version: '2.2.0'
+
+topology_template:
+  policies:
+    onap-multivim-plugin:
+      description: >-
+        multivim plugin executes operations.
+      type: aria.Plugin
+      properties:
+        version: 2.0.1
+
+
+data_types:
+
+  onap.multivim.datatypes.Config:
+    description: >-
+      multivim configuration
+    properties:
+      username:
+        type: string
+      password:
+        type: string
+      tenant_name:
+        type: string
+      auth_url:
+        type: string
+      region:
+        type: string
+        required: false
+      nova_url:
+        type: string
+        required: false
+      neutron_url:
+        type: string
+        required: false
+
+  onap.multivim.datatypes.Rules:
+    description: >-
+      multivim security group rules
+    properties:
+      remote_ip_prefix:
+        type: string
+        default: 0.0.0.0/0
+      port:
+        type: integer
+        default:
+
+  # source: https://developer.multivim.org/api-ref/compute/
+
+  onap.multivim.datatypes.Server:
+    description: >-
+      multivim Server args.
+    properties:
+      security_groups:
+        type: list
+        entry_schema: string
+        required: false
+      availability_zone:
+        type: string
+        required: false
+      userdata:
+        type: string
+        required: false
+      metadata:
+        type: map
+        entry_schema: string
+        required: false
+
+  onap.multivim.datatypes.Keypair:
+    description: >-
+      multivim keypair args.
+    properties:
+      public_key:
+        type: string
+        required: false
+      type:
+        type: string
+        required: false
+      user_id:
+        type: string
+        required: false
+
+  # source: https://developer.multivim.org/api-ref/block-storage/v2/index.html
+
+  onap.multivim.datatypes.Volume:
+    description: >-
+      multivim volume args.
+    properties:
+      size:
+        type: integer
+        required: false
+      description:
+        type: string
+        required: false
+      availability_zone:
+        type: string
+        required: false
+      consistencygroup_id:
+        type: string
+        required: false
+      volume_type:
+        type: string
+        required: false
+      snapshot_id:
+        type: string
+        required: false
+      source_replica:
+        type: string
+        required: false
+      tenant_id:
+        type: string
+        required: false
+
+  # source: https://developer.multivim.org/api-ref/image/
+
+  onap.multivim.datatypes.Image:
+    description: >-
+      multivim image args.
+    properties:
+      id:
+        type: string
+        required: false
+      min_disk:
+        type: integer
+        required: false
+      min_ram:
+        type: integer
+        required: false
+      name:
+        type: string
+        required: false
+      protected:
+        type: boolean
+        required: false
+      tags:
+        type: list
+        entry_schema: string
+        required: false
+      visibility:
+        type: string
+        required: false
+
+  # source: https://developer.multivim.org/api-ref/identity/v3/
+
+  onap.multivim.datatypes.Project:
+    description: >-
+      multivim image args.
+    properties:
+      is_domain:
+        type: boolean
+        required: false
+      description:
+        type: string
+        required: false
+      domain_id:
+        type: string
+        required: false
+      name:
+        type: string
+        required: false
+      enabled:
+        type: boolean
+        required: false
+      parent_id:
+        type: string
+        required: false
+
+  # source: https://developer.multivim.org/api-ref/networking/v2/index.html
+
+  onap.multivim.datatypes.Subnet:
+    description: >-
+      multivim subnet args.
+    properties:
+      network_id:
+        type: string
+        required: false
+      ip_version:
+        type: integer
+        required: false
+        default: 4
+      cidr:
+        type: string
+        required: false
+      gateway_ip:
+        type: string
+        required: false
+      dns_nameservers:
+        type: list
+        entry_schema: string
+        required: false
+      enable_dhcp:
+        type: boolean
+        required: false
+      tenant_id:
+        type: string
+        required: false
+
+  onap.multivim.datatypes.Port:
+    description: >-
+      multivim port args
+    properties:
+      network_id:
+        type: string
+        required: false
+      admin_state_up:
+        type: boolean
+        required: false
+      status:
+        type: string
+        required: false
+      mac_address:
+        type: string
+        required: false
+      device_id:
+        type: string
+        required: false
+      device_owner:
+        type: string
+        required: false
+      tenant_id:
+        type: string
+        required: false
+
+  onap.multivim.datatypes.Network:
+    description: >-
+      multivim network args
+    properties:
+      admin_state_up:
+        type: boolean
+        required: false
+      status:
+        type: string
+        required: false
+      subnets:
+        type: list
+        entry_schema: string
+        required: false
+      shared:
+        type: boolean
+        required: false
+      tenant_id:
+        type: string
+        required: false
+
+  onap.multivim.datatypes.SecurityGroup:
+    description: >-
+      multivim network args
+    properties:
+      admin_state_up:
+        type: boolean
+        required: false
+      port_security_enabled:
+        type: boolean
+        required: false
+      project_id:
+        type: string
+        required: false
+      qos_policy_id:
+        type: string
+        required: false
+      segments:
+        type: list
+        entry_schema: string
+        required: false
+      shared:
+        type: boolean
+        required: false
+      vlan_transparent:
+        type: boolean
+        required: false
+      tenant_id:
+        type: string
+        required: false
+
+  onap.multivim.datatypes.Router:
+    description: >-
+      multivim network args
+    properties:
+      bgpvpn_id:
+        type: string
+        required: false
+      router_id:
+        type: string
+        required: false
+
+  onap.multivim.datatypes.FloatingIP:
+    description: >-
+      multivim network args
+    properties:
+      tenant_id:
+        type: string
+        required: false
+      project_id:
+        type: string
+        required: false
+      floating_network_id:
+        type: string
+        required: false
+      floating_network_name:
+        type: string
+        required: false
+      fixed_ip_address:
+        type: string
+        required: false
+      floating_ip_address:
+        type: string
+        required: false
+      port_id:
+        type: string
+        required: false
+      subnet_id:
+        type: string
+        required: false
+
+
+interface_types:
+
+  onap.multivim.interfaces.validation:
+    derived_from: tosca.interfaces.Root
+    creation:
+      description: >-
+        creation operation for the multivim validation interface
+    deletion:
+      description: >-
+        deletion operation for the multivim validation interface
+
 
 node_types:
+
   onap.multivim.nodes.Server:
-    derived_from: cloudify.nodes.Compute
+    derived_from: tosca.nodes.Compute
     properties:
       server:
         default: {}
-        description: >
-          key-value server configuration as described in OpenStack compute create server API. (DEPRECATED - Use the args input in create operation instead)
+        type: onap.multivim.datatypes.Server
+        required: false
+      ip:
+        default:
+        type: string
+      os_family:
+        description: >-
+          Property specifying what type of operating system family
+          this compute node will run.
+        default: linux
+        type: string
       use_external_resource:
         type: boolean
         default: false
-        description: >
+        description: >-
           a boolean for setting whether to create the resource or use an existing one.
           See the using existing resources section.
       create_if_missing:
         default: false
-        description: >
+        type: boolean
+        description: >-
           If use_external_resource is ``true`` and the resource is missing,
           create it instead of failing.
       resource_id:
         default: ''
-        description: >
+        type: string
+        description: >-
           name to give to the new resource or the name or ID of an existing resource when the ``use_external_resource`` property is set to ``true`` (see the using existing resources section). Defaults to '' (empty string).
       image:
         default: ''
-        description: >
+        type: string
+        description: >-
           The image for the server.
           May receive either the ID or the name of the image.
           note: This property is currently optional for backwards compatibility,
@@ -43,342 +387,352 @@ node_types:
           (Default: '').
       flavor:
         default: ''
-        description: >
+        type: string
+        description: >-
           The flavor for the server.
           May receive either the ID or the name of the flavor.
           note: This property is currently optional for backwards compatibility,
           but will be modified to become a required property in future versions
           (Default: '').
-      management_network_name:
-        default: ''
-        description: >
-          Cloudify's management network name.
-          Every server should be connected to the management network.
-          If the management network's name information is available in the Provider Context,
-          this connection is made automatically and there's no need to override this property
-          (See the Misc section for more information on the Openstack Provider Context).
-          Otherwise, it is required to set the value of this property to the management network name as it was set in the bootstrap process.
-          Note: When using Nova-net Openstack (see the Nova-net Support section),
-          don't set this property. Defaults to '' (empty string).
       use_password:
         default: false
-        description: >
+        type: boolean
+        description: >-
           A boolean describing whether this server image supports user-password authentication.
           Images that do should post the administrator user's password to the Openstack metadata service (e.g. via cloudbase);
           The password would then be retrieved by the plugin,
           decrypted using the server's keypair and then saved in the server's runtime properties.
+      management_network_name:
+        type: string
+        description: >-
+          The current implementation of the multivim plugin requires this field. The value of
+          this field should be set to the multivim name of a network this server is attached to.
       multivim_config:
-        default: {}
-        description: >
-          see Openstack Configuraion
+        type: onap.multivim.datatypes.Config
+        required: false
+        description: >-
+            see Openstack Configuraion
     interfaces:
-      cloudify.interfaces.lifecycle:
+      Standard:
         create:
-          implementation: openstack.nova_plugin.server.create
+          implementation: onap-multivim-plugin > nova_plugin.server.create
           inputs:
             args:
+              required: false
               default: {}
-            multivim_config:
-              default: {}
+              type: onap.multivim.datatypes.Server
         start:
-          implementation: openstack.nova_plugin.server.start
+          implementation: onap-multivim-plugin > nova_plugin.server.start
           inputs:
             start_retry_interval:
-              description: Polling interval until the server is active in seconds
-              type: integer
               default: 30
+              type: integer
             private_key_path:
-              description: >
-                Path to private key which matches the server's
-                public key. Will be used to decrypt password in case
-                the "use_password" property is set to "true"
               type: string
               default: ''
-            multivim_config:
-              default: {}
-        stop:
-          implementation: openstack.nova_plugin.server.stop
-          inputs:
-            multivim_config:
-              default: {}
-        delete:
-          implementation: openstack.nova_plugin.server.delete
-          inputs:
-            multivim_config:
-              default: {}
-      cloudify.interfaces.validation:
+              required: true
+        stop: onap-multivim-plugin > nova_plugin.server.stop
+        delete: onap-multivim-plugin > nova_plugin.server.delete
+      Validation:
+        type: onap.multivim.interfaces.validation
         creation:
-          implementation: openstack.nova_plugin.server.creation_validation
+          implementation: onap-multivim-plugin > nova_plugin.server.creation_validation
           inputs:
             args:
+              required: false
               default: {}
-            multivim_config:
-              default: {}
+              type: onap.multivim.datatypes.Server
+
+    requirements:
+      - floating_ip:
+          capability: tosca.capabilities.Node
+          node: onap.multivim.nodes.FloatingIP
+          relationship: onap.multivim.server_connected_to_floating_ip
+          occurrences: [ 0, UNBOUNDED ]
+      - security_group:
+          capability: tosca.capabilities.Node
+          node: onap.multivim.nodes.SecurityGroup
+          relationship: onap.multivim.server_connected_to_security_group
+          occurrences: [ 0, UNBOUNDED ]
+      - port:
+          capability: tosca.capabilities.Node
+          node: onap.multivim.nodes.Port
+          relationship: onap.multivim.server_connected_to_port
+          occurrences: [ 0, UNBOUNDED ]
+      - key_pair:
+          capability: tosca.capabilities.Node
+          node: onap.multivim.nodes.KeyPair
+          relationship: onap.multivim.server_connected_to_keypair
+          occurrences: [ 0, UNBOUNDED ]
+    capabilities:
+      multivim_container:
+        type: Node
 
   onap.multivim.nodes.WindowsServer:
     derived_from: onap.multivim.nodes.Server
     properties:
       use_password:
         default: true
-        description: >
+        type: boolean
+        description: >-
           Default changed for derived type
           because Windows instances need a password for agent installation
       os_family:
         default: windows
-        description: >
+        type: string
+        description: >-
           (updates the os_family default as a convenience)
-      agent_config:
-        type: cloudify.datatypes.AgentConfig
-        default:
-          port: 5985
-        description: >
-          (updates the defaults for the agent_config for Windows)
 
   onap.multivim.nodes.KeyPair:
-    derived_from: cloudify.nodes.Root
+    derived_from: tosca.nodes.Root
     properties:
       keypair:
         default: {}
-        description: >
-          the keypair object as described by Openstack. This
-          parameter can be used to override and pass parameters
-          directly to Nova client.
-          Note that in the case of keypair, the only nested parameter
-          that can be used is "name".
+        type: onap.multivim.datatypes.Keypair
+        required: false
+        description: >-
+          the path (on the machine the plugin is running on) to
+          where the private key should be stored. If
+          use_external_resource is set to "true", the existing
+          private key is expected to be at this path.
       private_key_path:
         description: >
           the path (on the machine the plugin is running on) to
           where the private key should be stored. If
           use_external_resource is set to "true", the existing
           private key is expected to be at this path.
+        type: string
       use_external_resource:
         type: boolean
         default: false
-        description: >
+        description: >-
           a boolean describing whether this resource should be
           created or rather that it already exists on Openstack
           and should be used as-is.
       create_if_missing:
         default: false
-        description: >
+        type: boolean
+        description: >-
           If use_external_resource is ``true`` and the resource is missing,
           create it instead of failing.
       resource_id:
         default: ''
-        description: >
+        type: string
+        description: >-
           the name that will be given to the resource on Openstack (excluding optional prefix).
           If not provided, a default name will be given instead.
           If use_external_resource is set to "true", this exact
           value (without any prefixes applied) will be looked for
           as either the name or id of an existing keypair to be used.
       multivim_config:
-        default: {}
-        description: >
-          endpoints and authentication configuration for Openstack.
-          Expected to contain the following nested fields:
-          username, password, tenant_name, auth_url, region.
+        type: onap.multivim.datatypes.Config
+        required: false
     interfaces:
-      cloudify.interfaces.lifecycle:
+      Standard:
         create:
-          implementation: openstack.nova_plugin.keypair.create
+          implementation: onap-multivim-plugin > nova_plugin.keypair.create
           inputs:
             args:
+              required: false
               default: {}
-            multivim_config:
-              default: {}
-        delete:
-          implementation: openstack.nova_plugin.keypair.delete
-          inputs:
-            multivim_config:
-              default: {}
-      cloudify.interfaces.validation:
-        creation:
-          implementation: openstack.nova_plugin.keypair.creation_validation
-          inputs:
-            multivim_config:
-              default: {}
+              type: onap.multivim.datatypes.Keypair
+
+        delete: onap-multivim-plugin > nova_plugin.keypair.delete
+
+      Validation:
+        type: onap.multivim.interfaces.validation
+        creation: onap-multivim-plugin > nova_plugin.keypair.creation_validation
+
+    capabilities:
+      keypair:
+        type: tosca.capabilities.Node
 
   onap.multivim.nodes.Subnet:
-    derived_from: cloudify.nodes.Subnet
+    derived_from: tosca.nodes.Root
     properties:
       subnet:
-        default: {}
-        description: >
-          key-value subnet configuration as described at http://developer.openstack.org/api-ref-networking-v2.html#subnets. (**DEPRECATED - Use the `args` input in create operation instead**)
+        type: onap.multivim.datatypes.Subnet
+        required: false
+        default:
+          cidr: 172.16.0.0/16
       use_external_resource:
         type: boolean
         default: false
-        description: >
+        description: >-
           a boolean for setting whether to create the resource or use an existing one.
           See the using existing resources section.
       create_if_missing:
         default: false
-        description: >
+        type: boolean
+        description: >-
           If use_external_resource is ``true`` and the resource is missing,
           create it instead of failing.
       resource_id:
         default: ''
-        description: >
+        type: string
+        description: >-
           name to give to the new resource or the name or ID of an existing resource when the ``use_external_resource`` property is set to ``true`` (see the using existing resources section). Defaults to '' (empty string).
       multivim_config:
-        default: {}
-        description: >
-          endpoints and authentication configuration for Openstack.
-          Expected to contain the following nested fields:
-          username, password, tenant_name, auth_url, region.
+        type: onap.multivim.datatypes.Config
+        required: false
     interfaces:
-      cloudify.interfaces.lifecycle:
+      Standard:
         create:
-          implementation: openstack.neutron_plugin.subnet.create
+          implementation: onap-multivim-plugin > neutron_plugin.subnet.create
           inputs:
             args:
-              default: {}
-            multivim_config:
-              default: {}
-        delete:
-          implementation: openstack.neutron_plugin.subnet.delete
-          inputs:
-            multivim_config:
-              default: {}
-      cloudify.interfaces.validation:
+              required: false
+              type: onap.multivim.datatypes.Subnet
+              default:
+                cidr: 172.16.0.0/16
+        delete: onap-multivim-plugin > neutron_plugin.subnet.delete
+      Validation:
+        type: onap.multivim.interfaces.validation
         creation:
-          implementation: openstack.neutron_plugin.subnet.creation_validation
+          implementation: onap-multivim-plugin > neutron_plugin.subnet.creation_validation
           inputs:
             args:
-              default: {}
-            multivim_config:
-              default: {}
+              type: onap.multivim.datatypes.Subnet
+              required: false
+              default:
+                cidr: 172.16.0.0/16
+
+    requirements:
+      - router:
+          capability: tosca.capabilities.Node
+          node: onap.multivim.nodes.Router
+          relationship: onap.multivim.subnet_connected_to_router
+          occurrences: [ 0, UNBOUNDED ]
+      - network:
+          capability: tosca.capabilities.Node
+          node: onap.multivim.nodes.Network
+    capabilities:
+      subnet:
+        type: tosca.capabilities.Node
 
   onap.multivim.nodes.SecurityGroup:
-    derived_from: cloudify.nodes.SecurityGroup
+    derived_from: tosca.nodes.Root
     properties:
       security_group:
+        type: onap.multivim.datatypes.SecurityGroup
+        required: false
         default: {}
-        description: >
-          key-value security_group configuration as described in http://developer.openstack.org/api-ref-networking-v2-ext.html#createSecGroup. (**DEPRECATED - Use the `args` input in create operation instead**)
       description:
         type: string
         default: ''
-        description: >
+        description: >-
           SecurityGroup description.
       create_if_missing:
         default: false
-        description: >
+        type: boolean
+        description: >-
           If use_external_resource is ``true`` and the resource is missing,
           create it instead of failing.
       use_external_resource:
         type: boolean
         default: false
-        description: >
+        description: >-
           a boolean for setting whether to create the resource or use an existing one.
           See the using existing resources section.
       resource_id:
         default: ''
-        description: >
+        type: string
+        description: >-
           name to give to the new resource or the name or ID of an existing resource when the ``use_external_resource`` property is set to ``true`` (see the using existing resources section). Defaults to '' (empty string).
       multivim_config:
-        default: {}
-        description: >
-          endpoints and authentication configuration for Openstack.
-          Expected to contain the following nested fields:
-          username, password, tenant_name, auth_url, region.
+        type: onap.multivim.datatypes.Config
+        required: false
       rules:
         default: []
-        description: >
-          key-value security_group_rule configuration as described in http://developer.openstack.org/api-ref-networking-v2.html#security_groups
+        type: list
+        entry_schema: onap.multivim.datatypes.Rules
       disable_default_egress_rules:
         default: false
-        description: >
-          a flag for removing the default rules which https://wiki.openstack.org/wiki/Neutron/SecurityGroups#Behavior. If not set to `true`, these rules will remain, and exist alongside any additional rules passed using the `rules` property.
+        type: boolean
+        description: >-
+          a flag for removing the default rules which https://wiki.multivim.org/wiki/Neutron/SecurityGroups#Behavior. If not set to `true`, these rules will remain, and exist alongside any additional rules passed using the `rules` property.
     interfaces:
-      cloudify.interfaces.lifecycle:
+      Standard:
         create:
-          implementation: openstack.neutron_plugin.security_group.create
+          implementation: onap-multivim-plugin > neutron_plugin.security_group.create
           inputs:
             args:
+              type: onap.multivim.datatypes.SecurityGroup
+              required: false
               default: {}
-            multivim_config:
-              default: {}
-        delete:
-          implementation: openstack.neutron_plugin.security_group.delete
-          inputs:
-            multivim_config:
-              default: {}
-      cloudify.interfaces.validation:
-        creation:
-          implementation: openstack.neutron_plugin.security_group.creation_validation
-          inputs:
-            multivim_config:
-              default: {}
+        delete: onap-multivim-plugin > neutron_plugin.security_group.delete
+
+      Validation:
+        type: onap.multivim.interfaces.validation
+        creation: onap-multivim-plugin > neutron_plugin.security_group.creation_validation
+
+    capabilities:
+      security:
+        type: tosca.capabilities.Node
 
   onap.multivim.nodes.Router:
-    derived_from: cloudify.nodes.Router
+    derived_from: tosca.nodes.Root
     properties:
       router:
+        type: onap.multivim.datatypes.Router
+        required: false
         default: {}
-        description: >
-          key-value router configuration as described in http://developer.openstack.org/api-ref-networking-v2.html#layer3. (**DEPRECATED - Use the `args` input in create operation instead**)
       external_network:
         default: ''
-        description: >
+        type: string
+        description: >-
           An external network name or ID.
           If given, the router will use this external network as a gateway.
-      default_to_managers_external_network:
-        default: true
-        description: >
-          A boolean which determines whether to use the Cloudify Manager's external network if no other external network was given (whether by a relationship, by the `external_network` property or by the nested `external_gateway_info` key in the `router` property). This is only relevant if the manager's external network appears in the Provider-context. Defaults to `true`.
       use_external_resource:
         type: boolean
         default: false
-        description: >
+        description: >-
           a boolean for setting whether to create the resource or use an existing one.
           See the using existing resources section.
       create_if_missing:
         default: false
-        description: >
+        type: boolean
+        description: >-
           If use_external_resource is ``true`` and the resource is missing,
           create it instead of failing.
       resource_id:
         default: ''
-        description: >
+        description: >-
           name to give to the new resource or the name or ID of an existing resource when the ``use_external_resource`` property is set to ``true`` (see the using existing resources section). Defaults to '' (empty string).
+        type: string
       multivim_config:
-        default: {}
-        description: >
-          endpoints and authentication configuration for Openstack.
-          Expected to contain the following nested fields:
-          username, password, tenant_name, auth_url, region.
+        type: onap.multivim.datatypes.Config
+        required: false
+
     interfaces:
-      cloudify.interfaces.lifecycle:
+      Standard:
         create:
-          implementation: openstack.neutron_plugin.router.create
+          implementation: onap-multivim-plugin > neutron_plugin.router.create
           inputs:
             args:
               default: {}
-            multivim_config:
-              default: {}
-        delete:
-          implementation: openstack.neutron_plugin.router.delete
-          inputs:
-            multivim_config:
-              default: {}
-      cloudify.interfaces.validation:
-        creation:
-          implementation: openstack.neutron_plugin.router.creation_validation
-          inputs:
-            multivim_config:
-              default: {}
+              type: onap.multivim.datatypes.Router
+              required: false
+        delete: onap-multivim-plugin > neutron_plugin.router.delete
+      Validation:
+        type: onap.multivim.interfaces.validation
+        creation: onap-multivim-plugin > neutron_plugin.router.creation_validation
+
+    capabilities:
+      gateway:
+        type: tosca.capabilities.Node
 
   onap.multivim.nodes.Port:
-    derived_from: cloudify.nodes.Port
+    derived_from: tosca.nodes.Root
     properties:
       port:
+        type: onap.multivim.datatypes.Port
+        required: false
         default: {}
-        description: >
-          key-value port configuration as described in http://developer.openstack.org/api-ref-networking-v2.html#ports. (**DEPRECATED - Use the `args` input in create operation instead**)
       fixed_ip:
         default: ''
-        description: >
+        type: string
+        description: >-
           may be used to request a specific fixed IP for the port.
           If the IP is unavailable
           (either already taken or does not belong to a subnet the port is on)
@@ -386,407 +740,314 @@ node_types:
       use_external_resource:
         type: boolean
         default: false
-        description: >
+        description: >-
           a boolean for setting whether to create the resource or use an existing one.
           See the using existing resources section.
       create_if_missing:
         default: false
-        description: >
+        type: boolean
+        description: >-
           If use_external_resource is ``true`` and the resource is missing,
           create it instead of failing.
       resource_id:
         default: ''
-        description: >
+        type: string
+        description: >-
           name to give to the new resource or the name or ID of an existing resource when the ``use_external_resource`` property is set to ``true`` (see the using existing resources section). Defaults to '' (empty string).
       multivim_config:
-        default: {}
-        description: >
-          endpoints and authentication configuration for Openstack.
-          Expected to contain the following nested fields:
-          username, password, tenant_name, auth_url, region.
+        type: onap.multivim.datatypes.Config
+        required: false
+
     interfaces:
-      cloudify.interfaces.lifecycle:
+      Standard:
         create:
-          implementation: openstack.neutron_plugin.port.create
+          implementation: onap-multivim-plugin > neutron_plugin.port.create
           inputs:
             args:
               default: {}
-            multivim_config:
-              default: {}
-        delete:
-          implementation: openstack.neutron_plugin.port.delete
-          inputs:
-            multivim_config:
-              default: {}
-      cloudify.interfaces.validation:
-        creation:
-          implementation: openstack.neutron_plugin.port.creation_validation
-          inputs:
-            multivim_config:
-              default: {}
+              type: onap.multivim.datatypes.Port
+              required: false
+
+        delete: onap-multivim-plugin > neutron_plugin.port.delete
+
+      Validation:
+        type: onap.multivim.interfaces.validation
+        creation: onap-multivim-plugin > neutron_plugin.port.creation_validation
+
+    requirements:
+      - security_group:
+          capability: tosca.capabilities.Node
+          node: onap.multivim.nodes.SecurityGroup
+          relationship: onap.multivim.port_connected_to_security_group
+          occurrences: [ 0, UNBOUNDED ]
+      - floating_ip:
+          capability: tosca.capabilities.Node
+          node: onap.multivim.nodes.FloatingIP
+          relationship: onap.multivim.port_connected_to_floating_ip
+          occurrences: [ 0, UNBOUNDED ]
+      - subnet:
+          capability: tosca.capabilities.Node
+          node: onap.multivim.nodes.Subnet
+          relationship: onap.multivim.port_connected_to_subnet
+      - network:
+          capability: tosca.capabilities.Node
+          node: onap.multivim.nodes.Network
+          occurrences: [ 0, UNBOUNDED ]
+    capabilities:
+      entry_point:
+        type: tosca.capabilities.Node
 
   onap.multivim.nodes.Network:
-    derived_from: cloudify.nodes.Network
+    derived_from: tosca.nodes.Root
     properties:
       network:
+        type: onap.multivim.datatypes.Network
+        required: false
         default: {}
-        description: >
-          key-value network configuration as described in http://developer.openstack.org/api-ref-networking-v2.html#networks. (**DEPRECATED - Use the `args` input in create operation instead**)
       use_external_resource:
         type: boolean
         default: false
-        description: >
+        description: >-
           a boolean for setting whether to create the resource or use an existing one.
           See the using existing resources section.
       create_if_missing:
         default: false
-        description: >
+        type: boolean
+        description: >-
           If use_external_resource is ``true`` and the resource is missing,
           create it instead of failing.
       resource_id:
         default: ''
-        description: >
+        type: string
+        description: >-
           name to give to the new resource or the name or ID of an existing resource when the ``use_external_resource`` property is set to ``true`` (see the using existing resources section). Defaults to '' (empty string).
       multivim_config:
-        default: {}
-        description: >
-          endpoints and authentication configuration for Openstack.
-          Expected to contain the following nested fields:
-          username, password, tenant_name, auth_url, region.
+        type: onap.multivim.datatypes.Config
+        required: false
     interfaces:
-      cloudify.interfaces.lifecycle:
+      Standard:
         create:
-          implementation: openstack.neutron_plugin.network.create
+          implementation: onap-multivim-plugin > neutron_plugin.network.create
           inputs:
             args:
               default: {}
-            multivim_config:
-              default: {}
-        delete:
-          implementation: openstack.neutron_plugin.network.delete
-          inputs:
-            multivim_config:
-              default: {}
-      cloudify.interfaces.validation:
-        creation:
-          implementation: openstack.neutron_plugin.network.creation_validation
-          inputs:
-            multivim_config:
-              default: {}
+              type: onap.multivim.datatypes.Network
+              required: false
+
+        delete: onap-multivim-plugin > neutron_plugin.network.delete
+
+      Validation:
+        type: onap.multivim.interfaces.validation
+        creation: onap-multivim-plugin > neutron_plugin.network.creation_validation
+
+    capabilities:
+      address_space:
+        type: tosca.capabilities.Node
 
   onap.multivim.nodes.FloatingIP:
-    derived_from: cloudify.nodes.VirtualIP
+    derived_from: tosca.nodes.Root
+    attributes:
+      floating_ip_address:
+        type: string
     properties:
       floatingip:
+        type: onap.multivim.datatypes.FloatingIP
+        required: false
         default: {}
-        description: >
-          key-value floatingip configuration as described in http://developer.openstack.org/api-ref-networking-v2.html#layer3. (**DEPRECATED - Use the `args` input in create operation instead**)
       use_external_resource:
         type: boolean
         default: false
-        description: >
+        description: >-
           a boolean for setting whether to create the resource or use an existing one.
           See the using existing resources section.
       create_if_missing:
         default: false
-        description: >
+        type: boolean
+        description: >-
           If use_external_resource is ``true`` and the resource is missing,
           create it instead of failing.
       resource_id:
         description: IP address of the floating IP
         default: ''
+        type: string
+        description: >-
+          name to give to the new resource or the name or ID of an existing resource when the ``use_external_resource`` property is set to ``true`` (see the using existing resources section). Defaults to '' (empty string).
       multivim_config:
-        default: {}
-        description: >
-          endpoints and authentication configuration for Openstack.
-          Expected to contain the following nested fields:
-          username, password, tenant_name, auth_url, region.
+        type: onap.multivim.datatypes.Config
+        required: false
+
     interfaces:
-      cloudify.interfaces.lifecycle:
+      Standard:
         create:
-          implementation: openstack.neutron_plugin.floatingip.create
+          implementation: onap-multivim-plugin > neutron_plugin.floatingip.create
           inputs:
             args:
               default: {}
-            multivim_config:
-              default: {}
-        delete:
-          implementation: openstack.neutron_plugin.floatingip.delete
-          inputs:
-            multivim_config:
-              default: {}
-      cloudify.interfaces.validation:
-        creation:
-          implementation: openstack.neutron_plugin.floatingip.creation_validation
-          inputs:
-            multivim_config:
-              default: {}
+              type: onap.multivim.datatypes.FloatingIP
+              required: false
+
+        delete: onap-multivim-plugin > neutron_plugin.floatingip.delete
+
+      Validation:
+        type: onap.multivim.interfaces.validation
+        creation: onap-multivim-plugin > neutron_plugin.floatingip.creation_validation
+
+    capabilities:
+      address:
+        type: tosca.capabilities.Node
 
   onap.multivim.nodes.Volume:
-    derived_from: cloudify.nodes.Volume
+    derived_from: tosca.nodes.Root
     properties:
       volume:
         default: {}
-        description: >
-          key-value volume configuration as described in http://developer.openstack.org/api-ref-blockstorage-v1.html#volumes-v1. (**DEPRECATED - Use the `args` input in create operation instead**)
+        type: onap.multivim.datatypes.Volume
+        description: >-
+          key-value volume configuration as described in http://developer.multivim.org/api-ref-blockstorage-v1.html#volumes-v1. (**DEPRECATED - Use the `args` input in create operation instead**)
       use_external_resource:
         type: boolean
         default: false
-        description: >
+        description: >-
           a boolean for setting whether to create the resource or use an existing one.
           See the using existing resources section.
       create_if_missing:
         default: false
-        description: >
+        type: boolean
+        description: >-
           If use_external_resource is ``true`` and the resource is missing,
           create it instead of failing.
       resource_id:
-        default: ''
-        description: >
+        default:
+        type: string
+        description: >-
           name to give to the new resource or the name or ID of an existing resource when the ``use_external_resource`` property is set to ``true`` (see the using existing resources section). Defaults to '' (empty string).
       device_name:
         default: auto
-        description: >
+        type: string
+        description: >-
           The device name this volume will be attached to.
           Default value is *auto*,
-          which means openstack will auto-assign a device.
+          which means multivim will auto-assign a device.
           Note that if you do explicitly set a value,
           this value may not be the actual device name assigned.
-          Sometimes the device requested will not be available and openstack will assign it to a different device,
+          Sometimes the device requested will not be available and multivim will assign it to a different device,
           this is why we recommend using *auto*.
       multivim_config:
-        default: {}
-        description: >
-          endpoints and authentication configuration for Openstack.
-          Expected to contain the following nested fields:
-          username, password, tenant_name, auth_url, region.
+        type: onap.multivim.datatypes.Config
+        required: false
       boot:
         type: boolean
         default: false
-        description: >
+        description: >-
           If a Server instance is connected to this Volume by a relationship,
           this volume will be used as the boot volume for that Server.
     interfaces:
-      cloudify.interfaces.lifecycle:
+      Standard:
         create:
-          implementation: openstack.cinder_plugin.volume.create
+          implementation: onap-multivim-plugin > cinder_plugin.volume.create
           inputs:
             args:
               default: {}
-            multivim_config:
-              default: {}
+              type: onap.multivim.datatypes.Volume
+              required: false
+
             status_attempts:
-              description: >
+              description: >-
                 Number of times to check for the creation's status before failing
               type: integer
-              default: 20 
+              default: 20
             status_timeout:
-              description: >
+              description: >-
                 Interval (in seconds) between subsequent inquiries of the creation's
                 status
               type: integer
-              default: 15 
-        delete:
-          implementation: openstack.cinder_plugin.volume.delete
-          inputs:
-            multivim_config:
-              default: {}
-      cloudify.interfaces.validation:
-        creation:
-          implementation: openstack.cinder_plugin.volume.creation_validation
-          inputs:
-            multivim_config:
-              default: {}
+              default: 15
+        delete: onap-multivim-plugin > cinder_plugin.volume.delete
 
-  onap.multivim.nova_net.nodes.FloatingIP:
-    derived_from: cloudify.nodes.VirtualIP
-    properties:
-      floatingip:
-        default: {}
-        description: >
-          key-value floatingip configuration as described in http://developer.openstack.org/api-ref-compute-v2-ext.html#ext-os-floating-ips. (**DEPRECATED - Use the `args` input in create operation instead**)
-      use_external_resource:
-        type: boolean
-        default: false
-        description: >
-          a boolean for setting whether to create the resource or use an existing one.
-          See the using existing resources section.
-      create_if_missing:
-        default: false
-        description: >
-          TODO: CREATE. THIS IS MISSING
-      resource_id:
-        default: ''
-        description: >
-          name to give to the new resource or the name or ID of an existing resource when the ``use_external_resource`` property is set to ``true`` (see the using existing resources section). Defaults to '' (empty string).
-      multivim_config:
-        default: {}
-        description: >
-          endpoints and authentication configuration for Openstack.
-          Expected to contain the following nested fields:
-          username, password, tenant_name, auth_url, region.
-    interfaces:
-      cloudify.interfaces.lifecycle:
-        create:
-          implementation: openstack.nova_plugin.floatingip.create
-          inputs:
-            args:
-              default: {}
-            multivim_config:
-              default: {}
-        delete:
-          implementation: openstack.nova_plugin.floatingip.delete
-          inputs:
-            multivim_config:
-              default: {}
-      cloudify.interfaces.validation:
-        creation:
-          implementation: openstack.nova_plugin.floatingip.creation_validation
-          inputs:
-            multivim_config:
-              default: {}
+      Validation:
+        type: onap.multivim.interfaces.validation
+        creation: onap-multivim-plugin > cinder_plugin.volume.creation_validation
 
-  onap.multivim.nova_net.nodes.SecurityGroup:
-    derived_from: cloudify.nodes.SecurityGroup
-    properties:
-      security_group:
-        default: {}
-        description: >
-          key-value security_group configuration as described in http://developer.openstack.org/api-ref-compute-v2-ext.html#ext-os-security-groups. (**DEPRECATED - Use the `args` input in create operation instead**)
-      use_external_resource:
-        type: boolean
-        default: false
-        description: >
-          a boolean for setting whether to create the resource or use an existing one.
-          See the using existing resources section.
-      create_if_missing:
-        default: false
-        description: >
-          TODO: CREATE. THIS IS MISSING
-      resource_id:
-        default: ''
-        description: >
-          name to give to the new resource or the name or ID of an existing resource when the ``use_external_resource`` property is set to ``true`` (see the using existing resources section). Defaults to '' (empty string).
-      multivim_config:
-        default: {}
-        description: >
-          endpoints and authentication configuration for Openstack.
-          Expected to contain the following nested fields:
-          username, password, tenant_name, auth_url, region.
-      rules:
-        default: []
-        description: >
-          key-value security group rule as described in http://developer.openstack.org/api-ref-compute-v2-ext.html#ext-os-security-group-default-rules.
-      description:
-        description: security group description
-    interfaces:
-      cloudify.interfaces.lifecycle:
-        create:
-          implementation: openstack.nova_plugin.security_group.create
-          inputs:
-            args:
-              default: {}
-            multivim_config:
-              default: {}
-            status_attempts:
-              description: >
-                Number of times to check for the attachment's status before failing
-              type: integer
-              default: 10
-            status_timeout:
-              description: >
-                Interval (in seconds) between subsequent inquiries of the attachment's
-                status
-              type: integer
-              default: 2
-        delete:
-          implementation: openstack.nova_plugin.security_group.delete
-          inputs:
-            multivim_config:
-              default: {}
-      cloudify.interfaces.validation:
-        creation:
-          implementation: openstack.nova_plugin.security_group.creation_validation
-          inputs:
-            multivim_config:
-              default: {}
+    requirements:
+      - server:
+          capability: tosca.capabilities.Node
+          node: onap.multivim.nodes.Server
+          relationship: onap.multivim.volume_attached_to_server
 
   onap.multivim.nodes.Image:
-    derived_from: cloudify.nodes.Root
+    derived_from: tosca.nodes.Root
     properties:
       image:
-        description: >
+        description: >-
           Required parameters are (container_format, disk_format). Accepted
           types are available on
-          http://docs.openstack.org/developer/glance/formats.html
+          http://docs.multivim.org/developer/glance/formats.html
           To create an image from the local file its path should be added
           in data parameter.
         default: {}
+        type: map
+        entry_schema: string
       image_url:
         default: ''
-        description: >
-          The openstack resource URL for the image.
+        type: string
+        description: >-
+          The multivim resource URL for the image.
       use_external_resource:
         default: false
-        description: >
+        type: boolean
+        description: >-
           a boolean for setting whether to create the resource or use an existing one.
           See the using existing resources section.
       create_if_missing:
         default: false
-        description: >
+        type: boolean
+        description: >-
           If use_external_resource is ``true`` and the resource is missing,
           create it instead of failing.
       resource_id:
         default: ''
-        description: >
+        type: string
+        description: >-
           name to give to the new resource or the name or ID of an existing resource when the ``use_external_resource`` property is set to ``true`` (see the using existing resources section). Defaults to '' (empty string).
       multivim_config:
-        default: {}
-        description: >
-          endpoints and authentication configuration for Openstack.
-          Expected to contain the following nested fields:
-          username, password, tenant_name, auth_url, region.
+        type: onap.multivim.datatypes.Config
+        required: false
     interfaces:
-      cloudify.interfaces.lifecycle:
-        create:
-          implementation: openstack.glance_plugin.image.create
-          inputs:
-            multivim_config:
-              default: {}
+      Standard:
+        create: onap-multivim-plugin > glance_plugin.image.create
+
         start:
-          implementation: openstack.glance_plugin.image.start
+          implementation: onap-multivim-plugin > glance_plugin.image.start
           inputs:
             start_retry_interval:
               default: 30
-            multivim_config:
-              default: {}
-        delete:
-          implementation: openstack.glance_plugin.image.delete
-          inputs:
-            multivim_config:
-              default: {}
-      cloudify.interfaces.validation:
-        creation:
-          implementation: openstack.glance_plugin.image.creation_validation
-          inputs:
-            multivim_config:
-              default: {}
+              type: integer
 
+        delete: onap-multivim-plugin > glance_plugin.image.delete
+
+      Validation:
+        type: onap.multivim.interfaces.validation
+        creation: onap-multivim-plugin > glance_plugin.image.creation_validation
 
   onap.multivim.nodes.Project:
-    derived_from: cloudify.nodes.Root
+    derived_from: tosca.nodes.Root
     properties:
       project:
         default: {}
-        description: >
+        type: onap.multivim.datatypes.Project
+        description: >-
           key-value project configuration.
       users:
         default: []
-        description: >
+        type: list
+        entry_schema: string
+        description: >-
           List of users assigned to this project in the following format:
             { name: string, roles: [string] }
       quota:
         default: {}
+        type: map
+        entry_schema: string
         description: |
           A dictionary mapping service names to quota definitions for a proejct
 
@@ -797,64 +1058,55 @@ node_types:
               nova: <quota>
       use_external_resource:
         default: false
-        description: >
+        type: boolean
+        description: >-
           a boolean for setting whether to create the resource or use an existing one.
           See the using existing resources section.
       create_if_missing:
         default: false
-        description: >
+        type: boolean
+        description: >-
           If use_external_resource is ``true`` and the resource is missing,
           create it instead of failing.
       resource_id:
         default: ''
-        description: >
+        type: string
+        description: >-
           name to give to the new resource or the name or ID of an existing resource when the ``use_external_resource`` property is set to ``true`` (see the using existing resources section). Defaults to '' (empty string).
       multivim_config:
-        default: {}
-        description: >
-          endpoints and authentication configuration for Openstack.
-          Expected to contain the following nested fields:
-          username, password, tenant_name, auth_url, region.
+        type: onap.multivim.datatypes.Config
+        required: false
     interfaces:
-      cloudify.interfaces.lifecycle:
-        create: openstack.keystone_plugin.project.create
-        start: openstack.keystone_plugin.project.start
-        delete: openstack.keystone_plugin.project.delete
-      cloudify.interfaces.validation:
-        creation: openstack.keystone_plugin.project.creation_validation
+      Standard:
+        create: multivim.keystone_plugin.project.create
+        start: multivim.keystone_plugin.project.start
+        delete: multivim.keystone_plugin.project.delete
+      Validation:
+        type: onap.multivim.interfaces.validation
+        creation: multivim.keystone_plugin.project.creation_validation
 
-relationships:
+
+relationship_types:
+
   onap.multivim.port_connected_to_security_group:
-    derived_from: cloudify.relationships.connected_to
-    source_interfaces:
-      cloudify.interfaces.relationship_lifecycle:
-        establish:
-          implementation: openstack.neutron_plugin.port.connect_security_group
-          inputs:
-            multivim_config:
-              default: {}
+    derived_from: ConnectsTo
+    interfaces:
+      Configure:
+        add_source: onap-multivim-plugin > neutron_plugin.port.connect_security_group
 
   onap.multivim.subnet_connected_to_router:
-    derived_from: cloudify.relationships.connected_to
-    target_interfaces:
-      cloudify.interfaces.relationship_lifecycle:
-        establish:
-          implementation: openstack.neutron_plugin.router.connect_subnet
-          inputs:
-            multivim_config:
-              default: {}
-        unlink:
-          implementation: openstack.neutron_plugin.router.disconnect_subnet
-          inputs:
-            multivim_config:
-              default: {}
+    derived_from: ConnectsTo
+    interfaces:
+      Configure:
+        add_target: onap-multivim-plugin > neutron_plugin.router.connect_subnet
+        remove_target: onap-multivim-plugin > neutron_plugin.router.disconnect_subnet
 
   onap.multivim.server_connected_to_floating_ip:
-    derived_from: cloudify.relationships.connected_to
-    source_interfaces:
-      cloudify.interfaces.relationship_lifecycle:
-        establish:
-          implementation: openstack.nova_plugin.server.connect_floatingip
+    derived_from: ConnectsTo
+    interfaces:
+      Configure:
+        add_source:
+          implementation: onap-multivim-plugin > nova_plugin.server.connect_floatingip
           inputs:
             fixed_ip:
               description: >
@@ -862,69 +1114,42 @@ relationships:
                 If omitted, Openstack will choose which port to associate.
               type: string
               default: ''
-            multivim_config:
-              default: {}
-        unlink:
-          implementation: openstack.nova_plugin.server.disconnect_floatingip
-          inputs:
-            multivim_config:
-              default: {}
+        remove_source: onap-multivim-plugin > nova_plugin.server.disconnect_floatingip
 
   onap.multivim.port_connected_to_floating_ip:
-    derived_from: cloudify.relationships.connected_to
-    source_interfaces:
-      cloudify.interfaces.relationship_lifecycle:
-        establish:
-          implementation: openstack.neutron_plugin.floatingip.connect_port
-          inputs:
-            multivim_config:
-              default: {}
-        unlink:
-          implementation: openstack.neutron_plugin.floatingip.disconnect_port
-          inputs:
-            multivim_config:
-              default: {}
+    derived_from: ConnectsTo
+    interfaces:
+      Configure:
+        add_source: onap-multivim-plugin > neutron_plugin.floatingip.connect_port
+        remove_source: onap-multivim-plugin > neutron_plugin.floatingip.disconnect_port
 
   onap.multivim.server_connected_to_security_group:
-    derived_from: cloudify.relationships.connected_to
-    source_interfaces:
-      cloudify.interfaces.relationship_lifecycle:
-        establish:
-          implementation: openstack.nova_plugin.server.connect_security_group
-          inputs:
-            multivim_config:
-              default: {}
-        unlink:
-          implementation: openstack.nova_plugin.server.disconnect_security_group
-          inputs:
-            multivim_config:
-              default: {}
+    derived_from: ConnectsTo
+    interfaces:
+      Configure:
+        add_source: onap-multivim-plugin > nova_plugin.server.connect_security_group
+        remove_source: onap-multivim-plugin > nova_plugin.server.disconnect_security_group
 
   onap.multivim.server_connected_to_port:
-    derived_from: cloudify.relationships.connected_to
-    source_interfaces:
-      cloudify.interfaces.relationship_lifecycle:
-        unlink:
-          implementation: openstack.neutron_plugin.port.detach
-          inputs:
-            multivim_config:
-              default: {}
+    derived_from: ConnectsTo
+    interfaces:
+      Configure:
+        remove_source: onap-multivim-plugin > neutron_plugin.port.detach
 
   onap.multivim.server_connected_to_keypair:
-    derived_from: cloudify.relationships.connected_to
+    derived_from: ConnectsTo
 
   onap.multivim.port_connected_to_subnet:
-    derived_from: cloudify.relationships.connected_to
+    derived_from: ConnectsTo
 
   onap.multivim.volume_attached_to_server:
-    derived_from: cloudify.relationships.connected_to
-    target_interfaces:
-      cloudify.interfaces.relationship_lifecycle:
-        establish:
-          implementation: openstack.nova_plugin.server.attach_volume
+    derived_from: ConnectsTo
+    interfaces:
+      Configure:
+        add_target:
+          implementation: onap-multivim-plugin > nova_plugin.server.attach_volume
           inputs:
-            multivim_config:
-              default: {}
+
             status_attempts:
               description: >
                 Number of times to check for the attachment's status before failing
@@ -936,11 +1161,10 @@ relationships:
                 status
               type: integer
               default: 2
-        unlink:
-          implementation: openstack.nova_plugin.server.detach_volume
+        remove_target:
+          implementation: onap-multivim-plugin > nova_plugin.server.detach_volume
           inputs:
-            multivim_config:
-              default: {}
+
             status_attempts:
               description: >
                 Number of times to check for the detachment's status before failing
