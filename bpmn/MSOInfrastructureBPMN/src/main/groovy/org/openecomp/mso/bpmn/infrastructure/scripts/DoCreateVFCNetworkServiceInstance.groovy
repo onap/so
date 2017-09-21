@@ -72,12 +72,24 @@ public class CreateGenericE2EServiceInstance extends AbstractServiceTaskProcesso
            utils.log("DEBUG", "serviceType:" + serviceType, isDebugEnabled)
            String nodeTemplateUUID = execution.getVariable("nodeTemplateUUID")
            utils.log("DEBUG", "globalSubscriberId:" + globalSubscriberId, isDebugEnabled)
-           String siRequest = execution.getVariable("nodeParamters")
+           /*
+            * segmentInformation needed as a object of segment
+            * {
+            *     "domain":"",
+            *     "nodeTemplateName":"",
+            *     "nodeType":"",
+            *     "nsParameters":{
+            *       //this is the nsParameters sent to VF-C
+            *     }
+            * }
+            */
+           String siRequest = execution.getVariable("segmentInformation")
            utils.log("DEBUG", "Input Request:" + siRequest, isDebugEnabled)
            String nsOperationKey = "{\"globalSubscriberId\":" + globalSubscriberId + ",\"serviceType:\""
                  + serviceType + ",\"serviceId\":" + serviceId + ",\"operationId\":" + operationId
                  +",\"nodeTemplateUUID\":" + nodeTemplateUUID + "}";
            execution.setVariable("nsOperationKey", nsOperationKey);
+           execution.setVariable("nsParameters", jsonUtil.getJsonValue(siRequest, "nsParameters"))
 
        } catch (BpmnError e) {
            throw e;
