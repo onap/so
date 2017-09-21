@@ -54,8 +54,8 @@ public class HealthCheckHandler  {
 
     private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
     private static final String SITENAME = "mso.sitename";
-    private static final String ADPTER_ENDPOINT = "mso.openecomp.adapters.db.endpoint";
-    private static final String OPENECOMP_ADAPTER_NAMESPACE = "mso.openecomp.adapter.namespace";
+    private static final String ADAPTER_ENDPOINT = "mso.adapters.db.endpoint";
+    private static final String ADAPTER_NAMESPACE = "mso.adapters.namespace";
     private static final String CONFIG = "mso.bpmn.urn.properties";
     private static final String CREDENTIAL = "mso.adapters.db.auth";
     private static final String MSOKEY = "mso.msoKey";
@@ -94,17 +94,17 @@ public class HealthCheckHandler  {
         }
 
         String siteName = props.get(SITENAME);
-        String endpoint = props.get(ADPTER_ENDPOINT);
+        String endpoint = props.get(ADAPTER_ENDPOINT);
 
         if (null == siteName || siteName.length () == 0 || null == endpoint || endpoint.length () == 0) {
 
-            msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.DataError, "Unable to load key attributes (" + SITENAME + " or " + ADPTER_ENDPOINT + ") from the config file:" + CONFIG);
+            msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.DataError, "Unable to load key attributes (" + SITENAME + " or " + ADAPTER_ENDPOINT + ") from the config file:" + CONFIG);
 
             return NOT_STARTED_RESPONSE;
         }
 
         try {
-            if (!this.getSiteStatus (endpoint, siteName, props.get(CREDENTIAL), props.get(MSOKEY), props.get(OPENECOMP_ADAPTER_NAMESPACE))) {
+            if (!this.getSiteStatus (endpoint, siteName, props.get(CREDENTIAL), props.get(MSOKEY), props.get(ADAPTER_NAMESPACE))) {
                 msoLogger.debug("This site is currently disabled for maintenance.");
                 return HEALTH_CHECK_NOK_RESPONSE;
             }
@@ -146,17 +146,17 @@ public class HealthCheckHandler  {
         }
 
         String siteName = props.get(SITENAME);
-        String endpoint = props.get(ADPTER_ENDPOINT);
+        String endpoint = props.get(ADAPTER_ENDPOINT);
 
         if (null == siteName || siteName.length () == 0 || null == endpoint || endpoint.length () == 0) {
 
-            msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.DataError, "Unable to load key attributes (" + SITENAME + " or " + ADPTER_ENDPOINT + ") from the config file:" + CONFIG);
+            msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.DataError, "Unable to load key attributes (" + SITENAME + " or " + ADAPTER_ENDPOINT + ") from the config file:" + CONFIG);
 
             return NOT_STARTED_RESPONSE;
         }
 
         try {
-            if (!this.getSiteStatus (endpoint, siteName, props.get(CREDENTIAL), props.get(MSOKEY), props.get(OPENECOMP_ADAPTER_NAMESPACE))) {
+            if (!this.getSiteStatus (endpoint, siteName, props.get(CREDENTIAL), props.get(MSOKEY), props.get(ADAPTER_NAMESPACE))) {
                 msoLogger.debug("This site is currently disabled for maintenance.");
                 return HEALTH_CHECK_NOK_RESPONSE;
             }
@@ -169,7 +169,8 @@ public class HealthCheckHandler  {
         }
 
         try {
-        	ProcessEngines.getDefaultProcessEngine().getIdentityService().createGroupQuery().list();
+        	// TODO: check the appropriate process engine
+        	// ProcessEngines.getDefaultProcessEngine().getIdentityService().createGroupQuery().list();
         } catch (final Exception e) {
 
             msoLogger.error(MessageEnum.GENERAL_EXCEPTION_ARG, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception while verifying Camunda engine", e);
