@@ -1,0 +1,8 @@
+<allotted-resource xmlns="http://org.openecomp.aai.inventory/v9">
+   <relationship-list>
+      <relationship>
+         <related-to>allotted-resource</related-to>
+         <related-link>http://localhost:28090/aai/v9/mylink</related-link>
+      </relationship>
+   </relationship-list>
+</allotted-resource>
