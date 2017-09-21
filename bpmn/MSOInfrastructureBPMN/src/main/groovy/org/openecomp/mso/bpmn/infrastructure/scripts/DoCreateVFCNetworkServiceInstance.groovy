@@ -58,55 +58,27 @@ public class CreateGenericE2EServiceInstance extends AbstractServiceTaskProcesso
      * generate the operation id
      */
     public void preProcessRequest (Execution execution) {
-	  /* def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+	   def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
        String msg = ""
        utils.log("DEBUG", " *** preProcessRequest() *** ", isDebugEnabled)
-       try {
-
-           String siRequest = execution.getVariable("bpmnRequest")
-           utils.logAudit(siRequest)
-
-           String requestId = execution.getVariable("mso-request-id")
-           execution.setVariable("msoRequestId", requestId)
-           utils.log("DEBUG", "Input Request:" + siRequest + " reqId:" + requestId, isDebugEnabled)
-
-           String serviceInstanceId = execution.getVariable("serviceInstanceId")
-           if (isBlank(serviceInstanceId)) {
-               serviceInstanceId = UUID.randomUUID().toString()
-           }
-           utils.log("DEBUG", "Generated new Service Instance:" + serviceInstanceId, isDebugEnabled)
-           serviceInstanceId = UriUtils.encode(serviceInstanceId,"UTF-8")
-           execution.setVariable("serviceInstanceId", serviceInstanceId)
-           
+       try {                    
+           String globalSubscriberId = execution.getVariable("globalSubscriberId")
+           utils.log("DEBUG", "globalSubscriberId:" + globalSubscriberId, isDebugEnabled)
+           String serviceType = execution.getVariable("serviceType")
+           utils.log("DEBUG", "serviceType:" + serviceType, isDebugEnabled)
+           String serviceId = execution.getVariable("serviceId")
+           utils.log("DEBUG", "serviceId:" + serviceId, isDebugEnabled)
            String operationId = execution.getVariable("operationId")
-           if (isBlank(operationId)) {
-               operationId = UUID.randomUUID().toString()
-           }
-           utils.log("DEBUG", "Generated new Service Instance Operation:" + operationId, isDebugEnabled)
-           serviceInstanceId = UriUtils.encode(operationId,"UTF-8")
-           execution.setVariable("operationId", operationId)
-           //subscriberInfo, TBD , there is no globalSubscriberId in R1 for E2E Service.
-           //requestInfo TBD , there is no requestDetails for R1 E2E service
+           utils.log("DEBUG", "serviceType:" + serviceType, isDebugEnabled)
+           String nodeTemplateUUID = execution.getVariable("nodeTemplateUUID")
+           utils.log("DEBUG", "globalSubscriberId:" + globalSubscriberId, isDebugEnabled)
+           String siRequest = execution.getVariable("nodeParamters")
+           utils.log("DEBUG", "Input Request:" + siRequest, isDebugEnabled)
+           String nsOperationKey = "{\"globalSubscriberId\":" + globalSubscriberId + ",\"serviceType:\""
+                 + serviceType + ",\"serviceId\":" + serviceId + ",\"operationId\":" + operationId
+                 +",\"nodeTemplateUUID\":" + nodeTemplateUUID + "}";
+           execution.setVariable("nsOperationKey", nsOperationKey);
 
-           //TBD need to insert operationInfo to RequestDb
-           
-           //set service Instance Name
-           execution.setVariable("serviceInstanceName", jsonUtil.getJsonValue(siRequest, "service.name"))
-           execution.setVariable("serviceDescription", jsonUtil.getJsonValue(siRequest, "service.description"))
-           execution.setVariable("templateId", jsonUtil.getJsonValue(siRequest, "service.templateId"))
-     
-           //serviceParamters
-           String serviceParamters = jsonUtil.getJsonValue(siRequest, "service.parameters")
-           if (isBlank(serviceParamters)) {
-               msg = "Input service paramters is null"
-               utils.log("DEBUG", msg, isDebugEnabled)
-               exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-           } else
-           {
-               execution.setVariable("serviceParamters", serviceParamters)
-           }
-
-           utils.log("DEBUG", "service parameters:" + serviceParamters,  isDebugEnabled)
        } catch (BpmnError e) {
            throw e;
        } catch (Exception ex){
@@ -114,7 +86,7 @@ public class CreateGenericE2EServiceInstance extends AbstractServiceTaskProcesso
            utils.log("DEBUG", msg, isDebugEnabled)
            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
        }
-       utils.log("DEBUG"," ***** Exit preProcessRequest *****",  isDebugEnabled)*/
+       utils.log("DEBUG"," ***** Exit preProcessRequest *****",  isDebugEnabled)
 	}
 
 
