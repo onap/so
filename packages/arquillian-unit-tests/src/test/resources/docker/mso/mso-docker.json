@@ -169,6 +169,7 @@
             "logDebugUpdateNetworkInstanceInfra": "false",
             "aaiEndpoint": "http://mso:8080/aai-emul",
             "adaptersCompletemsoprocessEndpoint": "http://mso:8080/CompleteMsoProcess",
+            "adaptersNamespace": "http://org.openecomp.mso",
             "adaptersDbEndpoint": "http://mso:8080/dbadapters/RequestsDbAdapter",
             "adaptersSdncEndpoint": "http://mso:8080/adapters/SDNCAdapter",
             "adaptersTenantEndpoint": "http://mso:8080/tenants/TenantAdapter",
