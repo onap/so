@@ -58,7 +58,7 @@ public class CreateGenericE2EServiceInstance extends AbstractServiceTaskProcesso
      * generate the operation id
      */
     public void preProcessRequest (Execution execution) {
-	   def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+	  /* def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
        String msg = ""
        utils.log("DEBUG", " *** preProcessRequest() *** ", isDebugEnabled)
        try {
@@ -114,47 +114,22 @@ public class CreateGenericE2EServiceInstance extends AbstractServiceTaskProcesso
            utils.log("DEBUG", msg, isDebugEnabled)
            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
        }
-       utils.log("DEBUG"," ***** Exit preProcessRequest *****",  isDebugEnabled)
+       utils.log("DEBUG"," ***** Exit preProcessRequest *****",  isDebugEnabled)*/
 	}
 
-    /**
-     * send the sync response
-     * the response incloudes the instance id and the operation id
-     */
-    public void sendSyncResponse(Execution execution) {
-        def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-        utils.log("DEBUG", " *** sendSyncResponse *** ", isDebugEnabled)
 
-        try {
-            String requestId = execution.getVariable("msoRequestId")
-            String serviceInstanceId = execution.getVariable("serviceInstanceId")
-            String operationId = execution.getVariable("operationId")
-            // RESTResponse for API Handler (APIH) Reply Task
-            String createServiceRestResponse = """{"service":{"serviceId":"${serviceInstanceId}","operationId":"${operationId}"}}""".trim()
-            utils.log("DEBUG", " sendSyncResponse to APIH:" + "\n" + createServiceRestResponse, isDebugEnabled)
-            sendWorkflowResponse(execution, 202, createServiceRestResponse)
-            execution.setVariable("sentSyncResponse", true)
-
-        } catch (Exception ex) {
-            String msg = "Exceptuion in sendSyncResponse:" + ex.getMessage()
-            utils.log("DEBUG", msg, isDebugEnabled)
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
-        }
-        utils.log("DEBUG"," ***** Exit sendSyncResopnse *****",  isDebugEnabled)
+    public void createNetworkService(Execution execution) {
     }
 
-    public void preCreateRequest(Execution execution) {
+    public void instantiateNetworkService(Execution execution) {
     }
 
-    public void postConfigRequest(Execution execution) {
+    public void queryNSProgress(Execution execution) {
     }
 
-    public void preVFCRequest(Execution execution) {
+    public void timeDelay(Execution execution) {
     }
 
-    public void preAdaptorDataRequest(Execution execution) {
-    }
-
-    public void preSDNCRequest(Execution execution) {
+    public void finishNSCreate(Execution execution) {
     }
 }
