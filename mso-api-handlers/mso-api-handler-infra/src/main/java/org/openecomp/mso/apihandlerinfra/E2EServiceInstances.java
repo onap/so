@@ -55,7 +55,7 @@ import org.openecomp.mso.requestsdb.InfraActiveRequests;
 import org.openecomp.mso.requestsdb.RequestsDatabase;
 import org.openecomp.mso.utils.UUIDChecker;
 
-@Path("/")
+@Path("/e2eServiceInstances")
 public class E2EServiceInstances {
 
 	private HashMap<String, String> instanceIdMap = new HashMap<String,String>();
@@ -67,7 +67,7 @@ public class E2EServiceInstances {
 	}
 
 	@POST
-	@Path("e2eServiceInstances/{version:[vV][2-3]}")
+	@Path("/{version:[vV][3-5]}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createE2EServiceInstance(String request, @PathParam("version") String version) {
@@ -78,7 +78,7 @@ public class E2EServiceInstances {
 	}
 
 	@DELETE
-	@Path("e2eServiceInstances/{version:[vV][2-3]}/{serviceId}")
+	@Path("/{version:[vV][3-5]}/{serviceId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response deleteE2EServiceInstance(String request, @PathParam("version") String version) {
