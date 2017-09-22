@@ -1,0 +1,49 @@
+{
+   "transactionId": "testRequestId",
+   "requestId": "testRequestId",
+   "requestState": "complete",
+   "statusMessage": "",
+   "solutionInfo": {
+      "placement": [
+         {
+            "serviceResourceId": "test-resource-id-000",
+            "resourceModuleName": "ADIOD vRouter vCE",
+            "inventoryType": "service",
+            "serviceInstanceId": "service-instance-01234",
+            "cloudRegionId": "mtmnj1a",
+            "assignmentInfo": [
+               {
+                  "variableName": "cloudOwner",
+                  "variableValue": "att-aic"
+               },
+               {
+                  "variableName": "vnfHostName",
+                  "variableValue": "MDTNJ01"
+               },
+               {
+                  "variableName": "aicClli",
+                  "variableValue": "KDTNJ01"
+               },
+               {
+                  "variableName": "aicVersion",
+                  "variableValue": "3.0"
+               }
+            ]
+         }
+      ],
+      "licenseInfo": [
+         {
+            "serviceResourceId": "test-resource-id-000",
+            "resourceModuleName": "ADIOD vRouter vCE",
+            "entitlementPoolList": [
+               "f1d563e8-e714-4393-8f99-cc480144a05e",
+               "j1d563e8-e714-4393-8f99-cc480144a05e"
+            ],
+            "licenseKeyGroupList": [
+               "s1d563e8-e714-4393-8f99-cc480144a05e",
+               "b1d563e8-e714-4393-8f99-cc480144a05e"
+            ]
+         }
+      ]
+   }
+}
