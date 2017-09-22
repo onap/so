@@ -92,12 +92,12 @@ public class Utils {
 
 			String s = domToStr(newdoc);
 			msoLogger.debug("Formatted SdncReq:\n" + s);
-			return (s);
+			return s;
 
 		} catch (Exception e) {
 			msoLogger.error(MessageEnum.RA_ERROR_CREATE_SDNC_REQUEST, "SDNC", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception in genSdncReq", e);
 		}
-		return(null);
+		return null;
 	}
 	
 	public static String genSdncPutReq(Document reqDoc, RequestTunables rt) {
@@ -126,12 +126,12 @@ public class Utils {
 
 			String s = domToStr(newdoc);
 			msoLogger.debug("Formatted SdncPutReq:\n" + s);
-			return (s);
+			return s;
 
 		} catch (Exception e) {
 			msoLogger.error(MessageEnum.RA_ERROR_CREATE_SDNC_REQUEST, "SDNC", "", MsoLogger.ErrorCode.DataError, "Exception in genSdncPutReq", e);
 		}
-		return(null);
+		return null;
 	}
 
 	public static String genMsoFailResp(SDNCResponse resp) {
@@ -160,12 +160,12 @@ public class Utils {
 
 			String s = domToStr(newdoc);
 			msoLogger.debug("Formatted SdncReq:" + s);
-			return (s);
+			return s;
 
 		} catch (Exception e) {
 			msoLogger.error(MessageEnum.RA_ERROR_CREATE_SDNC_RESPONSE, "SDNC", "", MsoLogger.ErrorCode.DataError, "Exception in genMsoFailResp", e);
 		}
-		return(null);
+		return null;
 	}
 
 
@@ -185,11 +185,11 @@ public class Utils {
 				
 				// This is an awful fix for now but we don't want that xmlns="" to be generated
 				s = s.replaceAll("xmlns=\"\"", "");
-				return(s);
+				return s;
 			} catch (Exception e) {
 				msoLogger.error(MessageEnum.RA_ERROR_CONVERT_XML2STR, "", "", MsoLogger.ErrorCode.DataError, "Exception - domToStr", e);
 			}
 		}
-		return(null);
+		return null;
 	}
 }

@@ -125,12 +125,12 @@ public class SDNCAdapterCallbackRequest {
 			m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
 			StringWriter w = new StringWriter();
 			m.marshal(this, w);
-			return (w.toString());
+			return w.toString();
 		}
 		catch (Exception e)
 		{
 			msoLogger.error(MessageEnum.RA_MARSHING_ERROR, "", "", MsoLogger.ErrorCode.DataError, "Exception - MARSHING_ERROR", e);
 		}
-		return("");
+		return "";
 	}
 }
