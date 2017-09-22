@@ -41,10 +41,10 @@ import org.openecomp.mso.rest.RESTConfig
 import org.openecomp.mso.rest.APIResponse;
 
 /**
- * This groovy class supports the <class>CreateGenericE2EServiceInstance.bpmn</class> process.
- * flow for E2E ServiceInstance Create
+ * This groovy class supports the <class>DoCreateVFCNetworkServiceInstance.bpmn</class> process.
+ * flow for VFC Network Service Create
  */
-public class CreateGenericE2EServiceInstance extends AbstractServiceTaskProcessor {
+public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProcessor {
 
     String createUrl = "/vfc/vfcadapters/v1/ns"
             
