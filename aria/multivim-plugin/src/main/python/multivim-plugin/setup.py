@@ -18,7 +18,7 @@ from setuptools import setup
 
 setup(
     zip_safe=True,
-    name='cloudify-openstack-plugin',
+    name='onap-multivim-plugin',
     version='2.2.0',
     author='idanmo',
     author_email='idan@gigaspaces.com',
@@ -31,7 +31,7 @@ setup(
         'keystone_plugin'
     ],
     license='LICENSE',
-    description='Cloudify plugin for OpenStack infrastructure.',
+    description='ONAP plugin for multivim infrastructure.',
     install_requires=[
         'cloudify-plugins-common>=3.3.1',
         'keystoneauth1>=2.16.0,<3',
