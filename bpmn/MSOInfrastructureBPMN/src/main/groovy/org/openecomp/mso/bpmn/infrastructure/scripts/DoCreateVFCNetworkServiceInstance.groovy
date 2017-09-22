@@ -81,7 +81,7 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
            String operationId = execution.getVariable("operationId")
            utils.log("DEBUG", "serviceType:" + serviceType, isDebugEnabled)
            String nodeTemplateUUID = execution.getVariable("nodeTemplateUUID")
-           utils.log("DEBUG", "globalSubscriberId:" + globalSubscriberId, isDebugEnabled)
+           utils.log("DEBUG", "nodeTemplateUUID:" + nodeTemplateUUID, isDebugEnabled)
            /*
             * segmentInformation needed as a object of segment
             * {
@@ -123,7 +123,7 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
         String nsServiceDescription = execution.getVariable("nsServiceDescription")
         String reqBody = "{\"nsServiceName\":\"" + nsServiceName + "\",\"nsServiceDescription\":\"" + nsServiceDescription
               +"\",\"nsOperationKey\":" + nsOperationKey + ",\"nsParameters\":" + nsParameters
-        APIResponse createRsp = postRequest(createUrl, reqBody)
+        APIResponse apiResponse = postRequest(createUrl, reqBody)
         String returnCode = apiResponse.getStatusCode()
         String aaiResponseAsString = apiResponse.getResponseBodyAsString()
         String nsInstanceId = "";
@@ -145,7 +145,7 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
         String reqBody = "{\"nsServiceName\":\"" + nsServiceName + "\",\"nsServiceDescription\":\"" + nsServiceDescription
               +"\",\"nsOperationKey\":" + nsOperationKey + ",\"nsParameters\":" + nsParameters
         String url = instantiateUrl.replaceAll("{nsInstanceId}", execution.getVariable("nsInstanceId")) 
-        APIResponse createRsp = postRequest(url, reqBody)
+        APIResponse apiResponse = postRequest(url, reqBody)
         String returnCode = apiResponse.getStatusCode()
         String aaiResponseAsString = apiResponse.getResponseBodyAsString()
         String jobId = "";
@@ -162,7 +162,7 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
         String jobId = execution.getVariable("jobId")
         String nsOperationKey = excution.getVariable("nsOperationKey");
         String url = queryJobUrl.replaceAll("{jobId}", execution.getVariable("jobId")) 
-        APIResponse createRsp = postRequest(url, nsOperationKey)
+        APIResponse apiResponse = postRequest(url, nsOperationKey)
         String returnCode = apiResponse.getStatusCode()
         String aaiResponseAsString = apiResponse.getResponseBodyAsString()
         String operationStatus = "error"
