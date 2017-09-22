@@ -20,14 +20,14 @@
 
 package org.openecomp.mso.openstack.utils;
 
-import java.lang.reflect.InvocationTargetException;
 import org.openecomp.mso.cloud.CloudConfig;
 import org.openecomp.mso.cloud.CloudConfigFactory;
 import org.openecomp.mso.cloud.CloudIdentity;
 import org.openecomp.mso.cloud.CloudSite;
 import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.properties.MsoJavaProperties;
-import org.openecomp.mso.openstack.utils.MsoKeystoneUtils;
+
+import java.lang.reflect.InvocationTargetException;
 
 
 public class MsoTenantUtilsFactory {
@@ -55,7 +55,7 @@ public class MsoTenantUtilsFactory {
 	public MsoTenantUtils getTenantUtilsByServerType(String serverType) {
 
 		MsoTenantUtils tenantU = null;
-		if (CloudIdentity.IdentityServerType.KEYSTONE.equals(serverType)) {
+		if (CloudIdentity.IdentityServerType.KEYSTONE.toString().equals(serverType)) {
 			tenantU = new MsoKeystoneUtils (msoPropID);
 		} else {
 			try {
