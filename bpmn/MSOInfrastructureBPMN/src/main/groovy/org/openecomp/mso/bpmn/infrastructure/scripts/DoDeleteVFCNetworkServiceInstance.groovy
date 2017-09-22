@@ -60,23 +60,69 @@ public class DODeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
      * Pre Process the BPMN Flow Request
      * Inclouds:
      * generate the nsOperationKey
-     * generate the nsParameters
      */
-    public void preProcessRequest (Execution execution) {	  
+    public void preProcessRequest (Execution execution) {
+        def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+        String msg = ""
+        utils.log("DEBUG", " *** preProcessRequest() *** ", isDebugEnabled)
+        try {
+            //deal with operation key
+            String globalSubscriberId = execution.getVariable("globalSubscriberId")
+            utils.log("DEBUG", "globalSubscriberId:" + globalSubscriberId, isDebugEnabled)
+            String serviceType = execution.getVariable("serviceType")
+            utils.log("DEBUG", "serviceType:" + serviceType, isDebugEnabled)
+            String serviceId = execution.getVariable("serviceId")
+            utils.log("DEBUG", "serviceId:" + serviceId, isDebugEnabled)
+            String operationId = execution.getVariable("operationId")
+            utils.log("DEBUG", "serviceType:" + serviceType, isDebugEnabled)
+            String nodeTemplateUUID = execution.getVariable("nodeTemplateUUID")
+            utils.log("DEBUG", "nodeTemplateUUID:" + nodeTemplateUUID, isDebugEnabled)
+            String nsInstanceId = execution.getVariable("nsInstanceId")
+            utils.log("DEBUG", "nsInstanceId:" + nsInstanceId, isDebugEnabled)
+            String nsOperationKey = "{\"globalSubscriberId\":\"" + globalSubscriberId + "\",\"serviceType:\""
+                  + serviceType + "\",\"serviceId\":\"" + serviceId + "\",\"operationId\":\"" + operationId
+                  +"\",\"nodeTemplateUUID\":\"" + nodeTemplateUUID + "\"}";
+            execution.setVariable("nsOperationKey", nsOperationKey);
+        } catch (BpmnError e) {
+            throw e;
+        } catch (Exception ex){
+            msg = "Exception in preProcessRequest " + ex.getMessage()
+            utils.log("DEBUG", msg, isDebugEnabled)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+        }
+        utils.log("DEBUG"," ***** Exit preProcessRequest *****",  isDebugEnabled)
 	}
 
     /**
      * delete NS task
      */
     public void deleteNetworkService(Execution execution) {
-                
+        String nsOperationKey = excution.getVariable("nsOperationKey");
+        String url = deleteUrl.replaceAll("{nsInstanceId}", execution.getVariable("nsInstanceId")) 
+        APIResponse apiResponse = deleteRequest(url, reqBody)
+        String returnCode = apiResponse.getStatusCode()
+        String aaiResponseAsString = apiResponse.getResponseBodyAsString()
+        String operationStatus = "error";
+        if(returnCode== "200"){
+            operationStatus = "finished"
+        }
+        execution.setVariable("operationStatus", operationStatus)
     }
 
     /**
      * instantiate NS task
      */
     public void terminateNetworkService(Execution execution) {
-
+        String nsOperationKey = execution.getVariable("nsOperationKey") 
+        String url = terminateUrl.replaceAll("{nsInstanceId}", execution.getVariable("nsInstanceId")) 
+        APIResponse apiResponse = postRequest(url, reqBody)
+        String returnCode = apiResponse.getStatusCode()
+        String aaiResponseAsString = apiResponse.getResponseBodyAsString()
+        String jobId = "";
+        if(returnCode== "200"){
+            jobId =  jsonUtil.getJsonValue(aaiResponseAsString, "jobId")
+        }
+        execution.setVariable("jobId", nsInstanceId)   
     }
 
     /**
@@ -89,11 +135,11 @@ public class DODeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
         APIResponse createRsp = postRequest(url, nsOperationKey)
         String returnCode = apiResponse.getStatusCode()
         String aaiResponseAsString = apiResponse.getResponseBodyAsString()
-        String operationStatus = "error"
+        String operationProgress = "100"
         if(returnCode== "200"){
-            operationStatus = jsonUtil.getJsonValue(aaiResponseAsString, "responseDescriptor.status")
+            operationProgress = jsonUtil.getJsonValue(aaiResponseAsString, "responseDescriptor.progress")
         }
-        exection.setVariable("operationStatus", operationStatus)
+        exection.setVariable("operationProgress", operationProgress)
     }
 
     /**
@@ -110,7 +156,7 @@ public class DODeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
     /**
      * finish NS task
      */
-    public void finishNSCreate(Execution execution) {
+    public void finishNSDelete(Execution execution) {
         //no need to do anything util now
     }
 
@@ -131,7 +177,29 @@ public class DODeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
             taskProcessor.logDebug( "response code:"+ apiResponse.getStatusCode() +"\nresponse body:"+ apiResponse.getResponseBodyAsString(), isDebugEnabled)
             taskProcessor.logDebug( "======== Completed Execute VF-C adapter Post Process ======== ", isDebugEnabled)
         }catch(Exception e){
-            taskProcessor.utils.log("ERROR", "Exception occured while executing AAI Post Call. Exception is: \n" + e, isDebugEnabled)
+            taskProcessor.utils.log("ERROR", "Exception occured while executing VF-C Post Call. Exception is: \n" + e, isDebugEnabled)
+            throw new BpmnError("MSOWorkflowException")
+        }        
+        return apiResponse
+    }
+    /**
+     * delete request
+     * url: the url of the request
+     * requestBody: the body of the request
+     */
+    private APIResponse deleteRequest(String url, String requestBody){
+        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
+        taskProcessor.logDebug( " ======== Started Execute VFC adapter Delete Process ======== ", isDebugEnabled)
+        taskProcessor.logDebug( "url:"+url +"\nrequestBody:"+ requestBody, isDebugEnabled)
+        APIResponse apiResponse = null
+        try{
+            RESTConfig config = new RESTConfig(url);
+            RESTClient client = new RESTClient(config).addHeader("X-FromAppId", "MSO").addHeader("X-TransactionId", uuid).addHeader("Accept","application/json");
+            apiResponse = client.httpDelete(requestBody)
+            taskProcessor.logDebug( "response code:"+ apiResponse.getStatusCode() +"\nresponse body:"+ apiResponse.getResponseBodyAsString(), isDebugEnabled)
+            taskProcessor.logDebug( "======== Completed Execute VF-C adapter Delete Process ======== ", isDebugEnabled)
+        }catch(Exception e){
+            taskProcessor.utils.log("ERROR", "Exception occured while executing VF-C Post Call. Exception is: \n" + e, isDebugEnabled)
             throw new BpmnError("MSOWorkflowException")
         }        
         return apiResponse
