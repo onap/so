@@ -66,7 +66,12 @@ public class CreateGenericE2EServiceInstance extends AbstractServiceTaskProcesso
 	   def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
        String msg = ""
        utils.log("DEBUG", " *** preProcessRequest() *** ", isDebugEnabled)
-       try {                    
+       try {
+           //deal with nsName and Description
+           String nsServiceName = execution.getVariable("nsServiceName")
+           String nsServiceDescription = execution.getVariable("nsServiceDescription")
+           utils.log("DEBUG", "nsServiceName:" + nsServiceName + " nsServiceDescription:" + nsServiceDescription, isDebugEnabled)
+           //deal with operation key
            String globalSubscriberId = execution.getVariable("globalSubscriberId")
            utils.log("DEBUG", "globalSubscriberId:" + globalSubscriberId, isDebugEnabled)
            String serviceType = execution.getVariable("serviceType")
@@ -90,11 +95,12 @@ public class CreateGenericE2EServiceInstance extends AbstractServiceTaskProcesso
             */
            String siRequest = execution.getVariable("segmentInformation")
            utils.log("DEBUG", "Input Request:" + siRequest, isDebugEnabled)
-           String nsOperationKey = "{\"globalSubscriberId\":" + globalSubscriberId + ",\"serviceType:\""
-                 + serviceType + ",\"serviceId\":" + serviceId + ",\"operationId\":" + operationId
-                 +",\"nodeTemplateUUID\":" + nodeTemplateUUID + "}";
+           String nsOperationKey = "{\"globalSubscriberId\":\"" + globalSubscriberId + "\",\"serviceType:\""
+                 + serviceType + "\",\"serviceId\":\"" + serviceId + "\",\"operationId\":\"" + operationId
+                 +"\",\"nodeTemplateUUID\":\"" + nodeTemplateUUID + "\"}";
            execution.setVariable("nsOperationKey", nsOperationKey);
            execution.setVariable("nsParameters", jsonUtil.getJsonValue(siRequest, "nsParameters"))
+           
 
        } catch (BpmnError e) {
            throw e;
@@ -106,20 +112,82 @@ public class CreateGenericE2EServiceInstance extends AbstractServiceTaskProcesso
        utils.log("DEBUG"," ***** Exit preProcessRequest *****",  isDebugEnabled)
 	}
 
+    /**
+     * create NS task
+     */
     public void createNetworkService(Execution execution) {
-
+        
+        String nsOperationKey = excution.getVariable("nsOperationKey");
+        String nsParameters = excution.getVariable("nsParameters");
+        String nsServiceName = execution.getVariable("nsServiceName")
+        String nsServiceDescription = execution.getVariable("nsServiceDescription")
+        String reqBody = "{\"nsServiceName\":\"" + nsServiceName + "\",\"nsServiceDescription\":\"" + nsServiceDescription
+              +"\",\"nsOperationKey\":" + nsOperationKey + ",\"nsParameters\":" + nsParameters
+        APIResponse createRsp = postRequest(createUrl, reqBody)
+        String returnCode = apiResponse.getStatusCode()
+        String aaiResponseAsString = apiResponse.getResponseBodyAsString()
+        String nsInstanceId = "";
+        if(returnCode== "200"){
+            nsInstanceId =  jsonUtil.getJsonValue(aaiResponseAsString, "nsInstanceId")
+        }
+        execution.setVariable("nsInstanceId", nsInstanceId)
+        
     }
 
+    /**
+     * instantiate NS task
+     */
     public void instantiateNetworkService(Execution execution) {
+        String nsOperationKey = excution.getVariable("nsOperationKey");
+        String nsParameters = excution.getVariable("nsParameters");
+        String nsServiceName = execution.getVariable("nsServiceName")
+        String nsServiceDescription = execution.getVariable("nsServiceDescription")
+        String reqBody = "{\"nsServiceName\":\"" + nsServiceName + "\",\"nsServiceDescription\":\"" + nsServiceDescription
+              +"\",\"nsOperationKey\":" + nsOperationKey + ",\"nsParameters\":" + nsParameters
+        String url = instantiateUrl.replaceAll("{nsInstanceId}", execution.getVariable("nsInstanceId")) 
+        APIResponse createRsp = postRequest(url, reqBody)
+        String returnCode = apiResponse.getStatusCode()
+        String aaiResponseAsString = apiResponse.getResponseBodyAsString()
+        String jobId = "";
+        if(returnCode== "200"){
+            jobId =  jsonUtil.getJsonValue(aaiResponseAsString, "jobId")
+        }
+        execution.setVariable("jobId", nsInstanceId)
     }
 
+    /**
+     * query NS task
+     */
     public void queryNSProgress(Execution execution) {
+        String jobId = execution.getVariable("jobId")
+        String nsOperationKey = excution.getVariable("nsOperationKey");
+        String url = queryJobUrl.replaceAll("{jobId}", execution.getVariable("jobId")) 
+        APIResponse createRsp = postRequest(url, nsOperationKey)
+        String returnCode = apiResponse.getStatusCode()
+        String aaiResponseAsString = apiResponse.getResponseBodyAsString()
+        String operationStatus = "error"
+        if(returnCode== "200"){
+            operationStatus = jsonUtil.getJsonValue(aaiResponseAsString, "responseDescriptor.status")
+        }
+        exection.setVariable("operationStatus", operationStatus)
     }
 
+    /**
+     * delay 5 sec 
+     */
     public void timeDelay(Execution execution) {
+        try {
+            Thread.sleep(5000);
+        } catch(InterruptedException e) {           
+            taskProcessor.utils.log("ERROR", "Time Delay exception" + e , isDebugEnabled)
+        }
     }
 
+    /**
+     * finish NS task
+     */
     public void finishNSCreate(Execution execution) {
+        //no need to do anything util now
     }
 
     /**
@@ -136,11 +204,12 @@ public class CreateGenericE2EServiceInstance extends AbstractServiceTaskProcesso
             RESTConfig config = new RESTConfig(url);
             RESTClient client = new RESTClient(config).addHeader("X-FromAppId", "MSO").addHeader("X-TransactionId", uuid).addHeader("Accept","application/json");
             apiResponse = client.httpPost(requestBody)
+            taskProcessor.logDebug( "response code:"+ apiResponse.getStatusCode() +"\nresponse body:"+ apiResponse.getResponseBodyAsString(), isDebugEnabled)
             taskProcessor.logDebug( "======== Completed Execute VF-C adapter Post Process ======== ", isDebugEnabled)
         }catch(Exception e){
             taskProcessor.utils.log("ERROR", "Exception occured while executing AAI Post Call. Exception is: \n" + e, isDebugEnabled)
             throw new BpmnError("MSOWorkflowException")
-        }
+        }        
         return apiResponse
     }
 }
