@@ -406,5 +406,24 @@
        <artifactId>resteasy-jackson2-provider</artifactId>
        <version>3.0.11.Final</version>
     </dependency>
+
+		<dependency>
+			<groupId>org.onap.msb.java-sdk</groupId>
+			<artifactId>msb-java-sdk</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
+		</dependency>
+
+		<!--for yang tools-->
+<!--		<dependency>
+			<groupId>org.openecomp.so</groupId>
+			<artifactId>common</artifactId>
+			<version>1.1.0-SNAPSHOT</version>
+		</dependency>-->
+
+		<dependency>
+			<groupId>org.onap.sdnc.northbound</groupId>
+			<artifactId>generic-resource-api.model</artifactId>
+			<version>1.2.0</version>
+		</dependency>
 	</dependencies>
 </project>
