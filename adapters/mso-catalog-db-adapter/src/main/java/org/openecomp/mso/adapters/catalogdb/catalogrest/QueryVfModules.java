@@ -37,10 +37,10 @@ public class QueryVfModules {
 	private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
 	private List<VfModule> vfModules;
 
-	public QueryVfModules() { super(); vfModules = new ArrayList<VfModule>(); }
+	public QueryVfModules() { super(); vfModules = new ArrayList<>(); }
 	public QueryVfModules(List<VfModule> vlist) { 
 		LOGGER.debug ("QueryVfModules:");
-		vfModules = new ArrayList<VfModule>();
+		vfModules = new ArrayList<>();
 		for (VfModule o : vlist) {
 			LOGGER.debug ("-- o is a vfModules ----");
 			LOGGER.debug (o.toString());
@@ -55,7 +55,7 @@ public class QueryVfModules {
 	
 	@Override
 	public String toString () {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 
 		boolean first = true;
 		int i = 1;
