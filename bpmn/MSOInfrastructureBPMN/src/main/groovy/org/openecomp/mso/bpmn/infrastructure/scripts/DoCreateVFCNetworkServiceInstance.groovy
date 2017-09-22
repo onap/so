@@ -25,7 +25,6 @@ import groovy.xml.XmlUtil
 import groovy.json.*
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor 
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil 
-import org.openecomp.mso.bpmn.common.scripts.VidUtils 
 import org.openecomp.mso.bpmn.core.WorkflowException 
 import org.openecomp.mso.bpmn.core.json.JsonUtils 
 import org.openecomp.mso.rest.APIResponse
@@ -36,7 +35,10 @@ import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.runtime.Execution
 import org.apache.commons.lang3.*
 import org.apache.commons.codec.binary.Base64;
-import org.springframework.web.util.UriUtils
+import org.springframework.web.util.UriUtils 
+import org.openecomp.mso.rest.RESTClient 
+import org.openecomp.mso.rest.RESTConfig
+import org.openecomp.mso.rest.APIResponse;
 
 /**
  * This groovy class supports the <class>CreateGenericE2EServiceInstance.bpmn</class> process.
@@ -44,18 +46,21 @@ import org.springframework.web.util.UriUtils
  */
 public class CreateGenericE2EServiceInstance extends AbstractServiceTaskProcessor {
 
+    String createUrl = "/vfc/vfcadapters/v1/ns"
+            
+    String instantiateUrl = "/vfcvfcadatpers/v1/ns/{nsInstanceId}/instantiate"
+    
+    String queryJobUrl = "/vfc/vfcadatpers/v1/jobs/{jobId}"
+    
     ExceptionUtil exceptionUtil = new ExceptionUtil()
 
     JsonUtils jsonUtil = new JsonUtils()
 
-    VidUtils vidUtils = new VidUtils()
-
     /**
      * Pre Process the BPMN Flow Request
      * Inclouds:
-     * Deal with the parameters
-     * generate the service instance id
-     * generate the operation id
+     * generate the nsOperationKey
+     * generate the nsParameters
      */
     public void preProcessRequest (Execution execution) {
 	   def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
@@ -101,8 +106,8 @@ public class CreateGenericE2EServiceInstance extends AbstractServiceTaskProcesso
        utils.log("DEBUG"," ***** Exit preProcessRequest *****",  isDebugEnabled)
 	}
 
-
     public void createNetworkService(Execution execution) {
+
     }
 
     public void instantiateNetworkService(Execution execution) {
@@ -115,5 +120,27 @@ public class CreateGenericE2EServiceInstance extends AbstractServiceTaskProcesso
     }
 
     public void finishNSCreate(Execution execution) {
+    }
+
+    /**
+     * post request
+     * url: the url of the request
+     * requestBody: the body of the request
+     */
+    private APIResponse postRequest(String url, String requestBody){
+        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
+        taskProcessor.logDebug( " ======== Started Execute VFC adapter Post Process ======== ", isDebugEnabled)
+        taskProcessor.logDebug( "url:"+url +"\nrequestBody:"+ requestBody, isDebugEnabled)
+        APIResponse apiResponse = null
+        try{
+            RESTConfig config = new RESTConfig(url);
+            RESTClient client = new RESTClient(config).addHeader("X-FromAppId", "MSO").addHeader("X-TransactionId", uuid).addHeader("Accept","application/json");
+            apiResponse = client.httpPost(requestBody)
+            taskProcessor.logDebug( "======== Completed Execute VF-C adapter Post Process ======== ", isDebugEnabled)
+        }catch(Exception e){
+            taskProcessor.utils.log("ERROR", "Exception occured while executing AAI Post Call. Exception is: \n" + e, isDebugEnabled)
+            throw new BpmnError("MSOWorkflowException")
+        }
+        return apiResponse
     }
 }

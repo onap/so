@@ -49,7 +49,7 @@ import org.openecomp.mso.logger.MsoLogger;
  * @author
  * @version ONAP Amsterdam Release 2017-08-28
  */
-@Path("/v1/vfcdrivers")
+@Path("/vfcadapter/v1")
 public class VfcAdapterRest {
 
     private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);

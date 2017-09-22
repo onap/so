@@ -38,7 +38,7 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>Resteasy</servlet-name>
-    <url-pattern>/rest/*</url-pattern>
+    <url-pattern>/vfcadapter/*</url-pattern>
   </servlet-mapping>
     <security-constraint>
         <web-resource-collection>
