@@ -148,7 +148,7 @@ public class TypedRequestTunables {
 
 		String value = properties.getProperty(key, "");
 
-		if (value.equals("")) {
+		if ("".equals(value)) {
 			error = "Missing configuration for: " + key;
 			LOGGER.error(MessageEnum.RA_SDNC_MISS_CONFIG_PARAM, key, "SDNC", "", MsoLogger.ErrorCode.DataError, "Missing config param");
 			ALARMLOGGER.sendAlarm("MsoInternalError", MsoAlarmLogger.CRITICAL, error);
@@ -173,7 +173,7 @@ public class TypedRequestTunables {
 		String urlPropKey = Constants.REQUEST_TUNABLES + "." + parts[2];
 		sdncUrl = properties.getProperty(urlPropKey, "");
 
-		if (sdncUrl.equals("")) {
+		if ("".equals(sdncUrl)) {
 			error = "Missing configuration for: " + urlPropKey;
 			LOGGER.error(MessageEnum.RA_SDNC_MISS_CONFIG_PARAM, urlPropKey, "SDNC", "", MsoLogger.ErrorCode.DataError, "Missing config param");
 			ALARMLOGGER.sendAlarm("MsoInternalError", MsoAlarmLogger.CRITICAL, error);
@@ -190,7 +190,7 @@ public class TypedRequestTunables {
 
 		myUrl = properties.getProperty(Constants.MY_URL_PROP, "");
 
-		if (myUrl.equals("")) {
+		if ("".equals(myUrl)) {
 			error = "Missing configuration for: " + Constants.MY_URL_PROP;
 			LOGGER.error(MessageEnum.RA_SDNC_MISS_CONFIG_PARAM, Constants.MY_URL_PROP, "SDNC", "",
 				MsoLogger.ErrorCode.DataError, "Missing config param");
