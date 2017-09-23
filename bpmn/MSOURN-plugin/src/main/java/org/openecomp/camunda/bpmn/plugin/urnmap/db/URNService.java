@@ -39,6 +39,7 @@ public class URNService {
     return commandExecutor.executeQueryCommand(new Command<List<URNData>>() {
 
       @SuppressWarnings("unchecked")
+      @Override
       public List<URNData> execute(CommandContext commandContext) {
         return (List<URNData>) commandContext.getDbSqlSession().selectList("retrieveUrnKeyValuePair", null);
       }
