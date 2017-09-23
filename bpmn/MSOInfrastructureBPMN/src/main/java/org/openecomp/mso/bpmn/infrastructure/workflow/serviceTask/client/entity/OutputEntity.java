@@ -12,8 +12,8 @@ public class OutputEntity {
     @JsonProperty("response-code")
     private String responseCode;
 
-    @JsonProperty("esponse-message")
-    private String esponseMessage;
+    @JsonProperty("response-message")
+    private String responseMessage;
 
     @JsonProperty("ack-final-indicator")
     private String ackFinalIndicator;
@@ -40,12 +40,12 @@ public class OutputEntity {
         this.responseCode = responseCode;
     }
 
-    public String getEsponseMessage() {
-        return esponseMessage;
+    public String getResponseMessage() {
+        return responseMessage;
     }
 
-    public void setEsponseMessage(String esponseMessage) {
-        this.esponseMessage = esponseMessage;
+    public void setResponseMessage(String responseMessage) {
+        this.responseMessage = responseMessage;
     }
 
     public String getAckFinalIndicator() {
