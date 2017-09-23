@@ -135,7 +135,7 @@ public class SDNCEvent implements Serializable {
 
 	public void addParam(String name, String value) {
 		if (params == null) {
-			params = new LinkedHashMap<String, String>();
+			params = new LinkedHashMap<>();
 		}
 		params.put(name, value);
 	}
