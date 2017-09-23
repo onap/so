@@ -42,8 +42,6 @@ public class SDNCAdapterPortTypeImpl implements SDNCAdapterPortType {
 
 	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
 	private static MsoAlarmLogger alarmLogger = new MsoAlarmLogger();
-	private static final String LOG_SERVICE_NAME = "MSO-BPMN:MSO-SDNCAdapter.";
-	private static final String LOG_REPLY_NAME = "MSO-SDNCAdapter:MSO-BPMN.";
 	public static final String MSO_PROP_SDNC_ADAPTER="MSO_PROP_SDNC_ADAPTER";
 
 	@PostConstruct
@@ -82,7 +80,6 @@ public class SDNCAdapterPortTypeImpl implements SDNCAdapterPortType {
 		msoLogger.info(MessageEnum.RA_RECEIVE_BPEL_REQUEST, bpelReqId, callbackUrl, "SDNC", "");
 
 		SDNCRestClient sdncClient = new SDNCRestClient(bpelRequest,msoPropertiesFactory);
-		long subStartTime = System.currentTimeMillis ();
 		try {
 			Thread sdncClientThread = new Thread(sdncClient);
 			sdncClientThread.start();
@@ -100,6 +97,6 @@ public class SDNCAdapterPortTypeImpl implements SDNCAdapterPortType {
 		msoLogger.debug("Sending synchronous response to BPEL");
 		SDNCAdapterResponse wsResp = new SDNCAdapterResponse();
 		msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successful");
-		return (wsResp);
+		return wsResp;
 	}
 }
