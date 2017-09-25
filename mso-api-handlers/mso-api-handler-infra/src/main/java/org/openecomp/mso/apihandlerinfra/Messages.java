@@ -28,7 +28,10 @@ import org.openecomp.mso.apihandler.common.ErrorNumbers;
 
 public class Messages {
 
-	public static final Map<String,String> errors = new HashMap<String,String>();
+	public static final Map<String,String> errors = new HashMap<>();
+
+	private Messages(){
+	}
 	static {
 		errors.put(ErrorNumbers.REQUEST_FAILED_SCHEMA_VALIDATION + "_service", "Service request FAILED schema validation. %s");
 		errors.put(ErrorNumbers.REQUEST_FAILED_SCHEMA_VALIDATION + "_feature", "Feature request FAILED schema validation. %s");
