@@ -643,6 +643,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         return stringMap;
     }
 
+    @Override
     public void createVfModule(String cloudSiteId,
             String tenantId,
             String vnfType,
@@ -1415,6 +1416,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         return;
     }
 
+    @Override
     public void deleteVfModule (String cloudSiteId,
                            String tenantId,
                            String vnfName,
