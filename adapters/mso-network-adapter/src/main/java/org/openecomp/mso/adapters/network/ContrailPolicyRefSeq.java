@@ -32,6 +32,7 @@ public class ContrailPolicyRefSeq {
 	private String minor;
 
 	public ContrailPolicyRefSeq() {
+		/* To be done */
 	}
 	
 	public ContrailPolicyRefSeq(String major, String minor) {

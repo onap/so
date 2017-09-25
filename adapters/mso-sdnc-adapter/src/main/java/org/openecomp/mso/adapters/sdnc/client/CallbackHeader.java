@@ -66,6 +66,7 @@ public class CallbackHeader {
     protected String responseMessage;
 
     public CallbackHeader() {
+        /* Empty constructor */
     }
 
     public CallbackHeader(String reqId, String respCode, String respMsg) {
