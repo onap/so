@@ -39,7 +39,7 @@ public class UpdateVolumeGroupResponse extends VfResponseCommon {
 
 	public UpdateVolumeGroupResponse() {
 		super();
-		this.volumeGroupOutputs = new HashMap<String, String>();
+		this.volumeGroupOutputs = new HashMap<>();
 	}
 
 	public UpdateVolumeGroupResponse(
