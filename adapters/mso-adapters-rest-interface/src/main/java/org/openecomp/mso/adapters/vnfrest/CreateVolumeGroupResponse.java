@@ -36,7 +36,7 @@ public class CreateVolumeGroupResponse extends VfResponseCommon {
 	private String volumeGroupId;
 	private String volumeGroupStackId;
 	private Boolean volumeGroupCreated;
-	private Map<String,String> volumeGroupOutputs = new HashMap<String, String>();
+	private Map<String,String> volumeGroupOutputs = new HashMap<>();
 	private VolumeGroupRollback volumeGroupRollback = new VolumeGroupRollback();
 
 	public CreateVolumeGroupResponse() {
