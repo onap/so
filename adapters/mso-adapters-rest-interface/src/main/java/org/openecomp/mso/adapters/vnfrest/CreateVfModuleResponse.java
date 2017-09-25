@@ -36,7 +36,7 @@ public class CreateVfModuleResponse extends VfResponseCommon {
 	private String vfModuleId;
 	private String vfModuleStackId;
 	private Boolean vfModuleCreated;
-	private Map<String,String> vfModuleOutputs = new HashMap<String, String>();
+	private Map<String,String> vfModuleOutputs = new HashMap<>();
 	private VfModuleRollback rollback = new VfModuleRollback();
 
 	public CreateVfModuleResponse() {
