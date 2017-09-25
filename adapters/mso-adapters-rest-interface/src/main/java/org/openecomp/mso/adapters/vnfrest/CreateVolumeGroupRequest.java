@@ -43,7 +43,7 @@ public class CreateVolumeGroupRequest extends VfRequestCommon {
 	private String vnfVersion;
 	private String vfModuleType;
 	private String modelCustomizationUuid;
-	private Map<String,String> volumeGroupParams = new HashMap<String, String>();
+	private Map<String,String> volumeGroupParams = new HashMap<>();
 	private Boolean failIfExists;
 	private Boolean suppressBackout;
 	private MsoRequest msoRequest = new MsoRequest();
