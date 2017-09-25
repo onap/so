@@ -28,7 +28,7 @@ import org.openecomp.mso.apihandler.common.ErrorNumbers;
 
 public class Messages {
 
-	public static final Map<String,String> errors = new HashMap<String,String>();
+	public static final Map<String,String> errors = new HashMap<>();
 	static {
 		errors.put(ErrorNumbers.REQUEST_FAILED_SCHEMA_VALIDATION + "_service", "Service request FAILED schema validation. %s");
 		errors.put(ErrorNumbers.REQUEST_FAILED_SCHEMA_VALIDATION + "_feature", "Feature request FAILED schema validation. %s");
@@ -46,4 +46,7 @@ public class Messages {
 		errors.put(ErrorNumbers.NO_COMMUNICATION_TO_CATALOG_DB, "Could not communicate with MSO_CATALOG DB %s");
 		errors.put(ErrorNumbers.ERROR_FROM_CATALOG_DB, "Received error from MSO_CATALOG DB %s");		
 	}
+	
+	private Messages(){
+	}	
 }

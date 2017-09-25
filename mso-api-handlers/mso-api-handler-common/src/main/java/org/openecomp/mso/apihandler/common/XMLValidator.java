@@ -65,7 +65,7 @@ public class XMLValidator {
             stringXsd = IOUtils.toString (xsdStream);
 
             factory = SchemaFactory.newInstance (XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            factory.setResourceResolver ((new PathResourceResolver (XSDS_PATH)));
+            factory.setResourceResolver (new PathResourceResolver (XSDS_PATH));
             factory.setFeature (XMLConstants.FEATURE_SECURE_PROCESSING, true);
 
             String quotedXsd = stringXsd.replaceAll ("&#34;", "\"");
@@ -90,7 +90,7 @@ public class XMLValidator {
 
         } catch (IOException | SAXException e) {
             msoLogger.debug ("Exception: ", e);
-            return ("ErrorDetails: " + e.getMessage ());
+            return "ErrorDetails: " + e.getMessage ();
 
         } catch (Exception e) {
             msoLogger.error (MessageEnum.APIH_CANNOT_READ_SCHEMA, "", "", MsoLogger.ErrorCode.SchemaError, "APIH cannot read schema file", e);
