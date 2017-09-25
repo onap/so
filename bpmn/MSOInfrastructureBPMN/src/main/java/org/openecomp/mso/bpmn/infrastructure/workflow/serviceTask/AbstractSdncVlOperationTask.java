@@ -89,23 +89,21 @@ public abstract class AbstractSdncVlOperationTask extends BaseTask {
         } catch (Exception e) {
             System.out.println(e);
             logger.error(MessageEnum.GENERAL_EXCEPTION, " getMsbIp catch exception: ", "", this.getTaskName(), MsoLogger.ErrorCode.UnknownError, e.getClass().toString());
-        } finally {
-            return defaultValue;
         }
+        return defaultValue;
     }
 
     private Integer getInteger(DelegateExecution execution, String name, Integer defaultValue) {
         Integer vlaue = (Integer) execution.getVariable(name);
         try {
-            if (vlaue != null && vlaue instanceof Integer) {
+            if (vlaue != null) {
                 return vlaue;
             }
         } catch (Exception e) {
             System.out.println(e);
             logger.error(MessageEnum.GENERAL_EXCEPTION, " getMsbIp catch exception: ", "", this.getTaskName(), MsoLogger.ErrorCode.UnknownError, e.getClass().toString());
-        } finally {
-            return defaultValue;
         }
+        return defaultValue;
     }
 
     public String getProcessKey(DelegateExecution execution) {
