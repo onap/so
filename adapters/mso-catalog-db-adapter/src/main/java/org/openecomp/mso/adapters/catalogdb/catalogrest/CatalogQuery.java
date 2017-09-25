@@ -47,7 +47,7 @@ public abstract class CatalogQuery {
 
 	protected String setTemplate(String template, Map<String, String> valueMap) {
 		logger.debug ("CatalogQuery setTemplate");
-		StringBuilder result = new StringBuilder();
+		StringBuffer result = new StringBuffer();
 
 		String pattern = "<.*>";
 		Pattern r = Pattern.compile(pattern);
