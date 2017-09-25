@@ -156,7 +156,7 @@ public class JsonUtils {
 					str = null;
 				}
 				// append the content to the XML output
-				if (key.equals("content")) {
+				if ("content".equals(key)) {
 					if (curObj instanceof JSONArray) {
 						jsonArr = (JSONArray) curObj;
 						len = jsonArr.length();
@@ -952,11 +952,9 @@ public class JsonUtils {
 
 		try {
 			Object rawValue = getJsonRawValue(jsonStr, keys);
-			if (rawValue == null) {
-				return false;
-			} else {
-				return true;
-			}
+
+			return !(rawValue == null);
+
 		} catch (Exception e) {
 				msoLogger.debug("jsonElementExist(): unable to determine if json element exist. Exception is: " + e.toString(),e);
 		}
