@@ -114,8 +114,8 @@ public class TenantAdapterRest {
 		TenantRollback tenantRollback = new TenantRollback ();
 
 		try {
-			Holder<String> htenant = new Holder<String>();
-			Holder<TenantRollback> hrollback = new Holder<TenantRollback>();
+			Holder<String> htenant = new Holder<>();
+			Holder<TenantRollback> hrollback = new Holder<>();
 			MsoTenantAdapter impl = new MsoTenantAdapterImpl();
 		    impl.createTenant(
 		    	req.getCloudSiteId(),
@@ -183,7 +183,7 @@ public class TenantAdapterRest {
 		boolean tenantDeleted = false;
 
 		try {
-			Holder<Boolean> deleted = new Holder<Boolean>();
+			Holder<Boolean> deleted = new Holder<>();
 			MsoTenantAdapter impl = new MsoTenantAdapterImpl();
 		    impl.deleteTenant(
 		    	req.getCloudSiteId(),
@@ -231,9 +231,9 @@ public class TenantAdapterRest {
 	{
 		MsoTenant tenant = null;
 		try {
-			Holder<String> htenant = new Holder<String>();
-			Holder<String> tenantName = new Holder<String>();
-			Holder<Map<String,String>> metadata = new Holder<Map<String,String>>();
+			Holder<String> htenant = new Holder<>();
+			Holder<String> tenantName = new Holder<>();
+			Holder<Map<String,String>> metadata = new Holder<>();
 			MsoTenantAdapter impl = new MsoTenantAdapterImpl();
 		    impl.queryTenant(
 		    	cloudSiteId,
