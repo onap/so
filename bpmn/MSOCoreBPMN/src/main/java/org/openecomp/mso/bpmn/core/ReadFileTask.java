@@ -76,36 +76,18 @@ public class ReadFileTask extends BaseTask {
 		Object value = execution.getVariable(theInputVariable);
 
 		if (value == null) {
-			InputStream xmlStream = null;
-
-			try {
-				xmlStream = getClass().getResourceAsStream(theFile);
-
-				if (xmlStream == null) {
-					throw new IOException("Resource not found: " + theFile);
-				}
-
-				BufferedReader reader = new BufferedReader(new InputStreamReader(xmlStream));
+			try (InputStream xmlStream = getClass().getResourceAsStream(theFile);
+				BufferedReader reader = new BufferedReader(new InputStreamReader(xmlStream))) {
 				StringBuilder output = new StringBuilder();
 				String line;
 
 				while ((line = reader.readLine()) != null) {
 					output.append(line);
 				}
-
-				xmlStream.close();
-				xmlStream = null;
-
 				value = output.toString();
 
-			} finally {
-				if (xmlStream != null) {
-					try {
-						xmlStream.close();
-					} catch (Exception e) {
-					    msoLogger.debug("Exception ", e);
-					}
-				}
+			} catch (Exception e) {
+				msoLogger.debug("Exception at readResourceFile stream: " + e);
 			}
 		}
 		execution.setVariable(theInputVariable, value);
