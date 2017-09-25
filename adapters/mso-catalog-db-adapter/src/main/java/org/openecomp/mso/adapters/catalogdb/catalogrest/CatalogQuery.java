@@ -28,10 +28,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public abstract class CatalogQuery {
-	protected static MsoLogger logger = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
+	protected static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
 	private static final boolean IS_EMBED = true;
 
-	public abstract String json2(boolean isArray, boolean isEmbed);
+	public abstract String JSON2(boolean isArray, boolean isEmbed);
 
 	protected void put(Map<String, String> valueMap, String key, String value) {
 		valueMap.put(key, value == null? "null": '"'+ value+ '"');
@@ -46,21 +46,21 @@ public abstract class CatalogQuery {
 	}
 
 	protected String setTemplate(String template, Map<String, String> valueMap) {
-		logger.debug ("CatalogQuery setTemplate");
+		LOGGER.debug ("CatalogQuery setTemplate");
 		StringBuffer result = new StringBuffer();
 
 		String pattern = "<.*>";
 		Pattern r = Pattern.compile(pattern);
 		Matcher m = r.matcher(template);
 
-		logger.debug ("CatalogQuery template:"+ template);
+		LOGGER.debug ("CatalogQuery template:"+ template);
 		while(m.find()) {
 			String key = template.substring(m.start()+1, m.end()-1);
-			logger.debug ("CatalogQuery key:"+ key+ " contains key? "+ valueMap.containsKey(key));
+			LOGGER.debug ("CatalogQuery key:"+ key+ " contains key? "+ valueMap.containsKey(key));
 	         m.appendReplacement(result, valueMap.containsKey(key)? valueMap.get(key): "\"TBD\"");
 		}
 		m.appendTail(result);
-		logger.debug ("CatalogQuery return:"+ result.toString());
+		LOGGER.debug ("CatalogQuery return:"+ result.toString());
 		return result.toString();
 	}
 
@@ -74,8 +74,8 @@ public abstract class CatalogQuery {
 			jsonString = mapper.writeValueAsString(this);
 		}
 		catch (Exception e) {
-			logger.debug("Exception:", e);
-			logger.debug ("jsonString exception:"+e.getMessage());
+			LOGGER.debug("Exception:", e);
+			LOGGER.debug ("jsonString exception:"+e.getMessage());
 			jsonString = "invalid"; //throws instead?
 		}
 		return jsonString;
@@ -84,7 +84,7 @@ public abstract class CatalogQuery {
 	public String toJsonString(String version, boolean isArray) {
 		switch(version) {
 		case "v1": return smartToJSON();
-		case "v2": return json2(isArray, !IS_EMBED);
+		case "v2": return JSON2(isArray, !IS_EMBED);
 		default:
 			return "invalid version: "+ version;
 		}
