@@ -34,7 +34,7 @@ public class UpdateVfModuleResponse extends VfResponseCommon {
 	private String vnfId;
 	private String vfModuleId;
 	private String vfModuleStackId;
-	private Map<String,String> vfModuleOutputs = new HashMap<String, String>();
+	private Map<String,String> vfModuleOutputs = new HashMap<>();
 
 	public UpdateVfModuleResponse() {
 		super();
