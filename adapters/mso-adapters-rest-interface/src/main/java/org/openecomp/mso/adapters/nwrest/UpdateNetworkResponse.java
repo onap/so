@@ -35,12 +35,13 @@ public class UpdateNetworkResponse extends NetworkResponseCommon {
 	private String networkId;
 	private String neutronNetworkId;
 	private Map<String, String> subnetMap;
-	
+
 	public UpdateNetworkResponse() {
+		/* Empty Constructor */
 	}
-	
+
 	public UpdateNetworkResponse(String networkId, String neutronNetworkId,
-			Map<String, String> subnetMap, String messageId) {
+								 Map<String, String> subnetMap, String messageId) {
 		super(messageId);
 		this.networkId = networkId;
 		this.neutronNetworkId = neutronNetworkId;

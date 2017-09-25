@@ -47,6 +47,7 @@ public class ObjectFactory {
      *
      */
     public ObjectFactory() {
+        /* Empty constructor */
     }
 
     /**
