@@ -51,7 +51,7 @@ public class CamundaTaskClient extends RequestClient{
 		StringEntity input = new StringEntity(jsonReq);
 		input.setContentType(CommonConstants.CONTENT_TYPE_JSON);
 
-		String encryptedCredentials = null;
+		String encryptedCredentials;
 		if(props!=null){
 			encryptedCredentials = props.getProperty(CommonConstants.CAMUNDA_AUTH,null);
 			if(encryptedCredentials != null){
@@ -92,7 +92,7 @@ public class CamundaTaskClient extends RequestClient{
 			throws ClientProtocolException, IOException{
 		HttpGet get = new HttpGet(url);
 		msoLogger.debug("Camunda Task url is: "+ url);	
-		String encryptedCredentials = null;
+		String encryptedCredentials;
 		if(props!=null){
 			encryptedCredentials = props.getProperty(CommonConstants.CAMUNDA_AUTH,null);
 			if(encryptedCredentials != null){

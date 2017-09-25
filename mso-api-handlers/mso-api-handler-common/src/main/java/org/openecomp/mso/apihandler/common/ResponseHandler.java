@@ -131,36 +131,36 @@ public class ResponseHandler {
 	}
 
 	private int setStatus(int statusCode){
-		int status = 0;
+		int httpStatus;
 		switch(statusCode) {
 		case HttpStatus.SC_ACCEPTED:
 		case HttpStatus.SC_OK:		
-			status = HttpStatus.SC_ACCEPTED;
+			httpStatus = HttpStatus.SC_ACCEPTED;
 			break;
 		case HttpStatus.SC_BAD_REQUEST:
-			status = HttpStatus.SC_BAD_REQUEST;
+			httpStatus = HttpStatus.SC_BAD_REQUEST;
 			break;
 		case HttpStatus.SC_UNAUTHORIZED:
 		case HttpStatus.SC_FORBIDDEN:
-			status = HttpStatus.SC_INTERNAL_SERVER_ERROR;
+			httpStatus = HttpStatus.SC_INTERNAL_SERVER_ERROR;
 			break;
 		case HttpStatus.SC_NOT_FOUND:
-			status = HttpStatus.SC_NOT_IMPLEMENTED;
+			httpStatus = HttpStatus.SC_NOT_IMPLEMENTED;
 			break;
 		case HttpStatus.SC_INTERNAL_SERVER_ERROR:
-			status = HttpStatus.SC_BAD_GATEWAY;
+			httpStatus = HttpStatus.SC_BAD_GATEWAY;
 			break;
 		case HttpStatus.SC_SERVICE_UNAVAILABLE:
-			status = HttpStatus.SC_SERVICE_UNAVAILABLE;
+			httpStatus = HttpStatus.SC_SERVICE_UNAVAILABLE;
 			break;
 		case HttpStatus.SC_NO_CONTENT:
-			status = HttpStatus.SC_NO_CONTENT;
+			httpStatus = HttpStatus.SC_NO_CONTENT;
 			break;
 		default:
-			status = HttpStatus.SC_INTERNAL_SERVER_ERROR;
+			httpStatus = HttpStatus.SC_INTERNAL_SERVER_ERROR;
 			break;
 		}
-		return status;
+		return httpStatus;
 	}
 
 
