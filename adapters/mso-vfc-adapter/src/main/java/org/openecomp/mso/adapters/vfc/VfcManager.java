@@ -64,7 +64,7 @@ public class VfcManager {
     private static Map<String, String> nfvoUrlMap;
 
     static {
-        nfvoUrlMap = new HashMap<String, String>();
+        nfvoUrlMap = new HashMap<>();
         nfvoUrlMap.put(Step.CREATE, CommonConstant.NFVO_CREATE_URL);
         nfvoUrlMap.put(Step.INSTANTIATE, CommonConstant.NFVO_INSTANTIATE_URL);
         nfvoUrlMap.put(Step.TERMINATE, CommonConstant.NFVO_TERMINATE_URL);
@@ -399,7 +399,7 @@ public class VfcManager {
      */
     private String getUrl(String variable, String step) {
 
-        String url = CommonConstant.STR_EMPTY;
+        String url;
         String originalUrl;
         originalUrl = (String)nfvoUrlMap.get(step);
         url = String.format(originalUrl, variable);

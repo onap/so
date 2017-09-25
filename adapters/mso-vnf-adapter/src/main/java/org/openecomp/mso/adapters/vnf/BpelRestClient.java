@@ -142,9 +142,10 @@ public class BpelRestClient {
 	}
 
 	public void setRetryCount(int retryCount) {
-		if (retryCount < 0)
-			retryCount = DEFAULT_RETRY_COUNT;
-		this.retryCount = retryCount;
+		int newRetryCount = retryCount;
+		if (newRetryCount < 0)
+			newRetryCount = DEFAULT_RETRY_COUNT;
+		this.retryCount = newRetryCount;
 	}
 
 	public int getRetryInterval() {
@@ -164,14 +165,14 @@ public class BpelRestClient {
 	}
 
 	public String getRetryList() {
-		if (retryList.size() == 0)
+		if (retryList.isEmpty())
 			return "";
 		String t = retryList.toString();
 		return t.substring(1, t.length()-1);
 	}
 
 	public void setRetryList(String retryList) {
-		Set<Integer> s = new TreeSet<Integer>();
+		Set<Integer> s = new TreeSet<>();
 		for (String t : retryList.split("[, ]")) {
 			try {
 				s.add(Integer.parseInt(t));
