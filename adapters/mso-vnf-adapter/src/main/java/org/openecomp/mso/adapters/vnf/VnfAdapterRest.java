@@ -174,7 +174,7 @@ public class VnfAdapterRest {
 		public void run() {
 			try {
 				String cloudsite = req.getCloudSiteId();
-				Holder<Map<String, String>> outputs = new Holder <Map <String, String>> ();
+				Holder<Map<String, String>> outputs = new Holder <> ();
 				if (cloudsite != null && !cloudsite.equals(TESTING_KEYWORD)) {
 					//vnfAdapter.deleteVnf (req.getCloudSiteId(), req.getTenantId(), req.getVfModuleStackId(), req.getMsoRequest());
 					vnfAdapter.deleteVfModule (req.getCloudSiteId(), req.getTenantId(), req.getVfModuleStackId(), req.getMsoRequest(), outputs);
@@ -226,10 +226,10 @@ public class VnfAdapterRest {
 		try {
 			int respStatus = HttpStatus.SC_OK;
 			QueryVfModuleResponse qryResp = new QueryVfModuleResponse(aaiVnfId, aaiVfModuleId, null, null, null);
-			Holder<Boolean> vnfExists = new Holder<Boolean>();
-			Holder<String> vfModuleId = new Holder<String>();
-			Holder<VnfStatus> status  = new Holder<VnfStatus>();
-			Holder<Map<String, String>> outputs = new Holder <Map <String, String>> ();
+			Holder<Boolean> vnfExists = new Holder<>();
+			Holder<String> vfModuleId = new Holder<>();
+			Holder<VnfStatus> status  = new Holder<>();
+			Holder<Map<String, String>> outputs = new Holder <> ();
 			vnfAdapter.queryVnf (cloudSiteId, tenantId, vfModuleName, msoRequest, vnfExists, vfModuleId, status, outputs);
 			if (!vnfExists.value) {
 				LOGGER.debug ("vfModule not found");
@@ -354,9 +354,9 @@ public class VnfAdapterRest {
 			LOGGER.debug ("CreateVfModuleTask start");
 			try {
 				// Synchronous Web Service Outputs
-				Holder <String> vfModuleStackId = new Holder <String> ();
-				Holder <Map <String, String>> outputs = new Holder <Map <String, String>> ();
-				Holder <VnfRollback> vnfRollback = new Holder <VnfRollback> ();
+				Holder <String> vfModuleStackId = new Holder <> ();
+				Holder <Map <String, String>> outputs = new Holder <> ();
+				Holder <VnfRollback> vnfRollback = new Holder <> ();
 				String completeVnfVfModuleType = req.getVnfType() + "::" + req.getVfModuleType();
 				LOGGER.debug("completeVnfVfModuleType=" + completeVnfVfModuleType);
 				String cloudsite = req.getCloudSiteId();
@@ -483,9 +483,9 @@ public class VnfAdapterRest {
 				//MsoVnfAdapter vnfAdapter = new MsoVnfAdapterImpl (msoPropertiesFactory, cloudConfigFactory);
 
 				// Synchronous Web Service Outputs
-				Holder <String> vfModuleStackId = new Holder <String> ();
-				Holder <Map <String, String>> outputs = new Holder <Map <String, String>> ();
-				Holder <VnfRollback> vnfRollback = new Holder <VnfRollback> ();
+				Holder <String> vfModuleStackId = new Holder <> ();
+				Holder <Map <String, String>> outputs = new Holder <> ();
+				Holder <VnfRollback> vnfRollback = new Holder <> ();
 				String completeVnfVfModuleType = req.getVnfType() + "::" + req.getVfModuleType();
 				LOGGER.debug("in updateVf - completeVnfVfModuleType=" + completeVnfVfModuleType);
 
