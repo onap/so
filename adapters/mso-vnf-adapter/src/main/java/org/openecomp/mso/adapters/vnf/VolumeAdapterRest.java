@@ -136,9 +136,9 @@ public class VolumeAdapterRest {
 			LOGGER.debug ("CreateVFModule VolumesTask start");
 			try {
 				// Synchronous Web Service Outputs
-				Holder<String> stackId = new Holder<String>();
-				Holder<Map<String, String>> outputs = new Holder<Map<String, String>>();
-				Holder<VnfRollback> vnfRollback = new Holder<VnfRollback>();
+				Holder<String> stackId = new Holder<>();
+				Holder<Map<String, String>> outputs = new Holder<>();
+				Holder<VnfRollback> vnfRollback = new Holder<>();
 				String completeVnfVfModuleType = req.getVnfType() + "::" + req.getVfModuleType();
 				LOGGER.debug("in createVfModuleVolumes - completeVnfVfModuleType=" + completeVnfVfModuleType);
 
@@ -462,9 +462,9 @@ public class VolumeAdapterRest {
 			LOGGER.debug("UpdateVNFVolumesTask start");
 			try {
 				@SuppressWarnings("unused")
-				Holder<String> stackId = new Holder<String> ();
-				Holder<Map<String, String>> outputs = new Holder<Map <String, String>> ();
-				Holder<VnfRollback> vnfRollback = new Holder<VnfRollback> ();
+				Holder<String> stackId = new Holder<> ();
+				Holder<Map<String, String>> outputs = new Holder<> ();
+				Holder<VnfRollback> vnfRollback = new Holder<> ();
 				String completeVnfVfModuleType = req.getVnfType() + "::" + req.getVfModuleType();
 				LOGGER.debug("in updateVfModuleVolume - completeVnfVfModuleType=" + completeVnfVfModuleType);
 
@@ -535,10 +535,10 @@ public class VolumeAdapterRest {
     	try {
         	int respStatus = HttpStatus.SC_OK;
         	QueryVolumeGroupResponse qryResp = new QueryVolumeGroupResponse(aaiVolumeGroupId, volumeGroupStackId, null, null);
-        	Holder<Boolean> vnfExists = new Holder<Boolean>();
-        	Holder<String> vfModuleId = new Holder<String>();
-        	Holder<VnfStatus> status = new Holder<VnfStatus>();
-        	Holder<Map<String, String>> outputs = new Holder<Map<String, String>>();
+        	Holder<Boolean> vnfExists = new Holder<>();
+        	Holder<String> vfModuleId = new Holder<>();
+        	Holder<VnfStatus> status = new Holder<>();
+        	Holder<Map<String, String>> outputs = new Holder<>();
 			if (cloudSiteId != null && cloudSiteId.equals(TESTING_KEYWORD)) {
 				if (tenantId != null && tenantId.equals(TESTING_KEYWORD)) {
 					throw new VnfException("testing.");
@@ -575,7 +575,7 @@ public class VolumeAdapterRest {
 		}
 	}
     public static Map<String, String> testMap() {
-		Map<String, String> m = new HashMap<String, String>();
+		Map<String, String> m = new HashMap<>();
 		m.put("mickey", "7");
 		m.put("clyde", "10");
 		m.put("wayne", "99");

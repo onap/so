@@ -72,7 +72,7 @@ public class CreateVfModuleRequest extends VfRequestCommon {
 	private Boolean failIfExists;
 	private Boolean backout;
 
-	private Map<String,String> vfModuleParams = new HashMap<String, String>();
+	private Map<String,String> vfModuleParams = new HashMap<>();
 	private MsoRequest msoRequest = new MsoRequest();
 
 	public String getCloudSiteId() {
