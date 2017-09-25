@@ -110,6 +110,9 @@ public class XQueryScriptTask extends BaseTask {
 		Processor processor = new Processor(configuration);
 		XQueryCompiler compiler = processor.newXQueryCompiler();
 		XQueryExecutable executable = compile(compiler, theScriptFile);
+        if (executable == null) {
+            throw new ProcessEngineException(getClass().getSimpleName() + " Failed");
+        }
 
 		// The evaluator must not be shared by multiple threads.  Here is where
 		// the initial context may be set, as well as values of external variables.
@@ -219,26 +222,12 @@ public class XQueryScriptTask extends BaseTask {
 	 */
 	private XQueryExecutable compile(XQueryCompiler compiler, String resource)
 			throws Exception {
-		InputStream xqStream = null;
-		try {
-			xqStream = getClass().getResourceAsStream(resource);
-
-			if (xqStream == null) {
-				throw new IOException("Resource not found: " + resource);
-			}
-
+		try (InputStream xqStream = getClass().getResourceAsStream(resource)) {
 			XQueryExecutable executable = compiler.compile(xqStream);
-			xqStream.close();
-			xqStream = null;
 			return executable;
-		} finally {
-			if (xqStream != null) {
-				try {
-					xqStream.close();
-				} catch (Exception e) {
-				    msoLogger.debug ("Exception:", e);
-				}
-			}
+		} catch (Exception e) {
+			msoLogger.debug ("Exception at resourceFile stream:", e);
+			return null;
 		}
 	}
 }
