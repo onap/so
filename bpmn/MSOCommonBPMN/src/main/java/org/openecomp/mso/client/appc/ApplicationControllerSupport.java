@@ -108,7 +108,7 @@ public class ApplicationControllerSupport {
 			try {
 				return (Status) statusReader.invoke(response);
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-				throw new RuntimeException(String.format("Unable to obtain status from LCM Kit response"), e);
+				throw new RuntimeException("Unable to obtain status from LCM Kit response", e);
 			}
 		}
 		return new Status();
