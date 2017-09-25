@@ -67,29 +67,12 @@ public class ReadConfigTask extends BaseTask {
 		synchronized (ReadConfigTask.class) {
 			if (properties == null) {
 				properties = new Properties();
-
-				InputStream stream = null;
-
-				try {
-					stream = getClass().getResourceAsStream(thePropertiesFile);
-
-					if (stream == null) {
-						throw new IOException("Resource not found: " + thePropertiesFile);
-					}
+				try (InputStream stream = getClass().getResourceAsStream(thePropertiesFile)) {
 
 					properties.load(stream);
 
-					stream.close();
-					stream = null;
-
-				} finally {
-					if (stream != null) {
-						try {
-							stream.close();
-						} catch (Exception e) {
-						    msoLogger.debug("Exception:", e);
-						}
-					}
+				} catch (Exception e) {
+					msoLogger.debug("Exception at readResourceFile stream: " + e);
 				}
 			}
 		}
