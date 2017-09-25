@@ -312,15 +312,10 @@ public final class XmlTool {
 	 * @throws IOException if there is a problem reading the file
 	 */
 	private static String readResourceFile(String file) throws IOException {
-		InputStream stream = null;
-		try {
-			stream = XmlTool.class.getClassLoader().getResourceAsStream(file);
 
-			if (stream == null) {
-				throw new FileNotFoundException("No such resource file: " + file);
-			}
+		try (InputStream stream = XmlTool.class.getClassLoader().getResourceAsStream(file);
+			 Reader reader = new InputStreamReader(stream, "UTF-8")) {
 
-			Reader reader = new InputStreamReader(stream, "UTF-8");
 			StringBuilder out = new StringBuilder();
 			char[] buf = new char[1024];
 			int n;
@@ -328,18 +323,10 @@ public final class XmlTool {
 			while ((n = reader.read(buf)) >= 0) {
 				out.append(buf, 0, n);
 			}
-
-			stream.close();
-			stream = null;
 			return out.toString();
-		} finally {
-			if (stream != null) {
-				try {
-					stream.close();
-				} catch (Exception e) {
-					LOGGER.debug("Exception at readResourceFile close stream: " + e);
-				}
-			}
+		} catch (Exception e) {
+			LOGGER.debug("Exception at readResourceFile stream: " + e);
+			return null;
 		}
 	}
 	
