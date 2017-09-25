@@ -586,20 +586,20 @@ public class MsoRequest {
     public Map<String, List<String>> getOrchestrationFilters (MultivaluedMap<String, String> queryParams) throws ValidationException {
 
         String queryParam = null;
-        Map<String, List<String>> orchestrationFilterParams = new HashMap<String, List<String>>();
+        Map<String, List<String>> orchestrationFilterParams = new HashMap<>();
 
 
         for (Entry<String,List<String>> entry : queryParams.entrySet()) {
             queryParam = entry.getKey();
 
             try{
-          	  if(queryParam.equalsIgnoreCase("filter")){
+          	  if("filter".equalsIgnoreCase(queryParam)){
           		  for(String value : entry.getValue()) {
 	          		  StringTokenizer st = new StringTokenizer(value, ":");
 	
 	          		  int counter=0;
 	          		  String mapKey=null;
-	          		  List<String> orchestrationList = new ArrayList<String>();
+	          		  List<String> orchestrationList = new ArrayList<>();
 	          		  while (st.hasMoreElements()) {
 	          			  if(counter == 0){
 	          				  mapKey = st.nextElement() + "";
