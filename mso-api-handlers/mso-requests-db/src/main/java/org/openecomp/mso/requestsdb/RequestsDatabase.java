@@ -226,37 +226,37 @@ public class RequestsDatabase {
        
         if(instanceName != null && !instanceName.equals("")) {
         	
-        	if(requestScope.equals("service")){
+        	if("service".equals(requestScope)){
         		criteria.add (Restrictions.eq (SERVICE_INSTANCE_NAME, instanceName));
-        	} else if(requestScope.equals("vnf")){
+        	} else if("vnf".equals(requestScope)){
         		criteria.add (Restrictions.eq (VNF_INSTANCE_NAME, instanceName));
-        	} else if(requestScope.equals("volumeGroup")){
+        	} else if("volumeGroup".equals(requestScope)){
         		criteria.add (Restrictions.eq (VOLUME_GROUP_INSTANCE_NAME, instanceName));
-        	} else if(requestScope.equals("vfModule")){
+        	} else if("vfModule".equals(requestScope)){
         		criteria.add (Restrictions.eq (VFMODULE_INSTANCE_NAME, instanceName));
-        	} else if(requestScope.equals("network")){
+        	} else if("network".equals(requestScope)){
         		criteria.add (Restrictions.eq (NETWORK_INSTANCE_NAME, instanceName));
         	}
         
         } else {
             if(instanceIdMap != null){
-            	if(requestScope.equals("service") && instanceIdMap.get("serviceInstanceId") != null){
+            	if("service".equals(requestScope) && instanceIdMap.get("serviceInstanceId") != null){
             		criteria.add (Restrictions.eq (SERVICE_INSTANCE_ID, instanceIdMap.get("serviceInstanceId")));
              	}
             
-            	if(requestScope.equals("vnf") && instanceIdMap.get("vnfInstanceId") != null){
+            	if("vnf".equals(requestScope) && instanceIdMap.get("vnfInstanceId") != null){
             		criteria.add (Restrictions.eq (VNF_INSTANCE_ID, instanceIdMap.get("vnfInstanceId")));
              	}
             
-            	if(requestScope.equals("vfModule") && instanceIdMap.get("vfModuleInstanceId") != null){
+            	if("vfModule".equals(requestScope) && instanceIdMap.get("vfModuleInstanceId") != null){
             		criteria.add (Restrictions.eq (VFMODULE_INSTANCE_ID, instanceIdMap.get("vfModuleInstanceId")));
              	}
             
-            	if(requestScope.equals("volumeGroup") && instanceIdMap.get("volumeGroupInstanceId") != null){
+            	if("volumeGroup".equals(requestScope) && instanceIdMap.get("volumeGroupInstanceId") != null){
             		criteria.add (Restrictions.eq (VOLUME_GROUP_INSTANCE_ID, instanceIdMap.get("volumeGroupInstanceId")));
              	}
             
-            	if(requestScope.equals("network") && instanceIdMap.get("networkInstanceId") != null){
+            	if("network".equals(requestScope) && instanceIdMap.get("networkInstanceId") != null){
             		criteria.add (Restrictions.eq (NETWORK_INSTANCE_ID, instanceIdMap.get("networkInstanceId")));
             	}
             }
@@ -270,7 +270,7 @@ public class RequestsDatabase {
         
         InfraActiveRequests infraActiveRequests = null;
         
-        if(dupList != null && dupList.size() > 0){
+        if(dupList != null && !dupList.isEmpty()){
         	infraActiveRequests = dupList.get(0);
         }
          	
@@ -284,40 +284,40 @@ public class RequestsDatabase {
     	for (Map.Entry<String, List<String>> entry : orchestrationMap.entrySet())
     	{
     		String mapKey = entry.getKey();
-    		if(mapKey.equalsIgnoreCase("serviceInstanceId")) {
+    		if("serviceInstanceId".equalsIgnoreCase(mapKey)) {
     			mapKey = "serviceInstanceId";
-    		} else if(mapKey.equalsIgnoreCase("serviceInstanceName")) {
+    		} else if("serviceInstanceName".equalsIgnoreCase(mapKey)) {
     			mapKey = "serviceInstanceName";
-    		} else if(mapKey.equalsIgnoreCase("vnfInstanceId")){
+    		} else if("vnfInstanceId".equalsIgnoreCase(mapKey)){
     	    	mapKey = "vnfId";
-     	    } else if(mapKey.equalsIgnoreCase("vnfInstanceName")) {
+     	    } else if("vnfInstanceName".equalsIgnoreCase(mapKey)) {
     	    	mapKey = "vnfName";
-    	    } else if(mapKey.equalsIgnoreCase("vfModuleInstanceId")) {
+    	    } else if("vfModuleInstanceId".equalsIgnoreCase(mapKey)) {
     	    	mapKey = "vfModuleId";
-    	    } else if(mapKey.equalsIgnoreCase("vfModuleInstanceName")) {
+    	    } else if("vfModuleInstanceName".equalsIgnoreCase(mapKey)) {
     	    	mapKey = "vfModuleName";
-    	    } else if(mapKey.equalsIgnoreCase("volumeGroupInstanceId")) {
+    	    } else if("volumeGroupInstanceId".equalsIgnoreCase(mapKey)) {
     	    	mapKey = "volumeGroupId";
-    	    } else if(mapKey.equalsIgnoreCase("volumeGroupInstanceName")) {
+    	    } else if("volumeGroupInstanceName".equalsIgnoreCase(mapKey)) {
     	    	mapKey = "volumeGroupName";
-    	    } else if(mapKey.equalsIgnoreCase("networkInstanceId")) {
+    	    } else if("networkInstanceId".equalsIgnoreCase(mapKey)) {
     	    	mapKey = "networkId";
-    	    } else if(mapKey.equalsIgnoreCase("networkInstanceName")) {
+    	    } else if("networkInstanceName".equalsIgnoreCase(mapKey)) {
     	    	mapKey = "networkName";
-    	    } else if(mapKey.equalsIgnoreCase("lcpCloudRegionId")) {
+    	    } else if("lcpCloudRegionId".equalsIgnoreCase(mapKey)) {
     	    	mapKey = "aicCloudRegion";
-    	    } else if(mapKey.equalsIgnoreCase("tenantId")) {
+    	    } else if("tenantId".equalsIgnoreCase(mapKey)) {
     	    	mapKey = "tenantId";
-    	    } else if(mapKey.equalsIgnoreCase("modelType")) {
+    	    } else if("modelType".equalsIgnoreCase(mapKey)) {
     	    	mapKey = "requestScope";
-    	    } else if(mapKey.equalsIgnoreCase("requestorId")) {
+    	    } else if("requestorId".equalsIgnoreCase(mapKey)) {
     	    	mapKey = "requestorId";
-    	    } else if(mapKey.equalsIgnoreCase("requestExecutionDate")) {    	    	
+    	    } else if("requestExecutionDate".equalsIgnoreCase(mapKey)) {
     	    	mapKey = "startTime";
     	    }
     	    
     		String propertyValue = entry.getValue().get(1);
-    		if (mapKey.equals("startTime")) {    			
+    		if ("startTime".equals(mapKey)) {
     			SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy");    	        
     			try {
 	    	        Date thisDate = format.parse(propertyValue);
