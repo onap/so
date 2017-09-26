@@ -21,7 +21,6 @@
 package org.openecomp.mso.adapters.requestsdb;
 
 import java.sql.Timestamp;
-import java.util.List;
 
 import javax.jws.WebService;
 
@@ -43,7 +42,7 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
 
     protected AbstractSessionFactoryManager requestsDbSessionFactoryManager = new RequestsDbSessionFactoryManager ();
     
-    private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
+    private static MsoLogger logger = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
 
     @Override
     public void updateInfraRequest (String requestId,
@@ -110,90 +109,90 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
             }
             queryString += "lastModifiedBy = :lastModifiedBy where requestId = :requestId OR clientRequestId = :requestId";
 
-            LOGGER.debug("Executing update: " + queryString);
+            logger.debug("Executing update: " + queryString);
 
             Query query = session.createQuery (queryString);
             query.setParameter ("requestId", requestId);
             if (statusMessage != null) {
                 query.setParameter ("statusMessage", statusMessage);
-                LOGGER.debug ("StatusMessage in updateInfraRequest is set to: " + statusMessage);
+                logger.debug ("StatusMessage in updateInfraRequest is set to: " + statusMessage);
             }
             if (responseBody != null) {
             	query.setParameter ("responseBody", responseBody);
-            	LOGGER.debug ("ResponseBody in updateInfraRequest is set to: " + responseBody);
+                logger.debug ("ResponseBody in updateInfraRequest is set to: " + responseBody);
             }
             if (requestStatus != null) {
                 query.setParameter ("requestStatus", requestStatus.toString ());
-                LOGGER.debug ("RequestStatus in updateInfraRequest is set to: " + requestStatus.toString());
+                logger.debug ("RequestStatus in updateInfraRequest is set to: " + requestStatus.toString());
             }
 
             if (progress != null) {
                 query.setParameter ("progress", Long.parseLong (progress));
-                LOGGER.debug ("Progress in updateInfraRequest is set to: " + progress);
+                logger.debug ("Progress in updateInfraRequest is set to: " + progress);
             }
             if (vnfOutputs != null) {
                 query.setParameter ("vnfOutputs", vnfOutputs);
-                LOGGER.debug ("VnfOutputs in updateInfraRequest is set to: " + vnfOutputs);
+                logger.debug ("VnfOutputs in updateInfraRequest is set to: " + vnfOutputs);
             }
             if (serviceInstanceId != null) {
                 query.setParameter ("serviceInstanceId", serviceInstanceId);
-                LOGGER.debug ("ServiceInstanceId in updateInfraRequest is set to: " + serviceInstanceId);
+                logger.debug ("ServiceInstanceId in updateInfraRequest is set to: " + serviceInstanceId);
             }
             if (networkId != null) {
                 query.setParameter ("networkId", networkId);
-                LOGGER.debug ("NetworkId in updateInfraRequest is set to: " + networkId);
+                logger.debug ("NetworkId in updateInfraRequest is set to: " + networkId);
             }
             if (vnfId != null) {
                 query.setParameter ("vnfId", vnfId);
-                LOGGER.debug ("VnfId in updateInfraRequest is set to: " + vnfId);
+                logger.debug ("VnfId in updateInfraRequest is set to: " + vnfId);
             }
             if (vfModuleId != null) {
                 query.setParameter ("vfModuleId", vfModuleId);
-                LOGGER.debug ("vfModuleId in updateInfraRequest is set to: " + vfModuleId);
+                logger.debug ("vfModuleId in updateInfraRequest is set to: " + vfModuleId);
             }
             if (volumeGroupId != null) {
                 query.setParameter ("volumeGroupId", volumeGroupId);
-                LOGGER.debug ("VolumeGroupId in updateInfraRequest is set to: " + volumeGroupId);
+                logger.debug ("VolumeGroupId in updateInfraRequest is set to: " + volumeGroupId);
             }
             if (serviceInstanceName != null) {
                 query.setParameter ("serviceInstanceName", serviceInstanceName);
-                LOGGER.debug ("ServiceInstanceName in updateInfraRequest is set to: " + serviceInstanceName);
+                logger.debug ("ServiceInstanceName in updateInfraRequest is set to: " + serviceInstanceName);
             }
             if (vfModuleName != null) {
                 query.setParameter ("vfModuleName", vfModuleName);
-                LOGGER.debug ("vfModuleName in updateInfraRequest is set to: " + vfModuleName);
+                logger.debug ("vfModuleName in updateInfraRequest is set to: " + vfModuleName);
             }
             Timestamp nowTimeStamp = new Timestamp (System.currentTimeMillis ());
             if (requestStatus == RequestStatusType.COMPLETE || requestStatus == RequestStatusType.FAILED) {
                 query.setParameter ("endTime", nowTimeStamp);
-                LOGGER.debug ("EndTime in updateInfraRequest is set to: " + nowTimeStamp);
+                logger.debug ("EndTime in updateInfraRequest is set to: " + nowTimeStamp);
             } else {
                 query.setParameter ("modifyTime", nowTimeStamp);
-                LOGGER.debug ("ModifyTime in updateInfraRequest is set to: " + nowTimeStamp);
+                logger.debug ("ModifyTime in updateInfraRequest is set to: " + nowTimeStamp);
             }
             query.setParameter ("lastModifiedBy", lastModifiedBy);
-            LOGGER.debug ("LastModifiedBy in updateInfraRequest is set to: " + lastModifiedBy);
+            logger.debug ("LastModifiedBy in updateInfraRequest is set to: " + lastModifiedBy);
             result = query.executeUpdate ();
-            checkIfExists (result, requestId, startTime);
+            checkIfExists (result, requestId);
             session.getTransaction ().commit ();
         } catch (HibernateException e) {
             String error = "Unable to update MSO Requests DB: " + e.getMessage ();
-            LOGGER.error (MessageEnum.RA_CANT_UPDATE_REQUEST, "infra request parameters", requestId, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "HibernateException - " + error, e);
-            LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError, error);
+            logger.error (MessageEnum.RA_CANT_UPDATE_REQUEST, "infra request parameters", requestId, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "HibernateException - " + error, e);
+            logger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError, error);
             throw new MsoRequestsDbException (error, e);
         } finally {
             if (session != null && session.isOpen ()) {
                 session.close ();
             }
         }
-        LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successful");
+        logger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successful");
     }
 
 
-    private void checkIfExists (int result, String requestId, long startTime) throws MsoRequestsDbException {
+    private void checkIfExists (int result, String requestId) throws MsoRequestsDbException {
         if (result == 0) {
             String error = "Request ID does not exist in MSO Requests DB: " + requestId;
-            LOGGER.error (MessageEnum.RA_DB_REQUEST_NOT_EXIST, requestId, "", "", MsoLogger.ErrorCode.DataError, error);
+            logger.error (MessageEnum.RA_DB_REQUEST_NOT_EXIST, requestId, "", "", MsoLogger.ErrorCode.DataError, error);
             throw new MsoRequestsDbException (error);
         }
     }
@@ -205,7 +204,7 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
         MsoLogger.setLogContext (requestId, null);
         Session session = requestsDbSessionFactoryManager.getSessionFactory ().openSession ();
 
-        LOGGER.debug ("Call to MSO Infra RequestsDb adapter get method with request Id: " + requestId);
+        logger.debug ("Call to MSO Infra RequestsDb adapter get method with request Id: " + requestId);
 
         InfraActiveRequests request = null;
         try {
@@ -216,15 +215,15 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
         } catch (HibernateException e) {
             String error = "Unable to retrieve MSO Infra Requests DB for Request ID "
                            + requestId;
-            LOGGER.error (MessageEnum.RA_DB_REQUEST_NOT_EXIST, "Get Infra request", requestId, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "HibernateException - " + error, e);
-            LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError, error);
+            logger.error (MessageEnum.RA_DB_REQUEST_NOT_EXIST, "Get Infra request", requestId, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "HibernateException - " + error, e);
+            logger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError, error);
             throw new MsoRequestsDbException (error, e);
         } finally {
             if (session != null && session.isOpen ()) {
                 session.close ();
             }
         }
-        LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successful");
+        logger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successful");
         return request;
     }
 
@@ -235,13 +234,14 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
      * @param siteName The unique name of the site
      * @return Status of that site
      */
+    @Override
     public boolean getSiteStatus (String siteName) {
-        UUIDChecker.generateUUID (LOGGER);
+        UUIDChecker.generateUUID (logger);
         Session session = requestsDbSessionFactoryManager.getSessionFactory ().openSession ();
 
         long startTime = System.currentTimeMillis ();
         SiteStatus siteStatus = null;
-        LOGGER.debug ("Request database - get Site Status with Site name:" + siteName);
+        logger.debug ("Request database - get Site Status with Site name:" + siteName);
         try {
             String hql = "FROM SiteStatus WHERE siteName = :site_name";
             Query query = session.createQuery (hql);
@@ -255,10 +255,10 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
         }
         if (siteStatus == null) {
             // if not exist in DB, it means the site is not disabled, thus return true
-            LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successful");
+            logger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successful");
             return true;
         } else {
-            LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successful");
+            logger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successful");
             return siteStatus.getStatus();
         }
     }
