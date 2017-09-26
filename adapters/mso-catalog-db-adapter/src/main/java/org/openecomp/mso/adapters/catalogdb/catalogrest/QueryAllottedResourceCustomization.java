@@ -54,7 +54,7 @@ public class QueryAllottedResourceCustomization extends CatalogQuery {
 		"\t}";
 //		"\t}}";
 
-	public QueryAllottedResourceCustomization() { super(); allottedResourceCustomization = new ArrayList<AllottedResourceCustomization>(); }
+	public QueryAllottedResourceCustomization() { super(); allottedResourceCustomization = new ArrayList<>(); }
 	public QueryAllottedResourceCustomization(List<AllottedResourceCustomization> vlist) { allottedResourceCustomization = vlist; }
 
 	public List<AllottedResourceCustomization> getServiceAllottedResources(){ return this.allottedResourceCustomization; }
@@ -62,7 +62,7 @@ public class QueryAllottedResourceCustomization extends CatalogQuery {
 
 	@Override
 	public String toString () {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 
 		boolean first = true;
 		int i = 1;
@@ -76,10 +76,10 @@ public class QueryAllottedResourceCustomization extends CatalogQuery {
 
 	@Override
 	public String JSON2(boolean isArray, boolean isEmbed) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		if (!isEmbed && isArray) buf.append("{ ");
 		if (isArray) buf.append("\"serviceAllottedResources\": [");
-		Map<String, String> valueMap = new HashMap<String, String>();
+		Map<String, String> valueMap = new HashMap<>();
 		String sep = "";
 		boolean first = true;
 
