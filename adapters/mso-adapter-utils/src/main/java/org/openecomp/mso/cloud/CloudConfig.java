@@ -135,7 +135,7 @@ public class CloudConfig {
                     if (version == null || version.equals(cs.getAic_version())) {
                         return cs;
                     }
-                } else if (cs.getId().equalsIgnoreCase("default")) {
+                } else if ("default".equalsIgnoreCase(cs.getId())) {
                     // save it off in case we need it
                     defaultCloudSite = cs.clone();
                 }
