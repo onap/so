@@ -23,7 +23,6 @@ package org.openecomp.mso.adapters.sdnc.impl;
 
 import org.openecomp.mso.logger.MsoAlarmLogger;
 import org.openecomp.mso.logger.MsoLogger;
-import org.openecomp.mso.properties.MsoJavaProperties;
 import org.openecomp.mso.properties.MsoPropertiesException;
 import org.openecomp.mso.properties.MsoPropertiesFactory;
 
@@ -35,6 +34,7 @@ public class RequestTunables {
 	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
 	private static MsoAlarmLogger alarmLogger = new MsoAlarmLogger();
 	public static final String MSO_PROP_SDNC_ADAPTER="MSO_PROP_SDNC_ADAPTER";
+	public static final String GENERATED_KEY = "Generated key: ";
 
 	//criteria
 	private String reqId = "";
@@ -154,17 +154,17 @@ public class RequestTunables {
 	public void setTunables()
 	{
 		String error = null;
-		String key = null;
+		String key;
 		if ("query".equals(action)) { //due to variable format for operation eg services/layer3-service-list/8fe4ba4f-35cf-4d9b-a04a-fd3f5d4c5cc9
 			key = Constants.REQUEST_TUNABLES + "." + msoAction + ".." + action;
-			msoLogger.debug("Generated key: " + key);
+			msoLogger.debug(GENERATED_KEY + key);
 		}
 		else if ("put".equals(action)  || "restdelete".equals(action)) { //due to variable format for operation eg services/layer3-service-list/8fe4ba4f-35cf-4d9b-a04a-fd3f5d4c5cc9
 			key = Constants.REQUEST_TUNABLES + "..." + action;
-			msoLogger.debug("Generated key: " + key);
+			msoLogger.debug(GENERATED_KEY + key);
 		} else {
 			key = Constants.REQUEST_TUNABLES + "." + msoAction + "." + operation +"."  + action;
-			msoLogger.debug("Generated key: " + key);
+			msoLogger.debug(GENERATED_KEY + key);
 		}
 
 		String value;
