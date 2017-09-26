@@ -122,7 +122,6 @@ public class URNResource extends AbstractCockpitPluginResource{
     
     for(URNData d: list)
     {
-    	//msoLogger.debug(  d.getURNName() + "		"  + d.getURNValue());
     	msoLogger.debug( d.getURNName() + "		"  + d.getURNValue());
     }
    
@@ -167,9 +166,7 @@ public class URNResource extends AbstractCockpitPluginResource{
   			 
        msoLogger.debug("AddNewRow: XXXXXXXXXXXXXXXXX ---> key: " + key_ + " , Value: " + value_);
  	  final URNData nRow = new URNData();
- 	  nRow.setVer_("1"); 	
- 	  final String myKey = key_;
- 	  final String myValue = value_;
+ 	  nRow.setVer_("1");
  	  PreparedStatement psData = null;
 	  
 		msoLogger.debug("----------- START ----------------------");
