@@ -292,7 +292,7 @@ public class UpdateVnfNotification {
          */
         public List<UpdateVnfNotification.Outputs.Entry> getEntry() {
             if (entry == null) {
-                entry = new ArrayList<UpdateVnfNotification.Outputs.Entry>();
+                entry = new ArrayList<>();
             }
             return this.entry;
         }
