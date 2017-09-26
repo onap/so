@@ -154,7 +154,7 @@ public class RequestTunables {
 	public void setTunables()
 	{
 		String error = null;
-		String key = null;
+		String key;
 		if ("query".equals(action)) { //due to variable format for operation eg services/layer3-service-list/8fe4ba4f-35cf-4d9b-a04a-fd3f5d4c5cc9
 			key = Constants.REQUEST_TUNABLES + "." + msoAction + ".." + action;
 			msoLogger.debug("Generated key: " + key);

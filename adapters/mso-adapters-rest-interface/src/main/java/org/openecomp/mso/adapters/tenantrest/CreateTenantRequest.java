@@ -35,7 +35,7 @@ public class CreateTenantRequest extends TenantRequestCommon {
 	private String tenantName;
 	private Boolean failIfExists;
 	private Boolean backout;
-	private Map<String,String> metadata = new HashMap<String, String>();
+	private Map<String,String> metadata = new HashMap<>();
 	private MsoRequest msoRequest = new MsoRequest();
 	
 	public CreateTenantRequest() {}
