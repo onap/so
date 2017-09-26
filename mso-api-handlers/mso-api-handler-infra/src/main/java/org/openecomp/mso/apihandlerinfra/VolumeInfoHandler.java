@@ -84,7 +84,7 @@ public class VolumeInfoHandler {
         							+ " tenant-id:" + tenantId
         							+ " volume-group-id:" + volumeGroupId
         							+ " volume-group-name:" + volumeGroupName);
-        Response response = null;
+        Response response;
     	if (vnfType != null) {
             response = this.getRequestList ("vnfType", vnfType, version);
         } else {
@@ -233,7 +233,7 @@ public class VolumeInfoHandler {
 
         getMsoLogger ().debug ("getRequest: " + requestId);
 
-        String responseString = null;
+        String responseString;
 
         InfraActiveRequests activeReq = (RequestsDatabase.getInstance()).getRequestFromInfraActive (requestId,
                                                                                     "VOLUME");
@@ -257,7 +257,7 @@ public class VolumeInfoHandler {
                                                                                                    queryValue,
                                                                                                    "VOLUME");
   
-        List <VolumeRequest> queryResponseList = new LinkedList <VolumeRequest> ();
+        List <VolumeRequest> queryResponseList = new LinkedList <> ();
 
         if (activeReqList != null) {
             // build response for active
@@ -302,7 +302,7 @@ public class VolumeInfoHandler {
     }
 
     private List <VolumeRequest> infraRequestsResponses (List <? extends InfraRequests> arList, String version) {
-        List <VolumeRequest> queryResponseList = new LinkedList <VolumeRequest> ();
+        List <VolumeRequest> queryResponseList = new LinkedList <> ();
 
         for (InfraRequests ar : arList) {
             VolumeRequest qr = fillGeneric (ar);

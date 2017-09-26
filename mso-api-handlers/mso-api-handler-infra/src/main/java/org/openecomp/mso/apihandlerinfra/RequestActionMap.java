@@ -30,7 +30,7 @@ public class RequestActionMap {
     private static final Map<String, String> actionMap;
 
     static {
-        actionMap = new HashMap<String, String>();
+        actionMap = new HashMap<>();
         actionMap.put("CREATE_VF_MODULE", "createInstance");
         actionMap.put("DELETE_VF_MODULE", "deleteInstance");
         actionMap.put("UPDATE_VF_MODULE", "updateInstance");
