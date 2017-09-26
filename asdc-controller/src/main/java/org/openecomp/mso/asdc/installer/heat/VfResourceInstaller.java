@@ -220,7 +220,7 @@ public class VfResourceInstaller implements IVfResourceInstaller {
 			String resourceType = vfResourceStructure.getResourceInstance().getResourceType();
 			String resourceCategory = vfResourceStructure.getResourceInstance().getCategory();
 
-			if(resourceType.equals("VF")){
+			if("VF".equals(resourceType)){
 
 				if(resourceCategory.equalsIgnoreCase("Allotted Resource")){
 					VfResourceInstaller.createAllottedResourceCustomization(vfResourceStructure);
@@ -231,7 +231,7 @@ public class VfResourceInstaller implements IVfResourceInstaller {
 				}
 			}
 
-			if(resourceType.equals("VL")){
+			if("VL".equals(resourceType)){
 				VfResourceInstaller.createNetworkResourceCustomization(vfResourceStructure);
 				catalogDB.saveNetworkResourceCustomization(vfResourceStructure.getCatalogNetworkResourceCustomization());
 			}
@@ -243,12 +243,12 @@ public class VfResourceInstaller implements IVfResourceInstaller {
 			catalogDB.saveService(vfResourceStructure.getCatalogService());
 
 			// Now that the service has been added we can populate the Service_to_AllottedResources table
-			if(resourceType.equals("VF") && resourceCategory.equalsIgnoreCase("Allotted Resource")){
+			if("VF".equals(resourceType) && "Allotted Resource".equalsIgnoreCase(resourceCategory)){
 				catalogDB.saveServiceToAllottedResources(vfResourceStructure.getCatalogServiceToAllottedResources());
 			}
 
 			// Now that the service has been added we can populate the Service_to_Network table
-			if(resourceType.equals("VL")){
+			if("VL".equals(resourceType)){
 				catalogDB.saveServiceToNetworks(vfResourceStructure.getCatalogServiceToNetworks());
 			}
 
@@ -667,7 +667,7 @@ public class VfResourceInstaller implements IVfResourceInstaller {
 //		heatTemplate.setAsdcResourceName(vfResourceStructure.getResourceInstance().getResourceName());
 		heatTemplate.setAsdcUuid(vfModuleArtifact.getArtifactInfo().getArtifactUUID());
 
-		List<String> typeList = new ArrayList<String>();
+		List<String> typeList = new ArrayList<>();
 		typeList.add(ASDCConfiguration.HEAT_NESTED);
 		typeList.add(ASDCConfiguration.HEAT_ARTIFACT);
 
@@ -707,7 +707,7 @@ public class VfResourceInstaller implements IVfResourceInstaller {
 		// TODO Set the label
 //		heatEnvironment.setAsdcLabel("Label");
 
-		List<String> typeList = new ArrayList<String>();
+		List<String> typeList = new ArrayList<>();
 		typeList.add(ASDCConfiguration.HEAT);
 		typeList.add(ASDCConfiguration.HEAT_VOL);
 
