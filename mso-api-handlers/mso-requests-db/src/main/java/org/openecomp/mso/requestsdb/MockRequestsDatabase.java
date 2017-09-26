@@ -60,10 +60,10 @@ public class MockRequestsDatabase {
 		InfraActiveRequests returnRecord = null;
 		if (record != null) {
 			String requestAction = record.getRequestAction();
-			if (requestAction == null || !requestAction.equals("GetLayer3ServiceDetailsRequest")) {
+			if (!"GetLayer3ServiceDetailsRequest".equals(requestAction)) {
 				String status = record.getRequestStatus();
-				if (status != null && status.equals("COMPLETED")) {
-					return returnRecord = record;
+				if ("COMPLETED".equals(status)) {
+					returnRecord = record;
 				}
 			}
 		}
