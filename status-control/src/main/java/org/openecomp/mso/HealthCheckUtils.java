@@ -25,17 +25,12 @@ import org.openecomp.mso.db.catalog.CatalogDatabase;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.properties.MsoJavaProperties;
-import org.openecomp.mso.properties.MsoJsonProperties;
 import org.openecomp.mso.properties.MsoPropertiesFactory;
 import org.openecomp.mso.requestsdb.RequestsDatabase;
-import org.openecomp.mso.utils.UUIDChecker;
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 
@@ -288,7 +283,7 @@ public class HealthCheckUtils {
                 ip = ip.substring (0, length - 1);
             }
             return ip + url;
-        } else if (null != sslEnabled && "true".equals (sslEnabled.toLowerCase ())) {
+        } else if ("true".equalsIgnoreCase(sslEnabled)) {
             return "https://" + ip + ":" + port + url;
         } else {
             return "http://" + ip + ":" + port + url;
