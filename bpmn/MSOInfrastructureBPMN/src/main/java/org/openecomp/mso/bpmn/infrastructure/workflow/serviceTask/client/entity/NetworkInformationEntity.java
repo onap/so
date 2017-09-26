@@ -12,8 +12,8 @@ public class NetworkInformationEntity {
     @JsonProperty("network-type")
     private String networkType;
 
-    @JsonProperty("ecomp-model-information")
-    private EcompModelInformationEntity ecompModelInformation;
+    @JsonProperty("onap-model-information")
+    private OnapModelInformationEntity onapModelInformation;
 
     public String getNetworkId() {
         return networkId;
@@ -31,11 +31,11 @@ public class NetworkInformationEntity {
         this.networkType = networkType;
     }
 
-    public EcompModelInformationEntity getEcompModelInformation() {
-        return ecompModelInformation;
+    public OnapModelInformationEntity getOnapModelInformation() {
+        return onapModelInformation;
     }
 
-    public void setEcompModelInformation(EcompModelInformationEntity ecompModelInformation) {
-        this.ecompModelInformation = ecompModelInformation;
+    public void setOnapModelInformation(OnapModelInformationEntity onapModelInformation) {
+        this.onapModelInformation = onapModelInformation;
     }
 }

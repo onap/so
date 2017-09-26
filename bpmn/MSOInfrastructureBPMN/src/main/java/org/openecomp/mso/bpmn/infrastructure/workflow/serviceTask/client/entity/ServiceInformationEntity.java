@@ -12,8 +12,8 @@ public class ServiceInformationEntity {
     @JsonProperty("subscription-service-type")
     private String subscriptionServiceType;
 
-    @JsonProperty("ecomp-model-information")
-    private EcompModelInformationEntity ecompModelInformation;
+    @JsonProperty("onap-model-information")
+    private OnapModelInformationEntity onapModelInformation;
 
     @JsonProperty("service-instance-id")
     private String serviceInstanceId;
@@ -40,12 +40,12 @@ public class ServiceInformationEntity {
         this.subscriptionServiceType = subscriptionServiceType;
     }
 
-    public EcompModelInformationEntity getEcompModelInformation() {
-        return ecompModelInformation;
+    public OnapModelInformationEntity getOnapModelInformation() {
+        return onapModelInformation;
     }
 
-    public void setEcompModelInformation(EcompModelInformationEntity ecompModelInformation) {
-        this.ecompModelInformation = ecompModelInformation;
+    public void setOnapModelInformation(OnapModelInformationEntity onapModelInformation) {
+        this.onapModelInformation = onapModelInformation;
     }
 
     public String getServiceInstanceId() {

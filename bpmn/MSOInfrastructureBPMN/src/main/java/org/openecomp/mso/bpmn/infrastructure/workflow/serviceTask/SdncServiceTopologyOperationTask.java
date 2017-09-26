@@ -1,33 +1,32 @@
 package org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask;
 
+
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.openecomp.mso.bpmn.core.WorkflowException;
 import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.GenericResourceApi;
-import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.builder.NetworkRpcInputEntityBuilder;
-import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.entity.NetworkRpcInputEntity;
-import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.entity.NetworkRpcOutputEntity;
+import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.builder.ServiceRpcInputEntityBuilder;
+import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.entity.RpcServiceTopologyOperationInputEntity;
+import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.entity.RpcServiceTopologyOperationOutputEntity;
+import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.entity.ServiceTopologyOperationOutputEntity;
 import org.openecomp.mso.requestsdb.RequestsDbConstant;
 
 import java.util.Map;
 
 /**
- * Created by 10112215 on 2017/9/20.
+ * Created by 10112215 on 2017/9/26.
  */
-public class SdncVlOperationTaskEntityImpl extends AbstractSdncVlOperationTask {
+public class SdncServiceTopologyOperationTask extends AbstractSdncOperationTask {
     @Override
     public void sendRestrequestAndHandleResponse(DelegateExecution execution,
                                                  Map<String, String> inputs,
                                                  GenericResourceApi genericResourceApiClient) throws Exception {
-        updateProgress(execution, null, null, "40", "sendRestrequestAndHandleResponse begin!");
-        NetworkRpcInputEntityBuilder builder = new NetworkRpcInputEntityBuilder();
-        NetworkRpcInputEntity body = builder.build(inputs);
-        updateProgress(execution, null, null, "50", "RequestBody build finished!");
-        NetworkRpcOutputEntity networkRpcOutputEntiy = genericResourceApiClient.postNetworkTopologyPeration(body).execute().body();
-        updateProgress(execution, null, null, "90", "sendRestrequestAndHandleResponse finished!");
-        saveOutput(execution, networkRpcOutputEntiy);
+        ServiceRpcInputEntityBuilder builder = new ServiceRpcInputEntityBuilder();
+        RpcServiceTopologyOperationInputEntity inputEntity = builder.build(execution, inputs);
+        RpcServiceTopologyOperationOutputEntity outputEntity = genericResourceApiClient.postServiceTopologyOperation(inputEntity).execute().body();
+        saveOutput(execution, outputEntity);
     }
 
-    private void saveOutput(DelegateExecution execution, NetworkRpcOutputEntity output) throws Exception {
+    private void saveOutput(DelegateExecution execution, RpcServiceTopologyOperationOutputEntity output) throws Exception {
         String responseCode = output.getOutput().getResponseCode();
         if (!responseCode.equals("200")) {
             String processKey = getProcessKey(execution);
@@ -39,5 +38,4 @@ public class SdncVlOperationTaskEntityImpl extends AbstractSdncVlOperationTask {
             throw new Exception("");
         }
     }
-
 }
