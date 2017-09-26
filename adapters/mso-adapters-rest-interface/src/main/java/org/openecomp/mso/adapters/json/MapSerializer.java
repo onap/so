@@ -53,8 +53,9 @@ public class MapSerializer extends JsonSerializer<Map<String, String>> {
 		jsonGenerator.writeStartObject();
 		jsonGenerator.writeArrayFieldStart("entry");
 
-		for (String key : map.keySet()) {
-			String value = map.get(key);
+		for (Map.Entry<String,String> entry : map.entrySet()) {
+			String key = entry.getKey();
+			String value = entry.getValue();
 			jsonGenerator.writeStartObject();
 			jsonGenerator.writeStringField("key", key);
 			jsonGenerator.writeStringField("value", value);

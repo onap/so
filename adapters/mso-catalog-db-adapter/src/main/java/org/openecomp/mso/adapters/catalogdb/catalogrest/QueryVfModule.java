@@ -50,10 +50,10 @@ public class QueryVfModule extends CatalogQuery {
 		"\t}";
 //		"\t}}";
 
-	public QueryVfModule() { super(); vfModules = new ArrayList<VfModuleCustomization>(); }
+	public QueryVfModule() { super(); vfModules = new ArrayList<>(); }
 	public QueryVfModule(List<VfModuleCustomization> vlist) { 
 		LOGGER.debug ("QueryVfModule:");
-		vfModules = new ArrayList<VfModuleCustomization>();
+		vfModules = new ArrayList<>();
 		if (vlist != null) {
 			for (VfModuleCustomization o : vlist) {
 			LOGGER.debug ("-- o is a  vfModules ----");
@@ -69,7 +69,7 @@ public class QueryVfModule extends CatalogQuery {
 
 	@Override
 	public String toString () {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 
 		boolean first = true;
 		int i = 1;
@@ -83,9 +83,9 @@ public class QueryVfModule extends CatalogQuery {
 
 	@Override
 	public String JSON2(boolean isArray, boolean x) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		if (isArray) buf.append("\"vfModules\": [");
-		Map<String, String> valueMap = new HashMap<String, String>();
+		Map<String, String> valueMap = new HashMap<>();
 		String sep = "";
 		boolean first = true;
 
@@ -95,7 +95,7 @@ public class QueryVfModule extends CatalogQuery {
 			boolean vfNull = o.getVfModule() == null ? true : false;
 			boolean hasVolumeGroup = false;
 			String envt = o.getHeatEnvironmentArtifactUuid();
-			if (envt != null && !envt.equals("")) {
+			if (envt != null && !"".equals(envt)) {
 				hasVolumeGroup = true;
 			}
 
