@@ -444,7 +444,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                     throw new NetworkException (me);
                 }
 
-                if (heatStack != null && !(heatStack.getStatus () == HeatStatus.NOTFOUND)) {
+                if (heatStack != null && (heatStack.getStatus () != HeatStatus.NOTFOUND)) {
                     // Stack exists. Return success or error depending on input directive
                     if (failIfExists != null && failIfExists) {
                         String error = "CreateNetwork: Stack " + networkName
