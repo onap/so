@@ -784,7 +784,7 @@ public class ToscaResourceInstaller {// implements IVfResourceInstaller {
 		
 		String providerNetwork = toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(networkNodeTemplate, SdcPropertyNames.PROPERTY_NAME_PROVIDERNETWORK_ISPROVIDERNETWORK);
 		
-		if(providerNetwork != null && providerNetwork.equalsIgnoreCase("true")){
+		if("true".equalsIgnoreCase(providerNetwork)){
 			networkResource.setNeutronNetworkType("PROVIDER");
 		} else {
 			networkResource.setNeutronNetworkType("BASIC");
