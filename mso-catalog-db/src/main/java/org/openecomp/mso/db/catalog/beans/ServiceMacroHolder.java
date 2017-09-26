@@ -44,9 +44,9 @@ public class ServiceMacroHolder implements Serializable {
 		super();
 		this.service = null;
 		this.vnfResources = new ArrayList<VnfResource>();
-		this.networkResourceCustomizations = new ArrayList<NetworkResourceCustomization>();
-		this.allottedResourceCustomizations = new ArrayList<AllottedResourceCustomization>();
-		this.vnfResourceCustomizations = new ArrayList<VnfResourceCustomization>();
+		this.networkResourceCustomizations = new ArrayList<>();
+		this.allottedResourceCustomizations = new ArrayList<>();
+		this.vnfResourceCustomizations = new ArrayList<>();
 	}
 	public ServiceMacroHolder(Service service) {
 		this();
@@ -71,7 +71,7 @@ public class ServiceMacroHolder implements Serializable {
 			if (this.vnfResources != null) {
 				this.vnfResources.add(vr);
 			} else {
-				this.vnfResources = new ArrayList<VnfResource>();
+				this.vnfResources = new ArrayList<>();
 				this.vnfResources.add(vr);
 			}
 		}
@@ -88,7 +88,7 @@ public class ServiceMacroHolder implements Serializable {
 			if (this.vnfResourceCustomizations != null) {
 				this.vnfResourceCustomizations.add(vrc);
 			} else {
-				this.vnfResourceCustomizations = new ArrayList<VnfResourceCustomization>();
+				this.vnfResourceCustomizations = new ArrayList<>();
 				this.vnfResourceCustomizations.add(vrc);
 			}
 		}
@@ -104,7 +104,7 @@ public class ServiceMacroHolder implements Serializable {
 		if (this.networkResourceCustomizations != null) {
 			this.networkResourceCustomizations.add(nrc);
 		} else {
-			this.networkResourceCustomizations = new ArrayList<NetworkResourceCustomization>();
+			this.networkResourceCustomizations = new ArrayList<>();
 			this.networkResourceCustomizations.add(nrc);
 		}
 	}
@@ -119,11 +119,12 @@ public class ServiceMacroHolder implements Serializable {
 		if (this.allottedResourceCustomizations != null) {
 			this.allottedResourceCustomizations.add(arc);
 		} else {
-			this.allottedResourceCustomizations = new ArrayList<AllottedResourceCustomization>();
+			this.allottedResourceCustomizations = new ArrayList<>();
 			this.allottedResourceCustomizations.add(arc);
 		}
 	}
 
+    @Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("ServicePlus: ");
