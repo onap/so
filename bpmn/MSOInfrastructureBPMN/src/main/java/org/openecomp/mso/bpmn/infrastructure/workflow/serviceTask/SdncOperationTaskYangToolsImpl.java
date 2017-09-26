@@ -4,7 +4,6 @@ import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.opendaylight.yang.gen.v1.org.onap.sdnc.northbound.generic.resource.rev170824.NetworkTopologyOperationOutput;
-import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.openecomp.mso.bpmn.core.WorkflowException;
 import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.GenericResourceApi;
 import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.builder.NetworkTopologyRequestBodyBuilder;
@@ -17,16 +16,16 @@ import java.util.Map;
 /**
  * Created by 10112215 on 2017/9/20.
  */
-public class SdncVlOperationTaskYangToolsImpl extends AbstractSdncVlOperationTask {
+public class SdncOperationTaskYangToolsImpl extends AbstractSdncOperationTask {
 
     public void sendRestrequestAndHandleResponse(DelegateExecution execution,
                                                  Map<String, String> inputs,
                                                  GenericResourceApi genericResourceApiClient) throws Exception {
         updateProgress(execution, null, null, "40", "sendRestrequestAndHandleResponse begin!");
         NetworkTopologyRequestBodyBuilder builder = new NetworkTopologyRequestBodyBuilder();
-        RequestBody body = builder.build(inputs);
+        RequestBody body = builder.build(execution, inputs);
         updateProgress(execution, null, null, "50", "RequestBody build finished!");
-        ResponseBody responseBody = genericResourceApiClient.postNetworkTopologyPeration(body).execute().body();
+        ResponseBody responseBody = genericResourceApiClient.postNetworkTopologyOperation(body).execute().body();
         updateProgress(execution, null, null, "90", "sendRestrequestAndHandleResponse finished!");
         saveResponse(execution, responseBody);
     }
