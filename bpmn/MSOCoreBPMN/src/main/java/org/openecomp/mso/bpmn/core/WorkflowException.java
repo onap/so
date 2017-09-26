@@ -69,6 +69,7 @@ public class WorkflowException implements Serializable {
 	/**
 	 * Returns a string representation of this object.
 	 */
+    @Override
 	public String toString() {
 		StringBuilder out = new StringBuilder();
 		out.append(getClass().getSimpleName());
