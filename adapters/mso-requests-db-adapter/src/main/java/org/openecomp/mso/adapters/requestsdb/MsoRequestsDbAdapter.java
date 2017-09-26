@@ -27,7 +27,6 @@ import javax.xml.bind.annotation.XmlElement;
 
 import org.openecomp.mso.adapters.requestsdb.exceptions.MsoRequestsDbException;
 import org.openecomp.mso.requestsdb.InfraActiveRequests;
-import org.openecomp.mso.requestsdb.SiteStatus;
 
 /**
  * MSO Request DB Adapter Web Service
