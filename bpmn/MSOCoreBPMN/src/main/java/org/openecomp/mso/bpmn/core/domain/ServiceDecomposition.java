@@ -215,7 +215,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 			Resource resource = iter.next();
 			//resource.getModelInfo().getModelInvariantId();
 
-			if (resourceObjectId.equals("extracted information")){
+			if ("extracted information".equals(resourceObjectId)){
 				return resource.toJsonString();
 			}
 		}
