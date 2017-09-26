@@ -248,19 +248,11 @@ public class PropertyConfiguration {
 		Map<String, String> properties = new HashMap<>();
 		Properties newProperties = new Properties();
 
-		FileReader reader = null;
-		try {
-			reader = new FileReader(file);
+		try (FileReader reader = new FileReader(file)) {
 			newProperties.load(reader);
-		} finally {
-			if (reader != null) {
-				try {
-					reader.close();
-					LOGGER.debug("Closed " + fileName);
-				} catch (Exception e) {
-					LOGGER.debug("Exception :",e);
-				}
-			}
+		}
+		catch (Exception e) {
+			LOGGER.debug("Exception :",e);
 		}
 
 		for (Entry<Object, Object> entry : newProperties.entrySet()) {
@@ -291,6 +283,7 @@ public class PropertyConfiguration {
 			interrupt();
 		}
 
+		@Override
 		public void run() {
 			LOGGER.info(MessageEnum.BPMN_GENERAL_INFO, "BPMN",
 				"FileWatcherThread started");
