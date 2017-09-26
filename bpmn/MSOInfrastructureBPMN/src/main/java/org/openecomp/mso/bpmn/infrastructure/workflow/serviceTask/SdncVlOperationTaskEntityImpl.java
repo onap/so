@@ -29,7 +29,7 @@ public class SdncVlOperationTaskEntityImpl extends AbstractSdncVlOperationTask {
 
     private void saveOutput(DelegateExecution execution, NetworkRpcOutputEntity output) throws Exception {
         String responseCode = output.getOutput().getResponseCode();
-        if (!responseCode.equals("200")) {
+        if (!"200".equals(responseCode)) {
             String processKey = getProcessKey(execution);
             int errorCode = Integer.valueOf(responseCode);
             String errorMessage = output.getOutput().getResponseMessage();
