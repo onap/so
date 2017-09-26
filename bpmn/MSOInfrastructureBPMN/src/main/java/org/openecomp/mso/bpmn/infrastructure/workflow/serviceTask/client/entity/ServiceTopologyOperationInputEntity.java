@@ -3,9 +3,9 @@ package org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.entity
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Created by 10112215 on 2017/9/20.
+ * Created by 10112215 on 2017/9/26.
  */
-public class InputEntity {
+public class ServiceTopologyOperationInputEntity {
     @JsonProperty("sdnc-request-header")
     private SdncRequestHeaderEntity sdncRequestHeader;
 
@@ -15,11 +15,8 @@ public class InputEntity {
     @JsonProperty("service-information")
     private ServiceInformationEntity serviceInformation;
 
-    @JsonProperty("network-information")
-    private NetworkInformationEntity networkInformation;
-
-    @JsonProperty("network-request-input")
-    private NetworkRequestInputEntity networkRequestInput;
+    @JsonProperty("service-request-input")
+    private ServiceRequestInputEntity serviceRequestInput;
 
     public SdncRequestHeaderEntity getSdncRequestHeader() {
         return sdncRequestHeader;
@@ -45,19 +42,11 @@ public class InputEntity {
         this.serviceInformation = serviceInformation;
     }
 
-    public NetworkInformationEntity getNetworkInformation() {
-        return networkInformation;
+    public ServiceRequestInputEntity getServiceRequestInput() {
+        return serviceRequestInput;
     }
 
-    public void setNetworkInformation(NetworkInformationEntity networkInformation) {
-        this.networkInformation = networkInformation;
-    }
-
-    public NetworkRequestInputEntity getNetworkRequestInput() {
-        return networkRequestInput;
-    }
-
-    public void setNetworkRequestInput(NetworkRequestInputEntity networkRequestInput) {
-        this.networkRequestInput = networkRequestInput;
+    public void setServiceRequestInput(ServiceRequestInputEntity serviceRequestInput) {
+        this.serviceRequestInput = serviceRequestInput;
     }
 }
