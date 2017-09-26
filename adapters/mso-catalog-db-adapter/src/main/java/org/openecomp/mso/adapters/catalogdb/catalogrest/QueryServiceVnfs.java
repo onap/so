@@ -55,10 +55,10 @@ public class QueryServiceVnfs extends CatalogQuery {
 			"\t}";
 //			"\t}}";
 
-	public QueryServiceVnfs() { super(); serviceVnfs = new ArrayList<VnfResourceCustomization>(); }
+	public QueryServiceVnfs() { super(); serviceVnfs = new ArrayList<>(); }
 	public QueryServiceVnfs(List<VnfResourceCustomization> vlist) { 
 		LOGGER.debug ("QueryServiceVnfs:");
-		serviceVnfs = new ArrayList<VnfResourceCustomization>();
+		serviceVnfs = new ArrayList<>();
 		for (VnfResourceCustomization o : vlist) {
 			LOGGER.debug ("-- o is a  serviceVnfs ----");
 			LOGGER.debug (o.toString());
@@ -72,7 +72,7 @@ public class QueryServiceVnfs extends CatalogQuery {
 
 	@Override
 	public String toString () {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 
 		boolean first = true;
 		int i = 1;
@@ -86,10 +86,10 @@ public class QueryServiceVnfs extends CatalogQuery {
 
 	@Override
 	public String JSON2(boolean isArray, boolean isEmbed) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		if (!isEmbed && isArray) buf.append("{ ");
 		if (isArray) buf.append("\"serviceVnfs\": [");
-		Map<String, String> valueMap = new HashMap<String, String>();
+		Map<String, String> valueMap = new HashMap<>();
 		String sep = "";
 		boolean first = true;
 

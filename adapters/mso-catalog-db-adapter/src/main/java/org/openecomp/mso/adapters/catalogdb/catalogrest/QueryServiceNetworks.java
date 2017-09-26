@@ -51,10 +51,10 @@ public class QueryServiceNetworks extends CatalogQuery {
 		"\t}";
 //		"\t}}";
 
-	public QueryServiceNetworks() { super(); serviceNetworks = new ArrayList<NetworkResourceCustomization>(); }
+	public QueryServiceNetworks() { super(); serviceNetworks = new ArrayList<>(); }
 	public QueryServiceNetworks(List<NetworkResourceCustomization> vlist) {
 		LOGGER.debug ("QueryServiceNetworks:");
-		serviceNetworks = new ArrayList<NetworkResourceCustomization>();
+		serviceNetworks = new ArrayList<>();
 		for (NetworkResourceCustomization o : vlist) {
 			LOGGER.debug (o.toString());
 			serviceNetworks.add(o);
@@ -67,7 +67,7 @@ public class QueryServiceNetworks extends CatalogQuery {
 
 	@Override
 	public String toString () {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 
 		boolean first = true;
 		int i = 1;
@@ -81,11 +81,11 @@ public class QueryServiceNetworks extends CatalogQuery {
 
 	@Override
 	public String JSON2(boolean isArray, boolean isEmbed) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		if (!isEmbed && isArray) buf.append("{ ");
 		if (isArray) buf.append("\"serviceNetworks\": [");
 		//if (isArray) buf.append("[");
-		Map<String, String> valueMap = new HashMap<String, String>();
+		Map<String, String> valueMap = new HashMap<>();
 		String sep = "";
 		boolean first = true;
 
