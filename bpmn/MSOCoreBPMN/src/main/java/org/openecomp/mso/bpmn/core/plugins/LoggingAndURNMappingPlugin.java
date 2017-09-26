@@ -61,7 +61,7 @@ public class LoggingAndURNMappingPlugin extends AbstractProcessEnginePlugin {
 		List<BpmnParseListener> preParseListeners = processEngineConfiguration
 				.getCustomPreBPMNParseListeners();
 		if (preParseListeners == null) {
-			preParseListeners = new ArrayList<BpmnParseListener>();
+			preParseListeners = new ArrayList<>();
 			processEngineConfiguration.setCustomPreBPMNParseListeners(preParseListeners);
 		}
 		preParseListeners.add(new LoggingParseListener());
@@ -85,9 +85,11 @@ public class LoggingAndURNMappingPlugin extends AbstractProcessEnginePlugin {
 					new LoggingExecutionListener("TAKE"));
 		}
 
+        @Override
 		public void parseProcess(Element processElement, ProcessDefinitionEntity processDefinition) {
 		}
 
+        @Override
 		public void parseStartEvent(Element startEventElement, ScopeImpl scope, ActivityImpl startEventActivity) {
 			// Inject these listeners only on the main start event for the flow, not on any embedded subflow start events
 			if (scope instanceof ProcessDefinitionEntity) {
@@ -98,126 +100,157 @@ public class LoggingAndURNMappingPlugin extends AbstractProcessEnginePlugin {
 			injectLogExecutionListener(startEventActivity);
 		}
 
+		@Override
 		public void parseServiceTask(Element serviceTaskElement, ScopeImpl scope, ActivityImpl activity) {
 			injectLogExecutionListener(activity);
 		}
 
+        @Override
 		public void parseExclusiveGateway(Element exclusiveGwElement, ScopeImpl scope, ActivityImpl activity) {
 			injectLogExecutionListener(activity);
 		}
 
+        @Override
 		public void parseInclusiveGateway(Element inclusiveGwElement, ScopeImpl scope, ActivityImpl activity) {
 			injectLogExecutionListener(activity);
 		}
 
+        @Override
 		public void parseParallelGateway(Element parallelGwElement, ScopeImpl scope, ActivityImpl activity) {
 			injectLogExecutionListener(activity);
 		}
 
+        @Override
 		public void parseScriptTask(Element scriptTaskElement, ScopeImpl scope, ActivityImpl activity) {
 			injectLogExecutionListener(activity);
 		}
 
+        @Override
 		public void parseBusinessRuleTask(Element businessRuleTaskElement, ScopeImpl scope, ActivityImpl activity) {
 			injectLogExecutionListener(activity);
 		}
 
+        @Override
 		public void parseTask(Element taskElement, ScopeImpl scope, ActivityImpl activity) {
 			injectLogExecutionListener(activity);
 		}
 
+        @Override
 		public void parseManualTask(Element manualTaskElement, ScopeImpl scope, ActivityImpl activity) {
 			injectLogExecutionListener(activity);
 		}
 
+        @Override
 		public void parseUserTask(Element userTaskElement, ScopeImpl scope, ActivityImpl activity) {
 			injectLogExecutionListener(activity);
 		}
 
+        @Override
 		public void parseEndEvent(Element endEventElement, ScopeImpl scope, ActivityImpl activity) {
 			injectLogExecutionListener(activity);
 		}
 
+        @Override
 		public void parseBoundaryTimerEventDefinition(Element timerEventDefinition, boolean interrupting, ActivityImpl timerActivity) {
 			injectLogExecutionListener(timerActivity);
 		}
 
+        @Override
 		public void parseBoundaryErrorEventDefinition(Element errorEventDefinition, boolean interrupting, ActivityImpl activity, ActivityImpl nestedErrorEventActivity) {
 			injectLogExecutionListener(activity);
 		}
 
+        @Override
 		public void parseSubProcess(Element subProcessElement, ScopeImpl scope, ActivityImpl activity) {
 			injectLogExecutionListener(activity);
 		}
 
+        @Override
 		public void parseCallActivity(Element callActivityElement, ScopeImpl scope, ActivityImpl activity) {
 			injectLogExecutionListener(activity);
 		}
 
+        @Override
 		public void parseProperty(Element propertyElement, VariableDeclaration variableDeclaration, ActivityImpl activity) {
 			injectLogExecutionListener(activity);
 		}
 
+        @Override
 		public void parseSequenceFlow(Element sequenceFlowElement, ScopeImpl scopeElement, TransitionImpl transition) {
 			//injectLogExecutionListener(activity);
 		}
 
+        @Override
 		public void parseSendTask(Element sendTaskElement, ScopeImpl scope, ActivityImpl activity) {
 			injectLogExecutionListener(activity);
 		}
 
+        @Override
 		public void parseMultiInstanceLoopCharacteristics(Element activityElement, Element multiInstanceLoopCharacteristicsElement, ActivityImpl activity) {
 			injectLogExecutionListener(activity);
 		}
 
+        @Override
 		public void parseIntermediateTimerEventDefinition(Element timerEventDefinition, ActivityImpl timerActivity) {
 			injectLogExecutionListener(timerActivity);
 		}
 
+        @Override
 		public void parseRootElement(Element rootElement, List<ProcessDefinitionEntity> processDefinitions) {
 			//injectLogExecutionListener(activity);
 		}
 
+        @Override
 		public void parseReceiveTask(Element receiveTaskElement, ScopeImpl scope, ActivityImpl activity) {
 			injectLogExecutionListener(activity);
 		}
 
+        @Override
 		public void parseIntermediateSignalCatchEventDefinition(Element signalEventDefinition, ActivityImpl signalActivity) {
 			injectLogExecutionListener(signalActivity);
 		}
 
+        @Override
 		public void parseBoundarySignalEventDefinition(Element signalEventDefinition, boolean interrupting, ActivityImpl signalActivity) {
 			injectLogExecutionListener(signalActivity);
 		}
 
+        @Override
 		public void parseEventBasedGateway(Element eventBasedGwElement, ScopeImpl scope, ActivityImpl activity) {
 			injectLogExecutionListener(activity);
 		}
 
+        @Override
 		public void parseTransaction(Element transactionElement, ScopeImpl scope, ActivityImpl activity) {
 			injectLogExecutionListener(activity);
 		}
 
+        @Override
 		public void parseCompensateEventDefinition(Element compensateEventDefinition, ActivityImpl compensationActivity) {
 			injectLogExecutionListener(compensationActivity);
 		}
 
+        @Override
 		public void parseIntermediateThrowEvent(Element intermediateEventElement, ScopeImpl scope, ActivityImpl activity) {
 			injectLogExecutionListener(activity);
 		}
 
+        @Override
 		public void parseIntermediateCatchEvent(Element intermediateEventElement, ScopeImpl scope, ActivityImpl activity) {
 			injectLogExecutionListener(activity);
 		}
 
+        @Override
 		public void parseBoundaryEvent(Element boundaryEventElement, ScopeImpl scopeElement, ActivityImpl nestedActivity) {
 			injectLogExecutionListener(nestedActivity);
 		}
 
+        @Override
 		public void parseIntermediateMessageCatchEventDefinition(Element messageEventDefinition, ActivityImpl nestedActivity) {
 			injectLogExecutionListener(nestedActivity);
 		}
 
+        @Override
 		public void parseBoundaryMessageEventDefinition(Element element, boolean interrupting, ActivityImpl messageActivity) {
 			injectLogExecutionListener(messageActivity);
 		}
@@ -237,6 +270,7 @@ public class LoggingAndURNMappingPlugin extends AbstractProcessEnginePlugin {
 			return event;
 		}
 
+        @Override
 		public void notify(DelegateExecution execution) throws Exception {
 			ProcessEngineConfigurationImpl processEngineConfiguration =
 				Context.getProcessEngineConfiguration();
@@ -301,7 +335,7 @@ public class LoggingAndURNMappingPlugin extends AbstractProcessEnginePlugin {
 
 			List<URNMapping> mappings = sessionFactory.getCommandExecutorTxRequired().execute(command);
 
-			if (mappings != null && mappings.size() > 0) {
+			if (mappings != null && !mappings.isEmpty()) {
 				for (URNMapping mapping : mappings) {
 					String varName = URNMapping.createIdentifierFromURN(mapping.getName());
 					String varValue = mapping.getValue();
@@ -329,6 +363,7 @@ public class LoggingAndURNMappingPlugin extends AbstractProcessEnginePlugin {
 			return event;
 		}
 
+        @Override
 		public void notify(DelegateExecution execution) throws Exception {
 			String processKey = execution.getProcessEngineServices().getRepositoryService()
 				.getProcessDefinition(execution.getProcessDefinitionId()).getKey();
@@ -361,7 +396,7 @@ public class LoggingAndURNMappingPlugin extends AbstractProcessEnginePlugin {
 	 */
 	public static class LoggingExecutionListener implements ExecutionListener {
 		private static MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
-		private static ConcurrentHashMap<String, Long> startTimes = new ConcurrentHashMap<String, Long>();
+		private static ConcurrentHashMap<String, Long> startTimes = new ConcurrentHashMap<>();
 
 		private String event;
 
@@ -418,7 +453,7 @@ public class LoggingAndURNMappingPlugin extends AbstractProcessEnginePlugin {
 		}
 
 		private boolean isBlank(Object object) {
-			return object == null || object.toString().trim().equals("");
+			return object == null || "".equals(object.toString().trim());
 		}
 	}
 }
