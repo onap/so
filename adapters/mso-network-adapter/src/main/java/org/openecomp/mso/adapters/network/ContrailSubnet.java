@@ -34,22 +34,22 @@ import org.openecomp.mso.openstack.beans.Subnet;
 import static org.openecomp.mso.openstack.utils.MsoCommonUtils.isNullOrEmpty;
 
 public class ContrailSubnet {
-	private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
+	private static MsoLogger logger = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
 
 	@JsonProperty("network_ipam_refs_data_ipam_subnets_subnet")
 	private ContrailSubnetIp subnet = new ContrailSubnetIp();
 	
 	@JsonProperty("network_ipam_refs_data_ipam_subnets_default_gateway")
-	private String default_gateway;
+	private String defaultGateway;
 	
 	@JsonProperty("network_ipam_refs_data_ipam_subnets_subnet_name")
-	private String subnet_name;
+	private String subnetName;
 	
 	@JsonProperty("network_ipam_refs_data_ipam_subnets_enable_dhcp")
-	private Boolean enable_dhcp;
+	private Boolean enableDhcp;
 	
 	@JsonProperty("network_ipam_refs_data_ipam_subnets_addr_from_start")
-	private Boolean addr_from_start = true;
+	private Boolean addrFromStart = true;
 	
 	/** future - leave this commented
 	private String subnet_uuid;
@@ -60,18 +60,18 @@ public class ContrailSubnet {
 	**/
 	
 	@JsonProperty("network_ipam_refs_data_ipam_subnets_allocation_pools")
-	private List<ContrailSubnetPool> allocation_pools =  new ArrayList <ContrailSubnetPool> ();
+	private List<ContrailSubnetPool> allocationPools =  new ArrayList <ContrailSubnetPool> ();
 
 	public ContrailSubnet() {
 		super();
 	}
 
-	public String getDefault_gateway() {
-		return default_gateway;
+	public String getDefaultGateway() {
+		return defaultGateway;
 	}
 
-	public void setDefault_gateway(String default_gateway) {
-		this.default_gateway = default_gateway;
+	public void setDefaultGateway(String defaultGateway) {
+		this.defaultGateway = defaultGateway;
 	}
 
 	public ContrailSubnetIp getSubnet() {
@@ -82,36 +82,36 @@ public class ContrailSubnet {
 		this.subnet = subnet;
 	}
 
-	public Boolean isEnable_dhcp() {
-		return enable_dhcp;
+	public Boolean isEnableDhcp() {
+		return enableDhcp;
 	}
 
-	public void setEnable_dhcp(Boolean enable_dhcp) {
-		this.enable_dhcp = enable_dhcp;
+	public void setEnableDhcp(Boolean enableDhcp) {
+		this.enableDhcp = enableDhcp;
 	}
 
-	public String getSubnet_name() {
-		return subnet_name;
+	public String getSubnetName() {
+		return subnetName;
 	}
 
-	public void setSubnet_name(String subnet_name) {
-		this.subnet_name = subnet_name;
+	public void setSubnetName(String subnetName) {
+		this.subnetName = subnetName;
 	}
 
-	public List<ContrailSubnetPool> getAllocation_pools() {
-		return allocation_pools;
+	public List<ContrailSubnetPool> getAllocationPools() {
+		return allocationPools;
 	}
 
-	public void setPools(List<ContrailSubnetPool> allocation_pools) {
-		this.allocation_pools = allocation_pools;
+	public void setPools(List<ContrailSubnetPool> allocationPools) {
+		this.allocationPools = allocationPools;
 	}
 
-	public Boolean isAddr_from_start() {
-		return addr_from_start;
+	public Boolean isAddrFromStart() {
+		return addrFromStart;
 	}
 
-	public void setAddr_from_start(Boolean addr_from_start) {
-		this.addr_from_start = addr_from_start;
+	public void setAddrFromStart(Boolean addrFromStart) {
+		this.addrFromStart = addrFromStart;
 	}
 
 	public JsonNode toJsonNode()
@@ -124,8 +124,8 @@ public class ContrailSubnet {
 		}
 		catch (Exception e)
 		{
-			String error = "Error creating JsonNode for Contrail Subnet:" + subnet_name;
-			LOGGER.error (MessageEnum.RA_MARSHING_ERROR, error, "", "", MsoLogger.ErrorCode.SchemaError, "Exception creating JsonNode for Contrail Subnet", e);
+			String error = "Error creating JsonNode for Contrail Subnet:" + subnetName;
+			logger.error (MessageEnum.RA_MARSHING_ERROR, error, "", "", MsoLogger.ErrorCode.SchemaError, "Exception creating JsonNode for Contrail Subnet", e);
 		}
 		
 		return node;
@@ -141,41 +141,41 @@ public class ContrailSubnet {
 		}
 		catch (Exception e)
 		{
-			String error = "Error creating JsonString for Contrail Subnet:" + subnet_name;
-			LOGGER.error (MessageEnum.RA_MARSHING_ERROR, error, "", "", MsoLogger.ErrorCode.SchemaError, "Exception creating JsonString for Contrail Subnet", e);
+			String error = "Error creating JsonString for Contrail Subnet:" + subnetName;
+			logger.error (MessageEnum.RA_MARSHING_ERROR, error, "", "", MsoLogger.ErrorCode.SchemaError, "Exception creating JsonString for Contrail Subnet", e);
 		}
 		
 		return jsonString;
 	}
 	//poulate contrail subnet with input(from bopel) subnet
-	public void populateWith(Subnet i_subnet)
+	public void populateWith(Subnet inputSubnet)
 	{
-		if (i_subnet != null)
+		if (inputSubnet != null)
 		{
-			if (!isNullOrEmpty(i_subnet.getSubnetName()))
-				subnet_name = i_subnet.getSubnetName();
+			if (!isNullOrEmpty(inputSubnet.getSubnetName()))
+				subnetName = inputSubnet.getSubnetName();
 			else
-				subnet_name = i_subnet.getSubnetId();
-			enable_dhcp = i_subnet.getEnableDHCP();
-			default_gateway = i_subnet.getGatewayIp();
-			if (!isNullOrEmpty(i_subnet.getCidr()) )
+				subnetName = inputSubnet.getSubnetId();
+			enableDhcp = inputSubnet.getEnableDHCP();
+			defaultGateway = inputSubnet.getGatewayIp();
+			if (!isNullOrEmpty(inputSubnet.getCidr()) )
 			{
-				int idx = i_subnet.getCidr().indexOf("/");
+				int idx = inputSubnet.getCidr().indexOf("/");
 				if (idx != -1)
 				{
-					subnet.setIp_prefix(i_subnet.getCidr().substring(0, idx));
-					subnet.setIp_prefix_len(i_subnet.getCidr().substring(idx+1));
+					subnet.setIpPrefix(inputSubnet.getCidr().substring(0, idx));
+					subnet.setIpPrefixLen(inputSubnet.getCidr().substring(idx+1));
 				}
 			}
-			if (i_subnet.getAllocationPools() != null)
+			if (inputSubnet.getAllocationPools() != null)
 			{
-				for (Pool pool : i_subnet.getAllocationPools())
+				for (Pool pool : inputSubnet.getAllocationPools())
 				{
 					if ( !isNullOrEmpty(pool.getStart()) && !isNullOrEmpty(pool.getEnd()) )
 					{		
 						ContrailSubnetPool csp = new ContrailSubnetPool();
 						csp.populateWith(pool);
-						allocation_pools.add (csp);
+						allocationPools.add (csp);
 					}
 				}
 			}
@@ -186,11 +186,11 @@ public class ContrailSubnet {
 	public String toString() {
 		
 		StringBuilder buf = new StringBuilder ();
-		for (ContrailSubnetPool pool : allocation_pools)
+		for (ContrailSubnetPool pool : allocationPools)
 		{
 			 buf.append(pool.toString());
 		}
-		return "ContrailSubnet [subnet=" + subnet.toString() + " default_gateway=" + default_gateway
-				+ " enable_dhcp=" + enable_dhcp +  " addr_from_start=" + addr_from_start + " subnet_name=" + subnet_name + " allocation_pools=" + buf + " ]";
+		return "ContrailSubnet [subnet=" + subnet.toString() + " default_gateway=" + defaultGateway
+				+ " enable_dhcp=" + enableDhcp +  " addr_from_start=" + addrFromStart + " subnet_name=" + subnetName + " allocation_pools=" + buf + " ]";
 	}
 }
