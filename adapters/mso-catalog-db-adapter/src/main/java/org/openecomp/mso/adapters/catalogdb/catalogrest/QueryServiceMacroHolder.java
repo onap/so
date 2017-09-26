@@ -61,7 +61,7 @@ public class QueryServiceMacroHolder extends CatalogQuery {
 		if (service == null) return "\"serviceResources\": null";
 
 		StringBuilder buf = new StringBuilder();
-		Map<String, String> valueMap = new HashMap<String, String>();
+		Map<String, String> valueMap = new HashMap<>();
 
 		put(valueMap, "SERVICE_MODEL_NAME",         service.getModelName()); //getServiceModelName());
 		put(valueMap, "SERVICE_MODEL_UUID",         service.getModelUUID()); //getServiceModelUuid());
