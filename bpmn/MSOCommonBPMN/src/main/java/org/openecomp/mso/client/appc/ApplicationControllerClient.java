@@ -43,15 +43,7 @@ public class ApplicationControllerClient {
 
     private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
     
-	private static final int ACCEPT_SERIES = 100;
-	private static final int ERROR_SERIES = 200;
-	private static final int REJECT_SERIES = 300;
-	private static final int SUCCESS_SERIES = 400;
-	private static final int SUCCESS_STATUS = SUCCESS_SERIES + 0;
 	private static final int PARTIAL_SERIES = 500;
-	private static final int PARTIAL_SUCCESS_STATUS = PARTIAL_SERIES + 0;
-
-	private final boolean useLCMBypass = false;
 
 	private final String apiVer = "2.00";
 	private final String originatorId = "MSO";

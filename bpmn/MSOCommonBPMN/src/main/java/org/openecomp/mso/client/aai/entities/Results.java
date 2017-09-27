@@ -22,7 +22,7 @@ public class Results<T> {
 	
     public List<T> getResult() {
         if (result == null) {
-        	result = new ArrayList<T>();
+        	result = new ArrayList<>();
         }
         return this.result;
     }
