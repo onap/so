@@ -34,7 +34,7 @@ public class NetworkRecipe extends Recipe implements Serializable {
 	}
 	public void setModelName(String modelName) {
 		this.modelName = modelName;
-	}
+	}StringBuilder
 
 	public String getNetworkParamXSD() {
 		return networkParamXSD;
@@ -45,7 +45,7 @@ public class NetworkRecipe extends Recipe implements Serializable {
 	
 	@Override
 	public String toString () {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append(super.toString());
 		sb.append (",modelName=" + modelName);
 		sb.append (",networkParamXSD=" + networkParamXSD);
