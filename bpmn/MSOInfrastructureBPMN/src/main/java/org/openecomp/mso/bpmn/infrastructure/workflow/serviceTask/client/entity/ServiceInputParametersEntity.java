@@ -22,18 +22,20 @@ package org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.entity
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.List;
+
 /**
- * Created by 10112215 on 2017/9/20.
+ * Created by 10112215 on 2017/9/26.
  */
-public class NetworkRpcOutputEntity {
-    public OutputEntity getOutput() {
-        return output;
+public class ServiceInputParametersEntity {
+    public List<ParamEntity> getParamList() {
+        return paramList;
     }
 
-    public void setOutput(OutputEntity output) {
-        this.output = output;
+    public void setParamList(List<ParamEntity> paramList) {
+        this.paramList = paramList;
     }
 
-    @JsonProperty("output")
-    private OutputEntity output;
+    @JsonProperty("param")
+    private List<ParamEntity> paramList;
 }

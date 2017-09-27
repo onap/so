@@ -37,7 +37,7 @@ import java.util.Map;
 /**
  * Created by 10112215 on 2017/9/16.
  */
-public abstract class AbstractSdncVlOperationTask extends BaseTask {
+public abstract class AbstractSdncOperationTask extends BaseTask {
 
     private static final String DEFAULT_MSB_IP = "127.0.0.1";
     private static final int DEFAULT_MSB_Port = 10081;

@@ -38,6 +38,9 @@ public class NetworkRequestInputEntity {
     @JsonProperty("aic-clli")
     private String aicClli;
 
+    @JsonProperty("network-input-parameters")
+    private NetworkInputPaarametersEntity networkInputPaarameters;
+
     public String getNetworkName() {
         return networkName;
     }
@@ -77,7 +80,4 @@ public class NetworkRequestInputEntity {
     public void setNetworkInputPaarameters(NetworkInputPaarametersEntity networkInputPaarameters) {
         this.networkInputPaarameters = networkInputPaarameters;
     }
-
-    @JsonProperty("network-input-parameters")
-    private NetworkInputPaarametersEntity networkInputPaarameters;
 }

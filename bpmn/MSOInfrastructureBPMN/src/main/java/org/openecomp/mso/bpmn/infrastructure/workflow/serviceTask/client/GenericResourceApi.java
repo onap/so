@@ -23,8 +23,7 @@ package org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import org.onap.msb.sdk.httpclient.annotaion.ServiceHttpEndPoint;
-import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.entity.NetworkRpcInputEntity;
-import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.entity.NetworkRpcOutputEntity;
+import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.entity.*;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
@@ -36,10 +35,13 @@ import retrofit2.http.POST;
 public interface GenericResourceApi {
 
     @POST("/restconf/operations/GENERIC-RESOURCE-API:network-topology-operation")
-    Call<ResponseBody> postNetworkTopologyPeration(@Body RequestBody input);
+    Call<ResponseBody> postNetworkTopologyOperation(@Body RequestBody input);
 
     @POST("/restconf/operations/GENERIC-RESOURCE-API:network-topology-operation")
-    Call<NetworkRpcOutputEntity> postNetworkTopologyPeration(@Body NetworkRpcInputEntity input);
+    Call<RpcNetworkTopologyOperationOutputEntity> postNetworkTopologyOperation(@Body RpcNetworkTopologyOperationInputEntity input);
+
+    @POST("/restconf/operations/GENERIC-RESOURCE-API:service-topology-operation")
+    Call<RpcServiceTopologyOperationOutputEntity> postServiceTopologyOperation(@Body RpcServiceTopologyOperationInputEntity input);
 
 }
 
