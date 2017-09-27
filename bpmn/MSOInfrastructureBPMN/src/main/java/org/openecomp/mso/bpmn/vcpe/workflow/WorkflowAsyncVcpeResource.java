@@ -19,7 +19,8 @@ import org.openecomp.mso.bpmn.common.workflow.service.WorkflowAsyncResource;
  */
 @Path("/async")
 public class WorkflowAsyncVcpeResource extends WorkflowAsyncResource {
-	
+
+	@Override	
 	protected ProcessEngineServices getProcessEngineServices() {
 		return pes4junit.orElse(ProcessEngines.getProcessEngine("vcpe"));
 	}
