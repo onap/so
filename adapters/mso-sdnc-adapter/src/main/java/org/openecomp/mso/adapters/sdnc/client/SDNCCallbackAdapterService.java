@@ -45,14 +45,13 @@ public class SDNCCallbackAdapterService extends Service {
 
 	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
 
-    public final static URL WSDL_LOCATION;
-    public final static QName SERVICE = new QName("http://org.openecomp/workflow/sdnc/adapter/callback/wsdl/v1", "SDNCCallbackAdapterService");
-    public final static QName SDNCCallbackAdapterSoapHttpPort = new QName("http://org.openecomp/workflow/sdnc/adapter/callback/wsdl/v1", "SDNCCallbackAdapterSoapHttpPort");
+    public static final URL WSDL_LOCATION;
+    public static final QName SERVICE = new QName("http://org.openecomp/workflow/sdnc/adapter/callback/wsdl/v1", "SDNCCallbackAdapterService");
+    public static final QName SDNCCallbackAdapterSoapHttpPort = new QName("http://org.openecomp/workflow/sdnc/adapter/callback/wsdl/v1", "SDNCCallbackAdapterSoapHttpPort");
     static {
         URL wsdlUrl = null;
         try {
         	wsdlUrl = Thread.currentThread().getContextClassLoader().getResource("main/resources/SDNCCallbackAdapter.wsdl");
-        	//wsdlUrl = SDNCCallbackAdapterService.class.getClassLoader().getResource("SDNCCallbackAdapter.wsdl");
         } catch (Exception e) {
             msoLogger.error(MessageEnum.RA_WSDL_NOT_FOUND, "SDNCCallbackAdapter.wsdl", "SDNC", "", MsoLogger.ErrorCode.DataError, "Exception - WSDL not found", e);
         }
