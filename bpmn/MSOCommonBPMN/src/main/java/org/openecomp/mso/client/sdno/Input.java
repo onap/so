@@ -22,7 +22,7 @@ public class Input implements Serializable
     @JsonProperty("request-healthdiagnostic")
     private RequestHealthDiagnostic RequestHealthDiagnostic;
     @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+    private Map<String, Object> additionalProperties = new HashMap<>();
     private final static long serialVersionUID = 7155546785389227528L;
 
     @JsonProperty("request-healthdiagnostic")

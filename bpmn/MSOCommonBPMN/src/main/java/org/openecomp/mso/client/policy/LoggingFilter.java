@@ -33,19 +33,20 @@ public class LoggingFilter implements ClientRequestFilter, ClientResponseFilter,
 
 	private InputStream logInboundEntity(final StringBuilder b, InputStream stream, final Charset charset)
 			throws IOException {
-		if (!stream.markSupported()) {
-			stream = new BufferedInputStream(stream);
+		InputStream inputStream = stream;
+		if (!inputStream.markSupported()) {
+			inputStream = new BufferedInputStream(inputStream);
 		}
-		stream.mark(maxEntitySize + 1);
+		inputStream.mark(maxEntitySize + 1);
 		final byte[] entity = new byte[maxEntitySize + 1];
-		final int entitySize = stream.read(entity);
+		final int entitySize = inputStream.read(entity);
 		b.append(new String(entity, 0, Math.min(entitySize, maxEntitySize), charset));
 		if (entitySize > maxEntitySize) {
 			b.append("...more...");
 		}
 		b.append('\n');
-		stream.reset();
-		return stream;
+		inputStream.reset();
+		return inputStream;
 	}
 
 	@Override
