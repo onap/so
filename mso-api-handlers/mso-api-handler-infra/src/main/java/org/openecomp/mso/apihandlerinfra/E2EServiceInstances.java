@@ -189,8 +189,10 @@ public class E2EServiceInstances {
 		}
 
 		CatalogDatabase db = null;
+		RecipeLookupResult recipeLookupResult = null;
 		try {
 			db = CatalogDatabase.getInstance();
+			recipeLookupResult = getServiceInstanceOrchestrationURI(db, sir, action);
 		} catch (Exception e) {
 			msoLogger.error (MessageEnum.APIH_DB_ACCESS_EXC, MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.AvailabilityError, "Exception while communciate with Catalog DB", e);
 			msoRequest.setStatus (org.openecomp.mso.apihandlerinfra.vnfbeans.RequestStatusType.FAILED);
@@ -206,36 +208,10 @@ public class E2EServiceInstances {
 			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError, "Exception while communciate with DB");
 			msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
 			return response;
-		}
-
-
-		RecipeLookupResult recipeLookupResult = null;
-
-		try {
-			recipeLookupResult = getServiceInstanceOrchestrationURI(db, sir, action);
-		} catch (Exception e) {
-			msoLogger.error (MessageEnum.APIH_DB_ACCESS_EXC, MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.DataError, "Exception while querying Catalog DB", e);
-			msoRequest.setStatus (org.openecomp.mso.apihandlerinfra.vnfbeans.RequestStatusType.FAILED);
-			Response response = msoRequest.buildServiceErrorResponse (HttpStatus.SC_NOT_FOUND,
-					MsoException.ServiceException,
-					"Recipe could not be retrieved from catalog DB " + e.getMessage (),
-					ErrorNumbers.SVC_GENERAL_SERVICE_ERROR,
-					null);
-			alarmLogger.sendAlarm ("MsoDatabaseAccessError",
-					MsoAlarmLogger.CRITICAL,
-					Messages.errors.get (ErrorNumbers.ERROR_FROM_CATALOG_DB));
-			msoRequest.createRequestRecord (Status.FAILED,action);
-			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError, "Exception while querying Catalog DB");
-			msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
-			db.close();
-			return response;
-		}
-		finally{
-			if(null != db)
-			{
-				db.close();
+		} finally {
+			if(db != null) {
+			    db.close();
 			}
-
 		}
 
 		if (recipeLookupResult == null) {
