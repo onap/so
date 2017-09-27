@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a437d4f_7896cc40",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/cloud/CloudConfig.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2017-09-27T15:27:20Z",
+      "side": 1,
+      "message": "check if default is used anywhere else and make it constant if required",
+      "revId": "7cb31a0da72f61c7599b6086bfae345d9c81008b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
