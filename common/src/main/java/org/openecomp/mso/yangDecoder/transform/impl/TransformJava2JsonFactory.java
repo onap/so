@@ -57,21 +57,28 @@ public class TransformJava2JsonFactory  extends TYangJsonXmlBase {
     @Override
     protected void setupWithDataBroker(final DataBroker dataBroker) {
         // Intentionally left No-op, subclasses may customize it
-        mappingservice = new BindingToNormalizedNodeCodec(GeneratedClassLoadingStrategy.getTCCLClassLoadingStrategy(),
-                new BindingNormalizedNodeCodecRegistry(StreamWriterGenerator.create(JavassistUtils.forClassPool(ClassPool.getDefault()))));
-        moduleInfoBackedContext = ModuleInfoBackedContext.create();
+        
         // moduleInfoBackedContext.registerModuleInfo(BindingReflections.getModuleInfo(SncTunnels.class));
 
         try {
+        	mappingservice = new BindingToNormalizedNodeCodec(GeneratedClassLoadingStrategy.getTCCLClassLoadingStrategy(),
+                    new BindingNormalizedNodeCodecRegistry(StreamWriterGenerator.create(JavassistUtils.forClassPool(ClassPool.getDefault()))));
+            moduleInfoBackedContext = ModuleInfoBackedContext.create();
+            
             for (YangModuleInfo yangModuleInfo : getModuleInfos()) {
                 moduleInfoBackedContext.registerModuleInfo(yangModuleInfo);
             }
+            schemaContext = moduleInfoBackedContext.tryToCreateSchemaContext().get();
+            mappingservice.onGlobalContextUpdated(schemaContext);
+            controllerContext.setSchemas(schemaContext);
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+        	if(null != mappingservice){
+        		mappingservice.close();
+        	}
         }
-        schemaContext = moduleInfoBackedContext.tryToCreateSchemaContext().get();
-        mappingservice.onGlobalContextUpdated(schemaContext);
-        controllerContext.setSchemas(schemaContext);
+        
 
     }
 

@@ -240,9 +240,6 @@ public class BpelRestClient {
 		LOGGER.debug("Sending to BPEL server: "+bpelUrl);
 		LOGGER.debug("Content is: "+toBpelStr);
 
-		//Client 4.3+
-		CloseableHttpClient client = HttpClients.createDefault();
-
 		//POST
 		HttpPost post = new HttpPost(bpelUrl);
 		if (credentials != null && !credentials.isEmpty())
@@ -260,9 +257,13 @@ public class BpelRestClient {
 			.build();
 		post.setConfig(requestConfig);
 
+		//Client 4.3+
+		CloseableHttpClient client = null;
+				
         //Client 4.3+
         //Execute & GetResponse
 		try {
+			client = HttpClients.createDefault();
 			CloseableHttpResponse response = client.execute(post);
 			if (response != null) {
 				lastResponseCode = response.getStatusLine().getStatusCode();
