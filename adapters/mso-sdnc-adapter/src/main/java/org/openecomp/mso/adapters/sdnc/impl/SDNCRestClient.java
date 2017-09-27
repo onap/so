@@ -199,7 +199,7 @@ public class SDNCRestClient implements Runnable {
 			//default
 			sdncResp.setRespCode(HttpURLConnection.HTTP_INTERNAL_ERROR);
 			String respMsg = "Error processing request to SDNC. ";
-			String sdncErrMsg = null;
+			String sdncErrMsg = "";
 
 			if (e instanceof java.net.SocketTimeoutException )
 			{
@@ -264,9 +264,7 @@ public class SDNCRestClient implements Runnable {
 			if (e.getMessage() != null) {
                 respMsg = respMsg + e.getMessage();
             }
-			if (sdncErrMsg != null) {
-                respMsg = respMsg + sdncErrMsg;
-            }
+            respMsg = respMsg + sdncErrMsg;
 
 			sdncResp.setRespMsg(respMsg);
 
