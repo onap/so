@@ -37,7 +37,10 @@ public class QueryVfModules {
 	private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
 	private List<VfModule> vfModules;
 
-	public QueryVfModules() { super(); vfModules = new ArrayList<>(); }
+	public QueryVfModules() {
+		super();
+		vfModules = new ArrayList<>();
+	}
 	public QueryVfModules(List<VfModule> vlist) { 
 		LOGGER.debug ("QueryVfModules:");
 		vfModules = new ArrayList<>();
@@ -61,7 +64,8 @@ public class QueryVfModules {
 		int i = 1;
 		for (VfModule o : vfModules) {
 			buf.append(i+"\t");
-			if (!first) buf.append("\n"); first = false;
+			if (!first) buf.append("\n");
+			first = false;
 			buf.append(o);
 		}
 		return buf.toString();
