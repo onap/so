@@ -53,7 +53,7 @@ import org.openecomp.mso.logger.MessageEnum;
 public class SDNCAdapterRestImpl {
 
 	private MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory();
-	public final static String MSO_PROP_ADAPTER="MSO_PROP_SDNC_ADAPTER";
+	public static final String MSO_PROP_ADAPTER = "MSO_PROP_SDNC_ADAPTER";
 
 	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
 

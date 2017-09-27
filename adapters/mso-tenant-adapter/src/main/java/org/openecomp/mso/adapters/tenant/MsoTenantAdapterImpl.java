@@ -32,7 +32,6 @@ import org.openecomp.mso.properties.MsoPropertiesFactory;
 import org.openecomp.mso.adapters.tenant.exceptions.TenantAlreadyExists;
 import org.openecomp.mso.adapters.tenant.exceptions.TenantException;
 import org.openecomp.mso.adapters.tenantrest.TenantRollback;
-import org.openecomp.mso.cloud.CloudConfigFactory;
 import org.openecomp.mso.entity.MsoRequest;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
@@ -48,17 +47,22 @@ public class MsoTenantAdapterImpl implements MsoTenantAdapter {
 	MsoTenantUtilsFactory tFactory = new MsoTenantUtilsFactory(MSO_PROP_TENANT_ADAPTER);
 	
 	public static final String MSO_PROP_TENANT_ADAPTER="MSO_PROP_TENANT_ADAPTER";
+	public static final String CREATE_TENANT = "CreateTenant";
+    public static final String OPENSTACK = "OpenStack";
+    public static final String QUERY_TENANT = "QueryTenant";
+    public static final String DELETE_TENANT = "DeleteTenant";
+    public static final String ROLLBACK_TENANT = "RollbackTenant";
 	
     @Resource
     WebServiceContext wsContext;
 
-    private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
+    private static MsoLogger logger = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
     /**
      * Health Check web method. Does nothing but return to show the adapter is deployed.
      */
     @Override
     public void healthCheck () {
-        LOGGER.debug ("Health check call in Tenant Adapter");
+        logger.debug ("Health check call in Tenant Adapter");
     }
 
     /**
@@ -82,9 +86,9 @@ public class MsoTenantAdapterImpl implements MsoTenantAdapter {
                               Holder <String> tenantId,
                               Holder <TenantRollback> rollback) throws TenantException, TenantAlreadyExists {
         MsoLogger.setLogContext (msoRequest);
-        MsoLogger.setServiceName ("CreateTenant");
+        MsoLogger.setServiceName (CREATE_TENANT);
 
-        LOGGER.debug ("Call to MSO createTenant adapter. Creating Tenant: " + tenantName
+        logger.debug ("Call to MSO createTenant adapter. Creating Tenant: " + tenantName
                                       + "in "
                                       + cloudSiteId);
 
@@ -103,12 +107,12 @@ public class MsoTenantAdapterImpl implements MsoTenantAdapter {
         long queryTenantStartTime = System.currentTimeMillis ();
         try {
             newTenant = tUtils.queryTenantByName (tenantName, cloudSiteId);
-            LOGGER.recordMetricEvent (queryTenantStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from Open Stack", "OpenStack", "QueryTenant", null);
+            logger.recordMetricEvent (queryTenantStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from Open Stack", OPENSTACK, QUERY_TENANT, null);
         } catch (MsoException me) {
-            LOGGER.recordMetricEvent (queryTenantStartTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, "Exception while communicate with Open Stack", "OpenStack", "QueryTenant", null);
+            logger.recordMetricEvent (queryTenantStartTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, "Exception while communicate with Open Stack", OPENSTACK, QUERY_TENANT, null);
             String error = "Create Tenant " + tenantName + ": " + me;
-            LOGGER.error (MessageEnum.RA_CREATE_TENANT_ERR, me.getMessage(), "OpenStack", "createTenant", MsoLogger.ErrorCode.DataError, "Exception while communicate with Open Stack", me);
-            LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
+            logger.error (MessageEnum.RA_CREATE_TENANT_ERR, me.getMessage(), OPENSTACK, "createTenant", MsoLogger.ErrorCode.DataError, "Exception while communicate with Open Stack", me);
+            logger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
             throw new TenantException (me);
         }
         if (newTenant == null) {
@@ -117,34 +121,34 @@ public class MsoTenantAdapterImpl implements MsoTenantAdapter {
             long createTenantStartTime = System.currentTimeMillis ();
             try {
                 newTenantId = tUtils.createTenant (tenantName, cloudSiteId, metadata, backout.booleanValue ());
-                LOGGER.recordMetricEvent (createTenantStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from Open Stack", "OpenStack", "CreateTenant", null);
+                logger.recordMetricEvent (createTenantStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from Open Stack", OPENSTACK, CREATE_TENANT, null);
             } catch (MsoException me) {
-                LOGGER.recordMetricEvent (createTenantStartTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, "Exception while communicate with Open Stack", "OpenStack", "CreateTenant", null);
+                logger.recordMetricEvent (createTenantStartTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, "Exception while communicate with Open Stack", OPENSTACK, CREATE_TENANT, null);
                 String error = "Create Tenant " + tenantName + ": " + me;
-                LOGGER.error (MessageEnum.RA_CREATE_TENANT_ERR, me.getMessage(), "OpenStack", "createTenant", MsoLogger.ErrorCode.DataError, "Exception while communicate with Open Stack", me);
-                LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
+                logger.error (MessageEnum.RA_CREATE_TENANT_ERR, me.getMessage(), OPENSTACK, "createTenant", MsoLogger.ErrorCode.DataError, "Exception while communicate with Open Stack", me);
+                logger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
                 throw new TenantException (me);
             }
             tenantRollback.setTenantId (newTenantId);
             tenantRollback.setTenantCreated (true);
-            LOGGER.debug ("Tenant " + tenantName + " successfully created with ID " + newTenantId);
+            logger.debug ("Tenant " + tenantName + " successfully created with ID " + newTenantId);
         } else {
             if (failIfExists != null && failIfExists) {
-                String error = "CreateTenant: Tenant " + tenantName + " already exists in " + cloudSiteId;
-                LOGGER.error (MessageEnum.RA_TENANT_ALREADY_EXIST, tenantName, cloudSiteId, "OpenStack", "", MsoLogger.ErrorCode.DataError, "CreateTenant, Tenant already exists");
-                LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataError, error);
+                String error = CREATE_TENANT + ": Tenant " + tenantName + " already exists in " + cloudSiteId;
+                logger.error (MessageEnum.RA_TENANT_ALREADY_EXIST, tenantName, cloudSiteId, OPENSTACK, "", MsoLogger.ErrorCode.DataError, CREATE_TENANT + ", Tenant already exists");
+                logger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataError, error);
                 throw new TenantAlreadyExists (tenantName, cloudSiteId, newTenant.getTenantId ());
             }
 
             newTenantId = newTenant.getTenantId ();
             tenantRollback.setTenantCreated (false);
-            LOGGER.debug ("Tenant " + tenantName + " already exists with ID " + newTenantId);
+            logger.debug ("Tenant " + tenantName + " already exists with ID " + newTenantId);
         }
 
 
         tenantId.value = newTenantId;
         rollback.value = tenantRollback;
-        LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully create tenant");
+        logger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully create tenant");
         return;
     }
 
@@ -156,8 +160,8 @@ public class MsoTenantAdapterImpl implements MsoTenantAdapter {
                              Holder <String> tenantName,
                              Holder <Map <String, String>> metadata) throws TenantException {
         MsoLogger.setLogContext (msoRequest);
-        MsoLogger.setServiceName ("QueryTenant");
-        LOGGER.debug ("Querying Tenant " + tenantNameOrId + " in " + cloudSiteId);
+        MsoLogger.setServiceName (QUERY_TENANT);
+        logger.debug ("Querying Tenant " + tenantNameOrId + " in " + cloudSiteId);
 
         // Will capture execution time for metrics
         long startTime = System.currentTimeMillis ();
@@ -168,31 +172,31 @@ public class MsoTenantAdapterImpl implements MsoTenantAdapter {
         long subStartTime = System.currentTimeMillis ();
         try {
             qTenant = tUtils.queryTenant (tenantNameOrId, cloudSiteId);
-            LOGGER.recordMetricEvent (subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from Open Stack", "OpenStack", "QueryTenant", null);
+            logger.recordMetricEvent (subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from Open Stack", OPENSTACK, QUERY_TENANT, null);
             if (qTenant == null) {
                 // Not found by ID, Try by name.
                 qTenant = tUtils.queryTenantByName (tenantNameOrId, cloudSiteId);
             }
 
             if (qTenant == null) {
-                LOGGER.debug ("QueryTenant: Tenant " + tenantNameOrId + " not found");
+                logger.debug ("QueryTenant: Tenant " + tenantNameOrId + " not found");
                 tenantId.value = null;
                 tenantName.value = null;
                 metadata.value = null;
             } else {
-                LOGGER.debug ("QueryTenant: Tenant " + tenantNameOrId + " found with ID " + qTenant.getTenantId ());
+                logger.debug ("QueryTenant: Tenant " + tenantNameOrId + " found with ID " + qTenant.getTenantId ());
                 tenantId.value = qTenant.getTenantId ();
                 tenantName.value = qTenant.getTenantName ();
                 metadata.value = qTenant.getMetadata ();
             }
         } catch (MsoException me) {
             String error = "Query Tenant " + tenantNameOrId + ": " + me;
-            LOGGER.recordMetricEvent (subStartTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, "OpenStack", "QueryTenant", null);
-            LOGGER.error (MessageEnum.RA_GENERAL_EXCEPTION, me.getMessage(), "OpenStack", "", MsoLogger.ErrorCode.DataError, "Exception in queryTenant", me);
-            LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
+            logger.recordMetricEvent (subStartTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, OPENSTACK, QUERY_TENANT, null);
+            logger.error (MessageEnum.RA_GENERAL_EXCEPTION, me.getMessage(), OPENSTACK, "", MsoLogger.ErrorCode.DataError, "Exception in queryTenant", me);
+            logger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
             throw new TenantException (me);
         }
-        LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully query tenant");
+        logger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully query tenant");
         return;
     }
 
@@ -202,9 +206,9 @@ public class MsoTenantAdapterImpl implements MsoTenantAdapter {
                               MsoRequest msoRequest,
                               Holder <Boolean> tenantDeleted) throws TenantException {
         MsoLogger.setLogContext (msoRequest);
-        MsoLogger.setServiceName ("DeleteTenant");
+        MsoLogger.setServiceName (DELETE_TENANT);
 
-        LOGGER.debug ("Deleting Tenant " + tenantId + " in " + cloudSiteId);
+        logger.debug ("Deleting Tenant " + tenantId + " in " + cloudSiteId);
 
         // Will capture execution time for metrics
         long startTime = System.currentTimeMillis ();
@@ -216,17 +220,17 @@ public class MsoTenantAdapterImpl implements MsoTenantAdapter {
         	MsoTenantUtils tUtils = tFactory.getTenantUtils (cloudSiteId);
             boolean deleted = tUtils.deleteTenant (tenantId, cloudSiteId);
             tenantDeleted.value = deleted;
-            LOGGER.recordMetricEvent (subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully communicate with Open Stack", "OpenStack", "DeleteTenant", null);
+            logger.recordMetricEvent (subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully communicate with Open Stack", OPENSTACK, DELETE_TENANT, null);
         } catch (MsoException me) {
             String error = "Delete Tenant " + tenantId + ": " + me;
-            LOGGER.recordMetricEvent (subStartTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, "OpenStack", "DeleteTenant", null);
-            LOGGER.error (MessageEnum.RA_DELETE_TEMAMT_ERR, me.getMessage(), "OpenStack", "", MsoLogger.ErrorCode.DataError, "Exception - DeleteTenant", me);
-            LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
+            logger.recordMetricEvent (subStartTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, OPENSTACK, DELETE_TENANT, null);
+            logger.error (MessageEnum.RA_DELETE_TEMAMT_ERR, me.getMessage(), OPENSTACK, "", MsoLogger.ErrorCode.DataError, "Exception - DeleteTenant", me);
+            logger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
             throw new TenantException (me);
         }
 
         // On success, nothing is returned.
-        LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully delete tenant");
+        logger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully delete tenant");
         return;
     }
 
@@ -242,10 +246,10 @@ public class MsoTenantAdapterImpl implements MsoTenantAdapter {
     @Override
     public void rollbackTenant (TenantRollback rollback) throws TenantException {
         long startTime = System.currentTimeMillis ();
-        MsoLogger.setServiceName ("RollbackTenant");
+        MsoLogger.setServiceName (ROLLBACK_TENANT);
         // rollback may be null (e.g. if stack already existed when Create was called)
         if (rollback == null) {
-            LOGGER.warn (MessageEnum.RA_ROLLBACK_NULL, "OpenStack", "rollbackTenant", MsoLogger.ErrorCode.DataError, "rollbackTenant, rollback is null");
+            logger.warn (MessageEnum.RA_ROLLBACK_NULL, OPENSTACK, "rollbackTenant", MsoLogger.ErrorCode.DataError, "rollbackTenant, rollback is null");
             return;
         }
 
@@ -254,7 +258,7 @@ public class MsoTenantAdapterImpl implements MsoTenantAdapter {
         String tenantId = rollback.getTenantId ();
 
         MsoLogger.setLogContext (rollback.getMsoRequest ());
-        LOGGER.debug ("Rolling Back Tenant " + rollback.getTenantId () + " in " + cloudSiteId);
+        logger.debug ("Rolling Back Tenant " + rollback.getTenantId () + " in " + cloudSiteId);
 
         long subStartTime = System.currentTimeMillis ();
         if (rollback.getTenantCreated ()) {
@@ -262,18 +266,18 @@ public class MsoTenantAdapterImpl implements MsoTenantAdapter {
             	 
             	MsoTenantUtils tUtils = tFactory.getTenantUtils (cloudSiteId);
                 tUtils.deleteTenant (tenantId, cloudSiteId);
-                LOGGER.recordMetricEvent (subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully communicate with Open Stack", "OpenStack", "RollbackTenant", null);
+                logger.recordMetricEvent (subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully communicate with Open Stack", OPENSTACK, ROLLBACK_TENANT, null);
             } catch (MsoException me) {
-                me.addContext ("RollbackTenant");
+                me.addContext (ROLLBACK_TENANT);
                 // Failed to delete the tenant.
                 String error = "Rollback Tenant " + tenantId + ": " + me;
-                LOGGER.recordMetricEvent (subStartTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, "OpenStack", "RollbackTenant", null);
-                LOGGER.error (MessageEnum.RA_ROLLBACK_TENANT_ERR, me.getMessage(), "OpenStack", "rollbackTenant", MsoLogger.ErrorCode.DataError, "Exception - rollbackTenant", me);
-                LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
+                logger.recordMetricEvent (subStartTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, OPENSTACK, ROLLBACK_TENANT, null);
+                logger.error (MessageEnum.RA_ROLLBACK_TENANT_ERR, me.getMessage(), OPENSTACK, "rollbackTenant", MsoLogger.ErrorCode.DataError, "Exception - rollbackTenant", me);
+                logger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
                 throw new TenantException (me);
             }
         }
-        LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully roll back tenant");
+        logger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully roll back tenant");
         return;
     }
 }
