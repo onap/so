@@ -34,18 +34,21 @@ import org.openecomp.mso.logger.MsoLogger;
 @XmlRootElement(name = "vfModules")
 @NoJackson
 public class QueryVfModules {
-	private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
+	private static MsoLogger logger = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
 	private List<VfModule> vfModules;
 
-	public QueryVfModules() { super(); vfModules = new ArrayList<>(); }
-	public QueryVfModules(List<VfModule> vlist) { 
-		LOGGER.debug ("QueryVfModules:");
+	public QueryVfModules() {
+		super();
+		vfModules = new ArrayList<>();
+	}
+	public QueryVfModules(List<VfModule> vlist) {
+		logger.debug ("QueryVfModules:");
 		vfModules = new ArrayList<>();
 		for (VfModule o : vlist) {
-			LOGGER.debug ("-- o is a vfModules ----");
-			LOGGER.debug (o.toString());
+			logger.debug ("-- o is a vfModules ----");
+			logger.debug (o.toString());
 			vfModules.add(o);
-			LOGGER.debug ("-------------------");
+			logger.debug ("-------------------");
 		}
 	}
 
@@ -61,7 +64,10 @@ public class QueryVfModules {
 		int i = 1;
 		for (VfModule o : vfModules) {
 			buf.append(i+"\t");
-			if (!first) buf.append("\n"); first = false;
+			if (!first) {
+				buf.append("\n");
+			}
+			first = false;
 			buf.append(o);
 		}
 		return buf.toString();
@@ -72,11 +78,11 @@ public class QueryVfModules {
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			jsonString = mapper.writeValueAsString(this);
-			LOGGER.debug ("QueryVfModules jsonString: "+jsonString);
+			logger.debug ("QueryVfModules jsonString: "+jsonString);
 		}
 		catch (Exception e) {
-		    LOGGER.debug ("Exception:", e);
-			LOGGER.debug ("QueryVfModules jsonString exception:"+e.getMessage()); 
+			logger.debug ("Exception:", e);
+			logger.debug ("QueryVfModules jsonString exception:"+e.getMessage());
 		}
 		return jsonString;
 	}

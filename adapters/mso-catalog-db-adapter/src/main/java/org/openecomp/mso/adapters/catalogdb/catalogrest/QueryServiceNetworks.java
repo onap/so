@@ -34,7 +34,6 @@ public class QueryServiceNetworks extends CatalogQuery {
 	private List<NetworkResourceCustomization> serviceNetworks;
 	private final String template =
 		"\t{\n"+
-//		"\t{ \"networkResource\"            : {\n"+
 			"\t\t\"modelInfo\"                : {\n"+
 			"\t\t\t\"modelName\"              : <MODEL_NAME>,\n"+
 			"\t\t\t\"modelUuid\"              : <MODEL_UUID>,\n"+
@@ -49,12 +48,14 @@ public class QueryServiceNetworks extends CatalogQuery {
 			"\t\t\"networkRole\"              : <NETWORK_ROLE>,\n"+
 			"\t\t\"networkScope\"             : <NETWORK_SCOPE>\n"+
 		"\t}";
-//		"\t}}";
 
-	public QueryServiceNetworks() { super(); serviceNetworks = new ArrayList<NetworkResourceCustomization>(); }
+	public QueryServiceNetworks() {
+		super();
+		serviceNetworks = new ArrayList<>();
+	}
 	public QueryServiceNetworks(List<NetworkResourceCustomization> vlist) {
 		LOGGER.debug ("QueryServiceNetworks:");
-		serviceNetworks = new ArrayList<NetworkResourceCustomization>();
+		serviceNetworks = new ArrayList<>();
 		for (NetworkResourceCustomization o : vlist) {
 			LOGGER.debug (o.toString());
 			serviceNetworks.add(o);
@@ -73,7 +74,10 @@ public class QueryServiceNetworks extends CatalogQuery {
 		int i = 1;
 		for (NetworkResourceCustomization o : serviceNetworks) {
 			buf.append(i+"\t");
-			if (!first) buf.append("\n"); first = false;
+			if (!first) {
+				buf.append("\n");
+			}
+			first = false;
 			buf.append(o);
 		}
 		return buf.toString();
@@ -82,15 +86,22 @@ public class QueryServiceNetworks extends CatalogQuery {
 	@Override
 	public String JSON2(boolean isArray, boolean isEmbed) {
 		StringBuffer buf = new StringBuffer();
-		if (!isEmbed && isArray) buf.append("{ ");
-		if (isArray) buf.append("\"serviceNetworks\": [");
-		//if (isArray) buf.append("[");
-		Map<String, String> valueMap = new HashMap<String, String>();
+		if (!isEmbed && isArray) {
+			buf.append("{ ");
+		}
+		if (isArray) {
+			buf.append("\"serviceNetworks\": [");
+		}
+
+		Map<String, String> valueMap = new HashMap<>();
 		String sep = "";
 		boolean first = true;
 
 		for (NetworkResourceCustomization o : serviceNetworks) {
-			if (first) buf.append("\n"); first = false;
+			if (first) {
+				buf.append("\n");
+			}
+			first = false;
 			boolean nrNull = o.getNetworkResource() == null ? true : false;
 		    put(valueMap, "MODEL_NAME",               nrNull ? null : o.getNetworkResource().getModelName());
 		    put(valueMap, "MODEL_UUID",               nrNull ? null : o.getNetworkResource().getModelUUID());
@@ -107,9 +118,15 @@ public class QueryServiceNetworks extends CatalogQuery {
             buf.append(sep+ this.setTemplate(template, valueMap));
             sep = ",\n";
 		}
-		if (!first) buf.append("\n");
-		if (isArray) buf.append("]");
-		if (!isEmbed && isArray) buf.append("}");
+		if (!first) {
+			buf.append("\n");
+		}
+		if (isArray) {
+			buf.append("]");
+		}
+		if (!isEmbed && isArray) {
+			buf.append("}");
+		}
 		return buf.toString();
 	}
 }

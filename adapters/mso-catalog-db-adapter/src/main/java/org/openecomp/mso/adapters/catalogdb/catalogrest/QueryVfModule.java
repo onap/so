@@ -35,7 +35,6 @@ public class QueryVfModule extends CatalogQuery {
 	private List<VfModuleCustomization> vfModules;
 	private final String template =
 		"\t{\n"+
-//		"\t{ \"vfModule\"               : { \n"+
 		"\t\t\"modelInfo\"               : { \n"+
 			"\t\t\t\"modelName\"              : <MODEL_NAME>,\n"+
 			"\t\t\t\"modelUuid\"              : <MODEL_UUID>,\n"+
@@ -48,12 +47,11 @@ public class QueryVfModule extends CatalogQuery {
 			"\t\t\"initialCount\"           : <INITIAL_COUNT>,\n"+
 			"\t\t\"hasVolumeGroup\"           : <HAS_VOLUME_GROUP>\n"+
 		"\t}";
-//		"\t}}";
 
-	public QueryVfModule() { super(); vfModules = new ArrayList<VfModuleCustomization>(); }
+	public QueryVfModule() { super(); vfModules = new ArrayList<>(); }
 	public QueryVfModule(List<VfModuleCustomization> vlist) { 
 		LOGGER.debug ("QueryVfModule:");
-		vfModules = new ArrayList<VfModuleCustomization>();
+		vfModules = new ArrayList<>();
 		if (vlist != null) {
 			for (VfModuleCustomization o : vlist) {
 			LOGGER.debug ("-- o is a  vfModules ----");
@@ -75,7 +73,10 @@ public class QueryVfModule extends CatalogQuery {
 		int i = 1;
 		for (VfModuleCustomization o : vfModules) {
 			buf.append(i+"\t");
-			if (!first) buf.append("\n"); first = false;
+			if (!first) {
+				buf.append("\n");
+			}
+			first = false;
 			buf.append(o);
 		}
 		return buf.toString();
@@ -85,12 +86,15 @@ public class QueryVfModule extends CatalogQuery {
 	public String JSON2(boolean isArray, boolean x) {
 		StringBuffer buf = new StringBuffer();
 		if (isArray) buf.append("\"vfModules\": [");
-		Map<String, String> valueMap = new HashMap<String, String>();
+		Map<String, String> valueMap = new HashMap<>();
 		String sep = "";
 		boolean first = true;
 
 		for (VfModuleCustomization o : vfModules) {
-			if (first) buf.append("\n"); first = false;
+			if (first) {
+				buf.append("\n");
+			}
+			first = false;
 
 			boolean vfNull = o.getVfModule() == null ? true : false;
 			boolean hasVolumeGroup = false;
@@ -112,8 +116,12 @@ public class QueryVfModule extends CatalogQuery {
             buf.append(sep+ this.setTemplate(template, valueMap));
             sep = ",\n";
 		}
-		if (!first) buf.append("\n");
-		if (isArray) buf.append("]");
+		if (!first) {
+			buf.append("\n");
+		}
+		if (isArray) {
+			buf.append("]");
+		}
 		return buf.toString();
 	}
 }
