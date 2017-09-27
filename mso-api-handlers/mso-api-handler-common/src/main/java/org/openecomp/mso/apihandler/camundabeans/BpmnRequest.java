@@ -40,11 +40,7 @@ import org.openecomp.mso.apihandler.common.CommonConstants;
 	CommonConstants.REQUEST_DETAILS_VARIABLE})
 @JsonRootName(CommonConstants.CAMUNDA_ROOT_INPUT)
 public class BpmnRequest {
-	
-	public BpmnRequest() {
-		
-	}
-	
+
 	@JsonProperty(CommonConstants.CAMUNDA_HOST)
 	private CamundaInput host;
 	
@@ -89,8 +85,11 @@ public class BpmnRequest {
 	
 	@JsonProperty(CommonConstants.REQUEST_DETAILS_VARIABLE)
 	private CamundaInput requestDetails;
-	
-	
+
+	public BpmnRequest() {
+		/* Empty constructor */
+
+	}
 	
 	@JsonProperty(CommonConstants.CAMUNDA_HOST)
 	public CamundaInput getHost() {
@@ -246,9 +245,7 @@ public class BpmnRequest {
 	
 	@Override
 	public String toString() {
-		//return "CamundaRequest [requestId=" +  + ", host="
-		//		+ host + ", schema=" + schema + ", reqid=" + reqid + ", svcid="
-			//	+ svcid + ", timeout=" + timeout + "]";
+
 		return "BpmnRequest";
 	}	
 	
