@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a437d4f_d8c5b85c",
+        "filename": "bpmn/MSOURN-plugin/src/main/java/org/openecomp/camunda/bpmn/plugin/urnmap/resources/ProcessInstanceResource.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2017-09-27T15:14:12Z",
+      "side": 1,
+      "message": "What is this Annotation doing here??\nIts inappropriate...",
+      "revId": "e32daaf787d0596f008fd73efd6ee925516db247",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_f8ccfc8a",
+        "filename": "bpmn/MSOURN-plugin/src/main/java/org/openecomp/camunda/bpmn/plugin/urnmap/resources/ProcessInstanceResource.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2017-09-27T15:14:12Z",
+      "side": 1,
+      "message": "Is this required??",
+      "revId": "e32daaf787d0596f008fd73efd6ee925516db247",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
