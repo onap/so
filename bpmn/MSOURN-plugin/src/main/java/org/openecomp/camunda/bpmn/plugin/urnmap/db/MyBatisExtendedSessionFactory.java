@@ -37,6 +37,7 @@ public class MyBatisExtendedSessionFactory extends StandaloneProcessEngineConfig
 
   private String resourceName;
 
+  @Override
   protected void init() {
     throw new IllegalArgumentException(
             "Normal 'init' on process engine only used for extended MyBatis mappings is not allowed, please use 'initFromProcessEngineConfiguration'. You cannot construct a process engine with this configuration.");
@@ -55,7 +56,6 @@ public class MyBatisExtendedSessionFactory extends StandaloneProcessEngineConfig
     setDatabaseTablePrefix(processEngineConfiguration.getDatabaseTablePrefix());
 
     initDataSource();
-    //initVariableTypes();
     initCommandContextFactory();
     initTransactionFactory();
     initTransactionContextFactory();
@@ -75,7 +75,7 @@ public class MyBatisExtendedSessionFactory extends StandaloneProcessEngineConfig
    */
   @Override
   protected Collection<? extends CommandInterceptor> getDefaultCommandInterceptorsTxRequired() {
-    List<CommandInterceptor> defaultCommandInterceptorsTxRequired = new ArrayList<CommandInterceptor>();
+    List<CommandInterceptor> defaultCommandInterceptorsTxRequired = new ArrayList<>();
     defaultCommandInterceptorsTxRequired.add(new LogInterceptor());
     defaultCommandInterceptorsTxRequired.add(new CommandContextInterceptor(commandContextFactory, this, true));
     return defaultCommandInterceptorsTxRequired;
