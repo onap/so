@@ -31,7 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class AbstractSessionFactoryManager {
 
-    protected static Map<String, SessionFactory> sessionFactories = new ConcurrentHashMap<String, SessionFactory>();
+    protected static Map<String, SessionFactory> sessionFactories = new ConcurrentHashMap<>();
 
     protected synchronized SessionFactory initializeSessionFactory(URL hibernateConfigFile)
             throws MsoDatabaseException {
