@@ -73,7 +73,7 @@ public class HeatTemplateArtifactUuidModelUuid implements Serializable {
     public int hashCode () {
         // hash code does not have to be a unique result - only that two objects that should be treated as equal
         // return the same value. so this should work.
-        int result = 0;
+        int result;
         result = this.heatTemplateArtifactUuid.hashCode() + this.modelUuid.hashCode();
         return result;
     }
