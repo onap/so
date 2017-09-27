@@ -89,7 +89,7 @@ public class HeatTemplateParam implements Serializable {
 
     @Override
     public int hashCode () {
-        int result = 0;
+        int result;
         result = this.paramName == null ? 0 : this.paramName.hashCode() + this.heatTemplateArtifactUuid == null ? 0 : this.heatTemplateArtifactUuid.hashCode();
         return result;
 	}
