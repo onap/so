@@ -87,7 +87,7 @@ public class VnfInfoHandler {
         							+ " volume-group-id:" + volumeGroupId
         							+ " volume-group-name:" + volumeGroupName
         							+ " vnf-name: " + vnfName);
-        Response response = null;
+        Response response;
         if (vnfType != null) {
             response = this.getRequestList ("vnfType", vnfType, version);
         } else {
@@ -253,7 +253,7 @@ public class VnfInfoHandler {
 
         getMsoLogger ().debug ("getRequest: " + requestId);
 
-        String responseString = null;
+        String responseString;
 
         InfraActiveRequests activeReq = (RequestsDatabase.getInstance()).getRequestFromInfraActive (requestId, getRequestType ());
         if (activeReq != null) {
@@ -276,7 +276,7 @@ public class VnfInfoHandler {
                                                                                                    queryValue,
                                                                                                    getRequestType ());
 
-        List <VnfRequest> queryResponseList = new LinkedList <VnfRequest> ();
+        List <VnfRequest> queryResponseList = new LinkedList <> ();
 
         if (activeReqList != null) {
             // build response for active
@@ -320,7 +320,7 @@ public class VnfInfoHandler {
     }
 
     private List <VnfRequest> infraRequestsResponses (List <? extends InfraRequests> arList, String version) {
-        List <VnfRequest> queryResponseList = new LinkedList <VnfRequest> ();
+        List <VnfRequest> queryResponseList = new LinkedList <> ();
 
         for (InfraRequests ar : arList) {
             VnfRequest qr = fillGeneric (ar);

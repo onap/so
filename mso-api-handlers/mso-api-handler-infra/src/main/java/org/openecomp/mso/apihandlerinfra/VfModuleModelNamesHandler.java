@@ -48,7 +48,6 @@ public class VfModuleModelNamesHandler {
 
     private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH);
     private static final String LOG_SERVICE_NAME = "InfrastructurePortal:MSO-APIH.";
-    private static final String LOG_REPLY_NAME = "MSO-APIH:InfrastructurePortal.";
 
     @GET
     @ApiOperation(value="Finds Vf Module Model Names",response=Response.class)

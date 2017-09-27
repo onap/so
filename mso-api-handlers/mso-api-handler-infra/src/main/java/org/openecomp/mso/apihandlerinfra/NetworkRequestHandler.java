@@ -114,7 +114,7 @@ public class NetworkRequestHandler {
                                          + aicNodeClli
                                          + " - tenant id "
                                          + tenantId);
-        Response response = null;
+        Response response;
         if (networkType != null) {
             response = this.getRequestList ("vnfType", networkType, version);
         } else {
@@ -244,7 +244,7 @@ public class NetworkRequestHandler {
         MsoLogger.setLogContext (requestId, null);
         getMsoLogger ().debug ("getRequest: " + requestId);
 
-        String responseString = null;
+        String responseString;
 
         InfraActiveRequests activeReq = requestDB.getRequestFromInfraActive (requestId, "NETWORK");
         if (activeReq != null) {
@@ -267,7 +267,7 @@ public class NetworkRequestHandler {
                                                                                                    queryValue,
                                                                                                    "NETWORK");
 
-        List <NetworkRequest> queryResponseList = new LinkedList <NetworkRequest> ();
+        List <NetworkRequest> queryResponseList = new LinkedList <> ();
 
         if (activeReqList != null) {
             // build response for active
@@ -311,7 +311,7 @@ public class NetworkRequestHandler {
     }
 
     private List <NetworkRequest> infraRequestsResponses (List <? extends InfraRequests> arList, String version) {
-        List <NetworkRequest> queryResponseList = new LinkedList <NetworkRequest> ();
+        List <NetworkRequest> queryResponseList = new LinkedList <> ();
 
         for (InfraRequests ar : arList) {
             NetworkRequest qr = fillGeneric (ar);
@@ -383,7 +383,6 @@ public class NetworkRequestHandler {
     }
 
     private Response manageNetworkRequestImpl (String reqXML, String version) {
-    	String methodName = "NetworkRequest";
 
     	props = MsoPropertiesUtils.loadMsoProperties ();
         
@@ -577,7 +576,7 @@ public class NetworkRequestHandler {
                 msoLogger.debug ("MSO API Handler Posting call to BPEL engine for url: " + requestClient.getUrl ());
                 response = requestClient.post (msoRequest.getRequestXML (),
                         requestId,
-                        Integer.toString (recipe.getRecipeTimeout ()).toString (),
+                        Integer.toString (recipe.getRecipeTimeout ()),
                         version,
                         null,
                         null);
