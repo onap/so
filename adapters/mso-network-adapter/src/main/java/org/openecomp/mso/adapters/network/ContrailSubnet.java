@@ -60,7 +60,7 @@ public class ContrailSubnet {
 	**/
 	
 	@JsonProperty("network_ipam_refs_data_ipam_subnets_allocation_pools")
-	private List<ContrailSubnetPool> allocation_pools =  new ArrayList <ContrailSubnetPool> ();
+	private List<ContrailSubnetPool> allocation_pools =  new ArrayList <> ();
 
 	public ContrailSubnet() {
 		super();
