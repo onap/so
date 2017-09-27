@@ -32,9 +32,8 @@ import java.util.Map;
 @NoJackson
 public class QueryAllottedResourceCustomization extends CatalogQuery {
 	private List<AllottedResourceCustomization> allottedResourceCustomization;
-	private final String template =
+	private static final String template =
 		"\t{\n"+
-//		"\t{ \"allottedResource\"       : {\n"+
 		"\t\t\"modelInfo\"       : {\n"+
 			"\t\t\t\"modelName\"              : <MODEL_NAME>,\n"+
 			"\t\t\t\"modelUuid\"              : <MODEL_UUID>,\n"+
@@ -52,9 +51,11 @@ public class QueryAllottedResourceCustomization extends CatalogQuery {
 				"\t\t\"nfRole\"              : <NF_ROLE>,\n"+
 				"\t\t\"nfNamingCode\"              : <NF_NAMING_CODE>\n"+
 		"\t}";
-//		"\t}}";
 
-	public QueryAllottedResourceCustomization() { super(); allottedResourceCustomization = new ArrayList<AllottedResourceCustomization>(); }
+	public QueryAllottedResourceCustomization() {
+		super();
+		allottedResourceCustomization = new ArrayList<>();
+	}
 	public QueryAllottedResourceCustomization(List<AllottedResourceCustomization> vlist) { allottedResourceCustomization = vlist; }
 
 	public List<AllottedResourceCustomization> getServiceAllottedResources(){ return this.allottedResourceCustomization; }
@@ -77,9 +78,13 @@ public class QueryAllottedResourceCustomization extends CatalogQuery {
 	@Override
 	public String JSON2(boolean isArray, boolean isEmbed) {
 		StringBuffer buf = new StringBuffer();
-		if (!isEmbed && isArray) buf.append("{ ");
-		if (isArray) buf.append("\"serviceAllottedResources\": [");
-		Map<String, String> valueMap = new HashMap<String, String>();
+		if (!isEmbed && isArray) {
+			buf.append("{ ");
+		}
+		if (isArray) {
+			buf.append("\"serviceAllottedResources\": [");
+		}
+		Map<String, String> valueMap = new HashMap<>();
 		String sep = "";
 		boolean first = true;
 
@@ -108,9 +113,15 @@ public class QueryAllottedResourceCustomization extends CatalogQuery {
             sep = ",\n";
 		}
 		}
-		if (!first) buf.append("\n");
-		if (isArray) buf.append("]");
-		if (!isEmbed && isArray) buf.append("}");
+		if (!first) {
+			buf.append("\n");
+		}
+		if (isArray) {
+			buf.append("]");
+		}
+		if (!isEmbed && isArray) {
+			buf.append("}");
+		}
 		return buf.toString();
 	}
 

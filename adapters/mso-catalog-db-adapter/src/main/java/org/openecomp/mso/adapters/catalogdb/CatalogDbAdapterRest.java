@@ -88,7 +88,7 @@ import org.openecomp.mso.db.catalog.beans.AllottedResourceCustomization;
  */
 @Path("/{version: v[0-9]+}")
 public class CatalogDbAdapterRest {
-	private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
+	private static MsoLogger logger = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
 	private static final boolean IS_ARRAY = true;
 
 	public Response respond(String version, int respStatus, boolean isArray, CatalogQuery qryResp) {
@@ -107,8 +107,8 @@ public class CatalogDbAdapterRest {
 	public Response healthcheck (
 			@PathParam("version") String version
 	) {
-		String CHECK_HTML = "<!DOCTYPE html><html><head><meta charset=\"ISO-8859-1\"><title>Health Check</title></head><body>Application "+ version+ " ready</body></html>";
-		return Response.ok().entity(CHECK_HTML).build();
+		String checkHtml = "<!DOCTYPE html><html><head><meta charset=\"ISO-8859-1\"><title>Health Check</title></head><body>Application "+ version+ " ready</body></html>";
+		return Response.ok().entity(checkHtml).build();
 	}
 
 	@GET
@@ -144,32 +144,32 @@ public class CatalogDbAdapterRest {
 		try (CatalogDatabase db = CatalogDatabase.getInstance()) {
 			if (vnfUuid != null && !vnfUuid.equals("")) {
 				uuid = vnfUuid;
-				LOGGER.debug ("Query serviceVnfs getAllVnfsByVnfModelCustomizationUuid vnfModelCustomizationUuid: " + uuid);
+				logger.debug ("Query serviceVnfs getAllVnfsByVnfModelCustomizationUuid vnfModelCustomizationUuid: " + uuid);
 				ret = db.getAllVnfsByVnfModelCustomizationUuid(uuid);
 			}
 			else if (smUuid != null && !smUuid.equals("")) {
 				uuid = smUuid;
-				LOGGER.debug ("Query serviceVnfs getAllVnfsByServiceModelUuid serviceModelUuid: " + uuid);
+				logger.debug ("Query serviceVnfs getAllVnfsByServiceModelUuid serviceModelUuid: " + uuid);
 				ret = db.getAllVnfsByServiceModelUuid(uuid);
 			}
 			else if (smiUuid != null && !smiUuid.equals("")) {
 				uuid = smiUuid;
 				if (smVer != null && !smVer.equals("")) {
-					LOGGER.debug ("Query serviceVnfs getAllNetworksByServiceModelInvariantUuid serviceModelInvariantUuid: " + uuid+ " serviceModelVersion: "+ smVer);
+					logger.debug ("Query serviceVnfs getAllNetworksByServiceModelInvariantUuid serviceModelInvariantUuid: " + uuid+ " serviceModelVersion: "+ smVer);
 					ret = db.getAllVnfsByServiceModelInvariantUuid(uuid, smVer);
 				}
 				else {
-					LOGGER.debug ("Query serviceVnfs getAllNetworksByServiceModelInvariantUuid serviceModelUuid: " + uuid);
+					logger.debug ("Query serviceVnfs getAllNetworksByServiceModelInvariantUuid serviceModelUuid: " + uuid);
 					ret = db.getAllVnfsByServiceModelInvariantUuid(uuid);
 				}
 			}
 			else if (smName != null && !smName.equals("")) {
 				if (smVer != null && !smVer.equals("")) {
-					LOGGER.debug ("Query serviceVnfs getAllVnfsByServiceName serviceModelInvariantName: " + smName+ " serviceModelVersion: "+ smVer);
+					logger.debug ("Query serviceVnfs getAllVnfsByServiceName serviceModelInvariantName: " + smName+ " serviceModelVersion: "+ smVer);
 					ret = db.getAllVnfsByServiceName(smName, smVer);
 				}
 				else {
-					LOGGER.debug ("Query serviceVnfs getAllVnfsByServiceName serviceModelName: " + smName);
+					logger.debug ("Query serviceVnfs getAllVnfsByServiceName serviceModelName: " + smName);
 					ret = db.getAllVnfsByServiceName(smName);
 				}
 			}
@@ -178,18 +178,18 @@ public class CatalogDbAdapterRest {
 			}
 
 			if (ret == null || ret.isEmpty()) {
-				LOGGER.debug ("serviceVnfs not found");
+				logger.debug ("serviceVnfs not found");
 				respStatus = HttpStatus.SC_NOT_FOUND;
 				qryResp = new QueryServiceVnfs();
 			} else {
-				LOGGER.debug ("serviceVnfs found");
+				logger.debug ("serviceVnfs found");
 				qryResp = new QueryServiceVnfs(ret);
-				LOGGER.debug ("serviceVnfs qryResp="+ qryResp);
+				logger.debug ("serviceVnfs qryResp="+ qryResp);
 			}
-			LOGGER.debug ("Query serviceVnfs exit");
+			logger.debug ("Query serviceVnfs exit");
 			return respond(version, respStatus, isArray, qryResp);
 		} catch (Exception e) {
-			LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR,  uuid, "", "queryServiceVnfs", MsoLogger.ErrorCode.BusinessProcesssError, "Exception - queryServiceVnfs", e);
+			logger.error (MessageEnum.RA_QUERY_VNF_ERR,  uuid, "", "queryServiceVnfs", MsoLogger.ErrorCode.BusinessProcesssError, "Exception - queryServiceVnfs", e);
 			CatalogQueryException excResp = new CatalogQueryException(e.getMessage(), CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
 			return Response
 				.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
@@ -236,27 +236,27 @@ public class CatalogDbAdapterRest {
 		try (CatalogDatabase db = CatalogDatabase.getInstance()) {
 			if (nUuid != null && !nUuid.equals("")) {
 				uuid = nUuid;
-				LOGGER.debug ("Query serviceNetworks getAllNetworksByNetworkModelCustomizationUuid networkModelCustomizationUuid: " + uuid);
+				logger.debug ("Query serviceNetworks getAllNetworksByNetworkModelCustomizationUuid networkModelCustomizationUuid: " + uuid);
 				ret = db.getAllNetworksByNetworkModelCustomizationUuid(uuid);
 			}
 			else if (smUuid != null && !smUuid.equals("")) {
 				uuid = smUuid;
-				LOGGER.debug ("Query serviceNetworks getAllNetworksByServiceModelUuid serviceModelUuid: " + uuid);
+				logger.debug ("Query serviceNetworks getAllNetworksByServiceModelUuid serviceModelUuid: " + uuid);
 				ret = db.getAllNetworksByServiceModelUuid(uuid);
 			}
 			else if (nType != null && !nType.equals("")) {
 				uuid = nType;
-				LOGGER.debug ("Query serviceNetworks getAllNetworksByNetworkType serviceModelUuid: " + uuid);
+				logger.debug ("Query serviceNetworks getAllNetworksByNetworkType serviceModelUuid: " + uuid);
 				ret = db.getAllNetworksByNetworkType(uuid);
 			}
 			else if (smiUuid != null && !smiUuid.equals("")) {
 				uuid = smiUuid;
 				if (smVer != null && !smVer.equals("")) {
-					LOGGER.debug ("Query serviceNetworks getAllNetworksByServiceModelInvariantUuid serviceModelInvariantUuid: " + uuid+ " serviceModelVersion: "+ smVer);
+					logger.debug ("Query serviceNetworks getAllNetworksByServiceModelInvariantUuid serviceModelInvariantUuid: " + uuid+ " serviceModelVersion: "+ smVer);
 					ret = db.getAllNetworksByServiceModelInvariantUuid(uuid, smVer);
 				}
 				else {
-					LOGGER.debug ("Query serviceNetworks getAllNetworksByServiceModelInvariantUuid serviceModelUuid: " + uuid);
+					logger.debug ("Query serviceNetworks getAllNetworksByServiceModelInvariantUuid serviceModelUuid: " + uuid);
 					ret = db.getAllNetworksByServiceModelInvariantUuid(uuid);
 				}
 			}
@@ -265,18 +265,18 @@ public class CatalogDbAdapterRest {
 			}
 
 			if (ret == null || ret.isEmpty()) {
-				LOGGER.debug ("serviceNetworks not found");
+				logger.debug ("serviceNetworks not found");
 				respStatus = HttpStatus.SC_NOT_FOUND;
 				qryResp = new QueryServiceNetworks();
 			} else {
-				LOGGER.debug ("serviceNetworks found");
+				logger.debug ("serviceNetworks found");
 				qryResp = new QueryServiceNetworks(ret);
-				LOGGER.debug ("serviceNetworks qryResp="+ qryResp);
+				logger.debug ("serviceNetworks qryResp="+ qryResp);
 			}
-			LOGGER.debug ("Query serviceNetworks exit");
+			logger.debug ("Query serviceNetworks exit");
 			return respond(version, respStatus, isArray, qryResp);
 		} catch (Exception e) {
-			LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR,  uuid, "", "queryServiceNetworks", MsoLogger.ErrorCode.BusinessProcesssError, "Exception - queryServiceNetworks", e);
+			logger.error (MessageEnum.RA_QUERY_VNF_ERR,  uuid, "", "queryServiceNetworks", MsoLogger.ErrorCode.BusinessProcesssError, "Exception - queryServiceNetworks", e);
 			CatalogQueryException excResp = new CatalogQueryException(e.getMessage(), CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
 			return Response
 				.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
@@ -301,17 +301,17 @@ public class CatalogDbAdapterRest {
 		try (CatalogDatabase db = CatalogDatabase.getInstance()) {
 			if (smUuid != null && !smUuid.equals("")) {
 				uuid = smUuid;
-				LOGGER.debug ("Query serviceMacroHolder getAllResourcesByServiceModelUuid serviceModelUuid: " + uuid);
+				logger.debug ("Query serviceMacroHolder getAllResourcesByServiceModelUuid serviceModelUuid: " + uuid);
 				ret = db.getAllResourcesByServiceModelUuid(uuid);
 			}
 			else if (smiUuid != null && !smiUuid.equals("")) {
 				uuid = smiUuid;
 				if (smVer != null && !smVer.equals("")) {
-					LOGGER.debug ("Query serviceMacroHolder getAllResourcesByServiceModelInvariantUuid serviceModelInvariantUuid: " + uuid+ " serviceModelVersion: "+ smVer);
+					logger.debug ("Query serviceMacroHolder getAllResourcesByServiceModelInvariantUuid serviceModelInvariantUuid: " + uuid+ " serviceModelVersion: "+ smVer);
 					ret = db.getAllResourcesByServiceModelInvariantUuid(uuid, smVer);
 				}
 				else {
-					LOGGER.debug ("Query serviceMacroHolder getAllResourcesByServiceModelInvariantUuid serviceModelUuid: " + uuid);
+					logger.debug ("Query serviceMacroHolder getAllResourcesByServiceModelInvariantUuid serviceModelUuid: " + uuid);
 					ret = db.getAllResourcesByServiceModelInvariantUuid(uuid);
 				}
 			}
@@ -320,18 +320,18 @@ public class CatalogDbAdapterRest {
 			}
 
 			if (ret == null) {
-				LOGGER.debug ("serviceMacroHolder not found");
+				logger.debug ("serviceMacroHolder not found");
 				respStatus = HttpStatus.SC_NOT_FOUND;
 				qryResp = new QueryServiceMacroHolder();
 			} else {
-				LOGGER.debug ("serviceMacroHolder found");
+				logger.debug ("serviceMacroHolder found");
 				qryResp = new QueryServiceMacroHolder(ret);
-				LOGGER.debug ("serviceMacroHolder qryResp="+ qryResp);
+				logger.debug ("serviceMacroHolder qryResp="+ qryResp);
 			}
-			LOGGER.debug ("Query serviceMacroHolder exit");
+			logger.debug ("Query serviceMacroHolder exit");
 			return respond(version, respStatus, IS_ARRAY, qryResp);
 		} catch (Exception e) {
-			LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR,  uuid, "", "queryServiceMacroHolder", MsoLogger.ErrorCode.BusinessProcesssError, "Exception - queryServiceMacroHolder", e);
+			logger.error (MessageEnum.RA_QUERY_VNF_ERR,  uuid, "", "queryServiceMacroHolder", MsoLogger.ErrorCode.BusinessProcesssError, "Exception - queryServiceMacroHolder", e);
 			CatalogQueryException excResp = new CatalogQueryException(e.getMessage(), CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
 			return Response
 				.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
@@ -372,23 +372,23 @@ public class CatalogDbAdapterRest {
 		try (CatalogDatabase db = CatalogDatabase.getInstance()) {
 			if (smUuid != null && !smUuid.equals("")) {
 				uuid = smUuid;
-				LOGGER.debug ("Query AllottedResourceCustomization getAllAllottedResourcesByServiceModelUuid serviceModelUuid: " + uuid);
+				logger.debug ("Query AllottedResourceCustomization getAllAllottedResourcesByServiceModelUuid serviceModelUuid: " + uuid);
 				ret = db.getAllAllottedResourcesByServiceModelUuid(uuid);
 			}
 			else if (smiUuid != null && !smiUuid.equals("")) {
 				uuid = smiUuid;
 				if (smVer != null && !smVer.equals("")) {
-					LOGGER.debug ("Query AllottedResourceCustomization getAllAllottedResourcesByServiceModelInvariantUuid serviceModelInvariantUuid: " + uuid+ " serviceModelVersion: "+ smVer);
+					logger.debug ("Query AllottedResourceCustomization getAllAllottedResourcesByServiceModelInvariantUuid serviceModelInvariantUuid: " + uuid+ " serviceModelVersion: "+ smVer);
 					ret = db.getAllAllottedResourcesByServiceModelInvariantUuid(uuid, smVer);
 				}
 				else {
-					LOGGER.debug ("Query AllottedResourceCustomization getAllAllottedResourcesByServiceModelInvariantUuid serviceModelUuid: " + uuid);
+					logger.debug ("Query AllottedResourceCustomization getAllAllottedResourcesByServiceModelInvariantUuid serviceModelUuid: " + uuid);
 					ret = db.getAllAllottedResourcesByServiceModelInvariantUuid(uuid);
 				}
 			}
 			else if (aUuid != null && !aUuid.equals("")) {
 				uuid = aUuid;
-				LOGGER.debug ("Query AllottedResourceCustomization getAllAllottedResourcesByArModelCustomizationUuid serviceModelUuid: " + uuid);
+				logger.debug ("Query AllottedResourceCustomization getAllAllottedResourcesByArModelCustomizationUuid serviceModelUuid: " + uuid);
 				ret = db.getAllAllottedResourcesByArModelCustomizationUuid(uuid);
 			}
 			else {
@@ -396,18 +396,18 @@ public class CatalogDbAdapterRest {
 			}
 
 			if (ret == null || ret.isEmpty()) {
-				LOGGER.debug ("AllottedResourceCustomization not found");
+				logger.debug ("AllottedResourceCustomization not found");
 				respStatus = HttpStatus.SC_NOT_FOUND;
 				qryResp = new QueryAllottedResourceCustomization();
 			} else {
-				LOGGER.debug ("AllottedResourceCustomization found");
+				logger.debug ("AllottedResourceCustomization found");
 				qryResp = new QueryAllottedResourceCustomization(ret);
-				LOGGER.debug ("AllottedResourceCustomization qryResp="+ qryResp);
+				logger.debug ("AllottedResourceCustomization qryResp="+ qryResp);
 			}
-			LOGGER.debug ("Query AllottedResourceCustomization exit");
+			logger.debug ("Query AllottedResourceCustomization exit");
 			return respond(version, respStatus, isArray, qryResp);
 		} catch (Exception e) {
-			LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR,  uuid, "", "queryAllottedResourceCustomization", MsoLogger.ErrorCode.BusinessProcesssError, "Exception - queryAllottedResourceCustomization", e);
+			logger.error (MessageEnum.RA_QUERY_VNF_ERR,  uuid, "", "queryAllottedResourceCustomization", MsoLogger.ErrorCode.BusinessProcesssError, "Exception - queryAllottedResourceCustomization", e);
 			CatalogQueryException excResp = new CatalogQueryException(e.getMessage(), CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
 			return Response
 				.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
@@ -429,7 +429,7 @@ public class CatalogDbAdapterRest {
 
 		try{
 			if(vfModuleModelName != null && !vfModuleModelName.equals("")){
-				LOGGER.debug ("Query vfModules by vfModuleModuleName: " + vfModuleModelName);
+				logger.debug ("Query vfModules by vfModuleModuleName: " + vfModuleModelName);
 				VfModuleCustomization vfModule = db.getVfModuleCustomizationByModelName(vfModuleModelName);
 				if(vfModule != null){
 					ret = new ArrayList<VfModuleCustomization>(1);
@@ -439,23 +439,23 @@ public class CatalogDbAdapterRest {
 				throw(new Exception("Incoming parameter is null or blank"));
 			}
 			if(ret == null || ret.isEmpty()){
-				LOGGER.debug ("vfModules not found");
+				logger.debug ("vfModules not found");
 				respStatus = HttpStatus.SC_NOT_FOUND;
 				qryResp = new QueryVfModule();
 			}else{
-				LOGGER.debug ("vfModules found");
+				logger.debug ("vfModules found");
 				qryResp = new QueryVfModule(ret);
-				LOGGER.debug ("vfModules query Results is: "+ qryResp);
-				LOGGER.debug ("vfModules tojsonstring is: "+ qryResp.JSON2(false, false));
+				logger.debug ("vfModules query Results is: "+ qryResp);
+				logger.debug ("vfModules tojsonstring is: "+ qryResp.JSON2(false, false));
 			}
-			LOGGER.debug ("Query vfModules exit");
+			logger.debug ("Query vfModules exit");
 			return Response
 					.status(respStatus)
 					.entity(qryResp.JSON2(false, false)) 
 					.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 					.build();
 		}catch(Exception e){
-			LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR,  vfModuleModelName, "", "queryVfModules", MsoLogger.ErrorCode.BusinessProcesssError, "Exception during query VfModules by vfModuleModuleName: ", e);
+			logger.error (MessageEnum.RA_QUERY_VNF_ERR,  vfModuleModelName, "", "queryVfModules", MsoLogger.ErrorCode.BusinessProcesssError, "Exception during query VfModules by vfModuleModuleName: ", e);
 			CatalogQueryException excResp = new CatalogQueryException(e.getMessage(), CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
 			return Response
 					.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
