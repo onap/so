@@ -29,7 +29,6 @@ import javax.ws.rs.PUT;
 
 import org.camunda.bpm.cockpit.db.QueryParameters;
 import org.camunda.bpm.cockpit.plugin.resource.AbstractPluginResource;
-import org.camunda.bpm.cockpit.db.CommandExecutor;
 import org.openecomp.camunda.bpmn.plugin.urnmap.db.*;
 
 public class ProcessInstanceResource extends AbstractPluginResource {
@@ -56,25 +55,25 @@ public class ProcessInstanceResource extends AbstractPluginResource {
   }
   
   @PUT
-  //public void insertNewRow(String key_, String value_) 
+  //public void insertNewRow(String key, String value)
   public void insertNewRow(String temp) 
    {  
  	 System.out.println("AddNewRow: XXXXXXXXXXXXXXXXX ---> " + temp);
  	 StringTokenizer st = new StringTokenizer(temp, "|");
- 	 String key_ = "";
- 	 String value_ = "";
+ 	 String key = "";
+ 	 String value = "";
  	 
- 	 while(st.hasMoreTokens()) { 
- 		  key_ = st.nextToken(); 
- 		  value_ = st.nextToken(); 
- 		 System.out.println(key_ + "\t" + value_); 
+ 	 while(st.hasMoreTokens()) {
+         key = st.nextToken();
+         value = st.nextToken();
+ 		 System.out.println(key + "\t" + value);
  		 } 
   			 
-       System.out.println("AddNewRow: XXXXXXXXXXXXXXXXX ---> key: " + key_ + " , Value: " + value_);
+       System.out.println("AddNewRow: XXXXXXXXXXXXXXXXX ---> key: " + key + " , Value: " + value);
  	  URNData nRow = new URNData();
  	  nRow.setVer_("1"); 	 
- 	  nRow.setURNName(key_);
- 	  nRow.setURNValue(value_);
+ 	  nRow.setURNName(key);
+ 	  nRow.setURNValue(value);
  	  
  	 getQueryService().executeQuery("cockpit.urnMap.insertNewRow", nRow, URNData.class);
  	 
@@ -82,7 +81,6 @@ public class ProcessInstanceResource extends AbstractPluginResource {
    }
   
   @POST
- // public void getPersistData(List<URNData > myList) {  
   public void getPersistData(URNData d) {  
 	  
 	  System.out.println("getPersistData:  UrnName: " + d.getURNName() + " , URNValue: " + d.getURNValue() );

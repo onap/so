@@ -22,26 +22,26 @@ package org.openecomp.camunda.bpmn.plugin.urnmap.db;
 
 public class URNData {
 
-	  private String URNName;
-	  private String URNValue;
-	  private String Ver_;
+	  private String urnName;
+	  private String urnValue;
+	  private String ver_;
 	public String getURNName() {
-		return URNName;
+		return urnName;
 	}
 	public void setURNName(String uRNName) {
-		URNName = uRNName;
+		urnName = uRNName;
 	}
 	public String getURNValue() {
-		return URNValue;
+		return urnValue;
 	}
 	public void setURNValue(String uRNValue) {
-		URNValue = uRNValue;
+		urnValue = uRNValue;
 	}
 	public String getVer_() {
-		return Ver_;
+		return ver_;
 	}
-	public void setVer_(String ver_) {
-		Ver_ = ver_;
+	public void setVer_(String ver) {
+		ver_ = ver;
 	}
 	  
 }
