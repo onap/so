@@ -72,7 +72,7 @@ public abstract class IdentityAuthenticationTypeAbstract {
 
 	@Override
 	public final boolean equals(Object other) {
-		return ((this.identityType != null) && (other != null) && (other instanceof IdentityAuthenticationTypeAbstract) && (this.identityType.equals(other.toString())));
+		return (this.identityType != null) && (other != null) && (other instanceof IdentityAuthenticationTypeAbstract) && (this.identityType.equals(other.toString()));
 	}
 
 	@Override
