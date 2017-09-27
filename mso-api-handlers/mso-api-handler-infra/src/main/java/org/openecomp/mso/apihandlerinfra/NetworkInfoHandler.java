@@ -85,7 +85,7 @@ public class NetworkInfoHandler {
                                          + aicNodeClli
                                          + " - tenant id "
                                          + tenantId);
-        Response response = null;
+        Response response;
         if (networkType != null) {
             response = this.getRequestList ("vnfType", networkType, version);
         } else {
@@ -216,7 +216,7 @@ public class NetworkInfoHandler {
         MsoLogger.setLogContext (requestId, null);
         getMsoLogger ().debug ("getRequest: " + requestId);
 
-        String responseString = null;
+        String responseString;
 
         InfraActiveRequests activeReq = (RequestsDatabase.getInstance()).getRequestFromInfraActive (requestId, "NETWORK");
         if (activeReq != null) {
@@ -239,7 +239,7 @@ public class NetworkInfoHandler {
                                                                                                    queryValue,
                                                                                                    "NETWORK");
 
-        List <NetworkRequest> queryResponseList = new LinkedList <NetworkRequest> ();
+        List <NetworkRequest> queryResponseList = new LinkedList <> ();
 
         if (activeReqList != null) {
             // build response for active
@@ -283,7 +283,7 @@ public class NetworkInfoHandler {
     }
 
     private List <NetworkRequest> infraRequestsResponses (List <? extends InfraRequests> arList, String version) {
-        List <NetworkRequest> queryResponseList = new LinkedList <NetworkRequest> ();
+        List <NetworkRequest> queryResponseList = new LinkedList <> ();
 
         for (InfraRequests ar : arList) {
             NetworkRequest qr = fillGeneric (ar);

@@ -35,7 +35,7 @@ public class RequestClientFactory {
 		if(props ==null){
 			throw new IllegalStateException("properties is null");
 		}
-		String url = null;
+		String url;
 		if(orchestrationURI.contains(CommonConstants.BPEL_SEARCH_STR)){
 			url = props.getProperty(CommonConstants.BPEL_URL,null) + orchestrationURI;
 			retClient= new BPELRestClient();
