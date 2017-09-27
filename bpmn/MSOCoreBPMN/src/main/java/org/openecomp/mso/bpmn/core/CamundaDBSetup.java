@@ -66,11 +66,6 @@ public class CamundaDBSetup {
 
 			stmt = connection.prepareStatement("ALTER TABLE ACT_RU_VARIABLE alter column TEXT_ clob");
 			stmt.executeUpdate();
-			stmt.close();
-			stmt = null;
-
-			connection.close();
-			connection = null;
 
 			isDBConfigured = true;
 		} catch (SQLException e) {

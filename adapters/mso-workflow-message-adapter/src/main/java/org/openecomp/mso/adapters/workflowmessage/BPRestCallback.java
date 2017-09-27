@@ -144,11 +144,8 @@ public class BPRestCallback {
 					ALARMLOGGER.sendAlarm("MsoInternalError", MsoAlarmLogger.CRITICAL, msg);
 				}
 
-				httpResponse = null;
 			}
 
-			method.reset();
-			method = null;
 			return true;
 		} catch (Exception e) {
 			LOGGER.error(MessageEnum.RA_CALLBACK_BPEL_EXC, "Camunda", "", MsoLogger.ErrorCode.BusinessProcesssError,
@@ -160,6 +157,7 @@ public class BPRestCallback {
 			if (httpResponse != null) {
 				try {
 					EntityUtils.consume(httpResponse.getEntity());
+					httpResponse = null;
 				} catch (Exception e) {
 					LOGGER.debug("Exception :",e);
 				}
@@ -168,6 +166,7 @@ public class BPRestCallback {
 			if (method != null) {
 				try {
 					method.reset();
+					method = null;
 				} catch (Exception e) {
 					LOGGER.debug("Exception :",e);
 				}

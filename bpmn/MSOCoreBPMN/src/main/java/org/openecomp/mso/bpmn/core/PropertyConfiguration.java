@@ -28,6 +28,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.ClosedWatchServiceException;
 import java.nio.file.FileSystems;
+import java.nio.file.FileSystem;
 import java.nio.file.Path;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
@@ -133,9 +134,11 @@ public class PropertyConfiguration {
 			return;
 		}
 
+		FileSystem defaultFS = null;
 		try {
-			Path directory = FileSystems.getDefault().getPath(msoConfigPath);
-			WatchService watchService = FileSystems.getDefault().newWatchService();
+			defaultFS = FileSystems.getDefault();
+			Path directory = defaultFS.getPath(msoConfigPath);
+			WatchService watchService = defaultFS.newWatchService();
 			directory.register(watchService, ENTRY_MODIFY);
 
 			LOGGER.info(MessageEnum.BPMN_GENERAL_INFO, "BPMN", "Starting FileWatcherThread");
@@ -150,6 +153,14 @@ public class PropertyConfiguration {
 				"Property Configuration",
 				MsoLogger.ErrorCode.UnknownError,
 				"Error occurred while starting FileWatcherThread:" + e);
+		} finally {
+			try {
+			    if(null != defaultFS){
+				    defaultFS.close();
+			    }
+			} catch (IOException ex){
+				LOGGER.debug("IOException:", ex);
+			}
 		}
 	}
 

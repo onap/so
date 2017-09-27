@@ -573,6 +573,8 @@ public class ToscaResourceInstaller {// implements IVfResourceInstaller {
 						"Exception caught during installation of " + vfResourceStructure.getResourceInstance().getResourceName() + ". Transaction rollback.", e);
 			}
 
+		} finally {
+			catalogDB.close();
 		}
 				
 	}		
