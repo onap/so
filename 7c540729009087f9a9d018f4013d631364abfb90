@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a437d4f_38d4c4bb",
+        "filename": "asdc-controller/src/main/java/org/openecomp/mso/asdc/installer/heat/ToscaResourceInstaller.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 577,
+      "author": {
+        "id": 1595
+      },
+      "writtenOn": "2017-09-27T15:46:34Z",
+      "side": 1,
+      "message": "catalogDB should be checked if it\u0027s null before attempting close, no?",
+      "revId": "7c540729009087f9a9d018f4013d631364abfb90",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
