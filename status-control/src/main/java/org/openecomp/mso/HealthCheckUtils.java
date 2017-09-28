@@ -39,7 +39,7 @@ import javax.ws.rs.core.Response;
 public class HealthCheckUtils {
 
     private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.GENERAL);
-    private final static String MSO_PROP_TOPOLOGY = "MSO_PROP_TOPOLOGY";
+    private static final String MSO_PROP_TOPOLOGY = "MSO_PROP_TOPOLOGY";
     private static MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory();
     private static final String CHECK_HTML = "<!DOCTYPE html><html><head><meta charset=\"ISO-8859-1\"><title>Health Check</title></head><body>Application ready</body></html>";
     private static final String NOT_FOUND = "<!DOCTYPE html><html><head><meta charset=\"ISO-8859-1\"><title>Application Not Started</title></head><body>Application not started. Properties file missing or invalid or database Connection failed</body></html>";
