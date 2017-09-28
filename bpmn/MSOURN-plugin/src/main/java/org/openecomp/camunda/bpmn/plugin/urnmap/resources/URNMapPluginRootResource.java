@@ -32,7 +32,6 @@ public class URNMapPluginRootResource extends AbstractPluginRootResource
 {
 	  public URNMapPluginRootResource() {
 		  	  super(URNMapPlugin.ID);
-		  //super("");
 	  }
 
 	  @Path("{engineName}/process-instance") 
