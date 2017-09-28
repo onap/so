@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a437d4f_dcc92327",
+        "filename": "adapters/mso-sdnc-adapter/src/main/java/org/openecomp/mso/adapters/sdnc/impl/Utils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2017-09-28T13:10:55Z",
+      "side": 1,
+      "message": "Dont add a empty block as this would lead to another issue",
+      "revId": "fbc75c7256530998c7d4da65432e49a2b2b9ac64",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
