@@ -166,7 +166,7 @@ public class BpelRestClient {
 	}
 
 	public String getRetryList() {
-		if (retryList.size() == 0)
+		if (retryList.isEmpty())
 			return "";
 		String t = retryList.toString();
 		return t.substring(1, t.length()-1);

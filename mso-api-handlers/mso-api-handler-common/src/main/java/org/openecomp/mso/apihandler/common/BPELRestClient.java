@@ -60,7 +60,7 @@ public class BPELRestClient extends RequestClient {
                                                                 CommonConstants.ENCRYPTION_KEY);
                 if (userCredentials != null) {
                     post.addHeader ("Authorization",
-                                    "Basic " + new String (DatatypeConverter.printBase64Binary (userCredentials.getBytes ())));
+                                    "Basic " + DatatypeConverter.printBase64Binary (userCredentials.getBytes ()));
                 }
             }
         }

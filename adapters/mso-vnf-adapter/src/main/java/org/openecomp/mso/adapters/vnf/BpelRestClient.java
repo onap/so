@@ -234,7 +234,6 @@ public class BpelRestClient {
 	}
 	private void debug(String m) {
 		LOGGER.debug(m);
-//		System.err.println(m);
 	}
 	private void sendOne(final String toBpelStr, final String bpelUrl, final boolean isxml) {
 		LOGGER.debug("Sending to BPEL server: "+bpelUrl);
