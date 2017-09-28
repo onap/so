@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a437d4f_b84314ae",
+        "filename": "bpmn/MSOInfrastructureBPMN/src/main/java/org/openecomp/mso/bpmn/infrastructure/workflow/serviceTask/SdncNetworkTopologyOperationTask.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2017-09-28T12:58:47Z",
+      "side": 1,
+      "message": "dont use the magic numbers",
+      "revId": "66b06d89979610c90490d9b343bc44c227bf8395",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_d81db8bf",
+        "filename": "bpmn/MSOInfrastructureBPMN/src/main/java/org/openecomp/mso/bpmn/infrastructure/workflow/serviceTask/SdncOperationTaskYangToolsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2017-09-28T12:58:47Z",
+      "side": 1,
+      "message": "Remove the magic numbers",
+      "revId": "66b06d89979610c90490d9b343bc44c227bf8395",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
