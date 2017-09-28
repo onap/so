@@ -156,9 +156,9 @@ public class DeleteVnfNotification {
      * @return String type (deleteVnfNotification)
      */
  
-    
+	@Override
 	public String toString() {
-    	String deleteVnfNotification = "";
+    	String deleteVnfNotification;
     	if (exception==null) {
     		deleteVnfNotification = "<ns2:deleteVnfNotification xmlns:ns2=\"http://org.openecomp.mso/vnfNotify\"" + '\n' +
     				       "  xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">" + '\n' +
@@ -175,24 +175,5 @@ public class DeleteVnfNotification {
 				       "</ns2:deleteVnfNotification>";
     	}
     	return deleteVnfNotification;
-   	}    
-
-/*	
-	public String toString() {
-		StringWriter writer = new StringWriter();
-		try {
-			JAXBContext context = JAXBContext
-					.newInstance(DeleteVnfNotification.class);
-			Marshaller m = context.createMarshaller();
-			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			m.marshal(this, writer);
-			//System.out.println("toString() - " + writer.getBuffer().toString());			
-			return writer.getBuffer().toString();
-		} catch (JAXBException e) {
-			//System.out.println("JAXBException - " + e.getStackTrace());			
-			return "";
-		}
-	}    
-*/	
-	
+   	}    	
 }
