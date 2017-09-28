@@ -56,9 +56,9 @@ public class CloudConfig {
 
     private boolean                    validCloudConfig = false;
     @JsonProperty("identity_services")
-    private Map<String, CloudIdentity> identityServices = new HashMap<String, CloudIdentity>();
+    private Map<String, CloudIdentity> identityServices = new HashMap<>();
     @JsonProperty("cloud_sites")
-    private Map<String, CloudSite>     cloudSites       = new HashMap<String, CloudSite>();
+    private Map<String, CloudSite>     cloudSites       = new HashMap<>();
 
     private static ObjectMapper        mapper           = new ObjectMapper();
 
