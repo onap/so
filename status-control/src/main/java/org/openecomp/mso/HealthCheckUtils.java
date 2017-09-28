@@ -25,17 +25,12 @@ import org.openecomp.mso.db.catalog.CatalogDatabase;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.properties.MsoJavaProperties;
-import org.openecomp.mso.properties.MsoJsonProperties;
 import org.openecomp.mso.properties.MsoPropertiesFactory;
 import org.openecomp.mso.requestsdb.RequestsDatabase;
-import org.openecomp.mso.utils.UUIDChecker;
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 
@@ -44,7 +39,7 @@ import javax.ws.rs.core.Response;
 public class HealthCheckUtils {
 
     private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.GENERAL);
-    private final static String MSO_PROP_TOPOLOGY = "MSO_PROP_TOPOLOGY";
+    private static final String MSO_PROP_TOPOLOGY = "MSO_PROP_TOPOLOGY";
     private static MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory();
     private static final String CHECK_HTML = "<!DOCTYPE html><html><head><meta charset=\"ISO-8859-1\"><title>Health Check</title></head><body>Application ready</body></html>";
     private static final String NOT_FOUND = "<!DOCTYPE html><html><head><meta charset=\"ISO-8859-1\"><title>Application Not Started</title></head><body>Application not started. Properties file missing or invalid or database Connection failed</body></html>";
