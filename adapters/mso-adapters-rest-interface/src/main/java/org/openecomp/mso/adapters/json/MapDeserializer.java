@@ -55,7 +55,7 @@ public class MapDeserializer extends JsonDeserializer<Map<String, String>> {
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode tree = mapper.readTree(parser);
 
-		Map<String, String> map = new LinkedHashMap<String, String>();
+		Map<String, String> map = new LinkedHashMap<>();
 		Iterator<JsonNode> iterator = tree.iterator();
 
 		while (iterator.hasNext()) {
