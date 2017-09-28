@@ -25,8 +25,8 @@ import org.onap.msb.sdk.httpclient.RestServiceCreater;
 import org.onap.msb.sdk.httpclient.msb.MSBServiceClient;
 import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.GenericResourceApi;
 import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.builder.NetworkRpcInputEntityBuilder;
-import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.entity.NetworkRpcInputEntity;
-import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.entity.NetworkRpcOutputEntity;
+import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.entity.RpcNetworkTopologyOperationInputEntity;
+import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.entity.RpcNetworkTopologyOperationOutputEntity;
 import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.requestsdb.RequestsDatabase;
 import org.openecomp.mso.requestsdb.RequestsDbConstant;
@@ -67,11 +67,11 @@ public class SdncUnderlayVpnOperationClient {
     public boolean sendRestrequestAndHandleResponse(Map<String, String> inputs, GenericResourceApi genericResourceApiClient){
         updateProgress(null, null, "40", "sendRestrequestAndHandleResponse begin!");
         NetworkRpcInputEntityBuilder builder = new NetworkRpcInputEntityBuilder();
-        NetworkRpcInputEntity body = builder.build(inputs);
+        RpcNetworkTopologyOperationInputEntity body = builder.build(null, inputs);
         updateProgress(null, null, "50", "RequestBody build finished!");
-        NetworkRpcOutputEntity networkRpcOutputEntiy = null;
+        RpcNetworkTopologyOperationOutputEntity networkRpcOutputEntiy = null;
         try {
-            networkRpcOutputEntiy = genericResourceApiClient.postNetworkTopologyPeration(body).execute().body();
+            networkRpcOutputEntiy = genericResourceApiClient.postNetworkTopologyOperation(body).execute().body();
         } catch (Exception e) {
             e.printStackTrace();
             updateProgress(RequestsDbConstant.Status.ERROR, null, null, "sendRestrequestAndHandleResponse exception:" + e.getMessage());
@@ -115,7 +115,7 @@ public class SdncUnderlayVpnOperationClient {
         requestsDB.updateResOperStatus(resourceOperationStatus);
     }
 
-    private void saveOutput(NetworkRpcOutputEntity output) {
+    private void saveOutput(RpcNetworkTopologyOperationOutputEntity output) {
 
     }
 }

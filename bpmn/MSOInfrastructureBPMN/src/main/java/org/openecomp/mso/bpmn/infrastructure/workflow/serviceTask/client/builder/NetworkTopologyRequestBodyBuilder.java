@@ -22,6 +22,7 @@ package org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.builde
 
 import okhttp3.RequestBody;
 import org.apache.commons.lang3.StringUtils;
+import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.json.JSONObject;
 import org.opendaylight.yang.gen.v1.org.onap.sdnc.northbound.generic.resource.rev170824.NetworkTopologyOperationInput;
 import org.opendaylight.yang.gen.v1.org.onap.sdnc.northbound.generic.resource.rev170824.NetworkTopologyOperationInputBuilder;
@@ -44,7 +45,7 @@ import java.util.Map;
 /**
  * Created by 10112215 on 2017/9/20.
  */
-public class NetworkTopologyRequestBodyBuilder implements AbstractBuilder<Map<String, String>, RequestBody> {
+public class NetworkTopologyRequestBodyBuilder extends AbstractBuilder<Map<String, String>, RequestBody> {
 
     public static final String URI_PATH = "GENERIC-RESOURCE-API:network-topology-operation";
     public static final SdncRequestHeader.SvcAction SVC_DEFAULT_ACTION = SdncRequestHeader.SvcAction.Create;
@@ -64,7 +65,7 @@ public class NetworkTopologyRequestBodyBuilder implements AbstractBuilder<Map<St
     }
 
     @Override
-    public RequestBody build(Map<String, String> input) throws Exception {
+    public RequestBody build(DelegateExecution execution, Map<String, String> input) throws Exception {
         NetworkTopologyOperationInput sdncInput = getSdncInput(input);
         RequestBody body = getRequestBody(sdncInput);
         return body;

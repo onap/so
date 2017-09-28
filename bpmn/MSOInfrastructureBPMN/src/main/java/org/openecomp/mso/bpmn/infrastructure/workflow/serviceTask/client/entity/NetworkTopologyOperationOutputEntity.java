@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * Created by 10112215 on 2017/9/22.
  */
-public class OutputEntity {
+public class NetworkTopologyOperationOutputEntity {
     @JsonProperty("svc-request-id")
     private String svcRequestId;
 

@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * Created by 10112215 on 2017/9/20.
  */
-public class InputEntity {
+public class NetworkTopologyOperationInputEntity {
     @JsonProperty("sdnc-request-header")
     private SdncRequestHeaderEntity sdncRequestHeader;
 
