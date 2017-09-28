@@ -46,4 +46,7 @@ public class Messages {
 		errors.put(ErrorNumbers.NO_COMMUNICATION_TO_CATALOG_DB, "Could not communicate with MSO_CATALOG DB %s");
 		errors.put(ErrorNumbers.ERROR_FROM_CATALOG_DB, "Received error from MSO_CATALOG DB %s");		
 	}
+	
+	private Messages(){
+	}	
 }
