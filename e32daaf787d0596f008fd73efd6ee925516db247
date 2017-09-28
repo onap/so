@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "9a437d4f_339d0267",
+        "filename": "bpmn/MSOURN-plugin/src/main/java/org/openecomp/camunda/bpmn/plugin/urnmap/resources/ProcessInstanceResource.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 2269
+      },
+      "writtenOn": "2017-09-28T06:01:57Z",
+      "side": 1,
+      "message": "I have not added and not sure what is the use of this annotation. Should I delete or keep it same ?",
+      "parentUuid": "9a437d4f_d8c5b85c",
+      "revId": "e32daaf787d0596f008fd73efd6ee925516db247",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a437d4f_f8ccfc8a",
         "filename": "bpmn/MSOURN-plugin/src/main/java/org/openecomp/camunda/bpmn/plugin/urnmap/resources/ProcessInstanceResource.java",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2017-09-27T15:14:12Z",
       "side": 1,
       "message": "Is this required??",
+      "revId": "e32daaf787d0596f008fd73efd6ee925516db247",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_f38ada19",
+        "filename": "bpmn/MSOURN-plugin/src/main/java/org/openecomp/camunda/bpmn/plugin/urnmap/resources/ProcessInstanceResource.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 2269
+      },
+      "writtenOn": "2017-09-28T06:01:57Z",
+      "side": 1,
+      "message": "I have not added and not sure what is the use of this annotation. Should I delete or keep it same ?",
+      "parentUuid": "9a437d4f_f8ccfc8a",
       "revId": "e32daaf787d0596f008fd73efd6ee925516db247",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
