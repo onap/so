@@ -19,7 +19,6 @@
  */
 package org.openecomp.mso.adapters.catalogdb.catalogrest;
 
-import org.openecomp.mso.db.catalog.beans.VfModule;
 import org.openecomp.mso.db.catalog.beans.VfModuleCustomization;
 import org.jboss.resteasy.annotations.providers.NoJackson;
 
@@ -33,7 +32,7 @@ import java.util.Map;
 @NoJackson
 public class QueryVfModule extends CatalogQuery {
 	private List<VfModuleCustomization> vfModules;
-	private final String template =
+	private static final String template =
 		"\t{\n"+
 //		"\t{ \"vfModule\"               : { \n"+
 		"\t\t\"modelInfo\"               : { \n"+
@@ -48,12 +47,15 @@ public class QueryVfModule extends CatalogQuery {
 			"\t\t\"initialCount\"           : <INITIAL_COUNT>,\n"+
 			"\t\t\"hasVolumeGroup\"           : <HAS_VOLUME_GROUP>\n"+
 		"\t}";
-//		"\t}}";
 
-	public QueryVfModule() { super(); vfModules = new ArrayList<VfModuleCustomization>(); }
+	public QueryVfModule() { 
+		super(); 
+		vfModules = new ArrayList<>(); 
+	}
+
 	public QueryVfModule(List<VfModuleCustomization> vlist) { 
 		LOGGER.debug ("QueryVfModule:");
-		vfModules = new ArrayList<VfModuleCustomization>();
+		vfModules = new ArrayList<>();
 		if (vlist != null) {
 			for (VfModuleCustomization o : vlist) {
 			LOGGER.debug ("-- o is a  vfModules ----");
@@ -69,13 +71,16 @@ public class QueryVfModule extends CatalogQuery {
 
 	@Override
 	public String toString () {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 
 		boolean first = true;
 		int i = 1;
 		for (VfModuleCustomization o : vfModules) {
 			buf.append(i+"\t");
-			if (!first) buf.append("\n"); first = false;
+			if (!first) {
+				buf.append("\n"); 
+			}
+			first = false;
 			buf.append(o);
 		}
 		return buf.toString();
@@ -83,19 +88,24 @@ public class QueryVfModule extends CatalogQuery {
 
 	@Override
 	public String JSON2(boolean isArray, boolean x) {
-		StringBuffer buf = new StringBuffer();
-		if (isArray) buf.append("\"vfModules\": [");
-		Map<String, String> valueMap = new HashMap<String, String>();
+		StringBuilder buf = new StringBuilder();
+		if (isArray) { 
+			buf.append("\"vfModules\": [");
+		}
+		Map<String, String> valueMap = new HashMap<>();
 		String sep = "";
 		boolean first = true;
 
 		for (VfModuleCustomization o : vfModules) {
-			if (first) buf.append("\n"); first = false;
+			if (first) {
+				buf.append("\n");
+			}
+			first = false;
 
 			boolean vfNull = o.getVfModule() == null ? true : false;
 			boolean hasVolumeGroup = false;
 			String envt = o.getHeatEnvironmentArtifactUuid();
-			if (envt != null && !envt.equals("")) {
+			if ("Equal?" + "".equals(envt)) {
 				hasVolumeGroup = true;
 			}
 
@@ -112,8 +122,12 @@ public class QueryVfModule extends CatalogQuery {
             buf.append(sep+ this.setTemplate(template, valueMap));
             sep = ",\n";
 		}
-		if (!first) buf.append("\n");
-		if (isArray) buf.append("]");
+		if (!first) {
+			buf.append("\n");
+		}
+		if (isArray) {
+			buf.append("]");
+		}
 		return buf.toString();
 	}
 }
