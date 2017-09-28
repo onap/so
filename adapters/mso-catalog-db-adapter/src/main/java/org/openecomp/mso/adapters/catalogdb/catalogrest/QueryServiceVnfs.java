@@ -36,7 +36,6 @@ public class QueryServiceVnfs extends CatalogQuery {
 	private List<VnfResourceCustomization> serviceVnfs;
 	private final String template =
         "\n"+
-//        "\t{ \"vnfResource\"                    : {\n"+
         "\t{ \"modelInfo\"                    : {\n"+
 			"\t\t\"modelName\"              : <MODEL_NAME>,\n"+
 			"\t\t\"modelUuid\"              : <MODEL_UUID>,\n"+
@@ -50,15 +49,16 @@ public class QueryServiceVnfs extends CatalogQuery {
 			"\t\"nfType\"              		: <NF_TYPE>,\n"+
 			"\t\"nfRole\"              		: <NF_ROLE>,\n"+
 			"\t\"nfNamingCode\"         	: <NF_NAMING_CODE>,\n"+
-//        "\t}\n"+
 			"<_VFMODULES_>\n" + 
 			"\t}";
-//			"\t}}";
 
-	public QueryServiceVnfs() { super(); serviceVnfs = new ArrayList<VnfResourceCustomization>(); }
+	public QueryServiceVnfs() {
+		super();
+		serviceVnfs = new ArrayList<>();
+	}
 	public QueryServiceVnfs(List<VnfResourceCustomization> vlist) { 
 		LOGGER.debug ("QueryServiceVnfs:");
-		serviceVnfs = new ArrayList<VnfResourceCustomization>();
+		serviceVnfs = new ArrayList<>();
 		for (VnfResourceCustomization o : vlist) {
 			LOGGER.debug ("-- o is a  serviceVnfs ----");
 			LOGGER.debug (o.toString());
@@ -78,7 +78,10 @@ public class QueryServiceVnfs extends CatalogQuery {
 		int i = 1;
 		for (VnfResourceCustomization o : serviceVnfs) {
 			buf.append(i+"\t");
-			if (!first) buf.append("\n"); first = false;
+			if (!first) {
+				buf.append("\n");
+			}
+			first = false;
 			buf.append(o);
 		}
 		return buf.toString();
@@ -89,12 +92,15 @@ public class QueryServiceVnfs extends CatalogQuery {
 		StringBuffer buf = new StringBuffer();
 		if (!isEmbed && isArray) buf.append("{ ");
 		if (isArray) buf.append("\"serviceVnfs\": [");
-		Map<String, String> valueMap = new HashMap<String, String>();
+		Map<String, String> valueMap = new HashMap<>();
 		String sep = "";
 		boolean first = true;
 
 		for (VnfResourceCustomization o : serviceVnfs) {
-			if (first) buf.append("\n"); first = false;
+			if (first) {
+				buf.append("\n");
+			}
+			first = false;
 
 			boolean vrNull = o.getVnfResource() == null ? true : false;
 
@@ -116,9 +122,15 @@ public class QueryServiceVnfs extends CatalogQuery {
             buf.append(sep+ this.setTemplate(template, valueMap));
             sep = ",\n";
 		}
-		if (!first) buf.append("\n");
-		if (isArray) buf.append("]");
-		if (!isEmbed && isArray) buf.append("}");
+		if (!first) {
+			buf.append("\n");
+		}
+		if (isArray) {
+			buf.append("]");
+		}
+		if (!isEmbed && isArray) {
+			buf.append("}");
+		}
 		return buf.toString();
 	}
 }
