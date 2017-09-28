@@ -325,6 +325,7 @@ public class CreateVnfNotification {
         }
 
         // Not a generated method
+	@Override
         public String toString() {
         	StringBuilder out = new StringBuilder();
         	out.append("<outputs>\n");
@@ -418,23 +419,25 @@ public class CreateVnfNotification {
             }
             
             // Not a generated method
+            @Override
             public String toString() {
-            	String entry = "";
-            		entry =
+            	String entrystr;
+            		entrystr =
                "<entry>"+ '\n' +
     	       "   <key>"+key+"</key>" + '\n' +
     	       "   <value>"+value+"</value>" + '\n' +
     	       "</entry>";
-            	return entry; 
+            	return entrystr; 
             }
 
         }
 
     }
 
-    // Not a generated method
+	// Not a generated method
+	@Override
 	public String toString() {
-    	String createVnfNotification = "";
+    	String createVnfNotification;
     	if (exception==null) {
     		createVnfNotification = "<ns2:createVnfNotification xmlns:ns2=\"http://org.openecomp.mso/vnfNotify\"" + '\n' +
     				       "  xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">" + '\n' +
