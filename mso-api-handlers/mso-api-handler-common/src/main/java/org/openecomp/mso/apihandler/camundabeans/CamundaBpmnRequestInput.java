@@ -21,7 +21,6 @@
 package org.openecomp.mso.apihandler.camundabeans;
 
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.map.annotate.JsonRootName;
 
 import org.openecomp.mso.apihandler.common.CommonConstants;
 
@@ -38,6 +37,7 @@ public class CamundaBpmnRequestInput {
 
 
     public CamundaBpmnRequestInput() {
+        /* Empty constructor */
     }
 
     @JsonProperty(CommonConstants.CAMUNDA_VALUE)
