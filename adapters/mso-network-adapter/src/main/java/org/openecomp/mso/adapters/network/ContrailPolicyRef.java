@@ -22,17 +22,14 @@ package org.openecomp.mso.adapters.network;
 
 
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
-import org.openecomp.mso.openstack.exceptions.MsoAdapterException;
 
 public class ContrailPolicyRef {
-	private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
+	private static MsoLogger logger = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
 	 
 	@JsonProperty("network_policy_refs_data_sequence")
 	private ContrailPolicyRefSeq seq;
@@ -47,7 +44,7 @@ public class ContrailPolicyRef {
 		}
 		catch (Exception e)
 		{
-			LOGGER.error (MessageEnum.RA_MARSHING_ERROR, "Error creating JsonString for Contrail Policy Ref", "", "", MsoLogger.ErrorCode.SchemaError, "Exception creating JsonString for Contrail Policy Ref", e);
+			logger.error (MessageEnum.RA_MARSHING_ERROR, "Error creating JsonString for Contrail Policy Ref", "", "", MsoLogger.ErrorCode.SchemaError, "Exception creating JsonString for Contrail Policy Ref", e);
 		}
 		
 		return node;
@@ -63,7 +60,7 @@ public class ContrailPolicyRef {
 		}
 		catch (Exception e)
 		{
-			LOGGER.error (MessageEnum.RA_MARSHING_ERROR, "Error creating JsonString for Contrail Policy Ref", "", "", MsoLogger.ErrorCode.SchemaError, "Exception creating JsonString for Contrail Policy Ref", e);
+			logger.error (MessageEnum.RA_MARSHING_ERROR, "Error creating JsonString for Contrail Policy Ref", "", "", MsoLogger.ErrorCode.SchemaError, "Exception creating JsonString for Contrail Policy Ref", e);
 		}
 		
 		return jsonString;
