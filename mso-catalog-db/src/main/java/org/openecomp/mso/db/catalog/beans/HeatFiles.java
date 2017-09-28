@@ -82,10 +82,13 @@ public class HeatFiles extends MavenLikeVersioning implements Serializable {
 	public void setAsdcUuid(String artifactUuid) {
 		this.artifactUuid = artifactUuid;
 	}
+
+	@Override
 	public String getVersion() {
 		return version;
 	}
 
+	@Override
 	public void setVersion(String version) {
 		this.version = version;
 	}
@@ -99,7 +102,7 @@ public class HeatFiles extends MavenLikeVersioning implements Serializable {
 
 	@Override
 	public String toString () {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append ("artifactUuid=" + this.artifactUuid);
 		if (this.description == null) {
 			sb.append(", description=null");

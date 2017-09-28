@@ -26,13 +26,10 @@ import java.text.DateFormat;
 import java.util.Set;
 
 import org.openecomp.mso.db.catalog.utils.MavenLikeVersioning;
-import org.openecomp.mso.logger.MsoLogger;
 
 public class HeatTemplate extends MavenLikeVersioning implements Serializable {
 	
 	private static final long serialVersionUID = 768026109321305392L;
-
-    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.GENERAL);
 
     private String artifactUuid;
     private String templateName;
