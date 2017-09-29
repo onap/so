@@ -23,8 +23,8 @@ package org.openecomp.mso.client.aai;
 import java.io.IOException;
 import java.util.List;
 
-import org.openecomp.aai.domain.yang.GenericVnf;
-import org.openecomp.aai.domain.yang.Pserver;
+import org.onap.aai.domain.yang.GenericVnf;
+import org.onap.aai.domain.yang.Pserver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -33,8 +33,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.openecomp.aai.domain.yang.GenericVnf;
-import org.openecomp.aai.domain.yang.Pserver;
+import org.onap.aai.domain.yang.GenericVnf;
+import org.onap.aai.domain.yang.Pserver;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
