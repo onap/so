@@ -29,7 +29,7 @@ import java.util.UUID;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.openecomp.aai.domain.yang.Pserver;
+import org.onap.aai.domain.yang.Pserver;
 import static org.junit.Assert.assertEquals;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
