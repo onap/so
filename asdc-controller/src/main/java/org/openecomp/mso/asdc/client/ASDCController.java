@@ -442,7 +442,7 @@ public class ASDCController {
         try {
         	String resourceType = resourceStructure.getResourceInstance().getResourceType();
         	String category = resourceStructure.getResourceInstance().getCategory();
-        	if(resourceType.equals("VF") && !category.equalsIgnoreCase("Allotted Resource")){
+        	if("VF".equals(resourceType) && !"Allotted Resource".equalsIgnoreCase(category)){
         		resourceStructure.createVfModuleStructures();
         	}
         	//resourceInstaller.installTheResource (resourceStructure);
