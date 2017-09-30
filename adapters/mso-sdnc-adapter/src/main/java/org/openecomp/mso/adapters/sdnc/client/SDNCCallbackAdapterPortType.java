@@ -40,6 +40,7 @@ import org.openecomp.mso.adapters.sdnc.SDNCAdapterResponse;
 @WebService(targetNamespace = "http://org.openecomp/workflow/sdnc/adapter/callback/wsdl/v1", name = "SDNCCallbackAdapterPortType")
 @XmlSeeAlso({ObjectFactory.class})
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
+@FunctionalInterface
 public interface SDNCCallbackAdapterPortType {
 
     @WebResult(name = "SDNCAdapterResponse", targetNamespace = "http://org.openecomp/workflow/sdnc/adapter/schema/v1", partName = "SDNCAdapterCallbackResponse")
