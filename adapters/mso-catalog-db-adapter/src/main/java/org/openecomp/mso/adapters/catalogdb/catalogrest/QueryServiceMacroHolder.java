@@ -60,7 +60,7 @@ public class QueryServiceMacroHolder extends CatalogQuery {
 		Service service = serviceMacroHolder.getService();
 		if (service == null) return "\"serviceResources\": null";
 
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		Map<String, String> valueMap = new HashMap<String, String>();
 
 		put(valueMap, "SERVICE_MODEL_NAME",         service.getModelName()); //getServiceModelName());
