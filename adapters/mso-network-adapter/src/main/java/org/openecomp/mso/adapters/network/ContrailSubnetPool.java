@@ -32,6 +32,7 @@ public class ContrailSubnetPool {
 	private String end;
 
 	public ContrailSubnetPool() {
+		/* Empty constructor */
 	}
 
 	public String getStart() {
