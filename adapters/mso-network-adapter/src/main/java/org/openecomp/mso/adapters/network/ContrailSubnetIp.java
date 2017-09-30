@@ -26,33 +26,34 @@ import org.codehaus.jackson.annotate.JsonProperty;
 public class ContrailSubnetIp {
 	
 	@JsonProperty("network_ipam_refs_data_ipam_subnets_subnet_ip_prefix")
-	private String ip_prefix;
+	private String ipPrefix;
 	
 	@JsonProperty("network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len")
-	private String ip_prefix_len; 
+	private String ipPrefixLen;
 
 	public ContrailSubnetIp() {
+		/* Empty constructor */
 	}
 
-	public String getIp_prefix() {
-		return ip_prefix;
+	public String getIpPrefix() {
+		return ipPrefix;
 	}
 
-	public void setIp_prefix(String ip_prefix) {
-		this.ip_prefix = ip_prefix;
+	public void setIpPrefix(String ipPrefix) {
+		this.ipPrefix = ipPrefix;
 	}
 
-	public String getIp_prefix_len() {
-		return ip_prefix_len;
+	public String getIpPrefixLen() {
+		return ipPrefixLen;
 	}
 
-	public void setIp_prefix_len(String ip_prefix_len) {
-		this.ip_prefix_len = ip_prefix_len;
+	public void setIpPrefixLen(String ipPrefixLen) {
+		this.ipPrefixLen = ipPrefixLen;
 	}
 
 	@Override
 	public String toString() {
-		return "ContrailSubnetIp [ip_prefix=" + ip_prefix + ", ip_prefix_len=" + ip_prefix_len + "]";
+		return "ContrailSubnetIp [ip_prefix=" + ipPrefix + ", ip_prefix_len=" + ipPrefixLen + "]";
 	}
 
 }
