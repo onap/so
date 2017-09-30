@@ -22,8 +22,6 @@ package org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.builde
 
 import org.apache.commons.lang3.StringUtils;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
-import org.opendaylight.yang.gen.v1.org.onap.sdnc.northbound.generic.resource.rev170824.request.information.RequestInformation;
-import org.opendaylight.yang.gen.v1.org.onap.sdnc.northbound.generic.resource.rev170824.sdnc.request.header.SdncRequestHeader;
 import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.SdncUnderlayVpnPreprocessTask;
 import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.entity.OnapModelInformationEntity;
 import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.entity.ParamEntity;
@@ -36,35 +34,101 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+//import org.opendaylight.yang.gen.v1.org.onap.sdnc.northbound.generic.resource.rev170824.request.information.RequestInformation;
+//import org.opendaylight.yang.gen.v1.org.onap.sdnc.northbound.generic.resource.rev170824.sdnc.request.header.SdncRequestHeader;
+
 /**
  * Created by 10112215 on 2017/9/20.
  */
 public abstract class AbstractBuilder<IN, OUT> {
+     public static enum RequestAction {
+          CreateNetworkInstance(0, "CreateNetworkInstance"),
+          ActivateNetworkInstance(1, "ActivateNetworkInstance"),
+          CreateServiceInstance(2, "CreateServiceInstance"),
+          DeleteServiceInstance(3, "DeleteServiceInstance"),
+          DeleteNetworkInstance(4, "DeleteNetworkInstance"),
+          CreateVnfInstance(5, "CreateVnfInstance"),
+          ActivateVnfInstance(6, "ActivateVnfInstance"),
+          DeleteVnfInstance(7, "DeleteVnfInstance"),
+          CreateVfModuleInstance(8, "CreateVfModuleInstance"),
+          ActivateVfModuleInstance(9, "ActivateVfModuleInstance"),
+          DeleteVfModuleInstance(10, "DeleteVfModuleInstance"),
+          CreateContrailRouteInstance(11, "CreateContrailRouteInstance"),
+          DeleteContrailRouteInstance(12, "DeleteContrailRouteInstance"),
+          CreateSecurityZoneInstance(13, "CreateSecurityZoneInstance"),
+          DeleteSecurityZoneInstance(14, "DeleteSecurityZoneInstance");
+
+          String name;
+          int value;
+
+          private RequestAction(int value, String name) {
+               this.value = value;
+               this.name = name;
+          }
+
+          public String getName() {
+               return this.name;
+          }
+
+          public int getIntValue() {
+               return this.value;
+          }
+     }
+
+     public enum SvcAction {
+          Reserve(0, "reserve"),
+          Assign(1, "assign"),
+          Activate(2, "activate"),
+          Delete(3, "delete"),
+          Changeassign(4, "changeassign"),
+          Changedelete(5, "changedelete"),
+          Rollback(6, "rollback"),
+          Deactivate(7, "deactivate"),
+          Unassign(8, "unassign"),
+          Create(9, "create");
+
+          String name;
+          int value;
+
+          private SvcAction(int value, String name) {
+               this.value = value;
+               this.name = name;
+          }
+
+          public String getName() {
+               return this.name;
+          }
+
+          public int getIntValue() {
+               return this.value;
+          }
+     }
+
      protected String requestId = null;
 
      abstract OUT build(DelegateExecution execution, IN input) throws Exception;
 
      protected String getRequestActoin(DelegateExecution execution) {
-          String action = RequestInformation.RequestAction.CreateNetworkInstance.name();
+          String action = /*RequestInformation.*/RequestAction.CreateNetworkInstance.name();
           String operType = getOperType(execution);
           if (!StringUtils.isBlank(operType)) {
                if (RequestsDbConstant.OperationType.DELETE.equals(operType)) {
-                    action = RequestInformation.RequestAction.DeleteNetworkInstance.name();
+                    action = /*RequestInformation.*/RequestAction.DeleteNetworkInstance.name();
                } else if (RequestsDbConstant.OperationType.CREATE.equals(operType)) {
-                    action = RequestInformation.RequestAction.CreateNetworkInstance.name();
+                    action = /*RequestInformation.*/RequestAction.CreateNetworkInstance.name();
                }
           }
           return action;
      }
 
      protected String getOperationType(DelegateExecution execution) {
-          String action = SdncRequestHeader.SvcAction.Create.name();
+          String action = /*SdncRequestHeader.*/SvcAction.Create.name();
           String operType = getOperType(execution);
           if (!StringUtils.isBlank(operType)) {
                if (RequestsDbConstant.OperationType.DELETE.equals(operType)) {
-                    action = SdncRequestHeader.SvcAction.Delete.name();
+                    action = /*SdncRequestHeader.*/SvcAction.Delete.name();
                } else if (RequestsDbConstant.OperationType.CREATE.equals(operType)) {
-                    action = SdncRequestHeader.SvcAction.Create.name();
+                    action = /*SdncRequestHeader.*/SvcAction.Create.name();
                }
           }
           return action;
