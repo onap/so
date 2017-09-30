@@ -59,7 +59,7 @@ public class RequestHealthDiagnostic implements Serializable
     @JsonProperty("health-diagnostic-code")
     private String healthDiagnosticCode;
     @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+    private Map<String, Object> additionalProperties = new HashMap<>();
     private final static long serialVersionUID = 1166788526178388021L;
 
     @JsonProperty("request-client-name")
