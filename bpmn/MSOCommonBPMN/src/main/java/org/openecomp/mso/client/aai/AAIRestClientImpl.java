@@ -42,8 +42,6 @@ import org.onap.aai.domain.yang.Pservers;
 import org.openecomp.mso.bpmn.core.PropertyConfiguration;
 import org.openecomp.mso.client.aai.entities.CustomQuery;
 import org.openecomp.mso.client.aai.entities.Results;
-import org.openecomp.mso.logger.MsoLogger;
-import org.openecomp.mso.properties.MsoPropertiesFactory;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -56,15 +54,10 @@ public class AAIRestClientImpl implements AAIRestClient {
 
 	private final WebTarget webTarget;
 
-	private static MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory();
-
-	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.GENERAL);
-
 	private static final String ENDPOINT_VERSION = "v10";
 	private static final String ENDPOINT_GET_ALL = ENDPOINT_VERSION + "/cloud-infrastructure/pservers";
 	private static final String ENDPOINT_GET_ALL_VNFS = ENDPOINT_VERSION + "/network/generic-vnfs";
 	private static final String ENDPOINT_CUSTOM_QUERY = ENDPOINT_VERSION + "/query";
-	private static final String PSERVER_BY_VNF_QUERY = "g.V().has('aai-node-type', 'generic-vnf').has('vnf-name','USAUTOUFTIL2001UJDM02').out('runsOnPserver').has('aai-node-type', 'pserver')";
 	private static final String PSERVER_VNF_QUERY = "pservers-fromVnf";
 	private static final String GENERIC_VNF_PATH = ENDPOINT_VERSION + "/network/generic-vnfs/generic-vnf";
 	private static final String SERVICE_TOPOLOGY_BY_SERVICE_INSTANCE_ID = "store(‘x’).union(__.in(‘subscribesTo’).has(‘aai-node-type’,’customer’).store(‘x’),__.out(‘uses’).has(‘aai-node-type’,’allotted-resource’).store(‘x’),__.in(‘hasInstance’).has(‘aai-node-type’,’generic-vnf’).store(‘x’).union("
@@ -92,7 +85,6 @@ public class AAIRestClientImpl implements AAIRestClient {
 	public AAIRestClientImpl(final String host) throws NoSuchAlgorithmException {
 		Logger logger = Logger.getLogger(getClass().getName());
 		Client client = this.getSSLClient();
-		Map<String, String> properties = PropertyConfiguration.getInstance().getProperties("mso.bpmn.urn.properties");
 		webTarget = client.register(logger).register(new AAIClientResponseExceptionMapper()).target(host + "/aai");
 	}
 
@@ -107,7 +99,7 @@ public class AAIRestClientImpl implements AAIRestClient {
 	@Override
 	public List<Pserver> getPhysicalServerByVnfId(String vnfId, String transactionLoggingUuid)
 			throws JsonParseException, JsonMappingException, IOException {
-		List<String> startNodes = new ArrayList<String>();
+		List<String> startNodes = new ArrayList<>();
 		startNodes.add("network/generic-vnfs/generic-vnf/" + vnfId);
 		String jsonInput = webTarget.register(AAIQueryObjectMapperProvider.class).path(ENDPOINT_CUSTOM_QUERY)
 				.queryParam("format", "resource").request().header("X-FromAppId", "MSO")
