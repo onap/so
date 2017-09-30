@@ -41,6 +41,9 @@ public class Utils {
 
 	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
 
+	private Utils() {
+	}
+
 	public static String genSdncReq(Document reqDoc, RequestTunables rt) {
 		try {
 
