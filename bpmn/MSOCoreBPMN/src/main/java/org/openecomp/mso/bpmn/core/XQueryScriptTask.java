@@ -71,6 +71,7 @@ public class XQueryScriptTask extends BaseTask {
 	private Expression atomicInputVariables;
 	private Expression outputVariable;
 
+    @Override
 	public void execute(DelegateExecution execution) throws Exception {
 		if (msoLogger.isDebugEnabled()) {
 			msoLogger.debug("Started Executing " + getTaskName());
@@ -222,12 +223,11 @@ public class XQueryScriptTask extends BaseTask {
 	 */
 	private XQueryExecutable compile(XQueryCompiler compiler, String resource)
 			throws Exception {
-	    try (InputStream xqStream = getClass().getResourceAsStream(resource)) {
-		XQueryExecutable executable = compiler.compile(xqStream);
-		return executable;
-	    } catch (Exception e) {
-		msoLogger.debug ("Exception at resourceFile stream:", e);
-		return null;
-	    }
+		try (InputStream xqStream = getClass().getResourceAsStream(resource)) {
+            return compiler.compile(xqStream);
+		} catch (Exception e) {
+			msoLogger.debug ("Exception at resourceFile stream:", e);
+			return null;
+		}
 	}
 }
