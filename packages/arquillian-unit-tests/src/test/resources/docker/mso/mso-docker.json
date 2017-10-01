@@ -60,6 +60,9 @@
                 "https://localhost:8443/restconf/config",
                 "https://localhost:8443/restconf/operations/VNF-API:",
                 "https://localhost:8443/restconf/operations/NBNC-API:"
+                "https://localhost:8443/restconf/operations/NORTHBOUND-API:service-topology-operation",
+                "https://localhost:8443/restconf/operations/GENERIC-RESOURCE-API:",
+                "https://localhost:8443/restconf/operations/VNFTOPOLOGYAIC-API:"
             ],
 
             "bpelurl": "http://mso:8080/mso/SDNCAdapterCallbackService",
