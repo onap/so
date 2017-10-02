@@ -42,13 +42,13 @@ public class NetworkInfo {
 	private String id = "";
 	private NetworkStatus status = NetworkStatus.UNKNOWN;
 	private String provider = "";
-	private List<Integer> vlans = new ArrayList<Integer>();
-	private List<String> subnets = new ArrayList<String>();
+	private List<Integer> vlans = new ArrayList<>();
+	private List<String> subnets = new ArrayList<>();
 	private String shared = "";
 
 	static Map<String,NetworkStatus> NetworkStatusMap;
 	static {
-		NetworkStatusMap = new HashMap<String,NetworkStatus>();
+		NetworkStatusMap = new HashMap<>();
 		NetworkStatusMap.put("ACTIVE", NetworkStatus.ACTIVE);
 		NetworkStatusMap.put("DOWN", NetworkStatus.DOWN);
 		NetworkStatusMap.put("BUILD", NetworkStatus.BUILD);
@@ -96,14 +96,14 @@ public class NetworkInfo {
 
 		if (network.getProviderPhysicalNetwork() != null) {
 			this.provider = network.getProviderPhysicalNetwork();
-			if (network.getProviderNetworkType().equals("vlan")) {
+			if ("vlan".equals(network.getProviderNetworkType())) {
                 this.vlans.add(network.getProviderSegmentationId());
             }
 		}
-		else if (network.getSegments() != null && network.getSegments().size() > 0) {
+		else if (network.getSegments() != null && !network.getSegments().isEmpty()) {
 			Segment s = network.getSegments().get(0);
 			this.provider = s.getProviderPhysicalNetwork();
-			if (s.getProviderNetworkType().equals("vlan")) {
+			if ("vlan".equals(s.getProviderNetworkType())) {
                 for (Segment s1 : network.getSegments()) {
 					this.vlans.add(s1.getProviderSegmentationId());
 				}
