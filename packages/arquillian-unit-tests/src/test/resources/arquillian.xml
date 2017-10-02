@@ -67,8 +67,8 @@
             await:
              strategy: polling
              ports: [3306]
-             sleepPollingTime: 5 s
-             iterations: 24
+             sleepPollingTime: 15 s
+             iterations: 80
             env: [MYSQL_ROOT_PASSWORD=Etoile19_]
             portBindings: [3306/tcp]
             hostName: mariadb
