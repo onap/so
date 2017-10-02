@@ -87,9 +87,7 @@ public class E2EServiceInstances {
 	@ApiOperation(value="Create a E2E Service Instance on a version provided",response=Response.class)
 	public Response createE2EServiceInstance(String request, @PathParam("version") String version) {
 
-		Response response = E2EserviceInstances(request, Action.createInstance,	null, version);
-
-		return response;
+        return E2EserviceInstances(request, Action.createInstance,	null, version);
 	}
 
 	/**
@@ -103,14 +101,13 @@ public class E2EServiceInstances {
 	@ApiOperation(value="Delete E2E Service Instance on a specified version and serviceId",response=Response.class)
 	public Response deleteE2EServiceInstance(String request, @PathParam("version") String version, @PathParam("serviceId") String serviceId) {
 
-		instanceIdMap.put("serviceId", serviceId);
-		Response response = E2EserviceInstances(request, Action.deleteInstance,	null, version);
+        instanceIdMap.put("serviceId", serviceId);
 
-		return response;
+        return E2EserviceInstances(request, Action.deleteInstance, null, version);
 	}
 	
 	private Response E2EserviceInstances(String requestJSON, Action action,
-			HashMap<String, String> instanceIdMap, String version) {
+        HashMap<String, String> instanceIdMap, String version) {
 
 		String requestId = UUIDChecker.generateUUID(msoLogger);
 		long startTime = System.currentTimeMillis();
@@ -148,7 +145,8 @@ public class E2EServiceInstances {
 		String requestScope = sir.getService().getParameters().getNodeType();
 
 		try {
-			if(!(instanceName==null && requestScope.equals("service") && (action == Action.createInstance || action == Action.activateInstance))){
+			if(!(instanceName==null && "service".equals(requestScope) && (action == Action.createInstance || action
+					== Action.activateInstance))){
 				dup = (RequestsDatabase.getInstance()).checkInstanceNameDuplicate (instanceIdMap, instanceName, requestScope);
 			}
 		} catch (Exception e) {
@@ -469,10 +467,10 @@ public class E2EServiceInstances {
 		requestParameters.setSubscriptionServiceType("MOG");
 
 		//Userparams
-		List<E2EUserParam> userParams = new ArrayList<>(); 
+		List<E2EUserParam> userParams;
 		userParams = e2eSir.getService().getParameters().getRequestParameters().getUserParams();
-		List<Map<String, String>> userParamList = new ArrayList<Map<String,String>>();
-		Map<String,String> userParamMap= new HashMap<String, String>();
+		List<Map<String, String>> userParamList = new ArrayList<>();
+		Map<String,String> userParamMap= new HashMap<>();
 		for(E2EUserParam userp: userParams){
 			userParamMap.put(userp.getName(), userp.getValue());
 			userParamList.add(userParamMap);
