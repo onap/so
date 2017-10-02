@@ -12,7 +12,7 @@
 
     <extension qualifier="docker">
 
-      <property name="serverVersion">1.23</property>
+      <property name="serverVersion">1.24</property>
 
       <property name="serverUri">${docker.url}</property>
       <property name="definitionFormat">CUBE</property>

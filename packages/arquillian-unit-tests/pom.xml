@@ -1,336 +1,307 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.openecomp.so</groupId>
-		<artifactId>packages</artifactId>
-		<version>1.1.0-SNAPSHOT</version>
-	</parent>
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.openecomp.so</groupId>
+    <artifactId>packages</artifactId>
+    <version>1.1.0-SNAPSHOT</version>
+  </parent>
 
-	<groupId>org.openecomp.so.packages</groupId>
-	<name>Arquillian Unit Testing on MSO</name>
-	<artifactId>arquillian-unit-tests</artifactId>
+  <groupId>org.openecomp.so.packages</groupId>
+  <name>Arquillian Unit Testing on MSO</name>
+  <artifactId>arquillian-unit-tests</artifactId>
 
-	<packaging>jar</packaging>
+  <packaging>jar</packaging>
 
-	<profiles>
-		<profile>
-		<id>default-tests</id>
-		 <activation>
-			<activeByDefault>true</activeByDefault>
-		</activation>
-			<properties>
-				<it-suite-to-execute>**/IntegrationTestsSuite.java</it-suite-to-execute>
-				<container-to-start>jboss-as</container-to-start>
-				<mso.project.version>${project.version}</mso.project.version>
-			</properties>
-		</profile>
+  <profiles>
+    <profile>
+      <id>default-tests</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <it-suite-to-execute>**/IntegrationTestsSuite.java</it-suite-to-execute>
+        <container-to-start>jboss-as</container-to-start>
+        <mso.project.version>${project.version}</mso.project.version>
+      </properties>
+    </profile>
 
-    </profiles>
-
-
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.jboss.arquillian</groupId>
-				<artifactId>arquillian-bom</artifactId>
-				<version>1.1.11.Final</version>
-				<scope>import</scope>
-				<type>pom</type>
-			</dependency>
-
-			<dependency>
-				<groupId>org.jboss.spec</groupId>
-				<artifactId>jboss-javaee-6.0</artifactId>
-				<version>3.0.2.Final</version>
-				<type>pom</type>
-				<scope>import</scope>
-
-			</dependency>
-
-		</dependencies>
+  </profiles>
 
 
-	</dependencyManagement>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.jboss.arquillian</groupId>
+        <artifactId>arquillian-bom</artifactId>
+        <version>1.1.13.Final</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+
+      <dependency>
+        <groupId>org.jboss.spec</groupId>
+        <artifactId>jboss-javaee-6.0</artifactId>
+        <version>3.0.2.Final</version>
+        <type>pom</type>
+        <scope>import</scope>
+
+      </dependency>
+
+    </dependencies>
 
 
-	<dependencies>
-		<!-- For testing -->
-		<dependency>
-			<groupId>org.jboss.marshalling</groupId>
-			<artifactId>jboss-marshalling</artifactId>
-			<version>1.3.16.GA</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.jboss.arquillian.junit</groupId>
-			<artifactId>arquillian-junit-container</artifactId>
-			<scope>test</scope>
-
-		</dependency>
-
-<!--        <dependency>
-            <groupId>org.jboss.as</groupId>
-            <artifactId>jboss-as-arquillian-container-remote</artifactId>
-            <version>7.2.0.Final</version>
-            <scope>test</scope>
-        </dependency>-->
-
-     	<dependency>
-	      	<groupId>org.wildfly.arquillian</groupId>
-	 	 	<artifactId>wildfly-arquillian-container-remote</artifactId>
-	 		<version>1.1.0.Final</version>
-	 		<scope>test</scope>
-  		</dependency>
-
-  		<dependency>
-  			 <groupId>org.jboss.remoting</groupId>
-  			 <artifactId>jboss-remoting</artifactId>
-    		<version>4.0.9.Final</version>
-	 		<scope>test</scope>
-  		</dependency>
-
-  		<dependency>
-  		   	<groupId>org.jboss.logging</groupId>
-    		<artifactId>jboss-logging</artifactId>
-    		<version>3.2.1.Final</version>
-    		<scope>test</scope>
-  		</dependency>
-
-		<dependency>
-			<groupId>org.jboss.arquillian.protocol</groupId>
-			<artifactId>arquillian-protocol-servlet</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.jboss.shrinkwrap.resolver</groupId>
-			<artifactId>shrinkwrap-resolver-bom</artifactId>
-			<version>2.1.0-alpha-1</version>
-			<scope>runtime</scope>
-			<type>pom</type>
-		</dependency>
-
-		<!-- FOR DOCKER CONTROLLED BY ARQUILLIAN-->
-		<dependency>
-              <groupId>org.arquillian.cube</groupId>
-              <artifactId>arquillian-cube-openshift-parent</artifactId>
-              <version>1.0.0.Alpha15</version>
-              <type>pom</type>
-              <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.arquillian.cube</groupId>
-            <artifactId>arquillian-cube-docker</artifactId>
-            <version>1.0.0.Alpha15</version>
-            <scope>test</scope>
-        </dependency>
-
-		<!-- <dependency>
-			<groupId>org.eu.ingwar.tools</groupId>
-			<artifactId>arquillian-suite-extension</artifactId>
-			<version>1.1.1</version>
-			<scope>test</scope>
-		</dependency> -->
+  </dependencyManagement>
 
 
-		<!-- For testing -->
+  <dependencies>
+    <!-- For testing -->
+    <dependency>
+      <groupId>org.jboss.marshalling</groupId>
+      <artifactId>jboss-marshalling</artifactId>
+      <version>1.3.16.GA</version>
+      <scope>test</scope>
+    </dependency>
 
-		<!-- FOR JBOSS CODE -->
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-			<version>4.2.7.SP1</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
-			<version>4.2.7.SP1</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>jackson-mapper-asl</artifactId>
-			<version>1.9.9</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.validation</groupId>
-			<artifactId>validation-api</artifactId>
-			<version>1.0.0.GA</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.as</groupId>
-			<artifactId>jboss-as-ejb3</artifactId>
-			<version>7.2.0.Final</version>
-			<scope>test</scope>
-		</dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.junit</groupId>
+      <artifactId>arquillian-junit-container</artifactId>
+      <scope>test</scope>
+
+    </dependency>
+
+    <dependency>
+      <groupId>org.wildfly.arquillian</groupId>
+      <artifactId>wildfly-arquillian-container-remote</artifactId>
+      <version>1.1.0.Final</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.remoting</groupId>
+      <artifactId>jboss-remoting</artifactId>
+      <version>4.0.9.Final</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging</artifactId>
+      <version>3.2.1.Final</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.arquillian.protocol</groupId>
+      <artifactId>arquillian-protocol-servlet</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.shrinkwrap.resolver</groupId>
+      <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
+      <version>2.2.6</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- FOR DOCKER CONTROLLED BY ARQUILLIAN -->
+    <dependency>
+      <groupId>org.arquillian.cube</groupId>
+      <artifactId>arquillian-cube-docker</artifactId>
+      <version>1.9.0</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- For testing -->
+
+    <!-- FOR JBOSS CODE -->
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-core</artifactId>
+      <version>4.2.7.SP1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-entitymanager</artifactId>
+      <version>4.2.7.SP1</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.validation</groupId>
+      <artifactId>validation-api</artifactId>
+      <version>1.0.0.GA</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.as</groupId>
+      <artifactId>jboss-as-ejb3</artifactId>
+      <version>7.2.0.Final</version>
+      <scope>test</scope>
+    </dependency>
 
 
-   		<dependency>
-	      <groupId>com.smartbear.soapui</groupId>
-	      <artifactId>soapui</artifactId>
-	      <version>5.1.0</version>
-	      <type>jar</type>
-	      <scope>test</scope>
-	      <exclusions>
-		    <exclusion>
-		      	<groupId>thoughtworks</groupId>
-				<artifactId>xstream</artifactId>
-		  	</exclusion>
-		    <exclusion>
-		      	<groupId>gnu.cajo</groupId>
-				<artifactId>cajo</artifactId>
-		  	</exclusion>
-	  	  </exclusions>
-    	</dependency>
+    <dependency>
+      <groupId>com.smartbear.soapui</groupId>
+      <artifactId>soapui</artifactId>
+      <version>5.1.0</version>
+      <type>jar</type>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>thoughtworks</groupId>
+          <artifactId>xstream</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>gnu.cajo</groupId>
+          <artifactId>cajo</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
 
-    	<dependency>
-			<groupId>commons-codec</groupId>
-			<artifactId>commons-codec</artifactId>
-			<version>1.4</version>
-			<type>jar</type>
-			<scope>test</scope>
-		</dependency>
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>1.4</version>
+      <type>jar</type>
+      <scope>test</scope>
+    </dependency>
 
-    	<dependency>
-	        <groupId>org.seleniumhq.selenium</groupId>
-	        <artifactId>selenium-java</artifactId>
-	        <version>2.45.0</version>
-	        <scope>test</scope>
-		</dependency>
-		<dependency>
-		    <groupId>org.seleniumhq.selenium</groupId>
-		    <artifactId>selenium-firefox-driver</artifactId>
-		    <version>2.45.0</version>
-		    <scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.seleniumhq.selenium</groupId>
-		    <artifactId>selenium-server</artifactId>
-		    <version>2.45.0</version>
-		    <scope>test</scope>
-		</dependency>
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-java</artifactId>
+      <version>2.45.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-firefox-driver</artifactId>
+      <version>2.45.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-server</artifactId>
+      <version>2.45.0</version>
+      <scope>test</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpcore</artifactId>
-		</dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpcore</artifactId>
+    </dependency>
 
-		<dependency>
-			<groupId>org.openecomp.so</groupId>
-			<artifactId>asdc-controller</artifactId>
-			<version>${project.version}</version>
-			<scope>test</scope>
-			<classifier>classes</classifier>
-		</dependency>
+    <dependency>
+      <groupId>org.openecomp.so</groupId>
+      <artifactId>asdc-controller</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+      <classifier>classes</classifier>
+    </dependency>
 
-		<!-- <dependency>
-            <groupId>org.openecomp.so.adapters</groupId>
-            <artifactId>mso-appc-adapter</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-            <classifier>classes</classifier>
-        </dependency> -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+      <scope>test</scope>
+      <version>2.8.7</version>
+    </dependency>
 
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>1.10.19</version>
-			<scope>test</scope>
-		</dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <version>1.10.19</version>
+      <scope>test</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>org.openecomp.sdc.sdc-distribution-client</groupId>
-            <artifactId>sdc-distribution-client</artifactId>
-            <version>1.1.6-SNAPSHOT</version>
-			<scope>test</scope>
-		</dependency>
+    <dependency>
+      <groupId>org.openecomp.sdc.sdc-distribution-client</groupId>
+      <artifactId>sdc-distribution-client</artifactId>
+      <version>1.1.6-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>org.openecomp.so</groupId>
-			<artifactId>mso-catalog-db</artifactId>
-			<version>${project.version}</version>
-			<scope>test</scope>
-		</dependency>
-	<!-- FOR JMETER -->
-		<dependency>
-			<groupId>org.apache.jmeter</groupId>
-			<artifactId>ApacheJMeter_core</artifactId>
-			<version>2.13</version>
+    <dependency>
+      <groupId>org.openecomp.so</groupId>
+      <artifactId>mso-catalog-db</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- FOR JMETER -->
+    <dependency>
+      <groupId>org.apache.jmeter</groupId>
+      <artifactId>ApacheJMeter_core</artifactId>
+      <version>2.13</version>
 
-			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>commons-math3</artifactId>
-					<groupId>commons-math3</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>commons-pool2</artifactId>
-					<groupId>commons-pool2</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>commons-math3</artifactId>
+          <groupId>commons-math3</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-pool2</artifactId>
+          <groupId>commons-pool2</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
 
-		<dependency>
-			<groupId>org.apache.jmeter</groupId>
-			<artifactId>ApacheJMeter_http</artifactId>
-			<version>2.13</version>
+    <dependency>
+      <groupId>org.apache.jmeter</groupId>
+      <artifactId>ApacheJMeter_http</artifactId>
+      <version>2.13</version>
 
-			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>commons-math3</artifactId>
-					<groupId>commons-math3</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>commons-pool2</artifactId>
-					<groupId>commons-pool2</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>commons-math3</artifactId>
+          <groupId>commons-math3</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-pool2</artifactId>
+          <groupId>commons-pool2</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
 
-		<dependency>
-			<groupId>org.apache.jmeter</groupId>
-			<artifactId>ApacheJMeter_jdbc</artifactId>
-			<version>2.13</version>
+    <dependency>
+      <groupId>org.apache.jmeter</groupId>
+      <artifactId>ApacheJMeter_jdbc</artifactId>
+      <version>2.13</version>
 
-			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>commons-math3</artifactId>
-					<groupId>commons-math3</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>commons-pool2</artifactId>
-					<groupId>commons-pool2</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>commons-math3</artifactId>
+          <groupId>commons-math3</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-pool2</artifactId>
+          <groupId>commons-pool2</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
 
-		<!-- END  FOR JMETER -->
-	</dependencies>
+    <!-- END FOR JMETER -->
+  </dependencies>
 
-	<build>
-		<finalName>arquillian-tests</finalName>
-		<plugins>
-			<plugin>
-			    <groupId>org.codehaus.groovy.maven</groupId>
-       			<artifactId>gmaven-plugin</artifactId>
-			    <executions>
-			      <execution>
-			        <phase>generate-resources</phase>
-			        <goals>
-			          <goal>execute</goal>
-			        </goals>
-			        <configuration>
+  <build>
+    <finalName>arquillian-tests</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.groovy.maven</groupId>
+        <artifactId>gmaven-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>execute</goal>
+            </goals>
+            <configuration>
 			          <source>
 			            if ( project.properties['docker.host'] != null ) {
 			          		project.properties['docker.host.truncated']=project.properties['docker.host'].replaceFirst("^(http://|https://)","");
@@ -348,73 +319,73 @@
 			          		project.properties['mso.version']=project.properties['mso.project.version'];
 			          	}
 			          </source>
-			        </configuration>
-			      </execution>
-			  </executions>
-			</plugin>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
 
 
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>wagon-maven-plugin</artifactId>
-				<version>1.0</version>
-				<executions>
-					<execution>
-						<id>download-mariadb-connector</id>
-						<phase>pre-integration-test</phase>
-						<goals>
-							<goal>download-single</goal>
-						</goals>
-						<configuration>
-							<url>http://central.maven.org/</url>
-							<fromFile>maven2/org/mariadb/jdbc/mariadb-java-client/1.5.4/mariadb-java-client-1.5.4.jar</fromFile>
-							<toDir>${project.build.directory}/mariadb-connector</toDir>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-failsafe-plugin</artifactId>
-				<version>2.16</version>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>wagon-maven-plugin</artifactId>
+        <version>1.0</version>
+        <executions>
+          <execution>
+            <id>download-mariadb-connector</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>download-single</goal>
+            </goals>
+            <configuration>
+              <url>http://central.maven.org/</url>
+              <fromFile>maven2/org/mariadb/jdbc/mariadb-java-client/1.5.4/mariadb-java-client-1.5.4.jar</fromFile>
+              <toDir>${project.build.directory}/mariadb-connector</toDir>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>2.16</version>
 
-				<executions>
-					<execution>
-						<goals>
-							<goal>integration-test</goal>
-							<goal>verify</goal>
-						</goals>
-						<configuration>
-						  <skipAfterFailureCount>1</skipAfterFailureCount>
-						</configuration>
-					</execution>
-				</executions>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+            <configuration>
+              <skipAfterFailureCount>1</skipAfterFailureCount>
+            </configuration>
+          </execution>
+        </executions>
 
-				<configuration>
-					<systemPropertyVariables>
-						<arquillian.launch>${container-to-start}</arquillian.launch>
-						<target.folder>${project.build.directory}</target.folder>
-						<docker.url>${docker.host}</docker.url>
-						<docker.hostname>${docker.host.truncated}</docker.hostname>
-						<images.version>${mso.version}</images.version>
-					</systemPropertyVariables>
-				 	<reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
-					<testFailureIgnore>true</testFailureIgnore>
-					<includes>
-						<include>${it-suite-to-execute}</include>
-					</includes>
-				</configuration>
-			</plugin>
+        <configuration>
+          <systemPropertyVariables>
+            <arquillian.launch>${container-to-start}</arquillian.launch>
+            <target.folder>${project.build.directory}</target.folder>
+            <docker.url>${docker.host}</docker.url>
+            <docker.hostname>${docker.host.truncated}</docker.hostname>
+            <images.version>${mso.version}</images.version>
+          </systemPropertyVariables>
+          <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+          <testFailureIgnore>true</testFailureIgnore>
+          <includes>
+            <include>${it-suite-to-execute}</include>
+          </includes>
+        </configuration>
+      </plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
 
-				<configuration>
-					<skipTests>true</skipTests>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+        <configuration>
+          <skipTests>true</skipTests>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>
