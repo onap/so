@@ -22,10 +22,17 @@
 package org.openecomp.mso.adapters.vnf;
 
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -540,6 +547,41 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         return string;
     }
 
+    private boolean callHeatbridge(String heatStackId) {
+    	String executionDir = "/usr/local/lib/python2.7/dist-packages/heatbridge";
+    	String openstackIdentityUrl = "", username = "", password = "", tenant = "", region = "", owner = "";
+    	long waitTimeMs = 10000l;
+    	try {
+    		String[] cmdarray = {"/usr/bin/python", "HeatBridgeMain.py", openstackIdentityUrl, username, password, tenant, region, owner, heatStackId};
+    		String[] envp = null;
+    		File dir = new File(executionDir);
+    		LOGGER.debug("Calling HeatBridgeMain.py in " + dir + " with arguments " + Arrays.toString(cmdarray));
+    		Runtime r = Runtime.getRuntime();
+    		Process p = r.exec(cmdarray, envp, dir);
+    		/*			
+ 			BufferedReader stdout = new BufferedReader(new InputStreamReader(p.getInputStream()));
+ 			String linein = stdout.readLine();
+ 			while (linein!=null) {
+ 				System.out.println(linein);
+ 				linein = stdout.readLine();
+ 			}
+    		 */
+    		boolean wait = p.waitFor(waitTimeMs, TimeUnit.MILLISECONDS);
+
+    		LOGGER.debug(" HeatBridgeMain.py returned " + wait + " with code " + p.exitValue());
+    		return (wait && p.exitValue()==0);
+    	} catch (IOException e) {
+    		LOGGER.debug(" HeatBridgeMain.py failed with IO Exception! " + e);
+    		return false;
+    	} catch (InterruptedException e) {
+    		LOGGER.debug(" HeatBridgeMain.py failed when interrupted! " + e);
+    		return false;
+    	} catch (RuntimeException e) {
+    		LOGGER.debug(" HeatBridgeMain.py failed for unknown reasons!" + e);
+    		return false;
+    	}
+    }
+
     private void sendMapToDebug(Map<String, Object> inputs, String optionalName) {
     	int i = 0;
     	StringBuilder sb = new StringBuilder(optionalName == null ? "\ninputs" : "\n" + optionalName);
@@ -730,6 +772,9 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         vfRollback.setBaseGroupHeatStackId(baseVfHeatStackId);
         vfRollback.setIsBase(isBaseRequest);
         vfRollback.setModelCustomizationUuid(mcu);
+
+        // Put data into A&AI through Heatstack
+        boolean heatStackCallSuccess = callHeatbridge(baseVfHeatStackId);
 
         // First, look up to see if the VF already exists.
         MsoHeatUtils heat = new MsoHeatUtils (MSO_PROP_VNF_ADAPTER, msoPropertiesFactory,cloudConfigFactory);
