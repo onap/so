@@ -156,10 +156,10 @@ public class DeleteVnfNotification {
      * @return String type (deleteVnfNotification)
      */
  
-    
+    @Override
 	public String toString() {
-    	String deleteVnfNotification = "";
-    	if (exception==null) {
+    	String deleteVnfNotification;
+    	if (exception == null) {
     		deleteVnfNotification = "<ns2:deleteVnfNotification xmlns:ns2=\"http://org.openecomp.mso/vnfNotify\"" + '\n' +
     				       "  xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">" + '\n' +
     				       "   <messageId>"+messageId+"</messageId>" + '\n' +
