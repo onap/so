@@ -33,11 +33,11 @@ import org.openecomp.mso.global_tests.soapui.SoapUiITCase;
 @RunWith(Suite.class)
 @SuiteClasses({
 
-//    MSOUiITCase.class,
+//	MSOUiITCase.class,
 //	AppCAdapterITCase.class,
-	SoapUiITCase.class,
-    ASDCITCase.class,
-    LogsCheckerITCase.class
+//	SoapUiITCase.class,
+//	ASDCITCase.class,
+//	LogsCheckerITCase.class
 
 })
 public class IntegrationTestsSuite {
