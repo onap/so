@@ -73,7 +73,7 @@ public class SdncUnderlayVpnOperationClient {
         try {
             networkRpcOutputEntiy = genericResourceApiClient.postNetworkTopologyOperation(body).execute().body();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.debug("Exception: ", e);
             updateProgress(RequestsDbConstant.Status.ERROR, null, null, "sendRestrequestAndHandleResponse exception:" + e.getMessage());
             return false;
         }
