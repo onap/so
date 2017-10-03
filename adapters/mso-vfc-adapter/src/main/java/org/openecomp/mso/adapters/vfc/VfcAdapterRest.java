@@ -82,6 +82,7 @@ public class VfcAdapterRest {
             RestfulResponse rsp = driverMgr.createNs(nsInput);
             return buildResponse(rsp);
         } catch(ApplicationException e) {
+            LOGGER.debug("ApplicationException: ", e);
             return e.buildErrorResponse();
         }
     }
@@ -107,6 +108,7 @@ public class VfcAdapterRest {
             RestfulResponse rsp = driverMgr.deleteNs(nsOperationKey, nsInstanceId);
             return buildResponse(rsp);
         } catch(ApplicationException e) {
+            LOGGER.debug("ApplicationException: ", e);
             return e.buildErrorResponse();
         }
     }
@@ -135,6 +137,7 @@ public class VfcAdapterRest {
             RestfulResponse rsp = driverMgr.getNsProgress(nsOperationKey, jobId);
             return buildResponse(rsp);
         } catch(ApplicationException e) {
+            LOGGER.debug("ApplicationException: ", e);
             return e.buildErrorResponse();
         }
     }
@@ -161,6 +164,7 @@ public class VfcAdapterRest {
             RestfulResponse rsp = driverMgr.instantiateNs(nsInstanceId, nsInput);
             return buildResponse(rsp);
         } catch(ApplicationException e) {
+            LOGGER.debug("ApplicationException: ", e);
             return e.buildErrorResponse();
         }
     }
@@ -188,6 +192,7 @@ public class VfcAdapterRest {
             RestfulResponse rsp = driverMgr.terminateNs(nsOperationKey, nsInstanceId);
             return buildResponse(rsp);
         } catch(ApplicationException e) {
+            LOGGER.debug("ApplicationException: ", e);
             return e.buildErrorResponse();
         }
     }
