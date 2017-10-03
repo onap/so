@@ -24,9 +24,7 @@ import java.util.HashMap;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import org.openecomp.mso.cloud.CloudConfigFactory;
-import org.openecomp.mso.openstack.exceptions.MsoAdapterException;
 import org.openecomp.mso.openstack.exceptions.MsoCloudIdentityNotFound;
 import org.openecomp.mso.openstack.exceptions.MsoCloudSiteNotFound;
 import org.openecomp.mso.openstack.exceptions.MsoException;
@@ -37,7 +35,7 @@ import org.openecomp.mso.openstack.utils.MsoCommonUtils;
 import org.openecomp.mso.openstack.utils.MsoHeatUtils;
 import org.openecomp.mso.properties.MsoPropertiesFactory;
 
-
+import com.woorea.openstack.heat.model.CreateStackParam;
 
 /**
  * This class implements test methods of the MsoHeatUtils
@@ -54,25 +52,29 @@ public class MsoHeatUtilsTest extends MsoCommonUtils {
 		ClassLoader classLoader = CloudConfigTest.class.getClassLoader();
 		String config = classLoader.getResource("cloud_config.json").toString().substring(5);
 		cloudConfigFactory.initializeCloudConfig(config, 1);
-		msoHeatUtils = new MsoHeatUtils("NO_PROP",msoPropertiesFactory,cloudConfigFactory);
+		msoHeatUtils = new MsoHeatUtils("NO_PROP", msoPropertiesFactory, cloudConfigFactory);
 	}
 
 	@Test
-	public final void testCreateStackBadCloudConfig () throws MsoStackAlreadyExists, MsoTenantNotFound, MsoException, MsoCloudSiteNotFound {
+	public final void testCreateStackBadCloudConfig()
+			throws MsoStackAlreadyExists, MsoTenantNotFound, MsoException, MsoCloudSiteNotFound {
 		try {
-			msoHeatUtils.createStack ("DOESNOTEXIST", "test", "stackName", "test",  new HashMap<String,Object> (), Boolean.TRUE, 10);
+			msoHeatUtils.createStack("DOESNOTEXIST", "test", "stackName", "test", new HashMap<String, Object>(),
+					Boolean.TRUE, 10);
 		} catch (MsoCloudSiteNotFound e) {
 
 		} catch (java.lang.NullPointerException npe) {
-			
+
 		}
 
 	}
 
 	@Test
-    public final void testCreateStackFailedConnectionHeatClient () throws MsoStackAlreadyExists, MsoTenantNotFound, MsoException, MsoCloudSiteNotFound {
+	public final void testCreateStackFailedConnectionHeatClient()
+			throws MsoStackAlreadyExists, MsoTenantNotFound, MsoException, MsoCloudSiteNotFound {
 		try {
-			msoHeatUtils.createStack ("MT", "test", "stackName", "test",  new HashMap<String,Object> (), Boolean.TRUE, 10);
+			msoHeatUtils.createStack("MT", "test", "stackName", "test", new HashMap<String, Object>(), Boolean.TRUE,
+					10);
 		} catch (MsoIOException e) {
 
 		}
@@ -80,15 +82,76 @@ public class MsoHeatUtilsTest extends MsoCommonUtils {
 	}
 
 	@Test
-    public final void testCreateStackFailedConnection () throws MsoStackAlreadyExists, MsoTenantNotFound, MsoException, MsoCloudSiteNotFound {
+	public final void testCreateStackFailedConnection()
+			throws MsoStackAlreadyExists, MsoTenantNotFound, MsoException, MsoCloudSiteNotFound {
 		try {
-			msoHeatUtils.createStack ("MT", "test", "stackName", "test",  new HashMap<String,Object> (), Boolean.TRUE, 10);
+			msoHeatUtils.createStack("MT", "test", "stackName", "test", new HashMap<String, Object>(), Boolean.TRUE,
+					10);
 		} catch (MsoIOException e) {
 
 		}
 
 	}
 
+	@Test
+	public final void createStackSuccessWithEnvironment() throws MsoException {
+		try {
+			msoHeatUtils.createStack("MT", "test", "stackName", "test", new HashMap<String, Object>(), Boolean.TRUE, 10,
+					"environment");
+		} catch (MsoIOException e) {
 
+		}
 
+	}
+
+	@Test
+	public final void createStackSuccessWithFiles() throws MsoException {
+		try {
+			msoHeatUtils.createStack("MT", "test", "stackName", "test", new HashMap<String, Object>(), Boolean.TRUE, 10,
+					"environment", new HashMap<String, Object>());
+		} catch (MsoIOException e) {
+
+		}
+
+	}
+
+	@Test
+	public final void createStackSuccessWithHeatFiles() throws MsoException {
+		try {
+			msoHeatUtils.createStack("MT", "test", "stackName", "test", new HashMap<String, Object>(), Boolean.TRUE, 10,
+					"environment", new HashMap<String, Object>(), new HashMap<String, Object>());
+		} catch (MsoIOException e) {
+
+		}
+	}
+
+	@Test
+	public final void requestToStringBuilderTest() {
+		CreateStackParam param = new CreateStackParam();
+		param.setDisableRollback(false);
+		param.setEnvironment("environment");
+		param.setFiles(new HashMap<String, Object>());
+		param.setParameters(new HashMap<>());
+		param.setStackName("stackName");
+		param.setTemplate("template");
+		param.setTemplateUrl("http://templateUrl");
+		param.setTimeoutMinutes(1);
+
+		msoHeatUtils.requestToStringBuilder(param);
+	}
+
+	@Test
+	public final void heatCacheResetTest() {
+		msoHeatUtils.heatCacheReset();
+	}
+
+	@Test
+	public final void expireHeatClientTest() {
+		msoHeatUtils.expireHeatClient("tenantId", "cloudId");
+	}
+
+	@Test
+	public final void heatCacheCleanupTest() {
+		msoHeatUtils.heatCacheCleanup();
+	}
 }
