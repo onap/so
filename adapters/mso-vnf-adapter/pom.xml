@@ -30,7 +30,7 @@
 				<version>2.3</version>
 				<executions>
 					<execution>
-					    <id>Synch</id>
+						<id>Synch</id>
 						<goals>
 							<goal>wsgen</goal>
 						</goals>
@@ -42,7 +42,7 @@
 						</configuration>
 					</execution>
 					<execution>
-					        <id>Asynch</id>
+						<id>Asynch</id>
 						<goals>
 							<goal>wsgen</goal>
 						</goals>
@@ -70,7 +70,7 @@
 		</plugins>
 		<pluginManagement>
 			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
 					only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
@@ -144,7 +144,18 @@
 			<artifactId>status-control</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.jmockit</groupId>
+			<artifactId>jmockit</artifactId>
+			<version>1.8</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
 		<!-- <dependency> -->
 		<!-- <groupId>org.openecomp.so</groupId> -->
 		<!-- <artifactId>mso-catalog-db</artifactId> -->
