@@ -282,6 +282,7 @@ public class BpelRestClient {
 				client.close();
 			} catch (IOException e) {
 				// ignore
+				LOGGER.debug("IOException: ", e);
 			}
 		}
 		LOGGER.debug("Response code from BPEL server: "+lastResponseCode);
