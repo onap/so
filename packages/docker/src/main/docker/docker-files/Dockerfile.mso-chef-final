@@ -82,10 +82,10 @@ COPY ./maven/artifacts/* $JBOSS_HOME/standalone/deployments/
 RUN mkdir -p /etc/mso/config.d/ASDC && chown -R jboss:jboss /etc/mso/config.d/ASDC && chmod u+xrw /etc/mso/config.d/ASDC
 
 ## Install heatbridge
-RUN apt-get install -y python && apt-get install -y python-pip && echo 'PIP Installed, doing upgrade' && pip install --upgrade pip
-RUN mkdir /opt/mso/heatbridge
-COPY heatbridge/heatbridge-0.3.0.dev0-py2-none-any.whl /opt/mso/heatbridge
-RUN pip install /opt/mso/heatbridge/heatbridge-0.3.0.dev0-py2-none-any.whl
+#RUN apt-get install -y python && apt-get install -y python-pip && echo 'PIP Installed, doing upgrade' && pip install --upgrade pip
+#RUN mkdir /opt/mso/heatbridge
+#COPY heatbridge/heatbridge-0.3.0.dev0-py2-none-any.whl /opt/mso/heatbridge
+#RUN pip install /opt/mso/heatbridge/heatbridge-0.3.0.dev0-py2-none-any.whl
 
 ### Open Ports
 EXPOSE 8080
