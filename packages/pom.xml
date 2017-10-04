@@ -26,12 +26,17 @@
 			</modules>
 		</profile>
 
+    <!-- Those profile are exclusive, choose docker or with-integration-tests -->
 		<profile>
 			<id>docker</id>
 			<modules>
 				<module>deliveries</module>
 				<module>docker</module>
 			</modules>
+			<properties>
+					<!-- For this profile we probably don't want to skip the docker push (if deploy goal is specified) -->
+					<docker.skip.push>false</docker.skip.push>
+			</properties>
 		</profile>
 
 		<profile>
@@ -41,6 +46,10 @@
 				<module>docker</module>
 				<module>arquillian-unit-tests</module>
 			</modules>
+			<properties>
+					<!-- For this profile we want to skip the docker push (if deploy goal is specified) -->
+					<docker.skip.push>true</docker.skip.push>
+			</properties>
 		</profile>
 
 	</profiles>
