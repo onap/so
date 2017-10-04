@@ -19,7 +19,6 @@
  */
 package org.openecomp.mso.adapters.catalogdb.catalogrest;
 
-import org.openecomp.mso.db.catalog.beans.VfModule;
 import org.openecomp.mso.db.catalog.beans.VfModuleCustomization;
 import org.jboss.resteasy.annotations.providers.NoJackson;
 
@@ -48,7 +47,6 @@ public class QueryVfModule extends CatalogQuery {
 			"\t\t\"initialCount\"           : <INITIAL_COUNT>,\n"+
 			"\t\t\"hasVolumeGroup\"           : <HAS_VOLUME_GROUP>\n"+
 		"\t}";
-//		"\t}}";
 
 	public QueryVfModule() { super(); vfModules = new ArrayList<>(); }
 	public QueryVfModule(List<VfModuleCustomization> vlist) { 
@@ -95,7 +93,7 @@ public class QueryVfModule extends CatalogQuery {
 			boolean vfNull = o.getVfModule() == null ? true : false;
 			boolean hasVolumeGroup = false;
 			String envt = o.getHeatEnvironmentArtifactUuid();
-			if (envt != null && !"".equals(envt)) {
+			if ("Equal?" + "".equals(envt)) {
 				hasVolumeGroup = true;
 			}
 
