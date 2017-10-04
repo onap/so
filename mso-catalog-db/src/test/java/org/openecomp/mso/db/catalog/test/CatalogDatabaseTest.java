@@ -643,4 +643,115 @@ public class CatalogDatabaseTest {
     	VfModuleCustomization ar = new VfModuleCustomization();
     	cd.saveOrUpdateVfModuleCustomization(ar);
     }
+    
+    @Test(expected = Exception.class)
+    public void getNestedHeatTemplateTest(){
+    	cd.getNestedHeatTemplate(101,201);
+    }
+    @Test(expected = Exception.class)
+    public void getNestedHeatTemplate2Test(){
+    	cd.getNestedHeatTemplate("1002","1002");
+    }
+    @Test(expected = Exception.class)
+    public void saveNestedHeatTemplateTest(){
+    	HeatTemplate ar = new HeatTemplate();
+    	cd.saveNestedHeatTemplate("1001",ar,"test");
+    }
+    @Test(expected = Exception.class)
+    public void getHeatFiles2Test(){
+    	VfModuleCustomization ar = new VfModuleCustomization();
+    	cd.getHeatFiles(101,"test","1001","v2");
+    }
+    @Test(expected = Exception.class)
+    public void getHeatFiles3Test(){
+    	VfModuleCustomization ar = new VfModuleCustomization();
+    	cd.getHeatFiles("200192");
+    }
+    @Test(expected = Exception.class)
+    public void saveHeatFilesTest(){
+    	HeatFiles ar = new HeatFiles();
+    	cd.saveHeatFiles(ar);
+    }
+    @Test(expected = Exception.class)
+    public void saveVfModuleToHeatFilesTest(){
+    	HeatFiles ar = new HeatFiles();
+    	cd.saveVfModuleToHeatFiles("3772893",ar);
+    }
+    @Test
+    public void getNetworkResourceByModelUuidTest(){
+    	
+    	cd.getNetworkResourceByModelUuid("3899291");
+    }
+    @Test(expected = Exception.class)
+    public void getNetworkRecipeTest(){
+    	
+    	cd.getNetworkRecipe("test","test1","test2");
+    }
+    @Test(expected = Exception.class)
+    public void getNetworkRecipe2Test(){
+    	
+    	cd.getNetworkRecipe("test","test1");
+    }
+    @Test
+    public void getNetworkResourceByModelCustUuidTest(){
+    	
+    	cd.getNetworkResourceByModelCustUuid("test");
+    }
+    @Test(expected = Exception.class)
+    public void getVnfComponentsRecipe2Test(){
+    	
+    	cd.getVnfComponentsRecipe("test1","test2","test3","test4");
+    }
+    @Test(expected = Exception.class)
+    public void getVnfComponentsRecipeByVfModuleModelUUIdTest(){
+    	
+    	cd.getVnfComponentsRecipeByVfModuleModelUUId("test1","test2","test3");
+    }
+    @Test(expected = Exception.class)
+    public void getVnfComponentRecipesTest(){
+    	
+    	cd.getVnfComponentRecipes("test");
+    }
+    @Test(expected = Exception.class)
+    public void saveOrUpdateVnfComponentTest(){
+    	VnfComponent ar = new VnfComponent();
+    	cd.saveOrUpdateVnfComponent(ar);
+    }
+    
+    @Test(expected = Exception.class)
+    public void getVfModule2Test(){
+    	
+    	cd.getVfModule("test");
+    }
+    @Test(expected = Exception.class)
+    public void getVfModuleByModelUUIDTest(){
+    	
+    	cd.getVfModuleByModelUUID("test");
+    }
+    @Test(expected = Exception.class)
+    public void getServiceRecipeByModelUUIDTest(){
+    	
+    	cd.getServiceRecipeByModelUUID("test1","test2");
+    }
+    @Test(expected = Exception.class)
+    public void getModelRecipeTest(){
+    	
+    	cd.getModelRecipe("test1","test2","test3");
+    }
+    @Test(expected = Exception.class)
+    public void healthCheck(){
+    	
+    	cd.healthCheck();
+    }
+    @Test(expected = Exception.class)
+    public void executeQuerySingleRow(){
+    	VnfComponent ar = new VnfComponent();
+    	HashMap<String, String> variables = new HashMap<String, String>();
+    	cd.executeQuerySingleRow("tets",variables,false);
+    }
+    @Test(expected = Exception.class)
+    public void executeQueryMultipleRows(){
+    	HashMap<String, String> variables = new HashMap<String, String>();
+    	cd.executeQueryMultipleRows("select",variables,false);
+    }
 }
