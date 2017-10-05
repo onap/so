@@ -8,5 +8,4 @@ ONAP Service Orchestration Documentation
 .. toctree::
    :maxdepth: 1
 
-	
-	ONAP SO Env Setup.pdf
+   Install_and_Configure_an_Ubuntu_VM.rst
