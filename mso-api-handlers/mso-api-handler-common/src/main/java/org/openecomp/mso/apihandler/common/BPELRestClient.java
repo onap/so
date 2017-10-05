@@ -47,7 +47,7 @@ public class BPELRestClient extends RequestClient {
                               String schemaVersion,
                               String serviceInstanceId,
                               String action) throws ClientProtocolException, IOException {
-        String encryptedCredentials = null;
+        String encryptedCredentials;
         HttpPost post = new HttpPost (url);
         msoLogger.debug ("BPEL url is: " + url);
         StringEntity input = new StringEntity (bpelReqXML);

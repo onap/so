@@ -142,19 +142,19 @@ public class CatalogDbAdapterRest {
 		List<VnfResourceCustomization> ret;
 
 		try (CatalogDatabase db = CatalogDatabase.getInstance()) {
-			if (vnfUuid != null && !vnfUuid.equals("")) {
+			if (vnfUuid != null && !"".equals(vnfUuid)) {
 				uuid = vnfUuid;
 				LOGGER.debug ("Query serviceVnfs getAllVnfsByVnfModelCustomizationUuid vnfModelCustomizationUuid: " + uuid);
 				ret = db.getAllVnfsByVnfModelCustomizationUuid(uuid);
 			}
-			else if (smUuid != null && !smUuid.equals("")) {
+			else if (smUuid != null && !"".equals(smUuid)) {
 				uuid = smUuid;
 				LOGGER.debug ("Query serviceVnfs getAllVnfsByServiceModelUuid serviceModelUuid: " + uuid);
 				ret = db.getAllVnfsByServiceModelUuid(uuid);
 			}
-			else if (smiUuid != null && !smiUuid.equals("")) {
+			else if (smiUuid != null && !"".equals(smiUuid)) {
 				uuid = smiUuid;
-				if (smVer != null && !smVer.equals("")) {
+				if (smVer != null && !"".equals(smVer)) {
 					LOGGER.debug ("Query serviceVnfs getAllNetworksByServiceModelInvariantUuid serviceModelInvariantUuid: " + uuid+ " serviceModelVersion: "+ smVer);
 					ret = db.getAllVnfsByServiceModelInvariantUuid(uuid, smVer);
 				}
@@ -163,8 +163,8 @@ public class CatalogDbAdapterRest {
 					ret = db.getAllVnfsByServiceModelInvariantUuid(uuid);
 				}
 			}
-			else if (smName != null && !smName.equals("")) {
-				if (smVer != null && !smVer.equals("")) {
+			else if (smName != null && !"".equals(smName)) {
+				if (smVer != null && !"".equals(smVer)) {
 					LOGGER.debug ("Query serviceVnfs getAllVnfsByServiceName serviceModelInvariantName: " + smName+ " serviceModelVersion: "+ smVer);
 					ret = db.getAllVnfsByServiceName(smName, smVer);
 				}
@@ -221,7 +221,7 @@ public class CatalogDbAdapterRest {
 		@QueryParam("serviceModelVersion") String smVer,
 		@QueryParam("networkModelVersion") String nmVer
 	) {
-		if (nModelName != null && !nModelName.equals("")) {
+		if (nModelName != null && !"".equals(nModelName)) {
 			nType = nModelName;
 		}
 		return serviceNetworksImpl (version, IS_ARRAY, nUuid, nType, smUuid, smiUuid, smVer);
@@ -234,24 +234,24 @@ public class CatalogDbAdapterRest {
 		List<NetworkResourceCustomization> ret;
 
 		try (CatalogDatabase db = CatalogDatabase.getInstance()) {
-			if (nUuid != null && !nUuid.equals("")) {
+			if (nUuid != null && !"".equals(nUuid)) {
 				uuid = nUuid;
 				LOGGER.debug ("Query serviceNetworks getAllNetworksByNetworkModelCustomizationUuid networkModelCustomizationUuid: " + uuid);
 				ret = db.getAllNetworksByNetworkModelCustomizationUuid(uuid);
 			}
-			else if (smUuid != null && !smUuid.equals("")) {
+			else if (smUuid != null && !"".equals(smUuid)) {
 				uuid = smUuid;
 				LOGGER.debug ("Query serviceNetworks getAllNetworksByServiceModelUuid serviceModelUuid: " + uuid);
 				ret = db.getAllNetworksByServiceModelUuid(uuid);
 			}
-			else if (nType != null && !nType.equals("")) {
+			else if (nType != null && !"".equals(nType)) {
 				uuid = nType;
 				LOGGER.debug ("Query serviceNetworks getAllNetworksByNetworkType serviceModelUuid: " + uuid);
 				ret = db.getAllNetworksByNetworkType(uuid);
 			}
-			else if (smiUuid != null && !smiUuid.equals("")) {
+			else if (smiUuid != null && !"".equals(smiUuid)) {
 				uuid = smiUuid;
-				if (smVer != null && !smVer.equals("")) {
+				if (smVer != null && !"".equals(smVer)) {
 					LOGGER.debug ("Query serviceNetworks getAllNetworksByServiceModelInvariantUuid serviceModelInvariantUuid: " + uuid+ " serviceModelVersion: "+ smVer);
 					ret = db.getAllNetworksByServiceModelInvariantUuid(uuid, smVer);
 				}
@@ -299,14 +299,14 @@ public class CatalogDbAdapterRest {
 		ServiceMacroHolder ret;
 
 		try (CatalogDatabase db = CatalogDatabase.getInstance()) {
-			if (smUuid != null && !smUuid.equals("")) {
+			if (smUuid != null && !"".equals(smUuid)) {
 				uuid = smUuid;
 				LOGGER.debug ("Query serviceMacroHolder getAllResourcesByServiceModelUuid serviceModelUuid: " + uuid);
 				ret = db.getAllResourcesByServiceModelUuid(uuid);
 			}
-			else if (smiUuid != null && !smiUuid.equals("")) {
+			else if (smiUuid != null && !"".equals(smiUuid)) {
 				uuid = smiUuid;
-				if (smVer != null && !smVer.equals("")) {
+				if (smVer != null && !"".equals(smVer)) {
 					LOGGER.debug ("Query serviceMacroHolder getAllResourcesByServiceModelInvariantUuid serviceModelInvariantUuid: " + uuid+ " serviceModelVersion: "+ smVer);
 					ret = db.getAllResourcesByServiceModelInvariantUuid(uuid, smVer);
 				}
@@ -370,14 +370,14 @@ public class CatalogDbAdapterRest {
 		List<AllottedResourceCustomization > ret;
 
 		try (CatalogDatabase db = CatalogDatabase.getInstance()) {
-			if (smUuid != null && !smUuid.equals("")) {
+			if (smUuid != null && !"".equals(smUuid)) {
 				uuid = smUuid;
 				LOGGER.debug ("Query AllottedResourceCustomization getAllAllottedResourcesByServiceModelUuid serviceModelUuid: " + uuid);
 				ret = db.getAllAllottedResourcesByServiceModelUuid(uuid);
 			}
-			else if (smiUuid != null && !smiUuid.equals("")) {
+			else if (smiUuid != null && !"".equals(smiUuid)) {
 				uuid = smiUuid;
-				if (smVer != null && !smVer.equals("")) {
+				if (smVer != null && !"".equals(smVer)) {
 					LOGGER.debug ("Query AllottedResourceCustomization getAllAllottedResourcesByServiceModelInvariantUuid serviceModelInvariantUuid: " + uuid+ " serviceModelVersion: "+ smVer);
 					ret = db.getAllAllottedResourcesByServiceModelInvariantUuid(uuid, smVer);
 				}
@@ -386,7 +386,7 @@ public class CatalogDbAdapterRest {
 					ret = db.getAllAllottedResourcesByServiceModelInvariantUuid(uuid);
 				}
 			}
-			else if (aUuid != null && !aUuid.equals("")) {
+			else if (aUuid != null && !"".equals(aUuid)) {
 				uuid = aUuid;
 				LOGGER.debug ("Query AllottedResourceCustomization getAllAllottedResourcesByArModelCustomizationUuid serviceModelUuid: " + uuid);
 				ret = db.getAllAllottedResourcesByArModelCustomizationUuid(uuid);
@@ -428,11 +428,11 @@ public class CatalogDbAdapterRest {
 		CatalogDatabase db = CatalogDatabase.getInstance();
 
 		try{
-			if(vfModuleModelName != null && !vfModuleModelName.equals("")){
+			if(vfModuleModelName != null && !"".equals(vfModuleModelName)){
 				LOGGER.debug ("Query vfModules by vfModuleModuleName: " + vfModuleModelName);
 				VfModuleCustomization vfModule = db.getVfModuleCustomizationByModelName(vfModuleModelName);
 				if(vfModule != null){
-					ret = new ArrayList<VfModuleCustomization>(1);
+					ret = new ArrayList<>(1);
 					ret.add(vfModule);
 				}
 			}else{
