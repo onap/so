@@ -21,6 +21,10 @@
 package org.openecomp.mso.apihandlerinfra;
 
 
+import org.apache.http.HttpResponse;
+import org.apache.http.ProtocolVersion;
+import org.apache.http.entity.BasicHttpEntity;
+import org.apache.http.message.BasicHttpResponse;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.junit.Test;
@@ -31,9 +35,19 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
+import org.openecomp.mso.apihandler.common.CamundaClient;
+import org.openecomp.mso.apihandler.common.RequestClient;
+import org.openecomp.mso.apihandler.common.RequestClientFactory;
+import org.openecomp.mso.db.catalog.CatalogDatabase;
+import org.openecomp.mso.db.catalog.beans.Service;
+import org.openecomp.mso.db.catalog.beans.ServiceRecipe;
+import org.openecomp.mso.properties.MsoJavaProperties;
 import org.openecomp.mso.requestsdb.InfraActiveRequests;
 import org.openecomp.mso.requestsdb.RequestsDatabase;
 
@@ -51,6 +65,383 @@ public class ServiceInstanceTest {
 		Response resp = instance.createServiceInstance(requestJson, "v5");
 		String respBody = resp.getEntity().toString();
 		assertTrue(respBody.indexOf("Error parsing request.  No valid model-info is specified") != -1);
+	}
+	
+	@Test
+	public void createServiceInstanceNormalDuplicate(){
+		new MockUp<RequestsDatabase>() {
+            @Mock
+            public InfraActiveRequests checkInstanceNameDuplicate (HashMap<String,String> instanceIdMap, String instanceName, String requestScope) {
+                return new InfraActiveRequests();
+            }
+        };
+		ServiceInstances instance = new ServiceInstances();
+		String requestJson = "{\"serviceInstanceId\":\"1882939\","
+				+"\"vnfInstanceId\":\"1882938\","
+				+"\"networkInstanceId\":\"1882937\","
+				+"\"volumeGroupInstanceId\":\"1882935\","
+				+"\"vfModuleInstanceId\":\"1882934\","
+				+ "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
+		Response resp = instance.createServiceInstance(requestJson, "v2");
+		String respBody = resp.getEntity().toString();
+		assertTrue(respBody.indexOf("Locked instance - This service (testService) already has a request being worked with a status of null (RequestId - null). The existing request must finish or be cleaned up before proceeding.") != -1);
+	}
+	
+	@Test
+	public void createServiceInstanceTestDBException(){
+		new MockUp<RequestsDatabase>() {
+            @Mock
+            public InfraActiveRequests checkInstanceNameDuplicate (HashMap<String,String> instanceIdMap, String instanceName, String requestScope) {
+                return null;
+            }
+        };
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            public Service getServiceByModelName (String defaultServiceModelName) {
+            	Service serviceRecord = new Service();
+            	serviceRecord.setModelUUID("2883992993");
+            	return serviceRecord;
+            }
+        };
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            public ServiceRecipe getServiceRecipeByModelUUID (String uuid,String action) {
+            	ServiceRecipe recipe =new ServiceRecipe();
+            	recipe.setOrchestrationUri("/test/mso");
+            	recipe.setRecipeTimeout(1000);
+            	return recipe;
+            }
+        };
+		ServiceInstances instance = new ServiceInstances();
+		String requestJson = "{\"serviceInstanceId\":\"1882939\","
+				+"\"vnfInstanceId\":\"1882938\","
+				+"\"networkInstanceId\":\"1882937\","
+				+"\"volumeGroupInstanceId\":\"1882935\","
+				+"\"vfModuleInstanceId\":\"1882934\","
+				+ "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
+		Response resp = instance.createServiceInstance(requestJson, "v2");
+		String respBody = resp.getEntity().toString();
+		assertTrue(respBody.indexOf("Exception while creating record in DB null") != -1);
+	}
+	
+	@Test
+	public void createServiceInstanceTestBpmnFail(){
+		new MockUp<RequestsDatabase>() {
+            @Mock
+            public InfraActiveRequests checkInstanceNameDuplicate (HashMap<String,String> instanceIdMap, String instanceName, String requestScope) {
+                return null;
+            }
+        };
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            public Service getServiceByModelName (String defaultServiceModelName) {
+            	Service serviceRecord = new Service();
+            	serviceRecord.setModelUUID("2883992993");
+            	return serviceRecord;
+            }
+        };
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            public ServiceRecipe getServiceRecipeByModelUUID (String uuid,String action) {
+            	ServiceRecipe recipe =new ServiceRecipe();
+            	recipe.setOrchestrationUri("/test/mso");
+            	recipe.setRecipeTimeout(1000);
+            	return recipe;
+            }
+        };
+        
+        new MockUp<MsoRequest>() {
+            @Mock
+            public void createRequestRecord (Status status, Action action) {
+            	return;
+            }
+        };
+		ServiceInstances instance = new ServiceInstances();
+		String requestJson = "{\"serviceInstanceId\":\"1882939\","
+				+"\"vnfInstanceId\":\"1882938\","
+				+"\"networkInstanceId\":\"1882937\","
+				+"\"volumeGroupInstanceId\":\"1882935\","
+				+"\"vfModuleInstanceId\":\"1882934\","
+				+ "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
+		Response resp = instance.createServiceInstance(requestJson, "v2");
+		String respBody = resp.getEntity().toString();
+		assertTrue(respBody.indexOf("Failed calling bpmn properties") != -1);
+	}
+	
+	@Test(expected = Exception.class)
+	public void createServiceInstanceTest200Http(){
+		new MockUp<RequestsDatabase>() {
+            @Mock
+            public InfraActiveRequests checkInstanceNameDuplicate (HashMap<String,String> instanceIdMap, String instanceName, String requestScope) {
+                return null;
+            }
+        };
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            public Service getServiceByModelName (String defaultServiceModelName) {
+            	Service serviceRecord = new Service();
+            	serviceRecord.setModelUUID("2883992993");
+            	return serviceRecord;
+            }
+        };
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            public ServiceRecipe getServiceRecipeByModelUUID (String uuid,String action) {
+            	ServiceRecipe recipe =new ServiceRecipe();
+            	recipe.setOrchestrationUri("/test/mso");
+            	recipe.setRecipeTimeout(1000);
+            	return recipe;
+            }
+        };
+        
+        new MockUp<MsoRequest>() {
+            @Mock
+            public void createRequestRecord (Status status, Action action) {
+            	return;
+            }
+        };
+        
+        new MockUp<RequestClientFactory>() {
+            @Mock
+            public RequestClient getRequestClient(String orchestrationURI, MsoJavaProperties props) throws IllegalStateException{
+            	RequestClient client = new CamundaClient();
+            	client.setUrl("/test/url");
+            	return client;
+            }
+        };
+        
+        new MockUp<CamundaClient>() {
+            @Mock
+            public HttpResponse post(String requestId, boolean isBaseVfModule,
+        			int recipeTimeout, String requestAction, String serviceInstanceId,
+        			String vnfId, String vfModuleId, String volumeGroupId, String networkId,
+        			String serviceType, String vnfType, String vfModuleType, String networkType,
+        			String requestDetails){ 
+            	ProtocolVersion pv = new ProtocolVersion("HTTP",1,1);
+            	HttpResponse resp = new BasicHttpResponse(pv,200, "test response");
+            	BasicHttpEntity entity = new BasicHttpEntity();
+            	String body = "{\"response\":\"success\",\"message\":\"success\"}";
+            	InputStream instream = new ByteArrayInputStream(body.getBytes());
+            	entity.setContent(instream);
+            	resp.setEntity(entity);
+            	return resp;
+            }
+        };
+		ServiceInstances instance = new ServiceInstances();
+		String requestJson = "{\"serviceInstanceId\":\"1882939\","
+				+"\"vnfInstanceId\":\"1882938\","
+				+"\"networkInstanceId\":\"1882937\","
+				+"\"volumeGroupInstanceId\":\"1882935\","
+				+"\"vfModuleInstanceId\":\"1882934\","
+				+ "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
+		Response resp = instance.createServiceInstance(requestJson, "v2");
+		String respBody = resp.getEntity().toString();
+	}
+	
+	@Test
+	public void createServiceInstanceTest500Http(){
+		new MockUp<RequestsDatabase>() {
+            @Mock
+            public InfraActiveRequests checkInstanceNameDuplicate (HashMap<String,String> instanceIdMap, String instanceName, String requestScope) {
+                return null;
+            }
+        };
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            public Service getServiceByModelName (String defaultServiceModelName) {
+            	Service serviceRecord = new Service();
+            	serviceRecord.setModelUUID("2883992993");
+            	return serviceRecord;
+            }
+        };
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            public ServiceRecipe getServiceRecipeByModelUUID (String uuid,String action) {
+            	ServiceRecipe recipe =new ServiceRecipe();
+            	recipe.setOrchestrationUri("/test/mso");
+            	recipe.setRecipeTimeout(1000);
+            	return recipe;
+            }
+        };
+        
+        new MockUp<MsoRequest>() {
+            @Mock
+            public void createRequestRecord (Status status, Action action) {
+            	return;
+            }
+        };
+        
+        new MockUp<RequestClientFactory>() {
+            @Mock
+            public RequestClient getRequestClient(String orchestrationURI, MsoJavaProperties props) throws IllegalStateException{
+            	RequestClient client = new CamundaClient();
+            	client.setUrl("/test/url");
+            	return client;
+            }
+        };
+        
+        new MockUp<CamundaClient>() {
+            @Mock
+            public HttpResponse post(String requestId, boolean isBaseVfModule,
+        			int recipeTimeout, String requestAction, String serviceInstanceId,
+        			String vnfId, String vfModuleId, String volumeGroupId, String networkId,
+        			String serviceType, String vnfType, String vfModuleType, String networkType,
+        			String requestDetails){ 
+            	ProtocolVersion pv = new ProtocolVersion("HTTP",1,1);
+            	HttpResponse resp = new BasicHttpResponse(pv,500, "test response");
+            	BasicHttpEntity entity = new BasicHttpEntity();
+            	String body = "{\"response\":\"success\",\"message\":\"success\"}";
+            	InputStream instream = new ByteArrayInputStream(body.getBytes());
+            	entity.setContent(instream);
+            	resp.setEntity(entity);
+            	return resp;
+            }
+        };
+		ServiceInstances instance = new ServiceInstances();
+		String requestJson = "{\"serviceInstanceId\":\"1882939\","
+				+"\"vnfInstanceId\":\"1882938\","
+				+"\"networkInstanceId\":\"1882937\","
+				+"\"volumeGroupInstanceId\":\"1882935\","
+				+"\"vfModuleInstanceId\":\"1882934\","
+				+ "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
+		Response resp = instance.createServiceInstance(requestJson, "v2");
+		String respBody = resp.getEntity().toString();
+		assertTrue(respBody.indexOf("Request Failed due to BPEL error with HTTP Status") != -1);
+	}
+	
+	@Test
+	public void createServiceInstanceTestVnfModelType(){
+		new MockUp<RequestsDatabase>() {
+            @Mock
+            public InfraActiveRequests checkInstanceNameDuplicate (HashMap<String,String> instanceIdMap, String instanceName, String requestScope) {
+                return null;
+            }
+        };
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            public Service getServiceByModelName (String defaultServiceModelName) {
+            	Service serviceRecord = new Service();
+            	serviceRecord.setModelUUID("2883992993");
+            	return serviceRecord;
+            }
+        };
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            public ServiceRecipe getServiceRecipeByModelUUID (String uuid,String action) {
+            	ServiceRecipe recipe =new ServiceRecipe();
+            	recipe.setOrchestrationUri("/test/mso");
+            	recipe.setRecipeTimeout(1000);
+            	return recipe;
+            }
+        };
+        
+        new MockUp<MsoRequest>() {
+            @Mock
+            public void createRequestRecord (Status status, Action action) {
+            	return;
+            }
+        };
+        
+        new MockUp<RequestClientFactory>() {
+            @Mock
+            public RequestClient getRequestClient(String orchestrationURI, MsoJavaProperties props) throws IllegalStateException{
+            	RequestClient client = new CamundaClient();
+            	client.setUrl("/test/url");
+            	return client;
+            }
+        };
+        
+        new MockUp<CamundaClient>() {
+            @Mock
+            public HttpResponse post(String requestId, boolean isBaseVfModule,
+        			int recipeTimeout, String requestAction, String serviceInstanceId,
+        			String vnfId, String vfModuleId, String volumeGroupId, String networkId,
+        			String serviceType, String vnfType, String vfModuleType, String networkType,
+        			String requestDetails){ 
+            	ProtocolVersion pv = new ProtocolVersion("HTTP",1,1);
+            	HttpResponse resp = new BasicHttpResponse(pv,500, "test response");
+            	BasicHttpEntity entity = new BasicHttpEntity();
+            	String body = "{\"response\":\"success\",\"message\":\"success\"}";
+            	InputStream instream = new ByteArrayInputStream(body.getBytes());
+            	entity.setContent(instream);
+            	resp.setEntity(entity);
+            	return resp;
+            }
+        };
+		ServiceInstances instance = new ServiceInstances();
+		String requestJson = "{\"serviceInstanceId\":\"1882939\","
+				+"\"vnfInstanceId\":\"1882938\","
+				+"\"networkInstanceId\":\"1882937\","
+				+"\"volumeGroupInstanceId\":\"1882935\","
+				+"\"vfModuleInstanceId\":\"1882934\","
+				+ "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"vnf\",\"modelName\":\"serviceModel\",\"modelCustomizationName\":\"test\"}}}";
+		Response resp = instance.createServiceInstance(requestJson, "v5");
+		String respBody = resp.getEntity().toString();
+		assertTrue(respBody.indexOf("No valid modelVersionId is specified") != -1);
+	}
+	
+	@Test
+	public void createServiceInstanceTestNullHttpResp(){
+		new MockUp<RequestsDatabase>() {
+            @Mock
+            public InfraActiveRequests checkInstanceNameDuplicate (HashMap<String,String> instanceIdMap, String instanceName, String requestScope) {
+                return null;
+            }
+        };
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            public Service getServiceByModelName (String defaultServiceModelName) {
+            	Service serviceRecord = new Service();
+            	serviceRecord.setModelUUID("2883992993");
+            	return serviceRecord;
+            }
+        };
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            public ServiceRecipe getServiceRecipeByModelUUID (String uuid,String action) {
+            	ServiceRecipe recipe =new ServiceRecipe();
+            	recipe.setOrchestrationUri("/test/mso");
+            	recipe.setRecipeTimeout(1000);
+            	return recipe;
+            }
+        };
+        
+        new MockUp<MsoRequest>() {
+            @Mock
+            public void createRequestRecord (Status status, Action action) {
+            	return;
+            }
+        };
+        
+        new MockUp<RequestClientFactory>() {
+            @Mock
+            public RequestClient getRequestClient(String orchestrationURI, MsoJavaProperties props) throws IllegalStateException{
+            	RequestClient client = new CamundaClient();
+            	client.setUrl("/test/url");
+            	return client;
+            }
+        };
+        
+        new MockUp<CamundaClient>() {
+            @Mock
+            public HttpResponse post(String requestId, boolean isBaseVfModule,
+        			int recipeTimeout, String requestAction, String serviceInstanceId,
+        			String vnfId, String vfModuleId, String volumeGroupId, String networkId,
+        			String serviceType, String vnfType, String vfModuleType, String networkType,
+        			String requestDetails){ 
+            	return null;
+            }
+        };
+		ServiceInstances instance = new ServiceInstances();
+		String requestJson = "{\"serviceInstanceId\":\"1882939\","
+				+"\"vnfInstanceId\":\"1882938\","
+				+"\"networkInstanceId\":\"1882937\","
+				+"\"volumeGroupInstanceId\":\"1882935\","
+				+"\"vfModuleInstanceId\":\"1882934\","
+				+ "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
+		Response resp = instance.createServiceInstance(requestJson, "v2");
+		String respBody = resp.getEntity().toString();
+		assertTrue(respBody.indexOf("bpelResponse is null") != -1);
 	}
 	
 	@Test
