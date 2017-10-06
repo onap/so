@@ -24,6 +24,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Field;
 import java.net.URI;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -35,7 +38,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.openecomp.mso.apihandlerinfra.networkbeans.NetworkRequest;
+import org.openecomp.mso.requestsdb.InfraActiveRequests;
 import org.openecomp.mso.requestsdb.InfraRequests;
+import org.openecomp.mso.requestsdb.RequestsDatabase;
 
 public class NetworkRequestHandlerTest {
 
@@ -59,6 +64,23 @@ UriInfo uriInfo = null;
 	@Test
 	public void manageVnfRequestTest(){
 		Response resp = handler.manageNetworkRequest("<name>Test</name>", "v2");
+		assertTrue(null != resp);
+	}
+	@Test
+	public void manageVnfRequestTestV1(){
+		Response resp = handler.manageNetworkRequest("<name>Test</name>", "v1");
+		assertTrue(null != resp);
+	}
+	
+	@Test
+	public void manageVnfRequestTestV3(){
+		Response resp = handler.manageNetworkRequest("<name>Test</name>", "v3");
+		assertTrue(null != resp);
+	}
+	
+	@Test
+	public void manageVnfRequestTestInvalidVersion(){
+		Response resp = handler.manageNetworkRequest("<name>Test</name>", "v249");
 		assertTrue(null != resp);
 	}
 	
@@ -148,6 +170,52 @@ UriInfo uriInfo = null;
 		handler.fillNetworkRequest(qr, ar, "v3");
 		String param = (String)qr.getNetworkParams();
 		assertTrue(param.equals("test"));
+	}
+	
+	@Test
+	public void queryFiltersTest(){
+		new MockUp<RequestsDatabase>() {
+			@Mock
+			public List <InfraActiveRequests> getRequestListFromInfraActive (String queryAttributeName,
+                    String queryValue,
+                    String requestType) {
+				List <InfraActiveRequests> list = new ArrayList<InfraActiveRequests>();
+				InfraActiveRequests req = new InfraActiveRequests();
+				req.setAaiServiceId("299392");
+				req.setAction("CREATE");
+				req.setRequestStatus("COMPLETE");
+				req.setProgress(10001l);
+				req.setSource("test");
+				req.setStartTime(new Timestamp(10020100));
+				req.setEndTime(new Timestamp(20020100));
+				req.setStatusMessage("message");
+				list.add(req);
+				return list;
+			}
+		};
+		Response resp = handler.queryFilters("networkType", "serviceType", "aicNodeClli", "tenantId", "v1");
+		assertTrue(resp.getEntity().toString() != null);
+	}
+	
+	@Test
+	public void getRequestTest(){
+		new MockUp<RequestsDatabase>() {
+			@Mock
+			public InfraActiveRequests getRequestFromInfraActive (String requestId, String requestType) {
+				InfraActiveRequests req = new InfraActiveRequests();
+				req.setAaiServiceId("299392");
+				req.setAction("CREATE");
+				req.setRequestStatus("COMPLETE");
+				req.setProgress(10001l);
+				req.setSource("test");
+				req.setStartTime(new Timestamp(10020100));
+				req.setEndTime(new Timestamp(20020100));
+				req.setStatusMessage("message");
+				return req;
+			}
+		};
+		Response resp = handler.getRequest("388293", "v1");
+		assertTrue(resp.getEntity().toString() != null);
 	}
 	
 }
