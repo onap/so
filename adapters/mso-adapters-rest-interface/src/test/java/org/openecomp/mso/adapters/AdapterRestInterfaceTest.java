@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2017 Huawei Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,23 +50,68 @@ import org.openecomp.mso.adapters.nwrest.RollbackNetworkResponse;
 import org.openecomp.mso.adapters.nwrest.UpdateNetworkError;
 import org.openecomp.mso.adapters.nwrest.UpdateNetworkRequest;
 import org.openecomp.mso.adapters.nwrest.UpdateNetworkResponse;
+import org.openecomp.mso.adapters.sdncrest.RequestInformation;
+import org.openecomp.mso.adapters.sdncrest.SDNCErrorCommon;
+import org.openecomp.mso.adapters.sdncrest.SDNCEvent;
+import org.openecomp.mso.adapters.sdncrest.SDNCRequestCommon;
+import org.openecomp.mso.adapters.sdncrest.SDNCResponseCommon;
+import org.openecomp.mso.adapters.sdncrest.SDNCServiceError;
+import org.openecomp.mso.adapters.sdncrest.SDNCServiceRequest;
+import org.openecomp.mso.adapters.sdncrest.SDNCServiceResponse;
+import org.openecomp.mso.adapters.sdncrest.ServiceInformation;
+import org.openecomp.mso.adapters.tenantrest.CreateTenantError;
+import org.openecomp.mso.adapters.tenantrest.CreateTenantRequest;
+import org.openecomp.mso.adapters.tenantrest.CreateTenantResponse;
+import org.openecomp.mso.adapters.tenantrest.DeleteTenantError;
+import org.openecomp.mso.adapters.tenantrest.DeleteTenantRequest;
+import org.openecomp.mso.adapters.tenantrest.DeleteTenantResponse;
+import org.openecomp.mso.adapters.tenantrest.HealthCheckHandler;
+import org.openecomp.mso.adapters.tenantrest.QueryTenantError;
+import org.openecomp.mso.adapters.tenantrest.QueryTenantResponse;
+import org.openecomp.mso.adapters.tenantrest.RollbackTenantError;
+import org.openecomp.mso.adapters.tenantrest.RollbackTenantRequest;
+import org.openecomp.mso.adapters.tenantrest.RollbackTenantResponse;
+import org.openecomp.mso.adapters.tenantrest.TenantExceptionResponse;
+import org.openecomp.mso.adapters.tenantrest.TenantRequestCommon;
+import org.openecomp.mso.adapters.tenantrest.TenantRollback;
 import org.openecomp.mso.adapters.vnfrest.CreateVfModuleRequest;
+import org.openecomp.mso.adapters.vnfrest.CreateVfModuleResponse;
 import org.openecomp.mso.adapters.vnfrest.CreateVolumeGroupRequest;
+import org.openecomp.mso.adapters.vnfrest.CreateVolumeGroupResponse;
+import org.openecomp.mso.adapters.vnfrest.DeleteVfModuleRequest;
+import org.openecomp.mso.adapters.vnfrest.DeleteVfModuleResponse;
+import org.openecomp.mso.adapters.vnfrest.DeleteVolumeGroupRequest;
+import org.openecomp.mso.adapters.vnfrest.DeleteVolumeGroupResponse;
+import org.openecomp.mso.adapters.vnfrest.QueryVfModuleResponse;
+import org.openecomp.mso.adapters.vnfrest.QueryVolumeGroupResponse;
+import org.openecomp.mso.adapters.vnfrest.RollbackVfModuleRequest;
+import org.openecomp.mso.adapters.vnfrest.RollbackVfModuleResponse;
+import org.openecomp.mso.adapters.vnfrest.RollbackVolumeGroupRequest;
+import org.openecomp.mso.adapters.vnfrest.RollbackVolumeGroupResponse;
 import org.openecomp.mso.adapters.vnfrest.UpdateVfModuleRequest;
+import org.openecomp.mso.adapters.vnfrest.UpdateVfModuleResponse;
+import org.openecomp.mso.adapters.vnfrest.UpdateVolumeGroupRequest;
+import org.openecomp.mso.adapters.vnfrest.UpdateVolumeGroupResponse;
+import org.openecomp.mso.adapters.vnfrest.VfModuleExceptionResponse;
 import org.openecomp.mso.adapters.vnfrest.VfModuleRollback;
+import org.openecomp.mso.adapters.vnfrest.VfRequestCommon;
+import org.openecomp.mso.adapters.vnfrest.VfResponseCommon;
+import org.openecomp.mso.adapters.vnfrest.VolumeGroupExceptionResponse;
 import org.openecomp.mso.adapters.vnfrest.VolumeGroupRollback;
 import org.openecomp.mso.entity.MsoRequest;
 import org.openecomp.mso.openstack.beans.NetworkRollback;
 import org.openecomp.mso.openstack.beans.NetworkStatus;
 import org.openecomp.mso.openstack.beans.Subnet;
 import org.openecomp.mso.openstack.beans.VnfRollback;
+import org.openecomp.mso.openstack.beans.VnfStatus;
 
 public class AdapterRestInterfaceTest {
 	@Test(expected = Exception.class)
 	public final void mapDeserializerTest() {
 		MapDeserializer mapDeserializer = new MapDeserializer();
 		JsonParser jsonParser = Mockito.mock(JsonParser.class);
-		DeserializationContext deserializationContext = Mockito.mock(DeserializationContext.class);
+		DeserializationContext deserializationContext = Mockito
+				.mock(DeserializationContext.class);
 		try {
 			mapDeserializer.deserialize(jsonParser, deserializationContext);
 		} catch (IOException e) {
@@ -80,9 +125,11 @@ public class AdapterRestInterfaceTest {
 		mapSerializer.toString();
 		mapSerializer.unwrappingSerializer();
 		JsonGenerator jsonGenerator = Mockito.mock(JsonGenerator.class);
-		SerializerProvider serializerProvider = Mockito.mock(SerializerProvider.class);
+		SerializerProvider serializerProvider = Mockito
+				.mock(SerializerProvider.class);
 		try {
-			mapSerializer.serialize(new HashMap<String, String>(), jsonGenerator, serializerProvider);
+			mapSerializer.serialize(new HashMap<String, String>(),
+					jsonGenerator, serializerProvider);
 		} catch (IOException e) {
 		}
 	}
@@ -94,8 +141,9 @@ public class AdapterRestInterfaceTest {
 	public final void contrailNetworkPOJOTest() {
 		try {
 			ContrailNetwork contrailNetwork = new ContrailNetwork();
-			ContrailNetwork contrailNetwork2 = new ContrailNetwork("", "", new ArrayList<String>(),
-					new ArrayList<String>(), new ArrayList<String>());
+			ContrailNetwork contrailNetwork2 = new ContrailNetwork("", "",
+					new ArrayList<String>(), new ArrayList<String>(),
+					new ArrayList<String>());
 			contrailNetwork.getExternal();
 			contrailNetwork.setExternal("external");
 			contrailNetwork.setPolicyFqdns(new ArrayList<String>());
@@ -112,17 +160,20 @@ public class AdapterRestInterfaceTest {
 			updateNetworkRequest.setCloudSiteId("cloudSiteId");
 			updateNetworkRequest.setContrailNetwork(new ContrailNetwork());
 			updateNetworkRequest.setMessageId("messageId");
-			updateNetworkRequest.setModelCustomizationUuid("modelCustomizationUuid");
+			updateNetworkRequest
+					.setModelCustomizationUuid("modelCustomizationUuid");
 			updateNetworkRequest.setMsoRequest(new MsoRequest());
 			updateNetworkRequest.setNetworkId("networkId");
 			updateNetworkRequest.setNetworkName("networkName");
-			updateNetworkRequest.setNetworkParams(new HashMap<String, String>());
+			updateNetworkRequest
+					.setNetworkParams(new HashMap<String, String>());
 			updateNetworkRequest.setNetworkStackId("networkStackId");
 			updateNetworkRequest.setNetworkTechnology("networkTechnology");
 			updateNetworkRequest.setNetworkType("networkType");
 			updateNetworkRequest.setNetworkTypeVersion("networkTypeVersion");
 			updateNetworkRequest.setNotificationUrl("notificationUrl");
-			updateNetworkRequest.setProviderVlanNetwork(new ProviderVlanNetwork());
+			updateNetworkRequest
+					.setProviderVlanNetwork(new ProviderVlanNetwork());
 			updateNetworkRequest.setSkipAAI(true);
 			updateNetworkRequest.setSubnets(new ArrayList<Subnet>());
 			updateNetworkRequest.setTenantId("tenantId");
@@ -152,18 +203,21 @@ public class AdapterRestInterfaceTest {
 			createNetworkRequest.setContrailNetwork(new ContrailNetwork());
 			createNetworkRequest.setFailIfExists(false);
 			createNetworkRequest.setMessageId("messageId");
-			createNetworkRequest.setModelCustomizationUuid("modelCustomizationUuid");
+			createNetworkRequest
+					.setModelCustomizationUuid("modelCustomizationUuid");
 			createNetworkRequest.setMsoRequest(new MsoRequest());
 			createNetworkRequest.setNetworkId("networkId");
 			createNetworkRequest.setNetworkName("networkName");
 			createNetworkRequest.setNetworkType("networkType");
 			createNetworkRequest.setNetworkTypeVersion("networkTypeVersion");
 			createNetworkRequest.setNotificationUrl("notificationUrl");
-			createNetworkRequest.setProviderVlanNetwork(new ProviderVlanNetwork());
+			createNetworkRequest
+					.setProviderVlanNetwork(new ProviderVlanNetwork());
 			createNetworkRequest.setSkipAAI(true);
 			createNetworkRequest.setSubnets(new ArrayList<Subnet>());
 			createNetworkRequest.setTenantId("tenantId");
-			createNetworkRequest.setNetworkParams(new HashMap<String, String>());
+			createNetworkRequest
+					.setNetworkParams(new HashMap<String, String>());
 			createNetworkRequest.setNetworkTechnology("VMWARE");
 			createNetworkRequest.getBackout();
 			createNetworkRequest.getCloudSiteId();
@@ -186,11 +240,13 @@ public class AdapterRestInterfaceTest {
 			createNetworkRequest.isContrailRequest();
 
 			QueryNetworkResponse queryNetworkResponse = new QueryNetworkResponse();
-			QueryNetworkResponse queryNetworkResponse2 = new QueryNetworkResponse("", "", "", NetworkStatus.ACTIVE,
+			QueryNetworkResponse queryNetworkResponse2 = new QueryNetworkResponse(
+					"", "", "", NetworkStatus.ACTIVE,
 					new HashMap<String, String>());
 			queryNetworkResponse.setNetworkExists(true);
 			queryNetworkResponse.setNetworkId("networkId");
-			queryNetworkResponse.setNetworkOutputs(new HashMap<String, String>());
+			queryNetworkResponse
+					.setNetworkOutputs(new HashMap<String, String>());
 			queryNetworkResponse.setNetworkStackId("networkStackId");
 			queryNetworkResponse.setNetworkStatus(NetworkStatus.ACTIVE);
 			queryNetworkResponse.setNeutronNetworkId("neutronNetworkId");
@@ -209,8 +265,9 @@ public class AdapterRestInterfaceTest {
 			queryNetworkResponse.toJsonString();
 
 			CreateNetworkResponse createNetworkResponse = new CreateNetworkResponse();
-			CreateNetworkResponse createNetworkResponse2 = new CreateNetworkResponse("", "", "", "", true,
-					new HashMap<String, String>(), new NetworkRollback(), "");
+			CreateNetworkResponse createNetworkResponse2 = new CreateNetworkResponse(
+					"", "", "", "", true, new HashMap<String, String>(),
+					new NetworkRollback(), "");
 			createNetworkResponse.setMessageId("messageId");
 			createNetworkResponse.setNetworkCreated(true);
 			createNetworkResponse.setNetworkFqdn("networkFqdn");
@@ -244,7 +301,8 @@ public class AdapterRestInterfaceTest {
 			DeleteNetworkRequest deleteNetworkRequest = new DeleteNetworkRequest();
 			deleteNetworkRequest.setCloudSiteId("cloudSiteId");
 			deleteNetworkRequest.setMessageId("messageId");
-			deleteNetworkRequest.setModelCustomizationUuid("modelCustomizationUuid");
+			deleteNetworkRequest
+					.setModelCustomizationUuid("modelCustomizationUuid");
 			deleteNetworkRequest.setMsoRequest(new MsoRequest());
 			deleteNetworkRequest.setNetworkId("networkId");
 			deleteNetworkRequest.setNetworkStackId("networkStackId");
@@ -264,8 +322,10 @@ public class AdapterRestInterfaceTest {
 			deleteNetworkRequest.getTenantId();
 
 			NetworkExceptionResponse networkExceptionResponse = new NetworkExceptionResponse();
-			NetworkExceptionResponse networkExceptionResponse2 = new NetworkExceptionResponse("", null, false, "");
-			NetworkExceptionResponse networkExceptionResponse3 = new NetworkExceptionResponse("");
+			NetworkExceptionResponse networkExceptionResponse2 = new NetworkExceptionResponse(
+					"", null, false, "");
+			NetworkExceptionResponse networkExceptionResponse3 = new NetworkExceptionResponse(
+					"");
 			networkExceptionResponse.setCategory(null);
 			networkExceptionResponse.setMessage("message");
 			networkExceptionResponse.setMessageId("messageId");
@@ -276,7 +336,8 @@ public class AdapterRestInterfaceTest {
 			networkExceptionResponse.getRolledBack();
 
 			UpdateNetworkResponse updateNetworkResponse = new UpdateNetworkResponse();
-			UpdateNetworkResponse updateNetworkResponse2 = new UpdateNetworkResponse("", "", null, "");
+			UpdateNetworkResponse updateNetworkResponse2 = new UpdateNetworkResponse(
+					"", "", null, "");
 			updateNetworkResponse.setMessageId("messageId");
 			updateNetworkResponse.setNetworkId("networkId");
 			updateNetworkResponse.setNeutronNetworkId("");
@@ -287,39 +348,47 @@ public class AdapterRestInterfaceTest {
 			updateNetworkResponse.getSubnetMap();
 
 			DeleteNetworkResponse deleteNetworkResponse = new DeleteNetworkResponse();
-			DeleteNetworkResponse deleteNetworkResponse2 = new DeleteNetworkResponse("", false, "");
+			DeleteNetworkResponse deleteNetworkResponse2 = new DeleteNetworkResponse(
+					"", false, "");
 			deleteNetworkResponse.setNetworkDeleted(false);
 			deleteNetworkResponse.setNetworkId("networkId");
 			deleteNetworkResponse.getNetworkDeleted();
 			deleteNetworkResponse.getNetworkId();
 
 			ProviderVlanNetwork providerVlanNetwork = new ProviderVlanNetwork();
-			ProviderVlanNetwork providerVlanNetwork2 = new ProviderVlanNetwork("", null);
+			ProviderVlanNetwork providerVlanNetwork2 = new ProviderVlanNetwork(
+					"", null);
 			providerVlanNetwork.setPhysicalNetworkName("");
 			providerVlanNetwork.setVlans(null);
 			providerVlanNetwork.getPhysicalNetworkName();
 			providerVlanNetwork.getVlans();
 
 			RollbackNetworkResponse rollbackNetworkResponse = new RollbackNetworkResponse();
-			RollbackNetworkResponse rollbackNetworkResponse2 = new RollbackNetworkResponse(false, "");
+			RollbackNetworkResponse rollbackNetworkResponse2 = new RollbackNetworkResponse(
+					false, "");
 			rollbackNetworkResponse.setNetworkRolledBack(false);
 			rollbackNetworkResponse.getNetworkRolledBack();
 
 			CreateNetworkError createNetworkError = new CreateNetworkError();
 			CreateNetworkError createNetworkError2 = new CreateNetworkError("");
-			CreateNetworkError createNetworkError3 = new CreateNetworkError("", null, false, "");
+			CreateNetworkError createNetworkError3 = new CreateNetworkError("",
+					null, false, "");
 
 			DeleteNetworkError deleteNetworkError = new DeleteNetworkError();
 			DeleteNetworkError deleteNetworkError2 = new DeleteNetworkError("");
-			DeleteNetworkError deleteNetworkError3 = new DeleteNetworkError("", null, false, "");
+			DeleteNetworkError deleteNetworkError3 = new DeleteNetworkError("",
+					null, false, "");
 
 			RollbackNetworkError rollbackNetworkError = new RollbackNetworkError();
-			RollbackNetworkError rollbackNetworkError2 = new RollbackNetworkError("");
-			RollbackNetworkError rollbackNetworkError3 = new RollbackNetworkError("", null, false, "");
+			RollbackNetworkError rollbackNetworkError2 = new RollbackNetworkError(
+					"");
+			RollbackNetworkError rollbackNetworkError3 = new RollbackNetworkError(
+					"", null, false, "");
 
 			UpdateNetworkError updateNetworkError = new UpdateNetworkError();
 			UpdateNetworkError updateNetworkError2 = new UpdateNetworkError("");
-			UpdateNetworkError updateNetworkError3 = new UpdateNetworkError("", null, false, "");
+			UpdateNetworkError updateNetworkError3 = new UpdateNetworkError("",
+					null, false, "");
 
 			RollbackNetworkRequest rollbackNetworkRequest = new RollbackNetworkRequest();
 			rollbackNetworkRequest.setNetworkRollback(null);
@@ -432,8 +501,10 @@ public class AdapterRestInterfaceTest {
 			vnfRollback.setVolumeGroupName("");
 
 			VfModuleRollback vfModuleRollback = new VfModuleRollback();
-			VfModuleRollback vfModuleRollback2 = new VfModuleRollback(vnfRollback, "", "", "");
-			VfModuleRollback vfModuleRollback3 = new VfModuleRollback("", "", "", false, "", "", null, "");
+			VfModuleRollback vfModuleRollback2 = new VfModuleRollback(
+					vnfRollback, "", "", "");
+			VfModuleRollback vfModuleRollback3 = new VfModuleRollback("", "",
+					"", false, "", "", null, "");
 			vfModuleRollback.setCloudSiteId("");
 			vfModuleRollback.setMsoRequest(null);
 			vfModuleRollback.setTenantId("");
@@ -462,14 +533,17 @@ public class AdapterRestInterfaceTest {
 			volumeGroupRollback.getTenantId();
 			volumeGroupRollback.getVolumeGroupId();
 			volumeGroupRollback.getVolumeGroupStackId();
-			VolumeGroupRollback volumeGroupRollback2 = new VolumeGroupRollback(volumeGroupRollback, "", "");
-			VolumeGroupRollback volumeGroupRollback3 = new VolumeGroupRollback("", "", false, "", "", null, "");
+			VolumeGroupRollback volumeGroupRollback2 = new VolumeGroupRollback(
+					volumeGroupRollback, "", "");
+			VolumeGroupRollback volumeGroupRollback3 = new VolumeGroupRollback(
+					"", "", false, "", "", null, "");
 
 			CreateVolumeGroupRequest createVolumeGroupRequest = new CreateVolumeGroupRequest();
 			createVolumeGroupRequest.setCloudSiteId("");
 			createVolumeGroupRequest.setFailIfExists(false);
 			createVolumeGroupRequest.setMessageId("messageId");
-			createVolumeGroupRequest.setModelCustomizationUuid("modelCustomizationUuid");
+			createVolumeGroupRequest
+					.setModelCustomizationUuid("modelCustomizationUuid");
 			createVolumeGroupRequest.setMsoRequest(null);
 			createVolumeGroupRequest.setNotificationUrl("");
 			createVolumeGroupRequest.setSkipAAI(false);
@@ -496,6 +570,515 @@ public class AdapterRestInterfaceTest {
 			createVolumeGroupRequest.getVolumeGroupId();
 			createVolumeGroupRequest.getVolumeGroupName();
 			createVolumeGroupRequest.getVolumeGroupParams();
+
+			CreateVfModuleResponse createVfModuleResponse = new CreateVfModuleResponse();
+			createVfModuleResponse.setMessageId("");
+			createVfModuleResponse.setRollback(null);
+			createVfModuleResponse.setVfModuleCreated(false);
+			createVfModuleResponse.setVfModuleId("");
+			createVfModuleResponse.setVfModuleOutputs(null);
+			createVfModuleResponse.setVfModuleStackId("");
+			createVfModuleResponse.setVnfId("");
+			createVfModuleResponse.getMessageId();
+			createVfModuleResponse.getRollback();
+			createVfModuleResponse.getVfModuleCreated();
+			createVfModuleResponse.getVfModuleId();
+			createVfModuleResponse.getVfModuleOutputs();
+			createVfModuleResponse.getVfModuleStackId();
+			createVfModuleResponse.getVnfId();
+			CreateVfModuleResponse createVfModuleResponse2 = new CreateVfModuleResponse(
+					"", "", "", false, null, vfModuleRollback, "");
+
+			UpdateVolumeGroupRequest updateVolumeGroupRequest = new UpdateVolumeGroupRequest();
+			updateVolumeGroupRequest.setCloudSiteId("");
+			updateVolumeGroupRequest.setMessageId("");
+			updateVolumeGroupRequest.setModelCustomizationUuid("");
+			updateVolumeGroupRequest.setMsoRequest(null);
+			updateVolumeGroupRequest.setNotificationUrl("");
+			updateVolumeGroupRequest.setSkipAAI(false);
+			updateVolumeGroupRequest.setTenantId("");
+			updateVolumeGroupRequest.setVfModuleType("");
+			updateVolumeGroupRequest.setVnfType("");
+			updateVolumeGroupRequest.setVnfVersion("");
+			updateVolumeGroupRequest.setVolumeGroupId("");
+			updateVolumeGroupRequest.setVolumeGroupParams(null);
+			updateVolumeGroupRequest.setVolumeGroupStackId("");
+			updateVolumeGroupRequest.getCloudSiteId();
+			updateVolumeGroupRequest.getMessageId();
+			updateVolumeGroupRequest.getModelCustomizationUuid();
+			updateVolumeGroupRequest.getMsoRequest();
+			updateVolumeGroupRequest.getNotificationUrl();
+			updateVolumeGroupRequest.getSkipAAI();
+			updateVolumeGroupRequest.getTenantId();
+			updateVolumeGroupRequest.getVfModuleType();
+			updateVolumeGroupRequest.getVnfType();
+			updateVolumeGroupRequest.getVnfVersion();
+			updateVolumeGroupRequest.getVolumeGroupId();
+			updateVolumeGroupRequest.getVolumeGroupParams();
+			updateVolumeGroupRequest.getVolumeGroupStackId();
+
+			QueryVfModuleResponse queryVfModuleResponse = new QueryVfModuleResponse();
+			queryVfModuleResponse.setVfModuleId("");
+			queryVfModuleResponse.setVfModuleOutputs(null);
+			queryVfModuleResponse.setVfModuleStackId("");
+			queryVfModuleResponse.setVnfId("");
+			queryVfModuleResponse.setVnfStatus(null);
+			queryVfModuleResponse.getVfModuleId();
+			queryVfModuleResponse.getVfModuleOutputs();
+			queryVfModuleResponse.getVfModuleStackId();
+			queryVfModuleResponse.getVnfId();
+			queryVfModuleResponse.getVnfStatus();
+			QueryVfModuleResponse queryVfModuleResponse2 = new QueryVfModuleResponse(
+					"", "", "", VnfStatus.ACTIVE, null);
+
+			CreateVolumeGroupResponse createVolumeGroupResponse = new CreateVolumeGroupResponse();
+			CreateVolumeGroupResponse createVolumeGroupResponse2 = new CreateVolumeGroupResponse(
+					"", "volumeGroupStackId", true, null, null, "");
+			createVolumeGroupResponse.setMessageId("");
+			createVolumeGroupResponse.setVolumeGroupCreated(false);
+			createVolumeGroupResponse.setVolumeGroupId("");
+			createVolumeGroupResponse.setVolumeGroupOutputs(null);
+			createVolumeGroupResponse.setVolumeGroupRollback(null);
+			createVolumeGroupResponse.setVolumeGroupStackId("");
+			createVolumeGroupResponse.getMessageId();
+			createVolumeGroupResponse.getVolumeGroupCreated();
+			createVolumeGroupResponse.getVolumeGroupId();
+			createVolumeGroupResponse.getVolumeGroupOutputs();
+
+			VfResponseCommon vfResponseCommon = new CreateVfModuleResponse();
+			vfResponseCommon.setMessageId("");
+			vfResponseCommon.toJsonString();
+			vfResponseCommon.getMessageId();
+			vfResponseCommon.toXmlString();
+
+			QueryVolumeGroupResponse queryVolumeGroupResponse = new QueryVolumeGroupResponse();
+			QueryVolumeGroupResponse queryVolumeGroupResponse2 = new QueryVolumeGroupResponse(
+					"", "", null, null);
+			queryVolumeGroupResponse.setVolumeGroupId("");
+			queryVolumeGroupResponse.setVolumeGroupOutputs(null);
+			queryVolumeGroupResponse.setVolumeGroupStackId("");
+			queryVolumeGroupResponse.setVolumeGroupStatus(null);
+			queryVolumeGroupResponse.getVolumeGroupId();
+			queryVolumeGroupResponse.getVolumeGroupOutputs();
+			queryVolumeGroupResponse.getVolumeGroupStackId();
+			queryVolumeGroupResponse.getVolumeGroupStatus();
+			queryVolumeGroupResponse.toString();
+			queryVolumeGroupResponse.toJsonString();
+
+			DeleteVfModuleResponse deleteVfModuleResponse = new DeleteVfModuleResponse();
+			DeleteVfModuleResponse deleteVfModuleResponse2 = new DeleteVfModuleResponse(
+					"", "", false, "", null);
+			deleteVfModuleResponse.setMessageId("");
+			deleteVfModuleResponse.setVfModuleDeleted(false);
+			deleteVfModuleResponse.setVfModuleId("");
+			deleteVfModuleResponse.setVfModuleOutputs(null);
+			deleteVfModuleResponse.setVnfId("");
+			deleteVfModuleResponse.getMessageId();
+			deleteVfModuleResponse.getVfModuleDeleted();
+			deleteVfModuleResponse.getVfModuleId();
+			deleteVfModuleResponse.getVfModuleOutputs();
+			deleteVfModuleResponse.getVnfId();
+
+			UpdateVfModuleResponse updateVfModuleResponse = new UpdateVfModuleResponse();
+			UpdateVfModuleResponse updateVfModuleResponse2 = new UpdateVfModuleResponse(
+					"", "", "", null, "");
+			updateVfModuleResponse.setMessageId("");
+			updateVfModuleResponse.setVfModuleId("");
+			updateVfModuleResponse.setVfModuleOutputs(null);
+			updateVfModuleResponse.setVfModuleStackId("");
+			updateVfModuleResponse.setVnfId("");
+			updateVfModuleResponse.getMessageId();
+			updateVfModuleResponse.getVfModuleId();
+			updateVfModuleResponse.getVfModuleOutputs();
+			updateVfModuleResponse.getVfModuleStackId();
+			updateVfModuleResponse.getVnfId();
+
+			DeleteVfModuleRequest deleteVfModuleRequest = new DeleteVfModuleRequest();
+			deleteVfModuleRequest.setCloudSiteId("");
+			deleteVfModuleRequest.setMessageId("");
+			deleteVfModuleRequest.setMsoRequest(null);
+			deleteVfModuleRequest.setNotificationUrl("");
+			deleteVfModuleRequest.setSkipAAI(false);
+			deleteVfModuleRequest.setTenantId("");
+			deleteVfModuleRequest.setVfModuleId("");
+			deleteVfModuleRequest.setVfModuleStackId("");
+			deleteVfModuleRequest.setVnfId("");
+			deleteVfModuleRequest.getCloudSiteId();
+			deleteVfModuleRequest.getMessageId();
+			deleteVfModuleRequest.getMsoRequest();
+			deleteVfModuleRequest.getNotificationUrl();
+			deleteVfModuleRequest.getSkipAAI();
+			deleteVfModuleRequest.getTenantId();
+			deleteVfModuleRequest.getVfModuleId();
+			deleteVfModuleRequest.getVfModuleStackId();
+			deleteVfModuleRequest.getVnfId();
+
+			VfModuleExceptionResponse vfModuleExceptionResponse = new VfModuleExceptionResponse();
+			VfModuleExceptionResponse vfModuleExceptionResponse2 = new VfModuleExceptionResponse(
+					"", null, false, "");
+			vfModuleExceptionResponse.setCategory(null);
+			vfModuleExceptionResponse.setMessage("");
+			vfModuleExceptionResponse.setMessageId("");
+			vfModuleExceptionResponse.setRolledBack(false);
+			vfModuleExceptionResponse.getCategory();
+			vfModuleExceptionResponse.getMessage();
+			vfModuleExceptionResponse.getMessageId();
+			vfModuleExceptionResponse.getRolledBack();
+
+			DeleteVolumeGroupRequest deleteVolumeGroupRequest = new DeleteVolumeGroupRequest();
+			deleteVolumeGroupRequest.setCloudSiteId("");
+			deleteVolumeGroupRequest.setMessageId("");
+			deleteVolumeGroupRequest.setMsoRequest(null);
+			deleteVolumeGroupRequest.setNotificationUrl("");
+			deleteVolumeGroupRequest.setSkipAAI(false);
+			deleteVolumeGroupRequest.setTenantId("");
+			deleteVolumeGroupRequest.setVolumeGroupId("");
+			deleteVolumeGroupRequest.setVolumeGroupStackId("");
+			deleteVolumeGroupRequest.getCloudSiteId();
+			deleteVolumeGroupRequest.getMessageId();
+			deleteVolumeGroupRequest.getMsoRequest();
+			deleteVolumeGroupRequest.getNotificationUrl();
+			deleteVolumeGroupRequest.getSkipAAI();
+			deleteVolumeGroupRequest.getTenantId();
+			deleteVolumeGroupRequest.getVolumeGroupId();
+			deleteVolumeGroupRequest.getVolumeGroupStackId();
+
+			// 1
+			UpdateVolumeGroupResponse updateVolumeGroupResponse = new UpdateVolumeGroupResponse();
+			UpdateVolumeGroupResponse updateVolumeGroupResponse2 = new UpdateVolumeGroupResponse(
+					"", "", null, "");
+			updateVolumeGroupResponse.setMessageId("");
+			updateVolumeGroupResponse.setVolumeGroupId("");
+			updateVolumeGroupResponse.setVolumeGroupOutputs(null);
+			updateVolumeGroupResponse.setVolumeGroupStackId("");
+			updateVolumeGroupResponse.getMessageId();
+			updateVolumeGroupResponse.getVolumeGroupId();
+			updateVolumeGroupResponse.getVolumeGroupOutputs();
+			updateVolumeGroupResponse.getVolumeGroupStackId();
+
+			VfRequestCommon vfRequestCommon = new CreateVfModuleRequest();
+			vfRequestCommon.setMessageId("");
+			vfRequestCommon.setNotificationUrl("");
+			vfRequestCommon.setSkipAAI(false);
+			vfRequestCommon.getMessageId();
+			vfRequestCommon.getNotificationUrl();
+			vfRequestCommon.getSkipAAI();
+
+			DeleteVolumeGroupResponse deleteVolumeGroupResponse = new DeleteVolumeGroupResponse();
+			DeleteVolumeGroupResponse deleteVolumeGroupResponse2 = new DeleteVolumeGroupResponse(
+					false, "");
+			deleteVolumeGroupResponse.setMessageId("");
+			deleteVolumeGroupResponse.setVolumeGroupDeleted(false);
+			deleteVolumeGroupResponse.getMessageId();
+			deleteVolumeGroupResponse.getVolumeGroupDeleted();
+			deleteVolumeGroupResponse.toJsonString();
+			deleteVolumeGroupResponse.toXmlString();
+
+			RollbackVfModuleResponse rollbackVfModuleResponse = new RollbackVfModuleResponse();
+			RollbackVfModuleResponse rollbackVfModuleResponse2 = new RollbackVfModuleResponse(
+					false, "");
+			rollbackVfModuleResponse.setMessageId("");
+			rollbackVfModuleResponse.setVfModuleRolledback(false);
+			rollbackVfModuleResponse.getMessageId();
+			rollbackVfModuleResponse.getVfModuleRolledback();
+
+			RollbackVolumeGroupResponse rollbackVolumeGroupResponse = new RollbackVolumeGroupResponse();
+			RollbackVolumeGroupResponse rollbackVolumeGroupResponse2 = new RollbackVolumeGroupResponse(
+					false, "");
+			rollbackVolumeGroupResponse.setMessageId("");
+			rollbackVolumeGroupResponse.setVolumeGroupRolledBack(false);
+			rollbackVolumeGroupResponse.getMessageId();
+			rollbackVolumeGroupResponse.getVolumeGroupRolledBack();
+
+			VolumeGroupExceptionResponse volumeGroupExceptionResponse = new VolumeGroupExceptionResponse();
+			VolumeGroupExceptionResponse volumeGroupExceptionResponse2 = new VolumeGroupExceptionResponse(
+					"");
+			VolumeGroupExceptionResponse volumeGroupExceptionResponse3 = new VolumeGroupExceptionResponse(
+					"", null, false, "");
+			volumeGroupExceptionResponse.setCategory(null);
+			volumeGroupExceptionResponse.setMessage("");
+			volumeGroupExceptionResponse.setMessageId("");
+			volumeGroupExceptionResponse.setRolledBack(false);
+			volumeGroupExceptionResponse.getCategory();
+			volumeGroupExceptionResponse.getMessage();
+			volumeGroupExceptionResponse.getMessageId();
+			volumeGroupExceptionResponse.getRolledBack();
+			volumeGroupExceptionResponse.toJsonString();
+			volumeGroupExceptionResponse.toXmlString();
+
+			RollbackVfModuleRequest rollbackVfModuleRequest = new RollbackVfModuleRequest();
+			rollbackVfModuleRequest.setMessageId("");
+			rollbackVfModuleRequest.setNotificationUrl("");
+			rollbackVfModuleRequest.setSkipAAI(false);
+			rollbackVfModuleRequest.setVfModuleRollback(null);
+			rollbackVfModuleRequest.getMessageId();
+			rollbackVfModuleRequest.getNotificationUrl();
+			rollbackVfModuleRequest.getSkipAAI();
+			rollbackVfModuleRequest.getVfModuleRollback();
+			rollbackVfModuleRequest.toJsonString();
+			rollbackVfModuleRequest.toXmlString();
+
+			SDNCResponseCommon SDNCResponseCommon = new SDNCServiceResponse();
+			SDNCResponseCommon.setAckFinalIndicator("");
+			SDNCResponseCommon.setResponseCode("");
+			SDNCResponseCommon.setResponseMessage("");
+			SDNCResponseCommon.setSDNCRequestId("");
+			SDNCResponseCommon.getAckFinalIndicator();
+			SDNCResponseCommon.getResponseCode();
+			SDNCResponseCommon.getResponseMessage();
+			SDNCResponseCommon.getSDNCRequestId();
+			SDNCResponseCommon.toJson();
+			// 2
+
+			SDNCServiceResponse sDNCServiceResponse = new SDNCServiceResponse();
+			SDNCServiceResponse sDNCServiceResponse2 = new SDNCServiceResponse(
+					"", "", "", "");
+			sDNCServiceResponse.addParam("", "");
+			sDNCServiceResponse.setAckFinalIndicator("");
+			sDNCServiceResponse.setParams(null);
+			sDNCServiceResponse.setResponseCode("");
+			sDNCServiceResponse.setResponseMessage("");
+			sDNCServiceResponse.setSDNCRequestId("");
+			sDNCServiceResponse.getAckFinalIndicator();
+			sDNCServiceResponse.getParams();
+			sDNCServiceResponse.getResponseCode();
+			sDNCServiceResponse.getSDNCRequestId();
+			sDNCServiceResponse.getResponseMessage();
+
+			RollbackVolumeGroupRequest rollbackVolumeGroupRequest = new RollbackVolumeGroupRequest();
+			rollbackVolumeGroupRequest.setMessageId("");
+			rollbackVolumeGroupRequest.setNotificationUrl("");
+			rollbackVolumeGroupRequest.setSkipAAI(false);
+			rollbackVolumeGroupRequest.setVolumeGroupRollback(null);
+			rollbackVolumeGroupRequest.getMessageId();
+			rollbackVolumeGroupRequest.getNotificationUrl();
+			rollbackVolumeGroupRequest.getSkipAAI();
+			rollbackVolumeGroupRequest.getVolumeGroupRollback();
+			rollbackVolumeGroupRequest.toJsonString();
+			rollbackVolumeGroupRequest.toXmlString();
+
+			RequestInformation requestInformation = new RequestInformation();
+			RequestInformation requestInformation2 = new RequestInformation("",
+					"", "");
+			requestInformation.setNotificationUrl("");
+			requestInformation.setRequestId("");
+			requestInformation.setSource("");
+			requestInformation.getNotificationUrl();
+			requestInformation.getRequestId();
+			requestInformation.getSource();
+
+			SDNCErrorCommon sDNCErrorCommon = new SDNCServiceError();
+			sDNCErrorCommon.setAckFinalIndicator("");
+			sDNCErrorCommon.setResponseCode("");
+			sDNCErrorCommon.setResponseMessage("");
+			sDNCErrorCommon.setSDNCRequestId("");
+			sDNCErrorCommon.getAckFinalIndicator();
+			sDNCErrorCommon.getResponseCode();
+			sDNCErrorCommon.getResponseMessage();
+			sDNCErrorCommon.getSDNCRequestId();
+
+			SDNCEvent sDNCEvent = new SDNCEvent();
+			SDNCEvent sDNCEvent2 = new SDNCEvent("", "", "");
+			sDNCEvent.setEventCorrelator("");
+			sDNCEvent.setEventCorrelatorType("");
+			sDNCEvent.setEventType("");
+			sDNCEvent.setParams(null);
+			sDNCEvent.getEventCorrelator();
+			sDNCEvent.getEventCorrelatorType();
+			sDNCEvent.getEventType();
+			sDNCEvent.getParams();
+			sDNCEvent.addParam("", "");
+			sDNCEvent.toJson();
+
+			SDNCRequestCommon sDNCRequestCommon = new SDNCServiceRequest();
+			SDNCRequestCommon sDNCRequestCommon2 = new SDNCServiceRequest("",
+					"", "", "", "", null, null, "", "");
+			sDNCRequestCommon.setBPNotificationUrl("");
+			sDNCRequestCommon.setBPTimeout("");
+			sDNCRequestCommon.setSDNCRequestId("");
+			sDNCRequestCommon.getBPNotificationUrl();
+			sDNCRequestCommon.getBPTimeout();
+			sDNCRequestCommon.getSDNCRequestId();
+			sDNCRequestCommon.toJson();
+			sDNCRequestCommon.isSynchronous();
+
+			SDNCServiceError sDNCServiceError = new SDNCServiceError();
+			SDNCServiceError sDNCServiceError2 = new SDNCServiceError("", "",
+					"", "");
+			sDNCServiceError.setAckFinalIndicator("");
+			sDNCServiceError.setResponseCode("");
+			sDNCServiceError.setResponseMessage("");
+			sDNCServiceError.setSDNCRequestId("");
+			sDNCServiceError.getAckFinalIndicator();
+			sDNCServiceError.getResponseCode();
+			sDNCServiceError.getResponseMessage();
+			sDNCServiceError.getSDNCRequestId();
+
+			SDNCServiceRequest sDNCServiceRequest = new SDNCServiceRequest();
+			SDNCServiceRequest sDNCServiceRequest2 = new SDNCServiceRequest("",
+					"", "", "", "", requestInformation, null, "", "");
+			sDNCServiceRequest.setBPNotificationUrl("");
+			sDNCServiceRequest.setBPTimeout("");
+			sDNCServiceRequest.setRequestInformation(null);
+			sDNCServiceRequest.setSDNCOperation("");
+			sDNCServiceRequest.setSDNCRequestId("");
+			sDNCServiceRequest.setSDNCService("");
+			sDNCServiceRequest.setSDNCServiceData("");
+			sDNCServiceRequest.setSDNCServiceDataType("");
+			sDNCServiceRequest.setServiceInformation(null);
+			sDNCServiceRequest.getBPNotificationUrl();
+			sDNCServiceRequest.getBPTimeout();
+			sDNCServiceRequest.getRequestInformation();
+			sDNCServiceRequest.getSDNCOperation();
+			sDNCServiceRequest.getSDNCRequestId();
+			sDNCServiceRequest.getSDNCService();
+			sDNCServiceRequest.getSDNCServiceData();
+			sDNCServiceRequest.getSDNCServiceDataType();
+			sDNCServiceRequest.getServiceInformation();
+
+			// 3
+			ServiceInformation serviceInformation = new ServiceInformation();
+			ServiceInformation serviceInformation2 = new ServiceInformation("",
+					"", "", "");
+			serviceInformation.setServiceInstanceId("");
+			serviceInformation.setServiceType("");
+			serviceInformation.setSubscriberGlobalId("");
+			serviceInformation.setSubscriberName("");
+			serviceInformation.getServiceInstanceId();
+			serviceInformation.getServiceType();
+			serviceInformation.getSubscriberGlobalId();
+			serviceInformation.getSubscriberName();
+
+			CreateTenantError createTenantError = new CreateTenantError();
+			CreateTenantError createTenantError2 = new CreateTenantError("");
+			CreateTenantError createTenantError3 = new CreateTenantError("",
+					null, false);
+			createTenantError.setCategory(null);
+			createTenantError.setMessage("");
+			createTenantError.setRolledBack(false);
+			createTenantError.getCategory();
+			createTenantError.getMessage();
+			createTenantError.getRolledBack();
+
+			CreateTenantRequest createTenantRequest = new CreateTenantRequest();
+			createTenantRequest.setBackout(false);
+			createTenantRequest.setCloudSiteId("");
+			createTenantRequest.setFailIfExists(false);
+			createTenantRequest.setMetadata(null);
+			createTenantRequest.setMsoRequest(null);
+			createTenantRequest.setTenantName("");
+			createTenantRequest.getBackout();
+			createTenantRequest.getCloudSiteId();
+			createTenantRequest.getFailIfExists();
+			createTenantRequest.getMetadata();
+			createTenantRequest.getMsoRequest();
+			createTenantRequest.getTenantName();
+			createTenantRequest.toString();
+
+			CreateTenantResponse createTenantResponse = new CreateTenantResponse();
+			CreateTenantResponse createTenantResponse2 = new CreateTenantResponse(
+					"", "", false, null);
+			createTenantResponse.setCloudSiteId("");
+			createTenantResponse.setTenantCreated(false);
+			createTenantResponse.setTenantId("");
+			createTenantResponse.setTenantRollback(new TenantRollback());
+			createTenantResponse.getCloudSiteId();
+			createTenantResponse.getTenantCreated();
+			createTenantResponse.getTenantId();
+			createTenantResponse.getTenantRollback();
+			createTenantResponse.toString();
+
+			DeleteTenantError deleteTenantError = new DeleteTenantError();
+			DeleteTenantError deleteTenantError2 = new DeleteTenantError("");
+			DeleteTenantError deleteTenantError3 = new DeleteTenantError("",
+					null, false);
+			deleteTenantError.setCategory(null);
+			deleteTenantError.setMessage("");
+			deleteTenantError.setRolledBack(false);
+			deleteTenantError.getCategory();
+			deleteTenantError.getMessage();
+			deleteTenantError.getRolledBack();
+
+			DeleteTenantRequest deleteTenantRequest = new DeleteTenantRequest();
+			deleteTenantRequest.setCloudSiteId("");
+			deleteTenantRequest.setMsoRequest(null);
+			deleteTenantRequest.setTenantId("");
+			deleteTenantRequest.getCloudSiteId();
+			deleteTenantRequest.getMsoRequest();
+			deleteTenantRequest.getTenantId();
+
+			DeleteTenantResponse deleteTenantResponse = new DeleteTenantResponse();
+			deleteTenantResponse.setTenantDeleted(false);
+			deleteTenantResponse.getTenantDeleted();
+
+			HealthCheckHandler healthCheckHandler = new HealthCheckHandler();
+			healthCheckHandler.healthcheck();
+
+			QueryTenantError queryTenantError = new QueryTenantError();
+			QueryTenantError queryTenantError2 = new QueryTenantError("");
+			QueryTenantError queryTenantError3 = new QueryTenantError("", null);
+			queryTenantError.setCategory(null);
+			queryTenantError.setMessage("");
+			queryTenantError.getCategory();
+			queryTenantError.getMessage();
+
+			QueryTenantResponse queryTenantResponse = new QueryTenantResponse();
+			QueryTenantResponse queryTenantResponse2 = new QueryTenantResponse(
+					"", "", null);
+			queryTenantResponse.setMetadata(null);
+			queryTenantResponse.setTenantId("");
+			queryTenantResponse.setTenantName("");
+			queryTenantResponse.getMetadata();
+			queryTenantResponse.getTenantId();
+			queryTenantResponse.getTenantName();
+
+			RollbackTenantError rollbackTenantError = new RollbackTenantError();
+			RollbackTenantError rollbackTenantError2 = new RollbackTenantError(
+					"");
+			RollbackTenantError rollbackTenantError3 = new RollbackTenantError(
+					"", null, false);
+			rollbackTenantError.setCategory(null);
+			rollbackTenantError.setMessage("");
+			rollbackTenantError.setRolledBack(false);
+			rollbackTenantError.getCategory();
+			rollbackTenantError.getMessage();
+			rollbackTenantError.getRolledBack();
+
+			RollbackTenantRequest rollbackTenantRequest = new RollbackTenantRequest();
+			rollbackTenantRequest.setTenantRollback(null);
+			rollbackTenantRequest.getTenantRollback();
+
+			RollbackTenantResponse rollbackTenantResponse = new RollbackTenantResponse();
+			rollbackTenantResponse.setTenantRolledback(false);
+			rollbackTenantResponse.getTenantRolledback();
+
+			TenantExceptionResponse tenantExceptionResponse = new TenantExceptionResponse();
+			TenantExceptionResponse tenantExceptionResponse2 = new TenantExceptionResponse(
+					"");
+			TenantExceptionResponse tenantExceptionResponse3 = new TenantExceptionResponse(
+					"", null, false);
+			tenantExceptionResponse.setCategory(null);
+			tenantExceptionResponse.setMessage("");
+			tenantExceptionResponse.setRolledBack(false);
+			tenantExceptionResponse.getCategory();
+			tenantExceptionResponse.getMessage();
+			tenantExceptionResponse.getRolledBack();
+
+			TenantRequestCommon tenantRequestCommon = new TenantRequestCommon();
+			tenantRequestCommon.toJsonString();
+			tenantRequestCommon.toXmlString();
+
+			TenantRollback tenantRollback = new TenantRollback();
+			tenantRollback.toString();
+			tenantRollback.setCloudId("");
+			tenantRollback.setMsoRequest(null);
+			tenantRollback.setTenantCreated(false);
+			tenantRollback.setTenantId("");
+			tenantRollback.getCloudId();
+			tenantRollback.getMsoRequest();
+			tenantRollback.getTenantCreated();
+			tenantRollback.getTenantId();
+
 		} catch (Exception e) {
 			assert (false);
 
