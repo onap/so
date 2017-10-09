@@ -283,6 +283,9 @@ public class BpelRestClient {
 			} catch (IOException e) {
 				// ignore
 				LOGGER.debug("IOException: ", e);
+			} catch (NullPointerException e) {
+				// ignore
+				LOGGER.debug("NullPointerException: ", e);
 			}
 		}
 		LOGGER.debug("Response code from BPEL server: "+lastResponseCode);
