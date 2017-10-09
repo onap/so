@@ -98,6 +98,11 @@ public class ToscaResourceInstaller {// implements IVfResourceInstaller {
 			throws ArtifactInstallerException {
 		boolean status = false;
 		VfResourceStructure vfResourceStructure = (VfResourceStructure)vfResourceStruct;
+		try {
+		    status = vfResourceStructure.isDeployedSuccessfully();
+		} catch (RuntimeException e) {
+		    status = false;
+		}
 		
 		try {
 			
