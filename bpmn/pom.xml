@@ -30,7 +30,7 @@
 
   <modules>
     <module>MSOCoreBPMN</module>
-    <module>MSOMockServer</module>
+    <!--<module>MSOMockServer</module> -->
     <module>MSORESTClient</module>
     <module>MSOCommonBPMN</module>
     <module>MSOInfrastructureBPMN</module>
