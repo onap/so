@@ -8,4 +8,11 @@ ONAP Service Orchestration Documentation
 .. toctree::
    :maxdepth: 1
 
-   Install_and_Configure_an_Ubuntu_VM.rst
+   architecture.rst
+   offered_consumed_apis.rst
+   delivery.rst
+   logging.rst
+   installation.rst
+   configuration.rst
+   administration.rst
+   humaninterfaces.rst
