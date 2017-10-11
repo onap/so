@@ -2,9 +2,15 @@
 .. http://creativecommons.org/licenses/by/4.0
 .. Copyright 2017 Huawei Technologies Co., Ltd.
 
-ONAP Service Orchestration Documentation - Architecture
+ONAP Service Orchestration - Architecture
 ========================================================
+
+SO Architecture
+----------------
+SO architecture and internal details could be found in the below wiki link
+
+https://wiki.onap.org/pages/viewpage.action?pageId=9830754
 
 .. toctree::
    :maxdepth: 1
-   https://wiki.onap.org/pages/viewpage.action?pageId=9830754
+   

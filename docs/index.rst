@@ -8,6 +8,7 @@ ONAP Service Orchestration Documentation
 .. toctree::
    :maxdepth: 1
 
+   Install_Configure_SO.rst
    architecture.rst
    offered_consumed_apis.rst
-   Install_Configure_SO.rst
+   
