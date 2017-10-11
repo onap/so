@@ -1,0 +1,8 @@
+<service-instance>
+	<service-instance-id>MIS/1604/0026/SW_INTERNET</service-instance-id>
+	<service-type>SDN-MOBILITY</service-type>
+	<resource-version>123456789</resource-version>
+	
+	<relationship-list>
+	</relationship-list>
+</service-instance>

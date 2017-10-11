@@ -1,7 +1,0 @@
-<customer xmlns="http://org.openecomp.aai.inventory/v8">
-    <global-customer-id>MCBH-1610</global-customer-id>
-    <subscriber-name>MCBH-1610</subscriber-name>
-    <resource-version>1465943440</resource-version>
-    <service-subscriptions/>
-    <relationship-list/>
-</customer>

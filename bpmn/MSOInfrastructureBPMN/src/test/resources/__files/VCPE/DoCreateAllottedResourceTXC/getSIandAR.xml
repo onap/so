@@ -1,0 +1,38 @@
+<service-instance>
+    <service-instance-id>MIS/1604/0026/SW_INTERNET</service-instance-id>
+    <resource-version>123456789</resource-version>
+    
+    <orchestration-status>Active</orchestration-status>
+    
+    <relationship-list>
+      <relationship>
+         <related-to>allotted-resource</related-to>
+         <related-link>https://aai-ext1.test.com:8443/aai/v7/business/customers/customer/SDN-ETHERNET-INTERNET/service-subscriptions/service-subscription/123456789/service-instances/service-instance/MIS%252F1604%252F0026%252FSW_INTERNET/allotted-resources/allotted-resource/arId-1</related-link>
+      </relationship>
+      
+      <relationship>
+         <related-to>cvlan-tag</related-to>
+         <related-link>https://aai-ext1.test.com:8443/aai/v2/network/vces/vce/832bace2-3fb0-49e0-a6a4-07c47223c535/port-groups/port-group/slcp1447vbc.ipag/cvlan-tags/cvlan-tag/2003/</related-link>
+         <relationship-data>
+            <relationship-key>cvlan-tag.cvlan-tag</relationship-key>
+            <relationship-value>2003</relationship-value>
+         </relationship-data>
+         <relationship-data>
+            <relationship-key>port-group.interface-id</relationship-key>
+            <relationship-value>slcp1447vbc.ipag</relationship-value>
+         </relationship-data>
+         <relationship-data>
+            <relationship-key>vce.vnf-id</relationship-key>
+            <relationship-value>832bace2-3fb0-49e0-a6a4-07c47223c535</relationship-value>
+         </relationship-data>
+      </relationship>
+      <relationship>
+         <related-to>vce</related-to>
+		<related-link>https://aai-ext1.test.com:8443/aai/v2/network/vces/vce/832bace2-3fb0-49e0-a6a4-07c47223c535/</related-link>
+         <relationship-data>
+            <relationship-key>vce.vnf-id</relationship-key>
+            <relationship-value>832bace2-3fb0-49e0-a6a4-07c47223c535</relationship-value>
+         </relationship-data>
+      </relationship>
+    </relationship-list>
+</service-instance>

@@ -1,0 +1,6 @@
+<search-results xmlns="http://org.openecomp.aai.inventory">
+     <result-data>
+        <resource-type>allotted-resource</resource-type>
+        <resource-link>https://aai-ext1.test.com:8443/aai/v7/business/customers/customer/SDN-ETHERNET-INTERNET/service-subscriptions/service-subscription/123456789/service-instances/service-instance/MIS%252F1604%252F0026%252FSW_INTERNET/allotted-resources/allotted-resource/ar-txcA</resource-link>
+     </result-data>
+</search-results>

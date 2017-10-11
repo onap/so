@@ -12,11 +12,11 @@
          <related-link>http://localhost:28090/aai/v9/business/customers/customer/SDN-ETHERNET-INTERNET/service-subscriptions/service-subscription/123456789/service-instances/service-instance/MIS%252F1604%252F0026%252FSW_INTERNET/allotted-resources/allotted-resource/arId-1</related-link>
          <relationship-data>
             <relationship-key>customer.global-customer-id</relationship-key>
-            <relationship-value>MCBH-1610</relationship-value>
+            <relationship-value>SDN-ETHERNET-INTERNET</relationship-value>
          </relationship-data> 
          <relationship-data>
             <relationship-key>service-subscription.service-type</relationship-key>
-            <relationship-value>vcpesvc</relationship-value>
+            <relationship-value>123456789</relationship-value>
          </relationship-data>
          <relationship-data>
             <relationship-key>service-instance.service-instance-id</relationship-key>

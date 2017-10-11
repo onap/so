@@ -1,0 +1,8 @@
+<output xmlns="org:openecomp:sdnctl:vnf">
+	<vnf-information>
+		<vnf-id>skask</vnf-id>
+	</vnf-information>
+	<response-code>404</response-code>
+	<svc-request-id>{{REQUEST-ID}}</svc-request-id>
+	<ack-final-indicator>Y</ack-final-indicator>
+</output>

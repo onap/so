@@ -1,4 +1,4 @@
-/*-
+/*
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,13 +17,11 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
-/*
- * © 2014 AT&T Intellectual Property. All rights reserved. Used under license from AT&T Intellectual Property.
- */
 package org.openecomp.mso.bpmn.vcpe;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetAllottedResource;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetServiceInstance;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockNodeQueryServiceInstanceById;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPatchAllottedResource;
@@ -40,18 +38,18 @@ import org.camunda.bpm.engine.test.Deployment;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.mso.bpmn.common.BPMNUtil;
-import org.openecomp.mso.bpmn.common.WorkflowTest;
 import org.openecomp.mso.bpmn.mock.FileUtil;
 
 
-public class DoCreateAllottedResourceBRGTest extends WorkflowTest {
+public class DoCreateAllottedResourceBRGTest extends AbstractTestBase {
 
+	private static final String PROCNAME = "DoCreateAllottedResourceBRG";
 	private final CallbackSet callbacks = new CallbackSet();
 
 	public DoCreateAllottedResourceBRGTest() throws IOException {
-		callbacks.put("assign", FileUtil.readResourceFile("__files/VCPE/VfModularity/SDNCTopologyAssignCallback.xml"));
-		callbacks.put("create", FileUtil.readResourceFile("__files/VCPE/VfModularity/SDNCTopologyCreateCallback.xml"));
-		callbacks.put("activate", FileUtil.readResourceFile("__files/VCPE/VfModularity/SDNCTopologyActivateCallback.xml"));
+		callbacks.put("assign", FileUtil.readResourceFile("__files/VfModularity/SDNCTopologyAssignCallback.xml"));
+		callbacks.put("create", FileUtil.readResourceFile("__files/VfModularity/SDNCTopologyCreateCallback.xml"));
+		callbacks.put("activate", FileUtil.readResourceFile("__files/VfModularity/SDNCTopologyActivateCallback.xml"));
 		callbacks.put("query", FileUtil.readResourceFile("__files/VCPE/DoCreateAllottedResourceBRG/SDNCTopologyQueryCallback.xml"));
 	}
 	
@@ -62,14 +60,21 @@ public class DoCreateAllottedResourceBRGTest extends WorkflowTest {
 			"subprocess/FalloutHandler.bpmn",
 			"subprocess/DoCreateAllottedResourceBRG.bpmn",
 			"subprocess/DoCreateAllottedResourceBRGRollback.bpmn"})
-	public void testDoCreateAllottedResourceBRG_success() throws Exception{
+	public void testDoCreateAllottedResourceBRG_Success() throws Exception{
 
-		MockNodeQueryServiceInstanceById("MIS%252F1604%252F0026%252FSW_INTERNET", "GenericFlows/getSIUrlById.xml");
-		MockGetServiceInstance("SDN-ETHERNET-INTERNET", "123456789", "MIS%252F1604%252F0026%252FSW_INTERNET", "GenericFlows/getServiceInstance.xml");
-		MockNodeQueryServiceInstanceById("MIS%252F1604%252F0027%252FSW_INTERNET", "GenericFlows/getParentSIUrlById.xml");
-		MockGetServiceInstance("SDN-ETHERNET-INTERNET", "123456789", "MIS%252F1604%252F0027%252FSW_INTERNET", "GenericFlows/getParentServiceInstance.xml");
-		MockPutAllottedResource("SDN-ETHERNET-INTERNET", "123456789", "MIS%252F1604%252F0027%252FSW_INTERNET", "arId-1");
-		MockPatchAllottedResource("SDN-ETHERNET-INTERNET", "123456789", "MIS%252F1604%252F0027%252FSW_INTERNET", "arId-1");
+		// TODO: use INST instead of DEC_INST
+		/*
+		 * should be INST instead of DEC_INST, but AAI utilities appear to
+		 * have a bug in that they don't URL-encode the SI id before using
+		 * it in the query
+		 */
+		MockNodeQueryServiceInstanceById(DEC_INST, "GenericFlows/getSIUrlById.xml");
+		MockNodeQueryServiceInstanceById(DEC_PARENT_INST, "GenericFlows/getParentSIUrlById.xml");
+
+		MockGetServiceInstance(CUST, SVC, INST, "GenericFlows/getServiceInstance.xml");
+		MockGetServiceInstance(CUST, SVC, PARENT_INST, "GenericFlows/getParentServiceInstance.xml");
+		MockPutAllottedResource(CUST, SVC, PARENT_INST, ARID);
+		MockPatchAllottedResource(CUST, SVC, PARENT_INST, ARID);
 		mockSDNCAdapter(200);
 		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
 
@@ -77,7 +82,7 @@ public class DoCreateAllottedResourceBRGTest extends WorkflowTest {
 		Map<String, Object> variables = new HashMap<>();
 		setVariablesSuccess(variables, "testRequestId123");
 		
-		invokeSubProcess("DoCreateAllottedResourceBRG", businessKey, variables);
+		invokeSubProcess(PROCNAME, businessKey, variables);
 		
 		injectSDNCCallbacks(callbacks, "assign");
 		injectSDNCCallbacks(callbacks, "create");
@@ -87,14 +92,178 @@ public class DoCreateAllottedResourceBRGTest extends WorkflowTest {
 		waitForProcessEnd(businessKey, 10000);
 		
 		Assert.assertTrue(isProcessEnded(businessKey));
-		String allotedResourceName = BPMNUtil.getVariable(processEngineRule, "DoCreateAllottedResourceBRG", "allotedResourceName");
-		String workflowException = BPMNUtil.getVariable(processEngineRule, "DoCreateAllottedResourceBRG", "WorkflowException");
-		assertEquals("namefromrequest", allotedResourceName);
+		String workflowException = BPMNUtil.getVariable(processEngineRule, PROCNAME, VAR_WFEX);
 		assertEquals(null, workflowException);
+		
+		assertEquals("namefromrequest", BPMNUtil.getVariable(processEngineRule, PROCNAME, "allotedResourceName"));
+	}
+	
+	@Test
+	@Deployment(resources = {
+			"subprocess/GenericGetService.bpmn", 
+			"subprocess/SDNCAdapterV1.bpmn", 
+			"subprocess/FalloutHandler.bpmn",
+			"subprocess/DoCreateAllottedResourceBRG.bpmn",
+			"subprocess/DoCreateAllottedResourceBRGRollback.bpmn"})
+	public void testDoCreateAllottedResourceBRG_NoSI() throws Exception{
+
+		// TODO: use INST instead of DEC_INST
+		/*
+		 * should be INST instead of DEC_INST, but AAI utilities appear to
+		 * have a bug in that they don't URL-encode the SI id before using
+		 * it in the query
+		 */
+		MockNodeQueryServiceInstanceById(DEC_INST, "GenericFlows/getNotFound.xml");
+		MockNodeQueryServiceInstanceById(DEC_PARENT_INST, "GenericFlows/getParentSIUrlById.xml");
+
+		MockGetServiceInstance(CUST, SVC, INST, "GenericFlows/getServiceInstance.xml");
+		MockGetServiceInstance(CUST, SVC, PARENT_INST, "GenericFlows/getParentServiceInstance.xml");
+		MockPutAllottedResource(CUST, SVC, PARENT_INST, ARID);
+		MockPatchAllottedResource(CUST, SVC, PARENT_INST, ARID);
+		mockSDNCAdapter(200);
+		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+
+		String businessKey = UUID.randomUUID().toString();
+		Map<String, Object> variables = new HashMap<>();
+		setVariablesSuccess(variables, "testRequestId123");
+		
+		invokeSubProcess(PROCNAME, businessKey, variables);
+
+		waitForProcessEnd(businessKey, 10000);
+		
+		Assert.assertTrue(isProcessEnded(businessKey));
+		String workflowException = BPMNUtil.getVariable(processEngineRule, PROCNAME, VAR_WFEX);
+		assertNotNull(workflowException);
+		
+		assertEquals(null, BPMNUtil.getVariable(processEngineRule, PROCNAME, "allotedResourceName"));
+	}
+	
+	@Test
+	@Deployment(resources = {
+			"subprocess/GenericGetService.bpmn", 
+			"subprocess/SDNCAdapterV1.bpmn", 
+			"subprocess/FalloutHandler.bpmn",
+			"subprocess/DoCreateAllottedResourceBRG.bpmn",
+			"subprocess/DoCreateAllottedResourceBRGRollback.bpmn"})
+	public void testDoCreateAllottedResourceBRG_ActiveAr() throws Exception{
+
+		// TODO: use INST instead of DEC_INST
+		/*
+		 * should be INST instead of DEC_INST, but AAI utilities appear to
+		 * have a bug in that they don't URL-encode the SI id before using
+		 * it in the query
+		 */
+		MockNodeQueryServiceInstanceById(DEC_INST, "GenericFlows/getSIUrlById.xml");
+		MockNodeQueryServiceInstanceById(DEC_PARENT_INST, "GenericFlows/getParentSIUrlById.xml");
+		
+		MockGetServiceInstance(CUST, SVC, INST, "VCPE/DoCreateAllottedResourceBRG/getSIandAR.xml");
+		MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceBRG/getArBrg2.xml");
+		MockGetServiceInstance(CUST, SVC, PARENT_INST, "GenericFlows/getParentServiceInstance.xml");
+		MockPutAllottedResource(CUST, SVC, PARENT_INST, ARID);
+		MockPatchAllottedResource(CUST, SVC, PARENT_INST, ARID);
+		mockSDNCAdapter(200);
+		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+
+		String businessKey = UUID.randomUUID().toString();
+		Map<String, Object> variables = new HashMap<>();
+		setVariablesSuccess(variables, "testRequestId123");
+
+		variables.put("failExists", "false");
+		
+		invokeSubProcess(PROCNAME, businessKey, variables);
+		
+		injectSDNCCallbacks(callbacks, "query");
+
+		waitForProcessEnd(businessKey, 10000);
+		
+		Assert.assertTrue(isProcessEnded(businessKey));
+		String workflowException = BPMNUtil.getVariable(processEngineRule, PROCNAME, VAR_WFEX);
+		assertEquals(null, workflowException);
+		
+		assertEquals("namefromrequest", BPMNUtil.getVariable(processEngineRule, PROCNAME, "allotedResourceName"));
+	}
+	
+	@Test
+	@Deployment(resources = {
+			"subprocess/GenericGetService.bpmn", 
+			"subprocess/SDNCAdapterV1.bpmn", 
+			"subprocess/FalloutHandler.bpmn",
+			"subprocess/DoCreateAllottedResourceBRG.bpmn",
+			"subprocess/DoCreateAllottedResourceBRGRollback.bpmn"})
+	public void testDoCreateAllottedResourceBRG_NoParentSI() throws Exception{
+
+		// TODO: use INST instead of DEC_INST
+		/*
+		 * should be INST instead of DEC_INST, but AAI utilities appear to
+		 * have a bug in that they don't URL-encode the SI id before using
+		 * it in the query
+		 */
+		MockNodeQueryServiceInstanceById(DEC_INST, "GenericFlows/getSIUrlById.xml");
+		MockNodeQueryServiceInstanceById(DEC_PARENT_INST, "GenericFlows/getNotFound.xml");
+
+		MockGetServiceInstance(CUST, SVC, INST, "GenericFlows/getServiceInstance.xml");
+		MockGetServiceInstance(CUST, SVC, PARENT_INST, "GenericFlows/getParentServiceInstance.xml");
+		MockPutAllottedResource(CUST, SVC, PARENT_INST, ARID);
+		MockPatchAllottedResource(CUST, SVC, PARENT_INST, ARID);
+		mockSDNCAdapter(200);
+		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+
+		String businessKey = UUID.randomUUID().toString();
+		Map<String, Object> variables = new HashMap<>();
+		setVariablesSuccess(variables, "testRequestId123");
+		
+		invokeSubProcess(PROCNAME, businessKey, variables);
+
+		waitForProcessEnd(businessKey, 10000);
+		
+		Assert.assertTrue(isProcessEnded(businessKey));
+		String workflowException = BPMNUtil.getVariable(processEngineRule, PROCNAME, VAR_WFEX);
+		assertNotNull(workflowException);
+		
+		assertEquals(null, BPMNUtil.getVariable(processEngineRule, PROCNAME, "allotedResourceName"));
+	}
+	
+	@Test
+	@Deployment(resources = {
+			"subprocess/GenericGetService.bpmn", 
+			"subprocess/SDNCAdapterV1.bpmn", 
+			"subprocess/FalloutHandler.bpmn",
+			"subprocess/DoCreateAllottedResourceBRG.bpmn",
+			"subprocess/DoCreateAllottedResourceBRGRollback.bpmn"})
+	public void testDoCreateAllottedResourceBRG_SubProcessError() throws Exception{
+
+		// TODO: use INST instead of DEC_INST
+		/*
+		 * should be INST instead of DEC_INST, but AAI utilities appear to
+		 * have a bug in that they don't URL-encode the SI id before using
+		 * it in the query
+		 */
+		MockNodeQueryServiceInstanceById(DEC_INST, "GenericFlows/getSIUrlById.xml");
+		MockNodeQueryServiceInstanceById(DEC_PARENT_INST, "GenericFlows/getParentSIUrlById.xml");
+		
+		MockGetServiceInstance(CUST, SVC, INST, "GenericFlows/getServiceInstance.xml");
+		MockGetServiceInstance(CUST, SVC, PARENT_INST, "GenericFlows/getParentServiceInstance.xml");
+		MockPutAllottedResource(CUST, SVC, PARENT_INST, ARID);
+		MockPatchAllottedResource(CUST, SVC, PARENT_INST, ARID);
+		mockSDNCAdapter(404);
+		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+
+		String businessKey = UUID.randomUUID().toString();
+		Map<String, Object> variables = new HashMap<>();
+		setVariablesSuccess(variables, "testRequestId123");
+		
+		invokeSubProcess(PROCNAME, businessKey, variables);
+
+		waitForProcessEnd(businessKey, 10000);
+		
+		Assert.assertTrue(isProcessEnded(businessKey));
+		String workflowException = BPMNUtil.getVariable(processEngineRule, PROCNAME, VAR_WFEX);
+		assertNotNull(workflowException);
+		
+		assertEquals(null, BPMNUtil.getVariable(processEngineRule, PROCNAME, "allotedResourceName"));
 	}
 
 	private void setVariablesSuccess(Map<String, Object> variables, String requestId) {
-		// TODO: need all of these?
 		variables.put("isDebugLogEnabled", "true");
 		variables.put("failExists", "true");
 		variables.put("disableRollback", "true");
@@ -104,14 +273,15 @@ public class DoCreateAllottedResourceBRGTest extends WorkflowTest {
 		variables.put("sourceNetworkRole", "snRole");
 		variables.put("allottedResourceRole", "txc");
 		variables.put("allottedResourceType", "BRG");
-		variables.put("allottedResourceId", "arId-1");
+		variables.put("allottedResourceId", ARID);
 		variables.put("vni", "BRG");
 		variables.put("vgmuxBearerIP", "bearerip");
 		variables.put("brgWanMacAddress", "wanmac");
 		variables.put("junitSleepMs", "5");
+
+		variables.put("serviceInstanceId", DEC_INST);
+		variables.put("parentServiceInstanceId", DEC_PARENT_INST);
 		
-		variables.put("serviceInstanceId", "MIS%252F1604%252F0026%252FSW_INTERNET");
-		variables.put("parentServiceInstanceId","MIS%252F1604%252F0027%252FSW_INTERNET");
 		variables.put("serviceChainServiceInstanceId", "scsiId");
 		
 		String arModelInfo = "{ "+ "\"modelType\": \"allotted-resource\"," +

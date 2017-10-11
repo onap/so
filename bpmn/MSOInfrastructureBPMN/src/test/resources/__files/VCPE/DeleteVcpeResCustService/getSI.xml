@@ -1,0 +1,43 @@
+<service-instance>
+	
+   <service-instance-id>MIS/1604/0026/SW_INTERNET</service-instance-id>
+   <resource-version>123456789</resource-version>
+   
+	<allotted-resources>
+		<allotted-resource>
+			<type>TunnelXConn</type>
+			<id>ar-txcA</id>
+		</allotted-resource>
+		<allotted-resource>
+			<type>BRG</type>
+			<id>ar-brgB</id>
+		</allotted-resource>
+		<allotted-resource>
+			<type>other</type>
+			<id>ar-otherC</id>
+		</allotted-resource>
+	</allotted-resources>
+	
+	<relationship-list>
+      <relationship>
+         <related-to>generic-vnf</related-to>
+         <related-link>https://aai-ext1.test.com:8443/aai/v7/generic-vnf/vnfX</related-link>
+      </relationship>
+      <relationship>
+         <related-to>l3-network</related-to>
+         <related-link>https://aai-ext1.test.com:8443/aai/v7/l3-network/netA</related-link>
+      </relationship>
+      <relationship>
+         <related-to>generic-vnf</related-to>
+         <related-link>https://aai-ext1.test.com:8443/aai/v7/generic-vnf/vnfY</related-link>
+      </relationship>
+      <relationship>
+         <related-to>l3-network</related-to>
+         <related-link>https://aai-ext1.test.com:8443/aai/v7/l3-network/netB</related-link>
+      </relationship>
+      <relationship>
+         <related-to>l3-network</related-to>
+         <related-link>https://aai-ext1.test.com:8443/aai/v7/l3-network/netC</related-link>
+      </relationship>
+   </relationship-list>
+</service-instance>
