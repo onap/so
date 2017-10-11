@@ -55,5 +55,21 @@ public interface MsoRequestsDbAdapter {
 
     @WebMethod
     public boolean getSiteStatus (@WebParam(name="siteName") @XmlElement(required = true) String siteName);
+    
+    @WebMethod
+    public void updateServiceOperationStatus (@WebParam(name = "serviceId") @XmlElement(required = true) String serviceId,
+                                    @WebParam(name = "operationId") @XmlElement(required = false) String operationId,
+                                    @WebParam(name = "operationType") @XmlElement(required = false) String operationType,
+                                    @WebParam(name = "userId") @XmlElement(required = false) String userId,
+                                    @WebParam(name = "result") @XmlElement(required = false) String result,
+                                    @WebParam(name = "operationContent") @XmlElement(required = false) String operationContent,
+                                    @WebParam(name = "progress") @XmlElement(required = false) String progress,
+                                    @WebParam(name = "reason") @XmlElement(required = false) String reason) throws MsoRequestsDbException;
+
+    @WebMethod
+    public void initResourceOperationStatus (@WebParam(name = "serviceId") @XmlElement(required = true) String serviceId,
+                                    @WebParam(name = "operationId") @XmlElement(required = true) String operationId,
+                                    @WebParam(name = "operationType") @XmlElement(required = true) String operationType,
+                                    @WebParam(name = "resourceTemplateUUIDs") @XmlElement(required = true) String resourceTemplateUUIDs) throws MsoRequestsDbException;
 
 }

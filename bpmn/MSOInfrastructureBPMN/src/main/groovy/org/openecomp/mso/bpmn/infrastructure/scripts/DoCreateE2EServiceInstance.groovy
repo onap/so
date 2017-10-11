@@ -606,4 +606,64 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		utils.log("DEBUG"," *** Exit postProcessRollback *** ", isDebugEnabled)
 	}
 
+	public void preInitResourcesOperStatus(Execution execution){
+        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
+
+        utils.log("DEBUG", " ======== STARTED preInitResourcesOperStatus Process ======== ", isDebugEnabled)
+        try{
+            String serviceId = execution.getVariable("serviceInstanceId")
+            String operationId = execution.getVariable("operationId")
+            String operationType = execution.getVariable("operationType")
+            String resourceTemplateUUIDs = ""
+            String result = "processing"
+            String progress = "0"
+            String reason = ""
+            String operationContent = "Prepare service creation"
+            utils.log("DEBUG", "Generated new operation for Service Instance serviceId:" + serviceId + " operationId:" + operationId, isDebugEnabled)
+            serviceId = UriUtils.encode(serviceId,"UTF-8")
+            execution.setVariable("serviceInstanceId", serviceId)
+            execution.setVariable("operationId", operationId)
+            execution.setVariable("operationType", operationType)
+            def jsonSlurper = new JsonSlurper()
+            def jsonOutput = new JsonOutput()
+            String incomingRequest = execution.getVariable("bpmnRequest")
+            Map serviceReq =  jsonSlurper.parseText(incomingRequest)
+            def segmentList = serviceReq.service.parameters.segments
+                    
+            if (segmentList != null) {
+                segmentList.each {
+                    resourceTemplateUUIDs  = resourcesUUIDs + it.resourceUUID + ":"
+                }
+            }            
+
+            def dbAdapterEndpoint = execution.getVariable("URN_mso_openecomp_adapters_db_endpoint")
+            execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
+            utils.log("DEBUG", "DB Adapter Endpoint is: " + dbAdapterEndpoint, isDebugEnabled)
+
+            String payload =
+                """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                        xmlns:ns="http://org.openecomp.mso/requestsdb">
+                        <soapenv:Header/>
+                        <soapenv:Body>
+                            <ns:initResourceOperationStatus xmlns:ns="http://org.openecomp.mso/requestsdb">
+                            <serviceId>${serviceId}</serviceId>
+                            <operationId>${operationId}</operationId>
+                            <operationType>${operationType}</operationType>
+                            <resourceTemplateUUIDs>${resourceTemplateUUIDs}</resourceTemplateUUIDs>
+                        </ns:initResourceOperationStatus>
+                    </soapenv:Body>
+                </soapenv:Envelope>"""
+
+            payload = utils.formatXml(payload)
+            execution.setVariable("CVFMI_initResOperStatusRequest", payload)
+            utils.log("DEBUG", "Outgoing initResourceOperationStatus: \n" + payload, isDebugEnabled)
+            utils.logAudit("CreateVfModuleInfra Outgoing initResourceOperationStatus Request: " + payload)
+
+        }catch(Exception e){
+            utils.log("ERROR", "Exception Occured Processing preInitResourcesOperStatus. Exception is:\n" + e, isDebugEnabled)
+            execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during preInitResourcesOperStatus Method:\n" + e.getMessage())
+        }
+        utils.log("DEBUG", "======== COMPLETED preInitResourcesOperStatus Process ======== ", isDebugEnabled)  
+	}
+	
 }
