@@ -227,6 +227,20 @@ public class E2EServiceInstances {
 			return response;
 		}
 
+		try {
+			msoRequest.createRequestRecord (Status.PENDING, action);
+		} catch (Exception e) {
+			msoLogger.error (MessageEnum.APIH_DB_ACCESS_EXC_REASON, "Exception while creating record in DB", "", "", MsoLogger.ErrorCode.SchemaError, "Exception while creating record in DB", e);
+			msoRequest.setStatus (org.openecomp.mso.apihandlerinfra.vnfbeans.RequestStatusType.FAILED);
+			Response response = msoRequest.buildServiceErrorResponse (HttpStatus.SC_INTERNAL_SERVER_ERROR,
+					MsoException.ServiceException,
+					"Exception while creating record in DB " + e.getMessage(),
+					ErrorNumbers.SVC_BAD_PARAMETER,
+					null);
+			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError, "Exception while creating record in DB");
+			msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
+			return response;
+		}
 
 		String modelInfo = sir.getService().getParameters().getNodeTemplateName();
 		String[] arrayOfInfo = modelInfo.split(":");

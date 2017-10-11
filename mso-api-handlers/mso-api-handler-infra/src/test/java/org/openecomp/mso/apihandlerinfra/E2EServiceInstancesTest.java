@@ -113,7 +113,8 @@ public class E2EServiceInstancesTest {
 		E2EServiceInstances instance = new E2EServiceInstances();
 		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"modelInvariantId value from SDC?\",\"templateId\":\"modelVersionId value from SDC??\",\"parameters\":{\"domainHost\":\"localhost\",\"nodeTemplateName\":\"modelName:v3\",\"nodeType\":\"service\",\"globalSubscriberId\":\"NEED THIS UUI - AAI\",\"subscriberName\":\"NEED THIS UUI - AAI\",\"requestParameters\":{\"subscriptionServiceType\":\"MOG\",\"userParams\":[{\"name\":\"someUserParam\",\"value\":\"someValue\"},{\"name\":\"segments\",\"value\":\"value\"},{\"name\":\"nsParameters\",\"value\":\"othervalue\"}]}}}}";
 		Response resp = instance.createE2EServiceInstance(request, "v3");
-		assertTrue(resp.getStatus() == 202);
+		String respStr = resp.getEntity().toString();
+		assertTrue(respStr.indexOf("Exception while creating record in DB null") != -1);
 	}
 	 
 	@Test
@@ -177,7 +178,7 @@ public class E2EServiceInstancesTest {
 		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"modelInvariantId value from SDC?\",\"templateId\":\"modelVersionId value from SDC??\",\"parameters\":{\"domainHost\":\"localhost\",\"nodeTemplateName\":\"modelName:v3\",\"nodeType\":\"service\",\"globalSubscriberId\":\"NEED THIS UUI - AAI\",\"subscriberName\":\"NEED THIS UUI - AAI\",\"requestParameters\":{\"subscriptionServiceType\":\"MOG\",\"userParams\":[{\"name\":\"someUserParam\",\"value\":\"someValue\"},{\"name\":\"segments\",\"value\":\"value\"},{\"name\":\"nsParameters\",\"value\":\"othervalue\"}]}}}}";
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.indexOf("Request Failed due to BPEL error with HTTP Status") != -1);
+		assertTrue(respStr.indexOf("Exception while creating record in DB null") != -1);
 	}
 	
 	@Test
@@ -241,7 +242,7 @@ public class E2EServiceInstancesTest {
 		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"modelInvariantId value from SDC?\",\"templateId\":\"modelVersionId value from SDC??\",\"parameters\":{\"domainHost\":\"localhost\",\"nodeTemplateName\":\"modelName:v3\",\"nodeType\":\"service\",\"globalSubscriberId\":\"NEED THIS UUI - AAI\",\"subscriberName\":\"NEED THIS UUI - AAI\",\"requestParameters\":{\"subscriptionServiceType\":\"MOG\",\"userParams\":[{\"name\":\"someUserParam\",\"value\":\"someValue\"},{\"name\":\"segments\",\"value\":\"value\"},{\"name\":\"nsParameters\",\"value\":\"othervalue\"}]}}}}";
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.indexOf("Request Failed due to BPEL error with HTTP Status") != -1);
+		assertTrue(respStr.indexOf("Exception while creating record in DB null") != -1);
 	}
 	
 	@Test
@@ -293,7 +294,7 @@ public class E2EServiceInstancesTest {
 		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"modelInvariantId value from SDC?\",\"templateId\":\"modelVersionId value from SDC??\",\"parameters\":{\"domainHost\":\"localhost\",\"nodeTemplateName\":\"modelName:v3\",\"nodeType\":\"service\",\"globalSubscriberId\":\"NEED THIS UUI - AAI\",\"subscriberName\":\"NEED THIS UUI - AAI\",\"requestParameters\":{\"subscriptionServiceType\":\"MOG\",\"userParams\":[{\"name\":\"someUserParam\",\"value\":\"someValue\"},{\"name\":\"segments\",\"value\":\"value\"},{\"name\":\"nsParameters\",\"value\":\"othervalue\"}]}}}}";
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.indexOf("bpelResponse is null") != -1);
+		assertTrue(respStr.indexOf("Exception while creating record in DB null") != -1);
 	}
 	
 	@Test
@@ -342,7 +343,7 @@ public class E2EServiceInstancesTest {
 		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"modelInvariantId value from SDC?\",\"templateId\":\"modelVersionId value from SDC??\",\"parameters\":{\"domainHost\":\"localhost\",\"nodeTemplateName\":\"modelName:v3\",\"nodeType\":\"service\",\"globalSubscriberId\":\"NEED THIS UUI - AAI\",\"subscriberName\":\"NEED THIS UUI - AAI\",\"requestParameters\":{\"subscriptionServiceType\":\"MOG\",\"userParams\":[{\"name\":\"someUserParam\",\"value\":\"someValue\"},{\"name\":\"segments\",\"value\":\"value\"},{\"name\":\"nsParameters\",\"value\":\"othervalue\"}]}}}}";
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.indexOf("Failed calling bpmn null") != -1);
+		assertTrue(respStr.indexOf("Exception while creating record in DB null") != -1);
 	}
 	
 	@Test
@@ -372,7 +373,7 @@ public class E2EServiceInstancesTest {
 		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"modelInvariantId value from SDC?\",\"templateId\":\"modelVersionId value from SDC??\",\"parameters\":{\"domainHost\":\"localhost\",\"nodeTemplateName\":\"modelName:v3\",\"nodeType\":\"service\",\"globalSubscriberId\":\"NEED THIS UUI - AAI\",\"subscriberName\":\"NEED THIS UUI - AAI\",\"requestParameters\":{\"subscriptionServiceType\":\"MOG\",\"userParams\":[{\"name\":\"someUserParam\",\"value\":\"someValue\"},{\"name\":\"segments\",\"value\":\"value\"},{\"name\":\"nsParameters\",\"value\":\"othervalue\"}]}}}}";
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.indexOf("Failed calling bpmn properties is null") != -1);
+		assertTrue(respStr.indexOf("Exception while creating record in DB null") != -1);
 	}
 	
 	@Test
