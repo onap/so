@@ -2,9 +2,15 @@
 .. http://creativecommons.org/licenses/by/4.0
 .. Copyright 2017 Huawei Technologies Co., Ltd.
 
-ONAP Service Orchestration Documentation - Architecture
-========================================================
+ONAP Service Orchestration APIs
+=====================================
 
+SO APIs
+--------
+All the Service Orchestrator APIs, both inward and outward are documented in the below link of onap wiki.
+
+   https://wiki.onap.org/display/DW/SO+R1+Interfaces
+   
+   
 .. toctree::
    :maxdepth: 1
-   https://wiki.onap.org/display/DW/SO+R1+Interfaces
