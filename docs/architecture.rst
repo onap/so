@@ -2,12 +2,9 @@
 .. http://creativecommons.org/licenses/by/4.0
 .. Copyright 2017 Huawei Technologies Co., Ltd.
 
-ONAP Service Orchestration Documentation
-========================================
+ONAP Service Orchestration Documentation - Architecture
+========================================================
 
 .. toctree::
    :maxdepth: 1
-
-   architecture.rst
-   offered_consumed_apis.rst
-   Install_Configure_SO.rst
+   https://wiki.onap.org/pages/viewpage.action?pageId=9830754
