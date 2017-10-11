@@ -58,179 +58,179 @@ import org.openecomp.mso.logger.MsoLogger;
  */
 public class RestfulUtil {
 
-    /**
-     * Log service
-     */
-    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
+  /**
+   * Log service
+   */
+  private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
 
-    private static final MsoAlarmLogger ALARMLOGGER = new MsoAlarmLogger();
+  private static final MsoAlarmLogger ALARMLOGGER = new MsoAlarmLogger();
 
-    private static final int DEFAULT_TIME_OUT = 60;
+  private static final int DEFAULT_TIME_OUT = 60;
 
-    private RestfulUtil() {
+  private RestfulUtil() {
 
-    }
+  }
 
-    public static RestfulResponse send(String url, String methodType, String content) {
-        LOGGER.info(MessageEnum.RA_NS_EXC, url, "VFC", "");
-        LOGGER.debug("VFC Request Body:\n" + content);
+  public static RestfulResponse send(String url, String methodType, String content) {
+    LOGGER.info(MessageEnum.RA_NS_EXC, url, "VFC", "");
+    LOGGER.debug("VFC Request Body:\n" + content);
 
-        HttpRequestBase method = null;
-        HttpResponse httpResponse = null;
+    HttpRequestBase method = null;
+    HttpResponse httpResponse = null;
 
+    try {
+      int timeout = DEFAULT_TIME_OUT;
+
+      RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(timeout)
+          .setConnectTimeout(timeout).setConnectionRequestTimeout(timeout).build();
+
+      HttpClient client = HttpClientBuilder.create().build();
+
+      if ("POST".equals(methodType)) {
+        HttpPost httpPost = new HttpPost(url);
+        httpPost.setConfig(requestConfig);
+        httpPost.setEntity(new StringEntity(content, ContentType.APPLICATION_JSON));
+        method = httpPost;
+      } else if ("PUT".equals(methodType)) {
+        HttpPut httpPut = new HttpPut(url);
+        httpPut.setConfig(requestConfig);
+        httpPut.setEntity(new StringEntity(content, ContentType.APPLICATION_JSON));
+        method = httpPut;
+      } else if ("GET".equals(methodType)) {
+        HttpGet httpGet = new HttpGet(url);
+        httpGet.setConfig(requestConfig);
+        method = httpGet;
+      } else if ("DELETE".equals(methodType)) {
+        HttpDelete httpDelete = new HttpDelete(url);
+        httpDelete.setConfig(requestConfig);
+        method = httpDelete;
+      }
+
+      // now VFC have no auth
+      // String userCredentials =
+      // SDNCAdapterProperties.getEncryptedProperty(Constants.SDNC_AUTH_PROP,
+      // Constants.DEFAULT_SDNC_AUTH, Constants.ENCRYPTION_KEY);
+      // String authorization = "Basic " +
+      // DatatypeConverter.printBase64Binary(userCredentials.getBytes());
+      // method.setHeader("Authorization", authorization);
+
+      httpResponse = client.execute(method);
+
+      String responseContent = null;
+      if (httpResponse.getEntity() != null) {
+        responseContent = EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
+      }
+
+      int statusCode = httpResponse.getStatusLine().getStatusCode();
+      String statusMessage = httpResponse.getStatusLine().getReasonPhrase();
+
+      LOGGER.debug("VFC Response: " + statusCode + " " + statusMessage
+          + (responseContent == null ? "" : System.lineSeparator() + responseContent));
+
+      if (httpResponse.getStatusLine().getStatusCode() >= 300) {
+        String errMsg = "VFC returned " + statusCode + " " + statusMessage;
+        logError(errMsg);
+        return createResponse(statusCode, errMsg);
+      }
+
+      httpResponse = null;
+
+      if (null != method) {
+        method.reset();
+      } else {
+        LOGGER.debug("method is NULL:");
+      }
+
+      method = null;
+
+      LOGGER.info(MessageEnum.RA_RESPONSE_FROM_SDNC, responseContent, "SDNC", "");
+      return createResponse(statusCode, responseContent);
+
+    } catch (SocketTimeoutException e) {
+      String errMsg = "Request to SDNC timed out";
+      logError(errMsg, e);
+      return createResponse(HttpURLConnection.HTTP_CLIENT_TIMEOUT, errMsg);
+
+    } catch (ConnectTimeoutException e) {
+      String errMsg = "Request to SDNC timed out";
+      logError(errMsg, e);
+      return createResponse(HttpURLConnection.HTTP_CLIENT_TIMEOUT, errMsg);
+
+    } catch (Exception e) {
+      String errMsg = "Error processing request to SDNC";
+      logError(errMsg, e);
+      return createResponse(HttpURLConnection.HTTP_INTERNAL_ERROR, errMsg);
+
+    } finally {
+      if (httpResponse != null) {
         try {
-            int timeout = DEFAULT_TIME_OUT;
-
-            RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(timeout).setConnectTimeout(timeout)
-                    .setConnectionRequestTimeout(timeout).build();
-
-            HttpClient client = HttpClientBuilder.create().build();
-
-            if("POST".equals(methodType)) {
-                HttpPost httpPost = new HttpPost(url);
-                httpPost.setConfig(requestConfig);
-                httpPost.setEntity(new StringEntity(content, ContentType.APPLICATION_JSON));
-                method = httpPost;
-            } else if("PUT".equals(methodType)) {
-                HttpPut httpPut = new HttpPut(url);
-                httpPut.setConfig(requestConfig);
-                httpPut.setEntity(new StringEntity(content, ContentType.APPLICATION_JSON));
-                method = httpPut;
-            } else if("GET".equals(methodType)) {
-                HttpGet httpGet = new HttpGet(url);
-                httpGet.setConfig(requestConfig);
-                method = httpGet;
-            } else if("DELETE".equals(methodType)) {
-                HttpDelete httpDelete = new HttpDelete(url);
-                httpDelete.setConfig(requestConfig);
-                method = httpDelete;
-            }
-
-            // now VFC have no auth
-            // String userCredentials =
-            // SDNCAdapterProperties.getEncryptedProperty(Constants.SDNC_AUTH_PROP,
-            // Constants.DEFAULT_SDNC_AUTH, Constants.ENCRYPTION_KEY);
-            // String authorization = "Basic " +
-            // DatatypeConverter.printBase64Binary(userCredentials.getBytes());
-            // method.setHeader("Authorization", authorization);
-
-            httpResponse = client.execute(method);
-
-            String responseContent = null;
-            if(httpResponse.getEntity() != null) {
-                responseContent = EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
-            }
-
-            int statusCode = httpResponse.getStatusLine().getStatusCode();
-            String statusMessage = httpResponse.getStatusLine().getReasonPhrase();
-
-            LOGGER.debug("VFC Response: " + statusCode + " " + statusMessage
-                    + (responseContent == null ? "" : System.lineSeparator() + responseContent));
-
-            if(httpResponse.getStatusLine().getStatusCode() >= 300) {
-                String errMsg = "VFC returned " + statusCode + " " + statusMessage;
-                logError(errMsg);
-                return createResponse(statusCode, errMsg);
-            }
-
-            httpResponse = null;
-
-            if(null != method) {
-                method.reset();
-            }
-            else {
-                LOGGER.debug("method is NULL:");
-            }
-            
-            method = null;
-
-            LOGGER.info(MessageEnum.RA_RESPONSE_FROM_SDNC, responseContent, "SDNC", "");
-            return createResponse(statusCode, responseContent);
-
-        } catch(SocketTimeoutException e) {
-            String errMsg = "Request to SDNC timed out";
-            logError(errMsg, e);
-            return createResponse(HttpURLConnection.HTTP_CLIENT_TIMEOUT, errMsg);
-
-        } catch(ConnectTimeoutException e) {
-            String errMsg = "Request to SDNC timed out";
-            logError(errMsg, e);
-            return createResponse(HttpURLConnection.HTTP_CLIENT_TIMEOUT, errMsg);
-
-        } catch(Exception e) {
-            String errMsg = "Error processing request to SDNC";
-            logError(errMsg, e);
-            return createResponse(HttpURLConnection.HTTP_INTERNAL_ERROR, errMsg);
-
-        } finally {
-            if(httpResponse != null) {
-                try {
-                    EntityUtils.consume(httpResponse.getEntity());
-                } catch(Exception e) {
-                	LOGGER.debug("Exception :",e);
-                }
-            }
-
-            if(method != null) {
-                try {
-                    method.reset();
-                } catch(Exception e) {
-                	LOGGER.debug("Exception :",e);
-                }
-            }
+          EntityUtils.consume(httpResponse.getEntity());
+        } catch (Exception e) {
+          LOGGER.debug("Exception :", e);
         }
-    }
+      }
 
-    private static void logError(String errMsg, Throwable t) {
-        LOGGER.error(MessageEnum.RA_NS_EXC, "VFC", "", MsoLogger.ErrorCode.AvailabilityError, errMsg, t);
-        ALARMLOGGER.sendAlarm("MsoInternalError", MsoAlarmLogger.CRITICAL, errMsg);
-    }
-
-    private static void logError(String errMsg) {
-        LOGGER.error(MessageEnum.RA_NS_EXC, "VFC", "", MsoLogger.ErrorCode.AvailabilityError, errMsg);
-        ALARMLOGGER.sendAlarm("MsoInternalError", MsoAlarmLogger.CRITICAL, errMsg);
-    }
-
-    private static RestfulResponse createResponse(int statusCode, String content) {
-        RestfulResponse rsp = new RestfulResponse();
-        rsp.setStatus(statusCode);
-        rsp.setResponseContent(content);
-        return rsp;
-    }
-
-    /**
-     * @param request
-     * @return
-     */
-    public static String getRequestBody(HttpServletRequest request) {
-        String body = null;
-        StringBuilder stringBuilder = new StringBuilder();
-        BufferedReader bufferedReader = null;
+      if (method != null) {
         try {
-            InputStream inputStream = request.getInputStream();
-            if(inputStream != null) {
-                bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                char[] charBuffer = new char[128];
-                int bytesRead = -1;
-                while((bytesRead = bufferedReader.read(charBuffer)) > 0)
-                    stringBuilder.append(charBuffer, 0, bytesRead);
-            }
-        } catch(IOException ex) {
-            LOGGER.error(MessageEnum.RA_NS_EXC, "VFC", "", MsoLogger.ErrorCode.AvailabilityError,
-                    "read inputStream buffer catch exception:", ex);
-        } finally {
-            if(bufferedReader != null) {
-                try {
-                    bufferedReader.close();
-                } catch(IOException ex) {
-                    LOGGER.error(MessageEnum.RA_NS_EXC, "VFC", "", MsoLogger.ErrorCode.AvailabilityError,
-                            "close buffer catch exception:", ex);
-                }
-            }
+          method.reset();
+        } catch (Exception e) {
+          LOGGER.debug("Exception :", e);
         }
-
-        body = stringBuilder.toString();
-        return body;
+      }
     }
+  }
+
+  private static void logError(String errMsg, Throwable t) {
+    LOGGER.error(MessageEnum.RA_NS_EXC, "VFC", "", MsoLogger.ErrorCode.AvailabilityError, errMsg,
+        t);
+    ALARMLOGGER.sendAlarm("MsoInternalError", MsoAlarmLogger.CRITICAL, errMsg);
+  }
+
+  private static void logError(String errMsg) {
+    LOGGER.error(MessageEnum.RA_NS_EXC, "VFC", "", MsoLogger.ErrorCode.AvailabilityError, errMsg);
+    ALARMLOGGER.sendAlarm("MsoInternalError", MsoAlarmLogger.CRITICAL, errMsg);
+  }
+
+  private static RestfulResponse createResponse(int statusCode, String content) {
+    RestfulResponse rsp = new RestfulResponse();
+    rsp.setStatus(statusCode);
+    rsp.setResponseContent(content);
+    return rsp;
+  }
+
+  /**
+   * @param request
+   * @return
+   */
+  public static String getRequestBody(HttpServletRequest request) {
+    String body = null;
+    StringBuilder stringBuilder = new StringBuilder();
+    BufferedReader bufferedReader = null;
+    try {
+      InputStream inputStream = request.getInputStream();
+      if (inputStream != null) {
+        bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+        char[] charBuffer = new char[128];
+        int bytesRead = -1;
+        while ((bytesRead = bufferedReader.read(charBuffer)) > 0)
+          stringBuilder.append(charBuffer, 0, bytesRead);
+      }
+    } catch (IOException ex) {
+      LOGGER.error(MessageEnum.RA_NS_EXC, "VFC", "", MsoLogger.ErrorCode.AvailabilityError,
+          "read inputStream buffer catch exception:", ex);
+    } finally {
+      if (bufferedReader != null) {
+        try {
+          bufferedReader.close();
+        } catch (IOException ex) {
+          LOGGER.error(MessageEnum.RA_NS_EXC, "VFC", "", MsoLogger.ErrorCode.AvailabilityError,
+              "close buffer catch exception:", ex);
+        }
+      }
+    }
+
+    body = stringBuilder.toString();
+    return body;
+  }
 
 }

@@ -22,25 +22,24 @@ package org.openecomp.mso.adapters.vfc;
 import org.openecomp.mso.adapters.vfc.model.RestfulResponse;
 
 /**
- * Implement class of operating aai database table
- * <br>
+ * Implement class of operating aai database table <br>
  * <p>
  * </p>
  * 
  * @author
- * @version     ONAP Amsterdam Release  2017-08-28
+ * @version ONAP Amsterdam Release 2017-08-28
  */
 public class AaiUtil {
 
-    public static RestfulResponse addRelation(String globalSubsriberId, String serviceType,  String serviceInstanceId, String resourceInstanceId)
-    {
-        //sent rest to aai to add relation for service and ns.
-        return null;
-    }
-    
-    public static RestfulResponse removeRelation(String globalSubsriberId,  String serviceType, String serviceInstanceId ,String resourceInstanceId)
-    {
-        //sent rest to aai to remove relation between service an ns.
-        return null;
-    }
+  public static RestfulResponse addRelation(String globalSubsriberId, String serviceType,
+      String serviceInstanceId, String resourceInstanceId) {
+    // sent rest to aai to add relation for service and ns.
+    return null;
+  }
+
+  public static RestfulResponse removeRelation(String globalSubsriberId, String serviceType,
+      String serviceInstanceId, String resourceInstanceId) {
+    // sent rest to aai to remove relation between service an ns.
+    return null;
+  }
 }

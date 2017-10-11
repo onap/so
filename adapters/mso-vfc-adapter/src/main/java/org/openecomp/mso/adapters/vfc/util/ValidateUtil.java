@@ -27,60 +27,61 @@ import org.slf4j.LoggerFactory;
 
 public class ValidateUtil {
 
-    /**
-     * Log server.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(ValidateUtil.class);
+  /**
+   * Log server.
+   */
+  private static final Logger LOGGER = LoggerFactory.getLogger(ValidateUtil.class);
 
-    /**
-     * Constructor<br/>
-     * <p>
-     * </p>
-     * 
-     * @since ONAP Amsterdam Release 2017-9-6
-     */
-    private ValidateUtil() {
+  /**
+   * Constructor<br/>
+   * <p>
+   * </p>
+   * 
+   * @since ONAP Amsterdam Release 2017-9-6
+   */
+  private ValidateUtil() {
 
+  }
+
+  /**
+   * Assert String parameter.<br/>
+   * 
+   * @param paramValue parameter data
+   * @param name of parameter
+   * @since ONAP Amsterdam Release 2017-9-6
+   */
+  public static void assertStringNotNull(String paramValue, String paramName)
+      throws ApplicationException {
+    if (null != paramValue && !paramValue.isEmpty()) {
+      return;
     }
 
-    /**
-     * Assert String parameter.<br/>
-     * 
-     * @param paramValue parameter data
-     * @param name of parameter
-     * @since ONAP Amsterdam Release 2017-9-6
-     */
-    public static void assertStringNotNull(String paramValue, String paramName) throws ApplicationException {
-        if(null != paramValue && !paramValue.isEmpty()) {
-            return;
-        }
+    LOGGER.error(paramName + ": Parameter is null or empty.");
+    throw new ApplicationException(HttpCode.BAD_REQUEST, paramName + ": Invalid parameter.");
+  }
 
-        LOGGER.error(paramName + ": Parameter is null or empty.");
-        throw new ApplicationException(HttpCode.BAD_REQUEST, paramName + ": Invalid parameter.");
+  /**
+   * Assert object is null.<br/>
+   * 
+   * @param object data object
+   * @since ONAP Amsterdam Release 2017-9-6
+   */
+  public static void assertObjectNotNull(Object object) throws ApplicationException {
+    if (null == object) {
+      LOGGER.error("Object is null.");
+      throw new ApplicationException(HttpCode.BAD_REQUEST, "Object is null.");
     }
 
-    /**
-     * Assert object is null.<br/>
-     * 
-     * @param object data object
-     * @since ONAP Amsterdam Release 2017-9-6
-     */
-    public static void assertObjectNotNull(Object object) throws ApplicationException {
-        if(null == object) {
-            LOGGER.error("Object is null.");
-            throw new ApplicationException(HttpCode.BAD_REQUEST, "Object is null.");
-        }
+  }
 
-    }
-
-    /**
-     * <br>
-     * 
-     * @param str
-     * @return
-     * @since ONAP Amsterdam Release
-     */
-    public static boolean isStrEmpty(String str) {
-        return null == str || str.isEmpty();
-    }
+  /**
+   * <br>
+   * 
+   * @param str
+   * @return
+   * @since ONAP Amsterdam Release
+   */
+  public static boolean isStrEmpty(String str) {
+    return null == str || str.isEmpty();
+  }
 }
