@@ -22,20 +22,24 @@ package org.openecomp.mso.adapters.requestsdb;
 
 import java.sql.Timestamp;
 
+import javax.jws.WebMethod;
 import javax.jws.WebService;
 
-import org.openecomp.mso.requestsdb.SiteStatus;
-import org.openecomp.mso.utils.UUIDChecker;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-
 import org.openecomp.mso.adapters.requestsdb.exceptions.MsoRequestsDbException;
+import org.openecomp.mso.db.AbstractSessionFactoryManager;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
-import org.openecomp.mso.db.AbstractSessionFactoryManager;
-import org.openecomp.mso.requestsdb.RequestsDbSessionFactoryManager;
 import org.openecomp.mso.requestsdb.InfraActiveRequests;
+import org.openecomp.mso.requestsdb.OperationStatus;
+import org.openecomp.mso.requestsdb.RequestsDatabase;
+import org.openecomp.mso.requestsdb.RequestsDbConstant;
+import org.openecomp.mso.requestsdb.RequestsDbSessionFactoryManager;
+import org.openecomp.mso.requestsdb.ResourceOperationStatus;
+import org.openecomp.mso.requestsdb.SiteStatus;
+import org.openecomp.mso.utils.UUIDChecker;
 
 @WebService(serviceName = "RequestsDbAdapter", endpointInterface = "org.openecomp.mso.adapters.requestsdb.MsoRequestsDbAdapter", targetNamespace = "http://org.openecomp.mso/requestsdb")
 public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
@@ -262,4 +266,61 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
             return siteStatus.getStatus();
         }
     }
+    
+    /**
+     * update operation status
+     * <br>
+     * 
+     * @param serviceId
+     * @param operationId
+     * @param operationType
+     * @param userId
+     * @param result
+     * @param operationContent
+     * @param progress
+     * @param reason
+     * @throws MsoRequestsDbException
+     * @since   ONAP Amsterdam Release
+     */
+    @Override
+    public void updateServiceOperationStatus(String serviceId, String operationId, String operationType, String userId,
+            String result, String operationContent, String progress, String reason) throws MsoRequestsDbException {
+        OperationStatus operStatus = new OperationStatus();
+        operStatus.setServiceId(serviceId);
+        operStatus.setOperationId(operationId);
+        operStatus.setUserId(userId);
+        operStatus.setOperation(operationType);
+        operStatus.setReason(reason);
+        operStatus.setProgress(progress);
+        operStatus.setOperationContent(operationContent);
+        RequestsDatabase.getInstance().updateOperationStatus(operStatus);
+    }
+    
+    /**
+     * init the operation status of  all the resources 
+     * <br>
+     * 
+     * @param serviceId the service Id
+     * @param operationId the operation Id
+     * @param operationType the operationType
+     * @param resourceTemplateUUIDs the resources, the UUID is split by ":"
+     * @throws MsoRequestsDbException
+     * @since   ONAP Amsterdam Release
+     */
+    @Override
+    public void initResourceOperationStatus(String serviceId, String operationId, String operationType,
+            String resourceTemplateUUIDs) throws MsoRequestsDbException{
+        String[] resourceLst = resourceTemplateUUIDs.split(":");
+        for(String resource: resourceLst){
+            ResourceOperationStatus resourceStatus = new ResourceOperationStatus();
+            resourceStatus.setOperationId(operationId);
+            resourceStatus.setServiceId(serviceId);
+            resourceStatus.setResourceTemplateUUID(resource);
+            resourceStatus.setOperType(operationType);
+            resourceStatus.setStatus(RequestsDbConstant.Status.PROCESSING);
+            resourceStatus.setStatusDescription("Waiting for start");
+            RequestsDatabase.getInstance().updateResOperStatus(resourceStatus);
+        }     
+    }
+
 }
