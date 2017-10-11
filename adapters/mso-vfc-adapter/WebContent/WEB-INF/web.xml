@@ -1,118 +1,121 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
-  <display-name>mso-vfc-adapter</display-name>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	id="WebApp_ID" version="3.0">
+	<display-name>mso-vfc-adapter</display-name>
 
-   <context-param>
-	<param-name>resteasy.jndi.resources</param-name>
-	<param-value>java:module/MsoPropertiesFactory,java:module/CloudConfigFactory</param-value>
-   </context-param>
+	<context-param>
+		<param-name>resteasy.jndi.resources</param-name>
+		<param-value>java:module/MsoPropertiesFactory,java:module/CloudConfigFactory</param-value>
+	</context-param>
 
-   <context-param>
-  	<param-name>log.configuration</param-name>
-  	<param-value>logback.vfc.xml</param-value>
-  </context-param>
-  <context-param>
-  	<param-name>mso.configuration</param-name>
-  	<param-value>MSO_PROP_NETWORK_ADAPTER=mso.vfc.properties,MSO_PROP_TOPOLOGY=topology.properties</param-value>
-  </context-param>
-  <context-param>
-  	<param-name>mso.cloud_config.configuration</param-name>
-  	<param-value>cloud_config.json=2</param-value>
-  </context-param>
-  <context-param>
-    <param-name>resteasy.resources</param-name>
-    <param-value>
+	<context-param>
+		<param-name>log.configuration</param-name>
+		<param-value>logback.vfc.xml</param-value>
+	</context-param>
+	<context-param>
+		<param-name>mso.configuration</param-name>
+		<param-value>MSO_PROP_NETWORK_ADAPTER=mso.vfc.properties,MSO_PROP_TOPOLOGY=topology.properties</param-value>
+	</context-param>
+	<context-param>
+		<param-name>mso.cloud_config.configuration</param-name>
+		<param-value>cloud_config.json=2</param-value>
+	</context-param>
+	<context-param>
+		<param-name>resteasy.resources</param-name>
+		<param-value>
 		org.openecomp.mso.MsoStatusHandler,
 		org.openecomp.mso.logger.MsoLoggingServlet,
 		org.openecomp.mso.adapters.vfc.HealthCheckHandler,
 		org.openecomp.mso.adapters.vfc.VfcAdapterRest
     </param-value>
-  </context-param>
-  <context-param>
-    <param-name>resteasy.servlet.mapping.prefix</param-name>
-    <param-value>/rest</param-value>
-  </context-param>
-  <servlet>
-    <servlet-name>Resteasy</servlet-name>
-    <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>Resteasy</servlet-name>
-    <url-pattern>/vfcadapter/*</url-pattern>
-  </servlet-mapping>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>SoapRequests</web-resource-name>
-            <description>Soap Ingress Requests</description>
-            <url-pattern>/VfcAdapter</url-pattern>
-            <url-pattern>/VfcAdapterAsync</url-pattern>
-            <http-method>POST</http-method>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>BPEL-Client</role-name>
-        </auth-constraint>
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>SiteStatus</web-resource-name>
-            <description>SiteStatus APIs</description>
-            <url-pattern>/rest/setStatus/*</url-pattern>
-            <http-method>POST</http-method>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>SiteControl-Client</role-name>
-        </auth-constraint>
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>RestRequests</web-resource-name>
-            <description>Rest Ingress Requests</description>
-            <url-pattern>/rest/v1/vfc/*</url-pattern>
-            <http-method>DELETE</http-method>
-            <http-method>GET</http-method>
-            <http-method>POST</http-method>
-            <http-method>PUT</http-method>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>BPEL-Client</role-name>
-        </auth-constraint>
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>MSO internal Requests</web-resource-name>
-            <description>Internal Requests</description>
-            <url-pattern>/rest/logging/*</url-pattern>
-            <url-pattern>/rest/properties/*</url-pattern>
-            <http-method>POST</http-method>
-            <http-method>GET</http-method>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>MSO-Client</role-name>
-        </auth-constraint>
-    </security-constraint>
-    <login-config>
-        <auth-method>BASIC</auth-method>
-        <realm-name>ApplicationRealm</realm-name>
-    </login-config>
-    <security-role>
-        <role-name>BPEL-Client</role-name>
-    </security-role>
-    <security-role>
-        <role-name>SiteControl-Client</role-name>
-    </security-role>
-    <security-role>
-        <role-name>MSO-Client</role-name>
-    </security-role>
-  <filter>
+	</context-param>
+	<context-param>
+		<param-name>resteasy.servlet.mapping.prefix</param-name>
+		<param-value>/rest</param-value>
+	</context-param>
+	<servlet>
+		<servlet-name>Resteasy</servlet-name>
+		<servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Resteasy</servlet-name>
+		<url-pattern>/vfcadapter/*</url-pattern>
+	</servlet-mapping>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>SoapRequests</web-resource-name>
+			<description>Soap Ingress Requests</description>
+			<url-pattern>/VfcAdapter</url-pattern>
+			<url-pattern>/VfcAdapterAsync</url-pattern>
+			<http-method>POST</http-method>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>BPEL-Client</role-name>
+		</auth-constraint>
+	</security-constraint>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>SiteStatus</web-resource-name>
+			<description>SiteStatus APIs</description>
+			<url-pattern>/rest/setStatus/*</url-pattern>
+			<http-method>POST</http-method>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>SiteControl-Client</role-name>
+		</auth-constraint>
+	</security-constraint>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>RestRequests</web-resource-name>
+			<description>Rest Ingress Requests</description>
+			<url-pattern>/rest/v1/vfc/*</url-pattern>
+			<http-method>DELETE</http-method>
+			<http-method>GET</http-method>
+			<http-method>POST</http-method>
+			<http-method>PUT</http-method>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>BPEL-Client</role-name>
+		</auth-constraint>
+	</security-constraint>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>MSO internal Requests</web-resource-name>
+			<description>Internal Requests</description>
+			<url-pattern>/rest/logging/*</url-pattern>
+			<url-pattern>/rest/properties/*</url-pattern>
+			<http-method>POST</http-method>
+			<http-method>GET</http-method>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>MSO-Client</role-name>
+		</auth-constraint>
+	</security-constraint>
+	<login-config>
+		<auth-method>BASIC</auth-method>
+		<realm-name>ApplicationRealm</realm-name>
+	</login-config>
+	<security-role>
+		<role-name>BPEL-Client</role-name>
+	</security-role>
+	<security-role>
+		<role-name>SiteControl-Client</role-name>
+	</security-role>
+	<security-role>
+		<role-name>MSO-Client</role-name>
+	</security-role>
+	<filter>
 		<filter-name>LogFilter</filter-name>
 		<filter-class>org.openecomp.mso.logger.LogFilter</filter-class>
-  </filter>
-    <filter-mapping>
+	</filter>
+	<filter-mapping>
 		<filter-name>LogFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
-  <welcome-file-list>
-    <welcome-file>check.html</welcome-file>
-  </welcome-file-list>
+	<welcome-file-list>
+		<welcome-file>check.html</welcome-file>
+	</welcome-file-list>
 </web-app>
 
