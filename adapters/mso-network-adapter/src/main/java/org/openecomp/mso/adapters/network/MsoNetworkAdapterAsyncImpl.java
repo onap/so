@@ -653,9 +653,11 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
             sMap = hMap.value;
             UpdateNetworkNotification.SubnetIdMap.Entry entry = new UpdateNetworkNotification.SubnetIdMap.Entry ();
 
-            for (String key : sMap.keySet ()) {
+            for (Map.Entry<String,String> mapEntry : sMap.entrySet ()) {
+		String key = mapEntry.getKey();
+		String value = mapEntry.getValue();
                 entry.setKey (key);
-                entry.setValue (sMap.get (key));
+                entry.setValue (value);
                 subnetIdMap.getEntry ().add (entry);
             }
         }
@@ -671,9 +673,11 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
             sMap = hMap.value;
             QueryNetworkNotification.SubnetIdMap.Entry entry = new QueryNetworkNotification.SubnetIdMap.Entry ();
 
-            for (String key : sMap.keySet ()) {
+            for (Map.Entry<String,String> mapEntry : sMap.entrySet ()) {
+		String key = mapEntry.getKey();
+		String value = mapEntry.getValue();
                 entry.setKey (key);
-                entry.setValue (sMap.get (key));
+                entry.setValue (value);
                 subnetIdMap.getEntry ().add (entry);
             }
         }
