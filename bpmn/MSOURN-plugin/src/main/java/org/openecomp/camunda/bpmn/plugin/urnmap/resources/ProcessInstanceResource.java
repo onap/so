@@ -27,12 +27,17 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.camunda.bpm.cockpit.db.QueryParameters;
 import org.camunda.bpm.cockpit.plugin.resource.AbstractPluginResource;
 import org.camunda.bpm.cockpit.db.CommandExecutor;
 import org.openecomp.camunda.bpmn.plugin.urnmap.db.*;
 
 public class ProcessInstanceResource extends AbstractPluginResource {
+
+  private static final Logger log = LoggerFactory.getLogger(ProcessInstanceResource.class);
 
   public ProcessInstanceResource(String engineName) {
     super(engineName);
@@ -45,11 +50,11 @@ public class ProcessInstanceResource extends AbstractPluginResource {
                     "cockpit.urnMap.retrieveUrnKeyValuePair",
                     new QueryParameters<URNData>());
     
-    System.out.println("urnmap-plugin project - Results Retrieved: ");
-    System.out.println("URNName: " + "		" + "URNValue: " );
+    log.info("urnmap-plugin project - Results Retrieved: ");
+    log.info("URNName: " + "		" + "URNValue: " );
     for(URNData d: list)
     {
-    	System.out.println(  d.getURNName() + "		"  + d.getURNValue());
+    	log.info(  d.getURNName() + "		"  + d.getURNValue());
     }
    
     return list;
@@ -59,7 +64,7 @@ public class ProcessInstanceResource extends AbstractPluginResource {
   //public void insertNewRow(String key_, String value_) 
   public void insertNewRow(String temp) 
    {  
- 	 System.out.println("AddNewRow: XXXXXXXXXXXXXXXXX ---> " + temp);
+ 	 log.info("AddNewRow: XXXXXXXXXXXXXXXXX ---> " + temp);
  	 StringTokenizer st = new StringTokenizer(temp, "|");
  	 String key_ = "";
  	 String value_ = "";
@@ -70,7 +75,7 @@ public class ProcessInstanceResource extends AbstractPluginResource {
  		 System.out.println(key_ + "\t" + value_); 
  		 } 
   			 
-       System.out.println("AddNewRow: XXXXXXXXXXXXXXXXX ---> key: " + key_ + " , Value: " + value_);
+ 	  log.info("AddNewRow: XXXXXXXXXXXXXXXXX ---> key: " + key_ + " , Value: " + value_);
  	  URNData nRow = new URNData();
  	  nRow.setVer_("1"); 	 
  	  nRow.setURNName(key_);
@@ -78,19 +83,19 @@ public class ProcessInstanceResource extends AbstractPluginResource {
  	  
  	 getQueryService().executeQuery("cockpit.urnMap.insertNewRow", nRow, URNData.class);
  	 
- 	 System.out.println("AddNewRow: XXXXXX    END   XXXXXXXXXXX");
+ 	 log.info("AddNewRow: XXXXXX    END   XXXXXXXXXXX");
    }
   
   @POST
  // public void getPersistData(List<URNData > myList) {  
   public void getPersistData(URNData d) {  
 	  
-	  System.out.println("getPersistData:  UrnName: " + d.getURNName() + " , URNValue: " + d.getURNValue() );
+	  log.info("getPersistData:  UrnName: " + d.getURNName() + " , URNValue: " + d.getURNValue() );
 	    
  	    	getQueryService().executeQuery("cockpit.urnMap.persistURNData", d, URNData.class);
  	    	//getQueryService().executeQuery("cockpit.sample.persistURNData", d, ProcessInstanceCountDto.class);
 	     
 	    	    
-	    System.out.println("XXXXXXXXXX - END - XXXXXXXXXXXXXXX");
+	    log.info("XXXXXXXXXX - END - XXXXXXXXXXXXXXX");
   	}
 }
