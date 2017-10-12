@@ -21,6 +21,9 @@
 package org.openecomp.mso.bpmn.common;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
@@ -77,7 +80,18 @@ public class BPMNUtil {
 			    .getValue();
 		return (T) responseData;
 	}
+
 	
+	public static void assertAnyProcessInstanceFinished(ProcessEngineServices processEngineServices, String processDefinitionID) {
+		String pID = getProcessInstanceId(processEngineServices,
+				processDefinitionID);
+		assertNotNull(pID);
+	    assertTrue(processEngineServices.getHistoryService().createHistoricProcessInstanceQuery().processInstanceId(pID).finished().count() > 0);
+	}
+	
+	public static void assertNoProcessInstance(ProcessEngineServices processEngineServices, String processDefinitionID) {
+		assertNull(getProcessInstanceId(processEngineServices, processDefinitionID));
+	}
 	
 	public static void assertProcessInstanceFinished(ProcessEngineServices processEngineServices, String pid) {
 	    assertEquals(1, processEngineServices.getHistoryService().createHistoricProcessInstanceQuery().processInstanceId(pid).finished().count());

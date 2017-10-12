@@ -22,9 +22,9 @@ DeleteVcpeResCustService.preProcessRequest(execution)
 ]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_7" name="" sourceRef="preProcessRequest_ScriptTask" targetRef="sendSyncAckResponse_ScriptTask" />
-    <bpmn2:intermediateCatchEvent id="IntermediateCatchEvent_3" name="vCPE-CUSREST">
+    <bpmn2:intermediateCatchEvent id="IntermediateCatchEvent_3" name="vCPE-RESCUST">
       <bpmn2:outgoing>SequenceFlow_10o22u2</bpmn2:outgoing>
-      <bpmn2:linkEventDefinition id="_LinkEventDefinition_37" name="vCPE-CUSREST" />
+      <bpmn2:linkEventDefinition id="_LinkEventDefinition_37" name="vCPE-RESCUST" />
     </bpmn2:intermediateCatchEvent>
     <bpmn2:scriptTask id="postProcessAndCompletionRequest_ScriptTask" name="Post Process &#38; Completion Request" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_12ilko1</bpmn2:incoming>
@@ -38,7 +38,7 @@ DeleteVcpeResCustService.postProcessResponse(execution)]]></bpmn2:script>
       <bpmn2:extensionElements>
         <camunda:in variables="all" />
         <camunda:out variables="all" />
-        <camunda:in source="DELVAS_CompleteMsoProcessRequest" target="CompleteMsoProcessRequest" />
+        <camunda:in source="DVRCS_CompleteMsoProcessRequest" target="CompleteMsoProcessRequest" />
         <camunda:in source="requestId" target="requestId" />
         <camunda:in source="serviceInstanceId" target="serviceInstanceId" />
         <camunda:out source="CMSO_ResponseCode" target="CMSO_ResponseCode" />
@@ -73,8 +73,8 @@ execution.setVariable("DeleteVcpeResCustServiceSuccessIndicator", true)]]></bpmn
         <bpmn2:incoming>SequenceFlow_2</bpmn2:incoming>
         <bpmn2:outgoing>SequenceFlow_5</bpmn2:outgoing>
         <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.vcpe.scripts.*
-def DeleteServiceInstanceInfra = new DeleteServiceInstanceInfra()
-DeleteServiceInstanceInfra.processJavaException(execution)]]></bpmn2:script>
+def DeleteVcpeResCustService = new DeleteVcpeResCustService()
+DeleteVcpeResCustService.processJavaException(execution)]]></bpmn2:script>
       </bpmn2:scriptTask>
       <bpmn2:sequenceFlow id="SequenceFlow_5" name="" sourceRef="ScriptTask_1" targetRef="EndEvent_1" />
     </bpmn2:subProcess>
@@ -108,7 +108,7 @@ DeleteServiceInstanceInfra.processJavaException(execution)]]></bpmn2:script>
       </bpmn2:startEvent>
       <bpmn2:callActivity id="CallActivity_0jw5tqa" name="Call FalloutHandlerV1" calledElement="FalloutHandler">
         <bpmn2:extensionElements>
-          <camunda:in source="DELVAS_falloutRequest" target="FalloutHandlerRequest" />
+          <camunda:in source="DVRCS_falloutRequest" target="FalloutHandlerRequest" />
           <camunda:in source="msoRequestId" target="mso-request-id" />
           <camunda:in source="serviceInstanceId" target="mso-service-instance-id" />
           <camunda:out source="FH_ResponseCode" target="FH_ResponseCode" />
@@ -185,9 +185,9 @@ DeleteVcpeResCustService.prepareServiceDelete(execution)]]></bpmn2:script>
       <bpmn2:incoming>SequenceFlow_05cjs89</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0snq0kw</bpmn2:outgoing>
     </bpmn2:callActivity>
-    <bpmn2:intermediateThrowEvent id="IntermediateThrowEvent_0i8bmrc" name="GoToVCPE-CUSREST">
+    <bpmn2:intermediateThrowEvent id="IntermediateThrowEvent_0i8bmrc" name="GoToVCPE-RESCUST">
       <bpmn2:incoming>SequenceFlow_0zaircn</bpmn2:incoming>
-      <bpmn2:linkEventDefinition name="vCPE-CUSREST" />
+      <bpmn2:linkEventDefinition name="vCPE-RESCUST" />
     </bpmn2:intermediateThrowEvent>
     <bpmn2:intermediateCatchEvent id="IntermediateCatchEvent_04bw3vy" name="DeleteBRG">
       <bpmn2:outgoing>SequenceFlow_09i2jj0</bpmn2:outgoing>
@@ -214,7 +214,7 @@ DeleteVcpeResCustService.prepareServiceDelete(execution)]]></bpmn2:script>
       <bpmn2:outgoing>SequenceFlow_0zaircn</bpmn2:outgoing>
     </bpmn2:exclusiveGateway>
     <bpmn2:sequenceFlow id="SequenceFlow_05cjs89" name="Yes" sourceRef="ExclusiveGateway_0gw5gmo" targetRef="CallActivity_1yap348">
-      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{ execution.getVariable("DELVAS_BRG") == null || execution.getVariable("DELVAS_BRG") == true }]]></bpmn2:conditionExpression>
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{ execution.getVariable("DVRCS_BRG") == null || execution.getVariable("DVRCS_BRG") == true }]]></bpmn2:conditionExpression>
     </bpmn2:sequenceFlow>
     <bpmn2:sequenceFlow id="SequenceFlow_0snq0kw" sourceRef="CallActivity_1yap348" targetRef="ExclusiveGateway_1hmeube" />
     <bpmn2:sequenceFlow id="SequenceFlow_09i2jj0" sourceRef="IntermediateCatchEvent_04bw3vy" targetRef="ExclusiveGateway_0gw5gmo" />
@@ -223,7 +223,7 @@ DeleteVcpeResCustService.prepareServiceDelete(execution)]]></bpmn2:script>
     <bpmn2:sequenceFlow id="SequenceFlow_1jjh8rv" sourceRef="ExclusiveGateway_1hmeube" targetRef="IntermediateThrowEvent_19nq9li" />
     <bpmn2:sequenceFlow id="SequenceFlow_0nk8vsb" name="No" sourceRef="ExclusiveGateway_12i24vc" targetRef="ExclusiveGateway_0190r3n" />
     <bpmn2:sequenceFlow id="SequenceFlow_0npvfo3" name="Yes" sourceRef="ExclusiveGateway_12i24vc" targetRef="CallActivity_00g5q0n">
-      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{ execution.getVariable("DELVAS_TunnelXConn") == null || execution.getVariable("DELVAS_TunnelXConn") == true }]]></bpmn2:conditionExpression>
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{ execution.getVariable("DVRCS_TunnelXConn") == null || execution.getVariable("DVRCS_TunnelXConn") == true }]]></bpmn2:conditionExpression>
     </bpmn2:sequenceFlow>
     <bpmn2:callActivity id="CallActivity_00g5q0n" name="Delete TXC Allotted Resources&#10;" calledElement="DoDeleteAllottedResourceTXC">
       <bpmn2:extensionElements>
@@ -261,9 +261,9 @@ DeleteVcpeResCustService.prepareServiceDelete(execution)]]></bpmn2:script>
       <bpmn2:incoming>SequenceFlow_1yamcyn</bpmn2:incoming>
       <bpmn2:incoming>SequenceFlow_19cxgtm</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_128485i</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infra.scripts.*
-def DeleteGenericMacroServiceNetworkVnf= new DeleteGenericMacroServiceNetworkVnf()
-DeleteGenericMacroServiceNetworkVnf.prepareVnfAndModulesDelete(execution)]]></bpmn2:script>
+      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.vcpe.scripts.*
+def DeleteVcpeResCustService= new DeleteVcpeResCustService()
+DeleteVcpeResCustService.prepareVnfAndModulesDelete(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:intermediateThrowEvent id="IntermediateThrowEvent_1ks536f" name="GoToDeleteTXC">
       <bpmn2:incoming>SequenceFlow_1lfph6u</bpmn2:incoming>
@@ -286,9 +286,9 @@ DeleteGenericMacroServiceNetworkVnf.prepareVnfAndModulesDelete(execution)]]></bp
     <bpmn2:scriptTask id="ScriptTask_0wqfeak" name="Validate VNF delete" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_04fys47</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_1o5cutr</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infra.scripts.*
-def DeleteGenericMacroServiceNetworkVnf= new DeleteGenericMacroServiceNetworkVnf()
-DeleteGenericMacroServiceNetworkVnf.validateVnfDelete(execution)]]></bpmn2:script>
+      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.vcpe.scripts.*
+def DeleteVcpeResCustService= new DeleteVcpeResCustService()
+DeleteVcpeResCustService.validateVnfDelete(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:exclusiveGateway id="ExclusiveGateway_14hjmu4" name="Delete Additional VNFs?" default="SequenceFlow_10scc5r">
       <bpmn2:incoming>SequenceFlow_1o5cutr</bpmn2:incoming>
@@ -298,10 +298,10 @@ DeleteGenericMacroServiceNetworkVnf.validateVnfDelete(execution)]]></bpmn2:scrip
     <bpmn2:sequenceFlow id="SequenceFlow_128485i" sourceRef="ScriptTask_1csw2q1" targetRef="CallActivity_14j22w3" />
     <bpmn2:sequenceFlow id="SequenceFlow_04fys47" sourceRef="CallActivity_14j22w3" targetRef="ScriptTask_0wqfeak" />
     <bpmn2:sequenceFlow id="SequenceFlow_1yamcyn" name="Yes" sourceRef="ExclusiveGateway_0io2vo5" targetRef="ScriptTask_1csw2q1">
-      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{execution.getVariable("DELGMSNV_vnfsCount") > 0}]]></bpmn2:conditionExpression>
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{execution.getVariable("DVRCS_vnfsCount") > 0}]]></bpmn2:conditionExpression>
     </bpmn2:sequenceFlow>
     <bpmn2:sequenceFlow id="SequenceFlow_19cxgtm" name="Yes" sourceRef="ExclusiveGateway_14hjmu4" targetRef="ScriptTask_1csw2q1">
-      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{execution.getVariable("DELGMSNV_vnfsDeletedCountt") < execution.getVariable("DELGMSNV_vnfsCount")}]]></bpmn2:conditionExpression>
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{execution.getVariable("DVRCS_vnfsDeletedCount") < execution.getVariable("DVRCS_vnfsCount")}]]></bpmn2:conditionExpression>
     </bpmn2:sequenceFlow>
     <bpmn2:sequenceFlow id="SequenceFlow_1lfph6u" sourceRef="ExclusiveGateway_1bm1vby" targetRef="IntermediateThrowEvent_1ks536f" />
     <bpmn2:sequenceFlow id="SequenceFlow_1ofw0fi" sourceRef="IntermediateCatchEvent_0hy32qu" targetRef="ExclusiveGateway_0io2vo5" />
@@ -748,7 +748,7 @@ DeleteGenericMacroServiceNetworkVnf.validateVnfDelete(execution)]]></bpmn2:scrip
         <di:waypoint xsi:type="dc:Point" x="974" y="866" />
         <di:waypoint xsi:type="dc:Point" x="1059" y="866" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="972.5" y="841" width="0" height="12" />
+          <dc:Bounds x="971.5" y="845" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1ofw0fi_di" bpmnElement="SequenceFlow_1ofw0fi">

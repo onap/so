@@ -16,7 +16,7 @@ dcar.preProcessRequest(execution)]]></bpmn2:script>
     <bpmn2:scriptTask id="buildWorkflowException" name="Create Workflow Exception" scriptFormat="groovy">
       <bpmn2:incoming>notFound</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_6</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.utils.*
+      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
 ExceptionUtil exceptionUtil = new ExceptionUtil()
 exceptionUtil.buildWorkflowException(execution, 404, "Input Service Instance Id Not Found in AAI")]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -207,7 +207,7 @@ dcar.validateSDNCResp(execution, response, "activate" )]]></bpmn2:script>
     <bpmn2:scriptTask id="ScriptTask_1hzsbck" name="Create Workflow Exception" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_0f7u5pu</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_16o7col</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.utils.*
+      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
 
 ExceptionUtil exceptionUtil = new ExceptionUtil()
 exceptionUtil.buildWorkflowException(execution, 404, "BRG alloted resource Parent ServiceInstance:"  +  

@@ -1,0 +1,24 @@
+<output xmlns="org:openecomp:sdnctl:vnf">
+<tunnelxconn-topology  xmlns="org:openecomp:sdnctl:vnf">
+    <ecomp-model-information>
+        <model-invariant-uuid>36e20198-c67a-464b-96d0-aaa99eb2639e</model-invariant-uuid>
+        <model-uuid>5b9b15d0-5dd7-47dc-95b9-0440c340a3ba</model-uuid>
+        <model-version>1.0</model-version>
+        <model-name>TXCmodelname</model-name>
+        <model-customization-uuid>013bd784-9bca-4919-ae2f-ae57af27bad9</model-customization-uuid>
+    </ecomp-model-information>
+    <allotted-resource-identifiers>
+        <parent-service-instance-id>parent-service-instance-id</parent-service-instance-id>
+        <consuming-service-intance-id>consuming-service-instance-id</consuming-service-intance-id>
+        <allotted-resource-name>namefromrequest</allotted-resource-name>
+        <allotted-resource-type>tunnelxconn</allotted-resource-type>
+        <allotted-resource-id>allottedresourceidfromrequest</allotted-resource-id>
+    </allotted-resource-identifiers>
+    <tunnelxconn-assignments>
+    	<vni>my-vni</vni>
+    	<vgmux_bearer_ip>my-bearer-ip</vgmux_bearer_ip>
+    	<vgmux_lan_ip>my-lan-ip</vgmux_lan_ip>
+    </tunnelxconn-assignments>
+</tunnelxconn-topology>
+
+</output>

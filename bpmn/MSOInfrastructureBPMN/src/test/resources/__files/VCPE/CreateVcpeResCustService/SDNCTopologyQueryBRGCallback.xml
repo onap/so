@@ -1,0 +1,37 @@
+<output xmlns="org:openecomp:sdnctl:vnf">
+<brg-topology  xmlns="org:openecomp:sdnctl:vnf">
+    <ecomp-model-information>
+        <model-invariant-uuid>36e20198-c67a-464b-96d0-aaa99eb2639e</model-invariant-uuid>
+        <model-uuid>5b9b15d0-5dd7-47dc-95b9-0440c340a3ba</model-uuid>
+        <model-version>1.0</model-version>
+        <model-name>BRGmodelname</model-name>
+        <model-customization-uuid>013bd784-9bca-4919-ae2f-ae57af27bad9</model-customization-uuid>
+    </ecomp-model-information>
+    <allotted-resource-identifiers>
+        <parent-service-instance-id>parent-service-instance-id</parent-service-instance-id>
+        <consuming-service-intance-id>consuming-service-instance-id</consuming-service-intance-id>
+        <allotted-resource-name>namefromrequest</allotted-resource-name>
+        <allotted-resource-type>brg</allotted-resource-type>
+        <allotted-resource-id>allottedresourceidfromrequest</allotted-resource-id>
+    </allotted-resource-identifiers>
+    <brg-assignments>
+        <fq-name>fq-name</fq-name>
+        <dest-network>
+            <network-id>d1</network-id>
+            <network-role>drole</network-role>
+        </dest-network>
+        <vlan-tag>vlan-tag</vlan-tag>
+        <source-network>
+            <network-id>s2</network-id>
+            <network-role>srole</network-role>
+        </source-network>
+        <txc-id>txc-id</txc-id>
+        <txc-applied-service>
+            <service-instance-id>1</service-instance-id>
+            <vnf-id>123</vnf-id>
+            <txc-fqdn>a.b.c.d</txc-fqdn>
+        </txc-applied-service>
+    </brg-assignments>
+</brg-topology>
+
+</output>
