@@ -67,7 +67,7 @@ public class CreateNetworkRequest extends NetworkRequestCommon {
 	private ContrailNetwork contrailNetwork;
 	private Boolean failIfExists = false;
 	private Boolean backout = true;
-	private Map<String,String> networkParams = new HashMap<String, String>();
+	private Map<String,String> networkParams = new HashMap<>();
 	private MsoRequest msoRequest = new MsoRequest();
 
 	public CreateNetworkRequest() {

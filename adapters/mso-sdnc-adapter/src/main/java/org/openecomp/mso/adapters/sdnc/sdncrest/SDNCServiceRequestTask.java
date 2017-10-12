@@ -196,7 +196,7 @@ public class SDNCServiceRequestTask implements Runnable {
 		} catch (Exception e) {
 			LOGGER.error(MessageEnum.RA_ERROR_CONVERT_XML2STR, "", "",
 				MsoLogger.ErrorCode.DataError, "Exception - domToStr", e);
-			return(null);
+			return null;
 		}
 
 		LOGGER.debug("Formatted SDNC service request XML:\n" + xml);
