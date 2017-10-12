@@ -103,6 +103,7 @@ public class VfcManager {
     CustomerModel context = new CustomerModel();
     context.setGlobalCustomerId(segInput.getNsOperationKey().getGlobalSubscriberId());
     context.setServiceType(segInput.getNsOperationKey().getServiceType());
+    oRequest.setContext(context);
     String createReq = JsonUtil.marshal(oRequest);
 
     // Step4: Call NFVO or SDNO lcm to create ns
