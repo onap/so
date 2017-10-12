@@ -36,7 +36,9 @@
 		<property name="operationContent" column="OPERATION_CONTENT" type="string" length="256"/>
 		<property name="progress" column="PROGRESS" type="string" length="256"/>
 		<property name="reason" column="REASON" type="string" length="256"/>
-		<property name="operateAt" column="OPERATE_AT" type="timestamp" generated="insert" insert="false" update="false"/>
+		<property name="operateAt" type="timestamp" generated="insert" insert="false" update="false" not-null="true">
+          <column name="OPERATE_AT" default="CURRENT_TIMESTAMP"/>
+        </property>
 		<property name="finishedAt" column="FINISHED_AT" type="timestamp" generated="update" insert="false" update="false"/>	
 	</class>
 </hibernate-mapping>

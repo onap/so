@@ -33,7 +33,9 @@
 		<property name="url" 					column="URL" 					type="string" 			length="200" 	not-null="true"/>
 		<property name="description" 			column="DESCRIPTION" 			type="string" 			length="1200"/>
 		
-		<property name="created" type="timestamp" generated="insert" update="false" insert="false" column="CREATION_TIMESTAMP" not-null="true"/>
+		<property name="created" type="timestamp" generated="insert" update="false" insert="false" not-null="true">
+		  <column name="CREATION_TIMESTAMP" default="CURRENT_TIMESTAMP"/>
+		</property>
 	
 		<set name="services" inverse="true" cascade="all">
             <key column="TOSCA_CSAR_ARTIFACT_UUID" not-null="true" />

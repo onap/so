@@ -19,7 +19,7 @@
   ============LICENSE_END=========================================================
   -->
 
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
 <hibernate-mapping package="org.openecomp.mso.db.catalog.beans">
 	<class name="VfModuleToHeatFiles" table="VF_MODULE_TO_HEAT_FILES">
 		<meta attribute="class-description">

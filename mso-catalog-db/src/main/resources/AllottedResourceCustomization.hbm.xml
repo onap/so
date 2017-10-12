@@ -19,7 +19,7 @@
   ============LICENSE_END=========================================================
   -->
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <!-- Generated Dec 14, 2016 10:57:53 AM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
     <class name="org.openecomp.mso.db.catalog.beans.AllottedResourceCustomization"
@@ -58,8 +58,8 @@
         <property name="maxInstances" type="java.lang.Integer">
             <column name="MAX_INSTANCES" />
         </property>
-        <property name="created" type="timestamp" generated="insert" update="false" insert="false" >
-		    <column name="CREATION_TIMESTAMP" not-null="true"/>
-		</property>
+        <property name="created" type="timestamp" generated="insert" update="false" insert="false" not-null="true">
+          <column name="CREATION_TIMESTAMP" default="CURRENT_TIMESTAMP"/>
+        </property>
     </class>
 </hibernate-mapping>

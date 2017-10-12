@@ -33,7 +33,9 @@
 		<property name="description" column="DESCRIPTION" type="string" length="1200"/>
 		<property name="toscaCsarArtifactUUID" 	column="TOSCA_CSAR_ARTIFACT_UUID" 	type="string" 		length="200" />
 
-		<property name="created" type="timestamp" generated="insert" update="false" insert="false" column="CREATION_TIMESTAMP" not-null="true"/>
+		<property name="created" type="timestamp" generated="insert" update="false" insert="false" not-null="true">
+          <column name="CREATION_TIMESTAMP" default="CURRENT_TIMESTAMP"/>
+        </property>
 		<property name="modelInvariantUUID" type="string">
            <column name="MODEL_INVARIANT_UUID" default="'MANUAL_RECORD'" not-null="true" length="200"/>
         </property>

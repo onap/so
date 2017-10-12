@@ -18,7 +18,7 @@
   limitations under the License.
   ============LICENSE_END=========================================================
   -->
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
 <hibernate-mapping package="org.openecomp.mso.db.catalog.beans">
 	<class name="ServiceToNetworks" table="SERVICE_TO_NETWORKS">
 		<meta attribute="class-description">
@@ -33,9 +33,9 @@
 				<column name="NETWORK_MODEL_CUSTOMIZATION_UUID" not-null="true" length="200"/>
 			</key-property>
 		</composite-id>
-		<property name="created" type="timestamp" generated="insert" update="false" insert="false" >
-		    <column name="CREATION_TIMESTAMP" not-null="true"/>
-		</property>
+		<property name="created" type="timestamp" generated="insert" update="false" insert="false" not-null="true">
+          <column name="CREATION_TIMESTAMP" default="CURRENT_TIMESTAMP"/>
+        </property>
 	</class>
 
 </hibernate-mapping>

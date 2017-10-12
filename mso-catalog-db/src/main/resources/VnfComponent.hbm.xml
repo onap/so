@@ -34,8 +34,8 @@
             
         <property name="heatTemplateId" column="HEAT_TEMPLATE_ID" type="int" />
         <property name="heatEnvironmentId" column="HEAT_ENVIRONMENT_ID" type="int" />
-        <property name="created" type="timestamp" generated="insert" update="false" insert="false" >
-           <column name="CREATION_TIMESTAMP" not-null="true"/>
+        <property name="created" type="timestamp" generated="insert" update="false" insert="false" not-null="true">
+          <column name="CREATION_TIMESTAMP" default="CURRENT_TIMESTAMP"/>
         </property>
 
     </class>

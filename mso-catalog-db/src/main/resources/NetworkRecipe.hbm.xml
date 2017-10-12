@@ -53,9 +53,9 @@
 		</property>
 		<property name="networkParamXSD" column="NETWORK_PARAM_XSD" type="string" length="2048"/>
 		<property name="recipeTimeout" column="RECIPE_TIMEOUT" type="int"/>
-		<property name="created" type="timestamp" generated="insert" update="false" insert="false" >
-		    <column name="CREATION_TIMESTAMP" not-null="true"/>
-		</property>
+		<property name="created" type="timestamp" generated="insert" update="false" insert="false" not-null="true">
+          <column name="CREATION_TIMESTAMP" default="CURRENT_TIMESTAMP"/>
+        </property>
 	</class>
 	
 </hibernate-mapping>

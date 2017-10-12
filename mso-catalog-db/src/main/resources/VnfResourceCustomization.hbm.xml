@@ -38,7 +38,9 @@
 		<property name="nfNamingCode" 				column="NF_NAMING_CODE" 				type="string"		length="200"/>
 		<property name="vnfResourceModelUuid" 		column="VNF_RESOURCE_MODEL_UUID" 		type="string" 		length="200"	not-null="true"  />
 		
-		<property name="created" type="timestamp" generated="insert" update="false" insert="false" column="CREATION_TIMESTAMP" not-null="true"/>
+		<property name="created" type="timestamp" generated="insert" update="false" insert="false" not-null="true">
+          <column name="CREATION_TIMESTAMP" default="CURRENT_TIMESTAMP"/>
+        </property>
 		
 <!--
 		<set name="vfModuleCustomizations" inverse="true" cascade="all">
