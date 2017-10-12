@@ -28,6 +28,7 @@ import org.openecomp.mso.adapters.vfc.constant.CommonConstant.Step;
 import org.openecomp.mso.adapters.vfc.constant.DriverExceptionID;
 import org.openecomp.mso.adapters.vfc.constant.HttpCode;
 import org.openecomp.mso.adapters.vfc.exceptions.ApplicationException;
+import org.openecomp.mso.adapters.vfc.model.CustomerModel;
 import org.openecomp.mso.adapters.vfc.model.NSResourceInputParameter;
 import org.openecomp.mso.adapters.vfc.model.NsCreateReq;
 import org.openecomp.mso.adapters.vfc.model.NsInstantiateReq;
@@ -85,9 +86,9 @@ public class VfcManager {
   public RestfulResponse createNs(NSResourceInputParameter segInput) throws ApplicationException {
 
     // Step1: get service template by node type
-    String nsdId = segInput.getNsOperationKey().getNodeTemplateUUID();
+    String csarId = segInput.getNsOperationKey().getNodeTemplateUUID();
     // nsdId for NFVO is "id" in the response, while for SDNO is "servcice template id"
-    LOGGER.info("serviceTemplateId is {}, id is {}", nsdId);
+    LOGGER.info("serviceTemplateId is {}, id is {}", csarId);
 
     LOGGER.info("create ns -> begin");
     // Step2: Prepare url and method type
@@ -96,9 +97,12 @@ public class VfcManager {
 
     // Step3: Prepare restful parameters and options
     NsCreateReq oRequest = new NsCreateReq();
-    oRequest.setNsdId(nsdId);
+    oRequest.setCsarId(csarId);
     oRequest.setNsName(segInput.getNsServiceName());
     oRequest.setDescription(segInput.getNsServiceDescription());
+    CustomerModel context = new CustomerModel();
+    context.setGlobalCustomerId(segInput.getNsOperationKey().getGlobalSubscriberId());
+    context.setServiceType(segInput.getNsOperationKey().getServiceType());
     String createReq = JsonUtil.marshal(oRequest);
 
     // Step4: Call NFVO or SDNO lcm to create ns

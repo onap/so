@@ -29,24 +29,45 @@ package org.openecomp.mso.adapters.vfc.model;
  */
 public class NsCreateReq {
 
-    String nsdId;
+    CustomerModel context;
+    
+    String csarId;
 
     String nsName;
 
     String description;
-
+    
+    
     /**
-     * @return Returns the nsdId.
+     * @return Returns the context.
      */
-    public String getNsdId() {
-        return nsdId;
+    public CustomerModel getContext() {
+        return context;
     }
 
+
+    
     /**
-     * @param nsdId The nsdId to set.
+     * @param context The context to set.
      */
-    public void setNsdId(String nsdId) {
-        this.nsdId = nsdId;
+    public void setContext(CustomerModel context) {
+        this.context = context;
+    }
+
+
+    /**
+     * @return Returns the csarId.
+     */
+    public String getCsarId() {
+        return csarId;
+    }
+
+    
+    /**
+     * @param csarId The csarId to set.
+     */
+    public void setCsarId(String csarId) {
+        this.csarId = csarId;
     }
 
     /**
