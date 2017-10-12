@@ -103,7 +103,7 @@ public class MsoTenantAdapterImpl implements MsoTenantAdapter {
         MsoTenantUtils tUtils = tFactory.getTenantUtils (cloudSiteId);
 
         MsoTenant newTenant = null;
-        String newTenantId = null;
+        String newTenantId;
         long queryTenantStartTime = System.currentTimeMillis ();
         try {
             newTenant = tUtils.queryTenantByName (tenantName, cloudSiteId);

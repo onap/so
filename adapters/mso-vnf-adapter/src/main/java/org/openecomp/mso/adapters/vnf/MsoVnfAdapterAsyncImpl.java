@@ -555,9 +555,11 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
             sMap = hMap.value;
             UpdateVnfNotification.Outputs.Entry entry = new UpdateVnfNotification.Outputs.Entry ();
 
-            for (String key : sMap.keySet ()) {
+            for (Map.Entry<String,String> mapEntry : sMap.entrySet ()) {
+		String key = mapEntry.getKey();
+		String value = mapEntry.getValue();
                 entry.setKey (key);
-                entry.setValue (sMap.get (key));
+                entry.setValue (value);
                 outputs.getEntry ().add (entry);
             }
         }
@@ -574,9 +576,11 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
 
             QueryVnfNotification.Outputs.Entry entry = new QueryVnfNotification.Outputs.Entry ();
 
-            for (String key : sMap.keySet ()) {
+            for (Map.Entry<String,String> mapEntry : sMap.entrySet ()) {
+		String key = mapEntry.getKey();
+		String value = mapEntry.getValue();
                 entry.setKey (key);
-                entry.setValue (sMap.get (key));
+                entry.setValue (value);
                 outputs.getEntry ().add (entry);
             }
         }
