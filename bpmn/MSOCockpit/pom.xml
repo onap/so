@@ -41,7 +41,7 @@
 		
 		<dependency>
 			<groupId>org.camunda.bpm.webapp</groupId>
-			<artifactId>camunda-webapp-jboss-standalone</artifactId>
+			<artifactId>${camunda.bpm.webapp.artifact}</artifactId>
 			<version>${camunda.version}</version>
 			<type>war</type>
 		</dependency>

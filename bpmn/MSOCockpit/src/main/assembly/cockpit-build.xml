@@ -34,7 +34,7 @@
 		<dependencySet>
 			<outputDirectory>/</outputDirectory>
 			<includes>
-				<include>org.camunda.bpm.webapp:camunda-webapp-jboss-standalone</include>
+				<include>org.camunda.bpm.webapp:${camunda.bpm.webapp.artifact}</include>
 			</includes>
 			<unpack>true</unpack>
 			<unpackOptions>
