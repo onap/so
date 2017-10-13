@@ -80,7 +80,7 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
            utils.log("DEBUG", "serviceId:" + serviceId, isDebugEnabled)
            String operationId = execution.getVariable("operationId")
            utils.log("DEBUG", "serviceType:" + serviceType, isDebugEnabled)
-           String nodeTemplateUUID = execution.getVariable("nodeTemplateUUID")
+           String nodeTemplateUUID = execution.getVariable("resourceUUID")
            utils.log("DEBUG", "nodeTemplateUUID:" + nodeTemplateUUID, isDebugEnabled)
            /*
             * segmentInformation needed as a object of segment
@@ -93,13 +93,13 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
             *     }
             * }
             */
-           String siRequest = execution.getVariable("segmentInformation")
+           String nsParameters = execution.getVariable("resourceParamters")
            utils.log("DEBUG", "Input Request:" + siRequest, isDebugEnabled)
            String nsOperationKey = "{\"globalSubscriberId\":\"" + globalSubscriberId + "\",\"serviceType:\""
                  + serviceType + "\",\"serviceId\":\"" + serviceId + "\",\"operationId\":\"" + operationId
                  +"\",\"nodeTemplateUUID\":\"" + nodeTemplateUUID + "\"}";
            execution.setVariable("nsOperationKey", nsOperationKey);
-           execution.setVariable("nsParameters", jsonUtil.getJsonValue(siRequest, "nsParameters"))
+           execution.setVariable("nsParameters", nsParameters)
            
 
        } catch (BpmnError e) {
