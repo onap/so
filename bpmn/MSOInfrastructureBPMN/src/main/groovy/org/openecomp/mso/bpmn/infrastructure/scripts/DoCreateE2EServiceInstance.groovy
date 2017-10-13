@@ -179,7 +179,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 			execution.setVariable("modelVersion", modelVersion)
 			execution.setVariable("modelUuid", modelUuid)
 			execution.setVariable("modelName", modelName)
-			
+			 
 			StringBuilder sbParams = new StringBuilder()
 			Map<String, String> paramsMap = execution.getVariable("serviceInputParams")
 			if (paramsMap != null)
@@ -666,4 +666,33 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
         utils.log("DEBUG", "======== COMPLETED preInitResourcesOperStatus Process ======== ", isDebugEnabled)  
 	}
 	
+	public void preResourceRequest(execution, resourceName){
+	    def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+	    String serviceInstanceName = execution.getVariable("serviceInstanceName")
+	    String nsServiceName = nsName + "_" + serviceInstanceName
+	    String nsServiceDescription = execution.getVariable("serviceInstanceDescription")
+	    execution.setVariable("nsServiceName", nsServiceName)
+	    utils.log("DEBUG", "Prepare VFC Request nsServiceName:" + nsServiceName, isDebugEnabled)
+	    execution.setVariable("nsServiceDescription", nsServiceDescription)
+	    utils.log("DEBUG", "Prepare VFC Request nsServiceDescription:" + nsServiceDescription, isDebugEnabled)
+        String globalSubscriberId = execution.getVariable("globalSubscriberId")
+        String serviceType = execution.getVariable("serviceType")
+        String serviceId = execution.getVariable("serviceId")
+        String operationId = execution.getVariable("operationId")
+        String incomingRequest = execution.getVariable("bpmnRequest")
+        Map serviceReq =  jsonSlurper.parseText(incomingRequest)
+        def segmentList = serviceReq.service.parameters.segments                
+        if (segmentList != null) {
+            segmentList.each {
+                if(StringUtils.containsIgnoreCase(it.resourceName, nsName)){
+                    String resourceActualName = it.resourceName
+                    String resourceUUID  = it.resourceUUID
+                    String resourceParameters = it.nsParameters
+                    execution.setVariable("resourceName", resourceActualName)
+                    execution.setVariable("resourceUUID", resourceUUID)
+                    execution.setVariable("resourceParameters", resourceParameters)
+                }                
+            }
+        } 
+	}
 }
