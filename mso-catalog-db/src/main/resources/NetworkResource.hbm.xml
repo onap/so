@@ -44,7 +44,9 @@
 			<column name="AIC_VERSION_MAX" not-null="false" default="2.5" length="20"/>
 		</property>
 		
-		<property name="created" type="timestamp" generated="insert" update="false" insert="false" column="CREATION_TIMESTAMP" not-null="true"/>
+		<property name="created" type="timestamp" generated="insert" update="false" insert="false" not-null="true">
+          <column name="CREATION_TIMESTAMP" default="CURRENT_TIMESTAMP"/>
+        </property>
 
 	</class>
 

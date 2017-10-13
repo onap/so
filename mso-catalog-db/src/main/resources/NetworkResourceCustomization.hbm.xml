@@ -18,7 +18,7 @@
   limitations under the License.
   ============LICENSE_END=========================================================
   -->
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
     <class name="org.openecomp.mso.db.catalog.beans.NetworkResourceCustomization" table="NETWORK_RESOURCE_CUSTOMIZATION"> 
@@ -39,8 +39,8 @@
         <property name="networkRole" type="java.lang.String" length="200">
             <column name="NETWORK_ROLE" />
         </property>
-        <property name="created" type="timestamp" generated="insert" update="false" insert="false" >
-            <column name="CREATION_TIMESTAMP" not-null="true"/>
+        <property name="created" type="timestamp" generated="insert" update="false" insert="false" not-null="true">
+          <column name="CREATION_TIMESTAMP" default="CURRENT_TIMESTAMP"/>
         </property>
     </class>
 </hibernate-mapping>

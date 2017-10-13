@@ -40,7 +40,9 @@
 		</properties>
 		
 		<property name="orchestrationUri" type="string" column="ORCHESTRATION_URI" not-null="true" length="256"/>
-		<property name="created" type="timestamp" generated="insert" update="false" insert="false" column="CREATION_TIMESTAMP" not-null="true"/>
+		<property name="created" type="timestamp" generated="insert" update="false" insert="false" not-null="true">
+          <column name="CREATION_TIMESTAMP" default="CURRENT_TIMESTAMP"/>
+        </property>
 
 		<property name="action" 				column="ACTION" 					type="string" 			length="20" insert="false" update="false" />
 		<property name="version" 				column="VERSION_STR" 				type="string" 			length="20"/>

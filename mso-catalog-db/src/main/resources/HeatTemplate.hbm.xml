@@ -43,9 +43,9 @@
 		</property>
 		<property name="timeoutMinutes" column="TIMEOUT_MINUTES" type="int"/>
 		<property name="description" column="DESCRIPTION" type="string" length="1200"/>
-		<property name="created" type="timestamp" generated="insert" update="false" insert="false" >
-		  <column name="CREATION_TIMESTAMP" not-null="true"/>
-		</property>
+		<property name="created" type="timestamp" generated="insert" update="false" insert="false" not-null="true">
+          <column name="CREATION_TIMESTAMP" default="CURRENT_TIMESTAMP"/>
+        </property>
 		<property name="artifactChecksum" type="string">
 		  <column name="ARTIFACT_CHECKSUM" length="200" default="'MANUAL RECORD'" not-null="true"/>
 		</property>

@@ -20,7 +20,7 @@
   -->
 
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <!-- Generated Aug 6, 2015 1:11:38 PM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
     <class name="org.openecomp.mso.db.catalog.beans.HeatEnvironment" table="HEAT_ENVIRONMENT">
@@ -40,9 +40,9 @@
 		<property name="environment" type="text">
 		      <column name="BODY" not-null="true"/>
 		</property>
-		<property name="created" type="timestamp" generated="insert" insert="false" update="false">
-		    <column name="CREATION_TIMESTAMP" not-null="true"/>
-		</property>
+		<property name="created" type="timestamp" generated="insert" insert="false" update="false" not-null="true">
+          <column name="CREATION_TIMESTAMP" default="CURRENT_TIMESTAMP"/>
+        </property>
 		<property name="artifactChecksum" type="string">
 		  <column name="ARTIFACT_CHECKSUM" length="200" default="'MANUAL RECORD'" not-null="false"/>
 		</property>

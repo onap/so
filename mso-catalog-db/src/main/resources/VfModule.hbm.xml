@@ -20,7 +20,7 @@
   -->
 
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <!-- Generated Apr 28, 2016 2:44:06 PM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping package="org.openecomp.mso.db.catalog.beans">
     <class name="VfModule" table="VF_MODULE">
@@ -36,7 +36,9 @@
         <property name="heatTemplateArtifactUUId" 		type="string" 			column="HEAT_TEMPLATE_ARTIFACT_UUID" 		length="200"	not-null="true" />
         <property name="volHeatTemplateArtifactUUId"	type="string" 			column="VOL_HEAT_TEMPLATE_ARTIFACT_UUID" 	length="200" />
        	
-       	<property name="created" type="timestamp" generated="insert" update="false" insert="false" column ="CREATION_TIMESTAMP" not-null="true"/>
+       	<property name="created" type="timestamp" generated="insert" update="false" insert="false" not-null="true">
+          <column name="CREATION_TIMESTAMP" default="CURRENT_TIMESTAMP"/>
+        </property>
 
     </class>
 </hibernate-mapping>

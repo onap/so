@@ -19,7 +19,7 @@
   ============LICENSE_END=========================================================
   -->
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping package="org.openecomp.mso.db.catalog.beans">
     <class name="VfModuleCustomization" table="VF_MODULE_CUSTOMIZATION">
     
@@ -32,9 +32,9 @@
             <column name="VOL_ENVIRONMENT_ARTIFACT_UUID" length="200" not-null="false" />
         </property>
 
-       	<property name="created" type="timestamp" generated="insert" update="false" insert="false" >
-       	      <column name="CREATION_TIMESTAMP" not-null="true"/>
-       	</property>
+       	<property name="created" type="timestamp" generated="insert" update="false" insert="false" not-null="true">
+          <column name="CREATION_TIMESTAMP" default="CURRENT_TIMESTAMP"/>
+        </property>
         
         <property name="heatEnvironmentArtifactUuid" type="java.lang.String">
             <column name="HEAT_ENVIRONMENT_ARTIFACT_UUID" length="200" not-null="false" />

@@ -45,9 +45,9 @@
 		<property name="modelVersion" column="MODEL_VERSION" type="string" length="20"/>
 		<property name="modelCustomizationId" column="MODEL_CUSTOMIZATION_ID" type="string" length="40"/>
 		<property name="modelCustomizationName" column="MODEL_CUSTOMIZATION_NAME" type="string" length="40"/>
-		<property name="created" type="timestamp" generated="insert" update="false" insert="false" >
-		    <column name="CREATION_TIMESTAMP" not-null="true"/>
-		</property>
+		<property name="created" type="timestamp" generated="insert" update="false" insert="false" not-null="true">
+          <column name="CREATION_TIMESTAMP" default="CURRENT_TIMESTAMP"/>
+        </property>
 
 		<map name="recipes" cascade="all">
 			<key column="MODEL_ID"/>
@@ -80,8 +80,8 @@
         </property>
 		<property name="modelParamXSD" column="MODEL_PARAM_XSD" type="string" length="2048"/>
 		<property name="recipeTimeout" column="RECIPE_TIMEOUT" type="int"/>
-		<property name="created" type="timestamp" generated="insert" update="false" insert="false" >
-		    <column name="CREATION_TIMESTAMP" not-null="true"/>
-		</property>
+		<property name="created" type="timestamp" generated="insert" update="false" insert="false" not-null="true">
+          <column name="CREATION_TIMESTAMP" default="CURRENT_TIMESTAMP"/>
+        </property>
 	</class>
 </hibernate-mapping>

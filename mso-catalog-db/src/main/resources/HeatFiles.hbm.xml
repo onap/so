@@ -19,7 +19,7 @@
   ============LICENSE_END=========================================================
   -->
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <!-- Generated Mar 31, 2017 3:39:01 PM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
     <class name="org.openecomp.mso.db.catalog.beans.HeatFiles" table="HEAT_FILES">
@@ -39,8 +39,8 @@
         <property name="fileBody" type="java.lang.String" not-null="true">
             <column name="BODY" />
         </property>
-        <property name="created" type="java.sql.Timestamp" generated="insert" update="false" insert="false">
-            <column name="CREATION_TIMESTAMP" not-null="true"/>
+        <property name="created" type="java.sql.Timestamp" generated="insert" update="false" insert="false" not-null="true">
+          <column name="CREATION_TIMESTAMP" default="CURRENT_TIMESTAMP"/>
         </property>
         <property name="artifactChecksum" type="java.lang.String" length="200" not-null="true">
             <column name="ARTIFACT_CHECKSUM"/>

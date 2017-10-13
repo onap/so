@@ -48,6 +48,8 @@
         </property>
 		<property name="vnfComponentParamXSD" column="VNF_COMPONENT_PARAM_XSD" type="string" length="2048"/>
 		<property name="recipeTimeout" column="RECIPE_TIMEOUT" type="int"/>
-		<property name="created" column="CREATION_TIMESTAMP" type="timestamp" generated="insert" update="false" insert="false" />
+		<property name="created" type="timestamp" generated="insert" update="false" insert="false" not-null="true">
+          <column name="CREATION_TIMESTAMP" default="CURRENT_TIMESTAMP"/>
+        </property>
 	</class>
 </hibernate-mapping>

@@ -37,7 +37,9 @@
 		<property name="aicVersionMin" 				type="string" 		column="AIC_VERSION_MIN" 				length="20"/>
 		<property name="aicVersionMax" 				type="string" 		column="AIC_VERSION_MAX" 				length="20"/>
 		<property name="heatTemplateArtifactUUId" 	type="string" 		column="HEAT_TEMPLATE_ARTIFACT_UUID" 	length="200" />
-		<property name="created" 					type="timestamp" generated="insert" update="false" insert="false" column="CREATION_TIMESTAMP" not-null="true"/>
+		<property name="created" 					type="timestamp" generated="insert" update="false" insert="false" not-null="true">
+          <column name="CREATION_TIMESTAMP" default="CURRENT_TIMESTAMP"/>
+        </property>
 		
 		<set name="vnfResourceCustomizations" inverse="true" access="field" cascade="all">
             <key column="VNF_RESOURCE_MODEL_UUID" not-null="true" />

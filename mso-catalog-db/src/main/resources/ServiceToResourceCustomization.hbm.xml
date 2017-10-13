@@ -30,7 +30,9 @@
 			<key-property name="modelType"  					type="string" column="MODEL_TYPE" length="20" />
 			<key-property name="resourceModelCustomizationUUID" type="string" column="RESOURCE_MODEL_CUSTOMIZATION_UUID" length="200" />
 		</composite-id>
-		<property name="created" type="timestamp" generated="insert" update="false" insert="false" column="CREATION_TIMESTAMP" not-null="true"/>
+		<property name="created" type="timestamp" generated="insert" update="false" insert="false" not-null="true">
+          <column name="CREATION_TIMESTAMP" default="CURRENT_TIMESTAMP"/>
+        </property>
 		<property name="serviceModelUUID" 				type="string" column="SERVICE_MODEL_UUID" length="200" not-null="true"/>
 
 	</class>
