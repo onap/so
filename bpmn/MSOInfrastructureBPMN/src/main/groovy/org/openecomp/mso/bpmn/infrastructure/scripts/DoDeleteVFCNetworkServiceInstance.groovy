@@ -75,9 +75,9 @@ public class DODeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
             utils.log("DEBUG", "serviceId:" + serviceId, isDebugEnabled)
             String operationId = execution.getVariable("operationId")
             utils.log("DEBUG", "serviceType:" + serviceType, isDebugEnabled)
-            String nodeTemplateUUID = execution.getVariable("nodeTemplateUUID")
+            String nodeTemplateUUID = execution.getVariable("resourceTemplateUUID")
             utils.log("DEBUG", "nodeTemplateUUID:" + nodeTemplateUUID, isDebugEnabled)
-            String nsInstanceId = execution.getVariable("nsInstanceId")
+            String nsInstanceId = execution.getVariable("resourceInstanceId")
             utils.log("DEBUG", "nsInstanceId:" + nsInstanceId, isDebugEnabled)
             String nsOperationKey = "{\"globalSubscriberId\":\"" + globalSubscriberId + "\",\"serviceType:\""
                   + serviceType + "\",\"serviceId\":\"" + serviceId + "\",\"operationId\":\"" + operationId

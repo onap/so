@@ -619,7 +619,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
             String progress = "0"
             String reason = ""
             String operationContent = "Prepare service creation"
-            utils.log("DEBUG", "Generated new operation for Service Instance serviceId:" + serviceId + " operationId:" + operationId, isDebugEnabled)
+            utils.log("DEBUG", "Generated new operation for Service Instance serviceId:" + serviceId + " operationId:" + operationId + " operationType:" + oprationType, isDebugEnabled)
             serviceId = UriUtils.encode(serviceId,"UTF-8")
             execution.setVariable("serviceInstanceId", serviceId)
             execution.setVariable("operationId", operationId)
@@ -669,7 +669,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 	/**
 	 * prepare resource create request
 	 */
-	public void preResourceRequest(execution, resourceName){
+	public void preResourceRequest(execution, resourceType){
 	    def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 	    String serviceInstanceName = execution.getVariable("serviceInstanceName")
 	    String nsServiceName = nsName + "_" + serviceInstanceName
@@ -687,11 +687,10 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
         def segmentList = serviceReq.service.parameters.segments                
         if (segmentList != null) {
             segmentList.each {
-                if(StringUtils.containsIgnoreCase(it.resourceName, nsName)){
-                    String resourceActualName = it.resourceName
+                if(StringUtils.containsIgnoreCase(it.resourceName, resourceType)){
                     String resourceUUID  = it.resourceUUID
                     String resourceParameters = it.nsParameters
-                    execution.setVariable("resourceName", resourceActualName)
+                    execution.setVariable("resourceType", resourceType)
                     execution.setVariable("resourceUUID", resourceUUID)
                     execution.setVariable("resourceParameters", resourceParameters)
                 }                
