@@ -127,12 +127,13 @@ def ddsi = new DoCreateE2EServiceInstance()
 ddsi.postProcessAAIPUT(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_1dd86x8" sourceRef="ScriptTask_0q37vn9" targetRef="ExclusiveGateway_1nk6aol" />
-    <bpmn2:scriptTask id="ScriptTask_0081lne" name="Prepare SDN-C Adaptor Data Request" scriptFormat="groovy">
-      <bpmn2:incoming>SequenceFlow_1hgiln0</bpmn2:incoming>
+    <bpmn2:scriptTask id="ScriptTask_0081lne" name="Prepare  Resource Requst For overlay" scriptFormat="groovy">
+      <bpmn2:incoming>SequenceFlow_1pjr82f</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0ofqw6v</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
+String nsName = "overlay"
 def csi = new  DoCreateE2EServiceInstance()
-csi.preSDNCRequest(execution)]]></bpmn2:script>
+csi.preResourceRequest(execution, nsName)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:scriptTask id="ScriptTask_0wvq4t8" name="Prepare Resource Request for vEPC" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_05gdjox</bpmn2:incoming>
@@ -142,19 +143,6 @@ String resourceName= "vEPC"
 def csi = new  DoCreateE2EServiceInstance()
 csi.preResourceRequest(execution, resourceName)]]></bpmn2:script>
     </bpmn2:scriptTask>
-    <bpmn2:callActivity id="CallActivity_09c3ajg" name="Call DoCreateE2ENetworkInstance" calledElement="DoCreateWANNetworkInstance">
-      <bpmn2:extensionElements>
-        <camunda:in source="serviceId" target="serviceId" />
-        <camunda:in source="operationId" target="operationId" />
-        <camunda:in source="operationType" target="operationType" />
-        <camunda:in source="resourceTemplateUUID" target="resourceTemplateUUID" />
-        <camunda:in source="resourceName" target="resourceName" />
-        <camunda:in source="resoureceNodeType" target="resoureceNodeType" />
-        <camunda:in source="resourceReqJson" target="resourceReqJson" />
-      </bpmn2:extensionElements>
-      <bpmn2:incoming>SequenceFlow_0ofqw6v</bpmn2:incoming>
-      <bpmn2:outgoing>SequenceFlow_1vvdkcs</bpmn2:outgoing>
-    </bpmn2:callActivity>
     <bpmn2:callActivity id="CallActivity_0uwm4l1" name="Call DoCreateVFCNetworkServiceInstance For vEPC" calledElement="DoCreateVFCNetworkServiceInstance">
       <bpmn2:extensionElements>
         <camunda:in source="nsServiceName" target="nsServiceName" />
@@ -163,9 +151,10 @@ csi.preResourceRequest(execution, resourceName)]]></bpmn2:script>
         <camunda:in source="serviceType" target="serviceType" />
         <camunda:in source="serviceId" target="serviceId" />
         <camunda:in source="operationId" target="operationId" />
-        <camunda:in source="resourceName" target="resourceName" />
+        <camunda:in source="resourceType" target="resourceType" />
         <camunda:in source="resourceUUID" target="resourceUUID" />
         <camunda:in source="resourceParameters" target="resourceParameters" />
+        <camunda:in source="operationType" target="operationType" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_15zgrcq</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0k4q7jm</bpmn2:outgoing>
@@ -226,7 +215,7 @@ String nsName = "vIMS"
 def csi = new  DoCreateE2EServiceInstance()
 csi.preResourceRequest(execution, nsName)]]></bpmn2:script>
     </bpmn2:scriptTask>
-    <bpmn2:sequenceFlow id="SequenceFlow_1hgiln0" sourceRef="Task_03n6y9h" targetRef="ScriptTask_0081lne" />
+    <bpmn2:sequenceFlow id="SequenceFlow_1hgiln0" sourceRef="Task_03n6y9h" targetRef="Task_0io5qby" />
     <bpmn2:callActivity id="Task_03n6y9h" name="Call DoCreateVFCNetworkServiceInstance For vIMS" calledElement="DoCreateVFCNetworkServiceInstance">
       <bpmn2:extensionElements>
         <camunda:in source="nsServiceName" target="nsServiceName" />
@@ -235,13 +224,37 @@ csi.preResourceRequest(execution, nsName)]]></bpmn2:script>
         <camunda:in source="serviceType" target="serviceType" />
         <camunda:in source="serviceId" target="serviceId" />
         <camunda:in source="operationId" target="operationId" />
-        <camunda:in source="resourceName" target="resourceName" />
+        <camunda:in source="resourceType" target="resourceType" />
         <camunda:in source="resourceUUID" target="resourceUUID" />
         <camunda:in source="resourceParameters" target="resourceParameters" />
+        <camunda:in source="operationType" target="operationType" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_0ua1bbk</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_1hgiln0</bpmn2:outgoing>
     </bpmn2:callActivity>
+    <bpmn2:sequenceFlow id="SequenceFlow_1vo0235" sourceRef="Task_0io5qby" targetRef="Task_0pkhzoj" />
+    <bpmn2:serviceTask id="Task_0io5qby" name="Call Sync SDNC service Create " camunda:class="org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.SdncServiceTopologyOperationTask">
+      <bpmn2:incoming>SequenceFlow_1hgiln0</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_1vo0235</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+    <bpmn2:sequenceFlow id="SequenceFlow_17i1ors" sourceRef="Task_0pkhzoj" targetRef="Task_0gs55f1" />
+    <bpmn2:sequenceFlow id="SequenceFlow_1pjr82f" sourceRef="Task_0gs55f1" targetRef="ScriptTask_0081lne" />
+    <bpmn2:scriptTask id="Task_0pkhzoj" name="Prepare Resource Request For underlay">
+      <bpmn2:incoming>SequenceFlow_1vo0235</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_17i1ors</bpmn2:outgoing>
+      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
+String nsName = "underlay"
+def csi = new  DoCreateE2EServiceInstance()
+csi.preResourceRequest(execution, nsName)]]></bpmn2:script>
+    </bpmn2:scriptTask>
+    <bpmn2:serviceTask id="Task_0gs55f1" name="Call Underlay Create" camunda:class="org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.SdncNetworkTopologyOperationTask">
+      <bpmn2:incoming>SequenceFlow_17i1ors</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_1pjr82f</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+    <bpmn2:serviceTask id="CallActivity_09c3ajg" name="Call Overlay Create" camunda:class="org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.SdncNetworkTopologyOperationTask">
+      <bpmn2:incoming>SequenceFlow_0ofqw6v</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_1vvdkcs</bpmn2:outgoing>
+    </bpmn2:serviceTask>
   </bpmn2:process>
   <bpmn2:error id="Error_2" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
   <bpmn2:error id="Error_1" name="java.lang.Exception" errorCode="java.lang.Exception" />
@@ -417,25 +430,22 @@ csi.preResourceRequest(execution, nsName)]]></bpmn2:script>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_0081lne_di" bpmnElement="ScriptTask_0081lne">
-        <dc:Bounds x="211" y="819" width="100" height="80" />
+        <dc:Bounds x="-410" y="819" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ScriptTask_0wvq4t8_di" bpmnElement="ScriptTask_0wvq4t8">
         <dc:Bounds x="789" y="819" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="CallActivity_09c3ajg_di" bpmnElement="CallActivity_09c3ajg">
-        <dc:Bounds x="43" y="819" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="CallActivity_0uwm4l1_di" bpmnElement="CallActivity_0uwm4l1">
         <dc:Bounds x="632" y="819" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ScriptTask_1xdjlzm_di" bpmnElement="ScriptTask_1xdjlzm">
-        <dc:Bounds x="-152" y="819" width="100" height="80" />
+        <dc:Bounds x="-741" y="819" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0ofqw6v_di" bpmnElement="SequenceFlow_0ofqw6v">
-        <di:waypoint xsi:type="dc:Point" x="211" y="859" />
-        <di:waypoint xsi:type="dc:Point" x="143" y="859" />
+        <di:waypoint xsi:type="dc:Point" x="-410" y="859" />
+        <di:waypoint xsi:type="dc:Point" x="-478" y="859" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="132" y="838" width="90" height="12" />
+          <dc:Bounds x="-489" y="838" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_15zgrcq_di" bpmnElement="SequenceFlow_15zgrcq">
@@ -446,17 +456,17 @@ csi.preResourceRequest(execution, nsName)]]></bpmn2:script>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1vvdkcs_di" bpmnElement="SequenceFlow_1vvdkcs">
-        <di:waypoint xsi:type="dc:Point" x="43" y="859" />
-        <di:waypoint xsi:type="dc:Point" x="-52" y="859" />
+        <di:waypoint xsi:type="dc:Point" x="-578" y="859" />
+        <di:waypoint xsi:type="dc:Point" x="-641" y="859" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="-49.5" y="838" width="90" height="12" />
+          <dc:Bounds x="-654.5" y="838" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_092ghvu_di" bpmnElement="SequenceFlow_092ghvu">
-        <di:waypoint xsi:type="dc:Point" x="-152" y="859" />
-        <di:waypoint xsi:type="dc:Point" x="-191" y="859" />
+        <di:waypoint xsi:type="dc:Point" x="-741" y="859" />
+        <di:waypoint xsi:type="dc:Point" x="-787" y="859" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="-216.5" y="838" width="90" height="12" />
+          <dc:Bounds x="-809" y="838" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1170ztf_di" bpmnElement="SequenceFlow_1170ztf">
@@ -467,9 +477,9 @@ csi.preResourceRequest(execution, nsName)]]></bpmn2:script>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="EndEvent_01p249c_di" bpmnElement="EndEvent_0kbbt94">
-        <dc:Bounds x="-227" y="841" width="36" height="36" />
+        <dc:Bounds x="-823" y="841" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="-345" y="881" width="90" height="12" />
+          <dc:Bounds x="-941" y="881" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0k4q7jm_di" bpmnElement="SequenceFlow_0k4q7jm">
@@ -502,23 +512,56 @@ csi.preResourceRequest(execution, nsName)]]></bpmn2:script>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0ua1bbk_di" bpmnElement="SequenceFlow_0ua1bbk">
         <di:waypoint xsi:type="dc:Point" x="496" y="859" />
-        <di:waypoint xsi:type="dc:Point" x="458" y="859" />
+        <di:waypoint xsi:type="dc:Point" x="446" y="859" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="477" y="838" width="0" height="12" />
+          <dc:Bounds x="471" y="838" width="0" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_0ue196s_di" bpmnElement="Task_0aidjmp">
         <dc:Bounds x="496" y="819" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1hgiln0_di" bpmnElement="SequenceFlow_1hgiln0">
-        <di:waypoint xsi:type="dc:Point" x="358" y="859" />
-        <di:waypoint xsi:type="dc:Point" x="311" y="859" />
+        <di:waypoint xsi:type="dc:Point" x="346" y="859" />
+        <di:waypoint xsi:type="dc:Point" x="191" y="859" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="334.5" y="838" width="0" height="12" />
+          <dc:Bounds x="268.5" y="838" width="0" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="CallActivity_1hcdpgq_di" bpmnElement="Task_03n6y9h">
-        <dc:Bounds x="358" y="819" width="100" height="80" />
+        <dc:Bounds x="346" y="819" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1vo0235_di" bpmnElement="SequenceFlow_1vo0235">
+        <di:waypoint xsi:type="dc:Point" x="91" y="859" />
+        <di:waypoint xsi:type="dc:Point" x="46" y="859" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="68.5" y="838" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_0qi8cgg_di" bpmnElement="Task_0io5qby">
+        <dc:Bounds x="91" y="819" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_17i1ors_di" bpmnElement="SequenceFlow_17i1ors">
+        <di:waypoint xsi:type="dc:Point" x="-54" y="859" />
+        <di:waypoint xsi:type="dc:Point" x="-125" y="859" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-134.5" y="838" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1pjr82f_di" bpmnElement="SequenceFlow_1pjr82f">
+        <di:waypoint xsi:type="dc:Point" x="-225" y="859" />
+        <di:waypoint xsi:type="dc:Point" x="-310" y="859" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-312.5" y="838" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_0ue4dzp_di" bpmnElement="Task_0pkhzoj">
+        <dc:Bounds x="-54" y="819" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1q727pm_di" bpmnElement="Task_0gs55f1">
+        <dc:Bounds x="-225" y="819" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1cnnn5b_di" bpmnElement="CallActivity_09c3ajg">
+        <dc:Bounds x="-578" y="819" width="100" height="80" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
