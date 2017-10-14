@@ -76,7 +76,7 @@ public class ServiceRpcInputEntityBuilder extends AbstractBuilder<Map<String, St
         SdncRequestHeaderEntity sdncRequestHeaderEntity = new SdncRequestHeaderEntity();
         {
             sdncRequestHeaderEntity.setSvcRequestId(getRequestId(execution));
-            sdncRequestHeaderEntity.setSvcAction(getOperationType(execution));
+            sdncRequestHeaderEntity.setSvcAction(getSvcAction(execution));
         }
         serviceTopologyOperationInputEntity.setSdncRequestHeader(sdncRequestHeaderEntity);
     }

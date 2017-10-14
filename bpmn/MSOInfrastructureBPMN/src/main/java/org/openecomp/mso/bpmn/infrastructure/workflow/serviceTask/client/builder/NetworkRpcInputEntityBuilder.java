@@ -60,7 +60,7 @@ public class NetworkRpcInputEntityBuilder extends AbstractBuilder<Map<String, St
         SdncRequestHeaderEntity sdncRequestHeaderEntity = new SdncRequestHeaderEntity();
         {
             sdncRequestHeaderEntity.setSvcRequestId(getRequestId(execution));
-            sdncRequestHeaderEntity.setSvcAction(getOperationType(execution));
+            sdncRequestHeaderEntity.setSvcAction(getSvcAction(execution));
         }
         networkTopologyOperationInputEntity.setSdncRequestHeader(sdncRequestHeaderEntity);
     }

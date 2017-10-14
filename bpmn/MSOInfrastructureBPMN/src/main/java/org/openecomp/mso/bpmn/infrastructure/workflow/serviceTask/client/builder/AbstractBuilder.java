@@ -22,7 +22,6 @@ package org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.builde
 
 import org.apache.commons.lang3.StringUtils;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
-import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.SdncUnderlayVpnPreprocessTask;
 import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.entity.OnapModelInformationEntity;
 import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.entity.ParamEntity;
 import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.entity.RequestInformationEntity;
@@ -41,6 +40,10 @@ import java.util.UUID;
  * Created by 10112215 on 2017/9/20.
  */
 public abstract class AbstractBuilder<IN, OUT> {
+
+     public static final String OPERATION_TYPE = "operationType";
+     public static final String RESOURCE_TYPE = "resourceType";
+
      public static enum RequestAction {
           CreateNetworkInstance(0, "CreateNetworkInstance"),
           ActivateNetworkInstance(1, "ActivateNetworkInstance"),
@@ -56,7 +59,9 @@ public abstract class AbstractBuilder<IN, OUT> {
           CreateContrailRouteInstance(11, "CreateContrailRouteInstance"),
           DeleteContrailRouteInstance(12, "DeleteContrailRouteInstance"),
           CreateSecurityZoneInstance(13, "CreateSecurityZoneInstance"),
-          DeleteSecurityZoneInstance(14, "DeleteSecurityZoneInstance");
+          DeleteSecurityZoneInstance(14, "DeleteSecurityZoneInstance"),
+          ActivateDCINetworkInstance(15, "ActivateDCINetworkInstance"),
+          DeActivateDCINetworkInstance(16, "DeActivateDCINetworkInstance");
 
           String name;
           int value;
@@ -110,25 +115,55 @@ public abstract class AbstractBuilder<IN, OUT> {
 
      protected String getRequestActoin(DelegateExecution execution) {
           String action = /*RequestInformation.*/RequestAction.CreateNetworkInstance.name();
-          String operType = getOperType(execution);
+          String operType = (String) execution.getVariable(OPERATION_TYPE);
+          String resourceType = ((String) execution.getVariable(RESOURCE_TYPE)).toLowerCase();
           if (!StringUtils.isBlank(operType)) {
                if (RequestsDbConstant.OperationType.DELETE.equals(operType)) {
-                    action = /*RequestInformation.*/RequestAction.DeleteNetworkInstance.name();
+                    if (isOverlay(resourceType)) {
+                         action = /*RequestInformation.*/RequestAction.DeActivateDCINetworkInstance.name();
+                    } else if (isUnderlay(resourceType)) {
+                         action = /*RequestInformation.*/RequestAction.DeleteNetworkInstance.name();
+                    } else {
+                         action = /*RequestInformation.*/RequestAction.DeleteServiceInstance.name();
+                    }
                } else if (RequestsDbConstant.OperationType.CREATE.equals(operType)) {
-                    action = /*RequestInformation.*/RequestAction.CreateNetworkInstance.name();
+                    if (isOverlay(resourceType)) {
+                         action = /*RequestInformation.*/RequestAction.ActivateDCINetworkInstance.name();
+                    } else if (isUnderlay(resourceType)) {
+                         action = /*RequestInformation.*/RequestAction.CreateNetworkInstance.name();
+                    } else {
+                         action = /*RequestInformation.*/RequestAction.CreateServiceInstance.name();
+                    }
                }
           }
           return action;
      }
 
-     protected String getOperationType(DelegateExecution execution) {
+     private boolean isOverlay(String resourceType) {
+          return !StringUtils.isBlank(resourceType) && resourceType.contains("overlay");
+     }
+
+     private boolean isUnderlay(String resourceType) {
+          return !StringUtils.isBlank(resourceType) && resourceType.contains("underlay");
+     }
+
+     protected String getSvcAction(DelegateExecution execution) {
           String action = /*SdncRequestHeader.*/SvcAction.Create.name();
-          String operType = getOperType(execution);
+          String operType = (String) execution.getVariable(OPERATION_TYPE);
+          String resourceType = ((String) execution.getVariable(RESOURCE_TYPE)).toLowerCase();
           if (!StringUtils.isBlank(operType)) {
                if (RequestsDbConstant.OperationType.DELETE.equals(operType)) {
-                    action = /*SdncRequestHeader.*/SvcAction.Delete.name();
+                    if (isOverlay(resourceType)) {
+                         action = /*SdncRequestHeader.*/SvcAction.Deactivate.name();
+                    } else {
+                         action = /*SdncRequestHeader.*/SvcAction.Delete.name();
+                    }
                } else if (RequestsDbConstant.OperationType.CREATE.equals(operType)) {
-                    action = /*SdncRequestHeader.*/SvcAction.Create.name();
+                    if (isOverlay(resourceType)) {
+                         action = /*SdncRequestHeader.*/SvcAction.Activate.name();
+                    } else {
+                         action = /*SdncRequestHeader.*/SvcAction.Create.name();
+                    }
                }
           }
           return action;
@@ -142,10 +177,6 @@ public abstract class AbstractBuilder<IN, OUT> {
                }
           }
           return requestId;
-     }
-
-     protected String getOperType(DelegateExecution execution) {
-          return (String) execution.getVariable(SdncUnderlayVpnPreprocessTask.RESOURCE_OPER_TYPE);
      }
 
      protected OnapModelInformationEntity getOnapModelInformationEntity(DelegateExecution execution) {

@@ -40,9 +40,12 @@ public class SdncServiceTopologyOperationTask extends AbstractSdncOperationTask 
     public void sendRestrequestAndHandleResponse(DelegateExecution execution,
                                                  Map<String, String> inputs,
                                                  GenericResourceApi genericResourceApiClient) throws Exception {
+        updateProgress(execution, null, null, "40", "sendRestrequestAndHandleResponse begin!");
         ServiceRpcInputEntityBuilder builder = new ServiceRpcInputEntityBuilder();
         RpcServiceTopologyOperationInputEntity inputEntity = builder.build(execution, inputs);
+        updateProgress(execution, null, null, "50", "RequestBody build finished!");
         RpcServiceTopologyOperationOutputEntity outputEntity = genericResourceApiClient.postServiceTopologyOperation(inputEntity).execute().body();
+        updateProgress(execution, null, null, "90", "sendRestrequestAndHandleResponse finished!");
         saveOutput(execution, outputEntity);
     }
 
