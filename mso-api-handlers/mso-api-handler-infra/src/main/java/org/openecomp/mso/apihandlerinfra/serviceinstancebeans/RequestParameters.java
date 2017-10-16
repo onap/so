@@ -36,7 +36,7 @@ public class RequestParameters {
 	@JsonSerialize(include=Inclusion.ALWAYS)
 	private boolean aLaCarte = false;
 	@JsonIgnore
-	private boolean isALaCarteSet = false;
+	private boolean aLaCarteSet = false;
 	@JsonSerialize(include=Inclusion.ALWAYS)
 	private boolean autoBuildVfModules = false;
 	@JsonSerialize(include=Inclusion.ALWAYS)
@@ -55,18 +55,14 @@ public class RequestParameters {
 		this.subscriptionServiceType = subscriptionServiceType;
 	}
 
-	public boolean getALaCarte() {
-		return aLaCarte;
-	}
-
 	public void setaLaCarte(boolean aLaCarte) {
 		this.aLaCarte = aLaCarte;
-		this.isALaCarteSet = true;
+		this.aLaCarteSet = true;
 	}
 
 	//returns true if aLaCarte param came in on request
-	public boolean isALaCarteSet() {
-		return isALaCarteSet;
+	public boolean isaLaCarteSet() {
+		return aLaCarteSet;
 	}
 
 	public boolean isaLaCarte() {

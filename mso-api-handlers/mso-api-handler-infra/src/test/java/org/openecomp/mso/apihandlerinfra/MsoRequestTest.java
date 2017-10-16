@@ -84,7 +84,7 @@ public class MsoRequestTest {
 			assertEquals(msoRequest.getRequestInfo().getSource(),"VID");
 			assertFalse(msoRequest.getALaCarteFlag());
 			assertEquals(msoRequest.getReqVersion(),3);
-			boolean testIsALaCarteSet = msoRequest.getServiceInstancesRequest().getRequestDetails().getRequestParameters().isALaCarteSet();
+			boolean testIsALaCarteSet = msoRequest.getServiceInstancesRequest().getRequestDetails().getRequestParameters().isaLaCarteSet();
 			assertFalse(testIsALaCarteSet);
 
 	}
@@ -186,13 +186,13 @@ public class MsoRequestTest {
 			ServiceInstancesRequest sir  = mapper.readValue(requestJSON1, ServiceInstancesRequest.class);
 			MsoRequest msoRequest = new MsoRequest ("1234");
 			msoRequest.parse(sir, instanceIdMap, Action.deleteInstance, "v3");
-			boolean testIsALaCarteSet = msoRequest.getServiceInstancesRequest().getRequestDetails().getRequestParameters().isALaCarteSet();
+			boolean testIsALaCarteSet = msoRequest.getServiceInstancesRequest().getRequestDetails().getRequestParameters().isaLaCarteSet();
 			assertTrue(testIsALaCarteSet);
 			assertFalse(msoRequest.getALaCarteFlag());
 			sir  = mapper.readValue(requestJSON2, ServiceInstancesRequest.class);
 			msoRequest = new MsoRequest ("12345");
 			msoRequest.parse(sir, instanceIdMap, Action.deleteInstance, "v3");
-			testIsALaCarteSet = msoRequest.getServiceInstancesRequest().getRequestDetails().getRequestParameters().isALaCarteSet();
+			testIsALaCarteSet = msoRequest.getServiceInstancesRequest().getRequestDetails().getRequestParameters().isaLaCarteSet();
 			assertTrue(testIsALaCarteSet);
 			assertTrue(msoRequest.getALaCarteFlag());
 

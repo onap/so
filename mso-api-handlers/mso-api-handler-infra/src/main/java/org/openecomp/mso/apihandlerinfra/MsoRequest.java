@@ -254,7 +254,7 @@ public class MsoRequest {
         RequestParameters requestParameters = sir.getRequestDetails().getRequestParameters();
         if(this.reqVersion >= 3){
 	        if(requestParameters!=null){
-	        	this.aLaCarteFlag = sir.getRequestDetails().getRequestParameters().getALaCarte();
+	        	this.aLaCarteFlag = sir.getRequestDetails().getRequestParameters().isaLaCarte();
 	        }else{
 	        	this.aLaCarteFlag = false;
 	        }

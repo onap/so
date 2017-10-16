@@ -771,7 +771,7 @@ public class ServiceInstances {
 		}
 		//if an aLaCarte flag was sent in the request, throw an error if the recipe was not found
 		RequestParameters reqParam = msoRequest.getServiceInstancesRequest().getRequestDetails().getRequestParameters();
-		if(reqParam!=null && reqParam.isALaCarteSet() && recipe==null){
+		if(reqParam!=null && reqParam.isaLaCarteSet() && recipe==null){
 			return null;
 		}else if (recipe == null) {  //aLaCarte wasn't sent, so we'll try the default
 			serviceRecord = db.getServiceByModelName(defaultServiceModelName);
