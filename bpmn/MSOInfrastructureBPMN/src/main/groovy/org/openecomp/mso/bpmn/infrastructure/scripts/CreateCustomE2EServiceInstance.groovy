@@ -337,4 +337,15 @@ public class CreateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
         }
         utils.log("DEBUG", "======== COMPLETED prepareInitServiceOperationStatus Process ======== ", isDebugEnabled)    
 	}
+	
+	/**
+	 * send a request to SDNC 
+	 */
+	public void sendSdncSvc(Execution execution)
+	{ 
+	  def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
+	  utils.log("DEBUG", "======== sendSdncSvc Process ======== ", isDebugEnabled)  
+	  //TODO
+	}
+	
 }
