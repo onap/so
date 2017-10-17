@@ -47,7 +47,7 @@ public abstract class CatalogQuery {
 
 	protected String setTemplate(String template, Map<String, String> valueMap) {
 		LOGGER.debug ("CatalogQuery setTemplate");
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 
 		String pattern = "<.*>";
 		Pattern r = Pattern.compile(pattern);
@@ -86,7 +86,7 @@ public abstract class CatalogQuery {
 		case "v1": return smartToJSON();
 		case "v2": return JSON2(isArray, !IS_EMBED);
 		default:
-			return ("invalid version: "+ version);
+			return "invalid version: "+ version;
 		}
 	}
 }

@@ -537,9 +537,11 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
             sMap = hMap.value;
             CreateVnfNotification.Outputs.Entry entry = new CreateVnfNotification.Outputs.Entry ();
 
-            for (String key : sMap.keySet ()) {
+            for (Map.Entry<String, String> entry : sMap.entrySet ()) {
+                String key = entry.getKey();
+                String value = entry.getValue();
                 entry.setKey (key);
-                entry.setValue (sMap.get (key));
+                entry.setValue (value);
                 outputs.getEntry ().add (entry);
             }
         }
