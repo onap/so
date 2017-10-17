@@ -194,7 +194,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 	 */
 	@JsonIgnore
 	public String getServiceResourcesJsonString(){
-		StringBuffer serviceResourcesJsonStringBuffer = new StringBuffer();
+		StringBuilder serviceResourcesJsonStringBuffer = new StringBuilder();
 		serviceResourcesJsonStringBuffer.append(listToJson((this.getServiceNetworks())));
 		serviceResourcesJsonStringBuffer.append(listToJson((this.getServiceVnfs())));
 		serviceResourcesJsonStringBuffer.append(listToJson((this.getServiceAllottedResources())));
@@ -259,7 +259,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 	 */
 	public void addNetworkResource(Resource networkResource) {
 		if (networkResources == null){
-			networkResources = new ArrayList<NetworkResource>();
+			networkResources = new ArrayList<>();
 		}
 		this.networkResources.add((NetworkResource)networkResource);
 	}
@@ -269,7 +269,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 	 */
 	public void addAllottedResource(Resource allottedResource) {
 		if (allottedResources == null){
-			allottedResources = new ArrayList<AllottedResource>();
+			allottedResources = new ArrayList<>();
 		}
 		this.allottedResources.add((AllottedResource)allottedResource);
 	}
@@ -302,7 +302,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 	 * @param Resource
 	 */
 	public void addVnfResource(String jsonResource) {
-		VnfResource vnfResource = null;
+		VnfResource vnfResource;
 		vnfResource = DecomposeJsonUtil.JsonToVnfResource(jsonResource);
 		this.addVnfResource(vnfResource);
 	}
@@ -311,7 +311,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 	 * @param Resource
 	 */
 	public void addNetworkResource(String jsonResource) {
-		NetworkResource networkResource = null;
+		NetworkResource networkResource;
 		networkResource = DecomposeJsonUtil.JsonToNetworkResource(jsonResource);
 		this.addVnfResource(networkResource);
 	}
@@ -320,7 +320,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 	 * @param Resource
 	 */
 	public void addAllottedResource(String jsonResource) {
-		AllottedResource allottedResource = null;
+		AllottedResource allottedResource;
 		allottedResource = DecomposeJsonUtil.JsonToAllottedResource(jsonResource);
 		this.addVnfResource(allottedResource);
 	}
@@ -374,11 +374,9 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 		while (iter.hasNext()) {
 			Resource item = iter.next();
 
-			if (item.resourceType == resource.resourceType){
-				if (item.getResourceId().equalsIgnoreCase(resource.getResourceId())){
-					//returns TRUE if replacement is a success
-					return serviceResources.remove(resource);
-				}
+			if ((item.resourceType == resource.resourceType) &&
+			        (item.getResourceId().equalsIgnoreCase(resource.getResourceId()))){
+				return serviceResources.remove(resource);
 			}
 		}
 
