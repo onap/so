@@ -136,7 +136,7 @@ public class SDNCServiceRequestConnector extends SDNCConnector {
 				ackFinalIndicator = "Y";
 			}
 
-			if (!ackFinalIndicator.equals("Y") && !"N".equals(ackFinalIndicator)) {
+			if (!"Y".equals(ackFinalIndicator) && !"N".equals(ackFinalIndicator)) {
 				throw new ParseException("Invalid ack-final-indicator in SDNC response: '" + ackFinalIndicator + "'", 0);
 			}
 
