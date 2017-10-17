@@ -54,6 +54,7 @@ import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoAlarmLogger;
 import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.requestsdb.InfraActiveRequests;
+import org.openecomp.mso.requestsdb.OperationStatus;
 import org.openecomp.mso.requestsdb.RequestsDatabase;
 
 import com.wordnik.swagger.annotations.Api;
@@ -146,10 +147,10 @@ public class OrchestrationRequests {
 
 		long startTime = System.currentTimeMillis();
 
-		InfraActiveRequests requestDB = null;
+		OperationStatus requestDB = null;
 
 		try {
-			requestDB = requestsDB.getRequestFromInfraActive(serviceId);
+			requestDB = requestsDB.getOperationStatus(serviceId, operationId);
 
 		} catch (Exception e) {
 			msoLogger.error(MessageEnum.APIH_DB_ACCESS_EXC, MSO_PROP_APIHANDLER_INFRA, "", "",
@@ -181,9 +182,7 @@ public class OrchestrationRequests {
 
 		}
 
-		E2ERequest e2erequest = mapInfraActiveRequestToE2ERequest(requestDB);
-
-		e2eServiceResponse.setE2eRequest(e2erequest);
+		e2eServiceResponse.setE2eRequest(requestDB);
 
 		return Response.status(200).entity(e2eServiceResponse).build();
 	}
