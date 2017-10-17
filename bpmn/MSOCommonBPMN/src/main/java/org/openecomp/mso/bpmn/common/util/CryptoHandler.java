@@ -28,9 +28,9 @@ public class CryptoHandler implements ICryptoHandler {
 	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
 
 	private static String msoKey = "aa3871669d893c7fb8abbcda31b88b4f";
-	//private static String msoAaiPwd = "mso0206";
 	private static String msoAaiEncryptedPwd = "C1FC4A39E16419DD41DFC1212843F440";
 
+        @Override
 	public String getMsoAaiPassword() {
 		try {
 			return CryptoUtils.decrypt(msoAaiEncryptedPwd, msoKey);
@@ -41,6 +41,7 @@ public class CryptoHandler implements ICryptoHandler {
 	}
 
 
+	@Override
 	public String encryptMsoPassword(String plainMsoPwd) {
 		try {
 			return CryptoUtils.encrypt(plainMsoPwd, msoKey);
@@ -50,7 +51,7 @@ public class CryptoHandler implements ICryptoHandler {
 		}
 	}
 
-
+	@Override
 	public String decryptMsoPassword(String encryptedPwd) {
 		try {
 			return CryptoUtils.decrypt(encryptedPwd, msoKey);
