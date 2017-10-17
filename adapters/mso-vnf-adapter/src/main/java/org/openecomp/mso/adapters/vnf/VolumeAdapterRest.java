@@ -462,7 +462,6 @@ public class VolumeAdapterRest {
 			LOGGER.debug("UpdateVNFVolumesTask start");
 			try {
 				@SuppressWarnings("unused")
-				Holder<String> stackId = new Holder<> ();
 				Holder<Map<String, String>> outputs = new Holder<> ();
 				Holder<VnfRollback> vnfRollback = new Holder<> ();
 				String completeVnfVfModuleType = req.getVnfType() + "::" + req.getVfModuleType();
