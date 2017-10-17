@@ -58,7 +58,7 @@ public abstract class VfResponseCommon {
 
 	public String toJsonString() {
 		try {
-			String jsonString = null;
+			String jsonString;
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.enable(SerializationConfig.Feature.WRAP_ROOT_VALUE);
 			jsonString = mapper.writeValueAsString(this);

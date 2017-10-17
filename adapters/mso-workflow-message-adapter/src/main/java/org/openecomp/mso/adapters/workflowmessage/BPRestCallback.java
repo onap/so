@@ -132,10 +132,9 @@ public class BPRestCallback {
 				httpResponse = client.execute(method);
 
 				@SuppressWarnings("unused")
-				String responseContent = null;
 
 				if (httpResponse.getEntity() != null) {
-					responseContent = EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
+					EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
 				}
 
 				if (httpResponse.getStatusLine().getStatusCode() >= 300) {

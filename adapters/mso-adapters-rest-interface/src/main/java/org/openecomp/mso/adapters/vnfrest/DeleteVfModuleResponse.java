@@ -35,7 +35,7 @@ public class DeleteVfModuleResponse extends VfResponseCommon {
 	private String vnfId;
 	private String vfModuleId;
 	private Boolean vfModuleDeleted;
-	private Map<String,String> vfModuleOutputs = new HashMap<String, String>();
+	private Map<String,String> vfModuleOutputs = new HashMap<>();
 	public DeleteVfModuleResponse() {
 		super();
 	}
