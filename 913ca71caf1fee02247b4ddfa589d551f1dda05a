@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a2f8d8d_ebe1529b",
+        "filename": "bpmn/MSOCoreBPMN/src/main/java/org/openecomp/mso/bpmn/core/domain/ServiceDecomposition.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 378,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2017-10-17T14:06:44Z",
+      "side": 0,
+      "message": "This comment will be required,\nPlease do not remove any of these while refactoring the code",
+      "revId": "913ca71caf1fee02247b4ddfa589d551f1dda05a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
