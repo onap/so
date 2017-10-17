@@ -86,7 +86,7 @@ public abstract class CatalogQuery {
 		case "v1": return smartToJSON();
 		case "v2": return JSON2(isArray, !IS_EMBED);
 		default:
-			return ("invalid version: "+ version);
+			return "invalid version: "+ version;
 		}
 	}
 }
