@@ -86,7 +86,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 	private static final String MSO_PROP_VNF_ADAPTER = "MSO_PROP_VNF_ADAPTER";
     private static final String MSO_CONFIGURATION_ERROR = "MsoConfigurationError";
     private static final String VNF_ADAPTER_SERVICE_NAME = "MSO-BPMN:MSO-VnfAdapter.";
-    private static final String LOG_REPLY_NAME = "MSO-VnfAdapter:MSO-BPMN.";
     private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
     private static MsoAlarmLogger alarmLogger = new MsoAlarmLogger ();
     private static final String CHECK_REQD_PARAMS = "org.openecomp.mso.adapters.vnf.checkRequiredParameters";
@@ -433,34 +432,36 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
     }
 
     private Map <String, String> copyStringOutputs (Map <String, Object> stackOutputs) {
-        Map <String, String> stringOutputs = new HashMap <String, String> ();
-        for (String key : stackOutputs.keySet ()) {
-            if (stackOutputs.get (key) instanceof String) {
-                stringOutputs.put (key, (String) stackOutputs.get (key));
-            } else if (stackOutputs.get(key) instanceof Integer)  {
+        Map <String, String> stringOutputs = new HashMap <> ();
+        for (Map.Entry<String,Object> entry : stackOutputs.entrySet ()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            if (value instanceof String) {
+                stringOutputs.put (key, (String) value);
+            } else if (value instanceof Integer)  {
             	try {
-            		String str = "" + stackOutputs.get(key);
+            		String str = "" + value;
             		stringOutputs.put(key, str);
             	} catch (Exception e) {
             		LOGGER.debug("Unable to add " + key + " to outputs",e);
             	}
-            } else if (stackOutputs.get(key) instanceof JsonNode) {
+            } else if (value instanceof JsonNode) {
             	try {
-            		String str = this.convertNode((JsonNode) stackOutputs.get(key));
+            		String str = this.convertNode((JsonNode) value);
             		stringOutputs.put(key, str);
             	} catch (Exception e) {
             		LOGGER.debug("Unable to add " + key + " to outputs - exception converting JsonNode",e);
             	}
-            } else if (stackOutputs.get(key) instanceof java.util.LinkedHashMap) {
+            } else if (value instanceof java.util.LinkedHashMap) {
             	try {
-					String str = JSON_MAPPER.writeValueAsString(stackOutputs.get(key));
+					String str = JSON_MAPPER.writeValueAsString(value);
             		stringOutputs.put(key, str);
             	} catch (Exception e) {
             		LOGGER.debug("Unable to add " + key + " to outputs - exception converting LinkedHashMap",e);
             	}
             } else {
             	try {
-            		String str = stackOutputs.get(key).toString();
+            		String str = value.toString();
             		stringOutputs.put(key, str);
             	} catch (Exception e) {
             		LOGGER.debug("Unable to add " + key + " to outputs - unable to call .toString() " + e.getMessage(),e);
@@ -471,7 +472,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
     }
 
     private Map <String, Object> copyStringInputs (Map <String, String> stringInputs) {
-        return new HashMap <String, Object> (stringInputs);
+        return new HashMap <> (stringInputs);
     }
 
     /*
@@ -485,14 +486,14 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         StringBuilder sb = new StringBuilder ();
         try (Scanner scanner = new Scanner (environment)) {
             scanner.useDelimiter ("\n");
-            String line = null;
+            String line;
             Pattern resource = Pattern.compile ("\\s*\"\\w+::\\S+\"\\s*:");
             LOGGER.debug ("regex pattern for finding a resource_registry: \\s*\"\\w+::\\S+\"\\s*:");
             while (scanner.hasNextLine ()) {
                 line = scanner.nextLine ();
                 if (line.toLowerCase ().contains ("resource_registry")) {
                     sb.append (line + "\n");
-                    boolean done = false;
+                    boolean done;
                     // basically keep scanning until EOF or parameters: section
                     while (scanner.hasNextLine () && !done) {
                         line = scanner.nextLine ();
@@ -569,7 +570,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
     		boolean wait = p.waitFor(waitTimeMs, TimeUnit.MILLISECONDS);
 
     		LOGGER.debug(" HeatBridgeMain.py returned " + wait + " with code " + p.exitValue());
-    		return (wait && p.exitValue()==0);
+    		return wait && p.exitValue()==0;
     	} catch (IOException e) {
     		LOGGER.debug(" HeatBridgeMain.py failed with IO Exception! " + e);
     		return false;
@@ -591,10 +592,12 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
     	else if (inputs.size() < 1) {
     		sb.append("\tEMPTY");
     	} else {
-    		for (String str : inputs.keySet()) {
+    		for (Map.Entry<String,Object> entry : inputs.entrySet()) {
     			String outputString;
+    			String str = entry.getKey();
+    			Object value = entry.getValue();
     			try {
-    				outputString = inputs.get(str).toString();
+    				outputString = value.toString();
     			} catch (Exception e) {
     				LOGGER.debug("Exception :",e);
     				outputString = "Unable to call toString() on the value for " + str;
@@ -708,7 +711,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         String mcu = modelCustomizationUuid;
         boolean useMCUuid = false;
         if (mcu != null && !mcu.isEmpty()) {
-            if (mcu.equalsIgnoreCase("null")) {
+            if ("null".equalsIgnoreCase(mcu)) {
                 LOGGER.debug("modelCustomizationUuid: passed in as the string 'null' - will ignore: " + modelCustomizationUuid);
                 useMCUuid = false;
                 mcu = "";
@@ -720,25 +723,25 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
     	MsoLogger.setLogContext (msoRequest);
     	MsoLogger.setServiceName ("CreateVfModule");
     	String requestTypeString = "";
-        if (requestType != null && !requestType.equals("")) {
+        if (requestType != null && !"".equals(requestType)) {
         	requestTypeString = requestType;
         }
         String nestedStackId = null;
-        if (volumeGroupHeatStackId != null && !volumeGroupHeatStackId.equals("")) {
-        	if (!volumeGroupHeatStackId.equalsIgnoreCase("null")) {
+        if (volumeGroupHeatStackId != null && !"".equals(volumeGroupHeatStackId)) {
+        	if (!"null".equalsIgnoreCase(volumeGroupHeatStackId)) {
         		nestedStackId = volumeGroupHeatStackId;
         	}
         }
         String nestedBaseStackId = null;
-        if (baseVfHeatStackId != null && !baseVfHeatStackId.equals("")) {
-        	if (!baseVfHeatStackId.equalsIgnoreCase("null")) {
+        if (baseVfHeatStackId != null && !"".equals(baseVfHeatStackId)) {
+        	if (!"null".equalsIgnoreCase(baseVfHeatStackId)) {
         		nestedBaseStackId = baseVfHeatStackId;
         	}
         }
 
         if (inputs == null) {
         	// Create an empty set of inputs
-        	inputs = new HashMap<String,String>();
+        	inputs = new HashMap<>();
         	LOGGER.debug("inputs == null - setting to empty");
         } else {
         	this.sendMapToDebug(inputs);
@@ -774,7 +777,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         vfRollback.setModelCustomizationUuid(mcu);
 
         // Put data into A&AI through Heatstack
-        boolean heatStackCallSuccess = callHeatbridge(baseVfHeatStackId);
+        callHeatbridge(baseVfHeatStackId);
 
         // First, look up to see if the VF already exists.
         MsoHeatUtils heat = new MsoHeatUtils (MSO_PROP_VNF_ADAPTER, msoPropertiesFactory,cloudConfigFactory);
@@ -1037,17 +1040,16 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             		minVersionVnf = null;
             		maxVersionVnf = null;
             	}
-            	if (minVersionVnf != null && minVersionVnf.equals("")) {
+            	if (minVersionVnf != null && "".equals(minVersionVnf)) {
             		minVersionVnf = null;
             	}
-            	if (maxVersionVnf != null && maxVersionVnf.equals("")) {
+            	if (maxVersionVnf != null && "".equals(maxVersionVnf)) {
             		maxVersionVnf = null;
             	}
             }
 			if (minVersionVnf != null && maxVersionVnf != null) {
 				MavenLikeVersioning aicV = new MavenLikeVersioning();
 				CloudSite cloudSite = null;
-				String aicVersion = "";
 				if (this.cloudConfig == null) {
 					this.cloudConfig = this.cloudConfigFactory.getCloudConfig();
 				}
@@ -1133,7 +1135,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 			}
 			// By the time we get here - heatTemplateId and heatEnvtId should be populated (or null)
 			HeatTemplate heatTemplate = null;
-			if (heatTemplateArtifactUuid == null || heatTemplateArtifactUuid.equals("")) {
+			if (heatTemplateArtifactUuid == null || "".equals(heatTemplateArtifactUuid)) {
 				String error = "Create: No Heat Template ID defined in catalog database for " + vnfType + ", reqType=" + requestTypeString;
 				LOGGER.error(MessageEnum.RA_VNF_UNKNOWN_PARAM, "Heat Template ID", vnfType, "OpenStack", "", MsoLogger.ErrorCode.DataError, "Create: No Heat Template ID defined in catalog database");
                 LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataNotFound, error);
@@ -1158,7 +1160,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             HeatEnvironment heatEnvironment = null;
             String heatEnvironmentString = null;
 
-            if (heatEnvironmentArtifactUuid != null && !heatEnvironmentArtifactUuid.equals("")) {
+            if (heatEnvironmentArtifactUuid != null && !"".equals(heatEnvironmentArtifactUuid)) {
                 LOGGER.debug ("about to call getHeatEnvironment with :" + heatEnvironmentArtifactUuid + ":");
                 heatEnvironment = db.getHeatEnvironmentByArtifactUuid(heatEnvironmentArtifactUuid);
                 if (heatEnvironment == null) {
@@ -1184,13 +1186,15 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             LOGGER.debug ("In MsoVnfAdapterImpl, createVfModule about to call db.getNestedTemplates avec templateId="
                           + heatTemplate.getArtifactUuid());
             Map <String, Object> nestedTemplates = db.getNestedTemplates (heatTemplate.getArtifactUuid());
-            Map <String, Object> nestedTemplatesChecked = new HashMap <String, Object> ();
+            Map <String, Object> nestedTemplatesChecked = new HashMap <> ();
             if (nestedTemplates != null) {
                 // for debugging print them out
                 LOGGER.debug ("Contents of nestedTemplates - to be added to files: on stack:");
-                for (String providerResourceFile : nestedTemplates.keySet ()) {
+                for (Map.Entry<String, Object> entry : nestedTemplates.entrySet ()) {
+                    String providerResourceFile = entry.getKey();
+                    Object value = entry.getValue();
                     String providerResourceFileChecked = providerResourceFile; //this.enforceFilePrefix (providerResourceFile);
-                    String childTemplateBody = (String) nestedTemplates.get (providerResourceFile);
+                    String childTemplateBody = (String) value;
                     LOGGER.debug (providerResourceFileChecked + " -> " + childTemplateBody);
                     nestedTemplatesChecked.put (providerResourceFileChecked, childTemplateBody);
                 }
@@ -1202,7 +1206,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             // 1510 - Also add the files: for any get_files associated with this vnf_resource_id
             // *if* there are any
             Map<String, HeatFiles> heatFiles = null;
-			Map<String, Object> heatFilesObjects = new HashMap<String, Object>();
+			Map<String, Object> heatFilesObjects = new HashMap<>();
 
             // Add ability to turn on adding get_files with volume requests (by property).
             boolean addGetFilesOnVolumeReq = false;
@@ -1234,7 +1238,9 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 					// this will match the nested templates format
 					LOGGER.debug("Contents of heatFiles - to be added to files: on stack:");
 
-					for (String heatFileName : heatFiles.keySet()) {
+					for (Map.Entry<String, HeatFiles> entry : heatFiles.entrySet()) {
+						String heatFileName = entry.getKey();
+						HeatFiles value = entry.getValue();
 						if (heatFileName.startsWith("_ERROR|")) {
 							// This means there was an invalid entry in VF_MODULE_TO_HEAT_FILES table - the heat file it pointed to could not be found.
 							String heatFileId = heatFileName.substring(heatFileName.lastIndexOf("|")+1);
@@ -1246,8 +1252,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 							alarmLogger.sendAlarm (MSO_CONFIGURATION_ERROR, MsoAlarmLogger.CRITICAL, error);
 							throw new VnfException (error, MsoExceptionCategory.INTERNAL);
 						}
-						String heatFileBody = heatFiles.get(heatFileName)
-								.getFileBody();
+						String heatFileBody = value.getFileBody();
 						String heatFileNameChecked = heatFileName;
 						LOGGER.debug(heatFileNameChecked + " -> "
 								+ heatFileBody);
@@ -1263,14 +1268,13 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 
             // Check that required parameters have been supplied
             String missingParams = null;
-            List <String> paramList = new ArrayList <String> ();
+            List <String> paramList = new ArrayList <> ();
 
             // New for 1510 - consult the PARAM_ALIAS field to see if we've been
             // supplied an alias. Only check if we don't find it initially.
             // Also new in 1510 - don't flag missing parameters if there's an environment - because they might be there.
             // And also new - add parameter to turn off checking all together if we find we're blocking orders we
             // shouldn't
-            boolean haveEnvironmentParameters = false;
             boolean checkRequiredParameters = true;
             try {
                 String propertyString = msoPropertiesFactory.getMsoJavaProperties (MSO_PROP_VNF_ADAPTER)
@@ -1292,7 +1296,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             if (heatEnvironmentString != null && heatEnvironmentString.contains ("parameters:")) {
                 //LOGGER.debug ("Have an Environment argument with a parameters: section - will bypass checking for valid params - but will still check for aliases");
             	LOGGER.debug("Enhanced environment checking enabled - 1604");
-                haveEnvironmentParameters = true;
                 StringBuilder sb = new StringBuilder(heatEnvironmentString);
                 //LOGGER.debug("About to create MHEE with " + sb);
                 mhee = new MsoHeatEnvironmentEntry(sb);
@@ -1314,15 +1317,15 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             HashMap<String, Object> goldenInputs = null;
             
             LOGGER.debug("Now handle the inputs....first convert");
-            ArrayList<String> parameterNames = new ArrayList<String>();
-            HashMap<String, String> aliasToParam = new HashMap<String, String>();
+            ArrayList<String> parameterNames = new ArrayList<>();
+            HashMap<String, String> aliasToParam = new HashMap<>();
             StringBuilder sb = new StringBuilder("\nTemplate Parameters:\n");
             int cntr = 0;
             try { 
             	for (HeatTemplateParam htp : heatTemplate.getParameters()) {
             		sb.append("param[" + cntr++ + "]=" + htp.getParamName());
             		parameterNames.add(htp.getParamName());
-            		if (htp.getParamAlias() != null && !htp.getParamAlias().equals("")) {
+            		if (htp.getParamAlias() != null && !"".equals(htp.getParamAlias())) {
             			aliasToParam.put(htp.getParamAlias(), htp.getParamName());
             			sb.append(" ** (alias=" + htp.getParamAlias() + ")");
             		}
@@ -1534,7 +1537,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                            Holder <VnfRollback> rollback) throws VnfException {
     	String vfModuleName = vnfName;
     	String vfModuleType = vnfType;
-    	String vfVersion = vnfVersion;
     	String methodName = "updateVfModule";
     	MsoLogger.setLogContext (msoRequest.getRequestId (), msoRequest.getServiceInstanceId ());
     	String serviceName = VNF_ADAPTER_SERVICE_NAME + methodName;
@@ -1568,25 +1570,25 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         }
 
     	String requestTypeString = "";
-        if (requestType != null && !requestType.equals("")) {
+        if (requestType != null && !"".equals(requestType)) {
         	requestTypeString = requestType;
         }
         String nestedStackId = null;
-        if (volumeGroupHeatStackId != null && !volumeGroupHeatStackId.equals("")) {
-        	if (!volumeGroupHeatStackId.equalsIgnoreCase("null")) {
+        if (volumeGroupHeatStackId != null && !"".equals(volumeGroupHeatStackId)) {
+        	if (!"null".equalsIgnoreCase(volumeGroupHeatStackId)) {
         		nestedStackId = volumeGroupHeatStackId;
         	}
         }
         String nestedBaseStackId = null;
-        if (baseVfHeatStackId != null && !baseVfHeatStackId.equals("")) {
-        	if (!baseVfHeatStackId.equalsIgnoreCase("null")) {
+        if (baseVfHeatStackId != null && !"".equals(baseVfHeatStackId)) {
+        	if (!"null".equalsIgnoreCase(baseVfHeatStackId)) {
         		nestedBaseStackId = baseVfHeatStackId;
         	}
         }
 
         if (inputs == null) {
         	// Create an empty set of inputs
-        	inputs = new HashMap<String,String>();
+        	inputs = new HashMap<>();
         	LOGGER.debug("inputs == null - setting to empty");
         } else {
         	this.sendMapToDebug(inputs);
@@ -1596,7 +1598,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         if (requestTypeString.startsWith("VOLUME")) {
         	isVolumeRequest = true;
         }
-        if (vfModuleName == null || vfModuleName.trim().equals("")) {
+        if (vfModuleName == null || "".equals(vfModuleName.trim())) {
         	if (vfModuleStackId != null) {
         		vfModuleName = this.getVfModuleNameFromModuleStackId(vfModuleStackId);
         	}
@@ -1790,10 +1792,10 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             		minVersionVnf = null;
             		maxVersionVnf = null;
             		}
-            	if (minVersionVnf != null && minVersionVnf.equals("")) {
+            	if (minVersionVnf != null && "".equals(minVersionVnf)) {
             		minVersionVnf = null;
             	}
-            	if (maxVersionVnf != null && maxVersionVnf.equals("")) {
+            	if (maxVersionVnf != null && "".equals(maxVersionVnf)) {
             		maxVersionVnf = null;
             		}
             	}
@@ -1898,13 +1900,15 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             LOGGER.debug ("In MsoVnfAdapterImpl, about to call db.getNestedTemplates avec templateId="
                           + heatTemplate.getArtifactUuid ());
             Map <String, Object> nestedTemplates = db.getNestedTemplates (heatTemplate.getArtifactUuid ());
-            Map <String, Object> nestedTemplatesChecked = new HashMap <String, Object> ();
+            Map <String, Object> nestedTemplatesChecked = new HashMap <> ();
             if (nestedTemplates != null) {
                 // for debugging print them out
                 LOGGER.debug ("Contents of nestedTemplates - to be added to files: on stack:");
-                for (String providerResourceFile : nestedTemplates.keySet ()) {
+                for (Map.Entry<String, Object> entry : nestedTemplates.entrySet ()) {
+                    String providerResourceFile = entry.getKey();
+                    Object value = entry.getValue();
                     String providerResourceFileChecked = providerResourceFile; //this.enforceFilePrefix (providerResourceFile);
-                    String childTemplateBody = (String) nestedTemplates.get (providerResourceFile);
+                    String childTemplateBody = (String) value;
                     nestedTemplatesChecked.put (providerResourceFileChecked, childTemplateBody);
                     LOGGER.debug (providerResourceFileChecked + " -> " + childTemplateBody);
                 }
@@ -1920,7 +1924,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 
             Map <String, HeatFiles> heatFiles = null;
 //            Map <String, HeatFiles> heatFiles = db.getHeatFiles (vnf.getId ());
-            Map <String, Object> heatFilesObjects = new HashMap <String, Object> ();
+            Map <String, Object> heatFilesObjects = new HashMap <> ();
 
             // Add ability to turn on adding get_files with volume requests (by property).
             boolean addGetFilesOnVolumeReq = false;
@@ -1944,7 +1948,9 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                     // this will match the nested templates format
                     LOGGER.debug ("Contents of heatFiles - to be added to files: on stack:");
 
-                    for (String heatFileName : heatFiles.keySet ()) {
+                    for (Map.Entry<String, HeatFiles> entry : heatFiles.entrySet ()) {
+						String heatFileName = entry.getKey();
+						HeatFiles value = entry.getValue();
 						if (heatFileName.startsWith("_ERROR|")) {
 							// This means there was an invalid entry in VF_MODULE_TO_HEAT_FILES table - the heat file it pointed to could not be found.
 							String heatFileId = heatFileName.substring(heatFileName.lastIndexOf("|")+1);
@@ -1956,7 +1962,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 							alarmLogger.sendAlarm (MSO_CONFIGURATION_ERROR, MsoAlarmLogger.CRITICAL, error);
 							throw new VnfException (error, MsoExceptionCategory.INTERNAL);
 						}
-                        String heatFileBody = heatFiles.get (heatFileName).getFileBody ();
+                        String heatFileBody = value.getFileBody ();
                         LOGGER.debug (heatFileName + " -> " + heatFileBody);
                         heatFilesObjects.put (heatFileName, heatFileBody);
                     }
@@ -1968,7 +1974,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 
             // Check that required parameters have been supplied
             String missingParams = null;
-            List <String> paramList = new ArrayList <String> ();
+            List <String> paramList = new ArrayList <> ();
 
             // New for 1510 - consult the PARAM_ALIAS field to see if we've been
             // supplied an alias. Only check if we don't find it initially.
@@ -2016,7 +2022,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             }
 
             // New for 1607 - support params of json type
-            HashMap<String, JsonNode> jsonParams = new HashMap<String, JsonNode>();
+            HashMap<String, JsonNode> jsonParams = new HashMap<>();
             boolean hasJson = false;
 
             for (HeatTemplateParam parm : heatTemplate.getParameters ()) {
@@ -2027,11 +2033,11 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                               + parm.getParamAlias ());
                 // handle json
                 String parameterType = parm.getParamType();
-                if (parameterType == null || parameterType.trim().equals("")) {
+                if (parameterType == null || "".equals(parameterType.trim())) {
                 	parameterType = "String";
                 }
                 JsonNode jsonNode = null;
-                if (parameterType.equalsIgnoreCase("json") && inputs != null) {
+                if ("json".equalsIgnoreCase(parameterType) && inputs != null) {
                 	if (inputs.containsKey(parm.getParamName()) ) {
                 		hasJson = true;
                 		String jsonString = null;
@@ -2138,7 +2144,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 
             // Remove any extraneous parameters (don't throw an error)
             if (inputs != null) {
-                List <String> extraParams = new ArrayList <String> ();
+                List <String> extraParams = new ArrayList <> ();
                 extraParams.addAll (inputs.keySet ());
                 // This is not a valid parameter for this template
                 extraParams.removeAll (paramList);
@@ -2150,12 +2156,14 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             // 1607 - when we get here - we have clean inputs. Create inputsTwo in case we have json
             Map<String, Object> inputsTwo = null;
             if (hasJson && jsonParams.size() > 0) {
-            	inputsTwo = new HashMap<String, Object>();
-            	for (String keyParamName : inputs.keySet()) {
+            	inputsTwo = new HashMap<>();
+            	for (Map.Entry<String, String> entry : inputs.entrySet()) {
+            		String keyParamName = entry.getKey();
+            		String value = entry.getValue();
             		if (jsonParams.containsKey(keyParamName)) {
             			inputsTwo.put(keyParamName, jsonParams.get(keyParamName));
             		} else {
-            			inputsTwo.put(keyParamName, inputs.get(keyParamName));
+            			inputsTwo.put(keyParamName, value);
             		}
             	}
             }
