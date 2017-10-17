@@ -62,7 +62,14 @@
 			<directory>../../adapters/mso-vnf-adapter/target/</directory>
 			<outputDirectory>artifacts</outputDirectory>
 		</fileSet>
-
+		<!--add vfc adapter-->
+		<fileSet>
+			<includes>
+				<include>mso-vfc-adapter*.war</include>
+			</includes>
+			<directory>../../adapters/mso-vfc-adapter/target/</directory>
+			<outputDirectory>artifacts</outputDirectory>
+		</fileSet>
 		<fileSet>
 			<includes>
 				<include>mso-api-handler*.war</include>
