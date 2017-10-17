@@ -86,7 +86,7 @@ public class TasksHandler {
         // Prepare the query string to /task interface
         TaskVariables tv = new TaskVariables();
         
-        List<TaskVariableValue> tvvList = new ArrayList<TaskVariableValue>();
+        List<TaskVariableValue> tvvList = new ArrayList<>();
         
         if (originalRequestId != null) {
         	TaskVariableValue tvv = new TaskVariableValue();
@@ -168,7 +168,7 @@ public class TasksHandler {
 			return resp;
 		}
 		TasksGetResponse trr = new TasksGetResponse();
-		List<TaskList> taskList = new ArrayList<TaskList>();
+		List<TaskList> taskList = new ArrayList<>();
 		
 		ResponseHandler respHandler = new ResponseHandler (response, requestClient.getType ());
 		int bpelStatus = respHandler.getStatus ();
@@ -250,7 +250,6 @@ public class TasksHandler {
         
         msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successful");
         responseBack = Response.status (HttpStatus.SC_ACCEPTED).entity (jsonResponse).build ();
-       // msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
         return responseBack;
 		
     }    
@@ -261,9 +260,9 @@ public class TasksHandler {
     
     // Makes a GET call to Camunda to get variables for this task
     private TaskList getTaskInfo(String taskId) throws Exception {
-    	TaskList taskList = null;
+    	TaskList taskList;
     	String getRequestUrl = requestUrl + taskId + "/variables";
-		HttpResponse getResponse = null;
+		HttpResponse getResponse;
 		long subStartTime = System.currentTimeMillis();
 		
 		RequestClient requestClient = RequestClientFactory.getRequestClient (getRequestUrl, MsoPropertiesUtils.loadMsoProperties ());						
