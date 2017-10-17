@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a2f8d8d_6bbb2273",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/openecomp/mso/bpmn/common/adapter/vnf/MsoRequest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2017-10-17T14:14:35Z",
+      "side": 1,
+      "message": "change the + with a stringBuilder",
+      "revId": "e155c9bdb9bdb95e05b64b51ae5a6a79f8048832",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
