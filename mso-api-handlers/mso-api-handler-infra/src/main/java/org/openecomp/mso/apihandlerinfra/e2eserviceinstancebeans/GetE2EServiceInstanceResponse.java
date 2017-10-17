@@ -22,18 +22,19 @@
 package org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans;
 
 import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.openecomp.mso.requestsdb.OperationStatus;
 
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_DEFAULT)
 public class GetE2EServiceInstanceResponse {
 
-	protected E2ERequest e2eRequest;
+	protected OperationStatus e2eRequest;
 
-	public E2ERequest getE2eRequest() {
+	public OperationStatus getE2eRequest() {
 		return e2eRequest;
 	}
 
-	public void setE2eRequest(E2ERequest e2eRequest) {
-		this.e2eRequest = e2eRequest;
+	public void setE2eRequest(OperationStatus requestDB) {
+		this.e2eRequest = requestDB;
 	}
 
 }

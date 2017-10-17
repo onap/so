@@ -160,10 +160,10 @@ public class CreateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 		utils.log("DEBUG", " *** sendSyncResponse *** ", isDebugEnabled)
 
 		try {
-			String requestId = execution.getVariable("msoRequestId")
+			String operationId = execution.getVariable("operationId")
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
 			// RESTResponse for API Handler (APIH) Reply Task
-			String createServiceRestRequest = """{"service":{"serviceId":"${serviceInstanceId}","operationId":"${requestId}"}}""".trim()
+			String createServiceRestRequest = """{"service":{"serviceId":"${serviceInstanceId}","operationId":"${operationId}"}}""".trim()
 			utils.log("DEBUG", " sendSyncResponse to APIH:" + "\n" + createServiceRestRequest, isDebugEnabled)
 			sendWorkflowResponse(execution, 202, createServiceRestRequest)
 			execution.setVariable("sentSyncResponse", true)
