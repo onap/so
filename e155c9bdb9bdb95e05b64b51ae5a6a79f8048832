@@ -34,6 +34,24 @@
       "revId": "e155c9bdb9bdb95e05b64b51ae5a6a79f8048832",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_7522dcba",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/openecomp/mso/bpmn/common/adapter/vnf/MsoRequest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2017-10-18T07:00:02Z",
+      "side": 1,
+      "message": "recommended to use string buildier not + for string appending.\nThis is not pat of what you changed but please take care of the issues in the file when making modifications",
+      "parentUuid": "1a2f8d8d_15327810",
+      "revId": "e155c9bdb9bdb95e05b64b51ae5a6a79f8048832",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
