@@ -1,7 +1,7 @@
 <sdncadapterworkflow:SDNCAdapterWorkflowResponse xmlns:sdncadapterworkflow="http://org.openecomp/mso/workflow/schema/v1">
 	<sdncadapterworkflow:response-data>
 		<tag0:RequestData xmlns:tag0="http://org.openecomp/workflow/sdnc/adapter/schema/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">
-		&lt;output xmlns="org:openecomp:sdnctl:vnf"&gt;&lt;svc-request-id&gt;1660b8da-0a94-442d-8ed5-ea079e3c67c8&lt;/svc-request-id&gt;&lt;response-code&gt;200&lt;/response-code&gt;&lt;ack-final-indicator&gt;Y&lt;/ack-final-indicator&gt;&lt;vnf-information&gt;&lt;vnf-id&gt;8925b50d-de67-44c1-b984-e7ce7b0f4dae&lt;/vnf-id&gt;&lt;/vnf-information&gt;&lt;service-information&gt;&lt;service-type&gt;a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb&lt;/service-type&gt;&lt;service-instance-id&gt;8925b50d-de67-44c1-b984-e7ce7b0f4dae&lt;/service-instance-id&gt;&lt;subscriber-name&gt;notsurewecare&lt;/subscriber-name&gt;&lt;/service-information&gt;&lt;/output&gt;
+		&lt;output xmlns="org:onap:sdnctl:vnf"&gt;&lt;svc-request-id&gt;1660b8da-0a94-442d-8ed5-ea079e3c67c8&lt;/svc-request-id&gt;&lt;response-code&gt;200&lt;/response-code&gt;&lt;ack-final-indicator&gt;Y&lt;/ack-final-indicator&gt;&lt;vnf-information&gt;&lt;vnf-id&gt;8925b50d-de67-44c1-b984-e7ce7b0f4dae&lt;/vnf-id&gt;&lt;/vnf-information&gt;&lt;service-information&gt;&lt;service-type&gt;a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb&lt;/service-type&gt;&lt;service-instance-id&gt;8925b50d-de67-44c1-b984-e7ce7b0f4dae&lt;/service-instance-id&gt;&lt;subscriber-name&gt;notsurewecare&lt;/subscriber-name&gt;&lt;/service-information&gt;&lt;/output&gt;
 		</tag0:RequestData>
 	</sdncadapterworkflow:response-data>
 </sdncadapterworkflow:SDNCAdapterWorkflowResponse>
