@@ -16,6 +16,24 @@
       "revId": "913ca71caf1fee02247b4ddfa589d551f1dda05a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_556c809c",
+        "filename": "adapters/mso-sdnc-adapter/src/main/java/org/openecomp/mso/adapters/sdnc/sdncrest/SDNCServiceRequestConnector.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 2081
+      },
+      "writtenOn": "2017-10-18T05:09:46Z",
+      "side": 0,
+      "message": "Y is using in 4 places and hence is extracted with a constant, \"N\" is using it only one place and hence its not changed.",
+      "parentUuid": "1a2f8d8d_ebf8324b",
+      "revId": "913ca71caf1fee02247b4ddfa589d551f1dda05a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }

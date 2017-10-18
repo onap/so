@@ -16,6 +16,24 @@
       "revId": "5bd2c0f67c5749adce2db82b9b132273b528d2e7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_9572e87a",
+        "filename": "adapters/mso-vnf-adapter/src/main/java/org/openecomp/mso/adapters/vnf/MsoVnfAdapterAsyncImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 2081
+      },
+      "writtenOn": "2017-10-18T05:09:46Z",
+      "side": 1,
+      "message": "This file changes are only the code formatting and don\u0027t involve any functional issues",
+      "parentUuid": "1a2f8d8d_eb8f12cb",
+      "revId": "5bd2c0f67c5749adce2db82b9b132273b528d2e7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
