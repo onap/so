@@ -102,13 +102,14 @@ public class MsoRequest {
     public void setServiceInstanceId(String value) {
         this.serviceInstanceId = value;
     }
-    
+
+    @Override
     public String toString() {
-    	String request = "";
-    	request =
-       "<requestId>"+requestId+"</requestId>" + '\n' +
-       "<serviceInstanceId>"+serviceInstanceId+"</serviceInstanceId>";
-    	return request; 
+        StringBuilder request = new StringBuilder();
+        request.append("<requestId>"+requestId+"</requestId>");
+        request.append('\n');
+        request.append("<serviceInstanceId>"+serviceInstanceId+"</serviceInstanceId>");
+        return request.toString();
     }
 
 }
