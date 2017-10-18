@@ -37,6 +37,7 @@ import org.camunda.bpm.engine.runtime.Execution
 import org.apache.commons.lang3.*
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.web.util.UriUtils
+import org.json.JSONException;
 
 /**
  * This groovy class supports the <class>CreateGenericALaCarteServiceInstance.bpmn</class> process.
@@ -85,7 +86,12 @@ public class CreateGenericALaCarteServiceInstance extends AbstractServiceTaskPro
 			execution.setVariable("source", jsonUtil.getJsonValue(siRequest, "requestDetails.requestInfo.source"))
 			execution.setVariable("serviceInstanceName", jsonUtil.getJsonValue(siRequest, "requestDetails.requestInfo.instanceName"))
 			execution.setVariable("disableRollback", jsonUtil.getJsonValue(siRequest, "requestDetails.requestInfo.suppressRollback"))
-			String productFamilyId = jsonUtil.getJsonValue(siRequest, "requestDetails.requestInfo.productFamilyId")
+			String productFamilyId = null;
+			try { 
+				productFamilyId = jsonUtil.getJsonValue(siRequest, "requestDetails.requestInfo.productFamilyId")
+			} catch (JSONException e) {
+				productFamilyId = null;
+			}
 			if (isBlank(productFamilyId))
 			{
 				msg = "Input productFamilyId is null"
