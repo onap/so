@@ -33,5 +33,7 @@
 
         <mapping resource="InfraActiveRequests.hbm.xml"></mapping>
         <mapping resource="SiteStatus.hbm.xml"></mapping>
+        <mapping resource="OperationStatus.hbm.xml"></mapping>
+        <mapping resource="ResourceOperationStatus.hbm.xml"></mapping>
     </session-factory>
 </hibernate-configuration>

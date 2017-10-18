@@ -19,8 +19,6 @@
  */
 package org.openecomp.mso.adapters.vfc.model;
 
-import java.util.Map;
-
 /**
  * <br>
  * <p>
@@ -39,7 +37,7 @@ public class LocationConstraint {
     /**
      * location constraints: vimId
      */
-    private Map<String, String> locationConstraints;
+    private VimLocation locationConstraints;
 
     /**
      * @return Returns the vnfProfileId.
@@ -55,17 +53,19 @@ public class LocationConstraint {
         this.vnfProfileId = vnfProfileId;
     }
 
+    
     /**
      * @return Returns the locationConstraints.
      */
-    public Map<String, String> getLocationConstraints() {
+    public VimLocation getLocationConstraints() {
         return locationConstraints;
     }
 
+    
     /**
      * @param locationConstraints The locationConstraints to set.
      */
-    public void setLocationConstraints(Map<String, String> locationConstraints) {
+    public void setLocationConstraints(VimLocation locationConstraints) {
         this.locationConstraints = locationConstraints;
     }
 

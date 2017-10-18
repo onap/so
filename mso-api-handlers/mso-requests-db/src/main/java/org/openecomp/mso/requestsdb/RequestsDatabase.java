@@ -647,7 +647,7 @@ public class RequestsDatabase {
                 + operStatus.getResourceTemplateUUID());
         try {
             String hql =
-                    "FROM ResourceOperationStatus WHERE SERVICE_ID = :service_id and OPERATION_ID = :operation_id and RESOURCE_TEMPLATE_UUID = : res_uuid";
+                    "FROM ResourceOperationStatus WHERE SERVICE_ID = :service_id and OPERATION_ID = :operation_id and RESOURCE_TEMPLATE_UUID = :res_uuid";
             Query query = session.createQuery(hql);
             query.setParameter("service_id", operStatus.getServiceId());
             query.setParameter("operation_id", operStatus.getOperationId());

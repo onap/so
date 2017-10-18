@@ -34,6 +34,7 @@ public class AaiUtil {
   public static RestfulResponse addRelation(String globalSubsriberId, String serviceType,
       String serviceInstanceId, String resourceInstanceId) {
     // sent rest to aai to add relation for service and ns.
+      
     return null;
   }
 

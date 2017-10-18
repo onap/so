@@ -19,6 +19,15 @@
  */
 package org.openecomp.mso.adapters.vfc.model;
 
+import java.io.ByteArrayOutputStream;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
+
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig;
+import org.openecomp.mso.logger.MsoLogger;
+
 /**
  * NS Create Input Parameter For VFC Adapter<br>
  * <p>
@@ -28,6 +37,8 @@ package org.openecomp.mso.adapters.vfc.model;
  */
 public class NSResourceInputParameter {
 
+    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
+    
     private NsOperationKey nsOperationKey;
 
     private String nsServiceName;
@@ -91,5 +102,29 @@ public class NSResourceInputParameter {
     public void setNsOperationKey(NsOperationKey nsOperationKey) {
         this.nsOperationKey = nsOperationKey;
     }
+    public String toJsonString() {
+        String jsonString = null;
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.enable(SerializationConfig.Feature.WRAP_ROOT_VALUE);
+            jsonString = mapper.writeValueAsString(this);
+        } catch (Exception e) {
+            LOGGER.debug("Exception:", e);
+        }
+        return jsonString;
+    }
 
+    public String toXmlString() {
+        try {
+            ByteArrayOutputStream bs = new ByteArrayOutputStream();
+            JAXBContext context = JAXBContext.newInstance(this.getClass());
+            Marshaller marshaller = context.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true); //pretty print XML
+            marshaller.marshal(this, bs);
+            return bs.toString();
+        } catch (Exception e) {
+            LOGGER.debug("Exception:", e);
+            return "";
+        }
+    }
 }
