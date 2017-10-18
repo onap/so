@@ -19,6 +19,7 @@
  */
 package org.openecomp.mso.adapters.vfc.model;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -39,7 +40,7 @@ public class LocationConstraint {
     /**
      * location constraints: vimId
      */
-    private Map<String, String> locationConstraints;
+    private Map<String, String> locationConstraints = new HashMap<>();
 
     /**
      * @return Returns the vnfProfileId.

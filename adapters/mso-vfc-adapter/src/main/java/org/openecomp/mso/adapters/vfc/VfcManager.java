@@ -111,6 +111,11 @@ public class VfcManager {
     ValidateUtil.assertObjectNotNull(createRsp);
     LOGGER.info("create ns response status is : {}", createRsp.getStatus());
     LOGGER.info("create ns response content is : {}", createRsp.getResponseContent());
+    if(!HttpCode.isSucess(createRsp.getStatus())){
+        LOGGER.error("call create ns of VFC failed");
+        throw new ApplicationException(HttpCode.INTERNAL_SERVER_ERROR,
+            DriverExceptionID.FAIL_TO_CREATE_NS);
+    }
     @SuppressWarnings("unchecked")
     Map<String, String> rsp = JsonUtil.unMarshal(createRsp.getResponseContent(), Map.class);
     String nsInstanceId = rsp.get(CommonConstant.NS_INSTANCE_ID);

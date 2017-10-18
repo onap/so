@@ -1,32 +1,34 @@
 {
-    "nsServiceName":"vIMS",
-    "nsServiceDescription":"vIMS NS",
-    "nsOperationKey":{
-        "globalSubscriberId":"9b9f02c0-298b-458a-bc9c-be3692e4f350",
-        "serviceType":"service",
-        "serviceId":"9b9f02c0-298b-458a-bc9c-be3692e4f351",
-        "operationId":"9b9f02c0-298b-458a-bc9c-be3692e4f352",
-        "nodeTemplateUUID":"9b9f02c0-298b-458a-bc9c-be3692e4f353"
-    },
-    "nsParameters":{
-        "locationConstraints":[
-            {
-                "vnfProfileId":"zte-CSCF-1.0",
-                "locationConstraints":{
-                    "vimId":"1"
+    "NSResourceInputParameter":{
+        "nsServiceName":"vIMS",
+        "nsServiceDescription":"vIMS NS",
+        "nsOperationKey":{
+            "globalSubscriberId":"9b9f02c0-298b-458a-bc9c-be3692e4f350",
+            "serviceType":"service",
+            "serviceId":"9b9f02c0-298b-458a-bc9c-be3692e4f351",
+            "operationId":"9b9f02c0-298b-458a-bc9c-be3692e4f352",
+            "nodeTemplateUUID":"9b9f02c0-298b-458a-bc9c-be3692e4f353"
+        },
+        "nsParameters":{
+            "locationConstraints":[
+                {
+                    "vnfProfileId":"zte-CSCF-1.0",
+                    "locationConstraints":{
+                        "vimId":"1"
+                    }
                 }
+            ],
+            "additionalParamForNs":{
+                "externalDataNetworkName":"Flow_out_net",
+                "m6000_mng_ip":"181.18.20.2",
+                "externalCompanyFtpDataNetworkName":"Flow_out_net",
+                "externalPluginManageNetworkName":"plugin_net_2014",
+                "externalManageNetworkName":"mng_net_2017",
+                "sfc_data_network":"sfc_data_net_2016",
+                "NatIpRange":"210.1.1.10-210.1.1.20",
+                "location":"4050083f-465f-4838-af1e-47a545222ad0",
+                "sdncontroller":"9b9f02c0-298b-458a-bc9c-be3692e4f35e"
             }
-        ],
-        "additionalParamForNs":{
-            "externalDataNetworkName":"Flow_out_net",
-            "m6000_mng_ip":"181.18.20.2",
-            "externalCompanyFtpDataNetworkName":"Flow_out_net",
-            "externalPluginManageNetworkName":"plugin_net_2014",
-            "externalManageNetworkName":"mng_net_2017",
-            "sfc_data_network":"sfc_data_net_2016",
-            "NatIpRange":"210.1.1.10-210.1.1.20",
-            "location":"4050083f-465f-4838-af1e-47a545222ad0",
-            "sdncontroller":"9b9f02c0-298b-458a-bc9c-be3692e4f35e"
         }
     }
 }

@@ -1,7 +1,9 @@
 {
-    "globalSubscriberId":"9b9f02c0-298b-458a-bc9c-be3692e4f350",
-    "serviceType":"service",
-    "serviceId":"9b9f02c0-298b-458a-bc9c-be3692e4f351",
-    "operationId":"9b9f02c0-298b-458a-bc9c-be3692e4f352",
-    "nodeTemplateUUID":"9b9f02c0-298b-458a-bc9c-be3692e4f353"
+    "NsOperationKey":{
+        "globalSubscriberId":"9b9f02c0-298b-458a-bc9c-be3692e4f350",
+        "serviceType":"service",
+        "serviceId":"9b9f02c0-298b-458a-bc9c-be3692e4f351",
+        "operationId":"9b9f02c0-298b-458a-bc9c-be3692e4f352",
+        "nodeTemplateUUID":"9b9f02c0-298b-458a-bc9c-be3692e4f353"
+    }
 }

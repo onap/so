@@ -19,6 +19,7 @@
  */
 package org.openecomp.mso.adapters.vfc.model;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,7 +35,7 @@ public class NsParameters {
 
     private List<LocationConstraint> locationConstraints;
 
-    private Map<String, String> additionalParamForNs;
+    private Map<String, String> additionalParamForNs = new HashMap<>();
 
     /**
      * @return Returns the locationConstraints.
