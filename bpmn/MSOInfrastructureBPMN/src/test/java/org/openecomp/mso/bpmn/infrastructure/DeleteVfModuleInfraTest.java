@@ -89,7 +89,7 @@ public class DeleteVfModuleInfraTest extends WorkflowTest {
 			"</vfModuleException>" + EOL;
 					
 	private final String sdncAdapterDeleteCallback =
-		"<output xmlns=\"org:openecomp:sdnctl:l3api\">" + EOL +
+		"<output xmlns=\"org:onap:sdnctl:l3api\">" + EOL +
 		"  <svc-request-id>{{REQUEST-ID}}</svc-request-id>" + EOL +
 		"  <ack-final-indicator>Y</ack-final-indicator>" + EOL +
 		"</output>" + EOL;

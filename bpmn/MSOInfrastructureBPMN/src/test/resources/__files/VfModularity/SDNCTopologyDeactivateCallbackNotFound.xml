@@ -1,4 +1,4 @@
-<output xmlns="org:openecomp:sdnctl:vnf">
+<output xmlns="org:onap:sdnctl:vnf">
 	<vnf-information>
 		<vnf-id>skask</vnf-id>
 	</vnf-information>
