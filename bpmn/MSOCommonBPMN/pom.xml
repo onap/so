@@ -480,12 +480,12 @@
 		<dependency>
 			<groupId>org.openecomp.appc.client</groupId>
 			<artifactId>client-kit</artifactId>
-			<version>1.1.0</version>
+			<version>1.1.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openecomp.appc.client</groupId>
 			<artifactId>client-lib</artifactId>
-			<version>1.1.0</version>
+			<version>1.1.0-SNAPSHOT</version>
 		</dependency>
 		
 		<dependency>
@@ -549,12 +549,12 @@
 		<dependency>
 			<groupId>org.openecomp.appc.client</groupId>
 			<artifactId>client-kit</artifactId>
-			<version>1.1.0</version>
+			<version>1.1.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openecomp.appc.client</groupId>
 			<artifactId>client-lib</artifactId>
-			<version>1.1.0</version>
+			<version>1.1.0-SNAPSHOT</version>
 		</dependency>
 		
 		<dependency>
