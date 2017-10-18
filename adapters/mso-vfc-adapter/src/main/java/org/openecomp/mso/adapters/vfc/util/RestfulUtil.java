@@ -20,14 +20,8 @@
  */
 package org.openecomp.mso.adapters.vfc.util;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -202,35 +196,35 @@ public class RestfulUtil {
    * @param request
    * @return
    */
-  public static String getRequestBody(HttpServletRequest request) {
-    String body = null;
-    StringBuilder stringBuilder = new StringBuilder();
-    BufferedReader bufferedReader = null;
-    try {
-      InputStream inputStream = request.getInputStream();
-      if (inputStream != null) {
-        bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-        char[] charBuffer = new char[128];
-        int bytesRead = -1;
-        while ((bytesRead = bufferedReader.read(charBuffer)) > 0)
-          stringBuilder.append(charBuffer, 0, bytesRead);
-      }
-    } catch (IOException ex) {
-      LOGGER.error(MessageEnum.RA_NS_EXC, "VFC", "", MsoLogger.ErrorCode.AvailabilityError,
-          "read inputStream buffer catch exception:", ex);
-    } finally {
-      if (bufferedReader != null) {
-        try {
-          bufferedReader.close();
-        } catch (IOException ex) {
-          LOGGER.error(MessageEnum.RA_NS_EXC, "VFC", "", MsoLogger.ErrorCode.AvailabilityError,
-              "close buffer catch exception:", ex);
-        }
-      }
-    }
-
-    body = stringBuilder.toString();
-    return body;
-  }
+//  public static String getRequestBody(HttpServletRequest request) {
+//    String body = null;
+//    StringBuilder stringBuilder = new StringBuilder();
+//    BufferedReader bufferedReader = null;
+//    try {
+//      InputStream inputStream = request.getInputStream();
+//      if (inputStream != null) {
+//        bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+//        char[] charBuffer = new char[128];
+//        int bytesRead = -1;
+//        while ((bytesRead = bufferedReader.read(charBuffer)) > 0)
+//          stringBuilder.append(charBuffer, 0, bytesRead);
+//      }
+//    } catch (IOException ex) {
+//      LOGGER.error(MessageEnum.RA_NS_EXC, "VFC", "", MsoLogger.ErrorCode.AvailabilityError,
+//          "read inputStream buffer catch exception:", ex);
+//    } finally {
+//      if (bufferedReader != null) {
+//        try {
+//          bufferedReader.close();
+//        } catch (IOException ex) {
+//          LOGGER.error(MessageEnum.RA_NS_EXC, "VFC", "", MsoLogger.ErrorCode.AvailabilityError,
+//              "close buffer catch exception:", ex);
+//        }
+//      }
+//    }
+//
+//    body = stringBuilder.toString();
+//    return body;
+//  }
 
 }

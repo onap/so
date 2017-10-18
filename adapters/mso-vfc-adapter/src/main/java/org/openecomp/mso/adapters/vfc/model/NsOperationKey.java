@@ -19,6 +19,11 @@
  */
 package org.openecomp.mso.adapters.vfc.model;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.codehaus.jackson.map.annotate.JsonRootName;
+import org.jboss.resteasy.annotations.providers.NoJackson;
+
 /**
  * The operation key object for NS
  * <br>
@@ -28,6 +33,9 @@ package org.openecomp.mso.adapters.vfc.model;
  * @author
  * @version     ONAP Amsterdam Release  2017-09-15
  */
+@JsonRootName("NsOperationKey")
+@XmlRootElement(name = "NsOperationKey")
+@NoJackson
 public class NsOperationKey {
     
     /**
