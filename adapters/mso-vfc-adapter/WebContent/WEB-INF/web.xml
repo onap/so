@@ -41,20 +41,8 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>Resteasy</servlet-name>
-		<url-pattern>/vfcadapter/*</url-pattern>
+		<url-pattern>/rest/*</url-pattern>
 	</servlet-mapping>
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>SoapRequests</web-resource-name>
-			<description>Soap Ingress Requests</description>
-			<url-pattern>/VfcAdapter</url-pattern>
-			<url-pattern>/VfcAdapterAsync</url-pattern>
-			<http-method>POST</http-method>
-		</web-resource-collection>
-		<auth-constraint>
-			<role-name>BPEL-Client</role-name>
-		</auth-constraint>
-	</security-constraint>
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>SiteStatus</web-resource-name>
@@ -70,7 +58,7 @@
 		<web-resource-collection>
 			<web-resource-name>RestRequests</web-resource-name>
 			<description>Rest Ingress Requests</description>
-			<url-pattern>/rest/v1/vfc/*</url-pattern>
+			<url-pattern>/rest/v1/vfcadapter/*</url-pattern>
 			<http-method>DELETE</http-method>
 			<http-method>GET</http-method>
 			<http-method>POST</http-method>
