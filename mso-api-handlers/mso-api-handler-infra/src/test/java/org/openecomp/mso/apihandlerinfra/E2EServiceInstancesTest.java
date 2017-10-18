@@ -111,7 +111,7 @@ public class E2EServiceInstancesTest {
         };
         
 		E2EServiceInstances instance = new E2EServiceInstances();
-		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"modelInvariantId value from SDC?\",\"templateId\":\"modelVersionId value from SDC??\",\"parameters\":{\"domainHost\":\"localhost\",\"nodeTemplateName\":\"modelName:v3\",\"nodeType\":\"service\",\"globalSubscriberId\":\"NEED THIS UUI - AAI\",\"subscriberName\":\"NEED THIS UUI - AAI\",\"requestParameters\":{\"subscriptionServiceType\":\"MOG\",\"userParams\":[{\"name\":\"someUserParam\",\"value\":\"someValue\"},{\"name\":\"segments\",\"value\":\"value\"},{\"name\":\"nsParameters\",\"value\":\"othervalue\"}]}}}}";
+		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"templateId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"parameters\":{\"domainHost\":\"localhost\",\"nodeTemplateName\":\"modelName:v3\",\"nodeType\":\"service\",\"globalSubscriberId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"subscriberName\":\"NEED THIS UUI - AAI\",\"requestParameters\":{\"subscriptionServiceType\":\"MOG\",\"userParams\":[{\"name\":\"someUserParam\",\"value\":\"someValue\"},{\"name\":\"segments\",\"value\":\"value\"},{\"name\":\"nsParameters\",\"value\":\"othervalue\"}]}}}}";
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
 		assertTrue(respStr.indexOf("Exception while creating record in DB null") != -1);
@@ -175,7 +175,7 @@ public class E2EServiceInstancesTest {
         };
         
 		E2EServiceInstances instance = new E2EServiceInstances();
-		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"modelInvariantId value from SDC?\",\"templateId\":\"modelVersionId value from SDC??\",\"parameters\":{\"domainHost\":\"localhost\",\"nodeTemplateName\":\"modelName:v3\",\"nodeType\":\"service\",\"globalSubscriberId\":\"NEED THIS UUI - AAI\",\"subscriberName\":\"NEED THIS UUI - AAI\",\"requestParameters\":{\"subscriptionServiceType\":\"MOG\",\"userParams\":[{\"name\":\"someUserParam\",\"value\":\"someValue\"},{\"name\":\"segments\",\"value\":\"value\"},{\"name\":\"nsParameters\",\"value\":\"othervalue\"}]}}}}";
+		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"templateId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"parameters\":{\"domainHost\":\"localhost\",\"nodeTemplateName\":\"modelName:v3\",\"nodeType\":\"service\",\"globalSubscriberId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"subscriberName\":\"NEED THIS UUI - AAI\",\"requestParameters\":{\"subscriptionServiceType\":\"MOG\",\"userParams\":[{\"name\":\"someUserParam\",\"value\":\"someValue\"},{\"name\":\"segments\",\"value\":\"value\"},{\"name\":\"nsParameters\",\"value\":\"othervalue\"}]}}}}";
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
 		assertTrue(respStr.indexOf("Exception while creating record in DB null") != -1);
@@ -239,7 +239,7 @@ public class E2EServiceInstancesTest {
         };
         
 		E2EServiceInstances instance = new E2EServiceInstances();
-		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"modelInvariantId value from SDC?\",\"templateId\":\"modelVersionId value from SDC??\",\"parameters\":{\"domainHost\":\"localhost\",\"nodeTemplateName\":\"modelName:v3\",\"nodeType\":\"service\",\"globalSubscriberId\":\"NEED THIS UUI - AAI\",\"subscriberName\":\"NEED THIS UUI - AAI\",\"requestParameters\":{\"subscriptionServiceType\":\"MOG\",\"userParams\":[{\"name\":\"someUserParam\",\"value\":\"someValue\"},{\"name\":\"segments\",\"value\":\"value\"},{\"name\":\"nsParameters\",\"value\":\"othervalue\"}]}}}}";
+		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"templateId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"parameters\":{\"domainHost\":\"localhost\",\"nodeTemplateName\":\"modelName:v3\",\"nodeType\":\"service\",\"globalSubscriberId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"subscriberName\":\"NEED THIS UUI - AAI\",\"requestParameters\":{\"subscriptionServiceType\":\"MOG\",\"userParams\":[{\"name\":\"someUserParam\",\"value\":\"someValue\"},{\"name\":\"segments\",\"value\":\"value\"},{\"name\":\"nsParameters\",\"value\":\"othervalue\"}]}}}}";
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
 		assertTrue(respStr.indexOf("Exception while creating record in DB null") != -1);
@@ -291,7 +291,7 @@ public class E2EServiceInstancesTest {
         };
         
 		E2EServiceInstances instance = new E2EServiceInstances();
-		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"modelInvariantId value from SDC?\",\"templateId\":\"modelVersionId value from SDC??\",\"parameters\":{\"domainHost\":\"localhost\",\"nodeTemplateName\":\"modelName:v3\",\"nodeType\":\"service\",\"globalSubscriberId\":\"NEED THIS UUI - AAI\",\"subscriberName\":\"NEED THIS UUI - AAI\",\"requestParameters\":{\"subscriptionServiceType\":\"MOG\",\"userParams\":[{\"name\":\"someUserParam\",\"value\":\"someValue\"},{\"name\":\"segments\",\"value\":\"value\"},{\"name\":\"nsParameters\",\"value\":\"othervalue\"}]}}}}";
+		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"templateId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"parameters\":{\"domainHost\":\"localhost\",\"nodeTemplateName\":\"modelName:v3\",\"nodeType\":\"service\",\"globalSubscriberId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"subscriberName\":\"NEED THIS UUI - AAI\",\"requestParameters\":{\"subscriptionServiceType\":\"MOG\",\"userParams\":[{\"name\":\"someUserParam\",\"value\":\"someValue\"},{\"name\":\"segments\",\"value\":\"value\"},{\"name\":\"nsParameters\",\"value\":\"othervalue\"}]}}}}";
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
 		assertTrue(respStr.indexOf("Exception while creating record in DB null") != -1);
@@ -340,7 +340,7 @@ public class E2EServiceInstancesTest {
         };
         
 		E2EServiceInstances instance = new E2EServiceInstances();
-		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"modelInvariantId value from SDC?\",\"templateId\":\"modelVersionId value from SDC??\",\"parameters\":{\"domainHost\":\"localhost\",\"nodeTemplateName\":\"modelName:v3\",\"nodeType\":\"service\",\"globalSubscriberId\":\"NEED THIS UUI - AAI\",\"subscriberName\":\"NEED THIS UUI - AAI\",\"requestParameters\":{\"subscriptionServiceType\":\"MOG\",\"userParams\":[{\"name\":\"someUserParam\",\"value\":\"someValue\"},{\"name\":\"segments\",\"value\":\"value\"},{\"name\":\"nsParameters\",\"value\":\"othervalue\"}]}}}}";
+		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"templateId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"parameters\":{\"domainHost\":\"localhost\",\"nodeTemplateName\":\"modelName:v3\",\"nodeType\":\"service\",\"globalSubscriberId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"subscriberName\":\"NEED THIS UUI - AAI\",\"requestParameters\":{\"subscriptionServiceType\":\"MOG\",\"userParams\":[{\"name\":\"someUserParam\",\"value\":\"someValue\"},{\"name\":\"segments\",\"value\":\"value\"},{\"name\":\"nsParameters\",\"value\":\"othervalue\"}]}}}}";
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
 		assertTrue(respStr.indexOf("Exception while creating record in DB null") != -1);
@@ -370,7 +370,7 @@ public class E2EServiceInstancesTest {
             }
         };
 		E2EServiceInstances instance = new E2EServiceInstances();
-		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"modelInvariantId value from SDC?\",\"templateId\":\"modelVersionId value from SDC??\",\"parameters\":{\"domainHost\":\"localhost\",\"nodeTemplateName\":\"modelName:v3\",\"nodeType\":\"service\",\"globalSubscriberId\":\"NEED THIS UUI - AAI\",\"subscriberName\":\"NEED THIS UUI - AAI\",\"requestParameters\":{\"subscriptionServiceType\":\"MOG\",\"userParams\":[{\"name\":\"someUserParam\",\"value\":\"someValue\"},{\"name\":\"segments\",\"value\":\"value\"},{\"name\":\"nsParameters\",\"value\":\"othervalue\"}]}}}}";
+		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"templateId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"parameters\":{\"domainHost\":\"localhost\",\"nodeTemplateName\":\"modelName:v3\",\"nodeType\":\"service\",\"globalSubscriberId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"subscriberName\":\"NEED THIS UUI - AAI\",\"requestParameters\":{\"subscriptionServiceType\":\"MOG\",\"userParams\":[{\"name\":\"someUserParam\",\"value\":\"someValue\"},{\"name\":\"segments\",\"value\":\"value\"},{\"name\":\"nsParameters\",\"value\":\"othervalue\"}]}}}}";
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
 		assertTrue(respStr.indexOf("Exception while creating record in DB null") != -1);
@@ -401,7 +401,7 @@ public class E2EServiceInstancesTest {
             }
         };
 		E2EServiceInstances instance = new E2EServiceInstances();
-		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"modelInvariantId value from SDC?\",\"templateId\":\"modelVersionId value from SDC??\",\"parameters\":{\"domainHost\":\"localhost\",\"nodeTemplateName\":\"modelName:v3\",\"nodeType\":\"service\",\"globalSubscriberId\":\"NEED THIS UUI - AAI\",\"subscriberName\":\"NEED THIS UUI - AAI\",\"requestParameters\":{\"subscriptionServiceType\":\"MOG\",\"userParams\":[{\"name\":\"someUserParam\",\"value\":\"someValue\"},{\"name\":\"segments\",\"value\":\"value\"},{\"name\":\"nsParameters\",\"value\":\"othervalue\"}]}}}}";
+		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"templateId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"parameters\":{\"domainHost\":\"localhost\",\"nodeTemplateName\":\"modelName:v3\",\"nodeType\":\"service\",\"globalSubscriberId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"subscriberName\":\"NEED THIS UUI - AAI\",\"requestParameters\":{\"subscriptionServiceType\":\"MOG\",\"userParams\":[{\"name\":\"someUserParam\",\"value\":\"someValue\"},{\"name\":\"segments\",\"value\":\"value\"},{\"name\":\"nsParameters\",\"value\":\"othervalue\"}]}}}}";
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
 		//assertTrue(respStr.indexOf("Recipe could not be retrieved from catalog DB ") !=-1);
@@ -422,7 +422,7 @@ public class E2EServiceInstancesTest {
             }
         };
 		E2EServiceInstances instance = new E2EServiceInstances();
-		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"modelInvariantId value from SDC?\",\"templateId\":\"modelVersionId value from SDC??\",\"parameters\":{\"domainHost\":\"localhost\",\"nodeTemplateName\":\"modelName:v3\",\"nodeType\":\"service\",\"globalSubscriberId\":\"NEED THIS UUI - AAI\",\"subscriberName\":\"NEED THIS UUI - AAI\",\"requestParameters\":{\"subscriptionServiceType\":\"MOG\",\"userParams\":[{\"name\":\"someUserParam\",\"value\":\"someValue\"},{\"name\":\"segments\",\"value\":\"value\"},{\"name\":\"nsParameters\",\"value\":\"othervalue\"}]}}}}";
+		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"templateId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"parameters\":{\"domainHost\":\"localhost\",\"nodeTemplateName\":\"modelName:v3\",\"nodeType\":\"service\",\"globalSubscriberId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"subscriberName\":\"NEED THIS UUI - AAI\",\"requestParameters\":{\"subscriptionServiceType\":\"MOG\",\"userParams\":[{\"name\":\"someUserParam\",\"value\":\"someValue\"},{\"name\":\"segments\",\"value\":\"value\"},{\"name\":\"nsParameters\",\"value\":\"othervalue\"}]}}}}";
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
 		assertTrue(respStr.indexOf("The existing request must finish or be cleaned up before proceeding.") != -1);
@@ -437,7 +437,7 @@ public class E2EServiceInstancesTest {
             }
         };
 		E2EServiceInstances instance = new E2EServiceInstances();
-		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"modelInvariantId value from SDC?\",\"templateId\":\"modelVersionId value from SDC??\",\"parameters\":{\"domainHost\":\"localhost\",\"nodeTemplateName\":\"modelName:v3\",\"nodeType\":\"service\",\"globalSubscriberId\":\"NEED THIS UUI - AAI\",\"subscriberName\":\"NEED THIS UUI - AAI\",\"requestParameters\":{\"subscriptionServiceType\":\"MOG\",\"userParams\":[{\"name\":\"someUserParam\",\"value\":\"someValue\"},{\"name\":\"segments\",\"value\":\"value\"},{\"name\":\"nsParameters\",\"value\":\"othervalue\"}]}}}}";
+		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"templateId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"parameters\":{\"domainHost\":\"localhost\",\"nodeTemplateName\":\"modelName:v3\",\"nodeType\":\"service\",\"globalSubscriberId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"subscriberName\":\"NEED THIS UUI - AAI\",\"requestParameters\":{\"subscriptionServiceType\":\"MOG\",\"userParams\":[{\"name\":\"someUserParam\",\"value\":\"someValue\"},{\"name\":\"segments\",\"value\":\"value\"},{\"name\":\"nsParameters\",\"value\":\"othervalue\"}]}}}}";
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
 		//assertTrue(respStr.indexOf("Recipe could not be retrieved from catalog DB ") != -1);
@@ -447,7 +447,7 @@ public class E2EServiceInstancesTest {
 	@Test
 	public void createE2EServiceInstanceTestDBQueryFail(){
 		E2EServiceInstances instance = new E2EServiceInstances();
-		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"modelInvariantId value from SDC?\",\"templateId\":\"modelVersionId value from SDC??\",\"parameters\":{\"domainHost\":\"localhost\",\"nodeTemplateName\":\"modelName:v3\",\"nodeType\":\"service\",\"globalSubscriberId\":\"NEED THIS UUI - AAI\",\"subscriberName\":\"NEED THIS UUI - AAI\",\"requestParameters\":{\"subscriptionServiceType\":\"MOG\",\"userParams\":[{\"name\":\"someUserParam\",\"value\":\"someValue\"},{\"name\":\"segments\",\"value\":\"value\"},{\"name\":\"nsParameters\",\"value\":\"othervalue\"}]}}}}";
+		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"templateId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"parameters\":{\"domainHost\":\"localhost\",\"nodeTemplateName\":\"modelName:v3\",\"nodeType\":\"service\",\"globalSubscriberId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"subscriberName\":\"NEED THIS UUI - AAI\",\"requestParameters\":{\"subscriptionServiceType\":\"MOG\",\"userParams\":[{\"name\":\"someUserParam\",\"value\":\"someValue\"},{\"name\":\"segments\",\"value\":\"value\"},{\"name\":\"nsParameters\",\"value\":\"othervalue\"}]}}}}";
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
 		assertTrue(respStr.indexOf("SVC2000") != -1);
@@ -465,7 +465,7 @@ public class E2EServiceInstancesTest {
 	@Test
 	public void deleteE2EServiceInstanceTestNormal(){
 		E2EServiceInstances instance = new E2EServiceInstances();
-		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"modelInvariantId value from SDC?\",\"templateId\":\"modelVersionId value from SDC??\",\"parameters\":{\"domainHost\":\"localhost\",\"nodeTemplateName\":\"modelName:v3\",\"nodeType\":\"service\",\"globalSubscriberId\":\"NEED THIS UUI - AAI\",\"subscriberName\":\"NEED THIS UUI - AAI\",\"requestParameters\":{\"subscriptionServiceType\":\"MOG\",\"userParams\":[{\"name\":\"someUserParam\",\"value\":\"someValue\"},{\"name\":\"segments\",\"value\":\"value\"},{\"name\":\"nsParameters\",\"value\":\"othervalue\"}]}}}}";
+		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"templateId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"parameters\":{\"domainHost\":\"localhost\",\"nodeTemplateName\":\"modelName:v3\",\"nodeType\":\"service\",\"globalSubscriberId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"subscriberName\":\"NEED THIS UUI - AAI\",\"requestParameters\":{\"subscriptionServiceType\":\"MOG\",\"userParams\":[{\"name\":\"someUserParam\",\"value\":\"someValue\"},{\"name\":\"segments\",\"value\":\"value\"},{\"name\":\"nsParameters\",\"value\":\"othervalue\"}]}}}}";
 		Response resp = instance.deleteE2EServiceInstance(request, "v3", "12345678");
 		String respStr = resp.getEntity().toString();
 		assertTrue(respStr.indexOf("SVC2000") != -1);
