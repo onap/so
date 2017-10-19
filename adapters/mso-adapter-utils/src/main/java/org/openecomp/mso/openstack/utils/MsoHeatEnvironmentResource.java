@@ -56,10 +56,18 @@ public class MsoHeatEnvironmentResource {
 	public void setValue(String value) {
 		this.value = value;
 	}
+
+	@Override
 	public String toString() {
-		return "\"" + this.name + "\": " + this.value;
+		StringBuilder str = new StringBuilder();
+		str.append("\"");
+		str.append(this.name);
+		str.append("\": ");
+		str.append(this.value);
+		return str.toString();
 	}
-	
+
+	@Override
 	public boolean equals(Object o) {	
 		if (!(o instanceof MsoHeatEnvironmentResource)) {
 			return false;
@@ -74,7 +82,8 @@ public class MsoHeatEnvironmentResource {
 		}
 		return false;
 	}
-	
+
+	@Override
 	public int hashCode() {
 		int result = 0;
 		try {
