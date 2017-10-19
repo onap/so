@@ -257,6 +257,8 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 			}
 
 			String statusLine = isBlank(oStatus) ? "" : "<orchestration-status>${oStatus}</orchestration-status>"
+			String serviceTypeLine = isBlank(serviceType) ? "" : "<service-type>${serviceType}</service-type>"
+			String serviceRoleLine = isBlank(serviceRole) ? "" : "<service-role>${serviceRole}</service-role>"
 				
 			AaiUtil aaiUriUtil = new AaiUtil(this)
 			String aai_uri = aaiUriUtil.getBusinessCustomerUri(execution)
@@ -264,8 +266,8 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 			String serviceInstanceData =
 					"""<service-instance xmlns=\"${namespace}\">
 					<service-instance-name>${serviceInstanceName}</service-instance-name>
-					<service-type>${serviceType}</service-type>
-					<service-role>${serviceRole}</service-role>
+					${serviceTypeLine}
+					${serviceRoleLine}
 					${statusLine}
 				    <model-invariant-id>${modelInvariantUuid}</model-invariant-id>
 				    <model-version-id>${modelUuid}</model-version-id>
