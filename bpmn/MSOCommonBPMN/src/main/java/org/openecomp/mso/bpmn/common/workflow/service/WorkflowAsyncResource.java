@@ -261,7 +261,10 @@ public abstract class WorkflowAsyncResource {
 	}
 
 	private static String getKeyValueFromInputVariables(Map<String,Object> inputVariables, String key) {
-		if (inputVariables == null) return "";
+		if (inputVariables == null) {
+			return "";
+		}
+
 		return Objects.toString(inputVariables.get(key), "N/A");
 	}
 
@@ -278,12 +281,14 @@ public abstract class WorkflowAsyncResource {
 	}
 
 	private static Map<String, Object> getInputVariables(VariableMapImpl variableMap) {
-		Map<String, Object> inputVariables = new HashMap<String,Object>();
+		Map<String, Object> inputVariables = new HashMap<>();
 		@SuppressWarnings("unchecked")
 		Map<String, Object> vMap = (Map<String, Object>) variableMap.get("variables");
-		for (String vName : vMap.keySet()) {
+		for (Map.Entry<String, Object> entry : vMap.entrySet()) {
+			String vName = entry.getKey();
+			Object value = entry.getValue();
 			@SuppressWarnings("unchecked")
-			Map<String, Object> valueMap = (Map<String,Object>)vMap.get(vName); // value, type
+			Map<String, Object> valueMap = (Map<String,Object>)value; // value, type
 			inputVariables.put(vName, valueMap.get("value"));
 		}
 		return inputVariables;
