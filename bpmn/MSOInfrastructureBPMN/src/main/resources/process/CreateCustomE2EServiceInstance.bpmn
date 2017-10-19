@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.9.0">
   <bpmn:process id="CreateCustomE2EServiceInstance" name="CreateCustomE2EServiceInstance" isExecutable="true">
     <bpmn:startEvent id="StartEvent_00qj6ro" name="Create SI Start Flow">
       <bpmn:outgoing>SequenceFlow_0s2spoq</bpmn:outgoing>
@@ -22,7 +22,7 @@ ex.processJavaException(execution)]]></bpmn:script>
       <bpmn:sequenceFlow id="SequenceFlow_1dsbjjb" name="" sourceRef="StartEvent_0v1ffn4" targetRef="ScriptTask_0u3lw39" />
       <bpmn:sequenceFlow id="SequenceFlow_1yay321" name="" sourceRef="ScriptTask_0u3lw39" targetRef="EndEvent_0eznq6x" />
     </bpmn:subProcess>
-    <bpmn:callActivity id="DoCreateE2EServiceInstance" name="Call DoCreateE2EServiceInstance&#10;" calledElement="DoCreateE2EServiceInstance">
+    <bpmn:callActivity id="DoCreateCustomE2EServiceInstance" name="Call DoCreateCustomE2EServiceInstance&#10;" calledElement="DoCreateCustomE2EServiceInstance">
       <bpmn:extensionElements>
         <camunda:out source="WorkflowException" target="WorkflowException" />
         <camunda:in source="msoRequestId" target="msoRequestId" />
@@ -129,8 +129,8 @@ csi.sendSyncResponse(execution)]]></bpmn:script>
       <bpmn:errorEventDefinition errorRef="Error_0nbdy47" />
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="SequenceFlow_0s2spoq" sourceRef="StartEvent_00qj6ro" targetRef="ScriptTask_1s09c7d" />
-    <bpmn:sequenceFlow id="SequenceFlow_19eilro" sourceRef="ScriptTask_0xupxj9" targetRef="DoCreateE2EServiceInstance" />
-    <bpmn:sequenceFlow id="SequenceFlow_0klbpxx" sourceRef="DoCreateE2EServiceInstance" targetRef="ExclusiveGateway_0aqn64l" />
+    <bpmn:sequenceFlow id="SequenceFlow_19eilro" sourceRef="ScriptTask_0xupxj9" targetRef="DoCreateCustomE2EServiceInstance" />
+    <bpmn:sequenceFlow id="SequenceFlow_0klbpxx" sourceRef="DoCreateCustomE2EServiceInstance" targetRef="ExclusiveGateway_0aqn64l" />
     <bpmn:sequenceFlow id="SequenceFlow_0yayvrf" sourceRef="CallActivity_02fyxz0" targetRef="EndEvent_0bpd6c0" />
     <bpmn:sequenceFlow id="SequenceFlow_0z4faf9" sourceRef="ScriptTask_1s09c7d" targetRef="Task_1tqjch6" />
     <bpmn:sequenceFlow id="SequenceFlow_14zu6wr" name="yes" sourceRef="ExclusiveGateway_0aqn64l" targetRef="ScriptTask_0ttvn8r">
@@ -184,7 +184,7 @@ csi.prepareInitServiceOperationStatus(execution)]]></bpmn:script>
       <bpmndi:BPMNShape id="SubProcess_0ka59nc_di" bpmnElement="SubProcess_0ka59nc" isExpanded="true">
         <dc:Bounds x="463" y="632" width="394" height="188" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="CallActivity_0rhljy8_di" bpmnElement="DoCreateE2EServiceInstance">
+      <bpmndi:BPMNShape id="CallActivity_0rhljy8_di" bpmnElement="DoCreateCustomE2EServiceInstance">
         <dc:Bounds x="751" y="158" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_0bpd6c0_di" bpmnElement="EndEvent_0bpd6c0">

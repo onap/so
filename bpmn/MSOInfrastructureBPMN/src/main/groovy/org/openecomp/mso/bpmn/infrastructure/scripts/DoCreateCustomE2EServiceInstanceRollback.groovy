@@ -62,7 +62,7 @@ import org.springframework.web.util.UriUtils;
  * @param - rolledBack (no localRB->null, localRB F->false, localRB S->true)
  *
  */
-public class DoCreateE2EServiceInstanceRollback extends AbstractServiceTaskProcessor{
+public class DoCreateCustomE2EServiceInstanceRollback extends AbstractServiceTaskProcessor{
 
 	String Prefix="DCRESIRB_"
 

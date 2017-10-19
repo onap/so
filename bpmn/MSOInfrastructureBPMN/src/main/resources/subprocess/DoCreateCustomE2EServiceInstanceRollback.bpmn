@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
-  <bpmn2:process id="DoCreateE2EServiceInstanceRollback" name="DoCreateE2EServiceInstanceRollback" isExecutable="true">
+  <bpmn2:process id="DoCreateCustomE2EServiceInstanceRollback" name="DoCreateCustomE2EServiceInstanceRollback" isExecutable="true">
     <bpmn2:startEvent id="createSIRollback_startEvent" name="Start Flow">
       <bpmn2:outgoing>SequenceFlow_1</bpmn2:outgoing>
     </bpmn2:startEvent>
@@ -9,7 +9,7 @@
       <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_2</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
-def rbk = new DoCreateE2EServiceInstanceRollback()
+def rbk = new DoCreateCustomE2EServiceInstanceRollback()
 rbk.preProcessRequest(execution)
 ]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -29,7 +29,7 @@ rbk.preProcessRequest(execution)
         <bpmn2:incoming>SequenceFlow_8</bpmn2:incoming>
         <bpmn2:outgoing>SequenceFlow_7</bpmn2:outgoing>
         <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
-def rbk= new DoCreateE2EServiceInstanceRollback()
+def rbk= new DoCreateCustomE2EServiceInstanceRollback()
 rbk.processRollbackException(execution)]]></bpmn2:script>
       </bpmn2:scriptTask>
       <bpmn2:sequenceFlow id="SequenceFlow_7" name="" sourceRef="ScriptTask_1" targetRef="EndEvent_1" />
@@ -88,7 +88,7 @@ rbk.processRollbackException(execution)]]></bpmn2:script>
       <bpmn2:outgoing>SequenceFlow_0khjo7l</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
 String response = execution.getVariable("sdncDeactivateResponse")
-def rbk= new DoCreateE2EServiceInstanceRollback()
+def rbk= new DoCreateCustomE2EServiceInstanceRollback()
 rbk.validateSDNCResponse(execution, response, "deactivate")]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_0khjo7l" sourceRef="ScriptTask_1uxr0cx" targetRef="CallActivity_0ppz9nd" />
@@ -103,7 +103,7 @@ rbk.validateSDNCResponse(execution, response, "deactivate")]]></bpmn2:script>
       <bpmn2:incoming>SequenceFlow_1rzlaoy</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_01l4ssl</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
-def rbk = new DoCreateE2EServiceInstanceRollback()
+def rbk = new DoCreateCustomE2EServiceInstanceRollback()
 rbk.postProcessRequest(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_01l4ssl" sourceRef="PostProcess_ScriptTask" targetRef="EndEvent_3" />
@@ -120,7 +120,7 @@ rbk.postProcessRequest(execution)]]></bpmn2:script>
         <bpmn2:incoming>SequenceFlow_1ch4xrf</bpmn2:incoming>
         <bpmn2:outgoing>SequenceFlow_1pjk2ff</bpmn2:outgoing>
         <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
-def rbk= new DoCreateE2EServiceInstanceRollback()
+def rbk= new DoCreateCustomE2EServiceInstanceRollback()
 rbk.processRollbackJavaException(execution)]]></bpmn2:script>
       </bpmn2:scriptTask>
       <bpmn2:endEvent id="EndEvent_12e3h6k">
@@ -135,7 +135,7 @@ rbk.processRollbackJavaException(execution)]]></bpmn2:script>
       <bpmn2:outgoing>SequenceFlow_1njogr1</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
 String response = execution.getVariable("sdncDeleteResponse")
-def rbk= new DoCreateE2EServiceInstanceRollback()
+def rbk= new DoCreateCustomE2EServiceInstanceRollback()
 rbk.validateSDNCResponse(execution, response, "delete")]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:callActivity id="CallActivity_0ppz9nd" name="Call SDNC Service Topology Dekete" calledElement="sdncAdapter">
@@ -156,7 +156,7 @@ rbk.validateSDNCResponse(execution, response, "delete")]]></bpmn2:script>
   <bpmn2:error id="Error_2" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
   <bpmn2:error id="Error_1" name="java.lang.Exception" errorCode="java.lang.Exception" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DoCreateE2EServiceInstanceRollback">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DoCreateCustomE2EServiceInstanceRollback">
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_47" bpmnElement="createSIRollback_startEvent">
         <dc:Bounds x="151" y="79" width="36" height="36" />
         <bpmndi:BPMNLabel>

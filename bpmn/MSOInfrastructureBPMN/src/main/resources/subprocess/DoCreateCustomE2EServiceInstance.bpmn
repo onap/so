@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
-  <bpmn2:process id="DoCreateE2EServiceInstance" name="DoCreateE2EServiceInstance" isExecutable="true">
+  <bpmn2:process id="DoCreateCustomE2EServiceInstance" name="DoCreateCustomE2EServiceInstance" isExecutable="true">
     <bpmn2:startEvent id="createSI_startEvent" name="Start Flow">
       <bpmn2:outgoing>SequenceFlow_1</bpmn2:outgoing>
     </bpmn2:startEvent>
@@ -9,7 +9,7 @@
       <bpmn2:incoming>SequenceFlow_2</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_3</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
-def dcsi = new DoCreateE2EServiceInstance()
+def dcsi = new DoCreateCustomE2EServiceInstance()
 dcsi.getAAICustomerById(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_3" name="" sourceRef="getAAICustomerById_scriptTask" targetRef="ExclusiveGateway_09wkav2" />
@@ -17,7 +17,7 @@ dcsi.getAAICustomerById(execution)]]></bpmn2:script>
       <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_2</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
-def dcsi = new DoCreateE2EServiceInstance()
+def dcsi = new DoCreateCustomE2EServiceInstance()
 dcsi.preProcessRequest(execution)
 ]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -68,7 +68,7 @@ dcsi.preProcessRequest(execution)
       <bpmn2:endEvent id="EndEvent_117lkk3">
         <bpmn2:incoming>SequenceFlow_1xzgv5k</bpmn2:incoming>
       </bpmn2:endEvent>
-      <bpmn2:callActivity id="CallActivity_1srx6p6" name="Call DoCreateE2EServiceInstanceRollback" calledElement="DoCreateE2EServiceInstanceRollback">
+      <bpmn2:callActivity id="CallActivity_1srx6p6" name="Call DoCreateCustomE2EServiceInstanceRollback" calledElement="DoCreateCustomE2EServiceInstanceRollback">
         <bpmn2:extensionElements>
           <camunda:in source="msoRequestId" target="mso-request-id" />
           <camunda:in source="rollbackData" target="rollbackData" />
@@ -85,7 +85,7 @@ dcsi.preProcessRequest(execution)
         <bpmn2:incoming>SequenceFlow_0tgrn11</bpmn2:incoming>
         <bpmn2:outgoing>SequenceFlow_1lqktwf</bpmn2:outgoing>
         <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
-def dcsi = new DoCreateE2EServiceInstance()
+def dcsi = new DoCreateCustomE2EServiceInstance()
 dcsi.preProcessRollback(execution)
 ]]></bpmn2:script>
       </bpmn2:scriptTask>
@@ -94,7 +94,7 @@ dcsi.preProcessRollback(execution)
         <bpmn2:incoming>SequenceFlow_0eumzpf</bpmn2:incoming>
         <bpmn2:outgoing>SequenceFlow_1xzgv5k</bpmn2:outgoing>
         <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
-def dcsi = new DoCreateE2EServiceInstance()
+def dcsi = new DoCreateCustomE2EServiceInstance()
 dcsi.postProcessRollback(execution)
 ]]></bpmn2:script>
       </bpmn2:scriptTask>
@@ -115,7 +115,7 @@ dcsi.postProcessRollback(execution)
       <bpmn2:incoming>SequenceFlow_4</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_1w01tqs</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
-def dcsi = new DoCreateE2EServiceInstance()
+def dcsi = new DoCreateCustomE2EServiceInstance()
 dcsi.postProcessAAIGET(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_1w01tqs" sourceRef="ScriptTask_0i8cqdy" targetRef="CustomE2EPutService" />
@@ -123,7 +123,7 @@ dcsi.postProcessAAIGET(execution)]]></bpmn2:script>
       <bpmn2:incoming>SequenceFlow_129ih1g</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_1dd86x8</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
-def ddsi = new DoCreateE2EServiceInstance()
+def ddsi = new DoCreateCustomE2EServiceInstance()
 ddsi.postProcessAAIPUT(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_1dd86x8" sourceRef="ScriptTask_0q37vn9" targetRef="ExclusiveGateway_1nk6aol" />
@@ -132,7 +132,7 @@ ddsi.postProcessAAIPUT(execution)]]></bpmn2:script>
       <bpmn2:outgoing>SequenceFlow_0ofqw6v</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
 String nsName = "overlay"
-def csi = new  DoCreateE2EServiceInstance()
+def csi = new  DoCreateCustomE2EServiceInstance()
 csi.preResourceRequest(execution, nsName)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:scriptTask id="ScriptTask_0wvq4t8" name="Prepare Resource Request for vEPC" scriptFormat="groovy">
@@ -140,7 +140,7 @@ csi.preResourceRequest(execution, nsName)]]></bpmn2:script>
       <bpmn2:outgoing>SequenceFlow_15zgrcq</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
 String resourceName= "vEPC"
-def csi = new  DoCreateE2EServiceInstance()
+def csi = new  DoCreateCustomE2EServiceInstance()
 csi.preResourceRequest(execution, resourceName)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:callActivity id="CallActivity_0uwm4l1" name="Call DoCreateVFCNetworkServiceInstance For vEPC" calledElement="DoCreateVFCNetworkServiceInstance">
@@ -163,7 +163,7 @@ csi.preResourceRequest(execution, resourceName)]]></bpmn2:script>
       <bpmn2:incoming>SequenceFlow_1vvdkcs</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_092ghvu</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
-def csi = new  DoCreateE2EServiceInstance()
+def csi = new  DoCreateCustomE2EServiceInstance()
 csi.postConfigRequest(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_0ofqw6v" sourceRef="ScriptTask_0081lne" targetRef="CallActivity_09c3ajg" />
@@ -180,7 +180,7 @@ csi.postConfigRequest(execution)]]></bpmn2:script>
       <bpmn2:incoming>SequenceFlow_1170ztf</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_1qctzm0</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
-def ddsi = new DoCreateE2EServiceInstance()
+def ddsi = new DoCreateCustomE2EServiceInstance()
 ddsi.preInitResourcesOperStatus(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_05gdjox" sourceRef="Task_0raqlqc" targetRef="ScriptTask_0wvq4t8" />
@@ -212,7 +212,7 @@ ddsi.preInitResourcesOperStatus(execution)]]></bpmn2:script>
       <bpmn2:outgoing>SequenceFlow_0ua1bbk</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
 String nsName = "vIMS"
-def csi = new  DoCreateE2EServiceInstance()
+def csi = new  DoCreateCustomE2EServiceInstance()
 csi.preResourceRequest(execution, nsName)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_1hgiln0" sourceRef="Task_03n6y9h" targetRef="Task_0io5qby" />
@@ -244,7 +244,7 @@ csi.preResourceRequest(execution, nsName)]]></bpmn2:script>
       <bpmn2:outgoing>SequenceFlow_17i1ors</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
 String nsName = "underlay"
-def csi = new  DoCreateE2EServiceInstance()
+def csi = new  DoCreateCustomE2EServiceInstance()
 csi.preResourceRequest(execution, nsName)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:serviceTask id="Task_0gs55f1" name="Call Underlay Create" camunda:class="org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.SdncNetworkTopologyOperationTask">
@@ -259,7 +259,7 @@ csi.preResourceRequest(execution, nsName)]]></bpmn2:script>
   <bpmn2:error id="Error_2" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
   <bpmn2:error id="Error_1" name="java.lang.Exception" errorCode="java.lang.Exception" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DoCreateE2EServiceInstance">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DoCreateCustomE2EServiceInstance">
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_47" bpmnElement="createSI_startEvent">
         <dc:Bounds x="152" y="79" width="36" height="36" />
         <bpmndi:BPMNLabel>

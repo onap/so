@@ -72,7 +72,7 @@ import org.springframework.web.util.UriUtils;
  * @param - serviceInstanceName - (GET from AAI if null in input)
  *
  */
-public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
+public class DoCreateCustomE2EServiceInstance extends AbstractServiceTaskProcessor {
 
 	String Prefix="DCRESI_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
