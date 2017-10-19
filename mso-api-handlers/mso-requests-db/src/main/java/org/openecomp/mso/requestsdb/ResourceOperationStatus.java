@@ -19,6 +19,8 @@
  */
 package org.openecomp.mso.requestsdb;
 
+import java.io.Serializable;
+
 /**
  * The Resource operation status
  * <br>
@@ -28,7 +30,12 @@ package org.openecomp.mso.requestsdb;
  * @author
  * @version     ONAP Amsterdam Release  2017-08-28
  */
-public class ResourceOperationStatus {
+public class ResourceOperationStatus implements Serializable{
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
     private String serviceId;
     
@@ -161,6 +168,55 @@ public class ResourceOperationStatus {
     public void setOperType(String operType) {
         this.operType = operType;
     }
-    
+
+    /**
+     * <br>
+     * 
+     * @return
+     * @since   ONAP Amsterdam Release 
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((operationId == null) ? 0 : operationId.hashCode());
+        result = prime * result + ((resourceTemplateUUID == null) ? 0 : resourceTemplateUUID.hashCode());
+        result = prime * result + ((serviceId == null) ? 0 : serviceId.hashCode());
+        return result;
+    }
+
+    /**
+     * <br>
+     * 
+     * @param obj
+     * @return
+     * @since   ONAP Amsterdam Release 
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if(this == obj)
+            return true;
+        if(obj == null)
+            return false;
+        if(getClass() != obj.getClass())
+            return false;
+        ResourceOperationStatus other = (ResourceOperationStatus)obj;
+        if(operationId == null) {
+            if(other.operationId != null)
+                return false;
+        } else if(!operationId.equals(other.operationId))
+            return false;
+        if(resourceTemplateUUID == null) {
+            if(other.resourceTemplateUUID != null)
+                return false;
+        } else if(!resourceTemplateUUID.equals(other.resourceTemplateUUID))
+            return false;
+        if(serviceId == null) {
+            if(other.serviceId != null)
+                return false;
+        } else if(!serviceId.equals(other.serviceId))
+            return false;
+        return true;
+    }   
     
 }

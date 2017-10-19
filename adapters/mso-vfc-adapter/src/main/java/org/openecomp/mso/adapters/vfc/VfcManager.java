@@ -111,22 +111,8 @@ public class VfcManager {
     ValidateUtil.assertObjectNotNull(createRsp);
     LOGGER.info("create ns response status is : {}", createRsp.getStatus());
     LOGGER.info("create ns response content is : {}", createRsp.getResponseContent());
-    @SuppressWarnings("unchecked")
-    Map<String, String> rsp = JsonUtil.unMarshal(createRsp.getResponseContent(), Map.class);
-    String nsInstanceId = rsp.get(CommonConstant.NS_INSTANCE_ID);
-    if (ValidateUtil.isStrEmpty(nsInstanceId)) {
-      LOGGER.error("Invalid instanceId from create operation");
-      throw new ApplicationException(HttpCode.INTERNAL_SERVER_ERROR,
-          DriverExceptionID.INVALID_RESPONSEE_FROM_CREATE_OPERATION);
-    }
-    LOGGER.info("create ns -> end");
-    LOGGER.info("save segment and operaton info -> begin");
-    // Step 5: add relation between service and NS
-    AaiUtil.addRelation(segInput.getNsOperationKey().getGlobalSubscriberId(),
-        segInput.getNsOperationKey().getServiceType(), segInput.getNsOperationKey().getServiceId(),
-        nsInstanceId);
 
-    // Step 6: save resource operation information
+    // Step 5: save resource operation information
     ResourceOperationStatus nsOperInfo = (RequestsDatabase.getInstance())
         .getResourceOperationStatus(segInput.getNsOperationKey().getServiceId(),
             segInput.getNsOperationKey().getOperationId(),
@@ -142,6 +128,20 @@ public class VfcManager {
       throw new ApplicationException(HttpCode.INTERNAL_SERVER_ERROR,
           DriverExceptionID.FAIL_TO_CREATE_NS);
     }
+    @SuppressWarnings("unchecked")
+    Map<String, String> rsp = JsonUtil.unMarshal(createRsp.getResponseContent(), Map.class);
+    String nsInstanceId = rsp.get(CommonConstant.NS_INSTANCE_ID);
+    if (ValidateUtil.isStrEmpty(nsInstanceId)) {
+      LOGGER.error("Invalid instanceId from create operation");
+      throw new ApplicationException(HttpCode.INTERNAL_SERVER_ERROR,
+          DriverExceptionID.INVALID_RESPONSEE_FROM_CREATE_OPERATION);
+    }
+    LOGGER.info("create ns -> end");
+    LOGGER.info("save segment and operaton info -> begin");
+    // Step 6: add relation between service and NS
+    AaiUtil.addRelation(segInput.getNsOperationKey().getGlobalSubscriberId(),
+        segInput.getNsOperationKey().getServiceType(), segInput.getNsOperationKey().getServiceId(),
+        nsInstanceId);
     LOGGER.info("save segment and operation info -> end");
     return createRsp;
   }
@@ -220,18 +220,27 @@ public class VfcManager {
     String url = getUrl(nsInstanceId, CommonConstant.Step.INSTANTIATE);
     String methodType = CommonConstant.MethodType.POST;
 
-    RestfulResponse instRsp = RestfulUtil.send(url, methodType, instReq);
+    RestfulResponse instRsp = RestfulUtil.send(url, methodType, instReq);    
+    ResourceOperationStatus nsOperInfo = (RequestsDatabase.getInstance())
+            .getResourceOperationStatus(segInput.getNsOperationKey().getServiceId(),
+                segInput.getNsOperationKey().getOperationId(),
+                segInput.getNsOperationKey().getNodeTemplateUUID());
     ValidateUtil.assertObjectNotNull(instRsp);
+    if (!HttpCode.isSucess(instRsp.getStatus())) {
+        LOGGER.error("update segment operation status : fail to instantiate ns");
+        nsOperInfo.setStatus(RequestsDbConstant.Status.ERROR);
+        nsOperInfo.setErrorCode(String.valueOf(instRsp.getStatus()));
+        nsOperInfo.setStatusDescription(CommonConstant.StatusDesc.INSTANTIATE_NS_FAILED);
+        (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
+        throw new ApplicationException(HttpCode.INTERNAL_SERVER_ERROR,
+            DriverExceptionID.FAIL_TO_INSTANTIATE_NS);
+      }
     LOGGER.info("instantiate ns response status is : {}", instRsp.getStatus());
     LOGGER.info("instantiate ns response content is : {}", instRsp.getResponseContent());
-    ValidateUtil.assertObjectNotNull(instRsp.getResponseContent());
+    ValidateUtil.assertObjectNotNull(instRsp.getResponseContent());    
     @SuppressWarnings("unchecked")
     Map<String, String> rsp = JsonUtil.unMarshal(instRsp.getResponseContent(), Map.class);
     String jobId = rsp.get(CommonConstant.JOB_ID);
-    ResourceOperationStatus nsOperInfo = (RequestsDatabase.getInstance())
-        .getResourceOperationStatus(segInput.getNsOperationKey().getServiceId(),
-            segInput.getNsOperationKey().getOperationId(),
-            segInput.getNsOperationKey().getNodeTemplateUUID());
     if (ValidateUtil.isStrEmpty(jobId)) {
       LOGGER.error("Invalid jobId from instantiate operation");
       nsOperInfo.setStatus(RequestsDbConstant.Status.ERROR);
@@ -242,17 +251,6 @@ public class VfcManager {
           DriverExceptionID.INVALID_RESPONSE_FROM_INSTANTIATE_OPERATION);
     }
     LOGGER.info("instantiate ns -> end");
-
-    if (!HttpCode.isSucess(instRsp.getStatus())) {
-      LOGGER.error("update segment operation status : fail to instantiate ns");
-      nsOperInfo.setStatus(RequestsDbConstant.Status.ERROR);
-      nsOperInfo.setErrorCode(String.valueOf(instRsp.getStatus()));
-      nsOperInfo.setStatusDescription(CommonConstant.StatusDesc.INSTANTIATE_NS_FAILED);
-      (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
-      throw new ApplicationException(HttpCode.INTERNAL_SERVER_ERROR,
-          DriverExceptionID.FAIL_TO_INSTANTIATE_NS);
-    }
-
     // Step 3: update segment operation job id
     LOGGER.info("update resource operation status job id -> begin");
     nsOperInfo.setJobId(jobId);
@@ -296,6 +294,17 @@ public class VfcManager {
     ValidateUtil.assertObjectNotNull(terminateRsp);
     LOGGER.info("terminate ns response status is : {}", terminateRsp.getStatus());
     LOGGER.info("terminate ns response content is : {}", terminateRsp.getResponseContent());
+    // Step 3: update segment operation
+    if (!HttpCode.isSucess(terminateRsp.getStatus())) {
+      LOGGER.error("fail to instantiate ns");
+      nsOperInfo.setStatus(RequestsDbConstant.Status.ERROR);
+      nsOperInfo.setErrorCode(String.valueOf(terminateRsp.getStatus()));
+      nsOperInfo.setStatusDescription(CommonConstant.StatusDesc.TERMINATE_NS_FAILED);
+      (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
+
+      throw new ApplicationException(HttpCode.INTERNAL_SERVER_ERROR,
+          DriverExceptionID.FAIL_TO_TERMINATE_NS);
+    }
     @SuppressWarnings("unchecked")
     Map<String, String> rsp = JsonUtil.unMarshal(terminateRsp.getResponseContent(), Map.class);
     String jobId = rsp.get(CommonConstant.JOB_ID);
@@ -310,17 +319,6 @@ public class VfcManager {
     }
     LOGGER.info("terminate ns -> end");
 
-    // Step 3: update segment operation
-    if (!HttpCode.isSucess(terminateRsp.getStatus())) {
-      LOGGER.error("fail to instantiate ns");
-      nsOperInfo.setStatus(RequestsDbConstant.Status.ERROR);
-      nsOperInfo.setErrorCode(String.valueOf(terminateRsp.getStatus()));
-      nsOperInfo.setStatusDescription(CommonConstant.StatusDesc.TERMINATE_NS_FAILED);
-      (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
-
-      throw new ApplicationException(HttpCode.INTERNAL_SERVER_ERROR,
-          DriverExceptionID.FAIL_TO_TERMINATE_NS);
-    }
     LOGGER.info("update segment job id -> begin");
     nsOperInfo.setJobId(jobId);
     (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);

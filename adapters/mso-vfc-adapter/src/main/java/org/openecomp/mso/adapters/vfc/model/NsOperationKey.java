@@ -17,6 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.mso.adapters.vfc.model;
 
 /**
@@ -26,20 +27,20 @@ package org.openecomp.mso.adapters.vfc.model;
  * </p>
  * 
  * @author
- * @version     ONAP Amsterdam Release  2017-09-15
+ * @version ONAP Amsterdam Release 2017-09-15
  */
 public class NsOperationKey {
-    
+
     /**
      * The subscriber id
      */
     private String globalSubscriberId;
-    
+
     /**
      * The serviceType
      */
     private String serviceType;
-    
+
     /**
      * The service ID
      */
@@ -49,15 +50,12 @@ public class NsOperationKey {
      * The Operation ID
      */
     private String operationId;
-    
+
     /**
      * the NS template uuid
      */
     private String nodeTemplateUUID;
 
-    
-    
-    
     /**
      * @return Returns the globalSubscriberId.
      */
@@ -65,14 +63,13 @@ public class NsOperationKey {
         return globalSubscriberId;
     }
 
-    
     /**
      * @param globalSubscriberId The globalSubscriberId to set.
      */
     public void setGlobalSubscriberId(String globalSubscriberId) {
         this.globalSubscriberId = globalSubscriberId;
     }
-    
+
     /**
      * @return Returns the serviceType.
      */
@@ -80,8 +77,6 @@ public class NsOperationKey {
         return serviceType;
     }
 
-
-    
     /**
      * @param serviceType The serviceType to set.
      */
@@ -89,9 +84,7 @@ public class NsOperationKey {
         this.serviceType = serviceType;
     }
 
-
     /**
-     * 
      * <br>
      * 
      * @return
@@ -102,7 +95,6 @@ public class NsOperationKey {
     }
 
     /**
-     *     
      * <br>
      * 
      * @param serviceId
@@ -113,7 +105,6 @@ public class NsOperationKey {
     }
 
     /**
-     * 
      * <br>
      * 
      * @return
@@ -124,7 +115,6 @@ public class NsOperationKey {
     }
 
     /**
-     * 
      * <br>
      * 
      * @param operationId
@@ -134,7 +124,6 @@ public class NsOperationKey {
         this.operationId = operationId;
     }
 
-    
     /**
      * @return Returns the nodeTemplateUUID.
      */
@@ -142,7 +131,6 @@ public class NsOperationKey {
         return nodeTemplateUUID;
     }
 
-    
     /**
      * @param nodeTemplateUUID The nodeTemplateUUID to set.
      */
