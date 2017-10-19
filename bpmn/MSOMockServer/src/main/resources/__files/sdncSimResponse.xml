@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+	xmlns:v1="http://domain2.openecomp.org/workflow/sdnc/adapter/schema/v1">
+	<soapenv:Header />
+	<soapenv:Body>
+			<SDNCAdapterCallbackRequest
+				xmlns="http://domain2.openecomp.org/workflow/sdnc/adapter/schema/v1">
+				<CallbackHeader>
+					<RequestId>d325c9a7-84c0-4081-b979-9cc773a0976d</RequestId>
+					<ResponseCode>200</ResponseCode>
+					<ResponseMessage>OK</ResponseMessage>
+				</CallbackHeader>
+				<RequestData xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+					xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">&lt;layer3-service-list
+					xmlns="com:att:sdnctl:l3api"&gt;&lt;service-instance-id&gt;0XX/VXXX/003717//Shakeout&lt;/service-instance-id&gt;&lt;service-status&gt;&lt;rpc-name&gt;svc-topology-operation&lt;/rpc-name&gt;&lt;rpc-action&gt;delete&lt;/rpc-action&gt;&lt;request-status&gt;synccomplete&lt;/request-status&gt;&lt;final-indicator&gt;Y&lt;/final-indicator&gt;&lt;l3sdn-action&gt;DisconnectLayer3ServiceRequest&lt;/l3sdn-action&gt;&lt;response-timestamp&gt;2015-10-22T02:11:52.010Z&lt;/response-timestamp&gt;&lt;/service-status&gt;&lt;service-data&gt;&lt;svc-config-additional-data/&gt;&lt;/service-data&gt;&lt;/layer3-service-list&gt;
+				</RequestData>
+			</SDNCAdapterCallbackRequest>
+	</soapenv:Body>
+</soapenv:Envelope>
