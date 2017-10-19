@@ -23,6 +23,9 @@ package org.openecomp.mso.apihandlerinfra;
 
 public class Constants {
 
+	private Constants() {
+	}
+
 	public static final String VNF_TYPES_PATH = "/{version: v1|v2|v3}/vnf-types";
 	public static final String NETWORK_TYPES_PATH = "/{version: v1|v2|v3}/network-types";
 	public static final String VF_MODULE_MODEL_NAMES_PATH = "/{version: v2|v3}/vf-module-model-names";
