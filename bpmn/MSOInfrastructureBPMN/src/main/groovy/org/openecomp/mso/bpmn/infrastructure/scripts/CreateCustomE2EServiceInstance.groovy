@@ -317,7 +317,7 @@ public class CreateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
                             <serviceId>${serviceId}</serviceId>
                             <operationId>${operationId}</operationId>
                             <operationType>${operationType}</operationType>
-                            <userId>${userId}</responseBody>
+                            <userId>${userId}</userId>
                             <result>${result}</result>
                             <operationContent>${operationContent}</operationContent>
                             <progress>${progress}</progress>
