@@ -41,7 +41,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
-import javax.ejb.EJB;
 
 import org.openecomp.mso.utils.UUIDChecker;
 import org.w3c.dom.Document;
