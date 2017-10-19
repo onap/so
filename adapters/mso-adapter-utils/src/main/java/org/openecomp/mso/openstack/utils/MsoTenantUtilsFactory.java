@@ -33,11 +33,12 @@ import java.lang.reflect.InvocationTargetException;
 public class MsoTenantUtilsFactory {
 
 	private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
-	private CloudConfigFactory cloudConfigFactory= new CloudConfigFactory(); 
+  
+	private CloudConfigFactory cloudConfigFactory= new CloudConfigFactory();
 	protected CloudConfig cloudConfig;
 	protected MsoJavaProperties msoProps = null;
 	private String msoPropID;
-	
+
 	public MsoTenantUtilsFactory (String msoPropID) {
 		this.msoPropID = msoPropID;
 	}
@@ -45,7 +46,7 @@ public class MsoTenantUtilsFactory {
 	//based on Cloud IdentityServerType returns ORM or KEYSTONE Utils
 	public MsoTenantUtils getTenantUtils(String cloudSiteId) {
 
-		// Obtain the cloud site information 
+		// Obtain the cloud site information
 		cloudConfig = cloudConfigFactory.getCloudConfig();
 		CloudSite cloudSite = cloudConfig.getCloudSite (cloudSiteId);
 
@@ -54,7 +55,7 @@ public class MsoTenantUtilsFactory {
 
 	public MsoTenantUtils getTenantUtilsByServerType(String serverType) {
 
-		MsoTenantUtils tenantU = null;
+		MsoTenantUtils tenantU;
 		if (CloudIdentity.IdentityServerType.KEYSTONE.toString().equals(serverType)) {
 			tenantU = new MsoKeystoneUtils (msoPropID);
 		} else {
