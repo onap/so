@@ -618,7 +618,7 @@ public class WorkflowResource {
 
 	private ProcessEngineServices getProcessEngineServices() {
 		if (pes4junit == null) {
-			return ProcessEngines.getDefaultProcessEngine();
+			return ProcessEngines.getProcessEngine("infrastructure");
 		} else {
 			return pes4junit;
 		}

@@ -25,9 +25,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.camunda.bpm.BpmPlatform;
 import org.camunda.bpm.engine.MismatchingMessageCorrelationException;
 import org.camunda.bpm.engine.ProcessEngineServices;
+import org.camunda.bpm.engine.ProcessEngines;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.runtime.Execution;
 import org.camunda.bpm.engine.runtime.MessageCorrelationResult;
@@ -371,7 +371,7 @@ public abstract class AbstractCallbackService {
 	
 	protected ProcessEngineServices getProcessEngineServices() {
 		if (pes4junit == null) {
-			return BpmPlatform.getDefaultProcessEngine();
+			return ProcessEngines.getProcessEngine("infrastructure");
 		} else {
 			return pes4junit;
 		}
