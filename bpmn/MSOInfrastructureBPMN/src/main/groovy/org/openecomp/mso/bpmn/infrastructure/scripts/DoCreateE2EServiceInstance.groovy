@@ -636,7 +636,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
                 }
             }            
 
-            def dbAdapterEndpoint = execution.getVariable("URN_mso_openecomp_adapters_db_endpoint")
+            def dbAdapterEndpoint = execution.getVariable("URN_mso_adapters_openecomp_db_endpoint")
             execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
             utils.log("DEBUG", "DB Adapter Endpoint is: " + dbAdapterEndpoint, isDebugEnabled)
 

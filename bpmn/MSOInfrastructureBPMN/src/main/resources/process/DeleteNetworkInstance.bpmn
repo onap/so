@@ -116,7 +116,7 @@ DeleteNetworkInstance.prepareDBRequestError(execution)]]></bpmn2:script>
         <bpmn2:extensionElements>
           <camunda:connector>
             <camunda:inputOutput>
-              <camunda:inputParameter name="url">${URN_mso_openecomp_adapters_db_endpoint}</camunda:inputParameter>
+              <camunda:inputParameter name="url">${URN_mso_adapters_openecomp_db_endpoint}</camunda:inputParameter>
               <camunda:inputParameter name="payload">${DELNI_deleteDBRequest}</camunda:inputParameter>
               <camunda:inputParameter name="headers">
                 <camunda:map>

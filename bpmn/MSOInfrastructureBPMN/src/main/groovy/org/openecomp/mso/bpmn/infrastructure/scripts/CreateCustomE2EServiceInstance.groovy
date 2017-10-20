@@ -304,7 +304,7 @@ public class CreateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
             execution.setVariable("operationId", operationId)
             execution.setVariable("operationType", operationType)
 
-            def dbAdapterEndpoint = execution.getVariable("URN_mso_openecomp_adapters_db_endpoint")
+            def dbAdapterEndpoint = execution.getVariable("URN_mso_adapters_openecomp_db_endpoint")
             execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
             utils.log("DEBUG", "DB Adapter Endpoint is: " + dbAdapterEndpoint, isDebugEnabled)
 
