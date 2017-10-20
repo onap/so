@@ -40,6 +40,11 @@ import org.openecomp.mso.bpmn.common.workflow.service.WorkflowResponse;
  */
 public class FalloutHandlerTest extends WorkflowTest {
 	private void setupMocks() {
+		stubFor(post(urlEqualTo("/dbadapters/MsoRequestsDbAdapter"))
+				.willReturn(aResponse()
+				.withStatus(200)
+				.withHeader("Content-Type", "text/xml")
+				.withBody("<DbTag>Notified</DbTag>")));
 		stubFor(post(urlEqualTo("/dbadapters/RequestsDbAdapter"))
 				.willReturn(aResponse()
 				.withStatus(200)
