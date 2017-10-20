@@ -21,7 +21,6 @@
 package org.openecomp.mso.openstack.utils;
 
 
-import java.lang.StackTraceElement;
 import org.openecomp.mso.logger.MsoAlarmLogger;
 import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.logger.MessageEnum;
@@ -41,7 +40,7 @@ import com.woorea.openstack.quantum.model.NeutronError;
 
 public class MsoCommonUtils {
 
-	private static MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
+	private static MsoLogger logger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
 	protected static MsoAlarmLogger alarmLogger = new MsoAlarmLogger();
 	
 	protected static String retryDelayProp = "ecomp.mso.adapters.po.retryDelay";
@@ -111,18 +110,18 @@ public class MsoCommonUtils {
         		boolean retry = false;
         		if (retryCodes != null ) {
         			int code = e.getStatus();
-        			LOGGER.debug ("Config values RetryDelay:" + retryDelay + " RetryCount:" + retryCount + " RetryCodes:" + retryCodes + " ResponseCode:" + code);
+                    logger.debug ("Config values RetryDelay:" + retryDelay + " RetryCount:" + retryCount + " RetryCodes:" + retryCodes + " ResponseCode:" + code);
         			for (String rCode : retryCodes.split (",")) {
         				try {
         					if (retryCount > 0 && code == Integer.parseInt (rCode))
         					{
         						retryCount--;
         						retry = true;
-        						LOGGER.debug ("OpenStackResponseException ResponseCode:" + code +  " at:" + parentServiceMethodName + " request:" + requestType +  " Retry indicated. Attempts remaining:" + retryCount);
+                                logger.debug ("OpenStackResponseException ResponseCode:" + code +  " at:" + parentServiceMethodName + " request:" + requestType +  " Retry indicated. Attempts remaining:" + retryCount);
         						break;
         					}
         				} catch (NumberFormatException e1) {
-        					LOGGER.error (MessageEnum.RA_CONFIG_EXC, "No retries. Exception in parsing retry code in config:" + rCode, "", "", MsoLogger.ErrorCode.SchemaError, "Exception in parsing retry code in config");
+                            logger.error (MessageEnum.RA_CONFIG_EXC, "No retries. Exception in parsing retry code in config:" + rCode, "", "", MsoLogger.ErrorCode.SchemaError, "Exception in parsing retry code in config");
         					throw e;
         				}
         			}
@@ -132,7 +131,7 @@ public class MsoCommonUtils {
     				try {
     					Thread.sleep (retryDelay * 1000L);
     				} catch (InterruptedException e1) {
-    					LOGGER.debug ("Thread interrupted while sleeping", e1);
+                        logger.debug ("Thread interrupted while sleeping", e1);
     				}
     			}
         		else
@@ -143,11 +142,11 @@ public class MsoCommonUtils {
         		if (retryCount > 0)
         		{
         			retryCount--;
-        			LOGGER.debug ("OpenstackConnectException at:" + parentServiceMethodName + " request:" + requestType + " Retry indicated. Attempts remaining:" + retryCount);
+                    logger.debug ("OpenstackConnectException at:" + parentServiceMethodName + " request:" + requestType + " Retry indicated. Attempts remaining:" + retryCount);
         			try {
         				Thread.sleep (retryDelay * 1000L);
         			} catch (InterruptedException e1) {
-        				LOGGER.debug ("Thread interrupted while sleeping", e1);
+                        logger.debug ("Thread interrupted while sleeping", e1);
         			}
         		}
         		else
@@ -170,11 +169,11 @@ public class MsoCommonUtils {
             try {
                 // Failed Keystone calls return an Error entity body.
                 Error error = re.getResponse ().getErrorEntity (Error.class);
-                LOGGER.error (MessageEnum.RA_CONNECTION_EXCEPTION, "Openstack Keystone Error on " + context + ": " + error, "Openstack", "", MsoLogger.ErrorCode.DataError, "Openstack Keystone Error on " + context);
+                logger.error (MessageEnum.RA_CONNECTION_EXCEPTION, "Openstack Keystone Error on " + context + ": " + error, "Openstack", "", MsoLogger.ErrorCode.DataError, "Openstack Keystone Error on " + context);
 				me = new MsoOpenstackException (error.getCode (), error.getTitle (), error.getMessage ());
             } catch (Exception e2) {
                 // Can't parse the body as an "Error". Report the HTTP error
-            	LOGGER.error (MessageEnum.RA_CONNECTION_EXCEPTION, "HTTP Error on " + context + ": " + re.getStatus() + "," + re.getMessage(), "Openstack", "", MsoLogger.ErrorCode.DataError, "HTTP Error on " + context, e2);
+                logger.error (MessageEnum.RA_CONNECTION_EXCEPTION, "HTTP Error on " + context + ": " + re.getStatus() + "," + re.getMessage(), "Openstack", "", MsoLogger.ErrorCode.DataError, "HTTP Error on " + context, e2);
 				me = new MsoOpenstackException (re.getStatus (), re.getMessage (), "");
             }
 
@@ -192,7 +191,7 @@ public class MsoCommonUtils {
             me.addContext (context);
 
             // Generate an alarm for all connection errors.
-            LOGGER.error(MessageEnum.RA_GENERAL_EXCEPTION_ARG, "Openstack Keystone connection error on " + context + ": " + e, "Openstack", "", MsoLogger.ErrorCode.DataError, "Openstack Keystone connection error on " + context);
+            logger.error(MessageEnum.RA_GENERAL_EXCEPTION_ARG, "Openstack Keystone connection error on " + context + ": " + e, "Openstack", "", MsoLogger.ErrorCode.DataError, "Openstack Keystone connection error on " + context);
 			alarmLogger.sendAlarm ("KeystoneIOError", MsoAlarmLogger.CRITICAL, me.getContextMessage ());
         }
 
@@ -212,16 +211,16 @@ public class MsoCommonUtils {
             try {
                 // Failed Heat calls return an Explanation entity body.
                 Explanation explanation = re.getResponse ().getErrorEntity (Explanation.class);
-                LOGGER.error (MessageEnum.RA_CONNECTION_EXCEPTION, "OpenStack", "Openstack Error on " + context + ": " + explanation.toString(), "Openstack", "", MsoLogger.ErrorCode.DataError, "Exception - Openstack Error on " + context);
+                logger.error (MessageEnum.RA_CONNECTION_EXCEPTION, "OpenStack", "Openstack Error on " + context + ": " + explanation.toString(), "Openstack", "", MsoLogger.ErrorCode.DataError, "Exception - Openstack Error on " + context);
                 String fullError = explanation.getExplanation() + ", error.type=" + explanation.getError().getType() + ", error.message=" + explanation.getError().getMessage();
-                LOGGER.debug(fullError);
+                logger.debug(fullError);
 				me = new MsoOpenstackException (explanation.getCode (),
                                                 explanation.getTitle (),
                                                 //explanation.getExplanation ());
                                                 fullError);
             } catch (Exception e2) {
                 // Couldn't parse the body as an "Explanation". Report the original HTTP error.
-            	LOGGER.error (MessageEnum.RA_CONNECTION_EXCEPTION, "OpenStack", "HTTP Error on " + context + ": " + re.getStatus() + "," + e.getMessage(), "Openstack", "", MsoLogger.ErrorCode.DataError, "Exception - HTTP Error on " + context, e2);
+                logger.error (MessageEnum.RA_CONNECTION_EXCEPTION, "OpenStack", "HTTP Error on " + context + ": " + re.getStatus() + "," + e.getMessage(), "Openstack", "", MsoLogger.ErrorCode.DataError, "Exception - HTTP Error on " + context, e2);
 				me = new MsoOpenstackException (re.getStatus (), re.getMessage (), "");
             }
 
@@ -240,7 +239,7 @@ public class MsoCommonUtils {
 
             // Generate an alarm for all connection errors.
             alarmLogger.sendAlarm ("HeatIOError", MsoAlarmLogger.CRITICAL, me.getContextMessage ());
-            LOGGER.error(MessageEnum.RA_CONNECTION_EXCEPTION, "OpenStack", "Openstack Heat connection error on " + context + ": " + e, "Openstack", "", MsoLogger.ErrorCode.DataError, "Openstack Heat connection error on " + context);
+            logger.error(MessageEnum.RA_CONNECTION_EXCEPTION, "OpenStack", "Openstack Heat connection error on " + context + ": " + e, "Openstack", "", MsoLogger.ErrorCode.DataError, "Openstack Heat connection error on " + context);
     	}
 
         return me;
@@ -259,11 +258,11 @@ public class MsoCommonUtils {
             try {
                 // Failed Neutron calls return an NeutronError entity body
                 NeutronError error = re.getResponse ().getErrorEntity (NeutronError.class);
-                LOGGER.error (MessageEnum.RA_CONNECTION_EXCEPTION, "OpenStack", "Openstack Neutron Error on " + context + ": " + error, "Openstack", "", MsoLogger.ErrorCode.DataError, "Openstack Neutron Error on " + context);
+                logger.error (MessageEnum.RA_CONNECTION_EXCEPTION, "OpenStack", "Openstack Neutron Error on " + context + ": " + error, "Openstack", "", MsoLogger.ErrorCode.DataError, "Openstack Neutron Error on " + context);
 				me = new MsoOpenstackException (re.getStatus (), error.getType (), error.getMessage ());
             } catch (Exception e2) {
                 // Couldn't parse body as a NeutronError. Report the HTTP error.
-            	LOGGER.error (MessageEnum.RA_CONNECTION_EXCEPTION, "OpenStack", "HTTP Error on " + context + ": " + re.getStatus() + "," + e.getMessage(), "Openstack", "", MsoLogger.ErrorCode.DataError, "Openstack HTTP Error on " + context, e2);
+                logger.error (MessageEnum.RA_CONNECTION_EXCEPTION, "OpenStack", "HTTP Error on " + context + ": " + re.getStatus() + "," + e.getMessage(), "Openstack", "", MsoLogger.ErrorCode.DataError, "Openstack HTTP Error on " + context, e2);
 				me = new MsoOpenstackException (re.getStatus (), re.getMessage (), null);
             }
 
@@ -282,7 +281,7 @@ public class MsoCommonUtils {
 
             // Generate an alarm for all connection errors.
             alarmLogger.sendAlarm ("NeutronIOError", MsoAlarmLogger.CRITICAL, me.getContextMessage ());
-            LOGGER.error(MessageEnum.RA_CONNECTION_EXCEPTION, "OpenStack", "Openstack Neutron Connection error on "+ context + ": " + e, "OpenStack", "", MsoLogger.ErrorCode.DataError, "Openstack Neutron Connection error on "+ context);
+            logger.error(MessageEnum.RA_CONNECTION_EXCEPTION, "OpenStack", "Openstack Neutron Connection error on "+ context + ": " + e, "OpenStack", "", MsoLogger.ErrorCode.DataError, "Openstack Neutron Connection error on "+ context);
     	}
 
         return me;
@@ -300,7 +299,7 @@ public class MsoCommonUtils {
         me.setCategory (MsoExceptionCategory.INTERNAL);
 
         // Always generate an alarm for internal exceptions
-        LOGGER.error(MessageEnum.RA_GENERAL_EXCEPTION_ARG, "An exception occured on  "+ context + ": " + e, "OpenStack", "", MsoLogger.ErrorCode.DataError, "An exception occured on  "+ context);
+        logger.error(MessageEnum.RA_GENERAL_EXCEPTION_ARG, "An exception occured on  "+ context + ": " + e, "OpenStack", "", MsoLogger.ErrorCode.DataError, "An exception occured on  "+ context);
 		alarmLogger.sendAlarm ("AdapterInternalError", MsoAlarmLogger.CRITICAL, me.getContextMessage ());
 
         return me;
