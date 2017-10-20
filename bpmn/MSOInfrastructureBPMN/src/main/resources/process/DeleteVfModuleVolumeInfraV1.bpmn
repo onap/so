@@ -198,7 +198,7 @@ execution.setVariable("DELVfModVol_TransactionSuccessIndicator", true)]]></bpmn2
       <bpmn2:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
-            <camunda:inputParameter name="url">${URN_mso_openecomp_adapters_db_endpoint}</camunda:inputParameter>
+            <camunda:inputParameter name="url">${URN_mso_adapters_openecomp_db_endpoint}</camunda:inputParameter>
             <camunda:inputParameter name="payload">${DELVfModVol_updateInfraRequest}</camunda:inputParameter>
             <camunda:inputParameter name="headers">
               <camunda:map>
