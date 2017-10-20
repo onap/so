@@ -54,7 +54,7 @@ public class HealthCheckHandler  {
 
     private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
     private static final String SITENAME = "mso.sitename";
-    private static final String ADAPTER_ENDPOINT = "mso.adapters.db.endpoint";
+    private static final String ADAPTER_ENDPOINT = "mso.adapters.openecomp.db.endpoint";
     private static final String ADAPTER_NAMESPACE = "mso.adapters.namespace";
     private static final String CONFIG = "mso.bpmn.urn.properties";
     private static final String CREDENTIAL = "mso.adapters.db.auth";

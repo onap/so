@@ -116,7 +116,7 @@ Change the environment file located here : **/shared/mso-docker.json** then run 
 Here are the main parameters you could change:
 
 - mso_config_path: define the path where the configuration files for APIH, JRA and Camunda will be deployed. This parameter should not be changed.
-- In the section mso-bpmn-urn-config, adaptersDbEndpoint: This configuration must point to the APIH hostname. It should have this form: http://mso:8080/dbadapters/RequestsDbAdapter Do not change it if you are not sure.
+- In the section mso-bpmn-urn-config, adaptersOpenecompDbEndpoint: This configuration must point to the APIH hostname. It should have this form: http://mso:8080/dbadapters/RequestsDbAdapter Do not change it if you are not sure.
 - In the section mso-bpmn-urn-config, aaiEndpoint: This parameter should point to the A&AI component. It should be something like: https://c1.vm1.aai.simpledemo.opap.org:8443
 - In the section mso-bpmn-urn-config, aaiAuth: This parameter is the encrypted value of login:password to access the A&AI server. The key used to encrypt is defined in the parameter msoKey.
 - In the section asdc-connection, asdcAddresss: Change the values with the value provided by the ASDC team. Possible value: https://c2.vm1.sdc.simpledemo.onap.org:8443 The password field may be changed as well.
