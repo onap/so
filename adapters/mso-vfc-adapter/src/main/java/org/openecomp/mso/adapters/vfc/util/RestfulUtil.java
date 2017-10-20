@@ -62,7 +62,7 @@ public class RestfulUtil {
 
     private static final MsoAlarmLogger ALARMLOGGER = new MsoAlarmLogger();
 
-    private static final int DEFAULT_TIME_OUT = 60;
+    private static final int DEFAULT_TIME_OUT = 60000;
 
     private static final MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory();
 
