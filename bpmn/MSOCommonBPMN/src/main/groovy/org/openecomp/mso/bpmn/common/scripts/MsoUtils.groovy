@@ -283,7 +283,7 @@ class MsoUtils {
 	def log(logmode,logtxt,isDebugLogEnabled="false"){
 		MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
 		if ("INFO"==logmode) {
-			msoLogger.info(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, logtxt);
+			msoLogger.info(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, logtxt, "BPMN", MsoLogger.getServiceName());
 		} else if ("WARN"==logmode) {
 			// to see the warning text displayed in the log entry, the text must also be passed as arg0 (2nd argument) to invoke the correct MsoLogger warn() method
 			msoLogger.warn (MessageEnum.BPMN_GENERAL_WARNING, logtxt, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, logtxt);
