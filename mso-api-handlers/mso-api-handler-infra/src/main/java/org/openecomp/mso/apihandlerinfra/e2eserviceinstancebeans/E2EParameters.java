@@ -21,6 +21,7 @@
 package org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
@@ -30,52 +31,55 @@ import org.codehaus.jackson.annotate.JsonProperty;
 @JsonIgnoreProperties({ "additionalProperties" })
 public class E2EParameters {
 
-	@JsonProperty("domainHost")
-	private String domainHost;
-
-	@JsonProperty("nodeTemplateName")
-	private String nodeTemplateName;
-
-	@JsonProperty("nodeType")
-	private String nodeType;
-
 	@JsonProperty("globalSubscriberId")
 	private String globalSubscriberId;
 
 	@JsonProperty("subscriberName")
 	private String subscriberName;
+	
+	@JsonProperty("serviceType")
+	private String serviceType;
+	
+	@JsonProperty("templateName")
+	private String templateName;
+	
 
-	@JsonProperty("requestParameters")
-	private E2ERequestParameters requestParameters;
+	@JsonProperty("resources")
+	private List<ResourceRequest> resources;
 
 	@JsonIgnore
 	private Map<String, Object> additionalProperties = new HashMap<>();
 
-	public String getDomainHost() {
-		return domainHost;
-	}
+	
+    /**
+     * @return Returns the serviceType.
+     */
+    public String getServiceType() {
+        return serviceType;
+    }
+    
+    /**
+     * @param serviceType The serviceType to set.
+     */
+    public void setServiceType(String serviceType) {
+        this.serviceType = serviceType;
+    }
+   
+    /**
+     * @return Returns the templateName.
+     */
+    public String getTemplateName() {
+        return templateName;
+    }
+    
+    /**
+     * @param templateName The templateName to set.
+     */
+    public void setTemplateName(String templateName) {
+        this.templateName = templateName;
+    }
 
-	public void setDomainHost(String domainHost) {
-		this.domainHost = domainHost;
-	}
-
-	public String getNodeTemplateName() {
-		return nodeTemplateName;
-	}
-
-	public void setNodeTemplateName(String nodeTemplateName) {
-		this.nodeTemplateName = nodeTemplateName;
-	}
-
-	public String getNodeType() {
-		return nodeType;
-	}
-
-	public void setNodeType(String nodeType) {
-		this.nodeType = nodeType;
-	}
-
-	public String getGlobalSubscriberId() {
+    public String getGlobalSubscriberId() {
 		return globalSubscriberId;
 	}
 
@@ -91,14 +95,6 @@ public class E2EParameters {
 		this.subscriberName = subscriberName;
 	}
 
-	public E2ERequestParameters getRequestParameters() {
-		return requestParameters;
-	}
-
-	public void setRequestParameters(E2ERequestParameters requestParameters) {
-		this.requestParameters = requestParameters;
-	}
-
 	public Map<String, Object> getAdditionalProperties() {
 		return additionalProperties;
 	}
@@ -106,5 +102,19 @@ public class E2EParameters {
 	public void setAdditionalProperties(Map<String, Object> additionalProperties) {
 		this.additionalProperties = additionalProperties;
 	}
+    
+    /**
+     * @return Returns the resources.
+     */
+    public List<ResourceRequest> getResources() {
+        return resources;
+    }
+    
+    /**
+     * @param resources The resources to set.
+     */
+    public void setResources(List<ResourceRequest> resources) {
+        this.resources = resources;
+    }
 
 }
