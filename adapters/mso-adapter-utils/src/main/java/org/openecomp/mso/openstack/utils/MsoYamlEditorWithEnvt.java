@@ -32,7 +32,6 @@ import java.util.Set;
 import java.util.Map.Entry;
 import org.openecomp.mso.db.catalog.beans.HeatTemplateParam;
 import org.codehaus.jackson.map.ObjectMapper;
-import java.util.LinkedHashMap;
 
 import org.yaml.snakeyaml.Yaml;
 
@@ -63,7 +62,7 @@ public class MsoYamlEditorWithEnvt {
 	public synchronized Set <MsoHeatEnvironmentParameter> getParameterListFromEnvt() {
     	// In an environment entry, the parameters section can only contain the name:value - 
     	// not other attributes.
-    	Set <MsoHeatEnvironmentParameter> paramSet = new HashSet<MsoHeatEnvironmentParameter>();
+    	Set <MsoHeatEnvironmentParameter> paramSet = new HashSet<>();
     	Map<String, Object> resourceMap = null;
     	try {
     		resourceMap = (Map<String,Object>) yml.get("parameters");
@@ -79,13 +78,9 @@ public class MsoYamlEditorWithEnvt {
     	while (it.hasNext()) {
     		MsoHeatEnvironmentParameter hep = new MsoHeatEnvironmentParameter();
     		Map.Entry <String, Object> pair = it.next();
-    		//Map<String, String> resourceEntry = (Map <String, String>) pair.getValue();
-    		//String value = null;
-    		String value = null;
+    		String value;
     		Object obj = pair.getValue();
     		if (obj instanceof java.lang.String) {
-    			//value = (String) pair.getValue();
-    			// handle block scalar - literals and folded:
     			value = yaml.dump(obj);
     			// but this adds an extra '\n' at the end - which won't hurt - but we don't need it
     			value = value.substring(0, value.length() - 1);
