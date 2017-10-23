@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,49 +17,52 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonProperty;
+/**
+ * <br>
+ * <p>
+ * </p>
+ * 
+ * @author
+ * @version ONAP Amsterdam Release 2017-9-6
+ */
+public class NsParameters {
 
-public class E2ERequestParameters {
+    private List<LocationConstraint> locationConstraints;
 
-	@JsonProperty("subscriptionServiceType")
-	private String subscriptionServiceType;
+    private Map<String, Object> additionalParamForNs = new HashMap<String,Object>();
+    /**
+     * @return Returns the locationConstraints.
+     */
+    public List<LocationConstraint> getLocationConstraints() {
+        return locationConstraints;
+    }
 
-	@JsonProperty("userParams")
-	private List<E2EUserParam> userParams = null;
+    /**
+     * @param locationConstraints The locationConstraints to set.
+     */
+    public void setLocationConstraints(List<LocationConstraint> locationConstraints) {
+        this.locationConstraints = locationConstraints;
+    }
 
-	@JsonIgnore
-	private Map<String, Object> additionalProperties = new HashMap<>();
+    
+    /**
+     * @return Returns the additionalParamForNs.
+     */
+    public Map<String, Object> getAdditionalParamForNs() {
+        return additionalParamForNs;
+    }
 
-	public String getSubscriptionServiceType() {
-		return subscriptionServiceType;
-	}
-
-	public void setSubscriptionServiceType(String subscriptionServiceType) {
-		this.subscriptionServiceType = subscriptionServiceType;
-	}
-
-	public List<E2EUserParam> getUserParams() {
-		return userParams;
-	}
-
-	public void setUserParams(List<E2EUserParam> userParams) {
-		this.userParams = userParams;
-	}
-
-	public Map<String, Object> getAdditionalProperties() {
-		return additionalProperties;
-	}
-
-	public void setAdditionalProperties(Map<String, Object> additionalProperties) {
-		this.additionalProperties = additionalProperties;
-	}
-
+    
+    /**
+     * @param additionalParamForNs The additionalParamForNs to set.
+     */
+    public void setAdditionalParamForNs(Map<String, Object> additionalParamForNs) {
+        this.additionalParamForNs = additionalParamForNs;
+    }
 }
