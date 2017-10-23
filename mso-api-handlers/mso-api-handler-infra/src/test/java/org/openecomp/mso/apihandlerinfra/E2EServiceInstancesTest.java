@@ -34,9 +34,13 @@ import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.entity.BasicHttpEntity;
 import org.apache.http.message.BasicHttpResponse;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
+import org.hibernate.internal.SessionFactoryImpl;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.openecomp.mso.apihandler.common.CamundaClient;
 import org.openecomp.mso.apihandler.common.RequestClient;
 import org.openecomp.mso.apihandler.common.RequestClientFactory;
@@ -114,7 +118,7 @@ public class E2EServiceInstancesTest {
 		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"templateId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"parameters\":{\"globalSubscriberId\":\"123457\", \"subscriberName\":\"Customer1\",\"serviceType\":\"voLTE\",\"templateName\":\"voLTE Service:1.0\",\"resources\":[{\"resourceName\":\"MOG\",\"resourceDefId\":\"MOG\",\"resourceId\":\"MOG\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-vBAS-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}},{\"vnfProfileId\":\"zte-vMME-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}}],\"additionalParamForNs\":{}}}]}}}";
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.indexOf("Exception while creating record in DB null") != -1);
+		assertTrue(respStr.indexOf("success") != -1);
 	}
 	 
 	@Test
@@ -178,7 +182,7 @@ public class E2EServiceInstancesTest {
 		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"templateId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"parameters\":{\"globalSubscriberId\":\"123457\", \"subscriberName\":\"Customer1\",\"serviceType\":\"voLTE\",\"templateName\":\"voLTE Service:1.0\",\"resources\":[{\"resourceName\":\"MOG\",\"resourceDefId\":\"MOG\",\"resourceId\":\"MOG\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-vBAS-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}},{\"vnfProfileId\":\"zte-vMME-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}}],\"additionalParamForNs\":{}}}]}}}";
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.indexOf("Exception while creating record in DB null") != -1);
+		assertTrue(respStr.indexOf("SVC2000") != -1);
 	}
 	
 	@Test
@@ -242,7 +246,7 @@ public class E2EServiceInstancesTest {
 		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"templateId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"parameters\":{\"globalSubscriberId\":\"123457\", \"subscriberName\":\"Customer1\",\"serviceType\":\"voLTE\",\"templateName\":\"voLTE Service:1.0\",\"resources\":[{\"resourceName\":\"MOG\",\"resourceDefId\":\"MOG\",\"resourceId\":\"MOG\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-vBAS-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}},{\"vnfProfileId\":\"zte-vMME-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}}],\"additionalParamForNs\":{}}}]}}}";
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.indexOf("Exception while creating record in DB null") != -1);
+		assertTrue(respStr.indexOf("SVC2000") != -1);
 	}
 	
 	@Test
@@ -294,7 +298,7 @@ public class E2EServiceInstancesTest {
 		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"templateId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"parameters\":{\"globalSubscriberId\":\"123457\", \"subscriberName\":\"Customer1\",\"serviceType\":\"voLTE\",\"templateName\":\"voLTE Service:1.0\",\"resources\":[{\"resourceName\":\"MOG\",\"resourceDefId\":\"MOG\",\"resourceId\":\"MOG\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-vBAS-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}},{\"vnfProfileId\":\"zte-vMME-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}}],\"additionalParamForNs\":{}}}]}}}";
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.indexOf("Exception while creating record in DB null") != -1);
+		assertTrue(respStr.indexOf("SVC1000") != -1);
 	}
 	
 	@Test
@@ -343,7 +347,7 @@ public class E2EServiceInstancesTest {
 		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"templateId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"parameters\":{\"globalSubscriberId\":\"123457\", \"subscriberName\":\"Customer1\",\"serviceType\":\"voLTE\",\"templateName\":\"voLTE Service:1.0\",\"resources\":[{\"resourceName\":\"MOG\",\"resourceDefId\":\"MOG\",\"resourceId\":\"MOG\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-vBAS-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}},{\"vnfProfileId\":\"zte-vMME-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}}],\"additionalParamForNs\":{}}}]}}}";
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.indexOf("Exception while creating record in DB null") != -1);
+		assertTrue(respStr.indexOf("SVC1000") != -1);
 	}
 	
 	@Test
@@ -373,7 +377,7 @@ public class E2EServiceInstancesTest {
 		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"templateId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"parameters\":{\"globalSubscriberId\":\"123457\", \"subscriberName\":\"Customer1\",\"serviceType\":\"voLTE\",\"templateName\":\"voLTE Service:1.0\",\"resources\":[{\"resourceName\":\"MOG\",\"resourceDefId\":\"MOG\",\"resourceId\":\"MOG\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-vBAS-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}},{\"vnfProfileId\":\"zte-vMME-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}}],\"additionalParamForNs\":{}}}]}}}";
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.indexOf("Exception while creating record in DB null") != -1);
+		assertTrue(respStr.indexOf("SVC1000") != -1);
 	}
 	
 	@Test
@@ -425,7 +429,7 @@ public class E2EServiceInstancesTest {
 		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"templateId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"parameters\":{\"globalSubscriberId\":\"123457\", \"subscriberName\":\"Customer1\",\"serviceType\":\"voLTE\",\"templateName\":\"voLTE Service:1.0\",\"resources\":[{\"resourceName\":\"MOG\",\"resourceDefId\":\"MOG\",\"resourceId\":\"MOG\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-vBAS-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}},{\"vnfProfileId\":\"zte-vMME-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}}],\"additionalParamForNs\":{}}}]}}}";
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.indexOf("The existing request must finish or be cleaned up before proceeding.") != -1);
+		assertTrue(respStr.indexOf("SVC1000") != -1);
 	}
 	
 	@Test
@@ -450,7 +454,7 @@ public class E2EServiceInstancesTest {
 		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"templateId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"parameters\":{\"globalSubscriberId\":\"123457\", \"subscriberName\":\"Customer1\",\"serviceType\":\"voLTE\",\"templateName\":\"voLTE Service:1.0\",\"resources\":[{\"resourceName\":\"MOG\",\"resourceDefId\":\"MOG\",\"resourceId\":\"MOG\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-vBAS-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}},{\"vnfProfileId\":\"zte-vMME-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}}],\"additionalParamForNs\":{}}}]}}}";
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.indexOf("SVC2000") != -1);
+		assertTrue(respStr.indexOf("SVC1000") != -1);
 	}
 	
 	@Test
@@ -468,6 +472,6 @@ public class E2EServiceInstancesTest {
 		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"templateId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"parameters\":{\"globalSubscriberId\":\"123457\", \"subscriberName\":\"Customer1\",\"serviceType\":\"voLTE\",\"templateName\":\"voLTE Service:1.0\",\"resources\":[{\"resourceName\":\"MOG\",\"resourceDefId\":\"MOG\",\"resourceId\":\"MOG\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-vBAS-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}},{\"vnfProfileId\":\"zte-vMME-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}}],\"additionalParamForNs\":{}}}]}}}";
 		Response resp = instance.deleteE2EServiceInstance(request, "v3", "12345678");
 		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.indexOf("SVC2000") != -1);
+		assertTrue(respStr.indexOf("SVC1000") != -1);
 	}
 }

@@ -58,8 +58,6 @@ import org.xml.sax.InputSource
  * @param - subscriptionServiceType - O
  * @param - serviceInstanceId
  * @param - serviceInstanceName - O
- * @param - serviceModelInfo - O
- * @param - productFamilyId
  * @param - serviceInputParams (should contain aic_zone for serviceTypes TRANSPORT,ATM)
  * @param - sdncVersion 
  * @param - failNotFound - TODO
@@ -70,7 +68,7 @@ import org.xml.sax.InputSource
  * 
  * Rollback - Deferred
  */
-public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
+public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
 
 	String Prefix="DDELSI_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()

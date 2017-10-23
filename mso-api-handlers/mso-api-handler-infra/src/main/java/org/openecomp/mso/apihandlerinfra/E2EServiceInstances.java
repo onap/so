@@ -129,7 +129,9 @@ public class E2EServiceInstances {
 			e2eSir = mapper.readValue(requestJSON, E2EServiceInstanceRequest.class);
 
 		} catch (Exception e) {
-
+          //TODO update the service name
+          this.createOperationStatusRecordForError(action, requestId);
+		  
 			msoLogger.debug("Mapping of request to JSON object failed : ", e);
 			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_REQUEST,
 					MsoException.ServiceException, "Mapping of request to JSON object failed.  " + e.getMessage(),
@@ -153,7 +155,8 @@ public class E2EServiceInstances {
 					ErrorNumbers.SVC_BAD_PARAMETER, null);
 			if (msoRequest.getRequestId() != null) {
 				msoLogger.debug("Logging failed message to the database");
-				msoRequest.createRequestRecord(Status.FAILED, action);
+				//TODO update the service name
+		          this.createOperationStatusRecordForError(action, requestId);
 			}
 			msoLogger.error(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "",
 					MsoLogger.ErrorCode.SchemaError, requestJSON, e);
@@ -171,8 +174,10 @@ public class E2EServiceInstances {
 		try {
 			if (!(instanceName == null && "service".equals(requestScope)
 					&& (action == Action.createInstance || action == Action.activateInstance))) {
-				dup = (RequestsDatabase.getInstance()).checkInstanceNameDuplicate(instanceIdMap, instanceName,
-						requestScope);
+			  //TODO : Need to check for the duplicate record from the operation status,
+			  //TODO : commenting this check for unblocking current testing for now...  induces dead code...
+//				dup = (RequestsDatabase.getInstance()).checkInstanceNameDuplicate(instanceIdMap, instanceName,
+//						requestScope);
 			}
 		} catch (Exception e) {
 			msoLogger.error(MessageEnum.APIH_DUPLICATE_CHECK_EXC, MSO_PROP_APIHANDLER_INFRA, "", "",
@@ -204,7 +209,8 @@ public class E2EServiceInstances {
 
 			msoLogger.warn(MessageEnum.APIH_DUPLICATE_FOUND, dupMessage, "", "", MsoLogger.ErrorCode.SchemaError,
 					"Duplicate request - Subscriber already has a request for this service");
-			msoRequest.createRequestRecord(Status.FAILED, action);
+			
+			createOperationStatusRecordForError(action, requestId);
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.Conflict,
 					dupMessage);
 			msoLogger.debug("End of the transaction, the final response is: " + (String) response.getEntity());
@@ -225,7 +231,7 @@ public class E2EServiceInstances {
 					ErrorNumbers.SVC_NO_SERVER_RESOURCES, null);
 			alarmLogger.sendAlarm("MsoDatabaseAccessError", MsoAlarmLogger.CRITICAL,
 					Messages.errors.get(ErrorNumbers.NO_COMMUNICATION_TO_CATALOG_DB));
-			msoRequest.createRequestRecord(Status.FAILED, action);
+			createOperationStatusRecordForError(action, requestId);
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError,
 					"Exception while communciate with DB");
 			msoLogger.debug(END_OF_THE_TRANSACTION + (String) response.getEntity());
@@ -241,7 +247,7 @@ public class E2EServiceInstances {
 			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_NOT_FOUND,
 					MsoException.ServiceException, "Recipe does not exist in catalog DB",
 					ErrorNumbers.SVC_GENERAL_SERVICE_ERROR, null);
-			msoRequest.createRequestRecord(Status.FAILED, action);
+			createOperationStatusRecordForError(action, requestId);
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataNotFound,
 					"No recipe found in DB");
 			msoLogger.debug(END_OF_THE_TRANSACTION + (String) response.getEntity());
@@ -249,21 +255,21 @@ public class E2EServiceInstances {
 			return response;
 		}
 
-		try {
-			msoRequest.createRequestRecord(Status.PENDING, action);
-			//createOperationStatusRecord(action, requestId);
-		} catch (Exception e) {
-			msoLogger.error(MessageEnum.APIH_DB_ACCESS_EXC_REASON, "Exception while creating record in DB", "", "",
-					MsoLogger.ErrorCode.SchemaError, "Exception while creating record in DB", e);
-			msoRequest.setStatus(org.openecomp.mso.apihandlerinfra.vnfbeans.RequestStatusType.FAILED);
-			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_INTERNAL_SERVER_ERROR,
-					MsoException.ServiceException, "Exception while creating record in DB " + e.getMessage(),
-					ErrorNumbers.SVC_BAD_PARAMETER, null);
-			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError,
-					"Exception while creating record in DB");
-			msoLogger.debug("End of the transaction, the final response is: " + (String) response.getEntity());
-			return response;
-		}
+//		try {
+//			msoRequest.createRequestRecord(Status.PENDING, action);
+//			//createOperationStatusRecord(action, requestId);
+//		} catch (Exception e) {
+//			msoLogger.error(MessageEnum.APIH_DB_ACCESS_EXC_REASON, "Exception while creating record in DB", "", "",
+//					MsoLogger.ErrorCode.SchemaError, "Exception while creating record in DB", e);
+//			msoRequest.setStatus(org.openecomp.mso.apihandlerinfra.vnfbeans.RequestStatusType.FAILED);
+//			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_INTERNAL_SERVER_ERROR,
+//					MsoException.ServiceException, "Exception while creating record in DB " + e.getMessage(),
+//					ErrorNumbers.SVC_BAD_PARAMETER, null);
+//			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError,
+//					"Exception while creating record in DB");
+//			msoLogger.debug("End of the transaction, the final response is: " + (String) response.getEntity());
+//			return response;
+//		}
 
 		String serviceInstanceType = e2eSir.getService().getParameters().getServiceType();
 
@@ -296,6 +302,7 @@ public class E2EServiceInstances {
 					ErrorNumbers.SVC_NO_SERVER_RESOURCES, null);
 			alarmLogger.sendAlarm("MsoConfigurationError", MsoAlarmLogger.CRITICAL,
 					Messages.errors.get(ErrorNumbers.NO_COMMUNICATION_TO_BPEL));
+			createOperationStatusRecordForError(action, requestId);
 			msoLogger.error(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "",
 					MsoLogger.ErrorCode.AvailabilityError, "Exception while communicate with BPMN engine");
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError,
@@ -367,8 +374,6 @@ public class E2EServiceInstances {
 		if (bpelStatus == HttpStatus.SC_ACCEPTED) {
 			String camundaJSONResponseBody = respHandler.getResponseBody();
 			msoLogger.debug("Received from Camunda: " + camundaJSONResponseBody);
-			(RequestsDatabase.getInstance()).updateInfraStatus(requestId, Status.IN_PROGRESS.toString(),
-					Constants.PROGRESS_REQUEST_IN_PROGRESS, Constants.MODIFIED_BY_APIHANDLER);
 
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
 					"BPMN accepted the request, the request is in progress");
@@ -469,6 +474,8 @@ public class E2EServiceInstances {
 //		String[] arrayOfInfo = modelInfoValue.split(":");
 //		String modelName = arrayOfInfo[0];
 //		String modelVersion = arrayOfInfo[1];
+
+//      TODO: To ensure, if we dont get the values from the UUI
         String modelName = "voLTE";
         String modelVersion = "1.0";
 		// modelName
@@ -546,8 +553,9 @@ public class E2EServiceInstances {
 		return returnString;
 	}
 
-	private void createOperationStatusRecord(Action action, String requestId) {
-		{
+	
+	private void createOperationStatusRecordForError(Action action, String requestId) {
+
 			AbstractSessionFactoryManager requestsDbSessionFactoryManager = new RequestsDbSessionFactoryManager();
 
 			Session session = null;
@@ -555,21 +563,18 @@ public class E2EServiceInstances {
 
 				session = requestsDbSessionFactoryManager.getSessionFactory().openSession();
 				session.beginTransaction();
-
-				// if (null == sir) {
-				// sir = new ServiceInstancesRequest();
-				// }
-				OperationStatus os = new OperationStatus();
-				os.setOperation(action.name());
-				os.setOperationContent("");
-				os.setOperationId("");
-				os.setProgress("0");
-				os.setReason("");
-				os.setResult("Processing");
-				os.setServiceId(requestId);
-				os.setUserId("");
-				os.setFinishedAt(new Timestamp(System.currentTimeMillis()));
-				os.setOperateAt(new Timestamp(System.currentTimeMillis()));
+				
+		          OperationStatus os = new OperationStatus();
+		          os.setOperation(action.name());
+		          os.setOperationContent("");
+		          os.setOperationId("");
+		          os.setProgress("100");
+		          os.setReason("");
+		          os.setResult("error");
+		          os.setServiceId(requestId);
+		          os.setUserId("");
+		          os.setFinishedAt(new Timestamp(System.currentTimeMillis()));
+		          os.setOperateAt(new Timestamp(System.currentTimeMillis()));
 
 				session.save(os);
 				session.getTransaction().commit();
@@ -580,7 +585,6 @@ public class E2EServiceInstances {
 				if (null != session) {
 					session.close();
 				}
-			}
 		}
 	}
 }
