@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a2f8d8d_6cd8ceef",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/utils/MsoTenantUtilsFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2017-10-23T05:17:21Z",
+      "side": 0,
+      "message": "Should not be removed and should be used atleast to report exception before throw.",
+      "revId": "9b2a9869e4fce3e1b22e1c94c217f3797d01d448",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
