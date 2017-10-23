@@ -469,7 +469,7 @@ public class E2EServiceInstancesTest {
 	@Test
 	public void deleteE2EServiceInstanceTestNormal(){
 		E2EServiceInstances instance = new E2EServiceInstances();
-		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"templateId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"parameters\":{\"globalSubscriberId\":\"123457\", \"subscriberName\":\"Customer1\",\"serviceType\":\"voLTE\",\"templateName\":\"voLTE Service:1.0\",\"resources\":[{\"resourceName\":\"MOG\",\"resourceDefId\":\"MOG\",\"resourceId\":\"MOG\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-vBAS-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}},{\"vnfProfileId\":\"zte-vMME-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}}],\"additionalParamForNs\":{}}}]}}}";
+		String request = "{\"globalSubscriberId\":\"299392392\",\"serviceType\":\"VoLTE\"}";
 		Response resp = instance.deleteE2EServiceInstance(request, "v3", "12345678");
 		String respStr = resp.getEntity().toString();
 		assertTrue(respStr.indexOf("SVC1000") != -1);
