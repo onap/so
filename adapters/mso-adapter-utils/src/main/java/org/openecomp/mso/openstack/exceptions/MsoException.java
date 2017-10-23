@@ -61,6 +61,6 @@ public abstract class MsoException extends Exception
 		if (this.context == null)
 			return getMessage();
 		else
-			return ("[" + context + "] " + getMessage());
+			return "[" + context + "] " + getMessage();
 	}
 }
