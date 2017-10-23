@@ -21,8 +21,6 @@
 package org.openecomp.mso.adapters.requestsdb;
 
 import java.sql.Timestamp;
-
-import javax.jws.WebMethod;
 import javax.jws.WebService;
 
 import org.hibernate.HibernateException;
