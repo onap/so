@@ -251,7 +251,7 @@ public class E2EServiceInstances {
 
 		try {
 			msoRequest.createRequestRecord(Status.PENDING, action);
-			createOperationStatusRecord(action, requestId);
+			//createOperationStatusRecord(action, requestId);
 		} catch (Exception e) {
 			msoLogger.error(MessageEnum.APIH_DB_ACCESS_EXC_REASON, "Exception while creating record in DB", "", "",
 					MsoLogger.ErrorCode.SchemaError, "Exception while creating record in DB", e);
@@ -265,12 +265,9 @@ public class E2EServiceInstances {
 			return response;
 		}
 
-		String modelInfo = e2eSir.getService().getParameters().getNodeTemplateName();
-		String[] arrayOfInfo = modelInfo.split(":");
-		String serviceInstanceType = arrayOfInfo[0];
+		String serviceInstanceType = e2eSir.getService().getParameters().getServiceType();
 
 		String serviceId = "";
-
 		RequestClient requestClient = null;
 		HttpResponse response = null;
 
@@ -468,11 +465,12 @@ public class E2EServiceInstances {
 		// modelNameVersionId
 		modelInfo.setModelNameVersionId(e2eSir.getService().getTemplateId());
 
-		String modelInfoValue = e2eSir.getService().getParameters().getNodeTemplateName();
-		String[] arrayOfInfo = modelInfoValue.split(":");
-		String modelName = arrayOfInfo[0];
-		String modelVersion = arrayOfInfo[1];
-
+//		String modelInfoValue = e2eSir.getService().getParameters().getNodeTemplateName();
+//		String[] arrayOfInfo = modelInfoValue.split(":");
+//		String modelName = arrayOfInfo[0];
+//		String modelVersion = arrayOfInfo[1];
+        String modelName = "voLTE";
+        String modelVersion = "1.0";
 		// modelName
 		modelInfo.setModelName(modelName);
 
@@ -517,19 +515,19 @@ public class E2EServiceInstances {
 
 		// Userparams
 		List<E2EUserParam> userParams;
-		userParams = e2eSir.getService().getParameters().getRequestParameters().getUserParams();
+		//userParams = e2eSir.getService().getParameters().getRequestParameters().getUserParams();
 		List<Map<String, String>> userParamList = new ArrayList<>();
 		Map<String, String> userParamMap = new HashMap<>();
 		//complete json request updated in the camunda
 		userParamMap.put("UUIRequest", requestJSON);
 		userParamMap.put("ServiceInstanceName", e2eSir.getService().getName());
 
-		Map<String, String> userParamMap3 = null;
-		for (E2EUserParam userp : userParams) {
-			userParamMap.put(userp.getName(), userp.getValue());
-			userParamList.add(userParamMap);
-		}
-
+//		Map<String, String> userParamMap3 = null;
+//		for (E2EUserParam userp : userParams) {
+//			userParamMap.put(userp.getName(), userp.getValue());
+//			
+//		}
+		userParamList.add(userParamMap);
 		requestParameters.setUserParams(userParamList);
 
 		// setting requestParameters to requestDetails

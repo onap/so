@@ -1,0 +1,21 @@
+<jboss-deployment-structure>
+	<deployment>
+		<!-- Exclusions allow you to prevent the server from automatically adding some dependencies -->
+		<exclusions>
+			<module name="org.apache.log4j" />
+			<module name="org.slf4j" />
+			<module name="org.slf4j.impl" />
+			<module name="org.jboss.resteasy.resteasy-jackson-provider" />
+			<module name="org.jboss.resteasy.resteasy-jettison-provider" />
+		</exclusions>
+		<dependencies>
+			    <module name="org.jboss.jandex" slot="main" />
+                <module name="org.javassist" slot="main" />
+                <module name="org.antlr" slot="main" />
+                <module name="org.dom4j" slot="main" />
+                <module name="org.jboss.resteasy.resteasy-jackson2-provider" services="import" />
+                <!-- This module contain the ProviderBase class: -->
+                <module name="com.fasterxml.jackson.jaxrs.jackson-jaxrs-json-provider" export="true" />
+		</dependencies>
+	</deployment>
+</jboss-deployment-structure>
