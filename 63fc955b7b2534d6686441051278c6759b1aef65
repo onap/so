@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a2f8d8d_87f8757d",
+        "filename": "packages/docker/src/main/docker/docker-files/Dockerfile.mso-chef-final",
+        "patchSetId": 1
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2017-10-23T09:02:13Z",
+      "side": 1,
+      "message": "Please correct the statement",
+      "revId": "63fc955b7b2534d6686441051278c6759b1aef65",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
