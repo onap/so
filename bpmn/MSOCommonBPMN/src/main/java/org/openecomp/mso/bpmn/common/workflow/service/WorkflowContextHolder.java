@@ -45,7 +45,7 @@ public class WorkflowContextHolder {
 	/**
 	 * Delay Queue which holds workflow context holder objects
 	 */
-	private final DelayQueue<WorkflowContext> responseQueue = new DelayQueue<WorkflowContext>();
+	private final DelayQueue<WorkflowContext> responseQueue = new DelayQueue<>();
 	private final TimeoutThread timeoutThread = new TimeoutThread();
 
 	private WorkflowContextHolder() {
@@ -141,13 +141,13 @@ public class WorkflowContextHolder {
 	/**
 	 * Timeout thread which monitors the delay queue for expired context and send timeout response
 	 * to client
-	 *
+	 *git review -R
 	 * */
 	private class TimeoutThread extends Thread {
 		public void run() {
 			while (!isInterrupted()) {
 				try {
-					WorkflowContext requestObject = responseQueue.take();					
+					WorkflowContext requestObject = responseQueue.take();
 					msoLogger.debug("Time remaining for request id: " + requestObject.getRequestId() + ":" + requestObject.getDelay(TimeUnit.MILLISECONDS));
 					msoLogger.debug("Preparing timeout response for " + requestObject.getProcessKey() + ":" + ":" + requestObject.getRequestId());
 					WorkflowResponse response = new WorkflowResponse();
