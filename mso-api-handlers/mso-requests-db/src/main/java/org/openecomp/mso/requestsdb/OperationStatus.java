@@ -42,6 +42,8 @@ public class OperationStatus implements Serializable{
     
     private String operationId;
     
+    private String serviceName;
+    
     private String operation;
     
     private String userId;
@@ -156,6 +158,24 @@ public class OperationStatus implements Serializable{
     
     public void setFinishedAt(Timestamp finishedAt) {
         this.finishedAt = finishedAt;
+    }
+
+
+    
+    /**
+     * @return Returns the serviceName.
+     */
+    public String getServiceName() {
+        return serviceName;
+    }
+
+
+    
+    /**
+     * @param serviceName The serviceName to set.
+     */
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
     }
 
 

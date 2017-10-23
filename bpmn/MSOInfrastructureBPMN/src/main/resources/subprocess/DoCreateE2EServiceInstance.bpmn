@@ -100,17 +100,6 @@ dcsi.postProcessRollback(execution)
       </bpmn2:scriptTask>
       <bpmn2:sequenceFlow id="SequenceFlow_1xzgv5k" sourceRef="ScriptTask_1p0vyip" targetRef="EndEvent_117lkk3" />
     </bpmn2:subProcess>
-    <bpmn2:exclusiveGateway id="ExclusiveGateway_1nk6aol" name="sdncVersion is 1610?">
-      <bpmn2:incoming>SequenceFlow_1dd86x8</bpmn2:incoming>
-      <bpmn2:outgoing>SequenceFlow_00v4npo</bpmn2:outgoing>
-      <bpmn2:outgoing>SequenceFlow_1170ztf</bpmn2:outgoing>
-    </bpmn2:exclusiveGateway>
-    <bpmn2:endEvent id="EndEvent_10659gr">
-      <bpmn2:incoming>SequenceFlow_00v4npo</bpmn2:incoming>
-    </bpmn2:endEvent>
-    <bpmn2:sequenceFlow id="SequenceFlow_00v4npo" name="yes" sourceRef="ExclusiveGateway_1nk6aol" targetRef="EndEvent_10659gr">
-      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{execution.getVariable("sdncVersion" ) == "1610"}]]></bpmn2:conditionExpression>
-    </bpmn2:sequenceFlow>
     <bpmn2:scriptTask id="ScriptTask_0i8cqdy" name="Post Process AAI GET" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_4</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_1w01tqs</bpmn2:outgoing>
@@ -121,12 +110,11 @@ dcsi.postProcessAAIGET(execution)]]></bpmn2:script>
     <bpmn2:sequenceFlow id="SequenceFlow_1w01tqs" sourceRef="ScriptTask_0i8cqdy" targetRef="CustomE2EPutService" />
     <bpmn2:scriptTask id="ScriptTask_0q37vn9" name="Post Process AAI PUT" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_129ih1g</bpmn2:incoming>
-      <bpmn2:outgoing>SequenceFlow_1dd86x8</bpmn2:outgoing>
+      <bpmn2:outgoing>SequenceFlow_03fabby</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
 def ddsi = new DoCreateE2EServiceInstance()
 ddsi.postProcessAAIPUT(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
-    <bpmn2:sequenceFlow id="SequenceFlow_1dd86x8" sourceRef="ScriptTask_0q37vn9" targetRef="ExclusiveGateway_1nk6aol" />
     <bpmn2:scriptTask id="ScriptTask_0081lne" name="Prepare  Resource Requst For overlay" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_1pjr82f</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0ofqw6v</bpmn2:outgoing>
@@ -170,14 +158,13 @@ csi.postConfigRequest(execution)]]></bpmn2:script>
     <bpmn2:sequenceFlow id="SequenceFlow_15zgrcq" sourceRef="ScriptTask_0wvq4t8" targetRef="CallActivity_0uwm4l1" />
     <bpmn2:sequenceFlow id="SequenceFlow_1vvdkcs" sourceRef="CallActivity_09c3ajg" targetRef="ScriptTask_1xdjlzm" />
     <bpmn2:sequenceFlow id="SequenceFlow_092ghvu" sourceRef="ScriptTask_1xdjlzm" targetRef="EndEvent_0kbbt94" />
-    <bpmn2:sequenceFlow id="SequenceFlow_1170ztf" sourceRef="ExclusiveGateway_1nk6aol" targetRef="Task_0uiekmn" />
     <bpmn2:endEvent id="EndEvent_0kbbt94">
       <bpmn2:incoming>SequenceFlow_092ghvu</bpmn2:incoming>
     </bpmn2:endEvent>
     <bpmn2:sequenceFlow id="SequenceFlow_0k4q7jm" sourceRef="CallActivity_0uwm4l1" targetRef="Task_0aidjmp" />
     <bpmn2:sequenceFlow id="SequenceFlow_1qctzm0" sourceRef="Task_0uiekmn" targetRef="Task_0raqlqc" />
     <bpmn2:scriptTask id="Task_0uiekmn" name="Prepare Resource Oper Status">
-      <bpmn2:incoming>SequenceFlow_1170ztf</bpmn2:incoming>
+      <bpmn2:incoming>SequenceFlow_03fabby</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_1qctzm0</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
 def ddsi = new DoCreateE2EServiceInstance()
@@ -255,6 +242,7 @@ csi.preResourceRequest(execution, nsName)]]></bpmn2:script>
       <bpmn2:incoming>SequenceFlow_0ofqw6v</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_1vvdkcs</bpmn2:outgoing>
     </bpmn2:serviceTask>
+    <bpmn2:sequenceFlow id="SequenceFlow_03fabby" sourceRef="ScriptTask_0q37vn9" targetRef="Task_0uiekmn" />
   </bpmn2:process>
   <bpmn2:error id="Error_2" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
   <bpmn2:error id="Error_1" name="java.lang.Exception" errorCode="java.lang.Exception" />
@@ -366,25 +354,6 @@ csi.preResourceRequest(execution, nsName)]]></bpmn2:script>
           <dc:Bounds x="-18" y="467" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ExclusiveGateway_1nk6aol_di" bpmnElement="ExclusiveGateway_1nk6aol" isMarkerVisible="true">
-        <dc:Bounds x="997" y="460" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="905" y="472" width="72" height="24" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="EndEvent_10659gr_di" bpmnElement="EndEvent_10659gr">
-        <dc:Bounds x="1103" y="467" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1121" y="508" width="0" height="0" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_00v4npo_di" bpmnElement="SequenceFlow_00v4npo">
-        <di:waypoint xsi:type="dc:Point" x="1047" y="485" />
-        <di:waypoint xsi:type="dc:Point" x="1103" y="485" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1063" y="461" width="18" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_0i8cqdy_di" bpmnElement="ScriptTask_0i8cqdy">
         <dc:Bounds x="971" y="57" width="100" height="80" />
       </bpmndi:BPMNShape>
@@ -400,13 +369,6 @@ csi.preResourceRequest(execution, nsName)]]></bpmn2:script>
       <bpmndi:BPMNShape id="ScriptTask_0q37vn9_di" bpmnElement="ScriptTask_0q37vn9">
         <dc:Bounds x="972" y="336" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_1dd86x8_di" bpmnElement="SequenceFlow_1dd86x8">
-        <di:waypoint xsi:type="dc:Point" x="1022" y="416" />
-        <di:waypoint xsi:type="dc:Point" x="1022" y="460" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1037" y="438" width="0" height="0" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_0ocetux_di" bpmnElement="ScriptTask_0ocetux">
         <dc:Bounds x="76" y="442" width="100" height="80" />
       </bpmndi:BPMNShape>
@@ -467,13 +429,6 @@ csi.preResourceRequest(execution, nsName)]]></bpmn2:script>
         <di:waypoint xsi:type="dc:Point" x="-787" y="859" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="-809" y="838" width="90" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_1170ztf_di" bpmnElement="SequenceFlow_1170ztf">
-        <di:waypoint xsi:type="dc:Point" x="1022" y="510" />
-        <di:waypoint xsi:type="dc:Point" x="1022" y="588" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="992" y="543" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="EndEvent_01p249c_di" bpmnElement="EndEvent_0kbbt94">
@@ -563,6 +518,13 @@ csi.preResourceRequest(execution, nsName)]]></bpmn2:script>
       <bpmndi:BPMNShape id="ServiceTask_1cnnn5b_di" bpmnElement="CallActivity_09c3ajg">
         <dc:Bounds x="-578" y="819" width="100" height="80" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_03fabby_di" bpmnElement="SequenceFlow_03fabby">
+        <di:waypoint xsi:type="dc:Point" x="1022" y="416" />
+        <di:waypoint xsi:type="dc:Point" x="1022" y="588" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1037" y="496" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn2:definitions>

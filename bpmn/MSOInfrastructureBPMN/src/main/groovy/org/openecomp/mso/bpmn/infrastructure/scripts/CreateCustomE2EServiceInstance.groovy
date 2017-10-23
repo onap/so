@@ -292,6 +292,7 @@ public class CreateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
         try{
             String serviceId = execution.getVariable("serviceInstanceId")
             String operationId = UUID.randomUUID().toString()
+            String serviceName = execution.getVariable("serviceInstanceName")
             String operationType = "CREATE"
             String userId = ""
             String result = "processing"
@@ -316,6 +317,7 @@ public class CreateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
                             <ns:updateServiceOperationStatus xmlns:ns="http://org.openecomp.mso/requestsdb">
                             <serviceId>${serviceId}</serviceId>
                             <operationId>${operationId}</operationId>
+                            <serviceName>${serviceName}</serviceName>
                             <operationType>${operationType}</operationType>
                             <userId>${userId}</userId>
                             <result>${result}</result>
