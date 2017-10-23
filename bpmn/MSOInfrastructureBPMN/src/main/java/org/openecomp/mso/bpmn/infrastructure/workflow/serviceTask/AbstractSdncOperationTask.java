@@ -43,8 +43,9 @@ import java.util.Map;
 public abstract class AbstractSdncOperationTask extends BaseTask {
 
     private static final String DEFAULT_MSB_IP = "127.0.0.1";
-    private static final int DEFAULT_MSB_Port = 10081;
+    private static final int DEFAULT_MSB_Port = 80;
     private static final String SDCADAPTOR_INPUTS = "resourceParameters";
+    public static final String ONAP_IP = "ONAP_IP";
     private RequestsDatabase requestsDB = RequestsDatabase.getInstance();
 
 
@@ -105,9 +106,15 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
 
     private GenericResourceApi getGenericResourceApiClient(DelegateExecution execution) {
         updateProgress(execution, null, null, "20", "getGenericResourceApiClient begin!");
+        String msbIp = System.getenv().get(ONAP_IP);
+        int msbPort = DEFAULT_MSB_Port;
         Map<String, String> properties = PropertyConfiguration.getInstance().getProperties("mso.bpmn.urn.properties");
-        String msbIp = getString(properties, "msb.address", DEFAULT_MSB_IP);
-        int msbPort = Integer.valueOf(getString(properties, "msb.port", String.valueOf(DEFAULT_MSB_Port)));
+        if (properties != null) {
+            if (StringUtils.isBlank(msbIp)) {
+                msbIp = getString(properties, "msb.address", DEFAULT_MSB_IP);
+            }
+            msbPort = Integer.valueOf(getString(properties, "msb.port", String.valueOf(DEFAULT_MSB_Port)));
+        }
         MSBServiceClient msbClient = new MSBServiceClient(msbIp, msbPort);
         RestServiceCreater restServiceCreater = new RestServiceCreater(msbClient);
         return restServiceCreater.createService(GenericResourceApi.class);
