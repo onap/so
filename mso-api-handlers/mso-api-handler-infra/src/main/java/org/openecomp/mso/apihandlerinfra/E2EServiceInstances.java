@@ -45,6 +45,7 @@ import org.openecomp.mso.apihandler.common.ErrorNumbers;
 import org.openecomp.mso.apihandler.common.RequestClient;
 import org.openecomp.mso.apihandler.common.RequestClientFactory;
 import org.openecomp.mso.apihandler.common.ResponseHandler;
+import org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans.E2EServiceInstanceDeleteRequest;
 import org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans.E2EServiceInstanceRequest;
 import org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans.E2EUserParam;
 import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.ModelInfo;
@@ -112,7 +113,130 @@ public class E2EServiceInstances {
 
 		instanceIdMap.put("serviceId", serviceId);
 
-		return processE2EserviceInstances(request, Action.deleteInstance, null, version);
+		return deleteE2EserviceInstances(request, Action.deleteInstance, instanceIdMap, version);
+	}
+
+	private Response deleteE2EserviceInstances(String requestJSON, Action action,
+			HashMap<String, String> instanceIdMap, String version) {
+		
+		String requestId = UUIDChecker.generateUUID(msoLogger);
+		long startTime = System.currentTimeMillis();
+		msoLogger.debug("requestId is: " + requestId);
+		E2EServiceInstanceDeleteRequest e2eDelReq = null;
+
+		MsoRequest msoRequest = new MsoRequest(requestId);
+		
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			e2eDelReq = mapper.readValue(requestJSON, E2EServiceInstanceDeleteRequest.class);
+
+		} catch (Exception e) {
+
+			msoLogger.debug("Mapping of request to JSON object failed : ", e);
+			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_REQUEST,
+					MsoException.ServiceException, "Mapping of request to JSON object failed.  " + e.getMessage(),
+					ErrorNumbers.SVC_BAD_PARAMETER, null);
+			msoLogger.error(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "",
+					MsoLogger.ErrorCode.SchemaError, requestJSON, e);
+			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.SchemaError,
+					"Mapping of request to JSON object failed");
+			msoLogger.debug("End of the transaction, the final response is: " + (String) response.getEntity());
+			createOperationStatusRecordForError(action, requestId);
+			return response;
+		}
+		
+		CatalogDatabase db = null;
+		RecipeLookupResult recipeLookupResult = null;
+		try {
+			db = CatalogDatabase.getInstance();
+			recipeLookupResult = getServiceInstanceOrchestrationURI(db, action);
+		} catch (Exception e) {
+			msoLogger.error(MessageEnum.APIH_DB_ACCESS_EXC, MSO_PROP_APIHANDLER_INFRA, "", "",
+					MsoLogger.ErrorCode.AvailabilityError, "Exception while communciate with Catalog DB", e);
+			msoRequest.setStatus(org.openecomp.mso.apihandlerinfra.vnfbeans.RequestStatusType.FAILED);
+			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_NOT_FOUND,
+					MsoException.ServiceException, "No communication to catalog DB " + e.getMessage(),
+					ErrorNumbers.SVC_NO_SERVER_RESOURCES, null);
+			alarmLogger.sendAlarm("MsoDatabaseAccessError", MsoAlarmLogger.CRITICAL,
+					Messages.errors.get(ErrorNumbers.NO_COMMUNICATION_TO_CATALOG_DB));
+			msoRequest.createRequestRecord(Status.FAILED, action);
+			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError,
+					"Exception while communciate with DB");
+			msoLogger.debug(END_OF_THE_TRANSACTION + (String) response.getEntity());
+			return response;
+		} finally {
+			closeCatalogDB(db);
+		}
+		if (recipeLookupResult == null) {
+			msoLogger.error(MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND, MSO_PROP_APIHANDLER_INFRA, "", "",
+					MsoLogger.ErrorCode.DataError, "No recipe found in DB");
+			msoRequest.setStatus(org.openecomp.mso.apihandlerinfra.vnfbeans.RequestStatusType.FAILED);
+			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_NOT_FOUND,
+					MsoException.ServiceException, "Recipe does not exist in catalog DB",
+					ErrorNumbers.SVC_GENERAL_SERVICE_ERROR, null);
+			msoRequest.createRequestRecord(Status.FAILED, action);
+			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataNotFound,
+					"No recipe found in DB");
+			msoLogger.debug(END_OF_THE_TRANSACTION + (String) response.getEntity());
+			createOperationStatusRecordForError(action, requestId);
+			return response;
+		}
+
+		
+		RequestClient requestClient = null;
+		HttpResponse response = null;
+
+		long subStartTime = System.currentTimeMillis();
+		//String sirRequestJson = mapReqJsonToSvcInstReq(e2eSir, requestJSON);
+
+		try {
+			requestClient = RequestClientFactory.getRequestClient(recipeLookupResult.getOrchestrationURI(),
+					MsoPropertiesUtils.loadMsoProperties());
+
+			// Capture audit event
+			msoLogger.debug("MSO API Handler Posting call to BPEL engine for url: " + requestClient.getUrl());
+            String serviceId = instanceIdMap.get("serviceId");
+            String serviceInstanceType = e2eDelReq.getServiceType();
+			response = requestClient.post(requestId, false, recipeLookupResult.getRecipeTimeout(), action.name(),
+					serviceId, null, null, null, null, serviceInstanceType, null, null, null, requestJSON);
+
+			msoLogger.recordMetricEvent(subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
+					"Successfully received response from BPMN engine", "BPMN", recipeLookupResult.getOrchestrationURI(),
+					null);
+		} catch (Exception e) {
+			msoLogger.recordMetricEvent(subStartTime, MsoLogger.StatusCode.ERROR,
+					MsoLogger.ResponseCode.CommunicationError, "Exception while communicate with BPMN engine", "BPMN",
+					recipeLookupResult.getOrchestrationURI(), null);
+			Response resp = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_GATEWAY,
+					MsoException.ServiceException, "Failed calling bpmn " + e.getMessage(),
+					ErrorNumbers.SVC_NO_SERVER_RESOURCES, null);
+			alarmLogger.sendAlarm("MsoConfigurationError", MsoAlarmLogger.CRITICAL,
+					Messages.errors.get(ErrorNumbers.NO_COMMUNICATION_TO_BPEL));
+			msoLogger.error(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "",
+					MsoLogger.ErrorCode.AvailabilityError, "Exception while communicate with BPMN engine");
+			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError,
+					"Exception while communicate with BPMN engine");
+			msoLogger.debug("End of the transaction, the final response is: " + (String) resp.getEntity());
+			createOperationStatusRecordForError(action, requestId);
+			return resp;
+		}
+
+		if (response == null) {
+			Response resp = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_GATEWAY,
+					MsoException.ServiceException, "bpelResponse is null", ErrorNumbers.SVC_NO_SERVER_RESOURCES, null);
+			msoLogger.error(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "",
+					MsoLogger.ErrorCode.BusinessProcesssError, "Null response from BPEL");
+			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.InternalError,
+					"Null response from BPMN");
+			msoLogger.debug(END_OF_THE_TRANSACTION + (String) resp.getEntity());
+			createOperationStatusRecordForError(action, requestId);
+			return resp;
+		}
+
+		ResponseHandler respHandler = new ResponseHandler(response, requestClient.getType());
+		int bpelStatus = respHandler.getStatus();
+
+		return beplStatusUpdate(requestId, startTime, msoRequest, requestClient, respHandler, bpelStatus);
 	}
 
 	private Response processE2EserviceInstances(String requestJSON, Action action,
@@ -210,10 +334,11 @@ public class E2EServiceInstances {
 			msoLogger.warn(MessageEnum.APIH_DUPLICATE_FOUND, dupMessage, "", "", MsoLogger.ErrorCode.SchemaError,
 					"Duplicate request - Subscriber already has a request for this service");
 			
-			createOperationStatusRecordForError(action, requestId);
+			
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.Conflict,
 					dupMessage);
 			msoLogger.debug("End of the transaction, the final response is: " + (String) response.getEntity());
+			createOperationStatusRecordForError(action, requestId);
 			return response;
 		}
 		
@@ -231,10 +356,11 @@ public class E2EServiceInstances {
 					ErrorNumbers.SVC_NO_SERVER_RESOURCES, null);
 			alarmLogger.sendAlarm("MsoDatabaseAccessError", MsoAlarmLogger.CRITICAL,
 					Messages.errors.get(ErrorNumbers.NO_COMMUNICATION_TO_CATALOG_DB));
-			createOperationStatusRecordForError(action, requestId);
+			
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError,
 					"Exception while communciate with DB");
 			msoLogger.debug(END_OF_THE_TRANSACTION + (String) response.getEntity());
+			createOperationStatusRecordForError(action, requestId);
 			return response;
 		} finally {
 			closeCatalogDB(db);
@@ -247,11 +373,11 @@ public class E2EServiceInstances {
 			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_NOT_FOUND,
 					MsoException.ServiceException, "Recipe does not exist in catalog DB",
 					ErrorNumbers.SVC_GENERAL_SERVICE_ERROR, null);
-			createOperationStatusRecordForError(action, requestId);
+		
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataNotFound,
 					"No recipe found in DB");
 			msoLogger.debug(END_OF_THE_TRANSACTION + (String) response.getEntity());
-
+			createOperationStatusRecordForError(action, requestId);
 			return response;
 		}
 
@@ -302,12 +428,12 @@ public class E2EServiceInstances {
 					ErrorNumbers.SVC_NO_SERVER_RESOURCES, null);
 			alarmLogger.sendAlarm("MsoConfigurationError", MsoAlarmLogger.CRITICAL,
 					Messages.errors.get(ErrorNumbers.NO_COMMUNICATION_TO_BPEL));
-			createOperationStatusRecordForError(action, requestId);
 			msoLogger.error(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "",
 					MsoLogger.ErrorCode.AvailabilityError, "Exception while communicate with BPMN engine");
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError,
 					"Exception while communicate with BPMN engine");
 			msoLogger.debug("End of the transaction, the final response is: " + (String) resp.getEntity());
+			createOperationStatusRecordForError(action, requestId);
 			return resp;
 		}
 
