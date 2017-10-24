@@ -161,19 +161,23 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
 		  */
 		  def jsonSlurper = new JsonSlurper()
 		  def jsonOutput = new JsonOutput()
-  
+
 		  Map reqMap = jsonSlurper.parseText(createVcpeServiceRequest)
-  
+  
 		  //InputParams
 		  def userParams = reqMap.requestDetails?.requestParameters?.userParams
   
 		  Map<String, String> inputMap = [:]
+
+
 		  if (userParams) {
-			  userParams.each {
-				  name, value -> inputMap.put(name, value)
-					if (name.equals("BRG_WAN_MAC_Address"))
-							execution.setVariable("brgWanMacAddress", value)
-			  }
+				userParams.each {
+								userParam ->
+								if("BRG_WAN_MAC_Address".equals(userParam?.name)) {
+												execution.setVariable("brgWanMacAddress", userParam.value)
+												inputMap.put("BRG_WAN_MAC_Address", userParam.value)
+					}
+				}
 		  }
 
 		  utils.log("DEBUG", "User Input Parameters map: " + userParams.toString(), isDebugEnabled)

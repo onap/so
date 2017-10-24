@@ -30,10 +30,13 @@
 				{
 					"subscriptionServiceType":"123456789",
 					"aLaCarte":"false",
-					"userParams":
-						{
-							"BRG_WAN_MAC_Address" : "brgmac"
-						}
+                    "userParams":
+                       [
+                            {
+                                "name":"BRG_WAN_MAC_Address",
+                                "value":"brgmac"
+                            }
+                       ]
 				}
 				
 		}
