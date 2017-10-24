@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a2f8d8d_f5f8fae6",
+        "filename": "packages/docker/src/main/docker/docker-files/wait-for.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1423
+      },
+      "writtenOn": "2017-10-24T20:46:24Z",
+      "side": 1,
+      "message": "I believe MIT Licensed code may be included inside Apache 2.0 Licensed projects (which ONAP is), so I think we\u0027re ok here.",
+      "revId": "c06baaeb1da5b7382998e51725e772d08a9d96a1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_d5ddfe71",
+        "filename": "packages/docker/src/main/docker/docker-files/wait-for.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1423
+      },
+      "writtenOn": "2017-10-24T20:46:24Z",
+      "side": 1,
+      "message": "nc is not installed in the mso (or db) container.",
+      "range": {
+        "startLine": 28,
+        "startChar": 4,
+        "endLine": 28,
+        "endChar": 6
+      },
+      "revId": "c06baaeb1da5b7382998e51725e772d08a9d96a1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
