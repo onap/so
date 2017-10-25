@@ -29,6 +29,7 @@ import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -40,14 +41,19 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.hibernate.Session;
-
+import org.json.JSONObject;
 import org.openecomp.mso.apihandler.common.ErrorNumbers;
 import org.openecomp.mso.apihandler.common.RequestClient;
 import org.openecomp.mso.apihandler.common.RequestClientFactory;
 import org.openecomp.mso.apihandler.common.ResponseHandler;
+import org.openecomp.mso.apihandlerinfra.Messages;
+import org.openecomp.mso.apihandlerinfra.MsoException;
+import org.openecomp.mso.apihandlerinfra.MsoRequest;
+import org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans.DelE2ESvcResp;
 import org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans.E2EServiceInstanceDeleteRequest;
 import org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans.E2EServiceInstanceRequest;
 import org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans.E2EUserParam;
+import org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans.GetE2EServiceInstanceResponse;
 import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.ModelInfo;
 import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.RequestDetails;
 import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.RequestInfo;
@@ -115,11 +121,65 @@ public class E2EServiceInstances {
 
 		return deleteE2EserviceInstances(request, Action.deleteInstance, instanceIdMap, version);
 	}
+	
+	@GET
+	@Path("/{version:[vV][3-5]}/{serviceId}/operations/{operationId}")
+	@ApiOperation(value = "Find e2eServiceInstances Requests for a given serviceId and operationId", response = Response.class)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getE2EServiceInstances(@PathParam("serviceId") String serviceId,
+			@PathParam("version") String version, @PathParam("operationId") String operationId) {
+		RequestsDatabase requestsDB = RequestsDatabase.getInstance();
+		
+		GetE2EServiceInstanceResponse e2eServiceResponse = new GetE2EServiceInstanceResponse();
+
+		MsoRequest msoRequest = new MsoRequest(serviceId);
+
+		long startTime = System.currentTimeMillis();
+
+		OperationStatus operationStatus = null;
+
+		try {
+			operationStatus = requestsDB.getOperationStatus(serviceId, operationId);
+
+		} catch (Exception e) {
+			msoLogger.error(MessageEnum.APIH_DB_ACCESS_EXC, MSO_PROP_APIHANDLER_INFRA, "", "",
+					MsoLogger.ErrorCode.AvailabilityError,
+					"Exception while communciate with Request DB - Infra Request Lookup", e);
+			msoRequest.setStatus(org.openecomp.mso.apihandlerinfra.vnfbeans.RequestStatusType.FAILED);
+			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_NOT_FOUND,
+					MsoException.ServiceException, e.getMessage(), ErrorNumbers.NO_COMMUNICATION_TO_REQUESTS_DB, null);
+			alarmLogger.sendAlarm("MsoDatabaseAccessError", MsoAlarmLogger.CRITICAL,
+					Messages.errors.get(ErrorNumbers.NO_COMMUNICATION_TO_REQUESTS_DB));
+			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError,
+					"Exception while communciate with Request DB");
+			msoLogger.debug("End of the transaction, the final response is: " + (String) response.getEntity());
+			return response;
+
+		}
+
+		if (operationStatus == null) {
+			Response resp = msoRequest.buildServiceErrorResponse(HttpStatus.SC_NO_CONTENT,
+					MsoException.ServiceException, "E2E serviceId " + serviceId + " is not found in DB",
+					ErrorNumbers.SVC_DETAILED_SERVICE_ERROR, null);
+			msoLogger.error(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "",
+					MsoLogger.ErrorCode.BusinessProcesssError,
+					"Null response from RequestDB when searching by serviceId");
+			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataNotFound,
+					"Null response from RequestDB when searching by serviceId");
+			msoLogger.debug("End of the transaction, the final response is: " + (String) resp.getEntity());
+			return resp;
+
+		}
+
+		e2eServiceResponse.setE2eRequest(operationStatus);
+
+		return Response.status(200).entity(e2eServiceResponse).build();
+	}
 
 	private Response deleteE2EserviceInstances(String requestJSON, Action action,
 			HashMap<String, String> instanceIdMap, String version) {
-		
-		String requestId = UUIDChecker.generateUUID(msoLogger);
+		//TODO should be a new one or the same service instance Id
+		String requestId = instanceIdMap.get("serviceId");
 		long startTime = System.currentTimeMillis();
 		msoLogger.debug("requestId is: " + requestId);
 		E2EServiceInstanceDeleteRequest e2eDelReq = null;
@@ -236,7 +296,7 @@ public class E2EServiceInstances {
 		ResponseHandler respHandler = new ResponseHandler(response, requestClient.getType());
 		int bpelStatus = respHandler.getStatus();
 
-		return beplStatusUpdate(requestId, startTime, msoRequest, requestClient, respHandler, bpelStatus);
+		return beplStatusUpdate(requestId, startTime, msoRequest, requestClient, respHandler, bpelStatus, action);
 	}
 
 	private Response processE2EserviceInstances(String requestJSON, Action action,
@@ -451,7 +511,7 @@ public class E2EServiceInstances {
 		ResponseHandler respHandler = new ResponseHandler(response, requestClient.getType());
 		int bpelStatus = respHandler.getStatus();
 
-		return beplStatusUpdate(requestId, startTime, msoRequest, requestClient, respHandler, bpelStatus);
+		return beplStatusUpdate(requestId, startTime, msoRequest, requestClient, respHandler, bpelStatus, action);
 	}
 
 	private void closeCatalogDB(CatalogDatabase db) {
@@ -495,12 +555,28 @@ public class E2EServiceInstances {
 	}
 
 	private Response beplStatusUpdate(String requestId, long startTime, MsoRequest msoRequest,
-			RequestClient requestClient, ResponseHandler respHandler, int bpelStatus) {
-		// BPEL accepted the request, the request is in progress
+			RequestClient requestClient, ResponseHandler respHandler, int bpelStatus, Action action) {
+		// BPMN accepted the request, the request is in progress
 		if (bpelStatus == HttpStatus.SC_ACCEPTED) {
 			String camundaJSONResponseBody = respHandler.getResponseBody();
 			msoLogger.debug("Received from Camunda: " + camundaJSONResponseBody);
+			
+			// currently only for delete case we update the status here
+			if(action.name().equals("DELETE")){
+				ObjectMapper mapper = new ObjectMapper();
+				try{
+					DelE2ESvcResp jo = mapper.readValue(camundaJSONResponseBody, DelE2ESvcResp.class);
+					String operationId = jo.getOperationId();
 
+					this.createOperationStatusRecord("DELETE", requestId, operationId);
+				}
+				catch(Exception ex)
+				{
+					msoLogger.error(MessageEnum.APIH_BPEL_RESPONSE_ERROR, requestClient.getUrl(), "", "",
+							MsoLogger.ErrorCode.BusinessProcesssError,
+							"Response from BPEL engine is failed with HTTP Status=" + bpelStatus);
+				}
+			}
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
 					"BPMN accepted the request, the request is in progress");
 			msoLogger.debug(END_OF_THE_TRANSACTION + camundaJSONResponseBody);
@@ -711,6 +787,40 @@ public class E2EServiceInstances {
 				if (null != session) {
 					session.close();
 				}
+			}
 		}
+			private void createOperationStatusRecord(String actionNm, String serviceId, String operationId) {
+
+				AbstractSessionFactoryManager requestsDbSessionFactoryManager = new RequestsDbSessionFactoryManager();
+
+				Session session = null;
+				try {
+
+					session = requestsDbSessionFactoryManager.getSessionFactory().openSession();
+					session.beginTransaction();
+					
+			          OperationStatus os = new OperationStatus();
+			          os.setOperation(actionNm);
+			          os.setOperationContent("");
+			          os.setOperationId(operationId);
+			          os.setProgress("0");
+			          os.setReason("");
+			          os.setResult("processing");
+			          os.setServiceId(serviceId);
+			          //TODO : to be updated...
+			          os.setUserId("");
+			          os.setFinishedAt(new Timestamp(System.currentTimeMillis()));
+			          os.setOperateAt(new Timestamp(System.currentTimeMillis()));
+
+					session.save(os);
+					session.getTransaction().commit();
+
+				} catch (Exception e) {
+					msoLogger.error (MessageEnum.APIH_DB_INSERT_EXC, "", "", MsoLogger.ErrorCode.DataError, "Exception when creation record request in Operation", e);
+				} finally {
+					if (null != session) {
+						session.close();
+					}
+			}
 	}
 }
