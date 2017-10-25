@@ -98,7 +98,7 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			} else {
 				execution.setVariable("globalSubscriberId", globalSubscriberId)
 			}
-
+	execution.setVariable("URN_mso_adapters_openecomp_db_endpoint","http://mso.mso.testlab.openecomp.org:8080/dbadapters/RequestsDbAdapter")
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception ex){
@@ -156,6 +156,85 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 
 	}
 	
+  public void preInitResourcesOperStatus(Execution execution){
+        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
+
+        utils.log("DEBUG", " ======== STARTED preInitResourcesOperStatus Process ======== ", isDebugEnabled)
+        try{
+            String serviceId = execution.getVariable("serviceInstanceId")
+            String operationId = UUID.randomUUID().toString()
+            String operationType = "DELETE"
+            String resourceTemplateUUIDs = ""
+            String result = "processing"
+            String progress = "0"
+            String reason = ""
+            String operationContent = "Prepare service creation"
+            utils.log("DEBUG", "Generated new operation for Service Instance serviceId:" + serviceId + " operationId:" + operationId + " operationType:" + oprationType, isDebugEnabled)
+            serviceId = UriUtils.encode(serviceId,"UTF-8")
+            execution.setVariable("serviceInstanceId", serviceId)
+            execution.setVariable("operationId", operationId)
+            execution.setVariable("operationType", operationType)
+            // we use resource instance ids for delete flow as resourceTemplateUUIDs
+            /*[
+             {
+                 "resourceInstanceId":"1111",
+                 "resourceType":"vIMS"
+             },
+             {
+                 "resourceInstanceId":"222",
+                 "resourceType":"vEPC"
+             },
+             {
+                 "resourceInstanceId":"3333",
+                 "resourceType":"overlay"
+             },
+             {
+                 "resourceInstanceId":"4444",
+                 "resourceType":"underlay"
+             }
+         ]*/
+            String serviceRelationShip = execution.getVariable("serviceRelationShip")
+            
+            def jsonSlurper = new JsonSlurper()
+            def jsonOutput = new JsonOutput()         
+            List relationShipList =  jsonSlurper.parseText(serviceRelationShip)
+                    
+            if (relationShipList != null) {
+                relationShipList.each {
+                    resourceTemplateUUIDs  = resourceTemplateUUIDs + it.resourceInstanceId + ":"
+                }
+            }           
+
+            def dbAdapterEndpoint = execution.getVariable("URN_mso_adapters_openecomp_db_endpoint")
+            execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
+            utils.log("DEBUG", "DB Adapter Endpoint is: " + dbAdapterEndpoint, isDebugEnabled)
+
+            String payload =
+                """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                        xmlns:ns="http://org.openecomp.mso/requestsdb">
+                        <soapenv:Header/>
+                        <soapenv:Body>
+                            <ns:initResourceOperationStatus xmlns:ns="http://org.openecomp.mso/requestsdb">
+                            <serviceId>${serviceId}</serviceId>
+                            <operationId>${operationId}</operationId>
+                            <operationType>${operationType}</operationType>
+                            <resourceTemplateUUIDs>${resourceTemplateUUIDs}</resourceTemplateUUIDs>
+                        </ns:initResourceOperationStatus>
+                    </soapenv:Body>
+                </soapenv:Envelope>"""
+
+            payload = utils.formatXml(payload)
+            execution.setVariable("CVFMI_initResOperStatusRequest", payload)
+            utils.log("DEBUG", "Outgoing initResourceOperationStatus: \n" + payload, isDebugEnabled)
+            utils.logAudit("CreateVfModuleInfra Outgoing initResourceOperationStatus Request: " + payload)
+
+        }catch(Exception e){
+            utils.log("ERROR", "Exception Occured Processing preInitResourcesOperStatus. Exception is:\n" + e, isDebugEnabled)
+            execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during preInitResourcesOperStatus Method:\n" + e.getMessage())
+        }
+        utils.log("DEBUG", "======== COMPLETED preInitResourcesOperStatus Process ======== ", isDebugEnabled)  
+    }
+
 	public void prepareCompletionRequest (Execution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("DEBUG", " *** prepareCompletion *** ", isDebugEnabled)
