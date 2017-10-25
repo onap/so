@@ -134,58 +134,7 @@ public class OrchestrationRequests {
 		return Response.status(200).entity(orchestrationResponse).build();
 	}
 
-	@GET
-	@Path("e2eServiceInstances/{version:[vV][3-5]}/{serviceId}/operations/{operationId}")
-	@ApiOperation(value = "Find e2eServiceInstances Requests for a given serviceId and operationId", response = Response.class)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getE2EServiceInstances(@PathParam("serviceId") String serviceId,
-			@PathParam("version") String version, @PathParam("operationId") String operationId) {
-
-		GetE2EServiceInstanceResponse e2eServiceResponse = new GetE2EServiceInstanceResponse();
-
-		MsoRequest msoRequest = new MsoRequest(serviceId);
-
-		long startTime = System.currentTimeMillis();
-
-		OperationStatus requestDB = null;
-
-		try {
-			requestDB = requestsDB.getOperationStatus(serviceId, operationId);
-
-		} catch (Exception e) {
-			msoLogger.error(MessageEnum.APIH_DB_ACCESS_EXC, MSO_PROP_APIHANDLER_INFRA, "", "",
-					MsoLogger.ErrorCode.AvailabilityError,
-					"Exception while communciate with Request DB - Infra Request Lookup", e);
-			msoRequest.setStatus(org.openecomp.mso.apihandlerinfra.vnfbeans.RequestStatusType.FAILED);
-			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_NOT_FOUND,
-					MsoException.ServiceException, e.getMessage(), ErrorNumbers.NO_COMMUNICATION_TO_REQUESTS_DB, null);
-			alarmLogger.sendAlarm("MsoDatabaseAccessError", MsoAlarmLogger.CRITICAL,
-					Messages.errors.get(ErrorNumbers.NO_COMMUNICATION_TO_REQUESTS_DB));
-			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError,
-					"Exception while communciate with Request DB");
-			msoLogger.debug("End of the transaction, the final response is: " + (String) response.getEntity());
-			return response;
-
-		}
-
-		if (requestDB == null) {
-			Response resp = msoRequest.buildServiceErrorResponse(HttpStatus.SC_NO_CONTENT,
-					MsoException.ServiceException, "E2E serviceId " + serviceId + " is not found in DB",
-					ErrorNumbers.SVC_DETAILED_SERVICE_ERROR, null);
-			msoLogger.error(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "",
-					MsoLogger.ErrorCode.BusinessProcesssError,
-					"Null response from RequestDB when searching by serviceId");
-			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataNotFound,
-					"Null response from RequestDB when searching by serviceId");
-			msoLogger.debug("End of the transaction, the final response is: " + (String) resp.getEntity());
-			return resp;
-
-		}
-
-		e2eServiceResponse.setE2eRequest(requestDB);
-
-		return Response.status(200).entity(e2eServiceResponse).build();
-	}
+	
 
 	@GET
 	@Path("orchestrationRequests/{version:[vV][2-5]}")
@@ -242,7 +191,7 @@ public class OrchestrationRequests {
 	}
 
 	@POST
-	@Path("/{version: [vV][3-5]}/{requestId}/unlock")
+	@Path("orchestrationRequests/{version: [vV][3-5]}/{requestId}/unlock")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Unlock Orchestrated Requests for a given requestId", response = Response.class)
@@ -437,29 +386,4 @@ public class OrchestrationRequests {
 		return request;
 	}
 
-	private E2ERequest mapInfraActiveRequestToE2ERequest(InfraActiveRequests requestDB) {
-
-		E2ERequest e2erequest = new E2ERequest();
-
-		e2erequest.setOperationId(requestDB.getRequestId());
-		// e2erequest.setRequestScope(requestDB.getRequestScope());
-		e2erequest.setOperation(requestDB.getRequestAction());
-		e2erequest.setResult(requestDB.getRequestStatus());
-		e2erequest.setReason(requestDB.getStatusMessage());
-		e2erequest.setUserId(requestDB.getRequestorId());
-		e2erequest.setOperationContent(requestDB.getStatusMessage());
-		e2erequest.setProgress(requestDB.getProgress());
-
-		String startTimeStamp = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss").format(requestDB.getStartTime())
-				+ " GMT";
-		e2erequest.setOperateAt(startTimeStamp);
-
-		if (requestDB.getEndTime() != null) {
-			String endTimeStamp = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss").format(requestDB.getEndTime())
-					+ " GMT";
-			e2erequest.setFinishedAt(endTimeStamp);
-		}
-
-		return e2erequest;
-	}
 }

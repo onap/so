@@ -562,7 +562,7 @@ public class E2EServiceInstances {
 			msoLogger.debug("Received from Camunda: " + camundaJSONResponseBody);
 			
 			// currently only for delete case we update the status here
-			if(action.name().equals("DELETE")){
+			if(action == Action.deleteInstance){
 				ObjectMapper mapper = new ObjectMapper();
 				try{
 					DelE2ESvcResp jo = mapper.readValue(camundaJSONResponseBody, DelE2ESvcResp.class);
