@@ -253,12 +253,17 @@ public class E2EServiceInstances {
 			requestClient = RequestClientFactory.getRequestClient(recipeLookupResult.getOrchestrationURI(),
 					MsoPropertiesUtils.loadMsoProperties());
 
+			JSONObject jjo = new JSONObject(requestJSON);
+			jjo.put("operationId", UUIDChecker.generateUUID(msoLogger));
+			
+			String bpmnRequest = jjo.toString();
+			
 			// Capture audit event
 			msoLogger.debug("MSO API Handler Posting call to BPEL engine for url: " + requestClient.getUrl());
             String serviceId = instanceIdMap.get("serviceId");
             String serviceInstanceType = e2eDelReq.getServiceType();
 			response = requestClient.post(requestId, false, recipeLookupResult.getRecipeTimeout(), action.name(),
-					serviceId, null, null, null, null, serviceInstanceType, null, null, null, requestJSON);
+					serviceId, null, null, null, null, serviceInstanceType, null, null, null, bpmnRequest);
 
 			msoLogger.recordMetricEvent(subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
 					"Successfully received response from BPMN engine", "BPMN", recipeLookupResult.getOrchestrationURI(),
