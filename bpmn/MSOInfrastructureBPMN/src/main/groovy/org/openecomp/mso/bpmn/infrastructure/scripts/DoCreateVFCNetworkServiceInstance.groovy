@@ -46,11 +46,9 @@ import org.openecomp.mso.rest.APIResponse;
  */
 public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProcessor {
 
-    String createUrl = "/vfc/vfcadapters/v1/ns"
-            
-    String instantiateUrl = "/vfcvfcadatpers/v1/ns/{nsInstanceId}/instantiate"
+    String vfcUrl = "/vfc/rest/v1/vfcadapter"
     
-    String queryJobUrl = "/vfc/vfcadatpers/v1/jobs/{jobId}"
+    String host = "http://mso.mso.testlab.openecomp.org:8080"
     
     ExceptionUtil exceptionUtil = new ExceptionUtil()
 
@@ -65,23 +63,23 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
     public void preProcessRequest (Execution execution) {
 	   def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
        String msg = ""
-       utils.log("DEBUG", " *** preProcessRequest() *** ", isDebugEnabled)
+       utils.log("INFO", " *** preProcessRequest() *** ", isDebugEnabled)
        try {
            //deal with nsName and Description
            String nsServiceName = execution.getVariable("nsServiceName")
            String nsServiceDescription = execution.getVariable("nsServiceDescription")
-           utils.log("DEBUG", "nsServiceName:" + nsServiceName + " nsServiceDescription:" + nsServiceDescription, isDebugEnabled)
+           utils.log("INFO", "nsServiceName:" + nsServiceName + " nsServiceDescription:" + nsServiceDescription, isDebugEnabled)
            //deal with operation key
            String globalSubscriberId = execution.getVariable("globalSubscriberId")
-           utils.log("DEBUG", "globalSubscriberId:" + globalSubscriberId, isDebugEnabled)
+           utils.log("INFO", "globalSubscriberId:" + globalSubscriberId, isDebugEnabled)
            String serviceType = execution.getVariable("serviceType")
-           utils.log("DEBUG", "serviceType:" + serviceType, isDebugEnabled)
+           utils.log("INFO", "serviceType:" + serviceType, isDebugEnabled)
            String serviceId = execution.getVariable("serviceId")
-           utils.log("DEBUG", "serviceId:" + serviceId, isDebugEnabled)
+           utils.log("INFO", "serviceId:" + serviceId, isDebugEnabled)
            String operationId = execution.getVariable("operationId")
-           utils.log("DEBUG", "serviceType:" + serviceType, isDebugEnabled)
+           utils.log("INFO", "serviceType:" + serviceType, isDebugEnabled)
            String nodeTemplateUUID = execution.getVariable("resourceUUID")
-           utils.log("DEBUG", "nodeTemplateUUID:" + nodeTemplateUUID, isDebugEnabled)
+           utils.log("INFO", "nodeTemplateUUID:" + nodeTemplateUUID, isDebugEnabled)
            /*
             * segmentInformation needed as a object of segment
             * {
@@ -93,11 +91,15 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
             *     }
             * }
             */
-           String nsParameters = execution.getVariable("resourceParamters")
-           utils.log("DEBUG", "Input Request:" + siRequest, isDebugEnabled)
-           String nsOperationKey = "{\"globalSubscriberId\":\"" + globalSubscriberId + "\",\"serviceType:\""
-                 + serviceType + "\",\"serviceId\":\"" + serviceId + "\",\"operationId\":\"" + operationId
-                 +"\",\"nodeTemplateUUID\":\"" + nodeTemplateUUID + "\"}";
+           String nsParameters = execution.getVariable("resourceParameters")
+           utils.log("INFO", "nsParameters:" + nsParameters, isDebugEnabled)
+           String nsOperationKey = """{
+                   "globalSubscriberId":"${globalSubscriberId}",
+                   "serviceType":"${serviceType}",
+                   "serviceId":"${serviceId}",
+                   "operationId":"${operationId}",
+                   "nodeTemplateUUID":"${nodeTemplateUUID}"
+                    }"""
            execution.setVariable("nsOperationKey", nsOperationKey);
            execution.setVariable("nsParameters", nsParameters)
            
@@ -106,10 +108,10 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
            throw e;
        } catch (Exception ex){
            msg = "Exception in preProcessRequest " + ex.getMessage()
-           utils.log("DEBUG", msg, isDebugEnabled)
+           utils.log("INFO", msg, isDebugEnabled)
            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
        }
-       utils.log("DEBUG"," ***** Exit preProcessRequest *****",  isDebugEnabled)
+       utils.log("INFO"," ***** Exit preProcessRequest *****",  isDebugEnabled)
 	}
 
     /**
@@ -117,13 +119,17 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
      */
     public void createNetworkService(Execution execution) {
         
-        String nsOperationKey = excution.getVariable("nsOperationKey");
-        String nsParameters = excution.getVariable("nsParameters");
+        String nsOperationKey = execution.getVariable("nsOperationKey");
+        String nsParameters = execution.getVariable("nsParameters");
         String nsServiceName = execution.getVariable("nsServiceName")
         String nsServiceDescription = execution.getVariable("nsServiceDescription")
-        String reqBody = "{\"nsServiceName\":\"" + nsServiceName + "\",\"nsServiceDescription\":\"" + nsServiceDescription
-              +"\",\"nsOperationKey\":" + nsOperationKey + ",\"nsParameters\":" + nsParameters
-        APIResponse apiResponse = postRequest(createUrl, reqBody)
+        String reqBody ="""{
+                "nsServiceName":"${nsServiceName}",
+                "nsServiceDescription":"${nsServiceDescription}",
+                "nsOperationKey":${nsOperationKey},
+                "nsParameters":${nsParameters}
+               }"""
+        APIResponse apiResponse = postRequest(execution, host + vfcUrl + "/ns", reqBody)
         String returnCode = apiResponse.getStatusCode()
         String aaiResponseAsString = apiResponse.getResponseBodyAsString()
         String nsInstanceId = "";
@@ -138,14 +144,19 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
      * instantiate NS task
      */
     public void instantiateNetworkService(Execution execution) {
-        String nsOperationKey = excution.getVariable("nsOperationKey");
-        String nsParameters = excution.getVariable("nsParameters");
+        String nsOperationKey = execution.getVariable("nsOperationKey");
+        String nsParameters = execution.getVariable("nsParameters");
         String nsServiceName = execution.getVariable("nsServiceName")
         String nsServiceDescription = execution.getVariable("nsServiceDescription")
-        String reqBody = "{\"nsServiceName\":\"" + nsServiceName + "\",\"nsServiceDescription\":\"" + nsServiceDescription
-              +"\",\"nsOperationKey\":" + nsOperationKey + ",\"nsParameters\":" + nsParameters
-        String url = instantiateUrl.replaceAll("{nsInstanceId}", execution.getVariable("nsInstanceId")) 
-        APIResponse apiResponse = postRequest(url, reqBody)
+        String reqBody ="""{
+        "nsServiceName":"${nsServiceName}",
+        "nsServiceDescription":"${nsServiceDescription}",
+        "nsOperationKey":${nsOperationKey},
+        "nsParameters":${nsParameters}
+       }"""
+        String nsInstanceId = execution.getVariable("nsInstanceId")
+        String url = host + vfcUrl + "/ns/" +nsInstanceId + "/instantiate"
+        APIResponse apiResponse = postRequest(execution, url, reqBody)
         String returnCode = apiResponse.getStatusCode()
         String aaiResponseAsString = apiResponse.getResponseBodyAsString()
         String jobId = "";
@@ -160,16 +171,16 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
      */
     public void queryNSProgress(Execution execution) {
         String jobId = execution.getVariable("jobId")
-        String nsOperationKey = excution.getVariable("nsOperationKey");
-        String url = queryJobUrl.replaceAll("{jobId}", execution.getVariable("jobId")) 
-        APIResponse apiResponse = postRequest(url, nsOperationKey)
+        String nsOperationKey = execution.getVariable("nsOperationKey");
+        String url = host + vfcUrl + "/jobs/" + jobId
+        APIResponse apiResponse = postRequest(execution, url, nsOperationKey)
         String returnCode = apiResponse.getStatusCode()
         String aaiResponseAsString = apiResponse.getResponseBodyAsString()
         String operationStatus = "error"
         if(returnCode== "200"){
             operationStatus = jsonUtil.getJsonValue(aaiResponseAsString, "responseDescriptor.status")
         }
-        exection.setVariable("operationStatus", operationStatus)
+        execution.setVariable("operationStatus", operationStatus)
     }
 
     /**
@@ -189,25 +200,25 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
     public void finishNSCreate(Execution execution) {
         //no need to do anything util now
     }
-
+    
     /**
      * post request
      * url: the url of the request
      * requestBody: the body of the request
      */
-    private APIResponse postRequest(String url, String requestBody){
+    private APIResponse postRequest(Execution execution, String url, String requestBody){
         def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-        taskProcessor.logDebug( " ======== Started Execute VFC adapter Post Process ======== ", isDebugEnabled)
-        taskProcessor.logDebug( "url:"+url +"\nrequestBody:"+ requestBody, isDebugEnabled)
+        utils.log("INFO"," ***** Started Execute VFC adapter Post Process *****",  isDebugEnabled)
+        utils.log("INFO","url:"+url +"\nrequestBody:"+ requestBody,  isDebugEnabled)
         APIResponse apiResponse = null
         try{
             RESTConfig config = new RESTConfig(url);
-            RESTClient client = new RESTClient(config).addHeader("X-FromAppId", "MSO").addHeader("X-TransactionId", uuid).addHeader("Accept","application/json");
+            RESTClient client = new RESTClient(config).addHeader("Content-Type", "application/json").addHeader("Accept","application/json").addHeader("Authorization","Basic QlBFTENsaWVudDpwYXNzd29yZDEk");
             apiResponse = client.httpPost(requestBody)
-            taskProcessor.logDebug( "response code:"+ apiResponse.getStatusCode() +"\nresponse body:"+ apiResponse.getResponseBodyAsString(), isDebugEnabled)
-            taskProcessor.logDebug( "======== Completed Execute VF-C adapter Post Process ======== ", isDebugEnabled)
+            utils.log("INFO","response code:"+ apiResponse.getStatusCode() +"\nresponse body:"+ apiResponse.getResponseBodyAsString(),  isDebugEnabled)    
+            utils.log("INFO","======== Completed Execute VF-C adapter Post Process ======== ",  isDebugEnabled)
         }catch(Exception e){
-            taskProcessor.utils.log("ERROR", "Exception occured while executing AAI Post Call. Exception is: \n" + e, isDebugEnabled)
+            utils.log("ERROR","Exception occured while executing AAI Post Call. Exception is: \n" + e,  isDebugEnabled)
             throw new BpmnError("MSOWorkflowException")
         }        
         return apiResponse

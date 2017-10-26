@@ -21,6 +21,7 @@
 package org.openecomp.mso.adapters.requestsdb;
 
 import java.sql.Timestamp;
+
 import javax.jws.WebService;
 
 import org.hibernate.HibernateException;
@@ -281,11 +282,12 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
      * @since   ONAP Amsterdam Release
      */
     @Override
-    public void updateServiceOperationStatus(String serviceId, String operationId, String operationType, String userId,
+    public void updateServiceOperationStatus(String serviceId, String operationId, String serviceName,String operationType, String userId,
             String result, String operationContent, String progress, String reason) throws MsoRequestsDbException {
         OperationStatus operStatus = new OperationStatus();
         operStatus.setServiceId(serviceId);
         operStatus.setOperationId(operationId);
+        operStatus.setServiceName(serviceName);
         operStatus.setUserId(userId);
         operStatus.setOperation(operationType);
         operStatus.setReason(reason);

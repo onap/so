@@ -81,31 +81,29 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 	public void preProcessRequest (Execution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		String msg = ""
-		utils.log("DEBUG"," ***** preProcessRequest *****",  isDebugEnabled)
+		utils.log("INFO"," ***** preProcessRequest *****",  isDebugEnabled)
 
 		try {
-			String requestId = execution.getVariable("msoRequestId")
 			execution.setVariable("prefix", Prefix)
-			
 			//Inputs
 			//requestDetails.subscriberInfo. for AAI GET & PUT & SDNC assignToplology
 			String globalSubscriberId = execution.getVariable("globalSubscriberId") //globalCustomerId
-
+			utils.log("INFO"," ***** globalSubscriberId *****" + globalSubscriberId,  isDebugEnabled)
 			//requestDetails.requestParameters. for AAI PUT & SDNC assignTopology
-			String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
-
+			String serviceType = execution.getVariable("serviceType")
+			utils.log("INFO"," ***** serviceType *****" + serviceType,  isDebugEnabled)
 			//requestDetails.requestParameters. for SDNC assignTopology
 			String productFamilyId = execution.getVariable("productFamilyId") //AAI productFamilyId
 
 			if (isBlank(globalSubscriberId)) {
 				msg = "Input globalSubscriberId is null"
-				utils.log("DEBUG", msg, isDebugEnabled)
+				utils.log("INFO", msg, isDebugEnabled)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
 			
-			if (isBlank(subscriptionServiceType)) {
-				msg = "Input subscriptionServiceType is null"
-				utils.log("DEBUG", msg, isDebugEnabled)
+			if (isBlank(serviceType)) {
+				msg = "Input serviceType is null"
+				utils.log("INFO", msg, isDebugEnabled)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
 			
@@ -116,93 +114,25 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 			String sdncCallbackUrl = execution.getVariable('URN_mso_workflow_sdncadapter_callback')
 			if (isBlank(sdncCallbackUrl)) {
 				msg = "URN_mso_workflow_sdncadapter_callback is null"
-				utils.log("DEBUG", msg, isDebugEnabled)
+				utils.log("INFO", msg, isDebugEnabled)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
 			execution.setVariable("sdncCallbackUrl", sdncCallbackUrl)
-			utils.log("DEBUG","SDNC Callback URL: " + sdncCallbackUrl, isDebugEnabled)
+			utils.log("INFO","SDNC Callback URL: " + sdncCallbackUrl, isDebugEnabled)
 
-			//requestDetails.modelInfo.for AAI PUT servieInstanceData & SDNC assignTopology
-			String modelInvariantUuid = ""
-			String modelVersion = ""
-			String modelUuid = ""
-			String modelName = ""
-			String serviceInstanceName = "" 
-			//Generated in parent.for AAI PUT
-			String serviceInstanceId = ""
-			String serviceType = ""
-			String serviceRole = ""
-			
-			//requestDetails.requestInfo. for AAI GET/PUT serviceInstanceData & SDNC assignToplology
-			serviceInstanceName = execution.getVariable("serviceInstanceName")
-			serviceInstanceId = execution.getVariable("serviceInstanceId")
-			
-			String serviceModelInfo = execution.getVariable("serviceModelInfo")
-			if (isBlank(serviceModelInfo)) {
-				msg = "Input serviceModelInfo is null"
-				utils.log("DEBUG", msg, isDebugEnabled)
-				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-			}
-			modelInvariantUuid = jsonUtil.getJsonValue(serviceModelInfo, "modelInvariantUuid")
-			modelVersion = jsonUtil.getJsonValue(serviceModelInfo, "modelVersion")
-			modelUuid = jsonUtil.getJsonValue(serviceModelInfo, "modelUuid")
-			modelName = jsonUtil.getJsonValue(serviceModelInfo, "modelName")
-			//modelCustomizationUuid NA for SI
-	
-			execution.setVariable("serviceType", serviceType)
-			execution.setVariable("serviceRole", serviceRole)
-			
-			if (serviceInstanceName == null) {
-				execution.setVariable("serviceInstanceName", "")
-				serviceInstanceName = ""
-			}
-			if (isBlank(serviceInstanceId)){
-				msg = "Input serviceInstanceId is null"
-				utils.log("DEBUG", msg, isDebugEnabled)
-				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-			}
-			
-			if (modelInvariantUuid == null) {
-				modelInvariantUuid = ""
-			}
-			if (modelUuid == null) {
-				modelUuid = ""
-			}
-			if (modelVersion == null) {
-				modelVersion = ""
-			}
-			if (modelName == null) {
-				modelName = ""
-			}
+			//requestDetails.modelInfo.for AAI PUT servieInstanceData 			
+			//requestDetails.requestInfo. for AAI GET/PUT serviceInstanceData 
+			String serviceInstanceName = execution.getVariable("serviceInstanceName")
+			String serviceInstanceId = execution.getVariable("serviceInstanceId")
+			String uuiRequest = execution.getVariable("uuiRequest")
+			String modelInvariantUuid = jsonUtil.getJsonValue(uuiRequest, "service.serviceDefId")
+			String modelUuid = jsonUtil.getJsonValue(uuiRequest, "service.templateId")
+			//aai serviceType and Role can be setted as fixed value now.
+			String aaiServiceType = "voLTE type"
+			String aaiServiceRole = "voLTE role"
 			
 			execution.setVariable("modelInvariantUuid", modelInvariantUuid)
-			execution.setVariable("modelVersion", modelVersion)
 			execution.setVariable("modelUuid", modelUuid)
-			execution.setVariable("modelName", modelName)
-			 
-			StringBuilder sbParams = new StringBuilder()
-			Map<String, String> paramsMap = execution.getVariable("serviceInputParams")
-			if (paramsMap != null)
-			{
-				sbParams.append("<service-input-parameters>")
-				for (Map.Entry<String, String> entry : paramsMap.entrySet()) {
-					String paramsXml
-					String paramName = entry.getKey()
-					String paramValue = entry.getValue()
-					paramsXml =
-							"""	<param>
-							<name>${paramName}</name>
-							<value>${paramValue}</value>
-							</param>
-							"""
-					sbParams.append(paramsXml)
-				}
-				sbParams.append("</service-input-parameters>")
-			}
-			String siParamsXml = sbParams.toString()
-			if (siParamsXml == null)
-				siParamsXml = ""
-			execution.setVariable("siParamsXml", siParamsXml)
 
 			//AAI PUT
 			String oStatus = execution.getVariable("initialStatus") ?: ""
@@ -218,111 +148,39 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 			String namespace = aaiUriUtil.getNamespaceFromUri(aai_uri)
 			String serviceInstanceData =
 					"""<service-instance xmlns=\"${namespace}\">
-					<service-instance-name>${serviceInstanceName}</service-instance-name>
-					<service-type>${serviceType}</service-type>
-					<service-role>${serviceRole}</service-role>
+			        <service-instance-id>${serviceInstanceId}</service-instance-id>
+			        <service-instance-name>${serviceInstanceName}</service-instance-name>
+					<service-type>${aaiServiceType}</service-type>
+					<service-role>${aaiServiceRole}</service-role>
 					${statusLine}
 				    <model-invariant-id>${modelInvariantUuid}</model-invariant-id>
 				    <model-version-id>${modelUuid}</model-version-id>
-					</service-instance>""".trim()
-
+					</service-instance>""".trim()					
 			execution.setVariable("serviceInstanceData", serviceInstanceData)
 			utils.logAudit(serviceInstanceData)
-			utils.log("DEBUG", " 'payload' to create Service Instance in AAI - " + "\n" + serviceInstanceData, isDebugEnabled)
+			utils.log("INFO", " aai_uri " + aai_uri + " namespace:" + namespace, isDebugEnabled)
+			utils.log("INFO", " 'payload' to create Service Instance in AAI - " + "\n" + serviceInstanceData, isDebugEnabled)
 
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception ex){
 			msg = "Exception in preProcessRequest " + ex.getMessage()
-			utils.log("DEBUG", msg, isDebugEnabled)
+			utils.log("INFO", msg, isDebugEnabled)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		utils.log("DEBUG"," ***** Exit preProcessRequest *****",  isDebugEnabled)
-	}
-
-	//TODO: Will be able to replace with call to CustomE2EGetService as per the GenericGetService
-	public void getAAICustomerById (Execution execution) {
-		// https://{aaiEP}/aai/v8/business/customers/customer/{globalCustomerId}
-		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-		String msg = ""
-		try {
-
-			String globalCustomerId = execution.getVariable("globalSubscriberId") //UUI to AAI name map
-			utils.log("DEBUG"," ***** getAAICustomerById ***** globalCustomerId:" + globalCustomerId, isDebugEnabled)
-
-			String aai_endpoint = execution.getVariable("URN_aai_endpoint")
-			AaiUtil aaiUriUtil = new AaiUtil(this)
-			String aai_uri = aaiUriUtil.getBusinessCustomerUri(execution)
-			if (isBlank(aai_endpoint) || isBlank(aai_uri))
-			{
-				msg = "AAI URL is invalid. Endpoint:" + aai_endpoint + aai_uri
-				utils.log("DEBUG", msg, isDebugEnabled)
-				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-			}
-			String getAAICustomerUrl = "${aai_endpoint}${aai_uri}/" + UriUtils.encode(globalCustomerId,"UTF-8")
-
-			utils.logAudit(getAAICustomerUrl)
-			utils.log("DEBUG", "getAAICustomerById Url:" + getAAICustomerUrl, isDebugEnabled)
-			APIResponse response = aaiUriUtil.executeAAIGetCall(execution, getAAICustomerUrl)
-			String returnCode = response.getStatusCode()
-			String aaiResponseAsString = response.getResponseBodyAsString()
-
-			msg = "getAAICustomerById ResponseCode:" + returnCode + " ResponseString:" + aaiResponseAsString
-			utils.log("DEBUG",msg, isDebugEnabled)
-			utils.logAudit(msg)
-
-			if (returnCode=='200') {
-				// Customer found by ID. FLow to proceed.
-				utils.log("DEBUG",msg, isDebugEnabled)
-
-				//TODO Deferred
-				//we might verify that service-subscription with matching name exists
-				//and throw error if not. If not checked, we will get exception in subsequent step on Create call
-				//in 1610 we assume both customer & service subscription were pre-created
-
-			} else {
-				if (returnCode=='404') {
-					msg = "GlobalCustomerId:" + globalCustomerId + " not found (404) in AAI"
-					utils.log("DEBUG", msg, isDebugEnabled)
-					exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
-
-				} else {
-					if (aaiResponseAsString.contains("RESTFault")) {
-						utils.log("ERROR", aaiResponseAsString)
-						WorkflowException workflowException = exceptionUtil.MapAAIExceptionToWorkflowException(aaiResponseAsString, execution)
-						execution.setVariable("WorkflowException", workflowException)
-						throw new BpmnError("MSOWorkflowException")
-
-					} else {
-						// aai all errors
-						msg = "Error in getAAICustomerById ResponseCode:" + returnCode
-						utils.log("DEBUG", msg, isDebugEnabled)
-						exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
-					}
-				}
-			}
-
-		} catch (BpmnError e) {
-			throw e;
-		} catch (Exception ex) {
-			msg = "Exception in getAAICustomerById. " + ex.getMessage()
-			utils.log("DEBUG", msg, isDebugEnabled)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
-		}
-		utils.log("DEBUG"," *****Exit getAAICustomerById *****", isDebugEnabled)
-
+		utils.log("INFO"," ***** Exit preProcessRequest *****",  isDebugEnabled)
 	}
 
 	public void postProcessAAIGET(Execution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		utils.log("DEBUG"," ***** postProcessAAIGET ***** ", isDebugEnabled)
+		utils.log("INFO"," ***** postProcessAAIGET ***** ", isDebugEnabled)
 		String msg = ""
 
 		try {
 			String serviceInstanceName = execution.getVariable("serviceInstanceName")
 			boolean succInAAI = execution.getVariable("GENGS_SuccessIndicator")
 			if(succInAAI != true){
-				utils.log("DEBUG","Error getting Service-instance from AAI", + serviceInstanceName, isDebugEnabled)
+				utils.log("INFO","Error getting Service-instance from AAI", + serviceInstanceName, isDebugEnabled)
 				WorkflowException workflowException = execution.getVariable("WorkflowException")
 				utils.logAudit("workflowException: " + workflowException)
 				if(workflowException != null){
@@ -331,7 +189,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 				else
 				{
 					msg = "Failure in postProcessAAIGET GENGS_SuccessIndicator:" + succInAAI
-					utils.log("DEBUG", msg, isDebugEnabled)
+					utils.log("INFO", msg, isDebugEnabled)
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
 				}
 			}
@@ -339,9 +197,9 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 			{
 				boolean foundInAAI = execution.getVariable("GENGS_FoundIndicator")
 				if(foundInAAI == true){
-					utils.log("DEBUG","Found Service-instance in AAI", isDebugEnabled)
+					utils.log("INFO","Found Service-instance in AAI", isDebugEnabled)
 					msg = "ServiceInstance already exists in AAI:" + serviceInstanceName
-					utils.log("DEBUG", msg, isDebugEnabled)
+					utils.log("INFO", msg, isDebugEnabled)
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
 				}
 			}
@@ -349,21 +207,21 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 			throw e;
 		} catch (Exception ex) {
 			msg = "Exception in DoCreateServiceInstance.postProcessAAIGET. " + ex.getMessage()
-			utils.log("DEBUG", msg, isDebugEnabled)
+			utils.log("INFO", msg, isDebugEnabled)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		utils.log("DEBUG"," *** Exit postProcessAAIGET *** ", isDebugEnabled)
+		utils.log("INFO"," *** Exit postProcessAAIGET *** ", isDebugEnabled)
 	}
 
 	public void postProcessAAIPUT(Execution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		utils.log("DEBUG"," ***** postProcessAAIPUT ***** ", isDebugEnabled)
+		utils.log("INFO"," ***** postProcessAAIPUT ***** ", isDebugEnabled)
 		String msg = ""
 		try {
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
 			boolean succInAAI = execution.getVariable("GENPS_SuccessIndicator")
 			if(succInAAI != true){
-				utils.log("DEBUG","Error putting Service-instance in AAI", + serviceInstanceId, isDebugEnabled)
+				utils.log("INFO","Error putting Service-instance in AAI", + serviceInstanceId, isDebugEnabled)
 				WorkflowException workflowException = execution.getVariable("WorkflowException")
 				utils.logAudit("workflowException: " + workflowException)
 				if(workflowException != null){
@@ -387,150 +245,22 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 			throw e;
 		} catch (Exception ex) {
 			msg = "Exception in DoCreateServiceInstance.postProcessAAIDEL. " + ex.getMessage()
-			utils.log("DEBUG", msg, isDebugEnabled)
+			utils.log("INFO", msg, isDebugEnabled)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		utils.log("DEBUG"," *** Exit postProcessAAIPUT *** ", isDebugEnabled)
-	}
-
-	public void preProcessSDNCAssignRequest(Execution execution) {
-		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-		String msg = ""
-		utils.log("DEBUG"," ***** preProcessSDNCAssignRequest *****", isDebugEnabled)
-
-		try {
-			def serviceInstanceId = execution.getVariable("serviceInstanceId")
-			def serviceInstanceName = execution.getVariable("serviceInstanceName")
-			def callbackURL = execution.getVariable("sdncCallbackUrl")
-			def requestId = execution.getVariable("msoRequestId")
-			def serviceId = execution.getVariable("productFamilyId")
-			def subscriptionServiceType = execution.getVariable("subscriptionServiceType")
-			def globalSubscriberId = execution.getVariable("globalSubscriberId") //globalCustomerId
-			def serviceType = execution.getVariable("serviceType")
-
-			def modelInvariantUuid = execution.getVariable("modelInvariantUuid")
-			def modelVersion = execution.getVariable("modelVersion")
-			def modelUuid = execution.getVariable("modelUuid")
-			def modelName = execution.getVariable("modelName")
-			
-			def sdncRequestId = UUID.randomUUID().toString()
-			
-			def siParamsXml = execution.getVariable("siParamsXml")
-			
-			String sdncAssignRequest =
-					"""<sdncadapterworkflow:SDNCAdapterWorkflowRequest xmlns:ns5="http://org.openecomp/mso/request/types/v1"
-													xmlns:sdncadapterworkflow="http://org.openecomp/mso/workflow/schema/v1"
-													xmlns:sdncadapter="http://org.openecomp/workflow/sdnc/adapter/schema/v1">
-				   <sdncadapter:RequestHeader>
-							<sdncadapter:RequestId>${sdncRequestId}</sdncadapter:RequestId>
-							<sdncadapter:SvcInstanceId>${serviceInstanceId}</sdncadapter:SvcInstanceId>
-							<sdncadapter:SvcAction>assign</sdncadapter:SvcAction>
-							<sdncadapter:SvcOperation>service-topology-operation</sdncadapter:SvcOperation>
-							<sdncadapter:CallbackUrl>${callbackURL}</sdncadapter:CallbackUrl>
-							<sdncadapter:MsoAction>${serviceType}</sdncadapter:MsoAction>
-					</sdncadapter:RequestHeader>
-				<sdncadapterworkflow:SDNCRequestData>
-					<request-information>
-						<request-id>${requestId}</request-id>
-						<source>MSO</source>
-						<notification-url/>
-						<order-number/>
-						<order-version/>
-						<request-action>CreateServiceInstance</request-action>
-					</request-information>
-					<service-information>
-						<service-id>${serviceId}</service-id>
-						<subscription-service-type>${subscriptionServiceType}</subscription-service-type>
-						<ecomp-model-information>
-					         <model-invariant-uuid>${modelInvariantUuid}</model-invariant-uuid>
-					         <model-uuid>${modelUuid}</model-uuid>
-					         <model-version>${modelVersion}</model-version>
-					         <model-name>${modelName}</model-name>
-					    </ecomp-model-information>
-						<service-instance-id>${serviceInstanceId}</service-instance-id>
-						<subscriber-name/>
-						<global-customer-id>${globalSubscriberId}</global-customer-id>
-					</service-information>
-					<service-request-input>
-						<service-instance-name>${serviceInstanceName}</service-instance-name>
-						${siParamsXml}
-					</service-request-input>
-				</sdncadapterworkflow:SDNCRequestData>
-				</sdncadapterworkflow:SDNCAdapterWorkflowRequest>"""
-
-			utils.log("DEBUG","sdncAssignRequest:\n" + sdncAssignRequest, isDebugEnabled)
-			sdncAssignRequest = utils.formatXml(sdncAssignRequest)
-			execution.setVariable("sdncAssignRequest", sdncAssignRequest)
-			utils.logAudit("sdncAssignRequest:  " + sdncAssignRequest)
-
-			def sdncRequestId2 = UUID.randomUUID().toString()
-			String sdncDelete = sdncAssignRequest.replace(">assign<", ">delete<").replace(">CreateServiceInstance<", ">DeleteServiceInstance<").replace(">${sdncRequestId}<", ">${sdncRequestId2}<")
-			def sdncRequestId3 = UUID.randomUUID().toString()
-			String sdncDeactivate = sdncDelete.replace(">delete<", ">deactivate<").replace(">${sdncRequestId2}<", ">${sdncRequestId3}<")
-			def rollbackData = execution.getVariable("rollbackData")
-			rollbackData.put("SERVICEINSTANCE", "sdncDeactivate", sdncDeactivate)
-			rollbackData.put("SERVICEINSTANCE", "sdncDelete", sdncDelete)
-			execution.setVariable("rollbackData", rollbackData)
-			
-			utils.log("DEBUG","rollbackData:\n" + rollbackData.toString(), isDebugEnabled)
-
-		} catch (BpmnError e) {
-			throw e;
-		} catch(Exception ex) {
-			msg = "Exception in preProcessSDNCAssignRequest. " + ex.getMessage()
-			utils.log("DEBUG", msg, isDebugEnabled)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
-		}
-		utils.log("DEBUG"," *****Exit preProcessSDNCAssignRequest *****", isDebugEnabled)
-	}
-	
-	public void postProcessSDNCAssign (Execution execution) {
-		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		utils.log("DEBUG"," ***** postProcessSDNCAssign ***** ", isDebugEnabled)
-		try {
-			WorkflowException workflowException = execution.getVariable("WorkflowException")
-			utils.logAudit("workflowException: " + workflowException)
-
-			boolean successIndicator = execution.getVariable("SDNCA_SuccessIndicator")
-
-			String response = execution.getVariable("sdncAdapterResponse")
-			utils.logAudit("SDNCResponse: " + response)
-
-			SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
-			sdncAdapterUtils.validateSDNCResponse(execution, response, workflowException, successIndicator)
-
-			if(execution.getVariable(Prefix + 'sdncResponseSuccess') == true){
-				utils.log("DEBUG","Good response from SDNC Adapter for service-instance  topology assign: \n" + response, isDebugEnabled)
-
-				def rollbackData = execution.getVariable("rollbackData")
-				rollbackData.put("SERVICEINSTANCE", "rollbackSDNC", "true")
-				execution.setVariable("rollbackData", rollbackData)
-
-			}else{
-				utils.log("DEBUG","Bad Response from SDNC Adapter for service-instance assign", isDebugEnabled)
-				throw new BpmnError("MSOWorkflowException")
-			}
-
-		} catch (BpmnError e) {
-			throw e;
-		} catch(Exception ex) {
-			msg = "Exception in postProcessSDNCAssign. " + ex.getMessage()
-			utils.log("DEBUG", msg, isDebugEnabled)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
-		}
-		utils.log("DEBUG"," *** Exit postProcessSDNCAssign *** ", isDebugEnabled)
+		utils.log("INFO"," *** Exit postProcessAAIPUT *** ", isDebugEnabled)
 	}
 	
 	public void postProcessAAIGET2(Execution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		utils.log("DEBUG"," ***** postProcessAAIGET2 ***** ", isDebugEnabled)
+		utils.log("INFO"," ***** postProcessAAIGET2 ***** ", isDebugEnabled)
 		String msg = ""
 
 		try {
 			String serviceInstanceName = execution.getVariable("serviceInstanceName")
 			boolean succInAAI = execution.getVariable("GENGS_SuccessIndicator")
 			if(succInAAI != true){
-				utils.log("DEBUG","Error getting Service-instance from AAI in postProcessAAIGET2", + serviceInstanceName, isDebugEnabled)
+				utils.log("INFO","Error getting Service-instance from AAI in postProcessAAIGET2", + serviceInstanceName, isDebugEnabled)
 				WorkflowException workflowException = execution.getVariable("WorkflowException")
 				utils.logAudit("workflowException: " + workflowException)
 				if(workflowException != null){
@@ -539,7 +269,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 				else
 				{
 					msg = "Failure in postProcessAAIGET2 GENGS_SuccessIndicator:" + succInAAI
-					utils.log("DEBUG", msg, isDebugEnabled)
+					utils.log("INFO", msg, isDebugEnabled)
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
 				}
 			}
@@ -550,7 +280,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 					String aaiService = execution.getVariable("GENGS_service")
 					if (!isBlank(aaiService) && (utils.nodeExists(aaiService, "service-instance-name"))) {
 						execution.setVariable("serviceInstanceName",  utils.getNodeText1(aaiService, "service-instance-name"))
-						utils.log("DEBUG","Found Service-instance in AAI.serviceInstanceName:" + execution.getVariable("serviceInstanceName"), isDebugEnabled)
+						utils.log("INFO","Found Service-instance in AAI.serviceInstanceName:" + execution.getVariable("serviceInstanceName"), isDebugEnabled)
 					}
 				}
 			}
@@ -558,58 +288,58 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 			throw e;
 		} catch (Exception ex) {
 			msg = "Exception in DoCreateServiceInstance.postProcessAAIGET2 " + ex.getMessage()
-			utils.log("DEBUG", msg, isDebugEnabled)
+			utils.log("INFO", msg, isDebugEnabled)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		utils.log("DEBUG"," *** Exit postProcessAAIGET2 *** ", isDebugEnabled)
+		utils.log("INFO"," *** Exit postProcessAAIGET2 *** ", isDebugEnabled)
 	}
 
 	public void preProcessRollback (Execution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		utils.log("DEBUG"," ***** preProcessRollback ***** ", isDebugEnabled)
+		utils.log("INFO"," ***** preProcessRollback ***** ", isDebugEnabled)
 		try {
 			
 			Object workflowException = execution.getVariable("WorkflowException");
 
 			if (workflowException instanceof WorkflowException) {
-				utils.log("DEBUG", "Prev workflowException: " + workflowException.getErrorMessage(), isDebugEnabled)
+				utils.log("INFO", "Prev workflowException: " + workflowException.getErrorMessage(), isDebugEnabled)
 				execution.setVariable("prevWorkflowException", workflowException);
 				//execution.setVariable("WorkflowException", null);
 			}
 		} catch (BpmnError e) {
-			utils.log("DEBUG", "BPMN Error during preProcessRollback", isDebugEnabled)
+			utils.log("INFO", "BPMN Error during preProcessRollback", isDebugEnabled)
 		} catch(Exception ex) {
 			String msg = "Exception in preProcessRollback. " + ex.getMessage()
-			utils.log("DEBUG", msg, isDebugEnabled)
+			utils.log("INFO", msg, isDebugEnabled)
 		}
-		utils.log("DEBUG"," *** Exit preProcessRollback *** ", isDebugEnabled)
+		utils.log("INFO"," *** Exit preProcessRollback *** ", isDebugEnabled)
 	}
 
 	public void postProcessRollback (Execution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		utils.log("DEBUG"," ***** postProcessRollback ***** ", isDebugEnabled)
+		utils.log("INFO"," ***** postProcessRollback ***** ", isDebugEnabled)
 		String msg = ""
 		try {
 			Object workflowException = execution.getVariable("prevWorkflowException");
 			if (workflowException instanceof WorkflowException) {
-				utils.log("DEBUG", "Setting prevException to WorkflowException: ", isDebugEnabled)
+				utils.log("INFO", "Setting prevException to WorkflowException: ", isDebugEnabled)
 				execution.setVariable("WorkflowException", workflowException);
 			}
 			execution.setVariable("rollbackData", null)
 		} catch (BpmnError b) {
-			utils.log("DEBUG", "BPMN Error during postProcessRollback", isDebugEnabled)
+			utils.log("INFO", "BPMN Error during postProcessRollback", isDebugEnabled)
 			throw b;
 		} catch(Exception ex) {
 			msg = "Exception in postProcessRollback. " + ex.getMessage()
-			utils.log("DEBUG", msg, isDebugEnabled)
+			utils.log("INFO", msg, isDebugEnabled)
 		}
-		utils.log("DEBUG"," *** Exit postProcessRollback *** ", isDebugEnabled)
+		utils.log("INFO"," *** Exit postProcessRollback *** ", isDebugEnabled)
 	}
 
 	public void preInitResourcesOperStatus(Execution execution){
         def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 
-        utils.log("DEBUG", " ======== STARTED preInitResourcesOperStatus Process ======== ", isDebugEnabled)
+        utils.log("INFO", " ======== STARTED preInitResourcesOperStatus Process ======== ", isDebugEnabled)
         try{
             String serviceId = execution.getVariable("serviceInstanceId")
             String operationId = execution.getVariable("operationId")
@@ -619,26 +349,21 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
             String progress = "0"
             String reason = ""
             String operationContent = "Prepare service creation"
-            utils.log("DEBUG", "Generated new operation for Service Instance serviceId:" + serviceId + " operationId:" + operationId + " operationType:" + oprationType, isDebugEnabled)
+            utils.log("INFO", "Generated new operation for Service Instance serviceId:" + serviceId + " operationId:" + operationId + " operationType:" + operationType, isDebugEnabled)
             serviceId = UriUtils.encode(serviceId,"UTF-8")
             execution.setVariable("serviceInstanceId", serviceId)
             execution.setVariable("operationId", operationId)
             execution.setVariable("operationType", operationType)
-            def jsonSlurper = new JsonSlurper()
-            def jsonOutput = new JsonOutput()
-            String incomingRequest = execution.getVariable("bpmnRequest")
-            Map serviceReq =  jsonSlurper.parseText(incomingRequest)
-            def segmentList = serviceReq.service.parameters.segments
-                    
-            if (segmentList != null) {
-                segmentList.each {
-                    resourceTemplateUUIDs  = resourcesUUIDs + it.resourceUUID + ":"
-                }
-            }            
+            String incomingRequest = execution.getVariable("uuiRequest")
+            String resourcesStr = jsonUtil.getJsonValue(incomingRequest, "service.parameters.resources")  
+            List<String> resourceList = jsonUtil.StringArrayToList(execution, resourcesStr)   
+            for(String resource : resourceList){
+                    resourceTemplateUUIDs  = resourceTemplateUUIDs + jsonUtil.getJsonValue(resource, "resourceDefId") + ":"
+            }           
 
-            def dbAdapterEndpoint = execution.getVariable("URN_mso_adapters_openecomp_db_endpoint")
+            def dbAdapterEndpoint = "http://mso.mso.testlab.openecomp.org:8080/dbadapters/RequestsDbAdapter"
             execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
-            utils.log("DEBUG", "DB Adapter Endpoint is: " + dbAdapterEndpoint, isDebugEnabled)
+            utils.log("INFO", "DB Adapter Endpoint is: " + dbAdapterEndpoint, isDebugEnabled)
 
             String payload =
                 """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
@@ -656,45 +381,49 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 
             payload = utils.formatXml(payload)
             execution.setVariable("CVFMI_initResOperStatusRequest", payload)
-            utils.log("DEBUG", "Outgoing initResourceOperationStatus: \n" + payload, isDebugEnabled)
+            utils.log("INFO", "Outgoing initResourceOperationStatus: \n" + payload, isDebugEnabled)
             utils.logAudit("CreateVfModuleInfra Outgoing initResourceOperationStatus Request: " + payload)
 
         }catch(Exception e){
             utils.log("ERROR", "Exception Occured Processing preInitResourcesOperStatus. Exception is:\n" + e, isDebugEnabled)
             execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during preInitResourcesOperStatus Method:\n" + e.getMessage())
         }
-        utils.log("DEBUG", "======== COMPLETED preInitResourcesOperStatus Process ======== ", isDebugEnabled)  
+        utils.log("INFO", "======== COMPLETED preInitResourcesOperStatus Process ======== ", isDebugEnabled)  
 	}
 	
 	/**
 	 * prepare resource create request
 	 */
-	public void preResourceRequest(execution, resourceType){
+	public void preResourceRequest(execution){
+	    String resourceType = execution.getVariable("resourceType")
 	    def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 	    String serviceInstanceName = execution.getVariable("serviceInstanceName")
-	    String nsServiceName = nsName + "_" + serviceInstanceName
-	    String nsServiceDescription = execution.getVariable("serviceInstanceDescription")
+	    String nsServiceName = resourceType + "_" + serviceInstanceName
 	    execution.setVariable("nsServiceName", nsServiceName)
-	    utils.log("DEBUG", "Prepare VFC Request nsServiceName:" + nsServiceName, isDebugEnabled)
-	    execution.setVariable("nsServiceDescription", nsServiceDescription)
-	    utils.log("DEBUG", "Prepare VFC Request nsServiceDescription:" + nsServiceDescription, isDebugEnabled)
+	    utils.log("INFO", "Prepare VFC Request nsServiceName:" + nsServiceName, isDebugEnabled)
         String globalSubscriberId = execution.getVariable("globalSubscriberId")
         String serviceType = execution.getVariable("serviceType")
-        String serviceId = execution.getVariable("serviceId")
+        String serviceId = execution.getVariable("serviceInstanceId")
+        execution.setVariable("serviceId", serviceId)
         String operationId = execution.getVariable("operationId")
-        String incomingRequest = execution.getVariable("bpmnRequest")
-        Map serviceReq =  jsonSlurper.parseText(incomingRequest)
-        def segmentList = serviceReq.service.parameters.segments                
-        if (segmentList != null) {
-            segmentList.each {
-                if(StringUtils.containsIgnoreCase(it.resourceName, resourceType)){
-                    String resourceUUID  = it.resourceUUID
-                    String resourceParameters = it.nsParameters
-                    execution.setVariable("resourceType", resourceType)
-                    execution.setVariable("resourceUUID", resourceUUID)
-                    execution.setVariable("resourceParameters", resourceParameters)
-                }                
-            }
-        } 
+        String incomingRequest = execution.getVariable("uuiRequest")
+        String resourcesStr = jsonUtil.getJsonValue(incomingRequest, "service.parameters.resources")  
+        String nsServiceDescription = jsonUtil.getJsonValue(incomingRequest, "service.description")  
+        execution.setVariable("nsServiceDescription", nsServiceDescription)
+        utils.log("INFO", "Prepare VFC Request nsServiceDescription:" + nsServiceDescription, isDebugEnabled)
+        List<String> resourceList = jsonUtil.StringArrayToList(execution, resourcesStr)   
+        for(String resource : resourceList){
+            String resourceName = jsonUtil.getJsonValue(resource, "resourceName")  
+            if(StringUtils.containsIgnoreCase(resourceName, resourceType)){
+                String resourceUUID  = jsonUtil.getJsonValue(resource, "resourceDefId")
+                String resourceParameters = jsonUtil.getJsonValue(resource, "nsParameters")                
+                execution.setVariable("resourceUUID", resourceUUID)
+                execution.setVariable("resourceParameters", resourceParameters)
+                utils.log("INFO", "Prepare VFC Request resourceType:" + resourceType, isDebugEnabled)
+                utils.log("INFO", "Prepare VFC Request resourceUUID:" + resourceUUID, isDebugEnabled)
+                utils.log("INFO", "Prepare VFC Request resourceParameters:" + resourceParameters, isDebugEnabled)
+            } 
+        }
+	    utils.log("INFO", "Prepare VFC Request finished", isDebugEnabled)
 	}
 }
