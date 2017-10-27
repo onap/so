@@ -80,12 +80,12 @@ dcsi.instantiateNetworkService(execution)]]></bpmn:script>
 def dcsi = new DoCreateVFCNetworkServiceInstance()
 dcsi.queryNSProgress(execution)]]></bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:scriptTask id="finishNSCreate_Task" name="Finish NS Create">
+    <bpmn:scriptTask id="finishNSCreate_Task" name="Add NS RelationShip" scriptFormat="groovy">
       <bpmn:incoming>operationFinished_SequenceFlow</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0cq2q6g</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
 def dcsi = new DoCreateVFCNetworkServiceInstance()
-dcsi.finishNSCreate(execution)]]></bpmn:script>
+dcsi.addNSRelationship(execution)]]></bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_0xqo13p" sourceRef="queryJob_Task" targetRef="ExclusiveGateway_15492gl" />
     <bpmn:scriptTask id="timeDelay_Task" name="timeDelay" scriptFormat="groovy">

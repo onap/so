@@ -137,12 +137,7 @@ public class VfcManager {
           DriverExceptionID.INVALID_RESPONSEE_FROM_CREATE_OPERATION);
     }
     LOGGER.info("create ns -> end");
-    LOGGER.info("save segment and operaton info -> begin");
-    // Step 6: add relation between service and NS
-    AaiUtil.addRelation(segInput.getNsOperationKey().getGlobalSubscriberId(),
-        segInput.getNsOperationKey().getServiceType(), segInput.getNsOperationKey().getServiceId(),
-        nsInstanceId);
-    LOGGER.info("save segment and operation info -> end");
+
     return createRsp;
   }
 
@@ -180,11 +175,6 @@ public class VfcManager {
       throw new ApplicationException(HttpCode.INTERNAL_SERVER_ERROR,
           DriverExceptionID.FAIL_TO_DELETE_NS);
     }
-
-    // Step3: remove relation info between service and ns
-    AaiUtil.removeRelation(nsOperationKey.getGlobalSubscriberId(), nsOperationKey.getServiceType(),
-        nsOperationKey.getServiceId(), nsInstanceId);
-    LOGGER.info("delete segment information -> end");
 
     // Step4: update service segment operation status
     nsOperInfo.setStatus(RequestsDbConstant.Status.FINISHED);
