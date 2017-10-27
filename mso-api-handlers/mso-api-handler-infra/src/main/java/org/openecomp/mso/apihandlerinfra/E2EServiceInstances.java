@@ -40,6 +40,7 @@ import javax.ws.rs.core.Response;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.eclipse.jetty.io.RuntimeIOException;
 import org.hibernate.Session;
 import org.json.JSONObject;
 import org.openecomp.mso.apihandler.common.ErrorNumbers;
@@ -67,6 +68,7 @@ import org.openecomp.mso.db.catalog.beans.ServiceRecipe;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoAlarmLogger;
 import org.openecomp.mso.logger.MsoLogger;
+import org.openecomp.mso.properties.MsoDatabaseException;
 import org.openecomp.mso.requestsdb.InfraActiveRequests;
 import org.openecomp.mso.requestsdb.OperationStatus;
 import org.openecomp.mso.requestsdb.RequestsDatabase;
@@ -761,7 +763,7 @@ public class E2EServiceInstances {
 	}
 
 	
-	private void createOperationStatusRecordForError(Action action, String requestId) {
+	private void createOperationStatusRecordForError(Action action, String requestId) throws MsoDatabaseException{
 
 			AbstractSessionFactoryManager requestsDbSessionFactoryManager = new RequestsDbSessionFactoryManager();
 
@@ -780,21 +782,24 @@ public class E2EServiceInstances {
 		          os.setResult("error");
 		          os.setServiceId(requestId);
 		          os.setUserId("");
-		          os.setFinishedAt(new Timestamp(System.currentTimeMillis()));
-		          os.setOperateAt(new Timestamp(System.currentTimeMillis()));
+				Timestamp startTimeStamp = new Timestamp (System.currentTimeMillis());
+				Timestamp endTimeStamp = new Timestamp (System.currentTimeMillis());
+				os.setFinishedAt(endTimeStamp);
+				os.setOperateAt(startTimeStamp);
 
 				session.save(os);
 				session.getTransaction().commit();
 
 			} catch (Exception e) {
 				msoLogger.error (MessageEnum.APIH_DB_INSERT_EXC, "", "", MsoLogger.ErrorCode.DataError, "Exception when creation record request in Operation", e);
+				throw new MsoDatabaseException("Data did inserted in Operatus Status Table for failure", e);
 			} finally {
 				if (null != session) {
 					session.close();
 				}
 			}
 		}
-			private void createOperationStatusRecord(String actionNm, String serviceId, String operationId) {
+			private void createOperationStatusRecord(String actionNm, String serviceId, String operationId) throws MsoDatabaseException{
 
 				AbstractSessionFactoryManager requestsDbSessionFactoryManager = new RequestsDbSessionFactoryManager();
 
@@ -814,14 +819,17 @@ public class E2EServiceInstances {
 			          os.setServiceId(serviceId);
 			          //TODO : to be updated...
 			          os.setUserId("");
-			          os.setFinishedAt(new Timestamp(System.currentTimeMillis()));
-			          os.setOperateAt(new Timestamp(System.currentTimeMillis()));
+					  Timestamp startTimeStamp = new Timestamp (System.currentTimeMillis());
+					  Timestamp endTimeStamp = new Timestamp (System.currentTimeMillis());
+					  os.setFinishedAt(endTimeStamp);
+					  os.setOperateAt(startTimeStamp);
 
 					session.save(os);
 					session.getTransaction().commit();
 
 				} catch (Exception e) {
 					msoLogger.error (MessageEnum.APIH_DB_INSERT_EXC, "", "", MsoLogger.ErrorCode.DataError, "Exception when creation record request in Operation", e);
+					throw new MsoDatabaseException("Data did inserted in Operatus Status Table", e);
 				} finally {
 					if (null != session) {
 						session.close();
