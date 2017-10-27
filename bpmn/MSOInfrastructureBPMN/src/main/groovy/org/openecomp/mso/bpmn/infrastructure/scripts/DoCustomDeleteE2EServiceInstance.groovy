@@ -309,6 +309,13 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 		String msg = ""
 
 		try {
+			execution.setVariable("serviceInstanceId","serviceInstanceId")
+			execution.setVariable("GENGS_FoundIndicator",true)
+			execution.setVariable("GENGS_siResourceLink","GENGS_siResourceLink")
+			execution.setVariable("globalSubscriberId","globalSubscriberId")
+			execution.setVariable("subscriptionServiceType","subscriptionServiceType")
+			execution.setVariable("GENGS_service","GENGS_service")
+			execution.setVariable("GENGS_SuccessIndicator",true)
 
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
 			boolean foundInAAI = execution.getVariable("GENGS_FoundIndicator")
@@ -362,7 +369,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 					utils.log("DEBUG", msg, isDebugEnabled)
 					exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 				}
-				else
+			/*	else
 				{
 					utils.log("DEBUG", "SI Data" + siData, isDebugEnabled)
 					serviceType = utils.getNodeText1(siData,"service-type")
@@ -412,7 +419,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 						}
 
 					}
-				}
+				}*/
 			}else{
 				boolean succInAAI = execution.getVariable("GENGS_SuccessIndicator")
 				if(succInAAI != true){
@@ -581,12 +588,12 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
                
        if (relationShipList != null) {
            relationShipList.each {
-               if(resouceName.equals(it.resouceType))
+               if(resourceName.equals(it.resourceType))
                String resouceTemplateUUID = it.resourceInstanceId
-               String resouceInstanceUUID = it.resouceInstanceId
+               String resouceInstanceUUID = it.resourceInstanceId
                execution.setVariable("resouceTemplateUUID", resouceTemplateUUID)
                execution.setVariable("resouceInstanceId", resouceInstanceUUID)
-               execution.setResourceType("resourceType", resouceName)
+               execution.setResourceType("resourceType", resourceName)
            }
        }    
    }
