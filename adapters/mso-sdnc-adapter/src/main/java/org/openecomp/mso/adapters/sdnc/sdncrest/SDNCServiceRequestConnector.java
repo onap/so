@@ -43,6 +43,7 @@ import org.openecomp.mso.logger.MsoLogger;
 public class SDNCServiceRequestConnector extends SDNCConnector {
 
     private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
+    private static final String YES = "Y";
 	@Override
 	protected SDNCResponseCommon createResponseFromContent(int statusCode, String statusMessage,
 			String responseContent, TypedRequestTunables rt) {
@@ -57,7 +58,7 @@ public class SDNCServiceRequestConnector extends SDNCConnector {
 	@Override
 	protected SDNCErrorCommon createErrorResponse(int statusCode, String errMsg,
 			TypedRequestTunables rt) {
-		return new SDNCServiceError(rt.getReqId(), String.valueOf(statusCode), errMsg, "Y");
+		return new SDNCServiceError(rt.getReqId(), String.valueOf(statusCode), errMsg, YES);
 	}
 
 	/**
@@ -133,10 +134,10 @@ public class SDNCServiceRequestConnector extends SDNCConnector {
 			// ack-final-indicator is optional: default to "Y".
 
 			if (ackFinalIndicator == null || ackFinalIndicator.trim().isEmpty()) {
-				ackFinalIndicator = "Y";
+				ackFinalIndicator = YES;
 			}
 
-			if (!ackFinalIndicator.equals("Y") && !"N".equals(ackFinalIndicator)) {
+			if (!YES.equals(ackFinalIndicator) && !"N".equals(ackFinalIndicator)) {
 				throw new ParseException("Invalid ack-final-indicator in SDNC response: '" + ackFinalIndicator + "'", 0);
 			}
 
