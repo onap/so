@@ -26,38 +26,11 @@ ddsi.preProcessRequest(execution)
         <camunda:out source="GENDS_SuccessIndicator" target="GENDS_SuccessIndicator" />
         <camunda:out source="WorkflowException" target="WorkflowExcpeton" />
       </bpmn:extensionElements>
-      <bpmn:incoming>SequenceFlow_0uhpfcl</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_0vg4q7x</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0g6bxqw</bpmn:outgoing>
     </bpmn:callActivity>
-    <bpmn:exclusiveGateway id="ExclusiveGateway_0c6gz3v" name="SI found in AAI" default="SequenceFlow_0g20hqr">
-      <bpmn:incoming>SequenceFlow_0vi0sv6</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_1pcmc9e</bpmn:outgoing>
-      <bpmn:outgoing>SequenceFlow_0g20hqr</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:endEvent id="EndEvent_0123yz3">
-      <bpmn:incoming>SequenceFlow_0g20hqr</bpmn:incoming>
-    </bpmn:endEvent>
-    <bpmn:exclusiveGateway id="ExclusiveGateway_0veiutm" name="sdncVersion is 1610 ">
-      <bpmn:incoming>SequenceFlow_1pcmc9e</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_1av166w</bpmn:outgoing>
-      <bpmn:outgoing>SequenceFlow_0uhpfcl</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:callActivity id="CallActivity_0x2ulh3" name="Call AAI Generic GetService" calledElement="GenericGetService">
-      <bpmn:extensionElements>
-        <camunda:in source="serviceInstanceId" target="GENGS_serviceInstanceId" />
-        <camunda:in sourceExpression="service-instance" target="GENGS_type" />
-        <camunda:out source="GENGS_FoundIndicator" target="GENGS_FoundIndicator" />
-        <camunda:out source="GENGS_SuccessIndicator" target="GENGS_SuccessIndicator" />
-        <camunda:out source="WorkflowException" target="WorkflowException" />
-        <camunda:out source="GENGS_siResourceLink" target="GENGS_siResourceLink" />
-        <camunda:out source="GENGS_service" target="GENGS_service" />
-      </bpmn:extensionElements>
-      <bpmn:incoming>SequenceFlow_11e6bfy</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0sj8yc8</bpmn:outgoing>
-    </bpmn:callActivity>
     <bpmn:scriptTask id="ScriptTask_1rtnsh8" name="Post Process AAI GET" scriptFormat="groovy">
-      <bpmn:incoming>SequenceFlow_0sj8yc8</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_188ejvu</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0vi0sv6</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
 def ddsi = new DoCustomDeleteE2EServiceInstance()
@@ -89,15 +62,10 @@ ex.processJavaException(execution)]]></bpmn:script>
       <bpmn:sequenceFlow id="SequenceFlow_18vlzfo" name="" sourceRef="ScriptTask_0nha3pr" targetRef="EndEvent_06utmg4" />
     </bpmn:subProcess>
     <bpmn:sequenceFlow id="SequenceFlow_0vz7cd9" sourceRef="StartEvent_0212h2r" targetRef="ScriptTask_06phzgv" />
-    <bpmn:sequenceFlow id="SequenceFlow_11e6bfy" sourceRef="ScriptTask_06phzgv" targetRef="CallActivity_0x2ulh3" />
+    <bpmn:sequenceFlow id="SequenceFlow_11e6bfy" sourceRef="ScriptTask_06phzgv" targetRef="CallActivity_076pc2z" />
     <bpmn:sequenceFlow id="SequenceFlow_0e7inkl" sourceRef="ScriptTask_01erufg" targetRef="EndEvent_1uqzt26" />
     <bpmn:sequenceFlow id="SequenceFlow_0g6bxqw" sourceRef="CallActivity_06izbke" targetRef="ScriptTask_01erufg" />
-    <bpmn:sequenceFlow id="SequenceFlow_0vi0sv6" sourceRef="ScriptTask_1rtnsh8" targetRef="ExclusiveGateway_0c6gz3v" />
-    <bpmn:sequenceFlow id="SequenceFlow_1pcmc9e" name="yes" sourceRef="ExclusiveGateway_0c6gz3v" targetRef="ExclusiveGateway_0veiutm">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[#{execution.getVariable("GENGS_FoundIndicator" ) == true}]]></bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="SequenceFlow_0g20hqr" name="no" sourceRef="ExclusiveGateway_0c6gz3v" targetRef="EndEvent_0123yz3" />
-    <bpmn:sequenceFlow id="SequenceFlow_0sj8yc8" sourceRef="CallActivity_0x2ulh3" targetRef="ScriptTask_1rtnsh8" />
+    <bpmn:sequenceFlow id="SequenceFlow_0vi0sv6" sourceRef="ScriptTask_1rtnsh8" targetRef="ScriptTask_146jt8v" />
     <bpmn:callActivity id="CallActivity_Del_VFC" name="Call Network Service Delete for vEPC" calledElement="DODeleteVFCNetworkServiceInstance">
       <bpmn:extensionElements>
         <camunda:in source="globalSubscriberId" target="globalSubscriberId" />
@@ -112,7 +80,6 @@ ex.processJavaException(execution)]]></bpmn:script>
       <bpmn:incoming>SequenceFlow_1wmjau1</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0qquvgc</bpmn:outgoing>
     </bpmn:callActivity>
-    <bpmn:sequenceFlow id="SequenceFlow_1av166w" sourceRef="ExclusiveGateway_0veiutm" targetRef="ScriptTask_146jt8v" />
     <bpmn:sequenceFlow id="SequenceFlow_0qquvgc" sourceRef="CallActivity_Del_VFC" targetRef="ScriptTask_0mdub03" />
     <bpmn:scriptTask id="ScriptTask_0vcz9mj" name="Prepare Resource Delele For vEPC" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_1931m8u</bpmn:incoming>
@@ -151,12 +118,9 @@ ddsi.preResourceDelete(execution, resourceName )]]></bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_1dza4q4" sourceRef="ScriptTask_0z30dax" targetRef="CallActivity_Del_SDNC_cust" />
     <bpmn:sequenceFlow id="SequenceFlow_0rpu756" sourceRef="CallActivity_Del_SDNC_cust" targetRef="Task_14erap6" />
-    <bpmn:sequenceFlow id="SequenceFlow_0uhpfcl" name="yes" sourceRef="ExclusiveGateway_0veiutm" targetRef="CallActivity_06izbke">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[#{ execution.getVariable("sdncVersion" )   == "1610" }]]></bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_1wnkgpx" sourceRef="Task_0z1x3sg" targetRef="Task_0963dho" />
     <bpmn:sequenceFlow id="SequenceFlow_1931m8u" sourceRef="Task_0963dho" targetRef="ScriptTask_0vcz9mj" />
-    <bpmn:scriptTask id="Task_0z1x3sg" name="Prepare Resource Delele For vIMS">
+    <bpmn:scriptTask id="Task_0z1x3sg" name="Prepare Resource Delele For vIMS" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_1m7tont</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1wnkgpx</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
@@ -187,7 +151,7 @@ ddsi.preResourceDelete(execution, resourceName )]]></bpmn:script>
     <bpmn:sequenceFlow id="SequenceFlow_0d9lmlv" sourceRef="Task_14erap6" targetRef="Task_1j1u666" />
     <bpmn:sequenceFlow id="SequenceFlow_1g4djgh" sourceRef="Task_1j1u666" targetRef="Task_0edkv0m" />
     <bpmn:sequenceFlow id="SequenceFlow_0uc2beq" sourceRef="Task_0edkv0m" targetRef="ScriptTask_1g0tsto" />
-    <bpmn:scriptTask id="Task_14erap6" name="Prepare Resource Delele For Underlay">
+    <bpmn:scriptTask id="Task_14erap6" name="Prepare Resource Delele For Underlay" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_0rpu756</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0d9lmlv</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
@@ -203,8 +167,8 @@ ddsi.preResourceDelete(execution, resourceName )]]></bpmn:script>
       <bpmn:incoming>SequenceFlow_1g4djgh</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0uc2beq</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:scriptTask id="ScriptTask_146jt8v" name="Prepare Resource Oper Status">
-      <bpmn:incoming>SequenceFlow_1av166w</bpmn:incoming>
+    <bpmn:scriptTask id="ScriptTask_146jt8v" name="Prepare Resource Oper Status" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0vi0sv6</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1ym9otf</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
 def ddsi = new DoCustomDeleteE2EServiceInstance()
@@ -234,6 +198,20 @@ ddsi.preInitResourcesOperStatus(execution)]]></bpmn:script>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="SequenceFlow_1ym9otf" sourceRef="ScriptTask_146jt8v" targetRef="ServiceTask_00tg69u" />
     <bpmn:sequenceFlow id="SequenceFlow_0l4w9nr" sourceRef="ServiceTask_00tg69u" targetRef="ScriptTask_0z30dax" />
+    <bpmn:callActivity id="CallActivity_076pc2z" name="Call AAI Generic GetService" calledElement="GenericGetService">
+      <bpmn:extensionElements>
+        <camunda:in source="serviceInstanceId" target="GENGS_serviceInstanceId" />
+        <camunda:in sourceExpression="service-instance" target="GENGS_type" />
+        <camunda:out source="GENGS_FoundIndicator" target="GENGS_FoundIndicator" />
+        <camunda:out source="GENGS_SuccessIndicator" target="GENGS_SuccessIndicator" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+        <camunda:out source="GENGS_siResourceLink" target="GENGS_siResourceLink" />
+        <camunda:out source="GENGS_service" target="GENGS_service" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_11e6bfy</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_188ejvu</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="SequenceFlow_188ejvu" sourceRef="CallActivity_076pc2z" targetRef="ScriptTask_1rtnsh8" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DoCustomDeleteE2EServiceInstance">
@@ -255,29 +233,8 @@ ddsi.preInitResourcesOperStatus(execution)]]></bpmn:script>
       <bpmndi:BPMNShape id="CallActivity_06izbke_di" bpmnElement="CallActivity_06izbke">
         <dc:Bounds x="1188" y="779" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ExclusiveGateway_0c6gz3v_di" bpmnElement="ExclusiveGateway_0c6gz3v" isMarkerVisible="true">
-        <dc:Bounds x="-89" y="-42" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="-99" y="-63" width="71" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="EndEvent_0123yz3_di" bpmnElement="EndEvent_0123yz3">
-        <dc:Bounds x="-82" y="107" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="-154" y="148" width="90" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ExclusiveGateway_0veiutm_di" bpmnElement="ExclusiveGateway_0veiutm" isMarkerVisible="true">
-        <dc:Bounds x="-8" y="-42" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="-15" y="12" width="72" height="24" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="CallActivity_0x2ulh3_di" bpmnElement="CallActivity_0x2ulh3">
-        <dc:Bounds x="-382" y="-57" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ScriptTask_1rtnsh8_di" bpmnElement="ScriptTask_1rtnsh8">
-        <dc:Bounds x="-231" y="-57" width="100" height="80" />
+        <dc:Bounds x="-193" y="-57" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ScriptTask_01erufg_di" bpmnElement="ScriptTask_01erufg">
         <dc:Bounds x="1188" y="915" width="100" height="80" />
@@ -294,9 +251,9 @@ ddsi.preInitResourcesOperStatus(execution)]]></bpmn:script>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_11e6bfy_di" bpmnElement="SequenceFlow_11e6bfy">
         <di:waypoint xsi:type="dc:Point" x="-419" y="-17" />
-        <di:waypoint xsi:type="dc:Point" x="-382" y="-17" />
+        <di:waypoint xsi:type="dc:Point" x="-357" y="-17" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="-445.5" y="-38" width="90" height="12" />
+          <dc:Bounds x="-433" y="-38" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0e7inkl_di" bpmnElement="SequenceFlow_0e7inkl">
@@ -314,31 +271,10 @@ ddsi.preInitResourcesOperStatus(execution)]]></bpmn:script>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0vi0sv6_di" bpmnElement="SequenceFlow_0vi0sv6">
-        <di:waypoint xsi:type="dc:Point" x="-131" y="-17" />
-        <di:waypoint xsi:type="dc:Point" x="-89" y="-17" />
+        <di:waypoint xsi:type="dc:Point" x="-93" y="-17" />
+        <di:waypoint xsi:type="dc:Point" x="-26" y="-17" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="-155" y="-38" width="90" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_1pcmc9e_di" bpmnElement="SequenceFlow_1pcmc9e">
-        <di:waypoint xsi:type="dc:Point" x="-39" y="-17" />
-        <di:waypoint xsi:type="dc:Point" x="-8" y="-17" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="-21.375" y="-15" width="19" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0g20hqr_di" bpmnElement="SequenceFlow_0g20hqr">
-        <di:waypoint xsi:type="dc:Point" x="-64" y="8" />
-        <di:waypoint xsi:type="dc:Point" x="-64" y="107" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="-83" y="28" width="12" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0sj8yc8_di" bpmnElement="SequenceFlow_0sj8yc8">
-        <di:waypoint xsi:type="dc:Point" x="-282" y="-17" />
-        <di:waypoint xsi:type="dc:Point" x="-231" y="-17" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="-301.5" y="-38" width="90" height="12" />
+          <dc:Bounds x="-104.5" y="-38" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="StartEvent_0sf5lpt_di" bpmnElement="StartEvent_0sf5lpt">
@@ -373,13 +309,6 @@ ddsi.preInitResourcesOperStatus(execution)]]></bpmn:script>
       <bpmndi:BPMNShape id="CallActivity_1x56smn_di" bpmnElement="CallActivity_Del_VFC">
         <dc:Bounds x="1188" y="483" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_1av166w_di" bpmnElement="SequenceFlow_1av166w">
-        <di:waypoint xsi:type="dc:Point" x="42" y="-17" />
-        <di:waypoint xsi:type="dc:Point" x="83" y="-17" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="17.5" y="-38" width="90" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0qquvgc_di" bpmnElement="SequenceFlow_0qquvgc">
         <di:waypoint xsi:type="dc:Point" x="1238" y="563" />
         <di:waypoint xsi:type="dc:Point" x="1238" y="642" />
@@ -404,28 +333,20 @@ ddsi.preInitResourcesOperStatus(execution)]]></bpmn:script>
         <dc:Bounds x="1188" y="-57" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ScriptTask_0z30dax_di" bpmnElement="ScriptTask_0z30dax">
-        <dc:Bounds x="356" y="-57" width="100" height="80" />
+        <dc:Bounds x="316" y="-57" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1dza4q4_di" bpmnElement="SequenceFlow_1dza4q4">
-        <di:waypoint xsi:type="dc:Point" x="456" y="-17" />
-        <di:waypoint xsi:type="dc:Point" x="524" y="-17" />
+        <di:waypoint xsi:type="dc:Point" x="416" y="-17" />
+        <di:waypoint xsi:type="dc:Point" x="499" y="-17" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="445" y="-38" width="90" height="12" />
+          <dc:Bounds x="412.5" y="-38" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0rpu756_di" bpmnElement="SequenceFlow_0rpu756">
-        <di:waypoint xsi:type="dc:Point" x="624" y="-17" />
-        <di:waypoint xsi:type="dc:Point" x="692" y="-17" />
+        <di:waypoint xsi:type="dc:Point" x="599" y="-17" />
+        <di:waypoint xsi:type="dc:Point" x="679" y="-16" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="613" y="-38" width="90" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0uhpfcl_di" bpmnElement="SequenceFlow_0uhpfcl">
-        <di:waypoint xsi:type="dc:Point" x="17" y="8" />
-        <di:waypoint xsi:type="dc:Point" x="17" y="819" />
-        <di:waypoint xsi:type="dc:Point" x="1188" y="819" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="540.0043516100959" y="793" width="19" height="12" />
+          <dc:Bounds x="594" y="-37.5" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1wnkgpx_di" bpmnElement="SequenceFlow_1wnkgpx">
@@ -463,13 +384,13 @@ ddsi.preInitResourcesOperStatus(execution)]]></bpmn:script>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ServiceTask_0v9q75y_di" bpmnElement="CallActivity_Del_SDNC_cust">
-        <dc:Bounds x="524" y="-57" width="100" height="80" />
+        <dc:Bounds x="499" y="-57" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0d9lmlv_di" bpmnElement="SequenceFlow_0d9lmlv">
-        <di:waypoint xsi:type="dc:Point" x="792" y="-17" />
+        <di:waypoint xsi:type="dc:Point" x="779" y="-16" />
         <di:waypoint xsi:type="dc:Point" x="855" y="-17" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="778.5" y="-38" width="90" height="12" />
+          <dc:Bounds x="772" y="-37.5" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1g4djgh_di" bpmnElement="SequenceFlow_1g4djgh">
@@ -487,7 +408,7 @@ ddsi.preInitResourcesOperStatus(execution)]]></bpmn:script>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_1e5z0wu_di" bpmnElement="Task_14erap6">
-        <dc:Bounds x="692" y="-57" width="100" height="80" />
+        <dc:Bounds x="679" y="-56" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_0f0965f_di" bpmnElement="Task_1j1u666">
         <dc:Bounds x="855" y="-57" width="100" height="80" />
@@ -496,23 +417,33 @@ ddsi.preInitResourcesOperStatus(execution)]]></bpmn:script>
         <dc:Bounds x="1021" y="-57" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ScriptTask_146jt8v_di" bpmnElement="ScriptTask_146jt8v">
-        <dc:Bounds x="83" y="-57" width="100" height="80" />
+        <dc:Bounds x="-26" y="-57" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_00tg69u_di" bpmnElement="ServiceTask_00tg69u">
-        <dc:Bounds x="208" y="-57" width="100" height="80" />
+        <dc:Bounds x="144" y="-57" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1ym9otf_di" bpmnElement="SequenceFlow_1ym9otf">
-        <di:waypoint xsi:type="dc:Point" x="183" y="-17" />
-        <di:waypoint xsi:type="dc:Point" x="208" y="-17" />
+        <di:waypoint xsi:type="dc:Point" x="74" y="-17" />
+        <di:waypoint xsi:type="dc:Point" x="144" y="-17" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="151.5" y="-38" width="0" height="12" />
+          <dc:Bounds x="64" y="-38" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0l4w9nr_di" bpmnElement="SequenceFlow_0l4w9nr">
-        <di:waypoint xsi:type="dc:Point" x="308" y="-17" />
-        <di:waypoint xsi:type="dc:Point" x="356" y="-17" />
+        <di:waypoint xsi:type="dc:Point" x="244" y="-17" />
+        <di:waypoint xsi:type="dc:Point" x="316" y="-17" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="332" y="-38" width="0" height="12" />
+          <dc:Bounds x="235" y="-38" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="CallActivity_076pc2z_di" bpmnElement="CallActivity_076pc2z">
+        <dc:Bounds x="-357" y="-57" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_188ejvu_di" bpmnElement="SequenceFlow_188ejvu">
+        <di:waypoint xsi:type="dc:Point" x="-257" y="-17" />
+        <di:waypoint xsi:type="dc:Point" x="-193" y="-17" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-225" y="-38" width="0" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
