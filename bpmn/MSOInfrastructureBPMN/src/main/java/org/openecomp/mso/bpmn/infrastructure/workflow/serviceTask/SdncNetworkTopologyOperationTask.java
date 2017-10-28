@@ -58,6 +58,8 @@ public class SdncNetworkTopologyOperationTask extends AbstractSdncOperationTask 
             updateProgress(execution, RequestsDbConstant.Status.ERROR, String.valueOf(errorCode), null, errorMessage);
             throw new Exception("");
         }
+        updateProgress(execution, RequestsDbConstant.Status.FINISHED, null, RequestsDbConstant.Progress.ONE_HUNDRED, "execute finished!");
+
     }
 
 }

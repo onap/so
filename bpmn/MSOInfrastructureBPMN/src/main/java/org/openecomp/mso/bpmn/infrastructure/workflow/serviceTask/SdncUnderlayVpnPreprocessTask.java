@@ -41,7 +41,7 @@ public class SdncUnderlayVpnPreprocessTask extends BaseTask {
     private String getOperType(DelegateExecution execution) {
         String serviceId = (String) execution.getVariable("serviceId");
         String operationId = (String) execution.getVariable("operationId");
-        String resourceTemplateUUID = (String) execution.getVariable("resourceTemplateUUID");
+        String resourceTemplateUUID = (String) execution.getVariable("resourceUUID");
         ResourceOperationStatus resourceOperationStatus = requestsDB.getResourceOperationStatus(serviceId, operationId, resourceTemplateUUID);
         return resourceOperationStatus.getOperType();
     }
