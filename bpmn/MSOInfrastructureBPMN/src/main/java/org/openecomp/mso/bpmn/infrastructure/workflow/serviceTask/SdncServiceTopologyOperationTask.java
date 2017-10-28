@@ -40,12 +40,12 @@ public class SdncServiceTopologyOperationTask extends AbstractSdncOperationTask 
     public void sendRestrequestAndHandleResponse(DelegateExecution execution,
                                                  Map<String, String> inputs,
                                                  GenericResourceApi genericResourceApiClient) throws Exception {
-        updateProgress(execution, null, null, "40", "sendRestrequestAndHandleResponse begin!");
+//        updateProgress(execution, null, null, "40", "sendRestrequestAndHandleResponse begin!");
         ServiceRpcInputEntityBuilder builder = new ServiceRpcInputEntityBuilder();
         RpcServiceTopologyOperationInputEntity inputEntity = builder.build(execution, inputs);
-        updateProgress(execution, null, null, "50", "RequestBody build finished!");
+//        updateProgress(execution, null, null, "50", "RequestBody build finished!");
         RpcServiceTopologyOperationOutputEntity outputEntity = genericResourceApiClient.postServiceTopologyOperation(inputEntity).execute().body();
-        updateProgress(execution, null, null, "90", "sendRestrequestAndHandleResponse finished!");
+//        updateProgress(execution, null, null, "90", "sendRestrequestAndHandleResponse finished!");
         saveOutput(execution, outputEntity);
     }
 
@@ -57,7 +57,7 @@ public class SdncServiceTopologyOperationTask extends AbstractSdncOperationTask 
             String errorMessage = output.getOutput().getResponseMessage();
             WorkflowException workflowException = new WorkflowException(processKey, errorCode, errorMessage);
             execution.setVariable("SDNCA_SuccessIndicator", workflowException);
-            updateProgress(execution, RequestsDbConstant.Status.ERROR, String.valueOf(errorCode), null, errorMessage);
+//            updateProgress(execution, RequestsDbConstant.Status.ERROR, String.valueOf(errorCode), null, errorMessage);
             throw new Exception("");
         }
     }
