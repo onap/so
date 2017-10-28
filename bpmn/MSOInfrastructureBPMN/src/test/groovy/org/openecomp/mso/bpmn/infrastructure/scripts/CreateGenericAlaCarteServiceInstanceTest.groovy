@@ -58,10 +58,23 @@ class CreateGenericAlaCarteServiceInstanceTest  {
 							<aetgt:ErrorCode>5300</aetgt:ErrorCode>
 						</aetgt:WorkflowException>
 					</aetgt:FalloutHandlerRequest>"""
+					
+		String completeMsoProcessRequest =
+					   """<aetgt:MsoCompletionRequest xmlns:aetgt="http://org.openecomp/mso/workflow/schema/v1"
+                            xmlns:ns="http://org.openecomp/mso/request/types/v1"
+                            xmlns="http://org.openecomp/mso/infra/vnf-request/v1">
+   <request-info>
+      <request-id>88f65519-9a38-4c4b-8445-9eb4a5a5af56</request-id>
+      <action>CREATE</action>
+      <source>VID</source>
+   </request-info>
+   <aetgt:status-message>Network has been created successfully.</aetgt:status-message>
+   <aetgt:mso-bpel-name>BPMN Network action: CREATE</aetgt:mso-bpel-name>
+</aetgt:MsoCompletionRequest>"""
 
-String jsonIncomingRequest =
-"""{
-  "service": {
+		String jsonIncomingRequest =
+	"""{
+	"service": {
     "name": "so_test4",
     "description": "so_test2",
     "serviceDefId": "60c3e96e-0970-4871-b6e0-3b6de7561519",
