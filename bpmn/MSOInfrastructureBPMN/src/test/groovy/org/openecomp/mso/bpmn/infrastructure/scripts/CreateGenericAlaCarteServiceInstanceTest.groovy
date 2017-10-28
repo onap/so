@@ -28,7 +28,36 @@ class CreateGenericAlaCarteServiceInstanceTest  {
 		def utils = new MsoUtils()
 		JsonUtils jsonUtil = new JsonUtils()
 		VidUtils vidUtils = new VidUtils()
-	
+		
+	String createDBRequestError =
+"""<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+						<soapenv:Header/>
+						<soapenv:Body>
+							<ns:updateInfraRequest xmlns:ns="http://org.openecomp.mso/requestsdb">
+								<requestId>88f65519-9a38-4c4b-8445-9eb4a5a5af56</requestId>
+								<lastModifiedBy>BPMN</lastModifiedBy>
+								<statusMessage>Received error from SDN-C: No availability zone available</statusMessage>
+								<responseBody></responseBody>
+								<requestStatus>FAILED</requestStatus>
+								<vnfOutputs>&lt;network-id&gt;&lt;/network-id&gt;&lt;network-name&gt;&lt;/network-names&gt;</vnfOutputs>
+							</ns:updateInfraRequest>
+					   	</soapenv:Body>
+					   </soapenv:Envelope>"""
+
+	  String falloutHandlerRequest =
+					   """<aetgt:FalloutHandlerRequest xmlns:aetgt="http://org.openecomp/mso/workflow/schema/v1"
+					                             xmlns:ns="http://org.openecomp/mso/request/types/v1"
+					                             xmlns:wfsch="http://org.openecomp/mso/workflow/schema/v1">
+					   <request-info xmlns="http://org.openecomp/mso/infra/vnf-request/v1">
+					      <request-id>b69c9054-da09-4a2c-adf5-51042b62bfac</request-id>
+					      <action>CREATE</action>
+					      <source>VID</source>
+					   </request-info>
+						<aetgt:WorkflowException xmlns:aetgt="http://org.openecomp/mso/workflow/schema/v1">
+							<aetgt:ErrorMessage>Received error from SDN-C: No availability zone available.</aetgt:ErrorMessage>
+							<aetgt:ErrorCode>5300</aetgt:ErrorCode>
+						</aetgt:WorkflowException>
+					</aetgt:FalloutHandlerRequest>"""
 
 String jsonIncomingRequest =
 """{
