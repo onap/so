@@ -74,94 +74,70 @@ class CreateGenericAlaCarteServiceInstanceTest  {
 
 		String jsonIncomingRequest =
 	"""{
-	"service": {
-    "name": "so_test4",
-    "description": "so_test2",
-    "serviceDefId": "60c3e96e-0970-4871-b6e0-3b6de7561519",
-    "templateId": "592f9437-a9c0-4303-b9f6-c445bb7e9814",
-    "parameters": {
-      "globalSubscriberId": "123457",
-      "subscriberName": "Customer1",
-      "serviceType": "voLTE",
-      "templateName": "voLTE Service:1.0",
-      "resources": [
-        {
-          "resourceName": "vIMS",
-          "resourceDefId": "60c3e96e-0970-4871-b6e0-3b6de7561516",
-          "resourceId": "60c3e96e-0970-4871-b6e0-3b6de7561512",
-          "nsParameters": {
-            "locationConstraints": [
-              {
-                "vnfProfileId": "zte-vBAS-1.0",
-                "locationConstraints": {
-                  "vimId": "4050083f-465f-4838-af1e-47a545222ad0"
-                }
-              },
-              {
-                "vnfProfileId": "zte-vMME-1.0",
-                "locationConstraints": {
-                  "vimId": "4050083f-465f-4838-af1e-47a545222ad0"
-                }
-              }
-            ],
-            "additionalParamForNs": {}
-          }
-        },
-        {
-          "resourceName": "vEPC",
-          "resourceDefId": "61c3e96e-0970-4871-b6e0-3b6de7561516",
-          "resourceId": "62c3e96e-0970-4871-b6e0-3b6de7561512",
-          "nsParameters": {
-            "locationConstraints": [
-              {
-                "vnfProfileId": "zte-CSCF-1.0",
-                "locationConstraints": {
-                  "vimId": "4050083f-465f-4838-af1e-47a545222ad1"
-                }
-              }
-            ],
-            "additionalParamForNs": {}
-          }
-        },
-        {
-          "resourceName": "underlayvpn",
-          "resourceDefId": "60c3e96e-0970-4871-b6e0-3b6de7561513",
-          "resourceId": "60c3e96e-0970-4871-b6e0-3b6de7561514",
-          "nsParameters": {
-            "locationConstraints": [],
-            "additionalParamForNs": {
-              "externalDataNetworkName": "Flow_out_net",
-              "m6000_mng_ip": "181.18.20.2",
-              "externalCompanyFtpDataNetworkName": "Flow_out_net",
-              "externalPluginManageNetworkName": "plugin_net_2014",
-              "externalManageNetworkName": "mng_net_2017",
-              "sfc_data_network": "sfc_data_net_2016",
-              "NatIpRange": "210.1.1.10-210.1.1.20",
-              "location": "4050083f-465f-4838-af1e-47a545222ad0",
-              "sdncontroller": "9b9f02c0-298b-458a-bc9c-be3692e4f35e"
-            }
-          }
-        },
-        {
-          "resourceName": "overlayvpn",
-          "resourceDefId": "60c3e96e-0970-4871-b6e0-3b6de7561517",
-          "resourceId": "60c3e96e-0970-4871-b6e0-3b6de7561518",
-          "nsParameters": {
-            "locationConstraints": [],
-            "additionalParamForNs": {
-              "externalDataNetworkName": "Flow_out_net",
-              "m6000_mng_ip": "181.18.20.2",
-              "externalCompanyFtpDataNetworkName": "Flow_out_net",
-              "externalPluginManageNetworkName": "plugin_net_2014",
-              "externalManageNetworkName": "mng_net_2017",
-              "sfc_data_network": "sfc_data_net_2016",
-              "NatIpRange": "210.1.1.10-210.1.1.20",
-              "location": "4050083f-465f-4838-af1e-47a545222ad0",
-              "sdncontroller": "9b9f02c0-298b-458a-bc9c-be3692e4f35e"
-            }
-          }
-        }
-      ]
+  "variables": {
+    "bpmnRequest": {
+      "value": "{\"requestDetails\":{\"modelInfo\":{\"modelInvariantUuid\":\"1de901ed-17af-4b03-bc1f-41659cfa27cb\",\"modelType\":\"service\",\"modelName\":\"demoVLB\",\"modelVersion\":\"1.0\",\"modelUuid\":\"ace39141-09ec-4068-b06d-ac6b23bdc6e0\"},\"requestInfo\":{\"productFamilyId\":\"a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb\",\"source\":\"VID\",\"instanceName\":\"sample-instance-2\",\"suppressRollback\":false,\"requestorId\":\"1234\"},\"subscriberInfo\":{\"globalSubscriberId\":\"Demonstration\",\"subscriberName\":\"Demonstration\"},\"cloudConfiguration\":{\"tenantId\":\"onap\",\"lcpCloudRegionId\":\"RegionOne\"},\"requestParameters\":{\"subscriptionServiceType\":\"vLB\",\"aLaCarte\":false,\"autoBuildVfModules\":false,\"cascadeDelete\":false,\"usePreload\":true,\"rebuildVolumeGroups\":false}}}",
+      "type": "String"
+    },
+    "requestId": {
+      "value": "786230f6-5120-4400-aa6b-92a0eb214685",
+      "type": "String"
+    },
+    "mso-request-id": {
+      "value": "786230f6-5120-4400-aa6b-92a0eb214685",
+      "type": "String"
+    },
+    "isBaseVfModule": {
+      "value": false,
+      "type": "Boolean"
+    },
+    "recipeTimeout": {
+      "value": 180,
+      "type": "Integer"
+    },
+    "requestAction": {
+      "value": "createInstance",
+      "type": "String"
+    },
+    "serviceInstanceId": {
+      "value": "",
+      "type": "String"
+    },
+    "vnfId": {
+      "value": "",
+      "type": "String"
+    },
+    "vfModuleId": {
+      "value": "",
+      "type": "String"
+    },
+    "volumeGroupId": {
+      "value": "",
+      "type": "String"
+    },
+    "networkId": {
+      "value": "",
+      "type": "String"
+    },
+    "serviceType": {
+      "value": "demoVLB",
+      "type": "String"
+    },
+    "vnfType": {
+      "value": "",
+      "type": "String"
+    },
+    "vfModuleType": {
+      "value": "",
+      "type": "String"
+    },
+    "networkType": {
+      "value": "",
+      "type": "String"
+    },
+    "host": {
+      "value": "mso",
+      "type": "String"
     }
   }
 }"""
