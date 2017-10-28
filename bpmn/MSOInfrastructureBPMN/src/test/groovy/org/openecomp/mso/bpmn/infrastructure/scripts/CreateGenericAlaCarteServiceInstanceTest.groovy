@@ -207,4 +207,50 @@ class CreateGenericAlaCarteServiceInstanceTest  {
 				//ignore
 			}			
 		}
+		
+		@Test
+		//@Ignore
+		public void sendSyncResponse() {
+			
+			println "************ sendSyncResponse ************* "
+			
+			ExecutionEntity mockExecution = setupMock()
+			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
+			when(mockExecution.getVariable("isAsyncProcess")).thenReturn(true)
+			when(mockExecution.getVariable("mso-request-id")).thenReturn("e8ebf6a0-f8ea-4dc0-8b99-fe98a87722d6")
+			when(mockExecution.getVariable("serviceInstanceId")).thenReturn("f70e927b-6087-4974-9ef8-c5e4d5847ca4")
+			try{
+				// preProcessRequest(Execution execution)
+				CreateNetworkInstance CreateNetworkInstance = new CreateNetworkInstance()
+				CreateNetworkInstance.sendSyncResponse(mockExecution)
+
+				verify(mockExecution).setVariable("prefix", Prefix)
+				verify(mockExecution).setVariable("CreateNetworkInstanceResponseCode", "202")
+			}catch(Exception e){
+				//ignore
+			}
 		}
+			
+		private ExecutionEntity setupMock() {
+			
+			ProcessDefinition mockProcessDefinition = mock(ProcessDefinition.class)
+			when(mockProcessDefinition.getKey()).thenReturn("CreateNetworkInstance")
+			RepositoryService mockRepositoryService = mock(RepositoryService.class)
+			when(mockRepositoryService.getProcessDefinition()).thenReturn(mockProcessDefinition)
+			when(mockRepositoryService.getProcessDefinition().getKey()).thenReturn("CreateNetworkInstance")
+			when(mockRepositoryService.getProcessDefinition().getId()).thenReturn("100")
+			ProcessEngineServices mockProcessEngineServices = mock(ProcessEngineServices.class)
+			when(mockProcessEngineServices.getRepositoryService()).thenReturn(mockRepositoryService)
+			
+			ExecutionEntity mockExecution = mock(ExecutionEntity.class)
+			// Initialize prerequisite variables
+			
+			when(mockExecution.getId()).thenReturn("100")
+			when(mockExecution.getProcessDefinitionId()).thenReturn("CreateNetworkInstance")
+			when(mockExecution.getProcessInstanceId()).thenReturn("CreateNetworkInstance")
+			when(mockExecution.getProcessEngineServices()).thenReturn(mockProcessEngineServices)
+			when(mockExecution.getProcessEngineServices().getRepositoryService().getProcessDefinition(mockExecution.getProcessDefinitionId())).thenReturn(mockProcessDefinition)
+			
+			return mockExecution
+		}
+}
