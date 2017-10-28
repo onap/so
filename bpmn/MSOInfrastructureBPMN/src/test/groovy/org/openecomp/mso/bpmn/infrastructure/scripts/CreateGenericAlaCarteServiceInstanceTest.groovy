@@ -230,7 +230,29 @@ class CreateGenericAlaCarteServiceInstanceTest  {
 				//ignore
 			}
 		}
+		
+		@Test
+		//@Ignore
+		public void sendSyncError() {
 			
+			println "************ sendSyncError ************* "
+			
+			ExecutionEntity mockExecution = setupMock()
+			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
+			when(mockExecution.getVariable("isAsyncProcess")).thenReturn(true)
+			when(mockExecution.getVariable("mso-request-id")).thenReturn("e8ebf6a0-f8ea-4dc0-8b99-fe98a87722d6")
+			when(mockExecution.getVariable("serviceInstanceId")).thenReturn("f70e927b-6087-4974-9ef8-c5e4d5847ca4")
+			try{
+				CreateNetworkInstance CreateNetworkInstance = new CreateNetworkInstance()
+				CreateNetworkInstance.sendSyncError(mockExecution)
+
+				verify(mockExecution).setVariable("prefix", Prefix)
+				verify(mockExecution).setVariable("CreateNetworkInstanceResponseCode", "500")
+			}catch(Exception e){
+				//ignore
+			}
+		}
+		
 		private ExecutionEntity setupMock() {
 			
 			ProcessDefinition mockProcessDefinition = mock(ProcessDefinition.class)
