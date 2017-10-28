@@ -35,6 +35,7 @@ import org.openecomp.mso.adapters.vfc.model.NsOperationKey;
 import org.openecomp.mso.adapters.vfc.model.RestfulResponse;
 import org.openecomp.mso.adapters.vfc.util.JsonUtil;
 import org.openecomp.mso.adapters.vfc.util.ValidateUtil;
+import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
 
 /**
@@ -70,7 +71,7 @@ public class VfcAdapterRest {
     public Response createNfvoNs(String data) {
         try {
             ValidateUtil.assertObjectNotNull(data);
-            LOGGER.debug("body from request is {}" + data);
+            LOGGER.info(MessageEnum.RA_NS_EXC, "Create NS Request Received.Body from request is :\n" + data, "org.openecomp.mso.adapters.vfc.VfcAdapterRest", "VFC Adapter");
             NSResourceInputParameter nsInput = JsonUtil.unMarshal(data, NSResourceInputParameter.class);
             RestfulResponse rsp = driverMgr.createNs(nsInput);
             return buildResponse(rsp);
@@ -95,7 +96,7 @@ public class VfcAdapterRest {
         try {
 
             ValidateUtil.assertObjectNotNull(data);
-            LOGGER.debug("body from request is {}" + data);
+            LOGGER.info(MessageEnum.RA_NS_EXC, "Delete NS Request Received.Body from request is :\n" + data, "org.openecomp.mso.adapters.vfc.VfcAdapterRest", "VFC Adapter");
             NsOperationKey nsOperationKey = JsonUtil.unMarshal(data, NsOperationKey.class);
             RestfulResponse rsp = driverMgr.deleteNs(nsOperationKey, nsInstanceId);
             return buildResponse(rsp);
@@ -120,7 +121,7 @@ public class VfcAdapterRest {
     public Response queryNfvoJobStatus(String data, @PathParam("jobId") String jobId) {
         try {
             ValidateUtil.assertObjectNotNull(data);
-            LOGGER.debug("body from request is {}" + data);
+            LOGGER.info(MessageEnum.RA_NS_EXC, "Query Job Request Received.Body from request is :\n" + data, "org.openecomp.mso.adapters.vfc.VfcAdapterRest", "VFC Adapter");
             NsOperationKey nsOperationKey = JsonUtil.unMarshal(data, NsOperationKey.class);
             RestfulResponse rsp = driverMgr.getNsProgress(nsOperationKey, jobId);
             return buildResponse(rsp);
@@ -145,7 +146,7 @@ public class VfcAdapterRest {
     public Response instantiateNfvoNs(String data, @PathParam("nsInstanceId") String nsInstanceId) {
         try {
             ValidateUtil.assertObjectNotNull(data);
-            LOGGER.debug("body from request is {}" + data);
+            LOGGER.info(MessageEnum.RA_NS_EXC, "Instantiate Ns Request Received.Body from request is :\n" + data, "org.openecomp.mso.adapters.vfc.VfcAdapterRest", "VFC Adapter");
             NSResourceInputParameter nsInput = JsonUtil.unMarshal(data, NSResourceInputParameter.class);
             RestfulResponse rsp = driverMgr.instantiateNs(nsInstanceId, nsInput);
             return buildResponse(rsp);
@@ -170,7 +171,7 @@ public class VfcAdapterRest {
     public Response terminateNfvoNs(String data, @PathParam("nsInstanceId") String nsInstanceId) {
         try {
             ValidateUtil.assertObjectNotNull(data);
-            LOGGER.debug("body from request is {}" + data);
+            LOGGER.info(MessageEnum.RA_NS_EXC, "Terminate Ns Request Received.Body from request is :\n" + data, "org.openecomp.mso.adapters.vfc.VfcAdapterRest", "VFC Adapter");
             NsOperationKey nsOperationKey = JsonUtil.unMarshal(data, NsOperationKey.class);
             RestfulResponse rsp = driverMgr.terminateNs(nsOperationKey, nsInstanceId);
             return buildResponse(rsp);

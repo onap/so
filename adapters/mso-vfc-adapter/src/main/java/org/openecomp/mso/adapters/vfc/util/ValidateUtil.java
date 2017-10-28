@@ -22,15 +22,15 @@ package org.openecomp.mso.adapters.vfc.util;
 
 import org.openecomp.mso.adapters.vfc.constant.HttpCode;
 import org.openecomp.mso.adapters.vfc.exceptions.ApplicationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.mso.logger.MessageEnum;
+import org.openecomp.mso.logger.MsoLogger;
 
 public class ValidateUtil {
 
   /**
    * Log server.
    */
-  private static final Logger LOGGER = LoggerFactory.getLogger(ValidateUtil.class);
+  private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
 
   /**
    * Constructor<br/>
@@ -55,8 +55,8 @@ public class ValidateUtil {
     if (null != paramValue && !paramValue.isEmpty()) {
       return;
     }
+    LOGGER.error(MessageEnum.RA_NS_EXC, "VFC Adapter", "", MsoLogger.ErrorCode.AvailabilityError, paramName + ": Parameter is null or empty.");
 
-    LOGGER.error(paramName + ": Parameter is null or empty.");
     throw new ApplicationException(HttpCode.BAD_REQUEST, paramName + ": Invalid parameter.");
   }
 
@@ -68,7 +68,8 @@ public class ValidateUtil {
    */
   public static void assertObjectNotNull(Object object) throws ApplicationException {
     if (null == object) {
-      LOGGER.error("Object is null.");
+      LOGGER.error(MessageEnum.RA_NS_EXC, "VFC Adapter", "", MsoLogger.ErrorCode.AvailabilityError, "Object is null.");
+
       throw new ApplicationException(HttpCode.BAD_REQUEST, "Object is null.");
     }
 
