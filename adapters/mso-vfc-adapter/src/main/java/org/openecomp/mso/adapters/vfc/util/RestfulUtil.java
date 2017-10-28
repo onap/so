@@ -75,7 +75,7 @@ public class RestfulUtil {
             msbPort = msoPropertiesFactory.getMsoJavaProperties("MSO_PROP_TOPOLOGY").getProperty("msb-port", "8099");
 
         } catch(MsoPropertiesException e) {
-            LOGGER.error(MessageEnum.RA_NS_EXC, "VFC", "", MsoLogger.ErrorCode.AvailabilityError,
+            LOGGER.error(MessageEnum.RA_NS_EXC, "VFC Adapter", "", MsoLogger.ErrorCode.AvailabilityError,
                     "Get msb properties failed");
             e.printStackTrace();
         }
@@ -88,8 +88,7 @@ public class RestfulUtil {
 
     public static RestfulResponse send(String url, String methodType, String content) {
         String msbUrl = getMsbHost() + url;
-        LOGGER.info(MessageEnum.RA_NS_EXC, msbUrl, "VFC", "");
-        LOGGER.debug("VFC Request Body:\n" + content);
+        LOGGER.info(MessageEnum.RA_NS_EXC, "Begin to sent message " + methodType +": " + msbUrl, "org.openecomp.mso.adapters.vfc.util.RestfulUtil","VFC Adapter");
 
         HttpRequestBase method = null;
         HttpResponse httpResponse = null;
@@ -158,8 +157,6 @@ public class RestfulUtil {
             }
 
             method = null;
-
-            LOGGER.info(MessageEnum.RA_RESPONSE_FROM_SDNC, responseContent, "VFC", "");
             return createResponse(statusCode, responseContent);
 
         } catch(SocketTimeoutException e) {
@@ -197,12 +194,12 @@ public class RestfulUtil {
     }
 
     private static void logError(String errMsg, Throwable t) {
-        LOGGER.error(MessageEnum.RA_NS_EXC, "VFC", "", MsoLogger.ErrorCode.AvailabilityError, errMsg, t);
+        LOGGER.error(MessageEnum.RA_NS_EXC, "VFC Adapter", "", MsoLogger.ErrorCode.AvailabilityError, errMsg, t);
         ALARMLOGGER.sendAlarm("MsoInternalError", MsoAlarmLogger.CRITICAL, errMsg);
     }
 
     private static void logError(String errMsg) {
-        LOGGER.error(MessageEnum.RA_NS_EXC, "VFC", "", MsoLogger.ErrorCode.AvailabilityError, errMsg);
+        LOGGER.error(MessageEnum.RA_NS_EXC, "VFC Adapter", "", MsoLogger.ErrorCode.AvailabilityError, errMsg);
         ALARMLOGGER.sendAlarm("MsoInternalError", MsoAlarmLogger.CRITICAL, errMsg);
     }
 
@@ -212,40 +209,5 @@ public class RestfulUtil {
         rsp.setResponseContent(content);
         return rsp;
     }
-
-    /**
-     * @param request
-     * @return
-     */
-    // public static String getRequestBody(HttpServletRequest request) {
-    // String body = null;
-    // StringBuilder stringBuilder = new StringBuilder();
-    // BufferedReader bufferedReader = null;
-    // try {
-    // InputStream inputStream = request.getInputStream();
-    // if (inputStream != null) {
-    // bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-    // char[] charBuffer = new char[128];
-    // int bytesRead = -1;
-    // while ((bytesRead = bufferedReader.read(charBuffer)) > 0)
-    // stringBuilder.append(charBuffer, 0, bytesRead);
-    // }
-    // } catch (IOException ex) {
-    // LOGGER.error(MessageEnum.RA_NS_EXC, "VFC", "", MsoLogger.ErrorCode.AvailabilityError,
-    // "read inputStream buffer catch exception:", ex);
-    // } finally {
-    // if (bufferedReader != null) {
-    // try {
-    // bufferedReader.close();
-    // } catch (IOException ex) {
-    // LOGGER.error(MessageEnum.RA_NS_EXC, "VFC", "", MsoLogger.ErrorCode.AvailabilityError,
-    // "close buffer catch exception:", ex);
-    // }
-    // }
-    // }
-    //
-    // body = stringBuilder.toString();
-    // return body;
-    // }
 
 }
