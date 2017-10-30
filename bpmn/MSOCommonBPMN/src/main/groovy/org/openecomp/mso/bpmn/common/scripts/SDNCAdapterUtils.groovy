@@ -24,7 +24,7 @@ import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.runtime.Execution
 import org.openecomp.mso.bpmn.core.WorkflowException
-import org.openecomp.mso.bpmn.core.json.JsonUtils;
+import org.openecomp.mso.bpmn.core.json.JsonUtils
 import org.springframework.web.util.UriUtils
 
 
@@ -730,13 +730,8 @@ class SDNCAdapterUtils {
 					taskProcessor.utils.log("DEBUG", response + ' is empty');
 					exceptionUtil.buildAndThrowWorkflowException(execution, 500, "SDNCAdapter Workflow Response is Empty")
 				}else{
-
 					// we need to peer into the request data for error
-					def String sdncAdapterWorkflowResponse = taskProcessor.utils.getNodeXml(response, 'response-data', false)
-					def String decodedXml = decodeXML(sdncAdapterWorkflowResponse).replace('<?xml version="1.0" encoding="UTF-8"?>', "")
-
-					// change '&' to "&amp; (if present as data, ex: subscriber-name = 'FOUR SEASONS HEATING & COOLING_8310006378683'
-					decodedXml = decodedXml.replace("&", "&amp;")
+					def String decodedXml = taskProcessor.utils.getNodeText1(response, "RequestData")
 
 					taskProcessor.utils.log("DEBUG","decodedXml:\n" + decodedXml, isDebugLogEnabled)
 
@@ -745,12 +740,14 @@ class SDNCAdapterUtils {
 
 					try{
 						if (taskProcessor.utils.nodeExists(decodedXml, "response-message")) {
-							requestDataResponseMessage = taskProcessor.utils.getNodeText(decodedXml, "response-message")
-						} else if (taskProcessor.utils.nodeExists(decodedXml, "ResponseMessage")) {
-							requestDataResponseMessage = taskProcessor.utils.getNodeText(decodedXml, "ResponseMessage")
+							requestDataResponseMessage = taskProcessor.utils.getNodeText1(decodedXml, "response-message")
+							
+							// note: ResponseMessage appears within "response", not "decodedXml"
+						} else if (taskProcessor.utils.nodeExists(response, "ResponseMessage")) {
+							requestDataResponseMessage = taskProcessor.utils.getNodeText1(response, "ResponseMessage")
 						}
 					}catch(Exception e){
-						taskProcessor.utils.log("DEBUG", 'Error caught while decoding resposne ' + e.getMessage(), isDebugLogEnabled)
+						taskProcessor.utils.log("DEBUG", 'Error caught while decoding response ' + e.getMessage(), isDebugLogEnabled)
 					}
 
 					if(taskProcessor.utils.nodeExists(decodedXml, "response-code")) {
@@ -761,18 +758,20 @@ class SDNCAdapterUtils {
 							taskProcessor.utils.log("DEBUG","response-code node is empty", isDebugLogEnabled)
 							requestDataResponseCode = 0
 						}else{
-							requestDataResponseCode  = code.toInteger()
+							requestDataResponseCode  = code as Integer
 							taskProcessor.utils.log("DEBUG","response-code is: " + requestDataResponseCode, isDebugLogEnabled)
 						}
-					}else if(taskProcessor.utils.nodeExists(decodedXml, "ResponseCode")){
+						
+						// note: ResponseCode appears within "response", not "decodedXml"
+					}else if(taskProcessor.utils.nodeExists(response, "ResponseCode")){
 						taskProcessor.utils.log("DEBUG","ResponseCode node Exist ", isDebugLogEnabled)
-						String code = taskProcessor.utils.getNodeText1(decodedXml, "ResponseCode")
+						String code = taskProcessor.utils.getNodeText1(response, "ResponseCode")
 						if(code.isEmpty() || code.equals("")){
 							// if ResponseCode blank then Success
 							taskProcessor.utils.log("DEBUG","ResponseCode node is empty", isDebugLogEnabled)
 							requestDataResponseCode = 0
 						}else{
-							requestDataResponseCode  = code.toInteger()
+							requestDataResponseCode  = code as Integer
 							taskProcessor.utils.log("DEBUG","ResponseCode is: " + requestDataResponseCode, isDebugLogEnabled)
 						}
 					}else{
