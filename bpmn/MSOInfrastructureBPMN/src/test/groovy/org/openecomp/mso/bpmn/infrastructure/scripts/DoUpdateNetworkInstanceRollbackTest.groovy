@@ -88,13 +88,13 @@ class DoUpdateNetworkInstanceRollbackTest  {
       <network-information>
          <network-id>8abc633a-810b-4ca5-8b3a-09511d13a2ce</network-id>
          <network-type>CONTRAIL_EXTERNAL</network-type>
-         <ecomp-model-information>
+         <onap-model-information>
             <model-invariant-uuid>invariant-uuid</model-invariant-uuid>
             <model-customization-uuid>customization-uuid</model-customization-uuid>
             <model-uuid>uuid</model-uuid>
             <model-version>version</model-version>
             <model-name>CONTRAIL_EXTERNAL</model-name>
-         </ecomp-model-information>
+         </onap-model-information>
       </network-information>
       <network-request-information>
          <network-id>8abc633a-810b-4ca5-8b3a-09511d13a2ce</network-id>
@@ -136,13 +136,13 @@ class DoUpdateNetworkInstanceRollbackTest  {
       <network-information>
          <network-id>8abc633a-810b-4ca5-8b3a-09511d13a2ce</network-id>
          <network-type>CONTRAIL_EXTERNAL</network-type>
-         <ecomp-model-information>
+         <onap-model-information>
             <model-invariant-uuid>invariant-uuid</model-invariant-uuid>
             <model-customization-uuid>customization-uuid</model-customization-uuid>
             <model-uuid>uuid</model-uuid>
             <model-version>version</model-version>
             <model-name>CONTRAIL_EXTERNAL</model-name>
-         </ecomp-model-information>
+         </onap-model-information>
       </network-information>
       <network-request-information>
          <network-id>8abc633a-810b-4ca5-8b3a-09511d13a2ce</network-id>

@@ -195,7 +195,7 @@ public class DoDeleteAllottedResourceTXC extends AbstractServiceTaskProcessor{
 					<service-information>
 						<service-id></service-id>
 						<subscription-service-type></subscription-service-type>
-						<ecomp-model-information></ecomp-model-information>
+						<onap-model-information></onap-model-information>
 						<service-instance-id>${parentServiceInstanceId}</service-instance-id>
 						<subscriber-name/>
 						<global-customer-id></global-customer-id>
@@ -204,13 +204,13 @@ public class DoDeleteAllottedResourceTXC extends AbstractServiceTaskProcessor{
 						<allotted-resource-id>${allottedResourceId}</allotted-resource-id>    
 						<allotted-resource-type>tunnelxconn</allotted-resource-type>
 						<parent-service-instance-id>${parentServiceInstanceId}</parent-service-instance-id>   
-						<ecomp-model-information>
+						<onap-model-information>
 							<model-invariant-uuid>${modelInvariantId}</model-invariant-uuid>
 							<model-uuid>${modelUUId}</model-uuid>
 							<model-customization-uuid>${modelCustomizationId}</model-customization-uuid>
 							<model-version>${modelVersion}</model-version>
 							<model-name>${modelName}</model-name>
-						</ecomp-model-information>
+						</onap-model-information>
 					</allotted-resource-information>
 					<tunnelxconn-request-input>
 					</tunnelxconn-request-input>
