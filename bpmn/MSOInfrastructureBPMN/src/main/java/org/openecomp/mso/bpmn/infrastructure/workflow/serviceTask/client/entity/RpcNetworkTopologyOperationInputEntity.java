@@ -34,6 +34,6 @@ public class RpcNetworkTopologyOperationInputEntity {
         this.input = input;
     }
 
-    @JsonProperty("input")
+    @JsonProperty("GENERIC-RESOURCE-API:input")
     private NetworkTopologyOperationInputEntity input = null;
 }

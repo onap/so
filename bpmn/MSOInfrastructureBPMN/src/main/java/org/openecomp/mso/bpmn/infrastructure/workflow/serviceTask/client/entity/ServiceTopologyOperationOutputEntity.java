@@ -26,19 +26,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by 10112215 on 2017/9/26.
  */
 public class ServiceTopologyOperationOutputEntity {
-    @JsonProperty("svc-request-id")
+    @JsonProperty("GENERIC-RESOURCE-API:svc-request-id")
     private String svcRequestId;
 
-    @JsonProperty("response-code")
+    @JsonProperty("GENERIC-RESOURCE-API:response-code")
     private String responseCode;
 
-    @JsonProperty("response-message")
+    @JsonProperty("GENERIC-RESOURCE-API:response-message")
     private String responseMessage;
 
-    @JsonProperty("ack-final-indicator")
+    @JsonProperty("GENERIC-RESOURCE-API:ack-final-indicator")
     private String ackFinalIndicator;
 
-    @JsonProperty("service-response-information")
+    @JsonProperty("GENERIC-RESOURCE-API:service-response-information")
     private ServiceResponseInformationEntity serviceResponseInformation;
 
     public String getSvcRequestId() {

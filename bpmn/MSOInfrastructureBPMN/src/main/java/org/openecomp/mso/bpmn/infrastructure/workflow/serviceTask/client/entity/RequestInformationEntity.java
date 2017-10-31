@@ -74,21 +74,21 @@ public class RequestInformationEntity {
         this.orerVersion = orerVersion;
     }
 
-    @JsonProperty("request-id")
+    @JsonProperty("GENERIC-RESOURCE-API:request-id")
     private String requestId;
 
-    @JsonProperty("request-action")
+    @JsonProperty("GENERIC-RESOURCE-API:request-action")
     private String requestAction;
 
-    @JsonProperty("source")
+    @JsonProperty("GENERIC-RESOURCE-API:source")
     private String source;
 
-    @JsonProperty("notification-url")
+    @JsonProperty("GENERIC-RESOURCE-API:notification-url")
     private String notificationUrl;
 
-    @JsonProperty("order-number")
+    @JsonProperty("GENERIC-RESOURCE-API:order-number")
     private String orderUnmber;
 
-    @JsonProperty("order-version")
+    @JsonProperty("GENERIC-RESOURCE-API:order-version")
     private String orerVersion;
 }

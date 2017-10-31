@@ -26,19 +26,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by 10112215 on 2017/9/20.
  */
 public class NetworkRequestInputEntity {
-    @JsonProperty("network-name")
+    @JsonProperty("GENERIC-RESOURCE-API:network-name")
     private String networkName;
 
-    @JsonProperty("tenant")
+    @JsonProperty("GENERIC-RESOURCE-API:tenant")
     private String tenant;
 
-    @JsonProperty("aic-cloud-region")
+    @JsonProperty("GENERIC-RESOURCE-API:aic-cloud-region")
     private String aicCloudRegion;
 
-    @JsonProperty("aic-clli")
+    @JsonProperty("GENERIC-RESOURCE-API:aic-clli")
     private String aicClli;
 
-    @JsonProperty("network-input-parameters")
+    @JsonProperty("GENERIC-RESOURCE-API:network-input-parameters")
     private NetworkInputPaarametersEntity networkInputPaarameters;
 
     public String getNetworkName() {
