@@ -26,13 +26,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by 10112215 on 2017/9/20.
  */
 public class SdncRequestHeaderEntity {
-    @JsonProperty("svc-request-id")
+    @JsonProperty("GENERIC-RESOURCE-API:svc-request-id")
     private String svcRequestId;
 
-    @JsonProperty("svc-action")
+    @JsonProperty("GENERIC-RESOURCE-API:svc-action")
     private String svcAction;
 
-    @JsonProperty("svc-notification-url")
+    @JsonProperty("GENERIC-RESOURCE-API:svc-notification-url")
     private String svcNotificationUrl;
 
     public String getSvcRequestId() {

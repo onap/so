@@ -26,19 +26,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by 10112215 on 2017/9/20.
  */
 public class NetworkTopologyOperationInputEntity {
-    @JsonProperty("sdnc-request-header")
+    @JsonProperty("GENERIC-RESOURCE-API:sdnc-request-header")
     private SdncRequestHeaderEntity sdncRequestHeader;
 
-    @JsonProperty("request-information")
+    @JsonProperty("GENERIC-RESOURCE-API:request-information")
     private RequestInformationEntity requestInformation;
 
-    @JsonProperty("service-information")
+    @JsonProperty("GENERIC-RESOURCE-API:service-information")
     private ServiceInformationEntity serviceInformation;
 
-    @JsonProperty("network-information")
+    @JsonProperty("GENERIC-RESOURCE-API:network-information")
     private NetworkInformationEntity networkInformation;
 
-    @JsonProperty("network-request-input")
+    @JsonProperty("GENERIC-RESOURCE-API:network-request-input")
     private NetworkRequestInputEntity networkRequestInput;
 
     public SdncRequestHeaderEntity getSdncRequestHeader() {

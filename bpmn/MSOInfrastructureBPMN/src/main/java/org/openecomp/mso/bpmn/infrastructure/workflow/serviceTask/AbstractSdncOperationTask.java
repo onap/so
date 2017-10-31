@@ -268,7 +268,14 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
         String json = (String) execution.getVariable(SDCADAPTOR_INPUTS);
         JSONObject jsonObject = new JSONObject(json);
         JSONObject paras = jsonObject.getJSONObject("additionalParamForNs");
-        paras.keySet().stream().forEach(key -> inputs.put(key, paras.getString((String) key)));
+
+        while (paras.keys().hasNext()) {
+            String key = paras.keys().next();
+            inputs.put(key, paras.getString(key));
+        }
+/*        if (paras.keys().hasNext()) {
+            paras.keySet().stream().forEach(key -> inputs.put(key, paras.getString((String) key)));
+        }*/
         return inputs;
     }
 
@@ -309,7 +316,7 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
 //        updateProgress(execution, null, null, "20", "getGenericResourceApiClient begin!");
         String msbIp = System.getenv().get(ONAP_IP);
         int msbPort = DEFAULT_MSB_Port;
-        Map<String, String> properties = PropertyConfiguration.getInstance().getProperties("mso.bpmn.urn.properties");
+        Map<String, String> properties = PropertyConfiguration.getInstance().getProperties("topology.properties");
         if (properties != null) {
             if (StringUtils.isBlank(msbIp) || !isIp(msbIp)) {
                 msbIp = properties.get("msb-ip");
