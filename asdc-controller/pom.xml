@@ -100,7 +100,7 @@
 	 	<dependency>
   			<groupId>org.openecomp.sdc.sdc-distribution-client</groupId>
   			<artifactId>sdc-distribution-client</artifactId>
- 			 <version>1.1.32-SNAPSHOT</version>
+ 			 <version>1.1.32</version>
  			<exclusions>
        		 	<exclusion>  
 	         	 	<groupId>org.slf4j</groupId>
@@ -113,7 +113,7 @@
 		<dependency>
   			<groupId>org.openecomp.sdc.sdc-tosca</groupId>
   			<artifactId>sdc-tosca</artifactId>
-			<version>1.1.32-SNAPSHOT</version>
+			<version>1.1.32</version>
 		</dependency> 
 		
 
