@@ -26,10 +26,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by 10112215 on 2017/9/20.
  */
 public class ParamEntity {
-    @JsonProperty("name")
+    @JsonProperty("GENERIC-RESOURCE-API:name")
     private String name;
 
-    @JsonProperty("value")
+    @JsonProperty("GENERIC-RESOURCE-API:value")
     private String value;
 
     public String getName() {

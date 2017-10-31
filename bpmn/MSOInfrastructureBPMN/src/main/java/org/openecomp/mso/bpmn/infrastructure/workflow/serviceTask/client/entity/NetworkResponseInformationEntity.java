@@ -26,10 +26,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by 10112215 on 2017/9/22.
  */
 public class NetworkResponseInformationEntity {
-    @JsonProperty("instance-id")
+    @JsonProperty("GENERIC-RESOURCE-API:instance-id")
     private String instanceId;
 
-    @JsonProperty("object-path")
+    @JsonProperty("GENERIC-RESOURCE-API:object-path")
     private String objectPath;
 
     public String getInstanceId() {

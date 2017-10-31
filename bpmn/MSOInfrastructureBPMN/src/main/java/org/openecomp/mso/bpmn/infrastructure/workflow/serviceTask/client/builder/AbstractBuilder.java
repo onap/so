@@ -114,25 +114,25 @@ public abstract class AbstractBuilder<IN, OUT> {
      abstract OUT build(DelegateExecution execution, IN input) throws Exception;
 
      protected String getRequestActoin(DelegateExecution execution) {
-          String action = /*RequestInformation.*/RequestAction.CreateNetworkInstance.name();
+          String action = /*RequestInformation.*/RequestAction.CreateNetworkInstance.getName();
           String operType = (String) execution.getVariable(OPERATION_TYPE);
           String resourceType = ((String) execution.getVariable(RESOURCE_TYPE)).toLowerCase();
           if (!StringUtils.isBlank(operType)) {
                if (RequestsDbConstant.OperationType.DELETE.equals(operType)) {
                     if (isOverlay(resourceType)) {
-                         action = /*RequestInformation.*/RequestAction.DeActivateDCINetworkInstance.name();
+                         action = /*RequestInformation.*/RequestAction.DeActivateDCINetworkInstance.getName();
                     } else if (isUnderlay(resourceType)) {
-                         action = /*RequestInformation.*/RequestAction.DeleteNetworkInstance.name();
+                         action = /*RequestInformation.*/RequestAction.DeleteNetworkInstance.getName();
                     } else {
-                         action = /*RequestInformation.*/RequestAction.DeleteServiceInstance.name();
+                         action = /*RequestInformation.*/RequestAction.DeleteServiceInstance.getName();
                     }
                } else if (RequestsDbConstant.OperationType.CREATE.equals(operType)) {
                     if (isOverlay(resourceType)) {
-                         action = /*RequestInformation.*/RequestAction.ActivateDCINetworkInstance.name();
+                         action = /*RequestInformation.*/RequestAction.ActivateDCINetworkInstance.getName();
                     } else if (isUnderlay(resourceType)) {
-                         action = /*RequestInformation.*/RequestAction.CreateNetworkInstance.name();
+                         action = /*RequestInformation.*/RequestAction.CreateNetworkInstance.getName();
                     } else {
-                         action = /*RequestInformation.*/RequestAction.CreateServiceInstance.name();
+                         action = /*RequestInformation.*/RequestAction.CreateServiceInstance.getName();
                     }
                }
           }
@@ -148,21 +148,21 @@ public abstract class AbstractBuilder<IN, OUT> {
      }
 
      protected String getSvcAction(DelegateExecution execution) {
-          String action = /*SdncRequestHeader.*/SvcAction.Create.name();
+          String action = /*SdncRequestHeader.*/SvcAction.Create.getName();
           String operType = (String) execution.getVariable(OPERATION_TYPE);
           String resourceType = ((String) execution.getVariable(RESOURCE_TYPE)).toLowerCase();
           if (!StringUtils.isBlank(operType)) {
                if (RequestsDbConstant.OperationType.DELETE.equals(operType)) {
                     if (isOverlay(resourceType)) {
-                         action = /*SdncRequestHeader.*/SvcAction.Deactivate.name();
+                         action = /*SdncRequestHeader.*/SvcAction.Deactivate.getName();
                     } else {
-                         action = /*SdncRequestHeader.*/SvcAction.Delete.name();
+                         action = /*SdncRequestHeader.*/SvcAction.Delete.getName();
                     }
                } else if (RequestsDbConstant.OperationType.CREATE.equals(operType)) {
                     if (isOverlay(resourceType)) {
-                         action = /*SdncRequestHeader.*/SvcAction.Activate.name();
+                         action = /*SdncRequestHeader.*/SvcAction.Activate.getName();
                     } else {
-                         action = /*SdncRequestHeader.*/SvcAction.Create.name();
+                         action = /*SdncRequestHeader.*/SvcAction.Create.getName();
                     }
                }
           }
