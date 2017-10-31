@@ -36,6 +36,6 @@ public class NetworkInputPaarametersEntity {
         this.paramList = paramList;
     }
 
-    @JsonProperty("param")
+    @JsonProperty("GENERIC-RESOURCE-API:param")
     private List<ParamEntity> paramList;
 }

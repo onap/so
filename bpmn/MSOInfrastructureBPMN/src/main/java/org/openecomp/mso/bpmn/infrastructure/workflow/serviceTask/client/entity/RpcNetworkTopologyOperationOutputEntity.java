@@ -34,6 +34,6 @@ public class RpcNetworkTopologyOperationOutputEntity {
         this.output = output;
     }
 
-    @JsonProperty("output")
+    @JsonProperty("GENERIC-RESOURCE-API:output")
     private NetworkTopologyOperationOutputEntity output;
 }

@@ -18,22 +18,28 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.entity;
+package org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.Base64;
 
-/**
- * Created by 10112215 on 2017/9/26.
- */
-public class RpcServiceTopologyOperationOutputEntity {
-    @JsonProperty("GENERIC-RESOURCE-API:output")
-    private ServiceTopologyOperationOutputEntity output;
+public class HeaderUtil {
 
-    public ServiceTopologyOperationOutputEntity getOutput() {
-        return output;
+    public static final String USER = "admin";
+    public static final String PASS = "Kp8bJ4SXszM0WXlhak3eHlcse2gAw84vaoGGmJvUy2U";
+    public static final String DefaulAuth = getAuthorization(USER, PASS);
+
+    public static String getAuthorization(String usr, String pwd) {
+
+        return "Basic " + base64Encode(usr + ":" + pwd);
     }
 
-    public void setOutput(ServiceTopologyOperationOutputEntity output) {
-        this.output = output;
+    private static String base64Encode(String str) {
+        String base64 = str;
+        try {
+            base64 = Base64.getEncoder()
+                .encodeToString(str.getBytes("utf-8"));
+        } catch (Exception ex) {
+        }
+        return base64;
     }
 }

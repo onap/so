@@ -34,6 +34,6 @@ public class RpcServiceTopologyOperationInputEntity {
         this.serviceTopologyOperationInputEntity = serviceTopologyOperationInputEntity;
     }
 
-    @JsonProperty("input")
+    @JsonProperty("GENERIC-RESOURCE-API:input")
     private ServiceTopologyOperationInputEntity serviceTopologyOperationInputEntity;
 }
