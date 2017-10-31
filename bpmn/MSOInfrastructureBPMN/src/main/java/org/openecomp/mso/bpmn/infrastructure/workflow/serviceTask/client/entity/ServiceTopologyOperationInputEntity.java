@@ -26,16 +26,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by 10112215 on 2017/9/26.
  */
 public class ServiceTopologyOperationInputEntity {
-    @JsonProperty("sdnc-request-header")
+    @JsonProperty("GENERIC-RESOURCE-API:sdnc-request-header")
     private SdncRequestHeaderEntity sdncRequestHeader;
 
-    @JsonProperty("request-information")
+    @JsonProperty("GENERIC-RESOURCE-API:request-information")
     private RequestInformationEntity requestInformation;
 
-    @JsonProperty("service-information")
+    @JsonProperty("GENERIC-RESOURCE-API:service-information")
     private ServiceInformationEntity serviceInformation;
 
-    @JsonProperty("service-request-input")
+    @JsonProperty("GENERIC-RESOURCE-API:service-request-input")
     private ServiceRequestInputEntity serviceRequestInput;
 
     public SdncRequestHeaderEntity getSdncRequestHeader() {
