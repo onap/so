@@ -23,6 +23,7 @@ package org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.openecomp.mso.bpmn.core.WorkflowException;
 import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.GenericResourceApi;
+import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.HeaderUtil;
 import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.builder.NetworkRpcInputEntityBuilder;
 import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.entity.RpcNetworkTopologyOperationInputEntity;
 import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.entity.RpcNetworkTopologyOperationOutputEntity;
@@ -42,7 +43,8 @@ public class SdncNetworkTopologyOperationTask extends AbstractSdncOperationTask 
         NetworkRpcInputEntityBuilder builder = new NetworkRpcInputEntityBuilder();
         RpcNetworkTopologyOperationInputEntity inputEntity = builder.build(execution, inputs);
         updateProgress(execution, null, null, "50", "RequestBody build finished!");
-        RpcNetworkTopologyOperationOutputEntity outputEntity = genericResourceApiClient.postNetworkTopologyOperation(inputEntity).execute().body();
+        RpcNetworkTopologyOperationOutputEntity outputEntity = genericResourceApiClient.postNetworkTopologyOperation
+                (HeaderUtil.DefaulAuth ,inputEntity).execute().body();
         updateProgress(execution, null, null, "90", "sendRestrequestAndHandleResponse finished!");
         saveOutput(execution, outputEntity);
     }

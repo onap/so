@@ -26,7 +26,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by 10112215 on 2017/9/26.
  */
 public class RpcServiceTopologyOperationOutputEntity {
-    @JsonProperty("output")
+    @JsonProperty("GENERIC-RESOURCE-API:output")
     private ServiceTopologyOperationOutputEntity output;
 
     public ServiceTopologyOperationOutputEntity getOutput() {

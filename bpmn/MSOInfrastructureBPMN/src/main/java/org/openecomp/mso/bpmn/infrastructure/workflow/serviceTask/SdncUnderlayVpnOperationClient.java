@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.onap.msb.sdk.httpclient.RestServiceCreater;
 import org.onap.msb.sdk.httpclient.msb.MSBServiceClient;
 import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.GenericResourceApi;
+import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.HeaderUtil;
 import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.builder.NetworkRpcInputEntityBuilder;
 import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.entity.RpcNetworkTopologyOperationInputEntity;
 import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.entity.RpcNetworkTopologyOperationOutputEntity;
@@ -71,7 +72,8 @@ public class SdncUnderlayVpnOperationClient {
         updateProgress(null, null, "50", "RequestBody build finished!");
         RpcNetworkTopologyOperationOutputEntity networkRpcOutputEntiy = null;
         try {
-            networkRpcOutputEntiy = genericResourceApiClient.postNetworkTopologyOperation(body).execute().body();
+            networkRpcOutputEntiy = genericResourceApiClient.postNetworkTopologyOperation
+                    (HeaderUtil.DefaulAuth ,body).execute().body();
         } catch (Exception e) {
             logger.debug("Exception: ", e);
             updateProgress(RequestsDbConstant.Status.ERROR, null, null, "sendRestrequestAndHandleResponse exception:" + e.getMessage());

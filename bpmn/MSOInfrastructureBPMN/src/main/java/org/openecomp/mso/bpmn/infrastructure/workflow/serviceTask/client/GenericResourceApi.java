@@ -26,6 +26,7 @@ import org.onap.msb.sdk.httpclient.annotaion.ServiceHttpEndPoint;
 import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.entity.*;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 
 /**
@@ -35,13 +36,16 @@ import retrofit2.http.POST;
 public interface GenericResourceApi {
 
     @POST("/restconf/operations/GENERIC-RESOURCE-API:network-topology-operation")
-    Call<ResponseBody> postNetworkTopologyOperation(@Body RequestBody input);
+    Call<ResponseBody> postNetworkTopologyOperation(@Header("Authorization") String authorization,
+                                                    @Body RequestBody input);
 
     @POST("/restconf/operations/GENERIC-RESOURCE-API:network-topology-operation")
-    Call<RpcNetworkTopologyOperationOutputEntity> postNetworkTopologyOperation(@Body RpcNetworkTopologyOperationInputEntity input);
+    Call<RpcNetworkTopologyOperationOutputEntity> postNetworkTopologyOperation(@Header("Authorization") String authorization,
+                                                                               @Body RpcNetworkTopologyOperationInputEntity input);
 
     @POST("/restconf/operations/GENERIC-RESOURCE-API:service-topology-operation")
-    Call<RpcServiceTopologyOperationOutputEntity> postServiceTopologyOperation(@Body RpcServiceTopologyOperationInputEntity input);
+    Call<RpcServiceTopologyOperationOutputEntity> postServiceTopologyOperation(@Header("Authorization") String authorization,
+                                                                               @Body RpcServiceTopologyOperationInputEntity input);
 
 }
 

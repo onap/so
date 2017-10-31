@@ -27,10 +27,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class ServiceRequestInputEntity {
 
-    @JsonProperty("service-instance-name")
+    @JsonProperty("GENERIC-RESOURCE-API:service-instance-name")
     private String serviceInstanceName;
 
-    @JsonProperty("service-input-parameters")
+    @JsonProperty("GENERIC-RESOURCE-API:service-input-parameters")
     private ServiceInputParametersEntity serviceInputParametersEntity;
 
     public String getServiceInstanceName() {
