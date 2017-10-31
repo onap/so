@@ -134,7 +134,7 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
         String returnCode = apiResponse.getStatusCode()
         String aaiResponseAsString = apiResponse.getResponseBodyAsString()
         String nsInstanceId = "";
-        if(returnCode== "200"){
+        if(returnCode== "200" || returnCode == "201"){
             nsInstanceId =  jsonUtil.getJsonValue(aaiResponseAsString, "nsInstanceId")
         }
         execution.setVariable("nsInstanceId", nsInstanceId)
@@ -163,7 +163,7 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
         String returnCode = apiResponse.getStatusCode()
         String aaiResponseAsString = apiResponse.getResponseBodyAsString()
         String jobId = "";
-        if(returnCode== "200"){
+        if(returnCode== "200"|| returnCode == "201"){
             jobId =  jsonUtil.getJsonValue(aaiResponseAsString, "jobId")
         }
         execution.setVariable("jobId", jobId)
@@ -183,7 +183,7 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
         String returnCode = apiResponse.getStatusCode()
         String aaiResponseAsString = apiResponse.getResponseBodyAsString()
         String operationStatus = "error"
-        if(returnCode== "200"){
+        if(returnCode== "200"|| returnCode == "201"){
             operationStatus = jsonUtil.getJsonValue(aaiResponseAsString, "responseDescriptor.status")
         }
         execution.setVariable("operationStatus", operationStatus)
