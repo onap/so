@@ -358,7 +358,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
             String resourcesStr = jsonUtil.getJsonValue(incomingRequest, "service.parameters.resources")  
             List<String> resourceList = jsonUtil.StringArrayToList(execution, resourcesStr)   
             for(String resource : resourceList){
-                    resourceTemplateUUIDs  = resourceTemplateUUIDs + jsonUtil.getJsonValue(resource, "resourceDefId") + ":"
+                    resourceTemplateUUIDs  = resourceTemplateUUIDs + jsonUtil.getJsonValue(resource, "resourceId") + ":"
             }           
 
             def dbAdapterEndpoint = "http://mso.mso.testlab.openecomp.org:8080/dbadapters/RequestsDbAdapter"
@@ -415,7 +415,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
         for(String resource : resourceList){
             String resourceName = jsonUtil.getJsonValue(resource, "resourceName")  
             if(StringUtils.containsIgnoreCase(resourceName, resourceType)){
-                String resourceUUID  = jsonUtil.getJsonValue(resource, "resourceDefId")
+                String resourceUUID  = jsonUtil.getJsonValue(resource, "resourceId")
                 String resourceParameters = jsonUtil.getJsonValue(resource, "nsParameters")                
                 execution.setVariable("resourceUUID", resourceUUID)
                 execution.setVariable("resourceParameters", resourceParameters)
