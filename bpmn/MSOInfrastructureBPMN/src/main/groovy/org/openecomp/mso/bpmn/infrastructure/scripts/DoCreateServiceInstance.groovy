@@ -488,12 +488,12 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 					<service-information>
 						<service-id>${serviceId}</service-id>
 						<subscription-service-type>${subscriptionServiceType}</subscription-service-type>
-						<ecomp-model-information>
+						<onap-model-information>
 					         <model-invariant-uuid>${modelInvariantUuid}</model-invariant-uuid>
 					         <model-uuid>${modelUuid}</model-uuid>
 					         <model-version>${modelVersion}</model-version>
 					         <model-name>${modelName}</model-name>
-					    </ecomp-model-information>
+					    </onap-model-information>
 						<service-instance-id>${serviceInstanceId}</service-instance-id>
 						<subscriber-name/>
 						<global-customer-id>${globalSubscriberId}</global-customer-id>
