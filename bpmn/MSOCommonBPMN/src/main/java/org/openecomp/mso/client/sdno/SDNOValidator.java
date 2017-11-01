@@ -22,9 +22,16 @@ package org.openecomp.mso.client.sdno;
 
 import java.io.IOException;
 
-@FunctionalInterface
 public interface SDNOValidator {
 	
-	void healthDiagnostic(String vnfName, String uuid) throws IOException, Exception;
+	/**
+	 * Issues a health diagnostic request for a given vnf to SDN-O
+	 * 
+	 * @param vnfName
+	 * @param uuid
+	 * @throws IOException
+	 * @throws Exception
+	 */
+	public void healthDiagnostic(String vnfName, String uuid) throws IOException, Exception;
 
 }
