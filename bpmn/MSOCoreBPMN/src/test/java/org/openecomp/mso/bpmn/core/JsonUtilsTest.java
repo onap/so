@@ -162,26 +162,24 @@ public class JsonUtilsTest {
             try {
                     fis = new FileInputStream(file);
                     BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-//                  jsonReq = br.readLine();
                     CharBuffer cbuf = CharBuffer.allocate((int)file.length()+1);
                     br.read(cbuf);
                     cbuf.flip();
                     jsonReq = cbuf.toString();
                     if (jsonReq != null) {
-                            System.out.println("initialize(): json request: " + jsonReq);                           
+                            System.out.println("initialize(): json request: " + jsonReq);
                     } else {
                             System.out.println("initialize(): failed to read json request from src/test/resources/request.json");
                     }
                     fis.close();
                     fis = new FileInputStream(file2);
                     br = new BufferedReader(new InputStreamReader(fis));
-//                  jsonReqArray = br.readLine();
                     cbuf = CharBuffer.allocate((int)file.length()+1);
                     br.read(cbuf);
                     cbuf.flip();
                     jsonReqArray = cbuf.toString();
                     if (jsonReq != null) {
-                            System.out.println("initialize(): json request w/ array: " + jsonReqArray);                             
+                            System.out.println("initialize(): json request w/ array: " + jsonReqArray);
                     } else {
                             System.out.println("initialize(): failed to read json request from src/test/resources/request2.json");
                     }
@@ -220,14 +218,11 @@ public class JsonUtilsTest {
             
             // strip all the non-data whitespace
             xmlOut = xmlOut.replaceAll(">\\s*<", "><");
-//          System.out.println("testConversion(): xml in: " + xmlIn);
-//          System.out.println("testConversion(): xml out: " + xmlOut);
 
             Diff diffXml;
             try {
                     diffXml = new Diff(xmlIn, xmlOut);
                     Assert.assertTrue(diffXml.similar());
-//                  Assert.assertTrue(diffXml.identical());
             } catch (SAXException e) {
                     e.printStackTrace();
             } catch (IOException e) {
@@ -259,7 +254,6 @@ public class JsonUtilsTest {
             Assert.assertEquals(value, null);
             // retrieving a parameter/array value (originally a XML attribute)
             value = JsonUtils.getJsonParamValue(json, "vnf-request.vnf-params.param", "name");
-//          Assert.assertEquals(value, "[{\"content\":\"network1111\",\"name\":\"network\"},{\"content\":\"server1111\",\"name\":\"server\"}]");
             Assert.assertEquals(value, "network");
             value = JsonUtils.getJsonParamValue(json, "vnf-request.vnf-params.param", "content");
             Assert.assertEquals(value, "network1111");
@@ -288,7 +282,6 @@ public class JsonUtilsTest {
             System.out.println("testUpdate(): xml request to json: " + json);
             // the add should be successful
             String jsonUpd = JsonUtils.addJsonValue(json, "vnf-request.request-info.comment", "Some comment");
-//          System.out.println("testUpdate(): post add json request: " + jsonUpd);
             String value = JsonUtils.getJsonValue(jsonUpd, "vnf-request.request-info.comment");
             Assert.assertEquals(value, "Some comment");
             // the add should be ignored as the field already exists
@@ -297,12 +290,10 @@ public class JsonUtilsTest {
             Assert.assertEquals(value, "STMTN5MMSC21");
             // the update should be successful
             jsonUpd = JsonUtils.updJsonValue(jsonUpd, "vnf-request.vnf-inputs.vnf-name", "STMTN5MMSC22");
-//          System.out.println("testUpdate(): post update json request: " + jsonUpd);
             value = JsonUtils.getJsonValue(jsonUpd, "vnf-request.vnf-inputs.vnf-name");
             Assert.assertEquals(value, "STMTN5MMSC22");
             // the delete should be successful
             jsonUpd = JsonUtils.delJsonValue(jsonUpd, "vnf-request.request-info.comment");
-//          System.out.println("testUpdate(): post delete json request: " + jsonUpd);
             value = JsonUtils.getJsonValue(jsonUpd, "vnf-request.request-info.comment");
             Assert.assertEquals(value, null);
             // the delete should fail as field 'vnf-model' does not exist
@@ -352,14 +343,11 @@ public class JsonUtilsTest {
                     xmlOut = xmlOut.replaceAll(">\\s*<", "><");
                     System.out.println("testConversionArray(): XML after removing whitespace:" + xmlOut);
                     String xmlTest = xmlArrayReq.replaceAll(">\\s*<", "><");
-//                  System.out.println("testConversion(): xml test: " + xmlTest);
-//                  System.out.println("testConversion(): xml out: " + xmlOut);
 
                     Diff diffXml;
                     try {
                             diffXml = new Diff(xmlTest, xmlOut);
                           Assert.assertTrue(diffXml.similar());
-//                            Assert.assertTrue(diffXml.identical());
                     } catch (SAXException e) {
                             e.printStackTrace();
                     } catch (IOException e) {
