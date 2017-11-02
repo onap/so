@@ -127,6 +127,8 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 			String uuiRequest = execution.getVariable("uuiRequest")
 			String modelInvariantUuid = jsonUtil.getJsonValue(uuiRequest, "service.serviceDefId")
 			String modelUuid = jsonUtil.getJsonValue(uuiRequest, "service.templateId")
+			String serviceModelName = jsonUtil.getJsonValue(uuiRequest, "service.parameters.templateName")
+			execution.setVariable("serviceModelName", serviceModelName)
 			//aai serviceType and Role can be setted as fixed value now.
 			String aaiServiceType = "voLTE type"
 			String aaiServiceRole = "voLTE role"
@@ -416,8 +418,10 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
             String resourceName = jsonUtil.getJsonValue(resource, "resourceName")  
             if(StringUtils.containsIgnoreCase(resourceName, resourceType)){
                 String resourceUUID  = jsonUtil.getJsonValue(resource, "resourceId")
+                String resourceInvariantUUID  = jsonUtil.getJsonValue(resource, "resourceDefId")
                 String resourceParameters = jsonUtil.getJsonValue(resource, "nsParameters")                
                 execution.setVariable("resourceUUID", resourceUUID)
+                execution.setVariable("resourceInvariantUUID", resourceInvariantUUID)
                 execution.setVariable("resourceParameters", resourceParameters)
                 utils.log("INFO", "Prepare VFC Request resourceType:" + resourceType, isDebugEnabled)
                 utils.log("INFO", "Prepare VFC Request resourceUUID:" + resourceUUID, isDebugEnabled)

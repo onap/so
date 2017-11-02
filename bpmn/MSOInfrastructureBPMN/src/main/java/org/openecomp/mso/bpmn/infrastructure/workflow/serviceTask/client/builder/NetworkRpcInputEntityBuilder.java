@@ -85,7 +85,7 @@ public class NetworkRpcInputEntityBuilder extends AbstractBuilder<Map<String, St
     private void loadNetworkInformationEntity(DelegateExecution execution, NetworkTopologyOperationInputEntity networkTopologyOperationInputEntity) {
         NetworkInformationEntity networkInformationEntity = new NetworkInformationEntity();
         {
-            OnapModelInformationEntity onapModelInformationEntity = getOnapModelInformationEntity(execution);
+            OnapModelInformationEntity onapModelInformationEntity = getOnapNetworkModelInformationEntity(execution);
             networkInformationEntity.setOnapModelInformation(onapModelInformationEntity);
         }
         networkTopologyOperationInputEntity.setNetworkInformation(networkInformationEntity);

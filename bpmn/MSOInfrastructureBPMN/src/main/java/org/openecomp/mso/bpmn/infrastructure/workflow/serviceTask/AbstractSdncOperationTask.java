@@ -45,15 +45,20 @@ import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.requestsdb.RequestsDatabase;
 import org.openecomp.mso.requestsdb.ResourceOperationStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
  * Created by 10112215 on 2017/9/16.
  */
 public abstract class AbstractSdncOperationTask extends BaseTask {
+
+    private static final Logger logger = LoggerFactory.getLogger(AbstractSdncOperationTask.class);
 
     private static final String DEFAULT_MSB_IP = "127.0.0.1";
     private static final int DEFAULT_MSB_Port = 80;
@@ -74,16 +79,24 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
             "                <statusDescription>$statusDescription</statusDescription>\n"+
             "     </ns:updateResourceOperationStatus></soapenv:Body></soapenv:Envelope>";
 
+    private static final String getBodyTemplate = " <soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ns=\"http://org.openecomp.mso/requestsdb\"><soapenv:Header/><soapenv:Body>\n" +
+            "     <ns:getResourceOperationStatus>\n" +
+            "                <operationId>$operationId</operationId>\n" +
+            "                <resourceTemplateUUID>$resourceTemplateUUID</resourceTemplateUUID>\n" +
+            "                <serviceId>$serviceId</serviceId>\n" +
+            "     </ns:getResourceOperationStatus></soapenv:Body></soapenv:Envelope>";
+
 
     private void updateResOperStatus(ResourceOperationStatus resourceOperationStatus) throws RouteException {
+        logger.info("AbstractSdncOperationTask.updateResOperStatus begin!");
         String url = "http://mso:8080/dbadapters/RequestsDbAdapter";
         HttpPost httpPost = new HttpPost(url);
         httpPost.addHeader("Authorization", "Basic QlBFTENsaWVudDpwYXNzd29yZDEk");
         httpPost.addHeader("Content-type", "application/soap+xml");
-        String postBody = getStringBody(resourceOperationStatus);
+        String postBody = getPostStringBody(resourceOperationStatus);
         httpPost.setEntity(new StringEntity(postBody, ContentType.APPLICATION_XML));
         httpPost(url, httpPost);
-
+        logger.info("AbstractSdncOperationTask.updateResOperStatus end!");
         //requestsDB.updateResOperStatus(resourceOperationStatus);
     }
 
@@ -99,9 +112,10 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
         return postBody;
     }
 
-    protected void httpPost(String url, HttpPost httpPost) throws RouteException {
+    protected String httpPost(String url, HttpPost httpPost) throws RouteException {
+        logger.info("AbstractSdncOperationTask.httpPost begin!");
         CloseableHttpClient httpClient = HttpClients.createDefault();
-        String result;
+        String result = null;
         boolean var15 = false;
 
         String errorMsg;
@@ -110,8 +124,10 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
                 var15 = true;
                 CloseableHttpResponse closeableHttpResponse = httpClient.execute(httpPost);
                 result = EntityUtils.toString(closeableHttpResponse.getEntity());
-                LOGGER.info(MessageEnum.RA_RESPONSE_FROM_SDNC, result.toString(), "SDNC", "");
+                logger.info("result = {}", result);
+//                LOGGER.info(MessageEnum.RA_RESPONSE_FROM_SDNC, result.toString(), "SDNC", "");
                 if(closeableHttpResponse.getStatusLine().getStatusCode() != 200) {
+                    logger.info("exception: fail for status code = {}", closeableHttpResponse.getStatusLine().getStatusCode());
                     throw new RouteException(result, "SERVICE_GET_ERR");
                 }
 
@@ -120,6 +136,7 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
                 break label91;
             } catch (IOException var19) {
                 errorMsg = url + ":httpPostWithJSON connect faild";
+                logger.info("exception: POST_CONNECT_FAILD : {}", errorMsg);
                 throwsRouteException(errorMsg, var19, "POST_CONNECT_FAILD");
                 var15 = false;
             } finally {
@@ -128,6 +145,7 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
                         httpClient.close();
                     } catch (IOException var16) {
                         String errorMsg1 = url + ":close  httpClient faild";
+                        logger.info("exception: CLOSE_CONNECT_FAILD : {}", errorMsg1);
                         throwsRouteException(errorMsg1, var16, "CLOSE_CONNECT_FAILD");
                     }
 
@@ -138,6 +156,7 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
                 httpClient.close();
             } catch (IOException var17) {
                 errorMsg = url + ":close  httpClient faild";
+                logger.info("exception: CLOSE_CONNECT_FAILD : {}", errorMsg);
                 throwsRouteException(errorMsg, var17, "CLOSE_CONNECT_FAILD");
             }
         }
@@ -146,54 +165,78 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
             httpClient.close();
         } catch (IOException var18) {
             errorMsg = url + ":close  httpClient faild";
+            logger.info("exception: CLOSE_CONNECT_FAILD : {}", errorMsg);
             throwsRouteException(errorMsg, var18, "CLOSE_CONNECT_FAILD");
         }
+        logger.info("AbstractSdncOperationTask.httpPost end!");
+        return result;
     }
 
     private static void throwsRouteException(String errorMsg, Exception e, String errorCode) throws RouteException {
         String msg = errorMsg + ".errorMsg:" + e.getMessage();
+        logger.info("exception: {}", msg);
         throw new RouteException(errorMsg, errorCode);
     }
 
-    private String getStringBody(ResourceOperationStatus resourceOperationStatus) {
+    private String getPostStringBody(ResourceOperationStatus resourceOperationStatus) {
+        logger.info("AbstractSdncOperationTask.getPostStringBody begin!");
         String postBody = new String(postBodyTemplate);
-        postBody.replace("$errorCode", resourceOperationStatus.getErrorCode());
-        postBody.replace("$jobId", resourceOperationStatus.getJobId());
-        postBody.replace("$operType", resourceOperationStatus.getOperType());
-        postBody.replace("$operationId", resourceOperationStatus.getOperationId());
-        postBody.replace("$progress", resourceOperationStatus.getProgress());
-        postBody.replace("$resourceTemplateUUID", resourceOperationStatus.getResourceTemplateUUID());
-        postBody.replace("$serviceId", resourceOperationStatus.getServiceId());
-        postBody.replace("$status", resourceOperationStatus.getStatus());
-        postBody.replace("$statusDescription", resourceOperationStatus.getStatusDescription());
+        postBody = postBody.replace("$errorCode", resourceOperationStatus.getErrorCode());
+        postBody = postBody.replace("$jobId", resourceOperationStatus.getJobId());
+        postBody = postBody.replace("$operType", resourceOperationStatus.getOperType());
+        postBody = postBody.replace("$operationId", resourceOperationStatus.getOperationId());
+        postBody = postBody.replace("$progress", resourceOperationStatus.getProgress());
+        postBody = postBody.replace("$resourceTemplateUUID", resourceOperationStatus.getResourceTemplateUUID());
+        postBody = postBody.replace("$serviceId", resourceOperationStatus.getServiceId());
+        postBody = postBody.replace("$status", resourceOperationStatus.getStatus());
+        postBody = postBody.replace("$statusDescription", resourceOperationStatus.getStatusDescription());
+        logger.info("AbstractSdncOperationTask.getPostStringBody end!");
         return postBody;
     }
 
-    private ResourceOperationStatus getResourceOperationStatus(String serviceId, String operationId, String resourceTemplateUUID) throws RouteException {
-        String url = "http://mso:8080/dbadapters/RequestsDbAdapter";
-        HttpGet httpGet = new HttpGet(url);
-        httpGet.setHeader("Authorization", "Basic QlBFTENsaWVudDpwYXNzd29yZDEk");
-        httpGet.setHeader("Content-type", "application/soap+xml");
-        String result = httpGet(url, httpGet);
-        ResourceOperationStatus resourceOperationStatus = getResourceOperationStatusFromXmlString(result);
+    private String getGetStringBody(String serviceId, String operationId, String resourceTemplateUUID) {
+        logger.info("AbstractSdncOperationTask.getGetStringBody begin!");
+        String getBody = new String(getBodyTemplate);
+        getBody = getBody.replace("$operationId", operationId);
+        getBody = getBody.replace("$resourceTemplateUUID", resourceTemplateUUID);
+        getBody = getBody.replace("$serviceId", serviceId);
+        logger.info("AbstractSdncOperationTask.getGetStringBody end!");
+        return getBody;
+    }
 
+    private ResourceOperationStatus getResourceOperationStatus(String serviceId, String operationId, String resourceTemplateUUID) throws RouteException {
+        logger.info("AbstractSdncOperationTask.getResourceOperationStatus begin!");
+        String url = "http://mso:8080/dbadapters/RequestsDbAdapter";
+        HttpPost httpPost = new HttpPost(url);
+        httpPost.addHeader("Authorization", "Basic QlBFTENsaWVudDpwYXNzd29yZDEk");
+        httpPost.addHeader("Content-type", "application/soap+xml");
+        String getBody = getGetStringBody(serviceId, operationId, resourceTemplateUUID);
+        httpPost.setEntity(new StringEntity(getBody, ContentType.APPLICATION_XML));
+        String result = httpPost(url, httpPost);
+        ResourceOperationStatus resourceOperationStatus = getResourceOperationStatusFromXmlString(result);
+        logger.info("AbstractSdncOperationTask.getResourceOperationStatus end!");
         return resourceOperationStatus;
 
         //return requestsDB.getResourceOperationStatus(serviceId, operationId, resourceTemplateUUID);
     }
 
     private String httpGet(String url, HttpGet httpGet) throws RouteException {
+        logger.info("AbstractSdncOperationTask.httpGet begin!");
         boolean var16 = false;
         CloseableHttpClient httpClient = HttpClients.createDefault();
-        String result="";
+        String result = "";
         String errorMsg;
-        label109: {
-            label110: {
+        label109:
+        {
+            label110:
+            {
                 try {
                     var16 = true;
                     CloseableHttpResponse e = httpClient.execute(httpGet);
                     result = EntityUtils.toString(e.getEntity());
-                    if(e.getStatusLine().getStatusCode() != 200) {
+                    logger.info("result = {}", result);
+                    if (e.getStatusLine().getStatusCode() != 200) {
+                        logger.info("exception: fail for status code = {}", e.getStatusLine().getStatusCode());
                         throw new RouteException(result, "SERVICE_GET_ERR");
                     }
 
@@ -202,19 +245,22 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
                     break label110;
                 } catch (ClientProtocolException var21) {
                     errorMsg = url + ":httpGetWithJSON connect faild";
+                    logger.info("exception: GET_CONNECT_FAILD {}", errorMsg);
                     throwsRouteException(errorMsg, var21, "GET_CONNECT_FAILD");
                     var16 = false;
                 } catch (IOException var22) {
                     errorMsg = url + ":httpGetWithJSON connect faild";
+                    logger.info("exception: GET_CONNECT_FAILD {}", errorMsg);
                     throwsRouteException(errorMsg, var22, "GET_CONNECT_FAILD");
                     var16 = false;
                     break label109;
                 } finally {
-                    if(var16) {
+                    if (var16) {
                         try {
                             httpClient.close();
                         } catch (IOException var17) {
                             String errorMsg1 = url + ":close  httpClient faild";
+                            logger.info("exception: CLOSE_CONNECT_FAILD {}", errorMsg1);
                             throwsRouteException(errorMsg1, var17, "CLOSE_CONNECT_FAILD");
                         }
 
@@ -225,6 +271,7 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
                     httpClient.close();
                 } catch (IOException var19) {
                     errorMsg = url + ":close  httpClient faild";
+                    logger.info("exception: CLOSE_CONNECT_FAILD {}", errorMsg);
                     throwsRouteException(errorMsg, var19, "CLOSE_CONNECT_FAILD");
                 }
 
@@ -234,6 +281,7 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
                 httpClient.close();
             } catch (IOException var20) {
                 errorMsg = url + ":close  httpClient faild";
+                logger.info("exception: CLOSE_CONNECT_FAILD {}", errorMsg);
                 throwsRouteException(errorMsg, var20, "CLOSE_CONNECT_FAILD");
             }
 
@@ -243,12 +291,15 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
             httpClient.close();
         } catch (IOException var18) {
             errorMsg = url + ":close  httpClient faild";
+            logger.info("exception: CLOSE_CONNECT_FAILD {}", errorMsg);
             throwsRouteException(errorMsg, var18, "CLOSE_CONNECT_FAILD");
         }
+        logger.info("AbstractSdncOperationTask.httpGet end!");
         return result;
     }
 
     private ResourceOperationStatus getResourceOperationStatusFromXmlString(String result) {
+        logger.info("AbstractSdncOperationTask.getResourceOperationStatusFromXmlString begin!");
         ResourceOperationStatus resourceOperationStatus = new ResourceOperationStatus();
         resourceOperationStatus.setErrorCode(getValueByName("errorCode", result));
         resourceOperationStatus.setJobId(getValueByName("jobId", result));
@@ -259,19 +310,24 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
         resourceOperationStatus.setServiceId(getValueByName("serviceId", result));
         resourceOperationStatus.setStatus(getValueByName("status", result));
         resourceOperationStatus.setStatusDescription(getValueByName("statusDescription", result));
+        logger.info("AbstractSdncOperationTask.getResourceOperationStatusFromXmlString end!");
         return resourceOperationStatus;
     }
 
     private String getValueByName(String Name, String xml) {
-        String start = "<" + Name + ">";
-        String end = "</" + Name + ">";
-        return xml.substring(xml.indexOf(start), xml.indexOf(end)).replace(start, "");
+        if (!StringUtils.isBlank(xml) && xml.contains(Name)) {
+            String start = "<" + Name + ">";
+            String end = "</" + Name + ">";
+            return xml.substring(xml.indexOf(start), xml.indexOf(end)).replace(start, "");
+        }
+        return "";
     }
 
     protected static MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
 
     @Override
     public void execute(DelegateExecution execution) {
+        logger.info("AbstractSdncOperationTask.execute begin!");
         GenericResourceApi genericResourceApiClient = getGenericResourceApiClient(execution);
 //        updateProgress(execution, RequestsDbConstant.Status.PROCESSING, null, "10", "execute begin!");
         Map<String, String> inputs = getInputs(execution);
@@ -281,24 +337,29 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
             execution.setVariable("SDNCA_SuccessIndicator", true);
 //            updateProgress(execution, RequestsDbConstant.Status.FINISHED, null, RequestsDbConstant.Progress.ONE_HUNDRED, "execute finished!");
         } catch (Exception e) {
+            logger.info("exception: AbstractSdncOperationTask.fail!");
+            logger.error("exception: AbstractSdncOperationTask.fail!:", e);
             e.printStackTrace();
             execution.setVariable("SDNCA_SuccessIndicator", false);
         }
+        logger.info("AbstractSdncOperationTask.execute end!");
     }
 
     protected Map<String, String> getInputs(DelegateExecution execution) {
+        logger.info("AbstractSdncOperationTask.getInputs begin!");
         Map<String, String> inputs = new HashMap<>();
         String json = (String) execution.getVariable(SDCADAPTOR_INPUTS);
         JSONObject jsonObject = new JSONObject(json);
         JSONObject paras = jsonObject.getJSONObject("additionalParamForNs");
-
-        while (paras.keys().hasNext()) {
-            String key = paras.keys().next();
+        Iterator<String> iterator = paras.keys();
+        while (iterator.hasNext()) {
+            String key = iterator.next();
             inputs.put(key, paras.getString(key));
         }
 /*        if (paras.keys().hasNext()) {
             paras.keySet().stream().forEach(key -> inputs.put(key, paras.getString((String) key)));
         }*/
+        logger.info("AbstractSdncOperationTask.getInputs end!");
         return inputs;
     }
 
@@ -311,6 +372,7 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
                                String errorCode,
                                String progress,
                                String statusDescription) {
+        logger.info("AbstractSdncOperationTask.updateProgress begin!");
         String serviceId = (String) execution.getVariable("serviceId");
         String operationId = (String) execution.getVariable("operationId");
         String resourceTemplateUUID = (String) execution.getVariable("resourceUUID");
@@ -329,44 +391,57 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
                 resourceOperationStatus.setStatusDescription(statusDescription);
             }
             updateResOperStatus(resourceOperationStatus);
+            logger.info("AbstractSdncOperationTask.updateProgress end!");
         } catch (Exception exception) {
             System.out.println(exception);
+            logger.info("exception: AbstractSdncOperationTask.updateProgress fail!");
+            logger.error("exception: AbstractSdncOperationTask.updateProgress fail:", exception);
             LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " updateProgress catch exception: ", "", this.getTaskName(), MsoLogger.ErrorCode.UnknownError, exception.getClass().toString());
         }
     }
 
 
     protected boolean isSend2SdncDirectly() {
+        logger.info("AbstractSdncOperationTask.isSend2SdncDirectly begin!");
         Map<String, String> properties = PropertyConfiguration.getInstance().getProperties("topology.properties");
         if (properties != null) {
             String sdncIp = properties.get("sdnc-ip");
             String sdncPort = properties.get("sdnc-port");
             if (!StringUtils.isBlank(sdncIp) && isIp(sdncIp) && !StringUtils.isBlank(sdncPort)) {
+                logger.info("AbstractSdncOperationTask.isSend2SdncDirectly = true.");
                 return true;
             }
         }
+        logger.info("AbstractSdncOperationTask.isSend2SdncDirectly = false.");
         return false;
     }
 
     protected String getSdncIp() {
+        logger.info("AbstractSdncOperationTask.getSdncIp begin.");
         String sdncIp = null;
         Map<String, String> properties = PropertyConfiguration.getInstance().getProperties("topology.properties");
         if (properties != null) {
             sdncIp = properties.get("sdnc-ip");
         }
-        return StringUtils.isBlank(sdncIp) || !isIp(sdncIp) ? null : sdncIp;
+        String returnIp = StringUtils.isBlank(sdncIp) || !isIp(sdncIp) ? null : sdncIp;
+        logger.info("AbstractSdncOperationTask.getSdncIp: sdncIp = {}", returnIp);
+        return returnIp;
     }
 
     protected String getSdncPort() {
-        String sdncIp = null;
+        logger.info("AbstractSdncOperationTask.getSdncPort begin.");
+        String sdncPort = null;
         Map<String, String> properties = PropertyConfiguration.getInstance().getProperties("topology.properties");
         if (properties != null) {
-            sdncIp = properties.get("sdnc-port");
+            sdncPort = properties.get("sdnc-port");
         }
-        return StringUtils.isBlank(sdncIp) ? null : sdncIp;
+        String returnPort = StringUtils.isBlank(sdncPort) ? null : sdncPort;
+        logger.info("AbstractSdncOperationTask.getSdncPort: returnPort = {}", sdncPort);
+        return returnPort;
     }
 
     private GenericResourceApi getGenericResourceApiClient(DelegateExecution execution) {
+        logger.info("AbstractSdncOperationTask.getGenericResourceApiClient begin!");
 //        updateProgress(execution, null, null, "20", "getGenericResourceApiClient begin!");
         String msbIp = System.getenv().get(ONAP_IP);
         int msbPort = DEFAULT_MSB_Port;
@@ -384,8 +459,10 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
             }
             msbPort = Integer.valueOf(strMsbPort);
         }
+        logger.info("AbstractSdncOperationTask.getGenericResourceApiClient msbIp = " + msbIp + " msbPort = " + msbPort);
         MSBServiceClient msbClient = new MSBServiceClient(msbIp, msbPort);
         RestServiceCreater restServiceCreater = new RestServiceCreater(msbClient);
+        logger.info("AbstractSdncOperationTask.getGenericResourceApiClient end!");
         return restServiceCreater.createService(GenericResourceApi.class);
     }
 

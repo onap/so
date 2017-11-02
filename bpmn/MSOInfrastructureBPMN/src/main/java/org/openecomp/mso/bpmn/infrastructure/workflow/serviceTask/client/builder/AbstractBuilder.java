@@ -118,7 +118,7 @@ public abstract class AbstractBuilder<IN, OUT> {
           String operType = (String) execution.getVariable(OPERATION_TYPE);
           String resourceType = ((String) execution.getVariable(RESOURCE_TYPE)).toLowerCase();
           if (!StringUtils.isBlank(operType)) {
-               if (RequestsDbConstant.OperationType.DELETE.equals(operType)) {
+               if (RequestsDbConstant.OperationType.DELETE.equalsIgnoreCase(operType)) {
                     if (isOverlay(resourceType)) {
                          action = /*RequestInformation.*/RequestAction.DeActivateDCINetworkInstance.getName();
                     } else if (isUnderlay(resourceType)) {
@@ -126,7 +126,7 @@ public abstract class AbstractBuilder<IN, OUT> {
                     } else {
                          action = /*RequestInformation.*/RequestAction.DeleteServiceInstance.getName();
                     }
-               } else if (RequestsDbConstant.OperationType.CREATE.equals(operType)) {
+               } else if (RequestsDbConstant.OperationType.CREATE.equalsIgnoreCase(operType)) {
                     if (isOverlay(resourceType)) {
                          action = /*RequestInformation.*/RequestAction.ActivateDCINetworkInstance.getName();
                     } else if (isUnderlay(resourceType)) {
@@ -152,7 +152,7 @@ public abstract class AbstractBuilder<IN, OUT> {
           String operType = (String) execution.getVariable(OPERATION_TYPE);
           String resourceType = ((String) execution.getVariable(RESOURCE_TYPE)).toLowerCase();
           if (!StringUtils.isBlank(operType)) {
-               if (RequestsDbConstant.OperationType.DELETE.equals(operType)) {
+               if (RequestsDbConstant.OperationType.DELETE.equalsIgnoreCase(operType)) {
                     if (isOverlay(resourceType)) {
                          action = /*SdncRequestHeader.*/SvcAction.Deactivate.getName();
                     } else if (isUnderlay(resourceType)) {
@@ -160,7 +160,7 @@ public abstract class AbstractBuilder<IN, OUT> {
                     } else {
                          action = /*SdncRequestHeader.*/SvcAction.Unassign.getName();
                     }
-               } else if (RequestsDbConstant.OperationType.CREATE.equals(operType)) {
+               } else if (RequestsDbConstant.OperationType.CREATE.equalsIgnoreCase(operType)) {
                     if (isOverlay(resourceType)) {
                          action = /*SdncRequestHeader.*/SvcAction.Activate.getName();
                     } else if (isUnderlay(resourceType)) {
@@ -183,13 +183,13 @@ public abstract class AbstractBuilder<IN, OUT> {
           return requestId;
      }
 
-     protected OnapModelInformationEntity getOnapModelInformationEntity(DelegateExecution execution) {
+     protected OnapModelInformationEntity getOnapServiceModelInformationEntity(DelegateExecution execution) {
           OnapModelInformationEntity onapModelInformationEntity = new OnapModelInformationEntity();
           {
                String modelInvariantUuid = (String) execution.getVariable("modelInvariantUuid");
                String modelVersion = (String) execution.getVariable("modelVersion");
                String modelUuid = (String) execution.getVariable("modelUuid");
-               String modelName = (String) execution.getVariable("modelName");
+               String modelName = (String) execution.getVariable("serviceModelName");
                onapModelInformationEntity.setModelInvariantUuid(modelInvariantUuid);
                onapModelInformationEntity.setModelVersion(modelVersion);
                onapModelInformationEntity.setModelUuid(modelUuid);
@@ -197,6 +197,21 @@ public abstract class AbstractBuilder<IN, OUT> {
           }
           return onapModelInformationEntity;
      }
+     
+     protected OnapModelInformationEntity getOnapNetworkModelInformationEntity(DelegateExecution execution) {
+         OnapModelInformationEntity onapModelInformationEntity = new OnapModelInformationEntity();
+         {
+              String modelInvariantUuid = (String) execution.getVariable("resourceInvariantUUID");
+              String modelVersion = (String) execution.getVariable("modelVersion");
+              String modelUuid = (String) execution.getVariable("resourceUUID");
+              String modelName = (String) execution.getVariable("resourceType");
+              onapModelInformationEntity.setModelInvariantUuid(modelInvariantUuid);
+              onapModelInformationEntity.setModelVersion(modelVersion);
+              onapModelInformationEntity.setModelUuid(modelUuid);
+              onapModelInformationEntity.setModelName(modelName);
+         }
+         return onapModelInformationEntity;
+    }
 
      protected List<ParamEntity> getParamEntities(Map<String, String> inputs) {
           List<ParamEntity> paramEntityList = new ArrayList<>();
@@ -222,9 +237,9 @@ public abstract class AbstractBuilder<IN, OUT> {
 
      protected ServiceInformationEntity getServiceInformationEntity(DelegateExecution execution) {
           ServiceInformationEntity serviceInformationEntity = new ServiceInformationEntity();
-          serviceInformationEntity.setServiceId((String) execution.getVariable("productFamilyId"));
-          serviceInformationEntity.setSubscriptionServiceType((String) execution.getVariable("subscriptionServiceType"));
-          serviceInformationEntity.setOnapModelInformation(getOnapModelInformationEntity(execution));
+          serviceInformationEntity.setServiceId("VOLTE_SERVICE_ID");
+          serviceInformationEntity.setSubscriptionServiceType((String) execution.getVariable("serviceType"));
+          serviceInformationEntity.setOnapModelInformation(getOnapServiceModelInformationEntity(execution));
           serviceInformationEntity.setServiceInstanceId((String) execution.getVariable("serviceInstanceId"));
           serviceInformationEntity.setGlobalCustomerId((String) execution.getVariable("globalSubscriberId"));
           return serviceInformationEntity;
