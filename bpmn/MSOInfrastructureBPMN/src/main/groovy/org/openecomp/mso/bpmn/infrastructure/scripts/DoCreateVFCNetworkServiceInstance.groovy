@@ -234,8 +234,11 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
                                             </relationship-data>           
                                         </relationship>"""
         String endpoint = execution.getVariable("URN_aai_endpoint")  
+        utils.log("INFO","Add Relationship req:\n" + addRelationPayload,  isDebugEnabled)
         String url = endpoint + "/aai/v11/business/customers/customer/" + globalSubscriberId + "/service-subscriptions/service-subscription/" + serviceType + "/service-instances/service-instance/" + serviceId + "/relationship-list/relationship"
-        executeAAIPutCall(execution, url, addRelationPayload)
+        APIResponse aaiRsp = executeAAIPutCall(execution, url, addRelationPayload)
+        utils.log("INFO","aai response status code:" + aaiRsp.getStatusCode(),  isDebugEnabled)
+        utils.log("INFO","aai response content:" + aaiRsp.getResponseBodyAsString(),  isDebugEnabled)
         utils.log("INFO"," *****Exit addNSRelationship *****",  isDebugEnabled)
     }
     
