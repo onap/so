@@ -26,22 +26,22 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by 10112215 on 2017/9/20.
  */
 public class ServiceInformationEntity {
-    @JsonProperty("service-id")
+    @JsonProperty("GENERIC-RESOURCE-API:service-id")
     private String serviceId;
 
-    @JsonProperty("subscription-service-type")
+    @JsonProperty("GENERIC-RESOURCE-API:subscription-service-type")
     private String subscriptionServiceType;
 
-    @JsonProperty("onap-model-information")
+    @JsonProperty("GENERIC-RESOURCE-API:onap-model-information")
     private OnapModelInformationEntity onapModelInformation;
 
-    @JsonProperty("service-instance-id")
+    @JsonProperty("GENERIC-RESOURCE-API:service-instance-id")
     private String serviceInstanceId;
 
-    @JsonProperty("global-customer-id")
+    @JsonProperty("GENERIC-RESOURCE-API:global-customer-id")
     private String globalCustomerId;
 
-    @JsonProperty("subscriber-name")
+    @JsonProperty("GENERIC-RESOURCE-API:subscriber-name")
     private String subscriberName;
 
     public String getServiceId() {

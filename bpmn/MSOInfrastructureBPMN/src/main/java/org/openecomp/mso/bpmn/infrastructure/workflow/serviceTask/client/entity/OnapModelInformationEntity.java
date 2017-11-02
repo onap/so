@@ -26,19 +26,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by 10112215 on 2017/9/20.
  */
 public class OnapModelInformationEntity {
-    @JsonProperty("model-invariant-uuid")
+    @JsonProperty("GENERIC-RESOURCE-API:model-invariant-uuid")
     private String modelInvariantUuid;
 
-    @JsonProperty("model-customization-uuid")
+    @JsonProperty("GENERIC-RESOURCE-API:model-customization-uuid")
     private String modelCustomizationUuid;
 
-    @JsonProperty("model-uuid")
+    @JsonProperty("GENERIC-RESOURCE-API:model-uuid")
     private String modelUuid;
 
-    @JsonProperty("model-version")
+    @JsonProperty("GENERIC-RESOURCE-API:model-version")
     private String modelVersion;
 
-    @JsonProperty("model-name")
+    @JsonProperty("GENERIC-RESOURCE-API:model-name")
     private String modelName;
 
     public String getModelInvariantUuid() {

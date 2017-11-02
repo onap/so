@@ -26,13 +26,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by 10112215 on 2017/9/20.
  */
 public class NetworkInformationEntity {
-    @JsonProperty("network-id")
+    @JsonProperty("GENERIC-RESOURCE-API:network-id")
     private String networkId;
 
-    @JsonProperty("network-type")
+    @JsonProperty("GENERIC-RESOURCE-API:network-type")
     private String networkType;
 
-    @JsonProperty("onap-model-information")
+    @JsonProperty("GENERIC-RESOURCE-API:onap-model-information")
     private OnapModelInformationEntity onapModelInformation;
 
     public String getNetworkId() {
