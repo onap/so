@@ -27,14 +27,14 @@ import org.openecomp.mso.requestsdb.OperationStatus;
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_DEFAULT)
 public class GetE2EServiceInstanceResponse {
 
-	protected OperationStatus e2eRequest;
+	protected OperationStatus operation;
 
-	public OperationStatus getE2eRequest() {
-		return e2eRequest;
+	public OperationStatus getOperationStatus() {
+		return operation;
 	}
 
-	public void setE2eRequest(OperationStatus requestDB) {
-		this.e2eRequest = requestDB;
+	public void setOperationStatus(OperationStatus requestDB) {
+		this.operation = requestDB;
 	}
 
 }

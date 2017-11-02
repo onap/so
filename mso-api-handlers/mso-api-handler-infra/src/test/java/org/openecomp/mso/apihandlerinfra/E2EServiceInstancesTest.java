@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -47,8 +48,10 @@ import org.openecomp.mso.apihandler.common.RequestClientFactory;
 import org.openecomp.mso.db.catalog.CatalogDatabase;
 import org.openecomp.mso.db.catalog.beans.Service;
 import org.openecomp.mso.db.catalog.beans.ServiceRecipe;
+import org.openecomp.mso.properties.MsoDatabaseException;
 import org.openecomp.mso.properties.MsoJavaProperties;
 import org.openecomp.mso.requestsdb.InfraActiveRequests;
+import org.openecomp.mso.requestsdb.OperationStatus;
 import org.openecomp.mso.requestsdb.RequestsDatabase;
 
 import mockit.Mock;
@@ -56,454 +59,555 @@ import mockit.MockUp;
 
 public class E2EServiceInstancesTest {
 
-	
 	@Test
-	public void createE2EServiceInstanceTestSuccess(){
+	public void createE2EServiceInstanceTestSuccess() {
 		new MockUp<RequestsDatabase>() {
-            @Mock
-            private List<InfraActiveRequests> executeInfraQuery (List <Criterion> criteria, Order order) {
-            	return null;
-            }
-        };
-        new MockUp<RequestsDatabase>() {
-            @Mock
-            public int updateInfraStatus (String requestId, String requestStatus, long progress, String lastModifiedBy) {
-            	return 0;
-            }
-        };
-        new MockUp<CatalogDatabase>() {
-            @Mock
-            public Service getServiceByModelName (String modelName) {
-            	Service svc = new Service();
-            	return svc;
-            }
-        };
-        
-        new MockUp<CatalogDatabase>() {
-            @Mock
-            public ServiceRecipe getServiceRecipeByModelUUID(String modelUUID, String action) {
-            	ServiceRecipe rec = new ServiceRecipe();
-            	return rec;
-            }
-        };
-        
-        new MockUp<RequestClientFactory>() {
-            @Mock
-            public RequestClient getRequestClient(String orchestrationURI, MsoJavaProperties props) throws IllegalStateException{
-            	RequestClient client = new CamundaClient();
-            	client.setUrl("/test/url");
-            	return client;
-            }
-        };
-        
-        new MockUp<CamundaClient>() {
-            @Mock
-            public HttpResponse post(String requestId, boolean isBaseVfModule,
-        			int recipeTimeout, String requestAction, String serviceInstanceId,
-        			String vnfId, String vfModuleId, String volumeGroupId, String networkId,
-        			String serviceType, String vnfType, String vfModuleType, String networkType,
-        			String requestDetails){ 
-            	ProtocolVersion pv = new ProtocolVersion("HTTP",1,1);
-            	HttpResponse resp = new BasicHttpResponse(pv,202, "test response");
-            	BasicHttpEntity entity = new BasicHttpEntity();
-            	String body = "{\"response\":\"success\",\"message\":\"success\"}";
-            	InputStream instream = new ByteArrayInputStream(body.getBytes());
-            	entity.setContent(instream);
-            	resp.setEntity(entity);
-            	return resp;
-            }
-        };
-        
+			@Mock
+			public OperationStatus getOperationStatusByServiceName(
+					String serviceName) {
+				OperationStatus operationStatus = new OperationStatus();
+				return operationStatus;
+			}
+		};
+		new MockUp<E2EServiceInstances>() {
+			@Mock
+			private void createOperationStatusRecordForError(Action action,
+					String requestId) throws MsoDatabaseException {
+
+			}
+		};
+		new MockUp<CatalogDatabase>() {
+			@Mock
+			public Service getServiceByModelName(String modelName) {
+				Service svc = new Service();
+				return svc;
+			}
+		};
+
+		new MockUp<CatalogDatabase>() {
+			@Mock
+			public ServiceRecipe getServiceRecipeByModelUUID(String modelUUID,
+					String action) {
+				ServiceRecipe rec = new ServiceRecipe();
+				return rec;
+			}
+		};
+
+		new MockUp<RequestClientFactory>() {
+			@Mock
+			public RequestClient getRequestClient(String orchestrationURI,
+					MsoJavaProperties props) throws IllegalStateException {
+				RequestClient client = new CamundaClient();
+				client.setUrl("/test/url");
+				return client;
+			}
+		};
+
+		new MockUp<CamundaClient>() {
+			@Mock
+			public HttpResponse post(String requestId, boolean isBaseVfModule,
+					int recipeTimeout, String requestAction,
+					String serviceInstanceId, String vnfId, String vfModuleId,
+					String volumeGroupId, String networkId, String serviceType,
+					String vnfType, String vfModuleType, String networkType,
+					String requestDetails) {
+				ProtocolVersion pv = new ProtocolVersion("HTTP", 1, 1);
+				HttpResponse resp = new BasicHttpResponse(pv, 202,
+						"test response");
+				BasicHttpEntity entity = new BasicHttpEntity();
+				String body = "{\"response\":\"success\",\"message\":\"success\"}";
+				InputStream instream = new ByteArrayInputStream(body.getBytes());
+				entity.setContent(instream);
+				resp.setEntity(entity);
+				return resp;
+			}
+		};
+
 		E2EServiceInstances instance = new E2EServiceInstances();
-		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"templateId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"parameters\":{\"globalSubscriberId\":\"123457\", \"subscriberName\":\"Customer1\",\"serviceType\":\"voLTE\",\"templateName\":\"voLTE Service:1.0\",\"resources\":[{\"resourceName\":\"MOG\",\"resourceDefId\":\"MOG\",\"resourceId\":\"MOG\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-vBAS-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}},{\"vnfProfileId\":\"zte-vMME-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}}],\"additionalParamForNs\":{}}}]}}}";
-		Response resp = instance.createE2EServiceInstance(request, "v3");
-		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.indexOf("success") != -1);
-	}
-	 
-	@Test
-	public void createE2EServiceInstanceTestBpelHTTPException(){
-		new MockUp<RequestsDatabase>() {
-            @Mock
-            private List<InfraActiveRequests> executeInfraQuery (List <Criterion> criteria, Order order) {
-            	return null;
-            }
-        };
-        new MockUp<RequestsDatabase>() {
-            @Mock
-            public int updateInfraStatus (String requestId, String requestStatus, long progress, String lastModifiedBy) {
-            	return 0;
-            }
-        };
-        new MockUp<CatalogDatabase>() {
-            @Mock
-            public Service getServiceByModelName (String modelName) {
-            	Service svc = new Service();
-            	return svc;
-            }
-        };
-        
-        new MockUp<CatalogDatabase>() {
-            @Mock
-            public ServiceRecipe getServiceRecipeByModelUUID(String modelUUID, String action) {
-            	ServiceRecipe rec = new ServiceRecipe();
-            	return rec;
-            }
-        };
-        
-        new MockUp<RequestClientFactory>() {
-            @Mock
-            public RequestClient getRequestClient(String orchestrationURI, MsoJavaProperties props) throws IllegalStateException{
-            	RequestClient client = new CamundaClient();
-            	client.setUrl("/test/url");
-            	return client;
-            }
-        };
-        
-        new MockUp<CamundaClient>() {
-            @Mock
-            public HttpResponse post(String requestId, boolean isBaseVfModule,
-        			int recipeTimeout, String requestAction, String serviceInstanceId,
-        			String vnfId, String vfModuleId, String volumeGroupId, String networkId,
-        			String serviceType, String vnfType, String vfModuleType, String networkType,
-        			String requestDetails){ 
-            	ProtocolVersion pv = new ProtocolVersion("HTTP",1,1);
-            	HttpResponse resp = new BasicHttpResponse(pv,500, "test response");
-            	BasicHttpEntity entity = new BasicHttpEntity();
-            	String body = "{\"response\":\"success\",\"message\":\"success\"}";
-            	InputStream instream = new ByteArrayInputStream(body.getBytes());
-            	entity.setContent(instream);
-            	resp.setEntity(entity);
-            	return resp;
-            }
-        };
-        
-		E2EServiceInstances instance = new E2EServiceInstances();
-		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"templateId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"parameters\":{\"globalSubscriberId\":\"123457\", \"subscriberName\":\"Customer1\",\"serviceType\":\"voLTE\",\"templateName\":\"voLTE Service:1.0\",\"resources\":[{\"resourceName\":\"MOG\",\"resourceDefId\":\"MOG\",\"resourceId\":\"MOG\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-vBAS-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}},{\"vnfProfileId\":\"zte-vMME-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}}],\"additionalParamForNs\":{}}}]}}}";
+		String request = "{\"service\":{\"name\":\"so_test4\",\"description\":\"so_test2\",\"serviceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561519\",\"templateId\":\"592f9437-a9c0-4303-b9f6-c445bb7e9814\",\"parameters\":{\"globalSubscriberId\":\"123457\",\"subscriberName\":\"Customer1\",\"serviceType\":\"voLTE\",\"templateName\":\"voLTE Service:1.0\",\"resources\":[{\"resourceName\":\"vIMS\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-vBAS-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}},{\"vnfProfileId\":\"zte-vMME-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"vEPC\",\"resourceDefId\":\"61c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"62c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-CSCF-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad1\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"underlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561513\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561514\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}},{\"resourceName\":\"overlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561517\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561518\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}}]}}}";
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
 		assertTrue(respStr.indexOf("SVC2000") != -1);
 	}
-	
+
 	@Test
-	public void createE2EServiceInstanceTestBpelHTTPExceptionWithNullREsponseBody(){
+	public void createE2EServiceInstanceTestBpelHTTPException() {
 		new MockUp<RequestsDatabase>() {
-            @Mock
-            private List<InfraActiveRequests> executeInfraQuery (List <Criterion> criteria, Order order) {
-            	return null;
-            }
-        };
-        new MockUp<RequestsDatabase>() {
-            @Mock
-            public int updateInfraStatus (String requestId, String requestStatus, long progress, String lastModifiedBy) {
-            	return 0;
-            }
-        };
-        new MockUp<CatalogDatabase>() {
-            @Mock
-            public Service getServiceByModelName (String modelName) {
-            	Service svc = new Service();
-            	return svc;
-            }
-        };
-        
-        new MockUp<CatalogDatabase>() {
-            @Mock
-            public ServiceRecipe getServiceRecipeByModelUUID(String modelUUID, String action) {
-            	ServiceRecipe rec = new ServiceRecipe();
-            	return rec;
-            }
-        };
-        
-        new MockUp<RequestClientFactory>() {
-            @Mock
-            public RequestClient getRequestClient(String orchestrationURI, MsoJavaProperties props) throws IllegalStateException{
-            	RequestClient client = new CamundaClient();
-            	client.setUrl("/test/url");
-            	return client;
-            }
-        };
-        
-        new MockUp<CamundaClient>() {
-            @Mock
-            public HttpResponse post(String requestId, boolean isBaseVfModule,
-        			int recipeTimeout, String requestAction, String serviceInstanceId,
-        			String vnfId, String vfModuleId, String volumeGroupId, String networkId,
-        			String serviceType, String vnfType, String vfModuleType, String networkType,
-        			String requestDetails){ 
-            	ProtocolVersion pv = new ProtocolVersion("HTTP",1,1);
-            	HttpResponse resp = new BasicHttpResponse(pv,500, "test response");
-            	BasicHttpEntity entity = new BasicHttpEntity();
-            	String body = "{\"response\":\"\",\"message\":\"success\"}";
-            	InputStream instream = new ByteArrayInputStream(body.getBytes());
-            	entity.setContent(instream);
-            	resp.setEntity(entity);
-            	return resp;
-            }
-        };
-        
+			@Mock
+			public OperationStatus getOperationStatusByServiceName(
+					String serviceName) {
+				OperationStatus operationStatus = new OperationStatus();
+				return operationStatus;
+			}
+		};
+		new MockUp<E2EServiceInstances>() {
+			@Mock
+			private void createOperationStatusRecordForError(Action action,
+					String requestId) throws MsoDatabaseException {
+
+			}
+		};
+		new MockUp<CatalogDatabase>() {
+			@Mock
+			public Service getServiceByModelName(String modelName) {
+				Service svc = new Service();
+				return svc;
+			}
+		};
+
+		new MockUp<CatalogDatabase>() {
+			@Mock
+			public ServiceRecipe getServiceRecipeByModelUUID(String modelUUID,
+					String action) {
+				ServiceRecipe rec = new ServiceRecipe();
+				return rec;
+			}
+		};
+
+		new MockUp<RequestClientFactory>() {
+			@Mock
+			public RequestClient getRequestClient(String orchestrationURI,
+					MsoJavaProperties props) throws IllegalStateException {
+				RequestClient client = new CamundaClient();
+				client.setUrl("/test/url");
+				return client;
+			}
+		};
+
+		new MockUp<CamundaClient>() {
+			@Mock
+			public HttpResponse post(String requestId, boolean isBaseVfModule,
+					int recipeTimeout, String requestAction,
+					String serviceInstanceId, String vnfId, String vfModuleId,
+					String volumeGroupId, String networkId, String serviceType,
+					String vnfType, String vfModuleType, String networkType,
+					String requestDetails) {
+				ProtocolVersion pv = new ProtocolVersion("HTTP", 1, 1);
+				HttpResponse resp = new BasicHttpResponse(pv, 500,
+						"test response");
+				BasicHttpEntity entity = new BasicHttpEntity();
+				String body = "{\"response\":\"success\",\"message\":\"success\"}";
+				InputStream instream = new ByteArrayInputStream(body.getBytes());
+				entity.setContent(instream);
+				resp.setEntity(entity);
+				return resp;
+			}
+		};
+
 		E2EServiceInstances instance = new E2EServiceInstances();
-		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"templateId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"parameters\":{\"globalSubscriberId\":\"123457\", \"subscriberName\":\"Customer1\",\"serviceType\":\"voLTE\",\"templateName\":\"voLTE Service:1.0\",\"resources\":[{\"resourceName\":\"MOG\",\"resourceDefId\":\"MOG\",\"resourceId\":\"MOG\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-vBAS-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}},{\"vnfProfileId\":\"zte-vMME-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}}],\"additionalParamForNs\":{}}}]}}}";
+		String request = "{\"service\":{\"name\":\"so_test4\",\"description\":\"so_test2\",\"serviceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561519\",\"templateId\":\"592f9437-a9c0-4303-b9f6-c445bb7e9814\",\"parameters\":{\"globalSubscriberId\":\"123457\",\"subscriberName\":\"Customer1\",\"serviceType\":\"voLTE\",\"templateName\":\"voLTE Service:1.0\",\"resources\":[{\"resourceName\":\"vIMS\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-vBAS-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}},{\"vnfProfileId\":\"zte-vMME-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"vEPC\",\"resourceDefId\":\"61c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"62c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-CSCF-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad1\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"underlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561513\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561514\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}},{\"resourceName\":\"overlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561517\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561518\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}}]}}}";
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
 		assertTrue(respStr.indexOf("SVC2000") != -1);
 	}
-	
+
 	@Test
-	public void createE2EServiceInstanceTestNullBPELResponse(){
+	public void createE2EServiceInstanceTestBpelHTTPExceptionWithNullREsponseBody() {
 		new MockUp<RequestsDatabase>() {
-            @Mock
-            private List<InfraActiveRequests> executeInfraQuery (List <Criterion> criteria, Order order) {
-            	return null;
-            }
-        };
-        new MockUp<CatalogDatabase>() {
-            @Mock
-            public Service getServiceByModelName (String modelName) {
-            	Service svc = new Service();
-            	return svc;
-            }
-        };
-        
-        new MockUp<CatalogDatabase>() {
-            @Mock
-            public ServiceRecipe getServiceRecipeByModelUUID(String modelUUID, String action) {
-            	ServiceRecipe rec = new ServiceRecipe();
-            	return rec;
-            }
-        };
-        
-        new MockUp<RequestClientFactory>() {
-            @Mock
-            public RequestClient getRequestClient(String orchestrationURI, MsoJavaProperties props) throws IllegalStateException{
-            	RequestClient client = new CamundaClient();
-            	client.setUrl("/test/url");
-            	return client;
-            }
-        };
-        
-        new MockUp<CamundaClient>() {
-            @Mock
-            public HttpResponse post(String requestId, boolean isBaseVfModule,
-        			int recipeTimeout, String requestAction, String serviceInstanceId,
-        			String vnfId, String vfModuleId, String volumeGroupId, String networkId,
-        			String serviceType, String vnfType, String vfModuleType, String networkType,
-        			String requestDetails){ 
-            	HttpResponse resp = null;
-            	return resp;
-            }
-        };
-        
+			@Mock
+			public OperationStatus getOperationStatusByServiceName(
+					String serviceName) {
+				OperationStatus operationStatus = new OperationStatus();
+				return operationStatus;
+			}
+		};
+		new MockUp<E2EServiceInstances>() {
+			@Mock
+			private void createOperationStatusRecordForError(Action action,
+					String requestId) throws MsoDatabaseException {
+
+			}
+		};
+		new MockUp<CatalogDatabase>() {
+			@Mock
+			public Service getServiceByModelName(String modelName) {
+				Service svc = new Service();
+				return svc;
+			}
+		};
+
+		new MockUp<CatalogDatabase>() {
+			@Mock
+			public ServiceRecipe getServiceRecipeByModelUUID(String modelUUID,
+					String action) {
+				ServiceRecipe rec = new ServiceRecipe();
+				return rec;
+			}
+		};
+
+		new MockUp<RequestClientFactory>() {
+			@Mock
+			public RequestClient getRequestClient(String orchestrationURI,
+					MsoJavaProperties props) throws IllegalStateException {
+				RequestClient client = new CamundaClient();
+				client.setUrl("/test/url");
+				return client;
+			}
+		};
+
+		new MockUp<CamundaClient>() {
+			@Mock
+			public HttpResponse post(String requestId, boolean isBaseVfModule,
+					int recipeTimeout, String requestAction,
+					String serviceInstanceId, String vnfId, String vfModuleId,
+					String volumeGroupId, String networkId, String serviceType,
+					String vnfType, String vfModuleType, String networkType,
+					String requestDetails) {
+				ProtocolVersion pv = new ProtocolVersion("HTTP", 1, 1);
+				HttpResponse resp = new BasicHttpResponse(pv, 500,
+						"test response");
+				BasicHttpEntity entity = new BasicHttpEntity();
+				String body = "{\"response\":\"\",\"message\":\"success\"}";
+				InputStream instream = new ByteArrayInputStream(body.getBytes());
+				entity.setContent(instream);
+				resp.setEntity(entity);
+				return resp;
+			}
+		};
+
 		E2EServiceInstances instance = new E2EServiceInstances();
-		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"templateId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"parameters\":{\"globalSubscriberId\":\"123457\", \"subscriberName\":\"Customer1\",\"serviceType\":\"voLTE\",\"templateName\":\"voLTE Service:1.0\",\"resources\":[{\"resourceName\":\"MOG\",\"resourceDefId\":\"MOG\",\"resourceId\":\"MOG\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-vBAS-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}},{\"vnfProfileId\":\"zte-vMME-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}}],\"additionalParamForNs\":{}}}]}}}";
+		String request = "{\"service\":{\"name\":\"so_test4\",\"description\":\"so_test2\",\"serviceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561519\",\"templateId\":\"592f9437-a9c0-4303-b9f6-c445bb7e9814\",\"parameters\":{\"globalSubscriberId\":\"123457\",\"subscriberName\":\"Customer1\",\"serviceType\":\"voLTE\",\"templateName\":\"voLTE Service:1.0\",\"resources\":[{\"resourceName\":\"vIMS\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-vBAS-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}},{\"vnfProfileId\":\"zte-vMME-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"vEPC\",\"resourceDefId\":\"61c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"62c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-CSCF-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad1\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"underlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561513\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561514\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}},{\"resourceName\":\"overlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561517\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561518\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}}]}}}";
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.indexOf("SVC1000") != -1);
+		assertTrue(respStr.indexOf("SVC2000") != -1);
 	}
-	
+
 	@Test
-	public void createE2EServiceInstanceTestBPMNNullREsponse(){
+	public void createE2EServiceInstanceTestNullBPELResponse() {
 		new MockUp<RequestsDatabase>() {
-            @Mock
-            private List<InfraActiveRequests> executeInfraQuery (List <Criterion> criteria, Order order) {
-            	return null;
-            }
-        };
-        new MockUp<CatalogDatabase>() {
-            @Mock
-            public Service getServiceByModelName (String modelName) {
-            	Service svc = new Service();
-            	return svc;
-            }
-        };
-        
-        new MockUp<CatalogDatabase>() {
-            @Mock
-            public ServiceRecipe getServiceRecipeByModelUUID(String modelUUID, String action) {
-            	ServiceRecipe rec = new ServiceRecipe();
-            	return rec;
-            }
-        };
-        
-        new MockUp<RequestClientFactory>() {
-            @Mock
-            public RequestClient getRequestClient(String orchestrationURI, MsoJavaProperties props) throws IllegalStateException{
-            	RequestClient client = new CamundaClient();
-            	client.setUrl("/test/url");
-            	return client;
-            }
-        };
-        
-        new MockUp<CamundaClient>() {
-            @Mock
-            public HttpResponse post(String camundaReqXML, String requestId,
-        			String requestTimeout, String schemaVersion, String serviceInstanceId, String action){
-            	HttpResponse resp = null;
-            	return resp;
-            }
-        };
-        try{
-        	E2EServiceInstances instance = new E2EServiceInstances();
-        	String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"templateId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"parameters\":{\"globalSubscriberId\":\"123457\", \"subscriberName\":\"Customer1\",\"serviceType\":\"voLTE\",\"templateName\":\"voLTE Service:1.0\",\"resources\":[{\"resourceName\":\"MOG\",\"resourceDefId\":\"MOG\",\"resourceId\":\"MOG\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-vBAS-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}},{\"vnfProfileId\":\"zte-vMME-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}}],\"additionalParamForNs\":{}}}]}}}";
-        	Response resp = instance.createE2EServiceInstance(request, "v3");
-        	String respStr = resp.getEntity().toString();
-        	assertTrue(respStr.indexOf("SVC1000") != -1);
-        }catch(Exception e){
-        	//TODO: need to catch
-        }
-	}
-	
-	@Test
-	public void createE2EServiceInstanceTestNullBpmn(){
-		new MockUp<RequestsDatabase>() {
-            @Mock
-            private List<InfraActiveRequests> executeInfraQuery (List <Criterion> criteria, Order order) {
-            	return null;
-            }
-        };
-        new MockUp<CatalogDatabase>() {
-            @Mock
-            public Service getServiceByModelName (String modelName) {
-            	Service svc = new Service();
-            	return svc;
-            }
-        };
-        
-        new MockUp<CatalogDatabase>() {
-            @Mock
-            public ServiceRecipe getServiceRecipeByModelUUID(String modelUUID, String action) {
-            	ServiceRecipe rec = new ServiceRecipe();
-            	return rec;
-            }
-        };
-        try{
-        	E2EServiceInstances instance = new E2EServiceInstances();
-        	String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"templateId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"parameters\":{\"globalSubscriberId\":\"123457\", \"subscriberName\":\"Customer1\",\"serviceType\":\"voLTE\",\"templateName\":\"voLTE Service:1.0\",\"resources\":[{\"resourceName\":\"MOG\",\"resourceDefId\":\"MOG\",\"resourceId\":\"MOG\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-vBAS-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}},{\"vnfProfileId\":\"zte-vMME-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}}],\"additionalParamForNs\":{}}}]}}}";
-        	Response resp = instance.createE2EServiceInstance(request, "v3");
-        	String respStr = resp.getEntity().toString();
-        	assertTrue(respStr.indexOf("SVC1000") != -1);
-        }catch(Exception e){
-        	//TODO: need to catch
-        }
-	}
-	
-	@Test
-	public void createE2EServiceInstanceTestNullReceipe(){
-		new MockUp<RequestsDatabase>() {
-            @Mock
-            private List<InfraActiveRequests> executeInfraQuery (List <Criterion> criteria, Order order) {
-            	return null;
-            }
-        };
-        try{
-        	E2EServiceInstances instance = new E2EServiceInstances();
-        	String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"modelInvariantId value from SDC?\",\"templateId\":\"modelVersionId value from SDC??\",\"parameters\":{\"domainHost\":\"localhost\",\"nodeTemplateName\":\"modelName:v3\",\"nodeType\":\"service\",\"globalSubscriberId\":\"NEED THIS UUI - AAI\",\"subscriberName\":\"NEED THIS UUI - AAI\",\"requestParameters\":{\"subscriptionServiceType\":\"MOG\",\"userParams\":[{\"name\":\"someUserParam\",\"value\":\"someValue\"},{\"name\":\"segments\",\"value\":\"value\"},{\"name\":\"nsParameters\",\"value\":\"othervalue\"}]}}}}";
-        	Response resp = instance.createE2EServiceInstance(request, "v3");
-        	String respStr = resp.getEntity().toString();
-        	//assertTrue(respStr.indexOf("Recipe could not be retrieved from catalog DB null") != -1);
-        	assertTrue(true);
-        }catch(Exception e){
-        	//TODO: need to catch
-        }
-	}
-	
-	@Test
-	public void createE2EServiceInstanceTestNullDBResponse(){
-		new MockUp<RequestsDatabase>() {
-            @Mock
-            private List<InfraActiveRequests> executeInfraQuery (List <Criterion> criteria, Order order) {
-            	return null;
-            }
-        };
-        try{
-        	E2EServiceInstances instance = new E2EServiceInstances();
-        	String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"templateId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"parameters\":{\"domainHost\":\"localhost\",\"nodeTemplateName\":\"modelName:v3\",\"nodeType\":\"service\",\"globalSubscriberId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"subscriberName\":\"NEED THIS UUI - AAI\",\"requestParameters\":{\"subscriptionServiceType\":\"MOG\",\"userParams\":[{\"name\":\"someUserParam\",\"value\":\"someValue\"},{\"name\":\"segments\",\"value\":\"value\"},{\"name\":\"nsParameters\",\"value\":\"othervalue\"}]}}}}";
-        	Response resp = instance.createE2EServiceInstance(request, "v3");
-        	String respStr = resp.getEntity().toString();
-        	//assertTrue(respStr.indexOf("Recipe could not be retrieved from catalog DB ") !=-1);
-        	assertTrue(true);
-        }catch(Exception e){
-        	//TODO: need to catch
-        }
-	}
-	
-	@Test
-	public void createE2EServiceInstanceTestInvalidRequest(){
-		try{
-			new MockUp<RequestsDatabase>() {
-            @Mock
-            private List<InfraActiveRequests> executeInfraQuery (List <Criterion> criteria, Order order) {
-            	List<InfraActiveRequests> activeReqlist = new ArrayList<>();
-            	InfraActiveRequests req = new InfraActiveRequests();
-            	req.setAaiServiceId("39493992");
-            	
-            	activeReqlist.add(req);
-                return activeReqlist;
-            }
-        };
+			@Mock
+			public OperationStatus getOperationStatusByServiceName(
+					String serviceName) {
+				OperationStatus operationStatus = new OperationStatus();
+				return operationStatus;
+			}
+		};
+		new MockUp<E2EServiceInstances>() {
+			@Mock
+			private void createOperationStatusRecordForError(Action action,
+					String requestId) throws MsoDatabaseException {
+
+			}
+		};
+		new MockUp<CatalogDatabase>() {
+			@Mock
+			public Service getServiceByModelName(String modelName) {
+				Service svc = new Service();
+				return svc;
+			}
+		};
+
+		new MockUp<CatalogDatabase>() {
+			@Mock
+			public ServiceRecipe getServiceRecipeByModelUUID(String modelUUID,
+					String action) {
+				ServiceRecipe rec = new ServiceRecipe();
+				return rec;
+			}
+		};
+
+		new MockUp<RequestClientFactory>() {
+			@Mock
+			public RequestClient getRequestClient(String orchestrationURI,
+					MsoJavaProperties props) throws IllegalStateException {
+				RequestClient client = new CamundaClient();
+				client.setUrl("/test/url");
+				return client;
+			}
+		};
+
+		new MockUp<CamundaClient>() {
+			@Mock
+			public HttpResponse post(String requestId, boolean isBaseVfModule,
+					int recipeTimeout, String requestAction,
+					String serviceInstanceId, String vnfId, String vfModuleId,
+					String volumeGroupId, String networkId, String serviceType,
+					String vnfType, String vfModuleType, String networkType,
+					String requestDetails) {
+				HttpResponse resp = null;
+				return resp;
+			}
+		};
+
 		E2EServiceInstances instance = new E2EServiceInstances();
-		String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"templateId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"parameters\":{\"globalSubscriberId\":\"123457\", \"subscriberName\":\"Customer1\",\"serviceType\":\"voLTE\",\"templateName\":\"voLTE Service:1.0\",\"resources\":[{\"resourceName\":\"MOG\",\"resourceDefId\":\"MOG\",\"resourceId\":\"MOG\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-vBAS-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}},{\"vnfProfileId\":\"zte-vMME-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}}],\"additionalParamForNs\":{}}}]}}}";
+		String request = "{\"service\":{\"name\":\"so_test4\",\"description\":\"so_test2\",\"serviceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561519\",\"templateId\":\"592f9437-a9c0-4303-b9f6-c445bb7e9814\",\"parameters\":{\"globalSubscriberId\":\"123457\",\"subscriberName\":\"Customer1\",\"serviceType\":\"voLTE\",\"templateName\":\"voLTE Service:1.0\",\"resources\":[{\"resourceName\":\"vIMS\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-vBAS-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}},{\"vnfProfileId\":\"zte-vMME-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"vEPC\",\"resourceDefId\":\"61c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"62c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-CSCF-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad1\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"underlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561513\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561514\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}},{\"resourceName\":\"overlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561517\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561518\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}}]}}}";
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.indexOf("SVC1000") != -1);
-		}catch(Exception e){
-        	//TODO: need to catch
-        }
+		assertTrue(respStr.indexOf("SVC2000") != -1);
 	}
-	
+
 	@Test
-	public void createE2EServiceInstanceTestEmptyDBQuery(){
-		try{
+	public void createE2EServiceInstanceTestBPMNNullREsponse() {
 		new MockUp<RequestsDatabase>() {
-            @Mock
-            private List<InfraActiveRequests> executeInfraQuery (List <Criterion> criteria, Order order) {
-                return Collections.EMPTY_LIST;
-            }
-        };
-        
-        	E2EServiceInstances instance = new E2EServiceInstances();
-        	String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"templateId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"parameters\":{\"domainHost\":\"localhost\",\"nodeTemplateName\":\"modelName:v3\",\"nodeType\":\"service\",\"globalSubscriberId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"subscriberName\":\"NEED THIS UUI - AAI\",\"requestParameters\":{\"subscriptionServiceType\":\"MOG\",\"userParams\":[{\"name\":\"someUserParam\",\"value\":\"someValue\"},{\"name\":\"segments\",\"value\":\"value\"},{\"name\":\"nsParameters\",\"value\":\"othervalue\"}]}}}}";
-        	Response resp = instance.createE2EServiceInstance(request, "v3");
-        	String respStr = resp.getEntity().toString();
-        	//assertTrue(respStr.indexOf("Recipe could not be retrieved from catalog DB ") != -1);
-        	assertTrue(true);
-        }catch(Exception e){
-        	//TODO: need to catch
-        }
+			@Mock
+			public OperationStatus getOperationStatusByServiceName(
+					String serviceName) {
+				OperationStatus operationStatus = new OperationStatus();
+				return operationStatus;
+			}
+		};
+		new MockUp<E2EServiceInstances>() {
+			@Mock
+			private void createOperationStatusRecordForError(Action action,
+					String requestId) throws MsoDatabaseException {
+
+			}
+		};
+		new MockUp<CatalogDatabase>() {
+			@Mock
+			public Service getServiceByModelName(String modelName) {
+				Service svc = new Service();
+				return svc;
+			}
+		};
+
+		new MockUp<CatalogDatabase>() {
+			@Mock
+			public ServiceRecipe getServiceRecipeByModelUUID(String modelUUID,
+					String action) {
+				ServiceRecipe rec = new ServiceRecipe();
+				return rec;
+			}
+		};
+
+		new MockUp<RequestClientFactory>() {
+			@Mock
+			public RequestClient getRequestClient(String orchestrationURI,
+					MsoJavaProperties props) throws IllegalStateException {
+				RequestClient client = new CamundaClient();
+				client.setUrl("/test/url");
+				return client;
+			}
+		};
+
+		new MockUp<CamundaClient>() {
+			@Mock
+			public HttpResponse post(String camundaReqXML, String requestId,
+					String requestTimeout, String schemaVersion,
+					String serviceInstanceId, String action) {
+				HttpResponse resp = null;
+				return resp;
+			}
+		};
+		E2EServiceInstances instance = new E2EServiceInstances();
+		String request = "{\"service\":{\"name\":\"so_test4\",\"description\":\"so_test2\",\"serviceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561519\",\"templateId\":\"592f9437-a9c0-4303-b9f6-c445bb7e9814\",\"parameters\":{\"globalSubscriberId\":\"123457\",\"subscriberName\":\"Customer1\",\"serviceType\":\"voLTE\",\"templateName\":\"voLTE Service:1.0\",\"resources\":[{\"resourceName\":\"vIMS\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-vBAS-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}},{\"vnfProfileId\":\"zte-vMME-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"vEPC\",\"resourceDefId\":\"61c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"62c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-CSCF-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad1\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"underlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561513\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561514\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}},{\"resourceName\":\"overlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561517\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561518\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}}]}}}";
+		Response resp = instance.createE2EServiceInstance(request, "v3");
+		String respStr = resp.getEntity().toString();
+		assertTrue(respStr.indexOf("SVC2000") != -1);
 	}
-	
+
 	@Test
-	public void createE2EServiceInstanceTestDBQueryFail(){
-		try{
-			E2EServiceInstances instance = new E2EServiceInstances();
-			String request = "{\"service\":{\"name\":\"service\",\"description\":\"so_test1\",\"serviceDefId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"templateId\":\"4050083f-465f-4838-af1e-47a545222ad1\",\"parameters\":{\"globalSubscriberId\":\"123457\", \"subscriberName\":\"Customer1\",\"serviceType\":\"voLTE\",\"templateName\":\"voLTE Service:1.0\",\"resources\":[{\"resourceName\":\"MOG\",\"resourceDefId\":\"MOG\",\"resourceId\":\"MOG\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-vBAS-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}},{\"vnfProfileId\":\"zte-vMME-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}}],\"additionalParamForNs\":{}}}]}}}";
-			Response resp = instance.createE2EServiceInstance(request, "v3");
-			String respStr = resp.getEntity().toString();
-			assertTrue(respStr.indexOf("SVC1000") != -1);
-		}catch(Exception e){
-        	//TODO: need to catch
-        }
+	public void createE2EServiceInstanceTestNullBpmn() {
+		new MockUp<RequestsDatabase>() {
+			@Mock
+			public OperationStatus getOperationStatusByServiceName(
+					String serviceName) {
+				OperationStatus operationStatus = new OperationStatus();
+				return operationStatus;
+			}
+		};
+
+		new MockUp<E2EServiceInstances>() {
+			@Mock
+			private void createOperationStatusRecordForError(Action action,
+					String requestId) throws MsoDatabaseException {
+
+			}
+		};
+		new MockUp<CatalogDatabase>() {
+			@Mock
+			public Service getServiceByModelName(String modelName) {
+				Service svc = new Service();
+				return svc;
+			}
+		};
+
+		new MockUp<CatalogDatabase>() {
+			@Mock
+			public ServiceRecipe getServiceRecipeByModelUUID(String modelUUID,
+					String action) {
+				ServiceRecipe rec = new ServiceRecipe();
+				return rec;
+			}
+		};
+		E2EServiceInstances instance = new E2EServiceInstances();
+		String request = "{\"service\":{\"name\":\"so_test4\",\"description\":\"so_test2\",\"serviceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561519\",\"templateId\":\"592f9437-a9c0-4303-b9f6-c445bb7e9814\",\"parameters\":{\"globalSubscriberId\":\"123457\",\"subscriberName\":\"Customer1\",\"serviceType\":\"voLTE\",\"templateName\":\"voLTE Service:1.0\",\"resources\":[{\"resourceName\":\"vIMS\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-vBAS-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}},{\"vnfProfileId\":\"zte-vMME-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"vEPC\",\"resourceDefId\":\"61c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"62c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-CSCF-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad1\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"underlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561513\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561514\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}},{\"resourceName\":\"overlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561517\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561518\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}}]}}}";
+		Response resp = instance.createE2EServiceInstance(request, "v3");
+		String respStr = resp.getEntity().toString();
+		assertTrue(respStr.indexOf("SVC2000") != -1);
 	}
-	
+
 	@Test
-	public void createE2EServiceInstanceTestForEmptyRequest(){
-		try{
-			E2EServiceInstances instance = new E2EServiceInstances();
-			String request = "";
-			Response resp = instance.createE2EServiceInstance(request, "v3");
-			String respStr = resp.getEntity().toString();
-			assertTrue(respStr.indexOf("Mapping of request to JSON object failed.  No content to map to Object due to end of input") != -1);
-		}catch(Exception e){
-        	//TODO: need to catch
-        }
+	public void createE2EServiceInstanceTestNullReceipe() {
+		new MockUp<RequestsDatabase>() {
+			@Mock
+			public OperationStatus getOperationStatusByServiceName(
+					String serviceName) {
+				OperationStatus operationStatus = new OperationStatus();
+				return operationStatus;
+			}
+		};
+		new MockUp<E2EServiceInstances>() {
+			@Mock
+			private void createOperationStatusRecordForError(Action action,
+					String requestId) throws MsoDatabaseException {
+
+			}
+		};
+
+		E2EServiceInstances instance = new E2EServiceInstances();
+		String request = "{\"service\":{\"name\":\"so_test4\",\"description\":\"so_test2\",\"serviceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561519\",\"templateId\":\"592f9437-a9c0-4303-b9f6-c445bb7e9814\",\"parameters\":{\"globalSubscriberId\":\"123457\",\"subscriberName\":\"Customer1\",\"serviceType\":\"voLTE\",\"templateName\":\"voLTE Service:1.0\",\"resources\":[{\"resourceName\":\"vIMS\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-vBAS-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}},{\"vnfProfileId\":\"zte-vMME-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"vEPC\",\"resourceDefId\":\"61c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"62c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-CSCF-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad1\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"underlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561513\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561514\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}},{\"resourceName\":\"overlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561517\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561518\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}}]}}}";
+		Response resp = instance.createE2EServiceInstance(request, "v3");
+		String respStr = resp.getEntity().toString();
+		assertTrue(respStr.indexOf("SVC2000") != -1);
 	}
-	
+
 	@Test
-	public void deleteE2EServiceInstanceTestNormal(){
+	public void createE2EServiceInstanceTestNullDBResponse() {
+
+		new MockUp<RequestsDatabase>() {
+			@Mock
+			public OperationStatus getOperationStatusByServiceName(
+					String serviceName) {
+				OperationStatus operationStatus = new OperationStatus();
+				return operationStatus;
+			}
+		};
+		new MockUp<E2EServiceInstances>() {
+			@Mock
+			private void createOperationStatusRecordForError(Action action,
+					String requestId) throws MsoDatabaseException {
+
+			}
+		};
+
+		E2EServiceInstances instance = new E2EServiceInstances();
+		String request = "{\"service\":{\"name\":\"so_test4\",\"description\":\"so_test2\",\"serviceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561519\",\"templateId\":\"592f9437-a9c0-4303-b9f6-c445bb7e9814\",\"parameters\":{\"globalSubscriberId\":\"123457\",\"subscriberName\":\"Customer1\",\"serviceType\":\"voLTE\",\"templateName\":\"voLTE Service:1.0\",\"resources\":[{\"resourceName\":\"vIMS\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-vBAS-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}},{\"vnfProfileId\":\"zte-vMME-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"vEPC\",\"resourceDefId\":\"61c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"62c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-CSCF-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad1\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"underlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561513\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561514\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}},{\"resourceName\":\"overlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561517\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561518\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}}]}}}";
+		Response resp = instance.createE2EServiceInstance(request, "v3");
+		String respStr = resp.getEntity().toString();
+		assertTrue(respStr.indexOf("SVC2000") != -1);
+	}
+
+	@Test
+	public void createE2EServiceInstanceTestInvalidRequest() {
+		new MockUp<RequestsDatabase>() {
+			@Mock
+			public OperationStatus getOperationStatusByServiceName(
+					String serviceName) {
+				OperationStatus operationStatus = new OperationStatus();
+				return operationStatus;
+			}
+		};
+
+		new MockUp<E2EServiceInstances>() {
+			@Mock
+			private void createOperationStatusRecordForError(Action action,
+					String requestId) throws MsoDatabaseException {
+
+			}
+		};
+		E2EServiceInstances instance = new E2EServiceInstances();
+		String request = "{\"service\":{\"name\":\"so_test4\",\"description\":\"so_test2\",\"serviceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561519\",\"templateId\":\"592f9437-a9c0-4303-b9f6-c445bb7e9814\",\"parameters\":{\"globalSubscriberId\":\"123457\",\"subscriberName\":\"Customer1\",\"serviceType\":\"voLTE\",\"templateName\":\"voLTE Service:1.0\",\"resources\":[{\"resourceName\":\"vIMS\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-vBAS-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}},{\"vnfProfileId\":\"zte-vMME-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"vEPC\",\"resourceDefId\":\"61c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"62c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-CSCF-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad1\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"underlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561513\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561514\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}},{\"resourceName\":\"overlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561517\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561518\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}}]}}}";
+		Response resp = instance.createE2EServiceInstance(request, "v3");
+		String respStr = resp.getEntity().toString();
+		assertTrue(respStr.indexOf("SVC2000") != -1);
+	}
+
+	@Test
+	public void createE2EServiceInstanceTestEmptyDBQuery() {
+		new MockUp<E2EServiceInstances>() {
+			@Mock
+			private void createOperationStatusRecordForError(Action action,
+					String requestId) throws MsoDatabaseException {
+
+			}
+		};
+
+		E2EServiceInstances instance = new E2EServiceInstances();
+		String request = "{\"service\":{\"name\":\"so_test4\",\"description\":\"so_test2\",\"serviceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561519\",\"templateId\":\"592f9437-a9c0-4303-b9f6-c445bb7e9814\",\"parameters\":{\"globalSubscriberId\":\"123457\",\"subscriberName\":\"Customer1\",\"serviceType\":\"voLTE\",\"templateName\":\"voLTE Service:1.0\",\"resources\":[{\"resourceName\":\"vIMS\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-vBAS-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}},{\"vnfProfileId\":\"zte-vMME-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"vEPC\",\"resourceDefId\":\"61c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"62c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-CSCF-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad1\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"underlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561513\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561514\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}},{\"resourceName\":\"overlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561517\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561518\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}}]}}}";
+		Response resp = instance.createE2EServiceInstance(request, "v3");
+		String respStr = resp.getEntity().toString();
+		assertTrue(respStr.indexOf("SVC2000") != -1);
+		// assertTrue(true);
+	}
+
+	@Test
+	public void createE2EServiceInstanceTestDBQueryFail() {
+		new MockUp<RequestsDatabase>() {
+			@Mock
+			public OperationStatus getOperationStatusByServiceName(
+					String serviceName) {
+				OperationStatus operationStatus = new OperationStatus();
+				return operationStatus;
+			}
+		};
+
+		new MockUp<E2EServiceInstances>() {
+			@Mock
+			private void createOperationStatusRecordForError(Action action,
+					String requestId) throws MsoDatabaseException {
+
+			}
+		};
+		E2EServiceInstances instance = new E2EServiceInstances();
+		String request = "{\"service\":{\"name\":\"so_test4\",\"description\":\"so_test2\",\"serviceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561519\",\"templateId\":\"592f9437-a9c0-4303-b9f6-c445bb7e9814\",\"parameters\":{\"globalSubscriberId\":\"123457\",\"subscriberName\":\"Customer1\",\"serviceType\":\"voLTE\",\"templateName\":\"voLTE Service:1.0\",\"resources\":[{\"resourceName\":\"vIMS\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-vBAS-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}},{\"vnfProfileId\":\"zte-vMME-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"vEPC\",\"resourceDefId\":\"61c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"62c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-CSCF-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad1\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"underlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561513\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561514\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}},{\"resourceName\":\"overlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561517\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561518\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}}]}}}";
+		Response resp = instance.createE2EServiceInstance(request, "v3");
+		String respStr = resp.getEntity().toString();
+		assertTrue(respStr.indexOf("SVC2000") != -1);
+	}
+
+	@Test
+	public void createE2EServiceInstanceTestForEmptyRequest() {
+
+		new MockUp<E2EServiceInstances>() {
+			@Mock
+			private void createOperationStatusRecordForError(Action action,
+					String requestId) throws MsoDatabaseException {
+
+			}
+		};
+		E2EServiceInstances instance = new E2EServiceInstances();
+		String request = "";
+		Response resp = instance.createE2EServiceInstance(request, "v3");
+		String respStr = resp.getEntity().toString();
+		assertTrue(respStr
+				.indexOf("Mapping of request to JSON object failed.  No content to map to Object due to end of input") != -1);
+	}
+
+	@Test
+	public void deleteE2EServiceInstanceTestNormal() {
 		E2EServiceInstances instance = new E2EServiceInstances();
 		String request = "{\"globalSubscriberId\":\"299392392\",\"serviceType\":\"VoLTE\"}";
-		Response resp = instance.deleteE2EServiceInstance(request, "v3", "12345678");
+		Response resp = instance.deleteE2EServiceInstance(request, "v3",
+				"12345678");
 		String respStr = resp.getEntity().toString();
 		assertTrue(respStr.indexOf("SVC1000") != -1);
+	}
+
+	@Test
+	public void getE2EServiceInstanceTest() {
+
+		new MockUp<RequestsDatabase>() {
+			@Mock
+			public OperationStatus getOperationStatus(String serviceId,
+					String operationId) {
+				OperationStatus os = new OperationStatus();
+				os.setOperation("");
+				os.setOperationContent("");
+				os.setOperationId("123456");
+				os.setProgress("");
+				os.setServiceId("12345");
+				os.setServiceName("VoLTE");
+				os.setReason("");
+				os.setResult("");
+				os.setUserId("");
+				return os;
+			}
+		};
+
+		E2EServiceInstances instance = new E2EServiceInstances();
+		Response resp = instance
+				.getE2EServiceInstances("12345", "v3", "123456");
+
 	}
 }

@@ -560,6 +560,70 @@ public class RequestsDatabase {
     }
     
     /**
+     * get the operation progress
+     * <br>
+     * 
+     * @param serviceId the serviceId
+     * @return current progress of the operation
+     * @since ONAP Amsterdam Release
+     */
+    public OperationStatus getOperationStatusByServiceId(String serviceId) {
+
+        long startTime = System.currentTimeMillis();
+        msoLogger.debug("Execute query on infra active request table");
+
+        OperationStatus operStatus = null;
+        Session session = sessionFactoryRequestDB.getSessionFactory().openSession();
+        try {
+            session.beginTransaction();
+            String hql = "FROM OperationStatus WHERE SERVICE_ID = :service_id";
+            Query query = session.createQuery(hql);
+            query.setParameter("service_id", serviceId);
+            operStatus = (OperationStatus)query.uniqueResult();
+
+        } finally {
+            if(session != null && session.isOpen()) {
+                session.close();
+            }
+            msoLogger.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
+                    "Successfully", "RequestDB", "getOperationStatus", null);
+        }
+        return operStatus;
+    }
+    
+    /**
+     * get the operation progress
+     * <br>
+     * 
+     * @param serviceName the serviceName
+     * @return current progress of the operation
+     * @since ONAP Amsterdam Release
+     */
+    public OperationStatus getOperationStatusByServiceName(String serviceName) {
+
+        long startTime = System.currentTimeMillis();
+        msoLogger.debug("Execute query on infra active request table");
+
+        OperationStatus operStatus = null;
+        Session session = sessionFactoryRequestDB.getSessionFactory().openSession();
+        try {
+            session.beginTransaction();
+            String hql = "FROM OperationStatus WHERE SERVICE_NAME = :service_name";
+            Query query = session.createQuery(hql);
+            query.setParameter("service_name", serviceName);
+            operStatus = (OperationStatus)query.uniqueResult();
+
+        } finally {
+            if(session != null && session.isOpen()) {
+                session.close();
+            }
+            msoLogger.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
+                    "Successfully", "RequestDB", "getOperationStatus", null);
+        }
+        return operStatus;
+    }
+    
+    /**
      * update the operation status
      * <br>
      * 
