@@ -84,6 +84,7 @@ public class CreateVcpeResCustServiceTest extends AbstractTestBase {
 	
 	public void testCreateVcpeResCustService_Success() throws Exception {
 
+		System.out.println("starting:  testCreateVcpeResCustService_Success\n");
 		MockGetServiceResourcesCatalogData("uuid-miu-svc-011-abcdef", "2", "VCPE/CreateVcpeResCustService/getCatalogServiceResourcesData.json");
 		MockGetServiceResourcesCatalogData("uuid-miu-svc-011-abcdef", "VCPE/CreateVcpeResCustService/getCatalogServiceResourcesData.json");
 		MockGetCustomer(CUST, "VCPE/CreateVcpeResCustService/getCustomer.xml");
@@ -159,6 +160,7 @@ public class CreateVcpeResCustServiceTest extends AbstractTestBase {
 	
 	public void testCreateVcpeResCustService_NoParts() throws Exception {
 
+		System.out.println("starting: testCreateVcpeResCustService_NoParts\n"  );
 		MockGetServiceResourcesCatalogData("uuid-miu-svc-011-abcdef", "2", "VCPE/CreateVcpeResCustService/getCatalogServiceResourcesNoData.json");
 		MockGetServiceResourcesCatalogData("uuid-miu-svc-011-abcdef", "VCPE/CreateVcpeResCustService/getCatalogServiceResourcesNoData.json");
 		MockGetCustomer(CUST, "VCPE/CreateVcpeResCustService/getCustomer.xml");
@@ -226,6 +228,7 @@ public class CreateVcpeResCustServiceTest extends AbstractTestBase {
 	
 	public void testCreateVcpeResCustService_Fault_NoRollback() throws Exception {
 
+		System.out.println("starting:  testCreateVcpeResCustService_Fault_NoRollback\n");
 		MockGetServiceResourcesCatalogData("uuid-miu-svc-011-abcdef", "2", "VCPE/CreateVcpeResCustService/getCatalogServiceResourcesData.json");
 		MockGetServiceResourcesCatalogData("uuid-miu-svc-011-abcdef", "VCPE/CreateVcpeResCustService/getCatalogServiceResourcesData.json");
 		MockGetCustomer(CUST, "VCPE/CreateVcpeResCustService/getCustomer.xml");
@@ -296,6 +299,7 @@ public class CreateVcpeResCustServiceTest extends AbstractTestBase {
 	
 	public void testCreateVcpeResCustService_Fault_Rollback() throws Exception {
 
+		System.out.println("starting:  testCreateVcpeResCustService_Fault_Rollback\n");
 		MockGetServiceResourcesCatalogData("uuid-miu-svc-011-abcdef", "2", "VCPE/CreateVcpeResCustService/getCatalogServiceResourcesData.json");
 		MockGetServiceResourcesCatalogData("uuid-miu-svc-011-abcdef", "VCPE/CreateVcpeResCustService/getCatalogServiceResourcesData.json");
 		MockGetCustomer(CUST, "VCPE/CreateVcpeResCustService/getCustomer.xml");
