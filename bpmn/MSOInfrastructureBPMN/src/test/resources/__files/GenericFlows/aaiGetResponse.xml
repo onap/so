@@ -1,0 +1,33 @@
+<service-instance xmlns="http://org.openecomp.aai.inventory/v11">
+    <service-instance-id>1234</service-instance-id>
+    <service-instance-name>volte-service</service-instance-name>
+    <service-type>testservicetype</service-type>
+    <service-role>testservicerole</service-role>
+    <description>volte service</description>
+    <model-invariant-id>c1d4305f-cdbd-4bbe-9069-a2f4978fd89e</model-invariant-id>
+    <model-version-id>d4df5c27-98a1-4812-a8aa-c17f055b7a3f</model-version-id>
+    <resource-version>1508838121849</resource-version>
+    <orchestration-status>create</orchestration-status>
+    <relationship-list>
+        <relationship>
+            <related-to>service-instance</related-to>
+            <related-link>/aai/v11/business/customers/customer/test_customer/service-subscription/example-service-type/service-instance/1234_1</related-link>
+            <relationship-data>
+                <relationship-key>customer.global-customer-id</relationship-key>
+                <relationship-value>test_customer</relationship-value>
+            </relationship-data>
+            <relationship-data>
+                <relationship-key>service-subscription.service-type</relationship-key>
+                <relationship-value>test_customer</relationship-value>
+            </relationship-data>
+            <relationship-data>
+                <relationship-key>service-instance.service-instance-id</relationship-key>
+                <relationship-value>1234_1</relationship-value>
+            </relationship-data>
+            <related-to-property>
+                <property-key>service-instance.service-instance-name</property-key>
+                <property-value>volte-service_vEPC</property-value>
+            </related-to-property>
+        </relationship>
+    </relationship-list>
+</service-instance>
