@@ -18,7 +18,9 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.openecomp.mso.bpmn.infrastructure.scripts;
+package org.openecomp.mso.bpmn.infrastructure.scripts
+
+import org.json.JSONArray;
 
 import static org.apache.commons.lang3.StringUtils.*;
 import groovy.xml.XmlUtil
@@ -284,8 +286,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 
 			SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
 			sdncAdapterUtils.validateSDNCResponse(execution, response, workflowException, successIndicator)
-
-			if(execution.getVariable(Prefix + 'sdncResponseSuccess') == true){
+			if(execution.getVariable(Prefix + 'sdncResponseSuccess') == "true"){
 				utils.log("DEBUG","Good response from SDNC Adapter for service-instance " + method + "response:\n" + response, isDebugEnabled)
 
 			}else{
@@ -309,14 +310,6 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 		String msg = ""
 
 		try {
-			execution.setVariable("serviceInstanceId","serviceInstanceId")
-			execution.setVariable("GENGS_FoundIndicator",true)
-			execution.setVariable("GENGS_siResourceLink","GENGS_siResourceLink")
-			execution.setVariable("globalSubscriberId","globalSubscriberId")
-			execution.setVariable("subscriptionServiceType","subscriptionServiceType")
-			execution.setVariable("GENGS_service","GENGS_service")
-			execution.setVariable("GENGS_SuccessIndicator",true)
-
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
 			boolean foundInAAI = execution.getVariable("GENGS_FoundIndicator")
 			String serviceType = ""
@@ -369,7 +362,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 					utils.log("DEBUG", msg, isDebugEnabled)
 					exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 				}
-			/*	else
+				else
 				{
 					utils.log("DEBUG", "SI Data" + siData, isDebugEnabled)
 					serviceType = utils.getNodeText1(siData,"service-type")
@@ -384,7 +377,8 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 						DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 						DocumentBuilder docBuilder = docFactory.newDocumentBuilder()
 						Document serviceXml = docBuilder.parse(source)
-
+						serviceXml.getDocumentElement().normalize()
+						//test(siData)
 						NodeList nodeList = serviceXml.getElementsByTagName("relationship")
 						for (int x = 0; x < nodeList.getLength(); x++) {
 							Node node = nodeList.item(x)
@@ -399,6 +393,25 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 									utils.log("DEBUG", msg, isDebugEnabled)
 									exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
 								}else{
+									NodeList dataList = node.getChildNodes()
+									if(null != dataList) {
+										JSONArray jArray = new JSONArray()
+										for (int i = 0; i < dataList.getLength(); i++) {
+											Node dNode = dataList.item(i)
+											if(dNode.getNodeName() == "relationship-data") {
+												Element rDataEle = (Element)dNode
+
+												def eKey =  rDataEle.getElementsByTagName("relationship-key").item(0).getTextContent()
+												def eValue = rDataEle.getElementsByTagName("relationship-value").item(0).getTextContent()
+
+												JSONObject jObj = new JSONObject()
+												jObj.put("resourceInstanceId", eKey)
+												jObj.put("resourceType", eValue)
+												jArray.put(jObj)
+											}
+										}
+										execution.setVariable("serviceRelationShip", jArray)
+									}
 									utils.log("DEBUG", "Relationship NOT related to OpenStack", isDebugEnabled)
 								}
 							}
@@ -419,7 +432,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 						}
 
 					}
-				}*/
+				}
 			}else{
 				boolean succInAAI = execution.getVariable("GENGS_SuccessIndicator")
 				if(succInAAI != true){
@@ -492,7 +505,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
             String progress = "0"
             String reason = ""
             String operationContent = "Prepare service creation"
-            utils.log("DEBUG", "Generated new operation for Service Instance serviceId:" + serviceId + " operationId:" + operationId + " operationType:" + oprationType, isDebugEnabled)
+            utils.log("DEBUG", "Generated new operation for Service Instance serviceId:" + serviceId + " operationId:" + operationId + " operationType:" + operationType, isDebugEnabled)
             serviceId = UriUtils.encode(serviceId,"UTF-8")
             execution.setVariable("serviceInstanceId", serviceId)
             execution.setVariable("operationId", operationId)
@@ -588,12 +601,13 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
                
        if (relationShipList != null) {
            relationShipList.each {
-               if(resourceName.equals(it.resourceType))
-               String resouceTemplateUUID = it.resourceInstanceId
-               String resouceInstanceUUID = it.resourceInstanceId
-               execution.setVariable("resouceTemplateUUID", resouceTemplateUUID)
-               execution.setVariable("resouceInstanceId", resouceInstanceUUID)
-               execution.setResourceType("resourceType", resourceName)
+               if(resourceName.equals(it.resourceType)) {
+				   String resourceInstanceUUID = it.resourceInstanceId
+				   String resourceTemplateUUID = it.resourceInstanceId
+				   execution.setVariable("resourceTemplateId", resourceTemplateUUID)
+				   execution.setVariable("resourceInstanceId", resourceInstanceUUID)
+				   execution.setVariable("resourceType", resourceName)
+			   }
            }
        }    
    }
