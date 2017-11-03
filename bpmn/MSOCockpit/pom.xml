@@ -51,11 +51,11 @@
 			<artifactId>common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<dependency>
+		<!--<dependency>
 			<groupId>org.openecomp.so</groupId>
 			<artifactId>cockpit-urnmap-plugin</artifactId>
 			<version>${project.version}</version>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>org.openecomp.so</groupId>
 			<artifactId>MSOCoreBPMN</artifactId>
