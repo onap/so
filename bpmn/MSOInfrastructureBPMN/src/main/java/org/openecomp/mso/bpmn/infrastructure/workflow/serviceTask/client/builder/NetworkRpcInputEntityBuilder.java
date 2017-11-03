@@ -47,6 +47,7 @@ public class NetworkRpcInputEntityBuilder extends AbstractBuilder<Map<String, St
                 List<ParamEntity> paramEntityList = getParamEntities(inputs);
                 networkInputPaarametersEntity.setParamList(paramEntityList);
             }
+            networkRequestInputEntity.setNetworkInputPaarameters(networkInputPaarametersEntity);
         }
         networkTopologyOperationInputEntity.setNetworkRequestInput(networkRequestInputEntity);
     }
