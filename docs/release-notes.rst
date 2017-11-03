@@ -3,8 +3,8 @@
 .. Copyright 2017 Huawei Intellectual Property.  All rights reserved.
 
 
-A&AI Release Notes
-==================
+Service Orchestrator Release Notes
+==================================
 
 .. note::
 	* This Release Notes must be updated each time the team decides to Release new artifacts.
@@ -14,7 +14,7 @@ A&AI Release Notes
 	* This note must be removed after content has been added.
 		   
 
-Version: x.y.z
+Version: 1.1.0
 --------------
 
 
@@ -23,13 +23,13 @@ Version: x.y.z
 
 
 **New Features**
-	Initial release of Active and Available Inventory (AAI) for Open Network Automation Platform (ONAP)
+	Initial release of Service Orchestrator (SO) for Open Network Automation Platform (ONAP)
 
 
 **Bug Fixes**
-	- `CIMAN-65 <https://jira.onap.org/browse/CIMAN-65>`_ and a sentence explaining what this defect is addressing.
+	- ``_ and a sentence explaining what this defect is addressing.
 **Known Issues**
-	- `CIMAN-65 <https://jira.onap.org/browse/CIMAN-65>`_ and two, three sentences.
+	- ``_ and two, three sentences.
 	  One sentences explaining what is the issue.
 	  
 	  Another sentence explaining the impact of the issue.
@@ -43,7 +43,7 @@ Version: x.y.z
 **Upgrade Notes**
 
 **Deprecation Notes**
-	AAI Amsterdam provides support for legacy versions of the API, v8 and v11 in this release.  v11 is the latest and preferred version.
+	
 
 **Other**
 
