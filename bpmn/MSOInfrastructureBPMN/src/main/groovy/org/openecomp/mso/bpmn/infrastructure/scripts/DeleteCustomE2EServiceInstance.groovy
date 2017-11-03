@@ -330,4 +330,8 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 		}
 
 	 }
+
+	public void processJavaException(Execution execution) {
+		//TODO:
+	}
 }
