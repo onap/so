@@ -81,14 +81,9 @@ class DeleteCustomE2EServiceInstanceTest extends GroovyTestBase {
         def map = setupMap(mex)
         initPreProcess(mex)
         DeleteCustomE2EServiceInstance instance = new DeleteCustomE2EServiceInstance()
-        mex.setVariable("isDebugLogEnabled","true")
-        instance.preProcessRequest(mex);
+        instance.preProcessRequest(mex)
 
-        verify(mex).getVariable(GroovyTestBase.DBGFLAG)
-
-        verify(mex).setVariable("globalSubscriberId", "38829939920000")
-        verify(mex).setVariable("operationId", "59960003992")
-        verify(mex).setVariable("URN_mso_adapters_openecomp_db_endpoint", "http://mso.mso.testlab.openecomp.org:8080/dbadapters/RequestsDbAdapter")
+        verify(mex).setVariable("prefix", "DELSI_")
     }
 
     @Test
@@ -136,15 +131,6 @@ class DeleteCustomE2EServiceInstanceTest extends GroovyTestBase {
 					<source>null</source>
 				   </request-info>"""
         //verify(mex).setVariable("falloutRequest", requestInfo)
-    }
-
-    @Test
-    public void processJavaExceptionTest(){
-        ExecutionEntity mex = setupMock()
-        def map = setupMap(mex)
-        initPreProcess(mex)
-        DeleteCustomE2EServiceInstance instance = new DeleteCustomE2EServiceInstance()
-        instance.processJavaException()
     }
 
 
