@@ -81,7 +81,6 @@ class DeleteCustomE2EServiceInstanceTest extends GroovyTestBase {
         def map = setupMap(mex)
         initPreProcess(mex)
         DeleteCustomE2EServiceInstance instance = new DeleteCustomE2EServiceInstance()
-        mex.setVariable("isDebugLogEnabled","true")
         instance.preProcessRequest(mex);
 
         verify(mex).getVariable(GroovyTestBase.DBGFLAG)
@@ -136,15 +135,6 @@ class DeleteCustomE2EServiceInstanceTest extends GroovyTestBase {
 					<source>null</source>
 				   </request-info>"""
         //verify(mex).setVariable("falloutRequest", requestInfo)
-    }
-
-    @Test
-    public void processJavaExceptionTest(){
-        ExecutionEntity mex = setupMock()
-        def map = setupMap(mex)
-        initPreProcess(mex)
-        DeleteCustomE2EServiceInstance instance = new DeleteCustomE2EServiceInstance()
-        instance.processJavaException()
     }
 
 
