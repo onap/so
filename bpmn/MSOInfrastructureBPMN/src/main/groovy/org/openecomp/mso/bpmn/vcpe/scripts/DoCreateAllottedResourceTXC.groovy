@@ -78,6 +78,9 @@ public class DoCreateAllottedResourceTXC extends AbstractServiceTaskProcessor{
 		utils.log("DEBUG"," ***** preProcessRequest *****",  isDebugEnabled)
 
 		try {
+			utils.log("DEBUG"," ***** sleeping 30 seconds for AAI replication *****",  isDebugEnabled)
+			sleep(30000);
+			utils.log("DEBUG"," ***** sleep over *****",  isDebugEnabled)
 			execution.setVariable("prefix", Prefix)
 
 			//Config Inputs
@@ -215,6 +218,7 @@ public class DoCreateAllottedResourceTXC extends AbstractServiceTaskProcessor{
 			String arRole = execution.getVariable("allottedResourceRole")
 			String CSI_resourceLink = execution.getVariable("CSI_resourceLink")
 			String arModelInfo = execution.getVariable("allottedResourceModelInfo")
+			utils.log("DEBUG", "arModelInfo is:\n" + arModelInfo, isDebugEnabled)
 			String modelInvariantId = jsonUtil.getJsonValue(arModelInfo, "modelInvariantUuid")
 			String modelVersionId = jsonUtil.getJsonValue(arModelInfo, "modelUuid")
 			String modelCustomizationId = jsonUtil.getJsonValue(arModelInfo, "modelCustomizationUuid")
