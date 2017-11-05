@@ -283,7 +283,6 @@ public class DoCreateAllottedResourceTXCTest extends AbstractTestBase {
 		variables.put("allottedResourceType", "TXC");
 		variables.put("allottedResourceId", ARID);
 		variables.put("brgWanMacAddress", "wanmac");
-		variables.put("junitSleepMs", "5");
 
 		variables.put("serviceInstanceId", DEC_INST);
 		variables.put("parentServiceInstanceId", DEC_PARENT_INST);

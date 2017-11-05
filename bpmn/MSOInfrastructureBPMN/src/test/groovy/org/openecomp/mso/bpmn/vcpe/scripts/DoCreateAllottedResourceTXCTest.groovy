@@ -83,7 +83,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	// ***** preProcessRequest *****
 			
 	@Test
-//		@Ignore  
+	@Ignore  
 	public void preProcessRequest() {
 		ExecutionEntity mex = setupMock()
 		initPreProcess(mex)
@@ -107,7 +107,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	// ***** getAaiAR *****
 	
 	@Test
-//		@Ignore
+	@Ignore
 	public void getAaiAR() {
 		MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceTXC/getArTxc.xml")
 		
@@ -121,7 +121,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-//		@Ignore
+	@Ignore
 	public void getAaiAR_Duplicate() {
 		MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceTXC/getArTxc.xml")
 		
@@ -137,7 +137,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-//		@Ignore
+	@Ignore
 	public void getAaiAR_NotActive() {
 		MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceTXC/getArTxc.xml")
 		
@@ -153,7 +153,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-//		@Ignore
+	@Ignore
 	public void getAaiAR_NoStatus() {
 		MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceTXC/getArTxc.xml")
 		
@@ -172,7 +172,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	// ***** createAaiAR *****
 	
 	@Test
-//		@Ignore
+	@Ignore
 	public void createAaiAR() {
 		ExecutionEntity mex = setupMock()
 		def map = setupMap(mex)
@@ -196,7 +196,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-//		@Ignore
+	@Ignore
 	public void createAaiAR_NoArid_NoModelUuids() {
 		ExecutionEntity mex = setupMock()
 		def map = setupMap(mex)
@@ -226,7 +226,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-//		@Ignore
+	@Ignore
 	public void createAaiAR_MissingPsiLink() {
 		ExecutionEntity mex = setupMock()
 		initCreateAaiAr(mex)
@@ -241,7 +241,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-//		@Ignore
+	@Ignore
 	public void createAaiAR_HttpFailed() {
 		ExecutionEntity mex = setupMock()
 		initCreateAaiAr(mex)
@@ -254,7 +254,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-//		@Ignore
+	@Ignore
 	public void createAaiAR_BpmnError() {
 		ExecutionEntity mex = setupMock()
 		initCreateAaiAr(mex)
@@ -269,7 +269,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-//		@Ignore
+	@Ignore
 	public void createAaiAR_Ex() {
 		ExecutionEntity mex = setupMock()
 		initCreateAaiAr(mex)
@@ -287,7 +287,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	// ***** buildSDNCRequest *****
 	
 	@Test
-//		@Ignore
+	@Ignore
 	public void buildSDNCRequest() {
 		ExecutionEntity mex = setupMock()
 		initBuildSDNCRequest(mex)
@@ -312,7 +312,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-//		@Ignore
+	@Ignore
 	public void buildSDNCRequest_Ex() {
 		ExecutionEntity mex = setupMock()
 		initBuildSDNCRequest(mex)
@@ -328,7 +328,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	// ***** preProcessSDNCAssign *****
 	
 	@Test
-//		@Ignore
+	@Ignore
 	public void preProcessSDNCAssign() {
 		ExecutionEntity mex = setupMock()
 		def map = setupMap(mex)
@@ -354,7 +354,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-//		@Ignore
+	@Ignore
 	public void preProcessSDNCAssign_BpmnError() {
 		ExecutionEntity mex = setupMock()
 		initPreProcessSDNC(mex)
@@ -367,7 +367,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-//		@Ignore
+	@Ignore
 	public void preProcessSDNCAssign_Ex() {
 		ExecutionEntity mex = setupMock()
 		initPreProcessSDNC(mex)
@@ -383,7 +383,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	// ***** preProcessSDNCCreate *****
 	
 	@Test
-//		@Ignore
+	@Ignore
 	public void preProcessSDNCCreate() {
 		ExecutionEntity mex = setupMock()
 		def map = setupMap(mex)
@@ -410,7 +410,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-//		@Ignore
+	@Ignore
 	public void preProcessSDNCCreate_BpmnError() {
 		ExecutionEntity mex = setupMock()
 		initPreProcessSDNC(mex)
@@ -423,7 +423,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-//		@Ignore
+	@Ignore
 	public void preProcessSDNCCreate_Ex() {
 		ExecutionEntity mex = setupMock()
 		initPreProcessSDNC(mex)
@@ -439,7 +439,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	// ***** preProcessSDNCActivate *****
 	
 	@Test
-//		@Ignore
+	@Ignore
 	public void preProcessSDNCActivate() {
 		ExecutionEntity mex = setupMock()
 		def map = setupMap(mex)
@@ -466,7 +466,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-//		@Ignore
+	@Ignore
 	public void preProcessSDNCActivate_BpmnError() {
 		ExecutionEntity mex = setupMock()
 		initPreProcessSDNC(mex)
@@ -479,7 +479,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-//		@Ignore
+	@Ignore
 	public void preProcessSDNCActivate_Ex() {
 		ExecutionEntity mex = setupMock()
 		initPreProcessSDNC(mex)
@@ -495,7 +495,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	// ***** validateSDNCResp *****
 	
 	@Test
-//		@Ignore
+	@Ignore
 	public void validateSDNCResp() {
 		ExecutionEntity mex = setupMock()
 		def map = setupMap(mex)
@@ -519,7 +519,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-//		@Ignore
+	@Ignore
 	public void validateSDNCResp_Get() {
 		ExecutionEntity mex = setupMock()
 		def data = initValidateSDNCResp(mex)
@@ -538,7 +538,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-//		@Ignore
+	@Ignore
 	public void validateSDNCResp_Unsuccessful() {
 		ExecutionEntity mex = setupMock()
 		initValidateSDNCResp(mex)
@@ -553,7 +553,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-//		@Ignore
+	@Ignore
 	public void validateSDNCResp_BpmnError() {
 		ExecutionEntity mex = setupMock()
 		initValidateSDNCResp(mex)
@@ -567,7 +567,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-//		@Ignore
+	@Ignore
 	public void validateSDNCResp_Ex() {
 		ExecutionEntity mex = setupMock()
 		initValidateSDNCResp(mex)
@@ -584,7 +584,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	// ***** preProcessSDNCGet *****
 	
 	@Test
-//		@Ignore
+	@Ignore
 	public void preProcessSDNCGet_FoundAR() {
 		ExecutionEntity mex = setupMock()
 		def map = setupMap(mex)
@@ -603,7 +603,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-//		@Ignore
+	@Ignore
 	public void preProcessSDNCGet_NotFoundAR() {
 		ExecutionEntity mex = setupMock()
 		def map = setupMap(mex)
@@ -624,7 +624,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-//		@Ignore
+	@Ignore
 	public void preProcessSDNCGet_Ex() {
 		ExecutionEntity mex = setupMock()
 		initPreProcessSDNCGet(mex)
@@ -640,7 +640,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	// ***** updateAaiAROrchStatus *****
 	
 	@Test
-//		@Ignore
+	@Ignore
 	public void updateAaiAROrchStatus() {
 		MockPatchAllottedResource(CUST, SVC, INST, ARID)
 		
@@ -655,7 +655,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	// ***** generateOutputs *****
 	
 	@Test
-//		@Ignore
+	@Ignore
 	public void generateOutputs() {
 		ExecutionEntity mex = setupMock()
 		def txctop = FileUtil.readResourceFile("__files/VCPE/DoCreateAllottedResourceTXC/SDNCTopologyQueryCallback.xml")
@@ -674,7 +674,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-//		@Ignore
+	@Ignore
 	public void generateOutputs_BadXml() {
 		ExecutionEntity mex = setupMock()
 		
@@ -689,7 +689,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-//		@Ignore
+	@Ignore
 	public void generateOutputs_BpmnError() {
 		ExecutionEntity mex = setupMock()
 		
@@ -704,7 +704,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-//		@Ignore
+	@Ignore
 	public void generateOutputs_Ex() {
 		ExecutionEntity mex = setupMock()
 		
@@ -722,7 +722,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	// ***** preProcessRollback *****
 	
 	@Test
-//		@Ignore
+	@Ignore
 	public void preProcessRollback() {
 		ExecutionEntity mex = setupMock()
 		WorkflowException wfe = mock(WorkflowException.class)
@@ -738,7 +738,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-//		@Ignore
+	@Ignore
 	public void preProcessRollback_NotWFE() {
 		ExecutionEntity mex = setupMock()
 		
@@ -753,7 +753,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-//		@Ignore
+	@Ignore
 	public void preProcessRollback_BpmnError() {
 		ExecutionEntity mex = setupMock()
 		
@@ -767,7 +767,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-//		@Ignore
+	@Ignore
 	public void preProcessRollback_Ex() {
 		ExecutionEntity mex = setupMock()
 		
@@ -784,7 +784,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	// ***** postProcessRollback *****
 	
 	@Test
-//		@Ignore
+	@Ignore
 	public void postProcessRollback() {
 		ExecutionEntity mex = setupMock()
 		WorkflowException wfe = mock(WorkflowException.class)
@@ -801,7 +801,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-//		@Ignore
+	@Ignore
 	public void postProcessRollback_NotWFE() {
 		ExecutionEntity mex = setupMock()
 		
@@ -817,7 +817,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-//		@Ignore
+	@Ignore
 	public void postProcessRollback_BpmnError() {
 		ExecutionEntity mex = setupMock()
 		
@@ -832,7 +832,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-//		@Ignore
+	@Ignore
 	public void postProcessRollback_Ex() {
 		ExecutionEntity mex = setupMock()
 		
