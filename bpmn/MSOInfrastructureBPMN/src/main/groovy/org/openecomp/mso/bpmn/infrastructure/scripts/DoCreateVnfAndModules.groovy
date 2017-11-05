@@ -63,9 +63,9 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 	* @param - execution
 	*/
    public void preProcessRequest(Execution execution) {
-	   def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
+	   def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
 	   execution.setVariable("prefix",Prefix)
-	   utils.log("DEBUG", " *** STARTED DoCreateVnfAndModules PreProcessRequest Process*** ", isDebugEnabled)
+	   utils.log("DEBUG", " *** STARTED DoCreateVnfAndModules PreProcessRequest Process*** ", isDebugLogEnabled)
 	   
 	   setBasicDBAuthHeader(execution, isDebugLogEnabled)
 	   try{
@@ -78,21 +78,21 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 		   String requestId = execution.getVariable("msoRequestId")
 		   execution.setVariable("requestId", requestId)
 		   execution.setVariable("mso-request-id", requestId)
-		   utils.log("DEBUG", "Incoming Request Id is: " + requestId, isDebugEnabled)
+		   utils.log("DEBUG", "Incoming Request Id is: " + requestId, isDebugLogEnabled)
 
 		   String serviceInstanceId = execution.getVariable("serviceInstanceId")
-		   utils.log("DEBUG", "Incoming Service Instance Id is: " + serviceInstanceId, isDebugEnabled)
+		   utils.log("DEBUG", "Incoming Service Instance Id is: " + serviceInstanceId, isDebugLogEnabled)
 
 		   String vnfName = execution.getVariable("vnfName")
 		   execution.setVariable("CREVI_vnfName", vnfName)
-		   utils.log("DEBUG", "Incoming Vnf Name is: " + vnfName, isDebugEnabled)
+		   utils.log("DEBUG", "Incoming Vnf Name is: " + vnfName, isDebugLogEnabled)
 
 		   String productFamilyId = execution.getVariable("productFamilyId")
-		   utils.log("DEBUG", "Incoming Product Family Id is: " + productFamilyId, isDebugEnabled)
+		   utils.log("DEBUG", "Incoming Product Family Id is: " + productFamilyId, isDebugLogEnabled)
 
 		   String source = "VID"
 		   execution.setVariable("source", source)
-		   utils.log("DEBUG", "Incoming Source is: " + source, isDebugEnabled)
+		   utils.log("DEBUG", "Incoming Source is: " + source, isDebugLogEnabled)
 
 		   String lcpCloudRegionId = execution.getVariable("lcpCloudRegionId")
 		   utils.log("DEBUG", "Incoming LCP Cloud Region Id is: " + lcpCloudRegionId)
@@ -101,17 +101,17 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 		   utils.log("DEBUG", "Incoming Tenant Id is: " + tenantId)
 
 		   String disableRollback = execution.getVariable("disableRollback")
-		   utils.log("DEBUG", "Incoming Disable Rollback is: " + disableRollback, isDebugEnabled)
+		   utils.log("DEBUG", "Incoming Disable Rollback is: " + disableRollback, isDebugLogEnabled)
 
 		   String asdcServiceModelVersion = execution.getVariable("asdcServiceModelVersion")
-		   utils.log("DEBUG", "Incoming asdcServiceModelVersion: " + asdcServiceModelVersion, isDebugEnabled)
+		   utils.log("DEBUG", "Incoming asdcServiceModelVersion: " + asdcServiceModelVersion, isDebugLogEnabled)
 
 		   String vnfId = execution.getVariable("testVnfId") // for junits
 		   if(isBlank(vnfId)){
 			   vnfId = execution.getVariable("vnfId")
 			   if (isBlank(vnfId)) {
 				   vnfId = UUID.randomUUID().toString()
-				   utils.log("DEBUG", "Generated Vnf Id is: " + vnfId, isDebugEnabled)
+				   utils.log("DEBUG", "Generated Vnf Id is: " + vnfId, isDebugLogEnabled)
 			   }
 		   }
 		   execution.setVariable("vnfId", vnfId)
@@ -135,50 +135,50 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 
 
 	   }catch(BpmnError b){
-		   utils.log("DEBUG", "Rethrowing MSOWorkflowException", isDebugEnabled)
+		   utils.log("DEBUG", "Rethrowing MSOWorkflowException", isDebugLogEnabled)
 		   throw b
 	   }catch(Exception e){
-		   utils.log("DEBUG", " Error Occured in DoCreateVnfAndModules PreProcessRequest method!" + e.getMessage(), isDebugEnabled)
+		   utils.log("DEBUG", " Error Occured in DoCreateVnfAndModules PreProcessRequest method!" + e.getMessage(), isDebugLogEnabled)
 		   exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured in DoCreateVnf PreProcessRequest")
 
 	   }
-	   utils.log("DEBUG", "*** COMPLETED DoCreateVnfAndModules PreProcessRequest Process ***", isDebugEnabled)
+	   utils.log("DEBUG", "*** COMPLETED DoCreateVnfAndModules PreProcessRequest Process ***", isDebugLogEnabled)
    }
 
 
    public void queryCatalogDB (Execution execution) {
-	   def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+	   def isDebugLogEnabled=execution.getVariable("isDebugLogEnabled")
 	   execution.setVariable("prefix",Prefix)
 
-	   utils.log("DEBUG", " *** STARTED DoCreateVnfAndModules QueryCatalogDB Process *** ", isDebugEnabled)
+	   utils.log("DEBUG", " *** STARTED DoCreateVnfAndModules QueryCatalogDB Process *** ", isDebugLogEnabled)
 	   try {
 		   VnfResource vnf = null
 		   ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
 		   // if serviceDecomposition is specified, get info from serviceDecomposition
 		   if (serviceDecomposition != null) {
-			   utils.log("DEBUG", "Getting Catalog DB data from ServiceDecomposition object: " + serviceDecomposition.toJsonString(), isDebugEnabled)
+			   utils.log("DEBUG", "Getting Catalog DB data from ServiceDecomposition object: " + serviceDecomposition.toJsonString(), isDebugLogEnabled)
 			   List<VnfResource> vnfs = serviceDecomposition.getServiceVnfs()
-			   utils.log("DEBUG", "Read vnfs", isDebugEnabled)
+			   utils.log("DEBUG", "Read vnfs", isDebugLogEnabled)
 			   if (vnfs == null) {
-				   utils.log("DEBUG", "Error - vnfs are empty in serviceDecomposition object", isDebugEnabled)
+				   utils.log("DEBUG", "Error - vnfs are empty in serviceDecomposition object", isDebugLogEnabled)
 				   exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured in DoCreateVnf queryCatalogDB, vnfs are empty")
 			   }
 			   vnf = vnfs[0]
 			   String serviceModelName = serviceDecomposition.getModelInfo().getModelName()
 			   vnf.constructVnfType(serviceModelName)
 			   String vnfType = vnf.getVnfType()
-			   utils.log("DEBUG", "Incoming Vnf Type is: " + vnfType, isDebugEnabled)
+			   utils.log("DEBUG", "Incoming Vnf Type is: " + vnfType, isDebugLogEnabled)
 			   execution.setVariable("vnfType", vnfType)
 		   }
 		   else {
 			   //Get Vnf Info
 			   String vnfModelInfo = execution.getVariable("vnfModelInfo")
-			   utils.log("DEBUG", "vnfModelInfo: " + vnfModelInfo, isDebugEnabled)
+			   utils.log("DEBUG", "vnfModelInfo: " + vnfModelInfo, isDebugLogEnabled)
 			   String vnfModelCustomizationUuid = jsonUtil.getJsonValueForKey(vnfModelInfo, "modelCustomizationUuid")
 			   if (vnfModelCustomizationUuid == null) {
 					   vnfModelCustomizationUuid = ""
 			   }
-			   utils.log("DEBUG", "querying Catalog DB by vnfModelCustomizationUuid: " + vnfModelCustomizationUuid, isDebugEnabled)
+			   utils.log("DEBUG", "querying Catalog DB by vnfModelCustomizationUuid: " + vnfModelCustomizationUuid, isDebugLogEnabled)
 			  
 			   JSONArray vnfs = cutils.getAllVnfsByVnfModelCustomizationUuid(execution,
 							   vnfModelCustomizationUuid)
@@ -187,24 +187,24 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 			   JSONObject vnfObject = vnfs[0]
 			   vnf = decomposeJsonUtil.JsonToVnfResource(vnfObject.toString())			   
 		   }
-		   utils.log("DEBUG", "Read vnfResource", isDebugEnabled)
+		   utils.log("DEBUG", "Read vnfResource", isDebugLogEnabled)
 		   if (vnf == null) {
-			   utils.log("DEBUG", "Error - vnf is empty in serviceDecomposition object", isDebugEnabled)
+			   utils.log("DEBUG", "Error - vnf is empty in serviceDecomposition object", isDebugLogEnabled)
 			   exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured in DoCreateVnf queryCatalogDB, vnf is null")
 		   }
 		   execution.setVariable("vnfResourceDecomposition", vnf)
 
 		   List<ModuleResource> vfModules = vnf.getAllVfModuleObjects()
-		   utils.log("DEBUG", "Read vfModules", isDebugEnabled)
+		   utils.log("DEBUG", "Read vfModules", isDebugLogEnabled)
 		   if (vfModules == null) {
-			   utils.log("DEBUG", "Error - vfModules are empty in serviceDecomposition object", isDebugEnabled)
+			   utils.log("DEBUG", "Error - vfModules are empty in serviceDecomposition object", isDebugLogEnabled)
 			   exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured in DoCreateVnf queryCatalogDB, vf modules are empty")
 		   }
 			   			  
 		   ModuleResource baseVfModule = null
 
 		   for (int i = 0; i < vfModules.size; i++) {
-			   utils.log("DEBUG", "handling VF Module ", isDebugEnabled)
+			   utils.log("DEBUG", "handling VF Module ", isDebugLogEnabled)
 			   ModuleResource vfModule = vfModules[i]
 			   boolean isBase = vfModule.getIsBase()
 			   if (isBase) {
@@ -236,7 +236,7 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 			execution.setVariable("addOnModulesDeployed", 0)	  
 
 	   }catch(Exception ex) {
-		   utils.log("DEBUG", "Error Occured in DoCreateVnfAndModules QueryCatalogDB Process " + ex.getMessage(), isDebugEnabled)
+		   utils.log("DEBUG", "Error Occured in DoCreateVnfAndModules QueryCatalogDB Process " + ex.getMessage(), isDebugLogEnabled)
 		   exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured in DoCreateVnfAndModules QueryCatalogDB Process")
 	   }
 
@@ -249,7 +249,7 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 		   execution.setVariable("vnfId", "skask")
 	   }
 
-	   utils.log("DEBUG", "*** COMPLETED DoCreateVnfAndModules QueryCatalogDB Process ***", isDebugEnabled)
+	   utils.log("DEBUG", "*** COMPLETED DoCreateVnfAndModules QueryCatalogDB Process ***", isDebugLogEnabled)
    }
 
    public void preProcessAddOnModule(Execution execution){
@@ -364,45 +364,45 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
    }   
    
    public void preProcessRollback (Execution execution) {
-	   def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-	   utils.log("DEBUG"," ***** preProcessRollback ***** ", isDebugEnabled)
+	   def isDebugLogEnabled=execution.getVariable("isDebugLogEnabled")
+	   utils.log("DEBUG"," ***** preProcessRollback ***** ", isDebugLogEnabled)
 	   try {
 		   
 		   Object workflowException = execution.getVariable("WorkflowException");
 
 		   if (workflowException instanceof WorkflowException) {
-			   utils.log("DEBUG", "Prev workflowException: " + workflowException.getErrorMessage(), isDebugEnabled)
+			   utils.log("DEBUG", "Prev workflowException: " + workflowException.getErrorMessage(), isDebugLogEnabled)
 			   execution.setVariable("prevWorkflowException", workflowException);
 			   //execution.setVariable("WorkflowException", null);
 		   }
 	   } catch (BpmnError e) {
-		   utils.log("DEBUG", "BPMN Error during preProcessRollback", isDebugEnabled)
+		   utils.log("DEBUG", "BPMN Error during preProcessRollback", isDebugLogEnabled)
 	   } catch(Exception ex) {
 		   String msg = "Exception in preProcessRollback. " + ex.getMessage()
-		   utils.log("DEBUG", msg, isDebugEnabled)
+		   utils.log("DEBUG", msg, isDebugLogEnabled)
 	   }
-	   utils.log("DEBUG"," *** Exit preProcessRollback *** ", isDebugEnabled)
+	   utils.log("DEBUG"," *** Exit preProcessRollback *** ", isDebugLogEnabled)
    }
 
    public void postProcessRollback (Execution execution) {
-	   def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-	   utils.log("DEBUG"," ***** postProcessRollback ***** ", isDebugEnabled)
+	   def isDebugLogEnabled=execution.getVariable("isDebugLogEnabled")
+	   utils.log("DEBUG"," ***** postProcessRollback ***** ", isDebugLogEnabled)
 	   String msg = ""
 	   try {
 		   Object workflowException = execution.getVariable("prevWorkflowException");
 		   if (workflowException instanceof WorkflowException) {
-			   utils.log("DEBUG", "Setting prevException to WorkflowException: ", isDebugEnabled)
+			   utils.log("DEBUG", "Setting prevException to WorkflowException: ", isDebugLogEnabled)
 			   execution.setVariable("WorkflowException", workflowException);
 		   }
 		   execution.setVariable("rollbackData", null)
 	   } catch (BpmnError b) {
-		   utils.log("DEBUG", "BPMN Error during postProcessRollback", isDebugEnabled)
+		   utils.log("DEBUG", "BPMN Error during postProcessRollback", isDebugLogEnabled)
 		   throw b;
 	   } catch(Exception ex) {
 		   msg = "Exception in postProcessRollback. " + ex.getMessage()
-		   utils.log("DEBUG", msg, isDebugEnabled)
+		   utils.log("DEBUG", msg, isDebugLogEnabled)
 	   }
-	   utils.log("DEBUG"," *** Exit postProcessRollback *** ", isDebugEnabled)
+	   utils.log("DEBUG"," *** Exit postProcessRollback *** ", isDebugLogEnabled)
    }
 
 
