@@ -274,7 +274,7 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
 			execution.setVariable("serviceInstanceName", serviceInstanceName)
 
 			ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
-			execution.setVariable("serviceDecompositionString", serviceDecomposition.toJsonString())
+			execution.setVariable("serviceDecompositionString", serviceDecomposition.toJsonStringNoRootName())
 
 			utils.log("DEBUG", " ***** Completed prepareCreateServiceInstance of CreateVcpeResCustService ***** ", isDebugEnabled)
 		} catch (Exception ex) {
@@ -388,13 +388,13 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
 				while (iter.hasNext()){
 					AllottedResource allottedResource = (AllottedResource)iter.next();
 
-					utils.log("DEBUG", " getting model info for AllottedResource # :" + allottedResource.toJsonString(), isDebugEnabled)
+					utils.log("DEBUG", " getting model info for AllottedResource # :" + allottedResource.toJsonStringNoRootName(), isDebugEnabled)
 					utils.log("DEBUG", " allottedResource.getAllottedResourceType() :" + allottedResource.getAllottedResourceType(), isDebugEnabled)
 					if("TunnelXConn".equalsIgnoreCase(allottedResource.getAllottedResourceType())){
 						//set create flag to true
 						execution.setVariable("createTXCAR", true)
 						ModelInfo allottedResourceModelInfo = allottedResource.getModelInfo()
-						execution.setVariable("allottedResourceModelInfoTXC", allottedResourceModelInfo.toJsonString())
+						execution.setVariable("allottedResourceModelInfoTXC", allottedResourceModelInfo.toJsonStringNoRootName())
 						execution.setVariable("allottedResourceRoleTXC", allottedResource.getAllottedResourceRole())
 						execution.setVariable("allottedResourceTypeTXC", allottedResource.getAllottedResourceType())
 						//After decomposition and homing BBs, there should be an allotted resource object in the decomposition that represents the TXC,
@@ -441,13 +441,13 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
 				while (iter.hasNext()){
 					AllottedResource allottedResource = (AllottedResource)iter.next();
 
-					utils.log("DEBUG", " getting model info for AllottedResource # :" + allottedResource.toJsonString(), isDebugEnabled)
+					utils.log("DEBUG", " getting model info for AllottedResource # :" + allottedResource.toJsonStringNoRootName(), isDebugEnabled)
 					utils.log("DEBUG", " allottedResource.getAllottedResourceType() :" + allottedResource.getAllottedResourceType(), isDebugEnabled)
 					if("BRG".equalsIgnoreCase(allottedResource.getAllottedResourceType())){
 						//set create flag to true
 						execution.setVariable("createBRGAR", true)
 						ModelInfo allottedResourceModelInfo = allottedResource.getModelInfo()
-						execution.setVariable("allottedResourceModelInfoBRG", allottedResourceModelInfo.toJsonString())
+						execution.setVariable("allottedResourceModelInfoBRG", allottedResourceModelInfo.toJsonStringNoRootName())
 						execution.setVariable("allottedResourceRoleBRG", allottedResource.getAllottedResourceRole())
 						execution.setVariable("allottedResourceTypeBRG", allottedResource.getAllottedResourceType())
 						//After decomposition and homing BBs, there should be an allotted resource object in the decomposition that represents the BRG,

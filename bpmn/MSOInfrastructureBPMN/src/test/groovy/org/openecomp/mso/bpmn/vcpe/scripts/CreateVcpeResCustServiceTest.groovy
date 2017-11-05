@@ -274,7 +274,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	// ***** prepareCreateServiceInstance *****
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void prepareCreateServiceInstance() {
 		ExecutionEntity mex = setupMock()
 		initPrepareCreateServiceInstance(mex)
@@ -408,7 +408,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	// ***** prepareCreateAllottedResourceTXC *****
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void prepareCreateAllottedResourceTXC() {
 		ExecutionEntity mex = setupMock()
 		initPrepareCreateAllottedResourceTXC(mex)
@@ -462,7 +462,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	// ***** prepareCreateAllottedResourceBRG *****
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void prepareCreateAllottedResourceBRG() {
 		ExecutionEntity mex = setupMock()
 		initPrepareCreateAllottedResourceBRG(mex)
