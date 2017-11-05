@@ -363,6 +363,24 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
 	}
 
 
+	public void awaitAaiDistribution(Execution execution) {
+		def isDebugEnabled=execution.getVariable(DebugFlag)
+
+		try {
+			String tsleep = execution.getVariable("junitSleepMs")
+			
+			//workaround for aai replication issue
+			utils.log("DEBUG", "sleeping while AAI distributes data", isDebugEnabled)
+			sleep(tsleep == null ? 30000 : tsleep as Long)
+			
+		} catch (Exception ex) {
+			// try error in method block
+			String exceptionMessage = "Unexpected Error from method awaitAaiDistribution() - " + ex.getMessage()
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
+		}
+	 }
+
+
 	public void prepareCreateAllottedResourceTXC(Execution execution) {
 		def isDebugEnabled=execution.getVariable(DebugFlag)
 

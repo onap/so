@@ -368,7 +368,7 @@ CreateVcpeResCustService.prepareCreateServiceInstance(execution)]]></bpmn2:scrip
       <bpmn2:incoming>SequenceFlow_0vj46ej</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_13uceka</bpmn2:outgoing>
     </bpmn2:serviceTask>
-    <bpmn2:sequenceFlow id="SequenceFlow_13uceka" sourceRef="updateInfraRequest" targetRef="IntermediateThrowEvent_1as6hoa" />
+    <bpmn2:sequenceFlow id="SequenceFlow_13uceka" sourceRef="updateInfraRequest" targetRef="ScriptTask_1e5rwka" />
     <bpmn2:scriptTask id="ScriptTask_1qd3uwb" name="Post Process&#10;Create&#10;Service&#10;" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_1ky2sv9</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0vj46ej</bpmn2:outgoing>
@@ -431,7 +431,7 @@ CreateVcpeResCustService.prepareCreateAllottedResourceTXC(execution)]]></bpmn2:s
       <bpmn2:linkEventDefinition name="StartService" />
     </bpmn2:intermediateCatchEvent>
     <bpmn2:intermediateThrowEvent id="IntermediateThrowEvent_1as6hoa" name="GoToCreateAllottedResourcesTXC">
-      <bpmn2:incoming>SequenceFlow_13uceka</bpmn2:incoming>
+      <bpmn2:incoming>SequenceFlow_16acruh</bpmn2:incoming>
       <bpmn2:linkEventDefinition name="CreateAllottedResourcesTXC" />
     </bpmn2:intermediateThrowEvent>
     <bpmn2:sequenceFlow id="SequenceFlow_15odbkz" sourceRef="IntermediateCatchEvent_1i1nwfx" targetRef="prepareCreateService_scriptTask" />
@@ -471,36 +471,11 @@ CreateVcpeResCustService.prepareCreateAllottedResourceTXC(execution)]]></bpmn2:s
       <bpmn2:incoming>SequenceFlow_0e9e6fo</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0hwsm6n</bpmn2:outgoing>
     </bpmn2:exclusiveGateway>
-    <bpmn2:callActivity id="CallActivity_0xt1l8t" name="Call Create BRG Allotted Resource&#10;" calledElement="DoCreateAllottedResourceBRG">
-      <bpmn2:extensionElements>
-        <camunda:in source="msoRequestId" target="msoRequestId" />
-        <camunda:in source="disableRollback" target="disableRollback" />
-        <camunda:in source="isDebugLogEnabled" target="isDebugLogEnabled" />
-        <camunda:in source="failExists" target="failExists" />
-        <camunda:in source="serviceInstanceId" target="serviceInstanceId" />
-        <camunda:in source="parentServiceInstanceIdBRG" target="parentServiceInstanceId" />
-        <camunda:in source="allottedResourceIdBRG" target="allottedResourceId" />
-        <camunda:in source="allottedResourceModelInfoBRG" target="allottedResourceModelInfo" />
-        <camunda:in source="allottedResourceRoleBRG" target="allottedResourceRole" />
-        <camunda:out source="rollbackData" target="DCARBRG_rollbackData" />
-        <camunda:out source="rolledBack" target="rolledBack" />
-        <camunda:out source="WorkflowException" target="WorkflowException" />
-        <camunda:out source="allottedResourceId" target="DCARBRG_allottedResourceId" />
-        <camunda:out source="allottedResourceName" target="DCARBRG_allottedResourceName" />
-        <camunda:in source="allottedResourceTypeBRG" target="allottedResourceType" />
-        <camunda:in source="vni" target="vni" />
-        <camunda:in source="vgmuxBearerIP" target="vgmuxBearerIP" />
-        <camunda:in source="brgWanMacAddress" target="brgWanMacAddress" />
-      </bpmn2:extensionElements>
-      <bpmn2:incoming>SequenceFlow_0b5ztoe</bpmn2:incoming>
-      <bpmn2:outgoing>SequenceFlow_0e9e6fo</bpmn2:outgoing>
-    </bpmn2:callActivity>
     <bpmn2:sequenceFlow id="SequenceFlow_0hwsm6n" sourceRef="ExclusiveGateway_0jqgskx" targetRef="IntermediateThrowEvent_0lt5ltv" />
     <bpmn2:sequenceFlow id="SequenceFlow_0loks1u" name="No" sourceRef="ExclusiveGateway_1xwfgxs" targetRef="ExclusiveGateway_0jqgskx" />
     <bpmn2:sequenceFlow id="SequenceFlow_0b5ztoe" name="Yes" sourceRef="ExclusiveGateway_1xwfgxs" targetRef="CallActivity_0xt1l8t">
       <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{ execution.getVariable("createBRGAR") != null && execution.getVariable("createBRGAR") == true }]]></bpmn2:conditionExpression>
     </bpmn2:sequenceFlow>
-    <bpmn2:sequenceFlow id="SequenceFlow_0e9e6fo" sourceRef="CallActivity_0xt1l8t" targetRef="ExclusiveGateway_0jqgskx" />
     <bpmn2:scriptTask id="ScriptTask_05epj75" name="Prepare to create Allotted Resources BRG" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_15vce9o</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0yecpl2</bpmn2:outgoing>
@@ -616,6 +591,39 @@ def CreateVcpeResCustService= new CreateVcpeResCustService()
 CreateVcpeResCustService.validateVnfCreate(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_0k5vcuu" sourceRef="ScriptTask_18w0jud" targetRef="ExclusiveGateway_1hlbkue" />
+    <bpmn2:callActivity id="CallActivity_0xt1l8t" name="Call Create BRG Allotted Resource&#10;" calledElement="DoCreateAllottedResourceBRG">
+      <bpmn2:extensionElements>
+        <camunda:in source="msoRequestId" target="msoRequestId" />
+        <camunda:in source="disableRollback" target="disableRollback" />
+        <camunda:in source="isDebugLogEnabled" target="isDebugLogEnabled" />
+        <camunda:in source="failExists" target="failExists" />
+        <camunda:in source="serviceInstanceId" target="serviceInstanceId" />
+        <camunda:in source="parentServiceInstanceIdBRG" target="parentServiceInstanceId" />
+        <camunda:in source="allottedResourceIdBRG" target="allottedResourceId" />
+        <camunda:in source="allottedResourceModelInfoBRG" target="allottedResourceModelInfo" />
+        <camunda:in source="allottedResourceRoleBRG" target="allottedResourceRole" />
+        <camunda:out source="rollbackData" target="DCARBRG_rollbackData" />
+        <camunda:out source="rolledBack" target="rolledBack" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+        <camunda:out source="allottedResourceId" target="DCARBRG_allottedResourceId" />
+        <camunda:out source="allottedResourceName" target="DCARBRG_allottedResourceName" />
+        <camunda:in source="allottedResourceTypeBRG" target="allottedResourceType" />
+        <camunda:in source="vni" target="vni" />
+        <camunda:in source="vgmuxBearerIP" target="vgmuxBearerIP" />
+        <camunda:in source="brgWanMacAddress" target="brgWanMacAddress" />
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_0b5ztoe</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_0e9e6fo</bpmn2:outgoing>
+    </bpmn2:callActivity>
+    <bpmn2:sequenceFlow id="SequenceFlow_0e9e6fo" sourceRef="CallActivity_0xt1l8t" targetRef="ExclusiveGateway_0jqgskx" />
+    <bpmn2:scriptTask id="ScriptTask_1e5rwka" name="Await AAI Distribution" scriptFormat="groovy">
+      <bpmn2:incoming>SequenceFlow_13uceka</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_16acruh</bpmn2:outgoing>
+      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.vcpe.scripts.*
+def CreateVcpeResCustService = new CreateVcpeResCustService()
+CreateVcpeResCustService.awaitAaiDistribution(execution)]]></bpmn2:script>
+    </bpmn2:scriptTask>
+    <bpmn2:sequenceFlow id="SequenceFlow_16acruh" sourceRef="ScriptTask_1e5rwka" targetRef="IntermediateThrowEvent_1as6hoa" />
   </bpmn2:process>
   <bpmn2:error id="Error_2" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
   <bpmn2:error id="Error_1" name="java.lang.Exception" errorCode="java.lang.Exception" />
@@ -915,9 +923,9 @@ CreateVcpeResCustService.validateVnfCreate(execution)]]></bpmn2:script>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_13uceka_di" bpmnElement="SequenceFlow_13uceka">
         <di:waypoint xsi:type="dc:Point" x="894" y="583" />
-        <di:waypoint xsi:type="dc:Point" x="1053" y="583" />
+        <di:waypoint xsi:type="dc:Point" x="995" y="583" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="974" y="568" width="0" height="0" />
+          <dc:Bounds x="899.5" y="568" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_1qd3uwb_di" bpmnElement="ScriptTask_1qd3uwb">
@@ -1143,9 +1151,9 @@ CreateVcpeResCustService.validateVnfCreate(execution)]]></bpmn2:script>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="IntermediateThrowEvent_1as6hoa_di" bpmnElement="IntermediateThrowEvent_1as6hoa">
-        <dc:Bounds x="1056" y="565" width="36" height="36" />
+        <dc:Bounds x="1027" y="712" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1037" y="606" width="72" height="24" />
+          <dc:Bounds x="1002" y="753" width="85" height="36" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_15odbkz_di" bpmnElement="SequenceFlow_15odbkz">
@@ -1261,9 +1269,6 @@ CreateVcpeResCustService.validateVnfCreate(execution)]]></bpmn2:script>
           <dc:Bounds x="515" y="1317" width="0" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="CallActivity_0xt1l8t_di" bpmnElement="CallActivity_0xt1l8t">
-        <dc:Bounds x="400" y="1151" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0hwsm6n_di" bpmnElement="SequenceFlow_0hwsm6n">
         <di:waypoint xsi:type="dc:Point" x="585" y="1292" />
         <di:waypoint xsi:type="dc:Point" x="628" y="1292" />
@@ -1287,15 +1292,7 @@ CreateVcpeResCustService.validateVnfCreate(execution)]]></bpmn2:script>
         <di:waypoint xsi:type="dc:Point" x="337" y="1191" />
         <di:waypoint xsi:type="dc:Point" x="395" y="1191" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="353" y="1216.4242424242425" width="21" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0e9e6fo_di" bpmnElement="SequenceFlow_0e9e6fo">
-        <di:waypoint xsi:type="dc:Point" x="500" y="1191" />
-        <di:waypoint xsi:type="dc:Point" x="560" y="1191" />
-        <di:waypoint xsi:type="dc:Point" x="560" y="1267" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="485" y="1166" width="0" height="12" />
+          <dc:Bounds x="354" y="1216" width="19" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_05epj75_di" bpmnElement="ScriptTask_05epj75">
@@ -1498,6 +1495,29 @@ CreateVcpeResCustService.validateVnfCreate(execution)]]></bpmn2:script>
         <di:waypoint xsi:type="dc:Point" x="917" y="1024" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="883" y="961" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="CallActivity_0xt1l8t_di" bpmnElement="CallActivity_0xt1l8t">
+        <dc:Bounds x="400" y="1151" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0e9e6fo_di" bpmnElement="SequenceFlow_0e9e6fo">
+        <di:waypoint xsi:type="dc:Point" x="500" y="1191" />
+        <di:waypoint xsi:type="dc:Point" x="560" y="1191" />
+        <di:waypoint xsi:type="dc:Point" x="560" y="1267" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="440" y="1166" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_1e5rwka_di" bpmnElement="ScriptTask_1e5rwka">
+        <dc:Bounds x="995" y="543" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_16acruh_di" bpmnElement="SequenceFlow_16acruh">
+        <di:waypoint xsi:type="dc:Point" x="1045" y="623" />
+        <di:waypoint xsi:type="dc:Point" x="1045" y="663" />
+        <di:waypoint xsi:type="dc:Point" x="1045" y="663" />
+        <di:waypoint xsi:type="dc:Point" x="1045" y="712" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1060" y="657" width="0" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>

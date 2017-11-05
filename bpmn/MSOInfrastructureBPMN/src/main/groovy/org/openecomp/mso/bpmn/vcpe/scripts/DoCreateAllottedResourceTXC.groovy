@@ -81,6 +81,7 @@ public class DoCreateAllottedResourceTXC extends AbstractServiceTaskProcessor{
 			String msoRequestId	 = execution.getVariable("msoRequestId")
 			utils.log("DEBUG", " msoRequestId  = " + msoRequestId,  isDebugEnabled)
 
+<<<<<<< HEAD
 			if ((msoRequestId == null) || ("testRequestId".equals(msoRequestId)) || ("testRequestId123".equals(msoRequestId)))
 			{
 				utils.log("DEBUG"," ***** NOT sleeping 30 seconds for Junit *****",  isDebugEnabled)
@@ -92,6 +93,8 @@ public class DoCreateAllottedResourceTXC extends AbstractServiceTaskProcessor{
 				utils.log("DEBUG"," ***** sleep over *****",  isDebugEnabled)
 			}
 
+=======
+>>>>>>> b13245a... Moved sleep to macro flow
 			execution.setVariable("prefix", Prefix)
 
 			//Config Inputs
