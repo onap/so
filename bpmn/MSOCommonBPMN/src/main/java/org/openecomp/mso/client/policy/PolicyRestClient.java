@@ -1,6 +1,6 @@
 /*-
  * ============LICENSE_START=======================================================
- * ONAP - SO
+ * OPENECOMP - MSO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
@@ -20,50 +20,47 @@
 
 package org.openecomp.mso.client.policy;
 
+import java.net.MalformedURLException;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
+import javax.ws.rs.client.ClientResponseFilter;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriBuilderException;
 
+import org.openecomp.mso.client.ResponseExceptionMapperImpl;
+import org.openecomp.mso.client.RestProperties;
+import org.openecomp.mso.client.policy.entities.PolicyServiceType;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PolicyRestClient extends RestClient {
 
-	private static final String ENDPOINT_KEY = "policy.endpoint";
 	private static final String X_ECOMP_REQUESTID = String.valueOf(UUID.randomUUID());
-
-	public PolicyRestClient() {
-		super(ENDPOINT_KEY);
+	private final PolicyRestProperties properties;
+	public PolicyRestClient(PolicyRestProperties props, PolicyServiceType serviceType) {
+		super(props, Optional.of(UriBuilder.fromPath(serviceType.toString()).build()));
+		this.properties = props;
+		this.getClient();
 	}
 
 	@Override
 	protected void initializeHeaderMap(Map<String, String> headerMap) {
-		headerMap.put("ClientAuth", properties.get("policy.client.auth"));
-		headerMap.put("Authorization", properties.get("policy.auth"));
-		headerMap.put("Environment", properties.get("policy.environment"));
-		headerMap.put("X-ECOMP-RequestID", X_ECOMP_REQUESTID);
+		headerMap.put("ClientAuth", properties.getClientAuth());
+		headerMap.put("Authorization", properties.getAuth());
+		headerMap.put("Environment", properties.getEnvironment());
+		this.addRequestId(X_ECOMP_REQUESTID);
 	}
 
-	public PolicyDecision getDecision(String serviceType, String vnfType, String bbID, String workStep,
-			String errorCode) {
-		DecisionAttributes decisionAttributes = new DecisionAttributes();
-		decisionAttributes.setServiceType(serviceType);
-		decisionAttributes.setVNFType(vnfType);
-		decisionAttributes.setBBID(bbID);
-		decisionAttributes.setWorkStep(workStep);
-		decisionAttributes.setErrorCode(errorCode);
-
-		return this.getDecision(decisionAttributes);
+	@Override
+	protected Optional<ClientResponseFilter> addResponseFilter() {
+		return Optional.of(new ResponseExceptionMapperImpl());
 	}
 
-	private PolicyDecision getDecision(DecisionAttributes decisionAttributes) {
-		PolicyDecisionRequest decisionRequest = new PolicyDecisionRequest();
-		decisionRequest.setDecisionAttributes(decisionAttributes);
-		decisionRequest.setEcompcomponentName(ECOMP_COMPONENT_NAME);
-
-		return this.getBuilder().accept(MediaType.APPLICATION_JSON_TYPE)
-				.post(Entity.entity(decisionRequest, MediaType.APPLICATION_JSON)).readEntity(PolicyDecision.class);
+	@Override
+	public RestClient addRequestId(String requestId) {
+		this.headerMap.put("X-ECOMP-RequestID", requestId);
+		return this;
 	}
 }
