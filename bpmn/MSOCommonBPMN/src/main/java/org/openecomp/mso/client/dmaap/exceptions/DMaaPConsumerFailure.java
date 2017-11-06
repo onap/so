@@ -18,9 +18,17 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.mso.client.dmaap;
+package org.openecomp.mso.client.dmaap.exceptions;
 
-public interface Consumer {
+public class DMaaPConsumerFailure extends Exception {
 
-	public Iterable<String> fetch();
+	private static final long serialVersionUID = 2499229901897110362L;
+
+	public DMaaPConsumerFailure() {
+		super();
+	}
+	
+	public DMaaPConsumerFailure(String message) {
+		super(message);
+	}
 }

@@ -18,9 +18,18 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.mso.client.dmaap;
+package org.openecomp.mso.client;
 
-public interface Consumer {
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 
-	public Iterable<String> fetch();
+public class PreconditionFailedException extends WebApplicationException {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public PreconditionFailedException(String message) {
+        super(message, Response.Status.PRECONDITION_FAILED);
+    }
 }

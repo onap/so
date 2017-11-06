@@ -20,7 +20,7 @@
 
 package org.openecomp.mso.client.dmaap;
 
-public interface Consumer {
+public interface Publisher {
 
-	public Iterable<String> fetch();
+	public void send(String json);
 }

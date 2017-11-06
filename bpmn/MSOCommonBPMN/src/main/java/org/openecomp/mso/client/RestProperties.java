@@ -18,9 +18,13 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.mso.client.dmaap;
+package org.openecomp.mso.client;
 
-public interface Consumer {
+import java.net.MalformedURLException;
+import java.net.URL;
 
-	public Iterable<String> fetch();
+public interface RestProperties {
+
+	public URL getEndpoint() throws MalformedURLException;
+	public String getSystemName();
 }

@@ -21,7 +21,6 @@
 package org.openecomp.mso.client.policy;
 
 import java.io.BufferedInputStream;
-
 import java.io.ByteArrayOutputStream;
 import java.io.FilterOutputStream;
 import java.io.IOException;
@@ -30,6 +29,7 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
+
 import javax.annotation.Priority;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.ClientRequestContext;
@@ -45,7 +45,15 @@ public class LoggingFilter implements ClientRequestFilter, ClientResponseFilter,
 	private static final Logger logger = Logger.getLogger(LoggingFilter.class.getName());
 	private static final String ENTITY_STREAM_PROPERTY = "LoggingFilter.entityStream";
 	private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
-	private final int maxEntitySize = 1024 * 8;
+	private final int maxEntitySize;
+
+	public LoggingFilter() {
+		maxEntitySize = 1024 * 1024;
+	}
+
+	public LoggingFilter(int maxPayloadSize) {
+		this.maxEntitySize = Integer.min(maxPayloadSize, 1024 * 1024);
+	}
 
 	private void log(StringBuilder sb) {
 		logger.info(sb.toString());
@@ -53,20 +61,21 @@ public class LoggingFilter implements ClientRequestFilter, ClientResponseFilter,
 
 	private InputStream logInboundEntity(final StringBuilder b, InputStream stream, final Charset charset)
 			throws IOException {
-		InputStream inputStream = stream;
-		if (!inputStream.markSupported()) {
-			inputStream = new BufferedInputStream(inputStream);
+		if (!stream.markSupported()) {
+			stream = new BufferedInputStream(stream);
 		}
-		inputStream.mark(maxEntitySize + 1);
+		stream.mark(maxEntitySize + 1);
 		final byte[] entity = new byte[maxEntitySize + 1];
-		final int entitySize = inputStream.read(entity);
-		b.append(new String(entity, 0, Math.min(entitySize, maxEntitySize), charset));
+		final int entitySize = stream.read(entity);
+		if (entitySize != -1) {
+			b.append(new String(entity, 0, Math.min(entitySize, maxEntitySize), charset));
+		}
 		if (entitySize > maxEntitySize) {
 			b.append("...more...");
 		}
 		b.append('\n');
-		inputStream.reset();
-		return inputStream;
+		stream.reset();
+		return stream;
 	}
 
 	@Override
@@ -85,7 +94,6 @@ public class LoggingFilter implements ClientRequestFilter, ClientResponseFilter,
 			responseContext.setEntityStream(logInboundEntity(sb, responseContext.getEntityStream(), DEFAULT_CHARSET));
 			log(sb);
 		}
-
 	}
 
 	@Override

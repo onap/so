@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.mso.client.sdno;
+package org.openecomp.mso.client.sdno.beans;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -33,65 +33,29 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "operation",
-    "nodeType",
-    "body"
+    "input"
 })
-public class SDNO implements Serializable
+public class Body implements Serializable
 {
 
-    @JsonProperty("operation")
-    private String operation;
-    @JsonProperty("nodeType")
-    private String nodeType;
-    @JsonProperty("body")
-    private Body body;
+    @JsonProperty("input")
+    private Input input;
     @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<>();
-    private final static long serialVersionUID = -5303297382564282650L;
+    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+    private final static long serialVersionUID = 9101706044452851559L;
 
-    @JsonProperty("operation")
-    public String getOperation() {
-        return operation;
+    @JsonProperty("input")
+    public Input getInput() {
+        return input;
     }
 
-    @JsonProperty("operation")
-    public void setOperation(String operation) {
-        this.operation = operation;
+    @JsonProperty("input")
+    public void setInput(Input input) {
+        this.input = input;
     }
 
-    public SDNO withOperation(String operation) {
-        this.operation = operation;
-        return this;
-    }
-
-    @JsonProperty("nodeType")
-    public String getNodeType() {
-        return nodeType;
-    }
-
-    @JsonProperty("nodeType")
-    public void setNodeType(String nodeType) {
-        this.nodeType = nodeType;
-    }
-
-    public SDNO withNodeType(String nodeType) {
-        this.nodeType = nodeType;
-        return this;
-    }
-
-    @JsonProperty("body")
-    public Body getBody() {
-        return body;
-    }
-
-    @JsonProperty("body")
-    public void setBody(Body body) {
-        this.body = body;
-    }
-
-    public SDNO withBody(Body body) {
-        this.body = body;
+    public Body withInput(Input input) {
+        this.input = input;
         return this;
     }
 
@@ -105,7 +69,7 @@ public class SDNO implements Serializable
         this.additionalProperties.put(name, value);
     }
 
-    public SDNO SDNO (String name, Object value) {
+    public Body withAdditionalProperty(String name, Object value) {
         this.additionalProperties.put(name, value);
         return this;
     }
