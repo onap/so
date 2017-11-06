@@ -18,79 +18,147 @@ Make sure you have the VirtualBox Guest Additions ISO for your version of Virtua
 Create a new VM in VirtualBox for Ubuntu
 ----------------------------------------
 Type: Linux
+
 Version: Ubuntu (64-bit)
+
 At least 2048 MB memory
+
 At least 40 GB VDI
+
 Network: Attached to: NAT
 
 Create a port-forwarding rule for SSH
 -------------------------------------
 Create a port-forwarding rule so that you can use PuTTY (or other SSH client) to connect to the VM.
+
 Go to "Network" settings in VirtualBox, add a port forwarding rule:
+
 Name: SSH
+
 Protocol: TCP
+
 Host IP: 127.0.0.1
+
 Host Port: 1022
+
 Guest IP: <leave blank>
+
 Guest Port: 22
+
+.. image:: images/Configure_ubuntu_SO_1.png
+
+.
+
+.. image:: images/Configure_ubuntu_SO_2.png
 
 Create Shared Folder
 --------------------
 This is oriented to Windows users.  If you're using a MAC or a Linux host computer, the details may be different.  You can share any folder on the host computer with the Ubuntu VM.  On Windows, a practical choice is to share the C:\Users folder, so that your Windows home directory will be accessible from the Ubuntu VM.
+
 Go to "Shared Folders" settings in VirtualBox, add a share:
+
 Folder Path: C:\Users
+
 Folder Name: Users
+
 Auto-mount: <checked>
+
 Read-only: <unchecked>
+
+.. image:: images/Configure_ubuntu_SO_3.png
+
+.
+
+.. image:: images/Configure_ubuntu_SO_4.png
 
 Install Ubuntu in the VM
 ------------------------
 On the "Storage" panel in VirtualBox, click on "[ optical drive ]" and then "Choose Disk Image".  Select your Ubuntu ISO image.
 
+.. image:: images/Configure_ubuntu_SO_5.png
+
 After selecting the ISO image, start the VM.
+
 Follow the prompts to install Ubuntu.
 
 Proxy Configuration (optional)
 ------------------------------
 If you're behind a corporate firewall, configure some proxy settings.  NOTE: your proxy configuration may require username and password credentials, not shown here.
 **Ubuntu system proxy setting:**
+
 	System Settings → Network → Network proxy
+	
 	(Replace "proxyhost" and port with your actual proxy information)
 
+.. image:: images/Configure_ubuntu_SO_6.png
+	
 **apt proxy setting:**
 	Edit /etc/apt/apt.conf and add one line at the top (replace "proxyhost:port" with your actual proxy information):
+	
 		Acquire::http::Proxy "http://proxyhost:port";
+		
 	Reboot the VM.
 	
 Install SSH Server
 ------------------
-sudo apt update
-sudo apt install openssh-server
+
+.. code-block:: bash
+
+    sudo apt update
+    sudo apt install openssh-server
 
 Connect to the VM from your host computer
 -----------------------------------------
 	The PuTTY SSH client is popular.  A connection to localhost:1022 (or whatever port you have forwarded) will go to the VM.
 
+.. image:: images/Configure_ubuntu_SO_7.png
+	
 Install VirtualBox Guest Additions
 ----------------------------------
 On the "Storage" panel in VirtualBox, click on "[ optical drive ]" and then "Choose Disk Image".  Select your VirtualBox Guest Additions ISO image.
 
+.. image:: images/Configure_ubuntu_SO_8.png
+
 In a VM terminal window, mount the cdrom:
+
+.. code-block:: bash
+
 	sudo mkdir -p /media/cdrom
 	sudo mount /dev/cdrom /media/cdrom
+	
 Install necessary dependencies:
-	sudo apt update
-	sudo apt install gcc g++ dkms
+
+.. code-block:: bash
+
+    sudo apt update
+    sudo apt install gcc g++ dkms
+	
 Install the guest additions.  NOTE: look for errors in the command output!  If you see an error that says you are missing kernel headers, the most likely cause is that you are using a VirtualBox version that is too old.  The error message is misleading.
+
+.. code-block:: bash
+
 	cd /media/cdrom
 	sudo ./VBoxLinuxAdditions.run
 
+.. image:: images/Configure_ubuntu_SO_9.png	
+	
 Add yourself to the vboxsf user group (replace "userid" with your user ID):
+	
+.. code-block:: bash	
+	
 	sudo usermod -a -G vboxsf userid
+	
 Reboot the VM.
+
 In a VM terminal window, verify that you can access your home directory on the host computer, which should be mounted under here:
 	/media/sf_Users
 	
 Further Reading
 ----------------------------------------	
-https://wiki.onap.org/display/DW/Development+Environment
+
+.. toctree::
+   :maxdepth: 1
+
+   Install_Docker.rst
+   Configure_git_and_gerrit.rst
+   Workspace_and_Development_Tools.rst
