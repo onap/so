@@ -8,9 +8,8 @@ ONAP Service Orchestration APIs
 SO APIs
 --------
 All the Service Orchestrator APIs, both inward and outward are documented in the below link of onap wiki.
-
-   https://wiki.onap.org/display/DW/SO+R1+Interfaces
-   
-   
+ 
 .. toctree::
    :maxdepth: 1
+   
+   SO_R1_Interface.rst
