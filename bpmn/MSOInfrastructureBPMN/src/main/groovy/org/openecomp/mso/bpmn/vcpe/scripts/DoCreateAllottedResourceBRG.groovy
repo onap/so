@@ -89,6 +89,15 @@ public class DoCreateAllottedResourceBRG extends AbstractServiceTaskProcessor{
 			execution.setVariable("sdncCallbackUrl", sdncCallbackUrl)
 			utils.log("DEBUG","SDNC Callback URL: " + sdncCallbackUrl, isDebugEnabled)
 
+			String sdnReplDelay = execution.getVariable('URN_mso_workflow_sdnc_replication_delay')
+			if (isBlank(sdnReplDelay)) {
+				msg = "URN_mso_workflow_sdnc_replication_delay is null"
+				utils.log("DEBUG", msg, isDebugEnabled)
+				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+			}
+			execution.setVariable("sdnReplDelay", sdnReplDelay)
+			utils.log("DEBUG","SDNC replication delay: " + sdnReplDelay, isDebugEnabled)
+
 			//Request Inputs
 			if (isBlank(execution.getVariable("serviceInstanceId"))){
 				msg = "Input serviceInstanceId is null"
@@ -562,11 +571,6 @@ public class DoCreateAllottedResourceBRG extends AbstractServiceTaskProcessor{
 
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
 			String sdncRequestId = UUID.randomUUID().toString()
-			
-			String tsleep = execution.getVariable("junitSleepMs")
-			
-			//workaround for sdnc replication issue
-			sleep(tsleep == null ? 5000 : tsleep as Long)
 
 			//neeed the same url as used by vfmodules
 			String SDNCGetRequest =

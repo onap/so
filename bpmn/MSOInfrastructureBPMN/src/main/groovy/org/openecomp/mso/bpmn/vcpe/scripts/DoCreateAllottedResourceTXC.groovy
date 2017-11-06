@@ -93,6 +93,15 @@ public class DoCreateAllottedResourceTXC extends AbstractServiceTaskProcessor{
 			execution.setVariable("sdncCallbackUrl", sdncCallbackUrl)
 			utils.log("DEBUG","SDNC Callback URL: " + sdncCallbackUrl, isDebugEnabled)
 
+			String sdnReplDelay = execution.getVariable('URN_mso_workflow_sdnc_replication_delay')
+			if (isBlank(sdnReplDelay)) {
+				msg = "URN_mso_workflow_sdnc_replication_delay is null"
+				utils.log("DEBUG", msg, isDebugEnabled)
+				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+			}
+			execution.setVariable("sdnReplDelay", sdnReplDelay)
+			utils.log("DEBUG","SDNC replication delay: " + sdnReplDelay, isDebugEnabled)
+
 			//Request Inputs
 			if (isBlank(execution.getVariable("serviceInstanceId"))){
 				msg = "Input serviceInstanceId is null"
@@ -554,11 +563,6 @@ public class DoCreateAllottedResourceTXC extends AbstractServiceTaskProcessor{
 
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
 			String sdncRequestId = UUID.randomUUID().toString()
-			
-			String tsleep = execution.getVariable("junitSleepMs")
-			
-			//workaround for sdnc replication issue
-			sleep(tsleep == null ? 5000 : tsleep as Long)
 
 			//neeed the same url as used by vfmodules
 			String SDNCGetRequest =
@@ -606,8 +610,8 @@ public class DoCreateAllottedResourceTXC extends AbstractServiceTaskProcessor{
 		
 			String txca = utils.getNodeXml(arData, "tunnelxconn-assignments")
 			execution.setVariable("vni", utils.getNodeText1(txca, "vni"))
-			execution.setVariable("vgmuxBearerIP", utils.getNodeText1(txca, "vgmux_bearer_ip"))
-			execution.setVariable("vgmuxLanIP", utils.getNodeText1(txca, "vgmux_lan_ip"))
+			execution.setVariable("vgmuxBearerIP", utils.getNodeText1(txca, "vgmux-bearer-ip"))
+			execution.setVariable("vgmuxLanIP", utils.getNodeText1(txca, "vgmux-lan-ip"))
 			
 			String ari = utils.getNodeXml(arData, "allotted-resource-identifiers")
 			execution.setVariable("allotedResourceName", utils.getNodeText1(ari, "allotted-resource-name"))

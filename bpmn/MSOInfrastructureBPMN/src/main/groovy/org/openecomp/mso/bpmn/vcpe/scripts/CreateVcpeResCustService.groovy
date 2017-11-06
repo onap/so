@@ -40,6 +40,7 @@ import org.json.JSONArray;
 import org.apache.commons.lang3.*
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.web.util.UriUtils;
+import static org.apache.commons.lang3.StringUtils.*
 
 /**
  * This groovy class supports the <class>CreateVcpeResCustService.bpmn</class> process.
@@ -92,6 +93,16 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
 		try {
 			// initialize flow variables
 			InitializeProcessVariables(execution)
+
+			//Config Inputs
+			String aaiDistDelay = execution.getVariable('URN_mso_workflow_aai_distribution_delay')
+			if (isBlank(aaiDistDelay)) {
+				msg = "URN_mso_workflow_aai_distribution_delay is null"
+				utils.log("DEBUG", msg, isDebugEnabled)
+				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+			}
+			execution.setVariable("aaiDistDelay", aaiDistDelay)
+			utils.log("DEBUG","AAI distribution delay: " + aaiDistDelay, isDebugEnabled)
 
 			// check for incoming json message/input
 			String createVcpeServiceRequest = execution.getVariable("bpmnRequest")
@@ -361,24 +372,6 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
 		   exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 		}
 	}
-
-
-	public void awaitAaiDistribution(Execution execution) {
-		def isDebugEnabled=execution.getVariable(DebugFlag)
-
-		try {
-			String tsleep = execution.getVariable("junitSleepMs")
-			
-			//workaround for aai replication issue
-			utils.log("DEBUG", "sleeping while AAI distributes data", isDebugEnabled)
-			sleep(tsleep == null ? 30000 : tsleep as Long)
-			
-		} catch (Exception ex) {
-			// try error in method block
-			String exceptionMessage = "Unexpected Error from method awaitAaiDistribution() - " + ex.getMessage()
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
-		}
-	 }
 
 
 	public void prepareCreateAllottedResourceTXC(Execution execution) {

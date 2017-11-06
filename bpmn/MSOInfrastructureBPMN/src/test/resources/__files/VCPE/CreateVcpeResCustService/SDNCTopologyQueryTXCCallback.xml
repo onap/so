@@ -16,8 +16,8 @@
     </allotted-resource-identifiers>
     <tunnelxconn-assignments>
     	<vni>my-vni</vni>
-    	<vgmux_bearer_ip>my-bearer-ip</vgmux_bearer_ip>
-    	<vgmux_lan_ip>my-lan-ip</vgmux_lan_ip>
+    	<vgmux-bearer-ip>my-bearer-ip</vgmux_bearer_ip>
+    	<vgmux-lan-ip>my-lan-ip</vgmux_lan_ip>
     </tunnelxconn-assignments>
 </tunnelxconn-topology>
 

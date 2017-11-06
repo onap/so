@@ -277,7 +277,6 @@ public class DoCreateAllottedResourceBRGTest extends AbstractTestBase {
 		variables.put("vni", "BRG");
 		variables.put("vgmuxBearerIP", "bearerip");
 		variables.put("brgWanMacAddress", "wanmac");
-		variables.put("junitSleepMs", "5");
 
 		variables.put("serviceInstanceId", DEC_INST);
 		variables.put("parentServiceInstanceId", DEC_PARENT_INST);

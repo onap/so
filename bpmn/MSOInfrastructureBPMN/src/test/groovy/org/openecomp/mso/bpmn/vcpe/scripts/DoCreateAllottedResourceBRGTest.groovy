@@ -89,6 +89,7 @@ class DoCreateAllottedResourceBRGTest extends GroovyTestBase {
 		verify(mex).setVariable("prefix", Prefix)
 				
 		assertTrue(checkMissingPreProcessRequest("URN_mso_workflow_sdncadapter_callback"))
+		assertTrue(checkMissingPreProcessRequest("URN_mso_workflow_sdnc_replication_delay"))
 		assertTrue(checkMissingPreProcessRequest("serviceInstanceId"))
 		assertTrue(checkMissingPreProcessRequest("parentServiceInstanceId"))
 		assertTrue(checkMissingPreProcessRequest("allottedResourceModelInfo"))
@@ -886,6 +887,7 @@ class DoCreateAllottedResourceBRGTest extends GroovyTestBase {
 	private void initPreProcess(ExecutionEntity mex) {
 		when(mex.getVariable(DBGFLAG)).thenReturn("true")
 		when(mex.getVariable("URN_mso_workflow_sdncadapter_callback")).thenReturn("sdncurn")
+		when(mex.getVariable("URN_mso_workflow_sdnc_replication_delay")).thenReturn("sdncdelay")
 		when(mex.getVariable("serviceInstanceId")).thenReturn("sii")
 		when(mex.getVariable("parentServiceInstanceId")).thenReturn("psii")
 		when(mex.getVariable("allottedResourceModelInfo")).thenReturn("armi")
@@ -963,7 +965,6 @@ class DoCreateAllottedResourceBRGTest extends GroovyTestBase {
 		when(mex.getVariable("aaiARGetResponse")).thenReturn("<selflink>arlink</selflink>")
 		when(mex.getVariable("sdncAssignResponse")).thenReturn("<response-data>&lt;object-path&gt;assignlink&lt;/object-path&gt;</response-data>")
 		when(mex.getVariable("serviceInstanceId")).thenReturn("sii")
-		when(mex.getVariable("junitSleepMs")).thenReturn("5")
 		when(mex.getVariable("sdncCallbackUrl")).thenReturn("myurl")
 	}
 	

@@ -371,7 +371,6 @@ public class CreateVcpeResCustServiceTest extends AbstractTestBase {
 		variables.put("request-id", "testRequestId");
 		variables.put("serviceInstanceId", DEC_INST);
 		variables.put("allottedResourceId", ARID);
-		variables.put("junitSleepMs", "5");
 		return variables;
 
 	}
