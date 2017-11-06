@@ -366,9 +366,8 @@ CreateVcpeResCustService.prepareCreateServiceInstance(execution)]]></bpmn2:scrip
         </camunda:connector>
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_0vj46ej</bpmn2:incoming>
-      <bpmn2:outgoing>SequenceFlow_13uceka</bpmn2:outgoing>
+      <bpmn2:outgoing>SequenceFlow_0sjpja4</bpmn2:outgoing>
     </bpmn2:serviceTask>
-    <bpmn2:sequenceFlow id="SequenceFlow_13uceka" sourceRef="updateInfraRequest" targetRef="ScriptTask_1e5rwka" />
     <bpmn2:scriptTask id="ScriptTask_1qd3uwb" name="Post Process&#10;Create&#10;Service&#10;" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_1ky2sv9</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0vj46ej</bpmn2:outgoing>
@@ -431,7 +430,7 @@ CreateVcpeResCustService.prepareCreateAllottedResourceTXC(execution)]]></bpmn2:s
       <bpmn2:linkEventDefinition name="StartService" />
     </bpmn2:intermediateCatchEvent>
     <bpmn2:intermediateThrowEvent id="IntermediateThrowEvent_1as6hoa" name="GoToCreateAllottedResourcesTXC">
-      <bpmn2:incoming>SequenceFlow_16acruh</bpmn2:incoming>
+      <bpmn2:incoming>SequenceFlow_1db0ri1</bpmn2:incoming>
       <bpmn2:linkEventDefinition name="CreateAllottedResourcesTXC" />
     </bpmn2:intermediateThrowEvent>
     <bpmn2:sequenceFlow id="SequenceFlow_15odbkz" sourceRef="IntermediateCatchEvent_1i1nwfx" targetRef="prepareCreateService_scriptTask" />
@@ -616,14 +615,15 @@ CreateVcpeResCustService.validateVnfCreate(execution)]]></bpmn2:script>
       <bpmn2:outgoing>SequenceFlow_0e9e6fo</bpmn2:outgoing>
     </bpmn2:callActivity>
     <bpmn2:sequenceFlow id="SequenceFlow_0e9e6fo" sourceRef="CallActivity_0xt1l8t" targetRef="ExclusiveGateway_0jqgskx" />
-    <bpmn2:scriptTask id="ScriptTask_1e5rwka" name="Await AAI Distribution" scriptFormat="groovy">
-      <bpmn2:incoming>SequenceFlow_13uceka</bpmn2:incoming>
-      <bpmn2:outgoing>SequenceFlow_16acruh</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.vcpe.scripts.*
-def CreateVcpeResCustService = new CreateVcpeResCustService()
-CreateVcpeResCustService.awaitAaiDistribution(execution)]]></bpmn2:script>
-    </bpmn2:scriptTask>
-    <bpmn2:sequenceFlow id="SequenceFlow_16acruh" sourceRef="ScriptTask_1e5rwka" targetRef="IntermediateThrowEvent_1as6hoa" />
+    <bpmn2:intermediateCatchEvent id="IntermediateCatchEvent_1x88t9v" name="Await AAI Distribution&#10;&#10;">
+      <bpmn2:incoming>SequenceFlow_0sjpja4</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_1db0ri1</bpmn2:outgoing>
+      <bpmn2:timerEventDefinition>
+        <bpmn2:timeDuration xsi:type="bpmn2:tFormalExpression">${aaiDistDelay}</bpmn2:timeDuration>
+      </bpmn2:timerEventDefinition>
+    </bpmn2:intermediateCatchEvent>
+    <bpmn2:sequenceFlow id="SequenceFlow_0sjpja4" sourceRef="updateInfraRequest" targetRef="IntermediateCatchEvent_1x88t9v" />
+    <bpmn2:sequenceFlow id="SequenceFlow_1db0ri1" sourceRef="IntermediateCatchEvent_1x88t9v" targetRef="IntermediateThrowEvent_1as6hoa" />
   </bpmn2:process>
   <bpmn2:error id="Error_2" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
   <bpmn2:error id="Error_1" name="java.lang.Exception" errorCode="java.lang.Exception" />
@@ -921,13 +921,6 @@ CreateVcpeResCustService.awaitAaiDistribution(execution)]]></bpmn2:script>
       <bpmndi:BPMNShape id="ServiceTask_16yhzej_di" bpmnElement="updateInfraRequest">
         <dc:Bounds x="794" y="543" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_13uceka_di" bpmnElement="SequenceFlow_13uceka">
-        <di:waypoint xsi:type="dc:Point" x="894" y="583" />
-        <di:waypoint xsi:type="dc:Point" x="995" y="583" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="899.5" y="568" width="90" height="0" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_1qd3uwb_di" bpmnElement="ScriptTask_1qd3uwb">
         <dc:Bounds x="623" y="543" width="100" height="80" />
       </bpmndi:BPMNShape>
@@ -1151,9 +1144,9 @@ CreateVcpeResCustService.awaitAaiDistribution(execution)]]></bpmn2:script>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="IntermediateThrowEvent_1as6hoa_di" bpmnElement="IntermediateThrowEvent_1as6hoa">
-        <dc:Bounds x="1027" y="712" width="36" height="36" />
+        <dc:Bounds x="1027" y="666" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1002" y="753" width="85" height="36" />
+          <dc:Bounds x="1002" y="707" width="85" height="36" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_15odbkz_di" bpmnElement="SequenceFlow_15odbkz">
@@ -1508,16 +1501,24 @@ CreateVcpeResCustService.awaitAaiDistribution(execution)]]></bpmn2:script>
           <dc:Bounds x="440" y="1166" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ScriptTask_1e5rwka_di" bpmnElement="ScriptTask_1e5rwka">
-        <dc:Bounds x="995" y="543" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_16acruh_di" bpmnElement="SequenceFlow_16acruh">
-        <di:waypoint xsi:type="dc:Point" x="1045" y="623" />
-        <di:waypoint xsi:type="dc:Point" x="1045" y="663" />
-        <di:waypoint xsi:type="dc:Point" x="1045" y="663" />
-        <di:waypoint xsi:type="dc:Point" x="1045" y="712" />
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_1x88t9v_di" bpmnElement="IntermediateCatchEvent_1x88t9v">
+        <dc:Bounds x="1027" y="565" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1060" y="657" width="0" height="12" />
+          <dc:Bounds x="1018" y="530" width="54" height="48" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0sjpja4_di" bpmnElement="SequenceFlow_0sjpja4">
+        <di:waypoint xsi:type="dc:Point" x="894" y="583" />
+        <di:waypoint xsi:type="dc:Point" x="1027" y="583" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="960.5" y="562" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1db0ri1_di" bpmnElement="SequenceFlow_1db0ri1">
+        <di:waypoint xsi:type="dc:Point" x="1045" y="601" />
+        <di:waypoint xsi:type="dc:Point" x="1045" y="666" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1060" y="627.5" width="0" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
