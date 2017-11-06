@@ -22,29 +22,30 @@ package org.openecomp.mso.client.dmaap;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
-import com.att.nsa.mr.client.MRBatchingPublisher;
-import com.att.nsa.mr.client.MRClientFactory;
+import org.openecomp.mso.client.dmaap.rest.RestPublisher;
 
-public class DmaapPublisher {
+public abstract class DmaapPublisher extends DmaapClient {
 	
-	private final long seconds;
-	private final MRBatchingPublisher publisher;
-	
-	public DmaapPublisher(String filepath) throws FileNotFoundException, IOException {
+	private long seconds;
+	private final Publisher publisher;
+	public DmaapPublisher() throws FileNotFoundException, IOException {
+		super("dmaap/default-consumer.properties");
+		this.publisher = new RestPublisher(properties);
 		this.seconds = 20;
-		this.publisher = MRClientFactory.createBatchingPublisher(filepath);
+		
 	}
 	
-	public DmaapPublisher(String filepath, long seconds) throws FileNotFoundException, IOException {
+	public DmaapPublisher(long seconds) throws FileNotFoundException, IOException {
+		this();
 		this.seconds = seconds;
-		this.publisher = MRClientFactory.createBatchingPublisher(filepath);
 	}
 	
 	public void send(String json) throws IOException, InterruptedException {
+		auditLogger.info("publishing message to dmaap topic " + this.getTopic() + ": " + json);
 		publisher.send(json);
-		publisher.close(seconds, TimeUnit.SECONDS);
+		//publisher.close(seconds, TimeUnit.SECONDS);
 	}
+
 
 }
