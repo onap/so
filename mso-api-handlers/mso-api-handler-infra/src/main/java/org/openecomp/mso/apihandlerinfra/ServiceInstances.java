@@ -751,6 +751,11 @@ public class ServiceInstances {
 	private RecipeLookupResult getServiceURI (CatalogDatabase db, MsoRequest msoRequest, Action action) throws Exception {
 		// SERVICE REQUEST
 		// Construct the default service name
+		// if no source is provided then make it as VID 
+		if (null == msoRequest.getRequestInfo().getSource() || msoRequest.getRequestInfo().getSource().isEmpty()){
+					msoRequest.getRequestInfo().setSource("VID");
+		}
+				
 		// TODO need to make this a configurable property
 		String defaultServiceModelName = msoRequest.getRequestInfo().getSource() + "_DEFAULT";
 
