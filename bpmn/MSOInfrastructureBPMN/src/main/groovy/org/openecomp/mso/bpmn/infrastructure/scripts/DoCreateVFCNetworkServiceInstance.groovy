@@ -208,15 +208,14 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
     public void addNSRelationship(Execution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
         utils.log("INFO"," ***** addNSRelationship *****",  isDebugEnabled)
-        String operationStatus = execution.getVariable("operationStatus")
-        if(operationStatus != "finished"){
+        String nsInstanceId = execution.getVariable("nsInstanceId")
+        if(nsInstanceId == null || nsInstanceId == ""){
             utils.log("INFO"," create NS failed, so do not need to add relationship",  isDebugEnabled)
             return
         }
         String globalSubscriberId = execution.getVariable("globalSubscriberId")
         String serviceType = execution.getVariable("serviceType")
         String serviceId = execution.getVariable("serviceId")
-        String nsInstanceId = execution.getVariable("nsInstanceId")
         String addRelationPayload = """<relationship xmlns="http://org.openecomp.aai.inventory/v11">
                                             <related-to>service-instance</related-to>
                                             <related-link>/aai/v11/business/customers/customer/${globalSubscriberId}/service-subscriptions/service-subscription/${serviceType}/service-instances/service-instance/${nsInstanceId}</related-link>
