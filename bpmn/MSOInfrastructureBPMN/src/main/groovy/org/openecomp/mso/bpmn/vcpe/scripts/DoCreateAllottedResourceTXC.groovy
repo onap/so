@@ -80,18 +80,7 @@ public class DoCreateAllottedResourceTXC extends AbstractServiceTaskProcessor{
 		try {
 			String msoRequestId	 = execution.getVariable("msoRequestId")
 			utils.log("DEBUG", " msoRequestId  = " + msoRequestId,  isDebugEnabled)
-
-			if ((msoRequestId == null) || ("testRequestId".equals(msoRequestId)) || ("testRequestId123".equals(msoRequestId)))
-			{
-				utils.log("DEBUG"," ***** NOT sleeping 30 seconds for Junit *****",  isDebugEnabled)
-			}
-			else
-			{
-				utils.log("DEBUG"," ***** sleeping 30 seconds for AAI replication *****",  isDebugEnabled)
-				sleep(30000);
-				utils.log("DEBUG"," ***** sleep over *****",  isDebugEnabled)
-			}
-
+			
 			execution.setVariable("prefix", Prefix)
 
 			//Config Inputs

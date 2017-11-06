@@ -85,7 +85,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	// ***** preProcessRequest *****
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void preProcessRequest() {
 		ExecutionEntity mex = setupMock()
 		def map = setupMap(mex)
@@ -118,7 +118,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	}
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void preProcessRequest_EmptyParts() {
 		ExecutionEntity mex = setupMock()
 		def map = setupMap(mex)
@@ -160,7 +160,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	}
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void preProcessRequest_MissingSubscriberId() {
 		ExecutionEntity mex = setupMock()
 		def map = setupMap(mex)
@@ -178,7 +178,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	}
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void preProcessRequest_BpmnError() {
 		ExecutionEntity mex = setupMock()
 		initPreProcess(mex)
@@ -191,7 +191,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	}
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void preProcessRequest_Ex() {
 		ExecutionEntity mex = setupMock()
 		initPreProcess(mex)
@@ -206,7 +206,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	// ***** sendSyncResponse *****
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void sendSyncResponse() {
 		ExecutionEntity mex = setupMock()
 		def map = setupMap(mex)
@@ -229,7 +229,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	}
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void sendSyncResponse_Ex() {
 		ExecutionEntity mex = setupMock()
 		initSendSyncResponse(mex)
@@ -245,7 +245,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	// ***** prepareDecomposeService *****
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void prepareDecomposeService() {
 		ExecutionEntity mex = setupMock()
 		initPrepareDecomposeService(mex)
@@ -258,7 +258,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	}
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void prepareDecomposeService_Ex() {
 		ExecutionEntity mex = setupMock()
 		initPrepareDecomposeService(mex)
@@ -288,7 +288,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	}
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void prepareCreateServiceInstance_Ex() {
 		ExecutionEntity mex = setupMock()
 		initPrepareCreateServiceInstance(mex)
@@ -304,7 +304,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	// ***** postProcessServiceInstanceCreate *****
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void postProcessServiceInstanceCreate() {
 		ExecutionEntity mex = setupMock()
 		def map = setupMap(mex)
@@ -323,7 +323,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	}
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void postProcessServiceInstanceCreate_BpmnError() {
 		ExecutionEntity mex = setupMock()
 		initPostProcessServiceInstanceCreate(mex)
@@ -336,7 +336,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	}
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void postProcessServiceInstanceCreate_Ex() {
 		ExecutionEntity mex = setupMock()
 		initPostProcessServiceInstanceCreate(mex)
@@ -352,7 +352,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	// ***** processDecomposition *****
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void processDecomposition() {
 		ExecutionEntity mex = setupMock()
 		def svcdecomp = initProcessDecomposition(mex, true, true)
@@ -371,7 +371,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	}
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void processDecomposition_EmptyNet_EmptyVnf() {
 		ExecutionEntity mex = setupMock()
 		def svcdecomp = initProcessDecomposition(mex, true, true)
@@ -392,7 +392,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	}
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void processDecomposition_Ex() {
 		ExecutionEntity mex = setupMock()
 		def svcdecomp = initProcessDecomposition(mex, true, true)
@@ -402,6 +402,22 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 		CreateVcpeResCustService CreateVcpeResCustService = new CreateVcpeResCustService()
 		
 		assertTrue(doBpmnError( { _ -> CreateVcpeResCustService.processDecomposition(mex) }))
+	}
+	
+	
+	// ***** awaitAaiDistribution *****
+			
+	@Test
+	@Ignore  
+	public void awaitAaiDistribution() {
+		ExecutionEntity mex = setupMock()
+		initAwaitAaiDistribution(mex)
+		
+		CreateVcpeResCustService CreateVcpeResCustService = new CreateVcpeResCustService()
+		CreateVcpeResCustService.awaitAaiDistribution(mex)
+
+		verify(mex).getVariable(DBGFLAG)
+		verify(mex).getVariable("junitSleepMs")
 	}
 	
 	
@@ -426,7 +442,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	}
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void prepareCreateAllottedResourceTXC_NullArList() {
 		ExecutionEntity mex = setupMock()
 		def svcdecomp = initPrepareCreateAllottedResourceTXC(mex)
@@ -446,7 +462,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	}
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void prepareCreateAllottedResourceTXC_Ex() {
 		ExecutionEntity mex = setupMock()
 		initPrepareCreateAllottedResourceTXC(mex)
@@ -480,7 +496,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	}
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void prepareCreateAllottedResourceBRG_NullArList() {
 		ExecutionEntity mex = setupMock()
 		def svcdecomp = initPrepareCreateAllottedResourceBRG(mex)
@@ -500,7 +516,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	}
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void prepareCreateAllottedResourceBRG_Ex() {
 		ExecutionEntity mex = setupMock()
 		initPrepareCreateAllottedResourceBRG(mex)
@@ -516,7 +532,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	// ***** prepareVnfAndModulesCreate *****
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void prepareVnfAndModulesCreate() {
 		ExecutionEntity mex = setupMock()
 		initPrepareVnfAndModulesCreate(mex)
@@ -532,7 +548,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	}
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void prepareVnfAndModulesCreate_EmptyList() {
 		ExecutionEntity mex = setupMock()
 		initPrepareVnfAndModulesCreate(mex)
@@ -550,7 +566,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	}
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void prepareVnfAndModulesCreate_NullList() {
 		ExecutionEntity mex = setupMock()
 		initPrepareVnfAndModulesCreate(mex)
@@ -568,7 +584,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	}
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void prepareVnfAndModulesCreate_Ex() {
 		ExecutionEntity mex = setupMock()
 		initPrepareVnfAndModulesCreate(mex)
@@ -584,7 +600,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	// ***** validateVnfCreate *****
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void validateVnfCreate() {
 		ExecutionEntity mex = setupMock()
 		initValidateVnfCreate(mex)
@@ -598,7 +614,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	}
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void validateVnfCreate_Ex() {
 		ExecutionEntity mex = setupMock()
 		initValidateVnfCreate(mex)
@@ -614,7 +630,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	// ***** postProcessResponse *****
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void postProcessResponse() {
 		ExecutionEntity mex = setupMock()
 		def map = setupMap(mex)
@@ -635,7 +651,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	}
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void postProcessResponse_BpmnError() {
 		ExecutionEntity mex = setupMock()
 		def map = setupMap(mex)
@@ -649,7 +665,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	}
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void postProcessResponse_Ex() {
 		ExecutionEntity mex = setupMock()
 		def map = setupMap(mex)
@@ -666,7 +682,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	// ***** preProcessRollback *****
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void preProcessRollback() {
 		ExecutionEntity mex = setupMock()
 		def wfe = initPreProcessRollback(mex)
@@ -680,7 +696,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	}
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void preProcessRollback_NullWfe() {
 		ExecutionEntity mex = setupMock()
 		def map = setupMap(mex)
@@ -697,7 +713,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	}
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void preProcessRollback_BpmnError() {
 		ExecutionEntity mex = setupMock()
 		def map = setupMap(mex)
@@ -714,7 +730,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	}
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void preProcessRollback_Ex() {
 		ExecutionEntity mex = setupMock()
 		def map = setupMap(mex)
@@ -734,7 +750,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	// ***** postProcessRollback *****
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void postProcessRollback() {
 		ExecutionEntity mex = setupMock()
 		def wfe = initPostProcessRollback(mex)
@@ -748,7 +764,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	}
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void postProcessRollback_NullWfe() {
 		ExecutionEntity mex = setupMock()
 		def map = setupMap(mex)
@@ -765,7 +781,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	}
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void postProcessRollback_BpmnError() {
 		ExecutionEntity mex = setupMock()
 		def map = setupMap(mex)
@@ -778,7 +794,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	}
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void postProcessRollback_Ex() {
 		ExecutionEntity mex = setupMock()
 		def map = setupMap(mex)
@@ -798,7 +814,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	// ***** prepareFalloutRequest *****
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void prepareFalloutRequest() {
 		ExecutionEntity mex = setupMock()
 		def map = setupMap(mex)
@@ -817,7 +833,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	}
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void prepareFalloutRequest_Ex() {
 		ExecutionEntity mex = setupMock()
 		def map = setupMap(mex)
@@ -833,7 +849,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	// ***** sendSyncError *****
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void sendSyncError() {
 		ExecutionEntity mex = setupMock()
 		def map = setupMap(mex)
@@ -857,7 +873,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	}
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void sendSyncError_NotWfe() {
 		ExecutionEntity mex = setupMock()
 		def map = setupMap(mex)
@@ -883,7 +899,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	}
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void sendSyncError_NullWfe() {
 		ExecutionEntity mex = setupMock()
 		def map = setupMap(mex)
@@ -909,7 +925,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	}
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void sendSyncError_Ex() {
 		ExecutionEntity mex = setupMock()
 		def map = setupMap(mex)
@@ -928,7 +944,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	// ***** processJavaException *****
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void processJavaException() {
 		ExecutionEntity mex = setupMock()
 		def map = setupMap(mex)
@@ -948,7 +964,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	}
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void processJavaException_BpmnError() {
 		ExecutionEntity mex = setupMock()
 		def map = setupMap(mex)
@@ -964,7 +980,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	}
 			
 	@Test
-//	@Ignore  
+	@Ignore  
 	public void processJavaException_Ex() {
 		ExecutionEntity mex = setupMock()
 		def map = setupMap(mex)
@@ -1008,7 +1024,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 		when(mex.getVariable("createVcpeServiceRequest")).thenReturn(request)
 		when(mex.getVariable("serviceDecomposition")).thenReturn(svcdecomp)
 		
-		when(svcdecomp.toJsonString()).thenReturn("mydecomp")
+		when(svcdecomp.toJsonStringNoRootName()).thenReturn("mydecomp")
 	}
 	
 	private void initPostProcessServiceInstanceCreate(ExecutionEntity mex) {
@@ -1035,6 +1051,11 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 		when(mex.getVariable("serviceInstanceName")).thenReturn("sin")
 		
 		return svcdecomp
+	}
+	
+	private initAwaitAaiDistribution(ExecutionEntity mex) {
+		when(mex.getVariable(DBGFLAG)).thenReturn("true")
+		when(mex.getVariable("junitSleepMs")).thenReturn("5")
 	}
 	
 	private ServiceDecomposition initPrepareCreateAllottedResourceTXC(ExecutionEntity mex) {
@@ -1078,13 +1099,13 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 		ModelInfo mod = mock(ModelInfo.class)
 		HomingSolution home = mock(HomingSolution.class)
 		
-		when(ar.toJsonString()).thenReturn("json"+id)
+		when(ar.toJsonStringNoRootName()).thenReturn("json"+id)
 		when(ar.getAllottedResourceType()).thenReturn("TunnelXConn")
 		when(ar.getModelInfo()).thenReturn(mod)
 		when(ar.getAllottedResourceRole()).thenReturn("TXCr")
 		when(ar.getHomingSolution()).thenReturn(home)
 		
-		when(mod.toJsonString()).thenReturn("model"+id)
+		when(mod.toJsonStringNoRootName()).thenReturn("model"+id)
 		
 		when(home.getServiceInstanceId()).thenReturn("home"+id)
 		
@@ -1096,13 +1117,13 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 		ModelInfo mod = mock(ModelInfo.class)
 		HomingSolution home = mock(HomingSolution.class)
 		
-		when(ar.toJsonString()).thenReturn("json"+id)
+		when(ar.toJsonStringNoRootName()).thenReturn("json"+id)
 		when(ar.getAllottedResourceType()).thenReturn("BRG")
 		when(ar.getModelInfo()).thenReturn(mod)
 		when(ar.getAllottedResourceRole()).thenReturn("BRGr")
 		when(ar.getHomingSolution()).thenReturn(home)
 		
-		when(mod.toJsonString()).thenReturn("model"+id)
+		when(mod.toJsonStringNoRootName()).thenReturn("model"+id)
 		
 		when(home.getServiceInstanceId()).thenReturn("home"+id)
 		
