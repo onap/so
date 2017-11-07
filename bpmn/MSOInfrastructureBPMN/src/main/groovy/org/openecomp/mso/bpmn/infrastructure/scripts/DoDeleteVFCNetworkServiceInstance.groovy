@@ -41,10 +41,10 @@ import org.openecomp.mso.rest.RESTConfig
 import org.openecomp.mso.rest.APIResponse;
 
 /**
- * This groovy class supports the <class>DODeleteVFCNetworkServiceInstance.bpmn</class> process.
+ * This groovy class supports the <class>DoDeleteVFCNetworkServiceInstance.bpmn</class> process.
  * flow for E2E ServiceInstance Delete
  */
-public class DODeleteVFCNetworkServiceInstance extends AbstractServiceTaskProcessor {
+public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProcessor {
 
     String deleteUrl = "/vfc/vfcadapters/v1/ns/{nsInstanceId}"
             

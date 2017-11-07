@@ -105,6 +105,7 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 		 		operationId = UUID.randomUUID().toString()
 		 	 }   
 			execution.setVariable("operationId", operationId) 
+			execution.setVariable("operationType", "DELETE") 
 			
 			execution.setVariable("URN_mso_adapters_openecomp_db_endpoint","http://mso.mso.testlab.openecomp.org:8080/dbadapters/RequestsDbAdapter")
 			

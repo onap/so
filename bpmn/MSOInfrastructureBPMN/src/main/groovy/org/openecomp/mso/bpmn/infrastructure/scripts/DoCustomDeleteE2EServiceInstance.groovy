@@ -280,7 +280,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 		utils.log("INFO"," ***** postProcessSDNC " + method + " *****", isDebugEnabled)
 		String msg = ""
 
-		try {
+		/*try {
 			WorkflowException workflowException = execution.getVariable("WorkflowException")
 			boolean successIndicator = execution.getVariable("SDNCA_SuccessIndicator")
 			utils.log("INFO", "SDNCResponse: " + response, isDebugEnabled)
@@ -302,7 +302,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 			msg = "Exception in postProcessSDNC " + method + " Exception:" + ex.getMessage()
 			utils.log("INFO", msg, isDebugEnabled)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
-		}
+		}*/
 		utils.log("INFO"," *** Exit postProcessSDNC " + method + " ***", isDebugEnabled)
 	}
 

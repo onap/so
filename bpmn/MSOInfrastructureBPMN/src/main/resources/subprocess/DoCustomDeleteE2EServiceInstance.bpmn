@@ -66,7 +66,7 @@ ex.processJavaException(execution)]]></bpmn:script>
     <bpmn:sequenceFlow id="SequenceFlow_0e7inkl" sourceRef="ScriptTask_01erufg" targetRef="EndEvent_1uqzt26" />
     <bpmn:sequenceFlow id="SequenceFlow_0g6bxqw" sourceRef="CallActivity_06izbke" targetRef="ScriptTask_01erufg" />
     <bpmn:sequenceFlow id="SequenceFlow_0vi0sv6" sourceRef="ScriptTask_1rtnsh8" targetRef="ScriptTask_146jt8v" />
-    <bpmn:callActivity id="CallActivity_Del_VFC" name="Call Network Service Delete for vEPC" calledElement="DODeleteVFCNetworkServiceInstance">
+    <bpmn:callActivity id="CallActivity_Del_VFC" name="Call Network Service Delete for vEPC" calledElement="DoDeleteVFCNetworkServiceInstance">
       <bpmn:extensionElements>
         <camunda:in source="globalSubscriberId" target="globalSubscriberId" />
         <camunda:in source="serviceType" target="serviceType" />
@@ -129,7 +129,7 @@ def ddsi = new DoCustomDeleteE2EServiceInstance()
 ddsi.preResourceDelete(execution, resourceName )]]></bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_1m7tont" sourceRef="ScriptTask_1g0tsto" targetRef="Task_0z1x3sg" />
-    <bpmn:callActivity id="Task_0963dho" name="Call Network Service Delete for vIMS" calledElement="DODeleteVFCNetworkServiceInstance">
+    <bpmn:callActivity id="Task_0963dho" name="Call Network Service Delete for vIMS" calledElement="DoDeleteVFCNetworkServiceInstance">
       <bpmn:extensionElements>
         <camunda:in source="globalSubscriberId" target="globalSubscriberId" />
         <camunda:in source="serviceType" target="serviceType" />
