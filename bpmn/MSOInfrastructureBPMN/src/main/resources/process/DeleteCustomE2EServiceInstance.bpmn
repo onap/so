@@ -34,8 +34,9 @@ ex.processJavaException(execution)]]></bpmn:script>
         <camunda:in source="serviceInputParams" target="serviceInputParams" />
         <camunda:in source="failIfExists" target="failIfExists" />
         <camunda:in source="globalSubscriberId" target="globalSubscriberId" />
-        <camunda:in source="subscriptionServiceType" target="subscriptionServiceType" />
+        <camunda:in source="serviceType" target="serviceType" />
         <camunda:in sourceExpression="1610" target="sdncVersion" />
+        <camunda:in source="operationId" target="operationId" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_0zf2qyk</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_07hrbs0</bpmn:outgoing>

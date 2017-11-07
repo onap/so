@@ -182,7 +182,7 @@ ddsi.preInitResourcesOperStatus(execution)]]></bpmn:script>
             <camunda:inputParameter name="headers">
               <camunda:map>
                 <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">#{BasicAuthHeaderValueDB}</camunda:entry>
+                <camunda:entry key="Authorization">Basic QlBFTENsaWVudDpwYXNzd29yZDEk</camunda:entry>
               </camunda:map>
             </camunda:inputParameter>
             <camunda:inputParameter name="payload">${CVFMI_initResOperStatusRequest}</camunda:inputParameter>
@@ -207,6 +207,8 @@ ddsi.preInitResourcesOperStatus(execution)]]></bpmn:script>
         <camunda:out source="WorkflowException" target="WorkflowException" />
         <camunda:out source="GENGS_siResourceLink" target="GENGS_siResourceLink" />
         <camunda:out source="GENGS_service" target="GENGS_service" />
+        <camunda:in source="globalSubscriberId" target="GENGS_globalCustomerId" />
+        <camunda:in source="serviceType" target="GENGS_serviceType" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_11e6bfy</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_188ejvu</bpmn:outgoing>
