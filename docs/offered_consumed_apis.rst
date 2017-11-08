@@ -2,7 +2,7 @@
 .. http://creativecommons.org/licenses/by/4.0
 .. Copyright 2017 Huawei Technologies Co., Ltd.
 
-ONAP Service Orchestration APIs
+SO Offered and Consumed APIs
 =====================================
 
 SO APIs
