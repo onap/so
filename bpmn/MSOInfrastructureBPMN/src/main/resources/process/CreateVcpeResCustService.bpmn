@@ -569,6 +569,8 @@ CreateVcpeResCustService.prepareVnfAndModulesCreate(execution)]]></bpmn2:script>
         <camunda:out source="vgmuxLanIP" target="vgmuxLanIP" />
         <camunda:in source="allottedResourceTypeTXC" target="allottedResourceType" />
         <camunda:in source="brgWanMacAddress" target="brgWanMacAddress" />
+        <camunda:in source="globalCustomerId" target="globalCustomerId" />
+        <camunda:in source="subscriptionServiceType" target="subscriptionServiceType" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_16qob4p</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_1cgpklo</bpmn2:outgoing>
@@ -610,6 +612,8 @@ CreateVcpeResCustService.validateVnfCreate(execution)]]></bpmn2:script>
         <camunda:in source="vni" target="vni" />
         <camunda:in source="vgmuxBearerIP" target="vgmuxBearerIP" />
         <camunda:in source="brgWanMacAddress" target="brgWanMacAddress" />
+        <camunda:in source="subscriptionServiceType" target="subscriptionServiceType" />
+        <camunda:in source="globalCustomerId" target="globalCustomerId" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_0b5ztoe</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0e9e6fo</bpmn2:outgoing>
