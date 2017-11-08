@@ -41,10 +41,10 @@ import org.openecomp.mso.rest.RESTConfig
 import org.openecomp.mso.rest.APIResponse;
 
 /**
- * This groovy class supports the <class>DODeleteVFCNetworkServiceInstance.bpmn</class> process.
+ * This groovy class supports the <class>DoDeleteVFCNetworkServiceInstance.bpmn</class> process.
  * flow for E2E ServiceInstance Delete
  */
-public class DODeleteVFCNetworkServiceInstance extends AbstractServiceTaskProcessor {
+public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProcessor {
 
     String deleteUrl = "/vfc/vfcadapters/v1/ns/{nsInstanceId}"
             
@@ -64,21 +64,21 @@ public class DODeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
     public void preProcessRequest (Execution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
         String msg = ""
-        utils.log("DEBUG", " *** preProcessRequest() *** ", isDebugEnabled)
+        utils.log("INFO", " *** preProcessRequest() *** ", isDebugEnabled)
         try {
             //deal with operation key
             String globalSubscriberId = execution.getVariable("globalSubscriberId")
-            utils.log("DEBUG", "globalSubscriberId:" + globalSubscriberId, isDebugEnabled)
+            utils.log("INFO", "globalSubscriberId:" + globalSubscriberId, isDebugEnabled)
             String serviceType = execution.getVariable("serviceType")
-            utils.log("DEBUG", "serviceType:" + serviceType, isDebugEnabled)
+            utils.log("INFO", "serviceType:" + serviceType, isDebugEnabled)
             String serviceId = execution.getVariable("serviceId")
-            utils.log("DEBUG", "serviceId:" + serviceId, isDebugEnabled)
+            utils.log("INFO", "serviceId:" + serviceId, isDebugEnabled)
             String operationId = execution.getVariable("operationId")
-            utils.log("DEBUG", "serviceType:" + serviceType, isDebugEnabled)
+            utils.log("INFO", "serviceType:" + serviceType, isDebugEnabled)
             String nodeTemplateUUID = execution.getVariable("resourceTemplateUUID")
-            utils.log("DEBUG", "nodeTemplateUUID:" + nodeTemplateUUID, isDebugEnabled)
+            utils.log("INFO", "nodeTemplateUUID:" + nodeTemplateUUID, isDebugEnabled)
             String nsInstanceId = execution.getVariable("resourceInstanceId")
-            utils.log("DEBUG", "nsInstanceId:" + nsInstanceId, isDebugEnabled)
+            utils.log("INFO", "nsInstanceId:" + nsInstanceId, isDebugEnabled)
             String nsOperationKey = "{\"globalSubscriberId\":\"" + globalSubscriberId + "\",\"serviceType:\""
                   + serviceType + "\",\"serviceId\":\"" + serviceId + "\",\"operationId\":\"" + operationId
                   +"\",\"nodeTemplateUUID\":\"" + nodeTemplateUUID + "\"}";
@@ -87,16 +87,18 @@ public class DODeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
             throw e;
         } catch (Exception ex){
             msg = "Exception in preProcessRequest " + ex.getMessage()
-            utils.log("DEBUG", msg, isDebugEnabled)
+            utils.log("INFO", msg, isDebugEnabled)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
-        utils.log("DEBUG"," ***** Exit preProcessRequest *****",  isDebugEnabled)
+        utils.log("INFO"," ***** Exit preProcessRequest *****",  isDebugEnabled)
 	}
 
     /**
      * delete NS task
      */
     public void deleteNetworkService(Execution execution) {
+        def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+        utils.log("INFO", " *** deleteNetworkService  start *** ", isDebugEnabled)
         String nsOperationKey = excution.getVariable("nsOperationKey");
         String url = deleteUrl.replaceAll("{nsInstanceId}", execution.getVariable("nsInstanceId")) 
         APIResponse apiResponse = deleteRequest(url, reqBody)
@@ -107,12 +109,16 @@ public class DODeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
             operationStatus = "finished"
         }
         execution.setVariable("operationStatus", operationStatus)
+        
+        utils.log("INFO", " *** deleteNetworkService  end *** ", isDebugEnabled)
     }
 
     /**
      * instantiate NS task
      */
     public void terminateNetworkService(Execution execution) {
+        def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+        utils.log("INFO", " *** terminateNetworkService  start *** ", isDebugEnabled)
         String nsOperationKey = execution.getVariable("nsOperationKey") 
         String url = terminateUrl.replaceAll("{nsInstanceId}", execution.getVariable("nsInstanceId")) 
         APIResponse apiResponse = postRequest(url, reqBody)
@@ -123,12 +129,15 @@ public class DODeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
             jobId =  jsonUtil.getJsonValue(aaiResponseAsString, "jobId")
         }
         execution.setVariable("jobId", nsInstanceId)   
+        utils.log("INFO", " *** terminateNetworkService  end *** ", isDebugEnabled)
     }
 
     /**
      * query NS task
      */
     public void queryNSProgress(Execution execution) {
+        def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+        utils.log("INFO", " *** queryNSProgress  start *** ", isDebugEnabled)
         String jobId = execution.getVariable("jobId")
         String nsOperationKey = excution.getVariable("nsOperationKey");
         String url = queryJobUrl.replaceAll("{jobId}", execution.getVariable("jobId")) 
@@ -140,6 +149,7 @@ public class DODeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
             operationProgress = jsonUtil.getJsonValue(aaiResponseAsString, "responseDescriptor.progress")
         }
         exection.setVariable("operationProgress", operationProgress)
+        utils.log("INFO", " *** queryNSProgress  end *** ", isDebugEnabled)
     }
 
     /**
@@ -148,8 +158,8 @@ public class DODeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
     public void timeDelay(Execution execution) {
         try {
             Thread.sleep(5000);
-        } catch(InterruptedException e) {           
-            taskProcessor.utils.log("ERROR", "Time Delay exception" + e , isDebugEnabled)
+        } catch(InterruptedException e) {     
+            utils.log("INFO", "Time Delay exception" + e, isDebugEnabled)
         }
     }
 
@@ -167,17 +177,17 @@ public class DODeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
      */
     private APIResponse postRequest(String url, String requestBody){
         def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-        taskProcessor.logDebug( " ======== Started Execute VFC adapter Post Process ======== ", isDebugEnabled)
-        taskProcessor.logDebug( "url:"+url +"\nrequestBody:"+ requestBody, isDebugEnabled)
+        utils.log("INFO", " ======== Started Execute VFC adapter Post Process ======== ", isDebugEnabled)
+        utils.log("INFO", "url:"+url +"\nrequestBody:"+ requestBody, isDebugEnabled)
         APIResponse apiResponse = null
         try{
             RESTConfig config = new RESTConfig(url);
             RESTClient client = new RESTClient(config).addHeader("X-FromAppId", "MSO").addHeader("X-TransactionId", uuid).addHeader("Accept","application/json");
             apiResponse = client.httpPost(requestBody)
-            taskProcessor.logDebug( "response code:"+ apiResponse.getStatusCode() +"\nresponse body:"+ apiResponse.getResponseBodyAsString(), isDebugEnabled)
-            taskProcessor.logDebug( "======== Completed Execute VF-C adapter Post Process ======== ", isDebugEnabled)
+            utils.log("INFO", "response code:"+ apiResponse.getStatusCode() +"\nresponse body:"+ apiResponse.getResponseBodyAsString(), isDebugEnabled)
+            utils.log("INFO", "======== Completed Execute VF-C adapter Post Process ======== ", isDebugEnabled)
         }catch(Exception e){
-            taskProcessor.utils.log("ERROR", "Exception occured while executing VF-C Post Call. Exception is: \n" + e, isDebugEnabled)
+            utils.log("ERROR", "Exception occured while executing VF-C Post Call. Exception is: \n" + e, isDebugEnabled)
             throw new BpmnError("MSOWorkflowException")
         }        
         return apiResponse
@@ -189,17 +199,17 @@ public class DODeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
      */
     private APIResponse deleteRequest(String url, String requestBody){
         def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-        taskProcessor.logDebug( " ======== Started Execute VFC adapter Delete Process ======== ", isDebugEnabled)
-        taskProcessor.logDebug( "url:"+url +"\nrequestBody:"+ requestBody, isDebugEnabled)
+        utils.log("INFO", " ======== Started Execute VFC adapter Delete Process ======== ", isDebugEnabled)       
+        utils.log("INFO", "url:"+url +"\nrequestBody:"+ requestBody, isDebugEnabled) 
         APIResponse apiResponse = null
         try{
             RESTConfig config = new RESTConfig(url);
             RESTClient client = new RESTClient(config).addHeader("X-FromAppId", "MSO").addHeader("X-TransactionId", uuid).addHeader("Accept","application/json");
             apiResponse = client.httpDelete(requestBody)
-            taskProcessor.logDebug( "response code:"+ apiResponse.getStatusCode() +"\nresponse body:"+ apiResponse.getResponseBodyAsString(), isDebugEnabled)
-            taskProcessor.logDebug( "======== Completed Execute VF-C adapter Delete Process ======== ", isDebugEnabled)
+            utils.log("INFO", "response code:"+ apiResponse.getStatusCode() +"\nresponse body:"+ apiResponse.getResponseBodyAsString(), isDebugEnabled) 
+            utils.log("INFO", "======== Completed Execute VF-C adapter Delete Process ======== ", isDebugEnabled) 
         }catch(Exception e){
-            taskProcessor.utils.log("ERROR", "Exception occured while executing VF-C Post Call. Exception is: \n" + e, isDebugEnabled)
+            utils.log("ERROR", "Exception occured while executing VF-C Post Call. Exception is: \n" + e, isDebugEnabled) 
             throw new BpmnError("MSOWorkflowException")
         }        
         return apiResponse

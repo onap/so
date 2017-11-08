@@ -51,6 +51,8 @@ import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import org.xml.sax.InputSource
 
+import com.fasterxml.jackson.jaxrs.json.annotation.JSONP.Def;
+
 /**
  * This groovy class supports the <class>DoDeleteE2EServiceInstance.bpmn</class> process.
  * 
@@ -78,7 +80,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 
 	public void preProcessRequest (Execution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-		utils.log("DEBUG"," ***** preProcessRequest *****",  isDebugEnabled)
+		utils.log("INFO"," ***** preProcessRequest *****",  isDebugEnabled)
 		String msg = ""
 
 		try {
@@ -94,28 +96,28 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 			}
 
 			//requestDetails.requestParameters. for AAI PUT & SDNC assignTopology
-			String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
-			if (subscriptionServiceType == null)
+			String serviceType = execution.getVariable("serviceType")
+			if (serviceType == null)
 			{
-				execution.setVariable("subscriptionServiceType", "")
+				execution.setVariable("serviceType", "")
 			}
 
 			//Generated in parent for AAI PUT
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
 			if (isBlank(serviceInstanceId)){
 				msg = "Input serviceInstanceId is null"
-				utils.log("DEBUG", msg, isDebugEnabled)
+				utils.log("INFO", msg, isDebugEnabled)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
 
 			String sdncCallbackUrl = execution.getVariable('URN_mso_workflow_sdncadapter_callback')
 			if (isBlank(sdncCallbackUrl)) {
 				msg = "URN_mso_workflow_sdncadapter_callback is null"
-				utils.log("DEBUG", msg, isDebugEnabled)
+				utils.log("INFO", msg, isDebugEnabled)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
 			execution.setVariable("sdncCallbackUrl", sdncCallbackUrl)
-			utils.log("DEBUG","SDNC Callback URL: " + sdncCallbackUrl, isDebugEnabled)
+			utils.log("INFO","SDNC Callback URL: " + sdncCallbackUrl, isDebugEnabled)
 
 			StringBuilder sbParams = new StringBuilder()
 			Map<String, String> paramsMap = execution.getVariable("serviceInputParams")
@@ -145,10 +147,10 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 			throw e;
 		} catch (Exception ex){
 			msg = "Exception in preProcessRequest " + ex.getMessage()
-			utils.log("DEBUG", msg, isDebugEnabled)
+			utils.log("INFO", msg, isDebugEnabled)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		utils.log("DEBUG"," ***** Exit preProcessRequest *****",  isDebugEnabled)
+		utils.log("INFO"," ***** Exit preProcessRequest *****",  isDebugEnabled)
 	}
 	
 
@@ -160,7 +162,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 	
 	public void preProcessSDNCDelete (Execution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-		utils.log("DEBUG"," ***** preProcessSDNCDelete *****", isDebugEnabled)
+		utils.log("INFO"," ***** preProcessSDNCDelete *****", isDebugEnabled)
 		String msg = ""
 
 		try {
@@ -259,54 +261,54 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 			String sdncDeactivate = sdncDelete.replace(">delete<", ">deactivate<").replace(">${sdncRequestId}<", ">${sdncRequestId2}<")
 			execution.setVariable("sdncDelete", sdncDelete)
 			execution.setVariable("sdncDeactivate", sdncDeactivate)
-			utils.log("DEBUG","sdncDeactivate:\n" + sdncDeactivate, isDebugEnabled)
-			utils.log("DEBUG","sdncDelete:\n" + sdncDelete, isDebugEnabled)
+			utils.log("INFO","sdncDeactivate:\n" + sdncDeactivate, isDebugEnabled)
+			utils.log("INFO","sdncDelete:\n" + sdncDelete, isDebugEnabled)
 
 		} catch (BpmnError e) {
 			throw e;
 		} catch(Exception ex) {
 			msg = "Exception in preProcessSDNCDelete. " + ex.getMessage()
-			utils.log("DEBUG", msg, isDebugEnabled)
+			utils.log("INFO", msg, isDebugEnabled)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "Exception Occured in preProcessSDNCDelete.\n" + ex.getMessage())
 		}
-		utils.log("DEBUG"," *****Exit preProcessSDNCDelete *****", isDebugEnabled)
+		utils.log("INFO"," *****Exit preProcessSDNCDelete *****", isDebugEnabled)
 	}
 
 	public void postProcessSDNCDelete(Execution execution, String response, String method) {
 
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		utils.log("DEBUG"," ***** postProcessSDNC " + method + " *****", isDebugEnabled)
+		utils.log("INFO"," ***** postProcessSDNC " + method + " *****", isDebugEnabled)
 		String msg = ""
 
-		try {
+		/*try {
 			WorkflowException workflowException = execution.getVariable("WorkflowException")
 			boolean successIndicator = execution.getVariable("SDNCA_SuccessIndicator")
-			utils.log("DEBUG", "SDNCResponse: " + response, isDebugEnabled)
-			utils.log("DEBUG", "workflowException: " + workflowException, isDebugEnabled)
+			utils.log("INFO", "SDNCResponse: " + response, isDebugEnabled)
+			utils.log("INFO", "workflowException: " + workflowException, isDebugEnabled)
 
 			SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
 			sdncAdapterUtils.validateSDNCResponse(execution, response, workflowException, successIndicator)
 			if(execution.getVariable(Prefix + 'sdncResponseSuccess') == "true"){
-				utils.log("DEBUG","Good response from SDNC Adapter for service-instance " + method + "response:\n" + response, isDebugEnabled)
+				utils.log("INFO","Good response from SDNC Adapter for service-instance " + method + "response:\n" + response, isDebugEnabled)
 
 			}else{
 				msg = "Bad Response from SDNC Adapter for service-instance " + method
-				utils.log("DEBUG", msg, isDebugEnabled)
+				utils.log("INFO", msg, isDebugEnabled)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 3500, msg)
 			}
 		} catch (BpmnError e) {
 			throw e;
 		} catch(Exception ex) {
 			msg = "Exception in postProcessSDNC " + method + " Exception:" + ex.getMessage()
-			utils.log("DEBUG", msg, isDebugEnabled)
+			utils.log("INFO", msg, isDebugEnabled)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
-		}
-		utils.log("DEBUG"," *** Exit postProcessSDNC " + method + " ***", isDebugEnabled)
+		}*/
+		utils.log("INFO"," *** Exit postProcessSDNC " + method + " ***", isDebugEnabled)
 	}
 
 	public void postProcessAAIGET(Execution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		utils.log("DEBUG"," ***** postProcessAAIGET ***** ", isDebugEnabled)
+		utils.log("INFO"," ***** postProcessAAIGET ***** ", isDebugEnabled)
 		String msg = ""
 
 		try {
@@ -315,56 +317,19 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 			String serviceType = ""
 
 			if(foundInAAI == true){
-				utils.log("DEBUG","Found Service-instance in AAI", isDebugEnabled)
-
-				//Extract GlobalSubscriberId
-				String siRelatedLink = execution.getVariable("GENGS_siResourceLink")
-				if (isBlank(siRelatedLink))
-				{
-					msg = "Could not retrive ServiceInstance data from AAI to delete id:" + serviceInstanceId
-					utils.log("DEBUG", msg, isDebugEnabled)
-					exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-				}
-				else
-				{
-					utils.log("DEBUG","Found Service-instance in AAI. link: " + siRelatedLink, isDebugEnabled)
-					String  globalSubscriberId = execution.getVariable("globalSubscriberId")
-					if(isBlank(globalSubscriberId)){
-						int custStart = siRelatedLink.indexOf("customer/")
-						int custEnd = siRelatedLink.indexOf("/service-subscriptions")
-						globalSubscriberId = siRelatedLink.substring(custStart + 9, custEnd)
-						execution.setVariable("globalSubscriberId", globalSubscriberId)
-					}
-
-					//Extract Service Type if not provided on request
-					String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
-					if(isBlank(subscriptionServiceType)){
-						int serviceStart = siRelatedLink.indexOf("service-subscription/")
-						int serviceEnd = siRelatedLink.indexOf("/service-instances/")
-						String serviceTypeEncoded = siRelatedLink.substring(serviceStart + 21, serviceEnd)
-						subscriptionServiceType = UriUtils.decode(serviceTypeEncoded, "UTF-8")
-						execution.setVariable("subscriptionServiceType", subscriptionServiceType)
-					}
-
-					if (isBlank(globalSubscriberId) || isBlank(subscriptionServiceType))
-					{
-						msg = "Could not retrive global-customer-id & subscription-service-type from AAI to delete id:" + serviceInstanceId
-						utils.log("DEBUG", msg, isDebugEnabled)
-						exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-					}
-				}
+				utils.log("INFO","Found Service-instance in AAI", isDebugEnabled)
 
 				String siData = execution.getVariable("GENGS_service")
-				utils.log("DEBUG", "SI Data", isDebugEnabled)
+				utils.log("INFO", "SI Data", isDebugEnabled)
 				if (isBlank(siData))
 				{
 					msg = "Could not retrive ServiceInstance data from AAI to delete id:" + serviceInstanceId
-					utils.log("DEBUG", msg, isDebugEnabled)
+					utils.log("INFO", msg, isDebugEnabled)
 					exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 				}
 				else
 				{
-					utils.log("DEBUG", "SI Data" + siData, isDebugEnabled)
+					utils.log("INFO", "SI Data" + siData, isDebugEnabled)
 					serviceType = utils.getNodeText1(siData,"service-type")
 					execution.setVariable("serviceType", serviceType)
 					execution.setVariable("serviceRole", utils.getNodeText1(siData,"service-role"))
@@ -372,7 +337,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 
 					//Confirm there are no related service instances (vnf/network or volume)
 					if (utils.nodeExists(siData, "relationship-list")) {
-						utils.log("DEBUG", "SI Data relationship-list exists:", isDebugEnabled)
+						utils.log("INFO", "SI Data relationship-list exists:", isDebugEnabled)
 						InputSource source = new InputSource(new StringReader(siData));
 						DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 						DocumentBuilder docBuilder = docFactory.newDocumentBuilder()
@@ -380,63 +345,79 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 						serviceXml.getDocumentElement().normalize()
 						//test(siData)
 						NodeList nodeList = serviceXml.getElementsByTagName("relationship")
+	                    JSONArray jArray = new JSONArray()
 						for (int x = 0; x < nodeList.getLength(); x++) {
 							Node node = nodeList.item(x)
 							if (node.getNodeType() == Node.ELEMENT_NODE) {
 								Element eElement = (Element) node
-								def e = eElement.getElementsByTagName("related-to").item(0).getTextContent()
-								if(e.equals("generic-vnf") || e.equals("l3-network") || e.equals("allotted-resource") ){
-									utils.log("DEBUG", "ServiceInstance still has relationship(s) to generic-vnfs, l3-networks or allotted-resources", isDebugEnabled)
-									execution.setVariable("siInUse", true)
-									//there are relationship dependencies to this Service Instance
-									msg = " Stopped deleting Service Instance, it has dependencies. Service instance id: " + serviceInstanceId
-									utils.log("DEBUG", msg, isDebugEnabled)
-									exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
-								}else{
+								def e = eElement.getElementsByTagName("related-to").item(0).getTextContent()    								//for ns
+								if(e.equals("service-instance")){
+								    def relatedObject = eElement.getElementsByTagName("related-link").item(0).getTextContent()
+									utils.log("INFO", "ServiceInstance Related NS :" + relatedObject, isDebugEnabled)
+                                    NodeList dataList = node.getChildNodes()
+                                    if(null != dataList) {
+                                        JSONObject jObj = new JSONObject()
+                                        for (int i = 0; i < dataList.getLength(); i++) {
+                                            Node dNode = dataList.item(i)
+                                            if(dNode.getNodeName() == "relationship-data") {
+                                                Element rDataEle = (Element)dNode
+                                                def eKey =  rDataEle.getElementsByTagName("relationship-key").item(0).getTextContent()
+                                                def eValue = rDataEle.getElementsByTagName("relationship-value").item(0).getTextContent()
+                                                if(eKey.equals("service-instance.service-instance-id")){
+                                                    jObj.put("resourceInstanceId", eValue)
+                                                }
+                                            }
+                                            else if(dNode.getNodeName() == "related-to-property"){
+                                                 Element rDataEle = (Element)dNode
+                                                 def eKey =  rDataEle.getElementsByTagName("property-key").item(0).getTextContent()
+                                                 def eValue = rDataEle.getElementsByTagName("property-value").item(0).getTextContent()
+                                                 if(eKey.equals("service-instance.service-instance-name")){
+                                                        jObj.put("resourceType", eValue)
+                                                    }
+                                            }
+                                        }
+                                        utils.log("INFO", "Relationship related to Resource:" + jObj.toString(), isDebugEnabled)
+                                        jArray.put(jObj)
+                                    }
+						        //for overlay/underlay
+								}else if (e.equals("configuration")){
+                                    def relatedObject = eElement.getElementsByTagName("related-link").item(0).getTextContent()
+                                    utils.log("INFO", "ServiceInstance Related Configuration :" + relatedObject, isDebugEnabled)
 									NodeList dataList = node.getChildNodes()
 									if(null != dataList) {
-										JSONArray jArray = new JSONArray()
+										JSONObject jObj = new JSONObject()
 										for (int i = 0; i < dataList.getLength(); i++) {
 											Node dNode = dataList.item(i)
 											if(dNode.getNodeName() == "relationship-data") {
 												Element rDataEle = (Element)dNode
-
 												def eKey =  rDataEle.getElementsByTagName("relationship-key").item(0).getTextContent()
 												def eValue = rDataEle.getElementsByTagName("relationship-value").item(0).getTextContent()
-
-												JSONObject jObj = new JSONObject()
-												jObj.put("resourceInstanceId", eKey)
-												jObj.put("resourceType", eValue)
-												jArray.put(jObj)
+												if(eKey.equals("configuration.configuration-id")){
+												    jObj.put("resourceInstanceId", eValue)
+												}
+											}
+											else if(dNode.getNodeName() == "related-to-property"){
+	                                             Element rDataEle = (Element)dNode
+	                                             def eKey =  rDataEle.getElementsByTagName("property-key").item(0).getTextContent()
+	                                             def eValue = rDataEle.getElementsByTagName("property-value").item(0).getTextContent()
+	                                             if(eKey.equals("configuration.configuration-type")){
+	                                                    jObj.put("resourceType", eValue)
+	                                                }
 											}
 										}
-										execution.setVariable("serviceRelationShip", jArray)
-									}
-									utils.log("DEBUG", "Relationship NOT related to OpenStack", isDebugEnabled)
+										utils.log("INFO", "Relationship related to Resource:" + jObj.toString(), isDebugEnabled)
+                                        jArray.put(jObj)
+									}									
 								}
 							}
 						}
-					}
-
-					if ("TRANSPORT".equalsIgnoreCase(serviceType))
-					{
-						if ("PendingDelete".equals(orchestrationStatus))
-						{
-							execution.setVariable("skipDeactivate", true)
-						}
-						else
-						{
-							msg = "ServiceInstance of type TRANSPORT must in PendingDelete status to allow Delete. Orchestration-status:" + orchestrationStatus
-							utils.log("DEBUG", msg, isDebugEnabled)
-							exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-						}
-
+                        execution.setVariable("serviceRelationShip", jArray)
 					}
 				}
 			}else{
 				boolean succInAAI = execution.getVariable("GENGS_SuccessIndicator")
 				if(succInAAI != true){
-					utils.log("DEBUG","Error getting Service-instance from AAI", + serviceInstanceId, isDebugEnabled)
+					utils.log("INFO","Error getting Service-instance from AAI", + serviceInstanceId, isDebugEnabled)
 					WorkflowException workflowException = execution.getVariable("WorkflowException")
 					utils.logAudit("workflowException: " + workflowException)
 					if(workflowException != null){
@@ -445,33 +426,33 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 					else
 					{
 						msg = "Failure in postProcessAAIGET GENGS_SuccessIndicator:" + succInAAI
-						utils.log("DEBUG", msg, isDebugEnabled)
+						utils.log("INFO", msg, isDebugEnabled)
 						exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
 					}
 				}
 
-				utils.log("DEBUG","Service-instance NOT found in AAI. Silent Success", isDebugEnabled)
+				utils.log("INFO","Service-instance NOT found in AAI. Silent Success", isDebugEnabled)
 			}
-		} catch (BpmnError e) {
+		}catch (BpmnError e) {
 			throw e;
 		} catch (Exception ex) {
 			msg = "Exception in DoDeleteE2EServiceInstance.postProcessAAIGET. " + ex.getMessage()
-			utils.log("DEBUG", msg, isDebugEnabled)
+			utils.log("INFO", msg, isDebugEnabled)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		utils.log("DEBUG"," *** Exit postProcessAAIGET *** ", isDebugEnabled)
+		utils.log("INFO"," *** Exit postProcessAAIGET *** ", isDebugEnabled)
 	}
 
 	public void postProcessAAIDEL(Execution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		utils.log("DEBUG"," ***** postProcessAAIDEL ***** ", isDebugEnabled)
+		utils.log("INFO"," ***** postProcessAAIDEL ***** ", isDebugEnabled)
 		String msg = ""
 		try {
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
 			boolean succInAAI = execution.getVariable("GENDS_SuccessIndicator")
 			if(succInAAI != true){
 				msg = "Error deleting Service-instance in AAI" + serviceInstanceId
-				utils.log("DEBUG", msg, isDebugEnabled)
+				utils.log("INFO", msg, isDebugEnabled)
 				WorkflowException workflowException = execution.getVariable("WorkflowException")
 				utils.logAudit("workflowException: " + workflowException)
 				if(workflowException != null){
@@ -486,16 +467,16 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 			throw e;
 		} catch (Exception ex) {
 			msg = "Exception in DoDeleteE2EServiceInstance.postProcessAAIDEL. " + ex.getMessage()
-			utils.log("DEBUG", msg, isDebugEnabled)
+			utils.log("INFO", msg, isDebugEnabled)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		utils.log("DEBUG"," *** Exit postProcessAAIDEL *** ", isDebugEnabled)
+		utils.log("INFO"," *** Exit postProcessAAIDEL *** ", isDebugEnabled)
 	}
 	
 	public void preInitResourcesOperStatus(Execution execution){
         def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 
-        utils.log("DEBUG", " ======== STARTED preInitResourcesOperStatus Process ======== ", isDebugEnabled)
+        utils.log("INFO", " ======== STARTED preInitResourcesOperStatus Process ======== ", isDebugEnabled)
         try{
             String serviceId = execution.getVariable("serviceInstanceId")
             String operationId = execution.getVariable("operationId")
@@ -505,7 +486,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
             String progress = "0"
             String reason = ""
             String operationContent = "Prepare service creation"
-            utils.log("DEBUG", "Generated new operation for Service Instance serviceId:" + serviceId + " operationId:" + operationId + " operationType:" + operationType, isDebugEnabled)
+            utils.log("INFO", "Generated new operation for Service Instance serviceId:" + serviceId + " operationId:" + operationId + " operationType:" + operationType, isDebugEnabled)
             serviceId = UriUtils.encode(serviceId,"UTF-8")
             execution.setVariable("serviceInstanceId", serviceId)
             execution.setVariable("operationId", operationId)
@@ -540,10 +521,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
                     resourceTemplateUUIDs  = resourceTemplateUUIDs + it.resourceInstanceId + ":"
                 }
             }           
-
-            def dbAdapterEndpoint = execution.getVariable("URN_mso_openecomp_adapters_db_endpoint")
-            execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
-            utils.log("DEBUG", "DB Adapter Endpoint is: " + dbAdapterEndpoint, isDebugEnabled)
+            execution.setVariable("URN_mso_openecomp_adapters_db_endpoint","http://mso.mso.testlab.openecomp.org:8080/dbadapters/RequestsDbAdapter")
 
             String payload =
                 """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
@@ -561,14 +539,14 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 
             payload = utils.formatXml(payload)
             execution.setVariable("CVFMI_initResOperStatusRequest", payload)
-            utils.log("DEBUG", "Outgoing initResourceOperationStatus: \n" + payload, isDebugEnabled)
+            utils.log("INFO", "Outgoing initResourceOperationStatus: \n" + payload, isDebugEnabled)
             utils.logAudit("CreateVfModuleInfra Outgoing initResourceOperationStatus Request: " + payload)
 
         }catch(Exception e){
             utils.log("ERROR", "Exception Occured Processing preInitResourcesOperStatus. Exception is:\n" + e, isDebugEnabled)
             execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during preInitResourcesOperStatus Method:\n" + e.getMessage())
         }
-        utils.log("DEBUG", "======== COMPLETED preInitResourcesOperStatus Process ======== ", isDebugEnabled)  
+        utils.log("INFO", "======== COMPLETED preInitResourcesOperStatus Process ======== ", isDebugEnabled)  
     }
     
    /**
@@ -594,6 +572,9 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
             "resourceType":"underlay"
         }
     ]*/
+       def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
+
+       utils.log("INFO", " ======== STARTED preResourceDelete Process ======== ", isDebugEnabled)
        String serviceRelationShip = execution.getVariable("serviceRelationShip")       
        def jsonSlurper = new JsonSlurper()
        def jsonOutput = new JsonOutput()         
@@ -601,14 +582,17 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
                
        if (relationShipList != null) {
            relationShipList.each {
-               if(resourceName.equals(it.resourceType)) {
+               if(StringUtils.containsIgnoreCase(it.resourceType, resourceName)) {
 				   String resourceInstanceUUID = it.resourceInstanceId
 				   String resourceTemplateUUID = it.resourceInstanceId
 				   execution.setVariable("resourceTemplateId", resourceTemplateUUID)
 				   execution.setVariable("resourceInstanceId", resourceInstanceUUID)
 				   execution.setVariable("resourceType", resourceName)
+			       utils.log("INFO", "Delete Resource Info resourceTemplate Id :" + resourceTemplateUUID + "  resourceInstanceId: " + resourceInstanceUUID + " resourceType: " + resourceName, isDebugEnabled)
 			   }
            }
        }    
+       utils.log("INFO", " ======== END preResourceDelete Process ======== ", isDebugEnabled)
    }
 }
+ 

@@ -64,7 +64,7 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 		execution.setVariable("prefix",Prefix)
 		String msg = ""
 		
-		utils.log("DEBUG", " *** preProcessRequest Request *** ", isDebugEnabled)
+		utils.log("INFO", " *** preProcessRequest Request *** ", isDebugEnabled)
 
 		try {
 			// check for incoming json message/input
@@ -74,7 +74,7 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 
 			String requestId = execution.getVariable("mso-request-id")
 			execution.setVariable("msoRequestId", requestId)
-			utils.log("DEBUG", "Input Request:" + siRequest + " reqId:" + requestId, isDebugEnabled)
+			utils.log("INFO", "Input Request:" + siRequest + " reqId:" + requestId, isDebugEnabled)
 			
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
 			if (isBlank(serviceInstanceId)) {
@@ -85,7 +85,7 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			String serviceType = execution.getVariable("serviceType")
 			if (isBlank(serviceType)) {
 				msg = "Input serviceType' is null"
-				utils.log("DEBUG", msg, isDebugEnabled)
+				utils.log("INFO", msg, isDebugEnabled)
 			} else {
 				execution.setVariable("serviceType", serviceType)
 			}
@@ -94,7 +94,7 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			String globalSubscriberId = jsonUtil.getJsonValue(siRequest, "globalSubscriberId")
 			if (isBlank(globalSubscriberId)) {
 				msg = "Input globalSubscriberId' is null"
-				utils.log("DEBUG", msg, isDebugEnabled)
+				utils.log("INFO", msg, isDebugEnabled)
 			} else {
 				execution.setVariable("globalSubscriberId", globalSubscriberId)
 			}
@@ -105,6 +105,7 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 		 		operationId = UUID.randomUUID().toString()
 		 	 }   
 			execution.setVariable("operationId", operationId) 
+			execution.setVariable("operationType", "DELETE") 
 			
 			execution.setVariable("URN_mso_adapters_openecomp_db_endpoint","http://mso.mso.testlab.openecomp.org:8080/dbadapters/RequestsDbAdapter")
 			
@@ -112,34 +113,34 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			throw e;
 		} catch (Exception ex){
 			msg = "Exception in preProcessRequest " + ex.getMessage()
-			utils.log("DEBUG", msg, isDebugEnabled)
+			utils.log("INFO", msg, isDebugEnabled)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		utils.log("DEBUG"," ***** Exit preProcessRequest *****",  isDebugEnabled)
+		utils.log("INFO"," ***** Exit preProcessRequest *****",  isDebugEnabled)
 	}
 
 	public void sendSyncResponse (Execution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		utils.log("DEBUG", " *** sendSyncResponse  *** ", isDebugEnabled)
+		utils.log("INFO", " *** sendSyncResponse  *** ", isDebugEnabled)
 
 		try {
 			String operationId = execution.getVariable("operationId")
 			
 			// RESTResponse (for API Handler (APIH) Reply Task) :  :  
 			String syncResponse = """{"operationId":"${operationId}"}""".trim()
-			utils.log("DEBUG", " sendSynchResponse: xmlSyncResponse - " + "\n" + syncResponse, isDebugEnabled)
+			utils.log("INFO", " sendSynchResponse: xmlSyncResponse - " + "\n" + syncResponse, isDebugEnabled)
 			sendWorkflowResponse(execution, 202, syncResponse)
 
 		} catch (Exception ex) {
 			String msg  = "Exception in sendSyncResponse: " + ex.getMessage()
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 		}
-		utils.log("DEBUG"," ***** Exit sendSyncResopnse *****",  isDebugEnabled)
+		utils.log("INFO"," ***** Exit sendSyncResopnse *****",  isDebugEnabled)
 	}
 	
 	public void sendSyncError (Execution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		utils.log("DEBUG", " *** sendSyncError *** ", isDebugEnabled)
+		utils.log("INFO", " *** sendSyncError *** ", isDebugEnabled)
 
 		try {
 			String errorMessage = ""
@@ -160,14 +161,14 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			sendWorkflowResponse(execution, 500, buildworkflowException)
 
 		} catch (Exception ex) {
-			utils.log("DEBUG", " Sending Sync Error Activity Failed. " + "\n" + ex.getMessage(), isDebugEnabled)
+			utils.log("INFO", " Sending Sync Error Activity Failed. " + "\n" + ex.getMessage(), isDebugEnabled)
 		}
 
 	}
 	
 	public void prepareCompletionRequest (Execution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		utils.log("DEBUG", " *** prepareCompletion *** ", isDebugEnabled)
+		utils.log("INFO", " *** prepareCompletion *** ", isDebugEnabled)
 
 		try {
 			String requestId = execution.getVariable("msoRequestId")
@@ -188,23 +189,23 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			String xmlMsoCompletionRequest = utils.formatXml(msoCompletionRequest)
 
 			execution.setVariable("completionRequest", xmlMsoCompletionRequest)
-			utils.log("DEBUG", " Overall SUCCESS Response going to CompleteMsoProcess - " + "\n" + xmlMsoCompletionRequest, isDebugEnabled)
+			utils.log("INFO", " Overall SUCCESS Response going to CompleteMsoProcess - " + "\n" + xmlMsoCompletionRequest, isDebugEnabled)
 
 		} catch (Exception ex) {
 			String msg = " Exception in prepareCompletion:" + ex.getMessage()
-			utils.log("DEBUG", msg, isDebugEnabled)
+			utils.log("INFO", msg, isDebugEnabled)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		utils.log("DEBUG", "*** Exit prepareCompletionRequest ***", isDebugEnabled)
+		utils.log("INFO", "*** Exit prepareCompletionRequest ***", isDebugEnabled)
 	}
 	
 	public void prepareFalloutRequest(Execution execution){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		utils.log("DEBUG", " *** prepareFalloutRequest *** ", isDebugEnabled)
+		utils.log("INFO", " *** prepareFalloutRequest *** ", isDebugEnabled)
 
 		try {
 			WorkflowException wfex = execution.getVariable("WorkflowException")
-			utils.log("DEBUG", " Input Workflow Exception: " + wfex.toString(), isDebugEnabled)
+			utils.log("INFO", " Input Workflow Exception: " + wfex.toString(), isDebugEnabled)
 			String requestId = execution.getVariable("msoRequestId")
 			String source = execution.getVariable("source")
 			String requestInfo =
@@ -217,7 +218,7 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			String falloutRequest = exceptionUtil.processMainflowsBPMNException(execution, requestInfo)
 			execution.setVariable("falloutRequest", falloutRequest)
 		} catch (Exception ex) {
-			utils.log("DEBUG", "Exception prepareFalloutRequest:" + ex.getMessage(), isDebugEnabled)
+			utils.log("INFO", "Exception prepareFalloutRequest:" + ex.getMessage(), isDebugEnabled)
 			String errorException = "  Bpmn error encountered in CreateServiceInstance flow. FalloutHandlerRequest,  buildErrorResponse() - " + ex.getMessage()
 			String requestId = execution.getVariable("msoRequestId")
 			String falloutRequest =
@@ -237,7 +238,7 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 
 			execution.setVariable("falloutRequest", falloutRequest)
 		}
-		utils.log("DEBUG", "*** Exit prepareFalloutRequest ***", isDebugEnabled)
+		utils.log("INFO", "*** Exit prepareFalloutRequest ***", isDebugEnabled)
 	}
 	
 
@@ -249,7 +250,7 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 		execution.setVariable("prefix", Prefix)
 
 		try {
-			utils.log("DEBUG", " ***** Inside prepareDBRequest of DeleteCustomE2EServiceInstance ***** ", isDebugEnabled)
+			utils.log("INFO", " ***** Inside prepareDBRequest of DeleteCustomE2EServiceInstance ***** ", isDebugEnabled)
 
 			String requestId = execution.getVariable("DELSI_requestId")
 			String statusMessage = "E2E Service Instance successfully deleted."
@@ -290,7 +291,7 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 
-		utils.log("DEBUG", " ***** Inside prepareDBRequestError of DeleteCustomE2EServiceInstance ***** ", isDebugEnabled)
+		utils.log("INFO", " ***** Inside prepareDBRequestError of DeleteCustomE2EServiceInstance ***** ", isDebugEnabled)
 
 		try {
 			String requestId = execution.getVariable("DELSI_requestId")
