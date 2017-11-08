@@ -143,6 +143,9 @@ public class RequestInfo {
      *
      */
     public String getSource() {
+    	if(null == source || source.isEmpty()){
+    		source = "VID";
+    	}
         return source;
     }
 
