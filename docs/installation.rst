@@ -54,15 +54,17 @@ Follow the prompts to install Ubuntu.
 Proxy Configuration (optional)
 ------------------------------
 If you're behind a corporate firewall, configure some proxy settings.  NOTE: your proxy configuration may require username and password credentials, not shown here.
-**Ubuntu system proxy setting:**
-	System Settings → Network → Network proxy
-	(Replace "proxyhost" and port with your actual proxy information)
+**Ubuntu system proxy setting**:
 
-**apt proxy setting:**
-	Edit /etc/apt/apt.conf and add one line at the top (replace "proxyhost:port" with your actual proxy information):
-		Acquire::http::Proxy "http://proxyhost:port";
-	Reboot the VM.
-	
+- System Settings → Network → Network proxy
+  (Replace "proxyhost" and port with your actual proxy information)
+
+**apt proxy setting**:
+
+- Edit /etc/apt/apt.conf and add one line at the top (replace "proxyhost:port" with your actual proxy information):
+	Acquire::http::Proxy "http://proxyhost:port";
+- Reboot the VM.
+
 Install SSH Server
 ------------------
 sudo apt update
@@ -89,9 +91,9 @@ Install the guest additions.  NOTE: look for errors in the command output!  If y
 Add yourself to the vboxsf user group (replace "userid" with your user ID):
 	sudo usermod -a -G vboxsf userid
 Reboot the VM.
-In a VM terminal window, verify that you can access your home directory on the host computer, which should be mounted under here:
-	/media/sf_Users
-	
+In a VM terminal window, verify that you can access your home directory on the
+host computer, which should be mounted under /media/sf_Users
+
 Further Reading
-----------------------------------------	
+----------------------------------------
 https://wiki.onap.org/display/DW/Development+Environment
