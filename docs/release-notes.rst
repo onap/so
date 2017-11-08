@@ -3,8 +3,8 @@
 .. Copyright 2017 Huawei Intellectual Property.  All rights reserved.
 
 
-Service Orchestrator Release Notes
-==================================
+SO Release Notes
+================
 
 .. note::
 	* This Release Notes must be updated each time the team decides to Release new artifacts.
