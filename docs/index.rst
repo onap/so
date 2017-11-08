@@ -2,7 +2,7 @@
 .. http://creativecommons.org/licenses/by/4.0
 .. Copyright 2017 Huawei Technologies Co., Ltd.
 
-ONAP Service Orchestration Documentation
+ONAP SO
 ========================================
 
 .. toctree::

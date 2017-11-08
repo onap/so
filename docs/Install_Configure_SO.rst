@@ -2,7 +2,7 @@
 .. http://creativecommons.org/licenses/by/4.0
 .. Copyright 2017 Huawei Technologies Co., Ltd.
 
-Install and Configure Service Orchestrator
+SO Install & Configure
 ==========================================
 
 Get Ubuntu
