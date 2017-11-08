@@ -18,9 +18,17 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.mso.client.dmaap;
+package org.openecomp.mso.client.dmaap.exceptions;
 
-public interface Consumer {
+public class ExceededMaximumPollingTime extends RuntimeException  {
 
-	public Iterable<String> fetch();
+	private static final long serialVersionUID = 2331207691092906423L;
+
+	public ExceededMaximumPollingTime() {
+		super();
+	}
+	
+	public ExceededMaximumPollingTime(String message) {
+		super(message);
+	}
 }

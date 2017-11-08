@@ -32,6 +32,6 @@ public interface SDNOValidator {
 	 * @throws IOException
 	 * @throws Exception
 	 */
-	public void healthDiagnostic(String vnfName, String uuid) throws IOException, Exception;
+	public void healthDiagnostic(String vnfId, String requestingUserId) throws IOException, Exception;
 
 }

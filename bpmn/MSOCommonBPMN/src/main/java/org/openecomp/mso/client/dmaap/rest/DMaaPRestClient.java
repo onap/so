@@ -1,15 +1,15 @@
 /*-
  * ============LICENSE_START=======================================================
- * OPENECOMP - MSO
+ * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,39 +18,31 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.mso.client.policy;
+package org.openecomp.mso.client.dmaap.rest;
 
-import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Base64;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 
 import javax.ws.rs.client.ClientResponseFilter;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriBuilderException;
 
 import org.openecomp.mso.client.ResponseExceptionMapperImpl;
-import org.openecomp.mso.client.RestProperties;
-import org.openecomp.mso.client.policy.entities.PolicyServiceType;
-import org.springframework.stereotype.Service;
+import org.openecomp.mso.client.policy.RestClient;
 
-@Service
-public class PolicyRestClient extends RestClient {
+public class DMaaPRestClient  extends RestClient {
 
-	private static final String X_ECOMP_REQUESTID = String.valueOf(UUID.randomUUID());
-	private final PolicyRestProperties properties;
-	public PolicyRestClient(PolicyRestProperties props, PolicyServiceType serviceType) {
-		super(props, Optional.of(UriBuilder.fromPath(serviceType.toString()).build()));
-		this.properties = props;
-		this.getClient();
+	private final String username;
+	private final String password;
+	public DMaaPRestClient(URL url, String contentType, String username, String password) {
+		super(url, contentType);
+		this.username = username;
+		this.password = password;
 	}
 
 	@Override
 	protected void initializeHeaderMap(Map<String, String> headerMap) {
-		headerMap.put("ClientAuth", properties.getClientAuth());
-		headerMap.put("Authorization", properties.getAuth());
-		headerMap.put("Environment", properties.getEnvironment());
-		this.addRequestId(X_ECOMP_REQUESTID);
+		headerMap.put("Authorization", "Basic " + Base64.getEncoder().encodeToString(new String(username + ":" + password).getBytes()));
 	}
 
 	@Override
@@ -60,7 +52,6 @@ public class PolicyRestClient extends RestClient {
 
 	@Override
 	public RestClient addRequestId(String requestId) {
-		this.headerMap.put("X-ECOMP-RequestID", requestId);
-		return this;
+		return null;
 	}
 }

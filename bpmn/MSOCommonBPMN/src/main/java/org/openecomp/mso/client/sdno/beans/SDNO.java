@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.mso.client.sdno;
+package org.openecomp.mso.client.sdno.beans;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -33,29 +33,83 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "request-healthdiagnostic"
+    "operation",
+    "nodeLoc",
+    "nodeType",
+    "body"
 })
-public class Input implements Serializable
+public class SDNO implements Serializable
 {
 
-    @JsonProperty("request-healthdiagnostic")
-    private RequestHealthDiagnostic RequestHealthDiagnostic;
+    @JsonProperty("operation")
+    private String operation;
+    @JsonProperty("nodeLoc")
+    private String nodeLoc;
+    @JsonProperty("nodeType")
+    private String nodeType;
+    @JsonProperty("body")
+    private Body body;
     @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<>();
-    private final static long serialVersionUID = 7155546785389227528L;
+    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+    private final static long serialVersionUID = -5303297382564282650L;
 
-    @JsonProperty("request-healthdiagnostic")
-    public RequestHealthDiagnostic getRequestHealthDiagnostic() {
-        return RequestHealthDiagnostic;
+    @JsonProperty("operation")
+    public String getOperation() {
+        return operation;
     }
 
-    @JsonProperty("request-healthdiagnostic")
-    public void setRequestHealthDiagnostic(RequestHealthDiagnostic RequestHealthDiagnostic) {
-        this.RequestHealthDiagnostic = RequestHealthDiagnostic;
+    @JsonProperty("operation")
+    public void setOperation(String operation) {
+        this.operation = operation;
+    }
+    
+    @JsonProperty("nodeLoc")
+    public String getNodeLoc() {
+		return nodeLoc;
+	}
+    
+    @JsonProperty("nodeLoc")
+	public void setNodeLoc(String nodeLoc) {
+		this.nodeLoc = nodeLoc;
+	}
+    
+    public SDNO withNodeLoc(String nodeLoc) {
+    	this.nodeLoc = nodeLoc;
+    	return this;
     }
 
-    public Input withRequestHealthDiagnostic(RequestHealthDiagnostic RequestHealthDiagnostic) {
-        this.RequestHealthDiagnostic = RequestHealthDiagnostic;
+	public SDNO withOperation(String operation) {
+        this.operation = operation;
+        return this;
+    }
+
+    @JsonProperty("nodeType")
+    public String getNodeType() {
+        return nodeType;
+    }
+
+    @JsonProperty("nodeType")
+    public void setNodeType(String nodeType) {
+        this.nodeType = nodeType;
+    }
+
+    public SDNO withNodeType(String nodeType) {
+        this.nodeType = nodeType;
+        return this;
+    }
+
+    @JsonProperty("body")
+    public Body getBody() {
+        return body;
+    }
+
+    @JsonProperty("body")
+    public void setBody(Body body) {
+        this.body = body;
+    }
+
+    public SDNO withBody(Body body) {
+        this.body = body;
         return this;
     }
 
@@ -69,7 +123,7 @@ public class Input implements Serializable
         this.additionalProperties.put(name, value);
     }
 
-    public Input withAdditionalProperty(String name, Object value) {
+    public SDNO SDNO (String name, Object value) {
         this.additionalProperties.put(name, value);
         return this;
     }

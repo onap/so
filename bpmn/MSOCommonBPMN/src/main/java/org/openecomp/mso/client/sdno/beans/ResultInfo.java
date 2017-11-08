@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.mso.client.sdno;
+package org.openecomp.mso.client.sdno.beans;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -51,7 +51,7 @@ private String requestId;
 @JsonProperty("status")
 private String status;
 @JsonIgnore
-private Map<String, Object> additionalProperties = new HashMap<>();
+private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
 @JsonProperty("client-name")
 public String getClientName() {

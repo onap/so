@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.mso.client.sdno;
+package org.openecomp.mso.client.sdno.beans;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -33,29 +33,31 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "input"
+    "request-healthdiagnostic",
+    "request-hd-custom"
 })
-public class Body implements Serializable
+public class Input implements Serializable
 {
 
-    @JsonProperty("input")
-    private Input input;
+    @JsonProperty("request-healthdiagnostic")
+    private RequestHealthDiagnostic RequestHealthDiagnostic;
+    
     @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<>();
-    private final static long serialVersionUID = 9101706044452851559L;
+    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+    private final static long serialVersionUID = 7155546785389227528L;
 
-    @JsonProperty("input")
-    public Input getInput() {
-        return input;
+    @JsonProperty("request-healthdiagnostic")
+    public RequestHealthDiagnostic getRequestHealthDiagnostic() {
+        return RequestHealthDiagnostic;
     }
 
-    @JsonProperty("input")
-    public void setInput(Input input) {
-        this.input = input;
+    @JsonProperty("request-healthdiagnostic")
+    public void setRequestHealthDiagnostic(RequestHealthDiagnostic RequestHealthDiagnostic) {
+        this.RequestHealthDiagnostic = RequestHealthDiagnostic;
     }
 
-    public Body withInput(Input input) {
-        this.input = input;
+    public Input withRequestHealthDiagnostic(RequestHealthDiagnostic RequestHealthDiagnostic) {
+        this.RequestHealthDiagnostic = RequestHealthDiagnostic;
         return this;
     }
 
@@ -69,7 +71,7 @@ public class Body implements Serializable
         this.additionalProperties.put(name, value);
     }
 
-    public Body withAdditionalProperty(String name, Object value) {
+    public Input withAdditionalProperty(String name, Object value) {
         this.additionalProperties.put(name, value);
         return this;
     }
