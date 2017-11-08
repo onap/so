@@ -23,7 +23,7 @@
 <process-application
     xmlns="http://www.camunda.org/schema/1.0/ProcessApplication"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <process-engine name="infrastructure">
+  <process-engine name="default">
     <configuration>org.camunda.bpm.engine.impl.cfg.StandaloneProcessEngineConfiguration</configuration>
     <datasource>java:jboss/datasources/ProcessEngine</datasource>
     <properties>
@@ -71,7 +71,7 @@
 
 
   	<process-archive name="MSOInfrastructureBPMN">
- 		<process-engine>infrastructure</process-engine>
+ 		<process-engine>default</process-engine>
   		<properties>
       		<property name="isDeleteUponUndeploy">false</property>
       		<property name="isScanForProcessDefinitions">true</property>

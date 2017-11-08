@@ -75,7 +75,6 @@ import org.openecomp.mso.bpmn.common.adapter.vnf.UpdateVnfNotification;
 import org.openecomp.mso.bpmn.common.adapter.vnf.VnfRollback;
 import org.openecomp.mso.bpmn.common.workflow.service.SDNCAdapterCallbackServiceImpl;
 import org.openecomp.mso.bpmn.common.workflow.service.VnfAdapterNotifyServiceImpl;
-import org.openecomp.mso.bpmn.common.workflow.service.WorkflowAsyncCommonResource;
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowAsyncResource;
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowMessageResource;
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowResponse;
@@ -273,7 +272,7 @@ public class WorkflowTest {
 		VariableMapImpl variableMapImpl = createVariableMapImpl(variables);
 
 		System.out.println("Sending " + request + " to " + processKey + " process");
-		WorkflowAsyncResource workflowResource = new WorkflowAsyncCommonResource();
+		WorkflowAsyncResource workflowResource = new WorkflowAsyncResource();
 		workflowResource.setProcessEngineServices4junit(processEngineRule);
 
 		TestAsyncResponse asyncResponse = new TestAsyncResponse();
@@ -306,7 +305,7 @@ public class WorkflowTest {
 		VariableMapImpl variableMapImpl = createVariableMapImpl(variables);
 
 		System.out.println("Sending " + request + " to " + processKey + " process");
-		WorkflowAsyncResource workflowResource = new WorkflowAsyncCommonResource();
+		WorkflowAsyncResource workflowResource = new WorkflowAsyncResource();
 		workflowResource.setProcessEngineServices4junit(processEngineRule);
 
 		TestAsyncResponse asyncResponse = new TestAsyncResponse();

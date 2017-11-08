@@ -4,6 +4,7 @@ target
 .project
 .buildpath
 .idea
+.checkstyle
 *.iml
 **/logs/
 **/debug-logs/

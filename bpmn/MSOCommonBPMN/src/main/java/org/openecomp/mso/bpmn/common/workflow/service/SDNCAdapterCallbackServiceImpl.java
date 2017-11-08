@@ -20,9 +20,6 @@
 
 package org.openecomp.mso.bpmn.common.workflow.service;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
@@ -30,16 +27,9 @@ import javax.jws.WebService;
 import javax.ws.rs.core.Context;
 import javax.xml.ws.WebServiceContext;
 
-import org.camunda.bpm.BpmPlatform;
-import org.camunda.bpm.engine.MismatchingMessageCorrelationException;
-import org.camunda.bpm.engine.ProcessEngineServices;
-import org.camunda.bpm.engine.RuntimeService;
-import org.camunda.bpm.engine.runtime.ExecutionQuery;
 import org.openecomp.mso.bpmn.common.adapter.sdnc.SDNCAdapterCallbackRequest;
 import org.openecomp.mso.bpmn.common.adapter.sdnc.SDNCAdapterResponse;
 import org.openecomp.mso.bpmn.common.adapter.sdnc.SDNCCallbackAdapterPortType;
-import org.openecomp.mso.bpmn.core.PropertyConfiguration;
-import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
 
 /**

@@ -39,7 +39,6 @@ import javax.ws.rs.core.UriInfo;
 import org.camunda.bpm.engine.HistoryService;
 import org.camunda.bpm.engine.ProcessEngineException;
 import org.camunda.bpm.engine.ProcessEngineServices;
-import org.camunda.bpm.engine.ProcessEngines;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.history.HistoricVariableInstance;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
@@ -53,10 +52,8 @@ import org.openecomp.mso.logger.MsoLogger;
 import org.slf4j.MDC;
 
 @Path("/workflow")
-public class WorkflowResource {
+public class WorkflowResource extends ProcessEngineAwareService {
 	
-	private ProcessEngineServices pes4junit = null;
-
 	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
 	private static final String LOGMARKER = "[WRKFLOW-RESOURCE]";
 
@@ -614,17 +611,5 @@ public class WorkflowResource {
 				+ processKey + " with response: " + response.getResponse());
 		
 		return response;
-	}
-
-	private ProcessEngineServices getProcessEngineServices() {
-		if (pes4junit == null) {
-			return ProcessEngines.getProcessEngine("infrastructure");
-		} else {
-			return pes4junit;
-		}
-	}
-
-	public void setProcessEngineServices4junit(ProcessEngineServices pes) {
-		pes4junit = pes;
 	}
 }

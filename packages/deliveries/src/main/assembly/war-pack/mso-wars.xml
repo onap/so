@@ -102,13 +102,6 @@
 		</fileSet>
 
 		<fileSet>
-			<includes>
-				<include>MSOCommonBPMN*.war</include>
-			</includes>
-			<directory>../../bpmn/MSOCommonBPMN/target/</directory>
-			<outputDirectory>artifacts</outputDirectory>
-		</fileSet>
-		<fileSet>
             <includes>
                 <include>MSOInfrastructureBPMN*.war</include>
             </includes>
