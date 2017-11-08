@@ -1,0 +1,239 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a4e6583_e702a8b3",
+        "filename": "docs/Configure_git_and_gerrit.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 269
+      },
+      "writtenOn": "2017-11-08T16:25:47Z",
+      "side": 1,
+      "message": "D003 Tabulation used for indentation",
+      "revId": "41d048fba6cdf92d1f2f0b1d152a1874ddc97f3d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_c7ffaca9",
+        "filename": "docs/Configure_git_and_gerrit.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 269
+      },
+      "writtenOn": "2017-11-08T16:25:47Z",
+      "side": 1,
+      "message": "D003 Tabulation used for indentation",
+      "revId": "41d048fba6cdf92d1f2f0b1d152a1874ddc97f3d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_a72cb04b",
+        "filename": "docs/Configure_git_and_gerrit.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 269
+      },
+      "writtenOn": "2017-11-08T16:25:47Z",
+      "side": 1,
+      "message": "D003 Tabulation used for indentation",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 65
+      },
+      "revId": "41d048fba6cdf92d1f2f0b1d152a1874ddc97f3d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_8731b4a4",
+        "filename": "docs/Configure_git_and_gerrit.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 269
+      },
+      "writtenOn": "2017-11-08T16:25:47Z",
+      "side": 1,
+      "message": "D003 Tabulation used for indentation",
+      "range": {
+        "startLine": 30,
+        "startChar": 0,
+        "endLine": 33,
+        "endChar": 88
+      },
+      "revId": "41d048fba6cdf92d1f2f0b1d152a1874ddc97f3d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_e76bc883",
+        "filename": "docs/installation.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 269
+      },
+      "writtenOn": "2017-11-08T16:25:47Z",
+      "side": 1,
+      "message": "DOC8 warning: D003 Tabulation used for indentation",
+      "revId": "41d048fba6cdf92d1f2f0b1d152a1874ddc97f3d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_c768cc89",
+        "filename": "docs/installation.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 269
+      },
+      "writtenOn": "2017-11-08T16:25:47Z",
+      "side": 1,
+      "message": "DOC8 warning: D003 Tabulation used for indentation",
+      "range": {
+        "startLine": 65,
+        "startChar": 0,
+        "endLine": 65,
+        "endChar": 46
+      },
+      "revId": "41d048fba6cdf92d1f2f0b1d152a1874ddc97f3d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_a705d0c3",
+        "filename": "docs/installation.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 269
+      },
+      "writtenOn": "2017-11-08T16:25:47Z",
+      "side": 1,
+      "message": "DOC8 warning: D003 Tabulation used for indentation",
+      "range": {
+        "startLine": 75,
+        "startChar": 0,
+        "endLine": 75,
+        "endChar": 1
+      },
+      "revId": "41d048fba6cdf92d1f2f0b1d152a1874ddc97f3d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_670fd8e2",
+        "filename": "docs/installation.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 269
+      },
+      "writtenOn": "2017-11-08T16:25:47Z",
+      "side": 1,
+      "message": "DOC8 warning: D003 Tabulation used for indentation",
+      "range": {
+        "startLine": 82,
+        "startChar": 0,
+        "endLine": 83,
+        "endChar": 35
+      },
+      "revId": "41d048fba6cdf92d1f2f0b1d152a1874ddc97f3d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_4714dcf4",
+        "filename": "docs/installation.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 269
+      },
+      "writtenOn": "2017-11-08T16:25:47Z",
+      "side": 1,
+      "message": "DOC8 warning: D003 Tabulation used for indentation",
+      "range": {
+        "startLine": 85,
+        "startChar": 0,
+        "endLine": 86,
+        "endChar": 30
+      },
+      "revId": "41d048fba6cdf92d1f2f0b1d152a1874ddc97f3d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_27f9e0c8",
+        "filename": "docs/installation.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 269
+      },
+      "writtenOn": "2017-11-08T16:25:47Z",
+      "side": 1,
+      "message": "DOC8 warning: D003 Tabulation used for indentation",
+      "range": {
+        "startLine": 88,
+        "startChar": 0,
+        "endLine": 89,
+        "endChar": 30
+      },
+      "revId": "41d048fba6cdf92d1f2f0b1d152a1874ddc97f3d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_07f6e4d7",
+        "filename": "docs/installation.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 269
+      },
+      "writtenOn": "2017-11-08T16:25:47Z",
+      "side": 1,
+      "message": "DOC8 warning: D003 Tabulation used for indentation",
+      "range": {
+        "startLine": 92,
+        "startChar": 0,
+        "endLine": 92,
+        "endChar": 33
+      },
+      "revId": "41d048fba6cdf92d1f2f0b1d152a1874ddc97f3d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
