@@ -45,6 +45,8 @@ import static org.apache.commons.lang3.StringUtils.*
  * @param - disableRollback
  * @param - failExists  - O
  * @param - serviceInstanceId
+ * @param - globalCustomerId - O
+ * @param - subscriptionServiceType - O
  * @param - parentServiceInstanceId
  * @param - allottedReourceId - O
  * @param - allottedResourceModelInfo
@@ -316,6 +318,8 @@ public class DoCreateAllottedResourceTXC extends AbstractServiceTaskProcessor{
 
 			String allottedResourceId = execution.getVariable("allottedResourceId")
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
+			String globalCustomerId = execution.getVariable("globalCustomerId")
+			String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
 			String parentServiceInstanceId = execution.getVariable("parentServiceInstanceId")
 			String serviceChainServiceInstanceId = execution.getVariable("serviceChainServiceInstanceId")
 			String callbackUrl = execution.getVariable("sdncCallbackUrl")
@@ -368,11 +372,11 @@ public class DoCreateAllottedResourceTXC extends AbstractServiceTaskProcessor{
 					</request-information>
 					<service-information>
 						<service-id></service-id>
-						<subscription-service-type></subscription-service-type>
+						<subscription-service-type>${subscriptionServiceType}</subscription-service-type>
 						<onap-model-information></onap-model-information>
-						<service-instance-id>${parentServiceInstanceId}</service-instance-id>
+						<service-instance-id>${serviceInstanceId}</service-instance-id>
 						<subscriber-name/>
-						<global-customer-id></global-customer-id>
+						<global-customer-id>${globalCustomerId}</global-customer-id>
 					</service-information>
 					<allotted-resource-information>
 						<allotted-resource-id>${allottedResourceId}</allotted-resource-id>    
