@@ -26,8 +26,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.camunda.bpm.engine.MismatchingMessageCorrelationException;
-import org.camunda.bpm.engine.ProcessEngineServices;
-import org.camunda.bpm.engine.ProcessEngines;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.runtime.Execution;
 import org.camunda.bpm.engine.runtime.MessageCorrelationResult;
@@ -38,7 +36,7 @@ import org.openecomp.mso.logger.MsoLogger;
 /**
  * Abstract base class for callback services.
  */
-public abstract class AbstractCallbackService {
+public abstract class AbstractCallbackService extends ProcessEngineAwareService {
 	public static final long DEFAULT_TIMEOUT_SECONDS = 60;
 	public static final long FAST_POLL_DUR_SECONDS = 5;
 	public static final long FAST_POLL_INT_MS = 100;
@@ -46,8 +44,6 @@ public abstract class AbstractCallbackService {
 	
 	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
 
-	protected volatile ProcessEngineServices pes4junit = null;
-	
 	/**
 	 * Parameterized callback handler.
 	 */
@@ -367,17 +363,5 @@ public abstract class AbstractCallbackService {
 			return "Process[" + execution.getProcessInstanceId()
 				+ ":" + execution.getId() + "]";
 		}
-	}
-	
-	protected ProcessEngineServices getProcessEngineServices() {
-		if (pes4junit == null) {
-			return ProcessEngines.getProcessEngine("infrastructure");
-		} else {
-			return pes4junit;
-		}
-	}
-
-	public void setProcessEngineServices4junit(ProcessEngineServices pes) {
-		pes4junit = pes;
 	}
 }

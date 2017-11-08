@@ -26,14 +26,10 @@ import java.util.Set;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
+import org.openecomp.mso.bpmn.common.workflow.service.WorkflowAsyncResource;
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowMessageResource;
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowResource;
 
-/**
- * @version 1.0
- * RESTeasy workflow application which wires synchronous and asynchronous response
- *
- */
 @ApplicationPath("/")
 public class WorkflowResourceApplication extends Application {
     private Set<Object> singletons = new HashSet<Object>();
@@ -41,7 +37,7 @@ public class WorkflowResourceApplication extends Application {
 
     public WorkflowResourceApplication() {
         singletons.add(new WorkflowResource());
-        singletons.add(new WorkflowAsyncInfrastructureResource());
+        singletons.add(new WorkflowAsyncResource());
         singletons.add(new WorkflowMessageResource());
     }
 

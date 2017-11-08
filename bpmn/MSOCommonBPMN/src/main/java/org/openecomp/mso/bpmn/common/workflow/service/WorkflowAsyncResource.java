@@ -53,7 +53,7 @@ import org.slf4j.MDC;
  * For asynchronous process - the activity may send a acknowledgement response and then proceed further on executing the process
  */
 @Path("/async")
-public abstract class WorkflowAsyncResource {
+public class WorkflowAsyncResource extends ProcessEngineAwareService {
 
 	private static final WorkflowContextHolder contextHolder = WorkflowContextHolder.getInstance();
 	protected Optional<ProcessEngineServices> pes4junit = Optional.empty();
@@ -274,12 +274,6 @@ public abstract class WorkflowAsyncResource {
 	}
 	
 	
-	protected abstract ProcessEngineServices getProcessEngineServices();
-	
-	public void setProcessEngineServices4junit(ProcessEngineServices pes) {
-		pes4junit = Optional.ofNullable(pes);
-	}
-
 	private static Map<String, Object> getInputVariables(VariableMapImpl variableMap) {
 		Map<String, Object> inputVariables = new HashMap<>();
 		@SuppressWarnings("unchecked")

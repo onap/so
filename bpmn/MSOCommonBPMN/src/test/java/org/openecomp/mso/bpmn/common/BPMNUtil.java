@@ -42,7 +42,6 @@ import org.camunda.bpm.engine.variable.impl.VariableMapImpl;
 import org.jboss.resteasy.spi.AsynchronousResponse;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.openecomp.mso.bpmn.common.workflow.service.WorkflowAsyncCommonResource;
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowAsyncResource;
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowResource;
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowResponse;
@@ -201,7 +200,7 @@ public class BPMNUtil {
 	 * @param variables
 	 */
 	private static void executeAsyncFlow(ProcessEngineServices processEngineServices, String processKey, AsynchronousResponse asyncResponse, Map<String,String> variables) {
-		WorkflowAsyncResource workflowResource = new WorkflowAsyncCommonResource();
+		WorkflowAsyncResource workflowResource = new WorkflowAsyncResource();
 		VariableMapImpl variableMap = new VariableMapImpl();
 
 		Map<String, Object> variableValueType = new HashMap<String, Object>();
