@@ -48,7 +48,7 @@ This is the initial release of ONAP SO.
 There is a MSO 1.0.0 SO implementation existing in the pre-R1 ONAP Gerrit system.  
 The MSO1.0.0 is deprecated by the R1 release and the current release is built over this release.
 The Gerrit repos of mso/* are voided and already locked as read-only.
-Deprecated SO projects in gerrit repo.
+Following are the deprecated SO projects in gerrit repo:
 mso
 mso/chef-repo
 mso/docker-config
