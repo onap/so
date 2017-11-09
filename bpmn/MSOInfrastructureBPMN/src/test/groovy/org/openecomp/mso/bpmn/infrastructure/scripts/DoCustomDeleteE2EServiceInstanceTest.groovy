@@ -4,6 +4,7 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.junit.Before
 import org.junit.BeforeClass
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.MockitoAnnotations
@@ -57,6 +58,7 @@ class DoCustomDeleteE2EServiceInstanceTest extends GroovyTestBase {
         verify(mex).setVariable("siParamsXml", "")
     }
 
+    @Ignore
     @Test
     public void postProcessAAIGETTest(){
         ExecutionEntity mex = setupMock()
@@ -72,6 +74,7 @@ class DoCustomDeleteE2EServiceInstanceTest extends GroovyTestBase {
 //        verify(mex).setVariable("subscriptionServiceType", "e2eserviceInstance/delete")
     }
 
+    @Ignore
     @Test
     public void preInitResourcesOperStatusTest(){
         ExecutionEntity mex = setupMock()
@@ -95,7 +98,7 @@ class DoCustomDeleteE2EServiceInstanceTest extends GroovyTestBase {
         verify(mex).setVariable("resourceType", "overlay")
     }
 
-
+    @Ignore
     @Test
     public void postProcessSDNCDeleteTest(){
         ExecutionEntity mex = setupMock()
