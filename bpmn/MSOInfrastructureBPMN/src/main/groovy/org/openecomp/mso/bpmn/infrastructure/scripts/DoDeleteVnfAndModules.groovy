@@ -230,19 +230,10 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 			utils.logAudit("AAI endPoint: " + endPoint)
 
 			try {
-				RESTConfig config = new RESTConfig(endPoint);
-				def responseData = ''
-				def aaiRequestId = UUID.randomUUID().toString()
-				RESTClient client = new RESTClient(config).
-					addHeader('X-TransactionId', aaiRequestId).
-					addHeader('X-FromAppId', 'MSO').
-					addHeader('Content-Type', 'application/xml').
-					addHeader('Accept','application/xml');
-				logDebug('sending GET to AAI endpoint \'' + endPoint + '\'', isDebugLogEnabled)
-				APIResponse response = client.httpGet()
 				utils.logAudit("createVfModule - invoking httpGet() to AAI")
+				APIResponse response = aaiUriUtil.executeAAIGetCall(execution, endPoint)
 
-				responseData = response.getResponseBodyAsString()
+				def responseData = response.getResponseBodyAsString()
 				if (responseData != null) {
 					logDebug("Received generic VNF data: " + responseData, isDebugLogEnabled)
 
