@@ -253,6 +253,7 @@ DeleteVcpeResCustService.prepareServiceDelete(execution)]]></bpmn2:script>
         <camunda:out source="rolledBack" target="rolledBack" />
         <camunda:in source="lcpCloudRegionId" target="lcpCloudRegionId" />
         <camunda:in source="tenantId" target="tenantId" />
+        <camunda:in source="cloudConfiguration" target="cloudConfiguration" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_128485i</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_04fys47</bpmn2:outgoing>

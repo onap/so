@@ -135,10 +135,13 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 			utils.log("DEBUG", "Incoming subscriptionServiceType is: " + subscriptionServiceType, isDebugEnabled)
 			
 			// extract cloud configuration
-			String lcpCloudRegionId = jsonUtil.getJsonValue(DeleteVcpeResCustServiceRequest, "requestDetails.cloudConfiguration.lcpCloudRegionId")
+			String cloudConfiguration = jsonUtil.getJsonValue(DeleteVcpeResCustServiceRequest, "requestDetails.cloudConfiguration")
+			execution.setVariable("cloudConfiguration", cloudConfiguration)
+			utils.log("DEBUG","cloudConfiguration: "+ cloudConfiguration, isDebugEnabled)
+			String lcpCloudRegionId = jsonUtil.getJsonValue(cloudConfiguration, "lcpCloudRegionId")
 			execution.setVariable("lcpCloudRegionId", lcpCloudRegionId)
 			utils.log("DEBUG","lcpCloudRegionId: "+ lcpCloudRegionId, isDebugEnabled)
-			String tenantId = jsonUtil.getJsonValue(DeleteVcpeResCustServiceRequest, "requestDetails.cloudConfiguration.tenantId")
+			String tenantId = jsonUtil.getJsonValue(cloudConfiguration, "tenantId")
 			execution.setVariable("tenantId", tenantId)
 			utils.log("DEBUG","tenantId: "+ tenantId, isDebugEnabled)
 

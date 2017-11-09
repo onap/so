@@ -108,6 +108,7 @@ class DeleteVcpeResCustServiceTest extends GroovyTestBase {
 		
 		verify(mex).setVariable("lcpCloudRegionId", "mdt1")
 		verify(mex).setVariable("tenantId", "8b1df54faa3b49078e3416e21370a3ba")
+		assertEquals("""{"tenantId":"8b1df54faa3b49078e3416e21370a3ba","lcpCloudRegionId":"mdt1"}""", map.get("cloudConfiguration"))
 		verify(mex).setVariable("sdncVersion", "1702")
 		verify(mex).setVariable("GENGS_type", "service-instance")
 		assertTrue(map.containsKey(Prefix+"requestInfo"))
@@ -146,6 +147,7 @@ class DeleteVcpeResCustServiceTest extends GroovyTestBase {
 		
 		verify(mex).setVariable("lcpCloudRegionId", "mdt1")
 		verify(mex).setVariable("tenantId", "8b1df54faa3b49078e3416e21370a3ba")
+		assertEquals("""{"tenantId":"8b1df54faa3b49078e3416e21370a3ba","lcpCloudRegionId":"mdt1"}""", map.get("cloudConfiguration"))
 		verify(mex).setVariable("sdncVersion", "1702")
 		verify(mex).setVariable("GENGS_type", "service-instance")
 		assertTrue(map.containsKey(Prefix+"requestInfo"))
