@@ -288,13 +288,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.openecomp.so</groupId>
-			<artifactId>MSOMockServer</artifactId>
-			<version>${project.version}</version>
-			<classifier>classes</classifier>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.openecomp.so</groupId>
 			<artifactId>MSORESTClient</artifactId>
 			<version>${project.version}</version>
 		</dependency>

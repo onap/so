@@ -329,13 +329,6 @@
     	<version>4.3.2.RELEASE</version>
 	</dependency>
 	<dependency>
-		<groupId>org.openecomp.so</groupId>
-		<artifactId>MSOMockServer</artifactId>
-		<version>${project.version}</version>
-		<scope>test</scope>
-		<classifier>classes</classifier>
-	</dependency>
-	<dependency>
 	  <groupId>org.openecomp.so</groupId>
   	  <artifactId>MSORESTClient</artifactId>
   	  <version>${project.version}</version>
