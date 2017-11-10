@@ -604,15 +604,8 @@ public class E2EServiceInstances {
 					DelE2ESvcResp jo = mapper.readValue(
 							camundaJSONResponseBody, DelE2ESvcResp.class);
 					String operationId = jo.getOperationId();
-					OperationStatus operStatus = chkDuplicateServiceInOperStatus(instanceIdMap
-							.get("serviceId"));
-					if (null != operStatus) {
-						msoLogger
-								.debug("One task is already in progress state for this service id");
-					} else {
-						this.createOperationStatusRecord("DELETE", requestId,
+    				this.createOperationStatusRecord("DELETE", requestId,
 								operationId);
-					}
 				} catch (Exception ex) {
 					msoLogger.error(MessageEnum.APIH_BPEL_RESPONSE_ERROR,
 							requestClient.getUrl(), "", "",

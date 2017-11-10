@@ -430,4 +430,11 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
         }
 	    utils.log("INFO", "Prepare VFC Request finished", isDebugEnabled)
 	}
+	
+	   /**
+     * post config request.
+     */
+	public void postConfigRequest(execution){
+	    //now do noting
+	}
 }

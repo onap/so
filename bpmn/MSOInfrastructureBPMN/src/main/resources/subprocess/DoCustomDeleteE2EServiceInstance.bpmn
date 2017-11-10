@@ -133,10 +133,10 @@ ddsi.preResourceDelete(execution, resourceName )]]></bpmn:script>
       <bpmn:extensionElements>
         <camunda:in source="globalSubscriberId" target="globalSubscriberId" />
         <camunda:in source="serviceType" target="serviceType" />
-        <camunda:in source="serviceId" target="serviceId" />
+        <camunda:in source="serviceInstanceId" target="serviceId" />
         <camunda:in source="operationId" target="operationId" />
-        <camunda:in source="resouceTemplateUUID" target="resouceTemplateUUID" />
-        <camunda:in source="resouceInstanceId" target="resouceInstanceId" />
+        <camunda:in source="resourceTemplateId" target="resourceTemplateId" />
+        <camunda:in source="resourceInstanceId" target="resourceInstanceId" />
         <camunda:in source="resourceType" target="resourceType" />
         <camunda:in source="operationType" target="operationType" />
       </bpmn:extensionElements>

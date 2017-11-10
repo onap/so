@@ -313,6 +313,9 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
             String resourceTemplateUUIDs) throws MsoRequestsDbException{
         String[] resourceLst = resourceTemplateUUIDs.split(":");
         for(String resource: resourceLst){
+            if("".equals(resource)){
+                continue;
+            }
             ResourceOperationStatus resourceStatus = new ResourceOperationStatus();
             resourceStatus.setOperationId(operationId);
             resourceStatus.setServiceId(serviceId);

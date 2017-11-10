@@ -46,11 +46,10 @@ import org.openecomp.mso.rest.APIResponse;
  */
 public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProcessor {
 
-    String deleteUrl = "/vfc/vfcadapters/v1/ns/{nsInstanceId}"
-            
-    String terminateUrl = "/vfcvfcadatpers/v1/ns/{nsInstanceId}/terminate"
+
+    String vfcUrl = "/vfc/rest/v1/vfcadapter"
     
-    String queryJobUrl = "/vfc/vfcadatpers/v1/jobs/{jobId}"
+    String host = "http://mso.mso.testlab.openecomp.org:8080"
     
     ExceptionUtil exceptionUtil = new ExceptionUtil()
 
@@ -75,14 +74,20 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
             utils.log("INFO", "serviceId:" + serviceId, isDebugEnabled)
             String operationId = execution.getVariable("operationId")
             utils.log("INFO", "serviceType:" + serviceType, isDebugEnabled)
-            String nodeTemplateUUID = execution.getVariable("resourceTemplateUUID")
+            String nodeTemplateUUID = execution.getVariable("resourceTemplateId")
             utils.log("INFO", "nodeTemplateUUID:" + nodeTemplateUUID, isDebugEnabled)
             String nsInstanceId = execution.getVariable("resourceInstanceId")
             utils.log("INFO", "nsInstanceId:" + nsInstanceId, isDebugEnabled)
-            String nsOperationKey = "{\"globalSubscriberId\":\"" + globalSubscriberId + "\",\"serviceType:\""
-                  + serviceType + "\",\"serviceId\":\"" + serviceId + "\",\"operationId\":\"" + operationId
-                  +"\",\"nodeTemplateUUID\":\"" + nodeTemplateUUID + "\"}";
+            execution.setVariable("nsInstanceId",nsInstanceId)
+            String nsOperationKey = """{
+            "globalSubscriberId":"${globalSubscriberId}",
+            "serviceType":"${serviceType}",
+            "serviceId":"${serviceId}",
+            "operationId":"${operationId}",
+            "nodeTemplateUUID":"${nodeTemplateUUID}"
+             }"""
             execution.setVariable("nsOperationKey", nsOperationKey);
+            utils.log("INFO", "nsOperationKey:" + nsOperationKey, isDebugEnabled)
         } catch (BpmnError e) {
             throw e;
         } catch (Exception ex){
@@ -99,9 +104,9 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
     public void deleteNetworkService(Execution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
         utils.log("INFO", " *** deleteNetworkService  start *** ", isDebugEnabled)
-        String nsOperationKey = excution.getVariable("nsOperationKey");
-        String url = deleteUrl.replaceAll("{nsInstanceId}", execution.getVariable("nsInstanceId")) 
-        APIResponse apiResponse = deleteRequest(url, reqBody)
+        String nsOperationKey = execution.getVariable("nsOperationKey");
+        String url = host + vfcUrl + "/ns/" + execution.getVariable("nsInstanceId") 
+        APIResponse apiResponse = deleteRequest(execution, url, nsOperationKey)
         String returnCode = apiResponse.getStatusCode()
         String aaiResponseAsString = apiResponse.getResponseBodyAsString()
         String operationStatus = "error";
@@ -120,15 +125,15 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
         utils.log("INFO", " *** terminateNetworkService  start *** ", isDebugEnabled)
         String nsOperationKey = execution.getVariable("nsOperationKey") 
-        String url = terminateUrl.replaceAll("{nsInstanceId}", execution.getVariable("nsInstanceId")) 
-        APIResponse apiResponse = postRequest(url, reqBody)
+        String url =  host + vfcUrl + "/ns/" + execution.getVariable("nsInstanceId") + "/terminate"
+        APIResponse apiResponse = postRequest(execution, url, nsOperationKey)
         String returnCode = apiResponse.getStatusCode()
         String aaiResponseAsString = apiResponse.getResponseBodyAsString()
         String jobId = "";
         if(returnCode== "200"){
             jobId =  jsonUtil.getJsonValue(aaiResponseAsString, "jobId")
         }
-        execution.setVariable("jobId", nsInstanceId)   
+        execution.setVariable("jobId", jobId)   
         utils.log("INFO", " *** terminateNetworkService  end *** ", isDebugEnabled)
     }
 
@@ -139,9 +144,9 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
         utils.log("INFO", " *** queryNSProgress  start *** ", isDebugEnabled)
         String jobId = execution.getVariable("jobId")
-        String nsOperationKey = excution.getVariable("nsOperationKey");
-        String url = queryJobUrl.replaceAll("{jobId}", execution.getVariable("jobId")) 
-        APIResponse createRsp = postRequest(url, nsOperationKey)
+        String nsOperationKey = execution.getVariable("nsOperationKey");
+        String url =  host + vfcUrl + "/jobs/" +  execution.getVariable("jobId") 
+        APIResponse createRsp = postRequest(execution, url, nsOperationKey)
         String returnCode = apiResponse.getStatusCode()
         String aaiResponseAsString = apiResponse.getResponseBodyAsString()
         String operationProgress = "100"
@@ -175,14 +180,14 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
      * url: the url of the request
      * requestBody: the body of the request
      */
-    private APIResponse postRequest(String url, String requestBody){
+    private APIResponse postRequest(Execution execution, String url, String requestBody){
         def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
         utils.log("INFO", " ======== Started Execute VFC adapter Post Process ======== ", isDebugEnabled)
         utils.log("INFO", "url:"+url +"\nrequestBody:"+ requestBody, isDebugEnabled)
         APIResponse apiResponse = null
         try{
             RESTConfig config = new RESTConfig(url);
-            RESTClient client = new RESTClient(config).addHeader("X-FromAppId", "MSO").addHeader("X-TransactionId", uuid).addHeader("Accept","application/json");
+            RESTClient client = new RESTClient(config).addHeader("Content-Type", "application/json").addHeader("Accept","application/json").addHeader("Authorization","Basic QlBFTENsaWVudDpwYXNzd29yZDEk");;
             apiResponse = client.httpPost(requestBody)
             utils.log("INFO", "response code:"+ apiResponse.getStatusCode() +"\nresponse body:"+ apiResponse.getResponseBodyAsString(), isDebugEnabled)
             utils.log("INFO", "======== Completed Execute VF-C adapter Post Process ======== ", isDebugEnabled)
@@ -197,14 +202,14 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
      * url: the url of the request
      * requestBody: the body of the request
      */
-    private APIResponse deleteRequest(String url, String requestBody){
+    private APIResponse deleteRequest(Execution execution, String url, String requestBody){
         def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
         utils.log("INFO", " ======== Started Execute VFC adapter Delete Process ======== ", isDebugEnabled)       
-        utils.log("INFO", "url:"+url +"\nrequestBody:"+ requestBody, isDebugEnabled) 
+        utils.log("INFO", "url:"+url +"\nrequestBody:"+ requestBody, isDebugEnabled)
         APIResponse apiResponse = null
         try{
             RESTConfig config = new RESTConfig(url);
-            RESTClient client = new RESTClient(config).addHeader("X-FromAppId", "MSO").addHeader("X-TransactionId", uuid).addHeader("Accept","application/json");
+            RESTClient client = new RESTClient(config).addHeader("Content-Type", "application/json").addHeader("Accept","application/json").addHeader("Authorization","Basic QlBFTENsaWVudDpwYXNzd29yZDEk");
             apiResponse = client.httpDelete(requestBody)
             utils.log("INFO", "response code:"+ apiResponse.getStatusCode() +"\nresponse body:"+ apiResponse.getResponseBodyAsString(), isDebugEnabled) 
             utils.log("INFO", "======== Completed Execute VF-C adapter Delete Process ======== ", isDebugEnabled) 
