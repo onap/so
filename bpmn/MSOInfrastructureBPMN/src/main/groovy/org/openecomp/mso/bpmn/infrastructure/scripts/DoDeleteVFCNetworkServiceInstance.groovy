@@ -108,7 +108,7 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
         String url = host + vfcUrl + "/ns/" + execution.getVariable("nsInstanceId") 
         APIResponse apiResponse = deleteRequest(execution, url, nsOperationKey)
         String returnCode = apiResponse.getStatusCode()
-        String aaiResponseAsString = apiResponse.getResponseBodyAsString()
+        String apiResponseAsString = apiResponse.getResponseBodyAsString()
         String operationStatus = "error";
         if(returnCode== "200"){
             operationStatus = "finished"
@@ -146,14 +146,14 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
         String jobId = execution.getVariable("jobId")
         String nsOperationKey = execution.getVariable("nsOperationKey");
         String url =  host + vfcUrl + "/jobs/" +  execution.getVariable("jobId") 
-        APIResponse createRsp = postRequest(execution, url, nsOperationKey)
+        APIResponse apiResponse = postRequest(execution, url, nsOperationKey)
         String returnCode = apiResponse.getStatusCode()
-        String aaiResponseAsString = apiResponse.getResponseBodyAsString()
+        String apiResponseAsString = apiResponse.getResponseBodyAsString()
         String operationProgress = "100"
         if(returnCode== "200"){
-            operationProgress = jsonUtil.getJsonValue(aaiResponseAsString, "responseDescriptor.progress")
+            operationProgress = jsonUtil.getJsonValue(apiResponseAsString, "responseDescriptor.progress")
         }
-        exection.setVariable("operationProgress", operationProgress)
+        execution.setVariable("operationProgress", operationProgress)
         utils.log("INFO", " *** queryNSProgress  end *** ", isDebugEnabled)
     }
 

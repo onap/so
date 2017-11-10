@@ -330,11 +330,6 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 				else
 				{
 					utils.log("INFO", "SI Data" + siData, isDebugEnabled)
-					serviceType = utils.getNodeText1(siData,"service-type")
-					execution.setVariable("serviceType", serviceType)
-					execution.setVariable("serviceRole", utils.getNodeText1(siData,"service-role"))
-					String orchestrationStatus =  utils.getNodeText1(siData,"orchestration-status")
-
 					//Confirm there are no related service instances (vnf/network or volume)
 					if (utils.nodeExists(siData, "relationship-list")) {
 						utils.log("INFO", "SI Data relationship-list exists:", isDebugEnabled)
