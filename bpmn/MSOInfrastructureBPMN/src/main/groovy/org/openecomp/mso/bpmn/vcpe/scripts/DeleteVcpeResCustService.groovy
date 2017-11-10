@@ -145,7 +145,7 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 			execution.setVariable("tenantId", tenantId)
 			utils.log("DEBUG","tenantId: "+ tenantId, isDebugEnabled)
 
-			String sdncVersion = "1702"
+			String sdncVersion = "1707"
 			execution.setVariable("sdncVersion", sdncVersion)
 			utils.log("DEBUG","sdncVersion: "+ sdncVersion, isDebugEnabled)
 			
