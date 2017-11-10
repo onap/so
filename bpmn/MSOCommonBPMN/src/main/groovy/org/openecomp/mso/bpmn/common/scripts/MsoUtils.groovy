@@ -59,6 +59,21 @@ class MsoUtils {
 		}
 		return nodes
 	}
+	/**
+	 * Note: this uses XmlParser instead of XmlSlurper, thus it is not as
+	 * efficient because it instantiates the whole DOM tree.
+	 * @param xmlInput
+	 * @param element
+	 * @return a list of Nodes, or {@code null} if <i>xmlInput</i> is {@code null}
+	 */
+	def getMultNodeObjects(xmlInput, element){
+		def nodes=null
+		if(xmlInput!=null){
+			def xml= new XmlParser().parseText(xmlInput)
+			nodes = xml.'**'.findAll{ node-> node.name() == element }
+		}
+		return nodes
+	}
 	def getNodeText1(xmlInput,element){
 		def rtn=null
 		if(xmlInput!=null){

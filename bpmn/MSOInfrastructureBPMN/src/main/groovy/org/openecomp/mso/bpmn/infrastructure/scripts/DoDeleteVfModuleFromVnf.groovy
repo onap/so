@@ -19,6 +19,7 @@ import org.springframework.web.util.UriUtils
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.xml.sax.InputSource
+import static org.apache.commons.lang3.StringUtils.*
 
 public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 
@@ -118,19 +119,10 @@ public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 			utils.logAudit("DoDeleteVfModuleFromVnf: AAI endPoint  : " + endPoint)
 
 			try {
-				RESTConfig config = new RESTConfig(endPoint);
-				def responseData = ''
-				def aaiRequestId = UUID.randomUUID().toString()
-				RESTClient client = new RESTClient(config).
-					addHeader('X-TransactionId', aaiRequestId).
-					addHeader('X-FromAppId', 'MSO').
-					addHeader('Content-Type', 'application/xml').
-					addHeader('Accept','application/xml');
-				logDebug('sending GET to AAI endpoint \'' + endPoint + '\'', isDebugLogEnabled)
-				APIResponse response = client.httpGet()
 				utils.logAudit("DoDeleteVfModuleFromVnf: - invoking httpGet to AAI")
+				APIResponse response = aaiUriUtil.executeAAIGetCall(execution, endPoint)
 
-				responseData = response.getResponseBodyAsString()
+				def responseData = response.getResponseBodyAsString()
 				execution.setVariable('DDVMFV_getVnfResponseCode', response.getStatusCode())
 				execution.setVariable('DDVMFV_getVnfResponse', responseData)
 
@@ -416,37 +408,28 @@ public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 				execution.setVariable("DDVFMV_vnfVfModuleDeleteCompleted", true)
 
 				// Parse vnfOutputs for contrail network polcy FQDNs
-				if (vnfResponse.contains("vfModuleOutputs")) {
-					def vfModuleOutputsXml = utils.getNodeXml(vnfResponse, "vfModuleOutputs")
-					InputSource source = new InputSource(new StringReader(vfModuleOutputsXml));
-			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-			docFactory.setNamespaceAware(true)
-			DocumentBuilder docBuilder = docFactory.newDocumentBuilder()
-			Document outputsXml = docBuilder.parse(source)
-
-					NodeList entries = outputsXml.getElementsByTagNameNS("*", "entry")
+				def vfModuleOutputsXml = utils.getNodeXml(vnfResponse, "vfModuleOutputs")
+				if(!isBlank(vfModuleOutputsXml)) {
+					vfModuleOutputsXml = utils.removeXmlNamespaces(vfModuleOutputsXml)
 					List contrailNetworkPolicyFqdnList = []
-					for (int i = 0; i< entries.getLength(); i++) {
-						Node node = entries.item(i)
-						if (node.getNodeType() == Node.ELEMENT_NODE) {
-							Element element = (Element) node
-							String key = element.getElementsByTagNameNS("*", "key").item(0).getTextContent()
-							if (key.endsWith("contrail_network_policy_fqdn")) {
-								String contrailNetworkPolicyFqdn = element.getElementsByTagNameNS("*", "value").item(0).getTextContent()
-								logDebug("Obtained contrailNetworkPolicyFqdn: " + contrailNetworkPolicyFqdn, isDebugLogEnabled)
-								contrailNetworkPolicyFqdnList.add(contrailNetworkPolicyFqdn)
-							}
-							else if (key.equals("oam_management_v4_address")) {
-								String oamManagementV4Address = element.getElementsByTagNameNS("*", "value").item(0).getTextContent()
-								logDebug("Obtained oamManagementV4Address: " + oamManagementV4Address, isDebugLogEnabled)
-								execution.setVariable(Prefix + "oamManagementV4Address", oamManagementV4Address)
-							}
-							else if (key.equals("oam_management_v6_address")) {
-								String oamManagementV6Address = element.getElementsByTagNameNS("*", "value").item(0).getTextContent()
-								logDebug("Obtained oamManagementV6Address: " + oamManagementV6Address, isDebugLogEnabled)
-								execution.setVariable(Prefix + "oamManagementV6Address", oamManagementV6Address)
-							}
-
+					for(Node node: utils.getMultNodeObjects(vfModuleOutputsXml, "entry")) {
+						String key = utils.getChildNodeText(node, "key")
+						if(key == null) {
+							
+						} else if (key.endsWith("contrail_network_policy_fqdn")) {
+							String contrailNetworkPolicyFqdn = utils.getChildNodeText(node, "value")
+							logDebug("Obtained contrailNetworkPolicyFqdn: " + contrailNetworkPolicyFqdn, isDebugLogEnabled)
+							contrailNetworkPolicyFqdnList.add(contrailNetworkPolicyFqdn)
+						}
+						else if (key.equals("oam_management_v4_address")) {
+							String oamManagementV4Address = utils.getChildNodeText(node, "value")
+							logDebug("Obtained oamManagementV4Address: " + oamManagementV4Address, isDebugLogEnabled)
+							execution.setVariable(Prefix + "oamManagementV4Address", oamManagementV4Address)
+						}
+						else if (key.equals("oam_management_v6_address")) {
+							String oamManagementV6Address = utils.getChildNodeText(node, "value")
+							logDebug("Obtained oamManagementV6Address: " + oamManagementV6Address, isDebugLogEnabled)
+							execution.setVariable(Prefix + "oamManagementV6Address", oamManagementV6Address)
 						}
 					}
 					if (!contrailNetworkPolicyFqdnList.isEmpty()) {
