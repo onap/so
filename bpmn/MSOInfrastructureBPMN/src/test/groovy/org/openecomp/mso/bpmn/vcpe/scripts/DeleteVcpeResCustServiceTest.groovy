@@ -95,22 +95,23 @@ class DeleteVcpeResCustServiceTest extends GroovyTestBase {
 		DeleteVcpeResCustService.preProcessRequest(mex)
 
 		verify(mex).getVariable(DBGFLAG)
-		verify(mex).setVariable("prefix", Prefix)
-		verify(mex).setVariable("DeleteVcpeResCustServiceRequest", request)
-		verify(mex).setVariable("msoRequestId", "mri")
-		verify(mex).setVariable("requestAction", "ra")
-		verify(mex).setVariable("source", "VID")
-		verify(mex).setVariable("globalSubscriberId", CUST)
-		verify(mex).setVariable("globalCustomerId", CUST)
-		verify(mex).setVariable("disableRollback", "false")
-		verify(mex).setVariable("productFamilyId", "a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb")
-		verify(mex).setVariable("subscriptionServiceType", SVC)	
 		
-		verify(mex).setVariable("lcpCloudRegionId", "mdt1")
-		verify(mex).setVariable("tenantId", "8b1df54faa3b49078e3416e21370a3ba")
+		assertEquals(Prefix, map.get("prefix"))
+		assertEquals(request, map.get("DeleteVcpeResCustServiceRequest"))
+		assertEquals("mri", map.get("msoRequestId"))
+		assertEquals("ra", map.get("requestAction"))
+		assertEquals("VID", map.get("source"))
+		assertEquals(CUST, map.get("globalSubscriberId"))
+		assertEquals(CUST, map.get("globalCustomerId"))
+		assertEquals("false", map.get("disableRollback"))
+		assertEquals("a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb", map.get("productFamilyId"))
+		assertEquals(SVC, map.get("subscriptionServiceType"))
+		
+		assertEquals("mdt1", map.get("lcpCloudRegionId"))
+		assertEquals("8b1df54faa3b49078e3416e21370a3ba", map.get("tenantId"))
+		assertEquals("1707", map.get("sdncVersion"))
+		assertEquals("service-instance", map.get("GENGS_type"))
 		assertEquals("""{"tenantId":"8b1df54faa3b49078e3416e21370a3ba","lcpCloudRegionId":"mdt1"}""", map.get("cloudConfiguration"))
-		verify(mex).setVariable("sdncVersion", "1702")
-		verify(mex).setVariable("GENGS_type", "service-instance")
 		assertTrue(map.containsKey(Prefix+"requestInfo"))
 		
 		def reqinfo = map.get(Prefix+"requestInfo")
@@ -148,7 +149,7 @@ class DeleteVcpeResCustServiceTest extends GroovyTestBase {
 		verify(mex).setVariable("lcpCloudRegionId", "mdt1")
 		verify(mex).setVariable("tenantId", "8b1df54faa3b49078e3416e21370a3ba")
 		assertEquals("""{"tenantId":"8b1df54faa3b49078e3416e21370a3ba","lcpCloudRegionId":"mdt1"}""", map.get("cloudConfiguration"))
-		verify(mex).setVariable("sdncVersion", "1702")
+		verify(mex).setVariable("sdncVersion", "1707")
 		verify(mex).setVariable("GENGS_type", "service-instance")
 		assertTrue(map.containsKey(Prefix+"requestInfo"))
 		
@@ -258,16 +259,18 @@ class DeleteVcpeResCustServiceTest extends GroovyTestBase {
 		def map = setupMap(mex)
 		initPrepareServiceDelete(mex)
 		
+		myMockGetAr("/aai/v11/anytxc", 200, "arGetTXCById.xml");
+		myMockGetAr("/aai/v11/anybrg", 200, "arGetBRGById.xml");
+		myMockGetAr("/aai/v11/other", 200, "arGetOtherById.xml");
+		
 		DeleteVcpeResCustService DeleteVcpeResCustService = new DeleteVcpeResCustService()
 		DeleteVcpeResCustService.prepareServiceDelete(mex)
-
-		verify(mex).getVariable(DBGFLAG)
 		
 		verify(mex).setVariable(Prefix+"TunnelXConn", true)
-		assertEquals("txcA", map.get("TXC_allottedResourceId"))
+		assertEquals("ar-txcA", map.get("TXC_allottedResourceId"))
 		
 		verify(mex).setVariable(Prefix+"BRG", true)
-		assertEquals("brgB", map.get("BRG_allottedResourceId"))
+		assertEquals("ar-brgB", map.get("BRG_allottedResourceId"))
 		
 		verify(mex).setVariable(Prefix+"vnfsCount", 2)
 		assertNotNull(map.get(Prefix+"relatedVnfIdList"))
@@ -353,7 +356,60 @@ class DeleteVcpeResCustServiceTest extends GroovyTestBase {
 		when(mex.getVariable("GENGS_FoundIndicator")).thenReturn(true)
 		when(mex.getVariable("mso-request-id")).thenReturn("mri")
 		when(mex.getVariable("DeleteVcpeResCustServiceRequest")).thenReturn(request)
+		when(mex.getVariable("URN_aai_endpoint")).thenReturn(aaiUriPfx)
 		when(mex.getVariable("GENGS_service")).thenReturn(FileUtil.readResourceFile("__files/VCPE/DeleteVcpeResCustService/serviceToDelete.xml"))
+	}
+	
+	// ***** getAaiAr *****
+	
+	@Test
+//	@Ignore
+	public void getAaiAr() {
+		myMockGetAr("/myurl/ar1", 200, "arGetBRGById.xml");
+		
+		ExecutionEntity mex = setupMock()
+		initGetAaiAr(mex)
+				
+		DeleteVcpeResCustService DeleteVcpeResCustService = new DeleteVcpeResCustService()
+		def (type, id) = DeleteVcpeResCustService.getAaiAr(mex, "/myurl/ar1")
+		
+		assertEquals("BRG", type)
+		assertEquals("ar-brgB", id)
+	}
+	
+	@Test
+//	@Ignore
+	public void getAaiAr_401() {
+		myMockGetAr("/myurl/ar1", 401, "arGetBRGById.xml");
+		
+		ExecutionEntity mex = setupMock()
+		initGetAaiAr(mex)
+				
+		DeleteVcpeResCustService DeleteVcpeResCustService = new DeleteVcpeResCustService()
+		def (type, id) = DeleteVcpeResCustService.getAaiAr(mex, "/myurl/ar1")
+		
+		assertEquals(null, type)
+		assertEquals(null, id)
+	}
+	
+	@Test
+//	@Ignore
+	public void getAaiAr_EmptyResponse() {
+		myMockGetAr("/myurl/ar1", 200, "empty.txt");
+		
+		ExecutionEntity mex = setupMock()
+		initGetAaiAr(mex)
+				
+		DeleteVcpeResCustService DeleteVcpeResCustService = new DeleteVcpeResCustService()
+		def (type, id) = DeleteVcpeResCustService.getAaiAr(mex, "/myurl/ar1")
+		
+		assertEquals(null, type)
+		assertEquals(null, id)
+	}
+	
+	private void initGetAaiAr(ExecutionEntity mex) {
+		when(mex.getVariable(DBGFLAG)).thenReturn("true")
+		when(mex.getVariable("URN_aai_endpoint")).thenReturn(aaiUriPfx)
 	}
 	
 	// ***** prepareVnfAndModulesDelete *****
@@ -707,5 +763,13 @@ class DeleteVcpeResCustServiceTest extends GroovyTestBase {
 	
 	private initProcessJavaException(ExecutionEntity mex) {
 		when(mex.getVariable(DBGFLAG)).thenReturn("true")
+	}
+	
+	private void myMockGetAr(String url, int status, String fileResp) {
+		stubFor(get(urlMatching(url))
+				.willReturn(aResponse()
+						.withStatus(status)
+						.withHeader("Content-Type", "text/xml")
+						.withBodyFile("VCPE/DeleteVcpeResCustService/" + fileResp)));
 	}
 }

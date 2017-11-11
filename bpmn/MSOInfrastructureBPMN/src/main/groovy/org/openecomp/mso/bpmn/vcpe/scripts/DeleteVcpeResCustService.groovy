@@ -30,6 +30,7 @@ import org.openecomp.mso.bpmn.core.json.JsonUtils
 import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.rest.APIResponse
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
+import org.openecomp.mso.bpmn.common.scripts.AaiUtil
 
 import java.util.UUID;
 
@@ -40,6 +41,7 @@ import org.json.JSONArray;
 import org.apache.commons.lang3.*
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.web.util.UriUtils;
+import static org.apache.commons.lang3.StringUtils.*
 
 /**
  * This groovy class supports the <class>DeleteVcpeResCustService.bpmn</class> process.
@@ -145,7 +147,7 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 			execution.setVariable("tenantId", tenantId)
 			utils.log("DEBUG","tenantId: "+ tenantId, isDebugEnabled)
 
-			String sdncVersion = "1702"
+			String sdncVersion = "1707"
 			execution.setVariable("sdncVersion", sdncVersion)
 			utils.log("DEBUG","sdncVersion: "+ sdncVersion, isDebugEnabled)
 			
@@ -194,7 +196,7 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 
 	public void prepareServiceDelete(Execution execution) {
 		def isDebugEnabled=execution.getVariable(DebugFlag)
-		utils.log("DEBUG", " ***** Inside prepareServiceInstanceDelete() of DeleteVcpeResCustService ***** ", isDebugEnabled)
+		utils.log("DEBUG", " ***** Inside prepareServiceDelete() of DeleteVcpeResCustService ***** ", isDebugEnabled)
 		
 		try {
 			
@@ -214,79 +216,93 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 			String serviceInstanceAaiRecord = execution.getVariable("GENGS_service");
 			
 			utils.log("DEBUG", "serviceInstanceAaiRecord: "+serviceInstanceAaiRecord, isDebugEnabled)
+			serviceInstanceAaiRecord = utils.removeXmlNamespaces(serviceInstanceAaiRecord)
 			
-			// determine if AR needs to be deleted
-			boolean DVRCS_TunnelXConn = false
-			boolean DVRCS_BRG = false
-			String TXC_allottedResourceId
-			String BRG_allottedResourceId
-			XmlParser xmlParser = new XmlParser()
-			def groovy.util.Node siNode = xmlParser.parseText(serviceInstanceAaiRecord)
-			def groovy.util.Node arList = utils.getChildNode(siNode, 'allotted-resources')
-			if (arList != null) {
-				def groovy.util.NodeList ars = utils.getIdenticalChildren(arList, 'allotted-resource')
-				for (groovy.util.Node ar in ars) {
-					def type = utils.getChildNodeText(ar, 'type')
-					if ("TunnelXConn".equals(type)) {
+			def (TXC_found, TXC_id) = new Tuple(false, null)
+			def (BRG_found, BRG_id) = new Tuple(false, null)
+			List relatedVnfIdList = []
+			
+			for(Node rel: utils.getMultNodeObjects(serviceInstanceAaiRecord, "relationship")) {
+				def relto = utils.getChildNodeText(rel, "related-to")
+				def relink = utils.getChildNodeText(rel, "related-link")
+				utils.log("DEBUG", "check: "+relto+" link: "+relink, isDebugEnabled)
+				
+				if(isBlank(relto) || isBlank(relink)) {
+					
+				} else if(relto == "generic-vnf") {
+					def id = relink.substring(relink.indexOf("/generic-vnf/")+13)
+					if(id.endsWith("/")) {
+						id = id.substring(0, id.length()-1)
+					}
+					
+					relatedVnfIdList.add(id)
+					
+				} else if(relto == "allotted-resource") {
+					def (type, id) = getAaiAr(execution, relink)
+					
+					if(isBlank(type) || isBlank(id)) {
+						
+					} else if(type == "TunnelXConn") {
 						utils.log("DEBUG","TunnelXConn AR found", isDebugEnabled)
-						def id = utils.getChildNodeText(ar, 'id')
-						if (id != null){
-							DVRCS_TunnelXConn = true
-							TXC_allottedResourceId = id
-						}
-					} else if ("BRG".equals(type)) {
-						utils.log("DEBUG","FW AR found", isDebugEnabled)
-						def id = utils.getChildNodeText(ar, 'id')
-						if (id != null){
-							DVRCS_BRG = true
-							BRG_allottedResourceId = id
-						}
+						TXC_found = true
+						TXC_id = id
+						
+					} else if(type == "BRG") {
+						utils.log("DEBUG","BRG AR found", isDebugEnabled)
+						BRG_found = true
+						BRG_id = id
 					}
 				}
 			}
-			execution.setVariable(Prefix+"TunnelXConn", DVRCS_TunnelXConn)
-			utils.log("DEBUG", Prefix+"TunnelXConn : " + DVRCS_TunnelXConn, isDebugEnabled)
-			execution.setVariable("TXC_allottedResourceId", TXC_allottedResourceId)
-			utils.log("DEBUG", "TXC_allottedResourceId : " + TXC_allottedResourceId, isDebugEnabled)
 			
-			execution.setVariable(Prefix+"BRG", DVRCS_BRG)
-			utils.log("DEBUG", Prefix+"BRG : " + DVRCS_BRG, isDebugEnabled)
-			execution.setVariable("BRG_allottedResourceId", BRG_allottedResourceId)
-			utils.log("DEBUG", "BRG_allottedResourceId : " + BRG_allottedResourceId, isDebugEnabled)
-		
-			String relationship = ""
-			try {
-				relationship = networkUtils.getFirstNodeXml(serviceInstanceAaiRecord, "relationship-list")
-			} catch (Exception ex) {
-				//no relationships found
-			}
-			utils.log("DEBUG", " relationship string - " + relationship, isDebugEnabled)
+			execution.setVariable(Prefix+"TunnelXConn", TXC_found)
+			execution.setVariable("TXC_allottedResourceId", TXC_id)
+			utils.log("DEBUG", "TXC_allottedResourceId: " + TXC_id, isDebugEnabled)
+						
+			execution.setVariable(Prefix+"BRG", BRG_found)
+			execution.setVariable("BRG_allottedResourceId", BRG_id)
+			utils.log("DEBUG", "BRG_allottedResourceId: " + BRG_id, isDebugEnabled)
 			
-			int vnfsCount = 0
-			
-			if (relationship != null && relationship.length() > 0){
-				relationship = relationship.trim().replace("tag0:","").replace(":tag0","")
-				
-				// Check if Network TableREf is present, then build a List of network policy
-				List relatedVnfIdList = networkUtils.getRelatedVnfIdList(relationship)
-				vnfsCount = relatedVnfIdList.size()
-				execution.setVariable(Prefix+"vnfsCount", vnfsCount)
-				utils.log("DEBUG", " "+Prefix+"vnfsCount : " + vnfsCount, isDebugEnabled)
+			int vnfsCount = relatedVnfIdList.size()
+			execution.setVariable(Prefix+"vnfsCount", vnfsCount)
+			utils.log("DEBUG", " "+Prefix+"vnfsCount : " + vnfsCount, isDebugEnabled)
+			if(vnfsCount > 0) {
 				execution.setVariable(Prefix+"relatedVnfIdList", relatedVnfIdList)
-			} else {
-				execution.setVariable(Prefix+"vnfsCount", 0)
-				utils.log("DEBUG", " "+Prefix+"vnfsCount : " + vnfsCount, isDebugEnabled)
 			}
 			
-			utils.log("DEBUG", " ***** Completed prepareServiceInstanceDelete() of DeleteVcpeResCustService ***** ", isDebugEnabled)
+			utils.log("DEBUG", " ***** Completed prepareServiceDelete() of DeleteVcpeResCustService ***** ", isDebugEnabled)
 		} catch (BpmnError e){
 			throw e;
 		} catch (Exception ex) {
 			sendSyncError(execution)
-		   String exceptionMessage = "Bpmn error encountered in DeleteVcpeResCustService flow. prepareServiceInstanceDelete() - " + ex.getMessage()
-		   utils.log("DEBUG", exceptionMessage, isDebugEnabled)
-		   exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
+		    String exceptionMessage = "Bpmn error encountered in DeleteVcpeResCustService flow. prepareServiceDelete() - " + ex.getMessage()
+		    utils.log("DEBUG", exceptionMessage, isDebugEnabled)
+		    exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 		}
+	}
+	
+	private getAaiAr(Execution execution, String relink) {
+		def isDebugEnabled = execution.getVariable(DebugFlag)
+		AaiUtil aaiUtil = new AaiUtil(this)
+		String aaiEndpoint = execution.getVariable("URN_aai_endpoint") + relink
+		
+		utils.log("DEBUG", "get AR info " + aaiEndpoint, isDebugEnabled)
+		APIResponse response = aaiUtil.executeAAIGetCall(execution, aaiEndpoint)
+		
+		int responseCode = response.getStatusCode()
+		utils.log("DEBUG", "get AR info responseCode:" + responseCode, isDebugEnabled)
+		
+		String aaiResponse = response.getResponseBodyAsString()
+		utils.log("DEBUG", "get AR info " + aaiResponse, isDebugEnabled)
+		
+		if(responseCode < 200 || responseCode >= 300 || isBlank(aaiResponse)) {
+			return new Tuple2(null, null)
+		}
+		
+		def type = utils.getNodeText1(aaiResponse, "type")
+		def id = utils.getNodeText1(aaiResponse, "id")
+		
+		return new Tuple2(type, id)
 	}
 	
 	

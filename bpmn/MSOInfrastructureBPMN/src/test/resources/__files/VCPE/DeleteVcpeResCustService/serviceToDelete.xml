@@ -1,38 +1,36 @@
 <service xmlns="http://org.openecomp.aai.inventory/v9">
-	<allotted-resources>
-		<allotted-resource>
-			<type>TunnelXConn</type>
-			<id>txcA</id>
-		</allotted-resource>
-		<allotted-resource>
-			<type>BRG</type>
-			<id>brgB</id>
-		</allotted-resource>
-		<allotted-resource>
-			<type>other</type>
-			<id>otherC</id>
-		</allotted-resource>
-	</allotted-resources>
 	<relationship-list>
       <relationship>
          <related-to>generic-vnf</related-to>
-         <related-link>https://aai-ext1.test.com:8443/aai/v7/generic-vnf/vnfX</related-link>
+         <related-link>/aai/v7/generic-vnf/vnfX</related-link>
       </relationship>
       <relationship>
          <related-to>l3-network</related-to>
-         <related-link>https://aai-ext1.test.com:8443/aai/v7/l3-network/netA</related-link>
+         <related-link>/aai/v7/l3-network/netA</related-link>
       </relationship>
       <relationship>
          <related-to>generic-vnf</related-to>
-         <related-link>https://aai-ext1.test.com:8443/aai/v7/generic-vnf/vnfY</related-link>
+         <related-link>/aai/v7/generic-vnf/vnfY/</related-link>
       </relationship>
       <relationship>
          <related-to>l3-network</related-to>
-         <related-link>https://aai-ext1.test.com:8443/aai/v7/l3-network/netB</related-link>
+         <related-link>/aai/v7/l3-network/netB</related-link>
       </relationship>
       <relationship>
          <related-to>l3-network</related-to>
-         <related-link>https://aai-ext1.test.com:8443/aai/v7/l3-network/netC</related-link>
+         <related-link>/aai/v7/l3-network/netC</related-link>
+      </relationship>
+      <relationship>
+         <related-to>allotted-resource</related-to>
+         <related-link>/aai/v11/anytxc</related-link>
+      </relationship>
+      <relationship>
+         <related-to>allotted-resource</related-to>
+         <related-link>/aai/v11/anybrg</related-link>
+      </relationship>
+      <relationship>
+         <related-to>allotted-resource</related-to>
+         <related-link>/aai/v11/other</related-link>
       </relationship>
    </relationship-list>
 </service>
