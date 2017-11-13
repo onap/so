@@ -20,7 +20,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<!-- If the maven profile "docker" is specified the parameter -Dmso.git.url=<MsoGitRepo> must be provided
 		     i.e: mvn clean install -P docker -Dmso.git.url=https://gerrit.openecomp.org/r-->
-		<mso.chef.git.url.prefix>${env.GIT_NO_PROJECT}</mso.chef.git.url.prefix>
+		<mso.chef.git.url.prefix>${mso.git.url}</mso.chef.git.url.prefix>
 		<mso.chef.git.branchname>master</mso.chef.git.branchname>
 		<mso.chef.git.url.suffix.chef.repo>so/chef-repo</mso.chef.git.url.suffix.chef.repo>
 		<mso.chef.git.url.suffix.chef.config>so/so-config</mso.chef.git.url.suffix.chef.config>
