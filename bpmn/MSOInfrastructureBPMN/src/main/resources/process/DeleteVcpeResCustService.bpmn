@@ -181,6 +181,8 @@ DeleteVcpeResCustService.prepareServiceDelete(execution)]]></bpmn2:script>
         <camunda:in source="BRG_allottedResourceId" target="allottedResourceId" />
         <camunda:out source="WorkflowException" target="WorkflowException" />
         <camunda:out source="rolledBack" target="rolledBack" />
+        <camunda:in source="globalCustomerId" target="globalCustomerId" />
+        <camunda:in source="subscriptionServiceType" target="subscriptionServiceType" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_05cjs89</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0snq0kw</bpmn2:outgoing>
@@ -235,6 +237,8 @@ DeleteVcpeResCustService.prepareServiceDelete(execution)]]></bpmn2:script>
         <camunda:in source="TXC_allottedResourceId" target="allottedResourceId" />
         <camunda:out source="WorkflowException" target="WorkflowException" />
         <camunda:out source="rolledBack" target="rolledBack" />
+        <camunda:in source="globalCustomerId" target="globalCustomerId" />
+        <camunda:in source="subscriptionServiceType" target="subscriptionServiceType" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_0npvfo3</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0et9p0i</bpmn2:outgoing>
