@@ -65,6 +65,7 @@ public class SdncNetworkTopologyOperationTask extends AbstractSdncOperationTask 
         } else {
             Send2SdncDirectly(HeaderUtil.DefaulAuth, inputEntity);
         }
+        updateProgress(execution, RequestsDbConstant.Status.FINISHED, null, RequestsDbConstant.Progress.ONE_HUNDRED, "execute finished!");
         logger.info("SdncNetworkTopologyOperationTask.sendRestrequestAndHandleResponse end!");
     }
 
@@ -95,7 +96,7 @@ public class SdncNetworkTopologyOperationTask extends AbstractSdncOperationTask 
             logger.info("exception: SdncNetworkTopologyOperationTask.saveOutput fail!");
             throw new Exception("");
         }
-        updateProgress(execution, RequestsDbConstant.Status.FINISHED, null, RequestsDbConstant.Progress.ONE_HUNDRED, "execute finished!");
+        
         logger.info("SdncNetworkTopologyOperationTask.saveOutput end!");
     }
 
