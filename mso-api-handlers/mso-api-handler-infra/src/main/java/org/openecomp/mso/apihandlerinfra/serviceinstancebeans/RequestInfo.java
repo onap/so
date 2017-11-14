@@ -32,6 +32,7 @@ public class RequestInfo {
     protected String orderNumber;
     protected String productFamilyId;
     protected Integer orderVersion;
+    @JsonSerialize(include=Inclusion.ALWAYS)
     protected String source;
     protected String instanceName;
     @JsonSerialize(include=Inclusion.ALWAYS)
