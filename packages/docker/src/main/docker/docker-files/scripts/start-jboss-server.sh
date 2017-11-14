@@ -7,7 +7,7 @@
 # Copy the certificates
 echo 'Copying the *.crt provided in /shared folder'
 cp --verbose /shared/*.crt /usr/local/share/ca-certificates
-update-ca-certificates
+update-ca-certificates --fresh
 
 echo 'Running in JBOSS'
 su - jboss
