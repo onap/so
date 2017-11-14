@@ -365,7 +365,7 @@ public class VfcManager {
 
             nsOperInfo.setErrorCode(String.valueOf(rsp.getStatus()));
 
-            if(RequestsDbConstant.OperationType.CREATE.equals(nsOperInfo.getOperType())) {
+            if(RequestsDbConstant.OperationType.CREATE.equalsIgnoreCase(nsOperInfo.getOperType())) {
                 nsOperInfo.setStatus(RequestsDbConstant.Status.FINISHED);
             }
             (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
