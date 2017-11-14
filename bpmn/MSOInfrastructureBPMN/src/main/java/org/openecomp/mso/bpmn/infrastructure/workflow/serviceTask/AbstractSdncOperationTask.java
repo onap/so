@@ -330,9 +330,10 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
         logger.info("AbstractSdncOperationTask.execute begin!");
         GenericResourceApi genericResourceApiClient = getGenericResourceApiClient(execution);
 //        updateProgress(execution, RequestsDbConstant.Status.PROCESSING, null, "10", "execute begin!");
-        Map<String, String> inputs = getInputs(execution);
-//        updateProgress(execution, null, null, "30", "getGenericResourceApiClient finished!");
         try {
+            Map<String, String> inputs = getInputs(execution);
+//        updateProgress(execution, null, null, "30", "getGenericResourceApiClient finished!");
+
             sendRestrequestAndHandleResponse(execution, inputs, genericResourceApiClient);
             execution.setVariable("SDNCA_SuccessIndicator", true);
 //            updateProgress(execution, RequestsDbConstant.Status.FINISHED, null, RequestsDbConstant.Progress.ONE_HUNDRED, "execute finished!");
