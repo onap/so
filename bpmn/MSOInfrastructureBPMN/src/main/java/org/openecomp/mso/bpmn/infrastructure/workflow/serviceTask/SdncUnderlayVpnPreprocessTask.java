@@ -20,6 +20,7 @@
 
 package org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask;
 
+import org.apache.commons.lang3.StringUtils;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.openecomp.mso.bpmn.core.BaseTask;
 import org.openecomp.mso.requestsdb.RequestsDatabase;
@@ -40,8 +41,10 @@ public class SdncUnderlayVpnPreprocessTask extends BaseTask {
 
     private String getOperType(DelegateExecution execution) {
         String serviceId = (String) execution.getVariable("serviceId");
+        serviceId = StringUtils.isBlank(serviceId) ? (String) execution.getVariable("serviceInstanceId") : serviceId;
         String operationId = (String) execution.getVariable("operationId");
         String resourceTemplateUUID = (String) execution.getVariable("resourceUUID");
+        resourceTemplateUUID = StringUtils.isBlank(resourceTemplateUUID) ? (String) execution.getVariable("resourceTemplateId") : resourceTemplateUUID;
         ResourceOperationStatus resourceOperationStatus = requestsDB.getResourceOperationStatus(serviceId, operationId, resourceTemplateUUID);
         return resourceOperationStatus.getOperType();
     }

@@ -110,7 +110,7 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
         String returnCode = apiResponse.getStatusCode()
         String apiResponseAsString = apiResponse.getResponseBodyAsString()
         String operationStatus = "error";
-        if(returnCode== "200"){
+        if(returnCode== "200" || returnCode== "202"){
             operationStatus = "finished"
         }
         execution.setVariable("operationStatus", operationStatus)
@@ -130,7 +130,7 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
         String returnCode = apiResponse.getStatusCode()
         String aaiResponseAsString = apiResponse.getResponseBodyAsString()
         String jobId = "";
-        if(returnCode== "200"){
+        if(returnCode== "200" || returnCode== "202"){
             jobId =  jsonUtil.getJsonValue(aaiResponseAsString, "jobId")
         }
         execution.setVariable("jobId", jobId)   

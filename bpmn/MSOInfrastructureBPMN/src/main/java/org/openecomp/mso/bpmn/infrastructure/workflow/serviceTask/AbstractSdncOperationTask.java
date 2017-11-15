@@ -44,6 +44,7 @@ import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.Generic
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.requestsdb.RequestsDatabase;
+import org.openecomp.mso.requestsdb.RequestsDbConstant;
 import org.openecomp.mso.requestsdb.ResourceOperationStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -342,6 +343,8 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
             logger.error("exception: AbstractSdncOperationTask.fail!:", e);
             e.printStackTrace();
             execution.setVariable("SDNCA_SuccessIndicator", false);
+            updateProgress(execution, RequestsDbConstant.Status.ERROR, null, "100", "sendRestrequestAndHandleResponse finished!");
+
         }
         logger.info("AbstractSdncOperationTask.execute end!");
     }
@@ -350,16 +353,18 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
         logger.info("AbstractSdncOperationTask.getInputs begin!");
         Map<String, String> inputs = new HashMap<>();
         String json = (String) execution.getVariable(SDCADAPTOR_INPUTS);
-        JSONObject jsonObject = new JSONObject(json);
-        JSONObject paras = jsonObject.getJSONObject("additionalParamForNs");
-        Iterator<String> iterator = paras.keys();
-        while (iterator.hasNext()) {
-            String key = iterator.next();
-            inputs.put(key, paras.getString(key));
-        }
+        if (!StringUtils.isBlank(json)) {
+            JSONObject jsonObject = new JSONObject(json);
+            JSONObject paras = jsonObject.getJSONObject("additionalParamForNs");
+            Iterator<String> iterator = paras.keys();
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                inputs.put(key, paras.getString(key));
+            }
 /*        if (paras.keys().hasNext()) {
             paras.keySet().stream().forEach(key -> inputs.put(key, paras.getString((String) key)));
         }*/
+        }
         logger.info("AbstractSdncOperationTask.getInputs end!");
         return inputs;
     }
@@ -375,8 +380,10 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
                                String statusDescription) {
         logger.info("AbstractSdncOperationTask.updateProgress begin!");
         String serviceId = (String) execution.getVariable("serviceId");
+        serviceId = StringUtils.isBlank(serviceId) ? (String) execution.getVariable("serviceInstanceId") : serviceId;
         String operationId = (String) execution.getVariable("operationId");
         String resourceTemplateUUID = (String) execution.getVariable("resourceUUID");
+        resourceTemplateUUID = StringUtils.isBlank(resourceTemplateUUID) ? (String) execution.getVariable("resourceTemplateId") : resourceTemplateUUID;
         try {
             ResourceOperationStatus resourceOperationStatus = getResourceOperationStatus(serviceId, operationId, resourceTemplateUUID);
             if (!StringUtils.isBlank(status)) {

@@ -52,10 +52,10 @@ public class SdncNetworkTopologyOperationTask extends AbstractSdncOperationTask 
                                                  Map<String, String> inputs,
                                                  GenericResourceApi genericResourceApiClient) throws Exception {
         logger.info("SdncNetworkTopologyOperationTask.sendRestrequestAndHandleResponse begin!");
-        updateProgress(execution, null, null, "40", "sendRestrequestAndHandleResponse begin!");
+        updateProgress(execution, RequestsDbConstant.Status.PROCESSING, null, "40", "sendRestrequestAndHandleResponse begin!");
         NetworkRpcInputEntityBuilder builder = new NetworkRpcInputEntityBuilder();
         RpcNetworkTopologyOperationInputEntity inputEntity = builder.build(execution, inputs);
-        updateProgress(execution, null, null, "50", "RequestBody build finished!");
+        updateProgress(execution, RequestsDbConstant.Status.PROCESSING, null, "50", "RequestBody build finished!");
         RpcNetworkTopologyOperationOutputEntity outputEntity;
         if (!isSend2SdncDirectly()) {
             outputEntity = genericResourceApiClient.postNetworkTopologyOperation
@@ -92,7 +92,7 @@ public class SdncNetworkTopologyOperationTask extends AbstractSdncOperationTask 
             String errorMessage = output.getOutput().getResponseMessage();
             WorkflowException workflowException = new WorkflowException(processKey, errorCode, errorMessage);
             execution.setVariable("SDNCA_SuccessIndicator", workflowException);
-            updateProgress(execution, RequestsDbConstant.Status.ERROR, String.valueOf(errorCode), null, errorMessage);
+            updateProgress(execution, RequestsDbConstant.Status.ERROR, String.valueOf(errorCode), "100", errorMessage);
             logger.info("exception: SdncNetworkTopologyOperationTask.saveOutput fail!");
             throw new Exception("");
         }
