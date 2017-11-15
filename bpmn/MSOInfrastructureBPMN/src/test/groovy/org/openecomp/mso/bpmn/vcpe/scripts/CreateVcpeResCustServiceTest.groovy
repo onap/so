@@ -370,7 +370,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	// @Ignore  
 	public void processDecomposition() {
 		ExecutionEntity mex = setupMock()
-		def svcdecomp = initProcessDecomposition(mex, true, true)
+		def svcdecomp = initProcessDecomposition(mex)
 		
 		CreateVcpeResCustService CreateVcpeResCustService = new CreateVcpeResCustService()
 		CreateVcpeResCustService.processDecomposition(mex)
@@ -378,8 +378,8 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 		verify(mex).getVariable(DBGFLAG)
 		
 		verify(mex).setVariable("vnfList", svcdecomp.getServiceVnfs())
-		verify(mex).setVariable("vnfListString", '[myvnf, myvnf2, myvnf3]')
-		verify(mex).setVariable(Prefix+"VNFsCount", 3)
+		verify(mex).setVariable("vnfListString", '[myvnf]')
+		verify(mex).setVariable(Prefix+"VNFsCount", 1)
 		
 		verify(mex).setVariable("vnfModelInfo", "mymodel")
 		verify(mex).setVariable("vnfModelInfoString", "mymodel")
@@ -389,7 +389,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	// @Ignore  
 	public void processDecomposition_EmptyNet_EmptyVnf() {
 		ExecutionEntity mex = setupMock()
-		def svcdecomp = initProcessDecomposition(mex, true, true)
+		def svcdecomp = initProcessDecomposition(mex)
 		
 		when(svcdecomp.getServiceVnfs()).thenReturn(new LinkedList<VnfResource>())
 		
@@ -410,13 +410,42 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	// @Ignore  
 	public void processDecomposition_Ex() {
 		ExecutionEntity mex = setupMock()
-		def svcdecomp = initProcessDecomposition(mex, true, true)
+		def svcdecomp = initProcessDecomposition(mex)
 		
 		when(svcdecomp.getServiceVnfs()).thenThrow(new RuntimeException("expected exception"))
 		
 		CreateVcpeResCustService CreateVcpeResCustService = new CreateVcpeResCustService()
 		
 		assertTrue(doBpmnError( { _ -> CreateVcpeResCustService.processDecomposition(mex) }))
+	}
+	
+	
+	// ***** filterVnfs *****
+			
+	@Test
+	// @Ignore  
+	public void filterVnfs() {
+		ExecutionEntity mex = setupMock()
+		def svcdecomp = initFilterVnfs(mex)
+		
+		CreateVcpeResCustService CreateVcpeResCustService = new CreateVcpeResCustService()
+		CreateVcpeResCustService.processDecomposition(mex)
+		
+		verify(mex).setVariable("vnfListString", '[myvnf3, myvnf5]')
+	}
+			
+	@Test
+	// @Ignore  
+	public void filterVnfs_Null() {
+		ExecutionEntity mex = setupMock()
+		def svcdecomp = initFilterVnfs(mex)
+		
+		when(svcdecomp.getServiceVnfs()).thenReturn(null)
+		
+		CreateVcpeResCustService CreateVcpeResCustService = new CreateVcpeResCustService()
+		CreateVcpeResCustService.processDecomposition(mex)
+		
+		// nothing more to check, as long as it didn't throw an exception
 	}
 	
 	
@@ -1034,13 +1063,30 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 		when(mex.getVariable("serviceInstanceName")).thenReturn("sin")
 	}
 	
-	private ServiceDecomposition initProcessDecomposition(ExecutionEntity mex, boolean haveNet, boolean haveVnf) {
+	private ServiceDecomposition initProcessDecomposition(ExecutionEntity mex) {
 		List<VnfResource> vnflst = new LinkedList<>()
-		if(haveVnf) {
-			vnflst.add(makeVnf(""))
-			vnflst.add(makeVnf("2"))
-			vnflst.add(makeVnf("3"))
-		}
+		vnflst.add(makeVnf("", ""))
+		vnflst.add(makeVnf("2", "BRG"))
+		vnflst.add(makeVnf("3", "BRG"))
+			
+		ServiceDecomposition svcdecomp = mock(ServiceDecomposition.class)
+		when(svcdecomp.getServiceVnfs()).thenReturn(vnflst)
+		
+		when(mex.getVariable(DBGFLAG)).thenReturn("true")
+		when(mex.getVariable("serviceDecomposition")).thenReturn(svcdecomp)
+		when(mex.getVariable("serviceInstanceId")).thenReturn("sii")
+		when(mex.getVariable("serviceInstanceName")).thenReturn("sin")
+		
+		return svcdecomp
+	}
+	
+	private ServiceDecomposition initFilterVnfs(ExecutionEntity mex) {
+		List<VnfResource> vnflst = new LinkedList<>()
+		vnflst.add(makeVnf("", "BRG"))
+		vnflst.add(makeVnf("2", "TunnelXConn"))
+		vnflst.add(makeVnf("3", ""))
+		vnflst.add(makeVnf("4", "BRG"))
+		vnflst.add(makeVnf("5", "other"))
 			
 		ServiceDecomposition svcdecomp = mock(ServiceDecomposition.class)
 		when(svcdecomp.getServiceVnfs()).thenReturn(vnflst)
@@ -1133,10 +1179,10 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 		
 		List<VnfResource> vnflst = new LinkedList<>()
 		
-		vnflst.add(makeVnf("A"))
-		vnflst.add(makeVnf("B"))
-		vnflst.add(makeVnf("C"))
-		vnflst.add(makeVnf("D"))
+		vnflst.add(makeVnf("A", "BRG"))
+		vnflst.add(makeVnf("B", ""))
+		vnflst.add(makeVnf("C", ""))
+		vnflst.add(makeVnf("D", "TunnelXConn"))
 		
 		when(mex.getVariable(DBGFLAG)).thenReturn("true")
 		when(mex.getVariable("createVcpeServiceRequest")).thenReturn(request)
@@ -1146,7 +1192,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 		when(mex.getVariable("sdncVersion")).thenReturn("myvers")
 	}
 	
-	private VnfResource makeVnf(String id) {		
+	private VnfResource makeVnf(String id, String role) {		
 		ModelInfo mod = mock(ModelInfo.class)		
 		VnfResource vnf = mock(VnfResource.class)
 		
@@ -1154,8 +1200,9 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 		
 		when(vnf.toString()).thenReturn("myvnf"+id)
 		when(vnf.getModelInfo()).thenReturn(mod)
+		when(vnf.getNfRole()).thenReturn(role)
 
-		return vnf		
+		return vnf
 	}
 	
 	private initValidateVnfCreate(ExecutionEntity mex) {

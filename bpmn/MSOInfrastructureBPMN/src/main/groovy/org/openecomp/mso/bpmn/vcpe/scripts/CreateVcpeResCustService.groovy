@@ -343,6 +343,9 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
 
 			// VNFs
 			List<VnfResource> vnfList = serviceDecomposition.getServiceVnfs()
+			filterVnfs(vnfList)
+			serviceDecomposition.setServiceVnfs(vnfList)
+			
 			execution.setVariable("vnfList", vnfList)
 			execution.setVariable("vnfListString", vnfList.toString())
 
@@ -370,6 +373,24 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
 		   String exceptionMessage = "Bpmn error encountered in CreateVcpeResCustService flow. processDecomposition() - " + ex.getMessage()
 		   utils.log("DEBUG", exceptionMessage, isDebugEnabled)
 		   exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
+		}
+	}
+	
+	private void filterVnfs(List<VnfResource> vnfList) {
+		if(vnfList == null) {
+			return
+		}
+		
+		// remove BRG & TXC from VNF list
+		
+		Iterator<VnfResource> it = vnfList.iterator()
+		while(it.hasNext()) {
+			VnfResource vr = it.next()
+			
+			String role = vr.getNfRole()
+			if(role == "BRG" || role == "TunnelXConn") {
+				it.remove()
+			}
 		}
 	}
 
