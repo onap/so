@@ -485,11 +485,6 @@
 			<version>1.10.19</version>
 		</dependency>
 		<dependency>
-			<groupId>com.att.nsa</groupId>
-			<artifactId>dmaapClient</artifactId>
-			<version>0.2.12</version>
-		</dependency>
-		<dependency>
 			<!-- Optional Plugin for Camunda BPM Workbench -->
 			<groupId>org.camunda.bpm.workbench</groupId>
 			<artifactId>camunda-workbench-dist-embeddable</artifactId>
