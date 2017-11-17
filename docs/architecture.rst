@@ -2,11 +2,8 @@
 .. http://creativecommons.org/licenses/by/4.0
 .. Copyright 2017 Huawei Technologies Co., Ltd.
 
-SO - Service Orchestration
-========================================================
-
-SO Architecture
-----------------
+SO - Architecture
+===============
 
 .. image:: images/SO_Architecture_1.png
 
