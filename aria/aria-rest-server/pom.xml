@@ -25,12 +25,12 @@
   <groupId>org.onap.aria</groupId>
   <artifactId>ariarest</artifactId>
   <name>ariarest</name>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.2-SNAPSHOT</version>
   <description>ARIA REST API wheel build</description>
   <parent>
     <groupId>org.onap.oparent</groupId>
     <artifactId>oparent</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
   </parent>
 
   <pluginRepositories>
@@ -61,7 +61,7 @@
 	    <phase>initialize</phase>
 	    <configuration>
 	      <name>python_version</name>
-	      <regex>-SNAPSHOT</regex>
+	      <regex>-amsterdam</regex>
 	      <value>${project.version}</value>
 	      <replacement>\.dev0</replacement>
 	      <failIfNoMatch>false</failIfNoMatch>
