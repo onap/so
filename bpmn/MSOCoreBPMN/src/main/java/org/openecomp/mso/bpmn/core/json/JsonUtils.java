@@ -928,14 +928,14 @@ public class JsonUtils {
 		JSONObject obj = new JSONObject(stringListJson);
 		JSONArray arr = obj.getJSONArray("strings");
 		for (int i = 0; i < arr.length(); i++){
-			String s = arr.getString(i);
+		    String s = arr.get(i).toString();
 			list.add(s);
 		}
 		msoLogger.debug("Outgoing List is: " + list);
 		msoLogger.debug("Completed String Array To List Util Method");
 		return list;
 	}
-
+	
 	/**
 	 *
 	 * Invokes the getJsonRawValue() method to determine if the
