@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.openecomp.so</groupId>
 		<artifactId>packages</artifactId>
-		<version>1.1.0-SNAPSHOT</version>
+		<version>1.1.1-SNAPSHOT</version>
 	</parent>
 
 	<packaging>pom</packaging>
@@ -47,8 +47,8 @@
                             versionArray = project.properties['mso.project.version'].split('\\.');
                         }
 
-                        if ( project.properties['mso.project.version'].endsWith("-SNAPSHOT") ) {
-                            project.properties['project.docker.latesttag.version']=versionArray[0] + '.' + versionArray[1] + "-SNAPSHOT-latest";
+                        if ( project.properties['mso.project.version'].endsWith("-amsterdam") ) {
+                            project.properties['project.docker.latesttag.version']=versionArray[0] + '.' + versionArray[1] + "-amsterdam-latest";
                         } else {
                             project.properties['project.docker.latesttag.version']=versionArray[0] + '.' + versionArray[1] + "-STAGING-latest";
                         }
