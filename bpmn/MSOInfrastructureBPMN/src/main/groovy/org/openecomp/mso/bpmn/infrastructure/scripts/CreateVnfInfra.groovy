@@ -456,7 +456,7 @@ class CreateVnfInfra extends AbstractServiceTaskProcessor {
 			JSONArray vnfs = cutils.getAllVnfsByVnfModelCustomizationUuid(execution,
 							vnfModelCustomizationUuid, "v2")
 			utils.log("DEBUG", "obtained VNF list: " + vnfs, isDebugEnabled)			
-			execution.setVariable("CREVI_vnfs", vnfs)
+			execution.setVariable("CREVI_vnfs", vnfs.toString())
 			
 			if (vnfs == null) {
 				utils.log("ERROR", "No matching VNFs in Catalog DB for vnfModelCustomizationUuid=" + vnfModelCustomizationUuid, isDebugEnabled)
