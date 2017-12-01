@@ -38,6 +38,7 @@ import javax.ws.rs.core.Response;
 
 public class HealthCheckUtils {
 
+    private static final String HEALTH_CHECK = "HealthCheck";
     private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.GENERAL);
     private static final String MSO_PROP_TOPOLOGY = "MSO_PROP_TOPOLOGY";
     private static MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory();
@@ -60,7 +61,7 @@ public class HealthCheckUtils {
         try(CatalogDatabase catalogDB = CatalogDatabase.getInstance()) {
             catalogDB.healthCheck ();
         } catch (Exception e) {
-            subMsoLogger.error(MessageEnum.GENERAL_EXCEPTION, "", "HealthCheck", MsoLogger.ErrorCode.DataError, "Failed to check catalog database", e);
+            subMsoLogger.error(MessageEnum.GENERAL_EXCEPTION, "", HEALTH_CHECK, MsoLogger.ErrorCode.DataError, "Failed to check catalog database", e);
             subMsoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError, "Exception during healthcheck");
             return false;
         }
@@ -71,7 +72,7 @@ public class HealthCheckUtils {
         try {
             (RequestsDatabase.getInstance()).healthCheck ();
         } catch (Exception e) {
-            subMsoLogger.error(MessageEnum.GENERAL_EXCEPTION, "", "HealthCheck", MsoLogger.ErrorCode.DataError, "Failed to check request database", e);
+            subMsoLogger.error(MessageEnum.GENERAL_EXCEPTION, "", HEALTH_CHECK, MsoLogger.ErrorCode.DataError, "Failed to check request database", e);
             subMsoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.ServiceNotAvailable, "Exception during local healthcheck");
             return false;
         }
@@ -107,13 +108,13 @@ public class HealthCheckUtils {
         try {
             msoProperties = msoPropertiesFactory.getMsoJavaProperties(fileName);
         } catch (Exception e) {
-            msoLogger.error (MessageEnum.LOAD_PROPERTIES_FAIL, fileName, "", "HealthCheck", MsoLogger.ErrorCode.DataError, "Failed to load topology properties", e);
+            msoLogger.error (MessageEnum.LOAD_PROPERTIES_FAIL, fileName, "", HEALTH_CHECK, MsoLogger.ErrorCode.DataError, "Failed to load topology properties", e);
             return null;
         }
         if (msoProperties !=null && msoProperties.size() > 0) {
             return msoProperties;
         } else {
-            msoLogger.error (MessageEnum.NO_PROPERTIES, fileName, "", "HealthCheck", MsoLogger.ErrorCode.DataError, "No topology properties");
+            msoLogger.error (MessageEnum.NO_PROPERTIES, fileName, "", HEALTH_CHECK, MsoLogger.ErrorCode.DataError, "No topology properties");
             return  null;
         }
     }
@@ -138,8 +139,8 @@ public class HealthCheckUtils {
             }
             msoLogger.debug("verifyLocalHealth - Service not available");
         } catch (Exception e) {
-            msoLogger.error(MessageEnum.GENERAL_EXCEPTION, "", "HealthCheck", MsoLogger.ErrorCode.UnknownError, "Error in local HealthCheck", e);
-            msoLogger.recordMetricEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, "Exception while communicate with APIH/BPMN/RA", url, "HealthCheck", null);
+            msoLogger.error(MessageEnum.GENERAL_EXCEPTION, "", HEALTH_CHECK, MsoLogger.ErrorCode.UnknownError, "Error in local HealthCheck", e);
+            msoLogger.recordMetricEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, "Exception while communicate with APIH/BPMN/RA", url, HEALTH_CHECK, null);
             msoLogger.debug("Exception while triggering local health check api:" + finalUrl);
         }
         return false;
@@ -161,14 +162,14 @@ public class HealthCheckUtils {
         try {
             msoProperties = msoPropertiesFactory.getMsoJavaProperties(MSO_PROP_TOPOLOGY);
         } catch (Exception e) {
-            msoLogger.error(MessageEnum.LOAD_PROPERTIES_FAIL, MSO_PROP_TOPOLOGY, "", "HealthCheck", MsoLogger.ErrorCode.DataError, "Not able to load topology properties", e);
+            msoLogger.error(MessageEnum.LOAD_PROPERTIES_FAIL, MSO_PROP_TOPOLOGY, "", HEALTH_CHECK, MsoLogger.ErrorCode.DataError, "Not able to load topology properties", e);
             return null;
         }
 
         if (msoProperties != null && msoProperties.size() > 0) {
             return msoProperties;
         } else {
-            msoLogger.error(MessageEnum.LOAD_PROPERTIES_FAIL, MSO_PROP_TOPOLOGY, "", "HealthCheck", MsoLogger.ErrorCode.DataError, "Not able to load topology properties");
+            msoLogger.error(MessageEnum.LOAD_PROPERTIES_FAIL, MSO_PROP_TOPOLOGY, "", HEALTH_CHECK, MsoLogger.ErrorCode.DataError, "Not able to load topology properties");
             return null;
         }
     }
@@ -184,7 +185,7 @@ public class HealthCheckUtils {
         String sslEnabled = topologyProp.getProperty("ssl-enable", null);
 
         if (null == port || null == ip || ip.isEmpty() || port.isEmpty()) {
-            msoLogger.error (MessageEnum.GENERAL_EXCEPTION_ARG, "Not able to get the IP or the Port value. IP:" + ip + "; Port:" + port, "", "HealthCheck", MsoLogger.ErrorCode.DataError, "Not able to get the IP or the Port value. IP:" + ip + "; Port:" + port);
+            msoLogger.error (MessageEnum.GENERAL_EXCEPTION_ARG, "Not able to get the IP or the Port value. IP:" + ip + "; Port:" + port, "", HEALTH_CHECK, MsoLogger.ErrorCode.DataError, "Not able to get the IP or the Port value. IP:" + ip + "; Port:" + port);
             return false;
         }
 
@@ -192,26 +193,29 @@ public class HealthCheckUtils {
         if (NodeType.APIH.equals (type)) {
             String apiList = topologyProp.getProperty("apih-healthcheck-urn", null);
             if (null == apiList) {
-                msoLogger.error (MessageEnum.GENERAL_EXCEPTION_ARG, "Not able to get apih-healthcheck-urn parameter", "", "HealthCheck", MsoLogger.ErrorCode.DataError, "Not able to get apih-healthcheck-urn parameter");
+                String errorDescription = "Not able to get apih-healthcheck-urn parameter";
+                msoLogger.error (MessageEnum.GENERAL_EXCEPTION_ARG, errorDescription, "", HEALTH_CHECK, MsoLogger.ErrorCode.DataError, errorDescription);
                 return false;
             }
             apis = apiList.split(",");
         } else if (NodeType.RA.equals (type)){
             String apiList = topologyProp.getProperty("jra-healthcheck-urn", null);
             if (null == apiList) {
-                msoLogger.error (MessageEnum.GENERAL_EXCEPTION_ARG, "Not able to get jra-healthcheck-urn parameter", "", "HealthCheck", MsoLogger.ErrorCode.DataError, "Not able to get jra-healthcheck-urn parameter");
+                String errorDescription = "Not able to get jra-healthcheck-urn parameter";
+                msoLogger.error (MessageEnum.GENERAL_EXCEPTION_ARG, errorDescription, "", HEALTH_CHECK, MsoLogger.ErrorCode.DataError, errorDescription);
                 return false;
             }
             apis = apiList.split(",");
         } else if (NodeType.BPMN.equals (type)){
             String apiList = topologyProp.getProperty("camunda-healthcheck-urn", null);
             if (null == apiList) {
-                msoLogger.error (MessageEnum.GENERAL_EXCEPTION_ARG, "Not able to get jra-healthcheck-urn parameter", "", "HealthCheck", MsoLogger.ErrorCode.DataError, "Not able to get jra-healthcheck-urn parameter");
+                String errorDescription = "Not able to get camunda-healthcheck-urn parameter";
+                msoLogger.error (MessageEnum.GENERAL_EXCEPTION_ARG, errorDescription, "", HEALTH_CHECK, MsoLogger.ErrorCode.DataError, errorDescription);
                 return false;
             }
             apis = apiList.split(",");
         } else {
-            msoLogger.error (MessageEnum.GENERAL_EXCEPTION_ARG, "Unknown NodeType:" + type, "", "HealthCheck", MsoLogger.ErrorCode.DataError, "Unknown NodeType:" + type);
+            msoLogger.error (MessageEnum.GENERAL_EXCEPTION_ARG, "Unknown NodeType:" + type, "", HEALTH_CHECK, MsoLogger.ErrorCode.DataError, "Unknown NodeType:" + type);
             return false;
         }
 
@@ -233,7 +237,7 @@ public class HealthCheckUtils {
         // Get info from topology properties file
         MsoJavaProperties topologyProp = this.loadTopologyProperties();
         if (null == topologyProp) {
-            msoLogger.error (MessageEnum.GENERAL_EXCEPTION_ARG, "Not able to find the topology file", "", "HealthCheck", MsoLogger.ErrorCode.PermissionError, "Not able to find the topology file");
+            msoLogger.error (MessageEnum.GENERAL_EXCEPTION_ARG, "Not able to find the topology file", "", HEALTH_CHECK, MsoLogger.ErrorCode.PermissionError, "Not able to find the topology file");
             return false;
         }
 
@@ -246,7 +250,7 @@ public class HealthCheckUtils {
 
         if (null == apihLB || null == apihApi || null == bpmnLB || null == bpmnApi || null == jraLB || null == jraApi
                 || apihLB.isEmpty () || apihApi.isEmpty () || bpmnLB.isEmpty () || bpmnApi.isEmpty () || jraLB.isEmpty () || jraApi.isEmpty () ) {
-            msoLogger.error (MessageEnum.GENERAL_EXCEPTION_ARG, "Key parameters are missing from the topology file", "", "HealthCheck", MsoLogger.ErrorCode.DataError, "Key parameters are missing from the topology file");
+            msoLogger.error (MessageEnum.GENERAL_EXCEPTION_ARG, "Key parameters are missing from the topology file", "", HEALTH_CHECK, MsoLogger.ErrorCode.DataError, "Key parameters are missing from the topology file");
             return false;
         }
 
