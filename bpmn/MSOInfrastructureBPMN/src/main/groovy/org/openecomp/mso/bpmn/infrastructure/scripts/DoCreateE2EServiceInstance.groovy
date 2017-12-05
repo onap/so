@@ -130,8 +130,8 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 			String serviceModelName = jsonUtil.getJsonValue(uuiRequest, "service.parameters.templateName")
 			execution.setVariable("serviceModelName", serviceModelName)
 			//aai serviceType and Role can be setted as fixed value now.
-			String aaiServiceType = "voLTE type"
-			String aaiServiceRole = "voLTE role"
+			String aaiServiceType = "E2E Service"
+			String aaiServiceRole = "E2E Service"
 			
 			execution.setVariable("modelInvariantUuid", modelInvariantUuid)
 			execution.setVariable("modelUuid", modelUuid)
