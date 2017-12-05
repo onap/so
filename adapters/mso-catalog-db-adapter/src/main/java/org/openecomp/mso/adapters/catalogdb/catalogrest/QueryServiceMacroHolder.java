@@ -30,8 +30,9 @@ import java.util.Map;
 @XmlRootElement(name = "serviceResources")
 @NoJackson
 public class QueryServiceMacroHolder extends CatalogQuery {
-	private ServiceMacroHolder serviceMacroHolder;
-	private final String template =
+    private ServiceMacroHolder serviceMacroHolder;
+    private static final String LINE_BEGINNING = "(?m)^";
+	private static final String template =
 		"{ \"serviceResources\"    : {\n"+
 			"\t\"modelInfo\"       : {\n"+
             "\t\t\"modelName\"          : <SERVICE_MODEL_NAME>,\n"+
@@ -46,7 +47,10 @@ public class QueryServiceMacroHolder extends CatalogQuery {
             "<_SERVICEALLOTTEDRESOURCES_>\n"+
         "\t}}";
 
-	public QueryServiceMacroHolder() { super(); serviceMacroHolder = new ServiceMacroHolder(); }
+	public QueryServiceMacroHolder() {
+	    super();
+	    serviceMacroHolder = new ServiceMacroHolder();
+	}
 	public QueryServiceMacroHolder(ServiceMacroHolder vlist) { serviceMacroHolder = vlist; }
 
 	public ServiceMacroHolder getServiceResources(){ return this.serviceMacroHolder; }
@@ -58,7 +62,9 @@ public class QueryServiceMacroHolder extends CatalogQuery {
 	@Override
 	public String JSON2(boolean isArray, boolean x) {
 		Service service = serviceMacroHolder.getService();
-		if (service == null) return "\"serviceResources\": null";
+		if (service == null) {
+            return "\"serviceResources\": null";
+		}
 
 		StringBuilder buf = new StringBuilder();
 		Map<String, String> valueMap = new HashMap<>();
@@ -72,13 +78,13 @@ public class QueryServiceMacroHolder extends CatalogQuery {
 
 	    String subitem;
 	    subitem = new QueryServiceVnfs(serviceMacroHolder.getVnfResourceCustomizations()).JSON2(true, true); 
-	    valueMap.put("_SERVICEVNFS_",               subitem.replaceAll("(?m)^", "\t"));
+	    valueMap.put("_SERVICEVNFS_",               subitem.replaceAll(LINE_BEGINNING, "\t"));
 
 		subitem = new QueryServiceNetworks(serviceMacroHolder.getNetworkResourceCustomization()).JSON2(true, true);
-		valueMap.put("_SERVICENETWORKS_",           subitem.replaceAll("(?m)^", "\t"));
+		valueMap.put("_SERVICENETWORKS_",           subitem.replaceAll(LINE_BEGINNING, "\t"));
 
 		subitem = new QueryAllottedResourceCustomization(serviceMacroHolder.getAllottedResourceCustomization()).JSON2(true, true);
-		valueMap.put("_SERVICEALLOTTEDRESOURCES_",  subitem.replaceAll("(?m)^", "\t"));
+		valueMap.put("_SERVICEALLOTTEDRESOURCES_",  subitem.replaceAll(LINE_BEGINNING, "\t"));
 
         buf.append(this.setTemplate(template, valueMap));
 		return buf.toString();
