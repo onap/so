@@ -18,8 +18,7 @@
 
 
 import os
-from cStringIO import StringIO
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, request, jsonify
 from flask_autodoc.autodoc import Autodoc
 from aria import install_aria_extensions
 from aria.parser import consumption
@@ -34,6 +33,8 @@ from aria.utils import threading
 from aria.orchestrator.workflow_runner import WorkflowRunner
 from aria.orchestrator.workflows.executor.dry import DryExecutor
 import util
+import tempfile
+import shutil
 
 version_id = "0.1"
 route_base = "/api/" + version_id + "/"
@@ -69,29 +70,75 @@ def index():
 @aria.pass_logger
 def install_template(template_name, model_storage, resource_storage,
                      plugin_manager, logger):
+
     """
     installs a template in Aria storage
+
+    3 modes possible:
+
+      1. PUT JSON body which points to a CSAR URL.  Content-type must be
+         application/json. PUT data is a JSON object/map with the following
+         keys.:
+          * service_template_path (required): URL to CSAR
+          * service_template_filename (optional): service template file.
+
+      2. PUT with service template file body.  Content-type must be
+         text/plain.
+
+      3. PUT with binary CSAR body.  Content-type must be application/zip.
+         Optional query string arg "template_filename" can indicate the
+         service template filename in the CSAR.  Defaults to
+         "service-template.yaml".
     """
-    body = request.json
 
-    # Check body
-    if "service_template_path" in body:
-        service_template_path = body["service_template_path"]
+    service_template_path = None
+    service_template_filename = "service-template.yaml"
+
+    rtype = "unknown"
+    if request.is_json:
+        rtype = "json"
+    elif request.headers['Content-Type'] == "application/zip":
+        rtype = "zip"
+        suffix = ".csar"
+    elif request.headers['Content-Type'] == "text/plain":
+        rtype = "yaml"
+        suffix = ".yaml"
+
+    if rtype == "zip" or rtype == "yaml":
+        with tempfile.NamedTemporaryFile(prefix = "ariatmp_",
+                                         suffix = suffix,
+                                         delete = False) as f:
+            f.write(request.data)
+            service_template_path = f.name
+        if request.headers['Content-Type'] == "application/zip":
+            if "template_filename" in request.args:
+                service_template_filename = request.args["template_filename"]
+
+    elif rtype == "json":
+
+        body = request.json
+
+        # Check body
+        if "service_template_path" in body:
+            service_template_path = body["service_template_path"]
+        else:
+            return "request body missing service_template_path", 501
+
+        if "service_template_filename" in body:
+            service_template_filename = body["service_template_filename"]
+        else:
+            service_template_filename = "service-template.yaml"
+
     else:
-        return "request body missing service_template_path", 501
+        return "Unrecognized content type",400
 
-    if "service_template_filename" in body:
-        service_template_filename = body["service_template_filename"]
-    else:
-        service_template_filename = "service-template.yaml"
-
-    service_template_path = service_template_utils.get(
+    service_template_file_path = service_template_utils.get(
         service_template_path, service_template_filename)
 
     core = Core(model_storage, resource_storage, plugin_manager)
 
     try:
-        core.create_service_template(service_template_path,
+        core.create_service_template(service_template_file_path,
                                      os.path.dirname(service_template_path),
                                      template_name)
     except storage_exceptions.StorageError as e:
@@ -102,6 +149,12 @@ def install_template(template_name, model_storage, resource_storage,
     except Exception as e:
         logger.error("catchall exception")
         return e.message, 500
+    finally:
+        # cleanup
+        if rtype == "zip" or rtype == "yaml":
+            os.remove(service_template_path)
+        if rtype == "zip":
+            shutil.rmtree(os.path.dirname(service_template_file_path))
 
     return "service template installed", 200
 
