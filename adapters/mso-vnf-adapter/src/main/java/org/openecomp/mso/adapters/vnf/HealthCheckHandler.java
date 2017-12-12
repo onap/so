@@ -49,7 +49,7 @@ public class HealthCheckHandler {
 		MsoLogger.setServiceName ("Healthcheck");
 		UUIDChecker.verifyOldUUID(requestId, msoLogger);
 		HealthCheckUtils healthCheck = new HealthCheckUtils ();
-		if (!healthCheck.siteStatusCheck(msoLogger, startTime)) {
+		if (!healthCheck.siteStatusCheck(msoLogger)) {
 			return HealthCheckUtils.HEALTH_CHECK_NOK_RESPONSE;
 		}
 

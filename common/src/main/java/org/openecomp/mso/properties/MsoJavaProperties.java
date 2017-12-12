@@ -115,7 +115,6 @@ public class MsoJavaProperties extends AbstractMsoProperties {
 
 		} finally {
 			this.automaticRefreshInMinutes = this.getIntProperty(RELOAD_TIME_PROPERTY, DEFAULT_RELOAD_TIME_MIN);
-			// Always close the file
 			try {
 				if (reader != null) {
 					reader.close();
@@ -155,27 +154,31 @@ public class MsoJavaProperties extends AbstractMsoProperties {
 			return false;
 		}
 		MsoJavaProperties other = (MsoJavaProperties) obj;
-		if (!msoProperties.equals(other.msoProperties)) {
-			return false;
-		}
-		return true;
+
+		return msoProperties.equals(other.msoProperties);
 	}
 
 	@Override
 	public String toString() {
 
-		StringBuffer response = new StringBuffer();
-		response.append("Config file " + propertiesFileName + "(Timer:" + automaticRefreshInMinutes + "mins):"
-				+ System.getProperty("line.separator"));
+		StringBuilder response = new StringBuilder();
+		response.append("Config file ")
+				.append(propertiesFileName)
+				.append("(Timer:")
+				.append(automaticRefreshInMinutes)
+				.append("mins):")
+				.append(System.lineSeparator());
+
 		for (Object key : this.msoProperties.keySet()) {
 			String propertyName = (String) key;
 			response.append(propertyName);
 			response.append("=");
 			response.append(this.msoProperties.getProperty(propertyName));
-			response.append(System.getProperty("line.separator"));
+			response.append(System.lineSeparator());
 		}
-		response.append(System.getProperty("line.separator"));
-		response.append(System.getProperty("line.separator"));
+		response.append(System.lineSeparator());
+		response.append(System.lineSeparator());
+
 		return response.toString();
 	}
 }

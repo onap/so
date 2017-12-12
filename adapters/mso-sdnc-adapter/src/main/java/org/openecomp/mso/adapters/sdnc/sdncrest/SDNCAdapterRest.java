@@ -58,7 +58,7 @@ public class SDNCAdapterRest {
 		UUIDChecker.verifyOldUUID(requestId, LOGGER);
 		HealthCheckUtils healthCheck = new HealthCheckUtils();
 
-		if (!healthCheck.siteStatusCheck(LOGGER, startTime)) {
+		if (!healthCheck.siteStatusCheck(LOGGER)) {
 			return HealthCheckUtils.HEALTH_CHECK_NOK_RESPONSE;
 		}
 

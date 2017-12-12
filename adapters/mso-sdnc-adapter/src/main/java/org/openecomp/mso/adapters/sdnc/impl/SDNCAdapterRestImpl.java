@@ -131,7 +131,7 @@ public class SDNCAdapterRestImpl {
 		MsoLogger.setServiceName ("Healthcheck");
 		UUIDChecker.verifyOldUUID(requestId, msoLogger);
 		HealthCheckUtils healthCheck = new HealthCheckUtils ();
-		if (!healthCheck.siteStatusCheck(msoLogger, startTime)) {
+		if (!healthCheck.siteStatusCheck(msoLogger)) {
 			return HealthCheckUtils.HEALTH_CHECK_NOK_RESPONSE;
 		}
 
@@ -152,7 +152,7 @@ public class SDNCAdapterRestImpl {
 		// Generate a Request Id
 		String requestId = UUIDChecker.generateUUID(msoLogger);
 		HealthCheckUtils healthCheck = new HealthCheckUtils ();
-		if (!healthCheck.siteStatusCheck (msoLogger, startTime)) {
+		if (!healthCheck.siteStatusCheck (msoLogger)) {
 			return HealthCheckUtils.HEALTH_CHECK_NOK_RESPONSE;
 		}
 
@@ -175,7 +175,7 @@ public class SDNCAdapterRestImpl {
 		// Generate a Request Id
 		String requestId = UUIDChecker.generateUUID(msoLogger);
 		HealthCheckUtils healthCheck = new HealthCheckUtils ();
-		if (!healthCheck.siteStatusCheck (msoLogger, startTime)) {
+		if (!healthCheck.siteStatusCheck (msoLogger)) {
 			return HealthCheckUtils.HEALTH_CHECK_NOK_RESPONSE;
 		}
 

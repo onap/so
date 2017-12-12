@@ -21,19 +21,16 @@
 package org.openecomp.mso;
 
 
-import org.openecomp.mso.logger.MsoLogger;
-import org.openecomp.mso.properties.MsoJavaProperties;
-import org.openecomp.mso.requestsdb.RequestsDatabase;
 import org.apache.http.HttpStatus;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicStatusLine;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.openecomp.mso.properties.MsoJavaProperties;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -63,7 +60,7 @@ public class HealthCheckUtilsTest {
     private static CloseableHttpResponse nokRes, okRes;
 
     @BeforeClass
-    public static final void prepareMockvalues() {
+    public static void prepareMockvalues() {
         utils = Mockito.mock(HealthCheckUtils.class);
         client = Mockito.mock(CloseableHttpClient.class);
         nokRes = Mockito.mock(CloseableHttpResponse.class);
@@ -277,19 +274,7 @@ public class HealthCheckUtilsTest {
             method = HealthCheckUtils.class.getDeclaredMethod(methodName, String.class, String.class, String.class, String.class, String.class);
             method.setAccessible(true);
             return  method.invoke(tempUtil, arg1, arg2, arg3, arg4, arg5);
-        } catch (NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (SecurityException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
+        } catch (NoSuchMethodException | SecurityException | IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
