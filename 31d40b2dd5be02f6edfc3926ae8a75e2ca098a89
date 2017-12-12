@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_aa49f88c",
+        "filename": "status-control/src/test/java/org/openecomp/mso/HealthCheckUtilsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 903
+      },
+      "writtenOn": "2017-12-12T18:36:00Z",
+      "side": 1,
+      "message": "I personally think this test class needs to be revisited.\nReason is, it is actually mocking the class we are actually trying to test, therefore defying the purpose.\nBut that\u0027s outside of the scope of your changes.",
+      "range": {
+        "startLine": 44,
+        "startChar": 13,
+        "endLine": 44,
+        "endChar": 33
+      },
+      "revId": "31d40b2dd5be02f6edfc3926ae8a75e2ca098a89",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ea4f0091",
+        "filename": "status-control/src/test/java/org/openecomp/mso/HealthCheckUtilsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 903
+      },
+      "writtenOn": "2017-12-12T18:36:00Z",
+      "side": 1,
+      "message": "Method could be invoked directly instead",
+      "range": {
+        "startLine": 207,
+        "startChar": 36,
+        "endLine": 207,
+        "endChar": 57
+      },
+      "revId": "31d40b2dd5be02f6edfc3926ae8a75e2ca098a89",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_8a443c75",
+        "filename": "status-control/src/test/java/org/openecomp/mso/HealthCheckUtilsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 903
+      },
+      "writtenOn": "2017-12-12T18:36:00Z",
+      "side": 1,
+      "message": "Method could be invoked directly instead",
+      "range": {
+        "startLine": 211,
+        "startChar": 36,
+        "endLine": 211,
+        "endChar": 57
+      },
+      "revId": "31d40b2dd5be02f6edfc3926ae8a75e2ca098a89",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_6a7450cf",
+        "filename": "status-control/src/test/java/org/openecomp/mso/HealthCheckUtilsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 271,
+      "author": {
+        "id": 903
+      },
+      "writtenOn": "2017-12-12T18:36:00Z",
+      "side": 1,
+      "message": "While you\u0027re at it this method is useless and can be removed.\nSince this test is located in the same package, protected methods are actually visible.",
+      "range": {
+        "startLine": 271,
+        "startChar": 26,
+        "endLine": 271,
+        "endChar": 47
+      },
+      "revId": "31d40b2dd5be02f6edfc3926ae8a75e2ca098a89",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
