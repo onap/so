@@ -30,8 +30,6 @@ import javax.ws.rs.HeaderParam;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -62,7 +60,7 @@ public class WMAdapterRest {
 		UUIDChecker.verifyOldUUID(requestId, LOGGER);
 		HealthCheckUtils healthCheck = new HealthCheckUtils();
 
-		if (!healthCheck.siteStatusCheck(LOGGER, startTime)) {
+		if (!healthCheck.siteStatusCheck(LOGGER)) {
 			return HealthCheckUtils.HEALTH_CHECK_NOK_RESPONSE;
 		}
 

@@ -21,22 +21,16 @@
 package org.openecomp.mso;
 
 
-import org.openecomp.mso.logger.MsoLogger;
-import org.openecomp.mso.properties.MsoJavaProperties;
-import org.openecomp.mso.requestsdb.RequestsDatabase;
 import org.apache.http.HttpStatus;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicStatusLine;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import org.openecomp.mso.properties.MsoJavaProperties;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -63,7 +57,7 @@ public class HealthCheckUtilsTest {
     private static CloseableHttpResponse nokRes, okRes;
 
     @BeforeClass
-    public static final void prepareMockvalues() {
+    public static void prepareMockvalues() {
         utils = Mockito.mock(HealthCheckUtils.class);
         client = Mockito.mock(CloseableHttpClient.class);
         nokRes = Mockito.mock(CloseableHttpResponse.class);
@@ -207,11 +201,11 @@ public class HealthCheckUtilsTest {
 
         try {
             Mockito.when (client.execute (any(HttpUriRequest.class))).thenReturn (okRes);
-            Boolean res1 = (Boolean)invokeProtectedMethod(tempUtil, "verifyLocalHealth", ip1, port, apihUrl1, sslEnable, null);
+            boolean res1 = tempUtil.verifyLocalHealth(ip1, port, apihUrl1, sslEnable, null);
             assertTrue(res1);
 
             Mockito.when (client.execute (any(HttpUriRequest.class))).thenReturn (nokRes);
-            Boolean res2 = (Boolean)invokeProtectedMethod(tempUtil, "verifyLocalHealth", ip1, port, apihUrl1, sslEnable, null);
+            boolean res2 = tempUtil.verifyLocalHealth(ip1, port, apihUrl1, sslEnable, null);
             assertFalse(res2);
 
         } catch (Exception e) {
@@ -270,29 +264,4 @@ public class HealthCheckUtilsTest {
         Mockito.when(utils.loadTopologyProperties()).thenReturn(properties);
     }
 
-    // User reflection to invoke to avoid change the publicity of the method
-    private static Object invokeProtectedMethod (HealthCheckUtils tempUtil, String methodName, String arg1, String arg2, String arg3, String arg4, String arg5) {
-        Method method;
-        try {
-            method = HealthCheckUtils.class.getDeclaredMethod(methodName, String.class, String.class, String.class, String.class, String.class);
-            method.setAccessible(true);
-            return  method.invoke(tempUtil, arg1, arg2, arg3, arg4, arg5);
-        } catch (NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (SecurityException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return null;
-    }
 }
