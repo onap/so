@@ -67,12 +67,16 @@ class GroovyTestBase {
 	
 	String processName
 
-	public static void setUpBeforeClass() {
+	static {
 		def fr = new FileReader("src/test/resources/mso.bpmn.urn.properties")
 		urnProps.load(fr)
 		fr.close()
-		
+
 		aaiUriPfx = urnProps.get("aai.endpoint")
+	}
+
+	public static void setUpBeforeClass() {
+		// moved to the above static block to get the static aaiUriPfx assignment correctly.
 	}
 	
 	public GroovyTestBase(String processName) {

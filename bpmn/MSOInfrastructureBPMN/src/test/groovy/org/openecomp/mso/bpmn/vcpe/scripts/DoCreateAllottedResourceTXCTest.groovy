@@ -62,11 +62,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 
 	@BeforeClass
 	public static void setUpBeforeClass() {
-		def fr = new FileReader("src/test/resources/mso.bpmn.urn.properties")
-		urnProps.load(fr)
-		fr.close()
-		
-		aaiUriPfx = urnProps.get("aai.endpoint")
+		// nothing for now
 	}
 	  
     @Before
