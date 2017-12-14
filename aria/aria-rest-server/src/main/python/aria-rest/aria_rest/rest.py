@@ -116,7 +116,7 @@ def install_template(template_name, model_storage, resource_storage,
 
     elif rtype == "json":
 
-        body = request.json
+        body = request.json or {}
 
         # Check body
         if "service_template_path" in body:
@@ -169,7 +169,7 @@ def validate_template(model_storage, resource_storage, plugin_manager, logger):
     """
     Validates a TOSCA template
     """
-    body = request.json
+    body = request.json or {}
 
     # Check body
     if "service_template_path" in body:
@@ -385,7 +385,7 @@ def create_service(template_id, service_name, model_storage, resource_storage,
     """
     Creates a service from the specified service template
     """
-    body = request.json
+    body = request.json or {}
     inputs = {}
     if 'inputs' in body:
         inputs = body['inputs']
@@ -542,7 +542,7 @@ def start_execution(
     """
     Start an execution for the specified service
     """
-    body = request.json
+    body = request.json or {}
     executor = DryExecutor(
         ) if 'executor' in body and body['executor'] == 'dry' else None
 
@@ -585,7 +585,7 @@ def resume_execution(
     """
     Resume the specified execution
     """
-    body = request.json
+    body = request.json or {}
     execution = model_storage.execution.get(execution_id)
     if execution.status != execution.status.CANCELLED:
         return "cancelled execution cannot be resumed", 400
@@ -619,7 +619,7 @@ def cancel_execution(execution_id, model_storage, logger):
     Cancel the specified execution
     """
     logger.info("cancelling execution {}".format(execution_id))
-    body = request.json
+    body = request.json or {}
 
     try:
         execution = model_storage.execution.get(execution_id)
