@@ -406,7 +406,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 								}
 							}
 						}
-                        execution.setVariable("serviceRelationShip", jArray)
+                        execution.setVariable("serviceRelationShip", jArray.toString())
 					}
 				}
 			}else{
