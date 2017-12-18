@@ -24,19 +24,14 @@ import org.openecomp.mso.cloud.CloudConfig;
 import org.openecomp.mso.cloud.CloudConfigFactory;
 import org.openecomp.mso.cloud.CloudIdentity;
 import org.openecomp.mso.cloud.CloudSite;
-import org.openecomp.mso.logger.MsoLogger;
-import org.openecomp.mso.properties.MsoJavaProperties;
 
 import java.lang.reflect.InvocationTargetException;
 
 
 public class MsoTenantUtilsFactory {
 
-	private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
-
 	private CloudConfigFactory cloudConfigFactory= new CloudConfigFactory();
-	protected CloudConfig cloudConfig;
-	protected MsoJavaProperties msoProps = null;
+	private CloudConfig cloudConfig;
 	private String msoPropID;
 
 	public MsoTenantUtilsFactory (String msoPropID) {

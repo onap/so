@@ -81,7 +81,6 @@ public class MsoCommonUtils {
             }
         }
 
-        long start = System.currentTimeMillis ();
     	String requestType;
         if (request.getClass ().getEnclosingClass () != null) {
             requestType = request.getClass ().getEnclosingClass ().getSimpleName () + "."
@@ -308,7 +307,7 @@ public class MsoCommonUtils {
     public static boolean isNullOrEmpty (String s) {
         return s == null || s.isEmpty();
     }
-    
-    
+
+
 
 }

@@ -25,7 +25,6 @@ package org.openecomp.mso.openstack.exceptions;
 public class MsoTenantAlreadyExists extends MsoOpenstackException {
 
 	private static final long serialVersionUID = 1L;
-
 	// Constructor to create a new MsoOpenstackException instance
 	public MsoTenantAlreadyExists (String tenant, String cloud) {
 		// Set the detailed error as the Exception 'message'

@@ -35,12 +35,8 @@ import org.openecomp.mso.cloud.CloudIdentity;
 import org.openecomp.mso.cloud.CloudSite;
 import org.openecomp.mso.openstack.exceptions.MsoCloudIdentityNotFound;
 
-
-
 /**
  * This class implements test methods of the CloudConfig features.
- *
- *
  */
 public class CloudConfigTest {
 
@@ -110,32 +106,24 @@ public class CloudConfigTest {
 	   CloudIdentity identity3 = identityMap.get("MTINJVCC101_DCP");
 	   CloudIdentity identity4 = identityMap.get("MTSNJA3DCP1");
 
-//	   assertEquals (identity1.getKeystoneUrl(), "http://localhost:5000/v2.0");
-//	   assertEquals (identity1.getIdentityUrl(), "http://localhost:5000/v2.0");
 	   assertEquals (identity1.getMsoId(), "john");
 	   assertEquals (identity1.getMsoPass(), "changeme");
 	   assertEquals (identity1.getAdminTenant(), "admin");
 	   assertEquals (identity1.getMemberRole(), "_member_");
 	   assertEquals (identity1.hasTenantMetadata(), false);
 
-//	   assertEquals (identity2.getKeystoneUrl(), "http://localhost:5000/v2.0");
-//	   assertEquals (identity2.getIdentityUrl(), "http://localhost:5000/v2.0");
 	   assertEquals (identity2.getMsoId(), "mockId");
 	   assertEquals (identity2.getMsoPass(), "stack123");
 	   assertEquals (identity2.getAdminTenant(), "service");
 	   assertEquals (identity2.getMemberRole(), "_member_");
 	   assertEquals (identity2.hasTenantMetadata(), false);
 
-//	   assertEquals (identity3.getKeystoneUrl(), "http://localhost:5000/v2.0");
-//	   assertEquals (identity3.getIdentityUrl(), "http://localhost:5000/v2.0");
 	   assertEquals (identity3.getMsoId(), "mockIdToo");
 	   assertEquals (identity3.getMsoPass(), "AICG@mm@@2015");
 	   assertEquals (identity3.getAdminTenant(), "service");
 	   assertEquals (identity3.getMemberRole(), "admin");
 	   assertEquals (identity3.hasTenantMetadata(), true);
 
-//	   assertEquals (identity4.getKeystoneUrl(), "https://localhost:5000/v2.0");
-//	   assertEquals (identity4.getIdentityUrl(), "https://localhost:5000/v2.0");
 	   assertEquals (identity4.getMsoId(), "mockIdToo");
 	   assertEquals (identity4.getMsoPass(), "2315QRS2015srq");
 	   assertEquals (identity4.getAdminTenant(), "service");
@@ -162,8 +150,6 @@ public class CloudConfigTest {
    public final void testGetIdentityService () {
 	   CloudIdentity identity1  = con.getIdentityService("MT_KEYSTONE");
 	   assertNotNull(identity1);
-//	   assertEquals (identity1.getKeystoneUrl(), "http://localhost:5000/v2.0");
-//	   assertEquals (identity1.getIdentityUrl(), "http://localhost:5000/v2.0");
 	   assertEquals (identity1.getMsoId(), "john");
 	   assertEquals (identity1.getMsoPass(), "changeme");
 	   assertEquals (identity1.getAdminTenant(), "admin");
