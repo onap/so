@@ -26,8 +26,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openecomp.mso.cloud.CloudConfig;
-import org.openecomp.mso.cloud.CloudConfigFactory;
 import org.openecomp.mso.cloud.CloudIdentity;
 import org.openecomp.mso.cloud.CloudSite;
 import org.openecomp.mso.logger.MsoAlarmLogger;
@@ -39,9 +37,6 @@ import org.openecomp.mso.openstack.exceptions.MsoCloudSiteNotFound;
 import org.openecomp.mso.openstack.exceptions.MsoException;
 import org.openecomp.mso.openstack.exceptions.MsoOpenstackException;
 import org.openecomp.mso.openstack.exceptions.MsoTenantAlreadyExists;
-import org.openecomp.mso.properties.MsoJavaProperties;
-import org.openecomp.mso.properties.MsoPropertiesException;
-import org.openecomp.mso.properties.MsoPropertiesFactory;
 import com.woorea.openstack.base.client.OpenStackBaseException;
 import com.woorea.openstack.base.client.OpenStackConnectException;
 import com.woorea.openstack.base.client.OpenStackRequest;
@@ -87,7 +82,7 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
      * <p>
      *
      * @param tenantName The tenant name to create
-     * @param cloudId The cloud identifier (may be a region) in which to create the tenant.
+     * @param cloudSiteId The cloud identifier (may be a region) in which to create the tenant.
      * @return the tenant ID of the newly created tenant
      * @throws MsoTenantAlreadyExists Thrown if the requested tenant already exists
      * @throws MsoOpenstackException Thrown if the Openstack API call returns an exception
@@ -200,7 +195,7 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
      * @return the tenant properties of the queried tenant, or null if not found
      * @throws MsoOpenstackException Thrown if the Openstack API call returns an exception
      */
-    public MsoTenant queryTenant (String tenantId, String cloudSiteId) throws MsoException, MsoCloudSiteNotFound {
+    public MsoTenant queryTenant (String tenantId, String cloudSiteId) throws MsoException {
         // Obtain the cloud site information where we will query the tenant
         CloudSite cloudSite = cloudConfig.getCloudSite (cloudSiteId);
         if (cloudSite == null) {
@@ -679,11 +674,11 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
      * This may be useful if cached credentials get out of sync.
      */
     public static void adminCacheReset () {
-        adminClientCache = new HashMap <String, KeystoneCacheEntry> ();
+        adminClientCache = new HashMap<>();
     }
 
 	@Override
-	public String getKeystoneUrl(String regionId, String msoPropID, CloudIdentity cloudIdentity) throws MsoException {
+	public String getKeystoneUrl(String regionId, String msoPropID, CloudIdentity cloudIdentity) {
 		return cloudIdentity.getIdentityUrl();
 	}
 }

@@ -39,10 +39,7 @@ import com.woorea.openstack.keystone.model.Authentication;
 public final class AuthenticationMethodFactory {
 
 	private static Map<String, AuthenticationWrapper> authWrappers = new ConcurrentHashMap<>();
-	
-	/**
-	 * 
-	 */
+
 	private AuthenticationMethodFactory() {}
 	
 	/**

@@ -40,14 +40,12 @@ import com.woorea.openstack.quantum.model.NeutronError;
 
 public class MsoCommonUtils {
 
-	private static MsoLogger logger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
-	protected static MsoAlarmLogger alarmLogger = new MsoAlarmLogger();
-	
-	protected static String retryDelayProp = "ecomp.mso.adapters.po.retryDelay";
+    private static MsoLogger logger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
+    protected static MsoAlarmLogger alarmLogger = new MsoAlarmLogger();
+    protected static String retryDelayProp = "ecomp.mso.adapters.po.retryDelay";
     protected static String retryCountProp = "ecomp.mso.adapters.po.retryCount";
     protected static String retryCodesProp = "ecomp.mso.adapters.po.retryCodes";
-	
-	protected static int retryDelayDefault = 5;
+    protected static int retryDelayDefault = 5;
     protected static int retryCountDefault = 3;
     protected static String retryCodesDefault = "504";
   
@@ -81,7 +79,6 @@ public class MsoCommonUtils {
             }
         }
 
-        long start = System.currentTimeMillis ();
     	String requestType;
         if (request.getClass ().getEnclosingClass () != null) {
             requestType = request.getClass ().getEnclosingClass ().getSimpleName () + "."
@@ -308,7 +305,7 @@ public class MsoCommonUtils {
     public static boolean isNullOrEmpty (String s) {
         return s == null || s.isEmpty();
     }
-    
-    
+
+
 
 }
