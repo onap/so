@@ -22,17 +22,14 @@ package org.openecomp.mso.cloud;
 import java.io.IOException;
 
 import org.codehaus.jackson.JsonGenerator;
-import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.JsonSerializer;
 import org.codehaus.jackson.map.SerializerProvider;
-import org.openecomp.mso.cloud.CloudIdentity.IdentityServerType;
-
 
 public class IdentityServerTypeJsonSerializer extends JsonSerializer<IdentityServerTypeAbstract> {
 
 	@Override
 	public void serialize(IdentityServerTypeAbstract tmpObj, JsonGenerator jsonGenerator, SerializerProvider serializerProvider)
-			throws IOException, JsonProcessingException {
+			throws IOException {
 		jsonGenerator.writeObject(tmpObj.toString());
 	}
 }

@@ -26,26 +26,17 @@ package org.openecomp.mso.cloud;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.GeneralSecurityException;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.map.JsonSerializer;
-import org.codehaus.jackson.JsonGenerator;
-import org.codehaus.jackson.map.SerializerProvider;
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.codehaus.jackson.JsonProcessingException;
-
 import org.openecomp.mso.openstack.exceptions.MsoAdapterException;
 import org.openecomp.mso.openstack.exceptions.MsoException;
-import org.openecomp.mso.openstack.utils.MsoCommonUtils;
 import org.openecomp.mso.openstack.utils.MsoKeystoneUtils;
 import org.openecomp.mso.openstack.utils.MsoTenantUtils;
 import org.openecomp.mso.openstack.utils.MsoTenantUtilsFactory;
 import org.openecomp.mso.cloud.authentication.AuthenticationMethodFactory;
 import org.openecomp.mso.cloud.authentication.AuthenticationWrapper;
-import org.openecomp.mso.cloud.authentication.models.RackspaceAuthentication;
 import org.openecomp.mso.cloud.authentication.wrappers.RackspaceAPIKeyWrapper;
 import org.openecomp.mso.cloud.authentication.wrappers.UsernamePasswordWrapper;
 import org.openecomp.mso.logger.MessageEnum;
@@ -137,14 +128,6 @@ public class CloudIdentity {
         this.id = id;
     }
 
-    //DEPRECATED
-    public String getKeystoneUrl () throws MsoException {
-    	if (this.identityServerType.equals(IdentityServerType.KEYSTONE))
-    		return this.identityUrl;
-    	else
-    		return null;
-    }
-    
     public String getKeystoneUrl (String regionId, String msoPropID) throws MsoException {
     	if (IdentityServerType.KEYSTONE.equals(this.identityServerType)) {
     		return this.identityUrl;

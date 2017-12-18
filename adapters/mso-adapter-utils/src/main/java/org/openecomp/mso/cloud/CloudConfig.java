@@ -26,13 +26,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonRootName;
-import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.openstack.exceptions.MsoCloudIdentityNotFound;
 
@@ -165,25 +162,23 @@ public class CloudConfig {
         return null;
     }
 
-    protected synchronized void reloadPropertiesFile() throws JsonParseException, JsonMappingException, IOException, MsoCloudIdentityNotFound {
+    protected synchronized void reloadPropertiesFile() throws IOException, MsoCloudIdentityNotFound {
         this.loadCloudConfig(this.configFilePath, this.refreshTimerInMinutes);
     }
 
     protected synchronized void loadCloudConfig(String configFile, int refreshTimer)
-            throws JsonParseException, JsonMappingException, IOException, MsoCloudIdentityNotFound {
+            throws IOException, MsoCloudIdentityNotFound {
 
         FileReader reader = null;
         configFilePath = configFile;
         this.refreshTimerInMinutes = refreshTimer;
-
-        CloudConfig cloudConfig = null;
         this.validCloudConfig=false;
         
         try {
             reader = new FileReader(configFile);
             // Parse the JSON input into a CloudConfig
 
-            cloudConfig = mapper.readValue(reader, CloudConfig.class);
+            CloudConfig cloudConfig = mapper.readValue(reader, CloudConfig.class);
 
             this.cloudSites = cloudConfig.cloudSites;
             this.identityServices = cloudConfig.identityServices;

@@ -20,29 +20,10 @@
 
 package org.openecomp.mso.openstack.exceptions;
 
-
-/**
- * Cloud site not found exception.
- */
 public class MsoCloudSiteNotFound extends MsoException {
 
-    /**
-     * Serialization id.
-     */
     private static final long serialVersionUID = 2583769056266415664L;
 
-    /**
-     * Default constructor (needed for BPEL/JAXB)
-     */
-    public MsoCloudSiteNotFound () {
-        super("Cloud site not found");
-        super.category=MsoExceptionCategory.USERDATA;
-    }
-
-    /**
-     * Constructor to create a new MsoOpenstackException instance
-     * @param cloudSite the cloud site
-     */
     public MsoCloudSiteNotFound (String cloudSite) {
         // Set the detailed error as the Exception 'message'
         super("Cloud Site [" + cloudSite + "] not found");
