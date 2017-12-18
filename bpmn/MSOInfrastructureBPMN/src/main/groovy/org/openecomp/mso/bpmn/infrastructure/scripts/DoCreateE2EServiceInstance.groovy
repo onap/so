@@ -413,7 +413,11 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
         String nsServiceDescription = jsonUtil.getJsonValue(incomingRequest, "service.description")  
         execution.setVariable("nsServiceDescription", nsServiceDescription)
         utils.log("INFO", "Prepare VFC Request nsServiceDescription:" + nsServiceDescription, isDebugEnabled)
-        List<String> resourceList = jsonUtil.StringArrayToList(execution, resourcesStr)   
+        List<String> resourceList = jsonUtil.StringArrayToList(execution, resourcesStr) 
+        //reset the variables
+        execution.setVariable("resourceUUID", "")
+        execution.setVariable("resourceInvariantUUID", "")
+        execution.setVariable("resourceParameters", "")
         for(String resource : resourceList){
             String resourceName = jsonUtil.getJsonValue(resource, "resourceName")  
             if(StringUtils.containsIgnoreCase(resourceName, resourceType)){
