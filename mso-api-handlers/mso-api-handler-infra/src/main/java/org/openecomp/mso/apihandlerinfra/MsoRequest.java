@@ -21,8 +21,6 @@
 
 package org.openecomp.mso.apihandlerinfra;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
@@ -39,6 +37,7 @@ import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.RequestParameters;
 import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.ServiceException;
 import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.ServiceInstancesRequest;
 import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.SubscriberInfo;
+import org.openecomp.mso.apihandlerinfra.utils.XmlUtils;
 import org.openecomp.mso.apihandlerinfra.vnfbeans.RequestStatusType;
 import org.openecomp.mso.apihandlerinfra.vnfbeans.VnfInputs;
 import org.openecomp.mso.apihandlerinfra.vnfbeans.VnfRequest;
@@ -49,51 +48,33 @@ import org.openecomp.mso.requestsdb.InfraActiveRequests;
 import org.openecomp.mso.requestsdb.RequestsDatabase;
 import org.openecomp.mso.requestsdb.RequestsDbSessionFactoryManager;
 import org.openecomp.mso.utils.UUIDChecker;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class MsoRequest {
 
-    private String requestId;
-    private String requestXML;
-    private String requestJSON;
-    private String requestUri;
-    private VnfRequest vnfReq;
-    private RequestInfo requestInfo;
-    private ModelInfo modelInfo;
-    private CloudConfiguration cloudConfiguration ;
-    private VnfInputs vnfInputs;
-    private String vnfParams;
-    private Action action;
-    private String errorMessage;
-    private String errorCode;
-    private String httpResponse;
-    private String responseBody;
-    private RequestStatusType status;
-    private ServiceInstancesRequest sir;
-    private long startTime;
+    private final String requestId;
+
+	private String requestXML;
+	private String requestJSON;
+	private String requestUri;
+	private VnfRequest vnfReq;
+	private RequestInfo requestInfo;
+	private ModelInfo modelInfo;
+	private CloudConfiguration cloudConfiguration ;
+	private VnfInputs vnfInputs;
+	private String vnfParams;
+	private Action action;
+	private String errorMessage;
+	private String errorCode;
+	private String httpResponse;
+	private String responseBody;
+	private RequestStatusType status;
+	private ServiceInstancesRequest sir;
     private long progress = Constants.PROGRESS_REQUEST_RECEIVED;
     private String serviceInstanceType;
     private String vnfType;
@@ -112,18 +93,8 @@ public class MsoRequest {
 
     MsoRequest (String requestId) {
         this.requestId = requestId;
-        this.startTime = System.currentTimeMillis();
-        MsoLogger.setLogContext (requestId, null);
-
+		MsoLogger.setLogContext (requestId, null);
     }
-
-    MsoRequest () {
-
-        this.startTime = System.currentTimeMillis();
-        MsoLogger.setLogContext (requestId, null);
-
-    }
-
 
     public Response buildServiceErrorResponse (int httpResponseCode,
             MsoException exceptionType,
@@ -207,7 +178,6 @@ public class MsoRequest {
 
         try{
         	ObjectMapper mapper = new ObjectMapper();
-        	//mapper.configure(Feature.WRAP_ROOT_VALUE, true);
         	requestJSON = mapper.writeValueAsString(sir.getRequestDetails());
 
         } catch(Exception e){
@@ -554,7 +524,7 @@ public class MsoRequest {
 
     }
 
-    void parseOrchestration (ServiceInstancesRequest sir) throws ValidationException {
+	void parseOrchestration (ServiceInstancesRequest sir) throws ValidationException {
 
         msoLogger.debug ("Validating the Orchestration request");
 
@@ -562,7 +532,6 @@ public class MsoRequest {
 
         try{
         	ObjectMapper mapper = new ObjectMapper();
-        	//mapper.configure(Feature.WRAP_ROOT_VALUE, true);
         	requestJSON = mapper.writeValueAsString(sir.getRequestDetails());
 
         } catch(Exception e){
@@ -582,47 +551,6 @@ public class MsoRequest {
         	throw new ValidationException ("requestorId");
         }
     }
-
-    public Map<String, List<String>> getOrchestrationFilters (MultivaluedMap<String, String> queryParams) throws ValidationException {
-
-        String queryParam = null;
-        Map<String, List<String>> orchestrationFilterParams = new HashMap<>();
-
-
-        for (Entry<String,List<String>> entry : queryParams.entrySet()) {
-            queryParam = entry.getKey();
-
-            try{
-          	  if("filter".equalsIgnoreCase(queryParam)){
-          		  for(String value : entry.getValue()) {
-	          		  StringTokenizer st = new StringTokenizer(value, ":");
-	
-	          		  int counter=0;
-	          		  String mapKey=null;
-	          		  List<String> orchestrationList = new ArrayList<>();
-	          		  while (st.hasMoreElements()) {
-	          			  if(counter == 0){
-	          				  mapKey = st.nextElement() + "";
-	          			  } else{
-	          				  orchestrationList.add(st.nextElement() + "");
-	          			  }
-	          			 counter++;
-	        		  }
-	          		  orchestrationFilterParams.put(mapKey, orchestrationList);
-          		  }
-          	  }
-
-            }catch(Exception e){
-                //msoLogger.error (MessageEnum.APIH_VALIDATION_ERROR, e);
-                throw new ValidationException ("QueryParam ServiceInfo", e);
-
-        	}
-
-        }
-
-
-        return orchestrationFilterParams;
-  }
 
     public void createRequestRecord (Status status, Action action) {
 
@@ -741,7 +669,7 @@ public class MsoRequest {
             if ((status == Status.FAILED) || (status == Status.COMPLETE)) {
                 aq.setStatusMessage (this.errorMessage);
                 aq.setResponseBody (this.responseBody);
-                aq.setProgress(new Long(100));
+                aq.setProgress(100L);
 
                 Timestamp endTimeStamp = new Timestamp (System.currentTimeMillis());
                 aq.setEndTime (endTimeStamp);
@@ -764,9 +692,8 @@ public class MsoRequest {
     }
 
     public void updateFinalStatus (Status status) {
-        int result = 0;
         try {
-            result = (RequestsDatabase.getInstance()).updateInfraFinalStatus (requestId,
+            RequestsDatabase.getInstance().updateInfraFinalStatus (requestId,
                                                               status.toString (),
                                                               this.errorMessage,
                                                               this.progress,
@@ -796,9 +723,6 @@ public class MsoRequest {
     }
 
     public Response buildResponseFailedValidation (int httpResponseCode, String exceptionMessage) {
-
-
-
         return Response.status (httpResponseCode).entity (null).build ();
     }
 
@@ -860,16 +784,18 @@ public class MsoRequest {
 
     public void setStatus (RequestStatusType status) {
         this.status = status;
-        switch (status) {
-        case FAILED:
-        case COMPLETE:
-        	this.progress = Constants.PROGRESS_REQUEST_COMPLETED;
-        	break;
-        case IN_PROGRESS:
-        	this.progress = Constants.PROGRESS_REQUEST_IN_PROGRESS;
-        	break;
-        }
-    }
+		switch (status) {
+			case FAILED:
+			case COMPLETE:
+				this.progress = Constants.PROGRESS_REQUEST_COMPLETED;
+				break;
+			case IN_PROGRESS:
+				this.progress = Constants.PROGRESS_REQUEST_IN_PROGRESS;
+				break;
+			default:
+				break;
+		}
+	}
 
     public ModelInfo getModelInfo() {
     	return modelInfo;
@@ -903,93 +829,48 @@ public class MsoRequest {
     	return asdcServiceModelVersion;
     }
 
-    public static String domToStr (Document doc) {
-        if (doc == null) {
-            return null;
-        }
-
-        try {
-            StringWriter sw = new StringWriter ();
-            StreamResult sr = new StreamResult (sw);
-            TransformerFactory tf = TransformerFactory.newInstance ();
-            Transformer t = tf.newTransformer ();
-            t.setOutputProperty (OutputKeys.STANDALONE, "yes");
-            NodeList nl = doc.getDocumentElement ().getChildNodes ();
-            DOMSource source = null;
-            for (int x = 0; x < nl.getLength (); x++) {
-                Node e = nl.item (x);
-                if (e instanceof Element) {
-                    source = new DOMSource (e);
-                    break;
-                }
-            }
-            if (source != null) {
-                t.transform (source, sr);
-
-                String s = sw.toString ();
-                return s;
-            }
-
-            return null;
-
-        } catch (Exception e) {
-            msoLogger.error (MessageEnum.APIH_DOM2STR_ERROR, "", "", MsoLogger.ErrorCode.DataError, "Exception in domToStr", e);
-        }
-        return null;
-    }
-
     public void addBPMNSpecificInputs(String personaModelId, String personaModelVersion, Boolean isBaseVfModule,
     			String vnfPersonaModelId, String vnfPersonaModelVersion) {
-    	vnfInputs.setPersonaModelId(personaModelId);
-    	vnfInputs.setPersonaModelVersion(personaModelVersion);
-    	vnfInputs.setIsBaseVfModule(isBaseVfModule);
-    	vnfInputs.setVnfPersonaModelId(vnfPersonaModelId);
-    	vnfInputs.setVnfPersonaModelVersion(vnfPersonaModelVersion);
+		vnfInputs.setPersonaModelId(personaModelId);
+		vnfInputs.setPersonaModelVersion(personaModelVersion);
+		vnfInputs.setIsBaseVfModule(isBaseVfModule);
+		vnfInputs.setVnfPersonaModelId(vnfPersonaModelId);
+		vnfInputs.setVnfPersonaModelVersion(vnfPersonaModelVersion);
 
-    	this.vnfReq.setVnfInputs(vnfInputs);
+		this.vnfReq.setVnfInputs(vnfInputs);
 
-          StringWriter stringWriter = new StringWriter ();
-          try {
-              JAXBContext jaxbContext = JAXBContext.newInstance (VnfRequest.class);
-              Marshaller jaxbMarshaller = jaxbContext.createMarshaller ();
+		try {
+			requestXML = XmlUtils.marshallToString(vnfReq);
+		} catch (JAXBException e) {
+			msoLogger.debug("Exception: ", e);
+		}
 
-              // output pretty printed
-              jaxbMarshaller.setProperty (Marshaller.JAXB_FORMATTED_OUTPUT, true);
-
-              jaxbMarshaller.marshal (this.vnfReq, stringWriter);
-
-          } catch (JAXBException e) {
-              msoLogger.debug ("Exception: ", e);
-          }
-
-          this.requestXML = stringWriter.toString ();
-          msoLogger.debug("REQUEST XML to BPEL: " + this.requestXML);
-
-
-    }
+		msoLogger.debug("REQUEST XML to BPEL: " + requestXML);
+	}
 
     private static boolean empty(String s) {
     	  return (s == null || s.trim().isEmpty());
     }
 
-    public String getRequestJSON() throws JsonGenerationException, JsonMappingException, IOException {
+    public String getRequestJSON() throws IOException {
     	ObjectMapper mapper = new ObjectMapper();
     	mapper.setSerializationInclusion(Inclusion.NON_NULL);
-    	//mapper.configure(Feature.WRAP_ROOT_VALUE, true);
     	msoLogger.debug ("building sir from object " + sir);
     	requestJSON = mapper.writeValueAsString(sir);
     	
     	// Perform mapping from VID-style modelInfo fields to ASDC-style modelInfo fields
-    	
-    	msoLogger.debug("REQUEST JSON before mapping: " + requestJSON);
-    	// modelUuid = modelVersionId
-    	requestJSON = requestJSON.replaceAll("\"modelVersionId\":","\"modelUuid\":");
-    	// modelCustomizationUuid = modelCustomizationId
-    	requestJSON = requestJSON.replaceAll("\"modelCustomizationId\":","\"modelCustomizationUuid\":");
-    	// modelInstanceName = modelCustomizationName
-    	requestJSON = requestJSON.replaceAll("\"modelCustomizationName\":","\"modelInstanceName\":");
-    	// modelInvariantUuid = modelInvariantId 
-    	requestJSON = requestJSON.replaceAll("\"modelInvariantId\":","\"modelInvariantUuid\":");    	
+		// modelUuid = modelVersionId
+		// modelCustomizationUuid = modelCustomizationId
+		// modelInstanceName = modelCustomizationName
+		// modelInvariantUuid = modelInvariantId
+
+		msoLogger.debug("REQUEST JSON before mapping: " + requestJSON);
+
+		requestJSON = requestJSON.replaceAll("\"modelVersionId\":","\"modelUuid\":");
+		requestJSON = requestJSON.replaceAll("\"modelCustomizationId\":","\"modelCustomizationUuid\":");
+		requestJSON = requestJSON.replaceAll("\"modelCustomizationName\":","\"modelInstanceName\":");
+    	requestJSON = requestJSON.replaceAll("\"modelInvariantId\":","\"modelInvariantUuid\":");
+
     	msoLogger.debug("REQUEST JSON after mapping: " + requestJSON);
     	
     	return requestJSON;

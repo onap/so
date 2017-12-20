@@ -18,26 +18,25 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.mso.apihandlerinfra;
-
-
+package org.openecomp.mso.apihandlerinfra.utils;
 
 import java.util.Arrays;
 
 import org.openecomp.mso.properties.MsoJavaProperties;
 
 public class InfraUtils {
+
+	private InfraUtils() {
+	}
+
 	public static boolean isActionAllowed(MsoJavaProperties props, String requestType, String version, String action) {
-		 // Check for allowable actions
         String actionsPropertyName = requestType + "." + version + ".ApiAllowableActions";
         String allowableActions = props.getProperty(actionsPropertyName, null);
         return allowableActions == null || Arrays.asList(allowableActions.split(",")).contains(action);
 	}
 	
-	// Checks if the name is acceptable for heat stack
 	public static boolean isValidHeatName(String name) {
-		return name.matches("^[a-zA-Z][a-zA-Z0-9_\\.-]*$");
+		return name.matches("^[a-zA-Z][a-zA-Z0-9_.-]*$");
 	}
-	
-	
+
 }

@@ -20,10 +20,9 @@
  */
 package org.openecomp.mso.apihandlerinfra;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -40,21 +39,13 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.http.HttpStatus;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.openecomp.mso.apihandler.common.ErrorNumbers;
-import org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans.E2ERequest;
-import org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans.GetE2EServiceInstanceResponse;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.GetOrchestrationListResponse;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.GetOrchestrationResponse;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.InstanceReferences;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.Request;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.RequestDetails;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.RequestList;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.RequestStatus;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.ServiceInstancesRequest;
+import org.openecomp.mso.apihandler.common.ValidationException;
+import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.*;
+import org.openecomp.mso.apihandlerinfra.utils.JsonUtils;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoAlarmLogger;
 import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.requestsdb.InfraActiveRequests;
-import org.openecomp.mso.requestsdb.OperationStatus;
 import org.openecomp.mso.requestsdb.RequestsDatabase;
 
 import com.wordnik.swagger.annotations.Api;
@@ -64,7 +55,7 @@ import com.wordnik.swagger.annotations.ApiOperation;
 @Api(value = "/", description = "API Requests for Orchestration requests")
 public class OrchestrationRequests {
 
-	public final static String MSO_PROP_APIHANDLER_INFRA = "MSO_PROP_APIHANDLER_INFRA";
+	public static final String MSO_PROP_APIHANDLER_INFRA = "MSO_PROP_APIHANDLER_INFRA";
 
 	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.APIH);
 
@@ -134,8 +125,6 @@ public class OrchestrationRequests {
 		return Response.status(200).entity(orchestrationResponse).build();
 	}
 
-	
-
 	@GET
 	@Path("orchestrationRequests/{version:[vV][2-5]}")
 	@ApiOperation(value = "Find Orchestrated Requests for a URI Information", response = Response.class)
@@ -144,23 +133,49 @@ public class OrchestrationRequests {
 
 		long startTime = System.currentTimeMillis();
 
-		MsoRequest msoRequest = new MsoRequest();
-
 		MultivaluedMap<String, String> queryParams = ui.getQueryParameters();
-
-		List<InfraActiveRequests> activeRequests = null;
-
-		GetOrchestrationListResponse orchestrationList = null;
+		List<InfraActiveRequests> activeRequests;
+		GetOrchestrationListResponse orchestrationList;
 
 		try {
 
-			Map<String, List<String>> orchestrationMap = msoRequest.getOrchestrationFilters(queryParams);
+			String queryParam;
+			Map<String, List<String>> orchestrationFilterParams = new HashMap<>();
 
-			activeRequests = requestsDB.getOrchestrationFiltersFromInfraActive(orchestrationMap);
+
+			for (Map.Entry<String,List<String>> entry : queryParams.entrySet()) {
+                queryParam = entry.getKey();
+
+                try{
+                    if("filter".equalsIgnoreCase(queryParam)){
+                        for(String value : entry.getValue()) {
+                            StringTokenizer st = new StringTokenizer(value, ":");
+
+                            int counter=0;
+                            String mapKey=null;
+                            List<String> orchestrationList1 = new ArrayList<>();
+                            while (st.hasMoreElements()) {
+                                if(counter == 0){
+                                    mapKey = st.nextElement() + "";
+                                } else{
+                                    orchestrationList1.add(st.nextElement() + "");
+                                }
+                               counter++;
+                          }
+                            orchestrationFilterParams.put(mapKey, orchestrationList1);
+                        }
+                    }
+
+                }catch(Exception e){
+                    throw new ValidationException("QueryParam ServiceInfo", e);
+                }
+            }
+
+			activeRequests = requestsDB.getOrchestrationFiltersFromInfraActive(orchestrationFilterParams);
 
 			orchestrationList = new GetOrchestrationListResponse();
 
-			List<RequestList> requestLists = new ArrayList<RequestList>();
+			List<RequestList> requestLists = new ArrayList<>();
 
 			for (InfraActiveRequests infraActive : activeRequests) {
 
@@ -176,9 +191,9 @@ public class OrchestrationRequests {
 
 		} catch (Exception e) {
 			msoLogger.debug("Get Orchestration Request with Filters Failed : ", e);
-			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_INTERNAL_SERVER_ERROR,
+			Response response = buildServiceErrorResponse(HttpStatus.SC_INTERNAL_SERVER_ERROR,
 					MsoException.ServiceException, "Get Orchestration Request with Filters Failed.  " + e.getMessage(),
-					ErrorNumbers.SVC_GENERAL_SERVICE_ERROR, null);
+					ErrorNumbers.SVC_GENERAL_SERVICE_ERROR);
 			msoLogger.error(MessageEnum.APIH_GENERAL_EXCEPTION, MSO_PROP_APIHANDLER_INFRA, "", "",
 					MsoLogger.ErrorCode.BusinessProcesssError, "Get Orchestration Request with Filters Failed : " + e);
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataError,
@@ -314,7 +329,6 @@ public class OrchestrationRequests {
 		Request request = new Request();
 
 		ObjectMapper mapper = new ObjectMapper();
-		// mapper.configure(Feature.WRAP_ROOT_VALUE, true);
 
 		request.setRequestId(requestDB.getRequestId());
 		request.setRequestScope(requestDB.getRequestScope());
@@ -384,6 +398,34 @@ public class OrchestrationRequests {
 		request.setRequestStatus(status);
 
 		return request;
+	}
+
+	private Response buildServiceErrorResponse (int httpResponseCode,
+												MsoException exceptionType,
+												String text,
+												String messageId) {
+
+		RequestError re = new RequestError();
+		if("PolicyException".equals(exceptionType.name())){
+			PolicyException pe = new PolicyException();
+			pe.setMessageId(messageId);
+			pe.setText(text);
+			re.setPolicyException(pe);
+		} else {
+			ServiceException se = new ServiceException();
+			se.setMessageId(messageId);
+			se.setText(text);
+			re.setServiceException(se);
+		}
+
+		String requestErrorStr = null;
+
+		try{
+			requestErrorStr = JsonUtils.toJsonString(re);
+		}catch(IOException e){
+			msoLogger.error (MessageEnum.APIH_VALIDATION_ERROR, "", "", MsoLogger.ErrorCode.DataError, "Exception in buildServiceErrorResponse writing exceptionType to string ", e);
+		}
+		return Response.status (httpResponseCode).entity(requestErrorStr).build ();
 	}
 
 }

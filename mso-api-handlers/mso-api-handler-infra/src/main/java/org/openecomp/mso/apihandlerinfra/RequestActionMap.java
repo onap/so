@@ -29,6 +29,9 @@ import java.util.Map;
 public class RequestActionMap {
     private static final Map<String, String> actionMap;
 
+    private RequestActionMap() {
+    }
+
     static {
         actionMap = new HashMap<>();
         actionMap.put("CREATE_VF_MODULE", "createInstance");

@@ -34,6 +34,7 @@ import mockit.MockUp;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.openecomp.mso.apihandlerinfra.utils.MsoPropertiesUtils;
 import org.openecomp.mso.apihandlerinfra.vnfbeans.VnfRequest;
 import org.openecomp.mso.requestsdb.InfraActiveRequests;
 import org.openecomp.mso.requestsdb.InfraRequests;

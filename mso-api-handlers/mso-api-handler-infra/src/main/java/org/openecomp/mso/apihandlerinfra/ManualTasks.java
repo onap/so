@@ -20,6 +20,7 @@
  */
 package org.openecomp.mso.apihandlerinfra;
 
+import org.openecomp.mso.apihandlerinfra.utils.MsoPropertiesUtils;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoAlarmLogger;
 import org.openecomp.mso.logger.MsoLogger;

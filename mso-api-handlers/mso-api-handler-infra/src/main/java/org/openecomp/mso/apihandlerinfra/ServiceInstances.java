@@ -49,6 +49,7 @@ import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.RequestParameters;
 import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.RequestReferences;
 import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.ServiceInstancesRequest;
 import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.ServiceInstancesResponse;
+import org.openecomp.mso.apihandlerinfra.utils.MsoPropertiesUtils;
 import org.openecomp.mso.db.catalog.CatalogDatabase;
 import org.openecomp.mso.db.catalog.beans.NetworkResource;
 import org.openecomp.mso.db.catalog.beans.Recipe;

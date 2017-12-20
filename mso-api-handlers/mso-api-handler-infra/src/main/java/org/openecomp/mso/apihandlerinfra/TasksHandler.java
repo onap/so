@@ -41,6 +41,7 @@ import org.openecomp.mso.apihandler.common.ErrorNumbers;
 import org.openecomp.mso.apihandler.common.RequestClient;
 import org.openecomp.mso.apihandler.common.RequestClientFactory;
 import org.openecomp.mso.apihandler.common.ResponseHandler;
+import org.openecomp.mso.apihandlerinfra.utils.MsoPropertiesUtils;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoAlarmLogger;
 import org.openecomp.mso.logger.MsoLogger;

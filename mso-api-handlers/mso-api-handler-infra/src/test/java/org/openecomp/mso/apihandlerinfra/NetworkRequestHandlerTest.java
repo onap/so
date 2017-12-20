@@ -38,6 +38,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.openecomp.mso.apihandlerinfra.networkbeans.NetworkRequest;
+import org.openecomp.mso.apihandlerinfra.utils.MsoPropertiesUtils;
 import org.openecomp.mso.requestsdb.InfraActiveRequests;
 import org.openecomp.mso.requestsdb.InfraRequests;
 import org.openecomp.mso.requestsdb.RequestsDatabase;

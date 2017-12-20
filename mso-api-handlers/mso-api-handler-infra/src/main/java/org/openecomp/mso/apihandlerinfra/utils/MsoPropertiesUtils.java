@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.openecomp.mso.apihandlerinfra;
+package org.openecomp.mso.apihandlerinfra.utils;
 
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
@@ -26,7 +26,7 @@ import org.openecomp.mso.properties.MsoPropertiesFactory;
 
 public class MsoPropertiesUtils {
 
-    private final static String MSO_PROP_APIHANDLER_INFRA = "MSO_PROP_APIHANDLER_INFRA";
+    private static final String MSO_PROP_APIHANDLER_INFRA = "MSO_PROP_APIHANDLER_INFRA";
 
     private static MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory ();
 
@@ -34,7 +34,10 @@ public class MsoPropertiesUtils {
 
     private static boolean noProperties = true;
 
-    public synchronized static MsoJavaProperties loadMsoProperties () {
+    private MsoPropertiesUtils() {
+    }
+
+    public static synchronized MsoJavaProperties loadMsoProperties () {
         MsoJavaProperties msoProperties;
         try {
             msoProperties = msoPropertiesFactory.getMsoJavaProperties (MSO_PROP_APIHANDLER_INFRA);
@@ -52,8 +55,8 @@ public class MsoPropertiesUtils {
             return null;
         }
     }
-    
-    public synchronized static final boolean getNoPropertiesState() {
+
+    public static synchronized boolean getNoPropertiesState() {
     	return noProperties;
     }
 }

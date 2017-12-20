@@ -26,7 +26,6 @@ import java.io.StringWriter;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBContext;
@@ -42,6 +41,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.hibernate.Session;
 
+import org.openecomp.mso.apihandlerinfra.utils.InfraUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
