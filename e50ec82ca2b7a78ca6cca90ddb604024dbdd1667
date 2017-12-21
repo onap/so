@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_1605ae79",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/exceptions/MsoCloudIdentityNotFound.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2017-12-21T15:50:10Z",
+      "side": 1,
+      "message": "Javadoc is innacurate - in fact it\u0027s copied from MsoCloudSiteNotFound class.",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 27,
+        "endChar": 37
+      },
+      "revId": "e50ec82ca2b7a78ca6cca90ddb604024dbdd1667",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_76d8b21d",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/exceptions/MsoCloudIdentityNotFound.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2017-12-21T15:50:10Z",
+      "side": 1,
+      "message": "I think this javadoc can be removed as well. Name \"serialVersionUID\" is self-explanatory.",
+      "range": {
+        "startLine": 29,
+        "startChar": 0,
+        "endLine": 31,
+        "endChar": 7
+      },
+      "revId": "e50ec82ca2b7a78ca6cca90ddb604024dbdd1667",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_360a2a8b",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/exceptions/MsoCloudSiteNotFound.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2017-12-21T15:50:10Z",
+      "side": 1,
+      "message": "Same as previous - this javadoc is useless.",
+      "range": {
+        "startLine": 29,
+        "startChar": 0,
+        "endLine": 31,
+        "endChar": 7
+      },
+      "revId": "e50ec82ca2b7a78ca6cca90ddb604024dbdd1667",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d6fe666b",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/exceptions/MsoTenantAlreadyExists.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2017-12-21T15:50:10Z",
+      "side": 1,
+      "message": "This comment is unnecessary.",
+      "range": {
+        "startLine": 28,
+        "startChar": 1,
+        "endLine": 28,
+        "endChar": 62
+      },
+      "revId": "e50ec82ca2b7a78ca6cca90ddb604024dbdd1667",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_96f8de7d",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/utils/MsoCommonUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2017-12-21T15:50:10Z",
+      "side": 1,
+      "message": "There are sometimes tabs and sometimes 4 spaces in this file. Please unify it.",
+      "range": {
+        "startLine": 43,
+        "startChar": 0,
+        "endLine": 52,
+        "endChar": 54
+      },
+      "revId": "e50ec82ca2b7a78ca6cca90ddb604024dbdd1667",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_76ef52b1",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/utils/MsoCommonUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 309,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2017-12-21T15:50:10Z",
+      "side": 1,
+      "message": "There is already Strings.isNullOrEmpty();",
+      "range": {
+        "startLine": 307,
+        "startChar": 0,
+        "endLine": 309,
+        "endChar": 5
+      },
+      "revId": "e50ec82ca2b7a78ca6cca90ddb604024dbdd1667",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_3631ca5a",
+        "filename": "adapters/mso-adapter-utils/src/test/java/org/openecomp/mso/adapter_utils/tests/CloudConfigTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2017-12-21T15:50:10Z",
+      "side": 1,
+      "message": "Actual and expected is flipped in every of those cases (also that\u0027s the reason I don\u0027t like junit asserts).",
+      "range": {
+        "startLine": 104,
+        "startChar": 0,
+        "endLine": 131,
+        "endChar": 55
+      },
+      "revId": "e50ec82ca2b7a78ca6cca90ddb604024dbdd1667",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
