@@ -34,6 +34,7 @@ setup(
     license='LICENSE',
     description='Aria REST API for ONAP',
     install_requires=[
+        'distribute',
         'Flask==0.12.2',
         'flask-autodoc==0.1.2',
         'apache-ariatosca==0.1.1'
