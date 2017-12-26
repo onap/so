@@ -76,12 +76,12 @@
 	    <configuration>
               <executable>python</executable>
               <arguments>
-		<argument>${session.executionRootDirectory}/build.py</argument>
+		<argument>${project.basedir}/build.py</argument>
 	      </arguments>
 	      <environmentVariables>
 		<MVN_PHASE>package</MVN_PHASE>
 		<WHEEL_NAME>${wheel.name}</WHEEL_NAME>
-		<INPUT_DIR>${session.executionRootDirectory}/src/main/python/aria-rest</INPUT_DIR>
+		<INPUT_DIR>${project.basedir}/src/main/python/aria-rest</INPUT_DIR>
 		<OUTPUT_DIR>${project.build.directory}</OUTPUT_DIR>
               </environmentVariables>
 	    </configuration>
@@ -93,7 +93,7 @@
 	    <configuration>
               <executable>python</executable>
 	      <arguments>
-	        <argument>${session.executionRootDirectory}/build.py</argument>
+	        <argument>${project.basedir}/build.py</argument>
 	      </arguments>
 	      <environmentVariables>
 		<MVN_PHASE>deploy</MVN_PHASE>
