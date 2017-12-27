@@ -1,0 +1,13 @@
+{
+  "cloud_config": {
+    "identity_services": {
+      "default_service": {}
+    },
+    "cloud_sites": {
+      "default": {
+        "region_id": "defaultRegion",
+        "identity_service_id": "default_service"
+      }
+    }
+  }
+}
