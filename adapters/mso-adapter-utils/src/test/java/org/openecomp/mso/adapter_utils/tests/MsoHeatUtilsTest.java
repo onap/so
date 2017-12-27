@@ -25,6 +25,7 @@ import java.util.HashMap;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openecomp.mso.cloud.CloudConfigFactory;
+import org.openecomp.mso.cloud.CloudConfigTest;
 import org.openecomp.mso.openstack.exceptions.MsoCloudIdentityNotFound;
 import org.openecomp.mso.openstack.exceptions.MsoCloudSiteNotFound;
 import org.openecomp.mso.openstack.exceptions.MsoException;
