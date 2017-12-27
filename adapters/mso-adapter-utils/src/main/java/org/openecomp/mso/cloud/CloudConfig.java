@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import java.util.Optional;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -36,8 +37,8 @@ import org.openecomp.mso.openstack.exceptions.MsoCloudIdentityNotFound;
 /**
  * JavaBean JSON class for a CloudConfig. This bean maps a JSON-format cloud
  * configuration file to Java. The CloudConfig contains information about
- * Openstack cloud configurations. It includes: 
- * - CloudIdentity objects,representing DCP nodes (Openstack Identity Service) 
+ * Openstack cloud configurations. It includes:
+ * - CloudIdentity objects,representing DCP nodes (Openstack Identity Service)
  * - CloudSite objects, representing LCP nodes (Openstack Compute & other services)
  *
  * Note that this is only used to access Cloud Configurations loaded from a JSON
@@ -51,39 +52,27 @@ import org.openecomp.mso.openstack.exceptions.MsoCloudIdentityNotFound;
 @JsonRootName("cloud_config")
 public class CloudConfig {
 
-    private boolean                    validCloudConfig = false;
+    private static final String CLOUD_SITE_VERSION = "2.5";
+    private static final String DEFAULT_CLOUD_SITE_ID = "default";
+    private boolean validCloudConfig = false;
+    private static ObjectMapper mapper = new ObjectMapper();
+    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
+    protected String configFilePath;
+    protected int refreshTimerInMinutes;
     @JsonProperty("identity_services")
     private Map<String, CloudIdentity> identityServices = new HashMap<>();
     @JsonProperty("cloud_sites")
-    private Map<String, CloudSite>     cloudSites       = new HashMap<>();
-
-    private static ObjectMapper        mapper           = new ObjectMapper();
-
-    private static final MsoLogger     LOGGER           = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
-
-    protected String                   configFilePath;
-
-    protected int                      refreshTimerInMinutes;
+    private Map<String, CloudSite> cloudSites = new HashMap<>();
 
     public CloudConfig() {
         mapper.enable(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE);
         mapper.enable(DeserializationConfig.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
     }
 
-    /**
-     * Get a Map of all IdentityServices that have been loaded.
-     * 
-     * @return the Map
-     */
     public synchronized Map<String, CloudIdentity> getIdentityServices() {
         return identityServices;
     }
 
-    /**
-     * Get a Map of all CloudSites that have been loaded.
-     * 
-     * @return the Map
-     */
     public synchronized Map<String, CloudSite> getCloudSites() {
         return cloudSites;
     }
@@ -93,7 +82,7 @@ public class CloudConfig {
      * against the regions, and if no match is found there, then against
      * individual entries to try and find one with a CLLI that matches the ID
      * and an AIC version of 2.5.
-     * 
+     *
      * @param id
      *            the ID to match
      * @return a CloudSite, or null of no match found
@@ -104,53 +93,35 @@ public class CloudConfig {
                 return cloudSites.get(id);
             }
             // check for id == CLLI now as well
-            return getCloudSiteWithClli(id, "2.5");
+            return getCloudSiteWithClli(id);
         }
         return null;
     }
 
-    /**
-     * Get a specific CloudSites, based on a CLLI and (optional) version, which
-     * will be matched against the aic_version field of the CloudSite.
-     * 
-     * @param clli
-     *            the CLLI to match
-     * @param version
-     *            the version to match; may be null in which case any version
-     *            matches
-     * @return a CloudSite, or null of no match found
-     */
-    public synchronized CloudSite getCloudSiteWithClli(String clli, String version) {
-        if (clli != null) {
-            // New with 1610 - find cloud site called "DEFAULT" - return that
-            // object,with the name modified to match what they asked for. We're
-            // looping thru the cloud sites anyway - so save off the default one in case we
-            // need it.
-            CloudSite defaultCloudSite = null;
-            for (CloudSite cs : cloudSites.values()) {
-                if (cs.getClli() != null && clli.equals(cs.getClli())) {
-                    if (version == null || version.equals(cs.getAic_version())) {
-                        return cs;
-                    }
-                } else if ("default".equalsIgnoreCase(cs.getId())) {
-                    // save it off in case we need it
-                    defaultCloudSite = cs.clone();
-                }
-            }
-            // If we get here - we didn't find a match - so return the default
-            // cloud site
-            if (defaultCloudSite != null) {
-                defaultCloudSite.setRegionId(clli);
-                defaultCloudSite.setId(clli);
-            }
+    private CloudSite getCloudSiteWithClli(String clli) {
+        Optional <CloudSite> cloudSiteOptional = cloudSites.values().stream().filter(cs ->
+                cs.getClli() != null && clli.equals(cs.getClli()) && (CLOUD_SITE_VERSION.equals(cs.getAic_version())))
+                .findAny();
+        return cloudSiteOptional.orElse(getDefaultCloudSide(clli));
+    }
+
+    // TODO in future the result will be optional
+    private CloudSite getDefaultCloudSide(String clli) {
+        Optional<CloudSite> cloudSiteOpt = cloudSites.values().stream()
+                .filter(cs -> cs.getId().equalsIgnoreCase(DEFAULT_CLOUD_SITE_ID)).findAny();
+        if (cloudSiteOpt.isPresent()) {
+            CloudSite defaultCloudSite = cloudSiteOpt.get();
+            defaultCloudSite.setRegionId(clli);
+            defaultCloudSite.setId(clli);
             return defaultCloudSite;
+        } else {
+            return null;
         }
-        return null;
     }
 
     /**
      * Get a specific CloudIdentity, based on an ID.
-     * 
+     *
      * @param id
      *            the ID to match
      * @return a CloudIdentity, or null of no match found
@@ -173,7 +144,7 @@ public class CloudConfig {
         configFilePath = configFile;
         this.refreshTimerInMinutes = refreshTimer;
         this.validCloudConfig=false;
-        
+
         try {
             reader = new FileReader(configFile);
             // Parse the JSON input into a CloudConfig
@@ -200,7 +171,7 @@ public class CloudConfig {
                 }
             }
             this.validCloudConfig=true;
-            
+
         } finally {
             try {
                 if (reader != null) {
@@ -227,12 +198,9 @@ public class CloudConfig {
     public synchronized CloudConfig clone() {
         CloudConfig ccCopy = new CloudConfig();
         for (Entry<String, CloudIdentity> e : identityServices.entrySet()) {
-
             ccCopy.identityServices.put(e.getKey(), e.getValue().clone());
         }
-
         for (Entry<String, CloudSite> e : cloudSites.entrySet()) {
-
             ccCopy.cloudSites.put(e.getKey(), e.getValue().clone());
         }
         ccCopy.configFilePath = this.configFilePath;
@@ -290,5 +258,5 @@ public class CloudConfig {
         return true;
     }
 
-  
+
 }
