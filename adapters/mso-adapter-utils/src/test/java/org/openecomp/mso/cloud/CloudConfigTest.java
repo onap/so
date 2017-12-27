@@ -18,8 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.mso.adapter_utils.tests;
-
+package org.openecomp.mso.cloud;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -29,51 +28,24 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import java.util.Map;
-import org.openecomp.mso.cloud.CloudConfig;
-import org.openecomp.mso.cloud.CloudConfigFactory;
-import org.openecomp.mso.cloud.CloudIdentity;
-import org.openecomp.mso.cloud.CloudSite;
 import org.openecomp.mso.openstack.exceptions.MsoCloudIdentityNotFound;
 
-/**
- * This class implements test methods of the CloudConfig features.
- */
 public class CloudConfigTest {
 
-	private static CloudConfig con;
-	private static CloudConfigFactory cloudConfigFactory= new CloudConfigFactory();
+	private CloudConfig con;
+	private CloudConfigFactory cloudConfigFactory = new CloudConfigFactory();
 
-	public CloudConfigTest () {
-
-	}
-
-	/**
-    * This method is called before any test occurs.
-    * It creates a fake tree from scratch
-	 * @throws MsoCloudIdentityNotFound 
-    */
    @Before
    public final void prepare () throws MsoCloudIdentityNotFound {
 	   ClassLoader classLoader = CloudConfigTest.class.getClassLoader();
 	   String config = classLoader.getResource("cloud_config.json").toString().substring(5);
-
 	   cloudConfigFactory.initializeCloudConfig(config,1);
 	   con = cloudConfigFactory.getCloudConfig();
    }
 
-   /**
-    * This method implements a test for the getCloudConfig method.
-    */
-   @Test
-   public final void testGetCloudConfig () {
-	   assertNotNull(con);
-   }
 
-   /**
-    * This method implements a test for the getCloudSites method.
-    */
    @Test
-   public final void testGetCloudSites () {
+   public void testGetCloudSites () {
 	   Map<String,CloudSite> siteMap = con.getCloudSites();
 	   assertNotNull(siteMap);
 
@@ -97,7 +69,7 @@ public class CloudConfigTest {
     * This method implements a test for the getIdentityServices method.
     */
    @Test
-   public final void testGetIdentityServices () {
+   public void testGetIdentityServices () {
 	   Map<String,CloudIdentity> identityMap = con.getIdentityServices ();
 	   assertNotNull(identityMap);
 
@@ -132,22 +104,37 @@ public class CloudConfigTest {
 
    }
 
-   /**
-    * This method implements a test for the getCloudSite method.
-    */
    @Test
-   public final void testGetCloudSite () {
-	   CloudSite site1  = con.getCloudSite("MT");
-	   assertNotNull(site1);
-	   assertEquals (site1.getRegionId(), "regionOne");
-	   assertEquals (site1.getIdentityServiceId(), "MT_KEYSTONE");
+   public void cloudSiteIsGotById_when_IdFound () {
+	   CloudSite cloudSite  = con.getCloudSite("MT");
+	   assertNotNull(cloudSite);
+	   assertEquals (cloudSite.getRegionId(), "regionOne");
+	   assertEquals (cloudSite.getIdentityServiceId(), "MT_KEYSTONE");
    }
+
+	@Test
+	public void cloudSiteIsGotByClli_when_IdNotFound () {
+		CloudSite cloudSite  = con.getCloudSite("CS_clli");
+		assertNotNull(cloudSite);
+		assertEquals (cloudSite.getRegionId(), "clliRegion");
+		assertEquals(cloudSite.getClli(), "CS_clli");
+		assertEquals (cloudSite.getIdentityServiceId(), "CS_service");
+	}
+
+	@Test
+	public void cloudSiteIsGotByDefault_when_IdAndClliNotFound () {
+		CloudSite cloudSite  = con.getCloudSite("not_existing_id");
+		assertNotNull(cloudSite);
+		assertEquals (cloudSite.getRegionId(), "not_existing_id");
+		assertEquals (cloudSite.getClli(), "defaultClli");
+		assertEquals (cloudSite.getIdentityServiceId(), "CS_service");
+	}
 
    /**
     * This method implements a test for the getIdentityService method.
     */
    @Test
-   public final void testGetIdentityService () {
+   public void testGetIdentityService() {
 	   CloudIdentity identity1  = con.getIdentityService("MT_KEYSTONE");
 	   assertNotNull(identity1);
 	   assertEquals (identity1.getMsoId(), "john");
@@ -161,7 +148,7 @@ public class CloudConfigTest {
    }
    
    @Test (expected = MsoCloudIdentityNotFound.class)
-   public final void testLoadWithWrongFile () throws MsoCloudIdentityNotFound {
+   public void testLoadWithWrongFile () throws MsoCloudIdentityNotFound {
        ClassLoader classLoader = CloudConfigTest.class.getClassLoader();
        String config = classLoader.getResource("cloud_config_bad.json").toString().substring(5);
 
@@ -169,7 +156,7 @@ public class CloudConfigTest {
    }
    
    @Test
-   public final void testReloadWithWrongFile () {
+   public void testReloadWithWrongFile () {
        ClassLoader classLoader = CloudConfigTest.class.getClassLoader();
        String config = classLoader.getResource("cloud_config_bad.json").toString().substring(5);
 
