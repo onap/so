@@ -1,0 +1,211 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_6f720c7e",
+        "filename": "adapters/mso-adapters-rest-interface/src/main/java/org/openecomp/mso/adapters/json/MapDeserializer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2017-12-28T15:11:08Z",
+      "side": 1,
+      "message": "move return map; to new line. And Google Java Code Style requires to have braces here: 4.1.1 Braces are used where optional",
+      "range": {
+        "startLine": 57,
+        "startChar": 20,
+        "endLine": 57,
+        "endChar": 32
+      },
+      "revId": "5cef06c976eb87ddb3b5ff2388ba6c7ba00d2151",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_cf5d60eb",
+        "filename": "adapters/mso-adapters-rest-interface/src/main/java/org/openecomp/mso/adapters/json/MapDeserializer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2017-12-28T15:11:08Z",
+      "side": 1,
+      "message": "Change this while to foreach",
+      "range": {
+        "startLine": 59,
+        "startChar": 2,
+        "endLine": 59,
+        "endChar": 30
+      },
+      "revId": "5cef06c976eb87ddb3b5ff2388ba6c7ba00d2151",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_efd37c36",
+        "filename": "adapters/mso-adapters-rest-interface/src/main/java/org/openecomp/mso/adapters/json/MapDeserializer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2017-12-28T15:11:08Z",
+      "side": 1,
+      "message": "also this one",
+      "range": {
+        "startLine": 62,
+        "startChar": 3,
+        "endLine": 62,
+        "endChar": 36
+      },
+      "revId": "5cef06c976eb87ddb3b5ff2388ba6c7ba00d2151",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_6ff9acc7",
+        "filename": "adapters/mso-adapters-rest-interface/src/test/java/org/openecomp/mso/adapters/AdapterRestInterfaceTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2017-12-28T15:11:08Z",
+      "side": 1,
+      "message": "HashMap\u003c\u003e(),  you forgot a \"diamond\"",
+      "range": {
+        "startLine": 43,
+        "startChar": 31,
+        "endLine": 43,
+        "endChar": 40
+      },
+      "revId": "5cef06c976eb87ddb3b5ff2388ba6c7ba00d2151",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_2f03a4b9",
+        "filename": "adapters/mso-adapters-rest-interface/src/test/java/org/openecomp/mso/adapters/AdapterRestInterfaceTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2017-12-28T15:11:08Z",
+      "side": 1,
+      "message": "Is IOException expected here or not? Test should fail in one of those cases.",
+      "range": {
+        "startLine": 44,
+        "startChar": 2,
+        "endLine": 45,
+        "endChar": 3
+      },
+      "revId": "5cef06c976eb87ddb3b5ff2388ba6c7ba00d2151",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_2f1ac417",
+        "filename": "adapters/mso-adapters-rest-interface/src/test/java/org/openecomp/mso/adapters/json/MapDeserializerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2017-12-28T15:11:08Z",
+      "side": 1,
+      "message": "it can be local",
+      "range": {
+        "startLine": 40,
+        "startChar": 4,
+        "endLine": 40,
+        "endChar": 41
+      },
+      "revId": "5cef06c976eb87ddb3b5ff2388ba6c7ba00d2151",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_6f20cc49",
+        "filename": "adapters/mso-adapters-rest-interface/src/test/java/org/openecomp/mso/adapters/json/MapDeserializerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2017-12-28T15:11:08Z",
+      "side": 1,
+      "message": "please sepatare given, when, then",
+      "range": {
+        "startLine": 43,
+        "startChar": 16,
+        "endLine": 43,
+        "endChar": 45
+      },
+      "revId": "5cef06c976eb87ddb3b5ff2388ba6c7ba00d2151",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_4f1710ee",
+        "filename": "adapters/mso-adapters-rest-interface/src/test/java/org/openecomp/mso/adapters/json/MapDeserializerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2017-12-28T15:11:08Z",
+      "side": 1,
+      "message": "just \"throws Exception\"",
+      "range": {
+        "startLine": 43,
+        "startChar": 48,
+        "endLine": 43,
+        "endChar": 81
+      },
+      "revId": "5cef06c976eb87ddb3b5ff2388ba6c7ba00d2151",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_cf2b202f",
+        "filename": "adapters/mso-adapters-rest-interface/src/test/java/org/openecomp/mso/adapters/json/MapDeserializerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2017-12-28T15:11:08Z",
+      "side": 1,
+      "message": "You can try AssertJ. Then this assert gets more readable form:\n\nassertThat(params).hasSize(1).containsEntry(MAP_KEY, MAP_VALUE);",
+      "range": {
+        "startLine": 47,
+        "startChar": 0,
+        "endLine": 48,
+        "endChar": 53
+      },
+      "revId": "5cef06c976eb87ddb3b5ff2388ba6c7ba00d2151",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
