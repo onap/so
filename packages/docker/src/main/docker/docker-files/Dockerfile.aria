@@ -15,15 +15,30 @@
 # the License.
 # ============LICENSE_END====================================================
 # 
-
 FROM httpd:alpine
+ARG aria_rest_url
+ARG aria_rest_branch
 
 RUN apk update
 RUN apk add python2 py2-pip gcc python2-dev linux-headers musl-dev git curl
-
-RUN pip install apache-ariatosca==0.2.0 jinja2==2.8 aria-extension-cloudify==4.1
-RUN curl -sL http://github.com/dfilppi/aria-rest/archive/master.tar.gz|tar xzf -
-WORKDIR aria-rest-master
+WORKDIR /tmp
+RUN git clone -b 0.1.1 https://github.com/cloudify-cosmo/aria-extension-cloudify
+WORKDIR /tmp/aria-extension-cloudify
+RUN pip install -U setuptools
 RUN pip install .
+RUN pip install apache-ariatosca==0.1.1 jinja2==2.8
+WORKDIR /tmp
+RUN git clone -b ${aria_rest_branch} ${aria_rest_url}
+WORKDIR /tmp/so/aria/aria-rest-server/src/main/python/aria-rest
+RUN pip install .
+WORKDIR /tmp
+RUN git clone -b 2.0.1 https://github.com/cloudify-cosmo/cloudify-openstack-plugin
+RUN wagon create ./cloudify-openstack-plugin
+RUN aria plugins install cloudify_openstack_plugin-2.0.1-py27-none-linux_x86_64.wgn
+RUN rm cloudify_openstack_plugin-2.0.1-py27-none-linux_x86_64.wgn
+RUN git clone -b 1.4.10 https://github.com/cloudify-cosmo/cloudify-aws-plugin
+RUN wagon create ./cloudify-aws-plugin
+RUN aria plugins install cloudify_aws_plugin-1.4.10-py27-none-linux_x86_64.wgn
+RUN rm cloudify_aws_plugin-1.4.10-py27-none-linux_x86_64.wgn
 
 CMD aria-rest
