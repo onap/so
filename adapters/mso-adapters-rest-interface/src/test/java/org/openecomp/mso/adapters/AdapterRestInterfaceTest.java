@@ -23,31 +23,22 @@ package org.openecomp.mso.adapters;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import org.codehaus.jackson.JsonGenerator;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.map.DeserializationContext;
 import org.codehaus.jackson.map.SerializerProvider;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.openecomp.mso.adapters.json.MapDeserializer;
 import org.openecomp.mso.adapters.json.MapSerializer;
 import org.openecomp.mso.adapters.nwrest.ContrailNetwork;
-import org.openecomp.mso.adapters.nwrest.CreateNetworkError;
 import org.openecomp.mso.adapters.nwrest.CreateNetworkRequest;
 import org.openecomp.mso.adapters.nwrest.CreateNetworkResponse;
-import org.openecomp.mso.adapters.nwrest.DeleteNetworkError;
 import org.openecomp.mso.adapters.nwrest.DeleteNetworkRequest;
 import org.openecomp.mso.adapters.nwrest.DeleteNetworkResponse;
 import org.openecomp.mso.adapters.nwrest.NetworkExceptionResponse;
 import org.openecomp.mso.adapters.nwrest.NetworkRequestCommon;
 import org.openecomp.mso.adapters.nwrest.ProviderVlanNetwork;
-import org.openecomp.mso.adapters.nwrest.QueryNetworkError;
 import org.openecomp.mso.adapters.nwrest.QueryNetworkResponse;
-import org.openecomp.mso.adapters.nwrest.RollbackNetworkError;
 import org.openecomp.mso.adapters.nwrest.RollbackNetworkRequest;
 import org.openecomp.mso.adapters.nwrest.RollbackNetworkResponse;
-import org.openecomp.mso.adapters.nwrest.UpdateNetworkError;
 import org.openecomp.mso.adapters.nwrest.UpdateNetworkRequest;
 import org.openecomp.mso.adapters.nwrest.UpdateNetworkResponse;
 import org.openecomp.mso.adapters.sdncrest.RequestInformation;
@@ -101,22 +92,9 @@ import org.openecomp.mso.adapters.vnfrest.VolumeGroupRollback;
 import org.openecomp.mso.entity.MsoRequest;
 import org.openecomp.mso.openstack.beans.NetworkRollback;
 import org.openecomp.mso.openstack.beans.NetworkStatus;
-import org.openecomp.mso.openstack.beans.Subnet;
 import org.openecomp.mso.openstack.beans.VnfRollback;
-import org.openecomp.mso.openstack.beans.VnfStatus;
 
 public class AdapterRestInterfaceTest {
-	@Test(expected = Exception.class)
-	public final void mapDeserializerTest() {
-		MapDeserializer mapDeserializer = new MapDeserializer();
-		JsonParser jsonParser = Mockito.mock(JsonParser.class);
-		DeserializationContext deserializationContext = Mockito
-				.mock(DeserializationContext.class);
-		try {
-			mapDeserializer.deserialize(jsonParser, deserializationContext);
-		} catch (IOException e) {
-		}
-	}
 
 	@Test
 	public final void mapSerializerTest() {
@@ -128,8 +106,7 @@ public class AdapterRestInterfaceTest {
 		SerializerProvider serializerProvider = Mockito
 				.mock(SerializerProvider.class);
 		try {
-			mapSerializer.serialize(new HashMap<String, String>(),
-					jsonGenerator, serializerProvider);
+			mapSerializer.serialize(new HashMap(), jsonGenerator, serializerProvider);
 		} catch (IOException e) {
 		}
 	}
@@ -141,14 +118,11 @@ public class AdapterRestInterfaceTest {
 	public final void contrailNetworkPOJOTest() {
 		try {
 			ContrailNetwork contrailNetwork = new ContrailNetwork();
-			ContrailNetwork contrailNetwork2 = new ContrailNetwork("", "",
-					new ArrayList<String>(), new ArrayList<String>(),
-					new ArrayList<String>());
 			contrailNetwork.getExternal();
 			contrailNetwork.setExternal("external");
-			contrailNetwork.setPolicyFqdns(new ArrayList<String>());
-			contrailNetwork.setRouteTableFqdns(new ArrayList<String>());
-			contrailNetwork.setRouteTargets(new ArrayList<String>());
+			contrailNetwork.setPolicyFqdns(new ArrayList<>());
+			contrailNetwork.setRouteTableFqdns(new ArrayList<>());
+			contrailNetwork.setRouteTargets(new ArrayList<>());
 			contrailNetwork.setShared("shared");
 			contrailNetwork.getShared();
 			contrailNetwork.getPolicyFqdns();
@@ -166,7 +140,7 @@ public class AdapterRestInterfaceTest {
 			updateNetworkRequest.setNetworkId("networkId");
 			updateNetworkRequest.setNetworkName("networkName");
 			updateNetworkRequest
-					.setNetworkParams(new HashMap<String, String>());
+					.setNetworkParams(new HashMap<>());
 			updateNetworkRequest.setNetworkStackId("networkStackId");
 			updateNetworkRequest.setNetworkTechnology("networkTechnology");
 			updateNetworkRequest.setNetworkType("networkType");
@@ -175,7 +149,7 @@ public class AdapterRestInterfaceTest {
 			updateNetworkRequest
 					.setProviderVlanNetwork(new ProviderVlanNetwork());
 			updateNetworkRequest.setSkipAAI(true);
-			updateNetworkRequest.setSubnets(new ArrayList<Subnet>());
+			updateNetworkRequest.setSubnets(new ArrayList<>());
 			updateNetworkRequest.setTenantId("tenantId");
 			updateNetworkRequest.isContrailRequest();
 			updateNetworkRequest.getCloudSiteId();
@@ -214,10 +188,10 @@ public class AdapterRestInterfaceTest {
 			createNetworkRequest
 					.setProviderVlanNetwork(new ProviderVlanNetwork());
 			createNetworkRequest.setSkipAAI(true);
-			createNetworkRequest.setSubnets(new ArrayList<Subnet>());
+			createNetworkRequest.setSubnets(new ArrayList<>());
 			createNetworkRequest.setTenantId("tenantId");
 			createNetworkRequest
-					.setNetworkParams(new HashMap<String, String>());
+					.setNetworkParams(new HashMap<>());
 			createNetworkRequest.setNetworkTechnology("VMWARE");
 			createNetworkRequest.getBackout();
 			createNetworkRequest.getCloudSiteId();
@@ -240,19 +214,16 @@ public class AdapterRestInterfaceTest {
 			createNetworkRequest.isContrailRequest();
 
 			QueryNetworkResponse queryNetworkResponse = new QueryNetworkResponse();
-			QueryNetworkResponse queryNetworkResponse2 = new QueryNetworkResponse(
-					"", "", "", NetworkStatus.ACTIVE,
-					new HashMap<String, String>());
 			queryNetworkResponse.setNetworkExists(true);
 			queryNetworkResponse.setNetworkId("networkId");
 			queryNetworkResponse
-					.setNetworkOutputs(new HashMap<String, String>());
+					.setNetworkOutputs(new HashMap<>());
 			queryNetworkResponse.setNetworkStackId("networkStackId");
 			queryNetworkResponse.setNetworkStatus(NetworkStatus.ACTIVE);
 			queryNetworkResponse.setNeutronNetworkId("neutronNetworkId");
-			queryNetworkResponse.setRouteTargets(new ArrayList<String>());
-			queryNetworkResponse.setSubnetIdMap(new HashMap<String, String>());
-			queryNetworkResponse.setVlans(new ArrayList<Integer>());
+			queryNetworkResponse.setRouteTargets(new ArrayList<>());
+			queryNetworkResponse.setSubnetIdMap(new HashMap<>());
+			queryNetworkResponse.setVlans(new ArrayList<>());
 			queryNetworkResponse.getNetworkExists();
 			queryNetworkResponse.getNetworkId();
 			queryNetworkResponse.getNetworkOutputs();
@@ -265,9 +236,6 @@ public class AdapterRestInterfaceTest {
 			queryNetworkResponse.toJsonString();
 
 			CreateNetworkResponse createNetworkResponse = new CreateNetworkResponse();
-			CreateNetworkResponse createNetworkResponse2 = new CreateNetworkResponse(
-					"", "", "", "", true, new HashMap<String, String>(),
-					new NetworkRollback(), "");
 			createNetworkResponse.setMessageId("messageId");
 			createNetworkResponse.setNetworkCreated(true);
 			createNetworkResponse.setNetworkFqdn("networkFqdn");
@@ -275,7 +243,7 @@ public class AdapterRestInterfaceTest {
 			createNetworkResponse.setNetworkStackId("networkStackId");
 			createNetworkResponse.setNeutronNetworkId("neutronNetworkId");
 			createNetworkResponse.setRollback(new NetworkRollback());
-			createNetworkResponse.setSubnetMap(new HashMap<String, String>());
+			createNetworkResponse.setSubnetMap(new HashMap<>());
 			createNetworkResponse.toJsonString();
 			createNetworkResponse.toXmlString();
 			createNetworkResponse.getMessageId();
@@ -322,10 +290,6 @@ public class AdapterRestInterfaceTest {
 			deleteNetworkRequest.getTenantId();
 
 			NetworkExceptionResponse networkExceptionResponse = new NetworkExceptionResponse();
-			NetworkExceptionResponse networkExceptionResponse2 = new NetworkExceptionResponse(
-					"", null, false, "");
-			NetworkExceptionResponse networkExceptionResponse3 = new NetworkExceptionResponse(
-					"");
 			networkExceptionResponse.setCategory(null);
 			networkExceptionResponse.setMessage("message");
 			networkExceptionResponse.setMessageId("messageId");
@@ -336,8 +300,6 @@ public class AdapterRestInterfaceTest {
 			networkExceptionResponse.getRolledBack();
 
 			UpdateNetworkResponse updateNetworkResponse = new UpdateNetworkResponse();
-			UpdateNetworkResponse updateNetworkResponse2 = new UpdateNetworkResponse(
-					"", "", null, "");
 			updateNetworkResponse.setMessageId("messageId");
 			updateNetworkResponse.setNetworkId("networkId");
 			updateNetworkResponse.setNeutronNetworkId("");
@@ -348,53 +310,24 @@ public class AdapterRestInterfaceTest {
 			updateNetworkResponse.getSubnetMap();
 
 			DeleteNetworkResponse deleteNetworkResponse = new DeleteNetworkResponse();
-			DeleteNetworkResponse deleteNetworkResponse2 = new DeleteNetworkResponse(
-					"", false, "");
 			deleteNetworkResponse.setNetworkDeleted(false);
 			deleteNetworkResponse.setNetworkId("networkId");
 			deleteNetworkResponse.getNetworkDeleted();
 			deleteNetworkResponse.getNetworkId();
 
 			ProviderVlanNetwork providerVlanNetwork = new ProviderVlanNetwork();
-			ProviderVlanNetwork providerVlanNetwork2 = new ProviderVlanNetwork(
-					"", null);
 			providerVlanNetwork.setPhysicalNetworkName("");
 			providerVlanNetwork.setVlans(null);
 			providerVlanNetwork.getPhysicalNetworkName();
 			providerVlanNetwork.getVlans();
 
 			RollbackNetworkResponse rollbackNetworkResponse = new RollbackNetworkResponse();
-			RollbackNetworkResponse rollbackNetworkResponse2 = new RollbackNetworkResponse(
-					false, "");
 			rollbackNetworkResponse.setNetworkRolledBack(false);
 			rollbackNetworkResponse.getNetworkRolledBack();
-
-			CreateNetworkError createNetworkError = new CreateNetworkError();
-			CreateNetworkError createNetworkError2 = new CreateNetworkError("");
-			CreateNetworkError createNetworkError3 = new CreateNetworkError("",
-					null, false, "");
-
-			DeleteNetworkError deleteNetworkError = new DeleteNetworkError();
-			DeleteNetworkError deleteNetworkError2 = new DeleteNetworkError("");
-			DeleteNetworkError deleteNetworkError3 = new DeleteNetworkError("",
-					null, false, "");
-
-			RollbackNetworkError rollbackNetworkError = new RollbackNetworkError();
-			RollbackNetworkError rollbackNetworkError2 = new RollbackNetworkError(
-					"");
-			RollbackNetworkError rollbackNetworkError3 = new RollbackNetworkError(
-					"", null, false, "");
-
-			UpdateNetworkError updateNetworkError = new UpdateNetworkError();
-			UpdateNetworkError updateNetworkError2 = new UpdateNetworkError("");
-			UpdateNetworkError updateNetworkError3 = new UpdateNetworkError("",
-					null, false, "");
 
 			RollbackNetworkRequest rollbackNetworkRequest = new RollbackNetworkRequest();
 			rollbackNetworkRequest.setNetworkRollback(null);
 			rollbackNetworkRequest.getNetworkRollback();
-
-			QueryNetworkError queryNetworkError = new QueryNetworkError();
 
 			UpdateVfModuleRequest updateVfModuleRequest = new UpdateVfModuleRequest();
 			updateVfModuleRequest.setBackout(false);
@@ -501,10 +434,6 @@ public class AdapterRestInterfaceTest {
 			vnfRollback.setVolumeGroupName("");
 
 			VfModuleRollback vfModuleRollback = new VfModuleRollback();
-			VfModuleRollback vfModuleRollback2 = new VfModuleRollback(
-					vnfRollback, "", "", "");
-			VfModuleRollback vfModuleRollback3 = new VfModuleRollback("", "",
-					"", false, "", "", null, "");
 			vfModuleRollback.setCloudSiteId("");
 			vfModuleRollback.setMsoRequest(null);
 			vfModuleRollback.setTenantId("");
@@ -533,10 +462,6 @@ public class AdapterRestInterfaceTest {
 			volumeGroupRollback.getTenantId();
 			volumeGroupRollback.getVolumeGroupId();
 			volumeGroupRollback.getVolumeGroupStackId();
-			VolumeGroupRollback volumeGroupRollback2 = new VolumeGroupRollback(
-					volumeGroupRollback, "", "");
-			VolumeGroupRollback volumeGroupRollback3 = new VolumeGroupRollback(
-					"", "", false, "", "", null, "");
 
 			CreateVolumeGroupRequest createVolumeGroupRequest = new CreateVolumeGroupRequest();
 			createVolumeGroupRequest.setCloudSiteId("");
@@ -586,8 +511,6 @@ public class AdapterRestInterfaceTest {
 			createVfModuleResponse.getVfModuleOutputs();
 			createVfModuleResponse.getVfModuleStackId();
 			createVfModuleResponse.getVnfId();
-			CreateVfModuleResponse createVfModuleResponse2 = new CreateVfModuleResponse(
-					"", "", "", false, null, vfModuleRollback, "");
 
 			UpdateVolumeGroupRequest updateVolumeGroupRequest = new UpdateVolumeGroupRequest();
 			updateVolumeGroupRequest.setCloudSiteId("");
@@ -628,12 +551,8 @@ public class AdapterRestInterfaceTest {
 			queryVfModuleResponse.getVfModuleStackId();
 			queryVfModuleResponse.getVnfId();
 			queryVfModuleResponse.getVnfStatus();
-			QueryVfModuleResponse queryVfModuleResponse2 = new QueryVfModuleResponse(
-					"", "", "", VnfStatus.ACTIVE, null);
 
 			CreateVolumeGroupResponse createVolumeGroupResponse = new CreateVolumeGroupResponse();
-			CreateVolumeGroupResponse createVolumeGroupResponse2 = new CreateVolumeGroupResponse(
-					"", "volumeGroupStackId", true, null, null, "");
 			createVolumeGroupResponse.setMessageId("");
 			createVolumeGroupResponse.setVolumeGroupCreated(false);
 			createVolumeGroupResponse.setVolumeGroupId("");
@@ -652,8 +571,6 @@ public class AdapterRestInterfaceTest {
 			vfResponseCommon.toXmlString();
 
 			QueryVolumeGroupResponse queryVolumeGroupResponse = new QueryVolumeGroupResponse();
-			QueryVolumeGroupResponse queryVolumeGroupResponse2 = new QueryVolumeGroupResponse(
-					"", "", null, null);
 			queryVolumeGroupResponse.setVolumeGroupId("");
 			queryVolumeGroupResponse.setVolumeGroupOutputs(null);
 			queryVolumeGroupResponse.setVolumeGroupStackId("");
@@ -666,8 +583,6 @@ public class AdapterRestInterfaceTest {
 			queryVolumeGroupResponse.toJsonString();
 
 			DeleteVfModuleResponse deleteVfModuleResponse = new DeleteVfModuleResponse();
-			DeleteVfModuleResponse deleteVfModuleResponse2 = new DeleteVfModuleResponse(
-					"", "", false, "", null);
 			deleteVfModuleResponse.setMessageId("");
 			deleteVfModuleResponse.setVfModuleDeleted(false);
 			deleteVfModuleResponse.setVfModuleId("");
@@ -680,8 +595,6 @@ public class AdapterRestInterfaceTest {
 			deleteVfModuleResponse.getVnfId();
 
 			UpdateVfModuleResponse updateVfModuleResponse = new UpdateVfModuleResponse();
-			UpdateVfModuleResponse updateVfModuleResponse2 = new UpdateVfModuleResponse(
-					"", "", "", null, "");
 			updateVfModuleResponse.setMessageId("");
 			updateVfModuleResponse.setVfModuleId("");
 			updateVfModuleResponse.setVfModuleOutputs(null);
@@ -714,8 +627,6 @@ public class AdapterRestInterfaceTest {
 			deleteVfModuleRequest.getVnfId();
 
 			VfModuleExceptionResponse vfModuleExceptionResponse = new VfModuleExceptionResponse();
-			VfModuleExceptionResponse vfModuleExceptionResponse2 = new VfModuleExceptionResponse(
-					"", null, false, "");
 			vfModuleExceptionResponse.setCategory(null);
 			vfModuleExceptionResponse.setMessage("");
 			vfModuleExceptionResponse.setMessageId("");
@@ -745,8 +656,6 @@ public class AdapterRestInterfaceTest {
 
 			// 1
 			UpdateVolumeGroupResponse updateVolumeGroupResponse = new UpdateVolumeGroupResponse();
-			UpdateVolumeGroupResponse updateVolumeGroupResponse2 = new UpdateVolumeGroupResponse(
-					"", "", null, "");
 			updateVolumeGroupResponse.setMessageId("");
 			updateVolumeGroupResponse.setVolumeGroupId("");
 			updateVolumeGroupResponse.setVolumeGroupOutputs(null);
@@ -765,8 +674,6 @@ public class AdapterRestInterfaceTest {
 			vfRequestCommon.getSkipAAI();
 
 			DeleteVolumeGroupResponse deleteVolumeGroupResponse = new DeleteVolumeGroupResponse();
-			DeleteVolumeGroupResponse deleteVolumeGroupResponse2 = new DeleteVolumeGroupResponse(
-					false, "");
 			deleteVolumeGroupResponse.setMessageId("");
 			deleteVolumeGroupResponse.setVolumeGroupDeleted(false);
 			deleteVolumeGroupResponse.getMessageId();
@@ -775,26 +682,19 @@ public class AdapterRestInterfaceTest {
 			deleteVolumeGroupResponse.toXmlString();
 
 			RollbackVfModuleResponse rollbackVfModuleResponse = new RollbackVfModuleResponse();
-			RollbackVfModuleResponse rollbackVfModuleResponse2 = new RollbackVfModuleResponse(
-					false, "");
+
 			rollbackVfModuleResponse.setMessageId("");
 			rollbackVfModuleResponse.setVfModuleRolledback(false);
 			rollbackVfModuleResponse.getMessageId();
 			rollbackVfModuleResponse.getVfModuleRolledback();
 
 			RollbackVolumeGroupResponse rollbackVolumeGroupResponse = new RollbackVolumeGroupResponse();
-			RollbackVolumeGroupResponse rollbackVolumeGroupResponse2 = new RollbackVolumeGroupResponse(
-					false, "");
 			rollbackVolumeGroupResponse.setMessageId("");
 			rollbackVolumeGroupResponse.setVolumeGroupRolledBack(false);
 			rollbackVolumeGroupResponse.getMessageId();
 			rollbackVolumeGroupResponse.getVolumeGroupRolledBack();
 
 			VolumeGroupExceptionResponse volumeGroupExceptionResponse = new VolumeGroupExceptionResponse();
-			VolumeGroupExceptionResponse volumeGroupExceptionResponse2 = new VolumeGroupExceptionResponse(
-					"");
-			VolumeGroupExceptionResponse volumeGroupExceptionResponse3 = new VolumeGroupExceptionResponse(
-					"", null, false, "");
 			volumeGroupExceptionResponse.setCategory(null);
 			volumeGroupExceptionResponse.setMessage("");
 			volumeGroupExceptionResponse.setMessageId("");
@@ -831,9 +731,6 @@ public class AdapterRestInterfaceTest {
 			// 2
 
 			SDNCServiceResponse sDNCServiceResponse = new SDNCServiceResponse();
-			SDNCServiceResponse sDNCServiceResponse2 = new SDNCServiceResponse(
-					"", "", "", "");
-			sDNCServiceResponse.addParam("", "");
 			sDNCServiceResponse.setAckFinalIndicator("");
 			sDNCServiceResponse.setParams(null);
 			sDNCServiceResponse.setResponseCode("");
@@ -858,8 +755,6 @@ public class AdapterRestInterfaceTest {
 			rollbackVolumeGroupRequest.toXmlString();
 
 			RequestInformation requestInformation = new RequestInformation();
-			RequestInformation requestInformation2 = new RequestInformation("",
-					"", "");
 			requestInformation.setNotificationUrl("");
 			requestInformation.setRequestId("");
 			requestInformation.setSource("");
@@ -878,7 +773,6 @@ public class AdapterRestInterfaceTest {
 			sDNCErrorCommon.getSDNCRequestId();
 
 			SDNCEvent sDNCEvent = new SDNCEvent();
-			SDNCEvent sDNCEvent2 = new SDNCEvent("", "", "");
 			sDNCEvent.setEventCorrelator("");
 			sDNCEvent.setEventCorrelatorType("");
 			sDNCEvent.setEventType("");
@@ -891,8 +785,6 @@ public class AdapterRestInterfaceTest {
 			sDNCEvent.toJson();
 
 			SDNCRequestCommon sDNCRequestCommon = new SDNCServiceRequest();
-			SDNCRequestCommon sDNCRequestCommon2 = new SDNCServiceRequest("",
-					"", "", "", "", null, null, "", "");
 			sDNCRequestCommon.setBPNotificationUrl("");
 			sDNCRequestCommon.setBPTimeout("");
 			sDNCRequestCommon.setSDNCRequestId("");
@@ -903,8 +795,6 @@ public class AdapterRestInterfaceTest {
 			sDNCRequestCommon.isSynchronous();
 
 			SDNCServiceError sDNCServiceError = new SDNCServiceError();
-			SDNCServiceError sDNCServiceError2 = new SDNCServiceError("", "",
-					"", "");
 			sDNCServiceError.setAckFinalIndicator("");
 			sDNCServiceError.setResponseCode("");
 			sDNCServiceError.setResponseMessage("");
@@ -915,8 +805,6 @@ public class AdapterRestInterfaceTest {
 			sDNCServiceError.getSDNCRequestId();
 
 			SDNCServiceRequest sDNCServiceRequest = new SDNCServiceRequest();
-			SDNCServiceRequest sDNCServiceRequest2 = new SDNCServiceRequest("",
-					"", "", "", "", requestInformation, null, "", "");
 			sDNCServiceRequest.setBPNotificationUrl("");
 			sDNCServiceRequest.setBPTimeout("");
 			sDNCServiceRequest.setRequestInformation(null);
@@ -938,8 +826,6 @@ public class AdapterRestInterfaceTest {
 
 			// 3
 			ServiceInformation serviceInformation = new ServiceInformation();
-			ServiceInformation serviceInformation2 = new ServiceInformation("",
-					"", "", "");
 			serviceInformation.setServiceInstanceId("");
 			serviceInformation.setServiceType("");
 			serviceInformation.setSubscriberGlobalId("");
@@ -950,9 +836,6 @@ public class AdapterRestInterfaceTest {
 			serviceInformation.getSubscriberName();
 
 			CreateTenantError createTenantError = new CreateTenantError();
-			CreateTenantError createTenantError2 = new CreateTenantError("");
-			CreateTenantError createTenantError3 = new CreateTenantError("",
-					null, false);
 			createTenantError.setCategory(null);
 			createTenantError.setMessage("");
 			createTenantError.setRolledBack(false);
@@ -976,8 +859,6 @@ public class AdapterRestInterfaceTest {
 			createTenantRequest.toString();
 
 			CreateTenantResponse createTenantResponse = new CreateTenantResponse();
-			CreateTenantResponse createTenantResponse2 = new CreateTenantResponse(
-					"", "", false, null);
 			createTenantResponse.setCloudSiteId("");
 			createTenantResponse.setTenantCreated(false);
 			createTenantResponse.setTenantId("");
@@ -989,9 +870,6 @@ public class AdapterRestInterfaceTest {
 			createTenantResponse.toString();
 
 			DeleteTenantError deleteTenantError = new DeleteTenantError();
-			DeleteTenantError deleteTenantError2 = new DeleteTenantError("");
-			DeleteTenantError deleteTenantError3 = new DeleteTenantError("",
-					null, false);
 			deleteTenantError.setCategory(null);
 			deleteTenantError.setMessage("");
 			deleteTenantError.setRolledBack(false);
@@ -1015,16 +893,12 @@ public class AdapterRestInterfaceTest {
 			healthCheckHandler.healthcheck();
 
 			QueryTenantError queryTenantError = new QueryTenantError();
-			QueryTenantError queryTenantError2 = new QueryTenantError("");
-			QueryTenantError queryTenantError3 = new QueryTenantError("", null);
 			queryTenantError.setCategory(null);
 			queryTenantError.setMessage("");
 			queryTenantError.getCategory();
 			queryTenantError.getMessage();
 
 			QueryTenantResponse queryTenantResponse = new QueryTenantResponse();
-			QueryTenantResponse queryTenantResponse2 = new QueryTenantResponse(
-					"", "", null);
 			queryTenantResponse.setMetadata(null);
 			queryTenantResponse.setTenantId("");
 			queryTenantResponse.setTenantName("");
@@ -1033,10 +907,6 @@ public class AdapterRestInterfaceTest {
 			queryTenantResponse.getTenantName();
 
 			RollbackTenantError rollbackTenantError = new RollbackTenantError();
-			RollbackTenantError rollbackTenantError2 = new RollbackTenantError(
-					"");
-			RollbackTenantError rollbackTenantError3 = new RollbackTenantError(
-					"", null, false);
 			rollbackTenantError.setCategory(null);
 			rollbackTenantError.setMessage("");
 			rollbackTenantError.setRolledBack(false);
@@ -1053,10 +923,6 @@ public class AdapterRestInterfaceTest {
 			rollbackTenantResponse.getTenantRolledback();
 
 			TenantExceptionResponse tenantExceptionResponse = new TenantExceptionResponse();
-			TenantExceptionResponse tenantExceptionResponse2 = new TenantExceptionResponse(
-					"");
-			TenantExceptionResponse tenantExceptionResponse3 = new TenantExceptionResponse(
-					"", null, false);
 			tenantExceptionResponse.setCategory(null);
 			tenantExceptionResponse.setMessage("");
 			tenantExceptionResponse.setRolledBack(false);

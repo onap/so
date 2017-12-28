@@ -36,18 +36,6 @@ public class UpdateNetworkResponse extends NetworkResponseCommon {
 	private String neutronNetworkId;
 	private Map<String, String> subnetMap;
 
-	public UpdateNetworkResponse() {
-		/* Empty Constructor */
-	}
-
-	public UpdateNetworkResponse(String networkId, String neutronNetworkId,
-								 Map<String, String> subnetMap, String messageId) {
-		super(messageId);
-		this.networkId = networkId;
-		this.neutronNetworkId = neutronNetworkId;
-		this.subnetMap = subnetMap;
-	}
-
 	public String getNetworkId() {
 		return networkId;
 	}
