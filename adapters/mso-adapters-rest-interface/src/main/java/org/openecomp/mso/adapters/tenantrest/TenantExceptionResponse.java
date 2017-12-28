@@ -20,8 +20,6 @@
 
 package org.openecomp.mso.adapters.tenantrest;
 
-
-
 import org.openecomp.mso.openstack.exceptions.MsoExceptionCategory;
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -38,10 +36,6 @@ public class TenantExceptionResponse implements Serializable {
 	private Boolean rolledBack;
 
 	public TenantExceptionResponse () {}
-
-	public TenantExceptionResponse (String message) {
-		this.message = message;
-	}
 
 	public TenantExceptionResponse (String message, MsoExceptionCategory category, boolean rolledBack) {
 		this.message = message;
