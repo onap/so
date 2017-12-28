@@ -21,7 +21,6 @@ package org.openecomp.mso.adapters.json;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.DeserializationContext;
 import org.codehaus.jackson.map.JsonDeserializer;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -48,27 +47,22 @@ import java.util.Map;
  * </pre>
  */
 public class MapDeserializer extends JsonDeserializer<Map<String, String>> {
+
 	@Override
 	public Map<String, String> deserialize(JsonParser parser,
-			DeserializationContext context) throws IOException,
-			JsonProcessingException {
+			DeserializationContext context) throws IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode tree = mapper.readTree(parser);
-
 		Map<String, String> map = new LinkedHashMap<>();
-		Iterator<JsonNode> iterator = tree.iterator();
-
-		while (iterator.hasNext()) {
-			JsonNode element = iterator.next();
-			Iterator<JsonNode> arrayIterator = element.iterator();
-			while (arrayIterator.hasNext()) {
-				JsonNode arrayElement = arrayIterator.next();
+		if (tree == null)
+			return map;
+		for (JsonNode element : tree) {
+			for (JsonNode arrayElement : element) {
 				String key = arrayElement.get("key").getTextValue();
 				String value = arrayElement.get("value").getTextValue();
 				map.put(key, value);
 			}
 		}
-
 		return map;
 	}
 }
