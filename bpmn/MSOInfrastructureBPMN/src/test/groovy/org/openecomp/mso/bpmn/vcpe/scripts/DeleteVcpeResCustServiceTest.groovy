@@ -67,7 +67,6 @@ class DeleteVcpeResCustServiceTest extends GroovyTestBase {
 
 	@BeforeClass
 	public static void setUpBeforeClass() {
-		super.setUpBeforeClass()
 		request = FileUtil.readResourceFile("__files/VCPE/DeleteVcpeResCustService/request.json")
 	}
 	  

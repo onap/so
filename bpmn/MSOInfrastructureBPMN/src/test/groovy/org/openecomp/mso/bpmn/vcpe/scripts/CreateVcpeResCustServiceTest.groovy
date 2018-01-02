@@ -67,7 +67,6 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 
 	@BeforeClass
 	public static void setUpBeforeClass() {
-		super.setUpBeforeClass()
 		request = FileUtil.readResourceFile("__files/VCPE/CreateVcpeResCustService/request.json")
 	}
 	  

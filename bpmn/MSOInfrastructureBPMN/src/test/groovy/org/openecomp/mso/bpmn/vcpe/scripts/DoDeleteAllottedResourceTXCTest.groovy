@@ -65,7 +65,7 @@ class DoDeleteAllottedResourceTXCTest extends GroovyTestBase {
 
 	@BeforeClass
 	public static void setUpBeforeClass() {
-		super.setUpBeforeClass()
+		// nothing for now
 	}
 	  
     @Before
