@@ -37,10 +37,6 @@ public class RollbackTenantError implements Serializable {
 
 	public RollbackTenantError () {}
 
-	public RollbackTenantError (String message) {
-		this.message = message;
-	}
-
 	public RollbackTenantError (String message, MsoExceptionCategory category, boolean rolledBack) {
 		this.message = message;
 		this.category = category;
