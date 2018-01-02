@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_b2f95c4f",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/exceptions/MsoCloudIdentityNotFound.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2018-01-02T10:49:56Z",
+      "side": 1,
+      "message": "The java doc comment is ok here, is it removed for any specific intention??.",
+      "revId": "275fb6bcf9ff8b25944db07e8ec8ef7eae8976c6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_92fc6040",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/exceptions/MsoCloudIdentityNotFound.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2018-01-02T10:49:56Z",
+      "side": 1,
+      "message": "Whts wrong with this default constructor, why should we remove that?",
+      "revId": "275fb6bcf9ff8b25944db07e8ec8ef7eae8976c6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_5296d8f1",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/exceptions/MsoCloudSiteNotFound.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2018-01-02T10:49:56Z",
+      "side": 1,
+      "message": "The java doc comment is ok here, is it removed for any specific intention??.",
+      "revId": "275fb6bcf9ff8b25944db07e8ec8ef7eae8976c6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_729bd418",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/exceptions/MsoCloudSiteNotFound.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2018-01-02T10:49:56Z",
+      "side": 1,
+      "message": "Why is the default constructor removed?",
+      "revId": "275fb6bcf9ff8b25944db07e8ec8ef7eae8976c6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
