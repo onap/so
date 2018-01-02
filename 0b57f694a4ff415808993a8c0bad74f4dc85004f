@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_f537cee1",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/openecomp/mso/apihandlerinfra/NetworkMsoInfraRequest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 2731
+      },
+      "writtenOn": "2018-01-02T12:15:20Z",
+      "side": 1,
+      "message": "This is side effect of moving \"utils\" class to sub-package.",
+      "parentUuid": "5a93c517_b255dc1e",
+      "revId": "0b57f694a4ff415808993a8c0bad74f4dc85004f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_123cd0e1",
         "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/openecomp/mso/apihandlerinfra/TasksHandler.java",
         "patchSetId": 1
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_7553be17",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/openecomp/mso/apihandlerinfra/TasksHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 2731
+      },
+      "writtenOn": "2018-01-02T12:15:20Z",
+      "side": 1,
+      "message": "Again, this is side effect of moving utils class to separate package. If such change is not welcome I can undo it.",
+      "parentUuid": "5a93c517_123cd0e1",
+      "revId": "0b57f694a4ff415808993a8c0bad74f4dc85004f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_d22508c3",
         "filename": "mso-api-handlers/mso-api-handler-infra/src/test/java/org/openecomp/mso/apihandlerinfra/NetworkRequestHandlerTest.java",
         "patchSetId": 1
@@ -47,6 +83,24 @@
       "writtenOn": "2018-01-02T11:45:56Z",
       "side": 1,
       "message": "unused import??",
+      "revId": "0b57f694a4ff415808993a8c0bad74f4dc85004f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_15583a31",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/java/org/openecomp/mso/apihandlerinfra/NetworkRequestHandlerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 2731
+      },
+      "writtenOn": "2018-01-02T12:15:20Z",
+      "side": 1,
+      "message": "Same thing as previous comments.",
+      "parentUuid": "5a93c517_d22508c3",
       "revId": "0b57f694a4ff415808993a8c0bad74f4dc85004f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
