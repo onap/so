@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_8476563d",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/cloud/CloudConfig.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-01-04T16:25:27Z",
+      "side": 0,
+      "message": "I think you can left this javadoc. It gives more information than just the name \"getIdentityServices\"",
+      "range": {
+        "startLine": 74,
+        "startChar": 7,
+        "endLine": 74,
+        "endChar": 63
+      },
+      "revId": "30585fe9fa4c810c1f0589010f53221a588a31c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_a473524c",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/cloud/CloudConfig.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-01-04T16:25:27Z",
+      "side": 0,
+      "message": "ditto",
+      "range": {
+        "startLine": 83,
+        "startChar": 7,
+        "endLine": 83,
+        "endChar": 57
+      },
+      "revId": "30585fe9fa4c810c1f0589010f53221a588a31c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
