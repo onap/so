@@ -22,6 +22,29 @@
       "revId": "f11b87c8a1b0b640b41ed16c4497be0f75d85eb9",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_630b04d7",
+        "filename": "adapters/mso-adapter-utils/src/test/java/org/openecomp/mso/cloud/CloudConfigTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-01-04T09:13:10Z",
+      "side": 1,
+      "message": "Change tabs to spaces to comply to google style guide",
+      "range": {
+        "startLine": 37,
+        "startChar": 0,
+        "endLine": 37,
+        "endChar": 1
+      },
+      "revId": "f11b87c8a1b0b640b41ed16c4497be0f75d85eb9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
