@@ -21,27 +21,18 @@
 package org.openecomp.mso.openstack.utils;
 
 
-import java.io.Serializable;
-import java.util.Calendar;
-import java.util.HashMap;
 import java.util.Map;
-
 import org.openecomp.mso.cloud.CloudConfig;
 import org.openecomp.mso.cloud.CloudConfigFactory;
 import org.openecomp.mso.cloud.CloudIdentity;
-import org.openecomp.mso.logger.MsoAlarmLogger;
-import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.logger.MessageEnum;
+import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.openstack.beans.MsoTenant;
-import org.openecomp.mso.openstack.exceptions.MsoAdapterException;
 import org.openecomp.mso.openstack.exceptions.MsoCloudSiteNotFound;
 import org.openecomp.mso.openstack.exceptions.MsoException;
-import org.openecomp.mso.openstack.exceptions.MsoOpenstackException;
-import org.openecomp.mso.openstack.exceptions.MsoTenantAlreadyExists;
 import org.openecomp.mso.properties.MsoJavaProperties;
 import org.openecomp.mso.properties.MsoPropertiesException;
 import org.openecomp.mso.properties.MsoPropertiesFactory;
-import com.woorea.openstack.keystone.Keystone;
 
 public abstract class MsoTenantUtils extends MsoCommonUtils {
 
