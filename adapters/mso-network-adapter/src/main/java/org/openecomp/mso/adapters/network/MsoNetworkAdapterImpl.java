@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import java.util.Optional;
 import javax.jws.WebService;
 import javax.xml.ws.Holder;
 
@@ -271,8 +272,8 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         // So this is just catching that error in a bit more obvious way up front.
 
         cloudConfig = cloudConfigFactory.getCloudConfig ();
-        CloudSite cloudSite = cloudConfig.getCloudSite (cloudSiteId);
-        if (cloudSite == null)
+        Optional<CloudSite> cloudSiteOpt = cloudConfig.getCloudSite(cloudSiteId);
+        if (!cloudSiteOpt.isPresent())
         {
         	String error = "Configuration Error. Stack " + networkName + " in "
         			+ cloudSiteId
@@ -299,7 +300,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                                                             physicalNetworkName,
                                                             vlans,
                                                             routeTargets,
-                                                            cloudSite);
+                                                            cloudSiteOpt.get());
             String mode = networkResource.getOrchestrationMode ();
             NetworkType neutronNetworkType = NetworkType.valueOf (networkResource.getNeutronNetworkType ());
 
@@ -787,8 +788,8 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         networkRollback.setMsoRequest (msoRequest);
 
         cloudConfig = cloudConfigFactory.getCloudConfig ();
-        CloudSite cloudSite = cloudConfig.getCloudSite (cloudSiteId);
-        if (cloudSite == null) {
+        Optional<CloudSite> cloudSiteOpt = cloudConfig.getCloudSite (cloudSiteId);
+        if (!cloudSiteOpt.isPresent()) {
         	   String error = "UpdateNetwork: Configuration Error. Stack " + networkName + " in "
                        + cloudSiteId
                        + "/"
@@ -814,7 +815,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                     physicalNetworkName,
                     vlans,
                     routeTargets,
-                    cloudSite);
+                    cloudSiteOpt.get());
             String mode = networkResource.getOrchestrationMode();
             NetworkType neutronNetworkType = NetworkType.valueOf(networkResource.getNeutronNetworkType());
 
@@ -1233,7 +1234,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                               Holder <NetworkStatus> status,
                               Holder <List <Integer>> vlans,
                               Holder <Map <String, String>> subnetIdMap) throws NetworkException {
-        queryNetwork (cloudSiteId,
+        queryNetworkInfo(cloudSiteId,
                       tenantId,
                       networkNameOrId,
                       msoRequest,
@@ -1242,7 +1243,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                       neutronNetworkId,
                       status,
                       vlans,
-                      null,
                       subnetIdMap);
     }
 
@@ -1257,7 +1257,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                                       Holder <NetworkStatus> status,
                                       Holder <List <String>> routeTargets,
                                       Holder <Map <String, String>> subnetIdMap) throws NetworkException {
-        queryNetwork (cloudSiteId,
+        queryNetworkInfo(cloudSiteId,
                       tenantId,
                       networkNameOrId,
                       msoRequest,
@@ -1266,18 +1266,17 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                       neutronNetworkId,
                       status,
                       null,
-                      routeTargets,
                       subnetIdMap);
     }
 
     /**
-     * This is the queryNetwork method. It returns the existence and status of
+     * This is the queryNetworkInfo method. It returns the existence and status of
      * the specified network, along with its Neutron UUID and list of VLANs.
      * This method attempts to find the network using both Heat and Neutron.
      * Heat stacks are first searched based on the provided network name/id.
      * If none is found, the Neutron is directly queried.
      */
-    private void queryNetwork (String cloudSiteId,
+    private void queryNetworkInfo(String cloudSiteId,
                               String tenantId,
                               String networkNameOrId,
                               MsoRequest msoRequest,
@@ -1286,7 +1285,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                               Holder <String> neutronNetworkId,
                               Holder <NetworkStatus> status,
                               Holder <List <Integer>> vlans,
-                              Holder <List <String>> routeTargets,
                               Holder <Map <String, String>> subnetIdMap) throws NetworkException {
         MsoLogger.setLogContext (msoRequest);
         MsoLogger.setServiceName ("QueryNetwork");
@@ -1309,9 +1307,9 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             throw new NetworkException (error, MsoExceptionCategory.USERDATA);
         }
 
-        cloudConfig = cloudConfigFactory.getCloudConfig ();
-        CloudSite cloudSite = cloudConfig.getCloudSite (cloudSiteId);
-        if (cloudSite == null)
+        cloudConfig = cloudConfigFactory.getCloudConfig();
+        Optional<CloudSite> cloudSiteOpt = cloudConfig.getCloudSite(cloudSiteId);
+        if (!cloudSiteOpt.isPresent())
         {
         	String error = "Configuration Error. Stack " + networkNameOrId + " in "
         			+ cloudSiteId
@@ -1414,7 +1412,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 status.value = NetworkStatus.NOTFOUND;
                 neutronNetworkId.value = null;
                 if (vlans != null)
-                	vlans.value = new ArrayList <Integer> ();
+                	vlans.value = new ArrayList<>();
 
                 LOGGER.debug ("Network " + networkNameOrId + " not found");
             }

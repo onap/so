@@ -21,7 +21,6 @@
 
 package org.openecomp.mso.openstack.utils;
 
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -160,7 +159,7 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
      * @param tenantId The Openstack ID of the tenant in which to create the Stack
      * @param cloudSiteId The cloud identifier (may be a region) in which to create the tenant.
      * @param stackName The name of the stack to update
-     * @param stackTemplate The Heat template
+     * @param heatTemplate The Heat template
      * @param stackInputs A map of key/value inputs
      * @param pollForCompletion Indicator that polling should be handled in Java vs. in the client
      * @param environment An optional yaml-format string to specify environmental parameters
@@ -194,10 +193,8 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
         }
 
         // Obtain the cloud site information where we will create the stack
-        CloudSite cloudSite = cloudConfig.getCloudSite (cloudSiteId);
-        if (cloudSite == null) {
-            throw new MsoCloudSiteNotFound (cloudSiteId);
-        }
+        CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
+                () -> new MsoCloudSiteNotFound(cloudSiteId));
         // Get a Heat client. They are cached between calls (keyed by tenantId:cloudId)
         // This could throw MsoTenantNotFound or MsoOpenstackException (both propagated)
         Heat heatClient = getHeatClient (cloudSite, tenantId);

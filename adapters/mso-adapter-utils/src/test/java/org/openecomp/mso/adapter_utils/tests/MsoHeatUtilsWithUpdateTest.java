@@ -26,6 +26,7 @@ import static org.mockito.Mockito.when;
 import java.util.HashMap;
 import java.util.Map;
 
+import java.util.Optional;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -68,8 +69,8 @@ public class MsoHeatUtilsWithUpdateTest {
         cloudIdentity.setKeystoneUrl ("toto");
         cloudIdentity.setMsoPass (CloudIdentity.encryptPassword ("mockId"));
         cloudSite.setIdentityService (cloudIdentity);
-        when (cloudConfig.getCloudSite ("cloud")).thenReturn (cloudSite);
-        when (cloudConfig.getCloudSite ("none")).thenReturn (null);
+        when(cloudConfig.getCloudSite("cloud")).thenReturn (Optional.of(cloudSite));
+        when(cloudConfig.getCloudSite("none")).thenReturn (Optional.empty());
     }
 
     @Test
