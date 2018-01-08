@@ -46,7 +46,6 @@ import org.openecomp.mso.openstack.exceptions.MsoCloudIdentityNotFound;
  *
  * This class also contains methods to query cloud sites and/or identity
  * services by ID.
- *
  */
 
 @JsonRootName("cloud_config")
@@ -89,20 +88,19 @@ public class CloudConfig {
      * individual entries to try and find one with a CLLI that matches the ID
      * and an AIC version of 2.5.
      *
-     * @param id
-     *            the ID to match
-     * @return a CloudSite, or null of no match found
+     * @param id the ID to match
+     * @return an Optional of CloudSite object.
      */
-    public synchronized CloudSite getCloudSite(String id) {
-        if (id != null) {
-            if (cloudSites.containsKey(id)) {
-                return cloudSites.get(id);
-            }
-            // check for id == CLLI now as well
-            return getCloudSiteWithClli(id);
+    public synchronized Optional<CloudSite> getCloudSite(String id) {
+        if (id == null) {
+            return Optional.empty();
         }
-        return null;
+        if (cloudSites.containsKey(id)) {
+            return Optional.ofNullable(cloudSites.get(id));
+        }
+        return Optional.ofNullable(getCloudSiteWithClli(id));
     }
+
 
     private CloudSite getCloudSiteWithClli(String clli) {
         Optional <CloudSite> cloudSiteOptional = cloudSites.values().stream().filter(cs ->
@@ -111,7 +109,6 @@ public class CloudConfig {
         return cloudSiteOptional.orElse(getDefaultCloudSite(clli));
     }
 
-    // TODO in future the result will be optional
     private CloudSite getDefaultCloudSite(String clli) {
         Optional<CloudSite> cloudSiteOpt = cloudSites.values().stream()
                 .filter(cs -> cs.getId().equalsIgnoreCase(DEFAULT_CLOUD_SITE_ID)).findAny();

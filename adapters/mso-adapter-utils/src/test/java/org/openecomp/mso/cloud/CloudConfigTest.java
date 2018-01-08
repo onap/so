@@ -26,6 +26,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Optional;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -112,29 +113,29 @@ public class CloudConfigTest {
     @Test
     public void cloudSiteIsGotById_when_IdFound() throws MsoCloudIdentityNotFound {
         CloudConfig con = createTestObject(cloudConfigJsonFilePath);
-        CloudSite cloudSite = con.getCloudSite("MT");
-        assertNotNull(cloudSite);
-        assertEquals("regionOne", cloudSite.getRegionId());
-        assertEquals("MT_KEYSTONE", cloudSite.getIdentityServiceId());
+        Optional<CloudSite> cloudSite = con.getCloudSite("MT");
+        assertTrue(cloudSite.isPresent());
+        assertEquals("regionOne", cloudSite.get().getRegionId());
+        assertEquals("MT_KEYSTONE", cloudSite.get().getIdentityServiceId());
     }
 
     @Test
     public void cloudSiteIsGotByClli_when_IdNotFound() throws MsoCloudIdentityNotFound {
         CloudConfig con = createTestObject(cloudConfigJsonFilePath);
-        CloudSite cloudSite = con.getCloudSite("CS_clli");
-        assertNotNull(cloudSite);
-        assertEquals("clliRegion", cloudSite.getRegionId());
-        assertEquals("CS_clli", cloudSite.getClli());
-        assertEquals("CS_service", cloudSite.getIdentityServiceId());
+        Optional<CloudSite> cloudSite = con.getCloudSite("CS_clli");
+        assertTrue(cloudSite.isPresent());
+        assertEquals("clliRegion", cloudSite.get().getRegionId());
+        assertEquals("CS_clli", cloudSite.get().getClli());
+        assertEquals("CS_service", cloudSite.get().getIdentityServiceId());
     }
 
     @Test
     public void cloudSiteIsGotByDefault_when_IdAndClliNotFound() throws MsoCloudIdentityNotFound {
         CloudConfig con = createTestObject(cloudDefaultConfigJsonFilePath);
-        CloudSite cloudSite = con.getCloudSite("not_existing_id");
-        assertNotNull(cloudSite);
-        assertEquals("not_existing_id", cloudSite.getId());
-        assertEquals("not_existing_id", cloudSite.getRegionId());
+        Optional<CloudSite> cloudSite = con.getCloudSite("not_existing_id");
+        assertTrue(cloudSite.isPresent());
+        assertEquals("not_existing_id", cloudSite.get().getId());
+        assertEquals("not_existing_id", cloudSite.get().getRegionId());
     }
 
     @Test
