@@ -258,7 +258,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
      * @param cloudSiteId The cloud (may be a region) in which to create the stack.
      * @param tenantId The Openstack ID of the tenant in which to create the Stack
      * @param stackName The name of the stack to create
-     * @param stackTemplate The Heat template
+     * @param heatTemplate The Heat template
      * @param stackInputs A map of key/value inputs
      * @param pollForCompletion Indicator that polling should be handled in Java vs. in the client
      * @param environment An optional yaml-format string to specify environmental parameters
@@ -309,10 +309,8 @@ public class MsoHeatUtils extends MsoCommonUtils {
         }
 
         // Obtain the cloud site information where we will create the stack
-        CloudSite cloudSite = cloudConfig.getCloudSite (cloudSiteId);
-        if (cloudSite == null) {
-            throw new MsoCloudSiteNotFound (cloudSiteId);
-        }
+        CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
+                () -> new MsoCloudSiteNotFound(cloudSiteId));
         LOGGER.debug("Found: " + cloudSite.toString());
         // Get a Heat client. They are cached between calls (keyed by tenantId:cloudId)
         // This could throw MsoTenantNotFound or MsoOpenstackException (both propagated)
@@ -632,10 +630,8 @@ public class MsoHeatUtils extends MsoCommonUtils {
         LOGGER.debug ("Query HEAT stack: " + stackName + " in tenant " + tenantId);
 
         // Obtain the cloud site information where we will create the stack
-        CloudSite cloudSite = cloudConfig.getCloudSite (cloudSiteId);
-        if (cloudSite == null) {
-            throw new MsoCloudSiteNotFound (cloudSiteId);
-        }
+        CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
+                () -> new MsoCloudSiteNotFound(cloudSiteId));
         LOGGER.debug("Found: " + cloudSite.toString());
 
         // Get a Heat client. They are cached between calls (keyed by tenantId:cloudId)
@@ -696,10 +692,8 @@ public class MsoHeatUtils extends MsoCommonUtils {
                                   String stackName,
                                   boolean pollForCompletion) throws MsoException {
         // Obtain the cloud site information where we will create the stack
-        CloudSite cloudSite = cloudConfig.getCloudSite (cloudSiteId);
-        if (cloudSite == null) {
-            throw new MsoCloudSiteNotFound (cloudSiteId);
-        }
+        CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
+                () -> new MsoCloudSiteNotFound(cloudSiteId));
         LOGGER.debug("Found: " + cloudSite.toString());
 
         // Get a Heat client. They are cached between calls (keyed by tenantId:cloudId)
@@ -838,11 +832,8 @@ public class MsoHeatUtils extends MsoCommonUtils {
      */
     public List <StackInfo> queryAllStacks (String tenantId, String cloudSiteId) throws MsoException {
         // Obtain the cloud site information where we will create the stack
-        CloudSite cloudSite = cloudConfig.getCloudSite (cloudSiteId);
-        if (cloudSite == null) {
-            throw new MsoCloudSiteNotFound (cloudSiteId);
-        }
-
+        CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
+                () -> new MsoCloudSiteNotFound(cloudSiteId));
         // Get a Heat client. They are cached between calls (keyed by tenantId:cloudId)
         Heat heatClient = getHeatClient (cloudSite, tenantId);
 
@@ -950,8 +941,6 @@ public class MsoHeatUtils extends MsoCommonUtils {
      * tenantID + cloudId so that it can be reused without reauthenticating with
      * Openstack every time.
      *
-     * @param tenantName
-     * @param cloudId
      * @return an authenticated Heat object
      */
     public Heat getHeatClient (CloudSite cloudSite, String tenantId) throws MsoException {
@@ -1038,8 +1027,6 @@ public class MsoHeatUtils extends MsoCommonUtils {
      * the same Tenant Name is repeatedly used for creation/deletion.
      * <p>
      *
-     * @param tenantName
-     * @param cloudId
      */
     public static void expireHeatClient (String tenantId, String cloudId) {
         String cacheKey = cloudId + ":" + tenantId;
