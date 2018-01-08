@@ -19,7 +19,6 @@
  */
 package org.openecomp.mso.adapters.json;
 
-import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.map.JsonSerializer;
 import org.codehaus.jackson.map.SerializerProvider;
@@ -47,12 +46,9 @@ import java.util.Map;
 public class MapSerializer extends JsonSerializer<Map<String, String>> {
 	@Override
 	public void serialize(Map<String, String> map, JsonGenerator jsonGenerator,
-			SerializerProvider serializerProvider) throws IOException,
-			JsonGenerationException {
-
+			SerializerProvider serializerProvider) throws IOException {
 		jsonGenerator.writeStartObject();
 		jsonGenerator.writeArrayFieldStart("entry");
-
 		for (Map.Entry<String,String> entry : map.entrySet()) {
 			String key = entry.getKey();
 			String value = entry.getValue();
@@ -61,8 +57,8 @@ public class MapSerializer extends JsonSerializer<Map<String, String>> {
 			jsonGenerator.writeStringField("value", value);
 			jsonGenerator.writeEndObject();
 		}
-
 		jsonGenerator.writeEndArray();
 		jsonGenerator.writeEndObject();
+		jsonGenerator.close();
 	}
 }
