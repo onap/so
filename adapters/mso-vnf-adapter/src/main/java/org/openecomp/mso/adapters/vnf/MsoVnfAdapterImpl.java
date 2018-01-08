@@ -22,58 +22,49 @@
 package org.openecomp.mso.adapters.vnf;
 
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.jws.WebService;
-import javax.xml.ws.Holder;
-
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.openecomp.mso.adapters.vnf.exceptions.VnfAlreadyExists;
 import org.openecomp.mso.adapters.vnf.exceptions.VnfException;
 import org.openecomp.mso.adapters.vnf.exceptions.VnfNotFound;
-import org.openecomp.mso.cloud.CloudConfigFactory;
 import org.openecomp.mso.cloud.CloudConfig;
+import org.openecomp.mso.cloud.CloudConfigFactory;
 import org.openecomp.mso.cloud.CloudSite;
-import org.openecomp.mso.db.catalog.utils.MavenLikeVersioning;
 import org.openecomp.mso.db.catalog.CatalogDatabase;
 import org.openecomp.mso.db.catalog.beans.HeatEnvironment;
 import org.openecomp.mso.db.catalog.beans.HeatFiles;
 import org.openecomp.mso.db.catalog.beans.HeatTemplate;
 import org.openecomp.mso.db.catalog.beans.HeatTemplateParam;
-import org.openecomp.mso.db.catalog.beans.VnfResource;
 import org.openecomp.mso.db.catalog.beans.VfModule;
 import org.openecomp.mso.db.catalog.beans.VfModuleCustomization;
-import org.openecomp.mso.db.catalog.beans.VnfComponent;
+import org.openecomp.mso.db.catalog.beans.VnfResource;
+import org.openecomp.mso.db.catalog.utils.MavenLikeVersioning;
 import org.openecomp.mso.entity.MsoRequest;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoAlarmLogger;
 import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.openstack.beans.HeatStatus;
 import org.openecomp.mso.openstack.beans.StackInfo;
-import org.openecomp.mso.openstack.beans.VnfStatus;
 import org.openecomp.mso.openstack.beans.VnfRollback;
+import org.openecomp.mso.openstack.beans.VnfStatus;
 import org.openecomp.mso.openstack.exceptions.MsoException;
 import org.openecomp.mso.openstack.exceptions.MsoExceptionCategory;
+import org.openecomp.mso.openstack.utils.MsoHeatEnvironmentEntry;
 import org.openecomp.mso.openstack.utils.MsoHeatUtils;
 import org.openecomp.mso.openstack.utils.MsoHeatUtilsWithUpdate;
-import org.openecomp.mso.openstack.utils.MsoHeatEnvironmentEntry;
 import org.openecomp.mso.properties.MsoPropertiesFactory;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.ObjectMapper;
+import javax.jws.WebService;
+import javax.xml.ws.Holder;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @WebService(serviceName = "VnfAdapter", endpointInterface = "org.openecomp.mso.adapters.vnf.MsoVnfAdapter", targetNamespace = "http://org.openecomp.mso/vnf")
 public class MsoVnfAdapterImpl implements MsoVnfAdapter {
@@ -93,19 +84,11 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
 
     /**
-     * Health Check web method. Does nothing but return to show the adapter is deployed.
-     */
-    @Override
-    public void healthCheck () {
-        LOGGER.debug ("Health check call in VNF Adapter");
-    }
-
-    /**
      * DO NOT use that constructor to instantiate this class, the msoPropertiesfactory will be NULL.
      * @see MsoVnfAdapterImpl#MsoVnfAdapterImpl(MsoPropertiesFactory, CloudConfigFactory)
      */
     public MsoVnfAdapterImpl() {
-
+        // empty implementation
     }
 
     /**
@@ -115,6 +98,14 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
     public MsoVnfAdapterImpl(MsoPropertiesFactory msoPropFactory, CloudConfigFactory cloudConfigFact) {
     	this.msoPropertiesFactory = msoPropFactory;
     	this.cloudConfigFactory = cloudConfigFact;
+    }
+
+    /**
+     * Health Check web method. Does nothing but return to show the adapter is deployed.
+     */
+    @Override
+    public void healthCheck () {
+        LOGGER.debug ("Health check call in VNF Adapter");
     }
 
     /**
@@ -475,79 +466,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         return new HashMap <> (stringInputs);
     }
 
-    /*
-     * a helper method to make sure that any resource_registry entry of the format
-     * "xx::xx" : yyy.yaml (or yyy.template)
-     * has the file name prepended with "file:///"
-     * Return a String of the environment body that's passed in.
-     * Have to be careful not to mess up the original formatting.
-     */
-    private String parseEnvironment (String environment) {
-        StringBuilder sb = new StringBuilder ();
-        try (Scanner scanner = new Scanner (environment)) {
-            scanner.useDelimiter ("\n");
-            String line;
-            Pattern resource = Pattern.compile ("\\s*\"\\w+::\\S+\"\\s*:");
-            LOGGER.debug ("regex pattern for finding a resource_registry: \\s*\"\\w+::\\S+\"\\s*:");
-            while (scanner.hasNextLine ()) {
-                line = scanner.nextLine ();
-                if (line.toLowerCase ().contains ("resource_registry")) {
-                    sb.append (line + "\n");
-                    boolean done = false;
-                    // basically keep scanning until EOF or parameters: section
-                    while (scanner.hasNextLine () && !done) {
-                        line = scanner.nextLine ();
-                        if ("parameters:".equalsIgnoreCase (line.trim ())) {
-                            sb.append (line + "\n");
-                            done = true;
-                            break;
-                        }
-                        Matcher m = resource.matcher (line);
-                        if (m.find ()) {
-                            sb.append (m.group ());
-                            String secondPart = line.substring (m.end ()).trim ();
-                            String output = secondPart;
-                            if (secondPart.endsWith (".yaml")
-                                || secondPart.endsWith (".template") && !secondPart.startsWith ("file:///")) {
-                                output = "file:///" + secondPart;
-                                LOGGER.debug ("changed " + secondPart + " to " + output);
-                            } // don't do anything if it's not .yaml or .template
-                            sb.append (" " + output + "\n");
-                        } else {
-                            sb.append (line + "\n");
-                        }
-                    }
-                } else {
-                    sb.append (line + "\n");
-                    continue;
-                }
-            }
-            scanner.close ();
-        } catch (Exception e) {
-            LOGGER.debug ("Error trying to scan " + environment, e);
-            return environment;
-        }
-        return sb.toString ();
-    }
-
-    /*
-     * helper class to add file:/// to the Provider_Resource_File entry in HEAT_NESTED_TEMPLATE
-     * and the File_Name entry in HEAT_FILES if the file:/// part is missing.
-     */
-    private String enforceFilePrefix (String string) {
-        if (string.trim ().startsWith ("file:///")) {
-            // just leave it
-            return string;
-        }
-        if (string.trim ().endsWith (".yaml") || string.trim ().endsWith (".template")) {
-            // only .yaml or .template are valid anyway - otherwise don't bother
-            return "file:///" + string.trim ();
-        } else {
-            LOGGER.debug (string + " is NOT a .yaml or .template file");
-        }
-        return string;
-    }
-
     private boolean callHeatbridge(String heatStackId) {
     	String executionDir = "/usr/local/lib/python2.7/dist-packages/heatbridge";
     	String openstackIdentityUrl = "", username = "", password = "", tenant = "", region = "", owner = "";
@@ -559,14 +477,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
     		LOGGER.debug("Calling HeatBridgeMain.py in " + dir + " with arguments " + Arrays.toString(cmdarray));
     		Runtime r = Runtime.getRuntime();
     		Process p = r.exec(cmdarray, envp, dir);
-    		/*			
- 			BufferedReader stdout = new BufferedReader(new InputStreamReader(p.getInputStream()));
- 			String linein = stdout.readLine();
- 			while (linein!=null) {
- 				System.out.println(linein);
- 				linein = stdout.readLine();
- 			}
-    		 */
     		boolean wait = p.waitFor(waitTimeMs, TimeUnit.MILLISECONDS);
 
     		LOGGER.debug(" HeatBridgeMain.py returned " + wait + " with code " + p.exitValue());
