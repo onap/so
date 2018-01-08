@@ -17,14 +17,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.openecomp.mso.test;
+package org.openecomp.mso.adapters;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import org.junit.Test;
 import org.openecomp.mso.adapters.nwrest.ContrailNetwork;
 import org.openecomp.mso.adapters.nwrest.CreateNetworkError;
@@ -34,7 +32,6 @@ import org.openecomp.mso.adapters.nwrest.DeleteNetworkError;
 import org.openecomp.mso.adapters.nwrest.DeleteNetworkRequest;
 import org.openecomp.mso.adapters.nwrest.DeleteNetworkResponse;
 import org.openecomp.mso.adapters.nwrest.NetworkExceptionResponse;
-import org.openecomp.mso.adapters.nwrest.NetworkRequestCommon;
 import org.openecomp.mso.adapters.nwrest.NetworkTechnology;
 import org.openecomp.mso.adapters.nwrest.ProviderVlanNetwork;
 import org.openecomp.mso.adapters.nwrest.QueryNetworkResponse;
@@ -74,7 +71,6 @@ import org.openecomp.mso.adapters.vnfrest.UpdateVolumeGroupRequest;
 import org.openecomp.mso.adapters.vnfrest.UpdateVolumeGroupResponse;
 import org.openecomp.mso.adapters.vnfrest.VfModuleExceptionResponse;
 import org.openecomp.mso.adapters.vnfrest.VfModuleRollback;
-import org.openecomp.mso.adapters.vnfrest.VfResponseCommon;
 import org.openecomp.mso.adapters.vnfrest.VolumeGroupRollback;
 import org.openecomp.mso.entity.MsoRequest;
 
