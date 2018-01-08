@@ -26,6 +26,7 @@ import org.openecomp.mso.cloud.CloudIdentity;
 import org.openecomp.mso.cloud.CloudSite;
 
 import java.lang.reflect.InvocationTargetException;
+import org.openecomp.mso.openstack.exceptions.MsoCloudSiteNotFound;
 
 
 public class MsoTenantUtilsFactory {
@@ -39,12 +40,11 @@ public class MsoTenantUtilsFactory {
 	}
 
 	//based on Cloud IdentityServerType returns ORM or KEYSTONE Utils
-	public MsoTenantUtils getTenantUtils(String cloudSiteId) {
-
+	public MsoTenantUtils getTenantUtils(String cloudSiteId) throws MsoCloudSiteNotFound {
 		// Obtain the cloud site information
 		cloudConfig = cloudConfigFactory.getCloudConfig();
-		CloudSite cloudSite = cloudConfig.getCloudSite (cloudSiteId);
-
+		CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
+				() -> new MsoCloudSiteNotFound(cloudSiteId));
 		return getTenantUtilsByServerType(cloudSite.getIdentityService().getIdentityServerType().toString());
 	}
 
