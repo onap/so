@@ -986,4 +986,31 @@ class MsoUtils {
 
 		return requestId
 	}
+
+	/**
+	 * Remove all the empty nodes and attributes from the within the given node
+	 * @param node
+	 * @return true if all empty nodes and attributes were removed.
+	 */
+	public boolean cleanNode( Node node ) {
+		node.attributes().with { a ->
+			a.findAll { !it.value }.each { a.remove( it.key ) }
+		}
+		node.children().with { kids ->
+			kids.findAll { it instanceof Node ? !cleanNode( it ) : false }
+					.each { kids.remove( it ) }
+		}
+		node.attributes() || node.children() || node.text()
+	}
+
+	/**
+	 *
+	 * @param xml
+	 * @return String representation of xml after removing the empty nodes and attributes
+	 */
+	public String cleanNode(String xmlString) {
+		def xml = new XmlParser(false, false).parseText(xmlString)
+		cleanNode(xml)
+		return XmlUtil.serialize(xml)
+	}
 }
