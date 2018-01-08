@@ -35,6 +35,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import org.openecomp.mso.bpmn.core.utils.CamundaDBSetup;
 import org.openecomp.mso.logger.MsoLogger;
 
 /**
