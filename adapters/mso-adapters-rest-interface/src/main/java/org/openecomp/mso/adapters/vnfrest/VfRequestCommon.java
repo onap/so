@@ -21,11 +21,12 @@
 
 package org.openecomp.mso.adapters.vnfrest;
 
+import org.openecomp.mso.adapters.NetworkMessageCommon;
 
 /**
  * Everything that is common between all VfModule and VolumeGroup Requests.
  */
-public abstract class VfRequestCommon extends VfResponseCommon {
+public abstract class VfRequestCommon extends NetworkMessageCommon {
 	private Boolean skipAAI;
 	private String notificationUrl;
 

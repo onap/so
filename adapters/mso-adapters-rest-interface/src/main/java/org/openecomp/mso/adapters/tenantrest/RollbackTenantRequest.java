@@ -24,10 +24,11 @@ package org.openecomp.mso.adapters.tenantrest;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import org.jboss.resteasy.annotations.providers.NoJackson;
+import org.openecomp.mso.adapters.NetworkMessageCommon;
 
 @XmlRootElement(name = "rollbackTenantRequest")
 @NoJackson
-public class RollbackTenantRequest extends TenantRequestCommon {
+public class RollbackTenantRequest extends NetworkMessageCommon {
 
 	private TenantRollback tenantRollback;
 
