@@ -27,11 +27,12 @@ import org.codehaus.jackson.map.annotate.JsonRootName;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.openecomp.mso.adapters.NetworkMessageCommon;
 
 @JsonRootName("deleteVfModuleResponse")
 @XmlRootElement(name = "deleteVfModuleResponse")
 @NoJackson
-public class DeleteVfModuleResponse extends VfResponseCommon {
+public class DeleteVfModuleResponse extends NetworkMessageCommon {
 	private String vnfId;
 	private String vfModuleId;
 	private Boolean vfModuleDeleted;

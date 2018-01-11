@@ -20,7 +20,6 @@
 
 package org.openecomp.mso.adapters.vnfrest;
 
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,11 +27,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.map.annotate.JsonRootName;
 import org.jboss.resteasy.annotations.providers.NoJackson;
+import org.openecomp.mso.adapters.NetworkMessageCommon;
 
 @JsonRootName("updateVolumeGroupResponse")
 @XmlRootElement(name = "updateVolumeGroupResponse")
 @NoJackson
-public class UpdateVolumeGroupResponse extends VfResponseCommon {
+public class UpdateVolumeGroupResponse extends NetworkMessageCommon {
 	private String volumeGroupId;
 	private String volumeGroupStackId;
 	private Map<String,String> volumeGroupOutputs;

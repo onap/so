@@ -20,11 +20,10 @@
 
 package org.openecomp.mso.adapters.nwrest;
 
-
-
+import org.openecomp.mso.adapters.NetworkMessageCommon;
 import org.openecomp.mso.openstack.exceptions.MsoExceptionCategory;
 
-public class NetworkExceptionResponse extends NetworkResponseCommon {
+public class NetworkExceptionResponse extends NetworkMessageCommon {
     private String message;
 	private MsoExceptionCategory category;
 	private Boolean rolledBack;

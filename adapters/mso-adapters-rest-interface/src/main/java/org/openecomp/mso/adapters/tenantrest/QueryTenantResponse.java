@@ -25,10 +25,11 @@ package org.openecomp.mso.adapters.tenantrest;
 import java.util.Map;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.jboss.resteasy.annotations.providers.NoJackson;
+import org.openecomp.mso.adapters.NetworkMessageCommon;
 
 @XmlRootElement(name = "queryTenantResponse")
 @NoJackson
-public class QueryTenantResponse extends TenantRequestCommon {
+public class QueryTenantResponse extends NetworkMessageCommon {
 	private String tenantId;
 	private String tenantName;
 	private Map<String,String> metadata;

@@ -20,8 +20,7 @@
 
 package org.openecomp.mso.adapters.nwrest;
 
-
-
+import org.openecomp.mso.adapters.NetworkMessageRequest;
 import org.openecomp.mso.entity.MsoRequest;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -32,7 +31,7 @@ import org.codehaus.jackson.map.annotate.JsonRootName;
 @JsonRootName("deleteNetworkRequest")
 @XmlRootElement(name = "deleteNetworkRequest")
 @NoJackson
-public class DeleteNetworkRequest extends NetworkRequestCommon {
+public class DeleteNetworkRequest extends NetworkMessageRequest {
 
 	private String cloudSiteId;
 	private String tenantId;

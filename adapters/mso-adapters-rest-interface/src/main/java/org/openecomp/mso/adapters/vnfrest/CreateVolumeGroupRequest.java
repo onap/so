@@ -20,7 +20,6 @@
 
 package org.openecomp.mso.adapters.vnfrest;
 
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,12 +28,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.map.annotate.JsonRootName;
 import org.jboss.resteasy.annotations.providers.NoJackson;
 
+import org.openecomp.mso.adapters.NetworkMessageRequest;
 import org.openecomp.mso.entity.MsoRequest;
 
 @JsonRootName("createVolumeGroupRequest")
 @XmlRootElement(name = "createVolumeGroupRequest")
 @NoJackson
-public class CreateVolumeGroupRequest extends VfRequestCommon {
+public class CreateVolumeGroupRequest extends NetworkMessageRequest {
 	private String cloudSiteId;
 	private String tenantId;
 	private String volumeGroupName;

@@ -21,8 +21,6 @@
 
 package org.openecomp.mso.adapters.nwrest;
 
-
-
 import org.openecomp.mso.openstack.beans.NetworkStatus;
 
 import java.util.List;
