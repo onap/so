@@ -20,8 +20,7 @@
 
 package org.openecomp.mso.adapters.nwrest;
 
-
-
+import org.openecomp.mso.adapters.NetworkMessageRequest;
 import org.openecomp.mso.entity.MsoRequest;
 import org.openecomp.mso.openstack.beans.Subnet;
 
@@ -37,7 +36,7 @@ import org.openecomp.mso.logger.MsoLogger;
 @JsonRootName("updateNetworkRequest")
 @XmlRootElement(name = "updateNetworkRequest")
 @NoJackson
-public class UpdateNetworkRequest extends NetworkRequestCommon {
+public class UpdateNetworkRequest extends NetworkMessageRequest {
 	private String cloudSiteId;
 	private String tenantId;
 	private String networkId;

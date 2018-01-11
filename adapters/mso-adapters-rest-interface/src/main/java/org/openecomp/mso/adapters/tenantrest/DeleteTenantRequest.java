@@ -22,13 +22,14 @@ package org.openecomp.mso.adapters.tenantrest;
 
 
 
+import org.openecomp.mso.adapters.NetworkMessageCommon;
 import org.openecomp.mso.entity.MsoRequest;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.jboss.resteasy.annotations.providers.NoJackson;
 
 @XmlRootElement(name = "deleteTenantRequest")
 @NoJackson
-public class DeleteTenantRequest extends TenantRequestCommon {
+public class DeleteTenantRequest extends NetworkMessageCommon {
 
 	private String cloudSiteId;
 	private String tenantId;

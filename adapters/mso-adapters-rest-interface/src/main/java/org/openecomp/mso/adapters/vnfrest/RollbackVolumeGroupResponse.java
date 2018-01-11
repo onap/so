@@ -20,16 +20,16 @@
 
 package org.openecomp.mso.adapters.vnfrest;
 
-
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.map.annotate.JsonRootName;
 import org.jboss.resteasy.annotations.providers.NoJackson;
+import org.openecomp.mso.adapters.NetworkMessageCommon;
 
 @JsonRootName("rollbackVolumeGroupResponse")
 @XmlRootElement(name = "rollbackVolumeGroupResponse")
 @NoJackson
-public class RollbackVolumeGroupResponse extends VfResponseCommon {
+public class RollbackVolumeGroupResponse extends NetworkMessageCommon {
 	private Boolean volumeGroupRolledBack;
 
 	public RollbackVolumeGroupResponse() {

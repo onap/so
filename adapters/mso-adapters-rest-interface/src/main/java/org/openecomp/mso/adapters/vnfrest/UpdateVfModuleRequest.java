@@ -20,7 +20,7 @@
 
 package org.openecomp.mso.adapters.vnfrest;
 
-
+import org.openecomp.mso.adapters.NetworkMessageRequest;
 import org.openecomp.mso.entity.MsoRequest;
 
 import java.util.Map;
@@ -32,7 +32,7 @@ import org.codehaus.jackson.map.annotate.JsonRootName;
 @JsonRootName("updateVfModuleRequest")
 @XmlRootElement(name = "updateVfModuleRequest")
 @NoJackson
-public class UpdateVfModuleRequest extends VfRequestCommon {
+public class UpdateVfModuleRequest extends NetworkMessageRequest {
 
 	private String cloudSiteId;
 	private String tenantId;

@@ -20,16 +20,16 @@
 
 package org.openecomp.mso.adapters.vnfrest;
 
-
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.jboss.resteasy.annotations.providers.NoJackson;
 import org.codehaus.jackson.map.annotate.JsonRootName;
+import org.openecomp.mso.adapters.NetworkMessageRequest;
 
 @JsonRootName("rollbackVfModuleRequest")
 @XmlRootElement(name = "rollbackVfModuleRequest")
 @NoJackson
-public class RollbackVfModuleRequest extends VfRequestCommon {
+public class RollbackVfModuleRequest extends NetworkMessageRequest {
 	private VfModuleRollback vfModuleRollback;
 
 	public RollbackVfModuleRequest() {

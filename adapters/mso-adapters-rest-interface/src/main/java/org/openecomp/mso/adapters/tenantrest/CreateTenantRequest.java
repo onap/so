@@ -22,6 +22,7 @@ package org.openecomp.mso.adapters.tenantrest;
 
 
 
+import org.openecomp.mso.adapters.NetworkMessageCommon;
 import org.openecomp.mso.entity.MsoRequest;
 import java.util.Map;
 import java.util.HashMap;
@@ -30,7 +31,7 @@ import org.jboss.resteasy.annotations.providers.NoJackson;
 
 @XmlRootElement(name = "createTenantRequest")
 @NoJackson
-public class CreateTenantRequest extends TenantRequestCommon {
+public class CreateTenantRequest extends NetworkMessageCommon {
 	private String cloudSiteId;
 	private String tenantName;
 	private Boolean failIfExists;
