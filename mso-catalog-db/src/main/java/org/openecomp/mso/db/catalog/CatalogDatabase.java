@@ -155,29 +155,29 @@ public class CatalogDatabase implements Closeable {
      * @return A list of HeatTemplate objects
      */
     @SuppressWarnings("unchecked")
-    public List <HeatTemplate> getAllHeatTemplates () {
-        long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - get all Heat templates");
+    public List <HeatTemplate> getAllHeatTemplates() {
+        long startTime = System.currentTimeMillis();
+        LOGGER.debug("Catalog database - get all Heat templates");
         String hql = "FROM HeatTemplate";
-        Query query = getSession ().createQuery (hql);
+        Query query = getSession().createQuery(hql);
 
-        List <HeatTemplate> result = query.list ();
-        LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getAllHeatTemplates", null);
+        List <HeatTemplate> result = query.list();
+        LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getAllHeatTemplates", null);
         return result;
     }
 
     /**
      * Fetch a specific Heat Template by ID.
      *
-     * @param templateId
+     * @param templateId template id
      * @return HeatTemplate object or null if none found
      */
     @Deprecated
-    public HeatTemplate getHeatTemplate (int templateId) {
-        long startTime = System.currentTimeMillis ();
+    public HeatTemplate getHeatTemplate(int templateId) {
+        long startTime = System.currentTimeMillis();
         LOGGER.debug ("Catalog database - get Heat template with id " + templateId);
 
-        HeatTemplate template = (HeatTemplate) getSession ().get (HeatTemplate.class, templateId);
+        HeatTemplate template = (HeatTemplate) getSession().get(HeatTemplate.class, templateId);
         LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getHeatTemplate", null);
         return template;
     }
@@ -185,31 +185,31 @@ public class CatalogDatabase implements Closeable {
     /**
      * Return the newest version of a specific Heat Template (queried by Name).
      *
-     * @param templateName
+     * @param templateName template name
      * @return HeatTemplate object or null if none found
      */
-    public HeatTemplate getHeatTemplate (String templateName) {
+    public HeatTemplate getHeatTemplate(String templateName) {
 
-        long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - get Heat template with name " + templateName);
+        long startTime = System.currentTimeMillis();
+        LOGGER.debug("Catalog database - get Heat template with name " + templateName);
 
         String hql = "FROM HeatTemplate WHERE templateName = :template_name";
-        Query query = getSession ().createQuery (hql);
-        query.setParameter ("template_name", templateName);
+        Query query = getSession().createQuery (hql);
+        query.setParameter("template_name", templateName);
 
         @SuppressWarnings("unchecked")
-        List <HeatTemplate> resultList = query.list ();
+        List <HeatTemplate> resultList = query.list();
 
         // See if something came back. Name is unique, so
         if (resultList.isEmpty ()) {
             LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. No template found", "CatalogDB", "getHeatTemplate", null);
             return null;
         }
-        Collections.sort (resultList, new MavenLikeVersioningComparator ());
-        Collections.reverse (resultList);
+        Collections.sort(resultList, new MavenLikeVersioningComparator());
+        Collections.reverse(resultList);
 
-        LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getHeatTemplate", null);
-        return resultList.get (0);
+        LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getHeatTemplate", null);
+        return resultList.get(0);
     }
 
     /**
