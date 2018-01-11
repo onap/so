@@ -20,21 +20,17 @@
 
 package org.openecomp.mso.adapters.vnfrest;
 
-
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.map.annotate.JsonRootName;
 import org.jboss.resteasy.annotations.providers.NoJackson;
+import org.openecomp.mso.adapters.NetworkMessageRequest;
 
 @JsonRootName("rollbackVolumeGroupRequest")
 @XmlRootElement(name = "rollbackVolumeGroupRequest")
 @NoJackson
-public class RollbackVolumeGroupRequest extends VfRequestCommon {
+public class RollbackVolumeGroupRequest extends NetworkMessageRequest {
 	private VolumeGroupRollback volumeGroupRollback;
-
-	public RollbackVolumeGroupRequest() {
-		super();
-	}
 
 	public VolumeGroupRollback getVolumeGroupRollback() {
 		return volumeGroupRollback;

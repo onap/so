@@ -20,16 +20,15 @@
 
 package org.openecomp.mso.adapters.nwrest;
 
-
-
 import javax.xml.bind.annotation.XmlRootElement;
 import org.jboss.resteasy.annotations.providers.NoJackson;
 import org.codehaus.jackson.map.annotate.JsonRootName;
+import org.openecomp.mso.adapters.NetworkMessageCommon;
 
 @JsonRootName("deleteNetworkResponse")
 @XmlRootElement(name = "deleteNetworkResponse")
 @NoJackson
-public class DeleteNetworkResponse extends NetworkResponseCommon {
+public class DeleteNetworkResponse extends NetworkMessageCommon {
 
 	private String networkId;
 	private Boolean networkDeleted;

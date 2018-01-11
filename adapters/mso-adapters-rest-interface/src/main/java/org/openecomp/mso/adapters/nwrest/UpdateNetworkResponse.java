@@ -26,11 +26,12 @@ import java.util.Map;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.jboss.resteasy.annotations.providers.NoJackson;
 import org.codehaus.jackson.map.annotate.JsonRootName;
+import org.openecomp.mso.adapters.NetworkMessageCommon;
 
 @JsonRootName("updateNetworkResponse")
 @XmlRootElement(name = "updateNetworkResponse")
 @NoJackson
-public class UpdateNetworkResponse extends NetworkResponseCommon {
+public class UpdateNetworkResponse extends NetworkMessageCommon {
 	
 	private String networkId;
 	private String neutronNetworkId;

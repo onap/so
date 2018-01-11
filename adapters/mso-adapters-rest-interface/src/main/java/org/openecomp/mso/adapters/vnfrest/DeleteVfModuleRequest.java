@@ -20,7 +20,7 @@
 
 package org.openecomp.mso.adapters.vnfrest;
 
-
+import org.openecomp.mso.adapters.NetworkMessageRequest;
 import org.openecomp.mso.entity.MsoRequest;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -30,7 +30,7 @@ import org.codehaus.jackson.map.annotate.JsonRootName;
 @JsonRootName("deleteVfModuleRequest")
 @XmlRootElement(name = "deleteVfModuleRequest")
 @NoJackson
-public class DeleteVfModuleRequest extends VfRequestCommon {
+public class DeleteVfModuleRequest extends NetworkMessageRequest {
 	private String cloudSiteId;
 	private String tenantId;
 	private String vnfId;
@@ -38,10 +38,6 @@ public class DeleteVfModuleRequest extends VfRequestCommon {
 	private String vfModuleStackId;
 
 	private MsoRequest msoRequest = new MsoRequest();
-
-	public DeleteVfModuleRequest() {
-		super();
-	}
 
 	public String getCloudSiteId() {
 		return cloudSiteId;

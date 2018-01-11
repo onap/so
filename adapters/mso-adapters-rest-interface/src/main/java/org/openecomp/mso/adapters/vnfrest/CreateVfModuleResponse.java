@@ -20,18 +20,18 @@
 
 package org.openecomp.mso.adapters.vnfrest;
 
-
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import org.jboss.resteasy.annotations.providers.NoJackson;
 import org.codehaus.jackson.map.annotate.JsonRootName;
+import org.openecomp.mso.adapters.NetworkMessageCommon;
 
 @JsonRootName("createVfModuleResponse")
 @XmlRootElement(name = "createVfModuleResponse")
 @NoJackson
-public class CreateVfModuleResponse extends VfResponseCommon {
+public class CreateVfModuleResponse extends NetworkMessageCommon {
 	private String vnfId;
 	private String vfModuleId;
 	private String vfModuleStackId;

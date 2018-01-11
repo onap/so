@@ -20,27 +20,23 @@
 
 package org.openecomp.mso.adapters.vnfrest;
 
-
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.map.annotate.JsonRootName;
 import org.jboss.resteasy.annotations.providers.NoJackson;
 
+import org.openecomp.mso.adapters.NetworkMessageRequest;
 import org.openecomp.mso.entity.MsoRequest;
 
 @JsonRootName("deleteVolumeGroupRequest")
 @XmlRootElement(name = "deleteVolumeGroupRequest")
 @NoJackson
-public class DeleteVolumeGroupRequest extends VfRequestCommon {
+public class DeleteVolumeGroupRequest extends NetworkMessageRequest {
 	private String cloudSiteId;
 	private String tenantId;
 	private String volumeGroupId;
 	private String volumeGroupStackId;
 	private MsoRequest msoRequest = new MsoRequest();
-
-	public DeleteVolumeGroupRequest() {
-		super();
-	}
 
 	public String getCloudSiteId() {
 		return cloudSiteId;

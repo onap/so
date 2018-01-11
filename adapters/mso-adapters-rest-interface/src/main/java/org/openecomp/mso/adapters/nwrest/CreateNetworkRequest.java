@@ -20,8 +20,7 @@
 
 package org.openecomp.mso.adapters.nwrest;
 
-
-
+import org.openecomp.mso.adapters.NetworkMessageRequest;
 import org.openecomp.mso.openstack.beans.Subnet;
 import org.openecomp.mso.entity.MsoRequest;
 
@@ -53,7 +52,7 @@ import org.codehaus.jackson.map.annotate.JsonRootName;
 @JsonRootName("createNetworkRequest")
 @XmlRootElement(name = "createNetworkRequest")
 @NoJackson
-public class CreateNetworkRequest extends NetworkRequestCommon {
+public class CreateNetworkRequest extends NetworkMessageRequest {
 	private String cloudSiteId;
 	private String tenantId;
 	private String networkId;
@@ -69,10 +68,6 @@ public class CreateNetworkRequest extends NetworkRequestCommon {
 	private Boolean backout = true;
 	private Map<String,String> networkParams = new HashMap<>();
 	private MsoRequest msoRequest = new MsoRequest();
-
-	public CreateNetworkRequest() {
-		super();
-	}
 
 	public String getCloudSiteId() {
 		return cloudSiteId;

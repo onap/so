@@ -20,16 +20,16 @@
 
 package org.openecomp.mso.adapters.vnfrest;
 
-
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.map.annotate.JsonRootName;
 import org.jboss.resteasy.annotations.providers.NoJackson;
+import org.openecomp.mso.adapters.NetworkMessageCommon;
 
 @JsonRootName("deleteVolumeGroupResponse")
 @XmlRootElement(name = "deleteVolumeGroupResponse")
 @NoJackson
-public class DeleteVolumeGroupResponse extends VfResponseCommon {
+public class DeleteVolumeGroupResponse extends NetworkMessageCommon {
 	private Boolean volumeGroupDeleted;
 
 	public DeleteVolumeGroupResponse() {

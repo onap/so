@@ -20,7 +20,6 @@
 
 package org.openecomp.mso.adapters.vnfrest;
 
-
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.map.annotate.JsonRootName;
@@ -32,17 +31,6 @@ import org.openecomp.mso.entity.MsoRequest;
 @XmlRootElement(name = "VolumeGroupRollback")
 @NoJackson
 public class VolumeGroupRollback {
-//	“volumeGroupRollback”: {
-//	“volumeGroupId”: “<A&AI_ VOLUME_GROUP_ID>”,
-//	“volumeGroupStackId”: “<VOLUME_GROUP _STACK_ID>”,
-//	 “tenantId”: “<TENANT_ID>”,
-//	“cloudSiteId”: “<CLOUD_CLLI>”,
-//	“volumeGroupCreated”: TRUE|FALSE,
-//	“msoRequest”: {
-//		“requestId”: “<REQUEST_ID>”,
-//		“serviceInstanceId”: “<SERVICE_INSTANCE_ID>”
-//	}
-//},
 
 	private String volumeGroupId;
 	private String volumeGroupStackId;

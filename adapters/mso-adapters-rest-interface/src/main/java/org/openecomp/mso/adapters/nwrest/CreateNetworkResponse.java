@@ -20,8 +20,7 @@
 
 package org.openecomp.mso.adapters.nwrest;
 
-
-
+import org.openecomp.mso.adapters.NetworkMessageCommon;
 import org.openecomp.mso.openstack.beans.NetworkRollback;
 import java.util.Map;
 
@@ -33,7 +32,7 @@ import org.codehaus.jackson.map.annotate.JsonRootName;
 @JsonRootName("createNetworkResponse")
 @XmlRootElement(name = "createNetworkResponse")
 @NoJackson
-public class CreateNetworkResponse extends NetworkResponseCommon {
+public class CreateNetworkResponse extends NetworkMessageCommon {
 	private String networkId;
 	private String neutronNetworkId;
 	private String networkStackId;
