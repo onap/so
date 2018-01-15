@@ -224,9 +224,62 @@ public class CatalogDatabaseTest {
         assertEquals("456-uuid", ht.getAsdcUuid());
     }
 
-    @Test(expected = Exception.class)
-    public void getHeatTemplateTest3Exception(){
+    @Test
+    public void getHeatTemplateByTemplateNameTest() {
+
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public List<HeatTemplate> list() {
+                HeatTemplate heatTemplate = new HeatTemplate();
+                heatTemplate.setAsdcUuid("1234-uuid");
+                return Arrays.asList(heatTemplate);
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
         HeatTemplate ht = cd.getHeatTemplate("heat123","v2");
+        assertEquals("1234-uuid", ht.getAsdcUuid());
+    }
+
+    @Test
+    public void getHeatTemplateByTemplateNameEmptyResultTest() {
+
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public List<HeatTemplate> list() {
+                return Arrays.asList();
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        HeatTemplate ht = cd.getHeatTemplate("heat123","v2");
+        assertEquals(null, ht);
     }
 
     @Test(expected = Exception.class)
