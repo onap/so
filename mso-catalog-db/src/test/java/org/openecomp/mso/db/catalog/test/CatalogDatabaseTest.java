@@ -555,9 +555,64 @@ public class CatalogDatabaseTest {
         HeatEnvironment he = cd.getHeatEnvironmentByArtifactUuid("123");
     }
 
-    @Test(expected = Exception.class)
-    public void getServiceByInvariantUUIDTestException(){
-        Service ht = cd.getServiceByInvariantUUID("123");
+    @Test
+    public void getServiceByInvariantUUIDTest(){
+
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public List<Service> list() {
+                Service service = new Service();
+                service.setModelUUID("123-uuid");
+                return Arrays.asList(service);
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        Service service = cd.getServiceByInvariantUUID("123");
+        assertEquals("123-uuid", service.getModelUUID());
+    }
+
+    @Test
+    public void getServiceByInvariantUUIDEmptyResultTest(){
+
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public List<Service> list() {
+                return Arrays.asList();
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        Service service = cd.getServiceByInvariantUUID("123");
+        assertEquals(null, service);
     }
 
     @Test(expected = Exception.class)

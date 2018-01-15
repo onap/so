@@ -351,11 +351,11 @@ public class CatalogDatabase implements Closeable {
      */
     public Service getServiceByInvariantUUID (String modelInvariantUUID) {
 
-        long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - get service with Invariant UUID " + modelInvariantUUID);
+        long startTime = System.currentTimeMillis();
+        LOGGER.debug("Catalog database - get service with Invariant UUID " + modelInvariantUUID);
 
         String hql = "FROM Service WHERE modelInvariantUUID = :model_invariant_uuid";
-        Query query = getSession ().createQuery (hql);
+        Query query = getSession().createQuery(hql);
         query.setParameter ("model_invariant_uuid", modelInvariantUUID);
 
         @SuppressWarnings("unchecked")
