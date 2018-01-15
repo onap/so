@@ -314,19 +314,18 @@ public class CatalogDatabase implements Closeable {
      * @return HeatEnvironment object or null if none found
      */    
     public HeatEnvironment getHeatEnvironmentByArtifactUuid(String artifactUuid) {
-        long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - get Heat Environment with artifactUuid " + artifactUuid);
+        long startTime = System.currentTimeMillis();
+        LOGGER.debug("Catalog database - get Heat Environment with artifactUuid " + artifactUuid);
 
         String hql = "FROM HeatEnvironment WHERE artifactUuid = :artifactUuidValue";
         Query query = getSession().createQuery(hql);
-        query.setParameter ("artifactUuidValue", artifactUuid);
+        query.setParameter("artifactUuidValue", artifactUuid);
         HeatEnvironment environment = null;
         try {
-        	environment = (HeatEnvironment) query.uniqueResult ();
+            environment = (HeatEnvironment) query.uniqueResult();
         } catch (org.hibernate.NonUniqueResultException nure) {
         	LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row for Envt - data integrity error: artifactUuid='" + artifactUuid +"'", nure);
         	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for heatEnvironment artifactUuid=" + artifactUuid, "", "", MsoLogger.ErrorCode.DataError, "Non unique result for artifactUuid==" + artifactUuid);
-        	environment = null;
         } catch (org.hibernate.HibernateException he) {
         	LOGGER.debug("Hibernate Exception - while searching for envt: artifactUuid='" + artifactUuid + "' " + he.getMessage());
         	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " Hibernate exception searching envt for artifactUuid=" + artifactUuid, "", "", MsoLogger.ErrorCode.DataError, "Hibernate exception searching envt for artifactUuid=" + artifactUuid);

@@ -468,9 +468,91 @@ public class CatalogDatabaseTest {
         List<HeatTemplateParam> htList = cd.getParametersForHeatTemplate("12l3");
     }
 
+    @Test
+    public void getHeatEnvironmentByArtifactUuidTest(){
+
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public Object uniqueResult() {
+                HeatEnvironment heatEnvironment = new HeatEnvironment();
+                heatEnvironment.setArtifactUuid("123-uuid");
+                return heatEnvironment;
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        HeatEnvironment he = cd.getHeatEnvironmentByArtifactUuid("123");
+        assertEquals("123-uuid", he.getArtifactUuid());
+    }
+
+    @Test(expected = HibernateException.class)
+    public void getHeatEnvironmentByArtifactUuidHibernateExceptionTest(){
+
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public Object uniqueResult() {
+                throw new HibernateException("hibernate exception");
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        HeatEnvironment he = cd.getHeatEnvironmentByArtifactUuid("123");
+    }
+
     @Test(expected = Exception.class)
-    public void getHeatEnvironmentByArtifactUuidTestException(){
-        HeatEnvironment ht = cd.getHeatEnvironmentByArtifactUuid("123");
+    public void getHeatEnvironmentByArtifactUuidExceptionTest(){
+
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public Object uniqueResult() throws Exception {
+                throw new Exception();
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        HeatEnvironment he = cd.getHeatEnvironmentByArtifactUuid("123");
     }
 
     @Test(expected = Exception.class)
