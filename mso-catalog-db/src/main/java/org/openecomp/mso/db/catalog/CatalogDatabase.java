@@ -219,29 +219,29 @@ public class CatalogDatabase implements Closeable {
      * @param version
      * @return HeatTemplate object or null if none found
      */
-    public HeatTemplate getHeatTemplate (String templateName, String version) {
+    public HeatTemplate getHeatTemplate(String templateName, String version) {
 
-        long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - get Heat template with name " + templateName
+        long startTime = System.currentTimeMillis();
+        LOGGER.debug("Catalog database - get Heat template with name " + templateName
                                       + " and version "
                                       + version);
 
         String hql = "FROM HeatTemplate WHERE templateName = :template_name AND version = :version";
-        Query query = getSession ().createQuery (hql);
-        query.setParameter ("template_name", templateName);
-        query.setParameter ("version", version);
+        Query query = getSession().createQuery(hql);
+        query.setParameter("template_name", templateName);
+        query.setParameter("version", version);
 
         @SuppressWarnings("unchecked")
-        List <HeatTemplate> resultList = query.list ();
+        List <HeatTemplate> resultList = query.list();
 
         // See if something came back.
-        if (resultList.isEmpty ()) {
-            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. No template found.", "CatalogDB", "getHeatTemplate", null);
+        if (resultList.isEmpty()) {
+            LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. No template found.", "CatalogDB", "getHeatTemplate", null);
             return null;
         }
         // Name + Version is unique, so should only be one element
-        LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getHeatTemplate", null);
-        return resultList.get (0);
+        LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getHeatTemplate", null);
+        return resultList.get(0);
     }
 
     /**
