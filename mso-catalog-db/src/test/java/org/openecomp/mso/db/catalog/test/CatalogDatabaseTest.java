@@ -20,59 +20,12 @@
 
 package org.openecomp.mso.db.catalog.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
 import mockit.Mock;
 import mockit.MockUp;
-import org.hibernate.CacheMode;
-import org.hibernate.Criteria;
-import org.hibernate.Filter;
-import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
-import org.hibernate.IdentifierLoadAccess;
-import org.hibernate.LobHelper;
-import org.hibernate.LockMode;
-import org.hibernate.LockOptions;
-import org.hibernate.NaturalIdLoadAccess;
+import org.hibernate.NonUniqueResultException;
 import org.hibernate.Query;
-import org.hibernate.ReplicationMode;
-import org.hibernate.SQLQuery;
-import org.hibernate.ScrollMode;
-import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
-import org.hibernate.SessionEventListener;
-import org.hibernate.SessionFactory;
-import org.hibernate.SharedSessionBuilder;
-import org.hibernate.SimpleNaturalIdLoadAccess;
-import org.hibernate.Transaction;
-import org.hibernate.TypeHelper;
-import org.hibernate.UnknownProfileException;
-import org.hibernate.jdbc.ReturningWork;
-import org.hibernate.jdbc.Work;
-import org.hibernate.metamodel.source.annotations.xml.mocker.MockHelper;
-import org.hibernate.procedure.ProcedureCall;
-import org.hibernate.stat.SessionStatistics;
-import org.hibernate.transform.ResultTransformer;
-import org.hibernate.type.Type;
 import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.mso.db.catalog.CatalogDatabase;
@@ -98,6 +51,17 @@ import org.openecomp.mso.db.catalog.beans.VnfRecipe;
 import org.openecomp.mso.db.catalog.beans.VnfResource;
 import org.openecomp.mso.db.catalog.beans.VnfResourceCustomization;
 import org.openecomp.mso.db.catalog.utils.RecordNotFoundException;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class CatalogDatabaseTest {
 
@@ -305,9 +269,119 @@ public class CatalogDatabaseTest {
         assertEquals("123-uuid", ht.getAsdcUuid());
     }
 
+    @Test
+    public void getHeatTemplateByArtifactUuidTest(){
+
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public Object uniqueResult() {
+                HeatTemplate heatTemplate = new HeatTemplate();
+                heatTemplate.setAsdcUuid("123-uuid");
+                return heatTemplate;
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        HeatTemplate ht = cd.getHeatTemplateByArtifactUuidRegularQuery("123-uuid");
+        assertEquals("123-uuid", ht.getAsdcUuid());
+    }
+
+    @Test(expected = HibernateException.class)
+    public void getHeatTemplateByArtifactUuidHibernateErrorTest(){
+
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public Object uniqueResult() {
+                throw new HibernateException("hibernate exception");
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        HeatTemplate ht = cd.getHeatTemplateByArtifactUuidRegularQuery("123-uuid");
+    }
+
+    @Test(expected = NonUniqueResultException.class)
+    public void getHeatTemplateByArtifactUuidNonUniqueResultTest(){
+
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public Object uniqueResult() {
+                throw new NonUniqueResultException(2);
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        HeatTemplate ht = cd.getHeatTemplateByArtifactUuidRegularQuery("123-uuid");
+    }
+
     @Test(expected = Exception.class)
-    public void getHeatTemplateByArtifactUuidRegularQueryException(){
-        HeatTemplate ht = cd.getHeatTemplateByArtifactUuidRegularQuery("123");
+    public void getHeatTemplateByArtifactUuidGenericExceptionTest(){
+
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public Object uniqueResult() throws Exception {
+                throw new Exception();
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        HeatTemplate ht = cd.getHeatTemplateByArtifactUuidRegularQuery("123-uuid");
     }
 
     @Test(expected = Exception.class)

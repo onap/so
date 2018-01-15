@@ -4880,7 +4880,7 @@ public class CatalogDatabase implements Closeable {
     }
     
     public < E > E executeQuerySingleRow(String hql, HashMap<String, String> variables, boolean retry) {
-        long startTime = System.currentTimeMillis ();
+        long startTime = System.currentTimeMillis();
         LOGGER.debug("Catalog database - executeQuery: " + hql + (retry ? ", retry=true" : ", retry=false"));
         Query query = getSession().createQuery(hql);
 
@@ -4895,7 +4895,7 @@ public class CatalogDatabase implements Closeable {
 
         E theObject = null;
         try {
-        	theObject = (E) query.uniqueResult ();
+            theObject = (E) query.uniqueResult();
         } catch (org.hibernate.NonUniqueResultException nure) {
         	LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row");
         	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for " + hql, "", "", MsoLogger.ErrorCode.DataError, "Non unique result for " + hql );
