@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_3ecbc054",
+        "filename": "adapters/mso-adapters-rest-interface/src/main/java/org/openecomp/mso/adapters/NetworkMessageCommon.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-01-15T14:46:08Z",
+      "side": 1,
+      "message": "double space",
+      "range": {
+        "startLine": 32,
+        "startChar": 15,
+        "endLine": 32,
+        "endChar": 17
+      },
+      "revId": "9ed3db32e572dfa77a1e72c5a7e60aef98e9d204",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_bedef00f",
+        "filename": "adapters/mso-adapters-rest-interface/src/main/java/org/openecomp/mso/adapters/NetworkMessageCommon.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-01-15T14:46:08Z",
+      "side": 1,
+      "message": "Is this setter really necessary? Usually such short-living messages can be immutable and have all fields set in constructor or builder.",
+      "range": {
+        "startLine": 50,
+        "startChar": 0,
+        "endLine": 52,
+        "endChar": 5
+      },
+      "revId": "9ed3db32e572dfa77a1e72c5a7e60aef98e9d204",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_7eb148e0",
+        "filename": "adapters/mso-adapters-rest-interface/src/main/java/org/openecomp/mso/adapters/NetworkMessageCommon.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-01-15T14:46:08Z",
+      "side": 1,
+      "message": "You can change this to return mapper.writeValue...",
+      "range": {
+        "startLine": 60,
+        "startChar": 12,
+        "endLine": 60,
+        "endChar": 57
+      },
+      "revId": "9ed3db32e572dfa77a1e72c5a7e60aef98e9d204",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_9eb454d2",
+        "filename": "adapters/mso-adapters-rest-interface/src/main/java/org/openecomp/mso/adapters/NetworkMessageCommon.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-01-15T14:46:08Z",
+      "side": 1,
+      "message": "and this to return null;",
+      "range": {
+        "startLine": 64,
+        "startChar": 8,
+        "endLine": 64,
+        "endChar": 26
+      },
+      "revId": "9ed3db32e572dfa77a1e72c5a7e60aef98e9d204",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_5ecd6c5c",
+        "filename": "adapters/mso-adapters-rest-interface/src/main/java/org/openecomp/mso/adapters/NetworkMessageRequest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-01-15T14:46:08Z",
+      "side": 1,
+      "message": "Ditto. Propably cna be final.",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 27,
+        "endChar": 35
+      },
+      "revId": "9ed3db32e572dfa77a1e72c5a7e60aef98e9d204",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_be05907b",
+        "filename": "adapters/mso-adapters-rest-interface/src/main/java/org/openecomp/mso/adapters/nwrest/CreateNetworkRequest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-01-15T14:46:08Z",
+      "side": 1,
+      "message": "Ditto. Change to final and add builder if possible.",
+      "range": {
+        "startLine": 56,
+        "startChar": 0,
+        "endLine": 70,
+        "endChar": 50
+      },
+      "revId": "9ed3db32e572dfa77a1e72c5a7e60aef98e9d204",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_9e02146e",
+        "filename": "adapters/mso-adapters-rest-interface/src/main/java/org/openecomp/mso/adapters/nwrest/CreateNetworkResponse.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-01-15T14:46:08Z",
+      "side": 1,
+      "message": "This constructor takes waaaay to many parameters. Change to builder. Same for other message classes.",
+      "range": {
+        "startLine": 48,
+        "startChar": 0,
+        "endLine": 64,
+        "endChar": 2
+      },
+      "revId": "9ed3db32e572dfa77a1e72c5a7e60aef98e9d204",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
