@@ -282,9 +282,27 @@ public class CatalogDatabaseTest {
         assertEquals(null, ht);
     }
 
-    @Test(expected = Exception.class)
+    @Test
     public void getHeatTemplateByArtifactUuidException(){
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Object get(Class cls, Serializable id) {
+                HeatTemplate heatTemplate = new HeatTemplate();
+                heatTemplate.setAsdcUuid("123-uuid");
+                return heatTemplate;
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
         HeatTemplate ht = cd.getHeatTemplateByArtifactUuid("123");
+        assertEquals("123-uuid", ht.getAsdcUuid());
     }
 
     @Test(expected = Exception.class)

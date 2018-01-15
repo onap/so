@@ -266,10 +266,10 @@ public class CatalogDatabase implements Closeable {
      *
      * @param artifactUuid
      * @return HeatTemplate object or null if none found
-     */    
+     */
     public HeatTemplate getHeatTemplateByArtifactUuidRegularQuery(String artifactUuid) {
-       long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - get Heat template (regular query) with artifactUuid " + artifactUuid);
+        long startTime = System.currentTimeMillis();
+        LOGGER.debug("Catalog database - get Heat template (regular query) with artifactUuid " + artifactUuid);
 
         String hql = "FROM HeatTemplate WHERE artifactUuid = :artifactUuidValue";
         HashMap<String, String> variables = new HashMap<>();
@@ -277,9 +277,9 @@ public class CatalogDatabase implements Closeable {
         HeatTemplate template = (HeatTemplate) this.executeQuerySingleRow(hql, variables, true);
 
         if (template == null) {
-        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "NotFound", "CatalogDB", "getHeatTemplateByArtifactUuidRegularQuery", null);
+            LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "NotFound", "CatalogDB", "getHeatTemplateByArtifactUuidRegularQuery", null);
         } else {
-        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getHeatTemplateByArtifactUuidRegularQuery", null);
+            LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getHeatTemplateByArtifactUuidRegularQuery", null);
         }
         return template;
     }
