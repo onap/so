@@ -384,9 +384,88 @@ public class CatalogDatabaseTest {
         HeatTemplate ht = cd.getHeatTemplateByArtifactUuidRegularQuery("123-uuid");
     }
 
+    @Test
+    public void getParametersForHeatTemplateTest(){
+
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public List<HeatTemplate> list() {
+                HeatTemplate heatTemplate = new HeatTemplate();
+                heatTemplate.setAsdcUuid("1234-uuid");
+                return Arrays.asList(heatTemplate);
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        List<HeatTemplateParam> htList = cd.getParametersForHeatTemplate("12l3");
+        assertEquals(1, htList.size());
+    }
+
+    @Test(expected = HibernateException.class)
+    public void getParametersForHeatTemplateHibernateExceptionTest(){
+
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public List<HeatTemplate> list() {
+                throw new HibernateException("hibernate exception");
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        List<HeatTemplateParam> htList = cd.getParametersForHeatTemplate("12l3");
+    }
+
     @Test(expected = Exception.class)
-    public void getParametersForHeatTemplateTestException(){
-        List<HeatTemplateParam> ht = cd.getParametersForHeatTemplate("123");
+    public void getParametersForHeatTemplateExceptionTest(){
+
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public List<HeatTemplate> list() throws Exception {
+                throw new Exception();
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        List<HeatTemplateParam> htList = cd.getParametersForHeatTemplate("12l3");
     }
 
     @Test(expected = Exception.class)
