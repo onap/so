@@ -20,6 +20,7 @@
 
 package org.openecomp.mso.client.policy;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -27,7 +28,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.ClientResponseFilter;
@@ -39,187 +39,175 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.ext.ContextResolver;
-
 import org.apache.log4j.Logger;
 import org.openecomp.mso.client.RestProperties;
 import org.openecomp.mso.logger.MsoLogger;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 @Service
 public abstract class RestClient {
-	protected static final String ECOMP_COMPONENT_NAME = "MSO";
-	
-	private static final int MAX_PAYLOAD_SIZE = 1024 * 1024;
-	private WebTarget webTarget;
 
-	protected final Map<String, String> headerMap;
-	protected final MsoLogger msoLogger;
-	protected URL host;
-	protected Optional<URI> path;
-	protected Logger logger;
-	protected String accept;
-	protected String contentType;
+    private static final Logger LOG = Logger.getLogger(RestClient.class);
 
-	protected RestClient(RestProperties props, Optional<URI> path) {
-		logger = Logger.getLogger(getClass().getName());
-		msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.GENERAL);
+    private static final int MAX_PAYLOAD_SIZE = 1024 * 1024;
+    private WebTarget webTarget;
 
-		headerMap = new HashMap<>();
-		try {
-			host = props.getEndpoint();
-		} catch (MalformedURLException e) {
-			logger.error("url not valid", e);
-			throw new RuntimeException(e);
-		}
-		
-		this.path = path;
-		initializeClient(getClient());
-	}
+    protected final Map<String, String> headerMap;
+    protected final MsoLogger msoLogger;
+    protected URL host;
+    protected Optional<URI> path;
+    protected String accept;
+    protected String contentType;
 
-	protected RestClient(RestProperties props, Optional<URI> path, String accept, String contentType) {
-		this(props, path);
-		this.accept = accept;
-		this.contentType = contentType;
+    protected RestClient(RestProperties props, Optional<URI> path) {
+        msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.GENERAL);
 
-	}
+        headerMap = new HashMap<>();
+        try {
+            host = props.getEndpoint();
+        } catch (MalformedURLException e) {
+            LOG.error("url not valid", e);
+            throw new RuntimeException(e);
+        }
 
-	protected RestClient(URL host, String contentType) {
-		headerMap = new HashMap<>();
-		logger = Logger.getLogger(getClass().getName());
-		msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.GENERAL);
-		this.path = Optional.empty();
-		this.host = host;
-		this.contentType = contentType;
-		initializeClient(getClient());
-	}
+        this.path = path;
+        initializeClient(getClient());
+    }
 
-	/**
-	 * Override method to return false to disable logging.
-	 * 
-	 * @return true - to enable logging, false otherwise
-	 */
-	protected boolean enableLogging() {
-		return true;
-	}
-	
-	/**
-	 * Override method to return custom value for max payload size.
-	 * 
-	 * @return Default value for MAX_PAYLOAD_SIZE = 1024 * 1024
-	 */
-	protected int getMaxPayloadSize()
-	{
-		return MAX_PAYLOAD_SIZE;
-	}
+    protected RestClient(RestProperties props, Optional<URI> path, String accept, String contentType) {
+        this(props, path);
+        this.accept = accept;
+        this.contentType = contentType;
 
-	protected Builder getBuilder() {
+    }
 
-		Builder builder = webTarget.request();
-		initializeHeaderMap(headerMap);
+    protected RestClient(URL host, String contentType) {
+        headerMap = new HashMap<>();
+        msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.GENERAL);
+        path = Optional.empty();
+        this.host = host;
+        this.contentType = contentType;
+        initializeClient(getClient());
+    }
 
-		for (Entry<String, String> entry : headerMap.entrySet()) {
-			builder.header(entry.getKey(), entry.getValue());
-		}
-		return builder;
-	}
+    /**
+     * Override method to return false to disable logging.
+     *
+     * @return true - to enable logging, false otherwise
+     */
+    protected boolean enableLogging() {
+        return true;
+    }
 
-	protected abstract void initializeHeaderMap(Map<String, String> headerMap);
+    /**
+     * Override method to return custom value for max payload size.
+     *
+     * @return Default value for MAX_PAYLOAD_SIZE = 1024 * 1024
+     */
+    protected int getMaxPayloadSize() {
+        return MAX_PAYLOAD_SIZE;
+    }
 
-	protected abstract Optional<ClientResponseFilter> addResponseFilter();
+    protected Builder createInvocationBuilder() {
 
-	public abstract RestClient addRequestId(String requestId);
+        Builder builder = webTarget.request();
+        initializeHeaderMap(headerMap);
 
-	protected ContextResolver<ObjectMapper> getMapper() {
-		return new CommonObjectMapperProvider();
-	}
+        for (Entry<String, String> entry : headerMap.entrySet()) {
+            builder.header(entry.getKey(), entry.getValue());
+        }
+        return builder;
+    }
 
-	protected String getAccept() {
-		return accept;
-	}
+    protected abstract void initializeHeaderMap(Map<String, String> headerMap);
 
-	protected String getContentType() {
-		return contentType;
-	}
+    protected abstract Optional<ClientResponseFilter> addResponseFilter();
 
-	protected String getMergeContentType() {
-		return "application/merge-patch+json";
-	}
+    public abstract void addRequestId(String requestId);
 
-	protected Client getClient() {
-		return ClientBuilder.newBuilder().build();
-	}
+    protected ContextResolver<ObjectMapper> getMapper() {
+        return new CommonObjectMapperProvider();
+    }
 
-	protected void initializeClient(Client client) {
-		if (this.enableLogging()) {
-			client.register(logger).register(new LoggingFilter(this.getMaxPayloadSize()));
-		}
-		client.register(this.getMapper());
-		Optional<ClientResponseFilter> responseFilter = this.addResponseFilter();
-		if (responseFilter.isPresent()) {
-			client.register(responseFilter.get());
-		}
-		if (!path.isPresent()) {
-			webTarget = client.target(host.toString());
-		} else {
-			webTarget = client.target(UriBuilder.fromUri(host + path.get().toString()));
-		}
-		this.accept = MediaType.APPLICATION_JSON;
-		this.contentType = MediaType.APPLICATION_JSON;
-	}
+    protected String getAccept() {
+        return accept;
+    }
 
-	public Response get() {
-		return this.getBuilder().accept(this.getAccept()).get();
-	}
+    protected String getContentType() {
+        return contentType;
+    }
 
-	public Response post(Object obj) {
-		return this.getBuilder().accept(this.getAccept()).post(Entity.entity(obj, this.getContentType()));
-	}
+    protected String getMergeContentType() {
+        return "application/merge-patch+json";
+    }
 
-	public Response patch(Object obj) {
-		return this.getBuilder().header("X-HTTP-Method-Override", "PATCH").accept(this.getAccept())
-				.post(Entity.entity(obj, this.getMergeContentType()));
-	}
+    protected Client getClient() {
+        return ClientBuilder.newBuilder().build();
+    }
 
-	public Response put(Object obj) {
-		return this.getBuilder().accept(this.getAccept()).put(Entity.entity(obj, this.getContentType()));
-	}
+    protected void initializeClient(Client client) {
+        if (enableLogging()) {
+            client.register(LOG).register(new LoggingFilter(getMaxPayloadSize()));
+        }
+        client.register(getMapper());
+        addResponseFilter().ifPresent(client::register);
+        webTarget = path.map(path -> client.target(UriBuilder.fromUri(host + path.toString())))
+                .orElseGet(() -> client.target(host.toString()));
+        accept = MediaType.APPLICATION_JSON;
+        contentType = MediaType.APPLICATION_JSON;
+    }
 
-	public Response delete() {
-		return this.getBuilder().accept(this.getAccept()).delete();
-	}
+    public Response get() {
+        return createInvocationBuilder().accept(getAccept()).get();
+    }
 
-	public Response delete(Object obj) {
-		return this.getBuilder().header("X-HTTP-Method-Override", "DELETE").accept(this.getAccept())
-				.put(Entity.entity(obj, this.getContentType()));
-	}
+    public Response post(Object obj) {
+        return createInvocationBuilder().accept(getAccept()).post(Entity.entity(obj, getContentType()));
+    }
 
-	public <T> T get(Class<T> resultClass) {
-		return this.get().readEntity(resultClass);
-	}
+    public Response patch(Object obj) {
+        return createInvocationBuilder().header("X-HTTP-Method-Override", "PATCH").accept(getAccept())
+                .post(Entity.entity(obj, getMergeContentType()));
+    }
 
-	public <T> T get(GenericType<T> resultClass) {
-		return this.get().readEntity(resultClass);
-	}
+    public Response put(Object obj) {
+        return createInvocationBuilder().accept(getAccept()).put(Entity.entity(obj, getContentType()));
+    }
 
-	public <T> T post(Object obj, Class<T> resultClass) {
-		return this.post(obj).readEntity(resultClass);
-	}
+    public Response delete() {
+        return createInvocationBuilder().accept(getAccept()).delete();
+    }
 
-	public <T> T patch(Object obj, Class<T> resultClass) {
-		return this.patch(obj).readEntity(resultClass);
-	}
+    public Response delete(Object obj) {
+        return createInvocationBuilder().header("X-HTTP-Method-Override", "DELETE").accept(getAccept())
+                .put(Entity.entity(obj, getContentType()));
+    }
 
-	public <T> T put(Object obj, Class<T> resultClass) {
-		return this.put(obj).readEntity(resultClass);
-	}
+    public <T> T get(Class<T> resultClass) {
+        return get().readEntity(resultClass);
+    }
 
-	public <T> T delete(Class<T> resultClass) {
-		return this.delete().readEntity(resultClass);
-	}
-	
-	public <T> T delete(Object obj, Class<T> resultClass) {
-		return this.delete(obj).readEntity(resultClass);
-	}
+    public <T> T get(GenericType<T> resultClass) {
+        return get().readEntity(resultClass);
+    }
+
+    public <T> T post(Object obj, Class<T> resultClass) {
+        return post(obj).readEntity(resultClass);
+    }
+
+    public <T> T patch(Object obj, Class<T> resultClass) {
+        return patch(obj).readEntity(resultClass);
+    }
+
+    public <T> T put(Object obj, Class<T> resultClass) {
+        return put(obj).readEntity(resultClass);
+    }
+
+    public <T> T delete(Class<T> resultClass) {
+        return delete().readEntity(resultClass);
+    }
+
+    public <T> T delete(Object obj, Class<T> resultClass) {
+        return delete(obj).readEntity(resultClass);
+    }
 }

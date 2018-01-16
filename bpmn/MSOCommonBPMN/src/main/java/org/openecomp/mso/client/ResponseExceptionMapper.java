@@ -22,8 +22,6 @@ package org.openecomp.mso.client;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Optional;
-
 import javax.annotation.Priority;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ForbiddenException;
@@ -38,61 +36,59 @@ import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientResponseContext;
 import javax.ws.rs.client.ClientResponseFilter;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status.Family;
 import javax.ws.rs.ext.Provider;
+import org.apache.commons.io.IOUtils;
 
 @Provider
 @Priority(value = 1)
-public abstract class ResponseExceptionMapper implements ClientResponseFilter {
+public class ResponseExceptionMapper implements ClientResponseFilter {
 
-	@Override
-	public void filter(ClientRequestContext requestContext, ClientResponseContext responseContext) throws IOException {
-		if (responseContext.getStatus() >= 300) {
-			String message = "empty message";
-			if (responseContext.hasEntity()) {
-				Optional<String> result = this.extractMessage(responseContext.getEntityStream());
-				if (result.isPresent()) {
-					message = result.get();
-				}
-			}
-			Response.Status status = Response.Status.fromStatusCode(responseContext.getStatus());
-			WebApplicationException webAppException;
-			switch (status) {
-			case BAD_REQUEST:
-				webAppException = new BadRequestException(message);
-				break;
-			case UNAUTHORIZED:
-				webAppException = new NotAuthorizedException(message);
-				break;
-			case FORBIDDEN:
-				webAppException = new ForbiddenException(message);
-				break;
-			case NOT_FOUND:
-				webAppException = new NotFoundException(message);
-				break;
-			case METHOD_NOT_ALLOWED:
-				webAppException = new NotAllowedException(message);
-				break;
-			case NOT_ACCEPTABLE:
-				webAppException = new NotAcceptableException(message);
-				break;
-			case PRECONDITION_FAILED:
-				webAppException = new PreconditionFailedException(message);
-				break;
-			case UNSUPPORTED_MEDIA_TYPE:
-				webAppException = new NotSupportedException(message);
-				break;
-			case INTERNAL_SERVER_ERROR:
-				webAppException = new InternalServerErrorException(message);
-				break;
-			case SERVICE_UNAVAILABLE:
-				webAppException = new WebApplicationException(message);
-				break;
-			default:
-				webAppException = new WebApplicationException(message);
-			}
-			throw webAppException;
-		}
-	}
-	
-	public abstract Optional<String> extractMessage(InputStream stream) throws IOException;
+    @Override
+    public void filter(ClientRequestContext requestContext, ClientResponseContext responseContext) throws IOException {
+        if (isError(responseContext)) {
+            String message;
+            if (responseContext.hasEntity()) {
+                message = extractMessage(responseContext.getEntityStream());
+            } else {
+                message = "empty message";
+            }
+            Response.Status status = Response.Status.fromStatusCode(responseContext.getStatus());
+            switch (status) {
+                case BAD_REQUEST:
+                    throw new BadRequestException(message);
+                case UNAUTHORIZED:
+                    throw new NotAuthorizedException(message);
+                case FORBIDDEN:
+                    throw new ForbiddenException(message);
+                case NOT_FOUND:
+                    throw new NotFoundException(message);
+                case METHOD_NOT_ALLOWED:
+                    throw new NotAllowedException(message);
+                case NOT_ACCEPTABLE:
+                    throw new NotAcceptableException(message);
+                case PRECONDITION_FAILED:
+                    throw new PreconditionFailedException(message);
+                case UNSUPPORTED_MEDIA_TYPE:
+                    throw new NotSupportedException(message);
+                case INTERNAL_SERVER_ERROR:
+                    throw new InternalServerErrorException(message);
+                case SERVICE_UNAVAILABLE:
+                    throw new WebApplicationException(message);
+                default:
+                    throw new WebApplicationException(message);
+            }
+        }
+    }
+
+    private boolean isError(ClientResponseContext responseContext) {
+        Family family = responseContext.getStatusInfo().getFamily();
+        return family == Family.CLIENT_ERROR || family == Family.SERVER_ERROR || family == Family.OTHER;
+    }
+
+    private String extractMessage(InputStream stream) throws IOException {
+        final String input = IOUtils.toString(stream, "UTF-8");
+        stream.close();
+        return input;
+    }
 }

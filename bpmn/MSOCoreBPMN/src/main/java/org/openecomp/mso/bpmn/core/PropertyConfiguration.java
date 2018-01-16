@@ -91,7 +91,7 @@ public class PropertyConfiguration {
 	private FileWatcherThread fileWatcherThread = null;
 
 	// The key is the file name
-	private Map<String, TimerTask> timerTaskMap = new HashMap<>();
+	private final Map<String, TimerTask> timerTaskMap = new HashMap<>();
 
 	/**
      * Private Constructor.

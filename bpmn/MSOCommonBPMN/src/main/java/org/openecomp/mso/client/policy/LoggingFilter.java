@@ -55,10 +55,6 @@ public class LoggingFilter implements ClientRequestFilter, ClientResponseFilter,
 		this.maxEntitySize = Integer.min(maxPayloadSize, 1024 * 1024);
 	}
 
-	private void log(StringBuilder sb) {
-		logger.info(sb.toString());
-	}
-
 	private InputStream logInboundEntity(final StringBuilder b, InputStream stream, final Charset charset)
 			throws IOException {
 		if (!stream.markSupported()) {
@@ -92,7 +88,7 @@ public class LoggingFilter implements ClientRequestFilter, ClientResponseFilter,
 		final StringBuilder sb = new StringBuilder();
 		if (responseContext.hasEntity()) {
 			responseContext.setEntityStream(logInboundEntity(sb, responseContext.getEntityStream(), DEFAULT_CHARSET));
-			log(sb);
+			logger.info(sb.toString());
 		}
 	}
 
@@ -101,7 +97,7 @@ public class LoggingFilter implements ClientRequestFilter, ClientResponseFilter,
 		final LoggingStream stream = (LoggingStream) context.getProperty(ENTITY_STREAM_PROPERTY);
 		context.proceed();
 		if (stream != null) {
-			log(stream.getStringBuilder(DEFAULT_CHARSET));
+			logger.info(stream.getStringBuilder(DEFAULT_CHARSET).toString());
 		}
 	}
 
