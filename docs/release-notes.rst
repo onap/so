@@ -8,10 +8,10 @@ Service Orchestrator Release Notes
 
 The SO provides the highest level of service orchestration in the ONAP architecture. 
 
-Version: 1.1.0
+Version: 1.1.2
 --------------
 
-:Release Date: 2017-11-16
+:Release Date: 2018-01-18
 
 
 **New Features**
@@ -25,6 +25,34 @@ The orchestration engine is a reusable service. Any component of the architectur
 * The service model maintains consistency and reusability across all orchestration activities and ensures consistent methods, structure and version of the workflow execution environment.
 * Orchestration processes interact with other platform components or external systems via standard and well-defined APIs.
 
+
+Bug Fixes
+---------
+
+- `SO-344 <https://jira.onap.org/browse/SO-344>`_
+  Only pass one VNF to DoCreateVnfAndModules.
+
+- `SO-348 <https://jira.onap.org/browse/SO-348>`_
+  Json Analyze Exception in PreProcessRequest.
+
+- `SO-352 <https://jira.onap.org/browse/SO-352>`_
+  SO failed to create VNF - with error message: Internal Error Occurred in CreateVnfInfra QueryCatalogDB Process.
+
+- `SO-354 <https://jira.onap.org/browse/SO-354>`_
+  Change the Service Type And Service Role
+
+ 
+Known Issues
+------------
+None
+
+Security Issues
+---------------
+None
+
+Upgrade Notes
+-------------
+None
 
 **Deprecation Notes**
 
