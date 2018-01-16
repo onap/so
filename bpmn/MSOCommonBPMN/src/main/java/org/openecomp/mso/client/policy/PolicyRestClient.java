@@ -20,47 +20,42 @@
 
 package org.openecomp.mso.client.policy;
 
-import java.net.MalformedURLException;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-
 import javax.ws.rs.client.ClientResponseFilter;
 import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriBuilderException;
-
-import org.openecomp.mso.client.ResponseExceptionMapperImpl;
-import org.openecomp.mso.client.RestProperties;
+import org.openecomp.mso.client.ResponseExceptionMapper;
 import org.openecomp.mso.client.policy.entities.PolicyServiceType;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PolicyRestClient extends RestClient {
 
-	private static final String X_ECOMP_REQUESTID = String.valueOf(UUID.randomUUID());
-	private final PolicyRestProperties properties;
-	public PolicyRestClient(PolicyRestProperties props, PolicyServiceType serviceType) {
-		super(props, Optional.of(UriBuilder.fromPath(serviceType.toString()).build()));
-		this.properties = props;
-		this.getClient();
-	}
+    private static final String X_ECOMP_REQUESTID = String.valueOf(UUID.randomUUID());
+    private final PolicyRestProperties properties;
 
-	@Override
-	protected void initializeHeaderMap(Map<String, String> headerMap) {
-		headerMap.put("ClientAuth", properties.getClientAuth());
-		headerMap.put("Authorization", properties.getAuth());
-		headerMap.put("Environment", properties.getEnvironment());
-		this.addRequestId(X_ECOMP_REQUESTID);
-	}
+    public PolicyRestClient(PolicyRestProperties props, PolicyServiceType serviceType) {
+        super(props, Optional.of(UriBuilder.fromPath(serviceType.toString()).build()));
+        this.properties = props;
+        this.getClient();
+    }
 
-	@Override
-	protected Optional<ClientResponseFilter> addResponseFilter() {
-		return Optional.of(new ResponseExceptionMapperImpl());
-	}
+    @Override
+    protected void initializeHeaderMap(Map<String, String> headerMap) {
+        headerMap.put("ClientAuth", properties.getClientAuth());
+        headerMap.put("Authorization", properties.getAuth());
+        headerMap.put("Environment", properties.getEnvironment());
+        this.addRequestId(X_ECOMP_REQUESTID);
+    }
 
-	@Override
-	public RestClient addRequestId(String requestId) {
-		this.headerMap.put("X-ECOMP-RequestID", requestId);
-		return this;
-	}
+    @Override
+    protected Optional<ClientResponseFilter> addResponseFilter() {
+        return Optional.of(new ResponseExceptionMapper());
+    }
+
+    @Override
+    public void addRequestId(String requestId) {
+        this.headerMap.put("X-ECOMP-RequestID", requestId);
+    }
 }

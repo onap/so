@@ -25,6 +25,7 @@ import java.net.URL;
 
 public interface RestProperties {
 
-	public URL getEndpoint() throws MalformedURLException;
-	public String getSystemName();
+    URL getEndpoint() throws MalformedURLException;
+
+    String getSystemName();
 }

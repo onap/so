@@ -30,79 +30,75 @@ import java.util.Map;
  * in the same object for separate rollback operations.
  */
 public class RollbackData implements Serializable {
-	private static final long serialVersionUID = 1L;
 
-	private Map<String, Map<String, Serializable>> dictionary =
-		new HashMap<String, Map<String, Serializable>>();
-	
-	/**
-	 * Returns true if the specified type is stored in this object.
-	 * @param type the data type
-	 */
-	public boolean hasType(String type) {
-		return dictionary.containsKey(type);
-	}
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Stores a single item.
-	 * @param type the data type
-	 * @param key the key
-	 * @param value the value
-	 */
-	public void put(String type, String key, String value) {
-		Map<String, Serializable> mapForType = dictionary.get(type);
+    private Map<String, Map<String, Serializable>> dictionary = new HashMap<>();
 
-		if (mapForType == null) {
-			mapForType = new HashMap<String, Serializable>();
-			dictionary.put(type, mapForType);
-		}
+    /**
+     * Returns true if the specified type is stored in this object.
+     *
+     * @param type the data type
+     */
+    public boolean hasType(String type) {
+        return dictionary.containsKey(type);
+    }
 
-		mapForType.put(key, value);
-	}
+    /**
+     * Stores a single item.
+     *
+     * @param type the data type
+     * @param key the key
+     * @param value the value
+     */
+    public void put(String type, String key, String value) {
+        dictionary.computeIfAbsent(type, k -> new HashMap<>()).put(key, value);
+    }
 
-	/**
-	 * Gets a single item.
-	 * @param type the data type
-	 * @param key the key
-	 * @return the item or null if there is no item for the specified type and key
-	 */
-	public Serializable get(String type, String key) {
-		Map<String, Serializable> mapForType = dictionary.get(type);
+    /**
+     * Gets a single item.
+     *
+     * @param type the data type
+     * @param key the key
+     * @return the item or null if there is no item for the specified type and key
+     */
+    public Serializable get(String type, String key) {
+        Map<String, Serializable> mapForType = dictionary.get(type);
 
-		if (mapForType == null) {
-			return null;
-		}
+        if (mapForType == null) {
+            return null;
+        }
 
-		return mapForType.get(key);
-	}
+        return mapForType.get(key);
+    }
 
-	/**
-	 * Gets a map containing all items associated with the specified data type.
-	 * @param type the data type
-	 * @return a map, or null if there are no items associated with the specified
-	 *         data type
-	 */
-	public Map<String, Serializable> get(String type) {
-		return dictionary.get(type);
-	}
+    /**
+     * Gets a map containing all items associated with the specified data type.
+     *
+     * @param type the data type
+     * @return a map, or null if there are no items associated with the specified data type
+     */
+    public Map<String, Serializable> get(String type) {
+        return dictionary.get(type);
+    }
 
-	/**
-	 * Returns a string representation of this object.
-	 */
-	public String toString() {
-		StringBuilder out = new StringBuilder();
-		out.append(getClass().getSimpleName());
-		out.append('[');
-		boolean hasOne = false;
-		for (String type : dictionary.keySet()) {
-			if (hasOne) {
-				out.append(',');
-			}
-			out.append(type);
-			out.append(dictionary.get(type));
-			hasOne = true;
-		}
-		out.append(']');
-		return out.toString();
-	}
+    /**
+     * Returns a string representation of this object.
+     */
+    public String toString() {
+        StringBuilder out = new StringBuilder();
+        out.append(getClass().getSimpleName());
+        out.append('[');
+        boolean hasOne = false;
+        for (String type : dictionary.keySet()) {
+            if (hasOne) {
+                out.append(',');
+            }
+            out.append(type);
+            out.append(dictionary.get(type));
+            hasOne = true;
+        }
+        out.append(']');
+        return out.toString();
+    }
 }
