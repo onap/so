@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_3ecf4081",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/cloud/CloudConfig.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2018-01-16T09:38:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_ca677724",
+      "range": {
+        "startLine": 95,
+        "startChar": 23,
+        "endLine": 96,
+        "endChar": 36
+      },
+      "revId": "bcb082c8618b3a36030b25356b558288b16ed598",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_8a716fe2",
         "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/cloud/CloudConfig.java",
         "patchSetId": 3
@@ -36,6 +60,30 @@
       "writtenOn": "2018-01-15T05:36:02Z",
       "side": 1,
       "message": "Optional.of looks more appropriate to me here.",
+      "range": {
+        "startLine": 98,
+        "startChar": 23,
+        "endLine": 98,
+        "endChar": 42
+      },
+      "revId": "bcb082c8618b3a36030b25356b558288b16ed598",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_5eca4c6f",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/cloud/CloudConfig.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2018-01-16T09:38:04Z",
+      "side": 1,
+      "message": "The original logic returns null if CloudSite is not found. Optional.of throws the null pointer exception if the value is null, that is why Optional.of is a bad option because it changes the original data flow.",
+      "parentUuid": "5a93c517_8a716fe2",
       "range": {
         "startLine": 98,
         "startChar": 23,
