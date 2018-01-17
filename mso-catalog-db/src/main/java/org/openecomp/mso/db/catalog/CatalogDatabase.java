@@ -378,16 +378,16 @@ public class CatalogDatabase implements Closeable {
      */
     public Service getService (String modelName) {
 
-        long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - get service with name " + modelName);
+        long startTime = System.currentTimeMillis();
+        LOGGER.debug("Catalog database - get service with name " + modelName);
 
         String hql = "FROM Service WHERE modelName = :MODEL_NAME";
-        Query query = getSession ().createQuery (hql);
-        query.setParameter ("MODEL_NAME", modelName);
+        Query query = getSession().createQuery(hql);
+        query.setParameter("MODEL_NAME", modelName);
 
         Service service = null;
         try {
-        	service = (Service) query.uniqueResult ();
+        	service = (Service) query.uniqueResult();
         } catch (org.hibernate.NonUniqueResultException nure) {
         	LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row - data integrity error: modelName='" + modelName + "'");
         	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for modelName=" + modelName, "", "", MsoLogger.ErrorCode.DataError, "Non unique result for modelName=" + modelName);
