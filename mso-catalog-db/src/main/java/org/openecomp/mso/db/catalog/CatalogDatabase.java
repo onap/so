@@ -536,12 +536,12 @@ public class CatalogDatabase implements Closeable {
     }
 
     public Service getServiceByVersionAndInvariantId(String modelInvariantId, String modelVersion) throws Exception {
-        long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - get service with modelInvariantId: " + modelInvariantId + " and modelVersion: " + modelVersion);
+        long startTime = System.currentTimeMillis();
+        LOGGER.debug("Catalog database - get service with modelInvariantId: " + modelInvariantId + " and modelVersion: " + modelVersion);
 
         String hql = "FROM Service WHERE modelInvariantUUID = :MODEL_INVARIANT_UUID AND version = :VERSION_STR";
-        Query query = getSession ().createQuery (hql);
-        query.setParameter ("MODEL_INVARIANT_UUID", modelInvariantId);
+        Query query = getSession().createQuery(hql);
+        query.setParameter("MODEL_INVARIANT_UUID", modelInvariantId);
         query.setParameter("VERSION_STR", modelVersion);
 
         Service result = null;
@@ -554,11 +554,11 @@ public class CatalogDatabase implements Closeable {
         }
         // See if something came back.
         if (result==null) {
-            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. Service not found", "CatalogDB", "getServiceByVersionAndInvariantId", null);
+            LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. Service not found", "CatalogDB", "getServiceByVersionAndInvariantId", null);
             return null;
         }
 
-        LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getServiceByVersionAndInvariantId", null);
+        LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getServiceByVersionAndInvariantId", null);
         return result;
     }
 
