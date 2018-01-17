@@ -462,25 +462,25 @@ public class CatalogDatabase implements Closeable {
         	LOGGER.debug ("Catalog database - get service modelUUID with id " + serviceNameVersionId);
 
         	String hql = "FROM Service WHERE MODEL_UUID = :MODEL_UUID and http_method = :http_method";
-        	query = getSession ().createQuery (hql);
-            query.setParameter ("MODEL_UUID", serviceNameVersionId);
+        	query = getSession().createQuery(hql);
+            query.setParameter("MODEL_UUID", serviceNameVersionId);
          } else {
         	serviceId = map.get("serviceId");
         	serviceVersion = map.get("serviceVersion");
-            LOGGER.debug ("Catalog database - get serviceId with id " + serviceId + " and serviceVersion with " + serviceVersion);
+            LOGGER.debug("Catalog database - get serviceId with id " + serviceId + " and serviceVersion with " + serviceVersion);
 
             String hql = "FROM Service WHERE service_id = :service_id and service_version = :service_version and http_method = :http_method";
-            query = getSession ().createQuery (hql);
-            query.setParameter ("service_id", serviceId);
-            query.setParameter ("service_version", serviceVersion);
+            query = getSession().createQuery(hql);
+            query.setParameter("service_id", serviceId);
+            query.setParameter("service_version", serviceVersion);
          }
 
-        query.setParameter ("http_method", httpMethod);
+        query.setParameter("http_method", httpMethod);
 
-        long startTime = System.currentTimeMillis ();
+        long startTime = System.currentTimeMillis();
         Service service = null;
         try {
-        	service = (Service) query.uniqueResult ();
+        	service = (Service) query.uniqueResult();
         } catch (org.hibernate.NonUniqueResultException nure) {
         	LOGGER.debug("Non Unique Result Exception - data integrity error: service_id='" + serviceId + "', serviceVersion='" + serviceVersion + "'");
         	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for service_id=" + serviceId + " and serviceVersion=" + serviceVersion, "", "", MsoLogger.ErrorCode.DataError, "Non unique result for service_id=" + serviceId);
@@ -511,28 +511,28 @@ public class CatalogDatabase implements Closeable {
      * @param modelName
      * @return Service object or null if none found
      */
-    public Service getServiceByModelName (String modelName){
+    public Service getServiceByModelName(String modelName){
 
-        long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - get service with name " + modelName);
+        long startTime = System.currentTimeMillis();
+        LOGGER.debug("Catalog database - get service with name " + modelName);
 
         String hql = "FROM Service WHERE modelName = :MODEL_NAME";
-        Query query = getSession ().createQuery (hql);
-        query.setParameter ("MODEL_NAME", modelName);
+        Query query = getSession().createQuery(hql);
+        query.setParameter("MODEL_NAME", modelName);
 
         @SuppressWarnings("unchecked")
-        List <Service> resultList = query.list ();
+        List <Service> resultList = query.list();
 
         // See if something came back.
-        if (resultList.isEmpty ()) {
-            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. Service not found", "CatalogDB", "getServiceByModelName", null);
+        if (resultList.isEmpty()) {
+            LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. Service not found", "CatalogDB", "getServiceByModelName", null);
             return null;
         }
-        Collections.sort (resultList, new MavenLikeVersioningComparator ());
-        Collections.reverse (resultList);
+        Collections.sort(resultList, new MavenLikeVersioningComparator ());
+        Collections.reverse(resultList);
 
-        LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getServiceByModelName", null);
-        return resultList.get (0);
+        LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getServiceByModelName", null);
+        return resultList.get(0);
     }
 
     public Service getServiceByVersionAndInvariantId(String modelInvariantId, String modelVersion) throws Exception {
