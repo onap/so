@@ -615,21 +615,182 @@ public class CatalogDatabaseTest {
         assertEquals(null, service);
     }
 
-    @Test(expected = Exception.class)
-    public void getServiceTestException(){
-        Service ht = cd.getService("123");
+    @Test
+    public void getServiceTest(){
+
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public Object uniqueResult() throws Exception {
+                Service service = new Service();
+                service.setModelUUID("123-uuid");
+                return service;
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        Service service = cd.getService("123");
+        assertEquals("123-uuid", service.getModelUUID());
+    }
+
+    @Test(expected = NonUniqueResultException.class)
+    public void getServiceNoUniqueResultTest(){
+
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public Object uniqueResult() throws Exception {
+                throw new NonUniqueResultException(-1);
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        Service service = cd.getService("123");
+    }
+
+    @Test(expected = HibernateException.class)
+    public void getServiceHibernateExceptionTest(){
+
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public Object uniqueResult() throws Exception {
+                throw new HibernateException("hibernate exception");
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        Service service = cd.getService("123");
     }
 
     @Test(expected = Exception.class)
-    public void getServiceByModelUUIDTestException(){
-        Service ht = cd.getServiceByModelUUID("123");
+    public void getServiceExceptionTest(){
+
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public Object uniqueResult() throws Exception {
+                throw new Exception("generic exception");
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        Service service = cd.getService("123");
     }
 
-    @Test(expected = Exception.class)
-    public void getService2TestException(){
+    @Test
+    public void getServiceByModelUUIDTest(){
+
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public Object uniqueResult() throws Exception {
+                Service service = new Service();
+                service.setModelUUID("123-uuid");
+                return service;
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        Service service = cd.getServiceByModelUUID("123");
+        assertEquals("123-uuid", service.getModelUUID());
+    }
+
+    @Test
+    public void getService2Test(){
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public Object uniqueResult() throws Exception {
+                Service service = new Service();
+                service.setModelUUID("123-uuid");
+                return service;
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
         HashMap<String, String> map = new HashMap<>();
         map.put("serviceNameVersionId", "v2");
-        Service ht = cd.getService(map, "123");
+        Service service = cd.getService(map, "123");
+
+        assertEquals("123-uuid", service.getModelUUID());
     }
 
     @Test(expected = Exception.class)
