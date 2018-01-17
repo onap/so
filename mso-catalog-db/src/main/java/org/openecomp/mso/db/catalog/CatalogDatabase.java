@@ -651,30 +651,30 @@ public class CatalogDatabase implements Closeable {
         return resultList.get(0);
     }
 
-    public List<ServiceRecipe> getServiceRecipes (String serviceModelUuid) {
+    public List<ServiceRecipe> getServiceRecipes(String serviceModelUuid) {
 
         StringBuilder hql;
 
-       	hql = new StringBuilder ("FROM ServiceRecipe WHERE serviceModelUUID = :serviceModelUUID");
+        hql = new StringBuilder("FROM ServiceRecipe WHERE serviceModelUUID = :serviceModelUUID");
 
-        long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - get Service recipe with serviceModelUUID " + serviceModelUuid);
+        long startTime = System.currentTimeMillis();
+        LOGGER.debug("Catalog database - get Service recipe with serviceModelUUID " + serviceModelUuid);
 
-        Query query = getSession ().createQuery (hql.toString ());
-        query.setParameter ("serviceModelUUID", serviceModelUuid);
+        Query query = getSession().createQuery(hql.toString());
+        query.setParameter("serviceModelUUID", serviceModelUuid);
 
         @SuppressWarnings("unchecked")
-        List <ServiceRecipe> resultList = query.list ();
+        List <ServiceRecipe> resultList = query.list();
 
-        if (resultList.isEmpty ()) {
-            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. Service recipe not found", "CatalogDB", "getServiceRecipes", null);
+        if (resultList.isEmpty()) {
+            LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. Service recipe not found", "CatalogDB", "getServiceRecipes", null);
             return Collections.EMPTY_LIST;
         }
 
-        Collections.sort (resultList, new MavenLikeVersioningComparator ());
-        Collections.reverse (resultList);
+        Collections.sort(resultList, new MavenLikeVersioningComparator());
+        Collections.reverse(resultList);
 
-        LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getServiceRecipes", null);
+        LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getServiceRecipes", null);
         return resultList;
     }
 
