@@ -22,24 +22,20 @@ package org.openecomp.mso.adapter_utils.tests;
 
 import static org.junit.Assert.assertTrue;
 
+import com.woorea.openstack.heat.model.Stack;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.junit.Test;
 import org.openecomp.mso.entity.MsoRequest;
 import org.openecomp.mso.openstack.beans.HeatStatus;
 import org.openecomp.mso.openstack.beans.MsoTenant;
-import org.openecomp.mso.openstack.beans.NetworkInfo;
 import org.openecomp.mso.openstack.beans.NetworkRollback;
-import org.openecomp.mso.openstack.beans.NetworkStatus;
 import org.openecomp.mso.openstack.beans.Pool;
 import org.openecomp.mso.openstack.beans.StackInfo;
 import org.openecomp.mso.openstack.beans.Subnet;
 import org.openecomp.mso.openstack.beans.VnfRollback;
-
-import com.woorea.openstack.heat.model.Stack;
 
 public class AdapterBeansTest {
 	@Test
@@ -55,33 +51,6 @@ public class AdapterBeansTest {
 		assertTrue(tenant.getMetadata() != null);
 		new MsoTenant("1", "TenantName", hm);
 		// assertTrue(tenant.toString() != null);
-	}
-
-	@Test
-	public final void networkInfoTest() {
-		NetworkInfo networkInfo = new NetworkInfo();
-		networkInfo.setName("name");
-		assertTrue(networkInfo.getName().equalsIgnoreCase("name"));
-		networkInfo.setId("1");
-		assertTrue(networkInfo.getId().equalsIgnoreCase("1"));
-		networkInfo.setStatus(NetworkStatus.ACTIVE);
-		assertTrue(networkInfo.getStatus().equals(NetworkStatus.ACTIVE));
-		networkInfo.setProvider("provider");
-		networkInfo.getProvider().equalsIgnoreCase("provider");
-		List<Integer> al = new ArrayList<>();
-		al.add(1);
-		al.add(2);
-		networkInfo.setVlans(al);
-		assertTrue(networkInfo.getVlans() != null);
-		networkInfo.setShared("shared");
-		assertTrue(networkInfo.getShared().equalsIgnoreCase("shared"));
-		List<String> als = new ArrayList<>();
-		als.add("1");
-		als.add("2");
-		networkInfo.setSubnets(als);
-		assertTrue(networkInfo.getSubnets() != null);
-		new NetworkInfo("string", NetworkStatus.ACTIVE);
-		assertTrue(networkInfo.toString() != null);
 	}
 
 	@Test
