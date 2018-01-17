@@ -20,8 +20,6 @@
 
 package org.openecomp.mso.openstack.beans;
 
-
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +42,6 @@ public class NetworkInfo {
 	private String provider = "";
 	private List<Integer> vlans = new ArrayList<>();
 	private List<String> subnets = new ArrayList<>();
-	private String shared = "";
 
 	static Map<String,NetworkStatus> NetworkStatusMap;
 	static {
@@ -53,15 +50,6 @@ public class NetworkInfo {
 		NetworkStatusMap.put("DOWN", NetworkStatus.DOWN);
 		NetworkStatusMap.put("BUILD", NetworkStatus.BUILD);
 		NetworkStatusMap.put("ERROR", NetworkStatus.ERROR);
-	}
-
-	public NetworkInfo () {
-	}
-
-	public NetworkInfo (String name, NetworkStatus status) {
-		this.name = name;
-		this.id = name;	// Don't have an ID, so just use name
-		this.status = status;
 	}
 
 	/**
@@ -75,41 +63,35 @@ public class NetworkInfo {
 	 *
 	 * @param network
 	 */
-	public NetworkInfo (Network network)
-	{
-		if (network == null) {
-			this.status = NetworkStatus.NOTFOUND;
-			return;
-		}
-
-		this.name = network.getName();
-		this.id = network.getId();
-
-		if (network.getStatus() == null) {
-			// Can this happen on a newly created network?
-			this.status = NetworkStatus.UNKNOWN;
-		} else if (NetworkStatusMap.containsKey(network.getStatus())) {
-			this.status = NetworkStatusMap.get(network.getStatus());
+	public NetworkInfo(Network network) {
+		if (network != null) {
+			initFieldsWithDataFromNetwork(network);
 		} else {
-			this.status = NetworkStatus.UNKNOWN;
+			status = NetworkStatus.NOTFOUND;
 		}
+	}
 
+	private void initFieldsWithDataFromNetwork(Network network){
+		name = network.getName();
+		id = network.getId();
+
+		if (network.getStatus() != null && NetworkStatusMap.containsKey(network.getStatus())) {
+			status = NetworkStatusMap.get(network.getStatus());
+		}
 		if (network.getProviderPhysicalNetwork() != null) {
-			this.provider = network.getProviderPhysicalNetwork();
+			provider = network.getProviderPhysicalNetwork();
 			if ("vlan".equals(network.getProviderNetworkType())) {
-                this.vlans.add(network.getProviderSegmentationId());
+                vlans.add(network.getProviderSegmentationId());
             }
 		}
 		else if (network.getSegments() != null && !network.getSegments().isEmpty()) {
 			Segment s = network.getSegments().get(0);
-			this.provider = s.getProviderPhysicalNetwork();
+			provider = s.getProviderPhysicalNetwork();
 			if ("vlan".equals(s.getProviderNetworkType())) {
-                for (Segment s1 : network.getSegments()) {
-					this.vlans.add(s1.getProviderSegmentationId());
-				}
+				network.getSegments().forEach(segment -> vlans.add(segment.getProviderSegmentationId()));
             }
 		}
-		this.subnets = network.getSubnets();
+		subnets = network.getSubnets();
 	}
 
 	public String getName() {
@@ -156,22 +138,10 @@ public class NetworkInfo {
 		return subnets;
 	}
 
-	public void setSubnets (List<String> subnets) {
-		this.subnets = subnets;
-	}
-
-	public String getShared() {
-		return shared;
-	}
-
-	public void setShared(String shared) {
-		this.shared = shared;
-	}
-
 	@Override
     public String toString () {
 		return "Network: name=" + name + ",id=" + id + ",status=" + status +
-				",provider=" + provider + ",vlans=" + vlans + ",subnets=" + subnets + ",shared=" + shared;
+				",provider=" + provider + ",vlans=" + vlans + ",subnets=" + subnets;
 	}
 }
 
