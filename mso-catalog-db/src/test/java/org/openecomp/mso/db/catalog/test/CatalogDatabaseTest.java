@@ -913,9 +913,58 @@ public class CatalogDatabaseTest {
         ServiceRecipe ht = cd.getServiceRecipe("123","tetwe");
     }
 
-    @Test(expected = Exception.class)
-    public void getServiceRecipeByServiceModelUuidTestException() throws Exception{
-        ServiceRecipe ht = cd.getServiceRecipeByServiceModelUuid("123","tetwe");
+    @Test
+    public void getServiceRecipeByServiceModelUuidTest() {
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public List<ServiceRecipe> list() throws Exception {
+                ServiceRecipe serviceRecipe = new ServiceRecipe();
+                serviceRecipe.setId(1);
+                return Arrays.asList(serviceRecipe);
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        ServiceRecipe serviceRecipe = cd.getServiceRecipeByServiceModelUuid("123","tetwe");
+        assertEquals(1, serviceRecipe.getId());
+    }
+
+    @Test
+    public void getServiceRecipeByServiceModelUuidEmptyTest() {
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public List<ServiceRecipe> list() throws Exception {
+                return Arrays.asList();
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        ServiceRecipe serviceRecipe = cd.getServiceRecipeByServiceModelUuid("123","tetwe");
+        assertEquals(null, serviceRecipe);
     }
 
     @Test(expected = Exception.class)
