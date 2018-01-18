@@ -13,21 +13,9 @@ Version: 1.1.2
 
 :Release Date: 2018-01-18
 
-
-**New Features**
-
-The SO provides the highest level of service orchestration in the ONAP architecture.
-It executes end-to-end service activities by processing workflows and business logic and coordinating other ONAP and external component activities. 
-
-The orchestration engine is a reusable service. Any component of the architecture can execute SO orchestration capabilities. 
-
-* Orchestration services will process workflows based on defined models and recipe. 
-* The service model maintains consistency and reusability across all orchestration activities and ensures consistent methods, structure and version of the workflow execution environment.
-* Orchestration processes interact with other platform components or external systems via standard and well-defined APIs.
-
-
 Bug Fixes
 ---------
+The key defects fixed in this release :
 
 - `SO-344 <https://jira.onap.org/browse/SO-344>`_
   Only pass one VNF to DoCreateVnfAndModules.
@@ -41,18 +29,24 @@ Bug Fixes
 - `SO-354 <https://jira.onap.org/browse/SO-354>`_
   Change the Service Type And Service Role
 
- 
-Known Issues
-------------
-None
 
-Security Issues
----------------
-None
+Version: 1.1.1
+--------------
 
-Upgrade Notes
--------------
-None
+:Release Date: 2017-11-16
+
+
+**New Features**
+
+The SO provides the highest level of service orchestration in the ONAP architecture.
+It executes end-to-end service activities by processing workflows and business logic and coordinating other ONAP and external component activities. 
+
+The orchestration engine is a reusable service. Any component of the architecture can execute SO orchestration capabilities. 
+
+* Orchestration services will process workflows based on defined models and recipe. 
+* The service model maintains consistency and reusability across all orchestration activities and ensures consistent methods, structure and version of the workflow execution environment.
+* Orchestration processes interact with other platform components or external systems via standard and well-defined APIs.
+
 
 **Deprecation Notes**
 
