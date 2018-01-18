@@ -885,22 +885,23 @@ public class CatalogDatabase implements Closeable {
     /**
      * Return the newest version of a specific VNF resource (queried by modelInvariantId).
      *
-     * @param version
+     * @param modelInvariantUuid model invariant ID
+     * @param modelVersion model version
      * @return VnfResource object or null if none found
      */
     public VnfResource getVnfResourceByModelInvariantId(String modelInvariantUuid, String modelVersion) {
 
-        long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - get VNF resource with modelInvariantUuid " + modelInvariantUuid);
+        long startTime = System.currentTimeMillis();
+        LOGGER.debug("Catalog database - get VNF resource with modelInvariantUuid " + modelInvariantUuid);
 
         String hql = "FROM VnfResource WHERE modelInvariantUuid = :modelInvariantUuid and version = :serviceVersion";
-        Query query = getSession ().createQuery (hql);
-        query.setParameter ("modelInvariantUuid", modelInvariantUuid);
-        query.setParameter ("serviceVersion", modelVersion);
+        Query query = getSession().createQuery(hql);
+        query.setParameter("modelInvariantUuid", modelInvariantUuid);
+        query.setParameter("serviceVersion", modelVersion);
 
         VnfResource resource = null;
         try {
-        	resource = (VnfResource) query.uniqueResult ();
+        	resource = (VnfResource) query.uniqueResult();
         } catch (org.hibernate.NonUniqueResultException nure) {
         	LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row - data integrity error: modelInvariantUuid='" + modelInvariantUuid + "', serviceVersion='" + modelVersion + "'");
         	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for modelInvariantUuid=" + modelInvariantUuid + " and serviceVersion=" + modelVersion, "", "", MsoLogger.ErrorCode.DataError, "Non unique result for modelInvariantUuid=" + modelInvariantUuid);
