@@ -807,22 +807,22 @@ public class CatalogDatabase implements Closeable {
      * @param modelCustomizationId
      * @return VnfResource object or null if none found
      */
-    public VnfResource getVnfResourceByModelCustomizationId (String modelCustomizationId) {
+    public VnfResource getVnfResourceByModelCustomizationId(String modelCustomizationId) {
 
-        long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - get VNF resource with modelCustomizationId " + modelCustomizationId);
+        long startTime = System.currentTimeMillis();
+        LOGGER.debug("Catalog database - get VNF resource with modelCustomizationId " + modelCustomizationId);
 
         String hql = "SELECT vr "
 					+ "FROM VnfResource as vr JOIN vr.vnfResourceCustomizations as vrc "
 					+ "WHERE vrc.modelCustomizationUuid = :modelCustomizationId";
 		
-        Query query = getSession ().createQuery (hql);
-        query.setParameter ("modelCustomizationId", modelCustomizationId);
+        Query query = getSession().createQuery(hql);
+        query.setParameter("modelCustomizationId", modelCustomizationId);
 
         VnfResource resource = null;
         try {
-            resource = (VnfResource) query.uniqueResult ();
-        } catch (org.hibernate.NonUniqueResultException nure) {
+            resource = (VnfResource) query.uniqueResult();
+        } catch(org.hibernate.NonUniqueResultException nure) {
         	LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row - data integrity error: modelCustomizationUuid='" + modelCustomizationId + "'");
         	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for modelCustomizationUuid=" + modelCustomizationId, "", "", MsoLogger.ErrorCode.DataError, "Non unique result for modelCustomizationId=" + modelCustomizationId);
 
@@ -839,9 +839,9 @@ public class CatalogDatabase implements Closeable {
         	throw e;
         }
         if (resource == null) {
-        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "NotFound", "CatalogDB", "getVnfResourceByModelCustomizationId", null);
+            LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "NotFound", "CatalogDB", "getVnfResourceByModelCustomizationId", null);
         } else {
-        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVnfResourceByModelCustomizationId", null);
+            LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVnfResourceByModelCustomizationId", null);
         }
         return resource;
     }
