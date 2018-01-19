@@ -1055,28 +1055,28 @@ public class CatalogDatabase implements Closeable {
      * @param networkType
      * @return NetworkResource object or null if none found
      */
-    public NetworkResource getNetworkResource (String networkType) {
+    public NetworkResource getNetworkResource(String networkType) {
 
-        long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - get network resource with type " + networkType);
+        long startTime = System.currentTimeMillis();
+        LOGGER.debug("Catalog database - get network resource with type " + networkType);
 
         String hql = "FROM NetworkResource WHERE model_name = :network_type";
-        Query query = getSession ().createQuery (hql);
-        query.setParameter ("network_type", networkType);
+        Query query = getSession().createQuery(hql);
+        query.setParameter("network_type", networkType);
 
         @SuppressWarnings("unchecked")
-        List <NetworkResource> resultList = query.list ();
+        List <NetworkResource> resultList = query.list();
 
         // See if something came back. Name is unique, so
-        if (resultList.isEmpty ()) {
-            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. Network Resource not found", "CatalogDB", "getNetworkResource", null);
+        if (resultList.isEmpty()) {
+            LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. Network Resource not found", "CatalogDB", "getNetworkResource", null);
             return null;
         }
 
-        Collections.sort (resultList, new MavenLikeVersioningComparator ());
-        Collections.reverse (resultList);
-        LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getNetworkResource", null);
-        return resultList.get (0);
+        Collections.sort(resultList, new MavenLikeVersioningComparator());
+        Collections.reverse(resultList);
+        LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getNetworkResource", null);
+        return resultList.get(0);
     }
 
     /**

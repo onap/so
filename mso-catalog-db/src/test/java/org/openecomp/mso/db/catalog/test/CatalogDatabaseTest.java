@@ -1662,9 +1662,58 @@ public class CatalogDatabaseTest {
         assertEquals(null, vfModuleCustomization);
     }
 
-    @Test(expected = Exception.class)
-    public void getNetworkResourceTestException(){
-        NetworkResource vnf = cd.getNetworkResource("tetes");
+    @Test
+    public void getNetworkResourceTest(){
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public List<NetworkResource> list() throws Exception {
+                NetworkResource networkResource = new NetworkResource();
+                networkResource.setModelUUID("123-uuid");
+                return Arrays.asList(networkResource);
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        NetworkResource networkResource = cd.getNetworkResource("tetes");
+        assertEquals("123-uuid", networkResource.getModelUUID());
+    }
+
+    @Test
+    public void getNetworkResourceTestEmptyException(){
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public List<NetworkResource> list() throws Exception {
+                return Arrays.asList();
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        NetworkResource networkResource = cd.getNetworkResource("tetes");
+        assertEquals(null, networkResource);
     }
 
     @Test(expected = Exception.class)
