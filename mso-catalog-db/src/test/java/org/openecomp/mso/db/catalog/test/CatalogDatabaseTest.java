@@ -793,9 +793,62 @@ public class CatalogDatabaseTest {
         assertEquals("123-uuid", service.getModelUUID());
     }
 
-    @Test(expected = Exception.class)
-    public void getServiceByModelNameTestException(){
-        Service ht = cd.getServiceByModelName("123");
+    @Test
+    public void getServiceByModelNameTest(){
+
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public List<Service> list() throws Exception {
+                Service service = new Service();
+                service.setModelUUID("123-uuid");
+                return Arrays.asList(service);
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        Service service = cd.getServiceByModelName("123");
+        assertEquals("123-uuid", service.getModelUUID());
+    }
+
+    @Test
+    public void getServiceByModelNameEmptyTest(){
+
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public List<Service> list() throws Exception {
+                return Arrays.asList();
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        Service service = cd.getServiceByModelName("123");
+        assertEquals(null, service);
     }
 
     @Test(expected = Exception.class)
