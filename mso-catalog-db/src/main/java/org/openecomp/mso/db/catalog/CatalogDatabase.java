@@ -982,19 +982,19 @@ public class CatalogDatabase implements Closeable {
         return resultList.get(0);
     }
 
-    public VfModule getVfModuleModelName (String modelName, String model_version) {
+    public VfModule getVfModuleModelName(String modelName, String model_version) {
 
-        long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - get vfModuleModelName with type='" + modelName + "' and asdc_service_model_version='" + model_version + "'");
+        long startTime = System.currentTimeMillis();
+        LOGGER.debug("Catalog database - get vfModuleModelName with type='" + modelName + "' and asdc_service_model_version='" + model_version + "'");
 
         String hql = "FROM VfModule WHERE Name = :model_name and version = :model_version";
-        Query query = getSession ().createQuery (hql);
-        query.setParameter ("modelName", modelName);
-        query.setParameter ("model_version", model_version);
+        Query query = getSession().createQuery(hql);
+        query.setParameter("modelName", modelName);
+        query.setParameter("model_version", model_version);
 
         VfModule module = null;
         try {
-        	module = (VfModule) query.uniqueResult ();
+            module = (VfModule) query.uniqueResult();
         } catch (org.hibernate.NonUniqueResultException nure) {
         	LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row - data integrity error: type='" + modelName + "', asdc_service_model_version='" + model_version + "'");
         	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for type=" + modelName + " and version=" + model_version, "", "", MsoLogger.ErrorCode.DataError, "Non unique result for type=" + modelName);
@@ -1012,9 +1012,9 @@ public class CatalogDatabase implements Closeable {
         	throw e;
         }
         if (module == null) {
-        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "NotFound", "CatalogDB", "getVfModuleModelName", null);
+            LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "NotFound", "CatalogDB", "getVfModuleModelName", null);
         } else {
-        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVfModuleModelName", null);
+            LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVfModuleModelName", null);
         }
         return module;
     }

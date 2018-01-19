@@ -1497,11 +1497,116 @@ public class CatalogDatabaseTest {
         assertEquals(null, vfModule);
     }
 
-    @Test(expected = Exception.class)
-    public void getVfModuleModelName2TestException(){
-        VfModule vnf = cd.getVfModuleModelName("tetes","4kidsl");
+    @Test
+    public void getVfModuleModelNameTest() {
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public Object uniqueResult() {
+                VfModule vfModule = new VfModule();
+                vfModule.setModelUUID("123-uuid");
+                return vfModule;
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        VfModule vfModule = cd.getVfModuleModelName("tetes","4kidsl");
+        assertEquals("123-uuid", vfModule.getModelUUID());
     }
 
+    @Test(expected = NonUniqueResultException.class)
+    public void getVfModuleModelNameNURExceptionTest() {
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public Object uniqueResult() {
+                throw new NonUniqueResultException(-1);
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        VfModule vfModule = cd.getVfModuleModelName("tetes","4kidsl");
+    }
+
+    @Test(expected = HibernateException.class)
+    public void getVfModuleModelNameHibernateExceptionTest() {
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public Object uniqueResult() {
+                throw new HibernateException("hibernate exception");
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        VfModule vfModule = cd.getVfModuleModelName("tetes","4kidsl");
+    }
+
+    @Test(expected = Exception.class)
+    public void getVfModuleModelNameGenericExceptionTest() {
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public Object uniqueResult() throws Exception {
+                throw new Exception();
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        VfModule vfModule = cd.getVfModuleModelName("tetes","4kidsl");
+    }
     @Test(expected = Exception.class)
     public void ggetVfModuleCustomizationByModelNameTestException(){
         VfModuleCustomization vnf = cd.getVfModuleCustomizationByModelName("tetes");
