@@ -967,9 +967,58 @@ public class CatalogDatabaseTest {
         assertEquals(null, serviceRecipe);
     }
 
-    @Test(expected = Exception.class)
+    @Test
     public void getServiceRecipesTestException() throws Exception{
-        List<ServiceRecipe> ht = cd.getServiceRecipes("123");
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public List<ServiceRecipe> list() {
+                ServiceRecipe serviceRecipe = new ServiceRecipe();
+                serviceRecipe.setId(1);
+                return Arrays.asList(serviceRecipe);
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        List<ServiceRecipe> serviceRecipes = cd.getServiceRecipes("123");
+        assertEquals(1, serviceRecipes.size());
+    }
+
+    @Test
+    public void getServiceRecipesEmptyTest() throws Exception{
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public List<ServiceRecipe> list() {
+                return Arrays.asList();
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        List<ServiceRecipe> serviceRecipes = cd.getServiceRecipes("123");
+        assertEquals(0, serviceRecipes.size());
     }
 
     @Test(expected = Exception.class)
