@@ -1277,9 +1277,58 @@ public class CatalogDatabaseTest {
         ServiceRecipe ht = cd.getServiceRecipe(1001,"3992");
     }
 
-    @Test(expected = Exception.class)
-    public void getVnfResourceCustomizationByModelCustomizationNameTestException(){
+    @Test
+    public void getVnfResourceCustomizationByModelCustomizationNameTest(){
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public List<VnfResourceCustomization> list() throws Exception {
+                VnfResourceCustomization vnfResourceCustomization = new VnfResourceCustomization();
+                vnfResourceCustomization.setVnfResourceModelUUID("123-uuid");
+                return Arrays.asList(vnfResourceCustomization);
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
         VnfResourceCustomization vnf = cd.getVnfResourceCustomizationByModelCustomizationName("test", "test234");
+        assertEquals("123-uuid", vnf.getVnfResourceModelUUID());
+    }
+
+    @Test
+    public void getVnfResourceCustomizationByModelCustomizationNameEmptyTest(){
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public List<VnfResourceCustomization> list() throws Exception {
+                return Arrays.asList();
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        VnfResourceCustomization vnf = cd.getVnfResourceCustomizationByModelCustomizationName("test", "test234");
+        assertEquals(null, vnf);
     }
 
     @Test(expected = Exception.class)

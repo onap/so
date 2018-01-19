@@ -854,31 +854,31 @@ public class CatalogDatabase implements Closeable {
      */
     public VnfResourceCustomization getVnfResourceCustomizationByModelCustomizationName (String modelCustomizationName, String modelVersionId) {
 
-        long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - get VNF resource Customization with modelCustomizationName " + modelCustomizationName + " serviceModelUUID " + modelVersionId);
+        long startTime = System.currentTimeMillis();
+        LOGGER.debug("Catalog database - get VNF resource Customization with modelCustomizationName " + modelCustomizationName + " serviceModelUUID " + modelVersionId);
 
         String hql = "SELECT vrc FROM VnfResourceCustomization as vrc WHERE vrc.modelCustomizationUuid IN "
 					+ "(SELECT src.resourceModelCustomizationUUID FROM ServiceToResourceCustomization src "
 					+ "WHERE src.serviceModelUUID = :modelVersionId)"
 					+ "AND vrc.modelInstanceName = :modelCustomizationName";
 		
-        Query query = getSession ().createQuery (hql);
-        query.setParameter ("modelCustomizationName", modelCustomizationName);
-        query.setParameter ("modelVersionId", modelVersionId);
+        Query query = getSession().createQuery(hql);
+        query.setParameter("modelCustomizationName", modelCustomizationName);
+        query.setParameter("modelVersionId", modelVersionId);
 
         @SuppressWarnings("unchecked")
-        List <VnfResourceCustomization> resultList = query.list ();
+        List<VnfResourceCustomization> resultList = query.list();
 
-        if (resultList.isEmpty ()) {
-            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. VnfResourceCustomization not found", "CatalogDB", "getVnfResourceCustomizationByModelCustomizationName", null);
+        if (resultList.isEmpty()) {
+            LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. VnfResourceCustomization not found", "CatalogDB", "getVnfResourceCustomizationByModelCustomizationName", null);
             return null;
         }
         
-        Collections.sort (resultList, new MavenLikeVersioningComparator ());
-        Collections.reverse (resultList);
+        Collections.sort(resultList, new MavenLikeVersioningComparator());
+        Collections.reverse(resultList);
 
-        LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVnfResourceCustomizationByModelCustomizationName", null);
-        return resultList.get (0);
+        LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVnfResourceCustomizationByModelCustomizationName", null);
+        return resultList.get(0);
     }
     
     
