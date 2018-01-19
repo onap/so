@@ -1,0 +1,90 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_89be53d3",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/openecomp/mso/client/ResponseExceptionMapper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2018-01-19T13:44:37Z",
+      "side": 1,
+      "message": "why `Optional` need to be changed here ?",
+      "range": {
+        "startLine": 51,
+        "startChar": 12,
+        "endLine": 55,
+        "endChar": 13
+      },
+      "revId": "39b221dd4b1903b11aa45106e9d96ad8a6ed47a8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_09e32306",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/openecomp/mso/client/policy/LoggingFilter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2018-01-19T13:44:37Z",
+      "side": 1,
+      "message": "should be LOGGER",
+      "range": {
+        "startLine": 91,
+        "startChar": 3,
+        "endLine": 91,
+        "endChar": 9
+      },
+      "revId": "39b221dd4b1903b11aa45106e9d96ad8a6ed47a8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_e9e7d710",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/openecomp/mso/client/policy/PolicyRestProperties.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2018-01-19T13:44:37Z",
+      "side": 1,
+      "message": "extra line",
+      "revId": "39b221dd4b1903b11aa45106e9d96ad8a6ed47a8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_29b5bfed",
+        "filename": "bpmn/MSOCoreBPMN/src/main/java/org/openecomp/mso/bpmn/core/RollbackData.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2018-01-19T13:44:37Z",
+      "side": 1,
+      "message": "tab characters",
+      "range": {
+        "startLine": 53,
+        "startChar": 0,
+        "endLine": 54,
+        "endChar": 49
+      },
+      "revId": "39b221dd4b1903b11aa45106e9d96ad8a6ed47a8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
