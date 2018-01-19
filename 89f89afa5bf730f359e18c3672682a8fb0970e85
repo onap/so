@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_49804b46",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/beans/NetworkInfo.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2018-01-19T10:25:36Z",
+      "side": 0,
+      "message": "Why are these constructors removed...?",
+      "revId": "89f89afa5bf730f359e18c3672682a8fb0970e85",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
