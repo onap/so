@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_2927ff65",
+        "filename": "adapters/mso-adapters-rest-interface/src/main/java/org/openecomp/mso/adapters/NetworkMessageCommon.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2018-01-19T12:38:00Z",
+      "side": 1,
+      "message": "extra space",
+      "range": {
+        "startLine": 34,
+        "startChar": 66,
+        "endLine": 34,
+        "endChar": 67
+      },
+      "revId": "737ae5ee0b12c0b397a6efe0057db635257446ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
