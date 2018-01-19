@@ -1443,9 +1443,58 @@ public class CatalogDatabaseTest {
         VnfResource vnf = cd.getVnfResourceById(19299);
     }
 
-    @Test(expected = Exception.class)
-    public void getVfModuleModelNameTestException(){
-        VfModule vnf = cd.getVfModuleModelName("tetes");
+    @Test
+    public void getVfModuleModelName(){
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public List<VfModule> list() throws Exception {
+                VfModule vfModule = new VfModule();
+                vfModule.setModelUUID("123-uuid");
+                return Arrays.asList(vfModule);
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        VfModule vfModule = cd.getVfModuleModelName("vfmodule");
+        assertEquals("123-uuid", vfModule.getModelUUID());
+    }
+
+    @Test
+    public void getVfModuleModelNameExceptionTest(){
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public List<VfModule> list() throws Exception {
+                return Arrays.asList();
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        VfModule vfModule = cd.getVfModuleModelName("vfmodule");
+        assertEquals(null, vfModule);
     }
 
     @Test(expected = Exception.class)

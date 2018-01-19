@@ -958,28 +958,28 @@ public class CatalogDatabase implements Closeable {
      * Return the newest version of a vfModule - 1607
      *
      */
-    public VfModule getVfModuleModelName (String modelName) {
+    public VfModule getVfModuleModelName(String modelName) {
 
-        long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - get vfModuleModelName with name " + modelName);
+        long startTime = System.currentTimeMillis();
+        LOGGER.debug("Catalog database - get vfModuleModelName with name " + modelName);
 
         String hql = "FROM VfModule WHERE modelName = :model_name";
-        Query query = getSession ().createQuery (hql);
-        query.setParameter ("model_name", modelName);
+        Query query = getSession().createQuery(hql);
+        query.setParameter("model_name", modelName);
 
         @SuppressWarnings("unchecked")
-        List <VfModule> resultList = query.list ();
+        List<VfModule> resultList = query.list();
 
         // See if something came back. Name is unique, so
-        if (resultList.isEmpty ()) {
-            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. VF not found", "CatalogDB", "getVfModuleModelName", null);
+        if (resultList.isEmpty()) {
+            LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. VF not found", "CatalogDB", "getVfModuleModelName", null);
             return null;
         }
-        Collections.sort (resultList, new MavenLikeVersioningComparator ());
-        Collections.reverse (resultList);
+        Collections.sort(resultList, new MavenLikeVersioningComparator());
+        Collections.reverse(resultList);
 
-        LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVfModuleModelName", null);
-        return resultList.get (0);
+        LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVfModuleModelName", null);
+        return resultList.get(0);
     }
 
     public VfModule getVfModuleModelName (String modelName, String model_version) {
