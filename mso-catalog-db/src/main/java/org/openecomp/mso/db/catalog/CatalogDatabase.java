@@ -733,26 +733,26 @@ public class CatalogDatabase implements Closeable {
      */
     public VnfResource getVnfResource (String vnfType) {
 
-        long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - get vnf resource with model_name " + vnfType);
+        long startTime = System.currentTimeMillis();
+        LOGGER.debug("Catalog database - get vnf resource with model_name " + vnfType);
 
         String hql = "FROM VnfResource WHERE modelName = :vnf_name";
-        Query query = getSession ().createQuery (hql);
-        query.setParameter ("vnf_name", vnfType);
+        Query query = getSession().createQuery(hql);
+        query.setParameter("vnf_name", vnfType);
 
         @SuppressWarnings("unchecked")
-        List <VnfResource> resultList = query.list ();
+        List <VnfResource> resultList = query.list();
 
         // See if something came back. Name is unique, so
-        if (resultList.isEmpty ()) {
-            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. VNF not found", "CatalogDB", "getVnfResource", null);
+        if (resultList.isEmpty()) {
+            LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. VNF not found", "CatalogDB", "getVnfResource", null);
             return null;
         }
-        Collections.sort (resultList, new MavenLikeVersioningComparator ());
-        Collections.reverse (resultList);
+        Collections.sort(resultList, new MavenLikeVersioningComparator());
+        Collections.reverse(resultList);
 
-        LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVnfResource", null);
-        return resultList.get (0);
+        LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVnfResource", null);
+        return resultList.get(0);
     }
 
     /**
