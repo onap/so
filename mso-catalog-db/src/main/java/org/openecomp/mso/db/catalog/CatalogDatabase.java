@@ -614,41 +614,41 @@ public class CatalogDatabase implements Closeable {
      * @param action     *
      * @return ServiceRecipe object or null if none found
      */
-    public ServiceRecipe getServiceRecipeByServiceModelUuid (String serviceModelUuid, String action) {
+    public ServiceRecipe getServiceRecipeByServiceModelUuid(String serviceModelUuid, String action) {
 
         StringBuilder hql;
 
         if(action == null){
-        	hql = new StringBuilder ("FROM ServiceRecipe WHERE serviceModelUuid = :serviceModelUuid");
+            hql = new StringBuilder("FROM ServiceRecipe WHERE serviceModelUuid = :serviceModelUuid");
         }else {
-        	hql = new StringBuilder ("FROM ServiceRecipe WHERE serviceModelUuid = :serviceModelUuid AND action = :action ");
+            hql = new StringBuilder("FROM ServiceRecipe WHERE serviceModelUuid = :serviceModelUuid AND action = :action ");
         }
 
         long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - get Service recipe with serviceModelUuid " + serviceModelUuid 
+        LOGGER.debug("Catalog database - get Service recipe with serviceModelUuid " + serviceModelUuid
                                       + " and action "
                                       + action
                                       );
 
-        Query query = getSession ().createQuery (hql.toString ());
-        query.setParameter ("serviceModelUuid", serviceModelUuid);
+        Query query = getSession().createQuery(hql.toString());
+        query.setParameter("serviceModelUuid", serviceModelUuid);
         if(action != null){
-            query.setParameter (ACTION, action);
+            query.setParameter(ACTION, action);
         }
 
         @SuppressWarnings("unchecked")
-        List <ServiceRecipe> resultList = query.list ();
+        List <ServiceRecipe> resultList = query.list();
 
-        if (resultList.isEmpty ()) {
-            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. Service recipe not found", "CatalogDB", "getServiceRecipe", null);
+        if (resultList.isEmpty()) {
+            LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. Service recipe not found", "CatalogDB", "getServiceRecipe", null);
             return null;
         }
 
-        Collections.sort (resultList, new MavenLikeVersioningComparator ());
-        Collections.reverse (resultList);
+        Collections.sort(resultList, new MavenLikeVersioningComparator());
+        Collections.reverse(resultList);
 
-        LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getServiceRecipe", null);
-        return resultList.get (0);
+        LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getServiceRecipe", null);
+        return resultList.get(0);
     }
 
     public List<ServiceRecipe> getServiceRecipes (String serviceModelUuid) {
