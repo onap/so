@@ -43,6 +43,8 @@ public class VnfResource extends MavenLikeVersioning implements Serializable {
     private String orchestrationMode;
     private String aicVersionMin;
     private String aicVersionMax;
+    private String category;
+    private String subCategory;
     private String heatTemplateArtifactUUId;
     private Timestamp created;
     private String modelVersion;
@@ -108,7 +110,39 @@ public class VnfResource extends MavenLikeVersioning implements Serializable {
 		this.aicVersionMax = aicVersionMax;
 	}
 
-	public String getModelInvariantUuid() {
+	
+    /**
+     * @return Returns the category.
+     */
+    public String getCategory() {
+        return category;
+    }
+
+    
+    /**
+     * @param category The category to set.
+     */
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    
+    /**
+     * @return Returns the subCategory.
+     */
+    public String getSubCategory() {
+        return subCategory;
+    }
+
+    
+    /**
+     * @param subCategory The subCategory to set.
+     */
+    public void setSubCategory(String subCategory) {
+        this.subCategory = subCategory;
+    }
+
+    public String getModelInvariantUuid() {
 		return this.modelInvariantUuid;
 	}
 
