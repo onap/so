@@ -256,13 +256,9 @@ public class BpelRestClient {
 			.build();
 		post.setConfig(requestConfig);
 
-		//Client 4.3+
-		CloseableHttpClient client = null;
-				
         //Client 4.3+
         //Execute & GetResponse
-		try {
-			client = HttpClients.createDefault();
+		try(CloseableHttpClient client = HttpClients.createDefault()) {
 			CloseableHttpResponse response = client.execute(post);
 			if (response != null) {
 				lastResponseCode = response.getStatusLine().getStatusCode();
@@ -277,16 +273,6 @@ public class BpelRestClient {
 			LOGGER.error (MessageEnum.RA_SEND_VNF_NOTIF_ERR, error, "Camunda", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception - Error sending Bpel notification", e);
 			lastResponseCode = 900;
 			lastResponse = "";
-		} finally {
-			try {
-				client.close();
-			} catch (IOException e) {
-				// ignore
-				LOGGER.debug("IOException: ", e);
-			} catch (NullPointerException e) {
-				//ignore
-				LOGGER.debug("NullPointerException: ", e);
-			}
 		}
 		LOGGER.debug("Response code from BPEL server: "+lastResponseCode);
 		LOGGER.debug("Response body is: "+lastResponse);
