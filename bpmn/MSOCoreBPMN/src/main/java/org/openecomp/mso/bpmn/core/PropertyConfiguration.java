@@ -127,7 +127,7 @@ public class PropertyConfiguration {
 	 */
 	public synchronized void startUp() {
 		msoConfigPath = System.getProperty("mso.config.path");
-
+         WatchService watchService = null;
 		if (msoConfigPath == null) {
 			LOGGER.debug("mso.config.path JVM system property is not set");
 			return;
@@ -135,7 +135,8 @@ public class PropertyConfiguration {
 
 		try {
 			Path directory = FileSystems.getDefault().getPath(msoConfigPath);
-			WatchService watchService = FileSystems.getDefault().newWatchService();
+			//WatchService watchService = FileSystems.getDefault().newWatchService();
+			watchService = FileSystems.getDefault().newWatchService();
 			directory.register(watchService, ENTRY_MODIFY);
 
 			LOGGER.info(MessageEnum.BPMN_GENERAL_INFO, "BPMN", "Starting FileWatcherThread");
@@ -150,6 +151,18 @@ public class PropertyConfiguration {
 				"Property Configuration",
 				MsoLogger.ErrorCode.UnknownError,
 				"Error occurred while starting FileWatcherThread:" + e);
+		}
+		finally{
+			try {
+				watchService.close();
+			} catch (IOException e) {
+				LOGGER.error(
+						MessageEnum.BPMN_GENERAL_EXCEPTION,
+						"BPMN",
+						"Property Configuration",
+						MsoLogger.ErrorCode.UnknownError,
+						"Error occurred while closing FileWatcherThread:" + e);
+			}
 		}
 	}
 
