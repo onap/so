@@ -1080,9 +1080,111 @@ public class CatalogDatabaseTest {
         assertEquals(null, vnfResource);
     }
 
+    @Test
+    public void getVnfResourceByTypeTest() {
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public Object uniqueResult() {
+                VnfResource vnfResource = new VnfResource();
+                vnfResource.setModelUuid("123-uuid");
+                return vnfResource;
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        VnfResource vnfResource = cd.getVnfResource("vnf","3992");
+        assertEquals("123-uuid", vnfResource.getModelUuid());
+    }
+
+    @Test(expected = NonUniqueResultException.class)
+    public void getVnfResourceNURExceptionTest() {
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public Object uniqueResult() {
+                throw new NonUniqueResultException(-1);
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        VnfResource vnfResource = cd.getVnfResource("vnf","3992");
+    }
+
+    @Test(expected = HibernateException.class)
+    public void getVnfResourceHibernateExceptionTest() {
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public Object uniqueResult() {
+                throw new HibernateException("hibernate exception");
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        VnfResource vnfResource = cd.getVnfResource("vnf","3992");
+    }
+
     @Test(expected = Exception.class)
-    public void getVnfResource2TestException() throws Exception{
-        VnfResource ht = cd.getVnfResource("vnf","3992");
+    public void getVnfResourceExceptionTest() {
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public Object uniqueResult() throws Exception {
+                throw new Exception();
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        VnfResource vnfResource = cd.getVnfResource("vnf","3992");
     }
 
     @Test(expected = Exception.class)

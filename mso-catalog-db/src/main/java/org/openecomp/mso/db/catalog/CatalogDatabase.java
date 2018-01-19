@@ -759,22 +759,22 @@ public class CatalogDatabase implements Closeable {
      * Return the newest version of a specific VNF resource (queried by Name).
      *
      * @param vnfType
-     * @param version
+     * @param serviceVersion
      * @return VnfResource object or null if none found
      */
     public VnfResource getVnfResource (String vnfType, String serviceVersion) {
 
-        long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - get VNF resource with model_name " + vnfType + " and version=" + serviceVersion);
+        long startTime = System.currentTimeMillis();
+        LOGGER.debug("Catalog database - get VNF resource with model_name " + vnfType + " and version=" + serviceVersion);
 
         String hql = "FROM VnfResource WHERE modelName = :vnfName and version = :serviceVersion";
-        Query query = getSession ().createQuery (hql);
-        query.setParameter ("vnfName", vnfType);
-        query.setParameter ("serviceVersion", serviceVersion);
+        Query query = getSession().createQuery(hql);
+        query.setParameter("vnfName", vnfType);
+        query.setParameter("serviceVersion", serviceVersion);
 
         VnfResource resource = null;
         try {
-        	resource = (VnfResource) query.uniqueResult ();
+        	resource = (VnfResource) query.uniqueResult();
         } catch (org.hibernate.NonUniqueResultException nure) {
         	LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row - data integrity error: vnfType='" + vnfType + "', serviceVersion='" + serviceVersion + "'");
         	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for vnfType=" + vnfType + " and serviceVersion=" + serviceVersion, "", "", MsoLogger.ErrorCode.DataError, "Non unique result for vnfType=" + vnfType);
