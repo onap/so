@@ -35,6 +35,8 @@
 		<property name="neutronNetworkType" 		column="NEUTRON_NETWORK_TYPE" 			type="string" 	length="20"/>
 		<property name="description" 				column="DESCRIPTION" 					type="string" 	length="1200"/>
 		<property name="orchestrationMode" 			column="ORCHESTRATION_MODE" 			type="string" 	length="20"/>
+		<property name="category" 				    column="RESOURCE_CATEGORY"              type="string" 	length="20"/>
+		<property name="subCategory" 				column="RESOURCE_SUB_CATEGORY" 	        type="string" 	length="20"/>
 		<property name="heatTemplateArtifactUUID"	column="HEAT_TEMPLATE_ARTIFACT_UUID" 	type="string"	length="200"	not-null="true" />
 
 		<property name="aicVersionMin" type="string" >

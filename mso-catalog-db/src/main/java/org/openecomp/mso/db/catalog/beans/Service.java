@@ -39,6 +39,7 @@ public class Service extends MavenLikeVersioning implements Serializable {
 	private Timestamp created;
 	private String toscaCsarArtifactUUID;
 	private String modelVersion;
+	private String category;
 	private String serviceType;
 	private String serviceRole;
 	private Map<String,ServiceRecipe> recipes;
@@ -115,8 +116,22 @@ public class Service extends MavenLikeVersioning implements Serializable {
 		this.modelVersion = modelVersion;
 	}
 
-	
-	public String getServiceType() {
+    /**
+     * @return Returns the category.
+     */
+    public String getCategory() {
+        return category;
+    }
+
+    
+    /**
+     * @param category The category to set.
+     */
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getServiceType() {
 		return serviceType;
 	}
 
