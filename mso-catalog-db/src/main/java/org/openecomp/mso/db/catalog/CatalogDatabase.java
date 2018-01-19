@@ -1026,21 +1026,21 @@ public class CatalogDatabase implements Closeable {
      *@author cb645j
      *
      */
-    public VfModuleCustomization getVfModuleCustomizationByModelName (String modelName) {
+    public VfModuleCustomization getVfModuleCustomizationByModelName(String modelName) {
 
-        long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - get VfModuleCustomization By VfModule's ModelName: " + modelName);
+        long startTime = System.currentTimeMillis();
+        LOGGER.debug("Catalog database - get VfModuleCustomization By VfModule's ModelName: " + modelName);
 
         String hql = "SELECT VfModuleCustomization FROM VfModuleCustomization as vfmc LEFT OUTER JOIN VfModule as vfm on vfm.modelUUID = vfmc.vfModuleModelUuid where vfm.modelName = :model_name";
-        Query query = getSession ().createQuery (hql);
-        query.setParameter ("model_name", modelName);
+        Query query = getSession().createQuery(hql);
+        query.setParameter("model_name", modelName);
 
         @SuppressWarnings("unchecked")
         List<VfModuleCustomization> resultList = query.list();
 
         // See if something came back. Name is unique, so
-        if (resultList.isEmpty ()) {
-            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successful query but Vf module NOT found", "CatalogDB", "getVfModuleCustomizationByModelName", null);
+        if (resultList.isEmpty()) {
+            LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successful query but Vf module NOT found", "CatalogDB", "getVfModuleCustomizationByModelName", null);
             return null;
         }
 

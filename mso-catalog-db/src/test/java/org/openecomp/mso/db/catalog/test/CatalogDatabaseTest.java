@@ -1607,9 +1607,59 @@ public class CatalogDatabaseTest {
 
         VfModule vfModule = cd.getVfModuleModelName("tetes","4kidsl");
     }
-    @Test(expected = Exception.class)
-    public void ggetVfModuleCustomizationByModelNameTestException(){
-        VfModuleCustomization vnf = cd.getVfModuleCustomizationByModelName("tetes");
+
+    @Test
+    public void ggetVfModuleCustomizationByModelNameTest(){
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public List<VfModuleCustomization> list() throws Exception {
+                VfModuleCustomization vfModuleCustomization = new VfModuleCustomization();
+                vfModuleCustomization.setVfModuleModelUuid("123-uuid");
+                return Arrays.asList(vfModuleCustomization);
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        VfModuleCustomization vfModuleCustomization = cd.getVfModuleCustomizationByModelName("tetes");
+        assertEquals("123-uuid", vfModuleCustomization.getVfModuleModelUuid());
+    }
+
+    @Test
+    public void ggetVfModuleCustomizationByModelNameEmptyTest(){
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public List<VfModuleCustomization> list() throws Exception {
+                return Arrays.asList();
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        VfModuleCustomization vfModuleCustomization = cd.getVfModuleCustomizationByModelName("tetes");
+        assertEquals(null, vfModuleCustomization);
     }
 
     @Test(expected = Exception.class)
