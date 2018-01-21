@@ -53,12 +53,7 @@ import org.openecomp.mso.db.catalog.beans.VnfResourceCustomization;
 import org.openecomp.mso.db.catalog.utils.RecordNotFoundException;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -1716,9 +1711,62 @@ public class CatalogDatabaseTest {
         assertEquals(null, networkResource);
     }
 
-    @Test(expected = Exception.class)
-    public void getVnfRecipeTestException(){
-        VnfRecipe vnf = cd.getVnfRecipe("tetes","ergfedrf","4993493");
+    @Test
+    public void getVnfRecipeTest(){
+
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public List<VnfRecipe> list() throws Exception {
+                VnfRecipe vnfRecipe = new VnfRecipe();
+                vnfRecipe.setVfModuleId("123-id");
+                return Arrays.asList(vnfRecipe);
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        VnfRecipe vnfRecipe = cd.getVnfRecipe("tetes","ergfedrf","4993493");
+        assertEquals("123-id", vnfRecipe.getVfModuleId());
+    }
+
+    @Test
+    public void getVnfRecipeEmptyTest(){
+
+        MockUp<Query> mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public List<VnfRecipe> list() throws Exception {
+                return Collections.emptyList();
+            }
+        };
+
+        MockUp<Session> mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        VnfRecipe vnfRecipe = cd.getVnfRecipe("tetes","ergfedrf","4993493");
+        assertEquals(null, vnfRecipe);
     }
 
     @Test(expected = Exception.class)
