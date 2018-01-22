@@ -20,6 +20,10 @@
 
 package org.openecomp.mso.bpmn.common.scripts
 
+import org.json.JSONArray
+import org.json.JSONException
+import org.json.JSONObject
+
 import static org.apache.commons.lang3.StringUtils.*
 
 import org.apache.commons.lang3.*
@@ -301,8 +305,10 @@ class GenericGetService extends AbstractServiceTaskProcessor{
 			if(responseCode == 200){
 				utils.log("DEBUG", "  Query for Service Instance Url Received a Good Response Code", isDebugEnabled)
 				execution.setVariable("GENGS_SuccessIndicator", true)
-				if(utils.nodeExists(aaiResponse, "result-data")){
-					utils.log("DEBUG", "Query for Service Instance Url Response Does Contain Data" , isDebugEnabled)
+				String globalCustomerId = execution.getVariable("GENGS_globalCustomerId")
+				boolean doesNodeExist = isBlank(globalCustomerId) ? utils.nodeExists(aaiResponse, "result-data") : isSameCusmerSameServiceName(aaiResponse, globalCustomerId)
+				if(doesNodeExist){
+					utils.log("INFO", "Query for Service Instance Url Response Does Contain Data" , isDebugEnabled)
 					execution.setVariable("GENGS_FoundIndicator", true)
 					String resourceLink = utils.getNodeText1(aaiResponse, "resource-link")
 					execution.setVariable("GENGS_resourceLink", resourceLink)
@@ -437,6 +443,53 @@ class GenericGetService extends AbstractServiceTaskProcessor{
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured During GenericGetService")
 		}
 		utils.log("DEBUG", " *** COMPLETED GenericGetService GetServiceObject Process*** ", isDebugEnabled)
+	}
+
+	/**
+	 * An utility method which check whether a service(by name) is already present within a globalCustomerId or not.
+	 * @param jsonResponse raw response received from AAI by searching ServiceInstance by Name.
+	 * @param globalCustomerId
+	 * @return {@code true} if globalCustomerId is found at 6th position within "resource-link", {@code false} in any other cases.
+	 */
+	public boolean isSameCusmerSameServiceName(final String jsonResponse, final String globalCustomerId) {
+		/*
+		 Example of jsonString -
+		 		'{' +
+                '    "result-data": [' +
+                '        {' +
+                '            "resource-type": "service-instance",' +
+                '            "resource-link": "/aai/v11/business/customers/customer/AEESDNC/service-subscriptions/service-subscription/SDWAN-SITE/service-instances/service-instance/b7c21614-fd36-4c9e-9d54-e0c72305c6bb"' +
+                '        },' +
+                '        {' +
+                '            "resource-type": "service-instance",' +
+                '            "resource-link": "/aai/v11/business/customers/customer/ChittA/service-subscriptions/service-subscription/SDWAN-SITE/service-instances/service-instance/b7c21614-fd36-4c9e-9d54-e0c72305c6bb"' +
+                '        }' +
+                '    ]' +
+                '}'
+
+		 */
+		try {
+			if (StringUtils.isBlank(jsonResponse) || StringUtils.isBlank(globalCustomerId))
+				return false
+			JSONObject rootObject = new JSONObject(jsonResponse)
+			JSONArray jsonArray = rootObject.get("result-data")
+			if (jsonArray == null || jsonArray.length() < 1)
+				return false
+			for (JSONObject element : jsonArray) {
+				String resourceLink = element.getString("resource-link");
+				if (!StringUtils.isBlank(resourceLink)) {
+					int custStart = resourceLink.indexOf("customer/")
+					int custEnd = resourceLink.indexOf("/service-subscriptions/")
+					String receivedCustomerId = resourceLink.substring(custStart + 9, custEnd)
+					if (!StringUtils.isBlank(receivedCustomerId) && globalCustomerId.equals(receivedCustomerId)) {
+						return true
+					}
+				}
+			}
+			return false
+		} catch (JSONException e) {
+			return false
+		}
 	}
 
 }
