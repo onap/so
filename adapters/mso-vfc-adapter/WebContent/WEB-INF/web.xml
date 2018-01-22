@@ -16,7 +16,7 @@
 	</context-param>
 	<context-param>
 		<param-name>mso.configuration</param-name>
-		<param-value>MSO_PROP_NETWORK_ADAPTER=mso.vfc.properties,MSO_PROP_TOPOLOGY=topology.properties</param-value>
+		<param-value>MSO_PROP_VFC_ADAPTER=mso.vfc.properties,MSO_PROP_TOPOLOGY=topology.properties</param-value>
 	</context-param>
 	<context-param>
 		<param-name>mso.cloud_config.configuration</param-name>
