@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_97766e3d",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/openecomp/mso/client/ResponseExceptionMapper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-01-22T09:26:15Z",
+      "side": 1,
+      "message": "Because there was no scenario when extractMessage function could return empty optional.",
+      "parentUuid": "5a93c517_89be53d3",
+      "range": {
+        "startLine": 51,
+        "startChar": 12,
+        "endLine": 55,
+        "endChar": 13
+      },
+      "revId": "39b221dd4b1903b11aa45106e9d96ad8a6ed47a8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_09e32306",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/openecomp/mso/client/policy/LoggingFilter.java",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2018-01-19T13:44:37Z",
       "side": 1,
       "message": "should be LOGGER",
+      "range": {
+        "startLine": 91,
+        "startChar": 3,
+        "endLine": 91,
+        "endChar": 9
+      },
+      "revId": "39b221dd4b1903b11aa45106e9d96ad8a6ed47a8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_7793a24f",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/openecomp/mso/client/policy/LoggingFilter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-01-22T09:26:15Z",
+      "side": 1,
+      "message": "Done.",
+      "parentUuid": "5a93c517_09e32306",
       "range": {
         "startLine": 91,
         "startChar": 3,
@@ -65,6 +113,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_179a5e63",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/openecomp/mso/client/policy/PolicyRestProperties.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-01-22T09:26:15Z",
+      "side": 1,
+      "message": "Removed in patchset 2.",
+      "parentUuid": "5a93c517_e9e7d710",
+      "revId": "39b221dd4b1903b11aa45106e9d96ad8a6ed47a8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_29b5bfed",
         "filename": "bpmn/MSOCoreBPMN/src/main/java/org/openecomp/mso/bpmn/core/RollbackData.java",
         "patchSetId": 1
@@ -76,6 +142,30 @@
       "writtenOn": "2018-01-19T13:44:37Z",
       "side": 1,
       "message": "tab characters",
+      "range": {
+        "startLine": 53,
+        "startChar": 0,
+        "endLine": 54,
+        "endChar": 49
+      },
+      "revId": "39b221dd4b1903b11aa45106e9d96ad8a6ed47a8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_379d1a5a",
+        "filename": "bpmn/MSOCoreBPMN/src/main/java/org/openecomp/mso/bpmn/core/RollbackData.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-01-22T09:26:15Z",
+      "side": 1,
+      "message": "Changed to spaces in entire file.",
+      "parentUuid": "5a93c517_29b5bfed",
       "range": {
         "startLine": 53,
         "startChar": 0,
