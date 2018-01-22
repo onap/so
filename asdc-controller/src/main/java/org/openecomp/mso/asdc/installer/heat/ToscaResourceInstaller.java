@@ -563,7 +563,10 @@ public class ToscaResourceInstaller {// implements IVfResourceInstaller {
         					createNetworkResource(vlNode, toscaResourceStruct, networkHeatTemplateLookup.get(0));
         				
         				} else {
-        					throw new ArtifactInstallerException("No NetworkResourceName found in TempNetworkHeatTemplateLookup for " + networkResourceModelName);
+                            logger.info(MessageEnum.ASDC_GENERAL_INFO,
+                                    "No NetworkResourceName found in TempNetworkHeatTemplateLookup for" + networkResourceModelName, "ASDC",
+                                    "createVfModuleStructures");
+                            createNetworkResource(vlNode, toscaResourceStruct, null);
         				}
 					
 										
@@ -832,13 +835,16 @@ public class ToscaResourceInstaller {// implements IVfResourceInstaller {
 		networkResource.setModelVersion(testNull(networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_VERSION)));
 		
 		networkResource.setAicVersionMax(testNull(networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_MAXINSTANCES)));
-		networkResource.setAicVersionMin(networkHeatTemplateLookup.getAicVersionMin());
+		String aicVersionMin = networkHeatTemplateLookup != null ? networkHeatTemplateLookup.getAicVersionMin() : "2.5";
+		networkResource.setAicVersionMin(aicVersionMin);
 		networkResource.setToscaNodeType(networkNodeTemplate.getType());
 		networkResource.setDescription(testNull(networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION)));
 		networkResource.setOrchestrationMode("HEAT");
 		networkResource.setCategory(networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CATEGORY));
 		networkResource.setSubCategory(networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_SUBCATEGORY));
-		networkResource.setHeatTemplateArtifactUUID(networkHeatTemplateLookup.getHeatTemplateArtifactUuid());
+		//for tosca NS ,there is no heat for network VL
+		String heatTemplateArtifactUUID = networkHeatTemplateLookup != null ? networkHeatTemplateLookup.getHeatTemplateArtifactUuid() : "null";
+		networkResource.setHeatTemplateArtifactUUID(heatTemplateArtifactUUID);
 			
 		toscaResourceStructure.setCatalogNetworkResource(networkResource); 
 		
