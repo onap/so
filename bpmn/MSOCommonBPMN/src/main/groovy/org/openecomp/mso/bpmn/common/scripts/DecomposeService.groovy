@@ -17,7 +17,9 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.openecomp.mso.bpmn.common.scripts;
+package org.openecomp.mso.bpmn.common.scripts
+
+import org.openecomp.mso.bpmn.core.json.DecomposeJsonUtil;
 
 import static org.apache.commons.lang3.StringUtils.*;
 
@@ -96,12 +98,12 @@ public class DecomposeService extends AbstractServiceTaskProcessor {
 			// check for input
 			String serviceModelInvariantId = execution.getVariable("DDS_serviceModelInvariantId")
 			String modelVersion = execution.getVariable("DDS_modelVersion")
-			
+
 			utils.log("DEBUG", "serviceModelInvariantId: " + serviceModelInvariantId, isDebugEnabled)
-			utils.log("DEBUG", "modelVersion: " + modelVersion, isDebugEnabled)			
-			
+			utils.log("DEBUG", "modelVersion: " + modelVersion, isDebugEnabled)
+
 			JSONObject catalogDbResponse = null
-			
+
 			if (modelVersion != null && modelVersion.length() > 0)
 				catalogDbResponse = catalogDbUtils.getServiceResourcesByServiceModelInvariantUuidAndServiceModelVersion(execution, serviceModelInvariantId, modelVersion, "v2")
 			else
@@ -140,7 +142,7 @@ public class DecomposeService extends AbstractServiceTaskProcessor {
 			utils.log("DEBUG", "getting service decomposition", isDebugEnabled)
 
 			String catalogDbResponse = execution.getVariable("DDS_catalogDbResponse")
-			ServiceDecomposition serviceDecomposition = new ServiceDecomposition(catalogDbResponse, serviceInstanceId)
+			ServiceDecomposition serviceDecomposition = DecomposeJsonUtil.jsonToServiceDecomposition(catalogDbResponse, serviceInstanceId)
 
 			execution.setVariable("serviceDecomposition", serviceDecomposition)
 			execution.setVariable("serviceDecompositionString", serviceDecomposition.toJsonString())
