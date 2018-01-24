@@ -39,6 +39,7 @@
 		<property name="modelInvariantUUID" type="string">
            <column name="MODEL_INVARIANT_UUID" default="'MANUAL_RECORD'" not-null="true" length="200"/>
         </property>
+        <property name="category" 				column="SERVICE_CATEGORY" 				type="string" 		length="20"/>
         <property name="serviceType" 				column="SERVICE_TYPE" 				type="string" 		length="20"/>
         <property name="serviceRole" 				column="SERVICE_ROLE" 				type="string" 		length="20"/>
         

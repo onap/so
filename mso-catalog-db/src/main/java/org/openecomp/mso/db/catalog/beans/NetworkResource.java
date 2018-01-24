@@ -41,6 +41,8 @@ public class NetworkResource extends MavenLikeVersioning implements Serializable
 	private String toscaNodeType;
 	private Timestamp created;
 	private String modelUUID;
+    private String category;
+    private String subCategory;
 	private String heatTemplateArtifactUUID;
 	
 	public NetworkResource() {}
@@ -123,8 +125,40 @@ public class NetworkResource extends MavenLikeVersioning implements Serializable
 	public void setModelUUID(String modelUUID) {
 		this.modelUUID = modelUUID;
 	}
+	
+	
+    /**
+     * @return Returns the category.
+     */
+    public String getCategory() {
+        return category;
+    }
 
-	public String getHeatTemplateArtifactUUID() {
+    
+    /**
+     * @param category The category to set.
+     */
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    
+    /**
+     * @return Returns the subCategory.
+     */
+    public String getSubCategory() {
+        return subCategory;
+    }
+
+    
+    /**
+     * @param subCategory The subCategory to set.
+     */
+    public void setSubCategory(String subCategory) {
+        this.subCategory = subCategory;
+    }
+
+    public String getHeatTemplateArtifactUUID() {
 		return heatTemplateArtifactUUID;
 	}
 

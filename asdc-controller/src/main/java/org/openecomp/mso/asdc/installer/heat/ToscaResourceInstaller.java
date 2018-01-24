@@ -787,6 +787,7 @@ public class ToscaResourceInstaller {// implements IVfResourceInstaller {
 			service.setModelUUID(serviceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
 			//service.setVersion(serviceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_VERSION));
 			service.setModelInvariantUUID(serviceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID));
+			service.setCategory(serviceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_CATEGORY));
 			service.setToscaCsarArtifactUUID(toscaResourceStructure.getToscaArtifact().getArtifactUUID());
 			//service.setCreated(getCurrentTimeStamp());
 		}
@@ -835,6 +836,8 @@ public class ToscaResourceInstaller {// implements IVfResourceInstaller {
 		networkResource.setToscaNodeType(networkNodeTemplate.getType());
 		networkResource.setDescription(testNull(networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION)));
 		networkResource.setOrchestrationMode("HEAT");
+		networkResource.setCategory(networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CATEGORY));
+		networkResource.setSubCategory(networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_SUBCATEGORY));
 		networkResource.setHeatTemplateArtifactUUID(networkHeatTemplateLookup.getHeatTemplateArtifactUuid());
 			
 		toscaResourceStructure.setCatalogNetworkResource(networkResource); 
@@ -1019,11 +1022,12 @@ public class ToscaResourceInstaller {// implements IVfResourceInstaller {
 		vnfResource.setToscaNodeType(testNull(vfNodeTemplate.getType()));
 		vnfResource.setAicVersionMax(testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_MAXINSTANCES).trim()));
 		vnfResource.setAicVersionMin(testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_MININSTANCES).trim()));
-		//vnfResource.setHeatTemplateArtifactUUId(toscaResourceStructure.getHeatTemplateUUID());
-		
-	//	vfNodeTemplate.getProperties()
-		toscaResourceStructure.setCatalogVnfResource(vnfResource); 
-		
+        // vnfResource.setHeatTemplateArtifactUUId(toscaResourceStructure.getHeatTemplateUUID());
+        vnfResource.setCategory(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CATEGORY));
+        vnfResource.setSubCategory(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_SUBCATEGORY));
+        // vfNodeTemplate.getProperties()
+        toscaResourceStructure.setCatalogVnfResource(vnfResource);
+
 		VnfResourceCustomization vnfResourceCustomization = new VnfResourceCustomization();
 		vnfResourceCustomization.setModelCustomizationUuid(testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID).trim()));
 		vnfResourceCustomization.setModelInstanceName(vfNodeTemplate.getName());
