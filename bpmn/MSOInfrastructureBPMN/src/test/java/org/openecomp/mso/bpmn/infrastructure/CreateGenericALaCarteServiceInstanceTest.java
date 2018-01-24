@@ -79,8 +79,8 @@ public class CreateGenericALaCarteServiceInstanceTest extends WorkflowTest {
 		MockGetCustomer("MCBH-1610", "CreateServiceInstance/createServiceInstance_queryGlobalCustomerId_AAIResponse_Success.xml");
 		MockPutServiceInstance("MCBH-1610", "viprsvc", "RaaTest-1-id", "");
 		MockGetServiceInstance("MCBH-1610", "viprsvc", "RaaTest-1-id", "GenericFlows/getServiceInstance.xml");
-		MockNodeQueryServiceInstanceByName("RAATest-1", "");
-		MockNodeQueryServiceInstanceById("RaaTest-1-id", "");
+		MockNodeQueryServiceInstanceByName("RAATest-1", null);
+		MockNodeQueryServiceInstanceById("RaaTest-1-id", null);
 		//SDNC
 		mockSDNCAdapter(200);
 		//DB
