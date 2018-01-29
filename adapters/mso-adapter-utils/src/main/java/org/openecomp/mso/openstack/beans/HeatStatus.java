@@ -20,7 +20,6 @@
 
 package org.openecomp.mso.openstack.beans;
 
-
 /*
  * Enum status values to mirror the Openstack Heat stack status values
  */
