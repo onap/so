@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_cd96954c",
+        "filename": "bpmn/MSOCoreBPMN/src/main/java/org/openecomp/mso/bpmn/core/json/DecomposeJsonUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2018-01-29T11:15:02Z",
+      "side": 1,
+      "message": "why this constructor is introduced ?",
+      "range": {
+        "startLine": 40,
+        "startChar": 4,
+        "endLine": 41,
+        "endChar": 5
+      },
+      "revId": "6e5b46a342de2f763cf6e73f31a659ba2964d753",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ad9b0971",
+        "filename": "bpmn/MSOCoreBPMN/src/main/java/org/openecomp/mso/bpmn/core/json/DecomposeJsonUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2018-01-29T11:15:02Z",
+      "side": 1,
+      "message": "why you feel previous implementation need to be updated",
+      "range": {
+        "startLine": 56,
+        "startChar": 4,
+        "endLine": 62,
+        "endChar": 5
+      },
+      "revId": "6e5b46a342de2f763cf6e73f31a659ba2964d753",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
