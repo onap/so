@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_a2e1d89b",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/utils/MsoHeatUtils.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 954,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2018-01-29T08:28:54Z",
+      "side": 0,
+      "message": "should match with argument",
+      "range": {
+        "startLine": 953,
+        "startChar": 0,
+        "endLine": 954,
+        "endChar": 21
+      },
+      "revId": "b52a8c3ad952a185ce87195affbaea923afb8e41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_42f01467",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/utils/MsoHeatUtils.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 1042,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2018-01-29T08:28:54Z",
+      "side": 0,
+      "message": "should match with argument",
+      "range": {
+        "startLine": 1041,
+        "startChar": 7,
+        "endLine": 1042,
+        "endChar": 21
+      },
+      "revId": "b52a8c3ad952a185ce87195affbaea923afb8e41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_2272a8e5",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/utils/MsoNeutronUtils.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 445,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2018-01-29T08:28:54Z",
+      "side": 0,
+      "message": "should match with parameter name",
+      "range": {
+        "startLine": 443,
+        "startChar": 0,
+        "endLine": 445,
+        "endChar": 18
+      },
+      "revId": "b52a8c3ad952a185ce87195affbaea923afb8e41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}

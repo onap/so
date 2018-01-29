@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_026f6cfe",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/utils/MsoNeutronUtils.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2018-01-29T08:28:54Z",
+      "side": 1,
+      "message": "tab characters",
+      "range": {
+        "startLine": 104,
+        "startChar": 0,
+        "endLine": 105,
+        "endChar": 4
+      },
+      "revId": "9fc03d43bc5e102a4e9e738d1fc03bc307e61512",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
