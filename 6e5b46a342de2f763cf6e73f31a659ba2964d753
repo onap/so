@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_cdf9b581",
+        "filename": "bpmn/MSOCoreBPMN/src/main/java/org/openecomp/mso/bpmn/core/json/DecomposeJsonUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-01-29T12:52:28Z",
+      "side": 1,
+      "message": "It should be private. Will be fixed in next patchset.",
+      "parentUuid": "5a93c517_cd96954c",
+      "range": {
+        "startLine": 40,
+        "startChar": 4,
+        "endLine": 41,
+        "endChar": 5
+      },
+      "revId": "6e5b46a342de2f763cf6e73f31a659ba2964d753",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_ad9b0971",
         "filename": "bpmn/MSOCoreBPMN/src/main/java/org/openecomp/mso/bpmn/core/json/DecomposeJsonUtil.java",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2018-01-29T11:15:02Z",
       "side": 1,
       "message": "why you feel previous implementation need to be updated",
+      "range": {
+        "startLine": 56,
+        "startChar": 4,
+        "endLine": 62,
+        "endChar": 5
+      },
+      "revId": "6e5b46a342de2f763cf6e73f31a659ba2964d753",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0d00fd65",
+        "filename": "bpmn/MSOCoreBPMN/src/main/java/org/openecomp/mso/bpmn/core/json/DecomposeJsonUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-01-29T12:52:28Z",
+      "side": 1,
+      "message": "Because returning empty object when deserialization fails is bad. You can\u0027t easly check if deserialization failed, and here you can\u0027t even distinguish correct deserialization of empty object with failure.\n\nThere should be either returning no value (best in form of Optional.empty()) or throwing exception. I chose throwing exception, because failure in decoding json message is abnormal situation, and I can\u0027t handle it here.",
+      "parentUuid": "5a93c517_ad9b0971",
       "range": {
         "startLine": 56,
         "startChar": 4,
