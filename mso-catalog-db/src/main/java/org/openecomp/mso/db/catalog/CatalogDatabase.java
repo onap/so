@@ -958,43 +958,43 @@ public class CatalogDatabase implements Closeable {
      * Return the newest version of a vfModule - 1607
      *
      */
-    public VfModule getVfModuleModelName (String modelName) {
+    public VfModule getVfModuleModelName(String modelName) {
 
-        long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - get vfModuleModelName with name " + modelName);
+        long startTime = System.currentTimeMillis();
+        LOGGER.debug("Catalog database - get vfModuleModelName with name " + modelName);
 
         String hql = "FROM VfModule WHERE modelName = :model_name";
-        Query query = getSession ().createQuery (hql);
-        query.setParameter ("model_name", modelName);
+        Query query = getSession().createQuery(hql);
+        query.setParameter("model_name", modelName);
 
         @SuppressWarnings("unchecked")
-        List <VfModule> resultList = query.list ();
+        List<VfModule> resultList = query.list();
 
         // See if something came back. Name is unique, so
-        if (resultList.isEmpty ()) {
-            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. VF not found", "CatalogDB", "getVfModuleModelName", null);
+        if (resultList.isEmpty()) {
+            LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. VF not found", "CatalogDB", "getVfModuleModelName", null);
             return null;
         }
-        Collections.sort (resultList, new MavenLikeVersioningComparator ());
-        Collections.reverse (resultList);
+        Collections.sort(resultList, new MavenLikeVersioningComparator());
+        Collections.reverse(resultList);
 
-        LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVfModuleModelName", null);
-        return resultList.get (0);
+        LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVfModuleModelName", null);
+        return resultList.get(0);
     }
 
-    public VfModule getVfModuleModelName (String modelName, String model_version) {
+    public VfModule getVfModuleModelName(String modelName, String model_version) {
 
-        long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - get vfModuleModelName with type='" + modelName + "' and asdc_service_model_version='" + model_version + "'");
+        long startTime = System.currentTimeMillis();
+        LOGGER.debug("Catalog database - get vfModuleModelName with type='" + modelName + "' and asdc_service_model_version='" + model_version + "'");
 
         String hql = "FROM VfModule WHERE Name = :model_name and version = :model_version";
-        Query query = getSession ().createQuery (hql);
-        query.setParameter ("modelName", modelName);
-        query.setParameter ("model_version", model_version);
+        Query query = getSession().createQuery(hql);
+        query.setParameter("modelName", modelName);
+        query.setParameter("model_version", model_version);
 
         VfModule module = null;
         try {
-        	module = (VfModule) query.uniqueResult ();
+            module = (VfModule) query.uniqueResult();
         } catch (org.hibernate.NonUniqueResultException nure) {
         	LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row - data integrity error: type='" + modelName + "', asdc_service_model_version='" + model_version + "'");
         	LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for type=" + modelName + " and version=" + model_version, "", "", MsoLogger.ErrorCode.DataError, "Non unique result for type=" + modelName);
@@ -1012,9 +1012,9 @@ public class CatalogDatabase implements Closeable {
         	throw e;
         }
         if (module == null) {
-        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "NotFound", "CatalogDB", "getVfModuleModelName", null);
+            LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "NotFound", "CatalogDB", "getVfModuleModelName", null);
         } else {
-        	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVfModuleModelName", null);
+            LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVfModuleModelName", null);
         }
         return module;
     }
@@ -1026,21 +1026,21 @@ public class CatalogDatabase implements Closeable {
      *@author cb645j
      *
      */
-    public VfModuleCustomization getVfModuleCustomizationByModelName (String modelName) {
+    public VfModuleCustomization getVfModuleCustomizationByModelName(String modelName) {
 
-        long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - get VfModuleCustomization By VfModule's ModelName: " + modelName);
+        long startTime = System.currentTimeMillis();
+        LOGGER.debug("Catalog database - get VfModuleCustomization By VfModule's ModelName: " + modelName);
 
         String hql = "SELECT VfModuleCustomization FROM VfModuleCustomization as vfmc LEFT OUTER JOIN VfModule as vfm on vfm.modelUUID = vfmc.vfModuleModelUuid where vfm.modelName = :model_name";
-        Query query = getSession ().createQuery (hql);
-        query.setParameter ("model_name", modelName);
+        Query query = getSession().createQuery(hql);
+        query.setParameter("model_name", modelName);
 
         @SuppressWarnings("unchecked")
         List<VfModuleCustomization> resultList = query.list();
 
         // See if something came back. Name is unique, so
-        if (resultList.isEmpty ()) {
-            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successful query but Vf module NOT found", "CatalogDB", "getVfModuleCustomizationByModelName", null);
+        if (resultList.isEmpty()) {
+            LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successful query but Vf module NOT found", "CatalogDB", "getVfModuleCustomizationByModelName", null);
             return null;
         }
 
@@ -1055,28 +1055,28 @@ public class CatalogDatabase implements Closeable {
      * @param networkType
      * @return NetworkResource object or null if none found
      */
-    public NetworkResource getNetworkResource (String networkType) {
+    public NetworkResource getNetworkResource(String networkType) {
 
-        long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - get network resource with type " + networkType);
+        long startTime = System.currentTimeMillis();
+        LOGGER.debug("Catalog database - get network resource with type " + networkType);
 
         String hql = "FROM NetworkResource WHERE model_name = :network_type";
-        Query query = getSession ().createQuery (hql);
-        query.setParameter ("network_type", networkType);
+        Query query = getSession().createQuery(hql);
+        query.setParameter("network_type", networkType);
 
         @SuppressWarnings("unchecked")
-        List <NetworkResource> resultList = query.list ();
+        List <NetworkResource> resultList = query.list();
 
         // See if something came back. Name is unique, so
-        if (resultList.isEmpty ()) {
-            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. Network Resource not found", "CatalogDB", "getNetworkResource", null);
+        if (resultList.isEmpty()) {
+            LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. Network Resource not found", "CatalogDB", "getNetworkResource", null);
             return null;
         }
 
-        Collections.sort (resultList, new MavenLikeVersioningComparator ());
-        Collections.reverse (resultList);
-        LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getNetworkResource", null);
-        return resultList.get (0);
+        Collections.sort(resultList, new MavenLikeVersioningComparator());
+        Collections.reverse(resultList);
+        LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getNetworkResource", null);
+        return resultList.get(0);
     }
 
     /**
@@ -1087,46 +1087,46 @@ public class CatalogDatabase implements Closeable {
      * @param serviceType The service Name, if null or empty is provided, it won't be taken into account
      * @return VnfRecipe object or null if none found
      */
-    public VnfRecipe getVnfRecipe (String vnfType, String action, String serviceType) {
+    public VnfRecipe getVnfRecipe(String vnfType, String action, String serviceType) {
         boolean withServiceType = false;
 
-        StringBuilder hql = new StringBuilder ("FROM VnfRecipe WHERE vnfType = :vnfType AND action = :action ");
+        StringBuilder hql = new StringBuilder("FROM VnfRecipe WHERE vnfType = :vnfType AND action = :action ");
 
         // If query c
-        if (serviceType == null || serviceType.isEmpty ()) {
-            hql.append ("AND serviceType is NULL ");
+        if (serviceType == null || serviceType.isEmpty()) {
+            hql.append("AND serviceType is NULL ");
         } else {
-            hql.append ("AND serviceType = :serviceType ");
+            hql.append("AND serviceType = :serviceType ");
             withServiceType = true;
         }
 
-        long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - get VNF recipe with name " + vnfType
+        long startTime = System.currentTimeMillis();
+        LOGGER.debug("Catalog database - get VNF recipe with name " + vnfType
                                       + " and action "
                                       + action
                                       + " and service type "
                                       + serviceType);
 
-        Query query = getSession ().createQuery (hql.toString ());
-        query.setParameter (VNF_TYPE, vnfType);
-        query.setParameter (ACTION, action);
+        Query query = getSession().createQuery(hql.toString());
+        query.setParameter(VNF_TYPE, vnfType);
+        query.setParameter(ACTION, action);
         if (withServiceType) {
-            query.setParameter (SERVICE_TYPE, serviceType);
+            query.setParameter(SERVICE_TYPE, serviceType);
         }
 
         @SuppressWarnings("unchecked")
-        List <VnfRecipe> resultList = query.list ();
+        List <VnfRecipe> resultList = query.list();
 
-        if (resultList.isEmpty ()) {
-            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. VNF recipe not found", "CatalogDB", "getVnfRecipe", null);
+        if (resultList.isEmpty()) {
+            LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. VNF recipe not found", "CatalogDB", "getVnfRecipe", null);
             return null;
         }
 
-        Collections.sort (resultList, new MavenLikeVersioningComparator ());
-        Collections.reverse (resultList);
+        Collections.sort(resultList, new MavenLikeVersioningComparator());
+        Collections.reverse(resultList);
 
-        LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVnfRecipe", null);
-        return resultList.get (0);
+        LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVnfRecipe", null);
+        return resultList.get(0);
     }
 
     /**
@@ -1136,31 +1136,31 @@ public class CatalogDatabase implements Closeable {
      * @param action
      * @return VnfRecipe object or null if none found
      */
-    public VnfRecipe getVnfRecipe (String vnfType, String action) {
-        StringBuilder hql = new StringBuilder ("FROM VnfRecipe WHERE vnfType = :vnfType AND action = :action ");
+    public VnfRecipe getVnfRecipe(String vnfType, String action) {
+        StringBuilder hql = new StringBuilder("FROM VnfRecipe WHERE vnfType = :vnfType AND action = :action ");
 
-        long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - get VNF recipe with name " + vnfType
+        long startTime = System.currentTimeMillis();
+        LOGGER.debug("Catalog database - get VNF recipe with name " + vnfType
                                       + " and action "
                                       + action);
 
-        Query query = getSession ().createQuery (hql.toString ());
-        query.setParameter (VNF_TYPE, vnfType);
-        query.setParameter (ACTION, action);
+        Query query = getSession().createQuery(hql.toString());
+        query.setParameter(VNF_TYPE, vnfType);
+        query.setParameter(ACTION, action);
 
         @SuppressWarnings("unchecked")
-        List <VnfRecipe> resultList = query.list ();
+        List <VnfRecipe> resultList = query.list();
 
-        if (resultList.isEmpty ()) {
-            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. VNF recipe not found", "CatalogDB", "getVnfRecipe", null);
+        if (resultList.isEmpty()) {
+            LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. VNF recipe not found", "CatalogDB", "getVnfRecipe", null);
             return null;
         }
 
-        Collections.sort (resultList, new MavenLikeVersioningComparator ());
-        Collections.reverse (resultList);
+        Collections.sort(resultList, new MavenLikeVersioningComparator());
+        Collections.reverse(resultList);
 
-        LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVnfRecipe", null);
-        return resultList.get (0);
+        LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVnfRecipe", null);
+        return resultList.get(0);
     }
 
     /**
@@ -1170,30 +1170,30 @@ public class CatalogDatabase implements Closeable {
      * @param action
      * @return VnfRecipe object or null if none found
      */
-    public VnfRecipe getVnfRecipeByVfModuleId (String vnfType, String vfModuleId, String action) {
+    public VnfRecipe getVnfRecipeByVfModuleId(String vnfType, String vfModuleId, String action) {
 
-    	StringBuilder hql = new StringBuilder ("FROM VnfRecipe WHERE vfModuleId = :vfModuleId and action = :action  ");
+    	StringBuilder hql = new StringBuilder("FROM VnfRecipe WHERE vfModuleId = :vfModuleId and action = :action  ");
 
-        long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - get VNF Recipe with vfModuleId " + vfModuleId);
+        long startTime = System.currentTimeMillis();
+        LOGGER.debug("Catalog database - get VNF Recipe with vfModuleId " + vfModuleId);
 
-        Query query = getSession ().createQuery (hql.toString ());
-        query.setParameter (VF_MODULE_MODEL_UUID, vfModuleId);
-        query.setParameter (ACTION, action);
+        Query query = getSession().createQuery(hql.toString ());
+        query.setParameter(VF_MODULE_MODEL_UUID, vfModuleId);
+        query.setParameter(ACTION, action);
 
         @SuppressWarnings("unchecked")
-        List <VnfRecipe> resultList = query.list ();
+        List <VnfRecipe> resultList = query.list();
 
-        if (resultList.isEmpty ()) {
-            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. VNF recipe Entry not found", "CatalogDB", "getVnfRecipeByVfModuleId", null);
+        if (resultList.isEmpty()) {
+            LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. VNF recipe Entry not found", "CatalogDB", "getVnfRecipeByVfModuleId", null);
             return null;
         }
 
-        Collections.sort (resultList, new MavenLikeVersioningComparator ());
-        Collections.reverse (resultList);
+        Collections.sort(resultList, new MavenLikeVersioningComparator());
+        Collections.reverse(resultList);
 
-        LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. VNF Recipe Entry found", "CatalogDB", "getVnfRecipeByVfModuleId", null);
-        return resultList.get (0);
+        LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. VNF Recipe Entry found", "CatalogDB", "getVnfRecipeByVfModuleId", null);
+        return resultList.get(0);
     }
 
     public VfModule getVfModuleTypeByUuid(String modelCustomizationUuid) {
@@ -1299,7 +1299,7 @@ public class CatalogDatabase implements Closeable {
         query.setParameter ("serviceModelInvariantUuid", serviceModelInvariantUuid);
         VnfResource vnfResource = null;
         try {
-            vnfResource = (VnfResource) query.uniqueResult ();
+            vnfResource = (VnfResource) query.uniqueResult();
         } catch (org.hibernate.NonUniqueResultException nure) {
             LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row - data integrity error: serviceModelInvariantUuid='" + serviceModelInvariantUuid);
             LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for serviceModelInvariantUuid=" + serviceModelInvariantUuid, "", "", MsoLogger.ErrorCode.DataError, "Non unique result for serviceModelInvariantUuid==" + serviceModelInvariantUuid);
@@ -1317,23 +1317,23 @@ public class CatalogDatabase implements Closeable {
         	throw e;
         }
         if (vnfResource == null) {
-            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "NotFound", "CatalogDB", "getVfModuleType", null);
+            LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "NotFound", "CatalogDB", "getVfModuleType", null);
         } else {
-            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVfModuleType", null);
+            LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVfModuleType", null);
         }
         return vnfResource;
     }
 
     public VnfResource getVnfResourceByVnfUuid(String vnfResourceModelInvariantUuid) {
         long startTime = System.currentTimeMillis();
-        LOGGER.debug ("Catalog database - get vfModuleType with vnfResourceModelInvariantUuid " + vnfResourceModelInvariantUuid);
+        LOGGER.debug("Catalog database - get vfModuleType with vnfResourceModelInvariantUuid " + vnfResourceModelInvariantUuid);
 
         String hql = "FROM VnfResource WHERE vnfResourceModelInvariantUuid = :vnfResourceModelInvariantUuid";
         Query query = getSession().createQuery(hql);
-        query.setParameter ("vnfResourceModelInvariantUuid", vnfResourceModelInvariantUuid);
+        query.setParameter("vnfResourceModelInvariantUuid", vnfResourceModelInvariantUuid);
         VnfResource vnfResource = null;
         try {
-            vnfResource = (VnfResource) query.uniqueResult ();
+            vnfResource = (VnfResource) query.uniqueResult();
         } catch (org.hibernate.NonUniqueResultException nure) {
             LOGGER.debug("Non Unique Result Exception - the Catalog Database does not match a unique row - data integrity error: vnfResourceModelInvariantUuid='" + vnfResourceModelInvariantUuid);
             LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " non unique result for vnfResourceModelInvariantUuid=" + vnfResourceModelInvariantUuid, "", "", MsoLogger.ErrorCode.DataError, "Non unique result for vnfResourceModelInvariantUuid==" + vnfResourceModelInvariantUuid);
