@@ -93,6 +93,30 @@
       "revId": "96a4c01a8488ee04faaeb82877f62ed5ce049017",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_edca716d",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/openecomp/mso/client/dmaap/rest/DMaaPRestClient.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-01-29T10:46:16Z",
+      "side": 1,
+      "message": "After futher inspection only class that uses this method is PolicyRestClient which implements RestClient. Maybe I should just remove that method from RestClient interface, because only one implementation of this interface actually implements and uses that method?",
+      "parentUuid": "5a93c517_8df2cdd0",
+      "range": {
+        "startLine": 53,
+        "startChar": 3,
+        "endLine": 55,
+        "endChar": 5
+      },
+      "revId": "96a4c01a8488ee04faaeb82877f62ed5ce049017",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
