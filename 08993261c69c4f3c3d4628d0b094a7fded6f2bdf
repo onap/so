@@ -46,6 +46,30 @@
       "revId": "08993261c69c4f3c3d4628d0b094a7fded6f2bdf",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_cd0d3540",
+        "filename": "adapters/mso-adapters-rest-interface/src/main/java/org/openecomp/mso/adapters/nwrest/NetworkRequestCommon.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2018-01-29T15:50:06Z",
+      "side": 0,
+      "message": "Besides I think that the change you suggest would introduce more chaos (more abstract class). My change is related to lots of file, but the inheritance is more clear, also the new created abstract classes have more clear names.",
+      "parentUuid": "5a93c517_4db845c8",
+      "range": {
+        "startLine": 38,
+        "startChar": 0,
+        "endLine": 38,
+        "endChar": 44
+      },
+      "revId": "08993261c69c4f3c3d4628d0b094a7fded6f2bdf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
