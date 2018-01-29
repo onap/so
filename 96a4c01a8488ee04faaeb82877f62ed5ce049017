@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_4d6045a5",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/openecomp/mso/client/ResponseExceptionMapper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-01-29T10:45:29Z",
+      "side": 1,
+      "message": "Readability. Also old code passes incorrect codes like 194 as correct ones.",
+      "parentUuid": "5a93c517_c2a424a8",
+      "range": {
+        "startLine": 85,
+        "startChar": 24,
+        "endLine": 85,
+        "endChar": 68
+      },
+      "revId": "96a4c01a8488ee04faaeb82877f62ed5ce049017",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_42dfb40d",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/openecomp/mso/client/dmaap/rest/DMaaPRestClient.java",
         "patchSetId": 2
@@ -36,6 +60,30 @@
       "writtenOn": "2018-01-29T06:09:50Z",
       "side": 1,
       "message": "DmaaPRestClient never invokes addRequestId, Could you please confirm there is no use of returned null.",
+      "range": {
+        "startLine": 53,
+        "startChar": 3,
+        "endLine": 55,
+        "endChar": 5
+      },
+      "revId": "96a4c01a8488ee04faaeb82877f62ed5ce049017",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_8df2cdd0",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/openecomp/mso/client/dmaap/rest/DMaaPRestClient.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-01-29T10:45:29Z",
+      "side": 1,
+      "message": "My guess is that returned null is just empty method implementation provided by IDE. It should return \"this\" as in PolicyRestClient.\n\nI decided to remove return value because it was never used and can cause problems when someone decides to add additional methods to his RestClient implementations - something like\n\nmyRestClient.addRequestId(requestId).myMethod();\n\nwon\u0027t work, because addRequestId returns RestClient not MyRestClient.",
+      "parentUuid": "5a93c517_42dfb40d",
       "range": {
         "startLine": 53,
         "startChar": 3,

@@ -22,6 +22,30 @@
       "revId": "89f89afa5bf730f359e18c3672682a8fb0970e85",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_8d564dd1",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/openecomp/mso/client/ResponseExceptionMapperImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-01-29T10:45:29Z",
+      "side": 0,
+      "message": "Only abstract method was one for extracting message from InputStream. I see no reason to ever changing implementation of that util method and changing that method will not change actual logic of that class, that is mapping of exceptions.",
+      "parentUuid": "5a93c517_02b20ce6",
+      "range": {
+        "startLine": 29,
+        "startChar": 0,
+        "endLine": 29,
+        "endChar": 74
+      },
+      "revId": "89f89afa5bf730f359e18c3672682a8fb0970e85",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
