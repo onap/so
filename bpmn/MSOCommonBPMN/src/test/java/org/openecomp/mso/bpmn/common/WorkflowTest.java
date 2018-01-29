@@ -61,7 +61,6 @@ import org.custommonkey.xmlunit.DetailedDiff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.jboss.resteasy.spi.AsynchronousResponse;
 import org.json.JSONArray;
-import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Rule;
 import org.openecomp.mso.bpmn.common.adapter.sdnc.CallbackHeader;
@@ -78,7 +77,7 @@ import org.openecomp.mso.bpmn.common.workflow.service.VnfAdapterNotifyServiceImp
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowAsyncResource;
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowMessageResource;
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowResponse;
-import org.openecomp.mso.bpmn.core.CamundaDBSetup;
+import org.openecomp.mso.bpmn.core.utils.CamundaDBSetup;
 import org.openecomp.mso.bpmn.core.PropertyConfigurationSetup;
 import org.openecomp.mso.bpmn.core.domain.Resource;
 import org.openecomp.mso.bpmn.core.domain.ServiceDecomposition;

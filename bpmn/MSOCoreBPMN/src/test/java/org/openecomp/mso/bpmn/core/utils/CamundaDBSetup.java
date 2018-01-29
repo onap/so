@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.mso.bpmn.core;
+package org.openecomp.mso.bpmn.core.utils;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -35,9 +35,6 @@ public class CamundaDBSetup {
 	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
 	
 	private CamundaDBSetup() {
-	    /**
-	     * Constructor.
-	     */
 	}
 	
 	public static synchronized void configure() throws SQLException {

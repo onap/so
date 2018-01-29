@@ -36,26 +36,24 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  * ============LICENSE_END========================================================= 
- */ 
+ */
 
 package org.openecomp.mso.bpmn.core;
 
-import java.io.BufferedReader;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.CharBuffer;
-
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import org.xml.sax.SAXException;
-import org.custommonkey.xmlunit.Diff;
-
 import org.openecomp.mso.bpmn.core.json.JsonUtils;
 import org.openecomp.mso.bpmn.core.xml.XmlTool;
+import org.xmlunit.builder.DiffBuilder;
+import org.xmlunit.diff.DefaultNodeMatcher;
+import org.xmlunit.diff.Diff;
+import org.xmlunit.diff.ElementSelectors;
 
 /**
  * @version 1.0
@@ -63,8 +61,8 @@ import org.openecomp.mso.bpmn.core.xml.XmlTool;
 public class JsonUtilsTest {
 
     private static final String EOL = "\n";
-    private String xmlReq =
-                    "<vnf-request xmlns=\"http://org.openecomp/mso/infra/vnf-request/v1\">" + EOL +
+    private static final String XML_REQ =
+            "<vnf-request xmlns=\"http://org.openecomp/mso/infra/vnf-request/v1\">" + EOL +
                     "  <request-info>" + EOL +
                     "    <request-id>DEV-VF-0021</request-id>" + EOL +
                     "    <action>CREATE_VF_MODULE</action>" + EOL +
@@ -93,9 +91,9 @@ public class JsonUtilsTest {
                     "    <param name=\"server\">server1111</param>" + EOL +
                     "  </vnf-params> " + EOL +
                     "</vnf-request>" + EOL;
-    
-    private String xmlReqNoAttrs =
-                    "<vnf-request xmlns=\"http://org.openecomp/mso/infra/vnf-request/v1\">" + EOL +
+
+    private static final String XML_REQ_NO_ATTRS =
+            "<vnf-request xmlns=\"http://org.openecomp/mso/infra/vnf-request/v1\">" + EOL +
                     "  <request-info>" + EOL +
                     "    <action>DELETE_VF_MODULE</action>" + EOL +
                     "    <source>PORTAL</source>" + EOL +
@@ -115,246 +113,214 @@ public class JsonUtilsTest {
                     "  <vnf-params xmlns:tns=\"http://org.openecomp/mso/infra/vnf-request/v1\"/>" + EOL +
                     "</vnf-request>" + EOL;
 
-    private String xmlArrayReq =
-                    "<ucpeInfo>" + EOL +
+    private static final String XML_ARRAY_REQ =
+            "<ucpeInfo>" + EOL +
                     "       <outOfBandManagementModem>BROADBAND</outOfBandManagementModem>" + EOL +
-                "   <internetTopology>IVLAN</internetTopology>" + EOL +
-                "   <ucpeAliasHostName>SHELLUCPE31</ucpeAliasHostName>" + EOL +
-                "   <wanList>" + EOL +
-                "           <wanInfo>" + EOL +
-                "                   <wanType>AVPN</wanType>" + EOL +
-                "                   <interfaceType>1000BASE-T</interfaceType>" + EOL +
-                "                   <transportProviderName>ATT</transportProviderName>" + EOL +
-                "                   <circuitId>BT/SLIR/70911</circuitId>" + EOL +
-                "                   <dualMode>Active</dualMode>" + EOL +
-                "                   <wanPortNumber>WAN1</wanPortNumber>" + EOL +
-                "                   <transportManagementOption>ATT</transportManagementOption>" + EOL +
-                "                   <transportVendorTotalBandwidth>100</transportVendorTotalBandwidth>" + EOL +
-                "                   <mediaType>ELECTRICAL</mediaType>" + EOL +
-                "           </wanInfo>" + EOL +
-                "           <wanInfo>" + EOL +
-                "                   <wanType>AVPN</wanType>" + EOL +
-                "                   <interfaceType>10/100/1000BASE-T</interfaceType>" + EOL +
-                "                   <transportProviderName>ATT</transportProviderName>" + EOL +
-                "                   <circuitId>AS/KRFN/34611</circuitId>" + EOL +
-                "                   <dualMode>Active</dualMode>" + EOL +
-                "                   <wanPortNumber>WAN2</wanPortNumber>" + EOL +
-                "                   <transportManagementOption>ATT</transportManagementOption>" + EOL +
-                "                   <transportVendorTotalBandwidth>10000</transportVendorTotalBandwidth>" + EOL +
-                "                   <mediaType>MMF</mediaType>" + EOL +
-                "           </wanInfo>" + EOL +
-                "   </wanList>" + EOL +
-                "   <ucpeActivationCode>ASD-987-M31</ucpeActivationCode>" + EOL +
-                "   <ucpeHostName>USOSTCDALTX0101UJZZ31</ucpeHostName>" + EOL +
-                "   <ucpePartNumber>FG-VM00*</ucpePartNumber>" + EOL +
+                    "   <internetTopology>IVLAN</internetTopology>" + EOL +
+                    "   <ucpeAliasHostName>SHELLUCPE31</ucpeAliasHostName>" + EOL +
+                    "   <wanList>" + EOL +
+                    "           <wanInfo>" + EOL +
+                    "                   <wanType>AVPN</wanType>" + EOL +
+                    "                   <interfaceType>1000BASE-T</interfaceType>" + EOL +
+                    "                   <transportProviderName>ATT</transportProviderName>" + EOL +
+                    "                   <circuitId>BT/SLIR/70911</circuitId>" + EOL +
+                    "                   <dualMode>Active</dualMode>" + EOL +
+                    "                   <wanPortNumber>WAN1</wanPortNumber>" + EOL +
+                    "                   <transportManagementOption>ATT</transportManagementOption>" + EOL +
+                    "                   <transportVendorTotalBandwidth>100</transportVendorTotalBandwidth>" + EOL +
+                    "                   <mediaType>ELECTRICAL</mediaType>" + EOL +
+                    "           </wanInfo>" + EOL +
+                    "           <wanInfo>" + EOL +
+                    "                   <wanType>AVPN</wanType>" + EOL +
+                    "                   <interfaceType>10/100/1000BASE-T</interfaceType>" + EOL +
+                    "                   <transportProviderName>ATT</transportProviderName>" + EOL +
+                    "                   <circuitId>AS/KRFN/34611</circuitId>" + EOL +
+                    "                   <dualMode>Active</dualMode>" + EOL +
+                    "                   <wanPortNumber>WAN2</wanPortNumber>" + EOL +
+                    "                   <transportManagementOption>ATT</transportManagementOption>" + EOL +
+                    "                   <transportVendorTotalBandwidth>10000</transportVendorTotalBandwidth>" + EOL +
+                    "                   <mediaType>MMF</mediaType>" + EOL +
+                    "           </wanInfo>" + EOL +
+                    "   </wanList>" + EOL +
+                    "   <ucpeActivationCode>ASD-987-M31</ucpeActivationCode>" + EOL +
+                    "   <ucpeHostName>USOSTCDALTX0101UJZZ31</ucpeHostName>" + EOL +
+                    "   <ucpePartNumber>FG-VM00*</ucpePartNumber>" + EOL +
                     "</ucpeInfo>";
 
     // JSON request w/ embedded XML will be read from a file
-    private String jsonReq = null;
-    private String jsonReqArray = null;
-    
-    @Before
-    public void initialize() {
-            File file = new File("src/test/resources/request.json");
-            File file2 = new File("src/test/resources/requestArray.json");
-            FileInputStream fis = null;
+    private static String jsonReq;
+    private static String jsonReqArray;
 
-            try {
-                    fis = new FileInputStream(file);
-                    BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-                    CharBuffer cbuf = CharBuffer.allocate((int)file.length()+1);
-                    br.read(cbuf);
-                    cbuf.flip();
-                    jsonReq = cbuf.toString();
-                    if (jsonReq != null) {
-                            System.out.println("initialize(): json request: " + jsonReq);
-                    } else {
-                            System.out.println("initialize(): failed to read json request from src/test/resources/request.json");
-                    }
-                    fis.close();
-                    fis = new FileInputStream(file2);
-                    br = new BufferedReader(new InputStreamReader(fis));
-                    cbuf = CharBuffer.allocate((int)file.length()+1);
-                    br.read(cbuf);
-                    cbuf.flip();
-                    jsonReqArray = cbuf.toString();
-                    if (jsonReq != null) {
-                            System.out.println("initialize(): json request w/ array: " + jsonReqArray);
-                    } else {
-                            System.out.println("initialize(): failed to read json request from src/test/resources/request2.json");
-                    }
-            } catch (IOException e) {
-                    e.printStackTrace();
-            } finally {
-                    try {
-                            if (fis != null)
-                                    fis.close();
-                    } catch (IOException ex) {
-                            ex.printStackTrace();
-                    }
-            }
+    @BeforeClass
+    public static void initialize() throws Exception {
+        jsonReq = readFileToString("src/test/resources/request.json");
+        jsonReqArray = readFileToString("src/test/resources/requestArray.json");
     }
-    
-    @After
-    public void cleanup(){
+
+    private static String readFileToString(String path) throws IOException {
+        File file = new File(path);
+        return new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
     }
 
     @Test
-//  @Ignore
-    public void testConversion() {
-            // Note: the current version of the JsonUtils.json2xml() method
-            // does not support converting the JSONObject representation
-            // of XML attributes (JSONArray) back to XML. So this test will
-            // only succeed if the original XML does not contain attributes
-            
-            // save a copy of the xml with the namespaces removed
-            String xmlIn = XmlTool.removeNamespaces(xmlReqNoAttrs);
-            // strip all the non-data whitespace
-            xmlIn = xmlIn.replaceAll(">\\s*<", "><");
-            String json = JsonUtils.xml2json(xmlReqNoAttrs);
-            System.out.println("testConversion(): xml request to json: " + json);
-            String xmlOut = JsonUtils.json2xml(json);
-            System.out.println("testConversion(): json request back to xml: " + xmlOut);
-            
-            // strip all the non-data whitespace
-            xmlOut = xmlOut.replaceAll(">\\s*<", "><");
+    public void shouldConvertXmlToJsonAndBackToSameXml() throws Exception {
+        // Note: the current version of the JsonUtils.json2xml() method
+        // does not support converting the JSONObject representation
+        // of XML attributes (JSONArray) back to XML. So this test will
+        // only succeed if the original XML does not contain attributes
 
-            Diff diffXml;
-            try {
-                    diffXml = new Diff(xmlIn, xmlOut);
-                    Assert.assertTrue(diffXml.similar());
-            } catch (SAXException e) {
-                    e.printStackTrace();
-            } catch (IOException e) {
-                    e.printStackTrace();
-            }
+        // given
+        String xmlIn = XmlTool.removeNamespaces(XML_REQ_NO_ATTRS);
+        // when
+        String json = JsonUtils.xml2json(XML_REQ_NO_ATTRS);
+        String xmlOut = JsonUtils.json2xml(json);
+        // then
+        Diff diffXml = DiffBuilder.compare(xmlIn).withTest(xmlOut).ignoreWhitespace()
+                .withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byName)).checkForSimilar().build();
+
+        assertThat(diffXml.hasDifferences()).withFailMessage(diffXml.toString()).isFalse();
     }
 
     @Test
-//  @Ignore
-    public void testRetrieval() {
-            String json = JsonUtils.xml2json(xmlReq);
-            System.out.println("testRetrieval(): xml request to json: " + json);
-            // full JSON path
-            String value = JsonUtils.getJsonValue(json, "vnf-request.vnf-inputs.vnf-name");
-            Assert.assertEquals(value, "STMTN5MMSC21");
-            value = JsonUtils.getJsonValue(json, "vnf-request.request-info.action");
-            Assert.assertEquals(value, "CREATE_VF_MODULE");
-            // retrieving an integer
-            value = JsonUtils.getJsonValue(json, "vnf-request.vnf-inputs.persona-model-version");
-            Assert.assertEquals(value, "1");
-            // retrieving a float
-            value = JsonUtils.getJsonValue(json, "vnf-request.vnf-inputs.vnf-persona-model-version");
-            Assert.assertEquals(value, "1.5");
-            // retrieving a boolean
-            value = JsonUtils.getJsonValue(json, "vnf-request.vnf-inputs.is-base-module");
-            Assert.assertEquals(value, "true");
-            // attempt to retrieve a value for a non-existent field
-            value = JsonUtils.getJsonValue(json, "vnf-request.vnf-inputs.bad");
-            Assert.assertEquals(value, null);
-            // retrieving a parameter/array value (originally a XML attribute)
-            value = JsonUtils.getJsonParamValue(json, "vnf-request.vnf-params.param", "name");
-            Assert.assertEquals(value, "network");
-            value = JsonUtils.getJsonParamValue(json, "vnf-request.vnf-params.param", "content");
-            Assert.assertEquals(value, "network1111");
-            // retrieving a parameter/array value by index
-            value = JsonUtils.getJsonParamValue(json, "vnf-request.vnf-params.param", "content", 1);
-            Assert.assertEquals(value, "server1111");
-            value = JsonUtils.getJsonParamValue(json, "vnf-request.vnf-params.param", "name", 1);
-            Assert.assertEquals(value, "server");
-            // failure due to invalid parameter name
-            value = JsonUtils.getJsonParamValue(json, "vnf-request.vnf-params.param", "badParam");
-            Assert.assertEquals(value, null);
-            // failure due to array index out of bounds
-            value = JsonUtils.getJsonParamValue(json, "vnf-request.vnf-params.param", "name", 2);
-            Assert.assertEquals(value, null);
-            // by field name/key
-            value = JsonUtils.getJsonValueForKey(json, "source");
-            Assert.assertEquals(value, "PORTAL");
-            value = JsonUtils.getJsonValueForKey(json, "vnf-module");
-            Assert.assertEquals(value, null);       
+    public void shouldReadValuesForAbsoluteJsonPaths() throws Exception {
+        // given
+        String json = JsonUtils.xml2json(XML_REQ);
+        // when, then
+        assertThat(JsonUtils.getJsonValue(json, "vnf-request.vnf-inputs.vnf-name")).isEqualTo("STMTN5MMSC21");
+        assertThat(JsonUtils.getJsonValue(json, "vnf-request.request-info.action")).isEqualTo("CREATE_VF_MODULE");
+        assertThat(JsonUtils.getJsonValue(json, "vnf-request.vnf-inputs.persona-model-version")).isEqualTo("1");
+        assertThat(JsonUtils.getJsonValue(json, "vnf-request.vnf-inputs.vnf-persona-model-version")).isEqualTo("1.5");
+        assertThat(JsonUtils.getJsonValue(json, "vnf-request.vnf-inputs.is-base-module")).isEqualTo("true");
     }
 
     @Test
-//  @Ignore
-    public void testUpdate() {
-            String json = JsonUtils.xml2json(xmlReq);
-            System.out.println("testUpdate(): xml request to json: " + json);
-            // the add should be successful
-            String jsonUpd = JsonUtils.addJsonValue(json, "vnf-request.request-info.comment", "Some comment");
-            String value = JsonUtils.getJsonValue(jsonUpd, "vnf-request.request-info.comment");
-            Assert.assertEquals(value, "Some comment");
-            // the add should be ignored as the field already exists
-            jsonUpd = JsonUtils.addJsonValue(jsonUpd, "vnf-request.vnf-inputs.vnf-name", "STMTN5MMSC22");
-            value = JsonUtils.getJsonValue(jsonUpd, "vnf-request.vnf-inputs.vnf-name");
-            Assert.assertEquals(value, "STMTN5MMSC21");
-            // the update should be successful
-            jsonUpd = JsonUtils.updJsonValue(jsonUpd, "vnf-request.vnf-inputs.vnf-name", "STMTN5MMSC22");
-            value = JsonUtils.getJsonValue(jsonUpd, "vnf-request.vnf-inputs.vnf-name");
-            Assert.assertEquals(value, "STMTN5MMSC22");
-            // the delete should be successful
-            jsonUpd = JsonUtils.delJsonValue(jsonUpd, "vnf-request.request-info.comment");
-            value = JsonUtils.getJsonValue(jsonUpd, "vnf-request.request-info.comment");
-            Assert.assertEquals(value, null);
-            // the delete should fail as field 'vnf-model' does not exist
-            String jsonCur = jsonUpd;
-            jsonUpd = JsonUtils.delJsonValue(jsonUpd, "vnf-request.vnf-inputs.vnf-module");
-            Assert.assertEquals(jsonCur, jsonUpd);          
-    }
-    
-    @Test
-//  @Ignore
-    public void testEmbededXmlRetrievalConversion() {
-            try {
-                    // extract the embedded XML from the request
-                    String value = JsonUtils.getJsonValue(jsonReq, "variables.bpmnRequest.value");
-                    String xmlReq = XmlTool.removeNamespaces(XmlTool.normalize(value));
-                    System.out.println("testEmbededXmlRetrievalConversion(): xml payload: " + xmlReq);
-                    String json = JsonUtils.xml2json(xmlReq);
-                    System.out.println("testEmbededXmlRetrievalConversion(): xml request to json: " + json);
-                    String xmlOut = JsonUtils.json2xml(json);
-                    System.out.println("testEmbededXmlRetrievalConversion(): json request back to xml: " + xmlOut);
-                    Diff diffXml;
-                    try {
-                            // compare the XML before and after
-                            diffXml = new Diff(xmlReq, xmlOut);
-                            Assert.assertTrue(diffXml.similar());
-                    } catch (SAXException e) {
-                            e.printStackTrace();
-                    } catch (IOException e) {
-                            e.printStackTrace();
-                    }
-                    
-            } catch (Exception e) {
-                    e.printStackTrace();
-            }
+    public void shouldReturnValueForJsonKey() throws Exception {
+        // given
+        String json = JsonUtils.xml2json(XML_REQ);
+        // when, then
+        assertThat(JsonUtils.getJsonValueForKey(json, "source")).isEqualTo("PORTAL");
     }
 
     @Test
-//  @Ignore
-    // Tests the conversion of a JSON Doc containing a JSON Array to XML
-    public void testConversionArray() {
-            try {
-                    String jsonParm = JsonUtils.getJsonNodeValue(jsonReqArray, "requestDetails.requestParameters.ucpeInfo");
-                    System.out.println("testConversionArray(): json value: " + JsonUtils.prettyJson(jsonParm));
-                    String xmlOut = JsonUtils.json2xml(jsonParm);
-                    System.out.println("testConversionArray(): json parameters to xml: " + xmlOut);
-                    // strip all the non-data whitespace
-                    xmlOut = xmlOut.replaceAll(">\\s*<", "><");
-                    System.out.println("testConversionArray(): XML after removing whitespace:" + xmlOut);
-                    String xmlTest = xmlArrayReq.replaceAll(">\\s*<", "><");
+    public void shouldReturnNullForNonexistentJsonNode() throws Exception {
+        // given
+        String json = JsonUtils.xml2json(XML_REQ);
+        // when, then
+        assertThat(JsonUtils.getJsonValueForKey(json, "nonexistent-node")).isNull();
+    }
 
-                    Diff diffXml;
-                    try {
-                            diffXml = new Diff(xmlTest, xmlOut);
-                          Assert.assertTrue(diffXml.similar());
-                    } catch (SAXException e) {
-                            e.printStackTrace();
-                    } catch (IOException e) {
-                            e.printStackTrace();
-                    }
-            } catch (Exception e) {
-                    e.printStackTrace();
-            }
+    @Test
+    public void shouldReturnNullForNonExistentParameter() throws Exception {
+        // given
+        String json = JsonUtils.xml2json(XML_REQ);
+        // when, then
+        assertThat(JsonUtils.getJsonValue(json, "vnf-request.vnf-inputs.bad")).isNull();
+    }
+
+    @Test
+    public void shouldGetJasonParametersFromArray() throws Exception {
+        // given
+        String json = JsonUtils.xml2json(XML_REQ);
+        // when, then
+        assertThat(JsonUtils.getJsonParamValue(json, "vnf-request.vnf-params.param", "name")).isEqualTo("network");
+        assertThat(JsonUtils.getJsonParamValue(json, "vnf-request.vnf-params.param", "content"))
+                .isEqualTo("network1111");
+        assertThat(JsonUtils.getJsonParamValue(json, "vnf-request.vnf-params.param", "name", 1)).isEqualTo("server");
+        assertThat(JsonUtils.getJsonParamValue(json, "vnf-request.vnf-params.param", "content", 1))
+                .isEqualTo("server1111");
+        assertThat(JsonUtils.getJsonParamValue(json, "vnf-request.vnf-params.param", "badParam"))
+                .withFailMessage("Expected null for nonexistent param").isNull();
+        assertThat(JsonUtils.getJsonParamValue(json, "vnf-request.vnf-params.param", "name", 2))
+                .withFailMessage("Expected null for index out of bound").isNull();
+    }
+
+    @Test
+    public void shouldAddJsonValue() throws Exception {
+        // given
+        String json = JsonUtils.xml2json(XML_REQ);
+        String key = "vnf-request.request-info.comment";
+        String value = "Some comment";
+        // when
+        String jsonUpd = JsonUtils.addJsonValue(json, key, value);
+        // then
+        String extractedValue = JsonUtils.getJsonValue(jsonUpd, key);
+        assertThat(extractedValue).isEqualTo(value);
+    }
+
+    @Test
+    public void shouldIgnoreAddIfFieldAlreadyExists() throws Exception {
+        // given
+        String json = JsonUtils.xml2json(XML_REQ);
+        String key = "vnf-request.vnf-inputs.vnf-name";
+        String newValue = "STMTN5MMSC22";
+        String oldValue = JsonUtils.getJsonValue(json, key);
+        // when
+        String jsonUpd = JsonUtils.addJsonValue(json, key, newValue);
+        // then
+        String extractedValue = JsonUtils.getJsonValue(jsonUpd, key);
+        assertThat(extractedValue).isEqualTo(oldValue).isNotEqualTo(newValue);
+    }
+
+    @Test
+    public void shouldUpdateValueInJson() throws Exception {
+        // given
+        String json = JsonUtils.xml2json(XML_REQ);
+        String key = "vnf-request.vnf-inputs.vnf-name";
+        String newValue = "STMTN5MMSC22";
+        String oldValue = JsonUtils.getJsonValue(json, key);
+        // when
+        String jsonUpd = JsonUtils.updJsonValue(json, key, newValue);
+        // then
+        String extractedValue = JsonUtils.getJsonValue(jsonUpd, key);
+        assertThat(extractedValue).isNotEqualTo(oldValue).isEqualTo(newValue);
+    }
+
+    @Test
+    public void shouldDeleteValue() throws Exception {
+        // given
+        String json = JsonUtils.xml2json(XML_REQ);
+        String key = "vnf-request.vnf-inputs.vnf-name";
+        String oldValue = JsonUtils.getJsonValue(json, key);
+        // when
+        String jsonUpd = JsonUtils.delJsonValue(json, key);
+        // then
+        String extractedValue = JsonUtils.getJsonValue(jsonUpd, key);
+        assertThat(extractedValue).isNotEqualTo(oldValue).isNull();
+    }
+
+    @Test
+    public void shouldReturnOriginalJsonWhenTryingToRemoveNonexistentField() throws Exception {
+        // given
+        String json = JsonUtils.xml2json(XML_REQ);
+        String key = "vnf-request.vnf-inputs.does-not-exist";
+        // when
+        String jsonUpd = JsonUtils.delJsonValue(json, key);
+        // then
+        assertThat(jsonUpd).isEqualTo(json);
+    }
+
+    @Test
+    public void shouldConvertXmlToJsonAndBackToSameXmlExtractedFromTheRequest() throws Exception {
+        // given
+        String value = JsonUtils.getJsonValue(jsonReq, "variables.bpmnRequest.value");
+        String xmlReq = XmlTool.removeNamespaces(XmlTool.normalize(value));
+        // when
+        String json = JsonUtils.xml2json(xmlReq);
+        String xmlOut = JsonUtils.json2xml(json);
+        // then
+        Diff diffXml = DiffBuilder.compare(xmlReq).withTest(xmlOut).ignoreWhitespace()
+                .withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byName)).checkForSimilar().build();
+        assertThat(diffXml.hasDifferences()).withFailMessage(diffXml.toString()).isFalse();
+    }
+
+    @Test
+    public void shouldConvertJsonContainingArrayToXml() throws Exception {
+        // when
+        String jsonParm = JsonUtils.getJsonNodeValue(jsonReqArray, "requestDetails.requestParameters.ucpeInfo");
+        String xmlOut = JsonUtils.json2xml(jsonParm);
+        // then
+        Diff diffXml = DiffBuilder.compare(XML_ARRAY_REQ).withTest(xmlOut).ignoreWhitespace()
+                .withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byName)).checkForSimilar().build();
+        assertThat(diffXml.hasDifferences()).withFailMessage(diffXml.toString()).isFalse();
     }
 }
