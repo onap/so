@@ -22,18 +22,10 @@ package org.openecomp.mso.adapters.vnf.test;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.junit.Test;
 import org.openecomp.mso.adapters.vnf.MsoVnfAdapterAsyncImpl;
 import org.openecomp.mso.entity.MsoRequest;
-import org.openecomp.mso.openstack.beans.HeatStatus;
-import org.openecomp.mso.openstack.beans.StackInfo;
 import org.openecomp.mso.openstack.beans.VnfRollback;
-import org.openecomp.mso.openstack.exceptions.MsoException;
-import org.openecomp.mso.openstack.utils.MsoHeatUtils;
-
-import mockit.Mock;
-import mockit.MockUp;
 
 public class MsoVnfAdapterAsyncImplTest {
 
@@ -45,15 +37,6 @@ public class MsoVnfAdapterAsyncImplTest {
 
 	@Test
 	public void createVNFTest() {
-		new MockUp<MsoHeatUtils>() {
-			@Mock
-			public StackInfo queryStack(String cloudSiteId, String tenantId, String stackName) throws MsoException {
-				StackInfo info = new StackInfo();
-				info.setStatus(HeatStatus.CREATED);
-				return info;
-			}
-		};
-
 		MsoVnfAdapterAsyncImpl instance = new MsoVnfAdapterAsyncImpl();
 		MsoRequest msoRequest = new MsoRequest();
 		msoRequest.setRequestId("12345");

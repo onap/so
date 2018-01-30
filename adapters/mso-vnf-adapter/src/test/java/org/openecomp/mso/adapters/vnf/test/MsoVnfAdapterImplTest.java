@@ -22,24 +22,11 @@ package org.openecomp.mso.adapters.vnf.test;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.xml.ws.Holder;
-
 import org.junit.Test;
 import org.openecomp.mso.adapters.vnf.MsoVnfAdapterImpl;
-import org.openecomp.mso.db.catalog.CatalogDatabase;
-import org.openecomp.mso.db.catalog.beans.VfModule;
-import org.openecomp.mso.db.catalog.beans.VfModuleCustomization;
-import org.openecomp.mso.db.catalog.beans.VnfResource;
 import org.openecomp.mso.entity.MsoRequest;
-import org.openecomp.mso.openstack.beans.HeatStatus;
-import org.openecomp.mso.openstack.beans.StackInfo;
 import org.openecomp.mso.openstack.beans.VnfRollback;
-import org.openecomp.mso.openstack.exceptions.MsoException;
-import org.openecomp.mso.openstack.utils.MsoHeatUtils;
-
-import mockit.Mock;
-import mockit.MockUp;
 
 public class MsoVnfAdapterImplTest {
 
@@ -51,16 +38,6 @@ public class MsoVnfAdapterImplTest {
 
 	@Test
 	public void createVnfTest() {
-
-		new MockUp<MsoHeatUtils>() {
-			@Mock
-			public StackInfo queryStack(String cloudSiteId, String tenantId, String stackName) throws MsoException {
-				StackInfo info = new StackInfo();
-				info.setStatus(HeatStatus.CREATED);
-				return info;
-			}
-		};
-
 		MsoVnfAdapterImpl instance = new MsoVnfAdapterImpl();
 		MsoRequest msoRequest = new MsoRequest();
 		msoRequest.setRequestId("12345");
@@ -80,37 +57,6 @@ public class MsoVnfAdapterImplTest {
 
 	@Test
 	public void updateVnfTest() {
-
-		new MockUp<MsoHeatUtils>() {
-			@Mock
-			public StackInfo queryStack(String cloudSiteId, String tenantId, String stackName) throws MsoException {
-				StackInfo info = new StackInfo();
-				info.setStatus(HeatStatus.CREATED);
-				return info;
-			}
-		};
-
-		new MockUp<CatalogDatabase>() {
-			@Mock
-			public VfModuleCustomization getVfModuleCustomizationByModelCustomizationId(String modelCustomizationUuid) {
-				VfModuleCustomization vfcModule = new VfModuleCustomization();
-				VfModule vfm = new VfModule();
-				vfm.setVnfResourceModelUUId("88a6ca3ee0394ade9403f075db23167e");
-				vfcModule.setVfModule(vfm);
-				return vfcModule;
-			}
-		};
-
-		new MockUp<CatalogDatabase>() {
-			@Mock
-			public VnfResource getVnfResourceByModelUuid(String modelUuid) {
-				VnfResource vnfResource = new VnfResource();
-				vnfResource.setAicVersionMin("1");
-				vnfResource.setAicVersionMax("2");
-				return vnfResource;
-			}
-		};
-
 		MsoVnfAdapterImpl instance = new MsoVnfAdapterImpl();
 		MsoRequest msoRequest = new MsoRequest();
 		msoRequest.setRequestId("12345");
@@ -130,17 +76,6 @@ public class MsoVnfAdapterImplTest {
 
 	@Test
 	public void deleteVnfTest() {
-		new MockUp<MsoHeatUtils>() {
-			@Mock
-			public Map<String, Object> queryStackForOutputs(String cloudSiteId, String tenantId, String stackName)
-					throws MsoException {
-				
-				Map<String, Object> outputs = new HashMap<>();
-				outputs.put("Key1", "value1");
-				return outputs;
-			}
-		};
-
 		MsoVnfAdapterImpl instance = new MsoVnfAdapterImpl();
 		MsoRequest msoRequest = new MsoRequest();
 		msoRequest.setRequestId("12345");
