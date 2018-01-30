@@ -757,12 +757,16 @@ public class ServiceInstances {
 //		}
 				
 		// TODO need to make this a configurable property
-		String defaultServiceModelName = msoRequest.getRequestInfo().getSource() + "_DEFAULT";
+		String defaultServiceModelName = "*";
+		String defaultSourceServiceModelName = msoRequest.getRequestInfo().getSource() + "_DEFAULT";
 
 		Service serviceRecord;
 		ModelInfo modelInfo = msoRequest.getModelInfo();
 		if(msoRequest.getALaCarteFlag()){
-			serviceRecord = db.getServiceByModelName(defaultServiceModelName);
+			serviceRecord = db.getServiceByModelName(defaultSourceServiceModelName);
+			if (serviceRecord == null) {
+				serviceRecord = db.getServiceByModelName(defaultServiceModelName);
+			}
 		}else{
 			serviceRecord = db.getServiceByModelUUID(modelInfo.getModelVersionId()); // ModelVersionId is not required in v3
 			if(serviceRecord == null) {
@@ -778,12 +782,16 @@ public class ServiceInstances {
 		RequestParameters reqParam = msoRequest.getServiceInstancesRequest().getRequestDetails().getRequestParameters();
 		if(reqParam!=null && reqParam.isaLaCarteSet() && recipe==null){
 			return null;
-		}else if (recipe == null) {  //aLaCarte wasn't sent, so we'll try the default
-			serviceRecord = db.getServiceByModelName(defaultServiceModelName);
-			recipe = db.getServiceRecipeByModelUUID(serviceRecord.getModelUUID(), action.name());
 		}
 
-		if(modelInfo.getModelVersionId() == null) {	
+		//aLaCarte wasn't sent, so we'll try the default
+		serviceRecord = db.getServiceByModelName(defaultSourceServiceModelName);
+		if (serviceRecord == null) {
+			serviceRecord = db.getServiceByModelName(defaultServiceModelName);
+		}
+
+		recipe = db.getServiceRecipeByModelUUID(serviceRecord.getModelUUID(), action.name());
+		if(modelInfo.getModelVersionId() == null) {
 			modelInfo.setModelVersionId(serviceRecord.getModelUUID());
 		}
 		if(recipe==null){
