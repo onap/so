@@ -22,18 +22,15 @@ package org.openecomp.mso.adapter_utils.tests;
 
 import static org.junit.Assert.assertTrue;
 
-import com.woorea.openstack.heat.model.Stack;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.Test;
 import org.openecomp.mso.entity.MsoRequest;
-import org.openecomp.mso.openstack.beans.HeatStatus;
 import org.openecomp.mso.openstack.beans.MsoTenant;
 import org.openecomp.mso.openstack.beans.NetworkRollback;
 import org.openecomp.mso.openstack.beans.Pool;
-import org.openecomp.mso.openstack.beans.StackInfo;
 import org.openecomp.mso.openstack.beans.Subnet;
 import org.openecomp.mso.openstack.beans.VnfRollback;
 
@@ -96,26 +93,6 @@ public class AdapterBeansTest {
 		p.setEnd("end");
 		p.getEnd();
 		p.toString();
-	}
-
-	@Test
-	public final void stackInfoTest() {
-		StackInfo stackInfo = new StackInfo();
-		new StackInfo(new Stack());
-		new StackInfo("name", HeatStatus.CREATED, "statusmessage", new HashMap<>());
-		new StackInfo("name", HeatStatus.CREATED);
-		stackInfo.setCanonicalName("Canonicalname");
-		stackInfo.getCanonicalName();
-		stackInfo.setName("name");
-		stackInfo.getName();
-		stackInfo.setOutputs(new HashMap<>());
-		stackInfo.getOutputs();
-		stackInfo.setParameters(new HashMap<>());
-		stackInfo.getParameters();
-		stackInfo.setStatus(HeatStatus.CREATED);
-		stackInfo.getStatus();
-		stackInfo.setStatusMessage("statusMessage");
-		stackInfo.getStatusMessage();
 	}
 
 	@Test
