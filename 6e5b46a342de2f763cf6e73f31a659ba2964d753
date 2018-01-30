@@ -93,6 +93,30 @@
       "revId": "6e5b46a342de2f763cf6e73f31a659ba2964d753",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f391f452",
+        "filename": "bpmn/MSOCoreBPMN/src/main/java/org/openecomp/mso/bpmn/core/json/DecomposeJsonUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2018-01-30T05:21:58Z",
+      "side": 1,
+      "message": "what do you think if we throw exception in previous implementation it will not bring much changes to existing code.",
+      "parentUuid": "5a93c517_0d00fd65",
+      "range": {
+        "startLine": 56,
+        "startChar": 4,
+        "endLine": 62,
+        "endChar": 5
+      },
+      "revId": "6e5b46a342de2f763cf6e73f31a659ba2964d753",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
