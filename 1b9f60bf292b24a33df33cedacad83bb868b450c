@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_d37dd81d",
+        "filename": "bpmn/MSOCoreBPMN/src/main/java/org/openecomp/mso/bpmn/core/domain/ServiceDecomposition.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2018-01-30T05:21:58Z",
+      "side": 0,
+      "message": "this is invoked in \"DecomposeService.groovy\". Could you please confirm.",
+      "range": {
+        "startLine": 84,
+        "startChar": 0,
+        "endLine": 102,
+        "endChar": 2
+      },
+      "revId": "1b9f60bf292b24a33df33cedacad83bb868b450c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
