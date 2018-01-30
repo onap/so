@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_6313e8b8",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/cloud/CloudConfig.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2018-01-30T09:08:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_632c4803",
+      "range": {
+        "startLine": 98,
+        "startChar": 0,
+        "endLine": 103,
+        "endChar": 9
+      },
+      "revId": "fe86585ac78229dcb7e44577763bfa4ab1feeffa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_23364053",
         "filename": "adapters/mso-vnf-adapter/src/main/java/org/openecomp/mso/adapters/vnf/MsoVnfAdapterImpl.java",
         "patchSetId": 7
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_03222401",
+        "filename": "adapters/mso-vnf-adapter/src/main/java/org/openecomp/mso/adapters/vnf/MsoVnfAdapterImpl.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 1712,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2018-01-30T09:08:35Z",
+      "side": 1,
+      "message": "It can be as well, but current solution is better, because lambda needs additional code (throwing exception handling, variables used in lambda expression should be final).",
+      "parentUuid": "5a93c517_23364053",
+      "range": {
+        "startLine": 1712,
+        "startChar": 20,
+        "endLine": 1712,
+        "endChar": 51
+      },
+      "revId": "fe86585ac78229dcb7e44577763bfa4ab1feeffa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_832f14f6",
         "filename": "adapters/mso-vnf-adapter/src/main/java/org/openecomp/mso/adapters/vnf/MsoVnfAdapterImpl.java",
         "patchSetId": 7
@@ -59,6 +107,30 @@
       "writtenOn": "2018-01-18T15:42:38Z",
       "side": 1,
       "message": "Something is wrong with indentation here",
+      "range": {
+        "startLine": 1723,
+        "startChar": 0,
+        "endLine": 1724,
+        "endChar": 101
+      },
+      "revId": "fe86585ac78229dcb7e44577763bfa4ab1feeffa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_a32010f8",
+        "filename": "adapters/mso-vnf-adapter/src/main/java/org/openecomp/mso/adapters/vnf/MsoVnfAdapterImpl.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 1724,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2018-01-30T09:08:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_832f14f6",
       "range": {
         "startLine": 1723,
         "startChar": 0,
