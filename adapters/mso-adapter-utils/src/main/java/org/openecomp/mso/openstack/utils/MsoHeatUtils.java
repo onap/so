@@ -648,7 +648,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
         } catch (MsoTenantNotFound e) {
             // Tenant doesn't exist, so stack doesn't either
             LOGGER.debug ("Tenant with id " + tenantId + "not found.", e);
-            return new StackInfo (stackName, HeatStatus.NOTFOUND, null, null);
+            return new StackInfo (stackName, HeatStatus.NOTFOUND);
         } catch (MsoException me) {
             // Got an Openstack error. Propagate it
             LOGGER.error (MessageEnum.RA_CONNECTION_EXCEPTION, "OpenStack", "Openstack Exception on Token request: " + me, "Openstack", "", MsoLogger.ErrorCode.AvailabilityError, "Connection Exception");
@@ -662,7 +662,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
 
         if (heatStack == null) {
             // Stack does not exist. Return a StackInfo with status NOTFOUND
-            StackInfo stackInfo = new StackInfo (stackName, HeatStatus.NOTFOUND, null, null);
+            StackInfo stackInfo = new StackInfo (stackName, HeatStatus.NOTFOUND);
             return stackInfo;
         }
 
@@ -712,7 +712,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
         } catch (MsoTenantNotFound e) {
             // Tenant doesn't exist, so stack doesn't either
             LOGGER.debug ("Tenant with id " + tenantId + "not found.", e);
-            return new StackInfo (stackName, HeatStatus.NOTFOUND, null, null);
+            return new StackInfo (stackName, HeatStatus.NOTFOUND);
         } catch (MsoException me) {
             // Got an Openstack error. Propagate it
             LOGGER.error (MessageEnum.RA_CONNECTION_EXCEPTION, "Openstack", "Openstack Exception on Token request: " + me, "Openstack", "", MsoLogger.ErrorCode.AvailabilityError, "Connection Exception");
@@ -724,7 +724,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
         Stack heatStack = queryHeatStack (heatClient, stackName);
         if (heatStack == null || "DELETE_COMPLETE".equals (heatStack.getStackStatus ())) {
             // Not found. Return a StackInfo with status NOTFOUND
-            return new StackInfo (stackName, HeatStatus.NOTFOUND, null, null);
+            return new StackInfo (stackName, HeatStatus.NOTFOUND);
         }
 
         // Delete the stack.
@@ -747,7 +747,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
         } catch (OpenStackResponseException e) {
             if (e.getStatus () == 404) {
                 // Not found. We are OK with this. Return a StackInfo with status NOTFOUND
-                return new StackInfo (stackName, HeatStatus.NOTFOUND, null, null);
+                return new StackInfo (stackName, HeatStatus.NOTFOUND);
             } else {
                 // Convert the OpenStackResponseException to an MsoOpenstackException
                 throw heatExceptionToMsoException (e, DELETE_STACK);
@@ -813,7 +813,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
             }
 
             // The stack is gone when this point is reached
-            return new StackInfo (stackName, HeatStatus.NOTFOUND, null, null);
+            return new StackInfo (stackName, HeatStatus.NOTFOUND);
         }
 
         // Return the current status (if not polling, the delete may still be in progress)
