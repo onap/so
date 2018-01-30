@@ -21,40 +21,22 @@
 package org.openecomp.mso.adapters.vnf.test;
 
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Map;
-
 import javax.xml.ws.Holder;
-
-import mockit.Mock;
-import mockit.MockUp;
 import org.junit.Test;
 import org.openecomp.mso.adapters.vnf.MsoVnfAdapter;
 import org.openecomp.mso.adapters.vnf.MsoVnfAdapterImpl;
-import org.openecomp.mso.openstack.beans.HeatStatus;
-import org.openecomp.mso.openstack.beans.StackInfo;
-import org.openecomp.mso.openstack.beans.VnfStatus;
 import org.openecomp.mso.adapters.vnf.exceptions.VnfException;
-import org.openecomp.mso.openstack.exceptions.MsoCloudSiteNotFound;
-import org.openecomp.mso.openstack.exceptions.MsoException;
-import org.openecomp.mso.openstack.utils.MsoHeatUtils;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.openecomp.mso.openstack.beans.VnfStatus;
 
 public class QueryTest {
 
     @Test
     public void testQueryCreatedVnf() throws VnfException {
         {
-            new MockUp<MsoHeatUtils>() {
-                @Mock
-                public StackInfo queryStack(String cloudSiteId, String tenantId, String stackName) throws MsoException {
-                    StackInfo info = new StackInfo();
-                    info.setStatus(HeatStatus.CREATED);
-                    return info;
-                }
-            };
-
             MsoVnfAdapter vnfAdapter = new MsoVnfAdapterImpl();
             String cloudId = "MT";
             String tenantId = "MSO_Test";
@@ -74,15 +56,6 @@ public class QueryTest {
     @Test
     public void testQueryNotFoundVnf() throws VnfException {
         {
-            new MockUp<MsoHeatUtils>() {
-                @Mock
-                public StackInfo queryStack(String cloudSiteId, String tenantId, String stackName) throws MsoException {
-                    StackInfo info = new StackInfo();
-                    info.setStatus(HeatStatus.NOTFOUND);
-                    return info;
-                }
-            };
-
             MsoVnfAdapter vnfAdapter = new MsoVnfAdapterImpl();
             String cloudId = "MT";
             String tenantId = "MSO_Test";
@@ -102,13 +75,6 @@ public class QueryTest {
     @Test(expected = VnfException.class)
     public void testQueryVnfWithException() throws VnfException {
         {
-            new MockUp<MsoHeatUtils>() {
-                @Mock
-                public StackInfo queryStack(String cloudSiteId, String tenantId, String stackName) throws MsoException {
-                    throw new MsoCloudSiteNotFound(cloudSiteId);
-                }
-            };
-
             MsoVnfAdapter vnfAdapter = new MsoVnfAdapterImpl();
             String cloudId = "MT";
             String tenantId = "MSO_Test";
