@@ -22,6 +22,30 @@
       "revId": "1b9f60bf292b24a33df33cedacad83bb868b450c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0e28f332",
+        "filename": "bpmn/MSOCoreBPMN/src/main/java/org/openecomp/mso/bpmn/core/domain/ServiceDecomposition.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-01-30T10:31:02Z",
+      "side": 0,
+      "message": "DecompositeService.groovy is also changed in this patch, so it calls DecomposeJsonUtil.jsonToServiceDecomposition now.",
+      "parentUuid": "5a93c517_d37dd81d",
+      "range": {
+        "startLine": 84,
+        "startChar": 0,
+        "endLine": 102,
+        "endChar": 2
+      },
+      "revId": "1b9f60bf292b24a33df33cedacad83bb868b450c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
