@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_6d8d0131",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/utils/MsoHeatUtils.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 954,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2018-01-30T09:08:35Z",
+      "side": 0,
+      "message": "You comment on the wrong side, this is before my changes. I deleted the arguments from the comment (there was no description so there is no reason to keep them).",
+      "parentUuid": "5a93c517_a2e1d89b",
+      "range": {
+        "startLine": 953,
+        "startChar": 0,
+        "endLine": 954,
+        "endChar": 21
+      },
+      "revId": "b52a8c3ad952a185ce87195affbaea923afb8e41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_42f01467",
         "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/utils/MsoHeatUtils.java",
         "patchSetId": 8
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_0d847d0a",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/utils/MsoHeatUtils.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 1042,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2018-01-30T09:08:35Z",
+      "side": 0,
+      "message": "As above.",
+      "parentUuid": "5a93c517_42f01467",
+      "range": {
+        "startLine": 1041,
+        "startChar": 7,
+        "endLine": 1042,
+        "endChar": 21
+      },
+      "revId": "b52a8c3ad952a185ce87195affbaea923afb8e41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_2272a8e5",
         "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/utils/MsoNeutronUtils.java",
         "patchSetId": 8
@@ -59,6 +107,30 @@
       "writtenOn": "2018-01-29T08:28:54Z",
       "side": 0,
       "message": "should match with parameter name",
+      "range": {
+        "startLine": 443,
+        "startChar": 0,
+        "endLine": 445,
+        "endChar": 18
+      },
+      "revId": "b52a8c3ad952a185ce87195affbaea923afb8e41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_cd7d351e",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/utils/MsoNeutronUtils.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 445,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2018-01-30T09:08:35Z",
+      "side": 0,
+      "message": "You comment on the wrong side, this is before my changes. I deleted the arguments from the comment (there was no description so there is no reason to keep them).",
+      "parentUuid": "5a93c517_2272a8e5",
       "range": {
         "startLine": 443,
         "startChar": 0,
