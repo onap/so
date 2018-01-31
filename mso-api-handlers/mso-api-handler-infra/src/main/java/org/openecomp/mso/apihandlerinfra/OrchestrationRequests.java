@@ -160,7 +160,7 @@ public class OrchestrationRequests {
 
 			orchestrationList = new GetOrchestrationListResponse();
 
-			List<RequestList> requestLists = new ArrayList<RequestList>();
+			List<RequestList> requestLists = new ArrayList<>();
 
 			for (InfraActiveRequests infraActive : activeRequests) {
 
