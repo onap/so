@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_165c8924",
+        "filename": "bpmn/MSOCoreBPMN/src/main/java/org/openecomp/mso/bpmn/core/RollbackData.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2018-01-31T15:29:26Z",
+      "side": 1,
+      "message": "I would add class name but it is only my suggestion.",
+      "range": {
+        "startLine": 101,
+        "startChar": 4,
+        "endLine": 101,
+        "endChar": 5
+      },
+      "revId": "ebd504c48d03d25e5b77d9094f4baa31581ee0f1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f658fd33",
+        "filename": "bpmn/MSOCoreBPMN/src/test/java/org/openecomp/mso/bpmn/core/RollbackDataTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2018-01-31T15:29:26Z",
+      "side": 1,
+      "message": "Be consistent with modifier order.",
+      "range": {
+        "startLine": 34,
+        "startChar": 43,
+        "endLine": 34,
+        "endChar": 49
+      },
+      "revId": "ebd504c48d03d25e5b77d9094f4baa31581ee0f1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
