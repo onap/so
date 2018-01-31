@@ -482,6 +482,61 @@ public class GenericGetServiceTest extends WorkflowTest {
 		assertEquals(expectedWorkflowException, workflowException);
 	}
 
+    @Test
+    @Deployment(resources = {"subprocess/GenericGetService.bpmn"})
+    public void testGenericGetService_success_serviceInstance_byNameServicePresent() throws Exception{
+
+        MockNodeQueryServiceInstanceByName("1604-MVM-26", "GenericFlows/getSIUrlByNameMultiCustomer.xml");
+        MockGetServiceInstance("XyCorporation", "123456789", "MIS%252F1604%252F0026%252FSW_INTERNET", "GenericFlows/getServiceInstance.xml");
+
+        Map<String, String> variables = new HashMap<String, String>();
+        setVariablesInstance(variables, null, "1604-MVM-26", "XyCorporation", null);
+
+        WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericGetService", variables);
+        waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+
+        String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_SuccessIndicator");
+        String found = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_FoundIndicator");
+        String resourceLink = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_resourceLink");
+        String response = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "WorkflowResponse");
+        String workflowException = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "WorkflowException");
+        String siUrlResponseCode = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainSIUrlResponseCode");
+
+        assertEquals("true", successIndicator);
+        assertEquals("true", found);
+		assertNotNull(resourceLink);
+        assertNotNull(response);
+        assertEquals("200", siUrlResponseCode);
+        assertEquals(null, workflowException);
+    }
+
+	@Test
+	@Deployment(resources = {"subprocess/GenericGetService.bpmn"})
+	public void testGenericGetService_success_serviceInstance_byNameServiceNotPresent() throws Exception{
+
+		MockNodeQueryServiceInstanceByName("1604-MVM-26", "GenericFlows/getSIUrlByNameMultiCustomer.xml");
+		MockGetServiceInstance("CorporationNotPresent", "123456789", "MIS%252F1604%252F0026%252FSW_INTERNET", "GenericFlows/getServiceInstance.xml");
+
+		Map<String, String> variables = new HashMap<String, String>();
+		setVariablesInstance(variables, null, "1604-MVM-26", "CorporationNotPresent", null);
+
+		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericGetService", variables);
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+
+		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_SuccessIndicator");
+		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_FoundIndicator");
+		String resourceLink = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_resourceLink");
+		String response = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "WorkflowResponse");
+		String workflowException = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "WorkflowException");
+		String siUrlResponseCode = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainSIUrlResponseCode");
+
+		assertEquals("true", successIndicator);
+		assertEquals("false", found);
+		assertEquals(null, resourceLink);
+		assertEquals("  ", response);
+		assertEquals("200", siUrlResponseCode);
+		assertEquals(null, workflowException);
+	}
 
 	private void setVariablesInstance(Map<String, String> variables, String siId, String siName, String globalCustId, String serviceType) {
 		variables.put("isDebugLogEnabled", "true");

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<search-results xmlns="http://org.openecomp.aai.inventory/v11">
+    <result-data>
+        <resource-type>service-instance</resource-type>
+        <resource-link>/aai/v11/business/customers/customer/AbcBank/service-subscriptions/service-subscription/ABC-ST/service-instances/service-instance/MIS%252F1604%252F0026%252FSW_INTERNET</resource-link>
+    </result-data>
+    <result-data>
+        <resource-type>service-instance</resource-type>
+        <resource-link>/aai/v11/business/customers/customer/XyCorporation/service-subscriptions/service-subscription/XY-ST/service-instances/service-instance/MIS%252F1604%252F0026%252FSW_INTERNET</resource-link>
+    </result-data>
+</search-results>
