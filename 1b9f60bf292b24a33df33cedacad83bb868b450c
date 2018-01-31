@@ -46,6 +46,30 @@
       "revId": "1b9f60bf292b24a33df33cedacad83bb868b450c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_c573c9e5",
+        "filename": "bpmn/MSOCoreBPMN/src/main/java/org/openecomp/mso/bpmn/core/domain/ServiceDecomposition.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2018-01-31T05:22:54Z",
+      "side": 0,
+      "message": "thanks..my bad.",
+      "parentUuid": "5a93c517_0e28f332",
+      "range": {
+        "startLine": 84,
+        "startChar": 0,
+        "endLine": 102,
+        "endChar": 2
+      },
+      "revId": "1b9f60bf292b24a33df33cedacad83bb868b450c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
