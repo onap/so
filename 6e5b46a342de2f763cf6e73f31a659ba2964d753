@@ -141,6 +141,30 @@
       "revId": "6e5b46a342de2f763cf6e73f31a659ba2964d753",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_e545a570",
+        "filename": "bpmn/MSOCoreBPMN/src/main/java/org/openecomp/mso/bpmn/core/json/DecomposeJsonUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2018-01-31T05:22:54Z",
+      "side": 1,
+      "message": "okay.",
+      "parentUuid": "5a93c517_4ebcbbdc",
+      "range": {
+        "startLine": 56,
+        "startChar": 4,
+        "endLine": 62,
+        "endChar": 5
+      },
+      "revId": "6e5b46a342de2f763cf6e73f31a659ba2964d753",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
