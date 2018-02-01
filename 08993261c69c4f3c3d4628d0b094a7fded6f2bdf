@@ -70,6 +70,30 @@
       "revId": "08993261c69c4f3c3d4628d0b094a7fded6f2bdf",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ecd26ad1",
+        "filename": "adapters/mso-adapters-rest-interface/src/main/java/org/openecomp/mso/adapters/nwrest/NetworkRequestCommon.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2018-02-01T12:16:28Z",
+      "side": 0,
+      "message": "I feel like previous inheritance is convincing.\n\n\nAs per your suggestion inheritance looks like:\nNetworkMessageCommon \u003c- NetworkMessageReq\n\n\nSo XXXRequest classes will extend NetworkMessageReq and XXXResponse classes will extend NetworkMessageCommon, it gives me feeling that why NetworkMessageResponse does not exist. Should we assume for NetworkMessageCommon is type for XXXResponse classes.\n\n\nCan we reuse NetworkMessageCommon in future for XXXResponse class without affecting the functionality of NetworkMessageReq.",
+      "parentUuid": "5a93c517_cd0d3540",
+      "range": {
+        "startLine": 38,
+        "startChar": 0,
+        "endLine": 38,
+        "endChar": 44
+      },
+      "revId": "08993261c69c4f3c3d4628d0b094a7fded6f2bdf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
