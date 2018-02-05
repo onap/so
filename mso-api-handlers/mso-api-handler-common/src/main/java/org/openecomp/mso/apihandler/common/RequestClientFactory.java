@@ -21,14 +21,15 @@
 package org.openecomp.mso.apihandler.common;
 
 
-import java.util.Properties;
-
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import org.openecomp.mso.properties.MsoJavaProperties;
 
 public class RequestClientFactory {
-	
+
+    private RequestClientFactory() {
+    }
+
 	//based on URI, returns BPEL, CamundaTask or Camunda client
 	public static RequestClient getRequestClient(String orchestrationURI, MsoJavaProperties props) throws IllegalStateException{
 		RequestClient retClient;

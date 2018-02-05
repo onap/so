@@ -36,6 +36,7 @@ import java.io.IOException;
 
 public class CamundaClient extends RequestClient{
 	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.APIH);
+	private static final String CAMUNDA_URL_MESAGE = "Camunda url is: ";
 
 	public CamundaClient() {
 		super(CommonConstants.CAMUNDA);
@@ -47,13 +48,13 @@ public class CamundaClient extends RequestClient{
 			String requestTimeout, String schemaVersion, String serviceInstanceId, String action)
 					throws ClientProtocolException, IOException{
 		HttpPost post = new HttpPost(url);
-		msoLogger.debug("Camunda url is: "+ url);
+		msoLogger.debug(CAMUNDA_URL_MESAGE + url);
 		String jsonReq = wrapRequest(camundaReqXML, requestId, serviceInstanceId, requestTimeout,  schemaVersion);
 
 		StringEntity input = new StringEntity(jsonReq);
 		input.setContentType(CommonConstants.CONTENT_TYPE_JSON);
 
-		String encryptedCredentials = null;
+		String encryptedCredentials;
 		if(props!=null){
 			encryptedCredentials = props.getProperty(CommonConstants.CAMUNDA_AUTH,null);
 			if(encryptedCredentials != null){
@@ -65,22 +66,18 @@ public class CamundaClient extends RequestClient{
 		}
 
 		post.setEntity(input);
-		HttpResponse response = client.execute(post);
-
-		return response;
+        return client.execute(post);
 	}
 
 	@Override
-	public HttpResponse post(String jsonReq)
-					throws ClientProtocolException, IOException{
+	public HttpResponse post(String jsonReq) throws ClientProtocolException, IOException{
 		HttpPost post = new HttpPost(url);
-		msoLogger.debug("Camunda url is: "+ url);
-		//String jsonReq = wrapRequest(camundaReqXML, requestId, serviceInstanceId, requestTimeout,  schemaVersion);
+		msoLogger.debug(CAMUNDA_URL_MESAGE + url);
 
 		StringEntity input = new StringEntity(jsonReq);
 		input.setContentType(CommonConstants.CONTENT_TYPE_JSON);
 
-		String encryptedCredentials = null;
+		String encryptedCredentials;
 		if(props!=null){
 			encryptedCredentials = props.getProperty(CommonConstants.CAMUNDA_AUTH,null);
 			if(encryptedCredentials != null){
@@ -92,9 +89,8 @@ public class CamundaClient extends RequestClient{
 		}
 
 		post.setEntity(input);
-		HttpResponse response = client.execute(post);
 
-		return response;
+        return client.execute(post);
 	}
 
 	@Override
@@ -105,7 +101,7 @@ public class CamundaClient extends RequestClient{
 			String requestDetails)
 					throws ClientProtocolException, IOException{
 		HttpPost post = new HttpPost(url);
-		msoLogger.debug("Camunda url is: "+ url);
+		msoLogger.debug(CAMUNDA_URL_MESAGE + url);
 		String jsonReq = wrapVIDRequest(requestId, isBaseVfModule, recipeTimeout, requestAction,
 				serviceInstanceId, vnfId, vfModuleId, volumeGroupId, networkId,
 				serviceType, vnfType, vfModuleType, networkType, requestDetails);
@@ -113,7 +109,7 @@ public class CamundaClient extends RequestClient{
 		StringEntity input = new StringEntity(jsonReq);
 		input.setContentType(CommonConstants.CONTENT_TYPE_JSON);
 
-		String encryptedCredentials = null;
+		String encryptedCredentials;
 		if(props!=null){
 			encryptedCredentials = props.getProperty(CommonConstants.CAMUNDA_AUTH,null);
 			if(encryptedCredentials != null){
@@ -125,9 +121,8 @@ public class CamundaClient extends RequestClient{
 		}
 
 		post.setEntity(input);
-		HttpResponse response = client.execute(post);
 
-		return response;
+        return client.execute(post);
 	}
 	
 	@Override

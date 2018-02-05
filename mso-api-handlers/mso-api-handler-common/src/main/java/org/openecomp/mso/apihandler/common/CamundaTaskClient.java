@@ -20,19 +20,14 @@
 
 package org.openecomp.mso.apihandler.common;
 
-import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
 
 import javax.xml.bind.DatatypeConverter;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.IOException;
 
 public class CamundaTaskClient extends RequestClient{
@@ -63,9 +58,7 @@ public class CamundaTaskClient extends RequestClient{
 		}
 
 		post.setEntity(input);
-		HttpResponse response = client.execute(post);
-
-		return response;
+		return client.execute(post);
 	}
 	
 	@Override
@@ -88,8 +81,7 @@ public class CamundaTaskClient extends RequestClient{
 	}
 	
 	@Override
-	public HttpResponse get()
-			throws ClientProtocolException, IOException{
+	public HttpResponse get() throws ClientProtocolException, IOException{
 		HttpGet get = new HttpGet(url);
 		msoLogger.debug("Camunda Task url is: "+ url);	
 		String encryptedCredentials;
@@ -103,12 +95,7 @@ public class CamundaTaskClient extends RequestClient{
 			}
 		}
 		
-		HttpResponse getResponse = client.execute(get);	
-
-		return getResponse;
-}
-	
-	
-
+		return client.execute(get);
+	}
 
 }
