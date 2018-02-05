@@ -115,14 +115,11 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
 
     protected String httpPost(String url, HttpPost httpPost) throws RouteException {
         logger.info("AbstractSdncOperationTask.httpPost begin!");
-        CloseableHttpClient httpClient = HttpClients.createDefault();
         String result = null;
-        boolean var15 = false;
 
         String errorMsg;
         label91: {
-            try {
-                var15 = true;
+            try(CloseableHttpClient httpClient = HttpClients.createDefault()) {
                 CloseableHttpResponse closeableHttpResponse = httpClient.execute(httpPost);
                 result = EntityUtils.toString(closeableHttpResponse.getEntity());
                 logger.info("result = {}", result);
@@ -133,42 +130,14 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
                 }
 
                 closeableHttpResponse.close();
-                var15 = false;
                 break label91;
-            } catch (IOException var19) {
+            } catch (IOException var15) {
                 errorMsg = url + ":httpPostWithJSON connect faild";
                 logger.info("exception: POST_CONNECT_FAILD : {}", errorMsg);
-                throwsRouteException(errorMsg, var19, "POST_CONNECT_FAILD");
-                var15 = false;
-            } finally {
-                if(var15) {
-                    try {
-                        httpClient.close();
-                    } catch (IOException var16) {
-                        String errorMsg1 = url + ":close  httpClient faild";
-                        logger.info("exception: CLOSE_CONNECT_FAILD : {}", errorMsg1);
-                        throwsRouteException(errorMsg1, var16, "CLOSE_CONNECT_FAILD");
-                    }
-
-                }
-            }
-
-            try {
-                httpClient.close();
-            } catch (IOException var17) {
-                errorMsg = url + ":close  httpClient faild";
-                logger.info("exception: CLOSE_CONNECT_FAILD : {}", errorMsg);
-                throwsRouteException(errorMsg, var17, "CLOSE_CONNECT_FAILD");
+                throwsRouteException(errorMsg, var15, "POST_CONNECT_FAILD");
             }
         }
 
-        try {
-            httpClient.close();
-        } catch (IOException var18) {
-            errorMsg = url + ":close  httpClient faild";
-            logger.info("exception: CLOSE_CONNECT_FAILD : {}", errorMsg);
-            throwsRouteException(errorMsg, var18, "CLOSE_CONNECT_FAILD");
-        }
         logger.info("AbstractSdncOperationTask.httpPost end!");
         return result;
     }
@@ -223,78 +192,27 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
 
     private String httpGet(String url, HttpGet httpGet) throws RouteException {
         logger.info("AbstractSdncOperationTask.httpGet begin!");
-        boolean var16 = false;
-        CloseableHttpClient httpClient = HttpClients.createDefault();
         String result = "";
         String errorMsg;
-        label109:
-        {
-            label110:
-            {
-                try {
-                    var16 = true;
-                    CloseableHttpResponse e = httpClient.execute(httpGet);
-                    result = EntityUtils.toString(e.getEntity());
-                    logger.info("result = {}", result);
-                    if (e.getStatusLine().getStatusCode() != 200) {
-                        logger.info("exception: fail for status code = {}", e.getStatusLine().getStatusCode());
+        try(CloseableHttpClient httpClient = HttpClients.createDefault()) {
+		    CloseableHttpResponse e = httpClient.execute(httpGet);
+		    result = EntityUtils.toString(e.getEntity());
+		    logger.info("result = {}", result);
+		if (e.getStatusLine().getStatusCode() != 200) {
+			logger.info("exception: fail for status code = {}", e.getStatusLine().getStatusCode());
                         throw new RouteException(result, "SERVICE_GET_ERR");
                     }
-
                     e.close();
-                    var16 = false;
-                    break label110;
-                } catch (ClientProtocolException var21) {
-                    errorMsg = url + ":httpGetWithJSON connect faild";
-                    logger.info("exception: GET_CONNECT_FAILD {}", errorMsg);
-                    throwsRouteException(errorMsg, var21, "GET_CONNECT_FAILD");
-                    var16 = false;
-                } catch (IOException var22) {
-                    errorMsg = url + ":httpGetWithJSON connect faild";
-                    logger.info("exception: GET_CONNECT_FAILD {}", errorMsg);
-                    throwsRouteException(errorMsg, var22, "GET_CONNECT_FAILD");
-                    var16 = false;
-                    break label109;
-                } finally {
-                    if (var16) {
-                        try {
-                            httpClient.close();
-                        } catch (IOException var17) {
-                            String errorMsg1 = url + ":close  httpClient faild";
-                            logger.info("exception: CLOSE_CONNECT_FAILD {}", errorMsg1);
-                            throwsRouteException(errorMsg1, var17, "CLOSE_CONNECT_FAILD");
-                        }
+	    } catch (ClientProtocolException var16) {
+		    errorMsg = url + ":httpGetWithJSON connect faild";
+		    logger.info("exception: GET_CONNECT_FAILD {}", errorMsg);
+		    throwsRouteException(errorMsg, var16, "GET_CONNECT_FAILD");
+	    } catch (IOException var17) {
+		    errorMsg = url + ":httpGetWithJSON connect faild";
+		    logger.info("exception: GET_CONNECT_FAILD {}", errorMsg);
+		    throwsRouteException(errorMsg, var17, "GET_CONNECT_FAILD");
+	    }
 
-                    }
-                }
-
-                try {
-                    httpClient.close();
-                } catch (IOException var19) {
-                    errorMsg = url + ":close  httpClient faild";
-                    logger.info("exception: CLOSE_CONNECT_FAILD {}", errorMsg);
-                    throwsRouteException(errorMsg, var19, "CLOSE_CONNECT_FAILD");
-                }
-
-            }
-
-            try {
-                httpClient.close();
-            } catch (IOException var20) {
-                errorMsg = url + ":close  httpClient faild";
-                logger.info("exception: CLOSE_CONNECT_FAILD {}", errorMsg);
-                throwsRouteException(errorMsg, var20, "CLOSE_CONNECT_FAILD");
-            }
-
-        }
-
-        try {
-            httpClient.close();
-        } catch (IOException var18) {
-            errorMsg = url + ":close  httpClient faild";
-            logger.info("exception: CLOSE_CONNECT_FAILD {}", errorMsg);
-            throwsRouteException(errorMsg, var18, "CLOSE_CONNECT_FAILD");
-        }
         logger.info("AbstractSdncOperationTask.httpGet end!");
         return result;
     }
