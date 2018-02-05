@@ -41,6 +41,7 @@ public class ResponseHandler {
 	private HttpResponse httpResponse;
 	private int type;
 	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.APIH);
+    private static final String RESPONSE_BODY_MSG = "response body is: ";
 
 	public ResponseHandler(HttpResponse httpResponse, int type) {
 		this.httpResponse = httpResponse;
@@ -84,7 +85,7 @@ public class ResponseHandler {
 			if(response!=null){
 				responseBody = response.getResponse();
 			}
-			msoLogger.debug("response body is: " + responseBody);
+			msoLogger.debug(RESPONSE_BODY_MSG + responseBody);
 			
 		
 		if(status!=HttpStatus.SC_ACCEPTED){
@@ -99,7 +100,7 @@ public class ResponseHandler {
 		try {
 			if (bpelEntity!=null) {
 				responseBody = EntityUtils.toString(bpelEntity);
-				msoLogger.debug("response body is: " + responseBody);
+				msoLogger.debug(RESPONSE_BODY_MSG + responseBody);
 
 			}
 			if(status!=HttpStatus.SC_ACCEPTED){
@@ -118,7 +119,7 @@ public class ResponseHandler {
 		try {
 			if (camundataskEntity!=null) {
 				responseBody = EntityUtils.toString(camundataskEntity);
-				msoLogger.debug("response body is: " + responseBody);
+				msoLogger.debug(RESPONSE_BODY_MSG + responseBody);
 
 			}
 			if(status!=HttpStatus.SC_NO_CONTENT && status != HttpStatus.SC_ACCEPTED){

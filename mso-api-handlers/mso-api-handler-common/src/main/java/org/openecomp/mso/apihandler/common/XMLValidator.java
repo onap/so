@@ -40,14 +40,14 @@ import org.openecomp.mso.logger.MsoLogger;
 
 public class XMLValidator {
 
-    private static String XSDS_PATH;
+    private static String xsdspath;
 
     static {
         String prefixMsoPropertiesPath = System.getProperty ("mso.config.path");
         if (prefixMsoPropertiesPath == null) {
             prefixMsoPropertiesPath = "";
         }
-        XSDS_PATH = prefixMsoPropertiesPath + "xsds/";
+        xsdspath = prefixMsoPropertiesPath + "xsds/";
     }
 
     private String stringXsd;
@@ -60,12 +60,12 @@ public class XMLValidator {
 
     public XMLValidator (String xsdFile) {
 
-        try (FileInputStream xsdStream = new FileInputStream (XSDS_PATH + xsdFile)) {
+        try (FileInputStream xsdStream = new FileInputStream (xsdspath + xsdFile)) {
 
             stringXsd = IOUtils.toString (xsdStream);
 
             factory = SchemaFactory.newInstance (XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            factory.setResourceResolver (new PathResourceResolver (XSDS_PATH));
+            factory.setResourceResolver (new PathResourceResolver (xsdspath));
             factory.setFeature (XMLConstants.FEATURE_SECURE_PROCESSING, true);
 
             String quotedXsd = stringXsd.replaceAll ("&#34;", "\"");
@@ -73,7 +73,7 @@ public class XMLValidator {
             schema = factory.newSchema (src);
 
         } catch (IOException | SAXException e) {
-            msoLogger.debug ("Cannot open file " + XSDS_PATH + xsdFile, e);
+            msoLogger.debug ("Cannot open file " + xsdspath + xsdFile, e);
             errorMsg = "ErrorDetails: xsd file " + xsdFile + "could not be opened - " + e.getMessage ();
         }
     }

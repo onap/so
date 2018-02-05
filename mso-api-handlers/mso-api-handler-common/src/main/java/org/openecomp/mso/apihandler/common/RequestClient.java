@@ -22,7 +22,6 @@ package org.openecomp.mso.apihandler.common;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.Properties;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -83,16 +82,11 @@ public abstract class RequestClient {
 	
 	protected String getEncryptedPropValue (String prop, String defaultValue, String encryptionKey) {
 		 try {
-			 String result = CryptoUtils.decrypt(prop, encryptionKey);
-			 return result;
+			 return CryptoUtils.decrypt(prop, encryptionKey);
 		 }	
 		 catch (GeneralSecurityException e) {
 			 msoLogger.debug("Security exception", e);
 		 }
 		 return defaultValue;
 	 }
-
-	
-
-
 }
