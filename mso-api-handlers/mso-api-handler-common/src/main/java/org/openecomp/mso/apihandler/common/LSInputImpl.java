@@ -37,9 +37,6 @@ public class LSInputImpl implements LSInput {
     protected String fEncoding;
     protected boolean fCertifiedText;
 
-    public LSInputImpl () {
-    }
-
     @Override
     public InputStream getByteStream () {
         return fByteStream;
