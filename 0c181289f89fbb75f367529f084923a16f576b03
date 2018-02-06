@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_060a09d2",
+        "filename": "mso-api-handlers/mso-api-handler-common/src/main/java/org/openecomp/mso/apihandler/common/ErrorNumbers.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-02-06T19:37:17Z",
+      "side": 1,
+      "message": "Subhash, the sonar solution is asking for an empty constructor in this situation. It sees this class as a utility class (all static members) which is not meant to be instantiated. See https://sonar.onap.org/coding_rules#rule_key\u003dsquid%3AS1118\nand https://sonar.onap.org/issues/search#issues\u003dAV3BntKc5bp_wwmIVCMJ",
+      "parentUuid": "5a93c517_1087a362",
+      "range": {
+        "startLine": 25,
+        "startChar": 4,
+        "endLine": 26,
+        "endChar": 5
+      },
+      "revId": "0c181289f89fbb75f367529f084923a16f576b03",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_9092d39d",
         "filename": "mso-api-handlers/mso-api-handler-common/src/main/java/org/openecomp/mso/apihandler/common/RequestClientFactory.java",
         "patchSetId": 1
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_a610f501",
+        "filename": "mso-api-handlers/mso-api-handler-common/src/main/java/org/openecomp/mso/apihandler/common/RequestClientFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-02-06T19:37:17Z",
+      "side": 1,
+      "message": "See other comment.",
+      "parentUuid": "5a93c517_9092d39d",
+      "range": {
+        "startLine": 30,
+        "startChar": 4,
+        "endLine": 31,
+        "endChar": 2
+      },
+      "revId": "0c181289f89fbb75f367529f084923a16f576b03",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_f0ea370e",
         "filename": "mso-api-handlers/mso-api-handler-common/src/main/java/org/openecomp/mso/apihandler/common/XMLValidator.java",
         "patchSetId": 1
@@ -59,6 +107,30 @@
       "writtenOn": "2018-02-06T12:04:09Z",
       "side": 1,
       "message": "Static member should be in capital.",
+      "range": {
+        "startLine": 43,
+        "startChar": 26,
+        "endLine": 43,
+        "endChar": 34
+      },
+      "revId": "0c181289f89fbb75f367529f084923a16f576b03",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_2604e5be",
+        "filename": "mso-api-handlers/mso-api-handler-common/src/main/java/org/openecomp/mso/apihandler/common/XMLValidator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-02-06T19:37:17Z",
+      "side": 1,
+      "message": "I don\u0027t think this should be capital as it is not literally a constant (no \u0027static final\u0027). It should however be lowerCamelCase so \u0027xsdsPath\u0027.\n\nSee https://google.github.io/styleguide/javaguide.html#s5.2.4-constant-names and\nhttps://google.github.io/styleguide/javaguide.html#s5.2.5-non-constant-field-names",
+      "parentUuid": "5a93c517_f0ea370e",
       "range": {
         "startLine": 43,
         "startChar": 26,
