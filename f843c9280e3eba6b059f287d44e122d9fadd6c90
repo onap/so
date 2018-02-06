@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_d0f7fbf3",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/openecomp/mso/client/appc/ApplicationControllerClient.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2018-02-06T12:09:29Z",
+      "side": 1,
+      "message": "please put space between exception.\n\ncan we think of some generic exception instead of declaring multiple types of exception, which can be handled with one exception type by invoking statement.",
+      "range": {
+        "startLine": 79,
+        "startChar": 50,
+        "endLine": 79,
+        "endChar": 51
+      },
+      "revId": "f843c9280e3eba6b059f287d44e122d9fadd6c90",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
