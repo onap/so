@@ -76,7 +76,7 @@ public class ApplicationControllerClient {
 	private LifeCycleManagerStateful client;
 
 	public Status runCommand(Action action, ActionIdentifiers identifier, Flags flags, Payload payload,
-			String requestID) throws Exception {
+			String requestID) throws IllegalAccessException,NoSuchMethodException,AppcClientException,JsonProcessingException,InvocationTargetException {
 		Object requestObject = createRequest(action, identifier, flags, payload, requestID);
 		client = getAppCClient();
 		Method lcmMethod = appCSupport.getAPIMethod(action.name(), client, false);
@@ -118,7 +118,7 @@ public class ApplicationControllerClient {
 	}
 
 	public Object createRequest(Action action, ActionIdentifiers identifier, Flags flags, Payload payload,
-			String requestId) throws Exception {
+			String requestId) throws IllegalAccessException,NoSuchMethodException,InvocationTargetException {
 		Object requestObject = appCSupport.getInput(action.name());
 		try {
 			org.openecomp.appc.client.lcm.model.CommonHeader commonHeader = buildCommonHeader(requestId);
@@ -129,7 +129,7 @@ public class ApplicationControllerClient {
 					.invoke(requestObject, identifier);
 		} catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
 		    LOGGER.debug("Exception:", e);
-			throw new Exception("Error Building AppC Request: " + e.getMessage());
+			throw new IllegalAccessException("Error Building AppC Request: " + e.getMessage());
 		}
 		return requestObject;
 	}
