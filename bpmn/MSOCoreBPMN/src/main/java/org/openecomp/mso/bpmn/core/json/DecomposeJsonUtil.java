@@ -20,139 +20,102 @@
 
 package org.openecomp.mso.bpmn.core.json;
 
-import java.io.Serializable;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
-
-
 import org.openecomp.mso.bpmn.core.domain.AllottedResource;
 import org.openecomp.mso.bpmn.core.domain.NetworkResource;
 import org.openecomp.mso.bpmn.core.domain.ServiceDecomposition;
+import org.openecomp.mso.bpmn.core.domain.ServiceInstance;
 import org.openecomp.mso.bpmn.core.domain.VnfResource;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+public class DecomposeJsonUtil {
 
-import org.openecomp.mso.logger.MsoLogger;
+    private static final ObjectMapper OBJECT_MAPPER = createObjectMapper();
 
-public class DecomposeJsonUtil implements Serializable {
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    private DecomposeJsonUtil() {
+    }
 
-	/**
-	 * Method to construct Service Decomposition object converting
-	 * JSON structure
-	 * 
-	 * @param jsonString - input in JSON format confirming ServiceDecomposition
-	 * @return - ServiceDecomposition object
-	 * @throws IOException 
-	 * @throws JsonMappingException 
-	 * @throws JsonParseException 
-	 */
-	public static ServiceDecomposition JsonToServiceDecomposition(String jsonString) {
-        
-        ServiceDecomposition serviceDecomposition = new ServiceDecomposition();
+    private static ObjectMapper createObjectMapper() {
         ObjectMapper om = new ObjectMapper();
         om.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
-       
-		try {
-			serviceDecomposition = om.readValue(jsonString, ServiceDecomposition.class);
-		} catch (JsonParseException e) {
-			LOGGER.debug("JsonParseException :",e);
-		} catch (JsonMappingException e) {
-			LOGGER.debug("JsonMappingException :",e);
-		} catch (IOException e) {
-			LOGGER.debug("IOException :",e);
-		}
-		
-		return serviceDecomposition;
-	}
-	
-	/**
-	 * Method to construct Resource Decomposition object converting
-	 * JSON structure
-	 * 
-	 * @param jsonString - input in JSON format confirming ResourceDecomposition
-	 * @return - ServiceDecomposition object
-	 * @throws IOException 
-	 * @throws JsonMappingException 
-	 * @throws JsonParseException 
-	 */
-	public static VnfResource JsonToVnfResource(String jsonString) {
-        
-        VnfResource vnfResource = new VnfResource();
-        ObjectMapper om = new ObjectMapper();
-        om.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
-       
-		try {
-			vnfResource = om.readValue(jsonString, VnfResource.class);
-		} catch (JsonParseException e) {
-			LOGGER.debug("JsonParseException :",e);
-		} catch (JsonMappingException e) {
-			LOGGER.debug("JsonMappingException :",e);
-		} catch (IOException e) {
-			LOGGER.debug("IOException :",e);
-		}
-		return vnfResource;
-	}
-	
-	/**
-	 * Method to construct Resource Decomposition object converting
-	 * JSON structure
-	 * 
-	 * @param jsonString - input in JSON format confirming ResourceDecomposition
-	 * @return - ServiceDecomposition object
-	 * @throws IOException 
-	 * @throws JsonMappingException 
-	 * @throws JsonParseException 
-	 */
-	public static NetworkResource JsonToNetworkResource(String jsonString) {
-        
-        NetworkResource networkResource = new NetworkResource();
-        ObjectMapper om = new ObjectMapper();
-        om.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
-       
-		try {
-			networkResource = om.readValue(jsonString, NetworkResource.class);
-		} catch (JsonParseException e) {
-			LOGGER.debug("Exception :",e);
-		} catch (JsonMappingException e) {
-			LOGGER.debug("Exception :",e);
-		} catch (IOException e) {
-			LOGGER.debug("Exception :",e);
-		}
-		return networkResource;
-	}
-	
-	/**
-	 * Method to construct Resource Decomposition object converting
-	 * JSON structure
-	 * 
-	 * @param jsonString - input in JSON format confirming ResourceDecomposition
-	 * @return - ServiceDecomposition object
-	 * @throws IOException 
-	 * @throws JsonMappingException 
-	 * @throws JsonParseException 
-	 */
-	public static AllottedResource JsonToAllottedResource(String jsonString) {
-        
-		AllottedResource allottedResource = new AllottedResource();
-        ObjectMapper om = new ObjectMapper();
-        om.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
-       
-		try {
-			allottedResource = om.readValue(jsonString, AllottedResource.class);
-		} catch (JsonParseException e) {
-			LOGGER.debug("Exception :",e);
-		} catch (JsonMappingException e) {
-			LOGGER.debug("Exception :",e);
-		} catch (IOException e) {
-			LOGGER.debug("Exception :",e);
-		}
-		return allottedResource;
-	}
+        return om;
+    }
+
+    /**
+     * Method to construct Service Decomposition object converting JSON structure
+     *
+     * @param jsonString input in JSON format confirming ServiceDecomposition
+     * @return decoded object
+     * @throws JsonDecomposingException thrown when decoding json fails
+     */
+    public static ServiceDecomposition jsonToServiceDecomposition(String jsonString) throws JsonDecomposingException {
+        try {
+            return OBJECT_MAPPER.readValue(jsonString, ServiceDecomposition.class);
+        } catch (IOException e) {
+            throw new JsonDecomposingException("Exception while converting json to service decomposition", e);
+        }
+    }
+
+    /**
+     * Method to construct Service Decomposition object converting JSON structure
+     *
+     * @param jsonString input in JSON format confirming ServiceDecomposition
+     * @param serviceInstanceId service instance id to be put in decoded ServiceDecomposition
+     * @return decoded object
+     * @throws JsonDecomposingException thrown when decoding json fails
+     */
+    public static ServiceDecomposition jsonToServiceDecomposition(String jsonString, String serviceInstanceId)
+            throws JsonDecomposingException {
+        ServiceDecomposition serviceDecomposition = jsonToServiceDecomposition(jsonString);
+        ServiceInstance serviceInstance = new ServiceInstance();
+        serviceInstance.setInstanceId(serviceInstanceId);
+        serviceDecomposition.setServiceInstance(serviceInstance);
+        return serviceDecomposition;
+    }
+
+    /**
+     * Method to construct Resource Decomposition object converting JSON structure
+     *
+     * @param jsonString input in JSON format confirming ResourceDecomposition
+     * @return decoded object
+     * @throws JsonDecomposingException thrown when decoding json fails
+     */
+    public static VnfResource jsonToVnfResource(String jsonString) throws JsonDecomposingException {
+        try {
+            return OBJECT_MAPPER.readValue(jsonString, VnfResource.class);
+        } catch (IOException e) {
+            throw new JsonDecomposingException("Exception while converting json to vnf resource", e);
+        }
+    }
+
+    /**
+     * Method to construct Resource Decomposition object converting JSON structure
+     *
+     * @param jsonString input in JSON format confirming ResourceDecomposition
+     * @return decoded object
+     * @throws JsonDecomposingException thrown when decoding json fails
+     */
+    public static NetworkResource jsonToNetworkResource(String jsonString) throws JsonDecomposingException {
+        try {
+            return OBJECT_MAPPER.readValue(jsonString, NetworkResource.class);
+        } catch (IOException e) {
+            throw new JsonDecomposingException("Exception while converting json to network resource", e);
+        }
+    }
+
+    /**
+     * Method to construct Resource Decomposition object converting JSON structure
+     *
+     * @param jsonString - input in JSON format confirming ResourceDecomposition
+     * @return decoded object
+     * @throws JsonDecomposingException thrown when decoding json fails
+     */
+    public static AllottedResource jsonToAllottedResource(String jsonString) throws JsonDecomposingException {
+        try {
+            return OBJECT_MAPPER.readValue(jsonString, AllottedResource.class);
+        } catch (IOException e) {
+            throw new JsonDecomposingException("Exception while converting json to allotted resource", e);
+        }
+    }
 }

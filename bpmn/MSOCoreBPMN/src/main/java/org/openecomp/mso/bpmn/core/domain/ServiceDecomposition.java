@@ -31,9 +31,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
-import org.json.JSONObject;
 import org.openecomp.mso.bpmn.core.json.DecomposeJsonUtil;
-
+import org.openecomp.mso.bpmn.core.json.JsonDecomposingException;
 
 
 /**
@@ -50,7 +49,6 @@ import org.openecomp.mso.bpmn.core.json.DecomposeJsonUtil;
 public class ServiceDecomposition extends JsonWrapper implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	DecomposeJsonUtil jsonUtils = new DecomposeJsonUtil();
 
 	@JsonProperty("modelInfo")
 	private ModelInfo modelInfo;
@@ -67,48 +65,6 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 	private List <AllottedResource>  allottedResources;
 
 	public ServiceDecomposition () {
-		super();
-	}
-
-	public ServiceDecomposition (String catalogRestOutput) {
-
-		ServiceDecomposition serviceDecomposition = DecomposeJsonUtil.JsonToServiceDecomposition(catalogRestOutput);
-		this.modelInfo = serviceDecomposition.getModelInfo();
-		this.vnfResources = serviceDecomposition.getServiceVnfs();
-		this.allottedResources = serviceDecomposition.getServiceAllottedResources();
-		this.networkResources = serviceDecomposition.getServiceNetworks();
-		this.serviceRole = serviceDecomposition.getServiceRole();
-		this.serviceType = serviceDecomposition.getServiceType();
-	}
-
-	/**
-	 * Constructor taking Catalog DB Adapter REST output (serviceResources model) + service Instance ID
-	 * @param catalogRestOutput
-	 * @param serviceInstanceId
-	 */
-	public ServiceDecomposition (String catalogRestOutput, String serviceInstanceId) {
-
-		ServiceDecomposition serviceDecomposition = DecomposeJsonUtil.JsonToServiceDecomposition(catalogRestOutput);
-		this.modelInfo = serviceDecomposition.getModelInfo();
-		this.vnfResources = serviceDecomposition.getServiceVnfs();
-		this.allottedResources = serviceDecomposition.getServiceAllottedResources();
-		this.networkResources = serviceDecomposition.getServiceNetworks();
-
-		this.serviceRole = serviceDecomposition.getServiceRole();
-		this.serviceType = serviceDecomposition.getServiceType();
-		
-		this.serviceInstance = new ServiceInstance();
-		this.serviceInstance.setInstanceId(serviceInstanceId);
-	}
-
-	/**
-	 * Constructor taking a Service Decomposition JSON serialization
-	 * @param catalogRestOutput
-	 * @param serviceInstanceId
-	 */
-	public ServiceDecomposition (JSONObject jsonServiceDecomposition, String serviceInstanceId) {
-		//TODO provide constructor implementation
-
 	}
 
 	//*****
@@ -278,7 +234,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 	 * Add resource to the list
 	 * Given a ResourceDecomposition (subclass) object, add it to the Service Decomposition (in the appropriate category, e.g. as a VNF, Network, or Allotted Resource).
 	 * As dependencies are not currently supported, add it to the end of any ordered lists.
-	 * @param Resource
+	 * @param resource
 	 */
 	public void addResource(Resource resource) {
 		//create resource based upon type
@@ -299,36 +255,36 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 
 	/**
 	 * Add resource to the list
-	 * @param Resource
+	 * @param jsonResource
 	 */
-	public void addVnfResource(String jsonResource) {
+	public void addVnfResource(String jsonResource) throws JsonDecomposingException {
 		VnfResource vnfResource = null;
-		vnfResource = DecomposeJsonUtil.JsonToVnfResource(jsonResource);
+		vnfResource = DecomposeJsonUtil.jsonToVnfResource(jsonResource);
 		this.addVnfResource(vnfResource);
 	}
 	/**
 	 * Add resource to the list
-	 * @param Resource
+	 * @param jsonResource
 	 */
-	public void addNetworkResource(String jsonResource) {
+	public void addNetworkResource(String jsonResource) throws JsonDecomposingException {
 		NetworkResource networkResource = null;
-		networkResource = DecomposeJsonUtil.JsonToNetworkResource(jsonResource);
+		networkResource = DecomposeJsonUtil.jsonToNetworkResource(jsonResource);
 		this.addVnfResource(networkResource);
 	}
 	/**
 	 * Add resource to the list
-	 * @param Resource
+	 * @param jsonResource
 	 */
-	public void addAllottedResource(String jsonResource) {
+	public void addAllottedResource(String jsonResource) throws JsonDecomposingException {
 		AllottedResource allottedResource = null;
-		allottedResource = DecomposeJsonUtil.JsonToAllottedResource(jsonResource);
+		allottedResource = DecomposeJsonUtil.jsonToAllottedResource(jsonResource);
 		this.addVnfResource(allottedResource);
 	}
 
 	/**
 	 * Given a ResourceDecomposition (subclass) object, locate it in the Service Decomposition by its unique ID, and replace the current version with the new one.
 	 * This method should support concurrency control via an auto-incrementing field in the ResourceDecomposition class.
-	 * @param Resource
+	 * @param newResource
 	 * @return TRUE if replacement was a success
 	 */
 	public boolean replaceResource(Resource newResource){
@@ -365,7 +321,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 
 	/**
 	 *  Given a resource object ID, locate it in the Service Decomposition by its unique ID, and delete it.
-	 * @param Resource
+	 * @param resource
 	 * @return TRUE if delete was a success
 	 */
 	public boolean deleteResource(Resource resource){

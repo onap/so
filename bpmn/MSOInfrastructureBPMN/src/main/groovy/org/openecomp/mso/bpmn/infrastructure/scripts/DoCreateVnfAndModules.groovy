@@ -54,7 +54,6 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
    JsonUtils jsonUtil = new JsonUtils()
    VidUtils vidUtils = new VidUtils(this)
    CatalogDbUtils cutils = new CatalogDbUtils()
-   DecomposeJsonUtil decomposeJsonUtil = new DecomposeJsonUtil()
 
    /**
 	* This method gets and validates the incoming
@@ -185,7 +184,7 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 			   utils.log("DEBUG", "obtained VNF list")
 			   // Only one match here
 			   JSONObject vnfObject = vnfs[0]
-			   vnf = decomposeJsonUtil.JsonToVnfResource(vnfObject.toString())			   
+			   vnf = DecomposeJsonUtil.jsonToVnfResource(vnfObject.toString())
 		   }
 		   utils.log("DEBUG", "Read vnfResource", isDebugLogEnabled)
 		   if (vnf == null) {
