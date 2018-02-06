@@ -2,6 +2,282 @@
   "comments": [
     {
       "key": {
+        "uuid": "5a93c517_d3a945e0",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/utils/MsoHeatEnvironmentEntry.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-02-06T15:59:43Z",
+      "side": 1,
+      "message": "I thing you can reformat this file to spaces if you\u0027re changing most lines in the file.",
+      "range": {
+        "startLine": 32,
+        "startChar": 0,
+        "endLine": 32,
+        "endChar": 1
+      },
+      "revId": "38ca2db35850385bc124a61917df5112e7aac523",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_736951bd",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/utils/MsoHeatEnvironmentEntry.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-02-06T15:59:43Z",
+      "side": 1,
+      "message": "Is there any reason to use StringBuilder instead of String?",
+      "range": {
+        "startLine": 35,
+        "startChar": 9,
+        "endLine": 35,
+        "endChar": 22
+      },
+      "revId": "38ca2db35850385bc124a61917df5112e7aac523",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_133c8d92",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/utils/MsoHeatEnvironmentEntry.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-02-06T15:59:43Z",
+      "side": 1,
+      "message": "There should be no logic in constructor! Especially there should be no calls of non-static methods!",
+      "range": {
+        "startLine": 39,
+        "startChar": 2,
+        "endLine": 39,
+        "endChar": 20
+      },
+      "revId": "38ca2db35850385bc124a61917df5112e7aac523",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_53b5352f",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/utils/MsoHeatEnvironmentEntry.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-02-06T15:59:43Z",
+      "side": 1,
+      "message": "Either make rawEntry a String or call length() method - calling toString() copies entire String just to check if it\u0027s empty.",
+      "range": {
+        "startLine": 44,
+        "startChar": 27,
+        "endLine": 44,
+        "endChar": 56
+      },
+      "revId": "38ca2db35850385bc124a61917df5112e7aac523",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_73971191",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/utils/MsoHeatEnvironmentEntry.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-02-06T15:59:43Z",
+      "side": 1,
+      "message": "Bad variable name. \"b\" says nothing.",
+      "range": {
+        "startLine": 47,
+        "startChar": 10,
+        "endLine": 47,
+        "endChar": 11
+      },
+      "revId": "38ca2db35850385bc124a61917df5112e7aac523",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b37d9970",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/utils/MsoHeatEnvironmentEntry.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-02-06T15:59:43Z",
+      "side": 1,
+      "message": "Log \"Exception:\" is quite useless - there should be any usefull information while printing log, for example when it happen.",
+      "range": {
+        "startLine": 52,
+        "startChar": 20,
+        "endLine": 52,
+        "endChar": 30
+      },
+      "revId": "38ca2db35850385bc124a61917df5112e7aac523",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_9392dd9d",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/utils/MsoHeatEnvironmentEntry.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-02-06T15:59:43Z",
+      "side": 1,
+      "message": "Just \"return valid;\"",
+      "range": {
+        "startLine": 59,
+        "startChar": 9,
+        "endLine": 59,
+        "endChar": 19
+      },
+      "revId": "38ca2db35850385bc124a61917df5112e7aac523",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_33918999",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/utils/MsoHeatEnvironmentEntry.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-02-06T15:59:43Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 62,
+        "startChar": 9,
+        "endLine": 62,
+        "endChar": 26
+      },
+      "revId": "38ca2db35850385bc124a61917df5112e7aac523",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_130a4dd2",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/utils/MsoHeatEnvironmentEntry.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-02-06T15:59:43Z",
+      "side": 1,
+      "message": "Useless variable.",
+      "range": {
+        "startLine": 73,
+        "startChar": 2,
+        "endLine": 73,
+        "endChar": 27
+      },
+      "revId": "38ca2db35850385bc124a61917df5112e7aac523",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_13eecd22",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/utils/MsoHeatEnvironmentEntry.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-02-06T15:59:43Z",
+      "side": 1,
+      "message": "return true;",
+      "range": {
+        "startLine": 78,
+        "startChar": 3,
+        "endLine": 78,
+        "endChar": 19
+      },
+      "revId": "38ca2db35850385bc124a61917df5112e7aac523",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d3f705f4",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/utils/MsoHeatEnvironmentEntry.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-02-06T15:59:43Z",
+      "side": 1,
+      "message": "return false;",
+      "range": {
+        "startLine": 80,
+        "startChar": 2,
+        "endLine": 80,
+        "endChar": 18
+      },
+      "revId": "38ca2db35850385bc124a61917df5112e7aac523",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f39c81c2",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/utils/MsoHeatEnvironmentEntry.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-02-06T15:59:43Z",
+      "side": 1,
+      "message": "Can\u0027t we simply return String here?",
+      "range": {
+        "startLine": 83,
+        "startChar": 8,
+        "endLine": 83,
+        "endChar": 21
+      },
+      "revId": "38ca2db35850385bc124a61917df5112e7aac523",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_10524313",
         "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/utils/MsoHeatEnvironmentEntry.java",
         "patchSetId": 2
@@ -13,6 +289,98 @@
       "writtenOn": "2018-02-06T11:45:53Z",
       "side": 1,
       "message": "no point in using + again in a StringBuilder, please use append for all theses",
+      "revId": "38ca2db35850385bc124a61917df5112e7aac523",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_33e8a90f",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/utils/MsoHeatEnvironmentEntry.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-02-06T15:59:43Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 98,
+        "startChar": 8,
+        "endLine": 98,
+        "endChar": 21
+      },
+      "revId": "38ca2db35850385bc124a61917df5112e7aac523",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f3d1e157",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/utils/MsoHeatEnvironmentEntry.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-02-06T15:59:43Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 102,
+        "startChar": 9,
+        "endLine": 102,
+        "endChar": 22
+      },
+      "revId": "38ca2db35850385bc124a61917df5112e7aac523",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f306c1cd",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/utils/MsoHeatEnvironmentEntry.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-02-06T15:59:43Z",
+      "side": 1,
+      "message": "Why is there parsing of rawEntry with indexOf?",
+      "range": {
+        "startLine": 104,
+        "startChar": 16,
+        "endLine": 104,
+        "endChar": 60
+      },
+      "revId": "38ca2db35850385bc124a61917df5112e7aac523",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_5368d586",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/utils/MsoHeatEnvironmentEntry.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-02-06T15:59:43Z",
+      "side": 1,
+      "message": "Useless comment",
+      "range": {
+        "startLine": 105,
+        "startChar": 21,
+        "endLine": 105,
+        "endChar": 45
+      },
       "revId": "38ca2db35850385bc124a61917df5112e7aac523",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
