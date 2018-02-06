@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_90abb3d5",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/openecomp/mso/client/aai/AAIRestClient.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2018-02-06T11:57:24Z",
+      "side": 1,
+      "message": "please Remove tab character and white space",
+      "range": {
+        "startLine": 40,
+        "startChar": 0,
+        "endLine": 42,
+        "endChar": 1
+      },
+      "revId": "975c846802c2515a2201673be65db728248bd05a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f09c77c2",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/openecomp/mso/client/aai/AAIRestClientImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2018-02-06T11:57:24Z",
+      "side": 1,
+      "message": "should it be IOException ??",
+      "range": {
+        "startLine": 149,
+        "startChar": 13,
+        "endLine": 149,
+        "endChar": 59
+      },
+      "revId": "975c846802c2515a2201673be65db728248bd05a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
