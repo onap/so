@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_d05b7b2c",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/utils/MsoCommonUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2018-02-06T11:48:58Z",
+      "side": 1,
+      "message": "Are you sure of this change...?",
+      "revId": "b811f47cfd1bcd35062bb1a4ea6a54278f74a0d2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
