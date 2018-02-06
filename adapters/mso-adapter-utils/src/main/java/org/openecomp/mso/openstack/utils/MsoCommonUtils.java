@@ -73,7 +73,7 @@ public class MsoCommonUtils {
     	String parentServiceMethodName = classArr[0].getClassName () + "." + classArr[0].getMethodName ();
     	for (int i = 1; i < limit; i++) {
             String className = classArr[i].getClassName ();
-            if (!className.equals (MsoCommonUtils.class.getName ())) {
+            if (request instanceof OpenStackRequest) {
             	parentServiceMethodName = className + "." + classArr[i].getMethodName ();
             	break;
             }
@@ -129,6 +129,7 @@ public class MsoCommonUtils {
     					Thread.sleep (retryDelay * 1000L);
     				} catch (InterruptedException e1) {
                         logger.debug ("Thread interrupted while sleeping", e1);
+						Thread.currentThread().interrupt();
     				}
     			}
         		else
@@ -144,6 +145,7 @@ public class MsoCommonUtils {
         				Thread.sleep (retryDelay * 1000L);
         			} catch (InterruptedException e1) {
                         logger.debug ("Thread interrupted while sleeping", e1);
+						Thread.currentThread().interrupt();
         			}
         		}
         		else
