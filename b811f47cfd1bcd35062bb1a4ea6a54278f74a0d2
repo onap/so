@@ -16,6 +16,24 @@
       "revId": "b811f47cfd1bcd35062bb1a4ea6a54278f74a0d2",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_c910b2aa",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/utils/MsoCommonUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 2901
+      },
+      "writtenOn": "2018-02-07T09:56:09Z",
+      "side": 1,
+      "message": "From my point of view if we want to use instanceof operator then we should be using Parent class and it\u0027s object.\nHere \"request\" is the instance of OpenStackRequest. In earlier code we were trying to check that \"request\" is not the instance of MsoCommonUtils.\nAnd here OpenStackRequest is the parent class from which we are getting methods name and as per code we are trying Method to execute an Openstack command and track its execution time.So using \"request\" as instanceof OpenStackRequest is more convenient.",
+      "parentUuid": "5a93c517_d05b7b2c",
+      "revId": "b811f47cfd1bcd35062bb1a4ea6a54278f74a0d2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
