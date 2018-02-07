@@ -63,17 +63,22 @@ public class RestfulUtil {
     private static final MsoAlarmLogger ALARMLOGGER = new MsoAlarmLogger();
 
     private static final int DEFAULT_TIME_OUT = 60000;
+    
+    private static final String ONAP_IP = "ONAP_IP";
 
     private static final MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory();
 
     public static String getMsbHost() {
-        String msbIp = "10.229.32.131";
-        String msbPort = "8090";
+        String msbPort = "80";
+        //MSB_IP will be set as ONAP_IP environment parameter in install flow.
+        String msbIp = System.getenv().get(ONAP_IP);
         try {
-            msbIp = msoPropertiesFactory.getMsoJavaProperties("MSO_PROP_TOPOLOGY").getProperty("msb-ip",
-                    "10.229.32.131");
-            msbPort = msoPropertiesFactory.getMsoJavaProperties("MSO_PROP_TOPOLOGY").getProperty("msb-port", "8099");
-
+            //if ONAP IP is not set. get it from config file.
+            if(null == msbIp || msbIp.isEmpty()){
+                msbIp = msoPropertiesFactory.getMsoJavaProperties("MSO_PROP_TOPOLOGY").getProperty("msb-ip",
+                        "127.0.0.1");
+                msbPort = msoPropertiesFactory.getMsoJavaProperties("MSO_PROP_TOPOLOGY").getProperty("msb-port", "80");
+            }
         } catch(MsoPropertiesException e) {
             LOGGER.error(MessageEnum.RA_NS_EXC, "VFC Adapter", "", MsoLogger.ErrorCode.AvailabilityError,
                     "Get msb properties failed");
