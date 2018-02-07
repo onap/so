@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_49c0222a",
+        "filename": "bpmn/MSOInfrastructureBPMN/src/main/java/org/openecomp/mso/bpmn/infrastructure/workflow/serviceTask/AbstractSdncOperationTask.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2018-02-07T05:39:07Z",
+      "side": 1,
+      "message": "I think you should put some better naming for variable.",
+      "range": {
+        "startLine": 134,
+        "startChar": 33,
+        "endLine": 134,
+        "endChar": 38
+      },
+      "revId": "1e91d117dcdbe9150b0e0ec03c799f5db7ad363d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
