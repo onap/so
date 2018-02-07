@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_e9b7aed6",
+        "filename": "adapters/mso-vfc-adapter/src/main/java/org/openecomp/mso/adapters/vfc/util/RestfulUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2018-02-07T05:35:35Z",
+      "side": 1,
+      "message": "please remove whitespace",
+      "range": {
+        "startLine": 66,
+        "startChar": 0,
+        "endLine": 66,
+        "endChar": 4
+      },
+      "revId": "d77210907f6c53da913d4276397f382e51c57d15",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_a9b1a6e2",
+        "filename": "adapters/mso-vfc-adapter/src/main/java/org/openecomp/mso/adapters/vfc/util/RestfulUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2018-02-07T05:35:35Z",
+      "side": 1,
+      "message": "I think we should move it as static value, instead of putting hard coded value in code.",
+      "range": {
+        "startLine": 79,
+        "startChar": 24,
+        "endLine": 79,
+        "endChar": 35
+      },
+      "revId": "d77210907f6c53da913d4276397f382e51c57d15",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
