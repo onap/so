@@ -139,14 +139,14 @@ public class AAIRestClientImpl implements AAIRestClient {
 	}
 	
 	@Override
-	public void updateMaintenceFlag(String vnfName, boolean inMaint, String transactionLoggingUuid) throws Exception {
+	public void updateMaintenceFlag(String vnfName, boolean inMaint, String transactionLoggingUuid) throws JsonParseException, JsonMappingException, IOException {
 		GenericVnfs genericVnfs = webTarget.register(AAIResourcesObjectMapperProvider.class).path(ENDPOINT_GET_ALL_VNFS)
 				.queryParam("vnf-name", vnfName).request().header("X-FromAppId", "MSO")
 				.header("X-TransactionId", transactionLoggingUuid).header("Content-Type", "application/json")
 				.accept(MediaType.APPLICATION_JSON_TYPE).get().readEntity(GenericVnfs.class);
 
 		if (genericVnfs.getGenericVnf().size() > 1)
-			throw new Exception("Multiple Generic Vnfs Returned");
+			throw new IndexOutOfBoundsException ("Multiple Generic Vnfs Returned");
 
 		GenericVnf genericVnf = genericVnfs.getGenericVnf().get(0);
 		updateMaintenceFlagVnfId(genericVnf.getVnfId(), inMaint, transactionLoggingUuid);
@@ -154,7 +154,7 @@ public class AAIRestClientImpl implements AAIRestClient {
 
 	@Override
 	public void updateMaintenceFlagVnfId(String vnfId, boolean inMaint, String transactionLoggingUuid)
-			throws Exception {
+			throws JsonParseException, JsonMappingException, IOException {
 		GenericVnf genericVnf = new GenericVnf();
 		genericVnf.setInMaint(inMaint);
 		webTarget.register(AAIResourcesObjectMapperProvider.class).path(GENERIC_VNF_PATH + "/" + vnfId).request()
@@ -165,7 +165,7 @@ public class AAIRestClientImpl implements AAIRestClient {
 	}
 
 	@Override
-	public GenericVnf getVnfByName(String vnfId, String transactionLoggingUuid) throws Exception {
+	public GenericVnf getVnfByName(String vnfId, String transactionLoggingUuid) throws JsonParseException, JsonMappingException, IOException {
 		return webTarget.register(AAIResourcesObjectMapperProvider.class).path(GENERIC_VNF_PATH + "/" + vnfId).request()
 				.header("X-FromAppId", "MSO").header("X-TransactionId", transactionLoggingUuid)
 				.header("Content-Type", "application/json").accept(MediaType.APPLICATION_JSON_TYPE).get()
