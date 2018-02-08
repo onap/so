@@ -23,18 +23,13 @@
 
 package org.openecomp.mso.cloud.authentication;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
+import com.woorea.openstack.keystone.model.Authentication;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
 import org.openecomp.mso.cloud.CloudIdentity;
-
-import com.woorea.openstack.keystone.model.Authentication;
 
 /**
  * This factory manages all the wrappers associated to authentication types.
- *
  */
 public final class AuthenticationMethodFactory {
 
@@ -58,7 +53,7 @@ public final class AuthenticationMethodFactory {
 		}
 	}
 	
-	public static final synchronized Authentication getAuthenticationFor(CloudIdentity cloudIdentity) throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException, URISyntaxException {
+	public static final synchronized Authentication getAuthenticationFor(CloudIdentity cloudIdentity) {
 		if (cloudIdentity == null) {
 			throw new IllegalArgumentException("Cloud identity cannot be null");
 		}
