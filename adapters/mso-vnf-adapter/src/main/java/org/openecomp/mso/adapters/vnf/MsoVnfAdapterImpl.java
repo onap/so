@@ -21,7 +21,7 @@
 
 package org.openecomp.mso.adapters.vnf;
 
-
+import java.util.Optional;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -953,15 +953,14 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             }
             if (minVersionVnf != null && maxVersionVnf != null) {
                 MavenLikeVersioning aicV = new MavenLikeVersioning();
-                CloudSite cloudSite = null;
                 if (this.cloudConfig == null) {
                     this.cloudConfig = this.cloudConfigFactory.getCloudConfig();
                 }
                 // double check
                 if (this.cloudConfig != null) {
-                    cloudSite = this.cloudConfig.getCloudSite(cloudSiteId);
-                    if (cloudSite != null) {
-                        aicV.setVersion(cloudSite.getAic_version());
+                    Optional<CloudSite> cloudSiteOpt = this.cloudConfig.getCloudSite(cloudSiteId);
+                    if (cloudSiteOpt.isPresent()) {
+                        aicV.setVersion(cloudSiteOpt.get().getAic_version());
                         // Add code to handle unexpected values in here
                         boolean moreThanMin = true;
                         boolean equalToMin = true;
@@ -980,10 +979,10 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                         if (!doNotTest) {
                             if ((moreThanMin || equalToMin) // aic >= min
                                     && (equalToMax || !(moreThanMax))) { //aic <= max
-                                LOGGER.debug("VNF Resource " + vnfResource.getModelName() + ", ModelUuid=" + vnfResource.getModelUuid() + " VersionMin=" + minVersionVnf + " VersionMax:" + maxVersionVnf + " supported on Cloud: " + cloudSite.getId() + " with AIC_Version:" + cloudSite.getAic_version());
+                                LOGGER.debug("VNF Resource " + vnfResource.getModelName() + ", ModelUuid=" + vnfResource.getModelUuid() + " VersionMin=" + minVersionVnf + " VersionMax:" + maxVersionVnf + " supported on Cloud: " + cloudSiteOpt.get().getId() + " with AIC_Version:" + cloudSiteOpt.get().getAic_version());
                             } else {
                                 // ERROR
-                                String error = "VNF Resource type: " + vnfResource.getModelName() + ", ModelUuid=" + vnfResource.getModelUuid() + " VersionMin=" + minVersionVnf + " VersionMax:" + maxVersionVnf + " NOT supported on Cloud: " + cloudSite.getId() + " with AIC_Version:" + cloudSite.getAic_version();
+                                String error = "VNF Resource type: " + vnfResource.getModelName() + ", ModelUuid=" + vnfResource.getModelUuid() + " VersionMin=" + minVersionVnf + " VersionMax:" + maxVersionVnf + " NOT supported on Cloud: " + cloudSiteOpt.get().getId() + " with AIC_Version:" + cloudSiteOpt.get().getAic_version();
                                 LOGGER.error(MessageEnum.RA_CONFIG_EXC, error, "OpenStack", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception - setVersion");
                                 LOGGER.debug(error);
                                 throw new VnfException(error, MsoExceptionCategory.USERDATA);
@@ -1703,26 +1702,25 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                 }
             if (minVersionVnf != null && maxVersionVnf != null) {
                 MavenLikeVersioning aicV = new MavenLikeVersioning();
-                CloudSite cloudSite = null;
                 //String aicVersion = "";
                 if (this.cloudConfig == null) {
                     this.cloudConfig = this.cloudConfigFactory.getCloudConfig();
             }
                 // double check
                 if (this.cloudConfig != null) {
-                    cloudSite = this.cloudConfig.getCloudSite(cloudSiteId);
-                    if (cloudSite != null) {
-                        aicV.setVersion(cloudSite.getAic_version());
+                    Optional<CloudSite> cloudSiteOpt = this.cloudConfig.getCloudSite(cloudSiteId);
+                    if (cloudSiteOpt.isPresent()) {
+                        aicV.setVersion(cloudSiteOpt.get().getAic_version());
                         if ((aicV.isMoreRecentThan(minVersionVnf) || aicV.isTheSameVersion(minVersionVnf)) // aic >= min
                                 && (aicV.isTheSameVersion(maxVersionVnf) || !(aicV.isMoreRecentThan(maxVersionVnf)))) { //aic <= max
-                            LOGGER.debug("VNF Resource " + vnfResource.getModelName() + " VersionMin=" + minVersionVnf + " VersionMax:" + maxVersionVnf + " supported on Cloud: " + cloudSite.getId() + " with AIC_Version:" + cloudSite.getAic_version());
+                            LOGGER.debug("VNF Resource " + vnfResource.getModelName() + " VersionMin=" + minVersionVnf + " VersionMax:" + maxVersionVnf + " supported on Cloud: " + cloudSiteOpt.get().getId() + " with AIC_Version:" + cloudSiteOpt.get().getAic_version());
                         } else {
                             // ERROR
-                            String error = "VNF Resource type: " + vnfResource.getModelName() + " VersionMin=" + minVersionVnf + " VersionMax:" + maxVersionVnf + " NOT supported on Cloud: " + cloudSite.getId() + " with AIC_Version:" + cloudSite.getAic_version();
+                            String error = "VNF Resource type: " + vnfResource.getModelName() + " VersionMin=" + minVersionVnf + " VersionMax:" + maxVersionVnf + " NOT supported on Cloud: " + cloudSiteOpt.get().getId() + " with AIC_Version:" + cloudSiteOpt.get().getAic_version();
                             LOGGER.error(MessageEnum.RA_CONFIG_EXC, error, "OpenStack", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception - setVersion");
                             LOGGER.debug(error);
                             throw new VnfException(error, MsoExceptionCategory.USERDATA);
-                    }
+                        }
                     } // let this error out downstream to avoid introducing uncertainty at this stage
                 } else {
                     LOGGER.debug("cloudConfig is NULL - cannot check cloud site version");

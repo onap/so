@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,7 +43,6 @@ import org.openecomp.mso.openstack.exceptions.MsoIOException;
 import org.openecomp.mso.openstack.exceptions.MsoNetworkAlreadyExists;
 import org.openecomp.mso.openstack.exceptions.MsoNetworkNotFound;
 import org.openecomp.mso.openstack.exceptions.MsoOpenstackException;
-import org.openecomp.mso.openstack.exceptions.MsoTenantNotFound;
 import com.woorea.openstack.base.client.OpenStackBaseException;
 import com.woorea.openstack.base.client.OpenStackConnectException;
 import com.woorea.openstack.base.client.OpenStackRequest;
@@ -71,7 +70,7 @@ public class MsoNeutronUtils extends MsoCommonUtils
 
 	private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
 	private String msoPropID;
-	
+
 	public enum NetworkType {
 		BASIC, PROVIDER, MULTI_PROVIDER
 	};
@@ -99,13 +98,11 @@ public class MsoNeutronUtils extends MsoCommonUtils
 	 * @throws MsoCloudSiteNotFound Thrown if the cloudSite is invalid or unknown
 	 */
 	public NetworkInfo createNetwork (String cloudSiteId, String tenantId, NetworkType type, String networkName, String provider, List<Integer> vlans)
-		throws MsoException, MsoNetworkAlreadyExists, MsoCloudSiteNotFound
+            throws MsoException
 	{
 		// Obtain the cloud site information where we will create the stack
-		CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId);
-		if (cloudSite == null) {
-			throw new MsoCloudSiteNotFound(cloudSiteId);
-		}
+        CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
+                () -> new MsoCloudSiteNotFound(cloudSiteId));
 
 		Quantum neutronClient = getNeutronClient (cloudSite, tenantId);
 
@@ -177,19 +174,15 @@ public class MsoNeutronUtils extends MsoCommonUtils
 	 * @throws MsoOpenstackException Thrown if the Openstack API call returns an exception
 	 * @throws MsoCloudSiteNotFound
 	 */
-	public NetworkInfo queryNetwork (String networkNameOrId, String tenantId, String cloudSiteId)
-		throws MsoException, MsoCloudSiteNotFound
+    public NetworkInfo queryNetwork(String networkNameOrId, String tenantId, String cloudSiteId) throws MsoException
 	{
 		LOGGER.debug("In queryNetwork");
 
 		// Obtain the cloud site information
-		CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId);
-		if (cloudSite == null) {
-			throw new MsoCloudSiteNotFound(cloudSiteId);
-		}
+        CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
+                () -> new MsoCloudSiteNotFound(cloudSiteId));
 
 		Quantum neutronClient = getNeutronClient (cloudSite, tenantId);
-
 		// Check if the network exists and return its info
 		try {
 			Network network = findNetworkByNameOrId (neutronClient, networkNameOrId);
@@ -215,24 +208,20 @@ public class MsoNeutronUtils extends MsoCommonUtils
 	 * Delete the specified Network (by ID) in the given cloud.
 	 * If the network does not exist, success is returned.
 	 * <p>
-	 * @param networkNameOrId The name or Openstack ID of the network to delete
-	 * @param cloudId The cloud identifier (may be a region) from which to delete the network.
+	 * @param networkId Openstack ID of the network to delete
+	 * @param tenantId The Openstack tenant.
+	 * @param cloudSiteId The cloud identifier (may be a region) from which to delete the network.
 	 * @return true if the network was deleted, false if the network did not exist
 	 * @throws MsoOpenstackException If the Openstack API call returns an exception, this local
 	 * exception will be thrown.
 	 * @throws MsoCloudSiteNotFound
 	 */
-	public boolean deleteNetwork (String networkId, String tenantId, String cloudSiteId)
-		throws MsoException, MsoCloudSiteNotFound
+    public boolean deleteNetwork(String networkId, String tenantId, String cloudSiteId) throws MsoException
 	{
 		// Obtain the cloud site information where we will create the stack
-		CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId);
-		if (cloudSite == null) {
-			throw new MsoCloudSiteNotFound(cloudSiteId);
-		}
-
+        CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
+                () -> new MsoCloudSiteNotFound(cloudSiteId));
 		Quantum neutronClient = getNeutronClient (cloudSite, tenantId);
-
 		try {
 			// Check that the network exists.
 			Network network = findNetworkById (neutronClient, networkId);
@@ -273,7 +262,7 @@ public class MsoNeutronUtils extends MsoCommonUtils
 	 * to manage the virtual networking).
 	 *
 	 * @param cloudSiteId The cloud site ID (may be a region) in which to update the network.
-	 * @param the Openstack ID of the tenant in which to update the network
+	 * @param tenantId Openstack ID of the tenant in which to update the network
 	 * @param networkId The unique Openstack ID of the network to be updated
 	 * @param type The network type (Basic, Provider, Multi-Provider)
 	 * @param provider The provider network name.  This should not change.
@@ -284,15 +273,12 @@ public class MsoNeutronUtils extends MsoCommonUtils
 	 * @throws MsoCloudSiteNotFound
 	 */
 	public NetworkInfo updateNetwork (String cloudSiteId, String tenantId, String networkId, NetworkType type, String provider, List<Integer> vlans)
-		throws MsoException, MsoNetworkNotFound, MsoCloudSiteNotFound
+            throws MsoException
 	{
 		// Obtain the cloud site information where we will create the stack
-		CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId);
-		if (cloudSite == null) {
-			throw new MsoCloudSiteNotFound(cloudSiteId);
-		}
+        CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
+                () -> new MsoCloudSiteNotFound(cloudSiteId));
 		Quantum neutronClient = getNeutronClient (cloudSite, tenantId);
-
 		// Check that the network exists
 		Network network = findNetworkById (neutronClient, networkId);
 
@@ -359,8 +345,7 @@ public class MsoNeutronUtils extends MsoCommonUtils
 	 * @param tenantId - Openstack tenant ID
 	 * @return an authenticated Quantum object
 	 */
-	private Quantum getNeutronClient (CloudSite cloudSite, String tenantId)
-		throws MsoTenantNotFound, MsoException
+    private Quantum getNeutronClient(CloudSite cloudSite, String tenantId) throws MsoException
 	{
 		String cloudId = cloudSite.getId();
 
@@ -440,9 +425,6 @@ public class MsoNeutronUtils extends MsoCommonUtils
 	 * the KeystoneClient in case where a tenant is deleted.  In that case,
 	 * all cached credentials must be purged so that fresh authentication is
 	 * done on subsequent calls.
-	 * <p>
-	 * @param tenantName
-	 * @param cloudId
 	 */
 	public static void expireNeutronClient (String tenantId, String cloudId) {
 		String cacheKey = cloudId + ":" + tenantId;
@@ -602,6 +584,6 @@ public class MsoNeutronUtils extends MsoCommonUtils
 	 * This may be useful if cached credentials get out of sync.
 	 */
 	public static void neutronCacheReset () {
-		neutronClientCache = new HashMap<String,NeutronCacheEntry>();
+		neutronClientCache = new HashMap<>();
 	}
 }
