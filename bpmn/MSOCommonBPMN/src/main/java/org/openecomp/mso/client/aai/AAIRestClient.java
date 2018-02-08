@@ -32,13 +32,9 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 public interface AAIRestClient {
 	
-	Pservers getPhysicalServers(String hostName, String uuid);
-	
-	List<Pserver> getPhysicalServerByVnfId(String vnfId, String transactionLoggingUuid) throws UnsupportedEncodingException, JsonParseException, JsonMappingException, IOException;
-	
-	void updateMaintenceFlag(String vnfId,boolean inMaint, String transactionLoggingUuid) throws Exception;
-
-	void updateMaintenceFlagVnfId(String vnfId, boolean inMaint, String transactionLoggingUuid) throws Exception;
-	
-	GenericVnf getVnfByName(String vnfId,  String transactionLoggingUuid) throws Exception;
+Pservers getPhysicalServers(String hostName, String uuid);	
+List<Pserver> getPhysicalServerByVnfId(String vnfId, String transactionLoggingUuid) throws UnsupportedEncodingException, JsonParseException, JsonMappingException, IOException;	
+void updateMaintenceFlag(String vnfId,boolean inMaint, String transactionLoggingUuid) throws JsonParseException, JsonMappingException, IOException;
+void updateMaintenceFlagVnfId(String vnfId, boolean inMaint, String transactionLoggingUuid) throws JsonParseException, JsonMappingException , IOException;
+GenericVnf getVnfByName(String vnfId,  String transactionLoggingUuid) throws JsonParseException, JsonMappingException , IOException;
 }
