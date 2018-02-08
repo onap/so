@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_3353c03a",
+        "filename": "mso-api-handlers/mso-api-handler-common/src/main/java/org/openecomp/mso/apihandler/common/CamundaClient.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 991
+      },
+      "writtenOn": "2018-02-08T19:34:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_f53541f7",
+      "range": {
+        "startLine": 125,
+        "startChar": 0,
+        "endLine": 125,
+        "endChar": 2
+      },
+      "revId": "fef17e52549ae8cd60159ba84bbc47acc6999adf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_953cfde3",
         "filename": "mso-api-handlers/mso-api-handler-common/src/main/java/org/openecomp/mso/apihandler/common/RequestClientFactory.java",
         "patchSetId": 2
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_1356c42a",
+        "filename": "mso-api-handlers/mso-api-handler-common/src/main/java/org/openecomp/mso/apihandler/common/RequestClientFactory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 991
+      },
+      "writtenOn": "2018-02-08T19:34:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_953cfde3",
+      "range": {
+        "startLine": 31,
+        "startChar": 0,
+        "endLine": 31,
+        "endChar": 1
+      },
+      "revId": "fef17e52549ae8cd60159ba84bbc47acc6999adf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_b53fb9d5",
         "filename": "mso-api-handlers/mso-api-handler-common/src/main/java/org/openecomp/mso/apihandler/common/XMLValidator.java",
         "patchSetId": 2
@@ -59,6 +107,30 @@
       "writtenOn": "2018-02-08T04:48:18Z",
       "side": 1,
       "message": "static var name should be capital \nhttps://google.github.io/styleguide/javaguide.html#s5.2.4-constant-names",
+      "range": {
+        "startLine": 43,
+        "startChar": 26,
+        "endLine": 43,
+        "endChar": 34
+      },
+      "revId": "fef17e52549ae8cd60159ba84bbc47acc6999adf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f338f8f0",
+        "filename": "mso-api-handlers/mso-api-handler-common/src/main/java/org/openecomp/mso/apihandler/common/XMLValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 991
+      },
+      "writtenOn": "2018-02-08T19:34:13Z",
+      "side": 1,
+      "message": "As Marcus mentioned in the previous patch, since it is not declared as \u0027final\u0027, it can be written as \u0027xsdsPath\u0027. \n\nIf it were to be declared as \u0027private static final String\u0027, then we could have used XSDSPATH.",
+      "parentUuid": "5a93c517_b53fb9d5",
       "range": {
         "startLine": 43,
         "startChar": 26,
