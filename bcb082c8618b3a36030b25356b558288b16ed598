@@ -93,6 +93,29 @@
       "revId": "bcb082c8618b3a36030b25356b558288b16ed598",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ee8587ad",
+        "filename": "adapters/mso-tenant-adapter/src/main/java/org/openecomp/mso/adapters/tenant/MsoTenantAdapterImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2018-02-08T09:46:23Z",
+      "side": 1,
+      "message": "Add braces for this condition",
+      "range": {
+        "startLine": 121,
+        "startChar": 12,
+        "endLine": 122,
+        "endChar": 31
+      },
+      "revId": "bcb082c8618b3a36030b25356b558288b16ed598",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
