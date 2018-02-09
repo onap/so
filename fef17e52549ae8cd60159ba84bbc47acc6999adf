@@ -140,6 +140,30 @@
       "revId": "fef17e52549ae8cd60159ba84bbc47acc6999adf",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_01f18a01",
+        "filename": "mso-api-handlers/mso-api-handler-common/src/main/java/org/openecomp/mso/apihandler/common/XMLValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2018-02-09T05:48:31Z",
+      "side": 1,
+      "message": "okay",
+      "parentUuid": "5a93c517_f338f8f0",
+      "range": {
+        "startLine": 43,
+        "startChar": 26,
+        "endLine": 43,
+        "endChar": 34
+      },
+      "revId": "fef17e52549ae8cd60159ba84bbc47acc6999adf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
