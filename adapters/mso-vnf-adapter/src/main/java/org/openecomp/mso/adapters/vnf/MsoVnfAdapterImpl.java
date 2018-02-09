@@ -1199,9 +1199,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             if (heatEnvironmentString != null && heatEnvironmentString.contains ("parameters:")) {
                 //LOGGER.debug ("Have an Environment argument with a parameters: section - will bypass checking for valid params - but will still check for aliases");
                 LOGGER.debug("Enhanced environment checking enabled - 1604");
-                StringBuilder sb = new StringBuilder(heatEnvironmentString);
-                //LOGGER.debug("About to create MHEE with " + sb);
-                mhee = new MsoHeatEnvironmentEntry(sb);
+                mhee = MsoHeatEnvironmentEntry.create(heatEnvironmentString);
                 StringBuilder sb2 = new StringBuilder("\nHeat Template Parameters:\n");
                 for (HeatTemplateParam parm : heatTemplate.getParameters()) {
                     sb2.append("\t" + parm.getParamName() + ", required=" + parm.isRequired());
@@ -1210,7 +1208,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                     sb2.append("Environment says it's not valid! " + mhee.getErrorString());
                 } else {
                     sb2.append("\nEnvironment:");
-                    sb2.append(mhee.toFullString());
+                    sb2.append(mhee);
                 }
                 LOGGER.debug(sb2.toString());
             } else {
@@ -1291,7 +1289,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             // and it causes problems with json that has arrays
             String newEnvironmentString = null;
             if (mhee != null) {
-                newEnvironmentString = mhee.getRawEntry().toString();
+                newEnvironmentString = mhee.getRawEntry();
             }
 
             // "Fix" the template if it has CR/LF (getting this from Oracle)
@@ -1902,10 +1900,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             MsoHeatEnvironmentEntry mhee = null;
             if (heatEnvironmentString != null && heatEnvironmentString.toLowerCase ().contains ("parameters:")) {
                 LOGGER.debug("Enhanced environment checking enabled - 1604");
-                haveEnvironmentParameters = true;
-                StringBuilder sb = new StringBuilder(heatEnvironmentString);
-                //LOGGER.debug("About to create MHEE with " + sb);
-                mhee = new MsoHeatEnvironmentEntry(sb);
+                mhee = MsoHeatEnvironmentEntry.create(heatEnvironmentString);
                 StringBuilder sb2 = new StringBuilder("\nHeat Template Parameters:\n");
                 for (HeatTemplateParam parm : heatTemplate.getParameters()) {
                     sb2.append("\t" + parm.getParamName() + ", required=" + parm.isRequired());
@@ -1914,7 +1909,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                     sb2.append("Environment says it's not valid! " + mhee.getErrorString());
                 } else {
                     sb2.append("\nEnvironment:");
-                    sb2.append(mhee.toFullString());
+                    sb2.append(mhee);
                 }
                 LOGGER.debug(sb2.toString());
             } else {
@@ -2039,7 +2034,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             // Just submit the envt entry as received from the database
             String newEnvironmentString = null;
             if (mhee != null) {
-                newEnvironmentString = mhee.getRawEntry().toString();
+                newEnvironmentString = mhee.getRawEntry();
             }
 
             // Remove any extraneous parameters (don't throw an error)
