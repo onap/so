@@ -31,17 +31,18 @@ public class ValidationException extends Exception {
      **/
 
     private static final long serialVersionUID = 1L;
-    private static final String validationFailMessage = "No valid $ELEMENT is specified";
-    private static final String invalidElementMessage = "$ELEMENT is not valid in the $VERSION version";
+    private static final String VALIDATION_FAIL_MESSAGE = "No valid $ELEMENT is specified";
+    private static final String INVALID_ELEMENT_MESSAGE = "$ELEMENT is not valid in the $VERSION version";
+    private static final String ELEMENT_MESSAGE = "\\$ELEMENT";
 
     public ValidationException (String msg) {
-        super (validationFailMessage.replaceAll ("\\$ELEMENT", msg));
+        super (VALIDATION_FAIL_MESSAGE.replaceAll (ELEMENT_MESSAGE, msg));
     }
 
     public ValidationException (String msg, Exception cause) {
-        super (validationFailMessage.replaceAll ("\\$ELEMENT", msg), cause);
+        super (VALIDATION_FAIL_MESSAGE.replaceAll (ELEMENT_MESSAGE, msg), cause);
     }
     public ValidationException(String msg, String version) {
-        super(invalidElementMessage.replaceAll("\\$ELEMENT", msg).replaceAll("\\$VERSION", version));
+        super(INVALID_ELEMENT_MESSAGE.replaceAll(ELEMENT_MESSAGE, msg).replaceAll("\\$VERSION", version));
     }
 }

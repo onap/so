@@ -22,6 +22,9 @@ package org.openecomp.mso.apihandler.common;
  
 public final class ErrorNumbers {
 
+    private ErrorNumbers() {
+    }
+
     public static final String REQUEST_FAILED_SCHEMA_VALIDATION = "1000";
     public static final String RECIPE_DOES_NOT_EXIST = "1010";
     public static final String VFMODULE_TYPE_DOES_NOT_EXIST = "1011";
