@@ -17,21 +17,42 @@
 */
 package com.gigaspaces.aria.rest.client;
 
+import java.net.URI;
+import java.util.Date;
+
 /**
+ * 
+ *
  * Created by DeWayne on 7/17/2017.
  */
-public class OutputImpl implements Output {
-    private String name, description, value;
+public class ServiceImpl implements Service {
+    private int id;
+    private String description, name, template;
+    private Date created, updated;
 
-    public String getName() {
-        return name;
+    public int getId(){
+        return id;
     }
 
-    public String getDescription() {
+    public String getDescription(){
         return description;
     }
 
-    public String getValue() {
-        return value;
+    public String getName(){
+        return name;
     }
-}
+
+    public String getServiceTemplate(){
+	return template;
+    }
+
+    public Date getCreated(){
+        return created;
+    }
+
+    public Date getUpdated(){
+        return updated;
+    }
+    
+        
+}    
