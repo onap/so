@@ -22,6 +22,30 @@
       "revId": "f24a0ff02f0b7a64fc3163b56bd95a90d8465b05",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_bacc6a6b",
+        "filename": "adapters/mso-vnf-adapter/src/main/java/org/openecomp/mso/vdu/utils/VduPlugin.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 1595
+      },
+      "writtenOn": "2018-02-16T23:04:16Z",
+      "side": 1,
+      "message": "Only confused if the caller or implementer doesn\u0027t understand the contract I guess.",
+      "parentUuid": "5a93c517_1a131e0e",
+      "range": {
+        "startLine": 150,
+        "startChar": 9,
+        "endLine": 150,
+        "endChar": 95
+      },
+      "revId": "f24a0ff02f0b7a64fc3163b56bd95a90d8465b05",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
