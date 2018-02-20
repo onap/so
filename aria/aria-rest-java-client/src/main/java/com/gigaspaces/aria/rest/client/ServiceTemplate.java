@@ -28,4 +28,5 @@ public interface ServiceTemplate {
     int getId();
     String getFilename();
     String getDescription();
+    byte[] getCSARBytes();
 }
