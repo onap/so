@@ -1634,10 +1634,10 @@ public class WorkflowTest {
 				return null;
 			}
 
-			Collections.sort(processInstanceList, new Comparator<HistoricProcessInstance>() {
-			    public int compare(HistoricProcessInstance m1, HistoricProcessInstance m2) {
-			        return m1.getStartTime().compareTo(m2.getStartTime());
-			    }
+			processInstanceList.sort(new Comparator<HistoricProcessInstance>() {
+				public int compare(HistoricProcessInstance m1, HistoricProcessInstance m2) {
+					return m1.getStartTime().compareTo(m2.getStartTime());
+				}
 			});
 
 			HistoricProcessInstance processInstance = processInstanceList.get(0);
@@ -1672,10 +1672,10 @@ public class WorkflowTest {
 				return null;
 			}
 
-			Collections.sort(processInstanceList, new Comparator<HistoricProcessInstance>() {
-			    public int compare(HistoricProcessInstance m1, HistoricProcessInstance m2) {
-			        return m1.getStartTime().compareTo(m2.getStartTime());
-			    }
+			processInstanceList.sort(new Comparator<HistoricProcessInstance>() {
+				public int compare(HistoricProcessInstance m1, HistoricProcessInstance m2) {
+					return m1.getStartTime().compareTo(m2.getStartTime());
+				}
 			});
 
 			HistoricProcessInstance processInstance = processInstanceList.get(subflowInstanceIndex);
