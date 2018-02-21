@@ -1548,7 +1548,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
 				}
 			} else if ("boolean".equalsIgnoreCase(type)) {
 				String booleanString = inputs.get(key);
-				Boolean aBool = new Boolean(booleanString);
+				Boolean aBool = Boolean.valueOf(booleanString);
 				if (alias)
 					newInputs.put(realName, aBool);
 				else
