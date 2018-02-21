@@ -1985,16 +1985,16 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     		String outputTempl = "  subnet_id_%subnetId%:\n" + "    description: Openstack subnet identifier\n"
     				+ "    value: {get_resource: subnet_%subnetId%}\n";
 
-    		String curR;
+    		StringBuilder curR;
     		String curO;
     		StringBuilder resourcesBuf = new StringBuilder ();
     		StringBuilder outputsBuf = new StringBuilder ();
     		for (Subnet subnet : subnets) {
 
     			// build template for each subnet
-    			curR = resourceTempl;
+    			curR = new StringBuilder(resourceTempl);
     			if (subnet.getSubnetId () != null) {
-    				curR = curR.replace ("%subnetId%", subnet.getSubnetId ());
+    				curR = new StringBuilder(curR.toString().replace("%subnetId%", subnet.getSubnetId()));
     			} else {
     				String error = "Missing Required AAI SubnetId for subnet in HEAT Template";
     				LOGGER.error (MessageEnum.RA_MISSING_PARAM, error, "Openstack", "", MsoLogger.ErrorCode.DataError, "Missing Required AAI ID  for subnet in HEAT Template");
@@ -2002,13 +2002,13 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     			}
 
     			if (subnet.getSubnetName () != null) {
-    				curR = curR.replace ("%name%", subnet.getSubnetName ());
+    				curR = new StringBuilder(curR.toString().replace("%name%", subnet.getSubnetName()));
     			} else {
-    				curR = curR.replace ("%name%", subnet.getSubnetId ());
+    				curR = new StringBuilder(curR.toString().replace("%name%", subnet.getSubnetId()));
     			}
 
     			if (subnet.getCidr () != null) {
-    				curR = curR.replace ("%cidr%", subnet.getCidr ());
+    				curR = new StringBuilder(curR.toString().replace("%cidr%", subnet.getCidr()));
     			} else {
     				String error = "Missing Required cidr for subnet in HEAT Template";
     				LOGGER.error (MessageEnum.RA_MISSING_PARAM, error, "Openstack", "", MsoLogger.ErrorCode.DataError, "Missing Required cidr for subnet in HEAT Template");
@@ -2016,23 +2016,23 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     			}
 
     			if (subnet.getIpVersion () != null) {
-    				curR = curR + "      ip_version: " + subnet.getIpVersion () + "\n";
+    				curR.append("      ip_version: " + subnet.getIpVersion() + "\n");
     			}
     			if (subnet.getEnableDHCP () != null) {
-    				curR = curR + "      enable_dhcp: " +  Boolean.toString (subnet.getEnableDHCP ()) + "\n";
+    				curR.append("      enable_dhcp: ").append(Boolean.toString(subnet.getEnableDHCP())).append("\n");
     			}
     			if (subnet.getGatewayIp () != null && !subnet.getGatewayIp ().isEmpty() ) {
-    				curR = curR + "      gateway_ip: " + subnet.getGatewayIp () + "\n";
+    				curR.append("      gateway_ip: " + subnet.getGatewayIp() + "\n");
     			}
 
     			if (subnet.getAllocationPools() != null) {
-    				curR = curR + "      allocation_pools:\n";
+    				curR.append("      allocation_pools:\n");
     				for (Pool pool : subnet.getAllocationPools())
     				{
     					if (!isNullOrEmpty(pool.getStart()) && !isNullOrEmpty(pool.getEnd()))
     					{
-    						curR = curR + "       - start: " + pool.getStart () + "\n";
-    						curR = curR + "         end: " + pool.getEnd () + "\n";
+    						curR.append("       - start: " + pool.getStart() + "\n");
+    						curR.append("         end: " + pool.getEnd() + "\n");
     					}
     				}
     			}
