@@ -2166,9 +2166,7 @@ public class CatalogDatabase implements Closeable {
         	String networkModelCustomizationUuid = stn.getResourceModelCustomizationUUID();
             LOGGER.debug("Now searching for NetworkResourceCustomization for " + networkModelCustomizationUuid);
             List<NetworkResourceCustomization> resultSet = this.getAllNetworksByNetworkModelCustomizationUuid(networkModelCustomizationUuid);
-            for (NetworkResourceCustomization nrc : resultSet) {
-                masterList.add(nrc);
-            }
+            masterList.addAll(resultSet);
         }
         LOGGER.debug("Returning " + masterList.size() + " NRC records");
         LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getAllNetworksByServiceModelUuid", null);
@@ -2465,9 +2463,7 @@ public class CatalogDatabase implements Closeable {
         	String arModelCustomizationUuid = star.getResourceModelCustomizationUUID();
             LOGGER.debug("Now searching for AllottedResourceCustomization for " + arModelCustomizationUuid);
             List<AllottedResourceCustomization> resultSet = this.getAllAllottedResourcesByArModelCustomizationUuid(arModelCustomizationUuid);
-            for (AllottedResourceCustomization arc : resultSet) {
-                masterList.add(arc);
-            }
+            masterList.addAll(resultSet);
         }
         LOGGER.debug("Returning " + masterList.size() + " ARC records");
         LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getAllAllottedResourcesByServiceModelUuid", null);

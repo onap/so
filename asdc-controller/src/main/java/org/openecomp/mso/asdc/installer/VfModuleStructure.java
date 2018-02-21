@@ -79,13 +79,9 @@ public final class VfModuleStructure {
 		artifactsList.addAll(artifactsMap.get(ASDCConfiguration.HEAT_ENV));
 		artifactsList.addAll(artifactsMap.get(ASDCConfiguration.HEAT_VOL));
 
-		for (VfModuleArtifact artifact:(artifactsMap.get(ASDCConfiguration.HEAT_NESTED))) {
-			artifactsList.add(artifact);
-		}
+		artifactsList.addAll((artifactsMap.get(ASDCConfiguration.HEAT_NESTED)));
 
-		for (VfModuleArtifact artifact:(artifactsMap.get(ASDCConfiguration.HEAT_ARTIFACT))) {
-			artifactsList.add(artifact);
-		}
+		artifactsList.addAll((artifactsMap.get(ASDCConfiguration.HEAT_ARTIFACT)));
 
 		artifactsList.addAll(artifactsMap.get(ASDCConfiguration.HEAT_VOL));
 
