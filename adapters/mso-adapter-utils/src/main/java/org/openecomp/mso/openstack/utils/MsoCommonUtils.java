@@ -129,6 +129,7 @@ public class MsoCommonUtils {
     					Thread.sleep (retryDelay * 1000L);
     				} catch (InterruptedException e1) {
                         logger.debug ("Thread interrupted while sleeping", e1);
+						Thread.currentThread().interrupt();
     				}
     			}
         		else
@@ -144,6 +145,7 @@ public class MsoCommonUtils {
         				Thread.sleep (retryDelay * 1000L);
         			} catch (InterruptedException e1) {
                         logger.debug ("Thread interrupted while sleeping", e1);
+						Thread.currentThread().interrupt();
         			}
         		}
         		else
