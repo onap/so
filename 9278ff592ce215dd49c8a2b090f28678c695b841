@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_6bf609fb",
+        "filename": "bpmn/MSOInfrastructureBPMN/src/main/groovy/org/openecomp/mso/bpmn/infrastructure/scripts/DoCreateE2EServiceInstance.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 502,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2018-02-22T05:21:12Z",
+      "side": 1,
+      "message": "This should also be checked, the current flow could also support other controller types apart from VFC",
+      "revId": "9278ff592ce215dd49c8a2b090f28678c695b841",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0bdf456a",
+        "filename": "bpmn/MSOInfrastructureBPMN/src/main/groovy/org/openecomp/mso/bpmn/infrastructure/scripts/DoCustomDeleteE2EServiceInstance.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 639,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2018-02-22T05:21:12Z",
+      "side": 1,
+      "message": "same as above, have a check of the controller type not just VFC",
+      "revId": "9278ff592ce215dd49c8a2b090f28678c695b841",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
