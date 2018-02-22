@@ -109,7 +109,7 @@ public class VnfComponent implements Serializable {
     public int hashCode () {
         // return the hashCode of the concat string of type+vnfId - should be okay.
         int result = 0;
-        result = (this.componentType + this.vnfId).toString().hashCode();
+        result = (this.componentType + this.vnfId).hashCode();
         return result;
     }
 }

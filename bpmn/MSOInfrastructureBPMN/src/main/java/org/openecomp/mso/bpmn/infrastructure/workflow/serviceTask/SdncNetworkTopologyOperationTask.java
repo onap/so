@@ -77,7 +77,7 @@ public class SdncNetworkTopologyOperationTask extends AbstractSdncOperationTask 
         httpPost.addHeader("Authorization", defaulAuth);
         httpPost.addHeader("Content-type", "application/json");
         String postBody = getPostbody(inputEntity);
-        LOGGER.info(MessageEnum.RA_SEND_REQUEST_SDNC, postBody.toString(), "SDNC", "");
+        LOGGER.info(MessageEnum.RA_SEND_REQUEST_SDNC, postBody, "SDNC", "");
         httpPost.setEntity(new StringEntity(postBody, ContentType.APPLICATION_XML));
         httpPost(url, httpPost);
         logger.info("SdncNetworkTopologyOperationTask.Send2SdncDirectly end!");
