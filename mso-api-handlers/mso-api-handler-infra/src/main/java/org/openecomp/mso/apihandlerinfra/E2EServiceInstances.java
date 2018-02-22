@@ -243,7 +243,8 @@ public class E2EServiceInstances {
 		RecipeLookupResult recipeLookupResult = null;
 		try {
 			db = CatalogDatabase.getInstance();
-			recipeLookupResult = getServiceInstanceOrchestrationURI(db, action);
+			//TODO  Get the service template model version uuid from AAI.
+			recipeLookupResult = getServiceInstanceOrchestrationURI(db, null, action);
 		} catch (Exception e) {
 			msoLogger.error(MessageEnum.APIH_DB_ACCESS_EXC,
 					MSO_PROP_APIHANDLER_INFRA, "", "",
@@ -474,7 +475,7 @@ public class E2EServiceInstances {
 		RecipeLookupResult recipeLookupResult = null;
 		try {
 			db = CatalogDatabase.getInstance();
-			recipeLookupResult = getServiceInstanceOrchestrationURI(db, action);
+			recipeLookupResult = getServiceInstanceOrchestrationURI(db, e2eSir.getService().getTemplateId(), action);
 		} catch (Exception e) {
 			msoLogger.error(MessageEnum.APIH_DB_ACCESS_EXC, MSO_PROP_APIHANDLER_INFRA, "", "",
 					MsoLogger.ErrorCode.AvailabilityError, "Exception while communciate with Catalog DB", e);
@@ -669,14 +670,15 @@ public class E2EServiceInstances {
 	/**
 	 * Getting recipes from catalogDb
 	 * 
-	 * @param db
-	 * @param action
-	 * @return
+	 * @param db the catalog db
+	 * @param serviceModelUUID the service model version uuid
+	 * @param action the action for the service
+	 * @return the service recipe result
 	 */
 	private RecipeLookupResult getServiceInstanceOrchestrationURI(
-			CatalogDatabase db, Action action) {
+			CatalogDatabase db, String serviceModelUUID, Action action) {
 
-		RecipeLookupResult recipeLookupResult = getServiceURI(db, action);
+		RecipeLookupResult recipeLookupResult = getServiceURI(db, serviceModelUUID, action);
 
 		if (recipeLookupResult != null) {
 			msoLogger.debug("Orchestration URI is: "
@@ -691,20 +693,32 @@ public class E2EServiceInstances {
 
 	/**
 	 * Getting recipes from catalogDb
-	 * 
-	 * @param db
-	 * @param action
-	 * @return
+	 * If Service recipe is not set, use default recipe, if set , use special recipe.
+	 * @param db the catalog db
+	 * @param serviceModelUUID the service version uuid
+	 * @param action the action of the service.
+	 * @return the service recipe result.
 	 */
-	private RecipeLookupResult getServiceURI(CatalogDatabase db, Action action) {
+	private RecipeLookupResult getServiceURI(CatalogDatabase db, String serviceModelUUID, Action action) {
 
 		String defaultServiceModelName = "UUI_DEFAULT";
 
-		Service serviceRecord = db
+		Service defaultServiceRecord = db
 				.getServiceByModelName(defaultServiceModelName);
-		ServiceRecipe recipe = db.getServiceRecipeByModelUUID(
-				serviceRecord.getModelUUID(), action.name());
-
+		ServiceRecipe defaultRecipe = db.getServiceRecipeByModelUUID(
+		        defaultServiceRecord.getModelUUID(), action.name());
+		//set recipe as default generic recipe
+		ServiceRecipe recipe = defaultRecipe;
+		//check the service special recipe 
+		if(null != serviceModelUUID && ! serviceModelUUID.isEmpty()){
+		      ServiceRecipe serviceSpecialRecipe = db.getServiceRecipeByModelUUID(
+		              serviceModelUUID, action.name());
+		      if(null != serviceSpecialRecipe){
+		          //set service special recipe.
+		          recipe = serviceSpecialRecipe;
+		      }
+		}	
+		
 		if (recipe == null) {
 			return null;
 		}
