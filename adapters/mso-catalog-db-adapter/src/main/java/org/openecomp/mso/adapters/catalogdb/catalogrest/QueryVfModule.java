@@ -104,10 +104,10 @@ public class QueryVfModule extends CatalogQuery {
 		    put(valueMap, "MODEL_INVARIANT_ID",       vfNull ? null : o.getVfModule().getModelInvariantUuid());
 		    put(valueMap, "MODEL_VERSION",            vfNull ? null : o.getVfModule().getVersion());
 		    put(valueMap, "MODEL_CUSTOMIZATION_UUID", o.getModelCustomizationUuid());
-		    put(valueMap, "IS_BASE",                  vfNull ? false : new Boolean(o.getVfModule().isBase()? true: false));
-		    put(valueMap, "VF_MODULE_LABEL",          o.getLabel());
+			put(valueMap, "IS_BASE", vfNull ? false : Boolean.valueOf(o.getVfModule().isBase() ? true : false));
+			put(valueMap, "VF_MODULE_LABEL",          o.getLabel());
 		    put(valueMap, "INITIAL_COUNT",            o.getInitialCount());
-		    put(valueMap, "HAS_VOLUME_GROUP",           new Boolean(hasVolumeGroup));
+		    put(valueMap, "HAS_VOLUME_GROUP", Boolean.valueOf(hasVolumeGroup));
 
             buf.append(sep+ this.setTemplate(template, valueMap));
             sep = ",\n";
