@@ -1170,7 +1170,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             }
 
             // Check that required parameters have been supplied
-            String missingParams = null;
+            StringBuilder missingParams = null;
             List <String> paramList = new ArrayList <> ();
 
             // New for 1510 - consult the PARAM_ALIAS field to see if we've been
@@ -1264,9 +1264,9 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                     } else {
                         LOGGER.debug ("adding to missing parameters list: " + parm.getParamName ());
                         if (missingParams == null) {
-                            missingParams = parm.getParamName ();
+                            missingParams = new StringBuilder(parm.getParamName());
                         } else {
-                            missingParams += "," + parm.getParamName ();
+                            missingParams.append("," + parm.getParamName());
                         }
                     }
                 }
@@ -1276,7 +1276,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                 if (checkRequiredParameters) {
                     // Problem - missing one or more required parameters
                     String error = "Create VFModule: Missing Required inputs: " + missingParams;
-                    LOGGER.error (MessageEnum.RA_MISSING_PARAM, missingParams, "OpenStack", "", MsoLogger.ErrorCode.DataError, "Create VFModule: Missing Required inputs");
+                    LOGGER.error (MessageEnum.RA_MISSING_PARAM, missingParams.toString(), "OpenStack", "", MsoLogger.ErrorCode.DataError, "Create VFModule: Missing Required inputs");
                     LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.BadRequest, error);
                     throw new VnfException (error, MsoExceptionCategory.USERDATA);
                 } else {
@@ -1871,7 +1871,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             }
 
             // Check that required parameters have been supplied
-            String missingParams = null;
+            StringBuilder missingParams = null;
             List <String> paramList = new ArrayList <> ();
 
             // New for 1510 - consult the PARAM_ALIAS field to see if we've been
@@ -2009,9 +2009,9 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                     else {
                         LOGGER.debug ("adding to missing parameters list: " + parm.getParamName ());
                         if (missingParams == null) {
-                            missingParams = parm.getParamName ();
+                            missingParams = new StringBuilder(parm.getParamName());
                         } else {
-                            missingParams += "," + parm.getParamName ();
+                            missingParams.append("," + parm.getParamName());
                         }
                     }
                 }
@@ -2021,7 +2021,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                 // Problem - missing one or more required parameters
                 if (checkRequiredParameters) {
                 String error = "Update VNF: Missing Required inputs: " + missingParams;
-                LOGGER.error (MessageEnum.RA_MISSING_PARAM, missingParams, "OpenStack", "", MsoLogger.ErrorCode.DataError, error);
+                LOGGER.error (MessageEnum.RA_MISSING_PARAM, missingParams.toString(), "OpenStack", "", MsoLogger.ErrorCode.DataError, error);
                     LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.BadRequest, error);
                 throw new VnfException (error, MsoExceptionCategory.USERDATA);
                 } else {

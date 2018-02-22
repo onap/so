@@ -886,7 +886,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
     public Map <String, Object> validateStackParams (Map <String, Object> inputParams,
                                                      HeatTemplate heatTemplate) throws IllegalArgumentException {
         // Check that required parameters have been supplied for this template type
-        String missingParams = null;
+        StringBuilder missingParams = null;
         List <String> paramList = new ArrayList <> ();
 
         // TODO: Enhance DB to support defaults for Heat Template parameters
@@ -894,9 +894,9 @@ public class MsoHeatUtils extends MsoCommonUtils {
         for (HeatTemplateParam parm : heatTemplate.getParameters ()) {
             if (parm.isRequired () && !inputParams.containsKey (parm.getParamName ())) {
                 if (missingParams == null) {
-                    missingParams = parm.getParamName ();
+                    missingParams = new StringBuilder(parm.getParamName());
                 } else {
-                    missingParams += "," + parm.getParamName ();
+                    missingParams.append("," + parm.getParamName());
                 }
             }
             paramList.add (parm.getParamName ());
