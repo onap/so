@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_e6001004",
+        "filename": "adapters/mso-adapter-utils/src/test/java/org/openecomp/mso/cloud/authentication/wrappers/RackspaceAPIKeyWrapperTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-02-22T15:22:06Z",
+      "side": 1,
+      "message": "how about (just replace ExceptionThrown.class by correct one or remove it):\n\n        RackspaceAPIKeyWrapper testedObject \u003d new RackspaceAPIKeyWrapper();\n        assertThatThrownBy(() -\u003e testedObject.getAuthentication(null)).isInstanceOf(ExceptionThrown.class).hasMessage(WrapperTestUtility.EXCEPTION_MESSAGE);",
+      "range": {
+        "startLine": 50,
+        "startChar": 0,
+        "endLine": 55,
+        "endChar": 9
+      },
+      "revId": "aff3139998fc615fda667f700834913d8aec235d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_3a0ccc3a",
+        "filename": "adapters/mso-adapter-utils/src/test/java/org/openecomp/mso/cloud/authentication/wrappers/UsernamePasswordWrapperTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-02-22T15:22:06Z",
+      "side": 1,
+      "message": "Same here",
+      "range": {
+        "startLine": 50,
+        "startChar": 0,
+        "endLine": 55,
+        "endChar": 9
+      },
+      "revId": "aff3139998fc615fda667f700834913d8aec235d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
