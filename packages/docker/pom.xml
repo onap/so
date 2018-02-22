@@ -3,13 +3,13 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>org.openecomp.so</groupId>
+		<groupId>org.onap.so</groupId>
 		<artifactId>packages</artifactId>
 		<version>1.2.0-SNAPSHOT</version>
 	</parent>
 
 	<packaging>pom</packaging>
-	<groupId>org.openecomp.so</groupId>
+	<groupId>org.onap.so</groupId>
 	<artifactId>docker</artifactId>
 
 	<name>MSO Docker Deliveries</name>

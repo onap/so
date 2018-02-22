@@ -3,13 +3,13 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>org.openecomp.so</groupId>
+		<groupId>org.onap.so</groupId>
 		<artifactId>mso-api-handlers</artifactId>
 		<version>1.2.0-SNAPSHOT</version>
 	</parent>
 
 
-	<groupId>org.openecomp.so</groupId>
+	<groupId>org.onap.so</groupId>
 	<artifactId>mso-api-handler-common</artifactId>
 
 	<name>ECOMP MSO API Handler common</name>
@@ -73,13 +73,13 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.openecomp.so</groupId>
+			<groupId>org.onap.so</groupId>
 			<artifactId>mso-catalog-db</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
-			<groupId>org.openecomp.so</groupId>
+			<groupId>org.onap.so</groupId>
 			<artifactId>mso-requests-db</artifactId>
 			<version>${project.version}</version>
 		</dependency>

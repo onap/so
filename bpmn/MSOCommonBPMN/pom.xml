@@ -4,7 +4,7 @@
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>org.openecomp.so</groupId>
+		<groupId>org.onap.so</groupId>
 		<artifactId>bpmn</artifactId>
 		<version>1.2.0-SNAPSHOT</version>
 	</parent>
@@ -264,20 +264,20 @@
 			<version>3.4</version>
 		</dependency>
 		<dependency>
-			<groupId>org.openecomp.so</groupId>
+			<groupId>org.onap.so</groupId>
 			<artifactId>MSOCoreBPMN</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<!-- unit test utilities -->
-			<groupId>org.openecomp.so</groupId>
+			<groupId>org.onap.so</groupId>
 			<artifactId>MSOCoreBPMN</artifactId>
 			<version>${project.version}</version>
 			<classifier>tests</classifier>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.openecomp.so</groupId>
+			<groupId>org.onap.so</groupId>
 			<artifactId>common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -287,7 +287,7 @@
 			<version>2.0</version>
 		</dependency>
 		<dependency>
-			<groupId>org.openecomp.so</groupId>
+			<groupId>org.onap.so</groupId>
 			<artifactId>MSORESTClient</artifactId>
 			<version>${project.version}</version>
 		</dependency>
