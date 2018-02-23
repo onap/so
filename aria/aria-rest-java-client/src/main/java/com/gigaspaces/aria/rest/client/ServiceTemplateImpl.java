@@ -41,6 +41,14 @@ public class ServiceTemplateImpl implements ServiceTemplate {
     }
 
     /**
+     * Construct service template from CSAR byte array
+     */
+    public ServiceTemplateImpl(String name, byte[] csar){
+	    this.csar_blob = csar;
+	    this.name = name;
+    }
+
+    /**
      * Construct an instance based on CSAR
      * @param name a textual name for the template
      * @param uri a URI to a CSAR
@@ -53,13 +61,6 @@ public class ServiceTemplateImpl implements ServiceTemplate {
         this.description=description;
     }
     
-    /**
-     * Construct an instance based on CSAR array
-     */
-    public ServiceTemplateImpl(byte[] csar_bytes) {
-    	this.csar_blob = csar_bytes;
-    }
-
     public int getId(){
         return id;
     }
