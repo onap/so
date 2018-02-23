@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_335b97f7",
+        "filename": "adapters/mso-vnf-adapter/src/main/java/org/openecomp/mso/adapters/vnf/AriaVduPlugin.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 2085
+      },
+      "writtenOn": "2018-02-23T14:03:58Z",
+      "side": 1,
+      "message": "the serviceIds is a class member, and this function put its contents and does the class instance level cache. It means... before calling queryVDU and deleteVDU functions, we need to call this instantiateVDU. I guess the class caller should know this order.",
+      "range": {
+        "startLine": 121,
+        "startChar": 2,
+        "endLine": 121,
+        "endChar": 39
+      },
+      "revId": "75e3d92d1e1d1027c5ae96b79975877e3e3f145b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_5360a3a4",
+        "filename": "adapters/mso-vnf-adapter/src/main/java/org/openecomp/mso/adapters/vnf/AriaVduPlugin.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 228,
+      "author": {
+        "id": 2085
+      },
+      "writtenOn": "2018-02-23T14:03:58Z",
+      "side": 1,
+      "message": "The templateIds is a class member and I don\u0027t see where the templateIds contents are set (added) in this code.",
+      "range": {
+        "startLine": 228,
+        "startChar": 34,
+        "endLine": 228,
+        "endChar": 45
+      },
+      "revId": "75e3d92d1e1d1027c5ae96b79975877e3e3f145b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
