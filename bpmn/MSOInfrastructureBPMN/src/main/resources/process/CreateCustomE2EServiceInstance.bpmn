@@ -22,7 +22,7 @@ ex.processJavaException(execution)]]></bpmn:script>
       <bpmn:sequenceFlow id="SequenceFlow_1dsbjjb" name="" sourceRef="StartEvent_0v1ffn4" targetRef="ScriptTask_0u3lw39" />
       <bpmn:sequenceFlow id="SequenceFlow_1yay321" name="" sourceRef="ScriptTask_0u3lw39" targetRef="EndEvent_0eznq6x" />
     </bpmn:subProcess>
-    <bpmn:callActivity id="DoCreateE2EServiceInstance" name="Call DoCreateE2EServiceInstance&#10;" calledElement="DoCreateE2EServiceInstance">
+    <bpmn:callActivity id="DoCreateE2EServiceInstance" name="Call DoCreateE2EServiceInstanceV3&#10;" calledElement="DoCreateE2EServiceInstanceV3">
       <bpmn:extensionElements>
         <camunda:out source="WorkflowException" target="WorkflowException" />
         <camunda:in source="msoRequestId" target="msoRequestId" />

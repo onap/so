@@ -35,6 +35,7 @@ import org.openecomp.mso.rest.APIResponse;
 import org.openecomp.mso.rest.RESTClient
 import org.openecomp.mso.rest.RESTConfig
 
+import java.util.List;
 import java.util.UUID;
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
@@ -589,5 +590,72 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
        }    
        utils.log("INFO", " ======== END preResourceDelete Process ======== ", isDebugEnabled)
    }
+   
+   public void sequenceResource(execution){
+       def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
+
+       utils.log("INFO", " ======== STARTED sequenceResource Process ======== ", isDebugEnabled)
+       List<String> nsResources = new ArrayList<String>()
+       List<String> wanResources = new ArrayList<String>()
+       List<String> resourceSequence = new  ArrayList<String>()
+       
+       String serviceRelationShip = execution.getVariable("serviceRelationShip")
+               
+       
+       def jsonSlurper = new JsonSlurper()
+       def jsonOutput = new JsonOutput()         
+       List relationShipList =  jsonSlurper.parseText(serviceRelationShip)
+               
+       if (relationShipList != null) {
+           relationShipList.each {
+               if(StringUtils.containsIgnoreCase(it.resourceType, "overlay") || StringUtils.containsIgnoreCase(it.resourceType, "underlay")){
+                   wanResources.add(it.resourceType)
+               }else{
+                   nsResources.add(it.resourceType)
+               }
+           }
+       }     
+       resourceSequence.addAll(wanResources)
+       resourceSequence.addAll(nsResources)
+       String isContainsWanResource = wanResources.isEmpty() ? "false" : "true"
+       execution.setVariable("isContainsWanResource", isContainsWanResource)
+       execution.setVariable("currentResourceIndex", 0)
+       execution.setVariable("resourceSequence", resourceSequence)
+       utils.log("INFO", "resourceSequence: " + resourceSequence, isDebugEnabled)  
+       execution.setVariable("wanResources", wanResources)
+       utils.log("INFO", " ======== END sequenceResource Process ======== ", isDebugEnabled)
+   }
+   
+   public void getCurrentResource(execution){
+       def isDebugEnabled=execution.getVariable("isDebugLogEnabled")   
+       utils.log("INFO", "======== Start getCurrentResoure Process ======== ", isDebugEnabled)    
+       def currentIndex = execution.getVariable("currentResourceIndex")
+       List<String> resourceSequence = execution.getVariable("resourceSequence")  
+       List<String> wanResources = execution.getVariable("wanResources")  
+       String resourceName =  resourceSequence.get(currentIndex)
+       execution.setVariable("resourceType",resourceName)
+       if(wanResources.contains(resourceName)){
+           execution.setVariable("controllerInfo", "SDN-C")
+       }else{
+           execution.setVariable("controllerInfo", "VF-C")
+       }
+       utils.log("INFO", "======== COMPLETED getCurrentResoure Process ======== ", isDebugEnabled)  
+   }
+   
+   public void parseNextResource(execution){
+       def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+       utils.log("INFO", "======== Start parseNextResource Process ======== ", isDebugEnabled)    
+       def currentIndex = execution.getVariable("currentResourceIndex")
+       def nextIndex =  currentIndex + 1
+       execution.setVariable("currentResourceIndex", nextIndex)
+       List<String> resourceSequence = execution.getVariable("resourceSequence")    
+       if(nextIndex >= resourceSequence.size()){
+           execution.setVariable("allResourceFinished", "true")
+       }else{
+           execution.setVariable("allResourceFinished", "false")
+       }
+       utils.log("INFO", "======== COMPLETED parseNextResource Process ======== ", isDebugEnabled)            
+   }
+   
 }
  
