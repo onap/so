@@ -72,6 +72,7 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
 		execution.setVariable(Prefix+"VnfsCreatedCount", 0)
 		execution.setVariable("productFamilyId", "")
 		execution.setVariable("brgWanMacAddress", "")
+		execution.setVariable("customerLocation", "")
 
 		//TODO
 		execution.setVariable("sdncVersion", "1707")
@@ -174,7 +175,8 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
 		  def jsonOutput = new JsonOutput()
 
 		  Map reqMap = jsonSlurper.parseText(createVcpeServiceRequest)
-  
+
+  
 		  //InputParams
 		  def userParams = reqMap.requestDetails?.requestParameters?.userParams
   
@@ -188,6 +190,10 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
 												execution.setVariable("brgWanMacAddress", userParam.value)
 												inputMap.put("BRG_WAN_MAC_Address", userParam.value)
 					}
+								if("Customer_Location".equals(userParam?.name)) {
+									execution.setVariable("customerLocation", userParam.value)
+									inputMap.put("Customer_Location", userParam.value)
+								}
 				}
 		  }
 
@@ -195,6 +201,7 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
 		  execution.setVariable("serviceInputParams", inputMap)
 
 			utils.log("DEBUG", "Incoming brgWanMacAddress is: " + execution.getVariable('brgWanMacAddress'), isDebugEnabled)
+			utils.log("DEBUG", "Incoming customerLocation is: " + execution.getVariable('customerLocation'), isDebugEnabled)
 
 			//For Completion Handler & Fallout Handler
 			String requestInfo =
