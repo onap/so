@@ -51,29 +51,31 @@ public class MavenLikeVersioning implements Serializable {
 	 *
 	 */
 	public boolean isMoreRecentThan (String versionToCompare) {
-		if (versionToCompare == null || versionToCompare.trim().equals("") || this.version == null || this.version.trim().equals("")) {
+		if (versionToCompare == null || versionToCompare.trim().equals("") || this.version == null || this.version
+			.trim().equals("")) {
 			return false;
 		}
-		String [] currentVersionArray = this.version.split("\\.");
-		String [] specifiedVersionArray = versionToCompare.split("\\.");
+		String[] currentVersionArray = this.version.split("\\.");
+		String[] specifiedVersionArray = versionToCompare.split("\\.");
 
-        int smalestStringLength = Math.min(currentVersionArray.length, specifiedVersionArray.length);
+		int smalestStringLength = Math.min(currentVersionArray.length, specifiedVersionArray.length);
 
-		for (int currentVersionIndex=0;currentVersionIndex < smalestStringLength;++currentVersionIndex) {
+		for (int currentVersionIndex = 0; currentVersionIndex < smalestStringLength; ++currentVersionIndex) {
 
-			if (Integer.parseInt(currentVersionArray[currentVersionIndex]) < Integer.parseInt(specifiedVersionArray[currentVersionIndex])) {
+			if (Integer.parseInt(currentVersionArray[currentVersionIndex]) < Integer
+				.parseInt(specifiedVersionArray[currentVersionIndex])) {
 				return false;
-			} else if (Integer.parseInt(currentVersionArray[currentVersionIndex]) > Integer.parseInt(specifiedVersionArray[currentVersionIndex])) {
+			} else if (Integer.parseInt(currentVersionArray[currentVersionIndex]) > Integer
+				.parseInt(specifiedVersionArray[currentVersionIndex])) {
 				return true;
 			}
 		}
 
 		// Even if versionToCompare has more digits, it means versionToCompare is more recent
-		if (Integer.parseInt(currentVersionArray[smalestStringLength-1]) == Integer.parseInt(specifiedVersionArray[smalestStringLength-1])) {
-		    return currentVersionArray.length > specifiedVersionArray.length;
-		}
+		return Integer.parseInt(currentVersionArray[smalestStringLength - 1]) != Integer
+			.parseInt(specifiedVersionArray[smalestStringLength - 1])
+			|| currentVersionArray.length > specifiedVersionArray.length;
 
-		return true;
 	}
 
 	/**
