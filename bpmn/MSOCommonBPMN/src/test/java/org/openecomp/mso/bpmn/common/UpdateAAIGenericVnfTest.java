@@ -70,7 +70,7 @@ public class UpdateAAIGenericVnfTest extends WorkflowTest {
 		Integer responseCode = (Integer) getVariableFromHistory(businessKey, "UAAIGenVnf_updateGenericVnfResponseCode");
 		System.out.println("Subflow response code: " + responseCode);
 		System.out.println("Subflow response: " + response);
-		Assert.assertEquals(200, responseCode.intValue());
+		Assert.assertEquals(200, responseCode);
 		
 		logEnd();
 	}
@@ -133,7 +133,7 @@ public class UpdateAAIGenericVnfTest extends WorkflowTest {
 		Integer responseCode = (Integer) getVariableFromHistory(businessKey, "UAAIGenVnf_getGenericVnfResponseCode");
 		System.out.println("Subflow response code: " + responseCode);
 		System.out.println("Subflow response: " + response);
-		Assert.assertEquals(404, responseCode.intValue());
+		Assert.assertEquals(404, responseCode);
 		
 		logEnd();
 	}
@@ -167,7 +167,7 @@ public class UpdateAAIGenericVnfTest extends WorkflowTest {
 		Integer responseCode = (Integer) getVariableFromHistory(businessKey, "UAAIGenVnf_updateGenericVnfResponseCode");
 		System.out.println("Subflow response code: " + responseCode);
 		System.out.println("Subflow response: " + response);
-		Assert.assertEquals(404, responseCode.intValue());
+		Assert.assertEquals(404, responseCode);
 		
 		logEnd();
 	}
