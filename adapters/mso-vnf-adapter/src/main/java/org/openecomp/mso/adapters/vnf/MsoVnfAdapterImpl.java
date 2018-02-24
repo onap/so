@@ -1442,19 +1442,17 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         String serviceName = VNF_ADAPTER_SERVICE_NAME + methodName;
         MsoLogger.setServiceName (serviceName);
 
-        StringBuilder sbInit = new StringBuilder();
-        sbInit.append("updateVfModule: \n");
-        sbInit.append("cloudSiteId=").append(cloudSiteId).append("\n");
-        sbInit.append("tenantId=").append(tenantId).append("\n");
-        sbInit.append("vnfType=").append(vnfType).append("\n");
-        sbInit.append("vnfVersion=").append(vnfVersion).append("\n");
-        sbInit.append("vnfName=").append(vnfName).append("\n");
-        sbInit.append("requestType=").append(requestType).append("\n");
-        sbInit.append("volumeGroupHeatStackId=").append(volumeGroupHeatStackId).append("\n");
-        sbInit.append("baseVfHeatStackId=").append(baseVfHeatStackId).append("\n");
-        sbInit.append("vfModuleStackId=").append(vfModuleStackId).append("\n");
-        sbInit.append("modelCustomizationUuid=").append(modelCustomizationUuid).append("\n");
-        LOGGER.debug(sbInit.toString());
+        String strInit = "updateVfModule: cloudSiteId=" + cloudSiteId +
+            ",tenantId=" + tenantId +
+            ",vnfType=" + vnfType +
+            ",vnfVersion=" + vnfVersion +
+            ",vnfName=" + vnfName +
+            ",requestType=" + requestType +
+            ",volumeGroupHeatStackId=" + volumeGroupHeatStackId +
+            ",baseVfHeatStackId=" + baseVfHeatStackId +
+            ",vfModuleStackId=" + vfModuleStackId +
+            ",modelCustomizationUuid=" + modelCustomizationUuid;
+        LOGGER.debug(strInit);
 
         String mcu = modelCustomizationUuid;
         boolean useMCUuid = false;
