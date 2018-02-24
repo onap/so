@@ -741,7 +741,7 @@ public class MsoRequest {
             if ((status == Status.FAILED) || (status == Status.COMPLETE)) {
                 aq.setStatusMessage (this.errorMessage);
                 aq.setResponseBody (this.responseBody);
-                aq.setProgress(new Long(100));
+                aq.setProgress(100L);
 
                 Timestamp endTimeStamp = new Timestamp (System.currentTimeMillis());
                 aq.setEndTime (endTimeStamp);

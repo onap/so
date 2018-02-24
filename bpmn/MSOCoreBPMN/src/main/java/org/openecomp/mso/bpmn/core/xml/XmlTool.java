@@ -64,10 +64,10 @@ public final class XmlTool {
 	private static final Map<String, Integer> ENTITIES = new HashMap<>();
 	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.BPEL);
 	static {
-		ENTITIES.put("amp", new Integer(38));
-		ENTITIES.put("quot", new Integer(34));
-		ENTITIES.put("lt", new Integer(60));
-		ENTITIES.put("gt", new Integer(62));
+		ENTITIES.put("amp", 38);
+		ENTITIES.put("quot", 34);
+		ENTITIES.put("lt", 60);
+		ENTITIES.put("gt", 62);
 	}
 
 	/**
