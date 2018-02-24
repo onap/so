@@ -39,9 +39,8 @@ public class DmaapPropertiesLoader {
 	}
 	
 	public DmaapProperties getImpl() {
-		Iterator<DmaapProperties> propertyImpls = services.iterator();
-		while (propertyImpls.hasNext()) {
-			return propertyImpls.next();
+		for (DmaapProperties service : services) {
+			return service;
 		}
 		
 		return null;

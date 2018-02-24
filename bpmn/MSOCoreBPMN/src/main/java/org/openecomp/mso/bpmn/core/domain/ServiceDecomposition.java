@@ -186,15 +186,13 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 	@JsonIgnore
 	public String getVnfResource(String resourceObjectId) {
 
-		Iterator<Resource> iter = getServiceResources().iterator();
-		while (iter.hasNext()) {
-			Resource resource = iter.next();
-			//resource.getModelInfo().getModelInvariantId();
+        for (Resource resource : getServiceResources()) {
+            //resource.getModelInfo().getModelInvariantId();
 
-			if ("extracted information".equals(resourceObjectId)){
-				return resource.toJsonString();
-			}
-		}
+            if ("extracted information".equals(resourceObjectId)) {
+                return resource.toJsonString();
+            }
+        }
 		return "";
 	}
 
@@ -290,13 +288,11 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 	public boolean replaceResource(Resource newResource){
 		boolean result = false;
 		List serviceResources = getServiceResources();
-		Iterator<Resource> iter = serviceResources.iterator();
-		while (iter.hasNext()) {
-			Resource resource = iter.next();
+		for (Resource resource : (Iterable<Resource>) serviceResources) {
 			System.out.println("resource found");
-			if (resource.resourceType == newResource.resourceType){
+			if (resource.resourceType == newResource.resourceType) {
 				System.out.println("resource type matches");
-				if (resource.getResourceId().equalsIgnoreCase(newResource.getResourceId())){
+				if (resource.getResourceId().equalsIgnoreCase(newResource.getResourceId())) {
 					System.out.println("resource id matches");
 					//returns TRUE if replacement is a success
 					result = Collections.replaceAll(serviceResources, resource, newResource);
@@ -326,12 +322,9 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 	 */
 	public boolean deleteResource(Resource resource){
 		List serviceResources = getServiceResources();
-		Iterator<Resource> iter = serviceResources.iterator();
-		while (iter.hasNext()) {
-			Resource item = iter.next();
-
-			if (item.resourceType == resource.resourceType){
-				if (item.getResourceId().equalsIgnoreCase(resource.getResourceId())){
+		for (Resource item : (Iterable<Resource>) serviceResources) {
+			if (item.resourceType == resource.resourceType) {
+				if (item.getResourceId().equalsIgnoreCase(resource.getResourceId())) {
 					//returns TRUE if replacement is a success
 					return serviceResources.remove(resource);
 				}
@@ -377,10 +370,8 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 	@JsonIgnore
 	public Resource getServiceResource(String resourceId){
 		List<Resource> resources = getServiceResources();
-		Iterator<Resource> iter = resources.iterator();
-		while (iter.hasNext()){
-			Resource resource = iter.next();
-			if (resource.getResourceId().equalsIgnoreCase(resourceId)){
+		for (Resource resource : resources) {
+			if (resource.getResourceId().equalsIgnoreCase(resourceId)) {
 				//match
 				return resource;
 			}
