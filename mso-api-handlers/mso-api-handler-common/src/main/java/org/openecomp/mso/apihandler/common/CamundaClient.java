@@ -60,7 +60,8 @@ public class CamundaClient extends RequestClient{
 			if(encryptedCredentials != null){
 				String userCredentials = getEncryptedPropValue(encryptedCredentials, CommonConstants.DEFAULT_BPEL_AUTH, CommonConstants.ENCRYPTION_KEY);
 				if(userCredentials != null){
-					post.addHeader("Authorization", "Basic " + new String(DatatypeConverter.printBase64Binary(userCredentials.getBytes())));
+					post.addHeader("Authorization", "Basic " + DatatypeConverter
+                        .printBase64Binary(userCredentials.getBytes()));
 				}
 			}
 		}
@@ -83,7 +84,8 @@ public class CamundaClient extends RequestClient{
 			if(encryptedCredentials != null){
 				String userCredentials = getEncryptedPropValue(encryptedCredentials, CommonConstants.DEFAULT_BPEL_AUTH, CommonConstants.ENCRYPTION_KEY);
 				if(userCredentials != null){
-					post.addHeader("Authorization", "Basic " + new String(DatatypeConverter.printBase64Binary(userCredentials.getBytes())));
+					post.addHeader("Authorization", "Basic " + DatatypeConverter
+                        .printBase64Binary(userCredentials.getBytes()));
 				}
 			}
 		}
@@ -115,7 +117,8 @@ public class CamundaClient extends RequestClient{
 			if(encryptedCredentials != null){
 				String userCredentials = getEncryptedPropValue(encryptedCredentials, CommonConstants.DEFAULT_BPEL_AUTH, CommonConstants.ENCRYPTION_KEY);
 				if(userCredentials != null){
-					post.addHeader("Authorization", "Basic " + new String(DatatypeConverter.printBase64Binary(userCredentials.getBytes())));
+					post.addHeader("Authorization", "Basic " + DatatypeConverter
+                        .printBase64Binary(userCredentials.getBytes()));
 				}
 			}
 		}
