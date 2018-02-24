@@ -311,71 +311,71 @@ public class ASDCNotificationLogging {
 			return "NULL";
 		}
 
-		StringBuilder buffer = new StringBuilder("VfModuleMetaData:");
-		buffer.append(System.lineSeparator());
+		StringBuilder stringBuilder = new StringBuilder("VfModuleMetaData:");
+		stringBuilder.append(System.lineSeparator());
 
-		buffer.append("VfModuleModelName:");
-		buffer.append(testNull(moduleMetaData.getVfModuleModelName()));
-		buffer.append(System.lineSeparator());
+		stringBuilder.append("VfModuleModelName:");
+		stringBuilder.append(testNull(moduleMetaData.getVfModuleModelName()));
+		stringBuilder.append(System.lineSeparator());
 
-		buffer.append("VfModuleModelVersion:");
-		buffer.append(testNull(moduleMetaData.getVfModuleModelVersion()));
-		buffer.append(System.lineSeparator());
+		stringBuilder.append("VfModuleModelVersion:");
+		stringBuilder.append(testNull(moduleMetaData.getVfModuleModelVersion()));
+		stringBuilder.append(System.lineSeparator());
 
-		buffer.append("VfModuleModelUUID:");
-		buffer.append(testNull(moduleMetaData.getVfModuleModelUUID()));
-		buffer.append(System.lineSeparator());
+		stringBuilder.append("VfModuleModelUUID:");
+		stringBuilder.append(testNull(moduleMetaData.getVfModuleModelUUID()));
+		stringBuilder.append(System.lineSeparator());
 
-		buffer.append("VfModuleModelInvariantUUID:");
-		buffer.append(testNull(moduleMetaData.getVfModuleModelInvariantUUID()));
-		buffer.append(System.lineSeparator());
+		stringBuilder.append("VfModuleModelInvariantUUID:");
+		stringBuilder.append(testNull(moduleMetaData.getVfModuleModelInvariantUUID()));
+		stringBuilder.append(System.lineSeparator());
 
-		buffer.append("VfModuleModelDescription:");
-		buffer.append(testNull(moduleMetaData.getVfModuleModelDescription()));
-		buffer.append(System.lineSeparator());
+		stringBuilder.append("VfModuleModelDescription:");
+		stringBuilder.append(testNull(moduleMetaData.getVfModuleModelDescription()));
+		stringBuilder.append(System.lineSeparator());
 
-		buffer.append("Artifacts UUID List:");
+		stringBuilder.append("Artifacts UUID List:");
 
 		if (moduleMetaData.getArtifacts() != null) {
-			buffer.append("{");
+			stringBuilder.append("{");
 
 			for (String artifactUUID:moduleMetaData.getArtifacts()) {
-				buffer.append(System.lineSeparator());
-				buffer.append(testNull(artifactUUID));
-				buffer.append(System.lineSeparator());
-				buffer.append(",");
+				stringBuilder.append(System.lineSeparator());
+				stringBuilder.append(testNull(artifactUUID));
+				stringBuilder.append(System.lineSeparator());
+				stringBuilder.append(",");
 			}
-			buffer.replace(buffer.length()-1,buffer.length(), System.lineSeparator());
-			buffer.append("}");
-			buffer.append(System.lineSeparator());
+			stringBuilder.replace(stringBuilder.length()-1,stringBuilder.length(), System.lineSeparator());
+			stringBuilder.append("}");
+			stringBuilder.append(System.lineSeparator());
 		} else {
-			buffer.append("NULL");
+			stringBuilder.append("NULL");
 		}
 
 		if (moduleMetaData.getProperties() != null) {
 			Map<String, String> vfModuleMap = moduleMetaData.getProperties();
-			buffer.append("Properties List:");
-			buffer.append("{");
+			stringBuilder.append("Properties List:");
+			stringBuilder.append("{");
 
 			for (Map.Entry<String, String> entry : vfModuleMap.entrySet()) {
-				buffer.append(System.lineSeparator());
-				buffer.append("  " + entry.getKey() + " : " + entry.getValue());
+				stringBuilder.append(System.lineSeparator());
+				stringBuilder.append("  ").append(entry.getKey()).append(" : ").append(entry.getValue());
 			}
-			buffer.replace(buffer.length()-1,buffer.length(), System.lineSeparator());
-			buffer.append("}");
-			buffer.append(System.lineSeparator());
+			stringBuilder.replace(stringBuilder.length()-1,stringBuilder.length(), System.lineSeparator());
+			stringBuilder.append("}");
+			stringBuilder.append(System.lineSeparator());
 		} else {
-			buffer.append("NULL");
+			stringBuilder.append("NULL");
 		}
 
 
-		buffer.append(System.lineSeparator());
+		stringBuilder.append(System.lineSeparator());
 
-		buffer.append("isBase:");
-		buffer.append(moduleMetaData.isBase());
-		buffer.append(System.lineSeparator());
+		stringBuilder.append("isBase:");
+		stringBuilder.append(moduleMetaData.isBase());
+		stringBuilder.append(System.lineSeparator());
 
-		return buffer.toString();
+		return stringBuilder.toString();
 	}
 
 	private static String testNull(Object object) {

@@ -180,18 +180,18 @@ public class VnfResourceCustomization extends MavenLikeVersioning implements Ser
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder("VnfResourceCustomization: ");
-		sb.append("ModelCustUuid=" + this.modelCustomizationUuid ); 
-		sb.append(", ModelInstanceName=" + this.modelInstanceName);
-		sb.append(", vnfResourceModelUuid=" + this.vnfResourceModelUUID); 
-		sb.append(", creationTimestamp=" + this.created); 
-		sb.append(", minInstances=" + this.minInstances);
-		sb.append(", maxInstances=" + this.maxInstances);
-		sb.append(", availabilityZoneMaxCount=" + this.availabilityZoneMaxCount);
+		sb.append("ModelCustUuid=").append(this.modelCustomizationUuid);
+		sb.append(", ModelInstanceName=").append(this.modelInstanceName);
+		sb.append(", vnfResourceModelUuid=").append(this.vnfResourceModelUUID);
+		sb.append(", creationTimestamp=").append(this.created);
+		sb.append(", minInstances=").append(this.minInstances);
+		sb.append(", maxInstances=").append(this.maxInstances);
+		sb.append(", availabilityZoneMaxCount=").append(this.availabilityZoneMaxCount);
 //		sb.append(", vnfResource:\n" + this.vnfResource == null ? "null" : this.vnfResource.toString());
-		sb.append(", nfFunction=" + this.nfFunction); 
-		sb.append(", nfType=" + this.nfType);
-		sb.append(", nfRole=" + this.nfRole);
-		sb.append(", nfNamingCode=" + this.nfNamingCode);
+		sb.append(", nfFunction=").append(this.nfFunction);
+		sb.append(", nfType=").append(this.nfType);
+		sb.append(", nfRole=").append(this.nfRole);
+		sb.append(", nfNamingCode=").append(this.nfNamingCode);
 		
 		return sb.toString();
 	}

@@ -185,13 +185,13 @@ public class Model extends MavenLikeVersioning implements Serializable {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Model: ");
-		sb.append("modelCustomizationId=" + modelCustomizationId);
-		sb.append(",modelCustomizationName=" + modelCustomizationName);
-		sb.append(",modelInvariantId=" + modelInvariantId);
-		sb.append(",modelName=" + modelName);
-		sb.append(",modelType=" + modelType);
-		sb.append(",modelVersion=" + modelVersion);
-		sb.append(",modelVersionId=" + modelVersionId);
+		sb.append("modelCustomizationId=").append(modelCustomizationId);
+		sb.append(",modelCustomizationName=").append(modelCustomizationName);
+		sb.append(",modelInvariantId=").append(modelInvariantId);
+		sb.append(",modelName=").append(modelName);
+		sb.append(",modelType=").append(modelType);
+		sb.append(",modelVersion=").append(modelVersion);
+		sb.append(",modelVersionId=").append(modelVersionId);
         if (created != null) {
 	        sb.append (",created=");
 	        sb.append (DateFormat.getInstance().format(created));

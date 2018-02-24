@@ -48,8 +48,8 @@ public class HeatTemplateArtifactUuidModelUuid implements Serializable {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("heatTemplateArtifactUuid=" + this.heatTemplateArtifactUuid);
-		sb.append(" modelUuid=" + this.modelUuid);
+		sb.append("heatTemplateArtifactUuid=").append(this.heatTemplateArtifactUuid);
+		sb.append(" modelUuid=").append(this.modelUuid);
 		return sb.toString();
 	}
 	

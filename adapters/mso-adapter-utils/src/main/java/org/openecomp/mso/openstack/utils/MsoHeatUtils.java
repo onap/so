@@ -1217,18 +1217,18 @@ public class MsoHeatUtils extends MsoCommonUtils {
 		} else {
 			for (String key : params.keySet()) {
 				if (params.get(key) instanceof String) {
-					sb.append("\n" + key + "=" + (String) params.get(key));
+					sb.append("\n").append(key).append("=").append((String) params.get(key));
 				} else if (params.get(key) instanceof JsonNode) {
 					String jsonStringOut = this.convertNode((JsonNode)params.get(key));
-					sb.append("\n" + key + "=" + jsonStringOut);
+					sb.append("\n").append(key).append("=").append(jsonStringOut);
 				} else if (params.get(key) instanceof Integer) {
 					String integerOut = "" + params.get(key);
-					sb.append("\n" + key + "=" + integerOut);
+					sb.append("\n").append(key).append("=").append(integerOut);
 
 				} else {
 					try {
 						String str = params.get(key).toString();
-						sb.append("\n" + key + "=" + str);
+						sb.append("\n").append(key).append("=").append(str);
 					} catch (Exception e) {
 						LOGGER.debug("Exception :",e);
 					}
@@ -1272,16 +1272,16 @@ public class MsoHeatUtils extends MsoCommonUtils {
 		int counter = 0;
 		sb.append("OUTPUTS:\n");
 		for (String key : outputs.keySet()) {
-			sb.append("outputs[" + counter++ + "]: " + key + "=");
+			sb.append("outputs[").append(counter++).append("]: ").append(key).append("=");
 			Object obj = outputs.get(key);
 			if (obj instanceof String) {
-				sb.append((String)obj +" (a string)");
+				sb.append((String) obj).append(" (a string)");
 			} else if (obj instanceof JsonNode) {
-				sb.append(this.convertNode((JsonNode)obj) + " (a JsonNode)");
+				sb.append(this.convertNode((JsonNode) obj)).append(" (a JsonNode)");
 			} else if (obj instanceof java.util.LinkedHashMap) {
 				try {
 					String str = JSON_MAPPER.writeValueAsString(obj);
-					sb.append(str + " (a java.util.LinkedHashMap)");
+					sb.append(str).append(" (a java.util.LinkedHashMap)");
 				} catch (Exception e) {
 					LOGGER.debug("Exception :",e);
 					sb.append("(a LinkedHashMap value that would not convert nicely)");

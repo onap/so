@@ -88,7 +88,7 @@ public class HeatEnvironment extends MavenLikeVersioning implements Serializable
     @Override
 	public String toString () {
 		StringBuilder sb = new StringBuilder();
-		sb.append ("Artifact UUID=" + this.artifactUuid);
+		sb.append("Artifact UUID=").append(this.artifactUuid);
         sb.append (", name=");
         sb.append (name);
         sb.append (", version=");

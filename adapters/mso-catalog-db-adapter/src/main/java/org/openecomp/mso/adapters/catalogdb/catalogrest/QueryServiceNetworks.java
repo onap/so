@@ -67,30 +67,30 @@ public class QueryServiceNetworks extends CatalogQuery {
 
 	@Override
 	public String toString () {
-		StringBuilder buf = new StringBuilder();
+		StringBuilder sb = new StringBuilder();
 
 		boolean first = true;
 		int i = 1;
 		for (NetworkResourceCustomization o : serviceNetworks) {
-			buf.append(i+"\t");
-			if (!first) buf.append("\n"); first = false;
-			buf.append(o);
+			sb.append(i).append("\t");
+			if (!first) sb.append("\n"); first = false;
+			sb.append(o);
 		}
-		return buf.toString();
+		return sb.toString();
     }
 
 	@Override
 	public String JSON2(boolean isArray, boolean isEmbed) {
-		StringBuilder buf = new StringBuilder();
-		if (!isEmbed && isArray) buf.append("{ ");
-		if (isArray) buf.append("\"serviceNetworks\": [");
-		//if (isArray) buf.append("[");
+		StringBuilder sb = new StringBuilder();
+		if (!isEmbed && isArray) sb.append("{ ");
+		if (isArray) sb.append("\"serviceNetworks\": [");
+
 		Map<String, String> valueMap = new HashMap<>();
 		String sep = "";
 		boolean first = true;
 
 		for (NetworkResourceCustomization o : serviceNetworks) {
-			if (first) buf.append("\n"); first = false;
+			if (first) sb.append("\n"); first = false;
 			boolean nrNull = o.getNetworkResource() == null ? true : false;
 		    put(valueMap, "MODEL_NAME",               nrNull ? null : o.getNetworkResource().getModelName());
 		    put(valueMap, "MODEL_UUID",               nrNull ? null : o.getNetworkResource().getModelUUID());
@@ -104,12 +104,12 @@ public class QueryServiceNetworks extends CatalogQuery {
 		    put(valueMap, "NETWORK_SCOPE",             o.getNetworkScope());
 		    put(valueMap, "NETWORK_TECHNOLOGY",             o.getNetworkTechnology());
 
-            buf.append(sep+ this.setTemplate(template, valueMap));
+            sb.append(sep).append(this.setTemplate(template, valueMap));
             sep = ",\n";
 		}
-		if (!first) buf.append("\n");
-		if (isArray) buf.append("]");
-		if (!isEmbed && isArray) buf.append("}");
-		return buf.toString();
+		if (!first) sb.append("\n");
+		if (isArray) sb.append("]");
+		if (!isEmbed && isArray) sb.append("}");
+		return sb.toString();
 	}
 }

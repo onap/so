@@ -103,23 +103,23 @@ public class HeatFiles extends MavenLikeVersioning implements Serializable {
 	@Override
 	public String toString () {
 		StringBuilder sb = new StringBuilder();
-		sb.append ("artifactUuid=" + this.artifactUuid);
+		sb.append("artifactUuid=").append(this.artifactUuid);
 		if (this.description == null) {
 			sb.append(", description=null");
 		} else {
-			sb.append(", description=" + this.description);
+			sb.append(", description=").append(this.description);
 		}
 		if (this.fileName == null) {
 			sb.append(", fileName=null");
 		} else {
-			sb.append(",fileName=" + this.fileName);
+			sb.append(",fileName=").append(this.fileName);
 		}
 		if (this.fileBody == null) {
 			sb.append(", fileBody=null");
 		} else {
-			sb.append(",fileBody=" + this.fileBody);
+			sb.append(",fileBody=").append(this.fileBody);
 		}
-		sb.append(", artifactChecksum=" + this.artifactChecksum);
+		sb.append(", artifactChecksum=").append(this.artifactChecksum);
 		if (created != null) {
 	        sb.append (",created=");
 	        sb.append (DateFormat.getInstance().format(created));

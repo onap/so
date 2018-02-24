@@ -78,10 +78,10 @@ public class VnfComponent implements Serializable {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("VnfComponent: ");
-        sb.append("vnfId=" + vnfId);
-        sb.append(",componentType=" + componentType);
-        sb.append(",heatTemplateId=" + heatTemplateId);
-        sb.append(",heatEnvironmentId=" + heatEnvironmentId);
+        sb.append("vnfId=").append(vnfId);
+        sb.append(",componentType=").append(componentType);
+        sb.append(",heatTemplateId=").append(heatTemplateId);
+        sb.append(",heatEnvironmentId=").append(heatEnvironmentId);
         
         if (created != null) {
 	        sb.append (",created=");

@@ -365,16 +365,16 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
 		int counter = 0;
 		sb.append("OUTPUTS:\n");
 		for (String key : outputs.keySet()) {
-			sb.append("outputs[" + counter++ + "]: " + key + "=");
+			sb.append("outputs[").append(counter++).append("]: ").append(key).append("=");
 			Object obj = outputs.get(key);
 			if (obj instanceof String) {
-				sb.append((String)obj +" (a string)");
+				sb.append((String) obj).append(" (a string)");
 			} else if (obj instanceof JsonNode) {
-				sb.append(this.convertNode((JsonNode)obj) + " (a JsonNode)");
+				sb.append(this.convertNode((JsonNode) obj)).append(" (a JsonNode)");
 			} else if (obj instanceof java.util.LinkedHashMap) {
 				try {
 					String str = JSON_MAPPER.writeValueAsString(obj);
-					sb.append(str + " (a java.util.LinkedHashMap)");
+					sb.append(str).append(" (a java.util.LinkedHashMap)");
 				} catch (Exception e) {
 					LOGGER.debug("Exception :", e);
 					sb.append("(a LinkedHashMap value that would not convert nicely)");

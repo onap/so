@@ -61,12 +61,12 @@ public class HeatNestedTemplate implements Serializable {
     @Override
     public String toString () {
         StringBuilder sb = new StringBuilder ();
-        sb.append ("ParentTemplateId=" + this.parentTemplateId);
-        sb.append (", ChildTemplateId=" + this.childTemplateId);
+        sb.append("ParentTemplateId=").append(this.parentTemplateId);
+        sb.append(", ChildTemplateId=").append(this.childTemplateId);
         if (this.providerResourceFile == null) {
             sb.append (", providerResourceFile=null");
         } else {
-            sb.append (",providerResourceFile=" + this.providerResourceFile);
+            sb.append(",providerResourceFile=").append(this.providerResourceFile);
         }
         return sb.toString ();
     }

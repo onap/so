@@ -139,8 +139,8 @@ public class ServiceRecipe extends MavenLikeVersioning implements Serializable {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("RECIPE: " + action);
-		sb.append(",uri=" + orchestrationUri);
+		sb.append("RECIPE: ").append(action);
+		sb.append(",uri=").append(orchestrationUri);
         if (created != null) {
 	        sb.append (",created=");
 	        sb.append (DateFormat.getInstance().format(created));

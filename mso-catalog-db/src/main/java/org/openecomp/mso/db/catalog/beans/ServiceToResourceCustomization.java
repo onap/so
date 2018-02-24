@@ -99,7 +99,8 @@ public class ServiceToResourceCustomization implements Serializable {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("ServiceToResourceCustomization: modelType=" + modelType + ",serviceModelUUID=" + serviceModelUUID+",resourceModelCustomizationUUID="+resourceModelCustomizationUUID);
+		sb.append("ServiceToResourceCustomization: modelType=").append(modelType).append(",serviceModelUUID=")
+            .append(serviceModelUUID).append(",resourceModelCustomizationUUID=").append(resourceModelCustomizationUUID);
 		if (created != null) {
 		        sb.append (",created=");
 		        sb.append (DateFormat.getInstance().format(created));

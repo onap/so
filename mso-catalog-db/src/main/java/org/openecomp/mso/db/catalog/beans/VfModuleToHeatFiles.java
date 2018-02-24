@@ -50,8 +50,8 @@ public class VfModuleToHeatFiles implements Serializable {
     @Override
     public String toString () {
         StringBuilder sb = new StringBuilder ();
-        sb.append ("vfModuleModelUuid=" + this.vfModuleModelUuid);
-        sb.append (", heatFilesArtifactUuid=" + this.heatFilesArtifactUuid);
+        sb.append("vfModuleModelUuid=").append(this.vfModuleModelUuid);
+        sb.append(", heatFilesArtifactUuid=").append(this.heatFilesArtifactUuid);
         return sb.toString ();
     }
 

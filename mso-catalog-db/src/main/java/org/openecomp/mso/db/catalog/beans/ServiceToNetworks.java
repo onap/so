@@ -85,8 +85,8 @@ public class ServiceToNetworks implements Serializable {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("ServiceToNetworks mapping: ");
-		sb.append("serviceModelUuid=" + this.serviceModelUuid);
-		sb.append(",networkModelCustomizationUuid=" + networkModelCustomizationUuid);
+		sb.append("serviceModelUuid=").append(this.serviceModelUuid);
+		sb.append(",networkModelCustomizationUuid=").append(networkModelCustomizationUuid);
 		return sb.toString();
 	}
 
