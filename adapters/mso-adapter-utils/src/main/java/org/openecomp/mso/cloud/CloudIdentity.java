@@ -227,29 +227,18 @@ public class CloudIdentity {
 	public void setIdentityAuthenticationType(IdentityAuthenticationType identityAuthenticationType) {
 		this.identityAuthenticationType = identityAuthenticationType;
 	}
-	
+
 	@Override
     public String toString () {
-        StringBuilder stringBuilder = new StringBuilder ();
-        stringBuilder.append ("Cloud Identity Service: id=")
-                     .append (id)
-                     .append (", identityUrl=")
-                     .append (this.identityUrl)
-                     .append (", msoId=")
-                     .append (msoId)
-                     .append (", adminTenant=")
-                     .append (adminTenant)
-                     .append (", memberRole=")
-                     .append (memberRole)
-                     .append (", tenantMetadata=")
-                     .append (tenantMetadata)
-                     .append (", identityServerType=")
-                     .append (identityServerType == null ? "null" : identityServerType.toString())
-                     .append (", identityAuthenticationType=")
-                     .append (identityAuthenticationType == null ? "null" : identityAuthenticationType.toString());
-        
-        return stringBuilder.toString ();
-    }
+		return "Cloud Identity Service: id=" + id
+			+ ", identityUrl=" + this.identityUrl
+			+ ", msoId=" + msoId +
+			", adminTenant=" + adminTenant +
+			", memberRole=" + memberRole +
+			", tenantMetadata=" + tenantMetadata +
+			", identityServerType=" + (identityServerType == null ? "null" : identityServerType.toString()) +
+			", identityAuthenticationType=" + (identityAuthenticationType == null ? "null" : identityAuthenticationType.toString());
+	}
 
     public static String encryptPassword (String msoPass) {
         try {

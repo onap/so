@@ -44,13 +44,10 @@ public class HeatTemplateArtifactUuidModelUuid implements Serializable {
 	public void setModelUuid(String modelUuid) {
 		this.modelUuid = modelUuid;
 	}
-	
+
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("heatTemplateArtifactUuid=").append(this.heatTemplateArtifactUuid);
-		sb.append(" modelUuid=").append(this.modelUuid);
-		return sb.toString();
+		return "heatTemplateArtifactUuid=" + this.heatTemplateArtifactUuid + " modelUuid=" + this.modelUuid;
 	}
 	
     @Override

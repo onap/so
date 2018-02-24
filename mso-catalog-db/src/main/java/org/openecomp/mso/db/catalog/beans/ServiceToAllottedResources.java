@@ -77,16 +77,11 @@ public class ServiceToAllottedResources implements Serializable {
 		
 		return code;
 	}
-	
+
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("serviceModelUuid=");
-		sb.append(this.serviceModelUuid);
-		sb.append("arModelCustomizationUuid=");
-		sb.append(this.arModelCustomizationUuid);
-
-		return sb.toString();
+		return "serviceModelUuid=" + this.serviceModelUuid + "arModelCustomizationUuid="
+			+ this.arModelCustomizationUuid;
 	}
 
 }

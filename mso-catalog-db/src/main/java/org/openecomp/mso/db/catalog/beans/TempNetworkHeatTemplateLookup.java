@@ -65,14 +65,12 @@ public class TempNetworkHeatTemplateLookup implements Serializable {
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("NetworkResourceModelName=").append(this.networkResourceModelName);
-		sb.append("HeatTemplateArtifactUuid=").append(this.heatTemplateArtifactUuid);
-		sb.append("aicVersionMin=").append(this.aicVersionMin);
-		sb.append("aicVersionMax=").append(this.aicVersionMax);
-		return sb.toString();
+		return "NetworkResourceModelName=" + this.networkResourceModelName + "HeatTemplateArtifactUuid="
+			+ this.heatTemplateArtifactUuid + "aicVersionMin=" + this.aicVersionMin + "aicVersionMax="
+			+ this.aicVersionMax;
 	}
-    @Override
+
+	@Override
     public boolean equals (Object o) {
         if (!(o instanceof TempNetworkHeatTemplateLookup)) {
             return false;

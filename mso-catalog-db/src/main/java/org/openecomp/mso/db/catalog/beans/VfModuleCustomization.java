@@ -109,22 +109,22 @@ public class VfModuleCustomization implements Serializable {
 	public void setVfModule(VfModule vfModule) {
 		this.vfModule = vfModule;
 	}
+
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("modelCustomizationUuid=").append(this.modelCustomizationUuid);
-		sb.append("vfModuleModelUuid=").append(this.vfModuleModelUuid);
-		sb.append("label=").append(this.label);
-		sb.append("initalCount=").append(this.initialCount);
-		sb.append("minInstances=").append(this.minInstances);
-		sb.append("maxInstances=").append(this.maxInstances);
-		sb.append("availabilityZoneCount=").append(this.availabilityZoneCount);
-		sb.append("heatEnvironmentArtifactUuid=").append(this.heatEnvironmentArtifactUuid);
-		sb.append("volEnvironmentArtifactUuid=").append(this.volEnvironmentArtifactUuid);
-		sb.append("created=").append(this.created);
-		return sb.toString();
+		return "modelCustomizationUuid=" + this.modelCustomizationUuid +
+			"vfModuleModelUuid=" + this.vfModuleModelUuid +
+			"label=" + this.label +
+			"initalCount=" + this.initialCount +
+			"minInstances=" + this.minInstances +
+			"maxInstances=" + this.maxInstances +
+			"availabilityZoneCount=" + this.availabilityZoneCount +
+			"heatEnvironmentArtifactUuid=" + this.heatEnvironmentArtifactUuid +
+			"volEnvironmentArtifactUuid=" + this.volEnvironmentArtifactUuid +
+			"created=" + this.created;
 	}
-    @Override
+
+	@Override
     public boolean equals (Object o) {
         if (!(o instanceof VfModuleCustomization)) {
             return false;
