@@ -465,7 +465,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
     private boolean callHeatbridge(String heatStackId) {
         String executionDir = "/usr/local/lib/python2.7/dist-packages/heatbridge";
         String openstackIdentityUrl = "", username = "", password = "", tenant = "", region = "", owner = "";
-        long waitTimeMs = 10000l;
+        long waitTimeMs = 10000L;
         try {
             String[] cmdarray = {"/usr/bin/python", "HeatBridgeMain.py", openstackIdentityUrl, username, password, tenant, region, owner, heatStackId};
             String[] envp = null;
