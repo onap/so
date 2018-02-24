@@ -56,7 +56,7 @@ public class VnfRecipe extends Recipe implements Serializable {
 	
 	@Override
 	public String toString () {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append(super.toString());
 		sb.append (",vnfParamXSD=" + vnfParamXSD);
 		sb.append (",serviceType=" + getServiceType ());

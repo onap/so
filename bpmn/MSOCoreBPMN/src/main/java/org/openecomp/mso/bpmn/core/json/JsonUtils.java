@@ -122,7 +122,7 @@ public class JsonUtils {
 	 * @return String containing the XML translation
 	 */
 	public static String toXMLString(Object obj, String tagName) throws JSONException {
-		StringBuffer strBuf = new StringBuffer();
+		StringBuilder strBuf = new StringBuilder();
 		int i;
 		JSONArray jsonArr;
 		JSONObject jsonObj;

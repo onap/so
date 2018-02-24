@@ -49,7 +49,7 @@ public class ASDCGlobalController {
     	
 		List<String> controllerNames = ASDCConfiguration.getAllDefinedControllers();
 
-		StringBuffer controllerListLog = new StringBuffer("List of controllers loaded:");
+		StringBuilder controllerListLog = new StringBuilder("List of controllers loaded:");
 		for (String controllerName : controllerNames) {
 			controllers.put(controllerName, new ASDCController(controllerName));
 			controllerListLog.append(controllerName);

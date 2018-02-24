@@ -42,7 +42,7 @@ public class ASDCNotificationLogging {
 		if (asdcNotification == null) {
 			return "NULL";
 		}
-		StringBuffer buffer = new StringBuffer("ASDC Notification:");
+		StringBuilder buffer = new StringBuilder("ASDC Notification:");
 		buffer.append(System.lineSeparator());
 
 		buffer.append("DistributionID:");
@@ -96,7 +96,7 @@ public class ASDCNotificationLogging {
 		}
 		
 
-		StringBuffer buffer = new StringBuffer("CSAR Notification:");
+		StringBuilder buffer = new StringBuilder("CSAR Notification:");
 		buffer.append(System.lineSeparator());
 		buffer.append(System.lineSeparator());
 		
@@ -286,7 +286,7 @@ public class ASDCNotificationLogging {
 			return null;
 		}
 
-		StringBuffer buffer = new StringBuffer("VfModuleMetaData List:");
+		StringBuilder buffer = new StringBuilder("VfModuleMetaData List:");
 		buffer.append(System.lineSeparator());
 
 		buffer.append("{");
@@ -311,7 +311,7 @@ public class ASDCNotificationLogging {
 			return "NULL";
 		}
 
-		StringBuffer buffer = new StringBuffer("VfModuleMetaData:");
+		StringBuilder buffer = new StringBuilder("VfModuleMetaData:");
 		buffer.append(System.lineSeparator());
 
 		buffer.append("VfModuleModelName:");
@@ -395,7 +395,7 @@ public class ASDCNotificationLogging {
 			return null;
 		}
 
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("{");
 
 		for (IResourceInstance resourceInstanceElem:asdcNotification.getResources()) {
@@ -418,7 +418,7 @@ public class ASDCNotificationLogging {
 			return null;
 		}
 
-		StringBuffer buffer = new StringBuffer("Resource Instance Info:");
+		StringBuilder buffer = new StringBuilder("Resource Instance Info:");
 		buffer.append(System.lineSeparator());
 
 		buffer.append("ResourceInstanceName:");
@@ -473,7 +473,7 @@ public class ASDCNotificationLogging {
 			return null;
 		}
 
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("{");
 		for (IArtifactInfo artifactInfoElem:artifactsList) {
 			buffer.append(System.lineSeparator());
@@ -495,7 +495,7 @@ public class ASDCNotificationLogging {
 			return null;
 		}
 
-		StringBuffer buffer = new StringBuffer("Service Artifacts Info:");
+		StringBuilder buffer = new StringBuilder("Service Artifacts Info:");
 		buffer.append(System.lineSeparator());
 
 		buffer.append("ArtifactName:");

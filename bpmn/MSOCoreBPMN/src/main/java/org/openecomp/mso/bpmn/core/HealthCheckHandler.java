@@ -238,7 +238,7 @@ public class HealthCheckHandler  {
         BPMNLogger.debug(healthcheckDebugEnabled, "Post url is: " + url);
 
         //now create a soap request message as follows:
-        final StringBuffer payload = new StringBuffer();
+        final StringBuilder payload = new StringBuilder();
         payload.append("\n");
         payload.append("<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:req=\"" + adapterNamespace + "/requestsdb\">\n");
         payload.append("<soapenv:Header/>\n");
@@ -270,7 +270,7 @@ public class HealthCheckHandler  {
         BufferedReader rd = new BufferedReader(
                 new InputStreamReader(response.getEntity().getContent()));
 
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         String line = "";
         while ((line = rd.readLine()) != null) {
             result.append(line);

@@ -150,7 +150,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 	 */
 	@JsonIgnore
 	public String getServiceResourcesJsonString(){
-		StringBuffer serviceResourcesJsonStringBuffer = new StringBuffer();
+		StringBuilder serviceResourcesJsonStringBuffer = new StringBuilder();
 		serviceResourcesJsonStringBuffer.append(listToJson((this.getServiceNetworks())));
 		serviceResourcesJsonStringBuffer.append(listToJson((this.getServiceVnfs())));
 		serviceResourcesJsonStringBuffer.append(listToJson((this.getServiceAllottedResources())));

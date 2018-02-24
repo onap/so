@@ -240,7 +240,7 @@ public class VnfResource extends MavenLikeVersioning implements Serializable {
 
 	@Override
 	public String toString () {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 
 		buf.append("VNF=");
 		buf.append(",modelVersion=");

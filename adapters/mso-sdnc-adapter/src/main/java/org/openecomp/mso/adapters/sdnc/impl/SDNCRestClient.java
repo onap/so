@@ -142,7 +142,7 @@ public class SDNCRestClient implements Runnable {
 		DataOutputStream out = null;
 		BufferedReader in = null;
 		SDNCResponse sdncResp = new SDNCResponse(rt.getReqId());
-		StringBuffer response = new StringBuffer();
+		StringBuilder response = new StringBuilder();
 
 		msoLogger.info(MessageEnum.RA_SEND_REQUEST_SDNC, rt.toString(), "SDNC", "");
 		msoLogger.debug("SDNC Request Body:\n" + sdncReqBody);
