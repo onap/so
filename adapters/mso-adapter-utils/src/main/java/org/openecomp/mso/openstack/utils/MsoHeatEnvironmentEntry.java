@@ -65,11 +65,9 @@ public class MsoHeatEnvironmentEntry {
 
 	@Override
 	public String toString() {
-		final StringBuilder sb = new StringBuilder("MsoHeatEnvironmentEntry{");
-		sb.append("parameters=").append(parameters);
-		sb.append(", resourceRegistryEntryRaw='").append(resourceRegistryEntryRaw).append('\'');
-		sb.append('}');
-		return sb.toString();
+		return "MsoHeatEnvironmentEntry{" + "parameters=" + parameters +
+			", resourceRegistryEntryRaw='" + resourceRegistryEntryRaw + '\'' +
+			'}';
 	}
 
 	public String getRawEntry() {
