@@ -71,22 +71,16 @@ public class ServiceToAllottedResources implements Serializable {
 	
 	@Override 
 	public int hashCode() {
-		
+
 		int code = this.arModelCustomizationUuid == null ? 0 : this.arModelCustomizationUuid.hashCode();
 		code += this.serviceModelUuid == null ? 0 : this.serviceModelUuid.hashCode();
 		
 		return code;
 	}
-	
+
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("serviceModelUuid=");
-		sb.append(this.serviceModelUuid);
-		sb.append("arModelCustomizationUuid=");
-		sb.append(this.arModelCustomizationUuid);
-
-		return sb.toString();
+		return "serviceModelUuid=" + this.serviceModelUuid + "arModelCustomizationUuid=" + this.arModelCustomizationUuid;
 	}
 
 }

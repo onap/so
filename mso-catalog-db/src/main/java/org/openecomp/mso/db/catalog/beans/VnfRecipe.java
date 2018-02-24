@@ -53,14 +53,10 @@ public class VnfRecipe extends Recipe implements Serializable {
 	public void setVfModuleId(String vfModuleId) {
 		this.vfModuleId = vfModuleId;
 	}
-	
+
 	@Override
-	public String toString () {
-		StringBuilder sb = new StringBuilder();
-		sb.append(super.toString());
-		sb.append(",vnfParamXSD=").append(vnfParamXSD);
-		sb.append(",serviceType=").append(getServiceType());
-		sb.append(",vfModuleId=").append(getVfModuleId());
-		return sb.toString();
+	public String toString() {
+		return super.toString() + ",vnfParamXSD=" + vnfParamXSD + ",serviceType=" + getServiceType() + ",vfModuleId=" +
+			getVfModuleId();
 	}
 }

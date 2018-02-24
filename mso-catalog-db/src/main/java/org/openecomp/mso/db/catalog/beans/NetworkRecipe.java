@@ -20,7 +20,6 @@
 
 package org.openecomp.mso.db.catalog.beans;
 
-
 import java.io.Serializable;
 
 public class NetworkRecipe extends Recipe implements Serializable {
@@ -42,13 +41,11 @@ public class NetworkRecipe extends Recipe implements Serializable {
 	public void setNetworkParamXSD(String networkParamXSD) {
 		this.networkParamXSD = networkParamXSD;
 	}
-	
+
 	@Override
 	public String toString () {
-		StringBuilder sb = new StringBuilder();
-		sb.append(super.toString());
-		sb.append(",modelName=").append(modelName);
-		sb.append(",networkParamXSD=").append(networkParamXSD);
-		return sb.toString();
+		return super.toString() +
+			",modelName=" + modelName +
+			",networkParamXSD=" + networkParamXSD;
 	}
 }

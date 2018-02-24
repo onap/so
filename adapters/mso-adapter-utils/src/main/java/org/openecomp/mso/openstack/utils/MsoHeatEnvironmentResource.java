@@ -59,12 +59,10 @@ public class MsoHeatEnvironmentResource {
 
 	@Override
 	public String toString() {
-		StringBuilder str = new StringBuilder();
-		str.append("\"");
-		str.append(this.name);
-		str.append("\": ");
-		str.append(this.value);
-		return str.toString();
+		return "\"" +
+			this.name +
+			"\": " +
+			this.value;
 	}
 
 	@Override
