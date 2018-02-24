@@ -72,29 +72,29 @@ public class QueryServiceVnfs extends CatalogQuery {
 
 	@Override
 	public String toString () {
-		StringBuilder buf = new StringBuilder();
+		StringBuilder sb = new StringBuilder();
 
 		boolean first = true;
 		int i = 1;
 		for (VnfResourceCustomization o : serviceVnfs) {
-			buf.append(i+"\t");
-			if (!first) buf.append("\n"); first = false;
-			buf.append(o);
+			sb.append(i).append("\t");
+			if (!first) sb.append("\n"); first = false;
+			sb.append(o);
 		}
-		return buf.toString();
+		return sb.toString();
     }
 
 	@Override
 	public String JSON2(boolean isArray, boolean isEmbed) {
-		StringBuilder buf = new StringBuilder();
-		if (!isEmbed && isArray) buf.append("{ ");
-		if (isArray) buf.append("\"serviceVnfs\": [");
+		StringBuilder sb = new StringBuilder();
+		if (!isEmbed && isArray) sb.append("{ ");
+		if (isArray) sb.append("\"serviceVnfs\": [");
 		Map<String, String> valueMap = new HashMap<>();
 		String sep = "";
 		boolean first = true;
 
 		for (VnfResourceCustomization o : serviceVnfs) {
-			if (first) buf.append("\n"); first = false;
+			if (first) sb.append("\n"); first = false;
 
 			boolean vrNull = o.getVnfResource() == null ? true : false;
 
@@ -113,12 +113,12 @@ public class QueryServiceVnfs extends CatalogQuery {
 		    String subitem = new QueryVfModule(vrNull ? null : o.getVfModuleCustomizations()).JSON2(true, true); 
 		    valueMap.put("_VFMODULES_",               subitem.replaceAll("(?m)^", "\t\t"));
 
-            buf.append(sep+ this.setTemplate(template, valueMap));
+            sb.append(sep).append(this.setTemplate(template, valueMap));
             sep = ",\n";
 		}
-		if (!first) buf.append("\n");
-		if (isArray) buf.append("]");
-		if (!isEmbed && isArray) buf.append("}");
-		return buf.toString();
+		if (!first) sb.append("\n");
+		if (isArray) sb.append("]");
+		if (!isEmbed && isArray) sb.append("}");
+		return sb.toString();
 	}
 }

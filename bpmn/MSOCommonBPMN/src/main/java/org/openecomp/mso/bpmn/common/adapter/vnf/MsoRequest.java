@@ -106,9 +106,9 @@ public class MsoRequest {
     @Override
     public String toString() {
         StringBuilder request = new StringBuilder();
-        request.append("<requestId>"+requestId+"</requestId>");
+        request.append("<requestId>").append(requestId).append("</requestId>");
         request.append('\n');
-        request.append("<serviceInstanceId>"+serviceInstanceId+"</serviceInstanceId>");
+        request.append("<serviceInstanceId>").append(serviceInstanceId).append("</serviceInstanceId>");
         return request.toString();
     }
 

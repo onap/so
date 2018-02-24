@@ -112,16 +112,16 @@ public class VfModuleCustomization implements Serializable {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("modelCustomizationUuid=" + this.modelCustomizationUuid);
-		sb.append("vfModuleModelUuid=" + this.vfModuleModelUuid);
-		sb.append("label=" + this.label);
-		sb.append("initalCount=" + this.initialCount);
-		sb.append("minInstances=" + this.minInstances);
-		sb.append("maxInstances=" + this.maxInstances);
-		sb.append("availabilityZoneCount=" + this.availabilityZoneCount);
-		sb.append("heatEnvironmentArtifactUuid=" + this.heatEnvironmentArtifactUuid);
-		sb.append("volEnvironmentArtifactUuid=" + this.volEnvironmentArtifactUuid);
-		sb.append("created=" + this.created);
+		sb.append("modelCustomizationUuid=").append(this.modelCustomizationUuid);
+		sb.append("vfModuleModelUuid=").append(this.vfModuleModelUuid);
+		sb.append("label=").append(this.label);
+		sb.append("initalCount=").append(this.initialCount);
+		sb.append("minInstances=").append(this.minInstances);
+		sb.append("maxInstances=").append(this.maxInstances);
+		sb.append("availabilityZoneCount=").append(this.availabilityZoneCount);
+		sb.append("heatEnvironmentArtifactUuid=").append(this.heatEnvironmentArtifactUuid);
+		sb.append("volEnvironmentArtifactUuid=").append(this.volEnvironmentArtifactUuid);
+		sb.append("created=").append(this.created);
 		return sb.toString();
 	}
     @Override

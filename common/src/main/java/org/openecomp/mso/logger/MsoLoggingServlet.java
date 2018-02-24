@@ -95,7 +95,8 @@ public class MsoLoggingServlet {
 		List <Logger> loggerList = context.getLoggerList();
         for (Logger logger:loggerList) {
         	//if (logger.getLevel() != null) {
-        		response.append (logger.getName () + ":" + logger.getLevel () + " (" + logger.getEffectiveLevel () + ")\n");
+        		response.append(logger.getName()).append(":").append(logger.getLevel()).append(" (")
+                    .append(logger.getEffectiveLevel()).append(")\n");
         	//}
         }
         return Response.status (200).entity (response).build ();

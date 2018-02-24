@@ -100,9 +100,11 @@ public class ToscaCsar extends MavenLikeVersioning implements Serializable {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("TOSCACSAR: artifactUUID=" + artifactUUID + ",name=" + name + ",version=" + version + ",description=" + description+",artifactChecksum="+artifactChecksum+",url="+url);
+		sb.append("TOSCACSAR: artifactUUID=").append(artifactUUID).append(",name=").append(name).append(",version=")
+            .append(version).append(",description=").append(description).append(",artifactChecksum=")
+            .append(artifactChecksum).append(",url=").append(url);
 		for (Service service : services) {
-			sb.append ("\n" + service.toString());
+			sb.append("\n").append(service.toString());
 		}
 		if (created != null) {
 		        sb.append (",created=");

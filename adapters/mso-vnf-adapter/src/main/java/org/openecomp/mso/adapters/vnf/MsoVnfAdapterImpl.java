@@ -508,7 +508,8 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                     LOGGER.debug("Exception :",e);
                     outputString = "Unable to call toString() on the value for " + str;
                 }
-                sb.append("\t\nitem " + i++ + ": '" + str + "'='" + outputString + "'");
+                sb.append("\t\nitem ").append(i++).append(": '").append(str).append("'='").append(outputString)
+                    .append("'");
             }
         }
         LOGGER.debug(sb.toString());
@@ -524,7 +525,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             sb.append("\tEMPTY");
         } else {
             for (String str : inputs.keySet()) {
-                sb.append("\titem " + i++ + ": " + str + "=" + inputs.get(str));
+                sb.append("\titem ").append(i++).append(": ").append(str).append("=").append(inputs.get(str));
             }
         }
         LOGGER.debug(sb.toString());
@@ -1224,7 +1225,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             int cntr = 0;
             try {
                 for (HeatTemplateParam htp : heatTemplate.getParameters()) {
-                    sb.append("param[" + cntr++ + "]=" + htp.getParamName());
+                    sb.append("param[").append(cntr++).append("]=").append(htp.getParamName());
                     parameterNames.add(htp.getParamName());
                     if (htp.getParamAlias() != null && !"".equals(htp.getParamAlias())) {
                         aliasToParam.put(htp.getParamAlias(), htp.getParamName());
@@ -1443,16 +1444,16 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 
         StringBuilder sbInit = new StringBuilder();
         sbInit.append("updateVfModule: \n");
-        sbInit.append("cloudSiteId=" + cloudSiteId + "\n");
-        sbInit.append("tenantId=" + tenantId + "\n");
-        sbInit.append("vnfType=" + vnfType + "\n");
-        sbInit.append("vnfVersion=" + vnfVersion + "\n");
-        sbInit.append("vnfName=" + vnfName + "\n");
-        sbInit.append("requestType=" + requestType + "\n");
-        sbInit.append("volumeGroupHeatStackId=" + volumeGroupHeatStackId + "\n");
-        sbInit.append("baseVfHeatStackId=" + baseVfHeatStackId + "\n");
-        sbInit.append("vfModuleStackId=" + vfModuleStackId + "\n");
-        sbInit.append("modelCustomizationUuid=" + modelCustomizationUuid + "\n");
+        sbInit.append("cloudSiteId=").append(cloudSiteId).append("\n");
+        sbInit.append("tenantId=").append(tenantId).append("\n");
+        sbInit.append("vnfType=").append(vnfType).append("\n");
+        sbInit.append("vnfVersion=").append(vnfVersion).append("\n");
+        sbInit.append("vnfName=").append(vnfName).append("\n");
+        sbInit.append("requestType=").append(requestType).append("\n");
+        sbInit.append("volumeGroupHeatStackId=").append(volumeGroupHeatStackId).append("\n");
+        sbInit.append("baseVfHeatStackId=").append(baseVfHeatStackId).append("\n");
+        sbInit.append("vfModuleStackId=").append(vfModuleStackId).append("\n");
+        sbInit.append("modelCustomizationUuid=").append(modelCustomizationUuid).append("\n");
         LOGGER.debug(sbInit.toString());
 
         String mcu = modelCustomizationUuid;

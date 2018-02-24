@@ -3464,7 +3464,7 @@ public class CatalogDatabase implements Closeable {
                 	StringBuilder sb = new StringBuilder("Parameters: ");
                     for (HeatTemplateParam param : paramSet) {
                         param.setHeatTemplateArtifactUuid(heat.getArtifactUuid());
-                        sb.append(param.getParamName() + ", ");
+                        sb.append(param.getParamName()).append(", ");
                     }
                     LOGGER.debug(sb.toString());
                     heat.setParameters (paramSet);
@@ -4883,7 +4883,7 @@ public class CatalogDatabase implements Closeable {
         StringBuilder sb = new StringBuilder();
         if (variables != null) {
         	for(Map.Entry<String, String> entry : variables.entrySet()){
-        		sb.append(entry.getKey() + "=" + entry.getValue() + "\n");
+        		sb.append(entry.getKey()).append("=").append(entry.getValue()).append("\n");
         		query.setParameter(entry.getKey(), entry.getValue());
         	}
         }
@@ -4934,7 +4934,7 @@ public class CatalogDatabase implements Closeable {
         StringBuilder sb = new StringBuilder();
         if (variables != null) {
         	for(Map.Entry<String, String> entry : variables.entrySet()){
-        		sb.append(entry.getKey() + "=" + entry.getValue()+ "\n");
+        		sb.append(entry.getKey()).append("=").append(entry.getValue()).append("\n");
         		query.setParameter(entry.getKey(), entry.getValue());
         	}
         }

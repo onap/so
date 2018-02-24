@@ -129,7 +129,7 @@ public class ServiceMacroHolder implements Serializable {
 		StringBuilder sb = new StringBuilder();
 		sb.append("ServicePlus: ");
 		if (this.service != null) {
-			sb.append("service: " + this.service.toString());
+			sb.append("service: ").append(this.service.toString());
 		} else {
 			sb.append("service: null");
 		}
@@ -137,7 +137,7 @@ public class ServiceMacroHolder implements Serializable {
 			int i=0;
 			sb.append("VnfResources: ");
 			for (VnfResourceCustomization vrc : this.vnfResourceCustomizations) {
-				sb.append(", vnfResourceCustomization[" + i++ + "]:" + vrc.toString());
+				sb.append(", vnfResourceCustomization[").append(i++).append("]:").append(vrc.toString());
 			}
 		} else {
 			sb.append("none");
@@ -146,7 +146,7 @@ public class ServiceMacroHolder implements Serializable {
 			int i=0;
 			sb.append("VnfResources: ");
 			for (VnfResource vr : this.vnfResources) {
-				sb.append(", vnfResource[" + i++ + "]:" + vr.toString());
+				sb.append(", vnfResource[").append(i++).append("]:").append(vr.toString());
 			}
 		} else {
 			sb.append("none");
@@ -155,14 +155,14 @@ public class ServiceMacroHolder implements Serializable {
 			int i=0;
 			sb.append("NetworkResourceCustomizations:");
 			for (NetworkResourceCustomization nrc : this.networkResourceCustomizations) {
-				sb.append("NRC[" + i++ + "]: " + nrc.toString());
+				sb.append("NRC[").append(i++).append("]: ").append(nrc.toString());
 			}
 		}
 		if (this.allottedResourceCustomizations != null && this.allottedResourceCustomizations.size() > 0) {
 			int i=0;
 			sb.append("AllottedResourceCustomizations:");
 			for (AllottedResourceCustomization arc : this.allottedResourceCustomizations) {
-				sb.append("ARC[" + i++ + "]: " + arc.toString());
+				sb.append("ARC[").append(i++).append("]: ").append(arc.toString());
 			}
 		}
 

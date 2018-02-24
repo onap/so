@@ -240,45 +240,45 @@ public class VnfResource extends MavenLikeVersioning implements Serializable {
 
 	@Override
 	public String toString () {
-		StringBuilder buf = new StringBuilder();
+		StringBuilder sb = new StringBuilder();
 
-		buf.append("VNF=");
-		buf.append(",modelVersion=");
-		buf.append(modelVersion);
-		buf.append(",mode=");
-		buf.append(orchestrationMode);
-		buf.append(",heatTemplateArtifactUUId=");
-		buf.append(heatTemplateArtifactUUId);
-		buf.append(",envtId=");
-		buf.append(",asdcUuid=");
-		buf.append(",aicVersionMin=");
-		buf.append(this.aicVersionMin);
-		buf.append(",aicVersionMax=");
-		buf.append(this.aicVersionMax);
-        buf.append(",modelInvariantUuid=");
-        buf.append(this.modelInvariantUuid);
-        buf.append(",modelVersion=");
-        buf.append(",modelCustomizationName=");
-        buf.append(",modelName=");
-        buf.append(this.modelName);
-        buf.append(",serviceModelInvariantUUID=");
-		buf.append(",modelCustomizationUuid=");
-        buf.append(",toscaNodeType=");
-        buf.append(toscaNodeType);
+		sb.append("VNF=");
+		sb.append(",modelVersion=");
+		sb.append(modelVersion);
+		sb.append(",mode=");
+		sb.append(orchestrationMode);
+		sb.append(",heatTemplateArtifactUUId=");
+		sb.append(heatTemplateArtifactUUId);
+		sb.append(",envtId=");
+		sb.append(",asdcUuid=");
+		sb.append(",aicVersionMin=");
+		sb.append(this.aicVersionMin);
+		sb.append(",aicVersionMax=");
+		sb.append(this.aicVersionMax);
+        sb.append(",modelInvariantUuid=");
+        sb.append(this.modelInvariantUuid);
+        sb.append(",modelVersion=");
+        sb.append(",modelCustomizationName=");
+        sb.append(",modelName=");
+        sb.append(this.modelName);
+        sb.append(",serviceModelInvariantUUID=");
+		sb.append(",modelCustomizationUuid=");
+        sb.append(",toscaNodeType=");
+        sb.append(toscaNodeType);
 
 		if (created != null) {
-			buf.append(",created=");
-			buf.append(DateFormat.getInstance().format(created));
+			sb.append(",created=");
+			sb.append(DateFormat.getInstance().format(created));
 		}
 		
 		for(VnfResourceCustomization vrc : vnfResourceCustomizations) {
-			buf.append("/n" + vrc.toString());
+			sb.append("/n").append(vrc.toString());
 			}
 		
 		for(VfModule vfm : vfModules) {
-			buf.append("/n" + vfm.toString());
+			sb.append("/n").append(vfm.toString());
 		}
-		return buf.toString();
+		return sb.toString();
     }
 
 }

@@ -1747,20 +1747,20 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             stackParams.put (VLANS, csl);
         }
         if (routeTargets != null && !routeTargets.isEmpty()) {
-            StringBuilder buf = new StringBuilder ();
+            StringBuilder sb = new StringBuilder ();
             String sep = "";
             for (String rt : routeTargets) {
             	if (!isNullOrEmpty(rt))
             	{
             		if (aic3template)
-            			buf.append (sep).append ("target:" + rt);
+            			sb.append(sep).append("target:").append(rt);
             		else
-            			buf.append (sep).append (rt);
+            			sb.append (sep).append (rt);
 
             		sep = ",";
             	}
             }
-            String csl = buf.toString ();
+            String csl = sb.toString ();
 
             stackParams.put ("route_targets", csl);
         }

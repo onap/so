@@ -155,7 +155,7 @@ public final class XmlTool {
 				out.append("&amp;");
 				modified = true;
 			} else if (c < 32 || c > 126) {
-				out.append("&#" + (int)c + ";");
+				out.append("&#").append((int) c).append(";");
 				modified = true;
 			} else {
 				out.append(c);
@@ -199,7 +199,7 @@ public final class XmlTool {
 				out.append("&amp;");
 				modified = true;
 			} else if (c < 32 || c > 126) {
-				out.append("&#" + (int)c + ";");
+				out.append("&#").append((int) c).append(";");
 				modified = true;
 			} else {
 				out.append(c);

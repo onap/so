@@ -58,17 +58,17 @@ public class QueryVfModules {
 	
 	@Override
 	public String toString () {
-		StringBuilder buf = new StringBuilder();
+		StringBuilder sb = new StringBuilder();
 
 		boolean first = true;
 		int i = 1;
 		for (VfModule o : vfModules) {
-			buf.append(i+"\t");
-			if (!first) buf.append("\n");
+			sb.append(i).append("\t");
+			if (!first) sb.append("\n");
 			first = false;
-			buf.append(o);
+			sb.append(o);
 		}
-		return buf.toString();
+		return sb.toString();
     }
 	
 	public String toJsonString() {

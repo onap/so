@@ -150,14 +150,17 @@ public class Service extends MavenLikeVersioning implements Serializable {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SERVICE: name=" + modelName + ",modelVersion=" + modelVersion + ",description=" + description+",modelInvariantUUID="+modelInvariantUUID+",toscaCsarArtifactUUID="+toscaCsarArtifactUUID+",serviceType="+serviceType+",serviceRole="+serviceRole);
+		sb.append("SERVICE: name=").append(modelName).append(",modelVersion=").append(modelVersion)
+            .append(",description=").append(description).append(",modelInvariantUUID=").append(modelInvariantUUID)
+            .append(",toscaCsarArtifactUUID=").append(toscaCsarArtifactUUID).append(",serviceType=").append(serviceType)
+            .append(",serviceRole=").append(serviceRole);
 		for (String recipeAction : recipes.keySet()) {
 			ServiceRecipe recipe = recipes.get(recipeAction);
-			sb.append ("\n" + recipe.toString());
+			sb.append("\n").append(recipe.toString());
 		}
 		
 		for(ServiceToResourceCustomization serviceResourceCustomization : serviceResourceCustomizations) {
-			sb.append("\n" + serviceResourceCustomization.toString());
+			sb.append("\n").append(serviceResourceCustomization.toString());
 		}
 		if (created != null) {
 		        sb.append (",created=");
