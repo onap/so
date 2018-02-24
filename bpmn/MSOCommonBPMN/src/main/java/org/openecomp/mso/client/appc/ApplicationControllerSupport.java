@@ -56,9 +56,9 @@ public class ApplicationControllerSupport {
 	private static final int ERROR_SERIES = 200;
 	private static final int REJECT_SERIES = 300;
 	private static final int SUCCESS_SERIES = 400;
-	private static final int SUCCESS_STATUS = SUCCESS_SERIES + 0;
+	private static final int SUCCESS_STATUS = SUCCESS_SERIES;
 	private static final int PARTIAL_SERIES = 500;
-	private static final int PARTIAL_SUCCESS_STATUS = PARTIAL_SERIES + 0;
+	private static final int PARTIAL_SUCCESS_STATUS = PARTIAL_SERIES;
 	private static final int PARTIAL_FAILURE_STATUS = PARTIAL_SERIES + 1;
 
 	@Value("${lcm.model.package:org.openecomp.appc.client.lcm.model}")
