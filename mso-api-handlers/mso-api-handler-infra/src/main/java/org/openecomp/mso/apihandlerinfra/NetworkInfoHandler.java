@@ -295,8 +295,8 @@ public class NetworkInfoHandler {
 
     private String translateNetworkRequests (List <NetworkRequest> queryResponseList) {
         NetworkRequests queryResponses = new NetworkRequests ();
-        for (int i = 0; i < queryResponseList.size (); i++) {
-            queryResponses.getNetworkRequest ().add (queryResponseList.get (i));
+        for (NetworkRequest aQueryResponseList : queryResponseList) {
+            queryResponses.getNetworkRequest().add(aQueryResponseList);
         }
 
         StringWriter stringWriter = new StringWriter ();

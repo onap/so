@@ -332,8 +332,8 @@ public class VnfInfoHandler {
 
     private String translateVnfRequests (List <VnfRequest> queryResponseList) {
         VnfRequests queryResponses = new VnfRequests ();
-        for (int i = 0; i < queryResponseList.size (); i++) {
-            queryResponses.getVnfRequest ().add (queryResponseList.get (i));
+        for (VnfRequest aQueryResponseList : queryResponseList) {
+            queryResponses.getVnfRequest().add(aQueryResponseList);
         }
 
         StringWriter stringWriter = new StringWriter ();

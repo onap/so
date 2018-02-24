@@ -314,8 +314,8 @@ public class VolumeInfoHandler {
 
     private String translateVolumeRequests (List <VolumeRequest> queryResponseList) {
         VolumeRequests queryResponses = new VolumeRequests ();
-        for (int i = 0; i < queryResponseList.size (); i++) {
-            queryResponses.getVolumeRequest ().add (queryResponseList.get (i));
+        for (VolumeRequest aQueryResponseList : queryResponseList) {
+            queryResponses.getVolumeRequest().add(aQueryResponseList);
         }
 
         StringWriter stringWriter = new StringWriter ();

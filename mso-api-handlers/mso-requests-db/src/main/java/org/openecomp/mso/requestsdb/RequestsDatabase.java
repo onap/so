@@ -38,6 +38,7 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.openecomp.mso.db.AbstractSessionFactoryManager;
+import org.openecomp.mso.requestsdb.RequestsDbConstant.Status;
 import org.openecomp.mso.requestsdb.RequestsDbSessionFactoryManager;
 import org.openecomp.mso.logger.MsoLogger;
 
@@ -757,9 +758,9 @@ public class RequestsDatabase {
             int resourceCount = lstResourceStatus.size();
             int progress = 0;
             boolean isFinished = true;
-            for(int i = 0; i < resourceCount; i++) {
-                progress = progress + Integer.valueOf(lstResourceStatus.get(i).getProgress()) / resourceCount;
-                if(RequestsDbConstant.Status.PROCESSING.equals(lstResourceStatus.get(i).getStatus())) {
+            for (ResourceOperationStatus lstResourceStatu : lstResourceStatus) {
+                progress = progress + Integer.valueOf(lstResourceStatu.getProgress()) / resourceCount;
+                if (Status.PROCESSING.equals(lstResourceStatu.getStatus())) {
                     isFinished = false;
                 }
             }
