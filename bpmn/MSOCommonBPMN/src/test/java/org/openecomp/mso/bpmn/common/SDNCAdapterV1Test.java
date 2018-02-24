@@ -75,12 +75,12 @@ public class SDNCAdapterV1Test extends WorkflowTest {
 
 	private WorkflowResponse invokeFlow(String workflowRequest) {
 
-		Map<String, Object>valueMap = new HashMap<String, Object>();
+		Map<String, Object>valueMap = new HashMap<>();
 		valueMap.put("value", workflowRequest);
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("sdncAdapterWorkflowRequest", valueMap);
 
-		Map<String, Object> valueMap2 = new HashMap<String, Object>();
+		Map<String, Object> valueMap2 = new HashMap<>();
 		valueMap2.put("value", "true");
 		variables.put("isDebugLogEnabled", valueMap2);
 

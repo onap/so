@@ -50,7 +50,7 @@ public class SDNO implements Serializable
     @JsonProperty("body")
     private Body body;
     @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+    private Map<String, Object> additionalProperties = new HashMap<>();
     private final static long serialVersionUID = -5303297382564282650L;
 
     @JsonProperty("operation")

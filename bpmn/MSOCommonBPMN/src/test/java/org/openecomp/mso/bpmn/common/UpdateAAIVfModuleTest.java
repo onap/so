@@ -58,7 +58,7 @@ public class UpdateAAIVfModuleTest extends WorkflowTest {
 		MockPatchVfModuleId("skask", "supercool");
 		
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("mso-request-id", "999-99-9999");
 		variables.put("isDebugLogEnabled","true");
 		variables.put("UpdateAAIVfModuleRequest", updateAAIVfModuleRequest);
@@ -89,7 +89,7 @@ public class UpdateAAIVfModuleTest extends WorkflowTest {
 		MockGetGenericVnfById("/skask/vf-modules/vf-module/.*", "VfModularity/VfModule-supercool.xml", 404);
 		
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("mso-request-id", "999-99-9999");
 		variables.put("isDebugLogEnabled","true");
 		variables.put("UpdateAAIVfModuleRequest", updateAAIVfModuleRequest);
@@ -122,7 +122,7 @@ public class UpdateAAIVfModuleTest extends WorkflowTest {
 		MockAAIVfModuleBadPatch("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/skask/vf-modules/vf-module/supercool", 404);
 		
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("mso-request-id", "999-99-9999");
 		variables.put("isDebugLogEnabled","true");
 		variables.put("UpdateAAIVfModuleRequest", updateAAIVfModuleRequest);

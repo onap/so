@@ -67,7 +67,7 @@ public class ManualHandlingTest extends WorkflowTest {
 	public void  TestManualHandlingSuccess() {
 
 		RuntimeService runtimeService = processEngineRule.getRuntimeService();				
-		Map<String, Object> variables = new HashMap<String, Object>();		
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("isDebugLogEnabled","true");
 		variables.put("msoRequestId", "testRequestId");
 		variables.put("serviceType", "X");
@@ -103,7 +103,7 @@ public class ManualHandlingTest extends WorkflowTest {
 		        System.out.println("TASK NAME: " + task.getName());
 		        try {
 		        	System.out.println("Completing the task");
-		        	Map<String,Object> completeVariables = new HashMap<String,Object>();
+		        	Map<String,Object> completeVariables = new HashMap<>();
 		        	completeVariables.put("responseValue", "skip");
 		        	taskService.complete(task.getId(), completeVariables);		        
 		        }

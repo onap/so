@@ -51,7 +51,7 @@ public class GenericDeleteVnfTest extends WorkflowTest {
 	public void testGenericDeleteVnf_success_genericVnf() throws Exception{
 		MockDeleteGenericVnf("testVnfId123", "testReVer123");
 
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		setVariables(variables, "testVnfId123", "generic-vnf", "testReVer123");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericDeleteVnf", variables);
@@ -66,7 +66,7 @@ public class GenericDeleteVnfTest extends WorkflowTest {
 	public void testGenericDeleteVnf_success_vce() throws Exception{
 		MockDeleteVce("testVnfId123", "testReVer123", 204);
 
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		setVariables(variables, "testVnfId123", "vce", "testReVer123");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericDeleteVnf", variables);
@@ -83,7 +83,7 @@ public class GenericDeleteVnfTest extends WorkflowTest {
 		MockGetGenericVnfById("/testVnfId123", "GenericFlows/getGenericVnfByNameResponse.xml", 200);
 		MockDeleteGenericVnf("testVnfId123", "testReVer123");
 
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		setVariables(variables, "testVnfId123", "generic-vnf", "");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericDeleteVnf", variables);
@@ -99,7 +99,7 @@ public class GenericDeleteVnfTest extends WorkflowTest {
 		MockDeleteVce("testVnfId123", "testReVer123", 204);
 		MockGetVceById("testVnfId123", "GenericFlows/getVceResponse.xml");
 
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		setVariables(variables, "testVnfId123", "vce", null);
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericDeleteVnf", variables);
@@ -114,7 +114,7 @@ public class GenericDeleteVnfTest extends WorkflowTest {
 	public void testGenericDeleteVnf_success_genericVnf404() throws Exception{
 		MockDeleteGenericVnf("testVnfId123", "testReVer123", 404);
 
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		setVariables(variables, "testVnfId123", "generic-vnf", "testReVer123");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericDeleteVnf", variables);
@@ -129,7 +129,7 @@ public class GenericDeleteVnfTest extends WorkflowTest {
 	public void testGenericDeleteVnf_success_vce404() throws Exception{
 		MockDeleteVce("testVnfId123", "testReVer123", 404);
 
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		setVariables(variables, "testVnfId123", "vce", "testReVer123");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericDeleteVnf", variables);
@@ -144,7 +144,7 @@ public class GenericDeleteVnfTest extends WorkflowTest {
 	public void testGenericDeleteVnf_success_genericVnfNoResourceVersion404() throws Exception{
 		MockGetGenericVnfById_404("testVnfId123");
 
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		setVariables(variables, "testVnfId123", "generic-vnf", "");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericDeleteVnf", variables);
@@ -158,7 +158,7 @@ public class GenericDeleteVnfTest extends WorkflowTest {
 	@Deployment(resources = {"subprocess/GenericDeleteVnf.bpmn"})
 	public void testGenericDeleteVnf_error_missingVariables() throws Exception{
 
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		setVariables(variables, "testVnfId123", "", "testReVer123");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericDeleteVnf", variables);
@@ -173,7 +173,7 @@ public class GenericDeleteVnfTest extends WorkflowTest {
 	public void testGenericDeleteVnf_error_genericVnf500() throws Exception{
 
 		MockDeleteGenericVnf_500("testVnfId123", "testReVer123");
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		setVariables(variables, "testVnfId123", "generic-vnf", "testReVer123");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericDeleteVnf", variables);
@@ -188,7 +188,7 @@ public class GenericDeleteVnfTest extends WorkflowTest {
 	public void testGenericDeleteVnf_error_genericVnf412() throws Exception{
 		MockDeleteGenericVnf("testVnfId123", "testReVer123", 412);
 
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		setVariables(variables, "testVnfId123", "generic-vnf", "testReVer123");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericDeleteVnf", variables);

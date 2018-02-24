@@ -327,7 +327,7 @@ public class WorkflowTest {
 			String businessKey, String request, Map<String, Object> injectedVariables,
 			boolean serviceInstantiationModel) {
 
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 
 		// These variables may be overridded by injected variables.
 		variables.put("mso-service-request-timeout", "180");
@@ -422,7 +422,7 @@ public class WorkflowTest {
 	 * @return a VariableMap
 	 */
 	private VariableMapImpl createVariableMapImpl(Map<String, Object> variables) {
-		Map<String, Object> wrappedVariables = new HashMap<String, Object>();
+		Map<String, Object> wrappedVariables = new HashMap<>();
 
 		for (String key : variables.keySet()) {
 			Object value = variables.get(key);
@@ -441,7 +441,7 @@ public class WorkflowTest {
 	 * @return the wrapped variable
 	 */
 	private Map<String, Object> wrapVariableValue(Object value) {
-		HashMap<String, Object> valueMap = new HashMap<String, Object>();
+		HashMap<String, Object> valueMap = new HashMap<>();
 		valueMap.put("value", value);
 		return valueMap;
 	}
@@ -1776,7 +1776,7 @@ public class WorkflowTest {
 	 * An object that contains callback data for a "program".
 	 */
 	public class CallbackSet {
-		private final Map<String, CallbackData> map = new HashMap<String, CallbackData>();
+		private final Map<String, CallbackData> map = new HashMap<>();
 
 		/**
 		 * Add untyped callback data to the set.
@@ -1975,8 +1975,8 @@ public class WorkflowTest {
 	 * A NamespaceContext class based on a Map.
 	 */
 	private class SimpleNamespaceContext implements NamespaceContext {
-		private Map<String, String> prefixMap = new HashMap<String, String>();
-		private Map<String, String> uriMap = new HashMap<String, String>();
+		private Map<String, String> prefixMap = new HashMap<>();
+		private Map<String, String> uriMap = new HashMap<>();
 
 		public synchronized void add(String prefix, String uri) {
 			prefixMap.put(prefix, uri);
@@ -1990,7 +1990,7 @@ public class WorkflowTest {
 
 		@Override
 		public Iterator<String> getPrefixes(String uri) {
-			List<String> list = new ArrayList<String>();
+			List<String> list = new ArrayList<>();
 			String prefix = uriMap.get(uri);
 			if (prefix != null) {
 				list.add(prefix);

@@ -60,7 +60,7 @@ public class PrepareUpdateAAIVfModuleTest extends WorkflowTest {
 		MockPatchVfModuleId("skask", "supercool");
 		
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("mso-request-id", "999-99-9999");
 		variables.put("isDebugLogEnabled","true");
 		variables.put("PrepareUpdateAAIVfModuleRequest", prepareUpdateAAIVfModuleRequest);
@@ -94,7 +94,7 @@ public class PrepareUpdateAAIVfModuleTest extends WorkflowTest {
 		MockGetGenericVnfById_404("skask[?]depth=1");
 		
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();		
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("mso-request-id", "999-99-9999");
 		variables.put("isDebugLogEnabled","true");
 		variables.put("PrepareUpdateAAIVfModuleRequest", prepareUpdateAAIVfModuleRequest);
@@ -129,7 +129,7 @@ public class PrepareUpdateAAIVfModuleTest extends WorkflowTest {
 		MockGetGenericVnfByIdWithDepth("skask", 1, "VfModularity/GenericVnf.xml");
 		
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();		
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("mso-request-id", "999-99-9999");
 		variables.put("isDebugLogEnabled","true");
 		variables.put("PrepareUpdateAAIVfModuleRequest", prepareUpdateAAIVfModuleRequest);
@@ -159,7 +159,7 @@ public class PrepareUpdateAAIVfModuleTest extends WorkflowTest {
 		MockGetGenericVnfByIdWithDepth("skask", 1, "VfModularity/GenericVnf.xml");		
 		
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();		
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("mso-request-id", "999-99-9999");
 		variables.put("isDebugLogEnabled","true");
 		variables.put("PrepareUpdateAAIVfModuleRequest", prepareUpdateAAIVfModuleRequest);
@@ -190,7 +190,7 @@ public class PrepareUpdateAAIVfModuleTest extends WorkflowTest {
 		MockAAIVfModuleBadPatch("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/skask/vf-modules/vf-module/supercool", 404);
 		
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();		
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("mso-request-id", "999-99-9999");
 		variables.put("isDebugLogEnabled","true");
 		variables.put("PrepareUpdateAAIVfModuleRequest", prepareUpdateAAIVfModuleRequest);

@@ -51,7 +51,7 @@ public class CreateAAIVfModuleTest extends WorkflowTest {
 		MockAAICreateGenericVnf();
 		MockAAIVfModulePUT(true);
 		RuntimeService runtimeService = processEngineRule.getRuntimeService();				
-		Map<String, Object> variables = new HashMap<String, Object>();		
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("isDebugLogEnabled","true");
 		variables.put("isVidRequest", "false");
 		variables.put("vnfName", "STMTN5MMSC22");
@@ -78,7 +78,7 @@ public class CreateAAIVfModuleTest extends WorkflowTest {
 		MockAAICreateGenericVnf();
 		MockAAIVfModulePUT(true);
 		RuntimeService runtimeService = processEngineRule.getRuntimeService();				
-		Map<String, Object> variables = new HashMap<String, Object>();		
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("isDebugLogEnabled","true");
 		variables.put("isVidRequest", "false");
 		variables.put("vnfId", "a27ce5a9-29c4-4c22-a017-6615ac73c721");
@@ -103,7 +103,7 @@ public class CreateAAIVfModuleTest extends WorkflowTest {
 		MockAAICreateGenericVnf();
 		MockAAIVfModulePUT(true);
 		RuntimeService runtimeService = processEngineRule.getRuntimeService();				
-		Map<String, Object> variables = new HashMap<String, Object>();		
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("isDebugLogEnabled","true");		
 		variables.put("isVidRequest", "false");
 		variables.put("vnfName", "STMTN5MMSC23");
@@ -128,7 +128,7 @@ public class CreateAAIVfModuleTest extends WorkflowTest {
 		MockAAICreateGenericVnf();
 		MockAAIVfModulePUT(true);
 		RuntimeService runtimeService = processEngineRule.getRuntimeService();				
-		Map<String, Object> variables = new HashMap<String, Object>();		
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("isDebugLogEnabled","true");		
 		variables.put("isVidRequest", "false");
 		variables.put("vnfName", "STMTN5MMSC21");
@@ -153,7 +153,7 @@ public class CreateAAIVfModuleTest extends WorkflowTest {
 		MockAAICreateGenericVnf();
 		MockAAIVfModulePUT(true);
 		RuntimeService runtimeService = processEngineRule.getRuntimeService();				
-		Map<String, Object> variables = new HashMap<String, Object>();		
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("isDebugLogEnabled","true");		
 		variables.put("isVidRequest", "false");
 		variables.put("vnfId", "2f6aee38-1e2a-11e6-82d1-ffc7d9ee8aa4");
@@ -178,7 +178,7 @@ public class CreateAAIVfModuleTest extends WorkflowTest {
 		MockAAICreateGenericVnf();
 		MockAAIVfModulePUT(true);
 		RuntimeService runtimeService = processEngineRule.getRuntimeService();				
-		Map<String, Object> variables = new HashMap<String, Object>();		
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("isDebugLogEnabled","true");		
 		variables.put("isVidRequest", "false");
 		variables.put("vnfName", "STMTN5MMSC22");
@@ -203,7 +203,7 @@ public class CreateAAIVfModuleTest extends WorkflowTest {
 		MockAAICreateGenericVnf();
 		MockAAIVfModulePUT(true);
 		RuntimeService runtimeService = processEngineRule.getRuntimeService();				
-		Map<String, Object> variables = new HashMap<String, Object>();		
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("isDebugLogEnabled","true");		
 		variables.put("isVidRequest", "false");
 		variables.put("vnfId", "768073c7-f41f-4822-9323-b75962763d74");
@@ -228,7 +228,7 @@ public class CreateAAIVfModuleTest extends WorkflowTest {
 		MockAAICreateGenericVnf();
 		MockAAIVfModulePUT(true);
 		RuntimeService runtimeService = processEngineRule.getRuntimeService();				
-		Map<String, Object> variables = new HashMap<String, Object>();		
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("isDebugLogEnabled","true");		
 		variables.put("isVidRequest", "false");
 		variables.put("vnfId", "a27ce5a9-29c4-4c22-a017-6615ac73c721");

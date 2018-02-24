@@ -140,7 +140,7 @@ public class HomingTest extends WorkflowTest {
 		mockSNIRO();
 
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		setVariables(variables);
 
 		invokeSubProcess("Homing", businessKey, variables);
@@ -183,7 +183,7 @@ public class HomingTest extends WorkflowTest {
 		mockSNIRO();
 
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		setVariables2(variables);
 
 		invokeSubProcess("Homing", businessKey, variables);
@@ -237,7 +237,7 @@ public class HomingTest extends WorkflowTest {
 //System.out.println("At start of testHoming_success_vnfResourceList");
 		MockGetServiceResourcesCatalogData("1cc4e2e4-eb6e-404d-a66f-c8733cedcce8", "5.0", "/BuildingBlocks/catalogResp.json");
 		String busKey = UUID.randomUUID().toString();
-		Map<String, Object> vars = new HashMap<String, Object>();
+		Map<String, Object> vars = new HashMap<>();
 		setVariablesForServiceDecomposition(vars, "testRequestId123", "ff5256d2-5a33-55df-13ab-12abad84e7ff");
 		invokeSubProcess("DecomposeService", busKey, vars);
 		
@@ -252,7 +252,7 @@ public class HomingTest extends WorkflowTest {
 		mockSNIRO();
 
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("isDebugLogEnabled", "true");
 		variables.put("msoRequestId", "testRequestId");
 		variables.put("serviceInstanceId", "testServiceInstanceId");
@@ -288,7 +288,7 @@ public class HomingTest extends WorkflowTest {
 	public void testHoming_error_inputVariable() throws Exception {
 
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		setVariables3(variables);
 
 		invokeSubProcess("Homing", businessKey, variables);
@@ -307,7 +307,7 @@ public class HomingTest extends WorkflowTest {
 		mockSNIRO_500();
 
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		setVariables(variables);
 
 		invokeSubProcess("Homing", businessKey, variables);
@@ -326,7 +326,7 @@ public class HomingTest extends WorkflowTest {
 		mockSNIRO();
 
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		setVariables(variables);
 
 		invokeSubProcess("Homing", businessKey, variables);
@@ -347,7 +347,7 @@ public class HomingTest extends WorkflowTest {
 		mockSNIRO();
 
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		setVariables(variables);
 
 		invokeSubProcess("Homing", businessKey, variables);
@@ -368,7 +368,7 @@ public class HomingTest extends WorkflowTest {
 		mockSNIRO();
 
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		setVariables(variables);
 
 		invokeSubProcess("Homing", businessKey, variables);

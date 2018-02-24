@@ -41,7 +41,7 @@ public class Body implements Serializable
     @JsonProperty("input")
     private Input input;
     @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+    private Map<String, Object> additionalProperties = new HashMap<>();
     private final static long serialVersionUID = 9101706044452851559L;
 
     @JsonProperty("input")

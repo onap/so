@@ -55,7 +55,7 @@ public class CreateAAIVfModuleVolumeGroupTest extends WorkflowTest {
 		MockPutVfModuleIdNoResponse("skask", "PCRF", "lukewarm");
 		
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("mso-request-id", "999-99-9999");
 		variables.put("isDebugLogEnabled","true");
 		variables.put("CreateAAIVfModuleVolumeGroupRequest", updateAAIVfModuleRequest);
@@ -86,7 +86,7 @@ public class CreateAAIVfModuleVolumeGroupTest extends WorkflowTest {
 		MockGetVfModuleId("skask", ".*", "VfModularity/VfModule-supercool.xml", 404);
 		
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("mso-request-id", "999-99-9999");
 		variables.put("isDebugLogEnabled","true");
 		variables.put("CreateAAIVfModuleVolumeGroupRequest", updateAAIVfModuleRequest);
@@ -117,7 +117,7 @@ public class CreateAAIVfModuleVolumeGroupTest extends WorkflowTest {
 		MockGetVfModuleId("skask", "lukewarm", "VfModularity/VfModule-lukewarm.xml", 200);
 
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("mso-request-id", "999-99-9999");
 		variables.put("isDebugLogEnabled","true");
 		variables.put("CreateAAIVfModuleVolumeGroupRequest", updateAAIVfModuleRequest);

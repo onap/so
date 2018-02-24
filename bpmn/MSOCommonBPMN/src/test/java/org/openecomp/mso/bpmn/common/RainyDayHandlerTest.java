@@ -57,7 +57,7 @@ public class RainyDayHandlerTest extends WorkflowTest {
 	public void  TestRainyDayHandlingSuccess() {
 
 		RuntimeService runtimeService = processEngineRule.getRuntimeService();				
-		Map<String, Object> variables = new HashMap<String, Object>();		
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("isDebugLogEnabled","true");
 		variables.put("msoRequestId", "testRequestId");
 		variables.put("serviceType", "X");

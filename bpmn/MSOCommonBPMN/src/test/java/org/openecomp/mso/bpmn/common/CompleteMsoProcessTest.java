@@ -42,7 +42,7 @@ public class CompleteMsoProcessTest extends WorkflowTest {
 		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
 		
 		//String changeFeatureActivateRequest = FileUtil.readResourceFile("__files/SDN-ETHERNET-INTERNET/ChangeFeatureActivateV1/" + inputRequestFile);
-		Map<String, String> variables = new HashMap<String, String>();		
+		Map<String, String> variables = new HashMap<>();
 		variables.put("CompleteMsoProcessRequest",inputRequestFile);
 		
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "CompleteMsoProcess", variables);

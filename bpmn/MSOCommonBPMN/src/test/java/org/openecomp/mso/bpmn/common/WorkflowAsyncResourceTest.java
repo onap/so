@@ -42,7 +42,7 @@ public class WorkflowAsyncResourceTest extends WorkflowTest {
 		//it can be any request which asynchronously processed by the workflow
 		String request = "<aetgt:CreateTenantRequest xmlns:aetgt=\"http://org.openecomp/mso/workflow/schema/v1\" xmlns:sdncadapterworkflow=\"http://org.openecomp/mso/workflow/schema/v1\" xmlns:ns5=\"http://org.openecomp/mso/request/types/v1\">  <msoservtypes:service-information xmlns:msoservtypes=\"http://org.openecomp/mso/request/types/v1\">    <msoservtypes:service-type>SDN-ETHERNET-INTERNET</msoservtypes:service-type>    <msoservtypes:service-instance-id>HI/VLXM/950604//SW_INTERNET</msoservtypes:service-instance-id>    <msoservtypes:subscriber-name>SubName01</msoservtypes:subscriber-name> </msoservtypes:service-information> </aetgt:CreateTenantRequest>";
 
-		Map<String,String> variables = new HashMap<String,String>();
+		Map<String,String> variables = new HashMap<>();
 		variables.put("testAsyncRequestMsg", request);
 		variables.put("mso-request-id", UUID.randomUUID().toString());
 		variables.put("mso-service-request-timeout", "5");
@@ -56,17 +56,17 @@ public class WorkflowAsyncResourceTest extends WorkflowTest {
 		WorkflowAsyncResource workflowResource = new WorkflowAsyncResource();
 		VariableMapImpl variableMap = new VariableMapImpl();
 
-		Map<String, Object> variableValueType = new HashMap<String, Object>();
+		Map<String, Object> variableValueType = new HashMap<>();
 
-		Map<String, Object> requestMsg = new HashMap<String, Object>();
+		Map<String, Object> requestMsg = new HashMap<>();
 		requestMsg.put("value", request);
 		requestMsg.put("type", "String");
 
-		Map<String, Object> msorequestId = new HashMap<String, Object>();
+		Map<String, Object> msorequestId = new HashMap<>();
 		msorequestId.put("type", "String");
 		msorequestId.put("value",requestId);
 
-		Map<String, Object> timeout = new HashMap<String, Object>();
+		Map<String, Object> timeout = new HashMap<>();
 		timeout.put("type", "String");
 		timeout.put("value","5"); 
 

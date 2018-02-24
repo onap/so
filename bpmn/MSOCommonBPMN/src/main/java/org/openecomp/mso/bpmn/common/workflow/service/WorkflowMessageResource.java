@@ -90,7 +90,7 @@ public class WorkflowMessageResource extends AbstractCallbackService {
 		String correlationValue = correlator;
 		String contentTypeVariable = messageType + "_CONTENT_TYPE";
 
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 
 		if (contentType != null) {
 			variables.put(contentTypeVariable, contentType);

@@ -45,7 +45,7 @@ public class MockResource {
 	private boolean started = false;
 	private final Integer defaultPort = 28090;
 	private WireMockServer wireMockServer = null;
-	private static Map<String,String> mockProperties = new HashMap<String,String>();
+	private static Map<String,String> mockProperties = new HashMap<>();
 
 	public static String getMockProperties(String key) {
 		return mockProperties.get(key);

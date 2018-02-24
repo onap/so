@@ -85,7 +85,7 @@ public class ReceiveWorkflowMessageTest extends WorkflowTest {
 		logStart();
 
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("mso-request-id", "dffbae0e-5588-4bd6-9749-b0f0adb52312");
 		variables.put("isDebugLogEnabled", "true");
 		variables.put("RCVWFMSG_timeout", "PT1M");
@@ -115,7 +115,7 @@ public class ReceiveWorkflowMessageTest extends WorkflowTest {
 		logStart();
 
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("mso-request-id", "dffbae0e-5588-4bd6-9749-b0f0adb52312");
 		variables.put("isDebugLogEnabled", "true");
 		variables.put("RCVWFMSG_timeout", "PT0.1S");

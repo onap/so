@@ -58,7 +58,7 @@ public class FalloutHandlerTest extends WorkflowTest {
 		System.out.println("STARTED TEST: " + method);
         
 		//String changeFeatureActivateRequest = FileUtil.readResourceFile("__files/SDN-ETHERNET-INTERNET/ChangeFeatureActivateV1/" + inputRequestFile);
-		Map<String, String> variables = new HashMap<String, String>();		
+		Map<String, String> variables = new HashMap<>();
 		variables.put("FalloutHandlerRequest",inputRequestFile);
 		
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "FalloutHandler", variables);

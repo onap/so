@@ -49,7 +49,7 @@ public class DecomposeServiceTest extends WorkflowTest {
 
 
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		setVariablesSuccess(variables, "testRequestId123", "ff5256d2-5a33-55df-13ab-12abad84e7ff");
 		invokeSubProcess("DecomposeService", businessKey, variables);
 
@@ -66,7 +66,7 @@ public class DecomposeServiceTest extends WorkflowTest {
 
 
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		setVariablesSuccess(variables, "testRequestId123", "ff5256d2-5a33-55df-13ab-12abad84e7ff");
 		invokeSubProcess("DecomposeService", businessKey, variables);
 

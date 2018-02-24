@@ -241,7 +241,7 @@ public class VnfAdapterRestV1Test extends WorkflowTest {
 		String request = CREATE_VF_MODULE_REQUEST.replace("{{MESSAGE-ID}}", messageId);
 
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("mso-request-id", requestId);
 		variables.put("isDebugLogEnabled", "true");
 		variables.put("vnfAdapterRestV1Request", request);
@@ -272,7 +272,7 @@ public class VnfAdapterRestV1Test extends WorkflowTest {
 		String request = UPDATE_VF_MODULE_REQUEST.replace("{{MESSAGE-ID}}", messageId);
 
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("mso-request-id", requestId);
 		variables.put("isDebugLogEnabled", "true");
 		variables.put("vnfAdapterRestV1Request", request);
@@ -303,7 +303,7 @@ public class VnfAdapterRestV1Test extends WorkflowTest {
 		String request = DELETE_VF_MODULE_REQUEST.replace("{{MESSAGE-ID}}", messageId);
 
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("mso-request-id", requestId);
 		variables.put("isDebugLogEnabled", "true");
 		variables.put("vnfAdapterRestV1Request", request);
@@ -334,7 +334,7 @@ public class VnfAdapterRestV1Test extends WorkflowTest {
 		String request = ROLLBACK_VF_MODULE_REQUEST.replace("{{MESSAGE-ID}}", messageId);
 
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("mso-request-id", requestId);
 		variables.put("isDebugLogEnabled", "true");
 		variables.put("vnfAdapterRestV1Request", request);
@@ -365,7 +365,7 @@ public class VnfAdapterRestV1Test extends WorkflowTest {
 		String request = CREATE_VF_MODULE_REQUEST.replace("{{MESSAGE-ID}}", messageId);
 
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("mso-request-id", requestId);
 		variables.put("isDebugLogEnabled", "true");
 		variables.put("vnfAdapterRestV1Request", request);

@@ -70,7 +70,7 @@ public abstract class AbstractCallbackService extends ProcessEngineAwareService 
 			+ (message == null ? "" : System.lineSeparator()) + message);
 
 		try {
-			Map<String, Object> variables = new HashMap<String, Object>();
+			Map<String, Object> variables = new HashMap<>();
 
 			if (injectedVariables != null) {
 				variables.putAll(injectedVariables);
@@ -192,7 +192,7 @@ public abstract class AbstractCallbackService extends ProcessEngineAwareService 
 
 		int count = waitingProcesses.size();
 
-		List<ExecInfo> execInfoList = new ArrayList<ExecInfo>(count);
+		List<ExecInfo> execInfoList = new ArrayList<>(count);
 		for (Execution execution : waitingProcesses) {
 			execInfoList.add(new ExecInfo(execution));
 		}

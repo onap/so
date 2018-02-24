@@ -52,7 +52,7 @@ public class DeleteAAIVfModuleTest extends WorkflowTest {
 		MockAAIDeleteGenericVnf();
 		MockAAIDeleteVfModule();
 		RuntimeService runtimeService = processEngineRule.getRuntimeService();				
-		Map<String, Object> variables = new HashMap<String, Object>();		
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("isDebugLogEnabled","true");
 		variables.put("DeleteAAIVfModuleRequest","<vnf-request xmlns=\"http://openecomp.org/mso/infra/vnf-request/v1\"> <request-info> <action>DELETE_VF_MODULE</action> <source>PORTAL</source> </request-info> <vnf-inputs> <vnf-id>a27ce5a9-29c4-4c22-a017-6615ac73c721</vnf-id> <vnf-name>STMTN5MMSC21</vnf-name> <vf-module-id>973ed047-d251-4fb9-bf1a-65b8949e0a73</vf-module-id> <vf-module-name>STMTN5MMSC21-MMSC::module-0-0</vf-module-name> </vnf-inputs> <vnf-params xmlns:tns=\"http://openecomp.org/mso/infra/vnf-request/v1\"/> </vnf-request>");
 		runtimeService.startProcessInstanceByKey("DeleteAAIVfModule", variables);
@@ -88,7 +88,7 @@ public class DeleteAAIVfModuleTest extends WorkflowTest {
 		MockAAIDeleteGenericVnf();
 		MockAAIDeleteVfModule();
 		RuntimeService runtimeService = processEngineRule.getRuntimeService();				
-		Map<String, Object> variables = new HashMap<String, Object>();		
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("isDebugLogEnabled","true");
 		variables.put("DeleteAAIVfModuleRequest",request);
 		runtimeService.startProcessInstanceByKey("DeleteAAIVfModule", variables);
@@ -123,7 +123,7 @@ public class DeleteAAIVfModuleTest extends WorkflowTest {
 		MockAAIDeleteGenericVnf();
 		MockAAIDeleteVfModule();
 		RuntimeService runtimeService = processEngineRule.getRuntimeService();				
-		Map<String, Object> variables = new HashMap<String, Object>();		
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("isDebugLogEnabled","true");
 		variables.put("DeleteAAIVfModuleRequest",request);
 		runtimeService.startProcessInstanceByKey("DeleteAAIVfModule", variables);
@@ -158,7 +158,7 @@ public class DeleteAAIVfModuleTest extends WorkflowTest {
 		MockAAIDeleteGenericVnf();
 		MockAAIDeleteVfModule();
 		RuntimeService runtimeService = processEngineRule.getRuntimeService();				
-		Map<String, Object> variables = new HashMap<String, Object>();		
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("isDebugLogEnabled","true");
 		variables.put("DeleteAAIVfModuleRequest",request);
 		runtimeService.startProcessInstanceByKey("DeleteAAIVfModule", variables);
@@ -193,7 +193,7 @@ public class DeleteAAIVfModuleTest extends WorkflowTest {
 		MockAAIDeleteGenericVnf();
 		MockAAIDeleteVfModule();
 		RuntimeService runtimeService = processEngineRule.getRuntimeService();				
-		Map<String, Object> variables = new HashMap<String, Object>();		
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("isDebugLogEnabled","true");
 		variables.put("DeleteAAIVfModuleRequest",request);
 		runtimeService.startProcessInstanceByKey("DeleteAAIVfModule", variables);
@@ -228,7 +228,7 @@ public class DeleteAAIVfModuleTest extends WorkflowTest {
 		MockAAIDeleteGenericVnf();
 		MockAAIDeleteVfModule();
 		RuntimeService runtimeService = processEngineRule.getRuntimeService();				
-		Map<String, Object> variables = new HashMap<String, Object>();		
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("isDebugLogEnabled","true");
 		variables.put("DeleteAAIVfModuleRequest",request);
 		runtimeService.startProcessInstanceByKey("DeleteAAIVfModule", variables);
@@ -263,7 +263,7 @@ public class DeleteAAIVfModuleTest extends WorkflowTest {
 		MockAAIDeleteGenericVnf();
 		MockAAIDeleteVfModule();
 		RuntimeService runtimeService = processEngineRule.getRuntimeService();				
-		Map<String, Object> variables = new HashMap<String, Object>();		
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("isDebugLogEnabled","true");
 		variables.put("DeleteAAIVfModuleRequest",request);
 		runtimeService.startProcessInstanceByKey("DeleteAAIVfModule", variables);
@@ -284,7 +284,7 @@ public class DeleteAAIVfModuleTest extends WorkflowTest {
 		MockAAIDeleteGenericVnf();
 		MockAAIDeleteVfModule();
 		RuntimeService runtimeService = processEngineRule.getRuntimeService();				
-		Map<String, Object> variables = new HashMap<String, Object>();		
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("isDebugLogEnabled","true");
 		variables.put("DeleteAAIVfModuleRequest","<vnf-request xmlns=\"http://openecomp.org/mso/infra/vnf-request/v1\"> <request-info> <action>DELETE_VF_MODULE</action> <source>PORTAL</source> </request-info> <vnf-inputs> <vnf-id>a27ce5a9-29c4-4c22-a017-6615ac73c720</vnf-id> <vnf-name>STMTN5MMSC20</vnf-name> <vf-module-id>973ed047-d251-4fb9-bf1a-65b8949e0a76</vf-module-id> <vf-module-name>STMTN5MMSC20-MMSC::module-2-0</vf-module-name> </vnf-inputs> <vnf-params xmlns:tns=\"http://openecomp.org/mso/infra/vnf-request/v1\"/> </vnf-request>");
 		runtimeService.startProcessInstanceByKey("DeleteAAIVfModule", variables);
