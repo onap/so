@@ -68,16 +68,13 @@ public class MsoOpenstackException extends MsoException
 		this.statusMessage = message;
 		this.errorDetail = detail;
 	}
-	
+
 	@Override
-	public String toString () {
-		StringBuilder error = new StringBuilder();
-		error.append("");
-		error.append(statusCode);
-		error.append(" ");
-		error.append(statusMessage);
-		error.append(": ");
-		error.append(errorDetail);
-		return error.toString();
+	public String toString() {
+		return statusCode +
+			" " +
+			statusMessage +
+			": " +
+			errorDetail;
 	}
 }

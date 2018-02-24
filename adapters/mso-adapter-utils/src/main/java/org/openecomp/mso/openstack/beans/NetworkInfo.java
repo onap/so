@@ -139,15 +139,13 @@ public class NetworkInfo {
 
 	@Override
 	public String toString() {
-		final StringBuilder sb = new StringBuilder("NetworkInfo{");
-		sb.append("name='").append(name).append('\'');
-		sb.append(", id='").append(id).append('\'');
-		sb.append(", status=").append(status);
-		sb.append(", provider='").append(provider).append('\'');
-		sb.append(", vlans=").append(vlans);
-		sb.append(", subnets=").append(subnets);
-		sb.append('}');
-		return sb.toString();
+		return "NetworkInfo{" + "name='" + name + '\'' +
+			", id='" + id + '\'' +
+			", status=" + status +
+			", provider='" + provider + '\'' +
+			", vlans=" + vlans +
+			", subnets=" + subnets +
+			'}';
 	}
 }
 

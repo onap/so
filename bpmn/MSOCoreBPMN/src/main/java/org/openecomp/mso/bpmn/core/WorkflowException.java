@@ -71,15 +71,7 @@ public class WorkflowException implements Serializable {
 	 */
     @Override
 	public String toString() {
-		StringBuilder out = new StringBuilder();
-		out.append(getClass().getSimpleName());
-		out.append("[processKey=");
-		out.append(getProcessKey());
-		out.append(",errorCode=");
-		out.append(getErrorCode());
-		out.append(",errorMessage=");
-		out.append(getErrorMessage());
-		out.append("]");
-		return out.toString();
+		return getClass().getSimpleName() + "[processKey=" + getProcessKey() + ",errorCode=" + getErrorCode()
+			+ ",errorMessage=" + getErrorMessage() + "]";
 	}
 }
