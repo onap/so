@@ -103,24 +103,21 @@ public class NetworkResourceCustomization implements Serializable{
 	}
 
 	@Override
-	public String toString () {
-		StringBuilder sb = new StringBuilder();
-		sb.append("modelCustomizationUuid=");
-		sb.append(this.modelCustomizationUuid);
-		sb.append("networkResourceModelUuid=");
-		sb.append(this.networkResourceModelUuid);
-		sb.append("modelInstanceName=");
-		sb.append(this.modelInstanceName);
-		sb.append("networkType=");
-		sb.append(this.networkType);
-		sb.append("networkTechnology=");
-		sb.append(this.networkTechnology);
-		sb.append("networkScope=");
-		sb.append(this.networkScope);
-		sb.append("networkRole=");
-		sb.append(this.networkRole);
-
-		return sb.toString();
+	public String toString() {
+		return "modelCustomizationUuid=" +
+			this.modelCustomizationUuid +
+			"networkResourceModelUuid=" +
+			this.networkResourceModelUuid +
+			"modelInstanceName=" +
+			this.modelInstanceName +
+			"networkType=" +
+			this.networkType +
+			"networkTechnology=" +
+			this.networkTechnology +
+			"networkScope=" +
+			this.networkScope +
+			"networkRole=" +
+			this.networkRole;
 	}
 
     @Override

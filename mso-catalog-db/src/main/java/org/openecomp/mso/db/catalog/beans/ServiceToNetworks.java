@@ -80,14 +80,11 @@ public class ServiceToNetworks implements Serializable {
 		
 		return code;
 	}
-	
+
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("ServiceToNetworks mapping: ");
-		sb.append("serviceModelUuid=").append(this.serviceModelUuid);
-		sb.append(",networkModelCustomizationUuid=").append(networkModelCustomizationUuid);
-		return sb.toString();
+		return "ServiceToNetworks mapping: " + "serviceModelUuid=" + this.serviceModelUuid
+			+ ",networkModelCustomizationUuid=" + networkModelCustomizationUuid;
 	}
 
 }
