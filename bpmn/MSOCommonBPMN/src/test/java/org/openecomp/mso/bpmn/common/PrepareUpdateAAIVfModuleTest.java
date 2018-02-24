@@ -71,7 +71,7 @@ public class PrepareUpdateAAIVfModuleTest extends WorkflowTest {
 		Integer responseCode = (Integer) getVariableFromHistory(businessKey, "PUAAIVfMod_updateVfModuleResponseCode");
 		System.out.println("Subflow response code: " + responseCode);
 		System.out.println("Subflow response: " + response);
-		Assert.assertEquals(200, responseCode.intValue());
+		Assert.assertEquals(200, responseCode);
 		String heatStackId = (String) getVariableFromHistory(businessKey, "PUAAIVfMod_heatStackId");
 		System.out.println("Ouput heat-stack-id:" + heatStackId);
 		Assert.assertEquals("slowburn", heatStackId);
@@ -106,7 +106,7 @@ public class PrepareUpdateAAIVfModuleTest extends WorkflowTest {
 		WorkflowException workflowException = (WorkflowException) getVariableFromHistory(businessKey, "WorkflowException");
 		System.out.println("Subflow response code: " + responseCode);
 		System.out.println("Subflow response: " + response);
-		Assert.assertEquals(404, responseCode.intValue());
+		Assert.assertEquals(404, responseCode);
 		Assert.assertNotNull(workflowException);
 		System.out.println("Subflow WorkflowException error message: " + workflowException.getErrorMessage());
 		
@@ -202,7 +202,7 @@ public class PrepareUpdateAAIVfModuleTest extends WorkflowTest {
 		WorkflowException workflowException = (WorkflowException) getVariableFromHistory(businessKey, "WorkflowException");
 		System.out.println("Subflow response code: " + responseCode);
 		System.out.println("Subflow response: " + response);
-		Assert.assertEquals(404, responseCode.intValue());
+		Assert.assertEquals(404, responseCode);
 		Assert.assertNotNull(workflowException);
 		System.out.println("Subflow WorkflowException error message: " + workflowException.getErrorMessage());
 		
