@@ -69,7 +69,7 @@ public class UpdateAAIVfModuleTest extends WorkflowTest {
 		Integer responseCode = (Integer) getVariableFromHistory(businessKey, "UAAIVfMod_updateVfModuleResponseCode");
 		System.out.println("Subflow response code: " + responseCode);
 		System.out.println("Subflow response: " + response);
-		Assert.assertEquals(200, responseCode.intValue());
+		Assert.assertEquals(200, responseCode);
 		
 		logEnd();
 	}
@@ -100,7 +100,7 @@ public class UpdateAAIVfModuleTest extends WorkflowTest {
 		Integer responseCode = (Integer) getVariableFromHistory(businessKey, "UAAIVfMod_getVfModuleResponseCode");
 		System.out.println("Subflow response code: " + responseCode);
 		System.out.println("Subflow response: " + response);
-		Assert.assertEquals(404, responseCode.intValue());
+		Assert.assertEquals(404, responseCode);
 		
 		logEnd();
 	}
@@ -133,7 +133,7 @@ public class UpdateAAIVfModuleTest extends WorkflowTest {
 		Integer responseCode = (Integer) getVariableFromHistory(businessKey, "UAAIVfMod_updateVfModuleResponseCode");
 		System.out.println("Subflow response code: " + responseCode);
 		System.out.println("Subflow response: " + response);
-		Assert.assertEquals(404, responseCode.intValue());
+		Assert.assertEquals(404, responseCode);
 		
 		logEnd();
 	}
