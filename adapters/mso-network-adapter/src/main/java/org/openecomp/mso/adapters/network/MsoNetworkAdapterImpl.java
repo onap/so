@@ -595,7 +595,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                                                   null,
                                                   null,
                                                   null,
-                                                  backout.booleanValue());
+                        backout);
                 } catch (MsoException me) {
                     me.addContext (CREATE_NETWORK_CONTEXT);
                 	String error = "Create Network (heat): type " + neutronNetworkType

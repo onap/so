@@ -122,7 +122,7 @@ public class MsoTenantAdapterImpl implements MsoTenantAdapter {
                 backout = true;
             long createTenantStartTime = System.currentTimeMillis ();
             try {
-                newTenantId = tUtils.createTenant (tenantName, cloudSiteId, metadata, backout.booleanValue ());
+                newTenantId = tUtils.createTenant (tenantName, cloudSiteId, metadata, backout);
                 logger.recordMetricEvent (createTenantStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from Open Stack", OPENSTACK, CREATE_TENANT, null);
             } catch (MsoException me) {
                 logger.recordMetricEvent (createTenantStartTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, "Exception while communicate with Open Stack", OPENSTACK, CREATE_TENANT, null);
