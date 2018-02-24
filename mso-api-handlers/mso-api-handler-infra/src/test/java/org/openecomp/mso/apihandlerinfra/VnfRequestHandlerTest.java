@@ -182,7 +182,7 @@ public class VnfRequestHandlerTest {
 				req.setAaiServiceId("299392");
 				req.setAction("CREATE");
 				req.setRequestStatus("COMPLETE");
-				req.setProgress(10001l);
+				req.setProgress(10001L);
 				req.setSource("test");
 				req.setStartTime(new Timestamp(10020100));
 				req.setEndTime(new Timestamp(20020100));
@@ -207,7 +207,7 @@ public class VnfRequestHandlerTest {
 				req.setAaiServiceId("299392");
 				req.setAction("CREATE");
 				req.setRequestStatus("COMPLETE");
-				req.setProgress(10001l);
+				req.setProgress(10001L);
 				req.setSource("test");
 				req.setStartTime(new Timestamp(10020100));
 				req.setEndTime(new Timestamp(20020100));
@@ -229,7 +229,7 @@ public class VnfRequestHandlerTest {
 				req.setAaiServiceId("299392");
 				req.setAction("CREATE");
 				req.setRequestStatus("COMPLETE");
-				req.setProgress(10001l);
+				req.setProgress(10001L);
 				req.setSource("test");
 				req.setStartTime(new Timestamp(10020100));
 				req.setEndTime(new Timestamp(20020100));
