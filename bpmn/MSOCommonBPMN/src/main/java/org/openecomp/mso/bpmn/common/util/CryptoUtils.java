@@ -75,7 +75,7 @@ public class CryptoUtils {
 
 
     private static String byteArrayToHexString(byte[] b){
-        StringBuffer sb = new StringBuffer(b.length * 2);
+        StringBuilder sb = new StringBuilder(b.length * 2);
         for (byte aB : b) {
             int v = aB & 0xff;
             if (v < 16) {
