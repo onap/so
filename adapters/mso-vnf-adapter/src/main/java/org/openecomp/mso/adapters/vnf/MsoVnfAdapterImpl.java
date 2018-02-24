@@ -1319,7 +1319,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                                               newEnvironmentString,
                                               nestedTemplatesChecked,
                                               heatFilesObjects,
-                                              backout.booleanValue());
+                        backout);
                 LOGGER.recordMetricEvent (createStackStarttime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from Open Stack", "OpenStack", "CreateStack", vfModuleName);
             } catch (MsoException me) {
                 me.addContext ("CreateVFModule");
