@@ -598,7 +598,7 @@ public class MsoPropertiesFactoryTest {
 		assertFalse(msoProperties.equals(msoProperties2));
 		assertTrue(msoProperties.equals(msoProperties));
 		assertFalse(msoProperties.equals(null));
-		assertFalse(msoProperties.equals(new String()));
+		assertFalse(msoProperties.equals(""));
 		
 		// Test a reload with timer set to 1 in PATH_MSO_JSON_PROP2
 		msoPropertiesFactory.changeMsoPropertiesFilePath(MSO_JSON_PROP_ID, PATH_MSO_JSON_PROP);

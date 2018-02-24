@@ -150,7 +150,7 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
 
     private String getPostStringBody(ResourceOperationStatus resourceOperationStatus) {
         logger.info("AbstractSdncOperationTask.getPostStringBody begin!");
-        String postBody = new String(postBodyTemplate);
+        String postBody = postBodyTemplate;
         postBody = postBody.replace("$errorCode", resourceOperationStatus.getErrorCode());
         postBody = postBody.replace("$jobId", resourceOperationStatus.getJobId());
         postBody = postBody.replace("$operType", resourceOperationStatus.getOperType());
@@ -166,7 +166,7 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
 
     private String getGetStringBody(String serviceId, String operationId, String resourceTemplateUUID) {
         logger.info("AbstractSdncOperationTask.getGetStringBody begin!");
-        String getBody = new String(getBodyTemplate);
+        String getBody = getBodyTemplate;
         getBody = getBody.replace("$operationId", operationId);
         getBody = getBody.replace("$resourceTemplateUUID", resourceTemplateUUID);
         getBody = getBody.replace("$serviceId", serviceId);
