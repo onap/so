@@ -32,7 +32,7 @@
     <module>status-control</module>
     <module>bpmn</module>
     <module>packages</module>
-    <!-- <module>aria/aria-rest-server</module> -->
+    <module>aria</module>
   </modules>
   <properties>
     <project.mso.base.folder>.</project.mso.base.folder>
