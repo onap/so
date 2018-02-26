@@ -22,7 +22,7 @@ ex.processJavaException(execution)]]></bpmn:script>
       <bpmn:sequenceFlow id="SequenceFlow_0guajy5" name="" sourceRef="StartEvent_121296y" targetRef="ScriptTask_1c6ogpt" />
       <bpmn:sequenceFlow id="SequenceFlow_0dbt753" name="" sourceRef="ScriptTask_1c6ogpt" targetRef="EndEvent_1dw3dwx" />
     </bpmn:subProcess>
-    <bpmn:callActivity id="CallActivity_1vyx9hu" name="Call DoCustomDeleteE2EServiceInstanceV3&#10;" calledElement="DoCustomDeleteE2EServiceInstanceV3">
+    <bpmn:callActivity id="CallActivity_1vyx9hu" name="Call DoCustomDeleteE2EServiceInstance&#10;" calledElement="DoCustomDeleteE2EServiceInstance">
       <bpmn:extensionElements>
         <camunda:out source="WorkflowException" target="WorkflowException" />
         <camunda:in source="msoRequestId" target="msoRequestId" />
