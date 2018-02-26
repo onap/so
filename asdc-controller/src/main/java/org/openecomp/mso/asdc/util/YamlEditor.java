@@ -82,12 +82,10 @@ public class YamlEditor {
 
         @SuppressWarnings("unchecked")
         Map <String, Object> resourceMap = (Map <String, Object>) yml.get ("resources");
-        Iterator <Entry <String, Object>> it = resourceMap.entrySet ().iterator ();
-        while (it.hasNext ()) {
-            Map.Entry <String, Object> pair = it.next ();
+        for (Entry<String, Object> pair : resourceMap.entrySet()) {
             @SuppressWarnings("unchecked")
-            Map <String, String> resourceEntry = (Map <String, String>) pair.getValue ();
-            typeList.add (resourceEntry.get ("type"));
+            Map<String, String> resourceEntry = (Map<String, String>) pair.getValue();
+            typeList.add(resourceEntry.get("type"));
         }
         return typeList;
     }    
@@ -100,28 +98,27 @@ public class YamlEditor {
         Set <HeatTemplateParam> paramSet = new HashSet <HeatTemplateParam> ();
         @SuppressWarnings("unchecked")
         Map <String, Object> resourceMap = (Map <String, Object>) yml.get ("parameters");
-        Iterator <Entry <String, Object>> it = resourceMap.entrySet ().iterator ();
 
-        while (it.hasNext ()) {
-            HeatTemplateParam param = new HeatTemplateParam ();
-            Map.Entry <String, Object> pair = it.next ();
+        for (Entry<String, Object> stringObjectEntry : resourceMap.entrySet()) {
+            HeatTemplateParam param = new HeatTemplateParam();
+            Entry<String, Object> pair = stringObjectEntry;
             @SuppressWarnings("unchecked")
-            Map <String, String> resourceEntry = (Map <String, String>) pair.getValue ();
-            
-            param.setParamName (pair.getKey ());
+            Map<String, String> resourceEntry = (Map<String, String>) pair.getValue();
+
+            param.setParamName(pair.getKey());
             // System.out.println(pair.getKey()+":"+type);
             if (resourceEntry.containsKey("default")) {
-                param.setRequired (false);
+                param.setRequired(false);
             } else {
-                param.setRequired (true);
+                param.setRequired(true);
             }
             // Now set the type
-            String value = resourceEntry.get ("type");
-            param.setParamType (value);
-            
+            String value = resourceEntry.get("type");
+            param.setParamType(value);
+
             param.setHeatTemplateArtifactUuid(artifactUUID);
 
-            paramSet.add (param);
+            paramSet.add(param);
 
         }
         return paramSet;
