@@ -60,7 +60,7 @@ public abstract class AbstractMsoProperties {
 	protected abstract void loadPropertiesFile(String propertiesPath) throws IOException;
 	
 	@Override
-	protected abstract AbstractMsoProperties clone();
+	protected abstract AbstractMsoProperties clone() throws CloneNotSupportedException;
 	
 	@Override
 	public abstract int hashCode();
