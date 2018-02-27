@@ -362,7 +362,6 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 			utils.log("DEBUG", "Caught Exception during ProcessMainflowBPMNException Method: " + e, isDebugEnabled)
 			return null
 		}
-		utils.log("DEBUG", "Completed ProcessMainflowBPMNException Method", isDebugEnabled)
 	}
 
 	/**
