@@ -633,7 +633,7 @@ public class ServiceInstances {
 					serviceInstanceId, vnfId, vfModuleId, volumeGroupId, networkId,
 					msoRequest.getServiceInstanceType (),
 					msoRequest.getVnfType (), msoRequest.getVfModuleType (),
-					msoRequest.getNetworkType (), msoRequest.getRequestJSON());
+					msoRequest.getNetworkType (), msoRequest.getRequestJSON(), null);
 
 			msoLogger.recordMetricEvent (subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from BPMN engine", "BPMN", recipeLookupResult.getOrchestrationURI (), null);
 		} catch (Exception e) {

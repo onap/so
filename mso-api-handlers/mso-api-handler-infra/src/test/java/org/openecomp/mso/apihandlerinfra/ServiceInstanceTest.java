@@ -216,7 +216,7 @@ public class ServiceInstanceTest {
         			int recipeTimeout, String requestAction, String serviceInstanceId,
         			String vnfId, String vfModuleId, String volumeGroupId, String networkId,
         			String serviceType, String vnfType, String vfModuleType, String networkType,
-        			String requestDetails){ 
+        			String requestDetails, String recipeParamXsd){ 
             	ProtocolVersion pv = new ProtocolVersion("HTTP",1,1);
             	HttpResponse resp = new BasicHttpResponse(pv,200, "test response");
             	BasicHttpEntity entity = new BasicHttpEntity();
@@ -286,7 +286,7 @@ public class ServiceInstanceTest {
         			int recipeTimeout, String requestAction, String serviceInstanceId,
         			String vnfId, String vfModuleId, String volumeGroupId, String networkId,
         			String serviceType, String vnfType, String vfModuleType, String networkType,
-        			String requestDetails){ 
+        			String requestDetails, String recipeParamXsd){ 
             	ProtocolVersion pv = new ProtocolVersion("HTTP",1,1);
             	HttpResponse resp = new BasicHttpResponse(pv,500, "test response");
             	BasicHttpEntity entity = new BasicHttpEntity();
@@ -357,7 +357,7 @@ public class ServiceInstanceTest {
         			int recipeTimeout, String requestAction, String serviceInstanceId,
         			String vnfId, String vfModuleId, String volumeGroupId, String networkId,
         			String serviceType, String vnfType, String vfModuleType, String networkType,
-        			String requestDetails){ 
+        			String requestDetails, String recipeParamXsd){ 
             	ProtocolVersion pv = new ProtocolVersion("HTTP",1,1);
             	HttpResponse resp = new BasicHttpResponse(pv,500, "test response");
             	BasicHttpEntity entity = new BasicHttpEntity();
@@ -428,7 +428,7 @@ public class ServiceInstanceTest {
         			int recipeTimeout, String requestAction, String serviceInstanceId,
         			String vnfId, String vfModuleId, String volumeGroupId, String networkId,
         			String serviceType, String vnfType, String vfModuleType, String networkType,
-        			String requestDetails){ 
+        			String requestDetails, String recipeParamXsd){ 
             	return null;
             }
         };

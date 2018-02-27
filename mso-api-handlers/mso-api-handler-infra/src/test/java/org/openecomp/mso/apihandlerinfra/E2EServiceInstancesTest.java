@@ -110,7 +110,7 @@ public class E2EServiceInstancesTest {
 					String serviceInstanceId, String vnfId, String vfModuleId,
 					String volumeGroupId, String networkId, String serviceType,
 					String vnfType, String vfModuleType, String networkType,
-					String requestDetails) {
+					String requestDetails, String recipeParamXsd) {
 				ProtocolVersion pv = new ProtocolVersion("HTTP", 1, 1);
 				HttpResponse resp = new BasicHttpResponse(pv, 202,
 						"test response");
@@ -181,7 +181,7 @@ public class E2EServiceInstancesTest {
 					String serviceInstanceId, String vnfId, String vfModuleId,
 					String volumeGroupId, String networkId, String serviceType,
 					String vnfType, String vfModuleType, String networkType,
-					String requestDetails) {
+					String requestDetails, String recipeParamXsd) {
 				ProtocolVersion pv = new ProtocolVersion("HTTP", 1, 1);
 				HttpResponse resp = new BasicHttpResponse(pv, 500,
 						"test response");
@@ -252,7 +252,7 @@ public class E2EServiceInstancesTest {
 					String serviceInstanceId, String vnfId, String vfModuleId,
 					String volumeGroupId, String networkId, String serviceType,
 					String vnfType, String vfModuleType, String networkType,
-					String requestDetails) {
+					String requestDetails, String recipeParamXsd) {
 				ProtocolVersion pv = new ProtocolVersion("HTTP", 1, 1);
 				HttpResponse resp = new BasicHttpResponse(pv, 500,
 						"test response");
@@ -323,7 +323,7 @@ public class E2EServiceInstancesTest {
 					String serviceInstanceId, String vnfId, String vfModuleId,
 					String volumeGroupId, String networkId, String serviceType,
 					String vnfType, String vfModuleType, String networkType,
-					String requestDetails) {
+					String requestDetails, String recipeParamXsd) {
 				HttpResponse resp = null;
 				return resp;
 			}

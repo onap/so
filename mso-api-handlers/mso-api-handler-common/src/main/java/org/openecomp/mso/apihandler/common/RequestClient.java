@@ -74,7 +74,7 @@ public abstract class RequestClient {
 			int recipeTimeout, String requestAction, String serviceInstanceId,
 			String vnfId, String vfModuleId, String volumeGroupId, String networkId,
 			String serviceType, String vnfType, String vfModuleType, String networkType,
-			String requestDetails)
+			String requestDetails, String recipeParamXsd)
 					throws ClientProtocolException, IOException;
 	
 	public abstract HttpResponse get() 
