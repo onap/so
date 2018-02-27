@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_b32d5e00",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/cloud/CloudIdentity.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 233,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-02-27T14:47:47Z",
+      "side": 1,
+      "message": "From Java documentation: \"An implementation may choose to perform conversion and concatenation in one step to avoid creating and then discarding an intermediate String object. To increase the performance of repeated string concatenation, a Java compiler may use the StringBuffer class or a similar technique to reduce the number of intermediate String objects that are created by evaluation of an expression.\" And as of Java 1.6 javac does exactly that - converts such expressions to StringBuilder.\n\nJust remember that\u0027s not always the case - loops, for example, won\u0027t be optimized.",
+      "parentUuid": "5a93c517_53c97a57",
+      "revId": "396e723e403f06046ad6553b820295683927a6a6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_4560d000",
         "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/beans/NetworkInfo.java",
         "patchSetId": 2
