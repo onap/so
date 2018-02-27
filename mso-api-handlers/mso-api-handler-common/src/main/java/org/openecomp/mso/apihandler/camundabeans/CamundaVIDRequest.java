@@ -91,6 +91,9 @@ public class CamundaVIDRequest {
 	@JsonProperty(CommonConstants.NETWORK_TYPE_VARIABLE)
 	private CamundaInput networkType;
 
+	@JsonProperty(CommonConstants.RECIPE_PARAMS)
+	private CamundaInput recipeParams;
+	
 	@JsonProperty(CommonConstants.CAMUNDA_SERVICE_INPUT)
 	public CamundaInput getServiceInput() {
 		return serviceInput;
@@ -250,8 +253,17 @@ public class CamundaVIDRequest {
 		this.networkType = networkType;
 	}
 
+	@JsonProperty(CommonConstants.RECIPE_PARAMS)
+    public CamundaInput getRecipeParams() {
+        return recipeParams;
+    }
 
-	@Override
+	@JsonProperty(CommonConstants.RECIPE_PARAMS)
+    public void setRecipeParams(CamundaInput recipeParams) {
+        this.recipeParams = recipeParams;
+    }
+
+    @Override
 	public String toString() {
 		//return "CamundaRequest [requestId=" +  + ", host="
 		//		+ host + ", schema=" + schema + ", reqid=" + reqid + ", svcid="
