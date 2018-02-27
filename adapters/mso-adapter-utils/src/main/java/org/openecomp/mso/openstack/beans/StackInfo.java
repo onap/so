@@ -67,10 +67,8 @@ public class StackInfo {
 
 		if (stack.getStackStatus() == null) {
 			this.status = HeatStatus.INIT;
-		} else if (heatStatusMap.containsKey(stack.getStackStatus())) {
-			this.status = heatStatusMap.get(stack.getStackStatus());
 		} else {
-			this.status = HeatStatus.UNKNOWN;
+			this.status = heatStatusMap.getOrDefault(stack.getStackStatus(), HeatStatus.UNKNOWN);
 		}
 		if (stack.getOutputs() != null) {
 			this.outputs = new HashMap<>();

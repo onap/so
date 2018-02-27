@@ -46,21 +46,21 @@ public abstract class CatalogQuery {
 	}
 
 	protected String setTemplate(String template, Map<String, String> valueMap) {
-		LOGGER.debug ("CatalogQuery setTemplate");
+		LOGGER.debug("CatalogQuery setTemplate");
 		StringBuffer result = new StringBuffer();
 
 		String pattern = "<.*>";
 		Pattern r = Pattern.compile(pattern);
 		Matcher m = r.matcher(template);
 
-		LOGGER.debug ("CatalogQuery template:"+ template);
-		while(m.find()) {
-			String key = template.substring(m.start()+1, m.end()-1);
-			LOGGER.debug ("CatalogQuery key:"+ key+ " contains key? "+ valueMap.containsKey(key));
-	         m.appendReplacement(result, valueMap.containsKey(key)? valueMap.get(key): "\"TBD\"");
+		LOGGER.debug("CatalogQuery template:" + template);
+		while (m.find()) {
+			String key = template.substring(m.start() + 1, m.end() - 1);
+			LOGGER.debug("CatalogQuery key:" + key + " contains key? " + valueMap.containsKey(key));
+			m.appendReplacement(result, valueMap.getOrDefault(key, "\"TBD\""));
 		}
 		m.appendTail(result);
-                LOGGER.debug ("CatalogQuery return:"+ result.toString());
+		LOGGER.debug("CatalogQuery return:" + result.toString());
 		return result.toString();
 	}
 
