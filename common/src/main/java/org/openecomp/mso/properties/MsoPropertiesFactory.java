@@ -217,7 +217,8 @@ public class MsoPropertiesFactory implements Serializable {
         }
     }
 
-    private AbstractMsoProperties getAndCloneProperties(String msoPropertiesID, MsoPropertiesParameters.MsoPropertiesType type) throws MsoPropertiesException {
+    private AbstractMsoProperties getAndCloneProperties(String msoPropertiesID, MsoPropertiesParameters.MsoPropertiesType type)
+        throws MsoPropertiesException, CloneNotSupportedException {
     	 rwl.readLock ().lock ();
          try {
          	MsoPropertiesParameters msoPropInCache = MsoPropertiesFactory.msoPropertiesCache.get (msoPropertiesID);
@@ -229,7 +230,6 @@ public class MsoPropertiesFactory implements Serializable {
                  } else {
                  	throw new MsoPropertiesException ("Mso properties is not "+type.name()+" properties type:" + msoPropertiesID);
                  }
-             	
              }
          } finally {
              rwl.readLock ().unlock ();
@@ -266,21 +266,18 @@ public class MsoPropertiesFactory implements Serializable {
      *
      * @return A List of copies of the mso properties, can be empty
      */
-    public List <AbstractMsoProperties> getAllMsoProperties () {
+    public List <AbstractMsoProperties> getAllMsoProperties () throws CloneNotSupportedException {
 
         List <AbstractMsoProperties> resultList = new LinkedList <AbstractMsoProperties> ();
         rwl.readLock ().lock ();
         try {
-
         	for (MsoPropertiesParameters msoProp:MsoPropertiesFactory.msoPropertiesCache.values ()) {
         		resultList.add(msoProp.msoProperties.clone());
         	}
             return resultList;
-
         } finally {
             rwl.readLock ().unlock ();
         }
-
     }
 
     /**
