@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_85b49882",
+        "filename": "common/src/test/java/org/openecomp/mso/adapter_utils/tests/MsoPropertiesFactoryTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 601,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2018-02-27T07:15:05Z",
+      "side": 1,
+      "message": "replace the equals(\"\") check with isEmpty for improving performance.",
+      "revId": "29fa0cda84c27e822ef3357dc79b2271a79ada8e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
