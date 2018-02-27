@@ -16,6 +16,24 @@
       "revId": "29fa0cda84c27e822ef3357dc79b2271a79ada8e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_142f5889",
+        "filename": "common/src/test/java/org/openecomp/mso/adapter_utils/tests/MsoPropertiesFactoryTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 601,
+      "author": {
+        "id": 153
+      },
+      "writtenOn": "2018-02-27T23:48:15Z",
+      "side": 1,
+      "message": "Done equals was being called to compare different object types String compared with MsoJsonProperties.\n\nI am right to assume that we would call toString method on MsoJsonProperties then compare it with empty?",
+      "parentUuid": "5a93c517_85b49882",
+      "revId": "29fa0cda84c27e822ef3357dc79b2271a79ada8e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
