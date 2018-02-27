@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_85425866",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/cloud/CloudIdentity.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 233,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2018-02-27T07:41:02Z",
+      "side": 1,
+      "message": "dont use + for string appending, instead use the string builder / string buffer, or use the join proposed in the java 8",
+      "revId": "396e723e403f06046ad6553b820295683927a6a6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_4560d000",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/beans/NetworkInfo.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2018-02-27T07:41:02Z",
+      "side": 1,
+      "message": "same comment as above...\nuse StringJoiner / StringBuilder / StringBuffer",
+      "revId": "396e723e403f06046ad6553b820295683927a6a6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0556482a",
+        "filename": "bpmn/MSOCoreBPMN/src/main/java/org/openecomp/mso/bpmn/core/WorkflowException.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2018-02-27T07:41:02Z",
+      "side": 1,
+      "message": "same suggestion as above",
+      "revId": "396e723e403f06046ad6553b820295683927a6a6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_655dcc46",
+        "filename": "bpmn/MSOCoreBPMN/src/main/java/org/openecomp/mso/bpmn/core/domain/ServiceDecomposition.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2018-02-27T07:41:02Z",
+      "side": 1,
+      "message": "same suggestion as above",
+      "revId": "396e723e403f06046ad6553b820295683927a6a6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
