@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_53c97a57",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/cloud/CloudIdentity.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 233,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-02-27T14:45:16Z",
+      "side": 1,
+      "message": "There is no need for using StringBuilder here - java compiler will change string concatenation to StringBuilder automatically, and using string is definitely more readable.\n\nOne thing I\u0027d change - move + to end of line in first two lines.",
+      "parentUuid": "5a93c517_85425866",
+      "revId": "396e723e403f06046ad6553b820295683927a6a6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_4560d000",
         "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/beans/NetworkInfo.java",
         "patchSetId": 2
@@ -30,6 +48,29 @@
       "writtenOn": "2018-02-27T07:41:02Z",
       "side": 1,
       "message": "same comment as above...\nuse StringJoiner / StringBuilder / StringBuffer",
+      "revId": "396e723e403f06046ad6553b820295683927a6a6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d3e4aae2",
+        "filename": "adapters/mso-vnf-adapter/src/main/java/org/openecomp/mso/adapters/vnf/MsoVnfAdapterImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1456,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-02-27T14:45:16Z",
+      "side": 1,
+      "message": "There should be no new lines in logs",
+      "range": {
+        "startLine": 1445,
+        "startChar": 0,
+        "endLine": 1456,
+        "endChar": 27
+      },
       "revId": "396e723e403f06046ad6553b820295683927a6a6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -64,6 +105,29 @@
       "writtenOn": "2018-02-27T07:41:02Z",
       "side": 1,
       "message": "same suggestion as above",
+      "revId": "396e723e403f06046ad6553b820295683927a6a6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f3d8c61f",
+        "filename": "mso-catalog-db/src/main/java/org/openecomp/mso/db/catalog/beans/TempNetworkHeatTemplateLookup.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-02-27T14:45:16Z",
+      "side": 1,
+      "message": "move \"+\" to the end of previous line",
+      "range": {
+        "startLine": 69,
+        "startChar": 3,
+        "endLine": 69,
+        "endChar": 5
+      },
       "revId": "396e723e403f06046ad6553b820295683927a6a6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
