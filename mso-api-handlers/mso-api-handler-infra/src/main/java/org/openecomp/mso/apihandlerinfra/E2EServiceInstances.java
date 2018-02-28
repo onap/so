@@ -314,7 +314,7 @@ public class E2EServiceInstances {
 			response = requestClient.post(requestId, false,
 					recipeLookupResult.getRecipeTimeout(), action.name(),
 					serviceId, null, null, null, null, serviceInstanceType,
-					null, null, null, bpmnRequest);
+					null, null, null, bpmnRequest, recipeLookupResult.getRecipeParamXsd());
 
 			msoLogger.recordMetricEvent(subStartTime,
 					MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
@@ -542,7 +542,7 @@ public class E2EServiceInstances {
 			msoLogger.debug("MSO API Handler Posting call to BPEL engine for url: " + requestClient.getUrl());
 
 			response = requestClient.post(requestId, false, recipeLookupResult.getRecipeTimeout(), action.name(),
-					serviceId, null, null, null, null, serviceInstanceType, null, null, null, sirRequestJson);
+					serviceId, null, null, null, null, serviceInstanceType, null, null, null, sirRequestJson, recipeLookupResult.getRecipeParamXsd());
 
 			msoLogger.recordMetricEvent(subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
 					"Successfully received response from BPMN engine", "BPMN", recipeLookupResult.getOrchestrationURI(),
@@ -723,7 +723,7 @@ public class E2EServiceInstances {
 			return null;
 		}
 		return new RecipeLookupResult(recipe.getOrchestrationUri(),
-				recipe.getRecipeTimeout());
+				recipe.getRecipeTimeout(), recipe.getServiceParamXSD());
 
 	}
 

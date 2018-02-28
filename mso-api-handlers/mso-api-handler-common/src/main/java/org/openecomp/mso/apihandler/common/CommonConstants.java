@@ -63,6 +63,7 @@ public final class CommonConstants {
 	public static final String VF_MODULE_TYPE_VARIABLE = "vfModuleType";
 	public static final String NETWORK_TYPE_VARIABLE = "networkType";
 	public static final String REQUEST_DETAILS_VARIABLE = "requestDetails";	
+	public static final String RECIPE_PARAMS = "recipeParams";
 	
 	private CommonConstants () {
 	    // prevent creating an instance of this class
