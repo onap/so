@@ -3822,7 +3822,58 @@ public class CatalogDatabase implements Closeable {
         LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getToscaCsar", null);
         return resultList.get (0);
     }
+    
+    /**
+     * Return a specific Tosca CSAR Record resource (queried by atrifact uuid).
+     *
+     * @param toscaCsarArtifactUUID the artifact uuid of the tosca csar
+     * @return ToscaCsar object or null if none found
+     */
+    public ToscaCsar getToscaCsarByUUID(String toscaCsarArtifactUUID){
+        long startTime = System.currentTimeMillis ();
+        LOGGER.debug ("Catalog database - get Tosca CSAR record with artifactUUID " + toscaCsarArtifactUUID);
 
+        String hql = "FROM ToscaCsar WHERE artifactUUID = :toscaCsarArtifactUUID";
+        Query query = getSession ().createQuery (hql);
+        query.setParameter ("toscaCsarArtifactUUID", toscaCsarArtifactUUID);
+
+        @SuppressWarnings("unchecked")
+        List <ToscaCsar> resultList = query.list ();
+
+        // See if something came back. Name is unique, so
+        if (resultList.isEmpty ()) {
+            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. Tosca Csar not found", "CatalogDB", "getToscaCsarByUUID", null);
+            return null;
+        }
+
+        LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getToscaCsarByUUID", null);
+        return resultList.get (0);
+    }
+
+    /**
+     * Return a specific Tosca CSAR Record resource (queried by service model uuid).
+     * <br>
+     * 
+     * @param serviceModelUUID the service model uuid
+     * @return ToscaCsar object or null if none found
+     * @since ONAP Beijing Release
+     */
+    public ToscaCsar getToscaCsarByServiceModelUUID(String serviceModelUUID){
+        long startTime = System.currentTimeMillis ();
+        LOGGER.debug ("Catalog database - get Tosca CSAR record with serviceModelUUID " + serviceModelUUID);
+        Service service = getServiceByModelUUID(serviceModelUUID);
+        if(null == service){
+            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Service not found", "CatalogDB", "getToscaCsarByServiceModelUUID", null);
+            return null;
+        }
+        ToscaCsar csar = getToscaCsarByUUID(service.getToscaCsarArtifactUUID());
+        if(null == csar){
+            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Tosca csar of the service not found", "CatalogDB", "getToscaCsarByServiceModelUUID", null);
+            return null;
+        }
+        LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getToscaCsarByServiceModelUUID", null);
+        return csar;
+    }
     
     public void saveTempNetworkHeatTemplateLookup (TempNetworkHeatTemplateLookup tempNetworkHeatTemplateLookup) {
         long startTime = System.currentTimeMillis ();
