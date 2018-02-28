@@ -38,7 +38,7 @@ import org.openecomp.mso.apihandler.common.CommonConstants;
 	CommonConstants.VOLUME_GROUP_ID_VARIABLE, CommonConstants.NETWORK_ID_VARIABLE,
 	CommonConstants.SERVICE_TYPE_VARIABLE, CommonConstants.VNF_TYPE_VARIABLE,
 	CommonConstants.VF_MODULE_TYPE_VARIABLE, CommonConstants.NETWORK_TYPE_VARIABLE,
-	CommonConstants.CAMUNDA_SERVICE_INPUT})
+	CommonConstants.CAMUNDA_SERVICE_INPUT, CommonConstants.RECIPE_PARAMS})
 @JsonRootName(CommonConstants.CAMUNDA_ROOT_INPUT)
 public class CamundaVIDRequest {
 
