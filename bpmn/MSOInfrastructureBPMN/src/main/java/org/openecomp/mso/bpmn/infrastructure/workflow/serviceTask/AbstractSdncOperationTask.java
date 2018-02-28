@@ -319,7 +319,6 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
             updateResOperStatus(resourceOperationStatus);
             logger.info("AbstractSdncOperationTask.updateProgress end!");
         } catch (Exception exception) {
-            System.out.println(exception);
             logger.info("exception: AbstractSdncOperationTask.updateProgress fail!");
             logger.error("exception: AbstractSdncOperationTask.updateProgress fail:", exception);
             LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " updateProgress catch exception: ", "", this.getTaskName(), MsoLogger.ErrorCode.UnknownError, exception.getClass().toString());
@@ -403,7 +402,6 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
                 return vlaue;
             }
         } catch (Exception e) {
-            System.out.println(e);
             LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " getMsbIp catch exception: ", "", this.getTaskName(), MsoLogger.ErrorCode.UnknownError, e.getClass().toString());
         }
         return defaultValue;
@@ -416,7 +414,6 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
                 return vlaue;
             }
         } catch (Exception e) {
-            System.out.println(e);
             LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " getMsbIp catch exception: ", "", this.getTaskName(), MsoLogger.ErrorCode.UnknownError, e.getClass().toString());
         }
         return defaultValue;
