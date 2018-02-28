@@ -55,6 +55,42 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_34fb74c2",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/cloud/CloudIdentity.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 233,
+      "author": {
+        "id": 153
+      },
+      "writtenOn": "2018-02-28T00:52:36Z",
+      "side": 1,
+      "message": "please let me know if you are okay with Lukasz reference or if you want I can go back StringBuilder",
+      "parentUuid": "5a93c517_85425866",
+      "revId": "396e723e403f06046ad6553b820295683927a6a6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_34437443",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/cloud/CloudIdentity.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 233,
+      "author": {
+        "id": 153
+      },
+      "writtenOn": "2018-02-28T00:52:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_53c97a57",
+      "revId": "396e723e403f06046ad6553b820295683927a6a6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_4560d000",
         "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/openstack/beans/NetworkInfo.java",
         "patchSetId": 2
@@ -140,6 +176,30 @@
       "writtenOn": "2018-02-27T14:45:16Z",
       "side": 1,
       "message": "move \"+\" to the end of previous line",
+      "range": {
+        "startLine": 69,
+        "startChar": 3,
+        "endLine": 69,
+        "endChar": 5
+      },
+      "revId": "396e723e403f06046ad6553b820295683927a6a6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_947128aa",
+        "filename": "mso-catalog-db/src/main/java/org/openecomp/mso/db/catalog/beans/TempNetworkHeatTemplateLookup.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 153
+      },
+      "writtenOn": "2018-02-28T00:52:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_f3d8c61f",
       "range": {
         "startLine": 69,
         "startChar": 3,
