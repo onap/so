@@ -77,6 +77,7 @@ public class DecomposeService extends AbstractServiceTaskProcessor {
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
 			String serviceModelInfo = execution.getVariable("serviceModelInfo")
 			execution.setVariable("DDS_serviceModelInvariantId", jsonUtils.getJsonValue(serviceModelInfo, "modelInvariantUuid"))
+			execution.setVariable("DDS_serviceModelUuid", jsonUtils.getJsonValue(serviceModelInfo, "modelUuid"))
 			execution.setVariable("DDS_modelVersion", jsonUtils.getJsonValue(serviceModelInfo, "modelVersion"))
 		} catch (BpmnError e) {
 			throw e;
@@ -97,14 +98,16 @@ public class DecomposeService extends AbstractServiceTaskProcessor {
 
 			// check for input
 			String serviceModelInvariantId = execution.getVariable("DDS_serviceModelInvariantId")
+			String serviceModelUuid = execution.getVariable("DDS_serviceModelUuid")
 			String modelVersion = execution.getVariable("DDS_modelVersion")
 
 			utils.log("DEBUG", "serviceModelInvariantId: " + serviceModelInvariantId, isDebugEnabled)
 			utils.log("DEBUG", "modelVersion: " + modelVersion, isDebugEnabled)
 
 			JSONObject catalogDbResponse = null
-
-			if (modelVersion != null && modelVersion.length() > 0)
+            if(serviceModelUuid != null && serviceModelUuid.length() > 0)
+                catalogDbResponse = catalogDbUtils.getServiceResourcesByServiceModelUuid(execution, serviceModelUuid, "v2")
+            else if (modelVersion != null && modelVersion.length() > 0)
 				catalogDbResponse = catalogDbUtils.getServiceResourcesByServiceModelInvariantUuidAndServiceModelVersion(execution, serviceModelInvariantId, modelVersion, "v2")
 			else
 				catalogDbResponse = catalogDbUtils.getServiceResourcesByServiceModelInvariantUuid(execution, serviceModelInvariantId, "v2")

@@ -23,7 +23,7 @@
  */
 package org.openecomp.mso.bpmn.common;
 
-import static org.openecomp.mso.bpmn.mock.StubResponseDatabase.MockGetServiceResourcesCatalogData;
+import static org.openecomp.mso.bpmn.mock.StubResponseDatabase.MockGetServiceResourcesCatalogDataByModelUuid;
 import static org.openecomp.mso.bpmn.mock.StubResponseSNIRO.*;
 import static org.junit.Assert.*;
 
@@ -235,7 +235,8 @@ public class HomingTest extends WorkflowTest {
 
 		// Create a Service Decomposition 
 //System.out.println("At start of testHoming_success_vnfResourceList");
-		MockGetServiceResourcesCatalogData("1cc4e2e4-eb6e-404d-a66f-c8733cedcce8", "5.0", "/BuildingBlocks/catalogResp.json");
+	    MockGetServiceResourcesCatalogDataByModelUuid("2f7f309d-c842-4644-a2e4-34167be5eeb4", "/BuildingBlocks/catalogResp.json");
+		//MockGetServiceResourcesCatalogData("1cc4e2e4-eb6e-404d-a66f-c8733cedcce8", "5.0", "/BuildingBlocks/catalogResp.json");
 		String busKey = UUID.randomUUID().toString();
 		Map<String, Object> vars = new HashMap<>();
 		setVariablesForServiceDecomposition(vars, "testRequestId123", "ff5256d2-5a33-55df-13ab-12abad84e7ff");
