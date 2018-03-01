@@ -52,34 +52,37 @@ Once the network-level distribution artifacts are defined, similar updates can b
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-import org.apache.http.HttpStatus;
+import javax.ws.rs.core.Response;
 
-import org.openecomp.mso.logger.MessageEnum;
-import org.openecomp.mso.logger.MsoLogger;
+import org.apache.http.HttpStatus;
+import org.openecomp.mso.adapters.catalogdb.catalogrest.CatalogQuery;
 import org.openecomp.mso.adapters.catalogdb.catalogrest.CatalogQueryException;
 import org.openecomp.mso.adapters.catalogdb.catalogrest.CatalogQueryExceptionCategory;
-import org.openecomp.mso.adapters.catalogdb.catalogrest.CatalogQuery;
-import org.openecomp.mso.adapters.catalogdb.catalogrest.QueryServiceVnfs;
-import org.openecomp.mso.adapters.catalogdb.catalogrest.QueryServiceNetworks;
-import org.openecomp.mso.adapters.catalogdb.catalogrest.QueryServiceMacroHolder;
 import org.openecomp.mso.adapters.catalogdb.catalogrest.QueryAllottedResourceCustomization;
+import org.openecomp.mso.adapters.catalogdb.catalogrest.QueryServiceCsar;
+import org.openecomp.mso.adapters.catalogdb.catalogrest.QueryServiceMacroHolder;
+import org.openecomp.mso.adapters.catalogdb.catalogrest.QueryServiceNetworks;
+import org.openecomp.mso.adapters.catalogdb.catalogrest.QueryServiceVnfs;
 import org.openecomp.mso.adapters.catalogdb.catalogrest.QueryVfModule;
 import org.openecomp.mso.db.catalog.CatalogDatabase;
-import org.openecomp.mso.db.catalog.beans.VnfResourceCustomization;
-import org.openecomp.mso.db.catalog.beans.VfModuleCustomization;
+import org.openecomp.mso.db.catalog.beans.AllottedResourceCustomization;
 import org.openecomp.mso.db.catalog.beans.NetworkResourceCustomization;
 import org.openecomp.mso.db.catalog.beans.ServiceMacroHolder;
-import org.openecomp.mso.db.catalog.beans.AllottedResourceCustomization;
+import org.openecomp.mso.db.catalog.beans.ToscaCsar;
+import org.openecomp.mso.db.catalog.beans.VfModuleCustomization;
+import org.openecomp.mso.db.catalog.beans.VnfResourceCustomization;
+import org.openecomp.mso.logger.MessageEnum;
+import org.openecomp.mso.logger.MsoLogger;
 
 /**
  * This class services calls to the REST interface for VF Modules (http://host:port/ecomp/mso/catalog/v1)
@@ -466,4 +469,50 @@ public class CatalogDbAdapterRest {
 		}
 	}
 
+	/**
+	 * Get the tosca csar info from catalog
+	 * <br>
+	 * 
+	 * @param smUuid service model uuid
+	 * @return the tosca csar information of the serivce.
+	 * @since ONAP Beijing Release
+	 */
+    @GET
+    @Path("serviceToscaCsar")
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    public Response ServiceToscaCsar(@QueryParam("serviceModelUuid") String smUuid) {
+        int respStatus = HttpStatus.SC_OK;
+        CatalogDatabase db = CatalogDatabase.getInstance();
+        String entity = "";
+        try{
+            if(smUuid != null && !"".equals(smUuid)){
+                LOGGER.debug ("Query Csar by service model uuid: " + smUuid);
+                ToscaCsar toscaCsar = db.getToscaCsarByServiceModelUUID(smUuid);
+                if(toscaCsar != null){
+                    QueryServiceCsar serviceCsar = new QueryServiceCsar(toscaCsar);
+                    entity = serviceCsar.JSON2(false, false);
+                }
+                else{
+                    respStatus = HttpStatus.SC_NOT_FOUND;
+                }
+            }else{
+                throw(new Exception("Incoming parameter is null or blank"));
+            }           
+            LOGGER.debug ("Query Csar exit");
+            return Response
+                    .status(respStatus)
+                    .entity(entity) 
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                    .build();
+        }catch(Exception e){
+            LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR,  smUuid, "", "ServiceToscaCsar", MsoLogger.ErrorCode.BusinessProcesssError, "Exception during query csar by service model uuid: ", e);
+            CatalogQueryException excResp = new CatalogQueryException(e.getMessage(), CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
+            return Response
+                    .status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
+                    .entity(new GenericEntity<CatalogQueryException>(excResp) {})
+                    .build();
+        }finally {
+            db.close();
+        }
+    }
 }
