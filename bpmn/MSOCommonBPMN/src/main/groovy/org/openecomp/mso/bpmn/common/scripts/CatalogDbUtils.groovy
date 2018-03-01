@@ -694,6 +694,49 @@ class CatalogDbUtils {
 		return vnfsList
 	}
 
+	public JSONObject getServiceResourcesByServiceModelUuid(Execution execution, String serviceModelUuid) {
+        JSONObject resources = null
+        String endPoint = "/serviceResources?serviceModelUuid=" + UriUtils.encode(serviceModelUuid, "UTF-8")
+        try {
+            String catalogDbResponse = getResponseFromCatalogDb(execution, endPoint)
+
+            if (catalogDbResponse != null) {
+
+                resources = parseServiceResourcesJson(catalogDbResponse, "v1")
+            }
+
+        }
+        catch (Exception e) {
+            utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+        }
+
+        return resources
+    }
+
+    public JSONObject getServiceResourcesByServiceModelUuid(Execution execution, String serviceModelUuid, String catalogUtilsVersion) {
+        JSONObject resources = null
+        String endPoint = "/serviceResources?serviceModelUuid=" + UriUtils.encode(serviceModelUuid, "UTF-8")
+        try {
+            String catalogDbResponse = getResponseFromCatalogDb(execution, endPoint)
+
+            if (catalogDbResponse != null) {
+                if (!catalogUtilsVersion.equals("v1")) {
+                    resources = new JSONObject(catalogDbResponse)
+                }
+                else {
+                    resources = parseServiceResourcesJson(catalogDbResponse, catalogUtilsVersion)
+                }
+            }
+
+        }
+        catch (Exception e) {
+            utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+        }
+
+        return resources
+    }
+
+	
 	public JSONObject getServiceResourcesByServiceModelInvariantUuid(Execution execution, String serviceModelInvariantUuid) {
 		JSONObject resources = null
 		String endPoint = "/serviceResources?serviceModelInvariantUuid=" + UriUtils.encode(serviceModelInvariantUuid, "UTF-8")
