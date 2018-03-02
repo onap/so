@@ -128,7 +128,6 @@
       </snapshots>
     </repository>
     <repository>
-    <repository>
       <id>jboss-deprecated-repository</id>
       <name>JBoss Deprecated Maven Repository</name>
       <url>https://repository.jboss.org/nexus/content/repositories/deprecated/</url>
