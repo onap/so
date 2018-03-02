@@ -19,7 +19,7 @@
  */
 
 package org.openecomp.mso.bpmn.common.scripts
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.rest.APIResponse
 import org.openecomp.mso.rest.RESTClient;
@@ -31,7 +31,7 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 	def Prefix="DAAIVfMod_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
     private MsoUtils utils = new MsoUtils()
-	public void initProcessVariables(Execution execution) {
+	public void initProcessVariables(DelegateExecution execution) {
 		execution.setVariable("prefix",Prefix)
 		execution.setVariable("DAAIVfMod_vnfId",null)
 		execution.setVariable("DAAIVfMod_vnfName",null)
@@ -56,8 +56,8 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 	}
 	
 	// parse the incoming DELETE_VF_MODULE request and store the Generic Vnf
-	// and Vf Module Ids in the flow Execution
-	public void preProcessRequest(Execution execution) {
+	// and Vf Module Ids in the flow DelegateExecution
+	public void preProcessRequest(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		def xml = execution.getVariable("DeleteAAIVfModuleRequest")
 		utils.logAudit("DeleteAAIVfModule Request: " + xml)
@@ -79,7 +79,7 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 	
 	// send a GET request to AA&I to retrieve the Generic Vnf/Vf Module information based on a Vnf Id
 	// expect a 200 response with the information in the response body or a 404 if the Generic Vnf does not exist
-	public void queryAAIForGenericVnf(Execution execution) {
+	public void queryAAIForGenericVnf(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		def delModuleId = execution.getVariable("DAAIVfMod_vfModuleId")
 		def endPoint = execution.getVariable("URN_aai_endpoint") + execution.getVariable("DAAIVfMod_genericVnfEndpoint") + "?depth=1"
@@ -117,7 +117,7 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 	
 	// construct and send a DELETE request to A&AI to delete a Generic Vnf
 	// note: to get here, all the modules associated with the Generic Vnf must already be deleted
-	public void deleteGenericVnf(Execution execution) {
+	public void deleteGenericVnf(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		def aaiRequestId = utils.getRequestID()
 		def endPoint = execution.getVariable("URN_aai_endpoint") + execution.getVariable("DAAIVfMod_genericVnfEndpoint") +
@@ -150,7 +150,7 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 	}
 
 	// construct and send a DELETE request to A&AI to delete the Base or Add-on Vf Module
-	public void deleteVfModule(Execution execution) {
+	public void deleteVfModule(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		def endPoint = execution.getVariable("URN_aai_endpoint") + execution.getVariable("DAAIVfMod_vfModuleEndpoint") +
 			"/?resource-version=" + execution.getVariable("DAAIVfMod_vfModRsrcVer")
@@ -189,7 +189,7 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 	// parses the output from the result from queryAAIForGenericVnf() to determine if the Vf Module
 	// to be deleted exists for the specified Generic Vnf and if it is the Base Module,
 	// there are no Add-on Modules present
-	public void parseForVfModule(Execution execution) {
+	public void parseForVfModule(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		def xml = execution.getVariable("DAAIVfMod_queryGenericVnfResponse")
 		utils.logAudit("DeleteAAIVfModule - queryGenericVnfResponse" + xml)
@@ -270,7 +270,7 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 	// parses the output from the result from queryAAIForGenericVnf() to determine if the Vf Module
 	// to be deleted exists for the specified Generic Vnf and if it is the Base Module,
 	// there are no Add-on Modules present
-	public void parseForResourceVersion(Execution execution) {
+	public void parseForResourceVersion(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		def xml = execution.getVariable("DAAIVfMod_queryGenericVnfResponse")
 		utils.logAudit("DeleteAAIVfModule - queryGenericVnfResponse" + xml)
@@ -281,7 +281,7 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 	
 	
 	// generates a WorkflowException if the A&AI query returns a response code other than 200
-	public void handleAAIQueryFailure(Execution execution) {
+	public void handleAAIQueryFailure(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		
 		utils.log("ERROR", "Error occurred attempting to query AAI, Response Code " +
@@ -300,7 +300,7 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 	//		- the A&AI Vf Module DELETE returns a response code other than 200
 	// 		- the Vf Module is a Base Module that is not the last Vf Module
 	//		- the Vf Module does not exist for the Generic Vnf
-	public void handleDeleteVfModuleFailure(Execution execution) {
+	public void handleDeleteVfModuleFailure(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		
 		def errorCode = 2000
@@ -341,7 +341,7 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 
 	// generates a WorkflowException if
 	//		- the A&AI Generic Vnf DELETE returns a response code other than 200
-	public void handleDeleteGenericVnfFailure(Execution execution) {
+	public void handleDeleteGenericVnfFailure(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("ERROR", "AAI error occurred deleting the Generic Vnf: "
 			+ execution.getVariable("DAAIVfMod_deleteGenericVnfResponse"), isDebugEnabled)

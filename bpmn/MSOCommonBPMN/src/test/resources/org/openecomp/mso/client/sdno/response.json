@@ -1,0 +1,17 @@
+{
+
+    "result-info": {
+
+        "client-name": "MSO",
+
+        "code": "202",
+
+        "processing-host": "sdno1-host01",
+
+        "request-id": "xyz123",
+
+        "status": "ACCEPTED"
+
+    }
+
+}

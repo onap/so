@@ -20,13 +20,14 @@
 
 package org.openecomp.mso.bpmn.common.scripts;
 
+import java.io.ObjectInputStream.BlockDataInputStream
+
 //import groovy.util.Node;
 
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 
 import org.apache.commons.lang3.*
-import org.camunda.bpm.engine.runtime.Execution
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
@@ -234,245 +235,274 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 	  
 	 
 	 protected String buildVfModuleParams(Map<String, String> vnfParamsMap, String sdncGetResponse, String vnfId, String vnfName,
-			String vfModuleId, String vfModuleName, String vfModuleIndex) {
-			
-			//Get SDNC Response Data
-			
-			String data = utils.getNodeXml(sdncGetResponse, "response-data")
-			data = data.replaceAll("&lt;", "<")
-			data = data.replaceAll("&gt;", ">")
+		String vfModuleId, String vfModuleName, String vfModuleIndex, String environmentContext, String workloadContext) {
+		
+		//Get SDNC Response Data
+		
+		String data = utils.getNodeXml(sdncGetResponse, "response-data")
+		data = data.replaceAll("&lt;", "<")
+		data = data.replaceAll("&gt;", ">")
 
-			String serviceData = utils.getNodeXml(data, "service-data")
-			serviceData = utils.removeXmlPreamble(serviceData)
-			serviceData = utils.removeXmlNamespaces(serviceData)
-			String vnfRequestInfo = utils.getNodeXml(serviceData, "vnf-request-information")
-			String oldVnfId = utils.getNodeXml(vnfRequestInfo, "vnf-id")
-			oldVnfId = utils.removeXmlPreamble(oldVnfId)
-			oldVnfId = utils.removeXmlNamespaces(oldVnfId)
-			serviceData = serviceData.replace(oldVnfId, "")
-			def vnfId1 = utils.getNodeText1(serviceData, "vnf-id")
-			
-			Map<String, String> paramsMap = new HashMap<String, String>()
-			
-			if (vfModuleIndex != null) {
-				paramsMap.put("vf_module_index", "${vfModuleIndex}")
+		String serviceData = utils.getNodeXml(data, "service-data")
+		serviceData = utils.removeXmlPreamble(serviceData)
+		serviceData = utils.removeXmlNamespaces(serviceData)
+		String vnfRequestInfo = utils.getNodeXml(serviceData, "vnf-request-information")
+		String oldVnfId = utils.getNodeXml(vnfRequestInfo, "vnf-id")
+		oldVnfId = utils.removeXmlPreamble(oldVnfId)
+		oldVnfId = utils.removeXmlNamespaces(oldVnfId)
+		serviceData = serviceData.replace(oldVnfId, "")
+		def vnfId1 = utils.getNodeText1(serviceData, "vnf-id")
+		
+		Map<String, String> paramsMap = new HashMap<String, String>()
+		
+		if (vfModuleIndex != null) {
+			paramsMap.put("vf_module_index", "${vfModuleIndex}")
+		}
+
+		// Add-on data
+		paramsMap.put("vnf_id", "${vnfId}")
+		paramsMap.put("vnf_name", "${vnfName}")
+		paramsMap.put("vf_module_id", "${vfModuleId}")
+		paramsMap.put("vf_module_name", "${vfModuleName}")
+		paramsMap.put("environment_context", "${environmentContext}")
+		paramsMap.put("workload_context", "${workloadContext}")
+		
+		InputSource source = new InputSource(new StringReader(data));
+		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+		docFactory.setNamespaceAware(true)
+		DocumentBuilder docBuilder = docFactory.newDocumentBuilder()
+		Document responseXml = docBuilder.parse(source)
+
+
+		// Availability Zones Data
+		
+		NodeList aZonesList = responseXml.getElementsByTagNameNS("*", "availability-zones")
+		String aZonePosition = "0"
+		for (int z = 0; z < aZonesList.getLength(); z++) {
+			Node node = aZonesList.item(z)
+			if (node.getNodeType() == Node.ELEMENT_NODE) {
+				Element eElement = (Element) node
+				String aZoneValue = utils.getElementText(eElement, "availability-zone")
+				aZonePosition = z.toString()
+				paramsMap.put("availability_zone_${aZonePosition}", "${aZoneValue}")
 			}
-
-			// Add-on data
-			paramsMap.put("vnf_id", "${vnfId}")
-			paramsMap.put("vnf_name", "${vnfName}")
-			paramsMap.put("vf_module_id", "${vfModuleId}")
-			paramsMap.put("vf_module_name", "${vfModuleName}")
-			
-			InputSource source = new InputSource(new StringReader(data));
-			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-			docFactory.setNamespaceAware(true)
-			DocumentBuilder docBuilder = docFactory.newDocumentBuilder()
-			Document responseXml = docBuilder.parse(source)
-
-
-			// Availability Zones Data
-			
-			NodeList aZonesList = responseXml.getElementsByTagNameNS("*", "availability-zones")
-			String aZonePosition = "0"
-			for (int z = 0; z < aZonesList.getLength(); z++) {
-				Node node = aZonesList.item(z)
-				if (node.getNodeType() == Node.ELEMENT_NODE) {
-					Element eElement = (Element) node
-					String aZoneValue = utils.getElementText(eElement, "availability-zone")
-					aZonePosition = z.toString()
-					paramsMap.put("availability_zone_${aZonePosition}", "${aZoneValue}")
+		}
+		
+		// Map of network-roles and network-tags from vm-networks
+		
+		NodeList vmNetworksListGlobal = responseXml.getElementsByTagNameNS("*", "vm-networks")
+		Map<String, String> networkRoleMap = new HashMap<String, String>()
+		for(int n = 0; n < vmNetworksListGlobal.getLength(); n++){
+			Node nodeNetworkKey = vmNetworksListGlobal.item(n)
+			if (nodeNetworkKey.getNodeType() == Node.ELEMENT_NODE) {
+				Element eElementNetworkKey = (Element) nodeNetworkKey
+				String networkRole = utils.getElementText(eElementNetworkKey, "network-role")
+				String networkRoleValue = utils.getElementText(eElementNetworkKey, "network-role-tag")
+				if (networkRoleValue.isEmpty()) {
+					networkRoleValue = networkRole
 				}
+				networkRoleMap.put(networkRole, networkRoleValue)				
 			}
+		}		
 
-			// VNF Networks Data
-			
-			StringBuilder sbNet = new StringBuilder()
-			
-			NodeList vnfNetworkList = responseXml.getElementsByTagNameNS("*", "vnf-networks")
-			for (int x = 0; x < vnfNetworkList.getLength(); x++) {
-				Node node = vnfNetworkList.item(x)
-				if (node.getNodeType() == Node.ELEMENT_NODE) {
-					Element eElement = (Element) node
-					String vnfNetworkKey = utils.getElementText(eElement, "network-role")
-					String vnfNetworkNeutronIdValue = utils.getElementText(eElement, "neutron-id")
-					String vnfNetworkNetNameValue = utils.getElementText(eElement, "network-name")
-					String vnfNetworkSubNetIdValue = utils.getElementText(eElement, "subnet-id")
-					String vnfNetworkV6SubNetIdValue = utils.getElementText(eElement, "ipv6-subnet-id")
-					String vnfNetworkNetFqdnValue = utils.getElementText(eElement, "contrail-network-fqdn")
-					paramsMap.put("${vnfNetworkKey}_net_id", "${vnfNetworkNeutronIdValue}")
-					paramsMap.put("${vnfNetworkKey}_net_name", "${vnfNetworkNetNameValue}")
-					paramsMap.put("${vnfNetworkKey}_subnet_id", "${vnfNetworkSubNetIdValue}")
-					paramsMap.put("${vnfNetworkKey}_v6_subnet_id", "${vnfNetworkV6SubNetIdValue}")
-					paramsMap.put("${vnfNetworkKey}_net_fqdn", "${vnfNetworkNetFqdnValue}")
-					
-					NodeList sriovVlanFilterList = eElement.getElementsByTagNameNS("*","sriov-vlan-filter-list")
-					StringBuffer sriovFilterBuf = new StringBuffer()
-					String values = ""
-					for(int i = 0; i < sriovVlanFilterList.getLength(); i++){
-						Node node1 = sriovVlanFilterList.item(i)
-						if (node1.getNodeType() == Node.ELEMENT_NODE) {
-							Element eElement1 = (Element) node1
-							String value = utils.getElementText(eElement1, "sriov-vlan-filter")
-							if (i != sriovVlanFilterList.getLength() - 1) {
-								values = sriovFilterBuf.append(value + ",")
-							}
-							else {
-								values = sriovFilterBuf.append(value);
-							}
+		// VNF Networks Data
+		
+		StringBuilder sbNet = new StringBuilder()
+		
+		NodeList vnfNetworkList = responseXml.getElementsByTagNameNS("*", "vnf-networks")
+		for (int x = 0; x < vnfNetworkList.getLength(); x++) {
+			Node node = vnfNetworkList.item(x)
+			if (node.getNodeType() == Node.ELEMENT_NODE) {
+				Element eElement = (Element) node				
+				String vnfNetworkKey = utils.getElementText(eElement, "network-role-tag")
+				String networkRole = utils.getElementText(eElement, "network-role")
+				if (vnfNetworkKey.isEmpty()) {
+					vnfNetworkKey = networkRoleMap.get(networkRole)
+					if (vnfNetworkKey == null || vnfNetworkKey.isEmpty()) {
+						vnfNetworkKey = networkRole
+					}					
+				}				
+				String vnfNetworkNeutronIdValue = utils.getElementText(eElement, "neutron-id")
+				String vnfNetworkNetNameValue = utils.getElementText(eElement, "network-name")
+				String vnfNetworkSubNetIdValue = utils.getElementText(eElement, "subnet-id")
+				String vnfNetworkV6SubNetIdValue = utils.getElementText(eElement, "ipv6-subnet-id")
+				String vnfNetworkNetFqdnValue = utils.getElementText(eElement, "contrail-network-fqdn")
+				paramsMap.put("${vnfNetworkKey}_net_id", "${vnfNetworkNeutronIdValue}")
+				paramsMap.put("${vnfNetworkKey}_net_name", "${vnfNetworkNetNameValue}")
+				paramsMap.put("${vnfNetworkKey}_subnet_id", "${vnfNetworkSubNetIdValue}")
+				paramsMap.put("${vnfNetworkKey}_v6_subnet_id", "${vnfNetworkV6SubNetIdValue}")
+				paramsMap.put("${vnfNetworkKey}_net_fqdn", "${vnfNetworkNetFqdnValue}")
+				
+				NodeList sriovVlanFilterList = eElement.getElementsByTagNameNS("*","sriov-vlan-filter-list")
+				StringBuffer sriovFilterBuf = new StringBuffer()
+				String values = ""
+				for(int i = 0; i < sriovVlanFilterList.getLength(); i++){
+					Node node1 = sriovVlanFilterList.item(i)
+					if (node1.getNodeType() == Node.ELEMENT_NODE) {
+						Element eElement1 = (Element) node1
+						String value = utils.getElementText(eElement1, "sriov-vlan-filter")
+						if (i != sriovVlanFilterList.getLength() - 1) {
+							values = sriovFilterBuf.append(value + ",")
+						}
+						else {
+							values = sriovFilterBuf.append(value);
 						}
 					}
-					if (!values.isEmpty()) {
-							paramsMap.put("${vnfNetworkKey}_ATT_VF_VLAN_FILTER", "${values}")
-						}
+				}
+				if (!values.isEmpty()) {
+						paramsMap.put("${vnfNetworkKey}_ATT_VF_VLAN_FILTER", "${values}")
 					}
-			}
+				}
+		}
 
-			// VNF-VMS Data
-			
-			def key
-			def value
-			def networkKey
-			def networkValue
-			def floatingIPKey
-			def floatingIPKeyValue
-			def floatingIPV6Key
-			def floatingIPV6KeyValue
-			StringBuilder sb = new StringBuilder()
+		// VNF-VMS Data
+		
+		def key
+		def value
+		def networkKey
+		def networkValue
+		def floatingIPKey
+		def floatingIPKeyValue
+		def floatingIPV6Key
+		def floatingIPV6KeyValue
+		StringBuilder sb = new StringBuilder()
 
-			NodeList vmsList = responseXml.getElementsByTagNameNS("*","vnf-vms")
-			for (int x = 0; x < vmsList.getLength(); x++) {
-				Node node = vmsList.item(x)
-				if (node.getNodeType() == Node.ELEMENT_NODE) {
-					Element eElement = (Element) node
-					key = utils.getElementText(eElement, "vm-type")
-					String values
-					String position = "0"
-					StringBuilder sb1 = new StringBuilder()
-					NodeList valueList = eElement.getElementsByTagNameNS("*","vm-names")
-					NodeList vmNetworksList = eElement.getElementsByTagNameNS("*","vm-networks")
-					for(int i = 0; i < valueList.getLength(); i++){
-						Node node1 = valueList.item(i)
-						if (node1.getNodeType() == Node.ELEMENT_NODE) {
-							Element eElement1 = (Element) node1
-							value = utils.getElementText(eElement1, "vm-name")
-							if (i != valueList.getLength() - 1) {
-								values = sb1.append(value + ",")
-							}
-							else {
-								values = sb1.append(value);
-							}
-							position = i.toString()
-							paramsMap.put("${key}_name_${position}", "${value}")
+		NodeList vmsList = responseXml.getElementsByTagNameNS("*","vnf-vms")
+		for (int x = 0; x < vmsList.getLength(); x++) {
+			Node node = vmsList.item(x)
+			if (node.getNodeType() == Node.ELEMENT_NODE) {
+				Element eElement = (Element) node
+				key = utils.getElementText(eElement, "vm-type")
+				String values
+				String position = "0"
+				StringBuilder sb1 = new StringBuilder()
+				NodeList valueList = eElement.getElementsByTagNameNS("*","vm-names")
+				NodeList vmNetworksList = eElement.getElementsByTagNameNS("*","vm-networks")
+				for(int i = 0; i < valueList.getLength(); i++){
+					Node node1 = valueList.item(i)
+					if (node1.getNodeType() == Node.ELEMENT_NODE) {
+						Element eElement1 = (Element) node1
+						value = utils.getElementText(eElement1, "vm-name")
+						if (i != valueList.getLength() - 1) {
+							values = sb1.append(value + ",")
 						}
+						else {
+							values = sb1.append(value);
+						}
+						position = i.toString()
+						paramsMap.put("${key}_name_${position}", "${value}")
 					}
-					for(int n = 0; n < vmNetworksList.getLength(); n++){
-						String floatingIpKeyValueStr = ""
-						String floatingIpV6KeyValueStr = ""
-						Node nodeNetworkKey = vmNetworksList.item(n)
-						if (nodeNetworkKey.getNodeType() == Node.ELEMENT_NODE) {
-							Element eElementNetworkKey = (Element) nodeNetworkKey
-							String ipAddressValues
-							String ipV6AddressValues
-							String networkPosition = "0"
-							StringBuilder sb2 = new StringBuilder()
-							StringBuilder sb3 = new StringBuilder()
-							StringBuilder sb4 = new StringBuilder()
+				}
+				for(int n = 0; n < vmNetworksList.getLength(); n++){
+					String floatingIpKeyValueStr = ""
+					String floatingIpV6KeyValueStr = ""
+					Node nodeNetworkKey = vmNetworksList.item(n)
+					if (nodeNetworkKey.getNodeType() == Node.ELEMENT_NODE) {
+						Element eElementNetworkKey = (Element) nodeNetworkKey
+						String ipAddressValues
+						String ipV6AddressValues
+						String networkPosition = "0"
+						StringBuilder sb2 = new StringBuilder()
+						StringBuilder sb3 = new StringBuilder()
+						StringBuilder sb4 = new StringBuilder()
+						networkKey = utils.getElementText(eElementNetworkKey, "network-role-tag")
+						if (networkKey.isEmpty()) {
 							networkKey = utils.getElementText(eElementNetworkKey, "network-role")
-							floatingIPKey = key + '_' + networkKey + '_floating_ip'
-							floatingIPKeyValue = utils.getElementText(eElementNetworkKey, "floating-ip")
-							if(!floatingIPKeyValue.isEmpty()){
-								paramsMap.put("$floatingIPKey", "$floatingIPKeyValue")
-							}
-							floatingIPV6Key = key + '_' + networkKey + '_floating_v6_ip'
-							floatingIPV6KeyValue = utils.getElementText(eElementNetworkKey, "floating-ip-v6")
-							if(!floatingIPV6KeyValue.isEmpty()){
-								paramsMap.put("$floatingIPV6Key", "$floatingIPV6KeyValue")
-							}
-							NodeList networkIpsList = eElementNetworkKey.getElementsByTagNameNS("*","network-ips")
-							for(int a = 0; a < networkIpsList.getLength(); a++){
-								Node ipAddress = networkIpsList.item(a)
-								if (ipAddress.getNodeType() == Node.ELEMENT_NODE) {
-									Element eElementIpAddress = (Element) ipAddress
-									String ipAddressValue = utils.getElementText(eElementIpAddress, "ip-address")
-									if (a != networkIpsList.getLength() - 1) {
-										ipAddressValues = sb2.append(ipAddressValue + ",")
-									}
-									else {
-										ipAddressValues = sb2.append(ipAddressValue);
-									}
-									networkPosition = a.toString()
-									paramsMap.put("${key}_${networkKey}_ip_${networkPosition}", "${ipAddressValue}")
-								}
-							}
-							
-							paramsMap.put("${key}_${networkKey}_ips", "${ipAddressValues}")
-							
-							NodeList interfaceRoutePrefixesList = eElementNetworkKey.getElementsByTagNameNS("*","interface-route-prefixes")
-							String interfaceRoutePrefixValues = sb3.append("[")
-							
-							for(int a = 0; a < interfaceRoutePrefixesList.getLength(); a++){
-								Node interfaceRoutePrefix = interfaceRoutePrefixesList.item(a)
-								if (interfaceRoutePrefix.getNodeType() == Node.ELEMENT_NODE) {
-									Element eElementInterfaceRoutePrefix = (Element) interfaceRoutePrefix
-									String interfaceRoutePrefixValue = utils.getElementText(eElementInterfaceRoutePrefix, "interface-route-prefix-cidr")
-									if (interfaceRoutePrefixValue == null || interfaceRoutePrefixValue.isEmpty()) {
-										interfaceRoutePrefixValue = utils.getElementText(eElementInterfaceRoutePrefix, "interface-route-prefix")
-									}
-									if (a != interfaceRoutePrefixesList.getLength() - 1) {
-										interfaceRoutePrefixValues = sb3.append("{\"interface_route_table_routes_route_prefix\": \"" + interfaceRoutePrefixValue + "\"}" + ",")
-									}
-									else {
-										interfaceRoutePrefixValues = sb3.append("{\"interface_route_table_routes_route_prefix\": \"" + interfaceRoutePrefixValue + "\"}")
-									}
-								}
-							}
-							interfaceRoutePrefixValues = sb3.append("]")
-							if (interfaceRoutePrefixesList.getLength() > 0) {
-								paramsMap.put("${key}_${networkKey}_route_prefixes", "${interfaceRoutePrefixValues}")
-							}
-							
-							NodeList networkIpsV6List = eElementNetworkKey.getElementsByTagNameNS("*","network-ips-v6")
-							for(int a = 0; a < networkIpsV6List.getLength(); a++){
-								Node ipV6Address = networkIpsV6List.item(a)
-								if (ipV6Address.getNodeType() == Node.ELEMENT_NODE) {
-									Element eElementIpV6Address = (Element) ipV6Address
-									String ipV6AddressValue = utils.getElementText(eElementIpV6Address, "ip-address-ipv6")
-									if (a != networkIpsV6List.getLength() - 1) {
-										ipV6AddressValues = sb4.append(ipV6AddressValue + ",")
-									}
-									else {
-										ipV6AddressValues = sb4.append(ipV6AddressValue);
-									}
-									networkPosition = a.toString()
-									paramsMap.put("${key}_${networkKey}_v6_ip_${networkPosition}", "${ipV6AddressValue}")
-								}
-							}
-							paramsMap.put("${key}_${networkKey}_v6_ips", "${ipV6AddressValues}")
 						}
+						floatingIPKey = key + '_' + networkKey + '_floating_ip'
+						floatingIPKeyValue = utils.getElementText(eElementNetworkKey, "floating-ip")
+						if(!floatingIPKeyValue.isEmpty()){
+							paramsMap.put("$floatingIPKey", "$floatingIPKeyValue")
+						}
+						floatingIPV6Key = key + '_' + networkKey + '_floating_v6_ip'
+						floatingIPV6KeyValue = utils.getElementText(eElementNetworkKey, "floating-ip-v6")
+						if(!floatingIPV6KeyValue.isEmpty()){
+							paramsMap.put("$floatingIPV6Key", "$floatingIPV6KeyValue")
+						}
+						NodeList networkIpsList = eElementNetworkKey.getElementsByTagNameNS("*","network-ips")
+						for(int a = 0; a < networkIpsList.getLength(); a++){
+							Node ipAddress = networkIpsList.item(a)
+							if (ipAddress.getNodeType() == Node.ELEMENT_NODE) {
+								Element eElementIpAddress = (Element) ipAddress
+								String ipAddressValue = utils.getElementText(eElementIpAddress, "ip-address")
+								if (a != networkIpsList.getLength() - 1) {
+									ipAddressValues = sb2.append(ipAddressValue + ",")
+								}
+								else {
+									ipAddressValues = sb2.append(ipAddressValue);
+								}
+								networkPosition = a.toString()
+								paramsMap.put("${key}_${networkKey}_ip_${networkPosition}", "${ipAddressValue}")
+							}
+						}
+						
+						paramsMap.put("${key}_${networkKey}_ips", "${ipAddressValues}")
+						
+						NodeList interfaceRoutePrefixesList = eElementNetworkKey.getElementsByTagNameNS("*","interface-route-prefixes")
+						String interfaceRoutePrefixValues = sb3.append("[")
+						
+						for(int a = 0; a < interfaceRoutePrefixesList.getLength(); a++){
+							Node interfaceRoutePrefix = interfaceRoutePrefixesList.item(a)
+							if (interfaceRoutePrefix.getNodeType() == Node.ELEMENT_NODE) {
+								Element eElementInterfaceRoutePrefix = (Element) interfaceRoutePrefix
+								String interfaceRoutePrefixValue = utils.getElementText(eElementInterfaceRoutePrefix, "interface-route-prefix-cidr")
+								if (interfaceRoutePrefixValue == null || interfaceRoutePrefixValue.isEmpty()) {
+									interfaceRoutePrefixValue = utils.getElementText(eElementInterfaceRoutePrefix, "interface-route-prefix")
+								}
+								if (a != interfaceRoutePrefixesList.getLength() - 1) {
+									interfaceRoutePrefixValues = sb3.append("{\"interface_route_table_routes_route_prefix\": \"" + interfaceRoutePrefixValue + "\"}" + ",")
+								}
+								else {
+									interfaceRoutePrefixValues = sb3.append("{\"interface_route_table_routes_route_prefix\": \"" + interfaceRoutePrefixValue + "\"}")
+								}
+							}
+						}
+						interfaceRoutePrefixValues = sb3.append("]")
+						if (interfaceRoutePrefixesList.getLength() > 0) {
+							paramsMap.put("${key}_${networkKey}_route_prefixes", "${interfaceRoutePrefixValues}")
+						}
+						
+						NodeList networkIpsV6List = eElementNetworkKey.getElementsByTagNameNS("*","network-ips-v6")
+						for(int a = 0; a < networkIpsV6List.getLength(); a++){
+							Node ipV6Address = networkIpsV6List.item(a)
+							if (ipV6Address.getNodeType() == Node.ELEMENT_NODE) {
+								Element eElementIpV6Address = (Element) ipV6Address
+								String ipV6AddressValue = utils.getElementText(eElementIpV6Address, "ip-address-ipv6")
+								if (a != networkIpsV6List.getLength() - 1) {
+									ipV6AddressValues = sb4.append(ipV6AddressValue + ",")
+								}
+								else {
+									ipV6AddressValues = sb4.append(ipV6AddressValue);
+								}
+								networkPosition = a.toString()
+								paramsMap.put("${key}_${networkKey}_v6_ip_${networkPosition}", "${ipV6AddressValue}")
+							}
+						}
+						paramsMap.put("${key}_${networkKey}_v6_ips", "${ipV6AddressValues}")
 					}
-					paramsMap.put("${key}_names", "${values}")
+				}
+				paramsMap.put("${key}_names", "${values}")
+			}
+		}
+	//SDNC Response Params
+		String sdncResponseParams = ""
+		List<String> sdncResponseParamsToSkip = ["vnf_id", "vf_module_id", "vnf_name", "vf_module_name"]
+		String vnfParamsChildNodes = utils.getChildNodes(data, "vnf-parameters")
+		if(vnfParamsChildNodes == null || vnfParamsChildNodes.length() < 1){
+			// No SDNC params
+		}else{
+			NodeList paramsList = responseXml.getElementsByTagNameNS("*", "vnf-parameters")
+			for (int z = 0; z < paramsList.getLength(); z++) {
+				Node node = paramsList.item(z)
+				Element eElement = (Element) node
+				String vnfParameterName = utils.getElementText(eElement, "vnf-parameter-name")
+				if (!sdncResponseParamsToSkip.contains(vnfParameterName)) {
+					String vnfParameterValue = utils.getElementText(eElement, "vnf-parameter-value")
+					paramsMap.put("${vnfParameterName}", "${vnfParameterValue}")
 				}
 			}
-		//SDNC Response Params
-			String sdncResponseParams = ""
-			List<String> sdncResponseParamsToSkip = ["vnf_id", "vf_module_id", "vnf_name", "vf_module_name"]
-			String vnfParamsChildNodes = utils.getChildNodes(data, "vnf-parameters")
-			if(vnfParamsChildNodes == null || vnfParamsChildNodes.length() < 1){
-				// No SDNC params
-			}else{
-				NodeList paramsList = responseXml.getElementsByTagNameNS("*", "vnf-parameters")
-				for (int z = 0; z < paramsList.getLength(); z++) {
-					Node node = paramsList.item(z)
-					Element eElement = (Element) node
-					String vnfParameterName = utils.getElementText(eElement, "vnf-parameter-name")
-					if (!sdncResponseParamsToSkip.contains(vnfParameterName)) {
-						String vnfParameterValue = utils.getElementText(eElement, "vnf-parameter-value")
-						paramsMap.put("${vnfParameterName}", "${vnfParameterValue}")
-					}
-				}
-			}
-			
+		}
+		
 		// Parameters received from the request should overwrite any parameters received from SDNC
 		if (vnfParamsMap != null) {
 			for (Map.Entry<String, String> entry : vnfParamsMap.entrySet()) {
@@ -490,18 +520,18 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 			String paramValue = entry.getValue()
 			paramsXml =
 					"""<entry>
-						<key>${paramName}</key>
-						<value>${paramValue}</value>
-					</entry>
-					"""
-
+							<key>${paramName}</key>
+							<value>${paramValue}</value>
+						</entry>
+						"""
+	
 			vfModuleParams = sbParams.append(paramsXml)
 		}
 		
 		return vfModuleParams
-		
+	
 	}
-			
+	
 			
 			/*
 			 * Parses VNF parameters passed in on the incoming requests and SDNC parameters returned from SDNC get response
@@ -519,7 +549,7 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 			 */			  
 			 
 			 protected String buildVfModuleParamsFromCombinedTopologies(Map<String, String> vnfParamsMap, String vnfSdncGetResponse, String vfmoduleSdncGetResponse, String vnfId, String vnfName,
-					String vfModuleId, String vfModuleName, String vfModuleIndex) {
+					String vfModuleId, String vfModuleName, String vfModuleIndex, String environmentContext, String workloadContext) {
 					
 					// Set up initial parameters
 					
@@ -533,7 +563,9 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 					paramsMap.put("vnf_id", "${vnfId}")
 					paramsMap.put("vnf_name", "${vnfName}")
 					paramsMap.put("vf_module_id", "${vfModuleId}")
-					paramsMap.put("vf_module_name", "${vfModuleName}")					
+					paramsMap.put("vf_module_name", "${vfModuleName}")
+					paramsMap.put("environment_context","${environmentContext}")		
+					paramsMap.put("workload_context", "${workloadContext}")			
 					
 					//Get SDNC Response Data for VNF
 					
@@ -564,6 +596,40 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 							paramsMap.put("availability_zone_${aZonePosition}", "${aZoneValue}")
 						}
 					}
+					
+					//Get SDNC Response Data for VF Module
+					
+					String vfModuleData = utils.getNodeXml(vfmoduleSdncGetResponse, "response-data")
+					vfModuleData = vfModuleData.replaceAll("&lt;", "<")
+					vfModuleData = vfModuleData.replaceAll("&gt;", ">")
+		
+					String vfModuleTopology = utils.getNodeXml(vfModuleData, "vf-module-topology")
+					vfModuleTopology = utils.removeXmlPreamble(vfModuleTopology)
+					vfModuleTopology = utils.removeXmlNamespaces(vfModuleTopology)
+					String vfModuleTopologyIdentifier = utils.getNodeXml(vfModuleTopology, "vf-module-topology-identifier")
+					
+					InputSource sourceVfModule = new InputSource(new StringReader(vfModuleData));
+					DocumentBuilderFactory docFactoryVfModule = DocumentBuilderFactory.newInstance();
+					docFactoryVfModule.setNamespaceAware(true)
+					DocumentBuilder docBuilderVfModule = docFactoryVfModule.newDocumentBuilder()
+					Document responseXmlVfModule = docBuilderVfModule.parse(sourceVfModule)
+					
+					// Map of network-roles and network-tags from vm-networks
+					
+					NodeList vmNetworksListGlobal = responseXmlVfModule.getElementsByTagNameNS("*", "vm-networks")
+					Map<String, String> networkRoleMap = new HashMap<String, String>()
+					for(int n = 0; n < vmNetworksListGlobal.getLength(); n++){
+						Node nodeNetworkKey = vmNetworksListGlobal.item(n)
+						if (nodeNetworkKey.getNodeType() == Node.ELEMENT_NODE) {
+							Element eElementNetworkKey = (Element) nodeNetworkKey
+							String networkRole = utils.getElementText(eElementNetworkKey, "network-role")
+							String networkRoleValue = utils.getElementText(eElementNetworkKey, "network-role-tag")
+							if (networkRoleValue.isEmpty()) {
+								networkRoleValue = networkRole
+							}
+							networkRoleMap.put(networkRole, networkRoleValue)
+						}
+					}			
 		
 					// VNF Networks Data
 					
@@ -573,8 +639,15 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 					for (int x = 0; x < vnfNetworkList.getLength(); x++) {
 						Node node = vnfNetworkList.item(x)
 						if (node.getNodeType() == Node.ELEMENT_NODE) {
-							Element eElement = (Element) node
-							String vnfNetworkKey = utils.getElementText(eElement, "network-role")
+							Element eElement = (Element) node							
+							String vnfNetworkKey = utils.getElementText(eElement, "network-role-tag")
+							String networkRole = utils.getElementText(eElement, "network-role")
+							if (vnfNetworkKey.isEmpty()) {
+								vnfNetworkKey = networkRoleMap.get(networkRole)
+								if (vnfNetworkKey == null || vnfNetworkKey.isEmpty()) {
+									vnfNetworkKey = networkRole
+								}					
+							}	
 							String vnfNetworkNeutronIdValue = utils.getElementText(eElement, "neutron-id")
 							String vnfNetworkNetNameValue = utils.getElementText(eElement, "network-name")
 							String vnfNetworkSubNetIdValue = utils.getElementText(eElement, "subnet-id")
@@ -608,22 +681,7 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 							}
 					}
 					
-					//Get SDNC Response Data for VF Module
 					
-					String vfModuleData = utils.getNodeXml(vfmoduleSdncGetResponse, "response-data")
-					vfModuleData = vfModuleData.replaceAll("&lt;", "<")
-					vfModuleData = vfModuleData.replaceAll("&gt;", ">")
-		
-					String vfModuleTopology = utils.getNodeXml(vfModuleData, "vf-module-topology")
-					vfModuleTopology = utils.removeXmlPreamble(vfModuleTopology)
-					vfModuleTopology = utils.removeXmlNamespaces(vfModuleTopology)
-					String vfModuleTopologyIdentifier = utils.getNodeXml(vfModuleTopology, "vf-module-topology-identifier")
-					
-					InputSource sourceVfModule = new InputSource(new StringReader(vfModuleData));
-					DocumentBuilderFactory docFactoryVfModule = DocumentBuilderFactory.newInstance();
-					docFactoryVfModule.setNamespaceAware(true)
-					DocumentBuilder docBuilderVfModule = docFactoryVfModule.newDocumentBuilder()
-					Document responseXmlVfModule = docBuilderVfModule.parse(sourceVfModule)
 				
 					// VMS Data
 					
@@ -675,7 +733,10 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 									StringBuilder sb2 = new StringBuilder()
 									StringBuilder sb3 = new StringBuilder()
 									StringBuilder sb4 = new StringBuilder()
-									networkKey = utils.getElementText(eElementNetworkKey, "network-role")
+									networkKey = utils.getElementText(eElementNetworkKey, "network-role-tag")
+									if (networkKey.isEmpty()) {
+										networkKey = utils.getElementText(eElementNetworkKey, "network-role")
+									}
 									floatingIPKey = key + '_' + networkKey + '_floating_ip'
 									floatingIPKeyValue = utils.getElementText(eElementNetworkKey, "floating-ip")
 									if(!floatingIPKeyValue.isEmpty()){
@@ -886,6 +947,23 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 				aZones = sbAZone.append(aZoneXml)
 			}
 		}
+		
+		// Map of network-roles and network-tags from vm-networks
+		
+		NodeList vmNetworksListGlobal = responseXml.getElementsByTagNameNS("*", "vm-networks")
+		Map<String, String> networkRoleMap = new HashMap<String, String>()
+		for(int n = 0; n < vmNetworksListGlobal.getLength(); n++){
+			Node nodeNetworkKey = vmNetworksListGlobal.item(n)
+			if (nodeNetworkKey.getNodeType() == Node.ELEMENT_NODE) {
+				Element eElementNetworkKey = (Element) nodeNetworkKey
+				String networkRole = utils.getElementText(eElementNetworkKey, "network-role")
+				String networkRoleValue = utils.getElementText(eElementNetworkKey, "network-role-tag")
+				if (networkRoleValue.isEmpty()) {
+					networkRoleValue = networkRole
+				}
+				networkRoleMap.put(networkRole, networkRoleValue)
+			}
+		}
 	
 		// VNF Networks Data
 		String vnfNetworkNetId = ""
@@ -905,7 +983,14 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 			Node node = vnfNetworkList.item(x)
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
 				Element eElement = (Element) node
-				String vnfNetworkKey = utils.getElementText(eElement, "network-role")
+				String vnfNetworkKey = utils.getElementText(eElement, "network-role-tag")
+				String networkRole = utils.getElementText(eElement, "network-role")
+				if (vnfNetworkKey.isEmpty()) {
+					vnfNetworkKey = networkRoleMap.get(networkRole)
+					if (vnfNetworkKey == null || vnfNetworkKey.isEmpty()) {
+						vnfNetworkKey = networkRole
+					}					
+				}
 				String vnfNetworkNeutronIdValue = utils.getElementText(eElement, "neutron-id")
 				String vnfNetworkNetNameValue = utils.getElementText(eElement, "network-name")
 				String vnfNetworkSubNetIdValue = utils.getElementText(eElement, "subnet-id")
@@ -1034,7 +1119,10 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 						StringBuilder sb2 = new StringBuilder()
 						StringBuilder sb3 = new StringBuilder()
 						StringBuilder sb4 = new StringBuilder()
-						networkKey = utils.getElementText(eElementNetworkKey, "network-role")
+						networkKey = utils.getElementText(eElementNetworkKey, "network-role-tag")
+						if (networkKey.isEmpty()) {
+							networkKey = utils.getElementText(eElementNetworkKey, "network-role")
+						}
 						floatingIPKey = key + '_' + networkKey + '_floating_ip'
 						floatingIPKeyValue = utils.getElementText(eElementNetworkKey, "floating-ip")
 						if(!floatingIPKeyValue.isEmpty()){

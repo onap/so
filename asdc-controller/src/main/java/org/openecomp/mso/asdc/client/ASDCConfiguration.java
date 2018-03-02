@@ -53,6 +53,9 @@ public class ASDCConfiguration implements IConfiguration {
 
     public static final String MSO_PROP_ASDC = "MSO_PROP_ASDC";
     public static final String PARAMETER_PATTERN = "asdc-connections";
+    public static final String MSG_BUS_ADDRESS_ATTRIBUTE_NAME = "messageBusAddress";
+    public static final String COMPONENT_NAMES_ADDRESS_ATTRIBUTE_NAME = "componentNames";
+    public static final String WATCHDOG_TIMEOUT_NAME = "watchDogTimeout";
 
     public static final String CONSUMER_GROUP_ATTRIBUTE_NAME = "consumerGroup";
     public static final String CONSUMER_ID_ATTRIBUTE_NAME = "consumerId";
@@ -113,14 +116,46 @@ public class ASDCConfiguration implements IConfiguration {
 
     }
     
+    @Override
     public java.lang.Boolean isUseHttpsWithDmaap() {
     	return false;
     }
+    
+    @Override
+    public boolean isConsumeProduceStatusTopic(){
+    	return true;
+    }
+    
+    @Override
+    public List<String> getMsgBusAddress(){
 
+       JsonNode masterConfigNode = getASDCControllerConfigJsonNode ();
+        if (masterConfigNode != null && masterConfigNode.get (MSG_BUS_ADDRESS_ATTRIBUTE_NAME) != null) {
+            List<String> msgAddressList = new ArrayList<String>();
+            
+            Iterator<JsonNode> config = masterConfigNode.get(MSG_BUS_ADDRESS_ATTRIBUTE_NAME).elements();
+      
+            while( config.hasNext() ) {
+                String key = (String)config.next().asText();
+                msgAddressList.add(key);
+            }
+
+            if ("NULL".equals (msgAddressList) || msgAddressList.isEmpty ()) {
+                return null;
+            } else {
+                return msgAddressList;
+            }
+        } else {
+            return null;
+        } 
+    	
+    	
+    }
+    
     public String getAsdcControllerName () {
         return asdcControllerName;
     }
-
+    
     private JsonNode getASDCControllerConfigJsonNode () {
         if (this.msoProperties.getJsonRootNode ().get (PARAMETER_PATTERN) != null) {
             return this.msoProperties.getJsonRootNode ().get (PARAMETER_PATTERN).get (this.asdcControllerName);
@@ -182,6 +217,16 @@ public class ASDCConfiguration implements IConfiguration {
             }
         } else {
             return null;
+        }
+    }
+    
+    public int getWatchDogTimeout () {
+        JsonNode masterConfigNode = getASDCControllerConfigJsonNode ();
+        if (masterConfigNode != null && masterConfigNode.get (WATCHDOG_TIMEOUT_NAME) != null) {
+        	
+            return masterConfigNode.get (WATCHDOG_TIMEOUT_NAME).asInt ();
+        } else {
+            return 0;
         }
     }
 
@@ -376,6 +421,11 @@ public class ASDCConfiguration implements IConfiguration {
             throw new ASDCParametersException (POLLING_TIMEOUT_ATTRIBUTE_NAME
                                                + " parameter cannot be found in config mso.properties");
         }
+        
+        if (this.getWatchDogTimeout() == 0) {
+            throw new ASDCParametersException (WATCHDOG_TIMEOUT_NAME
+                                               + " parameter cannot be found in config mso.properties");
+        }
 
         if (this.getRelevantArtifactTypes () == null || this.getRelevantArtifactTypes ().isEmpty ()) {
             throw new ASDCParametersException (RELEVANT_ARTIFACT_TYPES_ATTRIBUTE_NAME
@@ -386,6 +436,12 @@ public class ASDCConfiguration implements IConfiguration {
             throw new ASDCParametersException (USER_ATTRIBUTE_NAME
                                                + " parameter cannot be found in config mso.properties");
         }
+                
+        if (this.getMsgBusAddress() == null || this.getMsgBusAddress().isEmpty ()) {
+            throw new ASDCParametersException (MSG_BUS_ADDRESS_ATTRIBUTE_NAME
+                                               + " parameter cannot be found in config mso.properties");
+        }
+        
     }
 
     /**

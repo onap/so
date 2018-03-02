@@ -1,0 +1,22 @@
+{
+  "transactions" : [ {
+    "put" : [ {
+      "uri" : "/network/generic-vnfs/generic-vnf/test1/relationship-list/relationship",
+      "body" : {
+        "related-link" : "/cloud-infrastructure/pservers/pserver/test2"
+      }
+    }, {
+      "uri" : "/network/generic-vnfs/generic-vnf/test3/relationship-list/relationship",
+      "body" : {
+        "related-link" : "/cloud-infrastructure/pservers/pserver/test4"
+      }
+    } ]
+  }, {
+    "put" : [ {
+      "uri" : "/network/generic-vnfs/generic-vnf/test5/relationship-list/relationship",
+      "body" : {
+        "related-link" : "/cloud-infrastructure/pservers/pserver/test6"
+      }
+    } ]
+  } ]
+}

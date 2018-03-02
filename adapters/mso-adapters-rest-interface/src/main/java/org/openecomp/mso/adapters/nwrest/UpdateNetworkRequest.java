@@ -22,21 +22,22 @@ package org.openecomp.mso.adapters.nwrest;
 
 
 
-import org.openecomp.mso.entity.MsoRequest;
-import org.openecomp.mso.openstack.beans.Subnet;
-
-import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import org.jboss.resteasy.annotations.providers.NoJackson;
-import org.codehaus.jackson.map.annotate.JsonRootName;
+
+import org.openecomp.mso.entity.MsoRequest;
 import org.openecomp.mso.logger.MsoLogger;
+import org.openecomp.mso.openstack.beans.Subnet;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRootName;
 
 @JsonRootName("updateNetworkRequest")
 @XmlRootElement(name = "updateNetworkRequest")
-@NoJackson
 public class UpdateNetworkRequest extends NetworkRequestCommon {
 	private String cloudSiteId;
 	private String tenantId;
@@ -54,7 +55,8 @@ public class UpdateNetworkRequest extends NetworkRequestCommon {
 	private Map<String,String> networkParams = new HashMap<>();
 	private MsoRequest msoRequest = new MsoRequest();
 	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
-	
+	@JsonProperty
+	private boolean contrailRequest;
 	public UpdateNetworkRequest() {
 		super();
 	}
@@ -185,5 +187,10 @@ public class UpdateNetworkRequest extends NetworkRequestCommon {
 
 	public boolean isContrailRequest() {
 		return (networkTechnology == NetworkTechnology.CONTRAIL) && (contrailNetwork != null);
+	}
+	
+	@JsonIgnore
+	public void setContrailRequest() {
+		this.contrailRequest = contrailRequest;
 	}
 }

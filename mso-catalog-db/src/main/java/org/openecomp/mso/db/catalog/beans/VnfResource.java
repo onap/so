@@ -226,9 +226,7 @@ public class VnfResource extends MavenLikeVersioning implements Serializable {
 			return null;
 	}
 		ArrayList<VfModule> list = new ArrayList<VfModule>();
-		for (VfModule vfm : this.vfModules) {
-			list.add(vfm);
-	}
+		list.addAll(this.vfModules);
 		return list;
 	}
 	
@@ -242,7 +240,7 @@ public class VnfResource extends MavenLikeVersioning implements Serializable {
 
 	@Override
 	public String toString () {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 
 		buf.append("VNF=");
 		buf.append(",modelVersion=");

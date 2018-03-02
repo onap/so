@@ -24,10 +24,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.jackson.annotate.JsonAnySetter;
-import org.codehaus.jackson.annotate.JsonIgnore;
-
 import org.openecomp.sdc.api.notification.IArtifactInfo;
+
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class JsonArtifactInfo implements IArtifactInfo {
 

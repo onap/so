@@ -4,16 +4,16 @@
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>org.openecomp.so</groupId>
+		<groupId>org.onap.so</groupId>
 		<artifactId>bpmn</artifactId>
-		<version>1.2.0-SNAPSHOT</version>
+		<version>1.1.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>MSOCommonBPMN</artifactId>
 	<name>MSOCommonBPMN</name>
 	<packaging>jar</packaging>
 
 	<properties>
-		<camunda.version>7.6.0</camunda.version>
+		<camunda.version>7.8.0</camunda.version>
 		<spring.version>4.3.2.RELEASE</spring.version>
 		<httpclient.version>3.1</httpclient.version>
 		<jax.ws.rs>2.0.1</jax.ws.rs>
@@ -21,6 +21,7 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.compiler.source>1.8</maven.compiler.source>
 	</properties>
+
 
 	<build>
 		<plugins>
@@ -40,6 +41,7 @@
 					</execution>
 				</executions>
 			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
@@ -162,6 +164,50 @@
 					</dependency>
 				</dependencies>
 			</plugin>
+			 <plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>jaxb2-maven-plugin</artifactId>
+				<version>2.3</version>
+				<executions>
+					<execution>
+						<id>xjc</id>
+						<goals>
+							<goal>xjc</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<extension>true</extension>
+					<arguments>
+						<argument>-Xannotate</argument>
+						<argument>-Xcommons-lang</argument>
+					</arguments>
+					<sources>
+						<source>src/main/resources/xsd</source>
+					</sources>
+					<xjbSources>
+						<xjbSource>src/main/resources/xjb</xjbSource>
+					</xjbSources>
+					<outputDirectory>${project.build.directory}/generated-sources</outputDirectory>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.jvnet.jaxb2_commons</groupId>
+						<artifactId>jaxb2-basics-annotate</artifactId>
+						<version>0.6.4</version>
+					</dependency>
+					<dependency>
+						<groupId>org.jvnet.jaxb2_commons</groupId>
+						<artifactId>jaxb2-commons-lang</artifactId>
+						<version>2.3</version>
+					</dependency>
+					<dependency>
+						<groupId>com.sun.codemodel</groupId>
+						<artifactId>codemodel</artifactId>
+						<version>2.6</version>
+					</dependency>
+				</dependencies>
+			</plugin>
 		</plugins>
 		<pluginManagement>
 			<plugins>
@@ -197,11 +243,14 @@
 						</lifecycleMappingMetadata>
 					</configuration>
 				</plugin>
+
+
 			</plugins>
 		</pluginManagement>
 	</build>
 
 	<dependencies>
+
 		<dependency>
 			<groupId>org.camunda.bpm</groupId>
 			<artifactId>camunda-engine</artifactId>
@@ -210,15 +259,10 @@
 			<groupId>org.camunda.bpm</groupId>
 			<artifactId>camunda-engine-cdi</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>org.camunda.bpm.extension</groupId>
 			<artifactId>camunda-bpm-assert</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>1.10.19</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -229,27 +273,26 @@
 			<groupId>org.camunda.bpm</groupId>
 			<artifactId>camunda-engine-plugin-spin</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>org.camunda.bpm</groupId>
 			<artifactId>camunda-engine-plugin-connect</artifactId>
 		</dependency>
+
 		<dependency>
 			<!-- Bootstrap for styling via Webjars project -->
 			<groupId>org.webjars</groupId>
 			<artifactId>bootstrap</artifactId>
 			<version>2.3.2</version>
 		</dependency>
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-client</artifactId>
-			<version>3.0.19.Final</version>
-		</dependency>
+
 		<dependency>
 			<!-- Needed for InMemoryH2Test -->
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 			<scope>test</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>com.fasterxml.uuid</groupId>
 			<artifactId>java-uuid-generator</artifactId>
@@ -259,25 +302,20 @@
 			<artifactId>groovy-all</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.4</version>
-		</dependency>
-		<dependency>
-			<groupId>org.openecomp.so</groupId>
+			<groupId>org.onap.so</groupId>
 			<artifactId>MSOCoreBPMN</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<!-- unit test utilities -->
-			<groupId>org.openecomp.so</groupId>
+			<groupId>org.onap.so</groupId>
 			<artifactId>MSOCoreBPMN</artifactId>
 			<version>${project.version}</version>
 			<classifier>tests</classifier>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.openecomp.so</groupId>
+			<groupId>org.onap.so</groupId>
 			<artifactId>common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -287,8 +325,13 @@
 			<version>2.0</version>
 		</dependency>
 		<dependency>
-			<groupId>org.openecomp.so</groupId>
+			<groupId>org.onap.so</groupId>
 			<artifactId>MSORESTClient</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.onap.so.adapters</groupId>
+			<artifactId>mso-adapters-rest-interface</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -296,60 +339,13 @@
 			<artifactId>javax.servlet-api</artifactId>
 			<version>3.0.1</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>com.github.tomakehurst</groupId>
-			<artifactId>wiremock</artifactId>
-			<version>1.56</version>
-			<scope>test</scope>
-			<classifier>standalone</classifier>
-			<exclusions>
-				<exclusion>
-					<groupId>org.mortbay.jetty</groupId>
-					<artifactId>jetty</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.google.guava</groupId>
-					<artifactId>guava</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.fasterxml.jackson.core</groupId>
-					<artifactId>jackson-core</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.fasterxml.jackson.core</groupId>
-					<artifactId>jackson-annotations</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.fasterxml.jackson.core</groupId>
-					<artifactId>jackson-databind</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.httpcomponents</groupId>
-					<artifactId>httpclient</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.skyscreamer</groupId>
-					<artifactId>jsonassert</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>xmlunit</groupId>
-					<artifactId>xmlunit</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.jayway.jsonpath</groupId>
-					<artifactId>json-path</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>net.sf.jopt-simple</groupId>
-					<artifactId>jopt-simple</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+
 		<dependency>
 			<groupId>org.camunda.bpm</groupId>
 			<artifactId>camunda-engine-spring</artifactId>
@@ -359,21 +355,7 @@
 			<artifactId>spring-beans</artifactId>
 			<version>4.3.2.RELEASE</version>
 		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-annotations</artifactId>
-			<version>2.8.7</version>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-core</artifactId>
-			<version>2.8.7</version>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.module</groupId>
-			<artifactId>jackson-module-jaxb-annotations</artifactId>
-			<version>2.4.0</version>
-		</dependency>
+
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
@@ -383,31 +365,6 @@
 			<groupId>commons-httpclient</groupId>
 			<artifactId>commons-httpclient</artifactId>
 			<version>${httpclient.version}</version>
-		</dependency>
-		<!--dependency>
-			<groupId>org.openecomp.appc.client</groupId>
-			<artifactId>client-kit</artifactId>
-			<version>1.1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.openecomp.appc.client</groupId>
-			<artifactId>client-lib</artifactId>
-			<version>1.1.0</version >
-		</dependency-->
-		<dependency>
-			<groupId>org.onap.aai.aai-common</groupId>
-			<artifactId>aai-schema</artifactId>
-			<version>1.1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-			<version>2.8.7</version>
-		</dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>1.10.19</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-lang</groupId>
@@ -435,11 +392,6 @@
 			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
-		</dependency>
-		<dependency>
 			<groupId>commons-httpclient</groupId>
 			<artifactId>commons-httpclient</artifactId>
 			<version>${httpclient.version}</version>
@@ -450,29 +402,14 @@
 			<version>${jax.ws.rs}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.openecomp.appc.client</groupId>
-			<artifactId>client-kit</artifactId>
-			<version>1.2.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.openecomp.appc.client</groupId>
+			<groupId>org.onap.appc.client</groupId>
 			<artifactId>client-lib</artifactId>
-			<version>1.2.0</version>
+			<version>1.5.0</version>
 		</dependency>
 		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-			<version>2.8.7</version>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-annotations</artifactId>
-			<version>2.8.7</version>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.module</groupId>
-			<artifactId>jackson-module-jaxb-annotations</artifactId>
-			<version>2.4.0</version>
+  			<groupId>org.onap.appc.client</groupId>
+  			<artifactId>client-kit</artifactId>
+  			<version>1.5.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.aspectj</groupId>
@@ -480,9 +417,9 @@
 			<version>1.6.12</version>
 		</dependency>
 		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>1.10.19</version>
+			<groupId>com.att.nsa</groupId>
+			<artifactId>saClientLibrary</artifactId>
+			<version>1.2.4</version>
 		</dependency>
 		<dependency>
 			<!-- Optional Plugin for Camunda BPM Workbench -->
@@ -491,15 +428,21 @@
 			<version>1.0.0-alpha8</version>
 			<scope>test</scope>
 		</dependency>
+    	<dependency>
+    		<groupId>org.json</groupId>
+        	<artifactId>json</artifactId>
+        	<version>20160810</version>
+    	</dependency>
 		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-jackson2-provider</artifactId>
-			<version>3.0.11.Final</version>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
+			<version>3.9.0</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>22.0</version>
+			<groupId>pl.pragmatists</groupId>
+			<artifactId>JUnitParams</artifactId>
+			<version>1.1.1</version>
 		</dependency>
 	</dependencies>
 </project>

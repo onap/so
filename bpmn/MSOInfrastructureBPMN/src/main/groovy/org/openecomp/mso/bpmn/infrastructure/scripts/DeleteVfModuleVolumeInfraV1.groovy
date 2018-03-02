@@ -26,7 +26,7 @@ import java.util.concurrent.ExecutionException;
 
 import org.springframework.web.util.UriUtils
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.apache.commons.lang3.*
 import org.openecomp.mso.bpmn.common.scripts.AaiUtil;
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor;
@@ -45,7 +45,7 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 	 * This method is executed during the preProcessRequest task of the <class>DeleteVfModuleVolume.bpmn</class> process.
 	 * @param execution
 	 */
-	public InitializeProcessVariables(Execution execution){
+	public InitializeProcessVariables(DelegateExecution execution){
 		execution.setVariable('prefix', 'DELVfModVol_')
 		execution.setVariable("DELVfModVol_volumeRequest", null)
 		execution.setVariable('DELVfModVol_requestInfo', null)
@@ -76,7 +76,7 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 	 * Perform initial processing, such as request validation, initialization of variables, etc.
 	 * * @param execution
 	 */
-	public void preProcessRequest (Execution execution) {
+	public void preProcessRequest (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		preProcessRequest(execution, isDebugEnabled)
 	}
@@ -85,7 +85,7 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 	 * This method is executed during the preProcessRequest task of the <class>DeleteVfModuleVolume.bpmn</class> process.
 	 * @param execution
 	 */
-	public void preProcessRequest (Execution execution, isDebugLogEnabled) {
+	public void preProcessRequest (DelegateExecution execution, isDebugLogEnabled) {
 
 		InitializeProcessVariables(execution)
 
@@ -137,7 +137,7 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 		logDebug('Request: ' + createVolumeIncoming, isDebugLogEnabled)
 	}
 
-	public void sendSyncResponse (Execution execution, isDebugEnabled) {
+	public void sendSyncResponse (DelegateExecution execution, isDebugEnabled) {
 
 		String volumeRequest = execution.getVariable("DELVfModVol_volumeRequest")
 		utils.log("DEBUG", " DELVfModVol_volumeRequest - " + "\n" + volumeRequest, isDebugEnabled)
@@ -169,7 +169,7 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 	}
 
 
-	public void sendSyncError (Execution execution, isDebugEnabled) {
+	public void sendSyncError (DelegateExecution execution, isDebugEnabled) {
 		WorkflowException we = execution.getVariable('WorkflowException')
 		def errorCode = we?.getErrorCode()
 		def errorMessage = we?.getErrorMessage()
@@ -178,7 +178,7 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 	}
 
 
-	public void callRESTQueryAAICloudRegion (Execution execution, isDebugEnabled) {
+	public void callRESTQueryAAICloudRegion (DelegateExecution execution, isDebugEnabled) {
 
 		String cloudRegion = execution.getVariable('DELVfModVol_cloudRegion')
 
@@ -216,7 +216,7 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 	 * Query volume group by id
 	 * @param execution
 	 */
-	public void queryAAIForVolumeGroup(Execution execution, isDebugLogEnabled) {
+	public void queryAAIForVolumeGroup(DelegateExecution execution, isDebugLogEnabled) {
 
 		ExceptionUtil exceptionUtil = new ExceptionUtil()
 
@@ -343,7 +343,7 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 		return false
 	}
 
-	public void prepareVnfAdapterDeleteRequest(Execution execution, isDebugLogEnabled) {
+	public void prepareVnfAdapterDeleteRequest(DelegateExecution execution, isDebugLogEnabled) {
 		def cloudRegion = execution.getVariable('DELVfModVol_cloudRegion')
 		def tenantId = execution.getVariable('DELVfModVol_tenantId')
 		def volumeGroupId = execution.getVariable('DELVfModVol_volumeGroupId')
@@ -379,7 +379,7 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 	}
 
 
-	public void deleteVolGrpId(Execution execution, isDebugEnabled) {
+	public void deleteVolGrpId(DelegateExecution execution, isDebugEnabled) {
 
 		// get variables
 		String queryAAIVolGrpIdResponse = execution.getVariable("DELVfModVol_queryAAIVolGrpResponse")
@@ -422,7 +422,7 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 	}
 
 
-	public void prepareDBRequest (Execution execution, isDebugLogEnabled) {
+	public void prepareDBRequest (DelegateExecution execution, isDebugLogEnabled) {
 
 		WorkflowException workflowExceptionObj = execution.getVariable("WorkflowException")
 		ExceptionUtil exceptionUtil = new ExceptionUtil();
@@ -464,7 +464,7 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 	}
 
 
-	public void prepareCompletionHandlerRequest (Execution execution, isDebugLogEnabled) {
+	public void prepareCompletionHandlerRequest (DelegateExecution execution, isDebugLogEnabled) {
 		def requestId = execution.getVariable("mso-request-id")
 		def source = execution.getVariable("DELVfModVol_source")
 
@@ -488,7 +488,7 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 
 
 
-	public void prepareFalloutHandler (Execution execution, isDebugEnabled) {
+	public void prepareFalloutHandler (DelegateExecution execution, isDebugEnabled) {
 
 		execution.setVariable("DELVfModVol_Success", false)
 		String requestId = execution.getVariable("DELVfModVol_requestId")
@@ -529,7 +529,7 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void handleTenantIdMismatch(Execution execution, isDebugLogEnabled) {
+	public void handleTenantIdMismatch(DelegateExecution execution, isDebugLogEnabled) {
 
 		def volumeGroupId = execution.getVariable('DELVfModVol_volumeGroupId')
 		def aicCloudRegion = execution.getVariable('DELVfModVol_aicCloudRegion')

@@ -4,7 +4,7 @@ import org.camunda.bpm.engine.ProcessEngineServices
 import org.camunda.bpm.engine.RepositoryService
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.camunda.bpm.engine.repository.ProcessDefinition
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -110,7 +110,7 @@ class CreateGenericAlaCarteServiceInstanceTest  {
 			
 		}
 
-		public void initializeVariables(Execution mockExecution) {
+		public void initializeVariables(DelegateExecution mockExecution) {
 			
 			//verify(mockExecution).setVariable(Prefix + "Success", false)
 			
@@ -131,7 +131,7 @@ class CreateGenericAlaCarteServiceInstanceTest  {
 			when(mockExecution.getVariable("bpmnRequest")).thenReturn(jsonIncomingRequest)
 			try{
 									
-				// preProcessRequest(Execution execution)						
+				// preProcessRequest(DelegateExecution execution)						
 				CreateGenericALaCarteServiceInstance createGenericALaCarteServiceInstance = new CreateGenericALaCarteServiceInstance()
 				createGenericALaCarteServiceInstance.preProcessRequest(mockExecution)
 
@@ -157,7 +157,7 @@ class CreateGenericAlaCarteServiceInstanceTest  {
 			when(mockExecution.getVariable("mso-request-id")).thenReturn("e8ebf6a0-f8ea-4dc0-8b99-fe98a87722d6")
 			when(mockExecution.getVariable("serviceInstanceId")).thenReturn("f70e927b-6087-4974-9ef8-c5e4d5847ca4")
 			try{
-				// preProcessRequest(Execution execution)
+				// preProcessRequest(DelegateExecution execution)
 				CreateGenericALaCarteServiceInstance createGenericALaCarteServiceInstance = new CreateGenericALaCarteServiceInstance()
 				createGenericALaCarteServiceInstance.sendSyncResponse(mockExecution)
 

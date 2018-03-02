@@ -31,6 +31,7 @@ exceptionUtil.buildWorkflowException(execution, 404, "Service Instance Not Found
         <camunda:out source="GENGS_siResourceLink" target="GENGS_siResourceLink" />
         <camunda:in source="isDebugLogEnabled" target="isDebugLogEnabled" />
         <camunda:in source="GENGS_type" target="GENGS_type" />
+        <camunda:in source="DoCVNF_serviceInstanceName" target="GENGS_serviceInstanceName" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_2</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_4</bpmn2:outgoing>

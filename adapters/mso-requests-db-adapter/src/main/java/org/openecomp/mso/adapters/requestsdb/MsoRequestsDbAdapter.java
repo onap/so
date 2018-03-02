@@ -27,7 +27,6 @@ import javax.xml.bind.annotation.XmlElement;
 
 import org.openecomp.mso.adapters.requestsdb.exceptions.MsoRequestsDbException;
 import org.openecomp.mso.requestsdb.InfraActiveRequests;
-import org.openecomp.mso.requestsdb.ResourceOperationStatus;
 
 /**
  * MSO Request DB Adapter Web Service
@@ -49,6 +48,8 @@ public interface MsoRequestsDbAdapter {
                                     @WebParam(name = "vfModuleId") @XmlElement(required = false) String vfModuleId,
                                     @WebParam(name = "volumeGroupId") @XmlElement(required = false) String volumeGroupId,
                                     @WebParam(name = "serviceInstanceName") @XmlElement(required = false) String serviceInstanceName,
+                                    @WebParam(name = "configurationId") @XmlElement(required = false) String configurationId,
+                                    @WebParam(name = "configurationName") @XmlElement(required = false) String configurationName,
                                     @WebParam(name = "vfModuleName") @XmlElement(required = false) String vfModuleName) throws MsoRequestsDbException;
 
     @WebMethod
@@ -60,7 +61,6 @@ public interface MsoRequestsDbAdapter {
     @WebMethod
     public void updateServiceOperationStatus (@WebParam(name = "serviceId") @XmlElement(required = true) String serviceId,
                                     @WebParam(name = "operationId") @XmlElement(required = false) String operationId,
-                                    @WebParam(name = "serviceName") @XmlElement(required = false) String serviceName,
                                     @WebParam(name = "operationType") @XmlElement(required = false) String operationType,
                                     @WebParam(name = "userId") @XmlElement(required = false) String userId,
                                     @WebParam(name = "result") @XmlElement(required = false) String result,
@@ -73,21 +73,5 @@ public interface MsoRequestsDbAdapter {
                                     @WebParam(name = "operationId") @XmlElement(required = true) String operationId,
                                     @WebParam(name = "operationType") @XmlElement(required = true) String operationType,
                                     @WebParam(name = "resourceTemplateUUIDs") @XmlElement(required = true) String resourceTemplateUUIDs) throws MsoRequestsDbException;
-    
-    @WebMethod
-    public ResourceOperationStatus getResourceOperationStatus (@WebParam(name="serviceId") @XmlElement(required = true) String serviceId,
-                                    @WebParam(name = "operationId") @XmlElement(required = true) String operationId,
-                                    @WebParam(name = "resourceTemplateUUID") @XmlElement(required = true) String resourceTemplateUUID) throws MsoRequestsDbException;
-    @WebMethod
-    public void updateResourceOperationStatus (@WebParam(name = "serviceId") @XmlElement(required = true) String serviceId,
-                                    @WebParam(name = "operationId") @XmlElement(required = true) String operationId,
-                                    @WebParam(name = "resourceTemplateUUID") @XmlElement(required = true) String resourceTemplateUUID,
-                                    @WebParam(name = "operType") @XmlElement(required = false) String operType,
-                                    @WebParam(name = "resourceInstanceID") @XmlElement(required = false) String resourceInstanceID,
-                                    @WebParam(name = "jobId") @XmlElement(required = false) String jobId,
-                                    @WebParam(name = "status") @XmlElement(required = false) String status,
-                                    @WebParam(name = "progress") @XmlElement(required = false) String progress,
-                                    @WebParam(name = "errorCode") @XmlElement(required = false) String errorCode,
-                                    @WebParam(name = "statusDescription") @XmlElement(required = false) String statusDescription) throws MsoRequestsDbException;
 
 }

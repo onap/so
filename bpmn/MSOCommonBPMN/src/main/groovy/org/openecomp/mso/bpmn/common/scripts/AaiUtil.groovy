@@ -20,7 +20,7 @@
 
 package org.openecomp.mso.bpmn.common.scripts
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor;
 import org.openecomp.mso.rest.APIResponse;
 import org.openecomp.mso.rest.RESTClient
@@ -40,7 +40,7 @@ class AaiUtil {
 		this.taskProcessor = taskProcessor
 	}
 
-	public String getNetworkGenericVnfEndpoint(Execution execution) {
+	public String getNetworkGenericVnfEndpoint(DelegateExecution execution) {
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		String endpoint = execution.getVariable("URN_aai_endpoint")
 		def uri = getNetworkGenericVnfUri(execution)
@@ -48,56 +48,56 @@ class AaiUtil {
 		return endpoint + uri
 	}
 
-	public String getNetworkGenericVnfUri(Execution execution) {
+	public String getNetworkGenericVnfUri(DelegateExecution execution) {
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		def uri = getUri(execution, 'generic_vnf')
 		taskProcessor.logDebug('AaiUtil.getNetworkGenericVnfUri() - AAI URI: ' + uri, isDebugLogEnabled)
 		return uri
 	}
 
-	public String getNetworkVpnBindingUri(Execution execution) {
+	public String getNetworkVpnBindingUri(DelegateExecution execution) {
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		def uri = getUri(execution, 'vpn_binding')
 		taskProcessor.logDebug('AaiUtil.getNetworkVpnBindingUri() - AAI URI: ' + uri, isDebugLogEnabled)
 		return uri
 	}
 
-	public String getNetworkPolicyUri(Execution execution) {
+	public String getNetworkPolicyUri(DelegateExecution execution) {
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		def uri = getUri(execution, 'network_policy')
 		taskProcessor.logDebug('AaiUtil.getNetworkPolicyUri() - AAI URI: ' + uri, isDebugLogEnabled)
 		return uri
 	}
 
-	public String getNetworkTableReferencesUri(Execution execution) {
+	public String getNetworkTableReferencesUri(DelegateExecution execution) {
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		def uri = getUri(execution, 'route_table_reference')
 		taskProcessor.logDebug('AaiUtil.getNetworkTableReferencesUri() - AAI URI: ' + uri, isDebugLogEnabled)
 		return uri
 	}
 
-	public String getNetworkVceUri(Execution execution) {
+	public String getNetworkVceUri(DelegateExecution execution) {
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		def uri = getUri(execution, 'vce')
 		taskProcessor.logDebug('AaiUtil.getNetworkVceUri() - AAI URI: ' + uri, isDebugLogEnabled)
 		return uri
 	}
 
-	public String getNetworkL3NetworkUri(Execution execution) {
+	public String getNetworkL3NetworkUri(DelegateExecution execution) {
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		def uri = getUri(execution, 'l3_network')
 		taskProcessor.logDebug('AaiUtil.getNetworkL3NetworkUri() - AAI URI: ' + uri, isDebugLogEnabled)
 		return uri
 	}
 
-	public String getBusinessCustomerUri(Execution execution) {
+	public String getBusinessCustomerUri(DelegateExecution execution) {
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		def uri = getUri(execution, 'customer')
 		taskProcessor.logDebug('AaiUtil.getBusinessCustomerUri() - AAI URI: ' + uri, isDebugLogEnabled)
 		return uri
 	}
 
-	//public String getBusinessCustomerUriv7(Execution execution) {
+	//public String getBusinessCustomerUriv7(DelegateExecution execution) {
 	//	def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 	//	//def uri = getUri(execution, BUSINESS_CUSTOMERV7)
 	//	def uri = getUri(execution, 'Customer')
@@ -105,7 +105,7 @@ class AaiUtil {
 	//	return uri
 	//}
 
-	public String getCloudInfrastructureCloudRegionEndpoint(Execution execution) {
+	public String getCloudInfrastructureCloudRegionEndpoint(DelegateExecution execution) {
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		String endpoint = execution.getVariable("URN_aai_endpoint")
 		def uri = getCloudInfrastructureCloudRegionUri(execution)
@@ -113,28 +113,28 @@ class AaiUtil {
 		return endpoint + uri
 	}
 
-	public String getCloudInfrastructureCloudRegionUri(Execution execution) {
+	public String getCloudInfrastructureCloudRegionUri(DelegateExecution execution) {
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		def uri = getUri(execution, 'cloud_region')
 		taskProcessor.logDebug('AaiUtil.getCloudInfrastructureCloudRegionUri() - AAI URI: ' + uri, isDebugLogEnabled)
 		return uri
 	}
 
-	public String getCloudInfrastructureTenantUri(Execution execution) {
+	public String getCloudInfrastructureTenantUri(DelegateExecution execution) {
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		def uri = getUri(execution, 'tenant')
 		taskProcessor.logDebug('AaiUtil.getCloudInfrastructureTenantUri() - AAI URI: ' + uri, isDebugLogEnabled)
 		return uri
 	}
 
-	public String getSearchNodesQueryUri(Execution execution) {
+	public String getSearchNodesQueryUri(DelegateExecution execution) {
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		def uri = getUri(execution, 'nodes_query')
 		taskProcessor.logDebug('AaiUtil.getSearchNodesQueryUri() - AAI URI: ' + uri, isDebugLogEnabled)
 		return uri
 	}
 
-	public String getSearchNodesQueryEndpoint(Execution execution) {
+	public String getSearchNodesQueryEndpoint(DelegateExecution execution) {
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		String endpoint = execution.getVariable("URN_aai_endpoint")
 		def uri = getSearchNodesQueryUri(execution)
@@ -142,14 +142,14 @@ class AaiUtil {
 		return endpoint + uri
 	}
 
-	public String getSearchGenericQueryUri(Execution execution) {
+	public String getSearchGenericQueryUri(DelegateExecution execution) {
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		def uri = getUri(execution, 'generic_query')
 		taskProcessor.logDebug('AaiUtil.getSearchGenericQueryUri() - AAI URI: ' + uri, isDebugLogEnabled)
 		return uri
 	}
 
-	public String getVersion(Execution execution, resourceName, processKey) {
+	public String getVersion(DelegateExecution execution, resourceName, processKey) {
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 
 		resourceName = resourceName.replaceAll('-', '_')
@@ -178,7 +178,7 @@ class AaiUtil {
 		(new ExceptionUtil()).buildAndThrowWorkflowException(execution, 9999, "Internal Error: One of the following should be defined in MSO URN properties file: ${versionWithResourceKey}, ${versionWithProcessKey}, ${DEFAULT_VERSION_KEY}")
 	}
 
-	public String getUri(Execution execution, resourceName) {
+	public String getUri(DelegateExecution execution, resourceName) {
 
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		def processKey = taskProcessor.getMainProcessKey(execution)
@@ -208,7 +208,7 @@ class AaiUtil {
 		(new ExceptionUtil()).buildAndThrowWorkflowException(execution, 9999, 'Internal Error: AAI URI entry for ' + key + ' not defined in the MSO URN properties file')
 	}
 
-	public String setNamespace(Execution execution) {
+	public String setNamespace(DelegateExecution execution) {
 		def key = AAI_NAMESPACE_STRING_KEY
 		aaiNamespace = execution.getVariable(key)
 		if (aaiNamespace == null ) {
@@ -219,7 +219,7 @@ class AaiUtil {
 	/**
 	 * This method can be used for getting the building namespace out of uri.
 	 *  NOTE: A getUri() method needs to be invoked first.
-	 *        Alternative method is the getNamespaceFromUri(Execution execution, String uri)
+	 *        Alternative method is the getNamespaceFromUri(DelegateExecution execution, String uri)
 	 * return namespace (plus version from uri)
 	 *
 	 * @param url
@@ -242,13 +242,13 @@ class AaiUtil {
 
 	/**
 	 * This method can be used for building namespace with aai version out of uri.
-	 *   NOTE: 2 arguments: Execution execution & String uri
+	 *   NOTE: 2 arguments: DelegateExecution execution & String uri
 	 * @param execution
 	 * @param url
 	 *
 	 * @return namespace
 	 */
-	public String getNamespaceFromUri(Execution execution, String uri) {
+	public String getNamespaceFromUri(DelegateExecution execution, String uri) {
 	   String namespace = execution.getVariable(AAI_NAMESPACE_STRING_KEY)
 	   if (namespace == null ) {
 		   (new ExceptionUtil()).buildAndThrowWorkflowException(execution, 9999, 'Internal Error: AAI URI entry for ' + AAI_NAMESPACE_STRING_KEY + ' not defined in the MSO URN properties file')
@@ -293,7 +293,7 @@ class AaiUtil {
 	 * @return APIResponse
 	 *
 	 */
-	public APIResponse executeAAIGetCall(Execution execution, String url){
+	public APIResponse executeAAIGetCall(DelegateExecution execution, String url){
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		taskProcessor.logDebug(" ======== STARTED Execute AAI Get Process ======== ", isDebugEnabled)
 		APIResponse apiResponse = null
@@ -315,7 +315,7 @@ class AaiUtil {
 			taskProcessor.logDebug( "======== COMPLETED Execute AAI Get Process ======== ", isDebugEnabled)
 		}catch(Exception e){
 			taskProcessor.logDebug("Exception occured while executing AAI Get Call. Exception is: \n" + e, isDebugEnabled)
-			throw new BpmnError("MSOWorkflowException")
+			(new ExceptionUtil()).buildAndThrowWorkflowException(execution, 9999, e.getMessage())
 		}
 		return apiResponse
 	}
@@ -333,7 +333,7 @@ class AaiUtil {
 	 * @return APIResponse
 	 *
 	 */
-	public APIResponse executeAAIPutCall(Execution execution, String url, String payload){
+	public APIResponse executeAAIPutCall(DelegateExecution execution, String url, String payload){
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		taskProcessor.logDebug( " ======== Started Execute AAI Put Process ======== ", isDebugEnabled)
 		APIResponse apiResponse = null
@@ -354,7 +354,7 @@ class AaiUtil {
 			taskProcessor.logDebug( "======== Completed Execute AAI Put Process ======== ", isDebugEnabled)
 		}catch(Exception e){
 			taskProcessor.utils.log("ERROR", "Exception occured while executing AAI Put Call. Exception is: \n" + e, isDebugEnabled)
-			throw new BpmnError("MSOWorkflowException")
+			(new ExceptionUtil()).buildAndThrowWorkflowException(execution, 9999, e.getMessage())
 		}
 		return apiResponse
 	}
@@ -371,7 +371,7 @@ class AaiUtil {
 	 * @return APIResponse
 	 *
 	 */
-	public APIResponse executeAAIPatchCall(Execution execution, String url, String payload){
+	public APIResponse executeAAIPatchCall(DelegateExecution execution, String url, String payload){
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		taskProcessor.logDebug( " ======== Started Execute AAI Patch Process ======== ", isDebugEnabled)
 		APIResponse apiResponse = null
@@ -393,7 +393,7 @@ class AaiUtil {
 			taskProcessor.logDebug( "======== Completed Execute AAI Patch Process ======== ", isDebugEnabled)
 		}catch(Exception e){
 			taskProcessor.utils.log("ERROR", "Exception occured while executing AAI Patch Call. Exception is: \n" + e, isDebugEnabled)
-			throw new BpmnError("MSOWorkflowException")
+			(new ExceptionUtil()).buildAndThrowWorkflowException(execution, 9999, e.getMessage())
 		}
 		return apiResponse
 	}
@@ -410,7 +410,7 @@ class AaiUtil {
 	 * @return APIResponse
 	 *
 	 */
-	public APIResponse executeAAIDeleteCall(Execution execution, String url){
+	public APIResponse executeAAIDeleteCall(DelegateExecution execution, String url){
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		taskProcessor.logDebug( " ======== Started Execute AAI Delete Process ======== ", isDebugEnabled)
 		APIResponse apiResponse = null
@@ -431,7 +431,7 @@ class AaiUtil {
 			taskProcessor.logDebug( "======== Completed Execute AAI Delete Process ======== ", isDebugEnabled)
 		}catch(Exception e){
 			taskProcessor.utils.log("ERROR", "Exception occured while executing AAI Delete Call. Exception is: \n" + e, isDebugEnabled)
-			throw new BpmnError("MSOWorkflowException")
+			(new ExceptionUtil()).buildAndThrowWorkflowException(execution, 9999, e.getMessage())
 		}
 		return apiResponse
 	}
@@ -448,7 +448,7 @@ class AaiUtil {
 	 * @return APIResponse
 	 *
 	 */
-	public APIResponse executeAAIDeleteCall(Execution execution, String url, String payload, String authHeader){
+	public APIResponse executeAAIDeleteCall(DelegateExecution execution, String url, String payload, String authHeader){
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		taskProcessor.logDebug( " ======== Started Execute AAI Delete Process ======== ", isDebugEnabled)
 		APIResponse apiResponse = null
@@ -469,7 +469,7 @@ class AaiUtil {
 			taskProcessor.logDebug( "======== Completed Execute AAI Delete Process ======== ", isDebugEnabled)
 		}catch(Exception e){
 			taskProcessor.utils.log("ERROR", "Exception occured while executing AAI Delete Call. Exception is: \n" + e, isDebugEnabled)
-			throw new BpmnError("MSOWorkflowException")
+			(new ExceptionUtil()).buildAndThrowWorkflowException(execution, 9999, e.getMessage())
 		}
 		return apiResponse
 	}
@@ -486,7 +486,7 @@ class AaiUtil {
 	 * @return APIResponse
 	 *
 	 */
-	public APIResponse executeAAIPostCall(Execution execution, String url, String payload){
+	public APIResponse executeAAIPostCall(DelegateExecution execution, String url, String payload){
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		taskProcessor.logDebug( " ======== Started Execute AAI Post Process ======== ", isDebugEnabled)
 		APIResponse apiResponse = null
@@ -507,7 +507,7 @@ class AaiUtil {
 			taskProcessor.logDebug( "======== Completed Execute AAI Post Process ======== ", isDebugEnabled)
 		}catch(Exception e){
 			taskProcessor.utils.log("ERROR", "Exception occured while executing AAI Post Call. Exception is: \n" + e, isDebugEnabled)
-			throw new BpmnError("MSOWorkflowException")
+			(new ExceptionUtil()).buildAndThrowWorkflowException(execution, 9999, e.getMessage())
 		}
 		return apiResponse
 	}
@@ -527,7 +527,7 @@ class AaiUtil {
 	 * @return APIResponse
 	 *
 	 */
-	public APIResponse executeAAIPostCall(Execution execution, String url, String payload, String authenticationHeaderValue, String headerName, String headerValue){
+	public APIResponse executeAAIPostCall(DelegateExecution execution, String url, String payload, String authenticationHeaderValue, String headerName, String headerValue){
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		taskProcessor.logDebug( " ======== Started Execute AAI Post Process ======== ", isDebugEnabled)
 		APIResponse apiResponse = null
@@ -546,7 +546,7 @@ class AaiUtil {
 			taskProcessor.logDebug( "======== Completed Execute AAI Post Process ======== ", isDebugEnabled)
 		}catch(Exception e){
 			taskProcessor.utils.log("ERROR", "Exception occured while executing AAI Post Call. Exception is: \n" + e, isDebugEnabled)
-			throw new BpmnError("MSOWorkflowException")
+			(new ExceptionUtil()).buildAndThrowWorkflowException(execution, 9999, e.getMessage())
 		}
 		return apiResponse
 	}
@@ -559,7 +559,7 @@ class AaiUtil {
 	 * @param backend - "PO" - real region, or "SDNC" - v2.5 (fake region).
 	 */
 
-	public String getAAICloudReqion(Execution execution, String url, String backend, inputCloudRegion){
+	public String getAAICloudReqion(DelegateExecution execution, String url, String backend, inputCloudRegion){
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		String regionId = ""
 		try{
@@ -600,7 +600,7 @@ class AaiUtil {
 			}
 		}catch(Exception e) {
 			taskProcessor.utils.log("ERROR", "Exception occured while getting the Cloud Reqion. Exception is: \n" + e, isDebugEnabled)
-			throw new BpmnError("MSOWorkflowException")
+			(new ExceptionUtil()).buildAndThrowWorkflowException(execution, 9999, e.getMessage())
 		}
 		return regionId
 	}
@@ -631,7 +631,7 @@ class AaiUtil {
 	 * @return moduleIndex
 	 *
 	 */
-	public int getLowestUnusedVfModuleIndexFromAAIVnfResponse(Execution execution, String aaiVnfResponse, String key, String value) {
+	public int getLowestUnusedVfModuleIndexFromAAIVnfResponse(DelegateExecution execution, String aaiVnfResponse, String key, String value) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		if (aaiVnfResponse != null) {
 			String vfModulesText = taskProcessor.utils.getNodeXml(aaiVnfResponse, "vf-modules")

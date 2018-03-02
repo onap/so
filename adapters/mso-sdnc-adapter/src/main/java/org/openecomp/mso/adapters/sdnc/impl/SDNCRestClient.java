@@ -142,7 +142,7 @@ public class SDNCRestClient implements Runnable {
 		DataOutputStream out = null;
 		BufferedReader in = null;
 		SDNCResponse sdncResp = new SDNCResponse(rt.getReqId());
-		StringBuffer response = new StringBuffer();
+		StringBuilder response = new StringBuilder();
 
 		msoLogger.info(MessageEnum.RA_SEND_REQUEST_SDNC, rt.toString(), "SDNC", "");
 		msoLogger.debug("SDNC Request Body:\n" + sdncReqBody);
@@ -197,7 +197,7 @@ public class SDNCRestClient implements Runnable {
 			//default
 			sdncResp.setRespCode(HttpURLConnection.HTTP_INTERNAL_ERROR);
 			String respMsg = "Error processing request to SDNC. ";
-			String sdncErrMsg = "";
+			StringBuilder sdncErrMsg = new StringBuilder();
 
 			if (e instanceof java.net.SocketTimeoutException )
 			{
@@ -229,7 +229,7 @@ public class SDNCRestClient implements Runnable {
 								String eType = null;
 								try {
 									eType = xpath.evaluate("error-type", error);
-									sdncErrMsg = ". SDNC Returned-[error-type:" + eType;
+									sdncErrMsg = new StringBuilder(". SDNC Returned-[error-type:" + eType);
 								} catch (Exception e3) {
 								    msoLogger.error (MessageEnum.RA_EVALUATE_XPATH_ERROR, "error-type", error.toString(), "SDNC", "", MsoLogger.ErrorCode.DataError, "Exception while evaluate xpath", e3);
 								}
@@ -237,7 +237,7 @@ public class SDNCRestClient implements Runnable {
 								String eTag = null;
 								try {
 									eTag = xpath.evaluate( "error-tag", error);
-									sdncErrMsg = sdncErrMsg + ", error-tag:" + eTag;
+									sdncErrMsg.append(", error-tag:").append(eTag);
 								} catch (Exception e3) {
 									msoLogger.error (MessageEnum.RA_EVALUATE_XPATH_ERROR, "error-tag", error.toString(), "SDNC", "", MsoLogger.ErrorCode.DataError, "Exception while evaluate xpath", e3);
 								}
@@ -245,7 +245,7 @@ public class SDNCRestClient implements Runnable {
 								String eMsg = null;
 								try {
 									eMsg = xpath.evaluate("error-message", error);
-									sdncErrMsg = sdncErrMsg + ", error-message:" + eMsg + "]";
+									sdncErrMsg.append(", error-message:").append(eMsg).append("]");
 								} catch (Exception e3) {
 									msoLogger.error (MessageEnum.RA_EVALUATE_XPATH_ERROR, "error-message", error.toString(), "SDNC", "", MsoLogger.ErrorCode.DataError, "Exception while evaluate xpath", e3);
 								}

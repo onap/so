@@ -25,7 +25,7 @@ import org.json.JSONObject;
 import org.json.JSONArray;
 
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution;
+import org.camunda.bpm.engine.delegate.DelegateExecution;
 
 import static org.apache.commons.lang3.StringUtils.*;
 
@@ -55,7 +55,7 @@ class DoCreateVnfAndModulesRollback extends AbstractServiceTaskProcessor {
 	 * @param - execution
 	 *
 	 */
-	public void preProcessRequest(Execution execution) {
+	public void preProcessRequest(DelegateExecution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		utils.log("DEBUG", " *** STARTED DoCreateVnfAndModulesRollback PreProcessRequest Process*** ", isDebugEnabled)
@@ -117,7 +117,10 @@ class DoCreateVnfAndModulesRollback extends AbstractServiceTaskProcessor {
 			}
 			else {
 				execution.setVariable("DCVAMR_numOfModulesToDelete", numOfAddOnModules + 1)				
-			}			
+			}
+			
+			// Set aLaCarte to false
+			execution.setVariable("DCVAMR_aLaCarte", false)			
 			
 		}catch(BpmnError b){
 			utils.log("DEBUG", "Rethrowing MSOWorkflowException", isDebugEnabled)
@@ -132,7 +135,7 @@ class DoCreateVnfAndModulesRollback extends AbstractServiceTaskProcessor {
 
 	
 	
-	public void preProcessCreateVfModuleRollback(Execution execution){
+	public void preProcessCreateVfModuleRollback(DelegateExecution execution){
 		def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 		logDebug(" ======== STARTED preProcessCreateVfModuleRollback ======== ", isDebugLogEnabled)
@@ -167,7 +170,7 @@ class DoCreateVnfAndModulesRollback extends AbstractServiceTaskProcessor {
 	}
 	
 	
-	public void postProcessCreateVfModuleRollback(Execution execution){
+	public void postProcessCreateVfModuleRollback(DelegateExecution execution){
 		def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 		logDebug(" ======== STARTED postProcessCreateVfModuleRollback ======== ", isDebugLogEnabled)
@@ -190,7 +193,7 @@ class DoCreateVnfAndModulesRollback extends AbstractServiceTaskProcessor {
 	}
 	
 	
-	public void preProcessSDNCDeactivateRequest(Execution execution){
+	public void preProcessSDNCDeactivateRequest(DelegateExecution execution){
 		def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 		logDebug(" ======== STARTED preProcessSDNCDeactivateRequest ======== ", isDebugLogEnabled)
@@ -214,7 +217,7 @@ class DoCreateVnfAndModulesRollback extends AbstractServiceTaskProcessor {
 		logDebug("======== COMPLETED preProcessSDNCDeactivateRequest ======== ", isDebugLogEnabled)
 	}
 	
-	public void preProcessSDNCUnassignRequest(Execution execution) {
+	public void preProcessSDNCUnassignRequest(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.preProcessSDNCUnassignRequest(' +
 			'execution=' + execution.getId() +
 			')'
@@ -239,7 +242,7 @@ class DoCreateVnfAndModulesRollback extends AbstractServiceTaskProcessor {
 		logDebug("======== COMPLETED  preProcessSDNCUnassignRequest Process ======== ", isDebugLogEnabled)
 	}
 	
-	public String buildSDNCRequest(Execution execution, String svcInstId, String action){
+	public String buildSDNCRequest(DelegateExecution execution, String svcInstId, String action){
 		
 				String uuid = execution.getVariable('testReqId') // for junits
 				if(uuid==null){
@@ -296,7 +299,7 @@ class DoCreateVnfAndModulesRollback extends AbstractServiceTaskProcessor {
 			return sdncRequest
 	}
 		
-	public void validateSDNCResponse(Execution execution, String response, String method){
+	public void validateSDNCResponse(DelegateExecution execution, String response, String method){
 		def isDebugLogEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		logDebug(" *** STARTED ValidateSDNCResponse Process*** ", isDebugLogEnabled)
@@ -321,7 +324,7 @@ class DoCreateVnfAndModulesRollback extends AbstractServiceTaskProcessor {
 		logDebug(" *** COMPLETED ValidateSDNCResponse Process*** ", isDebugLogEnabled)
 	}
 	
-	public void setSuccessfulRollbackStatus (Execution execution){
+	public void setSuccessfulRollbackStatus (DelegateExecution execution){
 		def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 		logDebug(" ======== STARTED setSuccessfulRollbackStatus ======== ", isDebugLogEnabled)
@@ -338,7 +341,7 @@ class DoCreateVnfAndModulesRollback extends AbstractServiceTaskProcessor {
 		logDebug("======== COMPLETED setSuccessfulRollbackStatus ======== ", isDebugLogEnabled)
 	}
 	
-	public void setFailedRollbackStatus (Execution execution){
+	public void setFailedRollbackStatus (DelegateExecution execution){
 		def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 		logDebug(" ======== STARTED setFailedRollbackStatus ======== ", isDebugLogEnabled)

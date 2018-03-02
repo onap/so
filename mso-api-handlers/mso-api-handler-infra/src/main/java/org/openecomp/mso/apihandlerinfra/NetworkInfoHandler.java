@@ -5,7 +5,7 @@ package org.openecomp.mso.apihandlerinfra;
  * #%L
  * MSO
  * %%
- * Copyright (C) 2016 OPENECOMP - MSO
+ * Copyright (C) 2016 ONAP - SO
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -295,8 +295,8 @@ public class NetworkInfoHandler {
 
     private String translateNetworkRequests (List <NetworkRequest> queryResponseList) {
         NetworkRequests queryResponses = new NetworkRequests ();
-        for (int i = 0; i < queryResponseList.size (); i++) {
-            queryResponses.getNetworkRequest ().add (queryResponseList.get (i));
+        for (NetworkRequest aQueryResponseList : queryResponseList) {
+            queryResponses.getNetworkRequest().add(aQueryResponseList);
         }
 
         StringWriter stringWriter = new StringWriter ();

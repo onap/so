@@ -29,6 +29,7 @@ import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetServiceInstance
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockNodeQueryServiceInstanceById;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockNodeQueryServiceInstanceByName;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPutServiceInstance;
+import static org.openecomp.mso.bpmn.mock.StubResponseDatabase.MockGetServiceResourcesCatalogData;
 import static org.openecomp.mso.bpmn.mock.StubResponseDatabase.mockUpdateRequestDB;
 import static org.openecomp.mso.bpmn.mock.StubResponseSDNCAdapter.mockSDNCAdapter;
 
@@ -64,6 +65,7 @@ public class CreateGenericALaCarteServiceInstanceTest extends WorkflowTest {
 	@Test
 	@Deployment(resources = {
 			"process/CreateGenericALaCarteServiceInstance.bpmn",
+			"subprocess/BuildingBlock/DecomposeService.bpmn",
 			"subprocess/DoCreateServiceInstance.bpmn",
 			"subprocess/DoCreateServiceInstanceRollback.bpmn",
 			"subprocess/SDNCAdapterV1.bpmn",
@@ -84,7 +86,9 @@ public class CreateGenericALaCarteServiceInstanceTest extends WorkflowTest {
 		//SDNC
 		mockSDNCAdapter(200);
 		//DB
+		MockGetServiceResourcesCatalogData("uuid-miu-svc-011-abcdef","2","/VIPR/getCatalogServiceResourcesData.json");
 		mockUpdateRequestDB(200, "DBUpdateResponse.xml");
+		MockGetServiceResourcesCatalogData("uuid-miu-svc-011-abcdef","InfrastructureFlows/DoCreateServiceInstance_request.json");
 
 
 		String businessKey = UUID.randomUUID().toString();
@@ -118,11 +122,13 @@ public class CreateGenericALaCarteServiceInstanceTest extends WorkflowTest {
 		variables.put("bpmnRequest", getRequest());
 		variables.put("mso-request-id", "RaaCSIRequestId-1");
 		variables.put("serviceInstanceId","RaaTest-1-id");
+		variables.put("sdncVersion", "1802");
+		variables.put("serviceInstanceName", "some-junk-name");
 		return variables;
 	}
 
 	public String getRequest() {
-		String request = "{\"requestDetails\":{\"modelInfo\":{\"modelType\":\"service\",\"modelInvariantUuid\":\"uuid-miu-svc-011-abcdef\",\"modelVersionUuid\":\"ASDC_TOSCA_UUID\",\"modelName\":\"SIModelName1\",\"modelVersion\":\"2\"},\"subscriberInfo\":{\"globalSubscriberId\":\"MCBH-1610\",\"subscriberName\":\"Kaneohe\"},\"requestInfo\":{\"instanceName\":\"RAATest-1\",\"source\":\"VID\",\"suppressRollback\":\"true\",\"productFamilyId\":\"a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb\"},\"cloudConfiguration\":{\"lcpCloudRegionId\":\"mdt1\",\"tenantId\":\"8b1df54faa3b49078e3416e21370a3ba\"},\"requestParameters\":{\"subscriptionServiceType\":\"viprsvc\",\"aLaCarte\":\"false\",\"userParams\":[]}}}";
+		String request = "{\"requestDetails\":{\"project\": {\"projectName\": \"projectName\"},\"owningEntity\": {\"owningEntityId\": \"randomStrings\",\"owningEntityName\": \"randomStrings\"},\"modelInfo\":{\"modelType\":\"service\",\"modelInvariantUuid\":\"uuid-miu-svc-011-abcdef\",\"modelVersionUuid\":\"ASDC_TOSCA_UUID\",\"modelName\":\"SIModelName1\",\"modelVersion\":\"2\"},\"subscriberInfo\":{\"globalSubscriberId\":\"MCBH-1610\",\"subscriberName\":\"Kaneohe\"},\"requestInfo\":{\"instanceName\":\"RAATest-1\",\"source\":\"VID\",\"suppressRollback\":\"true\",\"productFamilyId\":\"a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb\"},\"cloudConfiguration\":{\"lcpCloudRegionId\":\"mdt1\",\"tenantId\":\"8b1df54faa3b49078e3416e21370a3ba\"},\"requestParameters\":{\"subscriptionServiceType\":\"viprsvc\",\"aLaCarte\":\"false\",\"userParams\":[]}}}";
 		return request;
 	}
 

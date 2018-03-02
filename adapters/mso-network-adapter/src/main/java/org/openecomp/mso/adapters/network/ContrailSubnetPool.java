@@ -22,7 +22,7 @@ package org.openecomp.mso.adapters.network;
 
 
 import org.openecomp.mso.openstack.beans.Pool;
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 public class ContrailSubnetPool {
 	
 	@JsonProperty("network_ipam_refs_data_ipam_subnets_allocation_pools_start")

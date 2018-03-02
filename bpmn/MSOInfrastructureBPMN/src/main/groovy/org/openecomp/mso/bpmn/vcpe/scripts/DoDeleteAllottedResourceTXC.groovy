@@ -30,7 +30,7 @@ import org.openecomp.mso.rest.APIResponse
 
 import java.util.UUID;
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.apache.commons.lang3.*
 import org.springframework.web.util.UriUtils;
 import static org.apache.commons.lang3.StringUtils.*
@@ -65,7 +65,7 @@ public class DoDeleteAllottedResourceTXC extends AbstractServiceTaskProcessor{
 	String Prefix="DDARTXC_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 
-	public void preProcessRequest (Execution execution) {
+	public void preProcessRequest (DelegateExecution execution) {
 
 		def isDebugEnabled = execution.getVariable(DebugFlag)
 		String msg = ""
@@ -107,7 +107,7 @@ public class DoDeleteAllottedResourceTXC extends AbstractServiceTaskProcessor{
 		utils.log("DEBUG"," ***** Exit preProcessRequest *****",  isDebugEnabled)
 	}
 
-	public void getAaiAR (Execution execution) {
+	public void getAaiAR (DelegateExecution execution) {
 
 		def isDebugEnabled = execution.getVariable(DebugFlag)
 		utils.log("DEBUG"," ***** getAaiAR ***** ", isDebugEnabled)
@@ -137,7 +137,7 @@ public class DoDeleteAllottedResourceTXC extends AbstractServiceTaskProcessor{
 	}
 
 	// aaiARPath set during query (existing AR)
-	public void updateAaiAROrchStatus(Execution execution, String status){
+	public void updateAaiAROrchStatus(DelegateExecution execution, String status){
 		def isDebugEnabled = execution.getVariable(DebugFlag)
 		utils.log("DEBUG", " *** updateAaiAROrchStatus *** ", isDebugEnabled)
 		AllottedResourceUtils arUtils = new AllottedResourceUtils(this)
@@ -146,7 +146,7 @@ public class DoDeleteAllottedResourceTXC extends AbstractServiceTaskProcessor{
 		utils.log("DEBUG", " *** Exit updateAaiAROrchStatus *** ", isDebugEnabled)
 	}
 
-	public String buildSDNCRequest(Execution execution, String action, String sdncRequestId) {
+	public String buildSDNCRequest(DelegateExecution execution, String action, String sdncRequestId) {
 
 		def isDebugEnabled = execution.getVariable(DebugFlag)
 		String msg = ""
@@ -200,7 +200,7 @@ public class DoDeleteAllottedResourceTXC extends AbstractServiceTaskProcessor{
 					<service-information>
 						<service-id></service-id>
 						<subscription-service-type>${subscriptionServiceType}</subscription-service-type>
-						<onap-model-information></onap-model-information>
+						<ecomp-model-information></ecomp-model-information>
 						<service-instance-id>${serviceInstanceId}</service-instance-id>
 						<subscriber-name/>
 						<global-customer-id>${globalCustomerId}</global-customer-id>
@@ -209,13 +209,13 @@ public class DoDeleteAllottedResourceTXC extends AbstractServiceTaskProcessor{
 						<allotted-resource-id>${allottedResourceId}</allotted-resource-id>    
 						<allotted-resource-type>tunnelxconn</allotted-resource-type>
 						<parent-service-instance-id>${parentServiceInstanceId}</parent-service-instance-id>   
-						<onap-model-information>
+						<ecomp-model-information>
 							<model-invariant-uuid>${modelInvariantId}</model-invariant-uuid>
 							<model-uuid>${modelUUId}</model-uuid>
 							<model-customization-uuid>${modelCustomizationId}</model-customization-uuid>
 							<model-version>${modelVersion}</model-version>
 							<model-name>${modelName}</model-name>
-						</onap-model-information>
+						</ecomp-model-information>
 					</allotted-resource-information>
 					<tunnelxconn-request-input>
 					</tunnelxconn-request-input>
@@ -234,7 +234,7 @@ public class DoDeleteAllottedResourceTXC extends AbstractServiceTaskProcessor{
 		return sdncReq
 	}
 
-	public void preProcessSDNCUnassign(Execution execution) {
+	public void preProcessSDNCUnassign(DelegateExecution execution) {
 
 		def isDebugEnabled = execution.getVariable(DebugFlag)
 		String msg = ""
@@ -255,7 +255,7 @@ public class DoDeleteAllottedResourceTXC extends AbstractServiceTaskProcessor{
 		utils.log("DEBUG"," *****Exit preProcessSDNCUnassign *****", isDebugEnabled)
 	}
 
-	public void preProcessSDNCDelete(Execution execution) {
+	public void preProcessSDNCDelete(DelegateExecution execution) {
 
 		def isDebugEnabled = execution.getVariable(DebugFlag)
 		String msg = ""
@@ -276,7 +276,7 @@ public class DoDeleteAllottedResourceTXC extends AbstractServiceTaskProcessor{
 		utils.log("DEBUG"," *****Exit preProcessSDNCDelete *****", isDebugEnabled)
 	}
 
-	public void preProcessSDNCDeactivate(Execution execution) {
+	public void preProcessSDNCDeactivate(DelegateExecution execution) {
 
 		def isDebugEnabled = execution.getVariable(DebugFlag)
 		String msg = ""
@@ -297,7 +297,7 @@ public class DoDeleteAllottedResourceTXC extends AbstractServiceTaskProcessor{
 		utils.log("DEBUG"," *****Exit preProcessSDNCDeactivate *****", isDebugEnabled)
 	}
 
-	public void validateSDNCResp(Execution execution, String response, String method){
+	public void validateSDNCResp(DelegateExecution execution, String response, String method){
 
 		def isDebugLogEnabled=execution.getVariable(DebugFlag)
 		utils.log("DEBUG", " *** ValidateSDNCResponse Process*** ", isDebugLogEnabled)
@@ -348,7 +348,7 @@ public class DoDeleteAllottedResourceTXC extends AbstractServiceTaskProcessor{
 		logDebug(" *** Exit ValidateSDNCResp Process*** ", isDebugLogEnabled)
 	}
 
-	public void deleteAaiAR(Execution execution){
+	public void deleteAaiAR(DelegateExecution execution){
 		def isDebugLogEnabled = execution.getVariable(DebugFlag)
 		try{
 			utils.log("DEBUG", " *** deleteAaiAR *** ", isDebugLogEnabled)

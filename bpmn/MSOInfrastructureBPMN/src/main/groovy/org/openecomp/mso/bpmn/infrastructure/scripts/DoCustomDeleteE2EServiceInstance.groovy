@@ -35,12 +35,13 @@ import org.openecomp.mso.rest.APIResponse;
 import org.openecomp.mso.rest.RESTClient
 import org.openecomp.mso.rest.RESTConfig
 
+import java.util.List;
 import java.util.UUID;
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.json.JSONObject;
 import org.apache.commons.lang3.*
 import org.apache.commons.codec.binary.Base64;
@@ -78,7 +79,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
 
-	public void preProcessRequest (Execution execution) {
+	public void preProcessRequest (DelegateExecution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO"," ***** preProcessRequest *****",  isDebugEnabled)
 		String msg = ""
@@ -154,13 +155,13 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 	}
 	
 
-	public void preProcessVFCDelete (Execution execution) {
+	public void preProcessVFCDelete (DelegateExecution execution) {
 	}
 	
-	public void postProcessVFCDelete(Execution execution, String response, String method) {
+	public void postProcessVFCDelete(DelegateExecution execution, String response, String method) {
 	}
 	
-	public void preProcessSDNCDelete (Execution execution) {
+	public void preProcessSDNCDelete (DelegateExecution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO"," ***** preProcessSDNCDelete *****", isDebugEnabled)
 		String msg = ""
@@ -274,7 +275,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 		utils.log("INFO"," *****Exit preProcessSDNCDelete *****", isDebugEnabled)
 	}
 
-	public void postProcessSDNCDelete(Execution execution, String response, String method) {
+	public void postProcessSDNCDelete(DelegateExecution execution, String response, String method) {
 
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO"," ***** postProcessSDNC " + method + " *****", isDebugEnabled)
@@ -306,7 +307,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 		utils.log("INFO"," *** Exit postProcessSDNC " + method + " ***", isDebugEnabled)
 	}
 
-	public void postProcessAAIGET(Execution execution) {
+	public void postProcessAAIGET(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO"," ***** postProcessAAIGET ***** ", isDebugEnabled)
 		String msg = ""
@@ -438,7 +439,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 		utils.log("INFO"," *** Exit postProcessAAIGET *** ", isDebugEnabled)
 	}
 
-	public void postProcessAAIDEL(Execution execution) {
+	public void postProcessAAIDEL(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO"," ***** postProcessAAIDEL ***** ", isDebugEnabled)
 		String msg = ""
@@ -468,7 +469,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 		utils.log("INFO"," *** Exit postProcessAAIDEL *** ", isDebugEnabled)
 	}
 	
-	public void preInitResourcesOperStatus(Execution execution){
+   public void preInitResourcesOperStatus(DelegateExecution execution){
         def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 
         utils.log("INFO", " ======== STARTED preInitResourcesOperStatus Process ======== ", isDebugEnabled)
@@ -516,7 +517,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
                     resourceTemplateUUIDs  = resourceTemplateUUIDs + it.resourceInstanceId + ":"
                 }
             }           
-            execution.setVariable("URN_mso_openecomp_adapters_db_endpoint","http://mso.mso.testlab.openecomp.org:8080/dbadapters/RequestsDbAdapter")
+            execution.setVariable("URN_mso_adapters_openecomp_db_endpoint","http://mso.mso.testlab.openecomp.org:8080/dbadapters/RequestsDbAdapter")
 
             String payload =
                 """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
@@ -589,5 +590,72 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
        }    
        utils.log("INFO", " ======== END preResourceDelete Process ======== ", isDebugEnabled)
    }
+   
+   public void sequenceResource(execution){
+       def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
+
+       utils.log("INFO", " ======== STARTED sequenceResource Process ======== ", isDebugEnabled)
+       List<String> nsResources = new ArrayList<String>()
+       List<String> wanResources = new ArrayList<String>()
+       List<String> resourceSequence = new  ArrayList<String>()
+       
+       String serviceRelationShip = execution.getVariable("serviceRelationShip")
+               
+       
+       def jsonSlurper = new JsonSlurper()
+       def jsonOutput = new JsonOutput()         
+       List relationShipList =  jsonSlurper.parseText(serviceRelationShip)
+               
+       if (relationShipList != null) {
+           relationShipList.each {
+               if(StringUtils.containsIgnoreCase(it.resourceType, "overlay") || StringUtils.containsIgnoreCase(it.resourceType, "underlay")){
+                   wanResources.add(it.resourceType)
+               }else{
+                   nsResources.add(it.resourceType)
+               }
+           }
+       }     
+       resourceSequence.addAll(wanResources)
+       resourceSequence.addAll(nsResources)
+       String isContainsWanResource = wanResources.isEmpty() ? "false" : "true"
+       execution.setVariable("isContainsWanResource", isContainsWanResource)
+       execution.setVariable("currentResourceIndex", 0)
+       execution.setVariable("resourceSequence", resourceSequence)
+       utils.log("INFO", "resourceSequence: " + resourceSequence, isDebugEnabled)  
+       execution.setVariable("wanResources", wanResources)
+       utils.log("INFO", " ======== END sequenceResource Process ======== ", isDebugEnabled)
+   }
+   
+   public void getCurrentResource(execution){
+       def isDebugEnabled=execution.getVariable("isDebugLogEnabled")   
+       utils.log("INFO", "======== Start getCurrentResoure Process ======== ", isDebugEnabled)    
+       def currentIndex = execution.getVariable("currentResourceIndex")
+       List<String> resourceSequence = execution.getVariable("resourceSequence")  
+       List<String> wanResources = execution.getVariable("wanResources")  
+       String resourceName =  resourceSequence.get(currentIndex)
+       execution.setVariable("resourceType",resourceName)
+       if(wanResources.contains(resourceName)){
+           execution.setVariable("controllerInfo", "SDN-C")
+       }else{
+           execution.setVariable("controllerInfo", "VF-C")
+       }
+       utils.log("INFO", "======== COMPLETED getCurrentResoure Process ======== ", isDebugEnabled)  
+   }
+   
+   public void parseNextResource(execution){
+       def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+       utils.log("INFO", "======== Start parseNextResource Process ======== ", isDebugEnabled)    
+       def currentIndex = execution.getVariable("currentResourceIndex")
+       def nextIndex =  currentIndex + 1
+       execution.setVariable("currentResourceIndex", nextIndex)
+       List<String> resourceSequence = execution.getVariable("resourceSequence")    
+       if(nextIndex >= resourceSequence.size()){
+           execution.setVariable("allResourceFinished", "true")
+       }else{
+           execution.setVariable("allResourceFinished", "false")
+       }
+       utils.log("INFO", "======== COMPLETED parseNextResource Process ======== ", isDebugEnabled)            
+   }
+   
 }
  

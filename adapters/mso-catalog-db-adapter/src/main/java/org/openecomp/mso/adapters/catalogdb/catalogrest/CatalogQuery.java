@@ -21,7 +21,7 @@
 package org.openecomp.mso.adapters.catalogdb.catalogrest;
 
 import org.openecomp.mso.logger.MsoLogger;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Map;
 import java.util.regex.Matcher;

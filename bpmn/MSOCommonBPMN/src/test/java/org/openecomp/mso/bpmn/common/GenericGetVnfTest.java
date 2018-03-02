@@ -52,7 +52,7 @@ public class GenericGetVnfTest extends WorkflowTest {
 	public void testGenericGetVnf_success_genericVnf() throws Exception{
 		MockGetGenericVnfByIdWithDepth("testVnfId123", 1, "GenericFlows/getGenericVnfByNameResponse.xml");
 
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		setVariables(variables, "testVnfId123", "testVnfName123", "generic-vnf");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericGetVnf", variables);
@@ -79,7 +79,7 @@ public class GenericGetVnfTest extends WorkflowTest {
 	public void testGenericGetVnf_success_vce() throws Exception{
 		MockGetVceById("testVnfId123[?]depth=1", "GenericFlows/getVceResponse.xml");
 
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		setVariables(variables, "testVnfId123", "testVnfName123", "vce");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericGetVnf", variables);
@@ -106,7 +106,7 @@ public class GenericGetVnfTest extends WorkflowTest {
 	public void testGenericGetVnf_success_genericVnfByName() throws Exception{
 		MockGetGenericVnfByNameWithDepth("testVnfName123", 1, "GenericFlows/getGenericVnfResponse.xml");
 
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		setVariables(variables, "", "testVnfName123", "generic-vnf");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericGetVnf", variables);
@@ -133,7 +133,7 @@ public class GenericGetVnfTest extends WorkflowTest {
 	public void testGenericGetVnf_success_vceByName() throws Exception{
 		MockGetGenericVceByNameWithDepth("testVnfName123", 1, "GenericFlows/getVceByNameResponse.xml");
 
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		setVariables(variables, null, "testVnfName123", "vce");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericGetVnf", variables);
@@ -162,7 +162,7 @@ public class GenericGetVnfTest extends WorkflowTest {
 
 		MockGetGenericVnfById_500("testVnfId123");
 
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		setVariables(variables, "testVnfId123", "testVnfName123", "generic-vnf");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericGetVnf", variables);

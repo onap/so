@@ -21,29 +21,17 @@ package org.openecomp.mso.apihandlerinfra;
 
 import static org.junit.Assert.assertEquals;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.HashMap;
 
-import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpStatus;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.openecomp.mso.HealthCheckUtils;
 import org.openecomp.mso.apihandler.common.ValidationException;
-import org.openecomp.mso.requestsdb.InfraActiveRequests;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.Request;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.ServiceInstancesRequest;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 public class ServiceInstancesTest {
 

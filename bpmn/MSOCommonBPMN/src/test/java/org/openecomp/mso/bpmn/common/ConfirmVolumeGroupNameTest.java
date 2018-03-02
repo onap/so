@@ -51,7 +51,7 @@ public class ConfirmVolumeGroupNameTest extends WorkflowTest {
 		System.out.println("Before starting process");
 		
 		RuntimeService runtimeService = processEngineRule.getRuntimeService();				
-		Map<String, Object> variables = new HashMap<String, Object>();		
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("isDebugLogEnabled","true");
 		variables.put("ConfirmVolumeGroupName_volumeGroupId", "VOLUME_GROUP_ID_1");
 		variables.put("ConfirmVolumeGroupName_volumeGroupName", "VOLUME_GROUP_ID_1_NAME");
@@ -83,7 +83,7 @@ public class ConfirmVolumeGroupNameTest extends WorkflowTest {
 		System.out.println("Before starting process");
 		
 		RuntimeService runtimeService = processEngineRule.getRuntimeService();				
-		Map<String, Object> variables = new HashMap<String, Object>();		
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("isDebugLogEnabled","true");
 		variables.put("ConfirmVolumeGroupName_volumeGroupId", "VOLUME_GROUP_ID_THAT_DOES_NOT_EXIST");
 		variables.put("ConfirmVolumeGroupName_volumeGroupName", "cee6d136-e378-4678-a024-2cd15f0ee0cg");
@@ -116,7 +116,7 @@ public class ConfirmVolumeGroupNameTest extends WorkflowTest {
 		System.out.println("Before starting process");
 		
 		RuntimeService runtimeService = processEngineRule.getRuntimeService();				
-		Map<String, Object> variables = new HashMap<String, Object>();		
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("isDebugLogEnabled","true");
 		variables.put("ConfirmVolumeGroupName_volumeGroupId", "VOLUME_GROUP_ID_1");
 		variables.put("ConfirmVolumeGroupName_volumeGroupName", "BAD_VOLUME_GROUP_NAME");

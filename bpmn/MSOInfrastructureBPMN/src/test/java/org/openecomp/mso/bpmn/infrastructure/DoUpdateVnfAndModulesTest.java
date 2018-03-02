@@ -153,7 +153,7 @@ public class DoUpdateVnfAndModulesTest extends WorkflowTest {
 		//variables.put("testVnfId","testVnfId123");
 		variables.put("vnfType", "STMTN");
 		variables.put("vnfId", "skask");
-		variables.put("tenantId", "88a6ca3ee0394ade9403f075db23167e");
+		variables.put("tenantId", "fba1bd1e195a404cacb9ce17a9b2b421");
 		variables.put("lcpCloudRegionId", "mdt1");
 		
 		String serviceModelInfo = "{ "+ "\"modelType\": \"service\"," +

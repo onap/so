@@ -44,15 +44,14 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 
 @Path("/tasks")
 public class ManualTasks {
 	private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH);
 	private static MsoAlarmLogger alarmLogger = new MsoAlarmLogger ();
-	public final static String MSO_PROP_APIHANDLER_INFRA = "MSO_PROP_APIHANDLER_INFRA";	
 	
 	@POST
 	@Path("/{version:[vV]1}/{taskId}/complete")
@@ -91,7 +90,7 @@ public class ManualTasks {
 					"Mapping of request to JSON object failed.  " + e.getMessage(),
 					ErrorNumbers.SVC_BAD_PARAMETER, null);
 			
-			msoLogger.error (MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.SchemaError, request, e);
+			msoLogger.error (MessageEnum.APIH_REQUEST_VALIDATION_ERROR, Constants.MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.SchemaError, request, e);
 			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.SchemaError, "Mapping of request to JSON object failed");
 			msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
 			return response;
@@ -112,7 +111,7 @@ public class ManualTasks {
 		String camundaJsonReq = null;
 		try {
 			ObjectMapper mapper = new ObjectMapper();
-			mapper.configure(SerializationConfig.Feature.WRAP_ROOT_VALUE, true);
+			mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
 			camundaJsonReq = mapper.writeValueAsString(variablesForComplete);
 			msoLogger.debug("Camunda Json Request: " + camundaJsonReq);
 		} catch(Exception e){
@@ -121,7 +120,7 @@ public class ManualTasks {
 				"Mapping of JSON object to Camunda Request failed.  " + e.getMessage(),
 				ErrorNumbers.SVC_GENERAL_SERVICE_ERROR, null);
 		
-			msoLogger.error (MessageEnum.APIH_GENERAL_EXCEPTION, MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.UnknownError, request, e);
+			msoLogger.error (MessageEnum.APIH_GENERAL_EXCEPTION, Constants.MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.UnknownError, request, e);
 			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.InternalError, "Mapping of JSON object to Camunda request failed");
 			msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
 			return response;
@@ -155,7 +154,7 @@ public class ManualTasks {
 					MsoAlarmLogger.CRITICAL,
 					Messages.errors.get (ErrorNumbers.NO_COMMUNICATION_TO_BPEL));
 			msoRequest.updateFinalStatus (Status.FAILED);
-			msoLogger.error (MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.AvailabilityError, "Exception while communicate with BPMN engine");
+			msoLogger.error (MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, Constants.MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.AvailabilityError, "Exception while communicate with BPMN engine");
 			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, "Exception while communicate with BPMN engine");
 			msoLogger.debug ("End of the transaction, the final response is: " + (String) resp.getEntity ());
 			return resp;
@@ -169,7 +168,7 @@ public class ManualTasks {
 					ErrorNumbers.SVC_NO_SERVER_RESOURCES,
 					null);
 			msoRequest.updateFinalStatus (Status.FAILED);
-			msoLogger.error (MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Null response from BPEL");
+			msoLogger.error (MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, Constants.MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Null response from BPEL");
 			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.InternalError, "Null response from BPMN");
 			msoLogger.debug ("End of the transaction, the final response is: " + (String) resp.getEntity ());
 			return resp;
@@ -188,7 +187,7 @@ public class ManualTasks {
 			String completeResp = null;
 			try {
 				ObjectMapper mapper = new ObjectMapper();
-				mapper.configure(SerializationConfig.Feature.WRAP_ROOT_VALUE, true);
+				mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
 				completeResp = mapper.writeValueAsString(trr);
 			}
 			catch (Exception e) {

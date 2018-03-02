@@ -34,21 +34,24 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.openecomp.mso.apihandler.common.CommonConstants;
 import org.openecomp.mso.apihandler.common.ErrorNumbers;
 import org.openecomp.mso.apihandler.common.RequestClient;
 import org.openecomp.mso.apihandler.common.RequestClientFactory;
 import org.openecomp.mso.apihandler.common.ResponseHandler;
 import org.openecomp.mso.apihandler.common.ValidationException;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.ModelInfo;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.RelatedInstance;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.RelatedInstanceList;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.RequestParameters;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.RequestReferences;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.ServiceInstancesRequest;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.ServiceInstancesResponse;
+import org.openecomp.mso.serviceinstancebeans.ModelInfo;
+import org.openecomp.mso.serviceinstancebeans.ModelType;
+import org.openecomp.mso.serviceinstancebeans.RelatedInstance;
+import org.openecomp.mso.serviceinstancebeans.RelatedInstanceList;
+import org.openecomp.mso.serviceinstancebeans.RequestParameters;
+import org.openecomp.mso.serviceinstancebeans.RequestReferences;
+import org.openecomp.mso.serviceinstancebeans.ServiceInstancesRequest;
+import org.openecomp.mso.serviceinstancebeans.ServiceInstancesResponse;
 import org.openecomp.mso.db.catalog.CatalogDatabase;
 import org.openecomp.mso.db.catalog.beans.NetworkResource;
 import org.openecomp.mso.db.catalog.beans.Recipe;
@@ -62,6 +65,7 @@ import org.openecomp.mso.db.catalog.beans.VnfResourceCustomization;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoAlarmLogger;
 import org.openecomp.mso.logger.MsoLogger;
+import org.openecomp.mso.properties.MsoJavaProperties;
 import org.openecomp.mso.requestsdb.InfraActiveRequests;
 import org.openecomp.mso.requestsdb.RequestsDatabase;
 import org.openecomp.mso.utils.UUIDChecker;
@@ -76,10 +80,9 @@ public class ServiceInstances {
 	private HashMap<String, String> instanceIdMap = new HashMap<>();
 	private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH);
 	private static MsoAlarmLogger alarmLogger = new MsoAlarmLogger ();
-	public static final  String MSO_PROP_APIHANDLER_INFRA = "MSO_PROP_APIHANDLER_INFRA";
 
 	@POST
-	@Path("/{version:[vV][3-5]}")
+	@Path("/{version:[vV][4-6]}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value="Create a Service Instance on a version provided",response=Response.class)
@@ -91,12 +94,12 @@ public class ServiceInstances {
 	}
 	
 	@POST
-	@Path("/{version:[vV][5]}/{serviceInstanceId}/activate")
+	@Path("/{version:[vV][5-6]}/{serviceInstanceId}/activate")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value="Activate provided Service Instance",response=Response.class)
 	public Response activateServiceInstance(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId) {
-
+		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
 		Response response = serviceInstances(request, Action.activateInstance, instanceIdMap, version);
 
@@ -104,38 +107,153 @@ public class ServiceInstances {
 	}
 	
 	@POST
-	@Path("/{version:[vV][5]}/{serviceInstanceId}/deactivate")
+	@Path("/{version:[vV][5-6]}/{serviceInstanceId}/deactivate")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value="Deactivate provided Service Instance",response=Response.class)
 	public Response deactivateServiceInstance(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId) {
-
+		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
 		Response response = serviceInstances(request, Action.deactivateInstance, instanceIdMap, version);
 
 		return response;
 	}
 	
-
 	@DELETE
-	@Path("/{version:[vV][3-5]}/{serviceInstanceId}")
+	@Path("/{version:[vV][4-6]}/{serviceInstanceId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value="Delete provided Service Instance",response=Response.class)
 	public Response deleteServiceInstance(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId) {
-
+		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
 		Response response = serviceInstances(request, Action.deleteInstance, instanceIdMap, version);
 		return response;
 	}
+	
+	@POST
+	@Path("/{version:[vV][5-6]}/{serviceInstanceId}/configurations")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value="Create Port Mirroring Configuration",response=Response.class)
+	public Response createPortConfiguration(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId) {
+		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
+		Response response = configurationRecipeLookup(request, Action.createInstance, instanceIdMap, version);
+
+		return response;
+	}
+	
+	@DELETE
+	@Path("/{version:[vV][5-6]}/{serviceInstanceId}/configurations/{configurationInstanceId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value="Delete provided Port",response=Response.class)
+	public Response deletePortConfiguration(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
+									@PathParam("configurationInstanceId") String configurationInstanceId) {
+		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
+		instanceIdMap.put("configurationInstanceId", configurationInstanceId);
+		Response response = configurationRecipeLookup(request, Action.deleteInstance, instanceIdMap, version);
+		return response;
+	}
+	
+	@POST
+	@Path("/{version:[vV][5-6]}/{serviceInstanceId}/configurations/{configurationInstanceId}/enablePort")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value="Enable Port Mirroring",response=Response.class)
+	public Response enablePort(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
+								@PathParam("configurationInstanceId") String configurationInstanceId) {
+		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
+		instanceIdMap.put("configurationInstanceId", configurationInstanceId);
+		Response response = configurationRecipeLookup(request, Action.enablePort, instanceIdMap, version);
+
+		return response;
+	}
+	
+	@POST
+	@Path("/{version:[vV][5-6]}/{serviceInstanceId}/configurations/{configurationInstanceId}/disablePort")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value="Disable Port Mirroring",response=Response.class)
+	public Response disablePort(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
+								@PathParam("configurationInstanceId") String configurationInstanceId) {
+		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
+		instanceIdMap.put("configurationInstanceId", configurationInstanceId);
+		Response response = configurationRecipeLookup(request, Action.disablePort, instanceIdMap, version);
+
+		return response;
+	}
+	
+	@POST
+	@Path("/{version:[vV][5-6]}/{serviceInstanceId}/configurations/{configurationInstanceId}/activate")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value="Activate Port Mirroring",response=Response.class)
+	public Response activatePort(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
+								@PathParam("configurationInstanceId") String configurationInstanceId) {
+		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
+		instanceIdMap.put("configurationInstanceId", configurationInstanceId);
+		Response response = configurationRecipeLookup(request, Action.activateInstance, instanceIdMap, version);
+
+		return response;
+	}
+	
+	@POST
+	@Path("/{version:[vV][5-6]}/{serviceInstanceId}/configurations/{configurationInstanceId}/deactivate")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value="Deactivate Port Mirroring",response=Response.class)
+	public Response deactivatePort(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
+								@PathParam("configurationInstanceId") String configurationInstanceId) {
+		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
+		instanceIdMap.put("configurationInstanceId", configurationInstanceId);
+		Response response = configurationRecipeLookup(request, Action.deactivateInstance, instanceIdMap, version);
+
+		return response;
+	}
 
 	@POST
-	@Path("/{version:[vV][3-5]}/{serviceInstanceId}/vnfs")
+	@Path("/{version:[vV][6]}/{serviceInstanceId}/addRelationships")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value="Add Relationships to a Service Instance",response=Response.class)
+	public Response addRelationships(String request,  @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId) {
+		msoLogger.debug ("version is: " + version);
+		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
+		Response response = configurationRecipeLookup(request, Action.addRelationships, instanceIdMap, version);
+
+		return response;
+	}
+	
+	@POST
+	@Path("/{version:[vV][6]}/{serviceInstanceId}/removeRelationships")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value="Remove Relationships from Service Instance",response=Response.class)
+	public Response removeRelationships(String request,  @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId) {
+		msoLogger.debug ("version is: " + version);
+		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
+		Response response = configurationRecipeLookup(request, Action.removeRelationships, instanceIdMap, version);
+
+		return response;
+	}
+	
+	@POST
+	@Path("/{version:[vV][4-6]}/{serviceInstanceId}/vnfs")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value="Create VNF on a specified version and serviceInstance",response=Response.class)
 	public Response createVnfInstance(String request,  @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId) {
 		msoLogger.debug ("version is: " + version);
+		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
 		Response response = serviceInstances(request, Action.createInstance, instanceIdMap, version);
 
@@ -143,13 +261,14 @@ public class ServiceInstances {
 	}
 	
 	@POST
-	@Path("/{version:[vV][5]}/{serviceInstanceId}/vnfs/{vnfInstanceId}/replace")
+	@Path("/{version:[vV][5-6]}/{serviceInstanceId}/vnfs/{vnfInstanceId}/replace")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value="Replace provided VNF instance",response=Response.class)
 	public Response replaceVnfInstance(String request,  @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
 			@PathParam("vnfInstanceId") String vnfInstanceId) {
 		msoLogger.debug ("version is: " + version);
+		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
 		instanceIdMap.put("vnfInstanceId", vnfInstanceId);
 		Response response = serviceInstances(request, Action.replaceInstance, instanceIdMap, version);
@@ -158,29 +277,44 @@ public class ServiceInstances {
 	}
 	
 	@PUT
-	@Path("/{version:[vV][5]}/{serviceInstanceId}/vnfs/{vnfInstanceId}")
+	@Path("/{version:[vV][5-6]}/{serviceInstanceId}/vnfs/{vnfInstanceId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value="Update VNF on a specified version, serviceInstance and vnfInstance",response=Response.class)
 	public Response updateVnfInstance(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
 			@PathParam("vnfInstanceId") String vnfInstanceId) {			
-
+		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
 		instanceIdMap.put("vnfInstanceId", vnfInstanceId);		
 		Response response = serviceInstances(request, Action.updateInstance, instanceIdMap, version);
 
 		return response;
 	}
+	
+	@POST
+	@Path("/{version:[vV][6]}/{serviceInstanceId}/vnfs/{vnfInstanceId}/applyUpdatedConfig")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value="Apply updated configuration",response=Response.class)
+	public Response applyUpdatedConfig(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
+			@PathParam("vnfInstanceId") String vnfInstanceId) {			
+		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
+		instanceIdMap.put("vnfInstanceId", vnfInstanceId);		
+		Response response = serviceInstances(request, Action.applyUpdatedConfig, instanceIdMap, version);
+
+		return response;
+	}
 
 
 	@DELETE
-	@Path("/{version:[vV][3-5]}/{serviceInstanceId}/vnfs/{vnfInstanceId}")
+	@Path("/{version:[vV][4-6]}/{serviceInstanceId}/vnfs/{vnfInstanceId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value="Delete provided VNF instance",response=Response.class)
 	public Response deleteVnfInstance(String request,  @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
 			@PathParam("vnfInstanceId") String vnfInstanceId) {
-
+		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
 		instanceIdMap.put("vnfInstanceId", vnfInstanceId);
 		Response response = serviceInstances(request, Action.deleteInstance, instanceIdMap, version);
@@ -189,13 +323,14 @@ public class ServiceInstances {
 	}
 
 	@POST
-	@Path("/{version:[vV][3-5]}/{serviceInstanceId}/vnfs/{vnfInstanceId}/vfModules")
+	@Path("/{version:[vV][4-6]}/{serviceInstanceId}/vnfs/{vnfInstanceId}/vfModules")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value="Create VfModule on a specified version, serviceInstance and vnfInstance",response=Response.class)
 	public Response createVfModuleInstance(String request,  @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
 			@PathParam("vnfInstanceId") String vnfInstanceId) {
 		msoLogger.debug ("version is: " + version);
+		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
 		instanceIdMap.put("vnfInstanceId", vnfInstanceId);
 		Response response = serviceInstances(request, Action.createInstance, instanceIdMap, version);
@@ -204,15 +339,15 @@ public class ServiceInstances {
 	}
 	
 	@POST
-	@Path("/{version:[vV][5]}/{serviceInstanceId}/vnfs/{vnfInstanceId}/vfModules/{vfmoduleInstanceId}/replace")
+	@Path("/{version:[vV][5-6]}/{serviceInstanceId}/vnfs/{vnfInstanceId}/vfModules/{vfmoduleInstanceId}/replace")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value="Create VfModule on a specified version, serviceInstance and vnfInstance",response=Response.class)
 	public Response replaceVfModuleInstance(String request,  @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
 			@PathParam("vnfInstanceId") String vnfInstanceId,
 			@PathParam("vfmoduleInstanceId") String vfmoduleInstanceId) {
-		
 		msoLogger.debug ("version is: " + version);
+		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
 		instanceIdMap.put("vnfInstanceId", vnfInstanceId);
 		instanceIdMap.put("vfModuleInstanceId", vfmoduleInstanceId);
@@ -222,14 +357,14 @@ public class ServiceInstances {
 	}
 
 	@PUT
-	@Path("/{version:[vV][3-5]}/{serviceInstanceId}/vnfs/{vnfInstanceId}/vfModules/{vfmoduleInstanceId}")
+	@Path("/{version:[vV][4-6]}/{serviceInstanceId}/vnfs/{vnfInstanceId}/vfModules/{vfmoduleInstanceId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value="Update VfModule on a specified version, serviceInstance, vnfInstance and vfModule",response=Response.class)
 	public Response updateVfModuleInstance(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
 			@PathParam("vnfInstanceId") String vnfInstanceId,
 			@PathParam("vfmoduleInstanceId") String vfmoduleInstanceId) {
-
+		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
 		instanceIdMap.put("vnfInstanceId", vnfInstanceId);
 		instanceIdMap.put("vfModuleInstanceId", vfmoduleInstanceId);
@@ -237,17 +372,31 @@ public class ServiceInstances {
 
 		return response;
 	}
+	
+	@POST
+	@Path("/{version:[vV][6]}/{serviceInstanceId}/vnfs/{vnfInstanceId}/inPlaceSoftwareUpdate")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value="Perform VNF software update",response=Response.class)
+	public Response inPlaceSoftwareUpdate(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
+			@PathParam("vnfInstanceId") String vnfInstanceId) {			
+		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
+		instanceIdMap.put("vnfInstanceId", vnfInstanceId);		
+		Response response = serviceInstances(request, Action.inPlaceSoftwareUpdate, instanceIdMap, version);
 
+		return response;
+	}
+	
 	@DELETE
-	@Path("/{version:[vV][3-5]}/{serviceInstanceId}/vnfs/{vnfInstanceId}/vfModules/{vfmoduleInstanceId}")
+	@Path("/{version:[vV][4-6]}/{serviceInstanceId}/vnfs/{vnfInstanceId}/vfModules/{vfmoduleInstanceId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value="Delete provided VfModule instance",response=Response.class)
 	public Response deleteVfModuleInstance(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
 			@PathParam("vnfInstanceId") String vnfInstanceId,
 			@PathParam("vfmoduleInstanceId") String vfmoduleInstanceId) {
-
-
+		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
 		instanceIdMap.put("vnfInstanceId", vnfInstanceId);
 		instanceIdMap.put("vfModuleInstanceId", vfmoduleInstanceId);
@@ -258,13 +407,13 @@ public class ServiceInstances {
 
 
 	@POST
-	@Path("/{version:[vV][3-5]}/{serviceInstanceId}/vnfs/{vnfInstanceId}/volumeGroups")
+	@Path("/{version:[vV][4-6]}/{serviceInstanceId}/vnfs/{vnfInstanceId}/volumeGroups")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value="Create VolumeGroup on a specified version, serviceInstance, vnfInstance",response=Response.class)
 	public Response createVolumeGroupInstance(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
 			@PathParam("vnfInstanceId") String vnfInstanceId) {
-
+		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
 		instanceIdMap.put("vnfInstanceId", vnfInstanceId);
 		Response response = serviceInstances(request, Action.createInstance, instanceIdMap, version);
@@ -273,15 +422,14 @@ public class ServiceInstances {
 	}
 
 	@PUT
-	@Path("/{version:[vV][3-5]}/{serviceInstanceId}/vnfs/{vnfInstanceId}/volumeGroups/{volumeGroupInstanceId}")
+	@Path("/{version:[vV][4-6]}/{serviceInstanceId}/vnfs/{vnfInstanceId}/volumeGroups/{volumeGroupInstanceId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value="Update VolumeGroup on a specified version, serviceInstance, vnfInstance and volumeGroup",response=Response.class)
 	public Response updateVolumeGroupInstance(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
 			@PathParam("vnfInstanceId") String vnfInstanceId,
 			@PathParam("volumeGroupInstanceId") String volumeGroupInstanceId) {
-
-
+		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
 		instanceIdMap.put("vnfInstanceId", vnfInstanceId);
 		instanceIdMap.put("volumeGroupInstanceId", volumeGroupInstanceId);
@@ -291,15 +439,14 @@ public class ServiceInstances {
 	}
 
 	@DELETE
-	@Path("/{version:[vV][3-5]}/{serviceInstanceId}/vnfs/{vnfInstanceId}/volumeGroups/{volumeGroupInstanceId}")
+	@Path("/{version:[vV][4-6]}/{serviceInstanceId}/vnfs/{vnfInstanceId}/volumeGroups/{volumeGroupInstanceId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value="Delete provided VolumeGroup instance",response=Response.class)
 	public Response deleteVolumeGroupInstance(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
 			@PathParam("vnfInstanceId") String vnfInstanceId,
 			@PathParam("volumeGroupInstanceId") String volumeGroupInstanceId) {
-
-
+		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
 		instanceIdMap.put("vnfInstanceId", vnfInstanceId);
 		instanceIdMap.put("volumeGroupInstanceId", volumeGroupInstanceId);
@@ -309,12 +456,12 @@ public class ServiceInstances {
 	}
 
 	@POST
-	@Path("/{version:[vV][3-5]}/{serviceInstanceId}/networks")
+	@Path("/{version:[vV][4-6]}/{serviceInstanceId}/networks")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value="Create NetworkInstance on a specified version and serviceInstance ",response=Response.class)
 	public Response createNetworkInstance(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId) {
-
+		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
 		Response response = serviceInstances(request, Action.createInstance, instanceIdMap, version);
 
@@ -322,13 +469,13 @@ public class ServiceInstances {
 	}
 
 	@PUT
-	@Path("/{version:[vV][3-5]}/{serviceInstanceId}/networks/{networkInstanceId}")
+	@Path("/{version:[vV][4-6]}/{serviceInstanceId}/networks/{networkInstanceId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value="Update VolumeGroup on a specified version, serviceInstance, networkInstance",response=Response.class)
 	public Response updateNetworkInstance(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
 			@PathParam("networkInstanceId") String networkInstanceId) {
-
+		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
 		instanceIdMap.put("networkInstanceId", networkInstanceId);
 		Response response = serviceInstances(request, Action.updateInstance, instanceIdMap, version);
@@ -337,21 +484,19 @@ public class ServiceInstances {
 	}
 
 	@DELETE
-	@Path("/{version:[vV][3-5]}/{serviceInstanceId}/networks/{networkInstanceId}")
+	@Path("/{version:[vV][4-6]}/{serviceInstanceId}/networks/{networkInstanceId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value="Delete provided Network instance",response=Response.class)
 	public Response deleteNetworkInstance(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
 			@PathParam("networkInstanceId") String networkInstanceId) {
-
+		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
 		instanceIdMap.put("networkInstanceId", networkInstanceId);
 		Response response = serviceInstances(request, Action.deleteInstance, instanceIdMap, version);
 
 		return response;
 	}
-
-
 
 	private Response serviceInstances(String requestJSON, Action action, HashMap<String,String> instanceIdMap, String version) {
 
@@ -362,31 +507,19 @@ public class ServiceInstances {
 
 		MsoRequest msoRequest = new MsoRequest (requestId);
 
-
-		try{
-			ObjectMapper mapper = new ObjectMapper();
-			sir = mapper.readValue(requestJSON, ServiceInstancesRequest.class);
-
-		} catch(Exception e){
-			msoLogger.debug ("Mapping of request to JSON object failed : ", e);
+		try {
+			sir = convertJsonToServiceInstanceRequest(requestJSON, action, startTime, sir, msoRequest);
+		} catch(Exception e) {
 			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_REQUEST, MsoException.ServiceException,
 					"Mapping of request to JSON object failed.  " + e.getMessage(),
 					ErrorNumbers.SVC_BAD_PARAMETER, null);
-			if (msoRequest.getRequestId () != null) {
-				msoLogger.debug ("Mapping of request to JSON object failed");
-				msoRequest.createRequestRecord (Status.FAILED, action);
-			}
-			msoLogger.error (MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.SchemaError, requestJSON, e);
-			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.SchemaError, "Mapping of request to JSON object failed");
 			msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
 			return response;
 		}
 
-
-		try{
-			msoRequest.parse(sir, instanceIdMap, action, version);
-		} catch (Exception e) {
-			msoLogger.debug ("Validation failed: ", e);
+		try {
+			parseRequest(requestJSON, action, instanceIdMap, version, startTime, sir, msoRequest);
+		} catch(Exception e) {
 			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_REQUEST, MsoException.ServiceException,
 					"Error parsing request.  " + e.getMessage(),
 					ErrorNumbers.SVC_BAD_PARAMETER, null);
@@ -394,58 +527,33 @@ public class ServiceInstances {
 				msoLogger.debug ("Logging failed message to the database");
 				msoRequest.createRequestRecord (Status.FAILED, action);
 			}
-			msoLogger.error (MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.SchemaError, requestJSON, e);
-			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.SchemaError, "Validation of the input request failed");
 			msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
 			return response;
 		}
-
-		InfraActiveRequests dup = null;
+		
 		String instanceName = sir.getRequestDetails().getRequestInfo().getInstanceName();
-		String requestScope = sir.getRequestDetails().getModelInfo().getModelType().name();
+		String requestScope; 
+		if(action == Action.inPlaceSoftwareUpdate || action == Action.applyUpdatedConfig){
+			requestScope = (ModelType.vnf.name());
+		}else{
+			requestScope = sir.getRequestDetails().getModelInfo().getModelType().name();
+		}
+		InfraActiveRequests dup = null;
+				
 		try {
-			if(!(instanceName==null && "service".equals(requestScope) && (action == Action.createInstance || action == Action.activateInstance))){
-				dup = (RequestsDatabase.getInstance()).checkInstanceNameDuplicate (instanceIdMap, instanceName, requestScope);
-			}
-		} catch (Exception e) {
-			msoLogger.error (MessageEnum.APIH_DUPLICATE_CHECK_EXC, MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.DataError, "Error during duplicate check ", e);
-
+			dup = duplicateCheck(action, instanceIdMap, startTime, msoRequest, instanceName,requestScope);
+		} catch(Exception e) {
 			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_INTERNAL_SERVER_ERROR, MsoException.ServiceException,
 					e.getMessage(),
 					ErrorNumbers.SVC_DETAILED_SERVICE_ERROR,
 					null) ;
-
-
-			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError, "Error during duplicate check");
 			msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
 			return response;
 		}
 
 		if (dup != null) {
-			// Found the duplicate record. Return the appropriate error.
-			String instance;
-			if(instanceName != null){
-				instance = instanceName;
-			}else{
-				instance = instanceIdMap.get(requestScope + "InstanceId");
-			}
-			String dupMessage = "Error: Locked instance - This " + requestScope + " (" + instance + ") " + "already has a request being worked with a status of " + dup.getRequestStatus() + " (RequestId - " + dup.getRequestId() + "). The existing request must finish or be cleaned up before proceeding.";
-			//List<String> variables = new ArrayList<String>();
-			//variables.add(dup.getRequestStatus());
-
-			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_CONFLICT, MsoException.ServiceException,
-					dupMessage,
-					ErrorNumbers.SVC_DETAILED_SERVICE_ERROR,
-					null) ;
-
-
-			msoLogger.warn (MessageEnum.APIH_DUPLICATE_FOUND, dupMessage, "", "", MsoLogger.ErrorCode.SchemaError, "Duplicate request - Subscriber already has a request for this service");
-			msoRequest.createRequestRecord (Status.FAILED, action);
-			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.Conflict, dupMessage);
-			msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
-			return response;
+			return buildErrorOnDuplicateRecord(action, instanceIdMap, startTime, msoRequest, instanceName, requestScope, dup);
 		}
-
 
 		ServiceInstancesResponse serviceResponse = new ServiceInstancesResponse();
 
@@ -459,7 +567,7 @@ public class ServiceInstances {
 		try {
 			db = CatalogDatabase.getInstance();
 		} catch (Exception e) {
-			msoLogger.error (MessageEnum.APIH_DB_ACCESS_EXC, MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.AvailabilityError, "Exception while communciate with Catalog DB", e);
+			msoLogger.error (MessageEnum.APIH_DB_ACCESS_EXC, Constants.MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.AvailabilityError, "Exception while communciate with Catalog DB", e);
 			msoRequest.setStatus (org.openecomp.mso.apihandlerinfra.vnfbeans.RequestStatusType.FAILED);
 			Response response = msoRequest.buildServiceErrorResponse (HttpStatus.SC_NOT_FOUND,
 					MsoException.ServiceException,
@@ -475,8 +583,6 @@ public class ServiceInstances {
 			return response;
 		}
 
-
-
 		RecipeLookupResult recipeLookupResult = null;
 		try {
 			recipeLookupResult = getServiceInstanceOrchestrationURI (db, msoRequest, action);
@@ -489,12 +595,12 @@ public class ServiceInstances {
 				msoLogger.debug ("Logging failed message to the database");
 				msoRequest.createRequestRecord (Status.FAILED, action);
 			}
-			msoLogger.error (MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.SchemaError, requestJSON, e);
+			msoLogger.error (MessageEnum.APIH_REQUEST_VALIDATION_ERROR, Constants.MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.SchemaError, requestJSON, e);
 			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.SchemaError, "Validation of the input request failed");
 			msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
 			return response;
 		} catch (Exception e) {
-			msoLogger.error (MessageEnum.APIH_DB_ACCESS_EXC, MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.DataError, "Exception while querying Catalog DB", e);
+			msoLogger.error (MessageEnum.APIH_DB_ACCESS_EXC, Constants.MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.DataError, "Exception while querying Catalog DB", e);
 			msoRequest.setStatus (org.openecomp.mso.apihandlerinfra.vnfbeans.RequestStatusType.FAILED);
 			Response response = msoRequest.buildServiceErrorResponse (HttpStatus.SC_NOT_FOUND,
 					MsoException.ServiceException,
@@ -512,7 +618,7 @@ public class ServiceInstances {
 		}
 
 		if (recipeLookupResult == null) {
-			msoLogger.error (MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND, MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.DataError, "No recipe found in DB");
+			msoLogger.error (MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND, Constants.MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.DataError, "No recipe found in DB");
 			msoRequest.setStatus (org.openecomp.mso.apihandlerinfra.vnfbeans.RequestStatusType.FAILED);
 			Response response = msoRequest.buildServiceErrorResponse (HttpStatus.SC_NOT_FOUND,
 					MsoException.ServiceException,
@@ -528,8 +634,20 @@ public class ServiceInstances {
 
 
 		Boolean isBaseVfModule = false;
-
-		if (msoRequest.getModelInfo().getModelType().equals(ModelType.vfModule)) {
+		
+		if (msoRequest.getModelInfo() != null && (action == Action.applyUpdatedConfig ||
+				action == Action.inPlaceSoftwareUpdate)) {
+			
+		}
+		ModelType modelType;
+		if (action == Action.applyUpdatedConfig || action == Action.inPlaceSoftwareUpdate) {
+			modelType = ModelType.vnf;
+		}
+		else {
+			modelType = msoRequest.getModelInfo().getModelType();
+		}
+		
+		if (modelType.equals(ModelType.vfModule)) {
 			String asdcServiceModelVersion = msoRequest.getAsdcServiceModelVersion ();
 
 			// Get VF Module-specific base module indicator
@@ -551,7 +669,7 @@ public class ServiceInstances {
 			else if (action == Action.createInstance || action == Action.updateInstance){
 				// There is no entry for this vfModuleType with this version, if specified, in VF_MODULE table in Catalog DB.
 				// This request cannot proceed
-				msoLogger.error (MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND, MSO_PROP_APIHANDLER_INFRA, "VF Module Type", "", MsoLogger.ErrorCode.DataError, "No VfModuleType found in DB");
+				msoLogger.error (MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND, Constants.MSO_PROP_APIHANDLER_INFRA, "VF Module Type", "", MsoLogger.ErrorCode.DataError, "No VfModuleType found in DB");
 				msoRequest.setStatus (org.openecomp.mso.apihandlerinfra.vnfbeans.RequestStatusType.FAILED);
 				String serviceVersionText = "";
 				if (asdcServiceModelVersion != null && !asdcServiceModelVersion.isEmpty ()) {
@@ -605,39 +723,43 @@ public class ServiceInstances {
 		msoLogger.debug ("About to insert a record");
 
 		try {
-			msoRequest.createRequestRecord (Status.PENDING, action);
-		} catch (Exception e) {
-			msoLogger.error (MessageEnum.APIH_DB_ACCESS_EXC_REASON, "Exception while creating record in DB", "", "", MsoLogger.ErrorCode.SchemaError, "Exception while creating record in DB", e);
-			msoRequest.setStatus (org.openecomp.mso.apihandlerinfra.vnfbeans.RequestStatusType.FAILED);
-			Response response = msoRequest.buildServiceErrorResponse (HttpStatus.SC_INTERNAL_SERVER_ERROR,
-					MsoException.ServiceException,
-					"Exception while creating record in DB " + e.getMessage(),
-					ErrorNumbers.SVC_BAD_PARAMETER,
-					null);
-			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError, "Exception while creating record in DB");
+			createRequestRecord(action, startTime, msoRequest);
+		} catch(Exception e) {
+			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_INTERNAL_SERVER_ERROR,
+																	MsoException.ServiceException,
+																	"Exception while creating record in DB " + e.getMessage(),
+																	ErrorNumbers.SVC_BAD_PARAMETER,
+																	null);
 			msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
 			return response;
 		}
+		
+		return postBPELRequest(action, requestId, startTime, msoRequest, recipeLookupResult.getOrchestrationURI(), recipeLookupResult.getRecipeTimeout(), 
+								isBaseVfModule, serviceInstanceId, vnfId, vfModuleId, volumeGroupId, networkId, null,
+								msoRequest.getServiceInstanceType(), msoRequest.getVnfType(), msoRequest.getVfModuleType(), msoRequest.getNetworkType());
+	}
 
+	private Response postBPELRequest(Action action, String requestId, long startTime, MsoRequest msoRequest,
+									String orchestrationUri, int timeOut, Boolean isBaseVfModule,
+									String serviceInstanceId, String vnfId, String vfModuleId, String volumeGroupId, String networkId,
+									String configurationId, String serviceInstanceType, String vnfType, String vfModuleType, String networkType) {
 		RequestClient requestClient = null;
 		HttpResponse response = null;
 		long subStartTime = System.currentTimeMillis();
 		try {
-			requestClient = RequestClientFactory.getRequestClient (recipeLookupResult.getOrchestrationURI (), MsoPropertiesUtils.loadMsoProperties ());
-			// Capture audit event
+			requestClient = RequestClientFactory.getRequestClient (orchestrationUri, MsoPropertiesUtils.loadMsoProperties ());
 			msoLogger.debug ("MSO API Handler Posting call to BPEL engine for url: " + requestClient.getUrl ());
 
-			msoLogger.debug ("URL : " + requestClient.getUrl ());
+			System.out.println("URL : " + requestClient.getUrl ());
 
-			response = requestClient.post(requestId, isBaseVfModule, recipeLookupResult.getRecipeTimeout (), action.name (),
-					serviceInstanceId, vnfId, vfModuleId, volumeGroupId, networkId,
-					msoRequest.getServiceInstanceType (),
-					msoRequest.getVnfType (), msoRequest.getVfModuleType (),
-					msoRequest.getNetworkType (), msoRequest.getRequestJSON());
+			response = requestClient.post(requestId, isBaseVfModule, timeOut, action.name (),
+										serviceInstanceId, vnfId, vfModuleId, volumeGroupId, networkId, configurationId,
+										serviceInstanceType, vnfType, vfModuleType, networkType, 
+										msoRequest.getRequestJSON());
 
-			msoLogger.recordMetricEvent (subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from BPMN engine", "BPMN", recipeLookupResult.getOrchestrationURI (), null);
+			msoLogger.recordMetricEvent (subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from BPMN engine", "BPMN", orchestrationUri, null);
 		} catch (Exception e) {
-			msoLogger.recordMetricEvent (subStartTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, "Exception while communicate with BPMN engine", "BPMN", recipeLookupResult.getOrchestrationURI (), null);
+			msoLogger.recordMetricEvent (subStartTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, "Exception while communicate with BPMN engine", "BPMN", orchestrationUri, null);
 			msoRequest.setStatus (org.openecomp.mso.apihandlerinfra.vnfbeans.RequestStatusType.FAILED);
 			Response resp = msoRequest.buildServiceErrorResponse (HttpStatus.SC_BAD_GATEWAY,
 					MsoException.ServiceException,
@@ -648,7 +770,7 @@ public class ServiceInstances {
 					MsoAlarmLogger.CRITICAL,
 					Messages.errors.get (ErrorNumbers.NO_COMMUNICATION_TO_BPEL));
 			msoRequest.updateFinalStatus (Status.FAILED);
-			msoLogger.error (MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.AvailabilityError, "Exception while communicate with BPMN engine");
+			msoLogger.error (MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, Constants.MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.AvailabilityError, "Exception while communicate with BPMN engine");
 			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, "Exception while communicate with BPMN engine");
 			msoLogger.debug ("End of the transaction, the final response is: " + (String) resp.getEntity (),e);
 			return resp;
@@ -662,7 +784,7 @@ public class ServiceInstances {
 					ErrorNumbers.SVC_NO_SERVER_RESOURCES,
 					null);
 			msoRequest.updateFinalStatus (Status.FAILED);
-			msoLogger.error (MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Null response from BPEL");
+			msoLogger.error (MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, Constants.MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Null response from BPEL");
 			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.InternalError, "Null response from BPMN");
 			msoLogger.debug ("End of the transaction, the final response is: " + (String) resp.getEntity ());
 			return resp;
@@ -713,9 +835,90 @@ public class ServiceInstances {
 				return resp;
 			}
 		}
+	}
 
-		//return Response.status (HttpStatus.SC_ACCEPTED).entity (serviceResponse).build ();
-		// return serviceResponse;
+	private void createRequestRecord(Action action, long startTime, MsoRequest msoRequest) throws Exception {
+		try {
+			msoRequest.createRequestRecord (Status.PENDING, action);
+		} catch (Exception e) {
+			msoLogger.error (MessageEnum.APIH_DB_ACCESS_EXC_REASON, "Exception while creating record in DB", "", "", MsoLogger.ErrorCode.SchemaError, "Exception while creating record in DB", e);
+			msoRequest.setStatus (org.openecomp.mso.apihandlerinfra.vnfbeans.RequestStatusType.FAILED);
+			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError, "Exception while creating record in DB");
+			throw new Exception(e);
+		}
+	}
+
+	private Response buildErrorOnDuplicateRecord(Action action, HashMap<String, String> instanceIdMap, long startTime, MsoRequest msoRequest, 
+											String instanceName, String requestScope, InfraActiveRequests dup) {
+
+		// Found the duplicate record. Return the appropriate error.
+		String instance = null;
+		if(instanceName != null){
+			instance = instanceName;
+		}else{
+			instance = instanceIdMap.get(requestScope + "InstanceId");
+		}
+		String dupMessage = "Error: Locked instance - This " + requestScope + " (" + instance + ") " + "already has a request being worked with a status of " + dup.getRequestStatus() + " (RequestId - " + dup.getRequestId() + "). The existing request must finish or be cleaned up before proceeding.";
+		//List<String> variables = new ArrayList<String>();
+		//variables.add(dup.getRequestStatus());
+
+		Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_CONFLICT, MsoException.ServiceException,
+				dupMessage,
+				ErrorNumbers.SVC_DETAILED_SERVICE_ERROR,
+				null) ;
+
+
+		msoLogger.warn (MessageEnum.APIH_DUPLICATE_FOUND, dupMessage, "", "", MsoLogger.ErrorCode.SchemaError, "Duplicate request - Subscriber already has a request for this service");
+		msoRequest.createRequestRecord (Status.FAILED, action);
+		msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.Conflict, dupMessage);
+		msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
+		return response;
+	}
+
+	private InfraActiveRequests duplicateCheck(Action action, HashMap<String, String> instanceIdMap, long startTime,
+												MsoRequest msoRequest, String instanceName, String requestScope) throws Exception {
+		InfraActiveRequests dup = null;
+		try {
+			if(!(instanceName==null && requestScope.equals("service") && (action == Action.createInstance || action == Action.activateInstance))){
+				dup = (RequestsDatabase.getInstance()).checkInstanceNameDuplicate (instanceIdMap, instanceName, requestScope);
+			}
+		} catch (Exception e) {
+			msoLogger.error (MessageEnum.APIH_DUPLICATE_CHECK_EXC, Constants.MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.DataError, "Error during duplicate check ", e);
+			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError, "Error during duplicate check");
+			throw new Exception(e);
+		}
+		return dup;
+	}
+
+	private void parseRequest(String originalRequestJSON, Action action, HashMap<String, String> instanceIdMap, String version,
+								long startTime, ServiceInstancesRequest sir, MsoRequest msoRequest) throws Exception {
+		try{
+			msoRequest.parse(sir, instanceIdMap, action, version, originalRequestJSON);
+		} catch (Exception e) {
+			msoLogger.debug ("Validation failed: ", e);
+			msoLogger.error (MessageEnum.APIH_REQUEST_VALIDATION_ERROR, Constants.MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.SchemaError, originalRequestJSON, e);
+			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.SchemaError, "Validation of the input request failed");
+			throw new Exception(e);
+		}
+	}
+
+	private ServiceInstancesRequest convertJsonToServiceInstanceRequest(String requestJSON, Action action, long startTime,
+																		ServiceInstancesRequest sir, MsoRequest msoRequest) throws Exception {
+		try{
+			ObjectMapper mapper = new ObjectMapper();
+			sir = mapper.readValue(requestJSON, ServiceInstancesRequest.class);
+
+		} catch(Exception e){
+			msoLogger.debug ("Mapping of request to JSON object failed : ", e);
+			if (msoRequest.getRequestId () != null) {
+				msoLogger.debug ("Mapping of request to JSON object failed");
+				msoRequest.createRequestRecord (Status.FAILED, action);
+			}
+			msoLogger.error (MessageEnum.APIH_REQUEST_VALIDATION_ERROR, Constants.MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.SchemaError, requestJSON, e);
+			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.SchemaError, "Mapping of request to JSON object failed");
+			throw new Exception(e);
+		}
+		return sir;
 	}
 
 	private RecipeLookupResult getServiceInstanceOrchestrationURI (CatalogDatabase db, MsoRequest msoRequest, Action action) throws Exception {
@@ -724,8 +927,11 @@ public class ServiceInstances {
 
 		msoLogger.debug("aLaCarteFlag is " + msoRequest.getALaCarteFlag());
 		// Query MSO Catalog DB
-
-		if (msoRequest.getModelInfo().getModelType().equals(ModelType.service)) {
+		
+		if (action == Action.applyUpdatedConfig || action == Action.inPlaceSoftwareUpdate) {
+			recipeLookupResult = getDefaultVnfUri(db, msoRequest, action);
+		}
+		else if (msoRequest.getModelInfo().getModelType().equals(ModelType.service)) {
 			recipeLookupResult = getServiceURI(db, msoRequest, action);
 		}
 		else if (msoRequest.getModelInfo().getModelType().equals(ModelType.vfModule) ||
@@ -751,11 +957,6 @@ public class ServiceInstances {
 	private RecipeLookupResult getServiceURI (CatalogDatabase db, MsoRequest msoRequest, Action action) throws Exception {
 		// SERVICE REQUEST
 		// Construct the default service name
-		// if no source is provided then make it as VID 
-//		if (null == msoRequest.getRequestInfo().getSource() || msoRequest.getRequestInfo().getSource().isEmpty()){
-//					msoRequest.getRequestInfo().setSource("VID");
-//		}
-				
 		// TODO need to make this a configurable property
 		String defaultServiceModelName = "*";
 		String defaultSourceServiceModelName = msoRequest.getRequestInfo().getSource() + "_DEFAULT";
@@ -780,7 +981,7 @@ public class ServiceInstances {
 		}
 		//if an aLaCarte flag was sent in the request, throw an error if the recipe was not found
 		RequestParameters reqParam = msoRequest.getServiceInstancesRequest().getRequestDetails().getRequestParameters();
-		if(reqParam!=null && reqParam.isaLaCarteSet() && recipe==null){
+		if(reqParam!=null && reqParam.isaLaCarte() && recipe==null){
 			return null;
 		}
 
@@ -812,7 +1013,7 @@ public class ServiceInstances {
 		}
 
 		Recipe recipe = null;
-		String defaultVnfType = msoRequest.getRequestInfo().getSource() + "_DEFAULT";
+		String defaultSource = msoRequest.getRequestInfo().getSource() + "_DEFAULT";
 		String modelCustomizationId = modelInfo.getModelCustomizationId();
 		String modelCustomizationName = modelInfo.getModelCustomizationName();
 		String relatedInstanceModelVersionId = null;
@@ -884,7 +1085,7 @@ public class ServiceInstances {
 					}
 				}
 
-				VnfRecipe vnfRecipe = db.getVnfRecipe(defaultVnfType, action.name());
+				VnfRecipe vnfRecipe = db.getVnfRecipe(defaultSource, action.name());
 
 				if (vnfRecipe == null) {
 					return null;
@@ -904,51 +1105,49 @@ public class ServiceInstances {
 				//    			in vf_module_customization and looking up in vf_module (using vf_module_customizationâ€™s FK into vf_module) to find a match on MODEL_INVARIANT_UUID (modelInvariantId) 
 				//    			and MODEL_VERSION (modelVersion).
 
-				if(!msoRequest.getALaCarteFlag()) {
-					VfModuleCustomization vfmc = null;
+				VfModuleCustomization vfmc = null;
 					VnfResourceCustomization vnfrc;
-					VfModule vfModule = null;
+				VfModule vfModule = null;
 
-					if( modelInfo.getModelCustomizationId() != null) {
-						vfmc = db.getVfModuleCustomizationByModelCustomizationId(modelInfo.getModelCustomizationId());
-					} else {
-						vnfrc =db.getVnfResourceCustomizationByVnfModelCustomizationNameAndModelVersionId(relatedInstanceModelCustomizationName, relatedInstanceModelVersionId);
-						if(vnfrc == null) {
-							vnfrc = db.getVnfResourceCustomizationByModelInvariantId(relatedInstanceModelInvariantId, relatedInstanceVersion, relatedInstanceModelCustomizationName);
-						} 
+				if( modelInfo.getModelCustomizationId() != null) {
+					vfmc = db.getVfModuleCustomizationByModelCustomizationId(modelInfo.getModelCustomizationId());
+				} else {
+					vnfrc =db.getVnfResourceCustomizationByVnfModelCustomizationNameAndModelVersionId(relatedInstanceModelCustomizationName, relatedInstanceModelVersionId);
+					if(vnfrc == null) {
+						vnfrc = db.getVnfResourceCustomizationByModelInvariantId(relatedInstanceModelInvariantId, relatedInstanceVersion, relatedInstanceModelCustomizationName);
+					} 
 
-						List<VfModuleCustomization> list = db.getVfModuleCustomizationByVnfModuleCustomizationUuid(vnfrc.getModelCustomizationUuid());
+					List<VfModuleCustomization> list = db.getVfModuleCustomizationByVnfModuleCustomizationUuid(vnfrc.getModelCustomizationUuid());
 
-						String vfModuleModelUUID = modelInfo.getModelVersionId();
-						for(VfModuleCustomization vf : list) {
-							if(vfModuleModelUUID != null) {
-								vfModule = db.getVfModuleByModelCustomizationIdAndVersion(vf.getModelCustomizationUuid(), vfModuleModelUUID);
-							} else {
-								vfModule = db.getVfModuleByModelCustomizationIdModelVersionAndModelInvariantId(vf.getModelCustomizationUuid(), modelInfo.getModelVersion(), modelInfo.getModelInvariantId());
-							}
+					String vfModuleModelUUID = modelInfo.getModelVersionId();
+					for(VfModuleCustomization vf : list) {
+						if(vfModuleModelUUID != null) {
+							vfModule = db.getVfModuleByModelCustomizationIdAndVersion(vf.getModelCustomizationUuid(), vfModuleModelUUID);
+						} else {
+							vfModule = db.getVfModuleByModelCustomizationIdModelVersionAndModelInvariantId(vf.getModelCustomizationUuid(), modelInfo.getModelVersion(), modelInfo.getModelInvariantId());
+						}
 
-							if(vfModule != null) {
-								modelInfo.setModelCustomizationId(vf.getModelCustomizationUuid());
-								modelInfo.setModelCustomizationUuid(vf.getModelCustomizationUuid());
-								break;
-							}
+						if(vfModule != null) {
+							modelInfo.setModelCustomizationId(vf.getModelCustomizationUuid());
+							modelInfo.setModelCustomizationUuid(vf.getModelCustomizationUuid());
+							break;
 						}
 					}
+				}
 
-					if(vfmc == null && vfModule == null) {
-						throw new ValidationException("no catalog entry found");
-					} else if (vfModule == null && vfmc != null) {
-						vfModule = vfmc.getVfModule(); // can't be null as vfModuleModelUUID is not-null property in VfModuleCustomization table
-					}
+				if(vfmc == null && vfModule == null) {
+					throw new ValidationException("no catalog entry found");
+				} else if (vfModule == null && vfmc != null) {
+					vfModule = vfmc.getVfModule(); // can't be null as vfModuleModelUUID is not-null property in VfModuleCustomization table
+				}
 
-					if(modelInfo.getModelVersionId() == null) {
-						modelInfo.setModelVersionId(vfModule.getModelUUID());
-					}
-					recipe = db.getVnfComponentsRecipeByVfModuleModelUUId(vfModule.getModelUUID(), vnfComponentType, action.name());
-				} 
+				if(modelInfo.getModelVersionId() == null) {
+					modelInfo.setModelVersionId(vfModule.getModelUUID());
+				}
+				recipe = db.getVnfComponentsRecipeByVfModuleModelUUId(vfModule.getModelUUID(), vnfComponentType, action.name());
 
 				if(recipe == null) {
-					recipe = db.getVnfComponentsRecipeByVfModuleModelUUId(defaultVnfType, vnfComponentType, action.name());
+					recipe = db.getVnfComponentsRecipeByVfModuleModelUUId(defaultSource, vnfComponentType, action.name());
 					if (recipe == null) { 
 						recipe = db.getVnfComponentsRecipeByVfModuleModelUUId("*", vnfComponentType, action.name());
 					}
@@ -962,12 +1161,12 @@ public class ServiceInstances {
 			msoLogger.debug("recipe is null, getting default");
 
 			if(modelInfo.getModelType().equals(ModelType.vnf)) {
-				recipe = db.getVnfRecipe(defaultVnfType, action.name());
+				recipe = db.getVnfRecipe(defaultSource, action.name());
 				if (recipe == null) {
 					return null;
 				}
 			} else {
-				recipe = db.getVnfComponentsRecipeByVfModuleModelUUId("VID_DEFAULT", vnfComponentType, action.name());
+				recipe = db.getVnfComponentsRecipeByVfModuleModelUUId(defaultSource, vnfComponentType, action.name());
 
 				if (recipe == null) {
 					return null;
@@ -977,6 +1176,20 @@ public class ServiceInstances {
 
 		return new RecipeLookupResult (recipe.getOrchestrationUri (), recipe.getRecipeTimeout ());
 	}
+	
+	private RecipeLookupResult getDefaultVnfUri (CatalogDatabase db, MsoRequest msoRequest, Action action) throws Exception {
+
+		String defaultSource = msoRequest.getRequestInfo().getSource() + "_DEFAULT";		
+
+		VnfRecipe vnfRecipe = db.getVnfRecipe(defaultSource, action.name());
+
+		if (vnfRecipe == null) {
+			return null;
+		}
+
+		return new RecipeLookupResult (vnfRecipe.getOrchestrationUri(), vnfRecipe.getRecipeTimeout());		
+	}
+
 
 	private RecipeLookupResult getNetworkUri (CatalogDatabase db, MsoRequest msoRequest, Action action) throws Exception {
 
@@ -984,31 +1197,137 @@ public class ServiceInstances {
 
 		ModelInfo modelInfo = msoRequest.getModelInfo();
 		String modelName = modelInfo.getModelName();
-		Recipe recipe;
-		if(msoRequest.getALaCarteFlag()){
-			recipe = db.getNetworkRecipe(defaultNetworkType, action.name());
-		}else{
-			if(modelInfo.getModelCustomizationId()!=null){
-				NetworkResource networkResource = db.getNetworkResourceByModelCustUuid(modelInfo.getModelCustomizationId());
-				if(networkResource!=null){
-					if(modelInfo.getModelVersionId() == null) {
-						modelInfo.setModelVersionId(networkResource.getModelUUID());
-					}
-					recipe = db.getNetworkRecipe(networkResource.getModelName(), action.name());
-				}else{
-					throw new ValidationException("no catalog entry found");
+		Recipe recipe = null;
+
+		if(modelInfo.getModelCustomizationId()!=null){
+			NetworkResource networkResource = db.getNetworkResourceByModelCustUuid(modelInfo.getModelCustomizationId());
+			if(networkResource!=null){
+				if(modelInfo.getModelVersionId() == null) {
+					modelInfo.setModelVersionId(networkResource.getModelUUID());
 				}
+				recipe = db.getNetworkRecipe(networkResource.getModelName(), action.name());
 			}else{
-				//ok for version < 3 and action delete
-				recipe = db.getNetworkRecipe(modelName, action.name());
+				throw new ValidationException("no catalog entry found");
 			}
-			if(recipe == null){
-				recipe = db.getNetworkRecipe(defaultNetworkType, action.name());
-			}
+		}else{
+			//ok for version < 3 and action delete
+			recipe = db.getNetworkRecipe(modelName, action.name());
 		}
-		if (recipe == null) {
-			return null;
+
+		if(recipe == null){
+			recipe = db.getNetworkRecipe(defaultNetworkType, action.name());
 		}
-		return new RecipeLookupResult (recipe.getOrchestrationUri (), recipe.getRecipeTimeout ());
+		
+		return recipe !=null ? new RecipeLookupResult(recipe.getOrchestrationUri(), recipe.getRecipeTimeout()) : null;
+	}
+	
+	private Response configurationRecipeLookup(String requestJSON, Action action, HashMap<String,String> instanceIdMap, String version) {
+		String requestId = UUIDChecker.generateUUID(msoLogger);
+		long startTime = System.currentTimeMillis ();
+		msoLogger.debug ("requestId is: " + requestId);
+		ServiceInstancesRequest sir = null;
+		MsoRequest msoRequest = new MsoRequest (requestId);
+
+		try {
+			sir = convertJsonToServiceInstanceRequest(requestJSON, action, startTime, sir, msoRequest);
+		} catch(Exception e) {
+			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_REQUEST, MsoException.ServiceException,
+					"Mapping of request to JSON object failed.  " + e.getMessage(),
+					ErrorNumbers.SVC_BAD_PARAMETER, null);
+			msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
+			return response;
+		}
+
+		try {
+			parseRequest(requestJSON, action, instanceIdMap, version, startTime, sir, msoRequest);
+		} catch(Exception e) {
+			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_REQUEST, MsoException.ServiceException,
+					"Error parsing request.  " + e.getMessage(),
+					ErrorNumbers.SVC_BAD_PARAMETER, null);
+			msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
+			return response;
+		}
+
+		String instanceName = sir.getRequestDetails().getRequestInfo().getInstanceName();
+		String requestScope;
+		if(action == Action.inPlaceSoftwareUpdate || action == Action.applyUpdatedConfig){
+			requestScope = (ModelType.vnf.name());
+		}else{
+			requestScope = sir.getRequestDetails().getModelInfo().getModelType().name();
+		}
+		InfraActiveRequests dup = null;
+		
+		try {
+			dup = duplicateCheck(action, instanceIdMap, startTime, msoRequest, instanceName,requestScope);
+		} catch(Exception e) {
+			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_INTERNAL_SERVER_ERROR, MsoException.ServiceException,
+					e.getMessage(),
+					ErrorNumbers.SVC_DETAILED_SERVICE_ERROR,
+					null) ;
+			msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
+			return response;
+		}
+
+		if (dup != null) {
+			return buildErrorOnDuplicateRecord(action, instanceIdMap, startTime, msoRequest, instanceName, requestScope, dup);
+		}
+
+		ServiceInstancesResponse serviceResponse = new ServiceInstancesResponse();
+		RequestReferences referencesResponse = new RequestReferences();
+		referencesResponse.setRequestId(requestId);
+		serviceResponse.setRequestReferences(referencesResponse);
+		
+		MsoJavaProperties props = MsoPropertiesUtils.loadMsoProperties ();
+		String orchestrationUri = props.getProperty(CommonConstants.ALACARTE_ORCHESTRATION, null);
+		String timeOut = props.getProperty(CommonConstants.ALACARTE_RECIPE_TIMEOUT, null);
+		
+		if (StringUtils.isBlank(orchestrationUri) || StringUtils.isBlank(timeOut)) {
+			String error = StringUtils.isBlank(orchestrationUri) ? "ALaCarte Orchestration URI not found in properties" : "ALaCarte Recipe Timeout not found in properties";
+			
+			msoLogger.error (MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND, Constants.MSO_PROP_APIHANDLER_INFRA, "", "", 
+			MsoLogger.ErrorCode.DataError, error);
+			msoRequest.setStatus (org.openecomp.mso.apihandlerinfra.vnfbeans.RequestStatusType.FAILED);
+			Response response = msoRequest.buildServiceErrorResponse (HttpStatus.SC_NOT_FOUND,
+																	MsoException.ServiceException,
+																	error,
+																	ErrorNumbers.SVC_GENERAL_SERVICE_ERROR,
+																	null);
+			msoRequest.createRequestRecord (Status.FAILED, action);
+			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataNotFound, error);
+			msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
+			return response;
+			
+		}
+		
+		String serviceInstanceId = "";
+		String configurationId = "";
+		ServiceInstancesRequest siReq = msoRequest.getServiceInstancesRequest();
+
+		if(siReq.getServiceInstanceId () != null){
+			serviceInstanceId = siReq.getServiceInstanceId ();
+		}
+
+		if(siReq.getConfigurationId() != null){
+			configurationId = siReq.getConfigurationId();
+		}
+
+		requestId = msoRequest.getRequestId ();
+		msoLogger.debug ("requestId is: " + requestId);
+		msoLogger.debug ("About to insert a record");
+
+		try {
+			createRequestRecord(action, startTime, msoRequest);
+		} catch(Exception e) {
+			Response response = msoRequest.buildServiceErrorResponse (HttpStatus.SC_INTERNAL_SERVER_ERROR,
+					MsoException.ServiceException,
+					"Exception while creating record in DB " + e.getMessage(),
+					ErrorNumbers.SVC_BAD_PARAMETER,
+					null);
+			msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
+			return response;
+		}
+
+		return postBPELRequest(action, requestId, startTime, msoRequest, orchestrationUri, Integer.parseInt(timeOut), false, 
+								serviceInstanceId, null, null, null, null, configurationId, null, null, null, null);
 	}
 }

@@ -32,17 +32,20 @@ import org.openecomp.mso.bpmn.common.scripts.AaiUtil
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
 import org.openecomp.mso.bpmn.common.scripts.SDNCAdapterUtils
+import org.openecomp.mso.bpmn.common.scripts.CatalogDbUtils;
 import org.openecomp.mso.bpmn.core.RollbackData
 import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.rest.APIResponse;
 import org.openecomp.mso.rest.RESTClient
 import org.openecomp.mso.rest.RESTConfig
 
+import java.util.List;
 import java.util.UUID;
 
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.json.JSONObject;
+import org.json.JSONArray;
 import org.apache.commons.lang3.*
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.web.util.UriUtils;
@@ -77,8 +80,9 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 	String Prefix="DCRESI_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
+	CatalogDbUtils cutils = new CatalogDbUtils()
 
-	public void preProcessRequest (Execution execution) {
+	public void preProcessRequest (DelegateExecution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		String msg = ""
 		utils.log("INFO"," ***** preProcessRequest *****",  isDebugEnabled)
@@ -173,7 +177,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		utils.log("INFO"," ***** Exit preProcessRequest *****",  isDebugEnabled)
 	}
 
-	public void postProcessAAIGET(Execution execution) {
+	public void postProcessAAIGET(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO"," ***** postProcessAAIGET ***** ", isDebugEnabled)
 		String msg = ""
@@ -215,7 +219,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		utils.log("INFO"," *** Exit postProcessAAIGET *** ", isDebugEnabled)
 	}
 
-	public void postProcessAAIPUT(Execution execution) {
+	public void postProcessAAIPUT(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO"," ***** postProcessAAIPUT ***** ", isDebugEnabled)
 		String msg = ""
@@ -253,7 +257,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		utils.log("INFO"," *** Exit postProcessAAIPUT *** ", isDebugEnabled)
 	}
 	
-	public void postProcessAAIGET2(Execution execution) {
+	public void postProcessAAIGET2(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO"," ***** postProcessAAIGET2 ***** ", isDebugEnabled)
 		String msg = ""
@@ -296,7 +300,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		utils.log("INFO"," *** Exit postProcessAAIGET2 *** ", isDebugEnabled)
 	}
 
-	public void preProcessRollback (Execution execution) {
+	public void preProcessRollback (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO"," ***** preProcessRollback ***** ", isDebugEnabled)
 		try {
@@ -317,7 +321,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		utils.log("INFO"," *** Exit preProcessRollback *** ", isDebugEnabled)
 	}
 
-	public void postProcessRollback (Execution execution) {
+	public void postProcessRollback (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO"," ***** postProcessRollback ***** ", isDebugEnabled)
 		String msg = ""
@@ -338,7 +342,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		utils.log("INFO"," *** Exit postProcessRollback *** ", isDebugEnabled)
 	}
 
-	public void preInitResourcesOperStatus(Execution execution){
+	public void preInitResourcesOperStatus(DelegateExecution execution){
         def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 
         utils.log("INFO", " ======== STARTED preInitResourcesOperStatus Process ======== ", isDebugEnabled)
@@ -402,7 +406,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 	    String serviceInstanceName = execution.getVariable("serviceInstanceName")
 	    String nsServiceName = resourceType + "_" + serviceInstanceName
 	    execution.setVariable("nsServiceName", nsServiceName)
-	    utils.log("INFO", "Prepare VFC Request nsServiceName:" + nsServiceName, isDebugEnabled)
+	    utils.log("INFO", "Prepare Resource Request nsServiceName:" + nsServiceName, isDebugEnabled)
         String globalSubscriberId = execution.getVariable("globalSubscriberId")
         String serviceType = execution.getVariable("serviceType")
         String serviceId = execution.getVariable("serviceInstanceId")
@@ -412,7 +416,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
         String resourcesStr = jsonUtil.getJsonValue(incomingRequest, "service.parameters.resources")  
         String nsServiceDescription = jsonUtil.getJsonValue(incomingRequest, "service.description")  
         execution.setVariable("nsServiceDescription", nsServiceDescription)
-        utils.log("INFO", "Prepare VFC Request nsServiceDescription:" + nsServiceDescription, isDebugEnabled)
+        utils.log("INFO", "Prepare Resource Request nsServiceDescription:" + nsServiceDescription, isDebugEnabled)
         List<String> resourceList = jsonUtil.StringArrayToList(execution, resourcesStr) 
         //reset the variables
         execution.setVariable("resourceUUID", "")
@@ -427,18 +431,102 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
                 execution.setVariable("resourceUUID", resourceUUID)
                 execution.setVariable("resourceInvariantUUID", resourceInvariantUUID)
                 execution.setVariable("resourceParameters", resourceParameters)
-                utils.log("INFO", "Prepare VFC Request resourceType:" + resourceType, isDebugEnabled)
-                utils.log("INFO", "Prepare VFC Request resourceUUID:" + resourceUUID, isDebugEnabled)
-                utils.log("INFO", "Prepare VFC Request resourceParameters:" + resourceParameters, isDebugEnabled)
+                utils.log("INFO", "Prepare Resource Request resourceType:" + resourceType, isDebugEnabled)
+                utils.log("INFO", "Prepare Resource Request resourceUUID:" + resourceUUID, isDebugEnabled)
+                utils.log("INFO", "Prepare Resource Request resourceParameters:" + resourceParameters, isDebugEnabled)
             } 
         }
-	    utils.log("INFO", "Prepare VFC Request finished", isDebugEnabled)
+	    utils.log("INFO", "Prepare Controller Request finished", isDebugEnabled)
+	}
+	/**
+	 * sequence resource. we should analyze resource sequence from service template
+	 * Here we make VF first, and then network for E2E service.
+	 */
+	public void sequenceResoure(execution){
+	    def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+        utils.log("INFO", "======== Start sequenceResoure Process ======== ", isDebugEnabled)  
+	    String serviceModelUUID = execution.getVariable("modelUuid")
+        JSONArray networks = cutils.getAllNetworksByServiceModelUuid(execution, serviceModelUUID)
+        utils.log("DEBUG", "obtained Network list: " + networks, isDebugEnabled)            
+        if (networks == null) {
+            utils.log("INFO", "No matching networks in Catalog DB for serviceModelUUID=" + serviceModelUUID, isDebugEnabled)
+        }
+        String incomingRequest = execution.getVariable("uuiRequest")
+        String resourcesStr = jsonUtil.getJsonValue(incomingRequest, "service.parameters.resources")  
+        List<String> resourceList = jsonUtil.StringArrayToList(execution, resourcesStr) 
+        // Only one match herenetwork
+        List<String> nsResources = new ArrayList<String>()
+        List<String> wanResources = new ArrayList<String>()
+        List<String> resourceSequence = new  ArrayList<String>()
+        for(String resource : resourceList){
+            String resourceName = jsonUtil.getJsonValue(resource, "resourceName")  
+            String resourceUUID = jsonUtil.getJsonValue(resource, "resourceId")
+            //check is network.
+            boolean isNetwork = false;
+            if(networks != null){
+                for(int i = 0; i < networks.size(); i++){
+                    String networkUUID = jsonUtil.getJsonValueForKey(networks.get(i), "modelVersionId")
+                    if(StringUtils.equals(resourceUUID, networkUUID)){
+                        isNetwork = true
+                        break
+                    }
+                }
+            }
+            if(isNetwork){
+                wanResources.add(resourceName)
+            }else{
+                nsResources.add(resourceName)
+            }
+        }
+        resourceSequence.addAll(nsResources)
+        resourceSequence.addAll(wanResources)
+        String isContainsWanResource = wanResources.isEmpty() ? "false" : "true"
+        execution.setVariable("isContainsWanResource", isContainsWanResource)
+        execution.setVariable("currentResourceIndex", 0)
+        execution.setVariable("resourceSequence", resourceSequence)
+        utils.log("INFO", "resourceSequence: " + resourceSequence, isDebugEnabled)  
+        execution.setVariable("wanResources", wanResources)
+        utils.log("INFO", "======== COMPLETED sequenceResoure Process ======== ", isDebugEnabled)  
 	}
 	
+	public void getCurrentResoure(execution){
+	    def isDebugEnabled=execution.getVariable("isDebugLogEnabled")   
+        utils.log("INFO", "======== Start getCurrentResoure Process ======== ", isDebugEnabled)    
+	    def currentIndex = execution.getVariable("currentResourceIndex")
+	    List<String> resourceSequence = execution.getVariable("resourceSequence")  
+	    List<String> wanResources = execution.getVariable("wanResources")  
+	    String resourceName =  resourceSequence.get(currentIndex)
+	    execution.setVariable("resourceType",resourceName)
+	    if(wanResources.contains(resourceName)){
+	        execution.setVariable("controllerInfo", "SDN-C")
+	    }else{
+	        execution.setVariable("controllerInfo", "VF-C")
+	    }
+        utils.log("INFO", "======== COMPLETED getCurrentResoure Process ======== ", isDebugEnabled)  
+    }
+
 	   /**
-     * post config request.
+     * sequence resource
      */
-	public void postConfigRequest(execution){
-	    //now do noting
-	}
+    public void parseNextResource(execution){
+        def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+        utils.log("INFO", "======== Start parseNextResource Process ======== ", isDebugEnabled)    
+        def currentIndex = execution.getVariable("currentResourceIndex")
+        def nextIndex =  currentIndex + 1
+        execution.setVariable("currentResourceIndex", nextIndex)
+        List<String> resourceSequence = execution.getVariable("resourceSequence")    
+        if(nextIndex >= resourceSequence.size()){
+            execution.setVariable("allResourceFinished", "true")
+        }else{
+            execution.setVariable("allResourceFinished", "false")
+        }
+        utils.log("INFO", "======== COMPLETED parseNextResource Process ======== ", isDebugEnabled)       
+    }
+    
+      /**
+      * post config request.
+      */
+     public void postConfigRequest(execution){
+         //now do noting
+     } 
 }

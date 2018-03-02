@@ -60,11 +60,11 @@ public class SdncNetworkTopologyOperationTask extends AbstractSdncOperationTask 
         if (!isSend2SdncDirectly()) {
             outputEntity = genericResourceApiClient.postNetworkTopologyOperation
                     (HeaderUtil.DefaulAuth, inputEntity).execute().body();
-            updateProgress(execution, null, null, "90", "sendRestrequestAndHandleResponse finished!");
-            saveOutput(execution, outputEntity);
+        updateProgress(execution, null, null, "90", "sendRestrequestAndHandleResponse finished!");
+        saveOutput(execution, outputEntity);
         } else {
             Send2SdncDirectly(HeaderUtil.DefaulAuth, inputEntity);
-        }
+    }
         updateProgress(execution, RequestsDbConstant.Status.FINISHED, null, RequestsDbConstant.Progress.ONE_HUNDRED, "execute finished!");
         logger.info("SdncNetworkTopologyOperationTask.sendRestrequestAndHandleResponse end!");
     }
@@ -77,7 +77,7 @@ public class SdncNetworkTopologyOperationTask extends AbstractSdncOperationTask 
         httpPost.addHeader("Authorization", defaulAuth);
         httpPost.addHeader("Content-type", "application/json");
         String postBody = getPostbody(inputEntity);
-        LOGGER.info(MessageEnum.RA_SEND_REQUEST_SDNC, postBody.toString(), "SDNC", "");
+        LOGGER.info(MessageEnum.RA_SEND_REQUEST_SDNC, postBody, "SDNC", "");
         httpPost.setEntity(new StringEntity(postBody, ContentType.APPLICATION_XML));
         httpPost(url, httpPost);
         logger.info("SdncNetworkTopologyOperationTask.Send2SdncDirectly end!");

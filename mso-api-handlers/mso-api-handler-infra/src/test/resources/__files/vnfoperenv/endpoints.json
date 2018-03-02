@@ -1,0 +1,145 @@
+{
+   "ServiceEndPointList": [
+      {
+         "name": "dummy.pod.ns.dummy-pod3",
+         "version": {
+            "major": 1,
+            "minor": 0,
+            "patch": "0"
+         },
+         "hostAddress": "135.144.120.218",
+         "listenPort": "32004",
+         "latitude": "37.7022",
+         "longitude": "121.9358",
+         "registrationTime": "2017-07-18T15:39:17.367+0000",
+         "expirationTime": "9999-10-09T15:39:17.368+0000",
+         "contextPath": "/",
+         "routeOffer": "DEFAULT",
+         "statusInfo": {
+            "status": "RUNNING"
+         },
+         "eventStatusInfo": {
+            "status": "RUNNING"
+         },
+         "validatorStatusInfo": {
+            "status": "RUNNING"
+         },
+         "operationalInfo": {
+            "createdBy": "edge",
+            "updatedBy": "edge",
+            "createdTimestamp": "2017-07-18T15:39:17.367+0000",
+            "updatedTimestamp": "2017-07-18T15:39:17.367+0000"
+         },
+         "protocol": "dummypod-port",
+         "properties": [
+            {
+               "name": "Environment",
+               "value": "DEV"
+            },
+            {
+               "name": "Kubernetes Namespace",
+               "value": "dummy-pod-ns"
+            },
+            {
+               "name": "cpfrun_cluster_name",
+               "value": "CI-PDK1-TFINIT-CJ9125401"
+            }
+         ],
+         "disableType": []
+      },
+      {
+         "name": "dummy.pod.ns.dummy-pod3",
+         "version": {
+            "major": 1,
+            "minor": 0,
+            "patch": "0"
+         },
+         "hostAddress": "135.144.120.22",
+         "listenPort": "32004",
+         "latitude": "1.0",
+         "longitude": "1.0",
+         "registrationTime": "2017-07-18T15:39:17.816+0000",
+         "expirationTime": "9999-10-09T15:39:17.817+0000",
+         "contextPath": "/",
+         "routeOffer": "DEFAULT",
+         "statusInfo": {
+            "status": "RUNNING"
+         },
+         "eventStatusInfo": {
+            "status": "RUNNING"
+         },
+         "validatorStatusInfo": {
+            "status": "RUNNING"
+         },
+         "operationalInfo": {
+            "createdBy": "edge",
+            "updatedBy": "edge",
+            "createdTimestamp": "2017-07-18T15:39:17.816+0000",
+            "updatedTimestamp": "2017-07-18T15:39:17.816+0000"
+         },
+         "protocol": "dummypod-port",
+         "properties": [
+            {
+               "name": "Environment",
+               "value": "DEV"
+            },
+            {
+               "name": "Kubernetes Namespace",
+               "value": "dummy-pod-ns"
+            },
+            {
+               "name": "cpfrun_cluster_name",
+               "value": "CI-PDK1-TFINIT-CJ9125401"
+            }
+         ],
+         "disableType": []
+      },
+      {
+         "name": "dummy.pod.ns.dummy-pod1",
+         "version": {
+            "major": 1,
+            "minor": 0,
+            "patch": "0"
+         },
+         "hostAddress": "135.144.120.218",
+         "listenPort": "32002",
+         "latitude": "1.0",
+         "longitude": "1.0",
+         "registrationTime": "2017-07-18T15:39:14.443+0000",
+         "expirationTime": "9999-10-09T15:39:14.453+0000",
+         "contextPath": "/",
+         "routeOffer": "DEFAULT",
+         "statusInfo": {
+            "status": "RUNNING"
+         },
+         "eventStatusInfo": {
+            "status": "RUNNING"
+         },
+         "validatorStatusInfo": {
+            "status": "RUNNING"
+         },
+         "operationalInfo": {
+            "createdBy": "edge",
+            "updatedBy": "edge",
+            "createdTimestamp": "2017-07-18T15:39:14.443+0000",
+            "updatedTimestamp": "2017-07-18T15:39:14.443+0000"
+         },
+         "protocol": "dummypod-port",
+         "properties": [
+            {
+               "name": "Environment",
+               "value": "DEV"
+            },
+            {
+               "name": "Kubernetes Namespace",
+               "value": "dummy-pod-ns"
+            },
+            {
+               "name": "cpfrun_cluster_name",
+               "value": "CI-PDK1-TFINIT-CJ9125401"
+            }
+         ],
+         "disableType": []
+      }
+   ]
+}

@@ -4,19 +4,19 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.openecomp.so</groupId>
-    <artifactId>so</artifactId>
-    <version>1.2.0-SNAPSHOT</version>
+    <groupId>org.onap</groupId>
+    <artifactId>mso</artifactId>
+    <version>1.1.0-SNAPSHOT</version>
   </parent>
 
-  <groupId>org.openecomp.so</groupId>
+  <groupId>org.onap.so</groupId>
   <artifactId>bpmn</artifactId>
   <name>BPMN Subsystem</name>
   <description>BPMN Subsystem for MSO</description>
   <packaging>pom</packaging>
 
   <properties>
-    <camunda.version>7.7.0</camunda.version>
+    <camunda.version>7.8.0</camunda.version>
     <camunda.bpm.assert.version>1.2</camunda.bpm.assert.version>
     <camunda.bpm.webapp.artifact>camunda-webapp-jboss-standalone</camunda.bpm.webapp.artifact>
     <h2.version>1.3.173</h2.version>
@@ -34,6 +34,7 @@
     <module>MSORESTClient</module>
     <module>MSOCommonBPMN</module>
     <module>MSOInfrastructureBPMN</module>
+    <module>MSOURN-plugin</module>
     <module>MSOCockpit</module>
   </modules>
 

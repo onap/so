@@ -1,0 +1,41 @@
+{
+	"requestDetails": {
+		"modelInfo": {
+			"modelType": "vnf",
+			"modelInvariantId": "2fff5b20-214b-11e7-93ae-92361f002671",
+			"modelVersionId": "ff2ae348-214a-11e7-93ae-92361f002671",
+			"modelName": "vSAMP10a",
+			"modelVersion": "1.0",
+			"modelCustomizationName": "vSAMP10a 1",
+			"modelCustomizationId": "68dc9a92-214c-11e7-93ae-92361f002671"
+		},
+		"cloudConfiguration": {
+			"lcpCloudRegionId": "mtn6",
+			"tenantId": "19123c2924c648eb8e42a3c1f14b7682"
+		},
+		"requestInfo": {
+			"instanceName": "MSO_Dev_1802_VNF_10-9-1",
+			"productFamilyId": "06f76284-8710-11e6-ae22-56b6b6499611",
+			"source": "VID",
+			"suppressRollback": false
+		},
+		"relatedInstanceList": [
+		{
+			"relatedInstance": {
+			"instanceId": "c44dd5dc-849b-4691-b3c4-111c33140389",
+			"modelInfo": {
+				"modelType": "service",
+				"modelInvariantId": "9647dfc4-2083-11e7-93ae-92361f002671",
+				"modelVersionId": "5df8b6de-2083-11e7-93ae-92361f002671",
+				"modelName": "MSOTADevInfra_vSAMP10a_Service",
+				"modelVersion": "1.0"
+			}
+		}
+	}
+	],
+		"requestParameters": {
+			"autoBuildVfModules": false,
+			"payload": "{\"existing-software-version\": \"3.1\",\"new-software-version\": \"3.2\", \"operations-timeout\": \"3600\"}"
+		}
+	}
+}

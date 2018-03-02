@@ -61,6 +61,8 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
                                     String vfModuleId,
                                     String volumeGroupId,
                                     String serviceInstanceName,
+                                    String configurationId,
+                                    String configurationName,
                                     String vfModuleName) throws MsoRequestsDbException {
         MsoLogger.setLogContext (requestId, null);
         Session session = requestsDbSessionFactoryManager.getSessionFactory ().openSession ();
@@ -104,6 +106,12 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
             }
             if (vfModuleName != null) {
                 queryString += "vfModuleName = :vfModuleName, ";
+            }
+            if (configurationId != null) {
+                queryString += "configurationId = :configurationId, ";
+            }
+            if (configurationName != null) {
+                queryString += "configurationName = :configurationName, ";
             }
             if (requestStatus == RequestStatusType.COMPLETE || requestStatus == RequestStatusType.FAILED) {
                 queryString += "endTime = :endTime, ";
@@ -160,6 +168,18 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
             if (serviceInstanceName != null) {
                 query.setParameter ("serviceInstanceName", serviceInstanceName);
                 logger.debug ("ServiceInstanceName in updateInfraRequest is set to: " + serviceInstanceName);
+            }
+            if (vfModuleName != null) {
+                query.setParameter ("vfModuleName", vfModuleName);
+                logger.debug ("vfModuleName in updateInfraRequest is set to: " + vfModuleName);
+            }
+            if (configurationId != null) {
+                query.setParameter ("configurationId", configurationId);
+                logger.debug ("configurationId in updateInfraRequest is set to: " + configurationId);
+            }
+            if (configurationName != null) {
+                query.setParameter ("configurationName", configurationName);
+                logger.debug ("configurationName in updateInfraRequest is set to: " + configurationName);
             }
             if (vfModuleName != null) {
                 query.setParameter ("vfModuleName", vfModuleName);
@@ -282,13 +302,11 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
      * @since   ONAP Amsterdam Release
      */
     @Override
-    public void updateServiceOperationStatus(String serviceId, String operationId, String serviceName,String operationType, String userId,
+    public void updateServiceOperationStatus(String serviceId, String operationId, String operationType, String userId,
             String result, String operationContent, String progress, String reason) throws MsoRequestsDbException {
         OperationStatus operStatus = new OperationStatus();
-        operStatus.setResult(RequestsDbConstant.Status.PROCESSING);
         operStatus.setServiceId(serviceId);
         operStatus.setOperationId(operationId);
-        operStatus.setServiceName(serviceName);
         operStatus.setUserId(userId);
         operStatus.setOperation(operationType);
         operStatus.setReason(reason);
@@ -326,56 +344,5 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
             RequestsDatabase.getInstance().updateResOperStatus(resourceStatus);
         }     
     }
-    
-    /**
-     * get resource operation status
-     * <br>
-     * 
-     * @param serviceId
-     * @param operationId
-     * @param resourceUUID
-     * @return
-     * @throws MsoRequestsDbException
-     * @since   ONAP Amsterdam Release
-     */
-    @Override
-    public ResourceOperationStatus getResourceOperationStatus(String serviceId, String operationId, String resourceTemplateUUID)
-            throws MsoRequestsDbException {
-        return RequestsDatabase.getInstance().getResourceOperationStatus(serviceId, operationId, resourceTemplateUUID);
-    }
-    
-    /**
-     * update resource operation status
-     * <br>
-     * 
-     * @param serviceId
-     * @param operationId
-     * @param resourceUUID
-     * @param operationType
-     * @param resourceInstanceID
-     * @param jobId
-     * @param status
-     * @param progress
-     * @param errorCode
-     * @param statusDescription
-     * @throws MsoRequestsDbException
-     * @since   ONAP Amsterdam Release
-     */
-    @Override
-    public void updateResourceOperationStatus(String serviceId, String operationId, String resourceTemplateUUID,
-            String operType, String resourceInstanceID, String jobId, String status, String progress,
-            String errorCode, String statusDescription) throws MsoRequestsDbException {
-         ResourceOperationStatus resStatus = new ResourceOperationStatus();
-         resStatus.setServiceId(serviceId);
-         resStatus.setOperationId(operationId);
-         resStatus.setResourceTemplateUUID(resourceTemplateUUID);
-         resStatus.setOperType(operType);
-         resStatus.setResourceInstanceID(resourceInstanceID);
-         resStatus.setJobId(jobId);
-         resStatus.setStatus(status);
-         resStatus.setProgress(progress);
-         resStatus.setErrorCode(errorCode);
-         resStatus.setStatusDescription(statusDescription);
-         RequestsDatabase.getInstance().updateResOperStatus(resStatus);
-    }
+
 }

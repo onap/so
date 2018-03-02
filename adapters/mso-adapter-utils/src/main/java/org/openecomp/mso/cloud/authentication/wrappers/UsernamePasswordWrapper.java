@@ -32,19 +32,9 @@ import com.woorea.openstack.keystone.model.authentication.UsernamePassword;
 /**
  * This class implements the authentication wrapper for Openstack provided for
  * user name and password authentication.
- *
  */
 public class UsernamePasswordWrapper extends AuthenticationWrapper {
 
-	/**
-	 * 
-	 */
-	public UsernamePasswordWrapper() {
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openecomp.mso.cloud.authentication.AuthenticationWrapper#getAuthentication(org.openecomp.mso.cloud.CloudIdentity)
-	 */
 	@Override
 	public Authentication getAuthentication(CloudIdentity cloudIdentity) {
 		if (cloudIdentity == null) {

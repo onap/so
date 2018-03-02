@@ -136,12 +136,12 @@ public class DoCreateSIRollbackTest extends WorkflowTest {
 					"<service-information>" + EOL + 
 					"<service-id/>" + EOL + 
 					"<subscription-service-type>123456789</subscription-service-type>" + EOL + 
-					"<onap-model-information>" + EOL + 
+					"<ecomp-model-information>" + EOL + 
 					"<model-invariant-uuid/>" + EOL + 
 					"<model-uuid/>" + EOL + 
 					"<model-version/>" + EOL + 
 					"<model-name/>" + EOL + 
-					"</onap-model-information>" + EOL + 
+					"</ecomp-model-information>" + EOL + 
 					"<service-instance-id>MIS%252F1604%252F0026%252FSW_INTERNET</service-instance-id>" + EOL + 
 					"<subscriber-name/>" + EOL + 
 					"<global-customer-id>SDN-ETHERNET-INTERNET</global-customer-id>" + EOL + 
@@ -174,12 +174,12 @@ public class DoCreateSIRollbackTest extends WorkflowTest {
 				"<service-information>" + EOL + 
 				"<service-id/>" + EOL + 
 				"<subscription-service-type>123456789</subscription-service-type>" + EOL + 
-				"<onap-model-information>" + EOL + 
+				"<ecomp-model-information>" + EOL + 
 				"<model-invariant-uuid/>" + EOL + 
 				"<model-uuid/>" + EOL + 
 				"<model-version/>" + EOL + 
 				"<model-name/>" + EOL + 
-				"</onap-model-information>" + EOL + 
+				"</ecomp-model-information>" + EOL + 
 				"<service-instance-id>MIS%252F1604%252F0026%252FSW_INTERNET</service-instance-id>" + EOL + 
 				"<subscriber-name/>" + EOL + 
 				"<global-customer-id>SDN-ETHERNET-INTERNET</global-customer-id>" + EOL + 

@@ -159,7 +159,7 @@ public class MsoJsonProperties extends AbstractMsoProperties {
 
 	@Override
 	public String toString() {
-		StringBuffer response = new StringBuffer();
+		StringBuilder response = new StringBuilder();
 		response.append("Config file " + propertiesFileName + "(Timer:" + automaticRefreshInMinutes + "mins):"
 				+ System.getProperty("line.separator"));
 		response.append(this.jsonRootNode.toString());

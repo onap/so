@@ -22,6 +22,8 @@ package org.openecomp.mso.bpmn.common;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.openecomp.mso.bpmn.core.json.JsonUtils.getJsonValue;
+import static org.openecomp.mso.bpmn.core.json.JsonUtils.updJsonValue;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -30,8 +32,6 @@ import java.lang.management.RuntimeMXBean;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -61,6 +61,7 @@ import org.custommonkey.xmlunit.DetailedDiff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.jboss.resteasy.spi.AsynchronousResponse;
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Rule;
 import org.openecomp.mso.bpmn.common.adapter.sdnc.CallbackHeader;
@@ -77,12 +78,10 @@ import org.openecomp.mso.bpmn.common.workflow.service.VnfAdapterNotifyServiceImp
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowAsyncResource;
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowMessageResource;
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowResponse;
-import org.openecomp.mso.bpmn.core.utils.CamundaDBSetup;
 import org.openecomp.mso.bpmn.core.PropertyConfigurationSetup;
 import org.openecomp.mso.bpmn.core.domain.Resource;
 import org.openecomp.mso.bpmn.core.domain.ServiceDecomposition;
-
-import static org.openecomp.mso.bpmn.core.json.JsonUtils.*;
+import org.openecomp.mso.bpmn.core.utils.CamundaDBSetup;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -327,7 +326,7 @@ public class WorkflowTest {
 			String businessKey, String request, Map<String, Object> injectedVariables,
 			boolean serviceInstantiationModel) {
 
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 
 		// These variables may be overridded by injected variables.
 		variables.put("mso-service-request-timeout", "180");
@@ -422,7 +421,7 @@ public class WorkflowTest {
 	 * @return a VariableMap
 	 */
 	private VariableMapImpl createVariableMapImpl(Map<String, Object> variables) {
-		Map<String, Object> wrappedVariables = new HashMap<String, Object>();
+		Map<String, Object> wrappedVariables = new HashMap<>();
 
 		for (String key : variables.keySet()) {
 			Object value = variables.get(key);
@@ -441,7 +440,7 @@ public class WorkflowTest {
 	 * @return the wrapped variable
 	 */
 	private Map<String, Object> wrapVariableValue(Object value) {
-		HashMap<String, Object> valueMap = new HashMap<String, Object>();
+		HashMap<String, Object> valueMap = new HashMap<>();
 		valueMap.put("value", value);
 		return valueMap;
 	}
@@ -1502,16 +1501,71 @@ public class WorkflowTest {
 					for(Resource resource:resourceList){
 						resourceId = resource.getResourceId();
 					}
+					//TODO.. most other locations refer to solutionInfo.placementInfo 
 					String homingList = getJsonValue(content, "solutionInfo.placement");
-					JSONArray placementArr = new JSONArray(homingList);
+					JSONArray placementArr = null;
+					try {
+						placementArr = new JSONArray(homingList);
+					}
+					catch (Exception e) {
+						return false;
+					}
 					if(placementArr.length() == 1){
 						content = content.replace("((SERVICE_RESOURCE_ID))", resourceId);
 					}
 					String licenseInfoList = getJsonValue(content, "solutionInfo.licenseInfo");
-					JSONArray licenseArr = new JSONArray(licenseInfoList);
+					JSONArray licenseArr = null;
+					try {
+						licenseArr = new JSONArray(licenseInfoList);
+					}
+					catch (Exception e) {
+						return false;
+					}
 					if(licenseArr.length() == 1){
 						content = content.replace("((SERVICE_RESOURCE_ID))", resourceId);
 					}
+				}
+				else {
+					try {
+						String homingList = getJsonValue(content, "solutionInfo.placementInfo");
+						String licenseInfoList = getJsonValue(content, "solutionInfo.licenseInfo");
+						JSONArray placementArr = new JSONArray(homingList);
+						JSONArray licenseArr = new JSONArray(licenseInfoList);
+						for (Resource resource: resourceList) {
+							String resourceModuleName = resource.getModelInfo().getModelInstanceName();
+							String resourceId = resource.getResourceId();
+
+							for (int i=0; i<placementArr.length(); i++) {
+								JSONObject placementObj = placementArr.getJSONObject(i);
+								String placementModuleName = placementObj.getString("resourceModuleName");
+								if (placementModuleName.equalsIgnoreCase(resourceModuleName)) {
+									String placementString = placementObj.toString();
+									placementString = placementString.replace("((SERVICE_RESOURCE_ID))", resourceId);
+									JSONObject newPlacementObj = new JSONObject(placementString);
+									placementArr.put(i, newPlacementObj);
+								}
+							}
+							
+							for (int i=0; i<licenseArr.length(); i++) {
+								JSONObject licenseObj = licenseArr.getJSONObject(i);
+								String licenseModuleName = licenseObj.getString("resourceModuleName");
+								if (licenseModuleName.equalsIgnoreCase(resourceModuleName)) {
+									String licenseString = licenseObj.toString();
+									licenseString = licenseString.replace("((SERVICE_RESOURCE_ID))", resourceId);
+									JSONObject newLicenseObj = new JSONObject(licenseString);
+									licenseArr.put(i, newLicenseObj);
+								}
+							}
+						}
+						String newPlacementInfos = placementArr.toString();
+						String newLicenseInfos = licenseArr.toString();
+						content = updJsonValue(content, "solutionInfo.placementInfo", newPlacementInfos);
+						content = updJsonValue(content, "solutionInfo.licenseInfo", newLicenseInfos);
+					}
+					catch(Exception e) {
+						return false;
+					}
+					
 				}
 			}
 		}
@@ -1634,11 +1688,7 @@ public class WorkflowTest {
 				return null;
 			}
 
-			Collections.sort(processInstanceList, new Comparator<HistoricProcessInstance>() {
-			    public int compare(HistoricProcessInstance m1, HistoricProcessInstance m2) {
-			        return m1.getStartTime().compareTo(m2.getStartTime());
-			    }
-			});
+			processInstanceList.sort((m1, m2) -> m1.getStartTime().compareTo(m2.getStartTime()));
 
 			HistoricProcessInstance processInstance = processInstanceList.get(0);
 
@@ -1672,11 +1722,7 @@ public class WorkflowTest {
 				return null;
 			}
 
-			Collections.sort(processInstanceList, new Comparator<HistoricProcessInstance>() {
-			    public int compare(HistoricProcessInstance m1, HistoricProcessInstance m2) {
-			        return m1.getStartTime().compareTo(m2.getStartTime());
-			    }
-			});
+			processInstanceList.sort((m1, m2) -> m1.getStartTime().compareTo(m2.getStartTime()));
 
 			HistoricProcessInstance processInstance = processInstanceList.get(subflowInstanceIndex);
 
@@ -1784,7 +1830,7 @@ public class WorkflowTest {
 	 * An object that contains callback data for a "program".
 	 */
 	public class CallbackSet {
-		private final Map<String, CallbackData> map = new HashMap<String, CallbackData>();
+		private final Map<String, CallbackData> map = new HashMap<>();
 
 		/**
 		 * Add untyped callback data to the set.
@@ -1983,8 +2029,8 @@ public class WorkflowTest {
 	 * A NamespaceContext class based on a Map.
 	 */
 	private class SimpleNamespaceContext implements NamespaceContext {
-		private Map<String, String> prefixMap = new HashMap<String, String>();
-		private Map<String, String> uriMap = new HashMap<String, String>();
+		private Map<String, String> prefixMap = new HashMap<>();
+		private Map<String, String> uriMap = new HashMap<>();
 
 		public synchronized void add(String prefix, String uri) {
 			prefixMap.put(prefix, uri);
@@ -1998,7 +2044,7 @@ public class WorkflowTest {
 
 		@Override
 		public Iterator<String> getPrefixes(String uri) {
-			List<String> list = new ArrayList<String>();
+			List<String> list = new ArrayList<>();
 			String prefix = uriMap.get(uri);
 			if (prefix != null) {
 				list.add(prefix);

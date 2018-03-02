@@ -450,7 +450,7 @@ public class WorkflowResource extends ProcessEngineAwareService {
 					Object responseCodeObject = getVariableFromHistory(historyService, processInstanceId, prefix + "ResponseCode");
 					String responseCode = responseCodeObject == null ? null : String.valueOf(responseCodeObject);
 					msoLogger.debug(LOGMARKER + prefix + "ResponseCode: " + responseCode);
-					responseMap = new HashMap<String, Object>();
+					responseMap = new HashMap<>();
 					responseMap.put("WorkflowResponse", workflowResponse);
 					responseMap.put("ResponseCode", responseCode);
 					responseMap.put("Status", "Success");
@@ -467,7 +467,7 @@ public class WorkflowResource extends ProcessEngineAwareService {
 					if(workflowExceptionObject instanceof WorkflowException) {
 						workflowException = (WorkflowException) workflowExceptionObject;
 						workflowExceptionText = workflowException.toString();
-						responseMap = new HashMap<String, Object>();
+						responseMap = new HashMap<>();
 						responseMap.put("WorkflowException", workflowExceptionText);
 						responseMap.put("ResponseCode", workflowException.getErrorCode());
 						responseMap.put("Status", "Fail");
@@ -477,7 +477,7 @@ public class WorkflowResource extends ProcessEngineAwareService {
 						Object object = getVariableFromHistory(historyService, processInstanceId, prefix + "ResponseCode");
 						String responseCode = object == null ? null : String.valueOf(object);
 						workflowExceptionText = (String) workflowExceptionObject;
-						responseMap = new HashMap<String, Object>();
+						responseMap = new HashMap<>();
 						responseMap.put("WorkflowException", workflowExceptionText);
 						responseMap.put("ResponseCode", responseCode);
 						responseMap.put("Status", "Fail");
@@ -496,7 +496,7 @@ public class WorkflowResource extends ProcessEngineAwareService {
 					object = getVariableFromHistory(historyService, processInstanceId, prefix + "ResponseCode");
 					String responseCode = object == null ? null : String.valueOf(object);
 					msoLogger.debug(LOGMARKER + prefix + "ResponseCode: " + responseCode);
-					responseMap = new HashMap<String, Object>();
+					responseMap = new HashMap<>();
 					responseMap.put("Response", response);
 					responseMap.put("ResponseCode", responseCode);
 					responseMap.put("Status", "Success");
@@ -511,7 +511,7 @@ public class WorkflowResource extends ProcessEngineAwareService {
 					object = getVariableFromHistory(historyService, processInstanceId, prefix + "ResponseCode");
 					String responseCode = object == null ? null : String.valueOf(object);
 					msoLogger.debug(LOGMARKER + prefix + "ResponseCode: " + responseCode);
-					responseMap = new HashMap<String, Object>();
+					responseMap = new HashMap<>();
 					responseMap.put("Response", errorResponse);
 					responseMap.put("ResponseCode", responseCode);
 					responseMap.put("Status", "Fail");
@@ -569,7 +569,7 @@ public class WorkflowResource extends ProcessEngineAwareService {
 		try {
 			ProcessEngineServices engine = getProcessEngineServices();
 			List<HistoricVariableInstance> variables = engine.getHistoryService().createHistoricVariableInstanceQuery().processInstanceId(processInstanceId).list();
-			Map<String,String> variablesMap = new HashMap<String,String>();
+			Map<String,String> variablesMap = new HashMap<>();
 			for (HistoricVariableInstance variableInstance: variables) {
 				variablesMap.put(variableInstance.getName(), variableInstance.getValue().toString());
 			}

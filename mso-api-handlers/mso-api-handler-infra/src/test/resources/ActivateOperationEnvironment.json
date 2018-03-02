@@ -1,0 +1,33 @@
+{
+	"requestDetails": {
+		"requestInfo": {
+			"resourceType": "operationalEnvironment",
+			"instanceName": "myVnfOpEnv",
+			"source": "VID",
+			"requestorId": "az2017"
+		},
+		"relatedInstanceList": [
+			{
+				"relatedInstance": {
+					"resourceType": "operationalEnvironment",
+					"instanceId": "ff305d54-75b4-431b-adb2-eb6b9e5ff000",
+					"instanceName": "name"
+				}
+			}
+		],
+		"requestParameters": {
+			"operationalEnvironmentType": "VNF",
+			"workloadContext": "VNF_E2E-IST",
+			"manifest": {
+				"serviceModelList": [{
+					"serviceModelVersionId": "ff305d54-75b4-431b-adb2-eb6b9e5ff000",
+					"recoveryAction": "abort"
+				},
+				{
+					"serviceModelVersionId": "ff305d54-75b4-431b-adb2-eb6b9e5ff000",
+					"recoveryAction": "retry"
+				}]
+			}	
+		}
+	}
+}

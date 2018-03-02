@@ -27,7 +27,7 @@ import org.junit.Before
 import org.junit.Test
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.bpmn.common.scripts.SDNCAdapterUtils
 
@@ -50,7 +50,7 @@ public class SDNCAdapterUtilsTest {
 		wfex = null
 		tp = new AbstractServiceTaskProcessor() {
 			@Override
-			public void preProcessRequest(Execution execution) {
+			public void preProcessRequest(DelegateExecution execution) {
 			}
 		};
 		utils = new SDNCAdapterUtils(tp)
@@ -135,6 +135,35 @@ public class SDNCAdapterUtilsTest {
 		assertFalse(map.containsKey("WorkflowException"))
 	}
 	
+	@Test
+	public void testUpdateHomingInfo() {
+		String actual = utils.updateHomingInfo(null, "AIC3.0")
+		println actual
+		assertEquals("<l2-homing-information><aic-version>AIC3.0</aic-version></l2-homing-information>", actual)
+	}
+	
+	@Test
+	public void testUpdateHomingInfo2() {
+		String homingInfo = "<l2-homing-information><preferred-aic-clli>TESTCLLI</preferred-aic-clli></l2-homing-information>" 
+		String actual = utils.updateHomingInfo(homingInfo, "AIC3.0")
+		println actual
+		assertEquals("<l2-homing-information><preferred-aic-clli>TESTCLLI</preferred-aic-clli><aic-version>AIC3.0</aic-version></l2-homing-information>", actual)
+	}
+	
+	@Test
+	public void testUpdateServiceInfo() {
+		String actual = utils.updateServiceInfo(null, "96688f6f-ab06-4ef6-ae55-9d3af28ae909")
+		println actual
+		assertEquals("<service-information><infra-service-instance-id>96688f6f-ab06-4ef6-ae55-9d3af28ae909</infra-service-instance-id></service-information>", actual)
+	}
+	
+	@Test
+	public void testUpdateServiceInfo2() {
+		String serviceInfo = "<service-information><service-type>SDN-ETHERNET-INTERNET</service-type><service-instance-id>MIS/1602/00029/SB_INTERNET</service-instance-id></service-information>"
+		String actual = utils.updateServiceInfo(serviceInfo, "96688f6f-ab06-4ef6-ae55-9d3af28ae909")
+		println actual
+		assertEquals("<service-information><service-type>SDN-ETHERNET-INTERNET</service-type><service-instance-id>MIS/1602/00029/SB_INTERNET</service-instance-id><infra-service-instance-id>96688f6f-ab06-4ef6-ae55-9d3af28ae909</infra-service-instance-id></service-information>", actual)
+	}
 	
 	private String makeResp(String respcode, String respmsg, String reqdata) {
 		def rc = encodeXml(respcode)

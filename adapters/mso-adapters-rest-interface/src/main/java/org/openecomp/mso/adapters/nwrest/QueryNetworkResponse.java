@@ -21,40 +21,34 @@
 
 package org.openecomp.mso.adapters.nwrest;
 
-
-
-import org.openecomp.mso.openstack.beans.NetworkStatus;
-
 import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.jboss.resteasy.annotations.providers.NoJackson;
 import org.openecomp.mso.logger.MsoLogger;
+import org.openecomp.mso.openstack.beans.NetworkStatus;
+import org.openecomp.mso.openstack.beans.RouteTarget;
 
 @XmlRootElement(name = "queryNetworkResponse")
-@NoJackson
-public class QueryNetworkResponse {
+public class QueryNetworkResponse extends NetworkResponseCommon {
 	private String networkId;
 	private String neutronNetworkId;
 	private String networkStackId;
 	private Boolean networkExists;
 	private NetworkStatus networkStatus;
 	private List<Integer> vlans;
-	private List<String> routeTargets;
+	private List<RouteTarget> routeTargets;
 	private Map<String, String> subnetIdMap;
 	private Map<String, String> networkOutputs;
 	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
-	
+
 	public QueryNetworkResponse() {
 		super();
 	}
 
-	public QueryNetworkResponse(String networkId, String neutronNetworkId,
-			String networkStackId, NetworkStatus networkStatus,
-			Map<String, String> networkOutputs) {
+	public QueryNetworkResponse(String networkId, String neutronNetworkId, String networkStackId,
+			NetworkStatus networkStatus, Map<String, String> networkOutputs) {
 		super();
 		this.networkId = networkId;
 		this.neutronNetworkId = neutronNetworkId;
@@ -111,11 +105,11 @@ public class QueryNetworkResponse {
 		this.vlans = vlans;
 	}
 
-	public List<String> getRouteTargets() {
+	public List<RouteTarget> getRouteTargets() {
 		return routeTargets;
 	}
 
-	public void setRouteTargets(List<String> routeTargets) {
+	public void setRouteTargets(List<RouteTarget> routeTargets) {
 		this.routeTargets = routeTargets;
 	}
 
@@ -133,17 +127,5 @@ public class QueryNetworkResponse {
 
 	public void setNetworkOutputs(Map<String, String> networkOutputs) {
 		this.networkOutputs = networkOutputs;
-	}
-	
-	public String toJsonString() {
-		String jsonString = null;
-		try {
-			ObjectMapper mapper = new ObjectMapper();
-			jsonString = mapper.writeValueAsString(this);
-		}
-		catch (Exception e) {
-		    LOGGER.debug("Exception:", e);
-		}
-		return jsonString;
 	}
 }

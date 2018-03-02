@@ -19,18 +19,16 @@
  */
 package org.openecomp.mso.adapters.catalogdb.catalogrest;
 
-import org.openecomp.mso.db.catalog.beans.VfModule;
-import org.openecomp.mso.db.catalog.beans.VfModuleCustomization;
-import org.jboss.resteasy.annotations.providers.NoJackson;
-
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.openecomp.mso.db.catalog.beans.VfModuleCustomization;
+
 @XmlRootElement(name = "vfModules")
-@NoJackson
 public class QueryVfModule extends CatalogQuery {
 	private List<VfModuleCustomization> vfModules;
 	private final String template =
@@ -104,10 +102,10 @@ public class QueryVfModule extends CatalogQuery {
 		    put(valueMap, "MODEL_INVARIANT_ID",       vfNull ? null : o.getVfModule().getModelInvariantUuid());
 		    put(valueMap, "MODEL_VERSION",            vfNull ? null : o.getVfModule().getVersion());
 		    put(valueMap, "MODEL_CUSTOMIZATION_UUID", o.getModelCustomizationUuid());
-		    put(valueMap, "IS_BASE",                  vfNull ? false : new Boolean(o.getVfModule().isBase()? true: false));
-		    put(valueMap, "VF_MODULE_LABEL",          o.getLabel());
+			put(valueMap, "IS_BASE", vfNull ? false : o.getVfModule().isBase() ? true : false);
+			put(valueMap, "VF_MODULE_LABEL",          o.getLabel());
 		    put(valueMap, "INITIAL_COUNT",            o.getInitialCount());
-		    put(valueMap, "HAS_VOLUME_GROUP",           new Boolean(hasVolumeGroup));
+		    put(valueMap, "HAS_VOLUME_GROUP", hasVolumeGroup);
 
             buf.append(sep+ this.setTemplate(template, valueMap));
             sep = ",\n";

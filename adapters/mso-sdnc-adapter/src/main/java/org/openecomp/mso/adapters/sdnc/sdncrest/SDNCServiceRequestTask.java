@@ -138,6 +138,14 @@ public class SDNCServiceRequestTask implements Runnable {
 
 			Element requestInformation = addChild(root, "request-information");
 			addTextChild(requestInformation, "request-id", request.getRequestInformation().getRequestId());
+			if(request.getRequestInformation().getRequestAction()!= null) {
+				addTextChild(requestInformation, "request-action",
+						request.getRequestInformation().getRequestAction());
+			}
+			if(request.getRequestInformation().getRequestSubAction()!= null) {
+				addTextChild(requestInformation, "request-sub-action",
+						request.getRequestInformation().getRequestSubAction());
+			}
 			addTextChild(requestInformation, "source", request.getRequestInformation().getSource());
 			addTextChild(requestInformation, "notification-url", request.getRequestInformation().getNotificationUrl());
 

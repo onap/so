@@ -121,7 +121,7 @@ public class BPMNUtil {
 
 	
 	private static void buildVariable(String key, String value, Map<String,Object> variableValueType) {
-		Map<String, Object> host = new HashMap<String, Object>();
+		Map<String, Object> host = new HashMap<>();
 		host.put("value", value);
 		host.put("type", "String");
 		variableValueType.put(key, host);
@@ -131,7 +131,7 @@ public class BPMNUtil {
 		WorkflowResource workflowResource = new WorkflowResource();
 		VariableMapImpl variableMap = new VariableMapImpl();
 
-		Map<String, Object> variableValueType = new HashMap<String, Object>();
+		Map<String, Object> variableValueType = new HashMap<>();
 		for (String key : variables.keySet()) {
 			buildVariable(key, variables.get(key), variableValueType);
 		}
@@ -203,7 +203,7 @@ public class BPMNUtil {
 		WorkflowAsyncResource workflowResource = new WorkflowAsyncResource();
 		VariableMapImpl variableMap = new VariableMapImpl();
 
-		Map<String, Object> variableValueType = new HashMap<String, Object>();
+		Map<String, Object> variableValueType = new HashMap<>();
 		for (String key : variables.keySet()) {
 			buildVariable(key, variables.get(key), variableValueType);
 		}

@@ -34,6 +34,7 @@ import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockDBUpdateVfModule;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockDeleteGenericVnf;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockDeleteVfModuleId;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetGenericVnfById;
+import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetDefaultCloudRegionByCloudRegionId;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetGenericVnfByIdWithDepth;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetGenericVnfByIdWithPriority;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetServiceInstance;
@@ -102,9 +103,10 @@ public class ReplaceVnfInfraTest extends WorkflowTest {
 	 * @throws Exception
 	 */
 	@Test	
-    @Ignore
+ 
 	@Deployment(resources = {
-		"process/ReplaceVnfInfra.bpmn",		
+		"process/ReplaceVnfInfra.bpmn",	
+		"subprocess/RollbackVnf.bpmn",
 		"subprocess/DoDeleteVfModule.bpmn",
 		"subprocess/DoDeleteVnfAndModules.bpmn",
 		"subprocess/DeleteAAIVfModule.bpmn",
@@ -133,7 +135,8 @@ public class ReplaceVnfInfraTest extends WorkflowTest {
 		"subprocess/DoCreateVnfAndModulesRollback.bpmn",
 		"subprocess/BuildingBlock/DecomposeService.bpmn",
 		"subprocess/BuildingBlock/RainyDayHandler.bpmn",
-		"subprocess/BuildingBlock/ManualHandling.bpmn"
+		"subprocess/BuildingBlock/ManualHandling.bpmn",
+		"subprocess/BuildingBlock/AppCClient.bpmn"
 		
 		})
 	public void sunnyDay() throws Exception {
@@ -152,19 +155,21 @@ public class ReplaceVnfInfraTest extends WorkflowTest {
 		MockGetServiceInstance("SDN-ETHERNET-INTERNET", "123456789", "MIS%252F1604%252F0026%252FSW_INTERNET", "GenericFlows/getServiceInstance.xml");
 		//MockGetGenericVnfById_404("testVnfId");
 		MockGetServiceResourcesCatalogData("995256d2-5a33-55df-13ab-12abad84e7ff", "1.0", "VIPR/getCatalogServiceResourcesDataForReplaceVnfInfra.json");
+		MockGetServiceResourcesCatalogData("995256d2-5a33-55df-13ab-12abad84e7ff", "VIPR/getCatalogServiceResourcesDataForReplaceVnfInfra.json");
 		//MockGetGenericVnfByIdWithDepth("skask", 1, "VfModularity/GenericVnf.xml");
 		//MockPutGenericVnf(".*");
+		MockGetDefaultCloudRegionByCloudRegionId("mdt1", "AAI/AAI_defaultCloudRegionByCloudRegionId.json", 200);
 		MockAAIVfModule();
 		MockPatchGenericVnf("a27ce5a9-29c4-4c22-a017-6615ac73c721");
 		MockPatchVfModuleId("a27ce5a9-29c4-4c22-a017-6615ac73c721", ".*");
-		//mockSDNCAdapter("VfModularity/StandardSDNCSynchResponse.xml");	
-		//mockVNFPut("skask", "/supercool", 202);
-		//mockVNFPut("skask", "/lukewarm", 202);
-		//MockVNFAdapterRestVfModule();
-		//MockDBUpdateVfModule();	
-		//MockGetPserverByVnfId("skask", "AAI/AAI_pserverByVnfId.json", 200);
-		//MockGetGenericVnfsByVnfId("skask", "AAI/AAI_genericVnfsByVnfId.json", 200);
-		MockSetInMaintFlagByVnfId("skask", 200);
+		mockSDNCAdapter("VfModularity/StandardSDNCSynchResponse.xml");	
+		mockVNFPut("skask", "/supercool", 202);
+		mockVNFPut("skask", "/lukewarm", 202);
+		MockVNFAdapterRestVfModule();
+		MockDBUpdateVfModule();	
+		MockGetPserverByVnfId("skask", "AAI/AAI_pserverByVnfId.json", 200);
+		MockGetGenericVnfsByVnfId("skask", "AAI/AAI_genericVnfsByVnfId.json", 200);
+		MockSetInMaintFlagByVnfId("skask", "AAI/AAI_genericVnfsByVnfId.json", 200);		
 		MockPolicySkip();
 		
 		//mockSDNCAdapter("VfModularity/StandardSDNCSynchResponse.xml");

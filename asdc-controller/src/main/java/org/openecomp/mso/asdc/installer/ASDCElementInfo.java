@@ -109,7 +109,7 @@ public class ASDCElementInfo {
 	 */
 	@Override
 	public final String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		List<String> aggregatedElements = new ArrayList<>();
 		for (Entry<String, String> entry : this.getElementInfoMap().entrySet()) {
 			aggregatedElements.add(entry.getKey() + ": " + entry.getValue());

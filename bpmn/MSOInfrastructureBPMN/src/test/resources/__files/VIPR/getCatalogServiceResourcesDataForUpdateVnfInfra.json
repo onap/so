@@ -1,4 +1,8 @@
 { "serviceResources"    : {
+	"serviceType"        : "PortMirroring",
+	"serviceRole"        : "InfraRole",
+	"environmentContext" : "Luna",
+	"workloadContext"    : "Oxygen",
 	"modelInfo"       : {
 		"modelName"          : "MSO Test Network",
 		"modelUuid"          : "aed5a5b7-20d3-44f7-90a3-ddbd16f14d1e",
@@ -19,6 +23,7 @@
 		"nfType"              		: null,
 		"nfRole"              		: "vSCP",
 		"nfNamingCode"         	: null,
+		"multiStageDesign"		: null,
 			"vfModules": [
 				{
 					"modelInfo"               : { 

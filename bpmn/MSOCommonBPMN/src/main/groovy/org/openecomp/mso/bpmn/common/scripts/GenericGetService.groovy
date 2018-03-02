@@ -22,7 +22,7 @@ package org.openecomp.mso.bpmn.common.scripts
 
 import org.apache.commons.lang3.StringEscapeUtils
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.openecomp.mso.rest.APIResponse
 import org.springframework.web.util.UriUtils
 
@@ -101,7 +101,7 @@ class GenericGetService extends AbstractServiceTaskProcessor{
 	 * @param - execution
 	 *
 	 */
-	public void preProcessRequest(Execution execution) {
+	public void preProcessRequest(DelegateExecution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		utils.log("DEBUG", " *** STARTED GenericGetService PreProcessRequest Process*** ", isDebugEnabled)
@@ -187,7 +187,7 @@ class GenericGetService extends AbstractServiceTaskProcessor{
 	 *
 	 * @param - execution
 	 */
-	public void obtainServiceInstanceUrlById(Execution execution){
+	public void obtainServiceInstanceUrlById(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		utils.log("DEBUG", " *** STARTED GenericGetService ObtainServiceInstanceUrlById Process*** ", isDebugEnabled)
@@ -269,7 +269,7 @@ class GenericGetService extends AbstractServiceTaskProcessor{
 	 *
 	 * @param - execution
 	 */
-	public void obtainServiceInstanceUrlByName(Execution execution){
+	public void obtainServiceInstanceUrlByName(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		utils.log("DEBUG", " *** STARTED GenericGetService ObtainServiceInstanceUrlByName Process*** ", isDebugEnabled)
@@ -339,7 +339,7 @@ class GenericGetService extends AbstractServiceTaskProcessor{
 	 *
 	 * @param - execution
 	 */
-	public void getServiceObject(Execution execution){
+	public void getServiceObject(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		utils.log("DEBUG", " *** STARTED GenericGetService GetServiceObject Process*** ", isDebugEnabled)
@@ -410,6 +410,7 @@ class GenericGetService extends AbstractServiceTaskProcessor{
 			aaiResponse = StringEscapeUtils.unescapeXml(aaiResponse)
 			execution.setVariable("GENGS_getServiceResponse", aaiResponse)
 			utils.logAudit("GenericGetService AAI Response: " + aaiResponse)
+			aaiResponse = aaiResponse.replaceAll("&", "&amp;")
 			//Process Response
 			if(responseCode == 200 || responseCode == 202){
 				utils.log("DEBUG", "GET Service Received a Good Response Code", isDebugEnabled)

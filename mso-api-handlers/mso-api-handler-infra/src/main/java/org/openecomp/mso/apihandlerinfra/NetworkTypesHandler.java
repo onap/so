@@ -78,13 +78,13 @@ public class NetworkTypesHandler {
 
         ObjectFactory beansObjectFactory = new ObjectFactory ();
         NetworkTypes networkTypes = beansObjectFactory.createNetworkTypes ();
-        for (int i = 0; i < networkResources.size (); i++) {
-            NetworkType networkType = beansObjectFactory.createNetworkType ();
-            NetworkResource vr = networkResources.get (i);
-            networkType.setType (vr.getModelName());
-            networkType.setDescription (vr.getDescription ());
-            networkType.setId (String.valueOf (vr.getModelUUID()));
-            networkTypes.getNetworkType ().add (networkType);
+        for (NetworkResource networkResource : networkResources) {
+            NetworkType networkType = beansObjectFactory.createNetworkType();
+            NetworkResource vr = networkResource;
+            networkType.setType(vr.getModelName());
+            networkType.setDescription(vr.getDescription());
+            networkType.setId(String.valueOf(vr.getModelUUID()));
+            networkTypes.getNetworkType().add(networkType);
         }
 
         StringWriter stringWriter = new StringWriter ();

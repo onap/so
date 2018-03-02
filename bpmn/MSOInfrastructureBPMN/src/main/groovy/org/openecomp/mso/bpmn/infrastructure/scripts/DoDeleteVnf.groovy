@@ -25,7 +25,7 @@ import javax.xml.parsers.DocumentBuilderFactory
 
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
 import org.openecomp.mso.bpmn.common.scripts.VidUtils
@@ -57,7 +57,7 @@ class DoDeleteVnf extends AbstractServiceTaskProcessor {
 	 * @param - execution
 	 *
 	 */
-	public void preProcessRequest(Execution execution) {
+	public void preProcessRequest(DelegateExecution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		utils.log("DEBUG", " *** STARTED DoDeleteVnf PreProcessRequest Process*** ", isDebugEnabled)
@@ -86,7 +86,7 @@ class DoDeleteVnf extends AbstractServiceTaskProcessor {
 	}
 
 
-	public void processGetVnfResponse(Execution execution){
+	public void processGetVnfResponse(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		utils.log("DEBUG", " *** STARTED DoDeleteVnf processGetVnfResponse Process *** ", isDebugEnabled)

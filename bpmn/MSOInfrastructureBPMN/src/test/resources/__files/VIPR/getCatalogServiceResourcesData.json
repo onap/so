@@ -1,0 +1,94 @@
+{ "serviceResources"    : {
+	"modelInfo"       : {
+		"modelName"          : "MSO Test Network",
+		"modelUuid"          : "aed5a5b7-20d3-44f7-90a3-ddbd16f14d1e",
+		"modelInvariantUuid" : "52b49b5d-3086-4ffd-b5e6-1b1e5e7e062f",
+		"modelVersion"       : null
+	},
+	"serviceVnfs": [
+		{ "modelInfo"                    : {
+			"modelName"              : "vHNF for DHV Test",
+			"modelUuid"              : "7097d8bb-f6ad-4cf7-866e-6a04c8f1b332",
+			"modelInvariantUuid"     : "6ea0b528-e303-4686-aa77-aa2fcbdccb96",
+			"modelVersion"           : "2.0",
+			"modelCustomizationUuid" : "da86dd87-43c5-458c-b226-5315b7be9ad5",
+			"modelInstanceName"      : "vHNF for DHV Test 17"
+			},
+		"toscaNodeType"            : null,
+		"nfFunction"           	: null,
+		"nfType"              		: null,
+		"nfRole"              		: null,
+		"nfNamingCode"         	: null,
+		"multiStageDesign"		: null,
+			"vfModules": [
+				{
+					"modelInfo"               : { 
+						"modelName"              : "VhnfForDhvTest..base_TEST..module-0",
+						"modelUuid"              : "ebc3d18c-3e62-4c24-bcd6-961e98701a0a",
+						"modelInvariantUuid"     : "f5696ec0-ec71-4916-bf3b-93a654efcba4",
+						"modelVersion"           : "1",
+						"modelCustomizationUuid" : "1740536a-742e-40f5-b9c8-83918849a787"
+					},		"isBase"                 : true,
+					"vfModuleLabel"          : "base_TEST",
+					"initialCount"           : 1,
+					"hasVolumeGroup"           : true
+				}
+			]
+		}
+		],
+	"serviceNetworks": [
+			{
+			"modelInfo"                : {
+				"modelName"              : "CONTRAIL_BASIC",
+				"modelUuid"              : "fe5be3a6-dbe0-46d6-bcac-44dc841a7edc",
+				"modelInvariantUuid"     : "ab07fbd8-185a-45ac-be45-db3eb02e98d5",
+				"modelVersion"           : null,
+				"modelCustomizationUuid" : "0cb9b26a-9820-48a7-86e5-16c510e993d9",
+				"modelInstanceName"      : "CONTRAIL_BASIC 5"
+		},
+			"toscaNodeType"            : null,
+			"networkType"              : null,
+			"networkTechnology"        : null,
+			"networkRole"              : null,
+			"networkScope"             : null
+		}
+		],
+	"serviceAllottedResources": [
+			{
+			"modelInfo"       : {
+				"modelName"              : "IP_MUX_Demux",
+				"modelUuid"              : "64a1a718-556b-48ce-b3b7-ed3237ccc94f",
+				"modelInvariantUuid"     : "f110ef53-a0a6-4d72-ab91-fd88a835e8c4",
+				"modelVersion"           : "2.0",
+				"modelCustomizationUuid" : "4bab0880-2f06-4aeb-87cb-3734c8e8bf93",
+				"modelInstanceName"      : "Pri_IP_MUX_Demux 1"
+			},
+			"toscaNodeType"              : null,
+			"allottedResourceType"              : "ContrailRoute",
+			"allottedResourceRole"              : null,
+			"providingServiceModelInvariantUuid"              : null,
+			"nfFunction"              : null,
+			"nfType"              : null,
+			"nfRole"              : null,
+			"nfNamingCode"              : null
+		},
+				{
+			"modelInfo"       : {
+				"modelName"              : "Service_Admin",
+				"modelUuid"              : "73501e03-ee76-4509-a8ce-96d2a9f33ee9",
+				"modelInvariantUuid"     : "462edf71-1a3c-487b-bf55-497460ab7de3",
+				"modelVersion"           : "2.0",
+				"modelCustomizationUuid" : "a896ffad-c8f9-404e-a527-7a8d0cc99ce6",
+				"modelInstanceName"      : "Pri_Service_Admin 5"
+			},
+			"toscaNodeType"              : null,
+			"allottedResourceType"              : "SecurityZone",
+			"allottedResourceRole"              : null,
+			"providingServiceModelInvariantUuid"              : null,
+			"nfFunction"              : null,
+			"nfType"              : null,
+			"nfRole"              : null,
+			"nfNamingCode"              : null
+		}
+		]
+	}}

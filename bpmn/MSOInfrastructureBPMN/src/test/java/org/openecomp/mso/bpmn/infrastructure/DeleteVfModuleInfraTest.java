@@ -29,6 +29,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
+import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPatchVfModuleId;
+import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockVNFAdapterRestVfModule;
 import static org.openecomp.mso.bpmn.mock.StubResponseDatabase.mockUpdateRequestDB;
 import static org.openecomp.mso.bpmn.mock.StubResponseVNFAdapter.mockVNFDelete;
 
@@ -53,32 +55,40 @@ public class DeleteVfModuleInfraTest extends WorkflowTest {
 	private final CallbackSet callbacks = new CallbackSet();
 	
 	private static final String EOL = "\n";
-
+	
 	private final String vnfAdapterDeleteCallback = 
 			"<deleteVfModuleResponse>" + EOL +
 			"    <vnfId>a27ce5a9-29c4-4c22-a017-6615ac73c721</vnfId>" + EOL +
 			"    <vfModuleId>973ed047-d251-4fb9-bf1a-65b8949e0a73</vfModuleId>" + EOL +
 			"    <vfModuleDeleted>true</vfModuleDeleted>" + EOL +
 			"    <messageId>{{MESSAGE-ID}}</messageId>" + EOL +
-			" 	<vfModuleOutputs>" + EOL +  
-			" 	 <entry>" + EOL +
-			"	 <key>policyKey1_contrail_network_policy_fqdn</key>" + EOL +
-			" <value>MSOTest:DefaultPolicyFQDN1</value>" + EOL +
-			"</entry>" + EOL +
-			"<entry>" + EOL +
-			"<key>policyKey2_contrail_network_policy_fqdn</key>" + EOL +
-			"<value>MSOTest:DefaultPolicyFQDN2</value>" + EOL +
-			"</entry>" + EOL +
-			" 	 <entry>" + EOL +
-			"	 <key>oam_management_v4_address</key>" + EOL +
-			" <value>1234</value>" + EOL +
-			"</entry>" + EOL +
-			" 	 <entry>" + EOL +
-			"	 <key>oam_management_v6_address</key>" + EOL +
-			" <value>1234</value>" + EOL +
-			"</entry>" + EOL +
-			"</vfModuleOutputs>" + EOL +
 			"</deleteVfModuleResponse>" + EOL;
+
+	//private final String vnfAdapterDeleteCallback = 
+		//	"<deleteVfModuleResponse>" + EOL +
+	//		"    <vnfId>a27ce5a9-29c4-4c22-a017-6615ac73c721</vnfId>" + EOL +
+	//		"    <vfModuleId>973ed047-d251-4fb9-bf1a-65b8949e0a73</vfModuleId>" + EOL +
+	//		"    <vfModuleDeleted>true</vfModuleDeleted>" + EOL +
+	//		"    <messageId>{{MESSAGE-ID}}</messageId>" + EOL +
+	//		" 	<vfModuleOutputs>" + EOL +  
+	//		" 	 <entry>" + EOL +
+	//		"	 <key>policyKey1_contrail_network_policy_fqdn</key>" + EOL +
+	//		" <value>MSOTest:DefaultPolicyFQDN1</value>" + EOL +
+	//		"</entry>" + EOL +
+	//		"<entry>" + EOL +
+	//		"<key>policyKey2_contrail_network_policy_fqdn</key>" + EOL +
+	//		"<value>MSOTest:DefaultPolicyFQDN2</value>" + EOL +
+	//		"</entry>" + EOL +
+	//		" 	 <entry>" + EOL +
+	//		"	 <key>oam_management_v4_address</key>" + EOL +
+	//		" <value>1234</value>" + EOL +
+	//		"</entry>" + EOL +
+	//		" 	 <entry>" + EOL +
+	//		"	 <key>oam_management_v6_address</key>" + EOL +
+	//		" <value>1234</value>" + EOL +
+	//		"</entry>" + EOL +
+	//		"</vfModuleOutputs>" + EOL +
+	//		"</deleteVfModuleResponse>" + EOL;
 				
 	private final String vnfAdapterDeleteCallbackFail = 
 			"<vfModuleException>" + EOL +
@@ -97,13 +107,15 @@ public class DeleteVfModuleInfraTest extends WorkflowTest {
 	public DeleteVfModuleInfraTest() throws IOException {
 		callbacks.put("sdncChangeDelete", sdncAdapterDeleteCallback);
 		callbacks.put("sdncDelete", sdncAdapterDeleteCallback);
-		callbacks.put("vnfDelete", vnfAdapterDeleteCallback);
+		callbacks.put("vnfDelete", FileUtil.readResourceFile(
+				"__files/DeleteVfModuleCallbackResponse.xml"));
+		//callbacks.put("vnfDelete", vnfAdapterDeleteCallback);
 		callbacks.put("vnfDeleteFail", vnfAdapterDeleteCallbackFail);
 	}
 
 	@Test
 	@Deployment(resources = {
-			"process/Infrastructure/DeleteVfModuleInfra.bpmn",
+			"process/DeleteVfModuleInfra.bpmn",
 			"subprocess/DoDeleteVfModule.bpmn",
 			"subprocess/PrepareUpdateAAIVfModule.bpmn",
 			"subprocess/UpdateAAIVfModule.bpmn",
@@ -114,7 +126,7 @@ public class DeleteVfModuleInfraTest extends WorkflowTest {
 			"subprocess/CompleteMsoProcess.bpmn",
 			"subprocess/FalloutHandler.bpmn"
 		})
-	@Ignore
+	
 	public void  TestDeleteVfModuleSuccess() throws Exception {
 		// delete the Base Module
 		// vnf-id=a27ce5a9-29c4-4c22-a017-6615ac73c721, vf-module-id=973ed047-d251-4fb9-bf1a-65b8949e0a73
@@ -155,7 +167,10 @@ public class DeleteVfModuleInfraTest extends WorkflowTest {
 				  .withHeader("Content-Type", "text/xml")
 				  .withBodyFile("DeleteGenericVNFV1/sdncAdapterResponse.xml")));
 		
-		mockVNFDelete(".*", "/.*", 202);
+		//mockVNFDelete("a27ce5a9-29c4-4c22-a017-6615ac73c721", "973ed047-d251-4fb9-bf1a-65b8949e0a73", 202);
+		MockDoDeleteVfModule_DeleteVNFSuccess();
+		MockPatchVfModuleId("a27ce5a9-29c4-4c22-a017-6615ac73c721", "973ed047-d251-4fb9-bf1a-65b8949e0a73");
+	//	MockVNFAdapterRestVfModule();
 //		MockAAIGenericVnfSearch();
 //		MockAAIVfModulePUT(false);
 //		MockAAIDeleteGenericVnf();
@@ -575,5 +590,15 @@ public class DeleteVfModuleInfraTest extends WorkflowTest {
 				
 			}
 
-	
+			public static void MockDoDeleteVfModule_DeleteVNFSuccess() {
+				stubFor(delete(urlMatching("/vnfs/v1/vnfs/.*/vf-modules/.*"))
+						.willReturn(aResponse()
+						.withStatus(202)
+						.withHeader("Content-Type", "application/xml")));
+				stubFor(delete(urlMatching("/vnfs/v1/volume-groups/78987"))
+						.willReturn(aResponse()
+						.withStatus(202)
+						.withHeader("Content-Type", "application/xml")));
+			}
+
 }

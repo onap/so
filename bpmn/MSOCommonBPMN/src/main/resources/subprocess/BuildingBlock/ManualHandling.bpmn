@@ -5,7 +5,7 @@
       <bpmn2:outgoing>SequenceFlow_0jav6cu</bpmn2:outgoing>
     </bpmn2:startEvent>
     <bpmn2:endEvent id="EndEvent_3">
-      <bpmn2:incoming>SequenceFlow_192yimz</bpmn2:incoming>
+      <bpmn2:incoming>SequenceFlow_14cyk9v</bpmn2:incoming>
     </bpmn2:endEvent>
     <bpmn2:subProcess id="SubProcess_06d8lk8" name="Java Exception Handling Sub Process" triggeredByEvent="true">
       <bpmn2:startEvent id="StartEvent_0yljq9y">
@@ -26,15 +26,7 @@ exceptionUtil.processJavaException(execution)]]></bpmn2:script>
       <bpmn2:sequenceFlow id="SequenceFlow_0g4aus9" sourceRef="processJavaError" targetRef="EndEvent_117lkk3" />
     </bpmn2:subProcess>
     <bpmn2:sequenceFlow id="SequenceFlow_0jav6cu" sourceRef="createSI_startEvent" targetRef="Task_1qrt7xw" />
-    <bpmn2:sequenceFlow id="SequenceFlow_0zgg47r" sourceRef="Task_1qrt7xw" targetRef="ManualHandlingUserTask" />
-    <bpmn2:scriptTask id="Task_1qrt7xw" name="PreProcess Request" scriptFormat="groovy">
-      <bpmn2:incoming>SequenceFlow_0jav6cu</bpmn2:incoming>
-      <bpmn2:outgoing>SequenceFlow_0zgg47r</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
-def mh = new ManualHandling()
-mh.preProcessRequest(execution)]]></bpmn2:script>
-    </bpmn2:scriptTask>
-    <bpmn2:sequenceFlow id="SequenceFlow_192yimz" sourceRef="ManualHandlingUserTask" targetRef="EndEvent_3" />
+    <bpmn2:sequenceFlow id="SequenceFlow_192yimz" sourceRef="ManualHandlingUserTask" targetRef="Task_0r60vxk" />
     <bpmn2:userTask id="ManualHandlingUserTask" name="Manual Handling User Task">
       <bpmn2:extensionElements>
         <camunda:taskListener event="complete">
@@ -51,9 +43,87 @@ def mh = new ManualHandling()
 mh.setTaskVariables(task)]]></camunda:script>
         </camunda:taskListener>
       </bpmn2:extensionElements>
-      <bpmn2:incoming>SequenceFlow_0zgg47r</bpmn2:incoming>
+      <bpmn2:incoming>SequenceFlow_0igra4l</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_192yimz</bpmn2:outgoing>
     </bpmn2:userTask>
+    <bpmn2:sequenceFlow id="SequenceFlow_0mbjrvr" sourceRef="Task_137bzdi" targetRef="Task_1kuxfdu" />
+    <bpmn2:sequenceFlow id="SequenceFlow_0b84ki5" sourceRef="Task_1kuxfdu" targetRef="CreateAOTSRubyTicket" />
+    <bpmn2:sequenceFlow id="SequenceFlow_0zer29a" sourceRef="Task_0r60vxk" targetRef="Task_02xybqx" />
+    <bpmn2:sequenceFlow id="SequenceFlow_14cyk9v" sourceRef="Task_02xybqx" targetRef="EndEvent_3" />
+    <bpmn2:serviceTask id="Task_1kuxfdu" name="Update Infra DB Status to PENDING_MANUAL_TASK">
+      <bpmn2:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">${URN_mso_adapters_openecomp_db_endpoint}</camunda:inputParameter>
+            <camunda:inputParameter name="payload"><![CDATA[${execution.getVariable("setUpdateDBstatusPayload")}]]></camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
+                <camunda:entry key="Authorization">#{BasicAuthHeaderValueDB}</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:outputParameter name="updateRequestResponse"><![CDATA[${statusCode == null || statusCode == 204 ? "" : response}]]></camunda:outputParameter>
+            <camunda:outputParameter name="updateRequestResponseCode">${statusCode}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>soap-http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_0mbjrvr</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_0b84ki5</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+    <bpmn2:scriptTask id="Task_137bzdi" name="Prepare Requests DB Status Update to PENDING_MANUAL_TASK" scriptFormat="groovy">
+      <bpmn2:incoming>SequenceFlow_0zgg47r</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_0mbjrvr</bpmn2:outgoing>
+      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+def mh = new ManualHandling()
+mh.prepareRequestsDBStatusUpdate(execution, "PENDING_MANUAL_TASK")]]></bpmn2:script>
+    </bpmn2:scriptTask>
+    <bpmn2:scriptTask id="Task_0r60vxk" name="Prepare Requests DB Status Update to IN_PROGRESS" scriptFormat="groovy">
+      <bpmn2:incoming>SequenceFlow_192yimz</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_0zer29a</bpmn2:outgoing>
+      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+def mh = new ManualHandling()
+mh.prepareRequestsDBStatusUpdate(execution, "IN_PROGRESS")]]></bpmn2:script>
+    </bpmn2:scriptTask>
+    <bpmn2:serviceTask id="Task_02xybqx" name="Update Infra DB Status to IN_PROGRESS">
+      <bpmn2:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">${URN_mso_adapters_openecomp_db_endpoint}</camunda:inputParameter>
+            <camunda:inputParameter name="payload"><![CDATA[${execution.getVariable("setUpdateDBstatusPayload")}]]></camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
+                <camunda:entry key="Authorization">#{BasicAuthHeaderValueDB}</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:outputParameter name="updateRequestResponse"><![CDATA[${statusCode == null || statusCode == 204 ? "" : response}]]></camunda:outputParameter>
+            <camunda:outputParameter name="updateRequestResponseCode">${statusCode}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>soap-http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_0zer29a</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_14cyk9v</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+    <bpmn2:scriptTask id="Task_1qrt7xw" name="PreProcess Request" scriptFormat="groovy">
+      <bpmn2:incoming>SequenceFlow_0jav6cu</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_0zgg47r</bpmn2:outgoing>
+      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+def mh = new ManualHandling()
+mh.preProcessRequest(execution)]]></bpmn2:script>
+    </bpmn2:scriptTask>
+    <bpmn2:sequenceFlow id="SequenceFlow_0zgg47r" sourceRef="Task_1qrt7xw" targetRef="Task_137bzdi" />
+    <bpmn2:sequenceFlow id="SequenceFlow_0igra4l" sourceRef="CreateAOTSRubyTicket" targetRef="ManualHandlingUserTask" />
+    <bpmn2:scriptTask id="CreateAOTSRubyTicket" name="Create AOTS Ruby Ticket" scriptFormat="groovy">
+      <bpmn2:incoming>SequenceFlow_0b84ki5</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_0igra4l</bpmn2:outgoing>
+      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+def mh = new ManualHandling()
+mh.createAOTSTicket(execution)]]></bpmn2:script>
+    </bpmn2:scriptTask>
   </bpmn2:process>
   <bpmn2:error id="Error_2" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
   <bpmn2:error id="Error_1" name="java.lang.Exception" errorCode="java.lang.Exception" />
@@ -66,69 +136,119 @@ mh.setTaskVariables(task)]]></camunda:script>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="_BPMNShape_EndEvent_177" bpmnElement="EndEvent_3">
-        <dc:Bounds x="598" y="79" width="36" height="36" />
+        <dc:Bounds x="1286" y="79" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="616" y="120" width="0" height="0" />
+          <dc:Bounds x="1304" y="120" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="SubProcess_06d8lk8_di" bpmnElement="SubProcess_06d8lk8" isExpanded="true">
-        <dc:Bounds x="142" y="243" width="417" height="161" />
+        <dc:Bounds x="137" y="408" width="417" height="161" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="StartEvent_0yljq9y_di" bpmnElement="StartEvent_0yljq9y">
-        <dc:Bounds x="179" y="310" width="36" height="36" />
+        <dc:Bounds x="174" y="475" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="197" y="351" width="0" height="0" />
+          <dc:Bounds x="192" y="516" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_117lkk3_di" bpmnElement="EndEvent_117lkk3">
-        <dc:Bounds x="465" y="310" width="36" height="36" />
+        <dc:Bounds x="460" y="475" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="483" y="351" width="0" height="0" />
+          <dc:Bounds x="478" y="516" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0tgrn11_di" bpmnElement="SequenceFlow_0tgrn11">
-        <di:waypoint xsi:type="dc:Point" x="215" y="328" />
-        <di:waypoint xsi:type="dc:Point" x="290" y="328" />
+        <di:waypoint xsi:type="dc:Point" x="210" y="493" />
+        <di:waypoint xsi:type="dc:Point" x="285" y="493" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="253" y="313" width="0" height="0" />
+          <dc:Bounds x="248" y="478" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_0b5155c_di" bpmnElement="processJavaError">
-        <dc:Bounds x="290" y="288" width="100" height="80" />
+        <dc:Bounds x="285" y="453" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0g4aus9_di" bpmnElement="SequenceFlow_0g4aus9">
-        <di:waypoint xsi:type="dc:Point" x="390" y="328" />
-        <di:waypoint xsi:type="dc:Point" x="465" y="328" />
+        <di:waypoint xsi:type="dc:Point" x="385" y="493" />
+        <di:waypoint xsi:type="dc:Point" x="460" y="493" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="428" y="313" width="0" height="0" />
+          <dc:Bounds x="423" y="478" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0jav6cu_di" bpmnElement="SequenceFlow_0jav6cu">
         <di:waypoint xsi:type="dc:Point" x="188" y="97" />
         <di:waypoint xsi:type="dc:Point" x="238" y="97" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="213" y="82" width="0" height="0" />
+          <dc:Bounds x="214" y="82" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0zgg47r_di" bpmnElement="SequenceFlow_0zgg47r">
-        <di:waypoint xsi:type="dc:Point" x="338" y="97" />
-        <di:waypoint xsi:type="dc:Point" x="413" y="97" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="376" y="82" width="0" height="0" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ScriptTask_055s81f_di" bpmnElement="Task_1qrt7xw">
-        <dc:Bounds x="238" y="57" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_192yimz_di" bpmnElement="SequenceFlow_192yimz">
-        <di:waypoint xsi:type="dc:Point" x="513" y="97" />
-        <di:waypoint xsi:type="dc:Point" x="598" y="97" />
+        <di:waypoint xsi:type="dc:Point" x="944" y="97" />
+        <di:waypoint xsi:type="dc:Point" x="982" y="97" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="556" y="82" width="0" height="0" />
+          <dc:Bounds x="963" y="82" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="UserTask_1krqrz1_di" bpmnElement="ManualHandlingUserTask">
-        <dc:Bounds x="413" y="57" width="100" height="80" />
+        <dc:Bounds x="844" y="57" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0mbjrvr_di" bpmnElement="SequenceFlow_0mbjrvr">
+        <di:waypoint xsi:type="dc:Point" x="483" y="97" />
+        <di:waypoint xsi:type="dc:Point" x="527" y="97" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="505" y="82" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0b84ki5_di" bpmnElement="SequenceFlow_0b84ki5">
+        <di:waypoint xsi:type="dc:Point" x="627" y="97" />
+        <di:waypoint xsi:type="dc:Point" x="689" y="97" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="658" y="82" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0zer29a_di" bpmnElement="SequenceFlow_0zer29a">
+        <di:waypoint xsi:type="dc:Point" x="1082" y="97" />
+        <di:waypoint xsi:type="dc:Point" x="1128" y="97" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1105" y="82" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_14cyk9v_di" bpmnElement="SequenceFlow_14cyk9v">
+        <di:waypoint xsi:type="dc:Point" x="1228" y="97" />
+        <di:waypoint xsi:type="dc:Point" x="1286" y="97" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1257" y="82" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_0c0yopb_di" bpmnElement="Task_1kuxfdu">
+        <dc:Bounds x="527" y="57" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_1o2jyrv_di" bpmnElement="Task_137bzdi">
+        <dc:Bounds x="383" y="57" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_1mjq23a_di" bpmnElement="Task_0r60vxk">
+        <dc:Bounds x="982" y="57" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1hc2ewj_di" bpmnElement="Task_02xybqx">
+        <dc:Bounds x="1128" y="57" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_055s81f_di" bpmnElement="Task_1qrt7xw">
+        <dc:Bounds x="238" y="57" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0zgg47r_di" bpmnElement="SequenceFlow_0zgg47r">
+        <di:waypoint xsi:type="dc:Point" x="338" y="97" />
+        <di:waypoint xsi:type="dc:Point" x="383" y="97" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="361" y="82" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0igra4l_di" bpmnElement="SequenceFlow_0igra4l">
+        <di:waypoint xsi:type="dc:Point" x="789" y="97" />
+        <di:waypoint xsi:type="dc:Point" x="844" y="97" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="817" y="82" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_0yhlgfw_di" bpmnElement="CreateAOTSRubyTicket">
+        <dc:Bounds x="689" y="57" width="100" height="80" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

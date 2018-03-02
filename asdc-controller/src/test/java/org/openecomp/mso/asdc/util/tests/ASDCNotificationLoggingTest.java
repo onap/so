@@ -90,6 +90,18 @@ public class ASDCNotificationLoggingTest {
 			public IArtifactInfo getArtifactMetadataByUUID(String arg0) {
 				return null;
 			}
+
+			@Override
+			public String getWorkloadContext() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public void setWorkloadContext(String arg0) {
+				// TODO Auto-generated method stub
+				
+			}
 		};
 		return iNotification;
 	}

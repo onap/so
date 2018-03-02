@@ -631,7 +631,7 @@ public class VfResourceInstaller implements IVfResourceInstaller {
 			return body;
 		}
 
-		StringBuffer sb = new StringBuffer(body.length());
+		StringBuilder sb = new StringBuilder(body.length());
 
 		int currentIndex = 0;
 		int startIndex = 0;

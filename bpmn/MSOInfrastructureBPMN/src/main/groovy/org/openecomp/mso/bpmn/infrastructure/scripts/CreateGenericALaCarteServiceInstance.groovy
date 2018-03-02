@@ -25,7 +25,7 @@ import groovy.xml.XmlUtil
 import groovy.json.*
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
-import org.openecomp.mso.bpmn.common.scripts.VidUtils
+import org.openecomp.mso.bpmn.core.domain.ServiceDecomposition
 import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.bpmn.core.json.JsonUtils
 import org.openecomp.mso.rest.APIResponse
@@ -33,7 +33,7 @@ import org.openecomp.mso.rest.APIResponse
 import java.util.UUID;
 
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.apache.commons.lang3.*
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.web.util.UriUtils
@@ -48,13 +48,12 @@ public class CreateGenericALaCarteServiceInstance extends AbstractServiceTaskPro
 	String Prefix="CRESI_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
-	VidUtils vidUtils = new VidUtils()
 
-	public void preProcessRequest (Execution execution) {
+	public void preProcessRequest (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		String msg = ""
-		utils.log("DEBUG", " *** preProcessRequest() *** ", isDebugEnabled)
+		utils.log("DEBUG", " *** preProcessRequest() of CreateGenericALaCarteServiceInstance *** ", isDebugEnabled)
 
 		try {
 
@@ -68,8 +67,11 @@ public class CreateGenericALaCarteServiceInstance extends AbstractServiceTaskPro
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
 			if (isBlank(serviceInstanceId)) {
 				serviceInstanceId = UUID.randomUUID().toString()
+				utils.log("DEBUG", "Generated new Service Instance ID:" + serviceInstanceId, isDebugEnabled)
+			} else {
+				utils.log("DEBUG", "Using provided Service Instance ID:" + serviceInstanceId, isDebugEnabled)
 			}
-			utils.log("DEBUG", "Generated new Service Instance:" + serviceInstanceId, isDebugEnabled)
+
 			serviceInstanceId = UriUtils.encode(serviceInstanceId,"UTF-8")
 			execution.setVariable("serviceInstanceId", serviceInstanceId)
 
@@ -113,7 +115,7 @@ public class CreateGenericALaCarteServiceInstance extends AbstractServiceTaskPro
 			}
 
 			utils.log("DEBUG", "modelInfo" + serviceModelInfo,  isDebugEnabled)
-
+		
 			//requestParameters
 			String subscriptionServiceType = jsonUtil.getJsonValue(siRequest, "requestDetails.requestParameters.subscriptionServiceType")
 			if (isBlank(subscriptionServiceType)) {
@@ -139,7 +141,7 @@ public class CreateGenericALaCarteServiceInstance extends AbstractServiceTaskPro
 			Map<String, String> inputMap = [:]
 			if (userParams) {
 				userParams.each {
-					userParam -> inputMap.put(userParam.name, userParam.value)
+					userParam -> inputMap.put(userParam.name, userParam.value.toString())
 				}
 			}
 			
@@ -156,10 +158,10 @@ public class CreateGenericALaCarteServiceInstance extends AbstractServiceTaskPro
 			utils.log("DEBUG", msg, isDebugEnabled)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		utils.log("DEBUG"," ***** Exit preProcessRequest *****",  isDebugEnabled)
+		utils.log("DEBUG"," ***** Exit preProcessRequest of CreateGenericALaCarteServiceInstance *****",  isDebugEnabled)
 	}
 
-	public void sendSyncResponse (Execution execution) {
+	public void sendSyncResponse (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("DEBUG", " *** sendSyncResponse *** ", isDebugEnabled)
 
@@ -181,7 +183,7 @@ public class CreateGenericALaCarteServiceInstance extends AbstractServiceTaskPro
 	}
 
 
-	public void sendSyncError (Execution execution) {
+	public void sendSyncError (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("DEBUG", " *** sendSyncError *** ", isDebugEnabled)
 
@@ -209,7 +211,75 @@ public class CreateGenericALaCarteServiceInstance extends AbstractServiceTaskPro
 
 	}
 
-	public void prepareCompletionRequest (Execution execution) {
+	// *******************************
+	//
+	// *******************************
+	public void prepareDecomposeService(DelegateExecution execution) {
+		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+		utils.log("DEBUG", " ***** Inside prepareDecomposeService of CreateGenericALaCarteServiceInstance ***** ", isDebugEnabled)
+		try {
+			String siRequest = execution.getVariable("bpmnRequest")
+			String serviceModelInfo = jsonUtil.getJsonValue(siRequest, "requestDetails.modelInfo")
+			execution.setVariable("serviceModelInfo", serviceModelInfo)
+		} catch (Exception ex) {
+			// try error in method block
+			String exceptionMessage = "Bpmn error encountered in CreateGenericALaCarteServiceInstance flow. Unexpected Error from method prepareDecomposeService() - " + ex.getMessage()
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
+		}
+		utils.log("DEBUG", " ***** Completed prepareDecomposeService of CreateGenericALaCarteServiceInstance ***** ", isDebugEnabled)
+	 }
+	 
+	 
+	 // *******************************
+	 //
+	 // *******************************
+	 public void prepareCreateServiceInstance(DelegateExecution execution) {
+		 def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+ 
+		 try {
+			 utils.log("DEBUG", " ***** Inside prepareCreateServiceInstance of CreateGenericALaCarteServiceInstance ***** ", isDebugEnabled)
+ 
+			 /*
+			  * Extracting User Parameters from incoming Request and converting into a Map
+			  */
+			 def jsonSlurper = new JsonSlurper()
+			 def jsonOutput = new JsonOutput()
+			 def siRequest = execution.getVariable("bpmnRequest")
+			 Map reqMap = jsonSlurper.parseText(siRequest)
+			 //InputParams
+			 def userParams = reqMap.requestDetails?.requestParameters?.userParams
+			 Map<String, String> inputMap = [:]
+			 if (userParams != null) {
+				 userParams.each {
+					 userParam -> inputMap.put(userParam.name, userParam.value)
+				 }
+			 }
+			 
+			 utils.log("DEBUG", "User Input Parameters map: " + userParams.toString(), isDebugEnabled)
+			 execution.setVariable("serviceInputParams", inputMap)
+			 
+			 ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
+			
+			 String serviceInstanceId = execution.getVariable("serviceInstanceId")
+			 serviceDecomposition.getServiceInstance().setInstanceId(serviceInstanceId)
+			 
+			 String serviceInstanceName = jsonUtil.getJsonValue(siRequest, "requestDetails.requestInfo.instanceName")
+			 serviceDecomposition.getServiceInstance().setInstanceName(serviceInstanceName)
+			 execution.setVariable("serviceInstanceName", serviceInstanceName)
+			 execution.setVariable("serviceDecomposition", serviceDecomposition)
+			 execution.setVariable("serviceDecompositionString", serviceDecomposition.toJsonString())
+			 utils.log("DEBUG", "serviceDecomposition.serviceInstanceName: " + serviceDecomposition.getServiceInstance().getInstanceName(), isDebugEnabled)
+			 			 
+			 utils.log("DEBUG", " ***** Completed prepareCreateServiceInstance of CreateGenericALaCarteServiceInstance ***** ", isDebugEnabled)
+		 } catch (Exception ex) {
+			 // try error in method block
+			 String exceptionMessage = "Bpmn error encountered in CreateGenericALaCarteServiceInstance flow. Unexpected Error from method prepareCreateServiceInstance() - " + ex.getMessage()
+			 exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
+		 }
+	  }
+	  
+	  
+	public void prepareCompletionRequest (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("DEBUG", " *** prepareCompletion *** ", isDebugEnabled)
 
@@ -245,7 +315,7 @@ public class CreateGenericALaCarteServiceInstance extends AbstractServiceTaskPro
 		utils.log("DEBUG", "*** Exit prepareCompletionRequest ***", isDebugEnabled)
 	}
 
-	public void prepareFalloutRequest(Execution execution){
+	public void prepareFalloutRequest(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("DEBUG", " *** prepareFalloutRequest *** ", isDebugEnabled)
 

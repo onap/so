@@ -34,7 +34,7 @@ public class BigDecimalVersion {
     public static BigDecimal castAndCheckNotificationVersion(String version) {
     	// Truncate the version if bad type
     	String[] splitVersion = version.split("\\.");
-    	StringBuffer newVersion = new StringBuffer();
+    	StringBuilder newVersion = new StringBuilder();
     	if (splitVersion.length > 1) {
 	    	newVersion.append(splitVersion[0]);
 	    	newVersion.append(".");

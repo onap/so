@@ -78,6 +78,10 @@ public class InfraRequests implements java.io.Serializable {
 	private String networkName;
 	private String networkType;
 	private String requestorId;
+	private String configurationId;
+	private String configurationName;
+	private String operationalEnvId;
+	private String operationalEnvName;
 
 	public InfraRequests() {
 	}
@@ -410,4 +414,35 @@ public class InfraRequests implements java.io.Serializable {
 		this.requestorId = requestorId;
 	}
 
+	public String getConfigurationId() {
+		return configurationId;
+	}
+
+	public void setConfigurationId(String configurationId) {
+		this.configurationId = configurationId;
+	}
+
+	public String getConfigurationName() {
+		return configurationName;
+	}
+
+	public void setConfigurationName(String configurationName) {
+		this.configurationName = configurationName;
+	}
+
+	public String getOperationalEnvId() {
+		return operationalEnvId;
+	}
+
+	public void setOperationalEnvId(String operationalEnvId) {
+		this.operationalEnvId = operationalEnvId;
+	}
+
+	public String getOperationalEnvName() {
+		return operationalEnvName;
+	}
+
+	public void setOperationalEnvName(String operationalEnvName) {
+		this.operationalEnvName = operationalEnvName;
+	}
 }

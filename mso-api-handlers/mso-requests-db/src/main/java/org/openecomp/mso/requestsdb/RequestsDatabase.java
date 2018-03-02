@@ -21,10 +21,10 @@
 
 package org.openecomp.mso.requestsdb;
 
-import java.util.Date;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,7 +38,7 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.openecomp.mso.db.AbstractSessionFactoryManager;
-import org.openecomp.mso.requestsdb.RequestsDbSessionFactoryManager;
+import org.openecomp.mso.requestsdb.RequestsDbConstant.Status;
 import org.openecomp.mso.logger.MsoLogger;
 
 public class RequestsDatabase {
@@ -59,13 +59,18 @@ public class RequestsDatabase {
     protected static final String         VFMODULE_INSTANCE_NAME     = "vfModuleName";
     protected static final String         VFMODULE_INSTANCE_ID       = "vfModuleId";
     protected static final String         NETWORK_INSTANCE_NAME      = "networkName";
+    protected static final String		  CONFIGURATION_INSTANCE_ID  = "configurationId";
+    protected static final String		  CONFIGURATION_INSTANCE_NAME= "configurationName";
+    protected static final String		  OPERATIONAL_ENV_ID  		 = "operationalEnvId";
+    protected static final String		  OPERATIONAL_ENV_NAME		 = "operationalEnvName";
     protected static final String         NETWORK_INSTANCE_ID        = "networkId";
     protected static final String         GLOBAL_SUBSCRIBER_ID       = "globalSubscriberId";
     protected static final String         SERVICE_NAME_VERSION_ID    = "serviceNameVersionId";
     protected static final String         SERVICE_ID                 = "serviceId";
     protected static final String         SERVICE_VERSION            = "serviceVersion";
-
     protected static final String         REQUEST_ID                 = "requestId";
+    protected static final String         REQUESTOR_ID               = "requestorId";
+    
     protected static MockRequestsDatabase mockDB                     = null;
 
     public static RequestsDatabase getInstance() {
@@ -236,6 +241,10 @@ public class RequestsDatabase {
         		criteria.add (Restrictions.eq (VFMODULE_INSTANCE_NAME, instanceName));
         	} else if("network".equals(requestScope)){
         		criteria.add (Restrictions.eq (NETWORK_INSTANCE_NAME, instanceName));
+        	} else if(requestScope.equals("configuration")) {
+        		criteria.add (Restrictions.eq (CONFIGURATION_INSTANCE_NAME, instanceName));
+        	} else if(requestScope.equals("operationalEnvironment")) {
+        		criteria.add (Restrictions.eq (OPERATIONAL_ENV_NAME, instanceName));
         	}
         
         } else {
@@ -259,10 +268,18 @@ public class RequestsDatabase {
             	if("network".equals(requestScope) && instanceIdMap.get("networkInstanceId") != null){
             		criteria.add (Restrictions.eq (NETWORK_INSTANCE_ID, instanceIdMap.get("networkInstanceId")));
             	}
+            	
+            	if(requestScope.equals("configuration") && instanceIdMap.get("configurationInstanceId") != null){
+            		criteria.add (Restrictions.eq (CONFIGURATION_INSTANCE_ID, instanceIdMap.get("configurationInstanceId")));
+            	}
+            	
+            	if(requestScope.equals("operationalEnvironment") && instanceIdMap.get("operationalEnvironmentId") != null) {
+            		criteria.add (Restrictions.eq (OPERATIONAL_ENV_ID, instanceIdMap.get("operationalEnvironmentId")));
+            	}
             }
         }
         
-        criteria.add (Restrictions.in ("requestStatus", new String[] { "PENDING", "IN_PROGRESS", "TIMEOUT" }));
+        criteria.add (Restrictions.in ("requestStatus", new String[] { "PENDING", "IN_PROGRESS", "TIMEOUT", "PENDING_MANUAL_TASK" }));
         
         Order order = Order.desc (START_TIME);
         
@@ -304,6 +321,10 @@ public class RequestsDatabase {
     	    	mapKey = "networkId";
     	    } else if("networkInstanceName".equalsIgnoreCase(mapKey)) {
     	    	mapKey = "networkName";
+    	    } else if(mapKey.equalsIgnoreCase("configurationInstanceId")) {    	    	
+    	    	mapKey = "configurationId";
+    	    } else if(mapKey.equalsIgnoreCase("configurationInstanceName")) {    	    	
+    	    	mapKey = "configurationName";
     	    } else if("lcpCloudRegionId".equalsIgnoreCase(mapKey)) {
     	    	mapKey = "aicCloudRegion";
     	    } else if("tenantId".equalsIgnoreCase(mapKey)) {
@@ -349,6 +370,54 @@ public class RequestsDatabase {
         return executeInfraQuery (criteria, order);
     }
 
+    // Added this method for Tenant Isolation project ( 1802-295491a) to query the mso_requests DB 
+    // (infra_active_requests table) for operationalEnvId and OperationalEnvName
+    public List<InfraActiveRequests> getCloudOrchestrationFiltersFromInfraActive (Map<String, String> orchestrationMap) {
+    	List <Criterion> criteria = new LinkedList <> ();
+    	
+    	// Add criteria on OperationalEnvironment RequestScope when requestorId is only specified in the filter
+    	// as the same requestorId can also match on different API methods
+    	String resourceType = orchestrationMap.get("resourceType");
+    	if(resourceType == null) {
+    		criteria.add(Restrictions.eq("requestScope", "operationalEnvironment"));
+    	}
+    	
+    	for (Map.Entry<String, String> entry : orchestrationMap.entrySet()) {
+    		String mapKey = entry.getKey();
+    		if(mapKey.equalsIgnoreCase("requestorId")) {
+    	    	mapKey = "requestorId";
+    	    } else if(mapKey.equalsIgnoreCase("requestExecutionDate")) {    	    	
+    	    	mapKey = "startTime";
+    	    } else if(mapKey.equalsIgnoreCase("operationalEnvironmentId")) {    	    	
+    	    	mapKey = "operationalEnvId";
+    	    } else if(mapKey.equalsIgnoreCase("operationalEnvironmentName")) {    	    	
+    	    	mapKey = "operationalEnvName";
+    	    } else if(mapKey.equalsIgnoreCase("resourceType")) {    	    	
+    	    	mapKey = "requestScope";
+    	    }
+    	    
+    		String propertyValue = entry.getValue();
+    		if (mapKey.equals("startTime")) {    			
+    			SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy");    	        
+    			try {
+	    	        Date thisDate = format.parse(propertyValue);
+	    	        Timestamp minTime = new Timestamp(thisDate.getTime());	    	        
+	    	        Timestamp maxTime = new Timestamp(thisDate.getTime() + TimeUnit.DAYS.toMillis(1));
+	    	        
+	        		criteria.add(Restrictions.between(mapKey, minTime, maxTime));        		       			
+    			}
+    			catch (Exception e){
+    				msoLogger.debug("Exception in getCloudOrchestrationFiltersFromInfraActive(): + " + e.getMessage());
+    				return null;
+    			}
+    		} else {
+    			criteria.add(Restrictions.eq(mapKey, propertyValue));
+    		}
+    	}
+    	
+         Order order = Order.asc (START_TIME);
+         return executeInfraQuery (criteria, order);
+    }
 
     public List <InfraActiveRequests> getRequestListFromInfraActive (String queryAttributeName,
                                                                             String queryValue,
@@ -411,7 +480,7 @@ public class RequestsDatabase {
 
         try {
             session.beginTransaction ();
-            Query query = session.createQuery ("from InfraActiveRequests where vnfName = :vnfName and action = :action and (requestStatus = 'PENDING' or requestStatus = 'IN_PROGRESS' or requestStatus = 'TIMEOUT') and requestType = :requestType ORDER BY startTime DESC");
+            Query query = session.createQuery ("from InfraActiveRequests where vnfName = :vnfName and action = :action and (requestStatus = 'PENDING' or requestStatus = 'IN_PROGRESS' or requestStatus = 'TIMEOUT' or requestStatus = 'PENDING_MANUAL_TASK') and requestType = :requestType ORDER BY startTime DESC");
             query.setParameter ("vnfName", vnfName);
             query.setParameter ("action", action);
             query.setParameter (REQUEST_TYPE, requestType);
@@ -440,7 +509,7 @@ public class RequestsDatabase {
 
         try {
             session.beginTransaction ();
-            Query query = session.createQuery ("from InfraActiveRequests where vnfId = :vnfId and action = :action and (requestStatus = 'PENDING' or requestStatus = 'IN_PROGRESS' or requestStatus = 'TIMEOUT') and requestType = :requestType ORDER BY startTime DESC");
+            Query query = session.createQuery ("from InfraActiveRequests where vnfId = :vnfId and action = :action and (requestStatus = 'PENDING' or requestStatus = 'IN_PROGRESS' or requestStatus = 'TIMEOUT' or requestStatus = 'PENDING_MANUAL_TASK') and requestType = :requestType ORDER BY startTime DESC");
             query.setParameter ("vnfId", vnfId);
             query.setParameter ("action", action);
             query.setParameter (REQUEST_TYPE, requestType);
@@ -685,8 +754,8 @@ public class RequestsDatabase {
             operStatus = (ResourceOperationStatus)query.uniqueResult();
 
         } finally {
-            if(session != null && session.isOpen()) {
-                session.close();
+            if (session != null && session.isOpen ()) {
+                session.close ();
             }
             msoLogger.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
                     "Successfully", "RequestDB", "getOperationStatus", null);
@@ -757,9 +826,9 @@ public class RequestsDatabase {
             int resourceCount = lstResourceStatus.size();
             int progress = 0;
             boolean isFinished = true;
-            for(int i = 0; i < resourceCount; i++) {
-                progress = progress + Integer.valueOf(lstResourceStatus.get(i).getProgress()) / resourceCount;
-                if(RequestsDbConstant.Status.PROCESSING.equals(lstResourceStatus.get(i).getStatus())) {
+            for (ResourceOperationStatus lstResourceStatu : lstResourceStatus) {
+                progress = progress + Integer.valueOf(lstResourceStatu.getProgress()) / resourceCount;
+                if (Status.PROCESSING.equals(lstResourceStatu.getStatus())) {
                     isFinished = false;
                 }
             }
@@ -784,4 +853,31 @@ public class RequestsDatabase {
                     "Successfully", "RequestDB", "updateResOperStatus", null);
         }
     }
+
+	public InfraActiveRequests checkVnfIdStatus(String operationalEnvironmentId) {
+		long startTime = System.currentTimeMillis ();
+		msoLogger.debug ("Get Infra request from DB for OperationalEnvironmentId " + operationalEnvironmentId);
+
+		InfraActiveRequests ar = null;
+		Session session = sessionFactoryRequestDB.getSessionFactory ().openSession ();
+
+		try {
+			session.beginTransaction ();
+			Query query = session.createQuery ("FROM InfraActiveRequests WHERE operationalEnvId = :operationalEnvId AND requestStatus != 'COMPLETE' AND action = 'create' ORDER BY startTime DESC");
+			query.setParameter ("operationalEnvId", operationalEnvironmentId);
+	            
+			@SuppressWarnings("unchecked")
+			List <InfraActiveRequests> results = query.list ();
+			if (!results.isEmpty ()) {
+				ar = results.get (0);
+			}
+		} finally {
+			if (session != null && session.isOpen ()) {
+				session.close ();
+			}
+			msoLogger.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "RequestDB", "checkDuplicateByVnfName", null);
+		}
+
+		return ar;
+	}
 }

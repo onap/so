@@ -1,0 +1,25 @@
+{
+	"body": {
+		"output": {
+			"response-hd-custom": {
+				"response-status": "Failure",
+				"cached-data": "false",
+				"response-interface-type": "ansible",
+				"response-id": "191bf423-8473-4f7c-9fbb-e5dcbb40a12b",
+				"remote_end_time": "2017-10-13T14:51:53.490+0000",
+				"response-client-name": "MSO",
+				"user_id": "md5621",
+				"remote_start_time": "2017-10-13T14:51:53.173+0000",
+				"error-message": "my error message",
+				"connection-failure-msg": "SDNO was unable to connect to an Ansible REST API server; Please ensure Ansible REST server is running"
+			}
+		}
+	},
+	"result-info": {
+		"code": "200",
+		"status": "SUCCESS",
+		"request-id": "xyz123",
+		"client-name": "MSO",
+		"processing-host": "sdno-sdno-mtsnjv9sdno01"
+	}
+}

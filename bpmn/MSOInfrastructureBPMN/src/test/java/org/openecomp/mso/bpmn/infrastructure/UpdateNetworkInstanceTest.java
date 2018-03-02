@@ -81,8 +81,8 @@ public class UpdateNetworkInstanceTest extends WorkflowTest {
 		mockSDNCAdapterTopology("UpdateNetworkV2mock/sdncUpdateNetworkTopologySimResponse.xml", "SvcAction>changeassign");
 		MockNetworkAdapterRestPut("UpdateNetworkV2/updateNetworkResponse_Success.xml", "49c86598-f766-46f8-84f8-8d1c1b10f9b4");
 		MockGetNetworkCloudRegion("CreateNetworkV2/cloudRegion25_AAIResponse_Success.xml", "RDM2WAGPLCP");
-		MockGetNetworkByIdWithDepth("49c86598-f766-46f8-84f8-8d1c1b10f9b4", "UpdateNetworkV2/updateNetwork_queryNetworkId_AAIResponse_Success.xml", "1");
-		MockPutNetworkIdWithDepth("UpdateNetworkV2/updateNetwork_updateContrail_AAIResponse_Success.xml", "49c86598-f766-46f8-84f8-8d1c1b10f9b4", "1");
+		MockGetNetworkByIdWithDepth("49c86598-f766-46f8-84f8-8d1c1b10f9b4", "UpdateNetworkV2/updateNetwork_queryNetworkId_AAIResponse_Success.xml", "all");
+		MockPutNetworkIdWithDepth("UpdateNetworkV2/updateNetwork_updateContrail_AAIResponse_Success.xml", "49c86598-f766-46f8-84f8-8d1c1b10f9b4", "all");
 		MockGetNetworkVpnBinding("UpdateNetworkV2/updateNetwork_queryVpnBinding_AAIResponse_Success.xml", "85f015d0-2e32-4c30-96d2-87a1a27f8017");
 		MockGetNetworkVpnBinding("UpdateNetworkV2/updateNetwork_queryVpnBinding_AAIResponse_Success.xml", "c980a6ef-3b88-49f0-9751-dbad8608d0a6");
 		MockGetNetworkPolicy("UpdateNetworkV2/updateNetwork_queryNetworkPolicy_AAIResponse_Success.xml", "cee6d136-e378-4678-a024-2cd15f0ee0cg");
@@ -131,8 +131,8 @@ public class UpdateNetworkInstanceTest extends WorkflowTest {
 		mockSDNCAdapterTopology("UpdateNetworkV2mock/sdncUpdateNetworkTopologySimResponse.xml", "SvcAction>changeassign");
 		MockNetworkAdapterRestPut("UpdateNetworkV2/updateNetworkResponse_Success.xml", "49c86598-f766-46f8-84f8-8d1c1b10f9b4");
 		MockGetNetworkCloudRegion("CreateNetworkV2/cloudRegion25_AAIResponse_Success.xml", "RDM2WAGPLCP");
-		MockGetNetworkByIdWithDepth("49c86598-f766-46f8-84f8-8d1c1b10f9b4", "UpdateNetworkV2/updateNetwork_queryNetworkId_AAIResponse_Success.xml", "1");
-		MockPutNetworkIdWithDepth("UpdateNetworkV2/updateNetwork_updateContrail_AAIResponse_Success.xml", "49c86598-f766-46f8-84f8-8d1c1b10f9b4", "1");
+		MockGetNetworkByIdWithDepth("49c86598-f766-46f8-84f8-8d1c1b10f9b4", "UpdateNetworkV2/updateNetwork_queryNetworkId_AAIResponse_Success.xml", "all");
+		MockPutNetworkIdWithDepth("UpdateNetworkV2/updateNetwork_updateContrail_AAIResponse_Success.xml", "49c86598-f766-46f8-84f8-8d1c1b10f9b4", "all");
 		MockGetNetworkVpnBinding("UpdateNetworkV2/updateNetwork_queryVpnBinding_AAIResponse_Success.xml", "85f015d0-2e32-4c30-96d2-87a1a27f8017");
 		MockGetNetworkVpnBinding("UpdateNetworkV2/updateNetwork_queryVpnBinding_AAIResponse_Success.xml", "c980a6ef-3b88-49f0-9751-dbad8608d0a6");
 		MockGetNetworkPolicy("UpdateNetworkV2/updateNetwork_queryNetworkPolicy_AAIResponse_Success.xml", "cee6d136-e378-4678-a024-2cd15f0ee0cg");

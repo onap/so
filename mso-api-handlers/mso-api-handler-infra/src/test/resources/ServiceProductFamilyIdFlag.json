@@ -1,0 +1,72 @@
+{
+  "requestDetails": {
+    "cloudConfiguration": {
+      "lcpCloudRegionId": "mtn6", 
+      "tenantId": "19123c2924c648eb8e42a3c1f14b7682"
+    }, 
+    "modelInfo": {
+      "modelInvariantId": "1710f6e8-1c29-4990-9aea-e943a2ec3d21", 
+      "modelName": "SDNW Service 1710", 
+      "modelType": "volumeGroup", 
+      "modelVersion": "2.0", 
+      "modelVersionId": "1710966e-097c-4d63-afda-e0d3bb7015fb",
+      "modelCustomizationId": "b0ed83ec-b7b4-4c70-91c2-63feeaf8609b"
+    }, 
+    "requestInfo": {
+      "productFamilyId": "", 
+      "requestorId": "bp896r", 
+      "source": "VID", 
+      "suppressRollback": false
+    }, 
+    "requestParameters": {
+      "aLaCarte" : true,
+      "autoBuildVfModules": true, 
+      "subscriptionServiceType": "MSO-dev-service-type", 
+      "userParams": [
+        {
+          "name": "aic_zone", 
+          "value": "mtn6"
+        }
+      ]
+    }, 
+    "relatedInstanceList": [
+         {
+            "relatedInstance": {
+               "instanceId": "ff305d54-75b4-431b-adb2-eb6b9e5ff000", 
+               "modelInfo": {   
+                  "modelType": "service",
+                  "modelInvariantId": "ff3514e3-5a33-55df-13ab-12abad84e7ff",
+                  "modelVersionId": "fe6985cd-ea33-3346-ac12-ab121484a3fe",
+                  "modelName": "vSAMP12",
+                  "modelVersion": "1.0"
+               }
+            }
+         },
+         {
+            "relatedInstance": {
+               "instanceId": "ff305d54-75b4-431b-adb2-eb6b9e5ff000",
+				"instanceDirection": "source",
+               "modelInfo": {   
+                  "modelType": "vnf",
+                  "modelInvariantId": "ff5256d1-5a33-55df-13ab-12abad84e7ff",
+                  "modelVersionId": "fe6478e4-ea33-3346-ac12-ab121484a3fe",
+                  "modelName": "vSAMP12",
+                  "modelVersion": "1.0",
+                  "modelCustomizationId": "b0ed83ec-b7b4-4c70-91c2-63feeaf8609b"
+               }
+            }
+         }
+         ],
+    "subscriberInfo": {
+      "globalSubscriberId": "MSO_1610_dev", 
+      "subscriberName": "MSO_1610_dev"
+    },
+    "project": {
+		"projectName": "projectName"
+	},
+	"owningEntity": {
+      "owningEntityId": "randomStrings", 
+      "owningEntityName": "randomStrings"
+	}
+  }
+}

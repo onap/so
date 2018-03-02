@@ -1,0 +1,58 @@
+{
+	"requestDetails": {
+		"modelInfo":{ 
+			"modelType": "vfModule", 
+			"modelName": "vSAMP10aDEV::base::module-0", 
+			"modelVersionId": "20c4431c-246d-11e7-93ae-92361f002671", 
+			"modelInvariantId": "78ca26d0-246d-11e7-93ae-92361f002671", 
+			"modelVersion": "2", 
+			"modelCustomizationId": "cb82ffd8-252a-11e7-93ae-92361f002671" 
+		},
+		"cloudConfiguration":{ 
+			"lcpCloudRegionId": "mtn6", 
+			"tenantId": "0422ffb57ba042c0800a29dc85ca70f8"
+		},
+		"requestInfo":{ 
+			"instanceName": "MSO-DEV-VF-1802-it3-pwt3-vSAMP10a-base-1002-RoutePrefixes", 
+			"source": "VID", 
+			"suppressRollback": false, 
+			"requestorId": "bs7527" 
+		},
+	"relatedInstanceList": [{
+		"relatedInstance": {
+			"instanceId": "ff305d54-75b4-431b-adb2-eb6b9e5ff000",
+			"modelInfo":{ 
+				"modelType": "service", 
+				"modelName": "MSOTADevInfra_vSAMP10a_Service", 
+				"modelVersionId": "5df8b6de-2083-11e7-93ae-92361f002671", 
+				"modelInvariantId": "9647dfc4-2083-11e7-93ae-92361f002671", 
+				"modelVersion": "1.0" 
+			}
+	
+		}
+	},{
+		"relatedInstance": {
+			"instanceId": "ff305d54-75b4-431b-adb2-eb6b9e5ff000",
+			"modelInfo":{ 
+				"modelType": "vnf", 
+				"modelName": "vSAMP10a", 
+				"modelVersionId": "ff2ae348-214a-11e7-93ae-92361f002671", 
+				"modelInvariantId": "2fff5b20-214b-11e7-93ae-92361f002671", 
+				"modelVersion": "1.0", 
+				"modelCustomizationId": "68dc9a92-214c-11e7-93ae-92361f002671", 
+				"modelCustomizationName": "vSAMP10a 1" 
+			}
+		}
+	}],
+	"requestParameters": {
+		"usePreload": true,
+		"userParams": [{
+		"name": "vlc_sctp_b_route_prefixes",
+		"value": [
+			{ "interface_route_table_routes_route_prefix": "107.239.41.163/32" },
+			{ "interface_route_table_routes_route_prefix": "107.239.41.164/32" },
+			{ "interface_route_table_routes_route_prefix": "107.239.41.165/32" }
+		]}
+	]}
+	}
+}

@@ -35,16 +35,6 @@ import com.woorea.openstack.keystone.model.Authentication;
  */
 public class RackspaceAPIKeyWrapper extends AuthenticationWrapper {
 
-	/**
-	 * 
-	 */
-	public RackspaceAPIKeyWrapper() {
-		// TODO Auto-generated constructor stub
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openecomp.mso.cloud.authentication.AuthenticationWrapper#getAuthentication(org.openecomp.mso.cloud.CloudIdentity)
-	 */
 	@Override
 	public Authentication getAuthentication(CloudIdentity cloudIdentity) {
 		if (cloudIdentity == null) {

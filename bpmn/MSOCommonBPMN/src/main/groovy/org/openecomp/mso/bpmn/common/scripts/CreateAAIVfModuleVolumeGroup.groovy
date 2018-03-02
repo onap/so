@@ -21,7 +21,7 @@
 package org.openecomp.mso.bpmn.common.scripts
 
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.openecomp.mso.rest.APIResponse
 
 
@@ -35,7 +35,7 @@ public class CreateAAIVfModuleVolumeGroup extends AbstractServiceTaskProcessor {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void initProcessVariables(Execution execution) {
+	public void initProcessVariables(DelegateExecution execution) {
 		execution.setVariable('prefix', 'CAAIVfModVG_')
 		execution.setVariable('CAAIVfModVG_vnfId', null)
 		execution.setVariable('CAAIVfModVG_vfModuleId', null)
@@ -52,7 +52,7 @@ public class CreateAAIVfModuleVolumeGroup extends AbstractServiceTaskProcessor {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void preProcessRequest(Execution execution) {
+	public void preProcessRequest(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.preProcessRequest(' +
 			'execution=' + execution.getId() +
 			')'
@@ -93,7 +93,7 @@ public class CreateAAIVfModuleVolumeGroup extends AbstractServiceTaskProcessor {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void getVfModule(Execution execution) {
+	public void getVfModule(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.getVfModule(' +
 			'execution=' + execution.getId() +
 			')'
@@ -143,7 +143,7 @@ public class CreateAAIVfModuleVolumeGroup extends AbstractServiceTaskProcessor {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void updateVfModule(Execution execution) {
+	public void updateVfModule(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.updateVfModule(' +
 			'execution=' + execution.getId() +
 			')'
@@ -295,7 +295,7 @@ public class CreateAAIVfModuleVolumeGroup extends AbstractServiceTaskProcessor {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void handleAAIQueryFailure(Execution execution) {
+	public void handleAAIQueryFailure(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.handleAAIQueryFailure(' +
 			'execution=' + execution.getId() +
 			')'
@@ -316,7 +316,7 @@ public class CreateAAIVfModuleVolumeGroup extends AbstractServiceTaskProcessor {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void handleUpdateVfModuleFailure(Execution execution) {
+	public void handleUpdateVfModuleFailure(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.handleUpdateVfModuleFailure(' +
 			'execution=' + execution.getId() +
 			')'

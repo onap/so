@@ -20,34 +20,25 @@
 
 package org.openecomp.mso.client.appc;
 
-
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Properties;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.stereotype.Component;
 
-import org.openecomp.appc.client.lcm.api.AppcClientServiceFactoryProvider;
-import org.openecomp.appc.client.lcm.api.AppcLifeCycleManagerServiceFactory;
-import org.openecomp.appc.client.lcm.api.ApplicationContext;
-import org.openecomp.appc.client.lcm.api.LifeCycleManagerStateful;
-import org.openecomp.appc.client.lcm.api.ResponseHandler;
-import org.openecomp.appc.client.lcm.exceptions.AppcClientException;
-import org.openecomp.appc.client.lcm.model.Status;
+import org.onap.appc.client.lcm.api.LifeCycleManagerStateful;
+import org.onap.appc.client.lcm.api.ResponseHandler;
+import org.onap.appc.client.lcm.model.Status;
+import com.att.eelf.configuration.EELFLogger;
+import com.att.eelf.configuration.EELFManager;
+import com.att.eelf.configuration.EELFLogger.Level;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-
 
 @Component
 public class ApplicationControllerSupport {
@@ -56,19 +47,13 @@ public class ApplicationControllerSupport {
 	private static final int ERROR_SERIES = 200;
 	private static final int REJECT_SERIES = 300;
 	private static final int SUCCESS_SERIES = 400;
-	private static final int SUCCESS_STATUS = SUCCESS_SERIES + 0;
+	private static final int SUCCESS_STATUS = SUCCESS_SERIES;
 	private static final int PARTIAL_SERIES = 500;
-	private static final int PARTIAL_SUCCESS_STATUS = PARTIAL_SERIES + 0;
+	private static final int PARTIAL_SUCCESS_STATUS = PARTIAL_SERIES;
 	private static final int PARTIAL_FAILURE_STATUS = PARTIAL_SERIES + 1;
 
-	@Value("${lcm.model.package:org.openecomp.appc.client.lcm.model}")
-	private String lcmModelPackage;
-
-	public LifeCycleManagerStateful createService() throws AppcClientException, IOException {
-		AppcLifeCycleManagerServiceFactory factory = AppcClientServiceFactoryProvider
-				.getFactory(AppcLifeCycleManagerServiceFactory.class);
-		return factory.createLifeCycleManagerStateful(new ApplicationContext(), getLCMProperties());
-	}
+	protected final EELFLogger auditLogger = EELFManager.getInstance().getAuditLogger();
+	private String lcmModelPackage = "org.onap.appc.client.lcm.model";
 
 	/**
 	 * @param inputClass
@@ -114,26 +99,18 @@ public class ApplicationControllerSupport {
 				"Unable to derive viable LCM Kit API method for action", action, async));
 	}
 
-	public Method getCommonHeaderSetterMethod(String action) {
-		return getBeanPropertyMethodFor(getInputClass(action), "commonHeader", true);
-	}
-
-	public Method getPayloadSetterMethod(String action) {
-		return getBeanPropertyMethodFor(getInputClass(action), "payload", true);
-	}
-
 	public Status getStatusFromGenericResponse(Object response) {
 		Method statusReader = getBeanPropertyMethodFor(response.getClass(), "status", false);
 		if (statusReader != null) {
 			try {
 				return (Status) statusReader.invoke(response);
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-				throw new RuntimeException("Unable to obtain status from LCM Kit response", e);
+				auditLogger.log(Level.ERROR, "Unable to obtain status from LCM Kit response", e, e.getMessage());
 			}
 		}
 		return new Status();
 	}
-	
+
 	public static StatusCategory getCategoryOf(Status status) {
 		int codeSeries = status.getCode() - (status.getCode() % 100);
 		switch (codeSeries) {
@@ -157,7 +134,7 @@ public class ApplicationControllerSupport {
 			return StatusCategory.WARNING;
 		}
 	}
-	
+
 	public static boolean getFinalityOf(Status status) {
 		int codeSeries = status.getCode() - (status.getCode() % 100);
 		switch (codeSeries) {
@@ -171,16 +148,6 @@ public class ApplicationControllerSupport {
 		default:
 			return true;
 		}
-	}
-
-	/**
-	 * @return
-	 * @throws IOException
-	 */
-	private Properties getLCMProperties() throws IOException {
-		Resource resource = new ClassPathResource("/lcm.properties");
-		Properties properties = PropertiesLoaderUtils.loadProperties(resource);
-		return properties;
 	}
 
 	private Method getBeanPropertyMethodFor(Class<?> clazz, String propertyName, boolean isWriter) {
@@ -213,34 +180,36 @@ public class ApplicationControllerSupport {
 		try {
 			return Class.forName(lcmModelPackage + '.' + action + "Input");
 		} catch (ClassNotFoundException e) {
-			throw new RuntimeException(String.format("%s : %s using package : ",
+			throw new RuntimeException(String.format("%s : %s using package : %s",
 					"Unable to identify viable LCM Kit input class for action", action, lcmModelPackage), e);
 		}
 	}
-	
-	public static enum StatusCategory { 
-	    NORMAL("normal"),
-	    WARNING("warning"),
-	    ERROR("error");
 
-	    private final String category;
+	public enum StatusCategory {
+		NORMAL("normal"), WARNING("warning"), ERROR("error");
 
-	    private StatusCategory(final String category) {
-	        this.category = category;
-	    } 
+		private final String category;
 
-	    @Override 
-	    public String toString() {
-	        return category;
-	    } 
+		private StatusCategory(final String category) {
+			this.category = category;
+		}
+
+		@Override
+		public String toString() {
+			return category;
+		}
 	}
-	
-	public void logLCMMessage(Object message) throws JsonProcessingException {
+
+	public void logLCMMessage(Object message) {
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.setSerializationInclusion(Include.NON_NULL);
 		ObjectWriter writer = objectMapper.writerWithDefaultPrettyPrinter();
-		String inputAsJSON = writer.writeValueAsString(message);
-		System.out.println("LCM Kit input message follows.");
-		System.out.println(inputAsJSON);
+		String inputAsJSON;
+		try {
+			inputAsJSON = writer.writeValueAsString(message);
+			auditLogger.log(Level.INFO, "\nLCM Kit input message follows: \n" + inputAsJSON, null);
+		} catch (JsonProcessingException e) {
+			auditLogger.log(Level.ERROR, "Error in logging LCM Message: ", e, e.getMessage());
+		}
 	}
 }

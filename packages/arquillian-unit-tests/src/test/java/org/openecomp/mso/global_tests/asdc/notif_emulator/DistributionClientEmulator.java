@@ -28,10 +28,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
+import org.openecomp.mso.asdc.installer.IVfModuleData;
 import org.openecomp.sdc.api.IDistributionClient;
 import org.openecomp.sdc.api.consumer.IConfiguration;
 import org.openecomp.sdc.api.consumer.IDistributionStatusMessage;
@@ -43,8 +40,6 @@ import org.openecomp.sdc.api.results.IDistributionClientResult;
 import org.openecomp.sdc.impl.DistributionClientDownloadResultImpl;
 import org.openecomp.sdc.impl.DistributionClientResultImpl;
 import org.openecomp.sdc.utils.DistributionActionResultEnum;
-
-import org.openecomp.mso.asdc.installer.IVfModuleData;
 
 public class DistributionClientEmulator implements IDistributionClient {
 

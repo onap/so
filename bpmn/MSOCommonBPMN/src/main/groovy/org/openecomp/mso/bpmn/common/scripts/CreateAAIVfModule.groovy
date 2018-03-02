@@ -19,7 +19,7 @@
  */
 
 package org.openecomp.mso.bpmn.common.scripts
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.openecomp.mso.bpmn.core.RollbackData
 import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.rest.APIResponse
@@ -30,7 +30,7 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 	
 	def Prefix="CAAIVfMod_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
-	public void initProcessVariables(Execution execution) {
+	public void initProcessVariables(DelegateExecution execution) {
 		execution.setVariable("prefix",Prefix)
 		execution.setVariable("CAAIVfMod_vnfId",null)
 		execution.setVariable("CAAIVfMod_vnfName",null)
@@ -73,8 +73,8 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 	}	
 	
 	// parse the incoming CREATE_VF_MODULE request and store the Generic VNF
-	// and VF Module data in the flow Execution
-	public void preProcessRequest(Execution execution) {
+	// and VF Module data in the flow DelegateExecution
+	public void preProcessRequest(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		initProcessVariables(execution)
 
@@ -180,7 +180,7 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 	
 	// send a GET request to AA&I to retrieve the Generic VNF/VF Module information based on a Vnf Name
 	// expect a 200 response with the information in the response body or a 404 if the Generic VNF does not exist
-	public void queryAAIForGenericVnf(Execution execution) {
+	public void queryAAIForGenericVnf(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		def endPoint = execution.getVariable("URN_aai_endpoint") + execution.getVariable("CAAIVfMod_genericVnfGetEndpoint")
 
@@ -209,7 +209,7 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 	
 	// process the result from queryAAIForGenericVnf()
 	// note: this method is primarily for logging as the actual decision logic is embedded in the bpmn flow 
-	public void processAAIGenericVnfQuery(Execution execution) {
+	public void processAAIGenericVnfQuery(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		def result = execution.getVariable("CAAIVfMod_queryGenericVnfResponse")
 		
@@ -236,7 +236,7 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 
 	// construct and send a PUT request to A&AI to create a new Generic VNF
 	// note: to get here, the vnf-id in the original CREATE_VF_MODULE request was absent or ""
-	public void createGenericVnf(Execution execution) {
+	public void createGenericVnf(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		// TBD - is this how we want to generate the Id for the new Generic VNF?
 		def newVnfId = UUID.randomUUID().toString()
@@ -287,7 +287,7 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 	}
 
 	// construct and send a PUT request to A&AI to create a Base or Add-on VF Module
-	public void createVfModule(Execution execution, Boolean isBaseModule) {
+	public void createVfModule(DelegateExecution execution, Boolean isBaseModule) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		// TBD - is this how we want to generate the Id for the new (Base) VF Module?
 		
@@ -402,7 +402,7 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 	// parses the output from the result from queryAAIForGenericVnf() to determine if the vf-module-name
 	// requested for an Add-on VF Module does not already exist for the specified Generic VNF
 	// also retrieves VNF name from AAI response for existing VNF
-	public void parseForAddOnModule(Execution execution) {
+	public void parseForAddOnModule(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		def xml = execution.getVariable("CAAIVfMod_queryGenericVnfResponse")
 		def vnfNameFromAAI = utils.getNodeText1(xml, "vnf-name")
@@ -439,7 +439,7 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 	// parses the output from the result from queryAAIForGenericVnf() to determine if the vf-module-name
 	// requested for an Add-on VF Module does not already exist for the specified Generic VNF; 
 	// also retrieves VNF name from AAI response for existing VNF
-	public void parseForBaseModule(Execution execution) {
+	public void parseForBaseModule(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		def xml = execution.getVariable("CAAIVfMod_queryGenericVnfResponse")
 		def vnfNameFromAAI = utils.getNodeText1(xml, "vnf-name")
@@ -491,7 +491,7 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 	}
 	
 	// generates a WorkflowException when the A&AI query returns a response code other than 200 or 404
-	public void handleAAIQueryFailure(Execution execution) {
+	public void handleAAIQueryFailure(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		
 		utils.log("ERROR", "Error occurred attempting to query AAI, Response Code " +
@@ -508,7 +508,7 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 	//		- the requested Generic VNF does not exist but vnf-id != null
 	// 		- the A&AI VF Module PUT returns a response code other than 200 or 201
 	//		- the requested VF Module already exists for the Generic VNF
-	public void handleCreateVfModuleFailure(Execution execution) {
+	public void handleCreateVfModuleFailure(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		
 		def errorCode
@@ -563,7 +563,7 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 	 *      main CreateVfModule flow.
 	 * @param execution the execution
 	 */
-	public void rollback(Execution execution) {
+	public void rollback(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + ".rollback(" +
 			"execution=" + execution.getId() +
 			")"

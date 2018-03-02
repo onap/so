@@ -21,16 +21,15 @@
 package org.openecomp.mso.adapters.vnfrest;
 
 
-import javax.xml.bind.annotation.XmlRootElement;
-import org.jboss.resteasy.annotations.providers.NoJackson;
-import org.codehaus.jackson.map.annotate.JsonRootName;
-
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+import com.fasterxml.jackson.annotation.JsonRootName;
+
 @JsonRootName("deleteVfModuleResponse")
 @XmlRootElement(name = "deleteVfModuleResponse")
-@NoJackson
 public class DeleteVfModuleResponse extends VfResponseCommon {
 	private String vnfId;
 	private String vfModuleId;

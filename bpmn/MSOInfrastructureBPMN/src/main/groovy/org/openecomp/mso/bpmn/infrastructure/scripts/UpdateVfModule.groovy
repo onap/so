@@ -27,7 +27,7 @@ import groovy.xml.QName
 import java.io.Serializable;
 
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
 import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.bpmn.core.json.JsonUtils;
@@ -45,7 +45,7 @@ public class UpdateVfModule extends AbstractServiceTaskProcessor {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void initProcessVariables(Execution execution) {
+	public void initProcessVariables(DelegateExecution execution) {
 		execution.setVariable('prefix', 'UPDVfMod_')
 		execution.setVariable('UPDVfMod_Request', null)
 		execution.setVariable('UPDVfMod_requestInfo', null)
@@ -66,7 +66,7 @@ public class UpdateVfModule extends AbstractServiceTaskProcessor {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void preProcessRequest(Execution execution) {
+	public void preProcessRequest(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.preProcessRequest(' +
 			'execution=' + execution.getId() +
 			')'
@@ -107,7 +107,7 @@ public class UpdateVfModule extends AbstractServiceTaskProcessor {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void sendSynchResponse(Execution execution) {
+	public void sendSynchResponse(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.sendSynchResponse(' +
 			'execution=' + execution.getId() +
 			')'
@@ -165,7 +165,7 @@ public class UpdateVfModule extends AbstractServiceTaskProcessor {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void prepDoUpdateVfModule(Execution execution) {
+	public void prepDoUpdateVfModule(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.prepDoUpdateVfModule(' +
 			'execution=' + execution.getId() +
 			')'
@@ -188,7 +188,7 @@ public class UpdateVfModule extends AbstractServiceTaskProcessor {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void prepUpdateInfraRequest(Execution execution) {
+	public void prepUpdateInfraRequest(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.prepUpdateInfraRequest(' +
 			'execution=' + execution.getId() +
 			')'
@@ -243,7 +243,7 @@ public class UpdateVfModule extends AbstractServiceTaskProcessor {
 	 * @param execution the execution
 	 * @param resultVar the execution variable in which the result will be stored
 	 */
-	public void completionHandlerPrep(Execution execution, String resultVar) {
+	public void completionHandlerPrep(DelegateExecution execution, String resultVar) {
 		def method = getClass().getSimpleName() + '.completionHandlerPrep(' +
 			'execution=' + execution.getId() +
 			', resultVar=' + resultVar +
@@ -282,7 +282,7 @@ public class UpdateVfModule extends AbstractServiceTaskProcessor {
 	 * @param execution the execution
 	 * @param resultVar the execution variable in which the result will be stored
 	 */
-	public void falloutHandlerPrep(Execution execution, String resultVar) {
+	public void falloutHandlerPrep(DelegateExecution execution, String resultVar) {
 		def method = getClass().getSimpleName() + '.falloutHandlerPrep(' +
 			'execution=' + execution.getId() +
 			', resultVar=' + resultVar +

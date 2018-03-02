@@ -31,6 +31,7 @@ public class ServiceTemplateImpl implements ServiceTemplate {
     private URI uri;
     private String filename = DEFAULT_TEMPLATE_NAME;
     private String description;
+    private byte[] csar_blob; // for opaque binary
 
     public ServiceTemplateImpl(){}
 
@@ -40,7 +41,15 @@ public class ServiceTemplateImpl implements ServiceTemplate {
     }
 
     /**
-     * Construct an instance
+     * Construct service template from CSAR byte array
+     */
+    public ServiceTemplateImpl(String name, byte[] csar){
+	    this.csar_blob = csar;
+	    this.name = name;
+    }
+
+    /**
+     * Construct an instance based on CSAR
      * @param name a textual name for the template
      * @param uri a URI to a CSAR
      * @param filename the filename in the CSAR representing main yaml template
@@ -51,7 +60,7 @@ public class ServiceTemplateImpl implements ServiceTemplate {
         this.filename=filename;
         this.description=description;
     }
-
+    
     public int getId(){
         return id;
     }
@@ -75,6 +84,9 @@ public class ServiceTemplateImpl implements ServiceTemplate {
     }
     public void setFilename(String filename){
         this.filename=filename;
+    }
+    public byte[] getCSARBytes() {
+    	return csar_blob;
     }
 
     public String getDescription(){ return description;}

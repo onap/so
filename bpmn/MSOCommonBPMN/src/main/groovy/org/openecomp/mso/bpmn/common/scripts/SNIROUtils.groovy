@@ -1,6 +1,27 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * ONAP - SO
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+
 package org.openecomp.mso.bpmn.common.scripts
 
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.json.JSONArray
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
 import org.openecomp.mso.bpmn.common.scripts.MsoUtils
@@ -38,7 +59,7 @@ class SNIROUtils{
 	 *
 	 * @author cb645j
 	 */
-	public String buildRequest(Execution execution, String requestId, ServiceDecomposition decomposition, Subscriber subscriber, String homingParams){
+	public String buildRequest(DelegateExecution execution, String requestId, ServiceDecomposition decomposition, Subscriber subscriber, String homingParams){
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		utils.log("DEBUG", "Started Building Sniro Request", isDebugEnabled)
 		def callbackUrl = utils.createWorkflowMessageAdapterCallbackURL(execution, "SNIROResponse", requestId)
@@ -70,6 +91,25 @@ class SNIROUtils{
 			orderInfo = StringUtils.normalizeSpace(orderInfo)
 		}
 
+		//Determine RequestType
+		//TODO Figure out better way to determine this
+		String requestType = "initial"
+		List<Resource> resources = decomposition.getServiceResources()
+		for(Resource r:resources){
+			HomingSolution currentSolution = r.getCurrentHomingSolution()
+			if(currentSolution != null){
+				requestType = "speed changed"
+			}
+		}
+
+		int timeoutSeconds = 1800
+		String timeout = execution.getVariable("timeout")
+		if(isNotBlank(timeout)){
+			String subT = timeout.substring(2, timeout.length() - 1)
+			int timeoutInt = Integer.parseInt(subT)
+			timeoutSeconds = timeoutInt * 60
+		}
+
 		//Demands
 		String placementDemands = ""
 		StringBuilder sb = new StringBuilder()
@@ -81,7 +121,7 @@ class SNIROUtils{
 			utils.log("DEBUG", "Allotted Resources List is empty - will try to get service VNFs instead.", isDebugEnabled)
 			resourceList = decomposition.getServiceVnfs()
 		}
-		
+
 		if(resourceList.isEmpty() || resourceList == null){
 			utils.log("DEBUG", "Resources List is Empty", isDebugEnabled)
 		}else{
@@ -99,7 +139,19 @@ class SNIROUtils{
 				def resouceModelType = resourceModelInfo.getModelType()
 				def tenantId = "" //Optional
 				def tenantName = "" //Optional
-	
+
+
+				String existingPlacement = ""
+				HomingSolution currentPlacement = resource.getCurrentHomingSolution()
+				if(currentPlacement != null){
+					String homedServiceInstanceId = currentPlacement.getServiceInstanceId()
+					existingPlacement =
+					""","existingPlacement": {
+                           "serviceInstanceId": "${homedServiceInstanceId}"
+                    }"""
+				}
+
+
 				String demand =
 					"""{
 						"resourceInstanceType": "${resourceInstanceType}",
@@ -115,8 +167,9 @@ class SNIROUtils{
 						},
 						"tenantId": "${tenantId}",
 						"tenantName": "${tenantName}"
+						${existingPlacement}
 					},"""
-	
+
 				placementDemands = sb.append(demand)
 			}
 			placementDemands = placementDemands.substring(0, placementDemands.length() - 1);
@@ -126,7 +179,7 @@ class SNIROUtils{
 		sb = new StringBuilder()
 		if(vnfResourceList.isEmpty() || vnfResourceList == null){
 			utils.log("DEBUG", "Vnf Resources List is Empty", isDebugEnabled)
-		}else{	
+		}else{
 			for(VnfResource vnfResource:vnfResourceList){
 				ModelInfo vnfResourceModelInfo = vnfResource.getModelInfo()
 				ResourceInstance vnfResourceInstance = vnfResource.getResourceInstance()
@@ -139,7 +192,24 @@ class SNIROUtils{
 				def resouceModelVersion = vnfResourceModelInfo.getModelVersion()
 				def resouceModelVersionId = vnfResourceModelInfo.getModelUuid()
 				def resouceModelType = vnfResourceModelInfo.getModelType()
-	
+
+				String curentLicenseJson = ""
+				HomingSolution currentSol = vnfResource.getCurrentHomingSolution()
+				if(currentSol != null){
+					JSONArray entitlementPoolList = currentSol.getLicense().getEntitlementPoolListAsString()
+					JSONArray licenseKeyGroupList = currentSol.getLicense().getLicenseKeyGroupListAsString()
+					curentLicenseJson =
+					""" ,"existingLicense": [
+                           {
+                                 "entitlementPoolUUID":
+									${entitlementPoolList},
+                                 "licenseKeyGroupUUID":
+									${licenseKeyGroupList}
+
+                           }
+                    	]"""
+				}
+
 				String demand =
 				"""{
 						"resourceInstanceType": "${resourceInstanceType}",
@@ -153,13 +223,14 @@ class SNIROUtils{
 							"modelVersionId": "${resouceModelVersionId}",
 							"modelType": "${resouceModelType}"
 						}
+						${curentLicenseJson}
 					},"""
-	
+
 					licenseDemands = sb.append(demand)
 			}
 			licenseDemands = licenseDemands.substring(0, licenseDemands.length() - 1);
 		}
-			
+
 		String request =
 				"""{
 	  	"requestInfo": {
@@ -167,12 +238,13 @@ class SNIROUtils{
 				"requestId": "${requestId}",
 				"callbackUrl": "${callbackUrl}",
 				"sourceId": "mso",
+				"requestType": "${requestType}",
 				"optimizer": [
 					"placement",
 					"license"
 				],
 				"numSolutions": 1,
-				"timeout": 600
+				"timeout": ${timeoutSeconds}
 				},
 		"placementInfo": {
 			"serviceModelInfo": {
@@ -216,14 +288,14 @@ class SNIROUtils{
 	 *
 	 * @author cb645j
 	 */
-	public void validateCallbackResponse(Execution execution, String response){
+	public void validateCallbackResponse(DelegateExecution execution, String response){
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		String placements = ""
 		if(isBlank(response)){
 			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, "Sniro Async Callback Response is Empty")
 		}else{
-			if(JsonUtils.jsonElementExist(response, "solutionInfo.placement")){
-				placements = jsonUtil.getJsonValue(response, "solutionInfo.placement")
+			if(JsonUtils.jsonElementExist(response, "solutionInfo.placementInfo")){
+				placements = jsonUtil.getJsonValue(response, "solutionInfo.placementInfo")
 				if(isBlank(placements) || placements.equalsIgnoreCase("[]")){
 					String statusMessage = jsonUtil.getJsonValue(response, "statusMessage")
 					if(isBlank(statusMessage)){

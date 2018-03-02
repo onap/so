@@ -144,15 +144,16 @@ public class MsoLogger {
     // For internal logging of the initialization of MSO logs
     private static final Logger LOGGER      = Logger.getLogger(MsoLogger.class.getName());
 
-    private MsoLogger(MsoLogger.Catalog cat) {
-        this.logger = EELFManager.getInstance().getErrorLogger();
-        this.auditLogger = EELFManager.getInstance().getAuditLogger();
-        this.metricsLogger = EELFManager.getInstance().getMetricsLogger();
-        MsoLogger.initialization();
-        setDefaultLogCatalog(cat);
-    }
 
-    private static synchronized void initialization() {
+    // Since four adaptors are using the instance of  MsoLogger which will be referenced everywhere
+    // hence limiting the number of MsoLogger instances to five.
+    private static final MsoLogger generalMsoLogger = new MsoLogger(Catalog.GENERAL);
+    private static final MsoLogger apihLogger = new MsoLogger(Catalog.APIH);
+    private static final MsoLogger asdcLogger = new MsoLogger(Catalog.ASDC);
+    private static final MsoLogger raLogger = new MsoLogger(Catalog.RA);
+    private static final MsoLogger bpelLogger = new MsoLogger(Catalog.BPEL);
+
+    static {
         if (instanceUUID == null || ("").equals(instanceUUID)) {
             instanceUUID = getInstanceUUID();
         }
@@ -170,15 +171,40 @@ public class MsoLogger {
         }
     }
 
+    // Singleton instances of the EELFLogger of all types are referenced by MsoLogger
+    private MsoLogger(Catalog cat) {
+        this.logger = EELFManager.getInstance().getErrorLogger();
+        this.auditLogger = EELFManager.getInstance().getAuditLogger();
+        this.metricsLogger = EELFManager.getInstance().getMetricsLogger();
+        this.setDefaultLogCatalog(cat);
+    }
+
+
+
     /**
      * Get the MsoLogger based on the catalog
-     * 
+     * This method is fixed now to resolve the total number of objects that are getting created
+     * everytime this function gets called. Its supposed to have fixed number of instance per java process.
+     *
      * @param cat
      *            Catalog of the logger
      * @return the MsoLogger
      */
     public static synchronized MsoLogger getMsoLogger(MsoLogger.Catalog cat) {
-        return new MsoLogger(cat);
+        switch (cat) {
+            case GENERAL:
+                return generalMsoLogger;
+            case APIH:
+                return apihLogger;
+            case RA:
+                return raLogger;
+            case BPEL:
+                return bpelLogger;
+            case ASDC:
+                return asdcLogger;
+            default:
+                return generalMsoLogger;
+        }
     }
 
     /**

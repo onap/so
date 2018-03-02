@@ -22,12 +22,13 @@ package org.openecomp.mso.adapters.vnfrest;
 
 
 import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlRootElement;
-import org.jboss.resteasy.annotations.providers.NoJackson;
+
 import org.openecomp.mso.openstack.exceptions.MsoExceptionCategory;
 
 @XmlRootElement(name = "vfModuleException")
-@NoJackson
+
 public class VfModuleExceptionResponse extends VfResponseCommon implements Serializable {
     private static final long serialVersionUID = -9062290006520066109L;
 

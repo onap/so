@@ -363,8 +363,8 @@ public class VnfRequestHandler {
 
     private String translateVnfRequests (List <VnfRequest> queryResponseList) {
         VnfRequests queryResponses = new VnfRequests ();
-        for (int i = 0; i < queryResponseList.size (); i++) {
-            queryResponses.getVnfRequest ().add (queryResponseList.get (i));
+        for (VnfRequest aQueryResponseList : queryResponseList) {
+            queryResponses.getVnfRequest().add(aQueryResponseList);
         }
 
         StringWriter stringWriter = new StringWriter ();
@@ -711,12 +711,12 @@ public class VnfRequestHandler {
                 requestClient = RequestClientFactory.getRequestClient (orchestrationURI, props);
                 // Capture audit event
                 msoLogger.debug ("MSO API Handler Posting call to BPEL engine for url: " + requestClient.getUrl ());
-                response = requestClient.post (msoRequest.getRequestXML (),
-                        requestId,
-                        Integer.toString (recipe.getRecipeTimeout ()).toString (),
-                        version,
-                        null,
-                        null);
+                response = requestClient.post(msoRequest.getRequestXML(),
+                    requestId,
+                    Integer.toString(recipe.getRecipeTimeout()),
+                    version,
+                    null,
+                    null);
                 msoLogger.recordMetricEvent (subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from BPMN engine", "BPMN", orchestrationURI, null);
             } catch (Exception e) {
                 msoLogger.recordMetricEvent (subStartTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, "Exception while communicate with BPMN engine", "BPMN", orchestrationURI, null);

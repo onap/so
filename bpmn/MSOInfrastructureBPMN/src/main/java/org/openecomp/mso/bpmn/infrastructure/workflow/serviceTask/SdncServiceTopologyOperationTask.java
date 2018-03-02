@@ -33,6 +33,7 @@ import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.builder
 import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.entity.RpcServiceTopologyOperationInputEntity;
 import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.entity.RpcServiceTopologyOperationOutputEntity;
 import org.openecomp.mso.logger.MessageEnum;
+import org.openecomp.mso.requestsdb.RequestsDbConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,16 +53,16 @@ public class SdncServiceTopologyOperationTask extends AbstractSdncOperationTask 
                                                  Map<String, String> inputs,
                                                  GenericResourceApi genericResourceApiClient) throws Exception {
         logger.info("SdncServiceTopologyOperationTask.sendRestrequestAndHandleResponse begin!");
-//        updateProgress(execution, null, null, "40", "sendRestrequestAndHandleResponse begin!");
+        updateProgress(execution, null, null, "40", "sendRestrequestAndHandleResponse begin!");
         ServiceRpcInputEntityBuilder builder = new ServiceRpcInputEntityBuilder();
         RpcServiceTopologyOperationInputEntity inputEntity = builder.build(execution, inputs);
-//        updateProgress(execution, null, null, "50", "RequestBody build finished!");
+        updateProgress(execution, null, null, "50", "RequestBody build finished!");
         RpcServiceTopologyOperationOutputEntity outputEntity;
         if (!isSend2SdncDirectly()) {
             outputEntity = genericResourceApiClient.postServiceTopologyOperation
                     (HeaderUtil.DefaulAuth, inputEntity).execute().body();
-//        updateProgress(execution, null, null, "90", "sendRestrequestAndHandleResponse finished!");
-            saveOutput(execution, outputEntity);
+        updateProgress(execution, null, null, "90", "sendRestrequestAndHandleResponse finished!");
+        saveOutput(execution, outputEntity);
         } else {
             Send2SdncDirectly(HeaderUtil.DefaulAuth, inputEntity);
         }
@@ -77,7 +78,7 @@ public class SdncServiceTopologyOperationTask extends AbstractSdncOperationTask 
         httpPost.addHeader("Authorization", defaulAuth);
         httpPost.addHeader("Content-type", "application/json");
         String postBody = getPostbody(inputEntity);
-        LOGGER.info(MessageEnum.RA_SEND_REQUEST_SDNC, postBody.toString(), "SDNC", "");
+        LOGGER.info(MessageEnum.RA_SEND_REQUEST_SDNC, postBody, "SDNC", "");
         httpPost.setEntity(new StringEntity(postBody, ContentType.APPLICATION_XML));
         httpPost(url, httpPost);
         logger.info("SdncServiceTopologyOperationTask.Send2SdncDirectly end!");
@@ -92,7 +93,7 @@ public class SdncServiceTopologyOperationTask extends AbstractSdncOperationTask 
             String errorMessage = output.getOutput().getResponseMessage();
             WorkflowException workflowException = new WorkflowException(processKey, errorCode, errorMessage);
             execution.setVariable("SDNCA_SuccessIndicator", workflowException);
-//            updateProgress(execution, RequestsDbConstant.Status.ERROR, String.valueOf(errorCode), null, errorMessage);
+            updateProgress(execution, RequestsDbConstant.Status.ERROR, String.valueOf(errorCode), null, errorMessage);
             logger.info("exception: SdncServiceTopologyOperationTask.saveOutput fail!");
             throw new Exception("");
         }

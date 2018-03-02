@@ -29,18 +29,17 @@ ex.processJavaException(execution)]]></bpmn:script>
         <camunda:out source="rollbackData" target="rollbackData" />
         <camunda:in source="serviceInstanceId" target="serviceInstanceId" />
         <camunda:in source="serviceInstanceName" target="serviceInstanceName" />
+        <camunda:in source="serviceModelInfo" target="serviceModelInfo" />
         <camunda:in source="productFamilyId" target="productFamilyId" />
         <camunda:in source="disableRollback" target="disableRollback" />
-        <camunda:in source="uuiRequest" target="uuiRequest" />
+        <camunda:in source="serviceInputParams" target="serviceInputParams" />
         <camunda:out source="rolledBack" target="rolledBack" />
         <camunda:out source="serviceInstanceName" target="serviceInstanceName" />
         <camunda:in source="failIfExists" target="failIfExists" />
         <camunda:in source="globalSubscriberId" target="globalSubscriberId" />
-        <camunda:in source="serviceType" target="serviceType" />
+        <camunda:in source="subscriptionServiceType" target="subscriptionServiceType" />
+        <camunda:in sourceExpression="1610" target="sdncVersion" />
         <camunda:in source="initialStatus" target="initialStatus" />
-        <camunda:in source="operationId" target="operationId" />
-        <camunda:in source="operationType" target="operationType" />
-        <camunda:in source="URN_mso_adapters_openecomp_db_endpoint" target="URN_mso_adapters_openecomp_db_endpoint" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_19eilro</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0klbpxx</bpmn:outgoing>

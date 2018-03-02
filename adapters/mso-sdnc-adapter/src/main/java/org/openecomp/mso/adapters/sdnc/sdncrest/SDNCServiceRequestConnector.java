@@ -43,7 +43,6 @@ import org.openecomp.mso.logger.MsoLogger;
 public class SDNCServiceRequestConnector extends SDNCConnector {
 
     private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
-    private static final String YES = "Y";
 	@Override
 	protected SDNCResponseCommon createResponseFromContent(int statusCode, String statusMessage,
 			String responseContent, TypedRequestTunables rt) {
@@ -58,7 +57,7 @@ public class SDNCServiceRequestConnector extends SDNCConnector {
 	@Override
 	protected SDNCErrorCommon createErrorResponse(int statusCode, String errMsg,
 			TypedRequestTunables rt) {
-		return new SDNCServiceError(rt.getReqId(), String.valueOf(statusCode), errMsg, YES);
+		return new SDNCServiceError(rt.getReqId(), String.valueOf(statusCode), errMsg, "Y");
 	}
 
 	/**
@@ -134,10 +133,10 @@ public class SDNCServiceRequestConnector extends SDNCConnector {
 			// ack-final-indicator is optional: default to "Y".
 
 			if (ackFinalIndicator == null || ackFinalIndicator.trim().isEmpty()) {
-				ackFinalIndicator = YES;
+				ackFinalIndicator = "Y";
 			}
 
-			if (!YES.equals(ackFinalIndicator) && !"N".equals(ackFinalIndicator)) {
+			if (!ackFinalIndicator.equals("Y") && !"N".equals(ackFinalIndicator)) {
 				throw new ParseException("Invalid ack-final-indicator in SDNC response: '" + ackFinalIndicator + "'", 0);
 			}
 
@@ -149,7 +148,7 @@ public class SDNCServiceRequestConnector extends SDNCConnector {
 
 			// If the response code in the message from SDNC was not 2XX, return SDNCServiceError.
 
-			if (!responseCode.matches("2[0-9][0-9]")) {
+			if (!responseCode.matches("2[0-9][0-9]") && !responseCode.equals("0")) {
 				// Not a 2XX response.  Return SDNCServiceError.
 				return new SDNCServiceError(svcRequestId, responseCode, responseMessage, ackFinalIndicator);
 			}

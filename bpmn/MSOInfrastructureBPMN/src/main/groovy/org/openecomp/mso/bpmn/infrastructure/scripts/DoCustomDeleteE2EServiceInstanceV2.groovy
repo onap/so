@@ -20,40 +20,23 @@
  */
 package org.openecomp.mso.bpmn.infrastructure.scripts
 
-import org.json.JSONArray;
-
 import static org.apache.commons.lang3.StringUtils.*;
-import groovy.xml.XmlUtil
-import groovy.json.*
 
-import org.openecomp.mso.bpmn.core.json.JsonUtils
+import org.apache.commons.lang3.*
+import org.camunda.bpm.engine.delegate.BpmnError
+import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.camunda.bpm.engine.runtime.Execution
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.openecomp.mso.bpmn.common.scripts.AaiUtil
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
-import org.openecomp.mso.bpmn.common.scripts.SDNCAdapterUtils
 import org.openecomp.mso.bpmn.core.WorkflowException
+import org.openecomp.mso.bpmn.core.json.JsonUtils
 import org.openecomp.mso.rest.APIResponse;
-import org.openecomp.mso.rest.RESTClient
-import org.openecomp.mso.rest.RESTConfig
-
-import org.openecomp.mso.bpmn.common.scripts.AaiUtil
-
-import java.util.UUID;
-import javax.xml.parsers.DocumentBuilder
-import javax.xml.parsers.DocumentBuilderFactory
-
-import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
-import org.json.JSONObject;
-import org.apache.commons.lang3.*
-import org.apache.commons.codec.binary.Base64;
 import org.springframework.web.util.UriUtils;
-import org.w3c.dom.Document
-import org.w3c.dom.Element
-import org.w3c.dom.Node
-import org.w3c.dom.NodeList
-import org.xml.sax.InputSource
 
-import com.fasterxml.jackson.jaxrs.json.annotation.JSONP.Def;
+import groovy.json.*
 
 /**
  * This groovy class supports the <class>DoDeleteE2EServiceInstance.bpmn</class> process.
@@ -81,7 +64,7 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
 
-	public void preProcessRequest (Execution execution) {
+	public void preProcessRequest (DelegateExecution execution) {
 		
 		def method = getClass().getSimpleName() + '.buildAPPCRequest(' +'execution=' + execution.getId() +')'
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")

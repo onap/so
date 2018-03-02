@@ -82,7 +82,7 @@ public class NotificationLogging implements InvocationHandler {
 			return "EMPTY"; // No declared methods in this class !!!
 		}
 		
-		StringBuffer buffer = new StringBuffer("ASDC Notification:");
+		StringBuilder buffer = new StringBuilder("ASDC Notification:");
 		buffer.append(System.lineSeparator());
 		
 		for (Method m : declaredMethods) {

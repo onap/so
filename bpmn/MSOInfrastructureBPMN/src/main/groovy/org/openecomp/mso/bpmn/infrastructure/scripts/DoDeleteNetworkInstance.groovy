@@ -34,7 +34,7 @@ import org.openecomp.mso.rest.RESTConfig
 import java.util.UUID;
 
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.apache.commons.lang3.*
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.web.util.UriUtils
@@ -51,7 +51,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 	NetworkUtils networkUtils = new NetworkUtils()
 	SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils()
 
-	public InitializeProcessVariables(Execution execution){
+	public InitializeProcessVariables(DelegateExecution execution){
 		/* Initialize all the process variables in this block */
 
 		execution.setVariable(Prefix + "networkRequest", "")
@@ -102,7 +102,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 	//     Pre or Prepare Request Section
 	// **************************************************
 
-	public void preProcessRequest (Execution execution) {
+	public void preProcessRequest (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 
@@ -229,7 +229,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 	}
 
 
-	public void callRESTQueryAAI (Execution execution) {
+	public void callRESTQueryAAI (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 
@@ -244,7 +244,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 		String aai_endpoint = execution.getVariable("URN_aai_endpoint")
 		AaiUtil aaiUriUtil = new AaiUtil(this)
 		String aai_uri = aaiUriUtil.getNetworkL3NetworkUri(execution)
-		String queryAAIRequest = "${aai_endpoint}${aai_uri}/" + networkId + "?depth=1"
+		String queryAAIRequest = "${aai_endpoint}${aai_uri}/" + networkId + "?depth=all"
 		utils.logAudit(queryAAIRequest)
 		execution.setVariable(Prefix + "queryAAIRequest", queryAAIRequest)
 		utils.log("DEBUG", Prefix + "AAIRequest - " + "\n" + queryAAIRequest, isDebugEnabled)
@@ -328,7 +328,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 
 	}
 
-	public void callRESTQueryAAICloudRegion (Execution execution) {
+	public void callRESTQueryAAICloudRegion (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 
@@ -375,7 +375,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 
 	}
 
-	public void prepareNetworkRequest (Execution execution) {
+	public void prepareNetworkRequest (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 
@@ -463,7 +463,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 	 * This method is used instead of an HTTP Connector task because the
 	 * connector does not allow DELETE with a body.
 	 */
-	public void sendRequestToVnfAdapter(Execution execution) {
+	public void sendRequestToVnfAdapter(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.sendRequestToVnfAdapter(' +
 			'execution=' + execution.getId() +
 			')'
@@ -498,7 +498,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 	}
 
 
-	public void prepareSDNCRequest (Execution execution) {
+	public void prepareSDNCRequest (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 
@@ -548,7 +548,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 
 	}
 
-	public void prepareRpcSDNCRequest (Execution execution) {
+	public void prepareRpcSDNCRequest (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 
@@ -588,7 +588,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 	}
 	
 	
-	public void prepareRpcSDNCDeactivate(Execution execution) {
+	public void prepareRpcSDNCDeactivate(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 
@@ -626,7 +626,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 	//     Post or Validate Response Section
 	// **************************************************
 
-	public void validateNetworkResponse (Execution execution) {
+	public void validateNetworkResponse (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 
@@ -700,7 +700,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 
 	}
 
-	public void validateSDNCResponse (Execution execution) {
+	public void validateSDNCResponse (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 
@@ -728,7 +728,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 
 	}
 
-	public void validateRpcSDNCDeactivateResponse (Execution execution) {
+	public void validateRpcSDNCDeactivateResponse (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 
@@ -756,7 +756,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 
 	}
 	
-	public void prepareRpcSDNCDeactivateRollback(Execution execution) {
+	public void prepareRpcSDNCDeactivateRollback(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 
@@ -789,7 +789,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 
 	}
 	
-	public void prepareRollbackData(Execution execution) {
+	public void prepareRollbackData(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		
@@ -825,7 +825,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 		
 	}
 	
-	public void postProcessResponse (Execution execution) {
+	public void postProcessResponse (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 
@@ -886,7 +886,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 
 	}
 
-	public void prepareSuccessRollbackData(Execution execution) {
+	public void prepareSuccessRollbackData(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		
@@ -935,7 +935,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 		
 	}
 
-	public void prepareRpcSDNCUnassignRollback(Execution execution) {
+	public void prepareRpcSDNCUnassignRollback(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 
@@ -972,7 +972,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 
 	}
 	
-	public void prepareSDNCRollback (Execution execution) {
+	public void prepareSDNCRollback (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 
@@ -1025,7 +1025,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 
 	}
 	
-	public void setExceptionFlag(Execution execution){
+	public void setExceptionFlag(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		
@@ -1055,7 +1055,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 	//     Build Error Section
 	// *******************************
 
-	public void processJavaException(Execution execution){
+	public void processJavaException(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		try{

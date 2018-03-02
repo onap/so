@@ -1,10 +1,10 @@
-package org.openecomp.mso.bpmn.common.scripts
+package org.openecomp.mso.bpmn.common.scripts;
 
 import groovy.json.*
 
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
 
@@ -18,7 +18,7 @@ class ReceiveWorkflowMessage extends AbstractServiceTaskProcessor {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-public void preProcessRequest (Execution execution) {
+public void preProcessRequest (DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.preProcessRequest(' +
 			'execution=' + execution.getId() +
 			')'
@@ -30,7 +30,7 @@ public void preProcessRequest (Execution execution) {
 		setSuccessIndicator(execution, false)
 
 		try {
-			
+
 			// Confirm that timeout value has been provided in 'RCVWFMSG_timeout'.
 			def timeout = execution.getVariable('RCVWFMSG_timeout')
 			logDebug('Timeout value is \'' + timeout + '\'', isDebugLogEnabled)
@@ -40,7 +40,7 @@ public void preProcessRequest (Execution execution) {
 				logError(msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 			}
-			
+
 			// Confirm that message type has been provided in 'RCVWFMSG_messageType'
 			def messageType = execution.getVariable('RCVWFMSG_messageType')
 			logDebug('Message type is \'' + messageType + '\'', isDebugLogEnabled)
@@ -50,7 +50,7 @@ public void preProcessRequest (Execution execution) {
 				logError(msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 			}
-			
+
 			// Confirm that correlator value has been provided in 'RCVWFMSG_correlator'
 			def correlator = execution.getVariable('RCVWFMSG_correlator')
 			logDebug('Correlator value is \'' + correlator + '\'', isDebugLogEnabled)
@@ -61,7 +61,7 @@ public void preProcessRequest (Execution execution) {
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 			}
 			execution.setVariable(messageType + '_CORRELATOR', correlator)
-			
+
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
 			throw e
@@ -78,7 +78,7 @@ public void preProcessRequest (Execution execution) {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void processReceivedMessage(Execution execution){
+	public void processReceivedMessage(DelegateExecution execution){
 		def method = getClass().getSimpleName() + '.processReceivedMessage(' +
 			'execution=' + execution.getId() +
 			')'
@@ -95,7 +95,7 @@ public void preProcessRequest (Execution execution) {
 
 			// The received message is made available to the calling flow in WorkflowResponse
 			execution.setVariable("WorkflowResponse", receivedMessage)
-			
+
 			setSuccessIndicator(execution, true)
 
 			logDebug('Exited ' + method, isDebugLogEnabled)

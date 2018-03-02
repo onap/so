@@ -65,6 +65,7 @@ import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.openstack.beans.NetworkRollback;
 import org.openecomp.mso.openstack.beans.NetworkStatus;
+import org.openecomp.mso.openstack.beans.RouteTarget;
 import org.openecomp.mso.openstack.exceptions.MsoExceptionCategory;
 import org.openecomp.mso.properties.MsoPropertiesFactory;
 
@@ -344,7 +345,7 @@ public class NetworkAdapterRest {
             Holder<String> networkId = new Holder<>();
             Holder<String> neutronNetworkId = new Holder<>();
             Holder<NetworkStatus> status = new Holder<>();
-            Holder<List<String>> routeTargets = new Holder<>();
+            Holder<List<RouteTarget>> routeTargets = new Holder<>();
             Holder<Map<String, String>> subnetIdMap = new Holder<>();
 
 			adapter.queryNetworkContrail(cloudSiteId,  tenantId, aaiNetworkId,  msoRequest,

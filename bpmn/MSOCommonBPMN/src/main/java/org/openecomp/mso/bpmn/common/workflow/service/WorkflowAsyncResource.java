@@ -273,7 +273,6 @@ public class WorkflowAsyncResource extends ProcessEngineAwareService {
 		return pes.getRuntimeService().createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult() == null;
 	}
 	
-	
 	private static Map<String, Object> getInputVariables(VariableMapImpl variableMap) {
 		Map<String, Object> inputVariables = new HashMap<>();
 		@SuppressWarnings("unchecked")

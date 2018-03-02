@@ -4,7 +4,7 @@ package org.openecomp.mso.apihandlerinfra;
  * #%L
  * MSO
  * %%
- * Copyright (C) 2016 OPENECOMP - MSO
+ * Copyright (C) 2016 ONAP - SO
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -332,8 +332,8 @@ public class VnfInfoHandler {
 
     private String translateVnfRequests (List <VnfRequest> queryResponseList) {
         VnfRequests queryResponses = new VnfRequests ();
-        for (int i = 0; i < queryResponseList.size (); i++) {
-            queryResponses.getVnfRequest ().add (queryResponseList.get (i));
+        for (VnfRequest aQueryResponseList : queryResponseList) {
+            queryResponses.getVnfRequest().add(aQueryResponseList);
         }
 
         StringWriter stringWriter = new StringWriter ();

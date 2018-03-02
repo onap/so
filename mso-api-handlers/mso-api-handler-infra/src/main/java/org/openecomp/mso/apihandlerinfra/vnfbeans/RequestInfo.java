@@ -84,7 +84,7 @@ public class RequestInfo {
     protected RequestStatusType requestStatus;
     @XmlElement(name = "status-message")
     protected String statusMessage;
-    protected Integer progress;
+    protected String progress;
     @XmlElement(name = "start-time")
     protected String startTime;
     @XmlElement(name = "end-time")
@@ -195,7 +195,7 @@ public class RequestInfo {
      *     {@link Integer }
      *
      */
-    public Integer getProgress() {
+    public String getProgress() {
         return progress;
     }
 
@@ -207,7 +207,7 @@ public class RequestInfo {
      *     {@link Integer }
      *
      */
-    public void setProgress(Integer value) {
+    public void setProgress(String value) {
         this.progress = value;
     }
 

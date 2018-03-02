@@ -67,7 +67,7 @@ public class HeatTemplateTest {
         heatTemplate.setParameters (set);
         String heatStr = heatTemplate.toString (); 
         assertTrue (heatStr.contains ("param name"));
-        assertTrue (heatStr.toString ().contains ("param 2(reqd)"));
+        assertTrue (heatStr.contains ("param 2(reqd)"));
 
         File tempFile;
         try {

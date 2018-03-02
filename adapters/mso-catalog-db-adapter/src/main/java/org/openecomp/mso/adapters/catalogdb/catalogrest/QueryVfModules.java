@@ -25,14 +25,12 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.jboss.resteasy.annotations.providers.NoJackson;
-
 import org.openecomp.mso.db.catalog.beans.VfModule;
 import org.openecomp.mso.logger.MsoLogger;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @XmlRootElement(name = "vfModules")
-@NoJackson
 public class QueryVfModules {
 	private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
 	private List<VfModule> vfModules;

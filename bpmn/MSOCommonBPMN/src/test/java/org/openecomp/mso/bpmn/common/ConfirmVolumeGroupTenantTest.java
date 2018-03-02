@@ -46,7 +46,7 @@ public class ConfirmVolumeGroupTenantTest extends WorkflowTest {
 	public void testRemoveLayer3Service_success() throws Exception{
 		MockGetVolumeGroupById("MDTWNJ21", "a8399879-31b3-4973-be26-0a0cbe776b58", "CRTGVNF_queryAAIResponseVolume.xml");
 
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		setVariables(variables);
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "ConfirmVolumeGroupTenant", variables);
@@ -66,7 +66,7 @@ public class ConfirmVolumeGroupTenantTest extends WorkflowTest {
 	public void testRemoveLayer3Service_idsNotMatch() throws Exception{
 		MockGetVolumeGroupById("MDTWNJ21", "a8399879-31b3-4973-be26-0a0cbe776b58", "CRTGVNF_queryAAIResponseVolume_idsNotMatch.xml");
 
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		setVariables(variables);
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "ConfirmVolumeGroupTenant", variables);

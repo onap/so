@@ -257,7 +257,7 @@ public abstract class SDNCConnector {
 		//   </error>
 		// </errors>
 
-		String output = null;
+		StringBuilder output = null;
 
 		try {
 			XPathFactory xpathFactory = XPathFactory.newInstance();
@@ -306,9 +306,9 @@ public abstract class SDNCConnector {
 
 				if (!info.isEmpty()) {
 					if (output == null) {
-						output = "[" + info + "]";
+						output = new StringBuilder("[" + info + "]");
 					} else {
-						output += " [" + info + "]";
+						output.append(" [").append(info).append("]");
 					}
 				}
 			}
@@ -317,6 +317,6 @@ public abstract class SDNCConnector {
 				MsoLogger.ErrorCode.DataError, "Exception while analyzing errors", e);
 		}
 
-		return output;
+		return output.toString();
 	}
 }

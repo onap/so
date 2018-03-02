@@ -28,10 +28,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
 import org.openecomp.mso.asdc.client.ASDCConfiguration;
 import org.openecomp.mso.asdc.client.exceptions.ArtifactInstallerException;
 import org.openecomp.mso.db.catalog.beans.AllottedResourceCustomization;
@@ -40,13 +36,17 @@ import org.openecomp.mso.db.catalog.beans.Service;
 import org.openecomp.mso.db.catalog.beans.ServiceToAllottedResources;
 import org.openecomp.mso.db.catalog.beans.ServiceToNetworks;
 import org.openecomp.mso.db.catalog.beans.VnfResource;
-import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.sdc.api.IDistributionClient;
 import org.openecomp.sdc.api.notification.IArtifactInfo;
 import org.openecomp.sdc.api.notification.INotificationData;
 import org.openecomp.sdc.api.notification.IResourceInstance;
 import org.openecomp.sdc.api.results.IDistributionClientDownloadResult;
+import org.openecomp.mso.logger.MessageEnum;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * This structure exists to avoid having issues if the order of the vfResource/vfmodule artifact is not good (tree structure).
  *
@@ -139,7 +139,7 @@ public final class VfResourceStructure {
 
 	public void createVfModuleStructures() throws ArtifactInstallerException {
 
-	    //for vender tosca VNF there is no VFModule in VF
+		//for vender tosca VNF there is no VFModule in VF
 		if (vfModulesMetadataList == null) {
 		    LOGGER.info(MessageEnum.ASDC_GENERAL_INFO,"There is no VF mudules in the VF.", "ASDC", "createVfModuleStructures");
 		    return;

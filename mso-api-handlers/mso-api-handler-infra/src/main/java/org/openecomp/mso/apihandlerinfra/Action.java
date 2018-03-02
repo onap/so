@@ -30,5 +30,11 @@ public enum Action {
 	configureInstance,
 	replaceInstance,
 	activateInstance,
-	deactivateInstance
+	deactivateInstance,
+	enablePort,
+	disablePort,
+	addRelationships,
+	removeRelationships,
+	inPlaceSoftwareUpdate,
+	applyUpdatedConfig
 }

@@ -16,23 +16,24 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  * ============LICENSE_END========================================================= 
- */ 
+ */
 
 package org.openecomp.mso.bpmn.common.scripts
-
-import org.junit.runner.RunWith;
-import static org.junit.Assert.*
-import static org.mockito.Mockito.*
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentCaptor
 import org.mockito.MockitoAnnotations
 import org.mockito.runners.MockitoJUnitRunner
 import org.openecomp.mso.bpmn.core.WorkflowException
 
+import static org.assertj.core.api.Assertions.assertThat
+import static org.assertj.core.api.Assertions.assertThatThrownBy
+import static org.mockito.Matchers.eq
+import static org.mockito.Mockito.*
 
 @RunWith(MockitoJUnitRunner.class)
 class CompleteMsoProcessTest {
@@ -128,7 +129,7 @@ class CompleteMsoProcessTest {
 		when(mockExecution.getVariable("CMSO_mso-bpel-name")).thenReturn("BPEL")
 		when(mockExecution.getVariable("URN_mso_adapters_db_auth")).thenReturn("757A94191D685FD2092AC1490730A4FC");
 		when(mockExecution.getVariable("URN_mso_msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7");
-		
+
 		CompleteMsoProcess completeMsoProcess = new CompleteMsoProcess()
 		completeMsoProcess.setUpdateDBstatustoSuccessPayload(mockExecution)
 
@@ -145,29 +146,25 @@ class CompleteMsoProcessTest {
 </sdncadapterworkflow:MsoCompletionResponse>"""
 */
 	@Test
-	public void testbuildDataError(){
+    void testBuildDataError() {
+		// given
+		def message = "Some-Message"
 
-		boolean thrown = false;
-		String msg = "Some-Message";
-		
-		ExecutionEntity mockExecution = mock(ExecutionEntity.class)
-		when(mockExecution.getVariable("CMSO_mso-bpel-name")).thenReturn("BPEL-NAME")
-		when(mockExecution.getVariable("testProcessKey")).thenReturn("CompleteMsoProcess")
-		
-		WorkflowException exception = new WorkflowException("CompleteMsoProcess", 500, msg);
+		def mockExecution = mock ExecutionEntity.class
+		when mockExecution.getVariable("CMSO_mso-bpel-name") thenReturn "BPEL-NAME"
+		when mockExecution.getVariable("testProcessKey") thenReturn "CompleteMsoProcess"
 
-		try{
-		CompleteMsoProcess completeMsoProcess = new CompleteMsoProcess()
-		completeMsoProcess.buildDataError(mockExecution, msg)
-		}
-		catch (BpmnError e){
-			thrown = true;
-		}
+		def completeMsoProcess = new CompleteMsoProcess()
+		// when
+		assertThatThrownBy { completeMsoProcess.buildDataError(mockExecution, message) } isInstanceOf BpmnError
+		// then
+		verify mockExecution setVariable("CompleteMsoProcessResponse", msoCompletionResponse)
+		def argumentCaptor = ArgumentCaptor.forClass WorkflowException.class
+		verify mockExecution setVariable(eq("WorkflowException"), argumentCaptor.capture())
+		def capturedException = argumentCaptor.value
 
-		
-		verify(mockExecution).setVariable("CompleteMsoProcessResponse",msoCompletionResponse)
-		// Can't seem to figure out how to verify the exception and have spent way too much time on fixing this test case!
-		//verify(mockExecution).setVariable("WorkflowException",exception)
-		assertTrue(thrown);
-	}
+		assertThat capturedException.processKey isEqualTo "CompleteMsoProcess"
+		assertThat capturedException.errorCode isEqualTo 500
+		assertThat capturedException.errorMessage isEqualTo message
+    }
 }

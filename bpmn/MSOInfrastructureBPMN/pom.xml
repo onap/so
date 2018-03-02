@@ -1,9 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<parent>
-		<groupId>org.openecomp.so</groupId>
+		<groupId>org.onap.so</groupId>
 		<artifactId>bpmn</artifactId>
-		<version>1.2.0-SNAPSHOT</version>
+		<version>1.1.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>MSOInfrastructureBPMN</artifactId>
@@ -200,7 +200,11 @@
 			<groupId>org.camunda.bpm</groupId>
 			<artifactId>camunda-engine-cdi</artifactId>
 		</dependency>
-
+		<dependency>
+		    <groupId>com.google.guava</groupId>
+		    <artifactId>guava</artifactId>
+		    <version>22.0</version> <!-- or 22.0-android for the Android flavor -->
+		</dependency>
 		<dependency>
 			<!-- AssertJ Testing Library -->
 			<groupId>org.camunda.bpm.extension</groupId>
@@ -208,14 +212,7 @@
 			<version>1.2</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>1.10.19</version>
-			<scope>test</scope>
-		</dependency>
 		
-
 		<!-- Spin dataformat support, in compile scope to include it in the war
 			file -->
 		<dependency>
@@ -246,20 +243,6 @@
 			<artifactId>bootstrap</artifactId>
 			<version>2.3.2</version>
 		</dependency>
-
-		<dependency>
-		    <groupId>org.jboss.resteasy</groupId>
-		    <artifactId>resteasy-client</artifactId>
-		    <version>3.0.19.Final</version>
-		    <scope>provided</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.apache.httpcomponents</groupId>
-					<artifactId>httpclient</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
 		<dependency>
 			<!-- Needed for InMemoryH2Test -->
 			<groupId>com.h2database</groupId>
@@ -281,17 +264,17 @@
 			<version>3.4</version>
 		</dependency>
 		<dependency>
-			<groupId>org.openecomp.so</groupId>
+			<groupId>org.onap.so</groupId>
 			<artifactId>MSOCoreBPMN</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.openecomp.so</groupId>
+			<groupId>org.onap.so</groupId>
 			<artifactId>MSOCommonBPMN</artifactId>
 			<version>${project.version}</version>
-		</dependency>
+	    </dependency>
 		<dependency>
-			<groupId>org.openecomp.so</groupId>
+			<groupId>org.onap.so</groupId>
 			<artifactId>MSOCommonBPMN</artifactId>
 			<version>${project.version}</version>
 			<classifier>tests</classifier>
@@ -299,7 +282,7 @@
 		</dependency>
 		<dependency>
 			<!-- unit test utilities -->
-			<groupId>org.openecomp.so</groupId>
+			<groupId>org.onap.so</groupId>
 			<artifactId>MSOCoreBPMN</artifactId>
 			<version>${project.version}</version>
 			<classifier>tests</classifier>
@@ -317,7 +300,7 @@
     	<version>4.3.2.RELEASE</version>
 	</dependency>
 	<dependency>
-	  <groupId>org.openecomp.so</groupId>
+	  <groupId>org.onap.so</groupId>
   	  <artifactId>MSORESTClient</artifactId>
   	  <version>${project.version}</version>
 	</dependency>
@@ -329,55 +312,7 @@
         <scope>provided</scope>
     </dependency>
 
-	<dependency>
-			<groupId>com.github.tomakehurst</groupId>
-			<artifactId>wiremock</artifactId>
-			<version>1.56</version>
-			<scope>test</scope>
-			<classifier>standalone</classifier>
-			<exclusions>
-				<exclusion>
-					<groupId>org.mortbay.jetty</groupId>
-					<artifactId>jetty</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.google.guava</groupId>
-					<artifactId>guava</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.fasterxml.jackson.core</groupId>
-					<artifactId>jackson-core</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.fasterxml.jackson.core</groupId>
-					<artifactId>jackson-annotations</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.fasterxml.jackson.core</groupId>
-					<artifactId>jackson-databind</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.httpcomponents</groupId>
-					<artifactId>httpclient</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.skyscreamer</groupId>
-					<artifactId>jsonassert</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>xmlunit</groupId>
-					<artifactId>xmlunit</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.jayway.jsonpath</groupId>
-					<artifactId>json-path</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>net.sf.jopt-simple</groupId>
-					<artifactId>jopt-simple</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+
 		<dependency>
       		<groupId>org.camunda.bpm</groupId>
       		<artifactId>camunda-engine-spring</artifactId>
@@ -394,17 +329,6 @@
 			<version>1.0.0-alpha8</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-       <groupId>org.jboss.resteasy</groupId>
-       <artifactId>resteasy-jackson2-provider</artifactId>
-       <version>3.0.11.Final</version>
-			<exclusions>
-				<exclusion>
-					<groupId>com.fasterxml.jackson.jaxrs</groupId>
-					<artifactId>jackson-jaxrs-json-provider</artifactId>
-				</exclusion>
-			</exclusions>
-    </dependency>
 
 		<dependency>
 			<groupId>org.onap.msb.java-sdk</groupId>
@@ -420,9 +344,9 @@
 
 		<!--for yang tools-->
 <!--		<dependency>
-			<groupId>org.openecomp.so</groupId>
+			<groupId>org.onap.so</groupId>
 			<artifactId>common</artifactId>
-			<version>1.2.0-SNAPSHOT</version>
+			<version>1.1.0-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>

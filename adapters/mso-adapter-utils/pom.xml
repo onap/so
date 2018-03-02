@@ -2,11 +2,11 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>org.openecomp.so</groupId>
+		<groupId>org.onap.so</groupId>
 		<artifactId>adapters</artifactId>
-		<version>1.2.0-SNAPSHOT</version>
+		<version>1.1.0-SNAPSHOT</version>
 	</parent>
-	<groupId>org.openecomp.so.adapters</groupId>
+	<groupId>org.onap.so.adapters</groupId>
 	<artifactId>mso-adapter-utils</artifactId>
 	<name>mso-adapter-utils</name>
 	<description>Common MSO utilities, including Openstack client wrappers.</description>
@@ -44,33 +44,18 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.openecomp.so.libs.openstack-java-sdk</groupId>
-			<artifactId>keystone-client</artifactId>
-			<version>${openstack.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.openecomp.so.libs.openstack-java-sdk</groupId>
-			<artifactId>heat-client</artifactId>
-			<version>${openstack.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.openecomp.so.libs.openstack-java-sdk</groupId>
-			<artifactId>quantum-client</artifactId>
-			<version>${openstack.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.openecomp.so.libs.openstack-java-sdk.client-connectors</groupId>
-			<artifactId>http-connector</artifactId>
-			<version>${openstack.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.openecomp.so</groupId>
-			<artifactId>common</artifactId>
+			<groupId>org.onap.so.adapters</groupId>
+			<artifactId>mso-adapters-rest-interface</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.openecomp.so</groupId>
+			<groupId>org.onap.so</groupId>
 			<artifactId>mso-catalog-db</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.onap.so</groupId>
+			<artifactId>cloudify-client</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -80,44 +65,11 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-jaxrs</artifactId>
-			<version>3.0.19.Final</version>
-			<scope>provided</scope>
-			<exclusions>
-     			<exclusion>
-        		<groupId>org.slf4j</groupId>
-        		<artifactId>slf4j-api</artifactId>
-     			</exclusion>
-     			<exclusion>
-        		<groupId>org.slf4j</groupId>
-        		<artifactId>slf4j-simple</artifactId>
-     			</exclusion>
-				<exclusion>
-					<groupId>org.apache.httpcomponents</groupId>
-					<artifactId>httpclient</artifactId>
-				</exclusion>
-   			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>1.10.19</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.jmockit</groupId>
 			<artifactId>jmockit</artifactId>
 			<version>1.8</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
-			<scope>test</scope>
-		</dependency>
-
 		<dependency>
 			<groupId>org.jboss.spec.javax.ejb</groupId>
 			<artifactId>jboss-ejb-api_3.2_spec</artifactId>

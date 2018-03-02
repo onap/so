@@ -21,32 +21,22 @@
 package org.openecomp.mso.bpmn.infrastructure.scripts;
 
 import static org.apache.commons.lang3.StringUtils.*;
-import groovy.xml.XmlUtil
-import groovy.json.*
 
-import org.openecomp.mso.bpmn.core.domain.ServiceDecomposition
-import org.openecomp.mso.bpmn.core.domain.ServiceInstance
-import org.openecomp.mso.bpmn.core.domain.ModelInfo
-import org.openecomp.mso.bpmn.core.json.JsonUtils
+import org.apache.commons.lang3.*
+import org.camunda.bpm.engine.delegate.BpmnError
+import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.camunda.bpm.engine.runtime.Execution
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.openecomp.mso.bpmn.common.scripts.AaiUtil
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
-import org.openecomp.mso.bpmn.common.scripts.SDNCAdapterUtils
 import org.openecomp.mso.bpmn.core.RollbackData
 import org.openecomp.mso.bpmn.core.WorkflowException
-import org.openecomp.mso.rest.APIResponse;
-import org.openecomp.mso.rest.RESTClient
-import org.openecomp.mso.rest.RESTConfig
-
-import java.util.UUID;
-
-import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
-import org.json.JSONObject;
-import org.json.JSONArray;
-import org.apache.commons.lang3.*
-import org.apache.commons.codec.binary.Base64;
+import org.openecomp.mso.bpmn.core.json.JsonUtils
 import org.springframework.web.util.UriUtils;
+
+import groovy.json.*
 
 /**
  * This groovy class supports the <class>DoCreateServiceInstance.bpmn</class> process.
@@ -81,7 +71,7 @@ public class DoCreateE2EServiceInstanceV2 extends AbstractServiceTaskProcessor {
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
 
-	public void preProcessRequest (Execution execution) {
+	public void preProcessRequest (DelegateExecution execution) {
 	    //only for dug
 		execution.setVariable("isDebugLogEnabled","true")
 		execution.setVariable("unit_test", "true")

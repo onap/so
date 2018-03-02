@@ -51,7 +51,7 @@ public class GenericPutVnfTest extends WorkflowTest {
 
 		MockPutGenericVnf("testVnfId123");
 
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		setVariables(variables, "testVnfId123", genericVnfPayload, "generic-vnf");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericPutVnf", variables);
@@ -71,7 +71,7 @@ public class GenericPutVnfTest extends WorkflowTest {
 
 		MockPutVce("testVnfId123");
 
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		setVariables(variables, "testVnfId123", vcePayload, "vce");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericPutVnf", variables);
@@ -91,7 +91,7 @@ public class GenericPutVnfTest extends WorkflowTest {
 
 		MockPutGenericVnf("testVnfId123");
 
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		setVariables(variables, "testVnfId123", genericVnfPayload, "");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericPutVnf", variables);
@@ -113,7 +113,7 @@ public class GenericPutVnfTest extends WorkflowTest {
 
 		MockPutGenericVnf("testVnfId123");
 
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		setVariables(variables, "testVnfId123", genericVnfPayload, "");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericPutVnf", variables);
@@ -133,7 +133,7 @@ public class GenericPutVnfTest extends WorkflowTest {
 	@Deployment(resources = {"subprocess/GenericPutVnf.bpmn"})
 	public void testGenericPutVnf_error_404() throws Exception{
 
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		setVariables(variables, "testVnfId123", genericVnfPayload, "generic-vnf");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericPutVnf", variables);
@@ -154,7 +154,7 @@ public class GenericPutVnfTest extends WorkflowTest {
 
 		MockPutGenericVnf("/testVnfId123", 400);
 
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		setVariables(variables, "testVnfId123", genericVnfPayload, "generic-vnf");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericPutVnf", variables);

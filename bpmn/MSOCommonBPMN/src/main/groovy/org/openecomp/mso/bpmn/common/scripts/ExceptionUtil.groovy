@@ -22,8 +22,11 @@ package org.openecomp.mso.bpmn.common.scripts
 
 import static org.apache.commons.lang3.StringUtils.*
 
+import com.google.common.xml.XmlEscapers
+
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.runtime.Execution
 import org.openecomp.mso.bpmn.core.WorkflowException
 
@@ -44,7 +47,7 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 	 * @param execution the execution
 	 * @param response the aai exception
 	 */
-	WorkflowException MapAAIExceptionToWorkflowException(String response, Execution execution)
+	WorkflowException MapAAIExceptionToWorkflowException(String response, DelegateExecution execution)
 	{
 		def utils=new MsoUtils()
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
@@ -116,7 +119,7 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 	 * @param execution the execution
 	 * @param response the aai exception
 	 */
-	WorkflowException MapAAIExceptionToWorkflowExceptionGeneric(Execution execution, String response, int resCode){
+	WorkflowException MapAAIExceptionToWorkflowExceptionGeneric(DelegateExecution execution, String response, int resCode){
 		def utils=new MsoUtils()
 		def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
 		utils.log("DEBUG", "Start MapAAIExceptionToWorkflowExceptionGeneric Process", isDebugLogEnabled)
@@ -159,7 +162,7 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 	String buildErrorResponseXml(WorkflowException wfex) {
 		String xml
 		if(wfex != null){
-			String mes = wfex.getErrorMessage()
+			String mes = XmlEscapers.xmlContentEscaper().escape(wfex.getErrorMessage())
 			int code = wfex.getErrorCode()
 			xml =
 			"""<aetgt:WorkflowException xmlns:aetgt="http://org.openecomp/mso/workflow/schema/v1">
@@ -221,12 +224,11 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 			errorMessage=""
 		}
 		if( errorCode.equals('5010')){
-					return 'Could not communicate with A&amp;AI'
+					return 'Could not communicate with A&AI'
 		}else if (errorCode.equals('5020')){
-			return 'No response from A&amp;AI'
+			return 'No response from A&AI'
 		}else{
-			errorMessage = errorMessage.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-			return 'Received error from A&amp;AI (' +errorMessage +')'
+			return 'Received error from A&AI (' +errorMessage +')'
 		}
 	}
 
@@ -261,7 +263,7 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 	 * @param errorCode the error code
 	 * @param errorMessage the error message
 	 */
-	public void buildWorkflowException(Execution execution, int errorCode, String errorMessage) {
+	public void buildWorkflowException(DelegateExecution execution, int errorCode, String errorMessage) {
 		MsoUtils utils = new MsoUtils()
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		String processKey = getProcessKey(execution);
@@ -281,7 +283,7 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 	 * @param errorCode the error code
 	 * @param errorMessage the error message
 	 */
-	public void buildAndThrowWorkflowException(Execution execution, int errorCode, String errorMessage) {
+	public void buildAndThrowWorkflowException(DelegateExecution execution, int errorCode, String errorMessage) {
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		String processKey = getProcessKey(execution);
 		utils.log("Building a WorkflowException for Subflow " + processKey, isDebugLogEnabled)
@@ -302,7 +304,7 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 	 * @param - execution
 	 *
 	 */
-	public void processSubflowsBPMNException(Execution execution){
+	public void processSubflowsBPMNException(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		String processKey = getProcessKey(execution)
 		try{
@@ -329,7 +331,7 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 	 * @return - falloutHandlerRequest
 	 *
 	 */
-	public String processMainflowsBPMNException(Execution execution, String requestInfo){
+	public String processMainflowsBPMNException(DelegateExecution execution, String requestInfo){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		String processKey = getProcessKey(execution)
 		try{
@@ -339,7 +341,7 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 			}
 			requestInfo = utils.removeXmlPreamble(requestInfo)
 			WorkflowException wfex = execution.getVariable("WorkflowException")
-			String errorMessage = wfex.getErrorMessage()
+			String errorMessage = XmlEscapers.xmlContentEscaper().escape(wfex.getErrorMessage())
 			int errorCode = wfex.getErrorCode()
 
 			String falloutHandlerRequest =
@@ -373,7 +375,7 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 	 * @param - execution
 	 *
 	 */
-	public void processJavaException(Execution execution){
+	public void processJavaException(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		String processKey = getProcessKey(execution)
 		try{
@@ -391,7 +393,7 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 	}
 
 
-	public void preProcessRequest(Execution execution) {
+	public void preProcessRequest(DelegateExecution execution) {
 		// TODO Auto-generated method stub
 
 	}

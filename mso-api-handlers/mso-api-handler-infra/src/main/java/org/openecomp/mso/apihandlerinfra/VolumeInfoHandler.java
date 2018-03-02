@@ -4,7 +4,7 @@ package org.openecomp.mso.apihandlerinfra;
  * #%L
  * MSO
  * %%
- * Copyright (C) 2016 OPENECOMP - MSO
+ * Copyright (C) 2016 ONAP - SO
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -314,8 +314,8 @@ public class VolumeInfoHandler {
 
     private String translateVolumeRequests (List <VolumeRequest> queryResponseList) {
         VolumeRequests queryResponses = new VolumeRequests ();
-        for (int i = 0; i < queryResponseList.size (); i++) {
-            queryResponses.getVolumeRequest ().add (queryResponseList.get (i));
+        for (VolumeRequest aQueryResponseList : queryResponseList) {
+            queryResponses.getVolumeRequest().add(aQueryResponseList);
         }
 
         StringWriter stringWriter = new StringWriter ();

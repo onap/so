@@ -74,17 +74,17 @@ public class VfModuleModelNamesHandler {
 
         ObjectFactory beansObjectFactory = new ObjectFactory ();
         VfModuleModelNames vfModuleModelNames = beansObjectFactory.createVfModuleModelNames ();
-        for (int i = 0; i < vfModules.size (); i++) {
-            VfModuleModelName vfModuleModelName = beansObjectFactory.createVfModuleModelName ();
-            VfModule vm = vfModules.get (i);
-            vfModuleModelName.setModelName (vm.getModelName ());
-            vfModuleModelName.setModelVersion (vm.getVersion ());
-            vfModuleModelName.setModelInvariantUuid (vm.getModelInvariantUuid ());
+        for (VfModule vfModule : vfModules) {
+            VfModuleModelName vfModuleModelName = beansObjectFactory.createVfModuleModelName();
+            VfModule vm = vfModule;
+            vfModuleModelName.setModelName(vm.getModelName());
+            vfModuleModelName.setModelVersion(vm.getVersion());
+            vfModuleModelName.setModelInvariantUuid(vm.getModelInvariantUuid());
             vfModuleModelName.setIsBase(vm.isBase());
-            vfModuleModelName.setDescription (vm.getDescription ());
-            vfModuleModelName.setId (String.valueOf (vm.getModelUUID()));
-            vfModuleModelName.setAsdcServiceModelVersion(vm.getVersion ());
-            vfModuleModelNames.getVfModuleModelName ().add (vfModuleModelName);
+            vfModuleModelName.setDescription(vm.getDescription());
+            vfModuleModelName.setId(String.valueOf(vm.getModelUUID()));
+            vfModuleModelName.setAsdcServiceModelVersion(vm.getVersion());
+            vfModuleModelNames.getVfModuleModelName().add(vfModuleModelName);
         }
 
         StringWriter stringWriter = new StringWriter ();

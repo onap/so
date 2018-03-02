@@ -35,6 +35,7 @@ import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetServiceInstance
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockNodeQueryServiceInstanceById;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockNodeQueryServiceInstanceById_404;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPutGenericVnf;
+import static org.openecomp.mso.bpmn.mock.StubResponseDatabase.MockGetVnfCatalogDataCustomizationUuid;
 import static org.openecomp.mso.bpmn.mock.StubResponseDatabase.mockUpdateRequestDB;
 import static org.openecomp.mso.bpmn.mock.StubResponseSDNCAdapter.mockSDNCAdapter;
 
@@ -83,6 +84,7 @@ public class CreateVnfInfraTest extends WorkflowTest {
 		MockGetServiceInstance("SDN-ETHERNET-INTERNET", "123456789", "MIS%252F1604%252F0026%252FSW_INTERNET", "GenericFlows/getServiceInstance.xml");
 		MockGetGenericVnfByName_404();
 		MockPutGenericVnf();
+		MockGetVnfCatalogDataCustomizationUuid("customizationId123", "VIPR/getCatalogVnfData.json");
 		mockSDNCAdapter("/SDNCAdapter", "vnf-type>STMTN", 200, "VfModularity/StandardSDNCSynchResponse.xml");
 		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
 

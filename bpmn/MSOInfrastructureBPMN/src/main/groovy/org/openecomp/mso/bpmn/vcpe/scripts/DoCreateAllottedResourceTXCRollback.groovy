@@ -30,7 +30,7 @@ import org.openecomp.mso.rest.APIResponse
 
 import java.util.UUID;
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.apache.commons.lang3.*
 import org.springframework.web.util.UriUtils;
 import static org.apache.commons.lang3.StringUtils.*
@@ -58,7 +58,7 @@ public class DoCreateAllottedResourceTXCRollback extends AbstractServiceTaskProc
 	String Prefix="DCARTXCRB_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 
-	public void preProcessRequest (Execution execution) {
+	public void preProcessRequest (DelegateExecution execution) {
 		
 		def isDebugEnabled = execution.getVariable(DebugFlag)
 		String msg = ""
@@ -131,7 +131,7 @@ public class DoCreateAllottedResourceTXCRollback extends AbstractServiceTaskProc
 	}
 
 	// aaiARPath set during query (existing AR)
-	public void updateAaiAROrchStatus(Execution execution, String status){
+	public void updateAaiAROrchStatus(DelegateExecution execution, String status){
 		def isDebugEnabled = execution.getVariable(DebugFlag)
 		String msg = null;
 		utils.log("DEBUG", " *** updateAaiAROrchStatus ***", isDebugEnabled)
@@ -153,7 +153,7 @@ public class DoCreateAllottedResourceTXCRollback extends AbstractServiceTaskProc
 		utils.log("DEBUG", " *** Exit updateAaiAROrchStatus *** ", isDebugEnabled)
 	}
 
-	public void validateSDNCResp(Execution execution, String response, String method){
+	public void validateSDNCResp(DelegateExecution execution, String response, String method){
 
 		def isDebugLogEnabled=execution.getVariable(DebugFlag)
 		utils.log("DEBUG", " *** ValidateSDNCResponse Process*** ", isDebugLogEnabled)
@@ -194,7 +194,7 @@ public class DoCreateAllottedResourceTXCRollback extends AbstractServiceTaskProc
 		logDebug(" *** Exit ValidateSDNCResp Process*** ", isDebugLogEnabled)
 	}
 
-	public void deleteAaiAR(Execution execution){
+	public void deleteAaiAR(DelegateExecution execution){
 		def isDebugLogEnabled = execution.getVariable(DebugFlag)
 		try{
 			utils.log("DEBUG", " *** deleteAaiAR *** ", isDebugLogEnabled)
@@ -215,7 +215,7 @@ public class DoCreateAllottedResourceTXCRollback extends AbstractServiceTaskProc
 		utils.log("DEBUG", " *** Exit deleteAaiAR *** ", isDebugLogEnabled)
 	}
 	
-	public void postProcessRequest(Execution execution) {
+	public void postProcessRequest(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable(DebugFlag)
 		utils.log("DEBUG"," ***** postProcessRequest ***** ", isDebugEnabled)
 		String msg = ""
@@ -239,7 +239,7 @@ public class DoCreateAllottedResourceTXCRollback extends AbstractServiceTaskProc
 
 	}
 	
-	public void processRollbackException(Execution execution){
+	public void processRollbackException(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable(DebugFlag)
 		utils.log("DEBUG"," ***** processRollbackException ***** ", isDebugEnabled)
 		try{
@@ -258,7 +258,7 @@ public class DoCreateAllottedResourceTXCRollback extends AbstractServiceTaskProc
 		utils.log("DEBUG", " Exit processRollbackException", isDebugEnabled)
 	}
 
-	public void processRollbackJavaException(Execution execution){
+	public void processRollbackJavaException(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable(DebugFlag)
 		utils.log("DEBUG"," ***** processRollbackJavaException ***** ", isDebugEnabled)
 		try{

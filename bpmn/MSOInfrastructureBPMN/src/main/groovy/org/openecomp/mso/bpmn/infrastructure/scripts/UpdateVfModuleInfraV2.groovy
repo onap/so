@@ -26,13 +26,10 @@ import groovy.json.JsonSlurper
 import groovy.util.Node
 import groovy.util.XmlParser;
 import groovy.xml.QName
-import inventory.aai.att.com.v10.GenericVnf
-import inventory.aai.att.com.v10.GenericVnfs
-import inventory.aai.att.com.v10.Pserver
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.impl.cmd.AbstractSetVariableCmd
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 
 import java.io.Serializable;
 import java.util.List
@@ -76,7 +73,7 @@ public class UpdateVfModuleInfraV2 {
 
 
 
-	public void initProcessVariables(Execution execution) {
+	public void initProcessVariables(DelegateExecution execution) {
 		execution.setVariable('prefix', 'UPDVfModI_')
 		execution.setVariable('UPDVfModI_Request', null)
 		execution.setVariable('UPDVfModI_requestInfo', null)
@@ -98,7 +95,7 @@ public class UpdateVfModuleInfraV2 {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void preProcessRequest(Execution execution) {
+	public void preProcessRequest(DelegateExecution execution) {
 		System.out.print("*****************************PreProcessRequest**************************")
 
 		def method = getClass().getSimpleName() + '.preProcessRequest(' +
@@ -164,7 +161,7 @@ public class UpdateVfModuleInfraV2 {
 			Map<String, String> userParamsMap = [:]
 			if (userParams != null) {
 				userParams.each { userParam ->
-					userParamsMap.put(userParam.name, userParam.value)
+					userParamsMap.put(userParam.name, userParam.value.toString())
 				}
 			}
 
@@ -260,7 +257,7 @@ public class UpdateVfModuleInfraV2 {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void sendSynchResponse(Execution execution) {
+	public void sendSynchResponse(DelegateExecution execution) {
 		System.out.print("*****************************SendSynchResponse**************************")
 
 		def method = getClass().getSimpleName() + '.sendSynchResponse(' +
@@ -297,7 +294,7 @@ public class UpdateVfModuleInfraV2 {
 	}
 
 	//check to see if the Pserver Flag is locked
-	public void checkPserverFlag(Execution execution) {
+	public void checkPserverFlag(DelegateExecution execution) {
 
 		System.out.println("*****************************CheckingPserverFlag*************************")
 		String vnfId = (String)execution.getVariable('vnfId')
@@ -307,7 +304,7 @@ public class UpdateVfModuleInfraV2 {
 	}
 
 	//check to see if the VFFlag is locked
-	public void vfFlagCheck(Execution execution) {
+	public void vfFlagCheck(DelegateExecution execution) {
 
 		System.out.print("*****************************VfFlagCheck*************************")
 		String vnfId = (String)execution.getVariable('vnfId')
@@ -317,7 +314,7 @@ public class UpdateVfModuleInfraV2 {
 
 	}
 	//lock the VF Flag
-	public void vfFlagSet(Execution execution) {
+	public void vfFlagSet(DelegateExecution execution) {
 
 		System.out.print("*****************************VfFlagSet*************************")
 		String vnfId = (String)execution.getVariable('vnfId')
@@ -328,7 +325,7 @@ public class UpdateVfModuleInfraV2 {
 	}
 
 	//Lock AppC
-	public void lockAppC(Execution execution) {
+	public void lockAppC(DelegateExecution execution) {
 
 		System.out.print("*****************************lockAppC*************************")
 		def vfModuleId = ""
@@ -338,7 +335,7 @@ public class UpdateVfModuleInfraV2 {
 
 	}
 	//run health check
-	public void healthCheckAppC(Execution execution) {
+	public void healthCheckAppC(DelegateExecution execution) {
 
 		System.out.print("*****************************healthCheckAppC*************************")
 		def vfModuleId = ""
@@ -347,14 +344,14 @@ public class UpdateVfModuleInfraV2 {
 
 	}
 	//SDNO health diagnostic
-	public void healthDiagnosticSDNO(Execution execution) {
+	public void healthDiagnosticSDNO(DelegateExecution execution) {
 
 		System.out.print("*****************************healthDiagnosticSDNO is currently ignored*************************")
 		//SDNOValidatorImpl.healthDiagnostic("","");
 
 	}
 	//stop VF module controller
-	public void stopVfModuleController(Execution execution) {
+	public void stopVfModuleController(DelegateExecution execution) {
 
 		System.out.print("*****************************stopVfModuleController*************************")
 		def vfModuleId = ""
@@ -364,7 +361,7 @@ public class UpdateVfModuleInfraV2 {
 
 	}
 
-	public void doUpdateVfModulePrep(Execution execution) {
+	public void doUpdateVfModulePrep(DelegateExecution execution) {
 
 		System.out.print("*****************************doUpdateVfModulePrep*************************")
 		def method = getClass().getSimpleName() + '.prepDoUpdateVfModule(' +
@@ -386,7 +383,7 @@ public class UpdateVfModuleInfraV2 {
 
 	}
 
-	public void completionHandlerPrep(Execution execution,String resultVar) {
+	public void completionHandlerPrep(DelegateExecution execution,String resultVar) {
 
 		System.out.print("*****************************completionHandlerPrep*************************")
 		def method = getClass().getSimpleName() + '.completionHandlerPrep(' +
@@ -422,7 +419,7 @@ public class UpdateVfModuleInfraV2 {
 
 	}
 
-	public void healthCheckController(Execution execution) {
+	public void healthCheckController(DelegateExecution execution) {
 
 		System.out.print("*****************************healthCheckController*************************")
 		def vfModuleId = ""
@@ -431,7 +428,7 @@ public class UpdateVfModuleInfraV2 {
 
 	}
 
-	public void startVfModuleController(Execution execution) {
+	public void startVfModuleController(DelegateExecution execution) {
 
 		System.out.print("*****************************startVfModuleController*************************")
 		def vfModuleId = ""
@@ -440,7 +437,7 @@ public class UpdateVfModuleInfraV2 {
 
 	}
 
-	public void vFFlagUnset(Execution execution) {
+	public void vFFlagUnset(DelegateExecution execution) {
 
 		System.out.print("*****************************vFFlagUnset*************************")
 		String vnfId = (String)execution.getVariable('vnfId')
@@ -451,7 +448,7 @@ public class UpdateVfModuleInfraV2 {
 
 	}
 
-	public void unlockAppC(Execution execution) {
+	public void unlockAppC(DelegateExecution execution) {
 
 		System.out.print("*****************************unlockAppC*************************")
 		def vfModuleId = ""
@@ -460,7 +457,7 @@ public class UpdateVfModuleInfraV2 {
 
 	}
 
-	public void postUpgradeHealthCheckController(Execution execution) {
+	public void postUpgradeHealthCheckController(DelegateExecution execution) {
 
 		System.out.print("*****************************postUpgradeHealthCheckController*************************")
 		def vfModuleId = ""

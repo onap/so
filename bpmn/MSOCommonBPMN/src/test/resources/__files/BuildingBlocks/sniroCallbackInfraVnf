@@ -4,13 +4,14 @@
    "requestState": "complete",
    "statusMessage": "",
    "solutionInfo": {
-      "placement": [
+      "placementInfo": [
          {
             "serviceResourceId": "test-resource-id-000",
             "resourceModuleName": "ADIOD vRouter vCE",
             "inventoryType": "service",
             "serviceInstanceId": "service-instance-01234",
             "cloudRegionId": "mtmnj1a",
+            "isRehome": "False",
             "assignmentInfo": [
                {
                   "variableName": "cloudOwner",

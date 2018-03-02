@@ -1,0 +1,12 @@
+{ 
+   "cloud-owner": "att-aic",
+   "cloud-region-id": "mdt1",
+   "cloud-type": "openstack",
+   "owner-defined-type": "lcp",
+   "cloud-region-version": "aic3.0",
+   "identity-url": "https://identity-aic.mdt1.cci.att.com:5000/v2.0",
+   "cloud-zone": "z1",
+   "complex-name": "c1",
+   "sriov-automation": false,
+   "resource-version": "1503072127235"
+}

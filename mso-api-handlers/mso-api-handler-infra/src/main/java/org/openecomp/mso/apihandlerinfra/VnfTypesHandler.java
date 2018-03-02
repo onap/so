@@ -85,12 +85,12 @@ public class VnfTypesHandler {
 
         ObjectFactory beansObjectFactory = new ObjectFactory ();
         VnfTypes vnfTypes = beansObjectFactory.createVnfTypes ();
-        for (int i = 0; i < vnfResources.size (); i++) {
-            VnfType vnfType = beansObjectFactory.createVnfType ();
-            VnfResource vr = vnfResources.get (i);
-            vnfType.setDescription (vr.getDescription ());
-            vnfType.setId (String.valueOf (vr.getModelUuid()));
-            vnfTypes.getVnfType ().add (vnfType);
+        for (VnfResource vnfResource : vnfResources) {
+            VnfType vnfType = beansObjectFactory.createVnfType();
+            VnfResource vr = vnfResource;
+            vnfType.setDescription(vr.getDescription());
+            vnfType.setId(String.valueOf(vr.getModelUuid()));
+            vnfTypes.getVnfType().add(vnfType);
         }
 
         StringWriter stringWriter = new StringWriter ();

@@ -1,0 +1,47 @@
+<sdncadapterworkflow:SDNCAdapterWorkflowRequest
+	xmlns:ns5="http://org.openecomp/mso/request/types/v1"
+	xmlns:sdncadapterworkflow="http://org.openecomp/mso/workflow/schema/v1"
+	xmlns:sdncadapter="http://org.openecomp/workflow/sdnc/adapter/schema/v1">
+	<sdncadapter:RequestHeader>
+		<sdncadapter:RequestId>3a77913d-6d36-4507-8c6d-ab523af21fbf</sdncadapter:RequestId>
+		<sdncadapter:SvcInstanceId>14c5c14f-6caf-4028-9788-bb5ec9e8f9b8</sdncadapter:SvcInstanceId>
+		<sdncadapter:SvcAction>assign</sdncadapter:SvcAction>
+		<sdncadapter:SvcOperation>service-topology-operation
+		</sdncadapter:SvcOperation>
+		<sdncadapter:CallbackUrl>callbackURL-test</sdncadapter:CallbackUrl>
+		<sdncadapter:MsoAction>PORT-MIRROR</sdncadapter:MsoAction>
+	</sdncadapter:RequestHeader>
+	<sdncadapterworkflow:SDNCRequestData>
+		<request-information>
+			<request-id>requestId-test</request-id>
+			<source>MSO</source>
+			<notification-url />
+			<order-number />
+			<order-version />
+			<request-action>CreateServiceInstance</request-action>
+		</request-information>
+		<service-information>
+			<service-id>serviceId-test</service-id>
+			<subscription-service-type>subscriptionServiceType-test
+			</subscription-service-type>
+			<ecomp-model-information>
+				<model-invariant-uuid>modelInvariantUuid-test</model-invariant-uuid>
+				<model-uuid>modelUuid-test</model-uuid>
+				<model-version>modelVersion-test</model-version>
+				<model-name>modelName-test</model-name>
+			</ecomp-model-information>
+			<service-instance-id>serviceInstanceId-test</service-instance-id>
+			<subscriber-name />
+			<global-customer-id>globalSubscriberId-test</global-customer-id>
+		</service-information>
+		<service-request-input>
+			<service-instance-name>serviceInstanceName-test</service-instance-name>
+			<service-input-parameters>
+				<param>
+					<name>paramName</name>
+					<value>paramValue</value>
+				</param>
+			</service-input-parameters>
+		</service-request-input>
+	</sdncadapterworkflow:SDNCRequestData>
+</sdncadapterworkflow:SDNCAdapterWorkflowRequest>

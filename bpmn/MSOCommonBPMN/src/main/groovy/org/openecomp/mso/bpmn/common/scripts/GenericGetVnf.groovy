@@ -24,7 +24,7 @@ import static org.openecomp.mso.bpmn.common.scripts.GenericUtils.*;
 
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.openecomp.mso.rest.APIResponse
 import org.springframework.web.util.UriUtils
 
@@ -84,7 +84,7 @@ class GenericGetVnf extends AbstractServiceTaskProcessor{
 	 *
 	 * @param - execution
 	 */
-	public void preProcessRequest(Execution execution) {
+	public void preProcessRequest(DelegateExecution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		utils.log("DEBUG", " *** STARTED GenericGetVnf PreProcessRequest Process*** ", isDebugEnabled)
@@ -126,7 +126,7 @@ class GenericGetVnf extends AbstractServiceTaskProcessor{
 	 *
 	 * @param - execution
 	 */
-	public void getVnfByName(Execution execution){
+	public void getVnfByName(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		utils.log("DEBUG", " *** STARTED GenericGetVnf GetVnfByName Process*** ", isDebugEnabled)
@@ -199,7 +199,7 @@ class GenericGetVnf extends AbstractServiceTaskProcessor{
 	 *
 	 * @param - execution
 	 */
-	public void getVnfById(Execution execution){
+	public void getVnfById(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		utils.log("DEBUG", " *** STARTED GenericGetVnf GetVnfById Process*** ", isDebugEnabled)

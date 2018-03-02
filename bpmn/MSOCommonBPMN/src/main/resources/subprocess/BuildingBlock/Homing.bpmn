@@ -50,7 +50,7 @@ ex.processJavaException(execution)]]></bpmn2:script>
       <bpmn2:sequenceFlow id="SequenceFlow_0kamg53" name="" sourceRef="StartEvent_1fbpeuw" targetRef="processJavaException" />
       <bpmn2:sequenceFlow id="SequenceFlow_1o7154s" name="" sourceRef="processJavaException" targetRef="EndEvent_0jbvnr0" />
     </bpmn2:subProcess>
-    <bpmn2:scriptTask id="processHomingSolution" name="Process &#10;Homing Solutio&#10;" scriptFormat="groovy">
+    <bpmn2:scriptTask id="processHomingSolution" name="Process &#10;Solution&#10;" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_043r3j8</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_1h9opg9</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*

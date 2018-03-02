@@ -26,10 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.ObjectMapper;
-
 import org.openecomp.mso.cloud.CloudConfigFactory;
 import org.openecomp.mso.cloud.CloudSite;
 import org.openecomp.mso.logger.MessageEnum;
@@ -42,12 +38,16 @@ import org.openecomp.mso.openstack.exceptions.MsoStackNotFound;
 import org.openecomp.mso.properties.MsoJavaProperties;
 import org.openecomp.mso.properties.MsoPropertiesException;
 import org.openecomp.mso.properties.MsoPropertiesFactory;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.woorea.openstack.base.client.OpenStackBaseException;
 import com.woorea.openstack.base.client.OpenStackRequest;
 import com.woorea.openstack.heat.Heat;
 import com.woorea.openstack.heat.model.Stack;
-import com.woorea.openstack.heat.model.UpdateStackParam;
 import com.woorea.openstack.heat.model.Stack.Output;
+import com.woorea.openstack.heat.model.UpdateStackParam;
 
 public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
 

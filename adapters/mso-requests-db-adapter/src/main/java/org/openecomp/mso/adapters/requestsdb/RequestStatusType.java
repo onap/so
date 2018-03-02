@@ -56,7 +56,8 @@ public enum RequestStatusType {
 
     COMPLETE,
     FAILED,
-    IN_PROGRESS;
+    IN_PROGRESS,
+    PENDING_MANUAL_TASK;
 
     public String value() {
         return name();

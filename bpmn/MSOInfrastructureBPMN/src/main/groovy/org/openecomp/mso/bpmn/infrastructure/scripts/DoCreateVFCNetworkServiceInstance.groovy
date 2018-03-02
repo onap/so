@@ -32,7 +32,7 @@ import org.openecomp.mso.rest.APIResponse
 import java.util.UUID;
 
 import org.camunda.bpm.engine.delegate.BpmnError 
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.apache.commons.lang3.*
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.web.util.UriUtils 
@@ -47,20 +47,20 @@ import org.openecomp.mso.rest.APIResponse;
 public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProcessor {
 
     String vfcUrl = "/vfc/rest/v1/vfcadapter"
-    
+            
     String host = "http://mso.mso.testlab.openecomp.org:8080"
     
     ExceptionUtil exceptionUtil = new ExceptionUtil()
 
     JsonUtils jsonUtil = new JsonUtils()
-    
+
     /**
      * Pre Process the BPMN Flow Request
      * Inclouds:
      * generate the nsOperationKey
      * generate the nsParameters
      */
-    public void preProcessRequest (Execution execution) {
+    public void preProcessRequest (DelegateExecution execution) {
 	   def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
        String msg = ""
        utils.log("INFO", " *** preProcessRequest() *** ", isDebugEnabled)
@@ -117,7 +117,7 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
     /**
      * create NS task
      */
-    public void createNetworkService(Execution execution) {
+    public void createNetworkService(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
         utils.log("INFO"," *****  createNetworkService *****",  isDebugEnabled)
         String nsOperationKey = execution.getVariable("nsOperationKey");
@@ -144,8 +144,8 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
     /**
      * instantiate NS task
      */
-    public void instantiateNetworkService(Execution execution) {
-        def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+    public void instantiateNetworkService(DelegateExecution execution) {
+        def isDebugEnabled= execution.getVariable("isDebugLogEnabled")
         utils.log("INFO"," *****  instantiateNetworkService *****",  isDebugEnabled)
         String nsOperationKey = execution.getVariable("nsOperationKey");
         String nsParameters = execution.getVariable("nsParameters");
@@ -173,7 +173,7 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
     /**
      * query NS task
      */
-    public void queryNSProgress(Execution execution) {
+    public void queryNSProgress(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
         utils.log("INFO"," *****  queryNSProgress *****",  isDebugEnabled)
         String jobId = execution.getVariable("jobId")
@@ -193,8 +193,8 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
     /**
      * delay 5 sec 
      */
-    public void timeDelay(Execution execution) {
-        def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+    public void timeDelay(DelegateExecution execution) {
+        def isDebugEnabled= execution.getVariable("isDebugLogEnabled")
         try {
             Thread.sleep(5000);
         } catch(InterruptedException e) {           
@@ -205,7 +205,7 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
     /**
      * finish NS task
      */
-    public void addNSRelationship(Execution execution) {
+    public void addNSRelationship(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
         utils.log("INFO"," ***** addNSRelationship *****",  isDebugEnabled)
         String nsInstanceId = execution.getVariable("nsInstanceId")
@@ -241,7 +241,7 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
         utils.log("INFO"," *****Exit addNSRelationship *****",  isDebugEnabled)
     }
     
-    public APIResponse executeAAIPutCall(Execution execution, String url, String payload){
+    public APIResponse executeAAIPutCall(DelegateExecution execution, String url, String payload){
         def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
         utils.log("INFO", " ======== Started Execute AAI Put Process ======== ",  isDebugEnabled) 
         APIResponse apiResponse = null
@@ -265,13 +265,13 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
         }
         return apiResponse
     }
-    
+
     /**
      * post request
      * url: the url of the request
      * requestBody: the body of the request
      */
-    private APIResponse postRequest(Execution execution, String url, String requestBody){
+    private APIResponse postRequest(DelegateExecution execution, String url, String requestBody){
         def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
         utils.log("INFO"," ***** Started Execute VFC adapter Post Process *****",  isDebugEnabled)
         utils.log("INFO","url:"+url +"\nrequestBody:"+ requestBody,  isDebugEnabled)

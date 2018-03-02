@@ -29,6 +29,10 @@
     </param-value>
   </context-param>
   <context-param>
+    <param-name>resteasy.providers</param-name>
+    <param-value>org.openecomp.mso.adapters.providers.JettisonStyleMapperProvider</param-value>
+  </context-param>
+  <context-param>
     <param-name>resteasy.servlet.mapping.prefix</param-name>
     <param-value>/rest</param-value>
   </context-param>

@@ -84,6 +84,7 @@ dcvamr.preProcessCreateVfModuleRollback(execution)]]></bpmn2:script>
         <camunda:in source="sdncVersion" target="sdncVersion" />
         <camunda:out source="rolledBack" target="DCVM_rolledBack" />
         <camunda:out source="rollbackError" target="rollbackError" />
+        <camunda:in source="DCVAMR_aLaCarte" target="aLaCarte" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_1ycq005</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_181hb2a</bpmn2:outgoing>

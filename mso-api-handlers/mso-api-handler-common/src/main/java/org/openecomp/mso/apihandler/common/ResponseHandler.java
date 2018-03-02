@@ -27,7 +27,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.util.EntityUtils;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.openecomp.mso.apihandler.camundabeans.CamundaResponse;
 import org.openecomp.mso.logger.MsoLogger;

@@ -25,7 +25,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.camunda.bpm.BpmPlatform;
 import org.camunda.bpm.engine.MismatchingMessageCorrelationException;
+import org.camunda.bpm.engine.OptimisticLockingException;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.runtime.Execution;
 import org.camunda.bpm.engine.runtime.MessageCorrelationResult;
@@ -70,7 +72,7 @@ public abstract class AbstractCallbackService extends ProcessEngineAwareService 
 			+ (message == null ? "" : System.lineSeparator()) + message);
 
 		try {
-			Map<String, Object> variables = new HashMap<String, Object>();
+			Map<String, Object> variables = new HashMap<>();
 
 			if (injectedVariables != null) {
 				variables.putAll(injectedVariables);
@@ -192,7 +194,7 @@ public abstract class AbstractCallbackService extends ProcessEngineAwareService 
 
 		int count = waitingProcesses.size();
 
-		List<ExecInfo> execInfoList = new ArrayList<ExecInfo>(count);
+		List<ExecInfo> execInfoList = new ArrayList<>(count);
 		for (Execution execution : waitingProcesses) {
 			execInfoList.add(new ExecInfo(execution));
 		}
@@ -241,12 +243,64 @@ public abstract class AbstractCallbackService extends ProcessEngineAwareService 
 				.setVariables(variables)
 				.processInstanceVariableEquals(correlationVariable, correlationValue)
 				.correlateWithResult();
-
+			
 		} catch (MismatchingMessageCorrelationException e) {
 			// A correlation exception occurred even after we identified
 			// one waiting process.  Throw it back to the client.
 			throw e;
-		} catch (Exception e) {
+		} catch (OptimisticLockingException ole) {
+			
+			String msg = "Caught " + ole.getClass().getSimpleName() + " after receiving " + messageEventName
+				+ " with " + correlationVariable + " = '" + correlationValue
+				+ "': " + ole;
+			LOGGER.debug(msg);
+			LOGGER.error(MessageEnum.BPMN_GENERAL_EXCEPTION, "BPMN CORRELATION ERROR -", MsoLogger.getServiceName(),
+				MsoLogger.ErrorCode.UnknownError, msg, ole);
+			
+			//Retry for OptimisticLocking Exceptions
+			int retryCount = 0;
+			String retryStr = properties.get("mso.bpmn.optimisticlockingexception.retrycount");
+			if (retryStr != null) {
+				try {
+					retryCount = Integer.parseInt(retryStr);
+				} catch (NumberFormatException e) {
+					// Ignore
+				}
+			}
+			
+			LOGGER.debug("Retry correlate for OptimisticLockingException, retryCount:" + retryCount);
+			
+			for (; retryCount >0 ; retryCount--) {
+				
+				try{
+					Thread.sleep(SLOW_POLL_INT_MS);
+					
+					@SuppressWarnings("unused")
+					MessageCorrelationResult result = runtimeService
+						.createMessageCorrelation(messageEventName)
+						.setVariables(variables)
+						.processInstanceVariableEquals(correlationVariable, correlationValue)
+						.correlateWithResult();
+					retryCount = 0;
+					LOGGER.debug("OptimisticLockingException retry was successful, seting retryCount: " + retryCount);
+				} catch (OptimisticLockingException olex) {
+					//oleFlag = ex instanceof org.camunda.bpm.engine.OptimisticLockingException;
+					String strMsg = "Received exception, OptimisticLockingException retry failed, retryCount:" + retryCount + " | exception returned: " + olex;
+					LOGGER.debug(strMsg);
+					LOGGER.error(MessageEnum.BPMN_GENERAL_EXCEPTION, "BPMN", MsoLogger.getServiceName(),
+						MsoLogger.ErrorCode.UnknownError, strMsg, olex);
+				} catch (Exception excep) {
+					retryCount = 0;
+					//oleFlag = ex instanceof org.camunda.bpm.engine.OptimisticLockingException;
+					String strMsg = "Received exception, OptimisticLockingException retry failed, retryCount:" + retryCount + " | exception returned: " + excep;
+					LOGGER.debug(strMsg);
+					LOGGER.error(MessageEnum.BPMN_GENERAL_EXCEPTION, "BPMN", MsoLogger.getServiceName(),
+						MsoLogger.ErrorCode.UnknownError, strMsg, excep);
+				}
+		
+			}
+			
+		}catch (Exception e) {
 			// This must be an exception from the flow itself.  Log it, but don't
 			// report it back to the client.
 			String msg = "Caught " + e.getClass().getSimpleName() + " running "

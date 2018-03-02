@@ -37,6 +37,7 @@ import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPatchGenericVnf;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPatchVfModuleId;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPutGenericVnf;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPutVfModuleIdNoResponse;
+import static org.openecomp.mso.bpmn.mock.StubResponseDatabase.MockGetServiceResourcesCatalogData;
 import static org.openecomp.mso.bpmn.mock.StubResponseSDNCAdapter.mockSDNCAdapter;
 import static org.openecomp.mso.bpmn.mock.StubResponseVNFAdapter.mockVNFPut;
 
@@ -98,6 +99,8 @@ public class DoUpdateVfModuleTest extends WorkflowTest {
 		mockVNFPut("skask", "/supercool", 202);
 		MockPutGenericVnf("skask");
 		MockGetGenericVnfByIdWithPriority("skask", "supercool", 200, "VfModularity/VfModule-supercool.xml", 1);
+		//Catalog DB
+		MockGetServiceResourcesCatalogData("aa5256d2-5a33-55df-13ab-12abad84e7ff","InfrastructureFlows/DoCreateServiceInstance_request.json");
 		
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<String, Object>();
@@ -144,6 +147,8 @@ public class DoUpdateVfModuleTest extends WorkflowTest {
 		MockPatchVfModuleId("skask", ".*");
 		MockSDNCAdapterVfModule();
 		MockVNFAdapterRestVfModule();
+		//Catalog DB
+		MockGetServiceResourcesCatalogData("aa5256d2-5a33-55df-13ab-12abad84e7ff","InfrastructureFlows/DoCreateServiceInstance_request.json");
 		
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<String, Object>();
@@ -181,6 +186,14 @@ public class DoUpdateVfModuleTest extends WorkflowTest {
 				"\"modelVersion\": \"1\"," + 
 				"\"modelCustomizationUuid\": \"VNF-MODEL-123\"" + "}";
 	variables.put("vnfModelInfo", vnfModelInfo);
+	
+	String serviceModelInfo = "{ "+ "\"modelType\": \"service\"," +
+			"\"modelInvariantUuid\": \"aa5256d2-5a33-55df-13ab-12abad84e7ff\"," + 
+			"\"modelUuid\": \"bb6478e5-ea33-3346-ac12-ab121484a3fe\"," +
+			"\"modelName\": \"SVC-STMTN5MMSC21-MMSC::model-1-0\"," +
+			"\"modelVersion\": \"1\"," + 
+			 "}";
+	variables.put("serviceModelInfo", serviceModelInfo);
 		
 		invokeSubProcess("DoUpdateVfModule", businessKey, variables);
 		

@@ -61,6 +61,21 @@ public class StubResponsePolicy {
 					.withStatus(200)
 					.withHeader("Content-Type", "application/json")
 					.withBodyFile("policyAbortResponse.json")));
+		
+		stubFor(post(urlEqualTo("/pdp/api/getDecision"))
+				.withRequestBody(containing("VnfIPU"))
+				.willReturn(aResponse()
+					.withStatus(200)
+					.withHeader("Content-Type", "application/json")
+					.withBodyFile("policyAbortResponse.json")));
+		
+		stubFor(post(urlEqualTo("/pdp/api/getDecision"))
+				.withRequestBody(containing("VnfCU"))
+				.willReturn(aResponse()
+					.withStatus(200)
+					.withHeader("Content-Type", "application/json")
+					.withBodyFile("policyAbortResponse.json")));
+
 
 
 	}
@@ -82,6 +97,20 @@ public class StubResponsePolicy {
 		
 		stubFor(post(urlEqualTo("/pdp/api/getDecision"))
 				.withRequestBody(containing("RPLVnfI"))
+				.willReturn(aResponse()
+					.withStatus(200)
+					.withHeader("Content-Type", "application/json")
+					.withBodyFile("Policy/policySkipResponse.json")));
+		
+		stubFor(post(urlEqualTo("/pdp/api/getDecision"))
+				.withRequestBody(containing("VnfIPU"))
+				.willReturn(aResponse()
+					.withStatus(200)
+					.withHeader("Content-Type", "application/json")
+					.withBodyFile("Policy/policySkipResponse.json")));
+		
+		stubFor(post(urlEqualTo("/pdp/api/getDecision"))
+				.withRequestBody(containing("VnfCU"))
 				.willReturn(aResponse()
 					.withStatus(200)
 					.withHeader("Content-Type", "application/json")

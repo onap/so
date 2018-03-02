@@ -1,0 +1,42 @@
+{
+"requestDetails": {
+"modelInfo": {
+"modelType": "service",
+"modelInvariantId": "ff3514e3-5a33-55df-13ab-12abad84e7ff",
+"modelVersionId": "fe6985cd-ea33-3346-ac12-ab121484a3fe",
+"modelName": "Test",
+"modelVersion": "1.0"
+},
+"cloudConfiguration": {
+"lcpCloudRegionId": "mdt1",
+"tenantId": "88a6ca3ee0394ade9403f075db23167e"
+},
+"owningEntity": {
+"owningEntityId": "a",
+"owningEntityName": "a"
+},
+"project": {
+"projectName": "temp project"
+},
+"subscriberInfo": {
+"globalSubscriberId": "some subscriber id",
+"subscriberName": "some subscriber name"
+},
+"requestInfo": {
+"productFamilyId":"a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb",
+"source": "VID",
+"suppressRollback": true,
+"requestorId": "az2016"
+},
+"requestParameters": {
+"subscriptionServiceType": "MOG",
+"aLaCarte": false,
+"userParams": [
+{
+"name": "someUserParam",
+"value": "someValue"
+}
+]
+}
+}
+}

@@ -83,7 +83,7 @@ public class DeleteNetworkInstanceTest extends WorkflowTest {
 		// setup simulators
 		mockSDNCAdapterTopology("DeleteNetworkV2mock/sdncDeleteNetworkTopologySimResponse.xml", "SvcAction>delete");
 		MockNetworkAdapter("bdc5efe8-404a-409b-85f6-0dcc9eebae30", 200, "deleteNetworkResponse_Success.xml");
-		MockGetNetworkByIdWithDepth("bdc5efe8-404a-409b-85f6-0dcc9eebae30", "DeleteNetworkV2/deleteNetworkAAIResponse_Success.xml", "1");
+		MockGetNetworkByIdWithDepth("bdc5efe8-404a-409b-85f6-0dcc9eebae30", "DeleteNetworkV2/deleteNetworkAAIResponse_Success.xml", "all");
 		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
 		MockGetCloudRegion("RDM2WAGPLCP", 200, "DeleteNetworkV2/cloudRegion30_AAIResponse_Success.xml");
 
@@ -153,7 +153,7 @@ public class DeleteNetworkInstanceTest extends WorkflowTest {
 		mockSDNCAdapterTopology("DeleteNetworkV2mock/sdncDeleteNetworkTopologySimResponse.xml", "SvcAction>unassign");
 		mockSDNCAdapterTopology("DeleteNetworkV2mock/sdncDeleteNetworkTopologySimResponse.xml", "SvcAction>deactivate");
 		MockNetworkAdapter("bdc5efe8-404a-409b-85f6-0dcc9eebae30", 200, "deleteNetworkResponse_Success.xml");
-		MockGetNetworkByIdWithDepth("bdc5efe8-404a-409b-85f6-0dcc9eebae30", "DeleteNetworkV2/deleteNetworkAAIResponse_Success.xml", "1");
+		MockGetNetworkByIdWithDepth("bdc5efe8-404a-409b-85f6-0dcc9eebae30", "DeleteNetworkV2/deleteNetworkAAIResponse_Success.xml", "all");
 		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
 		MockGetCloudRegion("RDM2WAGPLCP", 200, "DeleteNetworkV2/cloudRegion30_AAIResponse_Success.xml");
 
@@ -229,7 +229,7 @@ public class DeleteNetworkInstanceTest extends WorkflowTest {
 		mockSDNCAdapterTopology("CreateNetworkV2mock/sdncCreateNetworkTopologySimResponse.xml", "SvcAction>activate");
 		MockNetworkAdapter("bdc5efe8-404a-409b-85f6-0dcc9eebae30", 200, "deleteNetworkResponse_Success.xml");
 		MockNetworkAdapterContainingRequest("createNetworkRequest", 200, "CreateNetworkV2/createNetworkResponse_Success.xml");
-		MockGetNetworkByIdWithDepth	("bdc5efe8-404a-409b-85f6-0dcc9eebae30", "DeleteNetworkV2/deleteNetworkAAIResponse_Success.xml", "1");
+		MockGetNetworkByIdWithDepth	("bdc5efe8-404a-409b-85f6-0dcc9eebae30", "DeleteNetworkV2/deleteNetworkAAIResponse_Success.xml", "all");
 		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
 		MockGetCloudRegion("RDM2WAGPLCP", 200, "DeleteNetworkV2/cloudRegion30_AAIResponse_Success.xml");
 

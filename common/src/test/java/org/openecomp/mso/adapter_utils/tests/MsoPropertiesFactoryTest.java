@@ -153,7 +153,7 @@ public class MsoPropertiesFactoryTest {
 		
 		assertFalse(msoPropChanged.equals(null));
 		assertFalse(msoPropChanged.equals(msoPropCache));
-		assertFalse(msoPropChanged.equals(new Boolean(true)));
+		assertFalse(msoPropChanged.equals(Boolean.TRUE));
 		
 		assertTrue(msoPropChanged.equals(msoPropChanged));
 	}

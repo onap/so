@@ -26,6 +26,7 @@ import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetGenericVnfByIdW
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetGenericVnfByIdWithPriority;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetServiceInstance;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockNodeQueryServiceInstanceById;
+import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetDefaultCloudRegionByCloudRegionId;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetPserverByVnfId;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetGenericVnfsByVnfId;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPatchGenericVnf;
@@ -76,9 +77,11 @@ public class UpdateVnfInfraTest extends WorkflowTest {
 	 * @throws Exception
 	 */
 	@Test	
-	@Ignore // IGNORED FOR 1710 MERGE TO ONAP
+	
+	
 	@Deployment(resources = {
-		"process/UpdateVnfInfra.bpmn",		
+		"process/UpdateVnfInfra.bpmn",
+		"subprocess/RollbackVnf.bpmn",
 		"subprocess/DoUpdateVfModule.bpmn",
 		"subprocess/DoUpdateVnfAndModules.bpmn",
 		"subprocess/PrepareUpdateAAIVfModule.bpmn",
@@ -91,7 +94,8 @@ public class UpdateVnfInfraTest extends WorkflowTest {
 		"subprocess/FalloutHandler.bpmn",
 		"subprocess/BuildingBlock/DecomposeService.bpmn",
 		"subprocess/BuildingBlock/RainyDayHandler.bpmn",
-		"subprocess/BuildingBlock/ManualHandling.bpmn"
+		"subprocess/BuildingBlock/ManualHandling.bpmn",
+		"subprocess/BuildingBlock/AppCClient.bpmn"
 		
 		})
 	public void sunnyDay() throws Exception {
@@ -102,7 +106,9 @@ public class UpdateVnfInfraTest extends WorkflowTest {
 		MockGetServiceInstance("SDN-ETHERNET-INTERNET", "123456789", "MIS%252F1604%252F0026%252FSW_INTERNET", "GenericFlows/getServiceInstance.xml");
 		//MockGetGenericVnfById_404("testVnfId");
 		MockGetServiceResourcesCatalogData("995256d2-5a33-55df-13ab-12abad84e7ff", "1.0", "VIPR/getCatalogServiceResourcesDataForUpdateVnfInfra.json");
+		MockGetServiceResourcesCatalogData("995256d2-5a33-55df-13ab-12abad84e7ff", "VIPR/getCatalogServiceResourcesDataForUpdateVnfInfra.json");
 		MockGetGenericVnfByIdWithDepth("skask", 1, "VfModularity/GenericVnf.xml");
+		MockGetDefaultCloudRegionByCloudRegionId("mdt1", "AAI/AAI_defaultCloudRegionByCloudRegionId.json", 200);
 		MockPutGenericVnf(".*");
 		MockAAIVfModule();
 		MockPatchGenericVnf("skask");
@@ -114,7 +120,7 @@ public class UpdateVnfInfraTest extends WorkflowTest {
 		MockDBUpdateVfModule();	
 		MockGetPserverByVnfId("skask", "AAI/AAI_pserverByVnfId.json", 200);
 		MockGetGenericVnfsByVnfId("skask", "AAI/AAI_genericVnfsByVnfId.json", 200);
-		MockSetInMaintFlagByVnfId("skask", 200);
+		MockSetInMaintFlagByVnfId("skask", "AAI/AAI_genericVnfsByVnfId.json", 200);
 		MockPolicySkip();
 		
 		mockSDNCAdapter("VfModularity/StandardSDNCSynchResponse.xml");
@@ -153,13 +159,7 @@ public class UpdateVnfInfraTest extends WorkflowTest {
 	// Active Scenario
 	private Map<String, Object> setupVariablesSunnyDayVID() {
 				Map<String, Object> variables = new HashMap<String, Object>();
-				//try {
-				//	variables.put("bpmnRequest", FileUtil.readResourceFile("__files/CreateVfModule_VID_request.json"));
-				//}
-				//catch (Exception e) {
-					
-				//}
-				//variables.put("mso-request-id", "testRequestId");
+				
 				variables.put("requestId", "testRequestId");				
 				variables.put("isDebugLogEnabled", "true");				
 				variables.put("serviceInstanceId", "f70e927b-6087-4974-9ef8-c5e4d5847ca4");

@@ -23,12 +23,10 @@ package org.openecomp.mso.adapters.vnfrest;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.codehaus.jackson.map.annotate.JsonRootName;
-import org.jboss.resteasy.annotations.providers.NoJackson;
+import com.fasterxml.jackson.annotation.JsonRootName;
 
 @JsonRootName("rollbackVolumeGroupRequest")
 @XmlRootElement(name = "rollbackVolumeGroupRequest")
-@NoJackson
 public class RollbackVolumeGroupRequest extends VfRequestCommon {
 	private VolumeGroupRollback volumeGroupRollback;
 

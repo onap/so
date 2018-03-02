@@ -24,7 +24,7 @@ import static org.apache.commons.lang3.StringUtils.*
 
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.openecomp.mso.rest.APIResponse
 import org.springframework.web.util.UriUtils
 
@@ -85,7 +85,7 @@ class GenericDeleteService extends AbstractServiceTaskProcessor{
 	 *
 	 * @param - execution
 	 */
-	public void preProcessRequest(Execution execution) {
+	public void preProcessRequest(DelegateExecution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		utils.log("DEBUG", " *** STARTED GenericDeleteService PreProcessRequest Process*** ", isDebugEnabled)
@@ -153,7 +153,7 @@ class GenericDeleteService extends AbstractServiceTaskProcessor{
 	 *
 	 * @param - execution
 	 */
-	public void getServiceResourceVersion(Execution execution){
+	public void getServiceResourceVersion(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		utils.log("DEBUG", " *** STARTED GenericDeleteService GetServiceResourceVersion Process*** ", isDebugEnabled)
@@ -193,6 +193,7 @@ class GenericDeleteService extends AbstractServiceTaskProcessor{
 			
 			String aaiResponse = response.getResponseBodyAsString()
 			aaiResponse = StringEscapeUtils.unescapeXml(aaiResponse)
+			aaiResponse = aaiResponse.replaceAll("&", "&amp;")
 			execution.setVariable("GENDS_getServiceResponse", aaiResponse)
 
 			utils.logAudit("GET Service Instance response : " + aaiResponse)
@@ -231,7 +232,7 @@ class GenericDeleteService extends AbstractServiceTaskProcessor{
 	 *
 	 * @param - execution
 	 */
-	public void deleteServiceObject(Execution execution){
+	public void deleteServiceObject(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		utils.log("DEBUG", " *** STARTED GenericDeleteService DeleteServiceObject Process*** ", isDebugEnabled)

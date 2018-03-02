@@ -23,28 +23,26 @@
 
 package org.openecomp.mso.cloud;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.security.GeneralSecurityException;
 
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.map.annotate.JsonDeserialize;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.openecomp.mso.openstack.exceptions.MsoAdapterException;
-import org.openecomp.mso.openstack.exceptions.MsoException;
-import org.openecomp.mso.openstack.utils.MsoKeystoneUtils;
-import org.openecomp.mso.openstack.utils.MsoTenantUtils;
-import org.openecomp.mso.openstack.utils.MsoTenantUtilsFactory;
 import org.openecomp.mso.cloud.authentication.AuthenticationMethodFactory;
 import org.openecomp.mso.cloud.authentication.AuthenticationWrapper;
 import org.openecomp.mso.cloud.authentication.wrappers.RackspaceAPIKeyWrapper;
 import org.openecomp.mso.cloud.authentication.wrappers.UsernamePasswordWrapper;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
-
-import com.woorea.openstack.keystone.model.authentication.UsernamePassword;
+import org.openecomp.mso.openstack.exceptions.MsoAdapterException;
+import org.openecomp.mso.openstack.exceptions.MsoException;
+import org.openecomp.mso.openstack.utils.MsoKeystoneUtils;
+import org.openecomp.mso.openstack.utils.MsoTenantUtils;
+import org.openecomp.mso.openstack.utils.MsoTenantUtilsFactory;
 import org.openecomp.mso.utils.CryptoUtils;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.woorea.openstack.keystone.model.Authentication;
+import com.woorea.openstack.keystone.model.authentication.UsernamePassword;
 
 /**
  * JavaBean JSON class for a CloudIdentity. This bean represents a cloud identity
@@ -143,15 +141,11 @@ public class CloudIdentity {
     		}
     	}
     }
-    
-    public Authentication getAuthentication () throws MsoException {
+
+	public Authentication getAuthentication() {
     	if (this.getIdentityAuthenticationType() != null) {
-			try {
 	    		return AuthenticationMethodFactory.getAuthenticationFor(this);
-			} catch (IllegalAccessException | InstantiationException | ClassNotFoundException | IOException | URISyntaxException e) {
-				throw new MsoAdapterException("Could not retrieve authentication for " + this.identityAuthenticationType, e);
-			}
-    	} else { // Fallback
+    	} else {
     		return new UsernamePassword(this.getMsoId(), this.getMsoPass());
     	}
     }

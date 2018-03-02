@@ -21,14 +21,12 @@ package org.openecomp.mso.adapters.catalogdb.catalogrest;
 
 import org.openecomp.mso.db.catalog.beans.Service;
 import org.openecomp.mso.db.catalog.beans.ServiceMacroHolder;
-import org.jboss.resteasy.annotations.providers.NoJackson;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.HashMap;
 import java.util.Map;
 
 @XmlRootElement(name = "serviceResources")
-@NoJackson
 public class QueryServiceMacroHolder extends CatalogQuery {
     private ServiceMacroHolder serviceMacroHolder;
     private static final String LINE_BEGINNING = "(?m)^";
@@ -40,8 +38,10 @@ public class QueryServiceMacroHolder extends CatalogQuery {
             "\t\t\"modelInvariantUuid\" : <SERVICE_MODEL_INVARIANT_ID>,\n"+
             "\t\t\"modelVersion\"       : <SERVICE_MODEL_VERSION>\n"+	
             "\t},\n"+
-            "\t\"serviceType\" : <SERVICE_TYPE>,\n"+
-            "\t\"serviceRole\" : <SERVICE_ROLE>,\n"+
+            "\t\"serviceType\"        : <SERVICE_TYPE>,\n"+
+            "\t\"serviceRole\"        : <SERVICE_ROLE>,\n"+
+            "\t\"environmentContext\" : <ENVIRONMENT_CONTEXT>,\n"+
+            "\t\"workloadContext\"    : <WORKLOAD_CONTEXT>,\n"+
             "<_SERVICEVNFS_>,\n"+
             "<_SERVICENETWORKS_>,\n"+
             "<_SERVICEALLOTTEDRESOURCES_>\n"+
@@ -73,8 +73,10 @@ public class QueryServiceMacroHolder extends CatalogQuery {
 		put(valueMap, "SERVICE_MODEL_UUID",         service.getModelUUID()); //getServiceModelUuid());
 		put(valueMap, "SERVICE_MODEL_INVARIANT_ID", service.getModelInvariantUUID()); //getServiceModelInvariantId());
 		put(valueMap, "SERVICE_MODEL_VERSION",      service.getVersion()); //getServiceModelVersion());
-		put(valueMap, "SERVICE_TYPE",      service.getServiceType());
-		put(valueMap, "SERVICE_ROLE",      service.getServiceRole());
+		put(valueMap, "SERVICE_TYPE",               service.getServiceType());
+		put(valueMap, "SERVICE_ROLE",               service.getServiceRole());
+		put(valueMap, "ENVIRONMENT_CONTEXT",        service.getEnvironmentContext());
+		put(valueMap, "WORKLOAD_CONTEXT",           service.getWorkloadContext());
 
 	    String subitem;
 	    subitem = new QueryServiceVnfs(serviceMacroHolder.getVnfResourceCustomizations()).JSON2(true, true); 

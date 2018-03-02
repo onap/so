@@ -25,74 +25,77 @@ import static org.junit.Assert.assertEquals;
 import java.util.Properties;
 import java.util.UUID;
 
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import org.openecomp.appc.client.lcm.model.Action;
-import org.openecomp.appc.client.lcm.model.ActionIdentifiers;
-import org.openecomp.appc.client.lcm.model.CheckLockInput;
-import org.openecomp.appc.client.lcm.model.Flags;
-import org.openecomp.appc.client.lcm.model.Status;
+import org.onap.appc.client.lcm.model.Action;
+import org.onap.appc.client.lcm.model.ActionIdentifiers;
+import org.onap.appc.client.lcm.model.CheckLockInput;
+import org.onap.appc.client.lcm.model.Status;
 
 public class ApplicationControllerClientTest {
 
-	private static ApplicationControllerClient client;
-	private static ApplicationControllerSupport support;
-
 	@BeforeClass
 	public static void beforeClass() {
-		client = new ApplicationControllerClient();
-		support = new ApplicationControllerSupport();
-		client.appCSupport = support;
 		System.setProperty("mso.config.path", "src/test/resources");
-
-	}
-
-	@AfterClass
-	public static void afterClass() throws Exception {
-		client.shutdownclient();
 	}
 
 	@Test
-	@Ignore // IGNORED FOR 1710 MERGE TO ONAP
-	public void createRequest_CheckLock_RequestBuilt() throws Exception {
-
-		org.springframework.test.util.ReflectionTestUtils.setField(support, "lcmModelPackage",
-				"org.openecomp.appc.client.lcm.model");
-		Flags flags = new Flags();
+	public void createRequest_CheckLock_RequestBuilt() {
+		ApplicationControllerClient client = new ApplicationControllerClient();
 		ActionIdentifiers actionIdentifiers = new ActionIdentifiers();
 		actionIdentifiers.setVnfId("vnfId");
-		CheckLockInput checkLockInput = (CheckLockInput) client.createRequest(Action.CheckLock, actionIdentifiers,
-				flags, null, "requestId");
+		CheckLockInput checkLockInput = (CheckLockInput) client.createRequest(Action.CheckLock, actionIdentifiers, null,
+				"requestId");
 		assertEquals(checkLockInput.getAction().name(), "CheckLock");
 	}
 
 	@Test
-	@Ignore // IGNORED FOR 1710 MERGE TO ONAP
-	public void runCommand_liveAppc() throws Exception {
-		org.springframework.test.util.ReflectionTestUtils.setField(support, "lcmModelPackage",
-				"org.openecomp.appc.client.lcm.model");
-		Flags flags = new Flags();
+	public void runCommand_liveAppc() {
+		ApplicationControllerClient client = new ApplicationControllerClient();
 		ActionIdentifiers actionIdentifiers = new ActionIdentifiers();
-		actionIdentifiers.setVnfId("ca522254-2ba4-4fbd-b15b-0ef0d9cfda5f");
-
-		// CheckLockInput checkLockInput = (CheckLockInput)
-		// client.createRequest(Action.CheckLock,actionIdentifiers,flags,null,"requestId");
-		Status status = client.runCommand(Action.Lock, actionIdentifiers, flags, null, UUID.randomUUID().toString());
+		//actionIdentifiers.setVnfId("ca522254-2ba4-4fbd-b15b-0ef0d9cfda5f");
+		actionIdentifiers.setVnfId("2d2bf10e-81a5-");
+		Status status;
+		try {
+			status = client.runCommand(Action.Lock, actionIdentifiers, null, UUID.randomUUID().toString());
+		} catch (ApplicationControllerOrchestratorException e) {
+			status = new Status();
+			status.setCode(e.getAppcCode());
+			status.setMessage(e.getMessage());
+		}
 		assertEquals("Status of run command is correct", status.getCode(), 306);
 	}
 
 	@Test
-	@Ignore // IGNORED FOR 1710 MERGE TO ONAP
-	public void runCommand_CheckLock_RequestBuilt() throws Exception {
-		org.springframework.test.util.ReflectionTestUtils.setField(support, "lcmModelPackage",
-				"org.openecomp.appc.client.lcm.model");
-		Flags flags = new Flags();
+	public void runCommand_CheckLock_RequestBuilt() {
+		ApplicationControllerClient client = new ApplicationControllerClient();
 		ActionIdentifiers actionIdentifiers = new ActionIdentifiers();
 		actionIdentifiers.setVnfId("fusion-vpp-vnf-001");
-		Status status = client.runCommand(Action.CheckLock, actionIdentifiers, flags, null, "requestId");
-		assertEquals("Status of run command is correct", status.getCode(), 400);
+		Status status;
+		try {
+			status = client.runCommand(Action.Unlock, actionIdentifiers, null, "requestId");
+		} catch (ApplicationControllerOrchestratorException e) {
+			status = new Status();
+			status.setCode(e.getAppcCode());
+			status.setMessage(e.getMessage());
+		}
+		assertEquals("Status of run command is correct", status.getCode(), 309);
 	}
+
+	@Test
+	public void test_getLCMPropertiesHelper() {
+		ApplicationControllerClient client = new ApplicationControllerClient();
+		Properties properties = client.getLCMProperties();
+		assertEquals(properties.get("topic.write"), "APPC-TEST-AMDOCS1-DEV3");
+		assertEquals(properties.get("topic.read.timeout"), "120000");
+		assertEquals(properties.get("client.response.timeout"), "120000");
+		assertEquals(properties.get("topic.read"), "APPC-TEST-AMDOCS2");
+		assertEquals(properties.get("poolMembers"),
+				"uebsb93kcdc.it.att.com:3904,uebsb92kcdc.it.att.com:3904,uebsb91kcdc.it.att.com:3904");
+		assertEquals(properties.get("client.key"), "iaEMAfjsVsZnraBP");
+		assertEquals(properties.get("client.secret"), "wcivUjsjXzmGFBfxMmyJu9dz");
+	}
+
 }

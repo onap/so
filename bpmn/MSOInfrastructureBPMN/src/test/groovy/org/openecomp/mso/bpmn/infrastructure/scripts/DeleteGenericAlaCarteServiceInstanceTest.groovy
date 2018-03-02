@@ -4,7 +4,7 @@ import org.camunda.bpm.engine.ProcessEngineServices
 import org.camunda.bpm.engine.RepositoryService
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.camunda.bpm.engine.repository.ProcessDefinition
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -67,7 +67,7 @@ class DeleteGenericAlaCarteServiceInstanceTest  {
 			
 		}
 
-		public void initializeVariables(Execution mockExecution) {
+		public void initializeVariables(DelegateExecution mockExecution) {
 			
 			verify(mockExecution).setVariable(Prefix + "Success", false)
 			
@@ -88,7 +88,7 @@ class DeleteGenericAlaCarteServiceInstanceTest  {
 			when(mockExecution.getVariable("bpmnRequest")).thenReturn(jsonIncomingRequest)
 			
 			try {
-                // preProcessRequest(Execution execution)
+                // preProcessRequest(DelegateExecution execution)
                 DeleteGenericALaCarteServiceInstance deleteGenericALaCarteServiceInstance = new DeleteGenericALaCarteServiceInstance()
                 deleteGenericALaCarteServiceInstance.preProcessRequest(mockExecution)
 

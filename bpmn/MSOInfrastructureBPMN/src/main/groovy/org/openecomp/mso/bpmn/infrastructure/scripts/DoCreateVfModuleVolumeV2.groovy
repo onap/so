@@ -21,7 +21,7 @@ import org.springframework.web.util.UriUtils
 import java.util.UUID;
 
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.apache.commons.lang3.*
 import org.apache.commons.codec.binary.Base64;
 
@@ -35,12 +35,12 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
      * Perform initial processing, such as request validation, initialization of variables, etc.
      * * @param execution
      */
-    public void preProcessRequest(Execution execution) {
+    public void preProcessRequest(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
         preProcessRequest(execution, isDebugEnabled)
     }
 
-    public void preProcessRequest(Execution execution, isDebugLogEnabled) {
+    public void preProcessRequest(DelegateExecution execution, isDebugLogEnabled) {
 		
 		execution.setVariable("prefix",prefix)
 		execution.setVariable(prefix+'SuccessIndicator', false)
@@ -88,7 +88,7 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 	 * @param execution
 	 * @param isDebugLogEnabled
 	 */
-	public void displayInput(Execution execution, isDebugLogEnabled) {
+	public void displayInput(DelegateExecution execution, isDebugLogEnabled) {
 		def input = ['mso-request-id', 'msoRequestId', 'isDebugLogEnabled', 'disableRollback', 'failIfExists', 'serviceInstanceId',
 			'vnfId', 'vnfName', 'tenantId', 'volumeGroupId', 'volumeGroupName', 'lcpCloudRegionId', 'vnfType', 'vfModuleModelInfo',  'asdcServiceModelVersion',
 			'test-volume-group-name', 'test-volume-group-id', 'vfModuleInputParams']
@@ -106,7 +106,7 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 	 * @param execution
 	 * @param isDebugEnabled
 	 */
-	public void setRollbackData(Execution execution, isDebugEnabled) {
+	public void setRollbackData(DelegateExecution execution, isDebugEnabled) {
 		def rollbackData = execution.getVariable("rollbackData")
 		if (rollbackData == null) {
 			rollbackData = new RollbackData()
@@ -122,7 +122,7 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 	 * @param execution
 	 * @param isDebugEnabled
 	 */
-	public void validateGetServiceInstanceCall(Execution execution, isDebugEnabled) {
+	public void validateGetServiceInstanceCall(DelegateExecution execution, isDebugEnabled) {
 		def found = execution.getVariable('GENGS_FoundIndicator')
 		def success = execution.getVariable('GENGS_SuccessIndicator')
 		def serviceInstanceId = execution.getVariable('serviceInstanceId')
@@ -141,7 +141,7 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 	 * @param execution
 	 * @param isDebugEnabled
 	 */
-	public void callRESTQueryAAICloudRegion (Execution execution, isDebugEnabled) {
+	public void callRESTQueryAAICloudRegion (DelegateExecution execution, isDebugEnabled) {
 
 		def cloudRegion = execution.getVariable("lcpCloudRegionId")
 		utils.log("DEBUG", 'Request cloud region is: ' + cloudRegion, isDebugEnabled)
@@ -184,7 +184,7 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 	 * @param execution
 	 * @param isDebugEnabled
 	 */
-	public void callRESTQueryAAIVolGrpName(Execution execution, isDebugEnabled) {
+	public void callRESTQueryAAIVolGrpName(DelegateExecution execution, isDebugEnabled) {
 
 		def volumeGroupName = execution.getVariable('volumeGroupName')
 		def cloudRegion = execution.getVariable('lcpCloudRegionId')
@@ -235,7 +235,7 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 	 * @param execution
 	 * @param isDebugEnabled
 	 */
-	public void buildWorkflowException(Execution execution, int errorCode, errorMessage, isDebugEnabled) {
+	public void buildWorkflowException(DelegateExecution execution, int errorCode, errorMessage, isDebugEnabled) {
 		utils.log("DEBUG", errorMessage, isDebugEnabled)
 		(new ExceptionUtil()).buildWorkflowException(execution, 2500, errorMessage)
 	}
@@ -246,7 +246,7 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 	 * @param execution
 	 * @param isDebugEnabled
 	 */
-	public void handleError(Execution execution, isDebugEnabled) {
+	public void handleError(DelegateExecution execution, isDebugEnabled) {
 		WorkflowException we = execution.getVariable('WorkflowException')
 		if (we == null) {
 			(new ExceptionUtil()).buildWorkflowException(execution, 2500, "Enexpected error encountered!")
@@ -260,7 +260,7 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 	 * @param execution
 	 * @param isDebugEnabled
 	 */
-	public void callRESTCreateAAIVolGrpName(Execution execution, isDebugEnabled) {
+	public void callRESTCreateAAIVolGrpName(DelegateExecution execution, isDebugEnabled) {
 
 		def vnfId = execution.getVariable('vnfId')
 		def volumeGroupId = execution.getVariable('volumeGroupId')
@@ -329,7 +329,7 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 	 * Prepare VNF adapter create request XML
 	 * @param execution
 	 */
-	public void prepareVnfAdapterCreateRequest(Execution execution, isDebugEnabled) {
+	public void prepareVnfAdapterCreateRequest(DelegateExecution execution, isDebugEnabled) {
 
 		def aaiGenericVnfResponse = execution.getVariable(prefix+'AAIQueryGenericVfnResponse')
 		def vnfId = utils.getNodeText1(aaiGenericVnfResponse, 'vnf-id')
@@ -448,44 +448,60 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 		execution.setVariable(prefix+"createVnfARequest", vnfSubCreateWorkflowRequestAsString)
 
 		// build rollback request for use later if needed
-		
-		String vnfSubRollbackWorkflowRequest =
-				"""<rollbackVolumeGroupRequest>
-				<cloudSiteId>${cloudSiteId}</cloudSiteId>
-				<tenantId>${tenantId}</tenantId>
-				<volumeGroupId>${volumeGroupId}</volumeGroupId>
-				<skipAAI>true</skipAAI>
-				<volumeGroupCreated>true</volumeGroupCreated>
-			    <msoRequest>
-			        <requestId>${requestId}</requestId>
-			        <serviceInstanceId>${serviceId}</serviceInstanceId>
-			    </msoRequest>
-			    <messageId>${messageId}</messageId>
-			    <notificationUrl>${notificationUrl}</notificationUrl>
-			</rollbackVolumeGroupRequest>"""
+		String vnfSubRollbackWorkflowRequest = buildRollbackVolumeGroupRequestXml(volumeGroupId, cloudSiteId, tenantId, requestId, serviceId, messageId, notificationUrl)
 
 		utils.log("DEBUG", "Sub Vnf flow rollback request: vnfSubRollbackWorkflowRequest " + "\n" + vnfSubRollbackWorkflowRequest, isDebugEnabled)
 
 		String vnfSubRollbackWorkflowRequestAsString = utils.formatXml(vnfSubRollbackWorkflowRequest)
 		execution.setVariable(prefix+"rollbackVnfARequest", vnfSubRollbackWorkflowRequestAsString)
 	}
+	
+	public String buildRollbackVolumeGroupRequestXml(volumeGroupId, cloudSiteId, tenantId, requestId, serviceId, messageId, notificationUrl) {
+		
+		def request = """
+		<rollbackVolumeGroupRequest>
+			<volumeGroupRollback>
+			   <volumeGroupId>${volumeGroupId}</volumeGroupId>
+			   <volumeGroupStackId>{{VOLUMEGROUPSTACKID}}</volumeGroupStackId>
+			   <tenantId>${tenantId}</tenantId>
+			   <cloudSiteId>${cloudSiteId}</cloudSiteId>
+			   <volumeGroupCreated>true</volumeGroupCreated>
+			   <msoRequest>
+			      <requestId>${requestId}</requestId>
+			      <serviceInstanceId>${serviceId}</serviceInstanceId>
+			   </msoRequest>
+			   <messageId>${messageId}</messageId>
+			</volumeGroupRollback>
+			<skipAAI>true</skipAAI>
+			<notificationUrl>${notificationUrl}</notificationUrl>
+		</rollbackVolumeGroupRequest>
+		""" 
+		
+		return request	
+	}
 
+	public String updateRollbackVolumeGroupRequestXml(String rollabackRequest, String heatStackId) {
+		String newRequest = rollabackRequest.replace("{{VOLUMEGROUPSTACKID}}", heatStackId)
+		return newRequest
+	}
 	
 	/**
 	 * Validate VNF adapter response
 	 * @param execution
 	 */
-	public void validateVnfResponse(Execution execution, isDebugEnabled) {
+	public void validateVnfResponse(DelegateExecution execution, isDebugEnabled) {
 		def vnfSuccess = execution.getVariable('VNFREST_SuccessIndicator')
 		utils.log("DEBUG", "vnfAdapterSuccessIndicator: "+ vnfSuccess, isDebugEnabled)
 		if(vnfSuccess==true) {
-			def vnfRollbackRequest = execution.getVariable(prefix+"rollbackVnfARequest")
-			utils.log("DEBUG", "vnfAdapter rollback request: "+ vnfRollbackRequest, isDebugEnabled)
+			String createVnfAResponse = execution.getVariable(prefix+"createVnfAResponse")
+			String heatStackID = utils.getNodeText1(createVnfAResponse, "volumeGroupStackId")
+			String vnfRollbackRequest = execution.getVariable(prefix+"rollbackVnfARequest")
+			String updatedVnfRollbackRequest = updateRollbackVolumeGroupRequestXml(vnfRollbackRequest, heatStackID)
+			utils.log("DEBUG", "vnfAdapter rollback request: "+ updatedVnfRollbackRequest, isDebugEnabled)
 			RollbackData rollbackData = execution.getVariable("rollbackData")
-			rollbackData.put("DCVFMODULEVOL", "rollbackVnfARequest", vnfRollbackRequest)
+			rollbackData.put("DCVFMODULEVOL", "rollbackVnfARequest", updatedVnfRollbackRequest)
 			rollbackData.put("DCVFMODULEVOL", "isCreateVnfRollbackNeeded", "true")
 		}
-
 	}
 	
 
@@ -495,7 +511,7 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 	 * @param execution
 	 * @param isDebugEnabled
 	 */
-	public void callRESTUpdateCreatedVolGrpName(Execution execution, isDebugEnabled) {
+	public void callRESTUpdateCreatedVolGrpName(DelegateExecution execution, isDebugEnabled) {
 
 		String requeryAAIVolGrpNameResponse = execution.getVariable(prefix+"queryAAIVolGrpNameResponse")
 		String volumeGroupId = utils.getNodeText1(requeryAAIVolGrpNameResponse, "volume-group-id")
@@ -554,7 +570,7 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 	 * @param execution
 	 * @param isDebugEnabled
 	 */
-	public void callRESTQueryAAIGenericVnf(Execution execution, isDebugEnabled) {
+	public void callRESTQueryAAIGenericVnf(DelegateExecution execution, isDebugEnabled) {
 
 		def vnfId = execution.getVariable('vnfId')
 

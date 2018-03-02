@@ -20,10 +20,9 @@
 
 package org.openecomp.mso.apihandler.camundabeans;
 
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.map.annotate.JsonRootName;
-
 import org.openecomp.mso.apihandler.common.CommonConstants;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * JavaBean JSON class for a "gMyServiceInput" which contains the xml payload that

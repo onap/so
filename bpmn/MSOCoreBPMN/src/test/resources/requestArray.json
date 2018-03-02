@@ -7,10 +7,10 @@
     },
     "modelInfo": {
       "modelType": "service",
-      "modelId": "ff3514e3-5a33-55df-13ab-12abad84e7ff",
-      "modelNameVersionId": "fe6985cd-ea33-3346-ac12-ab121484a3fe",
+      "modelInvariantId": "ff3514e3-5a33-55df-13ab-12abad84e7ff",
+      "modelVersionId": "fe6985cd-ea33-3346-ac12-ab121484a3fe",
       "modelName": "UCPE",
-      "modelVersion": 1
+      "modelVersion": "1"
     },
     "subscriberInfo": {
       "globalSubscriberId": "83031",

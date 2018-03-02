@@ -58,11 +58,14 @@ public final class CommonConstants {
 	public static final String VF_MODULE_ID_VARIABLE = "vfModuleId";
 	public static final String VOLUME_GROUP_ID_VARIABLE = "volumeGroupId";
 	public static final String NETWORK_ID_VARIABLE = "networkId";
+	public static final String CONFIGURATION_ID_VARIABLE = "configurationId";
 	public static final String SERVICE_TYPE_VARIABLE = "serviceType";
 	public static final String VNF_TYPE_VARIABLE = "vnfType";
 	public static final String VF_MODULE_TYPE_VARIABLE = "vfModuleType";
 	public static final String NETWORK_TYPE_VARIABLE = "networkType";
 	public static final String REQUEST_DETAILS_VARIABLE = "requestDetails";	
+	public static final String ALACARTE_ORCHESTRATION = "mso.infra.default.alacarte.orchestrationUri";
+	public static final String ALACARTE_RECIPE_TIMEOUT = "mso.infra.default.alacarte.recipeTimeout";
 	
 	private CommonConstants () {
 	    // prevent creating an instance of this class

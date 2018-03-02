@@ -23,6 +23,8 @@ import static org.apache.commons.lang3.StringUtils.*;
 
 import java.time.chrono.AbstractChronology
 import java.util.List
+import java.text.SimpleDateFormat
+import java.util.Date
 
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.TaskService
@@ -31,12 +33,13 @@ import org.camunda.bpm.engine.task.TaskQuery
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateTask
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.json.JSONObject;
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
 import org.openecomp.mso.bpmn.core.domain.ServiceDecomposition
 import org.openecomp.mso.bpmn.core.json.JsonUtils
+import org.openecomp.mso.client.ruby.*
 
 
 
@@ -57,6 +60,7 @@ import org.openecomp.mso.bpmn.core.json.JsonUtils
  * @param - errorCode
  * @param - errorText
  * @param - validResponses
+ * @param - vnfName
  *
  * Outputs:
  * @param - WorkflowException
@@ -70,13 +74,14 @@ public class ManualHandling extends AbstractServiceTaskProcessor {
 	
 	JsonUtils jsonUtils = new JsonUtils()
 
-	public void preProcessRequest (Execution execution) {
+	public void preProcessRequest (DelegateExecution execution) {
 		def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
 		String msg = ""
 		utils.log("DEBUG"," ***** preProcessRequest of ManualHandling *****",  isDebugLogEnabled)
 
 		try {
 			execution.setVariable("prefix", Prefix)
+			setBasicDBAuthHeader(execution, isDebugLogEnabled)
 			// check for required input
 			String requestId = execution.getVariable("msoRequestId")
 			utils.log("DEBUG", "msoRequestId is: " + requestId, isDebugLogEnabled)		
@@ -109,7 +114,7 @@ public class ManualHandling extends AbstractServiceTaskProcessor {
 		utils.log("DEBUG"," ***** Exit preProcessRequest of RainyDayHandler *****",  isDebugLogEnabled)
 	}
 
-	public void createManualTask (Execution execution) {
+	public void createManualTask (DelegateExecution execution) {
 		def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
 		String msg = ""
 		utils.log("DEBUG"," ***** createManualTask of ManualHandling *****",  isDebugLogEnabled)
@@ -247,7 +252,94 @@ public class ManualHandling extends AbstractServiceTaskProcessor {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
 		utils.log("DEBUG"," ***** Exit completeTask of ManualHandling *****",  isDebugLogEnabled)
-	}	
+	}
+	
+	public void prepareRequestsDBStatusUpdate (DelegateExecution execution, String requestStatus){
+		
+		def method = getClass().getSimpleName() + '.prepareRequestsDBStatusUpdate(' +'execution=' + execution.getId() +')'
+		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
+		utils.log("DEBUG"," ***** prepareRequestsDBStatusUpdate of ManualHandling *****",  isDebugLogEnabled)
+		try {
+			def requestId = execution.getVariable("msoRequestId")
+			String payload = """
+				<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:req="http://org.openecomp.mso/requestsdb">
+						   <soapenv:Header/>
+						   <soapenv:Body>
+						      <req:updateInfraRequest>
+						         <requestId>${requestId}</requestId>
+						         <lastModifiedBy>ManualHandling</lastModifiedBy>						         
+						         <requestStatus>${requestStatus}</requestStatus>								 
+						      </req:updateInfraRequest>
+						   </soapenv:Body>
+						</soapenv:Envelope>
+				"""
+			
+			execution.setVariable("setUpdateDBstatusPayload", payload)
+			utils.log("DEBUG", "Outgoing Update Mso Request Payload is: " + payload, isDebugLogEnabled)
+			utils.logAudit("setUpdateDBstatusPayload: " + payload)
+		
+		} catch (BpmnError e) {
+			throw e;
+		} catch (Exception e) {
+			logError('Caught exception in ' + method, e)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, "Internal Error - Occured in" + method)
+		}
+		
+		utils.log("DEBUG"," ***** Exit prepareRequestsDBStatusUpdate of ManualHandling *****",  isDebugLogEnabled)
+	}
+	
+	public void createAOTSTicket (DelegateExecution execution) {
+		def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
+		String msg = ""
+		utils.log("DEBUG"," ***** createAOTSTicket of ManualHandling *****",  isDebugLogEnabled)
+		
+		// This method will not be throwing an exception, but rather log the error
+
+		try {
+			execution.setVariable("prefix", Prefix)
+			setBasicDBAuthHeader(execution, isDebugLogEnabled)
+			// check for required input
+			String requestId = execution.getVariable("msoRequestId")
+			utils.log("DEBUG", "requestId is: " + requestId, isDebugLogEnabled)			
+			def currentActivity = execution.getVariable("currentActivity")
+			utils.log("DEBUG", "currentActivity is: " + currentActivity, isDebugLogEnabled)
+			def workStep = execution.getVariable("workStep")
+			utils.log("DEBUG", "workStep is: " + workStep, isDebugLogEnabled)
+			def failedActivity = execution.getVariable("failedActivity")
+			utils.log("DEBUG", "failedActivity is: " + failedActivity, isDebugLogEnabled)
+			def errorCode = execution.getVariable("errorCode")
+			utils.log("DEBUG", "errorCode is: " + errorCode, isDebugLogEnabled)
+			def errorText = execution.getVariable("errorText")
+			utils.log("DEBUG", "errorText is: " + errorText, isDebugLogEnabled)
+			def vnfName = execution.getVariable("vnfName")
+			utils.log("DEBUG", "vnfName is: " + vnfName, isDebugLogEnabled)			
+			
+			String rubyRequestId = UUID.randomUUID()
+			utils.log("DEBUG", "rubyRequestId: " + rubyRequestId, isDebugLogEnabled)
+			String sourceName = vnfName
+			utils.log("DEBUG", "sourceName: " + sourceName, isDebugLogEnabled)
+			String reason = "VID Workflow failed at " + failedActivity + " " + workStep + " call with error " + errorCode
+			utils.log("DEBUG", "reason: " + reason, isDebugLogEnabled)
+			String workflowId = requestId
+			utils.log("DEBUG", "workflowId: " + workflowId, isDebugLogEnabled)
+			String notification = "Request originated from VID | Workflow fallout on " + vnfName + " | Workflow step failure: " + workStep + " failed | VID workflow ID: " + workflowId
+			utils.log("DEBUG", "notification: " + notification, isDebugLogEnabled)			
+			
+			utils.log("DEBUG", "Creating AOTS Ticket request")			
+			
+			RubyClient rubyClient = new RubyClient()
+			rubyClient.rubyCreateTicketCheckRequest(rubyRequestId, sourceName, reason, workflowId, notification)			
+			
+		} catch (BpmnError e) {
+			msg = "BPMN error in createAOTSTicket " + ex.getMessage()
+			utils.log("ERROR", msg, isDebugLogEnabled)			
+		} catch (Exception ex){
+			msg = "Exception in createAOTSTicket " + ex.getMessage()
+			utils.log("ERROR", msg, isDebugLogEnabled)			
+		}
+		utils.log("DEBUG"," ***** Exit createAOTSTicket of ManualHandling *****",  isDebugLogEnabled)
+	}
+
 	
 	
 }

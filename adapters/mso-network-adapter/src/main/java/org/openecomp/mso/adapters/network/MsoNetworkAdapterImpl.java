@@ -21,6 +21,8 @@
 
 package org.openecomp.mso.adapters.network;
 
+import static org.openecomp.mso.openstack.utils.MsoCommonUtils.isNullOrEmpty;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,9 +31,6 @@ import java.util.Map;
 import java.util.Optional;
 import javax.jws.WebService;
 import javax.xml.ws.Holder;
-
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 
 import org.openecomp.mso.adapters.network.exceptions.NetworkException;
 import org.openecomp.mso.cloud.CloudConfig;
@@ -50,6 +49,7 @@ import org.openecomp.mso.openstack.beans.NetworkInfo;
 import org.openecomp.mso.openstack.beans.NetworkRollback;
 import org.openecomp.mso.openstack.beans.NetworkStatus;
 import org.openecomp.mso.openstack.beans.Pool;
+import org.openecomp.mso.openstack.beans.RouteTarget;
 import org.openecomp.mso.openstack.beans.StackInfo;
 import org.openecomp.mso.openstack.beans.Subnet;
 import org.openecomp.mso.openstack.exceptions.MsoAdapterException;
@@ -62,7 +62,8 @@ import org.openecomp.mso.openstack.utils.MsoNeutronUtils.NetworkType;
 import org.openecomp.mso.properties.MsoPropertiesException;
 import org.openecomp.mso.properties.MsoPropertiesFactory;
 
-import static org.openecomp.mso.openstack.utils.MsoCommonUtils.isNullOrEmpty;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @WebService(serviceName = "NetworkAdapter", endpointInterface = "org.openecomp.mso.adapters.network.MsoNetworkAdapter", targetNamespace = "http://org.openecomp.mso/network")
 public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
@@ -159,7 +160,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                                        String networkType,
                                        String modelCustomizationUuid,
                                        String networkName,
-                                       List <String> routeTargets,
+                                       List <RouteTarget> routeTargets,
                                        String shared,
                                        String external,
                                        Boolean failIfExists,
@@ -232,7 +233,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                                String networkName,
                                String physicalNetworkName,
                                List <Integer> vlans,
-                               List <String> routeTargets,
+                               List <RouteTarget> routeTargets,
                                String shared,
                                String external,
                                Boolean failIfExists,
@@ -696,7 +697,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                                        String modelCustomizationUuid,
                                        String networkId,
                                        String networkName,
-                                       List <String> routeTargets,
+                                       List <RouteTarget> routeTargets,
                                        String shared,
                                        String external,
                                        List <Subnet> subnets,
@@ -758,7 +759,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                                String networkName,
                                String physicalNetworkName,
                                List <Integer> vlans,
-                               List <String> routeTargets,
+                               List <RouteTarget> routeTargets,
                                String shared,
                                String external,
                                List <Subnet> subnets,
@@ -1131,7 +1132,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                                           String networkName,
                                           String physicalNetworkName,
                                           List <Integer> vlans,
-                                          List <String> routeTargets,
+                                          List <RouteTarget> routeTargets,
                                           CloudSite cloudSite) throws NetworkException {
         // Retrieve the Network Resource definition
         NetworkResource networkResource = null;
@@ -1243,6 +1244,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                       neutronNetworkId,
                       status,
                       vlans,
+                      null,
                       subnetIdMap);
     }
 
@@ -1255,7 +1257,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                                       Holder <String> networkId,
                                       Holder <String> neutronNetworkId,
                                       Holder <NetworkStatus> status,
-                                      Holder <List <String>> routeTargets,
+                                      Holder <List <RouteTarget>> routeTargets,
                                       Holder <Map <String, String>> subnetIdMap) throws NetworkException {
         queryNetworkInfo(cloudSiteId,
                       tenantId,
@@ -1266,6 +1268,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                       neutronNetworkId,
                       status,
                       null,
+                      routeTargets,
                       subnetIdMap);
     }
 
@@ -1285,6 +1288,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                               Holder <String> neutronNetworkId,
                               Holder <NetworkStatus> status,
                               Holder <List <Integer>> vlans,
+                              Holder <List <RouteTarget>> routeTargets,
                               Holder <Map <String, String>> subnetIdMap) throws NetworkException {
         MsoLogger.setLogContext (msoRequest);
         MsoLogger.setServiceName ("QueryNetwork");
@@ -1691,7 +1695,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                                           String networkName,
                                           String physicalNetwork,
                                           List <Integer> vlans,
-                                          List <String> routeTargets) {
+                                          List <RouteTarget> routeTargets) {
         String sep = "";
         StringBuilder missing = new StringBuilder ();
         if (isNullOrEmpty(networkName)) {
@@ -1716,7 +1720,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                                                         String networkName,
                                                         String physicalNetwork,
                                                         List <Integer> vlans,
-                                                        List <String> routeTargets,
+                                                        List <RouteTarget> routeTargets,
                                                         String shared,
                                                         String external,
                                                         boolean aic3template) {
@@ -1746,23 +1750,63 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             stackParams.put (PHYSICAL_NETWORK, physicalNetwork);
             stackParams.put (VLANS, csl);
         }
-        if (routeTargets != null && !routeTargets.isEmpty()) {
-            StringBuilder buf = new StringBuilder ();
+        
+		if (routeTargets != null) {
+			
+            String rtGlobal = "";
+            String rtImport = "";
+            String rtExport = "";
             String sep = "";
-            for (String rt : routeTargets) {
-            	if (!isNullOrEmpty(rt))
+            for (RouteTarget rt : routeTargets) {
+            	boolean rtIsNull = false;
+            	if (rt != null) {
+            		String routeTarget = rt.getRouteTarget();
+            		String routeTargetRole = rt.getRouteTargetRole();
+            		LOGGER.debug("Checking for an actually null route target: " + rt.toString());
+            		if (routeTarget == null || routeTarget.equals("") || routeTarget.equalsIgnoreCase("null"))
+            			rtIsNull = true;
+            		if (routeTargetRole == null || routeTargetRole.equals("") || routeTargetRole.equalsIgnoreCase("null"))
+            			rtIsNull = true;
+            	} else {
+            		rtIsNull = true;
+            	}
+            	if (!rtIsNull)
             	{
-            		if (aic3template)
-            			buf.append (sep).append ("target:" + rt);
-            		else
-            			buf.append (sep).append (rt);
+            		LOGGER.debug("Input RT:" + rt.toString());
+            		String role = rt.getRouteTargetRole();
+            		String rtValue = rt.getRouteTarget();
+            		
+            		if ("IMPORT".equalsIgnoreCase(role))
+            		{
+            			sep = rtImport.isEmpty() ? "" : ",";
+            			rtImport = aic3template ? rtImport + sep + "target:" + rtValue  : rtImport + sep + rtValue ;
+            		}
+            		else if ("EXPORT".equalsIgnoreCase(role))
+            		{
+            			sep = rtExport.isEmpty() ? "" : ",";
+            			rtExport = aic3template ? rtExport + sep + "target:" + rtValue  : rtExport + sep + rtValue ;
+            		}
+            		else // covers BOTH, empty etc
+            		{
+            			sep = rtGlobal.isEmpty() ? "" : ",";
+            			rtGlobal = aic3template ? rtGlobal + sep + "target:" + rtValue  : rtGlobal + sep + rtValue ;
+            		}
 
-            		sep = ",";
             	}
             }
-            String csl = buf.toString ();
-
-            stackParams.put ("route_targets", csl);
+            
+            if (!rtImport.isEmpty())
+            {
+            	stackParams.put ("route_targets_import", rtImport);
+            }
+            if (!rtExport.isEmpty())
+            {
+            	stackParams.put ("route_targets_export", rtExport);
+            }
+            if (!rtGlobal.isEmpty())
+            {
+            	stackParams.put ("route_targets", rtGlobal);
+            }
         }
         if (isNullOrEmpty(shared)) {
             stackParams.put ("shared", "False");
@@ -1810,22 +1854,24 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 			}
 		}
 
-		JsonNode node = null;
-		try
+		String jsonString = null;
+		if (!prlist.isEmpty())
 		{
-			ObjectMapper mapper = new ObjectMapper();
-			node = mapper.convertValue(prlist, JsonNode.class);
-			String jsonString = mapper.writeValueAsString(prlist);
-			LOGGER.debug("Json PolicyRefs Data:" + jsonString);
-		}
-		catch (Exception e)
-		{
-			String error = "Error creating JsonNode for policyRefs Data";
-			LOGGER.error (MessageEnum.RA_MARSHING_ERROR, error, "Openstack", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception creating JsonNode for policyRefs Data", e);
-			throw new MsoAdapterException (error);
+			try
+			{
+				ObjectMapper mapper = new ObjectMapper();
+				jsonString = mapper.writeValueAsString(prlist);
+				LOGGER.debug("Json PolicyRefs Data:" + jsonString);
+			}
+			catch (Exception e)
+			{
+				String error = "Error creating JsonNode for policyRefs Data";
+				LOGGER.error (MessageEnum.RA_MARSHING_ERROR, error, "Openstack", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception creating JsonNode for policyRefs Data", e);
+				throw new MsoAdapterException (error);
+			}
 		}
 		//update parameters
-		if (pFqdns != null && node != null)
+		if (pFqdns != null && !isNullOrEmpty(jsonString))
 		{
 			StringBuilder buf = new StringBuilder ();
 			String sep = "";
@@ -1838,10 +1884,9 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 			}
 			String csl = buf.toString ();
 			stackParams.put ("policy_refs", csl);
-			stackParams.put ("policy_refsdata", node);
+			stackParams.put ("policy_refsdata", jsonString);
+			LOGGER.debug ("StackParams updated with policy refs:" + csl + " refs data:" + jsonString);
 		}
-
-		LOGGER.debug ("StackParams updated with policy refs");
 		return;
     }
 
@@ -1933,24 +1978,26 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 			cslist.add(cs);
 		}
 
-		JsonNode node = null;
-		try
+		String jsonString = null;
+		if (!cslist.isEmpty())
 		{
-			ObjectMapper mapper = new ObjectMapper();
-			node = mapper.convertValue(cslist, JsonNode.class);
-			String jsonString = mapper.writeValueAsString(cslist);
-			LOGGER.debug("Json Subnet List:" + jsonString);
-		}
-		catch (Exception e)
-		{
-			String error = "Error creating JsonNode from input subnets";
-			LOGGER.error (MessageEnum.RA_MARSHING_ERROR, error, "", "", MsoLogger.ErrorCode.DataError, "Exception creating JsonNode from input subnets", e);
-			throw new MsoAdapterException (error);
+			try
+			{
+				ObjectMapper mapper = new ObjectMapper();
+				jsonString = mapper.writeValueAsString(cslist);
+				LOGGER.debug("Json Subnet List:" + jsonString);
+			}
+			catch (Exception e)
+			{
+				String error = "Error creating JsonNode from input subnets";
+				LOGGER.error (MessageEnum.RA_MARSHING_ERROR, error, "", "", MsoLogger.ErrorCode.DataError, "Exception creating JsonNode from input subnets", e);
+				throw new MsoAdapterException (error);
+			}
 		}
 		//update parameters
-		if (node != null)
+		if (!isNullOrEmpty(jsonString))
 		{
-			stackParams.put ("subnet_list", node);
+			stackParams.put ("subnet_list", jsonString);
 		}
 		//Outputs - All subnets are in one ipam_subnets structure
 		String outputTempl = "  subnet:\n" + "    description: Openstack subnet identifier\n"
@@ -1985,16 +2032,16 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     		String outputTempl = "  subnet_id_%subnetId%:\n" + "    description: Openstack subnet identifier\n"
     				+ "    value: {get_resource: subnet_%subnetId%}\n";
 
-    		String curR;
+    		StringBuilder curR;
     		String curO;
     		StringBuilder resourcesBuf = new StringBuilder ();
     		StringBuilder outputsBuf = new StringBuilder ();
     		for (Subnet subnet : subnets) {
 
     			// build template for each subnet
-    			curR = resourceTempl;
+    			curR = new StringBuilder(resourceTempl);
     			if (subnet.getSubnetId () != null) {
-    				curR = curR.replace ("%subnetId%", subnet.getSubnetId ());
+    				curR = new StringBuilder(curR.toString().replace("%subnetId%", subnet.getSubnetId()));
     			} else {
     				String error = "Missing Required AAI SubnetId for subnet in HEAT Template";
     				LOGGER.error (MessageEnum.RA_MISSING_PARAM, error, "Openstack", "", MsoLogger.ErrorCode.DataError, "Missing Required AAI ID  for subnet in HEAT Template");
@@ -2002,13 +2049,13 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     			}
 
     			if (subnet.getSubnetName () != null) {
-    				curR = curR.replace ("%name%", subnet.getSubnetName ());
+    				curR = new StringBuilder(curR.toString().replace("%name%", subnet.getSubnetName()));
     			} else {
-    				curR = curR.replace ("%name%", subnet.getSubnetId ());
+    				curR = new StringBuilder(curR.toString().replace("%name%", subnet.getSubnetId()));
     			}
 
     			if (subnet.getCidr () != null) {
-    				curR = curR.replace ("%cidr%", subnet.getCidr ());
+    				curR = new StringBuilder(curR.toString().replace("%cidr%", subnet.getCidr()));
     			} else {
     				String error = "Missing Required cidr for subnet in HEAT Template";
     				LOGGER.error (MessageEnum.RA_MISSING_PARAM, error, "Openstack", "", MsoLogger.ErrorCode.DataError, "Missing Required cidr for subnet in HEAT Template");
@@ -2016,23 +2063,23 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     			}
 
     			if (subnet.getIpVersion () != null) {
-    				curR = curR + "      ip_version: " + subnet.getIpVersion () + "\n";
+    				curR.append("      ip_version: " + subnet.getIpVersion() + "\n");
     			}
     			if (subnet.getEnableDHCP () != null) {
-    				curR = curR + "      enable_dhcp: " +  Boolean.toString (subnet.getEnableDHCP ()) + "\n";
+    				curR.append("      enable_dhcp: ").append(Boolean.toString(subnet.getEnableDHCP())).append("\n");
     			}
     			if (subnet.getGatewayIp () != null && !subnet.getGatewayIp ().isEmpty() ) {
-    				curR = curR + "      gateway_ip: " + subnet.getGatewayIp () + "\n";
+    				curR.append("      gateway_ip: " + subnet.getGatewayIp() + "\n");
     			}
 
     			if (subnet.getAllocationPools() != null) {
-    				curR = curR + "      allocation_pools:\n";
+    				curR.append("      allocation_pools:\n");
     				for (Pool pool : subnet.getAllocationPools())
     				{
     					if (!isNullOrEmpty(pool.getStart()) && !isNullOrEmpty(pool.getEnd()))
     					{
-    						curR = curR + "       - start: " + pool.getStart () + "\n";
-    						curR = curR + "         end: " + pool.getEnd () + "\n";
+    						curR.append("       - start: " + pool.getStart() + "\n");
+    						curR.append("         end: " + pool.getEnd() + "\n");
     					}
     				}
     			}
@@ -2070,8 +2117,8 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     		for (JsonNode sNode : rootNode.path("ipam_subnets"))
     		{
     			LOGGER.debug("Output Subnet Node" + sNode.toString());
-    			String name = sNode.path("subnet_name").getTextValue();
-    			String uuid = sNode.path("subnet_uuid").getTextValue();
+    			String name = sNode.path("subnet_name").textValue();
+    			String uuid = sNode.path("subnet_uuid").textValue();
     			String aaiId = name; // default
     			// try to find aaiId for name in input subnetList
     			if (subnets != null)

@@ -166,7 +166,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://org.openecomp.mso/vnfNotify", name = "rollbackVnfNotification")
     public JAXBElement<RollbackVnfNotification> createRollbackVnfNotification(RollbackVnfNotification value) {
-        return new JAXBElement<RollbackVnfNotification>(_RollbackVnfNotification_QNAME, RollbackVnfNotification.class, null, value);
+        return new JAXBElement<>(_RollbackVnfNotification_QNAME, RollbackVnfNotification.class, null, value);
     }
 
     /**
@@ -175,7 +175,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://org.openecomp.mso/vnfNotify", name = "deleteVnfNotification")
     public JAXBElement<DeleteVnfNotification> createDeleteVnfNotification(DeleteVnfNotification value) {
-        return new JAXBElement<DeleteVnfNotification>(_DeleteVnfNotification_QNAME, DeleteVnfNotification.class, null, value);
+        return new JAXBElement<>(_DeleteVnfNotification_QNAME, DeleteVnfNotification.class, null, value);
     }
 
     /**
@@ -184,7 +184,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://org.openecomp.mso/vnfNotify", name = "createVnfNotification")
     public JAXBElement<CreateVnfNotification> createCreateVnfNotification(CreateVnfNotification value) {
-        return new JAXBElement<CreateVnfNotification>(_CreateVnfNotification_QNAME, CreateVnfNotification.class, null, value);
+        return new JAXBElement<>(_CreateVnfNotification_QNAME, CreateVnfNotification.class, null, value);
     }
 
     /**
@@ -193,7 +193,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://org.openecomp.mso/vnfNotify", name = "updateVnfNotification")
     public JAXBElement<UpdateVnfNotification> createUpdateVnfNotification(UpdateVnfNotification value) {
-        return new JAXBElement<UpdateVnfNotification>(_UpdateVnfNotification_QNAME, UpdateVnfNotification.class, null, value);
+        return new JAXBElement<>(_UpdateVnfNotification_QNAME, UpdateVnfNotification.class, null, value);
     }
 
     /**
@@ -202,7 +202,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://org.openecomp.mso/vnfNotify", name = "queryVnfNotification")
     public JAXBElement<QueryVnfNotification> createQueryVnfNotification(QueryVnfNotification value) {
-        return new JAXBElement<QueryVnfNotification>(_QueryVnfNotification_QNAME, QueryVnfNotification.class, null, value);
+        return new JAXBElement<>(_QueryVnfNotification_QNAME, QueryVnfNotification.class, null, value);
     }
 
 }

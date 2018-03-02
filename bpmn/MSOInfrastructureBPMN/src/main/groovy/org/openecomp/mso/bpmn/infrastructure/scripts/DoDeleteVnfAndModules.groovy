@@ -19,12 +19,13 @@
  */
 package org.openecomp.mso.bpmn.infrastructure.scripts
 
+import java.awt.Component.BaselineResizeBehavior
 import java.util.UUID;
 
 import org.json.JSONObject;
 import org.json.JSONArray;
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution;
+import org.camunda.bpm.engine.delegate.DelegateExecution;
 
 import static org.apache.commons.lang3.StringUtils.*;
 
@@ -37,6 +38,10 @@ import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
 import org.openecomp.mso.bpmn.common.scripts.SDNCAdapterUtils
 import org.openecomp.mso.bpmn.common.scripts.VidUtils
+import org.openecomp.mso.bpmn.core.domain.ModelInfo
+import org.openecomp.mso.bpmn.core.domain.ModuleResource
+import org.openecomp.mso.bpmn.core.domain.ServiceDecomposition
+import org.openecomp.mso.bpmn.core.domain.VnfResource
 import org.openecomp.mso.bpmn.core.RollbackData
 import org.openecomp.mso.bpmn.core.WorkflowException
 import org.springframework.web.util.UriUtils;
@@ -60,7 +65,7 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 	 * @param - execution
 	 *	
 	 */
-	public void preProcessRequest(Execution execution) {
+	public void preProcessRequest(DelegateExecution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		utils.log("DEBUG", " *** STARTED DoDeleteVnfAndModules PreProcessRequest Process*** ", isDebugEnabled)
@@ -95,6 +100,9 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 			execution.setVariable("DDVAM_sdncVersion", sdncVersion)
 			utils.log("DEBUG", "Incoming Sdnc Version is: " + sdncVersion, isDebugEnabled)
 			
+			// Set aLaCarte flag to false
+			execution.setVariable("aLaCarte", false)
+			
 			String sdncCallbackUrl = (String) execution.getVariable('URN_mso_workflow_sdncadapter_callback')
 			if (sdncCallbackUrl == null || sdncCallbackUrl.trim().isEmpty()) {
 				def msg = 'Required variable \'URN_mso_workflow_sdncadapter_callback\' is missing'
@@ -103,7 +111,8 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 			}
 			execution.setVariable("sdncCallbackUrl", sdncCallbackUrl)
 			utils.logAudit("SDNC Callback URL: " + sdncCallbackUrl)
-			logDebug("SDNC Callback URL is: " + sdncCallbackUrl, isDebugEnabled)
+			logDebug("SDNC Callback URL is: " + sdncCallbackUrl, isDebugEnabled)	
+			
 			
 			if (!sdncVersion.equals("1702")) {
 				//String vnfModelInfo = execution.getVariable("vnfModelInfo")
@@ -153,8 +162,32 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 					globalSubscriberId = ""
 				}
 				execution.setVariable("DDVAM_globalSubscriberId", globalSubscriberId)
-				utils.log("DEBUG", "Incoming Global Subscriber Id is: " + globalSubscriberId, isDebugEnabled)
+				utils.log("DEBUG", "Incoming Global Subscriber Id is: " + globalSubscriberId, isDebugEnabled)		
+				
 			}
+			execution.setVariable("DDVAM_vfModulesFromDecomposition", null)
+			// Retrieve serviceDecomposition if present
+			ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
+			if (serviceDecomposition != null) {
+				utils.log("DEBUG", "Getting Catalog DB data from ServiceDecomposition object: " + serviceDecomposition.toJsonString(), isDebugEnabled)
+				List<VnfResource> vnfs = serviceDecomposition.getServiceVnfs()
+				utils.log("DEBUG", "Read vnfs", isDebugEnabled)
+				if (vnfs == null) {
+					utils.log("DEBUG", "Error - vnfs are empty in serviceDecomposition object", isDebugEnabled)
+					exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured in preProcessRequest - vnfs are empty")
+				}
+				VnfResource vnf = vnfs[0]
+				
+				if (vnf == null) {
+					utils.log("DEBUG", "Error - vnf is empty in serviceDecomposition object", isDebugEnabled)
+					exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured in preProcessRequest - vnf is empty")
+				}
+				
+				List<ModuleResource> vfModules = vnf.getAllVfModuleObjects()
+				
+				execution.setVariable("DDVAM_vfModulesFromDecomposition", vfModules)				
+			}
+			
 			execution.setVariable("DDVAM_moduleCount", 0)
 			execution.setVariable("DDVAM_nextModule", 0)
 			
@@ -172,7 +205,7 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 
 	
 	
-	public void preProcessAddOnModule(Execution execution){
+	public void preProcessAddOnModule(DelegateExecution execution){
 		def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 		logDebug(" ======== STARTED preProcessAddOnModule ======== ", isDebugLogEnabled)
@@ -212,7 +245,7 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void queryAAIVfModule(Execution execution) {
+	public void queryAAIVfModule(DelegateExecution execution) {
 		def isDebugLogEnabled=execution.getVariable("isDebugLogEnabled")
 		def method = getClass().getSimpleName() + '.queryAAIVfModule(' +
 			'execution=' + execution.getId() +
@@ -247,6 +280,7 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 				logDebug('Response code:' + response.getStatusCode(), isDebugLogEnabled)
 				logDebug('Response:' + System.lineSeparator() + responseData, isDebugLogEnabled)
 				//Map<String, String>[] vfModules = new HashMap<String,String>[]
+				List<ModuleResource> vfModulesFromDecomposition = execution.getVariable("DDVAM_vfModulesFromDecomposition")
 				def vfModulesList = new ArrayList<Map<String,String>>()
 				def vfModules = null
 				def vfModuleBaseEntry = null
@@ -261,14 +295,43 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 							vfModules = xmlVfModules.'**'.findAll {it.name() == "vf-module"}
 							execution.setVariable("DDVAM_moduleCount", vfModules.size())
 							int vfModulesSize = 0
+							ModelInfo vfModuleModelInfo = null
 							for (i in 0..vfModules.size()-1) {
 								def vfModuleXml = groovy.xml.XmlUtil.serialize(vfModules[i])
 							
 								Map<String, String> vfModuleEntry = new HashMap<String, String>()
 								def vfModuleId = utils.getNodeText1(vfModuleXml, "vf-module-id")
 								vfModuleEntry.put("vfModuleId", vfModuleId)
-								def vfModuleName = utils.getNodeText1(vfModuleXml, "vf-module-name")
+								def vfModuleName = utils.getNodeText1(vfModuleXml, "vf-module-name")      
 								vfModuleEntry.put("vfModuleName", vfModuleName)
+								
+								// Find the model for this vf module in decomposition if specified
+								if (vfModulesFromDecomposition != null) {
+									logDebug("vfModulesFromDecomposition is not null", isDebugLogEnabled)
+									def vfModuleUuid = utils.getNodeText1(vfModuleXml, "model-version-id")
+									if (vfModuleUuid == null) {
+										vfModuleUuid = utils.getNodeText1(vfModuleXml, "persona-model-version")
+									}
+									logDebug("vfModule UUID is: " + vfModuleUuid, isDebugLogEnabled)
+									for (j in 0..vfModulesFromDecomposition.size()-1) {
+										ModuleResource mr = vfModulesFromDecomposition[j]
+										if (mr.getModelInfo().getModelUuid() == vfModuleUuid) {
+											logDebug("Found modelInfo", isDebugLogEnabled)
+											vfModuleModelInfo = mr.getModelInfo()
+											break											
+										}
+										
+									}									
+								}
+								if (vfModuleModelInfo != null) {
+									String vfModuleModelInfoString = vfModuleModelInfo.toString()
+									def vfModuleModelInfoValue = jsonUtil.getJsonValue(vfModuleModelInfoString, "modelInfo")
+									vfModuleEntry.put("vfModuleModelInfo", vfModuleModelInfoValue)
+								}
+								else {
+									vfModuleEntry.put("vfModuleModelInfo", null)
+								}
+								
 								
 								def isBaseVfModule = utils.getNodeText(vfModuleXml, "is-base-vf-module")
 								// Save base vf module for last
@@ -301,7 +364,7 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 		}
 	}
 	
-	public void prepareNextModuleToDelete(Execution execution){
+	public void prepareNextModuleToDelete(DelegateExecution execution){
 		def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 		logDebug(" ======== STARTED prepareNextModuleToDelete ======== ", isDebugLogEnabled)
@@ -315,11 +378,10 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 			execution.setVariable("DDVAM_vfModuleId", vfModuleId)
 			
 			def vfModuleName = vfModule.get("vfModuleName")
-			execution.setVariable("DDVAM_vfModuleName", vfModuleName)
+			execution.setVariable("DDVAM_vfModuleName", vfModuleName)			
 			
-			
-			// HARDCODED FOR NOW
-			def vfModuleModelInfo = ""
+			def vfModuleModelInfo = vfModule.get("vfModuleModelInfo")
+			logDebug("vfModuleModelInfo for module delete: " + vfModuleModelInfo, isDebugLogEnabled)
 			execution.setVariable("DDVAM_vfModuleModelInfo", vfModuleModelInfo)			
 			
 		}catch(Exception e){
@@ -329,7 +391,7 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 		logDebug("======== COMPLETED prepareNextModuleToDelete ======== ", isDebugLogEnabled)
 	}
 	
-	public void preProcessSDNCDeactivateRequest(Execution execution){
+	public void preProcessSDNCDeactivateRequest(DelegateExecution execution){
 		def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 		logDebug(" ======== STARTED preProcessSDNCDeactivateRequest ======== ", isDebugLogEnabled)
@@ -353,7 +415,7 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 		logDebug("======== COMPLETED preProcessSDNCDeactivateRequest ======== ", isDebugLogEnabled)
 	}
 	
-	public void preProcessSDNCUnassignRequest(Execution execution) {
+	public void preProcessSDNCUnassignRequest(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.preProcessSDNCUnassignRequest(' +
 			'execution=' + execution.getId() +
 			')'
@@ -378,7 +440,7 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 		logDebug("======== COMPLETED  preProcessSDNCUnassignRequest Process ======== ", isDebugLogEnabled)
 	}
 	
-	public String buildSDNCRequest(Execution execution, String svcInstId, String action){
+	public String buildSDNCRequest(DelegateExecution execution, String svcInstId, String action){
 		
 				String uuid = execution.getVariable('testReqId') // for junits
 				if(uuid==null){
@@ -443,7 +505,7 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 			return sdncRequest
 	}
 		
-	public void validateSDNCResponse(Execution execution, String response, String method){
+	public void validateSDNCResponse(DelegateExecution execution, String response, String method){
 		def isDebugLogEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		logDebug(" *** STARTED ValidateSDNCResponse Process*** ", isDebugLogEnabled)

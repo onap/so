@@ -21,7 +21,7 @@
 package org.openecomp.mso.bpmn.infrastructure.scripts;
 
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor;
 import org.apache.commons.lang3.*
 
@@ -32,7 +32,7 @@ public class HealthCheckActivate extends AbstractServiceTaskProcessor {
 	 * Validates the request message and sets up the workflow.
 	 * @param execution the execution
 	 */
-	public void preProcessRequest(Execution execution) {
+	public void preProcessRequest(DelegateExecution execution) {
 
 	}
 	
@@ -41,7 +41,7 @@ public class HealthCheckActivate extends AbstractServiceTaskProcessor {
 	 * Sends the synchronous response back to the API Handler.
 	 * @param execution the execution
 	 */
-	public void sendResponse(Execution execution) {
+	public void sendResponse(DelegateExecution execution) {
 		def status = execution.getVariable("healthyStatus")
 		def healthcheckmessage = execution.getVariable("healthcheckmessage")
 			if (status == "true") {

@@ -142,7 +142,7 @@ public class VfModule extends MavenLikeVersioning implements Serializable {
 
 	@Override
 	public String toString () {
-       StringBuffer buf = new StringBuffer();
+       StringBuilder buf = new StringBuilder();
 
        buf.append("VFModule:");
        buf.append("modelName=");

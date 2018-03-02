@@ -27,11 +27,12 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 import org.openecomp.mso.db.catalog.beans.HeatTemplateParam;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.yaml.snakeyaml.Yaml;
 
@@ -73,33 +74,32 @@ public class MsoYamlEditorWithEnvt {
     	if (resourceMap == null) {
     		return paramSet;
     	}
-    	Iterator <Entry <String, Object>> it = resourceMap.entrySet().iterator();
-    	
-    	while (it.hasNext()) {
-    		MsoHeatEnvironmentParameter hep = new MsoHeatEnvironmentParameter();
-    		Map.Entry <String, Object> pair = it.next();
-    		String value;
-    		Object obj = pair.getValue();
-    		if (obj instanceof java.lang.String) {
-    			value = yaml.dump(obj);
-    			// but this adds an extra '\n' at the end - which won't hurt - but we don't need it
-    			value = value.substring(0, value.length() - 1);
-    		} else if (obj instanceof java.util.LinkedHashMap) {
-    			//Handle that it's json
-    			try {
-    				value = JSON_MAPPER.writeValueAsString(obj);
-    			} catch (Exception e) {
-    			    LOGGER.debug("Exception:", e);
-    				value = "_BAD_JSON_MAPPING";
-    			}
-    		} else {
-    			//this handles integers/longs/floats/etc.
-    			value = String.valueOf(obj);
-    		}
-    		hep.setName((String) pair.getKey());
-    		hep.setValue(value);
-    		paramSet.add(hep);
-    	}
+
+        for (Entry<String, Object> stringObjectEntry : resourceMap.entrySet()) {
+            MsoHeatEnvironmentParameter hep = new MsoHeatEnvironmentParameter();
+            Entry<String, Object> pair = stringObjectEntry;
+            String value;
+            Object obj = pair.getValue();
+            if (obj instanceof String) {
+                value = yaml.dump(obj);
+                // but this adds an extra '\n' at the end - which won't hurt - but we don't need it
+                value = value.substring(0, value.length() - 1);
+            } else if (obj instanceof LinkedHashMap) {
+                //Handle that it's json
+                try {
+                    value = JSON_MAPPER.writeValueAsString(obj);
+                } catch (Exception e) {
+                    LOGGER.debug("Exception:", e);
+                    value = "_BAD_JSON_MAPPING";
+                }
+            } else {
+                //this handles integers/longs/floats/etc.
+                value = String.valueOf(obj);
+            }
+            hep.setName((String) pair.getKey());
+            hep.setValue(value);
+            paramSet.add(hep);
+        }
     	return paramSet;
     }
     public synchronized Set <MsoHeatEnvironmentResource> getResourceListFromEnvt() {
@@ -107,15 +107,14 @@ public class MsoYamlEditorWithEnvt {
     		Set<MsoHeatEnvironmentResource> resourceList = new HashSet<>();
     		@SuppressWarnings("unchecked")
     		Map<String, Object> resourceMap = (Map<String,Object>) yml.get("resource_registry");
-    		Iterator<Entry <String,Object>> it = resourceMap.entrySet().iterator();
-    	
-    		while (it.hasNext()) {
-    			MsoHeatEnvironmentResource her = new MsoHeatEnvironmentResource();
-    			Map.Entry<String, Object> pair = it.next();
-    			her.setName((String) pair.getKey());
-    			her.setValue((String) pair.getValue());
-    			resourceList.add(her);
-    		}
+
+            for (Entry<String, Object> stringObjectEntry : resourceMap.entrySet()) {
+                MsoHeatEnvironmentResource her = new MsoHeatEnvironmentResource();
+                Entry<String, Object> pair = stringObjectEntry;
+                her.setName((String) pair.getKey());
+                her.setValue((String) pair.getValue());
+                resourceList.add(her);
+            }
     		return resourceList;
     	} catch (Exception e) {
     	    LOGGER.debug("Exception:", e);
@@ -126,35 +125,34 @@ public class MsoYamlEditorWithEnvt {
         Set <HeatTemplateParam> paramSet = new HashSet <> ();
         @SuppressWarnings("unchecked")
         Map <String, Object> resourceMap = (Map <String, Object>) yml.get ("parameters");
-        Iterator <Entry <String, Object>> it = resourceMap.entrySet ().iterator ();
 
-        while (it.hasNext ()) {
-            HeatTemplateParam param = new HeatTemplateParam ();
-            Map.Entry <String, Object> pair = it.next ();
+        for (Entry<String, Object> stringObjectEntry : resourceMap.entrySet()) {
+            HeatTemplateParam param = new HeatTemplateParam();
+            Entry<String, Object> pair = stringObjectEntry;
             @SuppressWarnings("unchecked")
-            Map <String, String> resourceEntry = (Map <String, String>) pair.getValue ();
+            Map<String, String> resourceEntry = (Map<String, String>) pair.getValue();
             String value = null;
             try {
-            	value = resourceEntry.get ("default");
-            } catch (java.lang.ClassCastException cce) {
+                value = resourceEntry.get("default");
+            } catch (ClassCastException cce) {
                 LOGGER.debug("Exception:", cce);
-            	// This exception only - the value is an integer. For what we're doing
-            	// here - we don't care - so set value to something - and it will 
-            	// get marked as not being required - which is correct.
-            	//System.out.println("cce exception!");
-            	value = "300"; 
-            	// okay
+                // This exception only - the value is an integer. For what we're doing
+                // here - we don't care - so set value to something - and it will
+                // get marked as not being required - which is correct.
+                //System.out.println("cce exception!");
+                value = "300";
+                // okay
             }
-            param.setParamName ((String) pair.getKey ());
+            param.setParamName((String) pair.getKey());
             if (value != null) {
-                param.setRequired (false);
+                param.setRequired(false);
             } else {
-                param.setRequired (true);
+                param.setRequired(true);
             }
-            value = resourceEntry.get ("type");
-            param.setParamType (value);
+            value = resourceEntry.get("type");
+            param.setParamType(value);
 
-            paramSet.add (param);
+            paramSet.add(param);
 
         }
         return paramSet;

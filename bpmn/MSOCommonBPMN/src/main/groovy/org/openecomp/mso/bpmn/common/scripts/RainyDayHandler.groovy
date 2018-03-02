@@ -25,13 +25,17 @@ import static org.apache.commons.lang3.StringUtils.*;
 
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.json.JSONObject;
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
 import org.openecomp.mso.bpmn.core.domain.ServiceDecomposition
 import org.openecomp.mso.bpmn.core.json.JsonUtils
-import org.openecomp.mso.client.policy.PolicyDecision
+import org.openecomp.mso.client.policy.PolicyClient
+import org.openecomp.mso.client.policy.PolicyClientImpl
+import org.openecomp.mso.client.policy.entities.DictionaryData
+import org.openecomp.mso.client.policy.entities.PolicyDecision
+import org.openecomp.mso.client.policy.entities.Treatments
 import org.openecomp.mso.client.policy.PolicyRestClient
 
 
@@ -54,6 +58,7 @@ import groovy.json.*
  * @param - failedActivity
  * @param - errorCode
  * @param - errorText 
+ * @param - vnfName
  *
  * Outputs:
  * @param - WorkflowException
@@ -67,7 +72,7 @@ public class RainyDayHandler extends AbstractServiceTaskProcessor {
 	
 	JsonUtils jsonUtils = new JsonUtils()
 
-	public void preProcessRequest (Execution execution) {
+	public void preProcessRequest (DelegateExecution execution) {
 		def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
 		String msg = ""
 		utils.log("DEBUG"," ***** preProcessRequest of RainyDayHandler *****",  isDebugLogEnabled)
@@ -91,6 +96,9 @@ public class RainyDayHandler extends AbstractServiceTaskProcessor {
 			utils.log("DEBUG", "errorCode is: " + errorCode, isDebugLogEnabled)
 			def errorText = execution.getVariable("errorText")
 			utils.log("DEBUG", "errorText is: " + errorText, isDebugLogEnabled)
+			String defaultPolicyDisposition = (String) execution.getVariable('URN_policy_default_disposition')
+			utils.log("DEBUG", "defaultPolicyDisposition is: " + defaultPolicyDisposition, isDebugLogEnabled)
+			execution.setVariable('defaultPolicyDisposition', defaultPolicyDisposition)
 			
 		} catch (BpmnError e) {
 			throw e;
@@ -102,7 +110,7 @@ public class RainyDayHandler extends AbstractServiceTaskProcessor {
 		utils.log("DEBUG"," ***** Exit preProcessRequest of RainyDayHandler *****",  isDebugLogEnabled)
 	}
 
-	public void queryPolicy (Execution execution) {
+	public void queryPolicy (DelegateExecution execution) {
 		def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
 		String msg = ""
 		utils.log("DEBUG"," ***** queryPolicy of RainyDayHandler *****",  isDebugLogEnabled)
@@ -122,34 +130,55 @@ public class RainyDayHandler extends AbstractServiceTaskProcessor {
 			
 			utils.log("DEBUG", "Before querying policy", isDebugLogEnabled)
 			
-			PolicyDecision decisionObject = null
-			
-			try {			
-				PolicyRestClient policyClient = new PolicyRestClient()
-				utils.log("DEBUG", "Created policy client", isDebugLogEnabled)
-				decisionObject = policyClient.getDecision(serviceType, vnfType, bbId, workStep, errorCode)
-				utils.log("DEBUG", "Obtained decision object", isDebugLogEnabled)
-			} catch(Exception e) {
-				msg = "Exception in queryPolicy " + e.getMessage()
-				utils.log("DEBUG", msg, isDebugLogEnabled)
-				
-			}
-			
 			String decision = 'DENY'
-			String disposition = "Abort"			
-			if (decisionObject != null) {
-				decision = decisionObject.getDecision()
-				disposition = decisionObject.getDetails()
-				utils.log("DEBUG", "Obtained disposition from policy engine: " + disposition, isDebugLogEnabled)
+			String disposition = "Abort"
+			String defaultAllowedTreatments = "rollback, skip, manual, abort"
+			
+			String defaultPolicyDisposition = (String) execution.getVariable('defaultPolicyDisposition')
+			if (defaultPolicyDisposition != null) {
+				utils.log("DEBUG", "Setting disposition to the configured default instead of querying Policy: " + defaultPolicyDisposition, isDebugLogEnabled)
+				disposition = defaultPolicyDisposition
+				utils.log("DEBUG", "Setting default allowed treatments: " + defaultAllowedTreatments, isDebugLogEnabled)
+				execution.setVariable("validResponses", defaultAllowedTreatments)
 			}
 			else {
-				disposition = "Manual"
-			}
-			if (disposition == null) {
-				disposition = "Manual"
+			
+				PolicyDecision decisionObject = null
+			
+				try {			
+					PolicyClient policyClient = new PolicyClientImpl()
+					utils.log("DEBUG", "Created policy client", isDebugLogEnabled)
+					decisionObject = policyClient.getDecision(serviceType, vnfType, bbId, workStep, errorCode)
+					utils.log("DEBUG", "Obtained decision object", isDebugLogEnabled)
+					DictionaryData dictClient = policyClient.getAllowedTreatments(bbId, workStep)					
+					Treatments treatments = dictClient.getTreatments()
+					String validResponses = treatments.getString()
+					if (validResponses != null) {
+						validResponses = validResponses.toLowerCase()
+					}
+					utils.log("DEBUG", "Obtained validResponses: " + validResponses, isDebugLogEnabled)
+					execution.setVariable("validResponses", validResponses)
+				
+				} catch(Exception e) {
+					msg = "Exception in queryPolicy " + e.getMessage()
+					utils.log("DEBUG", msg, isDebugLogEnabled)				
+				}
+			
+						
+				if (decisionObject != null) {
+					decision = decisionObject.getDecision()
+					disposition = decisionObject.getDetails()
+					utils.log("DEBUG", "Obtained disposition from policy engine: " + disposition, isDebugLogEnabled)
+				}
+				else {
+					disposition = "Abort"
+				}
+				if (disposition == null) {
+					disposition = "Abort"
+				}
 			}			
-			execution.setVariable("handlingCode", disposition)
-			execution.setVariable("validResponses", "rollback, abort, skip, retry")
+			execution.setVariable("handlingCode", disposition)			
+			
 			utils.log("DEBUG", "Disposition: "+ disposition, isDebugLogEnabled)
 
 		} catch (BpmnError e) {

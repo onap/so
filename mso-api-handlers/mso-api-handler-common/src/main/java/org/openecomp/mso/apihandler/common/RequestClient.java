@@ -26,7 +26,6 @@ import java.security.GeneralSecurityException;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
-
 import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.properties.MsoJavaProperties;
 import org.openecomp.mso.utils.CryptoUtils;
@@ -71,11 +70,10 @@ public abstract class RequestClient {
 	public abstract HttpResponse post(String request) throws ClientProtocolException, IOException;
 	
 	public abstract HttpResponse post(String requestId, boolean isBaseVfModule,
-			int recipeTimeout, String requestAction, String serviceInstanceId,
-			String vnfId, String vfModuleId, String volumeGroupId, String networkId,
-			String serviceType, String vnfType, String vfModuleType, String networkType,
-			String requestDetails)
-					throws ClientProtocolException, IOException;
+									int recipeTimeout, String requestAction, String serviceInstanceId,
+									String vnfId, String vfModuleId, String volumeGroupId, String networkId, String configurationId,
+									String serviceType, String vnfType, String vfModuleType, String networkType,
+									String requestDetails) throws ClientProtocolException, IOException;
 	
 	public abstract HttpResponse get() 
 					throws ClientProtocolException, IOException;

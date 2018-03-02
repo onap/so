@@ -128,7 +128,7 @@
             <column name="SERVICE_INSTANCE_NAME" length="80"/>
         </property>
         <property name="requestScope" type="string">
-            <column name="REQUEST_SCOPE" length="20"/>
+            <column name="REQUEST_SCOPE" length="45"/>
         </property>
         <property name="requestAction" type="string">
             <column name="REQUEST_ACTION" length="45" not-null="true"/>
@@ -144,6 +144,18 @@
         </property>
         <property name="requestorId" type="string">
             <column name="REQUESTOR_ID" length="80"/>
+        </property>
+        <property name="configurationId" type="string">
+            <column name="CONFIGURATION_ID" length="45"/>
+        </property>
+        <property name="configurationName" type="string">
+            <column name="CONFIGURATION_NAME" length="200"/>
+        </property>
+         <property name="operationalEnvId" type="string">
+            <column name="OPERATIONAL_ENV_ID" length="45"/>
+        </property>
+        <property name="operationalEnvName" type="string">
+            <column name="OPERATIONAL_ENV_NAME" length="200"/>
         </property>
     </class>
 </hibernate-mapping>
