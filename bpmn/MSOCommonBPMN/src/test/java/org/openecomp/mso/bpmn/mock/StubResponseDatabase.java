@@ -98,5 +98,13 @@ public class StubResponseDatabase {
 				  .withBodyFile(responseFile)));
 	}	
 	
+    public static void MockGetServiceResourcesCatalogDataByModelUuid(String serviceModelUuid, String responseFile){
+        stubFor(get(urlEqualTo("/v2/serviceResources?serviceModelUuid=" + serviceModelUuid))
+                  .willReturn(aResponse()
+                  .withStatus(200)
+                  .withHeader("Content-Type", "application/json")
+                  .withBodyFile(responseFile)));
+    }	
+	
 
 }
