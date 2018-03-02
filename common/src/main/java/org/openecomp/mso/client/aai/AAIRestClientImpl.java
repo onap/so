@@ -119,8 +119,7 @@ public class AAIRestClientImpl implements AAIRestClientI {
 		return results;
 	}
 	@Override
-	public void updateMaintenceFlag(String vnfName, boolean inMaint, String transactionLoggingUuid) throws throws JsonParseException, JsonMappingException, IOExcep
-tion {
+	public void updateMaintenceFlag(String vnfName, boolean inMaint, String transactionLoggingUuid) throws JsonParseException, JsonMappingException, IOException {
 		UUID requestId;
 		try {
 			requestId = UUID.fromString(transactionLoggingUuid);
