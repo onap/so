@@ -44,19 +44,15 @@ public class NotificationLogging implements InvocationHandler {
 
 	protected static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.ASDC);
 	
-	private static InvocationHandler handler = new InvocationHandler() {
-		@Override
-		public Object invoke(Object arg0, Method arg1, Object[] arg2)
-				throws Throwable {
-			List<Method> methods = objectMethodsToLog.get(arg0);
-			if ((methods == null) || (methods.isEmpty())) {
-				// Do nothing for now...
-				return null;
-			}
-			methods.add(arg1);
-			return arg1.invoke(arg0, arg2);
-		}
-	};
+	private static InvocationHandler handler = (arg0, arg1, arg2) -> {
+        List<Method> methods = objectMethodsToLog.get(arg0);
+        if ((methods == null) || (methods.isEmpty())) {
+            // Do nothing for now...
+            return null;
+        }
+        methods.add(arg1);
+        return arg1.invoke(arg0, arg2);
+    };
 	
 	public static InvocationHandler getHandler() {
 		return handler;
