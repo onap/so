@@ -1829,7 +1829,7 @@ public class WorkflowTest {
 		/**
 		 * Constructor
 		 * @param contentType the HTTP content type (optional)
-		 * @param type the callback message type (optional)
+		 * @param messageType the callback message type (optional)
 		 * @param content the content
 		 */
 		public CallbackData(String contentType, String messageType, String content) {

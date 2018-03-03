@@ -78,7 +78,7 @@ public class ASDCGlobalController {
     
     /**
      * Check that controllers list needs to be updated or not.
-     * @param return true if the list has been updated
+     * return true if the list has been updated
      */
     private boolean updateControllersListIfNeeded ()  {
     	boolean updateNeeded=false;

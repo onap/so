@@ -242,16 +242,16 @@ public class RESTClient {
     /**
      * Creates a RESTClient with the RESTConfig object.
      *
-     * @param RESTConfig config to use for sending request
+     * @param restConfig config to use for sending request
      *
      * @throws RESTException if unable to create a RESTClient
      */
-    public RESTClient(RESTConfig cfg) throws RESTException {
+    public RESTClient(RESTConfig restConfig) throws RESTException {
         this.headers = new LinkedHashMap<>();
         this.parameters = new LinkedHashMap<>();
-        this.URL = cfg.getURL();
-        this.proxyHost = cfg.getProxyHost();
-        this.proxyPort = cfg.getProxyPort();
+        this.URL = restConfig.getURL();
+        this.proxyHost = restConfig.getProxyHost();
+        this.proxyPort = restConfig.getProxyPort();
     }
 
     /**

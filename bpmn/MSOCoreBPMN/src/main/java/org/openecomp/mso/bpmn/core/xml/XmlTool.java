@@ -130,7 +130,7 @@ public final class XmlTool {
 
 	/**
 	 * Encodes a value so it can be used inside an XML text element.
-	 * @param s the string to encode
+	 * @param value the string to encode
 	 * @return the encoded string
 	 */
 	public static String encode(Object value) {
@@ -171,7 +171,7 @@ public final class XmlTool {
 	
 	/**
 	 * Encodes a value so it can be used inside an XML attribute.
-	 * @param s the string to encode
+	 * @param value the string to encode
 	 * @return the encoded string
 	 */
 	public static String encodeAttr(Object value) {

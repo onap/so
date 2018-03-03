@@ -699,7 +699,7 @@ public class RequestsDatabase {
      * update the resource operation
      * <br>
      * 
-     * @param operstatus the resource operation object
+     * @param operStatus the resource operation object
      * @since ONAP Amsterdam Release
      */
     public void updateResOperStatus(ResourceOperationStatus operStatus) {

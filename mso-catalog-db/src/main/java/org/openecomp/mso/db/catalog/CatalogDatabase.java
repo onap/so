@@ -1580,7 +1580,7 @@ public class CatalogDatabase implements Closeable {
      * Return the VnfResourceCustomization object identified by the given modelCustomizationUuid 1707
      * Note that the corresponding VnfResource Object will be put in the VnfResourceCustomization bean
      *
-     * @param getVnfResourceCustomizationByModelVersionId
+     * @param modelVersionId
      * @return VnfResourceCustomization or null if not found
      */
     public VnfResourceCustomization getVnfResourceCustomizationByModelVersionId(String modelVersionId) {
@@ -1862,7 +1862,7 @@ public class CatalogDatabase implements Closeable {
      * Return the VnfResourceCustomization object identified by the given modelCustomizationUuid 1707
      * Note that the corresponding VnfResource Object will be put in the VnfResourceCustomization bean
      *
-     * @param modelCustomizationUuid
+     * @param modelUuid
      * @return VnfResourceCustomization or null if not found
      */
     public VnfResource getVnfResourceByModelUuid(String modelUuid) {
@@ -2783,7 +2783,7 @@ public class CatalogDatabase implements Closeable {
      * Return a VNF Module List that matches a given VNF_TYPE, VF_MODULE_MODEL_NAME,
      * ASDC_SERVICE_MODEL_VERSION, MODEL_VERSION, and ACTION
      *
-     * @param vnfModuleType
+     * @param vfModuleType
      * @parm modelCustomizationUuid
      * @param asdcServiceModelVersion
      * @param modelVersion
@@ -3323,7 +3323,9 @@ public class CatalogDatabase implements Closeable {
     /**
      * Return a ServiceToResourceCustomization object 
      * 
-     * @param vfModuleModelUuid, heatFilesArtifactUuid
+     * @param serviceModelUuid
+     * @param resourceModelCustomizationUuid
+     * @param modelType
      * @return VfModuleToHeatFiles or null if none found
      */ 
     public ServiceToResourceCustomization getServiceToResourceCustomization(String serviceModelUuid, String resourceModelCustomizationUuid, String modelType) {
@@ -3349,7 +3351,7 @@ public class CatalogDatabase implements Closeable {
     /**
      * Return a Map<String, HeatFiles> for returning the heat files associated with a vfModule 1707
      * 
-     * @param parentHeatTemplateId
+     * @param vfModuleModelUuid
      * @return Map<String,Object> or null if none found
      */ 
     public Map <String, HeatFiles> getHeatFilesForVfModule(String vfModuleModelUuid) {
@@ -3565,7 +3567,7 @@ public class CatalogDatabase implements Closeable {
     /**
      * Retrieves a Heat environment from DB based on its unique key. 1707
      *
-     * @param name the environment artifact name
+     * @param artifactUuid the environment artifact name
      * @param version the environment resource version
      * @return the heat environment from DB or null if not found
      */
@@ -3798,7 +3800,7 @@ public class CatalogDatabase implements Closeable {
     /**
      * Return the newest version of a specific Tosca CSAR Record resource (queried by Name).
      *
-     * @param ToscaCsar
+     * @param artifactChecksum
      * @return ToscaCsar object or null if none found
      */
     public ToscaCsar getToscaCsar (String artifactChecksum) {
@@ -4361,9 +4363,7 @@ public class CatalogDatabase implements Closeable {
     /**
      * Return a Network Resource that matches the Network Customization defined by given MODEL_CUSTOMIZATION_UUID
      *
-     * @param networkType
-     * @param action
-     * @param serviceType
+     * @param modelUUID
      * @return NetworkRecipe object or null if none found
      */
     public NetworkResource getNetworkResourceByModelUuid(String modelUUID) {
@@ -4485,9 +4485,7 @@ public class CatalogDatabase implements Closeable {
     /**
      * Return a Network Resource that matches the Network Customization defined by given MODEL_CUSTOMIZATION_UUID
      *
-     * @param networkType
-     * @param action
-     * @param serviceType
+     * @param modelCustomizationUuid
      * @return NetworkRecipe object or null if none found
      */
     public NetworkResource getNetworkResourceByModelCustUuid(String modelCustomizationUuid) {
@@ -4576,7 +4574,7 @@ public class CatalogDatabase implements Closeable {
     /**
      * Return a VnfComponents recipe that matches a given VF_MODULE_ID, VNF_COMPONENT_TYPE, ACTION
      *
-     * @param vfModuleId
+     * @param vfModuleModelUUId
      * @param vnfComponentType
      * @param action
      * @return VnfComponentsRecipe object or null if none found
@@ -4698,7 +4696,7 @@ public class CatalogDatabase implements Closeable {
     /**
      * Return a VfModule record that matches a given MODEL_NAME
      *
-     * @param modelName
+     * @param modelUUID
      * @return VfModule object or null if none found
      */
     public VfModule getVfModuleByModelUUID (String modelUUID) {

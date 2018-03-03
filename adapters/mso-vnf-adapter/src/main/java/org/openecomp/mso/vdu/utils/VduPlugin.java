@@ -145,7 +145,7 @@ public interface VduPlugin {
      * @param tenantId The cloud tenant in which to delete the VDU.
      * @param vduInstanceId The unique id of the deployment to delete.
      * @param timeoutMinutes Timeout after which the delete action will be cancelled
-     * @param deleteBlueprint Flag to also delete the blueprint
+     * @param keepBlueprintLoaded Flag to also delete the blueprint
      * 
      * @return A VduInfo object, representing the state of the instance just prior to deletion.
      * 

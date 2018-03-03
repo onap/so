@@ -371,8 +371,9 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
      * @param cloudSiteId CLLI code of the cloud site in which to delete
      * @param tenantId Openstack tenant identifier
      * @param vnfName VNF Name or Openstack ID
+     * @param messageId
      * @param msoRequest Request tracking information for logs
-     * @param notificationURL the target URL for asynchronous response
+     * @param notificationUrl the target URL for asynchronous response
      */
     @Override
     public void deleteVnfA (String cloudSiteId,
