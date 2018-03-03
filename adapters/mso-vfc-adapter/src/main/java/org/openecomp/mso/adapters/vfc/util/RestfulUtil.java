@@ -166,12 +166,7 @@ public class RestfulUtil {
             method = null;
             return createResponse(statusCode, responseContent);
 
-        } catch(SocketTimeoutException e) {
-            String errMsg = "Request to VFC timed out";
-            logError(errMsg, e);
-            return createResponse(HttpURLConnection.HTTP_CLIENT_TIMEOUT, errMsg);
-
-        } catch(ConnectTimeoutException e) {
+        } catch(SocketTimeoutException | ConnectTimeoutException e) {
             String errMsg = "Request to VFC timed out";
             logError(errMsg, e);
             return createResponse(HttpURLConnection.HTTP_CLIENT_TIMEOUT, errMsg);
