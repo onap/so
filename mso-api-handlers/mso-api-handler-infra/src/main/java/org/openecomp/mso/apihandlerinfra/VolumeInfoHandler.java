@@ -134,43 +134,45 @@ public class VolumeInfoHandler {
         if (ar.getVnfType () != null) {
             vi.setVnfType (ar.getVnfType ());
         }
-        
-        if (version.equals(Constants.SCHEMA_VERSION_V1)) {
-        	if (ar.getServiceType () != null) {
-        		vi.setServiceType (ar.getServiceType ());
-        	}
-        	if (ar.getAicNodeClli () != null) {
-        		vi.setAicNodeClli (ar.getAicNodeClli ());
-        	}
-        }
-        else if (version.equals(Constants.SCHEMA_VERSION_V2)) {
-        	if (ar.getAaiServiceId () != null) {
-        		vi.setServiceId (ar.getAaiServiceId ());
-        	}
-        	if (ar.getAicCloudRegion () != null) {
-        		vi.setAicCloudRegion (ar.getAicCloudRegion ());
-        	}        	
-        	if (ar.getVfModuleModelName () != null) {
-        		vi.setVfModuleModelName (ar.getVfModuleModelName ());
-        	}        	
-        }
-        else if (version.equals(Constants.SCHEMA_VERSION_V3)) {
-        	if (ar.getAaiServiceId () != null) {
-        		vi.setServiceId (ar.getAaiServiceId ());
-        	}
-        	if (ar.getAicCloudRegion () != null) {
-        		vi.setAicCloudRegion (ar.getAicCloudRegion ());
-        	}        	
-        	if (ar.getVfModuleModelName () != null) {
-        		vi.setVfModuleModelName (ar.getVfModuleModelName ());
-        	}
-        	if (ar.getServiceInstanceId () != null) {
-        		vi.setServiceInstanceId (ar.getServiceInstanceId ());
-        	}
-        	if (ar.getVnfId () != null) {
-                vi.setVnfId (ar.getVnfId ());
-            }
-        }
+
+         switch (version) {
+             case Constants.SCHEMA_VERSION_V1:
+                 if (ar.getServiceType() != null) {
+                     vi.setServiceType(ar.getServiceType());
+                 }
+                 if (ar.getAicNodeClli() != null) {
+                     vi.setAicNodeClli(ar.getAicNodeClli());
+                 }
+                 break;
+             case Constants.SCHEMA_VERSION_V2:
+                 if (ar.getAaiServiceId() != null) {
+                     vi.setServiceId(ar.getAaiServiceId());
+                 }
+                 if (ar.getAicCloudRegion() != null) {
+                     vi.setAicCloudRegion(ar.getAicCloudRegion());
+                 }
+                 if (ar.getVfModuleModelName() != null) {
+                     vi.setVfModuleModelName(ar.getVfModuleModelName());
+                 }
+                 break;
+             case Constants.SCHEMA_VERSION_V3:
+                 if (ar.getAaiServiceId() != null) {
+                     vi.setServiceId(ar.getAaiServiceId());
+                 }
+                 if (ar.getAicCloudRegion() != null) {
+                     vi.setAicCloudRegion(ar.getAicCloudRegion());
+                 }
+                 if (ar.getVfModuleModelName() != null) {
+                     vi.setVfModuleModelName(ar.getVfModuleModelName());
+                 }
+                 if (ar.getServiceInstanceId() != null) {
+                     vi.setServiceInstanceId(ar.getServiceInstanceId());
+                 }
+                 if (ar.getVnfId() != null) {
+                     vi.setVnfId(ar.getVnfId());
+                 }
+                 break;
+         }
         if (ar.getTenantId () != null) {
             vi.setTenantId (ar.getTenantId ());
         }

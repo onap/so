@@ -157,26 +157,29 @@ public class VnfMsoInfraRequest {
         	 throw new ValidationException ("format for vnf request");        	
         }
         // Verify that the elements correspond to the version
-        
-               
-        if (version.equals(Constants.SCHEMA_VERSION_V1)) {
-        		if (this.vnfInputs.getVfModuleName () != null || this.vnfInputs.getVfModuleId () != null ||
-        				this.vnfInputs.getVfModuleModelName () != null || this.vnfInputs.getAsdcServiceModelVersion () != null ||
-        				this.vnfInputs.getBackoutOnFailure() != null || this.vnfInputs.getAicCloudRegion() != null ||
-        				this.vnfInputs.getServiceInstanceId  () != null) {
-        			throw new ValidationException ("format for v1 version of vnf request");
-        		}
+
+        switch (version) {
+            case Constants.SCHEMA_VERSION_V1:
+                if (this.vnfInputs.getVfModuleName() != null || this.vnfInputs.getVfModuleId() != null ||
+                    this.vnfInputs.getVfModuleModelName() != null || this.vnfInputs.getAsdcServiceModelVersion() != null
+                    ||
+                    this.vnfInputs.getBackoutOnFailure() != null || this.vnfInputs.getAicCloudRegion() != null ||
+                    this.vnfInputs.getServiceInstanceId() != null) {
+                    throw new ValidationException("format for v1 version of vnf request");
+                }
+                break;
+            case Constants.SCHEMA_VERSION_V2:
+                if (this.vnfInputs.getServiceType() != null || this.vnfInputs.getAicNodeClli() != null
+                    || this.vnfInputs.getServiceInstanceId() != null) {
+                    throw new ValidationException("format for v2 version of vnf request");
+                }
+                break;
+            case Constants.SCHEMA_VERSION_V3:
+                if (this.vnfInputs.getServiceType() != null || this.vnfInputs.getAicNodeClli() != null) {
+                    throw new ValidationException("format for v3 version of vnf request");
+                }
+                break;
         }
-        else if (version.equals(Constants.SCHEMA_VERSION_V2)) {
-        		if (this.vnfInputs.getServiceType() != null || this.vnfInputs.getAicNodeClli() != null || this.vnfInputs.getServiceInstanceId  () != null) {
-        			throw new ValidationException ("format for v2 version of vnf request");
-        		}
-        }
-        else if (version.equals(Constants.SCHEMA_VERSION_V3)) {
-    		if (this.vnfInputs.getServiceType() != null || this.vnfInputs.getAicNodeClli() != null) {
-    			throw new ValidationException ("format for v3 version of vnf request");
-    		}
-    }
         
         
         if (!InfraUtils.isActionAllowed (props, "vnf", version, action.value ())) {
