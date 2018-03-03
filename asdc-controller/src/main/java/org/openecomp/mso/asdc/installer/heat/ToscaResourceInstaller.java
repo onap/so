@@ -878,7 +878,7 @@ public class ToscaResourceInstaller {// implements IVfResourceInstaller {
 		String vfModuleModelUUID = vfModuleData.getVfModuleModelUUID();
 		
 		
-		if(vfModuleModelUUID != null && vfModuleModelUUID.indexOf(".") > -1){
+		if(vfModuleModelUUID != null && vfModuleModelUUID.contains(".")){
 			vfModuleModelUUID = vfModuleModelUUID.substring(0, vfModuleModelUUID.indexOf("."));
 		}
 					

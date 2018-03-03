@@ -162,9 +162,9 @@ public class DeleteVcpeResCustServiceTest extends AbstractTestBase {
 		assertEquals("true", BPMNUtil.getVariable(processEngineRule, PROCNAME, PROCNAME+VAR_SUCCESS_IND));
 		assertEquals("200", BPMNUtil.getVariable(processEngineRule, PROCNAME, VAR_RESP_CODE));
 		assertEquals(null, workflowException);
-		assertTrue(completionReq.indexOf("<request-id>testRequestId<") >= 0);
-		assertTrue(completionReq.indexOf("<action>DELETE<") >= 0);
-		assertTrue(completionReq.indexOf("<source>VID<") >= 0);
+		assertTrue(completionReq.contains("<request-id>testRequestId<"));
+		assertTrue(completionReq.contains("<action>DELETE<"));
+		assertTrue(completionReq.contains("<source>VID<"));
 
 		assertEquals("2", BPMNUtil.getVariable(processEngineRule, PROCNAME, Prefix+"vnfsDeletedCount"));
 
@@ -223,9 +223,9 @@ public class DeleteVcpeResCustServiceTest extends AbstractTestBase {
 		assertEquals("true", BPMNUtil.getVariable(processEngineRule, PROCNAME, PROCNAME+VAR_SUCCESS_IND));
 		assertEquals("200", BPMNUtil.getVariable(processEngineRule, PROCNAME, VAR_RESP_CODE));
 		assertEquals(null, workflowException);
-		assertTrue(completionReq.indexOf("<request-id>testRequestId<") >= 0);
-		assertTrue(completionReq.indexOf("<action>DELETE<") >= 0);
-		assertTrue(completionReq.indexOf("<source>VID<") >= 0);
+		assertTrue(completionReq.contains("<request-id>testRequestId<"));
+		assertTrue(completionReq.contains("<action>DELETE<"));
+		assertTrue(completionReq.contains("<source>VID<"));
 
 		assertEquals("0", BPMNUtil.getVariable(processEngineRule, PROCNAME, Prefix+"vnfsDeletedCount"));
 		
