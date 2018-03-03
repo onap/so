@@ -158,33 +158,35 @@ public class NetworkRequestHandler {
         if (ar.getVnfType () != null) {
             vi.setNetworkType (ar.getVnfType ());
         }
-        if (version.equals(Constants.SCHEMA_VERSION_V1)) {
-        	if (ar.getServiceType () != null) {
-        		vi.setServiceType (ar.getServiceType ());
-        	}
-        	if (ar.getAicNodeClli () != null) {
-        		vi.setAicNodeClli (ar.getAicNodeClli ());
-        	}
-        }
-        else if (version.equals(Constants.SCHEMA_VERSION_V2)) {
-        	if (ar.getAaiServiceId () != null) {
-        		vi.setServiceId (ar.getAaiServiceId ());
-        	}
-        	if (ar.getAicCloudRegion () != null) {
-        		vi.setAicCloudRegion (ar.getAicCloudRegion ());
-        	}
-        }
-        else if (version.equals(Constants.SCHEMA_VERSION_V3)) {
-        	if (ar.getAaiServiceId () != null) {
-        		vi.setServiceId (ar.getAaiServiceId ());
-        	}
-        	if (ar.getAicCloudRegion () != null) {
-        		vi.setAicCloudRegion (ar.getAicCloudRegion ());
-        	}
-        	if (ar.getServiceInstanceId () != null) {
-        		vi.setServiceInstanceId (ar.getServiceInstanceId ());
-        	}
-        			
+        switch (version) {
+            case Constants.SCHEMA_VERSION_V1:
+                if (ar.getServiceType() != null) {
+                    vi.setServiceType(ar.getServiceType());
+                }
+                if (ar.getAicNodeClli() != null) {
+                    vi.setAicNodeClli(ar.getAicNodeClli());
+                }
+                break;
+            case Constants.SCHEMA_VERSION_V2:
+                if (ar.getAaiServiceId() != null) {
+                    vi.setServiceId(ar.getAaiServiceId());
+                }
+                if (ar.getAicCloudRegion() != null) {
+                    vi.setAicCloudRegion(ar.getAicCloudRegion());
+                }
+                break;
+            case Constants.SCHEMA_VERSION_V3:
+                if (ar.getAaiServiceId() != null) {
+                    vi.setServiceId(ar.getAaiServiceId());
+                }
+                if (ar.getAicCloudRegion() != null) {
+                    vi.setAicCloudRegion(ar.getAicCloudRegion());
+                }
+                if (ar.getServiceInstanceId() != null) {
+                    vi.setServiceInstanceId(ar.getServiceInstanceId());
+                }
+
+                break;
         }
         
         if (ar.getTenantId () != null) {
