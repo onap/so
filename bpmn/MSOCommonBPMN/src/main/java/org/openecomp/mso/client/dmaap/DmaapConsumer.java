@@ -28,8 +28,6 @@ import org.openecomp.mso.client.dmaap.exceptions.DMaaPConsumerFailure;
 import org.openecomp.mso.client.dmaap.exceptions.ExceededMaximumPollingTime;
 import org.openecomp.mso.client.dmaap.rest.RestConsumer;
 
-import com.google.common.base.Stopwatch;
-
 public abstract class DmaapConsumer extends DmaapClient {
 
 	public DmaapConsumer() throws FileNotFoundException, IOException {

@@ -20,34 +20,7 @@
 
 package org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
-import org.camunda.bpm.engine.delegate.DelegateExecution;
-import org.json.JSONObject;
-import org.onap.msb.sdk.discovery.common.RouteException;
-import org.onap.msb.sdk.httpclient.RestServiceCreater;
-import org.onap.msb.sdk.httpclient.msb.MSBServiceClient;
-import org.openecomp.mso.bpmn.core.BaseTask;
-import org.openecomp.mso.bpmn.core.PropertyConfiguration;
 import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.GenericResourceApi;
-import org.openecomp.mso.logger.MessageEnum;
-import org.openecomp.mso.logger.MsoLogger;
-import org.openecomp.mso.requestsdb.RequestsDatabase;
-import org.openecomp.mso.requestsdb.RequestsDbConstant;
-import org.openecomp.mso.requestsdb.ResourceOperationStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.HashMap;

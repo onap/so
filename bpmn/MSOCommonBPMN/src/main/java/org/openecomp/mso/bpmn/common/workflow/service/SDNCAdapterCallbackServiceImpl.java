@@ -24,13 +24,11 @@ import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
-import javax.ws.rs.core.Context;
 import javax.xml.ws.WebServiceContext;
 
 import org.openecomp.mso.bpmn.common.adapter.sdnc.SDNCAdapterCallbackRequest;
 import org.openecomp.mso.bpmn.common.adapter.sdnc.SDNCAdapterResponse;
 import org.openecomp.mso.bpmn.common.adapter.sdnc.SDNCCallbackAdapterPortType;
-import org.openecomp.mso.logger.MsoLogger;
 
 /**
  * Implementation of SDNCAdapterCallbackService.

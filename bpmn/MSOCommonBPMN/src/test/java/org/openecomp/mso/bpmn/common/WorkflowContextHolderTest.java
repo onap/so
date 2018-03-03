@@ -20,18 +20,8 @@
 
 package org.openecomp.mso.bpmn.common;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-
 import java.util.UUID;
 
-import javax.ws.rs.core.Response;
-
-import org.jboss.resteasy.spi.AsynchronousResponse;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowCallbackResponse;
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowContext;
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowContextHolder;

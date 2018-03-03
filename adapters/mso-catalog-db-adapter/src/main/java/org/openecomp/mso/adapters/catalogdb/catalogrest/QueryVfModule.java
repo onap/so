@@ -19,7 +19,6 @@
  */
 package org.openecomp.mso.adapters.catalogdb.catalogrest;
 
-import org.openecomp.mso.db.catalog.beans.VfModule;
 import org.openecomp.mso.db.catalog.beans.VfModuleCustomization;
 import org.jboss.resteasy.annotations.providers.NoJackson;
 

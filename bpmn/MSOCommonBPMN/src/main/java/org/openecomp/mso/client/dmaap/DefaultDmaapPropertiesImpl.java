@@ -22,8 +22,6 @@ package org.openecomp.mso.client.dmaap;
 
 import java.util.Map;
 
-import org.openecomp.mso.bpmn.core.PropertyConfiguration;
-
 public class DefaultDmaapPropertiesImpl implements DmaapProperties {
 
 	private final Map<String, String> properties;

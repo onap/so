@@ -20,17 +20,10 @@
 
 package org.openecomp.mso.bpmn.common;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import org.camunda.bpm.engine.test.Deployment;
-import org.camunda.bpm.engine.variable.impl.VariableMapImpl;
-import org.jboss.resteasy.spi.AsynchronousResponse;
-import org.junit.Test;
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowAsyncResource;
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowResponse;
 

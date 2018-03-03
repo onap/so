@@ -29,25 +29,9 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.net.ssl.SSLContext;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
 
-import org.onap.aai.domain.yang.GenericVnf;
-import org.onap.aai.domain.yang.GenericVnfs;
-import org.onap.aai.domain.yang.Pserver;
-import org.onap.aai.domain.yang.Pservers;
-import org.openecomp.mso.bpmn.core.PropertyConfiguration;
 import org.openecomp.mso.client.aai.entities.CustomQuery;
 import org.openecomp.mso.client.aai.entities.Results;
-import org.springframework.stereotype.Service;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class AAIRestClientImpl implements AAIRestClient {

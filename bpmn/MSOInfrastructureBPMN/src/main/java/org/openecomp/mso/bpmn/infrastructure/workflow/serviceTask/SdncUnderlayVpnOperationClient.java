@@ -20,18 +20,11 @@
 
 package org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask;
 
-import org.apache.commons.lang3.StringUtils;
-import org.onap.msb.sdk.httpclient.RestServiceCreater;
-import org.onap.msb.sdk.httpclient.msb.MSBServiceClient;
 import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.GenericResourceApi;
 import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.HeaderUtil;
 import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.builder.NetworkRpcInputEntityBuilder;
 import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.entity.RpcNetworkTopologyOperationInputEntity;
 import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.entity.RpcNetworkTopologyOperationOutputEntity;
-import org.openecomp.mso.logger.MsoLogger;
-import org.openecomp.mso.requestsdb.RequestsDatabase;
-import org.openecomp.mso.requestsdb.RequestsDbConstant;
-import org.openecomp.mso.requestsdb.ResourceOperationStatus;
 
 import java.util.Map;
 

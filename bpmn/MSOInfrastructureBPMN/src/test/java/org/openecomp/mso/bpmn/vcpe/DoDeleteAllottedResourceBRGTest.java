@@ -19,26 +19,10 @@
  */
 package org.openecomp.mso.bpmn.vcpe;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockDeleteAllottedResource;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetAllottedResource;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPatchAllottedResource;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockQueryAllottedResourceById;
-import static org.openecomp.mso.bpmn.mock.StubResponseDatabase.mockUpdateRequestDB;
-import static org.openecomp.mso.bpmn.mock.StubResponseSDNCAdapter.mockSDNCAdapter;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import org.camunda.bpm.engine.test.Deployment;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.openecomp.mso.bpmn.common.BPMNUtil;
-import org.openecomp.mso.bpmn.mock.FileUtil;
 
 
 public class DoDeleteAllottedResourceBRGTest extends AbstractTestBase {

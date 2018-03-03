@@ -20,36 +20,10 @@
 
 package org.openecomp.mso.bpmn.infrastructure;
 
-import static org.junit.Assert.assertEquals;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockAAIVfModule;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockDBUpdateVfModule;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetGenericVnfById_404;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetServiceInstance;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockNodeQueryServiceInstanceById;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPatchGenericVnf;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPatchVfModuleId;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPutGenericVnf;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockSDNCAdapterVfModule;
-import static org.openecomp.mso.bpmn.mock.StubResponseSDNCAdapter.mockSDNCAdapter;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockVNFAdapterRestVfModule;
-import static org.openecomp.mso.bpmn.mock.StubResponseDatabase.mockUpdateRequestDB;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import org.camunda.bpm.engine.test.Deployment;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.openecomp.mso.bpmn.common.BPMNUtil;
-import org.openecomp.mso.bpmn.common.WorkflowTest;
-import org.openecomp.mso.bpmn.core.domain.ModelInfo;
-import org.openecomp.mso.bpmn.core.domain.ModuleResource;
-import org.openecomp.mso.bpmn.core.domain.ServiceDecomposition;
-import org.openecomp.mso.bpmn.core.domain.VnfResource;
-import org.openecomp.mso.bpmn.mock.FileUtil;
 
 /**
  * Unit Test for the DoCreateVnfAndModules Flow

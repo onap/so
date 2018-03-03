@@ -21,22 +21,16 @@
 package org.openecomp.mso.asdc.installer;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 
 import java.util.List;
 
 import org.openecomp.sdc.api.notification.IArtifactInfo;
-import org.openecomp.sdc.api.notification.INotificationData;
 //import org.openecomp.generic.tosca.parser.model.Metadata;
 //import org.openecomp.sdc.tosca.parser.factory.SdcCsarHelperFactory;
 //import org.openecomp.sdc.tosca.parser.factory.SdcCsarHelperFactory;
 ///import org.openecomp.generic.tosca.parser.model.Metadata;
-import org.openecomp.sdc.api.results.IDistributionClientDownloadResult;
 import org.openecomp.sdc.tosca.parser.api.ISdcCsarHelper;
-import org.openecomp.sdc.tosca.parser.impl.SdcCsarHelperImpl;
-import org.openecomp.sdc.tosca.parser.impl.SdcPropertyNames;
 
 
 import org.openecomp.sdc.tosca.parser.impl.SdcToscaParserFactory;

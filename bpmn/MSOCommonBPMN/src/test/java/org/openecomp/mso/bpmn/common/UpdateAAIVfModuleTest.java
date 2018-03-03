@@ -32,9 +32,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import org.camunda.bpm.engine.test.Deployment;
-import org.junit.Assert;
-import org.junit.Test;
 import org.openecomp.mso.bpmn.mock.FileUtil;
 
 /**

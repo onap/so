@@ -25,19 +25,6 @@ import java.security.GeneralSecurityException;
 
 import javax.xml.bind.DatatypeConverter;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.openecomp.mso.logger.MessageEnum;
-import org.openecomp.mso.logger.MsoLogger;
-import org.openecomp.mso.properties.MsoJavaProperties;
-import org.openecomp.mso.properties.MsoPropertiesFactory;
-import org.openecomp.mso.utils.CryptoUtils;
-
 /**
  * Support to call resource recipes from the BPMN workflow.
  * Such as call resource recipe in service workflow.

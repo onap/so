@@ -24,8 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
 
-import org.apache.commons.io.IOUtils;
-
 public class ResponseExceptionMapperImpl extends ResponseExceptionMapper {
 
 	@Override

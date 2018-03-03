@@ -29,7 +29,6 @@
 package org.openecomp.mso.apihandlerinfra.tasksbeans;
 
 import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_DEFAULT)
 

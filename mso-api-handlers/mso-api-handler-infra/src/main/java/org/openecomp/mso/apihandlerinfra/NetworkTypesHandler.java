@@ -39,7 +39,6 @@ import org.openecomp.mso.apihandlerinfra.networkbeans.ObjectFactory;
 import org.openecomp.mso.db.catalog.CatalogDatabase;
 import org.openecomp.mso.db.catalog.beans.NetworkResource;
 import org.openecomp.mso.logger.MsoLogger;
-import org.openecomp.mso.requestsdb.RequestsDatabase;
 import org.openecomp.mso.utils.UUIDChecker;
 
 import com.wordnik.swagger.annotations.Api;

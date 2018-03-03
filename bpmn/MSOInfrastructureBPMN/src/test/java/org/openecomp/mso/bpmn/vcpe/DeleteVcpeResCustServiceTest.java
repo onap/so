@@ -19,34 +19,11 @@
  */
 package org.openecomp.mso.bpmn.vcpe;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockDeleteAllottedResource;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetAllottedResource;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetServiceInstance;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockNodeQueryServiceInstanceById;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPatchAllottedResource;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockQueryAllottedResourceById;
-import static org.openecomp.mso.bpmn.mock.StubResponseDatabase.mockUpdateRequestDB;
-import static org.openecomp.mso.bpmn.mock.StubResponseSDNCAdapter.mockSDNCAdapter;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import org.camunda.bpm.engine.test.Deployment;
-import org.junit.Test;
-import org.openecomp.mso.bpmn.common.BPMNUtil;
-import org.openecomp.mso.bpmn.mock.FileUtil;
-
-import com.github.tomakehurst.wiremock.stubbing.Scenario;
 
 public class DeleteVcpeResCustServiceTest extends AbstractTestBase {
 

@@ -45,7 +45,6 @@ import org.openecomp.mso.openstack.exceptions.MsoCloudIdentityNotFound;
 import org.openecomp.mso.openstack.utils.MsoHeatUtils;
 import org.openecomp.mso.openstack.utils.MsoKeystoneUtils;
 import org.openecomp.mso.openstack.utils.MsoNeutronUtils;
-import org.openecomp.mso.properties.MsoPropertiesException;
 import org.openecomp.mso.logger.MessageEnum;
 
 /**

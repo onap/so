@@ -21,9 +21,6 @@ package org.openecomp.mso.bpmn.mock;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
-
 /**
  * 
  * JAX RS Application wiring for Mock Resource

@@ -26,7 +26,6 @@ import java.io.StringWriter;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBContext;

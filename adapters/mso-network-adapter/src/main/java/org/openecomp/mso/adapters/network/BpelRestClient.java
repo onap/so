@@ -22,7 +22,6 @@
 package org.openecomp.mso.adapters.network;
 
 
-import java.io.IOException;
 import java.util.Set;
 import java.util.TreeSet;
 

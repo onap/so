@@ -20,28 +20,11 @@
 
 package org.openecomp.mso.bpmn.common;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static org.openecomp.mso.bpmn.common.BPMNUtil.executeWorkFlow;
-import static org.openecomp.mso.bpmn.common.BPMNUtil.waitForWorkflowToFinish;
-import static com.github.tomakehurst.wiremock.client.WireMock.containing;
-import static com.github.tomakehurst.wiremock.client.WireMock.put;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
-import static org.openecomp.mso.bpmn.common.BPMNUtil.executeWorkFlow;
-import static org.openecomp.mso.bpmn.common.BPMNUtil.waitForWorkflowToFinish;
 import static org.openecomp.mso.bpmn.mock.StubResponsePolicy.MockPolicyAbort;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import org.camunda.bpm.engine.RuntimeService;
-import org.camunda.bpm.engine.test.Deployment;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.openecomp.mso.bpmn.common.workflow.service.WorkflowResponse;
-import org.openecomp.mso.bpmn.core.WorkflowException;
 
 /**
  * Unit test for RainyDayHandler.bpmn.

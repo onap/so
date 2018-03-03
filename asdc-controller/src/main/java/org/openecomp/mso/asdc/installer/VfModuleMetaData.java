@@ -20,7 +20,6 @@
 
 package org.openecomp.mso.asdc.installer;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,8 +27,6 @@ import java.util.Map;
 import org.codehaus.jackson.annotate.JsonAnySetter;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
-
-import org.openecomp.sdc.api.notification.IVfModuleMetadata;
 
 public class VfModuleMetaData implements IVfModuleData {
 

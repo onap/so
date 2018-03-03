@@ -20,36 +20,10 @@
 
 package org.openecomp.mso.bpmn.infrastructure;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.containing;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockDeleteGenericVnf;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockDeleteVfModuleId;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetGenericVnfById;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetGenericVnfByIdWithDepth;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetGenericVnfByName;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPatchGenericVnf;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPatchVfModuleId;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPutVfModuleId;
-import static org.openecomp.mso.bpmn.mock.StubResponseDatabase.mockUpdateRequestDB;
-import static org.openecomp.mso.bpmn.mock.StubResponseSDNCAdapter.mockSDNCAdapter;
-import static org.openecomp.mso.bpmn.mock.StubResponseVNFAdapter.mockVNFDelete;
-import static org.openecomp.mso.bpmn.mock.StubResponseVNFAdapter.mockVfModuleDelete;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import org.camunda.bpm.engine.test.Deployment;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.openecomp.mso.bpmn.common.WorkflowTest;
-import org.openecomp.mso.bpmn.core.RollbackData;
-import org.openecomp.mso.bpmn.core.WorkflowException;
-import org.openecomp.mso.bpmn.mock.FileUtil;
 
 /**
  * Unit test for DoCreateVnfAndModulesRollback.bpmn.

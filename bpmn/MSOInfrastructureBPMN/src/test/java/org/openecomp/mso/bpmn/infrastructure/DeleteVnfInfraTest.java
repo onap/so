@@ -23,29 +23,9 @@
 
 package org.openecomp.mso.bpmn.infrastructure;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
-import static org.junit.Assert.assertEquals;
-import static org.openecomp.mso.bpmn.common.BPMNUtil.executeWorkFlow;
-import static org.openecomp.mso.bpmn.common.BPMNUtil.waitForWorkflowToFinish;
-import static org.openecomp.mso.bpmn.mock.StubResponseDatabase.mockUpdateRequestDB;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockDeleteGenericVnf;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockDeleteGenericVnf_404;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetGenericVnfById;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.camunda.bpm.engine.test.Deployment;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.openecomp.mso.bpmn.common.BPMNUtil;
-import org.openecomp.mso.bpmn.common.WorkflowTest;
-import org.openecomp.mso.bpmn.common.workflow.service.WorkflowResponse;
-import org.openecomp.mso.bpmn.mock.FileUtil;
 
 /**
  * Please describe the DeleteVnfInfra.java class

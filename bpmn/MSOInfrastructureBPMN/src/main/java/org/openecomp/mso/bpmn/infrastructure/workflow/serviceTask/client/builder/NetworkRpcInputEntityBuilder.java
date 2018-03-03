@@ -20,7 +20,6 @@
 
 package org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.builder;
 
-import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.entity.*;
 
 import java.util.List;

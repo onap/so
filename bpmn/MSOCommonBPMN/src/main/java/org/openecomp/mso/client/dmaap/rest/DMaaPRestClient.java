@@ -25,8 +25,6 @@ import java.util.Base64;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.ws.rs.client.ClientResponseFilter;
-
 import org.openecomp.mso.client.ResponseExceptionMapperImpl;
 import org.openecomp.mso.client.policy.RestClient;
 

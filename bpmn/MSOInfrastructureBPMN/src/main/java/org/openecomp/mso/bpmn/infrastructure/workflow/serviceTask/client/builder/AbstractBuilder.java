@@ -20,13 +20,10 @@
 
 package org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.builder;
 
-import org.apache.commons.lang3.StringUtils;
-import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.entity.OnapModelInformationEntity;
 import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.entity.ParamEntity;
 import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.entity.RequestInformationEntity;
 import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.entity.ServiceInformationEntity;
-import org.openecomp.mso.requestsdb.RequestsDbConstant;
 
 import java.util.ArrayList;
 import java.util.List;

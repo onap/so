@@ -24,22 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
 
-import javax.annotation.Priority;
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.ForbiddenException;
-import javax.ws.rs.InternalServerErrorException;
-import javax.ws.rs.NotAcceptableException;
-import javax.ws.rs.NotAllowedException;
-import javax.ws.rs.NotAuthorizedException;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.NotSupportedException;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.client.ClientRequestContext;
-import javax.ws.rs.client.ClientResponseContext;
-import javax.ws.rs.client.ClientResponseFilter;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.Provider;
-
 @Provider
 @Priority(value = 1)
 public abstract class ResponseExceptionMapper implements ClientResponseFilter {

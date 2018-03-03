@@ -20,21 +20,11 @@
 
 package org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask;
 
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.camunda.bpm.engine.delegate.DelegateExecution;
-import org.onap.msb.sdk.discovery.common.RouteException;
-import org.openecomp.mso.bpmn.core.WorkflowException;
 import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.GenericResourceApi;
 import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.HeaderUtil;
 import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.builder.NetworkRpcInputEntityBuilder;
 import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.entity.RpcNetworkTopologyOperationInputEntity;
 import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.entity.RpcNetworkTopologyOperationOutputEntity;
-import org.openecomp.mso.logger.MessageEnum;
-import org.openecomp.mso.requestsdb.RequestsDbConstant;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 

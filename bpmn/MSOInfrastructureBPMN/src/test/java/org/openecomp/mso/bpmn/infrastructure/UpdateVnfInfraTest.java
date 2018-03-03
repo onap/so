@@ -20,37 +20,10 @@
 
 package org.openecomp.mso.bpmn.infrastructure;
 
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockAAIVfModule;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockDBUpdateVfModule;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetGenericVnfByIdWithDepth;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetGenericVnfByIdWithPriority;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetServiceInstance;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockNodeQueryServiceInstanceById;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetPserverByVnfId;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetGenericVnfsByVnfId;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPatchGenericVnf;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPatchVfModuleId;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPutGenericVnf;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPutVfModuleIdNoResponse;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockVNFAdapterRestVfModule;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockSetInMaintFlagByVnfId;
-import static org.openecomp.mso.bpmn.mock.StubResponseDatabase.MockGetServiceResourcesCatalogData;
-import static org.openecomp.mso.bpmn.mock.StubResponseDatabase.mockUpdateRequestDB;
-import static org.openecomp.mso.bpmn.mock.StubResponseSDNCAdapter.mockSDNCAdapter;
-import static org.openecomp.mso.bpmn.mock.StubResponseVNFAdapter.mockVNFPut;
-import static org.openecomp.mso.bpmn.mock.StubResponsePolicy.MockPolicySkip;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import org.camunda.bpm.engine.test.Deployment;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.openecomp.mso.bpmn.common.WorkflowTest;
-import org.openecomp.mso.bpmn.common.workflow.service.WorkflowResponse;
-import org.openecomp.mso.bpmn.mock.FileUtil;
 
 /**
  * Unit test cases for UpdateVnfInfra.bpmn

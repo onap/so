@@ -28,7 +28,6 @@ import java.util.Map.Entry;
 
 import org.openecomp.sdc.api.notification.IArtifactInfo;
 import org.openecomp.sdc.api.notification.IResourceInstance;
-import org.openecomp.sdc.api.notification.IVfModuleMetadata;
 import org.openecomp.mso.asdc.client.ASDCConfiguration;
 
 /**

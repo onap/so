@@ -20,26 +20,10 @@
 
 package org.openecomp.mso.bpmn.infrastructure;
 
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetGenericVnfByIdWithDepth;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetGenericVnfByIdWithPriority;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPutVfModuleIdNoResponse;
-import static org.openecomp.mso.bpmn.mock.StubResponseDatabase.mockUpdateRequestDB;
-import static org.openecomp.mso.bpmn.mock.StubResponseSDNCAdapter.mockSDNCAdapter;
-import static org.openecomp.mso.bpmn.mock.StubResponseVNFAdapter.mockVNFPut;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import org.camunda.bpm.engine.test.Deployment;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.openecomp.mso.bpmn.common.WorkflowTest;
-import org.openecomp.mso.bpmn.common.WorkflowTest.CallbackSet;
-import org.openecomp.mso.bpmn.common.WorkflowTest.TestAsyncResponse;
-import org.openecomp.mso.bpmn.common.workflow.service.WorkflowResponse;
-import org.openecomp.mso.bpmn.mock.FileUtil;
 
 /**
  * Unit test cases for UpdateVfModuleV2.bpmn

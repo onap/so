@@ -21,10 +21,6 @@
  
 package org.openecomp.mso.bpmn.infrastructure;
 
-import org.junit.Test;
-import org.openecomp.mso.bpmn.common.WorkflowTest;
-import org.openecomp.mso.bpmn.mock.StubResponseAAI;
-
 public class StubResponseAAITest extends WorkflowTest{
 
 	@Test

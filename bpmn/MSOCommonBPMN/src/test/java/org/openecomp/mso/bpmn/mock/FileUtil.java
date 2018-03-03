@@ -20,7 +20,6 @@ package org.openecomp.mso.bpmn.mock;
 
 import java.io.IOException;
 import java.io.InputStream;
-import org.openecomp.mso.logger.MsoLogger;
 
 /**
  * 

@@ -34,7 +34,6 @@ import javax.json.JsonReader;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.openecomp.mso.db.catalog.beans.NetworkResourceCustomization;
 import org.openecomp.mso.db.catalog.beans.VnfResourceCustomization;
 
 @RunWith(MockitoJUnitRunner.class)

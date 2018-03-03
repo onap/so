@@ -25,14 +25,10 @@ import static org.junit.Assert.*;
 import javax.ws.rs.core.Response;
 
 import org.apache.http.HttpStatus;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.openecomp.mso.HealthCheckUtils;
 import org.openecomp.mso.MsoStatusUtil;
-import org.openecomp.mso.logger.MsoLogger;
-import org.openecomp.mso.properties.MsoJavaProperties;
 import org.openecomp.mso.properties.MsoPropertiesFactory;
 
 public class GlobalHealthcheckHandlerTest {

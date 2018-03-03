@@ -20,8 +20,6 @@
 
 package org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.List;
 
 /**

@@ -20,12 +20,6 @@
 
 package org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask;
 
-import org.apache.commons.lang3.StringUtils;
-import org.camunda.bpm.engine.delegate.DelegateExecution;
-import org.openecomp.mso.bpmn.core.BaseTask;
-import org.openecomp.mso.requestsdb.RequestsDatabase;
-import org.openecomp.mso.requestsdb.ResourceOperationStatus;
-
 /**
  * Created by 10112215 on 2017/9/26.
  */

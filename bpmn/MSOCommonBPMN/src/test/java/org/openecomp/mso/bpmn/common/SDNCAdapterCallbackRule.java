@@ -22,10 +22,6 @@ package org.openecomp.mso.bpmn.common;
 
 import javax.xml.ws.Endpoint;
 
-import org.camunda.bpm.engine.ProcessEngineServices;
-import org.junit.rules.TestRule;
-import org.junit.runner.Description;
-import org.junit.runners.model.Statement;
 import org.openecomp.mso.bpmn.common.workflow.service.SDNCAdapterCallbackServiceImpl;
 
 /**

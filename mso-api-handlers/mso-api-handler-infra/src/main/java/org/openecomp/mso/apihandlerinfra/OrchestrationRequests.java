@@ -40,8 +40,6 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.http.HttpStatus;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.openecomp.mso.apihandler.common.ErrorNumbers;
-import org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans.E2ERequest;
-import org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans.GetE2EServiceInstanceResponse;
 import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.GetOrchestrationListResponse;
 import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.GetOrchestrationResponse;
 import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.InstanceReferences;
@@ -54,7 +52,6 @@ import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoAlarmLogger;
 import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.requestsdb.InfraActiveRequests;
-import org.openecomp.mso.requestsdb.OperationStatus;
 import org.openecomp.mso.requestsdb.RequestsDatabase;
 
 import com.wordnik.swagger.annotations.Api;

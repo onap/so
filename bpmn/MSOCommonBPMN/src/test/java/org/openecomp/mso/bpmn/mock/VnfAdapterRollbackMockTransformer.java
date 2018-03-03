@@ -18,16 +18,6 @@
 
 package org.openecomp.mso.bpmn.mock;
 
-import org.jboss.resteasy.client.ClientRequest;
-import org.jboss.resteasy.client.ClientResponse;
-
-import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
-import com.github.tomakehurst.wiremock.common.FileSource;
-import com.github.tomakehurst.wiremock.extension.ResponseTransformer;
-import com.github.tomakehurst.wiremock.http.Request;
-import com.github.tomakehurst.wiremock.http.ResponseDefinition;
-
-import org.openecomp.mso.logger.MsoLogger;
 /**
  * Please describe the VnfAdapterCreateMockTransformer.java class
  *

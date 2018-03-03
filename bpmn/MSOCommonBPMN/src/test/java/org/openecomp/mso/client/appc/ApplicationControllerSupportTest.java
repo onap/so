@@ -20,13 +20,6 @@
 
 package org.openecomp.mso.client.appc;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.openecomp.appc.client.lcm.model.Status;
 import org.openecomp.mso.client.appc.ApplicationControllerSupport.StatusCategory;
 
 @RunWith(JUnitParamsRunner.class)

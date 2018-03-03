@@ -20,7 +20,6 @@
 package org.openecomp.mso.adapters.catalogdb.catalogrest;
 /* should be called QueryVnfResource.java */
 
-import org.openecomp.mso.db.catalog.beans.VnfResource;
 import org.openecomp.mso.db.catalog.beans.VnfResourceCustomization;
 import org.jboss.resteasy.annotations.providers.NoJackson;
 

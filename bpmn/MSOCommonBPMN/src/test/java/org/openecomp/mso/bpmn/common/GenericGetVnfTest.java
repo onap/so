@@ -23,8 +23,6 @@
 
 package org.openecomp.mso.bpmn.common;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.openecomp.mso.bpmn.common.BPMNUtil.executeWorkFlow;
 import static org.openecomp.mso.bpmn.common.BPMNUtil.waitForWorkflowToFinish;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetGenericVnfByIdWithDepth;
@@ -36,9 +34,6 @@ import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetVceById;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.camunda.bpm.engine.test.Deployment;
-import org.junit.Ignore;
-import org.junit.Test;
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowResponse;
 
 /**

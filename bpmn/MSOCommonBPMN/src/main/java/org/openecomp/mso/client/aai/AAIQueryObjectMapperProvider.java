@@ -20,14 +20,6 @@
 
 package org.openecomp.mso.client.aai;
 
-import javax.ws.rs.ext.Provider;
-
-import com.fasterxml.jackson.databind.AnnotationIntrospector;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
-import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
-
 @Provider
 public class AAIQueryObjectMapperProvider extends AAICommonObjectMapperProvider {
 

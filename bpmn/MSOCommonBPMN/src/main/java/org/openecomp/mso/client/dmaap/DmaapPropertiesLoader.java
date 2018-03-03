@@ -20,7 +20,6 @@
 
 package org.openecomp.mso.client.dmaap;
 
-import java.util.Iterator;
 import java.util.ServiceLoader;
 
 public class DmaapPropertiesLoader {

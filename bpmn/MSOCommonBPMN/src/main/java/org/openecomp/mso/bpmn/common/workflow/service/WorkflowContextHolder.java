@@ -23,14 +23,6 @@ package org.openecomp.mso.bpmn.common.workflow.service;
 import java.util.concurrent.DelayQueue;
 import java.util.concurrent.TimeUnit;
 
-import javax.ws.rs.core.Response;
-
-import org.jboss.resteasy.spi.AsynchronousResponse;
-import org.slf4j.MDC;
-
-import org.openecomp.mso.logger.MessageEnum;
-import org.openecomp.mso.logger.MsoLogger;
-
 /**
  * Workflow Context Holder instance which can be accessed elsewhere either in groovy scripts or Java
  * @version 1.0

@@ -28,7 +28,6 @@ import javax.jws.WebService;
 import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceContext;
 
-import org.openecomp.mso.openstack.exceptions.MsoCloudSiteNotFound;
 import org.openecomp.mso.properties.MsoPropertiesFactory;
 import org.openecomp.mso.adapters.tenant.exceptions.TenantAlreadyExists;
 import org.openecomp.mso.adapters.tenant.exceptions.TenantException;
