@@ -25,10 +25,18 @@ public class RecipeLookupResult {
 
     private String orchestrationURI;
     private int recipeTimeout;
+    // the service recipe param.
+    private String recipeParamXsd;
     
     public RecipeLookupResult(String orchestrationURI, int recipeTimeout) {
     	this.orchestrationURI = orchestrationURI;
     	this.recipeTimeout = recipeTimeout;
+    }
+    
+    public RecipeLookupResult(String orchestrationURI, int recipeTimeout, String recipeParamXsd) {
+        this.orchestrationURI = orchestrationURI;
+        this.recipeTimeout = recipeTimeout;
+        this.recipeParamXsd = recipeParamXsd;
     }
     
     public String getOrchestrationURI () {
@@ -46,5 +54,23 @@ public class RecipeLookupResult {
     public void setRecipeTimeout (int recipeTimeout) {
     	this.recipeTimeout = recipeTimeout;
     }
+
+    
+    /**
+     * @return Returns the recipeParamXsd.
+     */
+    public String getRecipeParamXsd() {
+        return recipeParamXsd;
+    }
+
+    
+    /**
+     * @param recipeParamXsd The recipeParamXsd to set.
+     */
+    public void setRecipeParamXsd(String recipeParamXsd) {
+        this.recipeParamXsd = recipeParamXsd;
+    }
+    
+    
 }
     

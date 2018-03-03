@@ -54,12 +54,12 @@ import org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans.E2EServiceInsta
 import org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans.E2EServiceInstanceRequest;
 import org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans.E2EUserParam;
 import org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans.GetE2EServiceInstanceResponse;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.ModelInfo;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.RequestDetails;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.RequestInfo;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.RequestParameters;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.ServiceInstancesRequest;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.SubscriberInfo;
+import org.openecomp.mso.serviceinstancebeans.ModelInfo;
+import org.openecomp.mso.serviceinstancebeans.RequestDetails;
+import org.openecomp.mso.serviceinstancebeans.RequestInfo;
+import org.openecomp.mso.serviceinstancebeans.RequestParameters;
+import org.openecomp.mso.serviceinstancebeans.ServiceInstancesRequest;
+import org.openecomp.mso.serviceinstancebeans.SubscriberInfo;
 import org.openecomp.mso.db.AbstractSessionFactoryManager;
 import org.openecomp.mso.db.catalog.CatalogDatabase;
 import org.openecomp.mso.db.catalog.beans.Service;
@@ -75,6 +75,8 @@ import org.openecomp.mso.utils.UUIDChecker;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
+
+import org.openecomp.mso.serviceinstancebeans.ModelType;
 
 @Path("/e2eServiceInstances")
 @Api(value = "/e2eServiceInstances", description = "API Requests for E2E Service Instances")
@@ -403,7 +405,7 @@ public class E2EServiceInstances {
 		mapReqJsonToSvcInstReq(e2eSir, requestJSON);
 		sir.getRequestDetails().getRequestParameters().setaLaCarte(true);
 		try {
-			msoRequest.parse(sir, instanceIdMap, action, version);
+		    msoRequest.parse(sir, instanceIdMap, action, version, requestJSON);
 		} catch (Exception e) {
 			msoLogger.debug("Validation failed: ", e);
 			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_REQUEST,
@@ -806,8 +808,8 @@ public class E2EServiceInstances {
 		List<E2EUserParam> userParams;
 		// userParams =
 		// e2eSir.getService().getParameters().getRequestParameters().getUserParams();
-		List<Map<String, String>> userParamList = new ArrayList<>();
-		Map<String, String> userParamMap = new HashMap<>();
+		List<Map<String, Object>> userParamList = new ArrayList<>();
+		Map<String, Object> userParamMap = new HashMap<>();
 		// complete json request updated in the camunda
 		userParamMap.put("UUIRequest", requestJSON);
 		userParamMap.put("ServiceInstanceName", e2eSir.getService().getName());

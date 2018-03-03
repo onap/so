@@ -26,8 +26,7 @@
 //
 
 
-package org.openecomp.mso.apihandlerinfra.vnfbeans;
-
+package org.openecomp.mso.apihandlerinfra.networkbeans;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

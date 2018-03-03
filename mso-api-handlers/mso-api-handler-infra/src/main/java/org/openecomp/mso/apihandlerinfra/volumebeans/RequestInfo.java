@@ -26,7 +26,7 @@
 //
 
 
-package org.openecomp.mso.apihandlerinfra.vnfbeans;
+package org.openecomp.mso.apihandlerinfra.volumebeans;
 
 
 import javax.xml.bind.annotation.XmlAccessType;
