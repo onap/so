@@ -433,7 +433,7 @@ public class BeanTest {
 						m.invoke(obj);
 					} else if (types.length == 1) {
 						String type = types[0].getTypeName();
-						if (type.indexOf("<") != -1) {
+						if (type.contains("<")) {
 							type = type.substring(0, type.indexOf("<"));
 						}
 						Class paramCls = Class.forName(type);
