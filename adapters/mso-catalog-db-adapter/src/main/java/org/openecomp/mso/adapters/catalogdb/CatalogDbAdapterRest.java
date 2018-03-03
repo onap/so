@@ -428,45 +428,46 @@ public class CatalogDbAdapterRest {
 		QueryVfModule qryResp;
 		int respStatus = HttpStatus.SC_OK;
 		List<VfModuleCustomization> ret = null;
-		CatalogDatabase db = CatalogDatabase.getInstance();
 
-		try{
-			if(vfModuleModelName != null && !"".equals(vfModuleModelName)){
-				LOGGER.debug ("Query vfModules by vfModuleModuleName: " + vfModuleModelName);
-				VfModuleCustomization vfModule = db.getVfModuleCustomizationByModelName(vfModuleModelName);
-				if(vfModule != null){
-					ret = new ArrayList<>(1);
-					ret.add(vfModule);
-				}
-			}else{
-				throw(new Exception("Incoming parameter is null or blank"));
-			}
-			if(ret == null || ret.isEmpty()){
-				LOGGER.debug ("vfModules not found");
-				respStatus = HttpStatus.SC_NOT_FOUND;
-				qryResp = new QueryVfModule();
-			}else{
-				LOGGER.debug ("vfModules found");
-				qryResp = new QueryVfModule(ret);
-				LOGGER.debug ("vfModules query Results is: "+ qryResp);
-				LOGGER.debug ("vfModules tojsonstring is: "+ qryResp.JSON2(false, false));
-			}
-			LOGGER.debug ("Query vfModules exit");
-			return Response
-					.status(respStatus)
-					.entity(qryResp.JSON2(false, false)) 
-					.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-					.build();
-		}catch(Exception e){
-			LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR,  vfModuleModelName, "", "queryVfModules", MsoLogger.ErrorCode.BusinessProcesssError, "Exception during query VfModules by vfModuleModuleName: ", e);
-			CatalogQueryException excResp = new CatalogQueryException(e.getMessage(), CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
-			return Response
-					.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-					.entity(new GenericEntity<CatalogQueryException>(excResp) {})
-					.build();
-		}finally {
-			db.close();
-		}
+        try (CatalogDatabase db = CatalogDatabase.getInstance()) {
+            if (vfModuleModelName != null && !"".equals(vfModuleModelName)) {
+                LOGGER.debug("Query vfModules by vfModuleModuleName: " + vfModuleModelName);
+                VfModuleCustomization vfModule = db.getVfModuleCustomizationByModelName(vfModuleModelName);
+                if (vfModule != null) {
+                    ret = new ArrayList<>(1);
+                    ret.add(vfModule);
+                }
+            } else {
+                throw (new Exception("Incoming parameter is null or blank"));
+            }
+            if (ret == null || ret.isEmpty()) {
+                LOGGER.debug("vfModules not found");
+                respStatus = HttpStatus.SC_NOT_FOUND;
+                qryResp = new QueryVfModule();
+            } else {
+                LOGGER.debug("vfModules found");
+                qryResp = new QueryVfModule(ret);
+                LOGGER.debug("vfModules query Results is: " + qryResp);
+                LOGGER.debug("vfModules tojsonstring is: " + qryResp.JSON2(false, false));
+            }
+            LOGGER.debug("Query vfModules exit");
+            return Response
+                .status(respStatus)
+                .entity(qryResp.JSON2(false, false))
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                .build();
+        } catch (Exception e) {
+            LOGGER.error(MessageEnum.RA_QUERY_VNF_ERR, vfModuleModelName, "", "queryVfModules",
+                MsoLogger.ErrorCode.BusinessProcesssError, "Exception during query VfModules by vfModuleModuleName: ",
+                e);
+            CatalogQueryException excResp = new CatalogQueryException(e.getMessage(),
+                CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
+            return Response
+                .status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
+                .entity(new GenericEntity<CatalogQueryException>(excResp) {
+                })
+                .build();
+        }
 	}
 
 	/**
@@ -482,37 +483,36 @@ public class CatalogDbAdapterRest {
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public Response ServiceToscaCsar(@QueryParam("serviceModelUuid") String smUuid) {
         int respStatus = HttpStatus.SC_OK;
-        CatalogDatabase db = CatalogDatabase.getInstance();
         String entity = "";
-        try{
-            if(smUuid != null && !"".equals(smUuid)){
-                LOGGER.debug ("Query Csar by service model uuid: " + smUuid);
+        try (CatalogDatabase db = CatalogDatabase.getInstance()) {
+            if (smUuid != null && !"".equals(smUuid)) {
+                LOGGER.debug("Query Csar by service model uuid: " + smUuid);
                 ToscaCsar toscaCsar = db.getToscaCsarByServiceModelUUID(smUuid);
-                if(toscaCsar != null){
+                if (toscaCsar != null) {
                     QueryServiceCsar serviceCsar = new QueryServiceCsar(toscaCsar);
                     entity = serviceCsar.JSON2(false, false);
-                }
-                else{
+                } else {
                     respStatus = HttpStatus.SC_NOT_FOUND;
                 }
-            }else{
-                throw(new Exception("Incoming parameter is null or blank"));
-            }           
-            LOGGER.debug ("Query Csar exit");
+            } else {
+                throw (new Exception("Incoming parameter is null or blank"));
+            }
+            LOGGER.debug("Query Csar exit");
             return Response
-                    .status(respStatus)
-                    .entity(entity) 
-                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                    .build();
-        }catch(Exception e){
-            LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR,  smUuid, "", "ServiceToscaCsar", MsoLogger.ErrorCode.BusinessProcesssError, "Exception during query csar by service model uuid: ", e);
-            CatalogQueryException excResp = new CatalogQueryException(e.getMessage(), CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
+                .status(respStatus)
+                .entity(entity)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                .build();
+        } catch (Exception e) {
+            LOGGER.error(MessageEnum.RA_QUERY_VNF_ERR, smUuid, "", "ServiceToscaCsar",
+                MsoLogger.ErrorCode.BusinessProcesssError, "Exception during query csar by service model uuid: ", e);
+            CatalogQueryException excResp = new CatalogQueryException(e.getMessage(),
+                CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
             return Response
-                    .status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-                    .entity(new GenericEntity<CatalogQueryException>(excResp) {})
-                    .build();
-        }finally {
-            db.close();
+                .status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
+                .entity(new GenericEntity<CatalogQueryException>(excResp) {
+                })
+                .build();
         }
     }
 }
