@@ -94,23 +94,5 @@ public class CryptoUtils {
         return b;
     }
 
-    /**
-     * Not Used...
-     *
-    * Call Rttp utility jar to encrypt pwd
-    * @param clearPassword
-    * @return
-    * @throws GeneralSecurityException
-     * @throws Exception
-    *
-    public static String encryptRttpPwd(String clearPassword) throws GeneralSecurityException {
-        try {
-            return RttpBasicAuth.encrypt(clearPassword);
-        } catch (Exception e) {
-            // wrap generic exception
-            throw new GeneralSecurityException(e);
-        }
-    }
-    */
 }
 
