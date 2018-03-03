@@ -91,7 +91,7 @@ public class VolumeRequests {
      */
     public List<VolumeRequest> getVolumeRequest() {
         if (volumeRequest == null) {
-            volumeRequest = new ArrayList<VolumeRequest>();
+            volumeRequest = new ArrayList<>();
         }
         return this.volumeRequest;
     }

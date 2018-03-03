@@ -87,7 +87,7 @@ public class DeleteNetworkInstanceTest extends WorkflowTest {
 		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
 		MockGetCloudRegion("RDM2WAGPLCP", 200, "DeleteNetworkV2/cloudRegion30_AAIResponse_Success.xml");
 
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		variables.put("mso-request-id", "testRequestId");
 		variables.put("requestId", "testRequestId");
 		variables.put("isBaseVfModule", "true");
@@ -160,7 +160,7 @@ public class DeleteNetworkInstanceTest extends WorkflowTest {
 		String networkModelInfo = "  {\"modelName\": \"modelName\", " + '\n' +
 		                          "   \"networkType\": \"modelName\" }";
 
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		variables.put("testMessageId", "88f65519-9a38-4c4b-8445-9eb4a5a5af56");
 		variables.put("msoRequestId", "testRequestId");
 		variables.put("requestId", "testRequestId");
@@ -236,7 +236,7 @@ public class DeleteNetworkInstanceTest extends WorkflowTest {
 		String networkModelInfo = "  {\"modelCustomizationId\": \"uuid-nrc-001-1234\", " + '\n' +
                 "   \"modelInvariantId\": \"was-ist-das-001-1234\" }";
 
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		variables.put("testMessageId", "88f65519-9a38-4c4b-8445-9eb4a5a5af56");
 		variables.put("msoRequestId", "testRequestId");
 		variables.put("requestId", "testRequestId");

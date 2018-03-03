@@ -178,7 +178,7 @@ public class RequestsDatabase {
         long startTime = System.currentTimeMillis ();
         msoLogger.debug ("Execute query on infra active request table");
         
-        List <InfraActiveRequests> results = new ArrayList<InfraActiveRequests>();
+        List <InfraActiveRequests> results = new ArrayList<>();
 
         Session session = sessionFactoryRequestDB.getSessionFactory ().openSession ();
         try {

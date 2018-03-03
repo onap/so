@@ -60,7 +60,7 @@ public class VduBlueprintTest {
     @Test
     public void testGetTemplateFiles() {
         byte[] templateFileData = "some template file data".getBytes();
-        templateFiles = new HashMap<String, byte[]>();
+        templateFiles = new HashMap<>();
         templateFiles.put("templateKey1", templateFileData);
         vduBlueprint.setTemplateFiles(templateFiles);
         Assert.assertNotNull(vduBlueprint.getTemplateFiles());
@@ -71,7 +71,7 @@ public class VduBlueprintTest {
     @Test
     public void testGetAttachedFiles() {
         byte[] attachedFileData = "some file data".getBytes();
-        attachedFiles = new HashMap<String, byte[]>();
+        attachedFiles = new HashMap<>();
         attachedFiles.put("attachedKey1", attachedFileData);
         vduBlueprint.setAttachedFiles(attachedFiles);
         Assert.assertNotNull(vduBlueprint.getAttachedFiles());

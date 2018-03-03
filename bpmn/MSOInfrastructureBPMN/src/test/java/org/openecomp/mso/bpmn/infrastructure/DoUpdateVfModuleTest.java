@@ -100,7 +100,7 @@ public class DoUpdateVfModuleTest extends WorkflowTest {
 		MockGetGenericVnfByIdWithPriority("skask", "supercool", 200, "VfModularity/VfModule-supercool.xml", 1);
 		
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("mso-request-id", "DEV-VF-0011");
 		variables.put("isDebugLogEnabled","true");
 		variables.put("DoUpdateVfModuleRequest", doUpdateVfModuleRequest);
@@ -146,7 +146,7 @@ public class DoUpdateVfModuleTest extends WorkflowTest {
 		MockVNFAdapterRestVfModule();
 		
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("mso-request-id", "DEV-VF-0011");
 		variables.put("isDebugLogEnabled","true");
 		variables.put("msoRequestId", "DEV-VF-0011");

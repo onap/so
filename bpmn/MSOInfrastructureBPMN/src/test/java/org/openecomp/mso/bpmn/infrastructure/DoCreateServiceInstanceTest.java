@@ -90,7 +90,7 @@ public class DoCreateServiceInstanceTest extends WorkflowTest {
 		mockUpdateRequestDB(200, "DBUpdateResponse.xml");
 		String businessKey = UUID.randomUUID().toString();
 
-		Map<String, Object> variables =  new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		setupVariables(variables);
 		invokeSubProcess("DoCreateServiceInstance", businessKey, variables);
 		injectSDNCCallbacks(callbacks, "assign");

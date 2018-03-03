@@ -42,16 +42,16 @@ public class VnfCreateTest {
 		String tenantName = "John_Test";
 		String vnfType = "ApacheDemo";
 		String vnfName = "AdapterTest";
-		Map<String,String> inputs = new HashMap<String,String>();
+		Map<String,String> inputs = new HashMap<>();
 		inputs.put("vnf_id", "abc");
 		inputs.put("extra", "whocares");
 		inputs.put("private_subnet_gateway", "10.4.1.1");
 		inputs.put("private_subnet_cidr", "10.4.1.0/29");
 		
 		// Web Service Outputs
-		Holder<String> vnfId = new Holder<String>();
-		Holder<Map<String,String>> outputs = new Holder<Map<String,String>>();
-		Holder<VnfRollback> vnfRollback = new Holder<VnfRollback>();
+		Holder<String> vnfId = new Holder<>();
+		Holder<Map<String,String>> outputs = new Holder<>();
+		Holder<VnfRollback> vnfRollback = new Holder<>();
 
 		try {
 			vnfAdapter.createVnf(cloudId, tenantName, vnfType,null, vnfName, null, null, inputs, false, true, null,

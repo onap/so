@@ -71,7 +71,7 @@ public class NetworkBeansTest {
 			contrailSubnet.setAddrFromStart(true);
 			contrailSubnet.setDefaultGateway("defaultGateway");
 			contrailSubnet.setEnableDhcp(true);
-			contrailSubnet.setPools(new ArrayList<ContrailSubnetPool>());
+			contrailSubnet.setPools(new ArrayList<>());
 			contrailSubnet.setSubnet(new ContrailSubnetIp());
 			contrailSubnet.setSubnetName("subnetName");
 			contrailSubnet.getAllocationPools();

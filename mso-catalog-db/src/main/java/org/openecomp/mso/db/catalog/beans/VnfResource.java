@@ -195,7 +195,7 @@ public class VnfResource extends MavenLikeVersioning implements Serializable {
 	}
 
 	public List<VfModuleCustomization> getVfModuleCustomizations() {
-		return this.vfModuleCustomizations == null ? new ArrayList<VfModuleCustomization>() : this.vfModuleCustomizations;
+		return this.vfModuleCustomizations == null ? new ArrayList<>() : this.vfModuleCustomizations;
 	}
 	public void setVfModuleCustomizations(ArrayList<VfModuleCustomization> vfModuleCustomizations) {
 		this.vfModuleCustomizations = vfModuleCustomizations;
@@ -205,7 +205,7 @@ public class VnfResource extends MavenLikeVersioning implements Serializable {
 			if (this.vfModuleCustomizations != null) {
 				this.vfModuleCustomizations.add(vfmc);
 			} else {
-				this.vfModuleCustomizations = new ArrayList<VfModuleCustomization>();
+				this.vfModuleCustomizations = new ArrayList<>();
 				this.vfModuleCustomizations.add(vfmc);
 			}
 	}
@@ -216,7 +216,7 @@ public class VnfResource extends MavenLikeVersioning implements Serializable {
 			if (this.vfModules != null) {
 				this.vfModules.add(vfm);
 			} else {
-				this.vfModules = new HashSet<VfModule>();
+				this.vfModules = new HashSet<>();
 				this.vfModules.add(vfm);
 			}
 		}
@@ -225,7 +225,7 @@ public class VnfResource extends MavenLikeVersioning implements Serializable {
 		if (this.vfModules == null || this.vfModules.size() < 1) {
 			return null;
 	}
-		ArrayList<VfModule> list = new ArrayList<VfModule>();
+		ArrayList<VfModule> list = new ArrayList<>();
 		list.addAll(this.vfModules);
 		return list;
 	}

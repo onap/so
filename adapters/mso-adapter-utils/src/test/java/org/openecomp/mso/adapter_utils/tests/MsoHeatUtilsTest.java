@@ -60,7 +60,7 @@ public class MsoHeatUtilsTest extends MsoCommonUtils {
 	public final void testCreateStackBadCloudConfig()
 			throws MsoStackAlreadyExists, MsoTenantNotFound, MsoException, MsoCloudSiteNotFound {
 		try {
-			msoHeatUtils.createStack("DOESNOTEXIST", "test", "stackName", "test", new HashMap<String, Object>(),
+			msoHeatUtils.createStack("DOESNOTEXIST", "test", "stackName", "test", new HashMap<>(),
 					Boolean.TRUE, 10);
 		} catch (MsoCloudSiteNotFound e) {
 
@@ -74,7 +74,7 @@ public class MsoHeatUtilsTest extends MsoCommonUtils {
 	public final void testCreateStackFailedConnectionHeatClient()
 			throws MsoStackAlreadyExists, MsoTenantNotFound, MsoException, MsoCloudSiteNotFound {
 		try {
-			msoHeatUtils.createStack("MT", "test", "stackName", "test", new HashMap<String, Object>(), Boolean.TRUE,
+			msoHeatUtils.createStack("MT", "test", "stackName", "test", new HashMap<>(), Boolean.TRUE,
 					10);
 		} catch (MsoIOException e) {
 
@@ -86,7 +86,7 @@ public class MsoHeatUtilsTest extends MsoCommonUtils {
 	public final void testCreateStackFailedConnection()
 			throws MsoStackAlreadyExists, MsoTenantNotFound, MsoException, MsoCloudSiteNotFound {
 		try {
-			msoHeatUtils.createStack("MT", "test", "stackName", "test", new HashMap<String, Object>(), Boolean.TRUE,
+			msoHeatUtils.createStack("MT", "test", "stackName", "test", new HashMap<>(), Boolean.TRUE,
 					10);
 		} catch (MsoIOException e) {
 
@@ -97,7 +97,7 @@ public class MsoHeatUtilsTest extends MsoCommonUtils {
 	@Test
 	public final void createStackSuccessWithEnvironment() throws MsoException {
 		try {
-			msoHeatUtils.createStack("MT", "test", "stackName", "test", new HashMap<String, Object>(), Boolean.TRUE, 10,
+			msoHeatUtils.createStack("MT", "test", "stackName", "test", new HashMap<>(), Boolean.TRUE, 10,
 					"environment");
 		} catch (MsoIOException e) {
 
@@ -108,8 +108,8 @@ public class MsoHeatUtilsTest extends MsoCommonUtils {
 	@Test
 	public final void createStackSuccessWithFiles() throws MsoException {
 		try {
-			msoHeatUtils.createStack("MT", "test", "stackName", "test", new HashMap<String, Object>(), Boolean.TRUE, 10,
-					"environment", new HashMap<String, Object>());
+			msoHeatUtils.createStack("MT", "test", "stackName", "test", new HashMap<>(), Boolean.TRUE, 10,
+					"environment", new HashMap<>());
 		} catch (MsoIOException e) {
 
 		}
@@ -119,8 +119,8 @@ public class MsoHeatUtilsTest extends MsoCommonUtils {
 	@Test
 	public final void createStackSuccessWithHeatFiles() throws MsoException {
 		try {
-			msoHeatUtils.createStack("MT", "test", "stackName", "test", new HashMap<String, Object>(), Boolean.TRUE, 10,
-					"environment", new HashMap<String, Object>(), new HashMap<String, Object>());
+			msoHeatUtils.createStack("MT", "test", "stackName", "test", new HashMap<>(), Boolean.TRUE, 10,
+					"environment", new HashMap<>(), new HashMap<>());
 		} catch (MsoIOException e) {
 
 		}
@@ -131,7 +131,7 @@ public class MsoHeatUtilsTest extends MsoCommonUtils {
 		CreateStackParam param = new CreateStackParam();
 		param.setDisableRollback(false);
 		param.setEnvironment("environment");
-		param.setFiles(new HashMap<String, Object>());
+		param.setFiles(new HashMap<>());
 		param.setParameters(new HashMap<>());
 		param.setStackName("stackName");
 		param.setTemplate("template");

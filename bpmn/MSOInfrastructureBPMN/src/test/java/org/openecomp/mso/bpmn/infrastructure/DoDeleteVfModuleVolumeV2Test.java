@@ -64,7 +64,7 @@ public class DoDeleteVfModuleVolumeV2Test extends WorkflowTest {
 		MockGetVolumeGroupById("AAIAIC25", "78987", "VfModularity/VolumeGroup.xml");
 		String businessKey = UUID.randomUUID().toString();
 
-		Map<String, Object> testVariables = new HashMap<String, Object>();
+		Map<String, Object> testVariables = new HashMap<>();
 		testVariables.put("mso-request-id", "TEST-REQUEST-ID-0123");
 		testVariables.put("msoRequestId", "TEST-REQUEST-ID-0123");
 		testVariables.put("isDebugLogEnabled", "true");
@@ -102,7 +102,7 @@ public class DoDeleteVfModuleVolumeV2Test extends WorkflowTest {
 		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
 		String businessKey = UUID.randomUUID().toString();
 
-		Map<String, Object> testVariables = new HashMap<String, Object>();
+		Map<String, Object> testVariables = new HashMap<>();
 		testVariables.put("mso-request-id", "TEST-REQUEST-ID-0123");
 		testVariables.put("msoRequestId", "TEST-REQUEST-ID-0123");
 		testVariables.put("isDebugLogEnabled", "true");
@@ -138,7 +138,7 @@ public class DoDeleteVfModuleVolumeV2Test extends WorkflowTest {
 		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
 		String businessKey = UUID.randomUUID().toString();
 
-		Map<String, Object> testVariables = new HashMap<String, Object>();
+		Map<String, Object> testVariables = new HashMap<>();
 		testVariables.put("mso-request-id", "TEST-REQUEST-ID-0123");
 		testVariables.put("msoRequestId", "TEST-REQUEST-ID-0123");
 		testVariables.put("isDebugLogEnabled", "true");
@@ -174,7 +174,7 @@ public class DoDeleteVfModuleVolumeV2Test extends WorkflowTest {
 		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
 		String businessKey = UUID.randomUUID().toString();
 
-		Map<String, Object> testVariables = new HashMap<String, Object>();
+		Map<String, Object> testVariables = new HashMap<>();
 		testVariables.put("mso-request-id", "TEST-REQUEST-ID-0123");
 		testVariables.put("msoRequestId", "TEST-REQUEST-ID-0123");
 		testVariables.put("isDebugLogEnabled", "true");

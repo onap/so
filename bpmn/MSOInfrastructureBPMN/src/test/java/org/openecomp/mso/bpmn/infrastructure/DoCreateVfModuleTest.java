@@ -230,7 +230,7 @@ public class DoCreateVfModuleTest extends WorkflowTest {
 	
 	
 	private Map<String, Object> setupVariablesSunnyDayBuildingBlocks() {
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		//try {
 		//	variables.put("bpmnRequest", FileUtil.readResourceFile("__files/CreateVfModule_VID_request.json"));
 		//}

@@ -156,7 +156,7 @@ public class PropertyConfigurationSetup {
 	 * Create a map to hold properties to be added to mso.bpmn.properties.
 	 */
 	public static Map<String, String> createBpmnProperties() {
-		Map<String, String> properties = new HashMap<String, String>();
+		Map<String, String> properties = new HashMap<>();
 		properties.put("PROPERTIES-TYPE", PropertyConfiguration.MSO_BPMN_PROPERTIES);
 		return properties;
 	}
@@ -165,7 +165,7 @@ public class PropertyConfigurationSetup {
 	 * Create a map to hold properties to be added to mso.bpmn.urn.properties.
 	 */
 	public static Map<String, String> createBpmnUrnProperties() {
-		Map<String, String> properties = new HashMap<String, String>();
+		Map<String, String> properties = new HashMap<>();
 		properties.put("PROPERTIES-TYPE", PropertyConfiguration.MSO_BPMN_URN_PROPERTIES);
 		return properties;
 	}

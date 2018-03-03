@@ -162,8 +162,8 @@ public class MsoAlarmLogger implements ServletContextListener {
         encoder.setPattern(logPattern);
         encoder.setContext(context);
         encoder.start();
-        RollingFileAppender<ILoggingEvent> fileAppender=new RollingFileAppender<ILoggingEvent>();
-        TimeBasedRollingPolicy<ILoggingEvent> rollingPolicy=new TimeBasedRollingPolicy<ILoggingEvent>();
+        RollingFileAppender<ILoggingEvent> fileAppender= new RollingFileAppender<>();
+        TimeBasedRollingPolicy<ILoggingEvent> rollingPolicy= new TimeBasedRollingPolicy<>();
         rollingPolicy.setContext(context);
         rollingPolicy.setFileNamePattern(msoAlarmFile + ".%d");
         rollingPolicy.setParent(fileAppender);

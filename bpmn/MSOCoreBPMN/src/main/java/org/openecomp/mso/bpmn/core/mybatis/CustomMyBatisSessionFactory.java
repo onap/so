@@ -88,7 +88,7 @@ public class CustomMyBatisSessionFactory extends
 	@Override
 	protected Collection<? extends CommandInterceptor> getDefaultCommandInterceptorsTxRequired() {
 		List<CommandInterceptor> defaultCommandInterceptorsTxRequired =
-				new ArrayList<CommandInterceptor>();
+            new ArrayList<>();
 		defaultCommandInterceptorsTxRequired.add(new LogInterceptor());
 		defaultCommandInterceptorsTxRequired.add(new CommandContextInterceptor(
 				commandContextFactory, this, true));

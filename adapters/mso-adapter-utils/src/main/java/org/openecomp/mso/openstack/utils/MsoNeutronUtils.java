@@ -63,7 +63,7 @@ public class MsoNeutronUtils extends MsoCommonUtils
 	// token will be used until it expires.
 	//
 	// The cache key is "tenantId:cloudId"
-	private static Map<String,NeutronCacheEntry> neutronClientCache = new HashMap<String,NeutronCacheEntry>();
+	private static Map<String,NeutronCacheEntry> neutronClientCache = new HashMap<>();
 
 	// Fetch cloud configuration each time (may be cached in CloudConfig class)
 	private CloudConfig cloudConfig;
@@ -129,7 +129,7 @@ public class MsoNeutronUtils extends MsoCommonUtils
 			}
 		} else if (type == NetworkType.MULTI_PROVIDER) {
 			if (provider != null && vlans != null && vlans.size() > 0) {
-				List<Segment> segments = new ArrayList<Segment>(vlans.size());
+				List<Segment> segments = new ArrayList<>(vlans.size());
 				for (int vlan : vlans) {
 					Segment segment = new Segment();
 					segment.setProviderPhysicalNetwork (provider);
@@ -297,7 +297,7 @@ public class MsoNeutronUtils extends MsoCommonUtils
 			}
 		} else if (type == NetworkType.MULTI_PROVIDER) {
 			if (provider != null && vlans != null && vlans.size() > 0) {
-				List<Segment> segments = new ArrayList<Segment>(vlans.size());
+				List<Segment> segments = new ArrayList<>(vlans.size());
 				for (int vlan : vlans) {
 					Segment segment = new Segment();
 					segment.setProviderPhysicalNetwork (provider);

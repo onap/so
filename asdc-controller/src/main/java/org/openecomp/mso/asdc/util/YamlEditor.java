@@ -58,7 +58,7 @@ public class YamlEditor {
     }
 
     public synchronized List <String> getYamlNestedFileResourceTypeList () {
-        List <String> typeList = new ArrayList <String> ();
+        List <String> typeList = new ArrayList<>();
 
         @SuppressWarnings("unchecked")
         Map <String, Object> resourceMap = (Map <String, Object>) yml.get ("resources");
@@ -78,7 +78,7 @@ public class YamlEditor {
     }
     
     public synchronized List <String> getYamlResourceTypeList () {
-        List <String> typeList = new ArrayList <String> ();
+        List <String> typeList = new ArrayList<>();
 
         @SuppressWarnings("unchecked")
         Map <String, Object> resourceMap = (Map <String, Object>) yml.get ("resources");
@@ -95,7 +95,7 @@ public class YamlEditor {
     // Within Heat Template, under parameters catalog, it might indicate the default value of the parameter
     // If default value exist, the parameter is not mandatory, otherwise its value should be set
     public synchronized Set <HeatTemplateParam> getParameterList (String artifactUUID) {
-        Set <HeatTemplateParam> paramSet = new HashSet <HeatTemplateParam> ();
+        Set <HeatTemplateParam> paramSet = new HashSet<>();
         @SuppressWarnings("unchecked")
         Map <String, Object> resourceMap = (Map <String, Object>) yml.get ("parameters");
 
@@ -130,11 +130,11 @@ public class YamlEditor {
         @SuppressWarnings("unchecked")
         Map <String, Object> resourceMap = (Map <String, Object>) yml.get ("parameters");
         if (resourceMap == null) {
-            resourceMap = new LinkedHashMap <String, Object> ();
+            resourceMap = new LinkedHashMap<>();
             this.yml.put ("parameters", resourceMap);
         }
         for (HeatTemplateParam heatParam : heatSet) {
-            Map <String, Object> paramInfo = new HashMap <String, Object> ();
+            Map <String, Object> paramInfo = new HashMap<>();
             paramInfo.put ("type", heatParam.getParamType ());
 
             resourceMap.put (heatParam.getParamName (), paramInfo);

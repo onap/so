@@ -44,7 +44,7 @@ public class MsoVnfAdapterAsyncImplTest {
 		try {
 
 			instance.createVnfA("mdt1", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "vSAMP12", "VFMOD",
-					"volumeGroupHeatStackId|1", new HashMap<String, String>(), Boolean.FALSE, Boolean.TRUE, "messageId",
+					"volumeGroupHeatStackId|1", new HashMap<>(), Boolean.FALSE, Boolean.TRUE, "messageId",
 					null, "http://org.openecomp.mso/notify/adapterNotify/updateVnfNotificationRequest");
 		} catch (Exception e) {
 

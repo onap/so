@@ -70,7 +70,7 @@ public class CatalogDbAdapterRestClassTest {
 		 * 
 		 */
     	// set up mock return value
-        paramList = new ArrayList<VnfResourceCustomization>();
+        paramList = new ArrayList<>();
         VnfResourceCustomization d1 = new VnfResourceCustomization();
         d1.setModelCustomizationUuid("16ea3e56-a8ce-4ad7-8edd-4d2eae095391");
         d1.setModelInstanceName("ciVFOnboarded-FNAT-aab06c41 1");

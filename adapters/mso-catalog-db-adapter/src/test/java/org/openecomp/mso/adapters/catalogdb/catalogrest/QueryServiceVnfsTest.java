@@ -44,7 +44,7 @@ public class QueryServiceVnfsTest {
 	public void JSON2_Test()
 	{
 	    List<VnfResourceCustomization> paramList;    		
-        paramList = new ArrayList<VnfResourceCustomization>();
+        paramList = new ArrayList<>();
         VnfResourceCustomization d1 = new VnfResourceCustomization();
         d1.setModelInstanceName("0cb9b26a-9820-48a7-86e5-16c510e993d9");
         d1.setVnfResourceModelUuid("0cb9b26a-9820-48a7-86e5-16c510e993d9");

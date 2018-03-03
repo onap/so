@@ -203,7 +203,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 	 */
 	public void addVnfResource(Resource vnfResource) {
 		if (vnfResources == null){
-			vnfResources = new ArrayList<VnfResource>();
+			vnfResources = new ArrayList<>();
 		}
 		this.vnfResources.add((VnfResource)vnfResource);
 	}
@@ -213,7 +213,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 	 */
 	public void addNetworkResource(Resource networkResource) {
 		if (networkResources == null){
-			networkResources = new ArrayList<NetworkResource>();
+			networkResources = new ArrayList<>();
 		}
 		this.networkResources.add((NetworkResource)networkResource);
 	}
@@ -223,7 +223,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 	 */
 	public void addAllottedResource(Resource allottedResource) {
 		if (allottedResources == null){
-			allottedResources = new ArrayList<AllottedResource>();
+			allottedResources = new ArrayList<>();
 		}
 		this.allottedResources.add((AllottedResource)allottedResource);
 	}

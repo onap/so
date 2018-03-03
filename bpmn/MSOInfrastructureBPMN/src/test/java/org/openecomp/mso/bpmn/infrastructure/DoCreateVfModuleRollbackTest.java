@@ -105,7 +105,7 @@ public class DoCreateVfModuleRollbackTest extends WorkflowTest {
 		MockPatchVfModuleId("a27ce5a9-29c4-4c22-a017-6615ac73c721", "973ed047-d251-4fb9-bf1a-65b8949e0a73");
 		
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		RollbackData rollbackData = new RollbackData();
 		rollbackData.put("VFMODULE", "source", "PORTAL");
 		rollbackData.put("VFMODULE", "vnfid", "a27ce5a9-29c4-4c22-a017-6615ac73c721");

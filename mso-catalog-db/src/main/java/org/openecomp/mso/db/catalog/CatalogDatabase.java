@@ -2693,7 +2693,7 @@ public class CatalogDatabase implements Closeable {
     }
 
     private void populateNetworkResourceType(List<NetworkResourceCustomization> resultList) {
-        HashMap<String, NetworkResource> networkResources = new HashMap<String, NetworkResource>();
+        HashMap<String, NetworkResource> networkResources = new HashMap<>();
 
         for (NetworkResourceCustomization nrc : resultList) {
         	String network_id = nrc.getNetworkResourceModelUuid();

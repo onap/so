@@ -65,7 +65,7 @@ public class DeleteVfModuleVolumeInfraV1Test extends WorkflowTest {
 		String deleteVfModuleVolRequest =
 			FileUtil.readResourceFile("__files/DeleteVfModuleVolumeInfraV1/deleteVfModuleVolume_VID_request_st.json");
 		
-		Map<String, Object> testVariables = new HashMap<String, Object>();
+		Map<String, Object> testVariables = new HashMap<>();
 		testVariables.put("requestId", "TEST-REQUEST-ID-0123");
 		testVariables.put("volumeGroupId", "78987");
 		testVariables.put("serviceInstanceId", "test-service-instance-id-0123");
@@ -105,7 +105,7 @@ public class DeleteVfModuleVolumeInfraV1Test extends WorkflowTest {
 		String deleteVfModuleVolRequest =
 			FileUtil.readResourceFile("__files/DeleteVfModuleVolumeInfraV1/deleteVfModuleVolume_VID_request_st.json");
 		
-		Map<String, Object> testVariables = new HashMap<String, Object>();
+		Map<String, Object> testVariables = new HashMap<>();
 		testVariables.put("requestId", "TEST-REQUEST-ID-0123");
 		testVariables.put("volumeGroupId", "78987");
 		
@@ -145,7 +145,7 @@ public class DeleteVfModuleVolumeInfraV1Test extends WorkflowTest {
 		String deleteVfModuleVolRequest =
 			FileUtil.readResourceFile("__files/DeleteVfModuleVolumeInfraV1/deleteVfModuleVolume_VID_request_st.json");
 		
-		Map<String, Object> testVariables = new HashMap<String, Object>();
+		Map<String, Object> testVariables = new HashMap<>();
 		testVariables.put("requestId", "TEST-REQUEST-ID-0123");
 		testVariables.put("volumeGroupId", "78987");
 		

@@ -84,7 +84,7 @@ public class DoDeleteServiceInstanceTest extends WorkflowTest {
 		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
 		String businessKey = UUID.randomUUID().toString();
 
-		Map<String, Object> variables =  new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		setupVariables(variables);
 		invokeSubProcess("DoDeleteServiceInstance", businessKey, variables);
 		injectSDNCCallbacks(callbacks, "deactivate");
