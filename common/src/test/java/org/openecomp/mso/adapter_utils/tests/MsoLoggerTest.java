@@ -292,23 +292,11 @@ public class MsoLoggerTest {
 			method = MsoLogger.class.getDeclaredMethod("prepareMsg", String.class, String.class, String.class);
 			method.setAccessible(true);
 	    	return  (String)method.invoke(msoLogger, arg1, arg2, arg3);
-		} catch (NoSuchMethodException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
+		} catch (NoSuchMethodException | InvocationTargetException | IllegalArgumentException | IllegalAccessException | SecurityException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-    	return null;
+        return null;
     }
 
     // User reflection to invoke to avoid change the publicity of the method
@@ -318,22 +306,10 @@ public class MsoLoggerTest {
 			method = MsoLogger.class.getDeclaredMethod(methodName, String.class);
 			method.setAccessible(true);
 	    	return  method.invoke(msoLogger, arg);
-		} catch (NoSuchMethodException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
+		} catch (NoSuchMethodException | InvocationTargetException | IllegalArgumentException | IllegalAccessException | SecurityException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-    	return null;
+        return null;
     }
 }

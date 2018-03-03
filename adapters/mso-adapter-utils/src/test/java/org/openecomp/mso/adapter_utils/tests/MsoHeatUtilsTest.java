@@ -62,13 +62,11 @@ public class MsoHeatUtilsTest extends MsoCommonUtils {
 		try {
 			msoHeatUtils.createStack("DOESNOTEXIST", "test", "stackName", "test", new HashMap<>(),
 					Boolean.TRUE, 10);
-		} catch (MsoCloudSiteNotFound e) {
-
-		} catch (java.lang.NullPointerException npe) {
+		} catch (MsoCloudSiteNotFound | NullPointerException e) {
 
 		}
 
-	}
+    }
 
 	@Test
 	public final void testCreateStackFailedConnectionHeatClient()
