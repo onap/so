@@ -48,8 +48,8 @@ public class MsoVnfAdapterImplTest {
 		try {
 			instance.createVfModule("mdt1", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "vSAMP12", "VFMOD",
 					"volumeGroupHeatStackId|1", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
-					Boolean.FALSE, Boolean.TRUE, msoRequest, new Holder<>(), new Holder<Map<String, String>>(),
-					new Holder<VnfRollback>());
+					Boolean.FALSE, Boolean.TRUE, msoRequest, new Holder<>(), new Holder<>(),
+                new Holder<>());
 		} catch (Exception e) {
 
 		}
@@ -67,8 +67,8 @@ public class MsoVnfAdapterImplTest {
 		try {
 			instance.updateVfModule("mdt1", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "vSAMP12", "VFMOD",
 					"volumeGroupHeatStackId|1", "baseVfHeatStackId", "vfModuleStackId",
-					"88a6ca3ee0394ade9403f075db23167e", map, msoRequest, new Holder<Map<String, String>>(),
-					new Holder<VnfRollback>());
+					"88a6ca3ee0394ade9403f075db23167e", map, msoRequest, new Holder<>(),
+                new Holder<>());
 		} catch (Exception e) {
 
 		}
@@ -82,7 +82,7 @@ public class MsoVnfAdapterImplTest {
 		msoRequest.setServiceInstanceId("12345");
 		try {
 			instance.deleteVfModule("mdt1", "88a6ca3ee0394ade9403f075db23167e", "vSAMP12", msoRequest,
-					new Holder<Map<String, String>>());
+                new Holder<>());
 		} catch (Exception e) {
 
 		}

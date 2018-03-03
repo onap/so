@@ -55,7 +55,7 @@ public class TestBaseTask {
 	@Test
 	@Deployment(resources={"BaseTaskTest.bpmn"})
 	public void shouldInvokeService() {
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("firstName", "Jane");
 		variables.put("lastName", "Doe");
 		variables.put("age", (Integer)25);

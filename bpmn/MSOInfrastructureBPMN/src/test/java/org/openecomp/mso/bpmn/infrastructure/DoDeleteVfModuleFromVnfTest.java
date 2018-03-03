@@ -113,7 +113,7 @@ public class DoDeleteVfModuleFromVnfTest extends WorkflowTest {
 		MockAAIDeleteVfModule();
 		
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();		
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("isDebugLogEnabled","true");
 		variables.put("mso-request-id", "a27ce5a9-29c4-4c22-a017-6615ac73c721");
 		variables.put("msoRequestId", "a27ce5a9-29c4-4c22-a017-6615ac73c721");

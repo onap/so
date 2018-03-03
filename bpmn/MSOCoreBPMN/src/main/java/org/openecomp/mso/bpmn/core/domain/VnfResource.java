@@ -134,7 +134,7 @@ public class VnfResource extends Resource {
 	// methods to add to the list
 	public void addVfModule(ModuleResource moduleResource) {
 		if (vfModules == null){
-			vfModules = new ArrayList<ModuleResource>();
+			vfModules = new ArrayList<>();
 		}
 		this.vfModules.add(moduleResource);
 	}

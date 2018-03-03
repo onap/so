@@ -91,7 +91,7 @@ public class NetworkRequests {
      */
     public List<NetworkRequest> getNetworkRequest() {
         if (networkRequest == null) {
-            networkRequest = new ArrayList<NetworkRequest>();
+            networkRequest = new ArrayList<>();
         }
         return this.networkRequest;
     }

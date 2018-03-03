@@ -156,7 +156,7 @@ public class NotificationLogging implements InvocationHandler {
 				INotificationData.class.getClassLoader(),
 				new Class[] { INotificationData.class },
 				NotificationLogging.getHandler());
-		objectMethodsToLog.put(proxy, new ArrayList<Method>());
+		objectMethodsToLog.put(proxy, new ArrayList<>());
 	}
 	
 	private static <T> void methodToLog(T methodCall) {

@@ -155,7 +155,7 @@ public class VnfResourceCustomization extends MavenLikeVersioning implements Ser
 			if (this.vfModuleCustomizations != null) {
 				this.vfModuleCustomizations.add(vfmc);
 			} else {
-				this.vfModuleCustomizations = new ArrayList<VfModuleCustomization>();
+				this.vfModuleCustomizations = new ArrayList<>();
 				this.vfModuleCustomizations.add(vfmc);
 			}
 		}

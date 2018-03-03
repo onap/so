@@ -230,7 +230,7 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
         if (haveFiles && haveHeatFiles) {
             // Let's do this here - not in the bean
             LOGGER.debug ("Found files AND heatFiles - combine and add!");
-            Map <String, Object> combinedFiles = new HashMap <String, Object> ();
+            Map <String, Object> combinedFiles = new HashMap<>();
             for (String keyString : files.keySet ()) {
                 combinedFiles.put (keyString, files.get (keyString));
             }
@@ -358,7 +358,7 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
 			sb.append("(outputs is empty)");
 			return sb;
 		}
-		Map<String, Object> outputs = new HashMap<String,Object>();
+		Map<String, Object> outputs = new HashMap<>();
 		for (Output outputItem : outputList) {
 			outputs.put(outputItem.getOutputKey(), outputItem.getOutputValue());
 		}

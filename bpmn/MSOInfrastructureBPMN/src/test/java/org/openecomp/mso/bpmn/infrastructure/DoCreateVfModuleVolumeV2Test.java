@@ -67,7 +67,7 @@ public class DoCreateVfModuleVolumeV2Test extends WorkflowTest {
 		String businessKey = UUID.randomUUID().toString();
 		String createVfModuleVolRequest = FileUtil.readResourceFile("__files/DoCreateVfModuleVolumeV1/CreateVfModuleVolumeRequest.xml");
 		
-		Map<String, Object> testVariables = new HashMap<String, Object>();
+		Map<String, Object> testVariables = new HashMap<>();
 		testVariables.put("volumeGroupId", "TEST-VOLUME-VOLUME-GROUP-ID-0123");
 		testVariables.put("vnfId", "TEST-VNF-ID-0123");
 		testVariables.put("lcpCloudRegionId", "AAIAIC25");
@@ -100,7 +100,7 @@ public class DoCreateVfModuleVolumeV2Test extends WorkflowTest {
 		String businessKey = UUID.randomUUID().toString();
 		String createVfModuleVolRequest = FileUtil.readResourceFile("__files/DoCreateVfModuleVolumeV1/CreateVfModuleVolumeRequest.xml");
 		
-		Map<String, Object> testVariables = new HashMap<String, Object>();
+		Map<String, Object> testVariables = new HashMap<>();
 		testVariables.put("DCVFMODVOLV2_volumeGroupId", "TEST-VOLUME-VOLUME-GROUP-ID-0123");
 		testVariables.put("vnf-id", "TEST-VNF-ID-0123");
 		testVariables.put("volume-group-id", "TEST-VOLUME-GROUP-ID-0123");
@@ -139,7 +139,7 @@ public class DoCreateVfModuleVolumeV2Test extends WorkflowTest {
 		String businessKey = UUID.randomUUID().toString();
 		String createVfModuleVolRequest = FileUtil.readResourceFile("__files/DoCreateVfModuleVolumeV1/CreateVfModuleVolumeRequest.xml");
 		
-		Map<String, Object> testVariables = new HashMap<String, Object>();
+		Map<String, Object> testVariables = new HashMap<>();
 		testVariables.put("DCVFMODVOLV2_volumeGroupId", "TEST-VOLUME-VOLUME-GROUP-ID-0123");
 		testVariables.put("vnf-id", "TEST-VNF-ID-0123");
 		testVariables.put("volume-group-id", "TEST-VOLUME-GROUP-ID-0123");
@@ -176,7 +176,7 @@ public class DoCreateVfModuleVolumeV2Test extends WorkflowTest {
 		String businessKey = UUID.randomUUID().toString();
 		String createVfModuleVolRequest = FileUtil.readResourceFile("__files/DoCreateVfModuleVolumeV1/CreateVfModuleVolumeRequest.xml");
 		
-		Map<String, Object> testVariables = new HashMap<String, Object>();
+		Map<String, Object> testVariables = new HashMap<>();
 		testVariables.put("DCVFMODVOLV2_volumeGroupId", "TEST-VOLUME-VOLUME-GROUP-ID-0123");
 		testVariables.put("vnf-id", "TEST-VNF-ID-0123");
 		testVariables.put("volume-group-id", "TEST-VOLUME-GROUP-ID-0123");
@@ -217,7 +217,7 @@ public class DoCreateVfModuleVolumeV2Test extends WorkflowTest {
 		String businessKey = UUID.randomUUID().toString();
 		String createVfModuleVolRequest = FileUtil.readResourceFile("__files/DoCreateVfModuleVolumeV1/CreateVfModuleVolumeNoRollbackRequest.xml");
 		
-		Map<String, Object> testVariables = new HashMap<String, Object>();
+		Map<String, Object> testVariables = new HashMap<>();
 		testVariables.put("DCVFMODVOLV2_volumeGroupId", "TEST-VOLUME-VOLUME-GROUP-ID-0123");
 		testVariables.put("vnf-id", "TEST-VNF-ID-0123");
 		testVariables.put("volume-group-id", "TEST-VOLUME-GROUP-ID-0123");

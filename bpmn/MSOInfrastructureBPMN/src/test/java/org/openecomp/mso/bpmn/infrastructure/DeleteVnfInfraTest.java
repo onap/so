@@ -79,7 +79,7 @@ public class DeleteVnfInfraTest extends WorkflowTest {
 		MockDeleteGenericVnf();
 		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
 
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		setVariables(variables, deleteVnfInfraRequest, "testRequestId123", "MIS%2F1604%2F0026%2FSW_INTERNET");
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "DeleteVnfInfra", variables);
 		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
@@ -109,7 +109,7 @@ public class DeleteVnfInfraTest extends WorkflowTest {
 		MockDeleteGenericVnf();
 		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
 
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		setVariables(variables, deleteVnfInfraRequestCascadeDelete, "testRequestId123", "MIS%2F1604%2F0026%2FSW_INTERNET");
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "DeleteVnfInfra", variables);
 		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
@@ -139,7 +139,7 @@ public class DeleteVnfInfraTest extends WorkflowTest {
 		MockDeleteGenericVnf_404();
 		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
 
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		setVariables(variables, deleteVnfInfraRequest, "testRequestId123", "MIS%2F1604%2F0026%2FSW_INTERNET");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "DeleteVnfInfra", variables);
@@ -173,7 +173,7 @@ public class DeleteVnfInfraTest extends WorkflowTest {
 		MockDeleteGenericVnf();
 		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
 
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		setVariables(variables, deleteVnfInfraRequest, "testRequestId123", "MIS%2F1604%2F0026%2FSW_INTERNET");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "DeleteVnfInfra", variables);

@@ -123,7 +123,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://org.openecomp/mso/infra/network-request/v1", name = "network-params")
     public JAXBElement<Object> createNetworkParams(Object value) {
-        return new JAXBElement<Object>(_NetworkParams_QNAME, Object.class, null, value);
+        return new JAXBElement<>(_NetworkParams_QNAME, Object.class, null, value);
     }
 
 }

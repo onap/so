@@ -307,7 +307,7 @@ public class VnfRequestHandler {
                                                                                                    queryValue,
                                                                                                    getRequestType ());
 
-        List <VnfRequest> queryResponseList = new LinkedList <VnfRequest> ();
+        List <VnfRequest> queryResponseList = new LinkedList<>();
 
         if (activeReqList != null) {
             // build response for active
@@ -351,7 +351,7 @@ public class VnfRequestHandler {
     }
 
     private List <VnfRequest> infraRequestsResponses (List <? extends InfraRequests> arList, String version) {
-        List <VnfRequest> queryResponseList = new LinkedList <VnfRequest> ();
+        List <VnfRequest> queryResponseList = new LinkedList<>();
 
         for (InfraRequests ar : arList) {
             VnfRequest qr = fillGeneric (ar);

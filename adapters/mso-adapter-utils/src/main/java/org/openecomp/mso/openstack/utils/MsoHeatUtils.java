@@ -1436,7 +1436,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
 		
 		if (inputs == null) {
 			LOGGER.debug("convertInputMap - inputs is null - nothing to do here");
-			return new HashMap<String, Object>();
+			return new HashMap<>();
 		}
 		
 		LOGGER.debug("convertInputMap in MsoHeatUtils called, with " + inputs.size() + " inputs, and template " + template.getArtifactUuid());

@@ -43,7 +43,7 @@ public class ServiceMacroHolder implements Serializable {
 	public ServiceMacroHolder() {
 		super();
 		this.service = null;
-		this.vnfResources = new ArrayList<VnfResource>();
+		this.vnfResources = new ArrayList<>();
 		this.networkResourceCustomizations = new ArrayList<>();
 		this.allottedResourceCustomizations = new ArrayList<>();
 		this.vnfResourceCustomizations = new ArrayList<>();

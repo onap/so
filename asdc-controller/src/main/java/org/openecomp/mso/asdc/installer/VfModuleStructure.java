@@ -47,7 +47,7 @@ public final class VfModuleStructure {
 		vfModuleMetadata = vfmoduleMetadata;
 		parentVfResource = vfParentResource;
 
-		artifactsMap = new HashMap<String, List<VfModuleArtifact>>();
+		artifactsMap = new HashMap<>();
 
 		for (String artifactUUID:this.vfModuleMetadata.getArtifacts()) {
 			if (vfParentResource.getArtifactsMapByUUID().containsKey(artifactUUID)) {
@@ -64,7 +64,7 @@ public final class VfModuleStructure {
 			artifactsMap.get(vfModuleArtifact.getArtifactInfo().getArtifactType()).add(vfModuleArtifact);
 
 		} else {
-			List<VfModuleArtifact> nestedList = new LinkedList<VfModuleArtifact>();
+			List<VfModuleArtifact> nestedList = new LinkedList<>();
 			nestedList.add(vfModuleArtifact);
 
 			artifactsMap.put(vfModuleArtifact.getArtifactInfo().getArtifactType(), nestedList);
@@ -73,7 +73,7 @@ public final class VfModuleStructure {
 
 	public List<VfModuleArtifact> getOrderedArtifactList() {
 
-		List <VfModuleArtifact> artifactsList = new LinkedList <VfModuleArtifact>();
+		List <VfModuleArtifact> artifactsList = new LinkedList<>();
 
 		artifactsList.addAll(artifactsMap.get(ASDCConfiguration.HEAT));
 		artifactsList.addAll(artifactsMap.get(ASDCConfiguration.HEAT_ENV));

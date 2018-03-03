@@ -47,7 +47,7 @@ public class QueryServiceMarcoHolderTest {
 		svc.setModelUUID("0cb9b26a-9820-48a7-86e5-16c510e993d9");
 		svc.setModelName("Testing Model One");
 	    ArrayList<NetworkResourceCustomization> paramList;    		
-        paramList = new ArrayList<NetworkResourceCustomization>();
+        paramList = new ArrayList<>();
         NetworkResourceCustomization d1 = new NetworkResourceCustomization();
         d1.setNetworkResourceModelUuid("0cb9b26a-9820-48a7-86e5-16c510e993d9");
         paramList.add(d1);

@@ -76,7 +76,7 @@ public class YamlTest {
 		    	InputStream input = new FileInputStream(new File("src/test/resources/resource-examples/simpleTestWithoutParam.yaml"));
 		    	YamlEditor decoder = new YamlEditor (IOUtils.toByteArray(input));
 		    	
-		    	Set <HeatTemplateParam> newParamSet = new HashSet <HeatTemplateParam> (); 
+		    	Set <HeatTemplateParam> newParamSet = new HashSet<>();
 		    	
 		    	HeatTemplateParam heatParam1 = new HeatTemplateParam();
 		    	heatParam1.setHeatTemplateArtifactUuid("1");
@@ -108,7 +108,7 @@ public class YamlTest {
 		    	InputStream input = new FileInputStream(new File("src/test/resources/resource-examples/simpleTest.yaml"));
 		    	YamlEditor decoder = new YamlEditor (IOUtils.toByteArray(input));
 		    	
-		    	Set <HeatTemplateParam> newParamSet = new HashSet <HeatTemplateParam> (); 
+		    	Set <HeatTemplateParam> newParamSet = new HashSet<>();
 		    	
 		    	HeatTemplateParam heatParam1 = new HeatTemplateParam();
 		    	heatParam1.setHeatTemplateArtifactUuid("1");

@@ -78,7 +78,7 @@ public class MsoPropertiesFactory implements Serializable {
             // Hardcode if nothing is received
             prefixMsoPropertiesPath = "";
         }
-        msoPropertiesCache = new ConcurrentHashMap <String, MsoPropertiesParameters> ();
+        msoPropertiesCache = new ConcurrentHashMap<>();
     }
 
     private static final ReentrantReadWriteLock rwl = new ReentrantReadWriteLock ();
@@ -268,7 +268,7 @@ public class MsoPropertiesFactory implements Serializable {
      */
     public List <AbstractMsoProperties> getAllMsoProperties () {
 
-        List <AbstractMsoProperties> resultList = new LinkedList <AbstractMsoProperties> ();
+        List <AbstractMsoProperties> resultList = new LinkedList<>();
         rwl.readLock ().lock ();
         try {
 

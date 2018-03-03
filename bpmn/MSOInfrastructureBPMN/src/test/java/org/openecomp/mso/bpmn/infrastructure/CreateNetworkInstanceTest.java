@@ -430,7 +430,7 @@ public class CreateNetworkInstanceTest extends WorkflowTest {
 
 	// Success Scenario
 	private Map<String, String> setupVariables1() {
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		variables.put("testMessageId", "88f65519-9a38-4c4b-8445-9eb4a5a5af56");
 		variables.put("msoRequestId", "testRequestId");
 		variables.put("requestId", "testRequestId");
@@ -455,7 +455,7 @@ public class CreateNetworkInstanceTest extends WorkflowTest {
 
 	// Success Scenario 2
 	private Map<String, String> setupVariables2() {
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		variables.put("testMessageId", "88f65519-9a38-4c4b-8445-9eb4a5a5af56");
 		variables.put("msoRequestId", "testRequestId");
 		variables.put("serviceInstanceId", "f70e927b-6087-4974-9ef8-c5e4d5847ca4");
@@ -479,7 +479,7 @@ public class CreateNetworkInstanceTest extends WorkflowTest {
 
 	// Active Scenario
 	private Map<String, String> setupVariablesActive() {
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		variables.put("testMessageId", "88f65519-9a38-4c4b-8445-9eb4a5a5af56");
 		variables.put("msoRequestId", "testRequestId");
 		variables.put("serviceInstanceId", "f70e927b-6087-4974-9ef8-c5e4d5847ca4");
@@ -503,7 +503,7 @@ public class CreateNetworkInstanceTest extends WorkflowTest {
 
 	// Missing Name Scenario
 	private Map<String, String> setupVariablesMissingName() {
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		//variables.put("bpmnRequest", getCreateNetworkRequestMissingName());
 		variables.put("testMessageId", "88f65519-9a38-4c4b-8445-9eb4a5a5af56");
 		variables.put("msoRequestId", "testRequestId");
@@ -524,7 +524,7 @@ public class CreateNetworkInstanceTest extends WorkflowTest {
 
 	// SDNC Rollback Scenario
 	private Map<String, String> setupVariablesSDNCRollback() {
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		variables.put("testMessageId", "88f65519-9a38-4c4b-8445-9eb4a5a5af56");
 		variables.put("msoRequestId", "testRequestId");
 		variables.put("serviceInstanceId", "f70e927b-6087-4974-9ef8-c5e4d5847ca4");
@@ -609,7 +609,7 @@ public class CreateNetworkInstanceTest extends WorkflowTest {
 
 	// VID json input
 	private Map<String, String> setupVariablesVID1() {
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		variables.put("bpmnRequest", getCreateNetworkRequestVID1());
 		variables.put("mso-request-id", "testRequestId");
 		//variables.put("msoRequestId", "testRequestId");

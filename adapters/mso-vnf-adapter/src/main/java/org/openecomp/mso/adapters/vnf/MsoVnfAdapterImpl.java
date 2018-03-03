@@ -295,7 +295,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             vnfExists.value = Boolean.FALSE;
             status.value = VnfStatus.NOTFOUND;
             vnfId.value = null;
-            outputs.value = new HashMap <String, String> (); // Return as an empty map
+            outputs.value = new HashMap<>(); // Return as an empty map
 
             LOGGER.debug ("VNF " + vnfName + " not found");
         } else {
@@ -548,7 +548,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         if (objectMap == null) {
             return null;
         }
-        Map<String, String> stringMap = new HashMap<String, String>();
+        Map<String, String> stringMap = new HashMap<>();
         for (String key : objectMap.keySet()) {
             if (!stringMap.containsKey(key)) {
                 Object obj = objectMap.get(key);

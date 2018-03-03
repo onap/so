@@ -35,8 +35,8 @@ public class VduInfo {
 	private String vduInstanceId = "";
 	private String vduInstanceName = "";
 	private VduStatus status = VduStatus.NOTFOUND;
-	private Map<String,Object> outputs = new HashMap<String,Object>();
-	private Map<String,Object> inputs = new HashMap<String,Object>();
+	private Map<String,Object> outputs = new HashMap<>();
+	private Map<String,Object> inputs = new HashMap<>();
 	private String lastAction;
 	private String actionStatus;
 	private String errorMessage;

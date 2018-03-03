@@ -39,10 +39,10 @@ public class VnfQueryTest {
 		String cloudId = "MT";
 		String tenantId = "MSO_Test";
 		String vnfName = "VNF_TEST1";
-		Holder<Boolean> vnfExists = new Holder<Boolean>();
-		Holder<String> vnfId = new Holder<String>();
-		Holder<VnfStatus> status = new Holder<VnfStatus>();
-		Holder<Map<String,String>> outputs = new Holder<Map<String,String>>();
+		Holder<Boolean> vnfExists = new Holder<>();
+		Holder<String> vnfId = new Holder<>();
+		Holder<VnfStatus> status = new Holder<>();
+		Holder<Map<String,String>> outputs = new Holder<>();
 		
 		try {
 			vnfAdapter.queryVnf(cloudId, tenantId, vnfName, null,

@@ -76,7 +76,7 @@ public class MsoRequestTest {
 	            return;
 	        }
 			ObjectMapper mapper = new ObjectMapper();
-			 HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+			 HashMap<String, String> instanceIdMap = new HashMap<>();
 			instanceIdMap.put("serviceInstanceId", "3eecada1-83a4-4f33-9ed2-7937e7b8dbbc");
 			ServiceInstancesRequest sir  = mapper.readValue(requestJSON, ServiceInstancesRequest.class);
 			MsoRequest msoRequest = new MsoRequest ("1234");
@@ -101,7 +101,7 @@ public class MsoRequestTest {
 	            return;
 	        }
 			ObjectMapper mapper = new ObjectMapper();
-			 HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+			 HashMap<String, String> instanceIdMap = new HashMap<>();
 			instanceIdMap.put("serviceInstanceId", "3eecada1-83a4-4f33-9ed2-7937e7b8dbbc");
 			ServiceInstancesRequest sir  = mapper.readValue(requestJSON, ServiceInstancesRequest.class);
 			MsoRequest msoRequest = new MsoRequest ("1234");
@@ -121,7 +121,7 @@ public class MsoRequestTest {
 	            return;
 	        }
 			ObjectMapper mapper = new ObjectMapper();
-			 HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+			 HashMap<String, String> instanceIdMap = new HashMap<>();
 			instanceIdMap.put("serviceInstanceId", "3eecada1-83a4-4f33-9ed2-7937e7b8dbbc");
 			ServiceInstancesRequest sir  = mapper.readValue(requestJSON, ServiceInstancesRequest.class);
 			MsoRequest msoRequest = new MsoRequest ("1234");
@@ -141,7 +141,7 @@ public class MsoRequestTest {
 	            return;
 	        }
 			ObjectMapper mapper = new ObjectMapper();
-			 HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+			 HashMap<String, String> instanceIdMap = new HashMap<>();
 			instanceIdMap.put("serviceInstanceId", "3eecada1-83a4-4f33-9ed2-7937e7b8dbbc");
 			ServiceInstancesRequest sir  = mapper.readValue(requestJSON, ServiceInstancesRequest.class);
 			MsoRequest msoRequest = new MsoRequest ("1234");
@@ -161,7 +161,7 @@ public class MsoRequestTest {
 	            return;
 	        }
 			ObjectMapper mapper = new ObjectMapper();
-			 HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+			 HashMap<String, String> instanceIdMap = new HashMap<>();
 			instanceIdMap.put("serviceInstanceId", "3eecada1-83a4-4f33-9ed2-7937e7b8dbbc");
 			ServiceInstancesRequest sir  = mapper.readValue(requestJSON, ServiceInstancesRequest.class);
 			MsoRequest msoRequest = new MsoRequest ("1234");
@@ -181,7 +181,7 @@ public class MsoRequestTest {
 	            return;
 	        }
 			ObjectMapper mapper = new ObjectMapper();
-			 HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+			 HashMap<String, String> instanceIdMap = new HashMap<>();
 			instanceIdMap.put("serviceInstanceId", "3eecada1-83a4-4f33-9ed2-7937e7b8dbbc");
 			ServiceInstancesRequest sir  = mapper.readValue(requestJSON1, ServiceInstancesRequest.class);
 			MsoRequest msoRequest = new MsoRequest ("1234");
@@ -210,7 +210,7 @@ public class MsoRequestTest {
 	            return;
 	        }
 			ObjectMapper mapper = new ObjectMapper();
-			 HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+			 HashMap<String, String> instanceIdMap = new HashMap<>();
 			instanceIdMap.put("serviceInstanceId", "3eecada1-83a4-4f33-9ed2-7937e7b8dbbc");
 			ServiceInstancesRequest sir  = mapper.readValue(requestJSON2, ServiceInstancesRequest.class);
 			MsoRequest msoRequest = new MsoRequest ("1234");
@@ -230,7 +230,7 @@ public class MsoRequestTest {
 	            return;
 	        }
 			ObjectMapper mapper = new ObjectMapper();
-			 HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+			 HashMap<String, String> instanceIdMap = new HashMap<>();
 			instanceIdMap.put("serviceInstanceId", "3eecada1-83a4-4f33-9ed2-7937e7b8dbbc");
 			ServiceInstancesRequest sir  = mapper.readValue(requestJSON, ServiceInstancesRequest.class);
 			MsoRequest msoRequest = new MsoRequest ("1234");
@@ -251,7 +251,7 @@ public class MsoRequestTest {
 	        }
 		 
 			ObjectMapper mapper = new ObjectMapper();
-			HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+			HashMap<String, String> instanceIdMap = new HashMap<>();
 			instanceIdMap.put("serviceInstanceId", "3eecada1-83a4-4f33-9ed2-7937e7b8dbbc");
 			instanceIdMap.put("vnfInstanceId", "3eecada1-83a4-4f33-9ed2-7937e7b8dbbc");
 			ServiceInstancesRequest sir  = mapper.readValue(requestJSON, ServiceInstancesRequest.class);
@@ -270,7 +270,7 @@ public class MsoRequestTest {
 	        }
 		 
 			mapper = new ObjectMapper();
-			instanceIdMap = new HashMap<String,String>();
+			instanceIdMap = new HashMap<>();
 			instanceIdMap.put("serviceInstanceId", "3eecada1-83a4-4f33-9ed2-7937e7b8dbbc");
 			instanceIdMap.put("vnfInstanceId", "3eecada1-83a4-4f33-9ed2-7937e7b8dbbc");
 			sir  = mapper.readValue(requestJSON, ServiceInstancesRequest.class);
@@ -291,7 +291,7 @@ public class MsoRequestTest {
 	        }
 		 
 			ObjectMapper mapper = new ObjectMapper();
-			HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+			HashMap<String, String> instanceIdMap = new HashMap<>();
 			instanceIdMap.put("serviceInstanceId", "3eecada1-83a4-4f33-9ed2-7937e7b8dbbc");
 			instanceIdMap.put("vnfInstanceId", "3eecada1-83a4-4f33-9ed2-7937e7b8dbbc");
 			ServiceInstancesRequest sir  = mapper.readValue(requestJSON, ServiceInstancesRequest.class);

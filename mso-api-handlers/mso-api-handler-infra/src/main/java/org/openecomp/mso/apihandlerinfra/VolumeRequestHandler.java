@@ -289,7 +289,7 @@ public class VolumeRequestHandler {
                                                                                                    queryValue,
                                                                                                    "VOLUME");
   
-        List <VolumeRequest> queryResponseList = new LinkedList <VolumeRequest> ();
+        List <VolumeRequest> queryResponseList = new LinkedList<>();
 
         if (activeReqList != null) {
             // build response for active
@@ -334,7 +334,7 @@ public class VolumeRequestHandler {
     }
 
     private List <VolumeRequest> infraRequestsResponses (List <? extends InfraRequests> arList, String version) {
-        List <VolumeRequest> queryResponseList = new LinkedList <VolumeRequest> ();
+        List <VolumeRequest> queryResponseList = new LinkedList<>();
 
         for (InfraRequests ar : arList) {
             VolumeRequest qr = fillGeneric (ar);

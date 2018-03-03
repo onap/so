@@ -209,7 +209,7 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
                 return null;
             }
 
-            Map <String, String> metadata = new HashMap <String, String> ();
+            Map <String, String> metadata = new HashMap<>();
             if (cloudSite.getIdentityService ().hasTenantMetadata ()) {
                 OpenStackRequest <Metadata> request = keystoneAdminClient.tenants ().showMetadata (tenant.getId ());
                 Metadata tenantMetadata = executeAndRecordOpenstackRequest (request, msoProps);
@@ -255,7 +255,7 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
                 return null;
             }
 
-            Map <String, String> metadata = new HashMap <String, String> ();
+            Map <String, String> metadata = new HashMap<>();
             if (cloudSite.getIdentityService ().hasTenantMetadata ()) {
                 OpenStackRequest <Metadata> request = keystoneAdminClient.tenants ().showMetadata (tenant.getId ());
                 Metadata tenantMetadata = executeAndRecordOpenstackRequest (request, msoProps);

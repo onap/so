@@ -91,7 +91,7 @@ public class NetworkTypes {
      */
     public List<NetworkType> getNetworkType() {
         if (networkType == null) {
-            networkType = new ArrayList<NetworkType>();
+            networkType = new ArrayList<>();
         }
         return this.networkType;
     }

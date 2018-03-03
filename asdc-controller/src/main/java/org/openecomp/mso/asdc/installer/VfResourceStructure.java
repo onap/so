@@ -101,8 +101,8 @@ public final class VfResourceStructure {
 		resourceInstance=resourceinstance;
 
 
-		vfModulesStructureList = new LinkedList<VfModuleStructure>();
-		artifactsMapByUUID =  new HashMap<String, VfModuleArtifact>();
+		vfModulesStructureList = new LinkedList<>();
+		artifactsMapByUUID = new HashMap<>();
 	}
 
 	//@Override

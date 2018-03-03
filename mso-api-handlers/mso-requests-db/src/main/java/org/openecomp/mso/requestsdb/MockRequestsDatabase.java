@@ -30,7 +30,7 @@ public class MockRequestsDatabase {
 	private Map<String, InfraActiveRequests> activeRequests;
 	
 	public MockRequestsDatabase() {
-		activeRequests = new HashMap<String, InfraActiveRequests>();
+		activeRequests = new HashMap<>();
 	}
 	
 	public void addRecord(InfraActiveRequests record) {

@@ -153,7 +153,7 @@ public class MavenVersioningTest {
 		MavenLikeVersioning test12 = new MavenLikeVersioning();
 		test12.setVersion("2.0");
 		
-		List<MavenLikeVersioning> list= new LinkedList<MavenLikeVersioning>();
+		List<MavenLikeVersioning> list= new LinkedList<>();
 		list.add(test1);
 		list.add(test2);
 		list.add(test3);
