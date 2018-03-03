@@ -238,7 +238,6 @@ public class PropertyConfiguration {
 	 * Reads properties from the specified file, updates the property file cache, and
 	 * returns the properties in a map.
 	 * @param file the file to read
-	 * @param reload true if this is a reload event
 	 * @return a map of properties
 	 */
 	private Map<String, String> readProperties(File file) throws IOException {

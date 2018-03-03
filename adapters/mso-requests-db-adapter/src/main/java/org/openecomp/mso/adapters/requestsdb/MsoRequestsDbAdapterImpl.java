@@ -333,7 +333,7 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
      * 
      * @param serviceId
      * @param operationId
-     * @param resourceUUID
+     * @param resourceTemplateUUID
      * @return
      * @throws MsoRequestsDbException
      * @since   ONAP Amsterdam Release
@@ -350,7 +350,7 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
      * 
      * @param serviceId
      * @param operationId
-     * @param resourceUUID
+     * @param resourceTemplateUUID
      * @param operationType
      * @param resourceInstanceID
      * @param jobId
@@ -363,13 +363,13 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
      */
     @Override
     public void updateResourceOperationStatus(String serviceId, String operationId, String resourceTemplateUUID,
-            String operType, String resourceInstanceID, String jobId, String status, String progress,
+            String operationType, String resourceInstanceID, String jobId, String status, String progress,
             String errorCode, String statusDescription) throws MsoRequestsDbException {
          ResourceOperationStatus resStatus = new ResourceOperationStatus();
          resStatus.setServiceId(serviceId);
          resStatus.setOperationId(operationId);
          resStatus.setResourceTemplateUUID(resourceTemplateUUID);
-         resStatus.setOperType(operType);
+         resStatus.setOperType(operationType);
          resStatus.setResourceInstanceID(resourceInstanceID);
          resStatus.setJobId(jobId);
          resStatus.setStatus(status);

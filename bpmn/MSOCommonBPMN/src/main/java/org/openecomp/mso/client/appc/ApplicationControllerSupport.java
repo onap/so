@@ -71,7 +71,7 @@ public class ApplicationControllerSupport {
 	}
 
 	/**
-	 * @param inputClass
+	 * @param action
 	 * @return
 	 * @throws ClassNotFoundException
 	 * @throws InstantiationException

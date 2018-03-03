@@ -176,7 +176,7 @@ public class PropertyConfigurationSetup {
 	 * PropertyConfiguration, just like they do when a property file is updated on
 	 * a real MSO system. This method will optionally wait for the new properties
 	 * to be loaded.  Timeout results in an IOException.
-	 * @param values new properties
+	 * @param properties new properties
 	 * @param wait maximum amount of time to wait for new properties to be loaded,
 	 *             in milliseconds.  A value of zero means, "Do not wait."
 	 * @throws IOException

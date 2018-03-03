@@ -60,7 +60,7 @@ public class VfcAdapterRest {
     /**
      * Create a NS <br>
      * 
-     * @param servletReq the http request
+     * @param data the http request
      * @return
      * @since ONAP Amsterdam Release
      */

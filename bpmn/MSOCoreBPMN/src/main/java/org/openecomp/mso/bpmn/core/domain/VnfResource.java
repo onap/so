@@ -146,7 +146,6 @@ public class VnfResource extends Resource {
 	 * 
 	 * default setter for this field deprecated
 	 * @param modelName << serviceResources.modelInfo.modelName
-	 * @param modelInstanceName
 	 */
 	public void constructVnfType(String modelName) {
 		this.vnfType = modelName.concat("/").concat(this.modelInfo.getModelInstanceName());
