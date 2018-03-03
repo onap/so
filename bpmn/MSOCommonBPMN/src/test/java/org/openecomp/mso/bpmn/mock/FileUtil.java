@@ -35,11 +35,6 @@ public class FileUtil {
 
     private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
     
-    private FileUtil() {
-        /**
-         * Constructor.
-         */
-    }
 	/**
 	 * Read the specified resource file and return the contents as a String.
 	 * 
