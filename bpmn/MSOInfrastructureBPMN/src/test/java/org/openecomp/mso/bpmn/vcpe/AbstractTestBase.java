@@ -19,8 +19,6 @@
  */
 package org.openecomp.mso.bpmn.vcpe;
 
-import org.openecomp.mso.bpmn.common.WorkflowTest;
-
 public class AbstractTestBase extends WorkflowTest {
 	
 	

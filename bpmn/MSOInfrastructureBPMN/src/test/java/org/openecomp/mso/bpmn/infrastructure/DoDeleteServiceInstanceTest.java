@@ -20,23 +20,10 @@
 
 package org.openecomp.mso.bpmn.infrastructure;
 
-import static org.junit.Assert.assertEquals;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockDeleteServiceInstance;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetServiceInstance;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockNodeQueryServiceInstanceById;
-import static org.openecomp.mso.bpmn.mock.StubResponseDatabase.mockUpdateRequestDB;
-import static org.openecomp.mso.bpmn.mock.StubResponseSDNCAdapter.mockSDNCAdapter;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import org.camunda.bpm.engine.test.Deployment;
-import org.junit.Assert;
-import org.junit.Test;
-import org.openecomp.mso.bpmn.common.BPMNUtil;
-import org.openecomp.mso.bpmn.common.WorkflowTest;
 
 /**
  * Unit test cases for DoDeleteServiceInstance.bpmn

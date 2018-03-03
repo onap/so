@@ -20,19 +20,12 @@
 
 package org.openecomp.mso.bpmn.common;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.openecomp.mso.bpmn.common.BPMNUtil.executeWorkFlow;
 import static org.openecomp.mso.bpmn.common.BPMNUtil.waitForWorkflowToFinish;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.camunda.bpm.engine.test.Deployment;
-import org.junit.Assert;
-import org.junit.Test;
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowResponse;
 
 /**

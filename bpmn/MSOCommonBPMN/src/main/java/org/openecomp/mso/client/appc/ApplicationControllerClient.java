@@ -20,44 +20,13 @@
 
 package org.openecomp.mso.client.appc;
 
-import java.beans.BeanInfo;
-
 import java.util.Map;
 
-import org.openecomp.mso.bpmn.core.PropertyConfiguration;
-
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.Instant;
 import java.util.Properties;
 import java.util.UUID;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
-import org.openecomp.appc.client.lcm.api.AppcClientServiceFactoryProvider;
-import org.openecomp.appc.client.lcm.api.AppcLifeCycleManagerServiceFactory;
-import org.openecomp.appc.client.lcm.api.ApplicationContext;
-import org.openecomp.appc.client.lcm.api.LifeCycleManagerStateful;
-import org.openecomp.appc.client.lcm.api.ResponseHandler;
-import org.openecomp.appc.client.lcm.exceptions.AppcClientException;
-import org.openecomp.appc.client.lcm.model.Action;
-import org.openecomp.appc.client.lcm.model.ActionIdentifiers;
-import org.openecomp.appc.client.lcm.model.AuditOutput;
-import org.openecomp.appc.client.lcm.model.CommonHeader;
-import org.openecomp.appc.client.lcm.model.Flags;
-import org.openecomp.appc.client.lcm.model.Flags.Force;
-import org.openecomp.appc.client.lcm.model.Flags.Mode;
-import org.openecomp.appc.client.lcm.model.Payload;
-import org.openecomp.appc.client.lcm.model.Status;
-import org.openecomp.appc.client.lcm.model.ZULU;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import org.openecomp.mso.logger.MsoLogger;
 
 public class ApplicationControllerClient {
 

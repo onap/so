@@ -20,9 +20,6 @@
 
 package org.openecomp.mso.bpmn.common;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.openecomp.mso.bpmn.mock.StubResponseVNFAdapter.mockVNFDelete;
 import static org.openecomp.mso.bpmn.mock.StubResponseVNFAdapter.mockVNFPost;
 import static org.openecomp.mso.bpmn.mock.StubResponseVNFAdapter.mockVNFPut;
@@ -32,10 +29,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import org.camunda.bpm.engine.test.Deployment;
-import org.junit.Test;
-import org.openecomp.mso.bpmn.core.WorkflowException;
 
 /**
  * Unit tests for VnfAdapterRestV1.

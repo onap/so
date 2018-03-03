@@ -20,8 +20,6 @@
 
 package org.openecomp.mso.apihandlerinfra.serviceinstancebeans;
 
-import java.util.List;
-
 
 public class RequestList {
 

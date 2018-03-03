@@ -20,8 +20,6 @@
 
 package org.openecomp.mso.client.aai;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 public class AAIUpdatorImpl implements AAIUpdator {
 	
 	@Autowired

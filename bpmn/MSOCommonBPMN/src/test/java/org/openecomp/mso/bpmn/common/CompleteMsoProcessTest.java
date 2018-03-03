@@ -27,10 +27,6 @@ import static org.openecomp.mso.bpmn.mock.StubResponseDatabase.mockUpdateRequest
 import java.util.HashMap;
 import java.util.Map;
 
-import org.camunda.bpm.engine.test.Deployment;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowResponse;
 
 /**

@@ -27,7 +27,6 @@ import org.openecomp.mso.apihandlerinfra.vnfbeans.VnfTypes;
 import org.openecomp.mso.db.catalog.CatalogDatabase;
 import org.openecomp.mso.db.catalog.beans.VnfResource;
 import org.openecomp.mso.logger.MsoLogger;
-import org.openecomp.mso.requestsdb.RequestsDatabase;
 import org.openecomp.mso.utils.UUIDChecker;
 import org.apache.http.HttpStatus;
 

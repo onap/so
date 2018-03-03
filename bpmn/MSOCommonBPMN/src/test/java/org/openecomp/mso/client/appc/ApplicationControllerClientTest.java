@@ -20,21 +20,7 @@
 
 package org.openecomp.mso.client.appc;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.Properties;
 import java.util.UUID;
-
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
-
-import org.openecomp.appc.client.lcm.model.Action;
-import org.openecomp.appc.client.lcm.model.ActionIdentifiers;
-import org.openecomp.appc.client.lcm.model.CheckLockInput;
-import org.openecomp.appc.client.lcm.model.Flags;
-import org.openecomp.appc.client.lcm.model.Status;
 
 public class ApplicationControllerClientTest {
 

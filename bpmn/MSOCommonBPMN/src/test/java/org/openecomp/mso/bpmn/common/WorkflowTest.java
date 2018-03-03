@@ -20,9 +20,6 @@
 
 package org.openecomp.mso.bpmn.common;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
 import java.io.IOException;
 import java.io.StringReader;
 import java.lang.management.ManagementFactory;
@@ -30,15 +27,12 @@ import java.lang.management.RuntimeMXBean;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBException;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
@@ -51,18 +45,6 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.camunda.bpm.engine.RuntimeService;
-import org.camunda.bpm.engine.history.HistoricProcessInstance;
-import org.camunda.bpm.engine.history.HistoricVariableInstance;
-import org.camunda.bpm.engine.runtime.ProcessInstance;
-import org.camunda.bpm.engine.test.ProcessEngineRule;
-import org.camunda.bpm.engine.variable.impl.VariableMapImpl;
-import org.custommonkey.xmlunit.DetailedDiff;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.jboss.resteasy.spi.AsynchronousResponse;
-import org.json.JSONArray;
-import org.junit.Before;
-import org.junit.Rule;
 import org.openecomp.mso.bpmn.common.adapter.sdnc.CallbackHeader;
 import org.openecomp.mso.bpmn.common.adapter.sdnc.SDNCAdapterCallbackRequest;
 import org.openecomp.mso.bpmn.common.adapter.sdnc.SDNCAdapterResponse;
@@ -77,23 +59,13 @@ import org.openecomp.mso.bpmn.common.workflow.service.VnfAdapterNotifyServiceImp
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowAsyncResource;
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowMessageResource;
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowResponse;
-import org.openecomp.mso.bpmn.core.utils.CamundaDBSetup;
-import org.openecomp.mso.bpmn.core.PropertyConfigurationSetup;
-import org.openecomp.mso.bpmn.core.domain.Resource;
-import org.openecomp.mso.bpmn.core.domain.ServiceDecomposition;
 
-import static org.openecomp.mso.bpmn.core.json.JsonUtils.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import com.github.tomakehurst.wiremock.extension.ResponseTransformer;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
-
 
 
 /**

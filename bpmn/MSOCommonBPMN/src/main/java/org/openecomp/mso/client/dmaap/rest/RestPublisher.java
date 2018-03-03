@@ -24,9 +24,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriBuilderException;
-
 import org.openecomp.mso.client.dmaap.Publisher;
 import org.openecomp.mso.client.policy.RestClient;
 

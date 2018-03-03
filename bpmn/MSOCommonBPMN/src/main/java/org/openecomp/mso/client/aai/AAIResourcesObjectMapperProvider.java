@@ -20,10 +20,6 @@
 
 package org.openecomp.mso.client.aai;
 
-import javax.ws.rs.ext.Provider;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 @Provider
 public class AAIResourcesObjectMapperProvider extends AAICommonObjectMapperProvider {
 

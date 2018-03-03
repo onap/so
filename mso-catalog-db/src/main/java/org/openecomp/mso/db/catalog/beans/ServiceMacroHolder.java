@@ -21,7 +21,6 @@ package org.openecomp.mso.db.catalog.beans;
 
 import org.openecomp.mso.db.catalog.beans.Service;
 import org.openecomp.mso.db.catalog.beans.VnfResource;
-import org.openecomp.mso.db.catalog.beans.VfModule;
 import java.io.Serializable;
 import java.util.ArrayList;
 

@@ -20,16 +20,6 @@
 
 package org.openecomp.mso.client.sdno;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Optional;
-
-import org.openecomp.mso.client.dmaap.Consumer;
-import org.openecomp.mso.client.dmaap.DmaapConsumer;
-import org.openecomp.mso.client.dmaap.DmaapPublisher;
-import org.openecomp.mso.client.exceptions.SDNOException;
-import org.openecomp.mso.jsonpath.JsonPathUtil;
-
 public class SDNOValidatorImpl implements SDNOValidator {
 
 	private final static String aafUserName = "something";

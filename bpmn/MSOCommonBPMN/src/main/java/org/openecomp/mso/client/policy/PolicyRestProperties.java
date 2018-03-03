@@ -24,7 +24,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 
-import org.openecomp.mso.bpmn.core.PropertyConfiguration;
 import org.openecomp.mso.client.RestProperties;
 
 public class PolicyRestProperties implements RestProperties {

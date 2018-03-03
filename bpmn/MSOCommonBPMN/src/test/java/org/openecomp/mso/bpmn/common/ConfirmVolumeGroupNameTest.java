@@ -20,15 +20,10 @@
 
 package org.openecomp.mso.bpmn.common;
 
-import static org.junit.Assert.assertEquals;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetVolumeGroupById;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import org.camunda.bpm.engine.RuntimeService;
-import org.camunda.bpm.engine.test.Deployment;
-import org.junit.Test;
 
 /**
  * Unit test cases for ConfirmVolumeGroupName.bpmn

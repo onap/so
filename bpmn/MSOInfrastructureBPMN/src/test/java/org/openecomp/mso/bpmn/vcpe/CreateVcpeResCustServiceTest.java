@@ -19,30 +19,10 @@
  */
 package org.openecomp.mso.bpmn.vcpe;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockDeleteAllottedResource;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetAllottedResource;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetCustomer;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetServiceInstance;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockNodeQueryServiceInstanceById;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPatchAllottedResource;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPutAllottedResource;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPutServiceInstance;
-import static org.openecomp.mso.bpmn.mock.StubResponseDatabase.MockGetServiceResourcesCatalogData;
-import static org.openecomp.mso.bpmn.mock.StubResponseDatabase.mockUpdateRequestDB;
-import static org.openecomp.mso.bpmn.mock.StubResponseSDNCAdapter.mockSDNCAdapter;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import org.camunda.bpm.engine.test.Deployment;
-import org.junit.Test;
-import org.openecomp.mso.bpmn.common.BPMNUtil;
-import org.openecomp.mso.bpmn.mock.FileUtil;
 
 public class CreateVcpeResCustServiceTest extends AbstractTestBase {
 

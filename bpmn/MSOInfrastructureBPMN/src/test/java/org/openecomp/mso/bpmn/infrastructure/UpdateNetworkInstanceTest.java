@@ -20,29 +20,8 @@
 
 package org.openecomp.mso.bpmn.infrastructure;
 
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.*;
-import static org.openecomp.mso.bpmn.mock.StubResponseDatabase.MockUpdateRequestDB;
-import static org.openecomp.mso.bpmn.mock.StubResponseNetworkAdapter.MockNetworkAdapterRestPut;
-import static org.openecomp.mso.bpmn.mock.StubResponseSDNCAdapter.mockSDNCAdapterTopology;
-import static org.openecomp.mso.bpmn.common.BPMNUtil.executeAsyncWorkflow;
-import static org.openecomp.mso.bpmn.common.BPMNUtil.getVariable;
-import static org.junit.Assert.assertEquals;
-
 import java.util.HashMap;
 import java.util.Map;
-
-import org.camunda.bpm.engine.test.Deployment;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-
-import org.openecomp.mso.bpmn.common.BPMNUtil;
-import org.openecomp.mso.bpmn.common.WorkflowTest;
-import org.openecomp.mso.bpmn.common.WorkflowTestTransformer;
-import org.openecomp.mso.bpmn.common.SDNCAdapterCallbackRule;
-import org.openecomp.mso.bpmn.mock.SDNCAdapterNetworkTopologyMockTransformer;
-
-import com.github.tomakehurst.wiremock.extension.ResponseTransformer;
 
 /**
  * Unit test cases for DoUpdateNetworkInstance.bpmn

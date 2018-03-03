@@ -25,9 +25,6 @@ import java.net.URL;
 import java.util.List;
 import java.util.Properties;
 
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.UriBuilder;
-
 import org.openecomp.mso.client.dmaap.Consumer;
 import org.openecomp.mso.client.policy.RestClient;
 

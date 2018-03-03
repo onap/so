@@ -20,16 +20,6 @@
 
 package org.openecomp.mso.client.policy;
 
-import javax.ws.rs.ext.ContextResolver;
-
-import javax.ws.rs.ext.Provider;
-
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-
 @Provider
 public class CommonObjectMapperProvider implements ContextResolver<ObjectMapper> {
 

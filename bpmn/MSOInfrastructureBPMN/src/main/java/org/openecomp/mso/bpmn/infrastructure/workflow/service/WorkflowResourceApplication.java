@@ -23,13 +23,6 @@ package org.openecomp.mso.bpmn.infrastructure.workflow.service;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
-
-import org.openecomp.mso.bpmn.common.workflow.service.WorkflowAsyncResource;
-import org.openecomp.mso.bpmn.common.workflow.service.WorkflowMessageResource;
-import org.openecomp.mso.bpmn.common.workflow.service.WorkflowResource;
-
 @ApplicationPath("/")
 public class WorkflowResourceApplication extends Application {
     private Set<Object> singletons = new HashSet<>();

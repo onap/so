@@ -24,7 +24,6 @@ import javax.jws.Oneway;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
-import javax.ws.rs.core.Context;
 import javax.xml.ws.Action;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.WebServiceContext;
@@ -38,7 +37,6 @@ import org.openecomp.mso.bpmn.common.adapter.vnf.UpdateVnfNotification;
 import org.openecomp.mso.bpmn.common.adapter.vnf.VnfAdapterNotify;
 import org.openecomp.mso.bpmn.common.adapter.vnf.VnfRollback;
 import org.openecomp.mso.bpmn.common.adapter.vnf.VnfStatus;
-import org.openecomp.mso.logger.MsoLogger;
 
 /**
  * Implementation of the VnfAdapterNotify service.

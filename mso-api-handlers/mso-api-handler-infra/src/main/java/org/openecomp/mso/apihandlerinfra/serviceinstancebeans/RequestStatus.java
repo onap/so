@@ -20,8 +20,6 @@
 
 package org.openecomp.mso.apihandlerinfra.serviceinstancebeans;
 
-import java.util.Date;
-
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_DEFAULT)

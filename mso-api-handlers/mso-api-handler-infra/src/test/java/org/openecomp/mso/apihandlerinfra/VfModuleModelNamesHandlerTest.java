@@ -31,7 +31,6 @@ import mockit.MockUp;
 import org.junit.Test;
 import org.openecomp.mso.db.catalog.CatalogDatabase;
 import org.openecomp.mso.db.catalog.beans.VfModule;
-import org.openecomp.mso.db.catalog.beans.VnfResource;
 
 import javax.ws.rs.core.Response;
 public class VfModuleModelNamesHandlerTest {

@@ -23,8 +23,6 @@ package org.openecomp.mso.bpmn.common.workflow.service;
 import java.util.concurrent.Delayed;
 import java.util.concurrent.TimeUnit;
 
-import org.jboss.resteasy.spi.AsynchronousResponse;
-
 /**
  * @version 1.0
  * Workflow context object used to send timeout response, if workflow instance does not write the response in time

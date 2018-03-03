@@ -22,7 +22,6 @@
 package org.openecomp.mso.bpmn.common.util;
 
 import java.security.GeneralSecurityException;
-import org.openecomp.mso.logger.MsoLogger;
 
 public class CryptoHandler implements ICryptoHandler {
 	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);

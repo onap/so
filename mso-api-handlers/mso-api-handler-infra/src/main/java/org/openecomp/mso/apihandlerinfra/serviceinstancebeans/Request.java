@@ -20,9 +20,6 @@
 
 package org.openecomp.mso.apihandlerinfra.serviceinstancebeans;
 
-import java.util.Date;
-
-import org.codehaus.jackson.map.annotate.JsonRootName;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 //@JsonRootName(value = "request")

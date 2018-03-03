@@ -22,8 +22,6 @@ package org.openecomp.mso.bpmn.core.domain;
 
 import java.io.Serializable;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 /**
  * This class is used to store instance
  * data of Resources

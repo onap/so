@@ -20,8 +20,6 @@
 
 package org.openecomp.mso.asdc.installer;
 
-import java.util.Map;
-
 
 public interface IVfModuleData {
 

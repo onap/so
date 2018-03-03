@@ -25,7 +25,6 @@ package org.openecomp.mso.bpmn.common;
 
 import static org.openecomp.mso.bpmn.mock.StubResponseDatabase.MockGetServiceResourcesCatalogDataByModelUuid;
 import static org.openecomp.mso.bpmn.mock.StubResponseSNIRO.*;
-import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,12 +32,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import org.camunda.bpm.engine.test.Deployment;
-import org.junit.Test;
-
-import org.openecomp.mso.bpmn.core.WorkflowException;
-import org.openecomp.mso.bpmn.core.domain.*;
 
 import org.openecomp.mso.bpmn.mock.FileUtil;
 import org.openecomp.mso.bpmn.common.WorkflowTest;

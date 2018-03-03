@@ -21,7 +21,6 @@
 
 package org.openecomp.mso.bpmn.core.xml;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -50,7 +49,6 @@ import javax.xml.xpath.XPathFactory;
 
 import org.openecomp.mso.logger.MsoLogger;
 import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;

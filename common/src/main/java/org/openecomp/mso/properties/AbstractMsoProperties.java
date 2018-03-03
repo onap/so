@@ -22,7 +22,6 @@ package org.openecomp.mso.properties;
 
 
 import java.io.IOException;
-import java.util.Properties;
 
 import org.openecomp.mso.logger.MsoLogger;
 

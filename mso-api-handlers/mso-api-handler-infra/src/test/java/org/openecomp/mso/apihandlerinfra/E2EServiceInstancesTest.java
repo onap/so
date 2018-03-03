@@ -24,10 +24,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import javax.ws.rs.core.Response;
 
@@ -35,13 +31,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.entity.BasicHttpEntity;
 import org.apache.http.message.BasicHttpResponse;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Order;
-import org.hibernate.internal.SessionFactoryImpl;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.openecomp.mso.apihandler.common.CamundaClient;
 import org.openecomp.mso.apihandler.common.RequestClient;
 import org.openecomp.mso.apihandler.common.RequestClientFactory;
@@ -50,7 +40,6 @@ import org.openecomp.mso.db.catalog.beans.Service;
 import org.openecomp.mso.db.catalog.beans.ServiceRecipe;
 import org.openecomp.mso.properties.MsoDatabaseException;
 import org.openecomp.mso.properties.MsoJavaProperties;
-import org.openecomp.mso.requestsdb.InfraActiveRequests;
 import org.openecomp.mso.requestsdb.OperationStatus;
 import org.openecomp.mso.requestsdb.RequestsDatabase;
 

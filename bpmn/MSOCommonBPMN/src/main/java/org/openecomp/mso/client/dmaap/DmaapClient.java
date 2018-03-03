@@ -26,13 +26,6 @@ import java.util.Base64;
 import java.util.Map;
 import java.util.Properties;
 
-import org.openecomp.mso.bpmn.core.PropertyConfiguration;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-
-import com.att.eelf.configuration.EELFLogger;
-import com.att.eelf.configuration.EELFManager;
-
 public abstract class DmaapClient {
 	
 	protected final EELFLogger auditLogger = EELFManager.getInstance().getAuditLogger();

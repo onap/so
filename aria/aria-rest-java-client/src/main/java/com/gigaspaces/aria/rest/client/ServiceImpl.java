@@ -17,7 +17,6 @@
 */
 package com.gigaspaces.aria.rest.client;
 
-import java.net.URI;
 import java.util.Date;
 
 /**

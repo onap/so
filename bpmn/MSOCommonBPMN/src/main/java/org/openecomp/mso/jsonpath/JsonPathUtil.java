@@ -22,12 +22,6 @@ package org.openecomp.mso.jsonpath;
 
 import java.util.Optional;
 
-import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.Option;
-
-import net.minidev.json.JSONArray;
-
 public class JsonPathUtil {
 
 	

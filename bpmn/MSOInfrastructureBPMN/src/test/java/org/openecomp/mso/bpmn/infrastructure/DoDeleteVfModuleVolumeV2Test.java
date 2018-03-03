@@ -20,23 +20,10 @@
 
 package org.openecomp.mso.bpmn.infrastructure;
 
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockDeleteVolumeGroupById;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetNetworkCloudRegion;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetVolumeGroupById;
-import static org.openecomp.mso.bpmn.mock.StubResponseDatabase.mockUpdateRequestDB;
-import static org.openecomp.mso.bpmn.mock.StubResponseVNFAdapter.mockPutVNFVolumeGroup;
-import static org.openecomp.mso.bpmn.mock.StubResponseVNFAdapter.mockVfModuleDelete;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import org.camunda.bpm.engine.test.Deployment;
-import org.junit.Test;
-import org.openecomp.mso.bpmn.common.WorkflowTest;
-import org.openecomp.mso.bpmn.core.WorkflowException;
-import org.openecomp.mso.bpmn.mock.FileUtil;
 
 public class DoDeleteVfModuleVolumeV2Test extends WorkflowTest {
 

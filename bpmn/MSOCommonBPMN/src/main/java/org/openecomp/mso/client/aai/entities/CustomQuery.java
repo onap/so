@@ -23,8 +23,6 @@ package org.openecomp.mso.client.aai.entities;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-
 
 @JsonInclude(JsonInclude.Include.NON_NULL) 
 public class CustomQuery {

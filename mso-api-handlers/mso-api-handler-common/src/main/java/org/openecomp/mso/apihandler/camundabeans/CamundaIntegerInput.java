@@ -21,7 +21,6 @@
 package org.openecomp.mso.apihandler.camundabeans;
 
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.map.annotate.JsonRootName;
 
 import org.openecomp.mso.apihandler.common.CommonConstants;
 

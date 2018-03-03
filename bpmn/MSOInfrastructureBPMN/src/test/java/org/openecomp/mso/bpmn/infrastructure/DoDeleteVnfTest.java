@@ -23,20 +23,9 @@
 
 package org.openecomp.mso.bpmn.infrastructure;
 
-import static org.junit.Assert.assertEquals;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockDeleteGenericVnf;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetGenericVnfByIdWithDepth;
-import static org.openecomp.mso.bpmn.mock.StubResponseDatabase.mockUpdateRequestDB;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import org.camunda.bpm.engine.test.Deployment;
-import org.junit.Assert;
-import org.junit.Test;
-import org.openecomp.mso.bpmn.common.BPMNUtil;
-import org.openecomp.mso.bpmn.common.WorkflowTest;
 
 /**
  * Please describe the DeleteVnfInfra.java class

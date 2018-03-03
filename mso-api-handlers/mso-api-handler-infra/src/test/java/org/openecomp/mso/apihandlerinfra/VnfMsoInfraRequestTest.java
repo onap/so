@@ -20,8 +20,6 @@
 
 package org.openecomp.mso.apihandlerinfra;
 
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
 import org.openecomp.mso.apihandler.common.ValidationException;
 import org.openecomp.mso.properties.MsoJavaProperties;

@@ -20,22 +20,10 @@
 
 package org.openecomp.mso.bpmn.infrastructure;
 
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetGenericVnfById;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetVfModuleId;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetVolumeGroupById;
-import static org.openecomp.mso.bpmn.mock.StubResponseDatabase.mockUpdateRequestDB;
-import static org.openecomp.mso.bpmn.mock.StubResponseVNFAdapter.mockPutVNFVolumeGroup;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import org.camunda.bpm.engine.test.Deployment;
-import org.junit.Test;
-import org.openecomp.mso.bpmn.common.WorkflowTest;
-import org.openecomp.mso.bpmn.common.workflow.service.WorkflowResponse;
-import org.openecomp.mso.bpmn.mock.FileUtil;
 
 /**
  * Unit test cases for UpdateVfModuleVolume.bpmn

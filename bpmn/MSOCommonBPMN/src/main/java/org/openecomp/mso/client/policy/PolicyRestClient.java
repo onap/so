@@ -20,19 +20,12 @@
 
 package org.openecomp.mso.client.policy;
 
-import java.net.MalformedURLException;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import javax.ws.rs.client.ClientResponseFilter;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriBuilderException;
-
 import org.openecomp.mso.client.ResponseExceptionMapperImpl;
-import org.openecomp.mso.client.RestProperties;
 import org.openecomp.mso.client.policy.entities.PolicyServiceType;
-import org.springframework.stereotype.Service;
 
 @Service
 public class PolicyRestClient extends RestClient {

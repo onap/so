@@ -22,7 +22,6 @@ package org.openecomp.mso.utils;
 
 
 
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 

@@ -23,7 +23,7 @@ package org.openecomp.mso.apihandlerinfra.tasksbeans;
 import org.codehaus.jackson.map.annotate.JsonRootName;
 
 import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
+
 @JsonRootName(value = "variables")
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_DEFAULT)
 public class Variables {

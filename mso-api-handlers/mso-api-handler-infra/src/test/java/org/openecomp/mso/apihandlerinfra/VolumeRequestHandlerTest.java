@@ -37,8 +37,6 @@ import mockit.MockUp;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.openecomp.mso.apihandler.common.ValidationException;
-import org.openecomp.mso.properties.MsoJavaProperties;
 import org.openecomp.mso.requestsdb.InfraActiveRequests;
 import org.openecomp.mso.requestsdb.RequestsDatabase;
 

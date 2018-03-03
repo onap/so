@@ -20,20 +20,8 @@
 
 package org.openecomp.mso.bpmn.common;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.delete;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
-
 import java.util.HashMap;
 import java.util.Map;
-
-import org.camunda.bpm.engine.RuntimeService;
-import org.camunda.bpm.engine.test.Deployment;
-import org.junit.Assert;
-import org.junit.Test;
-import org.openecomp.mso.bpmn.core.WorkflowException;
 
 /**
  * Unit test for DeleteAAIVfModule.bpmn.

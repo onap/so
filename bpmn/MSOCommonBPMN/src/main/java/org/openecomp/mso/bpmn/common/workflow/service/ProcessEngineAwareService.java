@@ -23,9 +23,6 @@ package org.openecomp.mso.bpmn.common.workflow.service;
 
 import java.util.Optional;
 
-import org.camunda.bpm.engine.ProcessEngineServices;
-import org.camunda.bpm.engine.ProcessEngines;
-
 /**
  * Base class for services that must be process-engine aware. The only
  * process engine currently supported is the "default" process engine.

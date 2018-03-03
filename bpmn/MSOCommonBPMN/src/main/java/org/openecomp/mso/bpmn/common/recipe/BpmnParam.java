@@ -19,7 +19,6 @@
  */
 
 package org.openecomp.mso.bpmn.common.recipe;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  *  The bpmn workflow input param object

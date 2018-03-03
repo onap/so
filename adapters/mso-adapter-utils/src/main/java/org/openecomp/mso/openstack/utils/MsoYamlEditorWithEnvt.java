@@ -26,7 +26,6 @@ package org.openecomp.mso.openstack.utils;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;

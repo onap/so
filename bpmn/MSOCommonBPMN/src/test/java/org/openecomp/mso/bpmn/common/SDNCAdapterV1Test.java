@@ -20,10 +20,6 @@
 
 package org.openecomp.mso.bpmn.common;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.openecomp.mso.bpmn.mock.StubResponseDatabase.mockUpdateRequestDB;
 import static org.openecomp.mso.bpmn.mock.StubResponseSDNCAdapter.mockSDNCAdapter;
 
@@ -31,15 +27,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.ws.rs.core.Response;
-
-import org.camunda.bpm.engine.impl.cfg.ProcessEngineConfigurationImpl;
-import org.camunda.bpm.engine.runtime.Job;
-import org.camunda.bpm.engine.test.Deployment;
-import org.camunda.bpm.engine.variable.impl.VariableMapImpl;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
 import org.openecomp.mso.bpmn.common.adapter.sdnc.CallbackHeader;
 import org.openecomp.mso.bpmn.common.adapter.sdnc.SDNCAdapterCallbackRequest;
 import org.openecomp.mso.bpmn.common.adapter.sdnc.SDNCAdapterResponse;
@@ -47,8 +34,6 @@ import org.openecomp.mso.bpmn.common.workflow.service.SDNCAdapterCallbackService
 import org.openecomp.mso.bpmn.common.workflow.service.SDNCAdapterCallbackServiceImpl.SDNCAdapterErrorResponse;
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowResource;
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowResponse;
-import org.openecomp.mso.bpmn.core.PropertyConfigurationSetup;
-import org.openecomp.mso.bpmn.core.xml.XmlTool;
 import org.openecomp.mso.bpmn.mock.FileUtil;
 
 /**

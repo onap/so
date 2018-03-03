@@ -23,26 +23,10 @@
 
 package org.openecomp.mso.bpmn.infrastructure;
 
-import static org.junit.Assert.assertEquals;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetGenericVnfByName_404;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetServiceInstance;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockNodeQueryServiceInstanceById;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPutGenericVnf;
-import static org.openecomp.mso.bpmn.mock.StubResponseDatabase.mockUpdateRequestDB;
-import static org.openecomp.mso.bpmn.mock.StubResponseSDNCAdapter.mockSDNCAdapter;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import org.camunda.bpm.engine.test.Deployment;
-import org.junit.Assert;
-import org.junit.Test;
-import org.openecomp.mso.bpmn.common.BPMNUtil;
-import org.openecomp.mso.bpmn.common.WorkflowTest;
-import org.openecomp.mso.bpmn.common.WorkflowTest.CallbackSet;
-import org.openecomp.mso.bpmn.mock.FileUtil;
 
 /**
  * Unit Test for the DoCreateVnf Flow
