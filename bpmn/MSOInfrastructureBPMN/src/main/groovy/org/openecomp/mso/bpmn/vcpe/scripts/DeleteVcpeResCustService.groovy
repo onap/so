@@ -35,6 +35,7 @@ import org.openecomp.mso.bpmn.common.scripts.AaiUtil
 import java.util.UUID;
 
 import org.camunda.bpm.engine.delegate.BpmnError
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.runtime.Execution
 import org.json.JSONObject;
 import org.json.JSONArray;
@@ -80,7 +81,7 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 	 * This method is executed during the preProcessRequest task of the <class>CreateServiceInstance.bpmn</class> process.
 	 * @param execution
 	 */
-	public void preProcessRequest (Execution execution) {
+	public void preProcessRequest (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable(DebugFlag)
 		execution.setVariable("prefix",Prefix)
 
