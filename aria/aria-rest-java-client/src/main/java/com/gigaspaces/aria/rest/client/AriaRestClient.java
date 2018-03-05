@@ -19,9 +19,9 @@ package com.gigaspaces.aria.rest.client;
 
 import com.gigaspaces.aria.rest.client.exceptions.StorageException;
 import com.gigaspaces.aria.rest.client.exceptions.ValidationException;
-import com.fasterxml.jackson.JsonFactory;
-import com.fasterxml.jackson.JsonNode;
-import com.fasterxml.jackson.jaxrs.JacksonJsonProvider;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
