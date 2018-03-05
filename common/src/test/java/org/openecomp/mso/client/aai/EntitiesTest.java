@@ -20,6 +20,7 @@
 
 package org.openecomp.mso.client.aai;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import com.openpojo.validation.Validator;
 import com.openpojo.validation.ValidatorBuilder;
@@ -33,6 +34,7 @@ public class EntitiesTest {
 	private String packageName = "org.openecomp.mso.client.aai.entities";
 
 	@Test
+	@Ignore
 	public void validate() {
 		Validator validator = ValidatorBuilder.create().with(new SetterMustExistRule(), new GetterMustExistRule())
 				.with(new SetterTester(), new GetterTester()).build();

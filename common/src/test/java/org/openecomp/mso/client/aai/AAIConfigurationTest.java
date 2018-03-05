@@ -20,9 +20,14 @@
 
 package org.openecomp.mso.client.aai;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static org.junit.Assert.assertEquals;
+
 import java.util.UUID;
 
-import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
@@ -30,13 +35,6 @@ import org.openecomp.mso.client.aai.entities.uri.AAIUri;
 import org.openecomp.mso.client.aai.entities.uri.AAIUriFactory;
 import org.openecomp.mso.serviceinstancebeans.ModelInfo;
 import org.openecomp.mso.serviceinstancebeans.RequestDetails;
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.delete;
-import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
-import static org.junit.Assert.assertEquals;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
@@ -45,14 +43,6 @@ public class AAIConfigurationTest {
 	@Rule
 	public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().port(8443));
 	
-	@BeforeClass
-	public static void setUp() {
-		System.setProperty("mso.config.path", "src/test/resources");
-		System.setProperty("javax.net.ssl.keyStore", "C:/etc/ecomp/mso/config/msoClientKeyStore.jks");
-		System.setProperty("javax.net.ssl.keyStorePassword", "mso4you");
-		System.setProperty("javax.net.ssl.trustStore", "C:/etc/ecomp/mso/config/msoTrustStore.jks");
-		System.setProperty("javax.net.ssl.trustStorePassword", "mso_Domain2.0_4you");
-	}
 	@Ignore
 	@Test
 	public void verifyCreate() {
