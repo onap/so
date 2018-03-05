@@ -32,8 +32,8 @@ import org.openecomp.mso.bpmn.common.workflow.service.WorkflowResource;
 
 @ApplicationPath("/")
 public class WorkflowResourceApplication extends Application {
-    private Set<Object> singletons = new HashSet<Object>();
-    private Set<Class<?>> classes = new HashSet<Class<?>>();
+    private Set<Object> singletons = new HashSet<>();
+    private Set<Class<?>> classes = new HashSet<>();
 
     public WorkflowResourceApplication() {
         singletons.add(new WorkflowResource());
