@@ -42,7 +42,7 @@ import java.util.Map;
  * Created by 10112215 on 2017/9/26.
  */
 public class SdncServiceTopologyOperationTask extends AbstractSdncOperationTask {
-    private static final Logger logger = LoggerFactory.getLogger(SdncServiceTopologyOperationTask.class);
+    private static final Logger sdncLogger = LoggerFactory.getLogger(SdncServiceTopologyOperationTask.class);
 
 
     private static final String URL = "/restconf/operations/GENERIC-RESOURCE-API:service-topology-operation";
@@ -51,7 +51,7 @@ public class SdncServiceTopologyOperationTask extends AbstractSdncOperationTask 
     public void sendRestrequestAndHandleResponse(DelegateExecution execution,
                                                  Map<String, String> inputs,
                                                  GenericResourceApi genericResourceApiClient) throws Exception {
-        logger.info("SdncServiceTopologyOperationTask.sendRestrequestAndHandleResponse begin!");
+        sdncLogger.info("SdncServiceTopologyOperationTask.sendRestrequestAndHandleResponse begin!");
 //        updateProgress(execution, null, null, "40", "sendRestrequestAndHandleResponse begin!");
         ServiceRpcInputEntityBuilder builder = new ServiceRpcInputEntityBuilder();
         RpcServiceTopologyOperationInputEntity inputEntity = builder.build(execution, inputs);
@@ -63,39 +63,39 @@ public class SdncServiceTopologyOperationTask extends AbstractSdncOperationTask 
 //        updateProgress(execution, null, null, "90", "sendRestrequestAndHandleResponse finished!");
             saveOutput(execution, outputEntity);
         } else {
-            Send2SdncDirectly(HeaderUtil.DefaulAuth, inputEntity);
+            send2SdncDirectly(HeaderUtil.DefaulAuth, inputEntity);
         }
-        logger.info("SdncServiceTopologyOperationTask.sendRestrequestAndHandleResponse end!");
+        sdncLogger.info("SdncServiceTopologyOperationTask.sendRestrequestAndHandleResponse end!");
 
     }
 
-    private void Send2SdncDirectly(String defaulAuth,
+    private void send2SdncDirectly(String defaulAuth,
                                    RpcServiceTopologyOperationInputEntity inputEntity) throws RouteException {
-        logger.info("SdncServiceTopologyOperationTask.Send2SdncDirectly begin!");
+        sdncLogger.info("SdncServiceTopologyOperationTask.send2SdncDirectly begin!");
         String url = "http://" + getSdncIp() + ":" + getSdncPort() + URL;
         HttpPost httpPost = new HttpPost(url);
         httpPost.addHeader("Authorization", defaulAuth);
         httpPost.addHeader("Content-type", "application/json");
         String postBody = getPostbody(inputEntity);
-        LOGGER.info(MessageEnum.RA_SEND_REQUEST_SDNC, postBody, "SDNC", "");
+        msoLogger.info(MessageEnum.RA_SEND_REQUEST_SDNC, postBody, "SDNC", "");
         httpPost.setEntity(new StringEntity(postBody, ContentType.APPLICATION_XML));
         httpPost(url, httpPost);
-        logger.info("SdncServiceTopologyOperationTask.Send2SdncDirectly end!");
+        sdncLogger.info("SdncServiceTopologyOperationTask.send2SdncDirectly end!");
     }
 
     private void saveOutput(DelegateExecution execution, RpcServiceTopologyOperationOutputEntity output) throws Exception {
-        logger.info("SdncServiceTopologyOperationTask.saveOutput begin!");
+        sdncLogger.info("SdncServiceTopologyOperationTask.saveOutput begin!");
         String responseCode = output.getOutput().getResponseCode();
         if (!"200".equals(responseCode)) {
             String processKey = getProcessKey(execution);
-            int errorCode = Integer.valueOf(responseCode);
+            int errorCode = Integer.parseInt(responseCode);
             String errorMessage = output.getOutput().getResponseMessage();
             WorkflowException workflowException = new WorkflowException(processKey, errorCode, errorMessage);
             execution.setVariable("SDNCA_SuccessIndicator", workflowException);
 //            updateProgress(execution, RequestsDbConstant.Status.ERROR, String.valueOf(errorCode), null, errorMessage);
-            logger.info("exception: SdncServiceTopologyOperationTask.saveOutput fail!");
-            throw new Exception("");
+            sdncLogger.info("exception: SdncServiceTopologyOperationTask.saveOutput fail!");
+            throw new RouteException();
         }
-        logger.info("SdncServiceTopologyOperationTask.saveOutput end!");
+        sdncLogger.info("SdncServiceTopologyOperationTask.saveOutput end!");
     }
 }
