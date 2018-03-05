@@ -1,20 +1,20 @@
 {
-	"asdc-connections": {
-		"asdc-controller1": {
-			"asdcUser": "user1",
-			"asdcConsumerGroup": "consumer1",
-			"asdcConsumerId": "consumer1",
-			"asdcEnvironmentName": "PROD",
-			"asdcAddress": "localhost:8443",
-			"asdcPassword": "1c551b8b5ab91fcd5a0907b11c304199"
-		},
-		"asdc-controller2": {
-			"asdcUser": "user2",
-			"asdcConsumerGroup": "consumer2",
-			"asdcConsumerId": "consumer2",
-			"asdcEnvironmentName": "E2E",
-			"asdcAddress": "localhost:8443",
-			"asdcPassword": "1c551b8b5ab91fcd5a0907b11c304199"
-		}
-	}
+  "asdc-connections":{,
+    "asdc-controller1":{
+        "asdcUser": "user1",
+        "asdcConsumerGroup": "consumer1",
+        "asdcConsumerId": "consumer1",
+        "asdcEnvironmentName": "PROD",
+        "asdcAddress": "localhost:8443",
+        "asdcPassword": "1c551b8b5ab91fcd5a0907b11c304199"
+    },
+    "asdc-controller2":{
+        "asdcUser": "user2",
+        "asdcConsumerGroup": "consumer2",
+        "asdcConsumerId": "consumer2",
+        "asdcEnvironmentName": "E2E",
+        "asdcAddress": "localhost:8443",
+        "asdcPassword": "1c551b8b5ab91fcd5a0907b11c304199"
+    }
+  }
 }

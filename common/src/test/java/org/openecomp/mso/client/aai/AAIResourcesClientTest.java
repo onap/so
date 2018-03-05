@@ -52,7 +52,7 @@ public class AAIResourcesClientTest {
 	public void verifyNotExists() {
 		AAIResourceUri path = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test");
 		wireMockRule.stubFor(get(
-				urlPathEqualTo("/aai/v11" + path.build()))
+				urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build().toString()))
 				.willReturn(
 					aResponse()
 					.withHeader("Content-Type", "text/plain")
@@ -67,14 +67,14 @@ public class AAIResourcesClientTest {
 	public void verifyDelete() {
 		AAIResourceUri path = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test2");
 		wireMockRule.stubFor(get(
-				urlPathEqualTo("/aai/v11" + path.build()))
+				urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build().toString()))
 				.willReturn(
 					aResponse()
 					.withHeader("Content-Type", "application/json")
 					.withBodyFile("aai/resources/mockObject.json")
 					.withStatus(200)));
 		wireMockRule.stubFor(delete(
-				urlPathEqualTo("/aai/v11" + path.build()))
+				urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build().toString()))
 				.withQueryParam("resource-version", equalTo("1234"))
 				.willReturn(
 					aResponse()
@@ -88,7 +88,7 @@ public class AAIResourcesClientTest {
 		AAIResourceUri path = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test2");
 		AAIResourceUri path2 = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test3");
 		wireMockRule.stubFor(put(
-				urlPathEqualTo("/aai/v11" + path.build() + "/relationship-list/relationship"))
+				urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build().toString() + "/relationship-list/relationship"))
 				.willReturn(
 					aResponse()
 					.withHeader("Content-Type", "application/json")
