@@ -354,15 +354,13 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 					</aetgt:FalloutHandlerRequest>"""
 
 			utils.log("DEBUG", processKey + " Outgoing WorkflowException is: " + execution.getVariable("WorkflowException"), isDebugEnabled)
-			utils.log("DEBUG", processKey + " Outgoing FalloutHandler Request is: " + falloutHandlerRequest, isDebugEnabled)
-
+			utils.log("DEBUG", processKey + "Completed ProcessMainflowBPMNException Outgoing FalloutHandler Request is: " + falloutHandlerRequest, isDebugEnabled)
 			return falloutHandlerRequest
 
 		}catch(Exception e){
 			utils.log("DEBUG", "Caught Exception during ProcessMainflowBPMNException Method: " + e, isDebugEnabled)
 			return null
 		}
-		utils.log("DEBUG", "Completed ProcessMainflowBPMNException Method", isDebugEnabled)
 	}
 
 	/**
