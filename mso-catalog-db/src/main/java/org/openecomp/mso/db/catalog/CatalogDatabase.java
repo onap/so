@@ -4081,7 +4081,7 @@ public class CatalogDatabase implements Closeable {
              				newVnfRecipe.setDescription(vfRecipe.getDescription());
              				newVnfRecipe.setOrchestrationUri(vfRecipe.getOrchestrationUri());
              				newVnfRecipe.setRecipeTimeout(vfRecipe.getRecipeTimeout());
-             				newVnfRecipe.setVnfComponentParamXSD(vfRecipe.getVnfComponentParamXSD());
+             				newVnfRecipe.setParamXSD(vfRecipe.getParamXSD());
              				newVnfRecipe.setVfModuleModelUUId(newRecipe.getModelUUID());
              				newVnfRecipe.setVersion(vfRecipe.getVersion());
              				newVnfRecipe.setVnfComponentType(vfRecipe.getVnfComponentType());

@@ -52,8 +52,8 @@ public class VnfRecipeTest {
 		assertTrue(vnfRecipe.getServiceType().equalsIgnoreCase("serviceType"));
 		vnfRecipe.setVersion("version");
 		assertTrue(vnfRecipe.getVersion().equalsIgnoreCase("version"));
-		vnfRecipe.setVnfParamXSD("vnfParamXSD");
-		assertTrue(vnfRecipe.getVnfParamXSD().equalsIgnoreCase("vnfParamXSD"));
+		vnfRecipe.setParamXSD("vnfParamXSD");
+		assertTrue(vnfRecipe.getParamXSD().equalsIgnoreCase("vnfParamXSD"));
 		vnfRecipe.setVfModuleId("vfModuleId");
 		assertTrue(vnfRecipe.getVfModuleId().equalsIgnoreCase("vfModuleId"));
 //		assertTrue(vnfRecipe.toString() == null);

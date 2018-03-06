@@ -26,7 +26,6 @@ import java.io.Serializable;
 public class ArRecipe extends Recipe implements Serializable {
 	private static final long serialVersionUID = 768026109321305392L;
 	private String modelName;
-	private String arParamXSD;
 	public ArRecipe() {}
 
 	public String getModelName() {
@@ -35,28 +34,13 @@ public class ArRecipe extends Recipe implements Serializable {
 	public void setModelName(String modelName) {
 		this.modelName = modelName;
 	}
-	
-    /**
-     * @return Returns the arParamXSD.
-     */
-    public String getArParamXSD() {
-        return arParamXSD;
-    }
-
-    
-    /**
-     * @param arParamXSD The arParamXSD to set.
-     */
-    public void setArParamXSD(String arParamXSD) {
-        this.arParamXSD = arParamXSD;
-    }
 
     @Override
 	public String toString () {
 		StringBuilder sb = new StringBuilder();
 		sb.append(super.toString());
 		sb.append(",modelName=").append(modelName);
-		sb.append(",arParamXSD=").append(arParamXSD);
+		sb.append(",arParamXSD=").append(getParamXSD());
 		return sb.toString();
 	}
 }

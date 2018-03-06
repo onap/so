@@ -52,7 +52,7 @@
 		<property name="orchestrationUri" type="string">
 		  <column name="ORCHESTRATION_URI" not-null="true" length="256"/>
 		</property>
-		<property name="arParamXSD" column="AR_PARAM_XSD" type="string" length="2048"/>
+		<property name="paramXSD" column="AR_PARAM_XSD" type="string" length="2048"/>
 		<property name="recipeTimeout" column="RECIPE_TIMEOUT" type="int"/>
 		<property name="created" type="timestamp" generated="insert" update="false" insert="false" not-null="true">
           <column name="CREATION_TIMESTAMP" default="CURRENT_TIMESTAMP"/>

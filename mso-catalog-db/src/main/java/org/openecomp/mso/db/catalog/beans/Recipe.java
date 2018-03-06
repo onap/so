@@ -37,7 +37,7 @@ public class Recipe extends MavenLikeVersioning implements Serializable {
     protected String orchestrationUri;
     private int recipeTimeout;
     private String serviceType;
-
+    private String paramXSD;
 	private Timestamp created;
     
     public Recipe () {
@@ -100,7 +100,21 @@ public class Recipe extends MavenLikeVersioning implements Serializable {
 		this.created = created;
 	}
 
-	@Override
+    /**
+     * @return Returns the paramXSD.
+     */
+    public String getParamXSD() {
+        return paramXSD;
+    }
+  
+    /**
+     * @param paramXSD The paramXSD to set.
+     */
+    public void setParamXSD(String paramXSD) {
+        this.paramXSD = paramXSD;
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("RECIPE: ").append(action);
