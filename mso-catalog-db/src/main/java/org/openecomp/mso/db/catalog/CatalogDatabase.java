@@ -205,7 +205,7 @@ public class CatalogDatabase implements Closeable {
             LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. No template found", "CatalogDB", "getHeatTemplate", null);
             return null;
         }
-        Collections.sort(resultList, new MavenLikeVersioningComparator());
+        resultList.sort(new MavenLikeVersioningComparator());
         Collections.reverse(resultList);
 
         LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getHeatTemplate", null);
@@ -366,7 +366,7 @@ public class CatalogDatabase implements Closeable {
             LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. Service not found", "CatalogDB", "getServiceByName", null);
             return null;
         }
-        Collections.sort (resultList, new MavenLikeVersioningComparator ());
+        resultList.sort(new MavenLikeVersioningComparator());
         Collections.reverse (resultList);
 
         LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getServiceByName", null);
@@ -528,7 +528,7 @@ public class CatalogDatabase implements Closeable {
             LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. Service not found", "CatalogDB", "getServiceByModelName", null);
             return null;
         }
-        Collections.sort(resultList, new MavenLikeVersioningComparator ());
+        resultList.sort(new MavenLikeVersioningComparator());
         Collections.reverse(resultList);
 
         LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getServiceByModelName", null);
@@ -600,7 +600,7 @@ public class CatalogDatabase implements Closeable {
                                 return null;
                         }
 
-        Collections.sort (resultList, new MavenLikeVersioningComparator ());
+        resultList.sort(new MavenLikeVersioningComparator());
         Collections.reverse (resultList);
 
         LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getServiceRecipe", null);
@@ -644,7 +644,7 @@ public class CatalogDatabase implements Closeable {
             return null;
         }
 
-        Collections.sort(resultList, new MavenLikeVersioningComparator());
+        resultList.sort(new MavenLikeVersioningComparator());
         Collections.reverse(resultList);
 
         LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getServiceRecipe", null);
@@ -671,7 +671,7 @@ public class CatalogDatabase implements Closeable {
             return Collections.EMPTY_LIST;
         }
 
-        Collections.sort(resultList, new MavenLikeVersioningComparator());
+        resultList.sort(new MavenLikeVersioningComparator());
         Collections.reverse(resultList);
 
         LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getServiceRecipes", null);
@@ -748,7 +748,7 @@ public class CatalogDatabase implements Closeable {
             LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. VNF not found", "CatalogDB", "getVnfResource", null);
             return null;
         }
-        Collections.sort(resultList, new MavenLikeVersioningComparator());
+        resultList.sort(new MavenLikeVersioningComparator());
         Collections.reverse(resultList);
 
         LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVnfResource", null);
@@ -874,7 +874,7 @@ public class CatalogDatabase implements Closeable {
             return null;
         }
         
-        Collections.sort(resultList, new MavenLikeVersioningComparator());
+        resultList.sort(new MavenLikeVersioningComparator());
         Collections.reverse(resultList);
 
         LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVnfResourceCustomizationByModelCustomizationName", null);
@@ -975,7 +975,7 @@ public class CatalogDatabase implements Closeable {
             LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. VF not found", "CatalogDB", "getVfModuleModelName", null);
             return null;
         }
-        Collections.sort(resultList, new MavenLikeVersioningComparator());
+        resultList.sort(new MavenLikeVersioningComparator());
         Collections.reverse(resultList);
 
         LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVfModuleModelName", null);
@@ -1073,7 +1073,7 @@ public class CatalogDatabase implements Closeable {
             return null;
         }
 
-        Collections.sort(resultList, new MavenLikeVersioningComparator());
+        resultList.sort(new MavenLikeVersioningComparator());
         Collections.reverse(resultList);
         LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getNetworkResource", null);
         return resultList.get(0);
@@ -1122,7 +1122,7 @@ public class CatalogDatabase implements Closeable {
             return null;
         }
 
-        Collections.sort(resultList, new MavenLikeVersioningComparator());
+        resultList.sort(new MavenLikeVersioningComparator());
         Collections.reverse(resultList);
 
         LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVnfRecipe", null);
@@ -1156,7 +1156,7 @@ public class CatalogDatabase implements Closeable {
             return null;
         }
 
-        Collections.sort(resultList, new MavenLikeVersioningComparator());
+        resultList.sort(new MavenLikeVersioningComparator());
         Collections.reverse(resultList);
 
         LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVnfRecipe", null);
@@ -1189,7 +1189,7 @@ public class CatalogDatabase implements Closeable {
             return null;
         }
 
-        Collections.sort(resultList, new MavenLikeVersioningComparator());
+        resultList.sort(new MavenLikeVersioningComparator());
         Collections.reverse(resultList);
 
         LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. VNF Recipe Entry found", "CatalogDB", "getVnfRecipeByVfModuleId", null);
@@ -1246,7 +1246,7 @@ public class CatalogDatabase implements Closeable {
             LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. VF not found", "CatalogDB", "getVfModuleType", null);
             return null;
     	}
-        Collections.sort (resultList, new MavenLikeVersioningComparator ());
+        resultList.sort(new MavenLikeVersioningComparator());
         Collections.reverse (resultList);
 
         LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVfModuleType", null);
@@ -1373,7 +1373,7 @@ public class CatalogDatabase implements Closeable {
         VfModule module = null;
         
         if (modules != null && ! modules.isEmpty()) {
-        	Collections.sort (modules, new MavenLikeVersioningComparator ());
+        	modules.sort(new MavenLikeVersioningComparator());
         	Collections.reverse (modules);
         	module =  modules.get(0);
         }
@@ -1829,7 +1829,7 @@ public class CatalogDatabase implements Closeable {
             return null;
         }
         
-        Collections.sort (resultList, new MavenLikeVersioningComparator ());
+        resultList.sort(new MavenLikeVersioningComparator());
         Collections.reverse (resultList);
 
         LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVnfResourceCustomizationByVnfModelCustomizationNameAndModelVersionId", null);
@@ -2186,7 +2186,7 @@ public class CatalogDatabase implements Closeable {
             return new ArrayList<>();
         }
 
-        Collections.sort (serviceList, new MavenLikeVersioningComparator ());
+        serviceList.sort(new MavenLikeVersioningComparator());
         Collections.reverse (serviceList);
         Service service = serviceList.get(0);
 
@@ -2214,7 +2214,7 @@ public class CatalogDatabase implements Closeable {
             return new ArrayList<>();
         }
 
-        Collections.sort (serviceList, new MavenLikeVersioningComparator ());
+        serviceList.sort(new MavenLikeVersioningComparator());
         Collections.reverse (serviceList);
         Service service = serviceList.get(0);
 
@@ -2317,7 +2317,7 @@ public class CatalogDatabase implements Closeable {
     		return new ArrayList<>();
         }
 
-        Collections.sort (serviceList, new MavenLikeVersioningComparator ());
+        serviceList.sort(new MavenLikeVersioningComparator());
         Collections.reverse (serviceList);
 
         // Step 2 - Now query to get the related VnfResourceCustomizations
@@ -2351,7 +2351,7 @@ public class CatalogDatabase implements Closeable {
         if (resultList.isEmpty()) {
     		return new ArrayList<>();
         }
-        Collections.sort (resultList, new MavenLikeVersioningComparator ());
+        resultList.sort(new MavenLikeVersioningComparator());
         Collections.reverse (resultList);
         Service service = resultList.get(0);
         //now just call the method that takes the version - the service object will have the highest version
@@ -2372,7 +2372,7 @@ public class CatalogDatabase implements Closeable {
         if (resultList.isEmpty()) {
     		return new ArrayList<>();
                 }
-        Collections.sort (resultList, new MavenLikeVersioningComparator ());
+        resultList.sort(new MavenLikeVersioningComparator());
         Collections.reverse (resultList);
         Service service = resultList.get(0);
         LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getAllVnfsByServiceModelInvariantUuid", null);
@@ -2412,7 +2412,7 @@ public class CatalogDatabase implements Closeable {
         if (resultList.isEmpty()) {
             return Collections.EMPTY_LIST;
         }
-        Collections.sort (resultList, new MavenLikeVersioningComparator ());
+        resultList.sort(new MavenLikeVersioningComparator());
         Collections.reverse (resultList);
         Service service = resultList.get(0);
 
@@ -2484,7 +2484,7 @@ public class CatalogDatabase implements Closeable {
             return new ArrayList<>();
         }
 
-        Collections.sort (serviceList, new MavenLikeVersioningComparator ());
+        serviceList.sort(new MavenLikeVersioningComparator());
         Collections.reverse (serviceList);
         Service service = serviceList.get(0);
 
@@ -2510,7 +2510,7 @@ public class CatalogDatabase implements Closeable {
             return new ArrayList<>();
         }
 
-        Collections.sort (serviceList, new MavenLikeVersioningComparator ());
+        serviceList.sort(new MavenLikeVersioningComparator());
         Collections.reverse (serviceList);
         Service service = serviceList.get(0);
 
@@ -2582,7 +2582,7 @@ public class CatalogDatabase implements Closeable {
             return new ServiceMacroHolder();
         }
 
-        Collections.sort (serviceList, new MavenLikeVersioningComparator ());
+        serviceList.sort(new MavenLikeVersioningComparator());
         Collections.reverse (serviceList);
         Service service = serviceList.get(0);
 
@@ -2612,7 +2612,7 @@ public class CatalogDatabase implements Closeable {
             return new ServiceMacroHolder();
         }
 
-        Collections.sort (serviceList, new MavenLikeVersioningComparator ());
+        serviceList.sort(new MavenLikeVersioningComparator());
         Collections.reverse (serviceList);
         Service service = serviceList.get(0);
 
@@ -2645,7 +2645,7 @@ public class CatalogDatabase implements Closeable {
             return new ServiceMacroHolder();
         }
 
-        Collections.sort (serviceList, new MavenLikeVersioningComparator ());
+        serviceList.sort(new MavenLikeVersioningComparator());
         Collections.reverse (serviceList);
         Service service = serviceList.get(0);
 
@@ -2747,7 +2747,7 @@ public class CatalogDatabase implements Closeable {
             return null;
         }
 
-        Collections.sort (resultList, new MavenLikeVersioningComparator ());
+        resultList.sort(new MavenLikeVersioningComparator());
         Collections.reverse (resultList);
 
         VfModule vfMod = resultList.get(0);
@@ -2772,7 +2772,7 @@ public class CatalogDatabase implements Closeable {
             return null;
         }
 
-        Collections.sort (resultList1, new MavenLikeVersioningComparator ());
+        resultList1.sort(new MavenLikeVersioningComparator());
         Collections.reverse (resultList1);
 
         LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. VNF recipe found", "CatalogDB", "getVfModuleRecipe", null);
@@ -2839,7 +2839,7 @@ public class CatalogDatabase implements Closeable {
             return null;
         }
 
-        Collections.sort (resultList, new MavenLikeVersioningComparator ());
+        resultList.sort(new MavenLikeVersioningComparator());
         Collections.reverse (resultList);
 
         VfModule vfMod = resultList.get(0);
@@ -2864,7 +2864,7 @@ public class CatalogDatabase implements Closeable {
             return null;
         }
 
-        Collections.sort (resultList1, new MavenLikeVersioningComparator ());
+        resultList1.sort(new MavenLikeVersioningComparator());
         Collections.reverse (resultList1);
 
         LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. VNF recipe found", "CatalogDB", "getVnfComponentsRecipe", null);
@@ -2894,7 +2894,7 @@ public class CatalogDatabase implements Closeable {
             return null;
         }
 
-        Collections.sort (resultList, new MavenLikeVersioningComparator ());
+        resultList.sort(new MavenLikeVersioningComparator());
         Collections.reverse (resultList);
 
         VfModule vfMod = resultList.get(0);
@@ -2919,7 +2919,7 @@ public class CatalogDatabase implements Closeable {
             return null;
         }
 
-        Collections.sort (resultList1, new MavenLikeVersioningComparator ());
+        resultList1.sort(new MavenLikeVersioningComparator());
         Collections.reverse (resultList1);
 
         LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. VNF recipe found", "CatalogDB", "getVnfComponentsRecipe", null);
@@ -4383,7 +4383,7 @@ public class CatalogDatabase implements Closeable {
                 return null;
             }
             
-            Collections.sort (resultList, new MavenLikeVersioningComparator ());
+            resultList.sort(new MavenLikeVersioningComparator());
             Collections.reverse (resultList);
             
             return resultList.get (0);
@@ -4434,7 +4434,7 @@ public class CatalogDatabase implements Closeable {
                 return null;
             }
 
-            Collections.sort (resultList, new MavenLikeVersioningComparator ());
+            resultList.sort(new MavenLikeVersioningComparator());
             Collections.reverse (resultList);
 
             return resultList.get (0);
@@ -4473,7 +4473,7 @@ public class CatalogDatabase implements Closeable {
                 return null;
             }
 
-            Collections.sort (resultList, new MavenLikeVersioningComparator ());
+            resultList.sort(new MavenLikeVersioningComparator());
             Collections.reverse (resultList);
 
             return resultList.get (0);
@@ -4507,7 +4507,7 @@ public class CatalogDatabase implements Closeable {
                 return null;
             }
 
-            Collections.sort (resultList, new MavenLikeVersioningComparator ());
+            resultList.sort(new MavenLikeVersioningComparator());
             Collections.reverse (resultList);
 
             return resultList.get (0);
@@ -4564,7 +4564,7 @@ public class CatalogDatabase implements Closeable {
             if (resultList.isEmpty ()) {
                 return null;
             }
-            Collections.sort (resultList, new MavenLikeVersioningComparator ());
+            resultList.sort(new MavenLikeVersioningComparator());
             Collections.reverse (resultList);
 
             return resultList.get (0);
@@ -4607,7 +4607,7 @@ public class CatalogDatabase implements Closeable {
             if (resultList.isEmpty ()) {
                 return null;
             }
-            Collections.sort (resultList, new MavenLikeVersioningComparator ());
+            resultList.sort(new MavenLikeVersioningComparator());
             Collections.reverse (resultList);
 
             return resultList.get (0);
@@ -4636,7 +4636,7 @@ public class CatalogDatabase implements Closeable {
             return Collections.EMPTY_LIST;
         }
         
-        Collections.sort (resultList, new MavenLikeVersioningComparator ());
+        resultList.sort(new MavenLikeVersioningComparator());
         Collections.reverse (resultList);
 
         LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVfModuleRecipes", null);
@@ -4686,7 +4686,7 @@ public class CatalogDatabase implements Closeable {
             if (resultList.isEmpty ()) {
                 return null;
             }
-            Collections.sort (resultList, new MavenLikeVersioningComparator ());
+            resultList.sort(new MavenLikeVersioningComparator());
             Collections.reverse (resultList);
 
             return resultList.get (0);
@@ -4720,7 +4720,7 @@ public class CatalogDatabase implements Closeable {
             if (resultList.isEmpty ()) {
                 return null;
             }
-            Collections.sort (resultList, new MavenLikeVersioningComparator ());
+            resultList.sort(new MavenLikeVersioningComparator());
             Collections.reverse (resultList);
 
             return resultList.get (0);
@@ -4761,7 +4761,7 @@ public class CatalogDatabase implements Closeable {
 				LOGGER.debug("Catalog database - recipeResultList is null");
 				return null;
 			}
-			Collections.sort(recipeResultList, new MavenLikeVersioningComparator());
+			recipeResultList.sort(new MavenLikeVersioningComparator());
 			Collections.reverse(recipeResultList);
 			LOGGER.debug("Catalog database - recipeResultList contains " + recipeResultList.get(0).toString());
 
@@ -4833,7 +4833,7 @@ public class CatalogDatabase implements Closeable {
 				LOGGER.debug("Catalog database - recipeResultList is null");
 				return null;
 			}
-			Collections.sort(recipeResultList, new MavenLikeVersioningComparator());
+			recipeResultList.sort(new MavenLikeVersioningComparator());
 			Collections.reverse(recipeResultList);
 			LOGGER.debug("Catalog database - recipeResultList contains " + recipeResultList.get(0).toString());
 
@@ -4881,7 +4881,7 @@ public class CatalogDatabase implements Closeable {
                 LOGGER.debug("Catalog database - modelResultList is null");
                 return null;
             }
-            Collections.sort(modelResultList, new MavenLikeVersioningComparator());
+            modelResultList.sort(new MavenLikeVersioningComparator());
             Collections.reverse(modelResultList);
             LOGGER.debug("Catalog database - modelResultList contains " + modelResultList.get(0).toString());
 
@@ -4898,7 +4898,7 @@ public class CatalogDatabase implements Closeable {
                 LOGGER.debug("Catalog database - recipeResultList is null");
                 return null;
             }
-            Collections.sort(recipeResultList, new MavenLikeVersioningComparator());
+            recipeResultList.sort(new MavenLikeVersioningComparator());
             Collections.reverse(recipeResultList);
             LOGGER.debug("Catalog database - recipeResultList contains " + recipeResultList.get(0).toString());
 
