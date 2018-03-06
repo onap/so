@@ -107,7 +107,7 @@ public class NotificationLogging implements InvocationHandler {
 		return buffer.toString();
 	}
 	
-	private static final boolean isGetter(Method method) {
+	private static boolean isGetter(Method method) {
 
 		// Must start with a valid (and known) prefix
 		boolean prefixFound = false;
