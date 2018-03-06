@@ -252,15 +252,12 @@ public class MsoRequest {
         }
 
         RequestParameters requestParameters = sir.getRequestDetails().getRequestParameters();
-        if(this.reqVersion >= 3){
-	        if(requestParameters!=null){
-	        	this.aLaCarteFlag = sir.getRequestDetails().getRequestParameters().isaLaCarte();
-	        }else{
-	        	this.aLaCarteFlag = false;
-	        }
-        }else{
-        	this.aLaCarteFlag = true;
-        }
+		if (this.reqVersion >= 3) {
+			this.aLaCarteFlag =
+				requestParameters != null && sir.getRequestDetails().getRequestParameters().isaLaCarte();
+		} else {
+			this.aLaCarteFlag = true;
+		}
 
 		if(requestParameters != null && (reqVersion < 3) && requestParameters.getAutoBuildVfModules()){
     		throw new ValidationException("AutoBuildVfModule", version);

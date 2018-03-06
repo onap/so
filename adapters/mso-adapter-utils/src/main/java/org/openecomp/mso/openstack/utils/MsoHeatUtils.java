@@ -1106,11 +1106,8 @@ public class MsoHeatUtils extends MsoCommonUtils {
         }
 
         public boolean isExpired () {
-            if (expires == null) {
-                return true;
-            }
+            return expires == null || System.currentTimeMillis() > expires.getTimeInMillis();
 
-            return System.currentTimeMillis() > expires.getTimeInMillis();
         }
     }
 

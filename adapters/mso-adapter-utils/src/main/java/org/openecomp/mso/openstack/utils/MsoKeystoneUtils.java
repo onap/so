@@ -567,11 +567,8 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
         }
 
         public boolean isExpired () {
-            if (expires == null) {
-                return true;
-            }
+            return expires == null || System.currentTimeMillis() > expires.getTimeInMillis();
 
-            return System.currentTimeMillis() > expires.getTimeInMillis();
         }
     }
 
