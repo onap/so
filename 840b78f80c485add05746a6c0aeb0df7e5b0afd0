@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_982e248b",
+        "filename": "common/src/test/java/org/openecomp/mso/adapter_utils/tests/MsoLoggerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 297,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2018-03-06T14:32:29Z",
+      "side": 1,
+      "message": "Shouldnt use printstacktrace\nInstead use the logger",
+      "revId": "840b78f80c485add05746a6c0aeb0df7e5b0afd0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
