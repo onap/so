@@ -44,15 +44,12 @@ public class HeatTemplateArtifactUuidModelUuid implements Serializable {
 	public void setModelUuid(String modelUuid) {
 		this.modelUuid = modelUuid;
 	}
-	
+
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("heatTemplateArtifactUuid=").append(this.heatTemplateArtifactUuid);
-		sb.append(" modelUuid=").append(this.modelUuid);
-		return sb.toString();
+		return "heatTemplateArtifactUuid=" + this.heatTemplateArtifactUuid + " modelUuid=" + this.modelUuid;
 	}
-	
+
     @Override
     public boolean equals (Object o) {
         if (!(o instanceof HeatTemplateArtifactUuidModelUuid)) {
@@ -73,9 +70,7 @@ public class HeatTemplateArtifactUuidModelUuid implements Serializable {
     public int hashCode () {
         // hash code does not have to be a unique result - only that two objects that should be treated as equal
         // return the same value. so this should work.
-        int result;
-        result = this.heatTemplateArtifactUuid.hashCode() + this.modelUuid.hashCode();
-        return result;
+        return this.heatTemplateArtifactUuid.hashCode() + this.modelUuid.hashCode();
     }
 
 }

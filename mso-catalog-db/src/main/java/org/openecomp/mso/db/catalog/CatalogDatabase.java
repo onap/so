@@ -1137,14 +1137,13 @@ public class CatalogDatabase implements Closeable {
      * @return VnfRecipe object or null if none found
      */
     public VnfRecipe getVnfRecipe(String vnfType, String action) {
-        StringBuilder hql = new StringBuilder("FROM VnfRecipe WHERE vnfType = :vnfType AND action = :action ");
 
         long startTime = System.currentTimeMillis();
         LOGGER.debug("Catalog database - get VNF recipe with name " + vnfType
                                       + " and action "
                                       + action);
 
-        Query query = getSession().createQuery(hql.toString());
+        Query query = getSession().createQuery("FROM VnfRecipe WHERE vnfType = :vnfType AND action = :action ");
         query.setParameter(VNF_TYPE, vnfType);
         query.setParameter(ACTION, action);
 
@@ -1172,12 +1171,10 @@ public class CatalogDatabase implements Closeable {
      */
     public VnfRecipe getVnfRecipeByVfModuleId(String vnfType, String vfModuleId, String action) {
 
-    	StringBuilder hql = new StringBuilder("FROM VnfRecipe WHERE vfModuleId = :vfModuleId and action = :action  ");
-
         long startTime = System.currentTimeMillis();
         LOGGER.debug("Catalog database - get VNF Recipe with vfModuleId " + vfModuleId);
 
-        Query query = getSession().createQuery(hql.toString ());
+        Query query = getSession().createQuery("FROM VnfRecipe WHERE vfModuleId = :vfModuleId and action = :action  ");
         query.setParameter(VF_MODULE_MODEL_UUID, vfModuleId);
         query.setParameter(ACTION, action);
 
@@ -1893,17 +1890,17 @@ public class CatalogDatabase implements Closeable {
         } else {
         	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVnfResourceByModelUuid", null);
         }
-        return vnfResource;	
+        return vnfResource;
     }
-    
+
     public VnfResCustomToVfModuleCustom getVnfResCustomToVfModule(String vnfId, String vfId) {
     	long startTime = System.currentTimeMillis();
     	LOGGER.debug("Catalog database - getVnfResCustomToVfModule - vnfResourceCustModelCustUuid: " + vnfId + ", vfModuleCustModelCustomUuid=" + vfId);
-    	StringBuilder hql = new StringBuilder("FROM VnfResCustomToVfModuleCustom where vnfResourceCustModelCustomizationUuid = :vnfIdValue and vfModuleCustModelCustomizationUuid = :vfIdValue"); 	
-    	HashMap<String, String> parameters = new HashMap<>();
+        HashMap<String, String> parameters = new HashMap<>();
     	parameters.put("vnfIdValue", vnfId);
     	parameters.put("vfIdValue", vfId);
-    	VnfResCustomToVfModuleCustom vrctvmc = this.executeQuerySingleRow(hql.toString(), parameters, true);
+    	VnfResCustomToVfModuleCustom vrctvmc = this.executeQuerySingleRow(
+            "FROM VnfResCustomToVfModuleCustom where vnfResourceCustModelCustomizationUuid = :vnfIdValue and vfModuleCustModelCustomizationUuid = :vfIdValue", parameters, true);
         if (vrctvmc == null) {
         	LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "NotFound", "CatalogDB", "getVnfResCustomToVfModule", null);
         } else {
@@ -1926,8 +1923,7 @@ public class CatalogDatabase implements Closeable {
     public List<VfModule> getVfModulesForVnfResource(String vnfResourceModelUuid) {
         long startTime = System.currentTimeMillis();
     	LOGGER.debug("Catalog database - getVfModulesForVnfResource - vnfResourceModelUuid: " + vnfResourceModelUuid);
-    	StringBuilder hql = new StringBuilder("FROM VfModule where vnfResourceModelUUId = :vnfResourceModelUUId");
-        Query query = getSession().createQuery(hql.toString());
+        Query query = getSession().createQuery("FROM VfModule where vnfResourceModelUUId = :vnfResourceModelUUId");
     	query.setParameter("vnfResourceModelUUId", vnfResourceModelUuid);
         List<VfModule> resultList = null;
         try {
@@ -2175,8 +2171,7 @@ public class CatalogDatabase implements Closeable {
     public List<NetworkResourceCustomization> getAllNetworksByServiceModelInvariantUuid(String serviceModelInvariantUuid) {
         LOGGER.debug("Catalog database: getServiceNetworksByServiceModelInvariantUuid - " + serviceModelInvariantUuid);
 
-        StringBuilder hql = new StringBuilder("FROM Service WHERE modelInvariantUUID = :serviceModelInvariantUuid");
-        Query query = getSession().createQuery(hql.toString());
+        Query query = getSession().createQuery("FROM Service WHERE modelInvariantUUID = :serviceModelInvariantUuid");
         query.setParameter("serviceModelInvariantUuid", serviceModelInvariantUuid);
         @SuppressWarnings("unchecked")
         List<Service> serviceList = query.list();
@@ -2199,8 +2194,8 @@ public class CatalogDatabase implements Closeable {
     public List<NetworkResourceCustomization> getAllNetworksByServiceModelInvariantUuid(String serviceModelInvariantUuid, String serviceModelVersion) {
         LOGGER.debug("Catalog database: getServiceNetworksByServiceModelInvariantUuid - " + serviceModelInvariantUuid + ", version=" + serviceModelVersion);
 
-        StringBuilder hql = new StringBuilder("FROM Service WHERE modelInvariantUUID = :serviceModelInvariantUuid and version = :serviceModelVersion");
-        Query query = getSession().createQuery(hql.toString());
+        Query query = getSession().createQuery(
+            "FROM Service WHERE modelInvariantUUID = :serviceModelInvariantUuid and version = :serviceModelVersion");
         query.setParameter("serviceModelInvariantUuid", serviceModelInvariantUuid);
         query.setParameter("serviceModelVersion", serviceModelVersion);
 
@@ -2228,18 +2223,18 @@ public class CatalogDatabase implements Closeable {
         long startTime = System.currentTimeMillis();
         LOGGER.debug("Catalog database: getAllNetworksByNetworkModelCustomizationUuid - " + networkModelCustomizationUuid);
 
-        StringBuilder hql = new StringBuilder("FROM NetworkResourceCustomization WHERE modelCustomizationUuid = :networkModelCustomizationUuid");
-    	//Query query = getSession().createQuery(hql.toString());
+        //Query query = getSession().createQuery(hql.toString());
     	//query.setParameter("networkModelCustomizationUuid", networkModelCustomizationUuid);
     	//LOGGER.debug("QUERY: " + hql.toString() + ", networkModelCustomizationUuid=" + networkModelCustomizationUuid);
-    	
+
     	//@SuppressWarnings("unchecked")
     	//List<NetworkResourceCustomization> resultList = query.list();
-    	
+
     	HashMap<String, String> params = new HashMap<>();
     	params.put("networkModelCustomizationUuid", networkModelCustomizationUuid);
 
-    	List<NetworkResourceCustomization> resultList = this.executeQueryMultipleRows(hql.toString(), params, true);
+    	List<NetworkResourceCustomization> resultList = this.executeQueryMultipleRows(
+            "FROM NetworkResourceCustomization WHERE modelCustomizationUuid = :networkModelCustomizationUuid", params, true);
 
     	if (resultList.isEmpty()) {
     		LOGGER.debug("Unable to find an NMC with nmcu=" + networkModelCustomizationUuid);
@@ -2248,7 +2243,6 @@ public class CatalogDatabase implements Closeable {
     	for (NetworkResourceCustomization nrc : resultList) {
     		nrc.setNetworkResource(this.getNetworkResourceById(nrc.getNetworkResourceModelUuid()));
     	}
-     	
 
         LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getAllNetworksByNetworkModelCustomizationUuid", null);
         return resultList;
@@ -2265,9 +2259,9 @@ public class CatalogDatabase implements Closeable {
     	String networkResourceId = nr.getModelUUID();
 
         LOGGER.debug("Now searching for NRC's with networkResourceId = " + networkResourceId);
-    	StringBuilder hql = new StringBuilder("FROM NetworkResourceCustomization WHERE networkResourceModelUuid = :networkResourceId");
 
-        Query query = getSession().createQuery(hql.toString());
+        Query query = getSession().createQuery(
+            "FROM NetworkResourceCustomization WHERE networkResourceModelUuid = :networkResourceId");
         query.setParameter("networkResourceId", networkResourceId);
 
         @SuppressWarnings("unchecked")
@@ -2286,7 +2280,7 @@ public class CatalogDatabase implements Closeable {
     }
     public ArrayList<VfModuleCustomization> getAllVfmcForVrc(VnfResourceCustomization vrc) {
     	LOGGER.debug("Catalog database: getAllVfmcForVrc - " + vrc.getModelCustomizationUuid());
-    	
+
     	List<VnfResCustomToVfModuleCustom> vfmcs = this.getVRCtoVFMC(vrc.getModelCustomizationUuid(), null);
     	if (vfmcs == null || vfmcs.isEmpty()) {
     		return new ArrayList<>();
@@ -2306,8 +2300,7 @@ public class CatalogDatabase implements Closeable {
     public List<VnfResourceCustomization> getAllVnfsByServiceModelUuid(String serviceModelUuid) {
         LOGGER.debug("Catalog database: getAllVnfsByServiceModelUuid - " + serviceModelUuid);
 
-    	StringBuilder hql = new StringBuilder("FROM Service WHERE modelUUID = :serviceModelUuid");
-        Query query = getSession().createQuery(hql.toString());
+        Query query = getSession().createQuery("FROM Service WHERE modelUUID = :serviceModelUuid");
         query.setParameter("serviceModelUuid", serviceModelUuid);
         @SuppressWarnings("unchecked")
         List<Service> serviceList = query.list();
@@ -2328,7 +2321,7 @@ public class CatalogDatabase implements Closeable {
     		LOGGER.debug("Unable to find any related vnfs to a service with modelUuid=" + serviceModelUuid);
         	return new ArrayList<>();
     }
-        
+
         ArrayList<VnfResourceCustomization> allVrcs = new ArrayList<>();
         for (ServiceToResourceCustomization strc : strcs) {
         	LOGGER.debug("Try to find VRC for mcu=" + strc.getResourceModelCustomizationUUID());
@@ -2337,13 +2330,12 @@ public class CatalogDatabase implements Closeable {
         		allVrcs.add(vrc);
         }
         return allVrcs;
-    	
+
     }
     public List<VnfResourceCustomization> getAllVnfsByServiceModelInvariantUuid(String serviceModelInvariantUuid) {
         LOGGER.debug("Catalog database: getAllVnfsByServiceModelInvariantUuid - " + serviceModelInvariantUuid);
 
-        StringBuilder hqlService = new StringBuilder("FROM Service WHERE modelInvariantUUID = :serviceModelInvariantUuid");
-        Query query = getSession().createQuery(hqlService.toString());
+        Query query = getSession().createQuery("FROM Service WHERE modelInvariantUUID = :serviceModelInvariantUuid");
         query.setParameter("serviceModelInvariantUuid", serviceModelInvariantUuid);
         @SuppressWarnings("unchecked")
         List<Service> resultList = query.list();
@@ -2361,8 +2353,8 @@ public class CatalogDatabase implements Closeable {
         long startTime = System.currentTimeMillis();
         LOGGER.debug("Catalog database: getAllVnfsByServiceModelInvariantUuid - " + serviceModelInvariantUuid + ", version=" + serviceModelVersion);
 
-    	StringBuilder hql = new StringBuilder("FROM Service WHERE modelInvariantUUID = :serviceModelInvariantUuid and version = :serviceModelVersion");
-        Query query = getSession().createQuery(hql.toString());
+        Query query = getSession().createQuery(
+            "FROM Service WHERE modelInvariantUUID = :serviceModelInvariantUuid and version = :serviceModelVersion");
         query.setParameter("serviceModelInvariantUuid", serviceModelInvariantUuid);
         query.setParameter("serviceModelVersion", serviceModelVersion);
 
@@ -2385,8 +2377,8 @@ public class CatalogDatabase implements Closeable {
             return this.getAllVnfsByServiceName(serviceName);
         }
 
-    	StringBuilder hql = new StringBuilder("FROM Service WHERE modelName = :serviceName and version = :serviceVersion");
-        Query query = getSession().createQuery(hql.toString());
+        Query query = getSession().createQuery(
+            "FROM Service WHERE modelName = :serviceName and version = :serviceVersion");
         query.setParameter("serviceName", serviceName);
         query.setParameter("serviceVersion", serviceVersion);
 
@@ -2402,8 +2394,7 @@ public class CatalogDatabase implements Closeable {
     public List<VnfResourceCustomization> getAllVnfsByServiceName(String serviceName) {
         LOGGER.debug("Catalog database: getAllVnfsByServiceName - " + serviceName);
 
-    	StringBuilder hql = new StringBuilder("FROM Service WHERE modelName = :serviceName");
-        Query query = getSession().createQuery(hql.toString());
+        Query query = getSession().createQuery("FROM Service WHERE modelName = :serviceName");
         query.setParameter("serviceName", serviceName);
 
         @SuppressWarnings("unchecked")
@@ -2423,8 +2414,7 @@ public class CatalogDatabase implements Closeable {
         long startTime = System.currentTimeMillis();
         LOGGER.debug("Catalog database: getAllVnfsByVnfModelCustomizationUuid - " + vnfModelCustomizationUuid);
 
-    	StringBuilder hql1 = new StringBuilder("FROM VnfResourceCustomization WHERE modelCustomizationUuid = :vrcmcu");
-    	Query query1 = getSession().createQuery(hql1.toString());
+        Query query1 = getSession().createQuery("FROM VnfResourceCustomization WHERE modelCustomizationUuid = :vrcmcu");
     	query1.setParameter("vrcmcu", vnfModelCustomizationUuid);
         @SuppressWarnings("unchecked")
     	List<VnfResourceCustomization> resultList1 = query1.list();
@@ -2433,12 +2423,12 @@ public class CatalogDatabase implements Closeable {
             LOGGER.debug("Found no records matching " + vnfModelCustomizationUuid);
             return Collections.EMPTY_LIST;
         }
-    	
-    	for (VnfResourceCustomization vrc : resultList1) {
-    		VnfResource vr = this.getVnfResourceByModelUuid(vrc.getVnfResourceModelUuid());
-    		vrc.setVnfResource(vr);
-    		vrc.setVfModuleCustomizations(this.getAllVfmcForVrc(vrc));
-                }
+
+        for (VnfResourceCustomization vrc : resultList1) {
+            VnfResource vr = this.getVnfResourceByModelUuid(vrc.getVnfResourceModelUuid());
+            vrc.setVnfResource(vr);
+            vrc.setVfModuleCustomizations(this.getAllVfmcForVrc(vrc));
+        }
 
     	LOGGER.debug("Returning " + resultList1.size() + " vnf modules");
         LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getAllVnfsByVnfModelCustomizationUuid", null);
@@ -2473,8 +2463,7 @@ public class CatalogDatabase implements Closeable {
     public List<AllottedResourceCustomization> getAllAllottedResourcesByServiceModelInvariantUuid(String serviceModelInvariantUuid) {
         LOGGER.debug("Catalog database: getAllAllottedResourcesByServiceModelInvariantUuid - " + serviceModelInvariantUuid);
 
-        StringBuilder hql = new StringBuilder("FROM Service WHERE modelInvariantUUID = :serviceModelInvariantUuid");
-        Query query = getSession().createQuery(hql.toString());
+        Query query = getSession().createQuery("FROM Service WHERE modelInvariantUUID = :serviceModelInvariantUuid");
         query.setParameter("serviceModelInvariantUuid", serviceModelInvariantUuid);
         @SuppressWarnings("unchecked")
         List<Service> serviceList = query.list();
@@ -2497,8 +2486,8 @@ public class CatalogDatabase implements Closeable {
     public List<AllottedResourceCustomization> getAllAllottedResourcesByServiceModelInvariantUuid(String serviceModelInvariantUuid, String serviceModelVersion) {
         LOGGER.debug("Catalog database: getAllAllottedResourcesByServiceModelInvariantUuid - " + serviceModelInvariantUuid + ", version=" + serviceModelVersion);
 
-        StringBuilder hql = new StringBuilder("FROM Service WHERE modelInvariantUUID = :serviceModelInvariantUuid and version = :serviceModelVersion");
-        Query query = getSession().createQuery(hql.toString());
+        Query query = getSession().createQuery(
+            "FROM Service WHERE modelInvariantUUID = :serviceModelInvariantUuid and version = :serviceModelVersion");
         query.setParameter("serviceModelInvariantUuid", serviceModelInvariantUuid);
         query.setParameter("serviceModelVersion", serviceModelVersion);
 
@@ -2523,8 +2512,8 @@ public class CatalogDatabase implements Closeable {
         long startTime = System.currentTimeMillis();
         LOGGER.debug("Catalog database: getAllAllottedResourcesByArModelCustomizationUuid - " + arModelCustomizationUuid);
 
-        StringBuilder hql = new StringBuilder("FROM AllottedResourceCustomization WHERE modelCustomizationUuid = :arModelCustomizationUuid");
-        Query query = getSession().createQuery(hql.toString());
+        Query query = getSession().createQuery(
+            "FROM AllottedResourceCustomization WHERE modelCustomizationUuid = :arModelCustomizationUuid");
         query.setParameter("arModelCustomizationUuid", arModelCustomizationUuid);
 
         @SuppressWarnings("unchecked")
@@ -2601,8 +2590,7 @@ public class CatalogDatabase implements Closeable {
         long startTime = System.currentTimeMillis();
         LOGGER.debug("Catalog database: getAllResourcesByServiceModelInvariantUuid - " + serviceModelInvariantUuid);
 
-        StringBuilder hql = new StringBuilder("FROM Service WHERE modelInvariantUUID = :serviceModelInvariantUuid");
-        Query query = getSession().createQuery(hql.toString());
+        Query query = getSession().createQuery("FROM Service WHERE modelInvariantUUID = :serviceModelInvariantUuid");
         query.setParameter("serviceModelInvariantUuid", serviceModelInvariantUuid);
         @SuppressWarnings("unchecked")
         List<Service> serviceList = query.list();
@@ -2632,8 +2620,8 @@ public class CatalogDatabase implements Closeable {
         long startTime = System.currentTimeMillis();
         LOGGER.debug("Catalog database: getAllResourcesByServiceModelInvariantUuid - " + serviceModelInvariantUuid + ", version=" + serviceModelVersion);
 
-        StringBuilder hql = new StringBuilder("FROM Service WHERE modelInvariantUUID = :serviceModelInvariantUuid and version = :serviceModelVersion");
-        Query query = getSession().createQuery(hql.toString());
+        Query query = getSession().createQuery(
+            "FROM Service WHERE modelInvariantUUID = :serviceModelInvariantUuid and version = :serviceModelVersion");
         query.setParameter("serviceModelInvariantUuid", serviceModelInvariantUuid);
         query.setParameter("serviceModelVersion", serviceModelVersion);
         //TODO make this a unique query
@@ -2731,12 +2719,10 @@ public class CatalogDatabase implements Closeable {
     public VnfRecipe getVfModuleRecipe (String vnfType, String vfModuleModelName, String action) {
     	String vfModuleType = vnfType + "::" + vfModuleModelName;
 
-    	StringBuilder hql = new StringBuilder ("FROM VfModule WHERE type = :type ");
-
         long startTime = System.currentTimeMillis ();
         LOGGER.debug ("Catalog database - get VF MODULE  with type " + vfModuleType);
 
-        Query query = getSession ().createQuery (hql.toString ());
+        Query query = getSession ().createQuery ("FROM VfModule WHERE type = :type ");
         query.setParameter (TYPE, vfModuleType);
 
         @SuppressWarnings("unchecked")
@@ -2754,13 +2740,11 @@ public class CatalogDatabase implements Closeable {
 
         String vfModuleId = vfMod.getModelUUID();
 
-        StringBuilder hql1 = new StringBuilder ("FROM VnfRecipe WHERE vfModuleId = :vfModuleId AND action = :action ");
-
         LOGGER.debug ("Catalog database - get VNF recipe with vf module id " + vfModuleId
                                       + " and action "
                                       + action);
 
-        Query query1 = getSession ().createQuery (hql1.toString ());
+        Query query1 = getSession ().createQuery ("FROM VnfRecipe WHERE vfModuleId = :vfModuleId AND action = :action ");
         query1.setParameter (VF_MODULE_MODEL_UUID, vfModuleId);
         query1.setParameter (ACTION, action);
 
@@ -2846,13 +2830,12 @@ public class CatalogDatabase implements Closeable {
 
         String vfModuleId = vfMod.getModelUUID();
 
-        StringBuilder hql1 = new StringBuilder ("FROM VnfComponentsRecipe WHERE vfModuleId = :vfModuleId AND action = :action ");
-
         LOGGER.debug ("Catalog database - get Vnf Components recipe with vf module id " + vfModuleId
                 + " and action "
                 + action);
 
-        Query query1 = getSession ().createQuery (hql1.toString ());
+        Query query1 = getSession ().createQuery (
+            "FROM VnfComponentsRecipe WHERE vfModuleId = :vfModuleId AND action = :action ");
         query1.setParameter (VF_MODULE_MODEL_UUID, vfModuleId);
         query1.setParameter (ACTION, action);
 
@@ -2899,15 +2882,14 @@ public class CatalogDatabase implements Closeable {
 
         VfModule vfMod = resultList.get(0);
 
-        String vfModuleId = vfMod.getModelName();      
-
-        StringBuilder hql1 = new StringBuilder ("FROM VnfComponentsRecipe WHERE vfModuleId = :vfModuleId AND action = :action ");
+        String vfModuleId = vfMod.getModelName();
 
         LOGGER.debug ("Catalog database - get Vnf Components recipe with vf module id " + vfModuleId
                                       + " and action "
                                       + action);
 
-        Query query1 = getSession ().createQuery (hql1.toString ());
+        Query query1 = getSession ().createQuery (
+            "FROM VnfComponentsRecipe WHERE vfModuleId = :vfModuleId AND action = :action ");
         query1.setParameter (VF_MODULE_MODEL_UUID, vfModuleId);
         query1.setParameter (ACTION, action);
 

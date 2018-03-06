@@ -37,10 +37,6 @@ public class NetworkRecipe extends Recipe implements Serializable {
 
 	@Override
 	public String toString () {
-		StringBuilder sb = new StringBuilder();
-		sb.append(super.toString());
-		sb.append(",modelName=").append(modelName);
-		sb.append(",networkParamXSD=").append(getParamXSD());
-		return sb.toString();
+		return super.toString() + ",modelName=" + modelName + ",networkParamXSD=" + getParamXSD();
 	}
 }
