@@ -87,6 +87,7 @@ public class CatalogDatabase implements Closeable {
     private static final String VNF_COMPONENT_TYPE = "vnfComponentType";
     private static final String MODEL_ID = "modelId";
     private static final String MODEL_NAME = "modelName";
+    private static final String MODEL_VERSION = "version";
     private static final String TYPE = "type";
     private static final String MODEL_TYPE = "modelType";
     private static final String MODEL_VERSION_ID = "modelVersionId";
@@ -4443,6 +4444,26 @@ public class CatalogDatabase implements Closeable {
         }
     }
 
+    /**
+     * Return a Network recipe that matches a given MODEL_UUID and ACTION
+     *
+     * @param modelName
+     * @param action
+     * @return NetworkRecipe object or null if none found
+     */
+    public NetworkRecipe getNetworkRecipeByModuleUuid (String networkModelUuid, String action) {
+        LOGGER.debug ("Catalog database - get network recipe with network model uuid " + networkModelUuid
+                + " and action "
+                + action
+                );
+        NetworkResource networkResource = getNetworkResourceByModelUuid(networkModelUuid);
+        if(null == networkResource){
+            return null;
+        }
+        
+        NetworkRecipe recipe = getNetworkRecipeByNameVersion(networkResource.getModelName(), networkResource.getModelVersion(), action);
+        return recipe;        
+    }
     
     /**
      * Return a Network recipe that matches a given MODEL_NAME and ACTION
@@ -4482,6 +4503,46 @@ public class CatalogDatabase implements Closeable {
         }
     }
 
+    /**
+     * get network recipe by module name and version and action.
+     * <br>
+     * 
+     * @param modelName
+     * @param modelVersion
+     * @param action
+     * @return
+     * @since ONAP Beijing Release
+     */
+    public NetworkRecipe getNetworkRecipeByNameVersion(String modelName, String modelVersion, String action) {
+
+        long startTime = System.currentTimeMillis ();
+        LOGGER.debug ("Catalog database - get network recipe with network model name " + modelName
+                                      +"model version " + modelVersion + " and action " + action);
+
+        try {
+            String hql = "FROM NetworkRecipe WHERE modelName = :modelName AND version=:version AND action = :action";
+
+            Query query = getSession ().createQuery (hql);
+            query.setParameter (MODEL_NAME, modelName);
+            query.setParameter (MODEL_VERSION, modelVersion);
+            query.setParameter (ACTION, action);
+
+            @SuppressWarnings("unchecked")
+            List <NetworkRecipe> resultList = query.list ();
+
+            if (resultList.isEmpty ()) {
+                return null;
+            }
+
+            Collections.sort (resultList, new MavenLikeVersioningComparator ());
+            Collections.reverse (resultList);
+
+            return resultList.get (0);
+        } finally {
+            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getNetworkRecipe", null);
+        }
+    }
+    
     /**
      * Return a Network Resource that matches the Network Customization defined by given MODEL_CUSTOMIZATION_UUID
      *
