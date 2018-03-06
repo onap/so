@@ -16,6 +16,24 @@
       "revId": "840b78f80c485add05746a6c0aeb0df7e5b0afd0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_78bd5801",
+        "filename": "common/src/test/java/org/openecomp/mso/adapter_utils/tests/MsoLoggerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 297,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-03-06T14:54:12Z",
+      "side": 1,
+      "message": "Shouldn\u0027t even use logger here - you shouldn\u0027t log in tests. Instead test method should just throw this exception (same for other test methods in this class).\n\nCatching exception and only logging it is incredibly bad in tests - test will incorrectly pass when something went wrong and exception was thrown.",
+      "parentUuid": "5a93c517_982e248b",
+      "revId": "840b78f80c485add05746a6c0aeb0df7e5b0afd0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
