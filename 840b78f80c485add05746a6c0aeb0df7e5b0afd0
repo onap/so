@@ -34,6 +34,24 @@
       "revId": "840b78f80c485add05746a6c0aeb0df7e5b0afd0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_785478c9",
+        "filename": "common/src/test/java/org/openecomp/mso/adapter_utils/tests/MsoLoggerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 297,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2018-03-06T14:58:08Z",
+      "side": 1,
+      "message": "Agreed.. Thanks for pointing..\nMissed the part that this is test class, might have happened when reviewing 20 commits in one shot :)",
+      "parentUuid": "5a93c517_78bd5801",
+      "revId": "840b78f80c485add05746a6c0aeb0df7e5b0afd0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
