@@ -50,15 +50,6 @@ public class MsoHeatEnvironmentEntry {
 		this.processRawEntry();
 	}
 	
-	private MsoHeatEnvironmentEntry(Set<MsoHeatEnvironmentParameter> parameters, String rawEntry, boolean valid,
-			String errorString, String resourceRegistryEntryRaw) {
-		this.parameters = parameters;
-		this.rawEntry = new StringBuilder(rawEntry);
-		this.valid = valid;
-		this.errorString = errorString;
-		this.resourceRegistryEntryRaw = new StringBuilder(resourceRegistryEntryRaw);
-	}
-	
 	private void processRawEntry() {
 		try {
 			if (this.rawEntry == null || "".equals(this.rawEntry))
@@ -236,30 +227,6 @@ public class MsoHeatEnvironmentEntry {
 		}
 		sb.append(this.rawEntry.substring(indexOf));
 		return sb;
-	}
-	
-	private static String getResourceRegistryRawEntry(String rawEntry) {
-		int indexOf = rawEntry.indexOf("resource_registry:");
-		if (indexOf < 0) {
-			return "";
-		}
-		return rawEntry.substring(indexOf);
-	}
-	
-	public static MsoHeatEnvironmentEntry create(String rawEntry) {
-		if (rawEntry == null || rawEntry.isEmpty()) {
-			return new MsoHeatEnvironmentEntry(new StringBuilder(rawEntry));
-		}
-		try {
-			Set<MsoHeatEnvironmentParameter> parameters = new MsoYamlEditorWithEnvt(rawEntry.getBytes())
-					.getParameterListFromEnvt();
-			return new MsoHeatEnvironmentEntry(parameters, rawEntry, true, null,
-					getResourceRegistryRawEntry(rawEntry));
-		} catch (Exception e) {
-			LOGGER.debug(String.format("An exception occurred during processing the following raw entry: %s", rawEntry),
-					e);
-			return new MsoHeatEnvironmentEntry(null, rawEntry, false, e.getMessage(), null);
-		}
 	}
 	
 }

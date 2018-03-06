@@ -1148,7 +1148,9 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             if (heatEnvironmentString != null && heatEnvironmentString.contains ("parameters:")) {
                 //LOGGER.debug ("Have an Environment argument with a parameters: section - will bypass checking for valid params - but will still check for aliases");
             	LOGGER.debug("Enhanced environment checking enabled - 1604");
-                mhee = MsoHeatEnvironmentEntry.create(heatEnvironmentString);
+                StringBuilder sb = new StringBuilder(heatEnvironmentString);
+                //LOGGER.debug("About to create MHEE with " + sb);
+                mhee = new MsoHeatEnvironmentEntry(sb);
                 StringBuilder sb2 = new StringBuilder("\nHeat Template Parameters:\n");
                 for (HeatTemplateParam parm : heatTemplate.getParameters()) {
                 	sb2.append("\t" + parm.getParamName() + ", required=" + parm.isRequired());
@@ -1847,9 +1849,12 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             // Part 2: only submit to openstack the parameters in the envt that are in the heat template
             // Note this also removes any comments
             MsoHeatEnvironmentEntry mhee = null;
-            if (heatEnvironmentString != null && heatEnvironmentString.toLowerCase ().contains ("parameters:")) {
-            	LOGGER.debug("Enhanced environment checking enabled - 1604");
-                mhee = MsoHeatEnvironmentEntry.create(heatEnvironmentString);
+            if (heatEnvironmentString != null && heatEnvironmentString.contains ("parameters:")) {
+                //LOGGER.debug ("Have an Environment argument with a parameters: section - will bypass checking for valid params - but will still check for aliases");
+                LOGGER.debug("Enhanced environment checking enabled - 1604");
+                StringBuilder sb = new StringBuilder(heatEnvironmentString);
+                //LOGGER.debug("About to create MHEE with " + sb);
+                mhee = new MsoHeatEnvironmentEntry(sb);
                 StringBuilder sb2 = new StringBuilder("\nHeat Template Parameters:\n");
                 for (HeatTemplateParam parm : heatTemplate.getParameters()) {
                 	sb2.append("\t" + parm.getParamName() + ", required=" + parm.isRequired());

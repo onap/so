@@ -120,25 +120,6 @@ public class CloudConfigTest {
     }
 
     @Test
-    public void cloudSiteIsGotByClli_when_IdNotFound() throws MsoCloudIdentityNotFound {
-        CloudConfig con = createTestObject(cloudConfigJsonFilePath);
-        Optional<CloudSite> cloudSite = con.getCloudSite("CS_clli");
-        assertTrue(cloudSite.isPresent());
-        assertEquals("clliRegion", cloudSite.get().getRegionId());
-        assertEquals("CS_clli", cloudSite.get().getClli());
-        assertEquals("CS_service", cloudSite.get().getIdentityServiceId());
-    }
-
-    @Test
-    public void cloudSiteIsGotByDefault_when_IdAndClliNotFound() throws MsoCloudIdentityNotFound {
-        CloudConfig con = createTestObject(cloudDefaultConfigJsonFilePath);
-        Optional<CloudSite> cloudSite = con.getCloudSite("not_existing_id");
-        assertTrue(cloudSite.isPresent());
-        assertEquals("not_existing_id", cloudSite.get().getId());
-        assertEquals("not_existing_id", cloudSite.get().getRegionId());
-    }
-
-    @Test
     public void testGetIdentityService() throws MsoCloudIdentityNotFound {
         CloudConfig con = createTestObject(cloudConfigJsonFilePath);
         CloudIdentity identity1 = con.getIdentityService("MT_KEYSTONE");

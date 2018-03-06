@@ -23,13 +23,13 @@
   </organization>
   <modules>
     <module>common</module>
+    <module>cloudify-client</module>
     <module>mso-api-handlers</module>
     <module>mso-catalog-db</module>
     <module>adapters</module>
     <module>asdc-controller</module>
     <module>status-control</module>
     <module>bpmn</module>
-    <module>cloudify-client</module>
     <module>packages</module>
     <module>aria</module>
   </modules>
