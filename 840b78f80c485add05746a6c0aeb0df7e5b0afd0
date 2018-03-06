@@ -52,6 +52,60 @@
       "revId": "840b78f80c485add05746a6c0aeb0df7e5b0afd0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f3d98a57",
+        "filename": "common/src/test/java/org/openecomp/mso/adapter_utils/tests/MsoLoggerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 297,
+      "author": {
+        "id": 153
+      },
+      "writtenOn": "2018-03-06T22:12:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_78bd5801",
+      "revId": "840b78f80c485add05746a6c0aeb0df7e5b0afd0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_93dcc647",
+        "filename": "common/src/test/java/org/openecomp/mso/adapter_utils/tests/MsoLoggerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 297,
+      "author": {
+        "id": 153
+      },
+      "writtenOn": "2018-03-06T22:12:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_785478c9",
+      "revId": "840b78f80c485add05746a6c0aeb0df7e5b0afd0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d3d6ce27",
+        "filename": "common/src/test/java/org/openecomp/mso/adapter_utils/tests/MsoLoggerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 297,
+      "author": {
+        "id": 153
+      },
+      "writtenOn": "2018-03-06T22:12:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_982e248b",
+      "revId": "840b78f80c485add05746a6c0aeb0df7e5b0afd0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
