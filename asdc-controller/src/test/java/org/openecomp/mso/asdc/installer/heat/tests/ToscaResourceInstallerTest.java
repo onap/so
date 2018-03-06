@@ -329,6 +329,73 @@ public class ToscaResourceInstallerTest {
 		trs.setSdcCsarHelper(new ISdcCsarHelper() {
 
 			@Override
+			public List<NodeTemplate> getGroupMembersFromTopologyTemplate(String arg0) {
+			    return null;
+			}
+
+			@Override
+			public List<Map<String, Object>> getGroupsOfOriginOfNodeTemplate(NodeTemplate arg0) {
+			    return null;
+			}
+
+			@Override
+			public List<Map<String,Map<String,Object>>> getGroupsOfTopologyTemplateByToscaGroupType(String arg0) {
+			    return null;
+			}
+
+			@Override
+			public List<Map<String,Map<String,Object>>> getGroupsOfTopologyTemplate() {
+			    return null;
+			}
+
+			@Override
+			public List<Map<String,Map<String,Object>>> getPoliciesOfTargetByToscaPolicyType(NodeTemplate arg0, String arg1) {
+			    return null;
+			}
+
+			@Override
+			public List<Map<String,Map<String,Object>>> getPoliciesOfTarget(NodeTemplate arg0) {
+			    return null;
+			}
+
+			@Override
+			public NodeTemplate getNodeTemplateByName(String arg0) {
+			    return null;
+			}
+
+			@Override
+			public List<Map<String,Object>> getPolicyTargetsFromOrigin(NodeTemplate arg0, String arg1) {
+			    return null;
+			}
+
+			@Override
+			public List<NodeTemplate> getPolicyTargetsFromTopologyTemplate(String arg0) {
+			    return null;
+			}
+
+			@Override
+			public List<Map<String,Object>> getPoliciesOfOriginOfNodeTemplateByToscaPolicyType(NodeTemplate arg0, String arg1) {
+			    return null;
+			}
+
+			@Override
+			public List<Map<String,Object>> getPoliciesOfOriginOfNodeTemplate(NodeTemplate arg0) {
+			    return null;
+			}
+
+			@Override
+			public List<Map<String,Map<String,Object>>>  getPoliciesOfTopologyTemplateByToscaPolicyType(String arg0) {
+			    return null;
+			}
+
+			@Override
+			public List<Map<String,Map<String,Object>>> getPoliciesOfTopologyTemplate() {
+			    return null;
+			}
+
+			////////////////////////////////
+
+			@Override
 			public boolean hasTopology(NodeTemplate arg0) {
 				return false;
 			}
