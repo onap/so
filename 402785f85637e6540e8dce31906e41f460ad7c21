@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_59617d03",
+        "filename": "bpmn/MSOInfrastructureBPMN/src/main/groovy/org/openecomp/mso/bpmn/vcpe/scripts/CreateVcpeResCustService.groovy",
+        "patchSetId": 5
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-03-07T10:15:09Z",
+      "side": 1,
+      "message": "Add of customerLocation",
+      "range": {
+        "startLine": 76,
+        "startChar": 7,
+        "endLine": 76,
+        "endChar": 53
+      },
+      "revId": "402785f85637e6540e8dce31906e41f460ad7c21",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_795c794b",
+        "filename": "bpmn/MSOInfrastructureBPMN/src/main/groovy/org/openecomp/mso/bpmn/vcpe/scripts/CreateVcpeResCustService.groovy",
+        "patchSetId": 5
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-03-07T10:15:09Z",
+      "side": 1,
+      "message": "Add of customer location store.",
+      "range": {
+        "startLine": 200,
+        "startChar": 31,
+        "endLine": 206,
+        "endChar": 33
+      },
+      "revId": "402785f85637e6540e8dce31906e41f460ad7c21",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_19577527",
+        "filename": "bpmn/MSOInfrastructureBPMN/src/main/groovy/org/openecomp/mso/bpmn/vcpe/scripts/CreateVcpeResCustService.groovy",
+        "patchSetId": 5
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-03-07T10:15:09Z",
+      "side": 1,
+      "message": "Add of debug log of customer location.",
+      "range": {
+        "startLine": 215,
+        "startChar": 12,
+        "endLine": 216,
+        "endChar": 78
+      },
+      "revId": "402785f85637e6540e8dce31906e41f460ad7c21",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
