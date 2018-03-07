@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_07614cd2",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/openecomp/mso/bpmn/mock/FileUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2018-03-07T17:05:11Z",
+      "side": 1,
+      "message": "Remove this constructor declaration, it is completely useless.",
+      "revId": "f5d527e36c229f037fb06b16541389fe8e9e1295",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
