@@ -1203,4 +1203,25 @@ class CatalogDbUtils {
 		}
 
 	}
+	
+    /**
+     * get resource recipe by resource model uuid and action
+     */
+    public JSONObject getResourceRecipe(Execution execution, String resourceModelUuid, String action) {
+        String endPoint = "/resourceRecipe?resourceModelUuid=" + UriUtils.encode(resourceModelUuid, "UTF-8")+ "&action=" + UriUtils.encode(action, "UTF-8")
+        JSONObject responseJson = null
+        try {
+            msoLogger.debug("ENDPOINT: " + endPoint)
+            String catalogDbResponse = getResponseFromCatalogDb(execution, endPoint)
+
+            if (catalogDbResponse != null) {
+                responseJson = new JSONObject(catalogDbResponse)
+            }
+        }
+        catch (Exception e) {
+            utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+        }
+
+        return responseJson
+    }
 }
