@@ -93,7 +93,7 @@ public class URNMapping {
 	 * aai:endpoint becomes URN_aai_endpoint <br/>
 	 * ae:internal-reporting becomes URN_ae_internal_reporting <br/>
 	 * 
-	 * @param name the URN
+	 * @param urn the URN
 	 * @return a normalized identifier
 	 */
 	public static String createIdentifierFromURN(String urn) {

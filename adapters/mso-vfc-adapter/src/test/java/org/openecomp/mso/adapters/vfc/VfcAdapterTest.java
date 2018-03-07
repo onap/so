@@ -60,7 +60,7 @@ public class VfcAdapterTest {
     /**
      * mock get request body <br>
      * 
-     * @param request
+     * @param fileName
      * @return
      * @since ONAP Amsterdam Release
      */
@@ -71,7 +71,6 @@ public class VfcAdapterTest {
     /**
      * Mock the request body form a file <br>
      * 
-     * @param fileName
      * @since ONAP Amsterdam Release
      */
     private void mockRestfulUtil() {

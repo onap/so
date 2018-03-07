@@ -89,7 +89,7 @@ public class ModelRecipe extends MavenLikeVersioning implements Serializable {
 	}
 
 	/**
-	 * @param versionStr the versionStr to set
+	 * @param schemaVersion the versionStr to set
 	 */
 	public void setSchemaVersion(String schemaVersion) {
 		this.schemaVersion = schemaVersion;
