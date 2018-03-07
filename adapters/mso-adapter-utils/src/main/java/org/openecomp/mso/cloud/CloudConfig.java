@@ -79,8 +79,11 @@ public class CloudConfig {
      * Get a map of all cloud sites that have been loaded.
      */
     public synchronized Map<String, CloudSite> getCloudSites() {
-        return cloudSites;
+        Map<String, CloudSite> result = new HashMap<>();
+        result.putAll(cloudSites);
+        return result;
     }
+
 
     /**
      * Get a specific CloudSites, based on an ID. The ID is first checked
