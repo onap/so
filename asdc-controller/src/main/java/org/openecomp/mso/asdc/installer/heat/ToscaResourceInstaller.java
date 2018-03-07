@@ -419,39 +419,34 @@ public class ToscaResourceInstaller {// implements IVfResourceInstaller {
                                 toscaResourceStruct.getSdcCsarHelper().getVfModulesByVf(vfCustomizationUUID);
                         logger.debug("vfGroups:" + vfGroups.toString());
 
-                        vfGroups.sort(new Comparator<Group>() {
+						vfGroups.sort((group1, group2) -> {
 
-                            @Override
-                            public int compare(Group group1,
-                                Group group2) {
+							// Field name1Field = group1.class.getDeclaredField("name");
+							// name1Field.setAccessible(true);
+							String thisName = group1.getName(); // (String)
+							// name1Field.get(group1);
+							String thatName = group2.getName(); // (String)
+							// name1Field.get(group2);
 
-                                // Field name1Field = group1.class.getDeclaredField("name");
-                                // name1Field.setAccessible(true);
-                                String thisName = group1.getName(); // (String)
-                                // name1Field.get(group1);
-                                String thatName = group2.getName(); // (String)
-                                // name1Field.get(group2);
+							Matcher m = lastDigit.matcher(thisName);
+							Matcher m2 = lastDigit.matcher(thatName);
 
-                                Matcher m = lastDigit.matcher(thisName);
-                                Matcher m2 = lastDigit.matcher(thatName);
+							String thisDigit = "0";
+							String thatDigit = "0";
+							if (m.find()) {
+								thisDigit = m.group();
+							} else {
+								return -1;
+							}
+							if (m2.find()) {
+								thatDigit = m2.group();
+							} else {
+								return 1;
+							}
 
-                                String thisDigit = "0";
-                                String thatDigit = "0";
-                                if (m.find()) {
-                                    thisDigit = m.group();
-                                } else {
-                                    return -1;
-                                }
-                                if (m2.find()) {
-                                    thatDigit = m2.group();
-                                } else {
-                                    return 1;
-                                }
+							return new Integer(thisDigit).compareTo(new Integer(thatDigit));
 
-                                return new Integer(thisDigit).compareTo(new Integer(thatDigit));
-
-                            }
-                        });
+						});
 
                         logger.debug("vfGroupsAfter:" + vfGroups.toString());
 
