@@ -419,30 +419,30 @@ public class ToscaResourceInstaller {// implements IVfResourceInstaller {
                                 toscaResourceStruct.getSdcCsarHelper().getVfModulesByVf(vfCustomizationUUID);
                         logger.debug("vfGroups:" + vfGroups.toString());
 
-                        Collections.sort(vfGroups, new Comparator<org.openecomp.sdc.toscaparser.api.Group>() {
+                        vfGroups.sort(new Comparator<Group>() {
 
                             @Override
-                            public int compare(org.openecomp.sdc.toscaparser.api.Group group1,
-                                    org.openecomp.sdc.toscaparser.api.Group group2) {
+                            public int compare(Group group1,
+                                Group group2) {
 
                                 // Field name1Field = group1.class.getDeclaredField("name");
                                 // name1Field.setAccessible(true);
                                 String thisName = group1.getName(); // (String)
-                                                                    // name1Field.get(group1);
+                                // name1Field.get(group1);
                                 String thatName = group2.getName(); // (String)
-                                                                    // name1Field.get(group2);
+                                // name1Field.get(group2);
 
                                 Matcher m = lastDigit.matcher(thisName);
                                 Matcher m2 = lastDigit.matcher(thatName);
 
                                 String thisDigit = "0";
                                 String thatDigit = "0";
-                                if(m.find()) {
+                                if (m.find()) {
                                     thisDigit = m.group();
                                 } else {
                                     return -1;
                                 }
-                                if(m2.find()) {
+                                if (m2.find()) {
                                     thatDigit = m2.group();
                                 } else {
                                     return 1;

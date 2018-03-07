@@ -1195,7 +1195,7 @@ public class CatalogDatabase implements Closeable {
             return null;
         }
 
-        Collections.sort(resultList, new MavenLikeVersioningComparator());
+        resultList.sort(new MavenLikeVersioningComparator());
         Collections.reverse(resultList);
 
         LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVnfRecipe", null);
@@ -4576,7 +4576,7 @@ public class CatalogDatabase implements Closeable {
                 return null;
             }
 
-            Collections.sort (resultList, new MavenLikeVersioningComparator ());
+            resultList.sort(new MavenLikeVersioningComparator());
             Collections.reverse (resultList);
 
             return resultList.get (0);
@@ -5161,7 +5161,7 @@ public class CatalogDatabase implements Closeable {
                 return null;
             }
 
-            Collections.sort (resultList, new MavenLikeVersioningComparator ());
+            resultList.sort(new MavenLikeVersioningComparator());
             Collections.reverse (resultList);
 
             return resultList.get (0);
