@@ -29,14 +29,21 @@
 				{
 					"subscriptionServiceType":"123456789",
 					"aLaCarte":"false",
-                    "userParams":
-                       [
-                            {
-                                "name":"BRG_WAN_MAC_Address",
-                                "value":"brgmac"
-                            }
-                       ]
+					"userParams":
+					   [
+							{
+								"name":"BRG_WAN_MAC_Address",
+								"value":"brgmac"
+							},
+							{
+								"name": "Customer_Location",
+								"value": {
+									"customerLatitude": "32.897480",
+									"customerLongitude": "-97.040443",
+									"customerName": "some_company"
+								}
+							}
+						]
 				}
-				
 		}
 }
