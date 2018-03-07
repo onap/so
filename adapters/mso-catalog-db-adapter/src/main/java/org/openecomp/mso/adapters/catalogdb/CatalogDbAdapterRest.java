@@ -69,6 +69,7 @@ import org.openecomp.mso.adapters.catalogdb.catalogrest.CatalogQuery;
 import org.openecomp.mso.adapters.catalogdb.catalogrest.CatalogQueryException;
 import org.openecomp.mso.adapters.catalogdb.catalogrest.CatalogQueryExceptionCategory;
 import org.openecomp.mso.adapters.catalogdb.catalogrest.QueryAllottedResourceCustomization;
+import org.openecomp.mso.adapters.catalogdb.catalogrest.QueryResourceRecipe;
 import org.openecomp.mso.adapters.catalogdb.catalogrest.QueryServiceCsar;
 import org.openecomp.mso.adapters.catalogdb.catalogrest.QueryServiceMacroHolder;
 import org.openecomp.mso.adapters.catalogdb.catalogrest.QueryServiceNetworks;
@@ -77,6 +78,7 @@ import org.openecomp.mso.adapters.catalogdb.catalogrest.QueryVfModule;
 import org.openecomp.mso.db.catalog.CatalogDatabase;
 import org.openecomp.mso.db.catalog.beans.AllottedResourceCustomization;
 import org.openecomp.mso.db.catalog.beans.NetworkResourceCustomization;
+import org.openecomp.mso.db.catalog.beans.Recipe;
 import org.openecomp.mso.db.catalog.beans.ServiceMacroHolder;
 import org.openecomp.mso.db.catalog.beans.ToscaCsar;
 import org.openecomp.mso.db.catalog.beans.VfModuleCustomization;
@@ -481,7 +483,7 @@ public class CatalogDbAdapterRest {
     @GET
     @Path("serviceToscaCsar")
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-    public Response ServiceToscaCsar(@QueryParam("serviceModelUuid") String smUuid) {
+    public Response serviceToscaCsar(@QueryParam("serviceModelUuid") String smUuid) {
         int respStatus = HttpStatus.SC_OK;
         String entity = "";
         try (CatalogDatabase db = CatalogDatabase.getInstance()) {
@@ -513,6 +515,60 @@ public class CatalogDbAdapterRest {
                 .entity(new GenericEntity<CatalogQueryException>(excResp) {
                 })
                 .build();
+        }
+    }
+    
+    /**
+     * Get the resource recipe info from catalog
+     * <br>
+     * 
+     * @param rmUuid resource model uuid
+     * @return the recipe information of the resource.
+     * @since ONAP Beijing Release
+     */
+    @GET
+    @Path("resourceRecipe")
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    public Response resourceRecipe(@QueryParam("resourceModelUuid") String rmUuid, @QueryParam("action") String action) {
+        int respStatus = HttpStatus.SC_OK;
+        CatalogDatabase db = CatalogDatabase.getInstance();
+        String entity = "";
+        try{
+            if(rmUuid != null && !"".equals(rmUuid)){
+                LOGGER.debug ("Query recipe by resource model uuid: " + rmUuid);
+                //check vnf and network and ar, the resource could be any resource.
+                Recipe recipe = db.getVnfRecipeByModuleUuid(rmUuid, action);
+                if(null == recipe){
+                    recipe = db.getNetworkRecipeByModuleUuid(rmUuid, action);
+                }
+                if(null == recipe){
+                    recipe = db.getArRecipeByModuleUuid(rmUuid, action);
+                }
+                if(recipe != null){
+                    QueryResourceRecipe resourceRecipe = new QueryResourceRecipe(recipe);
+                    entity = resourceRecipe.JSON2(false, false);
+                }
+                else{
+                    respStatus = HttpStatus.SC_NOT_FOUND;
+                }
+            }else{
+                throw(new Exception("Incoming parameter is null or blank"));
+            }           
+            LOGGER.debug ("Query recipe exit");
+            return Response
+                    .status(respStatus)
+                    .entity(entity) 
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                    .build();
+        }catch(Exception e){
+            LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR,  rmUuid, "", "resourceRecipe", MsoLogger.ErrorCode.BusinessProcesssError, "Exception during query recipe by resource model uuid: ", e);
+            CatalogQueryException excResp = new CatalogQueryException(e.getMessage(), CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
+            return Response
+                    .status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
+                    .entity(new GenericEntity<CatalogQueryException>(excResp) {})
+                    .build();
+        }finally {
+            db.close();
         }
     }
 }
