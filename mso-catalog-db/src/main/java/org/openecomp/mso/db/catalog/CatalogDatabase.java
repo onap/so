@@ -36,6 +36,7 @@ import org.hibernate.Session;
 import org.openecomp.mso.db.AbstractSessionFactoryManager;
 import org.openecomp.mso.db.catalog.beans.AllottedResource;
 import org.openecomp.mso.db.catalog.beans.AllottedResourceCustomization;
+import org.openecomp.mso.db.catalog.beans.ArRecipe;
 import org.openecomp.mso.db.catalog.beans.HeatEnvironment;
 import org.openecomp.mso.db.catalog.beans.HeatFiles;
 import org.openecomp.mso.db.catalog.beans.HeatNestedTemplate;
@@ -5147,4 +5148,67 @@ public class CatalogDatabase implements Closeable {
         }
         return theObjects;
     }
+    
+    
+    /**
+     * get allotted resource recipe by module name and version and action.
+     * <br>
+     * 
+     * @param modelName
+     * @param modelVersion
+     * @param action
+     * @return
+     * @since ONAP Beijing Release
+     */
+    public ArRecipe getArRecipeByNameVersion(String modelName, String modelVersion, String action) {
+
+        long startTime = System.currentTimeMillis ();
+        LOGGER.debug ("Catalog database - get ar recipe with ar model name " + modelName
+                                      +"model version " + modelVersion + " and action " + action);
+
+        try {
+            String hql = "FROM ArRecipe WHERE modelName = :modelName AND version=:version AND action = :action";
+
+            Query query = getSession ().createQuery (hql);
+            query.setParameter (MODEL_NAME, modelName);
+            query.setParameter (MODEL_VERSION, modelVersion);
+            query.setParameter (ACTION, action);
+
+            @SuppressWarnings("unchecked")
+            List <ArRecipe> resultList = query.list ();
+
+            if (resultList.isEmpty ()) {
+                return null;
+            }
+
+            Collections.sort (resultList, new MavenLikeVersioningComparator ());
+            Collections.reverse (resultList);
+
+            return resultList.get (0);
+        } finally {
+            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getNetworkRecipe", null);
+        }
+    }
+    
+    /**
+     * Return a allotted resource recipe that matches a given MODEL_UUID and ACTION
+     *
+     * @param modelName
+     * @param action
+     * @return ArRecipe object or null if none found
+     */
+    public ArRecipe getArRecipeByModuleUuid (String ArModelUuid, String action) {
+        LOGGER.debug ("Catalog database - get ar recipe with ar model uuid " + ArModelUuid
+                + " and action "
+                + action
+                );
+        AllottedResource arResource = this.getAllottedResourceByModelUuid(ArModelUuid);
+        if(null == arResource){
+            return null;
+        }
+        
+        ArRecipe recipe = getArRecipeByNameVersion(arResource.getModelName(), arResource.getModelVersion(), action);
+        return recipe;        
+    }
+    
 }
