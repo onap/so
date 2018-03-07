@@ -1130,6 +1130,8 @@ public class CatalogDatabase implements Closeable {
         return resultList.get(0);
     }
 
+    
+    
     /**
      * Return a VNF recipe that matches a given VNF_TYPE and ACTION
      *
@@ -1161,6 +1163,63 @@ public class CatalogDatabase implements Closeable {
 
         LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVnfRecipe", null);
         return resultList.get(0);
+    }
+    
+    /**
+     * Return a VNF recipe that matches a given ModelName and Modelversion and ACTION
+     *
+     * @param modelName
+     * @param modelVersion
+     * @param action
+     * @return VnfRecipe object or null if none found
+     */
+    public VnfRecipe getVnfRecipeByNameVersion(String modelName, String modelVersion, String action) {
+        StringBuilder hql = new StringBuilder("FROM VnfRecipe WHERE vnfType = :vnfType AND version= :version AND action = :action ");
+
+        long startTime = System.currentTimeMillis();
+        LOGGER.debug("Catalog database - get VNF recipe with name " + modelName
+                                      + " and action "
+                                      + action);
+
+        Query query = getSession().createQuery(hql.toString());
+        query.setParameter(VNF_TYPE, modelName);
+        query.setParameter(MODEL_VERSION, modelVersion);
+        query.setParameter(ACTION, action);
+
+        @SuppressWarnings("unchecked")
+        List <VnfRecipe> resultList = query.list();
+
+        if (resultList.isEmpty()) {
+            LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. VNF recipe not found", "CatalogDB", "getVnfRecipe", null);
+            return null;
+        }
+
+        Collections.sort(resultList, new MavenLikeVersioningComparator());
+        Collections.reverse(resultList);
+
+        LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVnfRecipe", null);
+        return resultList.get(0);
+    }
+    
+    /**
+     * Return a Network recipe that matches a given MODEL_UUID and ACTION
+     *
+     * @param modelName
+     * @param action
+     * @return NetworkRecipe object or null if none found
+     */
+    public VnfRecipe getVnfRecipeByModuleUuid (String vnfModelUuid, String action) {
+        LOGGER.debug ("Catalog database - get vnf recipe with vnf resource model uuid " + vnfModelUuid
+                + " and action "
+                + action
+                );
+        VnfResource vnfResource = getVnfResourceByModelUuid(vnfModelUuid);
+        if(null == vnfResource){
+            return null;
+        }
+        
+        VnfRecipe recipe = this.getVnfRecipeByNameVersion(vnfResource.getModelName(), vnfResource.getModelVersion(), action);
+        return recipe;        
     }
 
     /**
