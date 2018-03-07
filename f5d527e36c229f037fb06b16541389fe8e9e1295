@@ -16,6 +16,24 @@
       "revId": "f5d527e36c229f037fb06b16541389fe8e9e1295",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_67c29086",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/openecomp/mso/bpmn/mock/FileUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 153
+      },
+      "writtenOn": "2018-03-07T18:41:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_07614cd2",
+      "revId": "f5d527e36c229f037fb06b16541389fe8e9e1295",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
