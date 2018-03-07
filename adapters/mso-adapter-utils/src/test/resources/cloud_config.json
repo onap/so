@@ -44,8 +44,7 @@
 			"tenant_metadata": true,
 			"identity_server_type": "KEYSTONE",
 			"identity_authentication_type": "USERNAME_PASSWORD"
-		},
-		"CS_service": {}
+		}
 
 	},
 	"cloud_sites":
@@ -77,14 +76,8 @@
 			"clli": "MTSNJA4LCP1",
 			"aic_version": "2.5",
 			"identity_service_id": "MTSNJA3DCP1"
-		},
-		"CS":
-		{
-			"region_id": "clliRegion",
-			"clli": "CS_clli",
-			"aic_version": "2.5",
-			"identity_service_id": "CS_service"
 		}
+
 	}
 }
 }

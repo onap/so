@@ -20,161 +20,221 @@
 
 package org.openecomp.mso.cloud;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Optional;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import org.junit.Before;
+import org.junit.Test;
 import org.openecomp.mso.openstack.exceptions.MsoCloudIdentityNotFound;
 
 public class CloudConfigTest {
 
-    private static String cloudConfigJsonFilePath;
-    private static String cloudDefaultConfigJsonFilePath;
-    private static String cloudConfigInvalidJsonFilePath;
+    private static final int NUMBER_OF_CLOUD_SITES_IN_JSON_FILE = 4;
+    private static final int NUMBER_OF_IDENTITY_SERVICES_IN_JSON_FILE = 4;
+    private static final String CLOUD_SITES_FIELD_NAME = "cloudSites";
+    private static final String IDENTITY_SERVICE_FIELD_NAME = "identityServices";
+    private static final String CLOUD_SITE_DEFAULT = "default";
+    private static final String CLOUD_CONFIG_JSON_FILE_NAME = "cloud_config.json";
+    private static final String CLOUD_CONFIG_INVALID_JSON_FILE_NAME = "cloud_config_bad.json";
 
-    @BeforeClass
-    public static void preparePaths() {
-        ClassLoader classLoader = CloudConfigTest.class.getClassLoader();
-        cloudConfigJsonFilePath = classLoader.getResource("cloud_config.json").getPath();
-        cloudDefaultConfigJsonFilePath = classLoader.getResource("cloud_default_config.json").getPath();
-        cloudConfigInvalidJsonFilePath = classLoader.getResource("cloud_config_bad.json").getPath();
-    }
+    private CloudConfig testedObject;
+    private CloudSite cloudSite;
+    private CloudSite cloudSiteDefault;
 
-    private CloudConfig createTestObject(String jsonFilePath) throws MsoCloudIdentityNotFound {
-        CloudConfigFactory cloudConfigFactory = new CloudConfigFactory();
-        cloudConfigFactory.initializeCloudConfig(jsonFilePath, 1);
-        return cloudConfigFactory.getCloudConfig();
+    @Before
+    public void init() {
+        testedObject = new CloudConfig();
     }
 
     @Test
-    public void testGetCloudSites() throws MsoCloudIdentityNotFound {
-        CloudConfig con = createTestObject(cloudConfigJsonFilePath);
-        Map<String, CloudSite> siteMap = con.getCloudSites();
-        assertNotNull(siteMap);
+    public void cloudSite_returnEmptyOptionalIfIdIsNull() {
+        Optional<CloudSite> cloudConfigOpt = new CloudConfig().getCloudSite(null);
+        assertThat(cloudConfigOpt).isEmpty();
+    }
 
+    @Test
+    public void cloudSiteIsGotById_when_IdFound() throws NoSuchFieldException, IllegalAccessException {
+        setCloudSitesMap();
+        Optional<CloudSite> cloudSiteOpt = testedObject.getCloudSite(cloudSite.getId());
+        assertThat(cloudSiteOpt).isPresent();
+        assertThat(cloudSiteOpt.get().getId()).isEqualTo(cloudSite.getId());
+        assertThat(cloudSiteOpt.get().getClli()).isEqualTo(cloudSite.getClli());
+    }
+
+    @Test
+    public void cloudSiteIsGotByClli_when_IdNotFound() throws NoSuchFieldException, IllegalAccessException {
+        setCloudSitesMap();
+        Optional<CloudSite> cloudSiteOpt = testedObject.getCloudSite(cloudSite.getClli());
+        assertTrue(cloudSiteOpt.isPresent());
+        assertThat(cloudSiteOpt.get().getId()).isEqualTo(cloudSite.getId());
+        assertThat(cloudSiteOpt.get().getClli()).isEqualTo(cloudSite.getClli());
+    }
+
+    @Test
+    public void cloudSiteIsGotByDefault_when_IdAndClliNotFound() throws NoSuchFieldException, IllegalAccessException {
+        setCloudSitesMap();
+        Optional<CloudSite> cloudSiteOpt = testedObject.getCloudSite("not_existing_id");
+        assertTrue(cloudSiteOpt.isPresent());
+        assertThat(cloudSiteOpt.get().getId()).isEqualTo("not_existing_id");
+        assertThat(cloudSiteOpt.get().getClli()).isEqualTo(cloudSiteDefault.getClli());
+    }
+
+    @Test
+    public void cloudSiteNotFound_returnNull() {
+        assertThat(testedObject.getCloudSite("not_existing_id")).isEmpty();
+    }
+
+    @Test
+    public void identityServiceFoundById() throws NoSuchFieldException, IllegalAccessException {
+        CloudIdentity cloudIdentity = createCloudIdentity();
+        setIdentityServiceMap();
+        CloudIdentity cloudIdentityResult = testedObject.getIdentityService(cloudIdentity.getId());
+
+        assertThat(cloudIdentityResult).isNotNull();
+        assertThat(cloudIdentityResult.getId()).isEqualTo(cloudIdentity.getId());
+        assertThat(cloudIdentityResult.getMsoId()).isEqualTo(cloudIdentity.getMsoId());
+    }
+
+    @Test
+    public void defaultClodeSiteNotFound_returnNull() {
+        assertThat(testedObject.getIdentityService("not_existing_id")).isNull();
+    }
+
+    @Test
+    public void loadCloudConfigSuccessful() throws IOException, MsoCloudIdentityNotFound {
+        ClassLoader classLoader = CloudConfigTest.class.getClassLoader();
+        String cloudConfigJsonFilePath = classLoader.getResource(CLOUD_CONFIG_JSON_FILE_NAME).getPath();
+        testedObject.loadCloudConfig(cloudConfigJsonFilePath, 1);
+        assertThat(testedObject.isValidCloudConfig()).isTrue();
+        checkCloudSites();
+        checkIdentityServices();
+    }
+
+    @Test
+    public void loadCloudConfig_cloudIdentityNotFound() {
+        ClassLoader classLoader = CloudConfigTest.class.getClassLoader();
+        String cloudConfigInvalidJsonFilePath = classLoader.getResource(CLOUD_CONFIG_INVALID_JSON_FILE_NAME).getPath();
+        assertThatThrownBy(() -> testedObject.loadCloudConfig(cloudConfigInvalidJsonFilePath, 1))
+                .isInstanceOf(MsoCloudIdentityNotFound.class)
+                .hasMessage("Cloud Identity [MT Cloud site refers to a non-existing identity service: "
+                        + "MT_KEYSTONE_NOT_EXISTING] not found");
+        assertThat(testedObject.isValidCloudConfig()).isFalse();
+    }
+
+    private void checkCloudSites() {
+        Map<String, CloudSite> siteMap = testedObject.getCloudSites();
+        assertThat(siteMap).isNotEmpty().hasSize(NUMBER_OF_CLOUD_SITES_IN_JSON_FILE);
         CloudSite site1 = siteMap.get("MT");
         CloudSite site2 = siteMap.get("DAN");
         CloudSite site3 = siteMap.get("MTINJVCC101");
         CloudSite site4 = siteMap.get("MTSNJA4LCP1");
 
-        assertEquals("regionOne", site1.getRegionId());
-        assertEquals("MT_KEYSTONE", site1.getIdentityServiceId());
-        assertEquals("RegionOne", site2.getRegionId());
-        assertEquals("DAN_KEYSTONE", site2.getIdentityServiceId());
-        assertEquals("regionTwo", site3.getRegionId());
-        assertEquals("MTINJVCC101_DCP", site3.getIdentityServiceId());
-        assertEquals("mtsnjlcp1", site4.getRegionId());
-        assertEquals("MTSNJA3DCP1", site4.getIdentityServiceId());
+        assertThat(site1.getId()).isEqualTo("MT");
+        assertThat(site1.getRegionId()).isEqualTo("regionOne");
+        assertThat(site1.getIdentityServiceId()).isEqualTo("MT_KEYSTONE");
+        assertThat(site1.getIdentityService()).isNotNull();
+        assertThat(site1.getIdentityService().getId()).isEqualTo(site1.getIdentityServiceId());
+
+        assertThat(site2.getId()).isEqualTo("DAN");
+        assertThat(site2.getRegionId()).isEqualTo("RegionOne");
+        assertThat(site2.getIdentityServiceId()).isEqualTo("DAN_KEYSTONE");
+        assertThat(site2.getIdentityService()).isNotNull();
+        assertThat(site2.getIdentityService().getId()).isEqualTo(site2.getIdentityServiceId());
+
+        assertThat(site3.getId()).isEqualTo("MTINJVCC101");
+        assertThat(site3.getRegionId()).isEqualTo("regionTwo");
+        assertThat(site3.getIdentityServiceId()).isEqualTo("MTINJVCC101_DCP");
+        assertThat(site3.getIdentityService()).isNotNull();
+        assertThat(site3.getIdentityService().getId()).isEqualTo(site3.getIdentityServiceId());
+
+        assertThat(site4.getId()).isEqualTo("MTSNJA4LCP1");
+        assertThat(site4.getRegionId()).isEqualTo("mtsnjlcp1");
+        assertThat(site4.getIdentityServiceId()).isEqualTo("MTSNJA3DCP1");
+        assertThat(site4.getIdentityService()).isNotNull();
+        assertThat(site4.getIdentityService().getId()).isEqualTo(site4.getIdentityServiceId());
     }
 
-    @Test
-    public void testGetIdentityServices() throws MsoCloudIdentityNotFound {
-        CloudConfig con = createTestObject(cloudConfigJsonFilePath);
-        Map<String, CloudIdentity> identityMap = con.getIdentityServices();
-        assertNotNull(identityMap);
+    private void checkIdentityServices() {
+        Map<String, CloudIdentity> identityMap = testedObject.getIdentityServices();
+        assertThat(identityMap).isNotEmpty().hasSize(NUMBER_OF_IDENTITY_SERVICES_IN_JSON_FILE);
 
         CloudIdentity identity1 = identityMap.get("MT_KEYSTONE");
         CloudIdentity identity2 = identityMap.get("DAN_KEYSTONE");
         CloudIdentity identity3 = identityMap.get("MTINJVCC101_DCP");
         CloudIdentity identity4 = identityMap.get("MTSNJA3DCP1");
 
-        assertEquals("john", identity1.getMsoId());
-        assertEquals("changeme", identity1.getMsoPass());
-        assertEquals("admin", identity1.getAdminTenant());
-        assertEquals("_member_", identity1.getMemberRole());
-        assertFalse(identity1.hasTenantMetadata());
+        assertThat(identity1.getMsoId()).isEqualTo("john");
+        assertThat(identity1.getMsoPass()).isEqualTo("changeme");
+        assertThat(identity1.getAdminTenant()).isEqualTo("admin");
+        assertThat(identity1.getMemberRole()).isEqualTo("_member_");
+        assertThat(identity1.hasTenantMetadata()).isFalse();
 
-        assertEquals("mockId", identity2.getMsoId());
-        assertEquals("stack123", identity2.getMsoPass());
-        assertEquals("service", identity2.getAdminTenant());
-        assertEquals("_member_", identity2.getMemberRole());
-        assertFalse(identity2.hasTenantMetadata());
+        assertThat(identity2.getMsoId()).isEqualTo("mockId");
+        assertThat(identity2.getMsoPass()).isEqualTo("stack123");
+        assertThat(identity2.getAdminTenant()).isEqualTo("service");
+        assertThat(identity2.getMemberRole()).isEqualTo("_member_");
+        assertThat(identity2.hasTenantMetadata()).isFalse();
 
-        assertEquals("mockIdToo", identity3.getMsoId());
-        assertEquals("AICG@mm@@2015", identity3.getMsoPass());
-        assertEquals("service", identity3.getAdminTenant());
-        assertEquals("admin", identity3.getMemberRole());
-        assertTrue(identity3.hasTenantMetadata());
+        assertThat(identity3.getMsoId()).isEqualTo("mockIdToo");
+        assertThat(identity3.getMsoPass()).isEqualTo("AICG@mm@@2015");
+        assertThat(identity3.getAdminTenant()).isEqualTo("service");
+        assertThat(identity3.getMemberRole()).isEqualTo("admin");
+        assertThat(identity3.hasTenantMetadata()).isTrue();
 
-        assertEquals("mockIdToo", identity4.getMsoId());
-        assertEquals("2315QRS2015srq", identity4.getMsoPass());
-        assertEquals("service", identity4.getAdminTenant());
-        assertEquals("admin", identity4.getMemberRole());
-        assertTrue(identity4.hasTenantMetadata());
+        assertThat(identity4.getMsoId()).isEqualTo("mockIdToo");
+        assertThat(identity4.getMsoPass()).isEqualTo("2315QRS2015srq");
+        assertThat(identity4.getAdminTenant()).isEqualTo("service");
+        assertThat(identity4.getMemberRole()).isEqualTo("admin");
+        assertThat(identity4.hasTenantMetadata()).isTrue();
     }
 
     @Test
-    public void cloudSiteIsGotById_when_IdFound() throws MsoCloudIdentityNotFound {
-        CloudConfig con = createTestObject(cloudConfigJsonFilePath);
-        Optional<CloudSite> cloudSite = con.getCloudSite("MT");
-        assertTrue(cloudSite.isPresent());
-        assertEquals("regionOne", cloudSite.get().getRegionId());
-        assertEquals("MT_KEYSTONE", cloudSite.get().getIdentityServiceId());
+    public void cloneSuccessful() throws NoSuchFieldException, IllegalAccessException {
+        setCloudSitesMap();
+        setIdentityServiceMap();
+        assertThat(testedObject.clone()).isEqualTo(testedObject);
     }
 
-    @Test
-    public void cloudSiteIsGotByClli_when_IdNotFound() throws MsoCloudIdentityNotFound {
-        CloudConfig con = createTestObject(cloudConfigJsonFilePath);
-        Optional<CloudSite> cloudSite = con.getCloudSite("CS_clli");
-        assertTrue(cloudSite.isPresent());
-        assertEquals("clliRegion", cloudSite.get().getRegionId());
-        assertEquals("CS_clli", cloudSite.get().getClli());
-        assertEquals("CS_service", cloudSite.get().getIdentityServiceId());
+    private void setCloudSitesMap() throws NoSuchFieldException, IllegalAccessException {
+        Field field = testedObject.getClass().getDeclaredField(CLOUD_SITES_FIELD_NAME);
+        field.setAccessible(true);
+        Map<String, CloudSite> cloudSites = new HashMap<>();
+        cloudSite = createCloudSite("idTest1", "clliTest1");
+        cloudSiteDefault = createCloudSite(CLOUD_SITE_DEFAULT, "clliTest2");
+        cloudSites.put(cloudSite.getId(), cloudSite);
+        cloudSites.put(cloudSiteDefault.getId(), cloudSiteDefault);
+        field.set(testedObject, cloudSites);
     }
 
-    @Test
-    public void cloudSiteIsGotByDefault_when_IdAndClliNotFound() throws MsoCloudIdentityNotFound {
-        CloudConfig con = createTestObject(cloudDefaultConfigJsonFilePath);
-        Optional<CloudSite> cloudSite = con.getCloudSite("not_existing_id");
-        assertTrue(cloudSite.isPresent());
-        assertEquals("not_existing_id", cloudSite.get().getId());
-        assertEquals("not_existing_id", cloudSite.get().getRegionId());
+    private void setIdentityServiceMap() throws NoSuchFieldException, IllegalAccessException {
+        Field field = testedObject.getClass().getDeclaredField(IDENTITY_SERVICE_FIELD_NAME);
+        field.setAccessible(true);
+
+        Map<String, CloudIdentity> cloudIdentityMap = new HashMap<>();
+        CloudIdentity cloudIdentity = createCloudIdentity();
+        cloudIdentityMap.put(cloudIdentity.getId(), cloudIdentity);
+        field.set(testedObject, cloudIdentityMap);
     }
 
-    @Test
-    public void testGetIdentityService() throws MsoCloudIdentityNotFound {
-        CloudConfig con = createTestObject(cloudConfigJsonFilePath);
-        CloudIdentity identity1 = con.getIdentityService("MT_KEYSTONE");
-        assertNotNull(identity1);
-        assertEquals("john", identity1.getMsoId());
-        assertEquals("changeme", identity1.getMsoPass());
-        assertEquals("admin", identity1.getAdminTenant());
-        assertEquals("_member_", identity1.getMemberRole());
-        assertFalse(identity1.hasTenantMetadata());
-
-        CloudIdentity identity2 = con.getIdentityService("Test");
-        assertNull(identity2);
+    private CloudIdentity createCloudIdentity() {
+        CloudIdentity cloudIdentity = new CloudIdentity();
+        cloudIdentity.setId("identityTestId");
+        cloudIdentity.setMsoId("msoTestId");
+        return cloudIdentity;
     }
 
-    @Test(expected = MsoCloudIdentityNotFound.class)
-    public void testLoadWithWrongFile() throws MsoCloudIdentityNotFound {
-        createTestObject(cloudConfigInvalidJsonFilePath);
+    private CloudSite createCloudSite(String id, String clli) {
+        CloudSite cloudSite = new CloudSite();
+        cloudSite.setId(id);
+        cloudSite.setClli(clli);
+        cloudSite.setAic_version("2.5");
+        cloudSite.setIdentityService(createCloudIdentity());
+        return cloudSite;
     }
-
-    @Test
-    public void testReloadWithWrongFile() {
-        CloudConfigFactory cloudConfigFactory = new CloudConfigFactory();
-        try {
-            cloudConfigFactory.initializeCloudConfig(cloudConfigInvalidJsonFilePath, 1);
-            Assert.fail("MsoCloudIdentityNotFound was expected");
-        } catch (MsoCloudIdentityNotFound e) {
-
-        }
-        assertTrue("Should be an empty CloudConfig", cloudConfigFactory.getCloudConfig().getCloudSites().isEmpty());
-        assertTrue("Should be an empty CloudConfig",
-                cloudConfigFactory.getCloudConfig().getIdentityServices().isEmpty());
-        // Now reload the right config
-        cloudConfigFactory.changeMsoPropertiesFilePath(cloudConfigJsonFilePath);
-        cloudConfigFactory.reloadCloudConfig();
-        assertTrue("Flag valid Config should be true now that the cloud_config is correct",
-                cloudConfigFactory.getCloudConfig().isValidCloudConfig());
-    }
-
 }
