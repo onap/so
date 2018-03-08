@@ -66,7 +66,7 @@ public class VduInfoTest {
     public void testGetOutputs() {
         Object obj = new Object();
         String str = "some text";
-        outputs = new HashMap<String, Object>();
+        outputs = new HashMap<>();
         outputs.put(str, obj);
         vduInfo.setOutputs(outputs);
         Assert.assertNotNull(vduInfo.getOutputs());
@@ -78,7 +78,7 @@ public class VduInfoTest {
     public void testGetInputs() {
         Object obj = new Object();
         String str = "some text";
-        inputs = new HashMap<String, Object>();
+        inputs = new HashMap<>();
         inputs.put(str, obj);
         vduInfo.setInputs(inputs);
         Assert.assertNotNull(vduInfo.getInputs());
