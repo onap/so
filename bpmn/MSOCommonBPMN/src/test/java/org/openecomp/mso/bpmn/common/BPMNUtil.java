@@ -68,7 +68,7 @@ public class BPMNUtil {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T extends Object> T getRawVariable(ProcessEngineServices processEngineServices, String processDefinitionID, String name) {
+	public static <T> T getRawVariable(ProcessEngineServices processEngineServices, String processDefinitionID, String name) {
 		String pID = getProcessInstanceId(processEngineServices,
 				processDefinitionID);
 		assertProcessInstanceFinished(processEngineServices, pID);
