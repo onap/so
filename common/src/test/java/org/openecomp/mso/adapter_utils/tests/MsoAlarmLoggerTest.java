@@ -41,91 +41,89 @@ import org.openecomp.mso.properties.MsoPropertiesFactory;
 
 /**
  * This junit test very roughly the alarm logger
- *
  */
 public class MsoAlarmLoggerTest {
 
-	public static MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory();
-	public static MsoAlarmLogger msoAlarmLogger;
+    public static MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory();
+    public static MsoAlarmLogger msoAlarmLogger;
 
-	@BeforeClass
-	public static final void createObjects() throws MsoPropertiesException
-	{
-	
-		File outputFile = new File ("target/alarm-test.log");
-		if (outputFile.exists()) {
-			outputFile.delete();
-		}
-		msoAlarmLogger = new MsoAlarmLogger("target/alarm-test.log");
-	}
+    @BeforeClass
+    public static final void createObjects() throws MsoPropertiesException {
 
-	@Test
-	public void testAlarmConfig() throws MsoPropertiesException, IOException {
+        File outputFile = new File("target/alarm-test.log");
+        if (outputFile.exists()) {
+            outputFile.delete();
+        }
+        msoAlarmLogger = new MsoAlarmLogger("target/alarm-test.log");
+    }
 
-		msoAlarmLogger.sendAlarm("test", 0, "detail message");
+    @Test
+    public void testAlarmConfig() throws MsoPropertiesException, IOException {
 
-		FileInputStream inputStream = new FileInputStream("target/alarm-test.log");
-		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        msoAlarmLogger.sendAlarm("test", 0, "detail message");
 
-		String line = reader.readLine();
-		String[] splitLine = line.split("\\|");
-		assertTrue(splitLine.length==4);
-		assertTrue("test".equals(splitLine[1]));
-		assertTrue("0".equals(splitLine[2]));
-		assertTrue("detail message".equals(splitLine[3]));
+        FileInputStream inputStream = new FileInputStream("target/alarm-test.log");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
-		line = reader.readLine();
-		assertNull(line);
-		reader.close();
-		inputStream.close();
+        String line = reader.readLine();
+        String[] splitLine = line.split("\\|");
+        assertTrue(splitLine.length == 4);
+        assertTrue("test".equals(splitLine[1]));
+        assertTrue("0".equals(splitLine[2]));
+        assertTrue("detail message".equals(splitLine[3]));
 
-		// Reset the file for others tests
-		PrintWriter writer = new PrintWriter(new File("target/alarm-test.log"));
-		writer.print("");
-		writer.close();
+        line = reader.readLine();
+        assertNull(line);
+        reader.close();
+        inputStream.close();
 
-	}
+        // Reset the file for others tests
+        PrintWriter writer = new PrintWriter(new File("target/alarm-test.log"));
+        writer.print("");
+        writer.close();
 
-	@Test
-	public void testAlarm() throws IOException {
+    }
 
-		msoAlarmLogger.sendAlarm("test", 0, "detail message");
-		msoAlarmLogger.sendAlarm("test2", 1, "detail message2");
-		msoAlarmLogger.sendAlarm("test3", 2, "detail message3");
+    @Test
+    public void testAlarm() throws IOException {
 
-		FileInputStream inputStream = new FileInputStream("target/alarm-test.log");
-		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        msoAlarmLogger.sendAlarm("test", 0, "detail message");
+        msoAlarmLogger.sendAlarm("test2", 1, "detail message2");
+        msoAlarmLogger.sendAlarm("test3", 2, "detail message3");
 
-		String line = reader.readLine();
-		String[] splitLine = line.split("\\|");
-		assertTrue(splitLine.length==4);
-		assertTrue("test".equals(splitLine[1]));
-		assertTrue("0".equals(splitLine[2]));
-		assertTrue("detail message".equals(splitLine[3]));
+        FileInputStream inputStream = new FileInputStream("target/alarm-test.log");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
-		line = reader.readLine();
-		splitLine = line.split("\\|");
-		assertTrue(splitLine.length==4);
-		assertTrue("test2".equals(splitLine[1]));
-		assertTrue("1".equals(splitLine[2]));
-		assertTrue("detail message2".equals(splitLine[3]));
+        String line = reader.readLine();
+        String[] splitLine = line.split("\\|");
+        assertTrue(splitLine.length == 4);
+        assertTrue("test".equals(splitLine[1]));
+        assertTrue("0".equals(splitLine[2]));
+        assertTrue("detail message".equals(splitLine[3]));
 
-		line = reader.readLine();
-		splitLine = line.split("\\|");
-		assertTrue(splitLine.length==4);
-		assertTrue("test3".equals(splitLine[1]));
-		assertTrue("2".equals(splitLine[2]));
-		assertTrue("detail message3".equals(splitLine[3]));
+        line = reader.readLine();
+        splitLine = line.split("\\|");
+        assertTrue(splitLine.length == 4);
+        assertTrue("test2".equals(splitLine[1]));
+        assertTrue("1".equals(splitLine[2]));
+        assertTrue("detail message2".equals(splitLine[3]));
 
-		line = reader.readLine();
-		assertNull(line);
-		reader.close();
-		inputStream.close();
+        line = reader.readLine();
+        splitLine = line.split("\\|");
+        assertTrue(splitLine.length == 4);
+        assertTrue("test3".equals(splitLine[1]));
+        assertTrue("2".equals(splitLine[2]));
+        assertTrue("detail message3".equals(splitLine[3]));
 
-		// Reset the file for others tests
-		PrintWriter writer = new PrintWriter(new File("target/alarm-test.log"));
-		writer.print("");
-		writer.close();
+        line = reader.readLine();
+        assertNull(line);
+        reader.close();
+        inputStream.close();
 
-	}
+        // Reset the file for others tests
+        PrintWriter writer = new PrintWriter(new File("target/alarm-test.log"));
+        writer.print("");
+        writer.close();
+
+    }
 }

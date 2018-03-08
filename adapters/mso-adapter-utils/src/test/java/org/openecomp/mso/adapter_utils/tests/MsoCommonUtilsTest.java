@@ -47,84 +47,82 @@ import com.woorea.openstack.base.client.OpenStackResponseException;
 
 /**
  * This class implements test methods of the MsoCommonUtils
- *
- *
  */
 public class MsoCommonUtilsTest extends MsoCommonUtils {
 
-	public static MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory();
-	
-	@Test
-    public final void testExecuteAndRecordOpenstackRequest () {
-		OpenStackRequest openstackRequest = Mockito.mock(OpenStackRequest.class);
-		Mockito.when(openstackRequest.endpoint()).thenReturn("localhost");
-		Mockito.when(openstackRequest.path()).thenReturn("/test");
-		//TODO:Must try a real connection
-		assertNull(super.executeAndRecordOpenstackRequest (openstackRequest));
+    public static MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory();
 
-	}
+    @Test
+    public final void testExecuteAndRecordOpenstackRequest() {
+        OpenStackRequest openstackRequest = Mockito.mock(OpenStackRequest.class);
+        Mockito.when(openstackRequest.endpoint()).thenReturn("localhost");
+        Mockito.when(openstackRequest.path()).thenReturn("/test");
+        //TODO:Must try a real connection
+        assertNull(super.executeAndRecordOpenstackRequest(openstackRequest));
 
-	@Test
-    public final void testKeystoneErrorToMsoException () {
-		OpenStackBaseException openStackConnectException = new OpenStackConnectException("connect");
+    }
 
-		OpenStackBaseException openStackResponseException = new OpenStackResponseException("response",1);
+    @Test
+    public final void testKeystoneErrorToMsoException() {
+        OpenStackBaseException openStackConnectException = new OpenStackConnectException("connect");
 
-		MsoException me = super.keystoneErrorToMsoException (openStackConnectException,"ContextError");
+        OpenStackBaseException openStackResponseException = new OpenStackResponseException("response", 1);
 
-		assertTrue(me instanceof MsoIOException);
-		assertTrue("connect".equals(me.getMessage()));
+        MsoException me = super.keystoneErrorToMsoException(openStackConnectException, "ContextError");
 
-
-		MsoException me2 = super.keystoneErrorToMsoException (openStackResponseException,"ContextError");
-		assertTrue(me2 instanceof MsoOpenstackException);
-		assertTrue("ContextError".equals(me2.getContext()));
-		assertTrue(MsoExceptionCategory.OPENSTACK.equals(me2.getCategory()));
-
-	}
-
-	@Test
-	public final void testHeatExceptionToMsoException () {
-		OpenStackBaseException openStackConnectException = new OpenStackConnectException("connect");
-
-		OpenStackBaseException openStackResponseException = new OpenStackResponseException("response",1);
-
-		MsoException me = super.heatExceptionToMsoException (openStackConnectException,"ContextError");
-
-		assertTrue(me instanceof MsoIOException);
-		assertTrue("connect".equals(me.getMessage()));
+        assertTrue(me instanceof MsoIOException);
+        assertTrue("connect".equals(me.getMessage()));
 
 
-		MsoException me2 = super.heatExceptionToMsoException (openStackResponseException,"ContextError");
-		assertTrue(me2 instanceof MsoOpenstackException);
-		assertTrue("ContextError".equals(me2.getContext()));
-		assertTrue(MsoExceptionCategory.OPENSTACK.equals(me2.getCategory()));
-	}
+        MsoException me2 = super.keystoneErrorToMsoException(openStackResponseException, "ContextError");
+        assertTrue(me2 instanceof MsoOpenstackException);
+        assertTrue("ContextError".equals(me2.getContext()));
+        assertTrue(MsoExceptionCategory.OPENSTACK.equals(me2.getCategory()));
 
-	@Test
-	public final void testNeutronExceptionToMsoException () {
-		OpenStackBaseException openStackConnectException = new OpenStackConnectException("connect");
+    }
 
-		OpenStackBaseException openStackResponseException = new OpenStackResponseException("response",1);
+    @Test
+    public final void testHeatExceptionToMsoException() {
+        OpenStackBaseException openStackConnectException = new OpenStackConnectException("connect");
 
-		MsoException me = super.neutronExceptionToMsoException (openStackConnectException,"ContextError");
+        OpenStackBaseException openStackResponseException = new OpenStackResponseException("response", 1);
 
-		assertTrue(me instanceof MsoIOException);
-		assertTrue("connect".equals(me.getMessage()));
+        MsoException me = super.heatExceptionToMsoException(openStackConnectException, "ContextError");
 
-		MsoException me2 = super.neutronExceptionToMsoException (openStackResponseException,"ContextError");
-		assertTrue(me2 instanceof MsoOpenstackException);
-		assertTrue("ContextError".equals(me2.getContext()));
-		assertTrue(MsoExceptionCategory.OPENSTACK.equals(me2.getCategory()));
-	}
+        assertTrue(me instanceof MsoIOException);
+        assertTrue("connect".equals(me.getMessage()));
 
-	@Test
-	public final void testRuntimeExceptionToMsoException () {
-	    RuntimeException re = new RuntimeException ("runtime");
-	    MsoException me = super.runtimeExceptionToMsoException (re, "ContextError");
 
-	    assertTrue (me instanceof MsoAdapterException);
-	    assertTrue("ContextError".equals(me.getContext()));
+        MsoException me2 = super.heatExceptionToMsoException(openStackResponseException, "ContextError");
+        assertTrue(me2 instanceof MsoOpenstackException);
+        assertTrue("ContextError".equals(me2.getContext()));
+        assertTrue(MsoExceptionCategory.OPENSTACK.equals(me2.getCategory()));
+    }
+
+    @Test
+    public final void testNeutronExceptionToMsoException() {
+        OpenStackBaseException openStackConnectException = new OpenStackConnectException("connect");
+
+        OpenStackBaseException openStackResponseException = new OpenStackResponseException("response", 1);
+
+        MsoException me = super.neutronExceptionToMsoException(openStackConnectException, "ContextError");
+
+        assertTrue(me instanceof MsoIOException);
+        assertTrue("connect".equals(me.getMessage()));
+
+        MsoException me2 = super.neutronExceptionToMsoException(openStackResponseException, "ContextError");
+        assertTrue(me2 instanceof MsoOpenstackException);
+        assertTrue("ContextError".equals(me2.getContext()));
+        assertTrue(MsoExceptionCategory.OPENSTACK.equals(me2.getCategory()));
+    }
+
+    @Test
+    public final void testRuntimeExceptionToMsoException() {
+        RuntimeException re = new RuntimeException("runtime");
+        MsoException me = super.runtimeExceptionToMsoException(re, "ContextError");
+
+        assertTrue(me instanceof MsoAdapterException);
+        assertTrue("ContextError".equals(me.getContext()));
         assertTrue(MsoExceptionCategory.INTERNAL.equals(me.getCategory()));
-	}
+    }
 }

@@ -30,21 +30,21 @@ import org.openecomp.mso.db.catalog.beans.TempNetworkHeatTemplateLookup;
 
 public class TempNetworkHeatTemplateLookupTest {
 
-	@Test
-	public final void tempNetworkHeatTemplateLookupDataTest() {
-		TempNetworkHeatTemplateLookup tempNetworkHeatTemplateLookup = new TempNetworkHeatTemplateLookup();
-		tempNetworkHeatTemplateLookup.setAicVersionMax("aicVersionMax");
-		assertTrue(tempNetworkHeatTemplateLookup.getAicVersionMax().equalsIgnoreCase("aicVersionMax"));
-		tempNetworkHeatTemplateLookup.setAicVersionMin("aicVersionMin");
-		assertTrue(tempNetworkHeatTemplateLookup.getAicVersionMin().equalsIgnoreCase("aicVersionMin"));
-		tempNetworkHeatTemplateLookup.setHeatTemplateArtifactUuid("heatTemplateArtifactUuid");
-		assertTrue(tempNetworkHeatTemplateLookup.getHeatTemplateArtifactUuid()
-				.equalsIgnoreCase("heatTemplateArtifactUuid"));
-		tempNetworkHeatTemplateLookup.setNetworkResourceModelName("networkResourceModelName");
-		assertTrue(tempNetworkHeatTemplateLookup.getNetworkResourceModelName()
-				.equalsIgnoreCase("networkResourceModelName"));
-//		assertTrue(tempNetworkHeatTemplateLookup.toString() != null);
+    @Test
+    public final void tempNetworkHeatTemplateLookupDataTest() {
+        TempNetworkHeatTemplateLookup tempNetworkHeatTemplateLookup = new TempNetworkHeatTemplateLookup();
+        tempNetworkHeatTemplateLookup.setAicVersionMax("aicVersionMax");
+        assertTrue(tempNetworkHeatTemplateLookup.getAicVersionMax().equalsIgnoreCase("aicVersionMax"));
+        tempNetworkHeatTemplateLookup.setAicVersionMin("aicVersionMin");
+        assertTrue(tempNetworkHeatTemplateLookup.getAicVersionMin().equalsIgnoreCase("aicVersionMin"));
+        tempNetworkHeatTemplateLookup.setHeatTemplateArtifactUuid("heatTemplateArtifactUuid");
+        assertTrue(tempNetworkHeatTemplateLookup.getHeatTemplateArtifactUuid()
+                .equalsIgnoreCase("heatTemplateArtifactUuid"));
+        tempNetworkHeatTemplateLookup.setNetworkResourceModelName("networkResourceModelName");
+        assertTrue(tempNetworkHeatTemplateLookup.getNetworkResourceModelName()
+                .equalsIgnoreCase("networkResourceModelName"));
+//      assertTrue(tempNetworkHeatTemplateLookup.toString() != null);
 
-	}
+    }
 
 }

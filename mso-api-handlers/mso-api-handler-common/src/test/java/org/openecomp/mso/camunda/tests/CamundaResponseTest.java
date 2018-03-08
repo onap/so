@@ -35,25 +35,23 @@ import org.openecomp.mso.apihandler.camundabeans.CamundaResponse;
 
 /**
  * This class implements test methods of Camunda Beans.
- * 
- *
  */
 public class CamundaResponseTest {
 
-	@Test
-	public final void testDeserialization() throws JsonGenerationException,
-			JsonMappingException, IOException {
-		ObjectMapper mapper = new ObjectMapper(); // can reuse, share globally
-		mapper.enable(DeserializationConfig.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
-		
-		String responseBody = "{ \"response\": \"<xml>xml</xml>\","+
-				  "\"messageCode\": 200,"+
-				  "\"message\": \"Successfully started the process\"," +
-				  "\"processInstanceID\":null,\"variables\":null}";
-	
-		CamundaResponse response = mapper.readValue(responseBody, CamundaResponse.class);
-		assertEquals(response.toString(), "CamundaResponse [response=<xml>xml</xml>, messageCode=200, message=Successfully started the process]");
+    @Test
+    public final void testDeserialization() throws JsonGenerationException,
+            JsonMappingException, IOException {
+        ObjectMapper mapper = new ObjectMapper(); // can reuse, share globally
+        mapper.enable(DeserializationConfig.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
 
-	}
+        String responseBody = "{ \"response\": \"<xml>xml</xml>\"," +
+                "\"messageCode\": 200," +
+                "\"message\": \"Successfully started the process\"," +
+                "\"processInstanceID\":null,\"variables\":null}";
+
+        CamundaResponse response = mapper.readValue(responseBody, CamundaResponse.class);
+        assertEquals(response.toString(), "CamundaResponse [response=<xml>xml</xml>, messageCode=200, message=Successfully started the process]");
+
+    }
 
 }

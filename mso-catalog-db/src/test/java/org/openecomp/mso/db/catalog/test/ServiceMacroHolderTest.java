@@ -34,15 +34,15 @@ import org.openecomp.mso.db.catalog.beans.VnfResourceCustomization;
 
 public class ServiceMacroHolderTest {
 
-	@Test
-	public final void serviceMacroHolderDataTest() {
-		ServiceMacroHolder serviceMacroHolder = new ServiceMacroHolder();
-		assertTrue(serviceMacroHolder.getService() == null);
-		serviceMacroHolder.addVnfResource(new VnfResource());
-		serviceMacroHolder.addVnfResourceCustomizations(new VnfResourceCustomization());
-		serviceMacroHolder.addNetworkResourceCustomization(new NetworkResourceCustomization());
-		serviceMacroHolder.addAllottedResourceCustomization(new AllottedResourceCustomization());
-		assertTrue(serviceMacroHolder != null);
-	}
+    @Test
+    public final void serviceMacroHolderDataTest() {
+        ServiceMacroHolder serviceMacroHolder = new ServiceMacroHolder();
+        assertTrue(serviceMacroHolder.getService() == null);
+        serviceMacroHolder.addVnfResource(new VnfResource());
+        serviceMacroHolder.addVnfResourceCustomizations(new VnfResourceCustomization());
+        serviceMacroHolder.addNetworkResourceCustomization(new NetworkResourceCustomization());
+        serviceMacroHolder.addAllottedResourceCustomization(new AllottedResourceCustomization());
+        assertTrue(serviceMacroHolder != null);
+    }
 
 }

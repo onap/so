@@ -33,38 +33,38 @@ import org.openecomp.mso.db.catalog.beans.VfModuleCustomization;
 
 public class VfModuleCustomizationTest {
 
-	@Test
-	public final void vfModuleCustomizationDataTest() {
-		VfModuleCustomization vfModuleCustomization = new VfModuleCustomization();
-		vfModuleCustomization.setCreated(new Timestamp(System.currentTimeMillis()));
-		assertTrue(vfModuleCustomization.getCreated() != null);
-		vfModuleCustomization.setAvailabilityZoneCount(1);
-		assertTrue(vfModuleCustomization.getAvailabilityZoneCount() == 1);
-		vfModuleCustomization.hashCode();
-		vfModuleCustomization.setVolEnvironmentArtifactUuid("volEnvironmentArtifactUuid");
-		assertTrue(
-				vfModuleCustomization.getVolEnvironmentArtifactUuid().equalsIgnoreCase("volEnvironmentArtifactUuid"));
+    @Test
+    public final void vfModuleCustomizationDataTest() {
+        VfModuleCustomization vfModuleCustomization = new VfModuleCustomization();
+        vfModuleCustomization.setCreated(new Timestamp(System.currentTimeMillis()));
+        assertTrue(vfModuleCustomization.getCreated() != null);
+        vfModuleCustomization.setAvailabilityZoneCount(1);
+        assertTrue(vfModuleCustomization.getAvailabilityZoneCount() == 1);
+        vfModuleCustomization.hashCode();
+        vfModuleCustomization.setVolEnvironmentArtifactUuid("volEnvironmentArtifactUuid");
+        assertTrue(
+                vfModuleCustomization.getVolEnvironmentArtifactUuid().equalsIgnoreCase("volEnvironmentArtifactUuid"));
 
-		vfModuleCustomization.setHeatEnvironmentArtifactUuid("heatEnvironmentArtifactUuid");
-		assertTrue(
-				vfModuleCustomization.getHeatEnvironmentArtifactUuid().equalsIgnoreCase("heatEnvironmentArtifactUuid"));
+        vfModuleCustomization.setHeatEnvironmentArtifactUuid("heatEnvironmentArtifactUuid");
+        assertTrue(
+                vfModuleCustomization.getHeatEnvironmentArtifactUuid().equalsIgnoreCase("heatEnvironmentArtifactUuid"));
 
-		vfModuleCustomization.setInitialCount(1);
-		assertTrue(vfModuleCustomization.getInitialCount() == 1);
+        vfModuleCustomization.setInitialCount(1);
+        assertTrue(vfModuleCustomization.getInitialCount() == 1);
 
-		vfModuleCustomization.setLabel("label");
-		assertTrue(vfModuleCustomization.getLabel().equalsIgnoreCase("label"));
-		vfModuleCustomization.setMaxInstances(2);
-		assertTrue(vfModuleCustomization.getMaxInstances() == 2);
-		vfModuleCustomization.setMinInstances(1);
-		assertTrue(vfModuleCustomization.getMinInstances() == 1);
-		vfModuleCustomization.setModelCustomizationUuid("modelCustomizationUuid");
-		assertTrue(vfModuleCustomization.getModelCustomizationUuid().equalsIgnoreCase("modelCustomizationUuid"));
-		vfModuleCustomization.setVfModule(new VfModule());
-		assertTrue(vfModuleCustomization.getVfModule() != null);
+        vfModuleCustomization.setLabel("label");
+        assertTrue(vfModuleCustomization.getLabel().equalsIgnoreCase("label"));
+        vfModuleCustomization.setMaxInstances(2);
+        assertTrue(vfModuleCustomization.getMaxInstances() == 2);
+        vfModuleCustomization.setMinInstances(1);
+        assertTrue(vfModuleCustomization.getMinInstances() == 1);
+        vfModuleCustomization.setModelCustomizationUuid("modelCustomizationUuid");
+        assertTrue(vfModuleCustomization.getModelCustomizationUuid().equalsIgnoreCase("modelCustomizationUuid"));
+        vfModuleCustomization.setVfModule(new VfModule());
+        assertTrue(vfModuleCustomization.getVfModule() != null);
 
-//		assertTrue(vfModuleCustomization.toString() == null);
+//      assertTrue(vfModuleCustomization.toString() == null);
 
-	}
+    }
 
 }

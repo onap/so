@@ -36,40 +36,40 @@ import org.openecomp.mso.db.catalog.beans.VnfResource;
 import javax.ws.rs.core.Response;
 
 public class VnfTypesHandlerTest {
-	
-	VnfTypesHandler handler = new VnfTypesHandler();
-	
-	@Test
-	public void getVnfTypesTest(){
-		Response resp = handler.getVnfTypes(null, "v2");
-		assertTrue(resp.getEntity().toString() != null);
-	}
-	
-	@Test
-	public void getVnfTypesTest2(){
-		new MockUp<CatalogDatabase>() {
-			@Mock
-			public  List <VnfResource>  getAllVnfResources(){
-				return null;
-			}	
-		};
-		Response resp = handler.getVnfTypes(null, "v2");
-		assertTrue(resp.getEntity().toString() != null);
-	}
-	
-	@Test
-	public void getVnfTypesTest3(){
-		new MockUp<CatalogDatabase>() {
-			@Mock
-			public  List <VnfResource>  getAllVnfResources(){
-				List <VnfResource> list = new ArrayList<>();
-				VnfResource resource = new VnfResource();
-				list.add(resource);
-				return list;
-			}	
-		};
-		Response resp = handler.getVnfTypes(null, "v2");
-		assertTrue(resp.getEntity().toString() != null);
-	}
+
+    VnfTypesHandler handler = new VnfTypesHandler();
+
+    @Test
+    public void getVnfTypesTest() {
+        Response resp = handler.getVnfTypes(null, "v2");
+        assertTrue(resp.getEntity().toString() != null);
+    }
+
+    @Test
+    public void getVnfTypesTest2() {
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            public List<VnfResource> getAllVnfResources() {
+                return null;
+            }
+        };
+        Response resp = handler.getVnfTypes(null, "v2");
+        assertTrue(resp.getEntity().toString() != null);
+    }
+
+    @Test
+    public void getVnfTypesTest3() {
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            public List<VnfResource> getAllVnfResources() {
+                List<VnfResource> list = new ArrayList<>();
+                VnfResource resource = new VnfResource();
+                list.add(resource);
+                return list;
+            }
+        };
+        Response resp = handler.getVnfTypes(null, "v2");
+        assertTrue(resp.getEntity().toString() != null);
+    }
 
 }

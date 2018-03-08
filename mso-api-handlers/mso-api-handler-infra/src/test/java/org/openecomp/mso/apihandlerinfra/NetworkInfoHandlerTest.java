@@ -28,38 +28,38 @@ import org.openecomp.mso.requestsdb.InfraRequests;
 
 public class NetworkInfoHandlerTest {
 
-	NetworkInfoHandler handler = new NetworkInfoHandler();
-	
-	@Test
-	public void fillVnfRequestTest(){
-		NetworkRequest qr = new NetworkRequest();
-		InfraRequests ar = new InfraRequests();
-		ar.setVnfId("2990102");
-		ar.setVnfParams("test");
-		handler.fillNetworkRequest(qr, ar, "v3");
-		String vnfid = (String)qr.getNetworkParams();
-		assertTrue(vnfid.equals("test"));
-	}
-	
-	@Test
-	public void fillVnfRequestTestV2(){
-		NetworkRequest qr = new NetworkRequest();
-		InfraRequests ar = new InfraRequests();
-		ar.setVnfId("2990102");
-		ar.setVnfParams("test");
-		handler.fillNetworkRequest(qr, ar, "v2");
-		String vnfid = (String)qr.getNetworkParams();
-		assertTrue(vnfid.equals("test"));
-	}
-	
-	@Test
-	public void fillVnfRequestTestV1(){
-		NetworkRequest qr = new NetworkRequest();
-		InfraRequests ar = new InfraRequests();
-		ar.setVnfId("2990102");
-		ar.setVnfParams("test");
-		handler.fillNetworkRequest(qr, ar, "v1");
-		String vnfid = (String)qr.getNetworkParams();
-		assertTrue(vnfid.equals("test"));
-	}
+    NetworkInfoHandler handler = new NetworkInfoHandler();
+
+    @Test
+    public void fillVnfRequestTest() {
+        NetworkRequest qr = new NetworkRequest();
+        InfraRequests ar = new InfraRequests();
+        ar.setVnfId("2990102");
+        ar.setVnfParams("test");
+        handler.fillNetworkRequest(qr, ar, "v3");
+        String vnfid = (String) qr.getNetworkParams();
+        assertTrue(vnfid.equals("test"));
+    }
+
+    @Test
+    public void fillVnfRequestTestV2() {
+        NetworkRequest qr = new NetworkRequest();
+        InfraRequests ar = new InfraRequests();
+        ar.setVnfId("2990102");
+        ar.setVnfParams("test");
+        handler.fillNetworkRequest(qr, ar, "v2");
+        String vnfid = (String) qr.getNetworkParams();
+        assertTrue(vnfid.equals("test"));
+    }
+
+    @Test
+    public void fillVnfRequestTestV1() {
+        NetworkRequest qr = new NetworkRequest();
+        InfraRequests ar = new InfraRequests();
+        ar.setVnfId("2990102");
+        ar.setVnfParams("test");
+        handler.fillNetworkRequest(qr, ar, "v1");
+        String vnfid = (String) qr.getNetworkParams();
+        assertTrue(vnfid.equals("test"));
+    }
 }

@@ -31,14 +31,14 @@ import org.openecomp.mso.openstack.utils.MsoTenantUtils;
 
 public class NewServerTypeUtils extends MsoTenantUtils {
 
-	/**
-	 * @param msoPropID
-	 */
-	public NewServerTypeUtils(String msoPropID) {
-		super(msoPropID);
-	}
+    /**
+     * @param msoPropID
+     */
+    public NewServerTypeUtils(String msoPropID) {
+        super(msoPropID);
+    }
 
-	@Override
+    @Override
     public String createTenant(String tenantName, String cloudSiteId, Map<String, String> metadata, boolean backout)
             throws MsoException {
         // TODO Auto-generated method stub

@@ -42,101 +42,101 @@ import org.openecomp.mso.bpmn.core.WorkflowException;
  */
 public class ReceiveWorkflowMessageTest extends WorkflowTest {
 
-	private static final String EOL = "\n";
+    private static final String EOL = "\n";
 
-	private final CallbackSet callbacks = new CallbackSet();
+    private final CallbackSet callbacks = new CallbackSet();
 
-	public ReceiveWorkflowMessageTest() throws IOException {
-		callbacks.put("sdnc-event-success", JSON, "SDNCAEvent",
-			"{" + EOL +
-			"  \"SDNCEvent\": {" + EOL +
-			"    \"eventType\": \"UCPE-ACTIVATION\"," + EOL +
-			"    \"eventCorrelatorType\": \"UCPE-HOST-NAME\"," + EOL +
-			"    \"eventCorrelator\": \"((CORRELATOR))\"," + EOL +
-			"    \"params\": {\"entry\":[" + EOL +
-			"      {\"key\": \"success-indicator\", \"value\":\"Y\"}" + EOL +
-			"	 ]}" +EOL +
-			"  }" + EOL +
-			"}" + EOL);
+    public ReceiveWorkflowMessageTest() throws IOException {
+        callbacks.put("sdnc-event-success", JSON, "SDNCAEvent",
+                "{" + EOL +
+                        "  \"SDNCEvent\": {" + EOL +
+                        "    \"eventType\": \"UCPE-ACTIVATION\"," + EOL +
+                        "    \"eventCorrelatorType\": \"UCPE-HOST-NAME\"," + EOL +
+                        "    \"eventCorrelator\": \"((CORRELATOR))\"," + EOL +
+                        "    \"params\": {\"entry\":[" + EOL +
+                        "      {\"key\": \"success-indicator\", \"value\":\"Y\"}" + EOL +
+                        "	 ]}" + EOL +
+                        "  }" + EOL +
+                        "}" + EOL);
 
-		callbacks.put("sdnc-event-fail", JSON, "SDNCAEvent",
-			"{" + EOL +
-			"  \"SDNCEvent\": {" + EOL +
-			"    \"eventType\": \"UCPE-ACTIVATION\"," + EOL +
-			"    \"eventCorrelatorType\": \"UCPE-HOST-NAME\"," + EOL +
-			"    \"eventCorrelator\": \"((CORRELATOR))\"," + EOL +
-			"    \"params\": {\"entry\":[" + EOL +
-			"      {\"key\": \"success-indicator\", \"value\":\"N\"}" + EOL +
-			"      {\"key\": \"error-message\", \"value\":\"SOMETHING BAD HAPPENED\"}" + EOL +
-			"	 ]}" +EOL +
-			"  }" + EOL +
-			"}" + EOL);
-	}
+        callbacks.put("sdnc-event-fail", JSON, "SDNCAEvent",
+                "{" + EOL +
+                        "  \"SDNCEvent\": {" + EOL +
+                        "    \"eventType\": \"UCPE-ACTIVATION\"," + EOL +
+                        "    \"eventCorrelatorType\": \"UCPE-HOST-NAME\"," + EOL +
+                        "    \"eventCorrelator\": \"((CORRELATOR))\"," + EOL +
+                        "    \"params\": {\"entry\":[" + EOL +
+                        "      {\"key\": \"success-indicator\", \"value\":\"N\"}" + EOL +
+                        "      {\"key\": \"error-message\", \"value\":\"SOMETHING BAD HAPPENED\"}" + EOL +
+                        "	 ]}" + EOL +
+                        "  }" + EOL +
+                        "}" + EOL);
+    }
 
-	/**
-	 * Test the happy path.
-	 */
-	@Test
-	@Deployment(resources = {
-		"subprocess/ReceiveWorkflowMessage.bpmn"
-		})
-	public void happyPath() throws Exception {
-		
-		logStart();
+    /**
+     * Test the happy path.
+     */
+    @Test
+    @Deployment(resources = {
+            "subprocess/ReceiveWorkflowMessage.bpmn"
+    })
+    public void happyPath() throws Exception {
 
-		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<>();
-		variables.put("mso-request-id", "dffbae0e-5588-4bd6-9749-b0f0adb52312");
-		variables.put("isDebugLogEnabled", "true");
-		variables.put("RCVWFMSG_timeout", "PT1M");
-		variables.put("RCVWFMSG_messageType", "SDNCAEvent");
-		variables.put("RCVWFMSG_correlator", "USOSTCDALTX0101UJZZ31");
+        logStart();
 
-		invokeSubProcess("ReceiveWorkflowMessage", businessKey, variables);
-		injectWorkflowMessages(callbacks, "sdnc-event-success");
-		waitForProcessEnd(businessKey, 10000);
+        String businessKey = UUID.randomUUID().toString();
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("mso-request-id", "dffbae0e-5588-4bd6-9749-b0f0adb52312");
+        variables.put("isDebugLogEnabled", "true");
+        variables.put("RCVWFMSG_timeout", "PT1M");
+        variables.put("RCVWFMSG_messageType", "SDNCAEvent");
+        variables.put("RCVWFMSG_correlator", "USOSTCDALTX0101UJZZ31");
 
-		String response = (String) getVariableFromHistory(businessKey, "WorkflowResponse");
-		System.out.println("Response:\n" + response);
-		assertTrue(response.contains("\"SDNCEvent\""));
-		assertTrue((boolean)getVariableFromHistory(businessKey, "RCVWFMSG_SuccessIndicator"));
-		
-		logEnd();
-	}
+        invokeSubProcess("ReceiveWorkflowMessage", businessKey, variables);
+        injectWorkflowMessages(callbacks, "sdnc-event-success");
+        waitForProcessEnd(businessKey, 10000);
 
-	/**
-	 * Test the timeout scenario.
-	 */
-	@Test
-	@Deployment(resources = {
-		"subprocess/ReceiveWorkflowMessage.bpmn"
-		})
-	public void timeout() throws Exception {
-		logStart();
+        String response = (String) getVariableFromHistory(businessKey, "WorkflowResponse");
+        System.out.println("Response:\n" + response);
+        assertTrue(response.contains("\"SDNCEvent\""));
+        assertTrue((boolean) getVariableFromHistory(businessKey, "RCVWFMSG_SuccessIndicator"));
 
-		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<>();
-		variables.put("mso-request-id", "dffbae0e-5588-4bd6-9749-b0f0adb52312");
-		variables.put("isDebugLogEnabled", "true");
-		variables.put("RCVWFMSG_timeout", "PT0.1S");
-		variables.put("RCVWFMSG_messageType", "SDNCAEvent");
-		variables.put("RCVWFMSG_correlator", "USOSTCDALTX0101UJZZ31");
+        logEnd();
+    }
 
-		invokeSubProcess("ReceiveWorkflowMessage", businessKey, variables);
+    /**
+     * Test the timeout scenario.
+     */
+    @Test
+    @Deployment(resources = {
+            "subprocess/ReceiveWorkflowMessage.bpmn"
+    })
+    public void timeout() throws Exception {
+        logStart();
 
-		// No injection
-		
-		waitForProcessEnd(businessKey, 10000);
-		
-		// There is no response from SDNC, so the flow doesn't set WorkflowResponse.
-		String response = (String) getVariableFromHistory(businessKey, "WorkflowResponse");
-		assertNull(response);
-		WorkflowException wfe = (WorkflowException) getVariableFromHistory(businessKey, "WorkflowException");
-		assertNotNull(wfe);
-		System.out.println(wfe.toString());
-		assertEquals("Receive Workflow Message Timeout Error", wfe.getErrorMessage());
-		assertFalse((boolean)getVariableFromHistory(businessKey, "RCVWFMSG_SuccessIndicator"));
-		
-		logEnd();
-	}
+        String businessKey = UUID.randomUUID().toString();
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("mso-request-id", "dffbae0e-5588-4bd6-9749-b0f0adb52312");
+        variables.put("isDebugLogEnabled", "true");
+        variables.put("RCVWFMSG_timeout", "PT0.1S");
+        variables.put("RCVWFMSG_messageType", "SDNCAEvent");
+        variables.put("RCVWFMSG_correlator", "USOSTCDALTX0101UJZZ31");
+
+        invokeSubProcess("ReceiveWorkflowMessage", businessKey, variables);
+
+        // No injection
+
+        waitForProcessEnd(businessKey, 10000);
+
+        // There is no response from SDNC, so the flow doesn't set WorkflowResponse.
+        String response = (String) getVariableFromHistory(businessKey, "WorkflowResponse");
+        assertNull(response);
+        WorkflowException wfe = (WorkflowException) getVariableFromHistory(businessKey, "WorkflowException");
+        assertNotNull(wfe);
+        System.out.println(wfe.toString());
+        assertEquals("Receive Workflow Message Timeout Error", wfe.getErrorMessage());
+        assertFalse((boolean) getVariableFromHistory(businessKey, "RCVWFMSG_SuccessIndicator"));
+
+        logEnd();
+    }
 }

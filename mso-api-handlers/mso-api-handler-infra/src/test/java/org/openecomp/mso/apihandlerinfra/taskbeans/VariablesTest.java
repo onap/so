@@ -23,75 +23,77 @@ package org.openecomp.mso.apihandlerinfra.taskbeans;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
 import org.openecomp.mso.apihandlerinfra.tasksbeans.Variables;
 import org.openecomp.mso.apihandlerinfra.tasksbeans.Value;
 
 public class VariablesTest {
 
-	Variables _variables;
-	protected Value _source;
-	protected Value _responseValue;
+    Variables _variables;
+    protected Value _source;
+    protected Value _responseValue;
     protected Value _requestorId;
-   
+
     @Before
-	public void setUp() {
-    	_variables = mock(Variables.class);
+    public void setUp() {
+        _variables = mock(Variables.class);
         _source = mock(Value.class);
         _responseValue = mock(Value.class);
         _requestorId = mock(Value.class);
-        
-		when(_variables.getSource()).thenReturn(_source);
-		when(_variables.getRequestorId()).thenReturn(_requestorId);
-		when(_variables.getResponseValue()).thenReturn(_responseValue);
-		
-	}
 
-	@After
-	public void tearDown() {
-		_variables = null;
-		_source = null;
-		_responseValue = null;
-		_requestorId = null;
-	}
-	
-	@Test
+        when(_variables.getSource()).thenReturn(_source);
+        when(_variables.getRequestorId()).thenReturn(_requestorId);
+        when(_variables.getResponseValue()).thenReturn(_responseValue);
+
+    }
+
+    @After
+    public void tearDown() {
+        _variables = null;
+        _source = null;
+        _responseValue = null;
+        _requestorId = null;
+    }
+
+    @Test
     public void testGetSource() {
-		_variables.setSource(_source);
-		assertTrue(_variables.getSource().equals(_source));
+        _variables.setSource(_source);
+        assertTrue(_variables.getSource().equals(_source));
     }
 
-	@Test
-	public void testSetSource(){
-		_variables.setSource(_source);
-		verify(_variables).setSource(_source);
-		}	
-	
-	@Test
+    @Test
+    public void testSetSource() {
+        _variables.setSource(_source);
+        verify(_variables).setSource(_source);
+    }
+
+    @Test
     public void testGetResponseValue() {
-		_variables.setResponseValue(_responseValue);
-		assertTrue(_variables.getResponseValue().equals(_responseValue));
+        _variables.setResponseValue(_responseValue);
+        assertTrue(_variables.getResponseValue().equals(_responseValue));
     }
 
-	@Test
-	public void testSetResponseValue(){
-		_variables.setResponseValue(_responseValue);
-		verify(_variables).setResponseValue(_responseValue);
-		}	
-	
-	@Test
+    @Test
+    public void testSetResponseValue() {
+        _variables.setResponseValue(_responseValue);
+        verify(_variables).setResponseValue(_responseValue);
+    }
+
+    @Test
     public void testGetRequestorId() {
-		_variables.setRequestorId(_requestorId);
-		assertTrue(_variables.getRequestorId().equals(_requestorId));
+        _variables.setRequestorId(_requestorId);
+        assertTrue(_variables.getRequestorId().equals(_requestorId));
     }
 
-	@Test
-	public void testSetRequestorId(){
-		_variables.setRequestorId(_requestorId);
-		verify(_variables).setRequestorId(_requestorId);
-		}	
-	
+    @Test
+    public void testSetRequestorId() {
+        _variables.setRequestorId(_requestorId);
+        verify(_variables).setRequestorId(_requestorId);
+    }
+
 }

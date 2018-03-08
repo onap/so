@@ -32,36 +32,36 @@ import org.openecomp.mso.db.catalog.beans.Service;
 
 public class ServiceTest {
 
-	@Test
-	public final void recipeDataTest() {
-		Service service = new Service();
-		service.setCreated(new Timestamp(System.currentTimeMillis()));
-		assertTrue(service.getCreated() != null);
-		service.setDescription("description");
-		assertTrue(service.getDescription().equalsIgnoreCase("description"));
+    @Test
+    public final void recipeDataTest() {
+        Service service = new Service();
+        service.setCreated(new Timestamp(System.currentTimeMillis()));
+        assertTrue(service.getCreated() != null);
+        service.setDescription("description");
+        assertTrue(service.getDescription().equalsIgnoreCase("description"));
 
-		service.setModelInvariantUUID("action");
-		assertTrue(service.getModelInvariantUUID().equalsIgnoreCase("action"));
+        service.setModelInvariantUUID("action");
+        assertTrue(service.getModelInvariantUUID().equalsIgnoreCase("action"));
 
-		service.setModelName("modelName");
-		assertTrue(service.getModelName().equalsIgnoreCase("modelName"));
+        service.setModelName("modelName");
+        assertTrue(service.getModelName().equalsIgnoreCase("modelName"));
 
-		service.setModelUUID("modelUUID");
-		assertTrue(service.getModelUUID().equalsIgnoreCase("modelUUID"));
-		service.setModelVersion("modelVersion");
-		assertTrue(service.getModelVersion().equalsIgnoreCase("modelVersion"));
-		service.setServiceRole("serviceRole");
-		assertTrue(service.getServiceRole().equalsIgnoreCase("serviceRole"));
-		service.setToscaCsarArtifactUUID("toscaCsarArtifactUUID");
-		assertTrue(service.getToscaCsarArtifactUUID().equalsIgnoreCase("toscaCsarArtifactUUID"));
+        service.setModelUUID("modelUUID");
+        assertTrue(service.getModelUUID().equalsIgnoreCase("modelUUID"));
+        service.setModelVersion("modelVersion");
+        assertTrue(service.getModelVersion().equalsIgnoreCase("modelVersion"));
+        service.setServiceRole("serviceRole");
+        assertTrue(service.getServiceRole().equalsIgnoreCase("serviceRole"));
+        service.setToscaCsarArtifactUUID("toscaCsarArtifactUUID");
+        assertTrue(service.getToscaCsarArtifactUUID().equalsIgnoreCase("toscaCsarArtifactUUID"));
 
-		service.setServiceType("serviceType");
-		assertTrue(service.getServiceType().equalsIgnoreCase("serviceType"));
-		service.setRecipes(null);
-		assertTrue(service.getRecipes() == null);
-		service.setServiceResourceCustomizations(null);
-		assertTrue(service.getServiceResourceCustomizations() == null);
+        service.setServiceType("serviceType");
+        assertTrue(service.getServiceType().equalsIgnoreCase("serviceType"));
+        service.setRecipes(null);
+        assertTrue(service.getRecipes() == null);
+        service.setServiceResourceCustomizations(null);
+        assertTrue(service.getServiceResourceCustomizations() == null);
 
-	}
+    }
 
 }

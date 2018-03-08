@@ -33,20 +33,21 @@ import org.openecomp.mso.properties.MsoPropertiesFactory;
 
 public class RequestTunablesTest {
 
-	public static MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory();
-	
+    public static MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory();
+
     /**
      * This method is called before any test occurs.
      * It creates a fake tree from scratch
-     * @throws MsoPropertiesException 
+     *
+     * @throws MsoPropertiesException
      */
     @BeforeClass
-    public static final void prepare () throws MsoPropertiesException {
-        ClassLoader classLoader = RequestTunablesTest.class.getClassLoader ();
-        String path = classLoader.getResource ("mso.properties").toString ().substring (5);
-        
+    public static final void prepare() throws MsoPropertiesException {
+        ClassLoader classLoader = RequestTunablesTest.class.getClassLoader();
+        String path = classLoader.getResource("mso.properties").toString().substring(5);
+
         msoPropertiesFactory.initializeMsoProperties(RequestTunables.MSO_PROP_SDNC_ADAPTER, path);
-      
+
     }
 
     /**
@@ -55,20 +56,20 @@ public class RequestTunablesTest {
      * .
      */
     @Test
-    public final void testRequestTunables () {
-        RequestTunables rt = new RequestTunables (null, null, "op", null,msoPropertiesFactory);
-        assert(rt.getReqId ().length ()==0);
-        rt = new RequestTunables ("reqId", "msoAction", null, "query",msoPropertiesFactory);
-        rt.setTunables ();
-        System.out.println(rt.toString ());
-      //  assert (rt.getReqMethod ().equals ("toto"));
-        assert (rt.getTimeout () != null);
-        assert (rt.getAction ().equals ("query"));
-        assert (rt.getMsoAction ().equals ("msoAction"));
-        assert (rt.getHeaderName ().equals ("sdnc-request-header"));
-        assert (rt.getOperation ().length () == 0);
-        assert (rt.getAsyncInd ().equals ("N"));
-        assert (rt.getReqId ().equals ("reqId"));
+    public final void testRequestTunables() {
+        RequestTunables rt = new RequestTunables(null, null, "op", null, msoPropertiesFactory);
+        assert (rt.getReqId().length() == 0);
+        rt = new RequestTunables("reqId", "msoAction", null, "query", msoPropertiesFactory);
+        rt.setTunables();
+        System.out.println(rt.toString());
+        //  assert (rt.getReqMethod ().equals ("toto"));
+        assert (rt.getTimeout() != null);
+        assert (rt.getAction().equals("query"));
+        assert (rt.getMsoAction().equals("msoAction"));
+        assert (rt.getHeaderName().equals("sdnc-request-header"));
+        assert (rt.getOperation().length() == 0);
+        assert (rt.getAsyncInd().equals("N"));
+        assert (rt.getReqId().equals("reqId"));
     }
 
 }

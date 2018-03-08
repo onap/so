@@ -32,32 +32,32 @@ import org.openecomp.mso.db.catalog.beans.VnfRecipe;
 
 public class VnfRecipeTest {
 
-	@Test
-	public final void vnfRecipeDataTest() {
-		VnfRecipe vnfRecipe = new VnfRecipe();
-		vnfRecipe.setCreated(new Timestamp(System.currentTimeMillis()));
-		assertTrue(vnfRecipe.getCreated() != null);
-		vnfRecipe.setDescription("description");
-		assertTrue(vnfRecipe.getDescription().equalsIgnoreCase("description"));
+    @Test
+    public final void vnfRecipeDataTest() {
+        VnfRecipe vnfRecipe = new VnfRecipe();
+        vnfRecipe.setCreated(new Timestamp(System.currentTimeMillis()));
+        assertTrue(vnfRecipe.getCreated() != null);
+        vnfRecipe.setDescription("description");
+        assertTrue(vnfRecipe.getDescription().equalsIgnoreCase("description"));
 
-		vnfRecipe.setOrchestrationUri("orchestrationUri");
-		assertTrue(vnfRecipe.getOrchestrationUri().equalsIgnoreCase("orchestrationUri"));
+        vnfRecipe.setOrchestrationUri("orchestrationUri");
+        assertTrue(vnfRecipe.getOrchestrationUri().equalsIgnoreCase("orchestrationUri"));
 
-		vnfRecipe.setRecipeTimeout(1);
-		assertTrue(vnfRecipe.getRecipeTimeout() == 1);
-		vnfRecipe.setVnfType("vnfType");
-		assertTrue(vnfRecipe.getVnfType().equalsIgnoreCase("vnfType"));
+        vnfRecipe.setRecipeTimeout(1);
+        assertTrue(vnfRecipe.getRecipeTimeout() == 1);
+        vnfRecipe.setVnfType("vnfType");
+        assertTrue(vnfRecipe.getVnfType().equalsIgnoreCase("vnfType"));
 
-		vnfRecipe.setServiceType("serviceType");
-		assertTrue(vnfRecipe.getServiceType().equalsIgnoreCase("serviceType"));
-		vnfRecipe.setVersion("version");
-		assertTrue(vnfRecipe.getVersion().equalsIgnoreCase("version"));
-		vnfRecipe.setParamXSD("vnfParamXSD");
-		assertTrue(vnfRecipe.getParamXSD().equalsIgnoreCase("vnfParamXSD"));
-		vnfRecipe.setVfModuleId("vfModuleId");
-		assertTrue(vnfRecipe.getVfModuleId().equalsIgnoreCase("vfModuleId"));
+        vnfRecipe.setServiceType("serviceType");
+        assertTrue(vnfRecipe.getServiceType().equalsIgnoreCase("serviceType"));
+        vnfRecipe.setVersion("version");
+        assertTrue(vnfRecipe.getVersion().equalsIgnoreCase("version"));
+        vnfRecipe.setParamXSD("vnfParamXSD");
+        assertTrue(vnfRecipe.getParamXSD().equalsIgnoreCase("vnfParamXSD"));
+        vnfRecipe.setVfModuleId("vfModuleId");
+        assertTrue(vnfRecipe.getVfModuleId().equalsIgnoreCase("vfModuleId"));
 //		assertTrue(vnfRecipe.toString() == null);
 
-	}
+    }
 
 }

@@ -19,7 +19,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  * ============LICENSE_END========================================================= 
- */ 
+ */
 
 package org.openecomp.mso.bpmn.common;
 
@@ -37,55 +37,54 @@ import org.openecomp.mso.bpmn.common.workflow.service.WorkflowResponse;
 
 /**
  * Please describe the ConfirmVolumeGroupTenantTest.java class
- *
  */
 public class ConfirmVolumeGroupTenantTest extends WorkflowTest {
 
-	@Test
-	@Deployment(resources = {"subprocess/ConfirmVolumeGroupTenant.bpmn"})
-	public void testRemoveLayer3Service_success() throws Exception{
-		MockGetVolumeGroupById("MDTWNJ21", "a8399879-31b3-4973-be26-0a0cbe776b58", "CRTGVNF_queryAAIResponseVolume.xml");
+    @Test
+    @Deployment(resources = {"subprocess/ConfirmVolumeGroupTenant.bpmn"})
+    public void testRemoveLayer3Service_success() throws Exception {
+        MockGetVolumeGroupById("MDTWNJ21", "a8399879-31b3-4973-be26-0a0cbe776b58", "CRTGVNF_queryAAIResponseVolume.xml");
 
-		Map<String, String> variables = new HashMap<>();
-		setVariables(variables);
+        Map<String, String> variables = new HashMap<>();
+        setVariables(variables);
 
-		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "ConfirmVolumeGroupTenant", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+        WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "ConfirmVolumeGroupTenant", variables);
+        waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
 
-		String actualNameMatch = BPMNUtil.getVariable(processEngineRule, "ConfirmVolumeGroupTenant", "groupNamesMatch");
-		String actualIdMatch = BPMNUtil.getVariable(processEngineRule, "ConfirmVolumeGroupTenant", "tenantIdsMatch");
-		String actualResponse = BPMNUtil.getVariable(processEngineRule, "ConfirmVolumeGroupTenant", "volumeHeatStackId");
+        String actualNameMatch = BPMNUtil.getVariable(processEngineRule, "ConfirmVolumeGroupTenant", "groupNamesMatch");
+        String actualIdMatch = BPMNUtil.getVariable(processEngineRule, "ConfirmVolumeGroupTenant", "tenantIdsMatch");
+        String actualResponse = BPMNUtil.getVariable(processEngineRule, "ConfirmVolumeGroupTenant", "volumeHeatStackId");
 
-		assertEquals("Response", "true", actualNameMatch);
-		assertEquals("Response", "true", actualIdMatch);
-		assertEquals("Response", "MoG_CinderVolumes_2/19387dc6-060f-446e-b41f-dcfd29c73845", actualResponse);
-	}
+        assertEquals("Response", "true", actualNameMatch);
+        assertEquals("Response", "true", actualIdMatch);
+        assertEquals("Response", "MoG_CinderVolumes_2/19387dc6-060f-446e-b41f-dcfd29c73845", actualResponse);
+    }
 
-	@Test
-	@Deployment(resources = {"subprocess/ConfirmVolumeGroupTenant.bpmn"})
-	public void testRemoveLayer3Service_idsNotMatch() throws Exception{
-		MockGetVolumeGroupById("MDTWNJ21", "a8399879-31b3-4973-be26-0a0cbe776b58", "CRTGVNF_queryAAIResponseVolume_idsNotMatch.xml");
+    @Test
+    @Deployment(resources = {"subprocess/ConfirmVolumeGroupTenant.bpmn"})
+    public void testRemoveLayer3Service_idsNotMatch() throws Exception {
+        MockGetVolumeGroupById("MDTWNJ21", "a8399879-31b3-4973-be26-0a0cbe776b58", "CRTGVNF_queryAAIResponseVolume_idsNotMatch.xml");
 
-		Map<String, String> variables = new HashMap<>();
-		setVariables(variables);
+        Map<String, String> variables = new HashMap<>();
+        setVariables(variables);
 
-		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "ConfirmVolumeGroupTenant", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+        WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "ConfirmVolumeGroupTenant", variables);
+        waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
 
-		String actualNameMatch = BPMNUtil.getVariable(processEngineRule, "ConfirmVolumeGroupTenant", "groupNamesMatch");
-		String actualIdMatch = BPMNUtil.getVariable(processEngineRule, "ConfirmVolumeGroupTenant", "tenantIdsMatch");
-		String actualResponse = BPMNUtil.getVariable(processEngineRule, "ConfirmVolumeGroupTenant", "WorkflowException");
+        String actualNameMatch = BPMNUtil.getVariable(processEngineRule, "ConfirmVolumeGroupTenant", "groupNamesMatch");
+        String actualIdMatch = BPMNUtil.getVariable(processEngineRule, "ConfirmVolumeGroupTenant", "tenantIdsMatch");
+        String actualResponse = BPMNUtil.getVariable(processEngineRule, "ConfirmVolumeGroupTenant", "WorkflowException");
 
-		assertEquals("Response", "true", actualNameMatch);
-		assertEquals("Response", "false", actualIdMatch);
-		assertEquals("Response", "WorkflowException[processKey=ConfirmVolumeGroupTenant,errorCode=1,errorMessage=Volume Group a8399879-31b3-4973-be26-0a0cbe776b58 does not belong to your tenant]", actualResponse);
+        assertEquals("Response", "true", actualNameMatch);
+        assertEquals("Response", "false", actualIdMatch);
+        assertEquals("Response", "WorkflowException[processKey=ConfirmVolumeGroupTenant,errorCode=1,errorMessage=Volume Group a8399879-31b3-4973-be26-0a0cbe776b58 does not belong to your tenant]", actualResponse);
 
-	}
+    }
 
-	private void setVariables(Map<String, String> variables) {
-		variables.put("isDebugLogEnabled", "true");
-		variables.put("volumeGroupId","a8399879-31b3-4973-be26-0a0cbe776b58");
-		variables.put("tenantId", "7dd5365547234ee8937416c65507d266");
-		variables.put("aicCloudRegion", "MDTWNJ21");
-	}
+    private void setVariables(Map<String, String> variables) {
+        variables.put("isDebugLogEnabled", "true");
+        variables.put("volumeGroupId", "a8399879-31b3-4973-be26-0a0cbe776b58");
+        variables.put("tenantId", "7dd5365547234ee8937416c65507d266");
+        variables.put("aicCloudRegion", "MDTWNJ21");
+    }
 }

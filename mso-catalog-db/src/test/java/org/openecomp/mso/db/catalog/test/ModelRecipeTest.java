@@ -32,28 +32,28 @@ import org.openecomp.mso.db.catalog.beans.ModelRecipe;
 
 public class ModelRecipeTest {
 
-	@Test
-	public final void modelRecipeDataTest() {
-		ModelRecipe modelRecipe = new ModelRecipe();
-		modelRecipe.setAction("action");
-		assertTrue(modelRecipe.getAction().equalsIgnoreCase("action"));
-		modelRecipe.setCreated(new Timestamp(System.currentTimeMillis()));
-		assertTrue(modelRecipe.getCreated() != null);
-		modelRecipe.setDescription("description");
-		assertTrue(modelRecipe.getDescription().equalsIgnoreCase("description"));
-		modelRecipe.setId(1);
-		assertTrue(modelRecipe.getId() == 1);
-		modelRecipe.setModelId(1);
-		assertTrue(modelRecipe.getModelId() == 1);
-		modelRecipe.setModelParamXSD("modelParamXSD");
-		assertTrue(modelRecipe.getModelParamXSD().equalsIgnoreCase("modelParamXSD"));
-		modelRecipe.setOrchestrationUri("orchestrationUri");
-		assertTrue(modelRecipe.getOrchestrationUri().equalsIgnoreCase("orchestrationUri"));
-		modelRecipe.setRecipeTimeout(1);
-		assertTrue(modelRecipe.getRecipeTimeout() == 1);
-		modelRecipe.setSchemaVersion("schemaVersion");
-		assertTrue(modelRecipe.getSchemaVersion().equalsIgnoreCase("schemaVersion"));
+    @Test
+    public final void modelRecipeDataTest() {
+        ModelRecipe modelRecipe = new ModelRecipe();
+        modelRecipe.setAction("action");
+        assertTrue(modelRecipe.getAction().equalsIgnoreCase("action"));
+        modelRecipe.setCreated(new Timestamp(System.currentTimeMillis()));
+        assertTrue(modelRecipe.getCreated() != null);
+        modelRecipe.setDescription("description");
+        assertTrue(modelRecipe.getDescription().equalsIgnoreCase("description"));
+        modelRecipe.setId(1);
+        assertTrue(modelRecipe.getId() == 1);
+        modelRecipe.setModelId(1);
+        assertTrue(modelRecipe.getModelId() == 1);
+        modelRecipe.setModelParamXSD("modelParamXSD");
+        assertTrue(modelRecipe.getModelParamXSD().equalsIgnoreCase("modelParamXSD"));
+        modelRecipe.setOrchestrationUri("orchestrationUri");
+        assertTrue(modelRecipe.getOrchestrationUri().equalsIgnoreCase("orchestrationUri"));
+        modelRecipe.setRecipeTimeout(1);
+        assertTrue(modelRecipe.getRecipeTimeout() == 1);
+        modelRecipe.setSchemaVersion("schemaVersion");
+        assertTrue(modelRecipe.getSchemaVersion().equalsIgnoreCase("schemaVersion"));
 //		assertTrue(modelRecipe.toString() != null);
-	}
+    }
 
 }

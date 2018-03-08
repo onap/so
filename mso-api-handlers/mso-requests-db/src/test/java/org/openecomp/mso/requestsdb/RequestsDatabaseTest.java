@@ -52,9 +52,12 @@ public class RequestsDatabaseTest {
                                 @Mocked Session session,
                                 @Mocked SQLQuery query) throws Exception {
         new Expectations() {{
-            sessionFactoryManager.getSessionFactory().openSession(); result = session;
-            session.createSQLQuery(" show tables "); result = query;
-            query.list(); result = Arrays.asList("table1", "table2");
+            sessionFactoryManager.getSessionFactory().openSession();
+            result = session;
+            session.createSQLQuery(" show tables ");
+            result = query;
+            query.list();
+            result = Arrays.asList("table1", "table2");
         }};
 
         assertTrue(requestsDatabase.healthCheck());
@@ -65,8 +68,10 @@ public class RequestsDatabaseTest {
                                       @Mocked Session session,
                                       @Mocked Query query) throws Exception {
         new Expectations() {{
-            sessionFactoryManager.getSessionFactory().openSession(); result = session;
-            query.executeUpdate(); result = 1;
+            sessionFactoryManager.getSessionFactory().openSession();
+            result = session;
+            query.executeUpdate();
+            result = 1;
         }};
         assertEquals(1, requestsDatabase.updateInfraStatus("123", "unknown", "unknown"));
     }
@@ -76,8 +81,10 @@ public class RequestsDatabaseTest {
                                        @Mocked Session session,
                                        @Mocked Query query) throws Exception {
         new Expectations() {{
-            sessionFactoryManager.getSessionFactory().openSession(); result = session;
-            query.executeUpdate(); result = 1;
+            sessionFactoryManager.getSessionFactory().openSession();
+            result = session;
+            query.executeUpdate();
+            result = 1;
         }};
         assertEquals(1, requestsDatabase.updateInfraStatus("123", "unknown", 0, "unknown"));
     }
@@ -87,8 +94,10 @@ public class RequestsDatabaseTest {
                                            @Mocked Session session,
                                            @Mocked Query query) throws Exception {
         new Expectations() {{
-            sessionFactoryManager.getSessionFactory().openSession(); result = session;
-            query.executeUpdate(); result = 1;
+            sessionFactoryManager.getSessionFactory().openSession();
+            result = session;
+            query.executeUpdate();
+            result = 1;
         }};
         assertEquals(1, requestsDatabase.updateInfraFinalStatus("123",
                 "unknown",
@@ -103,8 +112,10 @@ public class RequestsDatabaseTest {
                                               @Mocked Session session,
                                               @Mocked Query query) throws Exception {
         new Expectations() {{
-            sessionFactoryManager.getSessionFactory().openSession(); result = session;
-            query.uniqueResult(); result = new InfraActiveRequests("123", "action");
+            sessionFactoryManager.getSessionFactory().openSession();
+            result = session;
+            query.uniqueResult();
+            result = new InfraActiveRequests("123", "action");
         }};
         assertEquals("123",
                 requestsDatabase.getRequestFromInfraActive("123").getRequestId());
@@ -116,9 +127,12 @@ public class RequestsDatabaseTest {
                                                            @Mocked Criteria criteria) throws Exception {
 
         new Expectations() {{
-            sessionFactoryManager.getSessionFactory().openSession(); result = session;
-            session.createCriteria(InfraActiveRequests.class); result = criteria;
-            criteria.list(); result = Arrays.asList(new InfraActiveRequests("123", "action"));
+            sessionFactoryManager.getSessionFactory().openSession();
+            result = session;
+            session.createCriteria(InfraActiveRequests.class);
+            result = criteria;
+            criteria.list();
+            result = Arrays.asList(new InfraActiveRequests("123", "action"));
         }};
         assertEquals(1,
                 requestsDatabase.getRequestListFromInfraActive("queryattr",
@@ -131,9 +145,12 @@ public class RequestsDatabaseTest {
                                                   @Mocked Session session,
                                                   @Mocked Query query) throws Exception {
         new Expectations() {{
-            sessionFactoryManager.getSessionFactory().openSession(); result = session;
-            session.createQuery("from InfraActiveRequests where (requestId = :requestId OR clientRequestId = :requestId) and requestType = :requestType"); result = query;
-            query.uniqueResult(); result = new InfraActiveRequests("123", "action");
+            sessionFactoryManager.getSessionFactory().openSession();
+            result = session;
+            session.createQuery("from InfraActiveRequests where (requestId = :requestId OR clientRequestId = :requestId) and requestType = :requestType");
+            result = query;
+            query.uniqueResult();
+            result = new InfraActiveRequests("123", "action");
         }};
         assertEquals("123",
                 requestsDatabase.getRequestFromInfraActive("123", "requestType").getRequestId());
@@ -144,9 +161,12 @@ public class RequestsDatabaseTest {
                                                @Mocked Session session,
                                                @Mocked Criteria criteria) throws Exception {
         new Expectations() {{
-            sessionFactoryManager.getSessionFactory().openSession(); result = session;
-            session.createCriteria(InfraActiveRequests.class); result = criteria;
-            criteria.list(); result = Arrays.asList(new InfraActiveRequests());
+            sessionFactoryManager.getSessionFactory().openSession();
+            result = session;
+            session.createCriteria(InfraActiveRequests.class);
+            result = criteria;
+            criteria.list();
+            result = Arrays.asList(new InfraActiveRequests());
         }};
         assertEquals(1,
                 requestsDatabase.getRequestListFromInfraActive("queryAttr",
@@ -159,9 +179,12 @@ public class RequestsDatabaseTest {
                                             @Mocked Session session,
                                             @Mocked Query query) throws Exception {
         new Expectations() {{
-            sessionFactoryManager.getSessionFactory().openSession(); result = session;
-            session.createQuery("from InfraActiveRequests where vnfName = :vnfName and action = :action and (requestStatus = 'PENDING' or requestStatus = 'IN_PROGRESS' or requestStatus = 'TIMEOUT') and requestType = :requestType ORDER BY startTime DESC"); result = query;
-            query.list(); result = Arrays.asList(new InfraActiveRequests("123", "action"));
+            sessionFactoryManager.getSessionFactory().openSession();
+            result = session;
+            session.createQuery("from InfraActiveRequests where vnfName = :vnfName and action = :action and (requestStatus = 'PENDING' or requestStatus = 'IN_PROGRESS' or requestStatus = 'TIMEOUT') and requestType = :requestType ORDER BY startTime DESC");
+            result = query;
+            query.list();
+            result = Arrays.asList(new InfraActiveRequests("123", "action"));
         }};
         assertEquals("123",
                 requestsDatabase.checkDuplicateByVnfName("vnfname",
@@ -174,9 +197,12 @@ public class RequestsDatabaseTest {
                                           @Mocked Session session,
                                           @Mocked Query query) throws Exception {
         new Expectations() {{
-            sessionFactoryManager.getSessionFactory().openSession(); result = session;
-            session.createQuery("from InfraActiveRequests where vnfId = :vnfId and action = :action and (requestStatus = 'PENDING' or requestStatus = 'IN_PROGRESS' or requestStatus = 'TIMEOUT') and requestType = :requestType ORDER BY startTime DESC"); result = query;
-            query.list(); result = Arrays.asList(new InfraActiveRequests("123", "action"));
+            sessionFactoryManager.getSessionFactory().openSession();
+            result = session;
+            session.createQuery("from InfraActiveRequests where vnfId = :vnfId and action = :action and (requestStatus = 'PENDING' or requestStatus = 'IN_PROGRESS' or requestStatus = 'TIMEOUT') and requestType = :requestType ORDER BY startTime DESC");
+            result = query;
+            query.list();
+            result = Arrays.asList(new InfraActiveRequests("123", "action"));
         }};
         assertEquals("123",
                 requestsDatabase.checkDuplicateByVnfId("vnfname",
@@ -194,9 +220,12 @@ public class RequestsDatabaseTest {
                                   @Mocked Session session,
                                   @Mocked Query query) throws Exception {
         new Expectations() {{
-            sessionFactoryManager.getSessionFactory().openSession(); result = session;
-            session.createQuery("FROM SiteStatus WHERE siteName = :site_name"); result = query;
-            query.uniqueResult(); result = new SiteStatus();
+            sessionFactoryManager.getSessionFactory().openSession();
+            result = session;
+            session.createQuery("FROM SiteStatus WHERE siteName = :site_name");
+            result = query;
+            query.uniqueResult();
+            result = new SiteStatus();
         }};
         assertEquals(SiteStatus.class,
                 requestsDatabase.getSiteStatus("site").getClass());
@@ -207,9 +236,12 @@ public class RequestsDatabaseTest {
                                      @Mocked Session session,
                                      @Mocked Query query) throws Exception {
         new Expectations() {{
-            sessionFactoryManager.getSessionFactory().openSession(); result = session;
-            session.createQuery("FROM SiteStatus WHERE siteName = :site_name"); result = query;
-            query.uniqueResult(); result = new SiteStatus();
+            sessionFactoryManager.getSessionFactory().openSession();
+            result = session;
+            session.createQuery("FROM SiteStatus WHERE siteName = :site_name");
+            result = query;
+            query.uniqueResult();
+            result = new SiteStatus();
         }};
         requestsDatabase.updateSiteStatus("site", true);
     }
@@ -219,9 +251,12 @@ public class RequestsDatabaseTest {
                                        @Mocked Session session,
                                        @Mocked Query query) throws Exception {
         new Expectations() {{
-            sessionFactoryManager.getSessionFactory().openSession(); result = session;
-            session.createQuery("FROM OperationStatus WHERE SERVICE_ID = :service_id and OPERATION_ID = :operation_id"); result = query;
-            query.uniqueResult(); result = new OperationStatus();
+            sessionFactoryManager.getSessionFactory().openSession();
+            result = session;
+            session.createQuery("FROM OperationStatus WHERE SERVICE_ID = :service_id and OPERATION_ID = :operation_id");
+            result = query;
+            query.uniqueResult();
+            result = new OperationStatus();
         }};
         assertEquals(OperationStatus.class,
                 requestsDatabase.getOperationStatus("123",
@@ -233,9 +268,12 @@ public class RequestsDatabaseTest {
                                                   @Mocked Session session,
                                                   @Mocked Query query) throws Exception {
         new Expectations() {{
-            sessionFactoryManager.getSessionFactory().openSession(); result = session;
-            session.createQuery("FROM OperationStatus WHERE SERVICE_ID = :service_id"); result = query;
-            query.uniqueResult(); result = new OperationStatus();
+            sessionFactoryManager.getSessionFactory().openSession();
+            result = session;
+            session.createQuery("FROM OperationStatus WHERE SERVICE_ID = :service_id");
+            result = query;
+            query.uniqueResult();
+            result = new OperationStatus();
         }};
         assertEquals(OperationStatus.class,
                 requestsDatabase.getOperationStatusByServiceId("123").getClass());
@@ -246,9 +284,12 @@ public class RequestsDatabaseTest {
                                                     @Mocked Session session,
                                                     @Mocked Query query) throws Exception {
         new Expectations() {{
-            sessionFactoryManager.getSessionFactory().openSession(); result = session;
-            session.createQuery("FROM OperationStatus WHERE SERVICE_NAME = :service_name"); result = query;
-            query.uniqueResult(); result = new OperationStatus();
+            sessionFactoryManager.getSessionFactory().openSession();
+            result = session;
+            session.createQuery("FROM OperationStatus WHERE SERVICE_NAME = :service_name");
+            result = query;
+            query.uniqueResult();
+            result = new OperationStatus();
         }};
         assertEquals(OperationStatus.class,
                 requestsDatabase.getOperationStatusByServiceName("servicename").getClass());
@@ -259,9 +300,12 @@ public class RequestsDatabaseTest {
                                           @Mocked Session session,
                                           @Mocked Query query) throws Exception {
         new Expectations() {{
-            sessionFactoryManager.getSessionFactory().openSession(); result = session;
-            session.createQuery("FROM OperationStatus WHERE SERVICE_ID = :service_id and OPERATION_ID = :operation_id"); result = query;
-            query.uniqueResult(); result = new OperationStatus();
+            sessionFactoryManager.getSessionFactory().openSession();
+            result = session;
+            session.createQuery("FROM OperationStatus WHERE SERVICE_ID = :service_id and OPERATION_ID = :operation_id");
+            result = query;
+            query.uniqueResult();
+            result = new OperationStatus();
         }};
         requestsDatabase.updateOperationStatus(new OperationStatus());
     }
@@ -271,9 +315,12 @@ public class RequestsDatabaseTest {
                                                @Mocked Session session,
                                                @Mocked Query query) throws Exception {
         new Expectations() {{
-            sessionFactoryManager.getSessionFactory().openSession(); result = session;
-            session.createQuery("FROM ResourceOperationStatus WHERE serviceId = :service_id and operationId = :operation_id and resourceTemplateUUID= :uuid"); result = query;
-            query.uniqueResult(); result = new ResourceOperationStatus();
+            sessionFactoryManager.getSessionFactory().openSession();
+            result = session;
+            session.createQuery("FROM ResourceOperationStatus WHERE serviceId = :service_id and operationId = :operation_id and resourceTemplateUUID= :uuid");
+            result = query;
+            query.uniqueResult();
+            result = new ResourceOperationStatus();
         }};
         assertEquals(ResourceOperationStatus.class,
                 requestsDatabase.getResourceOperationStatus("serviceId",

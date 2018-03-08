@@ -23,6 +23,7 @@ package org.openecomp.mso.bpmn.core.internal;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Optional;
+
 import org.junit.Test;
 
 public class VariableNameExtractorTest {

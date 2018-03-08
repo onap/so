@@ -28,27 +28,27 @@ import org.openecomp.mso.requestsdb.InfraRequests;
 
 public class VolumeInfoHandlerTest {
 
-	VolumeInfoHandler handler = new VolumeInfoHandler();
-	
-	@Test
-	public void fillVnfRequestTestV3(){
-		VolumeRequest qr = new VolumeRequest();
-		InfraRequests ar = new InfraRequests();
-		ar.setVnfId("2990102");
-		ar.setVnfParams("test");
-		handler.fillVolumeRequest(qr, ar, "v3");
-		String vnfid = (String)qr.getVolumeParams();
-		assertTrue(vnfid.equals("test"));
-	}
-	
-	@Test
-	public void fillVnfRequestTestV2(){
-		VolumeRequest qr = new VolumeRequest();
-		InfraRequests ar = new InfraRequests();
-		ar.setVnfId("2990102");
-		ar.setVnfParams("test");
-		handler.fillVolumeRequest(qr, ar, "v2");
-		String vnfid = (String)qr.getVolumeParams();
-		assertTrue(vnfid.equals("test"));
-	}
+    VolumeInfoHandler handler = new VolumeInfoHandler();
+
+    @Test
+    public void fillVnfRequestTestV3() {
+        VolumeRequest qr = new VolumeRequest();
+        InfraRequests ar = new InfraRequests();
+        ar.setVnfId("2990102");
+        ar.setVnfParams("test");
+        handler.fillVolumeRequest(qr, ar, "v3");
+        String vnfid = (String) qr.getVolumeParams();
+        assertTrue(vnfid.equals("test"));
+    }
+
+    @Test
+    public void fillVnfRequestTestV2() {
+        VolumeRequest qr = new VolumeRequest();
+        InfraRequests ar = new InfraRequests();
+        ar.setVnfId("2990102");
+        ar.setVnfParams("test");
+        handler.fillVolumeRequest(qr, ar, "v2");
+        String vnfid = (String) qr.getVolumeParams();
+        assertTrue(vnfid.equals("test"));
+    }
 }

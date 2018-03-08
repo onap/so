@@ -30,14 +30,15 @@ import org.codehaus.jackson.map.JsonDeserializer;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
-public class JsonResourceInfoDeserializer extends JsonDeserializer<List<JsonResourceInfo>>{
+public class JsonResourceInfoDeserializer extends JsonDeserializer<List<JsonResourceInfo>> {
 
-	@Override
-	public List<JsonResourceInfo> deserialize(JsonParser jp, DeserializationContext ctxt)
-			throws IOException, JsonProcessingException {
-		List<JsonResourceInfo> jsonResourceInfoList =  new ObjectMapper().readValue(jp, new TypeReference<List<JsonResourceInfo>>(){}); 
-		
-		return jsonResourceInfoList;
-	}
+    @Override
+    public List<JsonResourceInfo> deserialize(JsonParser jp, DeserializationContext ctxt)
+            throws IOException, JsonProcessingException {
+        List<JsonResourceInfo> jsonResourceInfoList = new ObjectMapper().readValue(jp, new TypeReference<List<JsonResourceInfo>>() {
+        });
+
+        return jsonResourceInfoList;
+    }
 
 }

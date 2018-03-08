@@ -36,38 +36,38 @@ import org.openecomp.mso.db.catalog.beans.NetworkResource;
 
 public class NetworkTypesHandlerTest {
 
-	NetworkTypesHandler handler = new NetworkTypesHandler();
-	
-	@Test
-	public void getNetworkTypesTest(){
-		Response resp = handler.getNetworkTypes("v2");
-		assertTrue(resp.getEntity().toString() != null);
-	}
-	
-	@Test
-	public void getNetworkTypesTest2(){
-		new MockUp<CatalogDatabase>() {
-			@Mock
-			public  List <NetworkResource>  getAllNetworkResources(){
-				return null;
-			}	
-		};
-		Response resp = handler.getNetworkTypes("v2");
-		assertTrue(resp.getEntity().toString() != null);
-	}
-	
-	@Test
-	public void getNetworkTypesTest3(){
-		List <NetworkResource> netList = new ArrayList<>();
-		new MockUp<CatalogDatabase>() {
-			@Mock
-			public  List <NetworkResource>  getAllNetworkResources(){
-				NetworkResource ns = new NetworkResource();
-				netList.add(ns);
-				return netList;
-			}	
-		};
-		Response resp = handler.getNetworkTypes("v2");
-		assertTrue(resp.getEntity().toString() != null);
-	}
+    NetworkTypesHandler handler = new NetworkTypesHandler();
+
+    @Test
+    public void getNetworkTypesTest() {
+        Response resp = handler.getNetworkTypes("v2");
+        assertTrue(resp.getEntity().toString() != null);
+    }
+
+    @Test
+    public void getNetworkTypesTest2() {
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            public List<NetworkResource> getAllNetworkResources() {
+                return null;
+            }
+        };
+        Response resp = handler.getNetworkTypes("v2");
+        assertTrue(resp.getEntity().toString() != null);
+    }
+
+    @Test
+    public void getNetworkTypesTest3() {
+        List<NetworkResource> netList = new ArrayList<>();
+        new MockUp<CatalogDatabase>() {
+            @Mock
+            public List<NetworkResource> getAllNetworkResources() {
+                NetworkResource ns = new NetworkResource();
+                netList.add(ns);
+                return netList;
+            }
+        };
+        Response resp = handler.getNetworkTypes("v2");
+        assertTrue(resp.getEntity().toString() != null);
+    }
 }
