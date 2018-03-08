@@ -22,6 +22,30 @@
       "revId": "b891c670dd6c9aa077eda493fbb1b5308fc43567",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_35b82d29",
+        "filename": "bpmn/MSOInfrastructureBPMN/src/main/java/org/openecomp/mso/bpmn/infrastructure/workflow/serviceTask/AbstractSdncOperationTask.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 991
+      },
+      "writtenOn": "2018-03-08T19:06:31Z",
+      "side": 1,
+      "message": "Done. I wonder why the unit tests didn\u0027t catch. Interesting.",
+      "parentUuid": "5a93c517_8dafbb7c",
+      "range": {
+        "startLine": 161,
+        "startChar": 25,
+        "endLine": 161,
+        "endChar": 43
+      },
+      "revId": "b891c670dd6c9aa077eda493fbb1b5308fc43567",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
