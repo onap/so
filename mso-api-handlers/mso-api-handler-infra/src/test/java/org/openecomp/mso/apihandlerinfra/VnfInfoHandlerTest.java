@@ -28,27 +28,27 @@ import org.openecomp.mso.requestsdb.InfraRequests;
 
 public class VnfInfoHandlerTest {
 
-	VnfInfoHandler handler = new VnfInfoHandler();
-	
-	@Test
-	public void fillVnfRequestTest(){
-		VnfRequest qr = new VnfRequest();
-		InfraRequests ar = new InfraRequests();
-		ar.setVnfId("2990102");
-		ar.setVnfParams("test");
-		handler.fillVnfRequest(qr, ar, "v3");
-		String vnfid = (String)qr.getVnfParams();
-		assertTrue(vnfid.equals("test"));
-	}
-	
-	@Test
-	public void fillVnfRequestTestV2(){
-		VnfRequest qr = new VnfRequest();
-		InfraRequests ar = new InfraRequests();
-		ar.setVnfId("2990102");
-		ar.setVnfParams("test");
-		handler.fillVnfRequest(qr, ar, "v2");
-		String vnfid = (String)qr.getVnfParams();
-		assertTrue(vnfid.equals("test"));
-	}
+    VnfInfoHandler handler = new VnfInfoHandler();
+
+    @Test
+    public void fillVnfRequestTest() {
+        VnfRequest qr = new VnfRequest();
+        InfraRequests ar = new InfraRequests();
+        ar.setVnfId("2990102");
+        ar.setVnfParams("test");
+        handler.fillVnfRequest(qr, ar, "v3");
+        String vnfid = (String) qr.getVnfParams();
+        assertTrue(vnfid.equals("test"));
+    }
+
+    @Test
+    public void fillVnfRequestTestV2() {
+        VnfRequest qr = new VnfRequest();
+        InfraRequests ar = new InfraRequests();
+        ar.setVnfId("2990102");
+        ar.setVnfParams("test");
+        handler.fillVnfRequest(qr, ar, "v2");
+        String vnfid = (String) qr.getVnfParams();
+        assertTrue(vnfid.equals("test"));
+    }
 }

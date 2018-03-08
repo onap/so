@@ -36,47 +36,47 @@ import org.openecomp.mso.db.catalog.beans.VnfResourceCustomization;
 
 public class VnfResourceTest {
 
-	@Test
-	public final void vnfResourceDataTest() {
+    @Test
+    public final void vnfResourceDataTest() {
 
-		VnfResource vnfResource = new VnfResource();
-		vnfResource.setCreated(new Timestamp(System.currentTimeMillis()));
-		assertTrue(vnfResource.getCreated() != null);
-		vnfResource.setDescription("description");
-		assertTrue(vnfResource.getDescription().equalsIgnoreCase("description"));
+        VnfResource vnfResource = new VnfResource();
+        vnfResource.setCreated(new Timestamp(System.currentTimeMillis()));
+        assertTrue(vnfResource.getCreated() != null);
+        vnfResource.setDescription("description");
+        assertTrue(vnfResource.getDescription().equalsIgnoreCase("description"));
 
-		vnfResource.setAicVersionMax("aicVersionMax");
-		assertTrue(vnfResource.getAicVersionMax().equalsIgnoreCase("aicVersionMax"));
+        vnfResource.setAicVersionMax("aicVersionMax");
+        assertTrue(vnfResource.getAicVersionMax().equalsIgnoreCase("aicVersionMax"));
 
-		vnfResource.setAicVersionMin("aicVersionMin");
-		assertTrue(vnfResource.getAicVersionMin().equalsIgnoreCase("aicVersionMin"));
-		vnfResource.setHeatTemplateArtifactUUId("heatTemplateArtifactUUId");
-		assertTrue(vnfResource.getHeatTemplateArtifactUUId().equalsIgnoreCase("heatTemplateArtifactUUId"));
+        vnfResource.setAicVersionMin("aicVersionMin");
+        assertTrue(vnfResource.getAicVersionMin().equalsIgnoreCase("aicVersionMin"));
+        vnfResource.setHeatTemplateArtifactUUId("heatTemplateArtifactUUId");
+        assertTrue(vnfResource.getHeatTemplateArtifactUUId().equalsIgnoreCase("heatTemplateArtifactUUId"));
 
-		vnfResource.setModelInvariantUuid("modelInvariantUuid");
-		assertTrue(vnfResource.getModelInvariantUuid().equalsIgnoreCase("modelInvariantUuid"));
-		vnfResource.setModelName("modelName");
-		assertTrue(vnfResource.getModelName().equalsIgnoreCase("modelName"));
-		vnfResource.setModelUuid("modelUuid");
-		assertTrue(vnfResource.getModelUuid().equalsIgnoreCase("modelUuid"));
-		vnfResource.setModelVersion("modelVersion");
-		assertTrue(vnfResource.getModelVersion().equalsIgnoreCase("modelVersion"));
-		vnfResource.setOrchestrationMode("orchestrationMode");
-		assertTrue(vnfResource.getOrchestrationMode().equalsIgnoreCase("orchestrationMode"));
-		vnfResource.setTemplateId("heatTemplateArtifactUUId");
-		assertTrue(vnfResource.getHeatTemplateArtifactUUId().equalsIgnoreCase("heatTemplateArtifactUUId"));
-		vnfResource.setModelInvariantUuid("modelInvariantUuid");
-		assertTrue(vnfResource.getModelInvariantUuid().equalsIgnoreCase("modelInvariantUuid"));
-		Set<VnfResourceCustomization> list = new HashSet<>();
-		list.add(new VnfResourceCustomization());
-		vnfResource.setVnfResourceCustomizations(list);
-		assertTrue(vnfResource.getVfModuleCustomizations() != null);
-		Set<VfModule> vfModules = new HashSet<>();
-		vfModules.add(new VfModule());
-		vnfResource.setVfModules(vfModules);
-		assertTrue(vnfResource.getVfModules() != null);
-//		assertTrue(vnfResource.toString() != null);
+        vnfResource.setModelInvariantUuid("modelInvariantUuid");
+        assertTrue(vnfResource.getModelInvariantUuid().equalsIgnoreCase("modelInvariantUuid"));
+        vnfResource.setModelName("modelName");
+        assertTrue(vnfResource.getModelName().equalsIgnoreCase("modelName"));
+        vnfResource.setModelUuid("modelUuid");
+        assertTrue(vnfResource.getModelUuid().equalsIgnoreCase("modelUuid"));
+        vnfResource.setModelVersion("modelVersion");
+        assertTrue(vnfResource.getModelVersion().equalsIgnoreCase("modelVersion"));
+        vnfResource.setOrchestrationMode("orchestrationMode");
+        assertTrue(vnfResource.getOrchestrationMode().equalsIgnoreCase("orchestrationMode"));
+        vnfResource.setTemplateId("heatTemplateArtifactUUId");
+        assertTrue(vnfResource.getHeatTemplateArtifactUUId().equalsIgnoreCase("heatTemplateArtifactUUId"));
+        vnfResource.setModelInvariantUuid("modelInvariantUuid");
+        assertTrue(vnfResource.getModelInvariantUuid().equalsIgnoreCase("modelInvariantUuid"));
+        Set<VnfResourceCustomization> list = new HashSet<>();
+        list.add(new VnfResourceCustomization());
+        vnfResource.setVnfResourceCustomizations(list);
+        assertTrue(vnfResource.getVfModuleCustomizations() != null);
+        Set<VfModule> vfModules = new HashSet<>();
+        vfModules.add(new VfModule());
+        vnfResource.setVfModules(vfModules);
+        assertTrue(vnfResource.getVfModules() != null);
+//      assertTrue(vnfResource.toString() != null);
 
-	}
+    }
 
 }

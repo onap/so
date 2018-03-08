@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  * ============LICENSE_END========================================================= 
- */ 
+ */
 
 package org.openecomp.mso.bpmn.common;
 
@@ -39,59 +39,59 @@ import org.openecomp.mso.bpmn.common.workflow.service.WorkflowResponse;
 
 public class WorkflowContextHolderTest {
 
-	private WorkflowContext createContext(AsynchronousResponse asyncResponse) {
-		WorkflowContextHolder contextHolder = WorkflowContextHolder.getInstance();
-		String requestId = UUID.randomUUID().toString();
-		WorkflowContext workflowContext = new WorkflowContext("testAsyncProcess",
-			requestId, asyncResponse, 1000L);
-		contextHolder.put(workflowContext);
-		return workflowContext;
-	}
+    private WorkflowContext createContext(AsynchronousResponse asyncResponse) {
+        WorkflowContextHolder contextHolder = WorkflowContextHolder.getInstance();
+        String requestId = UUID.randomUUID().toString();
+        WorkflowContext workflowContext = new WorkflowContext("testAsyncProcess",
+                requestId, asyncResponse, 1000L);
+        contextHolder.put(workflowContext);
+        return workflowContext;
+    }
 
-	@Test
-	@Ignore // BROKEN TEST (previously ignored)
-	public void testContextExpiry() throws InterruptedException {
+    @Test
+    @Ignore // BROKEN TEST (previously ignored)
+    public void testContextExpiry() throws InterruptedException {
 
-		WorkflowContextHolder contextHolder = WorkflowContextHolder.getInstance();
-		AsynchronousResponse asyncResponse = mock(AsynchronousResponse.class);
-		WorkflowContext workflowContext = createContext(asyncResponse);
-		String requestId = workflowContext.getRequestId();
-		WorkflowContext context1 = contextHolder.getWorkflowContext(requestId);
+        WorkflowContextHolder contextHolder = WorkflowContextHolder.getInstance();
+        AsynchronousResponse asyncResponse = mock(AsynchronousResponse.class);
+        WorkflowContext workflowContext = createContext(asyncResponse);
+        String requestId = workflowContext.getRequestId();
+        WorkflowContext context1 = contextHolder.getWorkflowContext(requestId);
 
-		Assert.assertNotNull(context1);
-		Assert.assertEquals(requestId, context1.getRequestId());
-		Assert.assertEquals(workflowContext.getProcessKey(), context1.getProcessKey());
-		Assert.assertEquals(workflowContext.getStartTime(), context1.getStartTime());
+        Assert.assertNotNull(context1);
+        Assert.assertEquals(requestId, context1.getRequestId());
+        Assert.assertEquals(workflowContext.getProcessKey(), context1.getProcessKey());
+        Assert.assertEquals(workflowContext.getStartTime(), context1.getStartTime());
 
-		Thread.sleep(1000);
-		//context should not be available after a second
-		WorkflowContext context2 = contextHolder.getWorkflowContext(requestId);
-		Assert.assertNull(context2);
-	}
+        Thread.sleep(1000);
+        //context should not be available after a second
+        WorkflowContext context2 = contextHolder.getWorkflowContext(requestId);
+        Assert.assertNull(context2);
+    }
 
-	@Test
-	public void testProcessCallback() {
-		WorkflowContextHolder contextHolder = WorkflowContextHolder.getInstance();
-		AsynchronousResponse asyncResponse = mock(AsynchronousResponse.class);
-		WorkflowContext workflowContext = createContext(asyncResponse);
+    @Test
+    public void testProcessCallback() {
+        WorkflowContextHolder contextHolder = WorkflowContextHolder.getInstance();
+        AsynchronousResponse asyncResponse = mock(AsynchronousResponse.class);
+        WorkflowContext workflowContext = createContext(asyncResponse);
 
-		WorkflowCallbackResponse callbackResponse = new WorkflowCallbackResponse();
-		callbackResponse.setMessage("Success");
-		callbackResponse.setResponse("Successfully processed request");
-		callbackResponse.setStatusCode(200);
+        WorkflowCallbackResponse callbackResponse = new WorkflowCallbackResponse();
+        callbackResponse.setMessage("Success");
+        callbackResponse.setResponse("Successfully processed request");
+        callbackResponse.setStatusCode(200);
 
-		Response response = contextHolder.processCallback("testAsyncProcess",
-			"process-instance-id", workflowContext.getRequestId(),
-			callbackResponse);
-		WorkflowResponse response1 = (WorkflowResponse) response.getEntity();
-		Assert.assertNotNull(response1.getMessage());
-		Assert.assertEquals(200,response1.getMessageCode());
-		Assert.assertEquals("Success", response1.getMessage());
-		Assert.assertEquals("Successfully processed request", response1.getResponse());
-		verify(asyncResponse).setResponse(any(Response.class));
+        Response response = contextHolder.processCallback("testAsyncProcess",
+                "process-instance-id", workflowContext.getRequestId(),
+                callbackResponse);
+        WorkflowResponse response1 = (WorkflowResponse) response.getEntity();
+        Assert.assertNotNull(response1.getMessage());
+        Assert.assertEquals(200, response1.getMessageCode());
+        Assert.assertEquals("Success", response1.getMessage());
+        Assert.assertEquals("Successfully processed request", response1.getResponse());
+        verify(asyncResponse).setResponse(any(Response.class));
 
-		WorkflowContext context1 = contextHolder.getWorkflowContext(workflowContext.getRequestId());
-		Assert.assertNull(context1);
-	}
+        WorkflowContext context1 = contextHolder.getWorkflowContext(workflowContext.getRequestId());
+        Assert.assertNull(context1);
+    }
 
 }

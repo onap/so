@@ -63,13 +63,13 @@ public class CatalogDatabaseTest {
     CatalogDatabase cd = null;
 
     @Before
-    public void setup(){
+    public void setup() {
         cd = CatalogDatabase.getInstance();
     }
 
 
     @Test
-    public void getAllHeatTemplatesTest(){
+    public void getAllHeatTemplatesTest() {
 
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
             @Mock
@@ -93,12 +93,12 @@ public class CatalogDatabaseTest {
             }
         };
 
-        List <HeatTemplate> list = cd.getAllHeatTemplates();
+        List<HeatTemplate> list = cd.getAllHeatTemplates();
         assertEquals(list.size(), 1);
     }
 
     @Test
-    public void getHeatTemplateByIdTest(){
+    public void getHeatTemplateByIdTest() {
 
         MockUp<Session> mockedSession = new MockUp<Session>() {
             @Mock
@@ -121,7 +121,7 @@ public class CatalogDatabaseTest {
     }
 
     @Test
-    public void getHeatTemplateByNameEmptyListTest(){
+    public void getHeatTemplateByNameEmptyListTest() {
 
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
             @Mock
@@ -150,7 +150,7 @@ public class CatalogDatabaseTest {
     }
 
     @Test
-    public void getHeatTemplateByNameTest(){
+    public void getHeatTemplateByNameTest() {
 
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
             @Mock
@@ -209,7 +209,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        HeatTemplate ht = cd.getHeatTemplate("heat123","v2");
+        HeatTemplate ht = cd.getHeatTemplate("heat123", "v2");
         assertEquals("1234-uuid", ht.getAsdcUuid());
     }
 
@@ -237,12 +237,12 @@ public class CatalogDatabaseTest {
             }
         };
 
-        HeatTemplate ht = cd.getHeatTemplate("heat123","v2");
+        HeatTemplate ht = cd.getHeatTemplate("heat123", "v2");
         assertEquals(null, ht);
     }
 
     @Test
-    public void getHeatTemplateByArtifactUuidException(){
+    public void getHeatTemplateByArtifactUuidException() {
 
         MockUp<Session> mockedSession = new MockUp<Session>() {
             @Mock
@@ -265,7 +265,7 @@ public class CatalogDatabaseTest {
     }
 
     @Test
-    public void getHeatTemplateByArtifactUuidTest(){
+    public void getHeatTemplateByArtifactUuidTest() {
 
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
 
@@ -296,7 +296,7 @@ public class CatalogDatabaseTest {
     }
 
     @Test(expected = HibernateException.class)
-    public void getHeatTemplateByArtifactUuidHibernateErrorTest(){
+    public void getHeatTemplateByArtifactUuidHibernateErrorTest() {
 
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
 
@@ -324,7 +324,7 @@ public class CatalogDatabaseTest {
     }
 
     @Test(expected = NonUniqueResultException.class)
-    public void getHeatTemplateByArtifactUuidNonUniqueResultTest(){
+    public void getHeatTemplateByArtifactUuidNonUniqueResultTest() {
 
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
 
@@ -352,7 +352,7 @@ public class CatalogDatabaseTest {
     }
 
     @Test(expected = Exception.class)
-    public void getHeatTemplateByArtifactUuidGenericExceptionTest(){
+    public void getHeatTemplateByArtifactUuidGenericExceptionTest() {
 
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
 
@@ -380,7 +380,7 @@ public class CatalogDatabaseTest {
     }
 
     @Test
-    public void getParametersForHeatTemplateTest(){
+    public void getParametersForHeatTemplateTest() {
 
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
             @Mock
@@ -410,7 +410,7 @@ public class CatalogDatabaseTest {
     }
 
     @Test(expected = HibernateException.class)
-    public void getParametersForHeatTemplateHibernateExceptionTest(){
+    public void getParametersForHeatTemplateHibernateExceptionTest() {
 
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
             @Mock
@@ -437,7 +437,7 @@ public class CatalogDatabaseTest {
     }
 
     @Test(expected = Exception.class)
-    public void getParametersForHeatTemplateExceptionTest(){
+    public void getParametersForHeatTemplateExceptionTest() {
 
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
             @Mock
@@ -464,7 +464,7 @@ public class CatalogDatabaseTest {
     }
 
     @Test
-    public void getHeatEnvironmentByArtifactUuidTest(){
+    public void getHeatEnvironmentByArtifactUuidTest() {
 
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
 
@@ -495,7 +495,7 @@ public class CatalogDatabaseTest {
     }
 
     @Test(expected = HibernateException.class)
-    public void getHeatEnvironmentByArtifactUuidHibernateExceptionTest(){
+    public void getHeatEnvironmentByArtifactUuidHibernateExceptionTest() {
 
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
 
@@ -523,7 +523,7 @@ public class CatalogDatabaseTest {
     }
 
     @Test(expected = Exception.class)
-    public void getHeatEnvironmentByArtifactUuidExceptionTest(){
+    public void getHeatEnvironmentByArtifactUuidExceptionTest() {
 
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
 
@@ -551,7 +551,7 @@ public class CatalogDatabaseTest {
     }
 
     @Test
-    public void getServiceByInvariantUUIDTest(){
+    public void getServiceByInvariantUUIDTest() {
 
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
 
@@ -582,7 +582,7 @@ public class CatalogDatabaseTest {
     }
 
     @Test
-    public void getServiceByInvariantUUIDEmptyResultTest(){
+    public void getServiceByInvariantUUIDEmptyResultTest() {
 
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
 
@@ -611,7 +611,7 @@ public class CatalogDatabaseTest {
     }
 
     @Test
-    public void getServiceTest(){
+    public void getServiceTest() {
 
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
 
@@ -642,7 +642,7 @@ public class CatalogDatabaseTest {
     }
 
     @Test(expected = NonUniqueResultException.class)
-    public void getServiceNoUniqueResultTest(){
+    public void getServiceNoUniqueResultTest() {
 
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
 
@@ -670,7 +670,7 @@ public class CatalogDatabaseTest {
     }
 
     @Test(expected = HibernateException.class)
-    public void getServiceHibernateExceptionTest(){
+    public void getServiceHibernateExceptionTest() {
 
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
 
@@ -698,7 +698,7 @@ public class CatalogDatabaseTest {
     }
 
     @Test(expected = Exception.class)
-    public void getServiceExceptionTest(){
+    public void getServiceExceptionTest() {
 
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
 
@@ -726,7 +726,7 @@ public class CatalogDatabaseTest {
     }
 
     @Test
-    public void getServiceByModelUUIDTest(){
+    public void getServiceByModelUUIDTest() {
 
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
 
@@ -756,7 +756,7 @@ public class CatalogDatabaseTest {
     }
 
     @Test
-    public void getService2Test(){
+    public void getService2Test() {
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
 
             @Mock
@@ -789,7 +789,7 @@ public class CatalogDatabaseTest {
     }
 
     @Test
-    public void getServiceByModelNameTest(){
+    public void getServiceByModelNameTest() {
 
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
             @Mock
@@ -819,7 +819,7 @@ public class CatalogDatabaseTest {
     }
 
     @Test
-    public void getServiceByModelNameEmptyTest(){
+    public void getServiceByModelNameEmptyTest() {
 
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
             @Mock
@@ -847,7 +847,7 @@ public class CatalogDatabaseTest {
     }
 
     @Test
-    public void getServiceByVersionAndInvariantIdTest() throws Exception{
+    public void getServiceByVersionAndInvariantIdTest() throws Exception {
 
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
 
@@ -872,12 +872,12 @@ public class CatalogDatabaseTest {
                 return mockedSession.getMockInstance();
             }
         };
-        Service service = cd.getServiceByVersionAndInvariantId("123","tetwe");
+        Service service = cd.getServiceByVersionAndInvariantId("123", "tetwe");
         assertEquals("123-uuid", service.getModelUUID());
     }
 
     @Test(expected = Exception.class)
-    public void getServiceByVersionAndInvariantIdNonUniqueResultTest() throws Exception{
+    public void getServiceByVersionAndInvariantIdNonUniqueResultTest() throws Exception {
 
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
 
@@ -900,12 +900,12 @@ public class CatalogDatabaseTest {
                 return mockedSession.getMockInstance();
             }
         };
-        Service service = cd.getServiceByVersionAndInvariantId("123","tetwe");
+        Service service = cd.getServiceByVersionAndInvariantId("123", "tetwe");
     }
 
     @Test(expected = Exception.class)
-    public void getServiceRecipeTestException() throws Exception{
-        ServiceRecipe ht = cd.getServiceRecipe("123","tetwe");
+    public void getServiceRecipeTestException() throws Exception {
+        ServiceRecipe ht = cd.getServiceRecipe("123", "tetwe");
     }
 
     @Test
@@ -932,7 +932,7 @@ public class CatalogDatabaseTest {
                 return mockedSession.getMockInstance();
             }
         };
-        ServiceRecipe serviceRecipe = cd.getServiceRecipeByServiceModelUuid("123","tetwe");
+        ServiceRecipe serviceRecipe = cd.getServiceRecipeByServiceModelUuid("123", "tetwe");
         assertEquals(1, serviceRecipe.getId());
     }
 
@@ -958,12 +958,12 @@ public class CatalogDatabaseTest {
                 return mockedSession.getMockInstance();
             }
         };
-        ServiceRecipe serviceRecipe = cd.getServiceRecipeByServiceModelUuid("123","tetwe");
+        ServiceRecipe serviceRecipe = cd.getServiceRecipeByServiceModelUuid("123", "tetwe");
         assertEquals(null, serviceRecipe);
     }
 
     @Test
-    public void getServiceRecipesTestException() throws Exception{
+    public void getServiceRecipesTestException() throws Exception {
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
             @Mock
             public List<ServiceRecipe> list() {
@@ -991,7 +991,7 @@ public class CatalogDatabaseTest {
     }
 
     @Test
-    public void getServiceRecipesEmptyTest() throws Exception{
+    public void getServiceRecipesEmptyTest() throws Exception {
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
             @Mock
             public List<ServiceRecipe> list() {
@@ -1017,12 +1017,12 @@ public class CatalogDatabaseTest {
     }
 
     @Test(expected = Exception.class)
-    public void getVnfComponentTestException() throws Exception{
-        VnfComponent ht = cd.getVnfComponent(123,"vnf");
+    public void getVnfComponentTestException() throws Exception {
+        VnfComponent ht = cd.getVnfComponent(123, "vnf");
     }
 
     @Test
-    public void getVnfResourceTest() throws Exception{
+    public void getVnfResourceTest() throws Exception {
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
             @Mock
             public List<VnfResource> list() {
@@ -1050,7 +1050,7 @@ public class CatalogDatabaseTest {
     }
 
     @Test
-    public void getVnfResourceEmptyTest() throws Exception{
+    public void getVnfResourceEmptyTest() throws Exception {
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
             @Mock
             public List<VnfResource> list() {
@@ -1100,7 +1100,7 @@ public class CatalogDatabaseTest {
                 return mockedSession.getMockInstance();
             }
         };
-        VnfResource vnfResource = cd.getVnfResource("vnf","3992");
+        VnfResource vnfResource = cd.getVnfResource("vnf", "3992");
         assertEquals("123-uuid", vnfResource.getModelUuid());
     }
 
@@ -1127,7 +1127,7 @@ public class CatalogDatabaseTest {
                 return mockedSession.getMockInstance();
             }
         };
-        VnfResource vnfResource = cd.getVnfResource("vnf","3992");
+        VnfResource vnfResource = cd.getVnfResource("vnf", "3992");
     }
 
     @Test(expected = HibernateException.class)
@@ -1153,7 +1153,7 @@ public class CatalogDatabaseTest {
                 return mockedSession.getMockInstance();
             }
         };
-        VnfResource vnfResource = cd.getVnfResource("vnf","3992");
+        VnfResource vnfResource = cd.getVnfResource("vnf", "3992");
     }
 
     @Test(expected = Exception.class)
@@ -1179,7 +1179,7 @@ public class CatalogDatabaseTest {
                 return mockedSession.getMockInstance();
             }
         };
-        VnfResource vnfResource = cd.getVnfResource("vnf","3992");
+        VnfResource vnfResource = cd.getVnfResource("vnf", "3992");
     }
 
     @Test
@@ -1209,7 +1209,7 @@ public class CatalogDatabaseTest {
         };
 
         VnfResource vnfResource = cd.getVnfResourceByModelCustomizationId("3992");
-        assertEquals("123-uuid",vnfResource.getModelUuid());
+        assertEquals("123-uuid", vnfResource.getModelUuid());
     }
 
     @Test(expected = NonUniqueResultException.class)
@@ -1268,12 +1268,12 @@ public class CatalogDatabaseTest {
 
 
     @Test(expected = Exception.class)
-    public void getServiceRecipeTest2Exception() throws Exception{
-        ServiceRecipe ht = cd.getServiceRecipe(1001,"3992");
+    public void getServiceRecipeTest2Exception() throws Exception {
+        ServiceRecipe ht = cd.getServiceRecipe(1001, "3992");
     }
 
     @Test
-    public void getVnfResourceCustomizationByModelCustomizationNameTest(){
+    public void getVnfResourceCustomizationByModelCustomizationNameTest() {
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
             @Mock
             public List<VnfResourceCustomization> list() throws Exception {
@@ -1301,7 +1301,7 @@ public class CatalogDatabaseTest {
     }
 
     @Test
-    public void getVnfResourceCustomizationByModelCustomizationNameEmptyTest(){
+    public void getVnfResourceCustomizationByModelCustomizationNameEmptyTest() {
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
             @Mock
             public List<VnfResourceCustomization> list() throws Exception {
@@ -1327,11 +1327,11 @@ public class CatalogDatabaseTest {
     }
 
     @Test
-    public void getVnfResourceByModelInvariantIdTest(){
+    public void getVnfResourceByModelInvariantIdTest() {
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
 
             @Mock
-            public Object uniqueResult(){
+            public Object uniqueResult() {
                 VnfResource vnfResource = new VnfResource();
                 vnfResource.setModelUuid("123-uuid");
                 return vnfResource;
@@ -1356,11 +1356,11 @@ public class CatalogDatabaseTest {
     }
 
     @Test(expected = NonUniqueResultException.class)
-    public void getVnfResourceByModelInvariantIdNURExceptionTest(){
+    public void getVnfResourceByModelInvariantIdNURExceptionTest() {
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
 
             @Mock
-            public Object uniqueResult(){
+            public Object uniqueResult() {
                 throw new NonUniqueResultException(-1);
             }
         };
@@ -1382,11 +1382,11 @@ public class CatalogDatabaseTest {
     }
 
     @Test(expected = HibernateException.class)
-    public void getVnfResourceByModelInvariantIdHibernateExceptionTest(){
+    public void getVnfResourceByModelInvariantIdHibernateExceptionTest() {
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
 
             @Mock
-            public Object uniqueResult(){
+            public Object uniqueResult() {
                 throw new HibernateException("hibernate exception");
             }
         };
@@ -1408,7 +1408,7 @@ public class CatalogDatabaseTest {
     }
 
     @Test(expected = Exception.class)
-    public void getVnfResourceByModelInvariantIdExceptionTest(){
+    public void getVnfResourceByModelInvariantIdExceptionTest() {
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
 
             @Mock
@@ -1434,12 +1434,12 @@ public class CatalogDatabaseTest {
     }
 
     @Test(expected = Exception.class)
-    public void getVnfResourceByIdTestException(){
+    public void getVnfResourceByIdTestException() {
         VnfResource vnf = cd.getVnfResourceById(19299);
     }
 
     @Test
-    public void getVfModuleModelName(){
+    public void getVfModuleModelName() {
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
             @Mock
             public List<VfModule> list() throws Exception {
@@ -1467,7 +1467,7 @@ public class CatalogDatabaseTest {
     }
 
     @Test
-    public void getVfModuleModelNameExceptionTest(){
+    public void getVfModuleModelNameExceptionTest() {
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
             @Mock
             public List<VfModule> list() throws Exception {
@@ -1518,7 +1518,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        VfModule vfModule = cd.getVfModuleModelName("tetes","4kidsl");
+        VfModule vfModule = cd.getVfModuleModelName("tetes", "4kidsl");
         assertEquals("123-uuid", vfModule.getModelUUID());
     }
 
@@ -1546,7 +1546,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        VfModule vfModule = cd.getVfModuleModelName("tetes","4kidsl");
+        VfModule vfModule = cd.getVfModuleModelName("tetes", "4kidsl");
     }
 
     @Test(expected = HibernateException.class)
@@ -1573,7 +1573,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        VfModule vfModule = cd.getVfModuleModelName("tetes","4kidsl");
+        VfModule vfModule = cd.getVfModuleModelName("tetes", "4kidsl");
     }
 
     @Test(expected = Exception.class)
@@ -1600,11 +1600,11 @@ public class CatalogDatabaseTest {
             }
         };
 
-        VfModule vfModule = cd.getVfModuleModelName("tetes","4kidsl");
+        VfModule vfModule = cd.getVfModuleModelName("tetes", "4kidsl");
     }
 
     @Test
-    public void ggetVfModuleCustomizationByModelNameTest(){
+    public void ggetVfModuleCustomizationByModelNameTest() {
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
             @Mock
             public List<VfModuleCustomization> list() throws Exception {
@@ -1632,7 +1632,7 @@ public class CatalogDatabaseTest {
     }
 
     @Test
-    public void ggetVfModuleCustomizationByModelNameEmptyTest(){
+    public void ggetVfModuleCustomizationByModelNameEmptyTest() {
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
             @Mock
             public List<VfModuleCustomization> list() throws Exception {
@@ -1658,7 +1658,7 @@ public class CatalogDatabaseTest {
     }
 
     @Test
-    public void getNetworkResourceTest(){
+    public void getNetworkResourceTest() {
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
             @Mock
             public List<NetworkResource> list() throws Exception {
@@ -1686,7 +1686,7 @@ public class CatalogDatabaseTest {
     }
 
     @Test
-    public void getNetworkResourceTestEmptyException(){
+    public void getNetworkResourceTestEmptyException() {
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
             @Mock
             public List<NetworkResource> list() throws Exception {
@@ -1712,7 +1712,7 @@ public class CatalogDatabaseTest {
     }
 
     @Test
-    public void getVnfRecipeTest(){
+    public void getVnfRecipeTest() {
 
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
             @Mock
@@ -1737,12 +1737,12 @@ public class CatalogDatabaseTest {
             }
         };
 
-        VnfRecipe vnfRecipe = cd.getVnfRecipe("tetes","ergfedrf","4993493");
+        VnfRecipe vnfRecipe = cd.getVnfRecipe("tetes", "ergfedrf", "4993493");
         assertEquals("123-id", vnfRecipe.getVfModuleId());
     }
 
     @Test
-    public void getVnfRecipeEmptyTest(){
+    public void getVnfRecipeEmptyTest() {
 
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
             @Mock
@@ -1765,12 +1765,12 @@ public class CatalogDatabaseTest {
             }
         };
 
-        VnfRecipe vnfRecipe = cd.getVnfRecipe("tetes","ergfedrf","4993493");
+        VnfRecipe vnfRecipe = cd.getVnfRecipe("tetes", "ergfedrf", "4993493");
         assertEquals(null, vnfRecipe);
     }
 
     @Test
-    public void getVnfRecipe2Test(){
+    public void getVnfRecipe2Test() {
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
             @Mock
             public List<VnfRecipe> list() throws Exception {
@@ -1793,12 +1793,12 @@ public class CatalogDatabaseTest {
                 return mockedSession.getMockInstance();
             }
         };
-        VnfRecipe vnfRecipe = cd.getVnfRecipe("tetes","4993493");
+        VnfRecipe vnfRecipe = cd.getVnfRecipe("tetes", "4993493");
         assertEquals(1, vnfRecipe.getId());
     }
 
     @Test
-    public void getVnfRecipe2EmptyTest(){
+    public void getVnfRecipe2EmptyTest() {
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
             @Mock
             public List<VnfRecipe> list() throws Exception {
@@ -1819,12 +1819,12 @@ public class CatalogDatabaseTest {
                 return mockedSession.getMockInstance();
             }
         };
-        VnfRecipe vnfRecipe = cd.getVnfRecipe("tetes","4993493");
+        VnfRecipe vnfRecipe = cd.getVnfRecipe("tetes", "4993493");
         assertEquals(null, vnfRecipe);
     }
 
     @Test
-    public void getVnfRecipeByVfModuleIdTest(){
+    public void getVnfRecipeByVfModuleIdTest() {
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
             @Mock
             public List<VnfRecipe> list() throws Exception {
@@ -1848,12 +1848,12 @@ public class CatalogDatabaseTest {
             }
         };
 
-        VnfRecipe vnfRecipe = cd.getVnfRecipeByVfModuleId("tetes","4993493","vnf");
+        VnfRecipe vnfRecipe = cd.getVnfRecipeByVfModuleId("tetes", "4993493", "vnf");
         assertEquals(1, vnfRecipe.getId());
     }
 
     @Test
-    public void getVnfRecipeByVfModuleIdEmptyTest(){
+    public void getVnfRecipeByVfModuleIdEmptyTest() {
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
             @Mock
             public List<VnfRecipe> list() throws Exception {
@@ -1875,21 +1875,22 @@ public class CatalogDatabaseTest {
             }
         };
 
-        VnfRecipe vnfRecipe = cd.getVnfRecipeByVfModuleId("tetes","4993493","vnf");
+        VnfRecipe vnfRecipe = cd.getVnfRecipeByVfModuleId("tetes", "4993493", "vnf");
         assertEquals(null, vnfRecipe);
     }
 
     @Test(expected = Exception.class)
-    public void getVfModuleTypeTestException(){
+    public void getVfModuleTypeTestException() {
         VfModule vnf = cd.getVfModuleType("4993493");
     }
 
     @Test(expected = Exception.class)
-    public void getVfModuleType2TestException(){
-        VfModule vnf = cd.getVfModuleType("4993493","vnf");
+    public void getVfModuleType2TestException() {
+        VfModule vnf = cd.getVfModuleType("4993493", "vnf");
     }
+
     @Test
-    public void getVnfResourceByServiceUuidTest(){
+    public void getVnfResourceByServiceUuidTest() {
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
 
             @Mock
@@ -1918,7 +1919,7 @@ public class CatalogDatabaseTest {
     }
 
     @Test(expected = NonUniqueResultException.class)
-    public void getVnfResourceByServiceUuidNURExceptionTest(){
+    public void getVnfResourceByServiceUuidNURExceptionTest() {
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
 
             @Mock
@@ -1944,7 +1945,7 @@ public class CatalogDatabaseTest {
     }
 
     @Test(expected = HibernateException.class)
-    public void getVnfResourceByServiceUuidHibernateExceptionTest(){
+    public void getVnfResourceByServiceUuidHibernateExceptionTest() {
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
 
             @Mock
@@ -1970,7 +1971,7 @@ public class CatalogDatabaseTest {
     }
 
     @Test(expected = Exception.class)
-    public void getVnfResourceByServiceUuidExceptionTest(){
+    public void getVnfResourceByServiceUuidExceptionTest() {
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
 
             @Mock
@@ -1996,7 +1997,7 @@ public class CatalogDatabaseTest {
     }
 
     @Test
-    public void getVnfResourceByVnfUuidTest(){
+    public void getVnfResourceByVnfUuidTest() {
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
 
             @Mock
@@ -2026,7 +2027,7 @@ public class CatalogDatabaseTest {
     }
 
     @Test(expected = NonUniqueResultException.class)
-    public void getVnfResourceByVnfUuidNURExceptionTest(){
+    public void getVnfResourceByVnfUuidNURExceptionTest() {
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
 
             @Mock
@@ -2053,7 +2054,7 @@ public class CatalogDatabaseTest {
     }
 
     @Test(expected = HibernateException.class)
-    public void getVnfResourceByVnfUuidHibernateExceptionTest(){
+    public void getVnfResourceByVnfUuidHibernateExceptionTest() {
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
 
             @Mock
@@ -2080,7 +2081,7 @@ public class CatalogDatabaseTest {
     }
 
     @Test(expected = Exception.class)
-    public void getVnfResourceByVnfUuidExceptionTest(){
+    public void getVnfResourceByVnfUuidExceptionTest() {
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
 
             @Mock
@@ -2107,7 +2108,7 @@ public class CatalogDatabaseTest {
     }
 
     @Test
-    public void getVfModuleByModelInvariantUuidTest(){
+    public void getVfModuleByModelInvariantUuidTest() {
 
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
 
@@ -2138,7 +2139,7 @@ public class CatalogDatabaseTest {
     }
 
     @Test
-    public void getVfModuleByModelInvariantUuidEmptyTest(){
+    public void getVfModuleByModelInvariantUuidEmptyTest() {
 
         MockUp<Query> mockUpQuery = new MockUp<Query>() {
 
@@ -2167,370 +2168,450 @@ public class CatalogDatabaseTest {
     }
 
     @Test(expected = Exception.class)
-    public void getVfModuleByModelCustomizationUuidTestException(){
+    public void getVfModuleByModelCustomizationUuidTestException() {
         VfModuleCustomization vnf = cd.getVfModuleByModelCustomizationUuid("4993493");
     }
+
     @Test(expected = Exception.class)
-    public void getVfModuleByModelInvariantUuidAndModelVersionTestException(){
-        VfModule vnf = cd.getVfModuleByModelInvariantUuidAndModelVersion("4993493","vnf");
+    public void getVfModuleByModelInvariantUuidAndModelVersionTestException() {
+        VfModule vnf = cd.getVfModuleByModelInvariantUuidAndModelVersion("4993493", "vnf");
     }
+
     @Test(expected = Exception.class)
-    public void getVfModuleCustomizationByModelCustomizationIdTestException(){
+    public void getVfModuleCustomizationByModelCustomizationIdTestException() {
         VfModuleCustomization vnf = cd.getVfModuleCustomizationByModelCustomizationId("4993493");
     }
+
     @Test(expected = Exception.class)
-    public void getVfModuleByModelUuidTestException(){
+    public void getVfModuleByModelUuidTestException() {
         VfModule vnf = cd.getVfModuleByModelUuid("4993493");
     }
+
     @Test(expected = Exception.class)
-    public void getVnfResourceCustomizationByModelCustomizationUuidTestException(){
+    public void getVnfResourceCustomizationByModelCustomizationUuidTestException() {
         VnfResourceCustomization vnf = cd.getVnfResourceCustomizationByModelCustomizationUuid("4993493");
     }
+
     @Test(expected = Exception.class)
-    public void getVnfResourceCustomizationByModelVersionIdTestException(){
+    public void getVnfResourceCustomizationByModelVersionIdTestException() {
         VnfResourceCustomization vnf = cd.getVnfResourceCustomizationByModelVersionId("4993493");
     }
+
     @Test(expected = Exception.class)
-    public void getVfModuleByModelCustomizationIdAndVersionTestException(){
-        cd.getVfModuleByModelCustomizationIdAndVersion("4993493","test");
+    public void getVfModuleByModelCustomizationIdAndVersionTestException() {
+        cd.getVfModuleByModelCustomizationIdAndVersion("4993493", "test");
     }
+
     @Test(expected = Exception.class)
-    public void getVfModuleByModelCustomizationIdModelVersionAndModelInvariantIdTestException(){
-        cd.getVfModuleByModelCustomizationIdModelVersionAndModelInvariantId("4993493","vnf","test");
+    public void getVfModuleByModelCustomizationIdModelVersionAndModelInvariantIdTestException() {
+        cd.getVfModuleByModelCustomizationIdModelVersionAndModelInvariantId("4993493", "vnf", "test");
     }
+
     @Test(expected = Exception.class)
-    public void getVnfResourceCustomizationByModelInvariantIdTest(){
-        cd.getVnfResourceCustomizationByModelInvariantId("4993493","vnf","test");
+    public void getVnfResourceCustomizationByModelInvariantIdTest() {
+        cd.getVnfResourceCustomizationByModelInvariantId("4993493", "vnf", "test");
     }
+
     @Test(expected = Exception.class)
-    public void getVfModuleCustomizationByVnfModuleCustomizationUuidTest(){
+    public void getVfModuleCustomizationByVnfModuleCustomizationUuidTest() {
         cd.getVfModuleCustomizationByVnfModuleCustomizationUuid("4993493");
     }
+
     @Test(expected = Exception.class)
-    public void getVnfResourceCustomizationByVnfModelCustomizationNameAndModelVersionIdTest(){
-        cd.getVnfResourceCustomizationByVnfModelCustomizationNameAndModelVersionId("4993493","test");
+    public void getVnfResourceCustomizationByVnfModelCustomizationNameAndModelVersionIdTest() {
+        cd.getVnfResourceCustomizationByVnfModelCustomizationNameAndModelVersionId("4993493", "test");
     }
+
     @Test(expected = Exception.class)
-    public void getAllVfModuleCustomizationstest(){
+    public void getAllVfModuleCustomizationstest() {
         cd.getAllVfModuleCustomizations("4993493");
     }
+
     @Test(expected = Exception.class)
-    public void getVnfResourceByModelUuidTest(){
+    public void getVnfResourceByModelUuidTest() {
         cd.getVnfResourceByModelUuid("4993493");
     }
+
     @Test(expected = Exception.class)
-    public void getVnfResCustomToVfModuleTest(){
-        cd.getVnfResCustomToVfModule("4993493","test");
+    public void getVnfResCustomToVfModuleTest() {
+        cd.getVnfResCustomToVfModule("4993493", "test");
     }
+
     @Test(expected = Exception.class)
-    public void getVfModulesForVnfResourceTest(){
+    public void getVfModulesForVnfResourceTest() {
         VnfResource vnfResource = new VnfResource();
         vnfResource.setModelUuid("48839");
         cd.getVfModulesForVnfResource(vnfResource);
     }
+
     @Test(expected = Exception.class)
-    public void getVfModulesForVnfResource2Test(){
+    public void getVfModulesForVnfResource2Test() {
         cd.getVfModulesForVnfResource("4993493");
     }
+
     @Test(expected = Exception.class)
-    public void getServiceByUuidTest(){
+    public void getServiceByUuidTest() {
         cd.getServiceByUuid("4993493");
     }
+
     @Test(expected = Exception.class)
-    public void getNetworkResourceById2Test(){
+    public void getNetworkResourceById2Test() {
         cd.getNetworkResourceById(4993493);
     }
+
     @Test(expected = Exception.class)
-    public void getNetworkResourceByIdTest(){
+    public void getNetworkResourceByIdTest() {
         cd.getVfModuleTypeByUuid("4993493");
     }
+
     @Test
-    public void isEmptyOrNullTest(){
+    public void isEmptyOrNullTest() {
         boolean is = cd.isEmptyOrNull("4993493");
         assertFalse(is);
     }
+
     @Test(expected = Exception.class)
-    public void getSTRTest(){
-        cd.getSTR("4993493","test","vnf");
+    public void getSTRTest() {
+        cd.getSTR("4993493", "test", "vnf");
     }
+
     @Test(expected = Exception.class)
-    public void getVRCtoVFMCTest(){
-        cd.getVRCtoVFMC("4993493","388492");
+    public void getVRCtoVFMCTest() {
+        cd.getVRCtoVFMC("4993493", "388492");
     }
+
     @Test(expected = Exception.class)
-    public void getVfModuleTypeByUuidTestException(){
+    public void getVfModuleTypeByUuidTestException() {
         cd.getVfModuleTypeByUuid("4993493");
     }
 
     @Test(expected = Exception.class)
-    public void getTempNetworkHeatTemplateLookupTest(){
+    public void getTempNetworkHeatTemplateLookupTest() {
         cd.getTempNetworkHeatTemplateLookup("4993493");
     }
 
     @Test(expected = Exception.class)
-    public void getAllNetworksByServiceModelUuidTest(){
+    public void getAllNetworksByServiceModelUuidTest() {
         cd.getAllNetworksByServiceModelUuid("4993493");
     }
+
     @Test(expected = Exception.class)
-    public void getAllNetworksByServiceModelInvariantUuidTest(){
+    public void getAllNetworksByServiceModelInvariantUuidTest() {
         cd.getAllNetworksByServiceModelInvariantUuid("4993493");
     }
+
     @Test(expected = Exception.class)
-    public void getAllNetworksByServiceModelInvariantUuid2Test(){
-        cd.getAllNetworksByServiceModelInvariantUuid("4993493","test");
+    public void getAllNetworksByServiceModelInvariantUuid2Test() {
+        cd.getAllNetworksByServiceModelInvariantUuid("4993493", "test");
     }
+
     @Test(expected = Exception.class)
-    public void getAllNetworksByNetworkModelCustomizationUuidTest(){
+    public void getAllNetworksByNetworkModelCustomizationUuidTest() {
         cd.getAllNetworksByNetworkModelCustomizationUuid("4993493");
     }
+
     @Test(expected = Exception.class)
-    public void getAllNetworksByNetworkTypeTest(){
+    public void getAllNetworksByNetworkTypeTest() {
         cd.getAllNetworksByNetworkType("4993493");
     }
+
     @Test(expected = Exception.class)
-    public void getAllVfmcForVrcTest(){
+    public void getAllVfmcForVrcTest() {
         VnfResourceCustomization re = new VnfResourceCustomization();
         re.setModelCustomizationUuid("377483");
         cd.getAllVfmcForVrc(re);
     }
+
     @Test(expected = Exception.class)
-    public void getAllVnfsByServiceModelUuidTest(){
+    public void getAllVnfsByServiceModelUuidTest() {
         cd.getAllVnfsByServiceModelUuid("4993493");
     }
+
     @Test(expected = Exception.class)
-    public void getAllVnfsByServiceModelInvariantUuidTest(){
+    public void getAllVnfsByServiceModelInvariantUuidTest() {
         cd.getAllVnfsByServiceModelInvariantUuid("4993493");
     }
+
     @Test(expected = Exception.class)
-    public void getAllVnfsByServiceModelInvariantUuid2Test(){
-        cd.getAllVnfsByServiceModelInvariantUuid("4993493","test");
+    public void getAllVnfsByServiceModelInvariantUuid2Test() {
+        cd.getAllVnfsByServiceModelInvariantUuid("4993493", "test");
     }
+
     @Test(expected = Exception.class)
-    public void getAllVnfsByServiceNameTest(){
-        cd.getAllVnfsByServiceName("4993493","test");
+    public void getAllVnfsByServiceNameTest() {
+        cd.getAllVnfsByServiceName("4993493", "test");
     }
+
     @Test(expected = Exception.class)
-    public void getAllVnfsByServiceName2Test(){
+    public void getAllVnfsByServiceName2Test() {
         cd.getAllVnfsByServiceName("4993493");
     }
+
     @Test(expected = Exception.class)
-    public void getAllVnfsByVnfModelCustomizationUuidTest(){
+    public void getAllVnfsByVnfModelCustomizationUuidTest() {
         cd.getAllVnfsByVnfModelCustomizationUuid("4993493");
     }
+
     @Test(expected = Exception.class)
-    public void getAllAllottedResourcesByServiceModelUuidTest(){
+    public void getAllAllottedResourcesByServiceModelUuidTest() {
         cd.getAllAllottedResourcesByServiceModelUuid("4993493");
     }
+
     @Test(expected = Exception.class)
-    public void getAllAllottedResourcesByServiceModelInvariantUuidTest(){
+    public void getAllAllottedResourcesByServiceModelInvariantUuidTest() {
         cd.getAllAllottedResourcesByServiceModelInvariantUuid("4993493");
     }
+
     @Test(expected = Exception.class)
-    public void getAllAllottedResourcesByServiceModelInvariantUuid2Test(){
-        cd.getAllAllottedResourcesByServiceModelInvariantUuid("4993493","test");
+    public void getAllAllottedResourcesByServiceModelInvariantUuid2Test() {
+        cd.getAllAllottedResourcesByServiceModelInvariantUuid("4993493", "test");
     }
+
     @Test(expected = Exception.class)
-    public void getAllAllottedResourcesByArModelCustomizationUuidTest(){
+    public void getAllAllottedResourcesByArModelCustomizationUuidTest() {
         cd.getAllAllottedResourcesByArModelCustomizationUuid("4993493");
     }
+
     @Test(expected = Exception.class)
-    public void getAllottedResourceByModelUuidTest(){
+    public void getAllottedResourceByModelUuidTest() {
         cd.getAllottedResourceByModelUuid("4993493");
     }
+
     @Test(expected = Exception.class)
-    public void getAllResourcesByServiceModelUuidTest(){
+    public void getAllResourcesByServiceModelUuidTest() {
         cd.getAllResourcesByServiceModelUuid("4993493");
     }
+
     @Test(expected = Exception.class)
-    public void getAllResourcesByServiceModelInvariantUuidTest(){
+    public void getAllResourcesByServiceModelInvariantUuidTest() {
         cd.getAllResourcesByServiceModelInvariantUuid("4993493");
     }
 
     @Test(expected = Exception.class)
-    public void getAllResourcesByServiceModelInvariantUuid2Test(){
-        cd.getAllResourcesByServiceModelInvariantUuid("4993493","test");
-    }
-    @Test(expected = Exception.class)
-    public void getSingleNetworkByModelCustomizationUuidTest(){
-        cd.getSingleNetworkByModelCustomizationUuid("4993493");
-    }
-    @Test(expected = Exception.class)
-    public void getSingleAllottedResourceByModelCustomizationUuidTest(){
-        cd.getSingleAllottedResourceByModelCustomizationUuid("4993493");
-    }
-    @Test(expected = Exception.class)
-    public void getVfModuleRecipeTest(){
-        cd.getVfModuleRecipe("4993493","test","get");
-    }
-    @Test(expected = Exception.class)
-    public void getVfModuleTest(){
-        cd.getVfModule("4993493","test","get","v2","vnf");
-    }
-    @Test(expected = Exception.class)
-    public void getVnfComponentsRecipeTest(){
-        cd.getVnfComponentsRecipe("4993493","test","v2","vnf","get","3992");
-    }
-    @Test(expected = Exception.class)
-    public void getVnfComponentsRecipeByVfModuleTest(){
-        List <VfModule> resultList = new ArrayList<>();
-        VfModule m = new VfModule();
-        resultList.add(m);
-        cd.getVnfComponentsRecipeByVfModule(resultList,"4993493");
-    }
-    @Test(expected = Exception.class)
-    public void getAllVnfResourcesTest(){
-        cd.getAllVnfResources();
-    }
-    @Test(expected = Exception.class)
-    public void getVnfResourcesByRoleTest(){
-        cd.getVnfResourcesByRole("4993493");
-    }
-    @Test(expected = Exception.class)
-    public void getVnfResourceCustomizationsByRoleTest(){
-        cd.getVnfResourceCustomizationsByRole("4993493");
-    }
-    @Test(expected = Exception.class)
-    public void getAllNetworkResourcesTest(){
-        cd.getAllNetworkResources();
-    }
-    @Test(expected = Exception.class)
-    public void getAllNetworkResourceCustomizationsTest(){
-        cd.getAllNetworkResourceCustomizations();
-    }
-    @Test(expected = Exception.class)
-    public void getAllVfModulesTest(){
-        cd.getAllVfModules();
-    }
-    @Test(expected = Exception.class)
-    public void getAllVfModuleCustomizationsTest(){
-        cd.getAllVfModuleCustomizations();
-    }
-    @Test(expected = Exception.class)
-    public void getAllHeatEnvironmentTest(){
-        cd.getAllHeatEnvironment();
-    }
-    @Test(expected = Exception.class)
-    public void getHeatEnvironment2Test(){
-        cd.getHeatEnvironment(4993493);
-    }
-    @Test(expected = Exception.class)
-    public void getNestedTemplatesTest(){
-        cd.getNestedTemplates(4993493);
-    }
-    @Test(expected = Exception.class)
-    public void getNestedTemplates2Test(){
-        cd.getNestedTemplates("4993493");
-    }
-    @Test(expected = Exception.class)
-    public void getHeatFilesTest(){
-        cd.getHeatFiles(4993493);
-    }
-    @Test(expected = Exception.class)
-    public void getVfModuleToHeatFilesEntryTest(){
-        cd.getVfModuleToHeatFilesEntry("4993493","49959499");
-    }
-    @Test(expected = Exception.class)
-    public void getServiceToResourceCustomization(){
-        cd.getServiceToResourceCustomization("4993493","599349","49900");
-    }
-    @Test(expected = Exception.class)
-    public void getHeatFilesForVfModuleTest(){
-        cd.getHeatFilesForVfModule("4993493");
-    }
-    @Test(expected = Exception.class)
-    public void getHeatTemplateTest(){
-        cd.getHeatTemplate("4993493","test","heat");
+    public void getAllResourcesByServiceModelInvariantUuid2Test() {
+        cd.getAllResourcesByServiceModelInvariantUuid("4993493", "test");
     }
 
     @Test(expected = Exception.class)
-    public void saveHeatTemplateTest(){
+    public void getSingleNetworkByModelCustomizationUuidTest() {
+        cd.getSingleNetworkByModelCustomizationUuid("4993493");
+    }
+
+    @Test(expected = Exception.class)
+    public void getSingleAllottedResourceByModelCustomizationUuidTest() {
+        cd.getSingleAllottedResourceByModelCustomizationUuid("4993493");
+    }
+
+    @Test(expected = Exception.class)
+    public void getVfModuleRecipeTest() {
+        cd.getVfModuleRecipe("4993493", "test", "get");
+    }
+
+    @Test(expected = Exception.class)
+    public void getVfModuleTest() {
+        cd.getVfModule("4993493", "test", "get", "v2", "vnf");
+    }
+
+    @Test(expected = Exception.class)
+    public void getVnfComponentsRecipeTest() {
+        cd.getVnfComponentsRecipe("4993493", "test", "v2", "vnf", "get", "3992");
+    }
+
+    @Test(expected = Exception.class)
+    public void getVnfComponentsRecipeByVfModuleTest() {
+        List<VfModule> resultList = new ArrayList<>();
+        VfModule m = new VfModule();
+        resultList.add(m);
+        cd.getVnfComponentsRecipeByVfModule(resultList, "4993493");
+    }
+
+    @Test(expected = Exception.class)
+    public void getAllVnfResourcesTest() {
+        cd.getAllVnfResources();
+    }
+
+    @Test(expected = Exception.class)
+    public void getVnfResourcesByRoleTest() {
+        cd.getVnfResourcesByRole("4993493");
+    }
+
+    @Test(expected = Exception.class)
+    public void getVnfResourceCustomizationsByRoleTest() {
+        cd.getVnfResourceCustomizationsByRole("4993493");
+    }
+
+    @Test(expected = Exception.class)
+    public void getAllNetworkResourcesTest() {
+        cd.getAllNetworkResources();
+    }
+
+    @Test(expected = Exception.class)
+    public void getAllNetworkResourceCustomizationsTest() {
+        cd.getAllNetworkResourceCustomizations();
+    }
+
+    @Test(expected = Exception.class)
+    public void getAllVfModulesTest() {
+        cd.getAllVfModules();
+    }
+
+    @Test(expected = Exception.class)
+    public void getAllVfModuleCustomizationsTest() {
+        cd.getAllVfModuleCustomizations();
+    }
+
+    @Test(expected = Exception.class)
+    public void getAllHeatEnvironmentTest() {
+        cd.getAllHeatEnvironment();
+    }
+
+    @Test(expected = Exception.class)
+    public void getHeatEnvironment2Test() {
+        cd.getHeatEnvironment(4993493);
+    }
+
+    @Test(expected = Exception.class)
+    public void getNestedTemplatesTest() {
+        cd.getNestedTemplates(4993493);
+    }
+
+    @Test(expected = Exception.class)
+    public void getNestedTemplates2Test() {
+        cd.getNestedTemplates("4993493");
+    }
+
+    @Test(expected = Exception.class)
+    public void getHeatFilesTest() {
+        cd.getHeatFiles(4993493);
+    }
+
+    @Test(expected = Exception.class)
+    public void getVfModuleToHeatFilesEntryTest() {
+        cd.getVfModuleToHeatFilesEntry("4993493", "49959499");
+    }
+
+    @Test(expected = Exception.class)
+    public void getServiceToResourceCustomization() {
+        cd.getServiceToResourceCustomization("4993493", "599349", "49900");
+    }
+
+    @Test(expected = Exception.class)
+    public void getHeatFilesForVfModuleTest() {
+        cd.getHeatFilesForVfModule("4993493");
+    }
+
+    @Test(expected = Exception.class)
+    public void getHeatTemplateTest() {
+        cd.getHeatTemplate("4993493", "test", "heat");
+    }
+
+    @Test(expected = Exception.class)
+    public void saveHeatTemplateTest() {
         HeatTemplate heat = new HeatTemplate();
-        Set <HeatTemplateParam> paramSet = new HashSet<>();
-        cd.saveHeatTemplate(heat,paramSet);
+        Set<HeatTemplateParam> paramSet = new HashSet<>();
+        cd.saveHeatTemplate(heat, paramSet);
     }
+
     @Test(expected = Exception.class)
-    public void getHeatEnvironmentTest(){
-        cd.getHeatEnvironment("4993493","test","heat");
+    public void getHeatEnvironmentTest() {
+        cd.getHeatEnvironment("4993493", "test", "heat");
     }
+
     @Test(expected = Exception.class)
-    public void getHeatEnvironment3Test(){
-        cd.getHeatEnvironment("4993493","test");
+    public void getHeatEnvironment3Test() {
+        cd.getHeatEnvironment("4993493", "test");
     }
+
     @Test(expected = Exception.class)
-    public void saveHeatEnvironmentTest(){
+    public void saveHeatEnvironmentTest() {
         HeatEnvironment en = new HeatEnvironment();
         cd.saveHeatEnvironment(en);
     }
+
     @Test(expected = Exception.class)
-    public void saveHeatTemplate2Test(){
+    public void saveHeatTemplate2Test() {
         HeatTemplate heat = new HeatTemplate();
         cd.saveHeatTemplate(heat);
     }
+
     @Test(expected = Exception.class)
-    public void saveHeatFileTest(){
+    public void saveHeatFileTest() {
         HeatFiles hf = new HeatFiles();
         cd.saveHeatFile(hf);
     }
+
     @Test(expected = Exception.class)
-    public void saveVnfRecipeTest(){
+    public void saveVnfRecipeTest() {
         VnfRecipe vr = new VnfRecipe();
         cd.saveVnfRecipe(vr);
     }
+
     @Test(expected = Exception.class)
-    public void saveVnfComponentsRecipe(){
+    public void saveVnfComponentsRecipe() {
         VnfComponentsRecipe vr = new VnfComponentsRecipe();
         cd.saveVnfComponentsRecipe(vr);
     }
+
     @Test(expected = Exception.class)
-    public void saveOrUpdateVnfResourceTest(){
+    public void saveOrUpdateVnfResourceTest() {
         VnfResource vr = new VnfResource();
         cd.saveOrUpdateVnfResource(vr);
     }
+
     @Test(expected = Exception.class)
-    public void saveVnfResourceCustomizationTest(){
+    public void saveVnfResourceCustomizationTest() {
         VnfResourceCustomization vr = new VnfResourceCustomization();
         cd.saveVnfResourceCustomization(vr);
     }
+
     @Test(expected = Exception.class)
-    public void saveAllottedResourceCustomizationTest(){
+    public void saveAllottedResourceCustomizationTest() {
         AllottedResourceCustomization arc = new AllottedResourceCustomization();
         cd.saveAllottedResourceCustomization(arc);
     }
+
     @Test(expected = Exception.class)
-    public void saveAllottedResourceTest(){
+    public void saveAllottedResourceTest() {
         AllottedResource ar = new AllottedResource();
         cd.saveAllottedResource(ar);
     }
+
     @Test(expected = Exception.class)
     public void saveNetworkResourceTest() throws RecordNotFoundException {
         NetworkResource nr = new NetworkResource();
         cd.saveNetworkResource(nr);
     }
+
     @Test(expected = Exception.class)
-    public void saveToscaCsarTest()throws RecordNotFoundException {
+    public void saveToscaCsarTest() throws RecordNotFoundException {
         ToscaCsar ts = new ToscaCsar();
         cd.saveToscaCsar(ts);
     }
+
     @Test(expected = Exception.class)
-    public void getToscaCsar(){
+    public void getToscaCsar() {
         cd.getToscaCsar("4993493");
     }
+
     @Test(expected = Exception.class)
-    public void saveTempNetworkHeatTemplateLookupTest(){
+    public void saveTempNetworkHeatTemplateLookupTest() {
         TempNetworkHeatTemplateLookup t = new TempNetworkHeatTemplateLookup();
         cd.saveTempNetworkHeatTemplateLookup(t);
     }
+
     @Test(expected = Exception.class)
-    public void saveVfModuleToHeatFiles(){
+    public void saveVfModuleToHeatFiles() {
         VfModuleToHeatFiles v = new VfModuleToHeatFiles();
         cd.saveVfModuleToHeatFiles(v);
     }
+
     @Test(expected = Exception.class)
     public void saveVnfResourceToVfModuleCustomizationTest() throws RecordNotFoundException {
-        VnfResourceCustomization v =new VnfResourceCustomization();
+        VnfResourceCustomization v = new VnfResourceCustomization();
         VfModuleCustomization vm = new VfModuleCustomization();
         cd.saveVnfResourceToVfModuleCustomization(v, vm);
     }
+
     @Test(expected = Exception.class)
     public void saveNetworkResourceCustomizationTest() throws RecordNotFoundException {
         NetworkResourceCustomization nrc = new NetworkResourceCustomization();
@@ -2538,139 +2619,163 @@ public class CatalogDatabaseTest {
     }
 
     @Test(expected = Exception.class)
-    public void saveServiceToNetworksTest(){
+    public void saveServiceToNetworksTest() {
         AllottedResource ar = new AllottedResource();
         cd.saveAllottedResource(ar);
     }
+
     @Test(expected = Exception.class)
-    public void saveServiceToResourceCustomizationTest(){
+    public void saveServiceToResourceCustomizationTest() {
         ServiceToResourceCustomization ar = new ServiceToResourceCustomization();
         cd.saveServiceToResourceCustomization(ar);
     }
+
     @Test(expected = Exception.class)
-    public void saveServiceTest(){
+    public void saveServiceTest() {
         Service ar = new Service();
         cd.saveService(ar);
     }
+
     @Test(expected = Exception.class)
-    public void saveOrUpdateVfModuleTest(){
+    public void saveOrUpdateVfModuleTest() {
         VfModule ar = new VfModule();
         cd.saveOrUpdateVfModule(ar);
     }
+
     @Test(expected = Exception.class)
-    public void saveOrUpdateVfModuleCustomizationTest(){
+    public void saveOrUpdateVfModuleCustomizationTest() {
         VfModuleCustomization ar = new VfModuleCustomization();
         cd.saveOrUpdateVfModuleCustomization(ar);
     }
 
     @Test(expected = Exception.class)
-    public void getNestedHeatTemplateTest(){
-        cd.getNestedHeatTemplate(101,201);
+    public void getNestedHeatTemplateTest() {
+        cd.getNestedHeatTemplate(101, 201);
     }
+
     @Test(expected = Exception.class)
-    public void getNestedHeatTemplate2Test(){
-        cd.getNestedHeatTemplate("1002","1002");
+    public void getNestedHeatTemplate2Test() {
+        cd.getNestedHeatTemplate("1002", "1002");
     }
+
     @Test(expected = Exception.class)
-    public void saveNestedHeatTemplateTest(){
+    public void saveNestedHeatTemplateTest() {
         HeatTemplate ar = new HeatTemplate();
-        cd.saveNestedHeatTemplate("1001",ar,"test");
+        cd.saveNestedHeatTemplate("1001", ar, "test");
     }
+
     @Test(expected = Exception.class)
-    public void getHeatFiles2Test(){
+    public void getHeatFiles2Test() {
         VfModuleCustomization ar = new VfModuleCustomization();
-        cd.getHeatFiles(101,"test","1001","v2");
+        cd.getHeatFiles(101, "test", "1001", "v2");
     }
+
     @Test(expected = Exception.class)
-    public void getHeatFiles3Test(){
+    public void getHeatFiles3Test() {
         VfModuleCustomization ar = new VfModuleCustomization();
         cd.getHeatFiles("200192");
     }
+
     @Test(expected = Exception.class)
-    public void saveHeatFilesTest(){
+    public void saveHeatFilesTest() {
         HeatFiles ar = new HeatFiles();
         cd.saveHeatFiles(ar);
     }
+
     @Test(expected = Exception.class)
-    public void saveVfModuleToHeatFilesTest(){
+    public void saveVfModuleToHeatFilesTest() {
         HeatFiles ar = new HeatFiles();
-        cd.saveVfModuleToHeatFiles("3772893",ar);
+        cd.saveVfModuleToHeatFiles("3772893", ar);
     }
+
     @Test
-    public void getNetworkResourceByModelUuidTest(){
+    public void getNetworkResourceByModelUuidTest() {
 
         cd.getNetworkResourceByModelUuid("3899291");
     }
-    @Test(expected = Exception.class)
-    public void getNetworkRecipeTest(){
 
-        cd.getNetworkRecipe("test","test1","test2");
-    }
     @Test(expected = Exception.class)
-    public void getNetworkRecipe2Test(){
+    public void getNetworkRecipeTest() {
 
-        cd.getNetworkRecipe("test","test1");
+        cd.getNetworkRecipe("test", "test1", "test2");
     }
+
+    @Test(expected = Exception.class)
+    public void getNetworkRecipe2Test() {
+
+        cd.getNetworkRecipe("test", "test1");
+    }
+
     @Test
-    public void getNetworkResourceByModelCustUuidTest(){
+    public void getNetworkResourceByModelCustUuidTest() {
 
         cd.getNetworkResourceByModelCustUuid("test");
     }
-    @Test(expected = Exception.class)
-    public void getVnfComponentsRecipe2Test(){
 
-        cd.getVnfComponentsRecipe("test1","test2","test3","test4");
-    }
     @Test(expected = Exception.class)
-    public void getVnfComponentsRecipeByVfModuleModelUUIdTest(){
+    public void getVnfComponentsRecipe2Test() {
 
-        cd.getVnfComponentsRecipeByVfModuleModelUUId("test1","test2","test3");
+        cd.getVnfComponentsRecipe("test1", "test2", "test3", "test4");
     }
+
     @Test(expected = Exception.class)
-    public void getVnfComponentRecipesTest(){
+    public void getVnfComponentsRecipeByVfModuleModelUUIdTest() {
+
+        cd.getVnfComponentsRecipeByVfModuleModelUUId("test1", "test2", "test3");
+    }
+
+    @Test(expected = Exception.class)
+    public void getVnfComponentRecipesTest() {
 
         cd.getVnfComponentRecipes("test");
     }
+
     @Test(expected = Exception.class)
-    public void saveOrUpdateVnfComponentTest(){
+    public void saveOrUpdateVnfComponentTest() {
         VnfComponent ar = new VnfComponent();
         cd.saveOrUpdateVnfComponent(ar);
     }
 
     @Test(expected = Exception.class)
-    public void getVfModule2Test(){
+    public void getVfModule2Test() {
 
         cd.getVfModule("test");
     }
+
     @Test(expected = Exception.class)
-    public void getVfModuleByModelUUIDTest(){
+    public void getVfModuleByModelUUIDTest() {
 
         cd.getVfModuleByModelUUID("test");
     }
-    @Test(expected = Exception.class)
-    public void getServiceRecipeByModelUUIDTest(){
 
-        cd.getServiceRecipeByModelUUID("test1","test2");
-    }
     @Test(expected = Exception.class)
-    public void getModelRecipeTest(){
+    public void getServiceRecipeByModelUUIDTest() {
 
-        cd.getModelRecipe("test1","test2","test3");
+        cd.getServiceRecipeByModelUUID("test1", "test2");
     }
+
     @Test(expected = Exception.class)
-    public void healthCheck(){
+    public void getModelRecipeTest() {
+
+        cd.getModelRecipe("test1", "test2", "test3");
+    }
+
+    @Test(expected = Exception.class)
+    public void healthCheck() {
 
         cd.healthCheck();
     }
+
     @Test(expected = Exception.class)
-    public void executeQuerySingleRow(){
+    public void executeQuerySingleRow() {
         VnfComponent ar = new VnfComponent();
         HashMap<String, String> variables = new HashMap<>();
-        cd.executeQuerySingleRow("tets",variables,false);
+        cd.executeQuerySingleRow("tets", variables, false);
     }
+
     @Test(expected = Exception.class)
-    public void executeQueryMultipleRows(){
+    public void executeQueryMultipleRows() {
         HashMap<String, String> variables = new HashMap<>();
-        cd.executeQueryMultipleRows("select",variables,false);
+        cd.executeQueryMultipleRows("select", variables, false);
     }
 }

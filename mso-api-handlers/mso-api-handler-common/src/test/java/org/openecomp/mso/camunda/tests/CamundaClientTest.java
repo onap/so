@@ -51,11 +51,8 @@ import org.openecomp.mso.properties.MsoJavaProperties;
 
 /**
  * This class implements test methods of Camunda Beans.
- *
- *
  */
 public class CamundaClientTest {
-
 
 
     @Mock
@@ -68,15 +65,15 @@ public class CamundaClientTest {
 
     @Test
     public void tesCamundaPost() throws JsonGenerationException,
-    JsonMappingException, IOException {
+            JsonMappingException, IOException {
 
 
-        String responseBody ="{\"links\":[{\"method\":\"GET\",\"href\":\"http://localhost:9080/engine-rest/process-instance/2047c658-37ae-11e5-9505-7a1020524153\",\"rel\":\"self\"}],\"id\":\"2047c658-37ae-11e5-9505-7a1020524153\",\"definitionId\":\"dummy:10:73298961-37ad-11e5-9505-7a1020524153\",\"businessKey\":null,\"caseInstanceId\":null,\"ended\":true,\"suspended\":false}";
+        String responseBody = "{\"links\":[{\"method\":\"GET\",\"href\":\"http://localhost:9080/engine-rest/process-instance/2047c658-37ae-11e5-9505-7a1020524153\",\"rel\":\"self\"}],\"id\":\"2047c658-37ae-11e5-9505-7a1020524153\",\"definitionId\":\"dummy:10:73298961-37ad-11e5-9505-7a1020524153\",\"businessKey\":null,\"caseInstanceId\":null,\"ended\":true,\"suspended\":false}";
 
         HttpResponse mockResponse = createResponse(200, responseBody);
         mockHttpClient = Mockito.mock(HttpClient.class);
         Mockito.when(mockHttpClient.execute(Mockito.any(HttpPost.class)))
-        .thenReturn(mockResponse);
+                .thenReturn(mockResponse);
 
         String reqXML = "<xml>test</xml>";
         String orchestrationURI = "/engine-rest/process-definition/key/dummy/start";
@@ -93,7 +90,7 @@ public class CamundaClientTest {
         assertEquals(requestClient.getType(), CommonConstants.CAMUNDA);
         assertEquals(statusCode, HttpStatus.SC_OK);
 
-        props.setProperty (CommonConstants.CAMUNDA_AUTH, "ABCD1234");
+        props.setProperty(CommonConstants.CAMUNDA_AUTH, "ABCD1234");
         requestClient = RequestClientFactory.getRequestClient(orchestrationURI, props);
         requestClient.setClient(mockHttpClient);
         response = requestClient.post(null, "reqId", null, null, null, null);
@@ -104,8 +101,8 @@ public class CamundaClientTest {
     private HttpResponse createResponse(int respStatus,
                                         String respBody) {
         HttpResponse response = new BasicHttpResponse(
-                                                      new BasicStatusLine(
-                                                                          new ProtocolVersion("HTTP", 1, 1), respStatus, ""));
+                new BasicStatusLine(
+                        new ProtocolVersion("HTTP", 1, 1), respStatus, ""));
         response.setStatusCode(respStatus);
         try {
             response.setEntity(new StringEntity(respBody));
@@ -115,9 +112,6 @@ public class CamundaClientTest {
         }
         return response;
     }
-
-
-
 
 
 }

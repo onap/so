@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  * ============LICENSE_END========================================================= 
- */ 
+ */
 
 package org.openecomp.mso.bpmn.mock;
 
@@ -32,118 +32,118 @@ import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 
 import org.openecomp.mso.logger.MsoLogger;
+
 /**
  * Please describe the VnfAdapterUpdateMockTransformer.java class
- *
  */
 public class VnfAdapterUpdateMockTransformer extends ResponseTransformer {
 
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
-	
-	private String notifyCallbackResponse;
-	private String requestId;
-	private String ackResponse;
+    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
 
-	public VnfAdapterUpdateMockTransformer() {
-		notifyCallbackResponse = FileUtil.readResourceFile("vnfAdapter/vnfUpdateSimResponse.xml");
-	}
+    private String notifyCallbackResponse;
+    private String requestId;
+    private String ackResponse;
 
-	public VnfAdapterUpdateMockTransformer(String requestId) {
-		this.requestId = requestId;
-	}
+    public VnfAdapterUpdateMockTransformer() {
+        notifyCallbackResponse = FileUtil.readResourceFile("vnfAdapter/vnfUpdateSimResponse.xml");
+    }
+
+    public VnfAdapterUpdateMockTransformer(String requestId) {
+        this.requestId = requestId;
+    }
 
 
-	public String name() {
-		return "vnf-adapter-update-transformer";
-	}
+    public String name() {
+        return "vnf-adapter-update-transformer";
+    }
 
-	@Override
-	public ResponseDefinition transform(Request request, ResponseDefinition responseDefinition,
-			FileSource fileSource) {
+    @Override
+    public ResponseDefinition transform(Request request, ResponseDefinition responseDefinition,
+                                        FileSource fileSource) {
 
-		String requestBody = request.getBodyAsString();
+        String requestBody = request.getBodyAsString();
 
-		String notficationUrl = requestBody.substring(requestBody.indexOf("<notificationUrl>")+17, requestBody.indexOf("</notificationUrl>"));
-		String messageId = requestBody.substring(requestBody.indexOf("<messageId>")+11, requestBody.indexOf("</messageId>"));
-		String responseMessageId = "";
-		String updatedResponse = "";
-		
-		try {
-			// try supplied response file (if any)
-			System.out.println(" Supplied fileName: " + responseDefinition.getBodyFileName());
-		    ackResponse = FileUtil.readResourceFile("__files/" + responseDefinition.getBodyFileName());
-			notifyCallbackResponse = ackResponse;
-			responseMessageId = ackResponse.substring(ackResponse.indexOf("<messageId>")+11, ackResponse.indexOf("</messageId>"));
-		    updatedResponse = ackResponse.replace(responseMessageId, messageId); 
-		} catch (Exception ex) {
-			LOGGER.debug("Exception :",ex);
-			System.out.println(" ******* Use default response file in 'vnfAdapter/vnfUpdateSimResponse.xml'");
-		    responseMessageId = notifyCallbackResponse.substring(notifyCallbackResponse.indexOf("<messageId>")+11, notifyCallbackResponse.indexOf("</messageId>"));
-			updatedResponse = notifyCallbackResponse.replace(responseMessageId, messageId);
-		}
-		
-		System.out.println("response (mock) messageId       : " + responseMessageId);		
-		System.out.println("request  (replacement) messageId: " + messageId);
-		
-		System.out.println("vnf Response (before):" + notifyCallbackResponse);
-		System.out.println("vnf Response (after):" + updatedResponse);
-		
-		Object vnfDelay = MockResource.getMockProperties().get("vnf_delay");
-		int delay = 300;
-		if (vnfDelay != null) {
-			delay = Integer.parseInt(vnfDelay.toString());
-		}
+        String notficationUrl = requestBody.substring(requestBody.indexOf("<notificationUrl>") + 17, requestBody.indexOf("</notificationUrl>"));
+        String messageId = requestBody.substring(requestBody.indexOf("<messageId>") + 11, requestBody.indexOf("</messageId>"));
+        String responseMessageId = "";
+        String updatedResponse = "";
 
-		//Kick off callback thread
-		System.out.println("VnfAdapterUpdateMockTransformer notficationUrl: " + notficationUrl + ":delay: " + delay);		
-		CallbackResponseThread callbackResponseThread = new CallbackResponseThread(notficationUrl,updatedResponse, delay);
-		callbackResponseThread.start();
+        try {
+            // try supplied response file (if any)
+            System.out.println(" Supplied fileName: " + responseDefinition.getBodyFileName());
+            ackResponse = FileUtil.readResourceFile("__files/" + responseDefinition.getBodyFileName());
+            notifyCallbackResponse = ackResponse;
+            responseMessageId = ackResponse.substring(ackResponse.indexOf("<messageId>") + 11, ackResponse.indexOf("</messageId>"));
+            updatedResponse = ackResponse.replace(responseMessageId, messageId);
+        } catch (Exception ex) {
+            LOGGER.debug("Exception :", ex);
+            System.out.println(" ******* Use default response file in 'vnfAdapter/vnfUpdateSimResponse.xml'");
+            responseMessageId = notifyCallbackResponse.substring(notifyCallbackResponse.indexOf("<messageId>") + 11, notifyCallbackResponse.indexOf("</messageId>"));
+            updatedResponse = notifyCallbackResponse.replace(responseMessageId, messageId);
+        }
 
-		return ResponseDefinitionBuilder
-		           .like(responseDefinition).but()
-		           .withStatus(200).withBody(updatedResponse).withHeader("Content-Type", "text/xml")
-		           .build();
+        System.out.println("response (mock) messageId       : " + responseMessageId);
+        System.out.println("request  (replacement) messageId: " + messageId);
 
-	}
+        System.out.println("vnf Response (before):" + notifyCallbackResponse);
+        System.out.println("vnf Response (after):" + updatedResponse);
 
-	@Override
-	public boolean applyGlobally() {
-	    return false;
-	}
+        Object vnfDelay = MockResource.getMockProperties().get("vnf_delay");
+        int delay = 300;
+        if (vnfDelay != null) {
+            delay = Integer.parseInt(vnfDelay.toString());
+        }
 
-	private class CallbackResponseThread extends Thread {
+        //Kick off callback thread
+        System.out.println("VnfAdapterUpdateMockTransformer notficationUrl: " + notficationUrl + ":delay: " + delay);
+        CallbackResponseThread callbackResponseThread = new CallbackResponseThread(notficationUrl, updatedResponse, delay);
+        callbackResponseThread.start();
 
-		private String callbackUrl;
-		private String payLoad;
-		private int delay;
+        return ResponseDefinitionBuilder
+                .like(responseDefinition).but()
+                .withStatus(200).withBody(updatedResponse).withHeader("Content-Type", "text/xml")
+                .build();
 
-		public CallbackResponseThread(String callbackUrl, String payLoad, int delay) {
-			this.callbackUrl = callbackUrl;
-			this.payLoad = payLoad;
-			this.delay = delay;
-		}
+    }
 
-		public void run () {
-			try {
-				//Delay sending callback response
-				sleep(delay);
-			} catch (InterruptedException e1) {
-				LOGGER.debug("Exception :", e1);
-			}
-			System.out.println("Sending callback response to url: " + callbackUrl);			
-			ClientRequest request = new ClientRequest(callbackUrl);
-			request.body("text/xml", payLoad);
-			//System.err.println(payLoad);
-			try {
-				ClientResponse result = request.post();
-				System.out.println("Successfully posted callback? Status: " + result.getStatus());				
-				//System.err.println("Successfully posted callback:" + result.getStatus());
-			} catch (Exception e) {
-				System.out.println("catch error in - request.post() ");
-				LOGGER.debug("Exception :",e);
-			}
-		}
+    @Override
+    public boolean applyGlobally() {
+        return false;
+    }
 
-	}
+    private class CallbackResponseThread extends Thread {
+
+        private String callbackUrl;
+        private String payLoad;
+        private int delay;
+
+        public CallbackResponseThread(String callbackUrl, String payLoad, int delay) {
+            this.callbackUrl = callbackUrl;
+            this.payLoad = payLoad;
+            this.delay = delay;
+        }
+
+        public void run() {
+            try {
+                //Delay sending callback response
+                sleep(delay);
+            } catch (InterruptedException e1) {
+                LOGGER.debug("Exception :", e1);
+            }
+            System.out.println("Sending callback response to url: " + callbackUrl);
+            ClientRequest request = new ClientRequest(callbackUrl);
+            request.body("text/xml", payLoad);
+            //System.err.println(payLoad);
+            try {
+                ClientResponse result = request.post();
+                System.out.println("Successfully posted callback? Status: " + result.getStatus());
+                //System.err.println("Successfully posted callback:" + result.getStatus());
+            } catch (Exception e) {
+                System.out.println("catch error in - request.post() ");
+                LOGGER.debug("Exception :", e);
+            }
+        }
+
+    }
 }
 

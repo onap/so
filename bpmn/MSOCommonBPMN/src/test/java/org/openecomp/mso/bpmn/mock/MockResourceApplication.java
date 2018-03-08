@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  * ============LICENSE_END========================================================= 
- */ 
+ */
 
 package org.openecomp.mso.bpmn.mock;
 
@@ -25,26 +25,25 @@ import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
 /**
- * 
  * JAX RS Application wiring for Mock Resource
  */
 @ApplicationPath("/console")
 public class MockResourceApplication extends Application {
 
-	private Set<Object> singletons = new HashSet<>();
-	private Set<Class<?>> classes = new HashSet<>();
+    private Set<Object> singletons = new HashSet<>();
+    private Set<Class<?>> classes = new HashSet<>();
 
-	public MockResourceApplication() {
-		singletons.add(new MockResource());
-	}
+    public MockResourceApplication() {
+        singletons.add(new MockResource());
+    }
 
-	@Override
-	public Set<Class<?>> getClasses() {
-		return classes;
-	}
+    @Override
+    public Set<Class<?>> getClasses() {
+        return classes;
+    }
 
-	@Override
-	public Set<Object> getSingletons() {
-		return singletons;
-	}
+    @Override
+    public Set<Object> getSingletons() {
+        return singletons;
+    }
 }

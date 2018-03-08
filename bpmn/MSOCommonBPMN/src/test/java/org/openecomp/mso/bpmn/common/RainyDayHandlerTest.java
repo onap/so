@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  * ============LICENSE_END========================================================= 
- */ 
+ */
 
 package org.openecomp.mso.bpmn.common;
 
@@ -47,39 +47,38 @@ import org.openecomp.mso.bpmn.core.WorkflowException;
  * Unit test for RainyDayHandler.bpmn.
  */
 public class RainyDayHandlerTest extends WorkflowTest {
-	
-	@Test	
-	@Ignore // IGNORED FOR 1710 MERGE TO ONAP
-	@Deployment(resources = {
-			"subprocess/BuildingBlock/RainyDayHandler.bpmn",
-			"subprocess/BuildingBlock/ManualHandling.bpmn"
-		})
-	public void  TestRainyDayHandlingSuccess() {
 
-		RuntimeService runtimeService = processEngineRule.getRuntimeService();				
-		Map<String, Object> variables = new HashMap<>();
-		variables.put("isDebugLogEnabled","true");
-		variables.put("msoRequestId", "testRequestId");
-		variables.put("serviceType", "X");
-		variables.put("vnfType", "Y");
-		variables.put("currentActivity", "BB1");		
-		variables.put("workStep", "1");
-		variables.put("failedActivity", "");
-		variables.put("errorCode", "123");
-		variables.put("errorText", "update failed");
-		
-		MockPolicyAbort();
-		
-		
-		String businessKey = UUID.randomUUID().toString();
-		invokeSubProcess("RainyDayHandler", businessKey, variables);
+    @Test
+    @Ignore // IGNORED FOR 1710 MERGE TO ONAP
+    @Deployment(resources = {
+            "subprocess/BuildingBlock/RainyDayHandler.bpmn",
+            "subprocess/BuildingBlock/ManualHandling.bpmn"
+    })
+    public void TestRainyDayHandlingSuccess() {
 
-		waitForProcessEnd(businessKey, 10000);
+        RuntimeService runtimeService = processEngineRule.getRuntimeService();
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("isDebugLogEnabled", "true");
+        variables.put("msoRequestId", "testRequestId");
+        variables.put("serviceType", "X");
+        variables.put("vnfType", "Y");
+        variables.put("currentActivity", "BB1");
+        variables.put("workStep", "1");
+        variables.put("failedActivity", "");
+        variables.put("errorCode", "123");
+        variables.put("errorText", "update failed");
 
-		Assert.assertTrue(isProcessEnded(businessKey));
-		
-	}
+        MockPolicyAbort();
 
-	
-	
+
+        String businessKey = UUID.randomUUID().toString();
+        invokeSubProcess("RainyDayHandler", businessKey, variables);
+
+        waitForProcessEnd(businessKey, 10000);
+
+        Assert.assertTrue(isProcessEnded(businessKey));
+
+    }
+
+
 }

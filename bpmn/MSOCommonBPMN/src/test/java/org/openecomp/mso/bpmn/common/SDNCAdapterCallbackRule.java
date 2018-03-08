@@ -38,47 +38,47 @@ import org.openecomp.mso.bpmn.common.workflow.service.SDNCAdapterCallbackService
  * </pre>
  */
 public class SDNCAdapterCallbackRule implements TestRule {
-	public static final String DEFAULT_ENDPOINT_URL =
-		"http://localhost:28080/mso/SDNCAdapterCallbackService";
+    public static final String DEFAULT_ENDPOINT_URL =
+            "http://localhost:28080/mso/SDNCAdapterCallbackService";
 
-	private final ProcessEngineServices processEngineServices;
-	private final String endpointUrl;
+    private final ProcessEngineServices processEngineServices;
+    private final String endpointUrl;
 
-	public SDNCAdapterCallbackRule(ProcessEngineServices processEngineServices) {
-		this(processEngineServices, DEFAULT_ENDPOINT_URL);
-	}
+    public SDNCAdapterCallbackRule(ProcessEngineServices processEngineServices) {
+        this(processEngineServices, DEFAULT_ENDPOINT_URL);
+    }
 
-	public SDNCAdapterCallbackRule(ProcessEngineServices processEngineServices,
-			String endpointUrl) {
-		this.processEngineServices = processEngineServices;
-		this.endpointUrl = endpointUrl;
-	}
+    public SDNCAdapterCallbackRule(ProcessEngineServices processEngineServices,
+                                   String endpointUrl) {
+        this.processEngineServices = processEngineServices;
+        this.endpointUrl = endpointUrl;
+    }
 
-	@Override
-	public Statement apply(final Statement baseStmt, Description description) {
-		return new Statement() {
-			@Override
-			public void evaluate() throws Throwable {
-				Endpoint endpoint = null;
+    @Override
+    public Statement apply(final Statement baseStmt, Description description) {
+        return new Statement() {
+            @Override
+            public void evaluate() throws Throwable {
+                Endpoint endpoint = null;
 
-				try {
-					SDNCAdapterCallbackServiceImpl sdncCallbackService = new SDNCAdapterCallbackServiceImpl();
-					sdncCallbackService.setProcessEngineServices4junit(processEngineServices);
+                try {
+                    SDNCAdapterCallbackServiceImpl sdncCallbackService = new SDNCAdapterCallbackServiceImpl();
+                    sdncCallbackService.setProcessEngineServices4junit(processEngineServices);
 
-					System.setProperty("com.sun.xml.ws.transport.http.HttpAdapter.dump", "true");
-					System.setProperty("com.sun.xml.internal.ws.transport.http.HttpAdapter.dump", "true");
+                    System.setProperty("com.sun.xml.ws.transport.http.HttpAdapter.dump", "true");
+                    System.setProperty("com.sun.xml.internal.ws.transport.http.HttpAdapter.dump", "true");
 
-					System.out.println("Publishing Endpoint - " + endpointUrl);
-					endpoint = Endpoint.publish(endpointUrl, sdncCallbackService);
+                    System.out.println("Publishing Endpoint - " + endpointUrl);
+                    endpoint = Endpoint.publish(endpointUrl, sdncCallbackService);
 
-					baseStmt.evaluate();
-				} finally {
-					if (endpoint != null) {
-						System.out.println("Stopping Endpoint - " + endpointUrl);
-						endpoint.stop();
-					}
-				}
-			}
-		};
-	}
+                    baseStmt.evaluate();
+                } finally {
+                    if (endpoint != null) {
+                        System.out.println("Stopping Endpoint - " + endpointUrl);
+                        endpoint.stop();
+                    }
+                }
+            }
+        };
+    }
 }
