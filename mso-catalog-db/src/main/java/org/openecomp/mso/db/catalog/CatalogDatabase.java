@@ -1175,14 +1175,11 @@ public class CatalogDatabase implements Closeable {
      * @return VnfRecipe object or null if none found
      */
     public VnfRecipe getVnfRecipeByNameVersion(String modelName, String modelVersion, String action) {
-        StringBuilder hql = new StringBuilder("FROM VnfRecipe WHERE vnfType = :vnfType AND version= :version AND action = :action ");
 
         long startTime = System.currentTimeMillis();
-        LOGGER.debug("Catalog database - get VNF recipe with name " + modelName
-                                      + " and action "
-                                      + action);
+        LOGGER.debug("Catalog database - get VNF recipe with name " + modelName + " and action " + action);
 
-        Query query = getSession().createQuery(hql.toString());
+        Query query = getSession().createQuery("FROM VnfRecipe WHERE vnfType = :vnfType AND version= :version AND action = :action ");
         query.setParameter(VNF_TYPE, modelName);
         query.setParameter(MODEL_VERSION, modelVersion);
         query.setParameter(ACTION, action);

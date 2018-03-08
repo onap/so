@@ -37,10 +37,6 @@ public class ArRecipe extends Recipe implements Serializable {
 
     @Override
 	public String toString () {
-		StringBuilder sb = new StringBuilder();
-		sb.append(super.toString());
-		sb.append(",modelName=").append(modelName);
-		sb.append(",arParamXSD=").append(getParamXSD());
-		return sb.toString();
+		return super.toString() + ",modelName=" + modelName + ",arParamXSD=" + getParamXSD();
 	}
 }
