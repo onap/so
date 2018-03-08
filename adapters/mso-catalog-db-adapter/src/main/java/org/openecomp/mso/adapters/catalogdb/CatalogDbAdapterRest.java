@@ -531,44 +531,43 @@ public class CatalogDbAdapterRest {
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public Response resourceRecipe(@QueryParam("resourceModelUuid") String rmUuid, @QueryParam("action") String action) {
         int respStatus = HttpStatus.SC_OK;
-        CatalogDatabase db = CatalogDatabase.getInstance();
-        String entity = "";
-        try{
-            if(rmUuid != null && !"".equals(rmUuid)){
-                LOGGER.debug ("Query recipe by resource model uuid: " + rmUuid);
-                //check vnf and network and ar, the resource could be any resource.
-                Recipe recipe = db.getVnfRecipeByModuleUuid(rmUuid, action);
-                if(null == recipe){
-                    recipe = db.getNetworkRecipeByModuleUuid(rmUuid, action);
-                }
-                if(null == recipe){
-                    recipe = db.getArRecipeByModuleUuid(rmUuid, action);
-                }
-                if(recipe != null){
-                    QueryResourceRecipe resourceRecipe = new QueryResourceRecipe(recipe);
-                    entity = resourceRecipe.JSON2(false, false);
-                }
-                else{
-                    respStatus = HttpStatus.SC_NOT_FOUND;
-                }
-            }else{
-                throw(new Exception("Incoming parameter is null or blank"));
-            }           
-            LOGGER.debug ("Query recipe exit");
-            return Response
-                    .status(respStatus)
-                    .entity(entity) 
-                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                    .build();
-        }catch(Exception e){
-            LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR,  rmUuid, "", "resourceRecipe", MsoLogger.ErrorCode.BusinessProcesssError, "Exception during query recipe by resource model uuid: ", e);
-            CatalogQueryException excResp = new CatalogQueryException(e.getMessage(), CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
-            return Response
-                    .status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-                    .entity(new GenericEntity<CatalogQueryException>(excResp) {})
-                    .build();
-        }finally {
-            db.close();
-        }
+		String entity = "";
+		try (CatalogDatabase db = CatalogDatabase.getInstance()) {
+			if (rmUuid != null && !"".equals(rmUuid)) {
+				LOGGER.debug("Query recipe by resource model uuid: " + rmUuid);
+				//check vnf and network and ar, the resource could be any resource.
+				Recipe recipe = db.getVnfRecipeByModuleUuid(rmUuid, action);
+				if (null == recipe) {
+					recipe = db.getNetworkRecipeByModuleUuid(rmUuid, action);
+				}
+				if (null == recipe) {
+					recipe = db.getArRecipeByModuleUuid(rmUuid, action);
+				}
+				if (recipe != null) {
+					QueryResourceRecipe resourceRecipe = new QueryResourceRecipe(recipe);
+					entity = resourceRecipe.JSON2(false, false);
+				} else {
+					respStatus = HttpStatus.SC_NOT_FOUND;
+				}
+			} else {
+				throw (new Exception("Incoming parameter is null or blank"));
+			}
+			LOGGER.debug("Query recipe exit");
+			return Response
+				.status(respStatus)
+				.entity(entity)
+				.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+				.build();
+		} catch (Exception e) {
+			LOGGER.error(MessageEnum.RA_QUERY_VNF_ERR, rmUuid, "", "resourceRecipe",
+				MsoLogger.ErrorCode.BusinessProcesssError, "Exception during query recipe by resource model uuid: ", e);
+			CatalogQueryException excResp = new CatalogQueryException(e.getMessage(),
+				CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
+			return Response
+				.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
+				.entity(new GenericEntity<CatalogQueryException>(excResp) {
+				})
+				.build();
+		}
     }
 }
