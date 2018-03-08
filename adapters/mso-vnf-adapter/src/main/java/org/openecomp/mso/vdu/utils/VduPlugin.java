@@ -88,7 +88,7 @@ public interface VduPlugin {
     				String tenantId,
     				String vduInstanceName,
     				VduBlueprint vduBlueprint,
-    				Map <String, ? extends Object> inputs,
+    				Map <String, ?> inputs,
     				String environmentFile,
     				int timeoutMinutes,
     				boolean suppressBackout)
@@ -198,7 +198,7 @@ public interface VduPlugin {
     				String tenantId,
     				String vduInstanceId,
     				VduBlueprint vduBlueprint,
-    				Map <String, ? extends Object> inputs,
+    				Map <String, ?> inputs,
     				String environmentFile,
     				int timeoutMinutes)
 			throws MsoException;
