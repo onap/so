@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_8dafbb7c",
+        "filename": "bpmn/MSOInfrastructureBPMN/src/main/java/org/openecomp/mso/bpmn/infrastructure/workflow/serviceTask/AbstractSdncOperationTask.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-03-08T02:55:07Z",
+      "side": 1,
+      "message": "This should be GET_BODY_TEMPLATE",
+      "range": {
+        "startLine": 161,
+        "startChar": 25,
+        "endLine": 161,
+        "endChar": 43
+      },
+      "revId": "b891c670dd6c9aa077eda493fbb1b5308fc43567",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
