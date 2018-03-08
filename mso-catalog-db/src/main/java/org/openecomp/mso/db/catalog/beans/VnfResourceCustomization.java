@@ -179,21 +179,17 @@ public class VnfResourceCustomization extends MavenLikeVersioning implements Ser
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder("VnfResourceCustomization: ");
-		sb.append("ModelCustUuid=").append(this.modelCustomizationUuid);
-		sb.append(", ModelInstanceName=").append(this.modelInstanceName);
-		sb.append(", vnfResourceModelUuid=").append(this.vnfResourceModelUUID);
-		sb.append(", creationTimestamp=").append(this.created);
-		sb.append(", minInstances=").append(this.minInstances);
-		sb.append(", maxInstances=").append(this.maxInstances);
-		sb.append(", availabilityZoneMaxCount=").append(this.availabilityZoneMaxCount);
-//		sb.append(", vnfResource:\n" + this.vnfResource == null ? "null" : this.vnfResource.toString());
-		sb.append(", nfFunction=").append(this.nfFunction);
-		sb.append(", nfType=").append(this.nfType);
-		sb.append(", nfRole=").append(this.nfRole);
-		sb.append(", nfNamingCode=").append(this.nfNamingCode);
-		
-		return sb.toString();
+        return "VnfResourceCustomization: " + "ModelCustUuid=" + this.modelCustomizationUuid +
+            ", ModelInstanceName=" + this.modelInstanceName +
+            ", vnfResourceModelUuid=" + this.vnfResourceModelUUID +
+            ", creationTimestamp=" + this.created +
+            ", minInstances=" + this.minInstances +
+            ", maxInstances=" + this.maxInstances +
+            ", availabilityZoneMaxCount=" + this.availabilityZoneMaxCount +
+            ", nfFunction=" + this.nfFunction +
+            ", nfType=" + this.nfType +
+            ", nfRole=" + this.nfRole +
+            ", nfNamingCode=" + this.nfNamingCode;
 	}
 
 }
