@@ -35,7 +35,7 @@ public class RollbackData implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Map<String, Map<String, Serializable>> dictionary =
-            new HashMap<String, Map<String, Serializable>>();
+        new HashMap<>();
 
     /**
      * Returns true if the specified type is stored in this object.
@@ -54,12 +54,8 @@ public class RollbackData implements Serializable {
      * @param value the value
      */
     public void put(String type, String key, String value) {
-        Map<String, Serializable> mapForType = dictionary.get(type);
-
-        if (mapForType == null) {
-            mapForType = new HashMap<String, Serializable>();
-            dictionary.put(type, mapForType);
-        }
+        Map<String, Serializable> mapForType = dictionary
+            .computeIfAbsent(type, k -> new HashMap<>());
 
         mapForType.put(key, value);
     }

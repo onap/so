@@ -153,7 +153,7 @@ public class MavenVersioningTest {
 		MavenLikeVersioning test12 = new MavenLikeVersioning();
 		test12.setVersion("2.0");
 		
-		List<MavenLikeVersioning> list= new LinkedList<MavenLikeVersioning>();
+		List<MavenLikeVersioning> list= new LinkedList<>();
 		list.add(test1);
 		list.add(test2);
 		list.add(test3);
@@ -167,7 +167,7 @@ public class MavenVersioningTest {
 		list.add(test11);
 		list.add(test12);
 		
-		Collections.sort(list,new MavenLikeVersioningComparator());
+		list.sort(new MavenLikeVersioningComparator());
 		//Collections.reverse(list);
 		assertTrue(list.get(0).getVersion().equals("0.02"));
 		assertTrue(list.get(1).getVersion().equals("1.1"));

@@ -109,7 +109,7 @@ public class ASDCGlobalControllerTest {
 		Mockito.when(artifactInfo1.getArtifactDescription()).thenReturn("testos artifact1");
 
 		// Now provision the NotificationData mock
-		List<IArtifactInfo> listArtifact = new ArrayList<IArtifactInfo>();
+		List<IArtifactInfo> listArtifact = new ArrayList<>();
 		listArtifact.add(artifactInfo1);
 
 		// Create fake resource Instance

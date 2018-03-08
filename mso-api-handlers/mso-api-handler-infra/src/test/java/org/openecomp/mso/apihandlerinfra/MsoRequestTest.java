@@ -49,7 +49,7 @@ import junitparams.Parameters;
 @RunWith(JUnitParamsRunner.class)
 public class MsoRequestTest {
 	private ObjectMapper mapper = new ObjectMapper();
-	private HashMap<String, String> instanceIdMapTest = new HashMap<String, String>();
+	private HashMap<String, String> instanceIdMapTest = new HashMap<>();
 	private ServiceInstancesRequest sir;
 	private MsoRequest msoRequest;
 	private Action action;

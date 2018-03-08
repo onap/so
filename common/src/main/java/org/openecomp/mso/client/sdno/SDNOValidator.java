@@ -28,8 +28,8 @@ public interface SDNOValidator {
 	/**
 	 * Issues a health diagnostic request for a given vnf to SDN-O
 	 * 
-	 * @param vnfName
-	 * @param uuid
+	 * @param vnfId
+	 * @param requestingUserId
 	 * @throws IOException
 	 * @throws Exception
 	 */

@@ -291,7 +291,7 @@ public class UpdateNetworkInstanceTest extends WorkflowTest {
 
 	// Success Scenario
 	private Map<String, String> setupVariablesVID1() {
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		variables.put("bpmnRequest", getCreateNetworkRequest1());
 		variables.put("mso-request-id", "testRequestId");
 		variables.put("requestId", "testRequestId");
@@ -378,7 +378,7 @@ public class UpdateNetworkInstanceTest extends WorkflowTest {
 
 	// Success Scenario
 	private Map<String, String> setupVariablesVIPER1() {
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		variables.put("testMessageId", "88f65519-9a38-4c4b-8445-9eb4a5a5af56");
 		variables.put("msoRequestId", "testRequestId");
 		variables.put("requestId", "testRequestId");
@@ -402,7 +402,7 @@ public class UpdateNetworkInstanceTest extends WorkflowTest {
 
 	// Missing Name Scenario
 	private Map<String, String> setupVariablesMissingNetworkId() {
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		variables.put("mso-request-id", "88f65519-9a38-4c4b-8445-9eb4a5a5af56");
 		variables.put("bpmnRequest", getCreateNetworkRequestNetworkId());
 		variables.put("requestId", "testRequestId");

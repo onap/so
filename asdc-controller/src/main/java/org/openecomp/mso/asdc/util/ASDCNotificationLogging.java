@@ -42,51 +42,15 @@ public class ASDCNotificationLogging {
 		if (asdcNotification == null) {
 			return "NULL";
 		}
-		StringBuilder buffer = new StringBuilder("ASDC Notification:");
-		buffer.append(System.lineSeparator());
-
-		buffer.append("DistributionID:");
-		buffer.append(testNull(asdcNotification.getDistributionID()));
-		buffer.append(System.lineSeparator());
-
-
-		buffer.append("ServiceName:");
-		buffer.append(testNull(asdcNotification.getServiceName()));
-		buffer.append(System.lineSeparator());
-
-
-		buffer.append("ServiceVersion:");
-		buffer.append(testNull(asdcNotification.getServiceVersion()));
-		buffer.append(System.lineSeparator());
-
-
-		buffer.append("ServiceUUID:");
-		buffer.append(testNull(asdcNotification.getServiceUUID()));
-		buffer.append(System.lineSeparator());
-
-
-		buffer.append("ServiceInvariantUUID:");
-		buffer.append(testNull(asdcNotification.getServiceInvariantUUID()));
-		buffer.append(System.lineSeparator());
-
-
-		buffer.append("ServiceDescription:");
-		buffer.append(testNull(asdcNotification.getServiceDescription()));
-		buffer.append(System.lineSeparator());
-
-
-		buffer.append("Service Artifacts List:");
-		buffer.append(System.lineSeparator());
-		buffer.append(testNull(dumpArtifactInfoList(asdcNotification.getServiceArtifacts())));
-		buffer.append(System.lineSeparator());
-
-		buffer.append("Resource Instances List:");
-		buffer.append(System.lineSeparator());
-		buffer.append(testNull(dumpASDCResourcesList(asdcNotification)));
-		buffer.append(System.lineSeparator());
-
-
-		return buffer.toString();
+        return "ASDC Notification:" + System.lineSeparator() +
+            "DistributionID:" + testNull(asdcNotification.getDistributionID()) + System.lineSeparator() +
+            "ServiceName:" + testNull(asdcNotification.getServiceName()) + System.lineSeparator() +
+            "ServiceVersion:" + testNull(asdcNotification.getServiceVersion()) + System.lineSeparator() +
+            "ServiceUUID:" + testNull(asdcNotification.getServiceUUID()) + System.lineSeparator() +
+            "ServiceInvariantUUID:" + testNull(asdcNotification.getServiceInvariantUUID()) + System.lineSeparator() +
+            "ServiceDescription:" + testNull(asdcNotification.getServiceDescription()) + System.lineSeparator() +
+            "Service Artifacts List:" + System.lineSeparator() + testNull(dumpArtifactInfoList(asdcNotification.getServiceArtifacts())) + System.lineSeparator() +
+            "Resource Instances List:" + System.lineSeparator() + testNull(dumpASDCResourcesList(asdcNotification)) + System.lineSeparator();
 	}
 
 	public static String dumpCSARNotification(INotificationData asdcNotification, ToscaResourceStructure toscaResourceStructure) {
@@ -343,71 +307,71 @@ public class ASDCNotificationLogging {
 			return "NULL";
 		}
 
-		StringBuilder buffer = new StringBuilder("VfModuleMetaData:");
-		buffer.append(System.lineSeparator());
+		StringBuilder stringBuilder = new StringBuilder("VfModuleMetaData:");
+		stringBuilder.append(System.lineSeparator());
 
-		buffer.append("VfModuleModelName:");
-		buffer.append(testNull(moduleMetaData.getVfModuleModelName()));
-		buffer.append(System.lineSeparator());
+		stringBuilder.append("VfModuleModelName:");
+		stringBuilder.append(testNull(moduleMetaData.getVfModuleModelName()));
+		stringBuilder.append(System.lineSeparator());
 
-		buffer.append("VfModuleModelVersion:");
-		buffer.append(testNull(moduleMetaData.getVfModuleModelVersion()));
-		buffer.append(System.lineSeparator());
+		stringBuilder.append("VfModuleModelVersion:");
+		stringBuilder.append(testNull(moduleMetaData.getVfModuleModelVersion()));
+		stringBuilder.append(System.lineSeparator());
 
-		buffer.append("VfModuleModelUUID:");
-		buffer.append(testNull(moduleMetaData.getVfModuleModelUUID()));
-		buffer.append(System.lineSeparator());
+		stringBuilder.append("VfModuleModelUUID:");
+		stringBuilder.append(testNull(moduleMetaData.getVfModuleModelUUID()));
+		stringBuilder.append(System.lineSeparator());
 
-		buffer.append("VfModuleModelInvariantUUID:");
-		buffer.append(testNull(moduleMetaData.getVfModuleModelInvariantUUID()));
-		buffer.append(System.lineSeparator());
+		stringBuilder.append("VfModuleModelInvariantUUID:");
+		stringBuilder.append(testNull(moduleMetaData.getVfModuleModelInvariantUUID()));
+		stringBuilder.append(System.lineSeparator());
 
-		buffer.append("VfModuleModelDescription:");
-		buffer.append(testNull(moduleMetaData.getVfModuleModelDescription()));
-		buffer.append(System.lineSeparator());
+		stringBuilder.append("VfModuleModelDescription:");
+		stringBuilder.append(testNull(moduleMetaData.getVfModuleModelDescription()));
+		stringBuilder.append(System.lineSeparator());
 
-		buffer.append("Artifacts UUID List:");
+		stringBuilder.append("Artifacts UUID List:");
 
 		if (moduleMetaData.getArtifacts() != null) {
-			buffer.append("{");
+			stringBuilder.append("{");
 
 			for (String artifactUUID:moduleMetaData.getArtifacts()) {
-				buffer.append(System.lineSeparator());
-				buffer.append(testNull(artifactUUID));
-				buffer.append(System.lineSeparator());
-				buffer.append(",");
+				stringBuilder.append(System.lineSeparator());
+				stringBuilder.append(testNull(artifactUUID));
+				stringBuilder.append(System.lineSeparator());
+				stringBuilder.append(",");
 			}
-			buffer.replace(buffer.length()-1,buffer.length(), System.lineSeparator());
-			buffer.append("}");
-			buffer.append(System.lineSeparator());
+			stringBuilder.replace(stringBuilder.length()-1,stringBuilder.length(), System.lineSeparator());
+			stringBuilder.append("}");
+			stringBuilder.append(System.lineSeparator());
 		} else {
-			buffer.append("NULL");
+			stringBuilder.append("NULL");
 		}
 
 		if (moduleMetaData.getProperties() != null) {
 			Map<String, String> vfModuleMap = moduleMetaData.getProperties();
-			buffer.append("Properties List:");
-			buffer.append("{");
+			stringBuilder.append("Properties List:");
+			stringBuilder.append("{");
 
 			for (Map.Entry<String, String> entry : vfModuleMap.entrySet()) {
-				buffer.append(System.lineSeparator());
-				buffer.append("  " + entry.getKey() + " : " + entry.getValue());
+				stringBuilder.append(System.lineSeparator());
+				stringBuilder.append("  ").append(entry.getKey()).append(" : ").append(entry.getValue());
 			}
-			buffer.replace(buffer.length()-1,buffer.length(), System.lineSeparator());
-			buffer.append("}");
-			buffer.append(System.lineSeparator());
+			stringBuilder.replace(stringBuilder.length()-1,stringBuilder.length(), System.lineSeparator());
+			stringBuilder.append("}");
+			stringBuilder.append(System.lineSeparator());
 		} else {
-			buffer.append("NULL");
+			stringBuilder.append("NULL");
 		}
 
 
-		buffer.append(System.lineSeparator());
+		stringBuilder.append(System.lineSeparator());
 
-		buffer.append("isBase:");
-		buffer.append(moduleMetaData.isBase());
-		buffer.append(System.lineSeparator());
+		stringBuilder.append("isBase:");
+		stringBuilder.append(moduleMetaData.isBase());
+		stringBuilder.append(System.lineSeparator());
 
-		return buffer.toString();
+		return stringBuilder.toString();
 	}
 
 	private static String testNull(Object object) {
@@ -450,52 +414,17 @@ public class ASDCNotificationLogging {
 			return null;
 		}
 
-		StringBuilder buffer = new StringBuilder("Resource Instance Info:");
-		buffer.append(System.lineSeparator());
-
-		buffer.append("ResourceInstanceName:");
-		buffer.append(testNull(resourceInstance.getResourceInstanceName()));
-		buffer.append(System.lineSeparator());
-
-		buffer.append("ResourceCustomizationUUID:");
-		buffer.append(testNull(resourceInstance.getResourceCustomizationUUID()));
-		buffer.append(System.lineSeparator());
-
-		buffer.append("ResourceInvariantUUID:");
-		buffer.append(testNull(resourceInstance.getResourceInvariantUUID()));
-		buffer.append(System.lineSeparator());
-
-		buffer.append("ResourceName:");
-		buffer.append(testNull(resourceInstance.getResourceName()));
-		buffer.append(System.lineSeparator());
-
-		buffer.append("ResourceType:");
-		buffer.append(testNull(resourceInstance.getResourceType()));
-		buffer.append(System.lineSeparator());
-
-		buffer.append("ResourceUUID:");
-		buffer.append(testNull(resourceInstance.getResourceUUID()));
-		buffer.append(System.lineSeparator());
-
-		buffer.append("ResourceVersion:");
-		buffer.append(testNull(resourceInstance.getResourceVersion()));
-		buffer.append(System.lineSeparator());
-
-		buffer.append("Category:");
-		buffer.append(testNull(resourceInstance.getCategory()));
-		buffer.append(System.lineSeparator());
-
-		buffer.append("SubCategory:");
-		buffer.append(testNull(resourceInstance.getSubcategory()));
-		buffer.append(System.lineSeparator());
-
-		buffer.append("Resource Artifacts List:");
-		buffer.append(System.lineSeparator());
-		buffer.append(testNull(dumpArtifactInfoList(resourceInstance.getArtifacts())));
-		buffer.append(System.lineSeparator());
-
-		return buffer.toString();
-
+        return "Resource Instance Info:" + System.lineSeparator() +
+            "ResourceInstanceName:" + testNull(resourceInstance.getResourceInstanceName()) + System.lineSeparator() +
+            "ResourceCustomizationUUID:" + testNull(resourceInstance.getResourceCustomizationUUID()) + System.lineSeparator() +
+            "ResourceInvariantUUID:" + testNull(resourceInstance.getResourceInvariantUUID()) + System.lineSeparator() +
+            "ResourceName:" + testNull(resourceInstance.getResourceName()) + System.lineSeparator() +
+            "ResourceType:" + testNull(resourceInstance.getResourceType()) + System.lineSeparator() +
+            "ResourceUUID:" + testNull(resourceInstance.getResourceUUID()) + System.lineSeparator() +
+            "ResourceVersion:" + testNull(resourceInstance.getResourceVersion()) + System.lineSeparator() +
+            "Category:" + testNull(resourceInstance.getCategory()) + System.lineSeparator() +
+            "SubCategory:" + testNull(resourceInstance.getSubcategory()) + System.lineSeparator() +
+            "Resource Artifacts List:" + System.lineSeparator() + testNull(dumpArtifactInfoList(resourceInstance.getArtifacts())) + System.lineSeparator();
 	}
 
 

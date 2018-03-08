@@ -39,11 +39,11 @@ public class TenantTest {
 		
 		MsoTenantAdapter tenantAdapter = new MsoTenantAdapterImpl();
 		
-		Holder<String> tenantId = new Holder<String>();
-		Holder<String> tenantName = new Holder<String>();
-		Holder<Map<String,String>> tenantMetadata = new Holder<Map<String,String>>();
-		Holder<Boolean> tenantDeleted = new Holder<Boolean>();
-		Holder<TenantRollback> rollback = new Holder<TenantRollback>();
+		Holder<String> tenantId = new Holder<>();
+		Holder<String> tenantName = new Holder<>();
+		Holder<Map<String,String>> tenantMetadata = new Holder<>();
+		Holder<Boolean> tenantDeleted = new Holder<>();
+		Holder<TenantRollback> rollback = new Holder<>();
 		
 		try {
 			tenantAdapter.queryTenant (cloudId, "934a4ac9c4bd4b8d9d8ab3ef900281b0", null, tenantId, tenantName, tenantMetadata);

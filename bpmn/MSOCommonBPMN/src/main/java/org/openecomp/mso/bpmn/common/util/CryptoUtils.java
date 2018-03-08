@@ -38,11 +38,10 @@ public class CryptoUtils {
     public static final String AES = "AES";
 
     /**
-    * encrypt a value and generate a keyfile
+     * encrypt a value and generate a keyfile
      * if the keyfile is not found then a new one is created
-    * @throws GeneralSecurityException
-     * @throws IOException
-     */
+     * @throws GeneralSecurityException
+     * */
     public static String encrypt(String value, String keyString) throws GeneralSecurityException
     {
         SecretKeySpec sks = getSecretKeySpec(keyString);
@@ -53,9 +52,8 @@ public class CryptoUtils {
     }
 
     /**
-    * decrypt a value
+     * decrypt a value
      * @throws GeneralSecurityException
-     * @throws IOException
      */
     public static String decrypt(String message, String keyString) throws GeneralSecurityException
     {
@@ -96,23 +94,5 @@ public class CryptoUtils {
         return b;
     }
 
-    /**
-     * Not Used...
-     *
-    * Call Rttp utility jar to encrypt pwd
-    * @param clearPassword
-    * @return
-    * @throws GeneralSecurityException
-     * @throws Exception
-    *
-    public static String encryptRttpPwd(String clearPassword) throws GeneralSecurityException {
-        try {
-            return RttpBasicAuth.encrypt(clearPassword);
-        } catch (Exception e) {
-            // wrap generic exception
-            throw new GeneralSecurityException(e);
-        }
-    }
-    */
 }
 

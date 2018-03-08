@@ -162,7 +162,7 @@ public class VnfResourceCustomization extends MavenLikeVersioning implements Ser
 			if (this.vfModuleCustomizations != null) {
 				this.vfModuleCustomizations.add(vfmc);
 			} else {
-				this.vfModuleCustomizations = new ArrayList<VfModuleCustomization>();
+				this.vfModuleCustomizations = new ArrayList<>();
 				this.vfModuleCustomizations.add(vfmc);
 			}
 		}
@@ -186,21 +186,18 @@ public class VnfResourceCustomization extends MavenLikeVersioning implements Ser
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder("VnfResourceCustomization: ");
-		sb.append("ModelCustUuid=" + this.modelCustomizationUuid ); 
-		sb.append(", ModelInstanceName=" + this.modelInstanceName);
-		sb.append(", vnfResourceModelUuid=" + this.vnfResourceModelUUID); 
-		sb.append(", creationTimestamp=" + this.created); 
-		sb.append(", minInstances=" + this.minInstances);
-		sb.append(", maxInstances=" + this.maxInstances);
-		sb.append(", availabilityZoneMaxCount=" + this.availabilityZoneMaxCount);
-//		sb.append(", vnfResource:\n" + this.vnfResource == null ? "null" : this.vnfResource.toString());
-		sb.append(", nfFunction=" + this.nfFunction); 
-		sb.append(", nfType=" + this.nfType);
-		sb.append(", nfRole=" + this.nfRole);
-		sb.append(", nfNamingCode=" + this.nfNamingCode);
-		sb.append(", multiStageDesign=" + this.multiStageDesign);
-		return sb.toString();
+        return "VnfResourceCustomization: " + "ModelCustUuid=" + this.modelCustomizationUuid +
+            ", ModelInstanceName=" + this.modelInstanceName +
+            ", vnfResourceModelUuid=" + this.vnfResourceModelUUID +
+            ", creationTimestamp=" + this.created +
+            ", minInstances=" + this.minInstances +
+            ", maxInstances=" + this.maxInstances +
+            ", availabilityZoneMaxCount=" + this.availabilityZoneMaxCount +
+            ", nfFunction=" + this.nfFunction +
+            ", nfType=" + this.nfType +
+            ", nfRole=" + this.nfRole +
+            ", nfNamingCode=" + this.nfNamingCode +
+            ", multiStageDesign=" + this.multiStageDesign;
 	}
 
 }

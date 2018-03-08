@@ -240,7 +240,8 @@ public class HealthCheckHandler  {
         //now create a soap request message as follows:
         final StringBuilder payload = new StringBuilder();
         payload.append("\n");
-        payload.append("<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:req=\"" + adapterNamespace + "/requestsdb\">\n");
+        payload.append("<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:req=\"")
+            .append(adapterNamespace).append("/requestsdb\">\n");
         payload.append("<soapenv:Header/>\n");
         payload.append("<soapenv:Body>\n");
         payload.append("<req:getSiteStatus>\n");

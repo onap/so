@@ -148,7 +148,7 @@ public class VnfResource extends Resource {
 	// methods to add to the list
 	public void addVfModule(ModuleResource moduleResource) {
 		if (vfModules == null){
-			vfModules = new ArrayList<ModuleResource>();
+			vfModules = new ArrayList<>();
 		}
 		this.vfModules.add(moduleResource);
 	}
@@ -160,7 +160,6 @@ public class VnfResource extends Resource {
 	 *
 	 * default setter for this field deprecated
 	 * @param modelName << serviceResources.modelInfo.modelName
-	 * @param modelInstanceName
 	 */
 	public void constructVnfType(String modelName) {
 		this.vnfType = modelName.concat("/").concat(this.modelInfo.getModelInstanceName());

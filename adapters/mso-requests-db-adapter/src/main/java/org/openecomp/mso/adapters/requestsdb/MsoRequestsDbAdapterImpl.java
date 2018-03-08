@@ -344,5 +344,56 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
             RequestsDatabase.getInstance().updateResOperStatus(resourceStatus);
         }     
     }
-
+    
+    /**
+     * get resource operation status
+     * <br>
+     * 
+     * @param serviceId
+     * @param operationId
+     * @param resourceTemplateUUID
+     * @return
+     * @throws MsoRequestsDbException
+     * @since   ONAP Amsterdam Release
+     */
+    @Override
+    public ResourceOperationStatus getResourceOperationStatus(String serviceId, String operationId, String resourceTemplateUUID)
+            throws MsoRequestsDbException {
+        return RequestsDatabase.getInstance().getResourceOperationStatus(serviceId, operationId, resourceTemplateUUID);
+    }
+    
+    /**
+     * update resource operation status
+     * <br>
+     * 
+     * @param serviceId
+     * @param operationId
+     * @param resourceTemplateUUID
+     * @param operationType
+     * @param resourceInstanceID
+     * @param jobId
+     * @param status
+     * @param progress
+     * @param errorCode
+     * @param statusDescription
+     * @throws MsoRequestsDbException
+     * @since   ONAP Amsterdam Release
+     */
+    @Override
+    public void updateResourceOperationStatus(String serviceId, String operationId, String resourceTemplateUUID,
+            String operationType, String resourceInstanceID, String jobId, String status, String progress,
+            String errorCode, String statusDescription) throws MsoRequestsDbException {
+         ResourceOperationStatus resStatus = new ResourceOperationStatus();
+         resStatus.setServiceId(serviceId);
+         resStatus.setOperationId(operationId);
+         resStatus.setResourceTemplateUUID(resourceTemplateUUID);
+         resStatus.setOperType(operationType);
+         resStatus.setResourceInstanceID(resourceInstanceID);
+         resStatus.setJobId(jobId);
+         resStatus.setStatus(status);
+         resStatus.setProgress(progress);
+         resStatus.setErrorCode(errorCode);
+         resStatus.setStatusDescription(statusDescription);
+         RequestsDatabase.getInstance().updateResOperStatus(resStatus);
+    }
 }

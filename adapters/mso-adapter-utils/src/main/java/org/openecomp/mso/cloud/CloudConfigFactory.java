@@ -184,12 +184,12 @@ public class CloudConfigFactory implements Serializable {
             StringBuffer response = new StringBuffer ();
             response.append ("Cloud Sites:\n");
             for (CloudSite site : cloudConfig.getCloudSites ().values ()) {
-                response.append (site.toString () + "\n");
+                response.append(site.toString()).append("\n");
             }
     
             response.append ("\n\nCloud Identity Services:\n");
             for (CloudIdentity identity : cloudConfig.getIdentityServices ().values ()) {
-                response.append (identity.toString () + "\n");
+                response.append(identity.toString()).append("\n");
             }
     
             return Response.status (200).entity (response).build ();

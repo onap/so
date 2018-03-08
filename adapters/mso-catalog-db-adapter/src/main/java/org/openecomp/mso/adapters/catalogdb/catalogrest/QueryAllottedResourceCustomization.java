@@ -62,30 +62,30 @@ public class QueryAllottedResourceCustomization extends CatalogQuery {
 
 	@Override
 	public String toString () {
-		StringBuilder buf = new StringBuilder();
+		StringBuilder sb = new StringBuilder();
 
 		boolean first = true;
 		int i = 1;
 		for (AllottedResourceCustomization o : allottedResourceCustomization) {
-			buf.append(i+"\t");
-			if (!first) buf.append("\n"); first = false;
-			buf.append(o);
+			sb.append(i).append("\t");
+			if (!first) sb.append("\n"); first = false;
+			sb.append(o);
 		}
-		return buf.toString();
+		return sb.toString();
     }
 
 	@Override
 	public String JSON2(boolean isArray, boolean isEmbed) {
-		StringBuilder buf = new StringBuilder();
-		if (!isEmbed && isArray) buf.append("{ ");
-		if (isArray) buf.append("\"serviceAllottedResources\": [");
+		StringBuilder sb = new StringBuilder();
+		if (!isEmbed && isArray) sb.append("{ ");
+		if (isArray) sb.append("\"serviceAllottedResources\": [");
 		Map<String, String> valueMap = new HashMap<>();
 		String sep = "";
 		boolean first = true;
 
 		if (this.allottedResourceCustomization != null) {
 		for (AllottedResourceCustomization o : allottedResourceCustomization) {
-			if (first) buf.append("\n"); first = false;
+			if (first) sb.append("\n"); first = false;
 
 				boolean arNull = o.getAllottedResource() == null ? true : false;
 	
@@ -106,14 +106,14 @@ public class QueryAllottedResourceCustomization extends CatalogQuery {
 			    put(valueMap, "PROVIDING_SERVICE_MODEL_UUID",     o.getProvidingServiceModelUuid());
 			    put(valueMap, "PROVIDING_SERVICE_MODEL_NAME",     o.getProvidingServiceModelName());
 
-            buf.append(sep+ this.setTemplate(template, valueMap));
+            sb.append(sep).append(this.setTemplate(template, valueMap));
             sep = ",\n";
 		}
 		}
-		if (!first) buf.append("\n");
-		if (isArray) buf.append("]");
-		if (!isEmbed && isArray) buf.append("}");
-		return buf.toString();
+		if (!first) sb.append("\n");
+		if (isArray) sb.append("]");
+		if (!isEmbed && isArray) sb.append("}");
+		return sb.toString();
 	}
 
 }

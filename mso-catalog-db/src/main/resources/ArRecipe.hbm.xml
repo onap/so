@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*-
+ * ============LICENSE_START=======================================================
+ * ONAP - SO
+ * ================================================================================
+ * Copyright (C) 2018 Huawei Technologies Co., Ltd. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+  -->
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.openecomp.mso.db.catalog.beans">
+	<class name="ArRecipe" table="AR_RECIPE">
+		<meta attribute="class-description">
+			This class describes a AR recipe
+		</meta>
+		
+		<id name="id" type="int" column="id">
+			<generator class="native"/>
+		</id>
+
+		<properties name="uk_ar_recipe" unique="true">
+			<property name="modelName" type="string" >
+			     <column name="MODEL_NAME" not-null="true" length="20"/>
+			</property>
+			<property name="action" type="string" >
+			     <column name="ACTION" not-null="true" length="20"/>
+			</property>
+			<property name="version" type="string">
+			     <column name="VERSION_STR" not-null="true" length="20"/>
+			</property>
+			
+		</properties>
+		
+		<property name="serviceType" type="string" length="45">
+                 <column name="SERVICE_TYPE" not-null="false" length="45"/>
+        </property>
+		<property name="description" column="DESCRIPTION" type="string" length="1200"/>
+		<property name="orchestrationUri" type="string">
+		  <column name="ORCHESTRATION_URI" not-null="true" length="256"/>
+		</property>
+		<property name="paramXSD" column="AR_PARAM_XSD" type="string" length="2048"/>
+		<property name="recipeTimeout" column="RECIPE_TIMEOUT" type="int"/>
+		<property name="created" type="timestamp" generated="insert" update="false" insert="false" not-null="true">
+          <column name="CREATION_TIMESTAMP" default="CURRENT_TIMESTAMP"/>
+        </property>
+	</class>
+	
+</hibernate-mapping>

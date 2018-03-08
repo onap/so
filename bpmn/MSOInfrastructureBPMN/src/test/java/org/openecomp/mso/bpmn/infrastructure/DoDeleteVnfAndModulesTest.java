@@ -91,7 +91,7 @@ public class DoDeleteVnfAndModulesTest extends WorkflowTest {
 		mockSDNCAdapter(200);
 
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		setVariablesVnfOnly(variables);
 		invokeSubProcess("DoDeleteVnfAndModules", businessKey, variables);
 		
@@ -156,7 +156,7 @@ public class DoDeleteVnfAndModulesTest extends WorkflowTest {
 		MockAAIDeleteVfModule();
 
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		setVariablesVnfAndModules(variables);
 		invokeSubProcess("DoDeleteVnfAndModules", businessKey, variables);
 		
@@ -238,7 +238,7 @@ public class DoDeleteVnfAndModulesTest extends WorkflowTest {
 		MockPatchVfModuleId("a27ce5a9-29c4-4c22-a017-6615ac73c721", "973ed047-d251-4fb9-bf1a-65b8949e0a73");
 
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		setVariablesVnfAndModulesDirectDelete(variables);
 		invokeSubProcess("DoDeleteVnfAndModules", businessKey, variables);
 		

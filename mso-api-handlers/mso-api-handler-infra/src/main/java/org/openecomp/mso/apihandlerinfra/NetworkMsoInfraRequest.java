@@ -147,24 +147,27 @@ public class NetworkMsoInfraRequest {
         }
         
         // Verify that the elements correspond to the version
-        
-        if (version.equals(Constants.SCHEMA_VERSION_V1)) {
-        		if (this.networkInputs.getBackoutOnFailure() != null || this.networkInputs.getAicCloudRegion() != null ||
-        				this.networkInputs.getServiceInstanceId() != null) {
-        			throw new ValidationException ("format for v1 version of network request");
-        		}
+
+        switch (version) {
+            case Constants.SCHEMA_VERSION_V1:
+                if (this.networkInputs.getBackoutOnFailure() != null || this.networkInputs.getAicCloudRegion() != null
+                    ||
+                    this.networkInputs.getServiceInstanceId() != null) {
+                    throw new ValidationException("format for v1 version of network request");
+                }
+                break;
+            case Constants.SCHEMA_VERSION_V2:
+                if (this.networkInputs.getServiceType() != null || this.networkInputs.getAicNodeClli() != null ||
+                    this.networkInputs.getServiceInstanceId() != null) {
+                    throw new ValidationException("format for v2 version of network request");
+                }
+                break;
+            case Constants.SCHEMA_VERSION_V3:
+                if (this.networkInputs.getServiceType() != null || this.networkInputs.getAicNodeClli() != null) {
+                    throw new ValidationException("format for v3 version of network request");
+                }
+                break;
         }
-        else if (version.equals(Constants.SCHEMA_VERSION_V2)) {
-        		if (this.networkInputs.getServiceType() != null || this.networkInputs.getAicNodeClli() != null ||
-        				this.networkInputs.getServiceInstanceId() != null) {
-        			throw new ValidationException ("format for v2 version of network request");
-        		}
-        }
-        else if (version.equals(Constants.SCHEMA_VERSION_V3)) {
-    		if (this.networkInputs.getServiceType() != null || this.networkInputs.getAicNodeClli() != null) {
-    			throw new ValidationException ("format for v3 version of network request");
-    		}
-    }
 
         switch (action) {            
             case UPDATE:

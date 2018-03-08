@@ -321,14 +321,8 @@ public class LoggingAndURNMappingPlugin extends AbstractProcessEnginePlugin {
 		}
 
 		private void loadFromDB(DelegateExecution execution, ProcessEngineConfigurationImpl processEngineConfiguration) {
-			Command<List<URNMapping>> command = new Command<List<URNMapping>>() {
-				@SuppressWarnings("unchecked")
-				@Override
-				public List<URNMapping> execute(CommandContext commandContext) {
-					return (List<URNMapping>) commandContext.getDbSqlSession().selectList(
-						"mso.urnMapping.selectAll", null);
-				}
-			};
+			Command<List<URNMapping>> command = commandContext -> (List<URNMapping>) commandContext.getDbSqlSession()
+				.selectList("mso.urnMapping.selectAll", null);
 
 			CustomMyBatisSessionFactory sessionFactory = new CustomMyBatisSessionFactory();
 			sessionFactory.initFromProcessEngineConfiguration(processEngineConfiguration,

@@ -24,25 +24,22 @@
 package org.openecomp.mso.cloud;
 
 import java.security.GeneralSecurityException;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.woorea.openstack.keystone.model.Authentication;
+import com.woorea.openstack.keystone.model.authentication.UsernamePassword;
 import org.openecomp.mso.cloud.authentication.AuthenticationMethodFactory;
 import org.openecomp.mso.cloud.authentication.AuthenticationWrapper;
 import org.openecomp.mso.cloud.authentication.wrappers.RackspaceAPIKeyWrapper;
 import org.openecomp.mso.cloud.authentication.wrappers.UsernamePasswordWrapper;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
-import org.openecomp.mso.openstack.exceptions.MsoAdapterException;
 import org.openecomp.mso.openstack.exceptions.MsoException;
 import org.openecomp.mso.openstack.utils.MsoKeystoneUtils;
 import org.openecomp.mso.openstack.utils.MsoTenantUtils;
 import org.openecomp.mso.openstack.utils.MsoTenantUtilsFactory;
 import org.openecomp.mso.utils.CryptoUtils;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.woorea.openstack.keystone.model.Authentication;
-import com.woorea.openstack.keystone.model.authentication.UsernamePassword;
 
 /**
  * JavaBean JSON class for a CloudIdentity. This bean represents a cloud identity
@@ -230,29 +227,18 @@ public class CloudIdentity {
 	public void setIdentityAuthenticationType(IdentityAuthenticationType identityAuthenticationType) {
 		this.identityAuthenticationType = identityAuthenticationType;
 	}
-	
+
 	@Override
     public String toString () {
-        StringBuilder stringBuilder = new StringBuilder ();
-        stringBuilder.append ("Cloud Identity Service: id=")
-                     .append (id)
-                     .append (", identityUrl=")
-                     .append (this.identityUrl)
-                     .append (", msoId=")
-                     .append (msoId)
-                     .append (", adminTenant=")
-                     .append (adminTenant)
-                     .append (", memberRole=")
-                     .append (memberRole)
-                     .append (", tenantMetadata=")
-                     .append (tenantMetadata)
-                     .append (", identityServerType=")
-                     .append (identityServerType == null ? "null" : identityServerType.toString())
-                     .append (", identityAuthenticationType=")
-                     .append (identityAuthenticationType == null ? "null" : identityAuthenticationType.toString());
-        
-        return stringBuilder.toString ();
-    }
+		return "Cloud Identity Service: id=" + id +
+			", identityUrl=" + this.identityUrl +
+			", msoId=" + msoId +
+			", adminTenant=" + adminTenant +
+			", memberRole=" + memberRole +
+			", tenantMetadata=" + tenantMetadata +
+			", identityServerType=" + (identityServerType == null ? "null" : identityServerType.toString()) +
+			", identityAuthenticationType=" + (identityAuthenticationType == null ? "null" : identityAuthenticationType.toString());
+	}
 
     public static String encryptPassword (String msoPass) {
         try {

@@ -54,7 +54,7 @@ public class DoDeleteVnfTest extends WorkflowTest {
 		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
 		
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		setVariables(variables);
 		invokeSubProcess("DoDeleteVnf", businessKey, variables);
 		// Disabled until SDNC support is there
@@ -81,7 +81,7 @@ public class DoDeleteVnfTest extends WorkflowTest {
 		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
 		
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		setVariables(variables);
 
 		invokeSubProcess("DoDeleteVnf", businessKey, variables);
@@ -110,7 +110,7 @@ public class DoDeleteVnfTest extends WorkflowTest {
 		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
 
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		setVariables(variables);
 
 		invokeSubProcess("DoDeleteVnf", businessKey, variables);

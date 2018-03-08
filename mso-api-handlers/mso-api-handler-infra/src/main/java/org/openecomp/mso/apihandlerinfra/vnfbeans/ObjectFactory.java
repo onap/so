@@ -144,7 +144,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://org.openecomp/mso/infra/vnf-request/v1", name = "vnf-params")
     public JAXBElement<Object> createVnfParams(Object value) {
-        return new JAXBElement<Object>(_VnfParams_QNAME, Object.class, null, value);
+        return new JAXBElement<>(_VnfParams_QNAME, Object.class, null, value);
     }
 
 }

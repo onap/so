@@ -224,7 +224,7 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 			errorMessage=""
 		}
 		if( errorCode.equals('5010')){
-					return 'Could not communicate with A&AI'
+			return 'Could not communicate with A&AI'
 		}else if (errorCode.equals('5020')){
 			return 'No response from A&AI'
 		}else{
@@ -357,7 +357,6 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 
 			utils.log("DEBUG", processKey + " Outgoing WorkflowException is: " + execution.getVariable("WorkflowException"), isDebugEnabled)
 			utils.log("DEBUG", processKey + " Outgoing FalloutHandler Request is: " + falloutHandlerRequest, isDebugEnabled)
-
 			return falloutHandlerRequest
 
 		}catch(Exception e){

@@ -47,7 +47,7 @@ public class ValidateUtil {
    * Assert String parameter.<br/>
    * 
    * @param paramValue parameter data
-   * @param name of parameter
+   * @param paramName parameter name
    * @since ONAP Amsterdam Release 2017-9-6
    */
   public static void assertStringNotNull(String paramValue, String paramName)

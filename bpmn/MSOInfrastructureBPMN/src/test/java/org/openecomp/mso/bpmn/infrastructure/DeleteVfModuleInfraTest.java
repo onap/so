@@ -534,7 +534,7 @@ public class DeleteVfModuleInfraTest extends WorkflowTest {
 		String businessKey = UUID.randomUUID().toString();
 		String deleteVfModuleRequest =
 				FileUtil.readResourceFile("__files/DeleteVfModule_VID_request.json");
-		//Map<String, Object> variables = new HashMap<String, Object>();	
+		//Map<String, Object> variables = new HashMap<>();	
 		
 		//variables.put("isDebugLogEnabled","true");
 //		variables.put("mso-request-id", "a27ce5a9-29c4-4c22-a017-6615ac73c721");
@@ -567,7 +567,7 @@ public class DeleteVfModuleInfraTest extends WorkflowTest {
 	
 	// Active Scenario
 			private Map<String, Object> setupVariablesSunnyDayVID() {
-				Map<String, Object> variables = new HashMap<String, Object>();
+				Map<String, Object> variables = new HashMap<>();
 				//try {
 				//	variables.put("bpmnRequest", FileUtil.readResourceFile("__files/CreateVfModule_VID_request.json"));
 				//}

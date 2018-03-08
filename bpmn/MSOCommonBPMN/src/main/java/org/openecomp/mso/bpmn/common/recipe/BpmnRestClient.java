@@ -129,7 +129,7 @@ public class BpmnRestClient {
             if(encryptedCredentials != null) {
                 String userCredentials = getEncryptedPropValue(encryptedCredentials, DEFAULT_BPEL_AUTH, ENCRYPTION_KEY);
                 if(userCredentials != null) {
-                    post.addHeader("Authorization", "Basic " + new String(DatatypeConverter.printBase64Binary(userCredentials.getBytes())));
+                    post.addHeader("Authorization", "Basic " + DatatypeConverter.printBase64Binary(userCredentials.getBytes()));
                 }
             }
         }

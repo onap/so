@@ -150,7 +150,7 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
 
     private String getPostStringBody(ResourceOperationStatus resourceOperationStatus) {
         logger.info("AbstractSdncOperationTask.getPostStringBody begin!");
-        String postBody = new String(postBodyTemplate);
+        String postBody = postBodyTemplate;
         postBody = postBody.replace("$errorCode", resourceOperationStatus.getErrorCode());
         postBody = postBody.replace("$jobId", resourceOperationStatus.getJobId());
         postBody = postBody.replace("$operType", resourceOperationStatus.getOperType());
@@ -166,7 +166,7 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
 
     private String getGetStringBody(String serviceId, String operationId, String resourceTemplateUUID) {
         logger.info("AbstractSdncOperationTask.getGetStringBody begin!");
-        String getBody = new String(getBodyTemplate);
+        String getBody = getBodyTemplate;
         getBody = getBody.replace("$operationId", operationId);
         getBody = getBody.replace("$resourceTemplateUUID", resourceTemplateUUID);
         getBody = getBody.replace("$serviceId", serviceId);
@@ -319,7 +319,6 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
             updateResOperStatus(resourceOperationStatus);
             logger.info("AbstractSdncOperationTask.updateProgress end!");
         } catch (Exception exception) {
-            System.out.println(exception);
             logger.info("exception: AbstractSdncOperationTask.updateProgress fail!");
             logger.error("exception: AbstractSdncOperationTask.updateProgress fail:", exception);
             LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " updateProgress catch exception: ", "", this.getTaskName(), MsoLogger.ErrorCode.UnknownError, exception.getClass().toString());
@@ -403,7 +402,6 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
                 return vlaue;
             }
         } catch (Exception e) {
-            System.out.println(e);
             LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " getMsbIp catch exception: ", "", this.getTaskName(), MsoLogger.ErrorCode.UnknownError, e.getClass().toString());
         }
         return defaultValue;
@@ -416,7 +414,6 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
                 return vlaue;
             }
         } catch (Exception e) {
-            System.out.println(e);
             LOGGER.error(MessageEnum.GENERAL_EXCEPTION, " getMsbIp catch exception: ", "", this.getTaskName(), MsoLogger.ErrorCode.UnknownError, e.getClass().toString());
         }
         return defaultValue;

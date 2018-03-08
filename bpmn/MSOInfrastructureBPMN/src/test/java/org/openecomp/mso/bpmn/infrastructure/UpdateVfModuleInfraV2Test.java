@@ -98,7 +98,7 @@ public class UpdateVfModuleInfraV2Test extends WorkflowTest {
 	
 	// Active Scenario
 	private Map<String, Object> setupVariablesSunnyDayVID() {
-				Map<String, Object> variables = new HashMap<String, Object>();
+				Map<String, Object> variables = new HashMap<>();
 				variables.put("requestId", "testRequestId");		
 				variables.put("isBaseVfModule", false);
 				variables.put("isDebugLogEnabled", "true");

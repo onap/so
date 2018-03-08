@@ -66,6 +66,7 @@ public final class CommonConstants {
 	public static final String REQUEST_DETAILS_VARIABLE = "requestDetails";	
 	public static final String ALACARTE_ORCHESTRATION = "mso.infra.default.alacarte.orchestrationUri";
 	public static final String ALACARTE_RECIPE_TIMEOUT = "mso.infra.default.alacarte.recipeTimeout";
+	public static final String RECIPE_PARAMS = "recipeParams";
 	
 	private CommonConstants () {
 	    // prevent creating an instance of this class

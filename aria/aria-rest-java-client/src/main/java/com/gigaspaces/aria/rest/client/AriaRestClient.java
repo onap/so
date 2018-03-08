@@ -17,13 +17,7 @@
 */
 package com.gigaspaces.aria.rest.client;
 
-import com.gigaspaces.aria.rest.client.exceptions.StorageException;
-import com.gigaspaces.aria.rest.client.exceptions.ValidationException;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import java.util.List;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -32,7 +26,13 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.List;
+
+import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
+import org.codehaus.jackson.map.ObjectMapper;
+import com.gigaspaces.aria.rest.client.exceptions.StorageException;
+import com.gigaspaces.aria.rest.client.exceptions.ValidationException;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 

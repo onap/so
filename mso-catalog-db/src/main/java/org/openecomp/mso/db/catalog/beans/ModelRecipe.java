@@ -89,7 +89,7 @@ public class ModelRecipe extends MavenLikeVersioning implements Serializable {
 	}
 
 	/**
-	 * @param versionStr the versionStr to set
+	 * @param schemaVersion the versionStr to set
 	 */
 	public void setSchemaVersion(String schemaVersion) {
 		this.schemaVersion = schemaVersion;
@@ -169,12 +169,12 @@ public class ModelRecipe extends MavenLikeVersioning implements Serializable {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("ModelRecipe: ");
-		sb.append("modelId=" + modelId.toString());
-		sb.append(",action=" + action);
-		sb.append(",schemaVersion=" + schemaVersion);
-		sb.append(",orchestrationUri=" + orchestrationUri);
-		sb.append(",modelParamXSD=" + modelParamXSD);
-		sb.append(",recipeTimeout=" + recipeTimeout.toString());
+		sb.append("modelId=").append(modelId.toString());
+		sb.append(",action=").append(action);
+		sb.append(",schemaVersion=").append(schemaVersion);
+		sb.append(",orchestrationUri=").append(orchestrationUri);
+		sb.append(",modelParamXSD=").append(modelParamXSD);
+		sb.append(",recipeTimeout=").append(recipeTimeout.toString());
         if (created != null) {
 	        sb.append (",created=");
 	        sb.append (DateFormat.getInstance().format(created));

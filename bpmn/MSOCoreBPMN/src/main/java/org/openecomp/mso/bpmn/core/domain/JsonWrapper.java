@@ -92,10 +92,6 @@ public abstract class JsonWrapper implements Serializable  {
         JSONObject json = new JSONObject();
          try {
 			json = new JSONObject(mapper.writeValueAsString(this));
-		} catch (JsonGenerationException e) {
-			LOGGER.debug("Exception :",e);
-		} catch (JsonMappingException e) {
-			LOGGER.debug("Exception :",e);
 		} catch (JSONException e) {
 			LOGGER.debug("Exception :",e);
 		} catch (IOException e) {
@@ -112,8 +108,6 @@ public abstract class JsonWrapper implements Serializable  {
 		try {
 			jsonString = mapper.writeValueAsString(list);
 		} catch (JsonGenerationException e) {
-			LOGGER.debug("Exception :",e);
-		} catch (JsonMappingException e) {
 			LOGGER.debug("Exception :",e);
 		} catch (IOException e) {
 			LOGGER.debug("Exception :",e);

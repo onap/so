@@ -27,7 +27,6 @@ public class VnfRecipe extends Recipe implements Serializable {
 	private static final long serialVersionUID = 768026109321305392L;
 
 	private String vnfType;
-	private String vnfParamXSD;
 	private String vfModuleId; 
 
 	public VnfRecipe() {}
@@ -37,13 +36,6 @@ public class VnfRecipe extends Recipe implements Serializable {
 	}
 	public void setVnfType(String vnfType) {
 		this.vnfType = vnfType;
-	}
-
-	public String getVnfParamXSD() {
-		return vnfParamXSD;
-	}
-	public void setVnfParamXSD(String vnfParamXSD) {
-		this.vnfParamXSD = vnfParamXSD;
 	}
 	
 	public String getVfModuleId() {
@@ -56,11 +48,7 @@ public class VnfRecipe extends Recipe implements Serializable {
 	
 	@Override
 	public String toString () {
-		StringBuilder sb = new StringBuilder();
-		sb.append(super.toString());
-		sb.append (",vnfParamXSD=" + vnfParamXSD);
-		sb.append (",serviceType=" + getServiceType ());
-		sb.append (",vfModuleId=" + getVfModuleId ());
-		return sb.toString();
+		return super.toString() + ",vnfParamXSD=" + getParamXSD() + ",serviceType=" + getServiceType() + ",vfModuleId=" +
+			getVfModuleId();
 	}
 }

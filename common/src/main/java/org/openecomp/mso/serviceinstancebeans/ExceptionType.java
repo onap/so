@@ -148,7 +148,7 @@ public class ExceptionType {
      */
     public List<String> getVariables() {
         if (variables == null) {
-            variables = new ArrayList<String>();
+            variables = new ArrayList<>();
         }
         return this.variables;
     }

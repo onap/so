@@ -121,7 +121,7 @@ public class VfResourceInstallerTest {
 		distributionClient = Mockito.mock(IDistributionClient.class);
 
 		// Now provision the NotificationData mock
-		List<IArtifactInfo> listArtifact = new ArrayList<IArtifactInfo>();
+		List<IArtifactInfo> listArtifact = new ArrayList<>();
 		listArtifact.add(artifactInfo1);
 
 		// Create fake resource Instance

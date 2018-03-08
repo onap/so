@@ -146,7 +146,7 @@ public class MsoPropertiesFactoryConcurrencyTest {
 	public final void testGetMsoProperties()
 			throws MsoPropertiesException, InterruptedException, ExecutionException, FileNotFoundException {
 
-		List<Future<Integer>> list = new ArrayList<Future<Integer>>();
+		List<Future<Integer>> list = new ArrayList<>();
 		ExecutorService executor = Executors.newFixedThreadPool(20);
 
 		for (int i = 0; i <= 100000; i++) {

@@ -179,7 +179,7 @@ UriInfo uriInfo = null;
 			public List <InfraActiveRequests> getRequestListFromInfraActive (String queryAttributeName,
                     String queryValue,
                     String requestType) {
-				List <InfraActiveRequests> list = new ArrayList<InfraActiveRequests>();
+				List <InfraActiveRequests> list = new ArrayList<>();
 				InfraActiveRequests req = new InfraActiveRequests();
 				req.setAaiServiceId("299392");
 				req.setAction("CREATE");

@@ -176,7 +176,47 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		}
 		utils.log("INFO"," ***** Exit preProcessRequest *****",  isDebugEnabled)
 	}
+	
+   public void prepareDecomposeService(DelegateExecution execution) {
+        def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 
+        try {
+            utils.log("DEBUG", " ***** Inside prepareDecomposeService of create generic e2e service ***** ", isDebugEnabled)
+            String modelInvariantUuid = execution.getVariable("modelInvariantUuid")
+            String modelUuid = execution.getVariable("modelUuid")
+            //here modelVersion is not set, we use modelUuid to decompose the service.
+            String serviceModelInfo = """{
+            "modelInvariantUuid":"${modelInvariantUuid}",
+            "modelUuid":"${modelUuid}",
+            "modelVersion":""
+             }"""
+            execution.setVariable("serviceModelInfo", serviceModelInfo)
+
+            utils.log("DEBUG", " ***** Completed prepareDecomposeService of  create generic e2e service ***** ", isDebugEnabled)
+        } catch (Exception ex) {
+            // try error in method block
+            String exceptionMessage = "Bpmn error encountered in  create generic e2e service flow. Unexpected Error from method prepareDecomposeService() - " + ex.getMessage()
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
+        }
+     }
+
+    public void processDecomposition(DelegateExecution execution) {
+        def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+    
+        utils.log("DEBUG", " ***** Inside processDecomposition() of  create generic e2e service flow ***** ", isDebugEnabled)    
+        try {
+            ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
+        } catch (Exception ex) {
+            String exceptionMessage = "Bpmn error encountered in  create generic e2e service flow. processDecomposition() - " + ex.getMessage()
+            utils.log("DEBUG", exceptionMessage, isDebugEnabled)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
+        }
+    }
+    
+    public void doServiceHoming(DelegateExecution execution) {
+        //Now Homing is not clear. So to be implemented.
+    }
+    
 	public void postProcessAAIGET(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO"," ***** postProcessAAIGET ***** ", isDebugEnabled)

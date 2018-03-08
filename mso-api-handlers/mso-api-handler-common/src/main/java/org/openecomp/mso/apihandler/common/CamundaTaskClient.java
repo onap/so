@@ -53,7 +53,8 @@ public class CamundaTaskClient extends RequestClient{
 			if(encryptedCredentials != null){
 				String userCredentials = getEncryptedPropValue(encryptedCredentials, CommonConstants.DEFAULT_BPEL_AUTH, CommonConstants.ENCRYPTION_KEY);
 				if(userCredentials != null){
-					post.addHeader("Authorization", "Basic " + new String(DatatypeConverter.printBase64Binary(userCredentials.getBytes())));
+					post.addHeader("Authorization", "Basic " + DatatypeConverter
+						.printBase64Binary(userCredentials.getBytes()));
 				}
 			}
 		}
@@ -75,7 +76,7 @@ public class CamundaTaskClient extends RequestClient{
 			int recipeTimeout, String requestAction, String serviceInstanceId,
 			String vnfId, String vfModuleId, String volumeGroupId, String networkId, String configurationId,
 			String serviceType, String vnfType, String vfModuleType, String networkType,
-			String requestDetails)
+			String requestDetails, String recipeParamXsd)
 					throws ClientProtocolException, IOException{
 		msoLogger.debug("Method not supported");
 		return null;
@@ -91,7 +92,8 @@ public class CamundaTaskClient extends RequestClient{
 			if(encryptedCredentials != null){
 				String userCredentials = getEncryptedPropValue(encryptedCredentials, CommonConstants.DEFAULT_BPEL_AUTH, CommonConstants.ENCRYPTION_KEY);
 				if(userCredentials != null){
-					get.addHeader("Authorization", "Basic " + new String(DatatypeConverter.printBase64Binary(userCredentials.getBytes())));
+					get.addHeader("Authorization", "Basic " + new String(DatatypeConverter
+						.printBase64Binary(userCredentials.getBytes())));
 				}
 			}
 		}

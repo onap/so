@@ -166,43 +166,45 @@ public class VolumeRequestHandler {
         if (ar.getVnfType () != null) {
             vi.setVnfType (ar.getVnfType ());
         }
-        
-        if (version.equals(Constants.SCHEMA_VERSION_V1)) {
-        	if (ar.getServiceType () != null) {
-        		vi.setServiceType (ar.getServiceType ());
-        	}
-        	if (ar.getAicNodeClli () != null) {
-        		vi.setAicNodeClli (ar.getAicNodeClli ());
-        	}
-        }
-        else if (version.equals(Constants.SCHEMA_VERSION_V2)) {
-        	if (ar.getAaiServiceId () != null) {
-        		vi.setServiceId (ar.getAaiServiceId ());
-        	}
-        	if (ar.getAicCloudRegion () != null) {
-        		vi.setAicCloudRegion (ar.getAicCloudRegion ());
-        	}        	
-        	if (ar.getVfModuleModelName () != null) {
-        		vi.setVfModuleModelName (ar.getVfModuleModelName ());
-        	}        	
-        }
-        else if (version.equals(Constants.SCHEMA_VERSION_V3)) {
-        	if (ar.getAaiServiceId () != null) {
-        		vi.setServiceId (ar.getAaiServiceId ());
-        	}
-        	if (ar.getAicCloudRegion () != null) {
-        		vi.setAicCloudRegion (ar.getAicCloudRegion ());
-        	}        	
-        	if (ar.getVfModuleModelName () != null) {
-        		vi.setVfModuleModelName (ar.getVfModuleModelName ());
-        	}
-        	if (ar.getServiceInstanceId () != null) {
-        		vi.setServiceInstanceId (ar.getServiceInstanceId ());
-        	}
-        	if (ar.getVnfId () != null) {
-                vi.setVnfId (ar.getVnfId ());
-            }
-        }
+
+         switch (version) {
+             case Constants.SCHEMA_VERSION_V1:
+                 if (ar.getServiceType() != null) {
+                     vi.setServiceType(ar.getServiceType());
+                 }
+                 if (ar.getAicNodeClli() != null) {
+                     vi.setAicNodeClli(ar.getAicNodeClli());
+                 }
+                 break;
+             case Constants.SCHEMA_VERSION_V2:
+                 if (ar.getAaiServiceId() != null) {
+                     vi.setServiceId(ar.getAaiServiceId());
+                 }
+                 if (ar.getAicCloudRegion() != null) {
+                     vi.setAicCloudRegion(ar.getAicCloudRegion());
+                 }
+                 if (ar.getVfModuleModelName() != null) {
+                     vi.setVfModuleModelName(ar.getVfModuleModelName());
+                 }
+                 break;
+             case Constants.SCHEMA_VERSION_V3:
+                 if (ar.getAaiServiceId() != null) {
+                     vi.setServiceId(ar.getAaiServiceId());
+                 }
+                 if (ar.getAicCloudRegion() != null) {
+                     vi.setAicCloudRegion(ar.getAicCloudRegion());
+                 }
+                 if (ar.getVfModuleModelName() != null) {
+                     vi.setVfModuleModelName(ar.getVfModuleModelName());
+                 }
+                 if (ar.getServiceInstanceId() != null) {
+                     vi.setServiceInstanceId(ar.getServiceInstanceId());
+                 }
+                 if (ar.getVnfId() != null) {
+                     vi.setVnfId(ar.getVnfId());
+                 }
+                 break;
+         }
         if (ar.getTenantId () != null) {
             vi.setTenantId (ar.getTenantId ());
         }
@@ -289,7 +291,7 @@ public class VolumeRequestHandler {
                                                                                                    queryValue,
                                                                                                    "VOLUME");
   
-        List <VolumeRequest> queryResponseList = new LinkedList <VolumeRequest> ();
+        List <VolumeRequest> queryResponseList = new LinkedList<>();
 
         if (activeReqList != null) {
             // build response for active
@@ -334,7 +336,7 @@ public class VolumeRequestHandler {
     }
 
     private List <VolumeRequest> infraRequestsResponses (List <? extends InfraRequests> arList, String version) {
-        List <VolumeRequest> queryResponseList = new LinkedList <VolumeRequest> ();
+        List <VolumeRequest> queryResponseList = new LinkedList<>();
 
         for (InfraRequests ar : arList) {
             VolumeRequest qr = fillGeneric (ar);

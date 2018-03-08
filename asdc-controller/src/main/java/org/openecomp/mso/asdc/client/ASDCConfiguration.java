@@ -131,7 +131,7 @@ public class ASDCConfiguration implements IConfiguration {
 
        JsonNode masterConfigNode = getASDCControllerConfigJsonNode ();
         if (masterConfigNode != null && masterConfigNode.get (MSG_BUS_ADDRESS_ATTRIBUTE_NAME) != null) {
-            List<String> msgAddressList = new ArrayList<String>();
+            List<String> msgAddressList = new ArrayList<>();
             
             Iterator<JsonNode> config = masterConfigNode.get(MSG_BUS_ADDRESS_ATTRIBUTE_NAME).elements();
       

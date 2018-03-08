@@ -109,7 +109,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://org.openecomp/mso/infra/volume-request/v1", name = "volume-params")
     public JAXBElement<Object> createVolumeParams(Object value) {
-        return new JAXBElement<Object>(_VolumeParams_QNAME, Object.class, null, value);
+        return new JAXBElement<>(_VolumeParams_QNAME, Object.class, null, value);
     }
 
 }

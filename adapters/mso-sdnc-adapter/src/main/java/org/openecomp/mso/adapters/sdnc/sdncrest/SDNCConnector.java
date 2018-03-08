@@ -154,12 +154,7 @@ public abstract class SDNCConnector {
 			LOGGER.info(MessageEnum.RA_RESPONSE_FROM_SDNC, responseContent, "SDNC", "");
 			return createResponseFromContent(statusCode, statusMessage, responseContent, rt);
 
-		} catch (SocketTimeoutException e) {
-			String errMsg = "Request to SDNC timed out";
-			logError(errMsg, e);
-			return createErrorResponse(HttpURLConnection.HTTP_CLIENT_TIMEOUT, errMsg, rt);
-
-		} catch (ConnectTimeoutException e) {
+		} catch (SocketTimeoutException | ConnectTimeoutException e) {
 			String errMsg = "Request to SDNC timed out";
 			logError(errMsg, e);
 			return createErrorResponse(HttpURLConnection.HTTP_CLIENT_TIMEOUT, errMsg, rt);

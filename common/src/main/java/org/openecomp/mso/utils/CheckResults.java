@@ -36,7 +36,7 @@ public class CheckResults {
     private List <CheckResult> results;
 
     public CheckResults () {
-        results = new ArrayList <CheckResult> ();
+        results = new ArrayList<>();
     }
 
     public List <CheckResult> getResults () {

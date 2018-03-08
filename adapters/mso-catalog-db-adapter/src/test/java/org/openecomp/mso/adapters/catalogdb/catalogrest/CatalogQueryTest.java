@@ -49,7 +49,7 @@ public class CatalogQueryTest {
 		CatalogQuery mockCatalogQuery = Mockito.mock(CatalogQuery.class);
 		Mockito.doCallRealMethod().when(mockCatalogQuery).setTemplate(Mockito.anyString(), Mockito.anyMapOf(String.class, String.class));
 		
-		Map<String,String> valueMap = new HashMap<String,String>();
+		Map<String,String> valueMap = new HashMap<>();
 		valueMap.put("somekey", "somevalue");
 		
 		String ret = mockCatalogQuery.setTemplate("<somekey>", valueMap);
@@ -60,7 +60,7 @@ public class CatalogQueryTest {
 	@Test
 	public void smartToJson_Test()
 	{
-        List<VnfResourceCustomization> paramList = new ArrayList<VnfResourceCustomization>();
+        List<VnfResourceCustomization> paramList = new ArrayList<>();
         VnfResourceCustomization d1 = new VnfResourceCustomization();
         d1.setModelCustomizationUuid("16ea3e56-a8ce-4ad7-8edd-4d2eae095391");
         d1.setModelInstanceName("RG_6-26_mog11 0");

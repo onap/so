@@ -694,6 +694,47 @@ class CatalogDbUtils {
 		return vnfsList
 	}
 
+	public JSONObject getServiceResourcesByServiceModelUuid(DelegateExecution execution, String serviceModelUuid) {
+		JSONObject resources = null
+		String endPoint = "/serviceResources?serviceModelUuid=" + UriUtils.encode(serviceModelUuid, "UTF-8")
+		try {
+		    String catalogDbResponse = getResponseFromCatalogDb(execution, endPoint)
+	
+		    if (catalogDbResponse != null) {
+	
+			resources = parseServiceResourcesJson(catalogDbResponse, "v1")
+		    }
+	
+		}
+		catch (Exception e) {
+		    utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+		}
+
+		return resources
+	}
+
+	public JSONObject getServiceResourcesByServiceModelUuid(DelegateExecution execution, String serviceModelUuid, String catalogUtilsVersion) {
+		JSONObject resources = null
+		String endPoint = "/serviceResources?serviceModelUuid=" + UriUtils.encode(serviceModelUuid, "UTF-8")
+		try {
+			String catalogDbResponse = getResponseFromCatalogDb(execution, endPoint)
+
+			if (catalogDbResponse != null) {
+				if (!catalogUtilsVersion.equals("v1")) {
+					resources = new JSONObject(catalogDbResponse)
+				}
+				else {
+					resources = parseServiceResourcesJson(catalogDbResponse, catalogUtilsVersion)
+				}
+			}
+		}
+		catch (Exception e) {
+			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+		}
+
+		return resources
+	}
+
 	public JSONObject getServiceResourcesByServiceModelInvariantUuid(DelegateExecution execution, String serviceModelInvariantUuid) {
 		JSONObject resources = null
 		String endPoint = "/serviceResources?serviceModelInvariantUuid=" + UriUtils.encode(serviceModelInvariantUuid, "UTF-8")
@@ -1185,5 +1226,26 @@ class CatalogDbUtils {
 			return null
 		}
 
+	}
+
+	/**
+	 * get resource recipe by resource model uuid and action
+	 */
+	public JSONObject getResourceRecipe(DelegateExecution execution, String resourceModelUuid, String action) {
+		String endPoint = "/resourceRecipe?resourceModelUuid=" + UriUtils.encode(resourceModelUuid, "UTF-8")+ "&action=" + UriUtils.encode(action, "UTF-8")
+		JSONObject responseJson = null
+		try {
+			msoLogger.debug("ENDPOINT: " + endPoint)
+			String catalogDbResponse = getResponseFromCatalogDb(execution, endPoint)
+
+			if (catalogDbResponse != null) {
+				responseJson = new JSONObject(catalogDbResponse)
+			}
+		}
+		catch (Exception e) {
+			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+		}
+
+		return responseJson
 	}
 }

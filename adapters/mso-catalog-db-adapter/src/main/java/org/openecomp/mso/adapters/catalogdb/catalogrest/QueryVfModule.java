@@ -67,28 +67,28 @@ public class QueryVfModule extends CatalogQuery {
 
 	@Override
 	public String toString () {
-		StringBuilder buf = new StringBuilder();
+		StringBuilder sb = new StringBuilder();
 
 		boolean first = true;
 		int i = 1;
 		for (VfModuleCustomization o : vfModules) {
-			buf.append(i+"\t");
-			if (!first) buf.append("\n"); first = false;
-			buf.append(o);
+			sb.append(i).append("\t");
+			if (!first) sb.append("\n"); first = false;
+			sb.append(o);
 		}
-		return buf.toString();
+		return sb.toString();
     }
 
 	@Override
 	public String JSON2(boolean isArray, boolean x) {
-		StringBuilder buf = new StringBuilder();
-		if (isArray) buf.append("\"vfModules\": [");
+		StringBuilder sb = new StringBuilder();
+		if (isArray) sb.append("\"vfModules\": [");
 		Map<String, String> valueMap = new HashMap<>();
 		String sep = "";
 		boolean first = true;
 
 		for (VfModuleCustomization o : vfModules) {
-			if (first) buf.append("\n"); first = false;
+			if (first) sb.append("\n"); first = false;
 
 			boolean vfNull = o.getVfModule() == null ? true : false;
 			boolean hasVolumeGroup = false;
@@ -107,11 +107,11 @@ public class QueryVfModule extends CatalogQuery {
 		    put(valueMap, "INITIAL_COUNT",            o.getInitialCount());
 		    put(valueMap, "HAS_VOLUME_GROUP", hasVolumeGroup);
 
-            buf.append(sep+ this.setTemplate(template, valueMap));
+            sb.append(sep).append(this.setTemplate(template, valueMap));
             sep = ",\n";
 		}
-		if (!first) buf.append("\n");
-		if (isArray) buf.append("]");
-		return buf.toString();
+		if (!first) sb.append("\n");
+		if (isArray) sb.append("]");
+		return sb.toString();
 	}
 }

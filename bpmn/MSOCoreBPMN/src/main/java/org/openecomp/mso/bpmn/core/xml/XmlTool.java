@@ -130,7 +130,7 @@ public final class XmlTool {
 
 	/**
 	 * Encodes a value so it can be used inside an XML text element.
-	 * @param s the string to encode
+	 * @param value the string to encode
 	 * @return the encoded string
 	 */
 	public static String encode(Object value) {
@@ -155,7 +155,7 @@ public final class XmlTool {
 				out.append("&amp;");
 				modified = true;
 			} else if (c < 32 || c > 126) {
-				out.append("&#" + (int)c + ";");
+				out.append("&#").append((int) c).append(";");
 				modified = true;
 			} else {
 				out.append(c);
@@ -171,7 +171,7 @@ public final class XmlTool {
 	
 	/**
 	 * Encodes a value so it can be used inside an XML attribute.
-	 * @param s the string to encode
+	 * @param value the string to encode
 	 * @return the encoded string
 	 */
 	public static String encodeAttr(Object value) {
@@ -199,7 +199,7 @@ public final class XmlTool {
 				out.append("&amp;");
 				modified = true;
 			} else if (c < 32 || c > 126) {
-				out.append("&#" + (int)c + ";");
+				out.append("&#").append((int) c).append(";");
 				modified = true;
 			} else {
 				out.append(c);

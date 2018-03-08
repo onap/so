@@ -66,7 +66,8 @@ public class CamundaClient extends RequestClient{
 			if(encryptedCredentials != null){
 				String userCredentials = getEncryptedPropValue(encryptedCredentials, CommonConstants.DEFAULT_BPEL_AUTH, CommonConstants.ENCRYPTION_KEY);
 				if(userCredentials != null){
-					post.addHeader("Authorization", "Basic " + new String(DatatypeConverter.printBase64Binary(userCredentials.getBytes())));
+					post.addHeader("Authorization", "Basic " + DatatypeConverter
+                        .printBase64Binary(userCredentials.getBytes()));
 				}
 			}
 		}
@@ -89,7 +90,8 @@ public class CamundaClient extends RequestClient{
 			if(encryptedCredentials != null){
 				String userCredentials = getEncryptedPropValue(encryptedCredentials, CommonConstants.DEFAULT_BPEL_AUTH, CommonConstants.ENCRYPTION_KEY);
 				if(userCredentials != null){
-					post.addHeader("Authorization", "Basic " + new String(DatatypeConverter.printBase64Binary(userCredentials.getBytes())));
+					post.addHeader("Authorization", "Basic " + DatatypeConverter
+                        .printBase64Binary(userCredentials.getBytes()));
 				}
 			}
 		}
@@ -104,13 +106,13 @@ public class CamundaClient extends RequestClient{
 			int recipeTimeout, String requestAction, String serviceInstanceId,
 			String vnfId, String vfModuleId, String volumeGroupId, String networkId, String configurationId,
 			String serviceType, String vnfType, String vfModuleType, String networkType,
-			String requestDetails)
+			String requestDetails, String recipeParamXsd)
 					throws ClientProtocolException, IOException{
 		HttpPost post = new HttpPost(url);
 		msoLogger.debug(CAMUNDA_URL_MESAGE + url);
 		String jsonReq = wrapVIDRequest(requestId, isBaseVfModule, recipeTimeout, requestAction,
 				serviceInstanceId, vnfId, vfModuleId, volumeGroupId, networkId, configurationId,
-				serviceType, vnfType, vfModuleType, networkType, requestDetails);
+				serviceType, vnfType, vfModuleType, networkType, requestDetails, recipeParamXsd);
 
 		StringEntity input = new StringEntity(jsonReq);
 		input.setContentType(CommonConstants.CONTENT_TYPE_JSON);
@@ -121,7 +123,8 @@ public class CamundaClient extends RequestClient{
 			if(encryptedCredentials != null){
 				String userCredentials = getEncryptedPropValue(encryptedCredentials, CommonConstants.DEFAULT_BPEL_AUTH, CommonConstants.ENCRYPTION_KEY);
 				if(userCredentials != null){
-					post.addHeader("Authorization", "Basic " + new String(DatatypeConverter.printBase64Binary(userCredentials.getBytes())));
+					post.addHeader("Authorization", "Basic " + DatatypeConverter
+                        .printBase64Binary(userCredentials.getBytes()));
 				}
 			}
 		}
@@ -184,7 +187,7 @@ public class CamundaClient extends RequestClient{
 			int recipeTimeout, String requestAction, String serviceInstanceId,
 			String vnfId, String vfModuleId, String volumeGroupId, String networkId, String configurationId,
 			String serviceType, String vnfType, String vfModuleType, String networkType,
-			String requestDetails){
+			String requestDetails, String recipeParams){
 		String jsonReq = null;
 		if(requestId == null){
 			requestId ="";
@@ -244,7 +247,7 @@ public class CamundaClient extends RequestClient{
 			CamundaInput vnfTypeInput = new CamundaInput();
 			CamundaInput vfModuleTypeInput = new CamundaInput();
 			CamundaInput networkTypeInput = new CamundaInput();
-
+			CamundaInput recipeParamsInput = new CamundaInput();
 			host.setValue(parseURL());
 			requestIdInput.setValue(requestId);
 			isBaseVfModuleInput.setValue(isBaseVfModule);
@@ -260,7 +263,7 @@ public class CamundaClient extends RequestClient{
 			vnfTypeInput.setValue(vnfType);
 			vfModuleTypeInput.setValue(vfModuleType);
 			networkTypeInput.setValue(networkType);
-
+			recipeParamsInput.setValue(recipeParams);
 			serviceInput.setValue(requestDetails);
 			camundaRequest.setServiceInput(serviceInput);
 			camundaRequest.setHost(host);
@@ -279,7 +282,7 @@ public class CamundaClient extends RequestClient{
 			camundaRequest.setVnfType(vnfTypeInput);
 			camundaRequest.setVfModuleType(vfModuleTypeInput);
 			camundaRequest.setNetworkType(networkTypeInput);
-
+			camundaRequest.setRecipeParams(recipeParamsInput);
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
 

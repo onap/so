@@ -56,7 +56,7 @@ public class ApplicationControllerSupport {
 	private String lcmModelPackage = "org.onap.appc.client.lcm.model";
 
 	/**
-	 * @param inputClass
+	 * @param action
 	 * @return
 	 * @throws ClassNotFoundException
 	 * @throws InstantiationException

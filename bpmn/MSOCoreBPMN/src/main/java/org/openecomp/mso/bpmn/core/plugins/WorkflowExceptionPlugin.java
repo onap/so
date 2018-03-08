@@ -65,7 +65,7 @@ public class WorkflowExceptionPlugin extends AbstractProcessEnginePlugin {
 			processEngineConfiguration.getCustomPreBPMNParseListeners();
 
 		if (preParseListeners == null) {
-			preParseListeners = new ArrayList<BpmnParseListener>();
+			preParseListeners = new ArrayList<>();
 			processEngineConfiguration.setCustomPreBPMNParseListeners(preParseListeners);
 		}
 
@@ -76,7 +76,7 @@ public class WorkflowExceptionPlugin extends AbstractProcessEnginePlugin {
 		@Override
 		public void parseProcess(Element processElement, ProcessDefinitionEntity processDefinition) {
 			AtomicInteger triggerTaskIndex = new AtomicInteger(1);
-			List<ActivityImpl> activities = new ArrayList<ActivityImpl>(processDefinition.getActivities());
+			List<ActivityImpl> activities = new ArrayList<>(processDefinition.getActivities());
 			recurse(activities, triggerTaskIndex);
 		}
 
@@ -103,7 +103,7 @@ public class WorkflowExceptionPlugin extends AbstractProcessEnginePlugin {
 					// cause the process to die.
 
 					List<PvmTransition> outTransitions =
-						new ArrayList<PvmTransition>(activity.getOutgoingTransitions());
+                        new ArrayList<>(activity.getOutgoingTransitions());
 
 					for (PvmTransition transition : outTransitions) {
 						String triggerTaskId = "WorkflowExceptionTriggerTask_" + triggerTaskIndex;
@@ -112,7 +112,7 @@ public class WorkflowExceptionPlugin extends AbstractProcessEnginePlugin {
 
 						ClassDelegateActivityBehavior behavior = new  ClassDelegateActivityBehavior(
 								WorkflowExceptionTriggerTask.class.getName(),
-								new ArrayList<FieldDeclaration>(0));
+                            new ArrayList<>(0));
 
 						triggerTask.setActivityBehavior(behavior);
 						triggerTask.setName("Workflow Exception Trigger Task " + triggerTaskIndex);
@@ -124,7 +124,7 @@ public class WorkflowExceptionPlugin extends AbstractProcessEnginePlugin {
 						transitionImpl.setDestination(triggerTask);
 					}
 				} else if ("subProcess".equals(type)) {
-					recurse(new ArrayList<ActivityImpl>(activity.getActivities()), triggerTaskIndex);
+					recurse(new ArrayList<>(activity.getActivities()), triggerTaskIndex);
 				}
 			}
 		}

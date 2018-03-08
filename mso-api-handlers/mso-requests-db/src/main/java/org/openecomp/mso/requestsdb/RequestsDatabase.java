@@ -39,6 +39,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.openecomp.mso.db.AbstractSessionFactoryManager;
 import org.openecomp.mso.requestsdb.RequestsDbConstant.Status;
+import org.openecomp.mso.requestsdb.RequestsDbSessionFactoryManager;
 import org.openecomp.mso.logger.MsoLogger;
 
 public class RequestsDatabase {
@@ -182,7 +183,7 @@ public class RequestsDatabase {
         long startTime = System.currentTimeMillis ();
         msoLogger.debug ("Execute query on infra active request table");
         
-        List <InfraActiveRequests> results = new ArrayList<InfraActiveRequests>();
+        List <InfraActiveRequests> results = new ArrayList<>();
 
         Session session = sessionFactoryRequestDB.getSessionFactory ().openSession ();
         try {
@@ -767,7 +768,7 @@ public class RequestsDatabase {
      * update the resource operation
      * <br>
      * 
-     * @param operstatus the resource operation object
+     * @param operStatus the resource operation object
      * @since ONAP Amsterdam Release
      */
     public void updateResOperStatus(ResourceOperationStatus operStatus) {

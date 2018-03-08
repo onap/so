@@ -38,12 +38,12 @@ public class StackInfo {
 	private String canonicalName = "";
 	private HeatStatus status = HeatStatus.UNKNOWN;
 	private String statusMessage = "";
-	private Map<String,Object> outputs = new HashMap<String,Object>();
-	private Map<String,Object> parameters = new HashMap<String,Object>();
+	private Map<String,Object> outputs = new HashMap<>();
+	private Map<String,Object> parameters = new HashMap<>();
 	
 	static Map<String,HeatStatus> HeatStatusMap;
 	static {
-		HeatStatusMap = new HashMap<String,HeatStatus>();
+		HeatStatusMap = new HashMap<>();
 		HeatStatusMap.put("CREATE_IN_PROGRESS", HeatStatus.BUILDING);
 		HeatStatusMap.put("CREATE_COMPLETE", HeatStatus.CREATED);
 		HeatStatusMap.put("CREATE_FAILED", HeatStatus.FAILED);
@@ -88,13 +88,13 @@ public class StackInfo {
 		} else if (HeatStatusMap.containsKey(stack.getStackStatus())) {
 			this.status = HeatStatusMap.get(stack.getStackStatus());
 		} else {
-			this.status = HeatStatus.UNKNOWN;
+			this.status = HeatStatusMap.getOrDefault(stack.getStackStatus(), HeatStatus.UNKNOWN);
 		}
 		
 		this.statusMessage = stack.getStackStatusReason();
 		
 		if (stack.getOutputs() != null) {
-			this.outputs = new HashMap<String,Object>();
+			this.outputs = new HashMap<>();
 			for (Stack.Output output : stack.getOutputs()) {
 				this.outputs.put(output.getOutputKey(), output.getOutputValue());
 			}

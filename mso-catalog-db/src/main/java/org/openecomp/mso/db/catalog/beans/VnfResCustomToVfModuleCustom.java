@@ -53,15 +53,14 @@ public class VnfResCustomToVfModuleCustom implements Serializable {
 	public void setCreated(Timestamp created) {
 		this.created = created;
 	}
+
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("vnfResourceCustModelCustomizationUuid=" + this.vnfResourceCustModelCustomizationUuid);
-		sb.append("vfModuleCustModelCustomizationUuid=" + this.vfModuleCustModelCustomizationUuid);
-		sb.append("created=" + this.created);
-		return sb.toString();
+		return "vnfResourceCustModelCustomizationUuid=" + this.vnfResourceCustModelCustomizationUuid +
+			"vfModuleCustModelCustomizationUuid=" + this.vfModuleCustModelCustomizationUuid + "created=" + this.created;
 	}
-    @Override
+
+	@Override
     public boolean equals (Object o) {
         if (!(o instanceof VnfResCustomToVfModuleCustom)) {
             return false;

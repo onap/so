@@ -144,24 +144,27 @@ public class VolumeMsoInfraRequest {
 
         // Verify that the elements correspond to the version
 
-        if (version.equals(Constants.SCHEMA_VERSION_V1)) {
-    		if (this.volumeInputs.getBackoutOnFailure() != null || this.volumeInputs.getAicCloudRegion() != null ||
-    				this.volumeInputs.getVfModuleModelName () != null || this.volumeInputs.getAsdcServiceModelVersion () != null ||
-    				this.volumeInputs.getServiceInstanceId () != null || this.volumeInputs.getVnfId () != null) {
-    			throw new ValidationException ("format for v1 version of volume request");
-    		}
-    }
-    else if (version.equals(Constants.SCHEMA_VERSION_V2)) {
-    		if (this.volumeInputs.getServiceType() != null || this.volumeInputs.getAicNodeClli() != null ||
-    				this.volumeInputs.getServiceInstanceId () != null || this.volumeInputs.getVnfId () != null) {
-    			throw new ValidationException ("format for v2 version of volume request");
-    		}
-    }
-    else if (version.equals(Constants.SCHEMA_VERSION_V3)) {
-		if (this.volumeInputs.getServiceType() != null || this.volumeInputs.getAicNodeClli() != null) {
-			throw new ValidationException ("format for v3 version of volume request");
-		}
-    }
+        switch (version) {
+            case Constants.SCHEMA_VERSION_V1:
+                if (this.volumeInputs.getBackoutOnFailure() != null || this.volumeInputs.getAicCloudRegion() != null ||
+                    this.volumeInputs.getVfModuleModelName() != null
+                    || this.volumeInputs.getAsdcServiceModelVersion() != null ||
+                    this.volumeInputs.getServiceInstanceId() != null || this.volumeInputs.getVnfId() != null) {
+                    throw new ValidationException("format for v1 version of volume request");
+                }
+                break;
+            case Constants.SCHEMA_VERSION_V2:
+                if (this.volumeInputs.getServiceType() != null || this.volumeInputs.getAicNodeClli() != null ||
+                    this.volumeInputs.getServiceInstanceId() != null || this.volumeInputs.getVnfId() != null) {
+                    throw new ValidationException("format for v2 version of volume request");
+                }
+                break;
+            case Constants.SCHEMA_VERSION_V3:
+                if (this.volumeInputs.getServiceType() != null || this.volumeInputs.getAicNodeClli() != null) {
+                    throw new ValidationException("format for v3 version of volume request");
+                }
+                break;
+        }
 
 
         if (!InfraUtils.isActionAllowed (props, "volume", version, action.value ())) {

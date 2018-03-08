@@ -62,7 +62,7 @@ public class VnfTypesHandlerTest {
 		new MockUp<CatalogDatabase>() {
 			@Mock
 			public  List <VnfResource>  getAllVnfResources(){
-				List <VnfResource> list = new ArrayList<VnfResource>();
+				List <VnfResource> list = new ArrayList<>();
 				VnfResource resource = new VnfResource();
 				list.add(resource);
 				return list;

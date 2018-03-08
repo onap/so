@@ -753,9 +753,10 @@ public class ServiceInstances {
 			System.out.println("URL : " + requestClient.getUrl ());
 
 			response = requestClient.post(requestId, isBaseVfModule, timeOut, action.name (),
-										serviceInstanceId, vnfId, vfModuleId, volumeGroupId, networkId, configurationId,
-										serviceInstanceType, vnfType, vfModuleType, networkType, 
-										msoRequest.getRequestJSON());
+					serviceInstanceId, vnfId, vfModuleId, volumeGroupId, networkId, configurationId,
+					msoRequest.getServiceInstanceType (),
+					msoRequest.getVnfType (), msoRequest.getVfModuleType (),
+					msoRequest.getNetworkType (), msoRequest.getRequestJSON(), null);
 
 			msoLogger.recordMetricEvent (subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from BPMN engine", "BPMN", orchestrationUri, null);
 		} catch (Exception e) {

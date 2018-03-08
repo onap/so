@@ -70,10 +70,11 @@ public abstract class RequestClient {
 	public abstract HttpResponse post(String request) throws ClientProtocolException, IOException;
 	
 	public abstract HttpResponse post(String requestId, boolean isBaseVfModule,
-									int recipeTimeout, String requestAction, String serviceInstanceId,
-									String vnfId, String vfModuleId, String volumeGroupId, String networkId, String configurationId,
-									String serviceType, String vnfType, String vfModuleType, String networkType,
-									String requestDetails) throws ClientProtocolException, IOException;
+			int recipeTimeout, String requestAction, String serviceInstanceId,
+			String vnfId, String vfModuleId, String volumeGroupId, String networkId, String configurationId,
+			String serviceType, String vnfType, String vfModuleType, String networkType,
+			String requestDetails, String recipeParamXsd)
+					throws ClientProtocolException, IOException;
 	
 	public abstract HttpResponse get() 
 					throws ClientProtocolException, IOException;

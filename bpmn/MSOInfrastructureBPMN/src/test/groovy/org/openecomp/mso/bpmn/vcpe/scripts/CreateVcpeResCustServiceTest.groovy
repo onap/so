@@ -109,6 +109,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 		assertTrue(map.containsKey("subscriberInfo"))
 		
 		verify(mex).setVariable("brgWanMacAddress", "brgmac")
+		verify(mex).setVariable("customerLocation", ["customerLatitude":"32.897480", "customerLongitude":"-97.040443", "customerName":"some_company"])
 		assertTrue(map.containsKey("serviceInputParams"))
 		assertTrue(map.containsKey(Prefix+"requestInfo"))
 		
@@ -141,6 +142,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 		def req = request
 					.replace('"source"', '"sourceXXX"')
 					.replace('"BRG_WAN_MAC_Address"', '"BRG_WAN_MAC_AddressXXX"')
+					.replace('"Customer_Location"', '"Customer_LocationXXX"')
 		
 		when(mex.getVariable("bpmnRequest")).thenReturn(req)
 		when(mex.getVariable("serviceInstanceId")).thenReturn(null)
@@ -164,6 +166,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 		assertTrue(map.containsKey("subscriberInfo"))
 		
 		assertEquals("", map.get("brgWanMacAddress"))
+		assertEquals("", map.get("customerLocation"))
 		assertTrue(map.containsKey("serviceInputParams"))
 		assertTrue(map.containsKey(Prefix+"requestInfo"))
 		

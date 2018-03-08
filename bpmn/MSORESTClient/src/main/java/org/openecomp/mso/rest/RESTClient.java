@@ -242,16 +242,16 @@ public class RESTClient {
     /**
      * Creates a RESTClient with the RESTConfig object.
      *
-     * @param RESTConfig config to use for sending request
+     * @param restConfig config to use for sending request
      *
      * @throws RESTException if unable to create a RESTClient
      */
-    public RESTClient(RESTConfig cfg) throws RESTException {
-        this.headers = new LinkedHashMap<String, List<String>>();
-        this.parameters = new LinkedHashMap<String, List<String>>();
-        this.URL = cfg.getURL();
-        this.proxyHost = cfg.getProxyHost();
-        this.proxyPort = cfg.getProxyPort();
+    public RESTClient(RESTConfig restConfig) throws RESTException {
+        this.headers = new LinkedHashMap<>();
+        this.parameters = new LinkedHashMap<>();
+        this.URL = restConfig.getURL();
+        this.proxyHost = restConfig.getProxyHost();
+        this.proxyPort = restConfig.getProxyPort();
     }
 
     /**
@@ -266,7 +266,7 @@ public class RESTClient {
      */
     public RESTClient addParameter(String name, String value) {
         if (!parameters.containsKey(name)) {
-            parameters.put(name, new ArrayList<String>());
+            parameters.put(name, new ArrayList<>());
         }
 
         List<String> values = parameters.get(name);
@@ -306,7 +306,7 @@ public class RESTClient {
      */
     public RESTClient addHeader(String name, String value) {
         if (!headers.containsKey(name)) {
-            headers.put(name, new ArrayList<String>());
+            headers.put(name, new ArrayList<>());
         }
 
         List<String> values = headers.get(name);

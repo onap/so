@@ -89,7 +89,7 @@ public class CreateVnfInfraTest extends WorkflowTest {
 		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
 
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		setVariablesSuccess(variables, createVnfInfraRequest, "testRequestId123", "MIS%2F1604%2F0026%2FSW_INTERNET");
 		TestAsyncResponse asyncResponse = invokeAsyncProcess("CreateVnfInfra",
 				"v1", businessKey, createVnfInfraRequest, variables);
@@ -126,7 +126,7 @@ public class CreateVnfInfraTest extends WorkflowTest {
 
 		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
 
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		setVariables(variables, null, "testRequestId123", "MIS%2F1604%2F0026%2FSW_INTERNET");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "CreateVnfInfra", variables);
@@ -144,7 +144,7 @@ public class CreateVnfInfraTest extends WorkflowTest {
 		MockNodeQueryServiceInstanceById_404("MIS%2F1604%2F0026%2FSW_INTERNET");
 		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
 
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		setVariables(variables, createVnfInfraRequest, "testRequestId123", "MIS%2F1604%2F0026%2FSW_INTERNET");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "CreateVnfInfra", variables);
@@ -176,7 +176,7 @@ public class CreateVnfInfraTest extends WorkflowTest {
 		MockPutGenericVnf();
 		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
 
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		setVariables(variables, createVnfInfraRequest, "testRequestId123", "MIS%2F1604%2F0026%2FSW_INTERNET");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "CreateVnfInfra", variables);

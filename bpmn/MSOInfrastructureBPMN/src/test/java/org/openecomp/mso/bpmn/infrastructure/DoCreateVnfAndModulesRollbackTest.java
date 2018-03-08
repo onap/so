@@ -145,7 +145,7 @@ public class DoCreateVnfAndModulesRollbackTest extends WorkflowTest {
 		MockDeleteGenericVnf("a27ce5a9-29c4-4c22-a017-6615ac73c721", "0000021");
 		MockDeleteVfModuleId("a27ce5a9-29c4-4c22-a017-6615ac73c721", "973ed047-d251-4fb9-bf1a-65b8949e0a73", "0000073", 200);
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		RollbackData rollbackData = new RollbackData();
 
 		rollbackData.put("VFMODULE_BASE", "source", "PORTAL");
@@ -240,7 +240,7 @@ public class DoCreateVnfAndModulesRollbackTest extends WorkflowTest {
 		MockDoDeleteVfModule_SDNCSuccess();
 		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		RollbackData rollbackData = new RollbackData();
 
 		rollbackData.put("VNF", "vnfId", "testVnfId123");
@@ -327,7 +327,7 @@ public class DoCreateVnfAndModulesRollbackTest extends WorkflowTest {
 		MockDeleteGenericVnf("a27ce5a9-29c4-4c22-a017-6615ac73c721", "0000021");
 		MockDeleteVfModuleId("", "", "", 200);
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		RollbackData rollbackData = new RollbackData();
 	
 		rollbackData.put("VFMODULE_BASE", "source", "PORTAL");

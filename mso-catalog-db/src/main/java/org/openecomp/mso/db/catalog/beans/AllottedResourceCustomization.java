@@ -145,19 +145,11 @@ public class AllottedResourceCustomization extends MavenLikeVersioning implement
 
 	@Override
 	public String toString () {
-		StringBuilder sb = new StringBuilder();
-		sb.append("modelCustomizationUuid=");
-		sb.append(this.modelCustomizationUuid);
-		sb.append(",modelInstanceName=");
-		sb.append(this.modelInstanceName);
-		sb.append(",modelInstanceName=");
-		sb.append(this.modelInstanceName);
-		sb.append(",created=");
-		sb.append(this.created);
-		sb.append(",ar=");
-		sb.append(this.ar);
-
-		return sb.toString();
+		return "modelCustomizationUuid=" + this.modelCustomizationUuid +
+			",modelInstanceName=" + this.modelInstanceName +
+			",modelInstanceName=" + this.modelInstanceName +
+			",created=" + this.created +
+			",ar=" + this.ar;
 	}
 
 }

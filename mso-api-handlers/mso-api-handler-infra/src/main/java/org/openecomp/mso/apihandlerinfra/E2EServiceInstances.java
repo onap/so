@@ -31,6 +31,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -55,6 +56,7 @@ import org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans.E2EServiceInsta
 import org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans.E2EUserParam;
 import org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans.GetE2EServiceInstanceResponse;
 import org.openecomp.mso.serviceinstancebeans.ModelInfo;
+import org.openecomp.mso.serviceinstancebeans.ModelType;
 import org.openecomp.mso.serviceinstancebeans.RequestDetails;
 import org.openecomp.mso.serviceinstancebeans.RequestInfo;
 import org.openecomp.mso.serviceinstancebeans.RequestParameters;
@@ -75,8 +77,6 @@ import org.openecomp.mso.utils.UUIDChecker;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
-
-import org.openecomp.mso.serviceinstancebeans.ModelType;
 
 @Path("/e2eServiceInstances")
 @Api(value = "/e2eServiceInstances", description = "API Requests for E2E Service Instances")
@@ -101,11 +101,30 @@ public class E2EServiceInstances {
 	@Path("/{version:[vV][3-5]}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Create a E2E Service Instance on a version provided", response = Response.class)
+	@ApiOperation(value = "Create an E2E Service Instance on a version provided", response = Response.class)
 	public Response createE2EServiceInstance(String request,
 			@PathParam("version") String version) {
 
 		return processE2EserviceInstances(request, Action.createInstance, null,
+				version);
+	}
+	
+	/**
+	 * PUT Requests for E2E Service update Instance on a version provided
+	 */
+
+	@PUT
+	@Path("/{version:[vV][3-5]}/{serviceId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "Update an E2E Service Instance on a version provided and serviceId", response = Response.class)
+	public Response updateE2EServiceInstance(String request,
+			@PathParam("version") String version,
+			@PathParam("serviceId") String serviceId) {
+		
+		instanceIdMap.put("serviceId", serviceId);
+
+		return updateE2EserviceInstances(request, Action.updateInstance, instanceIdMap,
 				version);
 	}
 
@@ -315,7 +334,7 @@ public class E2EServiceInstances {
 			String serviceInstanceType = e2eDelReq.getServiceType();
 			response = requestClient.post(requestId, false,
 					recipeLookupResult.getRecipeTimeout(), action.name(),
-					serviceId, null, null, null, null, serviceInstanceType,
+					serviceId, null, null, null, null, null, serviceInstanceType,
 					null, null, null, bpmnRequest, recipeLookupResult.getRecipeParamXsd());
 
 			msoLogger.recordMetricEvent(subStartTime,
@@ -373,6 +392,202 @@ public class E2EServiceInstances {
 				requestClient, respHandler, bpelStatus, action, instanceIdMap);
 	}
 
+	private Response updateE2EserviceInstances(String requestJSON, Action action,
+			HashMap<String, String> instanceIdMap, String version) {
+
+		String requestId = instanceIdMap.get("serviceId");
+		long startTime = System.currentTimeMillis();
+		msoLogger.debug("requestId is: " + requestId);
+		E2EServiceInstanceRequest e2eSir = null;
+
+		MsoRequest msoRequest = new MsoRequest(requestId);
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			e2eSir = mapper.readValue(requestJSON, E2EServiceInstanceRequest.class);
+
+		} catch (Exception e) {
+          
+          this.createOperationStatusRecordForError(action, requestId);
+		  
+			msoLogger.debug("Mapping of request to JSON object failed : ", e);
+			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_REQUEST,
+					MsoException.ServiceException, "Mapping of request to JSON object failed.  " + e.getMessage(),
+					ErrorNumbers.SVC_BAD_PARAMETER, null);
+			msoLogger.error(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "",
+					MsoLogger.ErrorCode.SchemaError, requestJSON, e);
+			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.SchemaError,
+					"Mapping of request to JSON object failed");
+			msoLogger.debug("End of the transaction, the final response is: " + (String) response.getEntity());
+			return response;
+		}
+
+		mapReqJsonToSvcInstReq(e2eSir, requestJSON);
+		sir.getRequestDetails().getRequestParameters().setaLaCarte(true);
+		try {
+			msoRequest.parse(sir, instanceIdMap, action, version, requestJSON);
+		} catch (Exception e) {
+			msoLogger.debug("Validation failed: ", e);
+			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_REQUEST,
+					MsoException.ServiceException, "Error parsing request.  " + e.getMessage(),
+					ErrorNumbers.SVC_BAD_PARAMETER, null);
+			if (msoRequest.getRequestId() != null) {
+				msoLogger.debug("Logging failed message to the database");
+				this.createOperationStatusRecordForError(action, requestId);
+			}
+			msoLogger.error(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "",
+					MsoLogger.ErrorCode.SchemaError, requestJSON, e);
+			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.SchemaError,
+					"Validation of the input request failed");
+			msoLogger.debug("End of the transaction, the final response is: " + (String) response.getEntity());
+			return response;
+		}
+		
+		//check for the current operation status
+		Response resp = checkE2ESvcInstStatus(action, requestId, startTime, msoRequest);
+		if(resp != null && resp.getStatus() != 200) {
+			return resp;
+		}
+		
+		CatalogDatabase db = null;
+		RecipeLookupResult recipeLookupResult = null;
+		try {
+			db = CatalogDatabase.getInstance();
+			recipeLookupResult = getServiceInstanceOrchestrationURI(db, e2eSir.getService().getTemplateId(), action);
+		} catch (Exception e) {
+			msoLogger.error(MessageEnum.APIH_DB_ACCESS_EXC, MSO_PROP_APIHANDLER_INFRA, "", "",
+					MsoLogger.ErrorCode.AvailabilityError, "Exception while communciate with Catalog DB", e);
+			msoRequest.setStatus(org.openecomp.mso.apihandlerinfra.vnfbeans.RequestStatusType.FAILED);
+			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_NOT_FOUND,
+					MsoException.ServiceException, "No communication to catalog DB " + e.getMessage(),
+					ErrorNumbers.SVC_NO_SERVER_RESOURCES, null);
+			alarmLogger.sendAlarm("MsoDatabaseAccessError", MsoAlarmLogger.CRITICAL,
+					Messages.errors.get(ErrorNumbers.NO_COMMUNICATION_TO_CATALOG_DB));
+			
+			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError,
+					"Exception while communciate with DB");
+			msoLogger.debug(END_OF_THE_TRANSACTION + (String) response.getEntity());
+			createOperationStatusRecordForError(action, requestId);
+			return response;
+		} finally {
+			closeCatalogDB(db);
+		}
+
+		if (recipeLookupResult == null) {
+			msoLogger.error(MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND, MSO_PROP_APIHANDLER_INFRA, "", "",
+					MsoLogger.ErrorCode.DataError, "No recipe found in DB");
+			msoRequest.setStatus(org.openecomp.mso.apihandlerinfra.vnfbeans.RequestStatusType.FAILED);
+			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_NOT_FOUND,
+					MsoException.ServiceException, "Recipe does not exist in catalog DB",
+					ErrorNumbers.SVC_GENERAL_SERVICE_ERROR, null);
+		
+			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataNotFound,
+					"No recipe found in DB");
+			msoLogger.debug(END_OF_THE_TRANSACTION + (String) response.getEntity());
+			createOperationStatusRecordForError(action, requestId);
+			return response;
+		}
+
+		String serviceInstanceType = e2eSir.getService().getParameters().getServiceType();
+
+		String serviceId = "";
+		RequestClient requestClient = null;
+		HttpResponse response = null;
+
+		long subStartTime = System.currentTimeMillis();
+		String sirRequestJson = mapReqJsonToSvcInstReq(e2eSir, requestJSON);
+
+		try {
+			requestClient = RequestClientFactory.getRequestClient(recipeLookupResult.getOrchestrationURI(),
+					MsoPropertiesUtils.loadMsoProperties());
+
+			// Capture audit event
+			msoLogger.debug("MSO API Handler Posting call to BPEL engine for url: " + requestClient.getUrl());
+
+			response = requestClient.post(requestId, false, recipeLookupResult.getRecipeTimeout(), action.name(),
+					serviceId, null, null, null, null, null, serviceInstanceType, null, null, null, sirRequestJson,
+					recipeLookupResult.getRecipeParamXsd());
+
+			msoLogger.recordMetricEvent(subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
+					"Successfully received response from BPMN engine", "BPMN", recipeLookupResult.getOrchestrationURI(),
+					null);
+		} catch (Exception e) {
+			msoLogger.recordMetricEvent(subStartTime, MsoLogger.StatusCode.ERROR,
+					MsoLogger.ResponseCode.CommunicationError, "Exception while communicate with BPMN engine", "BPMN",
+					recipeLookupResult.getOrchestrationURI(), null);
+			Response getBPMNResp = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_GATEWAY,
+					MsoException.ServiceException, "Failed calling bpmn " + e.getMessage(),
+					ErrorNumbers.SVC_NO_SERVER_RESOURCES, null);
+			alarmLogger.sendAlarm("MsoConfigurationError", MsoAlarmLogger.CRITICAL,
+					Messages.errors.get(ErrorNumbers.NO_COMMUNICATION_TO_BPEL));
+			msoLogger.error(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "",
+					MsoLogger.ErrorCode.AvailabilityError, "Exception while communicate with BPMN engine");
+			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError,
+					"Exception while communicate with BPMN engine");
+			msoLogger.debug("End of the transaction, the final response is: " + (String) getBPMNResp.getEntity());
+			createOperationStatusRecordForError(action, requestId);
+			return getBPMNResp;
+		}
+
+		if (response == null) {
+			Response getBPMNResp = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_GATEWAY,
+					MsoException.ServiceException, "bpelResponse is null", ErrorNumbers.SVC_NO_SERVER_RESOURCES, null);
+			msoLogger.error(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "",
+					MsoLogger.ErrorCode.BusinessProcesssError, "Null response from BPEL");
+			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.InternalError,
+					"Null response from BPMN");
+			msoLogger.debug(END_OF_THE_TRANSACTION + (String) getBPMNResp.getEntity());
+			return getBPMNResp;
+		}
+
+		ResponseHandler respHandler = new ResponseHandler(response, requestClient.getType());
+		int bpelStatus = respHandler.getStatus();
+
+		return beplStatusUpdate(requestId, startTime, msoRequest, requestClient, respHandler, bpelStatus, action, instanceIdMap);
+	}
+
+	private Response checkE2ESvcInstStatus(Action action, String requestId, long startTime, MsoRequest msoRequest) {
+		OperationStatus curStatus = null;
+//		String instanceName = sir.getRequestDetails().getRequestInfo().getInstanceName();
+		String requestScope = sir.getRequestDetails().getModelInfo().getModelType().name();
+		try {
+			if (!(requestId == null && "service".equals(requestScope) && (action == Action.updateInstance))) {			    
+				curStatus = chkSvcInstOperStatusbySvcId(requestId);
+			}
+		} catch (Exception e) {
+			msoLogger.error(MessageEnum.APIH_DUPLICATE_CHECK_EXC, MSO_PROP_APIHANDLER_INFRA, "", "",
+					MsoLogger.ErrorCode.DataError, "Error during current operation status check ", e);
+
+			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_INTERNAL_SERVER_ERROR,
+					MsoException.ServiceException, e.getMessage(), ErrorNumbers.SVC_DETAILED_SERVICE_ERROR, null);
+
+			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError,
+					"Error during current operation status check");
+			msoLogger.debug("End of the transaction, the final response is: " + (String) response.getEntity());
+			return response;
+		}
+
+		if (curStatus != null && !curStatus.getProgress().equals("100")) {
+			String chkMessage = "Error: Locked instance - This " + requestScope + " (" + requestId + ") "
+					+ "now being worked with a status of " + curStatus.getProgress() + " (ServiceName - "
+					+ curStatus.getServiceName()
+					+ "). The existing request must finish or be cleaned up before proceeding.";
+
+			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_CONFLICT,
+					MsoException.ServiceException, chkMessage, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR, null);
+
+			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.Conflict,
+					chkMessage);
+
+			msoLogger.debug("End of the transaction, the final response is: " + (String) response.getEntity());
+
+			createOperationStatusRecordForError(action, requestId);
+
+			return response;
+		}
+		
+		return Response.status(200).entity(null).build();
+	}
+	
 	private Response processE2EserviceInstances(String requestJSON, Action action,
 			HashMap<String, String> instanceIdMap, String version) {
 
@@ -405,7 +620,7 @@ public class E2EServiceInstances {
 		mapReqJsonToSvcInstReq(e2eSir, requestJSON);
 		sir.getRequestDetails().getRequestParameters().setaLaCarte(true);
 		try {
-		    msoRequest.parse(sir, instanceIdMap, action, version, requestJSON);
+			msoRequest.parse(sir, instanceIdMap, action, version, requestJSON);
 		} catch (Exception e) {
 			msoLogger.debug("Validation failed: ", e);
 			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_REQUEST,
@@ -544,7 +759,8 @@ public class E2EServiceInstances {
 			msoLogger.debug("MSO API Handler Posting call to BPEL engine for url: " + requestClient.getUrl());
 
 			response = requestClient.post(requestId, false, recipeLookupResult.getRecipeTimeout(), action.name(),
-					serviceId, null, null, null, null, serviceInstanceType, null, null, null, sirRequestJson, recipeLookupResult.getRecipeParamXsd());
+					serviceId, null, null, null, null, null, serviceInstanceType, null, null, null, sirRequestJson,
+					recipeLookupResult.getRecipeParamXsd());
 
 			msoLogger.recordMetricEvent(subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
 					"Successfully received response from BPMN engine", "BPMN", recipeLookupResult.getOrchestrationURI(),
@@ -925,11 +1141,11 @@ public class E2EServiceInstances {
 		}
 	}
 
-	private OperationStatus chkDuplicateServiceInOperStatus(String serviceId) {
-		OperationStatus dupServiceName = (RequestsDatabase.getInstance())
+	private OperationStatus chkSvcInstOperStatusbySvcId(String serviceId) {
+		OperationStatus svcInstanceOperStatus = (RequestsDatabase.getInstance())
 				.getOperationStatusByServiceId(serviceId);
 
-		return dupServiceName;
+		return svcInstanceOperStatus;
 	}
 
 	private OperationStatus chkDuplicateServiceNameInOperStatus(

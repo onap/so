@@ -114,7 +114,7 @@ public class DoCreateVnfAndModulesTest extends WorkflowTest {
 		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
 
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		setVariablesSuccess(variables, "", "testRequestId123", "MIS%2F1604%2F0026%2FSW_INTERNET");
 		invokeSubProcess("DoCreateVnfAndModules", businessKey, variables);
 
@@ -168,7 +168,7 @@ public class DoCreateVnfAndModulesTest extends WorkflowTest {
 		mockSDNCAdapter("VfModularity/StandardSDNCSynchResponse.xml");
 		
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		setVariablesAddonSuccess(variables, "", "testRequestId123", "MIS%2F1604%2F0026%2FSW_INTERNET");
 		invokeSubProcess("DoCreateVnfAndModules", businessKey, variables);
 

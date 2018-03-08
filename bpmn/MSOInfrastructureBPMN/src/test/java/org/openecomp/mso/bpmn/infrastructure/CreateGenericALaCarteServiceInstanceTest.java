@@ -117,7 +117,7 @@ public class CreateGenericALaCarteServiceInstanceTest extends WorkflowTest {
 
 	// Success Scenario
 	private Map<String, String> setupVariables() {
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, String> variables = new HashMap<>();
 		variables.put("isDebugLogEnabled", "true");
 		variables.put("bpmnRequest", getRequest());
 		variables.put("mso-request-id", "RaaCSIRequestId-1");

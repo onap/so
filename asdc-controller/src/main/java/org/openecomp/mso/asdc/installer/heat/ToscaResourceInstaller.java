@@ -570,8 +570,6 @@ public class ToscaResourceInstaller {// implements IVfResourceInstaller {
 						       	   
 					} //Commented out to process VFModules each time 
 					
-
-					
 					// Here we expect many HEAT_TEMPLATE files to be there
 					if (vfModuleStructure.getArtifactsMap().containsKey(ASDCConfiguration.HEAT_ARTIFACT)) {
 						for (VfModuleArtifact heatArtifact : vfModuleStructure.getArtifactsMap()
@@ -962,7 +960,7 @@ public class ToscaResourceInstaller {// implements IVfResourceInstaller {
 		String vfModuleModelUUID = vfModuleData.getVfModuleModelUUID();
 		
 		
-		if(vfModuleModelUUID != null && vfModuleModelUUID.indexOf(".") > -1){
+		if(vfModuleModelUUID != null && vfModuleModelUUID.contains(".")){
 			vfModuleModelUUID = vfModuleModelUUID.substring(0, vfModuleModelUUID.indexOf("."));
 		}
 					
@@ -1264,5 +1262,4 @@ public class ToscaResourceInstaller {// implements IVfResourceInstaller {
 		
 		return new Timestamp(new Date().getTime());
 	}
-
 }

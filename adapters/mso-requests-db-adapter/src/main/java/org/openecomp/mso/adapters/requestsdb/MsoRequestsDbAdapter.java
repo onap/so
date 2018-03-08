@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlElement;
 
 import org.openecomp.mso.adapters.requestsdb.exceptions.MsoRequestsDbException;
 import org.openecomp.mso.requestsdb.InfraActiveRequests;
+import org.openecomp.mso.requestsdb.ResourceOperationStatus;
 
 /**
  * MSO Request DB Adapter Web Service
@@ -74,4 +75,20 @@ public interface MsoRequestsDbAdapter {
                                     @WebParam(name = "operationType") @XmlElement(required = true) String operationType,
                                     @WebParam(name = "resourceTemplateUUIDs") @XmlElement(required = true) String resourceTemplateUUIDs) throws MsoRequestsDbException;
 
+    @WebMethod
+    public ResourceOperationStatus getResourceOperationStatus (@WebParam(name="serviceId") @XmlElement(required = true) String serviceId,
+                                    @WebParam(name = "operationId") @XmlElement(required = true) String operationId,
+                                    @WebParam(name = "resourceTemplateUUID") @XmlElement(required = true) String resourceTemplateUUID) throws MsoRequestsDbException;
+    
+    @WebMethod
+    public void updateResourceOperationStatus (@WebParam(name = "serviceId") @XmlElement(required = true) String serviceId,
+                                    @WebParam(name = "operationId") @XmlElement(required = true) String operationId,
+                                    @WebParam(name = "resourceTemplateUUID") @XmlElement(required = true) String resourceTemplateUUID,
+                                    @WebParam(name = "operType") @XmlElement(required = false) String operType,
+                                    @WebParam(name = "resourceInstanceID") @XmlElement(required = false) String resourceInstanceID,
+                                    @WebParam(name = "jobId") @XmlElement(required = false) String jobId,
+                                    @WebParam(name = "status") @XmlElement(required = false) String status,
+                                    @WebParam(name = "progress") @XmlElement(required = false) String progress,
+                                    @WebParam(name = "errorCode") @XmlElement(required = false) String errorCode,
+                                    @WebParam(name = "statusDescription") @XmlElement(required = false) String statusDescription) throws MsoRequestsDbException;
 }

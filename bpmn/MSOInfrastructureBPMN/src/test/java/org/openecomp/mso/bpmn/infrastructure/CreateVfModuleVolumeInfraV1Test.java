@@ -88,7 +88,7 @@ public class CreateVfModuleVolumeInfraV1Test extends WorkflowTest {
 		String businessKey = UUID.randomUUID().toString();
 		String createVfModuleVolRequest = FileUtil.readResourceFile("__files/CreateVfModuleVolumeInfraV1/createVfModuleVolume_VID_request.json");
 		
-		Map<String, Object> testVariables = new HashMap<String, Object>();
+		Map<String, Object> testVariables = new HashMap<>();
 		testVariables.put("requestId", "TEST-REQUEST-ID-0123");
 		testVariables.put("serviceInstanceId", "test-service-instance-id");
 		testVariables.put("vnfId", "TEST-VNF-ID-0123");
@@ -138,7 +138,7 @@ public class CreateVfModuleVolumeInfraV1Test extends WorkflowTest {
 		String businessKey = UUID.randomUUID().toString();
 		String createVfModuleVolRequest = FileUtil.readResourceFile("__files/CreateVfModuleVolumeInfraV1/createVfModuleVolume_VID_request.json");
 		
-		Map<String, Object> testVariables = new HashMap<String, Object>();
+		Map<String, Object> testVariables = new HashMap<>();
 		testVariables.put("requestId", "TEST-REQUEST-ID-0123");
 		testVariables.put("serviceInstanceId", "test-service-instance-id");
 		testVariables.put("vnfId", "TEST-VNF-ID-0123");
@@ -182,7 +182,7 @@ public class CreateVfModuleVolumeInfraV1Test extends WorkflowTest {
 		String businessKey = UUID.randomUUID().toString();
 		String createVfModuleVolRequest = FileUtil.readResourceFile("__files/CreateVfModuleVolumeInfraV1/createVfModuleVolume_VID_request.json");
 		
-		Map<String, Object> testVariables = new HashMap<String, Object>();
+		Map<String, Object> testVariables = new HashMap<>();
 		testVariables.put("requestId", "TEST-REQUEST-ID-0123");
 		testVariables.put("serviceInstanceId", "test-service-instance-id");
 		testVariables.put("vnfId", "TEST-VNF-ID-0123");
@@ -229,7 +229,7 @@ public class CreateVfModuleVolumeInfraV1Test extends WorkflowTest {
 		String businessKey = UUID.randomUUID().toString();
 		String createVfModuleVolRequest = FileUtil.readResourceFile("__files/CreateVfModuleVolumeInfraV1/createVfModuleVolume_VID_request.json");
 		
-		Map<String, Object> testVariables = new HashMap<String, Object>();
+		Map<String, Object> testVariables = new HashMap<>();
 		testVariables.put("requestId", "TEST-REQUEST-ID-0123");
 		testVariables.put("serviceInstanceId", "test-service-instance-id");
 		testVariables.put("vnfId", "TEST-VNF-ID-0123");
@@ -271,7 +271,7 @@ public class CreateVfModuleVolumeInfraV1Test extends WorkflowTest {
 		String businessKey = UUID.randomUUID().toString();
 		String createVfModuleVolRequest = FileUtil.readResourceFile("__files/CreateVfModuleVolumeInfraV1/createVfModuleVolume_VID_request_noreqparm.json");
 		
-		Map<String, Object> testVariables = new HashMap<String, Object>();
+		Map<String, Object> testVariables = new HashMap<>();
 		testVariables.put("requestId", "TEST-REQUEST-ID-0123");
 		testVariables.put("serviceInstanceId", "test-service-instance-id");
 		testVariables.put("vnfId", "TEST-VNF-ID-0123");
@@ -311,7 +311,7 @@ public class CreateVfModuleVolumeInfraV1Test extends WorkflowTest {
 		String businessKey = UUID.randomUUID().toString();
 		String createVfModuleVolRequest = FileUtil.readResourceFile("__files/CreateVfModuleVolumeInfraV1/createVfModuleVolume_VID_request.json");
 		
-		Map<String, Object> testVariables = new HashMap<String, Object>();
+		Map<String, Object> testVariables = new HashMap<>();
 		testVariables.put("requestId", "TEST-REQUEST-ID-0123");
 		testVariables.put("serviceInstanceId", "test-service-instance-id");
 		//testVariables.put("vnfId", "TEST-VNF-ID-0123");
@@ -349,7 +349,7 @@ public class CreateVfModuleVolumeInfraV1Test extends WorkflowTest {
 		String businessKey = UUID.randomUUID().toString();
 		String createVfModuleVolRequest = FileUtil.readResourceFile("__files/CreateVfModuleVolumeInfraV1/createVfModuleVolume_VID_request.json");
 		
-		Map<String, Object> testVariables = new HashMap<String, Object>();
+		Map<String, Object> testVariables = new HashMap<>();
 		testVariables.put("requestId", "TEST-REQUEST-ID-0123");
 		testVariables.put("serviceInstanceId", "test-service-instance-id");
 		//testVariables.put("vnfId", "TEST-VNF-ID-0123");

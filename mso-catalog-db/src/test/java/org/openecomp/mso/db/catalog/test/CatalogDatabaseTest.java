@@ -2445,7 +2445,7 @@ public class CatalogDatabaseTest {
     @Test(expected = Exception.class)
     public void saveHeatTemplateTest(){
         HeatTemplate heat = new HeatTemplate();
-        Set <HeatTemplateParam> paramSet = new HashSet<HeatTemplateParam>();
+        Set <HeatTemplateParam> paramSet = new HashSet<>();
         cd.saveHeatTemplate(heat,paramSet);
     }
     @Test(expected = Exception.class)
@@ -2665,12 +2665,12 @@ public class CatalogDatabaseTest {
     @Test(expected = Exception.class)
     public void executeQuerySingleRow(){
         VnfComponent ar = new VnfComponent();
-        HashMap<String, String> variables = new HashMap<String, String>();
+        HashMap<String, String> variables = new HashMap<>();
         cd.executeQuerySingleRow("tets",variables,false);
     }
     @Test(expected = Exception.class)
     public void executeQueryMultipleRows(){
-        HashMap<String, String> variables = new HashMap<String, String>();
+        HashMap<String, String> variables = new HashMap<>();
         cd.executeQueryMultipleRows("select",variables,false);
     }
 }

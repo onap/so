@@ -156,7 +156,7 @@ public class PropertyConfigurationSetup {
 	 * Create a map to hold properties to be added to mso.bpmn.properties.
 	 */
 	public static Map<String, String> createBpmnProperties() {
-		Map<String, String> properties = new HashMap<String, String>();
+		Map<String, String> properties = new HashMap<>();
 		properties.put("PROPERTIES-TYPE", PropertyConfiguration.MSO_BPMN_PROPERTIES);
 		return properties;
 	}
@@ -165,7 +165,7 @@ public class PropertyConfigurationSetup {
 	 * Create a map to hold properties to be added to mso.bpmn.urn.properties.
 	 */
 	public static Map<String, String> createBpmnUrnProperties() {
-		Map<String, String> properties = new HashMap<String, String>();
+		Map<String, String> properties = new HashMap<>();
 		properties.put("PROPERTIES-TYPE", PropertyConfiguration.MSO_BPMN_URN_PROPERTIES);
 		return properties;
 	}
@@ -176,7 +176,7 @@ public class PropertyConfigurationSetup {
 	 * PropertyConfiguration, just like they do when a property file is updated on
 	 * a real MSO system. This method will optionally wait for the new properties
 	 * to be loaded.  Timeout results in an IOException.
-	 * @param values new properties
+	 * @param properties new properties
 	 * @param wait maximum amount of time to wait for new properties to be loaded,
 	 *             in milliseconds.  A value of zero means, "Do not wait."
 	 * @throws IOException

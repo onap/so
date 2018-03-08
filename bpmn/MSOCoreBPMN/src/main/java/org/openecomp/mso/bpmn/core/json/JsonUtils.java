@@ -132,7 +132,7 @@ public class JsonUtils {
 	 * to convert a JSONObject to an XML Doc. The intent of this is to
 	 * correctly generate XML from JSON including TAGs for JSONArrays
 	 *
-	 * @param  jsonObj	org.json.JSON object to be converted to XML
+	 * @param  obj	org.json.JSON object to be converted to XML
 	 * @param  tagName 	optional XML tagname supplied primarily during recursive calls
 	 * @return String containing the XML translation
 	 */
@@ -945,7 +945,7 @@ public class JsonUtils {
 	 * and puts it in a Java List<String>.
 	 *
 	 * @param execution
-	 * @param stringArray - the getJsonValue of a json array of strings
+	 * @param jsonArrayOfStrings - the getJsonValue of a json array of strings
 	 *
 	 * @return List - a java list containing the strings
 	 *

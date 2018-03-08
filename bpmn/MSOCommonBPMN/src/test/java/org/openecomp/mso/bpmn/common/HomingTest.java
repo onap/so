@@ -232,13 +232,8 @@ public class HomingTest extends WorkflowTest {
 	@Deployment(resources = {"subprocess/BuildingBlock/Homing.bpmn", "subprocess/BuildingBlock/DecomposeService.bpmn", "subprocess/ReceiveWorkflowMessage.bpmn"})
 	public void testHoming_success_vnfResourceList() throws Exception {
 
-		// Create a Service Decomposition
-
-		// TODO: ROBD: maybe use this one?
-		// MockGetServiceResourcesCatalogData("1cc4e2e4-eb6e-404d-a66f-c8733cedcce8", "__files/BuildingBlocks/catalogResp.json", "5.0");
-
-	        MockGetServiceResourcesCatalogDataByModelUuid("2f7f309d-c842-4644-a2e4-34167be5eeb4", "/BuildingBlocks/catalogResp.json");
-
+		// Create a Service Decomposition 
+		MockGetServiceResourcesCatalogDataByModelUuid("2f7f309d-c842-4644-a2e4-34167be5eeb4", "/BuildingBlocks/catalogResp.json");
 		String busKey = UUID.randomUUID().toString();
 		Map<String, Object> vars = new HashMap<>();
 		setVariablesForServiceDecomposition(vars, "testRequestId123", "ff5256d2-5a33-55df-13ab-12abad84e7ff");

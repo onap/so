@@ -179,50 +179,52 @@ public class VnfRequestHandler {
         if (ar.getVolumeGroupId () != null) {
         	vi.setVolumeGroupId (ar.getVolumeGroupId ());
         }
-        if (version.equals(Constants.SCHEMA_VERSION_V1)) {
-        	if (ar.getServiceType () != null) {
-        		vi.setServiceType (ar.getServiceType ());
-        	}
-        	if (ar.getAicNodeClli () != null) {
-        		vi.setAicNodeClli (ar.getAicNodeClli ());
-        	}
-        }
-        else if (version.equals(Constants.SCHEMA_VERSION_V2)) {
-        	if (ar.getAaiServiceId () != null) {
-        		vi.setServiceId (ar.getAaiServiceId ());
-        	}
-        	if (ar.getAicCloudRegion () != null) {
-        		vi.setAicCloudRegion (ar.getAicCloudRegion ());
-        	}
-        	if (ar.getVfModuleName () != null) {
-        		vi.setVfModuleName (ar.getVfModuleName ());
-        	}
-        	if (ar.getVfModuleId () != null) {
-        		vi.setVfModuleId (ar.getVfModuleId ());
-        	}
-        	if (ar.getVfModuleModelName () != null) {
-        		vi.setVfModuleModelName (ar.getVfModuleModelName ());
-        	}        	
-        }
-        else if (version.equals(Constants.SCHEMA_VERSION_V3)) {
-        	if (ar.getAaiServiceId () != null) {
-        		vi.setServiceId (ar.getAaiServiceId ());
-        	}
-        	if (ar.getAicCloudRegion () != null) {
-        		vi.setAicCloudRegion (ar.getAicCloudRegion ());
-        	}
-        	if (ar.getVfModuleName () != null) {
-        		vi.setVfModuleName (ar.getVfModuleName ());
-        	}
-        	if (ar.getVfModuleId () != null) {
-        		vi.setVfModuleId (ar.getVfModuleId ());
-        	}
-        	if (ar.getVfModuleModelName () != null) {
-        		vi.setVfModuleModelName (ar.getVfModuleModelName ());
-        	}
-        	if (ar.getServiceInstanceId () != null) {
-        		vi.setServiceInstanceId (ar.getServiceInstanceId ());
-        	}
+        switch (version) {
+            case Constants.SCHEMA_VERSION_V1:
+                if (ar.getServiceType() != null) {
+                    vi.setServiceType(ar.getServiceType());
+                }
+                if (ar.getAicNodeClli() != null) {
+                    vi.setAicNodeClli(ar.getAicNodeClli());
+                }
+                break;
+            case Constants.SCHEMA_VERSION_V2:
+                if (ar.getAaiServiceId() != null) {
+                    vi.setServiceId(ar.getAaiServiceId());
+                }
+                if (ar.getAicCloudRegion() != null) {
+                    vi.setAicCloudRegion(ar.getAicCloudRegion());
+                }
+                if (ar.getVfModuleName() != null) {
+                    vi.setVfModuleName(ar.getVfModuleName());
+                }
+                if (ar.getVfModuleId() != null) {
+                    vi.setVfModuleId(ar.getVfModuleId());
+                }
+                if (ar.getVfModuleModelName() != null) {
+                    vi.setVfModuleModelName(ar.getVfModuleModelName());
+                }
+                break;
+            case Constants.SCHEMA_VERSION_V3:
+                if (ar.getAaiServiceId() != null) {
+                    vi.setServiceId(ar.getAaiServiceId());
+                }
+                if (ar.getAicCloudRegion() != null) {
+                    vi.setAicCloudRegion(ar.getAicCloudRegion());
+                }
+                if (ar.getVfModuleName() != null) {
+                    vi.setVfModuleName(ar.getVfModuleName());
+                }
+                if (ar.getVfModuleId() != null) {
+                    vi.setVfModuleId(ar.getVfModuleId());
+                }
+                if (ar.getVfModuleModelName() != null) {
+                    vi.setVfModuleModelName(ar.getVfModuleModelName());
+                }
+                if (ar.getServiceInstanceId() != null) {
+                    vi.setServiceInstanceId(ar.getServiceInstanceId());
+                }
+                break;
         }
         qr.setVnfInputs (vi);
 
@@ -307,7 +309,7 @@ public class VnfRequestHandler {
                                                                                                    queryValue,
                                                                                                    getRequestType ());
 
-        List <VnfRequest> queryResponseList = new LinkedList <VnfRequest> ();
+        List <VnfRequest> queryResponseList = new LinkedList<>();
 
         if (activeReqList != null) {
             // build response for active
@@ -351,7 +353,7 @@ public class VnfRequestHandler {
     }
 
     private List <VnfRequest> infraRequestsResponses (List <? extends InfraRequests> arList, String version) {
-        List <VnfRequest> queryResponseList = new LinkedList <VnfRequest> ();
+        List <VnfRequest> queryResponseList = new LinkedList<>();
 
         for (InfraRequests ar : arList) {
             VnfRequest qr = fillGeneric (ar);

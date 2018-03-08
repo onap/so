@@ -38,7 +38,8 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 	CommonConstants.VOLUME_GROUP_ID_VARIABLE, CommonConstants.NETWORK_ID_VARIABLE,
 	CommonConstants.CONFIGURATION_ID_VARIABLE, CommonConstants.SERVICE_TYPE_VARIABLE, 
 	CommonConstants.VNF_TYPE_VARIABLE, CommonConstants.VF_MODULE_TYPE_VARIABLE, 
-	CommonConstants.NETWORK_TYPE_VARIABLE, CommonConstants.CAMUNDA_SERVICE_INPUT})
+	CommonConstants.NETWORK_TYPE_VARIABLE, CommonConstants.CAMUNDA_SERVICE_INPUT,
+	CommonConstants.CAMUNDA_SERVICE_INPUT, CommonConstants.RECIPE_PARAMS})
 @JsonRootName(CommonConstants.CAMUNDA_ROOT_INPUT)
 public class CamundaVIDRequest {
 
@@ -94,6 +95,9 @@ public class CamundaVIDRequest {
 	@JsonProperty(CommonConstants.NETWORK_TYPE_VARIABLE)
 	private CamundaInput networkType;
 
+	@JsonProperty(CommonConstants.RECIPE_PARAMS)
+	private CamundaInput recipeParams;
+	
 	@JsonProperty(CommonConstants.CAMUNDA_SERVICE_INPUT)
 	public CamundaInput getServiceInput() {
 		return serviceInput;
@@ -261,6 +265,16 @@ public class CamundaVIDRequest {
 	@JsonProperty(CommonConstants.NETWORK_TYPE_VARIABLE)
 	public void setNetworkType(CamundaInput networkType) {
 		this.networkType = networkType;
+	}
+
+	@JsonProperty(CommonConstants.RECIPE_PARAMS)
+	public CamundaInput getRecipeParams() {
+		return recipeParams;
+	}
+
+	@JsonProperty(CommonConstants.RECIPE_PARAMS)
+	public void setRecipeParams(CamundaInput recipeParams) {
+		this.recipeParams = recipeParams;
 	}
 
 	@Override

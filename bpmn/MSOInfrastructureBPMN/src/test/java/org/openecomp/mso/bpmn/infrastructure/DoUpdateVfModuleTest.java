@@ -103,7 +103,7 @@ public class DoUpdateVfModuleTest extends WorkflowTest {
 		MockGetServiceResourcesCatalogData("aa5256d2-5a33-55df-13ab-12abad84e7ff","InfrastructureFlows/DoCreateServiceInstance_request.json");
 		
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("mso-request-id", "DEV-VF-0011");
 		variables.put("isDebugLogEnabled","true");
 		variables.put("DoUpdateVfModuleRequest", doUpdateVfModuleRequest);
@@ -151,7 +151,7 @@ public class DoUpdateVfModuleTest extends WorkflowTest {
 		MockGetServiceResourcesCatalogData("aa5256d2-5a33-55df-13ab-12abad84e7ff","InfrastructureFlows/DoCreateServiceInstance_request.json");
 		
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("mso-request-id", "DEV-VF-0011");
 		variables.put("isDebugLogEnabled","true");
 		variables.put("msoRequestId", "DEV-VF-0011");

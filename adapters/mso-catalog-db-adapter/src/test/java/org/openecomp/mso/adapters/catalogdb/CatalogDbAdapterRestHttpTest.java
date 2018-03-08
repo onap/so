@@ -114,7 +114,7 @@ public class CatalogDbAdapterRestHttpTest {
     	try {
     	    List<VnfResourceCustomization> paramList;    		
         	// set up mock return value
-            paramList = new ArrayList<VnfResourceCustomization>();
+            paramList = new ArrayList<>();
             VnfResourceCustomization d1 = new VnfResourceCustomization();
             d1.setModelCustomizationUuid("16ea3e56-a8ce-4ad7-8edd-4d2eae095391");
             d1.setModelInstanceName("RG_6-26_mog11 0");
@@ -154,7 +154,7 @@ public class CatalogDbAdapterRestHttpTest {
     	try {
     	    List<VnfResourceCustomization> paramList;    		
         	// set up mock return value
-            paramList = new ArrayList<VnfResourceCustomization>();
+            paramList = new ArrayList<>();
             VnfResourceCustomization d1 = new VnfResourceCustomization();
             d1.setVnfResourceModelUuid("16ea3e56-a8ce-4ad7-8edd-4d2eae095391");
             d1.setModelInstanceName("RG_6-26_mog11 0");
@@ -198,7 +198,7 @@ public class CatalogDbAdapterRestHttpTest {
     	try {
     	    List<VnfResourceCustomization> paramList;    		
         	// set up mock return value
-            paramList = new ArrayList<VnfResourceCustomization>();
+            paramList = new ArrayList<>();
             VnfResourceCustomization d1 = new VnfResourceCustomization();
             d1.setModelCustomizationUuid("16ea3e56-a8ce-4ad7-8edd-4d2eae095391");
             d1.setModelInstanceName("RG_6-26_mog11 0");
@@ -242,7 +242,7 @@ public class CatalogDbAdapterRestHttpTest {
     	try {
     	    List<NetworkResourceCustomization> paramList;    		
         	// set up mock return value
-            paramList = new ArrayList<NetworkResourceCustomization>();
+            paramList = new ArrayList<>();
             NetworkResourceCustomization d1 = new NetworkResourceCustomization();
             d1.setNetworkResourceModelUuid("0cb9b26a-9820-48a7-86e5-16c510e993d9");
             paramList.add(d1);
@@ -282,7 +282,7 @@ public class CatalogDbAdapterRestHttpTest {
     	try {
     	    List<NetworkResourceCustomization> paramList;    		
         	// set up mock return value
-            paramList = new ArrayList<NetworkResourceCustomization>();
+            paramList = new ArrayList<>();
             NetworkResourceCustomization d1 = new NetworkResourceCustomization();
             d1.setNetworkResourceModelUuid("0cb9b26a-9820-48a7-86e5-16c510e993d9");
             paramList.add(d1);
@@ -322,7 +322,7 @@ public class CatalogDbAdapterRestHttpTest {
     	try {
     	    ArrayList<NetworkResourceCustomization> paramList;    		
         	// set up mock return value
-            paramList = new ArrayList<NetworkResourceCustomization>();
+            paramList = new ArrayList<>();
             NetworkResourceCustomization d1 = new NetworkResourceCustomization();
             d1.setNetworkResourceModelUuid("0cb9b26a-9820-48a7-86e5-16c510e993d9");
             paramList.add(d1);
@@ -367,7 +367,7 @@ public class CatalogDbAdapterRestHttpTest {
     	try {
     	    List<AllottedResourceCustomization> paramList;    		
         	// set up mock return value
-            paramList = new ArrayList<AllottedResourceCustomization>();
+            paramList = new ArrayList<>();
             AllottedResourceCustomization d1 = new AllottedResourceCustomization();
             d1.setArModelUuid("0cb9b26a-9820-48a7-86e5-16c510e993d9");
             paramList.add(d1);
@@ -409,7 +409,7 @@ public class CatalogDbAdapterRestHttpTest {
     	try {
     	    List<AllottedResourceCustomization> paramList;    		
         	// set up mock return value
-            paramList = new ArrayList<AllottedResourceCustomization>();
+            paramList = new ArrayList<>();
             AllottedResourceCustomization d1 = new AllottedResourceCustomization();
             d1.setArModelUuid("0cb9b26a-9820-48a7-86e5-16c510e993d9");
             paramList.add(d1);

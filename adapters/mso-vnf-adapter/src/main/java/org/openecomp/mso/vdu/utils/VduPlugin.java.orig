@@ -1,0 +1,256 @@
+/*-
+ * ============LICENSE_START=======================================================
+<<<<<<< HEAD
+ * ONAP - SO
+=======
+ * OPENECOMP - MSO
+>>>>>>> master
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+package org.openecomp.mso.vdu.utils;
+
+/**
+ * This interface defines a common API for template-based cloud deployments.
+ * The methods here should be adaptable for Openstack (Heat), Cloudify (TOSCA),
+ * Aria (TOSCA), Multi-VIM (TBD), and others (e.g. Azure Resource Manager).
+ * 
+ * The deployed instances are referred to here as Virtual Deployment Units (VDUs).
+ * The package of templates that define a give VDU is referred to as its blueprint.
+ * 
+ * Template-based orchestrators all follow a similar template/blueprint model.
+ * - One main template that is the top level definition
+ * - Optional nested templates referenced/included by the main template
+ * - Optional files attached to the template package, typically containing
+ *   configuration files, install scripts, orchestration scripts, etc.
+ *   
+ * The main template also defines the required inputs for creating a new instance,
+ * and output values exposed by successfully deployed instances.  Inputs and outputs
+ * may include simple or complex (JSON) data types.
+ *   
+ * Each implementation of this interface is expected to understand the MSO CloudConfig
+ * to obtain the credentials for its sub-orchestrator and the targeted cloud.
+ * The sub-orchestrator may have different credentials from the cloud (e.g. an Aria 
+ * instance in front of an Openstack cloud) or they may be the same (e.g. Heat)
+ */
+import java.util.Map;
+
+import org.openecomp.mso.openstack.exceptions.MsoException;
+
+public interface VduPlugin {
+
+    /**
+     * The instantiateVdu interface deploys a new VDU instance from a blueprint package.
+     * The templates and files in the blueprint may be pre-installed where supported
+     * (e.g. in Cloudify or Aria), or may be passed in directly (e.g. for Heat).  These
+     * files are expressed as byte arrays, though only text files are expected from ASDC.
+     * 
+     * For some VIMs, this may be a single command (e.g. Heat -> create stack) or may
+     * require a series of API calls (e.g. Cloudify -> upload blueprint, create deployment,
+     * execute install workflow).  These details are hidden within the implementation.
+     * The instantiation should be fully completed before returning.  On failures, this
+     * method is expected to back out the attempt, leaving the cloud in its previous state.
+     * 
+     * It is expected that parameters have been validated and contain at minimum the
+     * required parameters for the given template with no extra parameters.
+     *
+     * The VDU name supplied by the caller will be globally unique, and identify the artifact
+     * in A&AI.  Inventory is managed by the higher levels invoking this function.
+     *
+     * @param cloudSiteId The target cloud for the VDU.  Maps to a CloudConfig entry.
+     * @param tenantId The cloud tenant in which to deploy the VDU.  The meaning may differ by
+     * 		cloud provider, but every cloud supports some sort of tenant partitioning.
+     * @param vduInstanceName A unique name for the VDU instance to create
+     * @param vduBlueprint Object containing the collection of templates and files that comprise
+     * 		the blueprint for this VDU.
+     * @param inputs A map of key/value inputs.  Values may be strings, numbers, or JSON objects.
+     * @param environmentFile A file containing default parameter name/value pairs.  This is
+     * 		primarily for Heat, though ASDC may create a similar file for other orchestrators.
+     * @param timeoutMinutes Timeout after which the instantiation attempt will be cancelled
+     * @param suppressBackout Flag to preserve the deployment on install Failure.  Should normally
+     *		be False except in troubleshooting/debug cases
+     * 
+     * @return A VduInfo object
+     * @throws MsoException Thrown if the sub-orchestrator API calls fail or if a timeout occurs.
+     * Various subclasses of MsoException may be thrown.
+     */
+    public VduInfo instantiateVdu (
+    				String cloudSiteId,
+    				String tenantId,
+    				String vduInstanceName,
+    				VduBlueprint vduBlueprint,
+    				Map <String, ? extends Object> inputs,
+    				String environmentFile,
+    				int timeoutMinutes,
+    				boolean suppressBackout)
+			throws MsoException;
+
+    
+    /**
+     * Query a deployed VDU instance.  This call will return a VduInfo object, or null
+     * if the deployment does not exist.
+     * 
+     * Some VIM orchestrators identify deployment instances by string UUIDs, and others 
+     * by integers.  In the latter case, the ID will be passed in as a numeric string.
+     *
+     * The returned VduInfo object contains the input and output parameter maps,
+     * as well as other properties of the deployment (name, status, last action, etc.).
+     * 
+     * @param cloudSiteId The target cloud to query for the VDU.
+     * @param tenantId The cloud tenant in which to query
+     * @param vduInstanceId The ID of the deployment to query
+     * 
+     * @return A VduInfo object
+     * @throws MsoException Thrown if the VIM/sub-orchestrator API calls fail.
+     * Various subclasses of MsoException may be thrown.
+     */
+    public VduInfo queryVdu (
+    				String cloudSiteId,
+    				String tenantId,
+    				String vduInstanceId)
+			throws MsoException;
+
+    
+    /**
+     * Delete a VDU instance by ID.  If the VIM sub-orchestrator supports pre-installation
+     * of blueprints, the blueprint itself may remain installed.  This is recommended, since
+     * other VDU instances may be using it.
+     * 
+     * Some VIM orchestrators identify deployment instances by string UUIDs, and others 
+     * by integers.  In the latter case, the ID will be passed in as a numeric string.
+     * 
+     * For some VIMs, deletion may be a single command (e.g. Heat -> delete stack) or a
+     * series of API calls (e.g. Cloudify -> execute uninstall workflow, delete deployment).
+     * These details are hidden within the implementation.  The deletion should be fully
+     * completed before returning.    
+     *  
+     * The successful return is a VduInfo object which contains the state of the object just prior
+     * to deletion, with a status of DELETED.  If the deployment was not found, the VduInfo object
+     * should be empty (with a status of NOTFOUND).  There is no rollback from a successful deletion.
+     * 
+     * A deletion failure will result in an undefined deployment state - the components may
+     * or may not have been all or partially uninstalled, so the resulting deployment must
+     * be considered invalid.
+     *
+     * @param cloudSiteId The target cloud from which to delete the VDU.
+     * @param tenantId The cloud tenant in which to delete the VDU.
+     * @param vduInstanceId The unique id of the deployment to delete.
+     * @param timeoutMinutes Timeout after which the delete action will be cancelled
+<<<<<<< HEAD
+     * @param deleteBlueprint Flag to also delete the blueprint
+=======
+     * @param keepBlueprintLoaded Flag to also delete the blueprint
+>>>>>>> master
+     * 
+     * @return A VduInfo object, representing the state of the instance just prior to deletion.
+     * 
+     * @throws MsoException Thrown if the API calls fail or if a timeout occurs.
+     * Various subclasses of MsoException may be thrown.
+     */
+    public VduInfo deleteVdu (
+    				String cloudSiteId,
+    				String tenantId,
+    				String vduInstanceId,
+    				int timeoutMinutes,
+    				boolean keepBlueprintLoaded)
+			throws MsoException;
+
+    
+    /**
+     * The updateVdu interface attempts to update a VDU in-place, using either new inputs or
+     * a new model definition (i.e. updated templates/blueprints).  This depends on the
+     * capabilities of the targeted sub-orchestrator, as not all implementations are expected
+     * to support this ability.  It is primary included initially only for Heat.
+	 *
+     * It is expected that parameters have been validated and contain at minimum the required
+     * parameters for the given template with no extra parameters.  The VDU instance name cannot
+     * be updated. 
+     * 
+   	 * The update should be fully completed before returning. The successful return is a
+	 * VduInfo object containing the updated VDU state.
+     * 
+     * An update failure will result in an undefined deployment state - the components may
+     * or may not have been all or partially modified, deleted, recreated, etc.  So the resulting
+     * VDU must be considered invalid.
+     * 
+     * @param cloudSiteId The target cloud for the VDU.  Maps to a CloudConfig entry.
+     * @param tenantId The cloud tenant in which to deploy the VDU.  The meaning may differ by
+     * 		cloud provider, but every cloud supports some sort of tenant partitioning.
+     * @param vduInstanceId The unique ID for the VDU instance to update.
+     * @param vduBlueprint Object containing the collection of templates and files that comprise
+     * 		the blueprint for this VDU.
+     * @param inputs A map of key/value inputs.  Values may be strings, numbers, or JSON objects.
+     * @param environmentFile A file containing default parameter name/value pairs.  This is
+     * 		primarily for Heat, though ASDC may create a similar file for other orchestrators.
+     * @param timeoutMinutes Timeout after which the instantiation attempt will be cancelled
+     * 
+     * @return A VduInfo object
+     * @throws MsoException Thrown if the sub-orchestrator API calls fail or if a timeout occurs.
+     * Various subclasses of MsoException may be thrown.
+     */
+    public VduInfo updateVdu (
+    				String cloudSiteId,
+    				String tenantId,
+    				String vduInstanceId,
+    				VduBlueprint vduBlueprint,
+    				Map <String, ? extends Object> inputs,
+    				String environmentFile,
+    				int timeoutMinutes)
+			throws MsoException;
+
+    
+    /**
+     * Check if a blueprint package has been installed in the sub-orchestrator and available
+     * for use at a targeted cloud site.  If the specific sub-orchestrator does not support
+     * pre-installation, then those implementations should always return False.
+     * 
+     * @param cloudSiteId The cloud site where the blueprint is needed
+     * @param vduModelId Unique ID of the VDU model to query
+     * 
+     * @throws MsoException Thrown if the API call fails.
+     */
+    public boolean isBlueprintLoaded (String cloudSiteId, String vduModelId)
+			throws MsoException;
+
+    
+    /**
+     * Install a blueprint package to the target sub-orchestrator for a cloud site.
+     * The blueprints currently must be structured as a single directory with all of the
+     * required files.  One of those files is designated the "main file" for the blueprint.
+     * Files are provided as byte arrays, though expect only text files will be distributed
+     * from ASDC and stored by MSO.
+     * 
+     * @param cloudSiteId The cloud site where the blueprint is needed
+     * @param vduBlueprint Object containing the collection of templates and files that comprise
+     * 		the blueprint for this VDU.
+     * @param failIfExists Flag to return an error if blueprint already exists
+     * 
+     * @throws MsoException Thrown if the API call fails.
+     */
+    public void uploadBlueprint (String cloudSiteId,
+    							VduBlueprint vduBlueprint,
+    							boolean failIfExists)
+    	throws MsoException;
+
+    /**
+     * Indicator that this VIM sub-orchestrator implementation supports independent upload
+     * of blueprint packages.  Each implementation should return a constant value.
+     * 
+     * @returns True if the sub-orchestrator supports blueprint pre-installation (upload).
+     */
+    public boolean blueprintUploadSupported ();
+
+}

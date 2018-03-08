@@ -41,7 +41,7 @@ import org.openecomp.mso.properties.MsoPropertiesFactory;
 public class ASDCGlobalController {
 
     private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.ASDC);
-    private Map <String,ASDCController> controllers = new HashMap <String,ASDCController> ();
+    private Map <String,ASDCController> controllers = new HashMap<>();
         
     private MsoJsonProperties msoProp= null;
     
@@ -78,7 +78,7 @@ public class ASDCGlobalController {
     
     /**
      * Check that controllers list needs to be updated or not.
-     * @param return true if the list has been updated
+     * return true if the list has been updated
      */
     private boolean updateControllersListIfNeeded ()  {
     	boolean updateNeeded=false;
@@ -149,7 +149,7 @@ public class ASDCGlobalController {
     }
 
     public void closeASDC () {
-    	List<String> controllerToRemove = new LinkedList<String>();
+    	List<String> controllerToRemove = new LinkedList<>();
     	
         for (ASDCController controller : controllers.values()) {
             try {

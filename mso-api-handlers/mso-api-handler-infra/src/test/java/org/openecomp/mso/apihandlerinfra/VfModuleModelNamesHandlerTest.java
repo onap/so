@@ -49,7 +49,7 @@ public class VfModuleModelNamesHandlerTest {
 		new MockUp<CatalogDatabase>() {
 			@Mock
 			public  List <VfModule>  getAllVfModules(){
-				List <VfModule> list = new ArrayList<VfModule>();
+				List <VfModule> list = new ArrayList<>();
 				VfModule resource = new VfModule();
 				list.add(resource);
 				return list;

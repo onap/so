@@ -46,8 +46,8 @@ public class NetworkRecipeTest {
 		assertTrue(networkRecipe.getId() == 1);
 		networkRecipe.setModelName("modelName");
 		assertTrue(networkRecipe.getModelName().equalsIgnoreCase("modelName"));
-		networkRecipe.setNetworkParamXSD("networkParamXSD");
-		assertTrue(networkRecipe.getNetworkParamXSD().equalsIgnoreCase("networkParamXSD"));
+		networkRecipe.setParamXSD("networkParamXSD");
+		assertTrue(networkRecipe.getParamXSD().equalsIgnoreCase("networkParamXSD"));
 		networkRecipe.setOrchestrationUri("orchestrationUri");
 		assertTrue(networkRecipe.getOrchestrationUri().equalsIgnoreCase("orchestrationUri"));
 		networkRecipe.setRecipeTimeout(1);

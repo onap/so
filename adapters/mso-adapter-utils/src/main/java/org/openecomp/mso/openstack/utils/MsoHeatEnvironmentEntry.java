@@ -154,6 +154,13 @@ public class MsoHeatEnvironmentEntry {
 		return false;
 	}
 	
+	@Override
+	public String toString() {
+		return "MsoHeatEnvironmentEntry{" + "parameters=" + parameters +
+			", resourceRegistryEntryRaw='" + resourceRegistryEntryRaw + '\'' +
+			'}';
+	}
+	
 	public StringBuilder toFullStringExcludeNonParams(Set<HeatTemplateParam> params) {
 		// Basically give back the envt - but exclude the params that aren't in the HeatTemplate 
 		
@@ -209,10 +216,10 @@ public class MsoHeatEnvironmentEntry {
 		sb.append(this.resourceRegistryEntryRaw);			
 		return sb;
 	}
-
-	public StringBuilder getRawEntry() {
-		return this.rawEntry;
-	}
+	
+        public StringBuilder getRawEntry() {
+                return this.rawEntry;
+        }
 	
 	private StringBuilder getResourceRegistryRawEntry() {
 		
