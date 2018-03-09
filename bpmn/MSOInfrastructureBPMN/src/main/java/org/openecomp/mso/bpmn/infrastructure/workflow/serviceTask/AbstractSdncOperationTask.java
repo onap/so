@@ -203,11 +203,7 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
                         throw new RouteException(result, "SERVICE_GET_ERR");
                     }
                     e.close();
-	    } catch (ClientProtocolException e) {
-		    errorMsg = url + ":httpGetWithJSON connect faild";
-		    logger.info("exception: GET_CONNECT_FAILD {}", errorMsg);
-		    throwsRouteException(errorMsg, e, "GET_CONNECT_FAILD");
-	    } catch (IOException e) {
+	    } catch (ClientProtocolException | IOException e) {
 		    errorMsg = url + ":httpGetWithJSON connect faild";
 		    logger.info("exception: GET_CONNECT_FAILD {}", errorMsg);
 		    throwsRouteException(errorMsg, e, "GET_CONNECT_FAILD");
