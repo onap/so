@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_c9efed1c",
+        "filename": "adapters/mso-adapter-utils/src/test/java/org/openecomp/mso/cloud/CloudSiteTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1423
+      },
+      "writtenOn": "2018-03-09T22:39:14Z",
+      "side": 1,
+      "message": "Please fix.  Should be ONAP - SO",
+      "revId": "7ed4d058df5ebe7fdfecb559c7ce42f71f3ff931",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
