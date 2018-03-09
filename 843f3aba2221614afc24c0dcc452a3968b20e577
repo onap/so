@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_89f565ee",
+        "filename": "adapters/mso-adapter-utils/src/test/java/org/openecomp/mso/openstack/beans/MsoTenantTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1423
+      },
+      "writtenOn": "2018-03-09T22:40:46Z",
+      "side": 1,
+      "message": "Please fix. Should be ONAP - SO",
+      "range": {
+        "startLine": 3,
+        "startChar": 2,
+        "endLine": 3,
+        "endChar": 6
+      },
+      "revId": "843f3aba2221614afc24c0dcc452a3968b20e577",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_29e0d127",
+        "filename": "adapters/mso-adapter-utils/src/test/java/org/openecomp/mso/openstack/beans/NetworkRollbackTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1423
+      },
+      "writtenOn": "2018-03-09T22:40:46Z",
+      "side": 1,
+      "message": "Please fix.  Should be ONAP - SO",
+      "range": {
+        "startLine": 3,
+        "startChar": 0,
+        "endLine": 3,
+        "endChar": 13
+      },
+      "revId": "843f3aba2221614afc24c0dcc452a3968b20e577",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
