@@ -7,7 +7,6 @@
         <version>1.2.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.onap.so</groupId>
     <artifactId>MSOCoreBPMN</artifactId>
     <packaging>jar</packaging>
 

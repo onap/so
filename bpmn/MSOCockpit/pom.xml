@@ -7,7 +7,6 @@
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.onap.so</groupId>
 	<artifactId>MSOCockpit</artifactId>
 	<packaging>pom</packaging>
 	<name>MSOCockpit</name>
