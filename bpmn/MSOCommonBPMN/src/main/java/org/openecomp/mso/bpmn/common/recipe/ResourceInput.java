@@ -57,9 +57,14 @@ public class ResourceInput {
     @JsonProperty("operationId")
     private String operationId;
     
-    @JsonProperty("resourceType")
-    private String resourceType;
+    //for create resource
+    @JsonProperty("resourceInvariantUuid")
+    private String resourceInvariantUuid;
     
+    //for create resource
+    @JsonProperty("resourceUuid")
+    private String resourceUuid;
+
     //for create resource
     @JsonProperty("resourceCustomizationUuid")
     private String resourceCustomizationUuid;
@@ -181,26 +186,48 @@ public class ResourceInput {
     public void setOperationId(String operationId) {
         this.operationId = operationId;
     }
+        
+   
+    
+    /**
+     * @return Returns the resourceInvariantUuid.
+     */
+    @JsonProperty("resourceInvariantUuid")
+    public String getResourceInvariantUuid() {
+        return resourceInvariantUuid;
+    }
+
 
     
     /**
-     * @return Returns the resourceType.
+     * @param resourceInvariantUuid The resourceInvariantUuid to set.
      */
-    @JsonProperty("resourceType")
-    public String getResourceType() {
-        return resourceType;
+    @JsonProperty("resourceInvariantUuid")
+    public void setResourceInvariantUuid(String resourceInvariantUuid) {
+        this.resourceInvariantUuid = resourceInvariantUuid;
     }
+
 
     
     /**
-     * @param resourceType The resourceType to set.
+     * @return Returns the resourceUuid.
      */
-    @JsonProperty("resourceType")
-    public void setResourceType(String resourceType) {
-        this.resourceType = resourceType;
+    @JsonProperty("resourceUuid")
+    public String getResourceUuid() {
+        return resourceUuid;
     }
 
+
     
+    /**
+     * @param resourceUuid The resourceUuid to set.
+     */
+    @JsonProperty("resourceUuid")
+    public void setResourceUuid(String resourceUuid) {
+        this.resourceUuid = resourceUuid;
+    }
+
+
     /**
      * @return Returns the resourceCustomizationUuid.
      */
