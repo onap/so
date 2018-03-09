@@ -33,37 +33,37 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
  */
 public class StubResponseSNIRO {
 
-    public static void setupAllMocks() {
+	public static void setupAllMocks() {
 
-    }
+	}
 
-    public static void mockSNIRO() {
-        stubFor(post(urlEqualTo("/sniro/api/v2/placement"))
-                .willReturn(aResponse()
-                        .withStatus(202)
-                        .withHeader("Content-Type", "application/json")));
-    }
+	public static void mockSNIRO() {
+		stubFor(post(urlEqualTo("/sniro/api/v2/placement"))
+				.willReturn(aResponse()
+						.withStatus(202)
+						.withHeader("Content-Type", "application/json")));
+	}
 
-    public static void mockSNIRO(String responseFile) {
-        stubFor(post(urlEqualTo("/sniro/api/v2/placement"))
-                .willReturn(aResponse()
-                        .withStatus(202)
-                        .withHeader("Content-Type", "application/json")
-                        .withBodyFile(responseFile)));
-    }
+	public static void mockSNIRO(String responseFile) {
+		stubFor(post(urlEqualTo("/sniro/api/v2/placement"))
+				.willReturn(aResponse()
+						.withStatus(202)
+						.withHeader("Content-Type", "application/json")
+						.withBodyFile(responseFile)));
+	}
 
-    public static void mockSNIRO_400() {
-        stubFor(post(urlEqualTo("/sniro/api/v2/placement"))
-                .willReturn(aResponse()
-                        .withStatus(400)
-                        .withHeader("Content-Type", "application/json")));
-    }
+	public static void mockSNIRO_400() {
+		stubFor(post(urlEqualTo("/sniro/api/v2/placement"))
+				.willReturn(aResponse()
+						.withStatus(400)
+						.withHeader("Content-Type", "application/json")));
+	}
 
-    public static void mockSNIRO_500() {
-        stubFor(post(urlEqualTo("/sniro/api/v2/placement"))
-                .willReturn(aResponse()
-                        .withStatus(500)
-                        .withHeader("Content-Type", "application/json")));
-    }
+	public static void mockSNIRO_500() {
+		stubFor(post(urlEqualTo("/sniro/api/v2/placement"))
+				.willReturn(aResponse()
+						.withStatus(500)
+						.withHeader("Content-Type", "application/json")));
+	}
 
 }

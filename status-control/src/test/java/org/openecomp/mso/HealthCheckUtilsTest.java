@@ -62,19 +62,18 @@ public class HealthCheckUtilsTest {
         client = Mockito.mock(CloseableHttpClient.class);
         nokRes = Mockito.mock(CloseableHttpResponse.class);
         okRes = Mockito.mock(CloseableHttpResponse.class);
-        Mockito.when(nokRes.getStatusLine()).thenReturn(new BasicStatusLine(HttpVersion.HTTP_1_1, HttpStatus.SC_SERVICE_UNAVAILABLE, "FINE!"));
-        ;
+        Mockito.when(nokRes.getStatusLine()).thenReturn(new BasicStatusLine(HttpVersion.HTTP_1_1, HttpStatus.SC_SERVICE_UNAVAILABLE, "FINE!"));;
         Mockito.when(okRes.getStatusLine()).thenReturn(new BasicStatusLine(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "FINE!"));
 
         properties = new MsoJavaProperties();
         properties.setProperty("server-port", port);
         properties.setProperty("ssl-enable", sslEnable);
         properties.setProperty("apih-load-balancer", ip1);
-        properties.setProperty("apih-healthcheck-urn", apihUrl1 + "," + apihUrl2);
-        properties.setProperty("camunda-load-balancer", ip1);
-        properties.setProperty("camunda-healthcheck-urn", bpmnUrl1);
-        properties.setProperty("jra-load-balancer", ip1);
-        properties.setProperty("jra-healthcheck-urn", raUrl1 + "," + raUrl2 + "," + raUrl3);
+        properties.setProperty("apih-healthcheck-urn",apihUrl1 + "," + apihUrl2);
+        properties.setProperty("camunda-load-balancer",ip1);
+        properties.setProperty("camunda-healthcheck-urn",bpmnUrl1);
+        properties.setProperty("jra-load-balancer",ip1);
+        properties.setProperty("jra-healthcheck-urn",raUrl1 + "," + raUrl2 + "," + raUrl3);
         properties.setProperty("apih-nodehealthcheck-urn", apihUrl1);
         properties.setProperty("camunda-nodehealthcheck-urn", bpmnUrl1);
         properties.setProperty("jra-nodehealthcheck-urn", raUrl1);
@@ -85,44 +84,44 @@ public class HealthCheckUtilsTest {
         Mockito.when(utils.verifyGlobalHealthCheck(true, null)).thenCallRealMethod();
         Mockito.when(utils.verifyGlobalHealthCheck(false, null)).thenCallRealMethod();
 
-        Mockito.when(utils.getFinalUrl(ip1, port, raUrl1, sslEnable)).thenCallRealMethod();
-        Mockito.when(utils.getFinalUrl(ip1, port, raUrl1, null)).thenCallRealMethod();
-        Mockito.when(utils.getFinalUrl(ip1, port, raUrl1, "true")).thenCallRealMethod();
-        Mockito.when(utils.getFinalUrl(ip1, port, raUrl1, "otherValue")).thenCallRealMethod();
-        Mockito.when(utils.getFinalUrl(ip1, port, raUrl1, "True")).thenCallRealMethod();
-        Mockito.when(utils.getFinalUrl(ip1, port, raUrl1, "TRUE")).thenCallRealMethod();
-        Mockito.when(utils.getFinalUrl(ip1, null, raUrl1, null)).thenCallRealMethod();
-        Mockito.when(utils.getFinalUrl(iptest, null, raUrl1, null)).thenCallRealMethod();
+        Mockito.when(utils.getFinalUrl (ip1, port, raUrl1, sslEnable)).thenCallRealMethod();
+        Mockito.when(utils.getFinalUrl (ip1, port, raUrl1, null)).thenCallRealMethod();
+        Mockito.when(utils.getFinalUrl (ip1, port, raUrl1, "true")).thenCallRealMethod();
+        Mockito.when(utils.getFinalUrl (ip1, port, raUrl1, "otherValue")).thenCallRealMethod();
+        Mockito.when(utils.getFinalUrl (ip1, port, raUrl1, "True")).thenCallRealMethod();
+        Mockito.when(utils.getFinalUrl (ip1, port, raUrl1, "TRUE")).thenCallRealMethod();
+        Mockito.when(utils.getFinalUrl (ip1, null, raUrl1, null)).thenCallRealMethod();
+        Mockito.when(utils.getFinalUrl (iptest, null, raUrl1, null)).thenCallRealMethod();
 
         System.setProperty("jboss.qualified.host.name", ip1);
     }
 
     @Test
-    public final void testVerifyNodeHealthCheck() {
-        Mockito.when(utils.verifyLocalHealth(ip1, port, apihUrl1, sslEnable, null)).thenReturn(true);
-        Mockito.when(utils.verifyLocalHealth(ip1, port, apihUrl2, sslEnable, null)).thenReturn(true);
-        Mockito.when(utils.verifyLocalHealth(ip2, port, apihUrl2, sslEnable, null)).thenReturn(true);
-        Mockito.when(utils.verifyLocalHealth(ip2, port, apihUrl1, sslEnable, null)).thenReturn(false);
-        Mockito.when(utils.verifyLocalHealth(ip1, port, raUrl1, sslEnable, null)).thenReturn(true);
-        Mockito.when(utils.verifyLocalHealth(ip1, port, raUrl2, sslEnable, null)).thenReturn(false);
-        Mockito.when(utils.verifyLocalHealth(ip1, port, raUrl3, sslEnable, null)).thenReturn(true);
+    public final void testVerifyNodeHealthCheck () {
+        Mockito.when (utils.verifyLocalHealth(ip1, port, apihUrl1, sslEnable, null)).thenReturn(true);
+        Mockito.when (utils.verifyLocalHealth(ip1, port, apihUrl2, sslEnable, null)).thenReturn(true);
+        Mockito.when (utils.verifyLocalHealth(ip2, port, apihUrl2, sslEnable, null)).thenReturn(true);
+        Mockito.when (utils.verifyLocalHealth(ip2, port, apihUrl1, sslEnable, null)).thenReturn(false);
+        Mockito.when (utils.verifyLocalHealth(ip1, port, raUrl1, sslEnable, null)).thenReturn(true);
+        Mockito.when (utils.verifyLocalHealth(ip1, port, raUrl2, sslEnable, null)).thenReturn(false);
+        Mockito.when (utils.verifyLocalHealth(ip1, port, raUrl3, sslEnable, null)).thenReturn(true);
 
-        assertTrue(utils.verifyNodeHealthCheck(HealthCheckUtils.NodeType.APIH, null));
-        assertFalse(utils.verifyNodeHealthCheck(HealthCheckUtils.NodeType.RA, null));
+        assertTrue (utils.verifyNodeHealthCheck (HealthCheckUtils.NodeType.APIH, null));
+        assertFalse (utils.verifyNodeHealthCheck (HealthCheckUtils.NodeType.RA, null));
 
-        Mockito.when(utils.verifyLocalHealth(ip1, port, apihUrl1, sslEnable, null)).thenReturn(false);
-        Mockito.when(utils.verifyLocalHealth(ip1, port, raUrl2, sslEnable, null)).thenReturn(true);
-        assertFalse(utils.verifyNodeHealthCheck(HealthCheckUtils.NodeType.APIH, null));
-        assertTrue(utils.verifyNodeHealthCheck(HealthCheckUtils.NodeType.RA, null));
+        Mockito.when (utils.verifyLocalHealth(ip1, port, apihUrl1, sslEnable, null)).thenReturn(false);
+        Mockito.when (utils.verifyLocalHealth(ip1, port, raUrl2, sslEnable, null)).thenReturn(true);
+        assertFalse (utils.verifyNodeHealthCheck (HealthCheckUtils.NodeType.APIH, null));
+        assertTrue (utils.verifyNodeHealthCheck (HealthCheckUtils.NodeType.RA, null));
 
-        Mockito.when(utils.verifyLocalHealth(ip2, port, apihUrl1, sslEnable, null)).thenReturn(true);
-        assertFalse(utils.verifyNodeHealthCheck(HealthCheckUtils.NodeType.APIH, null));
-        assertTrue(utils.verifyNodeHealthCheck(HealthCheckUtils.NodeType.RA, null));
+        Mockito.when (utils.verifyLocalHealth(ip2, port, apihUrl1, sslEnable, null)).thenReturn(true);
+        assertFalse (utils.verifyNodeHealthCheck (HealthCheckUtils.NodeType.APIH, null));
+        assertTrue (utils.verifyNodeHealthCheck (HealthCheckUtils.NodeType.RA, null));
 
     }
 
     @Test
-    public final void testVerifyGlobalHealthCheckBPMN() {
+    public final void testVerifyGlobalHealthCheckBPMN () {
 
         // healthcheck of bpmn returns false
         Mockito.when(utils.verifyLocalHealth(ip1, null, bpmnUrl1, null, null)).thenReturn(false);
@@ -130,123 +129,123 @@ public class HealthCheckUtilsTest {
         Mockito.when(utils.verifyLocalHealth(ip1, null, raUrl1, null, null)).thenReturn(true);
 
         // verify BPMN healthcheck
-        assertFalse(utils.verifyGlobalHealthCheck(true, null));
+        assertFalse(utils.verifyGlobalHealthCheck (true, null));
 
         // do not verify BPMN healthcheck
-        assertTrue(utils.verifyGlobalHealthCheck(false, null));
+        assertTrue(utils.verifyGlobalHealthCheck (false, null));
 
         Mockito.when(utils.verifyLocalHealth(ip1, null, bpmnUrl1, null, null)).thenReturn(true);
-        assertTrue(utils.verifyGlobalHealthCheck(true, null));
+        assertTrue(utils.verifyGlobalHealthCheck (true, null));
     }
 
     @Test
-    public final void testVerifyGlobalHealthCheckAPIH() {
+    public final void testVerifyGlobalHealthCheckAPIH () {
 
         Mockito.when(utils.verifyLocalHealth(ip1, null, apihUrl1, null, null)).thenReturn(true);
         Mockito.when(utils.verifyLocalHealth(ip1, null, raUrl1, null, null)).thenReturn(true);
         Mockito.when(utils.verifyLocalHealth(ip1, null, bpmnUrl1, null, null)).thenReturn(true);
-        assertTrue(utils.verifyGlobalHealthCheck(true, null));
+        assertTrue(utils.verifyGlobalHealthCheck (true, null));
 
         Mockito.when(utils.verifyLocalHealth(ip1, null, apihUrl1, null, null)).thenReturn(false);
-        assertFalse(utils.verifyGlobalHealthCheck(true, null));
+        assertFalse(utils.verifyGlobalHealthCheck (true, null));
     }
 
     @Test
-    public final void testVerifyGlobalHealthCheckRA() {
+    public final void testVerifyGlobalHealthCheckRA () {
         // all health check apis returns true
         Mockito.when(utils.verifyLocalHealth(ip1, null, apihUrl1, null, null)).thenReturn(true);
         Mockito.when(utils.verifyLocalHealth(ip1, null, raUrl1, null, null)).thenReturn(true);
         Mockito.when(utils.verifyLocalHealth(ip1, null, bpmnUrl1, null, null)).thenReturn(true);
-        assertTrue(utils.verifyGlobalHealthCheck(true, null));
+        assertTrue(utils.verifyGlobalHealthCheck (true, null));
 
 
         // 3rd ra api return false; others return true
         Mockito.when(utils.verifyLocalHealth(ip1, null, raUrl1, null, null)).thenReturn(false);
-        assertFalse(utils.verifyGlobalHealthCheck(true, null));
+        assertFalse(utils.verifyGlobalHealthCheck (true, null));
     }
 
     @Test
-    public final void testGetFinalUrl() {
-        String finalUrl1 = utils.getFinalUrl(ip1, port, raUrl1, sslEnable);
-        assertTrue(finalUrl1.equals("http://" + ip1 + ":" + port + raUrl1));
+    public final void testGetFinalUrl () {
+        String finalUrl1 = utils.getFinalUrl (ip1, port, raUrl1, sslEnable);
+        assertTrue (finalUrl1.equals ("http://" + ip1 + ":" + port + raUrl1));
 
-        String finalUrl2 = utils.getFinalUrl(ip1, port, raUrl1, "true");
-        assertTrue(finalUrl2.equals("https://" + ip1 + ":" + port + raUrl1));
+        String finalUrl2 = utils.getFinalUrl (ip1, port, raUrl1, "true");
+        assertTrue (finalUrl2.equals ("https://" + ip1 + ":" + port + raUrl1));
 
-        String finalUrl3 = utils.getFinalUrl(ip1, port, raUrl1, null);
-        assertTrue(finalUrl3.equals("http://" + ip1 + ":" + port + raUrl1));
+        String finalUrl3 = utils.getFinalUrl (ip1, port, raUrl1, null);
+        assertTrue (finalUrl3.equals ("http://" + ip1 + ":" + port + raUrl1));
 
-        String finalUrl4 = utils.getFinalUrl(ip1, port, raUrl1, "otherValue");
-        assertTrue(finalUrl4.equals("http://" + ip1 + ":" + port + raUrl1));
+        String finalUrl4 = utils.getFinalUrl (ip1, port, raUrl1, "otherValue");
+        assertTrue (finalUrl4.equals ("http://" + ip1 + ":" + port + raUrl1));
 
-        String finalUrl5 = utils.getFinalUrl(ip1, port, raUrl1, "True");
-        assertTrue(finalUrl5.equals("https://" + ip1 + ":" + port + raUrl1));
+        String finalUrl5 = utils.getFinalUrl (ip1, port, raUrl1, "True");
+        assertTrue (finalUrl5.equals ("https://" + ip1 + ":" + port + raUrl1));
 
-        String finalUrl6 = utils.getFinalUrl(ip1, port, raUrl1, "TRUE");
-        assertTrue(finalUrl6.equals("https://" + ip1 + ":" + port + raUrl1));
+        String finalUrl6 = utils.getFinalUrl (ip1, port, raUrl1, "TRUE");
+        assertTrue (finalUrl6.equals ("https://" + ip1 + ":" + port + raUrl1));
 
-        String finalUrl7 = utils.getFinalUrl(ip1, null, raUrl1, null);
-        assertTrue(finalUrl7.equals(ip1 + raUrl1));
+        String finalUrl7 = utils.getFinalUrl (ip1, null, raUrl1, null);
+        assertTrue (finalUrl7.equals (ip1 + raUrl1));
 
-        String finalUrl8 = utils.getFinalUrl(iptest, null, raUrl1, null);
-        assertTrue(finalUrl8.equals("test" + raUrl1));
+        String finalUrl8 = utils.getFinalUrl (iptest, null, raUrl1, null);
+        assertTrue (finalUrl8.equals ("test" + raUrl1));
     }
 
     @Test
     public final void testVerifyLocalHealth() {
         HealthCheckUtils tempUtil = Mockito.mock(HealthCheckUtils.class);
 
-        Mockito.when(tempUtil.verifyLocalHealth(ip1, port, apihUrl1, sslEnable, null)).thenCallRealMethod();
-        Mockito.when(tempUtil.getFinalUrl(ip1, port, apihUrl1, sslEnable)).thenCallRealMethod();
-        Mockito.when(tempUtil.getHttpClient()).thenReturn(client);
+        Mockito.when(tempUtil.verifyLocalHealth(ip1, port, apihUrl1, sslEnable, null)).thenCallRealMethod ();
+        Mockito.when(tempUtil.getFinalUrl (ip1, port, apihUrl1, sslEnable)).thenCallRealMethod ();
+        Mockito.when(tempUtil.getHttpClient()).thenReturn (client);
 
         try {
-            Mockito.when(client.execute(any(HttpUriRequest.class))).thenReturn(okRes);
+            Mockito.when (client.execute (any(HttpUriRequest.class))).thenReturn (okRes);
             boolean res1 = tempUtil.verifyLocalHealth(ip1, port, apihUrl1, sslEnable, null);
             assertTrue(res1);
 
-            Mockito.when(client.execute(any(HttpUriRequest.class))).thenReturn(nokRes);
+            Mockito.when (client.execute (any(HttpUriRequest.class))).thenReturn (nokRes);
             boolean res2 = tempUtil.verifyLocalHealth(ip1, port, apihUrl1, sslEnable, null);
             assertFalse(res2);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace ();
         }
 
     }
 
 
     @Test
-    public final void NullityCheck() {
+    public final void NullityCheck () {
         Mockito.when(utils.verifyLocalHealth(ip1, null, bpmnUrl1, null, null)).thenReturn(true);
         Mockito.when(utils.verifyLocalHealth(ip1, null, apihUrl1, null, null)).thenReturn(true);
         Mockito.when(utils.verifyLocalHealth(ip1, null, raUrl1, null, null)).thenReturn(true);
 
-        assertTrue(utils.verifyGlobalHealthCheck(true, null));
+        assertTrue (utils.verifyGlobalHealthCheck (true, null));
 
         // mising server-camunda parameter
         MsoJavaProperties newProperties1 = new MsoJavaProperties();
         Mockito.when(utils.loadTopologyProperties()).thenReturn(newProperties1);
 
         newProperties1.setProperty("apih-load-balancer", ip1);
-        newProperties1.setProperty("apih-nodehealthcheck-urn", apihUrl1);
-        newProperties1.setProperty("jra-load-balancer", ip1);
-        newProperties1.setProperty("jra-nodehealthcheck-urn", raUrl1);
+        newProperties1.setProperty("apih-nodehealthcheck-urn",apihUrl1);
+        newProperties1.setProperty("jra-load-balancer",ip1);
+        newProperties1.setProperty("jra-nodehealthcheck-urn",raUrl1);
 
-        assertFalse(utils.verifyGlobalHealthCheck(true, null));
+        assertFalse (utils.verifyGlobalHealthCheck (true, null));
 
         // mising apih-server-list parameter
         MsoJavaProperties newProperties2 = new MsoJavaProperties();
         Mockito.when(utils.loadTopologyProperties()).thenReturn(newProperties2);
 
         newProperties2.setProperty("server-port", port);
-        newProperties2.setProperty("apih-nodehealthcheck-urn", apihUrl1);
-        newProperties2.setProperty("camunda-load-balancer", ip1);
-        newProperties2.setProperty("camunda-nodehealthcheck-urn", bpmnUrl1);
-        newProperties2.setProperty("jra-load-balancer", ip1);
-        newProperties2.setProperty("jra-nodehealthcheck-urn", raUrl1);
+        newProperties2.setProperty("apih-nodehealthcheck-urn",apihUrl1);
+        newProperties2.setProperty("camunda-load-balancer",ip1);
+        newProperties2.setProperty("camunda-nodehealthcheck-urn",bpmnUrl1);
+        newProperties2.setProperty("jra-load-balancer",ip1);
+        newProperties2.setProperty("jra-nodehealthcheck-urn",raUrl1);
 
-        assertFalse(utils.verifyGlobalHealthCheck(true, null));
+        assertFalse (utils.verifyGlobalHealthCheck (true, null));
 
         // mising jra-healthcheck-urn parameter
         MsoJavaProperties newProperties3 = new MsoJavaProperties();
@@ -254,13 +253,13 @@ public class HealthCheckUtilsTest {
 
         newProperties3.setProperty("server-port", port);
         newProperties3.setProperty("apih-load-balancer", ip1);
-        newProperties3.setProperty("apih-nodehealthcheck-urn", apihUrl1);
-        newProperties3.setProperty("camunda-load-balancer", ip1);
-        newProperties3.setProperty("camunda-nodehealthcheck-urn", bpmnUrl1);
-        newProperties3.setProperty("jra-load-balancer", ip1);
-        newProperties3.setProperty("jra-server-list", ip1);
+        newProperties3.setProperty("apih-nodehealthcheck-urn",apihUrl1);
+        newProperties3.setProperty("camunda-load-balancer",ip1);
+        newProperties3.setProperty("camunda-nodehealthcheck-urn",bpmnUrl1);
+        newProperties3.setProperty("jra-load-balancer",ip1);
+        newProperties3.setProperty("jra-server-list",ip1);
 
-        assertFalse(utils.verifyGlobalHealthCheck(true, null));
+        assertFalse (utils.verifyGlobalHealthCheck (true, null));
 
         Mockito.when(utils.loadTopologyProperties()).thenReturn(properties);
     }

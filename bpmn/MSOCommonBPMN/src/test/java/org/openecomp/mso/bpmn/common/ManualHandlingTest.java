@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  * ============LICENSE_END========================================================= 
- */
+ */ 
 
 package org.openecomp.mso.bpmn.common;
 
@@ -59,63 +59,64 @@ import org.openecomp.mso.bpmn.core.WorkflowException;
  * Unit test for RainyDayHandler.bpmn.
  */
 public class ManualHandlingTest extends WorkflowTest {
+	
+	@Test	
+	@Deployment(resources = {			
+			"subprocess/BuildingBlock/ManualHandling.bpmn"
+		})
+	public void  TestManualHandlingSuccess() {
 
-    @Test
-    @Deployment(resources = {
-            "subprocess/BuildingBlock/ManualHandling.bpmn"
-    })
-    public void TestManualHandlingSuccess() {
+		RuntimeService runtimeService = processEngineRule.getRuntimeService();				
+		Map<String, Object> variables = new HashMap<>();
+		variables.put("isDebugLogEnabled","true");
+		variables.put("msoRequestId", "testRequestId");
+		variables.put("serviceType", "X");
+		variables.put("vnfType", "Y");
+		variables.put("currentActivity", "BB1");		
+		variables.put("workStep", "1");
+		variables.put("failedActivity", "");
+		variables.put("errorCode", "123");
+		variables.put("errorText", "update failed");
+		variables.put("validResponses", "Rollback");
+		
 
-        RuntimeService runtimeService = processEngineRule.getRuntimeService();
-        Map<String, Object> variables = new HashMap<>();
-        variables.put("isDebugLogEnabled", "true");
-        variables.put("msoRequestId", "testRequestId");
-        variables.put("serviceType", "X");
-        variables.put("vnfType", "Y");
-        variables.put("currentActivity", "BB1");
-        variables.put("workStep", "1");
-        variables.put("failedActivity", "");
-        variables.put("errorCode", "123");
-        variables.put("errorText", "update failed");
-        variables.put("validResponses", "Rollback");
+		String businessKey = UUID.randomUUID().toString();
+		invokeSubProcess("ManualHandling", businessKey, variables);
+		
+		try {
+			Thread.sleep(5);
+		} catch (Exception e) {
+			
+		}
+		
+		TaskService taskService = processEngineRule.getTaskService();
+		
+		TaskQuery q = taskService.createTaskQuery();		
+	
+		List<Task> tasks = q.orderByTaskCreateTime().asc().list();
+		  int i = 0;
+		  
+		  for (Task task : tasks) {		  
+			 
+		    
+		        System.out.println("TASK ID: " + task.getId());
+		        System.out.println("TASK NAME: " + task.getName());
+		        try {
+		        	System.out.println("Completing the task");
+		        	Map<String,Object> completeVariables = new HashMap<>();
+		        	completeVariables.put("responseValue", "skip");
+		        	taskService.complete(task.getId(), completeVariables);		        
+		        }
+		        catch(Exception e) {
+		        	System.out.println("GOT EXCEPTION: " + e.getMessage());
+		        }		        
+		 	}	
 
+		waitForProcessEnd(businessKey, 100000);
 
-        String businessKey = UUID.randomUUID().toString();
-        invokeSubProcess("ManualHandling", businessKey, variables);
-
-        try {
-            Thread.sleep(5);
-        } catch (Exception e) {
-
-        }
-
-        TaskService taskService = processEngineRule.getTaskService();
-
-        TaskQuery q = taskService.createTaskQuery();
-
-        List<Task> tasks = q.orderByTaskCreateTime().asc().list();
-        int i = 0;
-
-        for (Task task : tasks) {
-
-
-            System.out.println("TASK ID: " + task.getId());
-            System.out.println("TASK NAME: " + task.getName());
-            try {
-                System.out.println("Completing the task");
-                Map<String, Object> completeVariables = new HashMap<>();
-                completeVariables.put("responseValue", "skip");
-                taskService.complete(task.getId(), completeVariables);
-            } catch (Exception e) {
-                System.out.println("GOT EXCEPTION: " + e.getMessage());
-            }
-        }
-
-        waitForProcessEnd(businessKey, 100000);
-
-        Assert.assertTrue(isProcessEnded(businessKey));
-
-    }
-
-
+		Assert.assertTrue(isProcessEnded(businessKey));
+		
+	}
+	
+	
 }

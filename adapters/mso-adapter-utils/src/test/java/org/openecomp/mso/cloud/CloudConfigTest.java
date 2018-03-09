@@ -27,13 +27,10 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Optional;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import java.util.Map;
-
 import org.openecomp.mso.openstack.exceptions.MsoCloudIdentityNotFound;
 
 public class CloudConfigTest {

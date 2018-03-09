@@ -32,18 +32,18 @@ import org.openecomp.mso.db.catalog.beans.ServiceToAllottedResources;
 
 public class ServiceToResourceCustomizationTest {
 
-    @Test
-    public final void serviceToResourceCustomizationDataTest() {
-        ServiceToAllottedResources serviceToResourceCustomization = new ServiceToAllottedResources();
-        serviceToResourceCustomization.setArModelCustomizationUuid("arModelCustomizationUuid");
-        assertTrue(
-                serviceToResourceCustomization.getArModelCustomizationUuid().equalsIgnoreCase("arModelCustomizationUuid"));
-        serviceToResourceCustomization.setCreated(new Timestamp(System.currentTimeMillis()));
-        assertTrue(serviceToResourceCustomization.getCreated() != null);
-        serviceToResourceCustomization.setServiceModelUuid("serviceModelUuid");
-        assertTrue(serviceToResourceCustomization.getServiceModelUuid().equalsIgnoreCase("serviceModelUuid"));
-//      assertTrue(serviceToResourceCustomization.toString() != null);
+	@Test
+	public final void serviceToResourceCustomizationDataTest() {
+		ServiceToAllottedResources serviceToResourceCustomization = new ServiceToAllottedResources();
+		serviceToResourceCustomization.setArModelCustomizationUuid("arModelCustomizationUuid");
+		assertTrue(
+				serviceToResourceCustomization.getArModelCustomizationUuid().equalsIgnoreCase("arModelCustomizationUuid"));
+		serviceToResourceCustomization.setCreated(new Timestamp(System.currentTimeMillis()));
+		assertTrue(serviceToResourceCustomization.getCreated() != null);
+		serviceToResourceCustomization.setServiceModelUuid("serviceModelUuid");
+		assertTrue(serviceToResourceCustomization.getServiceModelUuid().equalsIgnoreCase("serviceModelUuid"));
+//		assertTrue(serviceToResourceCustomization.toString() != null);
 
-    }
+	}
 
 }

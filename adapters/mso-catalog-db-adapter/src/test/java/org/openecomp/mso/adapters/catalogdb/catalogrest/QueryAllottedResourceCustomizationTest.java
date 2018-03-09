@@ -39,28 +39,29 @@ import org.openecomp.mso.db.catalog.beans.AllottedResourceCustomization;
 @RunWith(MockitoJUnitRunner.class)
 public class QueryAllottedResourceCustomizationTest {
 
-    @Test
-    public void JSON2_Test() {
-        List<AllottedResourceCustomization> paramList;
+	@Test
+	public void JSON2_Test()
+	{
+	    List<AllottedResourceCustomization> paramList;    		
         paramList = new ArrayList<>();
         AllottedResourceCustomization d1 = new AllottedResourceCustomization();
         d1.setModelInstanceName("0cb9b26a-9820-48a7-86e5-16c510e993d9");
         d1.setModelCustomizationUuid("16ea3e56-a8ce-4ad7-8edd-4d2eae095391");
         paramList.add(d1);
-
-        QueryAllottedResourceCustomization qarcObj = new QueryAllottedResourceCustomization(paramList);
-        String ret = qarcObj.JSON2(true, true);
-        System.out.println(ret);
-        ret = "{" + ret + "}";
-
+        
+		QueryAllottedResourceCustomization qarcObj = new QueryAllottedResourceCustomization(paramList);
+		String ret = qarcObj.JSON2(true, true);
+		System.out.println(ret);
+		ret = "{" + ret + "}";
+		
         JsonReader reader = Json.createReader(new StringReader(ret.replaceAll("\r?\n", "")));
         JsonObject respObj = reader.readObject();
         reader.close();
         JsonArray jArray = respObj.getJsonArray("serviceAllottedResources");
-        assertEquals(jArray.size(), 1);
-
-        assertEquals(jArray.getJsonObject(0).getJsonObject("modelInfo").getString("modelInstanceName"), "0cb9b26a-9820-48a7-86e5-16c510e993d9");
-        assertEquals(jArray.getJsonObject(0).getJsonObject("modelInfo").getString("modelCustomizationUuid"), "16ea3e56-a8ce-4ad7-8edd-4d2eae095391");
-    }
-
+		assertEquals(jArray.size(), 1);
+		
+		assertEquals(jArray.getJsonObject(0).getJsonObject("modelInfo").getString("modelInstanceName"), "0cb9b26a-9820-48a7-86e5-16c510e993d9");
+		assertEquals(jArray.getJsonObject(0).getJsonObject("modelInfo").getString("modelCustomizationUuid"), "16ea3e56-a8ce-4ad7-8edd-4d2eae095391");
+	}
+	
 }

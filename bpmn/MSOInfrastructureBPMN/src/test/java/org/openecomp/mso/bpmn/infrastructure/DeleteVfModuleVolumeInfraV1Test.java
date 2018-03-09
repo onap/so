@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  * ============LICENSE_END========================================================= 
- */
+ */ 
 
 package org.openecomp.mso.bpmn.infrastructure;
 
@@ -36,131 +36,131 @@ import org.openecomp.mso.bpmn.mock.FileUtil;
  * Unit test cases for UpdateVfModuleVolume.bpmn
  */
 public class DeleteVfModuleVolumeInfraV1Test extends WorkflowTest {
+	
+	private final CallbackSet callbacks = new CallbackSet();
 
-    private final CallbackSet callbacks = new CallbackSet();
+	public DeleteVfModuleVolumeInfraV1Test() throws IOException {
+		callbacks.put("volumeGroupDelete", FileUtil.readResourceFile(
+				"__files/DeleteVfModuleVolumeInfraV1/DeleteVfModuleVolumeCallbackResponse.xml"));
+	}
 
-    public DeleteVfModuleVolumeInfraV1Test() throws IOException {
-        callbacks.put("volumeGroupDelete", FileUtil.readResourceFile(
-                "__files/DeleteVfModuleVolumeInfraV1/DeleteVfModuleVolumeCallbackResponse.xml"));
-    }
-
-    /**
-     * Happy path scenario.
-     *
-     * @throws Exception
-     */
-    @Test
-    @Ignore // BROKEN TEST
-    @Deployment(resources = {"process/DeleteVfModuleVolumeInfraV1.bpmn",
+	/**
+	 * Happy path scenario.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	@Ignore // BROKEN TEST
+	@Deployment(resources = {"process/DeleteVfModuleVolumeInfraV1.bpmn",
             "subprocess/FalloutHandler.bpmn",
             "subprocess/CompleteMsoProcess.bpmn",
             "subprocess/VnfAdapterRestV1.bpmn"})
-    public void happyPath() throws Exception {
+	public void happyPath() throws Exception {
 
-        logStart();
-
+		logStart();
+		
 //		DeleteVfModuleVolumeInfraV1_success();
+		
+		String businessKey = UUID.randomUUID().toString();
+		String deleteVfModuleVolRequest =
+			FileUtil.readResourceFile("__files/DeleteVfModuleVolumeInfraV1/deleteVfModuleVolume_VID_request_st.json");
+		
+		Map<String, Object> testVariables = new HashMap<>();
+		testVariables.put("requestId", "TEST-REQUEST-ID-0123");
+		testVariables.put("volumeGroupId", "78987");
+		testVariables.put("serviceInstanceId", "test-service-instance-id-0123");
+		
+		TestAsyncResponse asyncResponse = invokeAsyncProcess("DeleteVfModuleVolumeInfraV1",
+			"v1", businessKey, deleteVfModuleVolRequest, testVariables);
+		WorkflowResponse response = receiveResponse(businessKey, asyncResponse, 100000);
 
-        String businessKey = UUID.randomUUID().toString();
-        String deleteVfModuleVolRequest =
-                FileUtil.readResourceFile("__files/DeleteVfModuleVolumeInfraV1/deleteVfModuleVolume_VID_request_st.json");
+		String responseBody = response.getResponse();
+		System.out.println("Workflow (Synch) Response:\n" + responseBody);
+		
+		injectVNFRestCallbacks(callbacks, "volumeGroupDelete");
+		
+		waitForProcessEnd(businessKey, 100000);
+		checkVariable(businessKey, "DELVfModVol_TransactionSuccessIndicator", true);
+		
+		logEnd();
+	}
 
-        Map<String, Object> testVariables = new HashMap<>();
-        testVariables.put("requestId", "TEST-REQUEST-ID-0123");
-        testVariables.put("volumeGroupId", "78987");
-        testVariables.put("serviceInstanceId", "test-service-instance-id-0123");
-
-        TestAsyncResponse asyncResponse = invokeAsyncProcess("DeleteVfModuleVolumeInfraV1",
-                "v1", businessKey, deleteVfModuleVolRequest, testVariables);
-        WorkflowResponse response = receiveResponse(businessKey, asyncResponse, 100000);
-
-        String responseBody = response.getResponse();
-        System.out.println("Workflow (Synch) Response:\n" + responseBody);
-
-        injectVNFRestCallbacks(callbacks, "volumeGroupDelete");
-
-        waitForProcessEnd(businessKey, 100000);
-        checkVariable(businessKey, "DELVfModVol_TransactionSuccessIndicator", true);
-
-        logEnd();
-    }
-
-    /**
-     * Test fails - vf module in use
-     *
-     * @throws Exception
-     */
-    @Test
-    @Deployment(resources = {"process/DeleteVfModuleVolumeInfraV1.bpmn",
+	/**
+	 * Test fails - vf module in use
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	@Deployment(resources = {"process/DeleteVfModuleVolumeInfraV1.bpmn",
             "subprocess/FalloutHandler.bpmn",
             "subprocess/CompleteMsoProcess.bpmn",
             "subprocess/VnfAdapterRestV1.bpmn"})
-    public void TestVfModuleInUseError() throws Exception {
+	public void TestVfModuleInUseError() throws Exception {
 
-        logStart();
-
+		logStart();
+		
 //		DeleteVfModuleVolumeInfraV1_inUseError(); // no assertions to check
+		
+		String businessKey = UUID.randomUUID().toString();
+		String deleteVfModuleVolRequest =
+			FileUtil.readResourceFile("__files/DeleteVfModuleVolumeInfraV1/deleteVfModuleVolume_VID_request_st.json");
+		
+		Map<String, Object> testVariables = new HashMap<>();
+		testVariables.put("requestId", "TEST-REQUEST-ID-0123");
+		testVariables.put("volumeGroupId", "78987");
+		
+		TestAsyncResponse asyncResponse = invokeAsyncProcess("DeleteVfModuleVolumeInfraV1",
+			"v1", businessKey, deleteVfModuleVolRequest, testVariables);
+		WorkflowResponse response = receiveResponse(businessKey, asyncResponse, 100000);
 
-        String businessKey = UUID.randomUUID().toString();
-        String deleteVfModuleVolRequest =
-                FileUtil.readResourceFile("__files/DeleteVfModuleVolumeInfraV1/deleteVfModuleVolume_VID_request_st.json");
-
-        Map<String, Object> testVariables = new HashMap<>();
-        testVariables.put("requestId", "TEST-REQUEST-ID-0123");
-        testVariables.put("volumeGroupId", "78987");
-
-        TestAsyncResponse asyncResponse = invokeAsyncProcess("DeleteVfModuleVolumeInfraV1",
-                "v1", businessKey, deleteVfModuleVolRequest, testVariables);
-        WorkflowResponse response = receiveResponse(businessKey, asyncResponse, 100000);
-
-        String responseBody = response.getResponse();
-        System.out.println("Workflow (Synch) Response:\n" + responseBody);
-
-        //injectVNFRestCallbacks(callbacks, "volumeGroupDelete");
-
-        waitForProcessEnd(businessKey, 100000);
-        checkVariable(businessKey, "DELVfModVol_TransactionSuccessIndicator", false);
-
-        logEnd();
-    }
-
-    /**
-     * Test fails on vnf adapter call
-     *
-     * @throws Exception
-     */
-    @Test
-    @Ignore // BROKEN TEST
-    @Deployment(resources = {"process/DeleteVfModuleVolumeInfraV1.bpmn",
+		String responseBody = response.getResponse();
+		System.out.println("Workflow (Synch) Response:\n" + responseBody);
+		
+		//injectVNFRestCallbacks(callbacks, "volumeGroupDelete");
+		
+		waitForProcessEnd(businessKey, 100000);
+		checkVariable(businessKey, "DELVfModVol_TransactionSuccessIndicator", false);
+		
+		logEnd();
+	}
+	
+	/**
+	 * Test fails on vnf adapter call
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	@Ignore // BROKEN TEST
+	@Deployment(resources = {"process/DeleteVfModuleVolumeInfraV1.bpmn",
             "subprocess/FalloutHandler.bpmn",
             "subprocess/CompleteMsoProcess.bpmn",
             "subprocess/VnfAdapterRestV1.bpmn"})
-    public void TestVnfAdapterCallfail() throws Exception {
+	public void TestVnfAdapterCallfail() throws Exception {
 
-        logStart();
-
+		logStart();
+		
 //		DeleteVfModuleVolumeInfraV1_fail();
+		
+		String businessKey = UUID.randomUUID().toString();
+		String deleteVfModuleVolRequest =
+			FileUtil.readResourceFile("__files/DeleteVfModuleVolumeInfraV1/deleteVfModuleVolume_VID_request_st.json");
+		
+		Map<String, Object> testVariables = new HashMap<>();
+		testVariables.put("requestId", "TEST-REQUEST-ID-0123");
+		testVariables.put("volumeGroupId", "78987");
+		
+		TestAsyncResponse asyncResponse = invokeAsyncProcess("DeleteVfModuleVolumeInfraV1",
+			"v1", businessKey, deleteVfModuleVolRequest, testVariables);
+		WorkflowResponse response = receiveResponse(businessKey, asyncResponse, 100000);
 
-        String businessKey = UUID.randomUUID().toString();
-        String deleteVfModuleVolRequest =
-                FileUtil.readResourceFile("__files/DeleteVfModuleVolumeInfraV1/deleteVfModuleVolume_VID_request_st.json");
-
-        Map<String, Object> testVariables = new HashMap<>();
-        testVariables.put("requestId", "TEST-REQUEST-ID-0123");
-        testVariables.put("volumeGroupId", "78987");
-
-        TestAsyncResponse asyncResponse = invokeAsyncProcess("DeleteVfModuleVolumeInfraV1",
-                "v1", businessKey, deleteVfModuleVolRequest, testVariables);
-        WorkflowResponse response = receiveResponse(businessKey, asyncResponse, 100000);
-
-        String responseBody = response.getResponse();
-        System.out.println("Workflow (Synch) Response:\n" + responseBody);
-
-        //injectVNFRestCallbacks(callbacks, "volumeGroupDelete");
-
-        waitForProcessEnd(businessKey, 100000);
-        checkVariable(businessKey, "DELVfModVol_TransactionSuccessIndicator", false);
-
-        logEnd();
-    }
+		String responseBody = response.getResponse();
+		System.out.println("Workflow (Synch) Response:\n" + responseBody);
+		
+		//injectVNFRestCallbacks(callbacks, "volumeGroupDelete");
+		
+		waitForProcessEnd(businessKey, 100000);
+		checkVariable(businessKey, "DELVfModVol_TransactionSuccessIndicator", false);
+		
+		logEnd();
+	}
 }

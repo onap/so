@@ -40,88 +40,90 @@ import org.openecomp.mso.apihandler.common.ResponseHandler;
 
 /**
  * This class implements test methods of CamundaResoponseHandler.
+ * 
+ *
  */
 public class ResponseHandlerTest {
 
     @Test
-    public void tesParseCamundaResponse() throws JsonGenerationException, JsonMappingException, IOException {
+    public void tesParseCamundaResponse () throws JsonGenerationException, JsonMappingException, IOException {
         // String body
         // ="{\"links\":[{\"method\":\"GET\",\"href\":\"http://localhost:9080/engine-rest/process-instance/2047c658-37ae-11e5-9505-7a1020524153\",\"rel\":\"self\"}],\"id\":\"2047c658-37ae-11e5-9505-7a1020524153\",\"definitionId\":\"dummy:10:73298961-37ad-11e5-9505-7a1020524153\",\"businessKey\":null,\"caseInstanceId\":null,\"ended\":true,\"suspended\":false}";
 
         String body = "{ \"response\": \"<xml>xml</xml>\"," + "\"messageCode\": 200,"
-                + "\"message\": \"Successfully started the process\"}";
+                      + "\"message\": \"Successfully started the process\"}";
 
-        HttpResponse response = createResponse(200, body, "application/json");
+        HttpResponse response = createResponse (200, body, "application/json");
 
-        ResponseHandler respHandler = new ResponseHandler(response, 1);
+        ResponseHandler respHandler = new ResponseHandler (response, 1);
 
-        int status = respHandler.getStatus();
-        assertEquals(status, HttpStatus.SC_ACCEPTED);
-        assertEquals(respHandler.getResponse().getMessage(), "Successfully started the process");
+        int status = respHandler.getStatus ();
+        assertEquals (status, HttpStatus.SC_ACCEPTED);
+        assertEquals (respHandler.getResponse ().getMessage (), "Successfully started the process");
 
     }
 
     @Test
-    public void tesParseBpelResponse() throws JsonGenerationException, JsonMappingException, IOException {
+    public void tesParseBpelResponse () throws JsonGenerationException, JsonMappingException, IOException {
         String body = "<layer3activate:service-response xmlns:layer3activate=\"http://org.openecomp/mso/request/layer3serviceactivate/schema/v1\""
-                + "xmlns:reqtype=\"http://org.openecomp/mso/request/types/v1\""
-                + "xmlns:aetgt=\"http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd\""
-                + "xmlns:types=\"http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd\">"
-                + "<reqtype:request-id>req5</reqtype:request-id>"
-                + "<reqtype:request-action>Layer3ServiceActivateRequest</reqtype:request-action>"
-                + "<reqtype:source>OMX</reqtype:source>"
-                + "<reqtype:ack-final-indicator>n</reqtype:ack-final-indicator>"
-                + "</layer3activate:service-response>";
+                      + "xmlns:reqtype=\"http://org.openecomp/mso/request/types/v1\""
+                      + "xmlns:aetgt=\"http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd\""
+                      + "xmlns:types=\"http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd\">"
+                      + "<reqtype:request-id>req5</reqtype:request-id>"
+                      + "<reqtype:request-action>Layer3ServiceActivateRequest</reqtype:request-action>"
+                      + "<reqtype:source>OMX</reqtype:source>"
+                      + "<reqtype:ack-final-indicator>n</reqtype:ack-final-indicator>"
+                      + "</layer3activate:service-response>";
 
-        HttpResponse response = createResponse(200, body, "text/xml");
+        HttpResponse response = createResponse (200, body, "text/xml");
 
-        ResponseHandler respHandler = new ResponseHandler(response, 0);
+        ResponseHandler respHandler = new ResponseHandler (response, 0);
 
-        int status = respHandler.getStatus();
-        assertEquals(status, HttpStatus.SC_ACCEPTED);
-        assertTrue(respHandler.getResponseBody() != null);
+        int status = respHandler.getStatus ();
+        assertEquals (status, HttpStatus.SC_ACCEPTED);
+        assertTrue (respHandler.getResponseBody () != null);
     }
 
     @Test
-    public void tes404ErrorResponse() throws JsonGenerationException, JsonMappingException, IOException {
+    public void tes404ErrorResponse () throws JsonGenerationException, JsonMappingException, IOException {
 
+    	
+        HttpResponse response = createResponse (HttpStatus.SC_NOT_FOUND, "<html>error</html>", "text/html");
+        ResponseHandler respHandler = new ResponseHandler (response, 1);
 
-        HttpResponse response = createResponse(HttpStatus.SC_NOT_FOUND, "<html>error</html>", "text/html");
-        ResponseHandler respHandler = new ResponseHandler(response, 1);
+        int status = respHandler.getStatus ();
 
-        int status = respHandler.getStatus();
-
-        assertEquals(HttpStatus.SC_NOT_IMPLEMENTED, status);
+        assertEquals (HttpStatus.SC_NOT_IMPLEMENTED, status);
 
     }
 
     @Test
-    public void tesGenricErrorResponse() throws JsonGenerationException, JsonMappingException, IOException {
+    public void tesGenricErrorResponse () throws JsonGenerationException, JsonMappingException, IOException {
 
         String body = "{ \"response\": \"<xml>xml</xml>\"," + "\"messageCode\": 500,"
-                + "\"message\": \"Something went wrong\"}";
+                      + "\"message\": \"Something went wrong\"}";
 
-        HttpResponse response = createResponse(500, body, "application/json");
+        HttpResponse response = createResponse (500, body, "application/json");
 
-        ResponseHandler respHandler = new ResponseHandler(response, 1);
+        ResponseHandler respHandler = new ResponseHandler (response, 1);
 
-        int status = respHandler.getStatus();
-        assertEquals(HttpStatus.SC_BAD_GATEWAY, status);
-        assertEquals(respHandler.getResponse().getMessage(), "Something went wrong");
-        System.out.println(respHandler.getResponseBody());
+        int status = respHandler.getStatus ();
+        assertEquals (HttpStatus.SC_BAD_GATEWAY, status);
+        assertEquals (respHandler.getResponse ().getMessage (), "Something went wrong");
+        System.out.println (respHandler.getResponseBody ());
 
     }
 
-    private HttpResponse createResponse(int respStatus, String respBody, String contentType) {
-        HttpResponse response = new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1),
-                respStatus,
-                ""));
-        response.setStatusCode(respStatus);
+    private HttpResponse createResponse (int respStatus, String respBody, String contentType) {
+        HttpResponse response = new BasicHttpResponse (new BasicStatusLine (new ProtocolVersion ("HTTP", 1, 1),
+                                                                            respStatus,
+                                                                            ""));
+        response.setStatusCode (respStatus);
         try {
-            response.setEntity(new StringEntity(respBody));
-            response.setHeader("Content-Type", contentType);
+            response.setEntity (new StringEntity (respBody));
+            response.setHeader ("Content-Type", contentType);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace ();
         }
         return response;
     }

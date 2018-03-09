@@ -34,45 +34,46 @@ import org.openecomp.mso.utils.CryptoUtils;
 
 /**
  * This class implements all test methods of the CryptoUtils features.
+ *
+ *
  */
 public class CryptoTest {
 
-    private static String testKey = "546573746F736973546573746F736973";
+	private static String testKey = "546573746F736973546573746F736973";
 
-    /**
+     /**
      * This method is called before any test occurs.
      * It creates a fake tree from scratch
      */
     @BeforeClass
-    public static final void prepare() {
-
+    public static final void prepare () {
+    
     }
 
     /**
      * This method implements a test of tree structure, mainly the storage of the leaves structure.
-     *
-     * @throws GeneralSecurityException
+     * @throws GeneralSecurityException 
      */
     @Test
-    public final void testEncryption() throws GeneralSecurityException {
-        String hexString = CryptoUtils.byteArrayToHexString("testosistestosi".getBytes());
-
-        final String testData = "This is a test string";
-        final String nonTestData = "This is not the right String";
-
-        String encodeString = CryptoUtils.encrypt(testData, testKey);
-
-        assertNotNull(encodeString);
-
-        assertTrue(testData.equals(CryptoUtils.decrypt(encodeString, testKey)));
-        assertFalse(nonTestData.equals(CryptoUtils.decrypt(encodeString, testKey)));
-
-        String encode2String = CryptoUtils.encrypt(testData, testKey);
-        assertNotNull(encode2String);
-
-        assertEquals(encodeString, encode2String);
-
-        assertEquals(CryptoUtils.decrypt(encodeString, testKey), CryptoUtils.decrypt(encode2String, testKey));
+    public final void testEncryption () throws GeneralSecurityException {
+    	String hexString = CryptoUtils.byteArrayToHexString("testosistestosi".getBytes());
+    	
+    	final String testData = "This is a test string";
+    	 final String nonTestData = "This is not the right String";
+    	 
+    	 String encodeString = CryptoUtils.encrypt(testData, testKey);
+    	
+    	 assertNotNull(encodeString);
+    	 
+    	 assertTrue(testData.equals(CryptoUtils.decrypt(encodeString, testKey)));
+    	 assertFalse(nonTestData.equals(CryptoUtils.decrypt(encodeString, testKey)));
+    	 
+    	 String encode2String = CryptoUtils.encrypt(testData, testKey);
+    	 assertNotNull(encode2String);
+    	 
+    	 assertEquals(encodeString,encode2String);
+    	 
+    	 assertEquals(CryptoUtils.decrypt(encodeString, testKey),CryptoUtils.decrypt(encode2String, testKey));
     }
 
 }

@@ -48,104 +48,104 @@ import org.openecomp.mso.db.catalog.beans.VnfResourceCustomization;
 
 public class ToStringTest {
 
-    @Test
-    public void testTModelRecipeToString() {
-        ModelRecipe mr = new ModelRecipe();
-        mr.setCreated(new Timestamp(10001));
-        mr.setModelId(102);
-        mr.setRecipeTimeout(100);
-        String str = mr.toString();
-        assertTrue(str != null);
-    }
-
-    @Test
-    public void networkResourcetoStringTest() {
-        NetworkResource nr = new NetworkResource();
-        nr.setCreated(new Timestamp(10000));
-        String str = nr.toString();
-        assertTrue(str != null);
-    }
-
-    @Test
-    public void modelTestToString() {
-        Model m = new Model();
-        m.setCreated(new Timestamp(100000));
-        m.setId(1001);
-        m.setModelCustomizationId("10012");
-        String str = m.toString();
-        assertTrue(str != null);
-    }
-
-    @Test
-    public void serviceMacroHolderTest() {
-        ServiceMacroHolder smh = new ServiceMacroHolder();
-        Service service = new Service();
-        Map<String, ServiceRecipe> recipes = new HashMap<>();
-        recipes.put("test", new ServiceRecipe());
-        service.setRecipes(recipes);
-
-        Set<ServiceToResourceCustomization> serviceResourceCustomizations = new HashSet<>();
-        ServiceToResourceCustomization sr = new ServiceToResourceCustomization();
-        serviceResourceCustomizations.add(sr);
-        service.setServiceResourceCustomizations(serviceResourceCustomizations);
-        smh.setService(service);
-
-        ArrayList<VnfResource> vnflist = new ArrayList<>();
-        smh.setVnfResources(vnflist);
-
-        VnfResource vr = new VnfResource();
-        Set<VnfResourceCustomization> vnfResourceCustomization = new HashSet<>();
-        vnfResourceCustomization.add(new VnfResourceCustomization());
-        vr.setVnfResourceCustomizations(vnfResourceCustomization);
-
-        Set<VfModule> vfModules = new HashSet<>();
-        vfModules.add(new VfModule());
-        vr.setVfModules(vfModules);
-        smh.addVnfResource(vr);
-
-        ArrayList<VnfResourceCustomization> vnfResourceCustomizations = new ArrayList<>();
-        smh.setVnfResourceCustomizations(vnfResourceCustomizations);
-
-        VnfResourceCustomization vrc = new VnfResourceCustomization();
-        smh.addVnfResourceCustomizations(vrc);
-
-        ArrayList<NetworkResourceCustomization> networkResourceCustomizations = new ArrayList<>();
-        smh.setNetworkResourceCustomization(networkResourceCustomizations);
-
-        NetworkResourceCustomization nrc = new NetworkResourceCustomization();
-        smh.addNetworkResourceCustomization(nrc);
-
-        ArrayList<AllottedResourceCustomization> allottedResourceCustomizations = new ArrayList<>();
-        smh.setAllottedResourceCustomization(allottedResourceCustomizations);
-
-        AllottedResourceCustomization arc = new AllottedResourceCustomization();
-        smh.addAllottedResourceCustomization(arc);
-
-        String str = smh.toString();
-        assertTrue(str != null);
-    }
-
-    @Test
-    public void heatFilesTest() {
-        HeatFiles hf = new HeatFiles();
-        String str = hf.toString();
-        assertTrue(str != null);
-
-    }
-
-    @Test
-    public void testVnfConponent() {
-        VnfComponent vnf = new VnfComponent();
-        String str = vnf.toString();
-        assertTrue(str != null);
-    }
-
-    @Test
-    public void testTempNetworkHeatTemplateLookup() {
-        TempNetworkHeatTemplateLookup tn = new TempNetworkHeatTemplateLookup();
-        String str = tn.toString();
-        assertTrue(str != null);
-    }
-
-
+	@Test
+	public void testTModelRecipeToString(){
+		ModelRecipe mr = new ModelRecipe();
+		mr.setCreated(new Timestamp(10001));
+		mr.setModelId(102);
+		mr.setRecipeTimeout(100);
+		String str = mr.toString();
+		assertTrue(str != null);
+	}
+	
+	@Test
+	public void networkResourcetoStringTest(){
+		NetworkResource nr = new NetworkResource();
+		nr.setCreated(new Timestamp(10000));
+		String str = nr.toString();
+		assertTrue(str != null);
+	}
+	
+	@Test
+	public void modelTestToString(){
+		Model m = new Model();
+		m.setCreated(new Timestamp(100000));
+		m.setId(1001);
+		m.setModelCustomizationId("10012");
+		String str = m.toString();
+		assertTrue(str != null);
+	}
+	
+	@Test
+	public void serviceMacroHolderTest(){
+		ServiceMacroHolder smh = new ServiceMacroHolder();
+		Service service = new Service();
+		Map<String,ServiceRecipe> recipes = new HashMap<>();
+		recipes.put("test", new ServiceRecipe());
+		service.setRecipes(recipes);
+		
+		Set<ServiceToResourceCustomization> serviceResourceCustomizations = new HashSet<>();
+		ServiceToResourceCustomization sr = new ServiceToResourceCustomization();
+		serviceResourceCustomizations.add(sr);
+		service.setServiceResourceCustomizations(serviceResourceCustomizations);
+		smh.setService(service);
+		
+		ArrayList<VnfResource> vnflist = new ArrayList<>();
+		smh.setVnfResources(vnflist);
+		
+		VnfResource vr = new VnfResource();
+		Set<VnfResourceCustomization>  vnfResourceCustomization = new HashSet<>();
+		vnfResourceCustomization.add(new VnfResourceCustomization());
+		vr.setVnfResourceCustomizations(vnfResourceCustomization);
+		
+		Set<VfModule> vfModules = new HashSet<>();
+		vfModules.add(new VfModule());
+		vr.setVfModules(vfModules);
+		smh.addVnfResource(vr);
+		
+		ArrayList<VnfResourceCustomization> vnfResourceCustomizations = new ArrayList<>();
+		smh.setVnfResourceCustomizations(vnfResourceCustomizations);
+		
+		VnfResourceCustomization vrc = new VnfResourceCustomization();
+		smh.addVnfResourceCustomizations(vrc);
+		
+		ArrayList<NetworkResourceCustomization> networkResourceCustomizations = new ArrayList<>();
+		smh.setNetworkResourceCustomization(networkResourceCustomizations);
+		
+		NetworkResourceCustomization nrc = new NetworkResourceCustomization();
+		smh.addNetworkResourceCustomization(nrc);
+		
+		ArrayList<AllottedResourceCustomization> allottedResourceCustomizations = new ArrayList<>();
+		smh.setAllottedResourceCustomization(allottedResourceCustomizations);
+		
+		AllottedResourceCustomization arc = new AllottedResourceCustomization();
+		smh.addAllottedResourceCustomization(arc);
+		
+		String str = smh.toString();
+		assertTrue(str != null);
+	}
+	
+	@Test
+	public void heatFilesTest(){
+		HeatFiles hf = new HeatFiles();
+		String str = hf.toString();
+		assertTrue(str != null);
+		
+	}
+	
+	@Test
+	public void testVnfConponent(){
+		VnfComponent vnf = new VnfComponent();
+		String str = vnf.toString();
+		assertTrue(str != null);
+	}
+	
+	@Test
+	public void testTempNetworkHeatTemplateLookup(){
+		TempNetworkHeatTemplateLookup tn =new TempNetworkHeatTemplateLookup();
+		String str = tn.toString();
+		assertTrue(str != null);
+	}
+	
+	
 }

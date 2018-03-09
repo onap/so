@@ -32,24 +32,24 @@ import org.openecomp.mso.db.catalog.beans.Recipe;
 
 public class RecipeTest {
 
-    @Test
-    public final void recipeDataTest() {
-        Recipe recipe = new Recipe();
-        recipe.setAction("action");
-        assertTrue(recipe.getAction().equalsIgnoreCase("action"));
-        recipe.setCreated(new Timestamp(System.currentTimeMillis()));
-        assertTrue(recipe.getCreated() != null);
-        recipe.setDescription("description");
-        assertTrue(recipe.getDescription().equalsIgnoreCase("description"));
-        recipe.setId(1);
-        assertTrue(recipe.getId() == 1);
-        recipe.setOrchestrationUri("orchestrationUri");
-        assertTrue(recipe.getOrchestrationUri().equalsIgnoreCase("orchestrationUri"));
-        recipe.setRecipeTimeout(1);
-        assertTrue(recipe.getRecipeTimeout() == 1);
-        recipe.setServiceType("serviceType");
-        assertTrue(recipe.getServiceType().equalsIgnoreCase("serviceType"));
+	@Test
+	public final void recipeDataTest() {
+		Recipe recipe = new Recipe();
+		recipe.setAction("action");
+		assertTrue(recipe.getAction().equalsIgnoreCase("action"));
+		recipe.setCreated(new Timestamp(System.currentTimeMillis()));
+		assertTrue(recipe.getCreated() != null);
+		recipe.setDescription("description");
+		assertTrue(recipe.getDescription().equalsIgnoreCase("description"));
+		recipe.setId(1);
+		assertTrue(recipe.getId() == 1);
+		recipe.setOrchestrationUri("orchestrationUri");
+		assertTrue(recipe.getOrchestrationUri().equalsIgnoreCase("orchestrationUri"));
+		recipe.setRecipeTimeout(1);
+		assertTrue(recipe.getRecipeTimeout() == 1);
+		recipe.setServiceType("serviceType");
+		assertTrue(recipe.getServiceType().equalsIgnoreCase("serviceType"));
 //		assertTrue(recipe.toString() != null);
-    }
+	}
 
 }

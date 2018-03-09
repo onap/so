@@ -21,20 +21,18 @@
 package org.openecomp.mso.apihandlerinfra;
 
 import org.junit.After;
-
 import static org.junit.Assert.assertEquals;
-
 import org.junit.Before;
 import org.junit.Test;
-
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
+
 public class RecipeLookupResultTest {
 
-    RecipeLookupResult instance;
+	RecipeLookupResult instance;
 
     public RecipeLookupResultTest() {
     }
@@ -60,7 +58,7 @@ public class RecipeLookupResultTest {
         assertEquals(expResult, result);
     }
 
-
+   
     /**
      * Test of setOrchestrationURI method.
      */
@@ -82,7 +80,7 @@ public class RecipeLookupResultTest {
         assertEquals(expResult, result);
     }
 
-
+   
     /**
      * Test of setRecipeTimeout method.
      */
@@ -92,7 +90,7 @@ public class RecipeLookupResultTest {
         instance.setRecipeTimeout(recipeTimeOut);
         verify(instance).setRecipeTimeout(10);
     }
-
-
+    
+    
 }
    

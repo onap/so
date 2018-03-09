@@ -27,33 +27,33 @@ import org.openecomp.mso.apihandlerinfra.vnfbeans.VnfInputs;
 
 public class BeanTest {
 
-    @Test
-    public void testVnfInputs() {
-        VnfInputs bean = new VnfInputs();
-        bean.setAicCloudRegion("south");
-        bean.setAicNodeClli("38982");
-        bean.setAsdcServiceModelVersion("v2");
-        bean.setBackoutOnFailure(false);
-        bean.setIsBaseVfModule(true);
-        bean.setPersonaModelId("2017");
-        bean.setPersonaModelVersion("v3");
-        bean.setProvStatus("active");
-        bean.setServiceId("123456");
-        bean.setServiceInstanceId("aaa1234");
-        bean.setServiceType("vnf");
-        bean.setTenantId("89903042");
-        bean.setVfModuleId("4993022");
-        bean.setVfModuleModelName("m1");
-        bean.setVnfId("34");
-        bean.setVnfName("test");
-        bean.setVnfPersonaModelId("1002");
-        bean.setVnfPersonaModelVersion("v3");
-        bean.setVnfType("fddf");
-        bean.setVolumeGroupId("7889");
-        bean.setVolumeGroupName("test");
-
-        String str = bean.toString();
-        assertTrue(str != null);
-
-    }
+	@Test
+	public void testVnfInputs(){
+		VnfInputs bean = new VnfInputs();
+		bean.setAicCloudRegion("south");
+		bean.setAicNodeClli("38982");
+		bean.setAsdcServiceModelVersion("v2");
+		bean.setBackoutOnFailure(false);
+		bean.setIsBaseVfModule(true);
+		bean.setPersonaModelId("2017");
+		bean.setPersonaModelVersion("v3");
+		bean.setProvStatus("active");
+		bean.setServiceId("123456");
+		bean.setServiceInstanceId("aaa1234");
+		bean.setServiceType("vnf");
+		bean.setTenantId("89903042");
+		bean.setVfModuleId("4993022");
+		bean.setVfModuleModelName("m1");
+		bean.setVnfId("34");
+		bean.setVnfName("test");
+		bean.setVnfPersonaModelId("1002");
+		bean.setVnfPersonaModelVersion("v3");
+		bean.setVnfType("fddf");
+		bean.setVolumeGroupId("7889");
+		bean.setVolumeGroupName("test");
+		
+		String str = bean.toString();
+		assertTrue(str != null);
+		
+	}
 }

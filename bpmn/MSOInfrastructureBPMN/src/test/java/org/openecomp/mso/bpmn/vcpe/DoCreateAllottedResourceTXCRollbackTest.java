@@ -43,303 +43,303 @@ import org.openecomp.mso.bpmn.mock.FileUtil;
 
 public class DoCreateAllottedResourceTXCRollbackTest extends AbstractTestBase {
 
-    private static final String PROCNAME = "DoCreateAllottedResourceTXCRollback";
-    private static final String RbType = "DCARTXC_";
-    private final CallbackSet callbacks = new CallbackSet();
+	private static final String PROCNAME = "DoCreateAllottedResourceTXCRollback";
+	private static final String RbType = "DCARTXC_";
+	private final CallbackSet callbacks = new CallbackSet();
+	
+	public DoCreateAllottedResourceTXCRollbackTest() throws IOException {
+		callbacks.put("deactivate", FileUtil.readResourceFile("__files/VfModularity/SDNCTopologyDeactivateCallback.xml"));
+		callbacks.put("delete", FileUtil.readResourceFile("__files/VfModularity/SDNCTopologyDeleteCallback.xml"));
+		callbacks.put("unassign", FileUtil.readResourceFile("__files/VfModularity/SDNCTopologyUnassignCallback.xml"));
+	}
+	
+	@Test
+	@Deployment(resources = {
+			"subprocess/SDNCAdapterV1.bpmn",
+			"subprocess/FalloutHandler.bpmn",
+			"subprocess/DoCreateAllottedResourceTXCRollback.bpmn"})
+	public void testDoCreateAllottedResourceTXCRollback_Success() throws Exception {
+		
+		MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceTXCRollback/arGetById.xml");
+		MockPatchAllottedResource(CUST, SVC, INST, ARID);
+		MockDeleteAllottedResource(CUST, SVC, INST, ARID, ARVERS);
+		mockSDNCAdapter(200);
+		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		
+		String businessKey = UUID.randomUUID().toString();
+		Map<String, Object> variables = new HashMap<>();
+		setVariablesSuccess(variables, "testRequestId1");
+		
+		invokeSubProcess(PROCNAME, businessKey, variables);
+		
+		injectSDNCCallbacks(callbacks, "deactivate");
+		injectSDNCCallbacks(callbacks, "delete");
+		injectSDNCCallbacks(callbacks, "unassign");
 
-    public DoCreateAllottedResourceTXCRollbackTest() throws IOException {
-        callbacks.put("deactivate", FileUtil.readResourceFile("__files/VfModularity/SDNCTopologyDeactivateCallback.xml"));
-        callbacks.put("delete", FileUtil.readResourceFile("__files/VfModularity/SDNCTopologyDeleteCallback.xml"));
-        callbacks.put("unassign", FileUtil.readResourceFile("__files/VfModularity/SDNCTopologyUnassignCallback.xml"));
-    }
+		waitForProcessEnd(businessKey, 10000);
+		
+		assertTrue(isProcessEnded(businessKey));
+		String workflowException = BPMNUtil.getVariable(processEngineRule, PROCNAME, VAR_WFEX);
+		System.out.println("workflowException:\n" + workflowException);
+		assertEquals(null, workflowException);
+		assertEquals("true", BPMNUtil.getVariable(processEngineRule, PROCNAME, "rolledBack"));
+		assertNull(BPMNUtil.getVariable(processEngineRule, PROCNAME, "rollbackError"));
+	}
+	
+	@Test
+	@Deployment(resources = {
+			"subprocess/SDNCAdapterV1.bpmn",
+			"subprocess/FalloutHandler.bpmn",
+			"subprocess/DoCreateAllottedResourceTXCRollback.bpmn"})
+	public void testDoCreateAllottedResourceTXCRollback_skipRollback() throws Exception {
+		
+		MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceTXCRollback/arGetById.xml");
+		MockPatchAllottedResource(CUST, SVC, INST, ARID);
+		MockDeleteAllottedResource(CUST, SVC, INST, ARID, ARVERS);
+		mockSDNCAdapter(200);
+		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		
+		String businessKey = UUID.randomUUID().toString();
+		Map<String, Object> variables = new HashMap<>();
+		RollbackData rollbackData = setVariablesSuccess(variables, "testRequestId1");
 
-    @Test
-    @Deployment(resources = {
-            "subprocess/SDNCAdapterV1.bpmn",
-            "subprocess/FalloutHandler.bpmn",
-            "subprocess/DoCreateAllottedResourceTXCRollback.bpmn"})
-    public void testDoCreateAllottedResourceTXCRollback_Success() throws Exception {
+		rollbackData.put(RbType, "rollbackAAI", "false");
+		rollbackData.put(RbType, "rollbackSDNCassign", "false");
+		
+		invokeSubProcess(PROCNAME, businessKey, variables);
 
-        MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceTXCRollback/arGetById.xml");
-        MockPatchAllottedResource(CUST, SVC, INST, ARID);
-        MockDeleteAllottedResource(CUST, SVC, INST, ARID, ARVERS);
-        mockSDNCAdapter(200);
-        mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		waitForProcessEnd(businessKey, 10000);
+		
+		assertTrue(isProcessEnded(businessKey));
+		String workflowException = BPMNUtil.getVariable(processEngineRule, PROCNAME, VAR_WFEX);
+		System.out.println("workflowException:\n" + workflowException);
+		assertEquals(null, workflowException);
+		assertEquals(null, BPMNUtil.getVariable(processEngineRule, PROCNAME, "rolledBack"));
+		assertNull(BPMNUtil.getVariable(processEngineRule, PROCNAME, "rollbackError"));
+	}
+	
+	@Test
+	@Deployment(resources = {
+			"subprocess/SDNCAdapterV1.bpmn",
+			"subprocess/FalloutHandler.bpmn",
+			"subprocess/DoCreateAllottedResourceTXCRollback.bpmn"})
+	public void testDoCreateAllottedResourceTXCRollback_DoNotRollBack() throws Exception {
+		
+		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		
+		String businessKey = UUID.randomUUID().toString();
+		Map<String, Object> variables = new HashMap<>();
+		RollbackData rollbackData = setVariablesSuccess(variables, "testRequestId1");
 
-        String businessKey = UUID.randomUUID().toString();
-        Map<String, Object> variables = new HashMap<>();
-        setVariablesSuccess(variables, "testRequestId1");
+		// this will cause "rollbackSDNC" to be set to false
+		rollbackData.put(RbType, "rollbackSDNCassign", "false");
+		
+		invokeSubProcess(PROCNAME, businessKey, variables);
 
-        invokeSubProcess(PROCNAME, businessKey, variables);
+		waitForProcessEnd(businessKey, 10000);
+		
+		assertTrue(isProcessEnded(businessKey));
+		String workflowException = BPMNUtil.getVariable(processEngineRule, PROCNAME, VAR_WFEX);
+		System.out.println("workflowException:\n" + workflowException);
+		assertEquals(null, workflowException);
+		assertEquals("true", BPMNUtil.getVariable(processEngineRule, PROCNAME, "rolledBack"));
+		assertNull(BPMNUtil.getVariable(processEngineRule, PROCNAME, "rollbackError"));
+	}
+	
+	@Test
+	@Deployment(resources = {
+			"subprocess/SDNCAdapterV1.bpmn",
+			"subprocess/FalloutHandler.bpmn",
+			"subprocess/DoCreateAllottedResourceTXCRollback.bpmn"})
+	public void testDoCreateAllottedResourceTXCRollback_NoDeactivate() throws Exception {
+		
+		MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceTXCRollback/arGetById.xml");
+		MockPatchAllottedResource(CUST, SVC, INST, ARID);
+		MockDeleteAllottedResource(CUST, SVC, INST, ARID, ARVERS);
+		mockSDNCAdapter(200);
+		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		
+		String businessKey = UUID.randomUUID().toString();
+		Map<String, Object> variables = new HashMap<>();
+		RollbackData rollbackData = setVariablesSuccess(variables, "testRequestId1");
 
-        injectSDNCCallbacks(callbacks, "deactivate");
-        injectSDNCCallbacks(callbacks, "delete");
-        injectSDNCCallbacks(callbacks, "unassign");
+		rollbackData.put(RbType, "rollbackSDNCactivate", "false");
+		
+		invokeSubProcess(PROCNAME, businessKey, variables);
 
-        waitForProcessEnd(businessKey, 10000);
+		injectSDNCCallbacks(callbacks, "delete");
+		injectSDNCCallbacks(callbacks, "unassign");
 
-        assertTrue(isProcessEnded(businessKey));
-        String workflowException = BPMNUtil.getVariable(processEngineRule, PROCNAME, VAR_WFEX);
-        System.out.println("workflowException:\n" + workflowException);
-        assertEquals(null, workflowException);
-        assertEquals("true", BPMNUtil.getVariable(processEngineRule, PROCNAME, "rolledBack"));
-        assertNull(BPMNUtil.getVariable(processEngineRule, PROCNAME, "rollbackError"));
-    }
+		waitForProcessEnd(businessKey, 10000);
+		
+		assertTrue(isProcessEnded(businessKey));
+		String workflowException = BPMNUtil.getVariable(processEngineRule, PROCNAME, VAR_WFEX);
+		System.out.println("workflowException:\n" + workflowException);
+		assertEquals(null, workflowException);
+		assertEquals("true", BPMNUtil.getVariable(processEngineRule, PROCNAME, "rolledBack"));
+		assertNull(BPMNUtil.getVariable(processEngineRule, PROCNAME, "rollbackError"));
+	}
+	
+	@Test
+	@Deployment(resources = {
+			"subprocess/SDNCAdapterV1.bpmn",
+			"subprocess/FalloutHandler.bpmn",
+			"subprocess/DoCreateAllottedResourceTXCRollback.bpmn"})
+	public void testDoCreateAllottedResourceTXCRollback_NoDelete() throws Exception {
+		
+		MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceTXCRollback/arGetById.xml");
+		MockPatchAllottedResource(CUST, SVC, INST, ARID);
+		MockDeleteAllottedResource(CUST, SVC, INST, ARID, ARVERS);
+		mockSDNCAdapter(200);
+		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		
+		String businessKey = UUID.randomUUID().toString();
+		Map<String, Object> variables = new HashMap<>();
+		RollbackData rollbackData = setVariablesSuccess(variables, "testRequestId1");
 
-    @Test
-    @Deployment(resources = {
-            "subprocess/SDNCAdapterV1.bpmn",
-            "subprocess/FalloutHandler.bpmn",
-            "subprocess/DoCreateAllottedResourceTXCRollback.bpmn"})
-    public void testDoCreateAllottedResourceTXCRollback_skipRollback() throws Exception {
+		rollbackData.put(RbType, "rollbackSDNCcreate", "false");
+		
+		invokeSubProcess(PROCNAME, businessKey, variables);
 
-        MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceTXCRollback/arGetById.xml");
-        MockPatchAllottedResource(CUST, SVC, INST, ARID);
-        MockDeleteAllottedResource(CUST, SVC, INST, ARID, ARVERS);
-        mockSDNCAdapter(200);
-        mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		injectSDNCCallbacks(callbacks, "deactivate");
+		injectSDNCCallbacks(callbacks, "unassign");
 
-        String businessKey = UUID.randomUUID().toString();
-        Map<String, Object> variables = new HashMap<>();
-        RollbackData rollbackData = setVariablesSuccess(variables, "testRequestId1");
+		waitForProcessEnd(businessKey, 10000);
+		
+		assertTrue(isProcessEnded(businessKey));
+		String workflowException = BPMNUtil.getVariable(processEngineRule, PROCNAME, VAR_WFEX);
+		System.out.println("workflowException:\n" + workflowException);
+		assertEquals(null, workflowException);
+		assertEquals("true", BPMNUtil.getVariable(processEngineRule, PROCNAME, "rolledBack"));
+		assertNull(BPMNUtil.getVariable(processEngineRule, PROCNAME, "rollbackError"));
+	}
+	
+	@Test
+	@Deployment(resources = {
+			"subprocess/SDNCAdapterV1.bpmn",
+			"subprocess/FalloutHandler.bpmn",
+			"subprocess/DoCreateAllottedResourceTXCRollback.bpmn"})
+	public void testDoCreateAllottedResourceTXCRollback_NoUnassign() throws Exception {
+		
+		MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceTXCRollback/arGetById.xml");
+		MockPatchAllottedResource(CUST, SVC, INST, ARID);
+		MockDeleteAllottedResource(CUST, SVC, INST, ARID, ARVERS);
+		mockSDNCAdapter(200);
+		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		
+		String businessKey = UUID.randomUUID().toString();
+		Map<String, Object> variables = new HashMap<>();
+		RollbackData rollbackData = setVariablesSuccess(variables, "testRequestId1");
 
-        rollbackData.put(RbType, "rollbackAAI", "false");
-        rollbackData.put(RbType, "rollbackSDNCassign", "false");
-
-        invokeSubProcess(PROCNAME, businessKey, variables);
-
-        waitForProcessEnd(businessKey, 10000);
-
-        assertTrue(isProcessEnded(businessKey));
-        String workflowException = BPMNUtil.getVariable(processEngineRule, PROCNAME, VAR_WFEX);
-        System.out.println("workflowException:\n" + workflowException);
-        assertEquals(null, workflowException);
-        assertEquals(null, BPMNUtil.getVariable(processEngineRule, PROCNAME, "rolledBack"));
-        assertNull(BPMNUtil.getVariable(processEngineRule, PROCNAME, "rollbackError"));
-    }
-
-    @Test
-    @Deployment(resources = {
-            "subprocess/SDNCAdapterV1.bpmn",
-            "subprocess/FalloutHandler.bpmn",
-            "subprocess/DoCreateAllottedResourceTXCRollback.bpmn"})
-    public void testDoCreateAllottedResourceTXCRollback_DoNotRollBack() throws Exception {
-
-        mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
-
-        String businessKey = UUID.randomUUID().toString();
-        Map<String, Object> variables = new HashMap<>();
-        RollbackData rollbackData = setVariablesSuccess(variables, "testRequestId1");
-
-        // this will cause "rollbackSDNC" to be set to false
-        rollbackData.put(RbType, "rollbackSDNCassign", "false");
-
-        invokeSubProcess(PROCNAME, businessKey, variables);
-
-        waitForProcessEnd(businessKey, 10000);
-
-        assertTrue(isProcessEnded(businessKey));
-        String workflowException = BPMNUtil.getVariable(processEngineRule, PROCNAME, VAR_WFEX);
-        System.out.println("workflowException:\n" + workflowException);
-        assertEquals(null, workflowException);
-        assertEquals("true", BPMNUtil.getVariable(processEngineRule, PROCNAME, "rolledBack"));
-        assertNull(BPMNUtil.getVariable(processEngineRule, PROCNAME, "rollbackError"));
-    }
-
-    @Test
-    @Deployment(resources = {
-            "subprocess/SDNCAdapterV1.bpmn",
-            "subprocess/FalloutHandler.bpmn",
-            "subprocess/DoCreateAllottedResourceTXCRollback.bpmn"})
-    public void testDoCreateAllottedResourceTXCRollback_NoDeactivate() throws Exception {
-
-        MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceTXCRollback/arGetById.xml");
-        MockPatchAllottedResource(CUST, SVC, INST, ARID);
-        MockDeleteAllottedResource(CUST, SVC, INST, ARID, ARVERS);
-        mockSDNCAdapter(200);
-        mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
-
-        String businessKey = UUID.randomUUID().toString();
-        Map<String, Object> variables = new HashMap<>();
-        RollbackData rollbackData = setVariablesSuccess(variables, "testRequestId1");
-
-        rollbackData.put(RbType, "rollbackSDNCactivate", "false");
-
-        invokeSubProcess(PROCNAME, businessKey, variables);
-
-        injectSDNCCallbacks(callbacks, "delete");
-        injectSDNCCallbacks(callbacks, "unassign");
-
-        waitForProcessEnd(businessKey, 10000);
-
-        assertTrue(isProcessEnded(businessKey));
-        String workflowException = BPMNUtil.getVariable(processEngineRule, PROCNAME, VAR_WFEX);
-        System.out.println("workflowException:\n" + workflowException);
-        assertEquals(null, workflowException);
-        assertEquals("true", BPMNUtil.getVariable(processEngineRule, PROCNAME, "rolledBack"));
-        assertNull(BPMNUtil.getVariable(processEngineRule, PROCNAME, "rollbackError"));
-    }
-
-    @Test
-    @Deployment(resources = {
-            "subprocess/SDNCAdapterV1.bpmn",
-            "subprocess/FalloutHandler.bpmn",
-            "subprocess/DoCreateAllottedResourceTXCRollback.bpmn"})
-    public void testDoCreateAllottedResourceTXCRollback_NoDelete() throws Exception {
-
-        MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceTXCRollback/arGetById.xml");
-        MockPatchAllottedResource(CUST, SVC, INST, ARID);
-        MockDeleteAllottedResource(CUST, SVC, INST, ARID, ARVERS);
-        mockSDNCAdapter(200);
-        mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
-
-        String businessKey = UUID.randomUUID().toString();
-        Map<String, Object> variables = new HashMap<>();
-        RollbackData rollbackData = setVariablesSuccess(variables, "testRequestId1");
-
-        rollbackData.put(RbType, "rollbackSDNCcreate", "false");
-
-        invokeSubProcess(PROCNAME, businessKey, variables);
-
-        injectSDNCCallbacks(callbacks, "deactivate");
-        injectSDNCCallbacks(callbacks, "unassign");
-
-        waitForProcessEnd(businessKey, 10000);
-
-        assertTrue(isProcessEnded(businessKey));
-        String workflowException = BPMNUtil.getVariable(processEngineRule, PROCNAME, VAR_WFEX);
-        System.out.println("workflowException:\n" + workflowException);
-        assertEquals(null, workflowException);
-        assertEquals("true", BPMNUtil.getVariable(processEngineRule, PROCNAME, "rolledBack"));
-        assertNull(BPMNUtil.getVariable(processEngineRule, PROCNAME, "rollbackError"));
-    }
-
-    @Test
-    @Deployment(resources = {
-            "subprocess/SDNCAdapterV1.bpmn",
-            "subprocess/FalloutHandler.bpmn",
-            "subprocess/DoCreateAllottedResourceTXCRollback.bpmn"})
-    public void testDoCreateAllottedResourceTXCRollback_NoUnassign() throws Exception {
-
-        MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceTXCRollback/arGetById.xml");
-        MockPatchAllottedResource(CUST, SVC, INST, ARID);
-        MockDeleteAllottedResource(CUST, SVC, INST, ARID, ARVERS);
-        mockSDNCAdapter(200);
-        mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
-
-        String businessKey = UUID.randomUUID().toString();
-        Map<String, Object> variables = new HashMap<>();
-        RollbackData rollbackData = setVariablesSuccess(variables, "testRequestId1");
-
-        rollbackData.put(RbType, "rollbackSDNCassign", "false");
-
+		rollbackData.put(RbType, "rollbackSDNCassign", "false");
+		
 		/*
 		 * Note: if assign == false then the flow/script will set
 		 * "skipRollback" to false, which will cause ALL of the SDNC steps
 		 * to be skipped, not just the unassign step.
 		 */
+		
+		invokeSubProcess(PROCNAME, businessKey, variables);
 
-        invokeSubProcess(PROCNAME, businessKey, variables);
+		waitForProcessEnd(businessKey, 10000);
+		
+		assertTrue(isProcessEnded(businessKey));
+		String workflowException = BPMNUtil.getVariable(processEngineRule, PROCNAME, VAR_WFEX);
+		System.out.println("workflowException:\n" + workflowException);
+		assertEquals(null, workflowException);
+		assertEquals("true", BPMNUtil.getVariable(processEngineRule, PROCNAME, "rolledBack"));
+		assertNull(BPMNUtil.getVariable(processEngineRule, PROCNAME, "rollbackError"));
+	}
+	
+	@Test
+	@Deployment(resources = {
+			"subprocess/SDNCAdapterV1.bpmn",
+			"subprocess/FalloutHandler.bpmn",
+			"subprocess/DoCreateAllottedResourceTXCRollback.bpmn"})
+	public void testDoCreateAllottedResourceTXCRollback_SubProcessError() throws Exception {
+		
+		MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceTXCRollback/arGetById.xml");
+		MockPatchAllottedResource(CUST, SVC, INST, ARID);
+		MockDeleteAllottedResource(CUST, SVC, INST, ARID, ARVERS);
+		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
 
-        waitForProcessEnd(businessKey, 10000);
+		mockSDNCAdapter(404);
+		
+		String businessKey = UUID.randomUUID().toString();
+		Map<String, Object> variables = new HashMap<>();
+		setVariablesSuccess(variables, "testRequestId1");
+		
+		invokeSubProcess(PROCNAME, businessKey, variables);
 
-        assertTrue(isProcessEnded(businessKey));
-        String workflowException = BPMNUtil.getVariable(processEngineRule, PROCNAME, VAR_WFEX);
-        System.out.println("workflowException:\n" + workflowException);
-        assertEquals(null, workflowException);
-        assertEquals("true", BPMNUtil.getVariable(processEngineRule, PROCNAME, "rolledBack"));
-        assertNull(BPMNUtil.getVariable(processEngineRule, PROCNAME, "rollbackError"));
-    }
+		waitForProcessEnd(businessKey, 10000);
+		
+		assertTrue(isProcessEnded(businessKey));
+		String workflowException = BPMNUtil.getVariable(processEngineRule, PROCNAME, VAR_WFEX);
+		System.out.println("workflowException:\n" + workflowException);
+		assertEquals(null, workflowException);
+		assertEquals("false", BPMNUtil.getVariable(processEngineRule, PROCNAME, "rolledBack"));
+		assertNotNull(BPMNUtil.getVariable(processEngineRule, PROCNAME, "rollbackError"));
+	}
+	
+	@Test
+	@Deployment(resources = {
+			"subprocess/SDNCAdapterV1.bpmn",
+			"subprocess/FalloutHandler.bpmn",
+			"subprocess/DoCreateAllottedResourceTXCRollback.bpmn"})
+	public void testDoCreateAllottedResourceTXCRollback_JavaException() throws Exception {
+		
+		MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceTXCRollback/arGetById.xml");
+		MockPatchAllottedResource(CUST, SVC, INST, ARID);
+		MockDeleteAllottedResource(CUST, SVC, INST, ARID, ARVERS);
+		mockSDNCAdapter(200);
+		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		
+		String businessKey = UUID.randomUUID().toString();
+		Map<String, Object> variables = new HashMap<>();
+		setVariablesSuccess(variables, "testRequestId1");
 
-    @Test
-    @Deployment(resources = {
-            "subprocess/SDNCAdapterV1.bpmn",
-            "subprocess/FalloutHandler.bpmn",
-            "subprocess/DoCreateAllottedResourceTXCRollback.bpmn"})
-    public void testDoCreateAllottedResourceTXCRollback_SubProcessError() throws Exception {
+		variables.put("rollbackData", "string instead of rollback data");
+		
+		invokeSubProcess(PROCNAME, businessKey, variables);
 
-        MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceTXCRollback/arGetById.xml");
-        MockPatchAllottedResource(CUST, SVC, INST, ARID);
-        MockDeleteAllottedResource(CUST, SVC, INST, ARID, ARVERS);
-        mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		waitForProcessEnd(businessKey, 10000);
+		
+		assertTrue(isProcessEnded(businessKey));
+		String workflowException = BPMNUtil.getVariable(processEngineRule, PROCNAME, VAR_WFEX);
+		System.out.println("workflowException:\n" + workflowException);
+		assertEquals(null, workflowException);
+		assertEquals("false", BPMNUtil.getVariable(processEngineRule, PROCNAME, "rolledBack"));
+		assertNotNull(BPMNUtil.getVariable(processEngineRule, PROCNAME, "rollbackError"));
+	}
 
-        mockSDNCAdapter(404);
+	private RollbackData setVariablesSuccess(Map<String, Object> variables, String requestId) {
+		variables.put("isDebugLogEnabled", "true");
+		variables.put("failNotFound", "true");
+		variables.put("msoRequestId", requestId);
+		variables.put("mso-request-id", "requestId");
+		variables.put("allottedResourceId", ARID);
 
-        String businessKey = UUID.randomUUID().toString();
-        Map<String, Object> variables = new HashMap<>();
-        setVariablesSuccess(variables, "testRequestId1");
+		variables.put("serviceInstanceId", DEC_INST);
+		variables.put("parentServiceInstanceId", DEC_PARENT_INST);
+		
+		RollbackData rollbackData = new RollbackData();
 
-        invokeSubProcess(PROCNAME, businessKey, variables);
-
-        waitForProcessEnd(businessKey, 10000);
-
-        assertTrue(isProcessEnded(businessKey));
-        String workflowException = BPMNUtil.getVariable(processEngineRule, PROCNAME, VAR_WFEX);
-        System.out.println("workflowException:\n" + workflowException);
-        assertEquals(null, workflowException);
-        assertEquals("false", BPMNUtil.getVariable(processEngineRule, PROCNAME, "rolledBack"));
-        assertNotNull(BPMNUtil.getVariable(processEngineRule, PROCNAME, "rollbackError"));
-    }
-
-    @Test
-    @Deployment(resources = {
-            "subprocess/SDNCAdapterV1.bpmn",
-            "subprocess/FalloutHandler.bpmn",
-            "subprocess/DoCreateAllottedResourceTXCRollback.bpmn"})
-    public void testDoCreateAllottedResourceTXCRollback_JavaException() throws Exception {
-
-        MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceTXCRollback/arGetById.xml");
-        MockPatchAllottedResource(CUST, SVC, INST, ARID);
-        MockDeleteAllottedResource(CUST, SVC, INST, ARID, ARVERS);
-        mockSDNCAdapter(200);
-        mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
-
-        String businessKey = UUID.randomUUID().toString();
-        Map<String, Object> variables = new HashMap<>();
-        setVariablesSuccess(variables, "testRequestId1");
-
-        variables.put("rollbackData", "string instead of rollback data");
-
-        invokeSubProcess(PROCNAME, businessKey, variables);
-
-        waitForProcessEnd(businessKey, 10000);
-
-        assertTrue(isProcessEnded(businessKey));
-        String workflowException = BPMNUtil.getVariable(processEngineRule, PROCNAME, VAR_WFEX);
-        System.out.println("workflowException:\n" + workflowException);
-        assertEquals(null, workflowException);
-        assertEquals("false", BPMNUtil.getVariable(processEngineRule, PROCNAME, "rolledBack"));
-        assertNotNull(BPMNUtil.getVariable(processEngineRule, PROCNAME, "rollbackError"));
-    }
-
-    private RollbackData setVariablesSuccess(Map<String, Object> variables, String requestId) {
-        variables.put("isDebugLogEnabled", "true");
-        variables.put("failNotFound", "true");
-        variables.put("msoRequestId", requestId);
-        variables.put("mso-request-id", "requestId");
-        variables.put("allottedResourceId", ARID);
-
-        variables.put("serviceInstanceId", DEC_INST);
-        variables.put("parentServiceInstanceId", DEC_PARENT_INST);
-
-        RollbackData rollbackData = new RollbackData();
-
-        rollbackData.put(RbType, "serviceInstanceId", DEC_INST);
-        rollbackData.put(RbType, "serviceSubscriptionType", SVC);
-        rollbackData.put(RbType, "disablerollback", "false");
-        rollbackData.put(RbType, "rollbackAAI", "true");
-        rollbackData.put(RbType, "rollbackSDNCassign", "true");
-        rollbackData.put(RbType, "rollbackSDNCactivate", "true");
-        rollbackData.put(RbType, "rollbackSDNCcreate", "true");
-        rollbackData.put(RbType, "aaiARPath", "http://localhost:28090/aai/v9/business/customers/customer/" + CUST + "/service-subscriptions/service-subscription/" + SVC + "/service-instances/service-instance/" + INST + "/allotted-resources/allotted-resource/" + ARID);
-
-        rollbackData.put(RbType, "sdncActivateRollbackReq", FileUtil.readResourceFile("__files/VCPE/DoCreateAllottedResourceTXCRollback/sdncActivateRollbackReq.xml"));
-        rollbackData.put(RbType, "sdncCreateRollbackReq", FileUtil.readResourceFile("__files/VCPE/DoCreateAllottedResourceTXCRollback/sdncCreateRollbackReq.xml"));
-        rollbackData.put(RbType, "sdncAssignRollbackReq", FileUtil.readResourceFile("__files/VCPE/DoCreateAllottedResourceTXCRollback/sdncAssignRollbackReq.xml"));
-
-        variables.put("rollbackData", rollbackData);
-
-        return rollbackData;
-    }
+		rollbackData.put(RbType, "serviceInstanceId", DEC_INST);
+		rollbackData.put(RbType, "serviceSubscriptionType", SVC);
+		rollbackData.put(RbType, "disablerollback", "false");
+		rollbackData.put(RbType, "rollbackAAI", "true");
+		rollbackData.put(RbType, "rollbackSDNCassign", "true");
+		rollbackData.put(RbType, "rollbackSDNCactivate", "true");
+		rollbackData.put(RbType, "rollbackSDNCcreate", "true");
+		rollbackData.put(RbType, "aaiARPath", "http://localhost:28090/aai/v9/business/customers/customer/"+CUST+"/service-subscriptions/service-subscription/"+SVC+"/service-instances/service-instance/"+INST+"/allotted-resources/allotted-resource/"+ARID);
+		
+		rollbackData.put(RbType, "sdncActivateRollbackReq", FileUtil.readResourceFile("__files/VCPE/DoCreateAllottedResourceTXCRollback/sdncActivateRollbackReq.xml"));
+		rollbackData.put(RbType, "sdncCreateRollbackReq", FileUtil.readResourceFile("__files/VCPE/DoCreateAllottedResourceTXCRollback/sdncCreateRollbackReq.xml")); 
+		rollbackData.put(RbType, "sdncAssignRollbackReq", FileUtil.readResourceFile("__files/VCPE/DoCreateAllottedResourceTXCRollback/sdncAssignRollbackReq.xml"));
+		
+		variables.put("rollbackData",rollbackData);
+		
+		return rollbackData;
+	}
 
 }

@@ -47,60 +47,62 @@ import org.openecomp.mso.global_tests.ArquillianPackagerForITCases;
 @RunWith(Arquillian.class)
 public class LogsCheckerITCase {
 
-
+  
     @BeforeClass
-    public static void waitBeforeStart() throws InterruptedException {
-        System.out.println("Executing " + LogsCheckerITCase.class.getName());
-
+    public static void waitBeforeStart () throws InterruptedException {
+        System.out.println ("Executing " + LogsCheckerITCase.class.getName ());
+      
     }
-
-    @Deployment(name = "log-check", testable = true)
-    public static Archive<?> createAsdcControllerWarDeployment() throws Exception {
-        // Any war could be used here, we just take that one randomly
-        // Be careful some WAR does not work when being injected in JBOSS, probably due to Servlet conflict
-        System.out.println("Deploying ASDC Controller WAR for log checker");
-        WebArchive warArchive = (WebArchive) ArquillianPackagerForITCases.createPackageFromExistingOne("../../asdc-controller/target/", "asdc-controller*.war", "asdc-controller.war");
-
-        JavaArchive testclasses = ShrinkWrap.create(JavaArchive.class, "testClasses.jar");
-
-        testclasses.addPackage("org.openecomp.mso.filesearching");
-
-        warArchive.addAsLibraries(testclasses);
-
-        Testable.archiveToTest(warArchive);
-        return warArchive;
+        
+	@Deployment(name="log-check",testable=true)
+	public static Archive<?> createAsdcControllerWarDeployment () throws Exception {
+		// Any war could be used here, we just take that one randomly
+		// Be careful some WAR does not work when being injected in JBOSS, probably due to Servlet conflict 
+		System.out.println("Deploying ASDC Controller WAR for log checker");
+		WebArchive warArchive =  (WebArchive)ArquillianPackagerForITCases.createPackageFromExistingOne("../../asdc-controller/target/", "asdc-controller*.war", "asdc-controller.war");
+		
+		JavaArchive testclasses = ShrinkWrap.create (JavaArchive.class, "testClasses.jar");
+		
+		testclasses.addPackage("org.openecomp.mso.filesearching");
+	
+		warArchive.addAsLibraries(testclasses);
+		
+		Testable.archiveToTest(warArchive);
+		return warArchive;
+	}
+    
+	@Before
+	public void beforeEachTest() {
+		LogFileSearching.initFile("/tmp/mso-log-checker.log");
+	}
+	
+	@After
+	public void afterEachTest() {
+		LogFileSearching.closeFile();
+	}
+	
+    @Test
+	@OperateOnDeployment("log-check")
+	public void testJbossServerLog() throws IOException  {
+    	
+    	File serverLogs = new File("/opt/jboss/standalone/log");
+    	//File serverLogs = new File("/tmp/jbosslogs/server.log");
+    	
+    	assertFalse(LogFileSearching.searchInDirectoryForCommonIssues(null, serverLogs));
+    	
     }
-
-    @Before
-    public void beforeEachTest() {
-        LogFileSearching.initFile("/tmp/mso-log-checker.log");
-    }
-
-    @After
-    public void afterEachTest() {
-        LogFileSearching.closeFile();
-    }
-
+    
     @Test
     @OperateOnDeployment("log-check")
-    public void testJbossServerLog() throws IOException {
-
-        File serverLogs = new File("/opt/jboss/standalone/log");
-        //File serverLogs = new File("/tmp/jbosslogs/server.log");
-
-        assertFalse(LogFileSearching.searchInDirectoryForCommonIssues(null, serverLogs));
-
+	public void testMSOLog() throws IOException  {
+    	//File serverLogs = new File("/opt/app/mso/jboss-eap-6.2/standalone/log/server.log");
+    	File msoLogs = new File("/var/log/ecomp/MSO");
+   	
+    	assertFalse(LogFileSearching.searchInDirectoryForCommonIssues(null, msoLogs));
+    	
     }
-
-    @Test
-    @OperateOnDeployment("log-check")
-    public void testMSOLog() throws IOException {
-        //File serverLogs = new File("/opt/app/mso/jboss-eap-6.2/standalone/log/server.log");
-        File msoLogs = new File("/var/log/ecomp/MSO");
-
-        assertFalse(LogFileSearching.searchInDirectoryForCommonIssues(null, msoLogs));
-
-    }
-
-
+    
+    
+  
+    
 }

@@ -23,9 +23,7 @@ package org.openecomp.mso.openstack.beans;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.woorea.openstack.heat.model.Stack;
-
 import java.io.IOException;
-
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;

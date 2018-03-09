@@ -34,42 +34,41 @@ import org.openecomp.mso.db.catalog.beans.VfModule;
 import org.openecomp.mso.db.catalog.beans.VnfResource;
 
 import javax.ws.rs.core.Response;
-
 public class VfModuleModelNamesHandlerTest {
 
-    VfModuleModelNamesHandler handler = new VfModuleModelNamesHandler();
-
-    @Test
-    public void getVfModuleModelNamesTest() {
-        Response resp = handler.getVfModuleModelNames("v2");
-        assertTrue(resp.getEntity().toString() != null);
-    }
-
-    @Test
-    public void getVfModuleModelNamesTest2() {
-        new MockUp<CatalogDatabase>() {
-            @Mock
-            public List<VfModule> getAllVfModules() {
-                List<VfModule> list = new ArrayList<>();
-                VfModule resource = new VfModule();
-                list.add(resource);
-                return list;
-            }
-        };
-        Response resp = handler.getVfModuleModelNames("v2");
-        assertTrue(resp.getEntity().toString() != null);
-    }
-
-
-    @Test
-    public void getVfModuleModelNamesTest3() {
-        new MockUp<CatalogDatabase>() {
-            @Mock
-            public List<VfModule> getAllVfModules() {
-                return null;
-            }
-        };
-        Response resp = handler.getVfModuleModelNames("v2");
-        assertTrue(resp.getEntity().toString() != null);
-    }
+	VfModuleModelNamesHandler handler = new VfModuleModelNamesHandler();
+	
+	@Test
+	public void getVfModuleModelNamesTest(){
+		Response resp = handler.getVfModuleModelNames("v2");
+		assertTrue(resp.getEntity().toString()!= null);
+	}
+	
+	@Test
+	public void getVfModuleModelNamesTest2(){
+		new MockUp<CatalogDatabase>() {
+			@Mock
+			public  List <VfModule>  getAllVfModules(){
+				List <VfModule> list = new ArrayList<>();
+				VfModule resource = new VfModule();
+				list.add(resource);
+				return list;
+			}	
+		};
+		Response resp = handler.getVfModuleModelNames("v2");
+		assertTrue(resp.getEntity().toString()!= null);
+	}
+	
+	
+	@Test
+	public void getVfModuleModelNamesTest3(){
+		new MockUp<CatalogDatabase>() {
+			@Mock
+			public  List <VfModule>  getAllVfModules(){
+				return null;
+			}	
+		};
+		Response resp = handler.getVfModuleModelNames("v2");
+		assertTrue(resp.getEntity().toString()!= null);
+	}
 }

@@ -22,20 +22,20 @@ package org.openecomp.mso.bpmn.vcpe;
 import org.openecomp.mso.bpmn.common.WorkflowTest;
 
 public class AbstractTestBase extends WorkflowTest {
+	
+	
+	public static final String CUST = "SDN-ETHERNET-INTERNET";
+	public static final String SVC = "123456789";
+	public static final String INST = "MIS%252F1604%252F0026%252FSW_INTERNET";
+	public static final String PARENT_INST = "MIS%252F1604%252F0027%252FSW_INTERNET";
+	public static final String ARID = "arId-1";
+	public static final String ARVERS = "1490627351232";
 
+	public static final String DEC_INST = "MIS%2F1604%2F0026%2FSW_INTERNET";
+	public static final String DEC_PARENT_INST = "MIS%2F1604%2F0027%2FSW_INTERNET";
 
-    public static final String CUST = "SDN-ETHERNET-INTERNET";
-    public static final String SVC = "123456789";
-    public static final String INST = "MIS%252F1604%252F0026%252FSW_INTERNET";
-    public static final String PARENT_INST = "MIS%252F1604%252F0027%252FSW_INTERNET";
-    public static final String ARID = "arId-1";
-    public static final String ARVERS = "1490627351232";
-
-    public static final String DEC_INST = "MIS%2F1604%2F0026%2FSW_INTERNET";
-    public static final String DEC_PARENT_INST = "MIS%2F1604%2F0027%2FSW_INTERNET";
-
-    public static final String VAR_SUCCESS_IND = "SuccessIndicator";
-    public static final String VAR_WFEX = "SavedWorkflowException1";
-    public static final String VAR_RESP_CODE = "CMSO_ResponseCode";
-    public static final String VAR_COMP_REQ = "CompleteMsoProcessRequest";
+	public static final String VAR_SUCCESS_IND = "SuccessIndicator";
+	public static final String VAR_WFEX = "SavedWorkflowException1";
+	public static final String VAR_RESP_CODE = "CMSO_ResponseCode";
+	public static final String VAR_COMP_REQ = "CompleteMsoProcessRequest";
 }

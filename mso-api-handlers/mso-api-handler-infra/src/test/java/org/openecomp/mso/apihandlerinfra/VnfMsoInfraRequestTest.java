@@ -27,12 +27,12 @@ import org.openecomp.mso.apihandler.common.ValidationException;
 import org.openecomp.mso.properties.MsoJavaProperties;
 
 public class VnfMsoInfraRequestTest {
-    VnfMsoInfraRequest request = new VnfMsoInfraRequest("29919020");
-
-    @Test(expected = Exception.class)
-    public void parseTest() throws ValidationException {
-        String reqXML = "<vnf-request><request-info> <request-id>29993</request-id><request-status>COMPLETE</request-status></request-info></vnf-request>";
-        request.parse(reqXML, "v1", new MsoJavaProperties());
-    }
-
+	VnfMsoInfraRequest request = new VnfMsoInfraRequest("29919020");
+	
+	@Test(expected=Exception.class)
+	public void parseTest() throws ValidationException {
+		String reqXML = "<vnf-request><request-info> <request-id>29993</request-id><request-status>COMPLETE</request-status></request-info></vnf-request>";
+		request.parse(reqXML, "v1", new MsoJavaProperties());
+	}
+	
 }

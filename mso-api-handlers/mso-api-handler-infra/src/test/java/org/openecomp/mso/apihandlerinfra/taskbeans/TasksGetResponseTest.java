@@ -23,7 +23,6 @@ package org.openecomp.mso.apihandlerinfra.taskbeans;
 import org.junit.After;
 
 import static org.junit.Assert.assertEquals;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.mso.apihandlerinfra.tasksbeans.TaskList;
@@ -37,36 +36,36 @@ import java.util.List;
 
 public class TasksGetResponseTest {
 
-    TasksGetResponse _tasksGetResponse;
-    private List<TaskList> _taskList;
+	TasksGetResponse _tasksGetResponse;
+	private List<TaskList> _taskList;
 
-    public TasksGetResponseTest() {
-    }
+	public TasksGetResponseTest() {
+	}
 
-    @SuppressWarnings("unchecked")
-    @Before
-    public void setUp() {
-        _tasksGetResponse = mock(TasksGetResponse.class);
-        _taskList = mock(List.class);
-        when(_tasksGetResponse.getTaskList()).thenReturn(_taskList);
-    }
+	@SuppressWarnings("unchecked")
+	@Before
+	public void setUp() {
+		_tasksGetResponse = mock(TasksGetResponse.class);
+		_taskList = mock(List.class);
+		when(_tasksGetResponse.getTaskList()).thenReturn(_taskList);
+	}
 
-    @After
-    public void tearDown() {
-        _tasksGetResponse = null;
-    }
+	@After
+	public void tearDown() {
+		_tasksGetResponse = null;
+	}
 
-    @Test
-    public void testGetTaskList() {
-        List<TaskList> result = _tasksGetResponse.getTaskList();
-        assertEquals(_taskList, result);
+	@Test
+	public void testGetTaskList() {
+		List<TaskList> result = _tasksGetResponse.getTaskList();
+		assertEquals(_taskList, result);
 
-    }
+	}
 
-    @Test
-    public void testSetTaskList() {
-        _tasksGetResponse.setTaskList(_taskList);
-        verify(_tasksGetResponse).setTaskList(_taskList);
+	@Test
+	public void testSetTaskList() {
+		_tasksGetResponse.setTaskList(_taskList);
+		verify(_tasksGetResponse).setTaskList(_taskList);
 
-    }
+	}
 }

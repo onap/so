@@ -32,25 +32,25 @@ public class CheckResultsTest {
      * Test method for {@link org.openecomp.mso.utils.CheckResults#getResults()}.
      */
     @Test
-    public final void testGetResults() {
-        CheckResults cr = new CheckResults();
-        cr.addHostCheckResult("host1", 0, "output");
-        cr.addHostCheckResult("host2", 2, "output2");
-        cr.addServiceCheckResult("host1", "service1", 0, "outputServ");
-        cr.addServiceCheckResult("host1", "service2", 2, "outputServ2");
-        cr.addServiceCheckResult("host2", "service1", 0, "output2Serv");
-        cr.addServiceCheckResult("host2", "service2", 2, "output2Serv2");
-        List<CheckResult> res = cr.getResults();
-        assert(res.size() == 6);
-        assert(res.get(0).getHostname().equals("host1"));
-        assert(res.get(1).getHostname().equals("host2"));
-        assert(res.get(2).getHostname().equals("host1"));
-        assert(res.get(3).getHostname().equals("host1"));
-        assert(res.get(4).getHostname().equals("host2"));
-        assert(res.get(5).getHostname().equals("host2"));
-        assert(res.get(0).getServicename() == null);
-        assert(res.get(3).getServicename().equals("service2"));
-        assert(res.get(5).getState() == 2);
+    public final void testGetResults () {
+        CheckResults cr = new CheckResults ();
+        cr.addHostCheckResult ("host1", 0, "output");
+        cr.addHostCheckResult ("host2", 2, "output2");
+        cr.addServiceCheckResult ("host1", "service1", 0, "outputServ");
+        cr.addServiceCheckResult ("host1", "service2", 2, "outputServ2");
+        cr.addServiceCheckResult ("host2", "service1", 0, "output2Serv");
+        cr.addServiceCheckResult ("host2", "service2", 2, "output2Serv2");
+        List <CheckResult> res = cr.getResults ();
+        assert(res.size () == 6);
+        assert(res.get (0).getHostname ().equals ("host1"));
+        assert(res.get (1).getHostname ().equals ("host2"));
+        assert(res.get (2).getHostname ().equals ("host1"));
+        assert(res.get (3).getHostname ().equals ("host1"));
+        assert(res.get (4).getHostname ().equals ("host2"));
+        assert(res.get (5).getHostname ().equals ("host2"));
+        assert(res.get (0).getServicename () == null);
+        assert(res.get (3).getServicename ().equals ("service2"));
+        assert(res.get (5).getState () == 2);
     }
 
 }

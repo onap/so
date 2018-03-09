@@ -23,7 +23,6 @@ package org.openecomp.mso.apihandlerinfra.taskbeans;
 import org.junit.After;
 
 import static org.junit.Assert.assertEquals;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.mso.apihandlerinfra.tasksbeans.TaskVariableValue;
@@ -37,36 +36,36 @@ import java.util.List;
 
 public class TaskVariablesTest {
 
-    TaskVariables _taskVariables;
-    private List<TaskVariableValue> _taskVariableValueList;
+	TaskVariables _taskVariables;
+	private List<TaskVariableValue> _taskVariableValueList;
 
-    public TaskVariablesTest() {
-    }
+	public TaskVariablesTest() {
+	}
 
-    @SuppressWarnings("unchecked")
-    @Before
-    public void setUp() {
-        _taskVariables = mock(TaskVariables.class);
-        _taskVariableValueList = mock(List.class);
-        when(_taskVariables.getTaskVariables()).thenReturn(_taskVariableValueList);
-    }
+	@SuppressWarnings("unchecked")
+	@Before
+	public void setUp() {
+		_taskVariables = mock(TaskVariables.class);
+		_taskVariableValueList  = mock(List.class);
+		when(_taskVariables.getTaskVariables()).thenReturn(_taskVariableValueList);
+	}
 
-    @After
-    public void tearDown() {
-        _taskVariables = null;
-    }
+	@After
+	public void tearDown() {
+		_taskVariables = null;
+	}
 
-    @Test
-    public void testGetTaskVariables() {
-        List<TaskVariableValue> result = _taskVariables.getTaskVariables();
-        assertEquals(_taskVariableValueList, result);
+	@Test
+	public void testGetTaskVariables() {
+		List<TaskVariableValue> result = _taskVariables.getTaskVariables();
+		assertEquals(_taskVariableValueList, result);
 
-    }
+	}
 
-    @Test
-    public void testSetTaskVariables() {
-        _taskVariables.setTaskVariables(_taskVariableValueList);
-        verify(_taskVariables).setTaskVariables(_taskVariableValueList);
+	@Test
+	public void testSetTaskVariables() {
+		_taskVariables.setTaskVariables(_taskVariableValueList);
+		verify(_taskVariables).setTaskVariables(_taskVariableValueList);
 
-    }
+	}
 }

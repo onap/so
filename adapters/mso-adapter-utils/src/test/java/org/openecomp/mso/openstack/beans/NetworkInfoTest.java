@@ -24,10 +24,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.woorea.openstack.quantum.model.Network;
 import com.woorea.openstack.quantum.model.Segment;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import org.junit.Test;
 
 public class NetworkInfoTest {

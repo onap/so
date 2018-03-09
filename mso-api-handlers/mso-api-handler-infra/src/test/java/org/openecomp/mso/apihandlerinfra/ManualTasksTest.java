@@ -28,11 +28,11 @@ import javax.ws.rs.core.Response;
 
 public class ManualTasksTest {
 
-    ManualTasks task = new ManualTasks();
-
-    @Test
-    public void completeTaskTest() {
-        Response resp = task.completeTask("test", "v2", "1882993");
-        assertTrue(resp.getEntity().toString() != null);
-    }
+	ManualTasks task = new ManualTasks();
+	
+	@Test
+	public void completeTaskTest(){
+		Response resp = task.completeTask("test", "v2", "1882993");
+		assertTrue(resp.getEntity().toString() != null);
+	}
 }

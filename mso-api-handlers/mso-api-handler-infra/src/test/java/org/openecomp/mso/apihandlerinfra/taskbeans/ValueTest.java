@@ -23,49 +23,47 @@ package org.openecomp.mso.apihandlerinfra.taskbeans;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import org.openecomp.mso.apihandlerinfra.tasksbeans.Value;
 
 public class ValueTest {
-    Value _valueInstance;
-    protected String _value;
+	Value _valueInstance;
+	protected String _value;
 
-    public ValueTest() {
-    }
+	public ValueTest() {
+	}
 
-    @Before
-    public void setUp() {
-        _valueInstance = mock(Value.class);
-        _value = "_value";
-        when(_valueInstance.getValue()).thenReturn(_value);
-    }
+	@Before
+	public void setUp() {
+		_valueInstance = mock(Value.class);
+		_value = "_value";
+		when(_valueInstance.getValue()).thenReturn(_value);
+	}
 
-    @After
-    public void tearDown() {
-        _valueInstance = null;
-    }
+	@After
+	public void tearDown() {
+		_valueInstance = null;
+	}
 
-    /**
-     * Test of getValue method
-     */
-    @Test
-    public void testGetValue() {
-        _valueInstance.setValue(_value);
-        assertEquals(_valueInstance.getValue(), _value);
+	/**
+	 * Test of getValue method
+	 */
+	@Test
+	public void testGetValue() {
+		_valueInstance.setValue(_value);
+		assertEquals(_valueInstance.getValue(),_value);
 
-    }
+	}
 
-    /**
-     * Test setValue
-     */
-    @Test
-    public void testSetValue() {
-        _valueInstance.setValue(_value);
-        verify(_valueInstance).setValue(_value);
-    }
+	/**
+	 * Test setValue
+	 */
+	@Test
+	public void testSetValue() {
+		_valueInstance.setValue(_value);
+		verify(_valueInstance).setValue(_value);
+	}
 }

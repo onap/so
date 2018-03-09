@@ -39,20 +39,20 @@ public class ServerTypeTest {
         IdentityServerTypeAbstract keystoneServerType = IdentityServerType.valueOf("KEYSTONE");
         assertNotNull(keystoneServerType);
     }
-
+    
     @Test
     public void testNewServerType() {
         IdentityServerTypeAbstract customServerType = null;
         try {
             customServerType = new IdentityServerType("NewServerType", NewServerTypeUtils.class);
-
+           
         } catch (IllegalArgumentException e) {
             fail("An exception should not be raised when we register a new server type for the first time");
         } finally {
             System.out.println(IdentityServerType.values().toString());
             assertEquals(customServerType, IdentityServerType.valueOf("NewServerType"));
         }
-
+        
         // Create it a second time
         IdentityServerTypeAbstract customServerType2 = null;
         try {
@@ -60,25 +60,23 @@ public class ServerTypeTest {
             fail("An exception should be raised as server type does not exist");
         } catch (IllegalArgumentException e) {
             // Fail silently -- it simply indicates we already registered it
-            customServerType2 = IdentityServerType.valueOf("NewServerType");
+        	customServerType2 = IdentityServerType.valueOf("NewServerType");
         } finally {
             System.out.println(IdentityServerType.values().toString());
             assertEquals(customServerType2, IdentityServerType.valueOf("NewServerType"));
         }
-
+        
         // Check the KeystoneURL for this custom TenantUtils
         CloudIdentity cloudIdentity = new CloudIdentity();
         cloudIdentity.setIdentityUrl("LocalIdentity");
         cloudIdentity.setIdentityAuthenticationType(CloudIdentity.IdentityAuthenticationType.RACKSPACE_APIKEY);
-        cloudIdentity.setIdentityServerType((CloudIdentity.IdentityServerType) CloudIdentity.IdentityServerType.
-                valueOf("NewServerType"));
+        cloudIdentity.setIdentityServerType((CloudIdentity.IdentityServerType) CloudIdentity.IdentityServerType.valueOf("NewServerType"));
         String regionId = "RegionA";
         String msoPropID = "12345";
         try {
-            assertEquals(cloudIdentity.getKeystoneUrl(regionId, msoPropID), msoPropID + ":" + regionId +
-                    ":NewServerTypeKeystoneURL/" + cloudIdentity.getIdentityUrl());
-        } catch (MsoException e) {
-            fail("No MSO Exception should have occured here");
-        }
+			assertEquals(cloudIdentity.getKeystoneUrl(regionId, msoPropID), msoPropID + ":" + regionId + ":NewServerTypeKeystoneURL/" + cloudIdentity.getIdentityUrl());
+		} catch (MsoException e) {
+			fail("No MSO Exception should have occured here");
+		}
     }
 }

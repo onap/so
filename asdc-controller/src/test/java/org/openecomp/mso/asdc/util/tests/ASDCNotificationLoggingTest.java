@@ -34,141 +34,141 @@ import org.openecomp.sdc.api.notification.INotificationData;
 import org.openecomp.sdc.api.notification.IResourceInstance;
 
 public class ASDCNotificationLoggingTest {
-    @Test
-    public void dumpASDCNotificationTestForNull() throws Exception {
-        INotificationData asdcNotification = iNotificationDataObject();
+	@Test
+	public void dumpASDCNotificationTestForNull() throws Exception {
+		INotificationData asdcNotification = iNotificationDataObject();
 
-        String result = ASDCNotificationLogging.dumpASDCNotification(asdcNotification);
+		String result = ASDCNotificationLogging.dumpASDCNotification(asdcNotification);
 
-        assertTrue(!result.equalsIgnoreCase("NULL"));
-    }
+		assertTrue(!result.equalsIgnoreCase("NULL"));
+	}
 
-    private INotificationData iNotificationDataObject() {
-        INotificationData iNotification = new INotificationData() {
+	private INotificationData iNotificationDataObject() {
+		INotificationData iNotification = new INotificationData() {
 
-            @Override
-            public String getServiceVersion() {
-                return "DistributionID";
-            }
+			@Override
+			public String getServiceVersion() {
+				return "DistributionID";
+			}
 
-            @Override
-            public String getServiceUUID() {
-                return "12343254";
-            }
+			@Override
+			public String getServiceUUID() {
+				return "12343254";
+			}
 
-            @Override
-            public String getServiceName() {
-                return "servername";
-            }
+			@Override
+			public String getServiceName() {
+				return "servername";
+			}
 
-            @Override
-            public String getServiceInvariantUUID() {
-                return "ServiceInvariantUUID";
-            }
+			@Override
+			public String getServiceInvariantUUID() {
+				return "ServiceInvariantUUID";
+			}
 
-            @Override
-            public String getServiceDescription() {
-                return "Description";
-            }
+			@Override
+			public String getServiceDescription() {
+				return "Description";
+			}
 
-            @Override
-            public List<IArtifactInfo> getServiceArtifacts() {
-                return new ArrayList();
-            }
+			@Override
+			public List<IArtifactInfo> getServiceArtifacts() {
+				return new ArrayList();
+			}
 
-            @Override
-            public List<IResourceInstance> getResources() {
-                return new ArrayList();
-            }
+			@Override
+			public List<IResourceInstance> getResources() {
+				return new ArrayList();
+			}
 
-            @Override
-            public String getDistributionID() {
-                return "23434";
-            }
+			@Override
+			public String getDistributionID() {
+				return "23434";
+			}
 
-            @Override
-            public IArtifactInfo getArtifactMetadataByUUID(String arg0) {
-                return null;
-            }
-        };
-        return iNotification;
-    }
+			@Override
+			public IArtifactInfo getArtifactMetadataByUUID(String arg0) {
+				return null;
+			}
+		};
+		return iNotification;
+	}
 
-    @Test
-    public void dumpASDCNotificationTest() throws Exception {
-        INotificationData asdcNotification = iNotificationDataObject();
-        String result = ASDCNotificationLogging.dumpASDCNotification(asdcNotification);
+	@Test
+	public void dumpASDCNotificationTest() throws Exception {
+		INotificationData asdcNotification = iNotificationDataObject();
+		String result = ASDCNotificationLogging.dumpASDCNotification(asdcNotification);
 
-        assertTrue(!result.equalsIgnoreCase("NULL"));
-    }
+		assertTrue(!result.equalsIgnoreCase("NULL"));
+	}
 
-    @Test
-    public void dumpVfModuleMetaDataListTest() {
-        INotificationData asdcNotification = iNotificationDataObject();
-        List<IVfModuleData> list = new ArrayList<>();
-        list.add(new VfModuleMetaData());
-        String result = null;
-        try {
-            result = ASDCNotificationLogging.dumpVfModuleMetaDataList(list);
-        } catch (Exception e) {
-        }
+	@Test
+	public void dumpVfModuleMetaDataListTest() {
+		INotificationData asdcNotification = iNotificationDataObject();
+		List<IVfModuleData> list = new ArrayList<>();
+		list.add(new VfModuleMetaData());
+		String result = null;
+		try {
+			result = ASDCNotificationLogging.dumpVfModuleMetaDataList(list);
+		} catch (Exception e) {
+		}
 
-        assertTrue(result == null);
+		assertTrue(result == null);
 
-    }
+	}
 
-    public IArtifactInfo getIArtifactInfo() {
-        return new IArtifactInfo() {
+	public IArtifactInfo getIArtifactInfo() {
+		return new IArtifactInfo() {
 
-            @Override
-            public List<IArtifactInfo> getRelatedArtifacts() {
-                return null;
-            }
+			@Override
+			public List<IArtifactInfo> getRelatedArtifacts() {
+				return null;
+			}
 
-            @Override
-            public IArtifactInfo getGeneratedArtifact() {
-                return null;
-            }
+			@Override
+			public IArtifactInfo getGeneratedArtifact() {
+				return null;
+			}
 
-            @Override
-            public String getArtifactVersion() {
-                return "version";
-            }
+			@Override
+			public String getArtifactVersion() {
+				return "version";
+			}
 
-            @Override
-            public String getArtifactUUID() {
-                return "123";
-            }
+			@Override
+			public String getArtifactUUID() {
+				return "123";
+			}
 
-            @Override
-            public String getArtifactURL() {
-                return "url";
-            }
+			@Override
+			public String getArtifactURL() {
+				return "url";
+			}
 
-            @Override
-            public String getArtifactType() {
-                return "type";
-            }
+			@Override
+			public String getArtifactType() {
+				return "type";
+			}
 
-            @Override
-            public Integer getArtifactTimeout() {
-                return 12;
-            }
+			@Override
+			public Integer getArtifactTimeout() {
+				return 12;
+			}
 
-            @Override
-            public String getArtifactName() {
-                return "name";
-            }
+			@Override
+			public String getArtifactName() {
+				return "name";
+			}
 
-            @Override
-            public String getArtifactDescription() {
-                return "desc";
-            }
+			@Override
+			public String getArtifactDescription() {
+				return "desc";
+			}
 
-            @Override
-            public String getArtifactChecksum() {
-                return "true";
-            }
-        };
-    }
+			@Override
+			public String getArtifactChecksum() {
+				return "true";
+			}
+		};
+	}
 }

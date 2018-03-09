@@ -48,28 +48,28 @@ import org.openecomp.mso.asdc.installer.IVfModuleData;
 
 public class DistributionClientEmulator implements IDistributionClient {
 
-    private String resourcePath;
+	private String resourcePath;
 
-    private List<IVfModuleData> listVFModuleMetaData;
+	private List<IVfModuleData> listVFModuleMetaData;
 
-    private List<IDistributionStatusMessage> distributionMessageReceived = new LinkedList<>();
+	private List<IDistributionStatusMessage> distributionMessageReceived = new LinkedList<>();
 
-    public DistributionClientEmulator(String notifFolderInResource) {
+	public DistributionClientEmulator(String notifFolderInResource) {
 
-        resourcePath = notifFolderInResource;
-    }
+		resourcePath = notifFolderInResource;
+	}
 
-    public List<IDistributionStatusMessage> getDistributionMessageReceived() {
-        return distributionMessageReceived;
-    }
-
-    @Override
-    public List<IVfModuleMetadata> decodeVfModuleArtifact(byte[] arg0) {
-        return null;
-    }
+	public List<IDistributionStatusMessage> getDistributionMessageReceived() {
+		return distributionMessageReceived;
+	}
+	
+	@Override
+	public List<IVfModuleMetadata> decodeVfModuleArtifact(byte[] arg0) {
+		return null;
+	}
 
 	/* @Override
-    public List<IVfModuleData> decodeVfModuleArtifact(byte[] arg0) {
+	public List<IVfModuleData> decodeVfModuleArtifact(byte[] arg0) {
 		try {
 			listVFModuleMetaData = new ObjectMapper().readValue(arg0, new TypeReference<List<JsonVfModuleMetaData>>(){});
 			return listVFModuleMetaData;
@@ -84,91 +84,91 @@ public class DistributionClientEmulator implements IDistributionClient {
 		return null;
 	} */
 
-    public List<IVfModuleData> getListVFModuleMetaData() {
-        return listVFModuleMetaData;
-    }
+	public List<IVfModuleData> getListVFModuleMetaData() {
+		return listVFModuleMetaData;
+	}
 
     @Override
-    public IDistributionClientDownloadResult download(IArtifactInfo arg0) {
+	public IDistributionClientDownloadResult download (IArtifactInfo arg0) {
 
+		
+		//String filename = resourcePath+"/artifacts/"+arg0.getArtifactURL();
+		String filename = arg0.getArtifactURL();
+		System.out.println("Emulating the download from resources files:"+filename);
+		
+		InputStream inputStream = null;
+		
+		if(arg0.getArtifactName().equals("service_Rg516VmmscSrvc_csar.csar")){
+			try{
+				inputStream = new FileInputStream(System.getProperty("java.io.tmpdir") + File.separator + "service_Rg516VmmscSrvc_csar.csar");
+			}catch(Exception e){
+				System.out.println("Error " + e.getMessage());
+			}
+		}else{
+		
+			inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourcePath + filename);
+		}
 
-        //String filename = resourcePath+"/artifacts/"+arg0.getArtifactURL();
-        String filename = arg0.getArtifactURL();
-        System.out.println("Emulating the download from resources files:" + filename);
+		if (inputStream == null) {
+			System.out.println("InputStream is NULL for:"+filename);
+		}
+		try {
+			return new DistributionClientDownloadResultImpl(DistributionActionResultEnum.SUCCESS, DistributionActionResultEnum.SUCCESS.name(),arg0.getArtifactName(),IOUtils.toByteArray(inputStream));
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+			}
+				return null;
+		}
 
-        InputStream inputStream = null;
+	@Override
+	public IConfiguration getConfiguration() {
+		return null;
+	}
 
-        if (arg0.getArtifactName().equals("service_Rg516VmmscSrvc_csar.csar")) {
-            try {
-                inputStream = new FileInputStream(System.getProperty("java.io.tmpdir") + File.separator + "service_Rg516VmmscSrvc_csar.csar");
-            } catch (Exception e) {
-                System.out.println("Error " + e.getMessage());
-            }
-        } else {
+	@Override
+	public IDistributionClientResult init(IConfiguration arg0, INotificationCallback arg1) {
+		return new DistributionClientResultImpl(DistributionActionResultEnum.SUCCESS,DistributionActionResultEnum.SUCCESS.name());
+	}
 
-            inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourcePath + filename);
-        }
+	@Override
+	public IDistributionClientResult sendDeploymentStatus(IDistributionStatusMessage arg0) {
+		this.distributionMessageReceived.add(arg0);
+		return new DistributionClientResultImpl(DistributionActionResultEnum.SUCCESS,DistributionActionResultEnum.SUCCESS.name());
+	}
 
-        if (inputStream == null) {
-            System.out.println("InputStream is NULL for:" + filename);
-        }
-        try {
-            return new DistributionClientDownloadResultImpl(DistributionActionResultEnum.SUCCESS, DistributionActionResultEnum.SUCCESS.name(), arg0.getArtifactName(), IOUtils.toByteArray(inputStream));
-        } catch (IOException e) {
+	@Override
+	public IDistributionClientResult sendDeploymentStatus(IDistributionStatusMessage arg0, String arg1) {
+		this.distributionMessageReceived.add(arg0);
+		return new DistributionClientResultImpl(DistributionActionResultEnum.SUCCESS,DistributionActionResultEnum.SUCCESS.name());
+	}
 
-            e.printStackTrace();
-        }
-        return null;
-    }
+	@Override
+	public IDistributionClientResult sendDownloadStatus(IDistributionStatusMessage arg0) {
+		this.distributionMessageReceived.add(arg0);
+		return new DistributionClientResultImpl(DistributionActionResultEnum.SUCCESS,DistributionActionResultEnum.SUCCESS.name());
+	}
 
-    @Override
-    public IConfiguration getConfiguration() {
-        return null;
-    }
+	@Override
+	public IDistributionClientResult sendDownloadStatus(IDistributionStatusMessage arg0, String arg1) {
+		this.distributionMessageReceived.add(arg0);
+		return new DistributionClientResultImpl(DistributionActionResultEnum.SUCCESS,DistributionActionResultEnum.SUCCESS.name());
+	}
 
-    @Override
-    public IDistributionClientResult init(IConfiguration arg0, INotificationCallback arg1) {
-        return new DistributionClientResultImpl(DistributionActionResultEnum.SUCCESS, DistributionActionResultEnum.SUCCESS.name());
-    }
+	@Override
+	public IDistributionClientResult start() {
+		return new DistributionClientResultImpl(DistributionActionResultEnum.SUCCESS,DistributionActionResultEnum.SUCCESS.name());
+	}
 
-    @Override
-    public IDistributionClientResult sendDeploymentStatus(IDistributionStatusMessage arg0) {
-        this.distributionMessageReceived.add(arg0);
-        return new DistributionClientResultImpl(DistributionActionResultEnum.SUCCESS, DistributionActionResultEnum.SUCCESS.name());
-    }
+	@Override
+	public IDistributionClientResult stop() {
+		return new DistributionClientResultImpl(DistributionActionResultEnum.SUCCESS,DistributionActionResultEnum.SUCCESS.name());
 
-    @Override
-    public IDistributionClientResult sendDeploymentStatus(IDistributionStatusMessage arg0, String arg1) {
-        this.distributionMessageReceived.add(arg0);
-        return new DistributionClientResultImpl(DistributionActionResultEnum.SUCCESS, DistributionActionResultEnum.SUCCESS.name());
-    }
+	}
 
-    @Override
-    public IDistributionClientResult sendDownloadStatus(IDistributionStatusMessage arg0) {
-        this.distributionMessageReceived.add(arg0);
-        return new DistributionClientResultImpl(DistributionActionResultEnum.SUCCESS, DistributionActionResultEnum.SUCCESS.name());
-    }
-
-    @Override
-    public IDistributionClientResult sendDownloadStatus(IDistributionStatusMessage arg0, String arg1) {
-        this.distributionMessageReceived.add(arg0);
-        return new DistributionClientResultImpl(DistributionActionResultEnum.SUCCESS, DistributionActionResultEnum.SUCCESS.name());
-    }
-
-    @Override
-    public IDistributionClientResult start() {
-        return new DistributionClientResultImpl(DistributionActionResultEnum.SUCCESS, DistributionActionResultEnum.SUCCESS.name());
-    }
-
-    @Override
-    public IDistributionClientResult stop() {
-        return new DistributionClientResultImpl(DistributionActionResultEnum.SUCCESS, DistributionActionResultEnum.SUCCESS.name());
-
-    }
-
-    @Override
-    public IDistributionClientResult updateConfiguration(IConfiguration arg0) {
-        return new DistributionClientResultImpl(DistributionActionResultEnum.SUCCESS, DistributionActionResultEnum.SUCCESS.name());
-    }
+	@Override
+	public IDistributionClientResult updateConfiguration(IConfiguration arg0) {
+		return new DistributionClientResultImpl(DistributionActionResultEnum.SUCCESS,DistributionActionResultEnum.SUCCESS.name());
+	}
 
 }

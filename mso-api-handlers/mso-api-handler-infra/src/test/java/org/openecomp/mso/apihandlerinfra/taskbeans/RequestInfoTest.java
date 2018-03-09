@@ -23,7 +23,6 @@ package org.openecomp.mso.apihandlerinfra.taskbeans;
 import org.junit.After;
 
 import static org.junit.Assert.assertEquals;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.mso.apihandlerinfra.tasksbeans.RequestInfo;
@@ -35,87 +34,87 @@ import static org.mockito.Mockito.when;
 
 public class RequestInfoTest {
 
-    RequestInfo _requestInfo;
-    String _source;
-    ValidResponses _responseValue;
-    String _requestorId;
+	RequestInfo _requestInfo;
+	String _source;
+	ValidResponses _responseValue;
+	String _requestorId;
 
-    public RequestInfoTest() {
-    }
+	public RequestInfoTest() {
+	}
 
-    @Before
-    public void setUp() {
-        _requestInfo = mock(RequestInfo.class);
-        _responseValue = ValidResponses.abort;
-        _requestorId = "ab1234";
-        _source = "VID";
-        when(_requestInfo.getRequestorId()).thenReturn(_requestorId);
-        when(_requestInfo.getSource()).thenReturn(_source);
-        when(_requestInfo.getResponseValue()).thenReturn(_responseValue);
+	@Before
+	public void setUp() {
+		_requestInfo = mock(RequestInfo.class);
+		_responseValue = ValidResponses.abort;
+		_requestorId = "ab1234";
+		_source = "VID";
+		when(_requestInfo.getRequestorId()).thenReturn(_requestorId);
+		when(_requestInfo.getSource()).thenReturn(_source);
+		when(_requestInfo.getResponseValue()).thenReturn(_responseValue);
 
-    }
+	}
 
-    @After
-    public void tearDown() {
-        _requestInfo = null;
-        _responseValue = null;
-    }
+	@After
+	public void tearDown() {
+		_requestInfo = null;
+		_responseValue = null;
+	}
 
-    /**
-     * Test of getSource method
-     */
-    @Test
-    public void testGetSource() {
-        String result = _requestInfo.getSource();
-        assertEquals(_source, result);
+	/**
+	 * Test of getSource method
+	 */
+	@Test
+	public void testGetSource() {
+	        String result = _requestInfo.getSource();
+	        assertEquals(_source, result);
 
-    }
+	}
 
-    /**
-     * Test setSource
-     */
-    @Test
-    public void testSetSource() {
-        _requestInfo.setSource("VID");
-        verify(_requestInfo).setSource(_source);
-    }
+	/**
+	 * Test setSource
+	 */
+	@Test
+	public void testSetSource() {
+		_requestInfo.setSource("VID");
+		verify(_requestInfo).setSource(_source);
+	}
+	
+	/**
+	 * Test of getRequestorId method
+	 */
+	@Test
+	public void testGetRequestorId() {
+	        String result = _requestInfo.getRequestorId();
+	        assertEquals(_requestorId, result);
 
-    /**
-     * Test of getRequestorId method
-     */
-    @Test
-    public void testGetRequestorId() {
-        String result = _requestInfo.getRequestorId();
-        assertEquals(_requestorId, result);
+	}
 
-    }
+	/**
+	 * Test setRequestInfo
+	 */
+	@Test
+	public void testSetRequestorId() {
+		_requestInfo.setRequestorId(_requestorId);
+		verify(_requestInfo).setRequestorId(_requestorId);
+	}
+	
 
-    /**
-     * Test setRequestInfo
-     */
-    @Test
-    public void testSetRequestorId() {
-        _requestInfo.setRequestorId(_requestorId);
-        verify(_requestInfo).setRequestorId(_requestorId);
-    }
+	/**
+	 * Test of getResponseValue method
+	 */
+	@Test
+	public void testGetResponseValue() {
+		ValidResponses result = _requestInfo.getResponseValue();
+	        assertEquals(_responseValue, result);
 
+	}
 
-    /**
-     * Test of getResponseValue method
-     */
-    @Test
-    public void testGetResponseValue() {
-        ValidResponses result = _requestInfo.getResponseValue();
-        assertEquals(_responseValue, result);
-
-    }
-
-    /**
-     * Test setResponseValues method
-     */
-    @Test
-    public void testSetResponseValue() {
-        _requestInfo.setResponseValue(ValidResponses.abort);
-        verify(_requestInfo).setResponseValue(_responseValue);
-    }
+	/**
+	 * Test setResponseValues method
+	 */
+	@Test
+	public void testSetResponseValue() {
+		_requestInfo.setResponseValue(ValidResponses.abort);
+		verify(_requestInfo).setResponseValue(_responseValue);
+	}
 }

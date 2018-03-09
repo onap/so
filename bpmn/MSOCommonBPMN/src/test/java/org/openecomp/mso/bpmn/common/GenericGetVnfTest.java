@@ -19,7 +19,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  * ============LICENSE_END========================================================= 
- */
+ */ 
 
 package org.openecomp.mso.bpmn.common;
 
@@ -43,148 +43,149 @@ import org.openecomp.mso.bpmn.common.workflow.service.WorkflowResponse;
 
 /**
  * Please describe the GenericGetVnfTest.java class
+ *
  */
 public class GenericGetVnfTest extends WorkflowTest {
 
-    @Test
-    @Deployment(resources = {"subprocess/GenericGetVnf.bpmn"})
-    public void testGenericGetVnf_success_genericVnf() throws Exception {
-        MockGetGenericVnfByIdWithDepth("testVnfId123", 1, "GenericFlows/getGenericVnfByNameResponse.xml");
+	@Test
+	@Deployment(resources = {"subprocess/GenericGetVnf.bpmn"})
+	public void testGenericGetVnf_success_genericVnf() throws Exception{
+		MockGetGenericVnfByIdWithDepth("testVnfId123", 1, "GenericFlows/getGenericVnfByNameResponse.xml");
 
-        Map<String, String> variables = new HashMap<>();
-        setVariables(variables, "testVnfId123", "testVnfName123", "generic-vnf");
+		Map<String, String> variables = new HashMap<>();
+		setVariables(variables, "testVnfId123", "testVnfName123", "generic-vnf");
 
-        WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericGetVnf", variables);
-        waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericGetVnf", variables);
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
 
-        String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_SuccessIndicator");
-        String found = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_FoundIndicator");
-        String vnf = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_vnf");
-        String byName = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_getVnfByName");
-        String response = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "WorkflowResponse");
-        String workflowException = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "WorkflowException");
+		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_SuccessIndicator");
+		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_FoundIndicator");
+		String vnf = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_vnf");
+		String byName = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_getVnfByName");
+		String response = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "WorkflowResponse");
+		String workflowException = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "WorkflowException");
 
-        assertEquals("true", successIndicator);
-        assertEquals("true", found);
-        assertEquals("false", byName);
-        assertNotNull(response);
-        assertNotNull(vnf);
-        assertEquals(null, workflowException);
+		assertEquals("true", successIndicator);
+		assertEquals("true", found);
+		assertEquals("false", byName);
+		assertNotNull(response);
+		assertNotNull(vnf);
+		assertEquals(null, workflowException);
 
-    }
+	}
 
-    @Test
-    @Deployment(resources = {"subprocess/GenericGetVnf.bpmn"})
-    public void testGenericGetVnf_success_vce() throws Exception {
-        MockGetVceById("testVnfId123[?]depth=1", "GenericFlows/getVceResponse.xml");
+	@Test
+	@Deployment(resources = {"subprocess/GenericGetVnf.bpmn"})
+	public void testGenericGetVnf_success_vce() throws Exception{
+		MockGetVceById("testVnfId123[?]depth=1", "GenericFlows/getVceResponse.xml");
 
-        Map<String, String> variables = new HashMap<>();
-        setVariables(variables, "testVnfId123", "testVnfName123", "vce");
+		Map<String, String> variables = new HashMap<>();
+		setVariables(variables, "testVnfId123", "testVnfName123", "vce");
 
-        WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericGetVnf", variables);
-        waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericGetVnf", variables);
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
 
-        String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_SuccessIndicator");
-        String found = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_FoundIndicator");
-        String vnf = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_vnf");
-        String byName = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_getVnfByName");
-        String response = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "WorkflowResponse");
-        String workflowException = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "WorkflowException");
+		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_SuccessIndicator");
+		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_FoundIndicator");
+		String vnf = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_vnf");
+		String byName = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_getVnfByName");
+		String response = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "WorkflowResponse");
+		String workflowException = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "WorkflowException");
 
-        assertEquals("true", successIndicator);
-        assertEquals("true", found);
-        assertEquals("false", byName);
-        assertNotNull(response);
-        assertNotNull(vnf);
-        assertEquals(null, workflowException);
+		assertEquals("true", successIndicator);
+		assertEquals("true", found);
+		assertEquals("false", byName);
+		assertNotNull(response);
+		assertNotNull(vnf);
+		assertEquals(null, workflowException);
 
-    }
+	}
 
-    @Test
-    @Deployment(resources = {"subprocess/GenericGetVnf.bpmn"})
-    public void testGenericGetVnf_success_genericVnfByName() throws Exception {
-        MockGetGenericVnfByNameWithDepth("testVnfName123", 1, "GenericFlows/getGenericVnfResponse.xml");
+	@Test
+	@Deployment(resources = {"subprocess/GenericGetVnf.bpmn"})
+	public void testGenericGetVnf_success_genericVnfByName() throws Exception{
+		MockGetGenericVnfByNameWithDepth("testVnfName123", 1, "GenericFlows/getGenericVnfResponse.xml");
 
-        Map<String, String> variables = new HashMap<>();
-        setVariables(variables, "", "testVnfName123", "generic-vnf");
+		Map<String, String> variables = new HashMap<>();
+		setVariables(variables, "", "testVnfName123", "generic-vnf");
 
-        WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericGetVnf", variables);
-        waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericGetVnf", variables);
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
 
-        String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_SuccessIndicator");
-        String found = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_FoundIndicator");
-        String vnf = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_vnf");
-        String byName = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_getVnfByName");
-        String response = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "WorkflowResponse");
-        String workflowException = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "WorkflowException");
+		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_SuccessIndicator");
+		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_FoundIndicator");
+		String vnf = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_vnf");
+		String byName = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_getVnfByName");
+		String response = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "WorkflowResponse");
+		String workflowException = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "WorkflowException");
 
-        assertEquals("true", successIndicator);
-        assertEquals("true", found);
-        assertEquals("true", byName);
-        assertNotNull(response);
-        assertNotNull(vnf);
-        assertEquals(null, workflowException);
+		assertEquals("true", successIndicator);
+		assertEquals("true", found);
+		assertEquals("true", byName);
+		assertNotNull(response);
+		assertNotNull(vnf);
+		assertEquals(null, workflowException);
 
-    }
+	}
 
-    @Test
-    @Deployment(resources = {"subprocess/GenericGetVnf.bpmn"})
-    public void testGenericGetVnf_success_vceByName() throws Exception {
-        MockGetGenericVceByNameWithDepth("testVnfName123", 1, "GenericFlows/getVceByNameResponse.xml");
+	@Test
+	@Deployment(resources = {"subprocess/GenericGetVnf.bpmn"})
+	public void testGenericGetVnf_success_vceByName() throws Exception{
+		MockGetGenericVceByNameWithDepth("testVnfName123", 1, "GenericFlows/getVceByNameResponse.xml");
 
-        Map<String, String> variables = new HashMap<>();
-        setVariables(variables, null, "testVnfName123", "vce");
+		Map<String, String> variables = new HashMap<>();
+		setVariables(variables, null, "testVnfName123", "vce");
 
-        WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericGetVnf", variables);
-        waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericGetVnf", variables);
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
 
-        String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_SuccessIndicator");
-        String found = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_FoundIndicator");
-        String vnf = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_vnf");
-        String byName = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_getVnfByName");
-        String response = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "WorkflowResponse");
-        String workflowException = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "WorkflowException");
+		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_SuccessIndicator");
+		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_FoundIndicator");
+		String vnf = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_vnf");
+		String byName = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_getVnfByName");
+		String response = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "WorkflowResponse");
+		String workflowException = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "WorkflowException");
 
-        assertEquals("true", successIndicator);
-        assertEquals("true", found);
-        assertEquals("true", byName);
-        assertNotNull(response);
-        assertNotNull(vnf);
-        assertEquals(null, workflowException);
+		assertEquals("true", successIndicator);
+		assertEquals("true", found);
+		assertEquals("true", byName);
+		assertNotNull(response);
+		assertNotNull(vnf);
+		assertEquals(null, workflowException);
 
-    }
+	}
 
-    @Test
-    @Ignore // BROKEN TEST (previously ignored)
-    @Deployment(resources = {"subprocess/GenericGetVnf.bpmn"})
-    public void testGenericGetVnf_error_genericVnf500() throws Exception {
+	@Test
+	@Ignore // BROKEN TEST (previously ignored)
+	@Deployment(resources = {"subprocess/GenericGetVnf.bpmn"})
+	public void testGenericGetVnf_error_genericVnf500() throws Exception{
 
-        MockGetGenericVnfById_500("testVnfId123");
+		MockGetGenericVnfById_500("testVnfId123");
 
-        Map<String, String> variables = new HashMap<>();
-        setVariables(variables, "testVnfId123", "testVnfName123", "generic-vnf");
+		Map<String, String> variables = new HashMap<>();
+		setVariables(variables, "testVnfId123", "testVnfName123", "generic-vnf");
 
-        WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericGetVnf", variables);
-        waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericGetVnf", variables);
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
 
-        String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_SuccessIndicator");
-        String found = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_FoundIndicator");
-        String workflowException = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "WorkflowException");
-        String byName = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_getVnfByName");
+		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_SuccessIndicator");
+		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_FoundIndicator");
+		String workflowException = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "WorkflowException");
+		String byName = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_getVnfByName");
 
-        String expectedWorkflowException = "WorkflowException[processKey=GenericGetVnf,errorCode=500,errorMessage=Incoming VnfId and VnfName are null. VnfId or VnfName is required!]";
+		String expectedWorkflowException = "WorkflowException[processKey=GenericGetVnf,errorCode=500,errorMessage=Incoming VnfId and VnfName are null. VnfId or VnfName is required!]";
 
-        assertEquals("false", successIndicator);
-        assertEquals("false", found);
-        assertEquals("false", byName);
+		assertEquals("false", successIndicator);
+		assertEquals("false", found);
+		assertEquals("false", byName);
 
-        assertEquals(expectedWorkflowException, workflowException);
-    }
+		assertEquals(expectedWorkflowException, workflowException);
+	}
 
-    private void setVariables(Map<String, String> variables, String vnfId, String vnfName, String type) {
-        variables.put("isDebugLogEnabled", "true");
-        variables.put("GENGV_vnfId", vnfId);
-        variables.put("GENGV_vnfName", vnfName);
-        variables.put("GENGV_type", type);
-    }
+	private void setVariables(Map<String, String> variables, String vnfId, String vnfName, String type) {
+		variables.put("isDebugLogEnabled", "true");
+		variables.put("GENGV_vnfId", vnfId);
+		variables.put("GENGV_vnfName",vnfName);
+		variables.put("GENGV_type", type);
+	}
 }

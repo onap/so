@@ -23,7 +23,6 @@ package org.openecomp.mso.apihandlerinfra.taskbeans;
 import org.junit.After;
 
 import static org.junit.Assert.assertEquals;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.mso.apihandlerinfra.tasksbeans.TaskRequestReference;
@@ -34,41 +33,40 @@ import static org.mockito.Mockito.when;
 
 public class TaskRequestReferenceTest {
 
-    TaskRequestReference _taskRequestReference;
+	TaskRequestReference _taskRequestReference;
 
     protected String _taskId;
+	public TaskRequestReferenceTest() {
+	}
+	
+	@Before
+	public void setUp() {
+		_taskRequestReference = mock(TaskRequestReference.class);
+		_taskId = "taskid";
+	
+		when(_taskRequestReference.getTaskId()).thenReturn(_taskId);
+	}
 
-    public TaskRequestReferenceTest() {
-    }
+	@After
+	public void tearDown() {
+		_taskRequestReference = null;
+	}
 
-    @Before
-    public void setUp() {
-        _taskRequestReference = mock(TaskRequestReference.class);
-        _taskId = "taskid";
-
-        when(_taskRequestReference.getTaskId()).thenReturn(_taskId);
-    }
-
-    @After
-    public void tearDown() {
-        _taskRequestReference = null;
-    }
-
-    /**
-     * Test getTaskRequestReference
-     */
-    @Test
-    public void taskGetRequestReference() {
-        String result = _taskRequestReference.getTaskId();
+	/**
+	 * Test getTaskRequestReference 
+	 */
+	@Test
+	public void taskGetRequestReference() {
+		String result = _taskRequestReference.getTaskId();
         assertEquals(_taskId, result);
-    }
+	}
 
-    /**
-     * Test setTaskRequestReference
-     */
-    @Test
-    public void testSetRequestInfo() {
-        _taskRequestReference.setTaskId(_taskId);
-        verify(_taskRequestReference).setTaskId(_taskId);
-    }
+	/**
+	 * Test setTaskRequestReference
+	 */
+	@Test
+	public void testSetRequestInfo() {
+		_taskRequestReference.setTaskId(_taskId);
+		verify(_taskRequestReference).setTaskId(_taskId);
+	}
 }

@@ -44,145 +44,131 @@ import org.openecomp.mso.properties.MsoPropertiesFactory;
 
 /**
  * This class implements test methods of the MsoPropertiesFactory features.
+ *
+ *
  */
 public class MsoPropertiesFactoryConcurrencyTest {
 
-    public static MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory();
+	public static MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory();
 
-    public static final String MSO_PROP_ID = "TEST_PROP";
-    public static final String PATH_MSO_PROP1 = MsoJavaProperties.class.getClassLoader().
-            getResource("mso.properties")
-            .toString().substring(5);
-    public static final String PATH_MSO_PROP2 = MsoJavaProperties.class.getClassLoader().
-            getResource("mso2.properties")
-            .toString().substring(5);
+	public static final String MSO_PROP_ID = "TEST_PROP";
+	public static final String PATH_MSO_PROP1 = MsoJavaProperties.class.getClassLoader().getResource("mso.properties")
+			.toString().substring(5);
+	public static final String PATH_MSO_PROP2 = MsoJavaProperties.class.getClassLoader().getResource("mso2.properties")
+			.toString().substring(5);
 
-    /**
-     * This method is called before any test occurs. It creates a fake tree from
-     * scratch
-     *
-     * @throws MsoPropertiesException
-     */
-    @BeforeClass
-    public static final void prepare() throws MsoPropertiesException {
-        // it's possible to have it already initialized, as tests are executed in the same JVM
-        msoPropertiesFactory.removeAllMsoProperties();
-        msoPropertiesFactory.initializeMsoProperties(MSO_PROP_ID, PATH_MSO_PROP1);
-    }
+	/**
+	 * This method is called before any test occurs. It creates a fake tree from
+	 * scratch
+	 *
+	 * @throws MsoPropertiesException
+	 */
+	@BeforeClass
+	public static final void prepare() throws MsoPropertiesException {
+		// it's possible to have it already initialized, as tests are executed in the same JVM
+	    msoPropertiesFactory.removeAllMsoProperties ();
+		msoPropertiesFactory.initializeMsoProperties(MSO_PROP_ID, PATH_MSO_PROP1);
+	}
 
-    private Callable<Integer> taskReload = new Callable<Integer>() {
-        @Override
-        public Integer call() {
-            try {
-                if (!msoPropertiesFactory.reloadMsoProperties()) {
-                    return 1;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                return 1;
-            }
-            return 0;
-        }
-    };
+	private Callable<Integer> taskReload = new Callable<Integer>() {
+		@Override
+		public Integer call() {
+			try {
+				if (!msoPropertiesFactory.reloadMsoProperties()) {
+					return 1;
+				}
+			} catch (Exception e) {
+			    e.printStackTrace ();
+				return 1;
+			}
+			return 0;
+		}
+	};
 
-    private Callable<Integer> taskRead = new Callable<Integer>() {
-        @Override
-        public Integer call() {
-            try {
-                MsoJavaProperties msoProperties = msoPropertiesFactory.getMsoJavaProperties(MSO_PROP_ID);
-                String property1 = msoProperties.getProperty("ecomp.mso.cloud.1.cloudId",
-                        "defaultValue");
-                String property2 = msoProperties.getProperty("ecomp.mso.cloud.1.keystoneUrl",
-                        "defaultValue");
-                String property3 = msoProperties.getProperty("ecomp.mso.cloud.1.msoId",
-                        "defaultValue");
-                String property4 = msoProperties.getProperty("ecomp.mso.cloud.1.publicNetId",
-                        "defaultValue");
-                String property5 = msoProperties.getProperty("does.not.exist",
-                        "defaultValue");
-                String property6 = msoProperties.getProperty("ecomp.mso.cloud.1.test",
-                        "defaultValue");
-                String property7 = msoProperties.getProperty("ecomp.mso.cloud.1.boolean",
-                        "defaultValue");
+	private Callable<Integer> taskRead = new Callable<Integer>() {
+		@Override
+		public Integer call() {
+			try {
+				MsoJavaProperties msoProperties = msoPropertiesFactory.getMsoJavaProperties(MSO_PROP_ID);
+				String property1 = msoProperties.getProperty("ecomp.mso.cloud.1.cloudId", "defaultValue");
+				String property2 = msoProperties.getProperty("ecomp.mso.cloud.1.keystoneUrl", "defaultValue");
+				String property3 = msoProperties.getProperty("ecomp.mso.cloud.1.msoId", "defaultValue");
+				String property4 = msoProperties.getProperty("ecomp.mso.cloud.1.publicNetId", "defaultValue");
+				String property5 = msoProperties.getProperty("does.not.exist", "defaultValue");
+				String property6 = msoProperties.getProperty("ecomp.mso.cloud.1.test", "defaultValue");
+				String property7 = msoProperties.getProperty("ecomp.mso.cloud.1.boolean", "defaultValue");
 
-                assertEquals(property1, "MT");
-                assertEquals(property2, "http://localhost:5000/v2.0");
-                assertEquals(property3, "John");
-                assertEquals(property4, "FD205490A48D48475607C36B9AD902BF");
-                assertEquals(property5, "defaultValue");
-                assertEquals(property6, "1234");
-                assertEquals(property7, "true");
+				assertEquals(property1, "MT");
+				assertEquals(property2, "http://localhost:5000/v2.0");
+				assertEquals(property3, "John");
+				assertEquals(property4, "FD205490A48D48475607C36B9AD902BF");
+				assertEquals(property5, "defaultValue");
+				assertEquals(property6, "1234");
+				assertEquals(property7, "true");
 
-            } catch (MsoPropertiesException e) {
-                e.printStackTrace();
-                return 1;
-            }
-            return 0;
-        }
-    };
+			} catch (MsoPropertiesException e) {
+                e.printStackTrace ();
+				return 1;
+			}
+			return 0;
+		}
+	};
 
-    private Callable<Integer> taskReadAll = new Callable<Integer>() {
-        @Override
-        public Integer call() {
-            try {
-                List<AbstractMsoProperties> msoPropertiesList = msoPropertiesFactory.getAllMsoProperties();
-                String property1 = ((MsoJavaProperties) msoPropertiesList.get(0)).
-                        getProperty("ecomp.mso.cloud.1.cloudId", "defaultValue");
-                String property2 = ((MsoJavaProperties) msoPropertiesList.get(0)).
-                        getProperty("ecomp.mso.cloud.1.keystoneUrl", "defaultValue");
-                String property3 = ((MsoJavaProperties) msoPropertiesList.get(0)).
-                        getProperty("ecomp.mso.cloud.1.msoId", "defaultValue");
-                String property4 = ((MsoJavaProperties) msoPropertiesList.get(0)).
-                        getProperty("ecomp.mso.cloud.1.publicNetId", "defaultValue");
-                String property5 = ((MsoJavaProperties) msoPropertiesList.get(0)).
-                        getProperty("does.not.exist", "defaultValue");
-                String property6 = ((MsoJavaProperties) msoPropertiesList.get(0)).
-                        getProperty("ecomp.mso.cloud.1.test", "defaultValue");
-                String property7 = ((MsoJavaProperties) msoPropertiesList.get(0)).
-                        getProperty("ecomp.mso.cloud.1.boolean", "defaultValue");
+	private Callable<Integer> taskReadAll = new Callable<Integer>() {
+		@Override
+		public Integer call() {
+			try {
+				List<AbstractMsoProperties> msoPropertiesList =  msoPropertiesFactory.getAllMsoProperties();
+				String property1 = ((MsoJavaProperties)msoPropertiesList.get(0)).getProperty("ecomp.mso.cloud.1.cloudId", "defaultValue");
+				String property2 = ((MsoJavaProperties)msoPropertiesList.get(0)).getProperty("ecomp.mso.cloud.1.keystoneUrl", "defaultValue");
+				String property3 = ((MsoJavaProperties)msoPropertiesList.get(0)).getProperty("ecomp.mso.cloud.1.msoId", "defaultValue");
+				String property4 = ((MsoJavaProperties)msoPropertiesList.get(0)).getProperty("ecomp.mso.cloud.1.publicNetId", "defaultValue");
+				String property5 = ((MsoJavaProperties)msoPropertiesList.get(0)).getProperty("does.not.exist", "defaultValue");
+				String property6 = ((MsoJavaProperties)msoPropertiesList.get(0)).getProperty("ecomp.mso.cloud.1.test", "defaultValue");
+				String property7 = ((MsoJavaProperties)msoPropertiesList.get(0)).getProperty("ecomp.mso.cloud.1.boolean", "defaultValue");
 
-                assertEquals(property1, "MT");
-                assertEquals(property2, "http://localhost:5000/v2.0");
-                assertEquals(property3, "John");
-                assertEquals(property4, "FD205490A48D48475607C36B9AD902BF");
-                assertEquals(property5, "defaultValue");
-                assertEquals(property6, "1234");
-                assertEquals(property7, "true");
-            } catch (Exception e) {
-                e.printStackTrace();
-                return 1;
-            }
-            return 0;
-        }
-    };
+				assertEquals(property1, "MT");
+				assertEquals(property2, "http://localhost:5000/v2.0");
+				assertEquals(property3, "John");
+				assertEquals(property4, "FD205490A48D48475607C36B9AD902BF");
+				assertEquals(property5, "defaultValue");
+				assertEquals(property6, "1234");
+				assertEquals(property7, "true");
+			} catch (Exception e) {
+                e.printStackTrace ();
+				return 1;
+			}
+			return 0;
+		}
+	};
 
-    @Test
-    public final void testGetMsoProperties()
-            throws MsoPropertiesException, InterruptedException, ExecutionException, FileNotFoundException {
+	@Test
+	public final void testGetMsoProperties()
+			throws MsoPropertiesException, InterruptedException, ExecutionException, FileNotFoundException {
 
-        List<Future<Integer>> list = new ArrayList<>();
-        ExecutorService executor = Executors.newFixedThreadPool(20);
+		List<Future<Integer>> list = new ArrayList<>();
+		ExecutorService executor = Executors.newFixedThreadPool(20);
 
-        for (int i = 0; i <= 100000; i++) {
+		for (int i = 0; i <= 100000; i++) {
 
-            Future<Integer> futureResult = executor.submit(taskRead);
-            list.add(futureResult);
+			Future<Integer> futureResult = executor.submit(taskRead);
+			list.add(futureResult);
 
-            futureResult = executor.submit(taskReload);
-            list.add(futureResult);
+			futureResult = executor.submit(taskReload);
+			list.add(futureResult);
 
-            futureResult = executor.submit(taskReadAll);
-            list.add(futureResult);
-        }
-        executor.shutdown();
-        while (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
+			futureResult = executor.submit(taskReadAll);
+			list.add(futureResult);
+		}
+		executor.shutdown();
+		while (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
             ;
         }
 
-        for (Future<Integer> result : list) {
-            assertTrue(result.get().equals(0));
-        }
+		for (Future<Integer> result : list) {
+			assertTrue(result.get().equals(0));
+		}
 
-    }
+	}
 
 }

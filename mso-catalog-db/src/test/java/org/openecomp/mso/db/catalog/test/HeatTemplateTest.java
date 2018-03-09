@@ -41,48 +41,48 @@ import org.openecomp.mso.db.catalog.beans.HeatTemplateParam;
  */
 
 public class HeatTemplateTest {
-
+	
     @Test
-    public final void heatTemplateTest() {
-        HeatTemplate heatTemplate = new HeatTemplate();
-        heatTemplate.setTemplateBody("testBody");
+    public final void heatTemplateTest () {
+        HeatTemplate heatTemplate = new HeatTemplate ();
+        heatTemplate.setTemplateBody ("testBody");
         heatTemplate.setArtifactUuid(UUID.randomUUID().toString());
-        assertTrue(heatTemplate.getHeatTemplate().equals("testBody"));
-        assertTrue(heatTemplate.toString().contains("8 chars"));
-        heatTemplate.setTemplateBody(null);
-        assertTrue(heatTemplate.toString().contains("Not defined"));
-        HashSet<HeatTemplateParam> set = new HashSet<>();
-        HeatTemplateParam param = new HeatTemplateParam();
-        param.setParamName("param name");
-        param.setParamType("string");
-        param.setRequired(false);
+        assertTrue (heatTemplate.getHeatTemplate ().equals ("testBody"));
+        assertTrue (heatTemplate.toString ().contains ("8 chars"));
+        heatTemplate.setTemplateBody (null);
+        assertTrue (heatTemplate.toString ().contains ("Not defined"));
+        HashSet<HeatTemplateParam> set = new HashSet<> ();
+        HeatTemplateParam param = new HeatTemplateParam ();
+        param.setParamName ("param name");
+        param.setParamType ("string");
+        param.setRequired (false);
         param.setHeatTemplateArtifactUuid(UUID.randomUUID().toString());
-        set.add(param);
-        HeatTemplateParam param2 = new HeatTemplateParam();
-        param2.setParamName("param 2");
-        param2.setParamType("string");
-        param2.setRequired(true);
+        set.add (param);
+        HeatTemplateParam param2 = new HeatTemplateParam ();
+        param2.setParamName ("param 2");
+        param2.setParamType ("string");
+        param2.setRequired (true);
         param2.setHeatTemplateArtifactUuid(UUID.randomUUID().toString());
-        set.add(param2);
-        heatTemplate.setParameters(set);
-        String heatStr = heatTemplate.toString();
-        assertTrue(heatStr.contains("param name"));
-        assertTrue(heatStr.contains("param 2(reqd)"));
+        set.add (param2);
+        heatTemplate.setParameters (set);
+        String heatStr = heatTemplate.toString (); 
+        assertTrue (heatStr.contains ("param name"));
+        assertTrue (heatStr.contains ("param 2(reqd)"));
 
         File tempFile;
         try {
-            tempFile = File.createTempFile("heatTemplate", "test");
-            tempFile.deleteOnExit();
-            try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempFile),
-                    "utf-8"))) {
-                writer.write("something\n");
-                writer.write("something2\n");
+            tempFile = File.createTempFile ("heatTemplate", "test");
+            tempFile.deleteOnExit ();
+            try (Writer writer = new BufferedWriter (new OutputStreamWriter (new FileOutputStream (tempFile),
+                                                                             "utf-8"))) {
+                writer.write ("something\n");
+                writer.write ("something2\n");
             }
-            heatTemplate.setTemplateBody(tempFile.getAbsolutePath());
-            assertTrue(heatTemplate.getHeatTemplate().contains("test"));
+            heatTemplate.setTemplateBody(tempFile.getAbsolutePath ());
+            assertTrue (heatTemplate.getHeatTemplate ().contains ("test"));
         } catch (IOException e) {
-            e.printStackTrace();
-            fail("Exception caught");
+            e.printStackTrace ();
+            fail ("Exception caught");
         }
     }
 

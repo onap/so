@@ -19,7 +19,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  * ============LICENSE_END========================================================= 
- */
+ */ 
 
 package org.openecomp.mso.bpmn.infrastructure;
 
@@ -49,151 +49,152 @@ import org.openecomp.mso.bpmn.mock.FileUtil;
 
 /**
  * Please describe the DeleteVnfInfra.java class
+ *
  */
 public class DeleteVnfInfraTest extends WorkflowTest {
 
-    private String deleteVnfInfraRequest;
-    private String deleteVnfInfraRequestCascadeDelete;
+	private String deleteVnfInfraRequest;
+	private String deleteVnfInfraRequestCascadeDelete;
 
-    public DeleteVnfInfraTest() throws IOException {
-        deleteVnfInfraRequest = FileUtil.readResourceFile("__files/InfrastructureFlows/CreateVnfInfraRequest.json");
-        deleteVnfInfraRequestCascadeDelete = FileUtil.readResourceFile("__files/InfrastructureFlows/DeleteVnfInfraRequestCascadeDelete.json");
-    }
+	public DeleteVnfInfraTest () throws IOException {
+		deleteVnfInfraRequest = FileUtil.readResourceFile("__files/InfrastructureFlows/CreateVnfInfraRequest.json");
+		deleteVnfInfraRequestCascadeDelete = FileUtil.readResourceFile("__files/InfrastructureFlows/DeleteVnfInfraRequestCascadeDelete.json");
+	}
 
-    @Test
-    @Deployment(resources = {"subprocess/GenericGetVnf.bpmn",
-            "subprocess/GenericDeleteVnf.bpmn",
-            "subprocess/DoDeleteVnf.bpmn",
-            "process/DeleteVnfInfra.bpmn",
-            "subprocess/FalloutHandler.bpmn",
-            "subprocess/CompleteMsoProcess.bpmn"})
-    public void testDeleteVnfInfra_success() throws Exception {
+	@Test
+	@Deployment(resources = {"subprocess/GenericGetVnf.bpmn",  
+							"subprocess/GenericDeleteVnf.bpmn", 
+							"subprocess/DoDeleteVnf.bpmn", 
+							"process/DeleteVnfInfra.bpmn", 
+							"subprocess/FalloutHandler.bpmn", 
+							"subprocess/CompleteMsoProcess.bpmn"})
+	public void testDeleteVnfInfra_success() throws Exception{
+		
+		stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/testVnfId123[?]depth=1"))
+				.willReturn(aResponse()
+						.withStatus(200)
+						.withHeader("Content-Type", "text/xml")
+						.withBodyFile("GenericFlows/getGenericVnfByNameResponse.xml")));
+		
+		MockDeleteGenericVnf();
+		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
 
-        stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/testVnfId123[?]depth=1"))
-                .willReturn(aResponse()
-                        .withStatus(200)
-                        .withHeader("Content-Type", "text/xml")
-                        .withBodyFile("GenericFlows/getGenericVnfByNameResponse.xml")));
+		Map<String, String> variables = new HashMap<>();
+		setVariables(variables, deleteVnfInfraRequest, "testRequestId123", "MIS%2F1604%2F0026%2FSW_INTERNET");
+		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "DeleteVnfInfra", variables);
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		Object cascadeDelete = BPMNUtil.getRawVariable(processEngineRule, "DeleteVnfInfra", "DELVI_cascadeDelete");
+		String found = BPMNUtil.getVariable(processEngineRule, "DoDeleteVnf", "GENGV_FoundIndicator") ;
+		String inUse = BPMNUtil.getVariable(processEngineRule, "DeleteVnfInfra", "DELVI_vnfInUse");
+		String response = BPMNUtil.getVariable(processEngineRule, "DeleteVnfInfra", "WorkflowResponse");
+		String workflowException = BPMNUtil.getVariable(processEngineRule, "DeleteVnfInfra", "WorkflowException");
 
-        MockDeleteGenericVnf();
-        mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		assertEquals(false, cascadeDelete);
+		assertEquals("true", found);
+		assertEquals("false", inUse);
+		assertEquals("Success", response);
+		assertEquals(null, workflowException);
+	}
+	
+	@Test
+	@Ignore // DoDeleteVnfAndModules not complete yet
+	@Deployment(resources = {"subprocess/GenericGetVnf.bpmn", 
+							"subprocess/GenericDeleteVnf.bpmn", 
+							"subprocess/DoDeleteVnfAndModules.bpmn", 
+							"process/DeleteVnfInfra.bpmn", 
+							"subprocess/FalloutHandler.bpmn", 
+							"subprocess/CompleteMsoProcess.bpmn"})
+	public void testDeleteVnfInfra_cascadeDelete() throws Exception{
+		MockGetGenericVnfById();
+		MockDeleteGenericVnf();
+		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
 
-        Map<String, String> variables = new HashMap<>();
-        setVariables(variables, deleteVnfInfraRequest, "testRequestId123", "MIS%2F1604%2F0026%2FSW_INTERNET");
-        WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "DeleteVnfInfra", variables);
-        waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
-        Object cascadeDelete = BPMNUtil.getRawVariable(processEngineRule, "DeleteVnfInfra", "DELVI_cascadeDelete");
-        String found = BPMNUtil.getVariable(processEngineRule, "DoDeleteVnf", "GENGV_FoundIndicator");
-        String inUse = BPMNUtil.getVariable(processEngineRule, "DeleteVnfInfra", "DELVI_vnfInUse");
-        String response = BPMNUtil.getVariable(processEngineRule, "DeleteVnfInfra", "WorkflowResponse");
-        String workflowException = BPMNUtil.getVariable(processEngineRule, "DeleteVnfInfra", "WorkflowException");
+		Map<String, String> variables = new HashMap<>();
+		setVariables(variables, deleteVnfInfraRequestCascadeDelete, "testRequestId123", "MIS%2F1604%2F0026%2FSW_INTERNET");
+		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "DeleteVnfInfra", variables);
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
 
-        assertEquals(false, cascadeDelete);
-        assertEquals("true", found);
-        assertEquals("false", inUse);
-        assertEquals("Success", response);
-        assertEquals(null, workflowException);
-    }
+		String found = BPMNUtil.getVariable(processEngineRule, "DoDeleteVnf", "GENGV_FoundIndicator") ;
+		String inUse = BPMNUtil.getVariable(processEngineRule, "DoDeleteVnf", "DoDVNF_vnfInUse");
+		String response = BPMNUtil.getVariable(processEngineRule, "DeleteVnfInfra", "WorkflowResponse");
+		String workflowException = BPMNUtil.getVariable(processEngineRule, "DeleteVnfInfra", "WorkflowException");
+		Object cascadeDelete = BPMNUtil.getRawVariable(processEngineRule, "DeleteVnfInfra", "DELVI_cascadeDelete");
 
-    @Test
-    @Ignore // DoDeleteVnfAndModules not complete yet
-    @Deployment(resources = {"subprocess/GenericGetVnf.bpmn",
-            "subprocess/GenericDeleteVnf.bpmn",
-            "subprocess/DoDeleteVnfAndModules.bpmn",
-            "process/DeleteVnfInfra.bpmn",
-            "subprocess/FalloutHandler.bpmn",
-            "subprocess/CompleteMsoProcess.bpmn"})
-    public void testDeleteVnfInfra_cascadeDelete() throws Exception {
-        MockGetGenericVnfById();
-        MockDeleteGenericVnf();
-        mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		assertEquals(true, cascadeDelete);
+		assertEquals("true", found);
+		assertEquals("false", inUse);
+		assertEquals("Success", response);
+		assertEquals(null, workflowException);
+	}
 
-        Map<String, String> variables = new HashMap<>();
-        setVariables(variables, deleteVnfInfraRequestCascadeDelete, "testRequestId123", "MIS%2F1604%2F0026%2FSW_INTERNET");
-        WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "DeleteVnfInfra", variables);
-        waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+	@Test
+	@Deployment(resources = {"subprocess/GenericGetVnf.bpmn", 
+							"subprocess/GenericDeleteVnf.bpmn", 
+							"subprocess/DoDeleteVnf.bpmn", 
+							"process/DeleteVnfInfra.bpmn", 
+							"subprocess/FalloutHandler.bpmn", 
+							"subprocess/CompleteMsoProcess.bpmn"})
+	public void testDeleteVnfInfra_success_vnfNotFound() throws Exception{
 
-        String found = BPMNUtil.getVariable(processEngineRule, "DoDeleteVnf", "GENGV_FoundIndicator");
-        String inUse = BPMNUtil.getVariable(processEngineRule, "DoDeleteVnf", "DoDVNF_vnfInUse");
-        String response = BPMNUtil.getVariable(processEngineRule, "DeleteVnfInfra", "WorkflowResponse");
-        String workflowException = BPMNUtil.getVariable(processEngineRule, "DeleteVnfInfra", "WorkflowException");
-        Object cascadeDelete = BPMNUtil.getRawVariable(processEngineRule, "DeleteVnfInfra", "DELVI_cascadeDelete");
+		MockDeleteGenericVnf_404();
+		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
 
-        assertEquals(true, cascadeDelete);
-        assertEquals("true", found);
-        assertEquals("false", inUse);
-        assertEquals("Success", response);
-        assertEquals(null, workflowException);
-    }
+		Map<String, String> variables = new HashMap<>();
+		setVariables(variables, deleteVnfInfraRequest, "testRequestId123", "MIS%2F1604%2F0026%2FSW_INTERNET");
 
-    @Test
-    @Deployment(resources = {"subprocess/GenericGetVnf.bpmn",
-            "subprocess/GenericDeleteVnf.bpmn",
-            "subprocess/DoDeleteVnf.bpmn",
-            "process/DeleteVnfInfra.bpmn",
-            "subprocess/FalloutHandler.bpmn",
-            "subprocess/CompleteMsoProcess.bpmn"})
-    public void testDeleteVnfInfra_success_vnfNotFound() throws Exception {
+		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "DeleteVnfInfra", variables);
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
 
-        MockDeleteGenericVnf_404();
-        mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		String found = BPMNUtil.getVariable(processEngineRule, "DoDeleteVnf", "GENGV_FoundIndicator") ;
+		String inUse = BPMNUtil.getVariable(processEngineRule, "DoDeleteVnf", "DoDVNF_vnfInUse");
+		String response = BPMNUtil.getVariable(processEngineRule, "DeleteVnfInfra", "WorkflowResponse");
+		String workflowException = BPMNUtil.getVariable(processEngineRule, "DoDeleteVnf", "WorkflowException");
 
-        Map<String, String> variables = new HashMap<>();
-        setVariables(variables, deleteVnfInfraRequest, "testRequestId123", "MIS%2F1604%2F0026%2FSW_INTERNET");
+		assertEquals("false", found);
+		assertEquals("false", inUse);
+		assertEquals("Success", response);
+		assertEquals(null, workflowException);
+	}
 
-        WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "DeleteVnfInfra", variables);
-        waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+	@Test
+	@Deployment(resources = {"subprocess/GenericGetVnf.bpmn",  
+							"subprocess/GenericDeleteVnf.bpmn", 
+							"subprocess/DoDeleteVnf.bpmn", 
+							"process/DeleteVnfInfra.bpmn", 
+							"subprocess/FalloutHandler.bpmn", 
+							"subprocess/CompleteMsoProcess.bpmn"})
+	public void testDeleteVnfInfra_error_vnfInUse() throws Exception{
 
-        String found = BPMNUtil.getVariable(processEngineRule, "DoDeleteVnf", "GENGV_FoundIndicator");
-        String inUse = BPMNUtil.getVariable(processEngineRule, "DoDeleteVnf", "DoDVNF_vnfInUse");
-        String response = BPMNUtil.getVariable(processEngineRule, "DeleteVnfInfra", "WorkflowResponse");
-        String workflowException = BPMNUtil.getVariable(processEngineRule, "DoDeleteVnf", "WorkflowException");
+		stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/testVnfId123[?]depth=1"))
+				.willReturn(aResponse()
+						.withStatus(200)
+						.withHeader("Content-Type", "text/xml")
+						.withBodyFile("GenericFlows/getGenericVnfResponse_hasRelationships.xml")));
+		MockDeleteGenericVnf();
+		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
 
-        assertEquals("false", found);
-        assertEquals("false", inUse);
-        assertEquals("Success", response);
-        assertEquals(null, workflowException);
-    }
+		Map<String, String> variables = new HashMap<>();
+		setVariables(variables, deleteVnfInfraRequest, "testRequestId123", "MIS%2F1604%2F0026%2FSW_INTERNET");
 
-    @Test
-    @Deployment(resources = {"subprocess/GenericGetVnf.bpmn",
-            "subprocess/GenericDeleteVnf.bpmn",
-            "subprocess/DoDeleteVnf.bpmn",
-            "process/DeleteVnfInfra.bpmn",
-            "subprocess/FalloutHandler.bpmn",
-            "subprocess/CompleteMsoProcess.bpmn"})
-    public void testDeleteVnfInfra_error_vnfInUse() throws Exception {
+		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "DeleteVnfInfra", variables);
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
 
-        stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/testVnfId123[?]depth=1"))
-                .willReturn(aResponse()
-                        .withStatus(200)
-                        .withHeader("Content-Type", "text/xml")
-                        .withBodyFile("GenericFlows/getGenericVnfResponse_hasRelationships.xml")));
-        MockDeleteGenericVnf();
-        mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		String found = BPMNUtil.getVariable(processEngineRule, "DoDeleteVnf", "GENGV_FoundIndicator") ;
+		String inUse = BPMNUtil.getVariable(processEngineRule, "DoDeleteVnf", "DoDVNF_vnfInUse");
+		String workflowException = BPMNUtil.getVariable(processEngineRule, "DeleteVnfInfra", "SavedWorkflowException1");
 
-        Map<String, String> variables = new HashMap<>();
-        setVariables(variables, deleteVnfInfraRequest, "testRequestId123", "MIS%2F1604%2F0026%2FSW_INTERNET");
+		String exWfex = "WorkflowException[processKey=DoDeleteVnf,errorCode=5000,errorMessage=Can't Delete Generic Vnf. Generic Vnf is still in use.]";
 
-        WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "DeleteVnfInfra", variables);
-        waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		assertEquals("true", found);
+		assertEquals("true", inUse);
+		assertEquals(exWfex, workflowException);
+	}
 
-        String found = BPMNUtil.getVariable(processEngineRule, "DoDeleteVnf", "GENGV_FoundIndicator");
-        String inUse = BPMNUtil.getVariable(processEngineRule, "DoDeleteVnf", "DoDVNF_vnfInUse");
-        String workflowException = BPMNUtil.getVariable(processEngineRule, "DeleteVnfInfra", "SavedWorkflowException1");
-
-        String exWfex = "WorkflowException[processKey=DoDeleteVnf,errorCode=5000,errorMessage=Can't Delete Generic Vnf. Generic Vnf is still in use.]";
-
-        assertEquals("true", found);
-        assertEquals("true", inUse);
-        assertEquals(exWfex, workflowException);
-    }
-
-    private void setVariables(Map<String, String> variables, String request, String requestId, String siId) {
-        variables.put("isDebugLogEnabled", "true");
-        variables.put("bpmnRequest", request);
-        variables.put("mso-request-id", requestId);
-        variables.put("serviceInstanceId", siId);
-        variables.put("vnfId", "testVnfId123");
-    }
+	private void setVariables(Map<String, String> variables, String request, String requestId, String siId) {
+		variables.put("isDebugLogEnabled", "true");
+		variables.put("bpmnRequest", request);
+		variables.put("mso-request-id", requestId);
+		variables.put("serviceInstanceId",siId);
+		variables.put("vnfId","testVnfId123");
+	}
 }

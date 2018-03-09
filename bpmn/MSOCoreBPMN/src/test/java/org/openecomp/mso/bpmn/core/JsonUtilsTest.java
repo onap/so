@@ -46,7 +46,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openecomp.mso.bpmn.core.json.JsonUtils;

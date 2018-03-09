@@ -21,7 +21,6 @@
 package org.openecomp.mso.adapters.sdnc.util;
 
 import java.util.UUID;
-
 import org.junit.Test;
 
 
@@ -31,14 +30,14 @@ public class SDNCRequestIdUtilTest {
      * Test method for {@link org.openecomp.mso.adapters.sdnc.SDNCRequestIdUtil#getSDNCOriginalRequestId()}.
      */
     @Test
-    public final void testGetSDNCOriginalRequestId() {
-        String originalRequestId = UUID.randomUUID().toString();
-        String postfixedRequestId = originalRequestId + "-1466203712068";
-        String postfixedRequestId2 = originalRequestId + "-1466203712068-2";
+    public final void testGetSDNCOriginalRequestId () {
+    	String originalRequestId = UUID.randomUUID().toString();
+    	String postfixedRequestId = originalRequestId + "-1466203712068";
+    	String postfixedRequestId2 = originalRequestId + "-1466203712068-2";
 
-        assert (SDNCRequestIdUtil.getSDNCOriginalRequestId(postfixedRequestId).equals(originalRequestId));
-        assert (SDNCRequestIdUtil.getSDNCOriginalRequestId(postfixedRequestId2).equals(postfixedRequestId2));
-
+        assert(SDNCRequestIdUtil.getSDNCOriginalRequestId(postfixedRequestId).equals(originalRequestId));
+        assert(SDNCRequestIdUtil.getSDNCOriginalRequestId(postfixedRequestId2).equals(postfixedRequestId2));
+       
     }
 
 }

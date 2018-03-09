@@ -32,32 +32,32 @@ import org.openecomp.mso.db.catalog.beans.VfModule;
 
 public class VfModuleTest {
 
-    @Test
-    public final void vfModuleDataTest() {
-        VfModule vfModule = new VfModule();
-        vfModule.setCreated(new Timestamp(System.currentTimeMillis()));
-        assertTrue(vfModule.getCreated() != null);
-        vfModule.setDescription("description");
-        assertTrue(vfModule.getDescription().equalsIgnoreCase("description"));
+	@Test
+	public final void vfModuleDataTest() {
+		VfModule vfModule = new VfModule();
+		vfModule.setCreated(new Timestamp(System.currentTimeMillis()));
+		assertTrue(vfModule.getCreated() != null);
+		vfModule.setDescription("description");
+		assertTrue(vfModule.getDescription().equalsIgnoreCase("description"));
 
-        vfModule.setModelInvariantUUID("action");
-        assertTrue(vfModule.getModelInvariantUUID().equalsIgnoreCase("action"));
+		vfModule.setModelInvariantUUID("action");
+		assertTrue(vfModule.getModelInvariantUUID().equalsIgnoreCase("action"));
 
-        vfModule.setModelName("modelName");
-        assertTrue(vfModule.getModelName().equalsIgnoreCase("modelName"));
+		vfModule.setModelName("modelName");
+		assertTrue(vfModule.getModelName().equalsIgnoreCase("modelName"));
 
-        vfModule.setModelUUID("modelUUID");
-        assertTrue(vfModule.getModelUUID().equalsIgnoreCase("modelUUID"));
-        vfModule.setModelVersion("modelVersion");
-        assertTrue(vfModule.getModelVersion().equalsIgnoreCase("modelVersion"));
-        vfModule.setHeatTemplateArtifactUUId("heatTemplateArtifactUUId");
-        assertTrue(vfModule.getHeatTemplateArtifactUUId().equalsIgnoreCase("heatTemplateArtifactUUId"));
-        vfModule.setVnfResourceModelUUId("vnfResourceModelUUId");
-        assertTrue(vfModule.getVnfResourceModelUUId().equalsIgnoreCase("vnfResourceModelUUId"));
-        vfModule.setIsBase(1);
-        assertTrue(vfModule.isBase());
-//      assertTrue(vfModule.toString() == null);
+		vfModule.setModelUUID("modelUUID");
+		assertTrue(vfModule.getModelUUID().equalsIgnoreCase("modelUUID"));
+		vfModule.setModelVersion("modelVersion");
+		assertTrue(vfModule.getModelVersion().equalsIgnoreCase("modelVersion"));
+		vfModule.setHeatTemplateArtifactUUId("heatTemplateArtifactUUId");
+		assertTrue(vfModule.getHeatTemplateArtifactUUId().equalsIgnoreCase("heatTemplateArtifactUUId"));
+		vfModule.setVnfResourceModelUUId("vnfResourceModelUUId");
+		assertTrue(vfModule.getVnfResourceModelUUId().equalsIgnoreCase("vnfResourceModelUUId"));
+		vfModule.setIsBase(1);
+		assertTrue(vfModule.isBase());
+//		assertTrue(vfModule.toString() == null);
 
-    }
+	}
 
 }

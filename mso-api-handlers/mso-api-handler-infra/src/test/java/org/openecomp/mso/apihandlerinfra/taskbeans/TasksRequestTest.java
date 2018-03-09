@@ -21,56 +21,52 @@
 package org.openecomp.mso.apihandlerinfra.taskbeans;
 
 import org.junit.After;
-
 import static org.junit.Assert.assertTrue;
-
 import org.junit.Before;
 import org.junit.Test;
-
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import org.openecomp.mso.apihandlerinfra.tasksbeans.RequestDetails;
 import org.openecomp.mso.apihandlerinfra.tasksbeans.TasksRequest;
 
 
 public class TasksRequestTest {
-    TasksRequest _tasksRequest;
-    private RequestDetails _requestDetails;
+	TasksRequest _tasksRequest;
+	private RequestDetails _requestDetails;
 
-    public TasksRequestTest() {
-    }
+	public TasksRequestTest() {
+	}
 
-    @Before
-    public void setUp() {
-        _tasksRequest = mock(TasksRequest.class);
-        _requestDetails = new RequestDetails();
-        when(_tasksRequest.getRequestDetails()).thenReturn(_requestDetails);
-    }
+	@Before
+	public void setUp() {
+		_tasksRequest = mock(TasksRequest.class);
+		_requestDetails = new RequestDetails();
+		when(_tasksRequest.getRequestDetails()).thenReturn(_requestDetails);
+	}
 
-    @After
-    public void tearDown() {
-        _tasksRequest = null;
-    }
+	@After
+	public void tearDown() {
+		_tasksRequest = null;
+	}
 
-    /**
-     * Test of getRequestDetails method
-     */
-    @Test
-    public void testGetRequestDetails() {
-        _tasksRequest.setRequestDetails(_requestDetails);
-        assertTrue(_tasksRequest.getRequestDetails().equals(_requestDetails));
+	/**
+	 * Test of getRequestDetails method
+	 */
+	@Test
+	public void testGetRequestDetails() {
+		_tasksRequest.setRequestDetails(_requestDetails);
+		assertTrue(_tasksRequest.getRequestDetails().equals(_requestDetails));
 
-    }
+	}
 
-    /**
-     * Test setRequestDetails
-     */
-    @Test
-    public void testSetRequestDetails() {
-        _tasksRequest.setRequestDetails(_requestDetails);
-        verify(_tasksRequest).setRequestDetails(_requestDetails);
-    }
+	/**
+	 * Test setRequestDetails
+	 */
+	@Test
+	public void testSetRequestDetails() {
+		_tasksRequest.setRequestDetails(_requestDetails);
+		verify(_tasksRequest).setRequestDetails(_requestDetails);
+	}
 
 }

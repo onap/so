@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import java.util.Optional;
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -51,86 +50,86 @@ import com.woorea.openstack.base.client.OpenStackConnectException;
 @RunWith(MockitoJUnitRunner.class)
 public class MsoHeatUtilsWithUpdateTest {
 
-    public static MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory();
-    public static CloudConfigFactory cloudConfigFactory = new CloudConfigFactory();
-
+	public static MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory();
+	public static CloudConfigFactory cloudConfigFactory = new CloudConfigFactory();
+	
     @Mock
     CloudConfig cloudConfig;
     @InjectMocks
-    MsoHeatUtilsWithUpdate util = new MsoHeatUtilsWithUpdate("NO_PROP", msoPropertiesFactory, cloudConfigFactory);
+    MsoHeatUtilsWithUpdate util=new MsoHeatUtilsWithUpdate("NO_PROP",msoPropertiesFactory,cloudConfigFactory);
 
     private CloudSite cloudSite;
 
     @Before
-    public void init() {
-        cloudSite = new CloudSite();
-        cloudSite.setId("cloud");
-        CloudIdentity cloudIdentity = new CloudIdentity();
+    public void init () {
+        cloudSite = new CloudSite ();
+        cloudSite.setId ("cloud");
+        CloudIdentity cloudIdentity = new CloudIdentity ();
         cloudIdentity.setIdentityServerType(IdentityServerType.KEYSTONE);
-        cloudIdentity.setKeystoneUrl("toto");
-        cloudIdentity.setMsoPass(CloudIdentity.encryptPassword("mockId"));
-        cloudSite.setIdentityService(cloudIdentity);
-        when(cloudConfig.getCloudSite("cloud")).thenReturn(Optional.of(cloudSite));
-        when(cloudConfig.getCloudSite("none")).thenReturn(Optional.empty());
+        cloudIdentity.setKeystoneUrl ("toto");
+        cloudIdentity.setMsoPass (CloudIdentity.encryptPassword ("mockId"));
+        cloudSite.setIdentityService (cloudIdentity);
+        when(cloudConfig.getCloudSite("cloud")).thenReturn (Optional.of(cloudSite));
+        when(cloudConfig.getCloudSite("none")).thenReturn (Optional.empty());
     }
 
     @Test
     @Ignore
-    public void testUpdateStack() {
+    public void testUpdateStack () {
         // Heat heat = Mockito.mock (Heat.class);
-        Map<String, Object> stackInputs = new HashMap<>();
+        Map <String, Object> stackInputs = new HashMap <> ();
         try {
-            util.updateStack("none", "tenantId", "stackName", "heatTemplate", stackInputs, false, 1);
+            util.updateStack ("none", "tenantId", "stackName", "heatTemplate", stackInputs, false, 1);
         } catch (MsoException e) {
             if (e instanceof MsoCloudSiteNotFound) {
                 // Ok
             } else {
-                e.printStackTrace();
-                fail("Exception caught");
+                e.printStackTrace ();
+                fail ("Exception caught");
             }
         }
         try {
-            util.updateStack("cloud", "tenantId", "stackName", "heatTemplate", stackInputs, false, 1);
+            util.updateStack ("cloud", "tenantId", "stackName", "heatTemplate", stackInputs, false, 1);
         } catch (MsoException e) {
-            if (e instanceof MsoIOException && e.getCause() != null
-                    && e.getCause() instanceof OpenStackConnectException) {
+            if (e instanceof MsoIOException && e.getCause () != null
+                && e.getCause () instanceof OpenStackConnectException) {
                 // Ok, we were able to go up to the connection to OpenStack
             } else {
-                e.printStackTrace();
-                fail("Exception caught");
+                e.printStackTrace ();
+                fail ("Exception caught");
             }
         }
         try {
-            util.updateStack("cloud", "tenantId", "stackName", "heatTemplate", stackInputs, false, 1, "environment");
+            util.updateStack ("cloud", "tenantId", "stackName", "heatTemplate", stackInputs, false, 1, "environment");
         } catch (MsoException e) {
-            if (e instanceof MsoIOException && e.getCause() != null
-                    && e.getCause() instanceof OpenStackConnectException) {
+            if (e instanceof MsoIOException && e.getCause () != null
+                && e.getCause () instanceof OpenStackConnectException) {
                 // Ok, we were able to go up to the connection to OpenStack
             } else {
-                e.printStackTrace();
-                fail("Exception caught");
+                e.printStackTrace ();
+                fail ("Exception caught");
             }
         }
         try {
-            util.updateStack("cloud", "tenantId", "stackName", "heatTemplate", stackInputs, false, 1, "environment", null);
+            util.updateStack ("cloud", "tenantId", "stackName", "heatTemplate", stackInputs, false, 1, "environment", null);
         } catch (MsoException e) {
-            if (e instanceof MsoIOException && e.getCause() != null
-                    && e.getCause() instanceof OpenStackConnectException) {
+            if (e instanceof MsoIOException && e.getCause () != null
+                && e.getCause () instanceof OpenStackConnectException) {
                 // Ok, we were able to go up to the connection to OpenStack
             } else {
-                e.printStackTrace();
-                fail("Exception caught");
+                e.printStackTrace ();
+                fail ("Exception caught");
             }
         }
         try {
-            util.updateStack("cloud", "tenantId", "stackName", "heatTemplate", stackInputs, false, 1, "environment", null, null);
+            util.updateStack ("cloud", "tenantId", "stackName", "heatTemplate", stackInputs, false, 1, "environment", null, null);
         } catch (MsoException e) {
-            if (e instanceof MsoIOException && e.getCause() != null
-                    && e.getCause() instanceof OpenStackConnectException) {
+            if (e instanceof MsoIOException && e.getCause () != null
+                && e.getCause () instanceof OpenStackConnectException) {
                 // Ok, we were able to go up to the connection to OpenStack
             } else {
-                e.printStackTrace();
-                fail("Exception caught");
+                e.printStackTrace ();
+                fail ("Exception caught");
             }
         }
     }

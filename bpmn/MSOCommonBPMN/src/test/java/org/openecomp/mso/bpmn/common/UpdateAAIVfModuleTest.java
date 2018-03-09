@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  * ============LICENSE_END========================================================= 
- */
+ */ 
 
 package org.openecomp.mso.bpmn.common;
 
@@ -41,101 +41,101 @@ import org.openecomp.mso.bpmn.mock.FileUtil;
  * Unit tests for UpdateAAIVfModuleTest.bpmn.
  */
 public class UpdateAAIVfModuleTest extends WorkflowTest {
+		
+	/**
+	 * Test the happy path through the flow.
+	 */
+	@Test	
+	@Deployment(resources = {
+			"subprocess/UpdateAAIVfModule.bpmn"
+		})
+	public void happyPath() throws IOException {
+		logStart();
+		
+		String updateAAIVfModuleRequest = FileUtil.readResourceFile("__files/VfModularity/UpdateAAIVfModuleRequest.xml"); 
+		MockGetGenericVnfByIdWithPriority("/skask/vf-modules/vf-module/supercool", 200, "VfModularity/VfModule-supercool.xml");
+		MockPutGenericVnf("/skask/vf-modules/vf-module/supercool", "PCRF", 200);
+		MockPatchVfModuleId("skask", "supercool");
+		
+		String businessKey = UUID.randomUUID().toString();
+		Map<String, Object> variables = new HashMap<>();
+		variables.put("mso-request-id", "999-99-9999");
+		variables.put("isDebugLogEnabled","true");
+		variables.put("UpdateAAIVfModuleRequest", updateAAIVfModuleRequest);
+		invokeSubProcess("UpdateAAIVfModule", businessKey, variables);
+		
+		Assert.assertTrue(isProcessEnded(businessKey));
+		String response = (String) getVariableFromHistory(businessKey, "UAAIVfMod_updateVfModuleResponse");
+		Integer responseCode = (Integer) getVariableFromHistory(businessKey, "UAAIVfMod_updateVfModuleResponseCode");
+		System.out.println("Subflow response code: " + responseCode);
+		System.out.println("Subflow response: " + response);
+		Assert.assertEquals(200, responseCode.intValue());
+		
+		logEnd();
+	}
 
-    /**
-     * Test the happy path through the flow.
-     */
-    @Test
-    @Deployment(resources = {
-            "subprocess/UpdateAAIVfModule.bpmn"
-    })
-    public void happyPath() throws IOException {
-        logStart();
+	/**
+	 * Test the case where the GET to AAI returns a 404.
+	 */
+	@Test	
+	@Deployment(resources = {
+			"subprocess/UpdateAAIVfModule.bpmn"
+		})
+	public void badGet() throws IOException {
+		
+		logStart();
+		
+		String updateAAIVfModuleRequest = FileUtil.readResourceFile("__files/VfModularity/UpdateAAIVfModuleRequest.xml"); 
+		MockGetGenericVnfById("/skask/vf-modules/vf-module/.*", "VfModularity/VfModule-supercool.xml", 404);
+		
+		String businessKey = UUID.randomUUID().toString();
+		Map<String, Object> variables = new HashMap<>();
+		variables.put("mso-request-id", "999-99-9999");
+		variables.put("isDebugLogEnabled","true");
+		variables.put("UpdateAAIVfModuleRequest", updateAAIVfModuleRequest);
+		invokeSubProcess("UpdateAAIVfModule", businessKey, variables);
+		
+		Assert.assertTrue(isProcessEnded(businessKey));
+		String response = (String) getVariableFromHistory(businessKey, "UAAIVfMod_getVfModuleResponse");
+		Integer responseCode = (Integer) getVariableFromHistory(businessKey, "UAAIVfMod_getVfModuleResponseCode");
+		System.out.println("Subflow response code: " + responseCode);
+		System.out.println("Subflow response: " + response);
+		Assert.assertEquals(404, responseCode.intValue());
+		
+		logEnd();
+	}
 
-        String updateAAIVfModuleRequest = FileUtil.readResourceFile("__files/VfModularity/UpdateAAIVfModuleRequest.xml");
-        MockGetGenericVnfByIdWithPriority("/skask/vf-modules/vf-module/supercool", 200, "VfModularity/VfModule-supercool.xml");
-        MockPutGenericVnf("/skask/vf-modules/vf-module/supercool", "PCRF", 200);
-        MockPatchVfModuleId("skask", "supercool");
-
-        String businessKey = UUID.randomUUID().toString();
-        Map<String, Object> variables = new HashMap<>();
-        variables.put("mso-request-id", "999-99-9999");
-        variables.put("isDebugLogEnabled", "true");
-        variables.put("UpdateAAIVfModuleRequest", updateAAIVfModuleRequest);
-        invokeSubProcess("UpdateAAIVfModule", businessKey, variables);
-
-        Assert.assertTrue(isProcessEnded(businessKey));
-        String response = (String) getVariableFromHistory(businessKey, "UAAIVfMod_updateVfModuleResponse");
-        Integer responseCode = (Integer) getVariableFromHistory(businessKey, "UAAIVfMod_updateVfModuleResponseCode");
-        System.out.println("Subflow response code: " + responseCode);
-        System.out.println("Subflow response: " + response);
-        Assert.assertEquals(200, responseCode.intValue());
-
-        logEnd();
-    }
-
-    /**
-     * Test the case where the GET to AAI returns a 404.
-     */
-    @Test
-    @Deployment(resources = {
-            "subprocess/UpdateAAIVfModule.bpmn"
-    })
-    public void badGet() throws IOException {
-
-        logStart();
-
-        String updateAAIVfModuleRequest = FileUtil.readResourceFile("__files/VfModularity/UpdateAAIVfModuleRequest.xml");
-        MockGetGenericVnfById("/skask/vf-modules/vf-module/.*", "VfModularity/VfModule-supercool.xml", 404);
-
-        String businessKey = UUID.randomUUID().toString();
-        Map<String, Object> variables = new HashMap<>();
-        variables.put("mso-request-id", "999-99-9999");
-        variables.put("isDebugLogEnabled", "true");
-        variables.put("UpdateAAIVfModuleRequest", updateAAIVfModuleRequest);
-        invokeSubProcess("UpdateAAIVfModule", businessKey, variables);
-
-        Assert.assertTrue(isProcessEnded(businessKey));
-        String response = (String) getVariableFromHistory(businessKey, "UAAIVfMod_getVfModuleResponse");
-        Integer responseCode = (Integer) getVariableFromHistory(businessKey, "UAAIVfMod_getVfModuleResponseCode");
-        System.out.println("Subflow response code: " + responseCode);
-        System.out.println("Subflow response: " + response);
-        Assert.assertEquals(404, responseCode.intValue());
-
-        logEnd();
-    }
-
-    /**
-     * Test the case where the GET to AAI is successful, but he subsequent PUT returns 404.
-     */
-    @Test
-    @Deployment(resources = {
-            "subprocess/UpdateAAIVfModule.bpmn"
-    })
-    public void badPatch() throws IOException {
-
-        logStart();
-
-        String updateAAIVfModuleRequest = FileUtil.readResourceFile("__files/VfModularity/UpdateAAIVfModuleRequest.xml");
-        MockGetGenericVnfById_404("/skask/vf-modules/vf-module/supercool");
-        MockGetGenericVnfById("/skask/vf-modules/vf-module/supercool", "VfModularity/VfModule-supercool.xml", 200);
-        MockAAIVfModuleBadPatch("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/skask/vf-modules/vf-module/supercool", 404);
-
-        String businessKey = UUID.randomUUID().toString();
-        Map<String, Object> variables = new HashMap<>();
-        variables.put("mso-request-id", "999-99-9999");
-        variables.put("isDebugLogEnabled", "true");
-        variables.put("UpdateAAIVfModuleRequest", updateAAIVfModuleRequest);
-        invokeSubProcess("UpdateAAIVfModule", businessKey, variables);
-
-        Assert.assertTrue(isProcessEnded(businessKey));
-        String response = (String) getVariableFromHistory(businessKey, "UAAIVfMod_updateVfModuleResponse");
-        Integer responseCode = (Integer) getVariableFromHistory(businessKey, "UAAIVfMod_updateVfModuleResponseCode");
-        System.out.println("Subflow response code: " + responseCode);
-        System.out.println("Subflow response: " + response);
-        Assert.assertEquals(404, responseCode.intValue());
-
-        logEnd();
-    }
+	/**
+	 * Test the case where the GET to AAI is successful, but he subsequent PUT returns 404.
+	 */
+	@Test	
+	@Deployment(resources = {
+			"subprocess/UpdateAAIVfModule.bpmn"
+		})
+	public void badPatch() throws IOException {
+		
+		logStart();
+		
+		String updateAAIVfModuleRequest = FileUtil.readResourceFile("__files/VfModularity/UpdateAAIVfModuleRequest.xml"); 
+		MockGetGenericVnfById_404("/skask/vf-modules/vf-module/supercool");
+		MockGetGenericVnfById("/skask/vf-modules/vf-module/supercool", "VfModularity/VfModule-supercool.xml", 200);
+		MockAAIVfModuleBadPatch("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/skask/vf-modules/vf-module/supercool", 404);
+		
+		String businessKey = UUID.randomUUID().toString();
+		Map<String, Object> variables = new HashMap<>();
+		variables.put("mso-request-id", "999-99-9999");
+		variables.put("isDebugLogEnabled","true");
+		variables.put("UpdateAAIVfModuleRequest", updateAAIVfModuleRequest);
+		invokeSubProcess("UpdateAAIVfModule", businessKey, variables);
+		
+		Assert.assertTrue(isProcessEnded(businessKey));
+		String response = (String) getVariableFromHistory(businessKey, "UAAIVfMod_updateVfModuleResponse");
+		Integer responseCode = (Integer) getVariableFromHistory(businessKey, "UAAIVfMod_updateVfModuleResponseCode");
+		System.out.println("Subflow response code: " + responseCode);
+		System.out.println("Subflow response: " + response);
+		Assert.assertEquals(404, responseCode.intValue());
+		
+		logEnd();
+	}
 }
 

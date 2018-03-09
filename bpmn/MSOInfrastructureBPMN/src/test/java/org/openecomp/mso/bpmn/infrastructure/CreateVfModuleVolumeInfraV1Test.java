@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  * ============LICENSE_END========================================================= 
- */
+ */ 
 
 package org.openecomp.mso.bpmn.infrastructure;
 
@@ -48,321 +48,321 @@ import org.openecomp.mso.bpmn.mock.StubResponseAAI;
 
 public class CreateVfModuleVolumeInfraV1Test extends WorkflowTest {
 
-    public static final String _prefix = "CVFMODVOL2_";
+	public static final String _prefix = "CVFMODVOL2_";
+	
+	private final CallbackSet callbacks = new CallbackSet();
 
-    private final CallbackSet callbacks = new CallbackSet();
-
-    public CreateVfModuleVolumeInfraV1Test() throws IOException {
-        callbacks.put("volumeGroupCreate", FileUtil.readResourceFile(
-                "__files/CreateVfModuleVolumeInfraV1/CreateVfModuleVolumeCallbackResponse.xml"));
-        callbacks.put("volumeGroupDelete", FileUtil.readResourceFile(
-                "__files/DeleteVfModuleVolumeInfraV1/DeleteVfModuleVolumeCallbackResponse.xml"));
-        callbacks.put("volumeGroupException", FileUtil.readResourceFile(
-                "__files/CreateVfModuleVolumeInfraV1/CreateVfModuleCallbackException.xml"));
-        callbacks.put("volumeGroupRollback", FileUtil.readResourceFile(
-                "__files/CreateVfModuleVolumeInfraV1/RollbackVfModuleVolumeCallbackResponse.xml"));
-    }
-
-    /**
-     * Happy path scenario for VID
-     *****************************/
-    @Test
-    //@Ignore
-    @Deployment(resources = {"process/CreateVfModuleVolumeInfraV1.bpmn",
-            "subprocess/GenericGetService.bpmn",
-            "subprocess/DoCreateVfModuleVolumeV2.bpmn",
+	public CreateVfModuleVolumeInfraV1Test() throws IOException {
+		callbacks.put("volumeGroupCreate", FileUtil.readResourceFile(
+				"__files/CreateVfModuleVolumeInfraV1/CreateVfModuleVolumeCallbackResponse.xml"));
+		callbacks.put("volumeGroupDelete", FileUtil.readResourceFile(
+				"__files/DeleteVfModuleVolumeInfraV1/DeleteVfModuleVolumeCallbackResponse.xml"));
+		callbacks.put("volumeGroupException", FileUtil.readResourceFile(
+				"__files/CreateVfModuleVolumeInfraV1/CreateVfModuleCallbackException.xml"));
+		callbacks.put("volumeGroupRollback", FileUtil.readResourceFile(
+				"__files/CreateVfModuleVolumeInfraV1/RollbackVfModuleVolumeCallbackResponse.xml"));
+	}
+	
+	/**
+	 * Happy path scenario for VID
+	 *****************************/
+	@Test
+	//@Ignore
+	@Deployment(resources = {"process/CreateVfModuleVolumeInfraV1.bpmn",
+			"subprocess/GenericGetService.bpmn",
+			"subprocess/DoCreateVfModuleVolumeV2.bpmn",
             "subprocess/FalloutHandler.bpmn",
             "subprocess/CompleteMsoProcess.bpmn",
             "subprocess/VnfAdapterRestV1.bpmn"})
-    public void TestSuccess() throws Exception {
+	public void TestSuccess() throws Exception {
 
-        logStart();
+		logStart();
+		
+		MockNodeQueryServiceInstanceById("test-service-instance-id", "CreateVfModuleVolumeInfraV1/getSIUrlById.xml");
+		MockGetGenericVnfById("/TEST-VNF-ID-0123", "CreateVfModuleVolumeInfraV1/GenericVnf.xml", 200);
+		MockPutVolumeGroupById("AAIAIC25", "TEST-VOLUME-GROUP-ID-0123", "CreateVfModuleVolumeInfraV1/createVfModuleVolume_createVolumeName_AAIResponse_Success.xml", 201);
+		MockGetVolumeGroupByName("AAIAIC25", "MSOTESTVOL101a-vSAMP12_base_vol_module-0", "CreateVfModuleVolumeInfraV1/createVfModuleVolume_queryVolumeName_AAIResponse_Success.xml", 200);
+		MockPutVolumeGroupById("AAIAIC25", "8424bb3c-c3e7-4553-9662-469649ed9379", "CreateVfModuleVolumeInfraV1/createVfModuleVolume_updateVolumeName_AAIResponse_Success.xml", 200);
+		mockPostVNFVolumeGroup(202);
 
-        MockNodeQueryServiceInstanceById("test-service-instance-id", "CreateVfModuleVolumeInfraV1/getSIUrlById.xml");
-        MockGetGenericVnfById("/TEST-VNF-ID-0123", "CreateVfModuleVolumeInfraV1/GenericVnf.xml", 200);
-        MockPutVolumeGroupById("AAIAIC25", "TEST-VOLUME-GROUP-ID-0123", "CreateVfModuleVolumeInfraV1/createVfModuleVolume_createVolumeName_AAIResponse_Success.xml", 201);
-        MockGetVolumeGroupByName("AAIAIC25", "MSOTESTVOL101a-vSAMP12_base_vol_module-0", "CreateVfModuleVolumeInfraV1/createVfModuleVolume_queryVolumeName_AAIResponse_Success.xml", 200);
-        MockPutVolumeGroupById("AAIAIC25", "8424bb3c-c3e7-4553-9662-469649ed9379", "CreateVfModuleVolumeInfraV1/createVfModuleVolume_updateVolumeName_AAIResponse_Success.xml", 200);
-        mockPostVNFVolumeGroup(202);
+		String businessKey = UUID.randomUUID().toString();
+		String createVfModuleVolRequest = FileUtil.readResourceFile("__files/CreateVfModuleVolumeInfraV1/createVfModuleVolume_VID_request.json");
+		
+		Map<String, Object> testVariables = new HashMap<>();
+		testVariables.put("requestId", "TEST-REQUEST-ID-0123");
+		testVariables.put("serviceInstanceId", "test-service-instance-id");
+		testVariables.put("vnfId", "TEST-VNF-ID-0123");
+		testVariables.put("test-volume-group-name", "TEST-MSOTESTVOL101a-vSAMP12_base_vol_module-0");
+		testVariables.put("test-volume-group-id", "TEST-VOLUME-GROUP-ID-0123");
+				
+		TestAsyncResponse asyncResponse = invokeAsyncProcess("CreateVfModuleVolumeInfraV1", "v1", businessKey, createVfModuleVolRequest, testVariables);
+		WorkflowResponse response = receiveResponse(businessKey, asyncResponse, 1000000);
 
-        String businessKey = UUID.randomUUID().toString();
-        String createVfModuleVolRequest = FileUtil.readResourceFile("__files/CreateVfModuleVolumeInfraV1/createVfModuleVolume_VID_request.json");
-
-        Map<String, Object> testVariables = new HashMap<>();
-        testVariables.put("requestId", "TEST-REQUEST-ID-0123");
-        testVariables.put("serviceInstanceId", "test-service-instance-id");
-        testVariables.put("vnfId", "TEST-VNF-ID-0123");
-        testVariables.put("test-volume-group-name", "TEST-MSOTESTVOL101a-vSAMP12_base_vol_module-0");
-        testVariables.put("test-volume-group-id", "TEST-VOLUME-GROUP-ID-0123");
-
-        TestAsyncResponse asyncResponse = invokeAsyncProcess("CreateVfModuleVolumeInfraV1", "v1", businessKey, createVfModuleVolRequest, testVariables);
-        WorkflowResponse response = receiveResponse(businessKey, asyncResponse, 1000000);
-
-        String responseBody = response.getResponse();
-        System.out.println("Workflow (Synch) Response:\n" + responseBody);
-
-        injectVNFRestCallbacks(callbacks, "volumeGroupCreate");
-
-        waitForProcessEnd(businessKey, 100000);
-        checkVariable(businessKey, "CVMVINFRAV1_SuccessIndicator", true);
-
-        logEnd();
-    }
-
-    /**
-     * Fail - trigger rollback
-     *****************************/
-    @Test
-    //@Ignore
-    @Deployment(resources = {"process/CreateVfModuleVolumeInfraV1.bpmn",
-            "subprocess/GenericGetService.bpmn",
-            "subprocess/DoCreateVfModuleVolumeV2.bpmn",
-            "subprocess/DoCreateVfModuleVolumeRollback.bpmn",
+		String responseBody = response.getResponse();
+		System.out.println("Workflow (Synch) Response:\n" + responseBody);
+		
+		injectVNFRestCallbacks(callbacks, "volumeGroupCreate");
+		
+		waitForProcessEnd(businessKey, 100000);
+		checkVariable(businessKey, "CVMVINFRAV1_SuccessIndicator", true);
+		
+		logEnd();
+	}
+	
+	/**
+	 * Fail - trigger rollback
+	 *****************************/
+	@Test
+	//@Ignore
+	@Deployment(resources = {"process/CreateVfModuleVolumeInfraV1.bpmn",
+			"subprocess/GenericGetService.bpmn",
+			"subprocess/DoCreateVfModuleVolumeV2.bpmn",
+			"subprocess/DoCreateVfModuleVolumeRollback.bpmn",
             "subprocess/FalloutHandler.bpmn",
             "subprocess/CompleteMsoProcess.bpmn",
             "subprocess/VnfAdapterRestV1.bpmn"})
-    public void TestRollback() throws Exception {
+	public void TestRollback() throws Exception {
 
-        logStart();
+		logStart();
+		
+		MockNodeQueryServiceInstanceById("test-service-instance-id", "CreateVfModuleVolumeInfraV1/getSIUrlById.xml");
+		MockGetGenericVnfById("/TEST-VNF-ID-0123", "CreateVfModuleVolumeInfraV1/GenericVnf.xml", 200);
+		MockPutVolumeGroupById("AAIAIC25", "TEST-VOLUME-GROUP-ID-0123", "CreateVfModuleVolumeInfraV1/createVfModuleVolume_createVolumeName_AAIResponse_Success.xml", 201);
+		mockPostVNFVolumeGroup(202);
+		mockPutVNFVolumeGroupRollback("TEST-VOLUME-GROUP-ID-0123", 202);
+		MockDeleteVolumeGroupById("AAIAIC25", "8424bb3c-c3e7-4553-9662-469649ed9379", "1460134360", 202);
+		StubResponseAAI.MockGetVolumeGroupByName_404("AAIAIC25", "TEST-MSOTESTVOL101a-vSAMP12_base_vol_module-0");
+		StubResponseAAI.MockGetVolumeGroupByName("AAIAIC25", "MSOTESTVOL101a-vSAMP12_base_vol_module-0", "CreateVfModuleVolumeInfraV1/createVfModuleVolume_queryVolumeName_AAIResponse_Success.xml", 200);
+		StubResponseAAI.MockDeleteVolumeGroup("AAIAIC25", "8424bb3c-c3e7-4553-9662-469649ed9379", "1460134360");
+		
+		String businessKey = UUID.randomUUID().toString();
+		String createVfModuleVolRequest = FileUtil.readResourceFile("__files/CreateVfModuleVolumeInfraV1/createVfModuleVolume_VID_request.json");
+		
+		Map<String, Object> testVariables = new HashMap<>();
+		testVariables.put("requestId", "TEST-REQUEST-ID-0123");
+		testVariables.put("serviceInstanceId", "test-service-instance-id");
+		testVariables.put("vnfId", "TEST-VNF-ID-0123");
+		testVariables.put("test-volume-group-name", "TEST-MSOTESTVOL101a-vSAMP12_base_vol_module-0");
+		testVariables.put("test-volume-group-id", "TEST-VOLUME-GROUP-ID-0123");
+				
+		TestAsyncResponse asyncResponse = invokeAsyncProcess("CreateVfModuleVolumeInfraV1", "v1", businessKey, createVfModuleVolRequest, testVariables);
+		WorkflowResponse response = receiveResponse(businessKey, asyncResponse, 1000000);
 
-        MockNodeQueryServiceInstanceById("test-service-instance-id", "CreateVfModuleVolumeInfraV1/getSIUrlById.xml");
-        MockGetGenericVnfById("/TEST-VNF-ID-0123", "CreateVfModuleVolumeInfraV1/GenericVnf.xml", 200);
-        MockPutVolumeGroupById("AAIAIC25", "TEST-VOLUME-GROUP-ID-0123", "CreateVfModuleVolumeInfraV1/createVfModuleVolume_createVolumeName_AAIResponse_Success.xml", 201);
-        mockPostVNFVolumeGroup(202);
-        mockPutVNFVolumeGroupRollback("TEST-VOLUME-GROUP-ID-0123", 202);
-        MockDeleteVolumeGroupById("AAIAIC25", "8424bb3c-c3e7-4553-9662-469649ed9379", "1460134360", 202);
-        StubResponseAAI.MockGetVolumeGroupByName_404("AAIAIC25", "TEST-MSOTESTVOL101a-vSAMP12_base_vol_module-0");
-        StubResponseAAI.MockGetVolumeGroupByName("AAIAIC25", "MSOTESTVOL101a-vSAMP12_base_vol_module-0", "CreateVfModuleVolumeInfraV1/createVfModuleVolume_queryVolumeName_AAIResponse_Success.xml", 200);
-        StubResponseAAI.MockDeleteVolumeGroup("AAIAIC25", "8424bb3c-c3e7-4553-9662-469649ed9379", "1460134360");
-
-        String businessKey = UUID.randomUUID().toString();
-        String createVfModuleVolRequest = FileUtil.readResourceFile("__files/CreateVfModuleVolumeInfraV1/createVfModuleVolume_VID_request.json");
-
-        Map<String, Object> testVariables = new HashMap<>();
-        testVariables.put("requestId", "TEST-REQUEST-ID-0123");
-        testVariables.put("serviceInstanceId", "test-service-instance-id");
-        testVariables.put("vnfId", "TEST-VNF-ID-0123");
-        testVariables.put("test-volume-group-name", "TEST-MSOTESTVOL101a-vSAMP12_base_vol_module-0");
-        testVariables.put("test-volume-group-id", "TEST-VOLUME-GROUP-ID-0123");
-
-        TestAsyncResponse asyncResponse = invokeAsyncProcess("CreateVfModuleVolumeInfraV1", "v1", businessKey, createVfModuleVolRequest, testVariables);
-        WorkflowResponse response = receiveResponse(businessKey, asyncResponse, 1000000);
-
-        String responseBody = response.getResponse();
-        System.out.println("Workflow (Synch) Response:\n" + responseBody);
-
-        injectVNFRestCallbacks(callbacks, "volumeGroupCreate");
-        injectVNFRestCallbacks(callbacks, "volumeGroupDelete");
-
-        waitForProcessEnd(businessKey, 100000);
-        checkVariable(businessKey, "CVMVINFRAV1_SuccessIndicator", false);
-
-        logEnd();
-    }
-
-    /**
-     * Happy path scenario for VID
-     *****************************/
-    @Test
-    @Ignore
-    @Deployment(resources = {"process/CreateVfModuleVolumeInfraV1.bpmn",
-            "subprocess/GenericGetService.bpmn",
-            "subprocess/DoCreateVfModuleVolumeV1.bpmn",
+		String responseBody = response.getResponse();
+		System.out.println("Workflow (Synch) Response:\n" + responseBody);
+		
+		injectVNFRestCallbacks(callbacks, "volumeGroupCreate");
+		injectVNFRestCallbacks(callbacks, "volumeGroupDelete");
+		
+		waitForProcessEnd(businessKey, 100000);
+		checkVariable(businessKey, "CVMVINFRAV1_SuccessIndicator", false);
+		
+		logEnd();
+	}
+	
+	/**
+	 * Happy path scenario for VID
+	 *****************************/
+	@Test
+	@Ignore
+	@Deployment(resources = {"process/CreateVfModuleVolumeInfraV1.bpmn",
+			"subprocess/GenericGetService.bpmn",
+			"subprocess/DoCreateVfModuleVolumeV1.bpmn",
             "subprocess/FalloutHandler.bpmn",
             "subprocess/CompleteMsoProcess.bpmn",
             "subprocess/VnfAdapterRestV1.bpmn"})
-    public void TestVolumeGroupAlreadyExists() throws Exception {
+	public void TestVolumeGroupAlreadyExists() throws Exception {
 
-        logStart();
+		logStart();
+		
+		MockGetVolumeGroupByName("AAIAIC25", "TEST-MSOTESTVOL101a-vSAMP12_base_vol_module-0", "CreateVfModuleVolumeInfraV1/createVfModuleVolume_queryVolumeName_AAIResponse_Success.xml", 200);
+		MockGetGenericVnfById("TEST-VNF-ID-0123", "CreateVfModuleVolumeInfraV1/GenericVnf.xml", 200);
+		MockNodeQueryServiceInstanceById("test-service-instance-id", "CreateVfModuleVolumeInfraV1/getSIUrlById.xml");
 
-        MockGetVolumeGroupByName("AAIAIC25", "TEST-MSOTESTVOL101a-vSAMP12_base_vol_module-0", "CreateVfModuleVolumeInfraV1/createVfModuleVolume_queryVolumeName_AAIResponse_Success.xml", 200);
-        MockGetGenericVnfById("TEST-VNF-ID-0123", "CreateVfModuleVolumeInfraV1/GenericVnf.xml", 200);
-        MockNodeQueryServiceInstanceById("test-service-instance-id", "CreateVfModuleVolumeInfraV1/getSIUrlById.xml");
+		String businessKey = UUID.randomUUID().toString();
+		String createVfModuleVolRequest = FileUtil.readResourceFile("__files/CreateVfModuleVolumeInfraV1/createVfModuleVolume_VID_request.json");
+		
+		Map<String, Object> testVariables = new HashMap<>();
+		testVariables.put("requestId", "TEST-REQUEST-ID-0123");
+		testVariables.put("serviceInstanceId", "test-service-instance-id");
+		testVariables.put("vnfId", "TEST-VNF-ID-0123");
+		testVariables.put("test-volume-group-name", "TEST-MSOTESTVOL101a-vSAMP12_base_vol_module-0");
+		testVariables.put("test-volume-group-id", "TEST-VOLUME-GROUP-ID-0123");
+				
+		TestAsyncResponse asyncResponse = invokeAsyncProcess("CreateVfModuleVolumeInfraV1", "v1", businessKey, createVfModuleVolRequest, testVariables);
+		WorkflowResponse response = receiveResponse(businessKey, asyncResponse, 1000000);
 
-        String businessKey = UUID.randomUUID().toString();
-        String createVfModuleVolRequest = FileUtil.readResourceFile("__files/CreateVfModuleVolumeInfraV1/createVfModuleVolume_VID_request.json");
-
-        Map<String, Object> testVariables = new HashMap<>();
-        testVariables.put("requestId", "TEST-REQUEST-ID-0123");
-        testVariables.put("serviceInstanceId", "test-service-instance-id");
-        testVariables.put("vnfId", "TEST-VNF-ID-0123");
-        testVariables.put("test-volume-group-name", "TEST-MSOTESTVOL101a-vSAMP12_base_vol_module-0");
-        testVariables.put("test-volume-group-id", "TEST-VOLUME-GROUP-ID-0123");
-
-        TestAsyncResponse asyncResponse = invokeAsyncProcess("CreateVfModuleVolumeInfraV1", "v1", businessKey, createVfModuleVolRequest, testVariables);
-        WorkflowResponse response = receiveResponse(businessKey, asyncResponse, 1000000);
-
-        String responseBody = response.getResponse();
-        System.out.println("Workflow (Synch) Response:\n" + responseBody);
-
-        //injectVNFRestCallbacks(callbacks, "volumeGroupCreate");
-
-        waitForProcessEnd(businessKey, 100000);
-        checkVariable(businessKey, "CVMVINFRAV1_SuccessIndicator", false);
-
-        logEnd();
-    }
-
-    /**
-     * Vnf Create fail
-     *****************************/
-    @Test
-    @Ignore
-    @Deployment(resources = {"process/CreateVfModuleVolumeInfraV1.bpmn",
-            "subprocess/GenericGetService.bpmn",
-            "subprocess/DoCreateVfModuleVolumeV1.bpmn",
+		String responseBody = response.getResponse();
+		System.out.println("Workflow (Synch) Response:\n" + responseBody);
+		
+		//injectVNFRestCallbacks(callbacks, "volumeGroupCreate");
+		
+		waitForProcessEnd(businessKey, 100000);
+		checkVariable(businessKey, "CVMVINFRAV1_SuccessIndicator", false);
+		
+		logEnd();
+	}
+	
+	/**
+	 *Vnf Create fail
+	 *****************************/
+	@Test
+	@Ignore
+	@Deployment(resources = {"process/CreateVfModuleVolumeInfraV1.bpmn",
+			"subprocess/GenericGetService.bpmn",
+			"subprocess/DoCreateVfModuleVolumeV1.bpmn",
             "subprocess/FalloutHandler.bpmn",
             "subprocess/CompleteMsoProcess.bpmn",
             "subprocess/VnfAdapterRestV1.bpmn"})
-    public void TestVNfCreateFail() throws Exception {
+	public void TestVNfCreateFail() throws Exception {
 
-        logStart();
+		logStart();
+		
+		MockNodeQueryServiceInstanceById("test-service-instance-id", "CreateVfModuleVolumeInfraV1/getSIUrlById.xml");
+		MockGetGenericVnfById("/TEST-VNF-ID-0123", "CreateVfModuleVolumeInfraV1/GenericVnf.xml", 200);
+		MockPutVolumeGroupById("AAIAIC25", "TEST-VOLUME-GROUP-ID-0123", "CreateVfModuleVolumeInfraV1/createVfModuleVolume_createVolumeName_AAIResponse_Success.xml", 201);
+		MockGetVolumeGroupByName("AAIAIC25", "MSOTESTVOL101a-vSAMP12_base_vol_module-0", "CreateVfModuleVolumeInfraV1/createVfModuleVolume_queryVolumeName_AAIResponse_Success.xml", 200);
+		MockPutVolumeGroupById("AAIAIC25", "8424bb3c-c3e7-4553-9662-469649ed9379", "CreateVfModuleVolumeInfraV1/createVfModuleVolume_updateVolumeName_AAIResponse_Success.xml", 200);
+		mockPostVNFVolumeGroup(202);
+		MockDeleteVolumeGroupById("AAIAIC25", "8424bb3c-c3e7-4553-9662-469649ed9379", "1460134360", 204);
 
-        MockNodeQueryServiceInstanceById("test-service-instance-id", "CreateVfModuleVolumeInfraV1/getSIUrlById.xml");
-        MockGetGenericVnfById("/TEST-VNF-ID-0123", "CreateVfModuleVolumeInfraV1/GenericVnf.xml", 200);
-        MockPutVolumeGroupById("AAIAIC25", "TEST-VOLUME-GROUP-ID-0123", "CreateVfModuleVolumeInfraV1/createVfModuleVolume_createVolumeName_AAIResponse_Success.xml", 201);
-        MockGetVolumeGroupByName("AAIAIC25", "MSOTESTVOL101a-vSAMP12_base_vol_module-0", "CreateVfModuleVolumeInfraV1/createVfModuleVolume_queryVolumeName_AAIResponse_Success.xml", 200);
-        MockPutVolumeGroupById("AAIAIC25", "8424bb3c-c3e7-4553-9662-469649ed9379", "CreateVfModuleVolumeInfraV1/createVfModuleVolume_updateVolumeName_AAIResponse_Success.xml", 200);
-        mockPostVNFVolumeGroup(202);
-        MockDeleteVolumeGroupById("AAIAIC25", "8424bb3c-c3e7-4553-9662-469649ed9379", "1460134360", 204);
+		String businessKey = UUID.randomUUID().toString();
+		String createVfModuleVolRequest = FileUtil.readResourceFile("__files/CreateVfModuleVolumeInfraV1/createVfModuleVolume_VID_request.json");
+		
+		Map<String, Object> testVariables = new HashMap<>();
+		testVariables.put("requestId", "TEST-REQUEST-ID-0123");
+		testVariables.put("serviceInstanceId", "test-service-instance-id");
+		testVariables.put("vnfId", "TEST-VNF-ID-0123");
+		testVariables.put("test-volume-group-name", "TEST-MSOTESTVOL101a-vSAMP12_base_vol_module-0");
+		testVariables.put("test-volume-group-id", "TEST-VOLUME-GROUP-ID-0123");
+				
+		TestAsyncResponse asyncResponse = invokeAsyncProcess("CreateVfModuleVolumeInfraV1", "v1", businessKey, createVfModuleVolRequest, testVariables);
+		WorkflowResponse response = receiveResponse(businessKey, asyncResponse, 1000000);
 
-        String businessKey = UUID.randomUUID().toString();
-        String createVfModuleVolRequest = FileUtil.readResourceFile("__files/CreateVfModuleVolumeInfraV1/createVfModuleVolume_VID_request.json");
+		String responseBody = response.getResponse();
+		System.out.println("Workflow (Synch) Response:\n" + responseBody);
+		
+		injectVNFRestCallbacks(callbacks, "volumeGroupException");
+		
+		waitForProcessEnd(businessKey, 100000);
+		checkVariable(businessKey, "CVMVINFRAV1_SuccessIndicator", false);
+		
+		logEnd();
+	}
+	
 
-        Map<String, Object> testVariables = new HashMap<>();
-        testVariables.put("requestId", "TEST-REQUEST-ID-0123");
-        testVariables.put("serviceInstanceId", "test-service-instance-id");
-        testVariables.put("vnfId", "TEST-VNF-ID-0123");
-        testVariables.put("test-volume-group-name", "TEST-MSOTESTVOL101a-vSAMP12_base_vol_module-0");
-        testVariables.put("test-volume-group-id", "TEST-VOLUME-GROUP-ID-0123");
-
-        TestAsyncResponse asyncResponse = invokeAsyncProcess("CreateVfModuleVolumeInfraV1", "v1", businessKey, createVfModuleVolRequest, testVariables);
-        WorkflowResponse response = receiveResponse(businessKey, asyncResponse, 1000000);
-
-        String responseBody = response.getResponse();
-        System.out.println("Workflow (Synch) Response:\n" + responseBody);
-
-        injectVNFRestCallbacks(callbacks, "volumeGroupException");
-
-        waitForProcessEnd(businessKey, 100000);
-        checkVariable(businessKey, "CVMVINFRAV1_SuccessIndicator", false);
-
-        logEnd();
-    }
-
-
-    /**
-     * Error scenario - vnf not found
-     ********************************/
-    @Test
-    @Ignore
-    @Deployment(resources = {"process/CreateVfModuleVolumeInfraV1.bpmn",
-            "subprocess/GenericGetService.bpmn",
-            "subprocess/DoCreateVfModuleVolumeV1.bpmn",
+	/**
+	 * Error scenario - vnf not found
+	 ********************************/
+	@Test
+	@Ignore
+	@Deployment(resources = {"process/CreateVfModuleVolumeInfraV1.bpmn",
+			"subprocess/GenericGetService.bpmn",
+			"subprocess/DoCreateVfModuleVolumeV1.bpmn",
             "subprocess/FalloutHandler.bpmn",
             "subprocess/CompleteMsoProcess.bpmn",
             "subprocess/VnfAdapterRestV1.bpmn"})
-    public void TestFailVnfNotFound() throws Exception {
+	public void TestFailVnfNotFound() throws Exception {
 
-        logStart();
+		logStart();
+		
+		MockNodeQueryServiceInstanceById("test-service-instance-id", "CreateVfModuleVolumeInfraV1/getSIUrlById.xml");
 
-        MockNodeQueryServiceInstanceById("test-service-instance-id", "CreateVfModuleVolumeInfraV1/getSIUrlById.xml");
+		String businessKey = UUID.randomUUID().toString();
+		String createVfModuleVolRequest = FileUtil.readResourceFile("__files/CreateVfModuleVolumeInfraV1/createVfModuleVolume_VID_request_noreqparm.json");
+		
+		Map<String, Object> testVariables = new HashMap<>();
+		testVariables.put("requestId", "TEST-REQUEST-ID-0123");
+		testVariables.put("serviceInstanceId", "test-service-instance-id");
+		testVariables.put("vnfId", "TEST-VNF-ID-0123");
+		testVariables.put("test-volume-group-name", "TEST-MSOTESTVOL101a-vSAMP12_base_vol_module-0");
+				
+		TestAsyncResponse asyncResponse = invokeAsyncProcess("CreateVfModuleVolumeInfraV1", "v1", businessKey, createVfModuleVolRequest, testVariables);
+		WorkflowResponse response = receiveResponse(businessKey, asyncResponse, 1000000);
 
-        String businessKey = UUID.randomUUID().toString();
-        String createVfModuleVolRequest = FileUtil.readResourceFile("__files/CreateVfModuleVolumeInfraV1/createVfModuleVolume_VID_request_noreqparm.json");
+		String responseBody = response.getResponse();
+		System.out.println("Workflow (Synch) Response:\n" + responseBody);
+		
+		//injectVNFRestCallbacks(callbacks, "volumeGroupCreate");
+		
+		waitForProcessEnd(businessKey, 100000);
+		checkVariable(businessKey, "CVMVINFRAV1_SuccessIndicator", false);
+		
+		logEnd();
+	}
 
-        Map<String, Object> testVariables = new HashMap<>();
-        testVariables.put("requestId", "TEST-REQUEST-ID-0123");
-        testVariables.put("serviceInstanceId", "test-service-instance-id");
-        testVariables.put("vnfId", "TEST-VNF-ID-0123");
-        testVariables.put("test-volume-group-name", "TEST-MSOTESTVOL101a-vSAMP12_base_vol_module-0");
-
-        TestAsyncResponse asyncResponse = invokeAsyncProcess("CreateVfModuleVolumeInfraV1", "v1", businessKey, createVfModuleVolRequest, testVariables);
-        WorkflowResponse response = receiveResponse(businessKey, asyncResponse, 1000000);
-
-        String responseBody = response.getResponse();
-        System.out.println("Workflow (Synch) Response:\n" + responseBody);
-
-        //injectVNFRestCallbacks(callbacks, "volumeGroupCreate");
-
-        waitForProcessEnd(businessKey, 100000);
-        checkVariable(businessKey, "CVMVINFRAV1_SuccessIndicator", false);
-
-        logEnd();
-    }
-
-    /**
-     * Error scenario - error in validation
-     **************************************/
-    @Test
-    @Ignore
-    @Deployment(resources = {"process/CreateVfModuleVolumeInfraV1.bpmn",
-            "subprocess/GenericGetService.bpmn",
-            "subprocess/DoCreateVfModuleVolumeV1.bpmn",
+	/**
+	 * Error scenario - error in validation
+	 **************************************/
+	@Test
+	@Ignore
+	@Deployment(resources = {"process/CreateVfModuleVolumeInfraV1.bpmn",
+			"subprocess/GenericGetService.bpmn",
+			"subprocess/DoCreateVfModuleVolumeV1.bpmn",
             "subprocess/FalloutHandler.bpmn",
             "subprocess/CompleteMsoProcess.bpmn",
             "subprocess/VnfAdapterRestV1.bpmn"})
-    public void TestFailNoVnfPassed() throws Exception {
+	public void TestFailNoVnfPassed() throws Exception {
 
-        logStart();
+		logStart();
+		
+		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
 
-        mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		String businessKey = UUID.randomUUID().toString();
+		String createVfModuleVolRequest = FileUtil.readResourceFile("__files/CreateVfModuleVolumeInfraV1/createVfModuleVolume_VID_request.json");
+		
+		Map<String, Object> testVariables = new HashMap<>();
+		testVariables.put("requestId", "TEST-REQUEST-ID-0123");
+		testVariables.put("serviceInstanceId", "test-service-instance-id");
+		//testVariables.put("vnfId", "TEST-VNF-ID-0123");
+		testVariables.put("test-volume-group-name", "TEST-MSOTESTVOL101a-vSAMP12_base_vol_module-0");
+				
+		TestAsyncResponse asyncResponse = invokeAsyncProcess("CreateVfModuleVolumeInfraV1", "v1", businessKey, createVfModuleVolRequest, testVariables);
+		WorkflowResponse response = receiveResponse(businessKey, asyncResponse, 1000000);
 
-        String businessKey = UUID.randomUUID().toString();
-        String createVfModuleVolRequest = FileUtil.readResourceFile("__files/CreateVfModuleVolumeInfraV1/createVfModuleVolume_VID_request.json");
-
-        Map<String, Object> testVariables = new HashMap<>();
-        testVariables.put("requestId", "TEST-REQUEST-ID-0123");
-        testVariables.put("serviceInstanceId", "test-service-instance-id");
-        //testVariables.put("vnfId", "TEST-VNF-ID-0123");
-        testVariables.put("test-volume-group-name", "TEST-MSOTESTVOL101a-vSAMP12_base_vol_module-0");
-
-        TestAsyncResponse asyncResponse = invokeAsyncProcess("CreateVfModuleVolumeInfraV1", "v1", businessKey, createVfModuleVolRequest, testVariables);
-        WorkflowResponse response = receiveResponse(businessKey, asyncResponse, 1000000);
-
-        String responseBody = response.getResponse();
-        System.out.println("Workflow (Synch) Response:\n" + responseBody);
-        waitForProcessEnd(businessKey, 100000);
-        checkVariable(businessKey, "CVMVINFRAV1_SuccessIndicator", false);
-
-        logEnd();
-    }
-
-    /**
-     * Error scenario - service instance not found
-     *********************************************/
-    @Test
-    @Ignore
-    @Deployment(resources = {"process/CreateVfModuleVolumeInfraV1.bpmn",
-            "subprocess/GenericGetService.bpmn",
-            "subprocess/DoCreateVfModuleVolumeV1.bpmn",
+		String responseBody = response.getResponse();
+		System.out.println("Workflow (Synch) Response:\n" + responseBody);
+		waitForProcessEnd(businessKey, 100000);
+		checkVariable(businessKey, "CVMVINFRAV1_SuccessIndicator", false);
+		
+		logEnd();
+	}
+	
+	/**
+	 * Error scenario - service instance not found
+	 *********************************************/
+	@Test
+	@Ignore
+	@Deployment(resources = {"process/CreateVfModuleVolumeInfraV1.bpmn",
+			"subprocess/GenericGetService.bpmn",
+			"subprocess/DoCreateVfModuleVolumeV1.bpmn",
             "subprocess/FalloutHandler.bpmn",
             "subprocess/CompleteMsoProcess.bpmn",
             "subprocess/VnfAdapterRestV1.bpmn"})
-    public void TestFailServiceInstanceNotFound() throws Exception {
+	public void TestFailServiceInstanceNotFound() throws Exception {
 
-        logStart();
+		logStart();
+		
+		MockNodeQueryServiceInstanceById("test-service-instance-id", "CreateVfModuleVolumeInfraV1/getSIUrlById.xml");
+		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
 
-        MockNodeQueryServiceInstanceById("test-service-instance-id", "CreateVfModuleVolumeInfraV1/getSIUrlById.xml");
-        mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		String businessKey = UUID.randomUUID().toString();
+		String createVfModuleVolRequest = FileUtil.readResourceFile("__files/CreateVfModuleVolumeInfraV1/createVfModuleVolume_VID_request.json");
+		
+		Map<String, Object> testVariables = new HashMap<>();
+		testVariables.put("requestId", "TEST-REQUEST-ID-0123");
+		testVariables.put("serviceInstanceId", "test-service-instance-id");
+		//testVariables.put("vnfId", "TEST-VNF-ID-0123");
+		testVariables.put("test-volume-group-name", "TEST-MSOTESTVOL101a-vSAMP12_base_vol_module-0");
+				
+		TestAsyncResponse asyncResponse = invokeAsyncProcess("CreateVfModuleVolumeInfraV1", "v1", businessKey, createVfModuleVolRequest, testVariables);
+		WorkflowResponse response = receiveResponse(businessKey, asyncResponse, 1000000);
 
-        String businessKey = UUID.randomUUID().toString();
-        String createVfModuleVolRequest = FileUtil.readResourceFile("__files/CreateVfModuleVolumeInfraV1/createVfModuleVolume_VID_request.json");
-
-        Map<String, Object> testVariables = new HashMap<>();
-        testVariables.put("requestId", "TEST-REQUEST-ID-0123");
-        testVariables.put("serviceInstanceId", "test-service-instance-id");
-        //testVariables.put("vnfId", "TEST-VNF-ID-0123");
-        testVariables.put("test-volume-group-name", "TEST-MSOTESTVOL101a-vSAMP12_base_vol_module-0");
-
-        TestAsyncResponse asyncResponse = invokeAsyncProcess("CreateVfModuleVolumeInfraV1", "v1", businessKey, createVfModuleVolRequest, testVariables);
-        WorkflowResponse response = receiveResponse(businessKey, asyncResponse, 1000000);
-
-        String responseBody = response.getResponse();
-        System.out.println("Workflow (Synch) Response:\n" + responseBody);
-        waitForProcessEnd(businessKey, 100000);
-        checkVariable(businessKey, "CVMVINFRAV1_SuccessIndicator", false);
-
-        logEnd();
-    }
+		String responseBody = response.getResponse();
+		System.out.println("Workflow (Synch) Response:\n" + responseBody);
+		waitForProcessEnd(businessKey, 100000);
+		checkVariable(businessKey, "CVMVINFRAV1_SuccessIndicator", false);
+		
+		logEnd();
+	}
 }

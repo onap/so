@@ -27,25 +27,27 @@ import org.openecomp.mso.adapters.sdnc.client.SDNCAdapterCallbackRequest;
 
 public class SDNCAdapterCallbackRequestTest {
 
-    static SDNCAdapterCallbackRequest sdc = new SDNCAdapterCallbackRequest();
-    static CallbackHeader ch = new CallbackHeader("413658f4-7f42-482e-b834-23a5c15657da-1474471336781", "200", "OK");
+  static SDNCAdapterCallbackRequest sdc = new SDNCAdapterCallbackRequest();
+   static CallbackHeader ch = new CallbackHeader("413658f4-7f42-482e-b834-23a5c15657da-1474471336781","200","OK");
+   
+   @Test
+   public void testSDNCAdapterCallbackRequest()
+   {
+       sdc.setCallbackHeader(ch);
+       sdc.setRequestData("data");
+       assert(sdc.getCallbackHeader()!=null);
+       assert(sdc.getRequestData()!=null);
+       assert(sdc.getCallbackHeader().equals(ch));
+       assert(sdc.getRequestData().equals("data"));
 
-    @Test
-    public void testSDNCAdapterCallbackRequest() {
-        sdc.setCallbackHeader(ch);
-        sdc.setRequestData("data");
-        assert (sdc.getCallbackHeader() != null);
-        assert (sdc.getRequestData() != null);
-        assert (sdc.getCallbackHeader().equals(ch));
-        assert (sdc.getRequestData().equals("data"));
-
-    }
-
-    @Test
-    public void testtoString() {
-        assert (ch.toString() != null);
-    }
-
+   }
+   
+   @Test
+   public void testtoString()
+   {
+       assert(ch.toString()!=null);
+   }
+   
 }
 
 

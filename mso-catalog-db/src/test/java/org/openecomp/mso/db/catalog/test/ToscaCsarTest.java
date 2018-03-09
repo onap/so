@@ -32,26 +32,26 @@ import org.openecomp.mso.db.catalog.beans.ToscaCsar;
 
 public class ToscaCsarTest {
 
-    @Test
-    public final void toscaCsarDataTest() {
-        ToscaCsar toscaCsar = new ToscaCsar();
-        toscaCsar.setCreated(new Timestamp(System.currentTimeMillis()));
-        assertTrue(toscaCsar.getCreated() != null);
-        toscaCsar.setDescription("description");
-        assertTrue(toscaCsar.getDescription().equalsIgnoreCase("description"));
+	@Test
+	public final void toscaCsarDataTest() {
+		ToscaCsar toscaCsar = new ToscaCsar();
+		toscaCsar.setCreated(new Timestamp(System.currentTimeMillis()));
+		assertTrue(toscaCsar.getCreated() != null);
+		toscaCsar.setDescription("description");
+		assertTrue(toscaCsar.getDescription().equalsIgnoreCase("description"));
 
-        toscaCsar.setArtifactChecksum("artifactChecksum");
-        assertTrue(toscaCsar.getArtifactChecksum().equalsIgnoreCase("artifactChecksum"));
+		toscaCsar.setArtifactChecksum("artifactChecksum");
+		assertTrue(toscaCsar.getArtifactChecksum().equalsIgnoreCase("artifactChecksum"));
 
-        toscaCsar.setArtifactUUID("artifactUUID");
-        assertTrue(toscaCsar.getArtifactUUID().equalsIgnoreCase("artifactUUID"));
+		toscaCsar.setArtifactUUID("artifactUUID");
+		assertTrue(toscaCsar.getArtifactUUID().equalsIgnoreCase("artifactUUID"));
 
-        toscaCsar.setName("name");
-        assertTrue(toscaCsar.getName().equalsIgnoreCase("name"));
-        toscaCsar.setUrl("url");
-        assertTrue(toscaCsar.getUrl().equalsIgnoreCase("url"));
-//      assertTrue(toscaCsar.toString() != null);
+		toscaCsar.setName("name");
+		assertTrue(toscaCsar.getName().equalsIgnoreCase("name"));
+		toscaCsar.setUrl("url");
+		assertTrue(toscaCsar.getUrl().equalsIgnoreCase("url"));
+//		assertTrue(toscaCsar.toString() != null);
 
-    }
+	}
 
 }

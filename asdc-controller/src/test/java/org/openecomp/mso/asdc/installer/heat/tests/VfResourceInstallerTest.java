@@ -63,219 +63,218 @@ import mockit.Mock;
 import mockit.MockUp;
 
 public class VfResourceInstallerTest {
-    private static MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory();
+	private static MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory();
 
-    private static String heatExample;
-    private static String heatExampleMD5HashBase64;
+	private static String heatExample;
+	private static String heatExampleMD5HashBase64;
 
-    private static INotificationData iNotif;
+	private static INotificationData iNotif;
 
-    private static IDistributionClientDownloadResult downloadResult;
-    private static IDistributionClientDownloadResult downloadCorruptedResult;
+	private static IDistributionClientDownloadResult downloadResult;
+	private static IDistributionClientDownloadResult downloadCorruptedResult;
 
-    private static IDistributionClientResult successfulClientInitResult;
-    private static IDistributionClientResult unsuccessfulClientInitResult;
+	private static IDistributionClientResult successfulClientInitResult;
+	private static IDistributionClientResult unsuccessfulClientInitResult;
 
-    private static IDistributionClient distributionClient;
+	private static IDistributionClient distributionClient;
 
-    private static IArtifactInfo artifactInfo1;
+	private static IArtifactInfo artifactInfo1;
 
-    private static IResourceInstance resource1;
+	private static IResourceInstance resource1;
 
-    private static VfResourceStructure vrs;
+	private static VfResourceStructure vrs;
 
-    public static final String ASDC_PROP = MsoJavaProperties.class.getClassLoader().getResource("mso.json").toString()
-            .substring(5);
-    public static final String ASDC_PROP2 = MsoJavaProperties.class.getClassLoader().getResource("mso2.json").toString()
-            .substring(5);
-    public static final String ASDC_PROP3 = MsoJavaProperties.class.getClassLoader().getResource("mso3.json").toString()
-            .substring(5);
-    public static final String ASDC_PROP_BAD = MsoJavaProperties.class.getClassLoader().getResource("mso-bad.json")
-            .toString().substring(5);
-    public static final String ASDC_PROP_WITH_NULL = MsoJavaProperties.class.getClassLoader()
-            .getResource("mso-with-NULL.json").toString().substring(5);
+	public static final String ASDC_PROP = MsoJavaProperties.class.getClassLoader().getResource("mso.json").toString()
+			.substring(5);
+	public static final String ASDC_PROP2 = MsoJavaProperties.class.getClassLoader().getResource("mso2.json").toString()
+			.substring(5);
+	public static final String ASDC_PROP3 = MsoJavaProperties.class.getClassLoader().getResource("mso3.json").toString()
+			.substring(5);
+	public static final String ASDC_PROP_BAD = MsoJavaProperties.class.getClassLoader().getResource("mso-bad.json")
+			.toString().substring(5);
+	public static final String ASDC_PROP_WITH_NULL = MsoJavaProperties.class.getClassLoader()
+			.getResource("mso-with-NULL.json").toString().substring(5);
 
-    @BeforeClass
-    public static final void prepareMockNotification() throws MsoPropertiesException, IOException, URISyntaxException,
-            NoSuchAlgorithmException, ArtifactInstallerException {
+	@BeforeClass
+	public static final void prepareMockNotification() throws MsoPropertiesException, IOException, URISyntaxException,
+			NoSuchAlgorithmException, ArtifactInstallerException {
 
-        heatExample = new String(Files.readAllBytes(Paths.get(
-                ASDCControllerTest.class.getClassLoader().getResource("resource-examples/autoscaling.yaml").toURI())));
-        MessageDigest md = MessageDigest.getInstance("MD5");
-        byte[] md5Hash = md.digest(heatExample.getBytes());
-        heatExampleMD5HashBase64 = Base64.encodeBase64String(md5Hash);
+		heatExample = new String(Files.readAllBytes(Paths.get(
+				ASDCControllerTest.class.getClassLoader().getResource("resource-examples/autoscaling.yaml").toURI())));
+		MessageDigest md = MessageDigest.getInstance("MD5");
+		byte[] md5Hash = md.digest(heatExample.getBytes());
+		heatExampleMD5HashBase64 = Base64.encodeBase64String(md5Hash);
 
-        iNotif = Mockito.mock(INotificationData.class);
+		iNotif = Mockito.mock(INotificationData.class);
 
-        // Create fake ArtifactInfo
-        artifactInfo1 = Mockito.mock(IArtifactInfo.class);
-        Mockito.when(artifactInfo1.getArtifactChecksum()).thenReturn(VfResourceInstallerTest.heatExampleMD5HashBase64);
+		// Create fake ArtifactInfo
+		artifactInfo1 = Mockito.mock(IArtifactInfo.class);
+		Mockito.when(artifactInfo1.getArtifactChecksum()).thenReturn(VfResourceInstallerTest.heatExampleMD5HashBase64);
 
-        Mockito.when(artifactInfo1.getArtifactName()).thenReturn("artifact1");
-        Mockito.when(artifactInfo1.getArtifactType()).thenReturn(ASDCConfiguration.HEAT);
-        Mockito.when(artifactInfo1.getArtifactURL())
-                .thenReturn("https://localhost:8080/v1/catalog/services/srv1/2.0/resources/aaa/1.0/artifacts/aaa.yml");
-        Mockito.when(artifactInfo1.getArtifactUUID()).thenReturn("UUID1");
-        Mockito.when(artifactInfo1.getArtifactDescription()).thenReturn("testos artifact1");
+		Mockito.when(artifactInfo1.getArtifactName()).thenReturn("artifact1");
+		Mockito.when(artifactInfo1.getArtifactType()).thenReturn(ASDCConfiguration.HEAT);
+		Mockito.when(artifactInfo1.getArtifactURL())
+				.thenReturn("https://localhost:8080/v1/catalog/services/srv1/2.0/resources/aaa/1.0/artifacts/aaa.yml");
+		Mockito.when(artifactInfo1.getArtifactUUID()).thenReturn("UUID1");
+		Mockito.when(artifactInfo1.getArtifactDescription()).thenReturn("testos artifact1");
 
-        distributionClient = Mockito.mock(IDistributionClient.class);
+		distributionClient = Mockito.mock(IDistributionClient.class);
 
-        // Now provision the NotificationData mock
-        List<IArtifactInfo> listArtifact = new ArrayList<>();
-        listArtifact.add(artifactInfo1);
+		// Now provision the NotificationData mock
+		List<IArtifactInfo> listArtifact = new ArrayList<>();
+		listArtifact.add(artifactInfo1);
 
-        // Create fake resource Instance
-        resource1 = Mockito.mock(IResourceInstance.class);
+		// Create fake resource Instance
+		resource1 = Mockito.mock(IResourceInstance.class);
 //		Mockito.when(resource1.getResourceType()).thenReturn("VF");
-        Mockito.when(resource1.getResourceName()).thenReturn("resourceName");
-        Mockito.when(resource1.getArtifacts()).thenReturn(listArtifact);
+		Mockito.when(resource1.getResourceName()).thenReturn("resourceName");
+		Mockito.when(resource1.getArtifacts()).thenReturn(listArtifact);
 
-        List<IResourceInstance> resources = new ArrayList<>();
-        resources.add(resource1);
+		List<IResourceInstance> resources = new ArrayList<>();
+		resources.add(resource1);
 
-        Mockito.when(iNotif.getResources()).thenReturn(resources);
-        Mockito.when(iNotif.getDistributionID()).thenReturn("distributionID1");
-        Mockito.when(iNotif.getServiceName()).thenReturn("serviceName1");
-        Mockito.when(iNotif.getServiceUUID()).thenReturn("serviceNameUUID1");
-        Mockito.when(iNotif.getServiceVersion()).thenReturn("1.0");
+		Mockito.when(iNotif.getResources()).thenReturn(resources);
+		Mockito.when(iNotif.getDistributionID()).thenReturn("distributionID1");
+		Mockito.when(iNotif.getServiceName()).thenReturn("serviceName1");
+		Mockito.when(iNotif.getServiceUUID()).thenReturn("serviceNameUUID1");
+		Mockito.when(iNotif.getServiceVersion()).thenReturn("1.0");
 
-        downloadResult = Mockito.mock(IDistributionClientDownloadResult.class);
-        Mockito.when(downloadResult.getArtifactPayload()).thenReturn(heatExample.getBytes());
-        Mockito.when(downloadResult.getDistributionActionResult()).thenReturn(DistributionActionResultEnum.SUCCESS);
-        Mockito.when(downloadResult.getDistributionMessageResult()).thenReturn("Success");
+		downloadResult = Mockito.mock(IDistributionClientDownloadResult.class);
+		Mockito.when(downloadResult.getArtifactPayload()).thenReturn(heatExample.getBytes());
+		Mockito.when(downloadResult.getDistributionActionResult()).thenReturn(DistributionActionResultEnum.SUCCESS);
+		Mockito.when(downloadResult.getDistributionMessageResult()).thenReturn("Success");
 
-        downloadCorruptedResult = Mockito.mock(IDistributionClientDownloadResult.class);
-        Mockito.when(downloadCorruptedResult.getArtifactPayload()).thenReturn((heatExample + "badone").getBytes());
-        Mockito.when(downloadCorruptedResult.getDistributionActionResult())
-                .thenReturn(DistributionActionResultEnum.SUCCESS);
-        Mockito.when(downloadCorruptedResult.getDistributionMessageResult()).thenReturn("Success");
+		downloadCorruptedResult = Mockito.mock(IDistributionClientDownloadResult.class);
+		Mockito.when(downloadCorruptedResult.getArtifactPayload()).thenReturn((heatExample + "badone").getBytes());
+		Mockito.when(downloadCorruptedResult.getDistributionActionResult())
+				.thenReturn(DistributionActionResultEnum.SUCCESS);
+		Mockito.when(downloadCorruptedResult.getDistributionMessageResult()).thenReturn("Success");
 
-        vrs = new VfResourceStructure(iNotif, resource1);
-        try {
-            vrs.addArtifactToStructure(distributionClient, artifactInfo1, downloadResult);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        try {
-            vrs.createVfModuleStructures();
-        } catch (ArtifactInstallerException e) {
-            e.printStackTrace();
-        }
-        vrs.getNotification();
-        vrs.getArtifactsMapByUUID();
-        vrs.getCatalogNetworkResourceCustomization();
-        vrs.getCatalogResourceCustomization();
-        vrs.getCatalogService();
-        vrs.getCatalogServiceToAllottedResources();
-        vrs.getCatalogServiceToNetworks();
-        vrs.getCatalogVnfResource();
-        vrs.getResourceInstance();
-        vrs.getVfModulesStructureList();
-        vrs.getVfModuleStructure();
-        vrs.setCatalogNetworkResourceCustomization(new NetworkResourceCustomization());
-        vrs.setCatalogResourceCustomization(new AllottedResourceCustomization());
-        vrs.setCatalogService(new Service());
-        vrs.setCatalogServiceToAllottedResources(new ServiceToAllottedResources());
-        vrs.setCatalogServiceToNetworks(new ServiceToNetworks());
-        vrs.setCatalogVnfResource(new VnfResource());
-        vrs.setSuccessfulDeployment();
+		vrs = new VfResourceStructure(iNotif, resource1);
+		try {
+			vrs.addArtifactToStructure(distributionClient, artifactInfo1, downloadResult);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		try {
+			vrs.createVfModuleStructures();
+		} catch (ArtifactInstallerException e) {
+			e.printStackTrace();
+		}
+		vrs.getNotification();
+		vrs.getArtifactsMapByUUID();
+		vrs.getCatalogNetworkResourceCustomization();
+		vrs.getCatalogResourceCustomization();
+		vrs.getCatalogService();
+		vrs.getCatalogServiceToAllottedResources();
+		vrs.getCatalogServiceToNetworks();
+		vrs.getCatalogVnfResource();
+		vrs.getResourceInstance();
+		vrs.getVfModulesStructureList();
+		vrs.getVfModuleStructure();
+		vrs.setCatalogNetworkResourceCustomization(new NetworkResourceCustomization());
+		vrs.setCatalogResourceCustomization(new AllottedResourceCustomization());
+		vrs.setCatalogService(new Service());
+		vrs.setCatalogServiceToAllottedResources(new ServiceToAllottedResources());
+		vrs.setCatalogServiceToNetworks(new ServiceToNetworks());
+		vrs.setCatalogVnfResource(new VnfResource());
+		vrs.setSuccessfulDeployment();
+		
+		AllottedResourceCustomization arc= new AllottedResourceCustomization();
+		arc.setModelCustomizationUuid("modelCustomizationUuid");
+		List<AllottedResourceCustomization> allottedResources = new ArrayList<>();
+		allottedResources.add(arc);
+		
+		NetworkResourceCustomization nrc = new NetworkResourceCustomization();
+		nrc.setModelCustomizationUuid("modelCustomizationUuid");
+		List<NetworkResourceCustomization> networkResources = new ArrayList<>();
+		networkResources.add(nrc);
+		
+		new MockUp<CatalogDatabase>() {
+			@Mock
+			public List<AllottedResourceCustomization> getAllAllottedResourcesByServiceModelUuid(String serviceModelUuid) {
+				return allottedResources;
+			}
+		};
+		new MockUp<CatalogDatabase>() {
+			@Mock
+			 public List<NetworkResourceCustomization> getAllNetworksByServiceModelUuid(String serviceModelUuid) {
+				return networkResources;
+			}
+		};
+		
+		// Mock now the ASDC distribution client behavior
+		successfulClientInitResult = Mockito.mock(IDistributionClientResult.class);
+		Mockito.when(successfulClientInitResult.getDistributionActionResult())
+				.thenReturn(DistributionActionResultEnum.SUCCESS);
 
-        AllottedResourceCustomization arc = new AllottedResourceCustomization();
-        arc.setModelCustomizationUuid("modelCustomizationUuid");
-        List<AllottedResourceCustomization> allottedResources = new ArrayList<>();
-        allottedResources.add(arc);
+		unsuccessfulClientInitResult = Mockito.mock(IDistributionClientResult.class);
+		Mockito.when(unsuccessfulClientInitResult.getDistributionActionResult())
+				.thenReturn(DistributionActionResultEnum.GENERAL_ERROR);
 
-        NetworkResourceCustomization nrc = new NetworkResourceCustomization();
-        nrc.setModelCustomizationUuid("modelCustomizationUuid");
-        List<NetworkResourceCustomization> networkResources = new ArrayList<>();
-        networkResources.add(nrc);
+	}
 
-        new MockUp<CatalogDatabase>() {
-            @Mock
-            public List<AllottedResourceCustomization> getAllAllottedResourcesByServiceModelUuid(String serviceModelUuid) {
-                return allottedResources;
-            }
-        };
-        new MockUp<CatalogDatabase>() {
-            @Mock
-            public List<NetworkResourceCustomization> getAllNetworksByServiceModelUuid(String serviceModelUuid) {
-                return networkResources;
-            }
-        };
+	@Before
+	public final void initBeforeEachTest() throws MsoPropertiesException {
+		// load the config
+		msoPropertiesFactory.removeAllMsoProperties();
+		msoPropertiesFactory.initializeMsoProperties(ASDCConfiguration.MSO_PROP_ASDC, ASDC_PROP);
+	}
 
-        // Mock now the ASDC distribution client behavior
-        successfulClientInitResult = Mockito.mock(IDistributionClientResult.class);
-        Mockito.when(successfulClientInitResult.getDistributionActionResult())
-                .thenReturn(DistributionActionResultEnum.SUCCESS);
+	@AfterClass
+	public static final void kill() throws MsoPropertiesException {
 
-        unsuccessfulClientInitResult = Mockito.mock(IDistributionClientResult.class);
-        Mockito.when(unsuccessfulClientInitResult.getDistributionActionResult())
-                .thenReturn(DistributionActionResultEnum.GENERAL_ERROR);
+		msoPropertiesFactory.removeMsoProperties(ASDCConfiguration.MSO_PROP_ASDC);
 
-    }
+	}
 
-    @Before
-    public final void initBeforeEachTest() throws MsoPropertiesException {
-        // load the config
-        msoPropertiesFactory.removeAllMsoProperties();
-        msoPropertiesFactory.initializeMsoProperties(ASDCConfiguration.MSO_PROP_ASDC, ASDC_PROP);
-    }
+	@Test
+	public void isResourceAlreadyDeployedAllotedResourceTest() {
+		
+		Mockito.when(resource1.getResourceType()).thenReturn("VF");
+		Mockito.when(resource1.getCategory()).thenReturn("Allotted Resource");
+		VfResourceInstaller vfri = new VfResourceInstaller();
 
-    @AfterClass
-    public static final void kill() throws MsoPropertiesException {
+		try {
+			vfri.isResourceAlreadyDeployed(vrs);
+		} catch (ArtifactInstallerException e) {
+		}
 
-        msoPropertiesFactory.removeMsoProperties(ASDCConfiguration.MSO_PROP_ASDC);
+	}
+	
+	@Test
+	public void isResourceAlreadyDeployedTest() {
+		
+		Mockito.when(resource1.getResourceType()).thenReturn("VF");
+		Mockito.when(resource1.getCategory()).thenReturn("Not Allotted Resource");
+		VfResourceInstaller vfri = new VfResourceInstaller();
+		
+		try {
+			vfri.isResourceAlreadyDeployed(vrs);
+		} catch (ArtifactInstallerException e) {
+		}
+		
+	}
+	@Test
+	public void isResourceAlreadyDeployedDuplicateNtwrkTest() {
+		
+		Mockito.when(resource1.getResourceType()).thenReturn("VL");
+		Mockito.when(resource1.getCategory()).thenReturn("Not Allotted Resource");
+		VfResourceInstaller vfri = new VfResourceInstaller();
+		
+		try {
+			vfri.isResourceAlreadyDeployed(vrs);
+		} catch (ArtifactInstallerException e) {
+		}
+		
+	}
 
-    }
-
-    @Test
-    public void isResourceAlreadyDeployedAllotedResourceTest() {
-
-        Mockito.when(resource1.getResourceType()).thenReturn("VF");
-        Mockito.when(resource1.getCategory()).thenReturn("Allotted Resource");
-        VfResourceInstaller vfri = new VfResourceInstaller();
-
-        try {
-            vfri.isResourceAlreadyDeployed(vrs);
-        } catch (ArtifactInstallerException e) {
-        }
-
-    }
-
-    @Test
-    public void isResourceAlreadyDeployedTest() {
-
-        Mockito.when(resource1.getResourceType()).thenReturn("VF");
-        Mockito.when(resource1.getCategory()).thenReturn("Not Allotted Resource");
-        VfResourceInstaller vfri = new VfResourceInstaller();
-
-        try {
-            vfri.isResourceAlreadyDeployed(vrs);
-        } catch (ArtifactInstallerException e) {
-        }
-
-    }
-
-    @Test
-    public void isResourceAlreadyDeployedDuplicateNtwrkTest() {
-
-        Mockito.when(resource1.getResourceType()).thenReturn("VL");
-        Mockito.when(resource1.getCategory()).thenReturn("Not Allotted Resource");
-        VfResourceInstaller vfri = new VfResourceInstaller();
-
-        try {
-            vfri.isResourceAlreadyDeployed(vrs);
-        } catch (ArtifactInstallerException e) {
-        }
-
-    }
-
-    @Test(expected = Exception.class)
-    public void installTheResourceTest() {
-        VfResourceInstaller vfri = new VfResourceInstaller();
-        try {
-            vfri.installTheResource(vrs);
-        } catch (ArtifactInstallerException e) {
-        }
-    }
+	@Test(expected=Exception.class)
+	public void installTheResourceTest() {
+		VfResourceInstaller vfri = new VfResourceInstaller();
+		try {
+			vfri.installTheResource(vrs);
+		} catch (ArtifactInstallerException e) {
+		}
+	}
 }
