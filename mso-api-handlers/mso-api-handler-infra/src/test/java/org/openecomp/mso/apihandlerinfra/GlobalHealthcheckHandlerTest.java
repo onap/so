@@ -37,24 +37,24 @@ import org.openecomp.mso.properties.MsoPropertiesFactory;
 
 public class GlobalHealthcheckHandlerTest {
 
-	public static MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory();
-	private static final String CHECK_HTML = "<!DOCTYPE html><html><head><meta charset=\"ISO-8859-1\"><title>Health Check</title></head><body>Application ready</body></html>";
-	public static final Response HEALTH_CHECK_RESPONSE = Response.status(HttpStatus.SC_OK).entity(CHECK_HTML).build();
+    public static MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory();
+    private static final String CHECK_HTML = "<!DOCTYPE html><html><head><meta charset=\"ISO-8859-1\"><title>Health Check</title></head><body>Application ready</body></html>";
+    public static final Response HEALTH_CHECK_RESPONSE = Response.status(HttpStatus.SC_OK).entity(CHECK_HTML).build();
 
-	@Test
-	public final void testGlobalHealthcheck() {
-		try {
-			MsoStatusUtil statusUtil = Mockito.mock(MsoStatusUtil.class);
-			HealthCheckUtils utils = Mockito.mock(HealthCheckUtils.class);
-			Mockito.when(utils.verifyGlobalHealthCheck(true, null)).thenReturn(true);
-			Mockito.when(statusUtil.getSiteStatus(Mockito.anyString())).thenReturn(true);
-			GlobalHealthcheckHandler gh = Mockito.mock(GlobalHealthcheckHandler.class);
-			Mockito.when(gh.globalHealthcheck(Mockito.anyBoolean())).thenReturn(HEALTH_CHECK_RESPONSE);
-			Response resp = gh.globalHealthcheck(true);
-			assertEquals(resp.getStatus(), HttpStatus.SC_OK);
-		} catch (Exception e) {
+    @Test
+    public final void testGlobalHealthcheck() {
+        try {
+            MsoStatusUtil statusUtil = Mockito.mock(MsoStatusUtil.class);
+            HealthCheckUtils utils = Mockito.mock(HealthCheckUtils.class);
+            Mockito.when(utils.verifyGlobalHealthCheck(true, null)).thenReturn(true);
+            Mockito.when(statusUtil.getSiteStatus(Mockito.anyString())).thenReturn(true);
+            GlobalHealthcheckHandler gh = Mockito.mock(GlobalHealthcheckHandler.class);
+            Mockito.when(gh.globalHealthcheck(Mockito.anyBoolean())).thenReturn(HEALTH_CHECK_RESPONSE);
+            Response resp = gh.globalHealthcheck(true);
+            assertEquals(resp.getStatus(), HttpStatus.SC_OK);
+        } catch (Exception e) {
 
-			e.printStackTrace();
-		}
-	}
+            e.printStackTrace();
+        }
+    }
 }

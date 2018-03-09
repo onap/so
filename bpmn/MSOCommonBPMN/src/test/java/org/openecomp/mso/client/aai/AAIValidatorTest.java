@@ -39,61 +39,61 @@ import org.onap.aai.domain.yang.Pserver;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-@RunWith(MockitoJUnitRunner.class) 
+@RunWith(MockitoJUnitRunner.class)
 public class AAIValidatorTest {
-	
-	@Mock
-	protected AAIRestClient client;
-	String vnfName = "testVnf";
-	String uuid = "UUID";
-	AAIValidatorImpl validator;
-	
-	@Before
-	public void init(){
-		validator = new AAIValidatorImpl();
-		validator.setClient(client);
-	}
-	
-	public List<Pserver> getPservers(boolean locked){
-		Pserver pserver = new Pserver();
-		pserver.setInMaint(locked);
-		List<Pserver> pservers = new ArrayList<Pserver>();
-		pservers.add(pserver);
-		return pservers;		
-	}
-	
-	public GenericVnf createGenericVnfs(boolean locked){
-		GenericVnf genericVnf = new GenericVnf();
-		genericVnf.setInMaint(locked);
-		
-		return genericVnf;		
-	}
 
-	@Test
-	public void test_IsPhysicalServerLocked_True() throws IOException{		
-		when(client.getPhysicalServerByVnfId(vnfName,uuid)).thenReturn(getPservers(true));	
-		boolean locked = validator.isPhysicalServerLocked(vnfName, uuid);
-		assertEquals(true, locked);
-	}
-	
-	@Test
-	public void test_IsPhysicalServerLocked_False() throws JsonParseException, JsonMappingException, UnsupportedEncodingException, IOException {
-		when(client.getPhysicalServerByVnfId(vnfName,uuid)).thenReturn(getPservers(false));	
-		boolean locked = validator.isPhysicalServerLocked(vnfName, uuid);
-		assertEquals(false, locked);
-	}
-	
-	@Test
-	public void test_IsVNFLocked_False() throws Exception{
-		when(client.getVnfByName(vnfName,uuid)).thenReturn(createGenericVnfs(false));	
-		boolean locked = validator.isVNFLocked(vnfName, uuid);
-		assertEquals(false, locked);
-	}
+    @Mock
+    protected AAIRestClient client;
+    String vnfName = "testVnf";
+    String uuid = "UUID";
+    AAIValidatorImpl validator;
 
-	@Test
-	public void test_IsVNFLocked_True() throws Exception{
-		when(client.getVnfByName(vnfName,uuid)).thenReturn(createGenericVnfs(true));	
-		boolean locked = validator.isVNFLocked(vnfName, uuid);
-		assertEquals(true,locked );
-	}
+    @Before
+    public void init() {
+        validator = new AAIValidatorImpl();
+        validator.setClient(client);
+    }
+
+    public List<Pserver> getPservers(boolean locked) {
+        Pserver pserver = new Pserver();
+        pserver.setInMaint(locked);
+        List<Pserver> pservers = new ArrayList<Pserver>();
+        pservers.add(pserver);
+        return pservers;
+    }
+
+    public GenericVnf createGenericVnfs(boolean locked) {
+        GenericVnf genericVnf = new GenericVnf();
+        genericVnf.setInMaint(locked);
+
+        return genericVnf;
+    }
+
+    @Test
+    public void test_IsPhysicalServerLocked_True() throws IOException {
+        when(client.getPhysicalServerByVnfId(vnfName, uuid)).thenReturn(getPservers(true));
+        boolean locked = validator.isPhysicalServerLocked(vnfName, uuid);
+        assertEquals(true, locked);
+    }
+
+    @Test
+    public void test_IsPhysicalServerLocked_False() throws JsonParseException, JsonMappingException, UnsupportedEncodingException, IOException {
+        when(client.getPhysicalServerByVnfId(vnfName, uuid)).thenReturn(getPservers(false));
+        boolean locked = validator.isPhysicalServerLocked(vnfName, uuid);
+        assertEquals(false, locked);
+    }
+
+    @Test
+    public void test_IsVNFLocked_False() throws Exception {
+        when(client.getVnfByName(vnfName, uuid)).thenReturn(createGenericVnfs(false));
+        boolean locked = validator.isVNFLocked(vnfName, uuid);
+        assertEquals(false, locked);
+    }
+
+    @Test
+    public void test_IsVNFLocked_True() throws Exception {
+        when(client.getVnfByName(vnfName, uuid)).thenReturn(createGenericVnfs(true));
+        boolean locked = validator.isVNFLocked(vnfName, uuid);
+        assertEquals(true, locked);
+    }
 }

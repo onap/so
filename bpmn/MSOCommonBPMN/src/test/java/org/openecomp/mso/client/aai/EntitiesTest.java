@@ -30,12 +30,12 @@ import com.openpojo.validation.test.impl.SetterTester;
 
 public class EntitiesTest {
 
-	private String packageName = "org.openecomp.mso.client.aai.entities";
+    private String packageName = "org.openecomp.mso.client.aai.entities";
 
-	@Test
-	public void validate() {
-		Validator validator = ValidatorBuilder.create().with(new SetterMustExistRule(), new GetterMustExistRule())
-				.with(new SetterTester(), new GetterTester()).build();
-		validator.validate(packageName);
-	}
+    @Test
+    public void validate() {
+        Validator validator = ValidatorBuilder.create().with(new SetterMustExistRule(), new GetterMustExistRule())
+                .with(new SetterTester(), new GetterTester()).build();
+        validator.validate(packageName);
+    }
 }

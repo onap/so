@@ -40,89 +40,89 @@ import org.openecomp.sdc.api.notification.IResourceInstance;
 
 public class JsonNotificationData implements INotificationData {
 
-	@JsonIgnore
-	private Map<String,Object> attributesMap = new HashMap<>();
-	
-	@JsonProperty("serviceArtifacts")
-	@JsonDeserialize(using=JsonArtifactInfoDeserializer.class)
-	private List<IArtifactInfo> serviceArtifacts;
-	
-	@JsonProperty("resources")
-	@JsonDeserialize(using=JsonResourceInfoDeserializer.class)
-	private List<IResourceInstance> resourcesList;
-	
-	public JsonNotificationData() {
-		
-	}
-		
-	/**
-	 * Method instantiate a INotificationData implementation from a JSON file.
-	 * 
-	 * @param notifFilePath The file path in String
-	 * @return A JsonNotificationData instance
-	 * @throws IOException in case of the file is not readable or not accessible 
-	 */
-	public static JsonNotificationData instantiateNotifFromJsonFile(String notifFilePath) throws IOException {
-		
-		InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(notifFilePath+"/notif-structure.json");
-		
-		if (is == null) {
-			throw new FileExistsException("Resource Path does not exist: "+notifFilePath);
-		}
-		ObjectMapper mapper = new ObjectMapper();
-		return mapper.readValue(is, JsonNotificationData.class);
-	}
-	
-	@SuppressWarnings("unused")
-	@JsonAnySetter
-	public final void setAttribute(String attrName, Object attrValue) {
-		if ((null != attrName) && (!attrName.isEmpty()) && (null != attrValue) && (null != attrValue.toString())) {
-			this.attributesMap.put(attrName,attrValue);
-		}
-	}
+    @JsonIgnore
+    private Map<String, Object> attributesMap = new HashMap<>();
 
-	@Override
-	public IArtifactInfo getArtifactMetadataByUUID(String arg0) {
-		return null;
-	}
+    @JsonProperty("serviceArtifacts")
+    @JsonDeserialize(using = JsonArtifactInfoDeserializer.class)
+    private List<IArtifactInfo> serviceArtifacts;
 
-	@Override
-	public String getDistributionID() {
-		return (String)this.attributesMap.get("distributionID");
-	}
+    @JsonProperty("resources")
+    @JsonDeserialize(using = JsonResourceInfoDeserializer.class)
+    private List<IResourceInstance> resourcesList;
 
-	@Override
-	public List<IResourceInstance> getResources() {
-		return resourcesList;
-	}
+    public JsonNotificationData() {
 
-	@Override
-	public List<IArtifactInfo> getServiceArtifacts() {
-		return this.serviceArtifacts;
-	}
+    }
 
-	@Override
-	public String getServiceDescription() {
-		return (String)this.attributesMap.get("serviceDescription");
-	}
+    /**
+     * Method instantiate a INotificationData implementation from a JSON file.
+     *
+     * @param notifFilePath The file path in String
+     * @return A JsonNotificationData instance
+     * @throws IOException in case of the file is not readable or not accessible
+     */
+    public static JsonNotificationData instantiateNotifFromJsonFile(String notifFilePath) throws IOException {
 
-	@Override
-	public String getServiceInvariantUUID() {
-		return (String)this.attributesMap.get("serviceInvariantUUID");
-	}
+        InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(notifFilePath + "/notif-structure.json");
 
-	@Override
-	public String getServiceName() {
-		return (String)this.attributesMap.get("serviceName");
-	}
+        if (is == null) {
+            throw new FileExistsException("Resource Path does not exist: " + notifFilePath);
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(is, JsonNotificationData.class);
+    }
 
-	@Override
-	public String getServiceUUID() {
-		return (String)this.attributesMap.get("serviceUUID");
-	}
+    @SuppressWarnings("unused")
+    @JsonAnySetter
+    public final void setAttribute(String attrName, Object attrValue) {
+        if ((null != attrName) && (!attrName.isEmpty()) && (null != attrValue) && (null != attrValue.toString())) {
+            this.attributesMap.put(attrName, attrValue);
+        }
+    }
 
-	@Override
-	public String getServiceVersion() {
-		return (String)this.attributesMap.get("serviceVersion");
-	}
+    @Override
+    public IArtifactInfo getArtifactMetadataByUUID(String arg0) {
+        return null;
+    }
+
+    @Override
+    public String getDistributionID() {
+        return (String) this.attributesMap.get("distributionID");
+    }
+
+    @Override
+    public List<IResourceInstance> getResources() {
+        return resourcesList;
+    }
+
+    @Override
+    public List<IArtifactInfo> getServiceArtifacts() {
+        return this.serviceArtifacts;
+    }
+
+    @Override
+    public String getServiceDescription() {
+        return (String) this.attributesMap.get("serviceDescription");
+    }
+
+    @Override
+    public String getServiceInvariantUUID() {
+        return (String) this.attributesMap.get("serviceInvariantUUID");
+    }
+
+    @Override
+    public String getServiceName() {
+        return (String) this.attributesMap.get("serviceName");
+    }
+
+    @Override
+    public String getServiceUUID() {
+        return (String) this.attributesMap.get("serviceUUID");
+    }
+
+    @Override
+    public String getServiceVersion() {
+        return (String) this.attributesMap.get("serviceVersion");
+    }
 }

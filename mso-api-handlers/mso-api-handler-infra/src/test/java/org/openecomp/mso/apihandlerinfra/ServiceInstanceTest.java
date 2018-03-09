@@ -56,850 +56,850 @@ import mockit.MockUp;
 
 public class ServiceInstanceTest {
 
-	/*** Create Service Instance Test Cases ***/
-	
-	@Test
-	public void createServiceInstanceInvalidModelInfo(){
-		ServiceInstances instance = new ServiceInstances();
-		String requestJson = "{\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\"}}}";
-		Response resp = instance.createServiceInstance(requestJson, "v5");
-		String respBody = resp.getEntity().toString();
-		assertTrue(respBody.contains("Error parsing request.  No valid model-info is specified"));
-	}
-	
-	@Test
-	public void createServiceInstanceNormalDuplicate(){
-		new MockUp<RequestsDatabase>() {
+    /*** Create Service Instance Test Cases ***/
+
+    @Test
+    public void createServiceInstanceInvalidModelInfo() {
+        ServiceInstances instance = new ServiceInstances();
+        String requestJson = "{\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\"}}}";
+        Response resp = instance.createServiceInstance(requestJson, "v5");
+        String respBody = resp.getEntity().toString();
+        assertTrue(respBody.contains("Error parsing request.  No valid model-info is specified"));
+    }
+
+    @Test
+    public void createServiceInstanceNormalDuplicate() {
+        new MockUp<RequestsDatabase>() {
             @Mock
-            public InfraActiveRequests checkInstanceNameDuplicate (HashMap<String,String> instanceIdMap, String instanceName, String requestScope) {
+            public InfraActiveRequests checkInstanceNameDuplicate(HashMap<String, String> instanceIdMap, String instanceName, String requestScope) {
                 return new InfraActiveRequests();
             }
         };
-		ServiceInstances instance = new ServiceInstances();
-		String requestJson = "{\"serviceInstanceId\":\"1882939\","
-				+"\"vnfInstanceId\":\"1882938\","
-				+"\"networkInstanceId\":\"1882937\","
-				+"\"volumeGroupInstanceId\":\"1882935\","
-				+"\"vfModuleInstanceId\":\"1882934\","
-				+ "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
-		Response resp = instance.createServiceInstance(requestJson, "v2");
-		String respBody = resp.getEntity().toString();
-		assertTrue(respBody.contains(
-            "Locked instance - This service (testService) already has a request being worked with a status of null (RequestId - null). The existing request must finish or be cleaned up before proceeding."));
-	}
-	
-	@Test
-	public void createServiceInstanceTestDBException(){
-		new MockUp<RequestsDatabase>() {
+        ServiceInstances instance = new ServiceInstances();
+        String requestJson = "{\"serviceInstanceId\":\"1882939\","
+                + "\"vnfInstanceId\":\"1882938\","
+                + "\"networkInstanceId\":\"1882937\","
+                + "\"volumeGroupInstanceId\":\"1882935\","
+                + "\"vfModuleInstanceId\":\"1882934\","
+                + "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
+        Response resp = instance.createServiceInstance(requestJson, "v2");
+        String respBody = resp.getEntity().toString();
+        assertTrue(respBody.contains(
+                "Locked instance - This service (testService) already has a request being worked with a status of null (RequestId - null). The existing request must finish or be cleaned up before proceeding."));
+    }
+
+    @Test
+    public void createServiceInstanceTestDBException() {
+        new MockUp<RequestsDatabase>() {
             @Mock
-            public InfraActiveRequests checkInstanceNameDuplicate (HashMap<String,String> instanceIdMap, String instanceName, String requestScope) {
+            public InfraActiveRequests checkInstanceNameDuplicate(HashMap<String, String> instanceIdMap, String instanceName, String requestScope) {
                 return null;
             }
         };
         new MockUp<CatalogDatabase>() {
             @Mock
-            public Service getServiceByModelName (String defaultServiceModelName) {
-            	Service serviceRecord = new Service();
-            	serviceRecord.setModelUUID("2883992993");
-            	return serviceRecord;
+            public Service getServiceByModelName(String defaultServiceModelName) {
+                Service serviceRecord = new Service();
+                serviceRecord.setModelUUID("2883992993");
+                return serviceRecord;
             }
         };
         new MockUp<CatalogDatabase>() {
             @Mock
-            public ServiceRecipe getServiceRecipeByModelUUID (String uuid,String action) {
-            	ServiceRecipe recipe =new ServiceRecipe();
-            	recipe.setOrchestrationUri("/test/mso");
-            	recipe.setRecipeTimeout(1000);
-            	return recipe;
+            public ServiceRecipe getServiceRecipeByModelUUID(String uuid, String action) {
+                ServiceRecipe recipe = new ServiceRecipe();
+                recipe.setOrchestrationUri("/test/mso");
+                recipe.setRecipeTimeout(1000);
+                return recipe;
             }
         };
-		ServiceInstances instance = new ServiceInstances();
-		String requestJson = "{\"serviceInstanceId\":\"1882939\","
-				+"\"vnfInstanceId\":\"1882938\","
-				+"\"networkInstanceId\":\"1882937\","
-				+"\"volumeGroupInstanceId\":\"1882935\","
-				+"\"vfModuleInstanceId\":\"1882934\","
-				+ "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
-		Response resp = instance.createServiceInstance(requestJson, "v2");
-		String respBody = resp.getEntity().toString();
-		assertTrue(respBody.contains("Exception while creating record in DB null"));
-	}
-	
-	@Test
-	public void createServiceInstanceTestBpmnFail(){
-		new MockUp<RequestsDatabase>() {
+        ServiceInstances instance = new ServiceInstances();
+        String requestJson = "{\"serviceInstanceId\":\"1882939\","
+                + "\"vnfInstanceId\":\"1882938\","
+                + "\"networkInstanceId\":\"1882937\","
+                + "\"volumeGroupInstanceId\":\"1882935\","
+                + "\"vfModuleInstanceId\":\"1882934\","
+                + "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
+        Response resp = instance.createServiceInstance(requestJson, "v2");
+        String respBody = resp.getEntity().toString();
+        assertTrue(respBody.contains("Exception while creating record in DB null"));
+    }
+
+    @Test
+    public void createServiceInstanceTestBpmnFail() {
+        new MockUp<RequestsDatabase>() {
             @Mock
-            public InfraActiveRequests checkInstanceNameDuplicate (HashMap<String,String> instanceIdMap, String instanceName, String requestScope) {
+            public InfraActiveRequests checkInstanceNameDuplicate(HashMap<String, String> instanceIdMap, String instanceName, String requestScope) {
                 return null;
             }
         };
         new MockUp<CatalogDatabase>() {
             @Mock
-            public Service getServiceByModelName (String defaultServiceModelName) {
-            	Service serviceRecord = new Service();
-            	serviceRecord.setModelUUID("2883992993");
-            	return serviceRecord;
+            public Service getServiceByModelName(String defaultServiceModelName) {
+                Service serviceRecord = new Service();
+                serviceRecord.setModelUUID("2883992993");
+                return serviceRecord;
             }
         };
         new MockUp<CatalogDatabase>() {
             @Mock
-            public ServiceRecipe getServiceRecipeByModelUUID (String uuid,String action) {
-            	ServiceRecipe recipe =new ServiceRecipe();
-            	recipe.setOrchestrationUri("/test/mso");
-            	recipe.setRecipeTimeout(1000);
-            	return recipe;
+            public ServiceRecipe getServiceRecipeByModelUUID(String uuid, String action) {
+                ServiceRecipe recipe = new ServiceRecipe();
+                recipe.setOrchestrationUri("/test/mso");
+                recipe.setRecipeTimeout(1000);
+                return recipe;
             }
         };
-        
+
         new MockUp<MsoRequest>() {
             @Mock
-            public void createRequestRecord (Status status, Action action) {
-            	return;
+            public void createRequestRecord(Status status, Action action) {
+                return;
             }
         };
-		ServiceInstances instance = new ServiceInstances();
-		String requestJson = "{\"serviceInstanceId\":\"1882939\","
-				+"\"vnfInstanceId\":\"1882938\","
-				+"\"networkInstanceId\":\"1882937\","
-				+"\"volumeGroupInstanceId\":\"1882935\","
-				+"\"vfModuleInstanceId\":\"1882934\","
-				+ "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
-		Response resp = instance.createServiceInstance(requestJson, "v2");
-		String respBody = resp.getEntity().toString();
-		assertTrue(respBody.contains("Failed calling bpmn properties"));
-	}
-	
-	@Test(expected = Exception.class)
-	public void createServiceInstanceTest200Http(){
-		new MockUp<RequestsDatabase>() {
+        ServiceInstances instance = new ServiceInstances();
+        String requestJson = "{\"serviceInstanceId\":\"1882939\","
+                + "\"vnfInstanceId\":\"1882938\","
+                + "\"networkInstanceId\":\"1882937\","
+                + "\"volumeGroupInstanceId\":\"1882935\","
+                + "\"vfModuleInstanceId\":\"1882934\","
+                + "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
+        Response resp = instance.createServiceInstance(requestJson, "v2");
+        String respBody = resp.getEntity().toString();
+        assertTrue(respBody.contains("Failed calling bpmn properties"));
+    }
+
+    @Test(expected = Exception.class)
+    public void createServiceInstanceTest200Http() {
+        new MockUp<RequestsDatabase>() {
             @Mock
-            public InfraActiveRequests checkInstanceNameDuplicate (HashMap<String,String> instanceIdMap, String instanceName, String requestScope) {
+            public InfraActiveRequests checkInstanceNameDuplicate(HashMap<String, String> instanceIdMap, String instanceName, String requestScope) {
                 return null;
             }
         };
         new MockUp<CatalogDatabase>() {
             @Mock
-            public Service getServiceByModelName (String defaultServiceModelName) {
-            	Service serviceRecord = new Service();
-            	serviceRecord.setModelUUID("2883992993");
-            	return serviceRecord;
+            public Service getServiceByModelName(String defaultServiceModelName) {
+                Service serviceRecord = new Service();
+                serviceRecord.setModelUUID("2883992993");
+                return serviceRecord;
             }
         };
         new MockUp<CatalogDatabase>() {
             @Mock
-            public ServiceRecipe getServiceRecipeByModelUUID (String uuid,String action) {
-            	ServiceRecipe recipe =new ServiceRecipe();
-            	recipe.setOrchestrationUri("/test/mso");
-            	recipe.setRecipeTimeout(1000);
-            	return recipe;
+            public ServiceRecipe getServiceRecipeByModelUUID(String uuid, String action) {
+                ServiceRecipe recipe = new ServiceRecipe();
+                recipe.setOrchestrationUri("/test/mso");
+                recipe.setRecipeTimeout(1000);
+                return recipe;
             }
         };
-        
+
         new MockUp<MsoRequest>() {
             @Mock
-            public void createRequestRecord (Status status, Action action) {
-            	return;
+            public void createRequestRecord(Status status, Action action) {
+                return;
             }
         };
-        
+
         new MockUp<RequestClientFactory>() {
             @Mock
-            public RequestClient getRequestClient(String orchestrationURI, MsoJavaProperties props) throws IllegalStateException{
-            	RequestClient client = new CamundaClient();
-            	client.setUrl("/test/url");
-            	return client;
+            public RequestClient getRequestClient(String orchestrationURI, MsoJavaProperties props) throws IllegalStateException {
+                RequestClient client = new CamundaClient();
+                client.setUrl("/test/url");
+                return client;
             }
         };
-        
+
         new MockUp<CamundaClient>() {
             @Mock
             public HttpResponse post(String requestId, boolean isBaseVfModule,
-        			int recipeTimeout, String requestAction, String serviceInstanceId,
-        			String vnfId, String vfModuleId, String volumeGroupId, String networkId,
-        			String serviceType, String vnfType, String vfModuleType, String networkType,
-        			String requestDetails, String recipeParamXsd){ 
-            	ProtocolVersion pv = new ProtocolVersion("HTTP",1,1);
-            	HttpResponse resp = new BasicHttpResponse(pv,200, "test response");
-            	BasicHttpEntity entity = new BasicHttpEntity();
-            	String body = "{\"response\":\"success\",\"message\":\"success\"}";
-            	InputStream instream = new ByteArrayInputStream(body.getBytes());
-            	entity.setContent(instream);
-            	resp.setEntity(entity);
-            	return resp;
+                                     int recipeTimeout, String requestAction, String serviceInstanceId,
+                                     String vnfId, String vfModuleId, String volumeGroupId, String networkId,
+                                     String serviceType, String vnfType, String vfModuleType, String networkType,
+                                     String requestDetails, String recipeParamXsd) {
+                ProtocolVersion pv = new ProtocolVersion("HTTP", 1, 1);
+                HttpResponse resp = new BasicHttpResponse(pv, 200, "test response");
+                BasicHttpEntity entity = new BasicHttpEntity();
+                String body = "{\"response\":\"success\",\"message\":\"success\"}";
+                InputStream instream = new ByteArrayInputStream(body.getBytes());
+                entity.setContent(instream);
+                resp.setEntity(entity);
+                return resp;
             }
         };
-		ServiceInstances instance = new ServiceInstances();
-		String requestJson = "{\"serviceInstanceId\":\"1882939\","
-				+"\"vnfInstanceId\":\"1882938\","
-				+"\"networkInstanceId\":\"1882937\","
-				+"\"volumeGroupInstanceId\":\"1882935\","
-				+"\"vfModuleInstanceId\":\"1882934\","
-				+ "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
-		Response resp = instance.createServiceInstance(requestJson, "v2");
-		String respBody = resp.getEntity().toString();
-	}
-	
-	@Test
-	public void createServiceInstanceTest500Http(){
-		new MockUp<RequestsDatabase>() {
+        ServiceInstances instance = new ServiceInstances();
+        String requestJson = "{\"serviceInstanceId\":\"1882939\","
+                + "\"vnfInstanceId\":\"1882938\","
+                + "\"networkInstanceId\":\"1882937\","
+                + "\"volumeGroupInstanceId\":\"1882935\","
+                + "\"vfModuleInstanceId\":\"1882934\","
+                + "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
+        Response resp = instance.createServiceInstance(requestJson, "v2");
+        String respBody = resp.getEntity().toString();
+    }
+
+    @Test
+    public void createServiceInstanceTest500Http() {
+        new MockUp<RequestsDatabase>() {
             @Mock
-            public InfraActiveRequests checkInstanceNameDuplicate (HashMap<String,String> instanceIdMap, String instanceName, String requestScope) {
+            public InfraActiveRequests checkInstanceNameDuplicate(HashMap<String, String> instanceIdMap, String instanceName, String requestScope) {
                 return null;
             }
         };
         new MockUp<CatalogDatabase>() {
             @Mock
-            public Service getServiceByModelName (String defaultServiceModelName) {
-            	Service serviceRecord = new Service();
-            	serviceRecord.setModelUUID("2883992993");
-            	return serviceRecord;
+            public Service getServiceByModelName(String defaultServiceModelName) {
+                Service serviceRecord = new Service();
+                serviceRecord.setModelUUID("2883992993");
+                return serviceRecord;
             }
         };
         new MockUp<CatalogDatabase>() {
             @Mock
-            public ServiceRecipe getServiceRecipeByModelUUID (String uuid,String action) {
-            	ServiceRecipe recipe =new ServiceRecipe();
-            	recipe.setOrchestrationUri("/test/mso");
-            	recipe.setRecipeTimeout(1000);
-            	return recipe;
+            public ServiceRecipe getServiceRecipeByModelUUID(String uuid, String action) {
+                ServiceRecipe recipe = new ServiceRecipe();
+                recipe.setOrchestrationUri("/test/mso");
+                recipe.setRecipeTimeout(1000);
+                return recipe;
             }
         };
-        
+
         new MockUp<MsoRequest>() {
             @Mock
-            public void createRequestRecord (Status status, Action action) {
-            	return;
+            public void createRequestRecord(Status status, Action action) {
+                return;
             }
         };
-        
+
         new MockUp<RequestClientFactory>() {
             @Mock
-            public RequestClient getRequestClient(String orchestrationURI, MsoJavaProperties props) throws IllegalStateException{
-            	RequestClient client = new CamundaClient();
-            	client.setUrl("/test/url");
-            	return client;
+            public RequestClient getRequestClient(String orchestrationURI, MsoJavaProperties props) throws IllegalStateException {
+                RequestClient client = new CamundaClient();
+                client.setUrl("/test/url");
+                return client;
             }
         };
-        
+
         new MockUp<CamundaClient>() {
             @Mock
             public HttpResponse post(String requestId, boolean isBaseVfModule,
-        			int recipeTimeout, String requestAction, String serviceInstanceId,
-        			String vnfId, String vfModuleId, String volumeGroupId, String networkId,
-        			String serviceType, String vnfType, String vfModuleType, String networkType,
-        			String requestDetails, String recipeParamXsd){ 
-            	ProtocolVersion pv = new ProtocolVersion("HTTP",1,1);
-            	HttpResponse resp = new BasicHttpResponse(pv,500, "test response");
-            	BasicHttpEntity entity = new BasicHttpEntity();
-            	String body = "{\"response\":\"success\",\"message\":\"success\"}";
-            	InputStream instream = new ByteArrayInputStream(body.getBytes());
-            	entity.setContent(instream);
-            	resp.setEntity(entity);
-            	return resp;
+                                     int recipeTimeout, String requestAction, String serviceInstanceId,
+                                     String vnfId, String vfModuleId, String volumeGroupId, String networkId,
+                                     String serviceType, String vnfType, String vfModuleType, String networkType,
+                                     String requestDetails, String recipeParamXsd) {
+                ProtocolVersion pv = new ProtocolVersion("HTTP", 1, 1);
+                HttpResponse resp = new BasicHttpResponse(pv, 500, "test response");
+                BasicHttpEntity entity = new BasicHttpEntity();
+                String body = "{\"response\":\"success\",\"message\":\"success\"}";
+                InputStream instream = new ByteArrayInputStream(body.getBytes());
+                entity.setContent(instream);
+                resp.setEntity(entity);
+                return resp;
             }
         };
-		ServiceInstances instance = new ServiceInstances();
-		String requestJson = "{\"serviceInstanceId\":\"1882939\","
-				+"\"vnfInstanceId\":\"1882938\","
-				+"\"networkInstanceId\":\"1882937\","
-				+"\"volumeGroupInstanceId\":\"1882935\","
-				+"\"vfModuleInstanceId\":\"1882934\","
-				+ "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
-		Response resp = instance.createServiceInstance(requestJson, "v2");
-		String respBody = resp.getEntity().toString();
-		assertTrue(respBody.contains("Request Failed due to BPEL error with HTTP Status"));
-	}
-	
-	@Test
-	public void createServiceInstanceTestVnfModelType(){
-		new MockUp<RequestsDatabase>() {
+        ServiceInstances instance = new ServiceInstances();
+        String requestJson = "{\"serviceInstanceId\":\"1882939\","
+                + "\"vnfInstanceId\":\"1882938\","
+                + "\"networkInstanceId\":\"1882937\","
+                + "\"volumeGroupInstanceId\":\"1882935\","
+                + "\"vfModuleInstanceId\":\"1882934\","
+                + "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
+        Response resp = instance.createServiceInstance(requestJson, "v2");
+        String respBody = resp.getEntity().toString();
+        assertTrue(respBody.contains("Request Failed due to BPEL error with HTTP Status"));
+    }
+
+    @Test
+    public void createServiceInstanceTestVnfModelType() {
+        new MockUp<RequestsDatabase>() {
             @Mock
-            public InfraActiveRequests checkInstanceNameDuplicate (HashMap<String,String> instanceIdMap, String instanceName, String requestScope) {
+            public InfraActiveRequests checkInstanceNameDuplicate(HashMap<String, String> instanceIdMap, String instanceName, String requestScope) {
                 return null;
             }
         };
         new MockUp<CatalogDatabase>() {
             @Mock
-            public Service getServiceByModelName (String defaultServiceModelName) {
-            	Service serviceRecord = new Service();
-            	serviceRecord.setModelUUID("2883992993");
-            	return serviceRecord;
+            public Service getServiceByModelName(String defaultServiceModelName) {
+                Service serviceRecord = new Service();
+                serviceRecord.setModelUUID("2883992993");
+                return serviceRecord;
             }
         };
         new MockUp<CatalogDatabase>() {
             @Mock
-            public ServiceRecipe getServiceRecipeByModelUUID (String uuid,String action) {
-            	ServiceRecipe recipe =new ServiceRecipe();
-            	recipe.setOrchestrationUri("/test/mso");
-            	recipe.setRecipeTimeout(1000);
-            	return recipe;
+            public ServiceRecipe getServiceRecipeByModelUUID(String uuid, String action) {
+                ServiceRecipe recipe = new ServiceRecipe();
+                recipe.setOrchestrationUri("/test/mso");
+                recipe.setRecipeTimeout(1000);
+                return recipe;
             }
         };
-        
+
         new MockUp<MsoRequest>() {
             @Mock
-            public void createRequestRecord (Status status, Action action) {
-            	return;
+            public void createRequestRecord(Status status, Action action) {
+                return;
             }
         };
-        
+
         new MockUp<RequestClientFactory>() {
             @Mock
-            public RequestClient getRequestClient(String orchestrationURI, MsoJavaProperties props) throws IllegalStateException{
-            	RequestClient client = new CamundaClient();
-            	client.setUrl("/test/url");
-            	return client;
+            public RequestClient getRequestClient(String orchestrationURI, MsoJavaProperties props) throws IllegalStateException {
+                RequestClient client = new CamundaClient();
+                client.setUrl("/test/url");
+                return client;
             }
         };
-        
+
         new MockUp<CamundaClient>() {
             @Mock
             public HttpResponse post(String requestId, boolean isBaseVfModule,
-        			int recipeTimeout, String requestAction, String serviceInstanceId,
-        			String vnfId, String vfModuleId, String volumeGroupId, String networkId,
-        			String serviceType, String vnfType, String vfModuleType, String networkType,
-        			String requestDetails, String recipeParamXsd){ 
-            	ProtocolVersion pv = new ProtocolVersion("HTTP",1,1);
-            	HttpResponse resp = new BasicHttpResponse(pv,500, "test response");
-            	BasicHttpEntity entity = new BasicHttpEntity();
-            	String body = "{\"response\":\"success\",\"message\":\"success\"}";
-            	InputStream instream = new ByteArrayInputStream(body.getBytes());
-            	entity.setContent(instream);
-            	resp.setEntity(entity);
-            	return resp;
+                                     int recipeTimeout, String requestAction, String serviceInstanceId,
+                                     String vnfId, String vfModuleId, String volumeGroupId, String networkId,
+                                     String serviceType, String vnfType, String vfModuleType, String networkType,
+                                     String requestDetails, String recipeParamXsd) {
+                ProtocolVersion pv = new ProtocolVersion("HTTP", 1, 1);
+                HttpResponse resp = new BasicHttpResponse(pv, 500, "test response");
+                BasicHttpEntity entity = new BasicHttpEntity();
+                String body = "{\"response\":\"success\",\"message\":\"success\"}";
+                InputStream instream = new ByteArrayInputStream(body.getBytes());
+                entity.setContent(instream);
+                resp.setEntity(entity);
+                return resp;
             }
         };
-		ServiceInstances instance = new ServiceInstances();
-		String requestJson = "{\"serviceInstanceId\":\"1882939\","
-				+"\"vnfInstanceId\":\"1882938\","
-				+"\"networkInstanceId\":\"1882937\","
-				+"\"volumeGroupInstanceId\":\"1882935\","
-				+"\"vfModuleInstanceId\":\"1882934\","
-				+ "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"vnf\",\"modelName\":\"serviceModel\",\"modelCustomizationName\":\"test\"}}}";
-		Response resp = instance.createServiceInstance(requestJson, "v5");
-		String respBody = resp.getEntity().toString();
-		assertTrue(respBody.contains("No valid modelVersionId is specified"));
-	}
-	
-	@Test
-	public void createServiceInstanceTestNullHttpResp(){
-		new MockUp<RequestsDatabase>() {
+        ServiceInstances instance = new ServiceInstances();
+        String requestJson = "{\"serviceInstanceId\":\"1882939\","
+                + "\"vnfInstanceId\":\"1882938\","
+                + "\"networkInstanceId\":\"1882937\","
+                + "\"volumeGroupInstanceId\":\"1882935\","
+                + "\"vfModuleInstanceId\":\"1882934\","
+                + "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"vnf\",\"modelName\":\"serviceModel\",\"modelCustomizationName\":\"test\"}}}";
+        Response resp = instance.createServiceInstance(requestJson, "v5");
+        String respBody = resp.getEntity().toString();
+        assertTrue(respBody.contains("No valid modelVersionId is specified"));
+    }
+
+    @Test
+    public void createServiceInstanceTestNullHttpResp() {
+        new MockUp<RequestsDatabase>() {
             @Mock
-            public InfraActiveRequests checkInstanceNameDuplicate (HashMap<String,String> instanceIdMap, String instanceName, String requestScope) {
+            public InfraActiveRequests checkInstanceNameDuplicate(HashMap<String, String> instanceIdMap, String instanceName, String requestScope) {
                 return null;
             }
         };
         new MockUp<CatalogDatabase>() {
             @Mock
-            public Service getServiceByModelName (String defaultServiceModelName) {
-            	Service serviceRecord = new Service();
-            	serviceRecord.setModelUUID("2883992993");
-            	return serviceRecord;
+            public Service getServiceByModelName(String defaultServiceModelName) {
+                Service serviceRecord = new Service();
+                serviceRecord.setModelUUID("2883992993");
+                return serviceRecord;
             }
         };
         new MockUp<CatalogDatabase>() {
             @Mock
-            public ServiceRecipe getServiceRecipeByModelUUID (String uuid,String action) {
-            	ServiceRecipe recipe =new ServiceRecipe();
-            	recipe.setOrchestrationUri("/test/mso");
-            	recipe.setRecipeTimeout(1000);
-            	return recipe;
+            public ServiceRecipe getServiceRecipeByModelUUID(String uuid, String action) {
+                ServiceRecipe recipe = new ServiceRecipe();
+                recipe.setOrchestrationUri("/test/mso");
+                recipe.setRecipeTimeout(1000);
+                return recipe;
             }
         };
-        
+
         new MockUp<MsoRequest>() {
             @Mock
-            public void createRequestRecord (Status status, Action action) {
-            	return;
+            public void createRequestRecord(Status status, Action action) {
+                return;
             }
         };
-        
+
         new MockUp<RequestClientFactory>() {
             @Mock
-            public RequestClient getRequestClient(String orchestrationURI, MsoJavaProperties props) throws IllegalStateException{
-            	RequestClient client = new CamundaClient();
-            	client.setUrl("/test/url");
-            	return client;
+            public RequestClient getRequestClient(String orchestrationURI, MsoJavaProperties props) throws IllegalStateException {
+                RequestClient client = new CamundaClient();
+                client.setUrl("/test/url");
+                return client;
             }
         };
-        
+
         new MockUp<CamundaClient>() {
             @Mock
             public HttpResponse post(String requestId, boolean isBaseVfModule,
-        			int recipeTimeout, String requestAction, String serviceInstanceId,
-        			String vnfId, String vfModuleId, String volumeGroupId, String networkId,
-        			String serviceType, String vnfType, String vfModuleType, String networkType,
-        			String requestDetails, String recipeParamXsd){ 
-            	return null;
+                                     int recipeTimeout, String requestAction, String serviceInstanceId,
+                                     String vnfId, String vfModuleId, String volumeGroupId, String networkId,
+                                     String serviceType, String vnfType, String vfModuleType, String networkType,
+                                     String requestDetails, String recipeParamXsd) {
+                return null;
             }
         };
-		ServiceInstances instance = new ServiceInstances();
-		String requestJson = "{\"serviceInstanceId\":\"1882939\","
-				+"\"vnfInstanceId\":\"1882938\","
-				+"\"networkInstanceId\":\"1882937\","
-				+"\"volumeGroupInstanceId\":\"1882935\","
-				+"\"vfModuleInstanceId\":\"1882934\","
-				+ "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
-		Response resp = instance.createServiceInstance(requestJson, "v2");
-		String respBody = resp.getEntity().toString();
-		assertTrue(respBody.contains("bpelResponse is null"));
-	}
-	
-	@Test
-	public void createServiceInstanceNormalNullDBFatch(){
-		new MockUp<RequestsDatabase>() {
+        ServiceInstances instance = new ServiceInstances();
+        String requestJson = "{\"serviceInstanceId\":\"1882939\","
+                + "\"vnfInstanceId\":\"1882938\","
+                + "\"networkInstanceId\":\"1882937\","
+                + "\"volumeGroupInstanceId\":\"1882935\","
+                + "\"vfModuleInstanceId\":\"1882934\","
+                + "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
+        Response resp = instance.createServiceInstance(requestJson, "v2");
+        String respBody = resp.getEntity().toString();
+        assertTrue(respBody.contains("bpelResponse is null"));
+    }
+
+    @Test
+    public void createServiceInstanceNormalNullDBFatch() {
+        new MockUp<RequestsDatabase>() {
             @Mock
-            private List<InfraActiveRequests> executeInfraQuery (List <Criterion> criteria, Order order) {
+            private List<InfraActiveRequests> executeInfraQuery(List<Criterion> criteria, Order order) {
                 return Collections.EMPTY_LIST;
             }
         };
-		ServiceInstances instance = new ServiceInstances();
-		String requestJson = "{\"serviceInstanceId\":\"1882939\","
-				+"\"vnfInstanceId\":\"1882938\","
-				+"\"networkInstanceId\":\"1882937\","
-				+"\"volumeGroupInstanceId\":\"1882935\","
-				+"\"vfModuleInstanceId\":\"1882934\","
-				+ "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
-		Response resp = instance.createServiceInstance(requestJson, "v2");
-		String respBody = resp.getEntity().toString();
-		assertTrue(respBody.contains("Recipe could not be retrieved from catalog DB null"));
-	}
-	
-	
-	@Test
-	public void createServiceInstanceInvalidModelVersionId(){
-		ServiceInstances instance = new ServiceInstances();
-		String requestJson = "{\"serviceInstanceId\":\"1882939\","
-				+"\"vnfInstanceId\":\"1882938\","
-				+"\"networkInstanceId\":\"1882937\","
-				+"\"volumeGroupInstanceId\":\"1882935\","
-				+"\"vfModuleInstanceId\":\"1882934\","
-				+ "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
-		Response resp = instance.createServiceInstance(requestJson, "v5");
-		String respBody = resp.getEntity().toString();
-		assertTrue(respBody.contains("Error parsing request.  No valid modelVersionId is specified"));
-	}
-	
-	@Test
-	public void createServiceInstanceNullInstanceName(){
-		ServiceInstances instance = new ServiceInstances();
-		String requestJson = "{\"serviceInstanceId\":\"1882939\","
-				+"\"vnfInstanceId\":\"1882938\","
-				+"\"networkInstanceId\":\"1882937\","
-				+"\"volumeGroupInstanceId\":\"1882935\","
-				+"\"vfModuleInstanceId\":\"1882934\","
-				+ "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
-		Response resp = instance.createServiceInstance(requestJson, "v2");
-		String respBody = resp.getEntity().toString();
-		assertTrue(respBody.contains("Error parsing request.  No valid instanceName is specified"));
-	}
-	
-	
-	@Test
-	public void createServiceInstanceNullModelInfo(){
-		ServiceInstances instance = new ServiceInstances();
-		String requestJson = "{\"serviceInstanceId\":\"1882939\","
-				+"\"vnfInstanceId\":\"1882938\","
-				+"\"networkInstanceId\":\"1882937\","
-				+"\"volumeGroupInstanceId\":\"1882935\","
-				+"\"vfModuleInstanceId\":\"1882934\","
-				+ "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\"},\"requestParameters\": { \"autoBuildVfModules\": false}}}";
-		Response resp = instance.createServiceInstance(requestJson, "v2");
-		String respBody = resp.getEntity().toString();
-		assertTrue(respBody.contains("Error parsing request.  No valid model-info is specified"));
-	}
-	
-	@Test
-	public void createServiceInstanceInvalidModelInvariantId(){
-		ServiceInstances instance = new ServiceInstances();
-		String requestJson = "{\"serviceInstanceId\":\"1882939\","
-				+"\"vnfInstanceId\":\"1882938\","
-				+"\"networkInstanceId\":\"1882937\","
-				+"\"volumeGroupInstanceId\":\"1882935\","
-				+"\"vfModuleInstanceId\":\"1882934\","
-				+ "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\"},\"requestParameters\": { \"autoBuildVfModules\": false},\"modelInfo\":{\"modelInvariantId\": \"1234\"}}}";
-		Response resp = instance.createServiceInstance(requestJson, "v2");
-		String respBody = resp.getEntity().toString();
-		assertTrue(respBody.contains("Error parsing request.  No valid modelType is specified"));
-	}
-	
-	@Test
-	public void createServiceInstanceNullModelVersion(){
-		ServiceInstances instance = new ServiceInstances();
-		String requestJson = "{\"serviceInstanceId\":\"1882939\","
-				+"\"vnfInstanceId\":\"1882938\","
-				+"\"networkInstanceId\":\"1882937\","
-				+"\"volumeGroupInstanceId\":\"1882935\","
-				+"\"vfModuleInstanceId\":\"1882934\","
-				+ "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\"},\"requestParameters\": { \"autoBuildVfModules\": false},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\"}}}";
-		Response resp = instance.createServiceInstance(requestJson, "v2");
-		String respBody = resp.getEntity().toString();
-		assertTrue(respBody.contains("Error parsing request.  No valid modelType is specified"));
-	}
-	
-	
-	@Test
-	public void createServiceInstanceNullModelType(){
-		ServiceInstances instance = new ServiceInstances();
-		String requestJson = "{\"serviceInstanceId\":\"1882939\","
-				+"\"vnfInstanceId\":\"1882938\","
-				+"\"networkInstanceId\":\"1882937\","
-				+"\"volumeGroupInstanceId\":\"1882935\","
-				+"\"vfModuleInstanceId\":\"1882934\","
-				+ "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\"},\"requestParameters\": { \"autoBuildVfModules\": false},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\"}}}";
-		Response resp = instance.createServiceInstance(requestJson, "v2");
-		String respBody = resp.getEntity().toString();
-		assertTrue(respBody.contains("Error parsing request.  No valid modelType is specified"));
-	}
-	
-	@Test
-	public void createServiceInstanceInvalidModelType(){
-		ServiceInstances instance = new ServiceInstances();
-		String requestJson = "{\"serviceInstanceId\":\"1882939\","
-				+"\"vnfInstanceId\":\"1882938\","
-				+"\"networkInstanceId\":\"1882937\","
-				+"\"volumeGroupInstanceId\":\"1882935\","
-				+"\"vfModuleInstanceId\":\"1882934\","
-				+ "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\"},\"requestParameters\": { \"autoBuildVfModules\": false},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"testmodel\"}}}";
-		Response resp = instance.createServiceInstance(requestJson, "v2");
-		String respBody = resp.getEntity().toString();
-		assertTrue(respBody.contains("Mapping of request to JSON object failed."));
-	}
-	
-	@Test
-	public void createServiceInstanceNullModelName(){
-		ServiceInstances instance = new ServiceInstances();
-		String requestJson = "{\"serviceInstanceId\":\"1882939\","
-				+"\"vnfInstanceId\":\"1882938\","
-				+"\"networkInstanceId\":\"1882937\","
-				+"\"volumeGroupInstanceId\":\"1882935\","
-				+"\"vfModuleInstanceId\":\"1882934\","
-				+ "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\"},\"requestParameters\": { \"autoBuildVfModules\": false},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\"}}}";
-		Response resp = instance.createServiceInstance(requestJson, "v2");
-		String respBody = resp.getEntity().toString();
-		assertTrue(respBody.contains("Error parsing request.  No valid modelName is specified"));
-	}
-	
-	@Test
-	public void createServiceInstanceInvalidVersionForAutoBuildVfModules(){
-		ServiceInstances instance = new ServiceInstances();
-		String requestJson = "{\"serviceInstanceId\":\"1882939\","
-				+"\"vnfInstanceId\":\"1882938\","
-				+"\"networkInstanceId\":\"1882937\","
-				+"\"volumeGroupInstanceId\":\"1882935\","
-				+"\"vfModuleInstanceId\":\"1882934\","
-				+ "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\"},\"requestParameters\": { \"autoBuildVfModules\": true},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
-		Response resp = instance.createServiceInstance(requestJson, "v2");
-		String respBody = resp.getEntity().toString();
-		assertTrue(respBody.contains("Error parsing request.  AutoBuildVfModule is not valid in the v2 version"));
-	}
-	
-	@Test
-	public void createServiceInstanceNullRequestParameter(){
-		ServiceInstances instance = new ServiceInstances();
-		String requestJson = "{\"serviceInstanceId\":\"1882939\","
-				+"\"vnfInstanceId\":\"1882938\","
-				+"\"networkInstanceId\":\"1882937\","
-				+"\"volumeGroupInstanceId\":\"1882935\","
-				+"\"vfModuleInstanceId\":\"1882934\","
-				+ "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\"},\"requestParameters\": { \"autoBuildVfModules\": false},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
-		Response resp = instance.createServiceInstance(requestJson, "v2");
-		String respBody = resp.getEntity().toString();
-		assertTrue(respBody.contains("Error parsing request.  No valid subscriptionServiceType is specified"));
-	}
-	
-	@Test
-	public void createServiceInstanceNullSubscriptionType(){
-		ServiceInstances instance = new ServiceInstances();
-		String requestJson = "{\"serviceInstanceId\":\"1882939\","
-				+"\"vnfInstanceId\":\"1882938\","
-				+"\"networkInstanceId\":\"1882937\","
-				+"\"volumeGroupInstanceId\":\"1882935\","
-				+"\"vfModuleInstanceId\":\"1882934\","
-				+ "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\"},\"requestParameters\": { \"autoBuildVfModules\": false},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
-		Response resp = instance.createServiceInstance(requestJson, "v2");
-		String respBody = resp.getEntity().toString();
-		assertTrue(respBody.contains("Error parsing request.  No valid subscriptionServiceType is specified"));
-	}
-	
-	@Test
-	public void createServiceInstanceAnbormalInvalidJson(){
-		ServiceInstances instance = new ServiceInstances();
-		String requestJson = "{\"name\":\"test\"}";
-		Response resp = instance.createServiceInstance(requestJson, "v2");
-		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.contains("Mapping of request to JSON object failed"));
-	}
-	
-	/*** Activate Service Instance Test Cases ***/
-	
-	@Test
-	public void activateServiceInstanceAnbormalInvalidJson(){
-		ServiceInstances instance = new ServiceInstances();
-		String requestJson = "{\"name\":\"test\"}";
-		Response resp = instance.activateServiceInstance(requestJson, "v5","557ea944-c83e-43cf-9ed7-3a354abd6d34");
-		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.contains("Mapping of request to JSON object failed"));
-	}
-	
-	@Test
-	public void activateServiceInstanceInvalidModelVersionId(){
-		ServiceInstances instance = new ServiceInstances();
-		String requestJson = "{\"serviceInstanceId\":\"1882939\","
-				+"\"vnfInstanceId\":\"1882938\","
-				+"\"networkInstanceId\":\"1882937\","
-				+"\"volumeGroupInstanceId\":\"1882935\","
-				+"\"vfModuleInstanceId\":\"1882934\","
-				+ "\"requestDetails\": {\"relatedInstanceList\" :[{\"relatedInstance\":{\"instanceName\":\"testInstance\",\"instanceId\":\"557ea944-c83e-43cf-9ed7-3a354abd6d37\",\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}],\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
-		Response resp = instance.activateServiceInstance(requestJson, "v5","557ea944-c83e-43cf-9ed7-3a354abd6d34");
-		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.contains("Error parsing request.  No valid modelVersionId in relatedInstance is specified"));
-	}
-	
-	@Test
-	public void activateServiceInstanceInvalidServiceInstanceId(){
-		ServiceInstances instance = new ServiceInstances();
-		String requestJson = "{\"serviceInstanceId\":\"1882939\","
-				+"\"vnfInstanceId\":\"1882938\","
-				+"\"networkInstanceId\":\"1882937\","
-				+"\"volumeGroupInstanceId\":\"1882935\","
-				+"\"vfModuleInstanceId\":\"1882934\","
-				+ "\"requestDetails\": {\"relatedInstanceList\" :[{\"relatedInstance\":{\"instanceName\":\"testInstance\",\"instanceId\":\"557ea944-c83e-43cf-9ed7-3a354abd6d37\",\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"4839499\"}}}],\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
-		Response resp = instance.activateServiceInstance(requestJson, "v5","557ea944-c83e-43cf-9ed7-3a354abd6d34");
-		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.contains(
-            "Error parsing request.  No valid serviceInstanceId matching the serviceInstanceId in request URI is specified"));
-	}
-	
-	@Test
-	public void activateServiceInstanceTestNormal(){
-		ServiceInstances instance = new ServiceInstances();
-		String requestJson = "{\"serviceInstanceId\":\"1882939\","
-				+"\"vnfInstanceId\":\"1882938\","
-				+"\"networkInstanceId\":\"1882937\","
-				+"\"volumeGroupInstanceId\":\"1882935\","
-				+"\"vfModuleInstanceId\":\"1882934\","
-				+ "\"requestDetails\": {\"relatedInstanceList\" :[{\"relatedInstance\":{\"instanceName\":\"testInstance\",\"instanceId\":\"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"4839499\"}}}],\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
-		Response resp = instance.activateServiceInstance(requestJson, "v5","557ea944-c83e-43cf-9ed7-3a354abd6d34");
-		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.contains("SVC2000"));
-	}
-	
-	/*** Deactivate Service Instance Test Cases ***/
-	
-	@Test
-	public void deactivateServiceInstanceAnbormalInvalidJson(){
-		ServiceInstances instance = new ServiceInstances();
-		String requestJson = "{\"name\":\"test\"}";
-		Response resp = instance.deactivateServiceInstance(requestJson, "v5","557ea944-c83e-43cf-9ed7-3a354abd6d34");
-		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.contains("Mapping of request to JSON object failed"));
-	}
-	
-	@Test
-	public void deactivateServiceInstanceInvalidModelVersionId(){
-		ServiceInstances instance = new ServiceInstances();
-		String requestJson = "{\"serviceInstanceId\":\"1882939\","
-				+"\"vnfInstanceId\":\"1882938\","
-				+"\"networkInstanceId\":\"1882937\","
-				+"\"volumeGroupInstanceId\":\"1882935\","
-				+"\"vfModuleInstanceId\":\"1882934\","
-				+ "\"requestDetails\": {\"relatedInstanceList\" :[{\"relatedInstance\":{\"instanceName\":\"testInstance\",\"instanceId\":\"557ea944-c83e-43cf-9ed7-3a354abd6d37\",\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}],\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
-		Response resp = instance.deactivateServiceInstance(requestJson, "v5","557ea944-c83e-43cf-9ed7-3a354abd6d34");
-		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.contains("Error parsing request.  No valid modelVersionId in relatedInstance is specified"));
-	}
-	
-	@Test
-	public void deactivateServiceInstanceInvalidServiceInstanceId(){
-		ServiceInstances instance = new ServiceInstances();
-		String requestJson = "{\"serviceInstanceId\":\"1882939\","
-				+"\"vnfInstanceId\":\"1882938\","
-				+"\"networkInstanceId\":\"1882937\","
-				+"\"volumeGroupInstanceId\":\"1882935\","
-				+"\"vfModuleInstanceId\":\"1882934\","
-				+ "\"requestDetails\": {\"relatedInstanceList\" :[{\"relatedInstance\":{\"instanceName\":\"testInstance\",\"instanceId\":\"557ea944-c83e-43cf-9ed7-3a354abd6d37\",\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"4839499\"}}}],\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
-		Response resp = instance.deactivateServiceInstance(requestJson, "v5","557ea944-c83e-43cf-9ed7-3a354abd6d34");
-		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.contains(
-            "Error parsing request.  No valid serviceInstanceId matching the serviceInstanceId in request URI is specified"));
-	}
-	
-	@Test
-	public void deactivateServiceInstanceTestNormal(){
-		ServiceInstances instance = new ServiceInstances();
-		String requestJson = "{\"serviceInstanceId\":\"1882939\","
-				+"\"vnfInstanceId\":\"1882938\","
-				+"\"networkInstanceId\":\"1882937\","
-				+"\"volumeGroupInstanceId\":\"1882935\","
-				+"\"vfModuleInstanceId\":\"1882934\","
-				+ "\"requestDetails\": {\"relatedInstanceList\" :[{\"relatedInstance\":{\"instanceName\":\"testInstance\",\"instanceId\":\"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"4839499\"}}}],\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
-		Response resp = instance.deactivateServiceInstance(requestJson, "v5","557ea944-c83e-43cf-9ed7-3a354abd6d34");
-		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.contains("SVC2000"));
-	}
-	
-	/*** Delete Service Instance Test Cases ***/
-	
-	@Test
-	public void deleteServiceInstanceAnbormalInvalidJson(){
-		ServiceInstances instance = new ServiceInstances();
-		String requestJson = "{\"name\":\"test\"}";
-		Response resp = instance.deleteServiceInstance(requestJson, "v5","557ea944-c83e-43cf-9ed7-3a354abd6d34");
-		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.contains("Mapping of request to JSON object failed"));
-	}
-	
-	@Test
-	public void deleteServiceInstanceInvalidModelVersionId(){
-		ServiceInstances instance = new ServiceInstances();
-		String requestJson = "{\"serviceInstanceId\":\"1882939\","
-				+"\"vnfInstanceId\":\"1882938\","
-				+"\"networkInstanceId\":\"1882937\","
-				+"\"volumeGroupInstanceId\":\"1882935\","
-				+"\"vfModuleInstanceId\":\"1882934\","
-				+ "\"requestDetails\": {\"relatedInstanceList\" :[{\"relatedInstance\":{\"instanceName\":\"testInstance\",\"instanceId\":\"557ea944-c83e-43cf-9ed7-3a354abd6d37\",\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}],\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
-		Response resp = instance.deleteServiceInstance(requestJson, "v5","557ea944-c83e-43cf-9ed7-3a354abd6d34");
-		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.contains("Error parsing request.  No valid modelVersionId is specified"));
-	}
-	
-	@Test
-	public void deleteServiceInstanceInvalidServiceInstanceId(){
-		ServiceInstances instance = new ServiceInstances();
-		String requestJson = "{\"serviceInstanceId\":\"1882939\","
-				+"\"vnfInstanceId\":\"1882938\","
-				+"\"networkInstanceId\":\"1882937\","
-				+"\"volumeGroupInstanceId\":\"1882935\","
-				+"\"vfModuleInstanceId\":\"1882934\","
-				+ "\"requestDetails\": {\"relatedInstanceList\" :[{\"relatedInstance\":{\"instanceName\":\"testInstance\",\"instanceId\":\"557ea944-c83e-43cf-9ed7-3a354abd6d37\",\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"4839499\"}}}],\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
-		Response resp = instance.deleteServiceInstance(requestJson, "v5","557ea944-c83e-43cf-9ed7-3a354abd6d34");
-		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.contains("Error parsing request.  No valid modelVersionId is specified"));
-	}
-	
-	@Test
-	public void deleteServiceInstanceTestNormal(){
-		ServiceInstances instance = new ServiceInstances();
-		String requestJson = "{\"serviceInstanceId\":\"1882939\","
-				+"\"vnfInstanceId\":\"1882938\","
-				+"\"networkInstanceId\":\"1882937\","
-				+"\"volumeGroupInstanceId\":\"1882935\","
-				+"\"vfModuleInstanceId\":\"1882934\","
-				+ "\"requestDetails\": {\"relatedInstanceList\" :[{\"relatedInstance\":{\"instanceName\":\"testInstance\",\"instanceId\":\"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"4839499\"}}}],\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"288393\",\"modelCustomizationId\":\"389823213\"}}}";
-		Response resp = instance.deleteServiceInstance(requestJson, "v5","557ea944-c83e-43cf-9ed7-3a354abd6d34");
-		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.contains("SVC2000"));
-	}
-	
-	/*** Create Vnf Instance Test Cases ***/
-	
-	@Test
-	public void createVNFInstanceTestInvalidCloudConfiguration(){
-		ServiceInstances instance = new ServiceInstances();
-		String requestJson = "{\"serviceInstanceId\":\"1882939\","
-				+"\"vnfInstanceId\":\"1882938\","
-				+"\"networkInstanceId\":\"1882937\","
-				+"\"volumeGroupInstanceId\":\"1882935\","
-				+"\"vfModuleInstanceId\":\"1882934\","
-				+ "\"requestDetails\": {\"relatedInstanceList\" :[{\"relatedInstance\":{\"instanceName\":\"testInstance\",\"instanceId\":\"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"4839499\"}}}],\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"288393\",\"modelCustomizationId\":\"389823213\"}}}";
-		Response resp = instance.createVnfInstance(requestJson, "v3","557ea944-c83e-43cf-9ed7-3a354abd6d34");
-		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.contains("Error parsing request.  No valid cloudConfiguration is specified"));
-	}
-	
-	@Test
-	public void createVNFInstanceTestInvalidIcpCloudRegionId(){
-		ServiceInstances instance = new ServiceInstances();
-		String s = "\"cloudConfiguration\":{}";
-		String requestJson = "{\"serviceInstanceId\":\"1882939\","
-				+"\"vnfInstanceId\":\"1882938\","
-				+"\"networkInstanceId\":\"1882937\","
-				+"\"volumeGroupInstanceId\":\"1882935\","
-				+"\"vfModuleInstanceId\":\"1882934\","
-				+ "\"requestDetails\": {\"cloudConfiguration\":{}, \"relatedInstanceList\" :[{\"relatedInstance\":{\"instanceName\":\"testInstance\",\"instanceId\":\"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"4839499\"}}}],\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"288393\",\"modelCustomizationId\":\"389823213\"}}}";
-		Response resp = instance.createVnfInstance(requestJson, "v3","557ea944-c83e-43cf-9ed7-3a354abd6d34");
-		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.contains("Error parsing request.  No valid lcpCloudRegionId is specified"));
-	}
-	
-	@Test
-	public void createVNFInstanceTestInvalidTenantId(){
-		ServiceInstances instance = new ServiceInstances();
-		String s = "\"cloudConfiguration\":{}";
-		String requestJson = "{\"serviceInstanceId\":\"1882939\","
-				+"\"vnfInstanceId\":\"1882938\","
-				+"\"networkInstanceId\":\"1882937\","
-				+"\"volumeGroupInstanceId\":\"1882935\","
-				+"\"vfModuleInstanceId\":\"1882934\","
-				+ "\"requestDetails\": {\"cloudConfiguration\":{\"lcpCloudRegionId\":\"2993841\"}, \"relatedInstanceList\" :[{\"relatedInstance\":{\"instanceName\":\"testInstance\",\"instanceId\":\"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"4839499\"}}}],\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"288393\",\"modelCustomizationId\":\"389823213\"}}}";
-		Response resp = instance.createVnfInstance(requestJson, "v3","557ea944-c83e-43cf-9ed7-3a354abd6d34");
-		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.contains("Error parsing request.  No valid tenantId is specified"));
-	}
-	
-	@Test
-	public void createVNFInstanceTestNormal(){
-		ServiceInstances instance = new ServiceInstances();
-		String s = "\"cloudConfiguration\":{}";
-		String requestJson = "{\"serviceInstanceId\":\"1882939\","
-				+"\"vnfInstanceId\":\"1882938\","
-				+"\"networkInstanceId\":\"1882937\","
-				+"\"volumeGroupInstanceId\":\"1882935\","
-				+"\"vfModuleInstanceId\":\"1882934\","
-				+ "\"requestDetails\": {\"cloudConfiguration\":{\"lcpCloudRegionId\":\"2993841\",\"tenantId\":\"2910032\"}, \"relatedInstanceList\" :[{\"relatedInstance\":{\"instanceName\":\"testInstance\",\"instanceId\":\"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"4839499\"}}}],\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"288393\",\"modelCustomizationId\":\"389823213\"}}}";
-		Response resp = instance.createVnfInstance(requestJson, "v3","557ea944-c83e-43cf-9ed7-3a354abd6d34");
-		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.contains("SVC2000"));
-	}
-	
-	/*** Replace Vnf Instance Test Cases ***/
-	@Test
-	public void replaceVNFInstanceTestNormal(){
-		ServiceInstances instance = new ServiceInstances();
-		String s = "\"cloudConfiguration\":{}";
-		String requestJson = "{\"serviceInstanceId\":\"1882939\","
-				+"\"vnfInstanceId\":\"1882938\","
-				+"\"networkInstanceId\":\"1882937\","
-				+"\"volumeGroupInstanceId\":\"1882935\","
-				+"\"vfModuleInstanceId\":\"1882934\","
-				+ "\"requestDetails\": {\"cloudConfiguration\":{\"lcpCloudRegionId\":\"2993841\",\"tenantId\":\"2910032\"}, \"relatedInstanceList\" :[{\"relatedInstance\":{\"instanceName\":\"testInstance\",\"instanceId\":\"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"4839499\"}}}],\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"288393\",\"modelCustomizationId\":\"389823213\"}}}";
-		Response resp = instance.replaceVnfInstance(requestJson, "v3","557ea944-c83e-43cf-9ed7-3a354abd6d34","557ea944-c83e-43cf-9ed7-3a354abd6d93");
-		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.contains("SVC2000"));
-	}
-	
-	/*** Update Vnf Instance Test Cases ***/
-	
-	@Test
-	public void updateVNFInstanceTestNormal(){
-		ServiceInstances instance = new ServiceInstances();
-		String s = "\"cloudConfiguration\":{}";
-		String requestJson = "{\"serviceInstanceId\":\"1882939\","
-				+"\"vnfInstanceId\":\"1882938\","
-				+"\"networkInstanceId\":\"1882937\","
-				+"\"volumeGroupInstanceId\":\"1882935\","
-				+"\"vfModuleInstanceId\":\"1882934\","
-				+ "\"requestDetails\": {\"cloudConfiguration\":{\"lcpCloudRegionId\":\"2993841\",\"tenantId\":\"2910032\"}, \"relatedInstanceList\" :[{\"relatedInstance\":{\"instanceName\":\"testInstance\",\"instanceId\":\"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"4839499\"}}}],\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"288393\",\"modelCustomizationId\":\"389823213\"}}}";
-		Response resp = instance.updateVnfInstance(requestJson, "v3","557ea944-c83e-43cf-9ed7-3a354abd6d34","557ea944-c83e-43cf-9ed7-3a354abd6d93");
-		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.contains("SVC2000"));
-	}
-	
-	/*** Update Vnf Instance Test Cases ***/
-	
-	@Test
-	public void deleteVNFInstanceTestNormal(){
-		ServiceInstances instance = new ServiceInstances();
-		String s = "\"cloudConfiguration\":{}";
-		String requestJson = "{\"serviceInstanceId\":\"1882939\","
-				+"\"vnfInstanceId\":\"1882938\","
-				+"\"networkInstanceId\":\"1882937\","
-				+"\"volumeGroupInstanceId\":\"1882935\","
-				+"\"vfModuleInstanceId\":\"1882934\","
-				+ "\"requestDetails\": {\"cloudConfiguration\":{\"lcpCloudRegionId\":\"2993841\",\"tenantId\":\"2910032\"}, \"relatedInstanceList\" :[{\"relatedInstance\":{\"instanceName\":\"testInstance\",\"instanceId\":\"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"4839499\"}}}],\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"288393\",\"modelCustomizationId\":\"389823213\"}}}";
-		Response resp = instance.deleteVnfInstance(requestJson, "v3","557ea944-c83e-43cf-9ed7-3a354abd6d34","557ea944-c83e-43cf-9ed7-3a354abd6d93");
-		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.contains("SVC2000"));
-	}
+        ServiceInstances instance = new ServiceInstances();
+        String requestJson = "{\"serviceInstanceId\":\"1882939\","
+                + "\"vnfInstanceId\":\"1882938\","
+                + "\"networkInstanceId\":\"1882937\","
+                + "\"volumeGroupInstanceId\":\"1882935\","
+                + "\"vfModuleInstanceId\":\"1882934\","
+                + "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
+        Response resp = instance.createServiceInstance(requestJson, "v2");
+        String respBody = resp.getEntity().toString();
+        assertTrue(respBody.contains("Recipe could not be retrieved from catalog DB null"));
+    }
+
+
+    @Test
+    public void createServiceInstanceInvalidModelVersionId() {
+        ServiceInstances instance = new ServiceInstances();
+        String requestJson = "{\"serviceInstanceId\":\"1882939\","
+                + "\"vnfInstanceId\":\"1882938\","
+                + "\"networkInstanceId\":\"1882937\","
+                + "\"volumeGroupInstanceId\":\"1882935\","
+                + "\"vfModuleInstanceId\":\"1882934\","
+                + "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
+        Response resp = instance.createServiceInstance(requestJson, "v5");
+        String respBody = resp.getEntity().toString();
+        assertTrue(respBody.contains("Error parsing request.  No valid modelVersionId is specified"));
+    }
+
+    @Test
+    public void createServiceInstanceNullInstanceName() {
+        ServiceInstances instance = new ServiceInstances();
+        String requestJson = "{\"serviceInstanceId\":\"1882939\","
+                + "\"vnfInstanceId\":\"1882938\","
+                + "\"networkInstanceId\":\"1882937\","
+                + "\"volumeGroupInstanceId\":\"1882935\","
+                + "\"vfModuleInstanceId\":\"1882934\","
+                + "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
+        Response resp = instance.createServiceInstance(requestJson, "v2");
+        String respBody = resp.getEntity().toString();
+        assertTrue(respBody.contains("Error parsing request.  No valid instanceName is specified"));
+    }
+
+
+    @Test
+    public void createServiceInstanceNullModelInfo() {
+        ServiceInstances instance = new ServiceInstances();
+        String requestJson = "{\"serviceInstanceId\":\"1882939\","
+                + "\"vnfInstanceId\":\"1882938\","
+                + "\"networkInstanceId\":\"1882937\","
+                + "\"volumeGroupInstanceId\":\"1882935\","
+                + "\"vfModuleInstanceId\":\"1882934\","
+                + "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\"},\"requestParameters\": { \"autoBuildVfModules\": false}}}";
+        Response resp = instance.createServiceInstance(requestJson, "v2");
+        String respBody = resp.getEntity().toString();
+        assertTrue(respBody.contains("Error parsing request.  No valid model-info is specified"));
+    }
+
+    @Test
+    public void createServiceInstanceInvalidModelInvariantId() {
+        ServiceInstances instance = new ServiceInstances();
+        String requestJson = "{\"serviceInstanceId\":\"1882939\","
+                + "\"vnfInstanceId\":\"1882938\","
+                + "\"networkInstanceId\":\"1882937\","
+                + "\"volumeGroupInstanceId\":\"1882935\","
+                + "\"vfModuleInstanceId\":\"1882934\","
+                + "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\"},\"requestParameters\": { \"autoBuildVfModules\": false},\"modelInfo\":{\"modelInvariantId\": \"1234\"}}}";
+        Response resp = instance.createServiceInstance(requestJson, "v2");
+        String respBody = resp.getEntity().toString();
+        assertTrue(respBody.contains("Error parsing request.  No valid modelType is specified"));
+    }
+
+    @Test
+    public void createServiceInstanceNullModelVersion() {
+        ServiceInstances instance = new ServiceInstances();
+        String requestJson = "{\"serviceInstanceId\":\"1882939\","
+                + "\"vnfInstanceId\":\"1882938\","
+                + "\"networkInstanceId\":\"1882937\","
+                + "\"volumeGroupInstanceId\":\"1882935\","
+                + "\"vfModuleInstanceId\":\"1882934\","
+                + "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\"},\"requestParameters\": { \"autoBuildVfModules\": false},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\"}}}";
+        Response resp = instance.createServiceInstance(requestJson, "v2");
+        String respBody = resp.getEntity().toString();
+        assertTrue(respBody.contains("Error parsing request.  No valid modelType is specified"));
+    }
+
+
+    @Test
+    public void createServiceInstanceNullModelType() {
+        ServiceInstances instance = new ServiceInstances();
+        String requestJson = "{\"serviceInstanceId\":\"1882939\","
+                + "\"vnfInstanceId\":\"1882938\","
+                + "\"networkInstanceId\":\"1882937\","
+                + "\"volumeGroupInstanceId\":\"1882935\","
+                + "\"vfModuleInstanceId\":\"1882934\","
+                + "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\"},\"requestParameters\": { \"autoBuildVfModules\": false},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\"}}}";
+        Response resp = instance.createServiceInstance(requestJson, "v2");
+        String respBody = resp.getEntity().toString();
+        assertTrue(respBody.contains("Error parsing request.  No valid modelType is specified"));
+    }
+
+    @Test
+    public void createServiceInstanceInvalidModelType() {
+        ServiceInstances instance = new ServiceInstances();
+        String requestJson = "{\"serviceInstanceId\":\"1882939\","
+                + "\"vnfInstanceId\":\"1882938\","
+                + "\"networkInstanceId\":\"1882937\","
+                + "\"volumeGroupInstanceId\":\"1882935\","
+                + "\"vfModuleInstanceId\":\"1882934\","
+                + "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\"},\"requestParameters\": { \"autoBuildVfModules\": false},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"testmodel\"}}}";
+        Response resp = instance.createServiceInstance(requestJson, "v2");
+        String respBody = resp.getEntity().toString();
+        assertTrue(respBody.contains("Mapping of request to JSON object failed."));
+    }
+
+    @Test
+    public void createServiceInstanceNullModelName() {
+        ServiceInstances instance = new ServiceInstances();
+        String requestJson = "{\"serviceInstanceId\":\"1882939\","
+                + "\"vnfInstanceId\":\"1882938\","
+                + "\"networkInstanceId\":\"1882937\","
+                + "\"volumeGroupInstanceId\":\"1882935\","
+                + "\"vfModuleInstanceId\":\"1882934\","
+                + "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\"},\"requestParameters\": { \"autoBuildVfModules\": false},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\"}}}";
+        Response resp = instance.createServiceInstance(requestJson, "v2");
+        String respBody = resp.getEntity().toString();
+        assertTrue(respBody.contains("Error parsing request.  No valid modelName is specified"));
+    }
+
+    @Test
+    public void createServiceInstanceInvalidVersionForAutoBuildVfModules() {
+        ServiceInstances instance = new ServiceInstances();
+        String requestJson = "{\"serviceInstanceId\":\"1882939\","
+                + "\"vnfInstanceId\":\"1882938\","
+                + "\"networkInstanceId\":\"1882937\","
+                + "\"volumeGroupInstanceId\":\"1882935\","
+                + "\"vfModuleInstanceId\":\"1882934\","
+                + "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\"},\"requestParameters\": { \"autoBuildVfModules\": true},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
+        Response resp = instance.createServiceInstance(requestJson, "v2");
+        String respBody = resp.getEntity().toString();
+        assertTrue(respBody.contains("Error parsing request.  AutoBuildVfModule is not valid in the v2 version"));
+    }
+
+    @Test
+    public void createServiceInstanceNullRequestParameter() {
+        ServiceInstances instance = new ServiceInstances();
+        String requestJson = "{\"serviceInstanceId\":\"1882939\","
+                + "\"vnfInstanceId\":\"1882938\","
+                + "\"networkInstanceId\":\"1882937\","
+                + "\"volumeGroupInstanceId\":\"1882935\","
+                + "\"vfModuleInstanceId\":\"1882934\","
+                + "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\"},\"requestParameters\": { \"autoBuildVfModules\": false},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
+        Response resp = instance.createServiceInstance(requestJson, "v2");
+        String respBody = resp.getEntity().toString();
+        assertTrue(respBody.contains("Error parsing request.  No valid subscriptionServiceType is specified"));
+    }
+
+    @Test
+    public void createServiceInstanceNullSubscriptionType() {
+        ServiceInstances instance = new ServiceInstances();
+        String requestJson = "{\"serviceInstanceId\":\"1882939\","
+                + "\"vnfInstanceId\":\"1882938\","
+                + "\"networkInstanceId\":\"1882937\","
+                + "\"volumeGroupInstanceId\":\"1882935\","
+                + "\"vfModuleInstanceId\":\"1882934\","
+                + "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\"},\"requestParameters\": { \"autoBuildVfModules\": false},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
+        Response resp = instance.createServiceInstance(requestJson, "v2");
+        String respBody = resp.getEntity().toString();
+        assertTrue(respBody.contains("Error parsing request.  No valid subscriptionServiceType is specified"));
+    }
+
+    @Test
+    public void createServiceInstanceAnbormalInvalidJson() {
+        ServiceInstances instance = new ServiceInstances();
+        String requestJson = "{\"name\":\"test\"}";
+        Response resp = instance.createServiceInstance(requestJson, "v2");
+        String respStr = resp.getEntity().toString();
+        assertTrue(respStr.contains("Mapping of request to JSON object failed"));
+    }
+
+    /*** Activate Service Instance Test Cases ***/
+
+    @Test
+    public void activateServiceInstanceAnbormalInvalidJson() {
+        ServiceInstances instance = new ServiceInstances();
+        String requestJson = "{\"name\":\"test\"}";
+        Response resp = instance.activateServiceInstance(requestJson, "v5", "557ea944-c83e-43cf-9ed7-3a354abd6d34");
+        String respStr = resp.getEntity().toString();
+        assertTrue(respStr.contains("Mapping of request to JSON object failed"));
+    }
+
+    @Test
+    public void activateServiceInstanceInvalidModelVersionId() {
+        ServiceInstances instance = new ServiceInstances();
+        String requestJson = "{\"serviceInstanceId\":\"1882939\","
+                + "\"vnfInstanceId\":\"1882938\","
+                + "\"networkInstanceId\":\"1882937\","
+                + "\"volumeGroupInstanceId\":\"1882935\","
+                + "\"vfModuleInstanceId\":\"1882934\","
+                + "\"requestDetails\": {\"relatedInstanceList\" :[{\"relatedInstance\":{\"instanceName\":\"testInstance\",\"instanceId\":\"557ea944-c83e-43cf-9ed7-3a354abd6d37\",\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}],\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
+        Response resp = instance.activateServiceInstance(requestJson, "v5", "557ea944-c83e-43cf-9ed7-3a354abd6d34");
+        String respStr = resp.getEntity().toString();
+        assertTrue(respStr.contains("Error parsing request.  No valid modelVersionId in relatedInstance is specified"));
+    }
+
+    @Test
+    public void activateServiceInstanceInvalidServiceInstanceId() {
+        ServiceInstances instance = new ServiceInstances();
+        String requestJson = "{\"serviceInstanceId\":\"1882939\","
+                + "\"vnfInstanceId\":\"1882938\","
+                + "\"networkInstanceId\":\"1882937\","
+                + "\"volumeGroupInstanceId\":\"1882935\","
+                + "\"vfModuleInstanceId\":\"1882934\","
+                + "\"requestDetails\": {\"relatedInstanceList\" :[{\"relatedInstance\":{\"instanceName\":\"testInstance\",\"instanceId\":\"557ea944-c83e-43cf-9ed7-3a354abd6d37\",\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"4839499\"}}}],\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
+        Response resp = instance.activateServiceInstance(requestJson, "v5", "557ea944-c83e-43cf-9ed7-3a354abd6d34");
+        String respStr = resp.getEntity().toString();
+        assertTrue(respStr.contains(
+                "Error parsing request.  No valid serviceInstanceId matching the serviceInstanceId in request URI is specified"));
+    }
+
+    @Test
+    public void activateServiceInstanceTestNormal() {
+        ServiceInstances instance = new ServiceInstances();
+        String requestJson = "{\"serviceInstanceId\":\"1882939\","
+                + "\"vnfInstanceId\":\"1882938\","
+                + "\"networkInstanceId\":\"1882937\","
+                + "\"volumeGroupInstanceId\":\"1882935\","
+                + "\"vfModuleInstanceId\":\"1882934\","
+                + "\"requestDetails\": {\"relatedInstanceList\" :[{\"relatedInstance\":{\"instanceName\":\"testInstance\",\"instanceId\":\"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"4839499\"}}}],\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
+        Response resp = instance.activateServiceInstance(requestJson, "v5", "557ea944-c83e-43cf-9ed7-3a354abd6d34");
+        String respStr = resp.getEntity().toString();
+        assertTrue(respStr.contains("SVC2000"));
+    }
+
+    /*** Deactivate Service Instance Test Cases ***/
+
+    @Test
+    public void deactivateServiceInstanceAnbormalInvalidJson() {
+        ServiceInstances instance = new ServiceInstances();
+        String requestJson = "{\"name\":\"test\"}";
+        Response resp = instance.deactivateServiceInstance(requestJson, "v5", "557ea944-c83e-43cf-9ed7-3a354abd6d34");
+        String respStr = resp.getEntity().toString();
+        assertTrue(respStr.contains("Mapping of request to JSON object failed"));
+    }
+
+    @Test
+    public void deactivateServiceInstanceInvalidModelVersionId() {
+        ServiceInstances instance = new ServiceInstances();
+        String requestJson = "{\"serviceInstanceId\":\"1882939\","
+                + "\"vnfInstanceId\":\"1882938\","
+                + "\"networkInstanceId\":\"1882937\","
+                + "\"volumeGroupInstanceId\":\"1882935\","
+                + "\"vfModuleInstanceId\":\"1882934\","
+                + "\"requestDetails\": {\"relatedInstanceList\" :[{\"relatedInstance\":{\"instanceName\":\"testInstance\",\"instanceId\":\"557ea944-c83e-43cf-9ed7-3a354abd6d37\",\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}],\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
+        Response resp = instance.deactivateServiceInstance(requestJson, "v5", "557ea944-c83e-43cf-9ed7-3a354abd6d34");
+        String respStr = resp.getEntity().toString();
+        assertTrue(respStr.contains("Error parsing request.  No valid modelVersionId in relatedInstance is specified"));
+    }
+
+    @Test
+    public void deactivateServiceInstanceInvalidServiceInstanceId() {
+        ServiceInstances instance = new ServiceInstances();
+        String requestJson = "{\"serviceInstanceId\":\"1882939\","
+                + "\"vnfInstanceId\":\"1882938\","
+                + "\"networkInstanceId\":\"1882937\","
+                + "\"volumeGroupInstanceId\":\"1882935\","
+                + "\"vfModuleInstanceId\":\"1882934\","
+                + "\"requestDetails\": {\"relatedInstanceList\" :[{\"relatedInstance\":{\"instanceName\":\"testInstance\",\"instanceId\":\"557ea944-c83e-43cf-9ed7-3a354abd6d37\",\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"4839499\"}}}],\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
+        Response resp = instance.deactivateServiceInstance(requestJson, "v5", "557ea944-c83e-43cf-9ed7-3a354abd6d34");
+        String respStr = resp.getEntity().toString();
+        assertTrue(respStr.contains(
+                "Error parsing request.  No valid serviceInstanceId matching the serviceInstanceId in request URI is specified"));
+    }
+
+    @Test
+    public void deactivateServiceInstanceTestNormal() {
+        ServiceInstances instance = new ServiceInstances();
+        String requestJson = "{\"serviceInstanceId\":\"1882939\","
+                + "\"vnfInstanceId\":\"1882938\","
+                + "\"networkInstanceId\":\"1882937\","
+                + "\"volumeGroupInstanceId\":\"1882935\","
+                + "\"vfModuleInstanceId\":\"1882934\","
+                + "\"requestDetails\": {\"relatedInstanceList\" :[{\"relatedInstance\":{\"instanceName\":\"testInstance\",\"instanceId\":\"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"4839499\"}}}],\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
+        Response resp = instance.deactivateServiceInstance(requestJson, "v5", "557ea944-c83e-43cf-9ed7-3a354abd6d34");
+        String respStr = resp.getEntity().toString();
+        assertTrue(respStr.contains("SVC2000"));
+    }
+
+    /*** Delete Service Instance Test Cases ***/
+
+    @Test
+    public void deleteServiceInstanceAnbormalInvalidJson() {
+        ServiceInstances instance = new ServiceInstances();
+        String requestJson = "{\"name\":\"test\"}";
+        Response resp = instance.deleteServiceInstance(requestJson, "v5", "557ea944-c83e-43cf-9ed7-3a354abd6d34");
+        String respStr = resp.getEntity().toString();
+        assertTrue(respStr.contains("Mapping of request to JSON object failed"));
+    }
+
+    @Test
+    public void deleteServiceInstanceInvalidModelVersionId() {
+        ServiceInstances instance = new ServiceInstances();
+        String requestJson = "{\"serviceInstanceId\":\"1882939\","
+                + "\"vnfInstanceId\":\"1882938\","
+                + "\"networkInstanceId\":\"1882937\","
+                + "\"volumeGroupInstanceId\":\"1882935\","
+                + "\"vfModuleInstanceId\":\"1882934\","
+                + "\"requestDetails\": {\"relatedInstanceList\" :[{\"relatedInstance\":{\"instanceName\":\"testInstance\",\"instanceId\":\"557ea944-c83e-43cf-9ed7-3a354abd6d37\",\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}],\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
+        Response resp = instance.deleteServiceInstance(requestJson, "v5", "557ea944-c83e-43cf-9ed7-3a354abd6d34");
+        String respStr = resp.getEntity().toString();
+        assertTrue(respStr.contains("Error parsing request.  No valid modelVersionId is specified"));
+    }
+
+    @Test
+    public void deleteServiceInstanceInvalidServiceInstanceId() {
+        ServiceInstances instance = new ServiceInstances();
+        String requestJson = "{\"serviceInstanceId\":\"1882939\","
+                + "\"vnfInstanceId\":\"1882938\","
+                + "\"networkInstanceId\":\"1882937\","
+                + "\"volumeGroupInstanceId\":\"1882935\","
+                + "\"vfModuleInstanceId\":\"1882934\","
+                + "\"requestDetails\": {\"relatedInstanceList\" :[{\"relatedInstance\":{\"instanceName\":\"testInstance\",\"instanceId\":\"557ea944-c83e-43cf-9ed7-3a354abd6d37\",\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"4839499\"}}}],\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
+        Response resp = instance.deleteServiceInstance(requestJson, "v5", "557ea944-c83e-43cf-9ed7-3a354abd6d34");
+        String respStr = resp.getEntity().toString();
+        assertTrue(respStr.contains("Error parsing request.  No valid modelVersionId is specified"));
+    }
+
+    @Test
+    public void deleteServiceInstanceTestNormal() {
+        ServiceInstances instance = new ServiceInstances();
+        String requestJson = "{\"serviceInstanceId\":\"1882939\","
+                + "\"vnfInstanceId\":\"1882938\","
+                + "\"networkInstanceId\":\"1882937\","
+                + "\"volumeGroupInstanceId\":\"1882935\","
+                + "\"vfModuleInstanceId\":\"1882934\","
+                + "\"requestDetails\": {\"relatedInstanceList\" :[{\"relatedInstance\":{\"instanceName\":\"testInstance\",\"instanceId\":\"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"4839499\"}}}],\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"288393\",\"modelCustomizationId\":\"389823213\"}}}";
+        Response resp = instance.deleteServiceInstance(requestJson, "v5", "557ea944-c83e-43cf-9ed7-3a354abd6d34");
+        String respStr = resp.getEntity().toString();
+        assertTrue(respStr.contains("SVC2000"));
+    }
+
+    /*** Create Vnf Instance Test Cases ***/
+
+    @Test
+    public void createVNFInstanceTestInvalidCloudConfiguration() {
+        ServiceInstances instance = new ServiceInstances();
+        String requestJson = "{\"serviceInstanceId\":\"1882939\","
+                + "\"vnfInstanceId\":\"1882938\","
+                + "\"networkInstanceId\":\"1882937\","
+                + "\"volumeGroupInstanceId\":\"1882935\","
+                + "\"vfModuleInstanceId\":\"1882934\","
+                + "\"requestDetails\": {\"relatedInstanceList\" :[{\"relatedInstance\":{\"instanceName\":\"testInstance\",\"instanceId\":\"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"4839499\"}}}],\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"288393\",\"modelCustomizationId\":\"389823213\"}}}";
+        Response resp = instance.createVnfInstance(requestJson, "v3", "557ea944-c83e-43cf-9ed7-3a354abd6d34");
+        String respStr = resp.getEntity().toString();
+        assertTrue(respStr.contains("Error parsing request.  No valid cloudConfiguration is specified"));
+    }
+
+    @Test
+    public void createVNFInstanceTestInvalidIcpCloudRegionId() {
+        ServiceInstances instance = new ServiceInstances();
+        String s = "\"cloudConfiguration\":{}";
+        String requestJson = "{\"serviceInstanceId\":\"1882939\","
+                + "\"vnfInstanceId\":\"1882938\","
+                + "\"networkInstanceId\":\"1882937\","
+                + "\"volumeGroupInstanceId\":\"1882935\","
+                + "\"vfModuleInstanceId\":\"1882934\","
+                + "\"requestDetails\": {\"cloudConfiguration\":{}, \"relatedInstanceList\" :[{\"relatedInstance\":{\"instanceName\":\"testInstance\",\"instanceId\":\"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"4839499\"}}}],\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"288393\",\"modelCustomizationId\":\"389823213\"}}}";
+        Response resp = instance.createVnfInstance(requestJson, "v3", "557ea944-c83e-43cf-9ed7-3a354abd6d34");
+        String respStr = resp.getEntity().toString();
+        assertTrue(respStr.contains("Error parsing request.  No valid lcpCloudRegionId is specified"));
+    }
+
+    @Test
+    public void createVNFInstanceTestInvalidTenantId() {
+        ServiceInstances instance = new ServiceInstances();
+        String s = "\"cloudConfiguration\":{}";
+        String requestJson = "{\"serviceInstanceId\":\"1882939\","
+                + "\"vnfInstanceId\":\"1882938\","
+                + "\"networkInstanceId\":\"1882937\","
+                + "\"volumeGroupInstanceId\":\"1882935\","
+                + "\"vfModuleInstanceId\":\"1882934\","
+                + "\"requestDetails\": {\"cloudConfiguration\":{\"lcpCloudRegionId\":\"2993841\"}, \"relatedInstanceList\" :[{\"relatedInstance\":{\"instanceName\":\"testInstance\",\"instanceId\":\"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"4839499\"}}}],\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"288393\",\"modelCustomizationId\":\"389823213\"}}}";
+        Response resp = instance.createVnfInstance(requestJson, "v3", "557ea944-c83e-43cf-9ed7-3a354abd6d34");
+        String respStr = resp.getEntity().toString();
+        assertTrue(respStr.contains("Error parsing request.  No valid tenantId is specified"));
+    }
+
+    @Test
+    public void createVNFInstanceTestNormal() {
+        ServiceInstances instance = new ServiceInstances();
+        String s = "\"cloudConfiguration\":{}";
+        String requestJson = "{\"serviceInstanceId\":\"1882939\","
+                + "\"vnfInstanceId\":\"1882938\","
+                + "\"networkInstanceId\":\"1882937\","
+                + "\"volumeGroupInstanceId\":\"1882935\","
+                + "\"vfModuleInstanceId\":\"1882934\","
+                + "\"requestDetails\": {\"cloudConfiguration\":{\"lcpCloudRegionId\":\"2993841\",\"tenantId\":\"2910032\"}, \"relatedInstanceList\" :[{\"relatedInstance\":{\"instanceName\":\"testInstance\",\"instanceId\":\"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"4839499\"}}}],\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"288393\",\"modelCustomizationId\":\"389823213\"}}}";
+        Response resp = instance.createVnfInstance(requestJson, "v3", "557ea944-c83e-43cf-9ed7-3a354abd6d34");
+        String respStr = resp.getEntity().toString();
+        assertTrue(respStr.contains("SVC2000"));
+    }
+
+    /*** Replace Vnf Instance Test Cases ***/
+    @Test
+    public void replaceVNFInstanceTestNormal() {
+        ServiceInstances instance = new ServiceInstances();
+        String s = "\"cloudConfiguration\":{}";
+        String requestJson = "{\"serviceInstanceId\":\"1882939\","
+                + "\"vnfInstanceId\":\"1882938\","
+                + "\"networkInstanceId\":\"1882937\","
+                + "\"volumeGroupInstanceId\":\"1882935\","
+                + "\"vfModuleInstanceId\":\"1882934\","
+                + "\"requestDetails\": {\"cloudConfiguration\":{\"lcpCloudRegionId\":\"2993841\",\"tenantId\":\"2910032\"}, \"relatedInstanceList\" :[{\"relatedInstance\":{\"instanceName\":\"testInstance\",\"instanceId\":\"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"4839499\"}}}],\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"288393\",\"modelCustomizationId\":\"389823213\"}}}";
+        Response resp = instance.replaceVnfInstance(requestJson, "v3", "557ea944-c83e-43cf-9ed7-3a354abd6d34", "557ea944-c83e-43cf-9ed7-3a354abd6d93");
+        String respStr = resp.getEntity().toString();
+        assertTrue(respStr.contains("SVC2000"));
+    }
+
+    /*** Update Vnf Instance Test Cases ***/
+
+    @Test
+    public void updateVNFInstanceTestNormal() {
+        ServiceInstances instance = new ServiceInstances();
+        String s = "\"cloudConfiguration\":{}";
+        String requestJson = "{\"serviceInstanceId\":\"1882939\","
+                + "\"vnfInstanceId\":\"1882938\","
+                + "\"networkInstanceId\":\"1882937\","
+                + "\"volumeGroupInstanceId\":\"1882935\","
+                + "\"vfModuleInstanceId\":\"1882934\","
+                + "\"requestDetails\": {\"cloudConfiguration\":{\"lcpCloudRegionId\":\"2993841\",\"tenantId\":\"2910032\"}, \"relatedInstanceList\" :[{\"relatedInstance\":{\"instanceName\":\"testInstance\",\"instanceId\":\"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"4839499\"}}}],\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"288393\",\"modelCustomizationId\":\"389823213\"}}}";
+        Response resp = instance.updateVnfInstance(requestJson, "v3", "557ea944-c83e-43cf-9ed7-3a354abd6d34", "557ea944-c83e-43cf-9ed7-3a354abd6d93");
+        String respStr = resp.getEntity().toString();
+        assertTrue(respStr.contains("SVC2000"));
+    }
+
+    /*** Update Vnf Instance Test Cases ***/
+
+    @Test
+    public void deleteVNFInstanceTestNormal() {
+        ServiceInstances instance = new ServiceInstances();
+        String s = "\"cloudConfiguration\":{}";
+        String requestJson = "{\"serviceInstanceId\":\"1882939\","
+                + "\"vnfInstanceId\":\"1882938\","
+                + "\"networkInstanceId\":\"1882937\","
+                + "\"volumeGroupInstanceId\":\"1882935\","
+                + "\"vfModuleInstanceId\":\"1882934\","
+                + "\"requestDetails\": {\"cloudConfiguration\":{\"lcpCloudRegionId\":\"2993841\",\"tenantId\":\"2910032\"}, \"relatedInstanceList\" :[{\"relatedInstance\":{\"instanceName\":\"testInstance\",\"instanceId\":\"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"4839499\"}}}],\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"288393\",\"modelCustomizationId\":\"389823213\"}}}";
+        Response resp = instance.deleteVnfInstance(requestJson, "v3", "557ea944-c83e-43cf-9ed7-3a354abd6d34", "557ea944-c83e-43cf-9ed7-3a354abd6d93");
+        String respStr = resp.getEntity().toString();
+        assertTrue(respStr.contains("SVC2000"));
+    }
 }

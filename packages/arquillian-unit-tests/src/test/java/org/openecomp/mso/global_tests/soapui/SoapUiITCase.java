@@ -54,63 +54,63 @@ import com.eviware.soapui.tools.SoapUITestCaseRunner;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class SoapUiITCase {
 
-	private static String jbossHost=System.getProperty("docker.hostname");
-	private static String jbossPort="18080";
-	
-	@Deployment(name="mso-api-handler-infra",testable=false)
-	public static Archive<?> createMsoApiHandlerInfraWarDeployment () {
-		System.out.println("Deploying ApiHandler Infra WAR on default server");
-		return ArquillianPackagerForITCases.createPackageFromExistingOne("../../mso-api-handlers/mso-api-handler-infra/target/", "mso-api-handler-infra*.war", "mso-api-handler-infra.war");
-	}
-	
-	@Deployment(name="mso-vnf-adapter",testable=false)
-	public static Archive<?> createMsoVnfAdapterWarDeployment () {
-		System.out.println("Deploying VNF Adapter WAR on default server");
-		return ArquillianPackagerForITCases.createPackageFromExistingOne("../../adapters/mso-vnf-adapter/target/", "mso-vnf-adapter*.war", "mso-vnf-adapter.war");
-	}
-	
-	@Deployment(name="mso-tenant-adapter",testable=false)
-	public static Archive<?> createMsoTenantAdapterWarDeployment () {
-		System.out.println("Deploying Tenant Adapter WAR on default server");
-		return ArquillianPackagerForITCases.createPackageFromExistingOne("../../adapters/mso-tenant-adapter/target/", "mso-tenant-adapter*.war", "mso-tenant-adapter.war");
-	}
-	
-	@Deployment(name="mso-sdnc-adapter",testable=false)
-	public static Archive<?> createMsoSdncAdapterWarDeployment () {
-		System.out.println("Deploying SDNC Adapter WAR on default server");
-		return ArquillianPackagerForITCases.createPackageFromExistingOne("../../adapters/mso-sdnc-adapter/target/", "mso-sdnc-adapter*.war", "mso-sdnc-adapter.war");
-	}
-	
-	@Deployment(name="mso-network-adapter",testable=false)
-	public static Archive<?> createMsoNetworkAdapterWarDeployment () {
-		System.out.println("Deploying Network Adapter WAR on default server");
-		return ArquillianPackagerForITCases.createPackageFromExistingOne("../../adapters/mso-network-adapter/target/", "mso-network-adapter*.war", "mso-network-adapter.war");
-	}
-	
-	@Deployment(name="mso-requests-db-adapter",testable=false)
-	public static Archive<?> createMsoRequestsDbAdapterWarDeployment () {
-		System.out.println("Deploying Requests DB Adapter WAR on default server");
-		return ArquillianPackagerForITCases.createPackageFromExistingOne("../../adapters/mso-requests-db-adapter/target/", "mso-requests-db-adapter*.war", "mso-requests-db-adapter.war");
-	}
-	
-	@Deployment(name="asdc-controller",testable=true)
-	public static Archive<?> createAsdcControllerWarDeployment () {
-		System.out.println("Deploying ASDC Controller WAR with additional resources on default server");
-		
-		WebArchive warArchive = (WebArchive)ArquillianPackagerForITCases.createPackageFromExistingOne("../../asdc-controller/target/", "asdc-controller*.war", "asdc-controller.war");
-		
-		// Take one war randomly to make arquilian happy
+    private static String jbossHost = System.getProperty("docker.hostname");
+    private static String jbossPort = "18080";
 
-			
-		return warArchive;
-	}
-	
-        @Deployment(name = "infrastructure-bpmn", testable = false)
-        public static Archive<?> createInfraBPMNDeployment() {
-            System.out.println("Deploying Infrastructure BPMN WAR on default server");
-            return ArquillianPackagerForITCases.createPackageFromExistingOne("../../bpmn/MSOInfrastructureBPMN/target/",
-                    "MSOInfrastructureBPMN*.war", "MSOInfrastructureBPMN.war");
-        }
+    @Deployment(name = "mso-api-handler-infra", testable = false)
+    public static Archive<?> createMsoApiHandlerInfraWarDeployment() {
+        System.out.println("Deploying ApiHandler Infra WAR on default server");
+        return ArquillianPackagerForITCases.createPackageFromExistingOne("../../mso-api-handlers/mso-api-handler-infra/target/", "mso-api-handler-infra*.war", "mso-api-handler-infra.war");
+    }
+
+    @Deployment(name = "mso-vnf-adapter", testable = false)
+    public static Archive<?> createMsoVnfAdapterWarDeployment() {
+        System.out.println("Deploying VNF Adapter WAR on default server");
+        return ArquillianPackagerForITCases.createPackageFromExistingOne("../../adapters/mso-vnf-adapter/target/", "mso-vnf-adapter*.war", "mso-vnf-adapter.war");
+    }
+
+    @Deployment(name = "mso-tenant-adapter", testable = false)
+    public static Archive<?> createMsoTenantAdapterWarDeployment() {
+        System.out.println("Deploying Tenant Adapter WAR on default server");
+        return ArquillianPackagerForITCases.createPackageFromExistingOne("../../adapters/mso-tenant-adapter/target/", "mso-tenant-adapter*.war", "mso-tenant-adapter.war");
+    }
+
+    @Deployment(name = "mso-sdnc-adapter", testable = false)
+    public static Archive<?> createMsoSdncAdapterWarDeployment() {
+        System.out.println("Deploying SDNC Adapter WAR on default server");
+        return ArquillianPackagerForITCases.createPackageFromExistingOne("../../adapters/mso-sdnc-adapter/target/", "mso-sdnc-adapter*.war", "mso-sdnc-adapter.war");
+    }
+
+    @Deployment(name = "mso-network-adapter", testable = false)
+    public static Archive<?> createMsoNetworkAdapterWarDeployment() {
+        System.out.println("Deploying Network Adapter WAR on default server");
+        return ArquillianPackagerForITCases.createPackageFromExistingOne("../../adapters/mso-network-adapter/target/", "mso-network-adapter*.war", "mso-network-adapter.war");
+    }
+
+    @Deployment(name = "mso-requests-db-adapter", testable = false)
+    public static Archive<?> createMsoRequestsDbAdapterWarDeployment() {
+        System.out.println("Deploying Requests DB Adapter WAR on default server");
+        return ArquillianPackagerForITCases.createPackageFromExistingOne("../../adapters/mso-requests-db-adapter/target/", "mso-requests-db-adapter*.war", "mso-requests-db-adapter.war");
+    }
+
+    @Deployment(name = "asdc-controller", testable = true)
+    public static Archive<?> createAsdcControllerWarDeployment() {
+        System.out.println("Deploying ASDC Controller WAR with additional resources on default server");
+
+        WebArchive warArchive = (WebArchive) ArquillianPackagerForITCases.createPackageFromExistingOne("../../asdc-controller/target/", "asdc-controller*.war", "asdc-controller.war");
+
+        // Take one war randomly to make arquilian happy
+
+
+        return warArchive;
+    }
+
+    @Deployment(name = "infrastructure-bpmn", testable = false)
+    public static Archive<?> createInfraBPMNDeployment() {
+        System.out.println("Deploying Infrastructure BPMN WAR on default server");
+        return ArquillianPackagerForITCases.createPackageFromExistingOne("../../bpmn/MSOInfrastructureBPMN/target/",
+                "MSOInfrastructureBPMN*.war", "MSOInfrastructureBPMN.war");
+    }
 /*
     @Deployment(name = "SoapUIMocks", testable = false)
     public static Archive <?> createSoapUIMocksWarDeployment () {
@@ -125,129 +125,129 @@ public class SoapUiITCase {
     }*/
 
     @BeforeClass
-    public static void waitBeforeStart () throws InterruptedException {
-    	Thread.currentThread().sleep(10000);
-        System.out.println ("Executing " + SoapUiITCase.class.getName ());
-       
+    public static void waitBeforeStart() throws InterruptedException {
+        Thread.currentThread().sleep(10000);
+        System.out.println("Executing " + SoapUiITCase.class.getName());
+
     }
 
     @Test
     @RunAsClient
-    public void test01Healthcheck () {
-        SoapUITestCaseRunner runner = new SoapUITestCaseRunner ();
+    public void test01Healthcheck() {
+        SoapUITestCaseRunner runner = new SoapUITestCaseRunner();
         runner.setSettingsFile("./src/test/resources/SoapUI/soapui-settings.xml");
         runner.setJUnitReport(true);
-        runner.setProjectFile ("./src/test/resources/SoapUI/Healthcheck-soapui-project.xml");
-        runner.setOutputFolder ("./target/surefire-reports");
+        runner.setProjectFile("./src/test/resources/SoapUI/Healthcheck-soapui-project.xml");
+        runner.setOutputFolder("./target/surefire-reports");
         String[] properties = new String[7];
-        properties[0] = "apihhost="+jbossHost+":"+jbossPort;
-        properties[1] = "jrahost="+jbossHost+":"+jbossPort;
+        properties[0] = "apihhost=" + jbossHost + ":" + jbossPort;
+        properties[1] = "jrahost=" + jbossHost + ":" + jbossPort;
         properties[2] = "userlogin=sitecontrol";
         properties[3] = "userpassword=Domain2.0!";
-        properties[4] = "bpmnhost="+jbossHost+":"+jbossPort;
+        properties[4] = "bpmnhost=" + jbossHost + ":" + jbossPort;
         properties[5] = "sitename=mso-docker";
         properties[6] = "enableBpmn=false";
-        runner.setProjectProperties (properties);
+        runner.setProjectProperties(properties);
 
         try {
-            runner.setTestSuite ("Healthcheck TestSuite");
-            runner.run ();
-            Map<TestAssertion,WsdlTestStepResult> mapResult= runner.getAssertionResults();
-            for(Map.Entry<TestAssertion,WsdlTestStepResult> entry : mapResult.entrySet()) {
+            runner.setTestSuite("Healthcheck TestSuite");
+            runner.run();
+            Map<TestAssertion, WsdlTestStepResult> mapResult = runner.getAssertionResults();
+            for (Map.Entry<TestAssertion, WsdlTestStepResult> entry : mapResult.entrySet()) {
                 assertTrue(entry.getValue().getStatus().equals(TestStepStatus.OK));
             }
-            assertTrue (runner.getFailedTests ().size () == 0);
+            assertTrue(runner.getFailedTests().size() == 0);
 
         } catch (Exception e) {
-            e.printStackTrace ();
+            e.printStackTrace();
             fail("Failure in SOAPUI Healthcheck");
         }
     }
 
     @Test
     @RunAsClient
-    public void test02ApiHandlerInfra () {
-        SoapUITestCaseRunner runner = new SoapUITestCaseRunner ();
+    public void test02ApiHandlerInfra() {
+        SoapUITestCaseRunner runner = new SoapUITestCaseRunner();
         runner.setSettingsFile("./src/test/resources/SoapUI/soapui-settings.xml");
         runner.setJUnitReport(true);
-        runner.setProjectFile ("./src/test/resources/SoapUI/Local-API-Handler-soapui-project.xml");
-        runner.setOutputFolder ("./target/surefire-reports");
+        runner.setProjectFile("./src/test/resources/SoapUI/Local-API-Handler-soapui-project.xml");
+        runner.setOutputFolder("./target/surefire-reports");
         String[] properties = new String[3];
-        properties[0] = "host="+jbossHost+":"+jbossPort;
+        properties[0] = "host=" + jbossHost + ":" + jbossPort;
         properties[1] = "user-infraportal=InfraPortalClient";
         properties[2] = "password-infraportal=password1$";
 
-        runner.setProjectProperties (properties);
+        runner.setProjectProperties(properties);
 
         try {
-            runner.setTestSuite ("simple_tests_endpoints");
-            runner.run ();
-            Map<TestAssertion,WsdlTestStepResult> mapResult= runner.getAssertionResults();
-            for(Map.Entry<TestAssertion,WsdlTestStepResult> entry : mapResult.entrySet()) {
+            runner.setTestSuite("simple_tests_endpoints");
+            runner.run();
+            Map<TestAssertion, WsdlTestStepResult> mapResult = runner.getAssertionResults();
+            for (Map.Entry<TestAssertion, WsdlTestStepResult> entry : mapResult.entrySet()) {
                 assertTrue(entry.getValue().getStatus().equals(TestStepStatus.OK));
             }
-            assertTrue (runner.getFailedTests ().size () == 0);
+            assertTrue(runner.getFailedTests().size() == 0);
 
         } catch (Exception e) {
-            e.printStackTrace ();
+            e.printStackTrace();
             fail("Failure in SOAPUI ApiHandler Infra");
         }
     }
 
     @Test
     @RunAsClient
-    public void test03StartNetworkAdapter () {
-    	SoapUITestCaseRunner runner = new SoapUITestCaseRunner ();
+    public void test03StartNetworkAdapter() {
+        SoapUITestCaseRunner runner = new SoapUITestCaseRunner();
         runner.setSettingsFile("./src/test/resources/SoapUI/soapui-settings.xml");
         runner.setJUnitReport(true);
-    	runner.setProjectFile ("./src/test/resources/SoapUI/MSONetworkAdapter-soapui-project.xml");
-    	runner.setOutputFolder ("./target/surefire-reports");
-    	String[] properties = new String[1];
-    	properties[0] = "host="+jbossHost+":"+jbossPort;
-    	runner.setProjectProperties (properties);
+        runner.setProjectFile("./src/test/resources/SoapUI/MSONetworkAdapter-soapui-project.xml");
+        runner.setOutputFolder("./target/surefire-reports");
+        String[] properties = new String[1];
+        properties[0] = "host=" + jbossHost + ":" + jbossPort;
+        runner.setProjectProperties(properties);
 
 
-    	try {
-    		runner.setTestSuite ("MsoNetworkAdapter TestSuite");
-    		runner.run ();
+        try {
+            runner.setTestSuite("MsoNetworkAdapter TestSuite");
+            runner.run();
 
-    		Map<TestAssertion,WsdlTestStepResult> mapResult= runner.getAssertionResults();
-    		for(Map.Entry<TestAssertion,WsdlTestStepResult> entry : mapResult.entrySet()) {
-    			assertTrue(entry.getValue().getStatus().equals(TestStepStatus.OK));
-    		}
-    		assertTrue (runner.getFailedTests ().size () == 0);
+            Map<TestAssertion, WsdlTestStepResult> mapResult = runner.getAssertionResults();
+            for (Map.Entry<TestAssertion, WsdlTestStepResult> entry : mapResult.entrySet()) {
+                assertTrue(entry.getValue().getStatus().equals(TestStepStatus.OK));
+            }
+            assertTrue(runner.getFailedTests().size() == 0);
 
-    	} catch (Exception e) {
-            e.printStackTrace ();
-    		fail("Failure in SOAPUI NetworkAdapter");
-    	}
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("Failure in SOAPUI NetworkAdapter");
+        }
     }
 
 
     @Test
     @RunAsClient
-    public void test04StartVnfAdapter () {
-        SoapUITestCaseRunner runner = new SoapUITestCaseRunner ();
+    public void test04StartVnfAdapter() {
+        SoapUITestCaseRunner runner = new SoapUITestCaseRunner();
         runner.setSettingsFile("./src/test/resources/SoapUI/soapui-settings.xml");
         runner.setJUnitReport(true);
-        runner.setProjectFile ("./src/test/resources/SoapUI/MSOVnfAdapter-soapui-project.xml");
-        runner.setOutputFolder ("./target/surefire-reports");
+        runner.setProjectFile("./src/test/resources/SoapUI/MSOVnfAdapter-soapui-project.xml");
+        runner.setOutputFolder("./target/surefire-reports");
         String[] properties = new String[1];
-        properties[0] = "host="+jbossHost+":"+jbossPort;
-        runner.setProjectProperties (properties);
+        properties[0] = "host=" + jbossHost + ":" + jbossPort;
+        runner.setProjectProperties(properties);
 
         try {
-            runner.setTestSuite ("MsoVnfAdapter TestSuite");
-            runner.run ();
+            runner.setTestSuite("MsoVnfAdapter TestSuite");
+            runner.run();
 
-            Map<TestAssertion,WsdlTestStepResult> mapResult= runner.getAssertionResults();
-            for(Map.Entry<TestAssertion,WsdlTestStepResult> entry : mapResult.entrySet()) {
+            Map<TestAssertion, WsdlTestStepResult> mapResult = runner.getAssertionResults();
+            for (Map.Entry<TestAssertion, WsdlTestStepResult> entry : mapResult.entrySet()) {
                 assertTrue(entry.getValue().getStatus().equals(TestStepStatus.OK));
             }
-            assertTrue (runner.getFailedTests ().size () == 0);
+            assertTrue(runner.getFailedTests().size() == 0);
 
         } catch (Exception e) {
-            e.printStackTrace ();
+            e.printStackTrace();
             fail("Failure in SOAPUI VnfAdapter");
         }
     }
@@ -255,30 +255,30 @@ public class SoapUiITCase {
 
     @Test
     @RunAsClient
-    public void test05StartTenantAdapter () {
-        SoapUITestCaseRunner runner = new SoapUITestCaseRunner ();
+    public void test05StartTenantAdapter() {
+        SoapUITestCaseRunner runner = new SoapUITestCaseRunner();
         runner.setSettingsFile("./src/test/resources/SoapUI/soapui-settings.xml");
         runner.setJUnitReport(true);
-        runner.setProjectFile ("./src/test/resources/SoapUI/MSOTenantAdapter-soapui-project.xml");
-        runner.setOutputFolder ("./target/surefire-reports");
+        runner.setProjectFile("./src/test/resources/SoapUI/MSOTenantAdapter-soapui-project.xml");
+        runner.setOutputFolder("./target/surefire-reports");
         String[] properties = new String[3];
-        properties[0] = "host="+jbossHost+":"+jbossPort;
+        properties[0] = "host=" + jbossHost + ":" + jbossPort;
         properties[1] = "user-bpel=BPELClient";
         properties[2] = "password-bpel=password1$";
-        runner.setProjectProperties (properties);
+        runner.setProjectProperties(properties);
 
         try {
-            runner.setTestSuite ("MsoTenantAdapter TestSuite");
-            runner.run ();
+            runner.setTestSuite("MsoTenantAdapter TestSuite");
+            runner.run();
 
-            Map<TestAssertion,WsdlTestStepResult> mapResult= runner.getAssertionResults();
-            for(Map.Entry<TestAssertion,WsdlTestStepResult> entry : mapResult.entrySet()) {
+            Map<TestAssertion, WsdlTestStepResult> mapResult = runner.getAssertionResults();
+            for (Map.Entry<TestAssertion, WsdlTestStepResult> entry : mapResult.entrySet()) {
                 assertTrue(entry.getValue().getStatus().equals(TestStepStatus.OK));
             }
-            assertTrue (runner.getFailedTests ().size () == 0);
+            assertTrue(runner.getFailedTests().size() == 0);
 
         } catch (Exception e) {
-            e.printStackTrace ();
+            e.printStackTrace();
             fail("Failure in SOAPUI TenantAdapter");
         }
     }
@@ -286,63 +286,63 @@ public class SoapUiITCase {
 
     @Test
     @RunAsClient
-    public void test06StartRequestDBAdapter () {
-        SoapUITestCaseRunner runner = new SoapUITestCaseRunner ();
+    public void test06StartRequestDBAdapter() {
+        SoapUITestCaseRunner runner = new SoapUITestCaseRunner();
         runner.setSettingsFile("./src/test/resources/SoapUI/soapui-settings.xml");
         runner.setJUnitReport(true);
-        runner.setProjectFile ("./src/test/resources/SoapUI/MsoRequestDB-soapui-project.xml");
-        runner.setOutputFolder ("./target/surefire-reports");
+        runner.setProjectFile("./src/test/resources/SoapUI/MsoRequestDB-soapui-project.xml");
+        runner.setOutputFolder("./target/surefire-reports");
         String[] properties = new String[3];
-        properties[0] = "host="+jbossHost+":"+jbossPort;
+        properties[0] = "host=" + jbossHost + ":" + jbossPort;
         properties[1] = "user-infraportal=InfraPortalClient";
         properties[2] = "password-infraportal=password1$";
-        runner.setProjectProperties (properties);
+        runner.setProjectProperties(properties);
 
 
         try {
-            runner.setTestSuite ("MsoRequestsDbAdapterImplPortBinding TestSuite");
-            runner.run ();
+            runner.setTestSuite("MsoRequestsDbAdapterImplPortBinding TestSuite");
+            runner.run();
 
-            Map<TestAssertion,WsdlTestStepResult> mapResult= runner.getAssertionResults();
-            for(Map.Entry<TestAssertion,WsdlTestStepResult> entry : mapResult.entrySet()) {
+            Map<TestAssertion, WsdlTestStepResult> mapResult = runner.getAssertionResults();
+            for (Map.Entry<TestAssertion, WsdlTestStepResult> entry : mapResult.entrySet()) {
                 assertTrue(entry.getValue().getStatus().equals(TestStepStatus.OK));
             }
-            assertTrue (runner.getFailedTests ().size () == 0);
+            assertTrue(runner.getFailedTests().size() == 0);
 
         } catch (Exception e) {
-            e.printStackTrace ();
-        	fail("Failure in SOAPUI RequestDB adapter");
+            e.printStackTrace();
+            fail("Failure in SOAPUI RequestDB adapter");
         }
     }
 
     @Test
     @RunAsClient
-    public void test07MsoConfigEndpoints () {
-        SoapUITestCaseRunner runner = new SoapUITestCaseRunner ();
-		runner.setSettingsFile("./src/test/resources/SoapUI/soapui-settings.xml");
-		runner.setJUnitReport(true);
-        runner.setProjectFile ("./src/test/resources/SoapUI/MSOConfig-soapui-project.xml");
-        runner.setOutputFolder ("./target/surefire-reports");
+    public void test07MsoConfigEndpoints() {
+        SoapUITestCaseRunner runner = new SoapUITestCaseRunner();
+        runner.setSettingsFile("./src/test/resources/SoapUI/soapui-settings.xml");
+        runner.setJUnitReport(true);
+        runner.setProjectFile("./src/test/resources/SoapUI/MSOConfig-soapui-project.xml");
+        runner.setOutputFolder("./target/surefire-reports");
         String[] properties = new String[3];
-        properties[0] = "host="+jbossHost+":"+jbossPort;
+        properties[0] = "host=" + jbossHost + ":" + jbossPort;
         properties[1] = "user-infraportal=InfraPortalClient";
         properties[2] = "password-infraportal=password1$";
-        runner.setProjectProperties (properties);
+        runner.setProjectProperties(properties);
 
 
         try {
-            runner.setTestSuite ("test_config_endpoints TestSuite");
-            runner.run ();
+            runner.setTestSuite("test_config_endpoints TestSuite");
+            runner.run();
 
-            Map<TestAssertion,WsdlTestStepResult> mapResult= runner.getAssertionResults();
-            for(Map.Entry<TestAssertion,WsdlTestStepResult> entry : mapResult.entrySet()) {
+            Map<TestAssertion, WsdlTestStepResult> mapResult = runner.getAssertionResults();
+            for (Map.Entry<TestAssertion, WsdlTestStepResult> entry : mapResult.entrySet()) {
                 assertTrue(entry.getValue().getStatus().equals(TestStepStatus.OK));
             }
-            assertTrue (runner.getFailedTests ().size () == 0);
+            assertTrue(runner.getFailedTests().size() == 0);
 
         } catch (Exception e) {
-            e.printStackTrace ();
-        	fail("Failure in SOAPUI MSOConfig Endpoints");
+            e.printStackTrace();
+            fail("Failure in SOAPUI MSOConfig Endpoints");
         }
     }
 }

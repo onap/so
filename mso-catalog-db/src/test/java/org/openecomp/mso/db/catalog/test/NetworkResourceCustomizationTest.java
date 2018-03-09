@@ -33,30 +33,30 @@ import org.openecomp.mso.db.catalog.beans.NetworkResourceCustomization;
 
 public class NetworkResourceCustomizationTest {
 
-	@Test
-	public final void networkResourceCustomizationDataTest() {
-		NetworkResourceCustomization networkResourceCustomization = new NetworkResourceCustomization();
-		networkResourceCustomization.setModelCustomizationUuid("modelCustomizationUuid");
-		assertTrue(networkResourceCustomization.getModelCustomizationUuid().equalsIgnoreCase("modelCustomizationUuid"));
-		networkResourceCustomization.setModelInstanceName("modelInstanceName");
-		assertTrue(networkResourceCustomization.getModelInstanceName().equalsIgnoreCase("modelInstanceName"));
-		networkResourceCustomization.setCreated(new Timestamp(System.currentTimeMillis()));
-		assertTrue(networkResourceCustomization.getCreated() != null);
-		networkResourceCustomization.setNetworkResource(new NetworkResource());
-		assertTrue(networkResourceCustomization.getNetworkResource() != null);
-		networkResourceCustomization.setNetworkResourceModelUuid("networkResourceModelUuid");
-		assertTrue(networkResourceCustomization.getNetworkResourceModelUuid()
-				.equalsIgnoreCase("networkResourceModelUuid"));
-		networkResourceCustomization.setNetworkRole("networkRole");
-		assertTrue(networkResourceCustomization.getNetworkRole().equalsIgnoreCase("networkRole"));
-		networkResourceCustomization.setNetworkScope("networkScope");
-		assertTrue(networkResourceCustomization.getNetworkScope().equalsIgnoreCase("networkScope"));
-		networkResourceCustomization.setNetworkTechnology("networkTechnology");
-		assertTrue(networkResourceCustomization.getNetworkTechnology().equalsIgnoreCase("networkTechnology"));
-		networkResourceCustomization.setNetworkType("networkType");
-		assertTrue(networkResourceCustomization.getNetworkType().equalsIgnoreCase("networkType"));
+    @Test
+    public final void networkResourceCustomizationDataTest() {
+        NetworkResourceCustomization networkResourceCustomization = new NetworkResourceCustomization();
+        networkResourceCustomization.setModelCustomizationUuid("modelCustomizationUuid");
+        assertTrue(networkResourceCustomization.getModelCustomizationUuid().equalsIgnoreCase("modelCustomizationUuid"));
+        networkResourceCustomization.setModelInstanceName("modelInstanceName");
+        assertTrue(networkResourceCustomization.getModelInstanceName().equalsIgnoreCase("modelInstanceName"));
+        networkResourceCustomization.setCreated(new Timestamp(System.currentTimeMillis()));
+        assertTrue(networkResourceCustomization.getCreated() != null);
+        networkResourceCustomization.setNetworkResource(new NetworkResource());
+        assertTrue(networkResourceCustomization.getNetworkResource() != null);
+        networkResourceCustomization.setNetworkResourceModelUuid("networkResourceModelUuid");
+        assertTrue(networkResourceCustomization.getNetworkResourceModelUuid()
+                .equalsIgnoreCase("networkResourceModelUuid"));
+        networkResourceCustomization.setNetworkRole("networkRole");
+        assertTrue(networkResourceCustomization.getNetworkRole().equalsIgnoreCase("networkRole"));
+        networkResourceCustomization.setNetworkScope("networkScope");
+        assertTrue(networkResourceCustomization.getNetworkScope().equalsIgnoreCase("networkScope"));
+        networkResourceCustomization.setNetworkTechnology("networkTechnology");
+        assertTrue(networkResourceCustomization.getNetworkTechnology().equalsIgnoreCase("networkTechnology"));
+        networkResourceCustomization.setNetworkType("networkType");
+        assertTrue(networkResourceCustomization.getNetworkType().equalsIgnoreCase("networkType"));
 //		assertTrue(networkResourceCustomization.toString() != null);
 
-	}
+    }
 
 }

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  * ============LICENSE_END========================================================= 
- */ 
+ */
 
 package org.openecomp.mso.bpmn.mock;
 
@@ -31,80 +31,80 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
  */
 public class StubResponseDatabase {
 
-	public static void setupAllMocks() {
+    public static void setupAllMocks() {
 
-	}
+    }
 
-	public static void MockUpdateRequestDB(String fileName){
-		stubFor(post(urlEqualTo("/dbadapters/RequestsDbAdapter"))
-				.willReturn(aResponse()
-				.withStatus(200)
-			    .withHeader("Content-Type", "text/xml")
-				.withBodyFile(fileName)));
-	}	
-	
-	public static void mockUpdateRequestDB(int statusCode, String reponseFile) {
-		stubFor(post(urlEqualTo("/dbadapters/RequestsDbAdapter"))
-				.willReturn(aResponse()
-				.withStatus(statusCode)
-			    .withHeader("Content-Type", "text/xml")
-				.withBodyFile(reponseFile)));
-	}
+    public static void MockUpdateRequestDB(String fileName) {
+        stubFor(post(urlEqualTo("/dbadapters/RequestsDbAdapter"))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "text/xml")
+                        .withBodyFile(fileName)));
+    }
 
-	public static void MockGetAllottedResourcesByModelInvariantId(String modelInvariantId, String responseFile){
-		stubFor(get(urlEqualTo("/v1/serviceAllottedResources?serviceModelInvariantUuid=" + modelInvariantId))
-				.willReturn(aResponse()
-				.withStatus(200)
-			    .withHeader("Content-Type", "application/json")
-				.withBodyFile(responseFile)));
-	}
+    public static void mockUpdateRequestDB(int statusCode, String reponseFile) {
+        stubFor(post(urlEqualTo("/dbadapters/RequestsDbAdapter"))
+                .willReturn(aResponse()
+                        .withStatus(statusCode)
+                        .withHeader("Content-Type", "text/xml")
+                        .withBodyFile(reponseFile)));
+    }
 
-	public static void MockGetAllottedResourcesByModelInvariantId_500(String modelInvariantId, String responseFile){
-		stubFor(get(urlEqualTo("/v1/serviceAllottedResources?serviceModelInvariantUuid=" + modelInvariantId))
-				.willReturn(aResponse()
-				.withStatus(500)));
-	}
-	
-	public static void MockGetVnfCatalogDataCustomizationUuid(String vnfModelCustomizationUuid,  String responseFile){
-		stubFor(get(urlEqualTo("/v2/serviceVnfs?vnfModelCustomizationUuid=" + vnfModelCustomizationUuid))
-				  .willReturn(aResponse()
-				  .withStatus(200)
-				  .withHeader("Content-Type", "application/json")
-				  .withBodyFile(responseFile)));
-	}
+    public static void MockGetAllottedResourcesByModelInvariantId(String modelInvariantId, String responseFile) {
+        stubFor(get(urlEqualTo("/v1/serviceAllottedResources?serviceModelInvariantUuid=" + modelInvariantId))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withBodyFile(responseFile)));
+    }
 
-	public static void MockGetVfModuleByModelNameCatalogData(String vfModuleModelName, String responseFile){
-		stubFor(get(urlEqualTo("/v2/vfModules?vfModuleModelName=" + vfModuleModelName))
-				  .willReturn(aResponse()
-				  .withStatus(200)
-				  .withHeader("Content-Type", "application/json")
-				  .withBodyFile(responseFile)));
-	}
-	
-	public static void MockGetServiceResourcesCatalogData(String serviceModelInvariantUuid, String serviceModelVersion, String responseFile){
-		stubFor(get(urlEqualTo("/v2/serviceResources?serviceModelInvariantUuid=" + serviceModelInvariantUuid + 
-				"&serviceModelVersion=" + serviceModelVersion))
-				  .willReturn(aResponse()
-				  .withStatus(200)
-				  .withHeader("Content-Type", "application/json")
-				  .withBodyFile(responseFile)));
-	}
-	
-	public static void MockGetServiceResourcesCatalogData(String serviceModelInvariantUuid, String responseFile){
-		stubFor(get(urlEqualTo("/v2/serviceResources?serviceModelInvariantUuid=" + serviceModelInvariantUuid))
-				  .willReturn(aResponse()
-				  .withStatus(200)
-				  .withHeader("Content-Type", "application/json")
-				  .withBodyFile(responseFile)));
-	}	
-	
-    public static void MockGetServiceResourcesCatalogDataByModelUuid(String serviceModelUuid, String responseFile){
+    public static void MockGetAllottedResourcesByModelInvariantId_500(String modelInvariantId, String responseFile) {
+        stubFor(get(urlEqualTo("/v1/serviceAllottedResources?serviceModelInvariantUuid=" + modelInvariantId))
+                .willReturn(aResponse()
+                        .withStatus(500)));
+    }
+
+    public static void MockGetVnfCatalogDataCustomizationUuid(String vnfModelCustomizationUuid, String responseFile) {
+        stubFor(get(urlEqualTo("/v2/serviceVnfs?vnfModelCustomizationUuid=" + vnfModelCustomizationUuid))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withBodyFile(responseFile)));
+    }
+
+    public static void MockGetVfModuleByModelNameCatalogData(String vfModuleModelName, String responseFile) {
+        stubFor(get(urlEqualTo("/v2/vfModules?vfModuleModelName=" + vfModuleModelName))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withBodyFile(responseFile)));
+    }
+
+    public static void MockGetServiceResourcesCatalogData(String serviceModelInvariantUuid, String serviceModelVersion, String responseFile) {
+        stubFor(get(urlEqualTo("/v2/serviceResources?serviceModelInvariantUuid=" + serviceModelInvariantUuid +
+                "&serviceModelVersion=" + serviceModelVersion))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withBodyFile(responseFile)));
+    }
+
+    public static void MockGetServiceResourcesCatalogData(String serviceModelInvariantUuid, String responseFile) {
+        stubFor(get(urlEqualTo("/v2/serviceResources?serviceModelInvariantUuid=" + serviceModelInvariantUuid))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withBodyFile(responseFile)));
+    }
+
+    public static void MockGetServiceResourcesCatalogDataByModelUuid(String serviceModelUuid, String responseFile) {
         stubFor(get(urlEqualTo("/v2/serviceResources?serviceModelUuid=" + serviceModelUuid))
-                  .willReturn(aResponse()
-                  .withStatus(200)
-                  .withHeader("Content-Type", "application/json")
-                  .withBodyFile(responseFile)));
-    }	
-	
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withBodyFile(responseFile)));
+    }
+
 
 }

@@ -43,222 +43,222 @@ import org.openecomp.mso.logger.MsoLogger;
  */
 public class TestBaseTask {
 
-	@Rule
-	public ProcessEngineRule processEngineRule = new ProcessEngineRule();
-	
-	@Before
-	public void beforeTest() throws Exception {
-		CamundaDBSetup.configure();
-		PropertyConfigurationSetup.init();
-	}
-	
-	@Test
-	@Deployment(resources={"BaseTaskTest.bpmn"})
-	public void shouldInvokeService() {
-		Map<String, Object> variables = new HashMap<>();
-		variables.put("firstName", "Jane");
-		variables.put("lastName", "Doe");
-		variables.put("age", (Integer)25);
-		variables.put("lastVisit", (Long)1438270117000L);
+    @Rule
+    public ProcessEngineRule processEngineRule = new ProcessEngineRule();
 
-		RuntimeService runtimeService = processEngineRule.getRuntimeService();
-		assertNotNull(runtimeService);
-		processEngineRule.getTaskService();
-		runtimeService.startProcessInstanceByKey("BaseTaskTest", variables);
-	}
-	
-	/**
-	 * Unit test code for BaseTask.
-	 */
-	public static class TestTask extends BaseTask {
-		private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
+    @Before
+    public void beforeTest() throws Exception {
+        CamundaDBSetup.configure();
+        PropertyConfigurationSetup.init();
+    }
 
-		private Expression existingString;
-		private Expression nonExistingString;
-		private Expression existingStringFromVar;
-		private Expression nonExistingStringFromVar;
-		
-		private Expression existingInteger;
-		private Expression nonExistingInteger;
-		private Expression existingIntegerFromVar;
-		private Expression nonExistingIntegerFromVar;
-		
-		private Expression existingLong;
-		private Expression nonExistingLong;
-		private Expression existingLongFromVar;
-		private Expression nonExistingLongFromVar;
-		
-		private Expression existingOutputVar;
-		private Expression nonExistingOutputVar;
-		private Expression existingBadOutputVar;
-		
-		public void execute(DelegateExecution execution) throws Exception {
-			msoLogger.debug("Started executing " + getClass().getSimpleName());
+    @Test
+    @Deployment(resources = {"BaseTaskTest.bpmn"})
+    public void shouldInvokeService() {
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("firstName", "Jane");
+        variables.put("lastName", "Doe");
+        variables.put("age", (Integer) 25);
+        variables.put("lastVisit", (Long) 1438270117000L);
 
-			/*********************************************************************/
-			msoLogger.debug("Running String Field Tests");
-			/*********************************************************************/
+        RuntimeService runtimeService = processEngineRule.getRuntimeService();
+        assertNotNull(runtimeService);
+        processEngineRule.getTaskService();
+        runtimeService.startProcessInstanceByKey("BaseTaskTest", variables);
+    }
 
-			String s = getStringField(existingString, execution, "existingString");
-			Assert.assertEquals("Hello World", s);
+    /**
+     * Unit test code for BaseTask.
+     */
+    public static class TestTask extends BaseTask {
+        private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
 
-			try {
-				s = getStringField(nonExistingString, execution, "nonExistingString");
-				Assert.fail("Expected BadInjectedFieldException for nonExistingString");
-			} catch (Exception e) {
-				if (!(e instanceof BadInjectedFieldException)) {
-					Assert.fail("Expected BadInjectedFieldException for nonExistingString");
-				}
-			}
+        private Expression existingString;
+        private Expression nonExistingString;
+        private Expression existingStringFromVar;
+        private Expression nonExistingStringFromVar;
 
-			s = getOptionalStringField(existingString, execution, "existingString");
-			Assert.assertEquals("Hello World", s);
+        private Expression existingInteger;
+        private Expression nonExistingInteger;
+        private Expression existingIntegerFromVar;
+        private Expression nonExistingIntegerFromVar;
 
-			s = getOptionalStringField(nonExistingString, execution, "nonExistingString");
-			Assert.assertEquals(null, s);
+        private Expression existingLong;
+        private Expression nonExistingLong;
+        private Expression existingLongFromVar;
+        private Expression nonExistingLongFromVar;
 
-			/*********************************************************************/
-			msoLogger.debug("Running String Expression Tests");
-			/*********************************************************************/
+        private Expression existingOutputVar;
+        private Expression nonExistingOutputVar;
+        private Expression existingBadOutputVar;
 
-			s = getStringField(existingStringFromVar, execution, "existingStringFromVar");
-			Assert.assertEquals("Jane", s);
+        public void execute(DelegateExecution execution) throws Exception {
+            msoLogger.debug("Started executing " + getClass().getSimpleName());
 
-			try {
-				s = getStringField(nonExistingStringFromVar, execution, "nonExistingStringFromVar");
-				Assert.fail("Expected BadInjectedFieldException for nonExistingString");
-			} catch (Exception e) {
-				if (!(e instanceof BadInjectedFieldException)) {
-					Assert.fail("Expected BadInjectedFieldException for nonExistingStringFromVar");
-				}
-			}
+            /*********************************************************************/
+            msoLogger.debug("Running String Field Tests");
+            /*********************************************************************/
 
-			s = getOptionalStringField(existingStringFromVar, execution, "existingStringFromVar");
-			Assert.assertEquals("Jane", s);
+            String s = getStringField(existingString, execution, "existingString");
+            Assert.assertEquals("Hello World", s);
 
-			s = getOptionalStringField(nonExistingStringFromVar, execution, "nonExistingStringFromVar");
-			Assert.assertEquals(null, s);
+            try {
+                s = getStringField(nonExistingString, execution, "nonExistingString");
+                Assert.fail("Expected BadInjectedFieldException for nonExistingString");
+            } catch (Exception e) {
+                if (!(e instanceof BadInjectedFieldException)) {
+                    Assert.fail("Expected BadInjectedFieldException for nonExistingString");
+                }
+            }
 
-			/*********************************************************************/
-			msoLogger.debug("Running Integer Field Tests");
-			/*********************************************************************/
+            s = getOptionalStringField(existingString, execution, "existingString");
+            Assert.assertEquals("Hello World", s);
 
-			Integer i = getIntegerField(existingInteger, execution, "existingInteger");
-			Assert.assertEquals((Integer)42, i);
+            s = getOptionalStringField(nonExistingString, execution, "nonExistingString");
+            Assert.assertEquals(null, s);
 
-			try {
-				i = getIntegerField(nonExistingInteger, execution, "nonExistingInteger");
-				Assert.fail("Expected BadInjectedFieldException for nonExistingInteger");
-			} catch (Exception e) {
-				if (!(e instanceof BadInjectedFieldException)) {
-					Assert.fail("Expected BadInjectedFieldException for nonExistingInteger");
-				}
-			}
+            /*********************************************************************/
+            msoLogger.debug("Running String Expression Tests");
+            /*********************************************************************/
 
-			i = getOptionalIntegerField(existingInteger, execution, "existingInteger");
-			Assert.assertEquals((Integer)42, i);
+            s = getStringField(existingStringFromVar, execution, "existingStringFromVar");
+            Assert.assertEquals("Jane", s);
 
-			i = getOptionalIntegerField(nonExistingInteger, execution, "nonExistingInteger");
-			Assert.assertEquals(null, i);
+            try {
+                s = getStringField(nonExistingStringFromVar, execution, "nonExistingStringFromVar");
+                Assert.fail("Expected BadInjectedFieldException for nonExistingString");
+            } catch (Exception e) {
+                if (!(e instanceof BadInjectedFieldException)) {
+                    Assert.fail("Expected BadInjectedFieldException for nonExistingStringFromVar");
+                }
+            }
 
-			/*********************************************************************/
-			msoLogger.debug("Running Integer Expression Tests");
-			/*********************************************************************/
+            s = getOptionalStringField(existingStringFromVar, execution, "existingStringFromVar");
+            Assert.assertEquals("Jane", s);
 
-			i = getIntegerField(existingIntegerFromVar, execution, "existingIntegerFromVar");
-			Assert.assertEquals((Integer)25, i);
+            s = getOptionalStringField(nonExistingStringFromVar, execution, "nonExistingStringFromVar");
+            Assert.assertEquals(null, s);
 
-			try {
-				i = getIntegerField(nonExistingIntegerFromVar, execution, "nonExistingIntegerFromVar");
-				Assert.fail("Expected BadInjectedFieldException for nonExistingInteger");
-			} catch (Exception e) {
-				if (!(e instanceof BadInjectedFieldException)) {
-					Assert.fail("Expected BadInjectedFieldException for nonExistingIntegerFromVar");
-				}
-			}
+            /*********************************************************************/
+            msoLogger.debug("Running Integer Field Tests");
+            /*********************************************************************/
 
-			i = getOptionalIntegerField(existingIntegerFromVar, execution, "existingIntegerFromVar");
-			Assert.assertEquals((Integer)25, i);
+            Integer i = getIntegerField(existingInteger, execution, "existingInteger");
+            Assert.assertEquals((Integer) 42, i);
 
-			i = getOptionalIntegerField(nonExistingIntegerFromVar, execution, "nonExistingIntegerFromVar");
-			Assert.assertEquals(null, i);
+            try {
+                i = getIntegerField(nonExistingInteger, execution, "nonExistingInteger");
+                Assert.fail("Expected BadInjectedFieldException for nonExistingInteger");
+            } catch (Exception e) {
+                if (!(e instanceof BadInjectedFieldException)) {
+                    Assert.fail("Expected BadInjectedFieldException for nonExistingInteger");
+                }
+            }
 
-			/*********************************************************************/
-			msoLogger.debug("Running Long Field Tests");
-			/*********************************************************************/
+            i = getOptionalIntegerField(existingInteger, execution, "existingInteger");
+            Assert.assertEquals((Integer) 42, i);
 
-			Long l = getLongField(existingLong, execution, "existingLong");
-			Assert.assertEquals((Long)123456789L, l);
+            i = getOptionalIntegerField(nonExistingInteger, execution, "nonExistingInteger");
+            Assert.assertEquals(null, i);
 
-			try {
-				l = getLongField(nonExistingLong, execution, "nonExistingLong");
-				Assert.fail("Expected BadInjectedFieldException for nonExistingLong");
-			} catch (Exception e) {
-				if (!(e instanceof BadInjectedFieldException)) {
-					Assert.fail("Expected BadInjectedFieldException for nonExistingLong");
-				}
-			}
+            /*********************************************************************/
+            msoLogger.debug("Running Integer Expression Tests");
+            /*********************************************************************/
 
-			l = getOptionalLongField(existingLong, execution, "existingLong");
-			Assert.assertEquals((Long)123456789L, l);
+            i = getIntegerField(existingIntegerFromVar, execution, "existingIntegerFromVar");
+            Assert.assertEquals((Integer) 25, i);
 
-			l = getOptionalLongField(nonExistingLong, execution, "nonExistingLong");
-			Assert.assertEquals(null, l);
+            try {
+                i = getIntegerField(nonExistingIntegerFromVar, execution, "nonExistingIntegerFromVar");
+                Assert.fail("Expected BadInjectedFieldException for nonExistingInteger");
+            } catch (Exception e) {
+                if (!(e instanceof BadInjectedFieldException)) {
+                    Assert.fail("Expected BadInjectedFieldException for nonExistingIntegerFromVar");
+                }
+            }
 
-			/*********************************************************************/
-			msoLogger.debug("Running Long Expression Tests");
-			/*********************************************************************/
+            i = getOptionalIntegerField(existingIntegerFromVar, execution, "existingIntegerFromVar");
+            Assert.assertEquals((Integer) 25, i);
 
-			l = getLongField(existingLongFromVar, execution, "existingLongFromVar");
-			Assert.assertEquals((Long)1438270117000L, l);
+            i = getOptionalIntegerField(nonExistingIntegerFromVar, execution, "nonExistingIntegerFromVar");
+            Assert.assertEquals(null, i);
 
-			try {
-				l = getLongField(nonExistingLongFromVar, execution, "nonExistingLongFromVar");
-				Assert.fail("Expected BadInjectedFieldException for nonExistingLong");
-			} catch (Exception e) {
-				if (!(e instanceof BadInjectedFieldException)) {
-					Assert.fail("Expected BadInjectedFieldException for nonExistingLongFromVar");
-				}
-			}
+            /*********************************************************************/
+            msoLogger.debug("Running Long Field Tests");
+            /*********************************************************************/
 
-			l = getOptionalLongField(existingLongFromVar, execution, "existingLongFromVar");
-			Assert.assertEquals((Long)1438270117000L, l);
+            Long l = getLongField(existingLong, execution, "existingLong");
+            Assert.assertEquals((Long) 123456789L, l);
 
-			l = getOptionalLongField(nonExistingLongFromVar, execution, "nonExistingLongFromVar");
-			Assert.assertEquals(null, i);
+            try {
+                l = getLongField(nonExistingLong, execution, "nonExistingLong");
+                Assert.fail("Expected BadInjectedFieldException for nonExistingLong");
+            } catch (Exception e) {
+                if (!(e instanceof BadInjectedFieldException)) {
+                    Assert.fail("Expected BadInjectedFieldException for nonExistingLong");
+                }
+            }
 
-			/*********************************************************************/
-			msoLogger.debug("Running Output Variable Field Tests");
-			/*********************************************************************/
+            l = getOptionalLongField(existingLong, execution, "existingLong");
+            Assert.assertEquals((Long) 123456789L, l);
 
-			String var = getOutputField(existingOutputVar, execution, "existingOutputVar");
-			Assert.assertEquals("goodVariable", var);
+            l = getOptionalLongField(nonExistingLong, execution, "nonExistingLong");
+            Assert.assertEquals(null, l);
 
-			try {
-				var = getOutputField(nonExistingOutputVar, execution, "nonExistingOutputVar");
-				Assert.fail("Expected BadInjectedFieldException for nonExistingString");
-			} catch (Exception e) {
-				if (!(e instanceof BadInjectedFieldException)) {
-					Assert.fail("Expected BadInjectedFieldException for nonExistingString");
-				}
-			}
+            /*********************************************************************/
+            msoLogger.debug("Running Long Expression Tests");
+            /*********************************************************************/
 
-			var = getOptionalOutputField(existingOutputVar, execution, "existingOutputVar");
-			Assert.assertEquals("goodVariable", var);
+            l = getLongField(existingLongFromVar, execution, "existingLongFromVar");
+            Assert.assertEquals((Long) 1438270117000L, l);
 
-			var = getOptionalOutputField(nonExistingOutputVar, execution, "nonExistingOutputVar");
-			Assert.assertEquals(null, var);
+            try {
+                l = getLongField(nonExistingLongFromVar, execution, "nonExistingLongFromVar");
+                Assert.fail("Expected BadInjectedFieldException for nonExistingLong");
+            } catch (Exception e) {
+                if (!(e instanceof BadInjectedFieldException)) {
+                    Assert.fail("Expected BadInjectedFieldException for nonExistingLongFromVar");
+                }
+            }
 
-			try {
-				var = getOutputField(existingBadOutputVar, execution, "existingBadOutputVar");
-				Assert.fail("Expected BadInjectedFieldException for nonExistingString");
-			} catch (Exception e) {
-				if (!(e instanceof BadInjectedFieldException)) {
-					Assert.fail("Expected BadInjectedFieldException for nonExistingString");
-				}
-			}
+            l = getOptionalLongField(existingLongFromVar, execution, "existingLongFromVar");
+            Assert.assertEquals((Long) 1438270117000L, l);
 
-			msoLogger.debug("Finished executing " + getClass().getSimpleName());
-		}
-	}
+            l = getOptionalLongField(nonExistingLongFromVar, execution, "nonExistingLongFromVar");
+            Assert.assertEquals(null, i);
+
+            /*********************************************************************/
+            msoLogger.debug("Running Output Variable Field Tests");
+            /*********************************************************************/
+
+            String var = getOutputField(existingOutputVar, execution, "existingOutputVar");
+            Assert.assertEquals("goodVariable", var);
+
+            try {
+                var = getOutputField(nonExistingOutputVar, execution, "nonExistingOutputVar");
+                Assert.fail("Expected BadInjectedFieldException for nonExistingString");
+            } catch (Exception e) {
+                if (!(e instanceof BadInjectedFieldException)) {
+                    Assert.fail("Expected BadInjectedFieldException for nonExistingString");
+                }
+            }
+
+            var = getOptionalOutputField(existingOutputVar, execution, "existingOutputVar");
+            Assert.assertEquals("goodVariable", var);
+
+            var = getOptionalOutputField(nonExistingOutputVar, execution, "nonExistingOutputVar");
+            Assert.assertEquals(null, var);
+
+            try {
+                var = getOutputField(existingBadOutputVar, execution, "existingBadOutputVar");
+                Assert.fail("Expected BadInjectedFieldException for nonExistingString");
+            } catch (Exception e) {
+                if (!(e instanceof BadInjectedFieldException)) {
+                    Assert.fail("Expected BadInjectedFieldException for nonExistingString");
+                }
+            }
+
+            msoLogger.debug("Finished executing " + getClass().getSimpleName());
+        }
+    }
 }

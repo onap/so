@@ -35,34 +35,33 @@ import org.openecomp.mso.cloud.authentication.models.RackspaceAuthentication;
  * A few JUnit tests to evaluate the new factory that manages authentication
  * types and their associated wrapper classes. Here it is assumed that core types
  * only are tested.
- *
  */
 public class AuthenticationMethodTest {
 
-	/**
-	 * 
-	 */
-	public AuthenticationMethodTest() {
-		// TODO Auto-generated constructor stub
-	}
+    /**
+     *
+     */
+    public AuthenticationMethodTest() {
+        // TODO Auto-generated constructor stub
+    }
 
-	@Test
-	public void testCustomRackspaceAuthFromCloudIdentity() {
-		CloudIdentity ci = new CloudIdentity();
-		ci.setIdentityAuthenticationType(CloudIdentity.IdentityAuthenticationType.RACKSPACE_APIKEY);
-		ci.setMsoPass("FD205490A48D48475607C36B9AD902BF");
-		ci.setMsoId("test");
-		Authentication auth = ci.getAuthentication();
-		assertTrue(RackspaceAuthentication.class.equals(auth.getClass()));
-	}
-	
-	@Test
-	public void testCoreUsernamePasswordAuthFromCloudIdentity() {
-		CloudIdentity ci = new CloudIdentity();
-		ci.setIdentityAuthenticationType(CloudIdentity.IdentityAuthenticationType.USERNAME_PASSWORD);
-		ci.setMsoPass("FD205490A48D48475607C36B9AD902BF");
-		ci.setMsoId("someuser");
-		Authentication auth = ci.getAuthentication();
-		assertTrue(UsernamePassword.class.equals(auth.getClass()));
-	}
+    @Test
+    public void testCustomRackspaceAuthFromCloudIdentity() {
+        CloudIdentity ci = new CloudIdentity();
+        ci.setIdentityAuthenticationType(CloudIdentity.IdentityAuthenticationType.RACKSPACE_APIKEY);
+        ci.setMsoPass("FD205490A48D48475607C36B9AD902BF");
+        ci.setMsoId("test");
+        Authentication auth = ci.getAuthentication();
+        assertTrue(RackspaceAuthentication.class.equals(auth.getClass()));
+    }
+
+    @Test
+    public void testCoreUsernamePasswordAuthFromCloudIdentity() {
+        CloudIdentity ci = new CloudIdentity();
+        ci.setIdentityAuthenticationType(CloudIdentity.IdentityAuthenticationType.USERNAME_PASSWORD);
+        ci.setMsoPass("FD205490A48D48475607C36B9AD902BF");
+        ci.setMsoId("someuser");
+        Authentication auth = ci.getAuthentication();
+        assertTrue(UsernamePassword.class.equals(auth.getClass()));
+    }
 }

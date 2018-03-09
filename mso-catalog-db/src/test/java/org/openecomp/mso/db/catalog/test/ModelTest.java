@@ -32,38 +32,38 @@ import org.openecomp.mso.db.catalog.beans.Model;
 
 public class ModelTest {
 
-	@Test
-	public final void modelDataTest() {
-		Model model = new Model();
-		model.setId(1);
-		assertTrue(model.getId() == 1);
+    @Test
+    public final void modelDataTest() {
+        Model model = new Model();
+        model.setId(1);
+        assertTrue(model.getId() == 1);
 
-		model.setCreated(new Timestamp(System.currentTimeMillis()));
-		assertTrue(model.getCreated() != null);
-		model.setModelCustomizationId("modelCustomizationId");
+        model.setCreated(new Timestamp(System.currentTimeMillis()));
+        assertTrue(model.getCreated() != null);
+        model.setModelCustomizationId("modelCustomizationId");
 
-		assertTrue(model.getModelCustomizationId().equalsIgnoreCase("modelCustomizationId"));
-		model.setModelCustomizationName("modelCustomizationName");
-		assertTrue(model.getModelCustomizationName().equalsIgnoreCase("modelCustomizationName"));
+        assertTrue(model.getModelCustomizationId().equalsIgnoreCase("modelCustomizationId"));
+        model.setModelCustomizationName("modelCustomizationName");
+        assertTrue(model.getModelCustomizationName().equalsIgnoreCase("modelCustomizationName"));
 
-		model.setModelInvariantId("modelInvariantId");
-		assertTrue(model.getModelInvariantId().equalsIgnoreCase("modelInvariantId"));
-		model.setModelName("modelName");
-		assertTrue(model.getModelName().equalsIgnoreCase("modelName"));
+        model.setModelInvariantId("modelInvariantId");
+        assertTrue(model.getModelInvariantId().equalsIgnoreCase("modelInvariantId"));
+        model.setModelName("modelName");
+        assertTrue(model.getModelName().equalsIgnoreCase("modelName"));
 
-		model.setModelType("modelType");
-		assertTrue(model.getModelType().equalsIgnoreCase("modelType"));
-		model.setModelVersion("modelVersion");
-		assertTrue(model.getModelVersion().equalsIgnoreCase("modelVersion"));
-		model.setModelVersionId("modelVersionId");
-		assertTrue(model.getModelVersionId().equalsIgnoreCase("modelVersionId"));
-		model.setVersion("1");
-		assertTrue(model.getVersion().equalsIgnoreCase("1"));
-		model.setRecipes(null);
+        model.setModelType("modelType");
+        assertTrue(model.getModelType().equalsIgnoreCase("modelType"));
+        model.setModelVersion("modelVersion");
+        assertTrue(model.getModelVersion().equalsIgnoreCase("modelVersion"));
+        model.setModelVersionId("modelVersionId");
+        assertTrue(model.getModelVersionId().equalsIgnoreCase("modelVersionId"));
+        model.setVersion("1");
+        assertTrue(model.getVersion().equalsIgnoreCase("1"));
+        model.setRecipes(null);
 
-		assertTrue(model.getRecipes() == null);
+        assertTrue(model.getRecipes() == null);
 //		assertTrue(model.toString() != null);
 
-	}
+    }
 
 }

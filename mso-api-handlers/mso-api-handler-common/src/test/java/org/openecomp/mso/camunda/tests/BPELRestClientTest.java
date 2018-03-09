@@ -50,77 +50,71 @@ import org.openecomp.mso.properties.MsoJavaProperties;
 
 /**
  * This class implements test methods of Camunda Beans.
- * 
- *
  */
 public class BPELRestClientTest {
 
 
+    @Mock
+    private HttpClient mockHttpClient;
 
-	@Mock
-	private HttpClient mockHttpClient;
+    @Before
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
+    }
 
-	@Before
-	public void setUp() {
-		MockitoAnnotations.initMocks(this);
-	}
-
-	@Test
-	public void tesBPELPost() throws JsonGenerationException,
-	JsonMappingException, IOException {
-
-
-		String responseBody ="<layer3activate:service-response xmlns:layer3activate=\"http://org.openecomp/mso/request/layer3serviceactivate/schema/v1\""
-												+ "xmlns:reqtype=\"http://org.openecomp/mso/request/types/v1\""
-												+ "xmlns:aetgt=\"http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd\""
-												+ "xmlns:types=\"http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd\">"
-												+ "<reqtype:request-id>req5</reqtype:request-id>"
-												+ "<reqtype:request-action>Layer3ServiceActivateRequest</reqtype:request-action>"
-												+ "<reqtype:source>OMX</reqtype:source>"
-												+ "<reqtype:ack-final-indicator>n</reqtype:ack-final-indicator>"
-												+ "</layer3activate:service-response>";
-		
-		HttpResponse mockResponse = createResponse(200, responseBody);
-		mockHttpClient = Mockito.mock(HttpClient.class);
-		Mockito.when(mockHttpClient.execute(Mockito.any(HttpPost.class)))
-		.thenReturn(mockResponse);
-
-		String reqXML = "<xml>test</xml>";
-		String orchestrationURI = "/active-bpel/services/REST/MsoLayer3ServiceActivate";
-
-		MsoJavaProperties props = new MsoJavaProperties();
-		props.setProperty(CommonConstants.BPEL_URL, "http://localhost:8089");
-		props.setProperty("bpelAuth", "786864AA53D0DCD881AED1154230C0C3058D58B9339D2EFB6193A0F0D82530E1");
-
-		RequestClient requestClient = RequestClientFactory.getRequestClient(orchestrationURI, props);
-		requestClient.setClient(mockHttpClient);
-		HttpResponse response = requestClient.post(reqXML, "reqId", "timeout", "version", null, null);
+    @Test
+    public void tesBPELPost() throws JsonGenerationException,
+            JsonMappingException, IOException {
 
 
-		int statusCode = response.getStatusLine().getStatusCode();
-		assertEquals(requestClient.getType(), CommonConstants.BPEL);
-		assertEquals(statusCode, HttpStatus.SC_OK);
+        String responseBody = "<layer3activate:service-response xmlns:layer3activate=\"http://org.openecomp/mso/request/layer3serviceactivate/schema/v1\""
+                + "xmlns:reqtype=\"http://org.openecomp/mso/request/types/v1\""
+                + "xmlns:aetgt=\"http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd\""
+                + "xmlns:types=\"http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd\">"
+                + "<reqtype:request-id>req5</reqtype:request-id>"
+                + "<reqtype:request-action>Layer3ServiceActivateRequest</reqtype:request-action>"
+                + "<reqtype:source>OMX</reqtype:source>"
+                + "<reqtype:ack-final-indicator>n</reqtype:ack-final-indicator>"
+                + "</layer3activate:service-response>";
+
+        HttpResponse mockResponse = createResponse(200, responseBody);
+        mockHttpClient = Mockito.mock(HttpClient.class);
+        Mockito.when(mockHttpClient.execute(Mockito.any(HttpPost.class)))
+                .thenReturn(mockResponse);
+
+        String reqXML = "<xml>test</xml>";
+        String orchestrationURI = "/active-bpel/services/REST/MsoLayer3ServiceActivate";
+
+        MsoJavaProperties props = new MsoJavaProperties();
+        props.setProperty(CommonConstants.BPEL_URL, "http://localhost:8089");
+        props.setProperty("bpelAuth", "786864AA53D0DCD881AED1154230C0C3058D58B9339D2EFB6193A0F0D82530E1");
+
+        RequestClient requestClient = RequestClientFactory.getRequestClient(orchestrationURI, props);
+        requestClient.setClient(mockHttpClient);
+        HttpResponse response = requestClient.post(reqXML, "reqId", "timeout", "version", null, null);
 
 
-	}
-
-	private HttpResponse createResponse(int respStatus, 
-			String respBody) {
-		HttpResponse response = new BasicHttpResponse(
-				new BasicStatusLine(
-						new ProtocolVersion("HTTP", 1, 1), respStatus, ""));
-		response.setStatusCode(respStatus);
-		try {
-			response.setEntity(new StringEntity(respBody));
-			response.setHeader("Content-Type", "text/xml");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return response;
-	}
+        int statusCode = response.getStatusLine().getStatusCode();
+        assertEquals(requestClient.getType(), CommonConstants.BPEL);
+        assertEquals(statusCode, HttpStatus.SC_OK);
 
 
+    }
 
+    private HttpResponse createResponse(int respStatus,
+                                        String respBody) {
+        HttpResponse response = new BasicHttpResponse(
+                new BasicStatusLine(
+                        new ProtocolVersion("HTTP", 1, 1), respStatus, ""));
+        response.setStatusCode(respStatus);
+        try {
+            response.setEntity(new StringEntity(respBody));
+            response.setHeader("Content-Type", "text/xml");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return response;
+    }
 
 
 }

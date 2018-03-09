@@ -33,33 +33,33 @@ import org.openecomp.mso.db.catalog.beans.ServiceRecipe;
 
 public class ServiceRecipeTest {
 
-	@Test
-	public final void serviceRecipeDataTest() {
+    @Test
+    public final void serviceRecipeDataTest() {
 
-		ServiceRecipe serviceRecipe = new ServiceRecipe();
-		serviceRecipe.setAction("action");
-		assertTrue(serviceRecipe.getAction().equalsIgnoreCase("action"));
-		serviceRecipe.setCreated(new Timestamp(System.currentTimeMillis()));
-		assertTrue(serviceRecipe.getCreated() != null);
-		serviceRecipe.setDescription("description");
-		assertTrue(serviceRecipe.getDescription().equalsIgnoreCase("description"));
-		serviceRecipe.setId(1);
-		assertTrue(serviceRecipe.getId() == 1);
-		serviceRecipe.setOrchestrationUri("orchestrationUri");
-		assertTrue(serviceRecipe.getOrchestrationUri().equalsIgnoreCase("orchestrationUri"));
-		serviceRecipe.setRecipeTimeout(1);
-		assertTrue(serviceRecipe.getRecipeTimeout() == 1);
-		serviceRecipe.setVersion("version");
-		assertTrue(serviceRecipe.getVersion().equalsIgnoreCase("version"));
-		serviceRecipe.setServiceTimeoutInterim(1);
-		assertTrue(serviceRecipe.getServiceTimeoutInterim() == 1);
-		serviceRecipe.setServiceParamXSD("serviceParamXSD");
-		assertTrue(serviceRecipe.getServiceParamXSD().equalsIgnoreCase("serviceParamXSD"));
-		assertTrue(serviceRecipe.toString() != null);
-		ServiceRecipe serviceRecipeWithValue = new ServiceRecipe(1, "string", "string", "string", "string", "string", 1,
-				1, new Date());
-		assertTrue(serviceRecipeWithValue.toString() != null);
+        ServiceRecipe serviceRecipe = new ServiceRecipe();
+        serviceRecipe.setAction("action");
+        assertTrue(serviceRecipe.getAction().equalsIgnoreCase("action"));
+        serviceRecipe.setCreated(new Timestamp(System.currentTimeMillis()));
+        assertTrue(serviceRecipe.getCreated() != null);
+        serviceRecipe.setDescription("description");
+        assertTrue(serviceRecipe.getDescription().equalsIgnoreCase("description"));
+        serviceRecipe.setId(1);
+        assertTrue(serviceRecipe.getId() == 1);
+        serviceRecipe.setOrchestrationUri("orchestrationUri");
+        assertTrue(serviceRecipe.getOrchestrationUri().equalsIgnoreCase("orchestrationUri"));
+        serviceRecipe.setRecipeTimeout(1);
+        assertTrue(serviceRecipe.getRecipeTimeout() == 1);
+        serviceRecipe.setVersion("version");
+        assertTrue(serviceRecipe.getVersion().equalsIgnoreCase("version"));
+        serviceRecipe.setServiceTimeoutInterim(1);
+        assertTrue(serviceRecipe.getServiceTimeoutInterim() == 1);
+        serviceRecipe.setServiceParamXSD("serviceParamXSD");
+        assertTrue(serviceRecipe.getServiceParamXSD().equalsIgnoreCase("serviceParamXSD"));
+        assertTrue(serviceRecipe.toString() != null);
+        ServiceRecipe serviceRecipeWithValue = new ServiceRecipe(1, "string", "string", "string", "string", "string", 1,
+                1, new Date());
+        assertTrue(serviceRecipeWithValue.toString() != null);
 
-	}
+    }
 
 }
