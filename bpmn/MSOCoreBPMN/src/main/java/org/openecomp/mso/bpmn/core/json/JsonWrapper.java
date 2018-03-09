@@ -85,12 +85,10 @@ public abstract class JsonWrapper implements Serializable  {
         JSONObject json = new JSONObject();
          try {
 			json = new JSONObject(mapper.writeValueAsString(this));
-		} catch (JSONException e) {
+		} catch (JSONException | IOException e) {
 			LOGGER.debug("Exception :",e);
-		} catch (IOException e) {
-			LOGGER.debug("Exception :",e);
-		}		
-         return json; 
+		}
+        return json;
 	}
 	
 	public String listToJson(List list)  {
@@ -100,8 +98,6 @@ public abstract class JsonWrapper implements Serializable  {
 		String jsonString = "";
 		try {
 			jsonString = mapper.writeValueAsString(list);
-		} catch (JsonGenerationException e) {
-			LOGGER.debug("Exception :",e);
 		} catch (IOException e) {
 			LOGGER.debug("Exception :",e);
 		}
