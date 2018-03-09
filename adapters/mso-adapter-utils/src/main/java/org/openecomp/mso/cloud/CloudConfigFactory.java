@@ -127,7 +127,7 @@ public class CloudConfigFactory implements Serializable {
      * @return true if Properties have been reloaded, false otherwise
      */
     @Schedule(minute = "*/1", hour = "*", persistent = false)
-    public void reloadCloudConfig () {
+    public static void reloadCloudConfig () {
 
         try {
             if (!rwl.writeLock ().tryLock () && !rwl.writeLock ().tryLock (30L, TimeUnit.SECONDS)) {
