@@ -38,9 +38,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
-/**
- * Created by 10112215 on 2017/9/20.
- */
 public class SdncNetworkTopologyOperationTask extends AbstractSdncOperationTask {
     private static final Logger sdncLogger = LoggerFactory.getLogger(SdncNetworkTopologyOperationTask.class);
 

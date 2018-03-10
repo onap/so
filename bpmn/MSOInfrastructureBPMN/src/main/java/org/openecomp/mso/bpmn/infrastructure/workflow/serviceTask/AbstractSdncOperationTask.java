@@ -51,9 +51,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-/**
- * Created by 10112215 on 2017/9/16.
- */
 public abstract class AbstractSdncOperationTask extends BaseTask {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractSdncOperationTask.class);
