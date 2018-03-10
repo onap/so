@@ -85,8 +85,8 @@ public void preProcessRequest (Execution execution) {
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		logDebug('Entered ' + method, isDebugLogEnabled)
 
-		String messageType = null;
-		String receivedMessage = null;
+		String messageType = null
+		String receivedMessage = null
 
 		try {
 			messageType = execution.getVariable('RCVWFMSG_messageType')

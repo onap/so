@@ -17,33 +17,33 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.openecomp.mso.bpmn.vcpe.scripts;
+package org.openecomp.mso.bpmn.vcpe.scripts
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashMap
+import java.util.Map
 
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
+import org.mockito.invocation.InvocationOnMock
+import org.mockito.stubbing.Answer
 
 class MapSetter implements Answer<Void> {
-	final Map<String,Object> map;
+	final Map<String,Object> map
 	
 	public MapSetter() {
-		map = new HashMap<>();
+		map = new HashMap<>()
 	}
 	
 	public MapSetter(Map<String,Object> map) {
-		this.map = map;
+		this.map = map
 	}
 
 	public Map<String, Object> getMap() {
-		return map;
+		return map
 	}
 
 	@Override
 	public Void answer(InvocationOnMock invocation) throws Throwable {
-		map.put(invocation.getArgumentAt(0, String.class), invocation.getArgumentAt(1, Object.class));
-		return null;
+		map.put(invocation.getArgumentAt(0, String.class), invocation.getArgumentAt(1, Object.class))
+		return null
 	}
 
 }

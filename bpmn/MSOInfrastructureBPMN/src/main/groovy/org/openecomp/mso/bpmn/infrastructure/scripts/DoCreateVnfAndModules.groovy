@@ -19,11 +19,11 @@
  */
 package org.openecomp.mso.bpmn.infrastructure.scripts
 
-import java.util.UUID;
+import java.util.UUID
 import java.util.List
 
-import org.json.JSONObject;
-import org.json.JSONArray;
+import org.json.JSONObject
+import org.json.JSONArray
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.openecomp.mso.bpmn.common.scripts.CatalogDbUtils
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
@@ -37,9 +37,9 @@ import org.openecomp.mso.bpmn.core.domain.VnfResource
 import org.openecomp.mso.bpmn.core.json.DecomposeJsonUtil
 import org.openecomp.mso.bpmn.core.json.JsonUtils
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution;
+import org.camunda.bpm.engine.runtime.Execution
 
-import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.*
 
 
 
@@ -367,11 +367,11 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 	   utils.log("DEBUG"," ***** preProcessRollback ***** ", isDebugLogEnabled)
 	   try {
 		   
-		   Object workflowException = execution.getVariable("WorkflowException");
+		   Object workflowException = execution.getVariable("WorkflowException")
 
 		   if (workflowException instanceof WorkflowException) {
 			   utils.log("DEBUG", "Prev workflowException: " + workflowException.getErrorMessage(), isDebugLogEnabled)
-			   execution.setVariable("prevWorkflowException", workflowException);
+			   execution.setVariable("prevWorkflowException", workflowException)
 			   //execution.setVariable("WorkflowException", null);
 		   }
 	   } catch (BpmnError e) {
@@ -388,15 +388,15 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 	   utils.log("DEBUG"," ***** postProcessRollback ***** ", isDebugLogEnabled)
 	   String msg = ""
 	   try {
-		   Object workflowException = execution.getVariable("prevWorkflowException");
+		   Object workflowException = execution.getVariable("prevWorkflowException")
 		   if (workflowException instanceof WorkflowException) {
 			   utils.log("DEBUG", "Setting prevException to WorkflowException: ", isDebugLogEnabled)
-			   execution.setVariable("WorkflowException", workflowException);
+			   execution.setVariable("WorkflowException", workflowException)
 		   }
 		   execution.setVariable("rollbackData", null)
 	   } catch (BpmnError b) {
 		   utils.log("DEBUG", "BPMN Error during postProcessRollback", isDebugLogEnabled)
-		   throw b;
+		   throw b
 	   } catch(Exception ex) {
 		   msg = "Exception in postProcessRollback. " + ex.getMessage()
 		   utils.log("DEBUG", msg, isDebugLogEnabled)

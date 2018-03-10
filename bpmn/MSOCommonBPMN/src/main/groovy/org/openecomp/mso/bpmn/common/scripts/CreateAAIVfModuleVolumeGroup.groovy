@@ -79,7 +79,7 @@ public class CreateAAIVfModuleVolumeGroup extends AbstractServiceTaskProcessor {
 
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in preProcessRequest(): ' + e.getMessage())
@@ -130,7 +130,7 @@ public class CreateAAIVfModuleVolumeGroup extends AbstractServiceTaskProcessor {
 			}
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in getVfModule(): ' + e.getMessage())
@@ -197,7 +197,7 @@ public class CreateAAIVfModuleVolumeGroup extends AbstractServiceTaskProcessor {
 			}
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in updateVfModule(): ' + e.getMessage())
@@ -240,7 +240,7 @@ public class CreateAAIVfModuleVolumeGroup extends AbstractServiceTaskProcessor {
 		volumeGroupRelationship.append(relationshipDataCRI)
 		volumeGroupRelationship.append(relationshipDataVGI)
 		
-		return volumeGroupRelationship;
+		return volumeGroupRelationship
 	}
 	
 	/**

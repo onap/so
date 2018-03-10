@@ -131,7 +131,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 		}
 		
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception ex){
 			def msg = "Exception in DoCreateVfModuleRollback preProcessRequest " + ex.getMessage()
 			utils.log("DEBUG", msg, isDebugEnabled)
@@ -420,7 +420,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("ERROR", "AAI error occurred deleting the Generic Vnf: "
 			+ execution.getVariable("DoDVfMod_deleteGenericVnfResponse"), isDebugEnabled)
-		String processKey = getProcessKey(execution);
+		String processKey = getProcessKey(execution)
 		exceptionUtil.buildWorkflowException(execution, 5000, "Failure in DoDeleteVfModule")
 
 	}
@@ -560,7 +560,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 			}
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 
 		} catch (Exception ex) {
 			String exceptionMessage = "Bpmn error encountered in DoCreateVfModuleRollback flow. deleteNetworkPoliciesFromAAI() - " + ex.getMessage()
@@ -614,7 +614,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in preProcessUpdateAAIGenericVnf((): ' + e.getMessage())

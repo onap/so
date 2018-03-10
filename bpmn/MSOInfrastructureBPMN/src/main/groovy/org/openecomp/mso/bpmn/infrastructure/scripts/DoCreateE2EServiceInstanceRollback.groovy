@@ -21,7 +21,7 @@
 package org.openecomp.mso.bpmn.infrastructure.scripts
 
 
-import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.*
 import groovy.xml.XmlUtil
 import groovy.json.*
 
@@ -30,18 +30,18 @@ import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.openecomp.mso.bpmn.common.scripts.SDNCAdapterUtils
 import org.openecomp.mso.bpmn.core.RollbackData
 import org.openecomp.mso.bpmn.core.WorkflowException
-import org.openecomp.mso.rest.APIResponse;
+import org.openecomp.mso.rest.APIResponse
 import org.openecomp.mso.rest.RESTClient
 import org.openecomp.mso.rest.RESTConfig
 
-import java.util.UUID;
+import java.util.UUID
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.runtime.Execution
-import org.json.JSONObject;
+import org.json.JSONObject
 import org.apache.commons.lang3.*
-import org.apache.commons.codec.binary.Base64;
-import org.springframework.web.util.UriUtils;
+import org.apache.commons.codec.binary.Base64
+import org.springframework.web.util.UriUtils
 /**
  * This groovy class supports the <class>DoCreateServiceInstanceRollback.bpmn</class> process.
  *
@@ -127,7 +127,7 @@ public class DoCreateE2EServiceInstanceRollback extends AbstractServiceTaskProce
 			}
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception ex){
 			msg = "Exception in Create ServiceInstance Rollback preProcessRequest " + ex.getMessage()
 			utils.log("DEBUG", msg, isDebugEnabled)
@@ -160,7 +160,7 @@ public class DoCreateE2EServiceInstanceRollback extends AbstractServiceTaskProce
 				throw new BpmnError("MSOWorkflowException")
 			}
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception ex){
 			msg = "Exception in Create ServiceInstance rollback for "  + method  + " Exception:" + ex.getMessage()
 			utils.log("DEBUG", msg, isDebugEnabled)

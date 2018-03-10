@@ -20,7 +20,7 @@
 
 package org.openecomp.mso.bpmn.infrastructure.scripts
 
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutionException
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.runtime.Execution
@@ -29,7 +29,7 @@ import org.springframework.web.util.UriUtils
 import org.openecomp.mso.bpmn.common.scripts.AaiUtil
 import org.openecomp.mso.bpmn.common.scripts.VfModuleBase
 import org.openecomp.mso.bpmn.core.WorkflowException
-import org.openecomp.mso.bpmn.core.json.JsonUtils;
+import org.openecomp.mso.bpmn.core.json.JsonUtils
 import org.openecomp.mso.rest.APIResponse
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
 
@@ -147,7 +147,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 			sendWorkflowResponse(execution, 200, synchResponse)
 			utils.logAudit("UpdateVfModuleVolume Synch Response: " + synchResponse)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in sendSynchResponse(): ' + e.getMessage())
@@ -205,7 +205,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in queryAAIForVolumeGroup(): ' + e.getMessage())
@@ -273,7 +273,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 			utils.logAudit("UpdateVfModuleVolume Request for VNFAdapter Rest: " + vnfAdapterRestRequest)
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepVnfAdapterRest(): ' + e.getMessage())
@@ -317,7 +317,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 			utils.logAudit("UpdateVfModuleVolume Request for Updating DB for Infra: " + updateInfraRequest)
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildWorkflowException(execution, 1002, 'Error in prepDbInfraDbRequest(): ' + e.getMessage())
@@ -354,7 +354,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepCompletionHandlerRequest(): ' + e.getMessage())
@@ -403,7 +403,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildWorkflowException(execution, 1002, 'Error in prepFalloutHandler(): ' + e.getMessage())
@@ -423,7 +423,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		logDebug('Entered ' + method, isDebugLogEnabled)
 
-		String processKey = getProcessKey(execution);
+		String processKey = getProcessKey(execution)
 		def volumeGroupId = execution.getVariable('UPDVfModVol_volumeGroupId')
 		def aicCloudRegion = execution.getVariable('UPDVfModVol_aicCloudRegion')
 		def tenantId = execution.getVariable('UPDVfModVol_tenantId')
@@ -434,8 +434,8 @@ class UpdateVfModuleVolume extends VfModuleBase {
 
 		logError('Error in UpdateVfModuleVol: ' + errorMessage)
 
-		WorkflowException exception = new WorkflowException(processKey, 5000, errorMessage);
-		execution.setVariable("WorkflowException", exception);
+		WorkflowException exception = new WorkflowException(processKey, 5000, errorMessage)
+		execution.setVariable("WorkflowException", exception)
 
 		logDebug('Exited ' + method, isDebugLogEnabled)
 		utils.logAudit("UpdateVfModuleVolume workflowException in Tenant Mismatch: " + errorMessage)

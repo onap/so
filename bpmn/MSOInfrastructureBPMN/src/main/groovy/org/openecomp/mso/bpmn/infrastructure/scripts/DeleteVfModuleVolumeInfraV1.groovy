@@ -18,20 +18,20 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.mso.bpmn.infrastructure.scripts;
+package org.openecomp.mso.bpmn.infrastructure.scripts
 
 import groovy.json.JsonSlurper
 
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutionException
 
 import org.springframework.web.util.UriUtils
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.runtime.Execution
 import org.apache.commons.lang3.*
-import org.openecomp.mso.bpmn.common.scripts.AaiUtil;
-import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor;
-import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil;
-import org.openecomp.mso.bpmn.common.scripts.VidUtils;
+import org.openecomp.mso.bpmn.common.scripts.AaiUtil
+import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
+import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
+import org.openecomp.mso.bpmn.common.scripts.VidUtils
 import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.rest.APIResponse
 
@@ -425,7 +425,7 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 	public void prepareDBRequest (Execution execution, isDebugLogEnabled) {
 
 		WorkflowException workflowExceptionObj = execution.getVariable("WorkflowException")
-		ExceptionUtil exceptionUtil = new ExceptionUtil();
+		ExceptionUtil exceptionUtil = new ExceptionUtil()
 		def requestId = execution.getVariable('DELVfModVol_requestId')
 		def volOutputs = execution.getVariable('DELVfModVol_volumeOutputs')
 		def statusMessage = "VolumeGroup successfully deleted"

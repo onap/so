@@ -21,8 +21,8 @@
 package org.openecomp.mso.bpmn.common.scripts
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.runtime.Execution
-import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor;
-import org.openecomp.mso.rest.APIResponse;
+import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
+import org.openecomp.mso.rest.APIResponse
 import org.openecomp.mso.rest.RESTClient
 import org.openecomp.mso.rest.RESTConfig
 
@@ -32,7 +32,7 @@ class AaiUtil {
 	public static final String AAI_NAMESPACE_STRING_KEY = 'URN_mso_workflow_global_default_aai_namespace'
 	public static final String DEFAULT_VERSION_KEY = 'URN_mso_workflow_global_default_aai_version'
 
-	private String aaiNamespace = null;
+	private String aaiNamespace = null
 
 	private AbstractServiceTaskProcessor taskProcessor
 
@@ -304,8 +304,8 @@ class AaiUtil {
 
 			String basicAuthCred = utils.getBasicAuth(execution.getVariable("URN_aai_auth"),execution.getVariable("URN_mso_msoKey"))
 
-			RESTConfig config = new RESTConfig(url);
-			RESTClient client = new RESTClient(config).addHeader("X-FromAppId", "MSO").addHeader("X-TransactionId", uuid).addHeader("Accept","application/xml");
+			RESTConfig config = new RESTConfig(url)
+			RESTClient client = new RESTClient(config).addHeader("X-FromAppId", "MSO").addHeader("X-TransactionId", uuid).addHeader("Accept","application/xml")
 
 			if (basicAuthCred != null && !"".equals(basicAuthCred)) {
 				client.addAuthorizationHeader(basicAuthCred)
@@ -344,8 +344,8 @@ class AaiUtil {
 
 			String basicAuthCred = utils.getBasicAuth(execution.getVariable("URN_aai_auth"),execution.getVariable("URN_mso_msoKey"))
 
-			RESTConfig config = new RESTConfig(url);
-			RESTClient client = new RESTClient(config).addHeader("X-FromAppId", "MSO").addHeader("X-TransactionId", uuid).addHeader("Content-Type", "application/xml").addHeader("Accept","application/xml");
+			RESTConfig config = new RESTConfig(url)
+			RESTClient client = new RESTClient(config).addHeader("X-FromAppId", "MSO").addHeader("X-TransactionId", uuid).addHeader("Content-Type", "application/xml").addHeader("Accept","application/xml")
 			if (basicAuthCred != null && !"".equals(basicAuthCred)) {
 				client.addAuthorizationHeader(basicAuthCred)
 			}
@@ -383,8 +383,8 @@ class AaiUtil {
 
 			String basicAuthCred = utils.getBasicAuth(execution.getVariable("URN_aai_auth"),execution.getVariable("URN_mso_msoKey"))
 
-			RESTConfig config = new RESTConfig(url);
-			RESTClient client = new RESTClient(config).addHeader("X-FromAppId", "MSO").addHeader("X-TransactionId", uuid).addHeader("Content-Type", "application/merge-patch+json").addHeader("Accept","application/json");
+			RESTConfig config = new RESTConfig(url)
+			RESTClient client = new RESTClient(config).addHeader("X-FromAppId", "MSO").addHeader("X-TransactionId", uuid).addHeader("Content-Type", "application/merge-patch+json").addHeader("Accept","application/json")
 			if (basicAuthCred != null && !"".equals(basicAuthCred)) {
 				client.addAuthorizationHeader(basicAuthCred)
 			}
@@ -421,8 +421,8 @@ class AaiUtil {
 
 			String basicAuthCred = utils.getBasicAuth(execution.getVariable("URN_aai_auth"),execution.getVariable("URN_mso_msoKey"))
 
-			RESTConfig config = new RESTConfig(url);
-			RESTClient client = new RESTClient(config).addHeader("X-FromAppId", "MSO").addHeader("X-TransactionId", uuid).addHeader("Accept","application/xml");
+			RESTConfig config = new RESTConfig(url)
+			RESTClient client = new RESTClient(config).addHeader("X-FromAppId", "MSO").addHeader("X-TransactionId", uuid).addHeader("Accept","application/xml")
 			if (basicAuthCred != null && !"".equals(basicAuthCred)) {
 				client.addAuthorizationHeader(basicAuthCred)
 			}
@@ -459,8 +459,8 @@ class AaiUtil {
 			taskProcessor.logDebug( "URL to be used is: " + url, isDebugEnabled)
 
 			String basicAuthCred = utils.getBasicAuth(execution.getVariable("URN_aai_auth"),execution.getVariable("URN_mso_msoKey"))
-			RESTConfig config = new RESTConfig(url);
-			RESTClient client = new RESTClient(config).addHeader("X-FromAppId", "MSO").addHeader("X-TransactionId", uuid).addHeader("Accept","application/xml").addAuthorizationHeader(authHeader);
+			RESTConfig config = new RESTConfig(url)
+			RESTClient client = new RESTClient(config).addHeader("X-FromAppId", "MSO").addHeader("X-TransactionId", uuid).addHeader("Accept","application/xml").addAuthorizationHeader(authHeader)
 			if (basicAuthCred != null && !"".equals(basicAuthCred)) {
 				client.addAuthorizationHeader(basicAuthCred)
 			}
@@ -496,8 +496,8 @@ class AaiUtil {
 			taskProcessor.logDebug( "URL to be used is: " + url, isDebugEnabled)
 
 			String basicAuthCred = utils.getBasicAuth(execution.getVariable("URN_aai_auth"),execution.getVariable("URN_mso_msoKey"))
-			RESTConfig config = new RESTConfig(url);
-			RESTClient client = new RESTClient(config).addHeader("X-FromAppId", "MSO").addHeader("X-TransactionId", uuid).addHeader("Accept","application/xml");
+			RESTConfig config = new RESTConfig(url)
+			RESTClient client = new RESTClient(config).addHeader("X-FromAppId", "MSO").addHeader("X-TransactionId", uuid).addHeader("Accept","application/xml")
 
 			if (basicAuthCred != null && !"".equals(basicAuthCred)) {
 				client.addAuthorizationHeader(basicAuthCred)
@@ -536,7 +536,7 @@ class AaiUtil {
 
 			String basicAuthCred = utils.getBasicAuth(execution.getVariable("URN_aai_auth"),execution.getVariable("URN_mso_msoKey"))
 
-			RESTConfig config = new RESTConfig(url);
+			RESTConfig config = new RESTConfig(url)
 			RESTClient client = new RESTClient(config).addAuthorizationHeader(authenticationHeaderValue).addHeader(headerName, headerValue)
 			if (basicAuthCred != null && !"".equals(basicAuthCred)) {
 				client.addAuthorizationHeader(basicAuthCred)

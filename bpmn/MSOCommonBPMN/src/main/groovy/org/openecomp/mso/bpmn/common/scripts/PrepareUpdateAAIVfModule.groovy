@@ -83,7 +83,7 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in preProcessRequest(): ' + e.getMessage())
@@ -115,14 +115,14 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 			utils.logAudit("PrepareUpdateAAIVfModule: AAI endPoint  : " + endPoint)
 			String basicAuthCred = utils.getBasicAuth(execution.getVariable("URN_aai_auth"),execution.getVariable("URN_mso_msoKey"))
 			try {
-				RESTConfig config = new RESTConfig(endPoint);
+				RESTConfig config = new RESTConfig(endPoint)
 				def responseData = ''
 				String aaiRequestId = utils.getRequestID()
 				RESTClient client = new RESTClient(config).
 					addHeader('X-TransactionId', aaiRequestId).
 					addHeader('X-FromAppId', 'MSO').
 					addHeader('Content-Type', 'application/xml').
-					addHeader('Accept','application/xml');
+					addHeader('Accept','application/xml')
 				if (basicAuthCred != null && !"".equals(basicAuthCred)) {
 					client.addAuthorizationHeader(basicAuthCred)
 				}
@@ -147,7 +147,7 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 			}
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in getGenericVnf(): ' + e.getMessage())
@@ -200,7 +200,7 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 			
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in validateVfModule(): ' + e.getMessage())
@@ -254,14 +254,14 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 			utils.logAudit("PrepareUpdateAAIVfModule: AAI endPoint  : " + endPoint)
 			String basicAuthCred = utils.getBasicAuth(execution.getVariable("URN_aai_auth"),execution.getVariable("URN_mso_msoKey"))
 			try {
-				RESTConfig config = new RESTConfig(endPoint);
+				RESTConfig config = new RESTConfig(endPoint)
 				def responseData = ''
                 def aaiRequestId = utils.getRequestID()
 				RESTClient client = new RESTClient(config).
 					addHeader('X-TransactionId', aaiRequestId).
 					addHeader('X-FromAppId', 'MSO').
 					addHeader('Content-Type', 'application/merge-patch+json').
-					addHeader('Accept','application/json');
+					addHeader('Accept','application/json')
 				if (basicAuthCred != null && !"".equals(basicAuthCred)) {
 					client.addAuthorizationHeader(basicAuthCred)
 				}
@@ -297,7 +297,7 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 			}
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in updateVfModule(): ' + e.getMessage())
@@ -319,7 +319,7 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 		logError('Error occurred attempting to query AAI, Response Code ' +
 			execution.getVariable('PUAAIVfMod_getVnfResponseCode') + ', Error Response ' +
 			execution.getVariable('PUAAIVfMod_getVnfResponse'))
-		String processKey = getProcessKey(execution);
+		String processKey = getProcessKey(execution)
 		WorkflowException exception = new WorkflowException(processKey, 5000,
 			execution.getVariable('PUAAIVfMod_getVnfResponse'))
 		execution.setVariable('WorkflowException', exception)
@@ -343,7 +343,7 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 		logError(errorMsg)
 		utils.logAudit("PrepareUpdateAAIVfModule: Error Message : " + errorMsg)
 		
-		String processKey = getProcessKey(execution);
+		String processKey = getProcessKey(execution)
 		WorkflowException exception = new WorkflowException(processKey, 5000, errorMsg)
 		execution.setVariable('WorkflowException', exception)
 
@@ -365,7 +365,7 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 		logError('Error occurred attempting to update VF Module in AAI, Response Code ' +
 			execution.getVariable('PUAAIVfMod_updateVfModuleResponseCode') + ', Error Response ' +
 			execution.getVariable('PUAAIVfMod_updateVfModuleResponse'))
-		String processKey = getProcessKey(execution);
+		String processKey = getProcessKey(execution)
 		WorkflowException exception = new WorkflowException(processKey, 5000,
 			execution.getVariable('PUAAIVfMod_updateVfModuleResponse'))
 		execution.setVariable('WorkflowException', exception)

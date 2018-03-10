@@ -2,10 +2,10 @@ package org.openecomp.mso.bpmn.infrastructure.scripts
 
 import static org.mockito.Mockito.*
 
-import static org.openecomp.mso.bpmn.mock.StubResponseNetworkAdapter.MockNetworkAdapter;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetNetworkByIdWithDepth;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetNetworkCloudRegion;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetNetworkCloudRegion_404;
+import static org.openecomp.mso.bpmn.mock.StubResponseNetworkAdapter.MockNetworkAdapter
+import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetNetworkByIdWithDepth
+import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetNetworkCloudRegion
+import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetNetworkCloudRegion_404
 import org.camunda.bpm.engine.ProcessEngineServices
 import org.camunda.bpm.engine.RepositoryService
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
@@ -30,7 +30,7 @@ import org.apache.commons.lang3.*
 class DoDeleteNetworkInstanceTest  {
 
 	@Rule
-	public WireMockRule wireMockRule = new WireMockRule(8090);
+	public WireMockRule wireMockRule = new WireMockRule(8090)
 
 		def utils = new MsoUtils()
 		String Prefix="DELNWKI_"
@@ -1459,8 +1459,8 @@ String sdncAdapterWorkflowFormattedResponse_404 =
 
 			println "************ sendRequestToVnfAdapter ************* "
 
-			WireMock.reset();
-			MockNetworkAdapter("bdc5efe8-404a-409b-85f6-0dcc9eebae30", 200, "deleteNetworkResponse_Success.xml");
+			WireMock.reset()
+			MockNetworkAdapter("bdc5efe8-404a-409b-85f6-0dcc9eebae30", 200, "deleteNetworkResponse_Success.xml")
 
 			ExecutionEntity mockExecution = setupMock()
 			when(mockExecution.getVariable(Prefix + "deleteNetworkRequest")).thenReturn(deleteNetworkRESTRequest)
@@ -1567,8 +1567,8 @@ String sdncAdapterWorkflowFormattedResponse_404 =
 
 			println "************ callRESTQueryAAI ************* "
 
-			WireMock.reset();
-			MockGetNetworkByIdWithDepth("bdc5efe8-404a-409b-85f6-0dcc9eebae30", "DeleteNetworkV2/deleteNetworkAAIResponse_Success.xml", "1");
+			WireMock.reset()
+			MockGetNetworkByIdWithDepth("bdc5efe8-404a-409b-85f6-0dcc9eebae30", "DeleteNetworkV2/deleteNetworkAAIResponse_Success.xml", "1")
 
 			ExecutionEntity mockExecution = setupMock()
 			when(mockExecution.getVariable(Prefix + "networkInputs")).thenReturn(expectedNetworkRequest)
@@ -1601,8 +1601,8 @@ String sdncAdapterWorkflowFormattedResponse_404 =
 
 			println "************ callRESTQueryAAI ************* "
 
-			WireMock.reset();
-			MockGetNetworkByIdWithDepth("bdc5efe8-404a-409b-85f6-0dcc9eebae30", "DeleteNetworkV2/deleteNetworkAAIResponse_withRelationship_Success.xml", "1");
+			WireMock.reset()
+			MockGetNetworkByIdWithDepth("bdc5efe8-404a-409b-85f6-0dcc9eebae30", "DeleteNetworkV2/deleteNetworkAAIResponse_withRelationship_Success.xml", "1")
 
 			ExecutionEntity mockExecution = setupMock()
 			when(mockExecution.getVariable(Prefix + "networkInputs")).thenReturn(expectedNetworkRequest)
@@ -1635,8 +1635,8 @@ String sdncAdapterWorkflowFormattedResponse_404 =
 
 			println "************ callRESTQueryAAI ************* "
 
-			WireMock.reset();
-			MockGetNetworkByIdWithDepth("bdc5efe8-404a-409b-85f6-0dcc9eebae30", "DeleteNetworkV2/deleteNetworkAAIResponse_Success.xml", "1");
+			WireMock.reset()
+			MockGetNetworkByIdWithDepth("bdc5efe8-404a-409b-85f6-0dcc9eebae30", "DeleteNetworkV2/deleteNetworkAAIResponse_Success.xml", "1")
 
 			ExecutionEntity mockExecution = setupMock()
 			when(mockExecution.getVariable(Prefix + "networkInputs")).thenReturn(expectedNetworkRequest)
@@ -1668,8 +1668,8 @@ String sdncAdapterWorkflowFormattedResponse_404 =
 
 			println "************ callRESTQueryAAICloudRegion30_200 ************* "
 
-			WireMock.reset();
-			MockGetNetworkCloudRegion("DeleteNetworkV2/cloudRegion30_AAIResponse_Success.xml", "RDM2WAGPLCP");
+			WireMock.reset()
+			MockGetNetworkCloudRegion("DeleteNetworkV2/cloudRegion30_AAIResponse_Success.xml", "RDM2WAGPLCP")
 
 			ExecutionEntity mockExecution = setupMock()
 			when(mockExecution.getVariable("prefix")).thenReturn(Prefix)
@@ -1699,8 +1699,8 @@ String sdncAdapterWorkflowFormattedResponse_404 =
 
 			println "************ callRESTQueryAAICloudRegion_NotFound ************* "
 
-			WireMock.reset();
-			MockGetNetworkCloudRegion_404("MDTWNJ21");
+			WireMock.reset()
+			MockGetNetworkCloudRegion_404("MDTWNJ21")
 
 			ExecutionEntity mockExecution = setupMock()
 			when(mockExecution.getVariable("prefix")).thenReturn(Prefix)
@@ -1731,8 +1731,8 @@ String sdncAdapterWorkflowFormattedResponse_404 =
 
 			println "************ callRESTQueryAAICloudRegion25_200 ************* "
 
-			WireMock.reset();
-			MockGetNetworkCloudRegion("DeleteNetworkV2/cloudRegion25_AAIResponse_Success.xml", "RDM2WAGPLCP");
+			WireMock.reset()
+			MockGetNetworkCloudRegion("DeleteNetworkV2/cloudRegion25_AAIResponse_Success.xml", "RDM2WAGPLCP")
 
 			ExecutionEntity mockExecution = setupMock()
 			when(mockExecution.getVariable("prefix")).thenReturn(Prefix)

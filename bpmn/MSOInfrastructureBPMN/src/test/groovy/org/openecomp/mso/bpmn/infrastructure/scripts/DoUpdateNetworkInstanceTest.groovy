@@ -1,13 +1,13 @@
 package org.openecomp.mso.bpmn.infrastructure.scripts
 
 import static org.mockito.Mockito.*
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetNetworkByIdWithDepth;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetNetworkCloudRegion;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetNetworkCloudRegion_404;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetNetworkVpnBinding;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetNetworkTableReference;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetNetworkPolicy;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPutNetworkIdWithDepth;
+import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetNetworkByIdWithDepth
+import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetNetworkCloudRegion
+import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetNetworkCloudRegion_404
+import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetNetworkVpnBinding
+import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetNetworkTableReference
+import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetNetworkPolicy
+import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPutNetworkIdWithDepth
 import org.camunda.bpm.engine.ProcessEngineServices
 import org.camunda.bpm.engine.RepositoryService
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
@@ -31,7 +31,7 @@ import org.apache.commons.lang3.*
 class DoUpdateNetworkInstanceTest  {
 
 	@Rule
-	public WireMockRule wireMockRule = new WireMockRule(8090);
+	public WireMockRule wireMockRule = new WireMockRule(8090)
 
 		def utils = new MsoUtils()
 		String Prefix="UPDNETI_"
@@ -2000,8 +2000,8 @@ String rollbackNetworkRequest =
 
 			println "************ callRESTQueryAAINetworkId ************* "
 
-			WireMock.reset();
-			MockGetNetworkByIdWithDepth("49c86598-f766-46f8-84f8-8d1c1b10f9b4", "UpdateNetworkV2/updateNetwork_queryNetworkId_AAIResponse_Success.xml", "1");
+			WireMock.reset()
+			MockGetNetworkByIdWithDepth("49c86598-f766-46f8-84f8-8d1c1b10f9b4", "UpdateNetworkV2/updateNetwork_queryNetworkId_AAIResponse_Success.xml", "1")
 
 			ExecutionEntity mockExecution = setupMock()
 			when(mockExecution.getVariable(Prefix + "networkRequest")).thenReturn(expectedNetworkRequest)
@@ -2033,8 +2033,8 @@ String rollbackNetworkRequest =
 
 			println "************ callRESTQueryAAICloudRegion30_200 ************* "
 
-			WireMock.reset();
-			MockGetNetworkCloudRegion("CreateNetworkV2/cloudRegion30_AAIResponse_Success.xml", "RDM2WAGPLCP");
+			WireMock.reset()
+			MockGetNetworkCloudRegion("CreateNetworkV2/cloudRegion30_AAIResponse_Success.xml", "RDM2WAGPLCP")
 
 			ExecutionEntity mockExecution = setupMock()
 			when(mockExecution.getVariable("prefix")).thenReturn(Prefix + "")
@@ -2068,8 +2068,8 @@ String rollbackNetworkRequest =
 
 			println "************ callRESTQueryAAICloudRegion25_200 ************* "
 
-			WireMock.reset();
-		    MockGetNetworkCloudRegion("CreateNetworkV2/cloudRegion25_AAIResponse_Success.xml", "RDM2WAGPLCP");
+			WireMock.reset()
+		    MockGetNetworkCloudRegion("CreateNetworkV2/cloudRegion25_AAIResponse_Success.xml", "RDM2WAGPLCP")
 
 			ExecutionEntity mockExecution = setupMock()
 			when(mockExecution.getVariable("prefix")).thenReturn(Prefix + "")
@@ -2103,8 +2103,8 @@ String rollbackNetworkRequest =
 
 			println "************ callRESTQueryAAICloudRegionFake ************* "
 
-			WireMock.reset();
-			MockGetNetworkCloudRegion_404("MDTWNJ21");
+			WireMock.reset()
+			MockGetNetworkCloudRegion_404("MDTWNJ21")
 
 			ExecutionEntity mockExecution = setupMock()
 			when(mockExecution.getVariable("prefix")).thenReturn(Prefix + "")
@@ -2140,9 +2140,9 @@ String rollbackNetworkRequest =
 
 			println "************ callRESTQueryAAINetworkVpnBinding_200 ************* "
 
-			WireMock.reset();
-			MockGetNetworkVpnBinding("UpdateNetworkV2/updateNetwork_queryVpnBinding_AAIResponse_Success.xml", "85f015d0-2e32-4c30-96d2-87a1a27f8017");
-			MockGetNetworkVpnBinding("UpdateNetworkV2/updateNetwork_queryVpnBinding_AAIResponse_Success.xml", "c980a6ef-3b88-49f0-9751-dbad8608d0a6");
+			WireMock.reset()
+			MockGetNetworkVpnBinding("UpdateNetworkV2/updateNetwork_queryVpnBinding_AAIResponse_Success.xml", "85f015d0-2e32-4c30-96d2-87a1a27f8017")
+			MockGetNetworkVpnBinding("UpdateNetworkV2/updateNetwork_queryVpnBinding_AAIResponse_Success.xml", "c980a6ef-3b88-49f0-9751-dbad8608d0a6")
 
 			ExecutionEntity mockExecution = setupMock()
 			when(mockExecution.getVariable(Prefix + "requeryIdAAIResponse")).thenReturn(queryIdAIIResponse) // v6
@@ -2178,8 +2178,8 @@ String rollbackNetworkRequest =
 
 			println "************ callRESTQueryAAINetworkVpnBinding_200 ************* "
 
-			WireMock.reset();
-			MockGetNetworkVpnBinding("UpdateNetworkV2/updateNetwork_queryVpnBinding_AAIResponse_Success.xml", "85f015d0-2e32-4c30-96d2-87a1a27f8017");
+			WireMock.reset()
+			MockGetNetworkVpnBinding("UpdateNetworkV2/updateNetwork_queryVpnBinding_AAIResponse_Success.xml", "85f015d0-2e32-4c30-96d2-87a1a27f8017")
 
 			ExecutionEntity mockExecution = setupMock()
 			when(mockExecution.getVariable(Prefix + "requeryIdAAIResponse")).thenReturn(queryIdAIIResponseTestScenario01)
@@ -2215,9 +2215,9 @@ String rollbackNetworkRequest =
 
 			println "************ callRESTQueryAAINetworkVpnBinding_200 ************* "
 
-			WireMock.reset();
-			MockGetNetworkVpnBinding("UpdateNetworkV2/updateNetwork_queryVpnBinding_AAIResponse_Success.xml", "85f015d0-2e32-4c30-96d2-87a1a27f8017");
-			MockGetNetworkVpnBinding("UpdateNetworkV2/updateNetwork_queryVpnBinding_AAIResponse_Success.xml", "c980a6ef-3b88-49f0-9751-dbad8608d0a6");
+			WireMock.reset()
+			MockGetNetworkVpnBinding("UpdateNetworkV2/updateNetwork_queryVpnBinding_AAIResponse_Success.xml", "85f015d0-2e32-4c30-96d2-87a1a27f8017")
+			MockGetNetworkVpnBinding("UpdateNetworkV2/updateNetwork_queryVpnBinding_AAIResponse_Success.xml", "c980a6ef-3b88-49f0-9751-dbad8608d0a6")
 
 			ExecutionEntity mockExecution = setupMock()
 			when(mockExecution.getVariable(Prefix + "requeryIdAAIResponse")).thenReturn(queryIdAIIResponse)
@@ -2253,8 +2253,8 @@ String rollbackNetworkRequest =
 
 			println "************ callRESTQueryAAINetworkVpnBinding_NotPresent ************* "
 
-			WireMock.reset();
-			MockGetNetworkVpnBinding("UpdateNetworkV2/updateNetwork_queryVpnBinding_AAIResponse_Success.xml", "85f015d0-2e32-4c30-96d2-87a1a27f8017");
+			WireMock.reset()
+			MockGetNetworkVpnBinding("UpdateNetworkV2/updateNetwork_queryVpnBinding_AAIResponse_Success.xml", "85f015d0-2e32-4c30-96d2-87a1a27f8017")
 
 			ExecutionEntity mockExecution = setupMock()
 			// Initialize prerequisite variables
@@ -2290,9 +2290,9 @@ String rollbackNetworkRequest =
 
 			println "************ callRESTQueryAAINetworkTableRef_200 ************* "
 
-			WireMock.reset();
-			MockGetNetworkTableReference("UpdateNetworkV2/updateNetwork_queryNetworkTableRef1_AAIResponse_Success.xml", "refFQDN1");
-			MockGetNetworkTableReference("UpdateNetworkV2/updateNetwork_queryNetworkTableRef2_AAIResponse_Success.xml", "refFQDN2");
+			WireMock.reset()
+			MockGetNetworkTableReference("UpdateNetworkV2/updateNetwork_queryNetworkTableRef1_AAIResponse_Success.xml", "refFQDN1")
+			MockGetNetworkTableReference("UpdateNetworkV2/updateNetwork_queryNetworkTableRef2_AAIResponse_Success.xml", "refFQDN2")
 
 			ExecutionEntity mockExecution = setupMock()
 			when(mockExecution.getVariable(Prefix + "requeryIdAAIResponse")).thenReturn(queryIdAIIResponse)
@@ -2328,8 +2328,8 @@ String rollbackNetworkRequest =
 
 			println "************ callRESTQueryAAINetworkPolicy_200 ************* "
 
-			WireMock.reset();
-			MockGetNetworkPolicy("UpdateNetworkV2/updateNetwork_queryNetworkPolicy_AAIResponse_Success.xml", "cee6d136-e378-4678-a024-2cd15f0ee0cg");
+			WireMock.reset()
+			MockGetNetworkPolicy("UpdateNetworkV2/updateNetwork_queryNetworkPolicy_AAIResponse_Success.xml", "cee6d136-e378-4678-a024-2cd15f0ee0cg")
 
 			ExecutionEntity mockExecution = setupMock()
 			when(mockExecution.getVariable(Prefix + "requeryIdAAIResponse")).thenReturn(queryIdAIIResponse)
@@ -2366,8 +2366,8 @@ String rollbackNetworkRequest =
 
 			println "************ callRESTReQueryAAINetworkId ************* "
 
-			WireMock.reset();
-			MockGetNetworkByIdWithDepth("49c86598-f766-46f8-84f8-8d1c1b10f9b4", "UpdateNetworkV2/updateNetwork_queryNetworkId_AAIResponse_Success.xml", "1");
+			WireMock.reset()
+			MockGetNetworkByIdWithDepth("49c86598-f766-46f8-84f8-8d1c1b10f9b4", "UpdateNetworkV2/updateNetwork_queryNetworkId_AAIResponse_Success.xml", "1")
 
 			ExecutionEntity mockExecution = setupMock()
 			when(mockExecution.getVariable(Prefix + "networkRequest")).thenReturn(expectedNetworkRequest)
@@ -2401,8 +2401,8 @@ String rollbackNetworkRequest =
 
 			println "************ callRESTUpdateContrailAAINetwork ************* "
 
-			WireMock.reset();
-			MockPutNetworkIdWithDepth("UpdateNetworkV2/updateNetwork_updateContrail_AAIResponse_Success.xml", "49c86598-f766-46f8-84f8-8d1c1b10f9b4", "1");
+			WireMock.reset()
+			MockPutNetworkIdWithDepth("UpdateNetworkV2/updateNetwork_updateContrail_AAIResponse_Success.xml", "49c86598-f766-46f8-84f8-8d1c1b10f9b4", "1")
 			
 			ExecutionEntity mockExecution = setupMock()
 			when(mockExecution.getVariable(Prefix + "networkRequest")).thenReturn(expectedNetworkRequest)

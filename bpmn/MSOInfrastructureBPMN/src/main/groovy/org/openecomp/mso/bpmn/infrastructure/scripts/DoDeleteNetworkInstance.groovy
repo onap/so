@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.openecomp.mso.bpmn.infrastructure.scripts;
+package org.openecomp.mso.bpmn.infrastructure.scripts
 
 import org.openecomp.mso.bpmn.core.json.JsonUtils
 import org.openecomp.mso.bpmn.common.scripts.AaiUtil
@@ -27,16 +27,16 @@ import org.openecomp.mso.bpmn.common.scripts.NetworkUtils
 import org.openecomp.mso.bpmn.common.scripts.SDNCAdapterUtils
 import org.openecomp.mso.bpmn.common.scripts.VidUtils
 import org.openecomp.mso.bpmn.core.WorkflowException
-import org.openecomp.mso.rest.APIResponse;
+import org.openecomp.mso.rest.APIResponse
 import org.openecomp.mso.rest.RESTClient
 import org.openecomp.mso.rest.RESTConfig
 
-import java.util.UUID;
+import java.util.UUID
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.runtime.Execution
 import org.apache.commons.lang3.*
-import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.Base64
 import org.springframework.web.util.UriUtils
 
 import groovy.xml.XmlUtil
@@ -216,7 +216,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 			}
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 
 		} catch (Exception ex){
 			 // caught exception
@@ -249,7 +249,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 		execution.setVariable(Prefix + "queryAAIRequest", queryAAIRequest)
 		utils.log("DEBUG", Prefix + "AAIRequest - " + "\n" + queryAAIRequest, isDebugEnabled)
 
-		RESTConfig config = new RESTConfig(queryAAIRequest);
+		RESTConfig config = new RESTConfig(queryAAIRequest)
 
 		ExceptionUtil exceptionUtil = new ExceptionUtil()
 		Boolean isVfRelationshipExist = false
@@ -363,7 +363,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 			}
 
 		} catch (BpmnError e) {
-		throw e;
+		throw e
 
 		} catch (Exception ex) {
 			// caught exception
@@ -478,9 +478,9 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 			RESTConfig config = new RESTConfig(vnfAdapterUrl)
 			RESTClient client = new RESTClient(config).
 				addHeader("Content-Type", "application/xml").
-				addAuthorizationHeader(execution.getVariable("BasicAuthHeaderValuePO"));
+				addAuthorizationHeader(execution.getVariable("BasicAuthHeaderValuePO"))
 
-			APIResponse response;
+			APIResponse response
 
 			response = client.httpDelete(vnfAdapterRequest)
 
@@ -688,7 +688,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 			}
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 
 		} catch (Exception ex) {
 			// caught exception
@@ -797,7 +797,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 		
 		try {
 			
-			Map<String, String> rollbackData = new HashMap<String, String>();
+			Map<String, String> rollbackData = new HashMap<String, String>()
 			String rollbackNetworkRequest = execution.getVariable(Prefix + "rollbackNetworkRequest")
 			if (rollbackNetworkRequest != null) {
 				if (rollbackNetworkRequest != "") {
@@ -901,7 +901,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 			    prepareSDNCRollback(execution)
 			}	
 			
-			Map<String, String> rollbackData = new HashMap<String, String>();
+			Map<String, String> rollbackData = new HashMap<String, String>()
 			String rollbackSDNCRequest = execution.getVariable(Prefix + "rollbackSDNCRequest")
 			if (rollbackSDNCRequest != null) {
 				if (rollbackSDNCRequest != "") {

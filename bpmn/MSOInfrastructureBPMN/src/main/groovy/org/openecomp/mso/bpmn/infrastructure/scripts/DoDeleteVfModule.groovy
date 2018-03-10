@@ -37,7 +37,7 @@ import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.xml.sax.InputSource
 import org.w3c.dom.Node
-import org.w3c.dom.NodeList;
+import org.w3c.dom.NodeList
 
 
 /* Subflow for Delete VF Module. When no DoDeleteVfModuleRequest is specified on input,
@@ -343,7 +343,7 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("ERROR", "AAI error occurred deleting the Generic Vnf: "
 			+ execution.getVariable("DoDVfMod_deleteGenericVnfResponse"), isDebugEnabled)
-		String processKey = getProcessKey(execution);
+		String processKey = getProcessKey(execution)
 		WorkflowException exception = new WorkflowException(processKey, 5000,
 			execution.getVariable("DoDVfMod_deleteGenericVnfResponse"))
 		execution.setVariable("WorkflowException", exception)
@@ -389,8 +389,8 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 				// Parse vnfOutputs for contrail network polcy FQDNs
 				if (vnfResponse.contains("vfModuleOutputs")) {
 					def vfModuleOutputsXml = utils.getNodeXml(vnfResponse, "vfModuleOutputs")
-					InputSource source = new InputSource(new StringReader(vfModuleOutputsXml));
-			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+					InputSource source = new InputSource(new StringReader(vfModuleOutputsXml))
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance()
 			docFactory.setNamespaceAware(true)
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder()
 			Document outputsXml = docBuilder.parse(source)
@@ -556,7 +556,7 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 			}
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 
 		} catch (Exception ex) {
 			String exceptionMessage = "Bpmn error encountered in DoDeletVfModule flow. deleteNetworkPoliciesFromAAI() - " + ex.getMessage()
@@ -609,7 +609,7 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepUpdateAAIGenericVnf(): ' + e.getMessage())

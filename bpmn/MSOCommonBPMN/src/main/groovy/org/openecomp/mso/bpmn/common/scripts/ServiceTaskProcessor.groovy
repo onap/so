@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.mso.bpmn.common.scripts;
+package org.openecomp.mso.bpmn.common.scripts
 
 import org.camunda.bpm.engine.runtime.Execution
 
@@ -28,5 +28,5 @@ import org.camunda.bpm.engine.runtime.Execution
  *
  */
 public interface ServiceTaskProcessor {
-	  public void preProcessRequest(Execution execution);
+	  public void preProcessRequest(Execution execution)
 }

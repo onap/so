@@ -268,8 +268,8 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 			utils.log("DEBUG", "invoking PUT call to AAI with payload:"+System.lineSeparator()+payload,isDebugEnabled)
 			utils.logAudit("Sending PUT call to AAI with Endpoint /n" + endPoint + " with payload /n" + payload)
 
-			AaiUtil aaiUtil = new AaiUtil(this);
-			APIResponse response = aaiUtil.executeAAIPutCall(execution, endPoint, payload);
+			AaiUtil aaiUtil = new AaiUtil(this)
+			APIResponse response = aaiUtil.executeAAIPutCall(execution, endPoint, payload)
 			def	responseData = response.getResponseBodyAsString()
 			def responseStatusCode = response.getStatusCode()
 			execution.setVariable("CAAIVfMod_createGenericVnfResponseCode", responseStatusCode)
@@ -299,7 +299,7 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 		def endPoint = execution.getVariable("URN_aai_endpoint") + execution.getVariable("CAAIVfMod_genericVnfPutEndpoint")
 		// need to append the existing Vnf Id or the one generated in createGenericVnf() to the url
 		endPoint = endPoint + UriUtils.encode(execution.getVariable("CAAIVfMod_vnfId"), "UTF-8") +
-			"/vf-modules/vf-module/" + newModuleId;
+			"/vf-modules/vf-module/" + newModuleId
 		int moduleIndex = 0
 		if (!isBaseModule) {
 			def aaiVnfResponse = execution.getVariable("CAAIVfMod_queryGenericVnfResponse")
@@ -325,7 +325,7 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 		// add rollback information about the Generic VNF for this base/add-on module
 		def rollbackData = execution.getVariable("RollbackData")
 		if (rollbackData == null) {
-			rollbackData = new RollbackData();
+			rollbackData = new RollbackData()
 		}
 		rollbackData.put("VFMODULE", "vnfId", execution.getVariable("CAAIVfMod_vnfId"))
 		rollbackData.put("VFMODULE", "vnfName", execution.getVariable("CAAIVfMod_vnfName"))

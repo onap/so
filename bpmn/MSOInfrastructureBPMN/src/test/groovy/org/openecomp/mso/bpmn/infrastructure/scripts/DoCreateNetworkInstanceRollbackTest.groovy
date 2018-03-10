@@ -8,27 +8,27 @@ import org.camunda.bpm.engine.RepositoryService
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.camunda.bpm.engine.impl.pvm.process.ProcessDefinitionImpl
 import org.camunda.bpm.engine.repository.ProcessDefinition
-import org.camunda.bpm.engine.runtime.Execution;
+import org.camunda.bpm.engine.runtime.Execution
 import org.mockito.MockitoAnnotations
 import org.mockito.runners.MockitoJUnitRunner
 import org.mockito.internal.debugging.MockitoDebuggerImpl
 import org.openecomp.mso.bpmn.common.scripts.MsoUtils
 import org.openecomp.mso.bpmn.core.WorkflowException
 import org.junit.Before
-import org.junit.Rule;
+import org.junit.Rule
 import org.junit.Test
 import org.junit.Ignore
 import org.junit.runner.RunWith
 
-import static org.openecomp.mso.bpmn.mock.StubResponseNetworkAdapter.MockNetworkAdapterRestRollbackDelete;
-import static org.junit.Assert.*;
+import static org.openecomp.mso.bpmn.mock.StubResponseNetworkAdapter.MockNetworkAdapterRestRollbackDelete
+import static org.junit.Assert.*
 
-import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.client.WireMock
+import com.github.tomakehurst.wiremock.junit.WireMockRule
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.HashMap
+import java.util.Map
+import java.util.UUID
 import org.apache.commons.lang3.*
 
 
@@ -36,7 +36,7 @@ import org.apache.commons.lang3.*
 class DoCreateNetworkInstanceRollbackTest  {
 	
 	@Rule
-	public WireMockRule wireMockRule = new WireMockRule(28090);
+	public WireMockRule wireMockRule = new WireMockRule(28090)
 	
 		def utils = new MsoUtils()
 		String Prefix="CRENWKIR_"
@@ -195,7 +195,7 @@ class DoCreateNetworkInstanceRollbackTest  {
 			println "************ preProcessRequest ************* " 
 			
 			WorkflowException workflowException = new WorkflowException("DoCreateNetworkInstance", 2500, "Received error from Network Adapter: JBWEB000065: HTTP Status 500.")
-			Map<String, String> rollbackData = new HashMap<String, String>();
+			Map<String, String> rollbackData = new HashMap<String, String>()
 			rollbackData.put("rollbackSDNCRequest", rollbackSDNCRequest)
 			rollbackData.put("rollbackActivateSDNCRequest", rollbackActivateSDNCRequest)
 			rollbackData.put("rollbackNetworkRequest", rollbackNetworkRequest)
@@ -232,7 +232,7 @@ class DoCreateNetworkInstanceRollbackTest  {
 		//@Ignore
 		public void callPONetworkAdapter() {
 
-			MockNetworkAdapterRestRollbackDelete("deleteNetworkResponse_Success.xml","8abc633a-810b-4ca5-8b3a-09511d13a2ce");
+			MockNetworkAdapterRestRollbackDelete("deleteNetworkResponse_Success.xml","8abc633a-810b-4ca5-8b3a-09511d13a2ce")
 			
 			ExecutionEntity mockExecution = setupMock()
 			// Initialize prerequisite variables
@@ -289,7 +289,7 @@ class DoCreateNetworkInstanceRollbackTest  {
 		//@Ignore
 		public void validateRollbackResponses_FullRollback() {
 			
-			Map<String, String> rollbackData = new HashMap<String, String>();
+			Map<String, String> rollbackData = new HashMap<String, String>()
 			rollbackData.put("rollbackSDNCRequest", rollbackSDNCRequest)
 			rollbackData.put("rollbackActivateSDNCRequest", rollbackActivateSDNCRequest)
 			rollbackData.put("rollbackNetworkRequest", rollbackNetworkRequest)

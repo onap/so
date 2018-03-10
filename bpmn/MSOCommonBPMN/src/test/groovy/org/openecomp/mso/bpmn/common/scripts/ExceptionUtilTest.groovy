@@ -21,11 +21,11 @@
 package org.openecomp.mso.bpmn.common.scripts
 
 import org.junit.Assert
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.junit.runner.RunWith
+import org.mockito.runners.MockitoJUnitRunner
 
 
-import org.junit.Ignore;
+import org.junit.Ignore
 
 import static org.mockito.Mockito.*
 
@@ -35,7 +35,7 @@ import org.junit.runner.RunWith
 import org.mockito.MockitoAnnotations
 import org.mockito.internal.debugging.MockitoDebuggerImpl
 import org.mockito.runners.MockitoJUnitRunner
-import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil;
+import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
 @RunWith(MockitoJUnitRunner.class)
 import org.junit.Test
 

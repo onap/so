@@ -20,9 +20,9 @@
  */
 package org.openecomp.mso.bpmn.infrastructure.scripts
 
-import org.json.JSONArray;
+import org.json.JSONArray
 
-import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.*
 import groovy.xml.XmlUtil
 import groovy.json.*
 
@@ -31,28 +31,28 @@ import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
 import org.openecomp.mso.bpmn.common.scripts.SDNCAdapterUtils
 import org.openecomp.mso.bpmn.core.WorkflowException
-import org.openecomp.mso.rest.APIResponse;
+import org.openecomp.mso.rest.APIResponse
 import org.openecomp.mso.rest.RESTClient
 import org.openecomp.mso.rest.RESTConfig
 
-import java.util.List;
-import java.util.UUID;
+import java.util.List
+import java.util.UUID
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.runtime.Execution
-import org.json.JSONObject;
+import org.json.JSONObject
 import org.apache.commons.lang3.*
-import org.apache.commons.codec.binary.Base64;
-import org.springframework.web.util.UriUtils;
+import org.apache.commons.codec.binary.Base64
+import org.springframework.web.util.UriUtils
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import org.xml.sax.InputSource
 
-import com.fasterxml.jackson.jaxrs.json.annotation.JSONP.Def;
+import com.fasterxml.jackson.jaxrs.json.annotation.JSONP.Def
 
 /**
  * This groovy class supports the <class>DoDeleteE2EServiceInstance.bpmn</class> process.
@@ -145,7 +145,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 			execution.setVariable("siParamsXml", siParamsXml)
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception ex){
 			msg = "Exception in preProcessRequest " + ex.getMessage()
 			utils.log("INFO", msg, isDebugEnabled)
@@ -266,7 +266,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 			utils.log("INFO","sdncDelete:\n" + sdncDelete, isDebugEnabled)
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch(Exception ex) {
 			msg = "Exception in preProcessSDNCDelete. " + ex.getMessage()
 			utils.log("INFO", msg, isDebugEnabled)
@@ -334,8 +334,8 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 					//Confirm there are no related service instances (vnf/network or volume)
 					if (utils.nodeExists(siData, "relationship-list")) {
 						utils.log("INFO", "SI Data relationship-list exists:", isDebugEnabled)
-						InputSource source = new InputSource(new StringReader(siData));
-						DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+						InputSource source = new InputSource(new StringReader(siData))
+						DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance()
 						DocumentBuilder docBuilder = docFactory.newDocumentBuilder()
 						Document serviceXml = docBuilder.parse(source)
 						serviceXml.getDocumentElement().normalize()
@@ -430,7 +430,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 				utils.log("INFO","Service-instance NOT found in AAI. Silent Success", isDebugEnabled)
 			}
 		}catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception ex) {
 			msg = "Exception in DoDeleteE2EServiceInstance.postProcessAAIGET. " + ex.getMessage()
 			utils.log("INFO", msg, isDebugEnabled)
@@ -460,7 +460,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 				}
 			}
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception ex) {
 			msg = "Exception in DoDeleteE2EServiceInstance.postProcessAAIDEL. " + ex.getMessage()
 			utils.log("INFO", msg, isDebugEnabled)

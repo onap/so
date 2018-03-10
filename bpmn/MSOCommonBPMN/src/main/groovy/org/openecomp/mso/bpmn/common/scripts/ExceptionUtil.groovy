@@ -196,7 +196,7 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 		if(errorMessage==null){
 			return '5000'
 		}
-		errorMessage = errorMessage.toLowerCase();
+		errorMessage = errorMessage.toLowerCase()
 		if(errorMessage.contains('timed out') || errorMessage.contains('timeout'))
 			return '5020'
 		else if (errorMessage.contains('connection'))
@@ -264,11 +264,11 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 	public void buildWorkflowException(Execution execution, int errorCode, String errorMessage) {
 		MsoUtils utils = new MsoUtils()
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		String processKey = getProcessKey(execution);
+		String processKey = getProcessKey(execution)
 		utils.log("DEBUG", "Building a WorkflowException for " + processKey, isDebugLogEnabled)
 
-		WorkflowException exception = new WorkflowException(processKey, errorCode, errorMessage);
-		execution.setVariable("WorkflowException", exception);
+		WorkflowException exception = new WorkflowException(processKey, errorCode, errorMessage)
+		execution.setVariable("WorkflowException", exception)
 		utils.log("DEBUG", "Outgoing WorkflowException is " + exception, isDebugLogEnabled)
 	}
 
@@ -283,11 +283,11 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 	 */
 	public void buildAndThrowWorkflowException(Execution execution, int errorCode, String errorMessage) {
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		String processKey = getProcessKey(execution);
+		String processKey = getProcessKey(execution)
 		utils.log("Building a WorkflowException for Subflow " + processKey, isDebugLogEnabled)
 
-		WorkflowException exception = new WorkflowException(processKey, errorCode, errorMessage);
-		execution.setVariable("WorkflowException", exception);
+		WorkflowException exception = new WorkflowException(processKey, errorCode, errorMessage)
+		execution.setVariable("WorkflowException", exception)
 		utils.log("DEBUG", "Outgoing WorkflowException is " + exception, isDebugLogEnabled)
 		utils.log("DEBUG", "Throwing MSOWorkflowException", isDebugLogEnabled)
 		throw new BpmnError("MSOWorkflowException")

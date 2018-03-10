@@ -140,7 +140,7 @@ public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 			}
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in queryAAIForVfModule(): ' + e.getMessage())
@@ -192,7 +192,7 @@ public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in validateVfModule(): ' + e.getMessage())
@@ -381,7 +381,7 @@ public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("ERROR", "AAI error occurred deleting the Generic Vnf: "
 			+ execution.getVariable("DDVFMV_deleteGenericVnfResponse"), isDebugEnabled)
-		String processKey = getProcessKey(execution);
+		String processKey = getProcessKey(execution)
 		WorkflowException exception = new WorkflowException(processKey, 5000,
 			execution.getVariable("DDVFMV_deleteGenericVnfResponse"))
 		execution.setVariable("WorkflowException", exception)
@@ -568,7 +568,7 @@ public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 			}
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 
 		} catch (Exception ex) {
 			String exceptionMessage = "Bpmn error encountered in DoDeletVfModule flow. deleteNetworkPoliciesFromAAI() - " + ex.getMessage()

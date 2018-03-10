@@ -76,7 +76,7 @@ public class UpdateAAIVfModule extends AbstractServiceTaskProcessor {
 
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in preProcessRequest(): ' + e.getMessage())
@@ -125,7 +125,7 @@ public class UpdateAAIVfModule extends AbstractServiceTaskProcessor {
 			}
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in getVfModule(): ' + e.getMessage())
@@ -234,7 +234,7 @@ public class UpdateAAIVfModule extends AbstractServiceTaskProcessor {
 			}
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in updateVfModule(): ' + e.getMessage())
@@ -348,7 +348,7 @@ public class UpdateAAIVfModule extends AbstractServiceTaskProcessor {
 		logError('Error occurred attempting to query AAI, Response Code ' +
 			execution.getVariable('UAAIVfMod_getVfModuleResponseCode') + ', Error Response ' +
 			execution.getVariable('UAAIVfMod_getVfModuleResponse'))
-		String processKey = getProcessKey(execution);
+		String processKey = getProcessKey(execution)
 		WorkflowException exception = new WorkflowException(processKey, 5000,
 			execution.getVariable('UAAIVfMod_getVfModuleResponse'))
 		execution.setVariable('WorkflowException', exception)
@@ -371,7 +371,7 @@ public class UpdateAAIVfModule extends AbstractServiceTaskProcessor {
 		logError('Error occurred attempting to update VF Module in AAI, Response Code ' +
 			execution.getVariable('UAAIVfMod_updateVfModuleResponseCode') + ', Error Response ' +
 			execution.getVariable('UAAIVfMod_updateVfModuleResponse'))
-		String processKey = getProcessKey(execution);
+		String processKey = getProcessKey(execution)
 		WorkflowException exception = new WorkflowException(processKey, 5000,
 			execution.getVariable('UAAIVfMod_updateVfModuleResponse'))
 		execution.setVariable('WorkflowException', exception)

@@ -109,7 +109,7 @@ class DoCustomDeleteE2EServiceInstanceTest extends GroovyTestBase {
         when(mex.getVariable("prefix")).thenReturn("DDELSI_")
         DoCustomDeleteE2EServiceInstance instance = new DoCustomDeleteE2EServiceInstance()
         String response = FileUtil.readResourceFile("__files/GenericFlows/SDNCDeleteResponse.xml")
-        String method = "deleteE2E";
+        String method = "deleteE2E"
         instance.postProcessSDNCDelete(mex, response, method)
 		// TODO: what to test here?
 //        verify(mex).setVariable("DDELSI_sdncRequestDataResponseCode", "0")

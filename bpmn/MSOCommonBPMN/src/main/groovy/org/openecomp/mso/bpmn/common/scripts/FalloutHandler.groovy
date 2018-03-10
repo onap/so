@@ -122,7 +122,7 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 			if (utils.nodeExists(xml, "notification-url")) {
 				notificationurl = utils.getNodeText(xml,"notification-url")
 				if(notificationurl != null && !notificationurl.isEmpty()) {
-					utils.log("DEBUG", "********** Incoming notification Url is: " + notificationurl,isDebugLogEnabled);
+					utils.log("DEBUG", "********** Incoming notification Url is: " + notificationurl,isDebugLogEnabled)
 					execution.setVariable("FH_notification-url-Ok", true)
 					execution.setVariable("FH_notification-url",notificationurl)
 				}
@@ -204,7 +204,7 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 		//	exceptionUtil.buildWorkflowException(execution, 2000, "Internal Error - Occured in" + method)
 		}
 	
-		utils.log("DEBUG","OUTOF --> Initialize Variables Fallout Handler #########",isDebugLogEnabled);
+		utils.log("DEBUG","OUTOF --> Initialize Variables Fallout Handler #########",isDebugLogEnabled)
 	}
 	
 	public String updateRequestPayload (Execution execution){
@@ -355,7 +355,7 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 	
 		try {
 			Boolean success = (Boolean) execution.getVariable("FH_success")
-			String out = success ? "Fallout Handler Succeeded" : "Fallout Handler Failed";
+			String out = success ? "Fallout Handler Succeeded" : "Fallout Handler Failed"
 	
 			def falloutHandlerResponse = """
 					<workflow:FalloutHandlerResponse xmlns:workflow="http://org.openecomp/mso/workflow/schema/v1">
@@ -364,7 +364,7 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 				"""
 	
 			falloutHandlerResponse = utils.formatXml(falloutHandlerResponse)
-			utils.logAudit("FalloutHandler Response: " + falloutHandlerResponse);
+			utils.logAudit("FalloutHandler Response: " + falloutHandlerResponse)
 	
 			execution.setVariable("FalloutHandlerResponse", falloutHandlerResponse)
 			execution.setVariable("WorkflowResponse", falloutHandlerResponse)

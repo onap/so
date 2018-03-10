@@ -68,7 +68,7 @@ public class CompleteMsoProcess extends AbstractServiceTaskProcessor {
 			setSuccessIndicator(execution, false)
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, "Internal Error - Occured in" + method)
@@ -161,9 +161,9 @@ public class CompleteMsoProcess extends AbstractServiceTaskProcessor {
 			
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
-			utils.log("DEBUG", "Exception Occured During PreProcessRequest: " + e, isDebugLogEnabled);
+			utils.log("DEBUG", "Exception Occured During PreProcessRequest: " + e, isDebugLogEnabled)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, "Internal Error - Occured in " + method)
 		}
 
@@ -226,7 +226,7 @@ public class CompleteMsoProcess extends AbstractServiceTaskProcessor {
 			utils.logAudit("setUpdateDBstatustoSuccessPayload: " + payload)
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, "Internal Error - Occured in" + method)
@@ -258,7 +258,7 @@ public class CompleteMsoProcess extends AbstractServiceTaskProcessor {
 
 		} catch (BpmnError e) {
 			utils.log("DEBUG", "Rethrowing MSOWorkflowException", isDebugLogEnabled)
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, "Internal Error - Occured in" + method)
@@ -295,7 +295,7 @@ public class CompleteMsoProcess extends AbstractServiceTaskProcessor {
 		
 					logDebug('Exited ' + method, isDebugLogEnabled)
 				} catch (BpmnError e) {
-					throw e;
+					throw e
 				} catch (Exception e) {
 					logError('Caught exception in ' + method, e)
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, "Internal Error - Occured in" + method)

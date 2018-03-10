@@ -19,9 +19,9 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.mso.bpmn.infrastructure.scripts;
+package org.openecomp.mso.bpmn.infrastructure.scripts
 
-import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.*
 import groovy.xml.XmlUtil
 import groovy.json.*
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
@@ -31,13 +31,13 @@ import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.bpmn.core.json.JsonUtils
 import org.openecomp.mso.rest.APIResponse
 
-import java.util.List;
-import java.util.UUID;
+import java.util.List
+import java.util.UUID
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.runtime.Execution
 import org.apache.commons.lang3.*
-import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.Base64
 import org.springframework.web.util.UriUtils
 
 /**
@@ -124,7 +124,7 @@ public class CreateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			execution.setVariable("URN_mso_adapters_openecomp_db_endpoint","http://mso.mso.testlab.openecomp.org:8080/dbadapters/RequestsDbAdapter")
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception ex){
 			msg = "Exception in preProcessRequest " + ex.getMessage()
 			utils.log("INFO", msg, isDebugEnabled)

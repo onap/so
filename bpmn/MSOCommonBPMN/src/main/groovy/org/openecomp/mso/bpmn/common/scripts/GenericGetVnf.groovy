@@ -20,7 +20,7 @@
 
 package org.openecomp.mso.bpmn.common.scripts
 
-import static org.openecomp.mso.bpmn.common.scripts.GenericUtils.*;
+import static org.openecomp.mso.bpmn.common.scripts.GenericUtils.*
 
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError

@@ -25,7 +25,7 @@ import org.apache.commons.lang3.*
 class UpdateNetworkInstanceTest  {
 
 	@Rule
-	public WireMockRule wireMockRule = new WireMockRule(8090);
+	public WireMockRule wireMockRule = new WireMockRule(8090)
 
 		String Prefix="UPDNI_"
 		def utils = new MsoUtils()

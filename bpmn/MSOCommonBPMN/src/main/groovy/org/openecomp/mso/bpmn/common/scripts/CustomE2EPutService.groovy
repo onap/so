@@ -20,20 +20,20 @@
  */
 package org.openecomp.mso.bpmn.common.scripts
 
-import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.*
 
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution;
+import org.camunda.bpm.engine.runtime.Execution
 import org.apache.commons.codec.binary.Base64
 import org.apache.commons.lang3.*
 
 import org.openecomp.mso.bpmn.core.json.JsonUtils
 import org.openecomp.mso.bpmn.core.WorkflowException
-import org.openecomp.mso.rest.APIResponse;
+import org.openecomp.mso.rest.APIResponse
 import org.openecomp.mso.rest.RESTClient
 import org.openecomp.mso.rest.RESTConfig
 
-import java.net.URLEncoder;
+import java.net.URLEncoder
 import org.springframework.web.util.UriUtils
 
 /**

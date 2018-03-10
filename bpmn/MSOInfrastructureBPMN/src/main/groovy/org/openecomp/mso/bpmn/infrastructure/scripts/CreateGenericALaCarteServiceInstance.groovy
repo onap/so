@@ -18,9 +18,9 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.mso.bpmn.infrastructure.scripts;
+package org.openecomp.mso.bpmn.infrastructure.scripts
 
-import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.*
 import groovy.xml.XmlUtil
 import groovy.json.*
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
@@ -30,14 +30,14 @@ import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.bpmn.core.json.JsonUtils
 import org.openecomp.mso.rest.APIResponse
 
-import java.util.UUID;
+import java.util.UUID
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.runtime.Execution
 import org.apache.commons.lang3.*
-import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.Base64
 import org.springframework.web.util.UriUtils
-import org.json.JSONException;
+import org.json.JSONException
 
 /**
  * This groovy class supports the <class>CreateGenericALaCarteServiceInstance.bpmn</class> process.
@@ -86,11 +86,11 @@ public class CreateGenericALaCarteServiceInstance extends AbstractServiceTaskPro
 			execution.setVariable("source", jsonUtil.getJsonValue(siRequest, "requestDetails.requestInfo.source"))
 			execution.setVariable("serviceInstanceName", jsonUtil.getJsonValue(siRequest, "requestDetails.requestInfo.instanceName"))
 			execution.setVariable("disableRollback", jsonUtil.getJsonValue(siRequest, "requestDetails.requestInfo.suppressRollback"))
-			String productFamilyId = null;
+			String productFamilyId = null
 			try { 
 				productFamilyId = jsonUtil.getJsonValue(siRequest, "requestDetails.requestInfo.productFamilyId")
 			} catch (JSONException e) {
-				productFamilyId = null;
+				productFamilyId = null
 			}
 			if (isBlank(productFamilyId))
 			{
@@ -150,7 +150,7 @@ public class CreateGenericALaCarteServiceInstance extends AbstractServiceTaskPro
 			//execution.setVariable("failExists", true)
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception ex){
 			msg = "Exception in preProcessRequest " + ex.getMessage()
 			utils.log("DEBUG", msg, isDebugEnabled)

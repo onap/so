@@ -18,9 +18,9 @@
  * ============LICENSE_END========================================================= 
  */ 
 
-package org.openecomp.mso.bpmn.common.scripts;
+package org.openecomp.mso.bpmn.common.scripts
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.*
 import static org.mockito.Mockito.*
 
 import org.openecomp.mso.rest.HttpHeader
@@ -28,13 +28,13 @@ import org.mockito.MockitoAnnotations
 import org.mockito.runners.MockitoJUnitRunner
 import org.mockito.internal.debugging.MockitoDebuggerImpl
 import org.junit.Before
-import org.openecomp.mso.bpmn.common.scripts.AaiUtil;
-import org.junit.Rule;
+import org.openecomp.mso.bpmn.common.scripts.AaiUtil
+import org.junit.Rule
 import org.junit.Test
 import org.junit.Ignore
 import org.junit.runner.RunWith
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.Before
+import org.junit.Test
 import org.camunda.bpm.engine.ProcessEngineServices
 import org.camunda.bpm.engine.RepositoryService
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity

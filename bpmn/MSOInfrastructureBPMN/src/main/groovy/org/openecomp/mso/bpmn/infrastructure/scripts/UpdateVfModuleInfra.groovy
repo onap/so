@@ -23,18 +23,18 @@ package org.openecomp.mso.bpmn.infrastructure.scripts
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import groovy.util.Node
-import groovy.util.XmlParser;
+import groovy.util.XmlParser
 import groovy.xml.QName
 
-import java.io.Serializable;
+import java.io.Serializable
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.runtime.Execution
 import org.openecomp.mso.rest.APIResponse
 import org.openecomp.mso.rest.RESTClient
 import org.openecomp.mso.rest.RESTConfig
-import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor;
-import org.openecomp.mso.bpmn.common.scripts.VidUtils;
+import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
+import org.openecomp.mso.bpmn.common.scripts.VidUtils
 import org.openecomp.mso.bpmn.core.RollbackData
 import org.openecomp.mso.bpmn.core.WorkflowException
 
@@ -260,7 +260,7 @@ public class UpdateVfModuleInfra extends AbstractServiceTaskProcessor {
 
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in sendResponse(): ' + e.getMessage())
@@ -288,7 +288,7 @@ public class UpdateVfModuleInfra extends AbstractServiceTaskProcessor {
 
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepDoUpdateVfModule(): ' + e.getMessage())
@@ -341,7 +341,7 @@ public class UpdateVfModuleInfra extends AbstractServiceTaskProcessor {
 
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepUpdateInfraRequest(): ' + e.getMessage())
@@ -379,7 +379,7 @@ public class UpdateVfModuleInfra extends AbstractServiceTaskProcessor {
 
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, 'Internal Error')
@@ -431,7 +431,7 @@ public class UpdateVfModuleInfra extends AbstractServiceTaskProcessor {
 
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildWorkflowException(execution, 2000, 'Internal Error')
@@ -452,7 +452,7 @@ public class UpdateVfModuleInfra extends AbstractServiceTaskProcessor {
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		logDebug('Entered ' + method, isDebugLogEnabled)
 
-		String processKey = getProcessKey(execution);
+		String processKey = getProcessKey(execution)
 		def prefix = execution.getVariable("prefix")
 
 		if (prefix == null) {
@@ -469,9 +469,9 @@ public class UpdateVfModuleInfra extends AbstractServiceTaskProcessor {
 					request = execution.getVariable('bpmnRequest')
 				}
 
-				setVariable(execution, processKey + 'Request', null);
-				setVariable(execution, 'bpmnRequest', null);
-				setVariable(execution, prefix + 'Request', request);
+				setVariable(execution, processKey + 'Request', null)
+				setVariable(execution, 'bpmnRequest', null)
+				setVariable(execution, prefix + 'Request', request)
 			}
 
 			if (request == null) {
@@ -500,7 +500,7 @@ public class UpdateVfModuleInfra extends AbstractServiceTaskProcessor {
 			logDebug('Exited ' + method, isDebugLogEnabled)
 			return request
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Invalid Message")

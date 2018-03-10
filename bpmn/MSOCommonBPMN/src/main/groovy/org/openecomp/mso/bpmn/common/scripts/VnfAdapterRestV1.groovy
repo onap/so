@@ -295,9 +295,9 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 			RESTConfig config = new RESTConfig(vnfAdapterUrl)
 			RESTClient client = new RESTClient(config).
 				addHeader("Content-Type", "application/xml").
-				addAuthorizationHeader(execution.getVariable(prefix + "basicAuthHeaderValue"));
+				addAuthorizationHeader(execution.getVariable(prefix + "basicAuthHeaderValue"))
 
-			APIResponse response;
+			APIResponse response
 
 			if ("GET".equals(vnfAdapterMethod)) {
 				response = client.httpGet()
@@ -370,7 +370,7 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 			String rolledBack = getChildText(root, "rolledBack")
 			rolledBack = rolledBack == null || rolledBack.isEmpty() ? "" : " rolledBack='" + rolledBack + "'"
 			exceptionUtil.buildWorkflowException(execution, 7020, "Received " + root.name() +
-				" from VnfAdapter:" + category + message + rolledBack);
+				" from VnfAdapter:" + category + message + rolledBack)
 		} catch (Exception e) {
 			response = response == null || String.valueOf(response).isEmpty() ? "NONE" : response
 			exceptionUtil.buildWorkflowException(execution, 7020, "Received error from VnfAdapter: " + response)

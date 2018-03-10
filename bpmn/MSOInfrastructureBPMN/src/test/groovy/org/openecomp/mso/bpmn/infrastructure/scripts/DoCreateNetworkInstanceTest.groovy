@@ -1,15 +1,15 @@
 package org.openecomp.mso.bpmn.infrastructure.scripts
 
 import static org.mockito.Mockito.*
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetNetworkByName;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetNetworkByName_404;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetNetworkByIdWithDepth;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetNetworkCloudRegion;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetNetworkCloudRegion_404;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPutNetworkIdWithDepth;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetNetworkPolicy;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetNetworkTableReference;
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetNetworkVpnBinding;
+import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetNetworkByName
+import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetNetworkByName_404
+import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetNetworkByIdWithDepth
+import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetNetworkCloudRegion
+import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetNetworkCloudRegion_404
+import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPutNetworkIdWithDepth
+import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetNetworkPolicy
+import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetNetworkTableReference
+import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetNetworkVpnBinding
 import org.camunda.bpm.engine.ProcessEngineServices
 import org.camunda.bpm.engine.RepositoryService
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
@@ -33,7 +33,7 @@ import org.apache.commons.lang3.*
 class DoCreateNetworkInstanceTest  {
 
 	@Rule
-	public WireMockRule wireMockRule = new WireMockRule(8090);
+	public WireMockRule wireMockRule = new WireMockRule(8090)
 
 		def utils = new MsoUtils()
 		String Prefix="CRENWKI_"
@@ -3205,8 +3205,8 @@ String sdncAdapterWorkflowAssignResponse =
 
 			println "************ callRESTQueryAAINetworkName ************* "
 
-			WireMock.reset();
-			MockGetNetworkByName("MNS-25180-L-01-dmz_direct_net_1", "CreateNetworkV2/createNetwork_queryName_AAIResponse_Success.xml");
+			WireMock.reset()
+			MockGetNetworkByName("MNS-25180-L-01-dmz_direct_net_1", "CreateNetworkV2/createNetwork_queryName_AAIResponse_Success.xml")
 
 			ExecutionEntity mockExecution = setupMock()
 			when(mockExecution.getVariable(Prefix + "networkInputs")).thenReturn(networkInputs)
@@ -3241,8 +3241,8 @@ String sdncAdapterWorkflowAssignResponse =
 
 			println "************ callRESTQueryAAINetworkName ************* "
 
-			WireMock.reset();
-			MockGetNetworkByName_404("CreateNetworkV2/createNetwork_queryName_AAIResponse_Success.xml", "myOwn_Network");
+			WireMock.reset()
+			MockGetNetworkByName_404("CreateNetworkV2/createNetwork_queryName_AAIResponse_Success.xml", "myOwn_Network")
 
 			ExecutionEntity mockExecution = setupMock()
 			when(mockExecution.getVariable(Prefix + "networkInputs")).thenReturn(networkInputs_404)
@@ -3275,8 +3275,8 @@ String sdncAdapterWorkflowAssignResponse =
 
 			println "************ callRESTQueryAAINetworkId ************* "
 
-			WireMock.reset();
-			MockGetNetworkByIdWithDepth("49c86598-f766-46f8-84f8-8d1c1b10f9b4", "CreateNetworkV2/createNetwork_queryNetworkId_AAIResponse_Success.xml", "1");
+			WireMock.reset()
+			MockGetNetworkByIdWithDepth("49c86598-f766-46f8-84f8-8d1c1b10f9b4", "CreateNetworkV2/createNetwork_queryNetworkId_AAIResponse_Success.xml", "1")
 
 			ExecutionEntity mockExecution = setupMock()
 			when(mockExecution.getVariable(Prefix + "assignSDNCResponse")).thenReturn(sdncAdapterWorkflowAssignResponse)
@@ -3310,8 +3310,8 @@ String sdncAdapterWorkflowAssignResponse =
 
 			println "************ callRESTQueryAAICloudRegion30_200 ************* "
 
-			WireMock.reset();
-			MockGetNetworkCloudRegion("CreateNetworkV2/cloudRegion25_AAIResponse_Success.xml", "RDM2WAGPLCP");
+			WireMock.reset()
+			MockGetNetworkCloudRegion("CreateNetworkV2/cloudRegion25_AAIResponse_Success.xml", "RDM2WAGPLCP")
 
 			ExecutionEntity mockExecution = setupMock()
 			when(mockExecution.getVariable("prefix")).thenReturn(Prefix)
@@ -3347,8 +3347,8 @@ String sdncAdapterWorkflowAssignResponse =
 
 			println "************ callRESTQueryAAICloudRegion25_200 ************* "
 
-			WireMock.reset();
-			MockGetNetworkCloudRegion("CreateNetworkV2/cloudRegion25_AAIResponse_Success.xml", "RDM2WAGPLCP");
+			WireMock.reset()
+			MockGetNetworkCloudRegion("CreateNetworkV2/cloudRegion25_AAIResponse_Success.xml", "RDM2WAGPLCP")
 
 			ExecutionEntity mockExecution = setupMock()
 			when(mockExecution.getVariable("prefix")).thenReturn(Prefix)
@@ -3384,7 +3384,7 @@ String sdncAdapterWorkflowAssignResponse =
 
 			println "************ callRESTQueryAAICloudRegionFake ************* "
 
-			WireMock.reset();
+			WireMock.reset()
 			MockGetNetworkCloudRegion_404("MDTWNJ21")
 
 			ExecutionEntity mockExecution = setupMock()
@@ -3423,9 +3423,9 @@ String sdncAdapterWorkflowAssignResponse =
 
 			println "************ callRESTQueryAAINetworkVpnBinding_200 ************* "
 
-			WireMock.reset();
-			MockGetNetworkVpnBinding("CreateNetworkV2/createNetwork_queryVpnBinding_AAIResponse_Success.xml", "85f015d0-2e32-4c30-96d2-87a1a27f8017");
-			MockGetNetworkVpnBinding("CreateNetworkV2/createNetwork_queryVpnBinding_AAIResponse_Success.xml", "c980a6ef-3b88-49f0-9751-dbad8608d0a6");
+			WireMock.reset()
+			MockGetNetworkVpnBinding("CreateNetworkV2/createNetwork_queryVpnBinding_AAIResponse_Success.xml", "85f015d0-2e32-4c30-96d2-87a1a27f8017")
+			MockGetNetworkVpnBinding("CreateNetworkV2/createNetwork_queryVpnBinding_AAIResponse_Success.xml", "c980a6ef-3b88-49f0-9751-dbad8608d0a6")
 
 			ExecutionEntity mockExecution = setupMock()
 			when(mockExecution.getVariable(Prefix + "queryIdAAIResponse")).thenReturn(queryIdAIIResponse) // v6
@@ -3462,8 +3462,8 @@ String sdncAdapterWorkflowAssignResponse =
 
 			println "************ callRESTQueryAAINetworkVpnBinding_200 ************* "
 
-			WireMock.reset();
-			MockGetNetworkVpnBinding("CreateNetworkV2/createNetwork_queryVpnBinding_AAIResponse_Success.xml", "85f015d0-2e32-4c30-96d2-87a1a27f8017");
+			WireMock.reset()
+			MockGetNetworkVpnBinding("CreateNetworkV2/createNetwork_queryVpnBinding_AAIResponse_Success.xml", "85f015d0-2e32-4c30-96d2-87a1a27f8017")
 
 			ExecutionEntity mockExecution = setupMock()
 			when(mockExecution.getVariable(Prefix + "queryIdAAIResponse")).thenReturn(queryIdAIIResponseTestScenario01)
@@ -3500,9 +3500,9 @@ String sdncAdapterWorkflowAssignResponse =
 
 			println "************ callRESTQueryAAINetworkVpnBinding_200 ************* "
 
-			WireMock.reset();
-			MockGetNetworkVpnBinding("CreateNetworkV2/createNetwork_queryVpnBinding_AAIResponse_Success.xml", "85f015d0-2e32-4c30-96d2-87a1a27f8017");
-			MockGetNetworkVpnBinding("CreateNetworkV2/createNetwork_queryVpnBinding_AAIResponse_Success.xml", "c980a6ef-3b88-49f0-9751-dbad8608d0a6");
+			WireMock.reset()
+			MockGetNetworkVpnBinding("CreateNetworkV2/createNetwork_queryVpnBinding_AAIResponse_Success.xml", "85f015d0-2e32-4c30-96d2-87a1a27f8017")
+			MockGetNetworkVpnBinding("CreateNetworkV2/createNetwork_queryVpnBinding_AAIResponse_Success.xml", "c980a6ef-3b88-49f0-9751-dbad8608d0a6")
 
 			ExecutionEntity mockExecution = setupMock()
 			when(mockExecution.getVariable(Prefix + "queryIdAAIResponse")).thenReturn(queryIdAIIResponse)
@@ -3540,8 +3540,8 @@ String sdncAdapterWorkflowAssignResponse =
 
 			println "************ callRESTQueryAAINetworkVpnBinding_NotPresent ************* "
 
-			WireMock.reset();
-			MockGetNetworkVpnBinding("CreateNetworkV2/createNetwork_queryVpnBinding_AAIResponse_Success.xml", "85f015d0-2e32-4c30-96d2-87a1a27f8017");
+			WireMock.reset()
+			MockGetNetworkVpnBinding("CreateNetworkV2/createNetwork_queryVpnBinding_AAIResponse_Success.xml", "85f015d0-2e32-4c30-96d2-87a1a27f8017")
 
 			ExecutionEntity mockExecution = setupMock()
 			// Initialize prerequisite variables
@@ -3578,8 +3578,8 @@ String sdncAdapterWorkflowAssignResponse =
 
 			println "************ callRESTQueryAAINetworkPolicy_200 ************* "
 
-			WireMock.reset();
-			MockGetNetworkPolicy("CreateNetworkV2/createNetwork_queryNetworkPolicy_AAIResponse_Success.xml", "cee6d136-e378-4678-a024-2cd15f0ee0cg");
+			WireMock.reset()
+			MockGetNetworkPolicy("CreateNetworkV2/createNetwork_queryNetworkPolicy_AAIResponse_Success.xml", "cee6d136-e378-4678-a024-2cd15f0ee0cg")
 
 			ExecutionEntity mockExecution = setupMock()
 			when(mockExecution.getVariable(Prefix + "queryIdAAIResponse")).thenReturn(queryIdAIIResponse)
@@ -3617,9 +3617,9 @@ String sdncAdapterWorkflowAssignResponse =
 
 			println "************ callRESTQueryAAINetworkTableRef_200 ************* "
 
-			WireMock.reset();
-			MockGetNetworkTableReference("CreateNetworkV2/createNetwork_queryNetworkTableRef1_AAIResponse_Success.xml", "refFQDN1");
-			MockGetNetworkTableReference("CreateNetworkV2/createNetwork_queryNetworkTableRef2_AAIResponse_Success.xml", "refFQDN2");
+			WireMock.reset()
+			MockGetNetworkTableReference("CreateNetworkV2/createNetwork_queryNetworkTableRef1_AAIResponse_Success.xml", "refFQDN1")
+			MockGetNetworkTableReference("CreateNetworkV2/createNetwork_queryNetworkTableRef2_AAIResponse_Success.xml", "refFQDN2")
 
 			ExecutionEntity mockExecution = setupMock()
 			when(mockExecution.getVariable(Prefix + "queryIdAAIResponse")).thenReturn(queryIdAIIResponse)
@@ -3656,8 +3656,8 @@ String sdncAdapterWorkflowAssignResponse =
 
 			println "************ callRESTReQueryAAINetworkId ************* "
 
-			WireMock.reset();
-			MockGetNetworkByIdWithDepth("49c86598-f766-46f8-84f8-8d1c1b10f9b4", "CreateNetworkV2/createNetwork_queryNetworkId_AAIResponse_Success.xml", "1");
+			WireMock.reset()
+			MockGetNetworkByIdWithDepth("49c86598-f766-46f8-84f8-8d1c1b10f9b4", "CreateNetworkV2/createNetwork_queryNetworkId_AAIResponse_Success.xml", "1")
 
 			ExecutionEntity mockExecution = setupMock()
 			when(mockExecution.getVariable(Prefix + "networkId")).thenReturn("49c86598-f766-46f8-84f8-8d1c1b10f9b4")
@@ -3692,8 +3692,8 @@ String sdncAdapterWorkflowAssignResponse =
 
 			println "************ callRESTUpdateContrailAAINetwork ************* "
 
-			WireMock.reset();
-			MockPutNetworkIdWithDepth("CreateNetworkV2/createNetwork_updateContrail_AAIResponse_Success.xml", "49c86598-f766-46f8-84f8-8d1c1b10f9b4", "1");
+			WireMock.reset()
+			MockPutNetworkIdWithDepth("CreateNetworkV2/createNetwork_updateContrail_AAIResponse_Success.xml", "49c86598-f766-46f8-84f8-8d1c1b10f9b4", "1")
 
 			ExecutionEntity mockExecution = setupMock()
 			when(mockExecution.getVariable(Prefix + "networkId")).thenReturn("49c86598-f766-46f8-84f8-8d1c1b10f9b4")
@@ -3732,8 +3732,8 @@ String sdncAdapterWorkflowAssignResponse =
 
 			println "************ callRESTUpdateContrailAAINetwork ************* "
 
-			WireMock.reset();
-			MockPutNetworkIdWithDepth("CreateNetworkV2/createNetwork_updateContrail_AAIResponse_Success.xml", "49c86598-f766-46f8-84f8-8d1c1b10f9b4", "1");
+			WireMock.reset()
+			MockPutNetworkIdWithDepth("CreateNetworkV2/createNetwork_updateContrail_AAIResponse_Success.xml", "49c86598-f766-46f8-84f8-8d1c1b10f9b4", "1")
 
 			ExecutionEntity mockExecution = setupMock()
 			when(mockExecution.getVariable(Prefix + "networkId")).thenReturn("49c86598-f766-46f8-84f8-8d1c1b10f9b4")

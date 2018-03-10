@@ -39,7 +39,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import static com.github.tomakehurst.wiremock.client.WireMock.put
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching
-import static org.junit.Assert.*;
+import static org.junit.Assert.*
 import static org.mockito.Mockito.*
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetAllottedResource
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPatchAllottedResource

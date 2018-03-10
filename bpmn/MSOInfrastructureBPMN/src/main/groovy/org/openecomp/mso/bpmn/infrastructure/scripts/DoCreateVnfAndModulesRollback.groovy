@@ -19,15 +19,15 @@
  */
 package org.openecomp.mso.bpmn.infrastructure.scripts
 
-import java.util.UUID;
+import java.util.UUID
 
-import org.json.JSONObject;
-import org.json.JSONArray;
+import org.json.JSONObject
+import org.json.JSONArray
 
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution;
+import org.camunda.bpm.engine.runtime.Execution
 
-import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.*
 
 import org.openecomp.mso.bpmn.core.json.JsonUtils
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor

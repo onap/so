@@ -270,7 +270,7 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 			}
 
 			// Note: the mapping function handles a null or empty responseCode
-			int mappedResponseCode = Integer.parseInt(exceptionUtil.MapSDNCResponseCodeToErrorCode(responseCode));
+			int mappedResponseCode = Integer.parseInt(exceptionUtil.MapSDNCResponseCodeToErrorCode(responseCode))
 			exceptionUtil.buildWorkflowException(execution, mappedResponseCode, "Received " + responseType +
 				" from SDNCAdapter:" + info)
 		} catch (Exception e) {

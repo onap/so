@@ -96,8 +96,8 @@ class DoDeleteVnf extends AbstractServiceTaskProcessor {
 			execution.setVariable("DoDVNF_resourceVersion", resourceVersion)
 
 			if(utils.nodeExists(vnf, "relationship")){
-				InputSource source = new InputSource(new StringReader(vnf));
-				DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+				InputSource source = new InputSource(new StringReader(vnf))
+				DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance()
 				DocumentBuilder docBuilder = docFactory.newDocumentBuilder()
 				Document vnfXml = docBuilder.parse(source)
 

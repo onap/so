@@ -18,7 +18,7 @@
  * ============LICENSE_END========================================================= 
  */ 
 
-package org.openecomp.mso.bpmn.infrastructure.scripts;
+package org.openecomp.mso.bpmn.infrastructure.scripts
 
 import static org.junit.Assert.*
 import static org.mockito.Mockito.*

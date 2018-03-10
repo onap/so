@@ -22,8 +22,8 @@ package org.openecomp.mso.bpmn.common.scripts
 
 import static org.mockito.Mockito.*
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
-import static org.junit.Assert.*;
-import org.junit.Test;
+import static org.junit.Assert.*
+import org.junit.Test
 
 class NetworkUtilsTest {
 

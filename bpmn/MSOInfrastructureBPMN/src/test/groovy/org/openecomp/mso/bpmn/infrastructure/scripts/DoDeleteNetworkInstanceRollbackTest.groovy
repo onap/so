@@ -8,26 +8,26 @@ import org.camunda.bpm.engine.RepositoryService
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.camunda.bpm.engine.impl.pvm.process.ProcessDefinitionImpl
 import org.camunda.bpm.engine.repository.ProcessDefinition
-import org.camunda.bpm.engine.runtime.Execution;
+import org.camunda.bpm.engine.runtime.Execution
 import org.mockito.MockitoAnnotations
 import org.mockito.runners.MockitoJUnitRunner
 import org.mockito.internal.debugging.MockitoDebuggerImpl
 import org.openecomp.mso.bpmn.common.scripts.MsoUtils
 import org.openecomp.mso.bpmn.core.WorkflowException
 import org.junit.Before
-import org.junit.Rule;
+import org.junit.Rule
 import org.junit.Test
 import org.junit.Ignore
 import org.junit.runner.RunWith
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.*
 
-import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.client.WireMock
+import com.github.tomakehurst.wiremock.junit.WireMockRule
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.HashMap
+import java.util.Map
+import java.util.UUID
 
 import org.apache.commons.lang3.*
 
@@ -36,7 +36,7 @@ import org.apache.commons.lang3.*
 class DoDeleteNetworkInstanceRollbackTest  {
 	
 	@Rule
-	public WireMockRule wireMockRule = new WireMockRule(8090);
+	public WireMockRule wireMockRule = new WireMockRule(8090)
 	
 		def utils = new MsoUtils()
 		String Prefix="DELNWKIR_"
@@ -188,7 +188,7 @@ class DoDeleteNetworkInstanceRollbackTest  {
 			println "************ preProcessRequest ************* " 
 			
 			WorkflowException workflowException = new WorkflowException("DoCreateNetworkInstance", 2500, "Received error from Network Adapter: JBWEB000065: HTTP Status 500.")
-			Map<String, String> rollbackData = new HashMap<String, String>();
+			Map<String, String> rollbackData = new HashMap<String, String>()
 			rollbackData.put("rollbackDeactivateSDNCRequest", rollbackDeActivateSDNCRequest)
 			rollbackData.put("rollbackNetworkRequest", rollbackNetworkRequest)
 			rollbackData.put("rollbackSDNCRequest", rollbackSDNCRequest)
@@ -262,7 +262,7 @@ class DoDeleteNetworkInstanceRollbackTest  {
 		//@Ignore
 		public void validateRollbackResponses_FullRollback() {
 			
-			Map<String, String> rollbackData = new HashMap<String, String>();
+			Map<String, String> rollbackData = new HashMap<String, String>()
 			rollbackData.put("rollbackDeactivateSDNCRequest", rollbackDeActivateSDNCRequest)
 			rollbackData.put("rollbackNetworkRequest", rollbackNetworkRequest)
 			rollbackData.put("rollbackSDNCRequest", rollbackSDNCRequest)

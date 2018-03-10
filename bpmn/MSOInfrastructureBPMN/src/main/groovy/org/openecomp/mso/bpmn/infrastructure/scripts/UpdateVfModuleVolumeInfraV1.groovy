@@ -22,16 +22,16 @@ package org.openecomp.mso.bpmn.infrastructure.scripts
 
 import groovy.json.JsonSlurper
 
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutionException
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.runtime.Execution
 import org.apache.commons.lang3.*
 import org.springframework.web.util.UriUtils
-import org.openecomp.mso.bpmn.common.scripts.AaiUtil;
-import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil;
-import org.openecomp.mso.bpmn.common.scripts.VfModuleBase;
-import org.openecomp.mso.bpmn.common.scripts.VidUtils;
+import org.openecomp.mso.bpmn.common.scripts.AaiUtil
+import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
+import org.openecomp.mso.bpmn.common.scripts.VfModuleBase
+import org.openecomp.mso.bpmn.common.scripts.VidUtils
 import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.rest.APIResponse
 import org.openecomp.mso.rest.RESTClient
@@ -436,7 +436,7 @@ class UpdateVfModuleVolumeInfraV1 extends VfModuleBase {
 	public void prepDbInfraDbRequest(Execution execution, isDebugLogEnabled) {
 
 		def requestId = execution.getVariable('UPDVfModVol_requestId')
-		ExceptionUtil exceptionUtil = new ExceptionUtil();
+		ExceptionUtil exceptionUtil = new ExceptionUtil()
 		
 		String updateInfraRequest = """
 			<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"

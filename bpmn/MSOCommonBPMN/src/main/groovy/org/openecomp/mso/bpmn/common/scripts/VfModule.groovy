@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.mso.bpmn.common.scripts;
+package org.openecomp.mso.bpmn.common.scripts
 
 import org.apache.commons.lang3.*
 

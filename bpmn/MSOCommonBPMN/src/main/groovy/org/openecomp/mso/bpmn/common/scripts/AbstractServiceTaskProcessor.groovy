@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.mso.bpmn.common.scripts;
+package org.openecomp.mso.bpmn.common.scripts
 
 import groovy.json.JsonSlurper
 
@@ -111,14 +111,14 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	 */
 	public void log(String level, String message, Throwable cause, String isLevelEnabled) {
 		if (cause == null) {
-			utils.log(level, message, isLevelEnabled);
+			utils.log(level, message, isLevelEnabled)
 		} else {
-			StringWriter stringWriter = new StringWriter();
-			PrintWriter printWriter = new PrintWriter(stringWriter);
-			printWriter.println(message);
-			cause.printStackTrace(printWriter);
-			utils.log(level, stringWriter.toString(), isLevelEnabled);
-			printWriter.close();
+			StringWriter stringWriter = new StringWriter()
+			PrintWriter printWriter = new PrintWriter(stringWriter)
+			printWriter.println(message)
+			cause.printStackTrace(printWriter)
+			utils.log(level, stringWriter.toString(), isLevelEnabled)
+			printWriter.close()
 		}
 	}
 
@@ -130,7 +130,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 		def workflowException = execution.getVariable("WorkflowException")
 
 		if (workflowException == null) {
-			logError(message);
+			logError(message)
 		} else {
 			logError(message + ": " + workflowException)
 		}
@@ -145,7 +145,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	 */
 	public saveWorkflowException(Execution execution, String variable) {
 		if (variable == null) {
-			throw new NullPointerException();
+			throw new NullPointerException()
 		}
 
 		execution.setVariable(variable, execution.getVariable("WorkflowException"))
@@ -259,7 +259,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		logDebug('Entered ' + method, isDebugLogEnabled)
 
-		String processKey = getProcessKey(execution);
+		String processKey = getProcessKey(execution)
 		def prefix = execution.getVariable("prefix")
 
 		def requestId =getVariable(execution, "mso-request-id")
@@ -306,12 +306,12 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	protected void sendWorkflowResponse(Execution execution, Object responseCode, String response) {
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		try {
-			String processKey = getProcessKey(execution);
+			String processKey = getProcessKey(execution)
 
 			// isAsyncProcess is injected by the workflow service that started the flow
 			if (!String.valueOf(execution.getVariable("isAsyncProcess")).equals("true")) {
 				throw new UnsupportedOperationException(processKey + ": " +
-					"sendWorkflowResponse is valid only in asynchronous workflows");
+					"sendWorkflowResponse is valid only in asynchronous workflows")
 			}
 
 			if (String.valueOf(execution.getVariable(processKey + "WorkflowResponseSent")).equals("true")) {
@@ -320,27 +320,27 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 
 				logDebug("Building " + processKey + " response ", isDebugLogEnabled)
 
-				int intResponseCode;
+				int intResponseCode
 
 				try {
-					intResponseCode = Integer.parseInt(String.valueOf(responseCode));
+					intResponseCode = Integer.parseInt(String.valueOf(responseCode))
 
 					if (intResponseCode < 100 || intResponseCode > 599) {
-						throw new NumberFormatException(String.valueOf(responseCode));
+						throw new NumberFormatException(String.valueOf(responseCode))
 					}
 				} catch (NumberFormatException e) {
 					throw new IllegalArgumentException("Process " + processKey
-						+ " provided an invalid HTTP response code: " + responseCode);
+						+ " provided an invalid HTTP response code: " + responseCode)
 				}
 
 				// Only 2XX responses are considered "Success"
 				String status = (intResponseCode >= 200 && intResponseCode <= 299) ?
-					"Success" : "Fail";
+					"Success" : "Fail"
 
 				// TODO: Should deprecate use of processKey+Response variable for the response. Will use "WorkflowResponse" instead
 				execution.setVariable(processKey + "ResponseCode", String.valueOf(intResponseCode))
-				execution.setVariable(processKey + "Response", response);
-				execution.setVariable(processKey + "Status", status);
+				execution.setVariable(processKey + "Response", response)
+				execution.setVariable(processKey + "Status", status)
 				execution.setVariable("WorkflowResponse", response)
 
 				logDebug("Sending response for " + processKey
@@ -364,7 +364,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 					execution.getVariable("mso-request-id"),
 					callbackResponse)
 
-				execution.setVariable(processKey + "WorkflowResponseSent", "true");
+				execution.setVariable(processKey + "WorkflowResponseSent", "true")
 			}
 
 		} catch (Exception ex) {
@@ -378,8 +378,8 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	 */
 	protected boolean isWorkflowResponseSent(Execution execution) {
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		String processKey = getProcessKey(execution);
-		return String.valueOf(execution.getVariable(processKey + "WorkflowResponseSent")).equals("true");
+		String processKey = getProcessKey(execution)
+		return String.valueOf(execution.getVariable(processKey + "WorkflowResponseSent")).equals("true")
 	}
 
 	/**
@@ -492,7 +492,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	 * exist in the given xml.
 	 */
 	protected String getNodeTextForce(String xml, String elementName) {
-		return getNodeText(xml, elementName, '');
+		return getNodeText(xml, elementName, '')
 	}
 
 	/**
@@ -649,16 +649,16 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 			num = n
 		}
 
-		String ending = ""; //the end to be added to the number
+		String ending = "" //the end to be added to the number
 		if(num != null){
 		if ((num % 10 == 1) && (num != 11)) {
-			ending = num + "st";
+			ending = num + "st"
 			} else if ((num % 10 == 2) && (num != 12)) {
-			ending = num + "nd";
+			ending = num + "nd"
 			} else if ((num % 10 == 3) && (num != 13)) {
-			ending = num + "rd";
+			ending = num + "rd"
 			} else {
-			ending = num + "th";
+			ending = num + "th"
 		}
 		}
 		return ending

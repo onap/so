@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.mso.bpmn.common.scripts;
+package org.openecomp.mso.bpmn.common.scripts
 
 import java.text.SimpleDateFormat
 
@@ -229,9 +229,9 @@ public class SDNCAdapter extends AbstractServiceTaskProcessor {
 		def sdnccallbackreq=execution.getVariable("sdncAdapterCallbackRequest")
 		utils.logAudit("sdncAdapterCallbackRequest :" + sdnccallbackreq)
 		if (sdnccallbackreq==null){
-			execution.setVariable("callbackResponseReceived",false);
+			execution.setVariable("callbackResponseReceived",false)
 		}else{
-			execution.setVariable("callbackResponseReceived",true);
+			execution.setVariable("callbackResponseReceived",true)
 		}
 	}
 
@@ -296,10 +296,10 @@ public class SDNCAdapter extends AbstractServiceTaskProcessor {
 	}
 
 	public String generateCurrentTimeInUtc(){
-		final  SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-		sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-		final String utcTime = sdf.format(new Date());
-		return utcTime;
+		final  SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+		sdf.setTimeZone(TimeZone.getTimeZone("UTC"))
+		final String utcTime = sdf.format(new Date())
+		return utcTime
 	}
 
 	public void toggleSuccessIndicator(Execution execution){

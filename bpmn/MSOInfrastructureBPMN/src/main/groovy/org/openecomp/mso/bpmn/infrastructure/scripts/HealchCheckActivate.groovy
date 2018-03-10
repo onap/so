@@ -18,11 +18,11 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.mso.bpmn.infrastructure.scripts;
+package org.openecomp.mso.bpmn.infrastructure.scripts
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.runtime.Execution
-import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor;
+import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.apache.commons.lang3.*
 
 public class HealthCheckActivate extends AbstractServiceTaskProcessor {

@@ -19,14 +19,14 @@
  */
 package org.openecomp.mso.bpmn.infrastructure.scripts
 
-import java.util.UUID;
+import java.util.UUID
 
-import org.json.JSONObject;
-import org.json.JSONArray;
+import org.json.JSONObject
+import org.json.JSONArray
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution;
+import org.camunda.bpm.engine.runtime.Execution
 
-import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.*
 
 import org.openecomp.mso.bpmn.core.json.JsonUtils
 import org.openecomp.mso.rest.APIResponse
@@ -39,7 +39,7 @@ import org.openecomp.mso.bpmn.common.scripts.SDNCAdapterUtils
 import org.openecomp.mso.bpmn.common.scripts.VidUtils
 import org.openecomp.mso.bpmn.core.RollbackData
 import org.openecomp.mso.bpmn.core.WorkflowException
-import org.springframework.web.util.UriUtils;
+import org.springframework.web.util.UriUtils
 
 /**
  * This class supports the macro VID Flow
@@ -294,7 +294,7 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 			}
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in queryAAIVfModule(): ' + e.getMessage())

@@ -18,9 +18,9 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.mso.bpmn.infrastructure.scripts;
+package org.openecomp.mso.bpmn.infrastructure.scripts
 
-import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.*
 import groovy.xml.XmlUtil
 import groovy.json.*
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor 
@@ -29,16 +29,16 @@ import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.bpmn.core.json.JsonUtils 
 import org.openecomp.mso.rest.APIResponse
 
-import java.util.UUID;
+import java.util.UUID
 
 import org.camunda.bpm.engine.delegate.BpmnError 
 import org.camunda.bpm.engine.runtime.Execution
 import org.apache.commons.lang3.*
-import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.Base64
 import org.springframework.web.util.UriUtils 
 import org.openecomp.mso.rest.RESTClient 
 import org.openecomp.mso.rest.RESTConfig
-import org.openecomp.mso.rest.APIResponse;
+import org.openecomp.mso.rest.APIResponse
 
 /**
  * This groovy class supports the <class>DoDeleteVFCNetworkServiceInstance.bpmn</class> process.
@@ -86,10 +86,10 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
             "operationId":"${operationId}",
             "nodeTemplateUUID":"${nodeTemplateUUID}"
              }"""
-            execution.setVariable("nsOperationKey", nsOperationKey);
+            execution.setVariable("nsOperationKey", nsOperationKey)
             utils.log("INFO", "nsOperationKey:" + nsOperationKey, isDebugEnabled)
         } catch (BpmnError e) {
-            throw e;
+            throw e
         } catch (Exception ex){
             msg = "Exception in preProcessRequest " + ex.getMessage()
             utils.log("INFO", msg, isDebugEnabled)
@@ -104,12 +104,12 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
     public void deleteNetworkService(Execution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
         utils.log("INFO", " *** deleteNetworkService  start *** ", isDebugEnabled)
-        String nsOperationKey = execution.getVariable("nsOperationKey");
+        String nsOperationKey = execution.getVariable("nsOperationKey")
         String url = host + vfcUrl + "/ns/" + execution.getVariable("nsInstanceId") 
         APIResponse apiResponse = deleteRequest(execution, url, nsOperationKey)
         String returnCode = apiResponse.getStatusCode()
         String apiResponseAsString = apiResponse.getResponseBodyAsString()
-        String operationStatus = "error";
+        String operationStatus = "error"
         if(returnCode== "200" || returnCode== "202"){
             operationStatus = "finished"
         }
@@ -129,7 +129,7 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
         APIResponse apiResponse = postRequest(execution, url, nsOperationKey)
         String returnCode = apiResponse.getStatusCode()
         String aaiResponseAsString = apiResponse.getResponseBodyAsString()
-        String jobId = "";
+        String jobId = ""
         if(returnCode== "200" || returnCode== "202"){
             jobId =  jsonUtil.getJsonValue(aaiResponseAsString, "jobId")
         }
@@ -144,7 +144,7 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
         utils.log("INFO", " *** queryNSProgress  start *** ", isDebugEnabled)
         String jobId = execution.getVariable("jobId")
-        String nsOperationKey = execution.getVariable("nsOperationKey");
+        String nsOperationKey = execution.getVariable("nsOperationKey")
         String url =  host + vfcUrl + "/jobs/" +  execution.getVariable("jobId") 
         APIResponse apiResponse = postRequest(execution, url, nsOperationKey)
         String returnCode = apiResponse.getStatusCode()
@@ -162,7 +162,7 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
      */
     public void timeDelay(Execution execution) {
         try {
-            Thread.sleep(5000);
+            Thread.sleep(5000)
         } catch(InterruptedException e) {     
             utils.log("INFO", "Time Delay exception" + e, isDebugEnabled)
         }
@@ -186,8 +186,8 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
         utils.log("INFO", "url:"+url +"\nrequestBody:"+ requestBody, isDebugEnabled)
         APIResponse apiResponse = null
         try{
-            RESTConfig config = new RESTConfig(url);
-            RESTClient client = new RESTClient(config).addHeader("Content-Type", "application/json").addHeader("Accept","application/json").addHeader("Authorization","Basic QlBFTENsaWVudDpwYXNzd29yZDEk");;
+            RESTConfig config = new RESTConfig(url)
+            RESTClient client = new RESTClient(config).addHeader("Content-Type", "application/json").addHeader("Accept","application/json").addHeader("Authorization","Basic QlBFTENsaWVudDpwYXNzd29yZDEk")
             apiResponse = client.httpPost(requestBody)
             utils.log("INFO", "response code:"+ apiResponse.getStatusCode() +"\nresponse body:"+ apiResponse.getResponseBodyAsString(), isDebugEnabled)
             utils.log("INFO", "======== Completed Execute VF-C adapter Post Process ======== ", isDebugEnabled)
@@ -208,8 +208,8 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
         utils.log("INFO", "url:"+url +"\nrequestBody:"+ requestBody, isDebugEnabled)
         APIResponse apiResponse = null
         try{
-            RESTConfig config = new RESTConfig(url);
-            RESTClient client = new RESTClient(config).addHeader("Content-Type", "application/json").addHeader("Accept","application/json").addHeader("Authorization","Basic QlBFTENsaWVudDpwYXNzd29yZDEk");
+            RESTConfig config = new RESTConfig(url)
+            RESTClient client = new RESTClient(config).addHeader("Content-Type", "application/json").addHeader("Accept","application/json").addHeader("Authorization","Basic QlBFTENsaWVudDpwYXNzd29yZDEk")
             apiResponse = client.httpDelete(requestBody)
             utils.log("INFO", "response code:"+ apiResponse.getStatusCode() +"\nresponse body:"+ apiResponse.getResponseBodyAsString(), isDebugEnabled) 
             utils.log("INFO", "======== Completed Execute VF-C adapter Delete Process ======== ", isDebugEnabled) 

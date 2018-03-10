@@ -17,9 +17,9 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.openecomp.mso.bpmn.vcpe.scripts;
+package org.openecomp.mso.bpmn.vcpe.scripts
 
-import org.openecomp.mso.bpmn.common.scripts.*;
+import org.openecomp.mso.bpmn.common.scripts.*
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
@@ -28,11 +28,11 @@ import org.openecomp.mso.bpmn.common.scripts.AaiUtil
 import org.openecomp.mso.bpmn.common.scripts.SDNCAdapterUtils
 import org.openecomp.mso.rest.APIResponse
 
-import java.util.UUID;
+import java.util.UUID
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.runtime.Execution
 import org.apache.commons.lang3.*
-import org.springframework.web.util.UriUtils;
+import org.springframework.web.util.UriUtils
 import static org.apache.commons.lang3.StringUtils.*
 
 /**
@@ -246,7 +246,7 @@ public class DoDeleteAllottedResourceTXC extends AbstractServiceTaskProcessor{
 			execution.setVariable("sdncUnassignRequest", sdncUnassignReq)
 			utils.logAudit("sdncUnassignRequest:  " + sdncUnassignReq)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch(Exception ex) {
 			msg = "Exception in preProcessSDNCUnassign. " + ex.getMessage()
 			utils.log("DEBUG", msg, isDebugEnabled)
@@ -267,7 +267,7 @@ public class DoDeleteAllottedResourceTXC extends AbstractServiceTaskProcessor{
 			execution.setVariable("sdncDeleteRequest", sdncDeleteReq)
 			utils.logAudit("sdncDeleteReq:  " + sdncDeleteReq)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch(Exception ex) {
 			msg = "Exception in preProcessSDNCDelete. " + ex.getMessage()
 			utils.log("DEBUG", msg, isDebugEnabled)
@@ -288,7 +288,7 @@ public class DoDeleteAllottedResourceTXC extends AbstractServiceTaskProcessor{
 			execution.setVariable("sdncDeactivateRequest", sdncDeactivateReq)
 			utils.logAudit("sdncDeactivateReq:  " + sdncDeactivateReq)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch(Exception ex) {
 			msg = "Exception in preProcessSDNCDeactivate. " + ex.getMessage()
 			utils.log("DEBUG", msg, isDebugEnabled)
@@ -339,7 +339,7 @@ public class DoDeleteAllottedResourceTXC extends AbstractServiceTaskProcessor{
 				}
 			}
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch(Exception ex) {
 			msg = "Exception in validateSDNCResp. " + ex.getMessage()
 			utils.log("DEBUG", msg, isDebugLogEnabled)
@@ -361,7 +361,7 @@ public class DoDeleteAllottedResourceTXC extends AbstractServiceTaskProcessor{
 			}
 			arUtils.deleteAR(execution, arLink + '?resource-version=' + UriUtils.encode(execution.getVariable("aaiARResourceVersion"),"UTF-8"))
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		}catch(Exception ex){
 			utils.log("ERROR", "Exception Occurred Processing preProcessSDNCGetRequest. Exception is:\n" + ex, isDebugLogEnabled)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occured during SDNC GET Method:\n" + ex.getMessage())

@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.mso.bpmn.infrastructure.scripts;
+package org.openecomp.mso.bpmn.infrastructure.scripts
 
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
@@ -373,8 +373,8 @@ public class DoCreateVfModule extends VfModuleBase {
 								utils.log("DEBUG", "Request does contain VNF Params", isDebugLogEnabled)
 								execution.setVariable("DCVFM_vnfParamsExistFlag", true)
 
-								InputSource xmlSource = new InputSource(new StringReader(request));
-								DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+								InputSource xmlSource = new InputSource(new StringReader(request))
+								DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance()
 								docFactory.setNamespaceAware(true)
 								DocumentBuilder docBuilder = docFactory.newDocumentBuilder()
 								Document xml = docBuilder.parse(xmlSource)
@@ -477,7 +477,7 @@ public class DoCreateVfModule extends VfModuleBase {
 			sendWorkflowResponse(execution, 200, "")
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Internal Error')
@@ -557,14 +557,14 @@ public class DoCreateVfModule extends VfModuleBase {
 			utils.logAudit("AAI endPoint: " + endPoint)
 
 			try {
-				RESTConfig config = new RESTConfig(endPoint);
+				RESTConfig config = new RESTConfig(endPoint)
 				def responseData = ''
 				def aaiRequestId = UUID.randomUUID().toString()
 				RESTClient client = new RESTClient(config).
 					addHeader('X-TransactionId', aaiRequestId).
 					addHeader('X-FromAppId', 'MSO').
 					addHeader('Content-Type', 'application/xml').
-					addHeader('Accept','application/xml');
+					addHeader('Accept','application/xml')
 				logDebug('sending GET to AAI endpoint \'' + endPoint + '\'', isDebugLogEnabled)
 				APIResponse response = client.httpGet()
 				utils.logAudit("createVfModule - invoking httpGet() to AAI")
@@ -612,7 +612,7 @@ public class DoCreateVfModule extends VfModuleBase {
 			}
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in queryAAIVfModule(): ' + e.getMessage())
@@ -891,7 +891,7 @@ public class DoCreateVfModule extends VfModuleBase {
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		logDebug('Entered ' + method, isDebugLogEnabled)
 
-		String processKey = getProcessKey(execution);
+		String processKey = getProcessKey(execution)
 		def prefix = execution.getVariable("prefix")
 
 		if (prefix == null) {
@@ -908,9 +908,9 @@ public class DoCreateVfModule extends VfModuleBase {
 					request = execution.getVariable('bpmnRequest')
 				}
 
-				setVariable(execution, processKey + 'Request', null);
-				setVariable(execution, 'bpmnRequest', null);
-				setVariable(execution, prefix + 'Request', request);
+				setVariable(execution, processKey + 'Request', null)
+				setVariable(execution, 'bpmnRequest', null)
+				setVariable(execution, prefix + 'Request', request)
 			}
 
 			if (request == null) {
@@ -938,7 +938,7 @@ public class DoCreateVfModule extends VfModuleBase {
 			logDebug('Exited ' + method, isDebugLogEnabled)
 			return request
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Invalid Message")
@@ -1236,8 +1236,8 @@ public class DoCreateVfModule extends VfModuleBase {
 				// Parse vnfOutputs for network_fqdn
 				if (vnfResponse.contains("vfModuleOutputs")) {
 					def vfModuleOutputsXml = utils.getNodeXml(vnfResponse, "vfModuleOutputs")
-					InputSource source = new InputSource(new StringReader(vfModuleOutputsXml));
-			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+					InputSource source = new InputSource(new StringReader(vfModuleOutputsXml))
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance()
 			docFactory.setNamespaceAware(true)
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder()
 			Document outputsXml = docBuilder.parse(source)
@@ -1488,7 +1488,7 @@ public class DoCreateVfModule extends VfModuleBase {
 
 		for (Map.Entry<String, String> entry : paramsMap.entrySet()) {
 			String paramsXml
-			String key = entry.getKey();
+			String key = entry.getKey()
 			if(key.endsWith("_network")){
 				String requestKey = key.substring(0, key.indexOf("_network"))
 				String requestValue = entry.getValue()
@@ -1649,11 +1649,11 @@ public class DoCreateVfModule extends VfModuleBase {
 				   utils.logAudit("AAI request endpoint: " + queryNetworkPolicyByFqdnAAIRequest)
 
 				   def aaiRequestId = UUID.randomUUID().toString()
-				   RESTConfig config = new RESTConfig(queryNetworkPolicyByFqdnAAIRequest);
+				   RESTConfig config = new RESTConfig(queryNetworkPolicyByFqdnAAIRequest)
 				   RESTClient client = new RESTClient(config).addHeader("X-TransactionId", aaiRequestId)
 															 .addHeader("X-FromAppId", "MSO")
 															 .addHeader("Content-Type", "application/xml")
-															 .addHeader("Accept","application/xml");
+															 .addHeader("Accept","application/xml")
 				   APIResponse response = client.get()
 				   int returnCode = response.getStatusCode()
 				   execution.setVariable("DCVFM_aaiQqueryNetworkPolicyByFqdnReturnCode", returnCode)
@@ -1693,11 +1693,11 @@ public class DoCreateVfModule extends VfModuleBase {
 						   logDebug("AAI request endpoint: " + addNetworkPolicyAAIRequest, isDebugLogEnabled)
 
 						   def aaiRequestIdPut = UUID.randomUUID().toString()
-						   RESTConfig configPut = new RESTConfig(addNetworkPolicyAAIRequest);
+						   RESTConfig configPut = new RESTConfig(addNetworkPolicyAAIRequest)
 						   RESTClient clientPut = new RESTClient(configPut).addHeader("X-TransactionId", aaiRequestIdPut)
 																	 .addHeader("X-FromAppId", "MSO")
 																	 .addHeader("Content-Type", "application/xml")
-																	 .addHeader("Accept","application/xml");
+																	 .addHeader("Accept","application/xml")
 						   logDebug("invoking PUT call to AAI with payload:"+System.lineSeparator()+payload, isDebugLogEnabled)
 						   utils.logAudit("Sending PUT call to AAI with Endpoint /n" + addNetworkPolicyAAIRequest + " with payload /n" + payload)
 						   APIResponse responsePut = clientPut.httpPut(payload)
@@ -1748,7 +1748,7 @@ public class DoCreateVfModule extends VfModuleBase {
 		   }
 
 	   } catch (BpmnError e) {
-		   throw e;
+		   throw e
 
 	   } catch (Exception ex) {
 		   String exceptionMessage = "Bpmn error encountered in DoCreateVfModule flow. createNetworkPoliciesInAAI() - " + ex.getMessage()
@@ -1804,7 +1804,7 @@ public class DoCreateVfModule extends VfModuleBase {
 
 		   logDebug('Exited ' + method, isDebugLogEnabled)
 	   } catch (BpmnError e) {
-		   throw e;
+		   throw e
 	   } catch (Exception e) {
 		   logError('Caught exception in ' + method, e)
 		   exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepUpdateAAIGenericVnf(): ' + e.getMessage())
@@ -1846,7 +1846,7 @@ public class DoCreateVfModule extends VfModuleBase {
 
 		   logDebug('Exited ' + method, isDebugLogEnabled)
 	   } catch (BpmnError e) {
-		   throw e;
+		   throw e
 	   } catch (Exception e) {
 		   logError('Caught exception in ' + method, e)
 		   exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in postProcessUpdateAAIGenericVnf(): ' + e.getMessage())
@@ -1858,11 +1858,11 @@ public class DoCreateVfModule extends VfModuleBase {
 	   utils.log("DEBUG"," ***** preProcessRollback ***** ", isDebugEnabled)
 	   try {
 		   
-		   Object workflowException = execution.getVariable("WorkflowException");
+		   Object workflowException = execution.getVariable("WorkflowException")
 
 		   if (workflowException instanceof WorkflowException) {
 			   utils.log("DEBUG", "Prev workflowException: " + workflowException.getErrorMessage(), isDebugEnabled)
-			   execution.setVariable("prevWorkflowException", workflowException);
+			   execution.setVariable("prevWorkflowException", workflowException)
 			   //execution.setVariable("WorkflowException", null);
 		   }
 	   } catch (BpmnError e) {
@@ -1879,15 +1879,15 @@ public class DoCreateVfModule extends VfModuleBase {
 	   utils.log("DEBUG"," ***** postProcessRollback ***** ", isDebugEnabled)
 	   String msg = ""
 	   try {
-		   Object workflowException = execution.getVariable("prevWorkflowException");
+		   Object workflowException = execution.getVariable("prevWorkflowException")
 		   if (workflowException instanceof WorkflowException) {
 			   utils.log("DEBUG", "Setting prevException to WorkflowException: ", isDebugEnabled)
-			   execution.setVariable("WorkflowException", workflowException);
+			   execution.setVariable("WorkflowException", workflowException)
 		   }
 		   execution.setVariable("rollbackData", null)
 	   } catch (BpmnError b) {
 		   utils.log("DEBUG", "BPMN Error during postProcessRollback", isDebugEnabled)
-		   throw b;
+		   throw b
 	   } catch(Exception ex) {
 		   msg = "Exception in postProcessRollback. " + ex.getMessage()
 		   utils.log("DEBUG", msg, isDebugEnabled)

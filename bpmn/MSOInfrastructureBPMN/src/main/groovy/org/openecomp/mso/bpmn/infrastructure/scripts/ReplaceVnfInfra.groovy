@@ -22,11 +22,11 @@ package org.openecomp.mso.bpmn.infrastructure.scripts
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import groovy.util.Node
-import groovy.util.XmlParser;
+import groovy.util.XmlParser
 import groovy.xml.QName
 
-import java.io.Serializable;
-import java.util.UUID;
+import java.io.Serializable
+import java.util.UUID
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.impl.cmd.AbstractSetVariableCmd
@@ -34,8 +34,8 @@ import org.camunda.bpm.engine.runtime.Execution
 import org.openecomp.mso.rest.APIResponse
 import org.openecomp.mso.rest.RESTClient
 import org.openecomp.mso.rest.RESTConfig
-import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor;
-import org.openecomp.mso.bpmn.common.scripts.VidUtils;
+import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
+import org.openecomp.mso.bpmn.common.scripts.VidUtils
 import org.openecomp.mso.bpmn.core.RollbackData
 import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
@@ -45,10 +45,10 @@ import org.openecomp.mso.bpmn.core.domain.ServiceDecomposition
 import org.openecomp.mso.bpmn.core.domain.VnfResource
 import org.openecomp.mso.client.aai.*
 
-import org.openecomp.mso.client.appc.ApplicationControllerClient;
-import org.openecomp.mso.client.appc.ApplicationControllerSupport;
-import org.openecomp.appc.client.lcm.model.Action;
-import org.openecomp.appc.client.lcm.model.ActionIdentifiers;
+import org.openecomp.mso.client.appc.ApplicationControllerClient
+import org.openecomp.mso.client.appc.ApplicationControllerSupport
+import org.openecomp.appc.client.lcm.model.Action
+import org.openecomp.appc.client.lcm.model.ActionIdentifiers
 import org.openecomp.appc.client.lcm.model.LockInput
 import org.openecomp.appc.client.lcm.model.UnlockInput
 import org.openecomp.appc.client.lcm.model.HealthCheckInput
@@ -260,7 +260,7 @@ public class ReplaceVnfInfra extends AbstractServiceTaskProcessor {
 
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in sendResponse(): ' + e.getMessage())
@@ -309,7 +309,7 @@ public class ReplaceVnfInfra extends AbstractServiceTaskProcessor {
 
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in getVnfResourceDecomposition(): ' + e.getMessage())
@@ -344,7 +344,7 @@ public class ReplaceVnfInfra extends AbstractServiceTaskProcessor {
 
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			execution.setVariable(prefix + "errorCode", "1002")
@@ -382,7 +382,7 @@ public class ReplaceVnfInfra extends AbstractServiceTaskProcessor {
 
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			execution.setVariable(prefix + "errorCode", "1002")
@@ -428,7 +428,7 @@ public class ReplaceVnfInfra extends AbstractServiceTaskProcessor {
 							
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			execution.setVariable(prefix + "errorCode", "1002")
@@ -461,10 +461,10 @@ public class ReplaceVnfInfra extends AbstractServiceTaskProcessor {
 				
 			ApplicationControllerSupport support = new ApplicationControllerSupport()
 			appcClient.appCSupport=support
-			org.springframework.test.util.ReflectionTestUtils.setField(support, "lcmModelPackage", "org.openecomp.appc.client.lcm.model");
-			Flags flags = new Flags();
-			ActionIdentifiers actionIdentifiers = new ActionIdentifiers();
-			actionIdentifiers.setVnfId(vnfId);
+			org.springframework.test.util.ReflectionTestUtils.setField(support, "lcmModelPackage", "org.openecomp.appc.client.lcm.model")
+			Flags flags = new Flags()
+			ActionIdentifiers actionIdentifiers = new ActionIdentifiers()
+			actionIdentifiers.setVnfId(vnfId)
 			Status appcStatus
 			switch(action) {
 				case Action.Lock:
@@ -556,7 +556,7 @@ public class ReplaceVnfInfra extends AbstractServiceTaskProcessor {
 
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, 'Internal Error')
@@ -648,7 +648,7 @@ public class ReplaceVnfInfra extends AbstractServiceTaskProcessor {
 
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildWorkflowException(execution, 2000, 'Internal Error')

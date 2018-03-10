@@ -20,7 +20,7 @@
 package org.openecomp.mso.bpmn.common.scripts
 
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution;
+import org.camunda.bpm.engine.runtime.Execution
 import org.openecomp.mso.bpmn.core.WorkflowException
 
 class VnfAdapterUtils {
@@ -76,7 +76,7 @@ class VnfAdapterUtils {
 				throw new BpmnError("MSOWorkflowException")
 			}
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			taskProcessor.logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, 'Internal Error- Unable to validate VNF Response ' + e.getMessage())

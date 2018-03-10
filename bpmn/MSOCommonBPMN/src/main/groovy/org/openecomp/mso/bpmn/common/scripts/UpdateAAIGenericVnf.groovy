@@ -99,7 +99,7 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in preProcessRequest(): ' + e.getMessage())
@@ -147,7 +147,7 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 			}
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in getGenericVnf(): ' + e.getMessage())
@@ -265,7 +265,7 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 			}
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in updateGenericVnf(): ' + e.getMessage())
@@ -311,7 +311,7 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 		logError('Error occurred attempting to query AAI, Response Code ' +
 			execution.getVariable('UAAIGenVnf_getGenericVnfResponseCode') + ', Error Response ' +
 			execution.getVariable('UAAIGenVnf_getGenericVnfResponse'))
-		String processKey = getProcessKey(execution);
+		String processKey = getProcessKey(execution)
 		WorkflowException exception = new WorkflowException(processKey, 5000,
 			execution.getVariable('UAAIGenVnf_getGenericVnfResponse'))
 		execution.setVariable('WorkflowException', exception)
@@ -336,7 +336,7 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 			execution.getVariable('UAAIGenVnf_updateGenericVnfResponseCode') + ', Error Response ' +
 			execution.getVariable('UAAIGenVnf_updateGenericVnfResponse'))
 
-		String processKey = getProcessKey(execution);
+		String processKey = getProcessKey(execution)
 		WorkflowException exception = new WorkflowException(processKey, 5000,
 			execution.getVariable('UAAIGenVnf_updateGenericVnfResponse'))
 		execution.setVariable('WorkflowException', exception)

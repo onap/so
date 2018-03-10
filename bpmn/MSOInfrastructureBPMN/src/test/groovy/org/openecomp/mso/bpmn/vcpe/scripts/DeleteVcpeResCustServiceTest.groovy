@@ -41,7 +41,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.patch
 import static com.github.tomakehurst.wiremock.client.WireMock.put
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching
-import static org.junit.Assert.*;
+import static org.junit.Assert.*
 import static org.mockito.Mockito.*
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetAllottedResource
 import org.openecomp.mso.bpmn.core.domain.ServiceDecomposition
@@ -258,9 +258,9 @@ class DeleteVcpeResCustServiceTest extends GroovyTestBase {
 		def map = setupMap(mex)
 		initPrepareServiceDelete(mex)
 		
-		myMockGetAr("/aai/v11/anytxc", 200, "arGetTXCById.xml");
-		myMockGetAr("/aai/v11/anybrg", 200, "arGetBRGById.xml");
-		myMockGetAr("/aai/v11/other", 200, "arGetOtherById.xml");
+		myMockGetAr("/aai/v11/anytxc", 200, "arGetTXCById.xml")
+		myMockGetAr("/aai/v11/anybrg", 200, "arGetBRGById.xml")
+		myMockGetAr("/aai/v11/other", 200, "arGetOtherById.xml")
 		
 		DeleteVcpeResCustService DeleteVcpeResCustService = new DeleteVcpeResCustService()
 		DeleteVcpeResCustService.prepareServiceDelete(mex)
@@ -364,7 +364,7 @@ class DeleteVcpeResCustServiceTest extends GroovyTestBase {
 	@Test
 //	@Ignore
 	public void getAaiAr() {
-		myMockGetAr("/myurl/ar1", 200, "arGetBRGById.xml");
+		myMockGetAr("/myurl/ar1", 200, "arGetBRGById.xml")
 		
 		ExecutionEntity mex = setupMock()
 		initGetAaiAr(mex)
@@ -379,7 +379,7 @@ class DeleteVcpeResCustServiceTest extends GroovyTestBase {
 	@Test
 //	@Ignore
 	public void getAaiAr_401() {
-		myMockGetAr("/myurl/ar1", 401, "arGetBRGById.xml");
+		myMockGetAr("/myurl/ar1", 401, "arGetBRGById.xml")
 		
 		ExecutionEntity mex = setupMock()
 		initGetAaiAr(mex)
@@ -394,7 +394,7 @@ class DeleteVcpeResCustServiceTest extends GroovyTestBase {
 	@Test
 //	@Ignore
 	public void getAaiAr_EmptyResponse() {
-		myMockGetAr("/myurl/ar1", 200, "empty.txt");
+		myMockGetAr("/myurl/ar1", 200, "empty.txt")
 		
 		ExecutionEntity mex = setupMock()
 		initGetAaiAr(mex)
@@ -769,6 +769,6 @@ class DeleteVcpeResCustServiceTest extends GroovyTestBase {
 				.willReturn(aResponse()
 						.withStatus(status)
 						.withHeader("Content-Type", "text/xml")
-						.withBodyFile("VCPE/DeleteVcpeResCustService/" + fileResp)));
+						.withBodyFile("VCPE/DeleteVcpeResCustService/" + fileResp)))
 	}
 }

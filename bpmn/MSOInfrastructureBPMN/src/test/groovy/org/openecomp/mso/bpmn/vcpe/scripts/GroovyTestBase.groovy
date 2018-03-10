@@ -41,7 +41,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.patch
 import static com.github.tomakehurst.wiremock.client.WireMock.put
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching
-import static org.junit.Assert.*;
+import static org.junit.Assert.*
 import static org.mockito.Mockito.*
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetAllottedResource
 import org.openecomp.mso.bpmn.core.RollbackData
@@ -87,10 +87,10 @@ class GroovyTestBase {
 		
 		try {
 			func()
-			return false;
+			return false
 			
 		} catch(BpmnError e) {
-			return true;
+			return true
 		}
 	}
 	
@@ -120,9 +120,9 @@ class GroovyTestBase {
 	}
 	
 	public Map<String,Object> setupMap(ExecutionEntity mex) {
-		MapSetter mapset = new MapSetter();
+		MapSetter mapset = new MapSetter()
 		doAnswer(mapset).when(mex).setVariable(any(), any())
-		return mapset.getMap();
+		return mapset.getMap()
 	}
 		
 }

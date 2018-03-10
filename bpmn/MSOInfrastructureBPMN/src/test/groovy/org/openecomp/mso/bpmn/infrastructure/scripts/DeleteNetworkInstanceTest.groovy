@@ -24,7 +24,7 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule
 class DeleteNetworkInstanceTest  {
 
 	@Rule
-	public WireMockRule wireMockRule = new WireMockRule(8090);
+	public WireMockRule wireMockRule = new WireMockRule(8090)
 	
 	String Prefix="DELNI_"
 	def utils = new MsoUtils()

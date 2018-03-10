@@ -18,9 +18,9 @@
  * ============LICENSE_END========================================================= 
  */ 
 
-package org.openecomp.mso.bpmn.common.scripts;
+package org.openecomp.mso.bpmn.common.scripts
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.*
 import static org.mockito.Mockito.*
 
 import org.junit.Before
@@ -52,7 +52,7 @@ public class SDNCAdapterUtilsTest {
 			@Override
 			public void preProcessRequest(Execution execution) {
 			}
-		};
+		}
 		utils = new SDNCAdapterUtils(tp)
 		
 		// svcex gets its variables from "map"

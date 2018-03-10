@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.mso.bpmn.infrastructure.scripts;
+package org.openecomp.mso.bpmn.infrastructure.scripts
 
 import groovy.json.JsonSlurper
 import groovy.json.JsonOutput
@@ -26,11 +26,11 @@ import groovy.json.JsonOutput
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.runtime.Execution
 import org.apache.commons.lang3.*
-import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor;
-import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil;
-import org.openecomp.mso.bpmn.common.scripts.NetworkUtils;
-import org.openecomp.mso.bpmn.common.scripts.SDNCAdapterUtils;
-import org.openecomp.mso.bpmn.common.scripts.VidUtils;
+import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
+import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
+import org.openecomp.mso.bpmn.common.scripts.NetworkUtils
+import org.openecomp.mso.bpmn.common.scripts.SDNCAdapterUtils
+import org.openecomp.mso.bpmn.common.scripts.VidUtils
 import org.openecomp.mso.bpmn.core.RollbackData
 import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.bpmn.core.json.JsonUtils
@@ -272,7 +272,7 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 			utils.logAudit("CreateVfModule Infra Response: " + synchResponse)
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in sendResponse(): ' + e.getMessage())
@@ -336,7 +336,7 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		logDebug('Entered ' + method, isDebugLogEnabled)
 
-		String processKey = getProcessKey(execution);
+		String processKey = getProcessKey(execution)
 		def prefix = execution.getVariable("prefix")
 
 		if (prefix == null) {
@@ -353,9 +353,9 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 					request = execution.getVariable('bpmnRequest')
 				}
 
-				setVariable(execution, processKey + 'Request', null);
-				setVariable(execution, 'bpmnRequest', null);
-				setVariable(execution, prefix + 'Request', request);
+				setVariable(execution, processKey + 'Request', null)
+				setVariable(execution, 'bpmnRequest', null)
+				setVariable(execution, prefix + 'Request', request)
 			}
 
 			if (request == null) {
@@ -385,7 +385,7 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 			logDebug('Exited ' + method, isDebugLogEnabled)
 			return request
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Invalid Message")
@@ -489,7 +489,7 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildWorkflowException(execution, 2000, 'Internal Error')

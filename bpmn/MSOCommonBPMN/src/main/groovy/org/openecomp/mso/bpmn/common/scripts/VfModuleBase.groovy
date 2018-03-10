@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.mso.bpmn.common.scripts;
+package org.openecomp.mso.bpmn.common.scripts
 
 //import groovy.util.Node;
 
@@ -264,8 +264,8 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 			paramsMap.put("vf_module_id", "${vfModuleId}")
 			paramsMap.put("vf_module_name", "${vfModuleName}")
 			
-			InputSource source = new InputSource(new StringReader(data));
-			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			InputSource source = new InputSource(new StringReader(data))
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance()
 			docFactory.setNamespaceAware(true)
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder()
 			Document responseXml = docBuilder.parse(source)
@@ -318,7 +318,7 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 								values = sriovFilterBuf.append(value + ",")
 							}
 							else {
-								values = sriovFilterBuf.append(value);
+								values = sriovFilterBuf.append(value)
 							}
 						}
 					}
@@ -360,7 +360,7 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 								values = sb1.append(value + ",")
 							}
 							else {
-								values = sb1.append(value);
+								values = sb1.append(value)
 							}
 							position = i.toString()
 							paramsMap.put("${key}_name_${position}", "${value}")
@@ -399,7 +399,7 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 										ipAddressValues = sb2.append(ipAddressValue + ",")
 									}
 									else {
-										ipAddressValues = sb2.append(ipAddressValue);
+										ipAddressValues = sb2.append(ipAddressValue)
 									}
 									networkPosition = a.toString()
 									paramsMap.put("${key}_${networkKey}_ip_${networkPosition}", "${ipAddressValue}")
@@ -442,7 +442,7 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 										ipV6AddressValues = sb4.append(ipV6AddressValue + ",")
 									}
 									else {
-										ipV6AddressValues = sb4.append(ipV6AddressValue);
+										ipV6AddressValues = sb4.append(ipV6AddressValue)
 									}
 									networkPosition = a.toString()
 									paramsMap.put("${key}_${networkKey}_v6_ip_${networkPosition}", "${ipV6AddressValue}")
@@ -545,8 +545,8 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 					vnfTopology = utils.removeXmlPreamble(vnfTopology)
 					vnfTopology = utils.removeXmlNamespaces(vnfTopology)
 										
-					InputSource sourceVnf = new InputSource(new StringReader(vnfData));
-					DocumentBuilderFactory docFactoryVnf = DocumentBuilderFactory.newInstance();
+					InputSource sourceVnf = new InputSource(new StringReader(vnfData))
+					DocumentBuilderFactory docFactoryVnf = DocumentBuilderFactory.newInstance()
 					docFactoryVnf.setNamespaceAware(true)
 					DocumentBuilder docBuilderVnf = docFactoryVnf.newDocumentBuilder()
 					Document responseXmlVnf = docBuilderVnf.parse(sourceVnf)
@@ -598,7 +598,7 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 										values = sriovFilterBuf.append(value + ",")
 									}
 									else {
-										values = sriovFilterBuf.append(value);
+										values = sriovFilterBuf.append(value)
 									}
 								}
 							}
@@ -619,8 +619,8 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 					vfModuleTopology = utils.removeXmlNamespaces(vfModuleTopology)
 					String vfModuleTopologyIdentifier = utils.getNodeXml(vfModuleTopology, "vf-module-topology-identifier")
 					
-					InputSource sourceVfModule = new InputSource(new StringReader(vfModuleData));
-					DocumentBuilderFactory docFactoryVfModule = DocumentBuilderFactory.newInstance();
+					InputSource sourceVfModule = new InputSource(new StringReader(vfModuleData))
+					DocumentBuilderFactory docFactoryVfModule = DocumentBuilderFactory.newInstance()
 					docFactoryVfModule.setNamespaceAware(true)
 					DocumentBuilder docBuilderVfModule = docFactoryVfModule.newDocumentBuilder()
 					Document responseXmlVfModule = docBuilderVfModule.parse(sourceVfModule)
@@ -657,7 +657,7 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 										values = sb1.append(value + ",")
 									}
 									else {
-										values = sb1.append(value);
+										values = sb1.append(value)
 									}
 									position = i.toString()
 									paramsMap.put("${key}_name_${position}", "${value}")
@@ -696,7 +696,7 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 												ipAddressValues = sb2.append(ipAddressValue + ",")
 											}
 											else {
-												ipAddressValues = sb2.append(ipAddressValue);
+												ipAddressValues = sb2.append(ipAddressValue)
 											}
 											networkPosition = a.toString()
 											paramsMap.put("${key}_${networkKey}_ip_${networkPosition}", "${ipAddressValue}")
@@ -739,7 +739,7 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 												ipV6AddressValues = sb4.append(ipV6AddressValue + ",")
 											}
 											else {
-												ipV6AddressValues = sb4.append(ipV6AddressValue);
+												ipV6AddressValues = sb4.append(ipV6AddressValue)
 											}
 											networkPosition = a.toString()
 											paramsMap.put("${key}_${networkKey}_v6_ip_${networkPosition}", "${ipV6AddressValue}")
@@ -860,8 +860,8 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 			</entry>"""
 	
 		utils.logAudit("vnfInfo: " + vnfInfo)
-		InputSource source = new InputSource(new StringReader(data));
-		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+		InputSource source = new InputSource(new StringReader(data))
+		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance()
 		docFactory.setNamespaceAware(true)
 		DocumentBuilder docBuilder = docFactory.newDocumentBuilder()
 		Document responseXml = docBuilder.parse(source)
@@ -954,7 +954,7 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 							values = sriovFilterBuf.append(value + ",")
 						}
 						else {
-							values = sriovFilterBuf.append(value);
+							values = sriovFilterBuf.append(value)
 						}
 					}
 				}
@@ -1011,7 +1011,7 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 							values = sb1.append(value + ",")
 						}
 						else {
-							values = sb1.append(value);
+							values = sb1.append(value)
 						}
 						position = i.toString()
 						String vnfPositionXml =
@@ -1061,7 +1061,7 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 									ipAddressValues = sb2.append(ipAddressValue + ",")
 								}
 								else {
-									ipAddressValues = sb2.append(ipAddressValue);
+									ipAddressValues = sb2.append(ipAddressValue)
 								}
 								networkPosition = a.toString()
 								String vmNetworksPositionsXml =
@@ -1120,7 +1120,7 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 									ipV6AddressValues = sb4.append(ipV6AddressValue + ",")
 								}
 								else {
-									ipV6AddressValues = sb4.append(ipV6AddressValue);
+									ipV6AddressValues = sb4.append(ipV6AddressValue)
 								}
 								networkPosition = a.toString()
 								String vmNetworksPositionsV6Xml =

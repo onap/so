@@ -38,7 +38,7 @@ import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.json.JSONArray
 import org.json.JSONObject
 
-import static org.openecomp.mso.bpmn.common.scripts.GenericUtils.*;
+import static org.openecomp.mso.bpmn.common.scripts.GenericUtils.*
 
 /**
  * This class is contains the scripts used
@@ -117,16 +117,16 @@ class Homing extends AbstractServiceTaskProcessor{
 				//Prepare Callback
 				String timeout = execution.getVariable("timeout")
 				if(isBlank(timeout)){
-					timeout = execution.getVariable("URN_mso_sniro_timeout");
+					timeout = execution.getVariable("URN_mso_sniro_timeout")
 					if(isBlank(timeout)) {
-						timeout = "PT30M";
+						timeout = "PT30M"
 					}
 				}
 				utils.log("DEBUG", "Async Callback Timeout will be: " + timeout, isDebugEnabled)
 
-				execution.setVariable("timeout", timeout);
-				execution.setVariable("correlator", requestId);
-				execution.setVariable("messageType", "SNIROResponse");
+				execution.setVariable("timeout", timeout)
+				execution.setVariable("correlator", requestId)
+				execution.setVariable("messageType", "SNIROResponse")
 
 				//Build Request & Call Sniro
 				String sniroRequest = sniroUtils.buildRequest(execution, requestId, serviceDecomposition, subscriber, homingParameters)
@@ -142,7 +142,7 @@ class Homing extends AbstractServiceTaskProcessor{
 				
 				String basicAuthCred = utils.getBasicAuth(execution.getVariable("URN_aai_auth"),execution.getVariable("URN_mso_msoKey"))
 				
-				RESTConfig config = new RESTConfig(url);
+				RESTConfig config = new RESTConfig(url)
 				RESTClient client = new RESTClient(config).addAuthorizationHeader(authHeader).addHeader("Content-Type", "application/json")
 				if (basicAuthCred != null && !"".equals(basicAuthCred)) {
 					client.addAuthorizationHeader(basicAuthCred)
@@ -150,10 +150,10 @@ class Homing extends AbstractServiceTaskProcessor{
 				APIResponse response = client.httpPost(sniroRequest)
 				
 				int responseCode = response.getStatusCode()
-				execution.setVariable("syncResponseCode", responseCode);
+				execution.setVariable("syncResponseCode", responseCode)
 				logDebug("SNIRO sync response code is: " + responseCode, isDebugEnabled)
 				String syncResponse = response.getResponseBodyAsString()
-				execution.setVariable("syncResponse", syncResponse);
+				execution.setVariable("syncResponse", syncResponse)
 				logDebug("SNIRO sync response is: " + syncResponse, isDebugEnabled)
 
 				utils.log("DEBUG", "*** Completed Homing Call Sniro ***", isDebugEnabled)
@@ -208,8 +208,8 @@ class Homing extends AbstractServiceTaskProcessor{
 						resource.getHomingSolution().setAicClli(assignmentMap.get("aicClli"))
 						resource.getHomingSolution().setAicVersion(assignmentMap.get("aicVersion"))
 						if(inventoryType.equalsIgnoreCase("service")){
-							resource.getHomingSolution().setVnfHostname(assignmentMap.get("vnfHostName"));
-							resource.getHomingSolution().setServiceInstanceId(placement.getString("serviceInstanceId"));
+							resource.getHomingSolution().setVnfHostname(assignmentMap.get("vnfHostName"))
+							resource.getHomingSolution().setServiceInstanceId(placement.getString("serviceInstanceId"))
 						}
 					}
 				}

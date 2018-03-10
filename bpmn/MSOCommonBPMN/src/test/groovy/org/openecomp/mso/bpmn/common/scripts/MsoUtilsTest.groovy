@@ -22,15 +22,15 @@ package org.openecomp.mso.bpmn.common.scripts
 
 // JUnit 4
 import org.junit.Test
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
+import org.junit.Before
+import org.junit.Ignore
+import org.junit.Rule
 
 import static groovy.test.GroovyAssert.shouldFail
 import static groovy.test.GroovyAssert.assertTrue
 import static groovy.test.GroovyAssert.assertEquals
 
-import org.openecomp.mso.bpmn.common.scripts.MsoUtils;
+import org.openecomp.mso.bpmn.common.scripts.MsoUtils
 import org.apache.commons.lang3.*
 
 

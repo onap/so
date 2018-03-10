@@ -17,32 +17,32 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.openecomp.mso.bpmn.vcpe.scripts;
+package org.openecomp.mso.bpmn.vcpe.scripts
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashMap
+import java.util.Map
 
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
+import org.mockito.invocation.InvocationOnMock
+import org.mockito.stubbing.Answer
 
 class MapGetter implements Answer<Object> {
-	final Map<String,Object> map;
+	final Map<String,Object> map
 	
 	public MapGetter() {
-		map = new HashMap<>();
+		map = new HashMap<>()
 	}
 	
 	public MapGetter(Map<String,Object> map) {
-		this.map = map;
+		this.map = map
 	}
 
 	public Map<String, Object> getMap() {
-		return map;
+		return map
 	}
 
 	@Override
 	public Object answer(InvocationOnMock invocation) throws Throwable {
-		return map.get(invocation.getArgumentAt(0, String.class));
+		return map.get(invocation.getArgumentAt(0, String.class))
 	}
 
 }

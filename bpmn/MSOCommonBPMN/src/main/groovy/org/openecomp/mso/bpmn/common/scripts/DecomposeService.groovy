@@ -19,15 +19,15 @@
  */
 package org.openecomp.mso.bpmn.common.scripts
 
-import org.openecomp.mso.bpmn.core.json.DecomposeJsonUtil;
+import org.openecomp.mso.bpmn.core.json.DecomposeJsonUtil
 
-import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.*
 
 
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.runtime.Execution
-import org.json.JSONObject;
+import org.json.JSONObject
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.openecomp.mso.bpmn.common.scripts.CatalogDbUtils
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
@@ -80,7 +80,7 @@ public class DecomposeService extends AbstractServiceTaskProcessor {
 			execution.setVariable("DDS_serviceModelUuid", jsonUtils.getJsonValue(serviceModelInfo, "modelUuid"))
 			execution.setVariable("DDS_modelVersion", jsonUtils.getJsonValue(serviceModelInfo, "modelVersion"))
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception ex){
 			msg = "Exception in preProcessRequest " + ex.getMessage()
 			utils.log("DEBUG", msg, isDebugEnabled)
@@ -117,7 +117,7 @@ public class DecomposeService extends AbstractServiceTaskProcessor {
 			utils.log("DEBUG", "catalog DB response string: "+ catalogDbResponseString, isDebugEnabled)
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception ex){
 			msg = "Exception in queryCatalogDb " + ex.getMessage()
 			utils.log("DEBUG", msg, isDebugEnabled)
@@ -153,7 +153,7 @@ public class DecomposeService extends AbstractServiceTaskProcessor {
 			utils.log("DEBUG", "service decomposition: "+ serviceDecomposition.toJsonString(), isDebugEnabled)
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception ex){
 			msg = "Exception in actuallyDecomposeService " + ex.getMessage()
 			utils.log("DEBUG", msg, isDebugEnabled)

@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.openecomp.mso.bpmn.vcpe.scripts;
+package org.openecomp.mso.bpmn.vcpe.scripts
 
 import groovy.xml.XmlUtil
 import groovy.json.*
@@ -31,15 +31,15 @@ import org.openecomp.mso.bpmn.core.RollbackData
 import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.bpmn.core.domain.*
 
-import java.util.UUID;
+import java.util.UUID
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.runtime.Execution
-import org.json.JSONObject;
-import org.json.JSONArray;
+import org.json.JSONObject
+import org.json.JSONArray
 import org.apache.commons.lang3.*
-import org.apache.commons.codec.binary.Base64;
-import org.springframework.web.util.UriUtils;
+import org.apache.commons.codec.binary.Base64
+import org.springframework.web.util.UriUtils
 import static org.apache.commons.lang3.StringUtils.*
 
 /**
@@ -110,7 +110,7 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
             // check for incoming json message/input
             String createVcpeServiceRequest = execution.getVariable("bpmnRequest")
             utils.logAudit(createVcpeServiceRequest)
-            execution.setVariable("createVcpeServiceRequest", createVcpeServiceRequest);
+            execution.setVariable("createVcpeServiceRequest", createVcpeServiceRequest)
             println 'createVcpeServiceRequest - ' + createVcpeServiceRequest
 
             // extract requestId
@@ -229,7 +229,7 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
                     " ***** Completed preProcessRequest CreateVcpeResCustService Request ***** ", isDebugEnabled)
 
         } catch (BpmnError e) {
-            throw e;
+            throw e
 
         } catch (Exception ex){
             String exceptionMessage = "Bpmn error encountered in CreateVcpeResCustService flow." +
@@ -361,7 +361,7 @@ xmlns:req="http://org.openecomp.mso/requestsdb">
             logDebug('Exited ' + method, isDebugLogEnabled)
 
         } catch (BpmnError e) {
-            throw e;
+            throw e
         } catch (Exception e) {
             logError('Caught exception in ' + method, e)
             exceptionUtil.buildAndThrowWorkflowException(execution, 2000, "Internal Error - Occured in" + method)
@@ -458,9 +458,9 @@ xmlns:req="http://org.openecomp.mso/requestsdb">
             //BB will query the full model from the Catalog DB.
             List<AllottedResource> allottedResources = serviceDecomposition.getServiceAllottedResources()
             if (allottedResources != null) {
-                Iterator iter = allottedResources.iterator();
+                Iterator iter = allottedResources.iterator()
                 while (iter.hasNext()){
-                    AllottedResource allottedResource = (AllottedResource)iter.next();
+                    AllottedResource allottedResource = (AllottedResource)iter.next()
 
                     utils.log("DEBUG", " getting model info for AllottedResource # :" +
                             allottedResource.toJsonStringNoRootName(), isDebugEnabled)
@@ -525,9 +525,9 @@ xmlns:req="http://org.openecomp.mso/requestsdb">
             // BB will query the full model from the Catalog DB.
             List<AllottedResource> allottedResources = serviceDecomposition.getServiceAllottedResources()
             if (allottedResources != null) {
-                Iterator iter = allottedResources.iterator();
+                Iterator iter = allottedResources.iterator()
                 while (iter.hasNext()){
-                    AllottedResource allottedResource = (AllottedResource)iter.next();
+                    AllottedResource allottedResource = (AllottedResource)iter.next()
 
                     utils.log("DEBUG", " getting model info for AllottedResource # :" +
                             allottedResource.toJsonStringNoRootName(), isDebugEnabled)
@@ -601,7 +601,7 @@ xmlns:req="http://org.openecomp.mso/requestsdb">
             List<VnfResource> vnfList = execution.getVariable("vnfList")
 
             Integer vnfsCreatedCount = execution.getVariable(Prefix+"VnfsCreatedCount")
-            String vnfModelInfoString = null;
+            String vnfModelInfoString = null
 
             if (vnfList != null && vnfList.size() > 0 ) {
                 utils.log("DEBUG", "getting model info for vnf # " + vnfsCreatedCount, isDebugEnabled)
@@ -697,7 +697,7 @@ xmlns:req="http://org.openecomp.mso/requestsdb">
             execution.setVariable(Prefix+"CompleteMsoProcessRequest", xmlMsoCompletionRequest)
             utils.log("DEBUG", " SUCCESS flow, going to CompleteMsoProcess - " + "\n" + xmlMsoCompletionRequest, isDebugEnabled)
         } catch (BpmnError e) {
-            throw e;
+            throw e
         } catch (Exception ex) {
             // try error in method block
             String exceptionMessage = "Bpmn error encountered in CreateVcpeResCustService flow. " +
@@ -711,11 +711,11 @@ xmlns:req="http://org.openecomp.mso/requestsdb">
         utils.log("DEBUG"," ***** preProcessRollback of CreateVcpeResCustService ***** ", isDebugEnabled)
         try {
 
-            Object workflowException = execution.getVariable("WorkflowException");
+            Object workflowException = execution.getVariable("WorkflowException")
 
             if (workflowException instanceof WorkflowException) {
                 utils.log("DEBUG", "Prev workflowException: " + workflowException.getErrorMessage(), isDebugEnabled)
-                execution.setVariable("prevWorkflowException", workflowException);
+                execution.setVariable("prevWorkflowException", workflowException)
                 //execution.setVariable("WorkflowException", null);
             }
         } catch (BpmnError e) {
@@ -732,14 +732,14 @@ xmlns:req="http://org.openecomp.mso/requestsdb">
         utils.log("DEBUG"," ***** postProcessRollback of CreateVcpeResCustService ***** ", isDebugEnabled)
         String msg = ""
         try {
-            Object workflowException = execution.getVariable("prevWorkflowException");
+            Object workflowException = execution.getVariable("prevWorkflowException")
             if (workflowException instanceof WorkflowException) {
                 utils.log("DEBUG", "Setting prevException to WorkflowException: ", isDebugEnabled)
-                execution.setVariable("WorkflowException", workflowException);
+                execution.setVariable("WorkflowException", workflowException)
             }
         } catch (BpmnError b) {
             utils.log("DEBUG", "BPMN Error during postProcessRollback", isDebugEnabled)
-            throw b;
+            throw b
         } catch(Exception ex) {
             msg = "Exception in postProcessRollback. " + ex.getMessage()
             utils.log("DEBUG", msg, isDebugEnabled)

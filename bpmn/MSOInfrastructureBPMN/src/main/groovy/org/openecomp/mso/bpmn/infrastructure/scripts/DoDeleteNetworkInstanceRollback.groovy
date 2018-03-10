@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.openecomp.mso.bpmn.infrastructure.scripts;
+package org.openecomp.mso.bpmn.infrastructure.scripts
 
 import groovy.xml.XmlUtil
 import groovy.json.*
@@ -29,16 +29,16 @@ import org.openecomp.mso.bpmn.common.scripts.NetworkUtils
 import org.openecomp.mso.bpmn.common.scripts.SDNCAdapterUtils
 import org.openecomp.mso.bpmn.common.scripts.VidUtils
 import org.openecomp.mso.bpmn.core.WorkflowException
-import org.openecomp.mso.rest.APIResponse;
+import org.openecomp.mso.rest.APIResponse
 import org.openecomp.mso.rest.RESTClient
 import org.openecomp.mso.rest.RESTConfig
 
-import java.util.UUID;
+import java.util.UUID
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.runtime.Execution
 import org.apache.commons.lang3.*
-import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.Base64
 import org.springframework.web.util.UriUtils
 
 /**
@@ -161,7 +161,7 @@ public class DoDeleteNetworkInstanceRollback extends AbstractServiceTaskProcesso
 			utils.log("DEBUG", "*** fullRollback? : " + execution.getVariable(Prefix + "fullRollback"), isDebugEnabled)
 			
 		} catch (BpmnError e) {
-		throw e;
+		throw e
 		
 		} catch (Exception ex) {
 			sendSyncError(execution)
@@ -278,9 +278,9 @@ public class DoDeleteNetworkInstanceRollback extends AbstractServiceTaskProcesso
 
 				statusMessage =  statusMessage + rollbackDeactivateSDNCMessages + rollbackNetworkErrorMessages + rollbackSdncErrorMessages
 				utils.log("DEBUG", "Final DoDeleteNetworkInstanceRollback status message: " + statusMessage, isDebugEnabled)
-				String processKey = getProcessKey(execution);
-				WorkflowException exception = new WorkflowException(processKey, errorCode, statusMessage);
-				execution.setVariable("workflowException", exception);
+				String processKey = getProcessKey(execution)
+				WorkflowException exception = new WorkflowException(processKey, errorCode, statusMessage)
+				execution.setVariable("workflowException", exception)
 			
 			} else {
 				// rollback due to failures in Main flow (Macro or a-ala-carte) - Full rollback

@@ -18,9 +18,9 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.openecomp.mso.bpmn.infrastructure.scripts;
+package org.openecomp.mso.bpmn.infrastructure.scripts
 
-import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.*
 import groovy.xml.XmlUtil
 import groovy.json.*
 
@@ -34,19 +34,19 @@ import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
 import org.openecomp.mso.bpmn.common.scripts.SDNCAdapterUtils
 import org.openecomp.mso.bpmn.core.RollbackData
 import org.openecomp.mso.bpmn.core.WorkflowException
-import org.openecomp.mso.rest.APIResponse;
+import org.openecomp.mso.rest.APIResponse
 import org.openecomp.mso.rest.RESTClient
 import org.openecomp.mso.rest.RESTConfig
 
-import java.util.UUID;
+import java.util.UUID
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.runtime.Execution
-import org.json.JSONObject;
-import org.json.JSONArray;
+import org.json.JSONObject
+import org.json.JSONArray
 import org.apache.commons.lang3.*
-import org.apache.commons.codec.binary.Base64;
-import org.springframework.web.util.UriUtils;
+import org.apache.commons.codec.binary.Base64
+import org.springframework.web.util.UriUtils
 
 /**
  * This groovy class supports the <class>DoCreateServiceInstance.bpmn</class> process.
@@ -208,7 +208,7 @@ public class DoCreateE2EServiceInstanceV2 extends AbstractServiceTaskProcessor {
 			execution.setVariable("operationStatus", "Waiting deploy resource...")			
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception ex){
 			msg = "Exception in preProcessRequest " + ex.getMessage()
 			utils.log("INFO", msg, isDebugEnabled)
@@ -252,7 +252,7 @@ public class DoCreateE2EServiceInstanceV2 extends AbstractServiceTaskProcessor {
 				}
 			}
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception ex) {
 			msg = "Exception in DoCreateServiceInstance.postProcessAAIGET. " + ex.getMessage()
 			utils.log("INFO", msg, isDebugEnabled)
@@ -292,7 +292,7 @@ public class DoCreateE2EServiceInstanceV2 extends AbstractServiceTaskProcessor {
 			}
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception ex) {
 			msg = "Exception in DoCreateServiceInstance.postProcessAAIDEL. " + ex.getMessage()
 			utils.log("INFO", msg, isDebugEnabled)
@@ -337,7 +337,7 @@ public class DoCreateE2EServiceInstanceV2 extends AbstractServiceTaskProcessor {
 				}
 			}
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception ex) {
 			msg = "Exception in DoCreateServiceInstance.postProcessAAIGET2 " + ex.getMessage()
 			utils.log("INFO", msg, isDebugEnabled)
@@ -353,11 +353,11 @@ public class DoCreateE2EServiceInstanceV2 extends AbstractServiceTaskProcessor {
 		utils.log("INFO"," ***** Enter DoCreateE2EServiceInstanceV2 preProcessRollback ***** ", isDebugEnabled)
 		try {
 			
-			Object workflowException = execution.getVariable("WorkflowException");
+			Object workflowException = execution.getVariable("WorkflowException")
 
 			if (workflowException instanceof WorkflowException) {
 				utils.log("INFO", "Prev workflowException: " + workflowException.getErrorMessage(), isDebugEnabled)
-				execution.setVariable("prevWorkflowException", workflowException);
+				execution.setVariable("prevWorkflowException", workflowException)
 				//execution.setVariable("WorkflowException", null);
 			}
 		} catch (BpmnError e) {
@@ -376,15 +376,15 @@ public class DoCreateE2EServiceInstanceV2 extends AbstractServiceTaskProcessor {
 		utils.log("INFO"," ***** Enter DoCreateE2EServiceInstanceV2 postProcessRollback ***** ", isDebugEnabled)
 		String msg = ""
 		try {
-			Object workflowException = execution.getVariable("prevWorkflowException");
+			Object workflowException = execution.getVariable("prevWorkflowException")
 			if (workflowException instanceof WorkflowException) {
 				utils.log("INFO", "Setting prevException to WorkflowException: ", isDebugEnabled)
-				execution.setVariable("WorkflowException", workflowException);
+				execution.setVariable("WorkflowException", workflowException)
 			}
 			execution.setVariable("rollbackData", null)
 		} catch (BpmnError b) {
 			utils.log("INFO", "BPMN Error during postProcessRollback", isDebugEnabled)
-			throw b;
+			throw b
 		} catch(Exception ex) {
 			msg = "Exception in postProcessRollback. " + ex.getMessage()
 			utils.log("INFO", msg, isDebugEnabled)
@@ -559,7 +559,7 @@ public class DoCreateE2EServiceInstanceV2 extends AbstractServiceTaskProcessor {
         	}
 		} catch (BpmnError b) {
 			utils.log("INFO", "BPMN Error during preResourceRequest", isDebugEnabled)
-			throw b;
+			throw b
 		} catch(Exception ex) {
 			msg = "Exception in preResourceRequest. " + ex.getMessage()
 			utils.log("INFO", msg, isDebugEnabled)
@@ -653,7 +653,7 @@ public class DoCreateE2EServiceInstanceV2 extends AbstractServiceTaskProcessor {
 			loadResourcesProperties(execution)
 			String createResourceSort = execution.getVariable("createResourceSort")
 			if (isBlank(createResourceSort)) {
-				createResourceSort = createResourceSortDef;
+				createResourceSort = createResourceSortDef
 			}
 			
 			List<String> sortResourceList = jsonUtil.StringArrayToList(execution, createResourceSort)
@@ -919,7 +919,7 @@ public class DoCreateE2EServiceInstanceV2 extends AbstractServiceTaskProcessor {
 			loadResourcesProperties(execution)
 			String resourceControllerType= execution.getVariable("resourceControllerType") 
 			if (isBlank(resourceControllerType)) {
-				resourceControllerType = resourceControllerTypeDef;
+				resourceControllerType = resourceControllerTypeDef
 			}
 			utils.log("INFO", "resourceControllerType: " + resourceControllerType, isDebugEnabled)
 		

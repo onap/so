@@ -17,9 +17,9 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.openecomp.mso.bpmn.infrastructure.scripts;
+package org.openecomp.mso.bpmn.infrastructure.scripts
 
-import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.*
 import groovy.xml.XmlUtil
 import groovy.json.*
 
@@ -33,18 +33,18 @@ import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
 import org.openecomp.mso.bpmn.common.scripts.SDNCAdapterUtils
 import org.openecomp.mso.bpmn.core.RollbackData
 import org.openecomp.mso.bpmn.core.WorkflowException
-import org.openecomp.mso.rest.APIResponse;
+import org.openecomp.mso.rest.APIResponse
 import org.openecomp.mso.rest.RESTClient
 import org.openecomp.mso.rest.RESTConfig
 
-import java.util.UUID;
+import java.util.UUID
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.runtime.Execution
-import org.json.JSONObject;
+import org.json.JSONObject
 import org.apache.commons.lang3.*
-import org.apache.commons.codec.binary.Base64;
-import org.springframework.web.util.UriUtils;
+import org.apache.commons.codec.binary.Base64
+import org.springframework.web.util.UriUtils
 
 /**
  * This groovy class supports the <class>DoCreateServiceInstance.bpmn</class> process.
@@ -278,7 +278,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 			utils.log("DEBUG", " 'payload' to create Service Instance in AAI - " + "\n" + serviceInstanceData, isDebugEnabled)
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception ex){
 			msg = "Exception in preProcessRequest " + ex.getMessage()
 			utils.log("DEBUG", msg, isDebugEnabled)
@@ -350,7 +350,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 			}
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception ex) {
 			msg = "Exception in getAAICustomerById. " + ex.getMessage()
 			utils.log("DEBUG", msg, isDebugEnabled)
@@ -393,7 +393,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 				}
 			}
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception ex) {
 			msg = "Exception in DoCreateServiceInstance.postProcessAAIGET. " + ex.getMessage()
 			utils.log("DEBUG", msg, isDebugEnabled)
@@ -431,7 +431,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 			}
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception ex) {
 			msg = "Exception in DoCreateServiceInstance.postProcessAAIDEL. " + ex.getMessage()
 			utils.log("DEBUG", msg, isDebugEnabled)
@@ -522,7 +522,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 			utils.log("DEBUG","rollbackData:\n" + rollbackData.toString(), isDebugEnabled)
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch(Exception ex) {
 			msg = "Exception in preProcessSDNCAssignRequest. " + ex.getMessage()
 			utils.log("DEBUG", msg, isDebugEnabled)
@@ -559,7 +559,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 			}
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch(Exception ex) {
 			msg = "Exception in postProcessSDNCAssign. " + ex.getMessage()
 			utils.log("DEBUG", msg, isDebugEnabled)
@@ -602,7 +602,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 				}
 			}
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception ex) {
 			msg = "Exception in DoCreateServiceInstance.postProcessAAIGET2 " + ex.getMessage()
 			utils.log("DEBUG", msg, isDebugEnabled)
@@ -616,11 +616,11 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 		utils.log("DEBUG"," ***** preProcessRollback ***** ", isDebugEnabled)
 		try {
 			
-			Object workflowException = execution.getVariable("WorkflowException");
+			Object workflowException = execution.getVariable("WorkflowException")
 
 			if (workflowException instanceof WorkflowException) {
 				utils.log("DEBUG", "Prev workflowException: " + workflowException.getErrorMessage(), isDebugEnabled)
-				execution.setVariable("prevWorkflowException", workflowException);
+				execution.setVariable("prevWorkflowException", workflowException)
 				//execution.setVariable("WorkflowException", null);
 			}
 		} catch (BpmnError e) {
@@ -637,15 +637,15 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 		utils.log("DEBUG"," ***** postProcessRollback ***** ", isDebugEnabled)
 		String msg = ""
 		try {
-			Object workflowException = execution.getVariable("prevWorkflowException");
+			Object workflowException = execution.getVariable("prevWorkflowException")
 			if (workflowException instanceof WorkflowException) {
 				utils.log("DEBUG", "Setting prevException to WorkflowException: ", isDebugEnabled)
-				execution.setVariable("WorkflowException", workflowException);
+				execution.setVariable("WorkflowException", workflowException)
 			}
 			execution.setVariable("rollbackData", null)
 		} catch (BpmnError b) {
 			utils.log("DEBUG", "BPMN Error during postProcessRollback", isDebugEnabled)
-			throw b;
+			throw b
 		} catch(Exception ex) {
 			msg = "Exception in postProcessRollback. " + ex.getMessage()
 			utils.log("DEBUG", msg, isDebugEnabled)

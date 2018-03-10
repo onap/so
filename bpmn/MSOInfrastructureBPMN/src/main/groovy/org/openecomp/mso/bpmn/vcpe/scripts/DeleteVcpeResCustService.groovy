@@ -22,25 +22,25 @@ package org.openecomp.mso.bpmn.vcpe.scripts
 import groovy.xml.XmlUtil
 import groovy.json.*
 
-import org.openecomp.mso.bpmn.common.scripts.CatalogDbUtils;
+import org.openecomp.mso.bpmn.common.scripts.CatalogDbUtils
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
-import org.openecomp.mso.bpmn.common.scripts.NetworkUtils;
-import org.openecomp.mso.bpmn.common.scripts.VidUtils;
+import org.openecomp.mso.bpmn.common.scripts.NetworkUtils
+import org.openecomp.mso.bpmn.common.scripts.VidUtils
 import org.openecomp.mso.bpmn.core.json.JsonUtils
 import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.rest.APIResponse
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.openecomp.mso.bpmn.common.scripts.AaiUtil
 
-import java.util.UUID;
+import java.util.UUID
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.runtime.Execution
-import org.json.JSONObject;
-import org.json.JSONArray;
+import org.json.JSONObject
+import org.json.JSONArray
 import org.apache.commons.lang3.*
-import org.apache.commons.codec.binary.Base64;
-import org.springframework.web.util.UriUtils;
+import org.apache.commons.codec.binary.Base64
+import org.springframework.web.util.UriUtils
 import static org.apache.commons.lang3.StringUtils.*
 
 /**
@@ -93,7 +93,7 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 			// check for incoming json message/input
 			String DeleteVcpeResCustServiceRequest = execution.getVariable("bpmnRequest")
 			utils.logAudit(DeleteVcpeResCustServiceRequest)
-			execution.setVariable("DeleteVcpeResCustServiceRequest", DeleteVcpeResCustServiceRequest);
+			execution.setVariable("DeleteVcpeResCustServiceRequest", DeleteVcpeResCustServiceRequest)
 			println 'DeleteVcpeResCustServiceRequest - ' + DeleteVcpeResCustServiceRequest
 
 			// extract requestId
@@ -167,7 +167,7 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 			utils.log("DEBUG", " ***** Completed preProcessRequest DeleteVcpeResCustServiceRequest Request ***** ", isDebugEnabled)
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception ex){
 			String exceptionMessage = "Bpmn error encountered in DeleteVcpeResCustService flow. Unexpected from method preProcessRequest() - " + ex.getMessage()
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
@@ -210,10 +210,10 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 			}
 			
 			// get variable within incoming json
-			String DeleteVcpeResCustServiceRequest = execution.getVariable("DeleteVcpeResCustServiceRequest");
+			String DeleteVcpeResCustServiceRequest = execution.getVariable("DeleteVcpeResCustServiceRequest")
 			
 			// get SI extracted by GenericGetService
-			String serviceInstanceAaiRecord = execution.getVariable("GENGS_service");
+			String serviceInstanceAaiRecord = execution.getVariable("GENGS_service")
 			
 			utils.log("DEBUG", "serviceInstanceAaiRecord: "+serviceInstanceAaiRecord, isDebugEnabled)
 			serviceInstanceAaiRecord = utils.removeXmlNamespaces(serviceInstanceAaiRecord)
@@ -272,7 +272,7 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 			
 			utils.log("DEBUG", " ***** Completed prepareServiceDelete() of DeleteVcpeResCustService ***** ", isDebugEnabled)
 		} catch (BpmnError e){
-			throw e;
+			throw e
 		} catch (Exception ex) {
 			sendSyncError(execution)
 		    String exceptionMessage = "Bpmn error encountered in DeleteVcpeResCustService flow. prepareServiceDelete() - " + ex.getMessage()
@@ -386,7 +386,7 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 			execution.setVariable(Prefix+"CompleteMsoProcessRequest", xmlMsoCompletionRequest)
 			utils.log("DEBUG", " SUCCESS flow, going to CompleteMsoProcess - " + "\n" + xmlMsoCompletionRequest, isDebugEnabled)
 		} catch (BpmnError e) {
-		throw e;
+		throw e
 
 		} catch (Exception ex) {
 			// try error in method block

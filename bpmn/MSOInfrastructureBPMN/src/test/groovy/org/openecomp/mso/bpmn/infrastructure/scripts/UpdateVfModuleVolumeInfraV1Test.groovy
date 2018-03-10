@@ -18,7 +18,7 @@
  * ============LICENSE_END========================================================= 
  */ 
 
-package org.openecomp.mso.bpmn.infrastructure.scripts;
+package org.openecomp.mso.bpmn.infrastructure.scripts
 
 import static org.junit.Assert.*
 import static org.mockito.Mockito.*
@@ -82,7 +82,7 @@ class UpdateVfModuleVolumeInfraV1Test {
 """
 	
 	@Rule
-	public WireMockRule wireMockRule = new WireMockRule(28090);
+	public WireMockRule wireMockRule = new WireMockRule(28090)
 	
 	@Before
 	public void init()

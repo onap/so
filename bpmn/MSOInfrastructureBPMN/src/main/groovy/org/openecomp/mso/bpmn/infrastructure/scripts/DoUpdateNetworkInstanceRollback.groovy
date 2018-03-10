@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.openecomp.mso.bpmn.infrastructure.scripts;
+package org.openecomp.mso.bpmn.infrastructure.scripts
 
 import groovy.xml.XmlUtil
 import groovy.json.*
@@ -32,12 +32,12 @@ import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.bpmn.core.json.JsonUtils
 import org.openecomp.mso.rest.APIResponse
 
-import java.util.UUID;
+import java.util.UUID
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.runtime.Execution
 import org.apache.commons.lang3.*
-import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.Base64
 import org.springframework.web.util.UriUtils
 
 /**
@@ -153,7 +153,7 @@ public class DoUpdateNetworkInstanceRollback extends AbstractServiceTaskProcesso
 
 
 		} catch (BpmnError e) {
-		throw e;
+		throw e
 
 		} catch (Exception ex) {
 			sendSyncError(execution)
@@ -242,9 +242,9 @@ public class DoUpdateNetworkInstanceRollback extends AbstractServiceTaskProcesso
 
 				statusMessage = statusMessage + rollbackNetworkErrorMessages + rollbackSdncErrorMessages
 				utils.log("DEBUG", "Final DoUpdateNetworkInstanceRollback status message: " + statusMessage, isDebugEnabled)
-				String processKey = getProcessKey(execution);
-				WorkflowException exception = new WorkflowException(processKey, errorCode, statusMessage);
-				execution.setVariable("workflowException", exception);
+				String processKey = getProcessKey(execution)
+				WorkflowException exception = new WorkflowException(processKey, errorCode, statusMessage)
+				execution.setVariable("workflowException", exception)
 
 			} else {
 				// rollback due to failures in Main flow (Macro) - Full rollback

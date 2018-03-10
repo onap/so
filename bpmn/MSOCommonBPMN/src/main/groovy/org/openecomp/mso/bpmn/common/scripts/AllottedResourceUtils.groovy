@@ -1,25 +1,25 @@
 package org.openecomp.mso.bpmn.common.scripts
 
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution;
+import org.camunda.bpm.engine.runtime.Execution
 import org.openecomp.mso.bpmn.core.WorkflowException
-import org.openecomp.mso.rest.APIResponse;
+import org.openecomp.mso.rest.APIResponse
 
 
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution;
+import org.camunda.bpm.engine.runtime.Execution
 
 import groovy.util.XmlParser
 import groovy.util.Node
-import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.*
 
 class AllottedResourceUtils {
 
 	private AbstractServiceTaskProcessor taskProcessor
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
-	MsoUtils utils;
+	MsoUtils utils
 
 	public AllottedResourceUtils(AbstractServiceTaskProcessor taskProcessor) {
 		this.taskProcessor = taskProcessor
@@ -91,7 +91,7 @@ class AllottedResourceUtils {
 			ar = getARbyLink(execution, arLink, "")
 		}
 		utils.log("DEBUG", " ***** Exit GetARbyId ***** AR:" + ar, isDebugEnabled)
-		return ar;
+		return ar
 	}
 	
 	public String getPSIFmARLink(Execution execution, String arLink)

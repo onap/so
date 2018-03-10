@@ -119,7 +119,7 @@ class SNIROUtils{
 	
 				placementDemands = sb.append(demand)
 			}
-			placementDemands = placementDemands.substring(0, placementDemands.length() - 1);
+			placementDemands = placementDemands.substring(0, placementDemands.length() - 1)
 		}
 
 		String licenseDemands = ""
@@ -157,7 +157,7 @@ class SNIROUtils{
 	
 					licenseDemands = sb.append(demand)
 			}
-			licenseDemands = licenseDemands.substring(0, licenseDemands.length() - 1);
+			licenseDemands = licenseDemands.substring(0, licenseDemands.length() - 1)
 		}
 			
 		String request =

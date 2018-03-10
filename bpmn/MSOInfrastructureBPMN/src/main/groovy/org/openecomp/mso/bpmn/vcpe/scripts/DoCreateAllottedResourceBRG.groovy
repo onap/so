@@ -17,20 +17,20 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.openecomp.mso.bpmn.vcpe.scripts;
+package org.openecomp.mso.bpmn.vcpe.scripts
 
-import org.openecomp.mso.bpmn.common.scripts.*;
+import org.openecomp.mso.bpmn.common.scripts.*
 import org.openecomp.mso.bpmn.common.scripts.AaiUtil
 import org.openecomp.mso.bpmn.core.RollbackData
 import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.bpmn.core.json.JsonUtils
 import org.openecomp.mso.rest.APIResponse
 
-import java.util.UUID;
+import java.util.UUID
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.runtime.Execution
 import org.apache.commons.lang3.*
-import org.springframework.web.util.UriUtils;
+import org.springframework.web.util.UriUtils
 import static org.apache.commons.lang3.StringUtils.*
 
 
@@ -437,7 +437,7 @@ public class DoCreateAllottedResourceBRG extends AbstractServiceTaskProcessor{
 			utils.log("DEBUG","rollbackData:\n" + rollbackData.toString(), isDebugEnabled)
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch(Exception ex) {
 			msg = "Exception in preProcessSDNCAssign. " + ex.getMessage()
 			utils.log("DEBUG", msg, isDebugEnabled)
@@ -467,7 +467,7 @@ public class DoCreateAllottedResourceBRG extends AbstractServiceTaskProcessor{
 			utils.log("DEBUG","rollbackData:\n" + rollbackData.toString(), isDebugEnabled)
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch(Exception ex) {
 			msg = "Exception in preProcessSDNCCreate. " + ex.getMessage()
 			utils.log("DEBUG", msg, isDebugEnabled)
@@ -497,7 +497,7 @@ public class DoCreateAllottedResourceBRG extends AbstractServiceTaskProcessor{
 			utils.log("DEBUG","rollbackData:\n" + rollbackData.toString(), isDebugEnabled)
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch(Exception ex) {
 			msg = "Exception in preProcessSDNCActivate. " + ex.getMessage()
 			utils.log("DEBUG", msg, isDebugEnabled)
@@ -537,7 +537,7 @@ public class DoCreateAllottedResourceBRG extends AbstractServiceTaskProcessor{
 				throw new BpmnError("MSOWorkflowException")
 			}
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch(Exception ex) {
 			msg = "Exception in validateSDNCResp. " + ex.getMessage()
 			utils.log("DEBUG", msg, isDebugLogEnabled)
@@ -638,11 +638,11 @@ public class DoCreateAllottedResourceBRG extends AbstractServiceTaskProcessor{
 		utils.log("DEBUG"," ***** preProcessRollback ***** ", isDebugEnabled)
 		try {
 
-			Object workflowException = execution.getVariable("WorkflowException");
+			Object workflowException = execution.getVariable("WorkflowException")
 
 			if (workflowException instanceof WorkflowException) {
 				utils.log("DEBUG", "Prev workflowException: " + workflowException.getErrorMessage(), isDebugEnabled)
-				execution.setVariable("prevWorkflowException", workflowException);
+				execution.setVariable("prevWorkflowException", workflowException)
 				//execution.setVariable("WorkflowException", null);
 			}
 		} catch (BpmnError e) {
@@ -659,15 +659,15 @@ public class DoCreateAllottedResourceBRG extends AbstractServiceTaskProcessor{
 		utils.log("DEBUG"," ***** postProcessRollback ***** ", isDebugEnabled)
 		String msg = ""
 		try {
-			Object workflowException = execution.getVariable("prevWorkflowException");
+			Object workflowException = execution.getVariable("prevWorkflowException")
 			if (workflowException instanceof WorkflowException) {
 				utils.log("DEBUG", "Setting prevException to WorkflowException: ", isDebugEnabled)
-				execution.setVariable("WorkflowException", workflowException);
+				execution.setVariable("WorkflowException", workflowException)
 			}
 			execution.setVariable("rollbackData", null)
 		} catch (BpmnError b) {
 			utils.log("DEBUG", "BPMN Error during postProcessRollback", isDebugEnabled)
-			throw b;
+			throw b
 		} catch(Exception ex) {
 			msg = "Exception in postProcessRollback. " + ex.getMessage()
 			utils.log("DEBUG", msg, isDebugEnabled)

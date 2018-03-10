@@ -20,19 +20,19 @@
 
 package org.openecomp.mso.bpmn.infrastructure.scripts
 
-import org.openecomp.mso.bpmn.common.scripts.AaiUtil;
-import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor;
-import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil;
-import org.openecomp.mso.bpmn.common.scripts.VidUtils;
+import org.openecomp.mso.bpmn.common.scripts.AaiUtil
+import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
+import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
+import org.openecomp.mso.bpmn.common.scripts.VidUtils
 import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.rest.APIResponse
-import java.util.Map;
+import java.util.Map
 
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution;
+import org.camunda.bpm.engine.runtime.Execution
 import org.apache.commons.lang3.*
 
 class CreateVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {

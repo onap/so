@@ -20,9 +20,9 @@
  */
 package org.openecomp.mso.bpmn.infrastructure.scripts
 
-import org.json.JSONArray;
+import org.json.JSONArray
 
-import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.*
 import groovy.xml.XmlUtil
 import groovy.json.*
 
@@ -31,29 +31,29 @@ import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
 import org.openecomp.mso.bpmn.common.scripts.SDNCAdapterUtils
 import org.openecomp.mso.bpmn.core.WorkflowException
-import org.openecomp.mso.rest.APIResponse;
+import org.openecomp.mso.rest.APIResponse
 import org.openecomp.mso.rest.RESTClient
 import org.openecomp.mso.rest.RESTConfig
 
 import org.openecomp.mso.bpmn.common.scripts.AaiUtil
 
-import java.util.UUID;
+import java.util.UUID
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.runtime.Execution
-import org.json.JSONObject;
+import org.json.JSONObject
 import org.apache.commons.lang3.*
-import org.apache.commons.codec.binary.Base64;
-import org.springframework.web.util.UriUtils;
+import org.apache.commons.codec.binary.Base64
+import org.springframework.web.util.UriUtils
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import org.xml.sax.InputSource
 
-import com.fasterxml.jackson.jaxrs.json.annotation.JSONP.Def;
+import com.fasterxml.jackson.jaxrs.json.annotation.JSONP.Def
 
 /**
  * This groovy class supports the <class>DoDeleteE2EServiceInstance.bpmn</class> process.
@@ -152,7 +152,7 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 			execution.setVariable("progress", "0")			
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception ex){
 			msg = "Exception in preProcessRequest " + ex.getMessage()
 			utils.log("INFO", msg, isDebugEnabled)
@@ -212,7 +212,7 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 				utils.log("INFO","Service-instance NOT found in AAI. Silent Success", isDebugEnabled)
 			}
 		}catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception ex) {
 			msg = "Bpmn error encountered in " + method + "--" + ex.getMessage()
 			utils.log("INFO", msg, isDebugEnabled)
@@ -298,7 +298,7 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 			loadResourcesProperties(execution)
 			String deleteResourceSort = execution.getVariable("deleteResourceSort")
 			if (isBlank(deleteResourceSort)) {
-				deleteResourceSort = deleteResourceSortDef;
+				deleteResourceSort = deleteResourceSortDef
 			}
 			
 			List<String> sortResourceList = jsonUtil.StringArrayToList(execution, deleteResourceSort)
@@ -361,7 +361,7 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 			execution.setVariable(Prefix+"resourceFinish", true)
 			
 			// get SI extracted by GenericGetService
-			String serviceInstanceAaiRecord = execution.getVariable("GENGS_service");
+			String serviceInstanceAaiRecord = execution.getVariable("GENGS_service")
 			utils.log("INFO", "serviceInstanceAaiRecord: " +serviceInstanceAaiRecord, isDebugEnabled)
 			
 			String aaiJsonRecord = jsonUtil.xml2json(serviceInstanceAaiRecord)
@@ -387,12 +387,12 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 				
 				
 				if (! isBlank(relationShip)){
-					JSONArray jsonArray = new JSONArray();
+					JSONArray jsonArray = new JSONArray()
 					if (relationShip.startsWith("{") && relationShip.endsWith("}")) {
-						JSONObject jsonObject = new JSONObject(relationShip);
-						jsonArray.put(jsonObject);
+						JSONObject jsonObject = new JSONObject(relationShip)
+						jsonArray.put(jsonObject)
 					} else if (relationShip.startsWith("[") && relationShip.endsWith("]")) {
-						jsonArray = new JSONArray(relationShip);
+						jsonArray = new JSONArray(relationShip)
 					} else {
 						utils.log("INFO", "The relationShip fomart is error" , isDebugEnabled)			
 					}
@@ -615,7 +615,7 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
                 }
 			}
 		} catch (BpmnError e){
-			throw e;
+			throw e
 		} catch (Exception ex) {
 		    String exceptionMessage = "Bpmn error encountered in DeleteMobileAPNCustService flow. prepareServiceDeleteResource() - " + ex.getMessage()
 		    utils.log("DEBUG", exceptionMessage, isDebugEnabled)
@@ -912,7 +912,7 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 			utils.log("INFO","sdncDelete:\n" + sdncDelete, isDebugEnabled)
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch(Exception ex) {
 			msg = "Exception in preProcessSDNCDelete. " + ex.getMessage()
 			utils.log("INFO", msg, isDebugEnabled)
@@ -978,7 +978,7 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 				}
 			}
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception ex) {
 			msg = "Exception in DoDeleteE2EServiceInstance.postProcessAAIDEL. " + ex.getMessage()
 			utils.log("INFO", msg, isDebugEnabled)
@@ -1112,7 +1112,7 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
             utils.logAudit("DoCustomDeleteE2EServiceInstanceV2 Outgoing initResourceOperationStatus Request: " + payload)
 
 		}catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception ex) {
 			msg = "Exception in DoCustomDeleteE2EServiceInstanceV2.preInitResourcesOperStatus. " + ex.getMessage()
 			utils.log("INFO", msg, isDebugEnabled)
@@ -1157,7 +1157,7 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 		
 			utils.log("INFO", "Delete Resource Info: resourceInstanceId :" + resourceInstanceId + "  resourceTemplateId: " + resourceInstanceId + " resourceType: " + resourceType, isDebugEnabled)
 		}catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception ex) {
 			msg = "Exception in DoDeleteE2EServiceInstance.preProcessVFCResourceDelete. " + ex.getMessage()
 			utils.log("INFO", msg, isDebugEnabled)
@@ -1175,7 +1175,7 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 		try{
 		
 		}catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception ex) {
 			msg = "Exception in DoDeleteE2EServiceInstance.postProcessVFCDelete. " + ex.getMessage()
 			utils.log("INFO", msg, isDebugEnabled)

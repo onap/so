@@ -24,7 +24,7 @@ package org.openecomp.mso.bpmn.infrastructure.scripts
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import groovy.util.Node
-import groovy.util.XmlParser;
+import groovy.util.XmlParser
 import groovy.xml.QName
 import inventory.aai.att.com.v10.GenericVnf
 import inventory.aai.att.com.v10.GenericVnfs
@@ -34,7 +34,7 @@ import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.impl.cmd.AbstractSetVariableCmd
 import org.camunda.bpm.engine.runtime.Execution
 
-import java.io.Serializable;
+import java.io.Serializable
 import java.util.List
 
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
@@ -58,21 +58,21 @@ public class UpdateVfModuleInfraV2 {
 
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 
-	boolean preProcessRequestCheck = true;
-	boolean sendSynchResponseCheck = true;
-	boolean checkPserverFlagCheck = true;
-	boolean vfFlagCheckSetCheck = true;
-	boolean lockAppCCheck = true;
-	boolean healthDiagnosticSDNOCheck = true;
-	boolean healthCheckAppCCheck = true;
-	boolean stopVfModuleControllerCheck = true;
-	boolean healthCheckControllerCheck = true;
-	boolean doUpdateVfModulePrepCheck = true;
-	boolean completionHandlerPrepCheck = true;
-	boolean startVfModuleControllerCheck = true;
-	boolean vFFlagUnsetCheck = true;
-	boolean unlockAppCCheck = true;
-	boolean postUpgradeHealthCheckControllerCheck = true;
+	boolean preProcessRequestCheck = true
+	boolean sendSynchResponseCheck = true
+	boolean checkPserverFlagCheck = true
+	boolean vfFlagCheckSetCheck = true
+	boolean lockAppCCheck = true
+	boolean healthDiagnosticSDNOCheck = true
+	boolean healthCheckAppCCheck = true
+	boolean stopVfModuleControllerCheck = true
+	boolean healthCheckControllerCheck = true
+	boolean doUpdateVfModulePrepCheck = true
+	boolean completionHandlerPrepCheck = true
+	boolean startVfModuleControllerCheck = true
+	boolean vFFlagUnsetCheck = true
+	boolean unlockAppCCheck = true
+	boolean postUpgradeHealthCheckControllerCheck = true
 
 
 
@@ -289,7 +289,7 @@ public class UpdateVfModuleInfraV2 {
 			sendWorkflowResponse(execution, 200, synchResponse)
 			//logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			//logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in sendResponse(): ' + e.getMessage())
@@ -323,7 +323,7 @@ public class UpdateVfModuleInfraV2 {
 		String vnfId = (String)execution.getVariable('vnfId')
 		String uuid = (String)execution.getVariable('moduleUuid')
 		AAIValidatorImpl aaiVI = new AAIValidatorImpl()
-		aaiVI.updateVnfToLocked(vnfId,uuid);
+		aaiVI.updateVnfToLocked(vnfId,uuid)
 		
 	}
 
@@ -332,7 +332,7 @@ public class UpdateVfModuleInfraV2 {
 
 		System.out.print("*****************************lockAppC*************************")
 		def vfModuleId = ""
-		ApplicationControllerClient aCC = new ApplicationControllerClient();
+		ApplicationControllerClient aCC = new ApplicationControllerClient()
 		def status = aCC.runCommand("Lock",vfModuleId)
 
 
@@ -342,7 +342,7 @@ public class UpdateVfModuleInfraV2 {
 
 		System.out.print("*****************************healthCheckAppC*************************")
 		def vfModuleId = ""
-		ApplicationControllerClient aCC = new ApplicationControllerClient();
+		ApplicationControllerClient aCC = new ApplicationControllerClient()
 		def status = aCC.runCommand("HealthCheck",vfModuleId)
 
 	}
@@ -358,7 +358,7 @@ public class UpdateVfModuleInfraV2 {
 
 		System.out.print("*****************************stopVfModuleController*************************")
 		def vfModuleId = ""
-		ApplicationControllerClient aCC = new ApplicationControllerClient();
+		ApplicationControllerClient aCC = new ApplicationControllerClient()
 		def status = aCC.runCommand("Stop",vfModuleId)
 
 
@@ -377,7 +377,7 @@ public class UpdateVfModuleInfraV2 {
 
 			//logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			//logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepDoUpdateVfModule(): ' + e.getMessage())
@@ -413,7 +413,7 @@ public class UpdateVfModuleInfraV2 {
 
 			//logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			//logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, 'Internal Error')
@@ -426,7 +426,7 @@ public class UpdateVfModuleInfraV2 {
 
 		System.out.print("*****************************healthCheckController*************************")
 		def vfModuleId = ""
-		ApplicationControllerClient aCC = new ApplicationControllerClient();
+		ApplicationControllerClient aCC = new ApplicationControllerClient()
 		def status = aCC.runCommand("HealthCheck",vfModuleId)
 
 	}
@@ -435,7 +435,7 @@ public class UpdateVfModuleInfraV2 {
 
 		System.out.print("*****************************startVfModuleController*************************")
 		def vfModuleId = ""
-		ApplicationControllerClient aCC = new ApplicationControllerClient();
+		ApplicationControllerClient aCC = new ApplicationControllerClient()
 		def status = aCC.runCommand("Start",vfModuleId)
 
 	}
@@ -446,7 +446,7 @@ public class UpdateVfModuleInfraV2 {
 		String vnfId = (String)execution.getVariable('vnfId')
 		String uuid = (String)execution.getVariable('moduleUuid')
 		AAIValidatorImpl aaiVI = new AAIValidatorImpl()
-		aaiVI.updateVnfToUnLocked(vnfId,uuid);
+		aaiVI.updateVnfToUnLocked(vnfId,uuid)
 
 
 	}
@@ -455,7 +455,7 @@ public class UpdateVfModuleInfraV2 {
 
 		System.out.print("*****************************unlockAppC*************************")
 		def vfModuleId = ""
-		ApplicationControllerClient aCC = new ApplicationControllerClient();
+		ApplicationControllerClient aCC = new ApplicationControllerClient()
 		def status = aCC.runCommand("Unlock",vfModuleId)
 
 	}
@@ -464,7 +464,7 @@ public class UpdateVfModuleInfraV2 {
 
 		System.out.print("*****************************postUpgradeHealthCheckController*************************")
 		def vfModuleId = ""
-		ApplicationControllerClient aCC = new ApplicationControllerClient();
+		ApplicationControllerClient aCC = new ApplicationControllerClient()
 		def status = aCC.runCommand("HealthCheck",vfModuleId)
 
 	}

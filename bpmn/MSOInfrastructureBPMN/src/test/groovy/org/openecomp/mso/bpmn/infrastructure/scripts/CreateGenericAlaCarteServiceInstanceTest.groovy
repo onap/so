@@ -14,7 +14,7 @@ import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.bpmn.core.json.JsonUtils
 import org.openecomp.mso.bpmn.common.scripts.VidUtils
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.*
 import static org.mockito.Mockito.*
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule
@@ -22,7 +22,7 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule
 class CreateGenericAlaCarteServiceInstanceTest  {
 	
 	@Rule
-	public WireMockRule wireMockRule = new WireMockRule(8090);
+	public WireMockRule wireMockRule = new WireMockRule(8090)
 	
 		String Prefix="CRESI_"
 		def utils = new MsoUtils()

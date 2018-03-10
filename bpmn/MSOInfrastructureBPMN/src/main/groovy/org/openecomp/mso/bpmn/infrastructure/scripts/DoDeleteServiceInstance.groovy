@@ -17,9 +17,9 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.openecomp.mso.bpmn.infrastructure.scripts;
+package org.openecomp.mso.bpmn.infrastructure.scripts
 
-import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.*
 import groovy.xml.XmlUtil
 import groovy.json.*
 
@@ -28,20 +28,20 @@ import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
 import org.openecomp.mso.bpmn.common.scripts.SDNCAdapterUtils
 import org.openecomp.mso.bpmn.core.WorkflowException
-import org.openecomp.mso.rest.APIResponse;
+import org.openecomp.mso.rest.APIResponse
 import org.openecomp.mso.rest.RESTClient
 import org.openecomp.mso.rest.RESTConfig
 
-import java.util.UUID;
+import java.util.UUID
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.runtime.Execution
-import org.json.JSONObject;
+import org.json.JSONObject
 import org.apache.commons.lang3.*
-import org.apache.commons.codec.binary.Base64;
-import org.springframework.web.util.UriUtils;
+import org.apache.commons.codec.binary.Base64
+import org.springframework.web.util.UriUtils
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
@@ -141,7 +141,7 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 			execution.setVariable("siParamsXml", siParamsXml)
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception ex){
 			msg = "Exception in preProcessRequest " + ex.getMessage()
 			utils.log("DEBUG", msg, isDebugEnabled)
@@ -255,7 +255,7 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 			utils.log("DEBUG","sdncDelete:\n" + sdncDelete, isDebugEnabled)
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch(Exception ex) {
 			msg = "Exception in preProcessSDNCDelete. " + ex.getMessage()
 			utils.log("DEBUG", msg, isDebugEnabled)
@@ -288,7 +288,7 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 				exceptionUtil.buildAndThrowWorkflowException(execution, 3500, msg)
 			}
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch(Exception ex) {
 			msg = "Exception in postProcessSDNC " + method + " Exception:" + ex.getMessage()
 			utils.log("DEBUG", msg, isDebugEnabled)
@@ -367,8 +367,8 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 					//Confirm there are no related service instances (vnf/network or volume)
 					if (utils.nodeExists(siData, "relationship-list")) {
 						utils.log("DEBUG", "SI Data relationship-list exists:", isDebugEnabled)
-						InputSource source = new InputSource(new StringReader(siData));
-						DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+						InputSource source = new InputSource(new StringReader(siData))
+						DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance()
 						DocumentBuilder docBuilder = docFactory.newDocumentBuilder()
 						Document serviceXml = docBuilder.parse(source)
 
@@ -427,7 +427,7 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 				utils.log("DEBUG","Service-instance NOT found in AAI. Silent Success", isDebugEnabled)
 			}
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception ex) {
 			msg = "Exception in DoDeleteServiceInstance.postProcessAAIGET. " + ex.getMessage()
 			utils.log("DEBUG", msg, isDebugEnabled)
@@ -457,7 +457,7 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 				}
 			}
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception ex) {
 			msg = "Exception in DoDeleteServiceInstance.postProcessAAIDEL. " + ex.getMessage()
 			utils.log("DEBUG", msg, isDebugEnabled)

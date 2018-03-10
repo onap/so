@@ -21,9 +21,9 @@
 package org.openecomp.mso.bpmn.infrastructure.scripts
 
 import groovy.json.JsonSlurper
-import groovy.util.XmlParser;
+import groovy.util.XmlParser
 
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutionException
 
 import org.springframework.web.util.UriUtils
 import org.camunda.bpm.engine.delegate.BpmnError

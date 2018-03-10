@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.mso.bpmn.common.scripts;
+package org.openecomp.mso.bpmn.common.scripts
 
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
@@ -414,7 +414,7 @@ class SDNCAdapterUtils {
 
 			taskProcessor.logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			taskProcessor.logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, "Internal Error")
@@ -727,7 +727,7 @@ class SDNCAdapterUtils {
 
 			if (successIndicator == true){
 				if (response == null || response.trim().equals("")) {
-					taskProcessor.utils.log("DEBUG", response + ' is empty');
+					taskProcessor.utils.log("DEBUG", response + ' is empty')
 					exceptionUtil.buildAndThrowWorkflowException(execution, 500, "SDNCAdapter Workflow Response is Empty")
 				}else{
 					// we need to peer into the request data for error
@@ -814,10 +814,10 @@ class SDNCAdapterUtils {
 			}
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			taskProcessor.utils.log("DEBUG", 'END of Validate SDNC Response', isDebugLogEnabled)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 500, 'Internal Error- Unable to validate SDNC Response ');
+			exceptionUtil.buildAndThrowWorkflowException(execution, 500, 'Internal Error- Unable to validate SDNC Response ')
 		}
 	}
 
@@ -915,7 +915,7 @@ class SDNCAdapterUtils {
 					}
 
 					if (response == null || response.trim().equals("")) {
-						taskProcessor.logWarn('sdncAdapter workflow response is empty');
+						taskProcessor.logWarn('sdncAdapter workflow response is empty')
 						execution.setVariable("L3HLAB_rollback", true)
 						def msg = trinityExceptionUtil.buildException("Exception occurred while validating SDNC response " , execution)
 						exceptionUtil.buildAndThrowWorkflowException(execution, intResponseCode, msg)
@@ -924,7 +924,7 @@ class SDNCAdapterUtils {
 					execution.setVariable(prefix+'sdncResponseSuccess', true)
 					taskProcessor.logDebug('Exited ' + method, isDebugLogEnabled)
 				} catch (BpmnError e) {
-					throw e;
+					throw e
 				} catch (Exception e) {
 					taskProcessor.logError('Caught exception in ' + method, e)
 					execution.setVariable(prefix+"ResponseCode",400)

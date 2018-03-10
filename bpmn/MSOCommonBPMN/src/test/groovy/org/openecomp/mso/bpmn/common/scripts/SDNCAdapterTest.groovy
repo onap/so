@@ -18,7 +18,7 @@
  * ============LICENSE_END========================================================= 
  */ 
 
-package org.openecomp.mso.bpmn.common.scripts;
+package org.openecomp.mso.bpmn.common.scripts
 
 import static org.mockito.Mockito.*
 
@@ -32,7 +32,7 @@ import org.junit.runner.RunWith
 import org.mockito.MockitoAnnotations
 import org.mockito.runners.MockitoJUnitRunner
 import org.mockito.internal.debugging.MockitoDebuggerImpl
-import org.openecomp.mso.bpmn.common.scripts.SDNCAdapter;
+import org.openecomp.mso.bpmn.common.scripts.SDNCAdapter
 
 import org.openecomp.mso.bpmn.mock.FileUtil
 
@@ -814,7 +814,7 @@ def sdncAdapterResponseError =
 	@Test
 	public void testPreProcessRequest() {
 
-		String sdncAdapterWorkflowRequest = FileUtil.readResourceFile("__files/SDN-ETHERNET-INTERNET/SDNCAdapterV1/sdncadapterworkflowrequest.xml");
+		String sdncAdapterWorkflowRequest = FileUtil.readResourceFile("__files/SDN-ETHERNET-INTERNET/SDNCAdapterV1/sdncadapterworkflowrequest.xml")
 		ExecutionEntity mockExecution = mock(ExecutionEntity.class)
 		when(mockExecution.getVariable("URN_mso_adapters_po_auth")).thenReturn("3141634BF7E070AA289CF2892C986C0B")
 		when(mockExecution.getVariable("URN_mso_msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
@@ -847,7 +847,7 @@ def sdncAdapterResponseError =
 	@Test
 	public void testProcessResponse()
 	{
-		String sdncAdapterCallbackResponse = FileUtil.readResourceFile("__files/SDN-ETHERNET-INTERNET/SDNCAdapterV1mock/sdncadaptercallbackrequest.xml");
+		String sdncAdapterCallbackResponse = FileUtil.readResourceFile("__files/SDN-ETHERNET-INTERNET/SDNCAdapterV1mock/sdncadaptercallbackrequest.xml")
 		ExecutionEntity mockExecution = mock(ExecutionEntity.class)
 		when(mockExecution.getVariable("sdncAdapterCallbackRequest")).thenReturn(sdncAdapterCallbackResponse)
 		SDNCAdapter sdncAdapter = new SDNCAdapter()
@@ -867,7 +867,7 @@ def sdncAdapterResponseError =
 	@Test
 	public void testProcessResponse_ErrorCase_404()
 	{
-		String sdncAdapterCallbackErrorResponse = FileUtil.readResourceFile("sdncadaptercallbackrequest_404CallBack.xml");
+		String sdncAdapterCallbackErrorResponse = FileUtil.readResourceFile("sdncadaptercallbackrequest_404CallBack.xml")
 		ExecutionEntity mockExecution = mock(ExecutionEntity.class)
 		when(mockExecution.getVariable("sdncAdapterCallbackRequest")).thenReturn(sdncAdapterCallbackErrorResponse)
 		SDNCAdapter sdncAdapter = new SDNCAdapter()

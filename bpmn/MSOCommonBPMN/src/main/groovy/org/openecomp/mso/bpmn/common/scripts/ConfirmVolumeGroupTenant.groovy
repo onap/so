@@ -52,7 +52,7 @@ class ConfirmVolumeGroupTenant extends AbstractServiceTaskProcessor{
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 		utils.log("DEBUG", " ======== STARTED Confirm Volume Group Tenant Subflow ======== ", isDebugEnabled)
-		String processKey = getProcessKey(execution);
+		String processKey = getProcessKey(execution)
 		try{
 			utils.log("DEBUG", " === Started QueryAAIForVolumeGroup Process === ", isDebugEnabled)
 
@@ -83,8 +83,8 @@ class ConfirmVolumeGroupTenant extends AbstractServiceTaskProcessor{
 				utils.log("DEBUG", "QueryAAIForVolumeGroup Received a Good REST Response is: \n" + response, isDebugEnabled)
 
 				String volumeGroupTenantId = ""
-				InputSource source = new InputSource(new StringReader(response));
-				DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+				InputSource source = new InputSource(new StringReader(response))
+				DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance()
 				docFactory.setNamespaceAware(true)
 				DocumentBuilder docBuilder = docFactory.newDocumentBuilder()
 				Document createVCERequestXml = docBuilder.parse(source)
@@ -173,7 +173,7 @@ class ConfirmVolumeGroupTenant extends AbstractServiceTaskProcessor{
 	public void assignWorkflowException(Execution execution, String message){
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
-		String processKey = getProcessKey(execution);
+		String processKey = getProcessKey(execution)
 		utils.log("DEBUG", " === STARTED Assign Workflow Exception === ", isDebugEnabled)
 		try{
 			String volumeGroupId = execution.getVariable("volumeGroupId")

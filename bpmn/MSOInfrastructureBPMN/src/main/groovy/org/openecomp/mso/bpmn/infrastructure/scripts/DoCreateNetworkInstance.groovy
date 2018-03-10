@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.openecomp.mso.bpmn.infrastructure.scripts;
+package org.openecomp.mso.bpmn.infrastructure.scripts
 
 import groovy.xml.XmlUtil
 import groovy.json.*
@@ -29,18 +29,18 @@ import org.openecomp.mso.bpmn.common.scripts.NetworkUtils
 import org.openecomp.mso.bpmn.common.scripts.SDNCAdapterUtils
 import org.openecomp.mso.bpmn.common.scripts.VidUtils
 import org.openecomp.mso.bpmn.core.WorkflowException
-import org.openecomp.mso.rest.APIResponse;
+import org.openecomp.mso.rest.APIResponse
 import org.openecomp.mso.rest.RESTClient
 import org.openecomp.mso.rest.RESTConfig
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.HashMap
+import java.util.Map
+import java.util.UUID
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.runtime.Execution
 import org.apache.commons.lang3.*
-import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.Base64
 import org.springframework.web.util.UriUtils
 
 /**
@@ -299,7 +299,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			execution.setVariable(Prefix + "networkName", networkName)
 		
 		} catch (BpmnError e) {
-		throw e;
+		throw e
 		
 		} catch (Exception ex) {
 			sendSyncError(execution)
@@ -376,7 +376,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			utils.log("DEBUG", Prefix + "isAAIqueryNameGood? : " + execution.getVariable(Prefix + "isAAIqueryNameGood"), isDebugEnabled)
 
 		} catch (BpmnError e) {
-		throw e;
+		throw e
 
 		} catch (Exception ex) {
 			// try error
@@ -426,7 +426,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			utils.log("DEBUG", " is Cloud Region Good: " + execution.getVariable(Prefix + "isCloudRegionGood"), isDebugEnabled)
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 
 		} catch (Exception ex) {
 			// try error
@@ -527,7 +527,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			}
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 
 		} catch (Exception ex) {
 			String exceptionMessage = "Bpmn error encountered in DoCreateNetworkInstance flow. callRESTQueryAAINetworkId() - " + ex.getMessage()
@@ -603,7 +603,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			}
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 
 		} catch (Exception ex) {
 			String exceptionMessage = "Bpmn error encountered in DoCreateNetworkInstance flow. callRESTReQueryAAINetworkId() - " + ex.getMessage()
@@ -737,7 +737,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			}
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 
 		} catch (Exception ex) {
 			String exceptionMessage = "Bpmn error encountered in DoCreateNetworkInstance flow. callRESTQueryAAINetworkVpnBinding() - " + ex.getMessage()
@@ -873,7 +873,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			}
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 
 		} catch (Exception ex) {
 			String exceptionMessage = "Bpmn error encountered in DoCreateNetworkInstance flow. callRESTQueryAAINetworkPolicy() - " + ex.getMessage()
@@ -1009,7 +1009,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			}
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 
 		} catch (Exception ex) {
 			String exceptionMessage = "Bpmn error encountered in DoCreateNetworkInstance flow. callRESTQueryAAINetworkTableRef() - " + ex.getMessage()
@@ -1092,7 +1092,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			}
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 
 		} catch (Exception ex) {
 			String exceptionMessage = "Bpmn error encountered in DoCreateNetworkInstance flow. callRESTUpdateContrailAAINetwork() - " + ex.getMessage()
@@ -1321,7 +1321,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			}
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 
 		} catch (Exception ex) {
 			String exceptionMessage = " Bpmn error encountered in DoCreateNetworkInstance flow. validateCreateNetworkResponse() - " + ex.getMessage()
@@ -1495,7 +1495,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 		
 		try {
 			
-			Map<String, String> rollbackData = new HashMap<String, String>();
+			Map<String, String> rollbackData = new HashMap<String, String>()
 			String rollbackSDNCRequest = execution.getVariable(Prefix + "rollbackSDNCRequest")
 			if (rollbackSDNCRequest != null) { 
 				if (rollbackSDNCRequest != "") {
@@ -1605,7 +1605,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			    prepareSDNCRollbackRequest(execution)
 			} 	
 			
-			Map<String, String> rollbackData = new HashMap<String, String>();
+			Map<String, String> rollbackData = new HashMap<String, String>()
 			String rollbackSDNCRequest = execution.getVariable(Prefix + "rollbackSDNCRequest")
 			if (rollbackSDNCRequest != null) {
 				if (rollbackSDNCRequest != "") {

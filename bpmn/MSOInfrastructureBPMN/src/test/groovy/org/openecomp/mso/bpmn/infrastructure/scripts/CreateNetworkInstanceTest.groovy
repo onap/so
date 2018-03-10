@@ -12,7 +12,7 @@ import org.mockito.MockitoAnnotations
 import org.openecomp.mso.bpmn.common.scripts.MsoUtils
 import org.openecomp.mso.bpmn.core.WorkflowException
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.*
 import static org.mockito.Mockito.*
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule
@@ -20,7 +20,7 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule
 class CreateNetworkInstanceTest  {
 	
 	@Rule
-	public WireMockRule wireMockRule = new WireMockRule(8090);
+	public WireMockRule wireMockRule = new WireMockRule(8090)
 	
 		String Prefix="CRENI_"
 		def utils = new MsoUtils()

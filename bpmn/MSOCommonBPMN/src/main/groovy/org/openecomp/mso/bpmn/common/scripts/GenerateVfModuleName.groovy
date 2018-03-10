@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 package org.openecomp.mso.bpmn.common.scripts
-import java.io.Serializable;
+import java.io.Serializable
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.runtime.Execution
@@ -26,7 +26,7 @@ import org.springframework.web.util.UriUtils
 
 import org.openecomp.mso.bpmn.core.json.JsonUtils
 import org.openecomp.mso.bpmn.core.WorkflowException
-import org.openecomp.mso.rest.APIResponse;
+import org.openecomp.mso.rest.APIResponse
 import org.openecomp.mso.rest.RESTClient
 import org.openecomp.mso.rest.RESTConfig
 
@@ -77,14 +77,14 @@ public class GenerateVfModuleName extends AbstractServiceTaskProcessor{
 			utils.logAudit("AAI endPoint: " + endPoint)
 
 			try {
-				RESTConfig config = new RESTConfig(endPoint);
+				RESTConfig config = new RESTConfig(endPoint)
 				def responseData = ''
 				def aaiRequestId = UUID.randomUUID().toString()
 				RESTClient client = new RESTClient(config).
 					addHeader('X-TransactionId', aaiRequestId).
 					addHeader('X-FromAppId', 'MSO').
 					addHeader('Content-Type', 'application/xml').
-					addHeader('Accept','application/xml');
+					addHeader('Accept','application/xml')
 				logDebug('sending GET to AAI endpoint \'' + endPoint + '\'', isDebugLogEnabled)
 				APIResponse response = client.httpGet()
 				utils.logAudit("GenerateVfModuleName - invoking httpGet() to AAI")
@@ -142,7 +142,7 @@ public class GenerateVfModuleName extends AbstractServiceTaskProcessor{
 			}
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in queryAAI(): ' + e.getMessage())

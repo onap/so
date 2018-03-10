@@ -18,11 +18,11 @@
  * ============LICENSE_END========================================================= 
  */ 
 
-package org.openecomp.mso.bpmn.common.scripts;
+package org.openecomp.mso.bpmn.common.scripts
 
 import static org.mockito.Mockito.*
 
-import org.openecomp.mso.bpmn.common.scripts.VidUtils;
+import org.openecomp.mso.bpmn.common.scripts.VidUtils
 import org.openecomp.mso.bpmn.core.WorkflowException
 
 import groovy.json.JsonSlurper
@@ -33,21 +33,21 @@ import org.camunda.bpm.engine.RepositoryService
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.camunda.bpm.engine.impl.pvm.process.ProcessDefinitionImpl
 import org.camunda.bpm.engine.repository.ProcessDefinition
-import org.camunda.bpm.engine.runtime.Execution;
+import org.camunda.bpm.engine.runtime.Execution
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.*
 
 import org.mockito.MockitoAnnotations
 import org.mockito.runners.MockitoJUnitRunner
 import org.mockito.internal.debugging.MockitoDebuggerImpl
 import org.junit.Before
-import org.junit.Rule;
+import org.junit.Rule
 import org.junit.Test
 import org.junit.Ignore
 import org.junit.runner.RunWith
-import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity;
-import org.junit.Before;
-import org.junit.Test;
+import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
+import org.junit.Before
+import org.junit.Test
 
 @RunWith(MockitoJUnitRunner.class)
 

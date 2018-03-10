@@ -17,9 +17,9 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.openecomp.mso.bpmn.common.scripts;
+package org.openecomp.mso.bpmn.common.scripts
 
-import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.*
 
 import java.time.chrono.AbstractChronology
 import java.util.List
@@ -32,7 +32,7 @@ import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateTask
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.runtime.Execution
-import org.json.JSONObject;
+import org.json.JSONObject
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
 import org.openecomp.mso.bpmn.core.domain.ServiceDecomposition
@@ -100,7 +100,7 @@ public class ManualHandling extends AbstractServiceTaskProcessor {
 			utils.log("DEBUG", "validResponses is: " + validResponses, isDebugLogEnabled)
 			
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception ex){
 			msg = "Exception in preProcessRequest " + ex.getMessage()
 			utils.log("DEBUG", msg, isDebugLogEnabled)
@@ -152,7 +152,7 @@ public class ManualHandling extends AbstractServiceTaskProcessor {
 
 		} catch (BpmnError e) {
 			utils.log("DEBUG", "BPMN exception: " + e.errorMessage, isDebugLogEnabled)
-			throw e;
+			throw e
 		} catch (Exception ex){
 			msg = "Exception in createManualTask " + ex.getMessage()
 			utils.log("DEBUG", msg, isDebugLogEnabled)
@@ -207,7 +207,7 @@ public class ManualHandling extends AbstractServiceTaskProcessor {
 
 		} catch (BpmnError e) {
 			utils.log("DEBUG", "BPMN exception: " + e.errorMessage, isDebugLogEnabled)
-			throw e;
+			throw e
 		} catch (Exception ex){
 			msg = "Exception in createManualTask " + ex.getMessage()
 			utils.log("DEBUG", msg, isDebugLogEnabled)
@@ -240,7 +240,7 @@ public class ManualHandling extends AbstractServiceTaskProcessor {
 
 		} catch (BpmnError e) {
 			utils.log("DEBUG", "BPMN exception: " + e.errorMessage, isDebugLogEnabled)
-			throw e;
+			throw e
 		} catch (Exception ex){
 			msg = "Exception in createManualTask " + ex.getMessage()
 			utils.log("DEBUG", msg, isDebugLogEnabled)

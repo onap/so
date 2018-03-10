@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.mso.bpmn.common.scripts;
+package org.openecomp.mso.bpmn.common.scripts
 
 import org.apache.commons.lang3.*
 
@@ -39,17 +39,17 @@ import org.w3c.dom.Element
 
 import org.w3c.dom.NamedNodeMap
 import org.w3c.dom.Node
-import org.w3c.dom.NodeList;
+import org.w3c.dom.NodeList
 import org.xml.sax.InputSource
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.runtime.Execution
-import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor;
+import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.NamedNodeMap
 import org.w3c.dom.Node
-import org.w3c.dom.NodeList;
+import org.w3c.dom.NodeList
 import org.xml.sax.InputSource
 
 
@@ -1379,8 +1379,8 @@ class NetworkUtils {
 
 			String subnets = ""
 			StringBuilder sb = new StringBuilder()
-			InputSource source = new InputSource(new StringReader(subnetsXml));
-			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			InputSource source = new InputSource(new StringReader(subnetsXml))
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance()
 			docFactory.setNamespaceAware(true)
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder()
 			Document xml = docBuilder.parse(source)
@@ -1450,8 +1450,8 @@ class NetworkUtils {
 	public String extractNeutSubId(String inputSource, String subnetId){
 
 				String value = ""
-				InputSource source = new InputSource(new StringReader(inputSource));
-				DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+				InputSource source = new InputSource(new StringReader(inputSource))
+				DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance()
 				docFactory.setNamespaceAware(true)
 				DocumentBuilder docBuilder = docFactory.newDocumentBuilder()
 				Document xml = docBuilder.parse(source)
@@ -1483,7 +1483,7 @@ class NetworkUtils {
 				else {
 					rollbackEnabled = true
 				}
-				rollbackValueSet = true;
+				rollbackValueSet = true
 			}
 		}
 

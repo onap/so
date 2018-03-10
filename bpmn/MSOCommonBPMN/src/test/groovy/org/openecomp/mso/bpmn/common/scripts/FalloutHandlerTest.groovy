@@ -20,19 +20,19 @@
 
 package org.openecomp.mso.bpmn.common.scripts
 
-import org.junit.runner.RunWith;
+import org.junit.runner.RunWith
 import static org.mockito.Mockito.*
-import static org.junit.Assert.*;
+import static org.junit.Assert.*
 
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentCaptor
 import org.mockito.MockitoAnnotations
 import org.mockito.runners.MockitoJUnitRunner
-import org.openecomp.mso.bpmn.common.scripts.MsoUtils;
-import org.openecomp.mso.bpmn.common.scripts.FalloutHandler;
+import org.openecomp.mso.bpmn.common.scripts.MsoUtils
+import org.openecomp.mso.bpmn.common.scripts.FalloutHandler
 
 @RunWith(MockitoJUnitRunner.class)
 class FalloutHandlerTest {
@@ -72,8 +72,8 @@ class FalloutHandlerTest {
 		ExecutionEntity mockExecution = mock(ExecutionEntity.class)
 
 		when(mockExecution.getVariable("FalloutHandlerRequest")).thenReturn(falloutHandlerRequest)
-		when(mockExecution.getVariable("URN_mso_adapters_db_auth")).thenReturn("757A94191D685FD2092AC1490730A4FC");
-		when(mockExecution.getVariable("URN_mso_msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7");
+		when(mockExecution.getVariable("URN_mso_adapters_db_auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
+		when(mockExecution.getVariable("URN_mso_msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 
 		FalloutHandler falloutHandler = new FalloutHandler()
 		falloutHandler.preProcessRequest(mockExecution)
@@ -150,8 +150,8 @@ class FalloutHandlerTest {
 		falloutHandler.postProcessResponse(mockExecution)
 
 		// Capture the arguments to setVariable
-		ArgumentCaptor<String> captor1 = ArgumentCaptor.forClass(String.class);
-		ArgumentCaptor<String> captor2 = ArgumentCaptor.forClass(String.class);
+		ArgumentCaptor<String> captor1 = ArgumentCaptor.forClass(String.class)
+		ArgumentCaptor<String> captor2 = ArgumentCaptor.forClass(String.class)
 		
 		verify(mockExecution, times(4)).setVariable(captor1.capture(), captor2.capture())
 		List<String> arg2List = captor2.getAllValues()
@@ -191,8 +191,8 @@ class FalloutHandlerTest {
 			falloutHandler.updateRequestPayload(mockExecution)
 			
 			// Capture the arguments to setVariable
-			ArgumentCaptor<String> captor1 = ArgumentCaptor.forClass(String.class);
-			ArgumentCaptor<String> captor2 = ArgumentCaptor.forClass(String.class);
+			ArgumentCaptor<String> captor1 = ArgumentCaptor.forClass(String.class)
+			ArgumentCaptor<String> captor2 = ArgumentCaptor.forClass(String.class)
 			
 			verify(mockExecution, times(1)).setVariable(captor1.capture(), captor2.capture())
 			List<String> arg2List = captor2.getAllValues()
@@ -227,8 +227,8 @@ class FalloutHandlerTest {
 				falloutHandler.updateRequestInfraPayload(mockExecution)
 				
 				// Capture the arguments to setVariable
-				ArgumentCaptor<String> captor1 = ArgumentCaptor.forClass(String.class);
-				ArgumentCaptor<String> captor2 = ArgumentCaptor.forClass(String.class);
+				ArgumentCaptor<String> captor1 = ArgumentCaptor.forClass(String.class)
+				ArgumentCaptor<String> captor2 = ArgumentCaptor.forClass(String.class)
 				
 				verify(mockExecution, times(1)).setVariable(captor1.capture(), captor2.capture())
 				List<String> arg2List = captor2.getAllValues()
@@ -259,14 +259,14 @@ class FalloutHandlerTest {
 			when(mockExecution.getVariable("FH_request_id")).thenReturn("testReqId")
 			when(mockExecution.getVariable("FH_ErrorMessage")).thenReturn("ErrorMessage")
 			when(mockExecution.getVariable("FH_ErrorCode")).thenReturn("ErrorCode")
-			when(mockExecution.getVariable("URN_mso_default_adapter_namespace")).thenReturn("http://org.openecomp.mso");
+			when(mockExecution.getVariable("URN_mso_default_adapter_namespace")).thenReturn("http://org.openecomp.mso")
 
 			FalloutHandler falloutHandler = new FalloutHandler()
 			falloutHandler.updateRequestGammaPayload(mockExecution)
 	
 			// Capture the arguments to setVariable
-			ArgumentCaptor<String> captor1 = ArgumentCaptor.forClass(String.class);
-			ArgumentCaptor<String> captor2 = ArgumentCaptor.forClass(String.class);
+			ArgumentCaptor<String> captor1 = ArgumentCaptor.forClass(String.class)
+			ArgumentCaptor<String> captor2 = ArgumentCaptor.forClass(String.class)
 			
 			verify(mockExecution, times(1)).setVariable(captor1.capture(), captor2.capture())
 			List<String> arg2List = captor2.getAllValues()
@@ -299,8 +299,8 @@ class FalloutHandlerTest {
 			falloutHandler.updateResponseStatusPayload(mockExecution)
 			
 			// Capture the arguments to setVariable
-			ArgumentCaptor<String> captor1 = ArgumentCaptor.forClass(String.class);
-			ArgumentCaptor<String> captor2 = ArgumentCaptor.forClass(String.class);
+			ArgumentCaptor<String> captor1 = ArgumentCaptor.forClass(String.class)
+			ArgumentCaptor<String> captor2 = ArgumentCaptor.forClass(String.class)
 			
 			verify(mockExecution, times(1)).setVariable(captor1.capture(), captor2.capture())
 			List<String> arg2List = captor2.getAllValues()

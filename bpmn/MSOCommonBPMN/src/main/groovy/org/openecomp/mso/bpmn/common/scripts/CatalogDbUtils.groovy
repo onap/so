@@ -20,10 +20,10 @@
 
 package org.openecomp.mso.bpmn.common.scripts
 
-import org.json.JSONObject;
-import org.json.JSONArray;
-import org.json.XML;
-import org.springframework.web.util.UriUtils;
+import org.json.JSONObject
+import org.json.JSONArray
+import org.json.XML
+import org.springframework.web.util.UriUtils
 
 import org.openecomp.mso.bpmn.core.json.JsonUtils
 
@@ -31,12 +31,12 @@ import org.openecomp.mso.bpmn.core.json.JsonUtils
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 import groovy.util.slurpersupport.GPathResult
-import groovy.xml.QName;
+import groovy.xml.QName
 
 import org.camunda.bpm.engine.runtime.Execution
 
-import org.openecomp.mso.logger.MsoLogger;
-import org.openecomp.mso.rest.APIResponse;
+import org.openecomp.mso.logger.MsoLogger
+import org.openecomp.mso.rest.APIResponse
 import org.openecomp.mso.rest.RESTClient
 import org.openecomp.mso.rest.RESTConfig
 
@@ -50,7 +50,7 @@ class CatalogDbUtils {
 	
 	MsoUtils utils = new MsoUtils()
 	JsonUtils jsonUtils = new JsonUtils()
-	MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
+	MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL)
 	static private String defaultDbAdapterVersion = "v2"
 
 	public JSONArray getAllNetworksByServiceModelUuid(Execution execution, String serviceModelUuid) {
@@ -1166,14 +1166,14 @@ class CatalogDbUtils {
 		try {
 			String catalogDbEndpoint = execution.getVariable("URN_mso_catalog_db_endpoint")
 			String queryEndpoint = catalogDbEndpoint + "/" + defaultDbAdapterVersion + endPoint
-			RESTConfig config = new RESTConfig(queryEndpoint);
+			RESTConfig config = new RESTConfig(queryEndpoint)
 			def responseData = ''
 			def bpmnRequestId = UUID.randomUUID().toString()
 			RESTClient client = new RESTClient(config).
 					addHeader('X-TransactionId', bpmnRequestId).
 					addHeader('X-FromAppId', 'BPMN').
 					addHeader('Content-Type', 'application/json').
-					addHeader('Accept','application/json');
+					addHeader('Accept','application/json')
 					
 			String basicAuthCred = execution.getVariable("BasicAuthHeaderValueDB")
 			if (basicAuthCred != null && !"".equals(basicAuthCred)) {

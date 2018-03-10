@@ -22,8 +22,8 @@ package org.openecomp.mso.bpmn.common.scripts
 import org.camunda.bpm.engine.runtime.Execution
 import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.rest.APIResponse
-import org.openecomp.mso.rest.RESTClient;
-import org.openecomp.mso.rest.RESTConfig;
+import org.openecomp.mso.rest.RESTClient
+import org.openecomp.mso.rest.RESTConfig
 
 
 public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
@@ -86,12 +86,12 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 		utils.logAudit("DeleteAAIVfModule endPoint: " + endPoint)
 		def aaiRequestId = utils.getRequestID()
 
-		RESTConfig config = new RESTConfig(endPoint);
+		RESTConfig config = new RESTConfig(endPoint)
 		utils.log("DEBUG","queryAAIForGenericVnf() endpoint-" + endPoint, isDebugEnabled)
 		def responseData = ""
 		try {
 			RESTClient client = new RESTClient(config).addHeader("X-TransactionId", aaiRequestId).addHeader("X-FromAppId", "MSO").
-				addHeader("Accept","application/xml");
+				addHeader("Accept","application/xml")
 			String basicAuthCred = utils.getBasicAuth(execution.getVariable("URN_aai_auth"),execution.getVariable("URN_mso_msoKey"))
 				
 			if (basicAuthCred != null && !"".equals(basicAuthCred)) {
@@ -123,12 +123,12 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 		def endPoint = execution.getVariable("URN_aai_endpoint") + execution.getVariable("DAAIVfMod_genericVnfEndpoint") +
 			"/?resource-version=" + execution.getVariable("DAAIVfMod_genVnfRsrcVer")
 		utils.logAudit("AAI endPoint: " + endPoint)
-		RESTConfig config = new RESTConfig(endPoint);
+		RESTConfig config = new RESTConfig(endPoint)
 		utils.log("DEBUG","deleteGenericVnf() endpoint-" + endPoint, isDebugEnabled)
 		def responseData = ""
 		try {
 			RESTClient client = new RESTClient(config).addHeader("X-TransactionId", aaiRequestId).addHeader("X-FromAppId", "MSO").
-				addHeader("Accept","application/xml");
+				addHeader("Accept","application/xml")
 			
 			String basicAuthCred = utils.getBasicAuth(execution.getVariable("URN_aai_auth"),execution.getVariable("URN_mso_msoKey"))
 					
@@ -156,12 +156,12 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 			"/?resource-version=" + execution.getVariable("DAAIVfMod_vfModRsrcVer")
 		def aaiRequestId = utils.getRequestID()
 
-		RESTConfig config = new RESTConfig(endPoint);
+		RESTConfig config = new RESTConfig(endPoint)
 		utils.log("DEBUG","deleteVfModule() endpoint-" + endPoint, isDebugEnabled)
 		def responseData = ""
 		try {
 			RESTClient client = new RESTClient(config).addHeader("X-TransactionId", aaiRequestId).addHeader("X-FromAppId", "MSO").
-				addHeader("Accept","application/xml");
+				addHeader("Accept","application/xml")
 			
 			String basicAuthCred = utils.getBasicAuth(execution.getVariable("URN_aai_auth"),execution.getVariable("URN_mso_msoKey"))
 					

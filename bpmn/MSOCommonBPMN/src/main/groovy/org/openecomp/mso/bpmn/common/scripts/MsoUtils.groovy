@@ -296,38 +296,38 @@ class MsoUtils {
 
 	
 	def log(logmode,logtxt,isDebugLogEnabled="false"){
-		MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
+		MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL)
 		if ("INFO"==logmode) {
-			msoLogger.info(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, logtxt, "BPMN", MsoLogger.getServiceName());
+			msoLogger.info(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, logtxt, "BPMN", MsoLogger.getServiceName())
 		} else if ("WARN"==logmode) {
 			// to see the warning text displayed in the log entry, the text must also be passed as arg0 (2nd argument) to invoke the correct MsoLogger warn() method
-			msoLogger.warn (MessageEnum.BPMN_GENERAL_WARNING, logtxt, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, logtxt);
+			msoLogger.warn (MessageEnum.BPMN_GENERAL_WARNING, logtxt, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, logtxt)
 		} else if ("ERROR"==logmode) {
 			// to see the error text displayed in the log entry, the text must also be passed as arg0 (2nd argument) to invoke the correct MsoLogger error() method
-		    msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, logtxt, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, logtxt);
+		    msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, logtxt, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, logtxt)
 
 		} else {
-			BPMNLogger.debug(isDebugLogEnabled, logtxt);
+			BPMNLogger.debug(isDebugLogEnabled, logtxt)
 		}
 	}
 	
 	def logContext(requestId, serviceInstanceId){
-	    MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
-		msoLogger.setLogContext(requestId, serviceInstanceId);
+	    MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL)
+		msoLogger.setLogContext(requestId, serviceInstanceId)
 	}
 	
 	def logMetrics(elapsedTime, logtxt){
-		MsoLogger metricsLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
+		MsoLogger metricsLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL)
 		
 		metricsLogger.recordMetricEvent (elapsedTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
-			logtxt, "BPMN", MsoLogger.getServiceName(), null);
+			logtxt, "BPMN", MsoLogger.getServiceName(), null)
 	}
 	
 	def logAudit(logtxt){
-		MsoLogger auditLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
-		long startTime = System.currentTimeMillis();
+		MsoLogger auditLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL)
+		long startTime = System.currentTimeMillis()
 		
-		auditLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, logtxt);
+		auditLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, logtxt)
 	}
 	
 	// headers: header - name-value
@@ -356,7 +356,7 @@ class MsoUtils {
 				out.append(nodeAsText)
 			}
 		}
-		return out.toString();
+		return out.toString()
 	}
 	
 	/**
@@ -408,7 +408,7 @@ class MsoUtils {
 	 * @return a possibly modified document
 	 */
 	public String removeXmlNamespaces(def xml) {
-		return XmlTool.removeNamespaces(xml);
+		return XmlTool.removeNamespaces(xml)
 	}
 
 	/**
@@ -431,7 +431,7 @@ class MsoUtils {
 	 * @return a reformatted document
 	 */
 	public String formatXml(def xml) {
-		return XmlTool.normalize(xml);
+		return XmlTool.normalize(xml)
 	}
 	
 	// build single elements
@@ -853,17 +853,17 @@ class MsoUtils {
 	}
 	
 	public String generateCurrentTimeInUtc(){
-		final  SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-		sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-		final String utcTime = sdf.format(new Date());
-		return utcTime;
+		final  SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+		sdf.setTimeZone(TimeZone.getTimeZone("UTC"))
+		final String utcTime = sdf.format(new Date())
+		return utcTime
 	}
 	
 	public String generateCurrentTimeInGMT(){
-		final  SimpleDateFormat sdf = new SimpleDateFormat("E, d MMM yyyy h:m:s z");
-		sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-		final String utcTime = sdf.format(new Date());
-		return utcTime;
+		final  SimpleDateFormat sdf = new SimpleDateFormat("E, d MMM yyyy h:m:s z")
+		sdf.setTimeZone(TimeZone.getTimeZone("GMT"))
+		final String utcTime = sdf.format(new Date())
+		return utcTime
 	}
 	
 
@@ -889,7 +889,7 @@ class MsoUtils {
 	
 	def encrypt(toEncrypt, msokey){
 		try {
-			String result = CryptoUtils.encrypt(toEncrypt, msokey);
+			String result = CryptoUtils.encrypt(toEncrypt, msokey)
 			return result
 		}
 		catch (Exception e) {
@@ -899,7 +899,7 @@ class MsoUtils {
 	
 	def decrypt(toDecrypt, msokey){
 		try {
-			String result = CryptoUtils.decrypt(toDecrypt, msokey);
+			String result = CryptoUtils.decrypt(toDecrypt, msokey)
 			return result
 		}
 		catch (Exception e) {

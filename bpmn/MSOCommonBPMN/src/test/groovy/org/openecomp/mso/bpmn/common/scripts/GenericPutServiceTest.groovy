@@ -1,7 +1,7 @@
 package org.openecomp.mso.bpmn.common.scripts
 
 import static org.mockito.Mockito.*
-import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPutServiceInstance;
+import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPutServiceInstance
 
 import org.camunda.bpm.engine.ProcessEngineServices
 import org.camunda.bpm.engine.RepositoryService
@@ -24,7 +24,7 @@ import org.apache.commons.lang3.*
 class GenericPutServiceTest {
 
 	@Rule
-	public WireMockRule wireMockRule = new WireMockRule(8090);
+	public WireMockRule wireMockRule = new WireMockRule(8090)
 
 	@Before
 	public void init()
@@ -75,9 +75,9 @@ class GenericPutServiceTest {
 	public void putServiceInstance() {
 		println "************ putServiceInstance ************* "
 
-		WireMock.reset();
+		WireMock.reset()
 
-		MockPutServiceInstance("1604-MVM-26", "SDN-ETHERNET-INTERNET", "MIS%252F1604%252F0026%252FSW_INTERNET", "GenericPutServiceInstance/GenericPutServiceInstance_PutServiceInstance_AAIResponse_Success.xml");
+		MockPutServiceInstance("1604-MVM-26", "SDN-ETHERNET-INTERNET", "MIS%252F1604%252F0026%252FSW_INTERNET", "GenericPutServiceInstance/GenericPutServiceInstance_PutServiceInstance_AAIResponse_Success.xml")
 		ExecutionEntity mockExecution = setupMock()
 
 		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
@@ -141,7 +141,7 @@ class GenericPutServiceTest {
 
 		println "************ putServiceInstance ************* "
 
-		WireMock.reset();
+		WireMock.reset()
 
 		ExecutionEntity mockExecution = setupMock()
 

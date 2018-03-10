@@ -20,15 +20,15 @@
 package org.openecomp.mso.bpmn.infrastructure.scripts
 
 import java.io.ObjectInputStream.BlockDataInputStream
-import java.util.UUID;
+import java.util.UUID
 
-import org.json.JSONObject;
-import org.json.JSONArray;
+import org.json.JSONObject
+import org.json.JSONArray
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution;
+import org.camunda.bpm.engine.runtime.Execution
 import org.hibernate.jpa.criteria.predicate.IsEmptyPredicate
 
-import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.*
 
 import org.openecomp.mso.bpmn.core.json.JsonUtils
 import org.openecomp.mso.rest.APIResponse
@@ -41,7 +41,7 @@ import org.openecomp.mso.bpmn.core.domain.ModelInfo
 import org.openecomp.mso.bpmn.core.domain.ModuleResource
 import org.openecomp.mso.bpmn.core.domain.VnfResource
 import org.openecomp.mso.bpmn.core.WorkflowException
-import org.springframework.web.util.UriUtils;
+import org.springframework.web.util.UriUtils
 
 /**
  * This class supports the VID Flow
@@ -161,14 +161,14 @@ class DoUpdateVnfAndModules extends AbstractServiceTaskProcessor {
 			utils.logAudit("AAI endPoint: " + endPoint)
 
 			try {
-				RESTConfig config = new RESTConfig(endPoint);
+				RESTConfig config = new RESTConfig(endPoint)
 				def responseData = ''
 				def aaiRequestId = UUID.randomUUID().toString()
 				RESTClient client = new RESTClient(config).
 					addHeader('X-TransactionId', aaiRequestId).
 					addHeader('X-FromAppId', 'MSO').
 					addHeader('Content-Type', 'application/xml').
-					addHeader('Accept','application/xml');
+					addHeader('Accept','application/xml')
 				logDebug('sending GET to AAI endpoint \'' + endPoint + '\'', isDebugLogEnabled)
 				APIResponse response = client.httpGet()
 				utils.logAudit("createVfModule - invoking httpGet() to AAI")
@@ -246,7 +246,7 @@ class DoUpdateVnfAndModules extends AbstractServiceTaskProcessor {
 			}
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in queryAAIVfModule(): ' + e.getMessage())
@@ -369,7 +369,7 @@ class DoUpdateVnfAndModules extends AbstractServiceTaskProcessor {
  
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepUpdateAAIGenericVnf(): ' + e.getMessage())

@@ -18,9 +18,9 @@
  * ============LICENSE_END========================================================= 
  */ 
 
-package org.openecomp.mso.bpmn.infrastructure.scripts;
+package org.openecomp.mso.bpmn.infrastructure.scripts
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.*
 import static org.mockito.Mockito.*
 
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
@@ -29,7 +29,7 @@ import org.mockito.MockitoAnnotations
 import org.mockito.runners.MockitoJUnitRunner
 import org.openecomp.mso.bpmn.common.scripts.MsoGroovyTest
 import org.junit.Before
-import org.junit.Ignore;
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -179,8 +179,8 @@ class CreateVfModuleVolumeInfraV1Test extends MsoGroovyTest {
 		createVfModuleVolumeInfraV1.preProcessRequest(mockExecution, 'true')
 		
 		// Capture the arguments to setVariable
-		ArgumentCaptor<String> captor1 = ArgumentCaptor.forClass(String.class);
-		ArgumentCaptor<String> captor2 = ArgumentCaptor.forClass(String.class);
+		ArgumentCaptor<String> captor1 = ArgumentCaptor.forClass(String.class)
+		ArgumentCaptor<String> captor2 = ArgumentCaptor.forClass(String.class)
 		
 		verify(mockExecution, times(15)).setVariable(captor1.capture(), captor2.capture())
 		

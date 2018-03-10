@@ -82,7 +82,7 @@ class DeleteCustomE2EServiceInstanceTest extends GroovyTestBase {
         initPreProcess(mex)
         DeleteCustomE2EServiceInstance instance = new DeleteCustomE2EServiceInstance()
         mex.setVariable("isDebugLogEnabled","true")
-        instance.preProcessRequest(mex);
+        instance.preProcessRequest(mex)
 
         verify(mex).getVariable(GroovyTestBase.DBGFLAG)
 

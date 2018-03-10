@@ -1,29 +1,29 @@
 package org.openecomp.mso.bpmn.infrastructure.scripts
 
-import static org.camunda.spin.Spin.XML;
+import static org.camunda.spin.Spin.XML
 import groovy.json.JsonSlurper
-import groovy.lang.GroovyInterceptable;
+import groovy.lang.GroovyInterceptable
 import groovy.xml.XmlUtil
 
 import org.openecomp.mso.bpmn.common.scripts.AaiUtil
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
 import org.openecomp.mso.bpmn.common.scripts.NetworkUtils
-import org.openecomp.mso.bpmn.common.scripts.VfModuleBase;
+import org.openecomp.mso.bpmn.common.scripts.VfModuleBase
 import org.openecomp.mso.bpmn.core.RollbackData
 import org.openecomp.mso.bpmn.core.WorkflowException
-import org.openecomp.mso.bpmn.core.json.JsonUtils;
+import org.openecomp.mso.bpmn.core.json.JsonUtils
 import org.openecomp.mso.rest.APIResponse
 import org.springframework.web.util.UriUtils
 
 
 
 
-import java.util.UUID;
+import java.util.UUID
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.runtime.Execution
 import org.apache.commons.lang3.*
-import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.Base64
 
 class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 
@@ -365,7 +365,7 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 		Map<String, String> paramsMap = execution.getVariable("vfModuleInputParams")
 		for (Map.Entry<String, String> entry : paramsMap.entrySet()) {
 			String paramsXml
-			String paramName = entry.getKey();
+			String paramName = entry.getKey()
 			String paramValue = entry.getValue()
 			paramsXml =
 				"""	<entry>
