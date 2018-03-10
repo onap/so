@@ -421,7 +421,7 @@ public class LoggingAndURNMappingPlugin extends AbstractProcessEnginePlugin {
 				try {
 					String id = execution.getId();
 					if ("START".equals(event) && id != null ) {
-						startTimes.put(id, (Long)System.currentTimeMillis());
+						startTimes.put(id, System.currentTimeMillis());
 					} else if ("END".equals(event) && id != null) {
 						String prefix = (String) execution.getVariable("prefix");
 
