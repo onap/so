@@ -108,7 +108,7 @@ public class MockResource {
 	@Produces("application/json")
 	public Response start(@PathParam("portNumber") Integer portNumber) {
 		if (portNumber == null) portNumber = defaultPort;
-		return startMockServer(portNumber.intValue());
+		return startMockServer(portNumber);
 	}
 
 
