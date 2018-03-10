@@ -65,7 +65,7 @@ public class RestfulResponse {
 
     public int getRespHeaderInt(String key) {
         if(this.respHeaderMap != null) {
-            String result = (String)this.respHeaderMap.get(key);
+            String result = this.respHeaderMap.get(key);
             if(result != null) {
                 return Integer.parseInt(result);
             }
@@ -75,7 +75,7 @@ public class RestfulResponse {
 
     public long getRespHeaderLong(String key) {
         if(this.respHeaderMap != null) {
-            String result = (String)this.respHeaderMap.get(key);
+            String result = this.respHeaderMap.get(key);
             if(result != null) {
                 return Long.parseLong(result);
             }
@@ -85,7 +85,7 @@ public class RestfulResponse {
 
     public String getRespHeaderStr(String key) {
         if(this.respHeaderMap != null) {
-            return ((String)this.respHeaderMap.get(key));
+            return this.respHeaderMap.get(key);
         }
         return null;
     }
