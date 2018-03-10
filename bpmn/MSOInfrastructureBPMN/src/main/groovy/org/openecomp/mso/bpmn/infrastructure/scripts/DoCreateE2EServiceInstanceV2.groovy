@@ -227,7 +227,7 @@ public class DoCreateE2EServiceInstanceV2 extends AbstractServiceTaskProcessor {
 		try {
 			String serviceInstanceName = execution.getVariable("serviceInstanceName")
 			boolean succInAAI = execution.getVariable("GENGS_SuccessIndicator")
-			if(succInAAI != true){
+			if(!succInAAI){
 				utils.log("INFO","Error getting Service-instance from AAI", + serviceInstanceName, isDebugEnabled)
 				WorkflowException workflowException = execution.getVariable("WorkflowException")
 				utils.logAudit("workflowException: " + workflowException)
@@ -244,7 +244,7 @@ public class DoCreateE2EServiceInstanceV2 extends AbstractServiceTaskProcessor {
 			else
 			{
 				boolean foundInAAI = execution.getVariable("GENGS_FoundIndicator")
-				if(foundInAAI == true){
+				if(foundInAAI){
 					utils.log("INFO","Found Service-instance in AAI", isDebugEnabled)
 					msg = "ServiceInstance already exists in AAI:" + serviceInstanceName
 					utils.log("INFO", msg, isDebugEnabled)
@@ -270,7 +270,7 @@ public class DoCreateE2EServiceInstanceV2 extends AbstractServiceTaskProcessor {
 		try {
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
 			boolean succInAAI = execution.getVariable("GENPS_SuccessIndicator")
-			if(succInAAI != true){
+			if(!succInAAI){
 				utils.log("INFO","Error putting Service-instance in AAI", + serviceInstanceId, isDebugEnabled)
 				WorkflowException workflowException = execution.getVariable("WorkflowException")
 				utils.logAudit("workflowException: " + workflowException)
@@ -311,7 +311,7 @@ public class DoCreateE2EServiceInstanceV2 extends AbstractServiceTaskProcessor {
 		try {
 			String serviceInstanceName = execution.getVariable("serviceInstanceName")
 			boolean succInAAI = execution.getVariable("GENGS_SuccessIndicator")
-			if(succInAAI != true){
+			if(!succInAAI){
 				utils.log("INFO","Error getting Service-instance from AAI in postProcessAAIGET2", + serviceInstanceName, isDebugEnabled)
 				WorkflowException workflowException = execution.getVariable("WorkflowException")
 				utils.logAudit("workflowException: " + workflowException)
@@ -328,7 +328,7 @@ public class DoCreateE2EServiceInstanceV2 extends AbstractServiceTaskProcessor {
 			else
 			{
 				boolean foundInAAI = execution.getVariable("GENGS_FoundIndicator")
-				if(foundInAAI == true){
+				if(foundInAAI){
 					String aaiService = execution.getVariable("GENGS_service")
 					if (!isBlank(aaiService) && (utils.nodeExists(aaiService, "service-instance-name"))) {
 						execution.setVariable("serviceInstanceName",  utils.getNodeText1(aaiService, "service-instance-name"))

@@ -725,7 +725,7 @@ class SDNCAdapterUtils {
 			execution.setVariable(prefix+'sdncResponseSuccess', false)
 			taskProcessor.utils.log("DEBUG", "Response" + ' = ' + (response == null ? "" : System.lineSeparator()) + response, isDebugLogEnabled)
 
-			if (successIndicator == true){
+			if (successIndicator){
 				if (response == null || response.trim().equals("")) {
 					taskProcessor.utils.log("DEBUG", response + ' is empty');
 					exceptionUtil.buildAndThrowWorkflowException(execution, 500, "SDNCAdapter Workflow Response is Empty")
@@ -842,7 +842,7 @@ class SDNCAdapterUtils {
 					execution.setVariable(prefix+'sdncResponseSuccess', false)
 
 					taskProcessor.utils.log("sdncAdapter Success Indicator is: " + success, isDebugLogEnabled)
-					if (success == true) {
+					if (success) {
 
 						// we need to look inside the request data for error
 						def String callbackRequestData = taskProcessor.utils.getNodeXml(response, 'RequestData', false)

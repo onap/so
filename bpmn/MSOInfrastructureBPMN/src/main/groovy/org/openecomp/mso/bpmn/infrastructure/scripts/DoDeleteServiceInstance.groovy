@@ -308,7 +308,7 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 			boolean foundInAAI = execution.getVariable("GENGS_FoundIndicator")
 			String serviceType = ""
 
-			if(foundInAAI == true){
+			if(foundInAAI){
 				utils.log("DEBUG","Found Service-instance in AAI", isDebugEnabled)
 
 				//Extract GlobalSubscriberId
@@ -409,7 +409,7 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 				}
 			}else{
 				boolean succInAAI = execution.getVariable("GENGS_SuccessIndicator")
-				if(succInAAI != true){
+				if(!succInAAI){
 					utils.log("DEBUG","Error getting Service-instance from AAI", + serviceInstanceId, isDebugEnabled)
 					WorkflowException workflowException = execution.getVariable("WorkflowException")
 					utils.logAudit("workflowException: " + workflowException)
@@ -443,7 +443,7 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 		try {
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
 			boolean succInAAI = execution.getVariable("GENDS_SuccessIndicator")
-			if(succInAAI != true){
+			if(!succInAAI){
 				msg = "Error deleting Service-instance in AAI" + serviceInstanceId
 				utils.log("DEBUG", msg, isDebugEnabled)
 				WorkflowException workflowException = execution.getVariable("WorkflowException")

@@ -181,7 +181,7 @@ class DoCreateVnfAndModulesRollback extends AbstractServiceTaskProcessor {
 			utils.log("ERROR", "Exception Occured Processing postProcessCreateVfModuleRollback. Exception is:\n" + e, isDebugLogEnabled)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during postProcessCreateVfModuleRollback Method:\n" + e.getMessage())
 		}
-		if (rolledBack == false) {
+		if (!rolledBack) {
 			logDebug("Failure on DoCreateVfModuleRollback", isDebugLogEnabled)
 			utils.log("ERROR", "Unsuccessful rollback of DoCreateVfModule")
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during rollback of DoCreateVfModule")

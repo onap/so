@@ -177,14 +177,14 @@ public class DoCreateServiceInstanceRollback extends AbstractServiceTaskProcesso
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
 			boolean rollbackAAI = execution.getVariable("rollbackAAI")
 			boolean rollbackSDNC = execution.getVariable("rollbackSDNC")
-			if (rollbackAAI == true || rollbackSDNC == true)
+			if (rollbackAAI || rollbackSDNC)
 			{
 				execution.setVariable("rolledBack", true)
 			}
-			if (rollbackAAI == true)
+			if (rollbackAAI)
 			{
 				boolean succInAAI = execution.getVariable("GENDS_SuccessIndicator")
-				if(succInAAI != true){
+				if(!succInAAI){
 					execution.setVariable("rolledBack", false) //both sdnc and aai must be successful to declare rollback Succesful
 					execution.setVariable("rollbackError", "Error deleting service-instance in AAI for rollback")
 					utils.log("DEBUG","Error deleting service-instance in AAI for rollback", + serviceInstanceId, isDebugEnabled)
