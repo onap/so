@@ -157,14 +157,9 @@ public abstract class RestClient {
 		}
 		client.register(this.getMapper());
 		Optional<ClientResponseFilter> responseFilter = this.addResponseFilter();
-		if (responseFilter.isPresent()) {
-			client.register(responseFilter.get());
-		}
-		if (!path.isPresent()) {
-			webTarget = client.target(host.toString());
-		} else {
-			webTarget = client.target(UriBuilder.fromUri(host + path.get().toString()));
-		}
+		responseFilter.ifPresent(clientResponseFilter -> client.register(clientResponseFilter));
+		webTarget = path.<WebTarget>map(uri -> client.target(UriBuilder.fromUri(host + uri.toString())))
+			.orElseGet(() -> client.target(host.toString()));
 		this.accept = MediaType.APPLICATION_JSON;
 		this.contentType = MediaType.APPLICATION_JSON;
 	}
