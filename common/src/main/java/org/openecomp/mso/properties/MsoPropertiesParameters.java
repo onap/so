@@ -23,8 +23,8 @@ package org.openecomp.mso.properties;
 
 public class MsoPropertiesParameters {
 	
-	protected enum MsoPropertiesType {JSON_PROP,JAVA_PROP};
-	
+	protected enum MsoPropertiesType {JSON_PROP,JAVA_PROP}
+
 	protected MsoPropertiesType msoPropertiesType;
 	
 	protected int refreshCounter;
