@@ -217,7 +217,7 @@ public class PropertyConfigurationSetup {
 			String newTimestamp = PropertyConfiguration.getInstance().getProperties(type)
 				.get(PropertyConfiguration.TIMESTAMP_PROPERTY);
 
-			if (newTimestamp != oldTimestamp) {
+			if (!newTimestamp.equals(oldTimestamp)) {
 				return;
 			}
 
