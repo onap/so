@@ -115,7 +115,7 @@ public class MsoLogger {
             return this.value;
         }
 
-        private ResponseCode(int value) {
+        ResponseCode(int value) {
             this.value = value;
         }
     };
@@ -130,7 +130,7 @@ public class MsoLogger {
             return this.value;
         }
 
-        private ErrorCode(int value) {
+        ErrorCode(int value) {
             this.value = value;
         }
     };

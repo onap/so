@@ -27,7 +27,7 @@ public enum InventoryType{
 
 	private String type;
 
-	private InventoryType(String type){
+	InventoryType(String type){
 		this.type = type;
 	}
 
