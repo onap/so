@@ -33,12 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-//import org.opendaylight.yang.gen.v1.org.onap.sdnc.northbound.generic.resource.rev170824.request.information.RequestInformation;
-//import org.opendaylight.yang.gen.v1.org.onap.sdnc.northbound.generic.resource.rev170824.sdnc.request.header.SdncRequestHeader;
-
-/**
- * Created by 10112215 on 2017/9/20.
- */
 public abstract class AbstractBuilder<IN, OUT> {
 
      public static final String OPERATION_TYPE = "operationType";

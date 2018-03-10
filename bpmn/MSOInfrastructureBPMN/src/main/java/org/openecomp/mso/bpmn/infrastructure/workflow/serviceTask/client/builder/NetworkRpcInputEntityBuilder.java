@@ -26,9 +26,6 @@ import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.entity.
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by 10112215 on 2017/9/20.
- */
 public class NetworkRpcInputEntityBuilder extends AbstractBuilder<Map<String, String>, RpcNetworkTopologyOperationInputEntity> {
 
     @Override

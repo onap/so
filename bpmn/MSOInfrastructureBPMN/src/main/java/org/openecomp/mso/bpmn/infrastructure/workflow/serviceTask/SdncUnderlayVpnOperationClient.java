@@ -35,9 +35,6 @@ import org.openecomp.mso.requestsdb.ResourceOperationStatus;
 
 import java.util.Map;
 
-/**
- * Created by 10112215 on 2017/9/21.
- */
 public class SdncUnderlayVpnOperationClient {
 
     private static final String DEFAULT_MSB_IP = "127.0.0.1";

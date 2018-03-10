@@ -24,9 +24,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-/**
- * Created by 10112215 on 2017/9/26.
- */
 public class ServiceInputParametersEntity {
     public List<ParamEntity> getParamList() {
         return paramList;
