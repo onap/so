@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
-import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.Comparator;
 
@@ -500,10 +499,7 @@ public class ToscaResourceInstaller {// implements IVfResourceInstaller {
 						List<org.openecomp.sdc.toscaparser.api.Group> vfGroups = toscaResourceStruct.getSdcCsarHelper().getVfModulesByVf(vfCustomizationUUID);
 						logger.debug("vfGroups:" + vfGroups.toString());
 						
-						Collections.sort(vfGroups, new Comparator<org.openecomp.sdc.toscaparser.api.Group>() {
-							@Override
-							public int compare(org.openecomp.sdc.toscaparser.api.Group group1, org.openecomp.sdc.toscaparser.api.Group group2) {
-								
+						vfGroups.sort((group1, group2) -> {
 								//Field name1Field = group1.class.getDeclaredField("name");
 								//name1Field.setAccessible(true);
 								String thisName = group1.getName(); //(String) name1Field.get(group1);
@@ -526,8 +522,6 @@ public class ToscaResourceInstaller {// implements IVfResourceInstaller {
 								}
 								
 								return new Integer(thisDigit).compareTo(new Integer(thatDigit));
-
-							}
 							});
 						
 						logger.debug("vfGroupsAfter:" + vfGroups.toString());

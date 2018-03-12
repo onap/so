@@ -403,7 +403,7 @@ public class JsonUtils {
 					return 0;
 				} else {
 					if (rawValue instanceof Integer) {
-						msoLogger.debug("getJsonIntValue(): the raw value is an Integer Object=" + ((String) rawValue).toString());
+						msoLogger.debug("getJsonValue(): the raw value is an Integer Object=" + ((String) rawValue));
 						return (Integer) rawValue;
 					} else {
 						msoLogger.debug("getJsonIntValue(): the raw value is NOT an Integer Object=" + rawValue.toString());

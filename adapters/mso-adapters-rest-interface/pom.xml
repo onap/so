@@ -58,13 +58,6 @@
 			<artifactId>http-connector</artifactId>
 			<version>${openstack.version}</version>
 		</dependency>
-<!-- ROBD - check if this is needed
-		<dependency>
-			<groupId>org.onap.so.adapters</groupId>
-			<artifactId>mso-adapter-utils</artifactId>
-			<version>${project.version}</version>
-		</dependency>
--->
 		<dependency>
 			<groupId>org.onap.so</groupId>
 			<artifactId>common</artifactId>

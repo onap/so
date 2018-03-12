@@ -22,7 +22,7 @@ package org.openecomp.mso.bpmn.common.scripts;
 
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.bpmn.core.json.JsonUtils;
 import org.springframework.web.util.UriUtils
@@ -43,7 +43,7 @@ class SDNCAdapterUtils {
 		this.taskProcessor = taskProcessor
 	}
 
-	String SDNCAdapterFeatureRequest(DelegateExecution execution, String requestName, String action, String callbackURL, String serviceOperation, String timeoutValueInMinutes) {
+	String SDNCAdapterFeatureRequest(DelegateExecution execution, String requestName, String action, String callbackURL, String serviceOperation, String timeoutValueInMinutes) {
 		def utils=new MsoUtils()
 
 		def prefix = execution.getVariable('prefix')
@@ -88,7 +88,7 @@ class SDNCAdapterUtils {
 		return sdncAdapterFeatureRequest
 	}
 
-	String SDNCAdapterActivateVnfRequest(DelegateExecution execution, String action, String callbackURL, String serviceOperation, String msoAction, String timeoutValueInMinutes) {
+	String SDNCAdapterActivateVnfRequest(DelegateExecution execution, String action, String callbackURL, String serviceOperation, String msoAction, String timeoutValueInMinutes) {
 		def utils=new MsoUtils()
 
 		def prefix = execution.getVariable('prefix')
@@ -131,7 +131,7 @@ class SDNCAdapterUtils {
 		return sdncAdapterActivateVnfRequest
 	}
 
-	String SDNCAdapterL3ToHigherLayerRequest(DelegateExecution execution, String action, String callbackURL, String serviceOperation, String timeoutValueInMinutes) {
+	String SDNCAdapterL3ToHigherLayerRequest(DelegateExecution execution, String action, String callbackURL, String serviceOperation, String timeoutValueInMinutes) {
 		def utils=new MsoUtils()
 
 		def prefix = execution.getVariable('prefix')
@@ -230,7 +230,7 @@ class SDNCAdapterUtils {
 
 
 
-	private void SDNCAdapterActivateRequest(DelegateExecution execution, String resultVar, String svcAction,
+	private void SDNCAdapterActivateRequest(DelegateExecution execution, String resultVar, String svcAction,
 			String svcOperation, String additionalData) {
 			def utils=new MsoUtils()
 
@@ -329,7 +329,7 @@ class SDNCAdapterUtils {
 	 * @param resultVar the execution variable in which the result will be stored
 	 * @param isAic3 boolean to indicate whether request is for AIC3.0
 	 */
-	public void sdncReservePrep(DelegateExecution execution, String action, String resultVar, boolean isAic3) {
+	public void sdncReservePrep(DelegateExecution execution, String action, String resultVar, boolean isAic3) {
 		sdncPrep(execution, resultVar, action , 'service-configuration-operation', null, isAic3, this.taskProcessor)
 	}
 
@@ -356,7 +356,7 @@ class SDNCAdapterUtils {
 	 * @param additionalData additional XML content to be inserted into the RequestData element (may be null)
 	 * @param isAic3 boolean to indicate whether request is for AIC3.0
 	 */
-	public void sdncPrep(DelegateExecution execution, String resultVar, String svcAction,
+	public void sdncPrep(DelegateExecution execution, String resultVar, String svcAction,
 			String svcOperation, String additionalData, boolean isAic3, AbstractServiceTaskProcessor taskProcessor) {
 		def method = getClass().getSimpleName() + '.sdncPrep(' +
 			'execution=' + execution.getId() +
@@ -489,7 +489,7 @@ class SDNCAdapterUtils {
 	 * @param additionalData additional XML content to be inserted into the
 	 *   RequestData element (may be null)
 	 */
-	 public String sdncTopologyRequestV2 (DelegateExecution execution, String requestXML, String serviceInstanceId, String callbackUrl, String action, String requestAction, String cloudRegionId, networkId, String queryAAIResponse, String additionalData) {
+	 public String sdncTopologyRequestV2 (DelegateExecution execution, String requestXML, String serviceInstanceId, String callbackUrl, String action, String requestAction, String cloudRegionId, networkId, String queryAAIResponse, String additionalData) {
 		 def utils=new MsoUtils()
 
 		 // SNDC is expecting request Id for header as unique each call.
@@ -607,7 +607,7 @@ class SDNCAdapterUtils {
 	  * @param additionalData additional XML content to be inserted into the
 	  *   RequestData element (may be null)
 	  */
-	  public String sdncTopologyRequestRsrc (DelegateExecution execution, String requestXML, String serviceInstanceId, String callbackUrl, String action, String requestAction, String cloudRegionId, networkId, String additionalData) {
+	  public String sdncTopologyRequestRsrc (DelegateExecution execution, String requestXML, String serviceInstanceId, String callbackUrl, String action, String requestAction, String cloudRegionId, networkId, String additionalData) {
 		  def utils=new MsoUtils()
 
 		  // SNDC is expecting request Id for header as unique each call.
@@ -769,7 +769,7 @@ class SDNCAdapterUtils {
 			 * @param responseVar the execution variable in which the response is stored
 			 * @param workflowException the WorkflowException Object returned from sdnc call
 			 */
-	public void validateSDNCResponse(DelegateExecution execution, String response, WorkflowException workflowException, boolean successIndicator){
+	public void validateSDNCResponse(DelegateExecution execution, String response, WorkflowException workflowException, boolean successIndicator){
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		taskProcessor.utils.log("DEBUG", "SDNC Response is: " + response, isDebugLogEnabled)
 		taskProcessor.utils.log("DEBUG", "SuccessIndicator is: " + successIndicator, isDebugLogEnabled)
@@ -779,7 +779,7 @@ class SDNCAdapterUtils {
 			execution.setVariable(prefix+'sdncResponseSuccess', false)
 			taskProcessor.utils.log("DEBUG", "Response" + ' = ' + (response == null ? "" : System.lineSeparator()) + response, isDebugLogEnabled)
 
-			if (successIndicator == true){
+			if (successIndicator){
 				if (response == null || response.trim().equals("")) {
 					taskProcessor.utils.log("DEBUG", response + ' is empty');
 					exceptionUtil.buildAndThrowWorkflowException(execution, 500, "SDNCAdapter Workflow Response is Empty")
@@ -883,7 +883,7 @@ class SDNCAdapterUtils {
 			 * @param responseCodeVar the execution variable in which the response code is stored
 			 * @param errorResponseVar the execution variable in which the error response is stored
 			 */
-			public void validateL3BondingSDNCResp(DelegateExecution execution, String response, WorkflowException workflowException, boolean success) {
+			public void validateL3BondingSDNCResp(DelegateExecution execution, String response, WorkflowException workflowException, boolean success) {
 				def method = getClass().getSimpleName() + '.validateL3BondingSDNCResp(' +
 					'execution=' + execution.getId() +
 					', response=' + response +
@@ -897,7 +897,7 @@ class SDNCAdapterUtils {
 					execution.setVariable(prefix+'sdncResponseSuccess', false)
 
 					taskProcessor.utils.log("sdncAdapter Success Indicator is: " + success, isDebugLogEnabled)
-					if (success == true) {
+					if (success) {
 
 						// we need to look inside the request data for error
 						def String callbackRequestData = taskProcessor.utils.getNodeXml(response, 'RequestData', false)

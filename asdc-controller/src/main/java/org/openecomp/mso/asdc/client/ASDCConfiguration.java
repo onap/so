@@ -455,7 +455,7 @@ public class ASDCConfiguration implements IConfiguration {
 
         MsoJsonProperties msoProp;
         try {
-            List <String> result = new ArrayList <String> ();
+            List <String> result = new ArrayList<>();
             msoProp = new MsoPropertiesFactory ().getMsoJsonProperties (MSO_PROP_ASDC);
 
             if (msoProp.getJsonRootNode ().get (PARAMETER_PATTERN) != null) {

@@ -245,7 +245,7 @@ public class HealthCheckHandler  {
         payload.append("<soapenv:Header/>\n");
         payload.append("<soapenv:Body>\n");
         payload.append("<req:getSiteStatus>\n");
-        payload.append("<siteName>" + site + "</siteName>\n");
+        payload.append("<siteName>").append(site).append("</siteName>\n");
         payload.append("</req:getSiteStatus>\n");
         payload.append("</soapenv:Body>\n");
         payload.append("</soapenv:Envelope>\n");

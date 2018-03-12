@@ -273,7 +273,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 					NetworkUtils networkUtils = new NetworkUtils()
 			        isVfRelationshipExist = networkUtils.isVfRelationshipExist(aaiResponseAsString)
 					execution.setVariable(Prefix + "isVfRelationshipExist", isVfRelationshipExist)
-					if (isVfRelationshipExist == true) {
+					if (isVfRelationshipExist) {
 						String relationshipMessage = "AAI Query Success Response but 'vf-module' relationship exist, not allowed to delete: network Id: " + networkId
 						exceptionUtil.buildWorkflowException(execution, 2500, relationshipMessage)
 

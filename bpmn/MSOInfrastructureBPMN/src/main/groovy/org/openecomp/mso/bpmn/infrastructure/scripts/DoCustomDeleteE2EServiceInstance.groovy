@@ -317,7 +317,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 			boolean foundInAAI = execution.getVariable("GENGS_FoundIndicator")
 			String serviceType = ""
 
-			if(foundInAAI == true){
+			if(foundInAAI){
 				utils.log("INFO","Found Service-instance in AAI", isDebugEnabled)
 
 				String siData = execution.getVariable("GENGS_service")
@@ -412,7 +412,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 				}
 			}else{
 				boolean succInAAI = execution.getVariable("GENGS_SuccessIndicator")
-				if(succInAAI != true){
+				if(!succInAAI){
 					utils.log("INFO","Error getting Service-instance from AAI", + serviceInstanceId, isDebugEnabled)
 					WorkflowException workflowException = execution.getVariable("WorkflowException")
 					utils.logAudit("workflowException: " + workflowException)
@@ -446,7 +446,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 		try {
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
 			boolean succInAAI = execution.getVariable("GENDS_SuccessIndicator")
-			if(succInAAI != true){
+			if(!succInAAI){
 				msg = "Error deleting Service-instance in AAI" + serviceInstanceId
 				utils.log("INFO", msg, isDebugEnabled)
 				WorkflowException workflowException = execution.getVariable("WorkflowException")
