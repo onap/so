@@ -114,7 +114,7 @@ csi.sendSyncError(execution)]]></bpmn:script>
       <bpmn:sequenceFlow id="SequenceFlow_01umodj" sourceRef="ScriptTask_0u8o9p2" targetRef="CallActivity_1ang7q8" />
     </bpmn:subProcess>
     <bpmn:scriptTask id="ScriptTask_0xupxj9" name="Send Sync Ack Response" scriptFormat="groovy">
-      <bpmn:incoming>SequenceFlow_081z8l2</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_0z4faf9</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_19eilro</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
 def csi = new  UpdateCustomE2EServiceInstance()
@@ -133,7 +133,7 @@ csi.sendSyncResponse(execution)]]></bpmn:script>
     <bpmn:sequenceFlow id="SequenceFlow_19eilro" sourceRef="ScriptTask_0xupxj9" targetRef="DoUpdateE2EServiceInstance" />
     <bpmn:sequenceFlow id="SequenceFlow_0klbpxx" sourceRef="DoUpdateE2EServiceInstance" targetRef="ExclusiveGateway_0aqn64l" />
     <bpmn:sequenceFlow id="SequenceFlow_0yayvrf" sourceRef="CallActivity_02fyxz0" targetRef="EndEvent_0bpd6c0" />
-    <bpmn:sequenceFlow id="SequenceFlow_0z4faf9" sourceRef="ScriptTask_1s09c7d" targetRef="Task_1tqjch6" />
+    <bpmn:sequenceFlow id="SequenceFlow_0z4faf9" sourceRef="ScriptTask_1s09c7d" targetRef="ScriptTask_0xupxj9" />
     <bpmn:sequenceFlow id="SequenceFlow_14zu6wr" name="yes" sourceRef="ExclusiveGateway_0aqn64l" targetRef="ScriptTask_0ttvn8r">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[#{execution.getVariable("WorkflowException") == null}]]></bpmn:conditionExpression>
     </bpmn:sequenceFlow>
@@ -141,37 +141,6 @@ csi.sendSyncResponse(execution)]]></bpmn:script>
     <bpmn:sequenceFlow id="SequenceFlow_1fueo69" name="no" sourceRef="ExclusiveGateway_0aqn64l" targetRef="EndEvent_07uk5iy">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[#{execution.getVariable("WorkflowException") != null}]]></bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="SequenceFlow_1euqjsp" sourceRef="Task_1tqjch6" targetRef="Task_19mxcw3" />
-    <bpmn:scriptTask id="Task_1tqjch6" name="Init Service Operation Status" scriptFormat="groovy">
-      <bpmn:incoming>SequenceFlow_0z4faf9</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_1euqjsp</bpmn:outgoing>
-      <bpmn:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
-def csi= new UpdateCustomE2EServiceInstance()
-csi.prepareInitServiceOperationStatus(execution)]]></bpmn:script>
-    </bpmn:scriptTask>
-    <bpmn:serviceTask id="Task_19mxcw3" name="Update Service Operation Status">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${CVFMI_dbAdapterEndpoint}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">Basic QlBFTENsaWVudDpwYXNzd29yZDEk</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">${CVFMI_updateServiceOperStatusRequest}</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="CVFMI_dbResponseCode">${statusCode}</camunda:outputParameter>
-            <camunda:outputParameter name="CVFMI_dbResponse">${response}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
-      <bpmn:incoming>SequenceFlow_1euqjsp</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_081z8l2</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="SequenceFlow_081z8l2" sourceRef="Task_19mxcw3" targetRef="ScriptTask_0xupxj9" />
   </bpmn:process>
   <bpmn:error id="Error_0nbdy47" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
@@ -186,7 +155,7 @@ csi.prepareInitServiceOperationStatus(execution)]]></bpmn:script>
         <dc:Bounds x="463" y="632" width="394" height="188" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="CallActivity_0rhljy8_di" bpmnElement="DoUpdateE2EServiceInstance">
-        <dc:Bounds x="751" y="158" width="100" height="80" />
+        <dc:Bounds x="717" y="158" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_0bpd6c0_di" bpmnElement="EndEvent_0bpd6c0">
         <dc:Bounds x="1258" y="286" width="36" height="36" />
@@ -195,7 +164,7 @@ csi.prepareInitServiceOperationStatus(execution)]]></bpmn:script>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ScriptTask_1s09c7d_di" bpmnElement="ScriptTask_1s09c7d">
-        <dc:Bounds x="115" y="158" width="100" height="80" />
+        <dc:Bounds x="214" y="158" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ScriptTask_0ttvn8r_di" bpmnElement="ScriptTask_0ttvn8r">
         <dc:Bounds x="1038" y="158" width="100" height="80" />
@@ -207,7 +176,7 @@ csi.prepareInitServiceOperationStatus(execution)]]></bpmn:script>
         <dc:Bounds x="348" y="370" width="679" height="194" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ScriptTask_0xupxj9_di" bpmnElement="ScriptTask_0xupxj9">
-        <dc:Bounds x="610" y="158" width="100" height="80" />
+        <dc:Bounds x="459" y="158" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ExclusiveGateway_0aqn64l_di" bpmnElement="ExclusiveGateway_0aqn64l" isMarkerVisible="true">
         <dc:Bounds x="903" y="173" width="50" height="50" />
@@ -223,23 +192,23 @@ csi.prepareInitServiceOperationStatus(execution)]]></bpmn:script>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0s2spoq_di" bpmnElement="SequenceFlow_0s2spoq">
         <di:waypoint xsi:type="dc:Point" x="30" y="198" />
-        <di:waypoint xsi:type="dc:Point" x="115" y="198" />
+        <di:waypoint xsi:type="dc:Point" x="214" y="198" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="27.5" y="177" width="90" height="12" />
+          <dc:Bounds x="77" y="177" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_19eilro_di" bpmnElement="SequenceFlow_19eilro">
-        <di:waypoint xsi:type="dc:Point" x="710" y="198" />
-        <di:waypoint xsi:type="dc:Point" x="751" y="198" />
+        <di:waypoint xsi:type="dc:Point" x="559" y="198" />
+        <di:waypoint xsi:type="dc:Point" x="717" y="198" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="685.5" y="177" width="90" height="12" />
+          <dc:Bounds x="593" y="177" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0klbpxx_di" bpmnElement="SequenceFlow_0klbpxx">
-        <di:waypoint xsi:type="dc:Point" x="851" y="198" />
+        <di:waypoint xsi:type="dc:Point" x="817" y="198" />
         <di:waypoint xsi:type="dc:Point" x="903" y="198" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="832" y="177" width="90" height="12" />
+          <dc:Bounds x="815" y="177" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0yayvrf_di" bpmnElement="SequenceFlow_0yayvrf">
@@ -250,10 +219,10 @@ csi.prepareInitServiceOperationStatus(execution)]]></bpmn:script>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0z4faf9_di" bpmnElement="SequenceFlow_0z4faf9">
-        <di:waypoint xsi:type="dc:Point" x="215" y="198" />
-        <di:waypoint xsi:type="dc:Point" x="273" y="198" />
+        <di:waypoint xsi:type="dc:Point" x="314" y="198" />
+        <di:waypoint xsi:type="dc:Point" x="459" y="198" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="199" y="177" width="90" height="12" />
+          <dc:Bounds x="341.5" y="177" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_14zu6wr_di" bpmnElement="SequenceFlow_14zu6wr">
@@ -361,26 +330,6 @@ csi.prepareInitServiceOperationStatus(execution)]]></bpmn:script>
         <di:waypoint xsi:type="dc:Point" x="798" y="474" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="715.5" y="459" width="0" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_1euqjsp_di" bpmnElement="SequenceFlow_1euqjsp">
-        <di:waypoint xsi:type="dc:Point" x="373" y="198" />
-        <di:waypoint xsi:type="dc:Point" x="446" y="198" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="364.5" y="177" width="90" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ScriptTask_1a3vwas_di" bpmnElement="Task_1tqjch6">
-        <dc:Bounds x="273" y="158" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_1afiuuq_di" bpmnElement="Task_19mxcw3">
-        <dc:Bounds x="446" y="158" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_081z8l2_di" bpmnElement="SequenceFlow_081z8l2">
-        <di:waypoint xsi:type="dc:Point" x="546" y="198" />
-        <di:waypoint xsi:type="dc:Point" x="610" y="198" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="533" y="177" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
