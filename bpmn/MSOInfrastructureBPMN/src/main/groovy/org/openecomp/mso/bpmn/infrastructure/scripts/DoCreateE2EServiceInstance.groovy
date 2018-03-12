@@ -27,6 +27,12 @@ import groovy.json.*
 import org.openecomp.mso.bpmn.core.domain.ServiceDecomposition
 import org.openecomp.mso.bpmn.core.domain.ServiceInstance
 import org.openecomp.mso.bpmn.core.domain.ModelInfo
+import org.openecomp.mso.bpmn.core.domain.Resource
+import org.openecomp.mso.bpmn.core.domain.AllottedResource
+import org.openecomp.mso.bpmn.core.domain.NetworkResource
+import org.openecomp.mso.bpmn.core.domain.VnfResource
+import org.openecomp.mso.bpmn.common.recipe.ResourceInput
+import org.openecomp.mso.bpmn.common.recipe.BpmnRestClient
 import org.openecomp.mso.bpmn.core.json.JsonUtils
 import org.openecomp.mso.bpmn.common.scripts.AaiUtil
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
@@ -41,6 +47,8 @@ import org.openecomp.mso.rest.RESTConfig
 
 import java.util.List;
 import java.util.UUID;
+
+import javax.mail.Quota.Resource;
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
@@ -225,7 +233,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		try {
 			String serviceInstanceName = execution.getVariable("serviceInstanceName")
 			boolean succInAAI = execution.getVariable("GENGS_SuccessIndicator")
-			if(succInAAI != true){
+			if(!succInAAI){
 				utils.log("INFO","Error getting Service-instance from AAI", + serviceInstanceName, isDebugEnabled)
 				WorkflowException workflowException = execution.getVariable("WorkflowException")
 				utils.logAudit("workflowException: " + workflowException)
@@ -242,7 +250,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 			else
 			{
 				boolean foundInAAI = execution.getVariable("GENGS_FoundIndicator")
-				if(foundInAAI == true){
+				if(foundInAAI){
 					utils.log("INFO","Found Service-instance in AAI", isDebugEnabled)
 					msg = "ServiceInstance already exists in AAI:" + serviceInstanceName
 					utils.log("INFO", msg, isDebugEnabled)
@@ -266,7 +274,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		try {
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
 			boolean succInAAI = execution.getVariable("GENPS_SuccessIndicator")
-			if(succInAAI != true){
+			if(!succInAAI){
 				utils.log("INFO","Error putting Service-instance in AAI", + serviceInstanceId, isDebugEnabled)
 				WorkflowException workflowException = execution.getVariable("WorkflowException")
 				utils.logAudit("workflowException: " + workflowException)
@@ -305,7 +313,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		try {
 			String serviceInstanceName = execution.getVariable("serviceInstanceName")
 			boolean succInAAI = execution.getVariable("GENGS_SuccessIndicator")
-			if(succInAAI != true){
+			if(!succInAAI){
 				utils.log("INFO","Error getting Service-instance from AAI in postProcessAAIGET2", + serviceInstanceName, isDebugEnabled)
 				WorkflowException workflowException = execution.getVariable("WorkflowException")
 				utils.logAudit("workflowException: " + workflowException)
@@ -322,7 +330,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 			else
 			{
 				boolean foundInAAI = execution.getVariable("GENGS_FoundIndicator")
-				if(foundInAAI == true){
+				if(foundInAAI){
 					String aaiService = execution.getVariable("GENGS_service")
 					if (!isBlank(aaiService) && (utils.nodeExists(aaiService, "service-instance-name"))) {
 						execution.setVariable("serviceInstanceName",  utils.getNodeText1(aaiService, "service-instance-name"))
@@ -400,11 +408,11 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
             execution.setVariable("serviceInstanceId", serviceId)
             execution.setVariable("operationId", operationId)
             execution.setVariable("operationType", operationType)
-            String incomingRequest = execution.getVariable("uuiRequest")
-            String resourcesStr = jsonUtil.getJsonValue(incomingRequest, "service.parameters.resources")  
-            List<String> resourceList = jsonUtil.StringArrayToList(execution, resourcesStr)   
+            ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
+            List<Resource>  resourceList = serviceDecomposition.getServiceResources()
+            
             for(String resource : resourceList){
-                    resourceTemplateUUIDs  = resourceTemplateUUIDs + jsonUtil.getJsonValue(resource, "resourceId") + ":"
+                    resourceTemplateUUIDs  = resourceTemplateUUIDs + resource.getModelInfo().getModelCustomizationUuid() + ":"                            
             }           
 
             def dbAdapterEndpoint = "http://mso.mso.testlab.openecomp.org:8080/dbadapters/RequestsDbAdapter"
@@ -491,41 +499,34 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
         if (networks == null) {
             utils.log("INFO", "No matching networks in Catalog DB for serviceModelUUID=" + serviceModelUUID, isDebugEnabled)
         }
-        String incomingRequest = execution.getVariable("uuiRequest")
-        String resourcesStr = jsonUtil.getJsonValue(incomingRequest, "service.parameters.resources")  
-        List<String> resourceList = jsonUtil.StringArrayToList(execution, resourcesStr) 
-        // Only one match herenetwork
-        List<String> nsResources = new ArrayList<String>()
-        List<String> wanResources = new ArrayList<String>()
-        List<String> resourceSequence = new  ArrayList<String>()
-        for(String resource : resourceList){
-            String resourceName = jsonUtil.getJsonValue(resource, "resourceName")  
-            String resourceUUID = jsonUtil.getJsonValue(resource, "resourceId")
-            //check is network.
-            boolean isNetwork = false;
-            if(networks != null){
-                for(int i = 0; i < networks.size(); i++){
-                    String networkUUID = jsonUtil.getJsonValueForKey(networks.get(i), "modelVersionId")
-                    if(StringUtils.equals(resourceUUID, networkUUID)){
-                        isNetwork = true
-                        break
-                    }
-                }
-            }
-            if(isNetwork){
-                wanResources.add(resourceName)
-            }else{
-                nsResources.add(resourceName)
-            }
+        ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
+                
+        //we use VF to define a network service
+        List<VnfResource>  vnfResourceList= serviceDecomposition.getServiceVnfs()
+        
+        //here wan is defined as a network resource        
+        List<NetworkResource> networkResourceList = serviceDecomposition.getServiceNetworks()
+
+        //allotted resource
+        List<AllottedResource> arResourceList= serviceDecomposition.getServiceAllottedResources()
+        //define sequenced resource list, we deploy vf first and then network and then ar
+        //this is defaule sequence
+        List<Resource>  sequencedResourceList = new ArrayList<Resource>();
+        if(null != vnfResourceList){
+            sequencedResourceList.addAll(vnfResourceList)
         }
-        resourceSequence.addAll(nsResources)
-        resourceSequence.addAll(wanResources)
-        String isContainsWanResource = wanResources.isEmpty() ? "false" : "true"
+        if(null != networkResourceList){
+            sequencedResourceList.addAll(networkResourceList)
+        }
+        if(null != arResourceList){
+            sequencedResourceList.addAll(arResourceList)
+        }
+
+        String isContainsWanResource = networkResourceList.isEmpty() ? "false" : "true"
         execution.setVariable("isContainsWanResource", isContainsWanResource)
         execution.setVariable("currentResourceIndex", 0)
-        execution.setVariable("resourceSequence", resourceSequence)
-        utils.log("INFO", "resourceSequence: " + resourceSequence, isDebugEnabled)  
-        execution.setVariable("wanResources", wanResources)
+        execution.setVariable("sequencedResourceList", sequencedResourceList)
+        utils.log("INFO", "sequencedResourceList: " + sequencedResourceList, isDebugEnabled)  
         utils.log("INFO", "======== COMPLETED sequenceResoure Process ======== ", isDebugEnabled)  
 	}
 	
@@ -533,15 +534,9 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 	    def isDebugEnabled=execution.getVariable("isDebugLogEnabled")   
         utils.log("INFO", "======== Start getCurrentResoure Process ======== ", isDebugEnabled)    
 	    def currentIndex = execution.getVariable("currentResourceIndex")
-	    List<String> resourceSequence = execution.getVariable("resourceSequence")  
-	    List<String> wanResources = execution.getVariable("wanResources")  
-	    String resourceName =  resourceSequence.get(currentIndex)
-	    execution.setVariable("resourceType",resourceName)
-	    if(wanResources.contains(resourceName)){
-	        execution.setVariable("controllerInfo", "SDN-C")
-	    }else{
-	        execution.setVariable("controllerInfo", "VF-C")
-	    }
+	    List<Resource> sequencedResourceList = execution.getVariable("sequencedResourceList")  
+	    Resource currentResource = sequencedResourceList.get(currentIndex)
+	    utils.log("INFO", "Now we deal with resouce:" + currentResource.getModelInfo().getModelName(), isDebugEnabled)  
         utils.log("INFO", "======== COMPLETED getCurrentResoure Process ======== ", isDebugEnabled)  
     }
 
@@ -554,8 +549,8 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
         def currentIndex = execution.getVariable("currentResourceIndex")
         def nextIndex =  currentIndex + 1
         execution.setVariable("currentResourceIndex", nextIndex)
-        List<String> resourceSequence = execution.getVariable("resourceSequence")    
-        if(nextIndex >= resourceSequence.size()){
+        List<String> sequencedResourceList = execution.getVariable("sequencedResourceList")    
+        if(nextIndex >= sequencedResourceList.size()){
             execution.setVariable("allResourceFinished", "true")
         }else{
             execution.setVariable("allResourceFinished", "false")
@@ -569,4 +564,59 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
      public void postConfigRequest(execution){
          //now do noting
      } 
+     
+     public void prepareResourceRecipeRequest(execution){
+         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")                 
+         utils.log("INFO", "======== Start prepareResourceRecipeRequest Process ======== ", isDebugEnabled) 
+         ResourceInput resourceInput = new ResourceInput()         
+         String serviceInstanceName = execution.getVariable("serviceInstanceName")
+         String resourceInstanceName = resourceType + "_" + serviceInstanceName
+         resourceInput.setResourceInstanceName(resourceInstanceName)
+         utils.log("INFO", "Prepare Resource Request resourceInstanceName:" + resourceInstanceName, isDebugEnabled)
+         String globalSubscriberId = execution.getVariable("globalSubscriberId")
+         String serviceType = execution.getVariable("serviceType")
+         String serviceInstanceId = execution.getVariable("serviceInstanceId")
+         String operationId = execution.getVariable("operationId")
+         String operationType = execution.getVariable("operationType")
+         resourceInput.setGlobalSubscriberId(globalSubscriberId)
+         resourceInput.setServiceType(serviceType)
+         resourceInput.setServiceInstanceId(serviceInstanceId)
+         resourceInput.setOperationId(operationId)
+         resourceInput.setOperationType(operationType);
+         def currentIndex = execution.getVariable("currentResourceIndex")
+         List<Resource> sequencedResourceList = execution.getVariable("sequencedResourceList")  
+         Resource currentResource = sequencedResourceList.get(currentIndex)
+         String resourceCustomizationUuid = currentResource.getModelInfo().getModelCustomizationUuid()
+         resourceInput.setResourceCustomizationUuid(resourceCustomizationUuid);
+         String resourceInvariantUuid = currentResource.getModelInfo().getModelInvariantUuid()
+         resourceInput.setResourceInvariantUuid(resourceInvariantUuid)
+         String resourceUuid = currentResource.getModelInfo().getModelUuid()
+         resourceInput.setResourceUuid(resourceUuid)
+         
+         String incomingRequest = execution.getVariable("uuiRequest")
+         String resourcesStr = jsonUtil.getJsonValue(incomingRequest, "service.parameters.resources")
+         String serviceRequestInputs = jsonUtil.getJsonValue(incomingRequest, "service.parameters.requestInputs")
+         String serviceDescription = jsonUtil.getJsonValue(incomingRequest, "service.description")  
+         resourceInput.setResourceInstanceDes(serviceDescription)
+         utils.log("INFO", "Prepare Resource Request:" + resourceInput.toString(), isDebugEnabled)
+         List<String> resourceList = jsonUtil.StringArrayToList(execution, resourcesStr)
+         String locationConstraints = ""
+         String resourceRequestInputs = ""
+         for(String resource : resourceList){
+             String resourceUuidTmp = jsonUtil.getJsonValue(resource, "resourceUuid")  
+             String resourceCustomizationUuidTmp = jsonUtil.getJsonValue(resource, "resourceCustomizationUuid")  
+             if(StringUtils.equals(resourceUuidTmp, resourceUuid) && StringUtils.equals(resourceCustomizationUuidTmp, resourceCustomizationUuid)){
+
+                 String resourceParameters = jsonUtil.getJsonValue(resource, "parameters")                
+                 locationConstraints =  jsonUtil.getJsonValue(resourceParameters, "locationConstraints")
+                 resourceRequestInputs =  jsonUtil.getJsonValue(resourceParameters, "requestInputs")
+             } 
+         }
+         //set the requestInputs from tempalte  To Be Done
+         //String resourceParameters = ResourceRequestBuilder.buildRequestParameters()
+         String resourceParameters = ""
+         resourceInput.setResourceParameters(resourceParameters)
+         execution.setVariable("resourceInput", resourceInput)
+         utils.log("INFO", "======== COMPLETED prepareResourceRecipeRequest Process ======== ", isDebugEnabled)      
+     }
 }

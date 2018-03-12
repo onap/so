@@ -259,16 +259,13 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 
 	/**
 	 * This method returns String representation of one combined list of Resources of All Types
-	 * @return
 	 */
 	@JsonIgnore
-	public String getServiceResourcesJsonString(){
-		StringBuilder serviceResourcesJsonStringBuffer = new StringBuilder();
-		serviceResourcesJsonStringBuffer.append(listToJson((this.getServiceNetworks())));
-		serviceResourcesJsonStringBuffer.append(listToJson((this.getServiceVnfs())));
-		serviceResourcesJsonStringBuffer.append(listToJson((this.getServiceAllottedResources())));
-		serviceResourcesJsonStringBuffer.append(listToJson((this.getServiceConfigResources())));
-		return serviceResourcesJsonStringBuffer.toString();
+	public String getServiceResourcesJsonString() {
+		return listToJson((this.getServiceNetworks())) +
+			listToJson((this.getServiceVnfs())) +
+			listToJson((this.getServiceAllottedResources())) +
+			listToJson((this.getServiceConfigResources()));
 	}
 
 	/**
@@ -308,7 +305,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 	@JsonIgnore
 	public String getVnfResource(String resourceObjectId) {
 
-		for (Resource resource : getServiceResources()) {
+        for (Resource resource : getServiceResources()) {
             //resource.getModelInfo().getModelInvariantId();
 
             if ("extracted information".equals(resourceObjectId)) {
