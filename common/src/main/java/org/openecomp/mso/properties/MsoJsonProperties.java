@@ -84,6 +84,7 @@ public class MsoJsonProperties extends AbstractMsoProperties {
 			// Clean
 			this.jsonRootNode = mapper.createObjectNode();
 			
+			System.out.println("ROBD: path=" + propertiesPath);
 			reader = new FileReader(propertiesPath);
 			
 			// Try a tree load
