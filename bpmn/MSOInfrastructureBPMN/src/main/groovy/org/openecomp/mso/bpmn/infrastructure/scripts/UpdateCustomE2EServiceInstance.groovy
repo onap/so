@@ -118,6 +118,15 @@ public class UpdateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			} else {
 				execution.setVariable("serviceType", serviceType)
 			}
+			
+			//operationId
+			String operationId = jsonUtil.getJsonValue(siRequest, "operationId")
+		 	if (isBlank(operationId)) {
+		 		operationId = UUID.randomUUID().toString()
+		 	 }   
+			execution.setVariable("operationId", operationId) 
+			execution.setVariable("operationType", "UPDATE")
+			
 			execution.setVariable("URN_mso_adapters_openecomp_db_endpoint","http://mso.mso.testlab.openecomp.org:8080/dbadapters/RequestsDbAdapter")
 
 		} catch (BpmnError e) {
