@@ -44,7 +44,7 @@ import java.util.Optional;
 public class ResourceRequestBuilder {
 
     public static String CUSTOMIZATION_UUID = "customizationUUID";
-    public static String SERVICE_URL_TOSCA_CSAR = "http://localhost:3099/serviceToscaCsar?serviceModelUuid=";
+    public static String SERVICE_URL_TOSCA_CSAR = "http://localhost:8080/ecomp/mso/catalog/v3/serviceToscaCsar?serviceModelUuid=";
 
     private static MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
 
@@ -114,13 +114,13 @@ public class ResourceRequestBuilder {
     private static String getCsarFromUuid(String uuid) throws Exception {
 
         ResteasyClient client = new ResteasyClientBuilder().build();
-        ResteasyWebTarget target = client.target(SERVICE_URL_TOSCA_CSAR + uuid + "\"");
+        ResteasyWebTarget target = client.target(SERVICE_URL_TOSCA_CSAR + uuid);
         Response response = target.request().get();
         String value = response.readEntity(String.class);
 
         HashMap<String,String> map = new Gson().fromJson(value, new TypeToken<HashMap<String, String>>(){}.getType());
 
-        File csarFile = new File(System.getProperty("mso.config.path") + "ASDC/" + map.get("NAME"));
+        File csarFile = new File(System.getProperty("mso.config.path") + "ASDC/" + map.get("name"));
 
         if (!csarFile.exists()) {
             throw new Exception("csar file does not exist.");
