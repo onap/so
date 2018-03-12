@@ -9,7 +9,6 @@
 	</parent>
 
 	<packaging>pom</packaging>
-	<groupId>org.onap.so</groupId>
 	<artifactId>docker</artifactId>
 
 	<name>MSO Docker Deliveries</name>

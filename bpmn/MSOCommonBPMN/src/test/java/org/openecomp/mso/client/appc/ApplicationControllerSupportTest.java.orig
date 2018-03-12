@@ -82,6 +82,7 @@ public class ApplicationControllerSupportTest {
 		status.setCode(code);
 		return status;
 	}
+}
 =======
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
@@ -141,5 +142,5 @@ public class ApplicationControllerSupportTest {
         status.setCode(code);
         return status;
     }
->>>>>>> master
 }
+>>>>>>> revert

@@ -222,7 +222,7 @@ public class DoCreateAllottedResourceBRGRollback extends AbstractServiceTaskProc
 		try {
 			execution.setVariable("rollbackData", null)
 			boolean skipRollback = execution.getVariable("skipRollback")
-			if (skipRollback != true)
+			if (!skipRollback)
 			{
 				execution.setVariable("rolledBack", true)
 				utils.log("DEBUG","rolledBack", isDebugEnabled)
