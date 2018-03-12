@@ -36,7 +36,7 @@ public enum PolicyServiceType {
 	
 	private final String name;
 	
-	private PolicyServiceType(String name) {
+	PolicyServiceType(String name) {
 		this.name = name;
 	}
 	
