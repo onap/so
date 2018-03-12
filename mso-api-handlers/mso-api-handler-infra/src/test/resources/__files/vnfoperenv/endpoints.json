@@ -1,5 +1,5 @@
 {
-   "ServiceEndPointList": [
+   "serviceEndPointList": [
       {
          "name": "dummy.pod.ns.dummy-pod3",
          "version": {

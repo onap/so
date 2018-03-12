@@ -188,7 +188,7 @@ public class MsoRequestTest {
 			{"No valid modelCustomizationId or modelCustomizationName is specified", mapper.readValue(inputStream("/VnfModelCustomizationId.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.createInstance, "v5"},
 			{"No valid cloudConfiguration is specified", mapper.readValue(inputStream("/CloudConfiguration.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.createInstance, "v4"},
 			{"No valid modelVersionId is specified", mapper.readValue(inputStream("/ModelVersionId.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.createInstance, "v5"},
-			{"No valid modelVersionId is specified", mapper.readValue(inputStream("/ConfigurationModelVersionID.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.activateInstance, "v5"},
+			{"No valid modelVersionId is specified", mapper.readValue(inputStream("/ConfigurationModelVersionId.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.activateInstance, "v5"},
 			{"No valid productFamilyId is specified", mapper.readValue(inputStream("/VnfProductFamilyId.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.createInstance, "v3"},
 			{"No valid productFamilyId is specified", mapper.readValue(inputStream("/NetworkProductFamilyId.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.createInstance, "v3"},
 			{"No valid productFamilyId is specified", mapper.readValue(inputStream("/NetworkProductFamilyId.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.updateInstance, "v3"},

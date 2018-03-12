@@ -72,7 +72,7 @@ public class ActivateVnfStatusOperationalEnvironmentTest {
 	public static void setUp() throws Exception {
 		MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory();
 		msoPropertiesFactory.removeAllMsoProperties();
-		msoPropertiesFactory.initializeMsoProperties(Constants.MSO_PROP_APIHANDLER_INFRA, "/mso.apihandler-infra.properties");
+		msoPropertiesFactory.initializeMsoProperties(Constants.MSO_PROP_APIHANDLER_INFRA, "src/test/resources/mso.apihandler-infra.properties");
 	}	
 	
 	@After
