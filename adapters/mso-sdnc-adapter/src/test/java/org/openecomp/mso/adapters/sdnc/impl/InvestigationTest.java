@@ -29,8 +29,10 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.junit.BeforeClass;
+import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.Test;
+import org.openecomp.mso.properties.MsoJavaProperties;
 import org.openecomp.mso.properties.MsoPropertiesException;
 import org.openecomp.mso.properties.MsoPropertiesFactory;
 import org.w3c.dom.Document;
@@ -41,18 +43,26 @@ import org.xml.sax.SAXException;
 
 public class InvestigationTest {
 	
-	private static MsoPropertiesFactory msoPF;
-	@BeforeClass
-	public static void setUp() throws MsoPropertiesException {
-		System.setProperty("mso.config.path", "src/test/resources/");
-		msoPF = new MsoPropertiesFactory();
-		msoPF.initializeMsoProperties("MSO_PROP_SDNC_ADAPTER", "mso.sdnc.properties");
-
+	private static MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory();
+	
+	public static final String SDNC_PROP = MsoJavaProperties.class.getClassLoader().getResource("mso.sdnc.properties").toString().substring(5);
+	
+	@Before
+	public final void initBeforeEachTest() throws MsoPropertiesException {
+			msoPropertiesFactory.removeAllMsoProperties();
+			msoPropertiesFactory.initializeMsoProperties("MSO_PROP_SDNC_ADAPTER", SDNC_PROP);
 	}
+
+	@AfterClass
+	public static final void kill () throws MsoPropertiesException {
+
+		    msoPropertiesFactory.removeMsoProperties("MSO_PROP_SDNC_ADAPTER");
+	}
+
 	@Test
 	public void run() throws ParserConfigurationException, IOException, SAXException {
 		
-		RequestTunables rt = new RequestTunables("reqid","","svc-topology-operation","delete", msoPF);
+		RequestTunables rt = new RequestTunables("reqid","","svc-topology-operation","delete", msoPropertiesFactory);
 		rt.setTunables();
 		/*Document reqDoc = parse();
 		NodeList nodeList = reqDoc.getElementsByTagName("sdncadapterworkflow:SDNCRequestData");
