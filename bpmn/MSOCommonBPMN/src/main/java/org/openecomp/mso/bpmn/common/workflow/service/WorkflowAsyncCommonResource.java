@@ -28,6 +28,6 @@ public class WorkflowAsyncCommonResource extends WorkflowAsyncResource {
 
 	@Override
     public String getProcessEngineName() {
-		return "infrastructure";
+		return "default";
 	}
 }
