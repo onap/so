@@ -20,12 +20,12 @@
 
 package org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @JsonIgnoreProperties({ "additionalProperties" })
 public class E2EService {
@@ -36,11 +36,17 @@ public class E2EService {
 	@JsonProperty("description")
 	private String description;
 
-	@JsonProperty("serviceDefId")
-	private String serviceDefId;
+	@JsonProperty("serviceInvariantUuid")
+	private String serviceInvariantUuid;
 
-	@JsonProperty("templateId")
-	private String templateId;
+	@JsonProperty("serviceUuid")
+	private String serviceUuid;
+
+	@JsonProperty("globalSubscriberId")
+	private String globalSubscriberId;
+
+	@JsonProperty("serviceType")
+	private String serviceType;
 
 	@JsonProperty("parameters")
 	private E2EParameters parameters;
@@ -64,22 +70,6 @@ public class E2EService {
 		this.description = description;
 	}
 
-	public String getServiceDefId() {
-		return serviceDefId;
-	}
-
-	public void setServiceDefId(String serviceDefId) {
-		this.serviceDefId = serviceDefId;
-	}
-
-	public String getTemplateId() {
-		return templateId;
-	}
-
-	public void setTemplateId(String templateId) {
-		this.templateId = templateId;
-	}
-
 	public E2EParameters getParameters() {
 		return parameters;
 	}
@@ -96,4 +86,35 @@ public class E2EService {
 		this.additionalProperties = additionalProperties;
 	}
 
+	public String getServiceInvariantUuid() {
+		return serviceInvariantUuid;
+	}
+
+	public void setServiceInvariantUuid(String serviceInvariantUuid) {
+		this.serviceInvariantUuid = serviceInvariantUuid;
+	}
+
+	public String getGlobalSubscriberId() {
+		return globalSubscriberId;
+	}
+
+	public void setGlobalSubscriberId(String globalSubscriberId) {
+		this.globalSubscriberId = globalSubscriberId;
+	}
+
+	public String getServiceType() {
+		return serviceType;
+	}
+
+	public void setServiceType(String serviceType) {
+		this.serviceType = serviceType;
+	}
+
+	public String getServiceUuid() {
+		return serviceUuid;
+	}
+
+	public void setServiceUuid(String serviceUuid) {
+		this.serviceUuid = serviceUuid;
+	}
 }
