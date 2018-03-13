@@ -16,8 +16,8 @@
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>aria-rest-java-client</module>
-		<module>aria-rest-server</module>
-		<!-- <module>multivim-plugin</module> -->
+		<!-- <module>aria-rest-java-client</module> -->
+		<!-- <module>aria-rest-server</module> -->
+		<module>multivim-plugin</module>
 	</modules>
 </project>
