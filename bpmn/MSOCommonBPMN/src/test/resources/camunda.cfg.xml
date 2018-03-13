@@ -28,14 +28,9 @@
         <ref bean="spinProcessEnginePlugin" />
         <ref bean="loggingPlugin" />
         <ref bean="workflowExceptionPlugin" />
-        <ref bean="workbenchPlugin" />
 	  </list>
     </property>
   </bean>
-
-  <bean id="workbenchPlugin" class="org.camunda.bpm.debugger.server.EmbeddableDebugWebsocketBootstrap">
-        	<property name="httpPort" value="28088"/>
-  </bean>          
 
   <bean id="loggingPlugin" class="org.openecomp.mso.bpmn.core.plugins.LoggingAndURNMappingPlugin" />
   

@@ -66,8 +66,7 @@ public class VnfConfigUpdateTest extends WorkflowTest {
 	 * @throws Exception
 	 */
 	@Test	
-
-	
+	@Ignore // 1802 merge
 	@Deployment(resources = {
 		"process/VnfConfigUpdate.bpmn",
 		"subprocess/RollbackVnf.bpmn",
