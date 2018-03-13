@@ -339,12 +339,13 @@ public class JsonUtilsTest {
     // Tests the jsonSchemaValidation() method
     public void testJsonSchemaValidation() {
     	try {
-			String result = JsonUtils.jsonSchemaValidation(jsonReqArray, "src/test/resources/requestSchema.json");
+	    String myReqArray = jsonReqArray;
+			String result = JsonUtils.jsonSchemaValidation(myReqArray, "src/test/resources/requestSchema.json");
 			System.out.println("Schema Validation Result: " + result);
 			Assert.assertTrue(result.contains("success"));
 			// remove a required parameter from the JSON doc so that validation fails
-			jsonReqArray = JsonUtils.delJsonValue(jsonReqArray, "requestDetails.requestParameters.ucpeInfo.ucpeHostName");
-			result = JsonUtils.jsonSchemaValidation(jsonReqArray, "src/test/resources/requestSchema.json");
+			myReqArray = JsonUtils.delJsonValue(myReqArray, "requestDetails.requestParameters.ucpeInfo.ucpeHostName");
+			result = JsonUtils.jsonSchemaValidation(myReqArray, "src/test/resources/requestSchema.json");
 			System.out.println("Schema Validation Result: " + result);			
 			Assert.assertTrue(result.contains("failure"));
 			Assert.assertTrue(result.contains("error: object has missing required properties ([\"ucpeHostName\"])"));
