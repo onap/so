@@ -451,7 +451,7 @@ public class E2EServiceInstances {
 		RecipeLookupResult recipeLookupResult = null;
 		try {
 			db = CatalogDatabase.getInstance();
-			recipeLookupResult = getServiceInstanceOrchestrationURI(db, e2eSir.getService().getTemplateId(), action);
+			recipeLookupResult = getServiceInstanceOrchestrationURI(db, e2eSir.getService().getServiceUuid(), action);
 		} catch (Exception e) {
 			msoLogger.error(MessageEnum.APIH_DB_ACCESS_EXC, MSO_PROP_APIHANDLER_INFRA, "", "",
 					MsoLogger.ErrorCode.AvailabilityError, "Exception while communciate with Catalog DB", e);
@@ -486,7 +486,7 @@ public class E2EServiceInstances {
 			return response;
 		}
 
-		String serviceInstanceType = e2eSir.getService().getParameters().getServiceType();
+		String serviceInstanceType = e2eSir.getService().getServiceType();
 
 		String serviceId = "";
 		RequestClient requestClient = null;
@@ -690,7 +690,7 @@ public class E2EServiceInstances {
 		RecipeLookupResult recipeLookupResult = null;
 		try {
 			db = CatalogDatabase.getInstance();
-			recipeLookupResult = getServiceInstanceOrchestrationURI(db, e2eSir.getService().getTemplateId(), action);
+			recipeLookupResult = getServiceInstanceOrchestrationURI(db, e2eSir.getService().getServiceUuid(), action);
 		} catch (Exception e) {
 			msoLogger.error(MessageEnum.APIH_DB_ACCESS_EXC, MSO_PROP_APIHANDLER_INFRA, "", "",
 					MsoLogger.ErrorCode.AvailabilityError, "Exception while communciate with Catalog DB", e);
@@ -740,7 +740,7 @@ public class E2EServiceInstances {
 //			return response;
 //		}
 
-		String serviceInstanceType = e2eSir.getService().getParameters().getServiceType();
+		String serviceInstanceType = e2eSir.getService().getServiceType();
 
 		String serviceId = "";
 		RequestClient requestClient = null;
@@ -959,10 +959,10 @@ public class E2EServiceInstances {
 		ModelInfo modelInfo = new ModelInfo();
 
 		// ModelInvariantId
-		modelInfo.setModelInvariantId(e2eSir.getService().getServiceDefId());
+		modelInfo.setModelInvariantId(e2eSir.getService().getServiceInvariantUuid());
 
 		// modelNameVersionId
-		modelInfo.setModelNameVersionId(e2eSir.getService().getTemplateId());
+		modelInfo.setModelNameVersionId(e2eSir.getService().getServiceUuid());
 
 		// String modelInfoValue =
 		// e2eSir.getService().getParameters().getNodeTemplateName();
@@ -988,12 +988,7 @@ public class E2EServiceInstances {
 		SubscriberInfo subscriberInfo = new SubscriberInfo();
 
 		// globalsubscriberId
-		subscriberInfo.setGlobalSubscriberId(e2eSir.getService()
-				.getParameters().getGlobalSubscriberId());
-
-		// subscriberName
-		subscriberInfo.setSubscriberName(e2eSir.getService().getParameters()
-				.getSubscriberName());
+		subscriberInfo.setGlobalSubscriberId(e2eSir.getService().getGlobalSubscriberId());
 
 		// setting subscriberInfo to requestDetails
 		requestDetails.setSubscriberInfo(subscriberInfo);

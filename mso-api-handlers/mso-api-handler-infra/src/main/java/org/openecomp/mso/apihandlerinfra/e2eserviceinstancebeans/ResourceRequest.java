@@ -20,25 +20,28 @@
 
 package org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ResourceRequest {
 
     @JsonProperty("resourceName")
     private String resourceName;
 
-    @JsonProperty("resourceDefId")
-    private String resourceDefId;
+    @JsonProperty("resourceInvariantUuid")
+    private String resourceInvariantUuid;
 
-    @JsonProperty("resourceId")
-    private String resourceId;
+    @JsonProperty("resourceUuid")
+    private String resourceUuid;
 
-    @JsonProperty("nsParameters")
-    private NsParameters nsParameters = null;
+    @JsonProperty("resourceCustomizationUuid")
+    private String resourceCustomizationUuid;
+
+    @JsonProperty("parameters")
+    private E2EParameters parameters;
 
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<>();
@@ -57,48 +60,6 @@ public class ResourceRequest {
         this.resourceName = resourceName;
     }
 
-    /**
-     * @return Returns the resourceDefId.
-     */
-    public String getResourceDefId() {
-        return resourceDefId;
-    }
-
-    /**
-     * @param resourceDefId The resourceDefId to set.
-     */
-    public void setResourceDefId(String resourceDefId) {
-        this.resourceDefId = resourceDefId;
-    }
-
-    /**
-     * @return Returns the resourceId.
-     */
-    public String getResourceId() {
-        return resourceId;
-    }
-
-    /**
-     * @param resourceId The resourceId to set.
-     */
-    public void setResourceId(String resourceId) {
-        this.resourceId = resourceId;
-    }
-
-    /**
-     * @return Returns the nsParameters.
-     */
-    public NsParameters getNsParameters() {
-        return nsParameters;
-    }
-
-    /**
-     * @param nsParameters The nsParameters to set.
-     */
-    public void setNsParameters(NsParameters nsParameters) {
-        this.nsParameters = nsParameters;
-    }
-
     public Map<String, Object> getAdditionalProperties() {
         return additionalProperties;
     }
@@ -107,4 +68,35 @@ public class ResourceRequest {
         this.additionalProperties = additionalProperties;
     }
 
+    public String getResourceInvariantUuid() {
+        return resourceInvariantUuid;
+    }
+
+    public void setResourceInvariantUuid(String resourceInvariantUuid) {
+        this.resourceInvariantUuid = resourceInvariantUuid;
+    }
+
+    public String getResourceUuid() {
+        return resourceUuid;
+    }
+
+    public void setResourceUuid(String resourceUuid) {
+        this.resourceUuid = resourceUuid;
+    }
+
+    public String getResourceCustomizationUuid() {
+        return resourceCustomizationUuid;
+    }
+
+    public void setResourceCustomizationUuid(String resourceCustomizationUuid) {
+        this.resourceCustomizationUuid = resourceCustomizationUuid;
+    }
+
+    public E2EParameters getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(E2EParameters parameters) {
+        this.parameters = parameters;
+    }
 }
