@@ -32,6 +32,7 @@ import java.util.UUID;
 
 import org.camunda.bpm.engine.test.Deployment;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openecomp.mso.bpmn.common.BPMNUtil;
 import org.openecomp.mso.bpmn.common.WorkflowTest;
@@ -55,7 +56,7 @@ public class DoCreateServiceInstanceV2Test extends WorkflowTest {
 	 *
 	 * @throws Exception
 	 */
-	//@Ignore // File not found - unable to run the test.  Also, Stubs need updating..
+	@Ignore // 1802 merge
 	@Test
 	@Deployment(resources = {
 			"subprocess/DoCreateServiceInstanceV2.bpmn",
