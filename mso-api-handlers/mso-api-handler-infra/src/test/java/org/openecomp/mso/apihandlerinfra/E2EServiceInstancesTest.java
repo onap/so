@@ -41,6 +41,7 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.internal.SessionFactoryImpl;
 import org.junit.Test;
+import org.junit.Ignore;
 import org.mockito.Mockito;
 import org.openecomp.mso.apihandler.common.CamundaClient;
 import org.openecomp.mso.apihandler.common.RequestClient;
@@ -574,6 +575,7 @@ public class E2EServiceInstancesTest {
             .contains("Mapping of request to JSON object failed.  No content to map to Object due to end of input"));
 	}
 
+	@Ignore
 	@Test
 	public void deleteE2EServiceInstanceTestNormal() {
 		E2EServiceInstances instance = new E2EServiceInstances();

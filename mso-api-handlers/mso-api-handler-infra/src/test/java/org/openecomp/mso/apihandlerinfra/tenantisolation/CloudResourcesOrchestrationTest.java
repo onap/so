@@ -38,6 +38,7 @@ import java.util.Map;
 import javax.ws.rs.core.Response;
 
 import org.jboss.resteasy.spi.ResteasyUriInfo;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openecomp.mso.requestsdb.InfraActiveRequests;
 import org.openecomp.mso.requestsdb.RequestsDatabase;
@@ -272,6 +273,7 @@ public class CloudResourcesOrchestrationTest {
 		assertEquals(200, response.getStatus());
 	}
 	
+	@Ignore
 	@Test
 	public void testGetOperationalEnvFilterException1() throws ParseException {
 		InfraActiveRequests iar = new InfraActiveRequests();

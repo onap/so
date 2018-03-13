@@ -37,6 +37,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.CharEncoding;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openecomp.mso.apihandlerinfra.MsoException;
 import org.openecomp.mso.apihandlerinfra.Status;
@@ -166,6 +167,7 @@ public class CloudOrchestrationTest {
 		assertEquals(200, response.getStatus());
 	}
 	
+	@Ignore
 	@Test
 	public void testDeactivateThreadException() throws IOException {
 		CloudOrchestration co = new CloudOrchestration();

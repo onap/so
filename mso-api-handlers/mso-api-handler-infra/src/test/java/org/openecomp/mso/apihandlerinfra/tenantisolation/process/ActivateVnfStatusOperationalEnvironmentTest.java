@@ -34,6 +34,7 @@ import java.util.List;
 import org.json.JSONObject;
 import org.junit.After;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.openecomp.mso.apihandlerinfra.Constants;
@@ -81,6 +82,7 @@ public class ActivateVnfStatusOperationalEnvironmentTest {
 	}
 
 
+	@Ignore
 	@Test
 	public void checkOrUpdateOverallStatusTest_Ok() throws Exception {
 		
