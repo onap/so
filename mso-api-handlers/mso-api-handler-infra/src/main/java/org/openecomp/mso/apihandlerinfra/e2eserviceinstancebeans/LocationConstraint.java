@@ -19,6 +19,8 @@
  */
 package org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans;
 
+import org.codehaus.jackson.annotate.JsonProperty;
+
 /**
  * <br>
  * <p>
@@ -32,11 +34,13 @@ public class LocationConstraint {
     /**
      * vnf profile id
      */
+    @JsonProperty("vnfProfileId")
     private String vnfProfileId;
 
     /**
      * location constraints: vimId
      */
+    @JsonProperty("locationConstraints")
     private VimLocation locationConstraints;
 
     /**

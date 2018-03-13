@@ -20,80 +20,28 @@
 
 package org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @JsonIgnoreProperties({ "additionalProperties" })
 public class E2EParameters {
 
-	@JsonProperty("globalSubscriberId")
-	private String globalSubscriberId;
-
-	@JsonProperty("subscriberName")
-	private String subscriberName;
-	
-	@JsonProperty("serviceType")
-	private String serviceType;
-	
-	@JsonProperty("templateName")
-	private String templateName;
-	
+	@JsonProperty("locationConstraints")
+	List<LocationConstraint> locationConstraints;
 
 	@JsonProperty("resources")
 	private List<ResourceRequest> resources;
 
+	@JsonProperty("requstInputs")
+	private HashMap<String, ?> requestInputs;
+
 	@JsonIgnore
 	private Map<String, Object> additionalProperties = new HashMap<>();
-
-	
-    /**
-     * @return Returns the serviceType.
-     */
-    public String getServiceType() {
-        return serviceType;
-    }
-    
-    /**
-     * @param serviceType The serviceType to set.
-     */
-    public void setServiceType(String serviceType) {
-        this.serviceType = serviceType;
-    }
-   
-    /**
-     * @return Returns the templateName.
-     */
-    public String getTemplateName() {
-        return templateName;
-    }
-    
-    /**
-     * @param templateName The templateName to set.
-     */
-    public void setTemplateName(String templateName) {
-        this.templateName = templateName;
-    }
-
-    public String getGlobalSubscriberId() {
-		return globalSubscriberId;
-	}
-
-	public void setGlobalSubscriberId(String globalSubscriberId) {
-		this.globalSubscriberId = globalSubscriberId;
-	}
-
-	public String getSubscriberName() {
-		return subscriberName;
-	}
-
-	public void setSubscriberName(String subscriberName) {
-		this.subscriberName = subscriberName;
-	}
 
 	public Map<String, Object> getAdditionalProperties() {
 		return additionalProperties;
@@ -117,4 +65,19 @@ public class E2EParameters {
         this.resources = resources;
     }
 
+    public List<LocationConstraint> getLocationConstraints() {
+        return locationConstraints;
+    }
+
+    public void setLocationConstraints(List<LocationConstraint> locationConstraints) {
+        this.locationConstraints = locationConstraints;
+    }
+
+	public HashMap<String, ?> getRequestInputs() {
+		return requestInputs;
+	}
+
+	public void setRequestInputs(HashMap<String, ?> requestInputs) {
+		this.requestInputs = requestInputs;
+	}
 }
