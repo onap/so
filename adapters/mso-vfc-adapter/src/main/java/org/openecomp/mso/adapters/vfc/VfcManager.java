@@ -398,7 +398,7 @@ public class VfcManager {
 
         String url;
         String originalUrl;
-        originalUrl = (String)nfvoUrlMap.get(step);
+        originalUrl = nfvoUrlMap.get(step);
         url = String.format(originalUrl, variable);
         return url;
 

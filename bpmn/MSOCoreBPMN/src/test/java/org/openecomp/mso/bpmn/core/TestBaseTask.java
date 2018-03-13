@@ -58,8 +58,8 @@ public class TestBaseTask {
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("firstName", "Jane");
 		variables.put("lastName", "Doe");
-		variables.put("age", (Integer)25);
-		variables.put("lastVisit", (Long)1438270117000L);
+		variables.put("age", 25);
+		variables.put("lastVisit", 1438270117000L);
 
 		RuntimeService runtimeService = processEngineRule.getRuntimeService();
 		assertNotNull(runtimeService);
