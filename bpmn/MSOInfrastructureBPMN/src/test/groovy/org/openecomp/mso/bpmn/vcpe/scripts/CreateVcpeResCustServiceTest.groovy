@@ -84,7 +84,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	// ***** preProcessRequest *****
 			
 	@Test
-	// @Ignore  
+	@Ignore // 1802 merge
 	public void preProcessRequest() {
 		ExecutionEntity mex = setupMock()
 		def map = setupMap(mex)
@@ -133,7 +133,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	}
 			
 	@Test
-	// @Ignore  
+	@Ignore // 1802 merge
 	public void preProcessRequest_EmptyParts() {
 		ExecutionEntity mex = setupMock()
 		def map = setupMap(mex)
