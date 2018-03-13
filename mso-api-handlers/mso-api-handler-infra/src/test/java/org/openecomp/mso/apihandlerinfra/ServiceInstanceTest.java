@@ -64,7 +64,7 @@ public class ServiceInstanceTest {
 		String requestJson = "{\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\"}}}";
 		Response resp = instance.createServiceInstance(requestJson, "v5");
 		String respBody = resp.getEntity().toString();
-		assertTrue(respBody.contains("Error parsing request.  No valid model-info is specified"));
+		assertTrue(respBody.contains("Error parsing request.") && respBody.contains("No valid model-info is specified"));
 	}
 	
 	@Test
@@ -477,7 +477,7 @@ public class ServiceInstanceTest {
 				+ "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
 		Response resp = instance.createServiceInstance(requestJson, "v5");
 		String respBody = resp.getEntity().toString();
-		assertTrue(respBody.contains("Error parsing request.  No valid modelVersionId is specified"));
+		assertTrue(respBody.contains("Error parsing request.") && respBody.contains("No valid modelVersionId is specified"));
 	}
 	
 	@Test
@@ -491,7 +491,7 @@ public class ServiceInstanceTest {
 				+ "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
 		Response resp = instance.createServiceInstance(requestJson, "v2");
 		String respBody = resp.getEntity().toString();
-		assertTrue(respBody.contains("Error parsing request.  No valid instanceName is specified"));
+		assertTrue(respBody.contains("Error parsing request.") && respBody.contains("No valid instanceName is specified"));
 	}
 	
 	
@@ -506,7 +506,7 @@ public class ServiceInstanceTest {
 				+ "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\"},\"requestParameters\": { \"autoBuildVfModules\": false}}}";
 		Response resp = instance.createServiceInstance(requestJson, "v2");
 		String respBody = resp.getEntity().toString();
-		assertTrue(respBody.contains("Error parsing request.  No valid model-info is specified"));
+		assertTrue(respBody.contains("Error parsing request.") && respBody.contains("No valid model-info is specified"));
 	}
 	
 	@Test
@@ -520,7 +520,7 @@ public class ServiceInstanceTest {
 				+ "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\"},\"requestParameters\": { \"autoBuildVfModules\": false},\"modelInfo\":{\"modelInvariantId\": \"1234\"}}}";
 		Response resp = instance.createServiceInstance(requestJson, "v2");
 		String respBody = resp.getEntity().toString();
-		assertTrue(respBody.contains("Error parsing request.  No valid modelType is specified"));
+		assertTrue(respBody.contains("Error parsing request.") && respBody.contains("No valid modelType is specified"));
 	}
 	
 	@Test
@@ -534,7 +534,7 @@ public class ServiceInstanceTest {
 				+ "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\"},\"requestParameters\": { \"autoBuildVfModules\": false},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\"}}}";
 		Response resp = instance.createServiceInstance(requestJson, "v2");
 		String respBody = resp.getEntity().toString();
-		assertTrue(respBody.contains("Error parsing request.  No valid modelType is specified"));
+		assertTrue(respBody.contains("Error parsing request.") && respBody.contains("No valid modelType is specified"));
 	}
 	
 	
@@ -549,7 +549,7 @@ public class ServiceInstanceTest {
 				+ "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\"},\"requestParameters\": { \"autoBuildVfModules\": false},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\"}}}";
 		Response resp = instance.createServiceInstance(requestJson, "v2");
 		String respBody = resp.getEntity().toString();
-		assertTrue(respBody.contains("Error parsing request.  No valid modelType is specified"));
+		assertTrue(respBody.contains("Error parsing request.") && respBody.contains("No valid modelType is specified"));
 	}
 	
 	@Test
@@ -577,7 +577,7 @@ public class ServiceInstanceTest {
 				+ "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\"},\"requestParameters\": { \"autoBuildVfModules\": false},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\"}}}";
 		Response resp = instance.createServiceInstance(requestJson, "v2");
 		String respBody = resp.getEntity().toString();
-		assertTrue(respBody.contains("Error parsing request.  No valid modelName is specified"));
+		assertTrue(respBody.contains("Error parsing request.") && respBody.contains("No valid modelName is specified"));
 	}
 	
 	@Test
@@ -591,7 +591,7 @@ public class ServiceInstanceTest {
 				+ "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\"},\"requestParameters\": { \"autoBuildVfModules\": true},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
 		Response resp = instance.createServiceInstance(requestJson, "v2");
 		String respBody = resp.getEntity().toString();
-		assertTrue(respBody.contains("Error parsing request.  AutoBuildVfModule is not valid in the v2 version"));
+		assertTrue(respBody.contains("Error parsing request.") && respBody.contains("AutoBuildVfModule is not valid in the v2 version"));
 	}
 	
 	@Test
@@ -605,7 +605,7 @@ public class ServiceInstanceTest {
 				+ "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\"},\"requestParameters\": { \"autoBuildVfModules\": false},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
 		Response resp = instance.createServiceInstance(requestJson, "v2");
 		String respBody = resp.getEntity().toString();
-		assertTrue(respBody.contains("Error parsing request.  No valid subscriptionServiceType is specified"));
+		assertTrue(respBody.contains("Error parsing request.") && respBody.contains("No valid subscriptionServiceType is specified"));
 	}
 	
 	@Test
@@ -619,7 +619,7 @@ public class ServiceInstanceTest {
 				+ "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\"},\"requestParameters\": { \"autoBuildVfModules\": false},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
 		Response resp = instance.createServiceInstance(requestJson, "v2");
 		String respBody = resp.getEntity().toString();
-		assertTrue(respBody.contains("Error parsing request.  No valid subscriptionServiceType is specified"));
+		assertTrue(respBody.contains("Error parsing request.") && respBody.contains("No valid subscriptionServiceType is specified"));
 	}
 	
 	@Test
@@ -653,7 +653,7 @@ public class ServiceInstanceTest {
 				+ "\"requestDetails\": {\"relatedInstanceList\" :[{\"relatedInstance\":{\"instanceName\":\"testInstance\",\"instanceId\":\"557ea944-c83e-43cf-9ed7-3a354abd6d37\",\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}],\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
 		Response resp = instance.activateServiceInstance(requestJson, "v5","557ea944-c83e-43cf-9ed7-3a354abd6d34");
 		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.contains("Error parsing request.  No valid modelVersionId in relatedInstance is specified"));
+		assertTrue(respStr.contains("Error parsing request.") && respStr.contains("No valid modelVersionId in relatedInstance is specified"));
 	}
 	
 	@Test
@@ -667,8 +667,7 @@ public class ServiceInstanceTest {
 				+ "\"requestDetails\": {\"relatedInstanceList\" :[{\"relatedInstance\":{\"instanceName\":\"testInstance\",\"instanceId\":\"557ea944-c83e-43cf-9ed7-3a354abd6d37\",\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"4839499\"}}}],\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
 		Response resp = instance.activateServiceInstance(requestJson, "v5","557ea944-c83e-43cf-9ed7-3a354abd6d34");
 		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.contains(
-            "Error parsing request.  No valid serviceInstanceId matching the serviceInstanceId in request URI is specified"));
+		assertTrue(respStr.contains("Error parsing request.") && respStr.contains("No valid serviceInstanceId matching the serviceInstanceId in request URI is specified"));
 	}
 	
 	@Test
@@ -707,7 +706,7 @@ public class ServiceInstanceTest {
 				+ "\"requestDetails\": {\"relatedInstanceList\" :[{\"relatedInstance\":{\"instanceName\":\"testInstance\",\"instanceId\":\"557ea944-c83e-43cf-9ed7-3a354abd6d37\",\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}],\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
 		Response resp = instance.deactivateServiceInstance(requestJson, "v5","557ea944-c83e-43cf-9ed7-3a354abd6d34");
 		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.contains("Error parsing request.  No valid modelVersionId in relatedInstance is specified"));
+		assertTrue(respStr.contains("Error parsing request.") && respStr.contains("No valid modelVersionId in relatedInstance is specified"));
 	}
 	
 	@Test
@@ -721,8 +720,7 @@ public class ServiceInstanceTest {
 				+ "\"requestDetails\": {\"relatedInstanceList\" :[{\"relatedInstance\":{\"instanceName\":\"testInstance\",\"instanceId\":\"557ea944-c83e-43cf-9ed7-3a354abd6d37\",\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"4839499\"}}}],\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
 		Response resp = instance.deactivateServiceInstance(requestJson, "v5","557ea944-c83e-43cf-9ed7-3a354abd6d34");
 		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.contains(
-            "Error parsing request.  No valid serviceInstanceId matching the serviceInstanceId in request URI is specified"));
+		assertTrue(respStr.contains("Error parsing request.") && respStr.contains("No valid serviceInstanceId matching the serviceInstanceId in request URI is specified"));
 	}
 	
 	@Test
@@ -761,7 +759,7 @@ public class ServiceInstanceTest {
 				+ "\"requestDetails\": {\"relatedInstanceList\" :[{\"relatedInstance\":{\"instanceName\":\"testInstance\",\"instanceId\":\"557ea944-c83e-43cf-9ed7-3a354abd6d37\",\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}],\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
 		Response resp = instance.deleteServiceInstance(requestJson, "v5","557ea944-c83e-43cf-9ed7-3a354abd6d34");
 		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.contains("Error parsing request.  No valid modelVersionId is specified"));
+		assertTrue(respStr.contains("Error parsing request.") && respStr.contains("No valid modelVersionId is specified"));
 	}
 	
 	@Test
@@ -775,7 +773,7 @@ public class ServiceInstanceTest {
 				+ "\"requestDetails\": {\"relatedInstanceList\" :[{\"relatedInstance\":{\"instanceName\":\"testInstance\",\"instanceId\":\"557ea944-c83e-43cf-9ed7-3a354abd6d37\",\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"4839499\"}}}],\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
 		Response resp = instance.deleteServiceInstance(requestJson, "v5","557ea944-c83e-43cf-9ed7-3a354abd6d34");
 		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.contains("Error parsing request.  No valid modelVersionId is specified"));
+		assertTrue(respStr.contains("Error parsing request.") && respStr.contains("No valid modelVersionId is specified"));
 	}
 	
 	@Test
@@ -805,7 +803,7 @@ public class ServiceInstanceTest {
 				+ "\"requestDetails\": {\"relatedInstanceList\" :[{\"relatedInstance\":{\"instanceName\":\"testInstance\",\"instanceId\":\"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"4839499\"}}}],\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"288393\",\"modelCustomizationId\":\"389823213\"}}}";
 		Response resp = instance.createVnfInstance(requestJson, "v3","557ea944-c83e-43cf-9ed7-3a354abd6d34");
 		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.contains("Error parsing request.  No valid cloudConfiguration is specified"));
+		assertTrue(respStr.contains("Error parsing request.") && respStr.contains("No valid cloudConfiguration is specified"));
 	}
 	
 	@Test
@@ -820,7 +818,7 @@ public class ServiceInstanceTest {
 				+ "\"requestDetails\": {\"cloudConfiguration\":{}, \"relatedInstanceList\" :[{\"relatedInstance\":{\"instanceName\":\"testInstance\",\"instanceId\":\"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"4839499\"}}}],\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"288393\",\"modelCustomizationId\":\"389823213\"}}}";
 		Response resp = instance.createVnfInstance(requestJson, "v3","557ea944-c83e-43cf-9ed7-3a354abd6d34");
 		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.contains("Error parsing request.  No valid lcpCloudRegionId is specified"));
+		assertTrue(respStr.contains("Error parsing request.") && respStr.contains("No valid lcpCloudRegionId is specified"));
 	}
 	
 	@Test
@@ -835,7 +833,7 @@ public class ServiceInstanceTest {
 				+ "\"requestDetails\": {\"cloudConfiguration\":{\"lcpCloudRegionId\":\"2993841\"}, \"relatedInstanceList\" :[{\"relatedInstance\":{\"instanceName\":\"testInstance\",\"instanceId\":\"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"4839499\"}}}],\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersionId\":\"288393\",\"modelCustomizationId\":\"389823213\"}}}";
 		Response resp = instance.createVnfInstance(requestJson, "v3","557ea944-c83e-43cf-9ed7-3a354abd6d34");
 		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.contains("Error parsing request.  No valid tenantId is specified"));
+		assertTrue(respStr.contains("Error parsing request.") && respStr.contains("No valid tenantId is specified"));
 	}
 	
 	@Test
