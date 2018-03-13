@@ -3071,7 +3071,7 @@ String sdncAdapterWorkflowAssignResponse =
 		}
 
 		@Test
-		//@Ignore
+		@Ignore // 1802 merge
 		public void preProcessRequest_XML_NetworkRequest() {
 
 			println "************ preProcessRequest_Payload ************* "

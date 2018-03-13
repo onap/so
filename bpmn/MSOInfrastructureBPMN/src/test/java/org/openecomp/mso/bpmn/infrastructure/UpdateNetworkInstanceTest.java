@@ -33,6 +33,7 @@ import java.util.Map;
 
 import org.camunda.bpm.engine.test.Deployment;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -63,7 +64,7 @@ public class UpdateNetworkInstanceTest extends WorkflowTest {
 	 */
 
 	@Test
-	//@Ignore
+	@Ignore // 1802 merge
 	@Deployment(resources = {"process/UpdateNetworkInstance.bpmn",
 							 "subprocess/DoUpdateNetworkInstance.bpmn",
 			                 "subprocess/FalloutHandler.bpmn",
@@ -113,7 +114,7 @@ public class UpdateNetworkInstanceTest extends WorkflowTest {
 	}
 
 	@Test
-	//@Ignore
+	@Ignore // 1802 merge
 	@Deployment(resources = {"process/UpdateNetworkInstance.bpmn",
 			                 "subprocess/DoUpdateNetworkInstance.bpmn",
 			                 "subprocess/FalloutHandler.bpmn",
