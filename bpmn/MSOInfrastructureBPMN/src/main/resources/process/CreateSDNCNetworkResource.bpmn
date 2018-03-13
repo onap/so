@@ -36,7 +36,7 @@ dcsi.preProcessRequest(execution)]]></bpmn:script>
       <bpmn:outgoing>SequenceFlow_0ow44q0</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
 def dcsi = new CreateSDNCNetworkResource()
-dcsi.postCreateSDNC(execution)]]></bpmn:script>
+dcsi.postCreateSDNCCall(execution)]]></bpmn:script>
     </bpmn:scriptTask>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
