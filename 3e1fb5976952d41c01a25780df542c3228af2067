@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_15fba379",
+        "filename": "bpmn/MSOInfrastructureBPMN/src/main/groovy/org/openecomp/mso/bpmn/infrastructure/scripts/DoUpdateE2EServiceInstance.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2018-03-13T14:37:34Z",
+      "side": 1,
+      "message": "Change the copyright to 2018",
+      "revId": "3e1fb5976952d41c01a25780df542c3228af2067",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
