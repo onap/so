@@ -89,7 +89,7 @@ public class ServiceInstanceTest {
             "Locked instance - This service (testService) already has a request being worked with a status of null (RequestId - null). The existing request must finish or be cleaned up before proceeding."));
 	}
 	
-	@Ignore
+	@Ignore // 1802 merge
 	@Test
 	public void createServiceInstanceTestDBException(){
 		new MockUp<RequestsDatabase>() {
@@ -127,7 +127,7 @@ public class ServiceInstanceTest {
 		assertTrue(respBody.contains("Exception while creating record in DB null"));
 	}
 	
-	@Ignore
+	@Ignore // 1802 merge
 	@Test
 	public void createServiceInstanceTestBpmnFail(){
 		new MockUp<RequestsDatabase>() {
@@ -172,7 +172,7 @@ public class ServiceInstanceTest {
 		assertTrue(respBody.contains("Failed calling bpmn properties"));
 	}
 	
-	@Ignore
+	@Ignore // 1802 merge
 	@Test(expected = Exception.class)
 	public void createServiceInstanceTest200Http(){
 		new MockUp<RequestsDatabase>() {
@@ -243,7 +243,7 @@ public class ServiceInstanceTest {
 		String respBody = resp.getEntity().toString();
 	}
 	
-	@Ignore
+	@Ignore // 1802 merge
 	@Test
 	public void createServiceInstanceTest500Http(){
 		new MockUp<RequestsDatabase>() {
@@ -386,7 +386,7 @@ public class ServiceInstanceTest {
 		assertTrue(respBody.contains("No valid modelVersionId is specified"));
 	}
 	
-	@Ignore
+	@Ignore // 1802 merge
 	@Test
 	public void createServiceInstanceTestNullHttpResp(){
 		new MockUp<RequestsDatabase>() {
@@ -486,7 +486,7 @@ public class ServiceInstanceTest {
 		assertTrue(respBody.contains("Error parsing request.") && respBody.contains("No valid modelVersionId is specified"));
 	}
 	
-	@Ignore
+	@Ignore // 1802 merge
 	@Test
 	public void createServiceInstanceNullInstanceName(){
 		ServiceInstances instance = new ServiceInstances();
@@ -573,7 +573,7 @@ public class ServiceInstanceTest {
 		assertTrue(respBody.contains("Mapping of request to JSON object failed."));
 	}
 	
-	@Ignore
+	@Ignore // 1802 merge
 	@Test
 	public void createServiceInstanceNullModelName(){
 		ServiceInstances instance = new ServiceInstances();
@@ -588,7 +588,7 @@ public class ServiceInstanceTest {
 		assertTrue(respBody.contains("Error parsing request.") && respBody.contains("No valid modelName is specified"));
 	}
 	
-	@Ignore
+	@Ignore // 1802 merge
 	@Test
 	public void createServiceInstanceInvalidVersionForAutoBuildVfModules(){
 		ServiceInstances instance = new ServiceInstances();
@@ -679,7 +679,7 @@ public class ServiceInstanceTest {
 		assertTrue(respStr.contains("Error parsing request.") && respStr.contains("No valid serviceInstanceId matching the serviceInstanceId in request URI is specified"));
 	}
 
-	@Ignore
+	@Ignore // 1802 merge
 	@Test
 	public void activateServiceInstanceTestNormal(){
 		ServiceInstances instance = new ServiceInstances();
@@ -733,7 +733,7 @@ public class ServiceInstanceTest {
 		assertTrue(respStr.contains("Error parsing request.") && respStr.contains("No valid serviceInstanceId matching the serviceInstanceId in request URI is specified"));
 	}
 	
-	@Ignore
+	@Ignore // 1802 merge
 	@Test
 	public void deactivateServiceInstanceTestNormal(){
 		ServiceInstances instance = new ServiceInstances();
@@ -787,7 +787,7 @@ public class ServiceInstanceTest {
 		assertTrue(respStr.contains("Error parsing request.") && respStr.contains("No valid modelVersionId is specified"));
 	}
 	
-	@Ignore
+	@Ignore // 1802 merge
 	@Test
 	public void deleteServiceInstanceTestNormal(){
 		ServiceInstances instance = new ServiceInstances();
@@ -804,7 +804,7 @@ public class ServiceInstanceTest {
 	
 	/*** Create Vnf Instance Test Cases ***/
 	
-	@Ignore
+	@Ignore // 1802 merge
 	@Test
 	public void createVNFInstanceTestInvalidCloudConfiguration(){
 		ServiceInstances instance = new ServiceInstances();
@@ -849,7 +849,7 @@ public class ServiceInstanceTest {
 		assertTrue(respStr.contains("Error parsing request.") && respStr.contains("No valid tenantId is specified"));
 	}
 	
-	@Ignore
+	@Ignore // 1802 merge
 	@Test
 	public void createVNFInstanceTestNormal(){
 		ServiceInstances instance = new ServiceInstances();
@@ -866,7 +866,7 @@ public class ServiceInstanceTest {
 	}
 	
 	/*** Replace Vnf Instance Test Cases ***/
-	@Ignore
+	@Ignore // 1802 merge
 	@Test
 	public void replaceVNFInstanceTestNormal(){
 		ServiceInstances instance = new ServiceInstances();

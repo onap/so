@@ -167,7 +167,7 @@ public class CloudOrchestrationTest {
 		assertEquals(200, response.getStatus());
 	}
 	
-	@Ignore
+	@Ignore // 1802 merge
 	@Test
 	public void testDeactivateThreadException() throws IOException {
 		CloudOrchestration co = new CloudOrchestration();

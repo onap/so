@@ -575,7 +575,7 @@ public class E2EServiceInstancesTest {
             .contains("Mapping of request to JSON object failed.  No content to map to Object due to end of input"));
 	}
 
-	@Ignore
+	@Ignore // 1802 merge
 	@Test
 	public void deleteE2EServiceInstanceTestNormal() {
 		E2EServiceInstances instance = new E2EServiceInstances();

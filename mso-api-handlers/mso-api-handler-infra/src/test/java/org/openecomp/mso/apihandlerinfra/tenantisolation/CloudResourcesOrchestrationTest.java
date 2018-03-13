@@ -273,7 +273,7 @@ public class CloudResourcesOrchestrationTest {
 		assertEquals(200, response.getStatus());
 	}
 	
-	@Ignore
+	@Ignore // 1802 merge
 	@Test
 	public void testGetOperationalEnvFilterException1() throws ParseException {
 		InfraActiveRequests iar = new InfraActiveRequests();

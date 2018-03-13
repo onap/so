@@ -82,7 +82,7 @@ public class ActivateVnfStatusOperationalEnvironmentTest {
 	}
 
 
-	@Ignore
+	@Ignore // 1802 merge
 	@Test
 	public void checkOrUpdateOverallStatusTest_Ok() throws Exception {
 		
