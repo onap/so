@@ -23,31 +23,46 @@ package org.openecomp.mso.bpmn.core.domain;
 import java.io.Serializable;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
+/**
+ * Stores resources placement and licensing information
+ *
+ */
 @JsonRootName("homingSolution")
-public class HomingSolution  extends JsonWrapper implements Serializable  {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class HomingSolution extends JsonWrapper implements Serializable  {
 
 	private static final long serialVersionUID = 1L;
 
 	private InventoryType inventoryType;
-	private String serviceInstanceId;
-	private String vnfHostname;
+	private boolean isRehome;
+	private String serviceInstanceId; //TODO should start using si object instead
 	private String cloudOwner;
 	private String cloudRegionId;
 	private String aicClli;
 	private String aicVersion;
-	private String ucpeId; //TODO Remove?
-	private List<String> entitlementPoolList;
-	private List<String> licenseKeyGroupList;
+	private String tenant;
+	private VnfResource vnf;
+	private License license = new License();
 
 
-	public InventoryType getInventoryType(){
+	/**
+	 * @return the inventoryType which indicates the solution type
+	 */
+	public InventoryType getInventoryType() {
 		return inventoryType;
 	}
 
-	public void setInventoryType(InventoryType inventoryType){
+	public void setInventoryType(InventoryType inventoryType) {
 		this.inventoryType = inventoryType;
+	}
+	public boolean isRehome() {
+		return isRehome;
+	}
+	public void setRehome(boolean isRehome) {
+		this.isRehome = isRehome;
 	}
 
 	public String getServiceInstanceId() {
@@ -58,21 +73,11 @@ public class HomingSolution  extends JsonWrapper implements Serializable  {
 		this.serviceInstanceId = serviceInstanceId;
 	}
 
-	public String getVnfHostname(){
-		return vnfHostname;
-	}
-
-	public void setVnfHostname(String vnfHostname){
-		this.vnfHostname = vnfHostname;
-	}
-
-
-	public String getCloudOwner(){
+	public String getCloudOwner() {
 		return cloudOwner;
 	}
 
-
-	public void setCloudOwner(String cloudOwner){
+	public void setCloudOwner(String cloudOwner) {
 		this.cloudOwner = cloudOwner;
 	}
 
@@ -83,48 +88,56 @@ public class HomingSolution  extends JsonWrapper implements Serializable  {
 	public void setCloudRegionId(String cloudRegionId) {
 		this.cloudRegionId = cloudRegionId;
 	}
-
-
-	public String getAicClli(){
+	/**
+	 * @return the aicClli (aka aic site, physical location id)
+	 */
+	public String getAicClli() {
 		return aicClli;
 	}
 
-
-	public void setAicClli(String aicClli){
+	public void setAicClli(String aicClli) {
 		this.aicClli = aicClli;
 	}
 
-
-	public String getAicVersion(){
+	public String getAicVersion() {
 		return aicVersion;
 	}
 
-
-	public void setAicVersion(String aicVersion){
+	public void setAicVersion(String aicVersion) {
 		this.aicVersion = aicVersion;
 	}
 
-	public String getUcpeId(){
-		return ucpeId;
+	public String getTenant() {
+		return tenant;
 	}
 
-	public void setUcpeId(String ucpeId){
-		this.ucpeId = ucpeId;
+	public void setTenant(String tenant) {
+		this.tenant = tenant;
 	}
 
-	public List<String> getEntitlementPoolList(){
-		return entitlementPoolList;
+	/**
+	 * @return the vnf that the resource was homed too.
+	 */
+	public VnfResource getVnf() {
+		return vnf;
 	}
 
-	public void setEntitlementPoolList(List<String> entitlementPoolList){
-		this.entitlementPoolList = entitlementPoolList;
+	public void setVnf(VnfResource vnf) {
+		this.vnf = vnf;
 	}
 
-	public List<String> getLicenseKeyGroupList(){
-		return licenseKeyGroupList;
+	public License getLicense() {
+		return license;
 	}
 
-	public void setLicenseKeyGroupList(List<String> licenseKeyGroupList){
-		this.licenseKeyGroupList = licenseKeyGroupList;
+	public void setLicense(License license) {
+		this.license = license;
 	}
+
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+
 }

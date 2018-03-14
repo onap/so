@@ -24,10 +24,8 @@ package org.openecomp.mso.adapters.tenantrest;
 
 import java.util.Map;
 import javax.xml.bind.annotation.XmlRootElement;
-import org.jboss.resteasy.annotations.providers.NoJackson;
 
 @XmlRootElement(name = "queryTenantResponse")
-@NoJackson
 public class QueryTenantResponse extends TenantRequestCommon {
 	private String tenantId;
 	private String tenantName;

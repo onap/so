@@ -35,7 +35,7 @@ import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.json.JSONObject;
 import org.apache.commons.lang3.*
 import org.apache.commons.codec.binary.Base64;
@@ -59,7 +59,7 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 	JsonUtils jsonUtil = new JsonUtils()
 	VidUtils vidUtils = new VidUtils()
 	
-	public void preProcessRequest (Execution execution) {
+	public void preProcessRequest (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		String msg = ""
@@ -81,17 +81,36 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 				msg = "Input serviceInstanceId' is null"
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
-						
-			String serviceType = execution.getVariable("serviceType")
-			if (isBlank(serviceType)) {
-				msg = "Input serviceType' is null"
-				utils.log("INFO", msg, isDebugEnabled)
-			} else {
-				execution.setVariable("serviceType", serviceType)
+		
+			//String xmlRequestDetails = vidUtils.getJsonRequestDetailstoXml(siRequest)
+			//execution.setVariable("requestDetails", xmlRequestDetails)
+			
+			//modelInfo
+			String serviceModelInfo = jsonUtil.getJsonValue(siRequest, "requestDetails.modelInfo")
+			if (isBlank(serviceModelInfo)) {
+				msg = "Input serviceModelInfo is null"
+				utils.log("DEBUG", msg, isDebugEnabled)
+			} else
+			{
+				execution.setVariable("serviceModelInfo", serviceModelInfo)
+				//utils.log("DEBUG", "modelInfo" + serviceModelInfo,  isDebugEnabled)
 			}
 			
+			//requestInfo
+			String productFamilyId = jsonUtil.getJsonValue(siRequest, "requestDetails.requestInfo.productFamilyId")
+			if (isBlank(productFamilyId))
+			{
+				msg = "Input productFamilyId is null"
+				utils.log("INFO", msg, isDebugEnabled)
+				//exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+			} else {
+				execution.setVariable("productFamilyId", productFamilyId)
+			}
+			String source = jsonUtil.getJsonValue(siRequest, "requestDetails.requestInfo.source")
+			execution.setVariable("source", source)
+			
 			//subscriberInfo
-			String globalSubscriberId = jsonUtil.getJsonValue(siRequest, "globalSubscriberId")
+			String globalSubscriberId = jsonUtil.getJsonValue(siRequest, "requestDetails.subscriberInfo.globalSubscriberId")
 			if (isBlank(globalSubscriberId)) {
 				msg = "Input globalSubscriberId' is null"
 				utils.log("INFO", msg, isDebugEnabled)
@@ -99,16 +118,38 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 				execution.setVariable("globalSubscriberId", globalSubscriberId)
 			}
 			
-			//operationId
-			String operationId = jsonUtil.getJsonValue(siRequest, "operationId")
-		 	if (isBlank(operationId)) {
-		 		operationId = UUID.randomUUID().toString()
-		 	 }   
-			execution.setVariable("operationId", operationId) 
+			//requestParameters
+			String subscriptionServiceType = jsonUtil.getJsonValue(siRequest, "requestDetails.requestParameters.subscriptionServiceType")
+			if (isBlank(subscriptionServiceType)) {
+				msg = "Input subscriptionServiceType is null"
+				utils.log("DEBUG", msg, isDebugEnabled)
+				//exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+			} else {
+				execution.setVariable("subscriptionServiceType", subscriptionServiceType)
+			}
+			
+			/*
+			 * Extracting User Parameters from incoming Request and converting into a Map
+			 */
+			def jsonSlurper = new JsonSlurper()
+			def jsonOutput = new JsonOutput()
+
+			Map reqMap = jsonSlurper.parseText(siRequest)
+
+			//InputParams
+			def userParams = reqMap.requestDetails?.requestParameters?.userParams
+
+			Map<String, String> inputMap = [:]
+			if (userParams) {
+				userParams.each {
+					userParam -> inputMap.put(userParam.name, userParam.value.toString())
+				}
+			}
 			execution.setVariable("operationType", "DELETE") 
 			
-			execution.setVariable("URN_mso_adapters_openecomp_db_endpoint","http://mso.mso.testlab.openecomp.org:8080/dbadapters/RequestsDbAdapter")
-			
+			utils.log("DEBUG", "User Input Parameters map: " + userParams.toString(), isDebugEnabled)
+			execution.setVariable("serviceInputParams", inputMap)
+
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception ex){
@@ -119,15 +160,16 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 		utils.log("INFO"," ***** Exit preProcessRequest *****",  isDebugEnabled)
 	}
 
-	public void sendSyncResponse (Execution execution) {
+	public void sendSyncResponse (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO", " *** sendSyncResponse  *** ", isDebugEnabled)
 
 		try {
-			String operationId = execution.getVariable("operationId")
-			
-			// RESTResponse (for API Handler (APIH) Reply Task) :  :  
-			String syncResponse = """{"operationId":"${operationId}"}""".trim()
+			String requestId = execution.getVariable("msoRequestId")
+			String serviceInstanceId = execution.getVariable("serviceInstanceId")
+
+			// RESTResponse (for API Handler (APIH) Reply Task)
+			String syncResponse = """{"requestReferences":{"instanceId":"${serviceInstanceId}","requestId":"${requestId}"}}""".trim()
 			utils.log("INFO", " sendSynchResponse: xmlSyncResponse - " + "\n" + syncResponse, isDebugEnabled)
 			sendWorkflowResponse(execution, 202, syncResponse)
 
@@ -138,7 +180,7 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 		utils.log("INFO"," ***** Exit sendSyncResopnse *****",  isDebugEnabled)
 	}
 	
-	public void sendSyncError (Execution execution) {
+	public void sendSyncError (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO", " *** sendSyncError *** ", isDebugEnabled)
 
@@ -166,7 +208,7 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 
 	}
 	
-	public void prepareCompletionRequest (Execution execution) {
+	public void prepareCompletionRequest (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO", " *** prepareCompletion *** ", isDebugEnabled)
 
@@ -199,7 +241,7 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 		utils.log("INFO", "*** Exit prepareCompletionRequest ***", isDebugEnabled)
 	}
 	
-	public void prepareFalloutRequest(Execution execution){
+	public void prepareFalloutRequest(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO", " *** prepareFalloutRequest *** ", isDebugEnabled)
 
@@ -245,7 +287,7 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 	// *******************************
 	//     Build DB request Section
 	// *******************************
-	public void prepareDBRequest (Execution execution) {
+	public void prepareDBRequest (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 
@@ -287,7 +329,7 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 	// *******************************
 	//     Build Error Section
 	// *******************************
-	public void prepareDBRequestError (Execution execution) {
+	public void prepareDBRequestError (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 
@@ -332,7 +374,7 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 
 	 }
 
-	public void processJavaException(Execution execution) {
+	public void processJavaException(DelegateExecution execution) {
 		//TODO:
 	}
 }

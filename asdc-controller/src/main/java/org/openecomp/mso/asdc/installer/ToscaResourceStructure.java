@@ -45,7 +45,7 @@ import org.openecomp.sdc.tosca.parser.impl.SdcToscaParserFactory;
 
 import org.openecomp.sdc.toscaparser.api.NodeTemplate;
 import org.openecomp.sdc.toscaparser.api.elements.Metadata;
-
+import org.openecomp.mso.asdc.client.exceptions.ASDCDownloadException;
 import org.openecomp.mso.db.catalog.beans.AllottedResource;
 import org.openecomp.mso.db.catalog.beans.AllottedResourceCustomization;
 import org.openecomp.mso.db.catalog.beans.NetworkResource;
@@ -76,13 +76,16 @@ public class ToscaResourceStructure {
 	String volHeatEnvTemplateUUID;
 	String envHeatTemplateUUID;
 	String heatFilesUUID;
+	String workloadPerformance;
 	boolean isVnfAlreadyInstalled = false;
 	String serviceVersion;
+	private boolean isDeployedSuccessfully=false;
+	
 	
 	private NetworkResourceCustomization catalogNetworkResourceCustomization;
 	
 	private NetworkResource catalogNetworkResource;
-	
+		
 	private AllottedResourceCustomization catalogResourceCustomization;
 	
 	private VfModule vfModule;
@@ -121,19 +124,18 @@ public class ToscaResourceStructure {
 	public ToscaResourceStructure(){
 	}
 	
-	public void updateResourceStructure(IArtifactInfo artifact){
+	public void updateResourceStructure(IArtifactInfo artifact) throws ASDCDownloadException {
 		
 				
 		try {
 				
 			SdcToscaParserFactory factory = SdcToscaParserFactory.getInstance();//Autoclosable
 			
+			LOGGER.debug("MSO config path is: " + System.getProperty("mso.config.path"));
 			
 			File spoolFile = new File(System.getProperty("mso.config.path") + "ASDC/" + artifact.getArtifactName());
-			
-
-			 
-			System.out.println("PATH IS " + spoolFile.getAbsolutePath());
+ 
+			LOGGER.debug("ASDC File path is: " + spoolFile.getAbsolutePath());
 			LOGGER.info(MessageEnum.ASDC_RECEIVE_SERVICE_NOTIF, "***PATH", "ASDC", spoolFile.getAbsolutePath());
 			
 
@@ -143,12 +145,12 @@ public class ToscaResourceStructure {
 			System.out.println("System out " + e.getMessage());
 			LOGGER.error(MessageEnum.ASDC_GENERAL_EXCEPTION_ARG,
 					"Exception caught during parser *****LOOK********* " + artifact.getArtifactName(), "ASDC", "processResourceNotification", MsoLogger.ErrorCode.BusinessProcesssError, "Exception in processResourceNotification", e);
-		}	
 			
+			throw new ASDCDownloadException ("Exception caught when passing the csar file to the parser ", e);
+		}	
 
 			serviceMetadata = sdcCsarHelper.getServiceMetadata();
-
-		
+	
 	}
 	
 	public String getHeatTemplateUUID() {
@@ -407,6 +409,129 @@ public class ToscaResourceStructure {
 
 	public void setServiceVersion(String serviceVersion) {
 		this.serviceVersion = serviceVersion;
+	}
+
+	public String getWorkloadPerformance() {
+		return workloadPerformance;
+	}
+
+	public void setWorkloadPerformance(String workloadPerformance) {
+		this.workloadPerformance = workloadPerformance;
+	}
+
+	public VfModule getVfModule() {
+		return vfModule;
+	}
+
+	public void setVfModule(VfModule vfModule) {
+		this.vfModule = vfModule;
+	}
+
+	public VfModuleCustomization getVfModuleCustomization() {
+		return vfModuleCustomization;
+	}
+
+	public void setVfModuleCustomization(VfModuleCustomization vfModuleCustomization) {
+		this.vfModuleCustomization = vfModuleCustomization;
+	}
+
+	public VnfResource getVnfResource() {
+		return vnfResource;
+	}
+
+	public void setVnfResource(VnfResource vnfResource) {
+		this.vnfResource = vnfResource;
+	}
+
+	public VnfResourceCustomization getVnfResourceCustomization() {
+		return vnfResourceCustomization;
+	}
+
+	public void setVnfResourceCustomization(
+			VnfResourceCustomization vnfResourceCustomization) {
+		this.vnfResourceCustomization = vnfResourceCustomization;
+	}
+
+	public AllottedResourceCustomization getAllottedResourceCustomization() {
+		return allottedResourceCustomization;
+	}
+
+	public void setAllottedResourceCustomization(
+			AllottedResourceCustomization allottedResourceCustomization) {
+		this.allottedResourceCustomization = allottedResourceCustomization;
+	}
+
+	public VnfResCustomToVfModuleCustom getVnfResCustomToVfModuleCustom() {
+		return vnfResCustomToVfModuleCustom;
+	}
+
+	public void setVnfResCustomToVfModuleCustom(
+			VnfResCustomToVfModuleCustom vnfResCustomToVfModuleCustom) {
+		this.vnfResCustomToVfModuleCustom = vnfResCustomToVfModuleCustom;
+	}
+
+	public TempNetworkHeatTemplateLookup getTempNetworkHeatTemplateLookup() {
+		return tempNetworkHeatTemplateLookup;
+	}
+
+	public void setTempNetworkHeatTemplateLookup(
+			TempNetworkHeatTemplateLookup tempNetworkHeatTemplateLookup) {
+		this.tempNetworkHeatTemplateLookup = tempNetworkHeatTemplateLookup;
+	}
+
+	public VfModuleToHeatFiles getVfModuleToHeatFiles() {
+		return vfModuleToHeatFiles;
+	}
+
+	public void setVfModuleToHeatFiles(VfModuleToHeatFiles vfModuleToHeatFiles) {
+		this.vfModuleToHeatFiles = vfModuleToHeatFiles;
+	}
+
+	public ToscaCsar getToscaCsar() {
+		return toscaCsar;
+	}
+
+	public void setToscaCsar(ToscaCsar toscaCsar) {
+		this.toscaCsar = toscaCsar;
+	}
+
+	public ServiceToResourceCustomization getVfServiceToResourceCustomization() {
+		return vfServiceToResourceCustomization;
+	}
+
+	public void setVfServiceToResourceCustomization(
+			ServiceToResourceCustomization vfServiceToResourceCustomization) {
+		this.vfServiceToResourceCustomization = vfServiceToResourceCustomization;
+	}
+
+	public ServiceToResourceCustomization getAllottedServiceToResourceCustomization() {
+		return allottedServiceToResourceCustomization;
+	}
+
+	public void setAllottedServiceToResourceCustomization(
+			ServiceToResourceCustomization allottedServiceToResourceCustomization) {
+		this.allottedServiceToResourceCustomization = allottedServiceToResourceCustomization;
+	}
+
+	public ServiceToResourceCustomization getVlServiceToResourceCustomization() {
+		return vlServiceToResourceCustomization;
+	}
+
+	public void setVlServiceToResourceCustomization(
+			ServiceToResourceCustomization vlServiceToResourceCustomization) {
+		this.vlServiceToResourceCustomization = vlServiceToResourceCustomization;
+	}
+
+	public static MsoLogger getLogger() {
+		return LOGGER;
+	}
+	
+	public boolean isDeployedSuccessfully() {
+		return isDeployedSuccessfully;
+	}
+
+	public void setSuccessfulDeployment() {
+		isDeployedSuccessfully = true;
 	}
 
 }

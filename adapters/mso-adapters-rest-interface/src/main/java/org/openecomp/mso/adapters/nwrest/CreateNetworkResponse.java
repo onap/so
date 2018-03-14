@@ -22,17 +22,17 @@ package org.openecomp.mso.adapters.nwrest;
 
 
 
-import org.openecomp.mso.openstack.beans.NetworkRollback;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.jboss.resteasy.annotations.providers.NoJackson;
-import org.codehaus.jackson.map.annotate.JsonRootName;
+import org.openecomp.mso.openstack.beans.NetworkRollback;
+
+import com.fasterxml.jackson.annotation.JsonRootName;
 
 @JsonRootName("createNetworkResponse")
 @XmlRootElement(name = "createNetworkResponse")
-@NoJackson
+
 public class CreateNetworkResponse extends NetworkResponseCommon {
 	private String networkId;
 	private String neutronNetworkId;

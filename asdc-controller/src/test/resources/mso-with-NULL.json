@@ -7,6 +7,12 @@
         "environmentName": "environmentName",
         "asdcAddress": "hostname",
         "password": "1c551b8b5ab91fcd5a0907b11c304199",
+       "watchDogTimeout": "300",
+       "messageBusAddress": [
+         "uebsb91sfdc.it.att.com",
+         "uebsb92sfdc.it.att.com",
+         "uebsb93sfdc.it.att.com"
+       ],
         "pollingInterval":10,
         "pollingTimeout":30
         

@@ -15,13 +15,13 @@
 	<modules>
 		<module>mso-adapter-utils</module>
 		<module>mso-adapters-rest-interface</module>
-		<module>mso-network-adapter</module>
+		<module>mso-vnf-adapter-async-client</module>
 		<module>mso-network-adapter-async-client</module>
+		<module>mso-network-adapter</module>
 		<module>mso-sdnc-adapter</module>
 		<!--<module>mso-appc-adapter</module>-->
 		<module>mso-tenant-adapter</module>
 		<module>mso-vnf-adapter</module>
-		<module>mso-vnf-adapter-async-client</module>
 		<module>mso-requests-db-adapter</module>
 		<module>mso-catalog-db-adapter</module>
 		<module>mso-workflow-message-adapter</module>

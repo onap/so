@@ -1,61 +1,62 @@
 {
-"requestDetails": {
-"modelInfo": {
-"modelType": "vfModule",
-"modelInvariantUuid": "introvert",
-"modelUuid": "fe6478e5-ea33-3346-ac12-ab121484a3fe",
-"modelName": "STMTN5MMSC21-MMSC::model-1-0",
-"modelVersion": "1",
-"modelCustomizationUuid": "MODEL12345"
-},
-"cloudConfiguration": {
-"lcpCloudRegionId": "MDTWNJ21",
-"tenantId": "fba1bd1e195a404cacb9ce17a9b2b421"
-},
-"requestInfo": {
-"instanceName": "PCRF::module-0",
-"instanceId": "supercool",
-"source": "VID",
-"suppressRollback": true
-},
-"relatedInstanceList": [
-{
-"relatedInstance": {
-"instanceId": "123456",
-"modelInfo": {
-"modelType": "service",
-"modelInvariantUuid": "ff3514e3-5a33-55df-13ab-12abad84e7ff",
-"modelUuid": "fe6985cd-ea33-3346-ac12-ab121484a3fe",
-"modelName": "SERVICE_MODEL_NAME",
-"modelVersion": "1.0"
-}
-}
-},
-{
-"relatedInstance": {
-"instanceId": "skask",
-"modelInfo": {
-"modelType": "vnf",
-"modelInvariantUuid": "skask",
-"modelUuid": "fe6478e4-ea33-3346-ac12-ab121484a3fe",
-"modelName": "vSAMP12",
-"modelVersion": "1.0",
-"modelInstanceName": "vSAMP12 1"
-}
-}
-}
-],
-"requestParameters": {
-"usePreload": false,
-"userParams" : [
-	{
-		"name" : "someUserParam",
-		"value" : "someValue"
-	},
-	{ 
-		"name": "sgi_protected_subnet_id", 
-		"value": "thisissomefakevalue" 
+	"requestDetails": {
+		"modelInfo": {
+			"modelType": "vfModule",
+			"modelInvariantUuid": "introvert",
+			"modelUuid": "fe6478e5-ea33-3346-ac12-ab121484a3fe",
+			"modelName": "STMTN5MMSC21-MMSC::model-1-0",
+			"modelVersion": "1",
+			"modelCustomizationUuid": "MODEL12345"
+		},
+		"cloudConfiguration": {
+			"lcpCloudRegionId": "MDTWNJ21",
+			"tenantId": "fba1bd1e195a404cacb9ce17a9b2b421"
+		},
+		"requestInfo": {
+			"instanceName": "PCRF::module-0",
+			"instanceId": "supercool",
+			"source": "VID",
+			"suppressRollback": true
+		},
+		"relatedInstanceList": [
+			{
+				"relatedInstance": {
+					"instanceId": "123456",
+					"modelInfo": {
+						"modelType": "service",
+						"modelInvariantUuid": "ff3514e3-5a33-55df-13ab-12abad84e7ff",
+						"modelUuid": "fe6985cd-ea33-3346-ac12-ab121484a3fe",
+						"modelName": "SERVICE_MODEL_NAME",
+						"modelVersion": "1.0"
+					}
+				}
+			},
+			{
+				"relatedInstance": {
+					"instanceId": "skask",
+					"modelInfo": {
+						"modelType": "vnf",
+						"modelInvariantUuid": "skask",
+						"modelUuid": "fe6478e4-ea33-3346-ac12-ab121484a3fe",
+						"modelName": "vSAMP12",
+						"modelVersion": "1.0",
+						"modelInstanceName": "vSAMP12 1"
+					}
+				}
+			}
+		],
+		"requestParameters": {
+			"usePreload": false,
+			"userParams": [
+				{
+					"name": "someUserParam",
+					"value": "someValue"
+				},
+				{
+					"name": "sgi_protected_subnet_id",
+					"value": "thisissomefakevalue"
+				}
+			]
+		}
 	}
-]
-}
 }

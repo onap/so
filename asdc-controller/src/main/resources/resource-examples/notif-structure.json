@@ -5,9 +5,9 @@
     "serviceVersion": "2.0",
     "serviceArtifacts": 
     [{
-		"artifactName": "service_Rg516VmmscSrvc_csar.csar",
+		"artifactName": "service_PortMirroringContainer_csar.csar",
 		"artifactType": "TOSCA_CSAR",
-		"artifactURL": "service_Rg516VmmscSrvc_csar.csar",
+		"artifactURL": "service_PortMirroringContainer_csar.csar",
 		"artifactChecksum": "ZDc1MTcxMzk4ODk4N2U5MzMxOTgwMzYzZTI0MTg5Y2U\u003d",
 		"artifactDescription": "TOSCA representation of the asset",
 		"artifactTimeout": 0,

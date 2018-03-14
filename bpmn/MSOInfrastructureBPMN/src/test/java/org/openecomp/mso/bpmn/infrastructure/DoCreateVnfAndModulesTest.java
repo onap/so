@@ -78,7 +78,7 @@ public class DoCreateVnfAndModulesTest extends WorkflowTest {
 	}
 
 	@Test
-    @Ignore // IGNORED FOR 1710 MERGE TO ONAP
+    
 	@Deployment(resources = {"subprocess/GenericGetService.bpmn",
 			"subprocess/GenericGetVnf.bpmn",
 			"subprocess/GenericPutVnf.bpmn", 
@@ -133,7 +133,7 @@ public class DoCreateVnfAndModulesTest extends WorkflowTest {
 	}
 	
 	@Test
-    @Ignore // IGNORED FOR 1710 MERGE TO ONAP
+    
 	@Deployment(resources = {"subprocess/GenericGetService.bpmn",
 			"subprocess/GenericGetVnf.bpmn",
 			"subprocess/GenericPutVnf.bpmn", 

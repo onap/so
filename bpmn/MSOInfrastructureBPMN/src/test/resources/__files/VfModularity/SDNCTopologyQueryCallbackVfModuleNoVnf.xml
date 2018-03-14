@@ -5,13 +5,13 @@
 		<vf-module-type>vSAMP10aDEV::base::module-0</vf-module-type>
 		<vf-module-name>zmtn6nf-code-111_base_0</vf-module-name>
 	</vf-module-topology-identifier>
-	<onap-model-information>
+	<ecomp-model-information>
 		<model-name>vSAMP10aDEV::base::module-0</model-name>
 		<model-customization-uuid>819ef122-ca19-4141-a61e-62922f8fc279</model-customization-uuid>
 		<model-version>ff2ae348-214a-11e7-93ae-92361f002673</model-version>
 		<model-invariant-uuid>3a97db99-c4bb-498a-a13a-38f65f1ced3d</model-invariant-uuid>
 		<model-uuid>ff2ae348-214a-11e7-93ae-92361f002673</model-uuid>
-	</onap-model-information>
+	</ecomp-model-information>
 	<tenant>19123c2924c648eb8e42a3c1f14b7682</tenant>
 	<aic-cloud-region>mtn6</aic-cloud-region>
 	<aic-clli>AUSTTXGR</aic-clli>		
@@ -37,7 +37,8 @@
 					</vm-names>
 					<vm-count>1</vm-count>
 					<vm-networks>
-						<network-role>mog_cor_B</network-role>
+						<network-role-tag>mog_cor_B</network-role-tag>
+						<network-role>hhh</network-role>
 						<network-ips>
 							<ip-address>107.224.36.249</ip-address>
 						</network-ips>

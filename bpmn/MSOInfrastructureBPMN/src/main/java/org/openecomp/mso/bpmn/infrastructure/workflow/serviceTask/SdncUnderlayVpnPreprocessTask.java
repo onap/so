@@ -43,7 +43,7 @@ public class SdncUnderlayVpnPreprocessTask extends BaseTask {
         String serviceId = (String) execution.getVariable("serviceId");
         serviceId = StringUtils.isBlank(serviceId) ? (String) execution.getVariable("serviceInstanceId") : serviceId;
         String operationId = (String) execution.getVariable("operationId");
-        String resourceTemplateUUID = (String) execution.getVariable("resourceUUID");
+        String resourceTemplateUUID = (String) execution.getVariable("resourceTemplateUUID");
         resourceTemplateUUID = StringUtils.isBlank(resourceTemplateUUID) ? (String) execution.getVariable("resourceTemplateId") : resourceTemplateUUID;
         ResourceOperationStatus resourceOperationStatus = requestsDB.getResourceOperationStatus(serviceId, operationId, resourceTemplateUUID);
         return resourceOperationStatus.getOperType();

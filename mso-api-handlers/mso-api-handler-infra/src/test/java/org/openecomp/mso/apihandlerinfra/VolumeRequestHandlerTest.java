@@ -62,6 +62,7 @@ public class VolumeRequestHandlerTest {
 	
 	@Test
 	public void manageVnfRequestTest(){
+		Mockito.when(uriInfo.getRequestUri()).thenReturn(URI.create("http://localhost:8080/test"));
 		Response resp = handler.manageVolumeRequest("<name>Test</name>", "v2");
 		assertTrue(null != resp);
 	}

@@ -20,7 +20,7 @@
 
 package org.openecomp.mso.bpmn.common.scripts
 
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.apache.commons.lang3.*
 
 class TrinityExceptionUtil {
@@ -60,7 +60,7 @@ class TrinityExceptionUtil {
 
 	
 	
-	String mapAdapterExecptionToCommonException(String response, Execution execution)
+	String mapAdapterExecptionToCommonException(String response, DelegateExecution execution)
 	{
 		def utils=new MsoUtils()
 		def method = getClass().getSimpleName() + '.mapAdapterExecptionToCommonException(' +
@@ -93,7 +93,7 @@ class TrinityExceptionUtil {
 	 * @param execution
 	 * @return mapped exception
 	 */
-	String mapAOTSExecptionToCommonException(String response, Execution execution)
+	String mapAOTSExecptionToCommonException(String response, DelegateExecution execution)
 	{
 		def utils=new MsoUtils()
 
@@ -128,7 +128,7 @@ class TrinityExceptionUtil {
 		}
 	}
 	
-	String mapSDNCAdapterExceptionToErrorResponse(String sdncAdapterCallbackRequest, Execution execution) {
+	String mapSDNCAdapterExceptionToErrorResponse(String sdncAdapterCallbackRequest, DelegateExecution execution) {
 		def utils=new MsoUtils()
 		def prefix=execution.getVariable("prefix")
 		def method = getClass().getSimpleName() + '.mapSDNCAdapterExceptionToErrorResponse(' +
@@ -182,7 +182,7 @@ class TrinityExceptionUtil {
 	 * @param execution
 	 * @return an error response conforming to the common 
 	 */
-	String mapAAIExceptionTCommonException(String response, Execution execution)
+	String mapAAIExceptionTCommonException(String response, DelegateExecution execution)
 	{
 		def utils=new MsoUtils()
 		def isDebugLogEnabled=execution.getVariable("isDebugLogEnabled")
@@ -315,7 +315,7 @@ class TrinityExceptionUtil {
 
 	}
 	
-	String parseError(Execution execution){
+	String parseError(DelegateExecution execution){
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		def utils=new MsoUtils()
 		def prefix=execution.getVariable("prefix")

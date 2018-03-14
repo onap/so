@@ -26,8 +26,13 @@
 	org.openecomp.mso.logger.MsoLoggingServlet,
 	org.openecomp.mso.adapters.vnf.HealthCheckHandler,
 	org.openecomp.mso.adapters.vnf.VnfAdapterRest,
+	org.openecomp.mso.adapters.vnf.VnfAdapterRestV2,
 	org.openecomp.mso.adapters.vnf.VolumeAdapterRest
     </param-value>
+  </context-param>
+  <context-param>
+    <param-name>resteasy.providers</param-name>
+    <param-value>org.openecomp.mso.adapters.providers.JettisonStyleMapperProvider</param-value>
   </context-param>
   <context-param>
     <param-name>resteasy.servlet.mapping.prefix</param-name>
@@ -46,7 +51,7 @@
         <web-resource-collection>
             <web-resource-name>RestRequests</web-resource-name>
             <description>Rest Ingress Requests</description>
-            <url-pattern>/rest/v1/*</url-pattern>
+            <url-pattern>/rest/v*/*</url-pattern>
             <http-method>POST</http-method>
             <http-method>GET</http-method>
             <http-method>PUT</http-method>

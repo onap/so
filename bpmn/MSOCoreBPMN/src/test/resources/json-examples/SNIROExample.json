@@ -1,0 +1,163 @@
+{
+	"solutionInfo": {
+		"licenseInfo": [
+			{
+				"resourceModuleName": "vHNF for DHV Test_1 0",
+				"serviceResourceId": "eb05bdec-e815-40cd-99dd-7175f462d2ba",
+				"licenseKeyGroupList": [],
+				"entitlementPoolList": [
+					"92718B2A0F91410B912F2A2C87AAA307",
+					"1EEF79979AD14EE498D31A7EF9DC9004"
+				]
+			}
+		],
+		"placementInfo": [
+			{
+				"assignmentInfo": [
+					{
+						"variableValue": "FRNKGE1A10",
+						"variableName": "aicClli"
+					},
+					{
+						"variableValue": "3.0",
+						"variableName": "aicVersion"
+					},
+					{
+						"variableValue": "att-aic",
+						"variableName": "cloudOwner"
+					}
+				],
+				"inventoryType": "cloud",
+				"resourceModuleName": "Primary IP_Mux_Demux updated_1 0",
+				"serviceResourceId": "7d3d786b-ce6d-4498-813e-3e3028aebea8",
+				"cloudRegionId": "fnkge1a",
+				"serviceInstanceId": ""
+			},
+			{
+				"assignmentInfo": [
+					{
+						"variableValue": "MDTWNJ2B12",
+						"variableName": "aicClli"
+					},
+					{
+						"variableValue": "vig20004vm002vig001",
+						"variableName": "vnfHostName"
+					},
+					{
+						"variableValue": "3.0",
+						"variableName": "aicVersion"
+					},
+					{
+						"variableValue": "att-aic",
+						"variableName": "cloudOwner"
+					},
+					{
+						"variableValue": "vig20004vm002vig001",
+						"variableName": "vnfHostName"
+					}
+				],
+				"inventoryType": "service",
+				"resourceModuleName": "Primary Tunnel_XConn for DHV Testing_1 0",
+				"serviceResourceId": "98fe07e7-4d9c-4f93-8138-18563c05a047",
+				"cloudRegionId": "mtrnj1b",
+				"serviceInstanceId": "519630c1-9b5c-45fb-8b84-3500ead7d77e"
+			},
+			{
+				"assignmentInfo": [
+					{
+						"variableValue": "FRNKGE1A10",
+						"variableName": "aicClli"
+					},
+					{
+						"variableValue": "3.0",
+						"variableName": "aicVersion"
+					},
+					{
+						"variableValue": "att-aic",
+						"variableName": "cloudOwner"
+					}
+				],
+				"inventoryType": "cloud",
+				"resourceModuleName": "Secondary Service_Admin for DHV Test_1 1",
+				"serviceResourceId": "9a1abd7e-5afc-4e85-8f27-251454452350",
+				"cloudRegionId": "fnkge1a",
+				"serviceInstanceId": ""
+			},
+			{
+				"assignmentInfo": [
+					{
+						"variableValue": "FRNKGE1B10",
+						"variableName": "aicClli"
+					},
+					{
+						"variableValue": "3.0",
+						"variableName": "aicVersion"
+					},
+					{
+						"variableValue": "att-aic",
+						"variableName": "cloudOwner"
+					}
+				],
+				"inventoryType": "cloud",
+				"resourceModuleName": "Primary Service_Admin for DHV Test_1 0",
+				"serviceResourceId": "11f557a2-72e3-4977-b2a3-5bf5d73e581c",
+				"cloudRegionId": "frkge1b",
+				"serviceInstanceId": ""
+			},
+			{
+				"assignmentInfo": [
+					{
+						"variableValue": "MDTWNJ2A22",
+						"variableName": "aicClli"
+					},
+					{
+						"variableValue": "vig20004vm001vig001",
+						"variableName": "vnfHostName"
+					},
+					{
+						"variableValue": "1.0",
+						"variableName": "aicVersion"
+					},
+					{
+						"variableValue": "att-aic",
+						"variableName": "cloudOwner"
+					},
+					{
+						"variableValue": "vig20004vm001vig001",
+						"variableName": "vnfHostName"
+					}
+				],
+				"inventoryType": "service",
+				"resourceModuleName": "Secondary Tunnel_XConn for DHV Testing_1 1",
+				"serviceResourceId": "73f1b218-a062-43de-82ae-98682ca78392",
+				"cloudRegionId": "mtrn2",
+				"serviceInstanceId": "7b594c13-6b72-41bd-893a-2656f5dbb87a"
+			},
+			{
+				"assignmentInfo": [
+					{
+						"variableValue": "FRNKGE1B10",
+						"variableName": "aicClli"
+					},
+					{
+						"variableValue": "3.0",
+						"variableName": "aicVersion"
+					},
+					{
+						"variableValue": "att-aic",
+						"variableName": "cloudOwner"
+					}
+				],
+				"inventoryType": "cloud",
+				"resourceModuleName": "Secondary IP_Mux_Demux updated_1 1",
+				"serviceResourceId": "20901d7f-4864-454b-99f1-5239fc353cfc",
+				"cloudRegionId": "frkge1b",
+				"serviceInstanceId": ""
+			}
+		]
+	},
+	"requestId": "90462920-208a-4e5e-bdf3-fcbe0454dde6",
+	"statusMessage": "",
+	"requestState": "done",
+	"transactionId": ""
+}

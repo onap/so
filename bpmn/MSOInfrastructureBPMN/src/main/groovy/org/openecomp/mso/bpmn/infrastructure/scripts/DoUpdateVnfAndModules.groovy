@@ -25,7 +25,7 @@ import java.util.UUID;
 import org.json.JSONObject;
 import org.json.JSONArray;
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution;
+import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.hibernate.jpa.criteria.predicate.IsEmptyPredicate
 
 import static org.apache.commons.lang3.StringUtils.*;
@@ -60,7 +60,7 @@ class DoUpdateVnfAndModules extends AbstractServiceTaskProcessor {
 	 * @param - execution
 	 *	
 	 */
-	public void preProcessRequest(Execution execution) {
+	public void preProcessRequest(DelegateExecution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		utils.log("DEBUG", " *** STARTED DoUpdateVnfAndModules PreProcessRequest Process*** ", isDebugEnabled)
@@ -143,7 +143,7 @@ class DoUpdateVnfAndModules extends AbstractServiceTaskProcessor {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void queryAAIVfModule(Execution execution) {
+	public void queryAAIVfModule(DelegateExecution execution) {
 		def isDebugLogEnabled=execution.getVariable("isDebugLogEnabled")
 		def method = getClass().getSimpleName() + '.queryAAIVfModule(' +
 			'execution=' + execution.getId() +
@@ -218,6 +218,29 @@ class DoUpdateVnfAndModules extends AbstractServiceTaskProcessor {
 														
 								def isBaseVfModule = utils.getNodeText(vfModuleXml, "is-base-vf-module")
 								vfModuleEntry.put("isBaseVfModule", isBaseVfModule)
+								
+								String volumeGroupId = ''
+								
+								logDebug("Next module!", isDebugLogEnabled)
+								def vfModuleRelationships = vfModules[i].'**'.findAll {it.name() == 'relationship-data'}
+								if (vfModuleRelationships.size() > 0) {
+									for (j in 0..vfModuleRelationships.size()-1) {										
+										if (vfModuleRelationships[j] != null) {
+									
+											def relationshipKey = vfModuleRelationships[j].'**'.findAll {it.name() == 'relationship-key'}											
+										
+											if (relationshipKey[0] == 'volume-group.volume-group-id') {
+												def relationshipValue = vfModuleRelationships[j].'**'.findAll {it.name() == 'relationship-value'}
+												volumeGroupId = relationshipValue[0]
+												break
+											}
+										}
+									}
+								}
+								
+								vfModuleEntry.put("volumeGroupId", volumeGroupId)
+								logDebug("volumeGroupId is: " + volumeGroupId, isDebugLogEnabled)
+
 								// Save base vf module to add it to the start of the list later
 								if (isBaseVfModule == "true") {									
 									vfModuleBaseEntry = vfModuleEntry
@@ -253,7 +276,7 @@ class DoUpdateVnfAndModules extends AbstractServiceTaskProcessor {
 		}
 	}
 	
-	public void prepareNextModuleToUpdate(Execution execution){
+	public void prepareNextModuleToUpdate(DelegateExecution execution){
 		def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 		logDebug(" ======== STARTED prepareNextModuleToUpdate ======== ", isDebugLogEnabled)
@@ -275,7 +298,9 @@ class DoUpdateVnfAndModules extends AbstractServiceTaskProcessor {
 			String modelInvariantUuid = vfModule.get("modelInvariantUuid")
 			logDebug("ModelInvariantUuid: " + modelInvariantUuid, isDebugLogEnabled)			
 			
-			execution.setVariable("DUVAM_volumeGroupId", "")
+			def volumeGroupId = vfModule.get("volumeGroupId")
+			execution.setVariable("DUVAM_volumeGroupId", volumeGroupId)
+
 			execution.setVariable("DUVAM_volumeGroupName", "")
 			
 			VnfResource vnfResource = (VnfResource) execution.getVariable("vnfResourceDecomposition")
@@ -309,7 +334,7 @@ class DoUpdateVnfAndModules extends AbstractServiceTaskProcessor {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void prepUpdateAAIGenericVnf(Execution execution) {
+	public void prepUpdateAAIGenericVnf(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.prepUpdateAAIGenericVnf(' +
 			'execution=' + execution.getId() +
 			')'
@@ -381,7 +406,7 @@ class DoUpdateVnfAndModules extends AbstractServiceTaskProcessor {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void callAppCf(Execution execution) {
+	public void callAppCf(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.callAppC(' +
 			'execution=' + execution.getId() +
 			')'

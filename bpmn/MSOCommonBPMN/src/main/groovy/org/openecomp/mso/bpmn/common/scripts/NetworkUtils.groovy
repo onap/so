@@ -33,7 +33,7 @@ import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
 
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 
@@ -43,7 +43,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource
 
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor;
 import org.w3c.dom.Document
 import org.w3c.dom.Element
@@ -1010,7 +1010,7 @@ class NetworkUtils {
 				   if (orchestrationStatus == "PendingDelete" || orchestrationStatus == "pending-delete") {
 					   // skip, do not include in processing, remove!!!
 				   } else {
-				      def subnetList = ["subnet-id", "neutron-subnet-id", "gateway-address", "network-start-address", "cidr-mask", "ip-version", "orchestration-status", "dhcp-enabled", "dhcp-start", "dhcp-end", "resource-version", "subnet-name"]
+				      def subnetList = ["subnet-id", "neutron-subnet-id", "gateway-address", "network-start-address", "cidr-mask", "ip-version", "orchestration-status", "dhcp-enabled", "dhcp-start", "dhcp-end", "resource-version", "subnet-name", "ip-assignment-direction", "host-routes"]
 				      rebuildingSubnets += buildSubNetworkElements(subnetXml, createNetworkResponse, subnetList, "subnet")
 				   }	  
 				}
@@ -1041,7 +1041,7 @@ class NetworkUtils {
 			   if (orchestrationStatus == "pending-delete" || orchestrationStatus == "PendingDelete") {
 				   // skip, do not include in processing, remove!!!
 			   } else {
-			   	  	def subnetList = ["dhcp-start", "dhcp-end", "network-start-address", "cidr-mask", "dhcp-enabled", "gateway-address", "ip-version", "subnet-id", "subnet-name"]
+			   	  	def subnetList = ["dhcp-start", "dhcp-end", "network-start-address", "cidr-mask", "dhcp-enabled", "gateway-address", "ip-version", "subnet-id", "subnet-name", "ip-assignment-direction", "host-routes"]
 					rebuildingSubnets += buildSubNetworkElements(subnetXml, subnetList, "subnets")
 			   		//rebuildingSubnets += buildSubNetworkElements(subnetXml, subnetList, "")
 			   }	
@@ -1084,7 +1084,14 @@ class NetworkUtils {
 					     if (element=="neutron-subnet-id") {
                                // skip
 						 } else {
-						    xmlBuild += "<"+element+">"+var.toString()+"</"+element+">"
+						 	 if (element=="host-routes") {
+								 if (subnetXml.contains("host-routes")) {
+									 List elementRoute = ["host-route-id", "route-prefix", "next-hop", "next-hop-type", "resource-version"]
+									 xmlBuild += buildXMLElements(subnetXml, "host-routes", "host-route", elementRoute)
+								 }
+						 	 } else { 	  
+							  	xmlBuild += "<"+element+">"+var.toString()+"</"+element+">"
+						 	 }	  
 						 }
 					 }
 				 }
@@ -1150,6 +1157,17 @@ class NetworkUtils {
 				if ((element == "subnet-name") && (var != null)) {
 					xmlBuild += "<subnetName>"+var.toString()+"</subnetName>"
 				}
+				if ((element == "ip-assignment-direction") && (var != null)) {
+					xmlBuild += "<addrFromStart>"+var.toString()+"</addrFromStart>"
+				}
+				if (element == "host-routes") {
+					def routes = ""
+					if (subnetXml.contains("host-routes")) {
+						routes = buildHostRoutes(subnetXml)
+					}
+					xmlBuild += routes 
+				}	
+				
 			}
 		}
 		if (parentName != "") {
@@ -1158,6 +1176,38 @@ class NetworkUtils {
 		return xmlBuild
 	}
 
+	// rebuild host-routes
+	def buildHostRoutes(subnetXml) {
+		List  routeElementList = ["host-route-id", "route-prefix", "next-hop", "next-hop-type", "resource-version"]
+		def hostRoutes = buildXMLElements(subnetXml, "host-routes", "host-route", routeElementList)
+		def buildHostRoutes = ""
+		def var = ""
+		if (hostRoutes!=null) {
+			def routesData = new XmlSlurper().parseText(hostRoutes)
+			def routes = routesData.'**'.findAll {it.name() == "host-route"}
+			def routesSize = routes.size()
+			for (i in 0..routesSize-1) {
+			   buildHostRoutes += "<hostRoutes>"
+			   def route = routes[i]
+			   def routeXml = XmlUtil.serialize(route)
+			   List  elementList = ["route-prefix", "next-hop"]
+			   for (element in elementList) {
+				   def xml= new XmlSlurper().parseText(routeXml)
+				   var = xml.'**'.find {it.name() == element}
+				   if (element == "route-prefix") {
+					   buildHostRoutes += "<prefix>"+var.toString()+"</prefix>"
+				   }
+				   if (element == "next-hop") {
+					   buildHostRoutes += "<nextHop>"+var.toString()+"</nextHop>"
+				   }
+			   }
+			   buildHostRoutes += "</hostRoutes>"
+			}   
+		}		
+		return buildHostRoutes		
+		
+	}
+	
 	// rebuild ctag-assignments
 	def rebuildCtagAssignments(xmlInput) {
 		def rebuildingCtagAssignments = ""
@@ -1470,7 +1520,7 @@ class NetworkUtils {
 				return value
 			}
 
-	public boolean isRollbackEnabled (Execution execution, String payloadXml) {
+	public boolean isRollbackEnabled (DelegateExecution execution, String payloadXml) {
 
 		def rollbackEnabled = false
 		def rollbackValueSet = false
@@ -1499,17 +1549,24 @@ class NetworkUtils {
 	/**
 	 * This method extracts the version for the the given ip-version.
 	 *
-	 * @param String ipvVersion - IP protocols version (ex: ipv4 or ipv6)
+	 * @param String ipvVersion - IP protocols version (ex: ipv4 or ipv6 or 4 or 6)
 	 * @return String version - digit version (ex: 4 or 6)
 	 */
 	
 	public String getIpvVersion (String ipvVersion) {
 		
 		String version = ""
-		if (ipvVersion.isNumber()) {
-			version = ipvVersion
-		} else {
-			version = ipvVersion.substring(ipvVersion.indexOf("ipv")+3)
+		try {
+			if (ipvVersion.isNumber()) {
+				version = ipvVersion
+			} else {
+				version = ipvVersion.substring(ipvVersion.indexOf("ipv")+3)
+				if (!version.isNumber()) {
+					version = ipvVersion
+				}
+			}
+		} catch (Exception ex) {
+			version = ipvVersion  
 		}
 		return version
 	}

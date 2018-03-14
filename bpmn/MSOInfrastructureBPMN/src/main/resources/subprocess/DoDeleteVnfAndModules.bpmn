@@ -68,6 +68,8 @@ exceptionUtil.processJavaException(execution)]]></bpmn2:script>
         <camunda:in source="DDVAM_sdncVersion" target="sdncVersion" />
         <camunda:in source="DDVAM_isVidRequest" target="isVidRequest" />
         <camunda:out source="WorkflowException" target="WorkflowException" />
+        <camunda:in source="retainResources" target="retainResources" />
+        <camunda:in source="aLaCarte" target="aLaCarte" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_1xujrk5</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_1p4ycii</bpmn2:outgoing>

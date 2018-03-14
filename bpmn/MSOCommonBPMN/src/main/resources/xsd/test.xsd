@@ -1,0 +1,68 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://org.openecomp/mso/workflow/schema/v1" xmlns:xs="http://www.w3.org/2001/XMLSchema" >
+  <xs:element name="request-id" type="xs:string"/>
+  <xs:element name="source" type="xs:string"/>
+  <xs:element name="notification-url" type="xs:string"/>
+  <xs:element name="order-number" type="xs:string"/>
+  <xs:element name="order-version" type="xs:string"/>
+  <xs:element name="request-action" type="xs:string"/>
+  <xs:element name="model-invariant-uuid" type="xs:string"/>
+  <xs:element name="model-uuid" type="xs:string"/>
+  <xs:element name="model-version" type="xs:string"/>
+  <xs:element name="model-name" type="xs:string"/>
+  <xs:element name="service-id" type="xs:string"/>
+  <xs:element name="subscription-service-type" type="xs:string"/>
+  <xs:element name="ecomp-model-information">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="v1:model-invariant-uuid" xmlns:v1="http://org.openecomp/mso/workflow/schema/v1"/>
+        <xs:element ref="v1:model-uuid" xmlns:v1="http://org.openecomp/mso/workflow/schema/v1"/>
+        <xs:element ref="v1:model-version" xmlns:v1="http://org.openecomp/mso/workflow/schema/v1"/>
+        <xs:element ref="v1:model-name" xmlns:v1="http://org.openecomp/mso/workflow/schema/v1"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="service-instance-id" type="xs:string"/>
+  <xs:element name="subscriber-name" type="xs:string"/>
+  <xs:element name="global-customer-id" type="xs:string"/>
+  <xs:element name="service-instance-name" type="xs:string"/>
+  <xs:element name="request-information">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="v1:request-id" xmlns:v1="http://org.openecomp/mso/workflow/schema/v1"/>
+        <xs:element ref="v1:source" xmlns:v1="http://org.openecomp/mso/workflow/schema/v1"/>
+        <xs:element ref="v1:notification-url" xmlns:v1="http://org.openecomp/mso/workflow/schema/v1"/>
+        <xs:element ref="v1:order-number" xmlns:v1="http://org.openecomp/mso/workflow/schema/v1"/>
+        <xs:element ref="v1:order-version" xmlns:v1="http://org.openecomp/mso/workflow/schema/v1"/>
+        <xs:element ref="v1:request-action" xmlns:v1="http://org.openecomp/mso/workflow/schema/v1"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="service-information">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="v1:service-id" xmlns:v1="http://org.openecomp/mso/workflow/schema/v1"/>
+        <xs:element ref="v1:subscription-service-type" xmlns:v1="http://org.openecomp/mso/workflow/schema/v1"/>
+        <xs:element ref="v1:ecomp-model-information" xmlns:v1="http://org.openecomp/mso/workflow/schema/v1"/>
+        <xs:element ref="v1:service-instance-id" xmlns:v1="http://org.openecomp/mso/workflow/schema/v1"/>
+        <xs:element ref="v1:subscriber-name" xmlns:v1="http://org.openecomp/mso/workflow/schema/v1"/>
+        <xs:element ref="v1:global-customer-id" xmlns:v1="http://org.openecomp/mso/workflow/schema/v1"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="service-request-input">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="v1:service-instance-name" xmlns:v1="http://org.openecomp/mso/workflow/schema/v1"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SDNCServiceInstanceRequestData">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="v1:request-information" xmlns:v1="http://org.openecomp/mso/workflow/schema/v1"/>
+        <xs:element ref="v1:service-information" xmlns:v1="http://org.openecomp/mso/workflow/schema/v1"/>
+        <xs:element ref="v1:service-request-input" xmlns:v1="http://org.openecomp/mso/workflow/schema/v1"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

@@ -19,14 +19,15 @@
  */
 package org.openecomp.mso.adapters.sdncrest;
 
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.map.annotate.JsonRootName;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.jboss.resteasy.annotations.providers.NoJackson;
+import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRootName;
 
 // NOTE: the JAXB (XML) annotations are required with JBoss AS7 and RESTEasy,
 //       even though we are using JSON exclusively.  The @NoJackson annotation
@@ -37,9 +38,8 @@ import java.io.Serializable;
  * The target action is determined by a service type and an operation.
  */
 @JsonRootName("SDNCServiceRequest")
-@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(Include.NON_NULL)
 @XmlRootElement(name = "SDNCServiceRequest")
-@NoJackson
 public class SDNCServiceRequest extends SDNCRequestCommon implements Serializable {
 	private static final long serialVersionUID = 1L;
 

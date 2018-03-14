@@ -37,6 +37,7 @@ import mockit.MockUp;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+
 import org.openecomp.mso.apihandlerinfra.networkbeans.NetworkRequest;
 import org.openecomp.mso.requestsdb.InfraActiveRequests;
 import org.openecomp.mso.requestsdb.InfraRequests;
@@ -52,28 +53,34 @@ UriInfo uriInfo = null;
 	public void setup() throws Exception{
 		
 		uriInfo = Mockito.mock(UriInfo.class);
+
 		Class<?> clazz = NetworkRequestHandler.class;
 		handler = (NetworkRequestHandler)clazz.newInstance();
 		
 		Field f1 = handler.getClass().getDeclaredField("uriInfo");
-		
+
 		f1.setAccessible(true);
         f1.set(handler, uriInfo);
+
 	}
 	
 	@Test
 	public void manageVnfRequestTest(){
+		Mockito.when(uriInfo.getRequestUri()).thenReturn(URI.create("http://localhost:8080/test"));
 		Response resp = handler.manageNetworkRequest("<name>Test</name>", "v2");
 		assertTrue(null != resp);
 	}
+
 	@Test
 	public void manageVnfRequestTestV1(){
+		Mockito.when(uriInfo.getRequestUri()).thenReturn(URI.create("http://localhost:8080/test"));
 		Response resp = handler.manageNetworkRequest("<name>Test</name>", "v1");
 		assertTrue(null != resp);
 	}
 	
 	@Test
 	public void manageVnfRequestTestV3(){
+		Mockito.when(uriInfo.getRequestUri()).thenReturn(URI.create("http://localhost:8080/test"));
 		Response resp = handler.manageNetworkRequest("<name>Test</name>", "v3");
 		assertTrue(null != resp);
 	}

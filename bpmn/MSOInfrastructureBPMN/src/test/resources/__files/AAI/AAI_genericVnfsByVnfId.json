@@ -14,7 +14,7 @@
   "heat-stack-id": "example-heat-stack-id-val-96869",
   "mso-catalog-key": "example-mso-catalog-key-val-30721",
   "management-option": "example-management-option-val-61927",
-  "ipv4-oam-address": "example-ipv4-oam-address-val-23494",
+  "ipv4-oam-address": "135.25.10.14",
   "ipv4-loopback0-address": "example-ipv4-loopback0-address-val-87072",
   "nm-lan-v6-address": "example-nm-lan-v6-address-val-91063",
   "management-v6-address": "example-management-v6-address-val-80466",
@@ -45,6 +45,112 @@
   "nf-naming-code": "example-nf-naming-code-val-25118",
   "selflink": "example-selflink-val-68404",
   
+  "relationship-list": {"relationship":    [
+            {
+         "related-to": "service-instance",
+         "relationship-label": "org.onap.relationships.inventory.ComposedOf",
+         "related-link": "/aai/v12/business/customers/customer/e433710f-9217-458d-a79d-1c7aff376d89/service-subscriptions/service-subscription/VIRTUAL%20USP/service-instances/service-instance/2c323333-af4f-4849-af03-c862c0e93e3b",
+         "relationship-data":          [
+                        {
+               "relationship-key": "customer.global-customer-id",
+               "relationship-value": "e433710f-9217-458d-a79d-1c7aff376d89"
+            },
+                        {
+               "relationship-key": "service-subscription.service-type",
+               "relationship-value": "VIRTUAL USP"
+            },
+                        {
+               "relationship-key": "service-instance.service-instance-id",
+               "relationship-value": "2c323333-af4f-4849-af03-c862c0e93e3b"
+            }
+         ],
+         "related-to-property": [         {
+            "property-key": "service-instance.service-instance-name",
+            "property-value": "kjhgfd1"
+         }]
+      },
+            {
+         "related-to": "vserver",
+         "relationship-label": "tosca.relationships.HostedOn",
+         "related-link": "/aai/v12/cloud-infrastructure/cloud-regions/cloud-region/att-aic/mtn23a/tenants/tenant/e6beab145f6b49098277ac163ac1b4f3/vservers/vserver/1b3f44e5-d96d-4aac-bd9a-310e8cfb0af5",
+         "relationship-data":          [
+                        {
+               "relationship-key": "cloud-region.cloud-owner",
+               "relationship-value": "att-aic"
+            },
+                        {
+               "relationship-key": "cloud-region.cloud-region-id",
+               "relationship-value": "mtn23a"
+            },
+                        {
+               "relationship-key": "tenant.tenant-id",
+               "relationship-value": "e6beab145f6b49098277ac163ac1b4f3"
+            },
+                        {
+               "relationship-key": "vserver.vserver-id",
+               "relationship-value": "1b3f44e5-d96d-4aac-bd9a-310e8cfb0af5"
+            }
+         ],
+         "related-to-property": [         {
+            "property-key": "vserver.vserver-name",
+            "property-value": "comx5000vm003"
+         }]
+      },
+            {
+         "related-to": "vserver",
+         "relationship-label": "tosca.relationships.HostedOn",
+         "related-link": "/aai/v12/cloud-infrastructure/cloud-regions/cloud-region/att-aic/mtn23a/tenants/tenant/e6beab145f6b49098277ac163ac1b4f3/vservers/vserver/14551849-1e70-45cd-bc5d-a256d49548a2",
+         "relationship-data":          [
+                        {
+               "relationship-key": "cloud-region.cloud-owner",
+               "relationship-value": "att-aic"
+            },
+                        {
+               "relationship-key": "cloud-region.cloud-region-id",
+               "relationship-value": "mtn23a"
+            },
+                        {
+               "relationship-key": "tenant.tenant-id",
+               "relationship-value": "e6beab145f6b49098277ac163ac1b4f3"
+            },
+                        {
+               "relationship-key": "vserver.vserver-id",
+               "relationship-value": "14551849-1e70-45cd-bc5d-a256d49548a2"
+            }
+         ],
+         "related-to-property": [         {
+            "property-key": "vserver.vserver-name",
+            "property-value": "comx5000vm002"
+         }]
+      },
+            {
+         "related-to": "vserver",
+         "relationship-label": "tosca.relationships.HostedOn",
+         "related-link": "/aai/v12/cloud-infrastructure/cloud-regions/cloud-region/att-aic/mtn23a/tenants/tenant/e6beab145f6b49098277ac163ac1b4f3/vservers/vserver/48bd7f11-408f-417c-b834-b41c1b98f7d7",
+         "relationship-data":          [
+                        {
+               "relationship-key": "cloud-region.cloud-owner",
+               "relationship-value": "att-aic"
+            },
+                        {
+               "relationship-key": "cloud-region.cloud-region-id",
+               "relationship-value": "mtn23a"
+            },
+                        {
+               "relationship-key": "tenant.tenant-id",
+               "relationship-value": "e6beab145f6b49098277ac163ac1b4f3"
+            },
+                        {
+               "relationship-key": "vserver.vserver-id",
+               "relationship-value": "48bd7f11-408f-417c-b834-b41c1b98f7d7"
+            }
+         ],
+         "related-to-property": [         {
+            "property-key": "vserver.vserver-name",
+            "property-value": "comx5000vm001"
+         }]
+      }
+   ]},  
   
  
  

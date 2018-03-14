@@ -81,13 +81,6 @@
             <version>3.0.1</version>
             <scope>provided</scope>
         </dependency>
-
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <version>1.10.19</version>
-            <scope>test</scope>
-        </dependency>
         <!-- Connectors, in compile scope to include it in the war file -->
         <dependency>
             <groupId>org.camunda.connect</groupId>
@@ -132,30 +125,20 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-jaxrs</artifactId>
-            <version>3.0.19.Final</version>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-simple</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.httpcomponents</groupId>
-                    <artifactId>httpclient</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20160212</version>
         </dependency>
+		<dependency>
+			<groupId>com.github.fge</groupId>
+			<artifactId>json-schema-validator</artifactId>
+			<version>2.2.6</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.fge</groupId>
+			<artifactId>json-schema-core</artifactId>
+			<version>1.2.4</version>
+		</dependency>
         <dependency>
             <groupId>org.xmlunit</groupId>
             <artifactId>xmlunit-core</artifactId>
@@ -167,7 +150,12 @@
             <artifactId>status-control</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
+		<dependency>
+			<groupId>org.onap.so</groupId>
+			<artifactId>mso-api-handler-common</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		 <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
             <version>3.8.0</version>

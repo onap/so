@@ -826,6 +826,14 @@ public class StubResponseAAI {
 						.withBodyFile(responseFile)));
 	}
 	
+	public static void MockGetVfModuleByName(String vnfId, String vfModuleName, String responseFile, int statusCode) {
+		stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/" + vnfId + "/vf-modules/vf-module[?]vf-module-name=" + vfModuleName))
+				.willReturn(aResponse()
+						.withStatus(statusCode)
+						.withHeader("Content-Type", "text/xml")
+						.withBodyFile(responseFile)));
+	}
+	
 	public static void MockGetVfModuleIdNoResponse(String vnfId, String requestContaining, String vfModuleId) {
 		stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/" + vnfId + "/vf-modules/vf-module/" + vfModuleId))
 				.withRequestBody(containing(requestContaining))
@@ -867,7 +875,7 @@ public class StubResponseAAI {
 	
 	/* AAI Pserver Queries */
 	public static void MockGetPserverByVnfId(String vnfId, String responseFile, int statusCode) {
-		stubFor(put(urlMatching("/v10/query.*"))
+		stubFor(put(urlMatching("/aai/v1[0-9]/query.*"))
 				.willReturn(aResponse()
 						.withStatus(statusCode)
 						.withHeader("Content-Type", "application/json")
@@ -875,7 +883,7 @@ public class StubResponseAAI {
 	}
 	
 	public static void MockGetGenericVnfsByVnfId(String vnfId, String responseFile, int statusCode) {
-		stubFor(get(urlMatching("/v10/network/generic-vnfs/.*"))
+		stubFor(get(urlMatching("/aai/v1[0-9]/network/generic-vnfs/.*"))
 				.willReturn(aResponse()
 						.withStatus(statusCode)
 						.withHeader("Content-Type", "application/json; charset=utf-8")
@@ -883,10 +891,26 @@ public class StubResponseAAI {
 	}
 	
 	public static void MockSetInMaintFlagByVnfId(String vnfId, int statusCode) {
-		stubFor(patch(urlMatching("/v10/network/generic-vnfs/.*"))
+		stubFor(patch(urlMatching("/aai/v1[0-9]/network/generic-vnfs/.*"))
+				.willReturn(aResponse()
+						.withStatus(statusCode)						
+						));
+	}
+	
+	public static void MockSetInMaintFlagByVnfId(String vnfId, String responseFile, int statusCode) {
+		stubFor(post(urlMatching("/aai/v1[0-9]/network/generic-vnfs/.*"))
 				.willReturn(aResponse()
 						.withStatus(statusCode)
+						.withBodyFile(responseFile)
 						));
+	}
+	
+	public static void MockGetDefaultCloudRegionByCloudRegionId(String cloudRegionId, String responseFile, int statusCode) {
+		stubFor(get(urlMatching("/aai/v1[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/att-aic/"+cloudRegionId + ".*"))
+				.willReturn(aResponse()
+						.withStatus(statusCode)
+						.withHeader("Content-Type", "application/json; charset=utf-8")
+						.withBodyFile(responseFile)));
 	}
 	
 	//// Deprecated Stubs below - to be deleted once unit test that reference them are refactored to use common ones above ////

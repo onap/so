@@ -26,14 +26,12 @@ import java.util.Map;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.codehaus.jackson.map.annotate.JsonRootName;
-import org.jboss.resteasy.annotations.providers.NoJackson;
-
 import org.openecomp.mso.entity.MsoRequest;
+
+import com.fasterxml.jackson.annotation.JsonRootName;
 
 @JsonRootName("updateVolumeGroupRequest")
 @XmlRootElement(name = "updateVolumeGroupRequest")
-@NoJackson
 public class UpdateVolumeGroupRequest extends VfRequestCommon {
 	private String cloudSiteId;
 	private String tenantId;

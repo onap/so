@@ -24,11 +24,9 @@ package org.openecomp.mso.adapters.tenantrest;
 
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlRootElement;
-import org.jboss.resteasy.annotations.providers.NoJackson;
 import org.openecomp.mso.openstack.exceptions.MsoExceptionCategory;
 
 @XmlRootElement(name = "deleteTenantError")
-@NoJackson
 public class DeleteTenantError implements Serializable {
 	private static final long serialVersionUID = -5778340182805870809L;
 	private String message;

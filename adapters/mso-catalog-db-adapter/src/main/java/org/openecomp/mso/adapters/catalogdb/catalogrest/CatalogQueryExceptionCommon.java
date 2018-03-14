@@ -20,8 +20,8 @@
  */
 package org.openecomp.mso.adapters.catalogdb.catalogrest;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -42,7 +42,7 @@ public abstract class CatalogQueryExceptionCommon {
 		try {
 			String jsonString;
 			ObjectMapper mapper = new ObjectMapper();
-			mapper.enable(SerializationConfig.Feature.WRAP_ROOT_VALUE);
+			mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
 			jsonString = mapper.writeValueAsString(this);
 			return jsonString;
 		} catch (Exception e) {

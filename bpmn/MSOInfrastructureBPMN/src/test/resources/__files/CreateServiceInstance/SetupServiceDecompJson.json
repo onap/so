@@ -1,0 +1,33 @@
+{
+"requestDetails": {
+	"serviceInstance":{
+		"serviceInstanceId": "MSORefactorTest1",
+        "serviceInstanceName":  "bensServiceInstance",
+        "serviceType":          "refactorServiceType",
+		"serviceRole":          "abc",
+		"modelInvariantUuid":   "9647dfc4-2083-11e7-93ae-92361f002671",
+		"modelUuid":           "5df8b6de-2083-11e7-93ae-92361f002671",
+		"modelVersion":         "1.0",
+		"modelName":            "MSOTADevInfra_vSAMP10a_Service",
+		"environmentContext":   "a",
+		"workloadContext":      "b"
+	},
+	"project":{
+		"projectName": "MSORefactorTest1"
+	},
+	"owningEntity":{
+		"owningEntityId": "MSORefactorTestId123",
+		"owningEntityName": "MSORefactorTest1"
+	},
+	"customer":{
+		"subscriptionServiceType": "refactorServiceType",
+		"globalSubscriberId": "MSO_1806_Refactor"
+	},
+	"request":{
+		"sdncRequestId": "abc",
+		"callbackURL": "abc",
+		"requestId": "md5621",
+		"productFamilyId": "abc"
+	}
+}
+}

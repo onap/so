@@ -1,0 +1,42 @@
+{
+  "requestDetails": {
+    "cloudConfiguration": {
+      "lcpCloudRegionId": "mtn6", 
+      "tenantId": "19123c2924c648eb8e42a3c1f14b7682"
+    }, 
+    "modelInfo": {
+      "modelInvariantId": "1710f6e8-1c29-4990-9aea-e943a2ec3d21", 
+      "modelName": "SDNW Service 1710", 
+      "modelType": "service", 
+      "modelVersionId": "1710966e-097c-4d63-afda-e0d3bb7015fb"
+    }, 
+    "requestInfo": {
+      "productFamilyId": "a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb", 
+      "requestorId": "bp896r", 
+      "source": "VID", 
+      "suppressRollback": false
+    }, 
+    "requestParameters": {
+      "aLaCarte" : false,
+      "autoBuildVfModules": true, 
+      "subscriptionServiceType": "MSO-dev-service-type", 
+      "userParams": [
+        {
+          "name": "aic_zone", 
+          "value": "mtn6"
+        }
+      ]
+    }, 
+    "subscriberInfo": {
+      "globalSubscriberId": "MSO_1610_dev", 
+      "subscriberName": "MSO_1610_dev"
+    },
+    "project": {
+		"projectName": "projectName"
+	},
+	"owningEntity": {
+      "owningEntityId": "randomStrings", 
+      "owningEntityName": "randomStrings"
+	}
+  }
+}

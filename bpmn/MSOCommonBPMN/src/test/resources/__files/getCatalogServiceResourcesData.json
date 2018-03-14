@@ -21,6 +21,7 @@
             "nfType": null,
             "nfRole": null,
             "nfNamingCode": null,
+            "multiStageDesign": null,
             "vfModules": [
                {
                   "modelInfo": {

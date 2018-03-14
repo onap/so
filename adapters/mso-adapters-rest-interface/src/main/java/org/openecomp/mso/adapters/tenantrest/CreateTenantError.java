@@ -24,11 +24,9 @@ package org.openecomp.mso.adapters.tenantrest;
 
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlRootElement;
-import org.jboss.resteasy.annotations.providers.NoJackson;
 import org.openecomp.mso.openstack.exceptions.MsoExceptionCategory;
 
 @XmlRootElement(name = "createTenantError")
-@NoJackson
 public class CreateTenantError implements Serializable {
 	private static final long serialVersionUID = 7305288262646805568L;
 	private String message;

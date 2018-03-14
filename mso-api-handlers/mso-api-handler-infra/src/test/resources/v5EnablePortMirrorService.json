@@ -1,0 +1,41 @@
+{
+  "requestDetails": {
+      "modelInfo": {
+         "modelType": "vnf",
+         "modelInvariantId": "2a0bc52d-f32b-4849-b6d8-9bb4b0e3220a",
+         "modelVersionId": "fe6985cd-ea33-3346-ac12-ab121484a3ff",
+         "modelCustomizationId": "b0ed83ec-b7b4-4c70-91c2-63feeaf8609b"
+      },
+      "cloudConfiguration": {
+          "lcpCloudRegionId": "mdt1",
+          "tenantId": "88a6ca3ee0394ade9403f075db23167e"
+      },
+      "requestInfo": {
+        	"source": "VID",
+			"requestorId": "az2016"
+      },
+      "relatedInstanceList": [
+         {
+            "relatedInstance": {
+               "instanceId": "ff305d54-75b4-431b-adb2-eb6b9e5ff000", 
+               "modelInfo": {   
+                  "modelType": "service",
+                  "modelInvariantId": "ff3514e3-5a33-55df-13ab-12abad84e7ff",
+                  "modelVersionId": "fe6985cd-ea33-3346-ac12-ab121484a3fe",
+                  "modelName": "vSAMP12",
+                  "modelVersion": "1.0"
+               }
+            }
+         },
+		 {
+            "relatedInstance": {
+               "instanceId": "ff305d54-75b4-431b-adb2-eb6b9e5ff000",
+               "instanceDirection": "source",
+               "modelInfo": {   
+                  "modelType": "connectionPoint"
+               }
+            }
+         }
+      ]
+  }
+}

@@ -21,38 +21,15 @@
 
 package org.openecomp.mso.apihandlerinfra;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
-import org.hibernate.Session;
-import org.openecomp.mso.apihandler.common.ValidationException;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.CloudConfiguration;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.ModelInfo;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.PolicyException;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.RelatedInstance;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.RelatedInstanceList;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.RequestError;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.RequestInfo;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.RequestParameters;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.ServiceException;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.ServiceInstancesRequest;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.SubscriberInfo;
-import org.openecomp.mso.apihandlerinfra.vnfbeans.RequestStatusType;
-import org.openecomp.mso.apihandlerinfra.vnfbeans.VnfInputs;
-import org.openecomp.mso.apihandlerinfra.vnfbeans.VnfRequest;
-import org.openecomp.mso.db.AbstractSessionFactoryManager;
-import org.openecomp.mso.logger.MessageEnum;
-import org.openecomp.mso.logger.MsoLogger;
-import org.openecomp.mso.requestsdb.InfraActiveRequests;
-import org.openecomp.mso.requestsdb.RequestsDatabase;
-import org.openecomp.mso.requestsdb.RequestsDbSessionFactoryManager;
-import org.openecomp.mso.utils.UUIDChecker;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.StringTokenizer;
 
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -64,15 +41,45 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.StringTokenizer;
+
+import org.hibernate.Session;
+import org.openecomp.mso.apihandler.common.ValidationException;
+import org.openecomp.mso.apihandlerinfra.vnfbeans.RequestStatusType;
+import org.openecomp.mso.apihandlerinfra.vnfbeans.VnfInputs;
+import org.openecomp.mso.apihandlerinfra.vnfbeans.VnfRequest;
+import org.openecomp.mso.db.AbstractSessionFactoryManager;
+import org.openecomp.mso.logger.MessageEnum;
+import org.openecomp.mso.logger.MsoLogger;
+import org.openecomp.mso.requestsdb.InfraActiveRequests;
+import org.openecomp.mso.requestsdb.RequestsDatabase;
+import org.openecomp.mso.requestsdb.RequestsDbSessionFactoryManager;
+import org.openecomp.mso.serviceinstancebeans.CloudConfiguration;
+import org.openecomp.mso.serviceinstancebeans.InstanceDirection;
+import org.openecomp.mso.serviceinstancebeans.LineOfBusiness;
+import org.openecomp.mso.serviceinstancebeans.ModelInfo;
+import org.openecomp.mso.serviceinstancebeans.ModelType;
+import org.openecomp.mso.serviceinstancebeans.OwningEntity;
+import org.openecomp.mso.serviceinstancebeans.Platform;
+import org.openecomp.mso.serviceinstancebeans.PolicyException;
+import org.openecomp.mso.serviceinstancebeans.Project;
+import org.openecomp.mso.serviceinstancebeans.RelatedInstance;
+import org.openecomp.mso.serviceinstancebeans.RelatedInstanceList;
+import org.openecomp.mso.serviceinstancebeans.RequestError;
+import org.openecomp.mso.serviceinstancebeans.RequestInfo;
+import org.openecomp.mso.serviceinstancebeans.RequestParameters;
+import org.openecomp.mso.serviceinstancebeans.ServiceException;
+import org.openecomp.mso.serviceinstancebeans.ServiceInstancesRequest;
+import org.openecomp.mso.serviceinstancebeans.SubscriberInfo;
+import org.openecomp.mso.utils.UUIDChecker;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class MsoRequest {
 
@@ -91,6 +98,7 @@ public class MsoRequest {
     private String errorCode;
     private String httpResponse;
     private String responseBody;
+    private String originalRequestJSON;
     private RequestStatusType status;
     private ServiceInstancesRequest sir;
     private long startTime;
@@ -103,7 +111,11 @@ public class MsoRequest {
     private String asdcServiceModelVersion;
     private String requestScope;
     private int reqVersion;
-    private boolean aLaCarteFlag = false;
+    private boolean aLaCarteFlag;
+    private Platform platform;
+    private LineOfBusiness lineOfBusiness;
+    private Project project;
+    private OwningEntity owningEntity;
 
     private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH);
     private static final String NOT_PROVIDED = "not provided";
@@ -164,10 +176,10 @@ public class MsoRequest {
     		se.setMessageId(messageId);
     		se.setText(text);
     		if(variables != null){
-				for(String variable: variables){
-					se.getVariables().add(variable);
-				}
-    		}
+        			for(String variable: variables){
+        				se.getVariables().add(variable);
+        			}
+        		}
     		re.setServiceException(se);
      	}
 
@@ -175,7 +187,7 @@ public class MsoRequest {
 
         try{
         	ObjectMapper mapper = new ObjectMapper();
-        	mapper.setSerializationInclusion(JsonSerialize.Inclusion.NON_DEFAULT);
+        	mapper.setSerializationInclusion(Include.NON_DEFAULT);
         	requestErrorStr = mapper.writeValueAsString(re);
         }catch(Exception e){
         	msoLogger.error (MessageEnum.APIH_VALIDATION_ERROR, "", "", MsoLogger.ErrorCode.DataError, "Exception in buildServiceErrorResponse writing exceptionType to string ", e);
@@ -195,25 +207,16 @@ public class MsoRequest {
     }
 
     // Parse request JSON
-    void parse (ServiceInstancesRequest sir, HashMap<String,String> instanceIdMap, Action action, String version) throws ValidationException {
+    void parse (ServiceInstancesRequest sir, HashMap<String,String> instanceIdMap, Action action, String version, String originalRequestJSON) throws ValidationException {
 
         msoLogger.debug ("Validating the Service Instance request");
 
         this.sir = sir;
         this.action = action;
         this.reqVersion = reqVersionToInt(version);
+        this.originalRequestJSON = originalRequestJSON;
         msoLogger.debug ("Incoming version is: " + version + " coverting to int: " + this.reqVersion);
-
-
-        try{
-        	ObjectMapper mapper = new ObjectMapper();
-        	//mapper.configure(Feature.WRAP_ROOT_VALUE, true);
-        	requestJSON = mapper.writeValueAsString(sir.getRequestDetails());
-
-        } catch(Exception e){
-        	throw new ValidationException ("Parse ServiceInstanceRequest to JSON string",e);
-        }
-
+        
         if(instanceIdMap != null){
         	if(instanceIdMap.get("serviceInstanceId") != null){
         		if (!UUIDChecker.isValidUUID (instanceIdMap.get ("serviceInstanceId"))) {
@@ -249,20 +252,22 @@ public class MsoRequest {
         		}
         		this.sir.setNetworkInstanceId(instanceIdMap.get("networkInstanceId"));
         	}
+        	
+        	if(instanceIdMap.get("configurationInstanceId") != null){
+        		if (!UUIDChecker.isValidUUID (instanceIdMap.get ("configurationInstanceId"))) {
+        			throw new ValidationException ("configurationInstanceId");
+        		}
+        		this.sir.setConfigurationId(instanceIdMap.get("configurationInstanceId"));
+        	}
         }
-
+        
+	    if(reqVersion >= 6 && (action == Action.inPlaceSoftwareUpdate || action == Action.applyUpdatedConfig)){
+        	parsePayload(sir, action);
+        }
+        else{
+	        
         RequestParameters requestParameters = sir.getRequestDetails().getRequestParameters();
-		if (this.reqVersion >= 3) {
-			this.aLaCarteFlag =
-				requestParameters != null && sir.getRequestDetails().getRequestParameters().isaLaCarte();
-		} else {
-			this.aLaCarteFlag = true;
-		}
-
-		if(requestParameters != null && (reqVersion < 3) && requestParameters.getAutoBuildVfModules()){
-    		throw new ValidationException("AutoBuildVfModule", version);
-        }
-
+        
         this.modelInfo = sir.getRequestDetails().getModelInfo();
 
         if (this.modelInfo == null) {
@@ -280,23 +285,80 @@ public class MsoRequest {
         }
 
         this.requestScope = modelInfo.getModelType().name();
-
+        
+        if(this.reqVersion >= 4){
+        	if(Action.addRelationships.equals(action) || Action.removeRelationships.equals(action)) {
+        		if(requestParameters == null || requestParameters.getALaCarte() == null) {
+        			throw new ValidationException ("aLaCarte in requestParameters");
+        		}
+        	}
+        }
+        
+        if(requestParameters != null){
+        	if(requestScope.equalsIgnoreCase(ModelType.vnf.name())){
+        		if(action == Action.createInstance){
+        			if(requestParameters.getAutoBuildVfModules() == null){
+        				requestParameters.setAutoBuildVfModules(false);
+        			}
+        		}
+        		if(action == Action.deleteInstance){
+        			if(requestParameters.getCascadeDelete() == null){
+        				requestParameters.setCascadeDelete(false);
+        			}
+        		}
+        		if(action == Action.updateInstance){
+        			if(requestParameters.isUsePreload() == null){
+        				requestParameters.setUsePreload(true);
+        			}
+        		}
+        		if(action == Action.replaceInstance){
+        			if(requestParameters.rebuildVolumeGroups() == null){
+        				requestParameters.setRebuildVolumeGroups(false);
+        			}
+        		}
+        	}
+        	if(requestScope.equalsIgnoreCase(ModelType.vfModule.name())){
+        		if(action == Action.createInstance || action == Action.updateInstance){
+        			if(requestParameters.isUsePreload() == null){
+        				requestParameters.setUsePreload(true);
+        			}
+        		}
+        	}
+        	if(this.reqVersion >= 4){
+ 		       if(requestParameters.getALaCarte() != null){
+ 		        	this.aLaCarteFlag = requestParameters.getALaCarte();
+ 		       }
+ 		       if(requestScope.equalsIgnoreCase(ModelType.service.name())){
+ 		    	   if(action == Action.createInstance || action == Action.deleteInstance || action == Action.activateInstance || action == Action.deactivateInstance){
+ 		    		   if(requestParameters.getALaCarte() == null){
+ 		    			   requestParameters.setaLaCarte(false);
+ 		    			   this.aLaCarteFlag = requestParameters.getALaCarte();
+ 		    		   }
+ 		    	   }
+ 		       }
+        	}else{
+        		this.aLaCarteFlag = true;
+        	}
+        }
+        if(reqVersion >= 5 && requestScope.equalsIgnoreCase(ModelType.vnf.name()) && action == Action.createInstance){
+        	parsePlatformAndLineOfBusiness(sir);
+        }
         // modelCustomizationId is required when usePreLoad is false for v4 and higher for VF Module Create
-        if(requestParameters != null && reqVersion > 3 && requestScope.equalsIgnoreCase(ModelType.vfModule.name()) && action == Action.createInstance && !requestParameters.isUsePreload()) {
+        if(requestParameters != null && reqVersion >= 4 && requestScope.equalsIgnoreCase(ModelType.vfModule.name()) && action == Action.createInstance && !requestParameters.isUsePreload()) {
         	if(!UUIDChecker.isValidUUID(modelInfo.getModelCustomizationId())) {
         		throw new ValidationException("modelCustomizationId");
         	}
         }
         
-        // modelCustomizationId is required when usePreLoad is false for v5 and higher for VF Module Replace
-        if(requestParameters != null && reqVersion > 4 && requestScope.equalsIgnoreCase(ModelType.vfModule.name()) && action == Action.replaceInstance && !requestParameters.isUsePreload()) {
+        // modelCustomizationId is required for v5 and higher for VF Module Replace
+        if(requestParameters != null && reqVersion > 4 && requestScope.equalsIgnoreCase(ModelType.vfModule.name()) && action == Action.replaceInstance) {
         	if(!UUIDChecker.isValidUUID(modelInfo.getModelCustomizationId())) {
         		throw new ValidationException("modelCustomizationId");
         	}
         }
         
-        // modelCustomizationId or modelCustomizationName are required when usePreLoad is false for v5 and higher for VNF Replace
-        if(requestParameters != null && reqVersion > 4 && requestScope.equalsIgnoreCase(ModelType.vnf.name()) && action == Action.replaceInstance && !requestParameters.isUsePreload()) {
+        // modelCustomizationId or modelCustomizationName are required for VNF Replace
+        if(requestParameters != null && reqVersion > 4 && requestScope.equalsIgnoreCase(ModelType.vnf.name()) && action == Action.replaceInstance) {
         	if(!UUIDChecker.isValidUUID(modelInfo.getModelCustomizationId()) && modelInfo.getModelCustomizationName() == null) {
         		throw new ValidationException("modelCustomizationId or modelCustomizationName");
         	}
@@ -305,7 +367,9 @@ public class MsoRequest {
         //is required for serviceInstance delete macro when aLaCarte=false (v3)
         //create and updates except for network (except v4)
         if (empty (modelInfo.getModelInvariantId ()) && ((this.reqVersion >2 && !this.aLaCarteFlag && requestScope.equalsIgnoreCase(ModelType.service.name()) && action == Action.deleteInstance) ||
-                !(this.reqVersion < 4 && requestScope.equalsIgnoreCase (ModelType.network.name ())) && (action == Action.createInstance || action == Action.updateInstance))) {
+                !(this.reqVersion < 4 && requestScope.equalsIgnoreCase (ModelType.network.name ())) && 
+                (action == Action.createInstance || action == Action.updateInstance || action == Action.enablePort || action == Action.disablePort || action == Action.addRelationships || action == Action.removeRelationships ||
+                (requestScope.equalsIgnoreCase(ModelType.configuration.name()) && (action == Action.activateInstance || action == Action.deactivateInstance))))) {
         	throw new ValidationException ("modelInvariantId");
         }
 
@@ -313,35 +377,31 @@ public class MsoRequest {
         	throw new ValidationException ("modelInvariantId format");
         }
 
-        if (this.reqVersion <= 2 && empty (modelInfo.getModelName ()) && (action == Action.createInstance || action == Action.updateInstance || (action == Action.deleteInstance &&
-        		(requestScope.equalsIgnoreCase (ModelType.network.name ()) || requestScope.equalsIgnoreCase (ModelType.vfModule.name ()))))) {
-        	throw new ValidationException ("modelName");
-        }
-        if(this.reqVersion > 2 && empty (modelInfo.getModelName ()) && (action == Action.createInstance || action == Action.updateInstance || (action == Action.deleteInstance &&
-        		(requestScope.equalsIgnoreCase (ModelType.vfModule.name ()))))){
+        if(this.reqVersion >= 4 && !(requestScope.equalsIgnoreCase(ModelType.configuration.name())) && empty (modelInfo.getModelName ()) && (action == Action.createInstance || action == Action.updateInstance || 
+        		action == Action.addRelationships || action == Action.removeRelationships || (action == Action.deleteInstance && (requestScope.equalsIgnoreCase (ModelType.vfModule.name ()))))){
         	throw new ValidationException ("modelName");
         }
 
-        if (empty (modelInfo.getModelVersion ()) && ((this.reqVersion == 3 && !this.aLaCarteFlag && requestScope.equalsIgnoreCase(ModelType.service.name()) && action == Action.deleteInstance) || 
-        		!(this.reqVersion < 4 && requestScope.equalsIgnoreCase (ModelType.network.name ())) && (action == Action.createInstance || action == Action.updateInstance))) {
+        if (empty (modelInfo.getModelVersion ()) && !(requestScope.equalsIgnoreCase(ModelType.configuration.name())) && 
+        		(!(this.reqVersion < 4 && requestScope.equalsIgnoreCase (ModelType.network.name ())) 
+        				&& (action == Action.createInstance || action == Action.updateInstance || action == Action.addRelationships || action == Action.removeRelationships))) {
         	throw new ValidationException ("modelVersion");
         }
 
-        // modelVersionId doesn't exist in v2, not required field in v3, is required for serviceInstance delete macro when aLaCarte=false in v4
-        if (this.reqVersion > 3 && empty (modelInfo.getModelVersionId()) && ((!this.aLaCarteFlag && requestScope.equalsIgnoreCase(ModelType.service.name()) && action == Action.deleteInstance) ||
-        		(action == Action.createInstance || action == Action.updateInstance))) {
+        // is required for serviceInstance delete macro when aLaCarte=false in v4
+        if (this.reqVersion >= 4 && empty (modelInfo.getModelVersionId()) && ((!this.aLaCarteFlag && requestScope.equalsIgnoreCase(ModelType.service.name()) && action == Action.deleteInstance) ||
+        		(action == Action.createInstance || action == Action.updateInstance || action == Action.enablePort || action == Action.disablePort || action == Action.addRelationships || action == Action.removeRelationships ||
+        		(requestScope.equalsIgnoreCase(ModelType.configuration.name()) && (action == Action.activateInstance || action == Action.deactivateInstance))))) {
         	throw new ValidationException ("modelVersionId");
-        }
+         }
         
         if(requestScope.equalsIgnoreCase(ModelType.vnf.name()) && action != Action.deleteInstance && empty (modelInfo.getModelCustomizationName ())) {
-        	if(this.reqVersion<=2){
-        		throw new ValidationException ("modelCustomizationName");
-        	} else if (!UUIDChecker.isValidUUID (modelInfo.getModelCustomizationId())) {
+        	if (!UUIDChecker.isValidUUID (modelInfo.getModelCustomizationId())) {
           		throw new ValidationException ("modelCustomizationId or modelCustomizationName");
           	}
         }
 
-        if(this.reqVersion > 2 && (!UUIDChecker.isValidUUID (modelInfo.getModelCustomizationId())) && requestScope.equalsIgnoreCase (ModelType.network.name ())
+        if(this.reqVersion >= 4 && (!UUIDChecker.isValidUUID (modelInfo.getModelCustomizationId())) && (requestScope.equalsIgnoreCase (ModelType.network.name ()) || requestScope.equalsIgnoreCase(ModelType.configuration.name()))
         		&& (action == Action.updateInstance || action == Action.createInstance)){
         	throw new ValidationException ("modelCustomizationId");
         }
@@ -351,8 +411,8 @@ public class MsoRequest {
         }
 
         this.cloudConfiguration = sir.getRequestDetails ().getCloudConfiguration ();
-        if ( (((!this.aLaCarteFlag && requestScope.equalsIgnoreCase (ModelType.service.name ()) && this.reqVersion < 5) ||
-        		(!requestScope.equalsIgnoreCase (ModelType.service.name ())) && action != Action.updateInstance))
+        if ( (((!this.aLaCarteFlag && requestScope.equalsIgnoreCase (ModelType.service.name ()) && this.reqVersion < 5) || 
+        		(!requestScope.equalsIgnoreCase (ModelType.service.name ())) && action != Action.updateInstance)) 
         		&& cloudConfiguration == null) {
         	throw new ValidationException ("cloudConfiguration");
         }
@@ -361,21 +421,23 @@ public class MsoRequest {
         	if (empty (cloudConfiguration.getLcpCloudRegionId ())) {
         		throw new ValidationException ("lcpCloudRegionId");
         	}
-        	if (empty (cloudConfiguration.getTenantId ())) {
+        	if (empty (cloudConfiguration.getTenantId ()) && !(requestScope.equalsIgnoreCase(ModelType.configuration.name()))) {
         		throw new ValidationException ("tenantId");
         	}
         }
 
 
-        if (requestScope.equalsIgnoreCase (ModelType.service.name ()) && action == Action.createInstance) {
+        if (requestScope.equalsIgnoreCase(ModelType.service.name()) && action == Action.createInstance) {
         	if (requestParameters == null) {
         		throw new ValidationException ("requestParameters");
         	}
-        	if (empty (requestParameters.getSubscriptionServiceType ())) {
+        	if (empty (requestParameters.getSubscriptionServiceType())) {
         		throw new ValidationException ("subscriptionServiceType");
         	}
         }
-        
+        if(this.reqVersion >= 5 && requestScope.equalsIgnoreCase(ModelType.service.name()) && action == Action.createInstance){
+        	parseProjectAndOwningEntity(sir);
+        }
         if (this.reqVersion > 4 && requestScope.equalsIgnoreCase (ModelType.service.name ()) && action == Action.createInstance) {
         	SubscriberInfo subscriberInfo = sir.getRequestDetails ().getSubscriberInfo();
         	if (subscriberInfo == null) {
@@ -394,11 +456,6 @@ public class MsoRequest {
         	this.networkType = modelInfo.getModelName();
         }
 
-        // Verify instanceName existence and format except for macro serviceInstance
-        if (this.reqVersion < 3 && requestScope.equalsIgnoreCase (ModelType.service.name ()) && empty (requestInfo.getInstanceName ()) && action == Action.createInstance) {
-        	throw new ValidationException ("instanceName");
-        }
-
         if (!empty (requestInfo.getInstanceName ())) {
         	if (!requestInfo.getInstanceName ().matches (Constants.VALID_INSTANCE_NAME_FORMAT)) {
         		throw new ValidationException ("instanceName format");
@@ -410,20 +467,19 @@ public class MsoRequest {
         	//Mandatory for macro request create service instance
         	if((requestScope.equalsIgnoreCase (ModelType.vnf.name ()) && action == Action.createInstance) || 
         		(requestScope.equalsIgnoreCase (ModelType.network.name ()) && (action == Action.createInstance || action == Action.updateInstance)) ||
-        		(this.reqVersion > 3 && !this.aLaCarteFlag && requestScope.equalsIgnoreCase(ModelType.service.name()) && action == Action.createInstance)) {
+	        		(this.reqVersion > 3 && !this.aLaCarteFlag && requestScope.equalsIgnoreCase(ModelType.service.name()) && action == Action.createInstance)) {
         	throw new ValidationException ("productFamilyId");
         }
         }
        
         //required for all operations in V4
-        if(empty(requestInfo.getRequestorId()) && this.reqVersion > 3) {
+        if(empty(requestInfo.getRequestorId()) && this.reqVersion >= 4) {
         	throw new ValidationException ("requestorId");
         }
 
         if (empty (requestInfo.getSource ())) {
         	throw new ValidationException ("source");
         }
-
 
         RelatedInstanceList[] instanceList = sir.getRequestDetails().getRelatedInstanceList();
 
@@ -433,6 +489,9 @@ public class MsoRequest {
         String volumeGroupId = null;
         boolean isRelatedServiceInstancePresent = false;
         boolean isRelatedVnfInstancePresent = false;
+    	boolean isSourceVnfPresent = false;
+      	boolean isDestinationVnfPresent = false;
+      	boolean isConnectionPointPresent = false;
 
         if (instanceList != null) {
 	       	for(RelatedInstanceList relatedInstanceList : instanceList){
@@ -447,28 +506,33 @@ public class MsoRequest {
 	          		throw new ValidationException ("modelType in relatedInstance");
 	          	}
 
-
+	          	if(empty(relatedInstance.getInstanceName ()) && ModelType.pnf.equals(relatedInstanceModelInfo.getModelType())) {
+	          		throw new ValidationException ("instanceName in relatedInstance for pnf modelType");
+	          	}
+	          	
 	        	if (!empty (relatedInstance.getInstanceName ())) {
 	            	if (!relatedInstance.getInstanceName ().matches (Constants.VALID_INSTANCE_NAME_FORMAT)) {
 	            		throw new ValidationException ("instanceName format in relatedInstance");
 	            	}
 	            }
 
-	          	if (empty (relatedInstance.getInstanceId ())) {
+	          	if (empty (relatedInstance.getInstanceId ()) && !ModelType.pnf.equals(relatedInstanceModelInfo.getModelType())) {
 	          		throw new ValidationException ("instanceId in relatedInstance");
 	          	}
 
-	          	if (!UUIDChecker.isValidUUID (relatedInstance.getInstanceId ())) {
+	          	if (!empty(relatedInstance.getInstanceId ()) && !UUIDChecker.isValidUUID (relatedInstance.getInstanceId ())) {
 	          		throw new ValidationException ("instanceId format in relatedInstance");
 	          	}
 
 
 	          	if (action != Action.deleteInstance) {
-	          		if(!relatedInstanceModelInfo.getModelType().equals(ModelType.volumeGroup)) {
+	          		if(!(	relatedInstanceModelInfo.getModelType().equals(ModelType.volumeGroup) || 
+	          				relatedInstanceModelInfo.getModelType().equals(ModelType.connectionPoint) ||
+	          				relatedInstanceModelInfo.getModelType().equals(ModelType.pnf))) {
 
 	          			if(empty (relatedInstanceModelInfo.getModelInvariantId ())) {
-	          			throw new ValidationException ("modelInvariantId in relatedInstance");
-	          			} else if(this.reqVersion > 3 && empty(relatedInstanceModelInfo.getModelVersionId ())) {
+	          				throw new ValidationException ("modelInvariantId in relatedInstance");
+	          			} else if(this.reqVersion >= 4 && empty(relatedInstanceModelInfo.getModelVersionId ())) {
 	          				throw new ValidationException("modelVersionId in relatedInstance");
 	          			} else if(empty(relatedInstanceModelInfo.getModelName ())) {
 	          				throw new ValidationException ("modelName in relatedInstance");
@@ -481,14 +545,25 @@ public class MsoRequest {
 		          			!UUIDChecker.isValidUUID (relatedInstanceModelInfo.getModelInvariantId ())) {
 		          		throw new ValidationException ("modelInvariantId format in relatedInstance");
 		          	}
+		          	
+		          	if(ModelType.configuration.name().equalsIgnoreCase(requestScope)) {
+		          		if(InstanceDirection.source.equals(relatedInstance.getInstanceDirection()) && relatedInstanceModelInfo.getModelType().equals(ModelType.vnf)) {
+		          			isSourceVnfPresent = true;
+		          		} else if(InstanceDirection.destination.equals(relatedInstance.getInstanceDirection()) && 
+		          				(relatedInstanceModelInfo.getModelType().equals(ModelType.vnf) || (relatedInstanceModelInfo.getModelType().equals(ModelType.pnf) && this.reqVersion == 6))) {
+		          			isDestinationVnfPresent = true;
+		          		}
 		          	}
+		          	
+		          	if(ModelType.connectionPoint.equals(relatedInstanceModelInfo.getModelType()) && ModelType.configuration.name().equalsIgnoreCase(requestScope)) {
+		          		isConnectionPointPresent = true;
+		          	}
+		        }
 
 	          	if (empty (relatedInstanceModelInfo.getModelCustomizationName ()) && relatedInstanceModelInfo.getModelType ().equals (ModelType.vnf) ) {
-	          		if(this.reqVersion >=3 && empty (relatedInstanceModelInfo.getModelCustomizationId()) && action != Action.deleteInstance) {
+	          		if(this.reqVersion >=4 && empty (relatedInstanceModelInfo.getModelCustomizationId()) && action != Action.deleteInstance) {
 	          			throw new ValidationException ("modelCustomizationName or modelCustomizationId in relatedInstance of vnf");
-	          		} else if(this.reqVersion < 3) {
-	          			throw new ValidationException ("modelCustomizationName in relatedInstance");
-	          	}
+	          		}
 	          	}
 
 	          	if(relatedInstanceModelInfo.getModelType().equals(ModelType.service)) {
@@ -498,7 +573,7 @@ public class MsoRequest {
 	          		}
 	          		serviceModelName = relatedInstanceModelInfo.getModelName ();
 	          		asdcServiceModelVersion = relatedInstanceModelInfo.getModelVersion ();
-	          	} else if(relatedInstanceModelInfo.getModelType().equals(ModelType.vnf)) {
+	          	} else if(relatedInstanceModelInfo.getModelType().equals(ModelType.vnf) && !(ModelType.configuration.name().equalsIgnoreCase(requestScope))) {
 	          		isRelatedVnfInstancePresent = true;
 	          		if (!relatedInstance.getInstanceId ().equals (this.sir.getVnfInstanceId ())) {
 	          			throw new ValidationException ("vnfInstanceId matching the vnfInstanceId in request URI");
@@ -509,7 +584,22 @@ public class MsoRequest {
 	          	}
           	}
 
+	       	if(action == Action.createInstance && ModelType.configuration.name().equalsIgnoreCase(requestScope)) {
+		       	if(!isSourceVnfPresent) {
+		       		throw new ValidationException ("source vnf relatedInstance for Port Configuration");
+		       	} 
+		       	
+		       	if(!isDestinationVnfPresent) {
+		       		throw new ValidationException ("destination vnf relatedInstance for Port Configuration");
+		       	}
+        	}
 
+	       	if((action == Action.enablePort || action == Action.disablePort) && ModelType.configuration.name().equalsIgnoreCase(requestScope)) {
+	       		if(!isConnectionPointPresent) {
+	       			throw new ValidationException ("connectionPoint relatedInstance for Port Configuration");
+	       		}
+	       	}
+	       	
 	        if(requestScope.equalsIgnoreCase (ModelType.volumeGroup.name ())) {
 	        	if (!isRelatedServiceInstancePresent) {
 	        		throw new ValidationException ("related service instance for volumeGroup request");
@@ -543,29 +633,87 @@ public class MsoRequest {
 	        	this.vnfType = serviceModelName + "/" + sir.getRequestDetails().getModelInfo().getModelCustomizationName();
 	       }
         }
-        else if ((( requestScope.equalsIgnoreCase(ModelType.vnf.name ()) || requestScope.equalsIgnoreCase(ModelType.volumeGroup.name ()) || requestScope.equalsIgnoreCase(ModelType.vfModule.name ()) ) && (action == Action.createInstance)) ||
-        		(this.reqVersion > 2 && (requestScope.equalsIgnoreCase(ModelType.volumeGroup.name ()) || requestScope.equalsIgnoreCase(ModelType.vfModule.name ())) && action == Action.updateInstance)){
+        else if ((( requestScope.equalsIgnoreCase(ModelType.vnf.name ()) || requestScope.equalsIgnoreCase(ModelType.volumeGroup.name ()) || requestScope.equalsIgnoreCase(ModelType.vfModule.name ()) 
+        			|| requestScope.equalsIgnoreCase(ModelType.configuration.name())) && (action == Action.createInstance || action == Action.enablePort || action == Action.disablePort)) ||
+        		(this.reqVersion >= 4 && (requestScope.equalsIgnoreCase(ModelType.volumeGroup.name ()) || requestScope.equalsIgnoreCase(ModelType.vfModule.name ())) && action == Action.updateInstance) ||
+        			(requestScope.equalsIgnoreCase(ModelType.service.name()) && (action.equals(Action.addRelationships) || action.equals(Action.removeRelationships)))){
         	 msoLogger.debug ("related instance exception");
         	throw new ValidationException ("related instances");
         }
-
+       }
     }
-
+    void parsePayload(ServiceInstancesRequest sir, Action action) throws ValidationException{
+    	msoLogger.debug("Validating for requestParameters and payload");
+    	this.sir = sir;
+    	this.action = action;
+    	this.requestScope = ModelType.vnf.name();
+    	RequestParameters requestParameters = sir.getRequestDetails().getRequestParameters();
+    	this.cloudConfiguration = sir.getRequestDetails ().getCloudConfiguration();
+    	this.requestInfo = sir.getRequestDetails().getRequestInfo();
+   
+    	if(action == Action.inPlaceSoftwareUpdate){
+    		if (cloudConfiguration == null) {
+    			throw new ValidationException ("cloudConfiguration");
+    		}else if (empty (cloudConfiguration.getLcpCloudRegionId ())) {
+        		throw new ValidationException ("lcpCloudRegionId");
+        	}else if (empty (cloudConfiguration.getTenantId ())) {
+        		throw new ValidationException ("tenantId");
+        	}
+        }
+    	if(requestInfo == null){
+    		throw new ValidationException("requestInfo");
+    	}else if(empty(requestInfo.getRequestorId())) {
+        	throw new ValidationException ("requestorId");
+        }else if (empty (requestInfo.getSource ())) {
+        	throw new ValidationException ("source");
+        }
+    	if(requestParameters == null){
+    		throw new ValidationException("requestParameters");
+    	}
+    }
+    void parsePlatformAndLineOfBusiness(ServiceInstancesRequest sir) throws ValidationException {
+    	msoLogger.debug("Validating Platform and LineOfBusiness Objects");
+    	this.sir = sir;
+    	platform = sir.getRequestDetails().getPlatform();
+    	lineOfBusiness = sir.getRequestDetails().getLineOfBusiness();
+   
+    	if(this.reqVersion > 5 && platform == null) {
+    		throw new ValidationException("platform");
+    	}
+    	
+    	if(platform != null && empty(platform.getPlatformName())){
+    		throw new ValidationException("platformName");
+    	}
+    	
+    	if(lineOfBusiness != null && empty(lineOfBusiness.getLineOfBusinessName())){
+        	throw new ValidationException("lineOfBusinessName");
+        }
+    }
+    
+    void parseProjectAndOwningEntity(ServiceInstancesRequest sir) throws ValidationException {
+    	msoLogger.debug("Validating Project and OwningEntity Objects");
+        this.sir = sir;
+    	this.project = sir.getRequestDetails().getProject();
+    	this.owningEntity = sir.getRequestDetails().getOwningEntity();
+    	
+    	if(this.reqVersion > 5 && owningEntity == null) {
+    		throw new ValidationException("owningEntity");
+    	}
+    	
+    	if(owningEntity != null && empty(owningEntity.getOwningEntityId())){
+			throw new ValidationException("owningEntityId");
+		}
+    	
+    	if(project != null && empty(project.getProjectName())){
+			throw new ValidationException("projectName");
+		}
+    }
+    
     void parseOrchestration (ServiceInstancesRequest sir) throws ValidationException {
 
         msoLogger.debug ("Validating the Orchestration request");
 
         this.sir = sir;
-
-        try{
-        	ObjectMapper mapper = new ObjectMapper();
-        	//mapper.configure(Feature.WRAP_ROOT_VALUE, true);
-        	requestJSON = mapper.writeValueAsString(sir.getRequestDetails());
-
-        } catch(Exception e){
-        	throw new ValidationException ("Parse ServiceInstanceRequest to JSON string", e);
-        }
-
         this.requestInfo = sir.getRequestDetails().getRequestInfo();
 
         if (this.requestInfo == null) {
@@ -660,7 +808,7 @@ public class MsoRequest {
             	}
             }
 
-            if (modelInfo != null) {
+            if (modelInfo != null  ||  (action == Action.inPlaceSoftwareUpdate || action == Action.applyUpdatedConfig)) {
             	aq.setRequestScope(requestScope);
             }
 
@@ -711,6 +859,11 @@ public class MsoRequest {
               	aq.setVnfType(vnfType);
 
             }
+            
+            if(ModelType.configuration.name().equalsIgnoreCase(requestScope)) {
+            	aq.setConfigurationId(sir.getConfigurationId());
+            	aq.setConfigurationName(requestInfo.getInstanceName());
+            }
 
             if(ModelType.vnf.name().equalsIgnoreCase(requestScope)){
               	aq.setVnfName(requestInfo.getInstanceName());
@@ -730,7 +883,7 @@ public class MsoRequest {
 				}
             }
 
-            aq.setRequestBody (this.requestJSON);
+            aq.setRequestBody (this.originalRequestJSON);
 
             aq.setRequestStatus (status.toString ());
             aq.setLastModifiedBy (Constants.MODIFIED_BY_APIHANDLER);
@@ -738,8 +891,7 @@ public class MsoRequest {
             if ((status == Status.FAILED) || (status == Status.COMPLETE)) {
                 aq.setStatusMessage (this.errorMessage);
                 aq.setResponseBody (this.responseBody);
-                aq.setProgress(100L);
-
+                aq.setProgress(new Long(100));
                 Timestamp endTimeStamp = new Timestamp (System.currentTimeMillis());
                 aq.setEndTime (endTimeStamp);
             }
@@ -798,7 +950,35 @@ public class MsoRequest {
 
         return Response.status (httpResponseCode).entity (null).build ();
     }
+    
+    public Platform getPlatform(){
+    	return platform;
+    }
+    
+    public void setPlatform(Platform value){
+    	this.platform = value;
+    }
+    
+    public LineOfBusiness getLineOfBusiness(){
+    	return lineOfBusiness;
+    }
+    
+    public void setLineOfBusiness(LineOfBusiness value){
+    	this.lineOfBusiness = value;
+    }
 
+    public Project getProject(){
+    	return project;
+    }
+    public void setProject(Project value){
+    	this.project = value;
+    }
+    public OwningEntity getOwningEntity(){
+    	return owningEntity;
+    }
+    public void setOwningEntity(OwningEntity value){
+    	this.owningEntity = value;
+    }
     public String getRequestUri () {
         return requestUri;
     }
@@ -971,7 +1151,7 @@ public class MsoRequest {
 
     public String getRequestJSON() throws JsonGenerationException, JsonMappingException, IOException {
     	ObjectMapper mapper = new ObjectMapper();
-    	mapper.setSerializationInclusion(Inclusion.NON_NULL);
+    	mapper.setSerializationInclusion(Include.NON_NULL);
     	//mapper.configure(Feature.WRAP_ROOT_VALUE, true);
     	msoLogger.debug ("building sir from object " + sir);
     	requestJSON = mapper.writeValueAsString(sir);

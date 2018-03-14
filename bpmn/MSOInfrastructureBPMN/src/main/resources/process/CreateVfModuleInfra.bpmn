@@ -37,6 +37,7 @@
         <camunda:in source="CVFMI_vfModuleModelInfo" target="vfModuleModelInfo" />
         <camunda:in source="CVFMI_usePreload" target="usePreload" />
         <camunda:in source="CVFMI_vfModuleInputParams" target="vfModuleInputParams" />
+        <camunda:in source="CVFMI_aLaCarte" target="aLaCarte" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_7</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_4</bpmn2:outgoing>

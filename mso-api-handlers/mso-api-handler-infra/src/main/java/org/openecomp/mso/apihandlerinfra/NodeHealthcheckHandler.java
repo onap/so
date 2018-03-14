@@ -37,8 +37,6 @@ import com.wordnik.swagger.annotations.ApiOperation;
 @Api(value="/nodehealthcheck",description="API Handler Infra Node Health Check")
 public class NodeHealthcheckHandler {
 
-	public final static String MSO_PROP_APIHANDLER_INFRA = "MSO_PROP_APIHANDLER_INFRA";
-
     private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH);
 
 	@HEAD

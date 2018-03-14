@@ -138,6 +138,6 @@ class DoCustomDeleteE2EServiceInstanceTest extends GroovyTestBase {
         when(mex.getVariable("GENGS_siResourceLink")).thenReturn("/service-subscription/e2eserviceInstance/delete/service-instances/")
         when(mex.getVariable("globalSubscriberId")).thenReturn("4993921112123")
         when(mex.getVariable("GENGS_service")).thenReturn("test3434")
-        when(mex.getVariable("URN_mso_openecomp_adapters_db_endpoint")).thenReturn("http://localhost:8080/mso")
+        when(mex.getVariable("URN_mso_adapters_openecomp_db_endpoint")).thenReturn("http://localhost:8080/mso")
     }
 }

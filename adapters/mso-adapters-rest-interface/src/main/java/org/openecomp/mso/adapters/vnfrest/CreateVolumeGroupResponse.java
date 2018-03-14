@@ -26,12 +26,11 @@ import java.util.Map;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.codehaus.jackson.map.annotate.JsonRootName;
-import org.jboss.resteasy.annotations.providers.NoJackson;
+import com.fasterxml.jackson.annotation.JsonRootName;
+
 
 @JsonRootName("createVolumeGroupResponse")
 @XmlRootElement(name = "createVolumeGroupResponse")
-@NoJackson
 public class CreateVolumeGroupResponse extends VfResponseCommon {
 	private String volumeGroupId;
 	private String volumeGroupStackId;

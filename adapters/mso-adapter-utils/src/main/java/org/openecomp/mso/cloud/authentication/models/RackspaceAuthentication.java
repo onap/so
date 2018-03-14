@@ -23,8 +23,9 @@
 
 package org.openecomp.mso.cloud.authentication.models;
 
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.map.annotate.JsonRootName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRootName;
 import com.woorea.openstack.keystone.model.Authentication;
 
 @JsonRootName("auth")

@@ -36,6 +36,7 @@
 		<property name="nfType" 					column="NF_TYPE" 						type="string" 		length="200"/>
 		<property name="nfRole" 					column="NF_ROLE" 						type="string" 		length="200"/>
 		<property name="nfNamingCode" 				column="NF_NAMING_CODE" 				type="string"		length="200"/>
+		<property name="multiStageDesign" 			column="MULTI_STAGE_DESIGN" 			type="string"		length="200"/>
 		<property name="vnfResourceModelUuid" 		column="VNF_RESOURCE_MODEL_UUID" 		type="string" 		length="200"	not-null="true"  />
 		
 		<property name="created" type="timestamp" generated="insert" update="false" insert="false" not-null="true">

@@ -2,14 +2,14 @@ package org.openecomp.mso.bpmn.common.scripts
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution;
+import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.rest.APIResponse;
 
 
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution;
+import org.camunda.bpm.engine.delegate.DelegateExecution;
 
 import groovy.util.XmlParser
 import groovy.util.Node
@@ -34,7 +34,7 @@ class AllottedResourceUtils {
 	* return: orchStatus - > AR found with this orchStatus
 	* setsVariable aaiARGetResponse
 	*/
-	public String getAROrchStatus (Execution execution) {
+	public String getAROrchStatus (DelegateExecution execution) {
 
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		utils.log("DEBUG"," ***** getAROrchStatus *****", isDebugEnabled)
@@ -81,7 +81,7 @@ class AllottedResourceUtils {
 	// get Allotted Resource by AllottedResourceId
 	// used on Delete - called from doDeleteAR
 	// setsVariable aaiARGetResponse
-	public String getARbyId (Execution execution, String allottedResourceId) {
+	public String getARbyId (DelegateExecution execution, String allottedResourceId) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("DEBUG", " ***** getARbyId ***** ", isDebugEnabled)
 		String arLink = getARLinkbyId(execution, allottedResourceId)
@@ -94,7 +94,7 @@ class AllottedResourceUtils {
 		return ar;
 	}
 	
-	public String getPSIFmARLink(Execution execution, String arLink)
+	public String getPSIFmARLink(DelegateExecution execution, String arLink)
 	{
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		// Path: /aai/{version}/business/customers/customer/{cust}/service-subscriptions/service-subscription/{subs}/service-instances/service-instance/{psiid}/allotted-resources/allotted-resource/{arid}
@@ -108,7 +108,7 @@ class AllottedResourceUtils {
 
 	// get Allotted Resource Link by AllottedResourceId using Nodes Query
 	// used on Delete - called from getARbyId
-	public String getARLinkbyId (Execution execution, String allottedResourceId) {
+	public String getARLinkbyId (DelegateExecution execution, String allottedResourceId) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("DEBUG", " ***** getARLinkbyId ***** ", isDebugEnabled)
 		String arLink = null
@@ -154,7 +154,7 @@ class AllottedResourceUtils {
 	// used on Create called from getARORchStatus
 	// used on Delete called from getARbyId
 	// setsVariable aaiARPath - used for Patch in create
-	public String getARbyLink (Execution execution, String link, String role) {
+	public String getARbyLink (DelegateExecution execution, String link, String role) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("DEBUG", " ***** getARbyLink ***** ", isDebugEnabled)
 		String ar = null
@@ -237,7 +237,7 @@ class AllottedResourceUtils {
 		return ar
 	}
 
-	public void updateAROrchStatus(Execution execution, String status, String aaiARPath){
+	public void updateAROrchStatus(DelegateExecution execution, String status, String aaiARPath){
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		utils.log("DEBUG", " *** updaAROrchStatus *** ", isDebugEnabled)
 		try{
@@ -275,7 +275,7 @@ class AllottedResourceUtils {
 	}
 	
 	//Sets Variable "wasDeleted"
-	public void deleteAR(Execution execution, String aaiARPath){
+	public void deleteAR(DelegateExecution execution, String aaiARPath){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("DEBUG", " *** deleteAR *** aaiARPath:" + aaiARPath, isDebugEnabled)
 		try {
@@ -315,7 +315,7 @@ class AllottedResourceUtils {
 		utils.log("DEBUG", " *** Exit deleteAR *** ", isDebugEnabled)
 	}
 
-	public void buildAAIErrorResponse(Execution execution, String response, String errorMessage){
+	public void buildAAIErrorResponse(DelegateExecution execution, String response, String errorMessage){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("DEBUG", " *** BuildAAIErrorResponse*** ", isDebugEnabled)
 

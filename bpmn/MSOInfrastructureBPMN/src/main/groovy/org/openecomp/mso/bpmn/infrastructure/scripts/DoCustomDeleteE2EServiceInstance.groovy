@@ -41,7 +41,7 @@ import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.json.JSONObject;
 import org.apache.commons.lang3.*
 import org.apache.commons.codec.binary.Base64;
@@ -79,7 +79,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
 
-	public void preProcessRequest (Execution execution) {
+	public void preProcessRequest (DelegateExecution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO"," ***** preProcessRequest *****",  isDebugEnabled)
 		String msg = ""
@@ -155,13 +155,13 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 	}
 	
 
-	public void preProcessVFCDelete (Execution execution) {
+	public void preProcessVFCDelete (DelegateExecution execution) {
 	}
 	
-	public void postProcessVFCDelete(Execution execution, String response, String method) {
+	public void postProcessVFCDelete(DelegateExecution execution, String response, String method) {
 	}
 	
-	public void preProcessSDNCDelete (Execution execution) {
+	public void preProcessSDNCDelete (DelegateExecution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO"," ***** preProcessSDNCDelete *****", isDebugEnabled)
 		String msg = ""
@@ -275,7 +275,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 		utils.log("INFO"," *****Exit preProcessSDNCDelete *****", isDebugEnabled)
 	}
 
-	public void postProcessSDNCDelete(Execution execution, String response, String method) {
+	public void postProcessSDNCDelete(DelegateExecution execution, String response, String method) {
 
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO"," ***** postProcessSDNC " + method + " *****", isDebugEnabled)
@@ -307,7 +307,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 		utils.log("INFO"," *** Exit postProcessSDNC " + method + " ***", isDebugEnabled)
 	}
 
-	public void postProcessAAIGET(Execution execution) {
+	public void postProcessAAIGET(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO"," ***** postProcessAAIGET ***** ", isDebugEnabled)
 		String msg = ""
@@ -439,7 +439,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 		utils.log("INFO"," *** Exit postProcessAAIGET *** ", isDebugEnabled)
 	}
 
-	public void postProcessAAIDEL(Execution execution) {
+	public void postProcessAAIDEL(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO"," ***** postProcessAAIDEL ***** ", isDebugEnabled)
 		String msg = ""
@@ -469,7 +469,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 		utils.log("INFO"," *** Exit postProcessAAIDEL *** ", isDebugEnabled)
 	}
 	
-	public void preInitResourcesOperStatus(Execution execution){
+   public void preInitResourcesOperStatus(DelegateExecution execution){
         def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 
         utils.log("INFO", " ======== STARTED preInitResourcesOperStatus Process ======== ", isDebugEnabled)
@@ -517,7 +517,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
                     resourceTemplateUUIDs  = resourceTemplateUUIDs + it.resourceInstanceId + ":"
                 }
             }           
-            execution.setVariable("URN_mso_openecomp_adapters_db_endpoint","http://mso.mso.testlab.openecomp.org:8080/dbadapters/RequestsDbAdapter")
+            execution.setVariable("URN_mso_adapters_openecomp_db_endpoint","http://mso.mso.testlab.openecomp.org:8080/dbadapters/RequestsDbAdapter")
 
             String payload =
                 """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"

@@ -28,14 +28,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
+import org.openecomp.mso.asdc.installer.IVfModuleData;
 import org.openecomp.sdc.api.IDistributionClient;
+import org.openecomp.sdc.api.consumer.IComponentDoneStatusMessage;
 import org.openecomp.sdc.api.consumer.IConfiguration;
 import org.openecomp.sdc.api.consumer.IDistributionStatusMessage;
+import org.openecomp.sdc.api.consumer.IFinalDistrStatusMessage;
 import org.openecomp.sdc.api.consumer.INotificationCallback;
+import org.openecomp.sdc.api.consumer.IStatusCallback;
 import org.openecomp.sdc.api.notification.IArtifactInfo;
 import org.openecomp.sdc.api.notification.IVfModuleMetadata;
 import org.openecomp.sdc.api.results.IDistributionClientDownloadResult;
@@ -43,8 +43,6 @@ import org.openecomp.sdc.api.results.IDistributionClientResult;
 import org.openecomp.sdc.impl.DistributionClientDownloadResultImpl;
 import org.openecomp.sdc.impl.DistributionClientResultImpl;
 import org.openecomp.sdc.utils.DistributionActionResultEnum;
-
-import org.openecomp.mso.asdc.installer.IVfModuleData;
 
 public class DistributionClientEmulator implements IDistributionClient {
 
@@ -132,6 +130,11 @@ public class DistributionClientEmulator implements IDistributionClient {
 	}
 
 	@Override
+	public IDistributionClientResult init(IConfiguration arg0, INotificationCallback arg1, IStatusCallback arg2) {
+		return new DistributionClientResultImpl(DistributionActionResultEnum.SUCCESS,DistributionActionResultEnum.SUCCESS.name());
+	}
+
+	@Override
 	public IDistributionClientResult sendDeploymentStatus(IDistributionStatusMessage arg0) {
 		this.distributionMessageReceived.add(arg0);
 		return new DistributionClientResultImpl(DistributionActionResultEnum.SUCCESS,DistributionActionResultEnum.SUCCESS.name());
@@ -171,4 +174,27 @@ public class DistributionClientEmulator implements IDistributionClient {
 		return new DistributionClientResultImpl(DistributionActionResultEnum.SUCCESS,DistributionActionResultEnum.SUCCESS.name());
 	}
 
+	@Override
+	public IDistributionClientResult sendComponentDoneStatus(IComponentDoneStatusMessage arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IDistributionClientResult sendComponentDoneStatus(IComponentDoneStatusMessage arg0, String arg1) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IDistributionClientResult sendFinalDistrStatus(IFinalDistrStatusMessage arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IDistributionClientResult sendFinalDistrStatus(IFinalDistrStatusMessage arg0, String arg1) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

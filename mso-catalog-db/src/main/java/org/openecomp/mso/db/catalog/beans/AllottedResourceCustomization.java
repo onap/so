@@ -42,6 +42,8 @@ public class AllottedResourceCustomization extends MavenLikeVersioning implement
 	private Integer minInstances;
 	private Integer maxInstances;
 	private AllottedResource ar = null;
+	private String providingServiceModelUuid;
+	private String providingServiceModelName;
 
 	public AllottedResourceCustomization() {
 		super();
@@ -128,9 +130,21 @@ public class AllottedResourceCustomization extends MavenLikeVersioning implement
 	public void setMaxInstances(Integer maxInstances) {
 		this.maxInstances = maxInstances;
 	}
+	public String getProvidingServiceModelUuid() {
+		return this.providingServiceModelUuid;
+	}
+	public void setProvidingServiceModelUuid(String providingServiceModelUuid) {
+		this.providingServiceModelUuid = providingServiceModelUuid;
+	}
+	public String getProvidingServiceModelName() {
+		return this.providingServiceModelName;
+	}
+	public void setProvidingServiceModelName(String providingServiceModelName) {
+		this.providingServiceModelName = providingServiceModelName;
+	}
 
 	@Override
-	public String toString() {
+	public String toString () {
 		return "modelCustomizationUuid=" + this.modelCustomizationUuid +
 			",modelInstanceName=" + this.modelInstanceName +
 			",modelInstanceName=" + this.modelInstanceName +

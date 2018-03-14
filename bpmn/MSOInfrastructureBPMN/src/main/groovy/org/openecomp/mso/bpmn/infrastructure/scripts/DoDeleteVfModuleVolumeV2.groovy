@@ -27,7 +27,7 @@ import java.util.concurrent.ExecutionException;
 
 import org.springframework.web.util.UriUtils
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.openecomp.mso.bpmn.common.scripts.AaiUtil
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
@@ -44,7 +44,7 @@ class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor {
 	JsonUtils jsonUtil = new JsonUtils()
 	
 	@Override
-	public void preProcessRequest(Execution execution) {
+	public void preProcessRequest(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		preProcessRequest(execution, isDebugEnabled)	
 	}
@@ -54,7 +54,7 @@ class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor {
 	 * @param execution
 	 * @param isDebugLogEnabled
 	 */
-	public void preProcessRequest (Execution execution, isDebugEnabled) {
+	public void preProcessRequest (DelegateExecution execution, isDebugEnabled) {
 		
 		//Input:
 		//  msoRequestId
@@ -96,7 +96,7 @@ class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor {
 	 * @param execution
 	 * @param isDebugLogEnabled
 	 */
-	public void postProcess(Execution execution, isDebugLogEnabled) {
+	public void postProcess(DelegateExecution execution, isDebugLogEnabled) {
 		execution.setVariable('wasDeleted', 'true')
 	}
 	
@@ -107,7 +107,7 @@ class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor {
 	 * @param execution
 	 * @param isDebugEnabled
 	 */
-	public void callRESTQueryAAICloudRegion(Execution execution, isDebugEnabled) {
+	public void callRESTQueryAAICloudRegion(DelegateExecution execution, isDebugEnabled) {
 		
 		String cloudRegion = execution.getVariable('lcpCloudRegionId')					
 		String aai_endpoint = execution.getVariable("URN_aai_endpoint")
@@ -140,7 +140,7 @@ class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor {
 	 * @param execution
 	 * @param isDebugLogEnabled
 	 */
-	public void callRESTQueryAAIForVolumeGroup(Execution execution, isDebugLogEnabled) {
+	public void callRESTQueryAAIForVolumeGroup(DelegateExecution execution, isDebugLogEnabled) {
 		
 		def tenantId = execution.getVariable('tenantId')								
 		def volumeGroupId = execution.getVariable('volumeGroupId')						
@@ -215,7 +215,7 @@ class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor {
 	 * @param execution
 	 * @param isDebugLogEnabled
 	 */
-	public void prepareVnfAdapterDeleteRequest(Execution execution, isDebugLogEnabled) {
+	public void prepareVnfAdapterDeleteRequest(DelegateExecution execution, isDebugLogEnabled) {
 		def cloudRegion = execution.getVariable(prefix+'aicCloudRegion')
 		def tenantId = execution.getVariable('tenantId')										// input parameter (optional) - see preProcessRequest
 		def volumeGroupId = execution.getVariable('volumeGroupId')								// input parameter (required)	
@@ -256,7 +256,7 @@ class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor {
 	 * @param execution
 	 * @param isDebugEnabled
 	 */
-	public void callRESTDeleteAAIVolumeGroup(Execution execution, isDebugEnabled) {
+	public void callRESTDeleteAAIVolumeGroup(DelegateExecution execution, isDebugEnabled) {
 		
 		// get variables
 		String queryAAIVolGrpIdResponse = execution.getVariable(prefix+"queryAAIVolGrpResponse")
