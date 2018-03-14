@@ -32,6 +32,7 @@ import org.openecomp.mso.bpmn.core.domain.AllottedResource
 import org.openecomp.mso.bpmn.core.domain.NetworkResource
 import org.openecomp.mso.bpmn.core.domain.VnfResource
 import org.openecomp.mso.bpmn.common.recipe.ResourceInput
+import org.openecomp.mso.bpmn.common.resource.ResourceRequestBuilder;
 import org.openecomp.mso.bpmn.common.recipe.BpmnRestClient
 import org.openecomp.mso.bpmn.core.json.JsonUtils
 import org.openecomp.mso.bpmn.common.scripts.AaiUtil
@@ -594,27 +595,10 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
          resourceInput.setResourceUuid(resourceUuid)
          
          String incomingRequest = execution.getVariable("uuiRequest")
-         String resourcesStr = jsonUtil.getJsonValue(incomingRequest, "service.parameters.resources")
-         String serviceRequestInputs = jsonUtil.getJsonValue(incomingRequest, "service.parameters.requestInputs")
-         String serviceDescription = jsonUtil.getJsonValue(incomingRequest, "service.description")  
-         resourceInput.setResourceInstanceDes(serviceDescription)
-         utils.log("INFO", "Prepare Resource Request:" + resourceInput.toString(), isDebugEnabled)
-         List<String> resourceList = jsonUtil.StringArrayToList(execution, resourcesStr)
-         String locationConstraints = ""
-         String resourceRequestInputs = ""
-         for(String resource : resourceList){
-             String resourceUuidTmp = jsonUtil.getJsonValue(resource, "resourceUuid")  
-             String resourceCustomizationUuidTmp = jsonUtil.getJsonValue(resource, "resourceCustomizationUuid")  
-             if(StringUtils.equals(resourceUuidTmp, resourceUuid) && StringUtils.equals(resourceCustomizationUuidTmp, resourceCustomizationUuid)){
-
-                 String resourceParameters = jsonUtil.getJsonValue(resource, "parameters")                
-                 locationConstraints =  jsonUtil.getJsonValue(resourceParameters, "locationConstraints")
-                 resourceRequestInputs =  jsonUtil.getJsonValue(resourceParameters, "requestInputs")
-             } 
-         }
          //set the requestInputs from tempalte  To Be Done
-         //String resourceParameters = ResourceRequestBuilder.buildRequestParameters()
-         String resourceParameters = ""
+         String serviceModelUuid = execution.getVariable("modelUuid")
+         String serviceParameters = jsonUtil.getJsonValue(incomingRequest, "service.parameters")
+         String resourceParameters = ResourceRequestBuilder.buildResourceRequestParameters(execution, serviceModelUuid, resourceCustomizationUuid, serviceParameters)
          resourceInput.setResourceParameters(resourceParameters)
          execution.setVariable("resourceInput", resourceInput)
          utils.log("INFO", "======== COMPLETED prepareResourceRecipeRequest Process ======== ", isDebugEnabled)      
