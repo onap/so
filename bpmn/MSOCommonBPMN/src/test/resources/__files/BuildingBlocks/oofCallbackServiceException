@@ -1,0 +1,12 @@
+{
+	"requestError": {
+		"serviceException": {
+		"variables": [
+		"severity", 400
+		],
+		 "requestId": "ae81d9a8-c949-493a-999c-f76c80503233",
+		  "text": "OOF PlacementError: requests.exceptions.HTTPError: 404 Client Error: Not Found for url: http://135.21.171.200:8091/v1/plans/97b4e303-5f75-492c-8fb2-21098281c8b8",
+		   "messageId": "SVC0001"
+		}
+	}
+}

@@ -39,6 +39,7 @@ public class ModelInfo  extends JsonWrapper implements Serializable {
 	private String modelVersion = "";
 	//additionally on resource level
 	private String modelCustomizationUuid = "";
+	private String modelCustomizationName = "";
 	private String modelInstanceName = "";
 	private String modelType = "";
 
@@ -73,6 +74,12 @@ public class ModelInfo  extends JsonWrapper implements Serializable {
 	}
 	public void setModelCustomizationUuid(String modelCustomizationUuid) {
 		this.modelCustomizationUuid = modelCustomizationUuid;
+	}
+	public String getModelCustomizationName() {
+		return modelCustomizationName;
+	}
+	public void setModelCustomizationName(String modelCustomizationName) {
+		this.modelCustomizationName = modelCustomizationName;
 	}
 	public String getModelInstanceName() {
 		return modelInstanceName;

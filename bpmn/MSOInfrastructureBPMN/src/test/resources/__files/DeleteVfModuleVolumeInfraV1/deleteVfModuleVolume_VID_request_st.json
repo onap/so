@@ -7,7 +7,7 @@
 			"modelVersion": "1.0"
 		},
 		"cloudConfiguration": {
-			"lcpCloudRegionId": "MDTWNJ21",
+			"lcpCloudRegionId": "cloudowner_MDTWNJ21",
 			"tenantId": "fba1bd1e195a404cacb9ce17a9b2b421"
 		},
 		"requestInfo": {
