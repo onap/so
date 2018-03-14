@@ -51,6 +51,7 @@ import javax.mail.Quota.Resource;
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.json.JSONObject;
 import org.json.JSONArray;
 import org.apache.commons.lang3.*
@@ -78,7 +79,7 @@ public class DoCompareModelVersions extends AbstractServiceTaskProcessor {
 	JsonUtils jsonUtil = new JsonUtils()
 	CatalogDbUtils cutils = new CatalogDbUtils()
 
-	public void preProcessRequest (Execution execution) {
+	public void preProcessRequest (DelegateExecution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		String msg = ""
 		utils.log("INFO"," ***** preProcessRequest *****",  isDebugEnabled)
