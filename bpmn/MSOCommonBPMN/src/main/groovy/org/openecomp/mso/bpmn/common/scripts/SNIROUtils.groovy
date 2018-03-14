@@ -96,7 +96,7 @@ class SNIROUtils{
 		String requestType = "initial"
 		List<Resource> resources = decomposition.getServiceResources()
 		for(Resource r:resources){
-			HomingSolution currentSolution = r.getCurrentHomingSolution()
+			HomingSolution currentSolution = (HomingSolution) r.getCurrentHomingSolution()
 			if(currentSolution != null){
 				requestType = "speed changed"
 			}
