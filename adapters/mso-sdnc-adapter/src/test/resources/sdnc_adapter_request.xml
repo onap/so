@@ -1,0 +1,48 @@
+<sdncadapterworkflow:SDNCAdapterWorkflowRequest
+	xmlns:ns5="http://org.openecomp/mso/request/types/v1"
+	xmlns:sdncadapterworkflow="http://org.openecomp/mso/workflow/schema/v1"
+	xmlns:sdncadapter="http://org.openecomp/workflow/sdnc/adapter/schema/v1">
+	<sdncadapter:RequestHeader>
+		<sdncadapter:RequestId>sdncRequestId-test</sdncadapter:RequestId>
+		<sdncadapter:SvcInstanceId>serviceInstanceId-test
+		</sdncadapter:SvcInstanceId>
+		<sdncadapter:SvcAction>assign</sdncadapter:SvcAction>
+		<sdncadapter:SvcOperation>service-topology-operation
+		</sdncadapter:SvcOperation>
+		<sdncadapter:CallbackUrl>callbackURL-test</sdncadapter:CallbackUrl>
+		<sdncadapter:MsoAction>msoAction-test</sdncadapter:MsoAction>
+	</sdncadapter:RequestHeader>
+	<sdncadapterworkflow:SDNCRequestData>
+		<request-information>
+			<request-id>requestId-test</request-id>
+			<source>MSO</source>
+			<notification-url />
+			<order-number />
+			<order-version />
+			<request-action>CreateServiceInstance</request-action>
+		</request-information>
+		<service-information>
+			<service-id>serviceId-test</service-id>
+			<subscription-service-type>subscriptionServiceType-test
+			</subscription-service-type>
+			<ecomp-model-information>
+				<model-invariant-uuid>modelInvariantUuid-test</model-invariant-uuid>
+				<model-uuid>modelUuid-test</model-uuid>
+				<model-version>modelVersion-test</model-version>
+				<model-name>modelName-test</model-name>
+			</ecomp-model-information>
+			<service-instance-id>serviceInstanceId-test</service-instance-id>
+			<subscriber-name />
+			<global-customer-id>globalSubscriberId-test</global-customer-id>
+		</service-information>
+		<service-request-input>
+			<service-instance-name>serviceInstanceName-test</service-instance-name>
+			<service-input-parameters>
+				<param>
+					<name>paramName</name>
+					<value>paramValue</value>
+				</param>
+			</service-input-parameters>
+		</service-request-input>
+	</sdncadapterworkflow:SDNCRequestData>
+</sdncadapterworkflow:SDNCAdapterWorkflowRequest>

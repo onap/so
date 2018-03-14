@@ -24,7 +24,11 @@ package org.openecomp.mso.properties;
 import java.io.FileReader;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
+
+import org.apache.commons.codec.binary.Base64;
 import org.openecomp.mso.utils.CryptoUtils;
 
 public class MsoJavaProperties extends AbstractMsoProperties {
@@ -86,11 +90,43 @@ public class MsoJavaProperties extends AbstractMsoProperties {
 
 	}
 
+	/**
+	 * @param encryptedAuth: encrypted credentials from properties
+	 * @param msoKey: key to use to decrypt from properties
+	 * @return base 64 encoded basic auth credentials
+	 */
+	public synchronized String getBasicAuth(String encryptedAuth, String msoKey){
+		String encodedString = null;
+		if ((encryptedAuth == null || encryptedAuth.isEmpty()) || (msoKey == null || msoKey.isEmpty()))
+			return null;
+		try {
+			String auth = decrypt(encryptedAuth, msoKey);
+			byte[] encoded = Base64.encodeBase64(auth.getBytes());
+			encodedString = new String(encoded);
+			encodedString = "Basic " + encodedString;
+			
+		} catch (Exception ex) {
+			LOGGER.debug("Exception while getBasicAuth " + encryptedAuth, ex);
+		}
+		return encodedString;
+	}		
+	
 	public synchronized int size() {
 		return this.msoProperties.size();
 	}
 	
-
+	public synchronized String decrypt(String toDecrypt, String msokey){
+		String result = null;
+		try {
+			result = CryptoUtils.decrypt(toDecrypt, msokey);
+			
+		}
+		catch (Exception e) {
+			LOGGER.debug("Failed to decrypt credentials: " + toDecrypt, e);
+		}
+		return result;
+	}	
+	
 	@Override
 	protected synchronized void reloadPropertiesFile() throws IOException {
 		this.loadPropertiesFile(this.propertiesFileName);
@@ -181,4 +217,12 @@ public class MsoJavaProperties extends AbstractMsoProperties {
 
 		return response.toString();
 	}
+	 
+    public Map<String, String> asMap() {
+        final Map<String, String> result = new HashMap<>();
+        msoProperties.forEach((key, value) -> result.put(key.toString(), value.toString()));
+        
+        return result;
+    }
+
 }

@@ -20,7 +20,6 @@
 
 package org.openecomp.mso.apihandlerinfra;
 
-
 /*
  * Enum for Status values returned by API Handler to Tail-F
 */
@@ -30,5 +29,6 @@ public enum Status {
 	COMPLETE,
 	FAILED,
 	TIMEOUT,
-	UNLOCKED
+	UNLOCKED,
+	PENDING_MANUAL_TASK
 }

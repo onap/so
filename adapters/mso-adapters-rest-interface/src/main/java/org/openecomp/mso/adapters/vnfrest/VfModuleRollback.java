@@ -25,12 +25,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.openecomp.mso.entity.MsoRequest;
 import org.openecomp.mso.openstack.beans.VnfRollback;
-import org.jboss.resteasy.annotations.providers.NoJackson;
-import org.codehaus.jackson.map.annotate.JsonRootName;
+
+import com.fasterxml.jackson.annotation.JsonRootName;
 
 @JsonRootName("VfModuleRollback")
 @XmlRootElement(name = "VfModuleRollback")
-@NoJackson
 public class VfModuleRollback {
 	private String vnfId;
 	private String vfModuleId;
@@ -40,6 +39,7 @@ public class VfModuleRollback {
 	private String cloudSiteId;
 	private MsoRequest msoRequest;
 	private String messageId;
+	private String mode = "HEAT";  // default
 
 	public VfModuleRollback() {
 	}
@@ -54,6 +54,7 @@ public class VfModuleRollback {
 		this.cloudSiteId = vrb.getCloudSiteId();
 		this.msoRequest = vrb.getMsoRequest();
 		this.messageId = messageId;
+		this.mode = vrb.getMode();
 	}
 
 	public VfModuleRollback(String vnfId, String vfModuleId,
@@ -119,5 +120,11 @@ public class VfModuleRollback {
 	}
 	public void setMessageId(String messageId) {
 		this.messageId = messageId;
+	}
+	public String getMode() {
+		return mode;
+	}
+	public void setMode(String mode) {
+		this.mode = mode;
 	}
 }

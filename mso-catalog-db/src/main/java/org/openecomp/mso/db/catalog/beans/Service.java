@@ -42,6 +42,8 @@ public class Service extends MavenLikeVersioning implements Serializable {
 	private String category;
 	private String serviceType;
 	private String serviceRole;
+	private String environmentContext;
+	private String workloadContext;
 	private Map<String,ServiceRecipe> recipes;
 	private Set<ServiceToResourceCustomization> serviceResourceCustomizations;
 	
@@ -146,14 +148,29 @@ public class Service extends MavenLikeVersioning implements Serializable {
 	public void setServiceRole(String serviceRole) {
 		this.serviceRole = serviceRole;
 	}
+	public String getEnvironmentContext() {
+		return this.environmentContext;
+	}
+	public void setEnvironmentContext(String environmentContext) {
+		this.environmentContext = environmentContext;
+	}
+
+	public String getWorkloadContext() {
+		return this.workloadContext;
+	}
+	public void setWorkloadContext(String workloadContext) {
+		this.workloadContext = workloadContext;
+	}
 
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SERVICE: name=").append(modelName).append(",modelVersion=").append(modelVersion)
-            .append(",description=").append(description).append(",modelInvariantUUID=").append(modelInvariantUUID)
-            .append(",toscaCsarArtifactUUID=").append(toscaCsarArtifactUUID).append(",serviceType=").append(serviceType)
-            .append(",serviceRole=").append(serviceRole);
+			.append(",description=").append(description).append(",modelInvariantUUID=").append(modelInvariantUUID)
+
+			.append(",toscaCsarArtifactUUID=").append(toscaCsarArtifactUUID).append(",serviceType=").append(serviceType)
+			.append(",serviceRole=").append(serviceRole).append(",envtContext=").append(this.environmentContext)
+			.append(",workloadContext=").append(this.workloadContext);
 		for (String recipeAction : recipes.keySet()) {
 			ServiceRecipe recipe = recipes.get(recipeAction);
 			sb.append("\n").append(recipe.toString());

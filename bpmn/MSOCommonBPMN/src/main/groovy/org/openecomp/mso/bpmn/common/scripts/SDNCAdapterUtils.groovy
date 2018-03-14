@@ -22,9 +22,9 @@ package org.openecomp.mso.bpmn.common.scripts;
 
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.openecomp.mso.bpmn.core.WorkflowException
-import org.openecomp.mso.bpmn.core.json.JsonUtils
+import org.openecomp.mso.bpmn.core.json.JsonUtils;
 import org.springframework.web.util.UriUtils
 
 
@@ -43,7 +43,7 @@ class SDNCAdapterUtils {
 		this.taskProcessor = taskProcessor
 	}
 
-	String SDNCAdapterFeatureRequest(Execution execution, String requestName, String action, String callbackURL, String serviceOperation, String timeoutValueInMinutes) {
+	String SDNCAdapterFeatureRequest(DelegateExecution execution, String requestName, String action, String callbackURL, String serviceOperation, String timeoutValueInMinutes) {
 		def utils=new MsoUtils()
 
 		def prefix = execution.getVariable('prefix')
@@ -88,7 +88,7 @@ class SDNCAdapterUtils {
 		return sdncAdapterFeatureRequest
 	}
 
-	String SDNCAdapterActivateVnfRequest(Execution execution, String action, String callbackURL, String serviceOperation, String msoAction, String timeoutValueInMinutes) {
+	String SDNCAdapterActivateVnfRequest(DelegateExecution execution, String action, String callbackURL, String serviceOperation, String msoAction, String timeoutValueInMinutes) {
 		def utils=new MsoUtils()
 
 		def prefix = execution.getVariable('prefix')
@@ -131,7 +131,7 @@ class SDNCAdapterUtils {
 		return sdncAdapterActivateVnfRequest
 	}
 
-	String SDNCAdapterL3ToHigherLayerRequest(Execution execution, String action, String callbackURL, String serviceOperation, String timeoutValueInMinutes) {
+	String SDNCAdapterL3ToHigherLayerRequest(DelegateExecution execution, String action, String callbackURL, String serviceOperation, String timeoutValueInMinutes) {
 		def utils=new MsoUtils()
 
 		def prefix = execution.getVariable('prefix')
@@ -230,7 +230,7 @@ class SDNCAdapterUtils {
 
 
 
-	private void SDNCAdapterActivateRequest(Execution execution, String resultVar, String svcAction,
+	private void SDNCAdapterActivateRequest(DelegateExecution execution, String resultVar, String svcAction,
 			String svcOperation, String additionalData) {
 			def utils=new MsoUtils()
 
@@ -273,6 +273,15 @@ class SDNCAdapterUtils {
 				additionalData = ""
 			}
 
+			boolean isAic3 = execution.getVariable("isAic3")
+			
+			if(isAic3) {
+				nnsl2HomingInformation = updateHomingInfo(nnsl2HomingInformation, "AIC3.0")
+			}
+			else {
+				nnsl2HomingInformation = updateHomingInfo(nnsl2HomingInformation, "AIC2.X")
+			}
+									
 			String content = """
 				<sdncadapterworkflow:SDNCAdapterWorkflowRequest xmlns:sdncadapterworkflow="http://openecomp.com/mso/workflow/schema/v1"
 						xmlns:sdncadapter="http://domain2.openecomp.com/workflow/sdnc/adapter/schema/v1">
@@ -303,12 +312,25 @@ class SDNCAdapterUtils {
 
 	/**
 	 * Builds an SDNC "reserve" request and stores it in the specified execution
-	 * variable.
+	 * variable. 
 	 * @param execution the execution
+	 * @param action the type of action: reserve, turnup, etc
 	 * @param resultVar the execution variable in which the result will be stored
 	 */
-	public void sdncReservePrep(Execution execution, String action, String resultVar) {
-		sdncPrep(execution, resultVar, action , 'service-configuration-operation', null, this.taskProcessor)
+	public void sdncReservePrep(DelegateExecution execution, String action, String resultVar) {
+		sdncReservePrep(execution, action, resultVar, false)
+	}
+
+	/**
+	 * Builds an SDNC "reserve" request and stores it in the specified execution
+	 * variable.
+	 * @param execution the execution
+	 * @param action the type of action: reserve, turnup, etc
+	 * @param resultVar the execution variable in which the result will be stored
+	 * @param isAic3 boolean to indicate whether request is for AIC3.0
+	 */
+	public void sdncReservePrep(DelegateExecution execution, String action, String resultVar, boolean isAic3) {
+		sdncPrep(execution, resultVar, action , 'service-configuration-operation', null, isAic3, this.taskProcessor)
 	}
 
 	/**
@@ -320,8 +342,22 @@ class SDNCAdapterUtils {
 	 * @param additionalData additional XML content to be inserted into the
 	 *        RequestData element (may be null)
 	 */
-	public void sdncPrep(Execution execution, String resultVar, String svcAction,
-			String svcOperation, String additionalData, AbstractServiceTaskProcessor taskProcessor) {
+	public void sdncPrep(DelegateExecution execution, String resultVar, String svcAction,
+		String svcOperation, String additionalData, AbstractServiceTaskProcessor taskProcessor) {
+		sdncPrep(execution, resultVar, svcAction, svcOperation, additionalData, false, taskProcessor)
+	}
+
+	/**
+	 * Builds a basic SDNC request and stores it in the specified execution variable.
+	 * @param execution the execution
+	 * @param resultVar the execution variable in which the result will be stored
+	 * @param svcAction the svcAction element value
+	 * @param svcOperation the svcOperation element value
+	 * @param additionalData additional XML content to be inserted into the RequestData element (may be null)
+	 * @param isAic3 boolean to indicate whether request is for AIC3.0
+	 */
+	public void sdncPrep(DelegateExecution execution, String resultVar, String svcAction,
+			String svcOperation, String additionalData, boolean isAic3, AbstractServiceTaskProcessor taskProcessor) {
 		def method = getClass().getSimpleName() + '.sdncPrep(' +
 			'execution=' + execution.getId() +
 			', resultVar=' + resultVar +
@@ -382,6 +418,14 @@ class SDNCAdapterUtils {
 			if (additionalData == null) {
 				additionalData = ""
 			}
+			
+			if(isAic3) {
+				nnsl2HomingInformation = updateHomingInfo(nnsl2HomingInformation, "AIC3.0")
+			}
+			else {
+				nnsl2HomingInformation = updateHomingInfo(nnsl2HomingInformation, "AIC2.X")
+			}
+
 
 			String content = """
 				<sdncadapterworkflow:SDNCAdapterWorkflowRequest xmlns:sdncadapterworkflow="http://openecomp.com/mso/workflow/schema/v1"
@@ -420,7 +464,17 @@ class SDNCAdapterUtils {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, "Internal Error")
 		}
 	}
-
+	
+	public String updateHomingInfo(String homingInfo, String aicVersion) {
+		String newHomingInfo
+		if(homingInfo == null || homingInfo.trim().length() == 0) {
+			newHomingInfo = "<l2-homing-information><aic-version>" + aicVersion + "</aic-version></l2-homing-information>"
+		}
+		else {
+			newHomingInfo = homingInfo.substring(0, homingInfo.indexOf("</l2-homing-information>")) + "<aic-version>" + aicVersion + "</aic-version></l2-homing-information>"
+		}
+	}
+	
 	/**
 	 * Builds a topology SDNC request and return String request.
 	 * As V2 will use 1607-style request, region instead of aic clli code
@@ -435,7 +489,7 @@ class SDNCAdapterUtils {
 	 * @param additionalData additional XML content to be inserted into the
 	 *   RequestData element (may be null)
 	 */
-	 public String sdncTopologyRequestV2 (Execution execution, String requestXML, String serviceInstanceId, String callbackUrl, String action, String requestAction, String cloudRegionId, networkId, String queryAAIResponse, String additionalData) {
+	 public String sdncTopologyRequestV2 (DelegateExecution execution, String requestXML, String serviceInstanceId, String callbackUrl, String action, String requestAction, String cloudRegionId, networkId, String queryAAIResponse, String additionalData) {
 		 def utils=new MsoUtils()
 
 		 // SNDC is expecting request Id for header as unique each call.
@@ -553,7 +607,7 @@ class SDNCAdapterUtils {
 	  * @param additionalData additional XML content to be inserted into the
 	  *   RequestData element (may be null)
 	  */
-	  public String sdncTopologyRequestRsrc (Execution execution, String requestXML, String serviceInstanceId, String callbackUrl, String action, String requestAction, String cloudRegionId, networkId, String additionalData) {
+	  public String sdncTopologyRequestRsrc (DelegateExecution execution, String requestXML, String serviceInstanceId, String callbackUrl, String action, String requestAction, String cloudRegionId, networkId, String additionalData) {
 		  def utils=new MsoUtils()
 
 		  // SNDC is expecting request Id for header as unique each call.
@@ -675,12 +729,12 @@ class SDNCAdapterUtils {
 						   <service-information>
 						      <service-id>${serviceId}</service-id>
 						      <subscription-service-type>${subscriptionServiceType}</subscription-service-type>
-							  <onap-model-information>
+							  <ecomp-model-information>
 								   <model-invariant-uuid>${serviceModelInvariantUuid}</model-invariant-uuid>
 								   <model-uuid>${serviceModelUuid}</model-uuid>
 								   <model-version>${serviceModelVersion}</model-version>
 								   <model-name>${serviceModelName}</model-name>
-                              </onap-model-information>
+                              </ecomp-model-information>
 						      <service-instance-id>${serviceInstanceId}</service-instance-id>
 						      <global-customer-id>${globalCustomerId}</global-customer-id>
 						      <subscriber-name>${subscriberName}</subscriber-name>
@@ -688,13 +742,13 @@ class SDNCAdapterUtils {
 						   <network-information>
 						      <network-id>${networkId}</network-id>
 						      <network-type>${networkType}</network-type>
-							  <onap-model-information>
+							  <ecomp-model-information>
 								   <model-invariant-uuid>${modelInvariantUuid}</model-invariant-uuid>
 								   <model-customization-uuid>${modelCustomizationUuid}</model-customization-uuid>
 								   <model-uuid>${modelUuid}</model-uuid>
 								   <model-version>${modelVersion}</model-version>
 								   <model-name>${modelName}</model-name>
-							  </onap-model-information>
+							  </ecomp-model-information>
 						   </network-information>
 						   <network-request-input>
 						     <network-name>${networkName}</network-name>
@@ -715,7 +769,7 @@ class SDNCAdapterUtils {
 			 * @param responseVar the execution variable in which the response is stored
 			 * @param workflowException the WorkflowException Object returned from sdnc call
 			 */
-	public void validateSDNCResponse(Execution execution, String response, WorkflowException workflowException, boolean successIndicator){
+	public void validateSDNCResponse(DelegateExecution execution, String response, WorkflowException workflowException, boolean successIndicator){
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		taskProcessor.utils.log("DEBUG", "SDNC Response is: " + response, isDebugLogEnabled)
 		taskProcessor.utils.log("DEBUG", "SuccessIndicator is: " + successIndicator, isDebugLogEnabled)
@@ -730,8 +784,13 @@ class SDNCAdapterUtils {
 					taskProcessor.utils.log("DEBUG", response + ' is empty');
 					exceptionUtil.buildAndThrowWorkflowException(execution, 500, "SDNCAdapter Workflow Response is Empty")
 				}else{
+
 					// we need to peer into the request data for error
-					def String decodedXml = taskProcessor.utils.getNodeText1(response, "RequestData")
+					def String sdncAdapterWorkflowResponse = taskProcessor.utils.getNodeXml(response, 'response-data', false)
+					def String decodedXml = decodeXML(sdncAdapterWorkflowResponse).replace('<?xml version="1.0" encoding="UTF-8"?>', "")
+
+					// change '&' to "&amp; (if present as data, ex: subscriber-name = 'FOUR SEASONS HEATING & COOLING_8310006378683'
+					decodedXml = decodedXml.replace("&", "&amp;")
 
 					taskProcessor.utils.log("DEBUG","decodedXml:\n" + decodedXml, isDebugLogEnabled)
 
@@ -740,14 +799,12 @@ class SDNCAdapterUtils {
 
 					try{
 						if (taskProcessor.utils.nodeExists(decodedXml, "response-message")) {
-							requestDataResponseMessage = taskProcessor.utils.getNodeText1(decodedXml, "response-message")
-							
-							// note: ResponseMessage appears within "response", not "decodedXml"
-						} else if (taskProcessor.utils.nodeExists(response, "ResponseMessage")) {
-							requestDataResponseMessage = taskProcessor.utils.getNodeText1(response, "ResponseMessage")
+							requestDataResponseMessage = taskProcessor.utils.getNodeText(decodedXml, "response-message")
+						} else if (taskProcessor.utils.nodeExists(decodedXml, "ResponseMessage")) {
+							requestDataResponseMessage = taskProcessor.utils.getNodeText(decodedXml, "ResponseMessage")
 						}
 					}catch(Exception e){
-						taskProcessor.utils.log("DEBUG", 'Error caught while decoding response ' + e.getMessage(), isDebugLogEnabled)
+						taskProcessor.utils.log("DEBUG", 'Error caught while decoding resposne ' + e.getMessage(), isDebugLogEnabled)
 					}
 
 					if(taskProcessor.utils.nodeExists(decodedXml, "response-code")) {
@@ -758,20 +815,18 @@ class SDNCAdapterUtils {
 							taskProcessor.utils.log("DEBUG","response-code node is empty", isDebugLogEnabled)
 							requestDataResponseCode = 0
 						}else{
-							requestDataResponseCode  = code as Integer
+							requestDataResponseCode  = code.toInteger()
 							taskProcessor.utils.log("DEBUG","response-code is: " + requestDataResponseCode, isDebugLogEnabled)
 						}
-						
-						// note: ResponseCode appears within "response", not "decodedXml"
-					}else if(taskProcessor.utils.nodeExists(response, "ResponseCode")){
+					}else if(taskProcessor.utils.nodeExists(decodedXml, "ResponseCode")){
 						taskProcessor.utils.log("DEBUG","ResponseCode node Exist ", isDebugLogEnabled)
-						String code = taskProcessor.utils.getNodeText1(response, "ResponseCode")
+						String code = taskProcessor.utils.getNodeText1(decodedXml, "ResponseCode")
 						if(code.isEmpty() || code.equals("")){
 							// if ResponseCode blank then Success
 							taskProcessor.utils.log("DEBUG","ResponseCode node is empty", isDebugLogEnabled)
 							requestDataResponseCode = 0
 						}else{
-							requestDataResponseCode  = code as Integer
+							requestDataResponseCode  = code.toInteger()
 							taskProcessor.utils.log("DEBUG","ResponseCode is: " + requestDataResponseCode, isDebugLogEnabled)
 						}
 					}else{
@@ -828,7 +883,7 @@ class SDNCAdapterUtils {
 			 * @param responseCodeVar the execution variable in which the response code is stored
 			 * @param errorResponseVar the execution variable in which the error response is stored
 			 */
-			public void validateL3BondingSDNCResp(Execution execution, String response, WorkflowException workflowException, boolean success) {
+			public void validateL3BondingSDNCResp(DelegateExecution execution, String response, WorkflowException workflowException, boolean success) {
 				def method = getClass().getSimpleName() + '.validateL3BondingSDNCResp(' +
 					'execution=' + execution.getId() +
 					', response=' + response +
@@ -951,13 +1006,13 @@ class SDNCAdapterUtils {
 		}		
 		String modelName = jsonUtil.getJsonValue(jsonModelInfo, "modelName")
 		String ecompModelInformation =
-				"""<onap-model-information>
+				"""<ecomp-model-information>
 						<model-invariant-uuid>${modelInvariantUuid}</model-invariant-uuid>
 						<model-uuid>${modelUuid}</model-uuid>
 						${modelCustomizationString}
 						<model-version>${modelVersion}</model-version>
 						<model-name>${modelName}</model-name>
-				</onap-model-information>"""
+				</ecomp-model-information>"""
 
 		return ecompModelInformation		
 	} 

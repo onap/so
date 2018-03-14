@@ -1,0 +1,41 @@
+{
+   "variableList":[
+      {
+         "variable":{
+            "name":"SDNCA_InterimNotify",
+            "value":true
+         }
+      },
+      {
+         "variable":{
+            "name":"source",
+            "value":"CCD"
+         }
+      },
+      {
+         "variable":{
+            "name":"CMSO_is_srv_inst_req",
+            "value":"true"
+         }
+      },
+      {
+         "variable":{
+            "name":"CMSO_is_json_content",
+            "value":"true"
+         }
+      },
+      {
+         "variable":{
+            "name":"CMSO_notificationUrl",
+            "value":"http://localhost:28090/CCD/StatusNotification"
+         }
+      },
+      {
+         "variable":{
+            "name":"CMSO_payload",
+            "value":{"hello":"goodbye"}
+         }
+      }
+   ]
+}
+

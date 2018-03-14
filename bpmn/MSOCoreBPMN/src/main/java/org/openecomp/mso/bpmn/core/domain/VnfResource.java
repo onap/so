@@ -44,17 +44,19 @@ public class VnfResource extends Resource {
 		resourceType = ResourceType.VNF;
 		setResourceId(UUID.randomUUID().toString());
 	}
-	
+
 	/*
 	 * fields specific to VNF resource type
 	 */
 	@JsonProperty("vfModules")
 	private List <ModuleResource>  vfModules;
+	private String vnfHostname;
 	private String vnfType;
 	private String nfFunction;
 	private String nfType;
 	private String nfRole;
 	private String nfNamingCode;
+	private String multiStageDesign;
 
 	/*
 	 * GET and SET
@@ -64,6 +66,12 @@ public class VnfResource extends Resource {
 	}
 	public void setModules(List<ModuleResource> moduleResources) {
 		this.vfModules = moduleResources;
+	}
+	public String getVnfHostname() {
+		return vnfHostname;
+	}
+	public void setVnfHostname(String vnfHostname) {
+		this.vnfHostname = vnfHostname;
 	}
 	@Deprecated
 	public void setVnfType(String vnfType) {
@@ -96,10 +104,16 @@ public class VnfResource extends Resource {
 	public void setNfNamingCode(String nfNamingCode) {
 		this.nfNamingCode = nfNamingCode;
 	}
+	public String getMultiStageDesign() {
+		return multiStageDesign;
+	}
+	public void setMultiStageDesign(String multiStageDesign) {
+		this.multiStageDesign = multiStageDesign;
+	}
 	/*
 	 * GET accessors per design requirements
 	 */
-	
+
 	/**
 	 * Returns a list of all VfModule objects.
 	 * Base module is first entry in the list
@@ -110,7 +124,7 @@ public class VnfResource extends Resource {
 		if (vfModules == null) {
 			return null;
 		}
-		
+
 		for (int i = 0; i < vfModules.size(); i++) {
 			ModuleResource moduleResource = vfModules.get(i);
 			if (moduleResource.getIsBase()){
@@ -120,17 +134,17 @@ public class VnfResource extends Resource {
 		}
 		return vfModules;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return Returns JSON list of all VfModule structures.
 	 */
 	@JsonIgnore
 	public String getAllVfModulesJson(){
-		
+
 		return listToJson(vfModules);
 	}
-	
+
 	// methods to add to the list
 	public void addVfModule(ModuleResource moduleResource) {
 		if (vfModules == null){
@@ -138,12 +152,12 @@ public class VnfResource extends Resource {
 		}
 		this.vfModules.add(moduleResource);
 	}
-	
+
 
 	/**
-	 * Utility method to allow construction of the filed in the form of 
+	 * Utility method to allow construction of the filed in the form of
 	 * <serviceResources.modelInfo.modelName>/<serviceVnfs.modelInfo.modelInstanceName>
-	 * 
+	 *
 	 * default setter for this field deprecated
 	 * @param modelName << serviceResources.modelInfo.modelName
 	 */

@@ -23,12 +23,12 @@
 
 package org.openecomp.mso.cloud;
 
+import java.security.GeneralSecurityException;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.woorea.openstack.keystone.model.Authentication;
 import com.woorea.openstack.keystone.model.authentication.UsernamePassword;
-import java.security.GeneralSecurityException;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.map.annotate.JsonDeserialize;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.openecomp.mso.cloud.authentication.AuthenticationMethodFactory;
 import org.openecomp.mso.cloud.authentication.AuthenticationWrapper;
 import org.openecomp.mso.cloud.authentication.wrappers.RackspaceAPIKeyWrapper;

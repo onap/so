@@ -19,13 +19,10 @@
  */
 package org.openecomp.mso.adapters.catalogdb.catalogrest;
 
-import org.jboss.resteasy.annotations.providers.NoJackson;
-
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 @XmlRootElement(name = "catalogQueryException")
-@NoJackson
 public class CatalogQueryException extends CatalogQueryExceptionCommon implements Serializable {
     private static final long serialVersionUID = -9062290006520066109L;
 

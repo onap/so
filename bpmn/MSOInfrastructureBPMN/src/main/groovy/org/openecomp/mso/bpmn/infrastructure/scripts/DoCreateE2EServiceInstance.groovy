@@ -51,7 +51,7 @@ import java.util.UUID;
 import javax.mail.Quota.Resource;
 
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.json.JSONObject;
 import org.json.JSONArray;
 import org.apache.commons.lang3.*
@@ -90,7 +90,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 	JsonUtils jsonUtil = new JsonUtils()
 	CatalogDbUtils cutils = new CatalogDbUtils()
 
-	public void preProcessRequest (Execution execution) {
+	public void preProcessRequest (DelegateExecution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		String msg = ""
 		utils.log("INFO"," ***** preProcessRequest *****",  isDebugEnabled)
@@ -185,7 +185,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		utils.log("INFO"," ***** Exit preProcessRequest *****",  isDebugEnabled)
 	}
 	
-   public void prepareDecomposeService(Execution execution) {
+   public void prepareDecomposeService(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 
         try {
@@ -208,7 +208,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
         }
      }
 
-    public void processDecomposition (Execution execution) {
+    public void processDecomposition(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
     
         utils.log("DEBUG", " ***** Inside processDecomposition() of  create generic e2e service flow ***** ", isDebugEnabled)    
@@ -221,11 +221,11 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
         }
     }
     
-    public void doServiceHoming(Execution execution) {
+    public void doServiceHoming(DelegateExecution execution) {
         //Now Homing is not clear. So to be implemented.
     }
     
-	public void postProcessAAIGET(Execution execution) {
+	public void postProcessAAIGET(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO"," ***** postProcessAAIGET ***** ", isDebugEnabled)
 		String msg = ""
@@ -267,7 +267,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		utils.log("INFO"," *** Exit postProcessAAIGET *** ", isDebugEnabled)
 	}
 
-	public void postProcessAAIPUT(Execution execution) {
+	public void postProcessAAIPUT(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO"," ***** postProcessAAIPUT ***** ", isDebugEnabled)
 		String msg = ""
@@ -305,7 +305,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		utils.log("INFO"," *** Exit postProcessAAIPUT *** ", isDebugEnabled)
 	}
 	
-	public void postProcessAAIGET2(Execution execution) {
+	public void postProcessAAIGET2(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO"," ***** postProcessAAIGET2 ***** ", isDebugEnabled)
 		String msg = ""
@@ -348,7 +348,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		utils.log("INFO"," *** Exit postProcessAAIGET2 *** ", isDebugEnabled)
 	}
 
-	public void preProcessRollback (Execution execution) {
+	public void preProcessRollback (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO"," ***** preProcessRollback ***** ", isDebugEnabled)
 		try {
@@ -369,7 +369,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		utils.log("INFO"," *** Exit preProcessRollback *** ", isDebugEnabled)
 	}
 
-	public void postProcessRollback (Execution execution) {
+	public void postProcessRollback (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO"," ***** postProcessRollback ***** ", isDebugEnabled)
 		String msg = ""
@@ -390,7 +390,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		utils.log("INFO"," *** Exit postProcessRollback *** ", isDebugEnabled)
 	}
 
-	public void preInitResourcesOperStatus(Execution execution){
+	public void preInitResourcesOperStatus(DelegateExecution execution){
         def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 
         utils.log("INFO", " ======== STARTED preInitResourcesOperStatus Process ======== ", isDebugEnabled)

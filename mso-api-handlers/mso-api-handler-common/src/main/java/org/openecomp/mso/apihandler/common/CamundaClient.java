@@ -21,18 +21,24 @@
 package org.openecomp.mso.apihandler.common;
 
 
-import org.openecomp.mso.apihandler.camundabeans.*;
-import org.openecomp.mso.logger.MessageEnum;
-import org.openecomp.mso.logger.MsoLogger;
+import java.io.IOException;
+
+import javax.xml.bind.DatatypeConverter;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
+import org.openecomp.mso.apihandler.camundabeans.CamundaBooleanInput;
+import org.openecomp.mso.apihandler.camundabeans.CamundaInput;
+import org.openecomp.mso.apihandler.camundabeans.CamundaIntegerInput;
+import org.openecomp.mso.apihandler.camundabeans.CamundaRequest;
+import org.openecomp.mso.apihandler.camundabeans.CamundaVIDRequest;
+import org.openecomp.mso.logger.MessageEnum;
+import org.openecomp.mso.logger.MsoLogger;
 
-import javax.xml.bind.DatatypeConverter;
-import java.io.IOException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 public class CamundaClient extends RequestClient{
 	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.APIH);
@@ -98,14 +104,14 @@ public class CamundaClient extends RequestClient{
 	@Override
 	public HttpResponse post(String requestId, boolean isBaseVfModule,
 			int recipeTimeout, String requestAction, String serviceInstanceId,
-			String vnfId, String vfModuleId, String volumeGroupId, String networkId,
+			String vnfId, String vfModuleId, String volumeGroupId, String networkId, String configurationId,
 			String serviceType, String vnfType, String vfModuleType, String networkType,
 			String requestDetails, String recipeParamXsd)
 					throws ClientProtocolException, IOException{
 		HttpPost post = new HttpPost(url);
 		msoLogger.debug(CAMUNDA_URL_MESAGE + url);
 		String jsonReq = wrapVIDRequest(requestId, isBaseVfModule, recipeTimeout, requestAction,
-				serviceInstanceId, vnfId, vfModuleId, volumeGroupId, networkId,
+				serviceInstanceId, vnfId, vfModuleId, volumeGroupId, networkId, configurationId,
 				serviceType, vnfType, vfModuleType, networkType, requestDetails, recipeParamXsd);
 
 		StringEntity input = new StringEntity(jsonReq);
@@ -167,7 +173,7 @@ public class CamundaClient extends RequestClient{
 			camundaRequest.setSchema(schema);
 			camundaRequest.setTimeout(timeout);
 			ObjectMapper mapper = new ObjectMapper();
-			mapper.configure(SerializationConfig.Feature.WRAP_ROOT_VALUE, true);
+			mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
 
 			jsonReq = mapper.writeValueAsString(camundaRequest);
 			msoLogger.debug("request body is " + jsonReq);
@@ -179,7 +185,7 @@ public class CamundaClient extends RequestClient{
 
 	private String wrapVIDRequest(String requestId, boolean isBaseVfModule,
 			int recipeTimeout, String requestAction, String serviceInstanceId,
-			String vnfId, String vfModuleId, String volumeGroupId, String networkId,
+			String vnfId, String vfModuleId, String volumeGroupId, String networkId, String configurationId,
 			String serviceType, String vnfType, String vfModuleType, String networkType,
 			String requestDetails, String recipeParams){
 		String jsonReq = null;
@@ -204,6 +210,9 @@ public class CamundaClient extends RequestClient{
 		if(networkId == null){
 			networkId ="";
 		}
+		if(configurationId == null){
+			configurationId ="";
+		}
 		if(serviceType == null){
 			serviceType ="";
 		}
@@ -220,8 +229,6 @@ public class CamundaClient extends RequestClient{
 			requestDetails ="";
 		}
 
-
-
 		try{
 			CamundaVIDRequest camundaRequest = new CamundaVIDRequest();
 			CamundaInput serviceInput = new CamundaInput();
@@ -235,6 +242,7 @@ public class CamundaClient extends RequestClient{
 			CamundaInput vfModuleIdInput = new CamundaInput();
 			CamundaInput volumeGroupIdInput = new CamundaInput();
 			CamundaInput networkIdInput = new CamundaInput();
+			CamundaInput configurationIdInput = new CamundaInput();
 			CamundaInput serviceTypeInput = new CamundaInput();
 			CamundaInput vnfTypeInput = new CamundaInput();
 			CamundaInput vfModuleTypeInput = new CamundaInput();
@@ -250,6 +258,7 @@ public class CamundaClient extends RequestClient{
 			vfModuleIdInput.setValue(vfModuleId);
 			volumeGroupIdInput.setValue(volumeGroupId);
 			networkIdInput.setValue(networkId);
+			configurationIdInput.setValue(configurationId);
 			serviceTypeInput.setValue(serviceType);
 			vnfTypeInput.setValue(vnfType);
 			vfModuleTypeInput.setValue(vfModuleType);
@@ -268,13 +277,14 @@ public class CamundaClient extends RequestClient{
 			camundaRequest.setVfModuleId(vfModuleIdInput);
 			camundaRequest.setVolumeGroupId(volumeGroupIdInput);
 			camundaRequest.setNetworkId(networkIdInput);
+			camundaRequest.setConfigurationId(configurationIdInput);
 			camundaRequest.setServiceType(serviceTypeInput);
 			camundaRequest.setVnfType(vnfTypeInput);
 			camundaRequest.setVfModuleType(vfModuleTypeInput);
 			camundaRequest.setNetworkType(networkTypeInput);
 			camundaRequest.setRecipeParams(recipeParamsInput);
 			ObjectMapper mapper = new ObjectMapper();
-			mapper.configure(SerializationConfig.Feature.WRAP_ROOT_VALUE, true);
+			mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
 
 			jsonReq = mapper.writeValueAsString(camundaRequest);
 			msoLogger.debug("request body is " + jsonReq);

@@ -21,7 +21,7 @@
 package org.openecomp.mso.bpmn.common.scripts
 
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.rest.APIResponse
 import org.springframework.web.util.UriUtils
@@ -37,7 +37,7 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void initProcessVariables(Execution execution) {
+	public void initProcessVariables(DelegateExecution execution) {
 		execution.setVariable('prefix', 'UAAIGenVnf_')
 		execution.setVariable('UAAIGenVnf_vnfId', null)
 		execution.setVariable('UAAIGenVnf_personaModelId', null)
@@ -56,7 +56,7 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void preProcessRequest(Execution execution) {
+	public void preProcessRequest(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.preProcessRequest(' +
 			'execution=' + execution.getId() +
 			')'
@@ -112,7 +112,7 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void getGenericVnf(Execution execution) {
+	public void getGenericVnf(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.getGenericVnf(' +
 			'execution=' + execution.getId() +
 			')'
@@ -159,7 +159,7 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void updateGenericVnf(Execution execution) {
+	public void updateGenericVnf(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.updateGenericVnf(' +
 			'execution=' + execution.getId() +
 			')'
@@ -301,7 +301,7 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void handleAAIQueryFailure(Execution execution) {
+	public void handleAAIQueryFailure(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.handleAAIQueryFailure(' +
 			'execution=' + execution.getId() +
 			')'
@@ -325,7 +325,7 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void handleUpdateGenericVnfFailure(Execution execution) {
+	public void handleUpdateGenericVnfFailure(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.handleUpdateGenericVnfFailure(' +
 			'execution=' + execution.getId() +
 			')'

@@ -1,0 +1,2 @@
+org.openecomp.mso.client.restproperties.AAIPropertiesImpl
+org.openecomp.mso.client.restproperties.PolicyRestPropertiesImpl

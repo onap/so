@@ -32,7 +32,7 @@ import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution;
+import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.apache.commons.lang3.*
 
 class CreateVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
@@ -43,7 +43,7 @@ class CreateVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 	 * Perform initial processing, such as request validation, initialization of variables, etc.
 	 * * @param execution
 	 */
-	public void preProcessRequest (Execution execution) {
+	public void preProcessRequest (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		setBasicDBAuthHeader(execution, isDebugEnabled)
 		preProcessRequest(execution, isDebugEnabled)
@@ -55,7 +55,7 @@ class CreateVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 	 * @param execution
 	 * @param isDebugEnabled
 	 */
-	public void preProcessRequest (Execution execution, isDebugEnabled) {
+	public void preProcessRequest (DelegateExecution execution, isDebugEnabled) {
 
 		execution.setVariable("prefix",prefix)
 		setSuccessIndicator(execution, false)
@@ -87,7 +87,7 @@ class CreateVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 	 * @param serviceInstanceId
 	 * @param isDebugLogEnabled
 	 */
-	public void setupVariables(Execution execution, Map requestMap, isDebugLogEnabled) {
+	public void setupVariables(DelegateExecution execution, Map requestMap, isDebugLogEnabled) {
 		
 		def jsonOutput = new JsonOutput()
 		
@@ -142,7 +142,7 @@ class CreateVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 		Map<String, String> vfModuleInputMap = [:]
 		
 		userParams.each { userParam ->
-			vfModuleInputMap.put(userParam.name, userParam.value)
+			vfModuleInputMap.put(userParam.name, userParam.value.toString())
 		}
 		execution.setVariable('vfModuleInputParams', vfModuleInputMap)
 
@@ -155,7 +155,7 @@ class CreateVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 
 	
 	
-	public void sendSyncResponse (Execution execution, isDebugEnabled) {
+	public void sendSyncResponse (DelegateExecution execution, isDebugEnabled) {
 		def volumeGroupId = execution.getVariable('volumeGroupId')
 		def requestId = execution.getVariable("mso-request-id")
 		def serviceInstanceId = execution.getVariable("serviceInstanceId")
@@ -169,7 +169,7 @@ class CreateVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 	}
 
 
-	public void sendSyncError (Execution execution, isDebugEnabled) {
+	public void sendSyncError (DelegateExecution execution, isDebugEnabled) {
 		WorkflowException we = execution.getVariable('WorkflowException')
 		def errorCode = we?.getErrorCode()
 		def errorMessage = we?.getErrorMessage()
@@ -183,7 +183,7 @@ class CreateVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 	 * @param execution
 	 * @param isDebugEnabled
 	 */
-	public void buildWorkflowException(Execution execution, int errorCode, errorMessage, isDebugEnabled) {
+	public void buildWorkflowException(DelegateExecution execution, int errorCode, errorMessage, isDebugEnabled) {
 		utils.log("DEBUG", errorMessage, isDebugEnabled)
 		(new ExceptionUtil()).buildWorkflowException(execution, 2500, errorMessage)
 	}
@@ -194,7 +194,7 @@ class CreateVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 	 * @param execution
 	 * @param isDebugEnabled
 	 */
-	public void prepareDbInfraSuccessRequest(Execution execution, isDebugEnabled) {
+	public void prepareDbInfraSuccessRequest(DelegateExecution execution, isDebugEnabled) {
 		def dbVnfOutputs = execution.getVariable(prefix+'volumeOutputs')
 		def requestId = execution.getVariable('mso-request-id')
 		def statusMessage = "VolumeGroup successfully created."
@@ -237,7 +237,7 @@ class CreateVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 	 * @param execution
 	 * @param isDebugEnabled
 	 */
-	public void postProcessResponse (Execution execution, isDebugEnabled) {
+	public void postProcessResponse (DelegateExecution execution, isDebugEnabled) {
 
 		def dbReturnCode = execution.getVariable(prefix+'dbReturnCode')
 		def createDBResponse =  execution.getVariable(prefix+'createDBResponse')
@@ -270,7 +270,7 @@ class CreateVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 
 	}
 
-	public void prepareFalloutHandlerRequest(Execution execution, isDebugEnabled) {
+	public void prepareFalloutHandlerRequest(DelegateExecution execution, isDebugEnabled) {
 
 		WorkflowException we = execution.getVariable('WorkflowException')
 		def errorCode = we?.getErrorCode()
@@ -309,7 +309,7 @@ class CreateVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 	 * @param execution
 	 * @param isDebugEnabled
 	 */
-	public void callRESTQueryAAIServiceInstance(Execution execution, isDebugEnabled) {
+	public void callRESTQueryAAIServiceInstance(DelegateExecution execution, isDebugEnabled) {
 
 		def request = execution.getVariable(prefix+"Request")
 		def serviceInstanceId = utils.getNodeText1(request, "service-instance-id")
@@ -348,12 +348,12 @@ class CreateVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 		}
 	}
 	
-	public void logAndSaveOriginalException(Execution execution, isDebugLogEnabled) {
+	public void logAndSaveOriginalException(DelegateExecution execution, isDebugLogEnabled) {
 		logWorkflowException(execution, 'CreateVfModuleVolumeInfraV1 caught an event')
 		saveWorkflowException(execution, 'CVMVINFRAV1_originalWorkflowException')
 	}
 	
-	public void validateRollbackResponse(Execution execution, isDebugLogEnabled) {
+	public void validateRollbackResponse(DelegateExecution execution, isDebugLogEnabled) {
 
 		def originalException = execution.getVariable("CVMVINFRAV1_originalWorkflowException")
 		execution.setVariable("WorkflowException", originalException)

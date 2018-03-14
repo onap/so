@@ -27,7 +27,7 @@ import groovy.xml.QName
 import java.io.Serializable;
 
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 
 import groovy.json.JsonSlurper
 
@@ -49,7 +49,7 @@ public class DeleteVfModuleInfra extends AbstractServiceTaskProcessor {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void initProcessVariables(Execution execution) {
+	public void initProcessVariables(DelegateExecution execution) {
 		execution.setVariable('prefix', 'DELVfModI_')
 		execution.setVariable('DELVfModI_requestInfo', null)
 		execution.setVariable('DELVfModI_requestId', null)
@@ -70,7 +70,7 @@ public class DeleteVfModuleInfra extends AbstractServiceTaskProcessor {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void preProcessRequest(Execution execution) {
+	public void preProcessRequest(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.preProcessRequest(' +
 			'execution=' + execution.getId() +
 			')'
@@ -103,7 +103,10 @@ public class DeleteVfModuleInfra extends AbstractServiceTaskProcessor {
 
 			execution.setVariable("vfModuleModelInfo", vfModuleModelInfo)
 			utils.log("DEBUG", "VfModuleModelInfo is: " + vfModuleModelInfo, isDebugLogEnabled)
-
+			
+			// This is aLaCarte flow, so aLaCarte flag is always on
+			execution.setVariable('aLaCarte', true)
+			
 			def vidUtils = new VidUtils(this)
 
 			String requestInXmlFormat = vidUtils.createXmlVfModuleRequest(execution, reqMap, 'DELETE_VF_MODULE', serviceInstanceId)
@@ -165,7 +168,7 @@ public class DeleteVfModuleInfra extends AbstractServiceTaskProcessor {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void sendSynchResponse(Execution execution) {
+	public void sendSynchResponse(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.sendResponse(' +
 			'execution=' + execution.getId() +
 			')'
@@ -208,7 +211,7 @@ public class DeleteVfModuleInfra extends AbstractServiceTaskProcessor {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void prepDoDeleteVfModule(Execution execution) {
+	public void prepDoDeleteVfModule(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.prepDoDeleteVfModule(' +
 			'execution=' + execution.getId() +
 			')'
@@ -231,7 +234,7 @@ public class DeleteVfModuleInfra extends AbstractServiceTaskProcessor {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void prepUpdateInfraRequest(Execution execution) {
+	public void prepUpdateInfraRequest(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.prepUpdateInfraRequest(' +
 			'execution=' + execution.getId() +
 			')'
@@ -280,7 +283,7 @@ public class DeleteVfModuleInfra extends AbstractServiceTaskProcessor {
 	 * @param execution the execution
 	 * @param resultVar the execution variable in which the result will be stored
 	 */
-	public void completionHandlerPrep(Execution execution, String resultVar) {
+	public void completionHandlerPrep(DelegateExecution execution, String resultVar) {
 		def method = getClass().getSimpleName() + '.completionHandlerPrep(' +
 			'execution=' + execution.getId() +
 			', resultVar=' + resultVar +
@@ -324,7 +327,7 @@ public class DeleteVfModuleInfra extends AbstractServiceTaskProcessor {
 	 * @param execution the execution
 	 * @param resultVar the execution variable in which the result will be stored
 	 */
-	public void falloutHandlerPrep(Execution execution, String resultVar) {
+	public void falloutHandlerPrep(DelegateExecution execution, String resultVar) {
 		def method = getClass().getSimpleName() + '.falloutHandlerPrep(' +
 			'execution=' + execution.getId() +
 			', resultVar=' + resultVar +

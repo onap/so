@@ -22,6 +22,8 @@ package org.openecomp.mso.apihandlerinfra;
 
 import static org.junit.Assert.assertTrue;
 
+import java.text.ParseException;
+
 import javax.ws.rs.core.Response;
 
 import org.junit.Test;
@@ -31,7 +33,7 @@ public class TasksHandlerTest {
 	TasksHandler handler = new TasksHandler();
 	
 	@Test
-	public void queryFiltersTest(){
+	public void queryFiltersTest() throws ParseException{
 		Response resp = handler.queryFilters("10020", "399495", "test", "nfRole", "buildingBlockName", "originalRequestDate", "originalRequestorId", "v2");
 		assertTrue(resp.getEntity().toString() != null);
 	}

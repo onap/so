@@ -23,20 +23,23 @@ package org.openecomp.mso.bpmn.core.domain;
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 
 
 public abstract class Resource extends JsonWrapper  implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private String resourceId;
+	private String resourceId; // TODO name this field just id instead, should be the id of the object as it is in aai
 	protected ResourceType resourceType; // Enum of vnf or network or allotted resource
 	protected ModelInfo modelInfo;
 	private long concurrencyCounter = 1L;
 
 	//private List modules;
 	private ResourceInstance resourceInstance = new ResourceInstance(); // TODO possibly remove
-	private HomingSolution homingSolution = new HomingSolution(); // TODO maybe this instead of resourceInstance being "bridge"
+	private HomingSolution homingSolution = new HomingSolution();
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private HomingSolution currentHomingSolution;
 
 	//common parameters for all Resources
 	private String toscaNodeType;
@@ -67,6 +70,12 @@ public abstract class Resource extends JsonWrapper  implements Serializable {
 
 	public void setHomingSolution(HomingSolution homingSolution){
 		this.homingSolution = homingSolution;
+	}
+	public HomingSolution getCurrentHomingSolution() {
+		return currentHomingSolution;
+	}
+	public void setCurrentHomingSolution(HomingSolution currentHomingSolution) {
+		this.currentHomingSolution = currentHomingSolution;
 	}
 	public void setResourceType(ResourceType resourceType) {
 		this.resourceType = resourceType;

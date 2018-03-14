@@ -12,7 +12,7 @@ import org.camunda.bpm.engine.ProcessEngineServices
 import org.camunda.bpm.engine.RepositoryService
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.camunda.bpm.engine.repository.ProcessDefinition
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -507,6 +507,29 @@ String expectedNetworkInputsMissingNetworkId =
                <orchestration-status>pending-update</orchestration-status>
                <dhcp-enabled>true</dhcp-enabled>
 	  		   <subnet-name>subnetName</subnet-name>
+	  		   <ip-assignment-direction>true</ip-assignment-direction>
+			   <host-routes>
+					<host-route>
+						<host-route-id>400d286b-7e44-4514-b9b3-f70f7360ff32</host-route-id>
+						<route-prefix>172.20.1.0/24</route-prefix>
+						<next-hop>10.102.200.1</next-hop>
+	  					<next-hop-type>ip-address</next-hop-type>
+						<resource-version>1505857300987</resource-version>
+					</host-route>
+						<host-route>
+						<host-route-id>6f038013-8b15-4eb8-914b-507489fbc8ee</host-route-id>
+						<route-prefix>10.102.0.0/16</route-prefix>
+						<next-hop>10.102.200.1</next-hop>
+	  					<next-hop-type>ip-address</next-hop-type>
+						<resource-version>1505857301151</resource-version>
+					</host-route>
+					<host-route>
+						<host-route-id>8811c5f8-f1ed-4fa0-a505-e1be60396e28</host-route-id>
+						<route-prefix>192.168.2.0/25</route-prefix>
+						<next-hop>10.102.200.1</next-hop>
+						<resource-version>1505857301954</resource-version>
+					</host-route>
+			   </host-routes>
                <relationship-list/>
             </subnet>
             <subnet>
@@ -518,6 +541,15 @@ String expectedNetworkInputsMissingNetworkId =
                <orchestration-status>pending-delete</orchestration-status>
                <dhcp-enabled>true</dhcp-enabled>
 	  		   <subnet-name>subnetName</subnet-name>
+	  		   <ip-assignment-direction>true</ip-assignment-direction>
+			   <host-routes>
+					<host-route>
+						<host-route-id>400d286b-7e44-4514-b9b3-f70f7360ff32</host-route-id>
+						<route-prefix>172.20.1.0/24</route-prefix>
+						<next-hop>10.102.200.1</next-hop>
+						<resource-version>1505857300987</resource-version>
+					</host-route>
+			   </host-routes>
                <relationship-list/>
             </subnet>
          </subnets>
@@ -979,6 +1011,19 @@ String expectedNetworkInputsMissingNetworkId =
       <ipVersion>4</ipVersion>
       <subnetId>57e9a1ff-d14f-4071-a828-b19ae98eb2fc</subnetId>
       <subnetName>subnetName</subnetName>
+      <addrFromStart>true</addrFromStart>
+      <hostRoutes>
+         <prefix>172.20.1.0/24</prefix>
+         <nextHop>10.102.200.1</nextHop>
+      </hostRoutes>
+      <hostRoutes>
+         <prefix>10.102.0.0/16</prefix>
+         <nextHop>10.102.200.1</nextHop>
+      </hostRoutes>
+      <hostRoutes>
+         <prefix>192.168.2.0/25</prefix>
+         <nextHop>10.102.200.1</nextHop>
+      </hostRoutes>
    </subnets>
    <skipAAI>true</skipAAI>
    <backout>true</backout>
@@ -1024,6 +1069,19 @@ String updateNetworkRequest_noPhysicalName =
       <ipVersion>4</ipVersion>
       <subnetId>57e9a1ff-d14f-4071-a828-b19ae98eb2fc</subnetId>
       <subnetName>subnetName</subnetName>
+      <addrFromStart>true</addrFromStart>
+      <hostRoutes>
+         <prefix>172.20.1.0/24</prefix>
+         <nextHop>10.102.200.1</nextHop>
+      </hostRoutes>
+      <hostRoutes>
+         <prefix>10.102.0.0/16</prefix>
+         <nextHop>10.102.200.1</nextHop>
+      </hostRoutes>
+      <hostRoutes>
+         <prefix>192.168.2.0/25</prefix>
+         <nextHop>10.102.200.1</nextHop>
+      </hostRoutes>
    </subnets>
    <skipAAI>true</skipAAI>
    <backout>true</backout>
@@ -1148,7 +1206,32 @@ String updateNetworkRequest_noPhysicalName =
          <ip-version>4</ip-version>
          <orchestration-status>Active</orchestration-status>
          <dhcp-enabled>true</dhcp-enabled>
+         <resource-version>1505857300987</resource-version>
          <subnet-name>subnetName</subnet-name>
+         <ip-assignment-direction>true</ip-assignment-direction>
+         <host-routes>
+            <host-route>
+               <host-route-id>400d286b-7e44-4514-b9b3-f70f7360ff32</host-route-id>
+               <route-prefix>172.20.1.0/24</route-prefix>
+               <next-hop>10.102.200.1</next-hop>
+               <next-hop-type>ip-address</next-hop-type>
+               <resource-version>1505857300987</resource-version>
+            </host-route>
+            <host-route>
+               <host-route-id>6f038013-8b15-4eb8-914b-507489fbc8ee</host-route-id>
+               <route-prefix>10.102.0.0/16</route-prefix>
+               <next-hop>10.102.200.1</next-hop>
+               <next-hop-type>ip-address</next-hop-type>
+               <resource-version>1505857301151</resource-version>
+            </host-route>
+            <host-route>
+               <host-route-id>8811c5f8-f1ed-4fa0-a505-e1be60396e28</host-route-id>
+               <route-prefix>192.168.2.0/25</route-prefix>
+               <next-hop>10.102.200.1</next-hop>
+               <next-hop-type/>
+               <resource-version>1505857301954</resource-version>
+            </host-route>
+         </host-routes>
       </subnet>
    </subnets>
    <segmentation-assignments>
@@ -1505,13 +1588,13 @@ String rollbackSDNCRequest =
       <network-information>
          <network-id>8abc633a-810b-4ca5-8b3a-09511d13a2ce</network-id>
          <network-type>CONTRAIL_EXTERNAL</network-type>
-         <onap-model-information>
+         <ecomp-model-information>
             <model-invariant-uuid>invariant-uuid</model-invariant-uuid>
             <model-customization-uuid>customization-uuid</model-customization-uuid>
             <model-uuid>uuid</model-uuid>
             <model-version>version</model-version>
             <model-name>CONTRAIL_EXTERNAL</model-name>
-         </onap-model-information>
+         </ecomp-model-information>
       </network-information>
       <network-request-information>
          <network-id>8abc633a-810b-4ca5-8b3a-09511d13a2ce</network-id>
@@ -1550,7 +1633,7 @@ String rollbackNetworkRequest =
 
 		}
 
-		public void initializeVariables (Execution mockExecution) {
+		public void initializeVariables (DelegateExecution mockExecution) {
 
 			verify(mockExecution).setVariable(Prefix + "messageId", "")
 			verify(mockExecution).setVariable("BasicAuthHeaderValuePO", "")
@@ -1665,7 +1748,7 @@ String rollbackNetworkRequest =
 			when(mockExecution.getVariable("URN_mso_rollback")).thenReturn("true")
 			when(mockExecution.getVariable("disableRollback")).thenReturn("true")
 
-			// preProcessRequest(Execution execution)
+			// preProcessRequest(DelegateExecution execution)
 			DoUpdateNetworkInstance DoUpdateNetworkInstance = new DoUpdateNetworkInstance()
 			DoUpdateNetworkInstance.preProcessRequest(mockExecution)
 
@@ -1727,7 +1810,7 @@ String rollbackNetworkRequest =
 			when(mockExecution.getVariable("URN_mso_adapters_network_rest_endpoint")).thenReturn("http://localhost:8090/networks/NetworkAdapter")
 			when(mockExecution.getVariable("URN_mso_adapters_sdnc_resource_endpoint")).thenReturn("http://localhost:8090/SDNCAdapterRpc")
 			
-			// preProcessRequest(Execution execution)
+			// preProcessRequest(DelegateExecution execution)
 			DoUpdateNetworkInstance DoUpdateNetworkInstance = new DoUpdateNetworkInstance()
 			DoUpdateNetworkInstance.preProcessRequest(mockExecution)
 
@@ -1779,7 +1862,7 @@ String rollbackNetworkRequest =
 			when(mockExecution.getVariable("URN_mso_rollback")).thenReturn("true")
 			when(mockExecution.getVariable("disableRollback")).thenReturn("true")
 
-			// preProcessRequest(Execution execution)
+			// preProcessRequest(DelegateExecution execution)
 			DoUpdateNetworkInstance DoUpdateNetworkInstance = new DoUpdateNetworkInstance()
 			try {
 				DoUpdateNetworkInstance.preProcessRequest(mockExecution)
@@ -1835,7 +1918,7 @@ String rollbackNetworkRequest =
 			when(mockExecution.getVariable("URN_mso_rollback")).thenReturn("true")
 			when(mockExecution.getVariable("disableRollback")).thenReturn("true")
 
-			// preProcessRequest(Execution execution)
+			// preProcessRequest(DelegateExecution execution)
 			DoUpdateNetworkInstance DoUpdateNetworkInstance = new DoUpdateNetworkInstance()
 			try {
 				DoUpdateNetworkInstance.preProcessRequest(mockExecution)
@@ -1884,7 +1967,7 @@ String rollbackNetworkRequest =
 			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
 			when(mockExecution.getVariable(Prefix + "rollbackEnabled")).thenReturn("true")
 
-			// preProcessRequest(Execution execution)
+			// preProcessRequest(DelegateExecution execution)
 			DoUpdateNetworkInstance DoUpdateNetworkInstance = new DoUpdateNetworkInstance()
 			DoUpdateNetworkInstance.prepareUpdateNetworkRequest(mockExecution)
 
@@ -1921,7 +2004,7 @@ String rollbackNetworkRequest =
 			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
 			when(mockExecution.getVariable(Prefix + "rollbackEnabled")).thenReturn("true")
 
-			// preProcessRequest(Execution execution)
+			// preProcessRequest(DelegateExecution execution)
 			DoUpdateNetworkInstance DoUpdateNetworkInstance = new DoUpdateNetworkInstance()
 			DoUpdateNetworkInstance.prepareUpdateNetworkRequest(mockExecution)
 
@@ -1954,7 +2037,7 @@ String rollbackNetworkRequest =
 			when(mockExecution.getVariable("GENGSI_siResourceLink")).thenReturn("https://aai-int1.test.com:8443/aai/v8/business/customers/customer/MSO_1610_dev/service-subscriptions/service-subscription/MSO-dev-service-type/service-instances/service-instance/6d4eb22a-82f1-4257-9f80-4176262cfe69/")
 
 
-			// preProcessRequest(Execution execution)
+			// preProcessRequest(DelegateExecution execution)
 			DoUpdateNetworkInstance DoUpdateNetworkInstance = new DoUpdateNetworkInstance()
 			DoUpdateNetworkInstance.prepareSDNCRequest(mockExecution)
 
@@ -1984,7 +2067,7 @@ String rollbackNetworkRequest =
 			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
 			when(mockExecution.getVariable("GENGSI_siResourceLink")).thenReturn("https://aai-int1.test.com:8443/aai/v8/business/customers/customer/MSO_1610_dev/service-subscriptions/service-subscription/MSO-dev-service-type/service-instances/service-instance/6d4eb22a-82f1-4257-9f80-4176262cfe69/")
 
-			// preProcessRequest(Execution execution)
+			// preProcessRequest(DelegateExecution execution)
 			DoUpdateNetworkInstance DoUpdateNetworkInstance = new DoUpdateNetworkInstance()
 			DoUpdateNetworkInstance.prepareSDNCRollbackRequest(mockExecution)
 
@@ -2001,7 +2084,7 @@ String rollbackNetworkRequest =
 			println "************ callRESTQueryAAINetworkId ************* "
 
 			WireMock.reset();
-			MockGetNetworkByIdWithDepth("49c86598-f766-46f8-84f8-8d1c1b10f9b4", "UpdateNetworkV2/updateNetwork_queryNetworkId_AAIResponse_Success.xml", "1");
+			MockGetNetworkByIdWithDepth("49c86598-f766-46f8-84f8-8d1c1b10f9b4", "UpdateNetworkV2/updateNetwork_queryNetworkId_AAIResponse_Success.xml", "all");
 
 			ExecutionEntity mockExecution = setupMock()
 			when(mockExecution.getVariable(Prefix + "networkRequest")).thenReturn(expectedNetworkRequest)
@@ -2013,7 +2096,7 @@ String rollbackNetworkRequest =
 			when(mockExecution.getVariable("URN_mso_msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 			when(mockExecution.getVariable("URN_aai_auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
 			
-			// preProcessRequest(Execution execution)
+			// preProcessRequest(DelegateExecution execution)
 			DoUpdateNetworkInstance DoUpdateNetworkInstance = new DoUpdateNetworkInstance()
 			DoUpdateNetworkInstance.callRESTQueryAAINetworkId(mockExecution)
 
@@ -2022,7 +2105,7 @@ String rollbackNetworkRequest =
 			//preDebugger.printInvocations(mockExecution)
 
 			verify(mockExecution).setVariable("prefix", Prefix + "")
-			verify(mockExecution).setVariable(Prefix + "queryIdAAIRequest", "http://localhost:8090/aai/v9/network/l3-networks/l3-network/49c86598-f766-46f8-84f8-8d1c1b10f9b4"+"?depth=1")
+			verify(mockExecution).setVariable(Prefix + "queryIdAAIRequest", "http://localhost:8090/aai/v9/network/l3-networks/l3-network/49c86598-f766-46f8-84f8-8d1c1b10f9b4"+"?depth=all")
 			verify(mockExecution).setVariable(Prefix + "aaiIdReturnCode", "200")
 
 		}
@@ -2047,7 +2130,7 @@ String rollbackNetworkRequest =
 			when(mockExecution.getVariable("URN_mso_msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 			when(mockExecution.getVariable("URN_aai_auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
 			
-			// preProcessRequest(Execution execution)
+			// preProcessRequest(DelegateExecution execution)
 			DoUpdateNetworkInstance DoUpdateNetworkInstance = new DoUpdateNetworkInstance()
 			DoUpdateNetworkInstance.callRESTQueryAAICloudRegion(mockExecution)
 
@@ -2082,7 +2165,7 @@ String rollbackNetworkRequest =
 			when(mockExecution.getVariable("URN_mso_msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 			when(mockExecution.getVariable("URN_aai_auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
 
-			// preProcessRequest(Execution execution)
+			// preProcessRequest(DelegateExecution execution)
 			DoUpdateNetworkInstance DoUpdateNetworkInstance = new DoUpdateNetworkInstance()
 			DoUpdateNetworkInstance.callRESTQueryAAICloudRegion(mockExecution)
 
@@ -2117,7 +2200,7 @@ String rollbackNetworkRequest =
 			when(mockExecution.getVariable("URN_mso_msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 			when(mockExecution.getVariable("URN_aai_auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
 
-			// preProcessRequest(Execution execution)
+			// preProcessRequest(DelegateExecution execution)
 			DoUpdateNetworkInstance DoUpdateNetworkInstance = new DoUpdateNetworkInstance()
 			DoUpdateNetworkInstance.callRESTQueryAAICloudRegion(mockExecution)
 
@@ -2155,7 +2238,7 @@ String rollbackNetworkRequest =
 			when(mockExecution.getVariable("URN_mso_msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 			when(mockExecution.getVariable("URN_aai_auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
 
-			// preProcessRequest(Execution execution)
+			// preProcessRequest(DelegateExecution execution)
 			DoUpdateNetworkInstance DoUpdateNetworkInstance = new DoUpdateNetworkInstance()
 			DoUpdateNetworkInstance.callRESTQueryAAINetworkVpnBinding(mockExecution)
 
@@ -2172,6 +2255,41 @@ String rollbackNetworkRequest =
 
 		}
 
+		@Test
+		//@Ignore
+		public void callRESTQueryAAINetworkVpnBindingList_200() {
+
+			println "************ callRESTQueryAAINetworkVpnBinding_200 ************* "
+
+			WireMock.reset();
+			MockGetNetworkVpnBinding("UpdateNetworkV2/updateNetwork_queryVpnBindingList_AAIResponse_Success.xml", "85f015d0-2e32-4c30-96d2-87a1a27f8017");
+			MockGetNetworkVpnBinding("UpdateNetworkV2/updateNetwork_queryVpnBindingList_AAIResponse_Success.xml", "c980a6ef-3b88-49f0-9751-dbad8608d0a6");
+
+			ExecutionEntity mockExecution = setupMock()
+			when(mockExecution.getVariable(Prefix + "requeryIdAAIResponse")).thenReturn(queryIdAIIResponse) // v6
+			when(mockExecution.getVariable(Prefix + "messageId")).thenReturn("e8ebf6a0-f8ea-4dc0-8b99-fe98a87722d6")
+			when(mockExecution.getVariable("URN_aai_endpoint")).thenReturn("http://localhost:8090")
+			when(mockExecution.getVariable("URN_mso_workflow_global_default_aai_version")).thenReturn("8")
+			when(mockExecution.getVariable("URN_mso_workflow_default_aai_v8_vpn_binding_uri")).thenReturn("/aai/v8/network/vpn-bindings/vpn-binding")
+			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
+			when(mockExecution.getVariable("URN_mso_workflow_global_default_aai_namespace")).thenReturn('http://org.openecomp.aai.inventory/')
+			when(mockExecution.getVariable("URN_mso_msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
+			when(mockExecution.getVariable("URN_aai_auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
+
+			// preProcessRequest(DelegateExecution execution)
+			DoUpdateNetworkInstance DoUpdateNetworkInstance = new DoUpdateNetworkInstance()
+			DoUpdateNetworkInstance.callRESTQueryAAINetworkVpnBinding(mockExecution)
+
+			verify(mockExecution).setVariable("prefix", Prefix + "")
+			verify(mockExecution).setVariable(Prefix + "vpnCount", 2)
+			verify(mockExecution).setVariable(Prefix + "vpnBindings", ['/aai/v8/network/vpn-bindings/vpn-binding/85f015d0-2e32-4c30-96d2-87a1a27f8017/', '/aai/v8/network/vpn-bindings/vpn-binding/c980a6ef-3b88-49f0-9751-dbad8608d0a6/'])
+			// the last vpnBinding value is saved.
+			verify(mockExecution).setVariable(Prefix + "queryVpnBindingAAIRequest", "http://localhost:8090/aai/v8/network/vpn-bindings/vpn-binding/85f015d0-2e32-4c30-96d2-87a1a27f8017?depth=all")
+			verify(mockExecution, atLeast(2)).setVariable(Prefix + "aaiQqueryVpnBindingReturnCode", "200")
+
+		}
+
+		
 		@Test
 		//@Ignore
 		public void callRESTQueryAAINetworkVpnBinding_TestScenario01_200() {
@@ -2192,7 +2310,7 @@ String rollbackNetworkRequest =
 			when(mockExecution.getVariable("URN_mso_msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 			when(mockExecution.getVariable("URN_aai_auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
 
-			// preProcessRequest(Execution execution)
+			// preProcessRequest(DelegateExecution execution)
 			DoUpdateNetworkInstance DoUpdateNetworkInstance = new DoUpdateNetworkInstance()
 			DoUpdateNetworkInstance.callRESTQueryAAINetworkVpnBinding(mockExecution)
 
@@ -2230,7 +2348,7 @@ String rollbackNetworkRequest =
 			when(mockExecution.getVariable("URN_mso_msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 			when(mockExecution.getVariable("URN_aai_auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
 
-			// preProcessRequest(Execution execution)
+			// preProcessRequest(DelegateExecution execution)
 			DoUpdateNetworkInstance DoUpdateNetworkInstance = new DoUpdateNetworkInstance()
 			DoUpdateNetworkInstance.callRESTQueryAAINetworkVpnBinding(mockExecution)
 
@@ -2269,7 +2387,7 @@ String rollbackNetworkRequest =
 			when(mockExecution.getVariable("URN_mso_msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 			when(mockExecution.getVariable("URN_aai_auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
 
-			// preProcessRequest(Execution execution)
+			// preProcessRequest(DelegateExecution execution)
 			DoUpdateNetworkInstance DoUpdateNetworkInstance = new DoUpdateNetworkInstance()
 			DoUpdateNetworkInstance.callRESTQueryAAINetworkVpnBinding(mockExecution)
 
@@ -2305,7 +2423,7 @@ String rollbackNetworkRequest =
 			when(mockExecution.getVariable("URN_mso_msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 			when(mockExecution.getVariable("URN_aai_auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
 
-			// preProcessRequest(Execution execution)
+			// preProcessRequest(DelegateExecution execution)
 			DoUpdateNetworkInstance DoUpdateNetworkInstance = new DoUpdateNetworkInstance()
 			DoUpdateNetworkInstance.callRESTQueryAAINetworkTableRef(mockExecution)
 
@@ -2342,7 +2460,7 @@ String rollbackNetworkRequest =
 			when(mockExecution.getVariable("URN_mso_msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 			when(mockExecution.getVariable("URN_aai_auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
 
-			// preProcessRequest(Execution execution)
+			// preProcessRequest(DelegateExecution execution)
 			DoUpdateNetworkInstance DoUpdateNetworkInstance = new DoUpdateNetworkInstance()
 			DoUpdateNetworkInstance.callRESTQueryAAINetworkPolicy(mockExecution)
 
@@ -2367,7 +2485,7 @@ String rollbackNetworkRequest =
 			println "************ callRESTReQueryAAINetworkId ************* "
 
 			WireMock.reset();
-			MockGetNetworkByIdWithDepth("49c86598-f766-46f8-84f8-8d1c1b10f9b4", "UpdateNetworkV2/updateNetwork_queryNetworkId_AAIResponse_Success.xml", "1");
+			MockGetNetworkByIdWithDepth("49c86598-f766-46f8-84f8-8d1c1b10f9b4", "UpdateNetworkV2/updateNetwork_queryNetworkId_AAIResponse_Success.xml", "all");
 
 			ExecutionEntity mockExecution = setupMock()
 			when(mockExecution.getVariable(Prefix + "networkRequest")).thenReturn(expectedNetworkRequest)
@@ -2380,7 +2498,7 @@ String rollbackNetworkRequest =
 			when(mockExecution.getVariable("URN_mso_msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 			when(mockExecution.getVariable("URN_aai_auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
 
-			// preProcessRequest(Execution execution)
+			// preProcessRequest(DelegateExecution execution)
 			DoUpdateNetworkInstance DoUpdateNetworkInstance = new DoUpdateNetworkInstance()
 			DoUpdateNetworkInstance.callRESTReQueryAAINetworkId(mockExecution)
 
@@ -2389,7 +2507,7 @@ String rollbackNetworkRequest =
 			//preDebugger.printInvocations(mockExecution)
 
 			verify(mockExecution).setVariable("prefix", Prefix + "")
-			verify(mockExecution).setVariable(Prefix + "requeryIdAAIRequest", "http://localhost:8090/aai/v9/network/l3-networks/l3-network/49c86598-f766-46f8-84f8-8d1c1b10f9b4"+"?depth=1")
+			verify(mockExecution).setVariable(Prefix + "requeryIdAAIRequest", "http://localhost:8090/aai/v9/network/l3-networks/l3-network/49c86598-f766-46f8-84f8-8d1c1b10f9b4"+"?depth=all")
 			verify(mockExecution).setVariable(Prefix + "aaiRequeryIdReturnCode", "200")
 
 		}
@@ -2402,7 +2520,7 @@ String rollbackNetworkRequest =
 			println "************ callRESTUpdateContrailAAINetwork ************* "
 
 			WireMock.reset();
-			MockPutNetworkIdWithDepth("UpdateNetworkV2/updateNetwork_updateContrail_AAIResponse_Success.xml", "49c86598-f766-46f8-84f8-8d1c1b10f9b4", "1");
+			MockPutNetworkIdWithDepth("UpdateNetworkV2/updateNetwork_updateContrail_AAIResponse_Success.xml", "49c86598-f766-46f8-84f8-8d1c1b10f9b4", "all");
 			
 			ExecutionEntity mockExecution = setupMock()
 			when(mockExecution.getVariable(Prefix + "networkRequest")).thenReturn(expectedNetworkRequest)
@@ -2417,7 +2535,7 @@ String rollbackNetworkRequest =
 			when(mockExecution.getVariable("URN_mso_msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 			when(mockExecution.getVariable("URN_aai_auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
 
-			// preProcessRequest(Execution execution)
+			// preProcessRequest(DelegateExecution execution)
 			DoUpdateNetworkInstance DoUpdateNetworkInstance = new DoUpdateNetworkInstance()
 			DoUpdateNetworkInstance.callRESTUpdateContrailAAINetwork(mockExecution)
 
@@ -2426,7 +2544,7 @@ String rollbackNetworkRequest =
 			//preDebugger.printInvocations(mockExecution)
 
 			verify(mockExecution).setVariable("prefix", Prefix + "")
-			verify(mockExecution).setVariable(Prefix + "updateContrailAAIUrlRequest", "http://localhost:8090/aai/v9/network/l3-networks/l3-network/49c86598-f766-46f8-84f8-8d1c1b10f9b4"+"?depth=1")
+			verify(mockExecution).setVariable(Prefix + "updateContrailAAIUrlRequest", "http://localhost:8090/aai/v9/network/l3-networks/l3-network/49c86598-f766-46f8-84f8-8d1c1b10f9b4"+"?depth=all")
 			verify(mockExecution).setVariable(Prefix + "updateContrailAAIPayloadRequest", updateContrailAAIPayloadRequest)
 			verify(mockExecution).setVariable(Prefix + "aaiUpdateContrailReturnCode", "200")
 			//verify(mockExecution).setVariable(Prefix + "updateContrailAAIResponse", updateContrailAAIResponse)
@@ -2564,7 +2682,7 @@ String rollbackNetworkRequest =
 			when(mockExecution.getVariable(Prefix + "rollbackNetworkRequest")).thenReturn(rollbackNetworkRequest)
 			when(mockExecution.getVariable("WorkflowException")).thenReturn(workflowException)
 
-			// preProcessRequest(Execution execution)
+			// preProcessRequest(DelegateExecution execution)
 			DoUpdateNetworkInstance DoUpdateNetworkInstance = new DoUpdateNetworkInstance()
 			DoUpdateNetworkInstance.prepareRollbackData(mockExecution)
 
@@ -2588,7 +2706,7 @@ String rollbackNetworkRequest =
 			when(mockExecution.getVariable(Prefix + "networkRequest")).thenReturn(expectedNetworkRequest)
 			when(mockExecution.getVariable("mso-request-id")).thenReturn("requestId")
 
-			// preProcessRequest(Execution execution)
+			// preProcessRequest(DelegateExecution execution)
 			DoUpdateNetworkInstance DoUpdateNetworkInstance = new DoUpdateNetworkInstance()
 			DoUpdateNetworkInstance.postProcessResponse(mockExecution)
 

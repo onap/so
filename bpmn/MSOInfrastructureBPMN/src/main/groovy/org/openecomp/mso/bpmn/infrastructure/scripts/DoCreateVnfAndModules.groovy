@@ -37,7 +37,7 @@ import org.openecomp.mso.bpmn.core.domain.VnfResource
 import org.openecomp.mso.bpmn.core.json.DecomposeJsonUtil
 import org.openecomp.mso.bpmn.core.json.JsonUtils
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution;
+import org.camunda.bpm.engine.delegate.DelegateExecution;
 
 import static org.apache.commons.lang3.StringUtils.*;
 
@@ -61,7 +61,7 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 	*
 	* @param - execution
 	*/
-   public void preProcessRequest(Execution execution) {
+   public void preProcessRequest(DelegateExecution execution) {
 	   def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
 	   execution.setVariable("prefix",Prefix)
 	   utils.log("DEBUG", " *** STARTED DoCreateVnfAndModules PreProcessRequest Process*** ", isDebugLogEnabled)
@@ -114,6 +114,9 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 			   }
 		   }
 		   execution.setVariable("vnfId", vnfId)
+		   
+		   // Set aLaCarte to false
+		   execution.setVariable("aLaCarte", false)
 
 		   def rollbackData = execution.getVariable("rollbackData")
 		   if (rollbackData == null) {
@@ -145,7 +148,7 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
    }
 
 
-   public void queryCatalogDB (Execution execution) {
+   public void queryCatalogDB (DelegateExecution execution) {
 	   def isDebugLogEnabled=execution.getVariable("isDebugLogEnabled")
 	   execution.setVariable("prefix",Prefix)
 
@@ -251,7 +254,7 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 	   utils.log("DEBUG", "*** COMPLETED DoCreateVnfAndModules QueryCatalogDB Process ***", isDebugLogEnabled)
    }
 
-   public void preProcessAddOnModule(Execution execution){
+   public void preProcessAddOnModule(DelegateExecution execution){
 	   def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
 	   execution.setVariable("prefix", Prefix)
 	   logDebug(" ======== STARTED preProcessAddOnModule ======== ", isDebugLogEnabled)
@@ -289,7 +292,7 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 	   logDebug("======== COMPLETED preProcessAddOnModule ======== ", isDebugLogEnabled)
    }
 
-   public void postProcessAddOnModule(Execution execution){
+   public void postProcessAddOnModule(DelegateExecution execution){
 	   def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
 	   execution.setVariable("prefix", Prefix)
 	   logDebug(" ======== STARTED postProcessAddOnModule ======== ", isDebugLogEnabled)
@@ -305,7 +308,7 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 	   logDebug("======== COMPLETED postProcessAddOnModule ======== ", isDebugLogEnabled)
    }
    
-   public void validateBaseModule(Execution execution){
+   public void validateBaseModule(DelegateExecution execution){
 	   def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
 	   execution.setVariable("prefix", Prefix)
 	   logDebug(" ======== STARTED validateBaseModule ======== ", isDebugLogEnabled)
@@ -333,7 +336,7 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 	   logDebug("======== COMPLETED validateBaseModule ======== ", isDebugLogEnabled)
    }
 
-   public void validateAddOnModule(Execution execution){
+   public void validateAddOnModule(DelegateExecution execution){
 	   def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
 	   execution.setVariable("prefix", Prefix)
 	   logDebug(" ======== STARTED validateAddOnModule ======== ", isDebugLogEnabled)
@@ -362,7 +365,7 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 	   logDebug("======== COMPLETED validateAddOnModule ======== ", isDebugLogEnabled)
    }   
    
-   public void preProcessRollback (Execution execution) {
+   public void preProcessRollback (DelegateExecution execution) {
 	   def isDebugLogEnabled=execution.getVariable("isDebugLogEnabled")
 	   utils.log("DEBUG"," ***** preProcessRollback ***** ", isDebugLogEnabled)
 	   try {
@@ -383,7 +386,7 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 	   utils.log("DEBUG"," *** Exit preProcessRollback *** ", isDebugLogEnabled)
    }
 
-   public void postProcessRollback (Execution execution) {
+   public void postProcessRollback (DelegateExecution execution) {
 	   def isDebugLogEnabled=execution.getVariable("isDebugLogEnabled")
 	   utils.log("DEBUG"," ***** postProcessRollback ***** ", isDebugLogEnabled)
 	   String msg = ""

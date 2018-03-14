@@ -25,7 +25,7 @@ package org.openecomp.mso.adapters.nwrest;
 import java.util.Map;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.jboss.resteasy.annotations.providers.NoJackson;
-import org.codehaus.jackson.map.annotate.JsonRootName;
+import com.fasterxml.jackson.annotation.JsonRootName;
 
 @JsonRootName("updateNetworkResponse")
 @XmlRootElement(name = "updateNetworkResponse")

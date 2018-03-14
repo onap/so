@@ -1,0 +1,10 @@
+{
+	"SDNCServiceResponse": {
+		"responseCode": "200",
+		"ackFinalIndicator": "Y",
+		"params": {
+			"e2e-vpn-key": "my-key"
+		},
+		"sdncRequestId": "my-id"
+	}
+}

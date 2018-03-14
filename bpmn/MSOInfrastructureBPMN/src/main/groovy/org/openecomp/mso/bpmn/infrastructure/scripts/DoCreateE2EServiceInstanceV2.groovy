@@ -21,32 +21,21 @@
 package org.openecomp.mso.bpmn.infrastructure.scripts;
 
 import static org.apache.commons.lang3.StringUtils.*;
-import groovy.xml.XmlUtil
-import groovy.json.*
 
-import org.openecomp.mso.bpmn.core.domain.ServiceDecomposition
-import org.openecomp.mso.bpmn.core.domain.ServiceInstance
-import org.openecomp.mso.bpmn.core.domain.ModelInfo
-import org.openecomp.mso.bpmn.core.json.JsonUtils
+import org.apache.commons.lang3.*
+import org.camunda.bpm.engine.delegate.BpmnError
+import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.openecomp.mso.bpmn.common.scripts.AaiUtil
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
-import org.openecomp.mso.bpmn.common.scripts.SDNCAdapterUtils
 import org.openecomp.mso.bpmn.core.RollbackData
 import org.openecomp.mso.bpmn.core.WorkflowException
-import org.openecomp.mso.rest.APIResponse;
-import org.openecomp.mso.rest.RESTClient
-import org.openecomp.mso.rest.RESTConfig
-
-import java.util.UUID;
-
-import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
-import org.json.JSONObject;
-import org.json.JSONArray;
-import org.apache.commons.lang3.*
-import org.apache.commons.codec.binary.Base64;
+import org.openecomp.mso.bpmn.core.json.JsonUtils
 import org.springframework.web.util.UriUtils;
+
+import groovy.json.*
 
 /**
  * This groovy class supports the <class>DoCreateServiceInstance.bpmn</class> process.
@@ -81,7 +70,7 @@ public class DoCreateE2EServiceInstanceV2 extends AbstractServiceTaskProcessor {
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
 
-	public void preProcessRequest (Execution execution) {
+	public void preProcessRequest (DelegateExecution execution) {
 	    //only for dug
 		execution.setVariable("isDebugLogEnabled","true")
 		execution.setVariable("unit_test", "true")
@@ -217,7 +206,7 @@ public class DoCreateE2EServiceInstanceV2 extends AbstractServiceTaskProcessor {
 		utils.log("INFO", "Exited " + method, isDebugEnabled)
 	}
 
-	public void postProcessAAIGET(Execution execution) {
+	public void postProcessAAIGET(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.postProcessAAIGET(' +'execution=' + execution.getId() +')'
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO","Entered " + method, isDebugEnabled)
@@ -261,7 +250,7 @@ public class DoCreateE2EServiceInstanceV2 extends AbstractServiceTaskProcessor {
 		utils.log("INFO", "Exited " + method, isDebugEnabled)
 	}
 
-	public void postProcessAAIPUT(Execution execution) {
+	public void postProcessAAIPUT(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.postProcessAAIPUT(' +'execution=' + execution.getId() +')'
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO","Entered " + method, isDebugEnabled)
@@ -301,7 +290,7 @@ public class DoCreateE2EServiceInstanceV2 extends AbstractServiceTaskProcessor {
 		utils.log("INFO", "Exited " + method, isDebugEnabled)
 	}
 	
-	public void postProcessAAIGET2(Execution execution) {
+	public void postProcessAAIGET2(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.postProcessAAIGET2(' +'execution=' + execution.getId() +')'
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO","Entered " + method, isDebugEnabled)
@@ -346,7 +335,7 @@ public class DoCreateE2EServiceInstanceV2 extends AbstractServiceTaskProcessor {
 		utils.log("INFO", "Exited " + method, isDebugEnabled)
 	}
 
-	public void preProcessRollback (Execution execution) {
+	public void preProcessRollback (DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.preProcessRollback(' +'execution=' + execution.getId() +')'
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO","Entered " + method, isDebugEnabled)
@@ -369,7 +358,7 @@ public class DoCreateE2EServiceInstanceV2 extends AbstractServiceTaskProcessor {
 		utils.log("INFO", "Exited " + method, isDebugEnabled)
 	}
 
-	public void postProcessRollback (Execution execution) {
+	public void postProcessRollback (DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.postProcessRollback(' +'execution=' + execution.getId() +')'
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO","Entered " + method, isDebugEnabled)
@@ -395,7 +384,7 @@ public class DoCreateE2EServiceInstanceV2 extends AbstractServiceTaskProcessor {
 	/**
 	 * Init the service Operation Status
 	 */
-	public void preUpdateServiceOperationStatus(Execution execution){
+	public void preUpdateServiceOperationStatus(DelegateExecution execution){
         def method = getClass().getSimpleName() + '.preUpdateServiceOperationStatus(' +'execution=' + execution.getId() +')'
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO","Entered " + method, isDebugEnabled)
@@ -460,7 +449,7 @@ public class DoCreateE2EServiceInstanceV2 extends AbstractServiceTaskProcessor {
 	}
 	
 
-	public void preInitResourcesOperStatus(Execution execution){
+	public void preInitResourcesOperStatus(DelegateExecution execution){
         def method = getClass().getSimpleName() + '.preInitResourcesOperStatus(' +'execution=' + execution.getId() +')'
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO","Entered " + method, isDebugEnabled)
@@ -576,7 +565,7 @@ public class DoCreateE2EServiceInstanceV2 extends AbstractServiceTaskProcessor {
 	
     /***********************************************************************************************/
 
-	private void loadResourcesProperties(Execution execution) {
+	private void loadResourcesProperties(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.loadResourcesProperties(' +'execution=' + execution.getId() +')'
 		def isDebugEnabled = execution.getVariable("isDebugEnabled")
 		utils.log("INFO","Entered " + method, isDebugEnabled)
@@ -610,7 +599,7 @@ public class DoCreateE2EServiceInstanceV2 extends AbstractServiceTaskProcessor {
         }
 	    utils.log("INFO", "Exited " + method, isDebugEnabled)
 	}
-	private sortCreateResource(Execution execution) {
+	private sortCreateResource(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.sortCreateResource(' +'execution=' + execution.getId() +')'
 		def isDebugEnabled = execution.getVariable("isDebugEnabled")
 		utils.log("INFO","Entered " + method, isDebugEnabled)
@@ -714,7 +703,7 @@ public class DoCreateE2EServiceInstanceV2 extends AbstractServiceTaskProcessor {
 	/**
 	 * get service resources
 	 */
-	public void getServiceResources(Execution execution){
+	public void getServiceResources(DelegateExecution execution){
         def method = getClass().getSimpleName() + '.getServiceResources(' +'execution=' + execution.getId() +')'
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO","Entered " + method, isDebugEnabled)
@@ -758,7 +747,7 @@ public class DoCreateE2EServiceInstanceV2 extends AbstractServiceTaskProcessor {
 	/**
 	 * prepare Decompose next resource to create request
 	 */
-	public void preProcessDecomposeNextResource(Execution execution){
+	public void preProcessDecomposeNextResource(DelegateExecution execution){
         def method = getClass().getSimpleName() + '.preProcessDecomposeNextResource(' +'execution=' + execution.getId() +')'
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO","Entered " + method, isDebugEnabled)
@@ -808,7 +797,7 @@ public class DoCreateE2EServiceInstanceV2 extends AbstractServiceTaskProcessor {
 	/**
 	 * post Decompose next resource to create request
 	 */
-	public void postProcessDecomposeNextResource(Execution execution){
+	public void postProcessDecomposeNextResource(DelegateExecution execution){
         def method = getClass().getSimpleName() + '.postProcessDecomposeNextResource(' +'execution=' + execution.getId() +')'
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO","Entered " + method, isDebugEnabled)
@@ -849,7 +838,7 @@ public class DoCreateE2EServiceInstanceV2 extends AbstractServiceTaskProcessor {
 	/**
 	* prepare check Resource Type 
 	*/
-	public void checkResourceType(Execution execution){
+	public void checkResourceType(DelegateExecution execution){
         def method = getClass().getSimpleName() + '.checkResourceType(' +'execution=' + execution.getId() +')'
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO","Entered " + method, isDebugEnabled)
@@ -966,7 +955,7 @@ public class DoCreateE2EServiceInstanceV2 extends AbstractServiceTaskProcessor {
 	/**
 	* prepare post Unkown Resource Type 
 	*/
-	public void postOtherControllerType(Execution execution){
+	public void postOtherControllerType(DelegateExecution execution){
         def method = getClass().getSimpleName() + '.postOtherControllerType(' +'execution=' + execution.getId() +')'
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO","Entered " + method, isDebugEnabled)

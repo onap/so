@@ -23,7 +23,7 @@ package org.openecomp.mso.bpmn.infrastructure.scripts
 import java.util.concurrent.ExecutionException;
 
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.apache.commons.lang3.*
 import org.springframework.web.util.UriUtils
 import org.openecomp.mso.bpmn.common.scripts.AaiUtil
@@ -42,7 +42,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	private void initProcessVariables(Execution execution) {
+	private void initProcessVariables(DelegateExecution execution) {
 		execution.setVariable('prefix', 'UPDVfModVol_')
 		execution.setVariable('UPDVfModVol_Request', null)
 		execution.setVariable('UPDVfModVol_requestInfo', null)
@@ -66,7 +66,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 	 * @param execution The flow's execution instance.
 	 */
 	@Override
-	public void preProcessRequest(Execution execution) {
+	public void preProcessRequest(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.preProcessRequest(' +
 			'execution=' + execution.getId() +
 			')'
@@ -108,7 +108,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void sendSynchResponse(Execution execution) {
+	public void sendSynchResponse(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.sendSynchResponse(' +
 			'execution=' + execution.getId() +
 			')'
@@ -160,7 +160,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void queryAAIForVolumeGroup(Execution execution) {
+	public void queryAAIForVolumeGroup(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.queryAAIForVolumeGroup(' +
 			'execution=' + execution.getId() +
 			')'
@@ -218,7 +218,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void prepVnfAdapterRest(Execution execution) {
+	public void prepVnfAdapterRest(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.prepVnfAdapterRest(' +
 			'execution=' + execution.getId() +
 			')'
@@ -285,7 +285,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void prepDbInfraDbRequest(Execution execution) {
+	public void prepDbInfraDbRequest(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.prepDbInfraDbRequest(' +
 			'execution=' + execution.getId() +
 			')'
@@ -329,7 +329,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void prepCompletionHandlerRequest(Execution execution) {
+	public void prepCompletionHandlerRequest(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.prepCompletionHandlerRequest(' +
 			'execution=' + execution.getId() +
 			')'
@@ -366,7 +366,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void prepFalloutHandler(Execution execution) {
+	public void prepFalloutHandler(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.prepFalloutHandler(' +
 			'execution=' + execution.getId() +
 			')'
@@ -416,7 +416,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void handleTenantIdMismatch(Execution execution) {
+	public void handleTenantIdMismatch(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.handleTenantIdMismatch(' +
 			'execution=' + execution.getId() +
 			')'

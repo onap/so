@@ -20,7 +20,8 @@
 
 package org.openecomp.mso.bpmn.common.scripts;
 
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 
 
 /**
@@ -28,5 +29,5 @@ import org.camunda.bpm.engine.runtime.Execution
  *
  */
 public interface ServiceTaskProcessor {
-	  public void preProcessRequest(Execution execution);
+	  public void preProcessRequest(DelegateExecution execution);
 }

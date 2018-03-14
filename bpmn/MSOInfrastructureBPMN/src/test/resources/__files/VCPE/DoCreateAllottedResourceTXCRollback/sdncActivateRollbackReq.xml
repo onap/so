@@ -20,7 +20,7 @@
 	<service-information>
 	<service-id></service-id>
 	<subscription-service-type></subscription-service-type>
-	<onap-model-information></onap-model-information>
+	<ecomp-model-information></ecomp-model-information>
 	<service-instance-id>MIS%252F1604%252F0026%252FSW_INTERNET</service-instance-id>
 	<subscriber-name/>
 	<global-customer-id></global-customer-id>
@@ -29,13 +29,13 @@
 	<allotted-resource-id>arId-1</allotted-resource-id>
 	<allotted-resource-type>tunnelxconn</allotted-resource-type>
 	<parent-service-instance-id>MIS%252F1604%252F0026%252FSW_INTERNET</parent-service-instance-id>
-	<onap-model-information>
+	<ecomp-model-information>
         <model-invariant-uuid></model-invariant-uuid>
         <model-uuid></model-uuid>
         <model-customization-uuid></model-customization-uuid>
         <model-version></model-version>
         <model-name></model-name>
-	</onap-model-information>
+	</ecomp-model-information>
 	</allotted-resource-information>
 	<tunnelxconn-request-input>
 	<source-network>

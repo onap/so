@@ -1,5 +1,5 @@
 /*-
- * ============LICENSE_START=======================================================
+d * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
@@ -26,14 +26,18 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.openecomp.sdc.api.IDistributionClient;
 import org.openecomp.sdc.api.consumer.IDistributionStatusMessage;
+import org.openecomp.sdc.api.consumer.IFinalDistrStatusMessage;
 import org.openecomp.sdc.api.consumer.INotificationCallback;
+import org.openecomp.sdc.api.consumer.IStatusCallback;
 import org.openecomp.sdc.api.notification.IArtifactInfo;
 import org.openecomp.sdc.api.notification.INotificationData;
 import org.openecomp.sdc.api.notification.IResourceInstance;
+import org.openecomp.sdc.api.notification.IStatusData;
 import org.openecomp.sdc.api.results.IDistributionClientDownloadResult;
 import org.openecomp.sdc.api.results.IDistributionClientResult;
 import org.openecomp.sdc.impl.DistributionClientFactory;
@@ -48,10 +52,14 @@ import org.openecomp.mso.asdc.installer.ToscaResourceStructure;
 import org.openecomp.mso.asdc.installer.VfResourceStructure;
 import org.openecomp.mso.asdc.installer.heat.ToscaResourceInstaller;
 import org.openecomp.mso.asdc.installer.heat.VfResourceInstaller;
+import org.openecomp.mso.asdc.tenantIsolation.DistributionStatus;
+import org.openecomp.mso.asdc.tenantIsolation.WatchdogDistribution;
 import org.openecomp.mso.asdc.util.ASDCNotificationLogging;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoAlarmLogger;
 import org.openecomp.mso.logger.MsoLogger;
+import org.openecomp.mso.properties.MsoPropertiesFactory;
+import org.openecomp.mso.requestsdb.WatchdogDistributionStatusDb;
 import org.openecomp.mso.utils.UUIDChecker;
 
 public class ASDCController {
@@ -65,6 +73,96 @@ public class ASDCController {
     protected String controllerName;
 
     protected ToscaResourceInstaller toscaInstaller;
+    
+    private static MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory();
+    
+   
+   private final class ResourceInstance implements IResourceInstance {
+    	       
+        @Override
+        public String getResourceInstanceName(){
+        	return new String();
+        }
+        
+        @Override
+        public String getResourceName(){
+        	return new String();
+        }
+        
+        @Override
+        public String getResourceVersion(){
+        	return new String();
+        }
+        
+        @Override
+        public String getResourceType(){
+        	return new String();
+        }
+        
+        @Override
+        public String getResourceUUID(){
+        	return new String();
+        }
+        
+        // Method descriptor #10 ()Ljava/util/List;
+        @Override
+        public java.util.List getArtifacts(){
+        	return new ArrayList();
+        }
+        
+        @Override
+        public String getResourceInvariantUUID(){
+        	return new String();
+        }
+        
+        @Override
+        public String getResourceCustomizationUUID(){
+        	return new String();
+        }
+        
+        @Override
+        public String getCategory(){
+        	return new String();
+        }
+        
+        @Override
+        public String getSubcategory(){
+        	return new String();
+        }
+    	
+    }
+    
+   private final class ASDCStatusCallBack implements IStatusCallback {
+	       	
+        @Override
+        public void activateCallback (IStatusData iStatus) {
+         	
+            long startTime = System.currentTimeMillis ();
+            UUIDChecker.generateUUID (LOGGER);
+            MsoLogger.setServiceName ("ASDCStatusCallBack");
+            MsoLogger.setLogContext (iStatus.getDistributionID (), iStatus.getComponentName());
+            String event = "Receive a callback componentStatus in ASDC, for componentName: " + iStatus.getComponentName() + " and status of " + iStatus.getStatus() + " distributionID of " + iStatus.getDistributionID() + 
+            		       " consumerID of " + iStatus.getConsumerID() + " errorReason of " + iStatus.getErrorReason();
+            
+            try{
+            	
+            	if (iStatus.getStatus() == DistributionStatusEnum.COMPONENT_DONE_OK || 
+            		iStatus.getStatus() == DistributionStatusEnum.COMPONENT_DONE_ERROR) {
+            	            		
+            		LOGGER.debug(event);
+            
+            		toscaInstaller.installTheComponentStatus(iStatus);
+            	
+            	}
+            
+            }catch(ArtifactInstallerException e){
+             	System.out.println("Error in ASDCStatusCallback " + e.getMessage());
+             	LOGGER.debug("Error in ASDCStatusCallback " + e.getMessage());
+            }
+            LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Completed the Status Call Back"); 
+        }
+    	
+    }
     
 
     /**
@@ -96,6 +194,7 @@ public class ASDCController {
             LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Completed the treatment of the notification");
         }
     }
+    
 
     // ***** Controller STATUS code
 
@@ -136,7 +235,6 @@ public class ASDCController {
     }
 
     // ***** END of Controller STATUS code
-
     protected ASDCConfiguration asdcConfig;
     private IDistributionClient distributionClient;
     private IVfResourceInstaller resourceInstaller;
@@ -224,7 +322,7 @@ public class ASDCController {
         }
         long initStartTime = System.currentTimeMillis ();
         IDistributionClientResult result = this.distributionClient.init (asdcConfig,
-                                                                         new ASDCNotificationCallBack (this));
+                                                                         new ASDCNotificationCallBack (this), new ASDCStatusCallBack());
         if (!result.getDistributionActionResult ().equals (DistributionActionResultEnum.SUCCESS)) {
             String endEvent = "ASDC distribution client init failed with reason:"
                               + result.getDistributionMessageResult ();
@@ -284,20 +382,20 @@ public class ASDCController {
 
     private boolean checkResourceAlreadyDeployed (VfResourceStructure resource) throws ArtifactInstallerException {
 
-    	if (toscaInstaller.isResourceAlreadyDeployed (resource)) {
-            LOGGER.info (MessageEnum.ASDC_ARTIFACT_ALREADY_EXIST,
+    	
+   		if (toscaInstaller.isResourceAlreadyDeployed (resource)) {
+    			LOGGER.info (MessageEnum.ASDC_ARTIFACT_ALREADY_EXIST,
                     resource.getResourceInstance().getResourceInstanceName(),
                     resource.getResourceInstance().getResourceUUID(),
                     resource.getResourceInstance().getResourceName(), "", "");
 
-            this.sendDeployNotificationsForResource(resource,DistributionStatusEnum.ALREADY_DOWNLOADED,null);
-            this.sendDeployNotificationsForResource(resource,DistributionStatusEnum.ALREADY_DEPLOYED,null);
+    			this.sendDeployNotificationsForResource(resource,DistributionStatusEnum.ALREADY_DOWNLOADED,null);
+    			this.sendDeployNotificationsForResource(resource,DistributionStatusEnum.ALREADY_DEPLOYED,null);
 
-            return true;
-        } else {
-            return false;
-        }
-
+    		return true;
+    	} else {
+    		return false;
+    	}
     }
 
     private final static String UUID_PARAM = "(UUID:";
@@ -413,7 +511,7 @@ public class ASDCController {
 
     	for (IArtifactInfo artifactInfo : vfResourceStructure.getResourceInstance().getArtifacts()) {
 
-    		if (DistributionStatusEnum.DEPLOY_OK.equals(distribStatus)
+    		if ((DistributionStatusEnum.DEPLOY_OK.equals(distribStatus) && !artifactInfo.getArtifactType().equalsIgnoreCase("OTHER"))
     				// This could be NULL if the artifact is a VF module artifact, this won't be present in the MAP
     				&& vfResourceStructure.getArtifactsMapByUUID().get(artifactInfo.getArtifactUUID()) != null
     				&& vfResourceStructure.getArtifactsMapByUUID().get(artifactInfo.getArtifactUUID()).getDeployedInDb() == 0) {
@@ -435,7 +533,34 @@ public class ASDCController {
     		}
     	}
     }
-
+    
+    private void sendCsarDeployNotification(INotificationData iNotif, VfResourceStructure resourceStructure, ToscaResourceStructure toscaResourceStructure, boolean deploySuccessful, String errorReason) {
+    	
+    			IArtifactInfo csarArtifact = toscaResourceStructure.getToscaArtifact();
+    			
+    			if(deploySuccessful){
+    				
+     	    		this.sendASDCNotification (NotificationType.DEPLOY,
+     	 	    			  csarArtifact.getArtifactURL (),
+     		                  asdcConfig.getConsumerID (),
+     		                  resourceStructure.getNotification().getDistributionID(),
+     		                  DistributionStatusEnum.DEPLOY_OK,
+     		                  errorReason,
+     		                  System.currentTimeMillis ());
+    				
+    			} else {
+    				
+    				this.sendASDCNotification (NotificationType.DEPLOY,
+   	 	    			  csarArtifact.getArtifactURL (),
+   		                  asdcConfig.getConsumerID (),
+   		                  resourceStructure.getNotification().getDistributionID(),
+   		                  DistributionStatusEnum.DEPLOY_ERROR,
+   		                  errorReason,
+   		                  System.currentTimeMillis ());
+    				
+    			}
+    }
+    
     private void deployResourceStructure (VfResourceStructure resourceStructure, ToscaResourceStructure toscaResourceStructure) throws ArtifactInstallerException {
 
     	LOGGER.info (MessageEnum.ASDC_START_DEPLOY_ARTIFACT, resourceStructure.getResourceInstance().getResourceInstanceName(), resourceStructure.getResourceInstance().getResourceUUID(), "ASDC", "deployResourceStructure");
@@ -445,21 +570,10 @@ public class ASDCController {
         	if("VF".equals(resourceType) && !"Allotted Resource".equalsIgnoreCase(category)){
         		resourceStructure.createVfModuleStructures();
         	}
-        	//resourceInstaller.installTheResource (resourceStructure);
-				
-			//ToscaResourceInstaller tri = new ToscaResourceInstaller();
-        	toscaInstaller.installTheResource(toscaResourceStructure, resourceStructure);
-			
-		/*	if(toscaResourceStructure.isVnfAlreadyInstalled()){
-	            LOGGER.info (MessageEnum.ASDC_ARTIFACT_ALREADY_EXIST,
-	            		toscaResourceStructure.getCatalogVnfResource().getModelName(),
-	            		toscaResourceStructure.getCatalogVnfResource().getModelUuid(),
-	            		toscaResourceStructure.getCatalogVnfResource().getModelUuid(),"","");
+        	
 
-            
-	            this.sendDeployNotificationsForResource(resourceStructure,DistributionStatusEnum.ALREADY_DOWNLOADED,null);
-	            this.sendDeployNotificationsForResource(resourceStructure,DistributionStatusEnum.ALREADY_DEPLOYED,null);
-			} */
+        	toscaInstaller.installTheResource(toscaResourceStructure, resourceStructure);
+        	        				
 
         } catch (ArtifactInstallerException e) {
         	LOGGER.info (MessageEnum.ASDC_ARTIFACT_DOWNLOAD_FAIL,
@@ -470,7 +584,7 @@ public class ASDCController {
         	throw e;
         }
 
-        if (resourceStructure.isDeployedSuccessfully()) {
+        if (resourceStructure.isDeployedSuccessfully() || toscaResourceStructure.isDeployedSuccessfully()) {
 	        LOGGER.info (MessageEnum.ASDC_ARTIFACT_DEPLOY_SUC,
 	           		resourceStructure.getResourceInstance().getResourceName(),
 	          		resourceStructure.getResourceInstance().getResourceUUID(),
@@ -479,6 +593,7 @@ public class ASDCController {
         }
 
     }
+    
 
     private enum NotificationType {
     	DOWNLOAD, DEPLOY
@@ -541,10 +656,42 @@ public class ASDCController {
         }
         LOGGER.recordMetricEvent (subStarttime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully sent notification to ASDC", "ASDC", action, null);
     }
+    
+    private void sendFinalDistributionStatus (
+    		String distributionID,
+    		DistributionStatusEnum status,
+    		String errorReason) {
+
+
+    	LOGGER.debug ("Enter sendFinalDistributionStatus with DistributionID " + distributionID + " and Status of " + status.name() + " and ErrorReason " + errorReason);
+
+    	long subStarttime = System.currentTimeMillis ();
+    	try {
+    		
+    		
+    		IFinalDistrStatusMessage finalDistribution = new FinalDistributionStatusMessage(distributionID,status,subStarttime, asdcConfig.getConsumerID());
+    		
+    		if(errorReason == null){
+    			this.distributionClient.sendFinalDistrStatus(finalDistribution);
+    		}else{
+    			this.distributionClient.sendFinalDistrStatus(finalDistribution, errorReason);
+    		}
+    		
+ 
+    	} catch (RuntimeException e) {
+    		// TODO: May be a list containing the unsent notification should be
+    		// kept
+    		LOGGER.debug ("Exception caught in sendFinalDistributionStatus " + e.getMessage());
+    		LOGGER.warn (MessageEnum.ASDC_SEND_NOTIF_ASDC_EXEC, "ASDC", "sendASDCNotification", MsoLogger.ErrorCode.SchemaError, "RuntimeException - sendASDCNotification", e);
+    	}
+    	LOGGER.recordMetricEvent (subStarttime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully sent Final notification to ASDC", "ASDC", null, null);
+    }
 
     public void treatNotification (INotificationData iNotif) {
 
     	int noOfArtifacts = 0;
+    	WatchdogDistribution wd = new WatchdogDistribution();
+
     	for (IResourceInstance resource : iNotif.getResources ()) {
     		noOfArtifacts += resource.getArtifacts ().size ();
     	}
@@ -561,21 +708,102 @@ public class ASDCController {
 						
 			// Process only the Resource artifacts in MSO
 			for (IResourceInstance resource : iNotif.getResources()) {
-
-				// We process only VNF(VF) and Network(VL) resources on MSO Side
-				// We process only VNF resource on MSO Side
-				if ("VF".equals(resource.getResourceType()) || "VL".equals(resource.getResourceType())) {
-					this.processResourceNotification(iNotif,resource);
-				}
+				
+				// We process only VNF(VF), Network(VL) and PNF resources on MSO Side
+				//if ("VF".equals(resource.getResourceType()) || "VL".equals(resource.getResourceType()) || "PNF".equals(resource.getResourceType())){
+				this.processResourceNotification(iNotif,resource);
+				//}
 
 			}
+			
+			//Handle services without any resources	
+			if (iNotif.getResources() == null || iNotif.getResources().size() < 1){
+				
+				this.processResourceNotification(iNotif, new ResourceInstance());
+			}
+			
+			//********************************************************************************************************
+			//Start Watchdog loop and wait for all components to complete before reporting final status back. 
+			// **If timer expires first then we will report a Distribution Error back to ASDC
+			//********************************************************************************************************
+        	long initialStartTime = System.currentTimeMillis();
+        	boolean componentsComplete = false;
+        	String distributionStatus = null;
+        	String watchdogError = null;
+        	String overallStatus = null;
+        	int watchDogTimeout = asdcConfig.getWatchDogTimeout() * 1000;
+        	boolean isDeploySuccess = false;
+        	WatchdogDistributionStatusDb wdDistributionStatus = WatchdogDistributionStatusDb.getInstance();
+        	
+						
+        	while(componentsComplete == false && (System.currentTimeMillis() - initialStartTime) < watchDogTimeout)
+        	{
+        		        		
+    			try{
+        		
+    				distributionStatus = wd.getOverallDistributionStatus(iNotif.getDistributionID());
+    				Thread.sleep(watchDogTimeout / 10);
+    		
+    			}catch(Exception e){
+    				LOGGER.debug ("Exception in Watchdog Loop " + e.getMessage());
+    				Thread.sleep(watchDogTimeout / 10);
+    			}
+    			
+    			if(distributionStatus != null && !distributionStatus.equalsIgnoreCase(DistributionStatus.INCOMPLETE.name())){
+    				
+    				if(distributionStatus.equalsIgnoreCase(DistributionStatus.SUCCESS.name())){
+    					isDeploySuccess = true;
+    					overallStatus = DistributionStatusEnum.DISTRIBUTION_COMPLETE_OK.name();
+    				}else{
+    					overallStatus = DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR.name();
+    				}
+    				
+    				componentsComplete = true;
+    			}
+        	}
+        	
+        	if(componentsComplete == false){
+        		LOGGER.debug("Timeout of " + watchDogTimeout + " seconds was reached before all components reported status");
+        		watchdogError = "Timeout occurred while waiting for all components to report status";
+        		overallStatus = DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR.name();
+        	}
+        	
+        	if(distributionStatus == null){
+          		overallStatus = DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR.name();
+        		LOGGER.debug("DistributionStatus is null for DistributionId: " + iNotif.getDistributionID());
+        		 	
+        	}
+        	
+        	try {
+        		wd.executePatchAAI(iNotif.getDistributionID(), iNotif.getServiceInvariantUUID(), overallStatus);
+        		LOGGER.debug ("A&AI Updated succefully with Distribution Status!");
+        	}
+        	catch(Exception e) {
+        		LOGGER.debug ("Exception in Watchdog executePatchAAI(): " + e.getMessage());
+        		watchdogError = "Error calling A&AI " + e.getMessage();
+        		if(e.getCause() != null) {
+        			LOGGER.debug ("Exception caused by: " + e.getCause().getMessage());
+        		}
+        	}
+     	
+        	
+        	if(isDeploySuccess && watchdogError == null){
+        		sendFinalDistributionStatus(iNotif.getDistributionID(), DistributionStatusEnum.DISTRIBUTION_COMPLETE_OK, null);
+        		wdDistributionStatus.updateWatchdogDistributionIdStatus(iNotif.getDistributionID(), DistributionStatusEnum.DISTRIBUTION_COMPLETE_OK.name());        
+        	} else {
+        		sendFinalDistributionStatus(iNotif.getDistributionID(), DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR, watchdogError);
+        		wdDistributionStatus.updateWatchdogDistributionIdStatus(iNotif.getDistributionID(), DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR.name());        
+        	}
+        	
+        	
 
-
-
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             LOGGER.error (MessageEnum.ASDC_GENERAL_EXCEPTION_ARG,
                           "Unexpected exception caught during the notification processing", "ASDC", "treatNotification", MsoLogger.ErrorCode.SchemaError, "RuntimeException in treatNotification",
                           e);
+            
+             sendFinalDistributionStatus(iNotif.getDistributionID(), DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR, e.getMessage());
+            
         } finally {
             this.changeControllerStatus (ASDCControllerStatus.IDLE);
         }
@@ -586,6 +814,8 @@ public class ASDCController {
 		// For each artifact, create a structure describing the VFModule in a ordered flat level
     	VfResourceStructure resourceStructure = new VfResourceStructure(iNotif,resource);
     	ToscaResourceStructure toscaResourceStructure = new ToscaResourceStructure();
+    	boolean deploySuccessful = true;
+    	String errorMessage = null;
 
 		try {
 
@@ -605,12 +835,22 @@ public class ASDCController {
 						}
 
 				}
-
 				this.processCsarServiceArtifacts(iNotif, toscaResourceStructure);
 				
-				this.deployResourceStructure(resourceStructure, toscaResourceStructure);
+				try{
+				
+					this.deployResourceStructure(resourceStructure, toscaResourceStructure);
+					
+				} catch(ArtifactInstallerException e){
+					deploySuccessful = false;
+					errorMessage = e.getMessage();
+				}
+												
+					this.sendCsarDeployNotification(iNotif, resourceStructure, toscaResourceStructure, deploySuccessful, errorMessage);
+					
 
-			}
+
+		}
 		} catch (ArtifactInstallerException | ASDCDownloadException | UnsupportedEncodingException e) {
 			LOGGER.error(MessageEnum.ASDC_GENERAL_EXCEPTION_ARG,
 					"Exception caught during Installation of artifact", "ASDC", "processResourceNotification", MsoLogger.ErrorCode.BusinessProcesssError, "Exception in processResourceNotification", e);

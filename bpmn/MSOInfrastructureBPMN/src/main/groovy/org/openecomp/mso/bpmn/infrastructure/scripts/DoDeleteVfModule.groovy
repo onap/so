@@ -23,7 +23,7 @@ import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.openecomp.mso.bpmn.common.scripts.AaiUtil
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
@@ -38,6 +38,8 @@ import org.w3c.dom.Element
 import org.xml.sax.InputSource
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList;
+import org.openecomp.mso.rest.RESTClient
+import org.openecomp.mso.rest.RESTConfig
 
 
 /* Subflow for Delete VF Module. When no DoDeleteVfModuleRequest is specified on input,
@@ -54,6 +56,7 @@ import org.w3c.dom.NodeList;
 * @param - cloudConfiguration*
 * @param - sdncVersion ("1610")
 * @param - retainResources 
+* @param - aLaCarte
 *
 * Outputs:
 * @param - WorkflowException
@@ -66,7 +69,7 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
 
-	public void initProcessVariables(Execution execution) {
+	public void initProcessVariables(DelegateExecution execution) {
 		execution.setVariable("prefix",Prefix)
 		execution.setVariable("DoDVfMod_contrailNetworkPolicyFqdnList", null)
 		execution.setVariable("DoDVfMod_oamManagementV4Address", null)
@@ -76,7 +79,7 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 
 	// parse the incoming DELETE_VF_MODULE request for the Generic Vnf and Vf Module Ids
 	// and formulate the outgoing request for PrepareUpdateAAIVfModuleRequest
-	public void preProcessRequest(Execution execution) {
+	public void preProcessRequest(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		initProcessVariables(execution)
 
@@ -122,7 +125,7 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 				if (retainResources == null) {
 					retainResources  = false
 				}
-				execution.setVariable("retainResources", retainResources)
+				execution.setVariable("retainResources", retainResources)				
 			}
 			else {
 
@@ -184,7 +187,7 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 
 	// build a SDNC vnf-topology-operation request for the specified action
 	// (note: the action passed is expected to be 'changedelete' or 'delete')
-	public void prepSDNCAdapterRequest(Execution execution, String action) {
+	public void prepSDNCAdapterRequest(DelegateExecution execution, String action) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 
 		String uuid = execution.getVariable('testReqId') // for junits
@@ -262,7 +265,7 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 
 	// parse the incoming DELETE_VF_MODULE request
 	// and formulate the outgoing VnfAdapterDeleteV1 request
-	public void prepVNFAdapterRequest(Execution execution) {
+	public void prepVNFAdapterRequest(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		def requestId = UUID.randomUUID().toString()
 		def origRequestId = execution.getVariable('requestId')
@@ -304,7 +307,7 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 
 	// parse the incoming DELETE_VF_MODULE request
 	// and formulate the outgoing UpdateAAIVfModuleRequest request
-	public void prepUpdateAAIVfModule(Execution execution) {
+	public void prepUpdateAAIVfModule(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		def vnfId = execution.getVariable("vnfId")
 		def vfModuleId = execution.getVariable("vfModuleId")
@@ -322,7 +325,7 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 
 	// parse the incoming DELETE_VF_MODULE request
 	// and formulate the outgoing DeleteAAIVfModuleRequest request
-	public void prepDeleteAAIVfModule(Execution execution) {
+	public void prepDeleteAAIVfModule(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 
 		def vnfId = execution.getVariable("vnfId")
@@ -339,7 +342,7 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 
 	// generates a WorkflowException if
 	//		-
-	public void handleDoDeleteVfModuleFailure(Execution execution) {
+	public void handleDoDeleteVfModuleFailure(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("ERROR", "AAI error occurred deleting the Generic Vnf: "
 			+ execution.getVariable("DoDVfMod_deleteGenericVnfResponse"), isDebugEnabled)
@@ -349,7 +352,7 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 		execution.setVariable("WorkflowException", exception)
 	}
 
-	public void sdncValidateResponse(Execution execution, String response){
+	public void sdncValidateResponse(DelegateExecution execution, String response){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 
@@ -366,7 +369,7 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 		}
 	}
 
-	public void postProcessVNFAdapterRequest(Execution execution) {
+	public void postProcessVNFAdapterRequest(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.postProcessVNFAdapterRequest(' +
 			'execution=' + execution.getId() +
 			')'
@@ -443,7 +446,7 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 		logDebug(" *** COMPLETED postProcessVnfAdapterResponse Process*** ", isDebugLogEnabled)
 	}
 
-	public void deleteNetworkPoliciesFromAAI(Execution execution) {
+	public void deleteNetworkPoliciesFromAAI(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.deleteNetworkPoliciesFromAAI(' +
 		'execution=' + execution.getId() +
 		')'
@@ -571,7 +574,7 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void prepUpdateAAIGenericVnf(Execution execution) {
+	public void prepUpdateAAIGenericVnf(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.prepUpdateAAIGenericVnf(' +
 			'execution=' + execution.getId() +
 			')'
@@ -615,6 +618,89 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepUpdateAAIGenericVnf(): ' + e.getMessage())
 		}
 	}
+	
+	/**
+	 * Using the vnfId and vfModuleId provided in the inputs,
+	 * query AAI to get the corresponding VF Module info.
+	 * A 200 response is expected with the VF Module info in the response body,
+	 * Will determine VF Module's orchestration status if one exists
+	 *
+	 * @param execution The flow's execution instance.
+	 */
+	public void queryAAIVfModuleForStatus(DelegateExecution execution) {
+		def isDebugLogEnabled=execution.getVariable("isDebugLogEnabled")
+		def method = getClass().getSimpleName() + '.queryAAIVfModuleForStatus(' +
+			'execution=' + execution.getId() +
+			')'
+		logDebug('Entered ' + method, isDebugLogEnabled)
+		
+		execution.setVariable(Prefix + 'orchestrationStatus', '')
+
+		try {
+			def vnfId = execution.getVariable('vnfId')
+			def vfModuleId = execution.getVariable('vfModuleId')
+
+			AaiUtil aaiUriUtil = new AaiUtil(this)
+			String  aai_uri = aaiUriUtil.getNetworkGenericVnfUri(execution)
+			logDebug('AAI URI is: ' + aai_uri, isDebugLogEnabled)
+
+			String endPoint = execution.getVariable("URN_aai_endpoint") + "${aai_uri}/" + UriUtils.encode(vnfId, "UTF-8") +
+					"/vf-modules/vf-module/" + UriUtils.encode(vfModuleId, "UTF-8")
+			utils.logAudit("AAI endPoint: " + endPoint)
+
+			try {
+				RESTConfig config = new RESTConfig(endPoint);
+				def responseData = ''
+				def aaiRequestId = UUID.randomUUID().toString()
+				RESTClient client = new RESTClient(config).
+					addHeader('X-TransactionId', aaiRequestId).
+					addHeader('X-FromAppId', 'MSO').
+					addHeader('Content-Type', 'application/xml').
+					addHeader('Accept','application/xml');
+				logDebug('sending GET to AAI endpoint \'' + endPoint + '\'', isDebugLogEnabled)
+				APIResponse response = client.httpGet()
+				utils.logAudit("createVfModule - invoking httpGet() to AAI")
+
+				responseData = response.getResponseBodyAsString()
+				if (responseData != null) {
+					logDebug("Received generic VNF data: " + responseData, isDebugLogEnabled)
+
+				}
+
+				utils.logAudit("deleteVfModule - queryAAIVfModule Response: " + responseData)
+				utils.logAudit("deleteVfModule - queryAAIVfModule ResponseCode: " + response.getStatusCode())
+
+				execution.setVariable(Prefix + 'queryAAIVfModuleForStatusResponseCode', response.getStatusCode())
+				execution.setVariable(Prefix + 'queryAAIVfModuleForStatusResponse', responseData)
+				logDebug('Response code:' + response.getStatusCode(), isDebugLogEnabled)
+				logDebug('Response:' + System.lineSeparator() + responseData, isDebugLogEnabled)
+				// Retrieve VF Module info and its orchestration status; if not found, do nothing
+				if (response.getStatusCode() == 200) {
+					// Parse the VNF record from A&AI to find base module info
+					logDebug('Parsing the VNF data to find orchestration status', isDebugLogEnabled)
+					if (responseData != null) {
+						def vfModuleText = utils.getNodeXml(responseData, "vf-module")
+						//def xmlVfModule= new XmlSlurper().parseText(vfModuleText)
+						def orchestrationStatus = utils.getNodeText1(vfModuleText, "orchestration-status")
+						execution.setVariable(Prefix + "orchestrationStatus", orchestrationStatus)
+						logDebug("Received orchestration status from A&AI: " + orchestrationStatus, isDebugLogEnabled)
+						
+					}
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace()
+				logDebug('Exception occurred while executing AAI GET:' + ex.getMessage(),isDebugLogEnabled)
+				exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'AAI GET Failed:' + ex.getMessage())
+			}
+			logDebug('Exited ' + method, isDebugLogEnabled)
+		} catch (BpmnError e) {
+			throw e;
+		} catch (Exception e) {
+			logError('Caught exception in ' + method, e)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in queryAAIVfModuleForStatus(): ' + e.getMessage())
+		}
+	}
+
 
 
 

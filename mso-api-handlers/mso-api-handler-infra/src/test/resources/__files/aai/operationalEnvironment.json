@@ -1,0 +1,9 @@
+{
+	"operational-environment-id": "testASDCDistributionId",
+	"operational-environment-name": "testASDCDistributionIName",
+	"operational-environment-type": "VNF",
+	"operational-environment-status": "ACTIVE",
+	"tenant-context": "Test",
+	"workload-context": "PVT",
+	"resource-version": "1505228226913"
+}

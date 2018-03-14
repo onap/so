@@ -42,7 +42,7 @@ import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.json.JSONObject;
 import org.json.JSONArray;
 import org.apache.commons.lang3.*
@@ -87,7 +87,7 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
 
-	public void preProcessRequest (Execution execution) {
+	public void preProcessRequest (DelegateExecution execution) {
 	    //only for dug
 		execution.setVariable("isDebugLogEnabled","true")
 		execution.setVariable("unit_test", "true")
@@ -231,7 +231,7 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		utils.log("INFO", "Exited " + method, isDebugEnabled)
 	}
 	
-	public void postProcessAAIGET(Execution execution) {
+	public void postProcessAAIGET(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO"," ***** postProcessAAIGET ***** ", isDebugEnabled)
 		String msg = ""
@@ -378,7 +378,7 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 	}
 	
 	
-	public void preInitResourcesOperStatus(Execution execution){
+	public void preInitResourcesOperStatus(DelegateExecution execution){
         def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 
         utils.log("INFO", " ======== STARTED preInitResourcesOperStatus Process ======== ", isDebugEnabled)
@@ -439,7 +439,7 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
     /**
 	 * Init the service Operation Status
 	 */
-	public void preUpdateServiceOperationStatus(Execution execution){
+	public void preUpdateServiceOperationStatus(DelegateExecution execution){
         def method = getClass().getSimpleName() + '.preUpdateServiceOperationStatus(' +'execution=' + execution.getId() +')'
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO","Entered " + method, isDebugEnabled)
@@ -502,36 +502,36 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
         utils.log("INFO", "Exited " + method, isDebugEnabled)
 	}
     
-    public void postResourcesOperStatus(Execution execution) {
+    public void postResourcesOperStatus(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
     
     }
     
-    public void preCompareModelVersions(Execution execution) {
+    public void preCompareModelVersions(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 
     }
 
-    public void postCompareModelVersions(Execution execution) {
+    public void postCompareModelVersions(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-    }
-    
-    public void preProcessForAddResource(Execution execution) {
-        def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-
-    }
-
-    public void postProcessForAddResource(Execution execution) {
-        def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-    
     }
     
-    public void preProcessForDeleteResource(Execution execution) {
+    public void preProcessForAddResource(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 
     }
 
-    public void postProcessForDeleteResource(Execution execution) {
+    public void postProcessForAddResource(DelegateExecution execution) {
+        def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+    
+    }
+    
+    public void preProcessForDeleteResource(DelegateExecution execution) {
+        def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+
+    }
+
+    public void postProcessForDeleteResource(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
     
     }    

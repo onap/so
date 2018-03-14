@@ -20,15 +20,17 @@
  */
 package org.openecomp.mso.adapters.sdncrest;
 
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
-import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
-
-import javax.xml.bind.annotation.XmlElement;
 import java.io.IOException;
 import java.io.Serializable;
+
+import javax.xml.bind.annotation.XmlElement;
+
 import org.openecomp.mso.logger.MsoLogger;
+
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 /**
  * Base class for all SDNC adapter responses, including errors.
@@ -109,8 +111,8 @@ public abstract class SDNCResponseCommon implements Serializable {
 	public String toJson() {
 		try {
 			ObjectMapper mapper = new ObjectMapper();
-			mapper.enable(SerializationConfig.Feature.WRAP_ROOT_VALUE);
-			mapper.setSerializationInclusion(Inclusion.NON_NULL);
+			mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
+			mapper.setSerializationInclusion(Include.NON_NULL);
 			return mapper.writeValueAsString(this);
 		} catch (IOException e) {
 		    LOGGER.debug("Exception:", e);

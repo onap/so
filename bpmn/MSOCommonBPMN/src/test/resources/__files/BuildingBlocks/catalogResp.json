@@ -38,8 +38,9 @@
             "nfRole": "",
             "nfType": "",
             "nfFunction": "",
-            "nfNamingCode": ""
-         }
+            "nfNamingCode": "",
+            "multiStageDesign": "N"
+        }
       ],
       "serviceNetworks": []
    }

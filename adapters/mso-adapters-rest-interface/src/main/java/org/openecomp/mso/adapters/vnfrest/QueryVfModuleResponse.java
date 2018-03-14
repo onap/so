@@ -21,33 +21,30 @@
 
 package org.openecomp.mso.adapters.vnfrest;
 
-import org.openecomp.mso.logger.MsoLogger;
-
-
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.jboss.resteasy.annotations.providers.NoJackson;
+import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.openstack.beans.VnfStatus;
 
+import com.fasterxml.jackson.annotation.JsonRootName;
+
+@JsonRootName("queryVfModuleResponse")
 @XmlRootElement(name = "queryVfModuleResponse")
-@NoJackson
-public class QueryVfModuleResponse {
+public class QueryVfModuleResponse extends VfResponseCommon{
 	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
 	private String vnfId;
 	private String vfModuleId;
 	private String vfModuleStackId;
 	private VnfStatus vnfStatus;
-	private Map<String,String> vfModuleOutputs;
+	private Map<String, String> vfModuleOutputs;
 
 	public QueryVfModuleResponse() {
 		super();
 	}
 
-	public QueryVfModuleResponse(String vnfId, String vfModuleId,
-			String vfModuleStackId, VnfStatus vnfStatus,
+	public QueryVfModuleResponse(String vnfId, String vfModuleId, String vfModuleStackId, VnfStatus vnfStatus,
 			Map<String, String> vfModuleOutputs) {
 		super();
 		this.vnfId = vnfId;
@@ -96,16 +93,5 @@ public class QueryVfModuleResponse {
 	public void setVfModuleOutputs(Map<String, String> vfModuleOutputs) {
 		this.vfModuleOutputs = vfModuleOutputs;
 	}
-
-	public String toJsonString() {
-		String jsonString = null;
-		try {
-			ObjectMapper mapper = new ObjectMapper();
-			jsonString = mapper.writeValueAsString(this);
-		}
-		catch (Exception e) {
-			LOGGER.debug("Exception :",e);
-		}
-		return jsonString;
-	}
+	
 }

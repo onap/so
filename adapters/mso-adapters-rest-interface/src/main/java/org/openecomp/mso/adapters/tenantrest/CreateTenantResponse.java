@@ -24,10 +24,8 @@ package org.openecomp.mso.adapters.tenantrest;
 
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlRootElement;
-import org.jboss.resteasy.annotations.providers.NoJackson;
 
 @XmlRootElement(name = "createTenantResponse")
-@NoJackson
 public class CreateTenantResponse implements Serializable {
 	private static final long serialVersionUID = -456155026754759682L;
 	private String cloudSiteId;

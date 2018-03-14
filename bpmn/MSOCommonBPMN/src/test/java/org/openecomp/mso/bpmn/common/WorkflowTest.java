@@ -22,6 +22,8 @@ package org.openecomp.mso.bpmn.common;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.openecomp.mso.bpmn.core.json.JsonUtils.getJsonValue;
+import static org.openecomp.mso.bpmn.core.json.JsonUtils.updJsonValue;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -30,8 +32,6 @@ import java.lang.management.RuntimeMXBean;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -61,6 +61,7 @@ import org.custommonkey.xmlunit.DetailedDiff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.jboss.resteasy.spi.AsynchronousResponse;
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Rule;
 import org.openecomp.mso.bpmn.common.adapter.sdnc.CallbackHeader;
@@ -77,12 +78,10 @@ import org.openecomp.mso.bpmn.common.workflow.service.VnfAdapterNotifyServiceImp
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowAsyncResource;
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowMessageResource;
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowResponse;
-import org.openecomp.mso.bpmn.core.utils.CamundaDBSetup;
 import org.openecomp.mso.bpmn.core.PropertyConfigurationSetup;
 import org.openecomp.mso.bpmn.core.domain.Resource;
 import org.openecomp.mso.bpmn.core.domain.ServiceDecomposition;
-
-import static org.openecomp.mso.bpmn.core.json.JsonUtils.*;
+import org.openecomp.mso.bpmn.core.utils.CamundaDBSetup;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -1501,16 +1500,71 @@ public class WorkflowTest {
 					for(Resource resource:resourceList){
 						resourceId = resource.getResourceId();
 					}
+					//TODO.. most other locations refer to solutionInfo.placementInfo 
 					String homingList = getJsonValue(content, "solutionInfo.placement");
-					JSONArray placementArr = new JSONArray(homingList);
+					JSONArray placementArr = null;
+					try {
+						placementArr = new JSONArray(homingList);
+					}
+					catch (Exception e) {
+						return false;
+					}
 					if(placementArr.length() == 1){
 						content = content.replace("((SERVICE_RESOURCE_ID))", resourceId);
 					}
 					String licenseInfoList = getJsonValue(content, "solutionInfo.licenseInfo");
-					JSONArray licenseArr = new JSONArray(licenseInfoList);
+					JSONArray licenseArr = null;
+					try {
+						licenseArr = new JSONArray(licenseInfoList);
+					}
+					catch (Exception e) {
+						return false;
+					}
 					if(licenseArr.length() == 1){
 						content = content.replace("((SERVICE_RESOURCE_ID))", resourceId);
 					}
+				}
+				else {
+					try {
+						String homingList = getJsonValue(content, "solutionInfo.placementInfo");
+						String licenseInfoList = getJsonValue(content, "solutionInfo.licenseInfo");
+						JSONArray placementArr = new JSONArray(homingList);
+						JSONArray licenseArr = new JSONArray(licenseInfoList);
+						for (Resource resource: resourceList) {
+							String resourceModuleName = resource.getModelInfo().getModelInstanceName();
+							String resourceId = resource.getResourceId();
+
+							for (int i=0; i<placementArr.length(); i++) {
+								JSONObject placementObj = placementArr.getJSONObject(i);
+								String placementModuleName = placementObj.getString("resourceModuleName");
+								if (placementModuleName.equalsIgnoreCase(resourceModuleName)) {
+									String placementString = placementObj.toString();
+									placementString = placementString.replace("((SERVICE_RESOURCE_ID))", resourceId);
+									JSONObject newPlacementObj = new JSONObject(placementString);
+									placementArr.put(i, newPlacementObj);
+								}
+							}
+							
+							for (int i=0; i<licenseArr.length(); i++) {
+								JSONObject licenseObj = licenseArr.getJSONObject(i);
+								String licenseModuleName = licenseObj.getString("resourceModuleName");
+								if (licenseModuleName.equalsIgnoreCase(resourceModuleName)) {
+									String licenseString = licenseObj.toString();
+									licenseString = licenseString.replace("((SERVICE_RESOURCE_ID))", resourceId);
+									JSONObject newLicenseObj = new JSONObject(licenseString);
+									licenseArr.put(i, newLicenseObj);
+								}
+							}
+						}
+						String newPlacementInfos = placementArr.toString();
+						String newLicenseInfos = licenseArr.toString();
+						content = updJsonValue(content, "solutionInfo.placementInfo", newPlacementInfos);
+						content = updJsonValue(content, "solutionInfo.licenseInfo", newLicenseInfos);
+					}
+					catch(Exception e) {
+						return false;
+					}
+					
 				}
 			}
 		}

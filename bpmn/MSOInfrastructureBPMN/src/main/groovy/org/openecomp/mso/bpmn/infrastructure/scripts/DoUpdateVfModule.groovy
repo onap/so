@@ -21,8 +21,9 @@
 package org.openecomp.mso.bpmn.infrastructure.scripts
 
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.openecomp.mso.bpmn.common.scripts.AaiUtil
+import org.openecomp.mso.bpmn.common.scripts.CatalogDbUtils
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
 import org.openecomp.mso.bpmn.common.scripts.NetworkUtils
 import org.openecomp.mso.bpmn.common.scripts.SDNCAdapterUtils
@@ -30,20 +31,27 @@ import org.openecomp.mso.bpmn.common.scripts.VfModule
 import org.openecomp.mso.bpmn.common.scripts.VfModuleBase
 import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.bpmn.core.json.JsonUtils;
+import org.openecomp.mso.client.aai.AAIResourcesClient
+import org.openecomp.mso.client.aai.entities.AAIResultWrapper
+import org.openecomp.mso.client.aai.entities.uri.AAIUri
 import org.openecomp.mso.rest.APIResponse
 import org.springframework.web.util.UriUtils
+import org.openecomp.mso.client.aai.AAIObjectType;
+import org.openecomp.mso.client.aai.entities.uri.AAIUriFactory;
+
 
 public class DoUpdateVfModule extends VfModuleBase {
 
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
+	CatalogDbUtils catalog = new CatalogDbUtils()
 
 	/**
 	 * Initialize the flow's variables.
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void initProcessVariables(Execution execution) {
+	public void initProcessVariables(DelegateExecution execution) {
 		execution.setVariable('prefix', 'DOUPVfMod_')
 		execution.setVariable('DOUPVfMod_requestInfo', null)
 		execution.setVariable('DOUPVfMod_serviceInstanceId', null)
@@ -87,7 +95,7 @@ public class DoUpdateVfModule extends VfModuleBase {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void preProcessRequest(Execution execution) {
+	public void preProcessRequest(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.preProcessRequest(' +
 			'execution=' + execution.getId() +
 			')'
@@ -108,9 +116,10 @@ public class DoUpdateVfModule extends VfModuleBase {
 				
 				def serviceModelInfo = execution.getVariable("serviceModelInfo")
 				logDebug("serviceModelInfo: " + serviceModelInfo, isDebugLogEnabled)
+				String modelInvariantUuid = jsonUtil.getJsonValue(serviceModelInfo, "modelInvariantUuid")
+				logDebug("modelInvariantUuid: " + modelInvariantUuid, isDebugLogEnabled)
 				def vnfModelInfo = execution.getVariable("vnfModelInfo")
 				
-
 				//tenantId
 				def tenantId = execution.getVariable("tenantId")
 				execution.setVariable("DOUPVfMod_tenantId", tenantId)
@@ -230,7 +239,37 @@ public class DoUpdateVfModule extends VfModuleBase {
 				Map<String,String> vfModuleInputParams = execution.getVariable("vfModuleInputParams")
 				if (vfModuleInputParams != null) {
 					execution.setVariable("DOUPVfMod_vnfParamsMap", vfModuleInputParams)					
-				}				
+				}	
+				//get workload and environment context from parent SI
+				String environmentContext = ""
+				String workloadContext =""
+				String serviceType =""
+				
+				try{
+					String json = catalog.getServiceResourcesByServiceModelInvariantUuidString(execution,modelInvariantUuid )
+					serviceType = jsonUtil.getJsonValue(json, "serviceResources.serviceType")
+				}catch(BpmnError e){
+					throw e
+				} catch (Exception ex){
+					String msg = "Exception in preProcessRequest " + ex.getMessage()
+					utils.log("DEBUG", msg, isDebugLogEnabled)
+					exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+				}
+				
+				try{
+					AAIUri serviceInstanceURI = AAIUriFactory.create(AAIObjectType.SERVICE_INSTANCE, globalSubscriberId,serviceType,serviceInstanceId)
+					AAIResourcesClient aaiRC = new AAIResourcesClient()
+					AAIResultWrapper aaiRW = aaiRC.get(serviceInstanceURI)
+					Map<String, Object> aaiJson = aaiRW.asMap()
+					environmentContext = aaiJson.getOrDefault("environment-context","")
+					workloadContext = aaiJson.getOrDefault("workload-context","")
+					
+				}catch (Exception ex) {
+					utils.log("DEBUG","Error retreiving parent service instance information", isDebugLogEnabled)
+				}
+				
+				execution.setVariable("DCVFM_environmentContext",environmentContext)
+				execution.setVariable("DCVFM_workloadContext",workloadContext)
 			}
 			else {
 
@@ -296,7 +335,7 @@ public class DoUpdateVfModule extends VfModuleBase {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void prepPrepareUpdateAAIVfModule(Execution execution) {
+	public void prepPrepareUpdateAAIVfModule(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.preparePrepareUpdateAAIVfModule(' +
 			'execution=' + execution.getId() +
 			')'
@@ -335,7 +374,7 @@ public class DoUpdateVfModule extends VfModuleBase {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void prepConfirmVolumeGroupTenant(Execution execution) {
+	public void prepConfirmVolumeGroupTenant(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.prepConfirmVolumeGroupTenant(' +
 			'execution=' + execution.getId() +
 			')'
@@ -393,7 +432,7 @@ public class DoUpdateVfModule extends VfModuleBase {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void prepSDNCTopologyChg(Execution execution) {
+	public void prepSDNCTopologyChg(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.prepSDNCTopologyChg(' +
 			'execution=' + execution.getId() +
 			')'
@@ -493,7 +532,7 @@ public class DoUpdateVfModule extends VfModuleBase {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void prepSDNCTopologyQuery(Execution execution) {
+	public void prepSDNCTopologyQuery(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.prepSDNCTopologyQuery(' +
 			'execution=' + execution.getId() +
 			')'
@@ -554,7 +593,7 @@ public class DoUpdateVfModule extends VfModuleBase {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void prepVnfAdapterRest(Execution execution) {
+	public void prepVnfAdapterRest(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.prepVnfAdapterRest(' +
 			'execution=' + execution.getId() +
 			')'
@@ -590,12 +629,17 @@ public class DoUpdateVfModule extends VfModuleBase {
 					notificationUrl = utils.getQualifiedHostNameForCallback(notificationUrl)
 			}
 			
+			String environmentContext = execution.getVariable("DOUPVEnvironment_context")
+			String workloadContext = execution.getVariable("DOUPVWorkload_context")
+			logDebug("workloadContext: " + workloadContext, isDebugLogEnabled)
+			logDebug("environmentContext: " + environmentContext, isDebugLogEnabled)
+			
 			Map<String, String> vnfParamsMap = execution.getVariable("DOUPVfMod_vnfParamsMap")
 
 			String sdncGetResponse = execution.getVariable('DOUPVfMod_sdncTopologyResponse')
 
 			String vfModuleParams = buildVfModuleParams(vnfParamsMap, sdncGetResponse, vnfId, vnfName,
-					vfModuleId, vfModuleName, null)
+					vfModuleId, vfModuleName, null, environmentContext, workloadContext)
 
 
 			String vnfAdapterRestRequest = """
@@ -646,7 +690,7 @@ public class DoUpdateVfModule extends VfModuleBase {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void prepUpdateAAIGenericVnf(Execution execution) {
+	public void prepUpdateAAIGenericVnf(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.prepUpdateAAIGenericVnf(' +
 			'execution=' + execution.getId() +
 			')'
@@ -694,7 +738,7 @@ public class DoUpdateVfModule extends VfModuleBase {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void prepUpdateAAIVfModule(Execution execution) {
+	public void prepUpdateAAIVfModule(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.prepUpdateAAIVfModule(' +
 			'execution=' + execution.getId() +
 			')'
@@ -767,7 +811,7 @@ public class DoUpdateVfModule extends VfModuleBase {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void prepSDNCTopologyAct(Execution execution) {
+	public void prepSDNCTopologyAct(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.prepSDNCTopologyAct(' +
 			'execution=' + execution.getId() +
 			')'
@@ -864,7 +908,7 @@ public class DoUpdateVfModule extends VfModuleBase {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void handleWorkflowException(Execution execution) {
+	public void handleWorkflowException(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.handleWorkflowException(' +
 			'execution=' + execution.getId() +
 			')'
@@ -884,7 +928,7 @@ public class DoUpdateVfModule extends VfModuleBase {
 		}
 	}
 
-	public void validateSDNCResponse(Execution execution, String response, String method){
+	public void validateSDNCResponse(DelegateExecution execution, String response, String method){
 		def isDebugLogEnabled=execution.getVariable("isDebugLogEnabled")
 		def prefix = execution.getVariable("prefix")
 
@@ -916,7 +960,7 @@ public class DoUpdateVfModule extends VfModuleBase {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void queryAAIVfModule(Execution execution) {
+	public void queryAAIVfModule(DelegateExecution execution) {
 		def isDebugLogEnabled=execution.getVariable("isDebugLogEnabled")
 		def method = getClass().getSimpleName() + '.getVfModule(' +
 			'execution=' + execution.getId() +

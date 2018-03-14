@@ -25,12 +25,9 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.jboss.resteasy.annotations.providers.NoJackson;
-
 import org.openecomp.mso.openstack.exceptions.MsoExceptionCategory;
 
 @XmlRootElement(name = "updateNetworkError")
-@NoJackson
 public class UpdateNetworkError extends NetworkExceptionResponse implements Serializable {
 	private static final long serialVersionUID = 46820809807914392L;
 

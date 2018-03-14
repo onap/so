@@ -32,8 +32,13 @@
 <!-- 		<property name="hibernate.hbm2ddl.auto">create</property> -->
 
         <mapping resource="InfraActiveRequests.hbm.xml"></mapping>
-        <mapping resource="SiteStatus.hbm.xml"></mapping>
+        <mapping resource="OperationalEnvServiceModelStatus.hbm.xml"></mapping>
+        <mapping resource="OperationalEnvDistributionStatus.hbm.xml"></mapping>
         <mapping resource="OperationStatus.hbm.xml"></mapping>
         <mapping resource="ResourceOperationStatus.hbm.xml"></mapping>
+        <mapping resource="SiteStatus.hbm.xml"></mapping>
+        <mapping resource="WatchdogDistributionStatus.hbm.xml"></mapping>
+        <mapping resource="WatchdogComponentDistributionStatus.hbm.xml"></mapping>
+        <mapping resource="WatchdogServiceModVerIdLookup.hbm.xml"></mapping>
     </session-factory>
 </hibernate-configuration>

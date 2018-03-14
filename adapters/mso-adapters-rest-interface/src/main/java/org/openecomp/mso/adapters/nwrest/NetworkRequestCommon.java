@@ -28,9 +28,12 @@ import java.io.ByteArrayOutputStream;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.openecomp.mso.logger.MsoLogger;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Everything that is common between all Network Requests.
@@ -40,7 +43,8 @@ public abstract class NetworkRequestCommon {
 	private Boolean skipAAI = false;
 	private String messageId;
 	private String notificationUrl;
-
+	@JsonProperty
+	private boolean synchronous;
 	public Boolean getSkipAAI() {
 		return skipAAI;
 	}
@@ -68,12 +72,17 @@ public abstract class NetworkRequestCommon {
 	public boolean isSynchronous() {
 		return notificationUrl == null || (notificationUrl.isEmpty());
 	}
+	
+	@JsonIgnore
+	public void setSynchronous(boolean synchronous) {
+		this.synchronous = synchronous;
+	}
 
 	public String toJsonString() {
 		String jsonString = null;
 		try {
 			ObjectMapper mapper = new ObjectMapper();
-			mapper.enable(SerializationConfig.Feature.WRAP_ROOT_VALUE);
+			mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
 			jsonString = mapper.writeValueAsString(this);
 		} catch (Exception e) {
 		    LOGGER.debug("Exception:", e);

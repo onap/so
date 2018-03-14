@@ -20,11 +20,8 @@
 
 package org.openecomp.mso.adapters.sdnc.impl;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
-import org.junit.BeforeClass;
+import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.Test;
 
 import org.openecomp.mso.properties.MsoJavaProperties;
@@ -33,22 +30,22 @@ import org.openecomp.mso.properties.MsoPropertiesFactory;
 
 public class RequestTunablesTest {
 
-	public static MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory();
+	private static MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory();
 	
-    /**
-     * This method is called before any test occurs.
-     * It creates a fake tree from scratch
-     * @throws MsoPropertiesException 
-     */
-    @BeforeClass
-    public static final void prepare () throws MsoPropertiesException {
-        ClassLoader classLoader = RequestTunablesTest.class.getClassLoader ();
-        String path = classLoader.getResource ("mso.properties").toString ().substring (5);
-        
-        msoPropertiesFactory.initializeMsoProperties(RequestTunables.MSO_PROP_SDNC_ADAPTER, path);
-      
-    }
+	public static final String SDNC_PROP = MsoJavaProperties.class.getClassLoader().getResource("mso.sdnc.properties").toString().substring(5);
+	
+	@Before
+	public final void initBeforeEachTest() throws MsoPropertiesException {
+			msoPropertiesFactory.removeAllMsoProperties();
+			msoPropertiesFactory.initializeMsoProperties("MSO_PROP_SDNC_ADAPTER", SDNC_PROP);
+	}
 
+	@AfterClass
+	public static final void kill () throws MsoPropertiesException {
+
+		    msoPropertiesFactory.removeMsoProperties("MSO_PROP_SDNC_ADAPTER");
+	}
+	
     /**
      * Test method for
      * {@link org.openecomp.mso.adapters.sdnc.impl.RequestTunables#RequestTunables(java.lang.String, java.lang.String, java.lang.String, java.lang.String)}

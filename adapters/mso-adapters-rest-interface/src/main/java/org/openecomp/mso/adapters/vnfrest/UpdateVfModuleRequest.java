@@ -21,17 +21,17 @@
 package org.openecomp.mso.adapters.vnfrest;
 
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.openecomp.mso.entity.MsoRequest;
 
-import java.util.Map;
-import java.util.HashMap;
-import javax.xml.bind.annotation.XmlRootElement;
-import org.jboss.resteasy.annotations.providers.NoJackson;
-import org.codehaus.jackson.map.annotate.JsonRootName;
+import com.fasterxml.jackson.annotation.JsonRootName;
 
 @JsonRootName("updateVfModuleRequest")
 @XmlRootElement(name = "updateVfModuleRequest")
-@NoJackson
 public class UpdateVfModuleRequest extends VfRequestCommon {
 
 	private String cloudSiteId;

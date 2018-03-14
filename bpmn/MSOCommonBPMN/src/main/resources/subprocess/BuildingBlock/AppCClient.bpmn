@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.9.0">
+  <bpmn:process id="AppCClient" name="AppCClient" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" name="Start">
+      <bpmn:outgoing>SequenceFlow_1wz1rfg</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1wz1rfg" sourceRef="StartEvent_1" targetRef="PreProcessRequest" />
+    <bpmn:scriptTask id="PreProcessRequest" name="PreProcessRequest" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1wz1rfg</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_14vlkf4</bpmn:outgoing>
+      <bpmn:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+def acc = new AppCClient()
+acc.preProcessRequest(execution)]]></bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:endEvent id="EndEvent_1k6463v">
+      <bpmn:incoming>SequenceFlow_1j937vi</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_14vlkf4" sourceRef="PreProcessRequest" targetRef="Task_12dmd3n" />
+    <bpmn:sequenceFlow id="SequenceFlow_1j937vi" sourceRef="Task_12dmd3n" targetRef="EndEvent_1k6463v" />
+    <bpmn:scriptTask id="Task_12dmd3n" name="Call APP-C VNF Start" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_14vlkf4</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1j937vi</bpmn:outgoing>
+      <bpmn:script><![CDATA[import org.onap.appc.client.lcm.model.Action
+import org.openecomp.mso.bpmn.common.scripts.*
+def acc = new AppCClient()
+acc.runAppcCommand(execution)]]></bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:subProcess id="SubProcess_1qgfsqz" triggeredByEvent="true">
+      <bpmn:startEvent id="StartEvent_0d3qxzd">
+        <bpmn:outgoing>SequenceFlow_1wi3avf</bpmn:outgoing>
+        <bpmn:errorEventDefinition />
+      </bpmn:startEvent>
+      <bpmn:endEvent id="EndEvent_187ulsw">
+        <bpmn:incoming>SequenceFlow_1gq753e</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_1gq753e" sourceRef="Task_0a36o0m" targetRef="EndEvent_187ulsw" />
+      <bpmn:sequenceFlow id="SequenceFlow_1wi3avf" sourceRef="StartEvent_0d3qxzd" targetRef="Task_0a36o0m" />
+      <bpmn:scriptTask id="Task_0a36o0m" name="Process Error" scriptFormat="groovy">
+        <bpmn:incoming>SequenceFlow_1wi3avf</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_1gq753e</bpmn:outgoing>
+        <bpmn:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+
+ExceptionUtil ex = new ExceptionUtil()
+ex.processSubflowsBPMNException(execution)]]></bpmn:script>
+      </bpmn:scriptTask>
+    </bpmn:subProcess>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="AppCClient">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="173" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="179" y="138" width="24" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1wz1rfg_di" bpmnElement="SequenceFlow_1wz1rfg">
+        <di:waypoint xsi:type="dc:Point" x="209" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="306" y="119" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="257.5" y="98.5" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_0369vot_di" bpmnElement="PreProcessRequest">
+        <dc:Bounds x="306" y="79" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1k6463v_di" bpmnElement="EndEvent_1k6463v">
+        <dc:Bounds x="844" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="817" y="142" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_14vlkf4_di" bpmnElement="SequenceFlow_14vlkf4">
+        <di:waypoint xsi:type="dc:Point" x="406" y="119" />
+        <di:waypoint xsi:type="dc:Point" x="471" y="119" />
+        <di:waypoint xsi:type="dc:Point" x="471" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="520" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="441" y="113.5" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1j937vi_di" bpmnElement="SequenceFlow_1j937vi">
+        <di:waypoint xsi:type="dc:Point" x="620" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="740" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="740" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="844" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="710" y="114" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_08gicz7_di" bpmnElement="Task_12dmd3n">
+        <dc:Bounds x="520" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SubProcess_0l79snr_di" bpmnElement="SubProcess_1qgfsqz" isExpanded="true">
+        <dc:Bounds x="124" y="271" width="340" height="159" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_0d8xcpk_di" bpmnElement="StartEvent_0d3qxzd">
+        <dc:Bounds x="150" y="332" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="168" y="372" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_187ulsw_di" bpmnElement="EndEvent_187ulsw">
+        <dc:Bounds x="394" y="332" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="412" y="372" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1gq753e_di" bpmnElement="SequenceFlow_1gq753e">
+        <di:waypoint xsi:type="dc:Point" x="334" y="350" />
+        <di:waypoint xsi:type="dc:Point" x="394" y="350" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="364" y="329" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1wi3avf_di" bpmnElement="SequenceFlow_1wi3avf">
+        <di:waypoint xsi:type="dc:Point" x="186" y="350" />
+        <di:waypoint xsi:type="dc:Point" x="234" y="350" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="210" y="329" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_1wumcac_di" bpmnElement="Task_0a36o0m">
+        <dc:Bounds x="234" y="310" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

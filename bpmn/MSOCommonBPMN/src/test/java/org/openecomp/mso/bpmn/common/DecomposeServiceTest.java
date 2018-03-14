@@ -45,8 +45,7 @@ public class DecomposeServiceTest extends WorkflowTest {
 	@Test
 	@Deployment(resources = {"subprocess/BuildingBlock/DecomposeService.bpmn"})
 	public void testDecomposeService_success() throws Exception{
-		MockGetServiceResourcesCatalogData("cmw-123-456-789", "/getCatalogServiceResourcesData.json", "1.0");
-
+		MockGetServiceResourcesCatalogData("cmw-123-456-789", "1.0", "/getCatalogServiceResourcesDataWithConfig.json");
 
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<>();

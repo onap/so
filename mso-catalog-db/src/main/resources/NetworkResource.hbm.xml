@@ -29,7 +29,7 @@
 
 		<id 	  name="modelUUID" 					column="MODEL_UUID" 					type="string" 	length="200"/>
 		<property name="modelName" 					column="MODEL_NAME" 					type="string" 	length="200"	not-null="true" />
-		<property name="modelInvariantUUID" 		column="MODEL_INVARIANT_UUID" 			type="string" 	length="200"/>
+		<property name="modelInvariantUUID" 		column="MODEL_INVARIANT_UUID" 			type="string" 	length="20"/>
 		<property name="modelVersion" 				column="MODEL_VERSION" 					type="string" 	length="20"/>
 		<property name="toscaNodeType" 				column="TOSCA_NODE_TYPE" 				type="string" 	length="200"/>
 		<property name="neutronNetworkType" 		column="NEUTRON_NETWORK_TYPE" 			type="string" 	length="20"/>

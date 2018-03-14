@@ -38,6 +38,7 @@ dvfm.prepDoDeleteVfModule(execution)]]></bpmn2:script>
         <camunda:in source="cloudConfiguration" target="cloudConfiguration" />
         <camunda:in source="&#34;1610&#34;" target="sdncVersion" />
         <camunda:in source="isVidRequest" target="isVidRequest" />
+        <camunda:in source="aLaCarte" target="aLaCarte" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_9</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_8</bpmn2:outgoing>

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,18 +27,22 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.annotate.JsonRootName;
+
 import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.openstack.exceptions.MsoCloudIdentityNotFound;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRootName;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * JavaBean JSON class for a CloudConfig. This bean maps a JSON-format cloud
  * configuration file to Java. The CloudConfig contains information about
- * Openstack cloud configurations. It includes:
- * - CloudIdentity objects,representing DCP nodes (Openstack Identity Service)
+ * Openstack cloud configurations. It includes: 
+ * - CloudIdentity objects,representing DCP nodes (Openstack Identity Service) 
  * - CloudSite objects, representing LCP nodes (Openstack Compute & other services)
  *
  * Note that this is only used to access Cloud Configurations loaded from a JSON
@@ -46,6 +50,7 @@ import org.openecomp.mso.openstack.exceptions.MsoCloudIdentityNotFound;
  *
  * This class also contains methods to query cloud sites and/or identity
  * services by ID.
+ *
  */
 
 @JsonRootName("cloud_config")
@@ -61,11 +66,13 @@ public class CloudConfig {
     @JsonProperty("identity_services")
     private Map<String, CloudIdentity> identityServices = new HashMap<>();
     @JsonProperty("cloud_sites")
-    private Map<String, CloudSite> cloudSites = new HashMap<>();
+    private Map <String, CloudSite> cloudSites = new HashMap <String, CloudSite> ();
+    @JsonProperty("cloudify_managers")
+    private Map <String, CloudifyManager> cloudifyManagers = new HashMap <String, CloudifyManager> ();
 
     public CloudConfig() {
-        mapper.enable(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE);
-        mapper.enable(DeserializationConfig.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
+        mapper.enable(DeserializationFeature.UNWRAP_ROOT_VALUE);
+        mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
     }
 
     /**
@@ -80,6 +87,14 @@ public class CloudConfig {
      */
     public Map<String, CloudSite> getCloudSites() {
         return Collections.unmodifiableMap(cloudSites);
+    }
+
+	/**
+	 * Get a Map of all CloudifyManagers that have been loaded.
+	 * @return the Map
+	 */
+    public synchronized Map <String, CloudifyManager> getCloudifyManagers () {
+        return cloudifyManagers;
     }
 
     /**
@@ -98,11 +113,10 @@ public class CloudConfig {
         if (cloudSites.containsKey(id)) {
             return Optional.ofNullable(cloudSites.get(id));
         }
-        return Optional.ofNullable(getCloudSiteWithClli(id));
+        return null;
     }
 
-
-    private CloudSite getCloudSiteWithClli(String clli) {
+     private CloudSite getCloudSiteWithClli(String clli) {
         Optional <CloudSite> cloudSiteOptional = cloudSites.values().stream().filter(cs ->
                 cs.getClli() != null && clli.equals(cs.getClli()) && (CLOUD_SITE_VERSION.equals(cs.getAic_version())))
                 .findAny();
@@ -124,7 +138,7 @@ public class CloudConfig {
 
     /**
      * Get a specific CloudIdentity, based on an ID.
-     *
+     * 
      * @param id
      *            the ID to match
      * @return a CloudIdentity, or null of no match found
@@ -135,6 +149,18 @@ public class CloudConfig {
         }
         return null;
     }
+
+	/**
+	 * Get a specific CloudifyManager, based on an ID.
+	 * @param id the ID to match
+	 * @return a CloudifyManager, or null of no match found
+	 */
+	public synchronized CloudifyManager getCloudifyManager (String id) {
+		if (cloudifyManagers.containsKey (id)) {
+			return cloudifyManagers.get (id);
+		}
+		return null;
+	}
 
     protected synchronized void reloadPropertiesFile() throws IOException, MsoCloudIdentityNotFound {
         this.loadCloudConfig(this.configFilePath, this.refreshTimerInMinutes);
@@ -156,11 +182,17 @@ public class CloudConfig {
 
             this.cloudSites = cloudConfig.cloudSites;
             this.identityServices = cloudConfig.identityServices;
+	        this.cloudifyManagers = cloudConfig.cloudifyManagers;
 
             // Copy Cloud Identity IDs to CloudIdentity objects
             for (Entry<String, CloudIdentity> entry : cloudConfig.getIdentityServices().entrySet()) {
                 entry.getValue().setId(entry.getKey());
             }
+
+	        // Copy Cloduify IDs to CloudifyManager objects
+	        for (Entry <String, CloudifyManager> entry : cloudConfig.getCloudifyManagers ().entrySet ()) {
+	            entry.getValue ().setId (entry.getKey ());
+	        }
 
             // Copy Cloud Site IDs to CloudSite objects, and set up internal
             // pointers to their corresponding identity service.
@@ -172,9 +204,11 @@ public class CloudConfig {
                 if (cloudIdentity == null) {
                     throw new MsoCloudIdentityNotFound(s.getId()+" Cloud site refers to a non-existing identity service: "+s.getIdentityServiceId());
                 }
+                CloudifyManager cloudifyManager = cloudConfig.getCloudifyManager(s.getCloudifyId());
+                s.setCloudifyManager(cloudifyManager);
             }
             this.validCloudConfig=true;
-
+            
         } finally {
             try {
                 if (reader != null) {
@@ -201,11 +235,20 @@ public class CloudConfig {
     public synchronized CloudConfig clone() {
         CloudConfig ccCopy = new CloudConfig();
         for (Entry<String, CloudIdentity> e : identityServices.entrySet()) {
+
             ccCopy.identityServices.put(e.getKey(), e.getValue().clone());
         }
+
         for (Entry<String, CloudSite> e : cloudSites.entrySet()) {
+
             ccCopy.cloudSites.put(e.getKey(), e.getValue().clone());
         }
+
+		for (Entry<String,CloudifyManager> e:cloudifyManagers.entrySet()) {
+
+			ccCopy.cloudifyManagers.put(e.getKey(), e.getValue().clone());
+		}
+
         ccCopy.configFilePath = this.configFilePath;
         ccCopy.refreshTimerInMinutes = this.refreshTimerInMinutes;
         ccCopy.validCloudConfig = this.validCloudConfig;
@@ -261,5 +304,5 @@ public class CloudConfig {
         return true;
     }
 
-
+  
 }

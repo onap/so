@@ -2,7 +2,7 @@
  * #%L
  * MSO
  * %%
- * Copyright (C) 2016 OPENECOMP - MSO
+ * Copyright (C) 2016 ONAP - SO
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ package org.openecomp.mso.apihandlerinfra;
 
 import org.openecomp.mso.apihandlerinfra.tasksbeans.*;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +36,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.openecomp.mso.apihandler.common.ErrorNumbers;
 import org.openecomp.mso.apihandler.common.RequestClient;
@@ -55,7 +56,6 @@ public class TasksHandler {
 
     private static MsoAlarmLogger alarmLogger = new MsoAlarmLogger ();
     private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH);
-    public final static String MSO_PROP_APIHANDLER_INFRA = "MSO_PROP_APIHANDLER_INFRA";
     public final static String requestUrl = "mso/task/";	
 
     @Path("/{version:[vV]1}")
@@ -68,7 +68,7 @@ public class TasksHandler {
                                   @QueryParam("buildingBlockName") String buildingBlockName,
                                   @QueryParam("originalRequestDate") String originalRequestDate,
                                   @QueryParam("originalRequestorId") String originalRequestorId,
-                                  @PathParam("version") String version) {
+                                  @PathParam("version") String version) throws ParseException {
     	Response responseBack = null;
         long startTime = System.currentTimeMillis ();
         String requestId = UUIDChecker.generateUUID(msoLogger);
@@ -162,7 +162,7 @@ public class TasksHandler {
 					MsoAlarmLogger.CRITICAL,
 					Messages.errors.get (ErrorNumbers.NO_COMMUNICATION_TO_BPEL));
 			msoRequest.updateFinalStatus (Status.FAILED);
-			msoLogger.error (MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.AvailabilityError, "Exception while communicate with BPMN engine");
+			msoLogger.error (MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, Constants.MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.AvailabilityError, "Exception while communicate with BPMN engine");
 			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, "Exception while communicate with BPMN engine");
 			msoLogger.debug ("End of the transaction, the final response is: " + (String) resp.getEntity (),e);
 			return resp;
@@ -204,7 +204,7 @@ public class TasksHandler {
 							MsoAlarmLogger.CRITICAL,
 							Messages.errors.get (ErrorNumbers.NO_COMMUNICATION_TO_BPEL));
 						
-						msoLogger.error (MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.AvailabilityError, "Exception while communicate with BPMN engine");
+						msoLogger.error (MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, Constants.MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.AvailabilityError, "Exception while communicate with BPMN engine");
 						msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, "Exception while communicate with BPMN engine");
 						msoLogger.debug ("End of the transaction, the final response is: " + (String) resp.getEntity (),e);
 						return resp;
@@ -293,7 +293,7 @@ public class TasksHandler {
     	
     }
     
-    private TaskList buildTaskList(String taskId, String respBody) {
+    private TaskList buildTaskList(String taskId, String respBody) throws ParseException {
     	TaskList taskList = new TaskList();
     	JSONObject variables = new JSONObject(respBody);
     	
@@ -313,7 +313,7 @@ public class TasksHandler {
     	return taskList;       	
     }
     
-    private String getOptVariableValue(JSONObject variables, String name) {
+    private String getOptVariableValue(JSONObject variables, String name) throws ParseException {
     	String variableEntry = variables.optString(name);
     	String value = "";
     	if (!variableEntry.isEmpty()) {
