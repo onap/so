@@ -47,7 +47,7 @@ import org.openecomp.mso.bpmn.core.domain.ServiceDecomposition
 import org.openecomp.mso.bpmn.core.domain.VnfResource
 import org.openecomp.mso.bpmn.core.domain.AllottedResource
 import org.openecomp.mso.bpmn.core.domain.ModelInfo
-import org.openecomp.mso.bpmn.core.domain.HomingSolution
+
 import org.openecomp.mso.bpmn.core.RollbackData
 import org.openecomp.mso.bpmn.vcpe.scripts.MapGetter
 import org.openecomp.mso.bpmn.vcpe.scripts.MapSetter

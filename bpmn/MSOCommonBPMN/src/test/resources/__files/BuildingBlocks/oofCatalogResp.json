@@ -1,0 +1,47 @@
+{
+   "serviceResources": {
+      "serviceType": null,
+      "serviceAllottedResources": [],
+      "modelInfo": {
+         "modelInvariantUuid": "1cc4e2e4-eb6e-404d-a66f-c8733cedcce8",
+         "modelName": "ADIOD vRouter vCE 011017 Service",
+         "modelVersion": "5.0",
+         "modelUuid": "2f7f309d-c842-4644-a2e4-34167be5eeb4"
+      },
+      "serviceRole": null,
+      "serviceVnfs": [
+         {
+            "toscaNodeType": "org.openecomp.resource.vf.AdiodVce",
+            "vfModules": [
+               {
+                  "initialCount": null,
+                  "vfModuleLabel": null,
+                  "modelInfo": {
+                     "modelInvariantUuid": "7fb428e1-8000-4800-a71a-f21b946973c5",
+                     "modelName": "AdiodVce..base_vCE..module-0",
+                     "modelVersion": "2",
+                     "modelCustomizationUuid": "1126e7e2-b377-4fd2-ad48-660a20caa829",
+                     "modelUuid": "435d57e1-93a2-4d58-aa5d-f2df2d126276"
+                  },
+                  "hasVolumeGroup": true,
+                  "isBase": true
+               }
+            ],
+            "modelInfo": {
+               "modelInvariantUuid": "fc72435b-4366-4257-a2f7-c70a3a998a7b",
+               "modelName": "ADIoD vCE",
+               "modelVersion": "2.0",
+               "modelCustomizationUuid": "bdaeed40-c964-4966-bdb8-51320dcaf587",
+               "modelInstanceName": "ADIoD vCE 0",
+               "modelUuid": "ec2bd873-5b2c-47e4-8858-f0495fa1dae1"
+            },
+            "nfRole": "",
+            "nfType": "",
+            "nfFunction": "",
+            "nfNamingCode": "",
+            "multiStageDesign": "N"
+        }
+      ],
+      "serviceNetworks": []
+   }
+}
