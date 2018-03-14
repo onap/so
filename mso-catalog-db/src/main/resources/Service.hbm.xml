@@ -42,6 +42,9 @@
         <property name="category" 				column="SERVICE_CATEGORY" 				type="string" 		length="20"/>
         <property name="serviceType" 				column="SERVICE_TYPE" 				type="string" 		length="20"/>
         <property name="serviceRole" 				column="SERVICE_ROLE" 				type="string" 		length="20"/>
+        <property name="environmentContext" 		column="ENVIRONMENT_CONTEXT" 		type="string" 		length="200"/>
+        <property name="workloadContext" 			column="WORKLOAD_CONTEXT" 			type="string" 		length="200"/>
+        
         
 		<map name="recipes" inverse="true" cascade="all">
 			<key column="SERVICE_MODEL_UUID"/>

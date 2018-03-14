@@ -33,19 +33,33 @@ public class ModuleResource  extends Resource {
 	public ModuleResource(){
 		resourceType = ResourceType.MODULE;
 	}
-	
+
 	/*
 	 * fields specific to VF Module resource type
 	 */
+	private String vfModuleName;
 	private String vfModuleType;
+	private String heatStackId;
 	private boolean hasVolumeGroup;
 	private boolean isBase;
 	private String vfModuleLabel;
 	private int initialCount;
-	
+
 	/*
 	 * GET && SET
 	 */
+	public String getVfModuleName() {
+		return vfModuleName;
+	}
+	public void setVfModuleName(String vfModuleName) {
+		this.vfModuleName = vfModuleName;
+	}
+	public String getHeatStackId() {
+		return heatStackId;
+	}
+	public void setHeatStackId(String heatStackId) {
+		this.heatStackId = heatStackId;
+	}
 	public boolean getIsBase() {
 		return isBase;
 	}
@@ -76,5 +90,5 @@ public class ModuleResource  extends Resource {
 	public void setHasVolumeGroup(boolean hasVolumeGroup) {
 		this.hasVolumeGroup = hasVolumeGroup;
 	}
-	
+
 }

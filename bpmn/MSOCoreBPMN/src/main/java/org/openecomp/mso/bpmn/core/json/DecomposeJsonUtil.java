@@ -20,16 +20,22 @@
 
 package org.openecomp.mso.bpmn.core.json;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.io.Serializable;
+
 import org.openecomp.mso.bpmn.core.domain.AllottedResource;
+import org.openecomp.mso.bpmn.core.domain.ConfigResource;
 import org.openecomp.mso.bpmn.core.domain.NetworkResource;
 import org.openecomp.mso.bpmn.core.domain.ServiceDecomposition;
 import org.openecomp.mso.bpmn.core.domain.ServiceInstance;
 import org.openecomp.mso.bpmn.core.domain.VnfResource;
 
-public class DecomposeJsonUtil {
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class DecomposeJsonUtil implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
     private static final ObjectMapper OBJECT_MAPPER = createObjectMapper();
 
@@ -51,7 +57,10 @@ public class DecomposeJsonUtil {
      */
     public static ServiceDecomposition jsonToServiceDecomposition(String jsonString) throws JsonDecomposingException {
         try {
-            return OBJECT_MAPPER.readValue(jsonString, ServiceDecomposition.class);
+			ObjectMapper om = new ObjectMapper();
+			om.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
+			om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            return om.readValue(jsonString, ServiceDecomposition.class);
         } catch (IOException e) {
             throw new JsonDecomposingException("Exception while converting json to service decomposition", e);
         }
@@ -114,6 +123,14 @@ public class DecomposeJsonUtil {
     public static AllottedResource jsonToAllottedResource(String jsonString) throws JsonDecomposingException {
         try {
             return OBJECT_MAPPER.readValue(jsonString, AllottedResource.class);
+        } catch (IOException e) {
+            throw new JsonDecomposingException("Exception while converting json to allotted resource", e);
+        }
+    }
+    
+    public static ConfigResource jsonToConfigResource(String jsonString) throws JsonDecomposingException {
+        try {
+            return OBJECT_MAPPER.readValue(jsonString, ConfigResource.class);
         } catch (IOException e) {
             throw new JsonDecomposingException("Exception while converting json to allotted resource", e);
         }

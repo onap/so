@@ -22,11 +22,15 @@ package org.openecomp.mso.adapters.nwrest;
 
 
 import java.util.List;
+import org.openecomp.mso.openstack.beans.RouteTarget;
 
+import com.fasterxml.jackson.annotation.JsonRootName;
+
+@JsonRootName("contrailNetwork")
 public class ContrailNetwork {
 	private String shared   = "false";
 	private String external = "false";
-	private List<String> routeTargets;
+	private List<RouteTarget> routeTargets;
 	private List<String> policyFqdns;
 	private List<String> routeTableFqdns;
 	
@@ -34,7 +38,7 @@ public class ContrailNetwork {
 		super();
 	}
 
-	public ContrailNetwork(String shared, String external, List<String> routeTargets, List<String> policyFqdns, List<String> routeTableFqdns) {
+	public ContrailNetwork(String shared, String external, List<RouteTarget> routeTargets, List<String> policyFqdns, List<String> routeTableFqdns) {
 		super();
 		this.shared = shared;
 		this.external = external;
@@ -59,11 +63,11 @@ public class ContrailNetwork {
 		this.external = external;
 	}
 
-	public List<String> getRouteTargets() {
+	public List<RouteTarget> getRouteTargets() {
 		return routeTargets;
 	}
 
-	public void setRouteTargets(List<String> routeTargets) {
+	public void setRouteTargets(List<RouteTarget> routeTargets) {
 		this.routeTargets = routeTargets;
 	}
 

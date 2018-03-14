@@ -19,9 +19,8 @@
 
 package org.openecomp.mso.apihandlerinfra.tasksbeans;
 
-import org.codehaus.jackson.map.annotate.JsonRootName;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
+import com.fasterxml.jackson.annotation.JsonRootName;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonRootName(value = "taskRequestReference")
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_DEFAULT)
 public class TaskRequestReference {

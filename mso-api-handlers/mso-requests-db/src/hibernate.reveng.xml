@@ -22,10 +22,9 @@
 <!DOCTYPE hibernate-reverse-engineering PUBLIC "-//Hibernate/Hibernate Reverse Engineering DTD 3.0//EN" "http://www.hibernate.org/dtd//hibernate-reverse-engineering-3.0.dtd" >
 
 <hibernate-reverse-engineering>
-
-   <schema-selection match-schema="MSO"/>
-     <table-filter match-schema="MSO" match-name=".*"/>
-     <type-mapping> 
-        <sql-type jdbc-type="OTHER" hibernate-type="java.sql.Timestamp" /> 
-    </type-mapping>
+	<schema-selection match-schema="MSO" />
+	<type-mapping>
+		<sql-type jdbc-type="OTHER" hibernate-type="java.sql.Timestamp" />
+	</type-mapping>
+	<table-filter match-schema="MSO" match-name=".*" />
 </hibernate-reverse-engineering>

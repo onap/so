@@ -28,7 +28,8 @@
 						"modelVersion": "1"
 					}
 				}
-			}, {
+			},
+			{
 				"relatedInstance": {
 					"instanceId": "{vnf-instance-id}",
 					"modelInfo": {
@@ -44,21 +45,60 @@
 		"requestParameters": {
 			"backoutOnFailure": true,
 			"serviceId": "a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb",
-			"userParams": {
-				{"name": "vnfName", "value": "STMTN5MMSC20" },
-				{"name": "vnfName2", "value": "US1117MTSNJVBR0246" },
-				{"name": "vnfNmInformation", "value": "" },
-				{"name": "vnfType", "value": "pcrf-capacity" },
-				{"name": "vnfId", "value": "skask" },
-				{"name": "vnfStackId", "value": "slowburn" },
-				{"name": "vnfStatus", "value": "created" },
-				{"name": "aicCloudRegion", "value": "MDTWNJ21" },
-				{"name": "availabilityZone", "value": "slcp3-esx-az01" },
-				{"name": "oamNetworkName", "value": "VLAN-OAM-1323" },
-				{"name": "vmName", "value": "slcp34246vbc246ceb" },
-				{"name": "ipagNetworkId", "value": "970cd2b9-7f09-4a12-af47-182ea38ba1f0" },
-				{"name": "vpeNetworkId", "value": "545cc2c3-1930-4100-b534-5d82d0e12bb6" }
-			}
+			"userParams": [
+				{
+					"name": "vnfName",
+					"value": "STMTN5MMSC20"
+				},
+				{
+					"name": "vnfName2",
+					"value": "US1117MTSNJVBR0246"
+				},
+				{
+					"name": "vnfNmInformation",
+					"value": ""
+				},
+				{
+					"name": "vnfType",
+					"value": "pcrf-capacity"
+				},
+				{
+					"name": "vnfId",
+					"value": "skask"
+				},
+				{
+					"name": "vnfStackId",
+					"value": "slowburn"
+				},
+				{
+					"name": "vnfStatus",
+					"value": "created"
+				},
+				{
+					"name": "aicCloudRegion",
+					"value": "MDTWNJ21"
+				},
+				{
+					"name": "availabilityZone",
+					"value": "slcp3-esx-az01"
+				},
+				{
+					"name": "oamNetworkName",
+					"value": "VLAN-OAM-1323"
+				},
+				{
+					"name": "vmName",
+					"value": "slcp34246vbc246ceb"
+				},
+				{
+					"name": "ipagNetworkId",
+					"value": "970cd2b9-7f09-4a12-af47-182ea38ba1f0"
+				},
+				{
+					"name": "vpeNetworkId",
+					"value": "545cc2c3-1930-4100-b534-5d82d0e12bb6"
+				}
+			]
 		}
 	}
 }

@@ -14,11 +14,7 @@
   </context-param>
   <context-param>
     <param-name>mso.configuration</param-name>
-    <param-value>MSO_PROP_WORKFLOW_MESSAGE_ADAPTER=mso.workflow-message-adapter.properties,MSO_PROP_TOPOLOGY=topology.properties</param-value>
-  </context-param>
-  <context-param>
-        <param-name>mso.cloud_config.configuration</param-name>
-        <param-value>cloud_config.json=2</param-value>
+    <param-value>MSO_PROP_WORKFLOW_MESSAGE_ADAPTER=mso.workflow-message-adapter.properties,MSO_PROP_TOPOLOGY=topology.properties,MSO_PROP_AAF=cadi.properties</param-value>
   </context-param>
   <context-param>
     <param-name>resteasy.resources</param-name>
@@ -27,6 +23,10 @@
         org.openecomp.mso.MsoStatusHandler,
         org.openecomp.mso.adapters.workflowmessage.WMAdapterRest
     </param-value>
+  </context-param>
+  <context-param>
+    <param-name>resteasy.providers</param-name>
+    <param-value>org.openecomp.mso.adapters.providers.JettisonStyleMapperProvider</param-value>
   </context-param>
   <servlet>
     <servlet-name>Resteasy</servlet-name>

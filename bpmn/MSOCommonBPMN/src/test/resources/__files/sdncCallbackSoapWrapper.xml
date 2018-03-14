@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+	xmlns:v1="http://org.openecomp/workflow/sdnc/adapter/schema/v1">
+	<soapenv:Header />
+	<soapenv:Body>
+			<SDNCAdapterCallbackRequest
+				xmlns="http://org.openecomp/workflow/sdnc/adapter/schema/v1">
+				<CallbackHeader>
+					<RequestId>SDNC_REQUEST_ID</RequestId>
+					<ResponseCode>200</ResponseCode>
+					<ResponseMessage>OK</ResponseMessage>
+				</CallbackHeader>
+				<RequestData xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+					xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+					SDNC_RESPONSE_DATA
+				</RequestData>
+			</SDNCAdapterCallbackRequest>
+	</soapenv:Body>
+</soapenv:Envelope>

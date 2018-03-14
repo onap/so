@@ -37,7 +37,7 @@ import org.openecomp.mso.rest.RESTConfig
 import java.util.UUID;
 
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.json.JSONObject;
 import org.apache.commons.lang3.*
 import org.apache.commons.codec.binary.Base64;
@@ -66,7 +66,7 @@ public class DoCreateE2EServiceInstanceRollback extends AbstractServiceTaskProce
 
 	String Prefix="DCRESIRB_"
 
-	public void preProcessRequest(Execution execution) {
+	public void preProcessRequest(DelegateExecution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		String msg = ""
@@ -136,7 +136,7 @@ public class DoCreateE2EServiceInstanceRollback extends AbstractServiceTaskProce
 		utils.log("DEBUG"," ***** Exit preProcessRequest *****",  isDebugEnabled)
 	}
 
-	public void validateSDNCResponse(Execution execution, String response, String method) {
+	public void validateSDNCResponse(DelegateExecution execution, String response, String method) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("DEBUG"," ***** validateSDNCResponse ***** ", isDebugEnabled)
 		String msg = ""
@@ -169,7 +169,7 @@ public class DoCreateE2EServiceInstanceRollback extends AbstractServiceTaskProce
 		utils.log("DEBUG"," ***** Exit validateSDNCResponse ***** ", isDebugEnabled)
 	}
 
-	public void postProcessRequest(Execution execution) {
+	public void postProcessRequest(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("DEBUG"," ***** postProcessRequest ***** ", isDebugEnabled)
 		String msg = ""
@@ -203,7 +203,7 @@ public class DoCreateE2EServiceInstanceRollback extends AbstractServiceTaskProce
 
 	}
 
-	public void processRollbackException(Execution execution){
+	public void processRollbackException(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("DEBUG"," ***** processRollbackException ***** ", isDebugEnabled)
 		try{
@@ -221,7 +221,7 @@ public class DoCreateE2EServiceInstanceRollback extends AbstractServiceTaskProce
 		utils.log("DEBUG", " Exit processRollbackException", isDebugEnabled)
 	}
 
-	public void processRollbackJavaException(Execution execution){
+	public void processRollbackJavaException(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("DEBUG"," ***** processRollbackJavaException ***** ", isDebugEnabled)
 		try{

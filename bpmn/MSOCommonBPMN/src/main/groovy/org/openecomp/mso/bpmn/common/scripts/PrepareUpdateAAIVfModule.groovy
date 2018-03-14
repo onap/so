@@ -21,7 +21,7 @@
 package org.openecomp.mso.bpmn.common.scripts
 
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.rest.APIResponse
 import org.openecomp.mso.rest.RESTClient
@@ -37,7 +37,7 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 	 * 
 	 * @param execution The flow's execution instance.
 	 */
-	public void initProcessVariables(Execution execution) {
+	public void initProcessVariables(DelegateExecution execution) {
 		execution.setVariable('prefix', 'PUAAIVfMod_')
 		execution.setVariable('PUAAIVfMod_vnfId', null)
 		execution.setVariable('PUAAIVfMod_vfModuleId', null)
@@ -58,7 +58,7 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 	 * 
 	 * @param execution The flow's execution instance.
 	 */
-	public void preProcessRequest(Execution execution) {
+	public void preProcessRequest(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.preProcessRequest(' +
 			'execution=' + execution.getId() +
 			')'
@@ -96,7 +96,7 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 	 * 
 	 * @param execution The flow's execution instance.
 	 */
-	public void getGenericVnf(Execution execution) {
+	public void getGenericVnf(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.getGenericVnf(' +
 			'execution=' + execution.getId() +
 			')'
@@ -162,7 +162,7 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 	 * 
 	 * @param execution The flow's execution instance.
 	 */
-	public void validateVfModule(Execution execution) {
+	public void validateVfModule(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.validateVfModule(' +
 			'execution=' + execution.getId() +
 			')'
@@ -212,7 +212,7 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 	 * 
 	 * @param execution The flow's execution instance.
 	 */
-	public void updateVfModule(Execution execution) {
+	public void updateVfModule(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.updateVfModule(' +
 			'execution=' + execution.getId() +
 			')'
@@ -309,7 +309,7 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 	 * 
 	 * @param execution The flow's execution instance.
 	 */
-	public void handleVnfNotFound(Execution execution) {
+	public void handleVnfNotFound(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.handleVnfNotFound(' +
 			'execution=' + execution.getId() +
 			')'
@@ -332,7 +332,7 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 	 * 
 	 * @param execution The flow's execution instance.
 	 */
-	public void handleVfModuleValidationError(Execution execution) {
+	public void handleVfModuleValidationError(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.handleVfModuleValidationError(' +
 			'execution=' + execution.getId() +
 			')'
@@ -355,7 +355,7 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 	 * 
 	 * @param execution The flow's execution instance.
 	 */
-	public void handleUpdateVfModuleFailure(Execution execution) {
+	public void handleUpdateVfModuleFailure(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.handleUpdateVfModuleFailure(' +
 			'execution=' + execution.getId() +
 			')'

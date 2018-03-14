@@ -22,7 +22,7 @@ package org.openecomp.mso.bpmn.common.scripts;
 
 import java.text.SimpleDateFormat
 
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.openecomp.mso.bpmn.core.WorkflowException
 
 
@@ -34,10 +34,10 @@ public class SDNCAdapter extends AbstractServiceTaskProcessor {
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 
 	// Script Task: Process SDNC Workflow Request
-	// Params: 	Workflow Execution
+	// Params: 	Workflow DelegateExecution
 	// Assume:	Received SDNCAdapterWorkflowRequest is in variable 'sdncAdapterWorkflowRequest'
 	//			Put created SDNCAdapterRequest in variable 'sdncAdapterRequest'
-	public void preProcessRequest (Execution execution) {
+	public void preProcessRequest (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		try{
 
@@ -155,7 +155,7 @@ public class SDNCAdapter extends AbstractServiceTaskProcessor {
 		utils.log("DEBUG","=========== End pre Process SDNCRequestScript ===========", isDebugEnabled)
 	}
 
-	public void postProcessResponse (Execution execution) {
+	public void postProcessResponse (DelegateExecution execution) {
 
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		try{
@@ -224,7 +224,7 @@ public class SDNCAdapter extends AbstractServiceTaskProcessor {
 		utils.log("DEBUG","=========== End POSTProcess SDNCAdapter ===========", isDebugEnabled)
 	}
 
-	public void callbackResponsecheck(Execution execution){
+	public void callbackResponsecheck(DelegateExecution execution){
 
 		def sdnccallbackreq=execution.getVariable("sdncAdapterCallbackRequest")
 		utils.logAudit("sdncAdapterCallbackRequest :" + sdnccallbackreq)
@@ -235,7 +235,7 @@ public class SDNCAdapter extends AbstractServiceTaskProcessor {
 		}
 	}
 
-	public void resetCallbackRequest(Execution execution) {
+	public void resetCallbackRequest(DelegateExecution execution) {
 
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 
@@ -269,7 +269,7 @@ public class SDNCAdapter extends AbstractServiceTaskProcessor {
 	}
 
 
-	public void prepareDBMessage(Execution execution) {
+	public void prepareDBMessage(DelegateExecution execution) {
 
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 
@@ -302,13 +302,13 @@ public class SDNCAdapter extends AbstractServiceTaskProcessor {
 		return utcTime;
 	}
 
-	public void toggleSuccessIndicator(Execution execution){
+	public void toggleSuccessIndicator(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("SDNCA_SuccessIndicator", true)
 		utils.log("DEBUG","Setting SDNCA Success Indicator to True", isDebugEnabled)
 	}
 
-	public void assignError(Execution execution){
+	public void assignError(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("DEBUG","=========== Started Assign Error ===========", isDebugEnabled)
 		WorkflowException wf = execution.getVariable("WorkflowException")
@@ -322,7 +322,7 @@ public class SDNCAdapter extends AbstractServiceTaskProcessor {
 		utils.log("DEBUG","=========== End Assign Error ===========", isDebugEnabled)
 	}
 	
-	public void setTimeout(Execution execution){
+	public void setTimeout(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("DEBUG","=========== Started SetTimeout ===========", isDebugEnabled)
 		utils.log("DEBUG", "Timer expired, telling correlation service to stop listening", isDebugEnabled)

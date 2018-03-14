@@ -25,13 +25,13 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;
-
 import org.openecomp.mso.apihandler.camundabeans.CamundaResponse;
+
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * This class implements test methods of Camunda Beans.
@@ -44,7 +44,7 @@ public class CamundaResponseTest {
 	public final void testDeserialization() throws JsonGenerationException,
 			JsonMappingException, IOException {
 		ObjectMapper mapper = new ObjectMapper(); // can reuse, share globally
-		mapper.enable(DeserializationConfig.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
+		mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
 		
 		String responseBody = "{ \"response\": \"<xml>xml</xml>\","+
 				  "\"messageCode\": 200,"+

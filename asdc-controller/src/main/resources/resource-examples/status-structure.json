@@ -1,0 +1,10 @@
+{ 
+
+    "distributionID":"35120a87-1f82-4276-9735-f6de5a244d65", 
+	"timestamp":"1436886906",
+	"consumerID":"mso.123456", 
+	"componentName":"ASDC",
+	"artifactURL":"/sdc/v1/catalog/services/srv1/2.0/resources/aaa/1.0/artifacts/aaa.yml",
+	"status":"DOWNLOAD_OK" 
+
+} 

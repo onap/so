@@ -25,7 +25,7 @@ import static org.apache.commons.lang3.StringUtils.*
 
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.openecomp.mso.rest.APIResponse
 import org.springframework.web.util.UriUtils
 
@@ -102,7 +102,7 @@ class CustomE2EGetService extends AbstractServiceTaskProcessor{
 	 * @param - execution
 	 *
 	 */
-	public void preProcessRequest(Execution execution) {
+	public void preProcessRequest(DelegateExecution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		utils.log("DEBUG", " *** STARTED GenericGetService PreProcessRequest Process*** ", isDebugEnabled)
@@ -188,7 +188,7 @@ class CustomE2EGetService extends AbstractServiceTaskProcessor{
 	 *
 	 * @param - execution
 	 */
-	public void obtainServiceInstanceUrlById(Execution execution){
+	public void obtainServiceInstanceUrlById(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		utils.log("DEBUG", " *** STARTED GenericGetService ObtainServiceInstanceUrlById Process*** ", isDebugEnabled)
@@ -270,7 +270,7 @@ class CustomE2EGetService extends AbstractServiceTaskProcessor{
 	 *
 	 * @param - execution
 	 */
-	public void obtainServiceInstanceUrlByName(Execution execution){
+	public void obtainServiceInstanceUrlByName(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		utils.log("DEBUG", " *** STARTED GenericGetService ObtainServiceInstanceUrlByName Process*** ", isDebugEnabled)
@@ -338,7 +338,7 @@ class CustomE2EGetService extends AbstractServiceTaskProcessor{
 	 *
 	 * @param - execution
 	 */
-	public void getServiceObject(Execution execution){
+	public void getServiceObject(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		utils.log("DEBUG", " *** STARTED GenericGetService GetServiceObject Process*** ", isDebugEnabled)

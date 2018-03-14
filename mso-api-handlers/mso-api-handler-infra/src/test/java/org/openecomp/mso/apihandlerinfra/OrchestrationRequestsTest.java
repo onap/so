@@ -20,26 +20,28 @@
 package org.openecomp.mso.apihandlerinfra;
 
 import static org.junit.Assert.assertEquals;
-
 import static org.junit.Assert.assertFalse;
+
 import java.io.IOException;
+
 import javax.ws.rs.core.Response;
 
 import org.apache.http.HttpStatus;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.openecomp.mso.apihandler.common.ValidationException;
 import org.openecomp.mso.requestsdb.InfraActiveRequests;
 import org.openecomp.mso.requestsdb.RequestsDatabase;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.GetOrchestrationResponse;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.InstanceReferences;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.Request;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.RequestStatus;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.ServiceInstancesRequest;
+import org.openecomp.mso.serviceinstancebeans.GetOrchestrationResponse;
+import org.openecomp.mso.serviceinstancebeans.InstanceReferences;
+import org.openecomp.mso.serviceinstancebeans.Request;
+import org.openecomp.mso.serviceinstancebeans.RequestStatus;
+import org.openecomp.mso.serviceinstancebeans.ServiceInstancesRequest;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class OrchestrationRequestsTest {
 

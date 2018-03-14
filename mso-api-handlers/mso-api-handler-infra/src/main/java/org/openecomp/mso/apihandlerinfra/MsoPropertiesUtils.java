@@ -26,8 +26,6 @@ import org.openecomp.mso.properties.MsoPropertiesFactory;
 
 public class MsoPropertiesUtils {
 
-    private final static String MSO_PROP_APIHANDLER_INFRA = "MSO_PROP_APIHANDLER_INFRA";
-
     private static MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory ();
 
     private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH);
@@ -37,9 +35,9 @@ public class MsoPropertiesUtils {
     public synchronized static MsoJavaProperties loadMsoProperties () {
         MsoJavaProperties msoProperties;
         try {
-            msoProperties = msoPropertiesFactory.getMsoJavaProperties (MSO_PROP_APIHANDLER_INFRA);
+            msoProperties = msoPropertiesFactory.getMsoJavaProperties (Constants.MSO_PROP_APIHANDLER_INFRA);
         } catch (Exception e) {
-            msoLogger.error (MessageEnum.APIH_LOAD_PROPERTIES_FAIL, MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.DataError, "Exception when loading MSO Properties", e);
+            msoLogger.error (MessageEnum.APIH_LOAD_PROPERTIES_FAIL, Constants.MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.DataError, "Exception when loading MSO Properties", e);
             return null;
         }
 
@@ -48,7 +46,7 @@ public class MsoPropertiesUtils {
             msoLogger.info (MessageEnum.APIH_PROPERTY_LOAD_SUC, "", "");
             return msoProperties;
         } else {
-            msoLogger.error (MessageEnum.APIH_NO_PROPERTIES, MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.DataError, "No MSO APIH_INFRA Properties found");
+            msoLogger.error (MessageEnum.APIH_NO_PROPERTIES, Constants.MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.DataError, "No MSO APIH_INFRA Properties found");
             return null;
         }
     }

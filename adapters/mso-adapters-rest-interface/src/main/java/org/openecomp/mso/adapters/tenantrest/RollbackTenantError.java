@@ -24,11 +24,9 @@ package org.openecomp.mso.adapters.tenantrest;
 
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlRootElement;
-import org.jboss.resteasy.annotations.providers.NoJackson;
 import org.openecomp.mso.openstack.exceptions.MsoExceptionCategory;
 
 @XmlRootElement(name = "rollbackTenantError")
-@NoJackson
 public class RollbackTenantError implements Serializable {
 	private static final long serialVersionUID = -5313713674529615223L;
 	private String message;

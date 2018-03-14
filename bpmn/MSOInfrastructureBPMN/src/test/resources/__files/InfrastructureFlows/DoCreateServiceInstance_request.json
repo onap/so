@@ -1,0 +1,186 @@
+{ "serviceResources"    : {
+	"modelInfo"       : {
+		"modelName"          : "MSOTADevInfra_vSAMP10a_Service",
+		"modelUuid"          : "5df8b6de-2083-11e7-93ae-92361f002671",
+		"modelInvariantUuid" : "9647dfc4-2083-11e7-93ae-92361f002671",
+		"modelVersion"       : "1.0"
+	},
+	"serviceType"        : "PortMirroring",
+	"serviceRole"        : "InfraRole",
+	"environmentContext" : "Luna",
+	"workloadContext"    : "Oxygen",
+	"serviceVnfs": [
+	
+		{ "modelInfo"                    : {
+			"modelName"              : "vSAMP10a",
+			"modelUuid"              : "ff2ae348-214a-11e7-93ae-92361f002671",
+			"modelInvariantUuid"     : "2fff5b20-214b-11e7-93ae-92361f002671",
+			"modelVersion"           : "1.0",
+			"modelCustomizationUuid" : "68dc9a92-214c-11e7-93ae-92361f002671",
+			"modelInstanceName"      : "vSAMP10a 1"
+			},
+		"toscaNodeType"            : "VF",
+		"nfFunction"           	: null,
+		"nfType"              		: null,
+		"nfRole"              		: null,
+		"nfNamingCode"         	: null,
+		"multiStageDesign"		: null,
+			"vfModules": [
+				{
+					"modelInfo"               : { 
+						"modelName"              : "NetworkFqdnTest4",
+						"modelUuid"              : "025606c1-4223-11e7-9252-005056850d2e",
+						"modelInvariantUuid"     : "06bd0a18-65c0-4418-83c7-5b0d13cba01a",
+						"modelVersion"           : "2.0",
+						"modelCustomizationUuid" : "06bd0a18-65c0-4418-83c7-5b0d13cba01a"
+					},		"isBase"                 : true,
+					"vfModuleLabel"          : "label",
+					"initialCount"           : 0,
+					"hasVolumeGroup"           : true
+				},
+				{
+					"modelInfo"               : { 
+						"modelName"              : "NetworkFqdnTest3",
+						"modelUuid"              : "02560575-4223-11e7-9252-005056850d2e",
+						"modelInvariantUuid"     : "06bd0a18-65c0-4418-83c7-5b0d13cba0bb",
+						"modelVersion"           : "1.0",
+						"modelCustomizationUuid" : "06bd0a18-65c0-4418-83c7-5b0d13cba0bb"
+					},		"isBase"                 : true,
+					"vfModuleLabel"          : "label",
+					"initialCount"           : 0,
+					"hasVolumeGroup"           : false
+				},
+				{
+					"modelInfo"               : { 
+						"modelName"              : "NetworkFqdnTest5",
+						"modelUuid"              : "025607e4-4223-11e7-9252-005056850d2e",
+						"modelInvariantUuid"     : "06bd0a18-65c0-4418-83c7-5b0d14cba01a",
+						"modelVersion"           : "1.0",
+						"modelCustomizationUuid" : "06bd0a18-65c0-4418-83c7-5b0d14cba01a"
+					},		"isBase"                 : false,
+					"vfModuleLabel"          : "label",
+					"initialCount"           : 0,
+					"hasVolumeGroup"           : false
+				},
+				{
+					"modelInfo"               : { 
+						"modelName"              : "vSAMP10aDEV::PCM::module-2",
+						"modelUuid"              : "7774b4e4-7d37-11e7-bb31-be2e44b06b34",
+						"modelInvariantUuid"     : "93e9c1d2-7d37-11e7-bb31-be2e44b06b34",
+						"modelVersion"           : "2",
+						"modelCustomizationUuid" : "6728bee8-7d3a-11e7-bb31-be2e44b06b34"
+					},		"isBase"                 : false,
+					"vfModuleLabel"          : "PCM",
+					"initialCount"           : 0,
+					"hasVolumeGroup"           : true
+				},
+				{
+					"modelInfo"               : { 
+						"modelName"              : "vSAMP10aDEV::PCM::module-1",
+						"modelUuid"              : "066de97e-253e-11e7-93ae-92361f002671",
+						"modelInvariantUuid"     : "64efd51a-2544-11e7-93ae-92361f002671",
+						"modelVersion"           : "2",
+						"modelCustomizationUuid" : "b4ea86b4-253f-11e7-93ae-92361f002671"
+					},		"isBase"                 : false,
+					"vfModuleLabel"          : "PCM",
+					"initialCount"           : 0,
+					"hasVolumeGroup"           : true
+				},
+				{
+					"modelInfo"               : { 
+						"modelName"              : "vSAMP10aDEV::base::module-0",
+						"modelUuid"              : "20c4431c-246d-11e7-93ae-92361f002671",
+						"modelInvariantUuid"     : "78ca26d0-246d-11e7-93ae-92361f002671",
+						"modelVersion"           : "2",
+						"modelCustomizationUuid" : "cb82ffd8-252a-11e7-93ae-92361f002671"
+					},		"isBase"                 : true,
+					"vfModuleLabel"          : "base",
+					"initialCount"           : 1,
+					"hasVolumeGroup"           : true
+				},
+				{
+					"modelInfo"               : { 
+						"modelName"              : "vSAMP10a::base::module-0",
+						"modelUuid"              : "02560de2-4223-11e7-9252-005056850d2e",
+						"modelInvariantUuid"     : null,
+						"modelVersion"           : "2",
+						"modelCustomizationUuid" : "MIGRATED_36e76920-ef30-4793-9979-cbd7d4b2bfc4"
+					},		"isBase"                 : true,
+					"vfModuleLabel"          : "base",
+					"initialCount"           : 1,
+					"hasVolumeGroup"           : true
+				},
+				{
+					"modelInfo"               : { 
+						"modelName"              : "base::module-0",
+						"modelUuid"              : "02561381-4223-11e7-9252-005056850d2e",
+						"modelInvariantUuid"     : null,
+						"modelVersion"           : "1",
+						"modelCustomizationUuid" : "MIGRATED_51baae4c-b7c7-4f57-b77e-6e01acca89e5"
+					},		"isBase"                 : true,
+					"vfModuleLabel"          : "module-0",
+					"initialCount"           : 1,
+					"hasVolumeGroup"           : false
+				},
+				{
+					"modelInfo"               : { 
+						"modelName"              : "vSAMP10a::PCM::module-1",
+						"modelUuid"              : "02560f1b-4223-11e7-9252-005056850d2e",
+						"modelInvariantUuid"     : null,
+						"modelVersion"           : "1",
+						"modelCustomizationUuid" : "MIGRATED_e9be2ed7-45b6-479c-b06e-9093899f8ce8"
+					},		"isBase"                 : true,
+					"vfModuleLabel"          : "PCM",
+					"initialCount"           : 1,
+					"hasVolumeGroup"           : true
+				}
+			]
+		}
+	],
+	"serviceNetworks": [],
+	"serviceAllottedResources": [
+		{
+			"modelInfo"       : {
+				"modelName"              : "Tunnel_Xconn",
+				"modelUuid"              : "f6b7d4c6-e8a4-46e2-81bc-31cad5072842",
+				"modelInvariantUuid"     : "b7a1b78e-6b6b-4b36-9698-8c9530da14af",
+				"modelVersion"           : "1.0",
+				"modelCustomizationUuid" : "5b9bee43-f537-4fb3-9e8b-4de9f714d28a",
+				"modelInstanceName"      : "Pri_Tunnel_Xconn 9"
+			},
+			"toscaNodeType"              : null,
+			"allottedResourceType"              : null,
+			"allottedResourceRole"              : null,
+			"providingServiceModelInvariantUuid"              : null,
+			"nfFunction"              : null,
+			"nfType"              : null,
+			"nfRole"              : null,
+			"nfNamingCode"              : null
+		}
+	],
+	"serviceConfigs": [
+		{
+			"modelInfo"       : {
+				"modelName"              : "Mulder",
+				"modelUuid"              : "025606c1-4fff-11e7-9252-005056850d2e",
+				"modelInvariantUuid"     : "025606c1-4eee-11e7-9252-005056850d2e",
+				"modelVersion"           : "1.0",
+				"modelCustomizationUuid" : "025606c1-4ddd-11e7-9252-005056850d2e",
+				"modelInstanceName"      : "X_FILES_001"
+			},
+			"toscaNodeType"   : "Scully"
+		},
+		{
+			"modelInfo"       : {
+				"modelName"              : "Krychuk",
+				"modelUuid"              : "025606c1-5fff-11e7-9252-005056850d2e",
+				"modelInvariantUuid"     : "025606c1-5eee-11e7-9252-005056850d2e",
+				"modelVersion"           : "1.0",
+				"modelCustomizationUuid" : "025606c1-5ddd-11e7-9252-005056850d2e",
+				"modelInstanceName"      : "X_FILES_002"
+			},
+			"toscaNodeType"   : "Skinner"
+		}
+	]
+	}}
+

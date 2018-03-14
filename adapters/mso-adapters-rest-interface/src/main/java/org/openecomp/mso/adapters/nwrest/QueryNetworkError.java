@@ -25,10 +25,7 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.jboss.resteasy.annotations.providers.NoJackson;
-
 @XmlRootElement(name = "queryNetworkError")
-@NoJackson
 public class QueryNetworkError extends NetworkExceptionResponse implements Serializable {
 	private static final long serialVersionUID = -6125469596399867146L;
 }

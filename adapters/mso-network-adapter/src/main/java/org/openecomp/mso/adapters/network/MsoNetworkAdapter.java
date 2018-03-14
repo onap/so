@@ -36,6 +36,7 @@ import org.openecomp.mso.entity.MsoRequest;
 import org.openecomp.mso.openstack.beans.NetworkRollback;
 import org.openecomp.mso.openstack.beans.NetworkStatus;
 import org.openecomp.mso.openstack.beans.Subnet;
+import org.openecomp.mso.openstack.beans.RouteTarget;
 
 @WebService (name="NetworkAdapter", targetNamespace="http://org.openecomp.mso/network")
 public interface MsoNetworkAdapter
@@ -70,7 +71,7 @@ public interface MsoNetworkAdapter
 							@WebParam(name="networkType") @XmlElement(required=true) String networkType,
 							@WebParam(name="modelCustomizationUuid") String modelCustomizationUuid,
 							@WebParam(name="networkName") @XmlElement(required=true) String networkName,
-							@WebParam(name="routeTargets") List<String> routeTargets,
+							@WebParam(name="routeTargets") List<RouteTarget> routeTargets,
 							@WebParam(name="shared") String shared,
 							@WebParam(name="external") String external,
 							@WebParam(name="failIfExists") Boolean failIfExists,
@@ -112,7 +113,7 @@ public interface MsoNetworkAdapter
 							@WebParam(name="modelCustomizationUuid") String modelCustomizationUuid,
 							@WebParam(name="networkId") @XmlElement(required=true) String networkId,
 							@WebParam(name="networkName") @XmlElement(required=true) String networkName,
-							@WebParam(name="routeTargets") List<String> routeTargets,
+							@WebParam(name="routeTargets") List<RouteTarget> routeTargets,
 							@WebParam(name="shared") String shared,
 							@WebParam(name="external") String external,
 							@WebParam(name="subnets") List<Subnet> subnets,
@@ -192,7 +193,7 @@ public interface MsoNetworkAdapter
 							@WebParam(name="networkId", mode=Mode.OUT) Holder<String> networkId,
 							@WebParam(name="neutronNetworkId", mode=Mode.OUT) Holder<String> neutronNetworkId,
 							@WebParam(name="status", mode=Mode.OUT) Holder<NetworkStatus> status,
-							@WebParam(name="routeTargets", mode=Mode.OUT) Holder<List<String>> routeTargets,
+							@WebParam(name="routeTargets", mode=Mode.OUT) Holder<List<RouteTarget>> routeTargets,
 							@WebParam(name="subnetIdMap", mode=Mode.OUT) Holder<Map<String, String>> subnetIdMap)
 		throws NetworkException;
 

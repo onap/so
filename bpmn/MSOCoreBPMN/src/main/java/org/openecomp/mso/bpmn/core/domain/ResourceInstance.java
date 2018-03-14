@@ -25,25 +25,33 @@ import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
- * This class is used to store instance
- * data of Resources
+ * Use resourceId in resource class instead
  *
  * @author cb645j
  *
  */
 //@JsonIgnoreProperties
+//TODO update any existing references then remove this pointless class
+@Deprecated
 public class ResourceInstance  extends JsonWrapper implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	private String instanceId;
 	private String instanceName;
-	private HomingSolution homingSolution;
 
 
 	public String getInstanceId() {
 		return instanceId;
 	}
+
+	/**
+	 * This class and method is deprecated so use
+	 * resourceId field in resource class instead
+	 *
+	 * @author cb645j
+	 *
+	 */
 	public void setInstanceId(String instanceId) {
 		this.instanceId = instanceId;
 	}
@@ -53,10 +61,5 @@ public class ResourceInstance  extends JsonWrapper implements Serializable {
 	public void setInstanceName(String instanceName) {
 		this.instanceName = instanceName;
 	}
-	public HomingSolution getHomingSolution() {
-		return homingSolution;
-	}
-	public void setHomingSolution(HomingSolution homingSolution) {
-		this.homingSolution = homingSolution;
-	}
+
 }

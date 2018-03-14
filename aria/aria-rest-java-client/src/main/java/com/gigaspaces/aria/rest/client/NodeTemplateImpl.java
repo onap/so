@@ -17,7 +17,7 @@
 */
 package com.gigaspaces.aria.rest.client;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Created by DeWayne on 7/18/2017.

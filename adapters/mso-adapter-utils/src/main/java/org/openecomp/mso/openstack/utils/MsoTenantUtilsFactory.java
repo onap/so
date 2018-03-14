@@ -20,28 +20,30 @@
 
 package org.openecomp.mso.openstack.utils;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.openecomp.mso.cloud.CloudConfig;
 import org.openecomp.mso.cloud.CloudConfigFactory;
 import org.openecomp.mso.cloud.CloudIdentity;
 import org.openecomp.mso.cloud.CloudSite;
-
-import java.lang.reflect.InvocationTargetException;
+import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.openstack.exceptions.MsoCloudSiteNotFound;
 
 
 public class MsoTenantUtilsFactory {
 
-	private CloudConfigFactory cloudConfigFactory= new CloudConfigFactory();
+	private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
+	private CloudConfigFactory cloudConfigFactory= new CloudConfigFactory(); 
 	private CloudConfig cloudConfig;
 	private String msoPropID;
-
+	
 	public MsoTenantUtilsFactory (String msoPropID) {
 		this.msoPropID = msoPropID;
 	}
 
 	//based on Cloud IdentityServerType returns ORM or KEYSTONE Utils
 	public MsoTenantUtils getTenantUtils(String cloudSiteId) throws MsoCloudSiteNotFound {
-		// Obtain the cloud site information
+		// Obtain the cloud site information 
 		cloudConfig = cloudConfigFactory.getCloudConfig();
 		CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
 				() -> new MsoCloudSiteNotFound(cloudSiteId));
@@ -50,7 +52,7 @@ public class MsoTenantUtilsFactory {
 
 	public MsoTenantUtils getTenantUtilsByServerType(String serverType) {
 
-		MsoTenantUtils tenantU;
+		MsoTenantUtils tenantU = null;
 		if (CloudIdentity.IdentityServerType.KEYSTONE.toString().equals(serverType)) {
 			tenantU = new MsoKeystoneUtils (msoPropID);
 		} else {

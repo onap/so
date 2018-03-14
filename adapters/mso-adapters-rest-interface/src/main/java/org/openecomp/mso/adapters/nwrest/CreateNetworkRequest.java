@@ -22,37 +22,26 @@ package org.openecomp.mso.adapters.nwrest;
 
 
 
-import org.openecomp.mso.openstack.beans.Subnet;
-import org.openecomp.mso.entity.MsoRequest;
-
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.jboss.resteasy.annotations.providers.NoJackson;
+import org.openecomp.mso.entity.MsoRequest;
+import org.openecomp.mso.openstack.beans.Subnet;
 
-import org.codehaus.jackson.map.annotate.JsonRootName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRootName;
+
 
 /* README
-* 1) Used JAXB/Jettison - see @NoJackson annotation on class to get RootElements REad by RestEasy
-* 2) due to 1) Maps need to use this format
-
-"networkParams": {"entry": [
-                         	{"key": "network_id",
-                         	"value": "59ed7b41-2983-413f-ba93-e7d437433916"},
-                         	{"key": "subnet_id",
-                         	"value": "086c9298-5c57-49b7-bb2b-6fd5730c5d92"},
-                         	{"key": "server_name_0",
-                         	"value": "RaaNetwork1"}
-                         	]},
- * 3) to output json see toJSonString method below which required the @JsonRootName annotation and the WRAP_ROOT feature enabled
- * 4) Tryong to work with RESTEASY JACKSON and JAXB/JETTISON to conform to Json input/output specs
+ Map<String, String> elements when marshalled to XML produce a list of <entry><key>${key}</key><value>${value}</value></entry> elements.
+ When marshalling to JSON they create a list of "${key}" : "${value}" pairs with no extra wrappers.
 */
 @JsonRootName("createNetworkRequest")
 @XmlRootElement(name = "createNetworkRequest")
-@NoJackson
 public class CreateNetworkRequest extends NetworkRequestCommon {
 	private String cloudSiteId;
 	private String tenantId;
@@ -69,6 +58,8 @@ public class CreateNetworkRequest extends NetworkRequestCommon {
 	private Boolean backout = true;
 	private Map<String,String> networkParams = new HashMap<>();
 	private MsoRequest msoRequest = new MsoRequest();
+	@JsonProperty
+	private boolean contrailRequest;
 
 	public CreateNetworkRequest() {
 		super();
@@ -196,5 +187,10 @@ public class CreateNetworkRequest extends NetworkRequestCommon {
 
 	public boolean isContrailRequest() {
 		return (networkTechnology == NetworkTechnology.CONTRAIL) && (contrailNetwork != null);
+	}
+	
+	@JsonIgnore
+	public void setContrailRequest(boolean contrailRequest) {
+		this.contrailRequest = contrailRequest;
 	}
 }

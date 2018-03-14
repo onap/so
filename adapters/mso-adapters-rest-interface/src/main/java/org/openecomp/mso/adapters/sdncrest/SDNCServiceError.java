@@ -19,12 +19,13 @@
  */
 package org.openecomp.mso.adapters.sdncrest;
 
-import org.codehaus.jackson.map.annotate.JsonRootName;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.jboss.resteasy.annotations.providers.NoJackson;
+import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonRootName;
 
 // NOTE: the JAXB (XML) annotations are required with JBoss AS7 and RESTEasy,
 //       even though we are using JSON exclusively.  The @NoJackson annotation
@@ -34,9 +35,8 @@ import java.io.Serializable;
  * SDNC adapter error response for "agnostic" API services.
  */
 @JsonRootName("SDNCServiceError")
-@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(Include.NON_NULL)
 @XmlRootElement(name = "SDNCServiceError")
-@NoJackson
 public class SDNCServiceError extends SDNCErrorCommon implements Serializable {
 	private static final long serialVersionUID = 1;
 

@@ -20,11 +20,11 @@
 
 package org.openecomp.mso.apihandler.camundabeans;
 
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.map.annotate.JsonRootName;
-import org.codehaus.jackson.annotate.JsonPropertyOrder;
-
 import org.openecomp.mso.apihandler.common.CommonConstants;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonRootName;
 
 /**
  * JavaBean JSON class for a "bpmnRequest" which contains the JSON payload that

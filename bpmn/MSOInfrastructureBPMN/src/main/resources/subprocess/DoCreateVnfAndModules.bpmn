@@ -39,6 +39,7 @@ doCreateVnfAndModules.preProcessRequest(execution)]]></bpmn:script>
         <camunda:in source="lcpCloudRegionId" target="lcpCloudRegionId" />
         <camunda:in source="tenantId" target="tenantId" />
         <camunda:in source="false" target="usePreload" />
+        <camunda:in source="aLaCarte" target="aLaCarte" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1hf7k7q</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1ixcnb6</bpmn:outgoing>
@@ -73,6 +74,7 @@ doCreateVnfAndModules.preProcessRequest(execution)]]></bpmn:script>
         <camunda:in source="lcpCloudRegionId" target="lcpCloudRegionId" />
         <camunda:in source="tenantId" target="tenantId" />
         <camunda:in source="false" target="usePreload" />
+        <camunda:in source="aLaCarte" target="aLaCarte" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1lh21yl</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1llbx0k</bpmn:outgoing>

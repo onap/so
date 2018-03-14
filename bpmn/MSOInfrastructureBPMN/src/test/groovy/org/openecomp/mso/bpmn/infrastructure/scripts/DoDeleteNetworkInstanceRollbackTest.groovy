@@ -8,7 +8,7 @@ import org.camunda.bpm.engine.RepositoryService
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.camunda.bpm.engine.impl.pvm.process.ProcessDefinitionImpl
 import org.camunda.bpm.engine.repository.ProcessDefinition
-import org.camunda.bpm.engine.runtime.Execution;
+import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.mockito.MockitoAnnotations
 import org.mockito.runners.MockitoJUnitRunner
 import org.mockito.internal.debugging.MockitoDebuggerImpl
@@ -89,13 +89,13 @@ class DoDeleteNetworkInstanceRollbackTest  {
       <network-information>
          <network-id>8abc633a-810b-4ca5-8b3a-09511d13a2ce</network-id>
          <network-type>CONTRAIL_EXTERNAL</network-type>
-         <onap-model-information>
+         <ecomp-model-information>
             <model-invariant-uuid>invariant-uuid</model-invariant-uuid>
             <model-customization-uuid>customization-uuid</model-customization-uuid>
             <model-uuid>uuid</model-uuid>
             <model-version>version</model-version>
             <model-name>CONTRAIL_EXTERNAL</model-name>
-         </onap-model-information>
+         </ecomp-model-information>
       </network-information>
       <network-request-information>
          <network-id>8abc633a-810b-4ca5-8b3a-09511d13a2ce</network-id>
@@ -136,13 +136,13 @@ class DoDeleteNetworkInstanceRollbackTest  {
       <network-information>
          <network-id>8abc633a-810b-4ca5-8b3a-09511d13a2ce</network-id>
          <network-type>CONTRAIL_EXTERNAL</network-type>
-         <onap-model-information>
+         <ecomp-model-information>
             <model-invariant-uuid>invariant-uuid</model-invariant-uuid>
             <model-customization-uuid>customization-uuid</model-customization-uuid>
             <model-uuid>uuid</model-uuid>
             <model-version>version</model-version>
             <model-name>CONTRAIL_EXTERNAL</model-name>
-         </onap-model-information>
+         </ecomp-model-information>
       </network-information>
       <network-request-information>
          <network-id>8abc633a-810b-4ca5-8b3a-09511d13a2ce</network-id>
@@ -164,7 +164,7 @@ class DoDeleteNetworkInstanceRollbackTest  {
 			
 		}
 		
-		public void initializeVariables (Execution mockExecution) {
+		public void initializeVariables (DelegateExecution mockExecution) {
 
 			verify(mockExecution).setVariable(Prefix + "WorkflowException", null)
 		
@@ -209,7 +209,7 @@ class DoDeleteNetworkInstanceRollbackTest  {
 			when(mockExecution.getVariable("URN_mso_adapters_sdnc_resource_endpoint")).thenReturn("http://localhost:8090/SDNCAdapterRpc")
 			
 			
-			// preProcessRequest(Execution execution)						
+			// preProcessRequest(DelegateExecution execution)						
 			DoDeleteNetworkInstanceRollback DoDeleteNetworkInstanceRollback = new DoDeleteNetworkInstanceRollback()
 			DoDeleteNetworkInstanceRollback.preProcessRequest(mockExecution)
 

@@ -26,16 +26,13 @@ import java.util.Map;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
-import org.jboss.resteasy.annotations.providers.NoJackson;
-
 import org.openecomp.mso.logger.MsoLogger;
-
 import org.openecomp.mso.openstack.beans.VnfStatus;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
 @XmlRootElement(name = "queryVolumeGroupResponse")
-@NoJackson
 public class QueryVolumeGroupResponse {
 	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
 	private String volumeGroupId;
@@ -95,7 +92,7 @@ public class QueryVolumeGroupResponse {
 		String jsonString = null;
 		try {
 			ObjectMapper mapper = new ObjectMapper();
-			mapper.enable(SerializationConfig.Feature.WRAP_ROOT_VALUE);
+			mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
 			jsonString = mapper.writeValueAsString(this);
 		}
 		catch (Exception e) {

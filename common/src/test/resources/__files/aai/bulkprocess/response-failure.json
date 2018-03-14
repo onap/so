@@ -1,0 +1,32 @@
+{
+	"transaction": [
+		{
+			"put": [
+				{
+					"body": {
+						"401": "{\"requestError\": {\"serviceException\": {\"messageId\": \"SVC3003\",\"text\": \"another error message\",\"variables\": []}}}"
+					}
+				},
+				{
+					"body": {
+						"200": "test2"
+					}
+				}
+			]
+		},
+		{
+			"put": [
+				{
+					"body": {
+						"400": "{\"requestError\": {\"serviceException\": {\"messageId\": \"SVC3003\",\"text\": \"my great error\",\"variables\": []}}}"
+					}
+				},
+				{
+					"body": {
+						"200": "test4"
+					}
+				}
+			]
+		}
+	]
+}

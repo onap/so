@@ -1,0 +1,26 @@
+{
+	"body": {
+		"input": {
+			"request-hd-custom": {
+				"request-client-name": "MSO",
+				"request-user-id": "test-user",
+				"request-id": "test-request-id",
+				"health-diagnostic-code": "VROUTER000004",
+				"operation-type": "lport_mirroring_check",
+				"aai-param-list": [
+					{
+						"key": "configuration-id",
+						"value": "test-configuration-id"
+					},
+					{
+						"key": "interface-id",
+						"value": "test-interface-id"
+					}
+				]
+			}
+		}
+	},
+	"operation": "health-diagnostic-custom",
+	"nodeLoc": "test-clli",
+	"nodeType": "VROUTER"
+}

@@ -33,47 +33,41 @@ public class MsoHeatEnvironmentEntryTest {
             + PARAMETER_NAME + ": " + VALUE_NAME + "}";
     private static final String RAW_ENTRY_WITH_RESOURCE_REGISTRY = "resource_registry: resourceTest";
     private static final String RAW_ENTRY_INVALID = "invalidRawEntry";
-    private static final String WHITESPACE = " ";
 
     @Test
     public void createObjectWithNullStringBuilder() {
-        MsoHeatEnvironmentEntry testedObject = MsoHeatEnvironmentEntry.create(null);
+        MsoHeatEnvironmentEntry testedObject = new MsoHeatEnvironmentEntry(null);
+        assertThat(testedObject.isValid()).isTrue();
         assertThat(testedObject.getRawEntry()).isNull();
         assertThat(testedObject.containsParameter(PARAMETER_NAME)).isFalse();
-        assertThat(testedObject.isValid()).isTrue();
     }
 
     @Test
     public void toFullString_ResourceRegistryNotPresentInRawEntry() {
-        MsoHeatEnvironmentEntry testedObject = MsoHeatEnvironmentEntry.create(RAW_ENTRY_WITH_NO_RESOURCE_REGISTRY);
-        assertThat(testedObject.getRawEntry()).isEqualTo(RAW_ENTRY_WITH_NO_RESOURCE_REGISTRY);
+        StringBuilder sb = new StringBuilder(RAW_ENTRY_WITH_NO_RESOURCE_REGISTRY);
+        MsoHeatEnvironmentEntry testedObject = new MsoHeatEnvironmentEntry(sb);
+        assertThat(testedObject.getRawEntry()).isEqualTo(sb);
         assertThat(testedObject.isValid()).isTrue();
         assertThat(testedObject.containsParameter(PARAMETER_NAME)).isTrue();
-        assertThat(testedObject.toString()).contains(PARAMETER_NAME).contains(VALUE_NAME);
-    }
-
-    @Test
-    public void toFullString_ResourceRegistryPresentInRawEntry() {
-        MsoHeatEnvironmentEntry testedObject = MsoHeatEnvironmentEntry.create(RAW_ENTRY_WITH_RESOURCE_REGISTRY);
-        assertThat(testedObject.getRawEntry()).isEqualTo(RAW_ENTRY_WITH_RESOURCE_REGISTRY);
-        assertThat(testedObject.containsParameter(PARAMETER_NAME)).isFalse();
-        assertThat(testedObject.isValid()).isTrue();
-        assertThat(testedObject.toString()).contains(RAW_ENTRY_WITH_RESOURCE_REGISTRY);
+        assertThat(testedObject.toString()).doesNotContain(RAW_ENTRY_WITH_RESOURCE_REGISTRY);
     }
 
     @Test
     public void toFullString_ExceptionOccurred() {
-        MsoHeatEnvironmentEntry testedObject = MsoHeatEnvironmentEntry.create(RAW_ENTRY_INVALID);
-        assertThat(testedObject.getRawEntry()).isEqualTo(RAW_ENTRY_INVALID);
+    	StringBuilder sb = new StringBuilder(RAW_ENTRY_INVALID);
+        MsoHeatEnvironmentEntry testedObject = new MsoHeatEnvironmentEntry(sb);
+        assertThat(testedObject.getRawEntry()).isEqualTo(sb);
         assertThat(testedObject.isValid()).isFalse();
         assertThat(testedObject.getErrorString()).isNotNull().isNotEmpty();
     }
 
     @Test
     public void checkIfContainsTheParameter() {
-        MsoHeatEnvironmentEntry testedObject = MsoHeatEnvironmentEntry.create(RAW_ENTRY_WITH_NO_RESOURCE_REGISTRY);
+        StringBuilder sb = new StringBuilder(RAW_ENTRY_WITH_NO_RESOURCE_REGISTRY);
+        MsoHeatEnvironmentEntry testedObject = new MsoHeatEnvironmentEntry(sb);
+        assertThat(testedObject.getRawEntry()).isEqualTo(sb);
+        assertThat(testedObject.isValid()).isTrue();
         assertThat(testedObject.containsParameter(PARAMETER_NAME)).isTrue();
         assertThat(testedObject.containsParameter(NOT_EXISTING_PARAM)).isFalse();
     }
-
 }

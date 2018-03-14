@@ -4,7 +4,7 @@ import org.camunda.bpm.engine.ProcessEngineServices
 import org.camunda.bpm.engine.RepositoryService
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.camunda.bpm.engine.repository.ProcessDefinition
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -120,7 +120,7 @@ String jsonIncomingRequest =
 			
 		}
 
-		public void initializeVariables(Execution mockExecution) {
+		public void initializeVariables(DelegateExecution mockExecution) {
 			
 			verify(mockExecution).setVariable(Prefix + "Success", false)
 			
@@ -141,7 +141,7 @@ String jsonIncomingRequest =
 			when(mockExecution.getVariable("bpmnRequest")).thenReturn(jsonIncomingRequest)
 			
 									
-			// preProcessRequest(Execution execution)						
+			// preProcessRequest(DelegateExecution execution)						
 			CreateNetworkInstance CreateNetworkInstance = new CreateNetworkInstance()
 			CreateNetworkInstance.preProcessRequest(mockExecution)
 
@@ -164,7 +164,7 @@ String jsonIncomingRequest =
 			// Initialize prerequisite variables
 			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
 									
-			// preProcessRequest(Execution execution)
+			// preProcessRequest(DelegateExecution execution)
 			CreateNetworkInstance CreateNetworkInstance = new CreateNetworkInstance()
 			CreateNetworkInstance.getNetworkModelInfo(mockExecution)
 
@@ -185,7 +185,7 @@ String jsonIncomingRequest =
 			when(mockExecution.getVariable("mso-request-id")).thenReturn("e8ebf6a0-f8ea-4dc0-8b99-fe98a87722d6")
 			when(mockExecution.getVariable("serviceInstanceId")).thenReturn("f70e927b-6087-4974-9ef8-c5e4d5847ca4")
 			
-			// preProcessRequest(Execution execution)
+			// preProcessRequest(DelegateExecution execution)
 			CreateNetworkInstance CreateNetworkInstance = new CreateNetworkInstance()
 			CreateNetworkInstance.sendSyncResponse(mockExecution)
 
@@ -233,7 +233,7 @@ String jsonIncomingRequest =
 			when(mockExecution.getVariable("URN_mso_adapters_db_auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
 			when(mockExecution.getVariable("URN_mso_msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 
-			// preProcessRequest(Execution execution)
+			// preProcessRequest(DelegateExecution execution)
 			CreateNetworkInstance CreateNetworkInstance = new CreateNetworkInstance()
 			CreateNetworkInstance.prepareDBRequestError(mockExecution)
 			
@@ -254,7 +254,7 @@ String jsonIncomingRequest =
 			when(mockExecution.getVariable("mso-request-id")).thenReturn("88f65519-9a38-4c4b-8445-9eb4a5a5af56")
 			when(mockExecution.getVariable(Prefix + "dbReturnCode")).thenReturn("200")
 			
-			// postProcessResponse(Execution execution)
+			// postProcessResponse(DelegateExecution execution)
 			CreateNetworkInstance CreateNetworkInstance = new CreateNetworkInstance()
 			CreateNetworkInstance.prepareCompletion(mockExecution)
 
@@ -284,7 +284,7 @@ String jsonIncomingRequest =
 			//when(mockExecution.getVariable("WorkflowException")).thenReturn(sndcWorkflowException)
 			when(mockExecution.getVariable("WorkflowException")).thenReturn(sndcWorkflowException)
 			
-			// buildErrorResponse(Execution execution)
+			// buildErrorResponse(DelegateExecution execution)
 			CreateNetworkInstance CreateNetworkInstance = new CreateNetworkInstance()
 			CreateNetworkInstance.buildErrorResponse(mockExecution)
 			
@@ -305,7 +305,7 @@ String jsonIncomingRequest =
 			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
 			when(mockExecution.getVariable("CMSO_ResponseCode")).thenReturn("200")
 			
-			// postProcessResponse(Execution execution)						
+			// postProcessResponse(DelegateExecution execution)						
 			CreateNetworkInstance CreateNetworkInstance = new CreateNetworkInstance()
 			CreateNetworkInstance.postProcessResponse(mockExecution)
 
@@ -325,7 +325,7 @@ String jsonIncomingRequest =
 			// Initialize prerequisite variables
 			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
 									
-			// preProcessRequest(Execution execution)
+			// preProcessRequest(DelegateExecution execution)
 			CreateNetworkInstance CreateNetworkInstance = new CreateNetworkInstance()
 			CreateNetworkInstance.processRollbackData(mockExecution)
 

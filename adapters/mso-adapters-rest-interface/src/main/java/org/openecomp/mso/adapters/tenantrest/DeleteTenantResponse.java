@@ -23,10 +23,8 @@ package org.openecomp.mso.adapters.tenantrest;
 
 
 import javax.xml.bind.annotation.XmlRootElement;
-import org.jboss.resteasy.annotations.providers.NoJackson;
 
 @XmlRootElement(name = "deleteTenantResponse")
-@NoJackson
 public class DeleteTenantResponse {
 
 	private Boolean tenantDeleted;

@@ -34,10 +34,10 @@ dcsi.instantiateNetworkService(execution)]]></bpmn:script>
       <bpmn:outgoing>createNSFailed_SequenceFlow</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="createNSSuccess_SequenceFlow" name="yes" sourceRef="ExclusiveGateway_0zfksms" targetRef="instantiate_NSTask">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[#{(execution.getVariable("nsInstanceId" )  != null && execution.getVariable("nsInstanceId" )  != "" )}]]></bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[#{(execution.getVariable("nsInstanceName" )  != null && execution.getVariable("nsInstanceName" )  != "" )}]]></bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="createNSFailed_SequenceFlow" name="no" sourceRef="ExclusiveGateway_0zfksms" targetRef="createNSFailed_EndEvent">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[#{(execution.getVariable("nsInstanceId" )  == null || execution.getVariable("nsInstanceId" )  == "" )}]]></bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[#{(execution.getVariable("nsInstanceName" )  == null || execution.getVariable("nsInstanceName" )  == "" )}]]></bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:exclusiveGateway id="ExclusiveGateway_1is7zys" name="Instantiate NS Success?">
       <bpmn:incoming>SequenceFlow_1ywe21t</bpmn:incoming>
@@ -80,7 +80,7 @@ dcsi.instantiateNetworkService(execution)]]></bpmn:script>
 def dcsi = new CreateVFCNSResource()
 dcsi.queryNSProgress(execution)]]></bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:scriptTask id="finishNSCreate_Task" name="Add NS RelationShip" scriptFormat="groovy">
+    <bpmn:scriptTask id="finishNSCreate_Task" name="Finish NS Create">
       <bpmn:incoming>operationFinished_SequenceFlow</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0cq2q6g</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*

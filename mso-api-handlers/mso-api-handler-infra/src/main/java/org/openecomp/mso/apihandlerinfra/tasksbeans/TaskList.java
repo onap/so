@@ -20,10 +20,9 @@
 
 package org.openecomp.mso.apihandlerinfra.tasksbeans;
 
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
-
 import org.json.JSONArray;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_DEFAULT)
 public class TaskList {    

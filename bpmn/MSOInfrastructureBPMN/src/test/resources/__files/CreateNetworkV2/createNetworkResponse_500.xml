@@ -2,77 +2,79 @@
 	<head>
 		<title>JBoss Web/7.2.2.Final-redhat-1 - JBWEB000064: Error report
 		</title>
-		<style><!--H1 {font-family:Tahoma,Arial,sans-serif;color:white;background-color:#525D76;font-size:22px;}
-				H2 {font-family:Tahoma,Arial,sans-serif;color:white;background-color:#525D76;font-size:16px;}
-				H3 {font-family:Tahoma,Arial,sans-serif;color:white;background-color:#525D76;font-size:14px;}
-				BODY {font-family:Tahoma,Arial,sans-serif;color:black;background-color:white;}
-				B {font-family:Tahoma,Arial,sans-serif;color:white;background-color:#525D76;}
-				P {font-family:Tahoma,Arial,sans-serif;background:white;color:black;font-size:12px;}A
+		<style><!--H1 {font-family:Tahoma,Arial,sans-serif;color:white;background-color:#525D76;font-size:22px;} 
+				H2 {font-family:Tahoma,Arial,sans-serif;color:white;background-color:#525D76;font-size:16px;} 
+				H3 {font-family:Tahoma,Arial,sans-serif;color:white;background-color:#525D76;font-size:14px;} 
+				BODY {font-family:Tahoma,Arial,sans-serif;color:black;background-color:white;} 
+				B {font-family:Tahoma,Arial,sans-serif;color:white;background-color:#525D76;} 
+				P {font-family:Tahoma,Arial,sans-serif;background:white;color:black;font-size:12px;}A 
 				{color : black;}A.name {color : black;}HR {color : #525D76;} -->
 		</style>
 	</head>
 	<body>
 		<h1>JBWEB000065: HTTP Status 500 - java.lang.NullPointerException</h1>
-		<HR size="1" noshade="noshade">
-			<p>
-				<b>JBWEB000309: type</b>
-				JBWEB000066: Exception report
-			</p>
-			<p>
-				<b>JBWEB000068: message</b>
-				<u>java.lang.NullPointerException</u>
-			</p>
-			<p>
-				<b>JBWEB000069: description</b>
-				<u>JBWEB000145: The server encountered an internal error that
-					prevented it from fulfilling this request.</u>
-			</p>
-			<p>
-				<b>JBWEB000070: exception</b>
-				<pre>org.jboss.resteasy.spi.UnhandledException:
-					java.lang.NullPointerException
-					org.jboss.resteasy.core.SynchronousDispatcher.handleApplicationException(SynchronousDispatcher.java:365)
-					org.jboss.resteasy.core.SynchronousDispatcher.handleException(SynchronousDispatcher.java:233)
-					org.jboss.resteasy.core.SynchronousDispatcher.handleInvokerException(SynchronousDispatcher.java:209)
-					org.jboss.resteasy.core.SynchronousDispatcher.getResponse(SynchronousDispatcher.java:557)
-					org.jboss.resteasy.core.SynchronousDispatcher.invoke(SynchronousDispatcher.java:524)
-					org.jboss.resteasy.core.SynchronousDispatcher.invoke(SynchronousDispatcher.java:126)
-					org.jboss.resteasy.plugins.server.servlet.ServletContainerDispatcher.service(ServletContainerDispatcher.java:208)
-					org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher.service(HttpServletDispatcher.java:55)
-					org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher.service(HttpServletDispatcher.java:50)
-					javax.servlet.http.HttpServlet.service(HttpServlet.java:847)
-					org.openecomp.mso.logger.LogFilter.doFilter(LogFilter.java:35)
-				</pre>
-			</p>
-			<p>
-				<b>JBWEB000071: root cause</b>
-				<pre>java.lang.NullPointerException
-					org.openecomp.mso.adapters.network.NetworkAdapterRest$CreateNetworkVolumesTask.run(NetworkAdapterRest.java:128)
-					org.openecomp.mso.adapters.network.NetworkAdapterRest.createNetwork(NetworkAdapterRest.java:64)
-					sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-					sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
-					sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-					java.lang.reflect.Method.invoke(Method.java:606)
-					org.jboss.resteasy.core.MethodInjectorImpl.invoke(MethodInjectorImpl.java:167)
-					org.jboss.resteasy.core.ResourceMethod.invokeOnTarget(ResourceMethod.java:269)
-					org.jboss.resteasy.core.ResourceMethod.invoke(ResourceMethod.java:227)
-					org.jboss.resteasy.core.ResourceMethod.invoke(ResourceMethod.java:216)
-					org.jboss.resteasy.core.SynchronousDispatcher.getResponse(SynchronousDispatcher.java:542)
-					org.jboss.resteasy.core.SynchronousDispatcher.invoke(SynchronousDispatcher.java:524)
-					org.jboss.resteasy.core.SynchronousDispatcher.invoke(SynchronousDispatcher.java:126)
-					org.jboss.resteasy.plugins.server.servlet.ServletContainerDispatcher.service(ServletContainerDispatcher.java:208)
-					org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher.service(HttpServletDispatcher.java:55)
-					org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher.service(HttpServletDispatcher.java:50)
-					javax.servlet.http.HttpServlet.service(HttpServlet.java:847)
-					org.openecomp.mso.logger.LogFilter.doFilter(LogFilter.java:35)
-				</pre>
-			</p>
-			<p>
-				<b>JBWEB000072: note</b>
-				<u>JBWEB000073: The full stack trace of the root cause is available
-					in the JBoss Web/7.2.2.Final-redhat-1 logs.</u>
-			</p>
-			<HR size="1" noshade="noshade">
-				<h3>JBoss Web/7.2.2.Final-redhat-1</h3>
+		<HR size="1" noshade="noshade" />
+		<p>
+			<b>JBWEB000309: type</b>
+			JBWEB000066: Exception report
+		</p>
+		<p>
+			<b>JBWEB000068: message</b>
+			<u>java.lang.NullPointerException</u>
+		</p>
+		<p>
+			<b>JBWEB000069: description</b>
+			<u>JBWEB000145: The server encountered an internal error that
+				prevented it from fulfilling this request.
+			</u>
+		</p>
+		<p>
+			<b>JBWEB000070: exception</b>
+			<pre>org.jboss.resteasy.spi.UnhandledException:
+				java.lang.NullPointerException
+				org.jboss.resteasy.core.SynchronousDispatcher.handleApplicationException(SynchronousDispatcher.java:365)
+				org.jboss.resteasy.core.SynchronousDispatcher.handleException(SynchronousDispatcher.java:233)
+				org.jboss.resteasy.core.SynchronousDispatcher.handleInvokerException(SynchronousDispatcher.java:209)
+				org.jboss.resteasy.core.SynchronousDispatcher.getResponse(SynchronousDispatcher.java:557)
+				org.jboss.resteasy.core.SynchronousDispatcher.invoke(SynchronousDispatcher.java:524)
+				org.jboss.resteasy.core.SynchronousDispatcher.invoke(SynchronousDispatcher.java:126)
+				org.jboss.resteasy.plugins.server.servlet.ServletContainerDispatcher.service(ServletContainerDispatcher.java:208)
+				org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher.service(HttpServletDispatcher.java:55)
+				org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher.service(HttpServletDispatcher.java:50)
+				javax.servlet.http.HttpServlet.service(HttpServlet.java:847)
+				org.openecomp.mso.logger.LogFilter.doFilter(LogFilter.java:35)
+			</pre>
+		</p>
+		<p>
+			<b>JBWEB000071: root cause</b>
+			<pre>java.lang.NullPointerException
+				org.openecomp.mso.adapters.network.NetworkAdapterRest$CreateNetworkVolumesTask.run(NetworkAdapterRest.java:128)
+				org.openecomp.mso.adapters.network.NetworkAdapterRest.createNetwork(NetworkAdapterRest.java:64)
+				sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+				sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+				sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+				java.lang.reflect.Method.invoke(Method.java:606)
+				org.jboss.resteasy.core.MethodInjectorImpl.invoke(MethodInjectorImpl.java:167)
+				org.jboss.resteasy.core.ResourceMethod.invokeOnTarget(ResourceMethod.java:269)
+				org.jboss.resteasy.core.ResourceMethod.invoke(ResourceMethod.java:227)
+				org.jboss.resteasy.core.ResourceMethod.invoke(ResourceMethod.java:216)
+				org.jboss.resteasy.core.SynchronousDispatcher.getResponse(SynchronousDispatcher.java:542)
+				org.jboss.resteasy.core.SynchronousDispatcher.invoke(SynchronousDispatcher.java:524)
+				org.jboss.resteasy.core.SynchronousDispatcher.invoke(SynchronousDispatcher.java:126)
+				org.jboss.resteasy.plugins.server.servlet.ServletContainerDispatcher.service(ServletContainerDispatcher.java:208)
+				org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher.service(HttpServletDispatcher.java:55)
+				org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher.service(HttpServletDispatcher.java:50)
+				javax.servlet.http.HttpServlet.service(HttpServlet.java:847)
+				org.openecomp.mso.logger.LogFilter.doFilter(LogFilter.java:35)
+			</pre>
+		</p>
+		<p>
+			<b>JBWEB000072: note</b>
+			<u>JBWEB000073: The full stack trace of the root cause is available
+				in the JBoss Web/7.2.2.Final-redhat-1 logs.
+			</u>
+		</p>
+		<HR size="1" noshade="noshade" />
+		<h3>JBoss Web/7.2.2.Final-redhat-1</h3>
 	</body>
 </html>

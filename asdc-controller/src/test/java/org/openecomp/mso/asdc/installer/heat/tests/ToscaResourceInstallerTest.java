@@ -73,8 +73,11 @@ import org.openecomp.sdc.api.results.IDistributionClientResult;
 import org.openecomp.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.openecomp.sdc.tosca.parser.impl.FilterType;
 import org.openecomp.sdc.tosca.parser.impl.SdcTypes;
+import org.openecomp.sdc.toscaparser.api.CapabilityAssignment;
+import org.openecomp.sdc.toscaparser.api.CapabilityAssignments;
 import org.openecomp.sdc.toscaparser.api.Group;
 import org.openecomp.sdc.toscaparser.api.NodeTemplate;
+import org.openecomp.sdc.toscaparser.api.RequirementAssignments;
 import org.openecomp.sdc.toscaparser.api.elements.Metadata;
 import org.openecomp.sdc.toscaparser.api.parameters.Input;
 import org.openecomp.sdc.utils.DistributionActionResultEnum;
@@ -326,6 +329,73 @@ public class ToscaResourceInstallerTest {
 		trs.setSdcCsarHelper(new ISdcCsarHelper() {
 
 			@Override
+			public List<NodeTemplate> getGroupMembersFromTopologyTemplate(String arg0) {
+			    return null;
+			}
+
+			@Override
+			public List<Map<String, Object>> getGroupsOfOriginOfNodeTemplate(NodeTemplate arg0) {
+			    return null;
+			}
+
+			@Override
+			public List<Map<String,Map<String,Object>>> getGroupsOfTopologyTemplateByToscaGroupType(String arg0) {
+			    return null;
+			}
+
+			@Override
+			public List<Map<String,Map<String,Object>>> getGroupsOfTopologyTemplate() {
+			    return null;
+			}
+
+			@Override
+			public List<Map<String,Map<String,Object>>> getPoliciesOfTargetByToscaPolicyType(NodeTemplate arg0, String arg1) {
+			    return null;
+			}
+
+			@Override
+			public List<Map<String,Map<String,Object>>> getPoliciesOfTarget(NodeTemplate arg0) {
+			    return null;
+			}
+
+			@Override
+			public NodeTemplate getNodeTemplateByName(String arg0) {
+			    return null;
+			}
+
+			@Override
+			public List<Map<String,Object>> getPolicyTargetsFromOrigin(NodeTemplate arg0, String arg1) {
+			    return null;
+			}
+
+			@Override
+			public List<NodeTemplate> getPolicyTargetsFromTopologyTemplate(String arg0) {
+			    return null;
+			}
+
+			@Override
+			public List<Map<String,Object>> getPoliciesOfOriginOfNodeTemplateByToscaPolicyType(NodeTemplate arg0, String arg1) {
+			    return null;
+			}
+
+			@Override
+			public List<Map<String,Object>> getPoliciesOfOriginOfNodeTemplate(NodeTemplate arg0) {
+			    return null;
+			}
+
+			@Override
+			public List<Map<String,Map<String,Object>>>  getPoliciesOfTopologyTemplateByToscaPolicyType(String arg0) {
+			    return null;
+			}
+
+			@Override
+			public List<Map<String,Map<String,Object>>> getPoliciesOfTopologyTemplate() {
+			    return null;
+			}
+
+			////////////////////////////////
+
+			@Override
 			public boolean hasTopology(NodeTemplate arg0) {
 				return false;
 			}
@@ -486,6 +556,42 @@ public class ToscaResourceInstallerTest {
 					String arg2) {
 				return null;
 			}
+
+			@Override
+			public CapabilityAssignments getCapabilitiesOf(NodeTemplate arg0) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public String getCapabilityPropertyLeafValue(CapabilityAssignment arg0, String arg1) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public Metadata getNodeTemplateMetadata(NodeTemplate arg0) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public RequirementAssignments getRequirementsOf(NodeTemplate arg0) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public Map<String, String> getServiceMetadataAllProperties() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public NodeTemplate getServiceNodeTemplateByNodeName(String arg0) {
+				// TODO Auto-generated method stub
+				return null;
+			}
 		});
 		// trs.setServiceMetadata(new Metadata(new HashMap<>()));
 		trs.setServiceToResourceCustomization(new ServiceToResourceCustomization());
@@ -547,7 +653,11 @@ public class ToscaResourceInstallerTest {
 		trs.setVolHeatEnvTemplateUUID("volHeatEnvTemplateUUID");
 		trs.isVnfAlreadyInstalled();
 
+		try{
 		trs.updateResourceStructure(artifactInfo1);
+		
+		}catch(Exception e){}
+		
 		ToscaResourceInstaller tri = new ToscaResourceInstaller();
 
 		try {

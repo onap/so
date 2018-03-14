@@ -25,11 +25,14 @@ import static org.openecomp.mso.bpmn.common.BPMNUtil.getRawVariable;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockAAIVfModule;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetGenericVnfByIdWithDepth;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetGenericVnfByIdWithPriority;
+import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetVfModuleByName;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPatchGenericVnf;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPatchVfModuleId;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPutGenericVnf;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPutNetwork;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPutVfModuleIdNoResponse;
+import static org.openecomp.mso.bpmn.mock.StubResponseDatabase.MockGetServiceResourcesCatalogData;
+import static org.openecomp.mso.bpmn.mock.StubResponseDatabase.MockGetVnfCatalogDataCustomizationUuid;
 import static org.openecomp.mso.bpmn.mock.StubResponseDatabase.mockUpdateRequestDB;
 import static org.openecomp.mso.bpmn.mock.StubResponseSDNCAdapter.mockSDNCAdapter;
 import static org.openecomp.mso.bpmn.mock.StubResponseVNFAdapter.mockVNFPost;
@@ -96,6 +99,8 @@ public class DoCreateVfModuleTest extends WorkflowTest {
 		mockSDNCAdapter("VfModularity/StandardSDNCSynchResponse.xml");
 		mockVNFPost("", 202, "skask");	
 		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		//Catalog DB
+		MockGetServiceResourcesCatalogData("aa5256d2-5a33-55df-13ab-12abad84e7ff","InfrastructureFlows/DoCreateServiceInstance_request.json");
 		
 		String businessKey = UUID.randomUUID().toString();
 		//RuntimeService runtimeService = processEngineRule.getRuntimeService();				
@@ -149,6 +154,9 @@ public class DoCreateVfModuleTest extends WorkflowTest {
 		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
 		MockPatchGenericVnf("skask");
 		MockPatchVfModuleId("skask", ".*");
+		//Catalog DB
+		MockGetServiceResourcesCatalogData("aa5256d2-5a33-55df-13ab-12abad84e7ff","InfrastructureFlows/DoCreateServiceInstance_request.json");
+				
 		
 		String businessKey = UUID.randomUUID().toString();
 		//RuntimeService runtimeService = processEngineRule.getRuntimeService();				
@@ -205,6 +213,8 @@ public class DoCreateVfModuleTest extends WorkflowTest {
 		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
 		MockPatchGenericVnf("skask");
 		MockPatchVfModuleId("skask", ".*");
+		//Catalog DB
+		MockGetServiceResourcesCatalogData("aa5256d2-5a33-55df-13ab-12abad84e7ff","InfrastructureFlows/DoCreateServiceInstance_request.json");
 		
 		String businessKey = UUID.randomUUID().toString();
 		//RuntimeService runtimeService = processEngineRule.getRuntimeService();				
@@ -217,6 +227,177 @@ public class DoCreateVfModuleTest extends WorkflowTest {
 		invokeSubProcess("DoCreateVfModule", businessKey, variables);
 		
 		injectSDNCCallbacks(callbacks, "assign, query");
+		injectVNFRestCallbacks(callbacks, "vnfCreate");
+		injectSDNCCallbacks(callbacks, "activate");
+
+		waitForProcessEnd(businessKey, 10000);
+		
+		Assert.assertTrue(isProcessEnded(businessKey));
+		Assert.assertTrue((boolean) getRawVariable(processEngineRule, "DoCreateVfModule", "DCVFM_SuccessIndicator"));
+		
+		logEnd();
+	}
+	
+	/**
+	 * Test the sunny day scenario for the aLaCarte request with no multiStageDesign
+	 */
+	@Test	
+	
+	@Deployment(resources = {
+			"subprocess/DoCreateVfModule.bpmn",
+			"subprocess/GenericGetVnf.bpmn",
+			"subprocess/SDNCAdapterV1.bpmn",
+			"subprocess/VnfAdapterRestV1.bpmn",
+			"subprocess/ConfirmVolumeGroupTenant.bpmn",
+			"subprocess/ConfirmVolumeGroupName.bpmn",
+			"subprocess/CreateAAIVfModule.bpmn",
+			"subprocess/UpdateAAIVfModule.bpmn",
+			"subprocess/CreateAAIVfModuleVolumeGroup.bpmn",
+			"subprocess/UpdateAAIGenericVnf.bpmn"
+		})
+	public void sunnyDay_aLaCarte_noMultistage() throws IOException {
+		
+		logStart();
+		
+		MockGetGenericVnfByIdWithPriority("skask", ".*", 200, "VfModularity/VfModule-new.xml", 5);
+		MockGetGenericVnfByIdWithDepth("skask", 1, "VfModularity/GenericVnf.xml");
+		MockPutVfModuleIdNoResponse("skask", "PCRF", ".*");
+		MockPutNetwork(".*", "VfModularity/AddNetworkPolicy_AAIResponse_Success.xml", 200);
+		MockPutGenericVnf("skask");
+		mockSDNCAdapter("/SDNCAdapter", "vnf-type>STMTN", 200, "VfModularity/StandardSDNCSynchResponse.xml");
+		mockSDNCAdapter("/SDNCAdapter", "SvcAction>query", 200, "VfModularity/StandardSDNCSynchResponse.xml");
+		mockVNFPost("", 202, "skask");
+		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		MockPatchGenericVnf("skask");
+		MockPatchVfModuleId("skask", ".*");
+		//Catalog DB
+		MockGetServiceResourcesCatalogData("aa5256d2-5a33-55df-13ab-12abad84e7ff","InfrastructureFlows/DoCreateServiceInstance_request.json");
+		MockGetVnfCatalogDataCustomizationUuid("VNF-MODEL-123", "VIPR/getCatalogVnfNoTwoPhasedForVfModule.json");		
+		
+		String businessKey = UUID.randomUUID().toString();
+		//RuntimeService runtimeService = processEngineRule.getRuntimeService();				
+		
+		Map<String, Object> variables = setupVariablesSunnyDayBuildingBlocks();
+		variables.put("sdncVersion", "1702");
+		variables.put("aLaCarte", true);
+		//runtimeService.startProcessInstanceByKey("DoCreateVfModule", variables);
+		invokeSubProcess("DoCreateVfModule", businessKey, variables);
+		
+		
+		injectSDNCCallbacks(callbacks, "assign, queryModule");
+		injectVNFRestCallbacks(callbacks, "vnfCreate");
+		injectSDNCCallbacks(callbacks, "activate");
+
+		waitForProcessEnd(businessKey, 10000);
+		
+		Assert.assertTrue(isProcessEnded(businessKey));
+		Assert.assertTrue((boolean) getRawVariable(processEngineRule, "DoCreateVfModule", "DCVFM_SuccessIndicator"));
+		
+		logEnd();
+	}
+	
+	/**
+	 * Test the sunny day scenario for the first stage of multistage design.
+	 */
+	@Test	
+	
+	@Deployment(resources = {
+			"subprocess/DoCreateVfModule.bpmn",
+			"subprocess/GenericGetVnf.bpmn",
+			"subprocess/SDNCAdapterV1.bpmn",
+			"subprocess/VnfAdapterRestV1.bpmn",
+			"subprocess/ConfirmVolumeGroupTenant.bpmn",
+			"subprocess/ConfirmVolumeGroupName.bpmn",
+			"subprocess/CreateAAIVfModule.bpmn",
+			"subprocess/UpdateAAIVfModule.bpmn",
+			"subprocess/CreateAAIVfModuleVolumeGroup.bpmn",
+			"subprocess/UpdateAAIGenericVnf.bpmn"
+		})
+	public void sunnyDay_1st_of_multistage() throws IOException {
+		
+		logStart();
+		
+		MockGetGenericVnfByIdWithPriority("skask", ".*", 200, "VfModularity/VfModule-new.xml", 5);
+		MockGetGenericVnfByIdWithDepth("skask", 1, "VfModularity/GenericVnf.xml");
+		MockPutVfModuleIdNoResponse("skask", "PCRF", ".*");
+		MockPutNetwork(".*", "VfModularity/AddNetworkPolicy_AAIResponse_Success.xml", 200);
+		MockPutGenericVnf("skask");
+		mockSDNCAdapter("/SDNCAdapter", "vnf-type>STMTN", 200, "VfModularity/StandardSDNCSynchResponse.xml");
+		mockSDNCAdapter("/SDNCAdapter", "SvcAction>query", 200, "VfModularity/StandardSDNCSynchResponse.xml");
+		mockVNFPost("", 202, "skask");
+		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		MockPatchGenericVnf("skask");
+		MockPatchVfModuleId("skask", ".*");
+		//Catalog DB
+		MockGetServiceResourcesCatalogData("aa5256d2-5a33-55df-13ab-12abad84e7ff","InfrastructureFlows/DoCreateServiceInstance_request.json");
+		MockGetVnfCatalogDataCustomizationUuid("VNF-MODEL-123", "VIPR/getCatalogVnfYesTwoPhasedForVfModule.json");		
+		
+		String businessKey = UUID.randomUUID().toString();
+		//RuntimeService runtimeService = processEngineRule.getRuntimeService();				
+		
+		Map<String, Object> variables = setupVariablesSunnyDayBuildingBlocks();
+		variables.put("sdncVersion", "1702");
+		variables.put("aLaCarte", true);
+		//runtimeService.startProcessInstanceByKey("DoCreateVfModule", variables);
+		invokeSubProcess("DoCreateVfModule", businessKey, variables);
+		
+		injectSDNCCallbacks(callbacks, "assign");
+		
+		waitForProcessEnd(businessKey, 10000);
+		
+		Assert.assertTrue(isProcessEnded(businessKey));
+		Assert.assertTrue((boolean) getRawVariable(processEngineRule, "DoCreateVfModule", "DCVFM_SuccessIndicator"));
+		
+		logEnd();
+	}
+	
+	/**
+	 * Test the sunny day scenario for the second stage of multiStageDesign
+	 */
+	@Test	
+	
+	@Deployment(resources = {
+			"subprocess/DoCreateVfModule.bpmn",
+			"subprocess/GenericGetVnf.bpmn",
+			"subprocess/SDNCAdapterV1.bpmn",
+			"subprocess/VnfAdapterRestV1.bpmn",
+			"subprocess/ConfirmVolumeGroupTenant.bpmn",
+			"subprocess/ConfirmVolumeGroupName.bpmn",
+			"subprocess/CreateAAIVfModule.bpmn",
+			"subprocess/UpdateAAIVfModule.bpmn",
+			"subprocess/CreateAAIVfModuleVolumeGroup.bpmn",
+			"subprocess/UpdateAAIGenericVnf.bpmn"
+		})
+	public void sunnyDay_2nd_of_multistage() throws IOException {
+		
+		logStart();
+		
+		MockGetGenericVnfByIdWithPriority("skask", ".*", 200, "VfModularity/VfModule-new.xml", 5);
+		MockGetVfModuleByName("skask", "PCRF%3A%3Amodule-0-2","VfModularity/VfModule-new-PendingActivation.xml", 200);
+		MockGetGenericVnfByIdWithDepth("skask", 1, "VfModularity/GenericVnf.xml");		
+		MockPutVfModuleIdNoResponse("skask", "PCRF", ".*");
+		MockPutNetwork(".*", "VfModularity/AddNetworkPolicy_AAIResponse_Success.xml", 200);
+		MockPutGenericVnf("skask");
+		mockSDNCAdapter("/SDNCAdapter", "vnf-type>STMTN", 200, "VfModularity/StandardSDNCSynchResponse.xml");
+		mockSDNCAdapter("/SDNCAdapter", "SvcAction>query", 200, "VfModularity/StandardSDNCSynchResponse.xml");
+		mockVNFPost("", 202, "skask");
+		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		MockPatchGenericVnf("skask");
+		MockPatchVfModuleId("skask", ".*");
+		//Catalog DB
+		MockGetServiceResourcesCatalogData("aa5256d2-5a33-55df-13ab-12abad84e7ff","InfrastructureFlows/DoCreateServiceInstance_request.json");
+		
+		
+		String businessKey = UUID.randomUUID().toString();
+		//RuntimeService runtimeService = processEngineRule.getRuntimeService();				
+		
+		Map<String, Object> variables = setupVariablesSunnyDayBuildingBlocks();
+		variables.put("sdncVersion", "1702");
+		variables.put("aLaCarte", true);
+		//runtimeService.startProcessInstanceByKey("DoCreateVfModule", variables);
+		invokeSubProcess("DoCreateVfModule", businessKey, variables);		
+		
+		injectSDNCCallbacks(callbacks, "queryModule");
 		injectVNFRestCallbacks(callbacks, "vnfCreate");
 		injectSDNCCallbacks(callbacks, "activate");
 

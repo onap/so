@@ -23,13 +23,13 @@ package org.openecomp.mso.bpmn.common.scripts
 import java.text.SimpleDateFormat
 
 import org.apache.commons.lang3.*
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 
 public class FalloutHandler extends AbstractServiceTaskProcessor {
 	String Prefix="FH_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	
-	public initializeProcessVariables(Execution execution){
+	public initializeProcessVariables(DelegateExecution execution){
 		def method = getClass().getSimpleName() + '.initializeProcessVariables(' +'execution=' + execution.getId() +')'
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		logDebug('Entered ' + method, isDebugLogEnabled)
@@ -93,7 +93,7 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 		}
 	}
 	
-	public void preProcessRequest (Execution execution) {
+	public void preProcessRequest (DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.preProcessRequest(' +'execution=' + execution.getId() +')'
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		logDebug('Entered ' + method, isDebugLogEnabled)
@@ -207,7 +207,7 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 		utils.log("DEBUG","OUTOF --> Initialize Variables Fallout Handler #########",isDebugLogEnabled);
 	}
 	
-	public String updateRequestPayload (Execution execution){
+	public String updateRequestPayload (DelegateExecution execution){
 		def method = getClass().getSimpleName() + '.updateRequestPayload(' +'execution=' + execution.getId() +')'
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		logDebug('Entered ' + method, isDebugLogEnabled)
@@ -238,7 +238,7 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 		}
 	}
 	
-	public String updateRequestInfraPayload (Execution execution){
+	public String updateRequestInfraPayload (DelegateExecution execution){
 		def method = getClass().getSimpleName() + '.updateRequestInfraPayload(' +'execution=' + execution.getId() +')'
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		logDebug('Entered ' + method, isDebugLogEnabled)
@@ -268,7 +268,7 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 		}
 	}
 	
-	public String updateRequestGammaPayload (Execution execution){
+	public String updateRequestGammaPayload (DelegateExecution execution){
 		def method = getClass().getSimpleName() + '.updateRequestGammaPayload(' +'execution=' + execution.getId() +')'
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		logDebug('Entered ' + method, isDebugLogEnabled)
@@ -298,7 +298,7 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 		}
 	}
 	
-	public String updateResponseStatusPayload (Execution execution){
+	public String updateResponseStatusPayload (DelegateExecution execution){
 		def method = getClass().getSimpleName() + '.updateResponseStatusPayload(' +'execution=' + execution.getId() +')'
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		logDebug('Entered ' + method, isDebugLogEnabled)
@@ -326,7 +326,7 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 		}
 	}
 	
-	public void buildDBWorkflowException(Execution execution, String responseCodeVariable) {
+	public void buildDBWorkflowException(DelegateExecution execution, String responseCodeVariable) {
 		def method = getClass().getSimpleName() + '.buildDBWorkflowException(' +
 			'execution=' + execution.getId() +
 			', responseCodeVariable=' + responseCodeVariable + ')'
@@ -348,7 +348,7 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 	/**
 	 * Used to create a workflow response in success and failure cases.
 	 */
-	public void postProcessResponse (Execution execution) {
+	public void postProcessResponse (DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.postProcessResponse(' +'execution=' + execution.getId() +')'
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		logDebug('Entered ' + method, isDebugLogEnabled)

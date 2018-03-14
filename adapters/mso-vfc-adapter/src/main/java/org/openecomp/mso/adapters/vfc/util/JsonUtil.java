@@ -22,13 +22,15 @@ package org.openecomp.mso.adapters.vfc.util;
 
 import java.io.IOException;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
-import org.codehaus.jackson.type.TypeReference;
 import org.openecomp.mso.adapters.vfc.constant.HttpCode;
 import org.openecomp.mso.adapters.vfc.exceptions.ApplicationException;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
+
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Interface for json analyzing.<br/>
@@ -51,9 +53,9 @@ public class JsonUtil {
   private static final ObjectMapper MAPPER = new ObjectMapper();
 
   static {
-    MAPPER.setDeserializationConfig(MAPPER.getDeserializationConfig().without(
-        org.codehaus.jackson.map.DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES));
-    MAPPER.setSerializationInclusion(Inclusion.NON_NULL);
+    MAPPER.setConfig(MAPPER.getDeserializationConfig().without(
+        DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES));
+    MAPPER.setSerializationInclusion(Include.NON_NULL);
   }
 
   /**

@@ -286,6 +286,63 @@ public class CreateVfModuleInfraTest extends WorkflowTest {
 				return variables;
 				
 			}
+			/**
+			 * Sunny day VID scenario with no preloads.
+			 * 
+			 * @throws Exception
+			 */
+			@Test	
+			@Deployment(resources = {
+					"process/CreateVfModuleInfra.bpmn",
+					"subprocess/DoCreateVfModule.bpmn",
+					"subprocess/GenericGetVnf.bpmn",
+					"subprocess/SDNCAdapterV1.bpmn",
+					"subprocess/VnfAdapterRestV1.bpmn",
+					"subprocess/ConfirmVolumeGroupTenant.bpmn",
+					"subprocess/GenericNotificationService.bpmn",
+					"subprocess/ConfirmVolumeGroupName.bpmn",
+					"subprocess/CreateAAIVfModule.bpmn",
+					"subprocess/UpdateAAIVfModule.bpmn",
+					"subprocess/UpdateAAIGenericVnf.bpmn",
+					"subprocess/CompleteMsoProcess.bpmn",
+					"subprocess/FalloutHandler.bpmn"
+				})
+			public void sunnyDayVIDMultipleUserParamValues() throws Exception {
+						
+				logStart();
+				
+				MockAAIVfModule();
+				MockPatchGenericVnf("skask");
+				MockPatchVfModuleId("skask", ".*");
+				MockSDNCAdapterVfModule();		
+				MockVNFAdapterRestVfModule();
+				MockDBUpdateVfModule();
+				
+				String businessKey = UUID.randomUUID().toString();
+				String createVfModuleRequest =
+					FileUtil.readResourceFile("__files/CreateVfModule_VID_request_userParam.json");
+				
+				Map<String, Object> variables = setupVariablesSunnyDayVID();		
+				
+				TestAsyncResponse asyncResponse = invokeAsyncProcess("CreateVfModuleInfra",
+					"v1", businessKey, createVfModuleRequest, variables);
+						
+				WorkflowResponse response = receiveResponse(businessKey, asyncResponse, 10000);
+				
+				String responseBody = response.getResponse();
+				System.out.println("Workflow (Synch) Response:\n" + responseBody);
+				
+				injectSDNCCallbacks(callbacks, "assign, query");
+				injectVNFRestCallbacks(callbacks, "vnfCreate");
+				injectSDNCCallbacks(callbacks, "activate");
+				
+				// TODO add appropriate assertions
+				
+				waitForProcessEnd(businessKey, 10000);
+				checkVariable(businessKey, "CreateVfModuleSuccessIndicator", true);
+				
+				logEnd();
+			}
 		
 	
 }

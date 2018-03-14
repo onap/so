@@ -21,16 +21,17 @@ package org.openecomp.mso.cloud;
 
 import java.io.IOException;
 
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.JsonToken;
-import org.codehaus.jackson.map.DeserializationContext;
-import org.codehaus.jackson.map.JsonDeserializer;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
 
 public class IdentityAuthenticationTypeJsonDeserializer extends JsonDeserializer<IdentityAuthenticationTypeAbstract> {
 
 	@Override
 	public IdentityAuthenticationTypeAbstract deserialize(JsonParser jsonParser, DeserializationContext deserializationContext)
-			throws IOException {
+			throws IOException, JsonProcessingException {
 		JsonToken token = jsonParser.getCurrentToken();
 		if (JsonToken.VALUE_STRING.equals(token)) {
 			return IdentityAuthenticationTypeAbstract.valueOf(jsonParser.getText());

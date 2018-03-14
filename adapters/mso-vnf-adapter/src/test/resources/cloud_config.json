@@ -1,0 +1,94 @@
+{ "cloud_config": {
+	"identity_services":
+	{
+		"MT_KEYSTONE":
+		{
+			"identity_url": "http://localhost:5000/v2.0",
+			"mso_id": "john",
+			"mso_pass": "FD205490A48D48475607C36B9AD902BF",
+			"admin_tenant": "admin",
+			"member_role": "_member_",
+			"tenant_metadata": false,
+			"identity_server_type": "KEYSTONE",
+			"identity_authentication_type": "RACKSPACE_APIKEY"
+		},
+		"DAN_KEYSTONE":
+		{
+			"identity_url": "http://localhost:5000/v2.0",
+			"mso_id": "mockId",
+			"mso_pass": "BC59F80E38208A42ABB81ECCDD4FB3E4",
+			"admin_tenant": "service",
+			"member_role": "_member_",
+			"tenant_metadata": false,
+			"identity_server_type": "KEYSTONE",
+			"identity_authentication_type": "USERNAME_PASSWORD"
+		},
+		"MTINJVCC101_DCP":
+		{
+			"identity_url": "http://localhost:5000/v2.0",
+			"mso_id": "mockIdToo",
+			"mso_pass": "95604B9EAAC4D77D74786FAE54177206",
+			"admin_tenant": "service",
+			"member_role": "admin",
+			"tenant_metadata": true,
+			"identity_server_type": "KEYSTONE",
+			"identity_authentication_type": "USERNAME_PASSWORD"
+		},
+		"MTSNJA3DCP1":
+		{
+			"identity_url": "https://localhost:5000/v2.0",
+			"mso_id": "mockIdToo",
+			"mso_pass": "1491DE07AC9D716A7966BB8C2848F031",
+			"admin_tenant": "service",
+			"member_role": "admin",
+			"tenant_metadata": true,
+			"identity_server_type": "KEYSTONE",
+			"identity_authentication_type": "USERNAME_PASSWORD"
+		},
+		"CS_service": {}
+
+	},
+	"cloud_sites":
+	{
+		"MT":
+		{
+			"region_id": "regionOne",
+			"clli": "MT",
+			"aic_version": "2.5",
+			"identity_service_id": "MT_KEYSTONE"
+		},
+		"DAN":
+		{
+			"region_id": "RegionOne",
+			"clli": "DAN",
+			"aic_version": "2.5",
+			"identity_service_id": "DAN_KEYSTONE"
+		},
+		"MTINJVCC101":
+		{
+			"region_id": "regionTwo",
+			"clli": "MTINJVCC101",
+			"aic_version": "2.5",
+			"identity_service_id": "MTINJVCC101_DCP"
+		},
+		"MTSNJA4LCP1":
+		{
+			"region_id": "mtsnjlcp1",
+			"clli": "MTSNJA4LCP1",
+			"aic_version": "2.5",
+			"identity_service_id": "MTSNJA3DCP1"
+		},
+		"CS":
+		{
+			"region_id": "clliRegion",
+			"clli": "CS_clli",
+			"aic_version": "2.5",
+			"identity_service_id": "CS_service"
+		}
+	}
+}
+}
+
+
+
+

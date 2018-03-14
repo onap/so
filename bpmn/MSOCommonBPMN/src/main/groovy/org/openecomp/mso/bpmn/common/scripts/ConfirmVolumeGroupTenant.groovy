@@ -25,7 +25,7 @@ import javax.xml.parsers.DocumentBuilderFactory
 
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.rest.APIResponse
 import org.w3c.dom.Document
@@ -48,7 +48,7 @@ class ConfirmVolumeGroupTenant extends AbstractServiceTaskProcessor{
 	String Prefix="CVGT_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 
-	public void preProcessRequest(Execution execution){
+	public void preProcessRequest(DelegateExecution execution){
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 		utils.log("DEBUG", " ======== STARTED Confirm Volume Group Tenant Subflow ======== ", isDebugEnabled)
@@ -148,7 +148,7 @@ class ConfirmVolumeGroupTenant extends AbstractServiceTaskProcessor{
 		utils.log("DEBUG", "=== COMPLETED queryAAIForVolumeGroup Process === ", isDebugEnabled)
 	}
 
-	public void assignVolumeHeatId(Execution execution){
+	public void assignVolumeHeatId(DelegateExecution execution){
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 		try{
@@ -170,7 +170,7 @@ class ConfirmVolumeGroupTenant extends AbstractServiceTaskProcessor{
 	utils.log("DEBUG", "======== COMPLETED Confirm Volume Group Tenant Subflow ======== ", isDebugEnabled)
 }
 
-	public void assignWorkflowException(Execution execution, String message){
+	public void assignWorkflowException(DelegateExecution execution, String message){
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 		String processKey = getProcessKey(execution);
