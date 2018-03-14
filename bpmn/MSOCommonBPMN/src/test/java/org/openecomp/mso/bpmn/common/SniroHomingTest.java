@@ -45,11 +45,9 @@ import org.openecomp.mso.bpmn.common.WorkflowTest;
 
 
 /**
- * Test the Homing subflow building block.
- *
- * @author cb645j
+ * Test the SNIRO Homing subflow building block.
  */
-public class HomingTest extends WorkflowTest {
+public class SniroHomingTest extends WorkflowTest {
 
 	ServiceDecomposition serviceDecomposition = new ServiceDecomposition();
 	String subscriber = "";
@@ -57,7 +55,7 @@ public class HomingTest extends WorkflowTest {
 
 	private final CallbackSet callbacks = new CallbackSet();
 
-	public HomingTest() throws IOException {
+	public SniroHomingTest() throws IOException {
 		String sniroCallback = FileUtil.readResourceFile("__files/BuildingBlocks/sniroCallback2AR1Vnf");
 		String sniroCallback2 = FileUtil.readResourceFile("__files/BuildingBlocks/sniroCallback2AR1Vnf2Net");
 		String sniroCallback3 = FileUtil.readResourceFile("__files/BuildingBlocks/sniroCallbackInfraVnf");
@@ -253,6 +251,7 @@ public class HomingTest extends WorkflowTest {
 
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<>();
+		variables.put("homingSolution", "sniro");
 		variables.put("isDebugLogEnabled", "true");
 		variables.put("msoRequestId", "testRequestId");
 		variables.put("serviceInstanceId", "testServiceInstanceId");
@@ -362,7 +361,7 @@ public class HomingTest extends WorkflowTest {
 		//Get Variables
 		WorkflowException workflowException = (WorkflowException) getVariableFromHistory(businessKey, "WorkflowException");
 
-		assertEquals("WorkflowException[processKey=Homing,errorCode=500,errorMessage=Received a Bad Sync Response from Sniro.]", workflowException.toString());
+		assertEquals("WorkflowException[processKey=Homing,errorCode=500,errorMessage=Received a Bad Sync Response from Sniro/OOF.]", workflowException.toString());
 	}
 
 	@Test
@@ -432,6 +431,7 @@ public class HomingTest extends WorkflowTest {
 
 
 	private void setVariables(Map<String, Object> variables) {
+		variables.put("homingSolution", "sniro");
 		variables.put("isDebugLogEnabled", "true");
 	//	variables.put("mso-request-id", "testRequestId");
 		variables.put("msoRequestId", "testRequestId");
@@ -463,6 +463,7 @@ public class HomingTest extends WorkflowTest {
 		netList.add(net2);
 		serviceDecomposition.setServiceNetworks(netList);
 
+		variables.put("homingSolution", "sniro");
 		variables.put("isDebugLogEnabled", "true");
 		variables.put("msoRequestId", "testRequestId");
 		variables.put("serviceInstanceId", "testServiceInstanceId");
@@ -471,6 +472,7 @@ public class HomingTest extends WorkflowTest {
 	}
 
 	private void setVariables3(Map<String, Object> variables) {
+		variables.put("homingSolution", "sniro");
 		variables.put("isDebugLogEnabled", "true");
 	//	variables.put("mso-request-id", "testRequestId");
 		variables.put("msoRequestId", "testRequestId");
@@ -519,6 +521,7 @@ public class HomingTest extends WorkflowTest {
 	}
 
 	private void setVariablesForServiceDecomposition(Map<String, Object> variables, String requestId, String siId) {
+		variables.put("homingSolution", "sniro");
 		variables.put("isDebugLogEnabled", "true");
 		variables.put("mso-request-id", requestId);
 		variables.put("msoRequestId", requestId);
