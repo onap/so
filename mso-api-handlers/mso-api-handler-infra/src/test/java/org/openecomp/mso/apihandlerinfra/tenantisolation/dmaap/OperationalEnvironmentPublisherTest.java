@@ -39,8 +39,8 @@ public class OperationalEnvironmentPublisherTest {
 		System.setProperty("mso.config.path", "src/test/resources/");
 		MsoPropertiesFactory propertiesFactory = new MsoPropertiesFactory();
 
-		propertiesFactory.removeMsoProperties("MSO_PROP_APIHANDLER_INFRA");
-		propertiesFactory.initializeMsoProperties("MSO_PROP_APIHANDLER_INFRA", "src/test/resources/mso.apihandler-infra.properties");
+		propertiesFactory.removeAllMsoProperties();
+		propertiesFactory.initializeMsoProperties("MSO_PROP_APIHANDLER_INFRA", "mso.apihandler-infra.properties");
 	}
 	
 	@Test
