@@ -1,0 +1,101 @@
+{
+  "requestInfo": {
+    "transactionId": "testRequestId",
+    "requestId": "testRequestId",
+    "callbackUrl": "https://so:5000/callbackUrl",
+    "sourceId": "SO",
+    "requestType": "create",
+    "numSolutions": 1,
+    "optimizers": ["placement"],
+    "timeout": 600
+  },
+  "placementInfo": {
+    "requestParameters": { "customerLatitude": 32.89748, "customerLongitude": -97.040443, "customerName": "xyz" },
+    "placementDemands": [
+      {
+        "resourceModuleName": "vGMuxInfra",
+        "serviceResourceId": "vGMuxInfra-xx",
+        "tenantId": "vGMuxInfra-tenant",
+        "resourceModelInfo": {
+          "modelInvariantId": "vGMuxInfra-modelInvariantId",
+          "modelVersionId": "vGMuxInfra-versionId",
+          "modelName": "vGMuxInfra-model",
+          "modelType": "resource",
+          "modelVersion": "1.0",
+          "modelCustomizationName": "vGMuxInfra-customeModelName"
+        }
+      },
+      {
+        "resourceModuleName": "vG",
+        "serviceResourceId": "71d563e8-e714-4393-8f99-cc480144a05e",
+        "tenantId": "vG-tenant",
+        "resourceModelInfo": {
+          "modelInvariantId": "vG-modelInvariantId",
+          "modelVersionId": "vG-versionId",
+          "modelName": "vG-model",
+          "modelType": "resource",
+          "modelVersion": "1.0",
+          "modelCustomizationName": "vG-customeModelName"
+        },
+        "existingCandidates": [
+          {
+            "identifierType": "service_instance_id",
+            "cloudOwner": "",
+            "identifiers": ["gjhd-098-fhd-987"]
+          }
+        ],
+        "excludedCandidates": [
+          {
+            "identifierType": "service_instance_id",
+            "cloudOwner": "",
+            "identifiers": ["gjhd-098-fhd-987"]
+          },
+          {
+            "identifierType": "vimId",
+            "cloudOwner": "vmware",
+            "identifiers": ["NYMDT67"]
+          }
+        ],
+        "requiredCandidates": [
+          {
+            "identifierType": "vimId",
+            "cloudOwner": "amazon",
+            "identifiers": ["TXAUS219"]
+          }
+        ]
+      }
+    ]
+  },
+  "serviceInfo": {
+    "serviceInstanceId": "d61b2543-5914-4b8f-8e81-81e38575b8ec",
+    "serviceName": "vCPE",
+    "modelInfo": {
+      "modelInvariantId": "vCPE-invariantId",
+      "modelVersionId": "vCPE-versionId",
+      "modelName": "vCPE-model",
+      "modelType": "service",
+      "modelVersion": "1.0",
+      "modelCustomizationName": "vCPE-customeModelName"
+    }
+  },
+  "licenseInfo": {
+    "licenseDemands": [
+      {
+        "resourceModuleName": "vGMuxInfra",
+        "serviceResourceId": "vGMuxInfra-xx",
+        "resourceModelInfo": {
+          "modelInvariantId": "vGMuxInfra-modelInvariantId",
+          "modelVersionId": "vGMuxInfra-versionId",
+          "modelName": "vGMuxInfra-model",
+          "modelType": "resource",
+          "modelVersion": "1.0",
+          "modelCustomizationName": "vGMuxInfra-customeModelName"
+        },
+        "existingLicenses": {
+          "entitlementPoolUUID": ["87257b49-9602-4ca1-9817-094e52bc873b", "43257b49-9602-4fe5-9337-094e52bc9435"],
+          "licenseKeyGroupUUID": ["87257b49-9602-4ca1-9817-094e52bc873b", "43257b49-9602-4fe5-9337-094e52bc9435"]
+        }
+      }
+    ]
+  }
+}
