@@ -18,7 +18,7 @@ ENV CHEF_CONFIG_NAME="mso-config"
 ### Downloading dependencies
 
 USER root
-RUN apt-get install -y curl && curl -LO  https://packages.chef.io/stable/ubuntu/12.04/chefdk_0.17.17-1_amd64.deb && curl -LO http://central.maven.org/maven2/org/mariadb/jdbc/mariadb-java-client/1.5.4/mariadb-java-client-1.5.4.jar && apt-get remove --purge -y curl && apt-get autoremove -y
+RUN apt-get install -y netcat curl && curl -LO  https://packages.chef.io/stable/ubuntu/12.04/chefdk_0.17.17-1_amd64.deb && curl -LO http://central.maven.org/maven2/org/mariadb/jdbc/mariadb-java-client/1.5.4/mariadb-java-client-1.5.4.jar && apt-get remove --purge -y curl && apt-get autoremove -y
 
 ### Install Chef
 RUN dpkg -i chefdk_0.17.17-1_amd64.deb 
@@ -80,6 +80,8 @@ RUN echo "LAUNCH_JBOSS_IN_BACKGROUND=true" >> $JBOSS_HOME/bin/standalone.conf
 COPY ./maven/artifacts/* $JBOSS_HOME/standalone/deployments/
 
 RUN mkdir -p /etc/mso/config.d/ASDC && chown -R jboss:jboss /etc/mso/config.d/ASDC && chmod u+xrw /etc/mso/config.d/ASDC
+
+COPY wait-for.sh /
 
 ## Install heatbridge
 #RUN apt-get install -y python && apt-get install -y python-pip && echo 'PIP Installed, doing upgrade' && pip install --upgrade pip
