@@ -30,6 +30,7 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 import static org.junit.Assert.assertEquals;
 
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openecomp.mso.adapters.nwrest.CreateNetworkRequest;
@@ -127,6 +128,7 @@ public class NetworkAdapterClientTest {
 		assertEquals("Testing QueryVfModule response", true, response.getNetworkExists());
 	}
 
+	@Ignore
 	@Test
 	public void updateNetworkTest() {
 		UpdateNetworkRequest request = new UpdateNetworkRequest();
