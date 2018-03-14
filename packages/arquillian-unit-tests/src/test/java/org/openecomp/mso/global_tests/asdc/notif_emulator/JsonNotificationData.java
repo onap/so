@@ -125,4 +125,13 @@ public class JsonNotificationData implements INotificationData {
 	public String getServiceVersion() {
 		return (String)this.attributesMap.get("serviceVersion");
 	}
+
+	@Override
+	public String getWorkloadContext() {
+		return (String)this.attributesMap.get("workloadContext");
+	}
+
+	@Override
+	public void setWorkloadContext(String arg0) {
+	}
 }

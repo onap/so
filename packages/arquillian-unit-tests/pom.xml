@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.onap.so</groupId>
     <artifactId>packages</artifactId>
-    <version>1.1.0-SNAPSHOT</version>
+    <version>1.2.0-SNAPSHOT</version>
   </parent>
 
   <groupId>org.onap.so.packages</groupId>
@@ -205,9 +205,9 @@
     </dependency>
 
     <dependency>
-      <groupId>org.onap.sdc.sdc-distribution-client</groupId>
+      <groupId>org.openecomp.sdc.sdc-distribution-client</groupId>
       <artifactId>sdc-distribution-client</artifactId>
-      <version>1.1.32</version>
+      <version>1.2.2</version>
       <scope>test</scope>
     </dependency>
 
@@ -277,6 +277,7 @@
 
   <build>
     <finalName>arquillian-tests</finalName>
+    <sourceDirectory>src/main/java</sourceDirectory>
     <plugins>
       <plugin>
         <groupId>org.codehaus.groovy.maven</groupId>
