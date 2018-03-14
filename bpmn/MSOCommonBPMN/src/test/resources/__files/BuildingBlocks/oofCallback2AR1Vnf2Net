@@ -1,0 +1,165 @@
+{
+    "transactionId": "testRequestId",
+	"requestId": "testRequestId",
+	"requestState": "complete",
+	"statusMessage": "",
+    "solutionInfo": {
+        "licenseInfo": [
+            {
+                "entitlementPoolList": [
+                    "f1d563e8-e714-4393-8f99-cc480144a05e",
+                    "j1d563e8-e714-4393-8f99-cc480144a05e"
+                ],
+                "licenseKeyGroupList": [
+                    "s1d563e8-e714-4393-8f99-cc480144a05e",
+                    "b1d563e8-e714-4393-8f99-cc480144a05e"
+                ],
+                "resourceModuleName": "vHNPortalaaS_primary_1",
+                "serviceResourceId": "testResourceIdAR"
+            },
+            {
+                "entitlementPoolList": [
+                    "f1d563e8-e714-4393-8f99-cc480144a05n",
+                    "j1d563e8-e714-4393-8f99-cc480144a05n"
+                ],
+                "licenseKeyGroupList": [
+                    "s1d563e8-e714-4393-8f99-cc480144a05n",
+                    "b1d563e8-e714-4393-8f99-cc480144a05n"
+                ],
+                "resourceModuleName": "net",
+                "serviceResourceId": "testResourceIdNet2"
+            },
+            {
+                "entitlementPoolList": [
+                    "91d563e8-e714-4393-8f99-cc480144a05e",
+                    "21d563e8-e714-4393-8f99-cc480144a05e"
+                ],
+                "licenseKeyGroupList": [
+                    "31d563e8-e714-4393-8f99-cc480144a05e",
+                    "71d563e8-e714-4393-8f99-cc480144a05e"
+                ],
+                "resourceModuleName": "vHNPortalaaS_secondary_1",
+                "serviceResourceId": "testResourceIdVNF"
+            }
+        ],
+        "placement": [
+            {
+                "assignmentInfo": [
+                    {
+                        "variableName": "cloudOwner",
+                        "variableValue": "aic"
+                    },
+                    {
+                        "variableName": "vnfHostName",
+                        "variableValue": "MDTNJ01"
+                    },
+                    {
+                        "variableName": "aicClli",
+                        "variableValue": "KDTNJ01"
+                    },
+                    {
+                        "variableName": "aicVersion",
+                        "variableValue": "3.0"
+                    }
+                ],
+                "cloudRegionId": "dfwtx",
+                "inventoryType": "service",
+                "resourceModuleName": "ALLOTTED_RESOURCE",
+                "serviceInstanceId": "testSIID1",
+                "serviceResourceId": "testResourceIdAR"
+            },
+            {
+                "assignmentInfo": [
+                    {
+                        "variableName": "cloudOwner",
+                        "variableValue": "aic"
+                    },
+                    {
+                        "variableName": "vnfHostName",
+                        "variableValue": "testVnfHostname2"
+                    },
+                    {
+                        "variableName": "aicClli",
+                        "variableValue": "testAicClli2"
+                    },
+                    {
+                        "variableName": "aicVersion",
+                        "variableValue": "3.0"
+                    }
+                ],
+                "cloudRegionId": "testCloudRegionId2",
+                "inventoryType": "service",
+                "resourceModuleName": "ALLOTTED_RESOURCE",
+                "serviceInstanceId": "testSIID2",
+                "serviceResourceId": "testResourceIdAR2"
+            },
+            {
+                "assignmentInfo": [
+                    {
+                        "variableName": "cloudOwner",
+                        "variableValue": "aic"
+                    },
+                    {
+                        "variableName": "vnfHostName",
+                        "variableValue": "testVnfHostNameNet"
+                    },
+                    {
+                        "variableName": "aicClli",
+                        "variableValue": "testAicClliNet"
+                    },
+                    {
+                        "variableName": "aicVersion",
+                        "variableValue": "3.0"
+                    }
+                ],
+                "cloudRegionId": "testCloudRegionIdNet",
+                "inventoryType": "service",
+                "resourceModuleName": "NETWORK",
+                "serviceInstanceId": "testServiceInstanceIdNet",
+                "serviceResourceId": "testResourceIdNet"
+            },
+            {
+                "assignmentInfo": [
+                    {
+                        "variableName": "cloudOwner",
+                        "variableValue": "aic"
+                    },
+                    {
+                        "variableName": "aicClli",
+                        "variableValue": "testAicClliNet2"
+                    },
+                    {
+                        "variableName": "aicVersion",
+                        "variableValue": "3.0"
+                    }
+                ],
+                "cloudRegionId": "testCloudRegionIdNet2",
+                "inventoryType": "cloud",
+                "resourceModuleName": "NETWORK",
+                "serviceInstanceId": "",
+                "serviceResourceId": "testResourceIdNet2"
+            },
+            {
+                "assignmentInfo": [
+                    {
+                        "variableName": "cloudOwner",
+                        "variableValue": "aic"
+                    },
+                    {
+                        "variableName": "aicClli",
+                        "variableValue": "testAicClli3"
+                    },
+                    {
+                        "variableName": "aicVersion",
+                        "variableValue": "3.0"
+                    }
+                ],
+                "cloudRegionId": "testCloudRegionId3",
+                "inventoryType": "cloud",
+                "resourceModuleName": "VNF",
+                "serviceInstanceId": "",
+                "serviceResourceId": "testResourceIdVNF"
+            }
+        ]
+    }
+}

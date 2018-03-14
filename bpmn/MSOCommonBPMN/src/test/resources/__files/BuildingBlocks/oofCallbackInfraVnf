@@ -1,0 +1,47 @@
+{
+   "transactionId": "xxx-xxx-xxxx",
+   "requestId": "yyy-yyy-yyyy",
+   "requestStatus": "completed",
+   "statusMessage": "Success!",
+   "solutions": {
+      "placementSolutions": [
+         {
+            "resourceModuleName": "vGMuxInfra",
+            "serviceResourceId": "some_resource_id",
+            "solution": {
+               "identifier_type": "service_instance_id",
+               "identifiers": ["gjhd-098-fhd-987"]
+            },
+            "assignmentInfo": [
+               { "key": "cloudOwner", "value": "amazon" },
+               { "key": "vnfHostName", "value": "ahr344gh" },
+               { "key": "isRehome", "value": "False" },
+               { "key": "cloud_region_id", "value": "1ac71fb8-ad43-4e16-9459-c3f372b8236d" }
+            ]
+         },
+         {
+            "resourceModuleName": "vG",
+            "serviceResourceId": "some_resource_id",
+            "solution": {
+               "identifier_type": "cloud_region_id",
+               "cloud_owner": "amazon",
+               "identifiers": ["gjhd-098-fhd-987"]
+            },
+            "assignmentInfo": [
+               { "key": "cloudOwner", "value": "amazon" },
+               { "key": "cloud_region_id", "value": "1ac71fb8-ad43-4e16-9459-c3f372b8236d" }
+            ]
+         }
+      ],
+      "licenseSolutions": [
+         {
+            "resourceModuleName": "vGMuxInfra",
+            "serviceResourceId": "some_resource_id",
+            "entitlementPoolUUID": ["1ac71fb8-ad43-4e16-9459-c3f372b8236d", "834fc71fb8-ad43-4fh7-9459-c3f372b8236f"],
+            "licenseKeyGroupUUID": ["1ac71fb8-ad43-4e16-9459-c3f372b8236d", "834fc71fb8-ad43-4fh7-9459-c3f372b8236f"],
+            "entitlementPoolInvariantUUID": ["1ac71fb8-ad43-4e16-9459-c3f372b8236d", "834fc71fb8-ad43-4fh7-9459-c3f372b8236f"],
+            "licenseKeyGroupInvariantUUID": ["1ac71fb8-ad43-4e16-9459-c3f372b8236d", "834fc71fb8-ad43-4fh7-9459-c3f372b8236f"]
+         }
+      ]
+   }
+}
