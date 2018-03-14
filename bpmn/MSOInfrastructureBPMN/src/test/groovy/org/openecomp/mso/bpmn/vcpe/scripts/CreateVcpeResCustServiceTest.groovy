@@ -32,6 +32,7 @@ import org.junit.Ignore
 import org.mockito.MockitoAnnotations
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.openecomp.mso.bpmn.core.WorkflowException
+import org.openecomp.mso.bpmn.core.domain.HomingSolution
 import org.openecomp.mso.bpmn.mock.FileUtil
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse
@@ -109,6 +110,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 		
 		verify(mex).setVariable("brgWanMacAddress", "brgmac")
 		verify(mex).setVariable("customerLocation", ["customerLatitude":"32.897480", "customerLongitude":"-97.040443", "customerName":"some_company"])
+		verify(mex).setVariable("homingService", "sniro")
 		assertTrue(map.containsKey("serviceInputParams"))
 		assertTrue(map.containsKey(Prefix+"requestInfo"))
 		
@@ -166,6 +168,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 		
 		assertEquals("", map.get("brgWanMacAddress"))
 		assertEquals("", map.get("customerLocation"))
+		assertEquals("oof", map.get("homingService"))
 		assertTrue(map.containsKey("serviceInputParams"))
 		assertTrue(map.containsKey(Prefix+"requestInfo"))
 		

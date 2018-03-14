@@ -23,7 +23,7 @@
 				},
 			"cloudConfiguration":
 				{
-					"lcpCloudRegionId":"mdt1",
+					"lcpCloudRegionId":"cloudowner_mdt1",
 					"tenantId":"8b1df54faa3b49078e3416e21370a3ba"
 				},
 			"requestParameters":
