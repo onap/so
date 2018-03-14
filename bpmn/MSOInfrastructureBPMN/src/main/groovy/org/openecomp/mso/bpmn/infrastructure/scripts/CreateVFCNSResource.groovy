@@ -44,7 +44,7 @@ import org.openecomp.mso.rest.APIResponse;
  * This groovy class supports the <class>DoCreateVFCNetworkServiceInstance.bpmn</class> process.
  * flow for VFC Network Service Create
  */
-public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProcessor {
+public class CreateVFCNSResource extends AbstractServiceTaskProcessor {
 
     String vfcUrl = "/vfc/rest/v1/vfcadapter"
             
@@ -55,6 +55,7 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
     JsonUtils jsonUtil = new JsonUtils()
 
     /**
+     * CreateVFCNSResource
      * Pre Process the BPMN Flow Request
      * Inclouds:
      * generate the nsOperationKey

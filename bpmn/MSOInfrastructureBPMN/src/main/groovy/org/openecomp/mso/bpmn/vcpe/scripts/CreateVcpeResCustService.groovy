@@ -35,7 +35,6 @@ import java.util.UUID;
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.camunda.bpm.engine.runtime.Execution
 import org.json.JSONObject;
 import org.json.JSONArray;
 import org.apache.commons.lang3.*
@@ -63,7 +62,7 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
 	 * This method is executed during the preProcessRequest task of the <class>CreateServiceInstance.bpmn</class> process.
 	 * @param execution
 	 */
-	public InitializeProcessVariables(Execution execution){
+	public InitializeProcessVariables(DelegateExecution execution){
 		/* Initialize all the process variables in this block */
 
 		execution.setVariable("createVcpeServiceRequest", "")
@@ -218,7 +217,7 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
 		}
 	}
 
-	public void sendSyncResponse(Execution execution) {
+	public void sendSyncResponse(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable(DebugFlag)
 
 		utils.log("DEBUG", " ***** Inside sendSyncResponse of CreateVcpeResCustService ***** ", isDebugEnabled)
@@ -242,7 +241,7 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
 	// *******************************
 	//
 	// *******************************
-	public void prepareDecomposeService(Execution execution) {
+	public void prepareDecomposeService(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable(DebugFlag)
 
 		try {
@@ -265,7 +264,7 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
 	// *******************************
 	//
 	// *******************************
-	public void prepareCreateServiceInstance(Execution execution) {
+	public void prepareCreateServiceInstance(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable(DebugFlag)
 
 		try {
@@ -296,7 +295,7 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
 		}
 	 }
 
-	public void postProcessServiceInstanceCreate (Execution execution){
+	public void postProcessServiceInstanceCreate (DelegateExecution execution){
 		def method = getClass().getSimpleName() + '.postProcessServiceInstanceCreate(' +'execution=' + execution.getId() +')'
 		def isDebugLogEnabled = execution.getVariable(DebugFlag)
 		logDebug('Entered ' + method, isDebugLogEnabled)
@@ -333,7 +332,7 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
 	}
 
 
-	public void processDecomposition (Execution execution) {
+	public void processDecomposition (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable(DebugFlag)
 
 		utils.log("DEBUG", " ***** Inside processDecomposition() of CreateVcpeResCustService ***** ", isDebugEnabled)
@@ -396,7 +395,7 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
 	}
 
 
-	public void prepareCreateAllottedResourceTXC(Execution execution) {
+	public void prepareCreateAllottedResourceTXC(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable(DebugFlag)
 
 		try {
@@ -449,7 +448,7 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 		}
 	 }
-	public void prepareCreateAllottedResourceBRG(Execution execution) {
+	public void prepareCreateAllottedResourceBRG(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable(DebugFlag)
 
 		try {
@@ -508,7 +507,7 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
 	// *******************************
 	//     Generate Network request Section
 	// *******************************
-	public void prepareVnfAndModulesCreate (Execution execution) {
+	public void prepareVnfAndModulesCreate (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable(DebugFlag)
 
 		try {
@@ -570,7 +569,7 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
 	// *******************************
 	//     Validate Vnf request Section -> increment count
 	// *******************************
-	public void validateVnfCreate (Execution execution) {
+	public void validateVnfCreate (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable(DebugFlag)
 
 		try {
@@ -592,7 +591,7 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
 	// *****************************************
 	//     Prepare Completion request Section
 	// *****************************************
-	public void postProcessResponse (Execution execution) {
+	public void postProcessResponse (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable(DebugFlag)
 
 		utils.log("DEBUG", " ***** Inside postProcessResponse of CreateVcpeResCustService ***** ", isDebugEnabled)
@@ -631,7 +630,7 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
 		}
 	}
 
-	public void preProcessRollback (Execution execution) {
+	public void preProcessRollback (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable(DebugFlag)
 		utils.log("DEBUG"," ***** preProcessRollback of CreateVcpeResCustService ***** ", isDebugEnabled)
 		try {
@@ -652,7 +651,7 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
 		utils.log("DEBUG"," *** Exit preProcessRollback of CreateVcpeResCustService *** ", isDebugEnabled)
 	}
 
-	public void postProcessRollback (Execution execution) {
+	public void postProcessRollback (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable(DebugFlag)
 		utils.log("DEBUG"," ***** postProcessRollback of CreateVcpeResCustService ***** ", isDebugEnabled)
 		String msg = ""
@@ -672,7 +671,7 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
 		utils.log("DEBUG"," *** Exit postProcessRollback of CreateVcpeResCustService *** ", isDebugEnabled)
 	}
 
-	public void prepareFalloutRequest(Execution execution){
+	public void prepareFalloutRequest(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable(DebugFlag)
 
 		utils.log("DEBUG", " *** STARTED CreateVcpeResCustService prepareFalloutRequest Process *** ", isDebugEnabled)
@@ -704,7 +703,7 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
 	}
 
 
-	public void sendSyncError (Execution execution) {
+	public void sendSyncError (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable(DebugFlag)
 		execution.setVariable("prefix", Prefix)
 
@@ -732,7 +731,7 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
 		}
 	}
 
-	public void processJavaException(Execution execution){
+	public void processJavaException(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable(DebugFlag)
 		execution.setVariable("prefix",Prefix)
 		try{

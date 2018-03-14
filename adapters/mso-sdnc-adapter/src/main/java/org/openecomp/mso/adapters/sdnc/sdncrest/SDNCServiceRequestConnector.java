@@ -114,7 +114,7 @@ public class SDNCServiceRequestConnector extends SDNCConnector {
 				} else if ("ack-final-indicator".equals(child.getNodeName())) {
 					ackFinalIndicator = child.getTextContent();
 				} else if ("response-parameters".equals(child.getNodeName())) {
-                    responseParameters.add((Element) child);
+                    responseParameters.add(child);
 				}
 			}
 

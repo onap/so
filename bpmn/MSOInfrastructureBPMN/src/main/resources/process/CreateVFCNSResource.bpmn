@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0">
-  <bpmn:process id="DoCreateVFCNetworkServiceInstance" name="DoCreateVFCNetworkServiceInstance" isExecutable="true">
+  <bpmn:process id="CreateVFCNSResource" name="CreateVFCNSResource" isExecutable="true">
     <bpmn:startEvent id="createNS_StartEvent" name="createNS_StartEvent">
       <bpmn:outgoing>SequenceFlow_1qo2pln</bpmn:outgoing>
     </bpmn:startEvent>
@@ -11,21 +11,21 @@
       <bpmn:incoming>SequenceFlow_0khtova</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1uiz85h</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
-def dcsi = new DoCreateVFCNetworkServiceInstance()
+def dcsi = new CreateVFCNSResource()
 dcsi.createNetworkService(execution)]]></bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="PreprocessIncomingRequest_task" name="Preprocess Incoming Request" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_1qo2pln</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0khtova</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
-def dcsi = new DoCreateVFCNetworkServiceInstance()
+def dcsi = new CreateVFCNSResource()
 dcsi.preProcessRequest(execution)]]></bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="instantiate_NSTask" name="Instantiate Network Service" scriptFormat="groovy">
       <bpmn:incoming>createNSSuccess_SequenceFlow</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1ywe21t</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
-def dcsi = new DoCreateVFCNetworkServiceInstance()
+def dcsi = new CreateVFCNSResource()
 dcsi.instantiateNetworkService(execution)]]></bpmn:script>
     </bpmn:scriptTask>
     <bpmn:exclusiveGateway id="ExclusiveGateway_0zfksms" name="Create NS Success?">
@@ -77,28 +77,28 @@ dcsi.instantiateNetworkService(execution)]]></bpmn:script>
       <bpmn:incoming>SequenceFlow_1gsbpxj</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0xqo13p</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
-def dcsi = new DoCreateVFCNetworkServiceInstance()
+def dcsi = new CreateVFCNSResource()
 dcsi.queryNSProgress(execution)]]></bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="finishNSCreate_Task" name="Finish NS Create">
       <bpmn:incoming>operationFinished_SequenceFlow</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0cq2q6g</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
-def dcsi = new DoCreateVFCNetworkServiceInstance()
-dcsi.finishNSCreate(execution)]]></bpmn:script>
+def dcsi = new CreateVFCNSResource()
+dcsi.addNSRelationship(execution)]]></bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_0xqo13p" sourceRef="queryJob_Task" targetRef="ExclusiveGateway_15492gl" />
     <bpmn:scriptTask id="timeDelay_Task" name="timeDelay" scriptFormat="groovy">
       <bpmn:incoming>operationProcessing_SequenceFlow</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1gsbpxj</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
-def dcsi = new DoCreateVFCNetworkServiceInstance()
+def dcsi = new CreateVFCNSResource()
 dcsi.timeDelay(execution)]]></bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_1gsbpxj" sourceRef="timeDelay_Task" targetRef="queryJob_Task" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DoCreateVFCNetworkServiceInstance">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="CreateVFCNSResource">
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="createNS_StartEvent">
         <dc:Bounds x="175" y="111" width="36" height="36" />
         <bpmndi:BPMNLabel>

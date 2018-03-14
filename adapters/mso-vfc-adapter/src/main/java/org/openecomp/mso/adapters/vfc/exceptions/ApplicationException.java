@@ -20,7 +20,7 @@
 
 package org.openecomp.mso.adapters.vfc.exceptions;
 
-import javax.ws.rs.core.Response;;
+import javax.ws.rs.core.Response;
 
 public class ApplicationException extends Exception {
 

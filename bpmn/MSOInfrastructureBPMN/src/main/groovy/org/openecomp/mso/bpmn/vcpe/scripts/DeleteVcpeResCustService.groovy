@@ -36,7 +36,6 @@ import java.util.UUID;
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.camunda.bpm.engine.runtime.Execution
 import org.json.JSONObject;
 import org.json.JSONArray;
 import org.apache.commons.lang3.*
@@ -65,7 +64,7 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 	 * This method is executed during the preProcessRequest task of the <class>DeleteVcpeResCustService.bpmn</class> process.
 	 * @param execution
 	 */
-	public InitializeProcessVariables(Execution execution){
+	public InitializeProcessVariables(DelegateExecution execution){
 		/* Initialize all the process variables in this block */
 
 		execution.setVariable("DeleteVcpeResCustServiceRequest", "")
@@ -175,7 +174,7 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 		}
 	}
 
-	public void sendSyncResponse(Execution execution) {
+	public void sendSyncResponse(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable(DebugFlag)
 
 		utils.log("DEBUG", " ***** Inside sendSyncResponse of DeleteVcpeResCustService ***** ", isDebugEnabled)
@@ -195,7 +194,7 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 		}
 	}
 
-	public void prepareServiceDelete(Execution execution) {
+	public void prepareServiceDelete(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable(DebugFlag)
 		utils.log("DEBUG", " ***** Inside prepareServiceDelete() of DeleteVcpeResCustService ***** ", isDebugEnabled)
 		
@@ -282,7 +281,7 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 		}
 	}
 	
-	private getAaiAr(Execution execution, String relink) {
+	private getAaiAr(DelegateExecution execution, String relink) {
 		def isDebugEnabled = execution.getVariable(DebugFlag)
 		AaiUtil aaiUtil = new AaiUtil(this)
 		String aaiEndpoint = execution.getVariable("URN_aai_endpoint") + relink
@@ -310,7 +309,7 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 	// *******************************
 	//     
 	// *******************************
-	public void prepareVnfAndModulesDelete (Execution execution) {
+	public void prepareVnfAndModulesDelete (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable(DebugFlag)
 		utils.log("DEBUG", " ***** Inside prepareVnfAndModulesDelete of DeleteVcpeResCustService ***** ", isDebugEnabled)
 
@@ -337,7 +336,7 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 	// *******************************
 	//     Validate Vnf request Section -> increment count
 	// *******************************
-	public void validateVnfDelete (Execution execution) {
+	public void validateVnfDelete (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable(DebugFlag)
 		utils.log("DEBUG", " ***** Inside validateVnfDelete of DeleteVcpeResCustService ***** ", isDebugEnabled)
 
@@ -359,7 +358,7 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 	// *****************************************
 	//     Prepare Completion request Section
 	// *****************************************
-	public void postProcessResponse (Execution execution) {
+	public void postProcessResponse (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable(DebugFlag)
 		utils.log("DEBUG", " ***** Inside postProcessResponse of DeleteVcpeResCustService ***** ", isDebugEnabled)
 
@@ -396,7 +395,7 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 		}
 	}
 
-	public void prepareFalloutRequest(Execution execution){
+	public void prepareFalloutRequest(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable(DebugFlag)
 		utils.log("DEBUG", " *** STARTED DeleteVcpeResCustService prepareFalloutRequest Process *** ", isDebugEnabled)
 
@@ -417,7 +416,7 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 	}
 
 
-	public void sendSyncError (Execution execution) {
+	public void sendSyncError (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable(DebugFlag)
 		utils.log("DEBUG", " ***** Inside sendSyncError() of DeleteVcpeResCustService ***** ", isDebugEnabled)
 
@@ -443,7 +442,7 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 		}
 	}
 
-	public void processJavaException(Execution execution){
+	public void processJavaException(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable(DebugFlag)
 		execution.setVariable("prefix",Prefix)
 		try{

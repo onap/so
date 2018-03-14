@@ -98,11 +98,11 @@ public class MsoLogger {
 
     public enum Catalog {
         APIH, BPEL, RA, ASDC, GENERAL
-    };
+    }
 
     public enum StatusCode {
         COMPLETE, ERROR
-    };
+    }
 
     public enum ResponseCode {
         Suc(0), PermissionError(100), DataError(300), DataNotFound(301), BadRequest(302), SchemaError(
@@ -115,10 +115,10 @@ public class MsoLogger {
             return this.value;
         }
 
-        private ResponseCode(int value) {
+        ResponseCode(int value) {
             this.value = value;
         }
-    };
+    }
 
     public enum ErrorCode {
         PermissionError(100), AvailabilityError(200), DataError(300), SchemaError(400), BusinessProcesssError(
@@ -130,10 +130,10 @@ public class MsoLogger {
             return this.value;
         }
 
-        private ErrorCode(int value) {
+        ErrorCode(int value) {
             this.value = value;
         }
-    };
+    }
 
     private EELFLogger          logger, auditLogger, metricsLogger;
     private static final String CONFIG_FILE = System.getProperty("jboss.home.dir") + "/mso-config/uuid/uuid_"

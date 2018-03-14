@@ -27,7 +27,6 @@ import com.google.common.xml.XmlEscapers
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.camunda.bpm.engine.runtime.Execution
 import org.openecomp.mso.bpmn.core.WorkflowException
 
 /**

@@ -350,7 +350,11 @@
 			<artifactId>spring-test</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.openecomp.sdc.sdc-tosca</groupId>
+			<artifactId>sdc-tosca</artifactId>
+			<version>1.2.3</version>
+		</dependency>
 		<dependency>
 			<groupId>org.camunda.bpm</groupId>
 			<artifactId>camunda-engine-spring</artifactId>

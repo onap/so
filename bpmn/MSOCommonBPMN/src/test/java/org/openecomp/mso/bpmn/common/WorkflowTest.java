@@ -132,8 +132,7 @@ public class WorkflowTest {
 		List<ResponseTransformer> transformerList = new ArrayList<ResponseTransformer>();
 
 		for (Field field : getClass().getFields()) {
-			WorkflowTestTransformer annotation = (WorkflowTestTransformer)
-				field.getAnnotation(WorkflowTestTransformer.class);
+			WorkflowTestTransformer annotation = field.getAnnotation(WorkflowTestTransformer.class);
 
 			if (annotation == null) {
 				continue;

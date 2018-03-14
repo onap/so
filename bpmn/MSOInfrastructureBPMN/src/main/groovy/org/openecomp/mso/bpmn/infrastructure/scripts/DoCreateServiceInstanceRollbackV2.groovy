@@ -2,7 +2,6 @@ package org.openecomp.mso.bpmn.infrastructure.scripts
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.camunda.bpm.engine.runtime.Execution
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.openecomp.mso.bpmn.core.domain.ServiceDecomposition
 import org.openecomp.mso.client.orchestration.AAIOrchestrator
@@ -15,7 +14,7 @@ public class DoCreateServiceInstanceRollbackV2 extends AbstractServiceTaskProces
 		
 	}
 	
-	public void aaiServiceInstanceRollback (Execution execution) {
+	public void aaiServiceInstanceRollback (DelegateExecution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")	
 		def aaiServiceInstanceRollback = execution.getVariable("aaiServiceInstanceRollback")
 		if(aaiServiceInstanceRollback){
@@ -36,7 +35,7 @@ public class DoCreateServiceInstanceRollbackV2 extends AbstractServiceTaskProces
 		}
 	}
 	
-	public void rollbackError (Execution execution) {
+	public void rollbackError (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("DEBUG"," ***** rollbackError ***** ", isDebugEnabled)
 		try{

@@ -20,12 +20,10 @@
 
 package org.openecomp.mso.cloud;
 
-
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-
 import javax.ejb.ConcurrencyManagement;
 import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.LocalBean;
@@ -49,8 +47,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
  * This class returns a cloud Config instances
- *
- *
  */
 
 @Singleton(name = "CloudConfigFactory")
@@ -61,13 +57,13 @@ public class CloudConfigFactory implements Serializable {
 
     private static final long serialVersionUID = 2956662716453261085L;
 
-    private static CloudConfig cloudConfigCache = new CloudConfig ();
+    private CloudConfig cloudConfigCache = new CloudConfig();
 
     protected static String prefixMsoPropertiesPath = System.getProperty ("mso.config.path");
 
     private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
 
-    private static int refreshTimer;
+    private int refreshTimer;
 
     private static final ReentrantReadWriteLock rwl = new ReentrantReadWriteLock ();
 
@@ -78,7 +74,6 @@ public class CloudConfigFactory implements Serializable {
     }
 
     public void initializeCloudConfig (String filePath, int refreshTimer) throws MsoCloudIdentityNotFound {
-
         rwl.writeLock ().lock ();
         try {
             cloudConfigCache.loadCloudConfig (prefixMsoPropertiesPath + filePath, refreshTimer);
@@ -92,18 +87,6 @@ public class CloudConfigFactory implements Serializable {
         } finally {
             rwl.writeLock ().unlock ();
         }
-    }
-
-    public void changeMsoPropertiesFilePath (String newMsoPropPath) {
-        rwl.writeLock ().lock ();
-        try {
-            CloudConfigFactory.cloudConfigCache.configFilePath = prefixMsoPropertiesPath + newMsoPropPath;
-        } finally {
-            rwl.writeLock ().unlock ();
-        }
-    }
-
-    public CloudConfigFactory () {
     }
 
     public CloudConfig getCloudConfig () {
@@ -126,7 +109,7 @@ public class CloudConfigFactory implements Serializable {
      * @return true if Properties have been reloaded, false otherwise
      */
     @Schedule(minute = "*/1", hour = "*", persistent = false)
-    public static void reloadCloudConfig () {
+    public void reloadCloudConfig () {
 
         try {
             if (!rwl.writeLock ().tryLock () && !rwl.writeLock ().tryLock (30L, TimeUnit.SECONDS)) {
@@ -179,23 +162,17 @@ public class CloudConfigFactory implements Serializable {
     @Path("/showConfig")
     @Produces("text/plain")
     public Response showCloudConfig () {
-        CloudConfig cloudConfig = this.getCloudConfig ();
-        if (cloudConfig != null) {
-            StringBuffer response = new StringBuffer ();
-            response.append ("Cloud Sites:\n");
-            for (CloudSite site : cloudConfig.getCloudSites ().values ()) {
-                response.append(site.toString()).append("\n");
-            }
-    
-            response.append ("\n\nCloud Identity Services:\n");
-            for (CloudIdentity identity : cloudConfig.getIdentityServices ().values ()) {
-                response.append(identity.toString()).append("\n");
-            }
-    
-            return Response.status (200).entity (response).build ();
-        } else {
-            return Response.status (500).entity ("Cloud Config has not been loaded properly, this could be due to a bad JSON structure (Check the logs for additional details)").build ();
+        CloudConfig cloudConfig = this.getCloudConfig();
+        StringBuffer response = new StringBuffer();
+        response.append("Cloud Sites:\n");
+        for (CloudSite site : cloudConfig.getCloudSites().values()) {
+            response.append(site.toString()).append("\n");
         }
+        response.append("\n\nCloud Identity Services:\n");
+        for (CloudIdentity identity : cloudConfig.getIdentityServices().values()) {
+            response.append(identity.toString()).append("\n");
+        }
+        return Response.status(200).entity(response).build();
     }
 
     @GET
@@ -206,8 +183,7 @@ public class CloudConfigFactory implements Serializable {
         MsoKeystoneUtils.adminCacheReset ();
         MsoHeatUtils.heatCacheReset ();
         MsoNeutronUtils.neutronCacheReset ();
-
-        String response = "Client caches reset.  All entries removed.";
+        String response = "Client caches reset. All entries removed.";
         return Response.status (200).entity (response).build ();
     }
 
@@ -219,8 +195,7 @@ public class CloudConfigFactory implements Serializable {
         MsoKeystoneUtils.adminCacheCleanup ();
         MsoHeatUtils.heatCacheCleanup ();
         MsoNeutronUtils.neutronCacheCleanup ();
-
-        String response = "Client caches cleaned up.  All expired entries removed";
+        String response = "Client caches cleaned up. All expired entries removed.";
         return Response.status (200).entity (response).build ();
     }
 

@@ -342,7 +342,7 @@ public class JsonUtils {
 					return null;
 				} else {
 					if (rawValue instanceof String) {
-						msoLogger.debug("getJsonValue(): the raw value is a String Object=" + ((String) rawValue));
+						msoLogger.debug("getJsonValue(): the raw value is a String Object=" + rawValue);
 						return (String) rawValue;
 					} else {
 						msoLogger.debug("getJsonValue(): the raw value is NOT a String Object=" + rawValue.toString());
@@ -371,7 +371,7 @@ public class JsonUtils {
 					return null;
 				} else {
 					if (rawValue instanceof String) {
-						msoLogger.debug("getJsonNodeValue(): the raw value is a String Object=" + ((String) rawValue));
+						msoLogger.debug("getJsonNodeValue(): the raw value is a String Object=" + rawValue);
 						return (String) rawValue;
 					} else {
 						msoLogger.debug("getJsonNodeValue(): the raw value is NOT a String Object=" + rawValue.toString());
@@ -403,7 +403,7 @@ public class JsonUtils {
 					return 0;
 				} else {
 					if (rawValue instanceof Integer) {
-						msoLogger.debug("getJsonValue(): the raw value is an Integer Object=" + ((String) rawValue));
+						msoLogger.debug("getJsonValue(): the raw value is an Integer Object=" + rawValue);
 						return (Integer) rawValue;
 					} else {
 						msoLogger.debug("getJsonIntValue(): the raw value is NOT an Integer Object=" + rawValue.toString());
@@ -431,7 +431,7 @@ public class JsonUtils {
 					return false;
 				} else {
 					if (rawValue instanceof Boolean) {
-						msoLogger.debug("getJsonBooleanValue(): the raw value is a Boolean Object=" + ((String) rawValue));
+						msoLogger.debug("getJsonBooleanValue(): the raw value is a Boolean Object=" + rawValue);
 						return (Boolean) rawValue;
 					} else {
 						msoLogger.debug("getJsonBooleanValue(): the raw value is NOT an Boolean Object=" + rawValue.toString());
@@ -477,7 +477,7 @@ public class JsonUtils {
 				return null;
 			} else {
 				if (rawValue instanceof JSONArray) {
-					msoLogger.debug("getJsonParamValue(): keys=" + keys + " points to JSONArray: " + ((JSONArray) rawValue).toString());
+					msoLogger.debug("getJsonParamValue(): keys=" + keys + " points to JSONArray: " + rawValue.toString());
 					int arrayLen = ((JSONArray) rawValue).length();
 					if (index < 0 || arrayLen < index+1) {
 						msoLogger.debug("getJsonParamValue(): index: " + index + " is out of bounds for array size of " + arrayLen);
@@ -567,7 +567,7 @@ public class JsonUtils {
 //				msoLogger.debug("getJsonValueForKey(): iterating over the keys");
 				Iterator <String> itr = jsonObj.keys();
 				while (itr.hasNext()) {
-					String nextKey = (String) itr.next();
+					String nextKey = itr.next();
 					Object obj = jsonObj.get(nextKey);
 					if (obj instanceof JSONObject) {
 //						msoLogger.debug("getJsonValueForKey(): key=" + nextKey + ", points to JSONObject, recursive call on: " +
@@ -614,7 +614,7 @@ public class JsonUtils {
 //				msoLogger.debug("getJsonIntValueForKey(): iterating over the keys");
 				Iterator <String> itr = jsonObj.keys();
 				while (itr.hasNext()) {
-					String nextKey = (String) itr.next();
+					String nextKey = itr.next();
 					Object obj = jsonObj.get(nextKey);
 					if (obj instanceof JSONObject) {
 //						msoLogger.debug("getJsonIntValueForKey(): key=" + nextKey + ", points to JSONObject, recursive call");
@@ -659,7 +659,7 @@ public class JsonUtils {
 //				msoLogger.debug("getJsonBooleanValueForKey(): iterating over the keys");
 				Iterator <String> itr = jsonObj.keys();
 				while (itr.hasNext()) {
-					String nextKey = (String) itr.next();
+					String nextKey = itr.next();
 					Object obj = jsonObj.get(nextKey);
 					if (obj instanceof JSONObject) {
 //						msoLogger.debug("getJsonBooleanValueForKey(): key=" + nextKey + ", points to JSONObject, recursive call");
@@ -717,7 +717,7 @@ public class JsonUtils {
 		if (!jsonValueExists(jsonStr, keys)) {
 			return putJsonValue(jsonStr, keys, value);
 		} else {
-			msoLogger.debug("addJsonValue(): JSON add failed, key=" + keys + "/value=" + (String) value + " already exists");
+			msoLogger.debug("addJsonValue(): JSON add failed, key=" + keys + "/value=" + value + " already exists");
 			return jsonStr;
 		}
 	}
@@ -855,7 +855,7 @@ public class JsonUtils {
 //						msoLogger.debug("putJsonValue(): key=" + keyStr + " points to json object");
 						jsonObj = (JSONObject) keyValue;
 					} else {
-						msoLogger.debug("putJsonValue(): key=" + keyStr + " not the last key but points to non-json object: " + (String) keyValue);
+						msoLogger.debug("putJsonValue(): key=" + keyStr + " not the last key but points to non-json object: " + keyValue);
 						return null;
 					}
 				} else { // at the last/new key value

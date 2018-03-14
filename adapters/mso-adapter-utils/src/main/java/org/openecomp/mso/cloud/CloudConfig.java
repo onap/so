@@ -22,6 +22,7 @@ package org.openecomp.mso.cloud;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -84,8 +85,8 @@ public class CloudConfig {
     /**
      * Get a map of all cloud sites that have been loaded.
      */
-    public synchronized Map<String, CloudSite> getCloudSites() {
-        return cloudSites;
+    public Map<String, CloudSite> getCloudSites() {
+        return Collections.unmodifiableMap(cloudSites);
     }
 
 	/**
