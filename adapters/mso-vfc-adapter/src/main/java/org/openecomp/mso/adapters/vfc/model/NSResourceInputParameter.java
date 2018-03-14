@@ -24,8 +24,8 @@ import java.io.ByteArrayOutputStream;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.openecomp.mso.logger.MsoLogger;
 
 /**
@@ -106,7 +106,7 @@ public class NSResourceInputParameter {
         String jsonString = null;
         try {
             ObjectMapper mapper = new ObjectMapper();
-            mapper.enable(SerializationConfig.Feature.WRAP_ROOT_VALUE);
+            mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
             jsonString = mapper.writeValueAsString(this);
         } catch (Exception e) {
             LOGGER.debug("Exception:", e);

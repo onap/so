@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_DkzPAHB4EeaJwpcpVN5gXw" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.4.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_DkzPAHB4EeaJwpcpVN5gXw" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.8.2" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
   <bpmn2:process id="CreateVnfInfra" name="CreateVnfInfra" isExecutable="true">
     <bpmn2:startEvent id="StartEvent_1">
       <bpmn2:outgoing>SequenceFlow_1</bpmn2:outgoing>
@@ -41,7 +41,7 @@ createVnf.sendSyncResponse(execution)]]></bpmn2:script>
         <camunda:in source="CREVI_vnfResourceDecomposition" target="vnfResourceDecomposition" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_0ed0uiq</bpmn2:incoming>
-      <bpmn2:outgoing>SequenceFlow_0lso26t</bpmn2:outgoing>
+      <bpmn2:outgoing>SequenceFlow_0w0m5fr</bpmn2:outgoing>
     </bpmn2:callActivity>
     <bpmn2:subProcess id="javaErrorHandlingSubProcess" name="Java Exception Handling Sub Process" triggeredByEvent="true">
       <bpmn2:scriptTask id="processJavaError" name="Process Error" scriptFormat="groovy">
@@ -100,7 +100,7 @@ createVnf.sendErrorResponse(execution)]]></bpmn2:script>
       <bpmn2:sequenceFlow id="SequenceFlow_12" name="" sourceRef="StartEvent_3" targetRef="sendErrorResponse" />
     </bpmn2:subProcess>
     <bpmn2:scriptTask id="postProcess" name="Prepare Completion Handler" scriptFormat="groovy">
-      <bpmn2:incoming>SequenceFlow_0lso26t</bpmn2:incoming>
+      <bpmn2:incoming>SequenceFlow_01mjjk3</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_16</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
 CreateVnfInfra createVnf = new CreateVnfInfra()
@@ -122,7 +122,6 @@ createVnf.prepareCompletionHandlerRequest(execution)]]></bpmn2:script>
       <bpmn2:outgoing>SequenceFlow_17</bpmn2:outgoing>
     </bpmn2:callActivity>
     <bpmn2:sequenceFlow id="SequenceFlow_17" name="" sourceRef="callCompletionHandler" targetRef="EndEvent_3" />
-    <bpmn2:sequenceFlow id="SequenceFlow_0lso26t" sourceRef="CreateVNF" targetRef="postProcess" />
     <bpmn2:sequenceFlow id="SequenceFlow_0ed0uiq" sourceRef="QueryCatalogDB" targetRef="CreateVNF" />
     <bpmn2:scriptTask id="QueryCatalogDB" name="Query Catalog DB" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_3</bpmn2:incoming>
@@ -130,6 +129,23 @@ createVnf.prepareCompletionHandlerRequest(execution)]]></bpmn2:script>
       <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
 CreateVnfInfra createVnf = new CreateVnfInfra()
 createVnf.queryCatalogDB(execution)]]></bpmn2:script>
+    </bpmn2:scriptTask>
+    <bpmn2:sequenceFlow id="SequenceFlow_0w0m5fr" sourceRef="CreateVNF" targetRef="Task_1gmhhag" />
+    <bpmn2:sequenceFlow id="SequenceFlow_0s4i7px" sourceRef="Task_1gmhhag" targetRef="Task_1307onz" />
+    <bpmn2:sequenceFlow id="SequenceFlow_01mjjk3" sourceRef="Task_1307onz" targetRef="postProcess" />
+    <bpmn2:scriptTask id="Task_1gmhhag" name="Create Platform" scriptFormat="groovy">
+      <bpmn2:incoming>SequenceFlow_0w0m5fr</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_0s4i7px</bpmn2:outgoing>
+      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
+CreateVnfInfra createVnf = new CreateVnfInfra()
+createVnf.createPlatform(execution)]]></bpmn2:script>
+    </bpmn2:scriptTask>
+    <bpmn2:scriptTask id="Task_1307onz" name="Create Line-of-Business" scriptFormat="groovy">
+      <bpmn2:incoming>SequenceFlow_0s4i7px</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_01mjjk3</bpmn2:outgoing>
+      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
+CreateVnfInfra createVnf = new CreateVnfInfra()
+createVnf.createLineOfBusiness(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
   </bpmn2:process>
   <bpmn2:error id="Error_1" name="Java Lang Exception" errorCode="java.lang.Exception" />
@@ -173,9 +189,9 @@ createVnf.queryCatalogDB(execution)]]></bpmn2:script>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="_BPMNShape_EndEvent_228" bpmnElement="EndEvent_3">
-        <dc:Bounds x="1090" y="222" width="36" height="36" />
+        <dc:Bounds x="1340" y="222" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1108" y="263" width="0" height="0" />
+          <dc:Bounds x="1313" y="263" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="_BPMNShape_SubProcess_32" bpmnElement="javaErrorHandlingSubProcess" isExpanded="true">
@@ -263,30 +279,23 @@ createVnf.queryCatalogDB(execution)]]></bpmn2:script>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="_BPMNShape_ScriptTask_325" bpmnElement="postProcess">
-        <dc:Bounds x="766" y="200" width="100" height="80" />
+        <dc:Bounds x="1042" y="200" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_20" bpmnElement="SequenceFlow_16" sourceElement="_BPMNShape_ScriptTask_325" targetElement="_BPMNShape_CallActivity_69">
-        <di:waypoint xsi:type="dc:Point" x="866" y="240" />
-        <di:waypoint xsi:type="dc:Point" x="907" y="240" />
+        <di:waypoint xsi:type="dc:Point" x="1142" y="240" />
+        <di:waypoint xsi:type="dc:Point" x="1192" y="240" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="887" y="225" width="0" height="0" />
+          <dc:Bounds x="1122" y="225" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="_BPMNShape_CallActivity_69" bpmnElement="callCompletionHandler">
-        <dc:Bounds x="907" y="200" width="100" height="80" />
+        <dc:Bounds x="1192" y="200" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_21" bpmnElement="SequenceFlow_17" sourceElement="_BPMNShape_CallActivity_69" targetElement="_BPMNShape_EndEvent_228">
-        <di:waypoint xsi:type="dc:Point" x="1007" y="240" />
-        <di:waypoint xsi:type="dc:Point" x="1090" y="240" />
+        <di:waypoint xsi:type="dc:Point" x="1292" y="240" />
+        <di:waypoint xsi:type="dc:Point" x="1340" y="240" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1049" y="225" width="0" height="0" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0lso26t_di" bpmnElement="SequenceFlow_0lso26t">
-        <di:waypoint xsi:type="dc:Point" x="718" y="240" />
-        <di:waypoint xsi:type="dc:Point" x="766" y="240" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="742" y="225" width="0" height="0" />
+          <dc:Bounds x="1271" y="225" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0ed0uiq_di" bpmnElement="SequenceFlow_0ed0uiq">
@@ -298,6 +307,33 @@ createVnf.queryCatalogDB(execution)]]></bpmn2:script>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_0z4xe39_di" bpmnElement="QueryCatalogDB">
         <dc:Bounds x="478" y="200" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0w0m5fr_di" bpmnElement="SequenceFlow_0w0m5fr">
+        <di:waypoint xsi:type="dc:Point" x="718" y="240" />
+        <di:waypoint xsi:type="dc:Point" x="757" y="240" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="737.5" y="219" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0s4i7px_di" bpmnElement="SequenceFlow_0s4i7px">
+        <di:waypoint xsi:type="dc:Point" x="857" y="240" />
+        <di:waypoint xsi:type="dc:Point" x="889" y="240" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="873" y="219" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_01mjjk3_di" bpmnElement="SequenceFlow_01mjjk3">
+        <di:waypoint xsi:type="dc:Point" x="989" y="240" />
+        <di:waypoint xsi:type="dc:Point" x="1042" y="240" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1015.5" y="219" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_1wah48v_di" bpmnElement="Task_1gmhhag">
+        <dc:Bounds x="757" y="200" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_0fy16oq_di" bpmnElement="Task_1307onz">
+        <dc:Bounds x="889" y="200" width="100" height="80" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

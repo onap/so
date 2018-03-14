@@ -26,7 +26,7 @@ import javax.xml.parsers.DocumentBuilderFactory
 
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
@@ -59,7 +59,7 @@ class DeleteVnfInfra extends AbstractServiceTaskProcessor {
 	 *
 	 * @param - execution
 	 */
-	public void preProcessRequest(Execution execution) {
+	public void preProcessRequest(DelegateExecution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		utils.log("DEBUG", " *** STARTED DeleteVnfInfra PreProcessRequest Process*** ", isDebugEnabled)
@@ -129,7 +129,7 @@ class DeleteVnfInfra extends AbstractServiceTaskProcessor {
 		utils.log("DEBUG", "*** COMPLETED DeleteVnfInfra PreProcessRequest Process ***", isDebugEnabled)
 	}
 
-	public void sendSyncResponse (Execution execution) {
+	public void sendSyncResponse (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 
@@ -154,7 +154,7 @@ class DeleteVnfInfra extends AbstractServiceTaskProcessor {
 		utils.log("DEBUG", "*** COMPLETED DeleteVnfInfra SendSyncResponse Process ***", isDebugEnabled)
 	}
 
-	public void prepareCompletionHandlerRequest(Execution execution){
+	public void prepareCompletionHandlerRequest(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 
@@ -187,7 +187,7 @@ class DeleteVnfInfra extends AbstractServiceTaskProcessor {
 		utils.log("DEBUG", "*** COMPLETED DeleteVnfInfra PrepareCompletionHandlerRequest Process ***", isDebugEnabled)
 	}
 
-	public void sendErrorResponse(Execution execution){
+	public void sendErrorResponse(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 

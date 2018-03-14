@@ -74,10 +74,12 @@ public class ManualHandlingTest extends WorkflowTest {
 		variables.put("vnfType", "Y");
 		variables.put("currentActivity", "BB1");		
 		variables.put("workStep", "1");
-		variables.put("failedActivity", "");
+		variables.put("failedActivity", "AAI");
+		variables.put("vnfName", "vSAMP12");
 		variables.put("errorCode", "123");
 		variables.put("errorText", "update failed");
 		variables.put("validResponses", "Rollback");
+		variables.put("vnfName", "vSAMP1");
 		
 
 		String businessKey = UUID.randomUUID().toString();

@@ -24,12 +24,11 @@ package org.openecomp.mso.adapters.nwrest;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.jboss.resteasy.annotations.providers.NoJackson;
-import org.codehaus.jackson.map.annotate.JsonRootName;
+import com.fasterxml.jackson.annotation.JsonRootName;
+
 
 @JsonRootName("rollbackNetworkResponse")
 @XmlRootElement(name = "rollbackNetworkResponse")
-@NoJackson
 public class RollbackNetworkResponse extends NetworkResponseCommon {
 
 	private Boolean networkRolledBack;

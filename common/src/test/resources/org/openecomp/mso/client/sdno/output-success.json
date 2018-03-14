@@ -1,0 +1,22 @@
+{
+    "body": {
+        "output": {
+             "response-healthdiagnostic": {
+			      "response-node-ip": "192.20.127.76",
+			      "response-id": "xyz123",
+			      "response-node-name": "mtvnjv9aads11",
+			      "response-status": "Success",
+			      "response-interface-type": "ssh",
+			      "response-details-json": "result",
+			      "cached-data": "false"
+			    }
+        }
+    },
+    "result-info": {
+        "client-name": "MSO",
+        "code": "200",
+        "processing-host": "sdno1-host01",
+        "request-id": "xyz123",
+        "status": "SUCCESS"
+    }
+}

@@ -49,4 +49,8 @@ public class Messages {
 	
 	private Messages(){
 	}	
+	
+	public static Map<String,String> getErrors() {
+		return errors;
+	}
 }

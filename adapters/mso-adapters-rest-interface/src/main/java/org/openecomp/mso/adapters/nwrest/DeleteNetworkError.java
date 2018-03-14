@@ -25,12 +25,9 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.jboss.resteasy.annotations.providers.NoJackson;
-
 import org.openecomp.mso.openstack.exceptions.MsoExceptionCategory;
 
 @XmlRootElement(name = "deleteNetworkError")
-@NoJackson
 public class DeleteNetworkError extends NetworkExceptionResponse implements Serializable {
 	private static final long serialVersionUID = 2735474165790444180L;
 

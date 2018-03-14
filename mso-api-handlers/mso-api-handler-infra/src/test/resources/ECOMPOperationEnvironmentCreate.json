@@ -1,0 +1,15 @@
+{
+	"requestDetails": {
+		"requestInfo": {
+    		"resourceType": "operationalEnvironment",
+			"instanceName": "myOpEnv",
+			"source": "VID",
+			"requestorId": "az2017"
+		},
+		"requestParameters": {
+			"operationalEnvironmentType": "ECOMP",
+			"tenantContext": "Test",
+			"workloadContext": "ECOMP_E2E-IST"
+		}
+  	}
+}

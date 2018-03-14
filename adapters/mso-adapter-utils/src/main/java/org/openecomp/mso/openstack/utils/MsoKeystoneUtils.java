@@ -383,7 +383,9 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
         // Get the Identity service URL. Throws runtime exception if not found per region.
         String adminUrl = null;
         try {
-            adminUrl = KeystoneUtils.findEndpointURL (access.getServiceCatalog (), "identity", region, "admin");
+        	// TODO:  FOR TESTING!!!!
+        	adminUrl = KeystoneUtils.findEndpointURL (access.getServiceCatalog (), "identity", region, "public");
+        	adminUrl = adminUrl.replaceFirst("5000", "35357");
         } catch (RuntimeException e) {
             String error = "Identity service not found: region=" + region + ",cloud=" + cloudIdentity.getId ();
             alarmLogger.sendAlarm ("MsoConfigurationError", MsoAlarmLogger.CRITICAL, error);

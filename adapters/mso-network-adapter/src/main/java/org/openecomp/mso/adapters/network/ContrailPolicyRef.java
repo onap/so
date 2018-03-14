@@ -21,12 +21,12 @@
 package org.openecomp.mso.adapters.network;
 
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.map.ObjectMapper;
-
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ContrailPolicyRef {
 	private static MsoLogger logger = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);

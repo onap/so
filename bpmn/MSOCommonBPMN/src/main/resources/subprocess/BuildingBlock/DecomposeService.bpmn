@@ -11,7 +11,7 @@
     <bpmn2:subProcess id="SubProcess_06d8lk8" name="Java Exception Handling Sub Process" triggeredByEvent="true">
       <bpmn2:startEvent id="StartEvent_0yljq9y">
         <bpmn2:outgoing>SequenceFlow_0tgrn11</bpmn2:outgoing>
-        <bpmn2:errorEventDefinition />
+        <bpmn2:errorEventDefinition errorRef="Error_1" />
       </bpmn2:startEvent>
       <bpmn2:endEvent id="EndEvent_117lkk3">
         <bpmn2:incoming>SequenceFlow_0g4aus9</bpmn2:incoming>

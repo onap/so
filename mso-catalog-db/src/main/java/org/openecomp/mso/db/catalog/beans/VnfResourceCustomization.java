@@ -44,6 +44,7 @@ public class VnfResourceCustomization extends MavenLikeVersioning implements Ser
 	private String nfType;
 	private String nfRole;
 	private String nfNamingCode;
+	private String multiStageDesign;
     private List<VfModuleCustomization> vfModuleCustomizations;
     private Set<ServiceToResourceCustomization> serviceResourceCustomizations;
 
@@ -144,6 +145,12 @@ public class VnfResourceCustomization extends MavenLikeVersioning implements Ser
 	public void setNfNamingCode(String nfNamingCode) {
 		this.nfNamingCode = nfNamingCode;
 	}
+	public String getMultiStageDesign() {
+		return this.multiStageDesign;
+	}
+	public void setMultiStageDesign(String multiStageDesign) {
+		this.multiStageDesign = multiStageDesign;
+	}
 	public List<VfModuleCustomization> getVfModuleCustomizations() {
 		return this.vfModuleCustomizations;
 	}
@@ -189,7 +196,8 @@ public class VnfResourceCustomization extends MavenLikeVersioning implements Ser
             ", nfFunction=" + this.nfFunction +
             ", nfType=" + this.nfType +
             ", nfRole=" + this.nfRole +
-            ", nfNamingCode=" + this.nfNamingCode;
+            ", nfNamingCode=" + this.nfNamingCode +
+            ", multiStageDesign=" + this.multiStageDesign;
 	}
 
 }

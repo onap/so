@@ -20,7 +20,7 @@
 
 package org.openecomp.mso.bpmn.infrastructure.scripts
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.openecomp.mso.bpmn.common.scripts.AaiUtil
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
@@ -36,13 +36,13 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 	def Prefix="DCVFMR_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 
-	public void initProcessVariables(Execution execution) {
+	public void initProcessVariables(DelegateExecution execution) {
 		execution.setVariable("prefix",Prefix)
 	}
 
 	// parse the incoming DELETE_VF_MODULE request for the Generic Vnf and Vf Module Ids
 	// and formulate the outgoing request for PrepareUpdateAAIVfModuleRequest
-	public void preProcessRequest(Execution execution) {
+	public void preProcessRequest(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 
 		initProcessVariables(execution)
@@ -141,7 +141,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 
 	// build a SDNC vnf-topology-operation request for the specified action
 	// (note: the action passed is expected to be 'changedelete' or 'delete')
-	public void prepSDNCAdapterRequest(Execution execution) {
+	public void prepSDNCAdapterRequest(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		String srvInstId = execution.getVariable("DCVFMR_serviceInstanceId")
 
@@ -232,7 +232,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 		execution.setVariable("sdncAdapterWorkflowRequest", request)
 	}
 
-	public void preProcessSDNCDeactivateRequest(Execution execution){
+	public void preProcessSDNCDeactivateRequest(DelegateExecution execution){
 		def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 		logDebug(" ======== STARTED preProcessSDNCDeactivateRequest ======== ", isDebugLogEnabled)
@@ -256,7 +256,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 		logDebug("======== COMPLETED preProcessSDNCDeactivateRequest ======== ", isDebugLogEnabled)
 	}
 
-	public void preProcessSDNCUnassignRequest(Execution execution) {
+	public void preProcessSDNCUnassignRequest(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.preProcessSDNCUnassignRequest(' +
 			'execution=' + execution.getId() +
 			')'
@@ -280,7 +280,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 		logDebug("======== COMPLETED  preProcessSDNCUnassignRequest Process ======== ", isDebugLogEnabled)
 	}
 
-	public String buildSDNCRequest(Execution execution, String svcInstId, String action){
+	public String buildSDNCRequest(DelegateExecution execution, String svcInstId, String action){
 	
 			String uuid = execution.getVariable('testReqId') // for junits
 			if(uuid==null){
@@ -340,7 +340,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 	
 	// parse the incoming DELETE_VF_MODULE request
 	// and formulate the outgoing VnfAdapterDeleteV1 request
-	public void prepVNFAdapterRequest(Execution execution) {
+	public void prepVNFAdapterRequest(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		String requestId = UUID.randomUUID().toString()
 		String origRequestId = execution.getVariable("DCVFMR_requestId")
@@ -382,7 +382,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 
 	// parse the incoming DELETE_VF_MODULE request
 	// and formulate the outgoing UpdateAAIVfModuleRequest request
-	public void prepUpdateAAIVfModule(Execution execution) {
+	public void prepUpdateAAIVfModule(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		String vnfId = execution.getVariable("DCVFMR_vnfId")
 		String vfModuleId = execution.getVariable("DCVFMR_vfModuleId")
@@ -397,10 +397,28 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 		utils.logAudit("UpdateAAIVfModule Request: " + request)
 		execution.setVariable("UpdateAAIVfModuleRequest", request)
 	}
+	
+	// parse the incoming DELETE_VF_MODULE request
+	// and formulate the outgoing UpdateAAIVfModuleRequest request
+	public void prepUpdateAAIVfModuleToAssigned(DelegateExecution execution) {
+		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+		String vnfId = execution.getVariable("DCVFMR_vnfId")
+		String vfModuleId = execution.getVariable("DCVFMR_vfModuleId")
+		// formulate the request for UpdateAAIVfModule
+		String request = """<UpdateAAIVfModuleRequest>
+								<vnf-id>${vnfId}</vnf-id>
+								<vf-module-id>${vfModuleId}</vf-module-id>
+								<heat-stack-id></heat-stack-id>
+								<orchestration-status>Assigned</orchestration-status>
+							</UpdateAAIVfModuleRequest>""" as String
+		utils.log("DEBUG", "UpdateAAIVfModuleRequest :" + request, isDebugEnabled)
+		utils.logAudit("UpdateAAIVfModule Request: " + request)
+		execution.setVariable("UpdateAAIVfModuleRequest", request)
+	}
 
 	// parse the incoming DELETE_VF_MODULE request
 	// and formulate the outgoing DeleteAAIVfModuleRequest request
-	public void prepDeleteAAIVfModule(Execution execution) {
+	public void prepDeleteAAIVfModule(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		String vnfId = execution.getVariable("DCVFMR_vnfId")
 		String vfModuleId = execution.getVariable("DCVFMR_vfModuleId")
@@ -416,7 +434,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 
 	// generates a WorkflowException if
 	//		-
-	public void handleDoDeleteVfModuleFailure(Execution execution) {
+	public void handleDoDeleteVfModuleFailure(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("ERROR", "AAI error occurred deleting the Generic Vnf: "
 			+ execution.getVariable("DoDVfMod_deleteGenericVnfResponse"), isDebugEnabled)
@@ -425,7 +443,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 
 	}
 
-	public void sdncValidateResponse(Execution execution, String response){
+	public void sdncValidateResponse(DelegateExecution execution, String response){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 
@@ -442,7 +460,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 		}
 	}
 
-	public void deleteNetworkPoliciesFromAAI(Execution execution) {
+	public void deleteNetworkPoliciesFromAAI(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.deleteNetworkPoliciesFromAAI(' +
 		'execution=' + execution.getId() +
 		')'
@@ -576,7 +594,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void preProcessUpdateAAIGenericVnf(Execution execution) {
+	public void preProcessUpdateAAIGenericVnf(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.preProcessUpdateAAIGenericVnf((' +
 			'execution=' + execution.getId() +
 			')'
@@ -621,7 +639,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 		}
 	}
 	
-	public void setSuccessfulRollbackStatus (Execution execution){
+	public void setSuccessfulRollbackStatus (DelegateExecution execution){
 		def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 		logDebug(" ======== STARTED setSuccessfulRollbackStatus ======== ", isDebugLogEnabled)
@@ -638,7 +656,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 		logDebug("======== COMPLETED setSuccessfulRollbackStatus ======== ", isDebugLogEnabled)
 	}
 	
-	public void setFailedRollbackStatus (Execution execution){
+	public void setFailedRollbackStatus (DelegateExecution execution){
 		def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 		logDebug(" ======== STARTED setFailedRollbackStatus ======== ", isDebugLogEnabled)

@@ -19,7 +19,7 @@
  */
 
 package org.openecomp.mso.bpmn.common.scripts
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.openecomp.mso.rest.APIResponse
 
 
@@ -28,7 +28,7 @@ public class ConfirmVolumeGroupName extends AbstractServiceTaskProcessor{
 	def Prefix="CVGN_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 
-	public void initProcessVariables(Execution execution) {
+	public void initProcessVariables(DelegateExecution execution) {
 		execution.setVariable("prefix",Prefix)
 		execution.setVariable("CVGN_volumeGroupId",null)
 		execution.setVariable("CVGN_volumeGroupName",null)
@@ -44,8 +44,8 @@ public class ConfirmVolumeGroupName extends AbstractServiceTaskProcessor{
 		execution.setVariable("RollbackData", null)
 	}
 
-	// store the incoming data in the flow Execution
-	public void preProcessRequest(Execution execution) {
+	// store the incoming data in the flow DelegateExecution
+	public void preProcessRequest(DelegateExecution execution) {
 		def isDebugLogEnabled=execution.getVariable("isDebugLogEnabled")
 		def volumeGroupId = execution.getVariable("ConfirmVolumeGroupName_volumeGroupId")
 		def volumeGroupName= execution.getVariable("ConfirmVolumeGroupName_volumeGroupName")
@@ -66,7 +66,7 @@ public class ConfirmVolumeGroupName extends AbstractServiceTaskProcessor{
 	
 	// send a GET request to AA&I to retrieve the Volume information based on volume-group-id
 	// expect a 200 response with the information in the response body or a 404 if the volume group id does not exist
-	public void queryAAIForVolumeGroupId(Execution execution) {
+	public void queryAAIForVolumeGroupId(DelegateExecution execution) {
 		def isDebugLogEnabled=execution.getVariable("isDebugLogEnabled")
 		def endPoint = execution.getVariable("URN_aai_endpoint") + execution.getVariable("CVGN_volumeGroupGetEndpoint")
 		
@@ -97,7 +97,7 @@ public class ConfirmVolumeGroupName extends AbstractServiceTaskProcessor{
 
 	// process the result from queryAAIVolumeGroupId()
 
-	public void checkAAIQueryResult(Execution execution) {
+	public void checkAAIQueryResult(DelegateExecution execution) {
 		def isDebugLogEnabled=execution.getVariable("isDebugLogEnabled")
 		def result = execution.getVariable("CVGN_queryVolumeGroupResponse")
 
@@ -123,7 +123,7 @@ public class ConfirmVolumeGroupName extends AbstractServiceTaskProcessor{
 
 
 	// generates a WorkflowException if the A&AI query returns a response code other than 200/404
-	public void handleAAIQueryFailure(Execution execution) {
+	public void handleAAIQueryFailure(DelegateExecution execution) {
 		def isDebugLogEnabled=execution.getVariable("isDebugLogEnabled")
 
 		logError("Error occurred attempting to query AAI, Response Code " +
@@ -136,7 +136,7 @@ public class ConfirmVolumeGroupName extends AbstractServiceTaskProcessor{
 	}
 
 	// generates a WorkflowException if the volume group name does not match AAI record for this volume group
-	public void handleVolumeGroupNameNoMatch(Execution execution) {
+	public void handleVolumeGroupNameNoMatch(DelegateExecution execution) {
 		def isDebugLogEnabled=execution.getVariable("isDebugLogEnabled")
 
 		def errorNotAssociated = "Error occurred - volume group id " + execution.getVariable("CVGN_volumeGroupId") +
@@ -150,7 +150,7 @@ public class ConfirmVolumeGroupName extends AbstractServiceTaskProcessor{
 	}
 
 	// sends a successful WorkflowResponse
-	public void reportSuccess(Execution execution) {
+	public void reportSuccess(DelegateExecution execution) {
 		def isDebugLogEnabled=execution.getVariable("isDebugLogEnabled")
 		logDebug("Sending 200 back to the caller", isDebugLogEnabled)
 		def responseXML = ""

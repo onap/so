@@ -24,7 +24,10 @@ import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
 
-
+/**
+ * Stores allotted-resource information
+ *
+ */
 @JsonRootName("allottedResource")
 public class AllottedResource extends Resource {
 
@@ -43,12 +46,16 @@ public class AllottedResource extends Resource {
 	 */
 	private String allottedResourceType;
 	private String allottedResourceRole;
+	private String providingServiceModelName;
 	private String providingServiceModelInvariantUuid;
+	private String providingServiceModelUuid;
 	private String nfFunction;
 	private String nfType;
 	private String nfRole;
 	private String nfNamingCode;
-	
+	private String orchestrationStatus;
+	private TunnelConnect tunnelConnect;
+
 	/*
 	 * GET and SET
 	 */
@@ -64,12 +71,24 @@ public class AllottedResource extends Resource {
 	public void setAllottedResourceRole(String allottedResourceRole) {
 		this.allottedResourceRole = allottedResourceRole;
 	}
+	public String getProvidingServiceModelName() {
+		return providingServiceModelName;
+	}
+	public void setProvidingServiceModelName(String providingServiceModelName) {
+		this.providingServiceModelName = providingServiceModelName;
+	}
 	public String getProvidingServiceModelInvariantUuid() {
 		return providingServiceModelInvariantUuid;
 	}
 	public void setProvidingServiceModelInvariantUuid(
 			String providingServiceModelInvariantUuid) {
 		this.providingServiceModelInvariantUuid = providingServiceModelInvariantUuid;
+	}
+	public String getProvidingServiceModelUuid() {
+		return providingServiceModelUuid;
+	}
+	public void setProvidingServiceModelUuid(String providingServiceModelUuid) {
+		this.providingServiceModelUuid = providingServiceModelUuid;
 	}
 	public String getNfFunction() {
 		return nfFunction;
@@ -94,5 +113,17 @@ public class AllottedResource extends Resource {
 	}
 	public void setNfNamingCode(String nfNamingCode) {
 		this.nfNamingCode = nfNamingCode;
+	}
+	public String getOrchestrationStatus() {
+		return orchestrationStatus;
+	}
+	public void setOrchestrationStatus(String orchestrationStatus) {
+		this.orchestrationStatus = orchestrationStatus;
+	}
+	public TunnelConnect getTunnelConnect() {
+		return tunnelConnect;
+	}
+	public void setTunnelConnect(TunnelConnect tunnelConnect) {
+		this.tunnelConnect = tunnelConnect;
 	}
 }

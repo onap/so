@@ -20,11 +20,11 @@
 
 package org.openecomp.mso.apihandler.camundabeans;
 
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.map.annotate.JsonRootName;
-import org.codehaus.jackson.annotate.JsonPropertyOrder;
-
 import org.openecomp.mso.apihandler.common.CommonConstants;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonRootName;
 
 /**
  * JavaBean JSON class for a "variables" which contains the JSON payload that
@@ -36,8 +36,9 @@ import org.openecomp.mso.apihandler.common.CommonConstants;
 	CommonConstants.REQUEST_ACTION_VARIABLE, CommonConstants.SERVICE_INSTANCE_ID_VARIABLE,
 	CommonConstants.VNF_ID_VARIABLE, CommonConstants.VF_MODULE_ID_VARIABLE,
 	CommonConstants.VOLUME_GROUP_ID_VARIABLE, CommonConstants.NETWORK_ID_VARIABLE,
-	CommonConstants.SERVICE_TYPE_VARIABLE, CommonConstants.VNF_TYPE_VARIABLE,
-	CommonConstants.VF_MODULE_TYPE_VARIABLE, CommonConstants.NETWORK_TYPE_VARIABLE,
+	CommonConstants.CONFIGURATION_ID_VARIABLE, CommonConstants.SERVICE_TYPE_VARIABLE, 
+	CommonConstants.VNF_TYPE_VARIABLE, CommonConstants.VF_MODULE_TYPE_VARIABLE, 
+	CommonConstants.NETWORK_TYPE_VARIABLE, CommonConstants.CAMUNDA_SERVICE_INPUT,
 	CommonConstants.CAMUNDA_SERVICE_INPUT, CommonConstants.RECIPE_PARAMS})
 @JsonRootName(CommonConstants.CAMUNDA_ROOT_INPUT)
 public class CamundaVIDRequest {
@@ -78,6 +79,9 @@ public class CamundaVIDRequest {
 
 	@JsonProperty(CommonConstants.NETWORK_ID_VARIABLE)
 	private CamundaInput networkId;
+
+	@JsonProperty(CommonConstants.CONFIGURATION_ID_VARIABLE)
+	private CamundaInput configurationId;
 
 	@JsonProperty(CommonConstants.SERVICE_TYPE_VARIABLE)
 	private CamundaInput serviceType;
@@ -213,6 +217,16 @@ public class CamundaVIDRequest {
 		this.networkId = networkId;
 	}
 
+	@JsonProperty(CommonConstants.CONFIGURATION_ID_VARIABLE)
+	public CamundaInput getConfigurationId() {
+		return configurationId;
+	}
+
+	@JsonProperty(CommonConstants.CONFIGURATION_ID_VARIABLE)
+	public void setConfigurationId(CamundaInput configurationId) {
+		this.configurationId = configurationId;
+	}
+
 	@JsonProperty(CommonConstants.SERVICE_TYPE_VARIABLE)
 	public CamundaInput getServiceType() {
 		return serviceType;
@@ -254,16 +268,16 @@ public class CamundaVIDRequest {
 	}
 
 	@JsonProperty(CommonConstants.RECIPE_PARAMS)
-    public CamundaInput getRecipeParams() {
-        return recipeParams;
-    }
+	public CamundaInput getRecipeParams() {
+		return recipeParams;
+	}
 
 	@JsonProperty(CommonConstants.RECIPE_PARAMS)
-    public void setRecipeParams(CamundaInput recipeParams) {
-        this.recipeParams = recipeParams;
-    }
+	public void setRecipeParams(CamundaInput recipeParams) {
+		this.recipeParams = recipeParams;
+	}
 
-    @Override
+	@Override
 	public String toString() {
 		//return "CamundaRequest [requestId=" +  + ", host="
 		//		+ host + ", schema=" + schema + ", reqid=" + reqid + ", svcid="

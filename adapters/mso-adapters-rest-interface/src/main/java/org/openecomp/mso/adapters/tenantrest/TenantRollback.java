@@ -25,7 +25,6 @@ package org.openecomp.mso.adapters.tenantrest;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.openecomp.mso.entity.MsoRequest;
-import org.jboss.resteasy.annotations.providers.NoJackson;
 
 /**
  * Javabean representing the rollback criteria following a "Create Tenant"
@@ -36,7 +35,6 @@ import org.jboss.resteasy.annotations.providers.NoJackson;
  */
 
 @XmlRootElement(name = "rollbackTenantRequest")
-@NoJackson
 public class TenantRollback extends TenantRequestCommon {
 	private String tenantId;
 	private String cloudId;

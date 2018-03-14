@@ -20,7 +20,6 @@
 package org.openecomp.mso.adapters.catalogdb.catalogrest;
 
 import org.openecomp.mso.db.catalog.beans.NetworkResourceCustomization;
-import org.jboss.resteasy.annotations.providers.NoJackson;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
@@ -29,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 
 @XmlRootElement(name = "serviceNetworks")
-@NoJackson
 public class QueryServiceNetworks extends CatalogQuery {
 	private List<NetworkResourceCustomization> serviceNetworks;
 	private final String template =

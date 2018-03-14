@@ -26,15 +26,15 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
 import org.junit.Test;
-
 import org.openecomp.mso.apihandler.camundabeans.CamundaInput;
 import org.openecomp.mso.apihandler.camundabeans.CamundaRequest;
 import org.openecomp.mso.apihandler.common.CommonConstants;
+
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 /**
  * This class implements test methods of Camunda Beans.
@@ -67,7 +67,7 @@ public class CamundaRequestTest {
 		timeout.setValue("");
 		camundaRequest.setTimeout(timeout);
 		ObjectMapper mapper = new ObjectMapper();
-		mapper.configure(SerializationConfig.Feature.WRAP_ROOT_VALUE, true);
+		mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
 
 		String json = mapper.writeValueAsString(camundaRequest);
 		System.out.println(json);

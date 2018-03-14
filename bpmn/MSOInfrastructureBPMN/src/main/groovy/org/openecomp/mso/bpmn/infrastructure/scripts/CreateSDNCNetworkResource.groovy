@@ -32,7 +32,7 @@ import org.openecomp.mso.rest.APIResponse
 import java.util.UUID;
 
 import org.camunda.bpm.engine.delegate.BpmnError 
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.apache.commons.lang3.*
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.web.util.UriUtils 
@@ -60,7 +60,7 @@ public class CreateSDNCCNetworkResource extends AbstractServiceTaskProcessor {
      * generate the nsOperationKey
      * generate the nsParameters
      */
-    public void preProcessRequest (Execution execution) {
+    public void preProcessRequest (DelegateExecution execution) {
 	   def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
        String msg = ""
        utils.log("INFO", " *** preProcessRequest() *** ", isDebugEnabled)
@@ -120,7 +120,7 @@ public class CreateSDNCCNetworkResource extends AbstractServiceTaskProcessor {
      * url: the url of the request
      * requestBody: the body of the request
      */
-    private APIResponse postRequest(Execution execution, String url, String requestBody){
+    private APIResponse postRequest(DelegateExecution execution, String url, String requestBody){
         def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
         utils.log("INFO"," ***** Started Execute VFC adapter Post Process *****",  isDebugEnabled)
         utils.log("INFO","url:"+url +"\nrequestBody:"+ requestBody,  isDebugEnabled)
@@ -138,7 +138,7 @@ public class CreateSDNCCNetworkResource extends AbstractServiceTaskProcessor {
         return apiResponse
     }
     
-    public void postCreateSDNCCall(Execution execution){
+    public void postCreateSDNCCall(DelegateExecution execution){
         
     }
 }

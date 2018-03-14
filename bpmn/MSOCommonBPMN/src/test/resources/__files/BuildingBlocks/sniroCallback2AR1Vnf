@@ -30,7 +30,7 @@
                 "serviceResourceId": "testResourceIdVNF"
             }
         ],
-        "placement": [
+        "placementInfo": [
             {
                 "assignmentInfo": [
                     {
@@ -54,7 +54,8 @@
                 "inventoryType": "service",
                 "resourceModuleName": "ALLOTTED_RESOURCE",
                 "serviceInstanceId": "testSIID1",
-                "serviceResourceId": "testResourceIdAR"
+                "serviceResourceId": "testResourceIdAR",
+                "isRehome": "False"
             },
             {
                 "assignmentInfo": [
@@ -79,7 +80,8 @@
                 "inventoryType": "service",
                 "resourceModuleName": "ALLOTTED_RESOURCE",
                 "serviceInstanceId": "testSIID2",
-                "serviceResourceId": "testResourceIdAR2"
+                "serviceResourceId": "testResourceIdAR2",
+                "isRehome": "False"
             },
             {
                 "assignmentInfo": [
@@ -100,7 +102,8 @@
                 "inventoryType": "cloud",
                 "resourceModuleName": "VNF",
                 "serviceInstanceId": "",
-                "serviceResourceId": "testResourceIdVNF"
+                "serviceResourceId": "testResourceIdVNF",
+                "isRehome": "False"
             }
         ]
     }

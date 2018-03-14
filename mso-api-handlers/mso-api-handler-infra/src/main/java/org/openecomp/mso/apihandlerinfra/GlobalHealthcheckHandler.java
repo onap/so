@@ -39,8 +39,6 @@ import com.wordnik.swagger.annotations.ApiOperation;
 @Api(value="/globalhealthcheck",description="APIH Infra Global Health Check")
 public class GlobalHealthcheckHandler {
 
-	public final static String MSO_PROP_APIHANDLER_INFRA = "MSO_PROP_APIHANDLER_INFRA";
-
     private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH);
 
 	@HEAD

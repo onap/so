@@ -34,14 +34,16 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
+
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.openstack.exceptions.MsoCloudIdentityNotFound;
 import org.openecomp.mso.openstack.utils.MsoHeatUtils;
 import org.openecomp.mso.openstack.utils.MsoKeystoneUtils;
 import org.openecomp.mso.openstack.utils.MsoNeutronUtils;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
  * This class returns a cloud Config instances

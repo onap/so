@@ -55,12 +55,13 @@ import org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans.E2EServiceInsta
 import org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans.E2EServiceInstanceRequest;
 import org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans.E2EUserParam;
 import org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans.GetE2EServiceInstanceResponse;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.ModelInfo;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.RequestDetails;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.RequestInfo;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.RequestParameters;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.ServiceInstancesRequest;
-import org.openecomp.mso.apihandlerinfra.serviceinstancebeans.SubscriberInfo;
+import org.openecomp.mso.serviceinstancebeans.ModelInfo;
+import org.openecomp.mso.serviceinstancebeans.ModelType;
+import org.openecomp.mso.serviceinstancebeans.RequestDetails;
+import org.openecomp.mso.serviceinstancebeans.RequestInfo;
+import org.openecomp.mso.serviceinstancebeans.RequestParameters;
+import org.openecomp.mso.serviceinstancebeans.ServiceInstancesRequest;
+import org.openecomp.mso.serviceinstancebeans.SubscriberInfo;
 import org.openecomp.mso.db.AbstractSessionFactoryManager;
 import org.openecomp.mso.db.catalog.CatalogDatabase;
 import org.openecomp.mso.db.catalog.beans.Service;
@@ -333,7 +334,7 @@ public class E2EServiceInstances {
 			String serviceInstanceType = e2eDelReq.getServiceType();
 			response = requestClient.post(requestId, false,
 					recipeLookupResult.getRecipeTimeout(), action.name(),
-					serviceId, null, null, null, null, serviceInstanceType,
+					serviceId, null, null, null, null, null, serviceInstanceType,
 					null, null, null, bpmnRequest, recipeLookupResult.getRecipeParamXsd());
 
 			msoLogger.recordMetricEvent(subStartTime,
@@ -423,7 +424,7 @@ public class E2EServiceInstances {
 		mapReqJsonToSvcInstReq(e2eSir, requestJSON);
 		sir.getRequestDetails().getRequestParameters().setaLaCarte(true);
 		try {
-			msoRequest.parse(sir, instanceIdMap, action, version);
+			msoRequest.parse(sir, instanceIdMap, action, version, requestJSON);
 		} catch (Exception e) {
 			msoLogger.debug("Validation failed: ", e);
 			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_REQUEST,
@@ -503,7 +504,8 @@ public class E2EServiceInstances {
 			msoLogger.debug("MSO API Handler Posting call to BPEL engine for url: " + requestClient.getUrl());
 
 			response = requestClient.post(requestId, false, recipeLookupResult.getRecipeTimeout(), action.name(),
-					serviceId, null, null, null, null, serviceInstanceType, null, null, null, sirRequestJson, recipeLookupResult.getRecipeParamXsd());
+					serviceId, null, null, null, null, null, serviceInstanceType, null, null, null, sirRequestJson,
+					recipeLookupResult.getRecipeParamXsd());
 
 			msoLogger.recordMetricEvent(subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
 					"Successfully received response from BPMN engine", "BPMN", recipeLookupResult.getOrchestrationURI(),
@@ -618,7 +620,7 @@ public class E2EServiceInstances {
 		mapReqJsonToSvcInstReq(e2eSir, requestJSON);
 		sir.getRequestDetails().getRequestParameters().setaLaCarte(true);
 		try {
-			msoRequest.parse(sir, instanceIdMap, action, version);
+			msoRequest.parse(sir, instanceIdMap, action, version, requestJSON);
 		} catch (Exception e) {
 			msoLogger.debug("Validation failed: ", e);
 			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_REQUEST,
@@ -757,7 +759,8 @@ public class E2EServiceInstances {
 			msoLogger.debug("MSO API Handler Posting call to BPEL engine for url: " + requestClient.getUrl());
 
 			response = requestClient.post(requestId, false, recipeLookupResult.getRecipeTimeout(), action.name(),
-					serviceId, null, null, null, null, serviceInstanceType, null, null, null, sirRequestJson, recipeLookupResult.getRecipeParamXsd());
+					serviceId, null, null, null, null, null, serviceInstanceType, null, null, null, sirRequestJson,
+					recipeLookupResult.getRecipeParamXsd());
 
 			msoLogger.recordMetricEvent(subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
 					"Successfully received response from BPMN engine", "BPMN", recipeLookupResult.getOrchestrationURI(),
@@ -1021,8 +1024,8 @@ public class E2EServiceInstances {
 		List<E2EUserParam> userParams;
 		// userParams =
 		// e2eSir.getService().getParameters().getRequestParameters().getUserParams();
-		List<Map<String, String>> userParamList = new ArrayList<>();
-		Map<String, String> userParamMap = new HashMap<>();
+		List<Map<String, Object>> userParamList = new ArrayList<>();
+		Map<String, Object> userParamMap = new HashMap<>();
 		// complete json request updated in the camunda
 		userParamMap.put("UUIRequest", requestJSON);
 		userParamMap.put("ServiceInstanceName", e2eSir.getService().getName());

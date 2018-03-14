@@ -31,7 +31,7 @@ import org.openecomp.mso.rest.APIResponse
 import java.util.UUID;
 
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.apache.commons.lang3.*
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.web.util.UriUtils
@@ -45,7 +45,7 @@ public class CreateNetworkInstance extends AbstractServiceTaskProcessor {
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
 
-	public InitializeProcessVariables(Execution execution){
+	public InitializeProcessVariables(DelegateExecution execution){
 		
 		execution.setVariable(Prefix + "source", "")
 		execution.setVariable(Prefix + "Success", false)
@@ -69,7 +69,7 @@ public class CreateNetworkInstance extends AbstractServiceTaskProcessor {
 	 * This method is executed during the preProcessRequest task of the <class>CreateNetworkInstance.bpmn</class> process.
 	 * @param execution
 	 */
-	public void preProcessRequest (Execution execution) {
+	public void preProcessRequest (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 
@@ -154,7 +154,7 @@ public class CreateNetworkInstance extends AbstractServiceTaskProcessor {
 		}
 	}
 
-	public void sendSyncResponse (Execution execution) {
+	public void sendSyncResponse (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 
@@ -178,7 +178,7 @@ public class CreateNetworkInstance extends AbstractServiceTaskProcessor {
 	}
 	
 	
-	public void getNetworkModelInfo (Execution execution) {
+	public void getNetworkModelInfo (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 
@@ -203,7 +203,7 @@ public class CreateNetworkInstance extends AbstractServiceTaskProcessor {
 	}
 	
 	
-	public void sendSyncError (Execution execution) {
+	public void sendSyncError (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 
@@ -224,7 +224,7 @@ public class CreateNetworkInstance extends AbstractServiceTaskProcessor {
 
 	}
 
-	public void prepareDBRequestError (Execution execution) {
+	public void prepareDBRequestError (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 
@@ -272,7 +272,7 @@ public class CreateNetworkInstance extends AbstractServiceTaskProcessor {
 
 	 }
 	
-	public void prepareCompletion (Execution execution) {
+	public void prepareCompletion (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 
@@ -320,7 +320,7 @@ public class CreateNetworkInstance extends AbstractServiceTaskProcessor {
 	//     Post or Validate Response Section
 	// **************************************************
 
-	public void postProcessResponse (Execution execution) {
+	public void postProcessResponse (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 	
@@ -354,7 +354,7 @@ public class CreateNetworkInstance extends AbstractServiceTaskProcessor {
 	//     Build Error Section
 	// *******************************
 
-	public void processRollbackData (Execution execution) {
+	public void processRollbackData (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 
@@ -375,7 +375,7 @@ public class CreateNetworkInstance extends AbstractServiceTaskProcessor {
 	}
 	
 	// Prepare for FalloutHandler
-	public void buildErrorResponse (Execution execution) {
+	public void buildErrorResponse (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 
@@ -436,7 +436,7 @@ public class CreateNetworkInstance extends AbstractServiceTaskProcessor {
 
 	}
 	
-	public void processJavaException(Execution execution){
+	public void processJavaException(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		try{

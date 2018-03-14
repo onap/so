@@ -34,6 +34,13 @@
          }
       ],
       "requestParameters": {
-      }
+      },
+	  "platform": {
+		"platformName": "platform name"
+	  },
+	  "lineOfBusiness": {
+		"lineOfBusinessName": "line of business names"
+	  }
   }
+  
 }

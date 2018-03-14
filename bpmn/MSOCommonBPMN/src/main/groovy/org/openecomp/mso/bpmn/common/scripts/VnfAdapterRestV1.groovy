@@ -22,7 +22,7 @@ package org.openecomp.mso.bpmn.common.scripts
 
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.openecomp.mso.rest.APIResponse
 import org.openecomp.mso.rest.RESTClient
 import org.openecomp.mso.rest.RESTConfig
@@ -32,7 +32,7 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 
 	// VNF Response Processing
-	public void preProcessRequest (Execution execution) {
+	public void preProcessRequest (DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.preProcessRequest(' +
 			'execution=' + execution.getId() +
 			')'
@@ -58,6 +58,10 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 
 			String messageId = getChildText(root, 'messageId')
 
+			if ('rollbackVolumeGroupRequest'.equals(requestType)) {
+				messageId = getMessageIdForVolumeGroupRollback(root)
+			}
+			
 			if (messageId == null || messageId.isEmpty()) {
 				String msg = getProcessKey(execution) + ': no messageId in ' + requestType
 				logError(msg)
@@ -219,7 +223,7 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 				vnfAdapterUrl = vnfAdapterEndpoint + '/volume-groups/' + URLEncoder.encode(volumeGroupId, 'UTF-8')
 
 			} else if ('rollbackVolumeGroupRequest'.equals(requestType)) {
-				String volumeGroupId = getChildText(root, 'volumeGroupId')
+				String volumeGroupId = root.'volumeGroupRollback'.'volumeGroupId'.text()
 
 				if (volumeGroupId == null || volumeGroupId.isEmpty()) {
 					String msg = getProcessKey(execution) + ': no volumeGroupId in ' + requestType
@@ -274,11 +278,15 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 		}
 	}
 
+	public String getMessageIdForVolumeGroupRollback(Node root) {
+		return root.'volumeGroupRollback'.'messageId'.text()
+	}
+	
 	/**
 	 * This method is used instead of an HTTP Connector task because the
 	 * connector does not allow DELETE with a body.
 	 */
-	public void sendRequestToVnfAdapter(Execution execution) {
+	public void sendRequestToVnfAdapter(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.sendRequestToVnfAdapter(' +
 			'execution=' + execution.getId() +
 			')'
@@ -324,7 +332,7 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 		}
 	}
 
-	public void processCallback(Execution execution){
+	public void processCallback(DelegateExecution execution){
 		def method = getClass().getSimpleName() + '.processCallback(' +
 			'execution=' + execution.getId() +
 			')'
@@ -360,7 +368,7 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 	 * a WorkflowException.  If the response cannot be parsed, a more generic
 	 * WorkflowException is created.
 	 */
-	public void vnfAdapterWorkflowException(Execution execution, Object response) {
+	public void vnfAdapterWorkflowException(DelegateExecution execution, Object response) {
 		try {
 			Node root = new XmlParser().parseText(response)
 			String category = getChildText(root, "category")

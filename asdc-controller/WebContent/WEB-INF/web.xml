@@ -59,8 +59,7 @@
 
   <context-param>
   	<param-name>mso.configuration</param-name>
-  	<param-value>MSO_PROP_ASDC=mso.asdc.json,MSO_PROP_TOPOLOGY=topology.properties</param-value>
-
+  	<param-value>MSO_PROP_ASDC=mso.asdc.json,MSO_PROP_TOPOLOGY=topology.properties,MSO_ASDC_CLIENTS=mso.asdc.clients.properties</param-value>
   </context-param>
 
   <context-param>

@@ -49,7 +49,6 @@ import org.openecomp.mso.bpmn.core.WorkflowException;
 public class RainyDayHandlerTest extends WorkflowTest {
 	
 	@Test	
-	@Ignore // IGNORED FOR 1710 MERGE TO ONAP
 	@Deployment(resources = {
 			"subprocess/BuildingBlock/RainyDayHandler.bpmn",
 			"subprocess/BuildingBlock/ManualHandling.bpmn"
@@ -67,6 +66,7 @@ public class RainyDayHandlerTest extends WorkflowTest {
 		variables.put("failedActivity", "");
 		variables.put("errorCode", "123");
 		variables.put("errorText", "update failed");
+		variables.put("vnfName", "vSAMP1");
 		
 		MockPolicyAbort();
 		

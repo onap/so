@@ -1,0 +1,15 @@
+{
+	"requestDetails": {
+		"requestInfo": {
+			"resourceType": "operationalEnvironment",
+			"instanceName": "myVnfOpEnv",
+			"source": "VID",
+			"requestorId": "az2017"
+		},
+		"requestParameters": {
+			"operationalEnvironmentType": "VNF",
+			"tenantContext": "Test",
+			"workloadContext": "VNF_E2E-IST"
+		}
+	}
+}

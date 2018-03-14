@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<!--
+  ============LICENSE_START=======================================================
+  ECOMP MSO
+  ================================================================================
+  Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+  ================================================================================
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  ============LICENSE_END=========================================================
+  -->
+
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 27, 2015 3:05:00 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="org.openecomp.mso.requestsdb.OperationalEnvServiceModelStatus" table="ACTIVATE_OPERATIONAL_ENV_SERVICE_MODEL_DISTRIBUTION_STATUS">
+      
+        <composite-id>
+			<key-property name="operationalEnvId" 	column="OPERATIONAL_ENV_ID" 		type="string" 	length="45" />
+			<key-property name="serviceModelVersionId" 	column="SERVICE_MODEL_VERSION_ID" 	type="string" 	length="45"/>
+			<key-property name="requestId" 	column="REQUEST_ID" 	type="string" 	length="45"/>
+		</composite-id> 
+		
+        <property name="serviceModelVersionDistrStatus" type="string">
+            <column name="SERVICE_MOD_VER_FINAL_DISTR_STATUS" length="45"/>
+        </property>
+        <property name="recoveryAction" type="string">
+            <column name="RECOVERY_ACTION" length="30" />
+        </property>
+        <property name="retryCount" type="integer">
+            <column name="RETRY_COUNT_LEFT"/>
+        </property>
+        <property name="workloadContext" type="string">
+            <column name="WORKLOAD_CONTEXT" length="80" />
+        </property>
+        <property name="createTime" type="timestamp">
+            <column name="CREATE_TIME"/>
+        </property>
+        <property name="modifyTime" type="timestamp">
+            <column name="MODIFY_TIME"/>
+        </property>
+
+    </class>
+</hibernate-mapping>

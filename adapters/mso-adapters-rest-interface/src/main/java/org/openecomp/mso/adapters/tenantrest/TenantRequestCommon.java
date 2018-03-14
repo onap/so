@@ -27,8 +27,8 @@ import java.io.ByteArrayOutputStream;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import org.openecomp.mso.logger.MsoLogger;
 
@@ -38,7 +38,7 @@ public class TenantRequestCommon {
 		try {
 			String jsonString;
 			ObjectMapper mapper = new ObjectMapper();
-			mapper.enable(SerializationConfig.Feature.WRAP_ROOT_VALUE);
+			mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
 			jsonString = mapper.writeValueAsString(this);
 			return jsonString;
 		} catch (Exception e) {

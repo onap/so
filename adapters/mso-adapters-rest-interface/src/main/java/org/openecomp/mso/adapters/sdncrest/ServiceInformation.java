@@ -19,7 +19,7 @@
  */
 package org.openecomp.mso.adapters.sdncrest;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.xml.bind.annotation.XmlElement;
 import java.io.Serializable;

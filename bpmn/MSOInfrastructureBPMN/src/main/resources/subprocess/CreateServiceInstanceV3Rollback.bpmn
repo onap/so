@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.8.2">
+  <bpmn:process id="CreateServiceInstanceV3Rollback" name="CreateServiceInstanceV3Rollback" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" name="start">
+      <bpmn:outgoing>SequenceFlow_15a3kpo</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_15a3kpo" sourceRef="StartEvent_1" targetRef="ServiceTask_1" />
+    <bpmn:endEvent id="EndEvent_0646ypz" name="end">
+      <bpmn:incoming>SequenceFlow_0dqe5xo</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0dqe5xo" sourceRef="ServiceTask_1" targetRef="EndEvent_0646ypz" />
+    <bpmn:serviceTask id="ServiceTask_1" name="Rollback AAI Service Instance" camunda:class="org.openecomp.mso.bpmn.infrastructure.DoCreateServiceInstance.RollbackAAIServiceInstance">
+      <bpmn:incoming>SequenceFlow_15a3kpo</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0dqe5xo</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:subProcess id="SubProcess_1omnzt2" triggeredByEvent="true">
+      <bpmn:startEvent id="StartEvent_1y39m1e" name="error">
+        <bpmn:outgoing>SequenceFlow_10szwpv</bpmn:outgoing>
+        <bpmn:errorEventDefinition />
+      </bpmn:startEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_10szwpv" sourceRef="StartEvent_1y39m1e" targetRef="ServiceTask_2" />
+      <bpmn:endEvent id="EndEvent_0j0lea1" name="end">
+        <bpmn:incoming>SequenceFlow_05g9m3e</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_05g9m3e" sourceRef="ServiceTask_2" targetRef="EndEvent_0j0lea1" />
+      <bpmn:serviceTask id="ServiceTask_2" name="Rollback Error" camunda:class="org.openecomp.mso.bpmn.infrastructure.DoCreateServiceInstance.RollbackError">
+        <bpmn:incoming>SequenceFlow_10szwpv</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_05g9m3e</bpmn:outgoing>
+      </bpmn:serviceTask>
+    </bpmn:subProcess>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="CreateServiceInstanceV3Rollback">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="173" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="180" y="138" width="22" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_15a3kpo_di" bpmnElement="SequenceFlow_15a3kpo">
+        <di:waypoint xsi:type="dc:Point" x="209" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="266" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="237.5" y="99" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_0646ypz_di" bpmnElement="EndEvent_0646ypz">
+        <dc:Bounds x="427" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="436" y="142" width="18" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0dqe5xo_di" bpmnElement="SequenceFlow_0dqe5xo">
+        <di:waypoint xsi:type="dc:Point" x="366" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="427" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="396.5" y="99" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_16utus7_di" bpmnElement="ServiceTask_1">
+        <dc:Bounds x="266" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SubProcess_17vvj4f_di" bpmnElement="SubProcess_1omnzt2" isExpanded="true">
+        <dc:Bounds x="141" y="199" width="350" height="200" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_08j7gdd_di" bpmnElement="StartEvent_1y39m1e">
+        <dc:Bounds x="172" y="277" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="178" y="317" width="24" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_10szwpv_di" bpmnElement="SequenceFlow_10szwpv">
+        <di:waypoint xsi:type="dc:Point" x="208" y="295" />
+        <di:waypoint xsi:type="dc:Point" x="268" y="295" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="238" y="274" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_0j0lea1_di" bpmnElement="EndEvent_0j0lea1">
+        <dc:Bounds x="423" y="277" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="432" y="317" width="18" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_05g9m3e_di" bpmnElement="SequenceFlow_05g9m3e">
+        <di:waypoint xsi:type="dc:Point" x="368" y="295" />
+        <di:waypoint xsi:type="dc:Point" x="423" y="295" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="395.5" y="274" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_074yl77_di" bpmnElement="ServiceTask_2">
+        <dc:Bounds x="268" y="255" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

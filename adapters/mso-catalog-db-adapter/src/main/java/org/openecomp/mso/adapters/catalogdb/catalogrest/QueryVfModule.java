@@ -19,18 +19,16 @@
  */
 package org.openecomp.mso.adapters.catalogdb.catalogrest;
 
-import org.openecomp.mso.db.catalog.beans.VfModule;
-import org.openecomp.mso.db.catalog.beans.VfModuleCustomization;
-import org.jboss.resteasy.annotations.providers.NoJackson;
-
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.openecomp.mso.db.catalog.beans.VfModuleCustomization;
+
 @XmlRootElement(name = "vfModules")
-@NoJackson
 public class QueryVfModule extends CatalogQuery {
 	private List<VfModuleCustomization> vfModules;
 	private final String template =

@@ -36,7 +36,7 @@ import org.openecomp.mso.rest.RESTConfig
 import java.util.UUID;
 
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.apache.commons.lang3.*
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.web.util.UriUtils
@@ -59,7 +59,7 @@ public class DoCreateNetworkInstanceRollback extends AbstractServiceTaskProcesso
 	 * This method is executed during the preProcessRequest task of the <class>DoCreateNetworkInstanceRollback.bpmn</class> process.
 	 * @param execution
 	 */
-	public InitializeProcessVariables(Execution execution){
+	public InitializeProcessVariables(DelegateExecution execution){
 		/* Initialize all the process variables in this block */
 
 		execution.setVariable(Prefix + "rollbackNetworkRequest", null)
@@ -93,7 +93,7 @@ public class DoCreateNetworkInstanceRollback extends AbstractServiceTaskProcesso
 	 * This method is executed during the preProcessRequest task of the <class>DoCreateNetworkInstanceRollback.bpmn</class> process.
 	 * @param execution
 	 */
-	public void preProcessRequest (Execution execution) {
+	public void preProcessRequest (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		
@@ -180,7 +180,7 @@ public class DoCreateNetworkInstanceRollback extends AbstractServiceTaskProcesso
 
 	}
 	
-	public void callPONetworkAdapter (Execution execution) {
+	public void callPONetworkAdapter (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 
@@ -222,7 +222,7 @@ public class DoCreateNetworkInstanceRollback extends AbstractServiceTaskProcesso
 	}
 	
 	
-	public void validateRollbackResponses (Execution execution) {
+	public void validateRollbackResponses (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 
@@ -365,7 +365,7 @@ public class DoCreateNetworkInstanceRollback extends AbstractServiceTaskProcesso
 
 
 	
-	public void processJavaException(Execution execution){
+	public void processJavaException(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		

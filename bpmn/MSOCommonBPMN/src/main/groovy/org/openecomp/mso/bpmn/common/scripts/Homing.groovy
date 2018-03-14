@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,7 +20,7 @@
 package org.openecomp.mso.bpmn.common.scripts
 
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 
 import org.openecomp.mso.bpmn.common.scripts.AaiUtil
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
@@ -29,6 +29,7 @@ import org.openecomp.mso.bpmn.core.domain.InventoryType
 import org.openecomp.mso.bpmn.core.domain.Resource
 import org.openecomp.mso.bpmn.core.domain.ServiceDecomposition
 import org.openecomp.mso.bpmn.core.domain.Subscriber
+import org.openecomp.mso.bpmn.core.domain.VnfResource
 import org.openecomp.mso.bpmn.core.json.JsonUtils
 import org.openecomp.mso.rest.APIResponse
 import org.openecomp.mso.rest.RESTClient
@@ -64,7 +65,7 @@ class Homing extends AbstractServiceTaskProcessor{
 	 *
 	 * @author cb645j
 	 */
-	public void callSniro(Execution execution){
+	public void callSniro(DelegateExecution execution){
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix","HOME_")
 		utils.log("DEBUG", "*** Started Homing Call Sniro ***", isDebugEnabled)
@@ -139,16 +140,11 @@ class Homing extends AbstractServiceTaskProcessor{
 				utils.log("DEBUG", "Posting to Sniro Url: " + url, isDebugEnabled)
 
 				logDebug( "URL to be used is: " + url, isDebugEnabled)
-				
-				String basicAuthCred = utils.getBasicAuth(execution.getVariable("URN_aai_auth"),execution.getVariable("URN_mso_msoKey"))
-				
+
 				RESTConfig config = new RESTConfig(url);
 				RESTClient client = new RESTClient(config).addAuthorizationHeader(authHeader).addHeader("Content-Type", "application/json")
-				if (basicAuthCred != null && !"".equals(basicAuthCred)) {
-					client.addAuthorizationHeader(basicAuthCred)
-				}
 				APIResponse response = client.httpPost(sniroRequest)
-				
+
 				int responseCode = response.getStatusCode()
 				execution.setVariable("syncResponseCode", responseCode);
 				logDebug("SNIRO sync response code is: " + responseCode, isDebugEnabled)
@@ -165,7 +161,7 @@ class Homing extends AbstractServiceTaskProcessor{
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured in Homing CallSniro: " + e.getMessage())
 		}
 	}
-	
+
 	/**
 	 * This method processes the callback response
 	 * and the contained homing solution. It sets
@@ -176,7 +172,7 @@ class Homing extends AbstractServiceTaskProcessor{
 	 *
 	 * @author cb645j
 	 */
-	public void processHomingSolution(Execution execution){
+	public void processHomingSolution(DelegateExecution execution){
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		utils.log("DEBUG", "*** Started Homing Process Homing Solution ***", isDebugEnabled)
 		try{
@@ -185,7 +181,7 @@ class Homing extends AbstractServiceTaskProcessor{
 			utils.logAudit("Sniro Async Callback Response is: " + response)
 
 			sniroUtils.validateCallbackResponse(execution, response)
-			String placements = jsonUtil.getJsonValue(response, "solutionInfo.placement")
+			String placements = jsonUtil.getJsonValue(response, "solutionInfo.placementInfo")
 
 			ServiceDecomposition decomposition = execution.getVariable("serviceDecomposition")
 			utils.log("DEBUG", "Service Decomposition: " + decomposition, isDebugEnabled)
@@ -202,14 +198,17 @@ class Homing extends AbstractServiceTaskProcessor{
 						String inventoryType = placement.getString("inventoryType")
 						resource.getHomingSolution().setInventoryType(InventoryType.valueOf(inventoryType))
 						resource.getHomingSolution().setCloudRegionId(placement.getString("cloudRegionId"))
+						resource.getHomingSolution().setRehome(placement.getBoolean("isRehome"))
 						JSONArray assignmentArr = placement.getJSONArray("assignmentInfo")
 						Map<String, String> assignmentMap = jsonUtil.entryArrayToMap(execution, assignmentArr.toString(), "variableName", "variableValue")
 						resource.getHomingSolution().setCloudOwner(assignmentMap.get("cloudOwner"))
 						resource.getHomingSolution().setAicClli(assignmentMap.get("aicClli"))
 						resource.getHomingSolution().setAicVersion(assignmentMap.get("aicVersion"))
 						if(inventoryType.equalsIgnoreCase("service")){
-							resource.getHomingSolution().setVnfHostname(assignmentMap.get("vnfHostName"));
-							resource.getHomingSolution().setServiceInstanceId(placement.getString("serviceInstanceId"));
+							VnfResource vnf = new VnfResource()
+							vnf.setVnfHostname(assignmentMap.get("vnfHostName"))
+							resource.getHomingSolution().setVnf(vnf)
+							resource.getHomingSolution().setServiceInstanceId(placement.getString("serviceInstanceId"))
 						}
 					}
 				}
@@ -226,11 +225,11 @@ class Homing extends AbstractServiceTaskProcessor{
 							//match
 							String jsonEntitlementPoolList = jsonUtil.getJsonValue(license.toString(), "entitlementPoolList")
 							List<String> entitlementPoolList = jsonUtil.StringArrayToList(execution, jsonEntitlementPoolList)
-							resource.getHomingSolution().setEntitlementPoolList(entitlementPoolList)
+							resource.getHomingSolution().getLicense().setEntitlementPoolList(entitlementPoolList)
 
 							String jsonLicenseKeyGroupList = jsonUtil.getJsonValue(license.toString(), "licenseKeyGroupList")
 							List<String> licenseKeyGroupList = jsonUtil.StringArrayToList(execution, jsonLicenseKeyGroupList)
-							resource.getHomingSolution().setLicenseKeyGroupList(licenseKeyGroupList)
+							resource.getHomingSolution().getLicense().setLicenseKeyGroupList(licenseKeyGroupList)
 						}
 					}
 				}
@@ -254,7 +253,7 @@ class Homing extends AbstractServiceTaskProcessor{
 	 * @param - execution
 	 * @author cb645j
 	 */
-	public String logStart(Execution execution){
+	public String logStart(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		String requestId = execution.getVariable("testReqId")
 		if(isBlank(requestId)){
@@ -270,6 +269,6 @@ class Homing extends AbstractServiceTaskProcessor{
 	/**
 	 * Auto-generated method stub
 	 */
-	public void preProcessRequest(Execution execution){}
+	public void preProcessRequest(DelegateExecution execution){}
 
 }

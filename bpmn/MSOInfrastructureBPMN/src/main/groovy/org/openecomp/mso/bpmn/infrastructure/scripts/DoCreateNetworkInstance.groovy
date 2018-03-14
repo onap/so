@@ -38,7 +38,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.apache.commons.lang3.*
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.web.util.UriUtils
@@ -61,7 +61,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 	 * This method is executed during the preProcessRequest task of the <class>DoCreateNetworkInstance.bpmn</class> process.
 	 * @param execution
 	 */
-	public InitializeProcessVariables(Execution execution){
+	public InitializeProcessVariables(DelegateExecution execution){
 		/* Initialize all the process variables in this block */
 
 		execution.setVariable(Prefix + "networkRequest", "")
@@ -174,7 +174,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 	 * This method is executed during the preProcessRequest task of the <class>DoCreateNetworkInstance.bpmn</class> process.
 	 * @param execution
 	 */
-	public void preProcessRequest (Execution execution) {
+	public void preProcessRequest (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		
@@ -312,7 +312,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 
 	}
 	
-	public void callRESTQueryAAINetworkName (Execution execution) {
+	public void callRESTQueryAAINetworkName (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		
@@ -388,7 +388,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 
 	}
 
-	public void callRESTQueryAAICloudRegion (Execution execution) {
+	public void callRESTQueryAAICloudRegion (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 				
@@ -438,7 +438,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 
 	}
 
-	public void callRESTQueryAAINetworkId(Execution execution) {
+	public void callRESTQueryAAINetworkId(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 
@@ -481,7 +481,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			String aai_endpoint = execution.getVariable("URN_aai_endpoint")
 			AaiUtil aaiUriUtil = new AaiUtil(this)
 			String aai_uri = aaiUriUtil.getNetworkL3NetworkUri(execution)
-			String queryIdAAIRequest = "${aai_endpoint}${aai_uri}/" + networkId + "?depth=1"
+			String queryIdAAIRequest = "${aai_endpoint}${aai_uri}/" + networkId + "?depth=all"
 			utils.logAudit(queryIdAAIRequest)
 			execution.setVariable(Prefix + "queryIdAAIRequest", queryIdAAIRequest)
 			utils.log("DEBUG", Prefix + "queryIdAAIRequest - " + "\n" + queryIdAAIRequest, isDebugEnabled)
@@ -538,7 +538,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 
 	}
 
-	public void callRESTReQueryAAINetworkId(Execution execution) {
+	public void callRESTReQueryAAINetworkId(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 
@@ -554,7 +554,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			String aai_endpoint = execution.getVariable("URN_aai_endpoint")
 			AaiUtil aaiUriUtil = new AaiUtil(this)
 			String aai_uri = aaiUriUtil.getNetworkL3NetworkUri(execution)
-			String requeryIdAAIRequest = "${aai_endpoint}${aai_uri}/" + networkId + "?depth=1"
+			String requeryIdAAIRequest = "${aai_endpoint}${aai_uri}/" + networkId + "?depth=all"
 			utils.logAudit(requeryIdAAIRequest)
 			execution.setVariable(Prefix + "requeryIdAAIRequest", requeryIdAAIRequest)
 			utils.log("DEBUG", Prefix + "requeryIdAAIRequest - " + "\n" + requeryIdAAIRequest, isDebugEnabled)
@@ -614,7 +614,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 
 	}
 
-	public void callRESTQueryAAINetworkVpnBinding(Execution execution) {
+	public void callRESTQueryAAINetworkVpnBinding(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 
@@ -686,9 +686,19 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 						utils.log("DEBUG", " AAI Query Vpn Binding Success REST Response, , vpnBinding #" + counting + " : " + "\n" + aaiResponseAsString, isDebugEnabled)
 
 						String routeTarget = ""
-						if (utils.nodeExists(aaiResponseAsString, "global-route-target")) {
-							routeTarget  = utils.getNodeText1(aaiResponseAsString, "global-route-target")
-							routeTargets += "<routeTargets>" + routeTarget + "</routeTargets>" + '\n'
+						String routeRole = ""
+						if (utils.nodeExists(aaiResponseAsString, "route-targets")) {
+							String aaiRouteTargets = utils.getNodeXml(aaiResponseAsString, "route-targets", false)
+							def aaiRouteTargetsXml = new XmlSlurper().parseText(aaiRouteTargets)
+							def aaiRouteTarget = aaiRouteTargetsXml.'**'.findAll {it.name() == "route-target"}
+							for (j in 0..aaiRouteTarget.size()-1) {
+								routeTarget  = utils.getNodeText1(XmlUtil.serialize(aaiRouteTarget[j]), "global-route-target")
+								routeRole  = utils.getNodeText1(XmlUtil.serialize(aaiRouteTarget[j]), "route-target-role")
+								routeTargets += "<routeTargets>" + '\n' +
+								                " <routeTarget>" + routeTarget + "</routeTarget>" + '\n' +
+												" <routeTargetRole>" + routeRole + "</routeTargetRole>" + '\n' +
+												"</routeTargets>" + '\n'
+							}
 						}
 
 					} else {
@@ -748,7 +758,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 
 	}
 
-	public void callRESTQueryAAINetworkPolicy(Execution execution) {
+	public void callRESTQueryAAINetworkPolicy(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 
@@ -884,7 +894,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 
 	}
 
-	public void callRESTQueryAAINetworkTableRef(Execution execution) {
+	public void callRESTQueryAAINetworkTableRef(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 
@@ -1021,7 +1031,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 	}
 
 
-	public void callRESTUpdateContrailAAINetwork(Execution execution) {
+	public void callRESTUpdateContrailAAINetwork(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 
@@ -1038,7 +1048,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			String aai_endpoint = execution.getVariable("URN_aai_endpoint")
 			AaiUtil aaiUriUtil = new AaiUtil(this)
 			String aai_uri = aaiUriUtil.getNetworkL3NetworkUri(execution)
-			String updateContrailAAIUrlRequest = "${aai_endpoint}${aai_uri}/" + networkId + "?depth=1"
+			String updateContrailAAIUrlRequest = "${aai_endpoint}${aai_uri}/" + networkId + "?depth=all"
 
 			utils.logAudit(updateContrailAAIUrlRequest)
 			execution.setVariable(Prefix + "updateContrailAAIUrlRequest", updateContrailAAIUrlRequest)
@@ -1103,7 +1113,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 
 	}
 
-	public void prepareCreateNetworkRequest (Execution execution) {
+	public void prepareCreateNetworkRequest (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 
@@ -1146,7 +1156,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 
 	}
 
-	public void prepareSDNCRequest (Execution execution) {
+	public void prepareSDNCRequest (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 
@@ -1188,7 +1198,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 
 	}
 
-	public void prepareRpcSDNCRequest (Execution execution) {
+	public void prepareRpcSDNCRequest (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 
@@ -1221,7 +1231,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 
 	}
 	
-	public void prepareRpcSDNCActivateRequest (Execution execution) {
+	public void prepareRpcSDNCActivateRequest (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		
@@ -1260,7 +1270,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 	//     Post or Validate Response Section
 	// **************************************************
 
-	public void validateCreateNetworkResponse (Execution execution) {
+	public void validateCreateNetworkResponse (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 
@@ -1333,7 +1343,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 
 	}
 
-	public void validateSDNCResponse (Execution execution) {
+	public void validateSDNCResponse (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 
@@ -1361,7 +1371,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 
 	}
 
-	public void validateRpcSDNCActivateResponse (Execution execution) {
+	public void validateRpcSDNCActivateResponse (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 
@@ -1390,7 +1400,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 	}
 
 
-	public void prepareSDNCRollbackRequest (Execution execution) {
+	public void prepareSDNCRollbackRequest (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 
@@ -1422,7 +1432,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 
 	}
 
-	public void prepareRpcSDNCRollbackRequest (Execution execution) {
+	public void prepareRpcSDNCRollbackRequest (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 
@@ -1454,7 +1464,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 
 	}
 	
-	public void prepareRpcSDNCActivateRollback(Execution execution) {
+	public void prepareRpcSDNCActivateRollback(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 
@@ -1487,7 +1497,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 
 	}
 	
-	public void prepareRollbackData(Execution execution) {
+	public void prepareRollbackData(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		
@@ -1529,7 +1539,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 		
 	}
 	
-	public void postProcessResponse(Execution execution) {
+	public void postProcessResponse(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		
@@ -1590,7 +1600,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 		
 	}
 	
-	public void prepareSuccessRollbackData(Execution execution) {
+	public void prepareSuccessRollbackData(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		
@@ -1639,7 +1649,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 		
 	}
 
-	public void setExceptionFlag(Execution execution){
+	public void setExceptionFlag(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		
@@ -1671,7 +1681,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 
 
 	
-	public void processJavaException(Execution execution){
+	public void processJavaException(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		

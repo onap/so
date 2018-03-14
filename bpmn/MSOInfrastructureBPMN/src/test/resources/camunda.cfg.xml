@@ -19,14 +19,6 @@
 
     <property name="history" value="full" />
 
-    <property name="customPostBPMNParseListeners">
-      <list>
-        <bean class="org.camunda.bpm.engine.impl.bpmn.parser.FoxFailedJobParseListener" />
-      </list>
-    </property>
-
-    <property name="failedJobCommandFactory" ref="foxFailedJobCommandFactory" />
-
     <!--<property name="idGenerator" ref="uuidGenerator" />-->
 
     <!-- engine plugins -->
@@ -36,21 +28,14 @@
         <ref bean="spinProcessEnginePlugin" />
         <ref bean="loggingPlugin" />
         <ref bean="workflowExceptionPlugin" />
-        <ref bean="workbenchPlugin" />
 	  </list>
     </property>
   </bean>
-
-  <bean id="workbenchPlugin" class="org.camunda.bpm.debugger.server.EmbeddableDebugWebsocketBootstrap">
-        	<property name="httpPort" value="28088"/>
-  </bean>          
 
   <bean id="loggingPlugin" class="org.openecomp.mso.bpmn.core.plugins.LoggingAndURNMappingPlugin" />
   
   <!-- Needed until all subflows generate MSOWorkflowException events --> 
   <bean id="workflowExceptionPlugin" class="org.openecomp.mso.bpmn.core.plugins.WorkflowExceptionPlugin" />
-
-  <bean id="foxFailedJobCommandFactory" class="org.camunda.bpm.engine.impl.jobexecutor.FoxFailedJobCommandFactory" />
 
   <!--<bean id="uuidGenerator" class="org.camunda.bpm.engine.impl.persistence.StrongUuidGenerator" />-->
 

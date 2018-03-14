@@ -43,9 +43,24 @@ public class VnfRollback {
 	private boolean isBase = false;
 	private String vfModuleStackId;
 	private String modelCustomizationUuid; //NOTE: this is the vfModule's modelCustomizationUuid
+	private String mode = "HEAT";
 
 	public VnfRollback() {}
 
+	/**
+	 * For backwards compatibility... orchestration mode defaults to HEAT
+	 * 
+	 * @param vnfId
+	 * @param tenantId
+	 * @param cloudSiteId
+	 * @param tenantCreated
+	 * @param vnfCreated
+	 * @param msoRequest
+	 * @param volumeGroupName
+	 * @param volumeGroupId
+	 * @param requestType
+	 * @param modelCustomizationUuid
+	 */
 	public VnfRollback(String vnfId, String tenantId, String cloudSiteId,
 			boolean tenantCreated, boolean vnfCreated,
 			MsoRequest msoRequest,
@@ -61,6 +76,38 @@ public class VnfRollback {
 		this.volumeGroupId = volumeGroupId;
 		this.requestType = requestType;
 		this.modelCustomizationUuid = modelCustomizationUuid;
+	}
+
+	/**
+	 * For backwards compatibility... orchestration mode defaults to HEAT
+	 * 
+	 * @param vnfId
+	 * @param tenantId
+	 * @param cloudSiteId
+	 * @param tenantCreated
+	 * @param vnfCreated
+	 * @param msoRequest
+	 * @param volumeGroupName
+	 * @param volumeGroupId
+	 * @param requestType
+	 * @param modelCustomizationUuid
+	 */
+	public VnfRollback(String vnfId, String tenantId, String cloudSiteId,
+			boolean tenantCreated, boolean vnfCreated,
+			MsoRequest msoRequest, String volumeGroupName, String volumeGroupId,
+			String requestType, String modelCustomizationUuid, String orchestrationMode) {
+		super();
+		this.vnfId = vnfId;
+		this.tenantId = tenantId;
+		this.cloudSiteId = cloudSiteId;
+		this.tenantCreated = tenantCreated;
+		this.vnfCreated = vnfCreated;
+		this.msoRequest = msoRequest;
+		this.volumeGroupName = volumeGroupName;
+		this.volumeGroupId = volumeGroupId;
+		this.requestType = requestType;
+		this.modelCustomizationUuid = modelCustomizationUuid;
+		this.mode = orchestrationMode;
 	}
 
 	public String getVnfId() {
@@ -150,11 +197,18 @@ public class VnfRollback {
 	public void setModelCustomizationUuid(String modelCustomizationUuid) {
 		this.modelCustomizationUuid = modelCustomizationUuid;
 	}
+	public String getMode() {
+		return this.mode;
+	}
+	public void setMode(String mode) {
+		this.mode = mode;
+	}
 	@Override
     public String toString() {
 		return "VnfRollback: cloud=" + cloudSiteId + ", tenant=" + tenantId +
 				", vnf=" + vnfId + ", tenantCreated=" + tenantCreated +
 				", vnfCreated=" + vnfCreated + ", requestType = " + requestType
-				+ ", modelCustomizationUuid=" + this.modelCustomizationUuid;
+				+ ", modelCustomizationUuid=" + this.modelCustomizationUuid
+				+ ", mode=" + mode;
 	}
 }

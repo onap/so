@@ -34,7 +34,7 @@ import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.json.JSONObject;
 import org.apache.commons.lang3.*
 import org.apache.commons.codec.binary.Base64;
@@ -58,7 +58,7 @@ public class DeleteGenericALaCarteServiceInstance extends AbstractServiceTaskPro
 	JsonUtils jsonUtil = new JsonUtils()
 	VidUtils vidUtils = new VidUtils()
 	
-	public void preProcessRequest (Execution execution) {
+	public void preProcessRequest (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		String msg = ""
@@ -141,7 +141,7 @@ public class DeleteGenericALaCarteServiceInstance extends AbstractServiceTaskPro
 			Map<String, String> inputMap = [:]
 			if (userParams) {
 				userParams.each {
-					userParam -> inputMap.put(userParam.name, userParam.value)
+					userParam -> inputMap.put(userParam.name, userParam.value.toString())
 				}
 			}
 			
@@ -158,7 +158,7 @@ public class DeleteGenericALaCarteServiceInstance extends AbstractServiceTaskPro
 		utils.log("DEBUG"," ***** Exit preProcessRequest *****",  isDebugEnabled)
 	}
 
-	public void sendSyncResponse (Execution execution) {
+	public void sendSyncResponse (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("DEBUG", " *** sendSyncResponse  *** ", isDebugEnabled)
 
@@ -178,7 +178,7 @@ public class DeleteGenericALaCarteServiceInstance extends AbstractServiceTaskPro
 		utils.log("DEBUG"," ***** Exit sendSyncResopnse *****",  isDebugEnabled)
 	}
 	
-	public void sendSyncError (Execution execution) {
+	public void sendSyncError (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("DEBUG", " *** sendSyncError *** ", isDebugEnabled)
 
@@ -206,7 +206,7 @@ public class DeleteGenericALaCarteServiceInstance extends AbstractServiceTaskPro
 
 	}
 	
-	public void prepareCompletionRequest (Execution execution) {
+	public void prepareCompletionRequest (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("DEBUG", " *** prepareCompletion *** ", isDebugEnabled)
 
@@ -239,7 +239,7 @@ public class DeleteGenericALaCarteServiceInstance extends AbstractServiceTaskPro
 		utils.log("DEBUG", "*** Exit prepareCompletionRequest ***", isDebugEnabled)
 	}
 	
-	public void prepareFalloutRequest(Execution execution){
+	public void prepareFalloutRequest(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("DEBUG", " *** prepareFalloutRequest *** ", isDebugEnabled)
 
@@ -285,7 +285,7 @@ public class DeleteGenericALaCarteServiceInstance extends AbstractServiceTaskPro
 	// *******************************
 	//     Build DB request Section
 	// *******************************
-	public void prepareDBRequest (Execution execution) {
+	public void prepareDBRequest (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 
@@ -327,7 +327,7 @@ public class DeleteGenericALaCarteServiceInstance extends AbstractServiceTaskPro
 	// *******************************
 	//     Build Error Section
 	// *******************************
-	public void prepareDBRequestError (Execution execution) {
+	public void prepareDBRequestError (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 

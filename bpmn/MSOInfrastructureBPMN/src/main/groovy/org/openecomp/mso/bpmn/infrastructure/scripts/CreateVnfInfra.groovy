@@ -23,7 +23,7 @@ package org.openecomp.mso.bpmn.infrastructure.scripts
 import java.util.UUID;
 
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution;
+import org.camunda.bpm.engine.delegate.DelegateExecution;
 
 import static org.apache.commons.lang3.StringUtils.*;
 import org.openecomp.mso.bpmn.common.scripts.CatalogDbUtils;
@@ -38,6 +38,7 @@ import org.openecomp.mso.bpmn.common.scripts.VidUtils;
 import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.bpmn.core.domain.VnfResource
 import org.openecomp.mso.bpmn.core.json.JsonUtils;
+import org.openecomp.mso.bpmn.infrastructure.aai.AAICreateResources;
 
 
 /**
@@ -52,6 +53,7 @@ class CreateVnfInfra extends AbstractServiceTaskProcessor {
 	JsonUtils jsonUtil = new JsonUtils()
 	VidUtils vidUtils = new VidUtils(this)
 	CatalogDbUtils cutils = new CatalogDbUtils()
+	AAICreateResources aaiCR = new AAICreateResources()
 
 	/**
 	 * This method gets and validates the incoming
@@ -60,7 +62,7 @@ class CreateVnfInfra extends AbstractServiceTaskProcessor {
 	 * @param - execution
 	 *
 	 */
-	public void preProcessRequest(Execution execution) {
+	public void preProcessRequest(DelegateExecution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		utils.log("DEBUG", " *** STARTED CreateVnfInfra PreProcessRequest Process*** ", isDebugEnabled)
@@ -191,7 +193,7 @@ class CreateVnfInfra extends AbstractServiceTaskProcessor {
 		utils.log("DEBUG", "*** COMPLETED CreateVnfInfra PreProcessRequest Process ***", isDebugEnabled)
 	}
 
-	public void sendSyncResponse (Execution execution) {
+	public void sendSyncResponse (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 
@@ -218,7 +220,7 @@ class CreateVnfInfra extends AbstractServiceTaskProcessor {
 	}
 
 	
-	public void preProcessSDNCAssignRequest(Execution execution){
+	public void preProcessSDNCAssignRequest(DelegateExecution execution){
 		def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 		logDebug(" ======== STARTED preProcessSDNCAssignRequest ======== ", isDebugLogEnabled)
@@ -244,7 +246,7 @@ class CreateVnfInfra extends AbstractServiceTaskProcessor {
 		logDebug("======== COMPLETED preProcessSDNCAssignRequest ======== ", isDebugLogEnabled)
 	}
 	
-	public void preProcessSDNCActivateRequest(Execution execution) {
+	public void preProcessSDNCActivateRequest(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.preProcessSDNCActivateRequest(' +
 			'execution=' + execution.getId() +
 			')'
@@ -269,7 +271,7 @@ class CreateVnfInfra extends AbstractServiceTaskProcessor {
 		logDebug("======== COMPLETED  preProcessSDNCActivateRequest Process ======== ", isDebugLogEnabled)
 	}
 	
-	public String buildSDNCRequest(Execution execution, String svcInstId, String action){
+	public String buildSDNCRequest(DelegateExecution execution, String svcInstId, String action){
 		
 				String uuid = execution.getVariable('testReqId') // for junits
 				if(uuid==null){
@@ -332,7 +334,7 @@ class CreateVnfInfra extends AbstractServiceTaskProcessor {
 			return sdncRequest		
 	}
 		
-	public void validateSDNCResponse(Execution execution, String response, String method){
+	public void validateSDNCResponse(DelegateExecution execution, String response, String method){
 		def isDebugLogEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		logDebug(" *** STARTED ValidateSDNCResponse Process*** ", isDebugLogEnabled)
@@ -358,7 +360,7 @@ class CreateVnfInfra extends AbstractServiceTaskProcessor {
 		logDebug(" *** COMPLETED ValidateSDNCResponse Process*** ", isDebugLogEnabled)
 	}
 
-	public void prepareCompletionHandlerRequest(Execution execution){
+	public void prepareCompletionHandlerRequest(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 
@@ -391,7 +393,7 @@ class CreateVnfInfra extends AbstractServiceTaskProcessor {
 		utils.log("DEBUG", "*** COMPLETED CreateVnfInfra PrepareCompletionHandlerRequest Process ***", isDebugEnabled)
 	}
 
-	public void sendErrorResponse(Execution execution){
+	public void sendErrorResponse(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 
@@ -416,7 +418,7 @@ class CreateVnfInfra extends AbstractServiceTaskProcessor {
 		utils.log("DEBUG", "*** COMPLETED CreateVnfInfra sendErrorResponse Process ***", isDebugEnabled)
 	}
 
-	public void prepareFalloutRequest(Execution execution){
+	public void prepareFalloutRequest(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 
@@ -442,7 +444,7 @@ class CreateVnfInfra extends AbstractServiceTaskProcessor {
 	}
 
 	
-	public void queryCatalogDB (Execution execution) {
+	public void queryCatalogDB (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 
@@ -455,8 +457,7 @@ class CreateVnfInfra extends AbstractServiceTaskProcessor {
 						
 			JSONArray vnfs = cutils.getAllVnfsByVnfModelCustomizationUuid(execution,
 							vnfModelCustomizationUuid, "v2")
-			utils.log("DEBUG", "obtained VNF list: " + vnfs, isDebugEnabled)			
-			execution.setVariable("CREVI_vnfs", vnfs)
+			utils.log("DEBUG", "obtained VNF list: " + vnfs, isDebugEnabled)
 			
 			if (vnfs == null) {
 				utils.log("ERROR", "No matching VNFs in Catalog DB for vnfModelCustomizationUuid=" + vnfModelCustomizationUuid, isDebugEnabled)
@@ -492,5 +493,59 @@ class CreateVnfInfra extends AbstractServiceTaskProcessor {
 		
 		
 		utils.log("DEBUG", "*** COMPLETED CreateVnfInfra QueryCatalogDb Process ***", isDebugEnabled)
+	}
+	public void createPlatform (DelegateExecution execution) {
+		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+		utils.log("DEBUG"," ***** START createPlatform *****",  isDebugEnabled)
+		
+		String request = execution.getVariable("bpmnRequest")
+		String platformName = jsonUtil.getJsonValue(request, "requestDetails.platform.platformName")
+		String vnfId = execution.getVariable("CREVI_vnfId")
+	
+		utils.log("DEBUG","Platform NAME: " + platformName, isDebugEnabled)
+		utils.log("DEBUG","VnfID: " + vnfId, isDebugEnabled)
+		
+		if(platformName == null||platformName.equals("")){
+			String msg = "Exception in createPlatform. platformName was not found in the request.";
+			utils.log("DEBUG", msg, isDebugEnabled)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+		}else{
+			utils.log("DEBUG", "platformName was found.", isDebugEnabled)
+			try{
+				AAICreateResources aaiCR = new AAICreateResources()
+				aaiCR.createAAIPlatform(platformName, vnfId)
+			}catch(Exception ex){
+				String msg = "Exception in createPlatform. " + ex.getMessage();
+				utils.log("DEBUG", msg, isDebugEnabled)
+				exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+			}
+		}
+		utils.log("DEBUG"," *** Exit createPlatform *** ", isDebugEnabled)
+	}
+	public void createLineOfBusiness (DelegateExecution execution) {
+		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+		utils.log("DEBUG"," ***** START createLineOfBusiness *****",  isDebugEnabled)
+		
+		String request = execution.getVariable("bpmnRequest")
+		String lineOfBusiness = jsonUtil.getJsonValue(request, "requestDetails.lineOfBusiness.lineOfBusinessName")
+		String vnfId = execution.getVariable("CREVI_vnfId")
+	
+		utils.log("DEBUG","LineOfBusiness NAME: " + lineOfBusiness, isDebugEnabled)
+		utils.log("DEBUG","VnfID: " + vnfId, isDebugEnabled)
+		
+		if(lineOfBusiness == null || lineOfBusiness.equals("")){
+			utils.log("DEBUG", "LineOfBusiness was not found. Continuing on with flow...", isDebugEnabled)
+		}else{
+			utils.log("DEBUG", "LineOfBusiness was found.", isDebugEnabled)
+			try{
+				AAICreateResources aaiCR = new AAICreateResources()
+				aaiCR.createAAILineOfBusiness(lineOfBusiness, vnfId)
+			}catch(Exception ex){
+				String msg = "Exception in LineOfBusiness. " + ex.getMessage();
+				utils.log("DEBUG", msg, isDebugEnabled)
+				exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+			}
+		}
+		utils.log("DEBUG"," *** Exit createLineOfBusiness *** ", isDebugEnabled)
 	}
 }

@@ -1,0 +1,23 @@
+{
+  "requestDetails": {
+      "modelInfo": {
+         "modelType": "configuration",
+         "modelInvariantId": "2a0bc52d-f32b-4849-b6d8-9bb4b0e3220a",
+         "modelVersionId": "fe6985cd-ea33-3346-ac12-ab121484a3ff",
+         "modelName": "CONTRAIL30_BASIC",
+         "modelVersion": "1.0",
+         "modelCustomizationId": "b0ed83ec-b7b4-4c70-91c2-63feeaf8609b"
+      },
+      "cloudConfiguration": {
+          "lcpCloudRegionId": "mdt1"
+      },
+      "requestInfo": {
+		    "instanceName":"port_mirror_config_12345",
+        	"source": "VID",
+			"requestorId": "az2016"
+      },
+      "requestParameters": {
+	      "userParams": []
+      }
+	}
+}

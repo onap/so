@@ -1,0 +1,12 @@
+{
+	"requestDetails": {
+		"requestInfo": {
+			"resourceType": "operationalEnvironment",
+			"source": "VID",
+			"requestorId": "az2017"
+		},
+		"requestParameters": {
+			"operationalEnvironmentType": "VNF"
+		}
+	}
+}

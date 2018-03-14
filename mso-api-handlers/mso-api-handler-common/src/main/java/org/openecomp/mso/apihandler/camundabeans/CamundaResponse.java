@@ -21,7 +21,7 @@
 package org.openecomp.mso.apihandler.camundabeans;
 
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * JavaBean JSON class for a "variables" which contains the xml payload that

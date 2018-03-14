@@ -26,10 +26,8 @@ import org.openecomp.mso.entity.MsoRequest;
 import java.util.Map;
 import java.util.HashMap;
 import javax.xml.bind.annotation.XmlRootElement;
-import org.jboss.resteasy.annotations.providers.NoJackson;
 
 @XmlRootElement(name = "createTenantRequest")
-@NoJackson
 public class CreateTenantRequest extends TenantRequestCommon {
 	private String cloudSiteId;
 	private String tenantName;

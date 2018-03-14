@@ -20,18 +20,20 @@
 
 package org.openecomp.mso.adapters.network;
 
+import static org.openecomp.mso.openstack.utils.MsoCommonUtils.isNullOrEmpty;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.map.ObjectMapper;
-
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
+import org.openecomp.mso.openstack.beans.HostRoute;
 import org.openecomp.mso.openstack.beans.Pool;
 import org.openecomp.mso.openstack.beans.Subnet;
-import static org.openecomp.mso.openstack.utils.MsoCommonUtils.isNullOrEmpty;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ContrailSubnet {
 	private static MsoLogger logger = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
@@ -49,19 +51,20 @@ public class ContrailSubnet {
 	private Boolean enableDhcp;
 	
 	@JsonProperty("network_ipam_refs_data_ipam_subnets_addr_from_start")
-	private Boolean addrFromStart = true;
-	
+	private Boolean addrFromStart = true;	
 	/** future - leave this commented
 	private String subnet_uuid;
 	private String dns_server_address;
 	private List<String> dns_nameservers;
 	private String dhcp_option_list;
-	private String host_routes;
 	**/
 	
 	@JsonProperty("network_ipam_refs_data_ipam_subnets_allocation_pools")
 	private List<ContrailSubnetPool> allocationPools =  new ArrayList <> ();
 
+	@JsonProperty("network_ipam_refs_data_ipam_subnets_host_routes")
+	private ContrailSubnetHostRoutes host_routes = new ContrailSubnetHostRoutes();
+	
 	public ContrailSubnet() {
 		super();
 	}
@@ -179,12 +182,24 @@ public class ContrailSubnet {
 					}
 				}
 			}
+			if (inputSubnet.getHostRoutes() != null)
+			{
+				List<ContrailSubnetHostRoute> hrList = host_routes.getHost_routes();
+				for (HostRoute hr : inputSubnet.getHostRoutes())
+				{
+					if ( !isNullOrEmpty(hr.getPrefix()) || !isNullOrEmpty(hr.getNextHop()) )
+					{		
+						ContrailSubnetHostRoute cshr = new ContrailSubnetHostRoute();
+						cshr.populateWith(hr);
+						hrList.add (cshr);
+					}
+				}
+			}
 		}
 	}
 
 	@Override
 	public String toString() {
-		
 		StringBuilder buf = new StringBuilder ();
 		for (ContrailSubnetPool pool : allocationPools)
 		{
@@ -193,4 +208,5 @@ public class ContrailSubnet {
 		return "ContrailSubnet [subnet=" + subnet.toString() + " default_gateway=" + defaultGateway
 				+ " enable_dhcp=" + enableDhcp +  " addr_from_start=" + addrFromStart + " subnet_name=" + subnetName + " allocation_pools=" + buf + " ]";
 	}
+
 }

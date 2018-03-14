@@ -28,6 +28,7 @@ import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockNodeQueryServiceIn
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPutServiceInstance;
 import static org.openecomp.mso.bpmn.mock.StubResponseDatabase.mockUpdateRequestDB;
 import static org.openecomp.mso.bpmn.mock.StubResponseSDNCAdapter.mockSDNCAdapter;
+import static org.openecomp.mso.bpmn.mock.StubResponseDatabase.MockGetServiceResourcesCatalogData;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -36,9 +37,11 @@ import java.util.UUID;
 
 import org.camunda.bpm.engine.test.Deployment;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openecomp.mso.bpmn.common.BPMNUtil;
 import org.openecomp.mso.bpmn.common.WorkflowTest;
+import org.openecomp.mso.bpmn.mock.FileUtil;
 
 /**
  * Unit test cases for DoCreateServiceInstance.bpmn
@@ -51,7 +54,9 @@ public class DoCreateServiceInstanceTest extends WorkflowTest {
 			"  <svc-request-id>((REQUEST-ID))</svc-request-id>" + EOL +
 			"  <ack-final-indicator>Y</ack-final-indicator>" + EOL +
 			"</output>" + EOL;
-		
+	private final String input = FileUtil.readResourceFile("__files/CreateServiceInstance/DoCreateServiceInstanceInput.json");
+	
+	
 	public DoCreateServiceInstanceTest() throws IOException {
 		callbacks.put("assign", sdncAdapterCallback);
 	}
@@ -61,8 +66,8 @@ public class DoCreateServiceInstanceTest extends WorkflowTest {
 	 *
 	 * @throws Exception
 	 */
-	//@Ignore // File not found - unable to run the test.  Also, Stubs need updating..
 	@Test
+	@Ignore // 1802 merge
 	@Deployment(resources = {
 			"subprocess/DoCreateServiceInstance.bpmn",
 			"subprocess/SDNCAdapterV1.bpmn",
@@ -88,6 +93,9 @@ public class DoCreateServiceInstanceTest extends WorkflowTest {
 		mockSDNCAdapter(200);
 		//DB
 		mockUpdateRequestDB(200, "DBUpdateResponse.xml");
+		//Catalog DB
+		MockGetServiceResourcesCatalogData("uuid-miu-svc-011-abcdef","InfrastructureFlows/DoCreateServiceInstance_request.json");
+		
 		String businessKey = UUID.randomUUID().toString();
 
 		Map<String, Object> variables = new HashMap<>();
@@ -109,10 +117,14 @@ public class DoCreateServiceInstanceTest extends WorkflowTest {
 		variables.put("isDebugLogEnabled", "true");
 		variables.put("msoRequestId", "RaaDSITestRequestId-1");
 		variables.put("serviceInstanceId","RaaTest-si-id");
-		variables.put("serviceModelInfo", "{\"modelType\":\"service\",\"modelInvariantUuid\":\"uuid-miu-svc-011-abcdef\",\"modelVersionUuid\":\"ASDC_TOSCA_UUID\",\"modelName\":\"SIModelName1\",\"modelVersion\":\"2\"}");
+		variables.put("serviceModelInfo", "{\"modelType\":\"service\",\"modelInvariantUuid\":\"uuid-miu-svc-011-abcdef\",\"modelVersionUuid\":\"ASDC_TOSCA_UUID\",\"modelName\":\"SIModelName1\",\"modelVersion\":\"2\",\"projectName\":\"proj123\",\"owningEntityId\":\"id123\",\"owningEntityName\":\"name123\"}");
 		variables.put("productFamilyId", "a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb");
 		variables.put("globalSubscriberId", "MCBH-1610");
 		variables.put("subscriptionServiceType", "viprsvc");
 		variables.put("instanceName", "RAATest-1");
+		variables.put("serviceInstanceName", "RAT-123");
+		variables.put("sdncVersion", "1611");
+		variables.put("serviceType", "PORT-MIRROR");
+		variables.put("requestJson", input);
 	}
 }

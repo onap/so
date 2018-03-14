@@ -22,16 +22,13 @@ package org.openecomp.mso.adapters.nwrest;
 
 
 
-import org.openecomp.mso.openstack.beans.NetworkRollback;
-
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.jboss.resteasy.annotations.providers.NoJackson;
-import org.codehaus.jackson.map.annotate.JsonRootName;
+import com.fasterxml.jackson.annotation.JsonRootName;
+import org.openecomp.mso.openstack.beans.NetworkRollback;
 
 @JsonRootName("rollbackNetworkRequest")
 @XmlRootElement(name = "rollbackNetworkRequest")
-@NoJackson
 public class RollbackNetworkRequest extends NetworkRequestCommon {
 	private NetworkRollback networkRollback;
 

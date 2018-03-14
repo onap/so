@@ -21,7 +21,7 @@
 package org.openecomp.mso.adapters.network;
 
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ContrailPolicyRefSeq {
 	

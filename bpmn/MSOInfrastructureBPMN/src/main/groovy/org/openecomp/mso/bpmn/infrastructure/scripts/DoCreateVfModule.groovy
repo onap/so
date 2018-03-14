@@ -20,20 +20,31 @@
 
 package org.openecomp.mso.bpmn.infrastructure.scripts;
 
+import java.util.Map
+import java.util.Currency.CurrencyNameGetter
+
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.json.JSONArray
+import org.json.JSONObject
 import org.openecomp.mso.bpmn.common.scripts.AaiUtil
+import org.openecomp.mso.bpmn.common.scripts.CatalogDbUtils
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
 import org.openecomp.mso.bpmn.common.scripts.NetworkUtils
 import org.openecomp.mso.bpmn.common.scripts.SDNCAdapterUtils
 import org.openecomp.mso.bpmn.common.scripts.VfModuleBase
 import org.openecomp.mso.bpmn.core.RollbackData
 import org.openecomp.mso.bpmn.core.WorkflowException
+import org.openecomp.mso.bpmn.core.domain.ServiceDecomposition
+import org.openecomp.mso.bpmn.core.domain.VnfResource
+import org.openecomp.mso.bpmn.core.json.DecomposeJsonUtil
 import org.openecomp.mso.bpmn.core.json.JsonUtils
+import org.openecomp.mso.client.aai.entities.AAIResultWrapper
+import org.openecomp.mso.client.aai.entities.uri.AAIUri
 import org.openecomp.mso.rest.APIResponse
 import org.openecomp.mso.rest.RESTClient
 import org.openecomp.mso.rest.RESTConfig
@@ -44,6 +55,13 @@ import org.w3c.dom.NamedNodeMap
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import org.xml.sax.InputSource
+import com.fasterxml.jackson.databind.ObjectMapper
+
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.ObjectMapper
+import org.openecomp.mso.client.aai.AAIObjectType;
+import org.openecomp.mso.client.aai.AAIResourcesClient
+import org.openecomp.mso.client.aai.entities.uri.AAIUriFactory;
 
 
 
@@ -53,12 +71,14 @@ public class DoCreateVfModule extends VfModuleBase {
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
 	SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
+	CatalogDbUtils catalog = new CatalogDbUtils()
+	DecomposeJsonUtil decomposeJsonUtils = new DecomposeJsonUtil()
 
 	/**
 	 * Validates the request message and sets up the workflow.
 	 * @param execution the execution
 	 */
-	public void preProcessRequest(Execution execution) {
+	public void preProcessRequest(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.preProcessRequest(' +
 			'execution=' + execution.getId() +
 			')'
@@ -85,8 +105,10 @@ public class DoCreateVfModule extends VfModuleBase {
 				
 				def serviceModelInfo = execution.getVariable("serviceModelInfo")
 				logDebug("serviceModelInfo: " + serviceModelInfo, isDebugLogEnabled)
-				def vnfModelInfo = execution.getVariable("vnfModelInfo")
+				String modelInvariantUuid = jsonUtil.getJsonValue(serviceModelInfo, "modelInvariantUuid")
+				logDebug("modelInvariantUuid: " + modelInvariantUuid, isDebugLogEnabled)
 				
+				def vnfModelInfo = execution.getVariable("vnfModelInfo")
 
 				//tenantId
 				def tenantId = execution.getVariable("tenantId")
@@ -174,7 +196,7 @@ public class DoCreateVfModule extends VfModuleBase {
 				execution.setVariable("DCVFM_asdcServiceModelVersion", asdcServiceModelVersion)
 				logDebug("asdcServiceModelVersion: " + asdcServiceModelVersion, isDebugLogEnabled)
 				//personaModelId
-				execution.setVariable("DCVFM_personaModelId", jsonUtil.getJsonValue(vfModuleModelInfo, "modelInvariantUuid"))
+				execution.setVariable("DCVFM_personaModelId", jsonUtil.getJsonValue(vfModuleModelInfo, "modelInvariantUuid"))			
 				//personaModelVersion
 				execution.setVariable("DCVFM_personaModelVersion", jsonUtil.getJsonValue(vfModuleModelInfo, "modelUuid"))
 				//vfModuleLabel
@@ -210,7 +232,42 @@ public class DoCreateVfModule extends VfModuleBase {
 				def usePreload = execution.getVariable("usePreload")
 				execution.setVariable("DCVFM_usePreload", usePreload)
 				logDebug("usePreload: " + usePreload, isDebugLogEnabled)
-
+				//aLaCarte
+				def aLaCarte = execution.getVariable("aLaCarte")				
+				execution.setVariable("DCVFM_aLaCarte", aLaCarte)
+				logDebug("aLaCarte: " + aLaCarte, isDebugLogEnabled)
+				
+				//get workload and environment context from parent SI
+				String environmentContext = ""
+				String workloadContext =""
+				String serviceType =""
+				
+				try{
+					String json = catalog.getServiceResourcesByServiceModelInvariantUuidString(execution,modelInvariantUuid )
+					serviceType = jsonUtil.getJsonValue(json, "serviceResources.serviceType")
+				}catch(BpmnError e){
+					throw e
+				} catch (Exception ex){
+					String msg = "Exception in preProcessRequest " + ex.getMessage()
+					utils.log("DEBUG", msg, isDebugLogEnabled)
+					exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+				}
+				
+				try{
+					AAIUri serviceInstanceURI = AAIUriFactory.create(AAIObjectType.SERVICE_INSTANCE, globalSubscriberId,serviceType,serviceInstanceId)
+					AAIResourcesClient aaiRC = new AAIResourcesClient()
+					AAIResultWrapper aaiRW = aaiRC.get(serviceInstanceURI)
+					Map<String, Object> aaiJson = aaiRW.asMap()
+					environmentContext = aaiJson.getOrDefault("environment-context","")
+					workloadContext = aaiJson.getOrDefault("workload-context","")
+					
+				}catch (Exception ex) {
+					utils.log("DEBUG","Error retreiving parent service instance information", isDebugLogEnabled)
+				}
+				
+				execution.setVariable("DCVFM_environmentContext",environmentContext)
+				execution.setVariable("DCVFM_workloadContext",workloadContext)
+											  
 			}
 			else {
 				// The info is inside the request - DEAD CODE
@@ -338,8 +395,7 @@ public class DoCreateVfModule extends VfModuleBase {
 					isBaseVfModule = utils.getNodeText(request, "is-base-vf-module")
 				}
 				execution.setVariable("DCVFM_isBaseVfModule", isBaseVfModule)
-				logDebug("isBaseVfModule: " + isBaseVfModule, isDebugLogEnabled)
-
+				logDebug("isBaseVfModule: " + isBaseVfModule, isDebugLogEnabled)				
 				//asdcServiceModelVersion
 				def asdcServiceModelVersion = ""
 				if (utils.nodeExists(request, "asdc-service-model-version")) {
@@ -426,6 +482,7 @@ public class DoCreateVfModule extends VfModuleBase {
 			rollbackData.put("VFMODULE", "rollbackCreateAAIVfModule", "false")
 			rollbackData.put("VFMODULE", "rollbackCreateNetworkPoliciesAAI", "false")
 			rollbackData.put("VFMODULE", "rollbackUpdateVnfAAI", "false")
+			rollbackData.put("VFMODULE", "heatstackid", "")
 
 			String sdncCallbackUrl = (String) execution.getVariable('URN_mso_workflow_sdncadapter_callback')
 				if (sdncCallbackUrl == null || sdncCallbackUrl.trim().isEmpty()) {
@@ -455,7 +512,7 @@ public class DoCreateVfModule extends VfModuleBase {
 	 * @param responseCodeVar the execution variable in which the response code is stored
 	 * @param errorResponseVar the execution variable in which the error response is stored
 	 */
-	public void validateWorkflowResponse(Execution execution, String responseVar,
+	public void validateWorkflowResponse(DelegateExecution execution, String responseVar,
 			String responseCodeVar, String errorResponseVar) {
 		SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
 		sdncAdapterUtils.validateSDNCResponse(execution, responseVar, responseCodeVar, errorResponseVar)
@@ -466,7 +523,7 @@ public class DoCreateVfModule extends VfModuleBase {
 	 * Sends the empty, synchronous response back to the API Handler.
 	 * @param execution the execution
 	 */
-	public void sendResponse(Execution execution) {
+	public void sendResponse(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.sendResponse(' +
 			'execution=' + execution.getId() +
 			')'
@@ -491,7 +548,7 @@ public class DoCreateVfModule extends VfModuleBase {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void postProcessCreateAAIVfModule(Execution execution) {
+	public void postProcessCreateAAIVfModule(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.getVfModule(' +
 			'execution=' + execution.getId() +
 			')'
@@ -538,7 +595,7 @@ public class DoCreateVfModule extends VfModuleBase {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void queryAAIVfModule(Execution execution) {
+	public void queryAAIVfModule(DelegateExecution execution) {
 		def isDebugLogEnabled=execution.getVariable("isDebugLogEnabled")
 		def method = getClass().getSimpleName() + '.getVfModule(' +
 			'execution=' + execution.getId() +
@@ -618,9 +675,95 @@ public class DoCreateVfModule extends VfModuleBase {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in queryAAIVfModule(): ' + e.getMessage())
 		}
 	}
+	
+	/**
+	 * Using the vnfId and vfModuleName provided in the inputs, 
+	 * query AAI to get the corresponding VF Module info.
+	 * A 200 response is expected with the VF Module info in the response body, 
+	 * or a 404 response if the module does not exist yet. Will determine VF Module's 
+	 * orchestration status if one exists
+	 *
+	 * @param execution The flow's execution instance.
+	 */
+	public void queryAAIVfModuleForStatus(DelegateExecution execution) {
+		def isDebugLogEnabled=execution.getVariable("isDebugLogEnabled")
+		def method = getClass().getSimpleName() + '.queryAAIVfModuleForStatus(' +
+			'execution=' + execution.getId() +
+			')'
+		logDebug('Entered ' + method, isDebugLogEnabled)
+		
+		execution.setVariable('DCVFM_orchestrationStatus', '')
+
+		try {
+			def vnfId = execution.getVariable('DCVFM_vnfId')
+			def vfModuleName = execution.getVariable('DCVFM_vfModuleName')
+
+			AaiUtil aaiUriUtil = new AaiUtil(this)
+			String  aai_uri = aaiUriUtil.getNetworkGenericVnfUri(execution)
+			logDebug('AAI URI is: ' + aai_uri, isDebugLogEnabled)
+
+			String endPoint = execution.getVariable("URN_aai_endpoint") + "${aai_uri}/" + UriUtils.encode(vnfId, "UTF-8") + 
+					"/vf-modules/vf-module?vf-module-name=" + UriUtils.encode(vfModuleName, "UTF-8")
+			utils.logAudit("AAI endPoint: " + endPoint)
+
+			try {
+				RESTConfig config = new RESTConfig(endPoint);
+				def responseData = ''
+				def aaiRequestId = UUID.randomUUID().toString()
+				RESTClient client = new RESTClient(config).
+					addHeader('X-TransactionId', aaiRequestId).
+					addHeader('X-FromAppId', 'MSO').
+					addHeader('Content-Type', 'application/xml').
+					addHeader('Accept','application/xml');
+				logDebug('sending GET to AAI endpoint \'' + endPoint + '\'', isDebugLogEnabled)
+				APIResponse response = client.httpGet()
+				utils.logAudit("createVfModule - invoking httpGet() to AAI")
+
+				responseData = response.getResponseBodyAsString()
+				if (responseData != null) {
+					logDebug("Received generic VNF data: " + responseData, isDebugLogEnabled)
+
+				}
+
+				utils.logAudit("createVfModule - queryAAIVfModule Response: " + responseData)
+				utils.logAudit("createVfModule - queryAAIVfModule ResponseCode: " + response.getStatusCode())
+
+				execution.setVariable('DCVFM_queryAAIVfModuleForStatusResponseCode', response.getStatusCode())
+				execution.setVariable('DCVFM_queryAAIVfModuleForStatusResponse', responseData)
+				logDebug('Response code:' + response.getStatusCode(), isDebugLogEnabled)
+				logDebug('Response:' + System.lineSeparator() + responseData, isDebugLogEnabled)
+				// Retrieve VF Module info and its orchestration status; if not found, do nothing
+				if (response.getStatusCode() == 200) {
+					// Parse the VNF record from A&AI to find base module info
+					logDebug('Parsing the VNF data to find orchestration status', isDebugLogEnabled)
+					if (responseData != null) {
+						def vfModuleText = utils.getNodeXml(responseData, "vf-module")
+						//def xmlVfModule= new XmlSlurper().parseText(vfModuleText)
+						def orchestrationStatus = utils.getNodeText1(vfModuleText, "orchestration-status")
+						execution.setVariable("DCVFM_orchestrationStatus", orchestrationStatus)
+						// Also retrieve vfModuleId
+						def vfModuleId = utils.getNodeText1(vfModuleText, "vf-module-id")
+						execution.setVariable("DCVFM_vfModuleId", vfModuleId)
+						logDebug("Received orchestration status from A&AI: " + orchestrationStatus, isDebugLogEnabled)
+						
+					}
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace()
+				logDebug('Exception occurred while executing AAI GET:' + ex.getMessage(),isDebugLogEnabled)
+				exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'AAI GET Failed:' + ex.getMessage())
+			}
+			logDebug('Exited ' + method, isDebugLogEnabled)
+		} catch (BpmnError e) {
+			throw e;
+		} catch (Exception e) {
+			logError('Caught exception in ' + method, e)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in queryAAIVfModuleForStatus(): ' + e.getMessage())
+		}
+	}
 
 
-	public void preProcessSDNCAssignRequest(Execution execution){
+	public void preProcessSDNCAssignRequest(DelegateExecution execution){
 		def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 		logDebug(" ======== STARTED preProcessSDNCAssignRequest ======== ", isDebugLogEnabled)
@@ -656,7 +799,7 @@ public class DoCreateVfModule extends VfModuleBase {
 		logDebug("======== COMPLETED preProcessSDNCAssignRequest ======== ", isDebugLogEnabled)
 	}
 
-	public void preProcessSDNCGetRequest(Execution execution, String element){
+	public void preProcessSDNCGetRequest(DelegateExecution execution, String element){
 		def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
 		String sdncVersion = execution.getVariable("DCVFM_sdncVersion")
 		execution.setVariable("prefix", Prefix)
@@ -749,7 +892,7 @@ public class DoCreateVfModule extends VfModuleBase {
 	}
 
 
-	public void preProcessVNFAdapterRequest(Execution execution) {
+	public void preProcessVNFAdapterRequest(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.VNFAdapterCreateVfModule(' +
 			'execution=' + execution.getId() +
 			')'
@@ -798,7 +941,13 @@ public class DoCreateVfModule extends VfModuleBase {
 		def volumeGroupStackId = execution.getVariable("DCVFM_volumeGroupStackId")
 		//modelCustomizationUuid
 		def modelCustomizationUuid = execution.getVariable("DCVFM_modelCustomizationUuid")
-
+		//environmentContext
+		String environmentContext = execution.getVariable("DCVFM_environmentContext")
+		//workloadContext
+		String workloadContext = execution.getVariable("DCVFM_workloadContext")
+		logDebug("workloadContext: " + workloadContext, isDebugLogEnabled)
+		logDebug("environmentContext: " + environmentContext, isDebugLogEnabled)
+		
 		def messageId = execution.getVariable('mso-request-id') + '-' +
                                 System.currentTimeMillis()
 
@@ -822,7 +971,7 @@ public class DoCreateVfModule extends VfModuleBase {
 		if (!sdncVersion.equals("1707")) {
 						
 			vfModuleParams = buildVfModuleParams(vnfParamsMap, vfModuleSdncGetResponse, vnfId, vnfName,
-				vfModuleId, vfModuleName, vfModuleIndex)
+				vfModuleId, vfModuleName, vfModuleIndex, environmentContext, workloadContext)
 		}
 		else {
 			//Get SDNC Response Data for Vnf Topology
@@ -830,7 +979,7 @@ public class DoCreateVfModule extends VfModuleBase {
 			utils.logAudit("vnfSdncGetResponse: " + vnfSdncGetResponse)
 			
 			vfModuleParams = buildVfModuleParamsFromCombinedTopologies(vnfParamsMap, vnfSdncGetResponse, vfModuleSdncGetResponse, vnfId, vnfName,
-				vfModuleId, vfModuleName, vfModuleIndex)			
+				vfModuleId, vfModuleName, vfModuleIndex, environmentContext, workloadContext)			
 		}
 
 		def svcInstId = ""
@@ -884,7 +1033,7 @@ public class DoCreateVfModule extends VfModuleBase {
 	 * @param execution the execution
 	 * @return the validated request
 	 */
-	public String validateInfraRequest(Execution execution) {
+	public String validateInfraRequest(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.validateInfraRequest(' +
 			'execution=' + execution.getId() +
 			')'
@@ -945,7 +1094,7 @@ public class DoCreateVfModule extends VfModuleBase {
 		}
 	}
 
-	public boolean isVolumeGroupIdPresent(Execution execution) {
+	public boolean isVolumeGroupIdPresent(DelegateExecution execution) {
 
 		def method = getClass().getSimpleName() + '.isVolumeGroupIdPresent(' +
 			'execution=' + execution.getId() +
@@ -966,7 +1115,7 @@ public class DoCreateVfModule extends VfModuleBase {
 
 	}
 
-	public boolean isVolumeGroupNamePresent(Execution execution) {
+	public boolean isVolumeGroupNamePresent(DelegateExecution execution) {
 
 		def method = getClass().getSimpleName() + '.isVolumeGroupNamePresent(' +
 			'execution=' + execution.getId() +
@@ -987,7 +1136,7 @@ public class DoCreateVfModule extends VfModuleBase {
 
 	}
 
-	public String buildSDNCRequest(Execution execution, String svcInstId, String action){
+	public String buildSDNCRequest(DelegateExecution execution, String svcInstId, String action){
 
 		String uuid = execution.getVariable('testReqId') // for junits
 		if(uuid==null){
@@ -1176,7 +1325,7 @@ public class DoCreateVfModule extends VfModuleBase {
 
 	}
 
-	public void preProcessSDNCActivateRequest(Execution execution) {
+	public void preProcessSDNCActivateRequest(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.preProcessSDNCActivateRequest(' +
 			'execution=' + execution.getId() +
 			')'
@@ -1209,7 +1358,7 @@ public class DoCreateVfModule extends VfModuleBase {
 		logDebug("======== COMPLETED  preProcessSDNCActivateRequest Process ======== ", isDebugLogEnabled)
 	}
 
-	public void postProcessVNFAdapterRequest(Execution execution) {
+	public void postProcessVNFAdapterRequest(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.postProcessVNFAdapterRequest(' +
 			'execution=' + execution.getId() +
 			')'
@@ -1298,7 +1447,7 @@ public class DoCreateVfModule extends VfModuleBase {
 	}
 
 
-	public void preProcessUpdateAAIVfModuleRequestOrch(Execution execution) {
+	public void preProcessUpdateAAIVfModuleRequestOrch(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.preProcessUpdateAAIVfModuleRequestOrch(' +
 			'execution=' + execution.getId() +
 			')'
@@ -1315,6 +1464,8 @@ public class DoCreateVfModule extends VfModuleBase {
 			if (!contrailServiceInstanceFqdn.equals("")) {
 				setContrailServiceInstanceFqdn = true
 			}
+			
+			execution.setVariable("DCVFM_orchestrationStatus", "Created")
 
 			String updateAAIVfModuleRequest = buildUpdateAAIVfModuleRequest(execution, false, true, true, setContrailServiceInstanceFqdn)
 
@@ -1330,8 +1481,38 @@ public class DoCreateVfModule extends VfModuleBase {
 		logDebug("======== COMPLETED preProcessUpdateAAIVfModuleRequestOrch ======== ", isDebugLogEnabled)
 
 	}
+	
+	public void preProcessUpdateAAIVfModuleRequestStatus(DelegateExecution execution, String status) {
+		def method = getClass().getSimpleName() + '.preProcessUpdateAAIVfModuleStatus(' +
+			'execution=' + execution.getId() +
+			')'
+		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
+		logDebug('Entered ' + method, isDebugLogEnabled)
+		execution.setVariable("prefix", Prefix)
+		logDebug(" ======== STARTED preProcessUpdateAAIVfModuleStatus ======== ", isDebugLogEnabled)
 
-	public void preProcessUpdateAAIVfModuleRequestGroup(Execution execution) {
+		try{
+
+			//Build UpdateAAIVfModule Request
+			execution.setVariable("DCVFM_orchestrationStatus", status)
+
+			String updateAAIVfModuleRequest = buildUpdateAAIVfModuleRequest(execution, false, true, false, false)
+
+			updateAAIVfModuleRequest = utils.formatXml(updateAAIVfModuleRequest)
+			execution.setVariable("DCVFM_updateAAIVfModuleRequest", updateAAIVfModuleRequest)
+			logDebug("Outgoing UpdateAAIVfModuleRequest is: \n" + updateAAIVfModuleRequest, isDebugLogEnabled)
+			utils.logAudit("Outgoing UpdateAAIVfModuleRequest is: \n"  + updateAAIVfModuleRequest)
+
+		}catch(Exception e){
+			utils.log("ERROR", "Exception Occured Processing preProcessUpdateAAIVfModuleStatus. Exception is:\n" + e, isDebugLogEnabled)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occured during preProcessUpdateAAIVfModuleStatus Method:\n" + e.getMessage())
+		}
+		logDebug("======== COMPLETED preProcessUpdateAAIVfModuleStatus ======== ", isDebugLogEnabled)
+
+	}
+
+
+	public void preProcessUpdateAAIVfModuleRequestGroup(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.preProcessUpdateAAIVfModuleRequestGroup(' +
 			'execution=' + execution.getId() +
 			')'
@@ -1359,7 +1540,7 @@ public class DoCreateVfModule extends VfModuleBase {
 
 	}
 
-	public void validateSDNCResponse(Execution execution, String response, String method){
+	public void validateSDNCResponse(DelegateExecution execution, String response, String method){
 		def isDebugLogEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		logDebug(" *** STARTED ValidateSDNCResponse Process*** ", isDebugLogEnabled)
@@ -1394,7 +1575,7 @@ public class DoCreateVfModule extends VfModuleBase {
 		logDebug(" *** COMPLETED ValidateSDNCResponse Process*** ", isDebugLogEnabled)
 	}
 
-	public void preProcessUpdateAfterCreateRequest(Execution execution){
+	public void preProcessUpdateAfterCreateRequest(DelegateExecution execution){
 		def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 		utils.log("DEBUG", " ======== STARTED preProcessRequest Process ======== ", isDebugLogEnabled)
@@ -1441,7 +1622,7 @@ public class DoCreateVfModule extends VfModuleBase {
 		utils.log("DEBUG", "======== COMPLETED preProcessSDNCGetRequest Process ======== ", isDebugLogEnabled)
 	}
 
-	public String buildUpdateAAIVfModuleRequest(Execution execution, boolean updateVolumeGroupId,
+	public String buildUpdateAAIVfModuleRequest(DelegateExecution execution, boolean updateVolumeGroupId,
 		boolean updateOrchestrationStatus, boolean updateHeatStackId, boolean updateContrailFqdn){
 
 		def vnfId = execution.getVariable("DCVFM_vnfId")
@@ -1453,7 +1634,7 @@ public class DoCreateVfModule extends VfModuleBase {
 		}
 		def orchestrationStatusString = ""
 		if (updateOrchestrationStatus) {
-			orchestrationStatusString = "<orchestration-status>Created</orchestration-status>"
+			orchestrationStatusString = "<orchestration-status>" + execution.getVariable("DCVFM_orchestrationStatus") + "</orchestration-status>"
 		}
 		def heatStackIdString = ""
 		if (updateHeatStackId) {
@@ -1480,7 +1661,7 @@ public class DoCreateVfModule extends VfModuleBase {
 
 	}
 
-	public String buildSDNCParamsXml(Execution execution){
+	public String buildSDNCParamsXml(DelegateExecution execution){
 
 		String params = ""
 		StringBuilder sb = new StringBuilder()
@@ -1505,7 +1686,7 @@ public class DoCreateVfModule extends VfModuleBase {
 		return params
 	}
 
-   public void queryCloudRegion (Execution execution) {
+   public void queryCloudRegion (DelegateExecution execution) {
 		def isDebugLogEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 		utils.log("DEBUG", " ======== STARTED queryCloudRegion ======== ", isDebugLogEnabled)
@@ -1557,7 +1738,7 @@ public class DoCreateVfModule extends VfModuleBase {
     *variables and ensures that the "WorkflowException" Variable is set.
     *
     */
-   public void processBPMNException(Execution execution){
+   public void processBPMNException(DelegateExecution execution){
 	   def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 	   execution.setVariable("prefix",Prefix)
 	   try{
@@ -1574,7 +1755,7 @@ public class DoCreateVfModule extends VfModuleBase {
 	   utils.log("DEBUG", "Completed processBPMNException Method", isDebugEnabled)
    }
 
-   public void prepareCreateAAIVfModuleVolumeGroupRequest(Execution execution) {
+   public void prepareCreateAAIVfModuleVolumeGroupRequest(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.prepareCreateAAIVfModuleVolumeGroupRequest(' +
 			'execution=' + execution.getId() +
 			')'
@@ -1613,7 +1794,7 @@ public class DoCreateVfModule extends VfModuleBase {
 
 	}
 
-   public void createNetworkPoliciesInAAI(Execution execution) {
+   public void createNetworkPoliciesInAAI(DelegateExecution execution) {
 	   def method = getClass().getSimpleName() + '.createNetworkPoliciesInAAI(' +
 	   'execution=' + execution.getId() +
 	   ')'
@@ -1763,7 +1944,7 @@ public class DoCreateVfModule extends VfModuleBase {
 	*
 	* @param execution The flow's execution instance.
 	*/
-   public void prepUpdateAAIGenericVnf(Execution execution) {
+   public void prepUpdateAAIGenericVnf(DelegateExecution execution) {
 	   def method = getClass().getSimpleName() + '.prepUpdateAAIGenericVnf(' +
 		   'execution=' + execution.getId() +
 		   ')'
@@ -1816,7 +1997,7 @@ public class DoCreateVfModule extends VfModuleBase {
 	*
 	* @param execution The flow's execution instance.
 	*/
-   public void postProcessUpdateAAIGenericVnf(Execution execution) {
+   public void postProcessUpdateAAIGenericVnf(DelegateExecution execution) {
 	   def method = getClass().getSimpleName() + '.postProcessUpdateAAIGenericVnf(' +
 		   'execution=' + execution.getId() +
 		   ')'
@@ -1824,7 +2005,7 @@ public class DoCreateVfModule extends VfModuleBase {
 	   logDebug('Entered ' + method, isDebugLogEnabled)
 
 	   try {
-		   def rollbackData = execution.getVariable("RollbackData")
+		   def rollbackData = execution.getVariable("rollbackData")
 
 		   rollbackData.put("VFMODULE", "rollbackUpdateVnfAAI", "true")
 
@@ -1842,7 +2023,7 @@ public class DoCreateVfModule extends VfModuleBase {
 			   rollbackData.put("VFMODULE", "oamManagementV6Address", oamManagementV6Address)
 		   }
 
-		   execution.setVariable("RollbackData", rollbackData)
+		   execution.setVariable("rollbackData", rollbackData)
 
 		   logDebug('Exited ' + method, isDebugLogEnabled)
 	   } catch (BpmnError e) {
@@ -1853,7 +2034,62 @@ public class DoCreateVfModule extends VfModuleBase {
 	   }
    }
    
-   public void preProcessRollback (Execution execution) {
+   public void queryCatalogDB (DelegateExecution execution) {
+	   def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
+	   String msg = ""
+	   utils.log("DEBUG"," ***** queryCatalogDB  *****",  isDebugEnabled)
+
+	   try {
+		   boolean twoPhaseDesign = false
+		   // check for input
+		   
+		   String vfModuleModelName = execution.getVariable("DCVFM_vfModuleModelName")
+		   utils.log("DEBUG", "vfModuleModelName: " + vfModuleModelName, isDebugEnabled)
+		   def vnfModelInfo = execution.getVariable("vnfModelInfo")
+		   def vnfModelCustomizationUuid = jsonUtil.getJsonValue(vnfModelInfo, "modelCustomizationUuid")
+		  
+		   utils.log("DEBUG", "vnfModelCustomizationUuid: " + vnfModelCustomizationUuid, isDebugEnabled)		   
+		
+		   JSONArray vnfs = catalog.getAllVnfsByVnfModelCustomizationUuid(execution, vnfModelCustomizationUuid, "v2")
+		   
+		   utils.log("DEBUG", "Incoming Query Catalog DB for Vnf Response is: " + vnfModelCustomizationUuid, isDebugEnabled)
+		   utils.logAudit("Incoming Query Catalog DB for Vf Module Response is: " + vnfModelCustomizationUuid)
+		   
+		   utils.log("DEBUG", "obtained VNF list")
+		   // Only one match here
+		   if (vnfs != null) {
+			   JSONObject vnfObject = vnfs.get(0)
+			   if (vnfObject != null) {
+				   String vnfJson = vnfObject.toString()
+				   //
+				   ObjectMapper om = new ObjectMapper();			  
+				   VnfResource vnf = om.readValue(vnfJson, VnfResource.class);
+		   
+				   // Get multiStageDesign flag
+		   
+				   String multiStageDesignValue = vnf.getMultiStageDesign()
+				   utils.log("DEBUG", "multiStageDesign value from Catalog DB is: " + multiStageDesignValue, isDebugEnabled)
+				   if (multiStageDesignValue != null) {
+					   if (multiStageDesignValue.equalsIgnoreCase("true")) {
+			   				twoPhaseDesign = true
+					   }
+				   }
+			   }
+		   }
+		   
+		   utils.log("DEBUG", "setting twoPhaseDesign flag to: " + twoPhaseDesign, isDebugEnabled)
+		   
+		   execution.setVariable("DCVFM_twoPhaseDesign", twoPhaseDesign)		
+	   } catch (BpmnError e) {
+		   throw e;
+	   } catch (Exception e) {
+		   logError('Caught exception in queryCatalogDB()', e)
+		   exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in queryCatalogDB(): ' + e.getMessage())
+	   }
+   }
+	
+   
+   public void preProcessRollback (DelegateExecution execution) {
 	   def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 	   utils.log("DEBUG"," ***** preProcessRollback ***** ", isDebugEnabled)
 	   try {
@@ -1874,7 +2110,7 @@ public class DoCreateVfModule extends VfModuleBase {
 	   utils.log("DEBUG"," *** Exit preProcessRollback *** ", isDebugEnabled)
    }
 
-   public void postProcessRollback (Execution execution) {
+   public void postProcessRollback (DelegateExecution execution) {
 	   def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 	   utils.log("DEBUG"," ***** postProcessRollback ***** ", isDebugEnabled)
 	   String msg = ""

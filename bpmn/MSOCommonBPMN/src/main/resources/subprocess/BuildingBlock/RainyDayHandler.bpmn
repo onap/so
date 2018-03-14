@@ -64,9 +64,11 @@ rdh.queryPolicy(execution)]]></bpmn2:script>
         <camunda:in source="workStep" target="workStep" />
         <camunda:in source="errorCode" target="errorCode" />
         <camunda:in source="errorText" target="errorText" />
-        <camunda:in source="RFH_validResponses" target="validResponses" />
+        <camunda:in source="validResponses" target="validResponses" />
         <camunda:out source="WorkflowException" target="WorkflowException" />
         <camunda:out source="responseValue" target="handlingCode" />
+        <camunda:in source="vnfName" target="vnfName" />
+        <camunda:in source="isDebugLogEnabled" target="isDebugLogEnabled" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_0navei4</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_1f0bjoy</bpmn2:outgoing>

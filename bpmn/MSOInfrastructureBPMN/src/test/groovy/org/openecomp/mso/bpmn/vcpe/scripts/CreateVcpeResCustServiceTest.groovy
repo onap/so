@@ -24,7 +24,6 @@ import org.camunda.bpm.engine.ProcessEngineServices
 import org.camunda.bpm.engine.RepositoryService
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.camunda.bpm.engine.repository.ProcessDefinition
-import org.camunda.bpm.engine.runtime.Execution
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Rule
@@ -84,7 +83,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	// ***** preProcessRequest *****
 			
 	@Test
-	// @Ignore  
+	@Ignore // 1802 merge
 	public void preProcessRequest() {
 		ExecutionEntity mex = setupMock()
 		def map = setupMap(mex)
@@ -133,7 +132,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	}
 			
 	@Test
-	// @Ignore  
+	@Ignore // 1802 merge
 	public void preProcessRequest_EmptyParts() {
 		ExecutionEntity mex = setupMock()
 		def map = setupMap(mex)
