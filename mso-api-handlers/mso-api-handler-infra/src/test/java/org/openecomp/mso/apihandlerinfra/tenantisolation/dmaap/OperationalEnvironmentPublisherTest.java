@@ -28,19 +28,19 @@ import java.io.IOException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openecomp.mso.apihandlerinfra.tenantisolation.dmaap.OperationalEnvironmentPublisher;
+import org.openecomp.mso.properties.MsoJavaProperties;
 import org.openecomp.mso.properties.MsoPropertiesException;
 import org.openecomp.mso.properties.MsoPropertiesFactory;
 
 public class OperationalEnvironmentPublisherTest {
 
+	private static final String APIH_INFRA_PROP = MsoJavaProperties.class.getClassLoader().getResource("mso.apihandler-infra.properties").toString().substring(5);
 	
 	@BeforeClass
 	public static void setUp() throws MsoPropertiesException {
-		System.setProperty("mso.config.path", "src/test/resources/");
 		MsoPropertiesFactory propertiesFactory = new MsoPropertiesFactory();
-
 		propertiesFactory.removeAllMsoProperties();
-		propertiesFactory.initializeMsoProperties("MSO_PROP_APIHANDLER_INFRA", "mso.apihandler-infra.properties");
+		propertiesFactory.initializeMsoProperties("MSO_PROP_APIHANDLER_INFRA", APIH_INFRA_PROP);
 	}
 	
 	@Test
