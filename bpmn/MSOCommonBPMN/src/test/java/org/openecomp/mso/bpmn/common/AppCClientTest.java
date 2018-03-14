@@ -51,6 +51,7 @@ import java.util.UUID;
 
 import org.camunda.bpm.engine.test.Deployment;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import org.openecomp.mso.bpmn.common.WorkflowTest;
@@ -62,6 +63,7 @@ public class AppCClientTest extends WorkflowTest{
 
 	
 	@Test
+	@Ignore // 1802 merge
 	@Deployment(resources = {"subprocess/BuildingBlock/AppCClient.bpmn"})
 	public void test() throws Exception{
 				
