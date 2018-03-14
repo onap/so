@@ -77,14 +77,14 @@ public class ResourceRequestBuilder {
      * @since ONAP Beijing Release
      */
     @SuppressWarnings("unchecked")
-    public static String buildResourceRequestParameters(Execution execution, String serviceUuid, String resourceucstomizationUuid, String serviceParameters) {
+    public static String buildResourceRequestParameters(Execution execution, String serviceUuid, String resourceCustomizationUuid, String serviceParameters) {
         List<String> resourceList = jsonUtil.StringArrayToList(execution, (String)JsonUtils.getJsonValue(serviceParameters, "resources")); 
         //Get the right location str for resource. default is an empty array.
         String locationConstraints ="[]";
         String resourceInputsFromUui = "";
         for(String resource: resourceList){
             String resCusUuid = (String)JsonUtils.getJsonValue(resource, "resourceCustomizationUuid");
-            if(resourceucstomizationUuid.equals(resCusUuid)){
+            if(resourceCustomizationUuid.equals(resCusUuid)){
                 String resourceParameters = JsonUtils.getJsonValue(resource, "parameters");
                 locationConstraints = JsonUtils.getJsonValue(resourceParameters, "locationConstraints");
                 resourceInputsFromUui = JsonUtils.getJsonValue(resourceParameters, "requestInputs");
@@ -93,7 +93,7 @@ public class ResourceRequestBuilder {
         Map<String, Object> serviceInput =getJsonObject((String)JsonUtils.getJsonValue(serviceParameters, "requestInputs"), Map.class);
         Map<String, Object> resourceInputsFromUuiMap = getJsonObject(resourceInputsFromUui, Map.class);
         try {
-            Map<String, Object> resourceInputsFromServiceDeclaredLevel = buildResouceRequest(serviceUuid, resourceucstomizationUuid, serviceInput);
+            Map<String, Object> resourceInputsFromServiceDeclaredLevel = buildResouceRequest(serviceUuid, resourceCustomizationUuid, serviceInput);
             resourceInputsFromUuiMap.putAll(resourceInputsFromServiceDeclaredLevel);
         } catch(SdcToscaParserException e) {
             e.printStackTrace();
