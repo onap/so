@@ -10,7 +10,7 @@
 },
 "cloudConfiguration": {
 "lcpCloudRegionId": "mdt1",
-"tenantId": "88a6ca3ee0394ade9403f075db23167e"
+"tenantId": "fba1bd1e195a404cacb9ce17a9b2b421"
 },
 "requestInfo": {
 "instanceName": "STMTN",
@@ -42,6 +42,14 @@
 	{ 
 		"name": "sgi_protected_subnet_id", 
 		"value": "thisissomefakevalue" 
+	},
+	{
+		"name": "vlc_sctp_b_route_prefixes",
+		"value": [
+			{ "interface_route_table_routes_route_prefix": "107.239.41.163/32" },
+			{ "interface_route_table_routes_route_prefix": "107.239.41.164/32" },
+			{ "interface_route_table_routes_route_prefix": "107.239.41.165/32" }
+		]
 	}
 ]
 }

@@ -128,7 +128,7 @@ public class DoDeleteVfModuleTest extends WorkflowTest {
 		MockPatchVfModuleId("a27ce5a9-29c4-4c22-a017-6615ac73c721", "973ed047-d251-4fb9-bf1a-65b8949e0a73");
 		
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<>();
+		Map<String, Object> variables = new HashMap<>();		
 		variables.put("isDebugLogEnabled","true");
 		variables.put("mso-request-id", "a27ce5a9-29c4-4c22-a017-6615ac73c721");
 		variables.put("mso-service-instance-id", "a27ce5a9-29c4-4c22-a017-6615ac73c721");
@@ -173,7 +173,7 @@ public class DoDeleteVfModuleTest extends WorkflowTest {
 		MockPatchVfModuleId("a27ce5a9-29c4-4c22-a017-6615ac73c721", "973ed047-d251-4fb9-bf1a-65b8949e0a73");
 		
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<>();
+		Map<String, Object> variables = new HashMap<>();		
 		
 		variables.put("mso-request-id", "a27ce5a9-29c4-4c22-a017-6615ac73c721");	
 		variables.put("requestId", "a27ce5a9-29c4-4c22-a017-6615ac73c721");		
@@ -185,6 +185,73 @@ public class DoDeleteVfModuleTest extends WorkflowTest {
 		variables.put("sdncVersion", "1610");
 		variables.put("isVidRequest", "true");
 		variables.put("retainResources", false);
+		String vfModuleModelInfo = "{" + "\"modelType\": \"vnf\"," +
+				"\"modelInvariantUuid\": \"ff5256d2-5a33-55df-13ab-12abad84e7ff\"," + 
+				"\"modelUuid\": \"fe6478e5-ea33-3346-ac12-ab121484a3fe\"," +
+				"\"modelName\": \"vSAMP12\"," +
+				"\"modelVersion\": \"1.0\"," + 
+				"\"modelCustomizationUuid\": \"MODEL-ID-1234\"," + 
+				"}";
+		variables.put("vfModuleModelInfo", vfModuleModelInfo);
+			
+		String cloudConfiguration = "{" + 
+				"\"lcpCloudRegionId\": \"RDM2WAGPLCP\"," +		
+				"\"tenantId\": \"fba1bd1e195a404cacb9ce17a9b2b421\"" + "}";
+		variables.put("cloudConfiguration", cloudConfiguration);
+	
+		
+		invokeSubProcess("DoDeleteVfModule", businessKey, variables);
+
+		// "changedelete" operation not required for deleting a Vf Module
+//		injectSDNCCallbacks(callbacks, "sdncChangeDelete");
+		injectVNFRestCallbacks(callbacks, "vnfDelete");
+		waitForRunningProcessCount("vnfAdapterDeleteV1", 0, 120000);
+		injectSDNCCallbacks(callbacks, "sdncDelete");
+
+		waitForProcessEnd(businessKey, 10000);
+		WorkflowException wfe = (WorkflowException) getVariableFromHistory(businessKey, wfeString);
+		checkVariable(businessKey, wfeString, null);
+		if (wfe != null) {
+			System.out.println("TestDoDeleteVfModule_Building_Block_Success: ErrorCode=" + wfe.getErrorCode() +
+					", ErrorMessage=" + wfe.getErrorMessage());
+		}
+		logEnd();
+	}
+	
+	@Test
+	@Deployment(resources = {
+			"subprocess/DoDeleteVfModule.bpmn",
+			"subprocess/PrepareUpdateAAIVfModule.bpmn",
+			"subprocess/UpdateAAIVfModule.bpmn",
+			"subprocess/UpdateAAIGenericVnf.bpmn",
+			"subprocess/DeleteAAIVfModule.bpmn",
+			"subprocess/SDNCAdapterV1.bpmn",
+			"subprocess/VnfAdapterRestV1.bpmn"
+		})
+	public void  TestDoDeleteVfModule_Building_Block_ModuleInAssignedState() {
+		logStart();
+		MockDoDeleteVfModule_SDNCSuccess();
+		MockDoDeleteVfModule_DeleteVNFSuccess();
+		MockAAIGenericVnfSearch();
+		MockAAIVfModulePUT(false);
+		MockAAIDeleteGenericVnf();
+		MockAAIDeleteVfModule();
+		MockPatchVfModuleId("a27ce5a9-29c4-4c22-a017-6615ac73c721", "973ed047-d251-4fb9-bf1a-65b8949e0a73");
+		
+		String businessKey = UUID.randomUUID().toString();
+		Map<String, Object> variables = new HashMap<>();		
+		
+		variables.put("mso-request-id", "a27ce5a9-29c4-4c22-a017-6615ac73c721");	
+		variables.put("requestId", "a27ce5a9-29c4-4c22-a017-6615ac73c721");		
+		variables.put("isDebugLogEnabled","true");
+		variables.put("vnfId", "a27ce5a9-29c4-4c22-a017-6615ac73c721");
+		variables.put("vfModuleId", "973ed047-d251-4fb9-bf1a-65b8949e0a73");
+		variables.put("serviceInstanceId", "a27ce5a9-29c4-4c22-a017-6615ac73c721");
+		variables.put("vfModuleName", "STMTN5MMSC21-MMSC::module-0-0");
+		variables.put("sdncVersion", "1610");
+		variables.put("isVidRequest", "true");
+		variables.put("retainResources", false);
+		variables.put("aLaCarte", true);
 		String vfModuleModelInfo = "{" + "\"modelType\": \"vnf\"," +
 				"\"modelInvariantUuid\": \"ff5256d2-5a33-55df-13ab-12abad84e7ff\"," + 
 				"\"modelUuid\": \"fe6478e5-ea33-3346-ac12-ab121484a3fe\"," +
@@ -263,7 +330,7 @@ public class DoDeleteVfModuleTest extends WorkflowTest {
 		MockPatchVfModuleId("a27ce5a9-29c4-4c22-a017-6615ac73c721", "973ed047-d251-4fb9-bf1a-65b8949e0a73");
 		
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<>();
+		Map<String, Object> variables = new HashMap<>();		
 		variables.put("isDebugLogEnabled","true");
 		variables.put("mso-request-id", "a27ce5a9-29c4-4c22-a017-6615ac73c721");
 		variables.put("mso-service-instance-id", "a27ce5a9-29c4-4c22-a017-6615ac73c721");
@@ -334,7 +401,7 @@ public class DoDeleteVfModuleTest extends WorkflowTest {
 		MockPatchVfModuleId("a27ce5a9-29c4-4c22-a017-6615ac73c721", "973ed047-d251-4fb9-bf1a-65b8949e0a73");
 		
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<>();
+		Map<String, Object> variables = new HashMap<>();		
 		variables.put("isDebugLogEnabled","true");
 		variables.put("mso-request-id", "a27ce5a9-29c4-4c22-a017-6615ac73c721");
 		variables.put("mso-service-instance-id", "a27ce5a9-29c4-4c22-a017-6615ac73c721");
@@ -405,7 +472,7 @@ public class DoDeleteVfModuleTest extends WorkflowTest {
 		MockPatchVfModuleId("a27ce5a9-29c4-4c22-a017-6615ac73c721", "973ed047-d251-4fb9-bf1a-65b8949e0a73");
 		
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<>();
+		Map<String, Object> variables = new HashMap<>();		
 		variables.put("isDebugLogEnabled","true");
 		variables.put("mso-request-id", "a27ce5a9-29c4-4c22-a017-6615ac73c721");
 		variables.put("mso-service-instance-id", "a27ce5a9-29c4-4c22-a017-6615ac73c721");
@@ -475,7 +542,7 @@ public class DoDeleteVfModuleTest extends WorkflowTest {
 		MockPatchVfModuleId("a27ce5a9-29c4-4c22-a017-6615ac73c721", "973ed047-d251-4fb9-bf1a-65b8949e0a73");
 		
 		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<>();
+		Map<String, Object> variables = new HashMap<>();		
 		variables.put("isDebugLogEnabled","true");
 		variables.put("mso-request-id", "a27ce5a9-29c4-4c22-a017-6615ac73c721");
 		variables.put("mso-service-instance-id", "a27ce5a9-29c4-4c22-a017-6615ac73c721");

@@ -9,13 +9,13 @@
 		<vnf-id>eac30f85-f61f-4c5f-862e-2c62f9e135de</vnf-id>
 		<vnf-type>null</vnf-type>
 	</vnf-topology-identifier-structure>
-	<onap-model-information>
+	<ecomp-model-information>
 		<model-name>vSAMP10a_macro</model-name>
 		<model-customization-uuid>819ef122-ca19-4141-a61e-62922f8fc279</model-customization-uuid>
 		<model-version>1.0</model-version>
 		<model-invariant-uuid>ef176121-f02c-4dd3-927c-22131d48446b</model-invariant-uuid>
 		<model-uuid>ff2ae348-214a-11e7-93ae-92361f002672</model-uuid>
-	</onap-model-information>
+	</ecomp-model-information>
 	<vnf-resource-assignments>			
 			<vnf-networks>
 					<network-role>mog_exn</network-role>

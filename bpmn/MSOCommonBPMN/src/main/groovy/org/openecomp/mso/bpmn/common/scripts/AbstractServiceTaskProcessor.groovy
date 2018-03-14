@@ -23,7 +23,7 @@ package org.openecomp.mso.bpmn.common.scripts;
 import groovy.json.JsonSlurper
 
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.variable.VariableMap
 import org.camunda.bpm.engine.variable.Variables
 import org.camunda.bpm.engine.variable.Variables.SerializationDataFormats
@@ -126,7 +126,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	 * Logs a WorkflowException at the ERROR level with the specified message.
 	 * @param execution the execution
 	 */
-	public void logWorkflowException(Execution execution, String message) {
+	public void logWorkflowException(DelegateExecution execution, String message) {
 		def workflowException = execution.getVariable("WorkflowException")
 
 		if (workflowException == null) {
@@ -143,7 +143,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	 * @param execution the execution
 	 * @return the name of the destination variable
 	 */
-	public saveWorkflowException(Execution execution, String variable) {
+	public saveWorkflowException(DelegateExecution execution, String variable) {
 		if (variable == null) {
 			throw new NullPointerException();
 		}
@@ -164,7 +164,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	 * @param execution the execution
 	 * @return the validated request
 	 */
-	public String validateRequest(Execution execution, String... requiredVariables) {
+	public String validateRequest(DelegateExecution execution, String... requiredVariables) {
 		ExceptionUtil exceptionUtil = new ExceptionUtil()
 		def method = getClass().getSimpleName() + '.validateRequest(' +
 			'execution=' + execution.getId() +
@@ -252,7 +252,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	 * @param execution the execution
 	 * @return the inputVars
 	 */
-	public Map validateJSONReq(Execution execution) {
+	public Map validateJSONReq(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.validateJSONReq(' +
 				'execution=' + execution.getId() +
 				')'
@@ -303,7 +303,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	 *         top-level process
 	 * @throws IllegalStateException if a response has already been sent
 	 */
-	protected void sendWorkflowResponse(Execution execution, Object responseCode, String response) {
+	protected void sendWorkflowResponse(DelegateExecution execution, Object responseCode, String response) {
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		try {
 			String processKey = getProcessKey(execution);
@@ -376,7 +376,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	 * Returns true if a workflow response has already been sent.
 	 * @param execution the execution
 	 */
-	protected boolean isWorkflowResponseSent(Execution execution) {
+	protected boolean isWorkflowResponseSent(DelegateExecution execution) {
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		String processKey = getProcessKey(execution);
 		return String.valueOf(execution.getVariable(processKey + "WorkflowResponseSent")).equals("true");
@@ -388,7 +388,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	 * 
 	 * @param execution the execution
 	 */
-	public String getProcessKey(Execution execution) {
+	public String getProcessKey(DelegateExecution execution) {
 		def testKey = execution.getVariable("testProcessKey")
 		if(testKey!=null){
 			return testKey
@@ -402,11 +402,11 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	 * top-level process.
 	 * @param execution the execution
 	 */
-	public String getMainProcessKey(Execution execution) {
-		Execution exec = execution
+	public String getMainProcessKey(DelegateExecution execution) {
+		DelegateExecution exec = execution
 
 		while (true) {
-			Execution parent = exec.getSuperExecution()
+			DelegateExecution parent = exec.getSuperExecution()
 
 			if (parent == null) {
 				parent = exec.getParent()
@@ -433,7 +433,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	 * @param elementName Name of element to search for.
 	 * @return The element node, if found in the xml.
 	 */
-	protected String getRequiredNodeXml(Execution execution, String xml, String elementName) {
+	protected String getRequiredNodeXml(DelegateExecution execution, String xml, String elementName) {
 		ExceptionUtil exceptionUtil = new ExceptionUtil()
 		def element = utils.getNodeXml(xml, elementName, false)
 		if (element.trim().isEmpty()) {
@@ -455,7 +455,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	 * @param elementName Name of element to whose value to get.
 	 * @return The non-empty value of the element, if found in the xml.
 	 */
-	protected String getRequiredNodeText(Execution execution, String xml, String elementName) {
+	protected String getRequiredNodeText(DelegateExecution execution, String xml, String elementName) {
 		ExceptionUtil exceptionUtil = new ExceptionUtil()
 		def elementText = utils.getNodeText1(xml, elementName)
 		if ((elementText == null) || (elementText.isEmpty())) {
@@ -501,7 +501,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	*@param name
 	*@param value
 	*/
-	public void setVariable(Execution execution, String name, Object value) {
+	public void setVariable(DelegateExecution execution, String name, Object value) {
 		VariableMap variables = Variables.createVariables()
 		variables.putValueTyped('payload', Variables.objectValue(value)
 		.serializationDataFormat(SerializationDataFormats.JAVA) // tells the engine to use java serialization for persisting the value
@@ -517,7 +517,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	*@param name
 	*@return
 	**/
-	public String getVariable(Execution execution, String name) {
+	public String getVariable(DelegateExecution execution, String name) {
 		def myObj = execution.getVariable(name)
 		if(myObj instanceof VariableMap){
 			VariableMap serializedObjectMap = (VariableMap) myObj
@@ -571,7 +571,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	 * Sets flows success indicator variable.
 	 *
 	 */
-	public void setSuccessIndicator(Execution execution, boolean isSuccess) {
+	public void setSuccessIndicator(DelegateExecution execution, boolean isSuccess) {
 		String prefix = execution.getVariable('prefix')
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 
@@ -584,7 +584,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	 * Sends a Error Sync Response
 	 *
 	 */
-	public void sendSyncError(Execution execution) {
+	public void sendSyncError(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		String requestId = execution.getVariable("mso-request-id")
 		logDebug('sendSyncError, requestId: ' + requestId, isDebugEnabled)
@@ -605,7 +605,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 		if (args != null && args.size() > 0) {
 
 			// First argument of method to call is always the execution object
-			Execution execution = (Execution) args[0]
+			DelegateExecution execution = (DelegateExecution) args[0]
 
 			def classAndMethod = getClass().getSimpleName() + '.' + methodName + '(execution=' + execution.getId() + ')'
 			def isDebugEnabled =  execution.getVariable('isDebugLogEnabled')
@@ -693,7 +693,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	 * @param messageType the message type (e.g. SDNCAResponse or VNFAResponse)
 	 * @param correlator the correlator value (e.g. a request ID)
 	 */
-	public String createCallbackURL(Execution execution, String messageType, String correlator) {
+	public String createCallbackURL(DelegateExecution execution, String messageType, String correlator) {
 		String endpoint = (String) execution.getVariable('URN_mso_workflow_message_endpoint')
 
 		if (endpoint == null || endpoint.isEmpty()) {
@@ -719,7 +719,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	 * @param messageType the message type (e.g. SNIROResponse)
 	 * @param correlator the correlator value (e.g. a request ID)
 	 */
-	public String createWorkflowMessageAdapterCallbackURL(Execution execution, String messageType, String correlator) {
+	public String createWorkflowMessageAdapterCallbackURL(DelegateExecution execution, String messageType, String correlator) {
 		String endpoint = (String) execution.getVariable('URN_mso_adapters_workflow_message_endpoint')
 
 		if (endpoint == null || endpoint.isEmpty()) {
@@ -737,7 +737,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 			'/' + UriUtils.encodePathSegment(correlator, 'UTF-8')
 	}
 	
-	public void setRollbackEnabled(Execution execution, isDebugLogEnabled) {
+	public void setRollbackEnabled(DelegateExecution execution, isDebugLogEnabled) {
 		
 		// Rollback settings
 		def prefix = execution.getVariable('prefix')
@@ -771,7 +771,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 		logDebug('rollbackEnabled (aka backoutOnFailure): ' + rollbackEnabled, isDebugLogEnabled)
 	}
 	
-	public void setBasicDBAuthHeader(Execution execution, isDebugLogEnabled) {
+	public void setBasicDBAuthHeader(DelegateExecution execution, isDebugLogEnabled) {
 		try {
 			String basicAuthValueDB = execution.getVariable("URN_mso_adapters_db_auth")
 			utils.log("DEBUG", " Obtained BasicAuth userid password for Catalog DB adapter: " + basicAuthValueDB, isDebugLogEnabled)

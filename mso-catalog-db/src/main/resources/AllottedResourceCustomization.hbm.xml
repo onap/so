@@ -61,5 +61,11 @@
         <property name="created" type="timestamp" generated="insert" update="false" insert="false" not-null="true">
           <column name="CREATION_TIMESTAMP" default="CURRENT_TIMESTAMP"/>
         </property>
+        <property name="providingServiceModelUuid" type="java.lang.String" length="200">
+            <column name="PROVIDING_SERVICE_MODEL_UUID" />
+        </property>
+        <property name="providingServiceModelName" type="java.lang.String" length="200">
+            <column name="PROVIDING_SERVICE_MODEL_NAME" />
+        </property>
     </class>
 </hibernate-mapping>

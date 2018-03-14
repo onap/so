@@ -25,7 +25,7 @@ import groovy.json.JsonSlurper
 import java.util.concurrent.ExecutionException;
 
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.apache.commons.lang3.*
 import org.springframework.web.util.UriUtils
 import org.openecomp.mso.bpmn.common.scripts.AaiUtil;
@@ -44,7 +44,7 @@ class UpdateVfModuleVolumeInfraV1 extends VfModuleBase {
 	 * 
 	 * @param execution The flow's execution instance.
 	 */
-	private void initProcessVariables(Execution execution) {
+	private void initProcessVariables(DelegateExecution execution) {
 		execution.setVariable('prefix', 'UPDVfModVol_')
 		execution.setVariable('UPDVfModVol_Request', null)
 		execution.setVariable('UPDVfModVol_requestInfo', null)
@@ -67,12 +67,12 @@ class UpdateVfModuleVolumeInfraV1 extends VfModuleBase {
 	 * Perform initial processing, such as request validation, initialization of variables, etc.
 	 * * @param execution
 	 */
-	public void preProcessRequest (Execution execution) {
+	public void preProcessRequest (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		preProcessRequest(execution, isDebugEnabled)
 	}
 	
-	public void preProcessRequest(Execution execution, isDebugLogEnabled) {
+	public void preProcessRequest(DelegateExecution execution, isDebugLogEnabled) {
 
 		initProcessVariables(execution)
 		String jsonRequest = validateRequest(execution)
@@ -135,7 +135,7 @@ class UpdateVfModuleVolumeInfraV1 extends VfModuleBase {
 	 * 
 	 * @param execution The flow's execution instance.
 	 */
-	public void sendSynchResponse(Execution execution, isDebugLogEnabled) {
+	public void sendSynchResponse(DelegateExecution execution, isDebugLogEnabled) {
 
 		def requestInfo = execution.getVariable('UPDVfModVol_requestInfo')
 		def requestId = execution.getVariable('UPDVfModVol_requestId')
@@ -185,7 +185,7 @@ class UpdateVfModuleVolumeInfraV1 extends VfModuleBase {
 	 * Volume Group Id and Aic Cloud Region.
 	 * @param execution The flow's execution instance.
 	 */
-	public void queryAAIForVolumeGroup(Execution execution, isDebugLogEnabled) {
+	public void queryAAIForVolumeGroup(DelegateExecution execution, isDebugLogEnabled) {
 
 		def volumeGroupId = execution.getVariable('UPDVfModVol_volumeGroupId')
 		def aicCloudRegion = execution.getVariable('UPDVfModVol_aicCloudRegion')
@@ -244,7 +244,7 @@ class UpdateVfModuleVolumeInfraV1 extends VfModuleBase {
 	 * @param execution
 	 * @param isDebugEnabled
 	 */
-	public void queryAAIForGenericVnf(Execution execution, isDebugEnabled) {
+	public void queryAAIForGenericVnf(DelegateExecution execution, isDebugEnabled) {
 		
 		def vnfId = execution.getVariable('vnfId')
 		
@@ -285,7 +285,7 @@ class UpdateVfModuleVolumeInfraV1 extends VfModuleBase {
 	 * @param execution
 	 * @param isDebugLogEnabled
 	 */
-	public void queryAAIForVfModule(Execution execution, isDebugLogEnabled) {
+	public void queryAAIForVfModule(DelegateExecution execution, isDebugLogEnabled) {
 		
 			AaiUtil aaiUtil = new AaiUtil(this)
 			String queryAAIVfModuleRequest = execution.getVariable('UPDVfModVol_relatedVfModuleLink')
@@ -346,7 +346,7 @@ class UpdateVfModuleVolumeInfraV1 extends VfModuleBase {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void prepVnfAdapterRest(Execution execution, isDebugLogEnabled) {
+	public void prepVnfAdapterRest(DelegateExecution execution, isDebugLogEnabled) {
 		
 		def aicCloudRegion = execution.getVariable('UPDVfModVol_aicCloudRegion')
 		def tenantId = execution.getVariable('UPDVfModVol_tenantId')
@@ -433,7 +433,7 @@ class UpdateVfModuleVolumeInfraV1 extends VfModuleBase {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void prepDbInfraDbRequest(Execution execution, isDebugLogEnabled) {
+	public void prepDbInfraDbRequest(DelegateExecution execution, isDebugLogEnabled) {
 
 		def requestId = execution.getVariable('UPDVfModVol_requestId')
 		ExceptionUtil exceptionUtil = new ExceptionUtil();
@@ -462,7 +462,7 @@ class UpdateVfModuleVolumeInfraV1 extends VfModuleBase {
 	 * Build a "CompletionHandler" request.
 	 * @param execution The flow's execution instance.
 	 */
-	public void prepCompletionHandlerRequest(Execution execution, requestId, action, source, isDebugLogEnabled) {
+	public void prepCompletionHandlerRequest(DelegateExecution execution, requestId, action, source, isDebugLogEnabled) {
 
 		String content = """
 		<aetgt:MsoCompletionRequest xmlns:aetgt="http://org.openecomp/mso/workflow/schema/v1"
@@ -486,7 +486,7 @@ class UpdateVfModuleVolumeInfraV1 extends VfModuleBase {
 	 * Build a "FalloutHandler" request.
 	 * @param execution The flow's execution instance.
 	 */
-	public void prepFalloutHandler(Execution execution, isDebugLogEnabled) {
+	public void prepFalloutHandler(DelegateExecution execution, isDebugLogEnabled) {
 		def requestId = execution.getVariable('UPDVfModVol_requestId')
 		def source = execution.getVariable('UPDVfModVol_source')
 		
@@ -527,7 +527,7 @@ class UpdateVfModuleVolumeInfraV1 extends VfModuleBase {
 	 * AAI did not match the Tenant Id in the incoming request.
 	 * @param execution The flow's execution instance.
 	 */
-	public void handleTenantIdMismatch(Execution execution, isDebugLogEnabled) {
+	public void handleTenantIdMismatch(DelegateExecution execution, isDebugLogEnabled) {
 		
 		def volumeGroupId = execution.getVariable('UPDVfModVol_volumeGroupId')
 		def aicCloudRegion = execution.getVariable('UPDVfModVol_aicCloudRegion')
@@ -547,7 +547,7 @@ class UpdateVfModuleVolumeInfraV1 extends VfModuleBase {
 	 * AAI did not match the model invariant ID in the incoming request.
 	 * @param execution The flow's execution instance.
 	 */
-	public void handlePersonaModelIdMismatch(Execution execution, isDebugLogEnabled) {
+	public void handlePersonaModelIdMismatch(DelegateExecution execution, isDebugLogEnabled) {
 		
 		def modelInvariantId = execution.getVariable('UPDVfModVol_modelInvariantId')
 		def personaModelId = execution.getVariable('UPDVfModVol_personaModelId')

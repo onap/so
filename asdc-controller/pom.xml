@@ -28,11 +28,6 @@
 	</build>
 
 	<dependencies>
-        <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-mapper-asl</artifactId>
-            <version>1.9.13</version>
-        </dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
@@ -99,7 +94,7 @@
 	 	<dependency>
   			<groupId>org.openecomp.sdc.sdc-distribution-client</groupId>
   			<artifactId>sdc-distribution-client</artifactId>
- 			 <version>1.1.32</version>
+ 			 <version>1.2.2</version>
  			<exclusions>
        		 	<exclusion>  
 	         	 	<groupId>org.slf4j</groupId>
@@ -112,7 +107,7 @@
 		<dependency>
   			<groupId>org.openecomp.sdc.sdc-tosca</groupId>
   			<artifactId>sdc-tosca</artifactId>
-			<version>1.1.32</version>
+  			<version>1.2.3</version>
 		</dependency> 
 		
 
@@ -148,6 +143,11 @@
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.onap.so</groupId>
+			<artifactId>mso-requests-db</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 

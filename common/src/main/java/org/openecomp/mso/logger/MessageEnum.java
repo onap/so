@@ -202,6 +202,7 @@ public enum MessageEnum implements EELFResolvableErrorEnum{
 	ASDC_SERVICE_NOT_SUPPORT,
 	ASDC_ARTIFACT_DEPLOY_SUC,
 	ASDC_PROPERTIES_NOT_FOUND,
+	ASDC_PROPERTIES_LOAD_SUCCESS,
 	// Default Messages, in case Log catalog is not defined
 	GENERAL_EXCEPTION_ARG,
 	GENERAL_EXCEPTION,

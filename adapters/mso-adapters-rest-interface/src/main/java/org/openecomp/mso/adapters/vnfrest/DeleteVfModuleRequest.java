@@ -21,15 +21,14 @@
 package org.openecomp.mso.adapters.vnfrest;
 
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.openecomp.mso.entity.MsoRequest;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import org.jboss.resteasy.annotations.providers.NoJackson;
-import org.codehaus.jackson.map.annotate.JsonRootName;
+import com.fasterxml.jackson.annotation.JsonRootName;
 
 @JsonRootName("deleteVfModuleRequest")
 @XmlRootElement(name = "deleteVfModuleRequest")
-@NoJackson
 public class DeleteVfModuleRequest extends VfRequestCommon {
 	private String cloudSiteId;
 	private String tenantId;

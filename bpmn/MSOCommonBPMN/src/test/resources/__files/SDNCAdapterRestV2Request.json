@@ -1,0 +1,21 @@
+{
+  "SDNCServiceRequest": {
+    "bpNotificationUrl": "http://localhost:28080/mso/WorkflowMesssage/SDNCAResponse/a4383a52-b9de-4bc4-bedf-02f3f9466535-1510232328526",
+    "sdncRequestId": "a4383a52-b9de-4bc4-bedf-02f3f9466535-1510232328526",
+    "requestInformation": {
+    "requestId": "a4383a52-b9de-4bc4-bedf-02f3f9466535",
+    "source": "CCD",
+    "notificationUrl": "http://localhost:28090/CCD/StatusNotification"
+  },
+  "serviceInformation": {
+    "serviceType": "vWanX",
+    "serviceInstanceId": "fd8bcdbb-b799-43ce-a7ff-ed8f2965a3b5",
+    "subscriberName": "Monster Joe's Truck & Tow",
+    "subscriberGlobalId": "8310000058863"
+  },
+  "sdncService": "ucpe-vnf",
+    "sdncOperation": "service-topology-cust-assign-operation",
+    "sdncServiceDataType": "XML",
+    "sdncServiceData": "<ucpe-vnf-assign-service-information><access-circuit-information><access-circuit-id>BT/SLIR/70901</access-circuit-id></access-circuit-information><access-circuit-information><access-circuit-id>AS/KRFN/34601</access-circuit-id></access-circuit-information><vnf-information><vnf-host-name>USOSTCDALTX0101VFWX01</vnf-host-name><ucpe-host-name>USOSTCDALTX0101UJZZ11</ucpe-host-name><vnf-type>WX</vnf-type><vnf-att-part-number>WX-VM00*</vnf-att-part-number><vnf-version-number>1.0.2</vnf-version-number><vnf-management-option>ATT</vnf-management-option><vnf-alternative-ownership>ATT-VENDOR-OWNED</vnf-alternative-ownership></vnf-information></ucpe-vnf-assign-service-information>"
+  }
+}

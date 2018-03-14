@@ -36,18 +36,24 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  * ============LICENSE_END========================================================= 
- */
+ */ 
 
 package org.openecomp.mso.bpmn.core;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+
+import org.json.JSONObject;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openecomp.mso.apihandler.common.ValidationException;
 import org.openecomp.mso.bpmn.core.json.JsonUtils;
 import org.openecomp.mso.bpmn.core.xml.XmlTool;
 import org.xmlunit.builder.DiffBuilder;
@@ -62,7 +68,7 @@ public class JsonUtilsTest {
 
     private static final String EOL = "\n";
     private static final String XML_REQ =
-            "<vnf-request xmlns=\"http://org.openecomp/mso/infra/vnf-request/v1\">" + EOL +
+                    "<vnf-request xmlns=\"http://org.openecomp/mso/infra/vnf-request/v1\">" + EOL +
                     "  <request-info>" + EOL +
                     "    <request-id>DEV-VF-0021</request-id>" + EOL +
                     "    <action>CREATE_VF_MODULE</action>" + EOL +
@@ -91,9 +97,9 @@ public class JsonUtilsTest {
                     "    <param name=\"server\">server1111</param>" + EOL +
                     "  </vnf-params> " + EOL +
                     "</vnf-request>" + EOL;
-
+    
     private static final String XML_REQ_NO_ATTRS =
-            "<vnf-request xmlns=\"http://org.openecomp/mso/infra/vnf-request/v1\">" + EOL +
+                    "<vnf-request xmlns=\"http://org.openecomp/mso/infra/vnf-request/v1\">" + EOL +
                     "  <request-info>" + EOL +
                     "    <action>DELETE_VF_MODULE</action>" + EOL +
                     "    <source>PORTAL</source>" + EOL +
@@ -114,49 +120,49 @@ public class JsonUtilsTest {
                     "</vnf-request>" + EOL;
 
     private static final String XML_ARRAY_REQ =
-            "<ucpeInfo>" + EOL +
+                    "<ucpeInfo>" + EOL +
                     "       <outOfBandManagementModem>BROADBAND</outOfBandManagementModem>" + EOL +
-                    "   <internetTopology>IVLAN</internetTopology>" + EOL +
-                    "   <ucpeAliasHostName>SHELLUCPE31</ucpeAliasHostName>" + EOL +
-                    "   <wanList>" + EOL +
-                    "           <wanInfo>" + EOL +
-                    "                   <wanType>AVPN</wanType>" + EOL +
-                    "                   <interfaceType>1000BASE-T</interfaceType>" + EOL +
-                    "                   <transportProviderName>ATT</transportProviderName>" + EOL +
-                    "                   <circuitId>BT/SLIR/70911</circuitId>" + EOL +
-                    "                   <dualMode>Active</dualMode>" + EOL +
-                    "                   <wanPortNumber>WAN1</wanPortNumber>" + EOL +
-                    "                   <transportManagementOption>ATT</transportManagementOption>" + EOL +
-                    "                   <transportVendorTotalBandwidth>100</transportVendorTotalBandwidth>" + EOL +
-                    "                   <mediaType>ELECTRICAL</mediaType>" + EOL +
-                    "           </wanInfo>" + EOL +
-                    "           <wanInfo>" + EOL +
-                    "                   <wanType>AVPN</wanType>" + EOL +
-                    "                   <interfaceType>10/100/1000BASE-T</interfaceType>" + EOL +
-                    "                   <transportProviderName>ATT</transportProviderName>" + EOL +
-                    "                   <circuitId>AS/KRFN/34611</circuitId>" + EOL +
-                    "                   <dualMode>Active</dualMode>" + EOL +
-                    "                   <wanPortNumber>WAN2</wanPortNumber>" + EOL +
-                    "                   <transportManagementOption>ATT</transportManagementOption>" + EOL +
-                    "                   <transportVendorTotalBandwidth>10000</transportVendorTotalBandwidth>" + EOL +
-                    "                   <mediaType>MMF</mediaType>" + EOL +
-                    "           </wanInfo>" + EOL +
-                    "   </wanList>" + EOL +
-                    "   <ucpeActivationCode>ASD-987-M31</ucpeActivationCode>" + EOL +
-                    "   <ucpeHostName>USOSTCDALTX0101UJZZ31</ucpeHostName>" + EOL +
-                    "   <ucpePartNumber>FG-VM00*</ucpePartNumber>" + EOL +
+                "   <internetTopology>IVLAN</internetTopology>" + EOL +
+                "   <ucpeAliasHostName>SHELLUCPE31</ucpeAliasHostName>" + EOL +
+                "   <wanList>" + EOL +
+                "           <wanInfo>" + EOL +
+                "                   <wanType>AVPN</wanType>" + EOL +
+                "                   <interfaceType>1000BASE-T</interfaceType>" + EOL +
+                "                   <transportProviderName>ATT</transportProviderName>" + EOL +
+                "                   <circuitId>BT/SLIR/70911</circuitId>" + EOL +
+                "                   <dualMode>Active</dualMode>" + EOL +
+                "                   <wanPortNumber>WAN1</wanPortNumber>" + EOL +
+                "                   <transportManagementOption>ATT</transportManagementOption>" + EOL +
+                "                   <transportVendorTotalBandwidth>100</transportVendorTotalBandwidth>" + EOL +
+                "                   <mediaType>ELECTRICAL</mediaType>" + EOL +
+                "           </wanInfo>" + EOL +
+                "           <wanInfo>" + EOL +
+                "                   <wanType>AVPN</wanType>" + EOL +
+                "                   <interfaceType>10/100/1000BASE-T</interfaceType>" + EOL +
+                "                   <transportProviderName>ATT</transportProviderName>" + EOL +
+                "                   <circuitId>AS/KRFN/34611</circuitId>" + EOL +
+                "                   <dualMode>Active</dualMode>" + EOL +
+                "                   <wanPortNumber>WAN2</wanPortNumber>" + EOL +
+                "                   <transportManagementOption>ATT</transportManagementOption>" + EOL +
+                "                   <transportVendorTotalBandwidth>10000</transportVendorTotalBandwidth>" + EOL +
+                "                   <mediaType>MMF</mediaType>" + EOL +
+                "           </wanInfo>" + EOL +
+                "   </wanList>" + EOL +
+                "   <ucpeActivationCode>ASD-987-M31</ucpeActivationCode>" + EOL +
+                "   <ucpeHostName>USOSTCDALTX0101UJZZ31</ucpeHostName>" + EOL +
+                "   <ucpePartNumber>FG-VM00*</ucpePartNumber>" + EOL +
                     "</ucpeInfo>";
 
     // JSON request w/ embedded XML will be read from a file
     private static String jsonReq;
     private static String jsonReqArray;
-
+    
     @BeforeClass
     public static void initialize() throws Exception {
         jsonReq = readFileToString("src/test/resources/request.json");
         jsonReqArray = readFileToString("src/test/resources/requestArray.json");
-    }
-
+                    }
+    
     private static String readFileToString(String path) throws IOException {
         File file = new File(path);
         return new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
@@ -164,16 +170,16 @@ public class JsonUtilsTest {
 
     @Test
     public void shouldConvertXmlToJsonAndBackToSameXml() throws Exception {
-        // Note: the current version of the JsonUtils.json2xml() method
-        // does not support converting the JSONObject representation
-        // of XML attributes (JSONArray) back to XML. So this test will
-        // only succeed if the original XML does not contain attributes
-
+            // Note: the current version of the JsonUtils.json2xml() method
+            // does not support converting the JSONObject representation
+            // of XML attributes (JSONArray) back to XML. So this test will
+            // only succeed if the original XML does not contain attributes
+            
         // given
         String xmlIn = XmlTool.removeNamespaces(XML_REQ_NO_ATTRS);
         // when
         String json = JsonUtils.xml2json(XML_REQ_NO_ATTRS);
-        String xmlOut = JsonUtils.json2xml(json);
+            String xmlOut = JsonUtils.json2xml(json);
         // then
         Diff diffXml = DiffBuilder.compare(xmlIn).withTest(xmlOut).ignoreWhitespace()
                 .withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byName)).checkForSimilar().build();
@@ -233,7 +239,7 @@ public class JsonUtilsTest {
         assertThat(JsonUtils.getJsonParamValue(json, "vnf-request.vnf-params.param", "name", 2))
                 .withFailMessage("Expected null for index out of bound").isNull();
     }
-
+            
     @Test
     public void shouldAddJsonValue() throws Exception {
         // given
@@ -259,7 +265,7 @@ public class JsonUtilsTest {
         // then
         String extractedValue = JsonUtils.getJsonValue(jsonUpd, key);
         assertThat(extractedValue).isEqualTo(oldValue).isNotEqualTo(newValue);
-    }
+            }
 
     @Test
     public void shouldUpdateValueInJson() throws Exception {
@@ -286,6 +292,11 @@ public class JsonUtilsTest {
         // then
         String extractedValue = JsonUtils.getJsonValue(jsonUpd, key);
         assertThat(extractedValue).isNotEqualTo(oldValue).isNull();
+			JSONObject jsonObj = new JSONObject(json);
+            Integer intValue = JsonUtils.getJsonIntValueForKey(jsonObj, "persona-model-version");
+            Assert.assertTrue(intValue == 1);
+            Boolean boolValue = JsonUtils.getJsonBooleanValueForKey(jsonObj, "is-base-module");
+            Assert.assertTrue(boolValue);
     }
 
     @Test
@@ -298,29 +309,48 @@ public class JsonUtilsTest {
         // then
         assertThat(jsonUpd).isEqualTo(json);
     }
-
+    
     @Test
     public void shouldConvertXmlToJsonAndBackToSameXmlExtractedFromTheRequest() throws Exception {
         // given
-        String value = JsonUtils.getJsonValue(jsonReq, "variables.bpmnRequest.value");
-        String xmlReq = XmlTool.removeNamespaces(XmlTool.normalize(value));
+                    String value = JsonUtils.getJsonValue(jsonReq, "variables.bpmnRequest.value");
+                    String xmlReq = XmlTool.removeNamespaces(XmlTool.normalize(value));
         // when
-        String json = JsonUtils.xml2json(xmlReq);
-        String xmlOut = JsonUtils.json2xml(json);
+                    String json = JsonUtils.xml2json(xmlReq);
+                    String xmlOut = JsonUtils.json2xml(json);
         // then
         Diff diffXml = DiffBuilder.compare(xmlReq).withTest(xmlOut).ignoreWhitespace()
+                .withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byName)).checkForSimilar().build();
+        assertThat(diffXml.hasDifferences()).withFailMessage(diffXml.toString()).isFalse();
+                    }
+                    
+    @Test
+    public void shouldConvertJsonContainingArrayToXml() throws Exception {
+        // when
+                    String jsonParm = JsonUtils.getJsonNodeValue(jsonReqArray, "requestDetails.requestParameters.ucpeInfo");
+                    String xmlOut = JsonUtils.json2xml(jsonParm);
+        // then
+        Diff diffXml = DiffBuilder.compare(XML_ARRAY_REQ).withTest(xmlOut).ignoreWhitespace()
                 .withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byName)).checkForSimilar().build();
         assertThat(diffXml.hasDifferences()).withFailMessage(diffXml.toString()).isFalse();
     }
 
     @Test
-    public void shouldConvertJsonContainingArrayToXml() throws Exception {
-        // when
-        String jsonParm = JsonUtils.getJsonNodeValue(jsonReqArray, "requestDetails.requestParameters.ucpeInfo");
-        String xmlOut = JsonUtils.json2xml(jsonParm);
-        // then
-        Diff diffXml = DiffBuilder.compare(XML_ARRAY_REQ).withTest(xmlOut).ignoreWhitespace()
-                .withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byName)).checkForSimilar().build();
-        assertThat(diffXml.hasDifferences()).withFailMessage(diffXml.toString()).isFalse();
+    // Tests the jsonSchemaValidation() method
+    public void testJsonSchemaValidation() {
+    	try {
+	    String myReqArray = jsonReqArray;
+			String result = JsonUtils.jsonSchemaValidation(myReqArray, "src/test/resources/requestSchema.json");
+			System.out.println("Schema Validation Result: " + result);
+			Assert.assertTrue(result.contains("success"));
+			// remove a required parameter from the JSON doc so that validation fails
+			myReqArray = JsonUtils.delJsonValue(myReqArray, "requestDetails.requestParameters.ucpeInfo.ucpeHostName");
+			result = JsonUtils.jsonSchemaValidation(myReqArray, "src/test/resources/requestSchema.json");
+			System.out.println("Schema Validation Result: " + result);			
+			Assert.assertTrue(result.contains("failure"));
+			Assert.assertTrue(result.contains("error: object has missing required properties ([\"ucpeHostName\"])"));
+		} catch (ValidationException e) {
+			e.printStackTrace();
+		}
     }
 }

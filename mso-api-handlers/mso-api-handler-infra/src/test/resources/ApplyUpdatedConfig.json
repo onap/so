@@ -1,0 +1,11 @@
+{
+   "requestDetails": {
+      "requestInfo": {
+         "source": "VID",
+         "requestorId": "az2016"
+      },
+      "requestParameters": {
+        "payload": "{\"request-parameters\":{\"host-ip-address\":\"10.10.10.10\"},\"configuration-parameters\":{\"name1\":\"value1\",\"name2\":\"value2\"}}"
+      }
+   }
+}

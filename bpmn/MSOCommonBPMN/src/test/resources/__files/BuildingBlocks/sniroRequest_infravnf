@@ -2,7 +2,7 @@
 	  	"requestInfo": {
 				"transactionId": "testRequestId",
 				"requestId": "testRequestId",
-				"callbackUrl": "http://localhost:28090/workflows/messages/message/SNIROResponse/testRequestId",
+				"callbackUrl": "http://localhost:8090/workflows/messages/message/SNIROResponse/testRequestId",
 				"sourceId": "mso",
 				"optimizer": [
 					"placement",

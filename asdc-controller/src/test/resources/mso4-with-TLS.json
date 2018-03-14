@@ -10,6 +10,12 @@
         "pollingInterval":10,
         "pollingTimeout":30,
         "activateServerTLSAuth": true,
+       "watchDogTimeout": "300",
+       "messageBusAddress": [
+         "uebsb91sfdc.it.att.com",
+         "uebsb92sfdc.it.att.com",
+         "uebsb93sfdc.it.att.com"
+       ],
         "keyStorePassword":"1c551b8b5ab91fcd5a0907b11c304199",    
         "keyStorePath": "/test"
     }

@@ -58,7 +58,14 @@
 				{"name": "oamNetworkName", "value": "VLAN-OAM-1323" },
 				{"name": "vmName", "value": "slcp34246vbc246ceb" },
 				{"name": "ipagNetworkId", "value": "970cd2b9-7f09-4a12-af47-182ea38ba1f0" },
-				{"name": "vpeNetworkId", "value": "545cc2c3-1930-4100-b534-5d82d0e12bb6" }
+				{"name": "vpeNetworkId", "value": "545cc2c3-1930-4100-b534-5d82d0e12bb6" },
+				{
+					"name": "vlc_sctp_b_route_prefixes",
+					"value": [
+						{ "interface_route_table_routes_route_prefix": "107.239.41.163/32" },
+						{ "interface_route_table_routes_route_prefix": "107.239.41.164/32" },
+						{ "interface_route_table_routes_route_prefix": "107.239.41.165/32" }
+				]}
 			]
 		}
 	}

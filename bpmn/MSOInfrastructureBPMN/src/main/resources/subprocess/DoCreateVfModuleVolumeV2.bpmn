@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_FhrCQG2BEeaNdqnn65BT4A" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.4.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_FhrCQG2BEeaNdqnn65BT4A" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.8.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
   <bpmn2:process id="DoCreateVfModuleVolumeV2" name="DoCreateVfModuleVolumeV2" isExecutable="true">
     <bpmn2:scriptTask id="ScriptTask_preProcessRequest" name="Preprocess Request" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
@@ -21,7 +21,7 @@ doCreateVfModuleVolumeV2.executeMethod('callRESTQueryAAICloudRegion', execution,
       <bpmn2:outgoing>SequenceFlow_7</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
 def doCreateVfModuleVolumeV2 = new DoCreateVfModuleVolumeV2()
-doCreateVfModuleVolumeV2.executeMethod('buildWorkflowException', execution, 2500, "Volume group $DCVFMODVOLV2_volumeGroupName already exists in the system.", isDebugLogEnabled)]]></bpmn2:script>
+doCreateVfModuleVolumeV2.executeMethod('buildWorkflowException', execution, 2500, "Volume group name already exists in the system.", isDebugLogEnabled)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_7" name="" sourceRef="ScriptTask_createVolGrpExistsException" targetRef="EndEvent_6" />
     <bpmn2:exclusiveGateway id="ExclusiveGateway_aaiReturnCode404" name="AAI Return Code is 404?" default="SequenceFlow_volGrpName404No">

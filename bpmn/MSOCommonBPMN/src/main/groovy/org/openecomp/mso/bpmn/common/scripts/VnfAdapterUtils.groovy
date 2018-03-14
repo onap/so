@@ -20,7 +20,7 @@
 package org.openecomp.mso.bpmn.common.scripts
 
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution;
+import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.openecomp.mso.bpmn.core.WorkflowException
 
 class VnfAdapterUtils {
@@ -33,7 +33,7 @@ class VnfAdapterUtils {
 
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 
-	public void validateVnfResponse(Execution execution, String responseVar, String responseCodeVar, String errorResponseVar) {
+	public void validateVnfResponse(DelegateExecution execution, String responseVar, String responseCodeVar, String errorResponseVar) {
 		def method = getClass().getSimpleName() + '.validateVnfResponse(' +
 			'execution=' + execution.getId() +
 			', responseVar=' + responseVar +

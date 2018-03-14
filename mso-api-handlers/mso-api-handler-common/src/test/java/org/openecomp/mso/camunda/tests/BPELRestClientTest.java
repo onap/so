@@ -24,7 +24,6 @@ package org.openecomp.mso.camunda.tests;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
-import java.util.Properties;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -34,18 +33,18 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicStatusLine;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-
 import org.openecomp.mso.apihandler.common.CommonConstants;
 import org.openecomp.mso.apihandler.common.RequestClient;
 import org.openecomp.mso.apihandler.common.RequestClientFactory;
 import org.openecomp.mso.properties.MsoJavaProperties;
+
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 
 /**

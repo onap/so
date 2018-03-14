@@ -86,6 +86,8 @@
 		<url-pattern>/api-docs/*</url-pattern>
 		<url-pattern>/tasks/*</url-pattern>
 		<url-pattern>/e2eServiceInstances/*</url-pattern>
+		<url-pattern>/cloudResources/*</url-pattern>
+		<url-pattern>/cloudResourcesRequests/*</url-pattern>
   	</servlet-mapping>
   
   <!-- To be replaced by AAF in the future, when Camunda scripts replacing the BPEL scripts completely -->

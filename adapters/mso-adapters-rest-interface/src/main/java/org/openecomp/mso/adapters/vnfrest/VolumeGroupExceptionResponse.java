@@ -23,12 +23,9 @@ package org.openecomp.mso.adapters.vnfrest;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.jboss.resteasy.annotations.providers.NoJackson;
-
 import org.openecomp.mso.openstack.exceptions.MsoExceptionCategory;
 
 @XmlRootElement(name = "volumeGroupException")
-@NoJackson
 public class VolumeGroupExceptionResponse extends VfModuleExceptionResponse {
 	// Exactly the same as a VfModuleExceptionResponse
 

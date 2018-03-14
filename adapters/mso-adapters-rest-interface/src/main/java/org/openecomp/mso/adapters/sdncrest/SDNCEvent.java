@@ -20,47 +20,35 @@
  */
 package org.openecomp.mso.adapters.sdncrest;
 
-import org.openecomp.mso.adapters.json.MapDeserializer;
-import org.openecomp.mso.adapters.json.MapSerializer;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
-import org.codehaus.jackson.map.annotate.JsonDeserialize;
-import org.codehaus.jackson.map.annotate.JsonRootName;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
-import org.jboss.resteasy.annotations.providers.NoJackson;
-
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.openecomp.mso.logger.MsoLogger;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRootName;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 // NOTE: the JAXB (XML) annotations are required with JBoss AS7 and RESTEasy,
 //       even though we are using JSON exclusively.  The @NoJackson annotation
 //       is also required in this environment.
 
 /**
- * SDNC adapter success response for "agnostic" API services. Note that the
- * map of response parameters is represented this way in JSON:
- * <pre>
- * "params": {
- *   "entry": [
- *     {"key": "P1", "value": "V1"},
- *     {"key": "P2", "value": "V2"},
- *     ...
- *     {"key": "PN", "value": "VN"}
- *   ]
- * }
+ Map<String, String> elements when marshalled to XML produce a list of <entry><key>${key}</key><value>${value}</value></entry> elements.
+ When marshalling to JSON they create a list of "${key}" : "${value}" pairs with no extra wrappers.
  * </pre>
  */
 @JsonRootName("SDNCEvent")
-@JsonSerialize(include= Inclusion.NON_NULL)
+@JsonInclude(Include.NON_NULL)
 @XmlRootElement(name = "SDNCEvent")
-@NoJackson
 public class SDNCEvent implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
@@ -121,14 +109,12 @@ public class SDNCEvent implements Serializable {
 	}
 
 	@JsonProperty("params")
-	@JsonDeserialize(using = MapDeserializer.class)
 	@XmlElement(name = "params")
 	public Map<String, String> getParams() {
 		return params;
 	}
 
 	@JsonProperty("params")
-	@JsonSerialize(using = MapSerializer.class, include= Inclusion.NON_NULL)
 	public void setParams(Map<String, String> params) {
 		this.params = params;
 	}
@@ -143,8 +129,8 @@ public class SDNCEvent implements Serializable {
 	public String toJson() {
 		try {
 			ObjectMapper mapper = new ObjectMapper();
-			mapper.enable(SerializationConfig.Feature.WRAP_ROOT_VALUE);
-			mapper.setSerializationInclusion(Inclusion.NON_NULL);
+			mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
+			mapper.setSerializationInclusion(Include.NON_NULL);
 			return mapper.writeValueAsString(this);
 		} catch (IOException e) {
 		    LOGGER.debug("Exception:", e);

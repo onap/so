@@ -54,6 +54,7 @@ public class MsoPropertyInitializerTest {
 	
 	@Before
 	public final void preparebeforeEachTest() throws MsoPropertiesException {
+		System.out.println("mso.config.path= " + System.getProperty("mso.config.path"));
 		MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory();
 		msoPropertiesFactory.removeAllMsoProperties();
 	

@@ -40,6 +40,7 @@ import org.openecomp.mso.db.catalog.beans.NetworkResourceCustomization;
 import org.openecomp.mso.entity.MsoRequest;
 import org.openecomp.mso.openstack.beans.NetworkRollback;
 import org.openecomp.mso.openstack.beans.NetworkStatus;
+import org.openecomp.mso.openstack.beans.RouteTarget;
 import org.openecomp.mso.openstack.beans.Subnet;
 
 public class NetworkAdapterTest {
@@ -108,7 +109,7 @@ public class NetworkAdapterTest {
         vlans.add (1);
         vlans.add (2);
         List <Subnet> subnets = new LinkedList <> ();
-        List <String> routeTargets = new LinkedList <> ();
+        List <RouteTarget> routeTargets = new LinkedList <> ();
         subnets.add (new Subnet ());
         List <String> policyFqdns = new LinkedList <> ();
         policyFqdns.add("pfqdn1");
@@ -185,7 +186,7 @@ public class NetworkAdapterTest {
         vlans.add (1);
         vlans.add (2);
         List <Subnet> subnets = new LinkedList <> ();
-        List <String> routeTargets = new LinkedList <> ();
+        List <RouteTarget> routeTargets = new LinkedList <> ();
         subnets.add (new Subnet ());
         List <String> policyFqdns = new LinkedList <> ();
         policyFqdns.add("pfqdn1");
@@ -247,7 +248,7 @@ public class NetworkAdapterTest {
 
     @Test
     public void queryTest2 () {
-        Holder <List <String>> routeTargets = new Holder <> ();
+        Holder <List <RouteTarget>> routeTargets = new Holder <> ();
         Holder <NetworkStatus> status = new Holder <> ();
         MsoRequest msoRequest = new MsoRequest ();
         Holder <String> networkId = new Holder <> ();

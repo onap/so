@@ -19,8 +19,9 @@
  */
 
 package org.openecomp.mso.client.appc;
-import org.openecomp.appc.client.lcm.api.ResponseHandler;
-import org.openecomp.appc.client.lcm.exceptions.AppcClientException;
+
+import org.onap.appc.client.lcm.api.ResponseHandler;
+import org.onap.appc.client.lcm.exceptions.AppcClientException;
 
 public class ApplicationControllerCallback<T> implements ResponseHandler<T>  {
 

@@ -24,7 +24,7 @@ import static org.apache.commons.lang3.StringUtils.*
 
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.openecomp.mso.rest.APIResponse
 import org.springframework.web.util.UriUtils
 
@@ -84,7 +84,7 @@ class GenericDeleteVnf extends AbstractServiceTaskProcessor{
 	 *
 	 * @param - execution
 	 */
-	public void preProcessRequest(Execution execution) {
+	public void preProcessRequest(DelegateExecution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		utils.log("DEBUG", " *** STARTED GenericDeleteVnf PreProcessRequest Process*** ", isDebugEnabled)
@@ -130,7 +130,7 @@ class GenericDeleteVnf extends AbstractServiceTaskProcessor{
 	 *
 	 * @param - execution
 	 */
-	public void getVnfResourceVersion(Execution execution){
+	public void getVnfResourceVersion(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		utils.log("DEBUG", " *** STARTED GenericDeleteVnf GetVnfResourceVersion Process*** ", isDebugEnabled)
@@ -208,7 +208,7 @@ class GenericDeleteVnf extends AbstractServiceTaskProcessor{
 	 *
 	 * @param - execution
 	 */
-	public void deleteVnf(Execution execution){
+	public void deleteVnf(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		utils.log("DEBUG", " *** STARTED GenericDeleteVnf DeleteVnf Process*** ", isDebugEnabled)

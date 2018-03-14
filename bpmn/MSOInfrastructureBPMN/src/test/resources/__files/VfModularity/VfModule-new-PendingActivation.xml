@@ -1,0 +1,9 @@
+<vf-module xmlns="http://org.openecomp.aai.inventory/v7">
+	<vf-module-id>b37d96db-7d2c-47ce-bf61-a6c7b82fe161</vf-module-id>
+	<vf-module-name>PCRF::module-0-2</vf-module-name>
+	<model-invariant-id>00000000-0000-0000-0000-000000000000</model-invariant-id>
+	<model-version-id>1.0</model-version-id>
+	<is-base-vf-module>false</is-base-vf-module>
+	<orchestration-status>PendingActivation</orchestration-status>
+	<resource-version>330-90</resource-version>
+</vf-module>

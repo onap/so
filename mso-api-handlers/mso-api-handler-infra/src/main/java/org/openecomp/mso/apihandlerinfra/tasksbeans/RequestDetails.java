@@ -20,8 +20,8 @@
 
 package org.openecomp.mso.apihandlerinfra.tasksbeans;
 
-import org.codehaus.jackson.map.annotate.JsonRootName;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonRootName;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @JsonRootName(value = "requestDetails")
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_DEFAULT)

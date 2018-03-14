@@ -21,7 +21,7 @@
 package org.openecomp.mso.cloud;
 
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * JavaBean JSON class for a CloudSite.  This bean represents a cloud location
@@ -44,9 +44,17 @@ public class CloudSite {
 	private String aic_version;
 	@JsonProperty("clli")
 	private String clli;
+	@JsonProperty("cloudify_id")
+	private String cloudifyId;
+	@JsonProperty("platform")
+	private String platform;
+	@JsonProperty("orchestrator")
+	private String orchestrator;
 
 	// Derived property (set by CloudConfig loader based on identityServiceId)
 	private CloudIdentity identityService;
+	// Derived property (set by CloudConfig loader based on cloudifyId)
+	private CloudifyManager cloudifyManager;
 
 	public CloudSite() {}
 	
@@ -93,13 +101,48 @@ public class CloudSite {
 		this.clli = clli;
 	}
 
+	public String getCloudifyId() {
+		return cloudifyId;
+	}
+
+	public void setCloudifyId (String id) {
+		this.cloudifyId = id;
+	}
+
+	public CloudifyManager getCloudifyManager () {
+		return cloudifyManager;
+	}
+
+	public void setCloudifyManager (CloudifyManager cloudify) {
+		this.cloudifyManager = cloudify;
+	}
+	
+	public String getPlatform() {
+		return platform;
+	}
+
+	public void setPlatform(String platform) {
+		this.platform = platform;
+	}
+
+	public String getOrchestrator() {
+		return orchestrator;
+	}
+
+	public void setOrchestrator(String orchestrator) {
+		this.orchestrator = orchestrator;
+	}
+
 	@Override
 	public String toString() {
 		return "CloudSite: id=" + id +
 			", regionId=" + regionId +
 			", identityServiceId=" + identityServiceId +
 			", aic_version=" + aic_version +
-			", clli=" + clli;
+			", clli=" + clli +
+			", cloudifyId=" + cloudifyId +
+			", platform=" + platform +
+			", orchestrator=" + orchestrator;
 	}
 
 	@Override
@@ -111,6 +154,11 @@ public class CloudSite {
 		cloudSiteCopy.aic_version = this.aic_version;
 		cloudSiteCopy.clli = this.clli;
 		cloudSiteCopy.identityService = this.identityService.clone();
+		cloudSiteCopy.cloudifyId = this.cloudifyId;
+		if (this.cloudifyManager != null)  cloudSiteCopy.cloudifyManager = this.cloudifyManager.clone();
+		cloudSiteCopy.platform = this.platform;
+		cloudSiteCopy.orchestrator = this.orchestrator;
+
 		return cloudSiteCopy;
 	}
 

@@ -58,19 +58,24 @@ public class VnfRequestHandlerTest {
 		f1.setAccessible(true);
         f1.set(handler, uriInfo);
 	}
-	
+
 	@Test
 	public void manageVnfRequestTestV2(){
+		Mockito.when(uriInfo.getRequestUri()).thenReturn(URI.create("http://localhost:8080/test"));
 		Response resp = handler.manageVnfRequest("<name>Test</name>", "v2");
 		assertTrue(null != resp);
 	}
+
 	@Test
 	public void manageVnfRequestTestv1(){
+		Mockito.when(uriInfo.getRequestUri()).thenReturn(URI.create("http://localhost:8080/test"));
 		Response resp = handler.manageVnfRequest("<name>Test</name>", "v1");
 		assertTrue(null != resp);
 	}
+
 	@Test
 	public void manageVnfRequestTestv3(){
+		Mockito.when(uriInfo.getRequestUri()).thenReturn(URI.create("http://localhost:8080/test"));
 		Response resp = handler.manageVnfRequest("<name>Test</name>", "v3");
 		assertTrue(null != resp);
 	}

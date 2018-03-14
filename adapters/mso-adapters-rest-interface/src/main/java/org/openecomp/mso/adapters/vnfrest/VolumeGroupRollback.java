@@ -23,14 +23,12 @@ package org.openecomp.mso.adapters.vnfrest;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.codehaus.jackson.map.annotate.JsonRootName;
-import org.jboss.resteasy.annotations.providers.NoJackson;
-
 import org.openecomp.mso.entity.MsoRequest;
+
+import com.fasterxml.jackson.annotation.JsonRootName;
 
 @JsonRootName("VolumeGroupRollback")
 @XmlRootElement(name = "VolumeGroupRollback")
-@NoJackson
 public class VolumeGroupRollback {
 //	“volumeGroupRollback”: {
 //	“volumeGroupId”: “<A&AI_ VOLUME_GROUP_ID>”,

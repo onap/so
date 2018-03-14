@@ -6,7 +6,7 @@ import java.net.URLEncoder
 import org.apache.commons.codec.binary.Base64
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 
 import groovy.json.*
 
@@ -27,7 +27,7 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 	/**
 	 * Processes the incoming request.
 	 */
-	public void preProcessRequest (Execution execution) {
+	public void preProcessRequest (DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.preProcessRequest(' +
 			'execution=' + execution.getId() +
 			')'
@@ -152,7 +152,7 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 	/**
 	 * Sends the request to the SDNC adapter.
 	 */
-	public void sendRequestToSDNCAdapter(Execution execution) {
+	public void sendRequestToSDNCAdapter(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.sendRequestToSDNCAdapter(' +
 			'execution=' + execution.getId() +
 			')'
@@ -204,7 +204,7 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 	/**
 	 * Processes a callback.
 	 */
-	public void processCallback(Execution execution){
+	public void processCallback(DelegateExecution execution){
 		def method = getClass().getSimpleName() + '.processCallback(' +
 			'execution=' + execution.getId() +
 			')'
@@ -253,7 +253,7 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 	 * a WorkflowException.  If the response cannot be parsed, a more generic
 	 * WorkflowException is created.
 	 */
-	public void sdncAdapterBuildWorkflowException(Execution execution, String response) {
+	public void sdncAdapterBuildWorkflowException(DelegateExecution execution, String response) {
 		try {
 			String responseType = jsonUtil.getJsonRootProperty(response)
 			String responseCode = jsonUtil.getJsonValue(response, responseType + ".responseCode")
@@ -282,7 +282,7 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 	/**
 	 * Gets the last callback request from the execution, or null if there was no callback.
 	 */
-	public String getLastCallback(Execution execution) {
+	public String getLastCallback(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.getLastCallback(' +
 			'execution=' + execution.getId() +
 			')'
@@ -318,7 +318,7 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 	/**
 	 * Sets the timeout value to wait for the next notification.
 	 */
-	public void setTimeoutValue(Execution execution) {
+	public void setTimeoutValue(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.setTimeoutValue(' +
 			'execution=' + execution.getId() +
 			')'

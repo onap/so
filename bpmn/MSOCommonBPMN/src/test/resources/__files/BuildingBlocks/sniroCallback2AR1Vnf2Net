@@ -42,7 +42,7 @@
                 "serviceResourceId": "testResourceIdVNF"
             }
         ],
-        "placement": [
+        "placementInfo": [
             {
                 "assignmentInfo": [
                     {
@@ -66,7 +66,8 @@
                 "inventoryType": "service",
                 "resourceModuleName": "ALLOTTED_RESOURCE",
                 "serviceInstanceId": "testSIID1",
-                "serviceResourceId": "testResourceIdAR"
+                "serviceResourceId": "testResourceIdAR",
+                "isRehome": "False"
             },
             {
                 "assignmentInfo": [
@@ -91,7 +92,8 @@
                 "inventoryType": "service",
                 "resourceModuleName": "ALLOTTED_RESOURCE",
                 "serviceInstanceId": "testSIID2",
-                "serviceResourceId": "testResourceIdAR2"
+                "serviceResourceId": "testResourceIdAR2",
+                "isRehome": "False"
             },
             {
                 "assignmentInfo": [
@@ -116,7 +118,8 @@
                 "inventoryType": "service",
                 "resourceModuleName": "NETWORK",
                 "serviceInstanceId": "testServiceInstanceIdNet",
-                "serviceResourceId": "testResourceIdNet"
+                "serviceResourceId": "testResourceIdNet",
+                "isRehome": "False"
             },
             {
                 "assignmentInfo": [
@@ -137,7 +140,8 @@
                 "inventoryType": "cloud",
                 "resourceModuleName": "NETWORK",
                 "serviceInstanceId": "",
-                "serviceResourceId": "testResourceIdNet2"
+                "serviceResourceId": "testResourceIdNet2",
+                "isRehome": "False"
             },
             {
                 "assignmentInfo": [
@@ -158,7 +162,8 @@
                 "inventoryType": "cloud",
                 "resourceModuleName": "VNF",
                 "serviceInstanceId": "",
-                "serviceResourceId": "testResourceIdVNF"
+                "serviceResourceId": "testResourceIdVNF",
+                "isRehome": "False"
             }
         ]
     }

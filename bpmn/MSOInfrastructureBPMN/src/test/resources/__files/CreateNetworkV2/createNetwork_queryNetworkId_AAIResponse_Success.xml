@@ -33,6 +33,21 @@
                <orchestration-status>pending-create</orchestration-status>
                <dhcp-enabled>true</dhcp-enabled>
    	  		   <subnet-name>subnetName</subnet-name>
+	  		   <ip-assignment-direction>true</ip-assignment-direction>   	  		   
+	  		   <host-routes>
+                 <host-route>
+                   <host-route-id>string</host-route-id>
+                   <route-prefix>192.10.16.0/24</route-prefix>
+                   <next-hop>192.10.16.100/24</next-hop>
+                   <next-hop-type>ip-address</next-hop-type> 
+                 </host-route>
+                 <host-route>
+                  <host-route-id>string</host-route-id>
+                  <route-prefix>192.110.17.0/24</route-prefix>
+                  <next-hop>192.110.17.110/24</next-hop>
+                  <next-hop-type>ip-address</next-hop-type>
+                 </host-route>
+               </host-routes>   	  		   
                <relationship-list/>
             </subnet>
          </subnets>

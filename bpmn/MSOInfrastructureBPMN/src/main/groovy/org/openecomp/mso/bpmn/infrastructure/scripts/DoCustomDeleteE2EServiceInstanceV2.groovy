@@ -20,40 +20,22 @@
  */
 package org.openecomp.mso.bpmn.infrastructure.scripts
 
-import org.json.JSONArray;
-
 import static org.apache.commons.lang3.StringUtils.*;
-import groovy.xml.XmlUtil
-import groovy.json.*
 
-import org.openecomp.mso.bpmn.core.json.JsonUtils
+import org.apache.commons.lang3.*
+import org.camunda.bpm.engine.delegate.BpmnError
+import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.openecomp.mso.bpmn.common.scripts.AaiUtil
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
-import org.openecomp.mso.bpmn.common.scripts.SDNCAdapterUtils
 import org.openecomp.mso.bpmn.core.WorkflowException
+import org.openecomp.mso.bpmn.core.json.JsonUtils
 import org.openecomp.mso.rest.APIResponse;
-import org.openecomp.mso.rest.RESTClient
-import org.openecomp.mso.rest.RESTConfig
-
-import org.openecomp.mso.bpmn.common.scripts.AaiUtil
-
-import java.util.UUID;
-import javax.xml.parsers.DocumentBuilder
-import javax.xml.parsers.DocumentBuilderFactory
-
-import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
-import org.json.JSONObject;
-import org.apache.commons.lang3.*
-import org.apache.commons.codec.binary.Base64;
 import org.springframework.web.util.UriUtils;
-import org.w3c.dom.Document
-import org.w3c.dom.Element
-import org.w3c.dom.Node
-import org.w3c.dom.NodeList
-import org.xml.sax.InputSource
 
-import com.fasterxml.jackson.jaxrs.json.annotation.JSONP.Def;
+import groovy.json.*
 
 /**
  * This groovy class supports the <class>DoDeleteE2EServiceInstance.bpmn</class> process.
@@ -81,7 +63,7 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
 
-	public void preProcessRequest (Execution execution) {
+	public void preProcessRequest (DelegateExecution execution) {
 		
 		def method = getClass().getSimpleName() + '.buildAPPCRequest(' +'execution=' + execution.getId() +')'
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
@@ -163,7 +145,7 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 	
 
 
-	public void postProcessAAIGET(Execution execution) {
+	public void postProcessAAIGET(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.postProcessAAIGET(' +'execution=' + execution.getId() +')'
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO","Entered " + method, isDebugEnabled)
@@ -221,7 +203,7 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 		utils.log("INFO", "Exited " + method, isDebugEnabled)
 	}
 	
-	private void loadResourcesProperties(Execution execution) {
+	private void loadResourcesProperties(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.loadResourcesProperties(' +'execution=' + execution.getId() +')'
 		def isDebugEnabled = execution.getVariable("isDebugEnabled")
 		utils.log("INFO","Entered " + method, isDebugEnabled)
@@ -255,7 +237,7 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
         }
 	    utils.log("INFO", "Exited " + method, isDebugEnabled)
 	}
-	private void sortDeleteResource(Execution execution) {
+	private void sortDeleteResource(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.sortDeleteResource(' +'execution=' + execution.getId() +')'
 		def isDebugEnabled = execution.getVariable("isDebugEnabled")
 		utils.log("INFO","Entered " + method, isDebugEnabled)
@@ -339,7 +321,7 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 	    utils.log("INFO", "Exited " + method, isDebugEnabled)
 		
 	}
-	public void prepareServiceDeleteResource(Execution execution) {
+	public void prepareServiceDeleteResource(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.prepareServiceDeleteResource(' +'execution=' + execution.getId() +')'
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO","Entered " + method, isDebugEnabled)
@@ -624,7 +606,7 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 		utils.log("INFO", "Exited " + method, isDebugEnabled)
 	}
 	
-	private String getAaiAr(Execution execution, String relink) {
+	private String getAaiAr(DelegateExecution execution, String relink) {
 		def method = getClass().getSimpleName() + '.getAaiAr(' +'execution=' + execution.getId() +')'
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO","Entered " + method, isDebugEnabled)
@@ -650,7 +632,7 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 	/**
 	 * prepare Decompose next resource to create request
 	 */
-	public void preProcessDecomposeNextResource(Execution execution){
+	public void preProcessDecomposeNextResource(DelegateExecution execution){
         def method = getClass().getSimpleName() + '.getAaiAr(' +'execution=' + execution.getId() +')'
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO","Entered " + method, isDebugEnabled)
@@ -708,7 +690,7 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 	/**
 	 * post Decompose next resource to create request
 	 */
-	public void postProcessDecomposeNextResource(Execution execution){
+	public void postProcessDecomposeNextResource(DelegateExecution execution){
         def method = getClass().getSimpleName() + '.postProcessDecomposeNextResource(' +'execution=' + execution.getId() +')'
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO","Entered " + method, isDebugEnabled)
@@ -750,7 +732,7 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 	/**
 	* prepare post Unkown Resource Type 
 	*/
-	public void postOtherControllerType(Execution execution){
+	public void postOtherControllerType(DelegateExecution execution){
         def method = getClass().getSimpleName() + '.postOtherControllerType(' +'execution=' + execution.getId() +')'
 		def isDebugEnabled = execution.getVariable("isDebugEnabled")
 		utils.log("INFO","Entered " + method, isDebugEnabled)
@@ -805,7 +787,7 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
         }    
         utils.log("INFO", "Exited " + method, isDebugEnabled)
     }
-	public void preProcessSDNCDelete (Execution execution) {
+	public void preProcessSDNCDelete (DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.preProcessSDNCDelete(' +'execution=' + execution.getId() +')'
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO","Entered " + method, isDebugEnabled)
@@ -921,7 +903,7 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 		utils.log("INFO", "Exited " + method, isDebugEnabled)
 	}
 
-	public void postProcessSDNCDelete(Execution execution, String response, String action) {
+	public void postProcessSDNCDelete(DelegateExecution execution, String response, String action) {
 
 		def method = getClass().getSimpleName() + '.postProcessSDNCDelete(' +'execution=' + execution.getId() +')'
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
@@ -955,7 +937,7 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 		utils.log("INFO", "Exited " + method, isDebugEnabled)
 	}
 	
-	public void postProcessAAIDEL(Execution execution) {
+	public void postProcessAAIDEL(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.postProcessAAIDEL(' +'execution=' + execution.getId() +')'
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO","Entered " + method, isDebugEnabled)
@@ -989,7 +971,7 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 	/**
 	 * Init the service Operation Status
 	 */
-	public void preUpdateServiceOperationStatus(Execution execution){
+	public void preUpdateServiceOperationStatus(DelegateExecution execution){
         def method = getClass().getSimpleName() + '.preUpdateServiceOperationStatus(' +'execution=' + execution.getId() +')'
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO","Entered " + method, isDebugEnabled)
@@ -1053,7 +1035,7 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
         utils.log("INFO", "Exited " + method, isDebugEnabled)
 	}
 	
-	public void preInitResourcesOperStatus(Execution execution){
+	public void preInitResourcesOperStatus(DelegateExecution execution){
         def method = getClass().getSimpleName() + '.preInitResourcesOperStatus(' +'execution=' + execution.getId() +')'
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO","Entered " + method, isDebugEnabled)
@@ -1166,7 +1148,7 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 		utils.log("INFO", "Exited " + method, isDebugEnabled)  
 	}
 
-	public void postProcessVFCDelete(Execution execution, String response, String action) {
+	public void postProcessVFCDelete(DelegateExecution execution, String response, String action) {
 		def method = getClass().getSimpleName() + '.postProcessVFCDelete(' +'execution=' + execution.getId() +')'
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO","Entered " + method, isDebugEnabled)

@@ -30,7 +30,7 @@ import java.util.UUID;
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.impl.cmd.AbstractSetVariableCmd
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.openecomp.mso.rest.APIResponse
 import org.openecomp.mso.rest.RESTClient
 import org.openecomp.mso.rest.RESTConfig
@@ -45,25 +45,22 @@ import org.openecomp.mso.bpmn.core.domain.ServiceDecomposition
 import org.openecomp.mso.bpmn.core.domain.VnfResource
 import org.openecomp.mso.client.aai.*
 
-import org.openecomp.mso.client.appc.ApplicationControllerClient;
-import org.openecomp.mso.client.appc.ApplicationControllerSupport;
-import org.openecomp.appc.client.lcm.model.Action;
-import org.openecomp.appc.client.lcm.model.ActionIdentifiers;
-import org.openecomp.appc.client.lcm.model.LockInput
-import org.openecomp.appc.client.lcm.model.UnlockInput
-import org.openecomp.appc.client.lcm.model.HealthCheckInput
-import org.openecomp.appc.client.lcm.model.StartInput
-import org.openecomp.appc.client.lcm.model.StopInput
-import org.openecomp.appc.client.lcm.model.Flags
-import org.openecomp.appc.client.lcm.model.Status
+import org.openecomp.mso.client.appc.ApplicationControllerOrchestrator
+import org.onap.appc.client.lcm.model.Action;
+import org.onap.appc.client.lcm.model.ActionIdentifiers;
+import org.onap.appc.client.lcm.model.LockInput
+import org.onap.appc.client.lcm.model.UnlockInput
+import org.onap.appc.client.lcm.model.HealthCheckInput
+import org.onap.appc.client.lcm.model.StartInput
+import org.onap.appc.client.lcm.model.Flags
+import org.onap.appc.client.lcm.model.Status
 
 
 
-public class ReplaceVnfInfra extends AbstractServiceTaskProcessor {
+public class ReplaceVnfInfra extends VnfCmBase {
 
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
-	JsonUtils jsonUtils = new JsonUtils()
-	ApplicationControllerClient appcClient = new ApplicationControllerClient()	
+	JsonUtils jsonUtils = new JsonUtils()		
 	def prefix = "RPLVnfI_"
 
 	/**
@@ -71,26 +68,33 @@ public class ReplaceVnfInfra extends AbstractServiceTaskProcessor {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void initProcessVariables(Execution execution) {
+	public void initProcessVariables(DelegateExecution execution) {
 		execution.setVariable('prefix', 'RPLVnfI_')
-		execution.setVariable('RPLVnfI_Request', null)
-		execution.setVariable('RPLVnfI_requestInfo', null)
-		execution.setVariable('RPLVnfI_requestId', null)
-		execution.setVariable('RPLVnfI_source', null)
-		execution.setVariable('RPLVnfI_vnfInputs', null)
-		execution.setVariable('RPLVnfI_vnfId', null)		
-		execution.setVariable('RPLVnfI_tenantId', null)		
-		execution.setVariable('RPLVnfI_vnfParams', null)
-		execution.setVariable('RPLVnfI_cloudConfiguration', null)		
+		execution.setVariable('Request', null)
+		execution.setVariable('requestInfo', null)		
+		execution.setVariable('source', null)
+		execution.setVariable('vnfInputs', null)		
+		execution.setVariable('tenantId', null)		
+		execution.setVariable('vnfParams', null)
+		execution.setVariable('cloudConfiguration', null)		
 		execution.setVariable('ReplaceVnfSuccessIndicator', false)
-		execution.setVariable('RPLVnfI_serviceType', null)
-		execution.setVariable('RPLVnfI_nfRole', null)
-		execution.setVariable('RPLVnfI_currentActivity', 'RPLVnfI')
-		execution.setVariable('RPLVnfI_workStep', null)
-		execution.setVariable('RPLVnfI_failedActivity', null)
-		execution.setVariable('RPLVnfI_errorCode', "0")
-		execution.setVariable('RPLVnfI_errorText', null)
-		execution.setVariable('RPLVnfI_healthCheckIndex', 1)
+		execution.setVariable('serviceType', null)
+		execution.setVariable('nfRole', null)
+		execution.setVariable('currentActivity', 'RPLVnfI')
+		execution.setVariable('workStep', null)
+		execution.setVariable('failedActivity', null)
+		execution.setVariable('errorCode', "0")
+		execution.setVariable('errorText', null)
+		execution.setVariable('healthCheckIndex', 1)
+		execution.setVariable('retainResources', true)
+		execution.setVariable('productFamilyId', null)
+		execution.setVariable('healthCheckIndex0', 0)
+		execution.setVariable('healthCheckIndex1', 1)
+		execution.setVariable("rollbackSetClosedLoopDisabledFlag", false)
+		execution.setVariable("rollbackVnfStop", false)
+		execution.setVariable("rollbackVnfLock", false)
+		execution.setVariable("rollbackQuiesceTraffic", false)
+		execution.setVariable("rollbackSetVnfInMaintenanceFlag", false)
 	}
 
 	/**
@@ -98,7 +102,7 @@ public class ReplaceVnfInfra extends AbstractServiceTaskProcessor {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void preProcessRequest(Execution execution) {
+	public void preProcessRequest(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.preProcessRequest(' +
 		'execution=' + execution.getId() +
 		')'
@@ -120,9 +124,17 @@ public class ReplaceVnfInfra extends AbstractServiceTaskProcessor {
 			def serviceInstanceId = execution.getVariable('serviceInstanceId')
 			def vnfId = execution.getVariable('vnfId')
 			
-			execution.setVariable(prefix + 'serviceInstanceId', serviceInstanceId)
-			execution.setVariable(prefix + 'vnfId', vnfId)
-			execution.setVariable("isVidRequest", "true")			
+			execution.setVariable('serviceInstanceId', serviceInstanceId)			
+			execution.setVariable("isVidRequest", "true")
+			execution.setVariable('serviceType', 'Mobility')
+			execution.setVariable('retainResources', true)
+			execution.setVariable('disableRollback', true)
+			execution.setVariable('payload', "")
+			execution.setVariable('actionLock', Action.Lock)
+			execution.setVariable('actionUnlock', Action.Unlock)
+			execution.setVariable('actionHealthCheck', Action.HealthCheck)
+			execution.setVariable('actionStart', Action.Start)
+			execution.setVariable('actionStop', Action.Stop)
 			
 			def asdcServiceModelVersion = ''
 			def serviceModelInfo = null
@@ -143,61 +155,64 @@ public class ReplaceVnfInfra extends AbstractServiceTaskProcessor {
 				}
 			}		
 			
-			execution.setVariable(prefix + 'asdcServiceModelVersion', asdcServiceModelVersion)
-			execution.setVariable(prefix + 'serviceModelInfo', serviceModelInfo)
+			execution.setVariable('asdcServiceModelVersion', asdcServiceModelVersion)
+			execution.setVariable('serviceModelInfo', serviceModelInfo)			
 			def vnfModelInfo = jsonOutput.toJson(reqMap.requestDetails?.modelInfo)
-			execution.setVariable(prefix + 'vnfModelInfo', vnfModelInfo)
+			execution.setVariable('vnfModelInfo', vnfModelInfo)
 			def vnfModelInvariantUuid = jsonUtils.getJsonValue(vnfModelInfo, "modelInvariantUuid")
-			execution.setVariable(prefix + 'vnfModelInvariantUuid', vnfModelInvariantUuid)	
+			execution.setVariable('vnfModelInvariantUuid', vnfModelInvariantUuid)	
 			logDebug("vnfModelInvariantUuid: " + vnfModelInvariantUuid, isDebugLogEnabled)	
 			
 			def vnfType = execution.getVariable('vnfType')
-			execution.setVariable(prefix + 'vnfType', vnfType)	
+			execution.setVariable('vnfType', vnfType)	
 			
 			def userParams = reqMap.requestDetails?.requestParameters?.userParams					
 			
 			Map<String, String> userParamsMap = [:]
 			if (userParams != null) {
 				userParams.each { userParam ->
-					userParamsMap.put(userParam.name, userParam.value)
+					userParamsMap.put(userParam.name, userParam.value.toString())
 				}							
 			}		
 						
 			utils.log("DEBUG", 'Processed user params: ' + userParamsMap, isDebugLogEnabled)		
 			
-			execution.setVariable(prefix + 'vfModuleInputParams', userParamsMap)			
+			execution.setVariable('vfModuleInputParams', userParamsMap)			
 						
-			def requestId = execution.getVariable("mso-request-id")
-			execution.setVariable(prefix + 'requestId', requestId)
-			
+			def requestId = execution.getVariable("requestId")		
+			execution.setVariable('msoRequestId', requestId)
+			utils.log("DEBUG", "requestId is: " + requestId, isDebugLogEnabled)
 			
 			def vnfName = reqMap.requestDetails?.requestInfo?.instanceName ?: null
-			execution.setVariable(prefix + 'vnfName', vnfName)
+			execution.setVariable('vnfName', vnfName)
 			
 			def requestorId = reqMap.requestDetails?.requestInfo?.requestorId ?: null
-			execution.setVariable(prefix + 'requestorId', requestorId)
+			execution.setVariable('requestorId', requestorId)
 			
 			def usePreload = reqMap.requestDetails?.requestParameters?.usePreload
-			execution.setVariable(prefix + 'usePreload', usePreload)
+			execution.setVariable('usePreload', usePreload)
+			
+			def productFamilyId = reqMap.requestDetails?.requestInfo?.productFamilyId ?: null
+			execution.setVariable('productFamilyId', productFamilyId)
 			
 			def cloudConfiguration = jsonOutput.toJson(reqMap.requestDetails?.cloudConfiguration)		
-			execution.setVariable(prefix + 'cloudConfiguration', cloudConfiguration)
+			execution.setVariable('cloudConfiguration', cloudConfiguration)
 			def lcpCloudRegionId	= jsonUtils.getJsonValue(cloudConfiguration, "lcpCloudRegionId")
-			execution.setVariable(prefix + 'lcpCloudRegionId', lcpCloudRegionId)
+			execution.setVariable('lcpCloudRegionId', lcpCloudRegionId)
 			def tenantId = jsonUtils.getJsonValue(cloudConfiguration, "tenantId")
-			execution.setVariable(prefix + 'tenantId', tenantId)
+			execution.setVariable('tenantId', tenantId)
 			
 			def globalSubscriberId = reqMap.requestDetails?.subscriberInfo?.globalSubscriberId ?: ''
-			execution.setVariable(prefix + 'globalSubscriberId', globalSubscriberId)
+			execution.setVariable('globalSubscriberId', globalSubscriberId)
 			
-			execution.setVariable(prefix + 'sdncVersion', '1702')
+			execution.setVariable('sdncVersion', '1702')
 
 			execution.setVariable("ReplaceVnfInfraSuccessIndicator", false)
 						
 			execution.setVariable("isDebugLogEnabled", isDebugLogEnabled)			
 			
 			def source = reqMap.requestDetails?.requestInfo?.source
-			execution.setVariable(prefix + "source", source)
+			execution.setVariable("source", source)
 			
 			//For Completion Handler & Fallout Handler
 			String requestInfo =
@@ -207,9 +222,9 @@ public class ReplaceVnfInfra extends AbstractServiceTaskProcessor {
 					<source>${source}</source>
 				   </request-info>"""
 			
-			execution.setVariable(prefix + "requestInfo", requestInfo)			
+			execution.setVariable("requestInfo", requestInfo)			
 			
-			logDebug('RequestInfo: ' + execution.getVariable(prefix + "requestInfo"), isDebugLogEnabled)		
+			logDebug('RequestInfo: ' + execution.getVariable("requestInfo"), isDebugLogEnabled)		
 			
 			logDebug('Exited ' + method, isDebugLogEnabled)
 
@@ -231,7 +246,7 @@ public class ReplaceVnfInfra extends AbstractServiceTaskProcessor {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void sendSynchResponse(Execution execution) {
+	public void sendSynchResponse(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.sendSynchResponse(' +
 			'execution=' + execution.getId() +
 			')'
@@ -240,9 +255,9 @@ public class ReplaceVnfInfra extends AbstractServiceTaskProcessor {
 
 
 		try {
-			def requestInfo = execution.getVariable('RPLVnfI_requestInfo')
-			def requestId = execution.getVariable('RPLVnfI_requestId')
-			def source = execution.getVariable('RPLVnfI_source')
+			def requestInfo = execution.getVariable('requestInfo')
+			def requestId = execution.getVariable('requestId')
+			def source = execution.getVariable('source')
 			def progress = getNodeTextForce(requestInfo, 'progress')
 			if (progress.isEmpty()) {
 				progress = '0'
@@ -275,7 +290,7 @@ public class ReplaceVnfInfra extends AbstractServiceTaskProcessor {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void getVnfResourceDecomposition(Execution execution) {
+	public void getVnfResourceDecomposition(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.getVnfResourceDecomposition(' +
 			'execution=' + execution.getId() +
 			')'
@@ -284,7 +299,7 @@ public class ReplaceVnfInfra extends AbstractServiceTaskProcessor {
 
 		try {
 			ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
-			String vnfModelInvariantUuid = execution.getVariable(prefix + 'vnfModelInvariantUuid')
+			String vnfModelInvariantUuid = execution.getVariable('vnfModelInvariantUuid')
 			logDebug("vnfModelInvariantUuid: " + vnfModelInvariantUuid, isDebugLogEnabled)
 			List<VnfResource> vnfResources = serviceDecomposition.getServiceVnfs()
 			
@@ -295,9 +310,9 @@ public class ReplaceVnfInfra extends AbstractServiceTaskProcessor {
 				
 				if (vnfModelInvariantUuid.equals(modelInvariantUuidFromDecomposition)) {
 					VnfResource vnfResourceDecomposition = vnfResources[i]
-					execution.setVariable(prefix + 'vnfResourceDecomposition', vnfResourceDecomposition)
+					execution.setVariable('vnfResourceDecomposition', vnfResourceDecomposition)
 					def nfRole = vnfResourceDecomposition.getNfRole()					
-					execution.setVariable(prefix + 'nfRole', nfRole)
+					execution.setVariable('nfRole', nfRole)
 					logDebug("vnfResourceDecomposition: " + vnfResourceDecomposition.toJsonString(), isDebugLogEnabled)					
 					break
 				}
@@ -322,13 +337,13 @@ public class ReplaceVnfInfra extends AbstractServiceTaskProcessor {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void checkIfVnfInMaintInAAI(Execution execution) {
+	public void checkIfVnfInMaintInAAI(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.checkIfVnfInMaintInAAI(' +
 			'execution=' + execution.getId() +
 			')'
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		execution.setVariable(prefix + 'errorCode', "0")
-		execution.setVariable(prefix + "workStep", "checkIfVnfInMaintInAAI")
+		execution.setVariable('errorCode', "0")
+		execution.setVariable("workStep", "checkIfVnfInMaintInAAI")
 		execution.setVariable("failedActivity", "AAI")
 		logDebug('Entered ' + method, isDebugLogEnabled)
 
@@ -340,15 +355,21 @@ public class ReplaceVnfInfra extends AbstractServiceTaskProcessor {
 			def vnfId = execution.getVariable("vnfId")
 			boolean isInMaint = aaiValidator.isVNFLocked(vnfId, transactionLoggingUuid)
 			logDebug("isInMaint result: " + isInMaint, isDebugLogEnabled)
-			execution.setVariable(prefix + 'isVnfInMaintenance', isInMaint)
+			execution.setVariable('isVnfInMaintenance', isInMaint)
+			
+			if (isInMaint) {
+				execution.setVariable("errorCode", "1003")
+				execution.setVariable("errorText", "VNF is in maintenance in A&AI")
+			}
+
 
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
-			execution.setVariable(prefix + "errorCode", "1002")
-			execution.setVariable(prefix + "errorText", e.getMessage())
+			execution.setVariable("errorCode", "1002")
+			execution.setVariable("errorText", e.getMessage())
 			//exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in checkIfVnfInMaintInAAI(): ' + e.getMessage())
 		}
 	}
@@ -360,14 +381,14 @@ public class ReplaceVnfInfra extends AbstractServiceTaskProcessor {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void checkIfPserversInMaintInAAI(Execution execution) {
+	public void checkIfPserversInMaintInAAI(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.checkIfPserversInMaintInAAI(' +
 			'execution=' + execution.getId() +
 			')'
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		execution.setVariable(prefix + 'errorCode', "0")
+		execution.setVariable('errorCode', "0")
 		logDebug('Entered ' + method, isDebugLogEnabled)
-		execution.setVariable(prefix + "workStep", "checkIfPserversInMaintInAAI")
+		execution.setVariable("workStep", "checkIfPserversInMaintInAAI")
 		execution.setVariable("failedActivity", "AAI")
 
 		try {
@@ -378,15 +399,20 @@ public class ReplaceVnfInfra extends AbstractServiceTaskProcessor {
 			def vnfId = execution.getVariable("vnfId")			
 			boolean areLocked = aaiValidator.isPhysicalServerLocked(vnfId, transactionLoggingUuid)
 			logDebug("areLocked result: " + areLocked, isDebugLogEnabled)
-			execution.setVariable(prefix + 'arePserversLocked', areLocked)
+			execution.setVariable('arePserversLocked', areLocked)
+			
+			if (areLocked) {
+				execution.setVariable("errorCode", "1003")
+				execution.setVariable("errorText", "pServers are locked in A&AI")
+			}
 
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
-			execution.setVariable(prefix + "errorCode", "1002")
-			execution.setVariable(prefix + "errorText", e.getMessage())
+			execution.setVariable("errorCode", "1002")
+			execution.setVariable("errorText", e.getMessage())
 			//exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in checkIfPserversInMaintInAAI(): ' + e.getMessage())
 		}
 	}
@@ -398,18 +424,18 @@ public class ReplaceVnfInfra extends AbstractServiceTaskProcessor {
 	 * @param execution The flow's execution instance.
 	 * @param inMaint The boolean value of the flag to set
 	 */
-	public void setVnfInMaintFlagInAAI(Execution execution, boolean inMaint) {
+	public void setVnfInMaintFlagInAAI(DelegateExecution execution, boolean inMaint) {
 		def method = getClass().getSimpleName() + '.setVnfInMaintFlagInAAI(' +
 			'execution=' + execution.getId() +
 			')'
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		execution.setVariable(prefix + 'errorCode', "0")
+		execution.setVariable('errorCode', "0")
 		logDebug('Entered ' + method, isDebugLogEnabled)
 		if (inMaint) {
-			execution.setVariable(prefix + "workStep", "setVnfInMaintFlagInAAI")
+			execution.setVariable("workStep", "setVnfInMaintFlagInAAI")
 		}
 		else {
-			execution.setVariable(prefix + "workStep", "unsetVnfInMaintFlagInAAI")
+			execution.setVariable("workStep", "unsetVnfInMaintFlagInAAI")
 		}
 		execution.setVariable("failedActivity", "AAI")
 
@@ -421,6 +447,7 @@ public class ReplaceVnfInfra extends AbstractServiceTaskProcessor {
 			def vnfId = execution.getVariable("vnfId")
 			if (inMaint) {
 				aaiUpdator.updateVnfToLocked(vnfId, transactionLoggingUuid)
+				execution.setVariable("rollbackSetVnfInMaintenanceFlag", true)
 			}
 			else {
 				aaiUpdator.updateVnfToUnLocked(vnfId, transactionLoggingUuid)
@@ -431,8 +458,8 @@ public class ReplaceVnfInfra extends AbstractServiceTaskProcessor {
 			throw e;
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
-			execution.setVariable(prefix + "errorCode", "1002")
-			execution.setVariable(prefix + "errorText", e.getMessage())
+			execution.setVariable("errorCode", "1002")
+			execution.setVariable("errorText", e.getMessage())
 			//exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in setVnfInMaintFlagInAAI(): ' + e.getMessage())
 		}
 	}
@@ -444,50 +471,46 @@ public class ReplaceVnfInfra extends AbstractServiceTaskProcessor {
 	 * @param execution The flow's execution instance.
 	 * @param action The action to take in APP-C.
 	 */
-	public void runAppcCommand(Execution execution, Action action) {
+	public void runAppcCommand(DelegateExecution execution, Action action) {
 		def method = getClass().getSimpleName() + '.runAppcCommand(' +
 			'execution=' + execution.getId() +
 			')'
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		execution.setVariable(prefix + 'errorCode', "0")
-		logDebug('Entered ' + method, isDebugLogEnabled)
+		execution.setVariable('errorCode', "0")
+		logDebug('Entered ' + method, isDebugLogEnabled)		
 		
 		try {
 			logDebug("Running APP-C action: " + action.toString(), isDebugLogEnabled)
 			String vnfId = execution.getVariable('vnfId')
-			String msoRequestId = execution.getVariable(prefix + 'requestId')
+			String msoRequestId = execution.getVariable('requestId')
 			execution.setVariable('msoRequestId', msoRequestId)
-			execution.setVariable(prefix + "failedActivity", "APP-C")
-				
-			ApplicationControllerSupport support = new ApplicationControllerSupport()
-			appcClient.appCSupport=support
-			org.springframework.test.util.ReflectionTestUtils.setField(support, "lcmModelPackage", "org.openecomp.appc.client.lcm.model");
-			Flags flags = new Flags();
-			ActionIdentifiers actionIdentifiers = new ActionIdentifiers();
-			actionIdentifiers.setVnfId(vnfId);
-			Status appcStatus
+			execution.setVariable("failedActivity", "APP-C")
+			execution.setVariable("workStep", action.toString() + "VNF")
+			
+			ApplicationControllerOrchestrator appcClient = new ApplicationControllerOrchestrator()			
+			Status appcStatus = null
 			switch(action) {
 				case Action.Lock:
-					execution.setVariable(prefix + 'workStep', "LockVNF")
-					appcStatus = appcClient.runCommand(Action.Lock,actionIdentifiers,flags,null,msoRequestId)
+					execution.setVariable('workStep', "LockVNF")
+					appcStatus = appcClient.runCommand(Action.Lock,msoRequestId,vnfId,null)
 					break
 				case Action.Unlock:
-					execution.setVariable(prefix + 'workStep', "UnlockVNF")
-					appcStatus = appcClient.runCommand(Action.Unlock,actionIdentifiers,flags,null,msoRequestId)
+					execution.setVariable('workStep', "UnlockVNF")
+					appcStatus = appcClient.runCommand(Action.Unlock,msoRequestId,vnfId,null)
 					break
 				case Action.HealthCheck:
-					def healthCheckIndex = execution.getVariable(prefix + 'healthCheckIndex')
-					execution.setVariable(prefix + 'workStep', "HealthCheckVNF" + healthCheckIndex)
-					execution.setVariable(prefix + 'healthCheckIndex', healthCheckIndex + 1)
-					appcStatus = appcClient.runCommand(Action.HealthCheck,actionIdentifiers,flags,null,msoRequestId)
+					def healthCheckIndex = execution.getVariable('healthCheckIndex')
+					execution.setVariable('workStep', "HealthCheckVNF" + healthCheckIndex)
+					execution.setVariable('healthCheckIndex', healthCheckIndex + 1)
+					appcStatus = appcClient.runCommand(Action.HealthCheck,msoRequestId,vnfId,null)
 					break
 				case Action.Start:
-					execution.setVariable(prefix + 'workStep', "StartVNF")
-					appcStatus = appcClient.runCommand(Action.Start,actionIdentifiers,flags,null,msoRequestId)
+					execution.setVariable('workStep', "StartVNF")
+					appcStatus = appcClient.runCommand(Action.Start,msoRequestId,vnfId,null)
 					break
 				case Action.Stop:
-					execution.setVariable(prefix + 'workStep', "StopVNF")
-					appcStatus = appcClient.runCommand(Action.Stop,actionIdentifiers,flags,null,msoRequestId)
+					execution.setVariable('workStep', "StopVNF")
+					appcStatus = appcClient.runCommand(Action.Stop,msoRequestId,vnfId,null)
 					break
 				default:
 					break
@@ -497,71 +520,27 @@ public class ReplaceVnfInfra extends AbstractServiceTaskProcessor {
 			logDebug("AppC status code is: " + appcCode, isDebugLogEnabled)
 			logDebug("AppC status message is: " + appcStatus.getMessage(), isDebugLogEnabled)
 			if (support.getCategoryOf(appcStatus) == ApplicationControllerSupport.StatusCategory.ERROR) {
-				execution.setVariable(prefix + "errorCode", Integer.toString(appcCode))
-				execution.setVariable(prefix + "errorText", appcStatus.getMessage())
+				execution.setVariable("errorCode", Integer.toString(appcCode))
+				execution.setVariable("errorText", appcStatus.getMessage())
 			}
+			
 			logDebug('Exited ' + method, isDebugLogEnabled)
 		} catch (BpmnError e) {
 			logError('Caught exception in ' + method, e)
-			execution.setVariable(prefix + "errorCode", "1002")
-			execution.setVariable(prefix + "errorText", e.getMessage())
-			//throw e;
+			execution.setVariable("errorCode", "1002")
+			execution.setVariable("errorText", e.getMessage())			
 		} catch (java.lang.NoSuchMethodError e) {
 			logError('Caught exception in ' + method, e)
-			execution.setVariable(prefix + "errorCode", "1002")
-			execution.setVariable(prefix + "errorText", e.getMessage())
-			//throw e;
+			execution.setVariable("errorCode", "1002")
+			execution.setVariable("errorText", e.getMessage())				
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
-			execution.setVariable(prefix + "errorCode", "1002")
-			execution.setVariable(prefix + "errorText", e.getMessage())
-			
-			//exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in ' + method + ': ' + e.getMessage())
+			execution.setVariable("errorCode", "1002")
+			execution.setVariable("errorText", e.getMessage())			
 		}
 	}
 
 
-	
-
-	/**
-	 * Builds a "CompletionHandler" request and stores it in the specified execution variable.
-	 *
-	 * @param execution the execution
-	 * @param resultVar the execution variable in which the result will be stored
-	 */
-	public void completionHandlerPrep(Execution execution, String resultVar) {
-		def method = getClass().getSimpleName() + '.completionHandlerPrep(' +
-			'execution=' + execution.getId() +
-			', resultVar=' + resultVar +
-			')'
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		logDebug('Entered ' + method, isDebugLogEnabled)
-
-		try {
-			def requestInfo = getVariable(execution, 'RPLVnfI_requestInfo')
-			
-			appcClient.shutdownclient()
-
-			String content = """
-				<sdncadapterworkflow:MsoCompletionRequest xmlns:sdncadapterworkflow="http://org.openecomp/mso/workflow/schema/v1"
-						xmlns:reqtype="http://org.openecomp/mso/request/types/v1">
-					${requestInfo}
-					<sdncadapterworkflow:mso-bpel-name>MSO_ACTIVATE_BPEL</sdncadapterworkflow:mso-bpel-name>
-				</sdncadapterworkflow:MsoCompletionRequest>
-			"""
-
-			content = utils.formatXml(content)
-			logDebug(resultVar + ' = ' + System.lineSeparator() + content, isDebugLogEnabled)
-			execution.setVariable(resultVar, content)
-
-			logDebug('Exited ' + method, isDebugLogEnabled)
-		} catch (BpmnError e) {
-			throw e;
-		} catch (Exception e) {
-			logError('Caught exception in ' + method, e)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, 'Internal Error')
-		}
-	}
 	
 	/**
 	* Prepare DoDeleteVnfAndModules call.
@@ -569,14 +548,14 @@ public class ReplaceVnfInfra extends AbstractServiceTaskProcessor {
 	*
 	* @param execution The flow's execution instance.
 	*/
-   public void prepDoDeleteVnfAndModules(Execution execution) {
+   public void prepDoDeleteVnfAndModules(DelegateExecution execution) {
 	   def method = getClass().getSimpleName() + '.prepDoDeleteVnfAndModules(' +
 		   'execution=' + execution.getId() +
 		   ')'
 	   def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled') 
-	   execution.setVariable(prefix + 'errorCode', "0")
+	   execution.setVariable('errorCode', "0")
 	   logDebug('Entered ' + method, isDebugLogEnabled)
-	   execution.setVariable(prefix + "workStep", "doDeleteVnfAndModules")
+	   execution.setVariable("workStep", "doDeleteVnfAndModules")
 	   execution.setVariable("failedActivity", "MSO Delete VNF")
 	   logDebug('Exited ' + method, isDebugLogEnabled)
 	   
@@ -588,87 +567,34 @@ public class ReplaceVnfInfra extends AbstractServiceTaskProcessor {
 	*
 	* @param execution The flow's execution instance.
 	*/
-   public void prepDoCreateVnfAndModules(Execution execution) {
+   public void prepDoCreateVnfAndModules(DelegateExecution execution) {
 	   def method = getClass().getSimpleName() + '.prepDoReplaceVnfAndModules(' +
 		   'execution=' + execution.getId() +
 		   ')'
 	   def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-	   execution.setVariable(prefix + 'errorCode', "0")
+	   execution.setVariable('errorCode', "0")
 	   logDebug('Entered ' + method, isDebugLogEnabled)
-	   execution.setVariable(prefix + "workStep", "doReplaceVnfAndModules")
-	   execution.setVariable("failedActivity", "MSO Replace VNF")
+	   execution.setVariable("workStep", "doCreateVnfAndModules")
+	   execution.setVariable("failedActivity", "MSO Create VNF")
 	   logDebug('Exited ' + method, isDebugLogEnabled)
 	   
    }
 	
-	/**
-	 * Builds a "FalloutHandler" request and stores it in the specified execution variable.
-	 *
-	 * @param execution the execution
-	 * @param resultVar the execution variable in which the result will be stored
-	 */
-	public void falloutHandlerPrep(Execution execution, String resultVar) {
-		def method = getClass().getSimpleName() + '.falloutHandlerPrep(' +
-			'execution=' + execution.getId() +
-			', resultVar=' + resultVar +
-			')'
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		logDebug('Entered ' + method, isDebugLogEnabled)
-
-		try {
-			def prefix = execution.getVariable('prefix')
-			def request = getVariable(execution, prefix+'Request')
-			def requestInformation = execution.getVariable(prefix + "requestInfo")			
-			
-			appcClient.shutdownclient()
-
-			def WorkflowException workflowException = execution.getVariable("WorkflowException")
-			def errorResponseCode = workflowException.getErrorCode()
-			def errorResponseMsg = workflowException.getErrorMessage()
-			def encErrorResponseMsg = ""
-			if (errorResponseMsg != null) {
-				encErrorResponseMsg = errorResponseMsg.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-			}
-
-			String content = """
-				<sdncadapterworkflow:FalloutHandlerRequest xmlns:sdncadapterworkflow="http://org.openecomp/mso/workflow/schema/v1"
-						xmlns:reqtype="http://org.openecomp/mso/request/types/v1"
-						xmlns:msoservtypes="http://org.openecomp/mso/request/types/v1"
-						xmlns:structuredtypes="http://org.openecomp/mso/structured/types/v1">
-					${requestInformation}
-					<sdncadapterworkflow:WorkflowException>
-						<sdncadapterworkflow:ErrorMessage>${encErrorResponseMsg}</sdncadapterworkflow:ErrorMessage>
-						<sdncadapterworkflow:ErrorCode>${errorResponseCode}</sdncadapterworkflow:ErrorCode>
-					</sdncadapterworkflow:WorkflowException>
-				</sdncadapterworkflow:FalloutHandlerRequest>
-			"""
-			content = utils.formatXml(content)
-			logDebug(resultVar + ' = ' + System.lineSeparator() + content, isDebugLogEnabled)
-			execution.setVariable(resultVar, content)
-
-			logDebug('Exited ' + method, isDebugLogEnabled)
-		} catch (BpmnError e) {
-			throw e;
-		} catch (Exception e) {
-			logError('Caught exception in ' + method, e)
-			exceptionUtil.buildWorkflowException(execution, 2000, 'Internal Error')
-		}
-	}
 	
 	/**
 	 * Handle Abort disposition from RainyDayHandler
 	 *	 
 	 * @param execution The flow's execution instance.	
 	 */
-	public void abortProcessing(Execution execution) {
+	public void abortProcessing(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.abortProcessing(' +
 			'execution=' + execution.getId() +
 			')'
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		logDebug('Entered ' + method, isDebugLogEnabled)
 		
-		def errorText = execution.getVariable(prefix + "errorText")
-		def errorCode = execution.getVariable(prefix + "errorCode")
+		def errorText = execution.getVariable("errorText")
+		def errorCode = execution.getVariable("errorCode")
 		
 		exceptionUtil.buildAndThrowWorkflowException(execution, errorCode as Integer, errorText)
 	}
@@ -678,14 +604,14 @@ public class ReplaceVnfInfra extends AbstractServiceTaskProcessor {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void manualProcessing(Execution execution) {
+	public void manualProcessing(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.manualProcessing(' +
 			'execution=' + execution.getId() +
 			')'
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		logDebug('Entered ' + method, isDebugLogEnabled)
 		
-		def taskId = execution.getVariable("RPLVnfI_taskId")
+		def taskId = execution.getVariable("taskId")
 		
 		exceptionUtil.buildAndThrowWorkflowException(execution, 2000, "Processing halted - manual task created: " + taskId)
 	}

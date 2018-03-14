@@ -19,28 +19,38 @@
  */
 package org.openecomp.mso.bpmn.infrastructure.scripts;
 
-import static org.apache.commons.lang3.StringUtils.*;
-import groovy.xml.XmlUtil
-import groovy.json.*
-
-import org.openecomp.mso.bpmn.core.domain.ServiceDecomposition
-import org.openecomp.mso.bpmn.core.domain.ServiceInstance
-import org.openecomp.mso.bpmn.core.domain.ModelInfo
-import org.openecomp.mso.bpmn.core.json.JsonUtils
+import org.camunda.bpm.engine.delegate.BpmnError
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.openecomp.mso.bpmn.common.scripts.AaiUtil
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
+import org.openecomp.mso.bpmn.common.scripts.CatalogDbUtils
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
 import org.openecomp.mso.bpmn.common.scripts.SDNCAdapterUtils
 import org.openecomp.mso.bpmn.core.RollbackData
 import org.openecomp.mso.bpmn.core.WorkflowException
-import org.openecomp.mso.rest.APIResponse;
+import org.openecomp.mso.bpmn.core.domain.ModelInfo
+import org.openecomp.mso.bpmn.core.domain.ServiceDecomposition
+import org.openecomp.mso.bpmn.core.domain.ServiceInstance
+import org.openecomp.mso.bpmn.core.json.JsonUtils
+import org.openecomp.mso.bpmn.infrastructure.aai.AAICreateResources
+import org.openecomp.mso.rest.APIResponse
+import org.springframework.web.util.UriUtils
+
+import static org.apache.commons.lang3.StringUtils.*;
+import groovy.xml.XmlUtil
+import groovy.json.*
+
 import org.openecomp.mso.rest.RESTClient
 import org.openecomp.mso.rest.RESTConfig
+import org.openecomp.mso.client.aai.AAIResourcesClient
+
+import java.util.logging.Logger;
+import java.net.URI;
 
 import java.util.UUID;
 
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.json.JSONObject;
 import org.apache.commons.lang3.*
 import org.apache.commons.codec.binary.Base64;
@@ -70,14 +80,16 @@ import org.springframework.web.util.UriUtils;
  * @param - WorkflowException
  * @param - serviceInstanceName - (GET from AAI if null in input)
  *
+ * This BB processes Macros(except TRANSPORT all sent to sdnc) and Alacartes(sdncSvcs && nonSdncSvcs) 
  */
 public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 
 	String Prefix="DCRESI_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
+	CatalogDbUtils cutils = new CatalogDbUtils()
 
-	public void preProcessRequest (Execution execution) {
+	public void preProcessRequest (DelegateExecution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		String msg = ""
 		utils.log("DEBUG"," ***** preProcessRequest *****",  isDebugEnabled)
@@ -131,31 +143,19 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 			String serviceInstanceId = ""
 			String serviceType = ""
 			String serviceRole = ""
-			
+					
 			ServiceDecomposition serviceDecomp = (ServiceDecomposition) execution.getVariable("serviceDecomposition")
 			if (serviceDecomp != null)
 			{
-				serviceType = serviceDecomp.getServiceType()
-				if (serviceType == null)
-				{
-					utils.log("DEBUG", "null serviceType", isDebugEnabled)
-					serviceType = ""
-				}
-				else
-				{
-					utils.log("DEBUG", "serviceType:" + serviceType, isDebugEnabled)
-				}
-				serviceRole = serviceDecomp.getServiceRole()
-				if (serviceRole == null)
-				{
-					serviceRole = ""
-				}
+				serviceType = serviceDecomp.getServiceType() ?: ""
+				utils.log("DEBUG", "serviceType:" + serviceType, isDebugEnabled)
+				serviceRole = serviceDecomp.getServiceRole() ?: ""
 				
 				ServiceInstance serviceInstance = serviceDecomp.getServiceInstance()
 				if (serviceInstance != null)
 				{
-					serviceInstanceId = serviceInstance.getInstanceId()
-					serviceInstanceName = serviceInstance.getInstanceName()
+					serviceInstanceId = serviceInstance.getInstanceId() ?: ""
+					serviceInstanceName = serviceInstance.getInstanceName() ?: ""
 					execution.setVariable("serviceInstanceId", serviceInstanceId)
 					execution.setVariable("serviceInstanceName", serviceInstanceName)
 				}
@@ -163,10 +163,10 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 				ModelInfo modelInfo = serviceDecomp.getModelInfo()
 				if (modelInfo != null)
 				{
-					modelInvariantUuid = modelInfo.getModelInvariantUuid()
-					modelVersion = modelInfo.getModelVersion()
-					modelUuid = modelInfo.getModelUuid()
-					modelName = modelInfo.getModelName()
+					modelInvariantUuid = modelInfo.getModelInvariantUuid() ?: ""
+					modelVersion = modelInfo.getModelVersion() ?: ""
+					modelUuid = modelInfo.getModelUuid() ?: ""
+					modelName = modelInfo.getModelName() ?: ""
 				}
 				else 
 				{
@@ -178,52 +178,78 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 			else
 			{
 				//requestDetails.requestInfo. for AAI GET/PUT serviceInstanceData & SDNC assignToplology
-				serviceInstanceName = execution.getVariable("serviceInstanceName")
-				serviceInstanceId = execution.getVariable("serviceInstanceId")
+				serviceInstanceName = execution.getVariable("serviceInstanceName") ?: ""
+				serviceInstanceId = execution.getVariable("serviceInstanceId") ?: ""
 				
 				String serviceModelInfo = execution.getVariable("serviceModelInfo")
 				if (isBlank(serviceModelInfo)) {
 					msg = "Input serviceModelInfo is null"
 					utils.log("DEBUG", msg, isDebugEnabled)
 					exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-				}
-				modelInvariantUuid = jsonUtil.getJsonValue(serviceModelInfo, "modelInvariantUuid")
-				modelVersion = jsonUtil.getJsonValue(serviceModelInfo, "modelVersion")
-				modelUuid = jsonUtil.getJsonValue(serviceModelInfo, "modelUuid")
-				modelName = jsonUtil.getJsonValue(serviceModelInfo, "modelName")
+				}			
+				modelInvariantUuid = jsonUtil.getJsonValue(serviceModelInfo, "modelInvariantUuid") ?: ""
+				modelVersion = jsonUtil.getJsonValue(serviceModelInfo, "modelVersion") ?: ""
+				modelUuid = jsonUtil.getJsonValue(serviceModelInfo, "modelUuid") ?: ""
+				modelName = jsonUtil.getJsonValue(serviceModelInfo, "modelName") ?: ""
 				//modelCustomizationUuid NA for SI
 	
 			}
+			
 			execution.setVariable("serviceType", serviceType)
 			execution.setVariable("serviceRole", serviceRole)
+			execution.setVariable("serviceInstanceName", serviceInstanceName)
+
+			execution.setVariable("modelInvariantUuid", modelInvariantUuid)
+			execution.setVariable("modelVersion", modelVersion)
+			execution.setVariable("modelUuid", modelUuid)
+			execution.setVariable("modelName", modelName)
 			
-			if (serviceInstanceName == null) {
-				execution.setVariable("serviceInstanceName", "")
-				serviceInstanceName = ""
+			//alacarte SIs are NOT sent to sdnc. exceptions are listed in config variable
+			String svcTypes = execution.getVariable("URN_sdnc_si_svc_types") ?: ""
+			utils.log("DEBUG", "SDNC SI serviceTypes:" + svcTypes, isDebugEnabled)
+			List<String> svcList = Arrays.asList(svcTypes.split("\\s*,\\s*"));
+			boolean isSdncService= false
+			for (String listEntry : svcList){
+				if (listEntry.equalsIgnoreCase(serviceType)){
+					isSdncService = true
+					break;
+				}
 			}
+			
+			//All Macros are sent to SDNC, TRANSPORT(Macro) is sent to SDNW
+			//Alacartes are sent to SDNC if they are listed in config variable above
+			execution.setVariable("sendToSDNC", true)
+			if(execution.getVariable("sdncVersion").equals("1610")) //alacarte
+			{
+				if(!isSdncService){ 
+					execution.setVariable("sendToSDNC", false)
+					//alacarte non-sdnc svcs must provide name (sdnc provides name for rest)
+					if (isBlank(execution.getVariable("serviceInstanceName" )))
+					{
+						msg = "Input serviceInstanceName must be provided for alacarte"
+						utils.log("DEBUG", msg, isDebugEnabled)
+						exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+					}
+				}
+			}
+			
+			utils.log("DEBUG", "isSdncService: " + isSdncService, isDebugEnabled)
+			utils.log("DEBUG", "Send To SDNC: " + execution.getVariable("sendToSDNC"), isDebugEnabled)
+			utils.log("DEBUG", "Service Type: " + execution.getVariable("serviceType"), isDebugEnabled)
+			
+			//macro may provide name and alacarte-portm may provide name
+			execution.setVariable("checkAAI", false)
+			if (!isBlank(execution.getVariable("serviceInstanceName" )))
+			{
+				execution.setVariable("checkAAI", true)
+			}
+			
 			if (isBlank(serviceInstanceId)){
 				msg = "Input serviceInstanceId is null"
 				utils.log("DEBUG", msg, isDebugEnabled)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
 			
-			if (modelInvariantUuid == null) {
-				modelInvariantUuid = ""
-			}
-			if (modelUuid == null) {
-				modelUuid = ""
-			}
-			if (modelVersion == null) {
-				modelVersion = ""
-			}
-			if (modelName == null) {
-				modelName = ""
-			}
-			
-			execution.setVariable("modelInvariantUuid", modelInvariantUuid)
-			execution.setVariable("modelVersion", modelVersion)
-			execution.setVariable("modelUuid", modelUuid)
-			execution.setVariable("modelName", modelName)
 			
 			StringBuilder sbParams = new StringBuilder()
 			Map<String, String> paramsMap = execution.getVariable("serviceInputParams")
@@ -250,7 +276,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 			execution.setVariable("siParamsXml", siParamsXml)
 
 			//AAI PUT
-			String oStatus = execution.getVariable("initialStatus") ?: ""
+			String oStatus = execution.getVariable("initialStatus") ?: "Active"
 			if ("TRANSPORT".equalsIgnoreCase(serviceType))
 			{
 				oStatus = "Created"
@@ -260,6 +286,28 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 			String serviceTypeLine = isBlank(serviceType) ? "" : "<service-type>${serviceType}</service-type>"
 			String serviceRoleLine = isBlank(serviceRole) ? "" : "<service-role>${serviceRole}</service-role>"
 				
+			//QUERY CATALOG DB AND GET WORKLOAD / ENVIRONMENT CONTEXT
+			String environmentContext = ""
+			String workloadContext =""
+			
+			try{
+				 String json = cutils.getServiceResourcesByServiceModelInvariantUuidString(execution,modelInvariantUuid )
+				 
+				 utils.log("DEBUG", "JSON IS: "+json, isDebugEnabled)
+				 				 
+				 environmentContext = jsonUtil.getJsonValue(json, "serviceResources.environmentContext") ?: ""
+				 workloadContext = jsonUtil.getJsonValue(json, "serviceResources.workloadContext") ?: ""
+				 utils.log("DEBUG", "Env Context is: "+ environmentContext, isDebugEnabled)
+				 utils.log("DEBUG", "Workload Context is: "+ workloadContext, isDebugEnabled)
+			}catch(BpmnError e){
+				throw e
+			} catch (Exception ex){
+				msg = "Exception in preProcessRequest " + ex.getMessage()
+				utils.log("DEBUG", msg, isDebugEnabled)
+				exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+			}
+			
+			//Create AAI Payload
 			AaiUtil aaiUriUtil = new AaiUtil(this)
 			String aai_uri = aaiUriUtil.getBusinessCustomerUri(execution)
 			String namespace = aaiUriUtil.getNamespaceFromUri(aai_uri)
@@ -271,12 +319,14 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 					${statusLine}
 				    <model-invariant-id>${modelInvariantUuid}</model-invariant-id>
 				    <model-version-id>${modelUuid}</model-version-id>
+					<environment-context>${environmentContext}</environment-context>
+					<workload-context>${workloadContext}</workload-context>
 					</service-instance>""".trim()
 
 			execution.setVariable("serviceInstanceData", serviceInstanceData)
 			utils.logAudit(serviceInstanceData)
 			utils.log("DEBUG", " 'payload' to create Service Instance in AAI - " + "\n" + serviceInstanceData, isDebugEnabled)
-
+				
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception ex){
@@ -288,7 +338,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 	}
 
 	//TODO: Will be able to replace with call to GenericGetService
-	public void getAAICustomerById (Execution execution) {
+	public void getAAICustomerById (DelegateExecution execution) {
 		// https://{aaiEP}/aai/v8/business/customers/customer/{globalCustomerId}
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		String msg = ""
@@ -360,7 +410,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 
 	}
 
-	public void postProcessAAIGET(Execution execution) {
+	public void postProcessAAIGET(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("DEBUG"," ***** postProcessAAIGET ***** ", isDebugEnabled)
 		String msg = ""
@@ -402,7 +452,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 		utils.log("DEBUG"," *** Exit postProcessAAIGET *** ", isDebugEnabled)
 	}
 
-	public void postProcessAAIPUT(Execution execution) {
+	public void postProcessAAIPUT(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("DEBUG"," ***** postProcessAAIPUT ***** ", isDebugEnabled)
 		String msg = ""
@@ -440,7 +490,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 		utils.log("DEBUG"," *** Exit postProcessAAIPUT *** ", isDebugEnabled)
 	}
 
-	public void preProcessSDNCAssignRequest(Execution execution) {
+	public void preProcessSDNCAssignRequest(DelegateExecution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		String msg = ""
 		utils.log("DEBUG"," ***** preProcessSDNCAssignRequest *****", isDebugEnabled)
@@ -453,7 +503,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 			def serviceId = execution.getVariable("productFamilyId")
 			def subscriptionServiceType = execution.getVariable("subscriptionServiceType")
 			def globalSubscriberId = execution.getVariable("globalSubscriberId") //globalCustomerId
-			def serviceType = execution.getVariable("serviceType")
+			def msoAction = ""
 
 			def modelInvariantUuid = execution.getVariable("modelInvariantUuid")
 			def modelVersion = execution.getVariable("modelVersion")
@@ -463,6 +513,12 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 			def sdncRequestId = UUID.randomUUID().toString()
 			
 			def siParamsXml = execution.getVariable("siParamsXml")
+			
+			// special URL for SDNW, msoAction helps set diff url in SDNCA
+			if("TRANSPORT".equalsIgnoreCase(execution.getVariable("serviceType")))
+			{
+				msoAction = "TRANSPORT"
+			}
 			
 			String sdncAssignRequest =
 					"""<sdncadapterworkflow:SDNCAdapterWorkflowRequest xmlns:ns5="http://org.openecomp/mso/request/types/v1"
@@ -474,7 +530,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 							<sdncadapter:SvcAction>assign</sdncadapter:SvcAction>
 							<sdncadapter:SvcOperation>service-topology-operation</sdncadapter:SvcOperation>
 							<sdncadapter:CallbackUrl>${callbackURL}</sdncadapter:CallbackUrl>
-							<sdncadapter:MsoAction>${serviceType}</sdncadapter:MsoAction>
+							<sdncadapter:MsoAction>${msoAction}</sdncadapter:MsoAction>
 					</sdncadapter:RequestHeader>
 				<sdncadapterworkflow:SDNCRequestData>
 					<request-information>
@@ -488,12 +544,12 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 					<service-information>
 						<service-id>${serviceId}</service-id>
 						<subscription-service-type>${subscriptionServiceType}</subscription-service-type>
-						<onap-model-information>
+						<ecomp-model-information>
 					         <model-invariant-uuid>${modelInvariantUuid}</model-invariant-uuid>
 					         <model-uuid>${modelUuid}</model-uuid>
 					         <model-version>${modelVersion}</model-version>
 					         <model-name>${modelName}</model-name>
-					    </onap-model-information>
+					    </ecomp-model-information>
 						<service-instance-id>${serviceInstanceId}</service-instance-id>
 						<subscriber-name/>
 						<global-customer-id>${globalSubscriberId}</global-customer-id>
@@ -531,7 +587,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 		utils.log("DEBUG"," *****Exit preProcessSDNCAssignRequest *****", isDebugEnabled)
 	}
 	
-	public void postProcessSDNCAssign (Execution execution) {
+	public void postProcessSDNCAssign (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("DEBUG"," ***** postProcessSDNCAssign ***** ", isDebugEnabled)
 		try {
@@ -568,7 +624,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 		utils.log("DEBUG"," *** Exit postProcessSDNCAssign *** ", isDebugEnabled)
 	}
 	
-	public void postProcessAAIGET2(Execution execution) {
+	public void postProcessAAIGET2(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("DEBUG"," ***** postProcessAAIGET2 ***** ", isDebugEnabled)
 		String msg = ""
@@ -611,7 +667,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 		utils.log("DEBUG"," *** Exit postProcessAAIGET2 *** ", isDebugEnabled)
 	}
 
-	public void preProcessRollback (Execution execution) {
+	public void preProcessRollback (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("DEBUG"," ***** preProcessRollback ***** ", isDebugEnabled)
 		try {
@@ -632,7 +688,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 		utils.log("DEBUG"," *** Exit preProcessRollback *** ", isDebugEnabled)
 	}
 
-	public void postProcessRollback (Execution execution) {
+	public void postProcessRollback (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("DEBUG"," ***** postProcessRollback ***** ", isDebugEnabled)
 		String msg = ""
@@ -651,6 +707,92 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 			utils.log("DEBUG", msg, isDebugEnabled)
 		}
 		utils.log("DEBUG"," *** Exit postProcessRollback *** ", isDebugEnabled)
+	}
+	
+	public void createProject(DelegateExecution execution) {
+		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+		utils.log("DEBUG", " ***** createProject ***** ", isDebugEnabled)
+
+		String bpmnRequest = execution.getVariable("requestJson")	
+		String projectName = jsonUtil.getJsonValue(bpmnRequest, "requestDetails.project.projectName")		
+		String serviceInstance = execution.getVariable("serviceInstanceId")
+		
+		utils.log("DEBUG", "BPMN REQUEST IS: "+ bpmnRequest, isDebugEnabled)
+		utils.log("DEBUG","PROJECT NAME: " + projectName, isDebugEnabled)
+		utils.log("DEBUG","Service Instance: " + serviceInstance, isDebugEnabled)
+			
+		if(projectName == null||projectName.equals("")){
+			utils.log("DEBUG", "Project Name was not found in input. Skipping task...", isDebugEnabled)
+		}else{
+			try{
+				AAICreateResources aaiCR = new AAICreateResources()
+				aaiCR.createAAIProject(projectName, serviceInstance)
+			}catch(Exception ex){
+				String msg = "Exception in createProject. " + ex.getMessage();
+				utils.log("DEBUG", msg, isDebugEnabled)
+				exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+			}
+		}	
+		utils.log("DEBUG"," *** Exit createProject *** ", isDebugEnabled)
+	}
+	
+	public void createOwningEntity(DelegateExecution execution) {
+		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+		utils.log("DEBUG", " ***** createOwningEntity ***** ", isDebugEnabled)
+		String msg = "";
+		String bpmnRequest = execution.getVariable("requestJson")	
+		String owningEntityId = jsonUtil.getJsonValue(bpmnRequest, "requestDetails.owningEntity.owningEntityId")		
+		String owningEntityName = jsonUtil.getJsonValue(bpmnRequest,"requestDetails.owningEntity.owningEntityName");
+		String serviceInstance = execution.getVariable("serviceInstanceId")
+			
+		utils.log("DEBUG","owningEntity: " + owningEntityId, isDebugEnabled)
+		utils.log("DEBUG", "OwningEntityName: "+ owningEntityName, isDebugEnabled)
+		utils.log("DEBUG","Service Instance: " + serviceInstance, isDebugEnabled)
+		
+		try{
+			AAICreateResources aaiCR = new AAICreateResources()
+			if(owningEntityId==null||owningEntityId.equals("")){
+				msg = "Exception in createOwningEntity. OwningEntityId is null in input.";	
+				throw new IllegalStateException();
+			}else{
+				if(aaiCR.existsOwningEntity(owningEntityId)){
+					aaiCR.connectOwningEntityandServiceInstance(owningEntityId,serviceInstance)
+				}else{
+					if(owningEntityName==null||owningEntityName.equals("")){
+						msg = "Exception in createOwningEntity. Can't create an owningEntity without an owningEntityName in input.";
+						throw new IllegalStateException();
+					}else{
+						aaiCR.createAAIOwningEntity(owningEntityId, owningEntityName, serviceInstance)
+					}
+				}
+			}
+		}catch(Exception ex){
+			utils.log("DEBUG", msg, isDebugEnabled)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+		}
+		utils.log("DEBUG"," *** Exit createOwningEntity *** ", isDebugEnabled)
+	}
+	
+	// *******************************
+	//     Build Error Section
+	// *******************************
+
+	public void processJavaException(DelegateExecution execution){
+		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+		
+		try{
+			utils.log("DEBUG", "Caught a Java Exception in DoCreateServiceInstance", isDebugEnabled)
+			utils.log("DEBUG", "Started processJavaException Method", isDebugEnabled)
+			utils.log("DEBUG", "Variables List: " + execution.getVariables(), isDebugEnabled)
+			execution.setVariable("UnexpectedError", "Caught a Java Lang Exception in DoCreateServiceInstance")  // Adding this line temporarily until this flows error handling gets updated
+			exceptionUtil.buildWorkflowException(execution, 500, "Caught a Java Lang Exception in DoCreateServiceInstance")
+			
+		}catch(Exception e){
+			utils.log("DEBUG", "Caught Exception during processJavaException Method: " + e, isDebugEnabled)
+			execution.setVariable("UnexpectedError", "Exception in processJavaException")  // Adding this line temporarily until this flows error handling gets updated
+			exceptionUtil.buildWorkflowException(execution, 500, "Exception in processJavaException method")
+		}
+		utils.log("DEBUG", "Completed processJavaException Method in DoCreateServiceInstance", isDebugEnabled)
 	}
 
 }

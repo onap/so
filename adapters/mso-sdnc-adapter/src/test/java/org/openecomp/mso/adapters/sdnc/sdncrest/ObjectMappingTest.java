@@ -19,14 +19,9 @@
  */
 package org.openecomp.mso.adapters.sdnc.sdncrest;
 
-import org.openecomp.mso.adapters.sdncrest.SDNCEvent;
-import org.openecomp.mso.adapters.sdncrest.SDNCServiceError;
-import org.openecomp.mso.adapters.sdncrest.SDNCServiceRequest;
-import org.openecomp.mso.adapters.sdncrest.SDNCServiceResponse;
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -34,9 +29,15 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Arrays;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
+import org.openecomp.mso.adapters.sdncrest.SDNCEvent;
+import org.openecomp.mso.adapters.sdncrest.SDNCServiceError;
+import org.openecomp.mso.adapters.sdncrest.SDNCServiceRequest;
+import org.openecomp.mso.adapters.sdncrest.SDNCServiceResponse;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 
 
@@ -102,14 +103,14 @@ public class ObjectMappingTest {
 		"}" + EOL;
 
 	private final String PARAMS =
-		"{\"entry\":[{\"key\":\"P1\",\"value\":\"V1\"},{\"key\":\"P2\",\"value\":\"V2\"},{\"key\":\"P3\",\"value\":\"V3\"}]}";
+		"{\"P1\":\"V1\",\"P2\":\"V2\",\"P3\":\"V3\"}";
 
 	@Test
 	public final void jsonToSDNCServiceRequest() throws Exception {
 		logTest();
 		ObjectMapper mapper = new ObjectMapper();
-		mapper.enable(SerializationConfig.Feature.WRAP_ROOT_VALUE);
-		mapper.enable(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE);
+		mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
+		mapper.enable(DeserializationFeature.UNWRAP_ROOT_VALUE);
 
 		String json = SDNC_SERVICE_REQUEST;
 		json = json.replace("((BP-TIMEOUT))", "\"bpTimeout\": \"" + "PT5M" + "\"," + EOL);
@@ -135,8 +136,8 @@ public class ObjectMappingTest {
 	public final void jsonToSDNCServiceRequestWithoutOptionalFields() throws Exception {
 		logTest();
 		ObjectMapper mapper = new ObjectMapper();
-		mapper.enable(SerializationConfig.Feature.WRAP_ROOT_VALUE);
-		mapper.enable(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE);
+		mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
+		mapper.enable(DeserializationFeature.UNWRAP_ROOT_VALUE);
 
 		// bpTimeout is optional.
 		String json = SDNC_SERVICE_REQUEST;
@@ -163,8 +164,8 @@ public class ObjectMappingTest {
 	public final void jsonFromSDNCServiceRequest() throws Exception {
 		logTest();
 		ObjectMapper mapper = new ObjectMapper();
-		mapper.enable(SerializationConfig.Feature.WRAP_ROOT_VALUE);
-		mapper.enable(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE);
+		mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
+		mapper.enable(DeserializationFeature.UNWRAP_ROOT_VALUE);
 
 		// Convert source json string to object.
 		String json1 = SDNC_SERVICE_REQUEST;
@@ -188,8 +189,8 @@ public class ObjectMappingTest {
 	public final void jsonFromSDNCServiceRequestWithoutOptionalFields() throws Exception {
 		logTest();
 		ObjectMapper mapper = new ObjectMapper();
-		mapper.enable(SerializationConfig.Feature.WRAP_ROOT_VALUE);
-		mapper.enable(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE);
+		mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
+		mapper.enable(DeserializationFeature.UNWRAP_ROOT_VALUE);
 
 		// Convert source json string to object.
 		String json1 = SDNC_SERVICE_REQUEST;
@@ -213,8 +214,8 @@ public class ObjectMappingTest {
 	public final void jsonToSDNCServiceResponse() throws Exception {
 		logTest();
 		ObjectMapper mapper = new ObjectMapper();
-		mapper.enable(SerializationConfig.Feature.WRAP_ROOT_VALUE);
-		mapper.enable(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE);
+		mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
+		mapper.enable(DeserializationFeature.UNWRAP_ROOT_VALUE);
 
 		String json = SDNC_SERVICE_RESPONSE;
 		json = json.replace("((RESPONSE-MESSAGE))", "    \"responseMessage\": \"" + "OK" + "\"," + EOL);
@@ -234,8 +235,8 @@ public class ObjectMappingTest {
 	public final void jsonToSDNCServiceResponseWithoutOptionalFields() throws Exception {
 		logTest();
 		ObjectMapper mapper = new ObjectMapper();
-		mapper.enable(SerializationConfig.Feature.WRAP_ROOT_VALUE);
-		mapper.enable(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE);
+		mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
+		mapper.enable(DeserializationFeature.UNWRAP_ROOT_VALUE);
 
 		// responseMessage is optional.
 		String json = SDNC_SERVICE_RESPONSE;
@@ -254,8 +255,8 @@ public class ObjectMappingTest {
 	public final void jsonFromSDNCServiceResponse() throws Exception {
 		logTest();
 		ObjectMapper mapper = new ObjectMapper();
-		mapper.enable(SerializationConfig.Feature.WRAP_ROOT_VALUE);
-		mapper.enable(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE);
+		mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
+		mapper.enable(DeserializationFeature.UNWRAP_ROOT_VALUE);
 
 		// Convert source json string to object.
 		String json1 = SDNC_SERVICE_RESPONSE;
@@ -280,8 +281,8 @@ public class ObjectMappingTest {
 	public final void jsonFromSDNCServiceResponseWithoutOptionalFields() throws Exception {
 		logTest();
 		ObjectMapper mapper = new ObjectMapper();
-		mapper.enable(SerializationConfig.Feature.WRAP_ROOT_VALUE);
-		mapper.enable(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE);
+		mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
+		mapper.enable(DeserializationFeature.UNWRAP_ROOT_VALUE);
 
 		// Convert source json string to object.
 		String json1 = SDNC_SERVICE_RESPONSE;
@@ -306,8 +307,8 @@ public class ObjectMappingTest {
 	public final void jsonToSDNCServiceError() throws Exception {
 		logTest();
 		ObjectMapper mapper = new ObjectMapper();
-		mapper.enable(SerializationConfig.Feature.WRAP_ROOT_VALUE);
-		mapper.enable(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE);
+		mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
+		mapper.enable(DeserializationFeature.UNWRAP_ROOT_VALUE);
 
 		String json = SDNC_SERVICE_ERROR;
 		json = json.replace("((RESPONSE-MESSAGE))", "\"responseMessage\": \"" + "SOMETHING BAD" + "\"," + EOL);
@@ -323,8 +324,8 @@ public class ObjectMappingTest {
 	public final void jsonToSDNCServiceErrorWithoutOptionalFields() throws Exception {
 		logTest();
 		ObjectMapper mapper = new ObjectMapper();
-		mapper.enable(SerializationConfig.Feature.WRAP_ROOT_VALUE);
-		mapper.enable(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE);
+		mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
+		mapper.enable(DeserializationFeature.UNWRAP_ROOT_VALUE);
 
 		// responseMessage is optional.
 		String json = SDNC_SERVICE_ERROR;
@@ -341,8 +342,8 @@ public class ObjectMappingTest {
 	public final void jsonFromSDNCServiceError() throws Exception {
 		logTest();
 		ObjectMapper mapper = new ObjectMapper();
-		mapper.enable(SerializationConfig.Feature.WRAP_ROOT_VALUE);
-		mapper.enable(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE);
+		mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
+		mapper.enable(DeserializationFeature.UNWRAP_ROOT_VALUE);
 
 		// Convert source json string to object.
 		String json1 = SDNC_SERVICE_ERROR;
@@ -366,8 +367,8 @@ public class ObjectMappingTest {
 	public final void jsonFromSDNCServiceErrorWithoutOptionalFields() throws Exception {
 		logTest();
 		ObjectMapper mapper = new ObjectMapper();
-		mapper.enable(SerializationConfig.Feature.WRAP_ROOT_VALUE);
-		mapper.enable(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE);
+		mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
+		mapper.enable(DeserializationFeature.UNWRAP_ROOT_VALUE);
 
 		// Convert source json string to object.
 		String json1 = SDNC_SERVICE_ERROR;
@@ -391,8 +392,8 @@ public class ObjectMappingTest {
 	public final void jsonToSDNCEvent() throws Exception {
 		logTest();
 		ObjectMapper mapper = new ObjectMapper();
-		mapper.enable(SerializationConfig.Feature.WRAP_ROOT_VALUE);
-		mapper.enable(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE);
+		mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
+		mapper.enable(DeserializationFeature.UNWRAP_ROOT_VALUE);
 
 		String json = SDNC_EVENT;
 		json = json.replace(EOL + "((EVENT-PARAMS))", "," + EOL + "    \"params\": " + PARAMS + EOL);
@@ -410,8 +411,8 @@ public class ObjectMappingTest {
 	public final void jsonToSDNCEventWithoutOptionalFields() throws Exception {
 		logTest();
 		ObjectMapper mapper = new ObjectMapper();
-		mapper.enable(SerializationConfig.Feature.WRAP_ROOT_VALUE);
-		mapper.enable(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE);
+		mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
+		mapper.enable(DeserializationFeature.UNWRAP_ROOT_VALUE);
 
 		// params are optional.
 		String json = SDNC_EVENT;
@@ -428,8 +429,8 @@ public class ObjectMappingTest {
 	public final void jsonFromSDNCEvent() throws Exception {
 		logTest();
 		ObjectMapper mapper = new ObjectMapper();
-		mapper.enable(SerializationConfig.Feature.WRAP_ROOT_VALUE);
-		mapper.enable(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE);
+		mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
+		mapper.enable(DeserializationFeature.UNWRAP_ROOT_VALUE);
 
 		// Convert source json string to object.
 		String json1 = SDNC_EVENT;

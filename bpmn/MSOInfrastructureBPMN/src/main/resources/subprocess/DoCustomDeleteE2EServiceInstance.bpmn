@@ -118,7 +118,7 @@ ddsi.preInitResourcesOperStatus(execution)]]></bpmn:script>
       <bpmn:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
-            <camunda:inputParameter name="url">${URN_mso_openecomp_adapters_db_endpoint}</camunda:inputParameter>
+            <camunda:inputParameter name="url">${URN_mso_adapters_openecomp_db_endpoint}</camunda:inputParameter>
             <camunda:inputParameter name="headers">
               <camunda:map>
                 <camunda:entry key="content-type">application/soap+xml</camunda:entry>

@@ -19,7 +19,7 @@
  */
 package org.openecomp.mso.adapters.sdncrest;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.xml.bind.annotation.XmlElement;
 import java.io.Serializable;
@@ -42,6 +42,12 @@ public class RequestInformation implements Serializable {
 	// NOTE: these are defined in the SDNC AID, but not used by MSO:
 	//     request-action
 	//     request-sub-action
+
+	// Identifies the request action
+	private String requestAction;
+
+	// Identifies the request sub action
+	private String requestSubAction;
 
 	public RequestInformation(String requestId, String source, String notificationUrl) {
 		this.requestId = requestId;
@@ -83,5 +89,27 @@ public class RequestInformation implements Serializable {
 	@JsonProperty("notificationUrl")
 	public void setNotificationUrl(String notificationUrl) {
 		this.notificationUrl = notificationUrl;
+	}
+
+	@JsonProperty("requestAction")
+	@XmlElement(name = "requestAction")
+	public String getRequestAction() {
+		return requestAction;
+	}
+
+	@JsonProperty("requestAction")
+	public void setRequestAction(String requestAction) {
+		this.requestAction = requestAction;
+	}
+
+	@JsonProperty("requestSubAction")
+	@XmlElement(name = "requestSubAction")
+	public String getRequestSubAction() {
+		return requestSubAction;
+	}
+
+	@JsonProperty("requestSubAction")
+	public void setRequestSubAction(String requestSubAction) {
+		this.requestSubAction = requestSubAction;
 	}
 }

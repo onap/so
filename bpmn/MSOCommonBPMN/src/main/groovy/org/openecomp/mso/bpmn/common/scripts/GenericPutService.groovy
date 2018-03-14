@@ -22,7 +22,7 @@ package org.openecomp.mso.bpmn.common.scripts
 import static org.apache.commons.lang3.StringUtils.*;
 
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution;
+import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.apache.commons.codec.binary.Base64
 import org.apache.commons.lang3.*
 
@@ -77,7 +77,8 @@ class GenericPutService extends AbstractServiceTaskProcessor{
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 
 
-	public void preProcessRequest(Execution execution) {
+	public void preProcessRequest(DelegateExecution execution) {
+		execution.setVariable("isDebugLogEnabled","true")
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		utils.log("DEBUG", " *** STARTED GenericPutService PreProcessRequest Process*** ", isDebugEnabled)
@@ -95,7 +96,7 @@ class GenericPutService extends AbstractServiceTaskProcessor{
 			String allottedResourceId = execution.getVariable("GENPS_allottedResourceId")
 			String tunnelXconnectId = execution.getVariable("GENPS_tunnelXconnectId")
 			String type = execution.getVariable("GENPS_type")
-
+			
 			if(type != null){
 				utils.log("DEBUG", "Incoming GENPS_type is: " + type, isDebugEnabled)
 				if(type.equalsIgnoreCase("service-instance")){
@@ -164,8 +165,6 @@ class GenericPutService extends AbstractServiceTaskProcessor{
 
 	}
 
-
-
 	/**
 	 * This method executes a Put call to AAI for the provided
 	 * service instance.
@@ -173,8 +172,8 @@ class GenericPutService extends AbstractServiceTaskProcessor{
 	 * @param - execution
 	 *
 	 */
-	public void putServiceInstance(Execution execution){
-		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+	public void putServiceInstance(DelegateExecution execution){
+		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")		
 		execution.setVariable("prefix",Prefix)
 		utils.log("DEBUG", " *** STARTED GenericPutService PutServiceInstance method*** ", isDebugEnabled)
 		try {
@@ -195,6 +194,7 @@ class GenericPutService extends AbstractServiceTaskProcessor{
 
 			String serviceType = execution.getVariable("GENPS_serviceType")
 			utils.log("DEBUG", " Incoming GENPS_serviceType is: " + serviceType, isDebugEnabled)
+			
 			String globalSubscriberId = execution.getVariable("GENPS_globalSubscriberId")
 			utils.log("DEBUG", "Incoming Global Subscriber Id is: " + globalSubscriberId, isDebugEnabled)
 
@@ -241,7 +241,6 @@ class GenericPutService extends AbstractServiceTaskProcessor{
 
 			execution.setVariable("GENPS_putServiceInstanceAaiPath", serviceAaiPath)
 			utils.log("DEBUG", "PUT Service Instance AAI Path is: " + "\n" + serviceAaiPath, isDebugEnabled)
-
 			APIResponse response = aaiUriUtil.executeAAIPutCall(execution, serviceAaiPath, payload)
 			int responseCode = response.getStatusCode()
 			execution.setVariable("GENPS_putServiceInstanceResponseCode", responseCode)
@@ -250,7 +249,6 @@ class GenericPutService extends AbstractServiceTaskProcessor{
 			String aaiResponse = response.getResponseBodyAsString()
 			aaiResponse = StringEscapeUtils.unescapeXml(aaiResponse)
 			execution.setVariable("GENPS_putServiceInstanceResponse", aaiResponse)
-
 
 			//Process Response
 			if(responseCode == 200 || responseCode == 201 || responseCode == 202 )
@@ -274,7 +272,5 @@ class GenericPutService extends AbstractServiceTaskProcessor{
 		}
 		utils.log("DEBUG", " *** COMPLETED GenericPutService PutServiceInstance Process*** ", isDebugEnabled)
 	}
-
-
 
 }

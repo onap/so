@@ -24,24 +24,23 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping package="org.openecomp.mso.requestsdb">
-   <class name="OperationStatus" table="OPERATION_STATUS">
-      <meta attribute="class-description">
-         This class describes a operation status
-      </meta>
-        <composite-id>
-             <key-property name="serviceId" type="string" column="SERVICE_ID"/>
-             <key-property name="operationId" column="OPERATION_ID" type="string" length="256"/>
-        </composite-id>
-        <property name="serviceName" column="SERVICE_NAME" type="string" length="256"/>
-        <property name="operation" column="OPERATION_TYPE" type="string" length="256"/>
-        <property name="userId" column="USER_ID" type="string" length="256"/>
-        <property name="result" column="RESULT" type="string" length="256"/>
-        <property name="operationContent" column="OPERATION_CONTENT" type="string" length="256"/>
-        <property name="progress" column="PROGRESS" type="string" length="256"/>
-        <property name="reason" column="REASON" type="string" length="256"/>
-        <property name="operateAt" type="timestamp">
-          <column name="OPERATE_AT"/>
+	<class name="OperationStatus" table="OPERATION_STATUS">
+		<meta attribute="class-description">
+			This class describes a operation status
+		</meta>
+        <composite-id>  
+             <key-property name="serviceId" type="string" column="SERVICE_ID"/>  
+             <key-property name="operationId" column="OPERATION_ID" type="string" length="256"/>  
+        </composite-id> 
+		<property name="operation" column="OPERATION_TYPE" type="string" length="256"/>		
+		<property name="userId" column="USER_ID" type="string" length="256"/>		
+		<property name="result" column="RESULT" type="string" length="256"/>
+		<property name="operationContent" column="OPERATION_CONTENT" type="string" length="256"/>
+		<property name="progress" column="PROGRESS" type="string" length="256"/>
+		<property name="reason" column="REASON" type="string" length="256"/>
+		<property name="operateAt" type="timestamp" generated="insert" insert="false" update="false" not-null="true">
+          <column name="OPERATE_AT" default="CURRENT_TIMESTAMP"/>
         </property>
-        <property name="finishedAt" column="FINISHED_AT" type="timestamp" />
-   </class>
+		<property name="finishedAt" column="FINISHED_AT" type="timestamp" generated="always" insert="false" update="false"/>	
+	</class>
 </hibernate-mapping>

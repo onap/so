@@ -21,7 +21,7 @@ package org.openecomp.mso.bpmn.common.scripts
 import java.io.Serializable;
 
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.springframework.web.util.UriUtils
 
 import org.openecomp.mso.bpmn.core.json.JsonUtils
@@ -37,7 +37,7 @@ public class GenerateVfModuleName extends AbstractServiceTaskProcessor{
 
 	
 	
-	public void preProcessRequest(Execution execution) {
+	public void preProcessRequest(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		
 		try {
@@ -58,7 +58,7 @@ public class GenerateVfModuleName extends AbstractServiceTaskProcessor{
 	}
 
 
-	public void queryAAI(Execution execution) {
+	public void queryAAI(DelegateExecution execution) {
 		def isDebugLogEnabled=execution.getVariable("isDebugLogEnabled")
 		def method = getClass().getSimpleName() + '.queryAAI(' +
 			'execution=' + execution.getId() +
@@ -150,7 +150,7 @@ public class GenerateVfModuleName extends AbstractServiceTaskProcessor{
 		
 	}
 					
-	public void generateName (Execution execution) {
+	public void generateName (DelegateExecution execution) {
 		def isDebugLogEnabled=execution.getVariable("isDebugLogEnabled")
 		def method = getClass().getSimpleName() + '.generateName() ' +
 			'execution=' + execution.getId() +

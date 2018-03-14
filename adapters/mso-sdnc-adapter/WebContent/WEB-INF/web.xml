@@ -26,6 +26,10 @@
     <param-value>org.openecomp.mso.logger.MsoLoggingServlet,org.openecomp.mso.adapters.sdnc.notify.SDNCNotifyResource,org.openecomp.mso.adapters.sdnc.impl.SDNCAdapterRestImpl,org.openecomp.mso.MsoStatusHandler,org.openecomp.mso.adapters.sdnc.sdncrest.SNIROResponse,org.openecomp.mso.adapters.sdnc.sdncrest.SDNCAdapterRest</param-value>
   </context-param>
   <context-param>
+    <param-name>resteasy.providers</param-name>
+    <param-value>org.openecomp.mso.adapters.providers.JettisonStyleMapperProvider</param-value>
+  </context-param>
+  <context-param>
     <param-name>resteasy.servlet.mapping.prefix</param-name>
     <param-value>/rest</param-value>
   </context-param>

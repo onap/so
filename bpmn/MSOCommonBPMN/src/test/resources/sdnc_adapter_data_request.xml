@@ -1,0 +1,33 @@
+<SDNCRequestData>
+		<request-information>
+			<request-id>ca424e60-cb22-43c5-88f9-ed68e17cebe2</request-id>
+			<source>MSO</source>
+			<notification-url />
+			<order-number />
+			<order-version />
+			<request-action>a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb</request-action>
+		</request-information>
+		<service-information>
+			<service-id>a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb</service-id>
+			<subscription-service-type>MSO-dev-service-type
+			</subscription-service-type>
+			<ecomp-model-information>
+				<model-invariant-uuid>de19ae10-9a25-11e7-abc4-cec278b6b50a</model-invariant-uuid>
+				<model-uuid>ee938612-9a25-11e7-abc4-cec278b6b50a</model-uuid>
+				<model-version>1.0</model-version>
+				<model-name>MSOTADevInfra_Configuration_Service</model-name>
+			</ecomp-model-information>
+			<service-instance-id>14c5c14f-6caf-4028-9788-bb5ec9e8f9b8</service-instance-id>
+			<subscriber-name />
+			<global-customer-id>MSO_1610_dev</global-customer-id>
+		</service-information>
+		<service-request-input>
+			<service-instance-name>MSO-DEV-SI-1802-PCM-926-100</service-instance-name>
+			<service-input-parameters>
+				<param>
+					<name>paramName</name>
+					<value>paramValue</value>
+				</param>
+			</service-input-parameters>
+		</service-request-input>
+	</SDNCRequestData>

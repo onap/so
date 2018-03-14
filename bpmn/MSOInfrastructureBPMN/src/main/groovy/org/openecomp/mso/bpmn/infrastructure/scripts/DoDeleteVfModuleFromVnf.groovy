@@ -4,7 +4,7 @@ import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.openecomp.mso.bpmn.common.scripts.AaiUtil
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
 import org.openecomp.mso.bpmn.common.scripts.SDNCAdapterUtils
@@ -27,13 +27,13 @@ public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
 
-	public void initProcessVariables(Execution execution) {
+	public void initProcessVariables(DelegateExecution execution) {
 		execution.setVariable("prefix",Prefix)
 		execution.setVariable("DDVFMV_contrailNetworkPolicyFqdnList", null)
 	}
 
 	// parse the incoming request
-	public void preProcessRequest(Execution execution) {
+	public void preProcessRequest(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		initProcessVariables(execution)
 
@@ -100,7 +100,7 @@ public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 		}
 	}
 	
-	public void queryAAIForVfModule(Execution execution) {
+	public void queryAAIForVfModule(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.queryAAIForVfModule(' +
 			'execution=' + execution.getId() +
 			')'
@@ -155,7 +155,7 @@ public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
-	public void validateVfModule(Execution execution) {
+	public void validateVfModule(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.validateVfModule(' +
 			'execution=' + execution.getId() +
 			')'
@@ -200,7 +200,7 @@ public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 	}
 
 
-	public void preProcessSDNCDeactivateRequest(Execution execution){
+	public void preProcessSDNCDeactivateRequest(DelegateExecution execution){
 		def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 		logDebug(" ======== STARTED preProcessSDNCDeactivateRequest ======== ", isDebugLogEnabled)
@@ -224,7 +224,7 @@ public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 		logDebug("======== COMPLETED preProcessSDNCDeactivateRequest ======== ", isDebugLogEnabled)
 	}
 
-	public void preProcessSDNCUnassignRequest(Execution execution) {
+	public void preProcessSDNCUnassignRequest(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.preProcessSDNCUnassignRequest(' +
 			'execution=' + execution.getId() +
 			')'
@@ -248,7 +248,7 @@ public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 		logDebug("======== COMPLETED  preProcessSDNCUnassignRequest Process ======== ", isDebugLogEnabled)
 	}
 
-	public String buildSDNCRequest(Execution execution, String svcInstId, String action){
+	public String buildSDNCRequest(DelegateExecution execution, String svcInstId, String action){
 	
 			String uuid = execution.getVariable('testReqId') // for junits
 			if(uuid==null){
@@ -306,7 +306,7 @@ public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 		return sdncRequest
 	}
 	
-	public void validateSDNCResponse(Execution execution, String response, String method){
+	public void validateSDNCResponse(DelegateExecution execution, String response, String method){
 		def isDebugLogEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		logDebug(" *** STARTED ValidateSDNCResponse Process*** ", isDebugLogEnabled)
@@ -334,7 +334,7 @@ public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 
 	// parse the incoming DELETE_VF_MODULE request
 	// and formulate the outgoing VnfAdapterDeleteV1 request
-	public void prepVNFAdapterRequest(Execution execution) {
+	public void prepVNFAdapterRequest(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		def requestId = UUID.randomUUID().toString()
 		def origRequestId = execution.getVariable('requestId')
@@ -377,7 +377,7 @@ public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 	
 	// generates a WorkflowException if
 	//		-
-	public void handleDoDeleteVfModuleFailure(Execution execution) {
+	public void handleDoDeleteVfModuleFailure(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("ERROR", "AAI error occurred deleting the Generic Vnf: "
 			+ execution.getVariable("DDVFMV_deleteGenericVnfResponse"), isDebugEnabled)
@@ -387,7 +387,7 @@ public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 		execution.setVariable("WorkflowException", exception)
 	}
 	
-	public void postProcessVNFAdapterRequest(Execution execution) {
+	public void postProcessVNFAdapterRequest(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.postProcessVNFAdapterRequest(' +
 			'execution=' + execution.getId() +
 			')'
@@ -455,7 +455,7 @@ public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 		logDebug(" *** COMPLETED postProcessVnfAdapterResponse Process*** ", isDebugLogEnabled)
 	}
 
-	public void deleteNetworkPoliciesFromAAI(Execution execution) {
+	public void deleteNetworkPoliciesFromAAI(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.deleteNetworkPoliciesFromAAI(' +
 		'execution=' + execution.getId() +
 		')'
@@ -579,7 +579,7 @@ public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 	}	
 	
 	// and formulate the outgoing DeleteAAIVfModuleRequest request
-	public void prepDeleteAAIVfModule(Execution execution) {
+	public void prepDeleteAAIVfModule(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 
 		def vnfId = execution.getVariable("vnfId")

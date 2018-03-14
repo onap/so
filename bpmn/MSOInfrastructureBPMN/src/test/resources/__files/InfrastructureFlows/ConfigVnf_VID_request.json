@@ -1,0 +1,39 @@
+{
+"requestDetails": {
+"modelInfo": {
+"modelType": "vnf",
+"modelInvariantUuid": "ff5256d2-5a33-55df-13ab-12abad84e7ff",
+"modelUuid": "fe6478e5-ea33-3346-ac12-ab121484a3fe",
+"modelName": "vSAMP12",
+"modelVersion": "1.0",
+"modelCustomizationUuid": "MODEL-ID-1234"
+},
+"cloudConfiguration": {
+"lcpCloudRegionId": "mdt1",
+"tenantId": "fba1bd1e195a404cacb9ce17a9b2b421"
+},
+"requestInfo": {
+"instanceName": "STMTN",
+"instanceId": "skask",
+"source": "VID",
+"suppressRollback": true
+},
+"relatedInstanceList": [
+{
+"relatedInstance": {
+"instanceId": "MIS%2F1604%2F0026%2FSW_INTERNET",
+"modelInfo": {
+"modelType": "service",
+"modelInvariantUuid": "995256d2-5a33-55df-13ab-12abad84e7ff",
+"modelUuid": "ab6478e5-ea33-3346-ac12-ab121484a3fe",
+"modelName": "ServicevSAMP12",
+"modelVersion": "1.0"
+}
+}
+}
+],
+"requestParameters": {
+"payload": "{\"request-parameters\":{\"host-ip-address\":\"10.10.10.10\"},\"configuration-         parameters\":{\"name1\":\"value1\",\"name2\":\"value2\"}}"
+}
+}
+}

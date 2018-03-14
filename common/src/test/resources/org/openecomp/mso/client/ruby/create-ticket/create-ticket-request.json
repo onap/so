@@ -1,0 +1,15 @@
+{
+	"event": {
+	"msoRequest": {
+		"requestClientName": "MSO",
+		"requestId": "abc123",
+		"requestTime": "test-time",
+		"sourceName": "source-name",
+		"reason": "reason",
+		"action": "Create Ticket",
+		"workflowId": "work-flow-Id",
+		"notification": "notification"
+	}
+}
+}
+

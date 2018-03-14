@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.apache.commons.lang3.*
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.web.util.UriUtils
@@ -50,7 +50,7 @@ public class UpdateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 	JsonUtils jsonUtil = new JsonUtils()
 
 
-	public void preProcessRequest (Execution execution) {
+	public void preProcessRequest (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		String msg = ""
@@ -139,7 +139,7 @@ public class UpdateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 		utils.log("INFO"," ***** Exit preProcessRequest *****",  isDebugEnabled)
 	}
 
-	public void sendSyncResponse (Execution execution) {
+	public void sendSyncResponse (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO", " *** sendSyncResponse *** ", isDebugEnabled)
 
@@ -161,7 +161,7 @@ public class UpdateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 	}
 
 
-	public void sendSyncError (Execution execution) {
+	public void sendSyncError (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO", " *** sendSyncError *** ", isDebugEnabled)
 
@@ -189,7 +189,7 @@ public class UpdateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 
 	}
 
-	public void prepareCompletionRequest (Execution execution) {
+	public void prepareCompletionRequest (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO", " *** prepareCompletion *** ", isDebugEnabled)
 
@@ -225,7 +225,7 @@ public class UpdateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 		utils.log("INFO", "*** Exit prepareCompletionRequest ***", isDebugEnabled)
 	}
 
-	public void prepareFalloutRequest(Execution execution){
+	public void prepareFalloutRequest(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO", " *** prepareFalloutRequest *** ", isDebugEnabled)
 

@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 import org.openecomp.mso.db.catalog.beans.HeatTemplateParam;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.yaml.snakeyaml.Yaml;
 

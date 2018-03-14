@@ -112,30 +112,8 @@ CreateNetworkInstance.prepareCompletion(execution)]]></bpmn2:script>
 def CreateNetworkInstance = new CreateNetworkInstance()
 CreateNetworkInstance.prepareDBRequestError(execution)]]></bpmn2:script>
       </bpmn2:scriptTask>
-      <bpmn2:serviceTask id="ServiceTask_0sztuly" name="Call DB Infra Error Update">
-        <bpmn2:extensionElements>
-          <camunda:connector>
-            <camunda:inputOutput>
-              <camunda:inputParameter name="url">${URN_mso_adapters_openecomp_db_endpoint}</camunda:inputParameter>
-              <camunda:inputParameter name="payload">${CRENI_createDBRequest}</camunda:inputParameter>
-              <camunda:inputParameter name="headers">
-                <camunda:map>
-                  <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                  <camunda:entry key="Authorization">#{BasicAuthHeaderValueDB}</camunda:entry>
-                </camunda:map>
-              </camunda:inputParameter>
-              <camunda:inputParameter name="method">POST</camunda:inputParameter>
-              <camunda:outputParameter name="CRENI_createDBResponse">${response}</camunda:outputParameter>
-              <camunda:outputParameter name="CRENI_dbReturnCode">${statusCode}</camunda:outputParameter>
-            </camunda:inputOutput>
-            <camunda:connectorId>http-connector</camunda:connectorId>
-          </camunda:connector>
-        </bpmn2:extensionElements>
-        <bpmn2:incoming>SequenceFlow_1s5niqb</bpmn2:incoming>
-        <bpmn2:outgoing>SequenceFlow_06s5eu4</bpmn2:outgoing>
-      </bpmn2:serviceTask>
       <bpmn2:scriptTask id="ScriptTask_1hql91g" name="Prepare FalloutHandler" scriptFormat="groovy">
-        <bpmn2:incoming>SequenceFlow_06s5eu4</bpmn2:incoming>
+        <bpmn2:incoming>SequenceFlow_1s5niqb</bpmn2:incoming>
         <bpmn2:outgoing>SequenceFlow_1reso2f</bpmn2:outgoing>
         <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
 def CreateNetworkInstance = new CreateNetworkInstance()
@@ -153,8 +131,7 @@ CreateNetworkInstance.buildErrorResponse(execution)]]></bpmn2:script>
         <bpmn2:incoming>SequenceFlow_1reso2f</bpmn2:incoming>
         <bpmn2:outgoing>SequenceFlow_1ghqolv</bpmn2:outgoing>
       </bpmn2:callActivity>
-      <bpmn2:sequenceFlow id="SequenceFlow_1s5niqb" sourceRef="ScriptTask_1akfe0b" targetRef="ServiceTask_0sztuly" />
-      <bpmn2:sequenceFlow id="SequenceFlow_06s5eu4" sourceRef="ServiceTask_0sztuly" targetRef="ScriptTask_1hql91g" />
+      <bpmn2:sequenceFlow id="SequenceFlow_1s5niqb" sourceRef="ScriptTask_1akfe0b" targetRef="ScriptTask_1hql91g" />
       <bpmn2:sequenceFlow id="SequenceFlow_1reso2f" sourceRef="ScriptTask_1hql91g" targetRef="CallActivity_1ksm1dz" />
       <bpmn2:sequenceFlow id="SequenceFlow_1ghqolv" sourceRef="CallActivity_1ksm1dz" targetRef="EndEvent_1rqikib" />
       <bpmn2:sequenceFlow id="SequenceFlow_0n4umjf" sourceRef="StartEvent_110xxgx" targetRef="ScriptTask_1akfe0b" />
@@ -273,10 +250,7 @@ CreateNetworkInstance.sendSyncResponse(execution)]]></bpmn2:script>
         <dc:Bounds x="1071" y="57" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ScriptTask_1akfe0b_di" bpmnElement="ScriptTask_1akfe0b">
-        <dc:Bounds x="258" y="520" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_0sztuly_di" bpmnElement="ServiceTask_0sztuly">
-        <dc:Bounds x="453" y="520" width="100" height="80" />
+        <dc:Bounds x="300" y="520" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0xxvjxq_di" bpmnElement="SequenceFlow_0xxvjxq">
         <di:waypoint xsi:type="dc:Point" x="1007" y="97" />
@@ -286,7 +260,7 @@ CreateNetworkInstance.sendSyncResponse(execution)]]></bpmn2:script>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_1hql91g_di" bpmnElement="ScriptTask_1hql91g">
-        <dc:Bounds x="632" y="520" width="100" height="80" />
+        <dc:Bounds x="543" y="520" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="CallActivity_1ksm1dz_di" bpmnElement="CallActivity_1ksm1dz">
         <dc:Bounds x="807" y="520" width="100" height="80" />
@@ -307,24 +281,17 @@ CreateNetworkInstance.sendSyncResponse(execution)]]></bpmn2:script>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1s5niqb_di" bpmnElement="SequenceFlow_1s5niqb">
-        <di:waypoint xsi:type="dc:Point" x="358" y="560" />
-        <di:waypoint xsi:type="dc:Point" x="453" y="560" />
+        <di:waypoint xsi:type="dc:Point" x="400" y="560" />
+        <di:waypoint xsi:type="dc:Point" x="543" y="560" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="406" y="545" width="0" height="0" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_06s5eu4_di" bpmnElement="SequenceFlow_06s5eu4">
-        <di:waypoint xsi:type="dc:Point" x="553" y="560" />
-        <di:waypoint xsi:type="dc:Point" x="632" y="560" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="593" y="545" width="0" height="0" />
+          <dc:Bounds x="472" y="545" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1reso2f_di" bpmnElement="SequenceFlow_1reso2f">
-        <di:waypoint xsi:type="dc:Point" x="732" y="560" />
+        <di:waypoint xsi:type="dc:Point" x="643" y="560" />
         <di:waypoint xsi:type="dc:Point" x="807" y="560" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="770" y="545" width="0" height="0" />
+          <dc:Bounds x="725" y="545" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1ghqolv_di" bpmnElement="SequenceFlow_1ghqolv">
@@ -343,9 +310,9 @@ CreateNetworkInstance.sendSyncResponse(execution)]]></bpmn2:script>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0n4umjf_di" bpmnElement="SequenceFlow_0n4umjf">
         <di:waypoint xsi:type="dc:Point" x="188" y="560" />
-        <di:waypoint xsi:type="dc:Point" x="258" y="560" />
+        <di:waypoint xsi:type="dc:Point" x="300" y="560" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="223" y="545" width="0" height="0" />
+          <dc:Bounds x="244" y="545" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0rt8wax_di" bpmnElement="SequenceFlow_0rt8wax">

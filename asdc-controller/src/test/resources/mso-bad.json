@@ -1,15 +1,13 @@
 {
-  "asdc-connections":{,
-    "asdc-controller1":{
-        "user": "testuser",
-        "consumerGroup": "consumerGroup",
-        "consumerId": "consumerId",
-        "environmentName": "environmentName",
-        "asdcAddress": "hostname1",
-
-        "pollingInterval":10,
-        "pollingTimeout":30
-        
-    }
-  }
+	"asdc-connections": {
+		"asdc-controller1": {
+			"user": "testuser",
+			"consumerGroup": "consumerGroup",
+			"consumerId": "consumerId",
+			"environmentName": "environmentName",
+			"asdcAddress": "hostname1",
+			"pollingInterval": 10,
+			"pollingTimeout": 30
+		}
+	}
 }

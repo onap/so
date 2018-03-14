@@ -20,15 +20,16 @@
 
 package org.openecomp.mso.apihandler.common;
 
-import org.openecomp.mso.logger.MsoLogger;
+import java.io.IOException;
+
+import javax.xml.bind.DatatypeConverter;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-
-import javax.xml.bind.DatatypeConverter;
-import java.io.IOException;
+import org.openecomp.mso.logger.MsoLogger;
 
 public class CamundaTaskClient extends RequestClient{
 	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.APIH);
@@ -53,7 +54,7 @@ public class CamundaTaskClient extends RequestClient{
 				String userCredentials = getEncryptedPropValue(encryptedCredentials, CommonConstants.DEFAULT_BPEL_AUTH, CommonConstants.ENCRYPTION_KEY);
 				if(userCredentials != null){
 					post.addHeader("Authorization", "Basic " + DatatypeConverter
-                        .printBase64Binary(userCredentials.getBytes()));
+						.printBase64Binary(userCredentials.getBytes()));
 				}
 			}
 		}
@@ -73,7 +74,7 @@ public class CamundaTaskClient extends RequestClient{
 	@Override
 	public HttpResponse post(String requestId, boolean isBaseVfModule,
 			int recipeTimeout, String requestAction, String serviceInstanceId,
-			String vnfId, String vfModuleId, String volumeGroupId, String networkId,
+			String vnfId, String vfModuleId, String volumeGroupId, String networkId, String configurationId,
 			String serviceType, String vnfType, String vfModuleType, String networkType,
 			String requestDetails, String recipeParamXsd)
 					throws ClientProtocolException, IOException{
@@ -91,8 +92,8 @@ public class CamundaTaskClient extends RequestClient{
 			if(encryptedCredentials != null){
 				String userCredentials = getEncryptedPropValue(encryptedCredentials, CommonConstants.DEFAULT_BPEL_AUTH, CommonConstants.ENCRYPTION_KEY);
 				if(userCredentials != null){
-					get.addHeader("Authorization", "Basic " + DatatypeConverter
-                        .printBase64Binary(userCredentials.getBytes()));
+					get.addHeader("Authorization", "Basic " + new String(DatatypeConverter
+						.printBase64Binary(userCredentials.getBytes())));
 				}
 			}
 		}

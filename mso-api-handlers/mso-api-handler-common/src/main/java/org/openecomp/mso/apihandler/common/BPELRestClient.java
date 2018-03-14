@@ -87,7 +87,7 @@ public class BPELRestClient extends RequestClient {
     @Override
     public HttpResponse post(String requestId, boolean isBaseVfModule,
                              int recipeTimeout, String requestAction, String serviceInstanceId,
-                             String vnfId, String vfModuleId, String volumeGroupId, String networkId,
+                             String vnfId, String vfModuleId, String volumeGroupId, String networkId, String configurationId,
                              String serviceType, String vnfType, String vfModuleType, String networkType,
                              String requestDetails, String recipeParamXsd) {
         return null;

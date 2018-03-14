@@ -30,10 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParseException;
-
 import org.openecomp.mso.cloud.CloudConfig;
 import org.openecomp.mso.cloud.CloudConfigFactory;
 import org.openecomp.mso.cloud.CloudIdentity;
@@ -55,6 +51,10 @@ import org.openecomp.mso.openstack.exceptions.MsoTenantNotFound;
 import org.openecomp.mso.properties.MsoJavaProperties;
 import org.openecomp.mso.properties.MsoPropertiesException;
 import org.openecomp.mso.properties.MsoPropertiesFactory;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.woorea.openstack.base.client.OpenStackConnectException;
 import com.woorea.openstack.base.client.OpenStackRequest;
 import com.woorea.openstack.base.client.OpenStackResponseException;
@@ -359,6 +359,21 @@ public class MsoHeatUtils extends MsoCommonUtils {
                 stack.setFiles (heatFiles);
             }
         }
+        
+        // 1802 - attempt to add better formatted printout of request to openstack
+        try {
+        	Map<String, Object> inputs = new HashMap<String, Object>();
+        	for (String key : stackInputs.keySet()) {
+        		Object o = (Object) stackInputs.get(key);
+        		if (o != null) {
+        			inputs.put(key, o);
+        		}
+        	}
+        	LOGGER.debug(this.printStackRequest(tenantId, heatFiles, files, environment, inputs, stackName, heatTemplate, timeoutMinutes, backout, cloudSiteId));
+        } catch (Exception e) {
+        	// that's okay - this is a nice-to-have
+        	LOGGER.debug("(had an issue printing nicely formatted request to debuglog) " + e.getMessage());
+        }
 
         Stack heatStack = null;
         try {
@@ -372,7 +387,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
             request.header ("X-Auth-User", cloudIdentity.getMsoId ());
             request.header ("X-Auth-Key", cloudIdentity.getMsoPass ());
             LOGGER.debug ("headers added, about to executeAndRecordOpenstackRequest");
-            LOGGER.debug(this.requestToStringBuilder(stack).toString());
+            //LOGGER.debug(this.requestToStringBuilder(stack).toString());
             // END - try to fix X-Auth-User
             heatStack = executeAndRecordOpenstackRequest (request, msoProps);
         } catch (OpenStackResponseException e) {
@@ -1416,7 +1431,7 @@ public class MsoHeatUtils extends MsoCommonUtils {
      * (heat variable type) -> java Object type
      * string -> String
      * number -> Integer
-     * json -> JsonNode
+     * json -> JsonNode XXX Removed with MSO-1475 / 1802
      * comma_delimited_list -> ArrayList
      * boolean -> Boolean
      * if any of the conversions should fail, we will default to adding it to the inputs
@@ -1506,26 +1521,14 @@ public class MsoHeatUtils extends MsoCommonUtils {
 						newInputs.put(key, integerString);
 				}
 			} else if ("json".equalsIgnoreCase(type)) {
+				// MSO-1475 - Leave this as a string now
 				String jsonString = inputs.get(key);
-    			JsonNode jsonNode = null;
-    			try {
-    				jsonNode = new ObjectMapper().readTree(jsonString);
-    			} catch (Exception e) {
-					LOGGER.debug("Unable to convert " + jsonString + " to a JsonNode!!", e);
-					jsonNode = null;
-    			}
-    			if (jsonNode != null) {
-    				if (alias)
-    					newInputs.put(realName, jsonNode);
-    				else
-    					newInputs.put(key, jsonNode);
-    			}
-    			else {
-    				if (alias)
-    					newInputs.put(realName, jsonString);
-    				else
-    					newInputs.put(key, jsonString);
-    			}
+				LOGGER.debug("Skipping conversion to jsonNode...");
+    			if (alias)
+    				newInputs.put(realName, jsonString);
+    			else
+    				newInputs.put(key, jsonString);
+    			//}
 			} else if ("comma_delimited_list".equalsIgnoreCase(type)) {
 				String commaSeparated = inputs.get(key);
 				try {
@@ -1559,5 +1562,85 @@ public class MsoHeatUtils extends MsoCommonUtils {
 		}
 		return newInputs;
 	}
-
+	
+	
+	/*
+	 * Create a string suitable for being dumped to a debug log that creates a 
+	 * pseudo-JSON request dumping what's being sent to Openstack API in the create or update request
+	 */
+	
+	private String printStackRequest(String tenantId, 
+			Map<String, Object> heatFiles,
+			Map<String, Object> nestedTemplates,
+			String environment,
+			Map<String, Object> inputs, 
+			String vfModuleName,
+			String template,
+			int timeoutMinutes,
+			boolean backout,
+			String cloudSiteId) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("CREATE STACK REQUEST (formatted for readability)\n");
+		sb.append("tenant=" + tenantId + ", cloud=" + cloudSiteId);
+		sb.append("{\n");
+		sb.append("  \"stack_name\": \"" + vfModuleName + "\",\n");
+		sb.append("  \"disable_rollback\": " + backout + ",\n");
+		sb.append("  \"timeout_mins\": " + timeoutMinutes + ",\n"); 
+		sb.append("  \"template\": {\n");
+		sb.append(template);
+		sb.append("  },\n");
+		sb.append("  \"environment\": {\n");
+		if (environment == null) 
+			sb.append("<none>");
+		else 
+			sb.append(environment);
+		sb.append("  },\n");
+		sb.append("  \"files\": {\n");
+		int filesCounter = 0;
+		if (heatFiles != null) {
+			for (String key : heatFiles.keySet()) {
+				filesCounter++;
+				if (filesCounter > 1) {
+					sb.append(",\n");
+				}
+				sb.append("    \"" + key + "\": {\n");
+				sb.append(heatFiles.get(key).toString() + "\n    }");
+			}
+		}
+		if (nestedTemplates != null) {
+			for (String key : nestedTemplates.keySet()) {
+				filesCounter++;
+				if (filesCounter > 1) {
+					sb.append(",\n");
+				}
+				sb.append("    \"" + key + "\": {\n");
+				sb.append(nestedTemplates.get(key).toString() + "\n    }");
+			}
+		}
+		sb.append("\n  },\n");
+		sb.append("  \"parameters\": {\n");
+		int paramCounter = 0;
+		for (String name : inputs.keySet()) {
+			paramCounter++;
+			if (paramCounter > 1) {
+				sb.append(",\n");
+			}
+			Object o = inputs.get(name);
+			if (o instanceof java.lang.String) {
+				sb.append("    \"" + name + "\": \"" + inputs.get(name).toString() + "\"");
+			} else if (o instanceof Integer) {
+				sb.append("    \"" + name + "\": " + inputs.get(name).toString() );
+			} else if (o instanceof ArrayList) {
+				sb.append("    \"" + name + "\": " + inputs.get(name).toString() );
+			} else if (o instanceof Boolean) {
+				sb.append("    \"" + name + "\": " + inputs.get(name).toString() );
+			} else {
+				sb.append("    \"" + name + "\": " + "\"(there was an issue trying to dump this value...)\"" );
+			}
+		}
+		sb.append("\n  }\n}\n");
+		
+		return sb.toString();
+	}
+	
 }

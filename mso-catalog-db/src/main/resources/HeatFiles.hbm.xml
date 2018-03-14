@@ -36,7 +36,7 @@
         <property name="version" type="java.lang.String" length="20" not-null="true">
             <column name="VERSION" />
         </property>
-        <property name="fileBody" type="text" not-null="true">
+        <property name="fileBody" type="java.lang.String" not-null="true">
             <column name="BODY" />
         </property>
         <property name="created" type="java.sql.Timestamp" generated="insert" update="false" insert="false" not-null="true">

@@ -68,6 +68,7 @@ exceptionUtil.processJavaException(execution)]]></bpmn2:script>
         <camunda:in source="sdncVersion" target="sdncVersion" />
         <camunda:in source="DUVAM_vfModuleModelInfo" target="vfModuleModelInfo" />
         <camunda:in source="usePreload" target="usePreload" />
+        <camunda:in source="vfModuleInputParams" target="vfModuleInputParams" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_04o61yk</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_1p4ycii</bpmn2:outgoing>
