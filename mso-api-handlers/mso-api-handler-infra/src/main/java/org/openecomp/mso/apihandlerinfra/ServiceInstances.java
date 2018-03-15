@@ -510,6 +510,7 @@ public class ServiceInstances {
 		try {
 			sir = convertJsonToServiceInstanceRequest(requestJSON, action, startTime, sir, msoRequest);
 		} catch(Exception e) {
+			msoLogger.debug("Exception occurred while mapping of request to JSON object ", e);
 			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_REQUEST, MsoException.ServiceException,
 					"Mapping of request to JSON object failed.  " + e.getMessage(),
 					ErrorNumbers.SVC_BAD_PARAMETER, null);
@@ -520,6 +521,7 @@ public class ServiceInstances {
 		try {
 			parseRequest(requestJSON, action, instanceIdMap, version, startTime, sir, msoRequest);
 		} catch(Exception e) {
+			msoLogger.debug("Exception occurred while logging ", e);
 			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_REQUEST, MsoException.ServiceException,
 					"Error parsing request.  " + e.getMessage(),
 					ErrorNumbers.SVC_BAD_PARAMETER, null);
@@ -725,6 +727,7 @@ public class ServiceInstances {
 		try {
 			createRequestRecord(action, startTime, msoRequest);
 		} catch(Exception e) {
+			msoLogger.debug("Exception occurred while creating record in DB", e);
 			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_INTERNAL_SERVER_ERROR,
 																	MsoException.ServiceException,
 																	"Exception while creating record in DB " + e.getMessage(),
