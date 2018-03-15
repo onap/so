@@ -4205,28 +4205,6 @@ public class CatalogDatabase implements Closeable {
           }
     }
 
-    @Deprecated
-    public void saveNestedHeatTemplate (int parentTemplateId, HeatTemplate childTemplate, String yamlFile) {
-    	/*
-        long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - save nested Heat template with name "
-                                      + childTemplate.getTemplateName ());
-        try {
-
-	        saveHeatTemplate(childTemplate, childTemplate.getParameters());
-	        if (getNestedHeatTemplate(parentTemplateId,childTemplate.getId()) == null) {
-	            HeatNestedTemplate nestedTemplate = new HeatNestedTemplate ();
-	            nestedTemplate.setParentTemplateId (parentTemplateId);
-	            nestedTemplate.setChildTemplateId (childTemplate.getId ());
-	            nestedTemplate.setProviderResourceFile (yamlFile);
-	            session.save (nestedTemplate);
-        	}
-        } finally {
-            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "saveNestedHeatTemplate", null);
-        }
-        */
-    }
-    
     // 1707
     public void saveNestedHeatTemplate (String parentTemplateId, HeatTemplate childTemplate, String yamlFile) {
         long startTime = System.currentTimeMillis ();
@@ -4357,26 +4335,6 @@ public class CatalogDatabase implements Closeable {
          }
     }
 
-    @Deprecated
-    public void saveVfModuleToHeatFiles (int parentVfModuleId, HeatFiles childFile) {
-    	/*
-        long startTime = System.currentTimeMillis ();
-        LOGGER.debug ("Catalog database - save Heat File to VFmodule link "
-                                      + childFile.getFileName());
-        try {
-            saveHeatFiles (childFile);
-            VfModuleToHeatFiles vfModuleToHeatFile = new VfModuleToHeatFiles ();
-	        vfModuleToHeatFile.setVfModuleId(parentVfModuleId);
-	        vfModuleToHeatFile.setHeatFilesId(childFile.getId());
-
-	        session.save (vfModuleToHeatFile);
-
-        } finally {
-            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "saveVfModuleToHeatFiles", null);
-        }
-        */
-    }
-    
     public void saveVfModuleToHeatFiles (String parentVfModuleId, HeatFiles childFile) {
         long startTime = System.currentTimeMillis ();
         LOGGER.debug ("Catalog database - save Heat File to VFmodule link "
