@@ -19,16 +19,11 @@
  */
 package org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans;
 
-/**
- * 
- * <br>
- * <p>
- * </p>
- * 
- * @author
- * @version     ONAP Amsterdam Release  2017-10-18
- */
+import org.codehaus.jackson.annotate.JsonProperty;
+
 public class VimLocation {
+
+    @JsonProperty("vimId")
     private String vimId;
 
     

@@ -60,6 +60,84 @@ import mockit.MockUp;
 
 public class E2EServiceInstancesTest {
 
+	String jsonBody = "{" +
+			"\"service\": {" +
+			"\"name\": \"so_test4\"," +
+			"\"description\": \"so_test2\"," +
+			"\"serviceInvariantUuid\": \"60c3e96e-0970-4871-b6e0-3b6de7561519\"," +
+			"\"serviceUuid\": \"592f9437-a9c0-4303-b9f6-c445bb7e9814\"," +
+			"\"globalSubscriberId\": \"123457\"," +
+			"\"serviceType\": \"voLTE\"," +
+			"\"parameters\": {" +
+			"\"resources\": [" +
+			"{" +
+			"\"resourceName\": \"vIMS\"," +
+			"\"resourceInvariantUuid\": \"60c3e96e-0970-4871-b6e0-3b6de7561516\"," +
+			"\"resourceUuid\": \"60c3e96e-0970-4871-b6e0-3b6de7561512\"," +
+			"\"parameters\": {" +
+			"\"locationConstraints\": [" +
+			"{" +
+			"\"vnfProfileId\": \"zte-vBAS-1.0\"," +
+			"\"locationConstraints\": {" +
+			"\"vimId\": \"4050083f-465f-4838-af1e-47a545222ad0\"" +
+			"}" +
+			"}," +
+			"{" +
+			"\"vnfProfileId\": \"zte-vMME-1.0\"," +
+			"\"locationConstraints\": {" +
+			"\"vimId\": \"4050083f-465f-4838-af1e-47a545222ad0\"" +
+			"}" +
+			"}" +
+			"]" +
+			"}" +
+			"}," +
+			"{" +
+			"\"resourceName\": \"vEPC\"," +
+			"\"resourceInvariantUuid\": \"61c3e96e-0970-4871-b6e0-3b6de7561516\"," +
+			"\"resourceUuid\": \"62c3e96e-0970-4871-b6e0-3b6de7561512\"," +
+			"\"parameters\": {" +
+			"\"locationConstraints\": [" +
+			"{" +
+			"\"vnfProfileId\": \"zte-CSCF-1.0\"," +
+			"\"locationConstraints\": {" +
+			"\"vimId\": \"4050083f-465f-4838-af1e-47a545222ad1\"" +
+			"}" +
+			"}" +
+			"]" +
+			"}" +
+			"}," +
+			"{" +
+			"\"resourceName\": \"underlayvpn\"," +
+			"\"resourceInvariantUuid\": \"60c3e96e-0970-4871-b6e0-3b6de7561513\"," +
+			"\"resourceUuid\": \"60c3e96e-0970-4871-b6e0-3b6de7561514\"," +
+			"\"parameters\": {" +
+			"\"locationConstraints\": []" +
+			"}" +
+			"}," +
+			"{" +
+			"\"resourceName\": \"overlayvpn\"," +
+			"\"resourceInvariantUuid\": \"60c3e96e-0970-4871-b6e0-3b6de7561517\"," +
+			"\"resourceUuid\": \"60c3e96e-0970-4871-b6e0-3b6de7561518\"," +
+			"\"parameters\": {" +
+			"\"locationConstraints\": []" +
+			"}" +
+			"}" +
+			"]," +
+			"\"requestInputs\": {" +
+			"\"externalDataNetworkName\": \"Flow_out_net\"," +
+			"\"m6000_mng_ip\": \"181.18.20.2\"," +
+			"\"externalCompanyFtpDataNetworkName\": \"Flow_out_net\"," +
+			"\"externalPluginManageNetworkName\": \"plugin_net_2014\"," +
+			"\"externalManageNetworkName\": \"mng_net_2017\"," +
+			"\"sfc_data_network\": \"sfc_data_net_2016\"," +
+			"\"NatIpRange\": \"210.1.1.10-210.1.1.20\"," +
+			"\"location\": \"4050083f-465f-4838-af1e-47a545222ad0\"," +
+			"\"sdncontroller\": \"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"" +
+			"}" +
+			"}" +
+			"}" +
+			"}";
+
 	@Test
 	public void createE2EServiceInstanceTestSuccess() {
 		new MockUp<RequestsDatabase>() {
@@ -125,7 +203,7 @@ public class E2EServiceInstancesTest {
 		};
 
 		E2EServiceInstances instance = new E2EServiceInstances();
-		String request = "{\"service\":{\"name\":\"so_test4\",\"description\":\"so_test2\",\"serviceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561519\",\"templateId\":\"592f9437-a9c0-4303-b9f6-c445bb7e9814\",\"parameters\":{\"globalSubscriberId\":\"123457\",\"subscriberName\":\"Customer1\",\"serviceType\":\"voLTE\",\"templateName\":\"voLTE Service:1.0\",\"resources\":[{\"resourceName\":\"vIMS\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-vBAS-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}},{\"vnfProfileId\":\"zte-vMME-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"vEPC\",\"resourceDefId\":\"61c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"62c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-CSCF-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad1\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"underlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561513\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561514\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}},{\"resourceName\":\"overlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561517\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561518\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}}]}}}";
+		String request = jsonBody;
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
 		assertTrue(respStr.contains("SVC2000"));
@@ -196,7 +274,7 @@ public class E2EServiceInstancesTest {
 		};
 
 		E2EServiceInstances instance = new E2EServiceInstances();
-		String request = "{\"service\":{\"name\":\"so_test4\",\"description\":\"so_test2\",\"serviceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561519\",\"templateId\":\"592f9437-a9c0-4303-b9f6-c445bb7e9814\",\"parameters\":{\"globalSubscriberId\":\"123457\",\"subscriberName\":\"Customer1\",\"serviceType\":\"voLTE\",\"templateName\":\"voLTE Service:1.0\",\"resources\":[{\"resourceName\":\"vIMS\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-vBAS-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}},{\"vnfProfileId\":\"zte-vMME-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"vEPC\",\"resourceDefId\":\"61c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"62c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-CSCF-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad1\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"underlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561513\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561514\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}},{\"resourceName\":\"overlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561517\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561518\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}}]}}}";
+		String request = jsonBody;
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
 		assertTrue(respStr.contains("SVC2000"));
@@ -267,7 +345,7 @@ public class E2EServiceInstancesTest {
 		};
 
 		E2EServiceInstances instance = new E2EServiceInstances();
-		String request = "{\"service\":{\"name\":\"so_test4\",\"description\":\"so_test2\",\"serviceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561519\",\"templateId\":\"592f9437-a9c0-4303-b9f6-c445bb7e9814\",\"parameters\":{\"globalSubscriberId\":\"123457\",\"subscriberName\":\"Customer1\",\"serviceType\":\"voLTE\",\"templateName\":\"voLTE Service:1.0\",\"resources\":[{\"resourceName\":\"vIMS\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-vBAS-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}},{\"vnfProfileId\":\"zte-vMME-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"vEPC\",\"resourceDefId\":\"61c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"62c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-CSCF-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad1\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"underlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561513\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561514\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}},{\"resourceName\":\"overlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561517\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561518\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}}]}}}";
+		String request = jsonBody;
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
 		assertTrue(respStr.contains("SVC2000"));
@@ -331,7 +409,7 @@ public class E2EServiceInstancesTest {
 		};
 
 		E2EServiceInstances instance = new E2EServiceInstances();
-		String request = "{\"service\":{\"name\":\"so_test4\",\"description\":\"so_test2\",\"serviceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561519\",\"templateId\":\"592f9437-a9c0-4303-b9f6-c445bb7e9814\",\"parameters\":{\"globalSubscriberId\":\"123457\",\"subscriberName\":\"Customer1\",\"serviceType\":\"voLTE\",\"templateName\":\"voLTE Service:1.0\",\"resources\":[{\"resourceName\":\"vIMS\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-vBAS-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}},{\"vnfProfileId\":\"zte-vMME-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"vEPC\",\"resourceDefId\":\"61c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"62c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-CSCF-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad1\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"underlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561513\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561514\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}},{\"resourceName\":\"overlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561517\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561518\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}}]}}}";
+		String request = jsonBody;
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
 		assertTrue(respStr.contains("SVC2000"));
@@ -391,7 +469,7 @@ public class E2EServiceInstancesTest {
 			}
 		};
 		E2EServiceInstances instance = new E2EServiceInstances();
-		String request = "{\"service\":{\"name\":\"so_test4\",\"description\":\"so_test2\",\"serviceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561519\",\"templateId\":\"592f9437-a9c0-4303-b9f6-c445bb7e9814\",\"parameters\":{\"globalSubscriberId\":\"123457\",\"subscriberName\":\"Customer1\",\"serviceType\":\"voLTE\",\"templateName\":\"voLTE Service:1.0\",\"resources\":[{\"resourceName\":\"vIMS\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-vBAS-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}},{\"vnfProfileId\":\"zte-vMME-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"vEPC\",\"resourceDefId\":\"61c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"62c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-CSCF-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad1\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"underlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561513\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561514\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}},{\"resourceName\":\"overlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561517\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561518\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}}]}}}";
+		String request = jsonBody;
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
 		assertTrue(respStr.contains("SVC2000"));
@@ -432,7 +510,7 @@ public class E2EServiceInstancesTest {
 			}
 		};
 		E2EServiceInstances instance = new E2EServiceInstances();
-		String request = "{\"service\":{\"name\":\"so_test4\",\"description\":\"so_test2\",\"serviceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561519\",\"templateId\":\"592f9437-a9c0-4303-b9f6-c445bb7e9814\",\"parameters\":{\"globalSubscriberId\":\"123457\",\"subscriberName\":\"Customer1\",\"serviceType\":\"voLTE\",\"templateName\":\"voLTE Service:1.0\",\"resources\":[{\"resourceName\":\"vIMS\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-vBAS-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}},{\"vnfProfileId\":\"zte-vMME-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"vEPC\",\"resourceDefId\":\"61c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"62c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-CSCF-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad1\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"underlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561513\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561514\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}},{\"resourceName\":\"overlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561517\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561518\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}}]}}}";
+		String request = jsonBody;;
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
 		assertTrue(respStr.contains("SVC2000"));
@@ -457,7 +535,7 @@ public class E2EServiceInstancesTest {
 		};
 
 		E2EServiceInstances instance = new E2EServiceInstances();
-		String request = "{\"service\":{\"name\":\"so_test4\",\"description\":\"so_test2\",\"serviceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561519\",\"templateId\":\"592f9437-a9c0-4303-b9f6-c445bb7e9814\",\"parameters\":{\"globalSubscriberId\":\"123457\",\"subscriberName\":\"Customer1\",\"serviceType\":\"voLTE\",\"templateName\":\"voLTE Service:1.0\",\"resources\":[{\"resourceName\":\"vIMS\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-vBAS-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}},{\"vnfProfileId\":\"zte-vMME-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"vEPC\",\"resourceDefId\":\"61c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"62c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-CSCF-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad1\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"underlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561513\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561514\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}},{\"resourceName\":\"overlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561517\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561518\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}}]}}}";
+		String request = jsonBody;
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
 		assertTrue(respStr.contains("SVC2000"));
@@ -483,7 +561,7 @@ public class E2EServiceInstancesTest {
 		};
 
 		E2EServiceInstances instance = new E2EServiceInstances();
-		String request = "{\"service\":{\"name\":\"so_test4\",\"description\":\"so_test2\",\"serviceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561519\",\"templateId\":\"592f9437-a9c0-4303-b9f6-c445bb7e9814\",\"parameters\":{\"globalSubscriberId\":\"123457\",\"subscriberName\":\"Customer1\",\"serviceType\":\"voLTE\",\"templateName\":\"voLTE Service:1.0\",\"resources\":[{\"resourceName\":\"vIMS\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-vBAS-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}},{\"vnfProfileId\":\"zte-vMME-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"vEPC\",\"resourceDefId\":\"61c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"62c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-CSCF-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad1\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"underlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561513\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561514\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}},{\"resourceName\":\"overlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561517\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561518\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}}]}}}";
+		String request = jsonBody;
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
 		assertTrue(respStr.contains("SVC2000"));
@@ -508,7 +586,7 @@ public class E2EServiceInstancesTest {
 			}
 		};
 		E2EServiceInstances instance = new E2EServiceInstances();
-		String request = "{\"service\":{\"name\":\"so_test4\",\"description\":\"so_test2\",\"serviceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561519\",\"templateId\":\"592f9437-a9c0-4303-b9f6-c445bb7e9814\",\"parameters\":{\"globalSubscriberId\":\"123457\",\"subscriberName\":\"Customer1\",\"serviceType\":\"voLTE\",\"templateName\":\"voLTE Service:1.0\",\"resources\":[{\"resourceName\":\"vIMS\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-vBAS-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}},{\"vnfProfileId\":\"zte-vMME-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"vEPC\",\"resourceDefId\":\"61c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"62c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-CSCF-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad1\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"underlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561513\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561514\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}},{\"resourceName\":\"overlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561517\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561518\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}}]}}}";
+		String request = jsonBody;
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
 		assertTrue(respStr.contains("SVC2000"));
@@ -525,7 +603,7 @@ public class E2EServiceInstancesTest {
 		};
 
 		E2EServiceInstances instance = new E2EServiceInstances();
-		String request = "{\"service\":{\"name\":\"so_test4\",\"description\":\"so_test2\",\"serviceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561519\",\"templateId\":\"592f9437-a9c0-4303-b9f6-c445bb7e9814\",\"parameters\":{\"globalSubscriberId\":\"123457\",\"subscriberName\":\"Customer1\",\"serviceType\":\"voLTE\",\"templateName\":\"voLTE Service:1.0\",\"resources\":[{\"resourceName\":\"vIMS\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-vBAS-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}},{\"vnfProfileId\":\"zte-vMME-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"vEPC\",\"resourceDefId\":\"61c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"62c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-CSCF-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad1\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"underlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561513\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561514\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}},{\"resourceName\":\"overlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561517\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561518\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}}]}}}";
+		String request = jsonBody;
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
 		assertTrue(respStr.contains("SVC2000"));
@@ -551,7 +629,7 @@ public class E2EServiceInstancesTest {
 			}
 		};
 		E2EServiceInstances instance = new E2EServiceInstances();
-		String request = "{\"service\":{\"name\":\"so_test4\",\"description\":\"so_test2\",\"serviceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561519\",\"templateId\":\"592f9437-a9c0-4303-b9f6-c445bb7e9814\",\"parameters\":{\"globalSubscriberId\":\"123457\",\"subscriberName\":\"Customer1\",\"serviceType\":\"voLTE\",\"templateName\":\"voLTE Service:1.0\",\"resources\":[{\"resourceName\":\"vIMS\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-vBAS-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}},{\"vnfProfileId\":\"zte-vMME-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"vEPC\",\"resourceDefId\":\"61c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"62c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-CSCF-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad1\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"underlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561513\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561514\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}},{\"resourceName\":\"overlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561517\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561518\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}}]}}}";
+		String request = jsonBody;
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
 		assertTrue(respStr.contains("SVC2000"));
@@ -679,7 +757,7 @@ public class E2EServiceInstancesTest {
 		};
 
 		E2EServiceInstances instance = new E2EServiceInstances();
-		String request = "{\"service\":{\"name\":\"so_test4\",\"description\":\"so_test2\",\"serviceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561519\",\"templateId\":\"592f9437-a9c0-4303-b9f6-c445bb7e9814\",\"parameters\":{\"globalSubscriberId\":\"123457\",\"subscriberName\":\"Customer1\",\"serviceType\":\"voLTE\",\"templateName\":\"voLTE Service:1.0\",\"resources\":[{\"resourceName\":\"vIMS\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-vBAS-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}},{\"vnfProfileId\":\"zte-vMME-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"vEPC\",\"resourceDefId\":\"61c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"62c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-CSCF-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad1\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"underlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561513\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561514\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}},{\"resourceName\":\"overlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561517\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561518\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}}]}}}";
+		String request = jsonBody;
 		Response resp = instance.updateE2EServiceInstance(request, "v3", "12345");
 		String respStr = resp.getEntity().toString();
 		assertTrue(respStr.contains("success"));
@@ -750,7 +828,7 @@ public class E2EServiceInstancesTest {
 		};
 
 		E2EServiceInstances instance = new E2EServiceInstances();
-		String request = "{\"service\":{\"name\":\"so_test4\",\"description\":\"so_test2\",\"serviceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561519\",\"templateId\":\"592f9437-a9c0-4303-b9f6-c445bb7e9814\",\"parameters\":{\"globalSubscriberId\":\"123457\",\"subscriberName\":\"Customer1\",\"serviceType\":\"voLTE\",\"templateName\":\"voLTE Service:1.0\",\"resources\":[{\"resourceName\":\"vIMS\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-vBAS-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}},{\"vnfProfileId\":\"zte-vMME-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad0\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"vEPC\",\"resourceDefId\":\"61c3e96e-0970-4871-b6e0-3b6de7561516\",\"resourceId\":\"62c3e96e-0970-4871-b6e0-3b6de7561512\",\"nsParameters\":{\"locationConstraints\":[{\"vnfProfileId\":\"zte-CSCF-1.0\",\"locationConstraints\":{\"vimId\":\"4050083f-465f-4838-af1e-47a545222ad1\"}}],\"additionalParamForNs\":{}}},{\"resourceName\":\"underlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561513\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561514\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}},{\"resourceName\":\"overlayvpn\",\"resourceDefId\":\"60c3e96e-0970-4871-b6e0-3b6de7561517\",\"resourceId\":\"60c3e96e-0970-4871-b6e0-3b6de7561518\",\"nsParameters\":{\"locationConstraints\":[],\"additionalParamForNs\":{\"externalDataNetworkName\":\"Flow_out_net\",\"m6000_mng_ip\":\"181.18.20.2\",\"externalCompanyFtpDataNetworkName\":\"Flow_out_net\",\"externalPluginManageNetworkName\":\"plugin_net_2014\",\"externalManageNetworkName\":\"mng_net_2017\",\"sfc_data_network\":\"sfc_data_net_2016\",\"NatIpRange\":\"210.1.1.10-210.1.1.20\",\"location\":\"4050083f-465f-4838-af1e-47a545222ad0\",\"sdncontroller\":\"9b9f02c0-298b-458a-bc9c-be3692e4f35e\"}}}]}}}";
+		String request = jsonBody;
 		Response resp = instance.updateE2EServiceInstance(request, "v3", "12345");
 		String respStr = resp.getEntity().toString();
 		assertTrue(respStr.contains("SVC2000"));
