@@ -565,7 +565,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
          utils.log("INFO", "======== COMPLETED prepareResourceRecipeRequest Process ======== ", isDebugEnabled)      
      }
      
-     public void executeResourceRecipe(Execution execution){
+     public void executeResourceRecipe(DelegateExecution execution){
          def isDebugEnabled=execution.getVariable("isDebugLogEnabled")                 
          utils.log("INFO", "======== Start executeResourceRecipe Process ======== ", isDebugEnabled) 
          String requestId = execution.getVariable("msoRequestId")
