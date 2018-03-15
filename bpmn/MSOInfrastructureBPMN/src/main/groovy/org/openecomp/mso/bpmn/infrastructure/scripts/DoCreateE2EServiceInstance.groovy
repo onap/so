@@ -21,6 +21,7 @@
 package org.openecomp.mso.bpmn.infrastructure.scripts;
 
 import static org.apache.commons.lang3.StringUtils.*;
+import org.apache.http.HttpResponse
 import groovy.xml.XmlUtil
 import groovy.json.*
 
@@ -562,5 +563,21 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
          resourceInput.setResourceParameters(resourceParameters)
          execution.setVariable("resourceInput", resourceInput)
          utils.log("INFO", "======== COMPLETED prepareResourceRecipeRequest Process ======== ", isDebugEnabled)      
+     }
+     
+     public void executeResourceRecipe(Execution execution){
+         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")                 
+         utils.log("INFO", "======== Start executeResourceRecipe Process ======== ", isDebugEnabled) 
+         String requestId = execution.getVariable("msoRequestId")
+         String serviceInstanceId = execution.getVariable("serviceInstanceId")
+         String serviceType = execution.getVariable("serviceType")
+         ResourceInput resourceInput = execution.getVariable("resourceInput")
+         String requestAction = resourceInput.getOperationType()
+         JSONObject resourceRecipe = cutils.getResourceRecipe(execution, resourceInput.getResourceUuid(), requestAction)
+         String recipeUri = resourceRecipe.getString("orchestrationUri")
+         String recipeTimeOut = resourceRecipe.getString("recipeTimeout")
+         String recipeParamXsd = resourceRecipe.get("paramXSD")
+         HttpResponse resp = BpmnRestClient.post(recipeUri, requestId, recipeTimeout, requestAction, serviceInstanceId, serviceType, resourceInput.toString(), recipeParamXsd)
+         
      }
 }
