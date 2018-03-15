@@ -511,6 +511,7 @@ public class E2EServiceInstances {
 					"Successfully received response from BPMN engine", "BPMN", recipeLookupResult.getOrchestrationURI(),
 					null);
 		} catch (Exception e) {
+			msoLogger.debug("Exception while communicate with BPMN engine", e);
 			msoLogger.recordMetricEvent(subStartTime, MsoLogger.StatusCode.ERROR,
 					MsoLogger.ResponseCode.CommunicationError, "Exception while communicate with BPMN engine", "BPMN",
 					recipeLookupResult.getOrchestrationURI(), null);
