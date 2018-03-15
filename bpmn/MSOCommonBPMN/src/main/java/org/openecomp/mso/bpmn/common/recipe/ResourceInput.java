@@ -304,7 +304,7 @@ public class ResourceInput {
     @Override
     public String toString() {
         ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
         String jsonStr = "";
         try {
             jsonStr = mapper.writeValueAsString(this);
