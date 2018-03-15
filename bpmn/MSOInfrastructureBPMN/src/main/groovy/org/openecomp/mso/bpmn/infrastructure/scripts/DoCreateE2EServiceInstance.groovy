@@ -446,47 +446,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
         utils.log("INFO", "======== COMPLETED preInitResourcesOperStatus Process ======== ", isDebugEnabled)  
 	}
 	
-	/**
-	 * prepare resource create request
-	 */
-	public void preResourceRequest(execution){
-	    String resourceType = execution.getVariable("resourceType")
-	    def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-	    String serviceInstanceName = execution.getVariable("serviceInstanceName")
-	    String nsServiceName = resourceType + "_" + serviceInstanceName
-	    execution.setVariable("nsServiceName", nsServiceName)
-	    utils.log("INFO", "Prepare Resource Request nsServiceName:" + nsServiceName, isDebugEnabled)
-        String globalSubscriberId = execution.getVariable("globalSubscriberId")
-        String serviceType = execution.getVariable("serviceType")
-        String serviceId = execution.getVariable("serviceInstanceId")
-        execution.setVariable("serviceId", serviceId)
-        String operationId = execution.getVariable("operationId")
-        String incomingRequest = execution.getVariable("uuiRequest")
-        String resourcesStr = jsonUtil.getJsonValue(incomingRequest, "service.parameters.resources")  
-        String nsServiceDescription = jsonUtil.getJsonValue(incomingRequest, "service.description")  
-        execution.setVariable("nsServiceDescription", nsServiceDescription)
-        utils.log("INFO", "Prepare Resource Request nsServiceDescription:" + nsServiceDescription, isDebugEnabled)
-        List<String> resourceList = jsonUtil.StringArrayToList(execution, resourcesStr) 
-        //reset the variables
-        execution.setVariable("resourceUUID", "")
-        execution.setVariable("resourceInvariantUUID", "")
-        execution.setVariable("resourceParameters", "")
-        for(String resource : resourceList){
-            String resourceName = jsonUtil.getJsonValue(resource, "resourceName")  
-            if(StringUtils.containsIgnoreCase(resourceName, resourceType)){
-                String resourceUUID  = jsonUtil.getJsonValue(resource, "resourceId")
-                String resourceInvariantUUID  = jsonUtil.getJsonValue(resource, "resourceDefId")
-                String resourceParameters = jsonUtil.getJsonValue(resource, "nsParameters")                
-                execution.setVariable("resourceUUID", resourceUUID)
-                execution.setVariable("resourceInvariantUUID", resourceInvariantUUID)
-                execution.setVariable("resourceParameters", resourceParameters)
-                utils.log("INFO", "Prepare Resource Request resourceType:" + resourceType, isDebugEnabled)
-                utils.log("INFO", "Prepare Resource Request resourceUUID:" + resourceUUID, isDebugEnabled)
-                utils.log("INFO", "Prepare Resource Request resourceParameters:" + resourceParameters, isDebugEnabled)
-            } 
-        }
-	    utils.log("INFO", "Prepare Controller Request finished", isDebugEnabled)
-	}
+
 	/**
 	 * sequence resource. we should analyze resource sequence from service template
 	 * Here we make VF first, and then network for E2E service.
