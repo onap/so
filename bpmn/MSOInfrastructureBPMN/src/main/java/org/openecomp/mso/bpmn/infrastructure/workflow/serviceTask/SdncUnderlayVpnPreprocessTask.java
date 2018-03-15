@@ -26,9 +26,6 @@ import org.openecomp.mso.bpmn.core.BaseTask;
 import org.openecomp.mso.requestsdb.RequestsDatabase;
 import org.openecomp.mso.requestsdb.ResourceOperationStatus;
 
-/**
- * Created by 10112215 on 2017/9/26.
- */
 public class SdncUnderlayVpnPreprocessTask extends BaseTask {
     public static final String RESOURCE_OPER_TYPE = "resourceOperType";
     private RequestsDatabase requestsDB = RequestsDatabase.getInstance();

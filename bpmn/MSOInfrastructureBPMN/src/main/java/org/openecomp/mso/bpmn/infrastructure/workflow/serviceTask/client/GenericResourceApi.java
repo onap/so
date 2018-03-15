@@ -29,9 +29,6 @@ import retrofit2.http.Body;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 
-/**
- * Created by 10112215 on 2017/9/16.
- */
 @ServiceHttpEndPoint(serviceName = "sdnc", serviceVersion = "v1")
 public interface GenericResourceApi {
 
