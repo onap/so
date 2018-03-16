@@ -348,7 +348,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
-			<version>${spring.version}</version>
+			<version>${org.spring-test.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openecomp.sdc.sdc-tosca</groupId>
@@ -479,7 +479,7 @@
    <dependency>
         <groupId>org.jboss.resteasy</groupId>
         <artifactId>resteasy-jackson2-provider</artifactId>
-        <version>3.1.0.Final</version>
+        <version>${resteasy.version}</version>
     </dependency>
 	</dependencies>
 </project>

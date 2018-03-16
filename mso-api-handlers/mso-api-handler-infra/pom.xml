@@ -23,6 +23,7 @@
 		<json4s-core-version>3.0.0</json4s-core-version>
 		<fasterxml-json-version>2.2.2</fasterxml-json-version>
 		<scala-lang-version>2.9.1-1</scala-lang-version>
+		<scala-compiler.version>2.9.1-1</scala-compiler.version>
 		<reflections-version>0.9.9-RC1</reflections-version>
 		<javassist-version>3.16.1-GA</javassist-version>
 		<paranamer-version>2.5.2</paranamer-version>
@@ -33,13 +34,13 @@
 		<dependency>
 		    <groupId>org.jboss.resteasy</groupId>
 		    <artifactId>resteasy-jaxrs</artifactId>
-		    <version>3.5.0.Final</version>
+		    <version>${resteasy.version}</version>
 		    <scope>provided</scope>
 		</dependency>
                 <dependency>
                     <groupId>org.jboss.resteasy</groupId>
                     <artifactId>resteasy-client</artifactId>
-                    <version>3.5.0.Final</version>
+                    <version>${resteasy.version}</version>
 <!--		    <scope>test</scope> -->
                 </dependency>
 		<dependency>
@@ -108,6 +109,12 @@
 			<groupId>org.scala-lang</groupId>
 			<artifactId>scala-library</artifactId>
 			<version>${scala-lang-version}</version>
+		</dependency>
+		<!--bwj added scala-compiler-->
+		<dependency>
+			<groupId>org.scala-lang</groupId>
+			<artifactId>scala-compiler</artifactId>
+			<version>${scala-compiler.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.reflections</groupId>

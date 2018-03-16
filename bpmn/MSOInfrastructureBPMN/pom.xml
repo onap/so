@@ -342,6 +342,31 @@
 			</exclusions>
 		</dependency>
 
+		<!-- bwj add; Jetty-util -->
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-util</artifactId>
+			<version>9.4.8.v20171121</version>
+		</dependency>
+		<!-- bwj add; hibernate-validator -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>5.4.2.Final</version>
+		</dependency>
+		<!-- bwj add; spring-test -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${org.spring-test.version}</version>
+		</dependency>
+		<!-- bwj add; libphonenumber  -->
+		<dependency>
+			<groupId>com.googlecode.libphonenumber</groupId>
+			<artifactId>libphonenumber</artifactId>
+			<version>8.9.1</version>
+		</dependency>
+
 		<!--for yang tools-->
 <!--		<dependency>
 			<groupId>org.onap.so</groupId>
