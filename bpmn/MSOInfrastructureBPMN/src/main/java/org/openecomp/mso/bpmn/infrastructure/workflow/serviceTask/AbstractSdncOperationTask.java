@@ -51,6 +51,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.xml.ws.http.HTTPException;
+
 /**
  * Created by 10112215 on 2017/9/16.
  */
@@ -246,7 +248,7 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
 
     public abstract void sendRestrequestAndHandleResponse(DelegateExecution execution,
                                                           Map<String, String> inputs,
-                                                          GenericResourceApi genericResourceApiClient) throws Exception;
+                                                          GenericResourceApi genericResourceApiClient) throws HTTPException;
 
     public void updateProgress(DelegateExecution execution,
                                String status,
@@ -359,6 +361,7 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
             }
         } catch (Exception e) {
             msoLogger.error(MessageEnum.GENERAL_EXCEPTION, " getMsbIp catch exception: ", "", this.getTaskName(), MsoLogger.ErrorCode.UnknownError, e.getClass().toString());
+            msoLogger.debug("getMsbIp catch exception",e);
         }
         return defaultValue;
     }
