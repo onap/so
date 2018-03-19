@@ -21,10 +21,12 @@
 package org.openecomp.mso.client.policy;
 
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.URI;
 import java.security.NoSuchAlgorithmException;
 import java.security.KeyStore;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.UUID;
 
 import javax.net.ssl.SSLContext;
@@ -38,7 +40,7 @@ import org.openecomp.mso.logger.MsoLogger;
 public abstract class RestClientSSL extends RestClient {
 	
 	public static final String SSL_KEY_STORE_KEY = "javax.net.ssl.keyStore";
-	public static final String SSL_KEY_STORE_PASSWORD_KEY = "javax.net.ssl.keyStorePassword";
+	public static  String SSL_KEY_STORE_PASSWORD_KEY;
 	public static final String MSO_LOAD_SSL_CLIENT_KEYSTORE_KEY = "mso.load.ssl.client.keystore";
 	
 
@@ -52,9 +54,11 @@ public abstract class RestClientSSL extends RestClient {
 
 	@Override
 	protected Client getClient() {
-		
 		Client client = null;
+		Properties keyProp = new Properties ();
 		try {
+			keyProp.load (Thread.currentThread ().getContextClassLoader ().getResourceAsStream ("Policy.properties"));
+			SSL_KEY_STORE_PASSWORD_KEY=(String) keyProp.get ("ssl.key.store.password.key");
 			String loadSSLKeyStore = System.getProperty(RestClientSSL.MSO_LOAD_SSL_CLIENT_KEYSTORE_KEY);
 			if(loadSSLKeyStore != null && loadSSLKeyStore.equalsIgnoreCase("true")) {
 				KeyStore ks = getKeyStore();
@@ -67,17 +71,22 @@ public abstract class RestClientSSL extends RestClient {
 			//Use default SSL context 
 			client = ClientBuilder.newBuilder().sslContext(SSLContext.getDefault()).build();
 			this.msoLogger.debug("RestClientSSL using default SSL context!");
-		} catch (NoSuchAlgorithmException e) {
+		} catch (NoSuchAlgorithmException | IOException e) {
 			this.msoLogger.error(MessageEnum.APIH_GENERAL_EXCEPTION, "AAI", "Client init", MsoLogger.ErrorCode.UnknownError, "could not create SSL client", e);
 			throw new RuntimeException(e);
 		}
 		return client;
 	}
 	
-	private KeyStore getKeyStore() {
+	private KeyStore getKeyStore() throws IOException {
 		KeyStore ks = null;
+		Properties keyProp = new Properties ();
+	
+		keyProp.load (Thread.currentThread ().getContextClassLoader ().getResourceAsStream ("Policy.properties"));
+		SSL_KEY_STORE_PASSWORD_KEY=(String) keyProp.get ("ssl.key.store.password.key");
 	    char[] password = System.getProperty(RestClientSSL.SSL_KEY_STORE_PASSWORD_KEY).toCharArray();
 	    FileInputStream fis = null;
+	    
 	    try {
 	    	ks = KeyStore.getInstance(KeyStore.getDefaultType());
 	        fis = new FileInputStream(System.getProperty(RestClientSSL.SSL_KEY_STORE_KEY));
@@ -86,6 +95,7 @@ public abstract class RestClientSSL extends RestClient {
 	    catch(Exception e) {
 	    	return null;
 	    }
+	    
 	    finally {
 	        if (fis != null) {
 	            try { 
