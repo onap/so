@@ -534,7 +534,167 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
     public void postProcessForDeleteResource(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
     
-    }    
+    } 
+    
+	public void preProcessAAIGET2(DelegateExecution execution) {
+        def isDebugEnabled=execution.getVariable("isDebugLogEnabled")	
+	}
+    	
+	public void postProcessAAIGET2(DelegateExecution execution) {
+		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+		utils.log("INFO"," ***** postProcessAAIGET2 ***** ", isDebugEnabled)
+		String msg = ""
+
+		try {
+			String serviceInstanceName = execution.getVariable("serviceInstanceName")
+			boolean succInAAI = execution.getVariable("GENGS_SuccessIndicator")
+			if(!succInAAI){
+				utils.log("INFO","Error getting Service-instance from AAI in postProcessAAIGET2", + serviceInstanceName, isDebugEnabled)
+				WorkflowException workflowException = execution.getVariable("WorkflowException")
+				utils.logAudit("workflowException: " + workflowException)
+				if(workflowException != null){
+					exceptionUtil.buildAndThrowWorkflowException(execution, workflowException.getErrorCode(), workflowException.getErrorMessage())
+				}
+				else
+				{
+					msg = "Failure in postProcessAAIGET2 GENGS_SuccessIndicator:" + succInAAI
+					utils.log("INFO", msg, isDebugEnabled)
+					exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
+				}
+			}
+			else
+			{
+				boolean foundInAAI = execution.getVariable("GENGS_FoundIndicator")
+				if(foundInAAI){
+					String aaiService = execution.getVariable("GENGS_service")
+					if (!isBlank(aaiService) && (utils.nodeExists(aaiService, "resource-version"))) {
+						execution.setVariable("serviceInstanceVersion",  utils.getNodeText1(aaiService, "resource-version"))
+						utils.log("INFO","Found Service-instance in AAI.serviceInstanceName:" + execution.getVariable("serviceInstanceName"), isDebugEnabled)
+					}
+				}
+			}
+		} catch (BpmnError e) {
+			throw e;
+		} catch (Exception ex) {
+			msg = "Exception in DoCreateServiceInstance.postProcessAAIGET2 " + ex.getMessage()
+			utils.log("INFO", msg, isDebugEnabled)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+		}
+		utils.log("INFO"," *** Exit postProcessAAIGET2 *** ", isDebugEnabled)
+	}
+
+	public void preProcessAAIPUT(DelegateExecution execution) {		
+		def method = getClass().getSimpleName() + '.preProcessRequest(' +'execution=' + execution.getId() +')'
+		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
+		utils.log("INFO","Entered " + method, isDebugEnabled)
+		String msg = ""
+		utils.log("INFO"," ***** preProcessAAIPUTt *****",  isDebugEnabled)
+
+		String modelUuid = execution.getVariable("modelUuid")
+		String serviceInstanceVersion = execution.getVariable("serviceInstanceVersion")
+		execution.setVariable("GENPS_serviceResourceVersion", serviceInstanceVersion)
+
+		AaiUtil aaiUriUtil = new AaiUtil(this)
+		utils.log("INFO","start create aai uri: " + aaiUriUtil, isDebugEnabled)	
+		String aai_uri = aaiUriUtil.getBusinessCustomerUri(execution)
+		utils.log("INFO","aai_uri: " + aai_uri, isDebugEnabled)
+		String namespace = aaiUriUtil.getNamespaceFromUri(aai_uri)
+		utils.log("INFO","namespace: " + namespace, isDebugEnabled)
+
+		String serviceInstanceData =
+				"""<service-instance xmlns=\"${namespace}\">
+			       <model-version-id">${modelUuid}</model-version-id>
+				 </service-instance>""".trim()
+
+		execution.setVariable("serviceInstanceData", serviceInstanceData)
+		utils.log("INFO","serviceInstanceData: " + serviceInstanceData, isDebugEnabled)
+		utils.logAudit(serviceInstanceData)
+		utils.log("INFO", " aai_uri " + aai_uri + " namespace:" + namespace, isDebugEnabled)
+		utils.log("INFO", " 'payload' to update Service Instance in AAI - " + "\n" + serviceInstanceData, isDebugEnabled)
+	
+		utils.log("INFO", "Exited " + method, isDebugEnabled)
+	}	
+	
+	public void postProcessAAIPUT(DelegateExecution execution) {
+		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+		utils.log("INFO"," ***** postProcessAAIPUT ***** ", isDebugEnabled)
+		String msg = ""
+		try {
+			String serviceInstanceId = execution.getVariable("serviceInstanceId")
+			boolean succInAAI = execution.getVariable("GENPS_SuccessIndicator")
+			if(!succInAAI){
+				utils.log("INFO","Error putting Service-instance in AAI", + serviceInstanceId, isDebugEnabled)
+				WorkflowException workflowException = execution.getVariable("WorkflowException")
+				utils.logAudit("workflowException: " + workflowException)
+				if(workflowException != null){
+					exceptionUtil.buildAndThrowWorkflowException(execution, workflowException.getErrorCode(), workflowException.getErrorMessage())
+				}
+			}
+			else
+			{
+				//start rollback set up
+				RollbackData rollbackData = new RollbackData()
+				def disableRollback = execution.getVariable("disableRollback")
+				rollbackData.put("SERVICEINSTANCE", "disableRollback", disableRollback.toString())
+				rollbackData.put("SERVICEINSTANCE", "rollbackAAI", "true")
+				rollbackData.put("SERVICEINSTANCE", "serviceInstanceId", serviceInstanceId)
+				rollbackData.put("SERVICEINSTANCE", "subscriptionServiceType", execution.getVariable("subscriptionServiceType"))
+				rollbackData.put("SERVICEINSTANCE", "globalSubscriberId", execution.getVariable("globalSubscriberId"))
+				execution.setVariable("rollbackData", rollbackData)
+			}
+
+		} catch (BpmnError e) {
+			throw e;
+		} catch (Exception ex) {
+			msg = "Exception in DoCreateServiceInstance.postProcessAAIDEL. " + ex.getMessage()
+			utils.log("INFO", msg, isDebugEnabled)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+		}
+		utils.log("INFO"," *** Exit postProcessAAIPUT *** ", isDebugEnabled)
+	}	
+
+	public void preProcessRollback (DelegateExecution execution) {
+		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+		utils.log("INFO"," ***** preProcessRollback ***** ", isDebugEnabled)
+		try {
+			
+			Object workflowException = execution.getVariable("WorkflowException");
+
+			if (workflowException instanceof WorkflowException) {
+				utils.log("INFO", "Prev workflowException: " + workflowException.getErrorMessage(), isDebugEnabled)
+				execution.setVariable("prevWorkflowException", workflowException);
+				//execution.setVariable("WorkflowException", null);
+			}
+		} catch (BpmnError e) {
+			utils.log("INFO", "BPMN Error during preProcessRollback", isDebugEnabled)
+		} catch(Exception ex) {
+			String msg = "Exception in preProcessRollback. " + ex.getMessage()
+			utils.log("INFO", msg, isDebugEnabled)
+		}
+		utils.log("INFO"," *** Exit preProcessRollback *** ", isDebugEnabled)
+	}
+
+	public void postProcessRollback (DelegateExecution execution) {
+		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+		utils.log("INFO"," ***** postProcessRollback ***** ", isDebugEnabled)
+		String msg = ""
+		try {
+			Object workflowException = execution.getVariable("prevWorkflowException");
+			if (workflowException instanceof WorkflowException) {
+				utils.log("INFO", "Setting prevException to WorkflowException: ", isDebugEnabled)
+				execution.setVariable("WorkflowException", workflowException);
+			}
+			execution.setVariable("rollbackData", null)
+		} catch (BpmnError b) {
+			utils.log("INFO", "BPMN Error during postProcessRollback", isDebugEnabled)
+			throw b;
+		} catch(Exception ex) {
+			msg = "Exception in postProcessRollback. " + ex.getMessage()
+			utils.log("INFO", msg, isDebugEnabled)
+		}
+		utils.log("INFO"," *** Exit postProcessRollback *** ", isDebugEnabled)
+	}
+
         
 	public void postConfigRequest(execution){
 	    //now do noting
