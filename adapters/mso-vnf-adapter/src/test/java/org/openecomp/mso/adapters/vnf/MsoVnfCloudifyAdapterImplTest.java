@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2018 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,21 +24,21 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.xml.ws.Holder;
 import org.junit.Test;
-import org.openecomp.mso.adapters.vnf.MsoVnfAdapterImpl;
+import org.openecomp.mso.adapters.vnf.MsoVnfCloudifyAdapterImpl;
 import org.openecomp.mso.entity.MsoRequest;
 import org.openecomp.mso.openstack.beans.VnfRollback;
 
-public class MsoVnfAdapterImplTest {
+public class MsoVnfCloudifyAdapterImplTest {
 
 	@Test
 	public void healthCheckVNFTest() {
-		MsoVnfAdapterImpl instance = new MsoVnfAdapterImpl();
+		MsoVnfCloudifyAdapterImpl instance = new MsoVnfCloudifyAdapterImpl();
 		instance.healthCheck();
 	}
 
 	@Test
 	public void createVnfTest() {
-		MsoVnfAdapterImpl instance = new MsoVnfAdapterImpl();
+		MsoVnfCloudifyAdapterImpl instance = new MsoVnfCloudifyAdapterImpl();
 		MsoRequest msoRequest = new MsoRequest();
 		msoRequest.setRequestId("12345");
 		msoRequest.setServiceInstanceId("12345");
@@ -46,18 +46,17 @@ public class MsoVnfAdapterImplTest {
 		Map<String, String> map = new HashMap<>();
 		map.put("key1", "value1");
 		try {
-			instance.createVfModule("mdt1", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "vSAMP12", "VFMOD",
+			instance.createVnf("mdt1", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "vSAMP12", "VFMOD",
 					"volumeGroupHeatStackId|1", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
 					Boolean.FALSE, Boolean.TRUE, msoRequest, new Holder<>(), new Holder<>(),
                 new Holder<>());
 		} catch (Exception e) {
-
 		}
 	}
 
 	@Test
 	public void updateVnfTest() {
-		MsoVnfAdapterImpl instance = new MsoVnfAdapterImpl();
+		MsoVnfCloudifyAdapterImpl instance = new MsoVnfCloudifyAdapterImpl();
 		MsoRequest msoRequest = new MsoRequest();
 		msoRequest.setRequestId("12345");
 		msoRequest.setServiceInstanceId("12345");
@@ -65,7 +64,7 @@ public class MsoVnfAdapterImplTest {
 		Map<String, String> map = new HashMap<>();
 		map.put("key1", "value1");
 		try {
-			instance.updateVfModule("mdt1", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "vSAMP12", "VFMOD",
+			instance.updateVnf("mdt1", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "vSAMP12", "VFMOD",
 					"volumeGroupHeatStackId|1", "baseVfHeatStackId", "vfModuleStackId",
 					"88a6ca3ee0394ade9403f075db23167e", map, msoRequest, new Holder<>(),
                 new Holder<>());
@@ -76,12 +75,12 @@ public class MsoVnfAdapterImplTest {
 
 	@Test
 	public void deleteVnfTest() {
-		MsoVnfAdapterImpl instance = new MsoVnfAdapterImpl();
+		MsoVnfCloudifyAdapterImpl instance = new MsoVnfCloudifyAdapterImpl();
 		MsoRequest msoRequest = new MsoRequest();
 		msoRequest.setRequestId("12345");
 		msoRequest.setServiceInstanceId("12345");
 		try {
-			instance.deleteVfModule("mdt1", "88a6ca3ee0394ade9403f075db23167e", "vSAMP12", msoRequest,
+			instance.deleteVnf("mdt1", "88a6ca3ee0394ade9403f075db23167e", "vSAMP12", msoRequest,
                 new Holder<>());
 		} catch (Exception e) {
 

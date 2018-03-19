@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2018 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,41 +21,29 @@
 package org.openecomp.mso.adapters.vnf.test;
 
 
-import java.util.Map;
-
-import javax.xml.ws.Holder;
 
 import org.openecomp.mso.adapters.vnf.MsoVnfAdapter;
 import org.openecomp.mso.adapters.vnf.MsoVnfAdapterImpl;
-import org.openecomp.mso.openstack.beans.VnfStatus;
 import org.openecomp.mso.adapters.vnf.exceptions.VnfException;
 
-public class VnfQueryTest {
+public class VnfDeleteTest {
 	public final static void main (String args[])
 	{
 		MsoVnfAdapter vnfAdapter = new MsoVnfAdapterImpl();
 		log ("Got a VnfAdapter");
 		
+		// Web Service Inputs
 		String cloudId = "MT";
-		String tenantId = "MSO_Test";
-		String vnfName = "VNF_TEST1";
-		Holder<Boolean> vnfExists = new Holder<>();
-		Holder<String> vnfId = new Holder<>();
-		Holder<VnfStatus> status = new Holder<>();
-		Holder<Map<String,String>> outputs = new Holder<>();
-		
+		String tenantName = "MSO_Test";
+		String vnfName = "AdapterTest";
+
 		try {
-			vnfAdapter.queryVnf(cloudId, tenantId, vnfName, null,
-						vnfExists, vnfId, status, outputs);
+			vnfAdapter.deleteVnf(cloudId, tenantName, vnfName, null);
 		} catch (VnfException e) {
 			log ("Got an Exception: " + e);
 		}
 		
-		if (! vnfExists.value){
-			log ("VNF Not Found");
-		} else {
-			log ("Found VNF, ID = " + vnfId.value + ", status=" + status.value);
-		}
+		log ("Deleted VNF");
 	}
 	
 	private static void log (String msg) {
