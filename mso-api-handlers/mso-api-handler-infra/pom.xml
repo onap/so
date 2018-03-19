@@ -109,6 +109,12 @@
 			<artifactId>scala-library</artifactId>
 			<version>${scala-lang-version}</version>
 		</dependency>
+		<!--bwj added scala-compiler-->
+		<dependency>
+			<groupId>org.scala-lang</groupId>
+			<artifactId>scala-compiler</artifactId>
+			<version>2.12.4</version>
+		</dependency>
 		<dependency>
 			<groupId>org.reflections</groupId>
 			<artifactId>reflections</artifactId>
