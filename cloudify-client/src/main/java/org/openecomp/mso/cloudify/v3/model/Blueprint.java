@@ -57,10 +57,6 @@ public class Blueprint implements Serializable {
     @JsonProperty("updated_at")
     private Date updatedAt;
     
-    // ObjectMapper instance to parse Json stack outputs
-    @JsonIgnore
-	private static ObjectMapper mapper = new ObjectMapper();
-
     public Date getCreatedAt() {
         return createdAt;
     }
@@ -124,6 +120,9 @@ public class Blueprint implements Serializable {
 	 */
 	public <T> T getMapValue (Map<String,Object> map, String key, Class<T> type)
 	{
+
+		ObjectMapper mapper = new ObjectMapper();
+
 		if (map.containsKey(key)) {
 			try {
 				String s = mapper.writeValueAsString(map.get(key));

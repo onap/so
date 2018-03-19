@@ -41,12 +41,6 @@ public class DeploymentOutputs implements Serializable {
     @JsonProperty("outputs")
     private Map<String, Object> outputs = null;
     
-
-    // ObjectMapper instance to parse Json object outputs
-    @JsonIgnore
-	private static ObjectMapper mapper = new ObjectMapper();
-
-
     public Map<String, Object> getOutputs() {
     	return this.outputs;
     }
@@ -67,6 +61,9 @@ public class DeploymentOutputs implements Serializable {
 	 */
 	public <T> T getMapValue (Map<String,Object> map, String key, Class<T> type)
 	{
+
+		ObjectMapper mapper = new ObjectMapper();
+
 		if (map.containsKey(key)) {
 			try {
 				String s = mapper.writeValueAsString(map.get(key));

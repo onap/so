@@ -78,10 +78,22 @@ public class Deployment implements Serializable {
     @JsonProperty("workflows")
     private List<Workflow> workflows;
 
-    // ObjectMapper instance to parse Json object outputs
-    @JsonIgnore
-	private static ObjectMapper mapper = new ObjectMapper();
-
+    public List<Object> getPolicyTriggers() {
+	return policyTriggers;
+    }
+    
+    public void setPolicyTriggers(List<Object> policyTriggers) {
+	this.policyTriggers = policyTriggers;
+    }
+    
+    public List<Object> getPolicyTypes() {
+	return policyTypes;
+    }
+    
+    public void setPolicyTypes(List<Object> policyTypes) {
+	this.policyTypes = policyTypes;
+    }
+    
     public String getBlueprintId() {
         return blueprintId;
     }
@@ -320,6 +332,8 @@ public class Deployment implements Serializable {
 	 */
 	public <T> T getMapValue (Map<String,Object> map, String key, Class<T> type)
 	{
+
+		ObjectMapper mapper = new ObjectMapper();
 		if (map.containsKey(key)) {
 			try {
 				String s = mapper.writeValueAsString(map.get(key));
