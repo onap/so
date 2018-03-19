@@ -47,7 +47,7 @@ public class MsoVnfCloudifyAdapterImplTest {
 		map.put("key1", "value1");
 		try {
 			instance.createVnf("mdt1", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "vSAMP12", "VFMOD",
-					"volumeGroupHeatStackId|1", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
+					"volumeGroupHeatStackId|1", map,
 					Boolean.FALSE, Boolean.TRUE, msoRequest, new Holder<>(), new Holder<>(),
                 new Holder<>());
 		} catch (Exception e) {
@@ -62,11 +62,11 @@ public class MsoVnfCloudifyAdapterImplTest {
 		msoRequest.setServiceInstanceId("12345");
 
 		Map<String, String> map = new HashMap<>();
+		
 		map.put("key1", "value1");
 		try {
 			instance.updateVnf("mdt1", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "vSAMP12", "VFMOD",
-					"volumeGroupHeatStackId|1", "baseVfHeatStackId", "vfModuleStackId",
-					"88a6ca3ee0394ade9403f075db23167e", map, msoRequest, new Holder<>(),
+					"volumeGroupHeatStackId|1",  map, msoRequest, new Holder<>(),
                 new Holder<>());
 		} catch (Exception e) {
 
@@ -80,8 +80,7 @@ public class MsoVnfCloudifyAdapterImplTest {
 		msoRequest.setRequestId("12345");
 		msoRequest.setServiceInstanceId("12345");
 		try {
-			instance.deleteVnf("mdt1", "88a6ca3ee0394ade9403f075db23167e", "vSAMP12", msoRequest,
-                new Holder<>());
+			instance.deleteVnf("mdt1", "88a6ca3ee0394ade9403f075db23167e", "vSAMP12", msoRequest);
 		} catch (Exception e) {
 
 		}
