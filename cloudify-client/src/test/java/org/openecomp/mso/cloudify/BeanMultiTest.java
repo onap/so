@@ -52,14 +52,7 @@ public class BeanMultiTest {
   }
   @Test
   public void validateBeansMsoApihandlerBeans() {
-      try{
-	  validator.validate("org.openecomp.mso.cloudify.v3.model",enumFilter);
-      } catch (AssertionError e) {
-	  System.err.println("!!!!!!!!!");
-	  e.printStackTrace();
-	  System.err.println("!!!!!!!!!");
-	  throw e;
-      }
+      validator.validate("org.openecomp.mso.cloudify.v3.model",enumFilter);
   }
   
   private static class FilterTestClasses implements PojoClassFilter {
