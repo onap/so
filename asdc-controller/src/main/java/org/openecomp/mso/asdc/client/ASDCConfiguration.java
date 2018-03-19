@@ -50,6 +50,8 @@ public class ASDCConfiguration implements IConfiguration {
     private MsoJsonProperties msoProperties;
 
     private String asdcControllerName;
+	private  String PASSWORD_ATTRIBUTE_NAME;
+    private  String KEY_STORE_PASSWORD;
 
     public static final String MSO_PROP_ASDC = "MSO_PROP_ASDC";
     public static final String PARAMETER_PATTERN = "asdc-connections";
@@ -60,14 +62,12 @@ public class ASDCConfiguration implements IConfiguration {
     public static final String CONSUMER_GROUP_ATTRIBUTE_NAME = "consumerGroup";
     public static final String CONSUMER_ID_ATTRIBUTE_NAME = "consumerId";
     public static final String ENVIRONMENT_NAME_ATTRIBUTE_NAME = "environmentName";
-    public static final String PASSWORD_ATTRIBUTE_NAME = "password";
     public static final String POLLING_INTERVAL_ATTRIBUTE_NAME = "pollingInterval";
     public static final String RELEVANT_ARTIFACT_TYPES_ATTRIBUTE_NAME = "relevantArtifactTypes";
     public static final String USER_ATTRIBUTE_NAME = "user";
     public static final String ASDC_ADDRESS_ATTRIBUTE_NAME = "asdcAddress";
     public static final String POLLING_TIMEOUT_ATTRIBUTE_NAME = "pollingTimeout";
     public static final String ACTIVATE_SERVER_TLS_AUTH = "activateServerTLSAuth";
-    public static final String KEY_STORE_PASSWORD = "keyStorePassword";
     public static final String KEY_STORE_PATH = "keyStorePath";
 
     public static final String HEAT="HEAT";
@@ -265,6 +265,10 @@ public class ASDCConfiguration implements IConfiguration {
 
     @Override
     public String getPassword () {
+	Properties keyProp = new Properties ();
+		try {
+			keyProp.load (Thread.currentThread ().getContextClassLoader ().getResourceAsStream ("config-key.properties"));
+     	   PASSWORD_ATTRIBUTE_NAME=(String) keyProp.get ("password.attribute.name");
         JsonNode masterConfigNode = getASDCControllerConfigJsonNode ();
         if (masterConfigNode != null && masterConfigNode.get (PASSWORD_ATTRIBUTE_NAME) != null) {
             String config = this.msoProperties.getEncryptedProperty (masterConfigNode.get (PASSWORD_ATTRIBUTE_NAME),
@@ -279,6 +283,9 @@ public class ASDCConfiguration implements IConfiguration {
         } else {
             return null;
         }
+		} catch (IOException e) {
+			 return null;
+		}
     }
 
     @Override
@@ -351,6 +358,10 @@ public class ASDCConfiguration implements IConfiguration {
 
 	@Override
 	public String getKeyStorePassword() {
+	Properties keyProp = new Properties ();
+		try {
+			keyProp.load (Thread.currentThread ().getContextClassLoader ().getResourceAsStream ("config-key.properties"));
+		    KEY_STORE_PASSWORD=(String) keyProp.get ("key.store.password");
 		JsonNode masterConfigNode = getASDCControllerConfigJsonNode();
 		if (masterConfigNode != null && masterConfigNode.get(KEY_STORE_PASSWORD) != null) {
 			String config = this.msoProperties.getEncryptedProperty(masterConfigNode.get(KEY_STORE_PASSWORD), null,
@@ -364,10 +375,14 @@ public class ASDCConfiguration implements IConfiguration {
 		} else {
 			return null;
 		}
+		} catch (IOException e) {
+			return null;
+		}
 	}
 
 	@Override
 	public String getKeyStorePath() {
+	
 		JsonNode masterConfigNode = getASDCControllerConfigJsonNode();
 		if (masterConfigNode != null && masterConfigNode.get(KEY_STORE_PATH) != null) {
 			String config = masterConfigNode.get(KEY_STORE_PATH).asText();
@@ -380,6 +395,7 @@ public class ASDCConfiguration implements IConfiguration {
 		} else {
 			return null;
 		}
+		
 	}
 
     public void testAllParameters () throws ASDCParametersException {
