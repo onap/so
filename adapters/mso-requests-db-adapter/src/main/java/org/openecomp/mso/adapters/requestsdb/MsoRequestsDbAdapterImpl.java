@@ -70,59 +70,59 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
         long startTime = System.currentTimeMillis ();
         try {
            	session.beginTransaction ();
-            String queryString = "update InfraActiveRequests set ";
+            StringBuilder queryString = new StringBuilder("update InfraActiveRequests set ");
             if (statusMessage != null) {
-                queryString += "statusMessage = :statusMessage, ";
+                queryString.append("statusMessage = :statusMessage, ");
             }
             if (responseBody != null) {
-                queryString += "responseBody = :responseBody, ";
+                queryString.append("responseBody = :responseBody, ");
             }
             if (requestStatus != null) {
-                queryString += "requestStatus = :requestStatus, ";
+                queryString.append("requestStatus = :requestStatus, ");
             }
             if (progress != null) {
-                queryString += "progress = :progress, ";
+                queryString.append("progress = :progress, ");
             }
             if (vnfOutputs != null) {
-                queryString += "vnfOutputs = :vnfOutputs, ";
+                queryString.append("vnfOutputs = :vnfOutputs, ");
             }
             if (serviceInstanceId != null) {
-                queryString += "serviceInstanceId = :serviceInstanceId, ";
+                queryString.append("serviceInstanceId = :serviceInstanceId, ");
             }
             if (networkId != null) {
-                queryString += "networkId = :networkId, ";
+                queryString.append("networkId = :networkId, ");
             }
             if (vnfId != null) {
-                queryString += "vnfId = :vnfId, ";
+                queryString.append("vnfId = :vnfId, ");
             }
             if (vfModuleId != null) {
-                queryString += "vfModuleId = :vfModuleId, ";
+                queryString.append("vfModuleId = :vfModuleId, ");
             }
             if (volumeGroupId != null) {
-                queryString += "volumeGroupId = :volumeGroupId, ";
+                queryString.append("volumeGroupId = :volumeGroupId, ");
             }
             if (serviceInstanceName != null) {
-                queryString += "serviceInstanceName = :serviceInstanceName, ";
+                queryString.append("serviceInstanceName = :serviceInstanceName, ");
             }
             if (vfModuleName != null) {
-                queryString += "vfModuleName = :vfModuleName, ";
+                queryString.append("vfModuleName = :vfModuleName, ");
             }
             if (configurationId != null) {
-                queryString += "configurationId = :configurationId, ";
+                queryString.append("configurationId = :configurationId, ");
             }
             if (configurationName != null) {
-                queryString += "configurationName = :configurationName, ";
+                queryString.append("configurationName = :configurationName, ");
             }
             if (requestStatus == RequestStatusType.COMPLETE || requestStatus == RequestStatusType.FAILED) {
-                queryString += "endTime = :endTime, ";
+                queryString.append("endTime = :endTime, ");
             } else {
-                queryString += "modifyTime = :modifyTime, ";
+                queryString.append("modifyTime = :modifyTime, ");
             }
-            queryString += "lastModifiedBy = :lastModifiedBy where requestId = :requestId OR clientRequestId = :requestId";
+            queryString.append("lastModifiedBy = :lastModifiedBy where requestId = :requestId OR clientRequestId = :requestId");
 
-            logger.debug("Executing update: " + queryString);
+            logger.debug("Executing update: " + queryString.toString());
 
-            Query query = session.createQuery (queryString);
+            Query query = session.createQuery (queryString.toString());
             query.setParameter ("requestId", requestId);
             if (statusMessage != null) {
                 query.setParameter ("statusMessage", statusMessage);
