@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2018 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,12 +46,11 @@ public class MsoVnfCloudifyAdapterImplTest {
 		Map<String, String> map = new HashMap<>();
 		map.put("key1", "value1");
 		try {
-			instance.createVfModule("mdt1", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "vSAMP12", "VFMOD",
-					"volumeGroupHeatStackId|1", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
+			instance.createVnf("mdt1", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "vSAMP12", "VFMOD",
+					"volumeGroupHeatStackId|1", map,
 					Boolean.FALSE, Boolean.TRUE, msoRequest, new Holder<>(), new Holder<>(),
                 new Holder<>());
 		} catch (Exception e) {
-
 		}
 	}
 
@@ -63,11 +62,11 @@ public class MsoVnfCloudifyAdapterImplTest {
 		msoRequest.setServiceInstanceId("12345");
 
 		Map<String, String> map = new HashMap<>();
+		
 		map.put("key1", "value1");
 		try {
-			instance.updateVfModule("mdt1", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "vSAMP12", "VFMOD",
-					"volumeGroupHeatStackId|1", "baseVfHeatStackId", "vfModuleStackId",
-					"88a6ca3ee0394ade9403f075db23167e", map, msoRequest, new Holder<>(),
+			instance.updateVnf("mdt1", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "vSAMP12", "VFMOD",
+					"volumeGroupHeatStackId|1",  map, msoRequest, new Holder<>(),
                 new Holder<>());
 		} catch (Exception e) {
 
@@ -81,8 +80,7 @@ public class MsoVnfCloudifyAdapterImplTest {
 		msoRequest.setRequestId("12345");
 		msoRequest.setServiceInstanceId("12345");
 		try {
-			instance.deleteVfModule("mdt1", "88a6ca3ee0394ade9403f075db23167e", "vSAMP12", msoRequest,
-                new Holder<>());
+			instance.deleteVnf("mdt1", "88a6ca3ee0394ade9403f075db23167e", "vSAMP12", msoRequest);
 		} catch (Exception e) {
 
 		}
