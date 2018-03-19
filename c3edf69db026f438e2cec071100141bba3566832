@@ -33,6 +33,23 @@
       "revId": "c3edf69db026f438e2cec071100141bba3566832",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_85568b28",
+        "filename": "bpmn/MSOInfrastructureBPMN/src/main/groovy/org/openecomp/mso/bpmn/infrastructure/scripts/DoCreateResources.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2018-03-19T10:31:50Z",
+      "side": 1,
+      "message": "networks, I dont see this being used... please confirm",
+      "revId": "c3edf69db026f438e2cec071100141bba3566832",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
