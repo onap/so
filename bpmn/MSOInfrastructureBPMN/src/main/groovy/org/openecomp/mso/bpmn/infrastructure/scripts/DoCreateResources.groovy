@@ -55,17 +55,14 @@ import org.openecomp.mso.bpmn.core.json.JsonUtils
  * @param - serviceInstanceName - O
  * @param - serviceInputParams (should contain aic_zone for serviceTypes TRANSPORT,ATM)
  * @param - sdncVersion 
- * @param - failNotFound - TODO
- * @param - serviceInputParams - TODO 
  *
  * @param - addResourceList
  *
  * Outputs:
  * @param - WorkflowException
- * 
- * Rollback - Deferred
+
  */
-public class DoCreateResources    extends AbstractServiceTaskProcessor
+public class DoCreateResources extends AbstractServiceTaskProcessor
 {
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
@@ -76,14 +73,14 @@ public class DoCreateResources    extends AbstractServiceTaskProcessor
 		utils.log("INFO"," ***** preProcessRequest *****",    isDebugEnabled)
 		String msg = ""
 		
-             List addResourceList = execution.getVariable("addResourceList")
+        List addResourceList = execution.getVariable("addResourceList")
         if (addResourceList == null)
         {
             msg = "Input addResourceList is null"
             utils.log("INFO", msg, isDebugEnabled)
             exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)  
         }
-        if (addResourceList.size() == 0)
+        else if (addResourceList.size() == 0)
         {
             msg = "No resource in addResourceList"
             utils.log("INFO", msg, isDebugEnabled)
@@ -95,13 +92,8 @@ public class DoCreateResources    extends AbstractServiceTaskProcessor
     {
         def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
         utils.log("INFO", "======== Start sequenceResoure Process ======== ", isDebugEnabled)
-        String serviceModelUUID = execution.getVariable("modelUuid")
-        JSONArray networks = cutils.getAllNetworksByServiceModelUuid(execution, serviceModelUUID)
-        utils.log("DEBUG", "obtained Network list: "+ networks, isDebugEnabled)
-        if (networks == null) {
-            utils.log("INFO", "No matching networks in Catalog DB for serviceModelUUID=" + serviceModelUUID, isDebugEnabled)
-        }
         
+        String serviceModelUUID = execution.getVariable("modelUuid")      
                
         List<Resource> addResourceList = execution.getVariable("addResourceList")        
 
