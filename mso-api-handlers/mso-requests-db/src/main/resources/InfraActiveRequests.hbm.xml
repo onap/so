@@ -113,7 +113,7 @@
             <column name="AAI_SERVICE_ID" length="50"/>
         </property>
         <property name="aicCloudRegion" type="string">
-            <column name="AIC_CLOUD_REGION" length="11"/>
+            <column name="AIC_CLOUD_REGION" length="200"/>
         </property>
         <property name="callBackUrl" type="string">
             <column name="CALLBACK_URL" length="200"/>
