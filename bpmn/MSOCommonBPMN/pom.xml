@@ -348,7 +348,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
-			<version>${spring.version}</version>
+			<version>4.3.14.RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openecomp.sdc.sdc-tosca</groupId>
