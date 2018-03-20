@@ -209,10 +209,10 @@
 			<!-- AssertJ Testing Library -->
 			<groupId>org.camunda.bpm.extension</groupId>
 			<artifactId>camunda-bpm-assert</artifactId>
-			<version>1.2</version>
+			<version>2.0-alpha2</version>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<!-- Spin dataformat support, in compile scope to include it in the war
 			file -->
 		<dependency>
@@ -341,6 +341,18 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <version>2.4.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-test</artifactId>
+      <version>1.4.2.RELEASE</version>
+      <scope>test</scope>
+    </dependency>
 
 		<!-- bwj add; Jetty-util -->
 		<dependency>
