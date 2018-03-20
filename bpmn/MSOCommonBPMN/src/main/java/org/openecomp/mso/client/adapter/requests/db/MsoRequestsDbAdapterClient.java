@@ -51,7 +51,7 @@ public class MsoRequestsDbAdapterClient implements MsoRequestsDbAdapter {
 			MsoLogger.setLogContext(request.getRequestId(), null);
 			try {
 				session.beginTransaction();
-				String queryString = "update InfraActiveRequests set ";
+				StringBuilder queryString = new StringBuilder("update InfraActiveRequests set ");
 				String statusMessage = null;
 				String responseBody = null;
 				RequestStatusType requestStatus = null;
@@ -67,72 +67,72 @@ public class MsoRequestsDbAdapterClient implements MsoRequestsDbAdapter {
 				String configurationId = null;
 				String configurationName = null;
 				if (request.getStatusMessage() != null) {
-					queryString += "statusMessage = :statusMessage, ";
+					queryString.append("statusMessage = :statusMessage, ");
 					statusMessage = request.getStatusMessage();
 				}
 				if (request.getResponseBody() != null) {
-					queryString += "responseBody = :responseBody, ";
+					queryString.append("responseBody = :responseBody, ");
 					responseBody = request.getResponseBody();
 				}
 				if (request.getRequestStatus() != null) {
-					queryString += "requestStatus = :requestStatus, ";
+					queryString.append("requestStatus = :requestStatus, ");
 					requestStatus = request.getRequestStatus();
 				}
 				if (request.getProgress() != null) {
-					queryString += "progress = :progress, ";
+					queryString.append("progress = :progress, ");
 					progress = request.getProgress();
 				}
 				if (request.getVnfOutputs() != null) {
-					queryString += "vnfOutputs = :vnfOutputs, ";
+					queryString.append("vnfOutputs = :vnfOutputs, ");
 					vnfOutputs = request.getVnfOutputs();
 				}
 				if (request.getServiceInstanceId() != null) {
-					queryString += "serviceInstanceId = :serviceInstanceId, ";
+					queryString.append("serviceInstanceId = :serviceInstanceId, ");
 					serviceInstanceId = request.getServiceInstanceId();
 				}
 				if (request.getNetworkId() != null) {
-					queryString += "networkId = :networkId, ";
+					queryString.append("networkId = :networkId, ");
 					networkId = request.getNetworkId();
 				}
 				if (request.getVnfId() != null) {
-					queryString += "vnfId = :vnfId, ";
+					queryString.append("vnfId = :vnfId, ");
 					vnfId = request.getVnfId();
 				}
 				if (request.getVfModuleId() != null) {
-					queryString += "vfModuleId = :vfModuleId, ";
+					queryString.append("vfModuleId = :vfModuleId, ");
 					vfModuleId = request.getVfModuleId();
 				}
 				if (request.getVolumeGroupId() != null) {
-					queryString += "volumeGroupId = :volumeGroupId, ";
+					queryString.append("volumeGroupId = :volumeGroupId, ");
 					volumeGroupId = request.getVolumeGroupId();
 				}
 				if (request.getServiceInstanceName() != null) {
-					queryString += "serviceInstanceName = :serviceInstanceName, ";
+					queryString.append("serviceInstanceName = :serviceInstanceName, ");
 					serviceInstanceName = request.getServiceInstanceName();
 				}
 				if (request.getVfModuleName() != null) {
-					queryString += "vfModuleName = :vfModuleName, ";
+					queryString.append("vfModuleName = :vfModuleName, ");
 					vfModuleName = request.getVfModuleName();
 				}
 				if (request.getConfigurationId() != null) {
-					queryString += "configurationId = :configurationId, ";
+					queryString.append("configurationId = :configurationId, ");
 					configurationId = request.getConfigurationId();
 				}
 				if (request.getConfigurationName() != null) {
-					queryString += "configurationName = :configurationName, ";
+					queryString.append("configurationName = :configurationName, ");
 					configurationName = request.getConfigurationName();
 				}
 				if (request.getRequestStatus() == RequestStatusType.COMPLETE
 						|| request.getRequestStatus() == RequestStatusType.FAILED) {
-					queryString += "endTime = :endTime, ";
+					queryString.append("endTime = :endTime, ");
 				} else {
-					queryString += "modifyTime = :modifyTime, ";
+					queryString.append("modifyTime = :modifyTime, ");
 				}
-				queryString += "lastModifiedBy = :lastModifiedBy where requestId = :requestId OR clientRequestId = :requestId";
+				queryString.append("lastModifiedBy = :lastModifiedBy where requestId = :requestId OR clientRequestId = :requestId");
 
-				LOGGER.debug("Executing update: " + queryString);
+				LOGGER.debug("Executing update: " + queryString.toString());
 
-				Query query = session.createQuery(queryString);
+				Query query = session.createQuery(queryString.toString());
 				query.setParameter("requestId", request.getRequestId());
 				if (statusMessage != null) {
 					query.setParameter("statusMessage", statusMessage);
