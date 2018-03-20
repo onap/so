@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.11.3">
+  <bpmn:collaboration id="Collaboration_1d0w8lf">
+    <bpmn:participant id="Participant_1egg397" name="SO&#10;Create and Activate Pnf Resource" processRef="CreateAndActivatePnfResource" />
+    <bpmn:participant id="Participant_0atuyq0" name="AAI" />
+    <bpmn:participant id="Participant_19w87ws" name="Workflow Message Service&#10;(communication with DMAAP)&#10;" />
+    <bpmn:messageFlow id="MessageFlow_1h3xu88" sourceRef="CreateAndActivatePnf_CreateAaiEntry" targetRef="Participant_0atuyq0" />
+    <bpmn:messageFlow id="MessageFlow_09ibv5a" sourceRef="CheckAiiForCorrelationId" targetRef="Participant_0atuyq0" />
+    <bpmn:messageFlow id="MessageFlow_0vjul4t" sourceRef="Participant_0atuyq0" targetRef="CheckAiiForCorrelationId" />
+    <bpmn:messageFlow id="MessageFlow_1vrcp2d" sourceRef="Participant_19w87ws" targetRef="WaitForDmaapPnfReadyNotification" />
+  </bpmn:collaboration>
+  <bpmn:process id="CreateAndActivatePnfResource" name="CreateAndActivatePnfResource" isExecutable="true">
+    <bpmn:sequenceFlow id="SequenceFlow_1ls8pua" name="No" sourceRef="DoesAaiContainInfoAboutIp" targetRef="AaiEntryExists">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{!aaiContainsInfoAboutIp}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_1qr6cmf" sourceRef="CreateAndActivatePnf_CreateAaiEntry" targetRef="AaiEntryExists" />
+    <bpmn:sequenceFlow id="SequenceFlow_1l1t6ak" name="Yes" sourceRef="DoesAaiContainInfoAboutPnf" targetRef="DoesAaiContainInfoAboutIp">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{aaiContainsInfoAboutPnf}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_0v5ffpe" name="No" sourceRef="DoesAaiContainInfoAboutPnf" targetRef="CreateAndActivatePnf_CreateAaiEntry">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{!aaiContainsInfoAboutPnf}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_1j4r3zt" sourceRef="CheckAiiForCorrelationId" targetRef="DoesAaiContainInfoAboutPnf" />
+    <bpmn:sequenceFlow id="SequenceFlow_1h6yz62" name="Yes" sourceRef="DoesAaiContainInfoAboutIp" targetRef="AaiEntryAlreadyUpToDate">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{aaiContainsInfoAboutIp}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_0j5ksz1" sourceRef="CreateAndActivatePnf_StartEvent" targetRef="CheckAiiForCorrelationId" />
+    <bpmn:endEvent id="AaiEntryAlreadyUpToDate" name="AAI entry already up-to-date">
+      <bpmn:incoming>SequenceFlow_1h6yz62</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="AaiEntryUpdated" name="AAI entry updated">
+      <bpmn:incoming>SequenceFlow_0p09qgm</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:startEvent id="CreateAndActivatePnf_StartEvent">
+      <bpmn:outgoing>SequenceFlow_0j5ksz1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_17s9025" sourceRef="AaiEntryExists" targetRef="WaitForDmaapPnfReadyNotification" />
+    <bpmn:sequenceFlow id="SequenceFlow_1kc34bc" sourceRef="WaitForDmaapTimeout" targetRef="ThrowTimeoutException" />
+    <bpmn:sequenceFlow id="SequenceFlow_0p09qgm" sourceRef="WaitForDmaapPnfReadyNotification" targetRef="AaiEntryUpdated" />
+    <bpmn:serviceTask id="CheckAiiForCorrelationId" name="Check AAI for correlation_id" camunda:delegateExpression="${checkAaiForCorrelationIdDelegate}">
+      <bpmn:incoming>SequenceFlow_0j5ksz1</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1j4r3zt</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="DoesAaiContainInfoAboutPnf" name="Does AAI contain info about pnf?">
+      <bpmn:incoming>SequenceFlow_1j4r3zt</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1l1t6ak</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_0v5ffpe</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="CreateAndActivatePnf_CreateAaiEntry" name="Create AAI entry with pnf-id = correlation_id" camunda:delegateExpression="${createAaiEntryWithPnfIdDelegate}">
+      <bpmn:incoming>SequenceFlow_0v5ffpe</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1qr6cmf</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="DoesAaiContainInfoAboutIp" name="Does AAI contain info about IPv4 or IPv6?">
+      <bpmn:incoming>SequenceFlow_1l1t6ak</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1h6yz62</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_1ls8pua</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:intermediateThrowEvent id="AaiEntryExists" name="AAI entry exists, lacking IP">
+      <bpmn:incoming>SequenceFlow_1qr6cmf</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1ls8pua</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_17s9025</bpmn:outgoing>
+    </bpmn:intermediateThrowEvent>
+    <bpmn:receiveTask id="WaitForDmaapPnfReadyNotification" name="Wait for DMAAP pnf-ready notification" messageRef="Message_13h1tlo">
+      <bpmn:incoming>SequenceFlow_17s9025</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0p09qgm</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:boundaryEvent id="WaitForDmaapTimeout" name="Timeout" attachedToRef="WaitForDmaapPnfReadyNotification">
+      <bpmn:outgoing>SequenceFlow_1kc34bc</bpmn:outgoing>
+      <bpmn:timerEventDefinition>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">#{timeoutForPnfEntryNotification}</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:endEvent id="ThrowTimeoutException" name="Throw timeout exception">
+      <bpmn:incoming>SequenceFlow_1kc34bc</bpmn:incoming>
+      <bpmn:errorEventDefinition errorRef="Error_1" />
+    </bpmn:endEvent>
+    <bpmn:association id="Association_0s4nwwj" sourceRef="AaiEntryAlreadyUpToDate" targetRef="TextAnnotation_0pbj7y9" />
+    <bpmn:association id="Association_1sypik1" sourceRef="AaiEntryUpdated" targetRef="TextAnnotation_0pbj7y9" />
+    <bpmn:association id="Association_0d7oxnz" sourceRef="CreateAndActivatePnf_StartEvent" targetRef="TextAnnotation_1eyzes8" />
+    <bpmn:textAnnotation id="TextAnnotation_0pbj7y9">
+      <bpmn:text><![CDATA[Outputs:
+ - ipAddress - String]]></bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_1eyzes8">
+      <bpmn:text><![CDATA[Inputs:
+ - timeoutForPnfEntryNotification - String
+ - correlationId - String
+]]></bpmn:text>
+    </bpmn:textAnnotation>
+  </bpmn:process>
+  <bpmn:error id="Error_1" name="MSO Workflow Exception" errorCode="MSOWorkflowException" />
+  <bpmn:message id="Message_13h1tlo" name="WorkflowMessage" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1d0w8lf">
+      <bpmndi:BPMNShape id="Participant_1egg397_di" bpmnElement="Participant_1egg397">
+        <dc:Bounds x="0" y="0" width="1645" height="354" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_1cttgdo_di" bpmnElement="DoesAaiContainInfoAboutPnf" isMarkerVisible="true">
+        <dc:Bounds x="408" y="230" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="388" y="283" width="85" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_0yamdfm_di" bpmnElement="DoesAaiContainInfoAboutIp" isMarkerVisible="true">
+        <dc:Bounds x="786" y="41" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="767" y="5" width="87" height="30" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0k52gr7_di" bpmnElement="AaiEntryUpdated">
+        <dc:Bounds x="1312" y="237" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1286" y="278" width="89" height="10" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_0j5ok9h_di" bpmnElement="CreateAndActivatePnf_StartEvent">
+        <dc:Bounds x="49" y="237" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="23" y="276" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0a5uk9o_di" bpmnElement="CheckAiiForCorrelationId">
+        <dc:Bounds x="194" y="215" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0iimk5v_di" bpmnElement="CreateAndActivatePnf_CreateAaiEntry">
+        <dc:Bounds x="572" y="215" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1j4r3zt_di" bpmnElement="SequenceFlow_1j4r3zt">
+        <di:waypoint xsi:type="dc:Point" x="294" y="255" />
+        <di:waypoint xsi:type="dc:Point" x="408" y="255" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="306" y="235" width="90" height="10" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1l1t6ak_di" bpmnElement="SequenceFlow_1l1t6ak">
+        <di:waypoint xsi:type="dc:Point" x="433" y="230" />
+        <di:waypoint xsi:type="dc:Point" x="433" y="66" />
+        <di:waypoint xsi:type="dc:Point" x="786" y="66" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="438" y="206" width="19" height="10" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0v5ffpe_di" bpmnElement="SequenceFlow_0v5ffpe">
+        <di:waypoint xsi:type="dc:Point" x="458" y="255" />
+        <di:waypoint xsi:type="dc:Point" x="572" y="255" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="471.6714285714286" y="237" width="15" height="10" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1h6yz62_di" bpmnElement="SequenceFlow_1h6yz62">
+        <di:waypoint xsi:type="dc:Point" x="836" y="66" />
+        <di:waypoint xsi:type="dc:Point" x="1312" y="66" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="842.76953125" y="51" width="19" height="10" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ls8pua_di" bpmnElement="SequenceFlow_1ls8pua">
+        <di:waypoint xsi:type="dc:Point" x="811" y="91" />
+        <di:waypoint xsi:type="dc:Point" x="811" y="237" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="821" y="119.69863013698631" width="15" height="10" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1qr6cmf_di" bpmnElement="SequenceFlow_1qr6cmf">
+        <di:waypoint xsi:type="dc:Point" x="672" y="255" />
+        <di:waypoint xsi:type="dc:Point" x="793" y="255" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="687.5" y="235" width="90" height="10" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0j5ksz1_di" bpmnElement="SequenceFlow_0j5ksz1">
+        <di:waypoint xsi:type="dc:Point" x="85" y="255" />
+        <di:waypoint xsi:type="dc:Point" x="194" y="255" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="94.5" y="235" width="90" height="10" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Participant_0i9ban2_di" bpmnElement="Participant_0atuyq0">
+        <dc:Bounds x="123" y="538" width="1222" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="MessageFlow_1h3xu88_di" bpmnElement="MessageFlow_1h3xu88">
+        <di:waypoint xsi:type="dc:Point" x="622" y="295" />
+        <di:waypoint xsi:type="dc:Point" x="622" y="538" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="592" y="411.5" width="90" height="10" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MessageFlow_09ibv5a_di" bpmnElement="MessageFlow_09ibv5a">
+        <di:waypoint xsi:type="dc:Point" x="225" y="295" />
+        <di:waypoint xsi:type="dc:Point" x="225" y="538" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="195" y="411.5" width="90" height="10" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MessageFlow_0vjul4t_di" bpmnElement="MessageFlow_0vjul4t">
+        <di:waypoint xsi:type="dc:Point" x="264" y="538" />
+        <di:waypoint xsi:type="dc:Point" x="264" y="295" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="234" y="411.5" width="90" height="10" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Participant_0vmrrhf_di" bpmnElement="Participant_19w87ws">
+        <dc:Bounds x="767" y="414" width="300" height="62" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0wbx6tt_di" bpmnElement="ThrowTimeoutException">
+        <dc:Bounds x="1164" y="135" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1157" y="172" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_00cy7r0_di" bpmnElement="AaiEntryAlreadyUpToDate">
+        <dc:Bounds x="1312" y="48" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1288" y="89" width="85" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="IntermediateThrowEvent_0fjcdy4_di" bpmnElement="AaiEntryExists">
+        <dc:Bounds x="793" y="237" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="771" y="283" width="80" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1eyzes8_di" bpmnElement="TextAnnotation_1eyzes8">
+        <dc:Bounds x="66" y="70" width="243" height="54" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0d7oxnz_di" bpmnElement="Association_0d7oxnz">
+        <di:waypoint xsi:type="dc:Point" x="67" y="237" />
+        <di:waypoint xsi:type="dc:Point" x="67" y="124" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_0pbj7y9_di" bpmnElement="TextAnnotation_0pbj7y9">
+        <dc:Bounds x="1431" y="45" width="189" height="42" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0s4nwwj_di" bpmnElement="Association_0s4nwwj">
+        <di:waypoint xsi:type="dc:Point" x="1348" y="66" />
+        <di:waypoint xsi:type="dc:Point" x="1431" y="67" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1sypik1_di" bpmnElement="Association_1sypik1">
+        <di:waypoint xsi:type="dc:Point" x="1339" y="239" />
+        <di:waypoint xsi:type="dc:Point" x="1431" y="80" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MessageFlow_1vrcp2d_di" bpmnElement="MessageFlow_1vrcp2d">
+        <di:waypoint xsi:type="dc:Point" x="1002" y="414" />
+        <di:waypoint xsi:type="dc:Point" x="1002" y="295" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="972" y="349.5" width="90" height="10" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_17s9025_di" bpmnElement="SequenceFlow_17s9025">
+        <di:waypoint xsi:type="dc:Point" x="829" y="255" />
+        <di:waypoint xsi:type="dc:Point" x="950" y="255" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="844.5" y="235" width="90" height="10" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="BoundaryEvent_15eo1k9_di" bpmnElement="WaitForDmaapTimeout">
+        <dc:Bounds x="1004" y="197" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1035" y="192" width="40" height="10" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1kc34bc_di" bpmnElement="SequenceFlow_1kc34bc">
+        <di:waypoint xsi:type="dc:Point" x="1022" y="197" />
+        <di:waypoint xsi:type="dc:Point" x="1022" y="153" />
+        <di:waypoint xsi:type="dc:Point" x="1164" y="153" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="992" y="170" width="90" height="10" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ReceiveTask_1sfysua_di" bpmnElement="WaitForDmaapPnfReadyNotification">
+        <dc:Bounds x="950" y="215" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0p09qgm_di" bpmnElement="SequenceFlow_0p09qgm">
+        <di:waypoint xsi:type="dc:Point" x="1050" y="255" />
+        <di:waypoint xsi:type="dc:Point" x="1312" y="255" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1181" y="235" width="0" height="10" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
