@@ -77,8 +77,9 @@ public class DoUpdateE2EServiceInstanceRollback extends AbstractServiceTaskProce
 		List addResourceList = execution.getVariable("addResourceList")
         List delResourceList = execution.getVariable("delResourceList")
         execution.setVariable("addResourceList_o",  addResourceList)
-        execution.setVariable("addResourceList",  delResourceList)
         execution.setVariable("delResourceList_o",  delResourceList)
+        //exchange add and delete resource list
+        execution.setVariable("addResourceList",  delResourceList)        
         execution.setVariable("delResourceList",  addResourceList)
 
 		try {
@@ -204,7 +205,7 @@ public class DoUpdateE2EServiceInstanceRollback extends AbstractServiceTaskProce
     
     } 
 
-	public void preProcessAAIGET2(DelegateExecution execution) {
+	public void preProcessAAIGET(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")	
 	}
     	
@@ -264,7 +265,7 @@ public class DoUpdateE2EServiceInstanceRollback extends AbstractServiceTaskProce
 
 		String serviceInstanceData =
 				"""<service-instance xmlns=\"${namespace}\">
-			       <resource-version">${serviceInstanceVersion}</resource-version>
+			       <resource-version">${modelUuid}</resource-version>
 				 </service-instance>""".trim()
 
 		execution.setVariable("serviceInstanceData", serviceInstanceData)
@@ -310,7 +311,7 @@ public class DoUpdateE2EServiceInstanceRollback extends AbstractServiceTaskProce
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("DEBUG"," ***** processRollbackException ***** ", isDebugEnabled)
 		try{
-			utils.log("DEBUG", "Caught an Exception in DoCreateServiceInstanceRollback", isDebugEnabled)
+			utils.log("DEBUG", "Caught an Exception in DoUpdateE2EServiceInstanceRollback", isDebugEnabled)
 			execution.setVariable("rollbackData", null)
 			execution.setVariable("rollbackError", "Caught exception in ServiceInstance Update Rollback")
 			execution.setVariable("WorkflowException", null)
