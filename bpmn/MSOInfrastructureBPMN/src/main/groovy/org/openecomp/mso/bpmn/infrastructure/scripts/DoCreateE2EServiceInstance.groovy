@@ -548,12 +548,9 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
          def currentIndex = execution.getVariable("currentResourceIndex")
          List<Resource> sequencedResourceList = execution.getVariable("sequencedResourceList")  
          Resource currentResource = sequencedResourceList.get(currentIndex)
-         String resourceCustomizationUuid = currentResource.getModelInfo().getModelCustomizationUuid()
-         resourceInput.setResourceCustomizationUuid(resourceCustomizationUuid);
-         String resourceInvariantUuid = currentResource.getModelInfo().getModelInvariantUuid()
-         resourceInput.setResourceInvariantUuid(resourceInvariantUuid)
-         String resourceUuid = currentResource.getModelInfo().getModelUuid()
-         resourceInput.setResourceUuid(resourceUuid)
+         resourceInput.setResourceModelInfo(currentResource.getModelInfo());
+         ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
+         resourceInput.setServiceModelInfo(serviceDecomposition.getModelInfo());
          
          String incomingRequest = execution.getVariable("uuiRequest")
          //set the requestInputs from tempalte  To Be Done

@@ -19,6 +19,8 @@
  */
 package org.openecomp.mso.bpmn.common.recipe;
 
+import org.openecomp.mso.bpmn.core.domain.ModelInfo;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonRootName;
@@ -35,7 +37,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
  * @author
  * @version     ONAP Beijing Release  2018-03-08
  */
-@JsonPropertyOrder({"resourceInstanceName", "resourceInstanceDes", "globalSubscriberId", "serviceType", "serviceId", "operationId", "resourceType","resourceCustomizationUuid"})
+@JsonPropertyOrder({"resourceInstanceName", "resourceInstanceDes", "globalSubscriberId", "serviceType", "serviceId", "operationId", "serviceModelInfo","resourceModelInfo", "resourceInstancenUuid","resourceParameters","operationType"})
 @JsonRootName("variables")
 public class ResourceInput {
 
@@ -57,17 +59,11 @@ public class ResourceInput {
     @JsonProperty("operationId")
     private String operationId;
     
-    //for create resource
-    @JsonProperty("resourceInvariantUuid")
-    private String resourceInvariantUuid;
+    @JsonProperty("serviceModelInfo")
+    private ModelInfo serviceModelInfo;
     
-    //for create resource
-    @JsonProperty("resourceUuid")
-    private String resourceUuid;
-
-    //for create resource
-    @JsonProperty("resourceCustomizationUuid")
-    private String resourceCustomizationUuid;
+    @JsonProperty("resourceModelInfo")
+    private ModelInfo resourceModelInfo;
     
     //for delete resource
     @JsonProperty("resourceInstancenUuid")
@@ -186,66 +182,46 @@ public class ResourceInput {
     public void setOperationId(String operationId) {
         this.operationId = operationId;
     }
-        
-   
     
     /**
-     * @return Returns the resourceInvariantUuid.
+     * @return Returns the serviceModelInfo.
      */
-    @JsonProperty("resourceInvariantUuid")
-    public String getResourceInvariantUuid() {
-        return resourceInvariantUuid;
+    @JsonProperty("serviceModelInfo")
+    public ModelInfo getServiceModelInfo() {
+        return serviceModelInfo;
     }
 
 
     
     /**
-     * @param resourceInvariantUuid The resourceInvariantUuid to set.
+     * @param serviceModelInfo The serviceModelInfo to set.
      */
-    @JsonProperty("resourceInvariantUuid")
-    public void setResourceInvariantUuid(String resourceInvariantUuid) {
-        this.resourceInvariantUuid = resourceInvariantUuid;
+    @JsonProperty("serviceModelInfo")
+    public void setServiceModelInfo(ModelInfo serviceModelInfo) {
+        this.serviceModelInfo = serviceModelInfo;
     }
 
 
     
     /**
-     * @return Returns the resourceUuid.
+     * @return Returns the resourceModelInfo.
      */
-    @JsonProperty("resourceUuid")
-    public String getResourceUuid() {
-        return resourceUuid;
+    @JsonProperty("resourceModelInfo")
+    public ModelInfo getResourceModelInfo() {
+        return resourceModelInfo;
     }
 
 
     
     /**
-     * @param resourceUuid The resourceUuid to set.
+     * @param resourceModelInfo The resourceModelInfo to set.
      */
-    @JsonProperty("resourceUuid")
-    public void setResourceUuid(String resourceUuid) {
-        this.resourceUuid = resourceUuid;
+    @JsonProperty("resourceModelInfo")
+    public void setResourceModelInfo(ModelInfo resourceModelInfo) {
+        this.resourceModelInfo = resourceModelInfo;
     }
 
 
-    /**
-     * @return Returns the resourceCustomizationUuid.
-     */
-    @JsonProperty("resourceCustomizationUuid")
-    public String getResourceCustomizationUuid() {
-        return resourceCustomizationUuid;
-    }
-
-    
-    /**
-     * @param resourceCustomizationUuid The resourceCustomizationUuid to set.
-     */
-    @JsonProperty("resourceCustomizationUuid")
-    public void setResourceCustomizationUuid(String resourceCustomizationUuid) {
-        this.resourceCustomizationUuid = resourceCustomizationUuid;
-    }
-
-    
     /**
      * @return Returns the resourceParameters.
      */
