@@ -452,7 +452,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 	 * sequence resource. we should analyze resource sequence from service template
 	 * Here we make VF first, and then network for E2E service.
 	 */
-	public void sequenceResoure(execution){
+	public void sequenceResoure(DelegateExecution execution){
 	    def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
         utils.log("INFO", "======== Start sequenceResoure Process ======== ", isDebugEnabled)  
 	    String serviceModelUUID = execution.getVariable("modelUuid")
@@ -492,7 +492,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
         utils.log("INFO", "======== COMPLETED sequenceResoure Process ======== ", isDebugEnabled)  
 	}
 	
-	public void getCurrentResoure(execution){
+	public void getCurrentResoure(DelegateExecution execution){
 	    def isDebugEnabled=execution.getVariable("isDebugLogEnabled")   
         utils.log("INFO", "======== Start getCurrentResoure Process ======== ", isDebugEnabled)    
 	    def currentIndex = execution.getVariable("currentResourceIndex")
@@ -505,7 +505,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 	   /**
      * sequence resource
      */
-    public void parseNextResource(execution){
+    public void parseNextResource(DelegateExecution execution){
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
         utils.log("INFO", "======== Start parseNextResource Process ======== ", isDebugEnabled)    
         def currentIndex = execution.getVariable("currentResourceIndex")
@@ -523,11 +523,11 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
       /**
       * post config request.
       */
-     public void postConfigRequest(execution){
+     public void postConfigRequest(DelegateExecution execution){
          //now do noting
      } 
      
-     public void prepareResourceRecipeRequest(execution){
+     public void prepareResourceRecipeRequest(DelegateExecution execution){
          def isDebugEnabled=execution.getVariable("isDebugLogEnabled")                 
          utils.log("INFO", "======== Start prepareResourceRecipeRequest Process ======== ", isDebugEnabled) 
          ResourceInput resourceInput = new ResourceInput()         
@@ -565,7 +565,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
          utils.log("INFO", "======== COMPLETED prepareResourceRecipeRequest Process ======== ", isDebugEnabled)      
      }
      
-     public void executeResourceRecipe(execution){
+     public void executeResourceRecipe(DelegateExecution execution){
          def isDebugEnabled=execution.getVariable("isDebugLogEnabled")                 
          utils.log("INFO", "======== Start executeResourceRecipe Process ======== ", isDebugEnabled) 
          String requestId = execution.getVariable("msoRequestId")
