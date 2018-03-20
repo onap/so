@@ -28,6 +28,7 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.client.ResponseProcessingException;
 import javax.ws.rs.core.GenericType;
 
+import javax.ws.rs.core.Response;
 import org.onap.aai.domain.yang.Relationship;
 import org.openecomp.mso.client.aai.entities.AAIResultWrapper;
 import org.openecomp.mso.client.aai.entities.uri.AAIResourceUri;
@@ -153,7 +154,7 @@ public class AAIResourcesClient extends AAIClient {
 		aaiRC.patch(obj);
 		return;
 	}
-	
+
 	/**
 	 * Retrieves an object from A&AI and unmarshalls it into the Class specified
 	 * @param clazz
@@ -162,6 +163,15 @@ public class AAIResourcesClient extends AAIClient {
 	 */
 	public <T> T get(Class<T> clazz, AAIResourceUri uri) {
 		return this.createClient(uri).get(clazz);
+	}
+
+	/**
+	 * Retrieves an object from A&AI and returns complete response
+	 * @param uri
+	 * @return
+	 */
+	public Response getFullResponse(AAIResourceUri uri) {
+		return this.createClient(uri).get();
 	}
 	
 	/**
