@@ -24,9 +24,12 @@ import static org.apache.commons.lang3.StringUtils.*;
 import groovy.xml.XmlUtil
 import groovy.json.*
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor 
-import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil 
+import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
+import org.openecomp.mso.bpmn.common.recipe.ResourceInput;
+import org.openecomp.mso.bpmn.common.resource.ResourceRequestBuilder 
 import org.openecomp.mso.bpmn.core.WorkflowException 
-import org.openecomp.mso.bpmn.core.json.JsonUtils 
+import org.openecomp.mso.bpmn.core.json.JsonUtils
+import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.builder.AbstractBuilder
 import org.openecomp.mso.rest.APIResponse
 
 import java.util.UUID;
@@ -46,13 +49,72 @@ import org.openecomp.mso.rest.APIResponse;
  */
 public class CreateSDNCCNetworkResource extends AbstractServiceTaskProcessor {
 
-    String vfcUrl = "/vfc/rest/v1/vfcadapter"
-    
-    String host = "http://mso.mso.testlab.openecomp.org:8080"
-    
+    String Prefix="CRESDNCRES_"
+            
     ExceptionUtil exceptionUtil = new ExceptionUtil()
 
     JsonUtils jsonUtil = new JsonUtils()
+    
+    public void preProcessRequest(DelegateExecution execution){
+        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
+        utils.log("INFO"," ***** Started preProcessRequest *****",  isDebugEnabled)
+        try {           
+            
+            //get bpmn inputs from resource request.
+            String requestId = execution.getVariable("requestId")
+            String requestAction = execution.getVariable("requestAction")
+            utils.log("INFO","The requestAction is: " + requestAction,  isDebugEnabled)
+            String recipeParamsFromRequest = execution.getVariable("recipeParams")
+            utils.log("INFO","The recipeParams is: " + recipeParams,  isDebugEnabled)
+            String resourceInput = execution.getVariable("requestInput")
+            utils.log("INFO","The resourceInput is: " + resourceInput,  isDebugEnabled)
+            //Get ResourceInput Object
+            ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(resourceInput, resourceInputObj)
+            execution.setVariable(Prefix + "resourceInput", resourceInputObj)
+            
+            //Deal with recipeParams
+            String recipeParamsFromWf = execution.getVariable("recipeParamXsd")
+            String resourceName = resourceInputObj.getResourceInstanceName()            
+            //For sdnc requestAction default is "createNetworkInstance"
+            String operationType = "Network"    
+            if(!StringUtils.isBlank(recipeParamsFromRequest)){
+                //the operationType from worflow(first node) is second priority.
+                operationType = jsonUtil.getJsonValue(recipeParamsFromRequest, "operationType")
+            }
+            if(!StringUtils.isBlank(recipeParamsFromWf)){
+                //the operationType from worflow(first node) is highest priority.
+                operationType = jsonUtil.getJsonValue(recipeParamsFromWf, "operationType")
+            }
+            
+            
+            //For sdnc, generate svc_action and request_action
+            String sdnc_svcAction = "create"
+            if(StringUtils.containsIgnoreCase(resourceInputObj.getResourceInstanceName(), "overlay")){
+                //This will be resolved in R3.
+                sdnc_svcAction ="activate"
+                operationType = "NCINetwork"        
+            }
+            if(StringUtils.containsIgnoreCase(resourceInputObj.getResourceInstanceName(), "underlay")){
+                //This will be resolved in R3.
+                operationType ="Network"
+            }        
+            String sdnc_requestAction = StringUtils.capitalize(sdnc_svcAction) + operationType +"Instance"                    
+            execution.setVariable(Prefix + "svcAction", sdnc_svcAction)        
+            execution.setVariable(Prefix + "requestAction", sdnc_requestAction)
+            execution.setVariable(Prefix + "serviceInstanceId", resourceInputObj.getServiceInstanceId())
+            execution.setVariable("mso-request-id", requestId)
+            execution.setVariable("mso-service-instance-id", resourceInputObj.getServiceInstanceId())
+            //TODO Here build networkrequest
+            
+        } catch (BpmnError e) {
+            throw e;
+        } catch (Exception ex){
+            msg = "Exception in preProcessRequest " + ex.getMessage()
+            utils.log("DEBUG", msg, isDebugEnabled)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+        }
+    }
+    
     
     /**
      * Pre Process the BPMN Flow Request
@@ -60,85 +122,43 @@ public class CreateSDNCCNetworkResource extends AbstractServiceTaskProcessor {
      * generate the nsOperationKey
      * generate the nsParameters
      */
-    public void preProcessRequest (DelegateExecution execution) {
-	   def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-       String msg = ""
-       utils.log("INFO", " *** preProcessRequest() *** ", isDebugEnabled)
-       try {
-           //deal with nsName and Description
-           String nsServiceName = execution.getVariable("nsServiceName")
-           String nsServiceDescription = execution.getVariable("nsServiceDescription")
-           utils.log("INFO", "nsServiceName:" + nsServiceName + " nsServiceDescription:" + nsServiceDescription, isDebugEnabled)
-           //deal with operation key
-           String globalSubscriberId = execution.getVariable("globalSubscriberId")
-           utils.log("INFO", "globalSubscriberId:" + globalSubscriberId, isDebugEnabled)
-           String serviceType = execution.getVariable("serviceType")
-           utils.log("INFO", "serviceType:" + serviceType, isDebugEnabled)
-           String serviceId = execution.getVariable("serviceId")
-           utils.log("INFO", "serviceId:" + serviceId, isDebugEnabled)
-           String operationId = execution.getVariable("operationId")
-           utils.log("INFO", "serviceType:" + serviceType, isDebugEnabled)
-           String nodeTemplateUUID = execution.getVariable("resourceUUID")
-           utils.log("INFO", "nodeTemplateUUID:" + nodeTemplateUUID, isDebugEnabled)
-           /*
-            * segmentInformation needed as a object of segment
-            * {
-            *     "domain":"",
-            *     "nodeTemplateName":"",
-            *     "nodeType":"",
-            *     "nsParameters":{
-            *       //this is the nsParameters sent to VF-C
-            *     }
-            * }
-            */
-           String nsParameters = execution.getVariable("resourceParameters")
-           utils.log("INFO", "nsParameters:" + nsParameters, isDebugEnabled)
-           String nsOperationKey = """{
-                   "globalSubscriberId":"${globalSubscriberId}",
-                   "serviceType":"${serviceType}",
-                   "serviceId":"${serviceId}",
-                   "operationId":"${operationId}",
-                   "nodeTemplateUUID":"${nodeTemplateUUID}"
-                    }"""
-           execution.setVariable("nsOperationKey", nsOperationKey);
-           execution.setVariable("nsParameters", nsParameters)
-           
+    public void prepareSDNCRequest (DelegateExecution execution) {
+        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
+        utils.log("INFO"," ***** Started prepareSDNCRequest *****",  isDebugEnabled)
 
-       } catch (BpmnError e) {
-           throw e;
-       } catch (Exception ex){
-           msg = "Exception in preProcessRequest " + ex.getMessage()
-           utils.log("INFO", msg, isDebugEnabled)
-           exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
-       }
-       utils.log("INFO"," ***** Exit preProcessRequest *****",  isDebugEnabled)
+        try {
+            // get variables
+            String sdnc_svcAction = execution.getVariable(Prefix + "svcAction")        
+            String sdnc_requestAction = execution.getVariable(Prefix + "requestAction")
+            String sdncCallback = execution.getVariable("URN_mso_workflow_sdncadapter_callback")
+            String createNetworkInput = execution.getVariable(Prefix + "networkRequest")
+
+            String serviceInstanceId = execution.getVariable(Prefix + "serviceInstanceId")
+            
+            // 1. prepare assign topology via SDNC Adapter SUBFLOW call
+            String sndcTopologyCreateRequest = sdncAdapterUtils.sdncTopologyRequestRsrc(execution, createNetworkInput, serviceInstanceId, sdncCallback, sdnc_svcAction, sdnc_requestAction, null, null, null)
+
+            String sndcTopologyCreateRequesAsString = utils.formatXml(sndcTopologyCreateRequest)
+            utils.logAudit(sndcTopologyCreateRequesAsString)
+            execution.setVariable(Prefix + "createSDNCRequest", sndcTopologyCreateRequesAsString)
+            utils.log("DEBUG", Prefix + "createSDNCRequest - " + "\n" +  sndcTopologyCreateRequesAsString, isDebugEnabled)
+
+        } catch (Exception ex) {
+            String exceptionMessage = " Bpmn error encountered in CreateSDNCCNetworkResource flow. prepareSDNCRequest() - " + ex.getMessage()
+            utils.log("DEBUG", exceptionMessage, isDebugEnabled)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
+
+        }
+       utils.log("INFO"," ***** Exit prepareSDNCRequest *****",  isDebugEnabled)
 	}
 
-    
-    /**
-     * post request
-     * url: the url of the request
-     * requestBody: the body of the request
-     */
-    private APIResponse postRequest(DelegateExecution execution, String url, String requestBody){
-        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-        utils.log("INFO"," ***** Started Execute VFC adapter Post Process *****",  isDebugEnabled)
-        utils.log("INFO","url:"+url +"\nrequestBody:"+ requestBody,  isDebugEnabled)
-        APIResponse apiResponse = null
-        try{
-            RESTConfig config = new RESTConfig(url);
-            RESTClient client = new RESTClient(config).addHeader("Content-Type", "application/json").addHeader("Accept","application/json").addHeader("Authorization","Basic QlBFTENsaWVudDpwYXNzd29yZDEk");
-            apiResponse = client.httpPost(requestBody)
-            utils.log("INFO","response code:"+ apiResponse.getStatusCode() +"\nresponse body:"+ apiResponse.getResponseBodyAsString(),  isDebugEnabled)    
-            utils.log("INFO","======== Completed Execute VF-C adapter Post Process ======== ",  isDebugEnabled)
-        }catch(Exception e){
-            utils.log("ERROR","Exception occured while executing AAI Post Call. Exception is: \n" + e,  isDebugEnabled)
-            throw new BpmnError("MSOWorkflowException")
-        }        
-        return apiResponse
-    }
-    
     public void postCreateSDNCCall(DelegateExecution execution){
+        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
+        utils.log("INFO"," ***** Started prepareSDNCRequest *****",  isDebugEnabled)
+        String responseCode = execution.getVariable(Prefix + "sdncCreateReturnCode")
+        String responseObj = execution.getVariable(Prefix + "SuccessIndicator")
         
+        utils.log("INFO","response from sdnc, response code :" + responseCode + "  response object :" + responseObj,  isDebugEnabled)
+        utils.log("INFO"," ***** Exit prepareSDNCRequest *****",  isDebugEnabled)
     }
 }
