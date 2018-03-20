@@ -4,5 +4,18 @@
                            http://www.springframework.org/schema/beans/spring-beans.xsd">
 
   <!-- Spring bean to be invoked through the ApplicationContextElResolver -->
+  <bean id="aaiConnection" class="org.openecomp.mso.bpmn.infrastructure.pnf.aai.AaiConnectionImpl"/>
+
+  <bean id="checkAaiForCorrelationIdDelegate" class="org.openecomp.mso.bpmn.infrastructure.pnf.delegate.CheckAaiForCorrelationIdDelegate">
+    <property name="aaiConnection" ref="aaiConnection"/>
+  </bean>
+
+  <bean id="updateAaiEntryForIpAddressDelegate" class="org.openecomp.mso.bpmn.infrastructure.pnf.delegate.UpdateAaiEntryForIpAddressDelegate">
+    <property name="aaiConnection" ref="aaiConnection"/>
+  </bean>
+
+  <bean id="createAaiEntryWithPnfIdDelegate" class="org.openecomp.mso.bpmn.infrastructure.pnf.delegate.CreateAaiEntryWithPnfIdDelegate">
+    <property name="aaiConnection" ref="aaiConnection"/>
+  </bean>
 
 </beans>
