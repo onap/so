@@ -25,7 +25,6 @@ import groovy.util.Node
 import groovy.util.XmlParser;
 import groovy.xml.QName
 
-import java.beans.MetaData.java_lang_Class_PersistenceDelegate
 import java.io.Serializable;
 import java.util.UUID;
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
@@ -39,7 +38,6 @@ import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor;
 import org.openecomp.mso.bpmn.common.scripts.VidUtils;
 import org.openecomp.mso.bpmn.core.RollbackData
 import org.openecomp.mso.bpmn.core.WorkflowException
-import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
 import org.openecomp.mso.bpmn.core.json.JsonUtils
 import org.openecomp.mso.bpmn.core.domain.ModelInfo
 import org.openecomp.mso.bpmn.core.domain.ServiceDecomposition
