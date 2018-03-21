@@ -86,7 +86,7 @@
               </environmentVariables>
 	    </configuration>
 	  </execution>
-          <execution>
+          <!--execution>
             <id>deploy</id>
 	    <phase>deploy</phase>
 	    <goals><goal>exec</goal></goals>
@@ -105,7 +105,7 @@
 	        <WHEEL_PATH>${project.build.directory}/${wheel.name}</WHEEL_PATH>
 	      </environmentVariables>
 	    </configuration>
-          </execution>   
+          </execution-->
         </executions>
       </plugin>
     </plugins>
