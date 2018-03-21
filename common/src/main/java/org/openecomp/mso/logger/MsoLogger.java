@@ -979,8 +979,7 @@ public class MsoLogger {
         File configFile = new File(CONFIG_FILE);
         String uuid = "";
         BufferedReader in = null;
-        BufferedWriter bw = null;
-        try {
+        try{
             // Verify whether instanceUUID file exist,
             // If yes, read the content; if not, generate the instanceUUID and
             // write to the file
@@ -990,10 +989,11 @@ public class MsoLogger {
                 if ((uuid = in.readLine()) == null) {
                     // the file is empty, regenerate the file
                     uuid = UUID.randomUUID().toString();
-                    FileWriter fw = new FileWriter(configFile.getAbsoluteFile());
-                    bw = new BufferedWriter(fw);
+                    try(BufferedWriter bw = new BufferedWriter(new FileWriter(configFile.getAbsoluteFile()))) {
                     bw.write(uuid);
-                    bw.close();
+                    } catch (IOException e) {
+                      LOGGER.log(Level.SEVERE, "Error trying to write UUID file", e);
+					}
                 }
                 in.close();
             } else {
@@ -1002,20 +1002,18 @@ public class MsoLogger {
                 uuid = UUID.randomUUID().toString();
                 configFile.getParentFile().mkdirs();
                 configFile.createNewFile();
-                FileWriter fw = new FileWriter(configFile.getAbsoluteFile());
-                bw = new BufferedWriter(fw);
-                bw.write(uuid);
-                bw.close();
+                try(BufferedWriter bw1 = new BufferedWriter(new FileWriter(configFile.getAbsoluteFile()))){
+                bw1.write(uuid);
+                } catch (IOException e) {
+                  LOGGER.log(Level.SEVERE, "Error trying to write UUID file", e);
+				}
             }
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Error trying to read UUID file", e);
+          LOGGER.log(Level.SEVERE, "Error trying to read UUID file", e);
         } finally {
             try {
                 if (in != null) {
                     in.close();
-                }
-                if (bw != null) {
-                    bw.close();
                 }
             } catch (IOException ex) {
                 LOGGER.log(Level.SEVERE, "Error trying to close UUID file", ex);
