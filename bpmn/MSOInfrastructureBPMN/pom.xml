@@ -367,6 +367,13 @@
 			<version>8.9.1</version>
 		</dependency>
 
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
+
 		<!--for yang tools-->
 <!--		<dependency>
 			<groupId>org.onap.so</groupId>
