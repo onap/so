@@ -50,8 +50,6 @@ import org.openecomp.mso.rest.RESTConfig
 import java.util.List;
 import java.util.UUID;
 
-import javax.mail.Quota.Resource;
-
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.json.JSONObject;
