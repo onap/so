@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_6b11bf5c",
+        "filename": "common/src/main/java/org/openecomp/mso/logger/MsoLogger.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 981,
+      "author": {
+        "id": 3541
+      },
+      "writtenOn": "2018-03-21T08:34:36Z",
+      "side": 1,
+      "message": "this \u0027in\u0027 is used created only if configFile exists. Please create it in smaller scope and use try with resources instead of closing it in finally block.",
+      "revId": "2cf568610cef0d7cfa3ecbd9a516b2d41180fd9f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
