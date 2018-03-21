@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.mso.adapters.vnf.test;
+package org.openecomp.mso.adapters.vnf;
 
 import java.util.HashMap;
 import java.util.Map;
