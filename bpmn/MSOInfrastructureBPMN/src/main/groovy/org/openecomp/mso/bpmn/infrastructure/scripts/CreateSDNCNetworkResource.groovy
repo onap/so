@@ -133,11 +133,76 @@ public class CreateSDNCCNetworkResource extends AbstractServiceTaskProcessor {
             String sdncCallback = execution.getVariable("URN_mso_workflow_sdncadapter_callback")
             String createNetworkInput = execution.getVariable(Prefix + "networkRequest")
 
+            String hdrRequestId = execution.getVariable("mso-request-id")
             String serviceInstanceId = execution.getVariable(Prefix + "serviceInstanceId")
-            
+            String source = execution.getVariable("source")
+            String sdnc_service_id = execution.getVariable(Prefix + "sdncServiceId")
+            ResourceInput resourceInputObj = execution.getVariable(Prefix + "resourceInput")
+            String serviceType = resourceInputObj.getServiceType()
+            String serviceModelInvariantUuid = resourceInputObj.getServiceModelInfo().getModelInvariantUuid()
+            String serviceModelUuid = resourceInputObj.getServiceModelInfo().getModelUuid()
+            String serviceModelVersion = resourceInputObj.getServiceModelInfo().getModelName()
+            String serviceModelName = resourceInputObj.getServiceModelInfo().getModelVersion()
+            String globalCustomerId = resourceInputObj.getGlobalSubscriberId()
+            String modelInvariantUuid = resourceInputObj.getResourceModelInfo().getModelInvariantUuid();
+            String modelCustomizationUuid = resourceInputObj.getResourceModelInfo().getModelCustomizationUuid()
+            String modelUuid = resourceInputObj.getResourceModelInfo().getModelUuid()
+            String modelName = resourceInputObj.getResourceModelInfo().getModelName()
+            String modelVersion = resourceInputObj.getResourceModelInfo().getModelVersion()
+            String resourceInputPrameters = resourceInputObj.getResourceParameters()
+            String netowrkInputParametersJson = jsonUtil.getJsonValue(resourceInputPrameters, "requestInputs")
+            //here convert json string to xml string
+            String netowrkInputParameters = jsonUtil.json2xml(netowrkInputParametersJson)
             // 1. prepare assign topology via SDNC Adapter SUBFLOW call
             String sndcTopologyCreateRequest = sdncAdapterUtils.sdncTopologyRequestRsrc(execution, createNetworkInput, serviceInstanceId, sdncCallback, sdnc_svcAction, sdnc_requestAction, null, null, null)
-
+                    String content =
+                    """<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://org.openecomp/mso/workflow/schema/v1"
+                                                              xmlns:sdncadapter="http://org.openecomp.mso/workflow/sdnc/adapter/schema/v1" 
+                                                              xmlns:sdncadapterworkflow="http://org.openecomp/mso/workflow/schema/v1">
+                                 <sdncadapter:RequestHeader>
+                                    <sdncadapter:RequestId>${hdrRequestId}</sdncadapter:RequestId>
+                                    <sdncadapter:SvcInstanceId>${serviceInstanceId}</sdncadapter:SvcInstanceId>
+                                    <sdncadapter:SvcAction>${sdnc_svcAction}</sdncadapter:SvcAction>
+                                    <sdncadapter:SvcOperation>network-topology-operation</sdncadapter:SvcOperation>
+                                    <sdncadapter:CallbackUrl>sdncCallback</sdncadapter:CallbackUrl>
+                                    <sdncadapter:MsoAction>generic-resource</sdncadapter:MsoAction>
+                                 </sdncadapter:RequestHeader>
+                                 <sdncadapterworkflow:SDNCRequestData>
+                                     <request-information>
+                                        <request-id>${hdrRequestId}</request-id>
+                                        <request-action>${sdnc_requestAction}</request-action>
+                                        <source>${source}</source>
+                                        <notification-url></notification-url>
+                                        <order-number></order-number>
+                                        <order-version></order-version>
+                                     </request-information>
+                                     <service-information>
+                                        <service-id>${sdnc_service_id}</service-id>
+                                        <subscription-service-type>${serviceType}</subscription-service-type>
+                                        <ecomp-model-information>
+                                             <model-invariant-uuid>${serviceModelInvariantUuid}</model-invariant-uuid>
+                                             <model-uuid>${serviceModelUuid}</model-uuid>
+                                             <model-version>${serviceModelVersion}</model-version>
+                                             <model-name>${serviceModelName}</model-name>
+                                        </ecomp-model-information>
+                                        <service-instance-id>${serviceInstanceId}</service-instance-id>
+                                        <global-customer-id>${globalCustomerId}</global-customer-id>
+                                     </service-information>
+                                     <network-information>
+                                        <ecomp-model-information>
+                                             <model-invariant-uuid>${modelInvariantUuid}</model-invariant-uuid>
+                                             <model-customization-uuid>${modelCustomizationUuid}</model-customization-uuid>
+                                             <model-uuid>${modelUuid}</model-uuid>
+                                             <model-version>${modelVersion}</model-version>
+                                             <model-name>${modelName}</model-name>
+                                        </ecomp-model-information>
+                                     </network-information>
+                                     <network-request-input>
+                                       <network-input-parameters>${netowrkInputParameters}</network-input-parameters>
+                                     </network-request-input>
+                                </sdncadapterworkflow:SDNCRequestData>
+                             </aetgt:SDNCAdapterWorkflowRequest>""".trim()
+            
             String sndcTopologyCreateRequesAsString = utils.formatXml(sndcTopologyCreateRequest)
             utils.logAudit(sndcTopologyCreateRequesAsString)
             execution.setVariable(Prefix + "createSDNCRequest", sndcTopologyCreateRequesAsString)

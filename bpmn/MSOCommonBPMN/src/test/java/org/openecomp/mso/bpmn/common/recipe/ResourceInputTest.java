@@ -19,9 +19,10 @@
 */
 package org.openecomp.mso.bpmn.common.recipe;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+import org.openecomp.mso.bpmn.core.domain.ModelInfo;
 
 public class ResourceInputTest {
    
@@ -34,9 +35,16 @@ public class ResourceInputTest {
 		ri.setServiceType("serviceType");
 		ri.setServiceInstanceId("serviceId");
 		ri.setOperationId("operationId");
-		ri.setResourceInvariantUuid("resourceInvariantUuid");
-		ri.setResourceUuid("resourceUuid");
-		ri.setResourceCustomizationUuid("resourceCustomizationUuid");
+		ModelInfo serviceModelInfo = new ModelInfo();
+		serviceModelInfo.setModelCustomizationUuid("modelCustomizationUuid");
+		serviceModelInfo.setModelInvariantUuid("modelInvariantUuid");
+		serviceModelInfo.setModelUuid("modelUuid");
+		ri.setServiceModelInfo(serviceModelInfo);
+        ModelInfo resourceModelInfo = new ModelInfo();
+        resourceModelInfo.setModelCustomizationUuid("modelCustomizationUuid");
+        resourceModelInfo.setModelInvariantUuid("modelInvariantUuid");
+        resourceModelInfo.setModelUuid("modelUuid");
+        ri.setResourceModelInfo(resourceModelInfo);
 		ri.setResourceInstancenUuid("resourceInstancenUuid");
 		ri.setResourceParameters("resourceParameters");
 		ri.setOperationType("operationType");
@@ -46,9 +54,6 @@ public class ResourceInputTest {
 		assertEquals(ri.getServiceType(), "serviceType");
 		assertEquals(ri.getServiceInstanceId(), "serviceId");
 		assertEquals(ri.getOperationId(), "operationId");
-		assertEquals(ri.getResourceInvariantUuid(), "resourceInvariantUuid");
-		assertEquals(ri.getResourceUuid(), "resourceUuid");
-		assertEquals(ri.getResourceCustomizationUuid(), "resourceCustomizationUuid");
 		assertEquals(ri.getResourceInstancenUuid(), "resourceInstancenUuid");
 		assertEquals(ri.getResourceParameters(), "resourceParameters");
 		assertEquals(ri.getOperationType(), "operationType");
