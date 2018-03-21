@@ -208,21 +208,21 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
     	if (requestType != null) {
     		newRequestTypeSb.append(requestType);
             }
-		this.createVfModule(cloudSiteId, 
+		this.createVfModule(cloudSiteId,
                                                tenantId,
-				vnfType, 
-				vnfVersion, 
+				vnfType,
+				vnfVersion,
                                                vnfName,
-				newRequestTypeSb.toString(), 
-				vfVolGroupHeatStackId, 
-				vfBaseHeatStackId, 
+				newRequestTypeSb.toString(),
+				vfVolGroupHeatStackId,
+				vfBaseHeatStackId,
 				null,
-				inputs, 
-				failIfExists, 
-				backout, 
-				msoRequest, 
-				vnfId, 
-				outputs, 
+				inputs,
+				failIfExists,
+				backout,
+				msoRequest,
+				vnfId,
+				outputs,
 				rollback);
     	// End createVf shortcut
         }
@@ -522,7 +522,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         }
         LOGGER.debug(sb.toString());
     }
-    
+
     private void sendMapToDebug(Map<String, String> inputs) {
         int i = 0;
         StringBuilder sb = new StringBuilder("inputs:");
@@ -785,7 +785,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         		nestedVolumeOutputs = nestedHeatStack.getOutputs();
         		this.sendMapToDebug(nestedVolumeOutputs, "volumeStackOutputs");
         		//TODO
-        		//heat.copyStringOutputsToInputs(inputs, nestedHeatStack.getOutputs(), false);      
+        		//heat.copyStringOutputsToInputs(inputs, nestedHeatStack.getOutputs(), false);
         		//this.sendMapToDebug(inputs);
         	}
         }
@@ -822,7 +822,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         		baseStackOutputs = nestedBaseHeatStack.getOutputs();
         		this.sendMapToDebug(baseStackOutputs, "baseStackOutputs");
         		//TODO
-        		//heat.copyStringOutputsToInputs(inputs, nestedBaseHeatStack.getOutputs(), false);      
+        		//heat.copyStringOutputsToInputs(inputs, nestedBaseHeatStack.getOutputs(), false);
         		//this.sendMapToDebug(inputs);
         	}
         }
@@ -978,7 +978,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             // with VNF_RESOURCE - we use the old methods.
             //Integer heatTemplateId = null;
             //Integer heatEnvtId = null;
-            
+
             String heatTemplateArtifactUuid = null;
             String heatEnvironmentArtifactUuid = null;
 
@@ -1168,6 +1168,13 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                 StringBuilder sb = new StringBuilder(heatEnvironmentString);
                 //LOGGER.debug("About to create MHEE with " + sb);
                 mhee = new MsoHeatEnvironmentEntry(sb);
+
+                String hpaEnviromnentString = ""; // TODO(sshank): How to obtain hpaEnviromnentString from Homing solution obtained in Groovy script?
+                if (hpaEnviromnentString != null && hpaEnviromnentString.contains("parameters:")) {
+                    StringBuilder hpasb = new StringBuilder(hpaEnviromnentString);
+                    mhee.setHPAParameters(hpasb);
+                }
+
                 StringBuilder sb2 = new StringBuilder("\nHeat Template Parameters:\n");
                 for (HeatTemplateParam parm : heatTemplate.getParameters()) {
                 	sb2.append("\t" + parm.getParamName() + ", required=" + parm.isRequired());
@@ -1184,13 +1191,13 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             }
             // New with 1707 - all variables converted to their native object types
             HashMap<String, Object> goldenInputs = null;
-            
+
             LOGGER.debug("Now handle the inputs....first convert");
             ArrayList<String> parameterNames = new ArrayList<>();
             HashMap<String, String> aliasToParam = new HashMap<>();
             StringBuilder sb = new StringBuilder("\nTemplate Parameters:\n");
             int cntr = 0;
-            try { 
+            try {
             	for (HeatTemplateParam htp : heatTemplate.getParameters()) {
             		sb.append("param[" + cntr++ + "]=" + htp.getParamName());
             		parameterNames.add(htp.getParamName());
@@ -1262,7 +1269,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             if (mhee != null) {
                 newEnvironmentString = mhee.getRawEntry().toString();
             }
-            
+
             // "Fix" the template if it has CR/LF (getting this from Oracle)
             String template = heatTemplate.getHeatTemplate();
             template = template.replaceAll("\r\n", "\n");
@@ -1649,7 +1656,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                     LOGGER.debug("This is unexpected - no nestedBaseStackId with this non-base request");
                 }
             }
-            
+
             //1607 - Add version check
             // First - see if it's in the VnfResource record
             // if we have a vf Module - then we have to query to get the VnfResource record.
@@ -1717,7 +1724,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 				LOGGER.debug("AIC Version not set in VNF_Resource - do not error for now - not checked.");
             }
 			// End Version check 1607
-            
+
 			String heatTemplateArtifactUuid = null;
 			String heatEnvironmentArtifactUuid = null;
 
