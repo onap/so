@@ -26,6 +26,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @JsonInclude(Include.NON_DEFAULT)
 @JsonRootName(value = "platform")
@@ -40,5 +41,9 @@ public class Platform implements Serializable {
 	}
 	public void setPlatformName(String value){
 		this.platformName = value;
+	}
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).append("platformName", platformName).toString();
 	}
 }

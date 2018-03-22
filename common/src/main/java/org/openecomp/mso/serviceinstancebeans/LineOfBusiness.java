@@ -26,6 +26,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @JsonRootName(value = "lineOfBusiness")
 @JsonInclude(Include.NON_DEFAULT)
@@ -40,5 +41,9 @@ public class LineOfBusiness implements Serializable {
 	}
 	public void setLineOfBusinessName(String value){
 		this.lineOfBusinessName = value;
+	}
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).append("lineOfBusinessName", lineOfBusinessName).toString();
 	}
 }

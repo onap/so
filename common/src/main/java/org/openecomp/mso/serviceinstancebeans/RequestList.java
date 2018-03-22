@@ -21,6 +21,7 @@
 package org.openecomp.mso.serviceinstancebeans;
 
 import java.util.List;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 
 public class RequestList {
@@ -33,6 +34,11 @@ public class RequestList {
 
 	public void setRequest(Request request) {
 		this.request = request;
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).append("request", request).toString();
 	}
 
 }

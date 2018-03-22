@@ -64,7 +64,7 @@ public class RequestParameters implements Serializable {
 		return aLaCarte;
 	}
 
-	public void setaLaCarte(boolean aLaCarte) {
+	public void setaLaCarte(Boolean aLaCarte) {
 		this.aLaCarte = aLaCarte;
 	}
 	
@@ -95,7 +95,7 @@ public class RequestParameters implements Serializable {
 		return autoBuildVfModules;
 	}
 
-	public void setAutoBuildVfModules(boolean autoBuildVfModules) {
+	public void setAutoBuildVfModules(Boolean autoBuildVfModules) {
 		this.autoBuildVfModules = autoBuildVfModules;
 	}
 
@@ -103,7 +103,7 @@ public class RequestParameters implements Serializable {
 		return cascadeDelete;
 	}
 
-	public void setCascadeDelete(boolean cascadeDelete) {
+	public void setCascadeDelete(Boolean cascadeDelete) {
 		this.cascadeDelete = cascadeDelete;
 	}
 
@@ -111,7 +111,7 @@ public class RequestParameters implements Serializable {
 		return usePreload;
 	}
 
-	public void setUsePreload(boolean usePreload) {
+	public void setUsePreload(Boolean usePreload) {
 		this.usePreload = usePreload;
 	}
 	
@@ -119,7 +119,10 @@ public class RequestParameters implements Serializable {
 		return rebuildVolumeGroups;
 	}
 
-	public void setRebuildVolumeGroups(boolean rebuildVolumeGroups) {
+	public Boolean isRebuildVolumeGroups() {
+		return rebuildVolumeGroups;
+	}
+	public void setRebuildVolumeGroups(Boolean rebuildVolumeGroups) {
 		this.rebuildVolumeGroups = rebuildVolumeGroups;
 	}
 	public String getPayload(){
