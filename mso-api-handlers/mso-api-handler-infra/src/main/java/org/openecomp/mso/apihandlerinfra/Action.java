@@ -36,5 +36,6 @@ public enum Action {
 	addRelationships,
 	removeRelationships,
 	inPlaceSoftwareUpdate,
-	applyUpdatedConfig
+	applyUpdatedConfig,
+	compareModel
 }

@@ -50,6 +50,7 @@ import org.openecomp.mso.apihandler.common.ResponseHandler;
 import org.openecomp.mso.apihandlerinfra.Messages;
 import org.openecomp.mso.apihandlerinfra.MsoException;
 import org.openecomp.mso.apihandlerinfra.MsoRequest;
+import org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans.CompareModelsRequest;
 import org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans.DelE2ESvcResp;
 import org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans.E2EServiceInstanceDeleteRequest;
 import org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans.E2EServiceInstanceRequest;
@@ -157,6 +158,141 @@ public class E2EServiceInstances {
 			@PathParam("version") String version,
 			@PathParam("operationId") String operationId) {
 		return getE2EServiceInstances(serviceId, operationId);
+	}
+	
+	/**
+	 * GET Requests for Comparing model of service instance with target version
+	 */
+	
+	@GET
+	@Path("/{version:[vV][3-5]}/{serviceId}/modeldifferences")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "Find added and deleted resources of target model for the e2eserviceInstance on a given serviceId ", response = Response.class)
+	public Response compareModelwithTargetVersion(String request,
+			@PathParam("serviceId") String serviceId,
+			@PathParam("version") String version) {
+		
+		instanceIdMap.put("serviceId", serviceId);
+		
+		return compareModelwithTargetVersion(request, Action.compareModel, instanceIdMap, version);
+	}	
+
+	private Response compareModelwithTargetVersion(String requestJSON,
+			Action action, HashMap<String, String> instanceIdMap, String version) {
+		
+		String requestId = instanceIdMap.get("serviceId");
+		long startTime = System.currentTimeMillis();
+		msoLogger.debug("requestId is: " + requestId);		
+		
+		CompareModelsRequest e2eCompareModelReq = null;
+
+		MsoRequest msoRequest = new MsoRequest(requestId);
+
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			e2eCompareModelReq = mapper.readValue(requestJSON, CompareModelsRequest.class);
+
+		} catch (Exception e) {
+
+			msoLogger.debug("Mapping of request to JSON object failed : ", e);
+			Response response = msoRequest.buildServiceErrorResponse(
+					HttpStatus.SC_BAD_REQUEST,
+					MsoException.ServiceException,
+					"Mapping of request to JSON object failed.  "
+							+ e.getMessage(), ErrorNumbers.SVC_BAD_PARAMETER,
+					null);
+			msoLogger.error(MessageEnum.APIH_REQUEST_VALIDATION_ERROR,
+					MSO_PROP_APIHANDLER_INFRA, "", "",
+					MsoLogger.ErrorCode.SchemaError, requestJSON, e);
+			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR,
+					MsoLogger.ResponseCode.SchemaError,
+					"Mapping of request to JSON object failed");
+			msoLogger.debug("End of the transaction, the final response is: "
+					+ (String) response.getEntity());
+
+			return response;
+		}		
+	
+	    //Define RecipeLookupResult info here instead of query DB for efficiency
+		String workflowUrl = "/mso/async/services/CompareModelofE2EServiceInstance";
+		int recipeTimeout = 180;
+
+		RequestClient requestClient = null;
+		HttpResponse response = null;
+
+		long subStartTime = System.currentTimeMillis();
+
+		try {
+			requestClient = RequestClientFactory.getRequestClient(
+					workflowUrl,
+					MsoPropertiesUtils.loadMsoProperties());
+
+			JSONObject jjo = new JSONObject(requestJSON);
+			String bpmnRequest = jjo.toString();
+
+			// Capture audit event
+			msoLogger.debug("MSO API Handler Posting call to BPEL engine for url: "
+							+ requestClient.getUrl());
+			String serviceId = instanceIdMap.get("serviceId");
+			String serviceType = e2eCompareModelReq.getServiceType();
+			response = requestClient.post(requestId, false,
+					recipeTimeout, action.name(),
+					serviceId, null, null, null, null, null, serviceType,
+					null, null, null, bpmnRequest, null);
+
+			msoLogger.recordMetricEvent(subStartTime,
+					MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
+					"Successfully received response from BPMN engine", "BPMN",
+					workflowUrl, null);
+		} catch (Exception e) {
+			msoLogger.recordMetricEvent(subStartTime,
+					MsoLogger.StatusCode.ERROR,
+					MsoLogger.ResponseCode.CommunicationError,
+					"Exception while communicate with BPMN engine", "BPMN",
+					workflowUrl, null);
+			Response resp = msoRequest.buildServiceErrorResponse(
+					HttpStatus.SC_BAD_GATEWAY, MsoException.ServiceException,
+					"Failed calling bpmn " + e.getMessage(),
+					ErrorNumbers.SVC_NO_SERVER_RESOURCES, null);
+			alarmLogger.sendAlarm("MsoConfigurationError",
+					MsoAlarmLogger.CRITICAL,
+					Messages.errors.get(ErrorNumbers.NO_COMMUNICATION_TO_BPEL));
+			msoLogger.error(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR,
+					MSO_PROP_APIHANDLER_INFRA, "", "",
+					MsoLogger.ErrorCode.AvailabilityError,
+					"Exception while communicate with BPMN engine");
+			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR,
+					MsoLogger.ResponseCode.CommunicationError,
+					"Exception while communicate with BPMN engine");
+			msoLogger.debug("End of the transaction, the final response is: "
+					+ (String) resp.getEntity());
+			return resp;
+		}
+
+		if (response == null) {
+			Response resp = msoRequest.buildServiceErrorResponse(
+					HttpStatus.SC_BAD_GATEWAY, MsoException.ServiceException,
+					"bpelResponse is null",
+					ErrorNumbers.SVC_NO_SERVER_RESOURCES, null);
+			msoLogger.error(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR,
+					MSO_PROP_APIHANDLER_INFRA, "", "",
+					MsoLogger.ErrorCode.BusinessProcesssError,
+					"Null response from BPEL");
+			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR,
+					MsoLogger.ResponseCode.InternalError,
+					"Null response from BPMN");
+			msoLogger.debug(END_OF_THE_TRANSACTION + (String) resp.getEntity());
+			return resp;
+		}
+
+		ResponseHandler respHandler = new ResponseHandler(response, requestClient.getType());
+		int bpelStatus = respHandler.getStatus();
+//		String responseBody = respHandler.getResponseBody();
+//		CompareModelsResult modelDiffResponse = new CompareModelsResult();
+
+		return beplStatusUpdate(requestId, startTime, msoRequest,
+				requestClient, respHandler, bpelStatus, action, instanceIdMap);
 	}
 
 	private Response getE2EServiceInstances(String serviceId, String operationId) {
@@ -814,8 +950,7 @@ public class E2EServiceInstances {
 		// BPMN accepted the request, the request is in progress
 		if (bpelStatus == HttpStatus.SC_ACCEPTED) {
 			String camundaJSONResponseBody = respHandler.getResponseBody();
-			msoLogger
-					.debug("Received from Camunda: " + camundaJSONResponseBody);
+			msoLogger.debug("Received from Camunda: " + camundaJSONResponseBody);
 
 			// currently only for delete case we update the status here
 			if (action == Action.deleteInstance) {
@@ -834,6 +969,7 @@ public class E2EServiceInstances {
 									+ bpelStatus);
 				}
 			}
+			
 			msoLogger.recordAuditEvent(startTime,
 					MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
 					"BPMN accepted the request, the request is in progress");
