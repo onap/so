@@ -20,6 +20,8 @@
 
 package org.openecomp.mso.serviceinstancebeans;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 public class RequestReferences {
 	
 	String requestId;
@@ -37,6 +39,10 @@ public class RequestReferences {
 	}
 	public void setInstanceId(String instanceId) {
 		this.instanceId = instanceId;
+	}
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).append("requestId", requestId).append("instanceId", instanceId).toString();
 	}
 
 

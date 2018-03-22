@@ -22,6 +22,8 @@ package org.openecomp.mso.serviceinstancebeans;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 @JsonInclude(Include.NON_DEFAULT)
 public class GetOrchestrationResponse {
@@ -34,6 +36,11 @@ public class GetOrchestrationResponse {
 
 	public void setRequest(Request request) {
 		this.request = request;
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).append("request", request).toString();
 	}
 
 

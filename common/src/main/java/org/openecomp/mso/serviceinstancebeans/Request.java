@@ -22,6 +22,7 @@ package org.openecomp.mso.serviceinstancebeans;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 //@JsonRootName(value = "request")
 @JsonInclude(Include.NON_DEFAULT)
@@ -78,6 +79,13 @@ public class Request {
 	}
 	public void setRequestDetails(RequestDetails requestDetails) {
 		this.requestDetails = requestDetails;
+	}
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).append("requestId", requestId).append("startTime", startTime)
+				.append("requestScope", requestScope).append("requestType", requestType)
+				.append("requestDetails", requestDetails).append("instanceReferences", instanceReferences)
+				.append("requestStatus", requestStatus).toString();
 	}
 
 }

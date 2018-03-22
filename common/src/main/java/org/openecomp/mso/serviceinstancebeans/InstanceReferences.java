@@ -20,6 +20,8 @@
 
 package org.openecomp.mso.serviceinstancebeans;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -106,5 +108,16 @@ public class InstanceReferences {
 
 	public void setRequestorId(String requestorId) {
 		this.requestorId = requestorId;
+	}
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).append("serviceInstanceId", serviceInstanceId)
+				.append("serviceInstanceName", serviceInstanceName).append("vnfInstanceId", vnfInstanceId)
+				.append("vnfInstanceName", vnfInstanceName).append("vfModuleInstanceId", vfModuleInstanceId)
+				.append("vfModuleInstanceName", vfModuleInstanceName)
+				.append("volumeGroupInstanceId", volumeGroupInstanceId)
+				.append("volumeGroupInstanceName", volumeGroupInstanceName)
+				.append("networkInstanceId", networkInstanceId).append("networkInstanceName", networkInstanceName)
+				.append("requestorId", requestorId).toString();
 	}
 }
