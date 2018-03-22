@@ -28,7 +28,7 @@ public class NodeHealthcheckHandlerTest {
     // later, it should be modified properly.
     NodeHealthcheckHandler test = new NodeHealthcheckHandler();
 
-    @Test
+    @Test(expected = NullPointerException.class)
     public void nodeHealthcheckTest() throws Exception {
         test.nodeHealthcheck();
     }
