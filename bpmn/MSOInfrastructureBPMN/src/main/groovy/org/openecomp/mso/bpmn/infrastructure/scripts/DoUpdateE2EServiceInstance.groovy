@@ -55,7 +55,7 @@ import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import org.xml.sax.InputSource
 /**
- * This groovy class supports the <class>DoCreateServiceInstance.bpmn</class> process.
+ * This groovy class supports the <class>DoUpdateE2EServiceInstance.bpmn</class> process.
  *
  * Inputs:
  * @param - msoRequestId
