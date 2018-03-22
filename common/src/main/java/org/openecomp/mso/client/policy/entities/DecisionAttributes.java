@@ -34,9 +34,9 @@ public class DecisionAttributes {
 	@JsonProperty("ServiceType")
 	private String serviceType;
 	@JsonProperty("VNFType")
-	private String vNFType;
+	private String VNFType;
 	@JsonProperty("BB_ID")
-	private String bbID;
+	private String BBID;
 	@JsonProperty("WorkStep")
 	private String workStep;
 	@JsonProperty("ErrorCode")
@@ -54,22 +54,22 @@ public class DecisionAttributes {
 
 	@JsonProperty("VNFType")
 	public String getVNFType() {
-		return vNFType;
+		return VNFType;
 	}
 
 	@JsonProperty("VNFType")
 	public void setVNFType(String vNFType) {
-		this.vNFType = vNFType;
+		this.VNFType = vNFType;
 	}
 
 	@JsonProperty("BB_ID")
 	public String getBBID() {
-		return bbID;
+		return BBID;
 	}
 
 	@JsonProperty("BB_ID")
 	public void setBBID(String bBID) {
-		this.bbID = bBID;
+		this.BBID = bBID;
 	}
 
 	@JsonProperty("WorkStep")
