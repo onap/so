@@ -35,7 +35,7 @@ public class CamundaBooleanInput {
     @JsonProperty(CommonConstants.CAMUNDA_VALUE)
     private boolean value;
     @JsonProperty(CommonConstants.CAMUNDA_TYPE)
-    private String type = "Boolean";
+    private static final String type = "Boolean";
 
 
     public CamundaBooleanInput() {

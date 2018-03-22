@@ -33,7 +33,7 @@ public class CamundaBpmnRequestInput {
     @JsonProperty(CommonConstants.CAMUNDA_VALUE)
     private BpmnRequest value;
     @JsonProperty(CommonConstants.CAMUNDA_TYPE)
-    private String type = "String";
+    private static final String type = "String";
 
 
     public CamundaBpmnRequestInput() {
