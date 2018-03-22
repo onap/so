@@ -33,7 +33,7 @@ public class CamundaIntegerInput {
     @JsonProperty(CommonConstants.CAMUNDA_VALUE)
     private int value;
     @JsonProperty(CommonConstants.CAMUNDA_TYPE)
-    private String type = "Integer";
+    private final String type = "Integer";
 
 
     public CamundaIntegerInput() {
