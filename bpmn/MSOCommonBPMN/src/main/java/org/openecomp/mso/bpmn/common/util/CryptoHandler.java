@@ -28,13 +28,16 @@ public class CryptoHandler implements ICryptoHandler {
 	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
 
 	private static String msoKey = "aa3871669d893c7fb8abbcda31b88b4f";
-	private static String msoAaiEncryptedPwd = "C1FC4A39E16419DD41DFC1212843F440";
-
+    private static String msoAaiEncryptedPwd;
+	
         @Override
 	public String getMsoAaiPassword() {
+	Properties keyProp = new Properties ();
 		try {
+		keyProp.load (Thread.currentThread ().getContextClassLoader ().getResourceAsStream ("urn.properties"));
+			msoAaiEncryptedPwd =(String) keyProp.get ("mso.AaiEncrypted.Pwd");
 			return CryptoUtils.decrypt(msoAaiEncryptedPwd, msoKey);
-		} catch (GeneralSecurityException e) {
+		} catch (GeneralSecurityException | IOException e) {
 			LOGGER.debug("GeneralSecurityException :",e);
 			return null;
 		}
