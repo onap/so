@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_d749918f",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/openecomp/mso/apihandlerinfra/E2EServiceInstances.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 3541
+      },
+      "writtenOn": "2018-03-22T11:16:54Z",
+      "side": 1,
+      "message": "Split into small functions instead of having on really long method. This will make your code more readable.",
+      "revId": "519b7a1fc4c5e6ddad1b3cbe7d581668d9e8ce1f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_575d8147",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/openecomp/mso/apihandlerinfra/E2EServiceInstances.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 269,
+      "author": {
+        "id": 3541
+      },
+      "writtenOn": "2018-03-22T11:16:54Z",
+      "side": 1,
+      "message": "use toString or String.valueOf instead of casting",
+      "revId": "519b7a1fc4c5e6ddad1b3cbe7d581668d9e8ce1f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
