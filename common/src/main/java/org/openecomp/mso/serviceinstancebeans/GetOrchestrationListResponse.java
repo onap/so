@@ -24,6 +24,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @JsonInclude(Include.NON_DEFAULT)
 public class GetOrchestrationListResponse {
@@ -36,6 +37,11 @@ public class GetOrchestrationListResponse {
 
 	public void setRequestList(List<RequestList> requestList) {
 		this.requestList = requestList;
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).append("requestList", requestList).toString();
 	}
 
 }

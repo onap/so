@@ -26,6 +26,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @JsonRootName(value = "relatedInstance")
 @JsonInclude(Include.NON_DEFAULT)
@@ -66,5 +67,10 @@ public class RelatedInstance implements Serializable {
 	}
 	public void setInstanceDirection(InstanceDirection instanceDirection) {
 		this.instanceDirection = instanceDirection;
+	}
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).append("instanceName", instanceName).append("instanceId", instanceId)
+				.append("modelInfo", modelInfo).append("instanceDirection", instanceDirection).toString();
 	}
 }

@@ -20,6 +20,8 @@
 
 package org.openecomp.mso.serviceinstancebeans;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 public class ServiceInstancesResponse {
 	
 	RequestReferences requestReferences;
@@ -30,6 +32,11 @@ public class ServiceInstancesResponse {
 
 	public void setRequestReferences(RequestReferences requestReferences) {
 		this.requestReferences = requestReferences;
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).append("requestReferences", requestReferences).toString();
 	}
 	
 

@@ -22,6 +22,7 @@ package org.openecomp.mso.serviceinstancebeans;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @JsonInclude(Include.NON_DEFAULT)
 public class RequestStatus {
@@ -55,5 +56,10 @@ public class RequestStatus {
 	}
 	public void setFinishTime(String finishTime) {
 		this.finishTime = finishTime;
+	}
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).append("requestState", requestState).append("statusMessage", statusMessage)
+				.append("percentProgress", percentProgress).append("finishTime", finishTime).toString();
 	}
 }

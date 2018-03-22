@@ -26,6 +26,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @JsonRootName(value = "project")
 @JsonInclude(Include.NON_DEFAULT)
@@ -41,5 +42,10 @@ public class Project implements Serializable {
 
 	public void setProjectName(String value) {
 		this.projectName = value;
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).append("projectName", projectName).toString();
 	}
 }

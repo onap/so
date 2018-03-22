@@ -32,6 +32,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 
 /**
@@ -114,5 +115,11 @@ public class RequestError {
     public void setServiceException(ServiceException value) {
         this.serviceException = value;
     }
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).append("policyException", policyException)
+				.append("serviceException", serviceException).toString();
+	}
 
 }
