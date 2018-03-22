@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_e851480f",
+        "filename": "adapters/mso-vnf-adapter/src/main/java/org/openecomp/mso/adapters/vnf/MsoVnfAdapterImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1172,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-03-22T16:22:57Z",
+      "side": 1,
+      "message": "I believe we will have to pass it in at createVfModule() -- since adapters in SO are generally called via REST XML/JSON we will have to pass HPA params from the BPMN flows via REST when the VNF adapter is called by createVcpRestCust and then peculate the HPA params through calls to here. We\u0027ll have to make the HPA info optional.",
+      "range": {
+        "startLine": 1172,
+        "startChar": 16,
+        "endLine": 1172,
+        "endChar": 48
+      },
+      "revId": "97669a5793ba0df5d7adf3ebda71280a721c5fdb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
