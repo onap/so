@@ -37,4 +37,12 @@ public class GetE2EServiceInstanceResponse {
 		this.operation = requestDB;
 	}
 
+	public OperationStatus getOperation() {
+		return operation;
+	}
+
+	public void setOperation(OperationStatus operation) {
+		this.operation = operation;
+	}
+
 }
