@@ -60,4 +60,10 @@ public class E2EUserParam {
 	public void setAdditionalProperty(String name, Object value) {
 		this.additionalProperties.put(name, value);
 	}
+
+	public void setAdditionalProperties(Map<String, Object> additionalProperties) {
+		this.additionalProperties = additionalProperties;
+	}
+	
+	
 }

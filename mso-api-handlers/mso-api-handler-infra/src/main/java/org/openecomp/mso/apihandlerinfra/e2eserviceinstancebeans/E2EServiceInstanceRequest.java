@@ -47,6 +47,12 @@ public class E2EServiceInstanceRequest {
 	public Map<String, Object> getAdditionalProperties() {
 		return this.additionalProperties;
 	}
+	
+	
+
+	public void setAdditionalProperties(Map<String, Object> additionalProperties) {
+		this.additionalProperties = additionalProperties;
+	}
 
 	public void setAdditionalProperty(String name, Object value) {
 		this.additionalProperties.put(name, value);
