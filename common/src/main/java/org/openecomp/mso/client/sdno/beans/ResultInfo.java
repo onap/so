@@ -113,4 +113,7 @@ public void setAdditionalProperty(String name, Object value) {
 this.additionalProperties.put(name, value);
 }
 
+public void setAdditionalProperties(Map<String, Object> map) {
+this.additionalProperties = map;
+}
 }
