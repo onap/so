@@ -37,7 +37,7 @@ public class CamundaInput {
 	@JsonProperty(CommonConstants.CAMUNDA_VALUE)
 	private String value;
 	@JsonProperty(CommonConstants.CAMUNDA_TYPE)
-	private String type = "String";
+	private final String type = "String";
 
 
 	public CamundaInput() {
