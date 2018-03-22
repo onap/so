@@ -123,6 +123,10 @@ public class SDNO implements Serializable
         this.additionalProperties.put(name, value);
     }
 
+    public void setAdditionalProperties(Map<String, Object> map) {
+    	this.additionalProperties = map;
+    }
+    
     public SDNO SDNO (String name, Object value) {
         this.additionalProperties.put(name, value);
         return this;

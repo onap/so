@@ -68,6 +68,9 @@ public class Body implements Serializable
     public void setAdditionalProperty(String name, Object value) {
         this.additionalProperties.put(name, value);
     }
+    public void setAdditionalProperties(Map<String, Object> map) {
+    	this.additionalProperties = map;
+    }
 
     public Body withAdditionalProperty(String name, Object value) {
         this.additionalProperties.put(name, value);
