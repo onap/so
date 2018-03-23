@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_27bbdac5",
+        "filename": "adapters/mso-adapter-utils/src/test/java/org/openecomp/mso/cloudify/beans/DeploymentInfoTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 3541
+      },
+      "writtenOn": "2018-03-23T12:17:43Z",
+      "side": 1,
+      "message": "I agree it\u0027s better then before but still it should be improved. Please split this into few tests and use descriptive name. Developer should know what you are testing just after looking on test case name. Remember that those are unit tests and single unit tests should test single functionality.",
+      "revId": "5c2f54db5f7a19ea66ee68f9bcde4edfba736608",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
