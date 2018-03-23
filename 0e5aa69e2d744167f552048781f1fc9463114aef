@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_a747ea1c",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 588,
+      "author": {
+        "id": 3541
+      },
+      "writtenOn": "2018-03-23T11:11:00Z",
+      "side": 1,
+      "message": "In line 455 you have mockito-all dependency, please remove it.\nhttps://github.com/mockito/mockito/issues/324",
+      "range": {
+        "startLine": 588,
+        "startChar": 0,
+        "endLine": 588,
+        "endChar": 3
+      },
+      "revId": "0e5aa69e2d744167f552048781f1fc9463114aef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
