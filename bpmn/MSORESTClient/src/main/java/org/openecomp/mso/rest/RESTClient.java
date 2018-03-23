@@ -195,10 +195,11 @@ public class RESTClient {
 					.register("http",
 							PlainConnectionSocketFactory.getSocketFactory())
 					.register("https", sslSocketFactory).build();
-			PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(
-					registry);
-			clientBuilder = HttpClientBuilder.create().setConnectionManager(
-					manager);
+			try(PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(
+					registry)){
+				clientBuilder = HttpClientBuilder.create().setConnectionManager(
+						manager);
+			}
 		} catch (Exception ex) {
 			LOGGER.debug("Exception :", ex);
 			throw new RESTException(ex.getMessage());
