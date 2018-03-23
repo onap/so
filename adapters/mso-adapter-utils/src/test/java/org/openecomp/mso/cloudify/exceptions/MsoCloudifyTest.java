@@ -24,8 +24,8 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 public class MsoCloudifyTest {
-
-    @Test
+    
+	@Test
     public void test() {
         MsoBlueprintAlreadyExists mbae=new MsoBlueprintAlreadyExists("blueprintId", "cloud");
         MsoCloudifyManagerNotFound mcm=new MsoCloudifyManagerNotFound("cloudSiteId");

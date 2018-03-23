@@ -24,8 +24,8 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 public class MsoCloudifyWorkflowExceptionTest {
-
-    @Test
+	
+	@Test
     public void test() {
         MsoCloudifyWorkflowException mcw=new MsoCloudifyWorkflowException("message", "id", "workflowId", "workflowStatus");
         mcw.getWorkflowStatus();
