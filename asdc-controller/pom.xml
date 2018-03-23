@@ -98,11 +98,25 @@
 
 
 		<dependency>
+			<!-- This version should be upgraded in Beijing -->
   			<groupId>org.openecomp.sdc.sdc-tosca</groupId>
   			<artifactId>sdc-tosca</artifactId>
   			<version>1.2.3</version>
+			<exclusions>
+				<exclusion>  
+					<groupId>org.openecomp.sdc.jtosca</groupId>
+					<artifactId>jtosca</artifactId>
+  					<!-- <version>1.2.2-SNAPSHOT</version> -->
+				</exclusion>
+			</exclusions>
 		</dependency> 
-		
+		<dependency>  
+			<!-- When the sdc-tosca version is upgraded from 1.2.3,
+			     this dependency should be removed entirely -->
+			<groupId>org.openecomp.sdc.jtosca</groupId>
+			<artifactId>jtosca</artifactId>
+  			<version>1.2.1</version>
+		</dependency>
 
 		<dependency>
 		    <groupId>org.apache.httpcomponents</groupId>

@@ -350,11 +350,26 @@
 			<artifactId>spring-test</artifactId>
 			<version>4.3.14.RELEASE</version>
 		</dependency>
-		<dependency>
-			<groupId>org.openecomp.sdc.sdc-tosca</groupId>
-			<artifactId>sdc-tosca</artifactId>
-			<version>1.2.3</version>
-		</dependency>
+                <dependency>
+			 <!-- This version should be upgraded in Beijing -->
+                        <groupId>org.openecomp.sdc.sdc-tosca</groupId>
+                        <artifactId>sdc-tosca</artifactId>
+                        <version>1.2.3</version>
+                        <exclusions>
+                                <exclusion>
+                                        <groupId>org.openecomp.sdc.jtosca</groupId>
+                                        <artifactId>jtosca</artifactId>
+                                        <!-- <version>1.2.2-SNAPSHOT</version> -->
+                                </exclusion>
+                        </exclusions>
+                </dependency>
+                <dependency>
+			<!-- When the sdc-tosca version is upgraded from 1.2.3,
+                             this dependency should be removed entirely -->
+                        <groupId>org.openecomp.sdc.jtosca</groupId>
+                        <artifactId>jtosca</artifactId>
+                        <version>1.2.1</version>
+                </dependency>
 		<dependency>
 			<groupId>org.camunda.bpm</groupId>
 			<artifactId>camunda-engine-spring</artifactId>
