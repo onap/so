@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_50057e12",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/adapters/vdu/VduInstance.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1423
+      },
+      "writtenOn": "2018-03-23T21:59:01Z",
+      "side": 1,
+      "message": "These initializers should be:\nprotected Map\u003cString, Object\u003e outputs \u003d new HashMap\u003c\u003e();\nprotected Map\u003cString, Object\u003e inputs \u003d new HashMap\u003c\u003e();\n\nOtherwise sonar will flag them.\n\nPlease make the change in other files as well.  I saw it in a few other places (HashMap and ArrayList).  Thanks.",
+      "revId": "7f53dbd087365cd621789bec4e94b6378dcf2b70",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
