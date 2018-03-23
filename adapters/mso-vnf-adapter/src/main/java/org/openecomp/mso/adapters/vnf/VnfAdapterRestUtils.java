@@ -74,9 +74,9 @@ public class VnfAdapterRestUtils
 			vnfAdapter = new MsoVnfAdapterImpl (msoPropertiesFactory, cloudConfigFactory);
 		}
 		else {
-			// Don't expect this, but default is the HEAT adapter
-			LOGGER.debug ("GetVnfAdapterImpl: Return Default (Heat) Adapter");
-			vnfAdapter = new MsoVnfAdapterImpl (msoPropertiesFactory, cloudConfigFactory);
+			// Default is the PLUGIN adapter
+			LOGGER.debug ("GetVnfAdapterImpl: Return Default (Plugin) Adapter");
+			vnfAdapter = new MsoVnfPluginAdapterImpl (msoPropertiesFactory, cloudConfigFactory);
 		}
 		
 		return vnfAdapter;
