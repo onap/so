@@ -23,6 +23,8 @@ package org.openecomp.mso.adapters.vnf;
 import java.util.HashMap;
 import java.util.Map;
 import javax.xml.ws.Holder;
+
+import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.mso.adapters.vnf.MsoVnfAdapterImpl;
 import org.openecomp.mso.entity.MsoRequest;
@@ -30,7 +32,49 @@ import org.openecomp.mso.openstack.beans.VnfRollback;
 
 public class MsoVnfAdapterImplTest {
 
-	@Test
+	MsoVnfAdapter msoVnfAdapter = new MsoVnfAdapterImpl();
+
+    @Test
+    public void updateVnf() throws Exception {
+		MsoRequest msoRequest = new MsoRequest();
+		msoRequest.setRequestId("12345");
+		msoRequest.setServiceInstanceId("12345");
+
+    	msoVnfAdapter.updateVnf("cloudsite", "tenantid", "vfw", "v1", "test",
+				"update", "heatid", new HashMap<>(), msoRequest, new Holder<>(), new Holder<>());
+    	Assert.assertTrue(true);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void queryVnfNullPoinerExceptionTest() throws Exception {
+		MsoRequest msoRequest = new MsoRequest();
+		msoRequest.setRequestId("12345");
+		msoRequest.setServiceInstanceId("12345");
+
+		msoVnfAdapter.queryVnf("cloudSiteId",
+				"tenantId",
+				"vnfName",
+				msoRequest,
+				new Holder<>(),
+				new Holder<>(),
+				new Holder<>(),
+				new Holder<>());
+		Assert.assertFalse(true);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void rollbackVnfCloudSiteInfoNotAvail() throws Exception {
+		VnfRollback rollback = new VnfRollback();
+		rollback.setVnfId("vnfid");
+		rollback.setVfModuleStackId("stackid");
+		rollback.setCloudSiteId("11234");
+		rollback.setTenantId("234");
+
+		msoVnfAdapter.rollbackVnf(rollback);
+		Assert.assertFalse(true);
+    }
+
+    @Test
 	public void healthCheckVNFTest() {
 		MsoVnfAdapterImpl instance = new MsoVnfAdapterImpl();
 		instance.healthCheck();
