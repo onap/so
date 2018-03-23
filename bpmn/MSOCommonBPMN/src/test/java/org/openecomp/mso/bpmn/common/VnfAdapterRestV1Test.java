@@ -229,7 +229,6 @@ public class VnfAdapterRestV1Test extends WorkflowTest {
 	}
 
 	@Test
-	@Ignore // 1802 merge
 	@Deployment(resources = {
 		"subprocess/VnfAdapterRestV1.bpmn"
 		})
@@ -261,7 +260,6 @@ public class VnfAdapterRestV1Test extends WorkflowTest {
 	}
 
 	@Test
-	@Ignore // 1802 merge
 	@Deployment(resources = {
 		"subprocess/VnfAdapterRestV1.bpmn"
 		})
@@ -293,7 +291,6 @@ public class VnfAdapterRestV1Test extends WorkflowTest {
 	}
 
 	@Test
-	@Ignore // 1802 merge
 	@Deployment(resources = {
 		"subprocess/VnfAdapterRestV1.bpmn"
 		})
@@ -324,7 +321,6 @@ public class VnfAdapterRestV1Test extends WorkflowTest {
 		logEnd();
 	}
 
-	@Ignore // 1802 merge
 	@Test
 	@Deployment(resources = {
 		"subprocess/VnfAdapterRestV1.bpmn"
@@ -357,7 +353,6 @@ public class VnfAdapterRestV1Test extends WorkflowTest {
 	}
 
 	@Test
-	@Ignore // 1802 merge
 	@Deployment(resources = {
 		"subprocess/VnfAdapterRestV1.bpmn"
 		})

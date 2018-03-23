@@ -76,81 +76,81 @@ public class StubResponseVNFAdapter {
 	}
 	
 	public static void mockVNFPost(String vfModuleId, int statusCode, String vnfId) {
-		stubFor(post(urlEqualTo("/vnfs/v1/vnfs/" + vnfId + "/vf-modules" + vfModuleId))
+		stubFor(post(urlEqualTo("/vnfs/rest/v1/vnfs/" + vnfId + "/vf-modules" + vfModuleId))
 				.willReturn(aResponse()
 				.withStatus(statusCode)
 				.withHeader("Content-Type", "application/xml")));
 	}
 	
 	public static void mockVNFPut(String vfModuleId, int statusCode) {
-		stubFor(put(urlEqualTo("/vnfs/v1/vnfs/vnfId/vf-modules" + vfModuleId))
+		stubFor(put(urlEqualTo("/vnfs/rest/v1/vnfs/vnfId/vf-modules" + vfModuleId))
 				.willReturn(aResponse()
 				.withStatus(statusCode)
 				.withHeader("Content-Type", "application/xml")));
 	}
 	
 	public static void mockVNFPut(String vnfId, String vfModuleId, int statusCode) {
-		stubFor(put(urlEqualTo("/vnfs/v1/vnfs/" + vnfId + "/vf-modules" + vfModuleId))
+		stubFor(put(urlEqualTo("/vnfs/rest/v1/vnfs/" + vnfId + "/vf-modules" + vfModuleId))
 				.willReturn(aResponse()
 				.withStatus(statusCode)
 				.withHeader("Content-Type", "application/xml")));
 	}
 	
 	public static void mockVNFDelete(String vnfId, String vfModuleId, int statusCode) {
-		stubFor(delete(urlEqualTo("/vnfs/v1/vnfs/" + vnfId + "/vf-modules" + vfModuleId))
+		stubFor(delete(urlEqualTo("/vnfs/rest/v1/vnfs/" + vnfId + "/vf-modules" + vfModuleId))
 				.willReturn(aResponse()
 				.withStatus(statusCode)
 				.withHeader("Content-Type", "application/xml")));
 	}
 	
 	public static void mockVNFRollbackDelete(String vfModuleId, int statusCode) {
-		stubFor(delete(urlEqualTo("/vnfs/v1/vnfs/vnfId/vf-modules" + vfModuleId + "/rollback"))
+		stubFor(delete(urlEqualTo("/vnfs/rest/v1/vnfs/vnfId/vf-modules" + vfModuleId + "/rollback"))
 				.willReturn(aResponse()
 				.withStatus(statusCode)
 				.withHeader("Content-Type", "application/xml")));
 	}
 	
 	public static void mockPutVNFVolumeGroup(String volumeGroupId, int statusCode) {
-		stubFor(put(urlEqualTo("/vnfs/v1/volume-groups/" + volumeGroupId))
+		stubFor(put(urlEqualTo("/vnfs/rest/v1/volume-groups/" + volumeGroupId))
 				.willReturn(aResponse()
 					.withStatus(statusCode)
 					.withHeader("Content-Type", "application/xml")));
 	}
 	
 	public static void mockPutVNFVolumeGroupRollback(String volumeGroupId, int statusCode) {
-		stubFor(delete(urlMatching("/vnfs/v1/volume-groups/" + volumeGroupId + "/rollback"))
+		stubFor(delete(urlMatching("/vnfs/rest/v1/volume-groups/" + volumeGroupId + "/rollback"))
 				.willReturn(aResponse()
 				.withStatus(statusCode)
 				.withHeader("Content-Type", "application/xml")));
 	}
 	public static void mockPostVNFVolumeGroup(int statusCode) {
-		stubFor(post(urlEqualTo("/vnfs/v1/volume-groups"))
+		stubFor(post(urlEqualTo("/vnfs/rest/v1/volume-groups"))
 				.willReturn(aResponse()
 					.withStatus(statusCode)
 					.withHeader("Content-Type", "application/xml")));
 	}
 	
 	public static void mockVNFAdapterRest(String vnfId) {
-		stubFor(post(urlEqualTo("/vnfs/v1/vnfs/" + vnfId + "/vf-modules"))
+		stubFor(post(urlEqualTo("/vnfs/rest/v1/vnfs/" + vnfId + "/vf-modules"))
 				.willReturn(aResponse()
 						.withStatus(200)));
 	}
 
 	public static void mockVNFAdapterRest_500(String vnfId) {
-		stubFor(post(urlEqualTo("/vnfs/v1/vnfs/" + vnfId + "/vf-modules"))
+		stubFor(post(urlEqualTo("/vnfs/rest/v1/vnfs/" + vnfId + "/vf-modules"))
 				.willReturn(aResponse()
 						.withStatus(500)));
 	}
 	
 	public static void mockVfModuleDelete(String volumeGroupId) {
-		stubFor(delete(urlMatching("/vnfs/v1/volume-groups/"+ volumeGroupId))
+		stubFor(delete(urlMatching("/vnfs/rest/v1/volume-groups/"+ volumeGroupId))
 				.willReturn(aResponse()
 				.withStatus(202)
 				.withHeader("Content-Type", "application/xml")));
 	}
 	
 	public static void mockVfModuleDelete(String volumeGroupId, int statusCode) {
-		stubFor(delete(urlMatching("/vnfs/v1/volume-groups/78987"))
+		stubFor(delete(urlMatching("/vnfs/rest/v1/volume-groups/78987"))
 				.willReturn(aResponse()
 				.withStatus(statusCode)
 				.withHeader("Content-Type", "application/xml")));
