@@ -26,11 +26,22 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import org.openecomp.mso.adapters.vdu.CloudInfo;
+import org.openecomp.mso.adapters.vdu.PluginAction;
+import org.openecomp.mso.adapters.vdu.VduArtifact;
+import org.openecomp.mso.adapters.vdu.VduArtifact.ArtifactType;
+import org.openecomp.mso.adapters.vdu.VduException;
+import org.openecomp.mso.adapters.vdu.VduInstance;
+import org.openecomp.mso.adapters.vdu.VduModelInfo;
+import org.openecomp.mso.adapters.vdu.VduPlugin;
+import org.openecomp.mso.adapters.vdu.VduStateType;
+import org.openecomp.mso.adapters.vdu.VduStatus;
 import org.openecomp.mso.cloud.CloudConfig;
 import org.openecomp.mso.cloud.CloudConfigFactory;
 import org.openecomp.mso.cloud.CloudSite;
@@ -56,6 +67,7 @@ import org.openecomp.mso.cloudify.v3.client.ExecutionsResource.CancelExecution;
 import org.openecomp.mso.cloudify.v3.client.ExecutionsResource.GetExecution;
 import org.openecomp.mso.cloudify.v3.client.ExecutionsResource.ListExecutions;
 import org.openecomp.mso.cloudify.v3.client.ExecutionsResource.StartExecution;
+import org.openecomp.mso.cloudify.v3.model.AzureConfig;
 import org.openecomp.mso.cloudify.v3.model.Blueprint;
 import org.openecomp.mso.cloudify.v3.model.CancelExecutionParams;
 import org.openecomp.mso.cloudify.v3.model.CloudifyError;
@@ -85,7 +97,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class MsoCloudifyUtils extends MsoCommonUtils {
+public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
 
 	private MsoPropertiesFactory msoPropertiesFactory;
 	private CloudConfigFactory cloudConfigFactory;
@@ -111,6 +123,12 @@ public class MsoCloudifyUtils extends MsoCommonUtils {
     
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
 
+    /**
+     * This constructor MUST be used ONLY in the JUNIT tests, not for real code.
+     */
+    public MsoCloudifyUtils() {
+    	
+    }
     /**
      * This constructor MUST be used ONLY in the JUNIT tests, not for real code.
      * The MsoPropertiesFactory will be added by EJB injection.
@@ -186,17 +204,24 @@ public class MsoCloudifyUtils extends MsoCommonUtils {
         
         Cloudify cloudify = getCloudifyClient (cloudSite.get());
 
-        // Create the Cloudify OpenstackConfig with the credentials
-        OpenstackConfig openstackConfig = getOpenstackConfig (cloudSite.get(), tenantId);
-        
         LOGGER.debug ("Ready to Create Deployment (" + deploymentId + ") with input params: " + inputs);
 
         // Build up the inputs, including:
         // - from provided "environment" file
         // - passed in by caller
-        // - special input for Openstack Credentials
+        // - special input for cloud-specific Credentials
         Map<String,Object> expandedInputs = new HashMap<String,Object> (inputs);
-        expandedInputs.put("openstack_config", openstackConfig);
+        
+        String platform = cloudSite.get().getPlatform();
+        if (platform == null || platform.equals("") || platform.equalsIgnoreCase("OPENSTACK")) {
+        	// Create the Cloudify OpenstackConfig with the credentials
+        	OpenstackConfig openstackConfig = getOpenstackConfig (cloudSite.get(), tenantId);
+        	expandedInputs.put("openstack_config", openstackConfig);
+        } else if (platform.equalsIgnoreCase("AZURE")) {
+        	// Create Cloudify AzureConfig with the credentials
+	    	AzureConfig azureConfig = getAzureConfig (cloudSite.get(), tenantId);
+	    	expandedInputs.put("azure_config",  azureConfig);
+        }
          
         // Build up the parameters to create a new deployment
     	CreateDeploymentParams deploymentParams = new CreateDeploymentParams();
@@ -236,10 +261,11 @@ public class MsoCloudifyUtils extends MsoCommonUtils {
 
     	/*
     	 * It can take some time for Cloudify to be ready to execute a workflow
-    	 * on the deployment.  Sleep 10 seconds.
+    	 * on the deployment.  Sleep 30 seconds based on observation of behavior
+    	 * in a Cloudify VM instance (delay due to "create_deployment_environment").
     	 */
     	try {
-    		Thread.sleep(10000);
+    		Thread.sleep(30000);
     	} catch (InterruptedException e) {}
     	
     	/*
@@ -825,7 +851,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils {
     /*
      * Common method to load a blueprint.  May be called from 
      */
-    private boolean uploadBlueprint (Cloudify cloudify, String blueprintId, String mainFileName, Map<String,byte[]> blueprintFiles)
+    protected boolean uploadBlueprint (Cloudify cloudify, String blueprintId, String mainFileName, Map<String,byte[]> blueprintFiles)
     	throws MsoException
     {
     	// Check if it already exists.  If so, return false.
@@ -1204,11 +1230,234 @@ public class MsoCloudifyUtils extends MsoCommonUtils {
         return me;
     }
 
+
+
+    /*******************************************************************************
+     * 
+     * Methods (and associated utilities) to implement the VduPlugin interface
+     * 
+     *******************************************************************************/
+    
+    /**
+     * VduPlugin interface for instantiate function.
+     * 
+     * This one is a bit more complex, in that it will first upload the blueprint if needed,
+     * then create the Cloudify deployment and execute the install workflow.
+     * 
+     * This implementation also merges any parameters defined in the ENV file with the other
+     * other input parameters for any undefined parameters).
+     * The basic MsoCloudifyUtils separates blueprint management from deploument actions,
+     * but the VduPlugin does not declare blueprint management operations.
+     */
+    public VduInstance instantiateVdu (
+			CloudInfo cloudInfo,
+			String instanceName,
+			Map<String,Object> inputs,
+			VduModelInfo vduModel,
+			boolean rollbackOnFailure)
+    	throws VduException
+    {
+    	String cloudSiteId = cloudInfo.getCloudSiteId();
+    	String tenantId = cloudInfo.getTenantId();
+    	
+    	// Translate the VDU ModelInformation structure to that which is needed for
+    	// creating and uploading a blueprint.  Use the model customization UUID as
+    	// the blueprint identifier.
+    	
+    	String blueprintId = vduModel.getModelCustomizationUUID();
+    	
+		try {
+			
+	    	if (! isBlueprintLoaded (cloudSiteId, blueprintId)) {
+				LOGGER.debug ("Blueprint " + blueprintId + " is not loaded.  Will upload it now.");
+	
+				// Prepare the blueprint inputs.  Need the set of blueprint templates and files,
+				// plus the main blueprint name.
+				Map<String,byte[]> blueprintFiles = new HashMap<String,byte[]>();
+				String mainTemplate = "";
+	
+				// Add all of the blueprint artifacts from the VDU model
+				List<VduArtifact> vduArtifacts = vduModel.getArtifacts();
+				for (VduArtifact vduArtifact: vduArtifacts)
+				{
+					// Add all artifacts to the blueprint, with one exception.
+					// ENVIRONMENT files will be processed later as additional parameters.
+					
+					ArtifactType artifactType = vduArtifact.getType();
+					if (artifactType != ArtifactType.ENVIRONMENT) {
+						blueprintFiles.put(vduArtifact.getName(), vduArtifact.getContent());
+						
+						if (artifactType == ArtifactType.MAIN_TEMPLATE) {
+							mainTemplate = vduArtifact.getName();
+						}
+					}
+				}
+						
+	            // Upload the blueprint package
+				uploadBlueprint(cloudSiteId, blueprintId, mainTemplate, blueprintFiles, false);
+			}
+    	}
+    	catch (Exception e) {
+    		throw new VduException ("CloudifyUtils (instantiateVDU): blueprint Exception", e);
+    	}
+    	
+		
+    	// Next, create and install a new deployment based on the blueprint.
+    	// For Cloudify, the deploymentId is specified by the client.  Just use the instance name
+    	// as the ID.
+    	
+    	try {
+    		// Query the Cloudify Deployment object and  populate a VduInstance
+    		DeploymentInfo deployment = createAndInstallDeployment (cloudSiteId,
+                    tenantId,
+                    instanceName,
+                    blueprintId,
+                    inputs,
+                    true,  // (poll for completion)
+                    vduModel.getTimeoutMinutes(),
+                    rollbackOnFailure);
+    		
+        	VduInstance vduInstance = deploymentInfoToVduInstance(deployment);
+        	
+        	return vduInstance;
+    	}
+    	catch (Exception e) {
+    		throw new VduException ("CloudifyUtils (instantiateVDU): Create-and-install-deployment Exception", e);
+    	}
+    }
+    
+    
+    /**
+     * VduPlugin interface for query function.
+     */
+    public VduInstance queryVdu (CloudInfo cloudInfo, String instanceId)
+    	throws VduException
+    {
+    	String cloudSiteId = cloudInfo.getCloudSiteId();
+    	String tenantId = cloudInfo.getTenantId();
+    	
+    	try {
+    		// Query the Cloudify Deployment object and  populate a VduInstance
+    		DeploymentInfo deployment = queryDeployment (cloudSiteId, tenantId, instanceId);
+    		
+        	VduInstance vduInstance = deploymentInfoToVduInstance(deployment);
+        	
+        	return vduInstance;
+    	}
+    	catch (Exception e) {
+    		throw new VduException ("Query VDU Exception", e);
+    	}
+    }
+    
+    
+    /**
+     * VduPlugin interface for delete function.
+     */
+    public VduInstance deleteVdu (CloudInfo cloudInfo, String instanceId, int timeoutMinutes)
+    	throws VduException
+    {
+    	String cloudSiteId = cloudInfo.getCloudSiteId();
+    	String tenantId = cloudInfo.getTenantId();
+    	
+    	try {
+    		// Uninstall and delete the Cloudify Deployment
+    		DeploymentInfo deployment = uninstallAndDeleteDeployment (cloudSiteId, tenantId, instanceId, timeoutMinutes);
+    		
+    		// Populate a VduInstance based on the deleted Cloudify Deployment object
+        	VduInstance vduInstance = deploymentInfoToVduInstance(deployment);
+        	
+        	return vduInstance;
+    	}
+    	catch (Exception e) {
+    		throw new VduException ("Delete VDU Exception", e);
+    	}
+    }
+    
+    
+    /**
+     * VduPlugin interface for update function.
+     * 
+     * Update is currently not supported in the MsoCloudifyUtils implementation.
+     * Just return a VduException.
+     * 
+     */
+    public VduInstance updateVdu (
+			CloudInfo cloudInfo,
+			String instanceId,
+			Map<String,Object> inputs,
+			VduModelInfo vduModel,
+			boolean rollbackOnFailure)
+    	throws VduException
+    {
+    	throw new VduException ("CloudifyUtils: updateVDU interface not supported");
+    }
+    
+    	
+    /*
+     * Convert the local DeploymentInfo object (Cloudify-specific) to a generic VduInstance object
+     */
+    protected VduInstance deploymentInfoToVduInstance (DeploymentInfo deployment)
+    {
+    	VduInstance vduInstance = new VduInstance();
+    	
+    	// only one ID in Cloudify, use for both VDU name and ID
+    	vduInstance.setVduInstanceId(deployment.getId());
+    	vduInstance.setVduInstanceName(deployment.getId());
+    	
+    	// Copy inputs and outputs
+    	vduInstance.setInputs(deployment.getInputs());
+    	vduInstance.setOutputs(deployment.getOutputs());
+    	
+    	// Translate the status elements
+    	vduInstance.setStatus(deploymentStatusToVduStatus (deployment));
+    	
+    	return vduInstance;
+    }
+    
+    protected VduStatus deploymentStatusToVduStatus (DeploymentInfo deployment)
+    {
+    	VduStatus vduStatus = new VduStatus();
+    	
+    	// Determine the status based on last action & status
+    	// DeploymentInfo object should be enhanced to report a better status internally.
+    	DeploymentStatus status = deployment.getStatus();
+    	
+    	if (status == null) {
+    		vduStatus.setState(VduStateType.UNKNOWN);
+    	}
+    	else if (status == DeploymentStatus.NOTFOUND) {
+    		vduStatus.setState(VduStateType.NOTFOUND);
+	}
+    	else if (status == DeploymentStatus.INSTALLED) {
+    		vduStatus.setState(VduStateType.INSTANTIATED);
+    	}
+    	else if (status == DeploymentStatus.CREATED) {
+        	// Deployment exists but is not installed.  This shouldn't really happen,
+    		// since create + install or uninstall + delete are always done together.
+    		// But account for it anyway, assuming the operation is still in progress.
+    		String lastAction = deployment.getLastAction();
+    		if (lastAction == null)
+    			vduStatus.setState(VduStateType.INSTANTIATING);
+    		else
+    			vduStatus.setState(VduStateType.DELETING);
+    	}
+    	else if (status == DeploymentStatus.FAILED) {
+    		vduStatus.setState(VduStateType.FAILED);
+    	} else {
+    		vduStatus.setState(VduStateType.UNKNOWN);
+    	}
+    	
+    	vduStatus.setErrorMessage(deployment.getErrorMessage());
+    	vduStatus.setLastAction(new PluginAction(deployment.getLastAction(), deployment.getActionStatus(), deployment.getErrorMessage()));
+    	
+    	return vduStatus;
+    }
+    
     /*
      * Return an OpenstackConfig object as expected by Cloudify Openstack Plug-in.
      * Base the values on the CloudSite definition.
      */
-    private OpenstackConfig getOpenstackConfig (CloudSite cloudSite, String tenantId) {
+    protected OpenstackConfig getOpenstackConfig (CloudSite cloudSite, String tenantId) {
         OpenstackConfig openstackConfig = new OpenstackConfig();
         openstackConfig.setRegion (cloudSite.getRegionId());
         openstackConfig.setAuthUrl (cloudSite.getIdentityService().getIdentityUrl());
@@ -1216,5 +1465,19 @@ public class MsoCloudifyUtils extends MsoCommonUtils {
         openstackConfig.setPassword (cloudSite.getIdentityService().getMsoPass());
         openstackConfig.setTenantName (tenantId);
         return openstackConfig;
+    }
+    
+    /*
+     * Return an Azure object as expected by Cloudify Azure Plug-in.
+     * Base the values on the CloudSite definition.
+     */
+    protected AzureConfig getAzureConfig (CloudSite cloudSite, String tenantId) {
+        AzureConfig azureConfig = new AzureConfig();
+        // TODO: Use adminTenant for now, instead of adding another element
+        azureConfig.setSubscriptionId (cloudSite.getIdentityService().getAdminTenant());
+        azureConfig.setTenantId (tenantId);
+        azureConfig.setClientId (cloudSite.getIdentityService().getMsoId());
+        azureConfig.setClientSecret (cloudSite.getIdentityService().getMsoPass());
+        return azureConfig;
     }
 }
