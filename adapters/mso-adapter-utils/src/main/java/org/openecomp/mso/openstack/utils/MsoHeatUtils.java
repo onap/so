@@ -30,6 +30,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.openecomp.mso.adapters.vdu.CloudInfo;
+import org.openecomp.mso.adapters.vdu.PluginAction;
+import org.openecomp.mso.adapters.vdu.VduArtifact;
+import org.openecomp.mso.adapters.vdu.VduArtifact.ArtifactType;
+import org.openecomp.mso.adapters.vdu.VduException;
+import org.openecomp.mso.adapters.vdu.VduInstance;
+import org.openecomp.mso.adapters.vdu.VduModelInfo;
+import org.openecomp.mso.adapters.vdu.VduPlugin;
+import org.openecomp.mso.adapters.vdu.VduStateType;
+import org.openecomp.mso.adapters.vdu.VduStatus;
 import org.openecomp.mso.cloud.CloudConfig;
 import org.openecomp.mso.cloud.CloudConfigFactory;
 import org.openecomp.mso.cloud.CloudIdentity;
@@ -52,7 +62,6 @@ import org.openecomp.mso.properties.MsoJavaProperties;
 import org.openecomp.mso.properties.MsoPropertiesException;
 import org.openecomp.mso.properties.MsoPropertiesFactory;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.woorea.openstack.base.client.OpenStackConnectException;
@@ -68,7 +77,7 @@ import com.woorea.openstack.keystone.model.Access;
 import com.woorea.openstack.keystone.model.Authentication;
 import com.woorea.openstack.keystone.utils.KeystoneUtils;
 
-public class MsoHeatUtils extends MsoCommonUtils {
+public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 
 	private MsoPropertiesFactory msoPropertiesFactory;
 
@@ -110,6 +119,13 @@ public class MsoHeatUtils extends MsoCommonUtils {
 
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
 
+    /**
+     * This constructor MUST be used ONLY in the JUNIT tests, not for real code.
+     */
+    public MsoHeatUtils() {
+    	
+    }
+    
     /**
      * This constructor MUST be used ONLY in the JUNIT tests, not for real code.
      * The MsoPropertiesFactory will be added by EJB injection.
@@ -1642,5 +1658,205 @@ public class MsoHeatUtils extends MsoCommonUtils {
 		
 		return sb.toString();
 	}
+	
+	/*******************************************************************************
+     * 
+     * Methods (and associated utilities) to implement the VduPlugin interface
+     * 
+     *******************************************************************************/
+    
+    /**
+     * VduPlugin interface for instantiate function.
+     * 
+     * Translate the VduPlugin parameters to the corresponding 'createStack' parameters,
+     * and then invoke the existing function.
+     */
+    public VduInstance instantiateVdu (
+			CloudInfo cloudInfo,
+			String instanceName,
+			Map<String,Object> inputs,
+			VduModelInfo vduModel,
+			boolean rollbackOnFailure)
+    	throws VduException
+    {
+    	String cloudSiteId = cloudInfo.getCloudSiteId();
+    	String tenantId = cloudInfo.getTenantId();
+    	
+    	// Translate the VDU ModelInformation structure to that which is needed for
+    	// creating the Heat stack.  Loop through the artifacts, looking specifically
+    	// for MAIN_TEMPLATE and ENVIRONMENT.  Any other artifact will
+    	// be attached as a FILE.
+    	String heatTemplate = null;
+    	Map<String,Object> nestedTemplates = new HashMap<String,Object>();
+    	Map<String,Object> files = new HashMap<String,Object>();
+    	String heatEnvironment = null;
+    	
+    	for (VduArtifact vduArtifact: vduModel.getArtifacts()) {
+    		if (vduArtifact.getType() == ArtifactType.MAIN_TEMPLATE) {
+    			heatTemplate = new String(vduArtifact.getContent());
+    		}
+    		else if (vduArtifact.getType() == ArtifactType.NESTED_TEMPLATE) {
+    			nestedTemplates.put(vduArtifact.getName(), new String(vduArtifact.getContent()));
+    		}
+    		else if (vduArtifact.getType() == ArtifactType.ENVIRONMENT) {
+    			heatEnvironment = new String(vduArtifact.getContent());
+    		}
+    	}
+    	
+    	try {
+    	    StackInfo stackInfo = createStack (cloudSiteId,
+                    tenantId,
+                    instanceName,
+                    heatTemplate,
+                    inputs,
+                    true,	// poll for completion
+                    vduModel.getTimeoutMinutes(),
+                    heatEnvironment,
+                    nestedTemplates,
+                    files,
+                    rollbackOnFailure);
+    		
+    	    // Populate a vduInstance from the StackInfo
+        	VduInstance vduInstance = stackInfoToVduInstance(stackInfo);
+        	
+        	return vduInstance;
+    	}
+    	catch (Exception e) {
+    		throw new VduException ("MsoHeatUtils (instantiateVDU): createStack Exception", e);
+    	}
+    }
+    
+    
+    /**
+     * VduPlugin interface for query function.
+     */
+    public VduInstance queryVdu (CloudInfo cloudInfo, String instanceId)
+    	throws VduException
+    {
+    	String cloudSiteId = cloudInfo.getCloudSiteId();
+    	String tenantId = cloudInfo.getTenantId();
+    	
+    	try {
+    		// Query the Cloudify Deployment object and  populate a VduInstance
+    		StackInfo stackInfo = queryStack (cloudSiteId, tenantId, instanceId);
+    		
+        	VduInstance vduInstance = stackInfoToVduInstance(stackInfo);
+        	
+        	return vduInstance;
+    	}
+    	catch (Exception e) {
+    		throw new VduException ("MsoHeatUtile (queryVdu): queryStack Exception ", e);
+    	}
+    }
+    
+    
+    /**
+     * VduPlugin interface for delete function.
+     */
+    public VduInstance deleteVdu (CloudInfo cloudInfo, String instanceId, int timeoutMinutes)
+    	throws VduException
+    {
+    	String cloudSiteId = cloudInfo.getCloudSiteId();
+    	String tenantId = cloudInfo.getTenantId();
+    	
+    	try {
+    		// Delete the Heat stack
+    		StackInfo stackInfo = deleteStack (tenantId, cloudSiteId, instanceId, true);
+    		
+    		// Populate a VduInstance based on the deleted Cloudify Deployment object
+        	VduInstance vduInstance = stackInfoToVduInstance(stackInfo);
+        	
+        	// Override return state to DELETED (HeatUtils sets to NOTFOUND)
+        	vduInstance.getStatus().setState(VduStateType.DELETED);
+        	
+        	return vduInstance;
+    	}
+    	catch (Exception e) {
+    		throw new VduException ("Delete VDU Exception", e);
+    	}
+    }
+    
+    
+    /**
+     * VduPlugin interface for update function.
+     * 
+     * Update is currently not supported in the MsoHeatUtils implementation of VduPlugin.
+     * Just return a VduException.
+     * 
+     */
+    public VduInstance updateVdu (
+			CloudInfo cloudInfo,
+			String instanceId,
+			Map<String,Object> inputs,
+			VduModelInfo vduModel,
+			boolean rollbackOnFailure)
+    	throws VduException
+    {
+    	throw new VduException ("MsoHeatUtils: updateVdu interface not supported");
+    }
+    
+    	
+    /*
+     * Convert the local DeploymentInfo object (Cloudify-specific) to a generic VduInstance object
+     */
+    private VduInstance stackInfoToVduInstance (StackInfo stackInfo)
+    {
+    	VduInstance vduInstance = new VduInstance();
+    	
+    	// The full canonical name as the instance UUID
+    	vduInstance.setVduInstanceId(stackInfo.getCanonicalName());
+    	vduInstance.setVduInstanceName(stackInfo.getName());
+    	
+    	// Copy inputs and outputs
+    	vduInstance.setInputs(stackInfo.getParameters());
+    	vduInstance.setOutputs(stackInfo.getOutputs());
+    	
+    	// Translate the status elements
+    	vduInstance.setStatus(stackStatusToVduStatus (stackInfo));
+    	
+    	return vduInstance;
+    }
+    
+    private VduStatus stackStatusToVduStatus (StackInfo stackInfo)
+    {
+    	VduStatus vduStatus = new VduStatus();
+    	
+    	// Map the status fields to more generic VduStatus.
+    	// There are lots of HeatStatus values, so this is a bit long...
+    	HeatStatus heatStatus = stackInfo.getStatus();
+    	String statusMessage = stackInfo.getStatusMessage();
+    	
+    	if (heatStatus == HeatStatus.INIT  ||  heatStatus == HeatStatus.BUILDING) {
+    		vduStatus.setState(VduStateType.INSTANTIATING);
+    		vduStatus.setLastAction((new PluginAction ("create", "in_progress", statusMessage)));
+    	}
+    	else if (heatStatus == HeatStatus.NOTFOUND) {
+    		vduStatus.setState(VduStateType.NOTFOUND);
+    	}
+    	else if (heatStatus == HeatStatus.CREATED) {
+    		vduStatus.setState(VduStateType.INSTANTIATED);
+    		vduStatus.setLastAction((new PluginAction ("create", "complete", statusMessage)));
+    	}
+    	else if (heatStatus == HeatStatus.UPDATED) {
+    		vduStatus.setState(VduStateType.INSTANTIATED);
+    		vduStatus.setLastAction((new PluginAction ("update", "complete", statusMessage)));
+    	}
+    	else if (heatStatus == HeatStatus.UPDATING) {
+    		vduStatus.setState(VduStateType.UPDATING);
+    		vduStatus.setLastAction((new PluginAction ("update", "in_progress", statusMessage)));
+    	}
+    	else if (heatStatus == HeatStatus.DELETING) {
+    		vduStatus.setState(VduStateType.DELETING);
+    		vduStatus.setLastAction((new PluginAction ("delete", "in_progress", statusMessage)));
+    	}
+    	else if (heatStatus == HeatStatus.FAILED) {
+    		vduStatus.setState(VduStateType.FAILED);
+        	vduStatus.setErrorMessage(stackInfo.getStatusMessage());
+    	} else {
+    		vduStatus.setState(VduStateType.UNKNOWN);
+    	}
+    	
+    	return vduStatus;
+    }
 	
 }
