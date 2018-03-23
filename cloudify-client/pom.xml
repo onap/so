@@ -69,7 +69,13 @@
             <artifactId>commons-lang</artifactId>
             <version>2.6</version>
         </dependency>
-	</dependencies>
+        <dependency>
+            <groupId>com.openpojo</groupId>
+            <artifactId>openpojo</artifactId>
+            <version>0.8.4</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
 
 </project>
