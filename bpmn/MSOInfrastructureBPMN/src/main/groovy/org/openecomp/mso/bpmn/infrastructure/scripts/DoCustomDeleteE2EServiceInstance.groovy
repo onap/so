@@ -20,10 +20,19 @@
  */
 package org.openecomp.mso.bpmn.infrastructure.scripts
 
-import org.json.JSONArray;
+import org.json.JSONArray
+import org.openecomp.mso.bpmn.common.resource.ResourceRequestBuilder
+import org.openecomp.mso.bpmn.core.domain.Resource
+import org.openecomp.mso.bpmn.core.domain.ServiceDecomposition
+import org.openecomp.mso.bpmn.infrastructure.properties.BPMNProperties;
+import org.apache.http.HttpResponse
+import org.json.JSONArray
+import org.openecomp.mso.bpmn.common.recipe.BpmnRestClient
+import org.openecomp.mso.bpmn.common.recipe.ResourceInput;
 
 import static org.apache.commons.lang3.StringUtils.*;
 import groovy.xml.XmlUtil
+import org.openecomp.mso.bpmn.common.scripts.CatalogDbUtils;
 import groovy.json.*
 
 import org.openecomp.mso.bpmn.core.json.JsonUtils
@@ -78,6 +87,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 	String Prefix="DDELSI_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
+	CatalogDbUtils cutils = new CatalogDbUtils()
 
 	public void preProcessRequest (DelegateExecution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
@@ -330,6 +340,18 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 				}
 				else
 				{
+					// get model invariant id
+					// Get Template uuid and version
+					if (utils.nodeExists(siData, "model-invariant-id") && utils.nodeExists(siData, "model-version-id") ) {
+						utils.log("INFO", "SI Data model-invariant-id and model-version-id exist:", isDebugEnabled)
+						def modelInvariantId  = serviceXml.getElementsByTagName("model-invariant-id").item(0).getTextContent()
+						def modelVersionId  = serviceXml.getElementsByTagName("model-version-id").item(0).getTextContent()
+
+						// Set Original Template info
+						execution.setVariable("model-invariant-id-original", modelInvariantId)
+						execution.setVariable("model-version-id-original", modelVersionId)
+					}
+
 					utils.log("INFO", "SI Data" + siData, isDebugEnabled)
 					//Confirm there are no related service instances (vnf/network or volume)
 					if (utils.nodeExists(siData, "relationship-list")) {
@@ -437,6 +459,43 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
 		utils.log("INFO"," *** Exit postProcessAAIGET *** ", isDebugEnabled)
+	}
+
+	public void prepareDecomposeService(DelegateExecution execution) {
+		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+
+		try {
+			utils.log("DEBUG", " ***** Inside prepareDecomposeService of create generic e2e service ***** ", isDebugEnabled)
+			String modelInvariantUuid = execution.getVariable("model-invariant-id")
+			//here modelVersion is not set, we use modelUuid to decompose the service.
+			String serviceModelInfo = """{
+            "modelInvariantUuid":"${modelInvariantUuid}",
+            "modelUuid":"${modelUuid}",
+            "modelVersion":""
+             }"""
+			execution.setVariable("serviceModelInfo", serviceModelInfo)
+
+			utils.log("DEBUG", " ***** Completed prepareDecomposeService of  create generic e2e service ***** ", isDebugEnabled)
+		} catch (Exception ex) {
+			// try error in method block
+			String exceptionMessage = "Bpmn error encountered in  create generic e2e service flow. Unexpected Error from method prepareDecomposeService() - " + ex.getMessage()
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
+		}
+	}
+
+	public void postDecomposeService(DelegateExecution execution) {
+		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+
+		utils.log("DEBUG", " ***** Inside processDecomposition() of  create generic e2e service flow ***** ", isDebugEnabled)
+		try {
+			ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
+			List<Resource> deleteResourceList = serviceDecomposition.getServiceResources()
+			execution.setVariable("deleteResourceList", deleteResourceList)
+		} catch (Exception ex) {
+			String exceptionMessage = "Bpmn error encountered in  create generic e2e service flow. processDecomposition() - " + ex.getMessage()
+			utils.log("DEBUG", exceptionMessage, isDebugEnabled)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
+		}
 	}
 
 	public void postProcessAAIDEL(DelegateExecution execution) {
@@ -549,6 +608,8 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
     * prepare delete parameters
     */
    public void preResourceDelete(execution, resourceName){
+
+	   def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
        // we use resource instance ids for delete flow as resourceTemplateUUIDs
        /*[
         {
@@ -568,29 +629,79 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
             "resourceType":"underlay"
         }
     ]*/
-       def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 
        utils.log("INFO", " ======== STARTED preResourceDelete Process ======== ", isDebugEnabled)
-       String serviceRelationShip = execution.getVariable("serviceRelationShip")       
-       def jsonSlurper = new JsonSlurper()
-       def jsonOutput = new JsonOutput()         
-       List relationShipList =  jsonSlurper.parseText(serviceRelationShip)
-               
-       if (relationShipList != null) {
-           relationShipList.each {
-               if(StringUtils.containsIgnoreCase(it.resourceType, resourceName)) {
-				   String resourceInstanceUUID = it.resourceInstanceId
-				   String resourceTemplateUUID = it.resourceInstanceId
-				   execution.setVariable("resourceTemplateId", resourceTemplateUUID)
-				   execution.setVariable("resourceInstanceId", resourceInstanceUUID)
-				   execution.setVariable("resourceType", resourceName)
-			       utils.log("INFO", "Delete Resource Info resourceTemplate Id :" + resourceTemplateUUID + "  resourceInstanceId: " + resourceInstanceUUID + " resourceType: " + resourceName, isDebugEnabled)
-			   }
-           }
-       }    
+
+	   List<Resource> deleteResourceList = execution.getVariable("deleteResourceList")
+	   Resource resource = deleteResourceList.get(execution.getVariable("currentResourceIndex"))
+
+//	   String serviceRelationShip = execution.getVariable("serviceRelationShip")
+//       def jsonSlurper = new JsonSlurper()
+//       def jsonOutput = new JsonOutput()
+//       List relationShipList =  jsonSlurper.parseText(serviceRelationShip)
+
+
+	   ResourceInput resourceInput = new ResourceInput()
+	   String serviceInstanceName = execution.getVariable("serviceInstanceName")
+	   String resourceInstanceName = resource.getResourceType() + "_" + serviceInstanceName
+	   resourceInput.setResourceInstanceName(resourceInstanceName)
+	   utils.log("INFO", "Prepare Resource Request resourceInstanceName:" + resourceInstanceName, isDebugEnabled)
+	   String globalSubscriberId = execution.getVariable("globalSubscriberId")
+	   String serviceType = execution.getVariable("serviceType")
+	   String serviceInstanceId = execution.getVariable("serviceInstanceId")
+	   String operationId = execution.getVariable("operationId")
+	   String operationType = execution.getVariable("operationType")
+	   resourceInput.setGlobalSubscriberId(globalSubscriberId)
+	   resourceInput.setServiceType(serviceType)
+	   resourceInput.setServiceInstanceId(serviceInstanceId)
+	   resourceInput.setOperationId(operationId)
+	   resourceInput.setOperationType(operationType);
+
+	   resourceInput.setResourceModelInfo(resource.getModelInfo());
+	   ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
+	   resourceInput.setServiceModelInfo(serviceDecomposition.getModelInfo());
+
+	   //set the requestInputs from template  To Be Done
+	   String serviceModelUuid = execution.getVariable("modelUuid")
+
+	   String resourceParameters = ResourceRequestBuilder.buildResourceRequestParameters(execution, serviceModelUuid, resourceCustomizationUuid, serviceParameters)
+	   resourceInput.setResourceParameters(resourceParameters)
+	   execution.setVariable("resourceInput", resourceInput)
+
+//       if (relationShipList != null) {
+//           relationShipList.each {
+//               if(StringUtils.containsIgnoreCase(it.resourceType, resourceName)) {
+//				   String resourceInstanceUUID = it.resourceInstanceId
+//				   String resourceTemplateUUID = it.resourceInstanceId
+//				   execution.setVariable("resourceTemplateId", resourceTemplateUUID)
+//				   execution.setVariable("resourceInstanceId", resourceInstanceUUID)
+//				   execution.setVariable("resourceType", resourceName)
+//			       utils.log("INFO", "Delete Resource Info resourceTemplate Id :" + resourceTemplateUUID + "  resourceInstanceId: " + resourceInstanceUUID + " resourceType: " + resourceName, isDebugEnabled)
+//			   }
+//           }
+//       }
        utils.log("INFO", " ======== END preResourceDelete Process ======== ", isDebugEnabled)
    }
-   
+
+	/**
+	 * Execute delete workflow for resource
+	 */
+   public void executeResourceDelete(execution) {
+	   def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+	   utils.log("INFO", "======== Start executeResourceDelete Process ======== ", isDebugEnabled)
+	   String requestId = execution.getVariable("msoRequestId")
+	   String serviceInstanceId = execution.getVariable("serviceInstanceId")
+	   String serviceType = execution.getVariable("serviceType")
+	   ResourceInput resourceInput = execution.getVariable("resourceInput")
+	   String requestAction = resourceInput.getOperationType()
+	   JSONObject resourceRecipe = cutils.getResourceRecipe(execution, resourceInput.getResourceUuid(), requestAction)
+	   String recipeUri = resourceRecipe.getString("orchestrationUri")
+	   String recipeTimeOut = resourceRecipe.getString("recipeTimeout")
+	   String recipeParamXsd = resourceRecipe.get("paramXSD")
+	   HttpResponse resp = BpmnRestClient.post(recipeUri, requestId, recipeTimeout, requestAction, serviceInstanceId, serviceType, resourceInput.toString(), recipeParamXsd)
+	   utils.log("INFO", " ======== END executeResourceDelete Process ======== ", isDebugEnabled)
+   }
+
    public void sequenceResource(execution){
        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 
@@ -598,14 +709,28 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
        List<String> nsResources = new ArrayList<String>()
        List<String> wanResources = new ArrayList<String>()
        List<String> resourceSequence = new  ArrayList<String>()
-       
-       String serviceRelationShip = execution.getVariable("serviceRelationShip")
+
+	   List<Resource> deleteResourceList = execution.getVariable("deleteResourceList")
+       List<Resource> deleteResourceSeq = new ArrayList();
+
+	   String serviceRelationShip = execution.getVariable("serviceRelationShip")
                
        
        def jsonSlurper = new JsonSlurper()
-       def jsonOutput = new JsonOutput()         
        List relationShipList =  jsonSlurper.parseText(serviceRelationShip)
-               
+
+	   List<String> resouceTypeSeq = BPMNProperties.getResourceSequenceProp();
+
+//	   if (relationShipList != null) {
+//		   for (String resourceType in resouceTypeSeq) {
+//			   relationShipList.each {
+//				   if(StringUtils.containsIgnoreCase(it.resourceType, resouceType)){
+//					   resourceSequence.add(it.resourceType)
+//				   }
+//			   }
+//		   }
+//	   }
+
        if (relationShipList != null) {
            relationShipList.each {
                if(StringUtils.containsIgnoreCase(it.resourceType, "overlay") || StringUtils.containsIgnoreCase(it.resourceType, "underlay")){
@@ -614,33 +739,49 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
                    nsResources.add(it.resourceType)
                }
            }
-       }     
-       resourceSequence.addAll(wanResources)
-       resourceSequence.addAll(nsResources)
+       }
+
+	   for (String resourceType in resouceTypeSeq) {
+		   for (Resource resource in deleteResourceList) {
+			   if (StringUtils.containsIgnoreCase(resource.getModelInfo().getModelName(), resouceType)) {
+
+				   // fill the resource with reseoruce-instance-id retrieved from aai
+				   relationShipList.each {
+					   if (StringUtils.containsIgnoreCase(it.resourceType, resource.getResourceType())) {
+						   resource.setResourceId(it.resourceInstanceId)
+					   }
+				   }
+
+				   deleteResourceSeq.add(resource);
+
+			   }
+		   }
+	   }
+
        String isContainsWanResource = wanResources.isEmpty() ? "false" : "true"
        execution.setVariable("isContainsWanResource", isContainsWanResource)
        execution.setVariable("currentResourceIndex", 0)
-       execution.setVariable("resourceSequence", resourceSequence)
-       utils.log("INFO", "resourceSequence: " + resourceSequence, isDebugEnabled)  
+       execution.setVariable("resourceSequence", deleteResourceSeq)
+       utils.log("INFO", "resourceSequence: " + deleteResourceSeq, isDebugEnabled)
        execution.setVariable("wanResources", wanResources)
        utils.log("INFO", " ======== END sequenceResource Process ======== ", isDebugEnabled)
    }
    
-   public void getCurrentResource(execution){
-       def isDebugEnabled=execution.getVariable("isDebugLogEnabled")   
-       utils.log("INFO", "======== Start getCurrentResoure Process ======== ", isDebugEnabled)    
-       def currentIndex = execution.getVariable("currentResourceIndex")
-       List<String> resourceSequence = execution.getVariable("resourceSequence")  
-       List<String> wanResources = execution.getVariable("wanResources")  
-       String resourceName =  resourceSequence.get(currentIndex)
-       execution.setVariable("resourceType",resourceName)
-       if(wanResources.contains(resourceName)){
-           execution.setVariable("controllerInfo", "SDN-C")
-       }else{
-           execution.setVariable("controllerInfo", "VF-C")
-       }
-       utils.log("INFO", "======== COMPLETED getCurrentResoure Process ======== ", isDebugEnabled)  
-   }
+//   public void getCurrentResource(execution){
+//       def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+//       utils.log("INFO", "======== Start getCurrentResoure Process ======== ", isDebugEnabled)
+//       def currentIndex = execution.getVariable("currentResourceIndex")
+//       List<Resource> resourceSequence = execution.getVariable("resourceSequence")
+////       List<String> wanResources = execution.getVariable("wanResources")
+////       String resourceName =  resourceSequence.get(currentIndex)
+////       execution.setVariable("resourceType",resourceName)
+////       if(wanResources.contains(resourceName)){
+////           execution.setVariable("controllerInfo", "SDN-C")
+////       }else{
+////           execution.setVariable("controllerInfo", "VF-C")
+////       }
+//       utils.log("INFO", "======== COMPLETED getCurrentResoure Process ======== ", isDebugEnabled)
+//   }
    
    public void parseNextResource(execution){
        def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
