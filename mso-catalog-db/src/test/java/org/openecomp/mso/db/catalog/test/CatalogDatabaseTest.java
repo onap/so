@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,6 +22,9 @@ package org.openecomp.mso.db.catalog.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -37,33 +40,14 @@ import org.hibernate.NonUniqueResultException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.openecomp.mso.db.catalog.CatalogDatabase;
-import org.openecomp.mso.db.catalog.beans.AllottedResource;
-import org.openecomp.mso.db.catalog.beans.AllottedResourceCustomization;
-import org.openecomp.mso.db.catalog.beans.HeatEnvironment;
-import org.openecomp.mso.db.catalog.beans.HeatFiles;
-import org.openecomp.mso.db.catalog.beans.HeatTemplate;
-import org.openecomp.mso.db.catalog.beans.HeatTemplateParam;
-import org.openecomp.mso.db.catalog.beans.NetworkResource;
-import org.openecomp.mso.db.catalog.beans.NetworkResourceCustomization;
-import org.openecomp.mso.db.catalog.beans.Service;
-import org.openecomp.mso.db.catalog.beans.ServiceRecipe;
-import org.openecomp.mso.db.catalog.beans.ServiceToResourceCustomization;
-import org.openecomp.mso.db.catalog.beans.TempNetworkHeatTemplateLookup;
-import org.openecomp.mso.db.catalog.beans.ToscaCsar;
-import org.openecomp.mso.db.catalog.beans.VfModule;
-import org.openecomp.mso.db.catalog.beans.VfModuleCustomization;
-import org.openecomp.mso.db.catalog.beans.VfModuleToHeatFiles;
-import org.openecomp.mso.db.catalog.beans.VnfComponent;
-import org.openecomp.mso.db.catalog.beans.VnfComponentsRecipe;
-import org.openecomp.mso.db.catalog.beans.VnfRecipe;
-import org.openecomp.mso.db.catalog.beans.VnfResource;
-import org.openecomp.mso.db.catalog.beans.VnfResourceCustomization;
+import org.openecomp.mso.db.catalog.beans.*;
 import org.openecomp.mso.db.catalog.utils.RecordNotFoundException;
 
 import mockit.Mock;
@@ -77,6 +61,9 @@ public class CatalogDatabaseTest {
     private MockUp<CatalogDatabase> mockCd = null;
     private MockUp<Session> mockedSession = null;
     private MockUp<Query> mockUpQuery = null;
+    private MockUp<Query> mockUpQuery2 = null;
+    private MockUp<Query> mockUpQuery3 = null;
+    private MockUp<Query> mockUpQuery4 = null;
     @Before
     public void setup(){
         cd = CatalogDatabase.getInstance();
@@ -861,7 +848,9 @@ public class CatalogDatabaseTest {
 
         assertEquals("123-uuid", service.getModelUUID());
 
-
+        map.remove("serviceNameVersionId");
+        service = cd.getService(map, "123");
+        assertNotNull(service);
     }
 
     @Test
@@ -2428,8 +2417,64 @@ public class CatalogDatabaseTest {
     }
     @Test
     public void getVnfResourceCustomizationByVnfModelCustomizationNameAndModelVersionIdTest(){
-    	thrown.expect(Exception.class);
-        cd.getVnfResourceCustomizationByVnfModelCustomizationNameAndModelVersionId("4993493","test");
+
+        mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public List<VnfResourceCustomization> list() {
+                VnfResourceCustomization vnfResourceCustomization = new VnfResourceCustomization();
+                return Arrays.asList(vnfResourceCustomization);
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                assertTrue(hql.contains("SELECT vrc FROM VnfResourceCustomization as vrc WHERE vrc.vnfResourceModelUuid IN (SELECT vr.modelUuid FROM VnfResource vr WHERE vr.modelUuid = :modelVersionId)AND vrc.modelInstanceName = :modelCustomizationName"));
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        assertNotNull(cd.getVnfResourceCustomizationByVnfModelCustomizationNameAndModelVersionId("modelCustomizationName","modelVersionId"));
+
+        VnfResourceCustomization result = cd.getVnfResourceCustomizationByVnfModelCustomizationNameAndModelVersionId("4993493", "test");
+        assertNotNull(result);
+    }
+
+    @Test
+    public void getVnfResourceCustomizationByVnfModelCustomizationNameAndModelVersionId_NullReturnTest(){
+
+        mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public List<VnfResourceCustomization> list() {
+                return Arrays.asList();
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                assertTrue(hql.contains("SELECT vrc FROM VnfResourceCustomization as vrc WHERE vrc.vnfResourceModelUuid IN (SELECT vr.modelUuid FROM VnfResource vr WHERE vr.modelUuid = :modelVersionId)AND vrc.modelInstanceName = :modelCustomizationName"));
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        VnfResourceCustomization result = cd.getVnfResourceCustomizationByVnfModelCustomizationNameAndModelVersionId("4993493", "test");
+        assertNull(result);
     }
     @Test
     public void getAllVfModuleCustomizationstest(){
@@ -2480,16 +2525,12 @@ public class CatalogDatabaseTest {
     }
     @Test
     public void getSTRTest(){
-    	thrown.expect(Exception.class);
-        cd.getSTR("4993493","test","vnf");
-    }
-    @Test
-    public void getVRCtoVFMCTest(){
-    	mockUpQuery = new MockUp<Query>() {
+        mockUpQuery = new MockUp<Query>() {
 
             @Mock
-            public List<VfModule> list() throws Exception {
-                return Collections.emptyList();
+            public List<ServiceToResourceCustomization> list() {
+                ServiceToResourceCustomization vnfResourceCustomization = new ServiceToResourceCustomization();
+                return Arrays.asList(vnfResourceCustomization);
             }
         };
 
@@ -2506,7 +2547,39 @@ public class CatalogDatabaseTest {
                 return mockedSession.getMockInstance();
             }
         };
-        assertEquals(cd.getVRCtoVFMC("4993493","388492").size(), 0);
+
+        List<ServiceToResourceCustomization> str = cd.getSTR("4993493", "test", "vnf");
+        assertFalse(str.isEmpty());
+
+    }
+    @Test
+    public void getVRCtoVFMCTest(){
+        mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public List<VnfResCustomToVfModuleCustom> list() {
+                VnfResCustomToVfModuleCustom vnfResourceCustomization = new VnfResCustomToVfModuleCustom();
+                return Arrays.asList(vnfResourceCustomization);
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                assertTrue(hql.contains("FROM VnfResCustomToVfModuleCustom WHERE vnfResourceCustModelCustomizationUuid = :vrc_mcu AND vfModuleCustModelCustomizationUuid = :vfmc_mcu"));
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        List<VnfResCustomToVfModuleCustom> vrCtoVFMC = cd.getVRCtoVFMC("4993493", "388492");
+        assertFalse(vrCtoVFMC.isEmpty());
     }
     @Test
     public void getVfModuleTypeByUuidTestException(){
@@ -2516,8 +2589,30 @@ public class CatalogDatabaseTest {
 
     @Test
     public void getTempNetworkHeatTemplateLookupTest(){
-    	thrown.expect(Exception.class);
-        cd.getTempNetworkHeatTemplateLookup("4993493");
+        mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public List<TempNetworkHeatTemplateLookup> list() {
+                TempNetworkHeatTemplateLookup vnfResourceCustomization = new TempNetworkHeatTemplateLookup();
+                return Arrays.asList(vnfResourceCustomization);
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        List<TempNetworkHeatTemplateLookup> tempNetworkHeatTemplateLookup = cd.getTempNetworkHeatTemplateLookup("4993493");
+        assertFalse(tempNetworkHeatTemplateLookup.isEmpty());
     }
 
     @Test
@@ -2604,8 +2699,56 @@ public class CatalogDatabaseTest {
     }
     @Test
     public void getAllAllottedResourcesByServiceModelUuidTest(){
-    	thrown.expect(Exception.class);
-        cd.getAllAllottedResourcesByServiceModelUuid("4993493");
+        mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public List<ServiceToResourceCustomization> list() {
+                ServiceToResourceCustomization vnfResourceCustomization = new ServiceToResourceCustomization();
+                return Arrays.asList(vnfResourceCustomization);
+            }
+        };
+        mockUpQuery2 = new MockUp<Query>() {
+
+            @Mock
+            public List<AllottedResourceCustomization> list() {
+                AllottedResourceCustomization vnfResourceCustomization = new AllottedResourceCustomization();
+                return Arrays.asList(vnfResourceCustomization);
+            }
+        };
+        mockUpQuery3 = new MockUp<Query>() {
+
+            @Mock
+            public List<AllottedResource> list() {
+                AllottedResource vnfResourceCustomization = new AllottedResource();
+                return Arrays.asList(vnfResourceCustomization);
+            }
+        };
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                if(hql.contains("ServiceToResourceCustomization")){
+                    return mockUpQuery.getMockInstance();
+
+                }else if(hql.contains("AllottedResource " )){
+                    return mockUpQuery3.getMockInstance();
+
+                } else{
+                    return mockUpQuery2.getMockInstance();
+                }
+
+
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        List<AllottedResourceCustomization> allAllottedResourcesByServiceModelUuid = cd.getAllAllottedResourcesByServiceModelUuid("4993493");
+        assertFalse(allAllottedResourcesByServiceModelUuid.isEmpty());
     }
     @Test
     public void getAllAllottedResourcesByServiceModelInvariantUuidTest(){
@@ -2614,8 +2757,68 @@ public class CatalogDatabaseTest {
     }
     @Test
     public void getAllAllottedResourcesByServiceModelInvariantUuid2Test(){
-    	thrown.expect(Exception.class);
-        cd.getAllAllottedResourcesByServiceModelInvariantUuid("4993493","test");
+
+        mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public List<ServiceToResourceCustomization> list() {
+                ServiceToResourceCustomization vnfResourceCustomization = new ServiceToResourceCustomization();
+                return Arrays.asList(vnfResourceCustomization);
+            }
+        };
+        mockUpQuery2 = new MockUp<Query>() {
+
+            @Mock
+            public List<AllottedResourceCustomization> list() {
+                AllottedResourceCustomization vnfResourceCustomization = new AllottedResourceCustomization();
+                return Arrays.asList(vnfResourceCustomization);
+            }
+        };
+        mockUpQuery3 = new MockUp<Query>() {
+
+            @Mock
+            public List<AllottedResource> list() {
+                AllottedResource vnfResourceCustomization = new AllottedResource();
+                return Arrays.asList(vnfResourceCustomization);
+            }
+        };
+        mockUpQuery4 = new MockUp<Query>() {
+
+            @Mock
+            public List<Service> list() {
+                Service vnfResourceCustomization = new Service();
+                return Arrays.asList(vnfResourceCustomization);
+            }
+        };
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                if(hql.contains("ServiceToResourceCustomization")){
+                    return mockUpQuery.getMockInstance();
+
+                }else if(hql.contains("AllottedResource " )){
+                    return mockUpQuery3.getMockInstance();
+
+                } else if(hql.contains(" Service ")){
+                    return mockUpQuery4.getMockInstance();
+                }else{
+                    return mockUpQuery2.getMockInstance();
+                }
+
+
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+
+        List<AllottedResourceCustomization> allottedResourceCustomizations = cd.getAllAllottedResourcesByServiceModelInvariantUuid("4993493", "test");
+        assertFalse(allottedResourceCustomizations.isEmpty());
     }
     @Test
     public void getAllAllottedResourcesByArModelCustomizationUuidTest(){
@@ -2660,11 +2863,12 @@ public class CatalogDatabaseTest {
     }
     @Test
     public void getVfModuleTest(){
-    	mockUpQuery = new MockUp<Query>() {
+        mockUpQuery = new MockUp<Query>() {
 
             @Mock
-            public List<VfModule> list() throws Exception {
-                return Collections.emptyList();
+            public List<VfModule> list() {
+                VfModule vnfResourceCustomization = new VfModule();
+                return Arrays.asList(vnfResourceCustomization);
             }
         };
 
@@ -2681,7 +2885,9 @@ public class CatalogDatabaseTest {
                 return mockedSession.getMockInstance();
             }
         };
-        assertEquals(cd.getVfModule("4993493","test","get","v2","vnf").size(), 0);
+
+        List<VfModule> vfModule = cd.getVfModule("4993493", "test", "get", "v2", "vnf");
+        assertFalse(vfModule.isEmpty());
     }
     @Test
     public void getVnfComponentsRecipeTest(){
@@ -2698,52 +2904,19 @@ public class CatalogDatabaseTest {
     }
     @Test
     public void getAllVnfResourcesTest(){
-    	thrown.expect(Exception.class);
-        cd.getAllVnfResources();
-    }
-    @Test
-    public void getVnfResourcesByRoleTest(){
-    	thrown.expect(Exception.class);
-        cd.getVnfResourcesByRole("4993493");
-    }
-    @Test
-    public void getVnfResourceCustomizationsByRoleTest(){
-    	thrown.expect(Exception.class);
-        cd.getVnfResourceCustomizationsByRole("4993493");
-    }
-    @Test
-    public void getAllNetworkResourcesTest(){
-    	thrown.expect(Exception.class);
-        cd.getAllNetworkResources();
-    }
-    @Test
-    public void getAllNetworkResourceCustomizationsTest(){
-    	thrown.expect(Exception.class);
-        cd.getAllNetworkResourceCustomizations();
-    }
-    @Test
-    public void getAllVfModulesTest(){
-    	thrown.expect(Exception.class);
-        cd.getAllVfModules();
-    }
-    @Test
-    public void getAllVfModuleCustomizationsTest(){
-    	thrown.expect(Exception.class);
-        cd.getAllVfModuleCustomizations();
-    }
-    @Test
-    public void getAllHeatEnvironmentTest(){
-    	mockUpQuery = new MockUp<Query>() {
+        mockUpQuery = new MockUp<Query>() {
 
             @Mock
-            public List<VfModule> list() throws Exception {
-                return Collections.emptyList();
+            public List<VnfResource> list() {
+                VnfResource vnfResourceCustomization = new VnfResource();
+                return Arrays.asList(vnfResourceCustomization);
             }
         };
 
         mockedSession = new MockUp<Session>() {
             @Mock
             public Query createQuery(String hql) {
+                assertTrue(hql.contains("FROM VnfResource"));
                 return mockUpQuery.getMockInstance();
             }
         };
@@ -2754,7 +2927,204 @@ public class CatalogDatabaseTest {
                 return mockedSession.getMockInstance();
             }
         };
-        assertEquals(cd.getAllHeatEnvironment().size(), 0);
+        List<VnfResource> allVnfResources = cd.getAllVnfResources();
+        assertFalse(allVnfResources.isEmpty());
+    }
+    @Test
+    public void getVnfResourcesByRoleTest(){
+        mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public List<VnfResource> list() {
+                VnfResource vnfResourceCustomization = new VnfResource();
+                return Arrays.asList(vnfResourceCustomization);
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                assertTrue(hql.contains("FROM VnfResource WHERE vnfRole = :vnfRole"));
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        List<VnfResource> vnfResourcesByRole = cd.getVnfResourcesByRole("4993493");
+        assertFalse(vnfResourcesByRole.isEmpty());
+    }
+    @Test
+    public void getVnfResourceCustomizationsByRoleTest(){
+        mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public List<VnfResourceCustomization> list() {
+                VnfResourceCustomization vnfResourceCustomization = new VnfResourceCustomization();
+                return Arrays.asList(vnfResourceCustomization);
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                assertTrue(hql.contains("FROM VnfResourceCustomization WHERE nfRole = :vnfRole"));
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        List<VnfResourceCustomization> vnfResourceCustomizationsByRole = cd.getVnfResourceCustomizationsByRole("4993493");
+        assertFalse(vnfResourceCustomizationsByRole.isEmpty());
+    }
+    @Test
+    public void getAllNetworkResourcesTest(){
+        mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public List<NetworkResource> list() {
+                NetworkResource vnfResourceCustomization = new NetworkResource();
+                return Arrays.asList(vnfResourceCustomization);
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                assertTrue(hql.contains("FROM NetworkResource"));
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        List<NetworkResource> allNetworkResources = cd.getAllNetworkResources();
+        assertFalse(allNetworkResources.isEmpty());
+    }
+    @Test
+    public void getAllNetworkResourceCustomizationsTest(){
+        mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public List<NetworkResourceCustomization> list() {
+                NetworkResourceCustomization vnfResourceCustomization = new NetworkResourceCustomization();
+                return Arrays.asList(vnfResourceCustomization);
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                assertTrue(hql.contains("FROM NetworkResourceCustomization"));
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        List<NetworkResourceCustomization> allNetworkResourceCustomizations = cd.getAllNetworkResourceCustomizations();
+        assertFalse(allNetworkResourceCustomizations.isEmpty());
+    }
+    @Test
+    public void getAllVfModulesTest(){
+        mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public List<VfModule> list() {
+                VfModule vnfResourceCustomization = new VfModule();
+                return Arrays.asList(vnfResourceCustomization);
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                assertTrue(hql.contains("FROM VfModule"));
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        List<VfModule> allVfModules = cd.getAllVfModules();
+        assertFalse(allVfModules.isEmpty());
+    }
+    @Test
+    public void getAllVfModuleCustomizationsTest(){
+        mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public List<VfModuleCustomization> list() {
+                VfModuleCustomization vnfResourceCustomization = new VfModuleCustomization();
+                return Arrays.asList(vnfResourceCustomization);
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                assertTrue(hql.contains("FROM VfModuleCustomization"));
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        List<VfModuleCustomization> allVfModuleCustomizations = cd.getAllVfModuleCustomizations();
+        assertFalse(allVfModuleCustomizations.isEmpty());
+    }
+    @Test
+    public void getAllHeatEnvironmentTest(){
+        mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public List<HeatEnvironment> list() {
+                HeatEnvironment vnfResourceCustomization = new HeatEnvironment();
+                return Arrays.asList(vnfResourceCustomization);
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                assertTrue(hql.contains("FROM HeatEnvironment"));
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        List<HeatEnvironment> allHeatEnvironment = cd.getAllHeatEnvironment();
+        assertFalse(allHeatEnvironment.isEmpty());
     }
     @Test
     public void getHeatEnvironment2Test(){
@@ -2913,12 +3283,6 @@ public class CatalogDatabaseTest {
         cd.saveTempNetworkHeatTemplateLookup(t);
     }
     @Test
-    public void saveVfModuleToHeatFiles(){
-        VfModuleToHeatFiles v = new VfModuleToHeatFiles();
-        thrown.expect(Exception.class);
-        cd.saveVfModuleToHeatFiles(v);
-    }
-    @Test
     public void saveVnfResourceToVfModuleCustomizationTest() throws RecordNotFoundException {
         VnfResourceCustomization v =new VnfResourceCustomization();
         VfModuleCustomization vm = new VfModuleCustomization();
@@ -3015,28 +3379,89 @@ public class CatalogDatabaseTest {
     }
     @Test
     public void getNetworkRecipe2Test(){
-    	thrown.expect(Exception.class);
-        cd.getNetworkRecipe("test","test1");
+        mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public List<NetworkRecipe> list() {
+                NetworkRecipe heatTemplate = new NetworkRecipe();
+                return Arrays.asList(heatTemplate);
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        NetworkRecipe networkRecipe = cd.getNetworkRecipe("test","test1");assertNotNull(networkRecipe);
+        assertNotNull(networkRecipe);
+
     }
     @Test
     public void getNetworkResourceByModelCustUuidTest(){
 
         cd.getNetworkResourceByModelCustUuid("test");
     }
-    @Test
-    public void getVnfComponentsRecipe2Test(){
-    	thrown.expect(Exception.class);
-        cd.getVnfComponentsRecipe("test1","test2","test3","test4");
-    }
+
     @Test
     public void getVnfComponentsRecipeByVfModuleModelUUIdTest(){
-    	thrown.expect(Exception.class);
-        cd.getVnfComponentsRecipeByVfModuleModelUUId("test1","test2","test3");
+        mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public List<VnfComponentsRecipe> list() {
+                VnfComponentsRecipe heatTemplate = new VnfComponentsRecipe();
+                return Arrays.asList(heatTemplate);
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        VnfComponentsRecipe vnfComponentsRecipeByVfModuleModelUUId = cd.getVnfComponentsRecipeByVfModuleModelUUId("test1", "test2", "test3");
+        assertNotNull(vnfComponentsRecipeByVfModuleModelUUId);
     }
     @Test
     public void getVnfComponentRecipesTest(){
-    	thrown.expect(Exception.class);
-        cd.getVnfComponentRecipes("test");
+        mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public List<VnfComponentsRecipe> list() {
+                VnfComponentsRecipe heatTemplate = new VnfComponentsRecipe();
+                return Arrays.asList(heatTemplate);
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        List<VnfComponentsRecipe> test = cd.getVnfComponentRecipes("test");
+        assertNotNull(test);
+        assertFalse(test.isEmpty());
     }
     @Test
     public void saveOrUpdateVnfComponentTest(){
@@ -3047,28 +3472,134 @@ public class CatalogDatabaseTest {
 
     @Test
     public void getVfModule2Test(){
-    	thrown.expect(Exception.class);
-        cd.getVfModule("test");
+        mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public List<VfModule> list() {
+                VfModule heatTemplate = new VfModule();
+                return Arrays.asList(heatTemplate);
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        VfModule test = cd.getVfModule("test");
+        assertNotNull(test);
     }
     @Test
     public void getVfModuleByModelUUIDTest(){
-    	thrown.expect(Exception.class);
-        cd.getVfModuleByModelUUID("test");
+        mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public List<VfModule> list() {
+                VfModule heatTemplate = new VfModule();
+                return Arrays.asList(heatTemplate);
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        VfModule test = cd.getVfModuleByModelUUID("test");
+        assertNotNull(test);
     }
     @Test
     public void getServiceRecipeByModelUUIDTest(){
-    	thrown.expect(Exception.class);
-        cd.getServiceRecipeByModelUUID("test1","test2");
+        mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public List<ServiceRecipe> list() {
+                ServiceRecipe heatTemplate = new ServiceRecipe();
+                return Arrays.asList(heatTemplate);
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        Assert.assertNotNull(cd.getServiceRecipeByModelUUID("test1", "test2"));
     }
     @Test
     public void getModelRecipeTest(){
-    	thrown.expect(Exception.class);
-        cd.getModelRecipe("test1","test2","test3");
+        mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public List<Object> list() {
+                return new ArrayList();
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        Assert.assertNull(cd.getModelRecipe("test1", "test2", "test3"));
     }
     @Test
+    @Ignore
     public void healthCheck(){
-    	thrown.expect(Exception.class);
-        cd.healthCheck();
+        mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public List<HeatTemplate> list() {
+                HeatTemplate heatTemplate = new HeatTemplate();
+                return Arrays.asList(heatTemplate);
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createSQLQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        assertNotNull(cd.healthCheck());
     }
     @Test
     public void executeQuerySingleRow(){
@@ -3077,10 +3608,521 @@ public class CatalogDatabaseTest {
         thrown.expect(Exception.class);
         cd.executeQuerySingleRow("tets",variables,false);
     }
+
     @Test
     public void executeQueryMultipleRows(){
         HashMap<String, String> variables = new HashMap<>();
-        thrown.expect(Exception.class);
-        cd.executeQueryMultipleRows("select",variables,false);
+
+        mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public List<HeatTemplate> list() {
+                HeatTemplate heatTemplate = new HeatTemplate();
+                return Arrays.asList(heatTemplate);
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+
+        List<Object> select = cd.executeQueryMultipleRows("select", variables, false);
+        assertFalse(select.isEmpty());
+    }
+
+    @Test
+    public void getArRecipeByNameVersion(){
+        mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public List<ArRecipe> list() {
+                ArRecipe arRecipe = new ArRecipe();
+                return Arrays.asList(arRecipe);
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        assertNotNull(cd.getArRecipeByNameVersion("select","variables","String"));
+    }
+    @Test
+    public void getVnfComponentsRecipe(){
+        mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public List<VnfComponentsRecipe> list() {
+                VnfComponentsRecipe heatTemplate = new VnfComponentsRecipe();
+                return Arrays.asList(heatTemplate);
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        assertNotNull(cd.getVnfComponentsRecipe("vnfType","vnfComponentType","action","serviceType"));
+    }
+    @Test
+    public void getNetworkRecipeByNameVersion(){
+        mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public List<NetworkRecipe> list() {
+                NetworkRecipe heatTemplate = new NetworkRecipe();
+                return Arrays.asList(heatTemplate);
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        assertNotNull(cd.getNetworkRecipeByNameVersion("modelName","modelVersion","action"));
+    }
+    @Test
+    public void saveOrUpdateVfModuleCustomization(){
+        mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public List<NetworkRecipe> list() {
+                NetworkRecipe heatTemplate = new NetworkRecipe();
+                return Arrays.asList(heatTemplate);
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        VfModuleCustomization vfModuleCustomization = new VfModuleCustomization();
+        vfModuleCustomization.setHeatEnvironmentArtifactUuid("HeatEnvironmentArtifactUuid");
+        vfModuleCustomization.setVolEnvironmentArtifactUuid("VolEnvironmentArtifactUuid");
+        vfModuleCustomization.setVfModuleModelUuid("VfModuleModelUuid");
+        vfModuleCustomization.setModelCustomizationUuid("ModelCustomizationUuid");
+        cd.saveOrUpdateVfModuleCustomization(vfModuleCustomization);
+    }
+    @Test
+    public void saveServiceToNetworks(){
+        mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public List<Service> list() {
+                Service service = new Service();
+                service.setModelUUID("123-uuid");
+                return Arrays.asList(service);
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        ServiceToNetworks serviceToNetworks = new ServiceToNetworks();
+        cd.saveServiceToNetworks(serviceToNetworks);
+    }
+    @Test
+    public void saveVfModuleToHeatFiles() {
+        mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public List<Service> list() {
+                Service service = new Service();
+                service.setModelUUID("123-uuid");
+                return Arrays.asList(service);
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        VfModuleToHeatFiles vfModuleToHeatFiles = new VfModuleToHeatFiles();
+
+        cd.saveVfModuleToHeatFiles(vfModuleToHeatFiles);
+    }
+    @Test
+    public void saveTempNetworkHeatTemplateLookup() {
+        mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public List<Service> list() {
+                Service service = new Service();
+                service.setModelUUID("123-uuid");
+                return Arrays.asList(service);
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        TempNetworkHeatTemplateLookup tempNetworkHeatTemplateLookup = new TempNetworkHeatTemplateLookup();
+
+        cd.saveTempNetworkHeatTemplateLookup(tempNetworkHeatTemplateLookup);
+    }
+    @Test
+    public void getToscaCsarByServiceModelUUID() {
+        mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public List<Service> list() {
+                Service service = new Service();
+                service.setModelUUID("123-uuid");
+                return Arrays.asList(service);
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+
+        assertNull(cd.getToscaCsarByServiceModelUUID("uuid-123"));
+        cd.close();
+    }
+    @Test
+    public void getVnfRecipeByNameVersion(){
+        mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public List<VnfRecipe> list() {
+                VnfRecipe vnfRecipe = new VnfRecipe();
+                return Arrays.asList(vnfRecipe);
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        assertNotNull(cd.getVnfRecipeByNameVersion("modelName","modelVersion","action"));
+    }
+    @Test
+    public void getVnfRecipeByModuleUuid(){
+        mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public List<VnfRecipe> list() {
+                VnfRecipe vnfRecipe = new VnfRecipe();
+                return Arrays.asList(vnfRecipe);
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        assertNull(cd.getVnfRecipeByModuleUuid("vnfModelUuid","action"));
+    }
+    @Test
+    public void getVfModuleType(){
+        mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public List<VnfRecipe> list() {
+                VnfRecipe vnfRecipe = new VnfRecipe();
+                return Arrays.asList(vnfRecipe);
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        assertNull(cd.getVfModuleType("type","version"));
+    }
+    @Test
+    public void getVfModuleByModelInvariantUuidAndModelVersion(){
+        mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public List<VnfRecipe> list() {
+                VnfRecipe vnfRecipe = new VnfRecipe();
+                return Arrays.asList(vnfRecipe);
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        assertNull(cd.getVfModuleByModelInvariantUuidAndModelVersion("modelInvariantUuid","modelVersion"));
+    }
+    @Test
+    public void getVnfResourceCustomizationByModelCustomizationUuid(){
+        mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public List<VnfRecipe> list() {
+                VnfRecipe vnfRecipe = new VnfRecipe();
+                return Arrays.asList(vnfRecipe);
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        assertNull(cd.getVnfResourceCustomizationByModelCustomizationUuid("modelCustomizationUuid"));
+    }
+    @Test
+    public void getVfModuleByModelCustomizationIdAndVersion(){
+        mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public List<VnfRecipe> list() {
+                VnfRecipe vnfRecipe = new VnfRecipe();
+                return Arrays.asList(vnfRecipe);
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        assertNull(cd.getVfModuleByModelCustomizationIdAndVersion("modelCustomizationUuid","modelVersionId"));
+    }
+    @Test
+    public void getVfModuleByModelCustomizationIdModelVersionAndModelInvariantId(){
+        mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public List<VnfRecipe> list() {
+                VnfRecipe vnfRecipe = new VnfRecipe();
+                return Arrays.asList(vnfRecipe);
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        assertNull(cd.getVfModuleByModelCustomizationIdModelVersionAndModelInvariantId("modelCustomizationUuid","modelVersion","modelInvariantId"));
+    }
+    @Test
+    public void getVnfResourceCustomizationByModelInvariantId(){
+        mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public List<VnfRecipe> list() {
+                VnfRecipe vnfRecipe = new VnfRecipe();
+                return Arrays.asList(vnfRecipe);
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        assertNull(cd.getVnfResourceCustomizationByModelInvariantId("modelInvariantId","modelVersion","modelCustomizationName"));
+    }
+    @Test
+    public void getVfModuleCustomizationByVnfModuleCustomizationUuid(){
+        mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public List<VnfRecipe> list() {
+                VnfRecipe vnfRecipe = new VnfRecipe();
+                return Arrays.asList(vnfRecipe);
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        assertNotNull(cd.getVfModuleCustomizationByVnfModuleCustomizationUuid("modelCustomizationUuid"));
+    }
+    @Test
+    public void getVnfResourceCustomizationByVnfModelCustomizationNameAndModelVersionId(){
+        mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public List<VnfResourceCustomization> list() {
+                VnfResourceCustomization vnfResourceCustomization = new VnfResourceCustomization();
+                return Arrays.asList(vnfResourceCustomization);
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        assertNotNull(cd.getVnfResourceCustomizationByVnfModelCustomizationNameAndModelVersionId("modelCustomizationName","modelVersionId"));
     }
 }
