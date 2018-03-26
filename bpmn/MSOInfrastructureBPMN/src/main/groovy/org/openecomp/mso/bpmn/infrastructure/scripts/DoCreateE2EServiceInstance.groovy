@@ -411,8 +411,8 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
             ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
             List<Resource>  resourceList = serviceDecomposition.getServiceResources()
             
-            for(String resource : resourceList){
-                    resourceTemplateUUIDs  = resourceTemplateUUIDs + resource.getModelInfo().getModelCustomizationUuid() + ":"                            
+            for(Resource resource : resourceList){
+                    resourceTemplateUUIDs  = resourceTemplateUUIDs + resource.getModelInfo().getModelCustomizationUuid() + ":"
             }           
 
             def dbAdapterEndpoint = "http://mso.mso.testlab.openecomp.org:8080/dbadapters/RequestsDbAdapter"
@@ -425,13 +425,13 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
                         <soapenv:Header/>
                         <soapenv:Body>
                             <ns:initResourceOperationStatus xmlns:ns="http://org.openecomp.mso/requestsdb">
-                            <serviceId>${serviceId}</serviceId>
-                            <operationId>${operationId}</operationId>
-                            <operationType>${operationType}</operationType>
-                            <resourceTemplateUUIDs>${resourceTemplateUUIDs}</resourceTemplateUUIDs>
-                        </ns:initResourceOperationStatus>
-                    </soapenv:Body>
-                </soapenv:Envelope>"""
+								<serviceId>${serviceId}</serviceId>
+								<operationId>${operationId}</operationId>
+								<operationType>${operationType}</operationType>
+								<resourceTemplateUUIDs>${resourceTemplateUUIDs}</resourceTemplateUUIDs>
+                            </ns:initResourceOperationStatus>
+                    	</soapenv:Body>
+                	</soapenv:Envelope>"""
 
             payload = utils.formatXml(payload)
             execution.setVariable("CVFMI_initResOperStatusRequest", payload)
