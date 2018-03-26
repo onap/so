@@ -18,7 +18,10 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.openecomp.mso.bpmn.infrastructure.scripts;
+package org.openecomp.mso.bpmn.infrastructure.scripts
+
+import org.openecomp.mso.bpmn.infrastructure.properties.BPMNProperties
+import org.openecomp.mso.bpmn.infrastructure.properties.ResourceSequence;
 
 import static org.apache.commons.lang3.StringUtils.*;
 import org.apache.http.HttpResponse
@@ -472,15 +475,32 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
         //define sequenced resource list, we deploy vf first and then network and then ar
         //this is defaule sequence
         List<Resource>  sequencedResourceList = new ArrayList<Resource>();
-        if(null != vnfResourceList){
-            sequencedResourceList.addAll(vnfResourceList)
-        }
-        if(null != networkResourceList){
-            sequencedResourceList.addAll(networkResourceList)
-        }
-        if(null != arResourceList){
-            sequencedResourceList.addAll(arResourceList)
-        }
+
+		def sequence = BPMNProperties.getResourceSequenceProp();
+		for (resource in sequence) {
+			switch (resource) {
+				case ResourceSequence.NETWORK_RESOURCE:
+					if (null != networkResourceList) {
+						sequencedResourceList.addAll(networkResourceList)
+					}
+					break;
+
+				case ResourceSequence.VNF_RESOURCE:
+					if (null != vnfResourceList) {
+						sequencedResourceList.addAll(vnfResourceList)
+					}
+					break;
+
+				case ResourceSequence.ALLOTTED_RESOURCE:
+					if (null != arResourceList) {
+						sequencedResourceList.addAll(arResourceList)
+					}
+					break;
+
+				default:
+					break;
+			}
+		}
 
         String isContainsWanResource = networkResourceList.isEmpty() ? "false" : "true"
         execution.setVariable("isContainsWanResource", isContainsWanResource)
