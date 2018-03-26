@@ -92,7 +92,7 @@ public class CreateSDNCCNetworkResource extends AbstractServiceTaskProcessor {
             if(StringUtils.containsIgnoreCase(resourceInputObj.getResourceInstanceName(), "overlay")){
                 //This will be resolved in R3.
                 sdnc_svcAction ="activate"
-                operationType = "NCINetwork"        
+                operationType = "ActivateDCINetworkInstance"
             }
             if(StringUtils.containsIgnoreCase(resourceInputObj.getResourceInstanceName(), "underlay")){
                 //This will be resolved in R3.
