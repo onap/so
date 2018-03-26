@@ -22,6 +22,30 @@
       "revId": "97669a5793ba0df5d7adf3ebda71280a721c5fdb",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_4f05cfc0",
+        "filename": "adapters/mso-vnf-adapter/src/main/java/org/openecomp/mso/adapters/vnf/MsoVnfAdapterImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1172,
+      "author": {
+        "id": 991
+      },
+      "writtenOn": "2018-03-26T18:32:23Z",
+      "side": 1,
+      "message": "Ok. I have added something like [1] to check if anything related to HPA was passed. If passed, then the string is set.\n\n[1] - https://gerrit.onap.org/r/#/c/37619/2/adapters/mso-vnf-adapter/src/main/java/org/openecomp/mso/adapters/vnf/MsoVnfAdapterImpl.java@681",
+      "parentUuid": "5a93c517_e851480f",
+      "range": {
+        "startLine": 1172,
+        "startChar": 16,
+        "endLine": 1172,
+        "endChar": 48
+      },
+      "revId": "97669a5793ba0df5d7adf3ebda71280a721c5fdb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
