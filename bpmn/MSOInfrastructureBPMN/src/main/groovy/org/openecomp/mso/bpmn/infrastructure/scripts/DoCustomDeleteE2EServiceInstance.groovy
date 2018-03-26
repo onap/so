@@ -20,10 +20,17 @@
  */
 package org.openecomp.mso.bpmn.infrastructure.scripts
 
-import org.json.JSONArray;
+import org.json.JSONArray
+import org.openecomp.mso.bpmn.core.domain.ServiceDecomposition
+import org.openecomp.mso.bpmn.infrastructure.properties.BPMNProperties;
+import org.apache.http.HttpResponse
+import org.json.JSONArray
+import org.openecomp.mso.bpmn.common.recipe.BpmnRestClient
+import org.openecomp.mso.bpmn.common.recipe.ResourceInput;
 
 import static org.apache.commons.lang3.StringUtils.*;
 import groovy.xml.XmlUtil
+import org.openecomp.mso.bpmn.common.scripts.CatalogDbUtils;
 import groovy.json.*
 
 import org.openecomp.mso.bpmn.core.json.JsonUtils
@@ -78,6 +85,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 	String Prefix="DDELSI_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
+	CatalogDbUtils cutils = new CatalogDbUtils()
 
 	public void preProcessRequest (DelegateExecution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
@@ -330,6 +338,18 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 				}
 				else
 				{
+					// get model invariant id
+					// Get Template uuid and version
+					if (utils.nodeExists(siData, "model-invariant-id") && utils.nodeExists(siData, "model-version-id") ) {
+						utils.log("INFO", "SI Data model-invariant-id and model-version-id exist:", isDebugEnabled)
+						def modelInvariantId  = serviceXml.getElementsByTagName("model-invariant-id").item(0).getTextContent()
+						def modelVersionId  = serviceXml.getElementsByTagName("model-version-id").item(0).getTextContent()
+
+						// Set Original Template info
+						execution.setVariable("model-invariant-id-original", modelInvariantId)
+						execution.setVariable("model-version-id-original", modelVersionId)
+					}
+
 					utils.log("INFO", "SI Data" + siData, isDebugEnabled)
 					//Confirm there are no related service instances (vnf/network or volume)
 					if (utils.nodeExists(siData, "relationship-list")) {
@@ -437,6 +457,41 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
 		utils.log("INFO"," *** Exit postProcessAAIGET *** ", isDebugEnabled)
+	}
+
+	public void prepareDecomposeService(DelegateExecution execution) {
+		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+
+		try {
+			utils.log("DEBUG", " ***** Inside prepareDecomposeService of create generic e2e service ***** ", isDebugEnabled)
+			String modelInvariantUuid = execution.getVariable("model-invariant-id")
+			//here modelVersion is not set, we use modelUuid to decompose the service.
+			String serviceModelInfo = """{
+            "modelInvariantUuid":"${modelInvariantUuid}",
+            "modelUuid":"${modelUuid}",
+            "modelVersion":""
+             }"""
+			execution.setVariable("serviceModelInfo", serviceModelInfo)
+
+			utils.log("DEBUG", " ***** Completed prepareDecomposeService of  create generic e2e service ***** ", isDebugEnabled)
+		} catch (Exception ex) {
+			// try error in method block
+			String exceptionMessage = "Bpmn error encountered in  create generic e2e service flow. Unexpected Error from method prepareDecomposeService() - " + ex.getMessage()
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
+		}
+	}
+
+	public void processDecomposition(DelegateExecution execution) {
+		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+
+		utils.log("DEBUG", " ***** Inside processDecomposition() of  create generic e2e service flow ***** ", isDebugEnabled)
+		try {
+			ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
+		} catch (Exception ex) {
+			String exceptionMessage = "Bpmn error encountered in  create generic e2e service flow. processDecomposition() - " + ex.getMessage()
+			utils.log("DEBUG", exceptionMessage, isDebugEnabled)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
+		}
 	}
 
 	public void postProcessAAIDEL(DelegateExecution execution) {
@@ -590,7 +645,26 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
        }    
        utils.log("INFO", " ======== END preResourceDelete Process ======== ", isDebugEnabled)
    }
-   
+
+	/**
+	 * Execute delete workflow for resource
+	 */
+   public void executeResourceDelete(execution) {
+	   def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+	   utils.log("INFO", "======== Start executeResourceDelete Process ======== ", isDebugEnabled)
+	   String requestId = execution.getVariable("msoRequestId")
+	   String serviceInstanceId = execution.getVariable("serviceInstanceId")
+	   String serviceType = execution.getVariable("serviceType")
+	   ResourceInput resourceInput = execution.getVariable("resourceInput")
+	   String requestAction = resourceInput.getOperationType()
+	   JSONObject resourceRecipe = cutils.getResourceRecipe(execution, resourceInput.getResourceUuid(), requestAction)
+	   String recipeUri = resourceRecipe.getString("orchestrationUri")
+	   String recipeTimeOut = resourceRecipe.getString("recipeTimeout")
+
+	   HttpResponse resp = BpmnRestClient.post(recipeUri, requestId, recipeTimeout, requestAction, serviceInstanceId, null, null, null)
+	   utils.log("INFO", " ======== END executeResourceDelete Process ======== ", isDebugEnabled)
+   }
+
    public void sequenceResource(execution){
        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 
@@ -605,7 +679,19 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
        def jsonSlurper = new JsonSlurper()
        def jsonOutput = new JsonOutput()         
        List relationShipList =  jsonSlurper.parseText(serviceRelationShip)
-               
+
+	   List<String> resouceTypeSeq = BPMNProperties.getResourceSequenceProp();
+
+	   if (relationShipList != null) {
+		   for (String resourceType in resouceTypeSeq) {
+			   relationShipList.each {
+				   if(StringUtils.containsIgnoreCase(it.resourceType, resouceType)){
+					   resourceSequence.add(it.resourceType)
+				   }
+			   }
+		   }
+	   }
+
        if (relationShipList != null) {
            relationShipList.each {
                if(StringUtils.containsIgnoreCase(it.resourceType, "overlay") || StringUtils.containsIgnoreCase(it.resourceType, "underlay")){
@@ -614,9 +700,8 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
                    nsResources.add(it.resourceType)
                }
            }
-       }     
-       resourceSequence.addAll(wanResources)
-       resourceSequence.addAll(nsResources)
+       }
+
        String isContainsWanResource = wanResources.isEmpty() ? "false" : "true"
        execution.setVariable("isContainsWanResource", isContainsWanResource)
        execution.setVariable("currentResourceIndex", 0)
