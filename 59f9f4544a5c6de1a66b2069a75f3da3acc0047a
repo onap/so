@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_15a59a03",
+        "filename": "pom.xml",
+        "patchSetId": 8
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-03-26T21:45:37Z",
+      "side": 1,
+      "message": "Snapshots do not appear to be enabled in SO or SO-libs. So there isn\u0027t a 1.2.0-SNAPSHOT. Using 1.2.0 fails with dependency on oparent 1.1.0-SNAPSHOT which has expired.\n\nWe need a new release version ultimately that\u0027s dependencies are satisfied.",
+      "range": {
+        "startLine": 50,
+        "startChar": 23,
+        "endLine": 50,
+        "endChar": 37
+      },
+      "revId": "59f9f4544a5c6de1a66b2069a75f3da3acc0047a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
