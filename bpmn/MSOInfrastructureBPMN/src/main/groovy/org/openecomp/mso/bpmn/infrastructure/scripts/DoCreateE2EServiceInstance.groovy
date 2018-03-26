@@ -18,7 +18,10 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.openecomp.mso.bpmn.infrastructure.scripts;
+package org.openecomp.mso.bpmn.infrastructure.scripts
+
+import org.openecomp.mso.bpmn.infrastructure.properties.BPMNProperties
+import org.openecomp.mso.bpmn.infrastructure.properties.ResourceSequence;
 
 import static org.apache.commons.lang3.StringUtils.*;
 import org.apache.http.HttpResponse
@@ -447,14 +450,77 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 
 	// prepare input param for using DoCreateResources.bpmn
 	public void preProcessForAddResource(DelegateExecution execution) {
-		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO", " ======== STARTED preProcessForAddResource Process ======== ", isDebugEnabled)
-		
+
 		ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
 		List<Resource> addResourceList = serviceDecomposition.getServiceResources()
 		execution.setVariable("addResourceList", addResourceList)
-		
+
 		utils.log("INFO", "======== COMPLETED preProcessForAddResource Process ======== ", isDebugEnabled)
+	}
+
+	/**
+	 * sequence resource. we should analyze resource sequence from service template
+	 * Here we make VF first, and then network for E2E service.
+	 */
+	public void sequenceResoure(DelegateExecution execution){
+	    def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+        utils.log("INFO", "======== Start sequenceResoure Process ======== ", isDebugEnabled)  
+	    String serviceModelUUID = execution.getVariable("modelUuid")
+        JSONArray networks = cutils.getAllNetworksByServiceModelUuid(execution, serviceModelUUID)
+        utils.log("DEBUG", "obtained Network list: " + networks, isDebugEnabled)            
+        if (networks == null) {
+            utils.log("INFO", "No matching networks in Catalog DB for serviceModelUUID=" + serviceModelUUID, isDebugEnabled)
+        }
+        ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
+                
+        //we use VF to define a network service
+        List<VnfResource>  vnfResourceList= serviceDecomposition.getServiceVnfs()
+        
+        //here wan is defined as a network resource        
+        List<NetworkResource> networkResourceList = serviceDecomposition.getServiceNetworks()
+
+        //allotted resource
+        List<AllottedResource> arResourceList= serviceDecomposition.getServiceAllottedResources()
+        //define sequenced resource list, we deploy vf first and then network and then ar
+        //this is defaule sequence
+        List<Resource>  sequencedResourceList = new ArrayList<Resource>();
+
+		def sequence = BPMNProperties.getResourceSequenceProp();
+
+		// TODO: need to update the resource based on the resource sequence
+//		for (resource in sequence) {
+//			switch (resource) {
+//				case ResourceSequence.NETWORK_RESOURCE:
+//					if (null != networkResourceList) {
+//						sequencedResourceList.addAll(networkResourceList)
+//					}
+//					break;
+//
+//				case ResourceSequence.VNF_RESOURCE:
+//					if (null != vnfResourceList) {
+//						sequencedResourceList.addAll(vnfResourceList)
+//					}
+//					break;
+//
+//				case ResourceSequence.ALLOTTED_RESOURCE:
+//					if (null != arResourceList) {
+//						sequencedResourceList.addAll(arResourceList)
+//					}
+//					break;
+//
+//				default:
+//					break;
+//			}
+//		}
+
+        String isContainsWanResource = networkResourceList.isEmpty() ? "false" : "true"
+        execution.setVariable("isContainsWanResource", isContainsWanResource)
+        execution.setVariable("currentResourceIndex", 0)
+        execution.setVariable("sequencedResourceList", sequencedResourceList)
+        utils.log("INFO", "sequencedResourceList: " + sequencedResourceList, isDebugEnabled)  
+        utils.log("INFO", "======== COMPLETED sequenceResoure Process ======== ", isDebugEnabled)  
 	}
 
 	public void postProcessForAddResource(DelegateExecution execution) {

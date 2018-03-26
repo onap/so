@@ -85,18 +85,19 @@ public class CreateSDNCCNetworkResource extends AbstractServiceTaskProcessor {
                 //the operationType from worflow(first node) is highest priority.
                 operationType = jsonUtil.getJsonValue(recipeParamsFromWf, "operationType")
             }
-            
+
+            operationType = "create" + operationType + "Instance"
             
             //For sdnc, generate svc_action and request_action
             String sdnc_svcAction = "create"
             if(StringUtils.containsIgnoreCase(resourceInputObj.getResourceInstanceName(), "overlay")){
                 //This will be resolved in R3.
                 sdnc_svcAction ="activate"
-                operationType = "NCINetwork"        
+                operationType = "ActivateDCINetworkInstance"
             }
             if(StringUtils.containsIgnoreCase(resourceInputObj.getResourceInstanceName(), "underlay")){
                 //This will be resolved in R3.
-                operationType ="Network"
+                operationType ="CreateNetworkInstance"
             }        
             String sdnc_requestAction = StringUtils.capitalize(sdnc_svcAction) + operationType +"Instance"                    
             execution.setVariable(Prefix + "svcAction", sdnc_svcAction)        
