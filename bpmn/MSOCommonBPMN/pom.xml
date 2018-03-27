@@ -395,15 +395,25 @@
 			<artifactId>spring-web</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
+		<!-- bwj: duplicated one
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
+		-->
+		<!-- bwj: duplicated
 		<dependency>
 			<groupId>commons-httpclient</groupId>
 			<artifactId>commons-httpclient</artifactId>
 			<version>${httpclient.version}</version>
+		</dependency>
+		-->
+		<!-- bwj: added -->
+		<dependency>
+			<groupId>com.googlecode.libphonenumber</groupId>
+			<artifactId>libphonenumber</artifactId>
+			<version>8.9.1</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.ws.rs</groupId>
