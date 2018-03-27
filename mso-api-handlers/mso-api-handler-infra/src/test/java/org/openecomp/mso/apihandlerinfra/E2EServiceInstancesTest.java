@@ -20,9 +20,11 @@
 
 package org.openecomp.mso.apihandlerinfra;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -33,6 +35,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolVersion;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.entity.BasicHttpEntity;
 import org.apache.http.message.BasicHttpResponse;
 import org.hibernate.HibernateException;
@@ -40,6 +43,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.internal.SessionFactoryImpl;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.Ignore;
 import org.mockito.Mockito;
@@ -51,6 +55,7 @@ import org.openecomp.mso.db.catalog.beans.Service;
 import org.openecomp.mso.db.catalog.beans.ServiceRecipe;
 import org.openecomp.mso.properties.MsoDatabaseException;
 import org.openecomp.mso.properties.MsoJavaProperties;
+import org.openecomp.mso.properties.MsoPropertiesFactory;
 import org.openecomp.mso.requestsdb.InfraActiveRequests;
 import org.openecomp.mso.requestsdb.OperationStatus;
 import org.openecomp.mso.requestsdb.RequestsDatabase;
@@ -137,6 +142,21 @@ public class E2EServiceInstancesTest {
 			"}" +
 			"}" +
 			"}";
+
+    private final String compareModelsRequest = "{" +
+            "\"globalSubscriberId\": \"60c3e96e-0970-4871-b6e0-3b6de7561519\"," +
+            "\"serviceType\": \"vnf\"," +
+            "\"modelInvariantIdTarget\": \"60c3e96e-0970-4871-b6e0-3b6de1234567\"," +
+            "\"modelVersionIdTarget\": \"modelVersionIdTarget\"" +
+            "}";
+
+    @BeforeClass
+    public static void setUp() throws Exception {
+
+        MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory();
+        msoPropertiesFactory.removeAllMsoProperties();
+        msoPropertiesFactory.initializeMsoProperties(Constants.MSO_PROP_APIHANDLER_INFRA, "src/test/resources/mso.apihandler-infra.properties");
+    }
 
 	@Test
 	public void createE2EServiceInstanceTestSuccess() {
@@ -833,4 +853,71 @@ public class E2EServiceInstancesTest {
 		String respStr = resp.getEntity().toString();
 		assertTrue(respStr.contains("SVC2000"));
 	}
+
+    @Test
+    public void compareModelwithTargetVersionBadRequest(){
+
+        E2EServiceInstances instance = new E2EServiceInstances();
+        Response response = instance.compareModelwithTargetVersion("", "12345", "v3");
+
+        assertNotNull(response);
+        assertTrue(response.getEntity().toString().contains("Mapping of request to JSON object failed."));
+
+    }
+    @Test
+    public void compareModelwithTargetVersionFailedBPMNCall(){
+
+        new MockUp<CamundaClient>() {
+            @Mock
+            public HttpResponse post(String requestId, boolean isBaseVfModule,
+                 int recipeTimeout, String requestAction, String serviceInstanceId,
+                 String vnfId, String vfModuleId, String volumeGroupId, String networkId, String configurationId,
+                 String serviceType, String vnfType, String vfModuleType, String networkType,
+                 String requestDetails, String recipeParamXsd)
+                    throws ClientProtocolException, IOException {
+
+                throw new ClientProtocolException();
+            }
+        };
+
+        E2EServiceInstances instance = new E2EServiceInstances();
+        Response response = instance.compareModelwithTargetVersion(compareModelsRequest, "12345", "v3");
+
+        assertNotNull(response);
+        assertTrue(response.getEntity().toString().contains("Failed calling bpmn"));
+
+    }
+
+    @Test
+    public void compareModelwithTargetVersionSuccess(){
+
+        new MockUp<CamundaClient>() {
+            @Mock
+            public HttpResponse post(String requestId, boolean isBaseVfModule,
+                                     int recipeTimeout, String requestAction, String serviceInstanceId,
+                                     String vnfId, String vfModuleId, String volumeGroupId, String networkId, String configurationId,
+                                     String serviceType, String vnfType, String vfModuleType, String networkType,
+                                     String requestDetails, String recipeParamXsd)
+                    throws ClientProtocolException, IOException {
+
+                ProtocolVersion pv = new ProtocolVersion("HTTP", 1, 1);
+                HttpResponse resp = new BasicHttpResponse(pv, 202,
+                        "compareModelwithTargetVersion, test response");
+                BasicHttpEntity entity = new BasicHttpEntity();
+                String body = "{\"response\":\"success\",\"message\":\"success\"}";
+                InputStream instream = new ByteArrayInputStream(body.getBytes());
+                entity.setContent(instream);
+                resp.setEntity(entity);
+
+                return resp;
+            }
+        };
+
+        E2EServiceInstances instance = new E2EServiceInstances();
+        Response response = instance.compareModelwithTargetVersion(compareModelsRequest, "12345", "v3");
+
+        assertNotNull(response);
+        assertTrue(response.getStatus()==202);
+
+    }
 }
