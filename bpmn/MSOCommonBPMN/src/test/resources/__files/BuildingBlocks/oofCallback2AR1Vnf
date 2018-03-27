@@ -1,0 +1,109 @@
+{
+    "transactionId": "testRequestId",
+    "requestId": "testRequestId",
+    "requestState": "complete",
+    "statusMessage": "success",
+    "solutions": {
+        "licenseSolutions": [
+            {
+                "entitlementPoolUUID": [
+                    "f1d563e8-e714-4393-8f99-cc480144a05e",
+                    "j1d563e8-e714-4393-8f99-cc480144a05e"
+                ],
+                "licenseKeyGroupUUID": [
+                    "s1d563e8-e714-4393-8f99-cc480144a05e",
+                    "b1d563e8-e714-4393-8f99-cc480144a05e"
+                ],
+                "resourceModuleName": "vHNPortalaaS_primary_1",
+                "serviceResourceId": "testResourceIdAR"
+            },
+            {
+                "entitlementPoolUUID": [
+                    "91d563e8-e714-4393-8f99-cc480144a05e",
+                    "21d563e8-e714-4393-8f99-cc480144a05e"
+                ],
+                "licenseKeyGroupUUID": [
+                    "31d563e8-e714-4393-8f99-cc480144a05e",
+                    "71d563e8-e714-4393-8f99-cc480144a05e"
+                ],
+                "resourceModuleName": "vHNPortalaaS_secondary_1",
+                "serviceResourceId": "testResourceIdVNF"
+            }
+        ],
+        "placementSolutions": [
+            {
+                "resourceModuleName": "ALLOTTED_RESOURCE",
+                "serviceInstanceId": "testSIID1",
+                "serviceResourceId": "testResourceIdAR",
+                "solution": {
+                    "identifierType": "serviceInstanceId",
+                    "identifiers": ["testSIID1"]
+                },
+                "assignmentInfo": [
+                    {
+                        "key": "cloudOwner",
+                        "value": "aic"
+                    },
+                    {
+                        "key": "vnfHostName",
+                        "value": "MDTNJ01"
+                    },
+                    {
+                        "key": "isRehome",
+                        "value": "False"
+                    },
+                    {
+                        "key": "cloudRegionId",
+                        "value": "dfwtx"
+                    }
+                ]
+            },
+            {   "resourceModuleName": "ALLOTTED_RESOURCE",
+                "serviceResourceId": "testResourceIdAR2",
+                "solution": {
+                    "identifierType": "serviceInstanceId",
+                    "identifiers": ["testSIID2"]
+                },
+                "assignmentInfo": [
+                    {
+                        "key": "cloudOwner",
+                        "value": "aic"
+                    },
+                    {
+                        "key": "vnfHostName",
+                        "value": "testVnfHostname2"
+                    },
+                    {
+                        "key": "isRehome",
+                        "value": "False"
+                    },
+                    {
+                        "key": "cloudRegionId",
+                        "value": "testCloudRegionId2"
+                    }
+                ]
+            },
+            {
+                "resourceModuleName": "VNF",
+                "serviceResourceId": "testResourceIdVNF",
+                "solution": {
+                    "identifierType": "cloudRegionId",
+                    "cloudOwner": "aic",
+                    "identifiers": [
+                        "testCloudRegionId3"
+                    ]
+                },
+                "assignmentInfo": [
+                        {
+                            "key": "cloudOwner",
+                            "value": "aic"
+                        },
+                        {
+                            "key": "cloudRegionId",
+                            "value": "testCloudRegionId3"
+                        }
+                    ]
+            }
+        ]
+    }
+}
