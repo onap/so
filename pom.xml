@@ -434,7 +434,7 @@
     <dependency>
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-jackson2-provider</artifactId>
-      <version>${resteasy.version}</version>
+      <version>3.1.0.Final</version>
     </dependency>
 	<dependency>
 		<groupId>org.hamcrest</groupId>
