@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_4e362805",
+        "filename": "adapters/mso-adapter-utils/src/test/java/org/openecomp/mso/cloudify/utils/MsoCloudifyUtilsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-03-27T14:32:02Z",
+      "side": 1,
+      "message": "why every test have expected exception?",
+      "range": {
+        "startLine": 70,
+        "startChar": 4,
+        "endLine": 70,
+        "endChar": 48
+      },
+      "revId": "1dce0183abcba972784d7a73d0c72800c422689e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0e49008b",
+        "filename": "adapters/mso-adapter-utils/src/test/java/org/openecomp/mso/cloudify/utils/MsoCloudifyUtilsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-03-27T14:32:02Z",
+      "side": 1,
+      "message": "remove dead code",
+      "range": {
+        "startLine": 143,
+        "startChar": 0,
+        "endLine": 154,
+        "endChar": 7
+      },
+      "revId": "1dce0183abcba972784d7a73d0c72800c422689e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
