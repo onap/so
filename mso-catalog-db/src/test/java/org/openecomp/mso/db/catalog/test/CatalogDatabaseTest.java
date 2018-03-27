@@ -87,7 +87,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -96,6 +96,10 @@ public class CatalogDatabaseTest {
 
         List <HeatTemplate> list = cd.getAllHeatTemplates();
         assertEquals(list.size(), 1);
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test
@@ -110,7 +114,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -119,6 +123,9 @@ public class CatalogDatabaseTest {
 
         HeatTemplate ht = cd.getHeatTemplate(10);
         assertEquals("123-uuid", ht.getAsdcUuid());
+
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test
@@ -139,7 +146,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -148,6 +155,10 @@ public class CatalogDatabaseTest {
 
         HeatTemplate ht = cd.getHeatTemplate("heat123");
         assertEquals(null, ht);
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test
@@ -173,7 +184,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -182,6 +193,10 @@ public class CatalogDatabaseTest {
 
         HeatTemplate ht = cd.getHeatTemplate("heat123");
         assertEquals("456-uuid", ht.getAsdcUuid());
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test
@@ -203,7 +218,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -212,6 +227,10 @@ public class CatalogDatabaseTest {
 
         HeatTemplate ht = cd.getHeatTemplate("heat123","v2");
         assertEquals("1234-uuid", ht.getAsdcUuid());
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test
@@ -231,7 +250,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -240,6 +259,10 @@ public class CatalogDatabaseTest {
 
         HeatTemplate ht = cd.getHeatTemplate("heat123","v2");
         assertEquals(null, ht);
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test
@@ -254,7 +277,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -263,6 +286,9 @@ public class CatalogDatabaseTest {
 
         HeatTemplate ht = cd.getHeatTemplateByArtifactUuid("123");
         assertEquals("123-uuid", ht.getAsdcUuid());
+
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test
@@ -285,7 +311,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -294,6 +320,10 @@ public class CatalogDatabaseTest {
 
         HeatTemplate ht = cd.getHeatTemplateByArtifactUuidRegularQuery("123-uuid");
         assertEquals("123-uuid", ht.getAsdcUuid());
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test(expected = HibernateException.class)
@@ -314,7 +344,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -322,6 +352,10 @@ public class CatalogDatabaseTest {
         };
 
         HeatTemplate ht = cd.getHeatTemplateByArtifactUuidRegularQuery("123-uuid");
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test(expected = NonUniqueResultException.class)
@@ -342,7 +376,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -350,6 +384,10 @@ public class CatalogDatabaseTest {
         };
 
         HeatTemplate ht = cd.getHeatTemplateByArtifactUuidRegularQuery("123-uuid");
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test(expected = Exception.class)
@@ -370,7 +408,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -378,6 +416,10 @@ public class CatalogDatabaseTest {
         };
 
         HeatTemplate ht = cd.getHeatTemplateByArtifactUuidRegularQuery("123-uuid");
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test
@@ -399,7 +441,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -408,6 +450,10 @@ public class CatalogDatabaseTest {
 
         List<HeatTemplateParam> htList = cd.getParametersForHeatTemplate("12l3");
         assertEquals(1, htList.size());
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test(expected = HibernateException.class)
@@ -427,7 +473,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -435,6 +481,10 @@ public class CatalogDatabaseTest {
         };
 
         List<HeatTemplateParam> htList = cd.getParametersForHeatTemplate("12l3");
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test(expected = Exception.class)
@@ -454,7 +504,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -462,6 +512,10 @@ public class CatalogDatabaseTest {
         };
 
         List<HeatTemplateParam> htList = cd.getParametersForHeatTemplate("12l3");
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test
@@ -484,7 +538,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -493,6 +547,10 @@ public class CatalogDatabaseTest {
 
         HeatEnvironment he = cd.getHeatEnvironmentByArtifactUuid("123");
         assertEquals("123-uuid", he.getArtifactUuid());
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test(expected = HibernateException.class)
@@ -513,7 +571,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -521,6 +579,10 @@ public class CatalogDatabaseTest {
         };
 
         HeatEnvironment he = cd.getHeatEnvironmentByArtifactUuid("123");
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test(expected = Exception.class)
@@ -541,7 +603,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -549,6 +611,10 @@ public class CatalogDatabaseTest {
         };
 
         HeatEnvironment he = cd.getHeatEnvironmentByArtifactUuid("123");
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test
@@ -571,7 +637,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -580,6 +646,10 @@ public class CatalogDatabaseTest {
 
         Service service = cd.getServiceByInvariantUUID("123");
         assertEquals("123-uuid", service.getModelUUID());
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test
@@ -600,7 +670,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -609,6 +679,10 @@ public class CatalogDatabaseTest {
 
         Service service = cd.getServiceByInvariantUUID("123");
         assertEquals(null, service);
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test
@@ -631,7 +705,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -640,6 +714,10 @@ public class CatalogDatabaseTest {
 
         Service service = cd.getService("123");
         assertEquals("123-uuid", service.getModelUUID());
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test(expected = NonUniqueResultException.class)
@@ -660,7 +738,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -668,6 +746,10 @@ public class CatalogDatabaseTest {
         };
 
         Service service = cd.getService("123");
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test(expected = HibernateException.class)
@@ -688,7 +770,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -696,6 +778,10 @@ public class CatalogDatabaseTest {
         };
 
         Service service = cd.getService("123");
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test(expected = Exception.class)
@@ -716,7 +802,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -724,6 +810,10 @@ public class CatalogDatabaseTest {
         };
 
         Service service = cd.getService("123");
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test
@@ -746,7 +836,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -754,6 +844,10 @@ public class CatalogDatabaseTest {
         };
         Service service = cd.getServiceByModelUUID("123");
         assertEquals("123-uuid", service.getModelUUID());
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test
@@ -775,7 +869,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -787,6 +881,10 @@ public class CatalogDatabaseTest {
         Service service = cd.getService(map, "123");
 
         assertEquals("123-uuid", service.getModelUUID());
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test
@@ -808,7 +906,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -817,6 +915,10 @@ public class CatalogDatabaseTest {
 
         Service service = cd.getServiceByModelName("123");
         assertEquals("123-uuid", service.getModelUUID());
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test
@@ -836,7 +938,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -845,6 +947,10 @@ public class CatalogDatabaseTest {
 
         Service service = cd.getServiceByModelName("123");
         assertEquals(null, service);
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test
@@ -867,7 +973,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -875,6 +981,10 @@ public class CatalogDatabaseTest {
         };
         Service service = cd.getServiceByVersionAndInvariantId("123","tetwe");
         assertEquals("123-uuid", service.getModelUUID());
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test(expected = Exception.class)
@@ -895,13 +1005,17 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
             }
         };
         Service service = cd.getServiceByVersionAndInvariantId("123","tetwe");
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test(expected = Exception.class)
@@ -927,7 +1041,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -935,6 +1049,10 @@ public class CatalogDatabaseTest {
         };
         ServiceRecipe serviceRecipe = cd.getServiceRecipeByServiceModelUuid("123","tetwe");
         assertEquals(1, serviceRecipe.getId());
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test
@@ -953,7 +1071,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -961,6 +1079,10 @@ public class CatalogDatabaseTest {
         };
         ServiceRecipe serviceRecipe = cd.getServiceRecipeByServiceModelUuid("123","tetwe");
         assertEquals(null, serviceRecipe);
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test
@@ -981,7 +1103,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -989,6 +1111,10 @@ public class CatalogDatabaseTest {
         };
         List<ServiceRecipe> serviceRecipes = cd.getServiceRecipes("123");
         assertEquals(1, serviceRecipes.size());
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test
@@ -1007,7 +1133,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -1015,6 +1141,10 @@ public class CatalogDatabaseTest {
         };
         List<ServiceRecipe> serviceRecipes = cd.getServiceRecipes("123");
         assertEquals(0, serviceRecipes.size());
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test(expected = Exception.class)
@@ -1040,7 +1170,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -1048,6 +1178,10 @@ public class CatalogDatabaseTest {
         };
         VnfResource vnfResource = cd.getVnfResource("vnf");
         assertEquals("123-uuid", vnfResource.getModelUuid());
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test
@@ -1066,7 +1200,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -1074,6 +1208,10 @@ public class CatalogDatabaseTest {
         };
         VnfResource vnfResource = cd.getVnfResource("vnf");
         assertEquals(null, vnfResource);
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test
@@ -1095,7 +1233,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -1103,6 +1241,10 @@ public class CatalogDatabaseTest {
         };
         VnfResource vnfResource = cd.getVnfResource("vnf","3992");
         assertEquals("123-uuid", vnfResource.getModelUuid());
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test(expected = NonUniqueResultException.class)
@@ -1122,13 +1264,17 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
             }
         };
         VnfResource vnfResource = cd.getVnfResource("vnf","3992");
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test(expected = HibernateException.class)
@@ -1148,13 +1294,17 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
             }
         };
         VnfResource vnfResource = cd.getVnfResource("vnf","3992");
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test(expected = Exception.class)
@@ -1174,13 +1324,17 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
             }
         };
         VnfResource vnfResource = cd.getVnfResource("vnf","3992");
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test
@@ -1202,7 +1356,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -1211,6 +1365,10 @@ public class CatalogDatabaseTest {
 
         VnfResource vnfResource = cd.getVnfResourceByModelCustomizationId("3992");
         assertEquals("123-uuid",vnfResource.getModelUuid());
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test(expected = NonUniqueResultException.class)
@@ -1230,7 +1388,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -1238,6 +1396,10 @@ public class CatalogDatabaseTest {
         };
 
         VnfResource vnfResource = cd.getVnfResourceByModelCustomizationId("3992");
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test(expected = HibernateException.class)
@@ -1257,7 +1419,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -1265,6 +1427,10 @@ public class CatalogDatabaseTest {
         };
 
         VnfResource vnfResource = cd.getVnfResourceByModelCustomizationId("3992");
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
 
@@ -1291,7 +1457,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -1299,6 +1465,10 @@ public class CatalogDatabaseTest {
         };
         VnfResourceCustomization vnf = cd.getVnfResourceCustomizationByModelCustomizationName("test", "test234");
         assertEquals("123-uuid", vnf.getVnfResourceModelUUID());
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test
@@ -1317,7 +1487,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -1325,6 +1495,10 @@ public class CatalogDatabaseTest {
         };
         VnfResourceCustomization vnf = cd.getVnfResourceCustomizationByModelCustomizationName("test", "test234");
         assertEquals(null, vnf);
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test
@@ -1346,7 +1520,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -1354,6 +1528,10 @@ public class CatalogDatabaseTest {
         };
         VnfResource vnf = cd.getVnfResourceByModelInvariantId("test", "test234");
         assertEquals("123-uuid", vnf.getModelUuid());
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test(expected = NonUniqueResultException.class)
@@ -1373,13 +1551,17 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
             }
         };
         VnfResource vnf = cd.getVnfResourceByModelInvariantId("test", "test234");
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test(expected = HibernateException.class)
@@ -1399,13 +1581,17 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
             }
         };
         VnfResource vnf = cd.getVnfResourceByModelInvariantId("test", "test234");
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test(expected = Exception.class)
@@ -1425,17 +1611,20 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
             }
         };
         VnfResource vnf = cd.getVnfResourceByModelInvariantId("test", "test234");
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void getVnfResourceByIdTestException(){
         VnfResource vnf = cd.getVnfResourceById(19299);
     }
@@ -1458,7 +1647,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -1466,6 +1655,10 @@ public class CatalogDatabaseTest {
         };
         VfModule vfModule = cd.getVfModuleModelName("vfmodule");
         assertEquals("123-uuid", vfModule.getModelUUID());
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test
@@ -1484,7 +1677,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -1492,6 +1685,10 @@ public class CatalogDatabaseTest {
         };
         VfModule vfModule = cd.getVfModuleModelName("vfmodule");
         assertEquals(null, vfModule);
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test
@@ -1513,7 +1710,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -1522,6 +1719,10 @@ public class CatalogDatabaseTest {
 
         VfModule vfModule = cd.getVfModuleModelName("tetes","4kidsl");
         assertEquals("123-uuid", vfModule.getModelUUID());
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test(expected = NonUniqueResultException.class)
@@ -1541,7 +1742,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -1549,6 +1750,10 @@ public class CatalogDatabaseTest {
         };
 
         VfModule vfModule = cd.getVfModuleModelName("tetes","4kidsl");
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test(expected = HibernateException.class)
@@ -1568,7 +1773,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -1576,6 +1781,10 @@ public class CatalogDatabaseTest {
         };
 
         VfModule vfModule = cd.getVfModuleModelName("tetes","4kidsl");
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test(expected = Exception.class)
@@ -1595,7 +1804,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -1603,6 +1812,10 @@ public class CatalogDatabaseTest {
         };
 
         VfModule vfModule = cd.getVfModuleModelName("tetes","4kidsl");
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test
@@ -1623,7 +1836,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -1631,6 +1844,10 @@ public class CatalogDatabaseTest {
         };
         VfModuleCustomization vfModuleCustomization = cd.getVfModuleCustomizationByModelName("tetes");
         assertEquals("123-uuid", vfModuleCustomization.getVfModuleModelUuid());
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test
@@ -1649,7 +1866,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -1657,6 +1874,10 @@ public class CatalogDatabaseTest {
         };
         VfModuleCustomization vfModuleCustomization = cd.getVfModuleCustomizationByModelName("tetes");
         assertEquals(null, vfModuleCustomization);
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test
@@ -1677,7 +1898,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -1685,6 +1906,10 @@ public class CatalogDatabaseTest {
         };
         NetworkResource networkResource = cd.getNetworkResource("tetes");
         assertEquals("123-uuid", networkResource.getModelUUID());
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test
@@ -1703,7 +1928,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -1711,6 +1936,10 @@ public class CatalogDatabaseTest {
         };
         NetworkResource networkResource = cd.getNetworkResource("tetes");
         assertEquals(null, networkResource);
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test
@@ -1732,7 +1961,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -1741,6 +1970,10 @@ public class CatalogDatabaseTest {
 
         VnfRecipe vnfRecipe = cd.getVnfRecipe("tetes","ergfedrf","4993493");
         assertEquals("123-id", vnfRecipe.getVfModuleId());
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test
@@ -1760,7 +1993,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -1769,6 +2002,10 @@ public class CatalogDatabaseTest {
 
         VnfRecipe vnfRecipe = cd.getVnfRecipe("tetes","ergfedrf","4993493");
         assertEquals(null, vnfRecipe);
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test
@@ -1789,7 +2026,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -1797,6 +2034,10 @@ public class CatalogDatabaseTest {
         };
         VnfRecipe vnfRecipe = cd.getVnfRecipe("tetes","4993493");
         assertEquals(1, vnfRecipe.getId());
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test
@@ -1815,7 +2056,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -1823,6 +2064,10 @@ public class CatalogDatabaseTest {
         };
         VnfRecipe vnfRecipe = cd.getVnfRecipe("tetes","4993493");
         assertEquals(null, vnfRecipe);
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test
@@ -1843,7 +2088,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -1852,6 +2097,10 @@ public class CatalogDatabaseTest {
 
         VnfRecipe vnfRecipe = cd.getVnfRecipeByVfModuleId("tetes","4993493","vnf");
         assertEquals(1, vnfRecipe.getId());
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test
@@ -1870,7 +2119,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -1879,6 +2128,10 @@ public class CatalogDatabaseTest {
 
         VnfRecipe vnfRecipe = cd.getVnfRecipeByVfModuleId("tetes","4993493","vnf");
         assertEquals(null, vnfRecipe);
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test(expected = Exception.class)
@@ -1887,7 +2140,6 @@ public class CatalogDatabaseTest {
     }
 
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void getVfModuleType2TestException(){
         VfModule vnf = cd.getVfModuleType("4993493","vnf");
     }
@@ -1910,7 +2162,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -1918,6 +2170,10 @@ public class CatalogDatabaseTest {
         };
         VnfResource vnfResource = cd.getVnfResourceByServiceUuid("4993493");
         assertEquals("123-uuid", vnfResource.getModelUuid());
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test(expected = NonUniqueResultException.class)
@@ -1937,13 +2193,17 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
             }
         };
         VnfResource vnfResource = cd.getVnfResourceByServiceUuid("4993493");
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test(expected = HibernateException.class)
@@ -1963,13 +2223,17 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
             }
         };
         VnfResource vnfResource = cd.getVnfResourceByServiceUuid("4993493");
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test(expected = Exception.class)
@@ -1989,13 +2253,17 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
             }
         };
         VnfResource vnfResource = cd.getVnfResourceByServiceUuid("4993493");
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test
@@ -2017,7 +2285,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -2026,6 +2294,10 @@ public class CatalogDatabaseTest {
 
         VnfResource vnfResource = cd.getVnfResourceByVnfUuid("4993493");
         assertEquals("123-uuid", vnfResource.getModelUuid());
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test(expected = NonUniqueResultException.class)
@@ -2045,7 +2317,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -2053,6 +2325,10 @@ public class CatalogDatabaseTest {
         };
 
         VnfResource vnfResource = cd.getVnfResourceByVnfUuid("4993493");
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test(expected = HibernateException.class)
@@ -2072,7 +2348,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -2080,6 +2356,10 @@ public class CatalogDatabaseTest {
         };
 
         VnfResource vnfResource = cd.getVnfResourceByVnfUuid("4993493");
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test(expected = Exception.class)
@@ -2099,7 +2379,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -2107,6 +2387,10 @@ public class CatalogDatabaseTest {
         };
 
         VnfResource vnfResource = cd.getVnfResourceByVnfUuid("4993493");
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test
@@ -2129,7 +2413,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -2138,6 +2422,10 @@ public class CatalogDatabaseTest {
 
         VfModule vfModule = cd.getVfModuleByModelInvariantUuid("4993493");
         assertEquals("123-uuid", vfModule.getModelUUID());
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test
@@ -2158,7 +2446,7 @@ public class CatalogDatabaseTest {
             }
         };
 
-        new MockUp<CatalogDatabase>() {
+        MockUp<CatalogDatabase> mockCd = new MockUp<CatalogDatabase>() {
             @Mock
             private Session getSession() {
                 return mockedSession.getMockInstance();
@@ -2167,6 +2455,10 @@ public class CatalogDatabaseTest {
 
         VfModule vfModule = cd.getVfModuleByModelInvariantUuid("4993493");
         assertEquals(null, vfModule);
+
+	mockUpQuery.tearDown();
+	mockedSession.tearDown();
+	mockCd.tearDown();
     }
 
     @Test(expected = Exception.class)
@@ -2174,7 +2466,6 @@ public class CatalogDatabaseTest {
         VfModuleCustomization vnf = cd.getVfModuleByModelCustomizationUuid("4993493");
     }
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void getVfModuleByModelInvariantUuidAndModelVersionTestException(){
         VfModule vnf = cd.getVfModuleByModelInvariantUuidAndModelVersion("4993493","vnf");
     }
@@ -2187,7 +2478,6 @@ public class CatalogDatabaseTest {
         VfModule vnf = cd.getVfModuleByModelUuid("4993493");
     }
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void getVnfResourceCustomizationByModelCustomizationUuidTestException(){
         VnfResourceCustomization vnf = cd.getVnfResourceCustomizationByModelCustomizationUuid("4993493");
     }
@@ -2196,42 +2486,34 @@ public class CatalogDatabaseTest {
         VnfResourceCustomization vnf = cd.getVnfResourceCustomizationByModelVersionId("4993493");
     }
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void getVfModuleByModelCustomizationIdAndVersionTestException(){
         cd.getVfModuleByModelCustomizationIdAndVersion("4993493","test");
     }
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void getVfModuleByModelCustomizationIdModelVersionAndModelInvariantIdTestException(){
         cd.getVfModuleByModelCustomizationIdModelVersionAndModelInvariantId("4993493","vnf","test");
     }
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void getVnfResourceCustomizationByModelInvariantIdTest(){
         cd.getVnfResourceCustomizationByModelInvariantId("4993493","vnf","test");
     }
-    @Test(expected = Exception.class)
-    @Ignore // 1802 merge
+    @Test
     public void getVfModuleCustomizationByVnfModuleCustomizationUuidTest(){
-        cd.getVfModuleCustomizationByVnfModuleCustomizationUuid("4993493");
+        assertEquals(cd.getVfModuleCustomizationByVnfModuleCustomizationUuid("4993493").size(), 0);
     }
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void getVnfResourceCustomizationByVnfModelCustomizationNameAndModelVersionIdTest(){
         cd.getVnfResourceCustomizationByVnfModelCustomizationNameAndModelVersionId("4993493","test");
     }
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void getAllVfModuleCustomizationstest(){
         cd.getAllVfModuleCustomizations("4993493");
     }
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void getVnfResourceByModelUuidTest(){
         cd.getVnfResourceByModelUuid("4993493");
     }
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void getVnfResCustomToVfModuleTest(){
         cd.getVnfResCustomToVfModule("4993493","test");
     }
@@ -2250,7 +2532,6 @@ public class CatalogDatabaseTest {
         cd.getServiceByUuid("4993493");
     }
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void getNetworkResourceById2Test(){
         cd.getNetworkResourceById(4993493);
     }
@@ -2264,31 +2545,26 @@ public class CatalogDatabaseTest {
         assertFalse(is);
     }
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void getSTRTest(){
         cd.getSTR("4993493","test","vnf");
     }
-    @Test(expected = Exception.class)
-    @Ignore // 1802 merge
+    @Test
     public void getVRCtoVFMCTest(){
-        cd.getVRCtoVFMC("4993493","388492");
+        assertEquals(cd.getVRCtoVFMC("4993493","388492").size(), 0);
     }
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void getVfModuleTypeByUuidTestException(){
         cd.getVfModuleTypeByUuid("4993493");
     }
 
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void getTempNetworkHeatTemplateLookupTest(){
         cd.getTempNetworkHeatTemplateLookup("4993493");
     }
 
-    @Test(expected = Exception.class)
-    @Ignore // 1802 merge
+    @Test
     public void getAllNetworksByServiceModelUuidTest(){
-        cd.getAllNetworksByServiceModelUuid("4993493");
+        assertEquals(cd.getAllNetworksByServiceModelUuid("4993493").size(), 0);
     }
     @Test(expected = Exception.class)
     public void getAllNetworksByServiceModelInvariantUuidTest(){
@@ -2307,7 +2583,6 @@ public class CatalogDatabaseTest {
         cd.getAllNetworksByNetworkType("4993493");
     }
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void getAllVfmcForVrcTest(){
         VnfResourceCustomization re = new VnfResourceCustomization();
         re.setModelCustomizationUuid("377483");
@@ -2338,7 +2613,6 @@ public class CatalogDatabaseTest {
         cd.getAllVnfsByVnfModelCustomizationUuid("4993493");
     }
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void getAllAllottedResourcesByServiceModelUuidTest(){
         cd.getAllAllottedResourcesByServiceModelUuid("4993493");
     }
@@ -2347,7 +2621,6 @@ public class CatalogDatabaseTest {
         cd.getAllAllottedResourcesByServiceModelInvariantUuid("4993493");
     }
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void getAllAllottedResourcesByServiceModelInvariantUuid2Test(){
         cd.getAllAllottedResourcesByServiceModelInvariantUuid("4993493","test");
     }
@@ -2364,13 +2637,11 @@ public class CatalogDatabaseTest {
         cd.getAllResourcesByServiceModelUuid("4993493");
     }
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void getAllResourcesByServiceModelInvariantUuidTest(){
         cd.getAllResourcesByServiceModelInvariantUuid("4993493");
     }
 
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void getAllResourcesByServiceModelInvariantUuid2Test(){
         cd.getAllResourcesByServiceModelInvariantUuid("4993493","test");
     }
@@ -2386,10 +2657,9 @@ public class CatalogDatabaseTest {
     public void getVfModuleRecipeTest(){
         cd.getVfModuleRecipe("4993493","test","get");
     }
-    @Test(expected = Exception.class)
-    @Ignore // 1802 merge
+    @Test
     public void getVfModuleTest(){
-        cd.getVfModule("4993493","test","get","v2","vnf");
+        assertEquals(cd.getVfModule("4993493","test","get","v2","vnf"), null);
     }
     @Test(expected = Exception.class)
     public void getVnfComponentsRecipeTest(){
@@ -2403,44 +2673,36 @@ public class CatalogDatabaseTest {
         cd.getVnfComponentsRecipeByVfModule(resultList,"4993493");
     }
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void getAllVnfResourcesTest(){
         cd.getAllVnfResources();
     }
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void getVnfResourcesByRoleTest(){
         cd.getVnfResourcesByRole("4993493");
     }
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void getVnfResourceCustomizationsByRoleTest(){
         cd.getVnfResourceCustomizationsByRole("4993493");
     }
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void getAllNetworkResourcesTest(){
         cd.getAllNetworkResources();
     }
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void getAllNetworkResourceCustomizationsTest(){
         cd.getAllNetworkResourceCustomizations();
     }
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void getAllVfModulesTest(){
         cd.getAllVfModules();
     }
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void getAllVfModuleCustomizationsTest(){
         cd.getAllVfModuleCustomizations();
     }
-    @Test(expected = Exception.class)
-    @Ignore // 1802 merge
+    @Test
     public void getAllHeatEnvironmentTest(){
-        cd.getAllHeatEnvironment();
+        assertEquals(cd.getAllHeatEnvironment(), null);
     }
     @Test(expected = Exception.class)
     public void getHeatEnvironment2Test(){
@@ -2463,7 +2725,6 @@ public class CatalogDatabaseTest {
         cd.getVfModuleToHeatFilesEntry("4993493","49959499");
     }
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void getServiceToResourceCustomization(){
         cd.getServiceToResourceCustomization("4993493","599349","49900");
     }
@@ -2477,48 +2738,44 @@ public class CatalogDatabaseTest {
     }
 
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void saveHeatTemplateTest(){
         HeatTemplate heat = new HeatTemplate();
         Set <HeatTemplateParam> paramSet = new HashSet<>();
         cd.saveHeatTemplate(heat,paramSet);
     }
-    @Test(expected = Exception.class)
-    @Ignore // 1802 merge
+    @Test
     public void getHeatEnvironmentTest(){
-        cd.getHeatEnvironment("4993493","test","heat");
+        assertEquals(cd.getHeatEnvironment("4993493","test","heat"), null);
     }
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void getHeatEnvironment3Test(){
         cd.getHeatEnvironment("4993493","test");
     }
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void saveHeatEnvironmentTest(){
         HeatEnvironment en = new HeatEnvironment();
         cd.saveHeatEnvironment(en);
     }
+    @Ignore // 1802 merge - method doesn't throw an exception any more
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void saveHeatTemplate2Test(){
         HeatTemplate heat = new HeatTemplate();
         cd.saveHeatTemplate(heat);
     }
+    @Ignore // 1802 merge - method doesn't throw an exception any more
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void saveHeatFileTest(){
         HeatFiles hf = new HeatFiles();
         cd.saveHeatFile(hf);
     }
+    @Ignore // 1802 merge - method doesn't throw an exception any more
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void saveVnfRecipeTest(){
         VnfRecipe vr = new VnfRecipe();
         cd.saveVnfRecipe(vr);
     }
+    @Ignore // 1802 merge - method doesn't throw an exception any more
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void saveVnfComponentsRecipe(){
         VnfComponentsRecipe vr = new VnfComponentsRecipe();
         cd.saveVnfComponentsRecipe(vr);
@@ -2529,7 +2786,6 @@ public class CatalogDatabaseTest {
         cd.saveOrUpdateVnfResource(vr);
     }
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void saveVnfResourceCustomizationTest(){
         VnfResourceCustomization vr = new VnfResourceCustomization();
         cd.saveVnfResourceCustomization(vr);
@@ -2544,8 +2800,8 @@ public class CatalogDatabaseTest {
         AllottedResource ar = new AllottedResource();
         cd.saveAllottedResource(ar);
     }
+    @Ignore // 1802 merge - method doesn't throw an exception any more
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void saveNetworkResourceTest() throws RecordNotFoundException {
         NetworkResource nr = new NetworkResource();
         cd.saveNetworkResource(nr);
@@ -2560,13 +2816,11 @@ public class CatalogDatabaseTest {
         cd.getToscaCsar("4993493");
     }
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void saveTempNetworkHeatTemplateLookupTest(){
         TempNetworkHeatTemplateLookup t = new TempNetworkHeatTemplateLookup();
         cd.saveTempNetworkHeatTemplateLookup(t);
     }
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void saveVfModuleToHeatFiles(){
         VfModuleToHeatFiles v = new VfModuleToHeatFiles();
         cd.saveVfModuleToHeatFiles(v);
@@ -2604,7 +2858,6 @@ public class CatalogDatabaseTest {
         cd.saveOrUpdateVfModule(ar);
     }
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void saveOrUpdateVfModuleCustomizationTest(){
         VfModuleCustomization ar = new VfModuleCustomization();
         cd.saveOrUpdateVfModuleCustomization(ar);
@@ -2664,7 +2917,6 @@ public class CatalogDatabaseTest {
         cd.getNetworkResourceByModelCustUuid("test");
     }
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void getVnfComponentsRecipe2Test(){
 
         cd.getVnfComponentsRecipe("test1","test2","test3","test4");
@@ -2686,13 +2938,11 @@ public class CatalogDatabaseTest {
     }
 
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void getVfModule2Test(){
 
         cd.getVfModule("test");
     }
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void getVfModuleByModelUUIDTest(){
 
         cd.getVfModuleByModelUUID("test");
@@ -2713,14 +2963,12 @@ public class CatalogDatabaseTest {
         cd.healthCheck();
     }
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void executeQuerySingleRow(){
         VnfComponent ar = new VnfComponent();
         HashMap<String, String> variables = new HashMap<>();
         cd.executeQuerySingleRow("tets",variables,false);
     }
     @Test(expected = Exception.class)
-    @Ignore // 1802 merge
     public void executeQueryMultipleRows(){
         HashMap<String, String> variables = new HashMap<>();
         cd.executeQueryMultipleRows("select",variables,false);
