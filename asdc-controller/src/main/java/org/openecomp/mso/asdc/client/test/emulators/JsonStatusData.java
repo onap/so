@@ -25,8 +25,8 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openecomp.sdc.api.notification.IStatusData;
-import org.openecomp.sdc.utils.DistributionStatusEnum;
+import org.onap.sdc.api.notification.IStatusData;
+import org.onap.sdc.utils.DistributionStatusEnum;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;

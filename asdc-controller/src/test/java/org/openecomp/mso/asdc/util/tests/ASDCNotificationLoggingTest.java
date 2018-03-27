@@ -29,9 +29,9 @@ import org.junit.Test;
 import org.openecomp.mso.asdc.installer.IVfModuleData;
 import org.openecomp.mso.asdc.installer.VfModuleMetaData;
 import org.openecomp.mso.asdc.util.ASDCNotificationLogging;
-import org.openecomp.sdc.api.notification.IArtifactInfo;
-import org.openecomp.sdc.api.notification.INotificationData;
-import org.openecomp.sdc.api.notification.IResourceInstance;
+import org.onap.sdc.api.notification.IArtifactInfo;
+import org.onap.sdc.api.notification.INotificationData;
+import org.onap.sdc.api.notification.IResourceInstance;
 
 public class ASDCNotificationLoggingTest {
 	@Test

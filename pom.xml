@@ -10,7 +10,6 @@
   <groupId>org.onap.so</groupId>
   <artifactId>so</artifactId>
   <packaging>pom</packaging>
-  <!-- <version>1.2.0-SNAPSHOT</version> -->
   <version>1.2.0-SNAPSHOT</version>
   <name>so</name>
   <description>This Maven project is responsible to build and package all child projects - contributions in the MSO project.
@@ -47,8 +46,7 @@
     <org.apache.maven.user-settings></org.apache.maven.user-settings>
     <!-- this is used for Chef mso-code cookbook -->
     <swm.version>2.19.3-1</swm.version>
-    <!-- <openstack.version>1.2.0-SNAPSHOT</openstack.version> -->
-	<openstack.version>1.2.0</openstack.version>
+	<openstack.version>1.2.1</openstack.version>
     <nexusproxy>https://nexus.onap.org</nexusproxy>
     <maven.build.timestamp.format>yyyyMMdd'T'HHmm</maven.build.timestamp.format>
     <resteasy.version>3.0.19.Final</resteasy.version>

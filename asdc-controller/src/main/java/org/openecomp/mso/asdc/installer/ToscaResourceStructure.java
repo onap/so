@@ -27,24 +27,24 @@ import java.io.IOException;
 
 import java.util.List;
 
-import org.openecomp.sdc.api.notification.IArtifactInfo;
-import org.openecomp.sdc.api.notification.INotificationData;
+import org.onap.sdc.api.notification.IArtifactInfo;
+import org.onap.sdc.api.notification.INotificationData;
 //import org.openecomp.generic.tosca.parser.model.Metadata;
-//import org.openecomp.sdc.tosca.parser.factory.SdcCsarHelperFactory;
-//import org.openecomp.sdc.tosca.parser.factory.SdcCsarHelperFactory;
+//import org.onap.sdc.tosca.parser.factory.SdcCsarHelperFactory;
+//import org.onap.sdc.tosca.parser.factory.SdcCsarHelperFactory;
 ///import org.openecomp.generic.tosca.parser.model.Metadata;
-import org.openecomp.sdc.api.results.IDistributionClientDownloadResult;
-import org.openecomp.sdc.tosca.parser.api.ISdcCsarHelper;
-import org.openecomp.sdc.tosca.parser.impl.SdcCsarHelperImpl;
-import org.openecomp.sdc.tosca.parser.impl.SdcPropertyNames;
+import org.onap.sdc.api.results.IDistributionClientDownloadResult;
+import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
+import org.onap.sdc.tosca.parser.impl.SdcCsarHelperImpl;
+import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
 
 
-import org.openecomp.sdc.tosca.parser.impl.SdcToscaParserFactory;
+import org.onap.sdc.tosca.parser.impl.SdcToscaParserFactory;
 
 
 
-import org.openecomp.sdc.toscaparser.api.NodeTemplate;
-import org.openecomp.sdc.toscaparser.api.elements.Metadata;
+import org.onap.sdc.toscaparser.api.NodeTemplate;
+import org.onap.sdc.toscaparser.api.elements.Metadata;
 import org.openecomp.mso.asdc.client.exceptions.ASDCDownloadException;
 import org.openecomp.mso.db.catalog.beans.AllottedResource;
 import org.openecomp.mso.db.catalog.beans.AllottedResourceCustomization;

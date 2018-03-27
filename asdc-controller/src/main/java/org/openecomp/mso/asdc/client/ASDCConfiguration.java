@@ -34,7 +34,7 @@ import org.openecomp.mso.asdc.client.exceptions.ASDCParametersException;
 import org.openecomp.mso.properties.MsoJsonProperties;
 import org.openecomp.mso.properties.MsoPropertiesException;
 import org.openecomp.mso.properties.MsoPropertiesFactory;
-import org.openecomp.sdc.api.consumer.IConfiguration;
+import org.onap.sdc.api.consumer.IConfiguration;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

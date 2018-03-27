@@ -38,20 +38,20 @@ import java.util.Comparator;
 
 import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.exception.LockAcquisitionException;
-import org.openecomp.sdc.api.consumer.IComponentDoneStatusMessage;
+import org.onap.sdc.api.consumer.IComponentDoneStatusMessage;
 //import org.openecomp.generic.tosca.parser.model.Metadata;
 //import org.openecomp.generic.tosca.parser.model.NodeTemplate;
-import org.openecomp.sdc.api.notification.IArtifactInfo;
-import org.openecomp.sdc.api.notification.IStatusData;
-import org.openecomp.sdc.api.notification.IVfModuleMetadata;
-import org.openecomp.sdc.api.results.IDistributionClientResult;
-import org.openecomp.sdc.tosca.parser.impl.SdcPropertyNames;
-import org.openecomp.sdc.toscaparser.api.Group;
-import org.openecomp.sdc.toscaparser.api.NodeTemplate;
-import org.openecomp.sdc.toscaparser.api.Property;
-import org.openecomp.sdc.toscaparser.api.elements.Metadata;
-import org.openecomp.sdc.toscaparser.api.parameters.Input;
-import org.openecomp.sdc.utils.DistributionStatusEnum;
+import org.onap.sdc.api.notification.IArtifactInfo;
+import org.onap.sdc.api.notification.IStatusData;
+import org.onap.sdc.api.notification.IVfModuleMetadata;
+import org.onap.sdc.api.results.IDistributionClientResult;
+import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
+import org.onap.sdc.toscaparser.api.Group;
+import org.onap.sdc.toscaparser.api.NodeTemplate;
+import org.onap.sdc.toscaparser.api.Property;
+import org.onap.sdc.toscaparser.api.elements.Metadata;
+import org.onap.sdc.toscaparser.api.parameters.Input;
+import org.onap.sdc.utils.DistributionStatusEnum;
 import org.openecomp.mso.asdc.client.ASDCConfiguration;
 import org.openecomp.mso.asdc.client.exceptions.ArtifactInstallerException;
 import org.openecomp.mso.asdc.installer.ASDCElementInfo;
@@ -496,7 +496,7 @@ public class ToscaResourceInstaller {// implements IVfResourceInstaller {
 					catalogDB.saveServiceToResourceCustomization(toscaResourceStruct.getCatalogVfServiceToResourceCustomization());
 
 
-						List<org.openecomp.sdc.toscaparser.api.Group> vfGroups = toscaResourceStruct.getSdcCsarHelper().getVfModulesByVf(vfCustomizationUUID);
+						List<org.onap.sdc.toscaparser.api.Group> vfGroups = toscaResourceStruct.getSdcCsarHelper().getVfModulesByVf(vfCustomizationUUID);
 						logger.debug("vfGroups:" + vfGroups.toString());
 						
 						vfGroups.sort((group1, group2) -> {
