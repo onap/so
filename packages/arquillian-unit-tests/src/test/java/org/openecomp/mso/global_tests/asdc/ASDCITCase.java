@@ -48,12 +48,12 @@ import org.junit.AfterClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import org.openecomp.sdc.api.consumer.IDistributionStatusMessage;
-import org.openecomp.sdc.api.notification.IArtifactInfo;
-import org.openecomp.sdc.api.notification.IResourceInstance;
+import org.onap.sdc.api.consumer.IDistributionStatusMessage;
+import org.onap.sdc.api.notification.IArtifactInfo;
+import org.onap.sdc.api.notification.IResourceInstance;
 import org.openecomp.mso.asdc.installer.VfModuleMetaData;
 import org.openecomp.mso.asdc.installer.IVfModuleData;
-import org.openecomp.sdc.utils.DistributionStatusEnum;
+import org.onap.sdc.utils.DistributionStatusEnum;
 import org.openecomp.mso.asdc.client.ASDCConfiguration;
 import org.openecomp.mso.asdc.client.ASDCController;
 import org.openecomp.mso.asdc.client.exceptions.ASDCControllerException;

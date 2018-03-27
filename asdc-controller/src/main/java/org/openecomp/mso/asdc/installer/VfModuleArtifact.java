@@ -23,8 +23,8 @@ package org.openecomp.mso.asdc.installer;
 
 import java.io.UnsupportedEncodingException;
 
-import org.openecomp.sdc.api.notification.IArtifactInfo;
-import org.openecomp.sdc.api.results.IDistributionClientDownloadResult;
+import org.onap.sdc.api.notification.IArtifactInfo;
+import org.onap.sdc.api.results.IDistributionClientDownloadResult;
 
 /**
  * The structure that contains the artifactInfo and its associated DownloadedResult. 

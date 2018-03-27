@@ -147,7 +147,7 @@
 		<dependency>
 			<groupId>org.onap.so</groupId>
 			<artifactId>aria-client</artifactId>
-			<version>1.2.0</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jmockit</groupId>

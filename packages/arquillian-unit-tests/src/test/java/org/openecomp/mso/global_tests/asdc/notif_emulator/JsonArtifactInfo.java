@@ -24,7 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.openecomp.sdc.api.notification.IArtifactInfo;
+import org.onap.sdc.api.notification.IArtifactInfo;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;

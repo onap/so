@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.openecomp.sdc.api.notification.IVfModuleMetadata;
+import org.onap.sdc.api.notification.IVfModuleMetadata;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;

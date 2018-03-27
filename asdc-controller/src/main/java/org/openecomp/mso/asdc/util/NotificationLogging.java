@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.openecomp.mso.logger.MsoLogger;
-import org.openecomp.sdc.api.notification.INotificationData;
+import org.onap.sdc.api.notification.INotificationData;
 
 
 public class NotificationLogging implements InvocationHandler {

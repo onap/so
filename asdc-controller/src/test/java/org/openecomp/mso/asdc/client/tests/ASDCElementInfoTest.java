@@ -33,10 +33,10 @@ import java.util.UUID;
 
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.openecomp.sdc.api.notification.IArtifactInfo;
-import org.openecomp.sdc.api.notification.INotificationData;
-import org.openecomp.sdc.api.notification.IResourceInstance;
-import org.openecomp.sdc.api.notification.IVfModuleMetadata;
+import org.onap.sdc.api.notification.IArtifactInfo;
+import org.onap.sdc.api.notification.INotificationData;
+import org.onap.sdc.api.notification.IResourceInstance;
+import org.onap.sdc.api.notification.IVfModuleMetadata;
 import org.openecomp.mso.asdc.client.ASDCConfiguration;
 import org.openecomp.mso.asdc.client.exceptions.ArtifactInstallerException;
 import org.openecomp.mso.asdc.installer.ASDCElementInfo;

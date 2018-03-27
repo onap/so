@@ -28,20 +28,20 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.openecomp.mso.asdc.installer.IVfModuleData;
-import org.openecomp.sdc.api.IDistributionClient;
-import org.openecomp.sdc.api.consumer.IComponentDoneStatusMessage;
-import org.openecomp.sdc.api.consumer.IConfiguration;
-import org.openecomp.sdc.api.consumer.IDistributionStatusMessage;
-import org.openecomp.sdc.api.consumer.IFinalDistrStatusMessage;
-import org.openecomp.sdc.api.consumer.INotificationCallback;
-import org.openecomp.sdc.api.consumer.IStatusCallback;
-import org.openecomp.sdc.api.notification.IArtifactInfo;
-import org.openecomp.sdc.api.notification.IVfModuleMetadata;
-import org.openecomp.sdc.api.results.IDistributionClientDownloadResult;
-import org.openecomp.sdc.api.results.IDistributionClientResult;
-import org.openecomp.sdc.impl.DistributionClientDownloadResultImpl;
-import org.openecomp.sdc.impl.DistributionClientResultImpl;
-import org.openecomp.sdc.utils.DistributionActionResultEnum;
+import org.onap.sdc.api.IDistributionClient;
+import org.onap.sdc.api.consumer.IComponentDoneStatusMessage;
+import org.onap.sdc.api.consumer.IConfiguration;
+import org.onap.sdc.api.consumer.IDistributionStatusMessage;
+import org.onap.sdc.api.consumer.IFinalDistrStatusMessage;
+import org.onap.sdc.api.consumer.INotificationCallback;
+import org.onap.sdc.api.consumer.IStatusCallback;
+import org.onap.sdc.api.notification.IArtifactInfo;
+import org.onap.sdc.api.notification.IVfModuleMetadata;
+import org.onap.sdc.api.results.IDistributionClientDownloadResult;
+import org.onap.sdc.api.results.IDistributionClientResult;
+import org.onap.sdc.impl.DistributionClientDownloadResultImpl;
+import org.onap.sdc.impl.DistributionClientResultImpl;
+import org.onap.sdc.utils.DistributionActionResultEnum;
 
 public class DistributionClientEmulator implements IDistributionClient {
 

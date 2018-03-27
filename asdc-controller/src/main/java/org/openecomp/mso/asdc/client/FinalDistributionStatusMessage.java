@@ -20,8 +20,8 @@
 
 package org.openecomp.mso.asdc.client;
 
-import org.openecomp.sdc.api.consumer.IFinalDistrStatusMessage;
-import org.openecomp.sdc.utils.DistributionStatusEnum;
+import org.onap.sdc.api.consumer.IFinalDistrStatusMessage;
+import org.onap.sdc.utils.DistributionStatusEnum;
 
 public class FinalDistributionStatusMessage implements IFinalDistrStatusMessage{
 

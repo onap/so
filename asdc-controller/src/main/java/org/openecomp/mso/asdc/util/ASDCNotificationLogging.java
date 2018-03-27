@@ -24,14 +24,14 @@ package org.openecomp.mso.asdc.util;
 import java.util.List;
 import java.util.Map;
 
-import org.openecomp.sdc.api.notification.IArtifactInfo;
-import org.openecomp.sdc.api.notification.INotificationData;
-import org.openecomp.sdc.api.notification.IResourceInstance;
-import org.openecomp.sdc.tosca.parser.api.ISdcCsarHelper;
-import org.openecomp.sdc.tosca.parser.impl.SdcPropertyNames;
-import org.openecomp.sdc.toscaparser.api.Group;
-import org.openecomp.sdc.toscaparser.api.NodeTemplate;
-import org.openecomp.sdc.toscaparser.api.elements.Metadata;
+import org.onap.sdc.api.notification.IArtifactInfo;
+import org.onap.sdc.api.notification.INotificationData;
+import org.onap.sdc.api.notification.IResourceInstance;
+import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
+import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
+import org.onap.sdc.toscaparser.api.Group;
+import org.onap.sdc.toscaparser.api.NodeTemplate;
+import org.onap.sdc.toscaparser.api.elements.Metadata;
 import org.openecomp.mso.asdc.installer.IVfModuleData;
 import org.openecomp.mso.asdc.installer.ToscaResourceStructure;
 
