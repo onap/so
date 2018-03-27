@@ -19,15 +19,9 @@
 
 from setuptools import setup, find_packages
 
-try:
-  with open('VERSION') as v_file:
-    version = v_file.read().strip()
-except IOError:
-    print "There was a problem parsing the VERSION file."
-
 setup(
   name='aria-rest-server',
-  version=version,
+  version='0.1.0',
   packages=find_packages(),
   author = '',
   author_email = '',
