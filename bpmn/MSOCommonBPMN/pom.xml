@@ -350,11 +350,26 @@
 			<artifactId>spring-test</artifactId>
 			<version>4.3.14.RELEASE</version>
 		</dependency>
-                <dependency>
-                        <groupId>org.onap.sdc.sdc-tosca</groupId>
-                        <artifactId>sdc-tosca</artifactId>
-                        <version>1.3.3</version>
-                </dependency>
+		<dependency>
+			<groupId>org.onap.sdc.sdc-tosca</groupId>
+			<artifactId>sdc-tosca</artifactId>
+			<version>1.3.3</version>
+			<!-- sdc-tosca:1.3.3 depends on jtosca:1.3.4-SNAPSHOT,
+			     which must be excluded, and the release version
+			     of jtosca must be pulled in using an additional
+			     dependency, below -->
+			<exclusions>
+				<exclusion>
+					<groupId>org.onap.sdc.jtosca</groupId>
+					<artifactId>jtosca</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.onap.sdc.jtosca</groupId>
+			<artifactId>jtosca</artifactId>
+			<version>1.3.4</version>
+		</dependency>
 		<dependency>
 			<groupId>org.camunda.bpm</groupId>
 			<artifactId>camunda-engine-spring</artifactId>
