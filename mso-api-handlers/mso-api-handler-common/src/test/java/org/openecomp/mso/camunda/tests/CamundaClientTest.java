@@ -24,6 +24,7 @@ package org.openecomp.mso.camunda.tests;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -67,8 +68,6 @@ public class CamundaClientTest {
     @Test
     public void tesCamundaPost() throws JsonGenerationException,
     JsonMappingException, IOException {
-
-
         String responseBody ="{\"links\":[{\"method\":\"GET\",\"href\":\"http://localhost:9080/engine-rest/process-instance/2047c658-37ae-11e5-9505-7a1020524153\",\"rel\":\"self\"}],\"id\":\"2047c658-37ae-11e5-9505-7a1020524153\",\"definitionId\":\"dummy:10:73298961-37ad-11e5-9505-7a1020524153\",\"businessKey\":null,\"caseInstanceId\":null,\"ended\":true,\"suspended\":false}";
 
         HttpResponse mockResponse = createResponse(200, responseBody);
@@ -97,6 +96,30 @@ public class CamundaClientTest {
         response = requestClient.post(null, "reqId", null, null, null, null);
         assertEquals(requestClient.getType(), CommonConstants.CAMUNDA);
         assertEquals(statusCode, HttpStatus.SC_OK);
+    }
+
+    @Test
+    public void testCamundaPostJson() throws IOException {
+        String responseBody ="{\"links\":[{\"method\":\"GET\",\"href\":\"http://localhost:9080/engine-rest/process-instance/2047c658-37ae-11e5-9505-7a1020524153\",\"rel\":\"self\"}],\"id\":\"2047c658-37ae-11e5-9505-7a1020524153\",\"definitionId\":\"dummy:10:73298961-37ad-11e5-9505-7a1020524153\",\"businessKey\":null,\"caseInstanceId\":null,\"ended\":true,\"suspended\":false}";
+
+        HttpResponse mockResponse = createResponse(200, responseBody);
+        mockHttpClient = Mockito.mock(HttpClient.class);
+        Mockito.when(mockHttpClient.execute(Mockito.any(HttpPost.class)))
+                .thenReturn(mockResponse);
+
+        String reqXML = "<xml>test</xml>";
+        String orchestrationURI = "/engine-rest/process-definition/key/dummy/start";
+
+        MsoJavaProperties props = new MsoJavaProperties();
+        props.setProperty(CommonConstants.CAMUNDA_URL, "http://localhost:8089");
+
+        RequestClient requestClient = RequestClientFactory.getRequestClient(orchestrationURI, props);
+        requestClient.setClient(mockHttpClient);
+        HttpResponse response = requestClient.post("mso-req-id", false, 180,
+                "createInstance", "svc-inst-id", "vnf-id", "vf-module-id", "vg-id", "nw-id", "conf-id", "svc-type",
+                "vnf-type", "vf-module-type", "nw-type", "", "");
+        assertEquals(requestClient.getType(), CommonConstants.CAMUNDA);
+        assertEquals(response.getStatusLine().getStatusCode(), HttpStatus.SC_OK);
     }
 
     private HttpResponse createResponse(int respStatus,
