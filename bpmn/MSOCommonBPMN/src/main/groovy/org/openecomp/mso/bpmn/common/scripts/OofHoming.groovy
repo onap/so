@@ -20,7 +20,7 @@
 package org.openecomp.mso.bpmn.common.scripts
 
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.delegate.DelegateExecution;
+import org.camunda.bpm.engine.delegate.DelegateExecution
 
 import org.openecomp.mso.bpmn.common.scripts.AaiUtil
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
@@ -199,54 +199,82 @@ class OofHoming extends AbstractServiceTaskProcessor {
             List<Resource> resourceList = decomposition.getServiceResources()
             JSONArray arr = new JSONArray(placements)
             for (int i = 0; i < arr.length(); i++) {
-                JSONObject placement = arr.getJSONObject(i)
-                utils.log("DEBUG", "****** JSONObject is: " + placement + " *****", "true")
-                String jsonServiceResourceId = placement.getString("serviceResourceId")
-                for (Resource resource : resourceList) {
-                    String serviceResourceId = resource.getResourceId()
-                    if (serviceResourceId.equalsIgnoreCase(jsonServiceResourceId)) {
-                        JSONObject solution = placement.getJSONObject("solution")
-                        String solutionType = solution.getString("identifierType")
-                        String inventoryType = ""
-                        if (solutionType.equalsIgnoreCase("serviceInstanceId")) {
-                            inventoryType = "service"
-                        } else {
-                            inventoryType = "cloud"
-
-                        }
-                        resource.getHomingSolution().setInventoryType(InventoryType.valueOf(inventoryType))
-
-                        // TODO Deal with Placement Solutions & Assignment Info here
-                        JSONArray assignmentArr = placement.getJSONArray("assignmentInfo")
-                        Map<String, String> assignmentMap = jsonUtil.entryArrayToMap(execution, assignmentArr.toString(), "key", "value")
-                        resource.getHomingSolution().setCloudOwner(assignmentMap.get("cloudOwner"))
-                        resource.getHomingSolution().setCloudRegionId(assignmentMap.get("cloudRegionId"))
-                        if (inventoryType.equalsIgnoreCase("service")) {
-                            resource.getHomingSolution().setRehome(assignmentMap.get("isRehome").toBoolean())
-                            VnfResource vnf = new VnfResource()
-                            vnf.setVnfHostname(assignmentMap.get("vnfHostName"))
-                            resource.getHomingSolution().setVnf(vnf)
-                            resource.getHomingSolution().setServiceInstanceId(solution.getJSONArray("identifiers")[0].toString())
-                        }
-                    }
-                }
-            }
-            if (JsonUtils.jsonElementExist(response, "solutions.licenseSolutions")) {
-                String licenseSolutions = jsonUtil.getJsonValue(response, "solutions.licenseSolutions")
-                JSONArray licenseArr = new JSONArray(licenseSolutions)
-                for (int l = 0; l < licenseArr.length(); l++) {
-                    JSONObject license = licenseArr.getJSONObject(l)
-                    String jsonServiceResourceId = license.getString("serviceResourceId")
+                JSONArray arrSol = arr.getJSONArray(i)
+                for (int j = 0; j < arrSol.length(); j++) {
+                    JSONObject placement = arrSol.getJSONObject(j)
+                    utils.log("DEBUG", "****** JSONObject is: " + placement + " *****", "true")
+                    String jsonServiceResourceId = placement.getString("serviceResourceId")
                     for (Resource resource : resourceList) {
                         String serviceResourceId = resource.getResourceId()
                         if (serviceResourceId.equalsIgnoreCase(jsonServiceResourceId)) {
-                            String jsonEntitlementPoolList = jsonUtil.getJsonValue(license.toString(), "entitlementPoolUUID")
-                            List<String> entitlementPoolList = jsonUtil.StringArrayToList(execution, jsonEntitlementPoolList)
-                            resource.getHomingSolution().getLicense().setEntitlementPoolList(entitlementPoolList)
+                            JSONObject solution = placement.getJSONObject("solution")
+                            String solutionType = solution.getString("identifierType")
+                            String inventoryType = ""
+                            if (solutionType.equalsIgnoreCase("serviceInstanceId")) {
+                                inventoryType = "service"
+                            } else {
+                                inventoryType = "cloud"
+                            }
+                            resource.getHomingSolution().setInventoryType(InventoryType.valueOf(inventoryType))
 
-                            String jsonLicenseKeyGroupList = jsonUtil.getJsonValue(license.toString(), "licenseKeyGroupUUID")
-                            List<String> licenseKeyGroupList = jsonUtil.StringArrayToList(execution, jsonLicenseKeyGroupList)
-                            resource.getHomingSolution().getLicense().setLicenseKeyGroupList(licenseKeyGroupList)
+                            // TODO Deal with Placement Solutions & Assignment Info here
+                            JSONArray assignmentArr = placement.getJSONArray("assignmentInfo")
+                            Integer arrayIndex = 0
+                            Integer flavorsIndex = null
+                            Boolean foundFlavors = false
+                            String flavors = null
+                            Map<String, String> flavorsMap = null
+                            assignmentArr.each { element ->
+                                JSONObject jsonObject = new JSONObject(element.toString())
+                                if (jsonUtil.getJsonRawValue(jsonObject.toString(), "key") == "flavors") {
+                                    flavors = jsonUtil.getJsonRawValue(jsonObject.toString(), "value")
+                                    foundFlavors = true
+                                    flavorsIndex = arrayIndex
+                                } else {
+                                    arrayIndex += 1
+                                }
+                            }
+                            if (foundFlavors) {
+                                assignmentArr.remove(flavorsIndex)
+                                flavorsMap = jsonUtil.jsonStringToMap(execution, flavors.toString())
+                            }
+                            Map<String, String> assignmentMap = jsonUtil.entryArrayToMap(execution, assignmentArr.toString(), "key", "value")
+                            String cloudOwner = assignmentMap.get("cloudOwner")
+                            String cloudRegionId = assignmentMap.get("cloudRegionId")
+                            resource.getHomingSolution().setCloudOwner(cloudOwner)
+                            resource.getHomingSolution().setCloudRegionId(cloudRegionId)
+                            if (flavorsMap != null && flavorsMap.toString() != "[:]") {
+                                resource.getHomingSolution().setFlavors(flavorsMap)
+                                execution.setVariable(cloudRegionId + "_flavorMap", flavorsMap)
+                            }
+
+                            if (inventoryType.equalsIgnoreCase("service")) {
+                                resource.getHomingSolution().setRehome(assignmentMap.get("isRehome").toBoolean())
+                                VnfResource vnf = new VnfResource()
+                                vnf.setVnfHostname(assignmentMap.get("vnfHostName"))
+                                resource.getHomingSolution().setVnf(vnf)
+                                resource.getHomingSolution().setServiceInstanceId(solution.getJSONArray("identifiers")[0].toString())
+                            }
+                        }
+                    }
+                }
+                if (JsonUtils.jsonElementExist(response, "solutions.licenseSolutions")) {
+                    String licenseSolutions = jsonUtil.getJsonValue(response, "solutions.licenseSolutions")
+                    JSONArray licenseArr = new JSONArray(licenseSolutions)
+                    for (int l = 0; l < licenseArr.length(); l++) {
+                        JSONObject license = licenseArr.getJSONObject(l)
+                        String jsonServiceResourceId = license.getString("serviceResourceId")
+                        for (Resource resource : resourceList) {
+                            String serviceResourceId = resource.getResourceId()
+                            if (serviceResourceId.equalsIgnoreCase(jsonServiceResourceId)) {
+                                String jsonEntitlementPoolList = jsonUtil.getJsonValue(license.toString(), "entitlementPoolUUID")
+                                List<String> entitlementPoolList = jsonUtil.StringArrayToList(execution, jsonEntitlementPoolList)
+                                resource.getHomingSolution().getLicense().setEntitlementPoolList(entitlementPoolList)
+
+                                String jsonLicenseKeyGroupList = jsonUtil.getJsonValue(license.toString(), "licenseKeyGroupUUID")
+                                List<String> licenseKeyGroupList = jsonUtil.StringArrayToList(execution, jsonLicenseKeyGroupList)
+                                resource.getHomingSolution().getLicense().setLicenseKeyGroupList(licenseKeyGroupList)
+                            }
                         }
                     }
                 }

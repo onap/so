@@ -174,6 +174,12 @@ public class DoCreateVfModule extends VfModuleBase {
 				execution.setVariable("DCVFM_serviceInstanceId", serviceInstanceId)
 				rollbackData.put("VFMODULE", "serviceInstanceId", serviceInstanceId)
 				logDebug("serviceInstanceId: " + serviceInstanceId, isDebugLogEnabled)
+				//flavorMap
+				def flavorMap = execution.getVariable(cloudSiteId + "_flavorMap")
+				if (flavorMap != null) {
+					execution.setVariable("DCVFM_flavorMap", flavorMap)
+					logDebug("flavorMap is: " + flavorMap, isDebugLogEnabled)
+				}
 				//source - HARDCODED
 				def source = "VID"
 				execution.setVariable("DCVFM_source", source)
@@ -927,6 +933,8 @@ public class DoCreateVfModule extends VfModuleBase {
 		def serviceId = execution.getVariable("DCVFM_serviceId")
 		//serviceInstanceId
 		def serviceInstanceId = execution.getVariable("DCVFM_serviceInstanceId")
+		//flavorMap
+		def flavorMap = execution.getVariable("DCVFM_flavorMap")
 		//backoutOnFailure
 		def backoutOnFailure = execution.getVariable("DCVFM_backoutOnFailure")
 		//volumeGroupId
@@ -962,6 +970,10 @@ public class DoCreateVfModule extends VfModuleBase {
 		}
 
 		Map<String, String> vnfParamsMap = execution.getVariable("DCVFM_vnfParamsMap")
+		// Add flavorLabel Map to vnfParamsMap
+		flavorMap.each { label, flavor ->
+			vnfParamsMap.put("label_" + label, flavor)
+		}
 		String vfModuleParams = ""
 		//Get SDNC Response Data for VF Module Topology
 		String vfModuleSdncGetResponse = execution.getVariable('DCVFM_getSDNCAdapterResponse')

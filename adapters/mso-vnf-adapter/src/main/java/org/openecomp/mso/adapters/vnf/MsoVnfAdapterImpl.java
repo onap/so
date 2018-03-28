@@ -1052,6 +1052,15 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                 LOGGER.debug("no environment parameter found for this Type " + vfModuleType);
             }
 
+            // Replace flavors in environment with those returned by OOF
+            for (Map.Entry<String, String> input : inputs.entrySet()){
+                if (heatEnvironmentString.contains("label_" + input.getKey())){
+                    heatEnvironmentString = heatEnvironmentString.replace("label_" + input.getKey(),
+                            input.getValue());
+                    inputs.remove("label_" + input.getKey());
+                }
+            }
+
             // 1510 - Add the files: for nested templates *if* there are any
             LOGGER.debug("In MsoVnfAdapterImpl, createVfModule about to call db.getNestedTemplates avec templateId="
                     + heatTemplate.getArtifactUuid());

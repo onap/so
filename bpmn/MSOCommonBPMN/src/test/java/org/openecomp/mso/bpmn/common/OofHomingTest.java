@@ -123,6 +123,10 @@ public class OofHomingTest extends WorkflowTest {
         VnfResource vnf = new VnfResource();
         vnf.setResourceId("testResourceIdVNF");
         vnf.setResourceInstanceName("testVnfInstanceName");
+        HashMap<String, String> flavors = new HashMap<>();
+        flavors.put("flavorLabel1xxx", "vimFlavorxxx");
+        flavors.put("flavorLabel2xxx", "vimFlavorxxx");
+        vnf.getHomingSolution().setFlavors(flavors);
         ModelInfo vnfModel = new ModelInfo();
         vnfModel.setModelCustomizationUuid("testModelCustomizationUuidVNF");
         vnfModel.setModelInvariantUuid("testModelInvariantIdVNF");
@@ -190,7 +194,7 @@ public class OofHomingTest extends WorkflowTest {
                 resourceARHoming2.getVnf().getResourceId(),"aic", "testCloudRegionId2",
                 null, null), resourceARHoming2String);
         assertEquals(homingSolutionCloud("cloud","aic", "testCloudRegionId3",
-                "\"91d563e8-e714-4393-8f99-cc480144a05e\", \"21d563e8-e714-4393-8f99-cc480144a05e\"",
+                true, "\"91d563e8-e714-4393-8f99-cc480144a05e\", \"21d563e8-e714-4393-8f99-cc480144a05e\"",
                 "\"31d563e8-e714-4393-8f99-cc480144a05e\", \"71d563e8-e714-4393-8f99-cc480144a05e\""),
                 resourceVNFHomingString);
         assertEquals(verifyOofRequest(), expectedOofRequest);
@@ -255,7 +259,7 @@ public class OofHomingTest extends WorkflowTest {
                 null, null), resourceARHoming2String);
         assertEquals(homingSolutionCloud("cloud","aic",
                 "testCloudRegionId3",
-                "\"91d563e8-e714-4393-8f99-cc480144a05e\", \"21d563e8-e714-4393-8f99-cc480144a05e\"",
+                true, "\"91d563e8-e714-4393-8f99-cc480144a05e\", \"21d563e8-e714-4393-8f99-cc480144a05e\"",
                 "\"31d563e8-e714-4393-8f99-cc480144a05e\", \"71d563e8-e714-4393-8f99-cc480144a05e\""),
                 resourceVNFHomingString);
         assertEquals(homingSolutionService("service", "testServiceInstanceIdNet",
@@ -264,7 +268,7 @@ public class OofHomingTest extends WorkflowTest {
                 null, null), resourceNetHomingString);
         assertEquals(homingSolutionCloud("cloud", "aic",
                 "testCloudRegionIdNet2",
-                "\"f1d563e8-e714-4393-8f99-cc480144a05n\", \"j1d563e8-e714-4393-8f99-cc480144a05n\"",
+                false, "\"f1d563e8-e714-4393-8f99-cc480144a05n\", \"j1d563e8-e714-4393-8f99-cc480144a05n\"",
                 "\"s1d563e8-e714-4393-8f99-cc480144a05n\", \"b1d563e8-e714-4393-8f99-cc480144a05n\""),
                 resourceNetHoming2String);
         assertEquals(verifyOofRequest(), expectedOofRequest);
@@ -405,7 +409,7 @@ public class OofHomingTest extends WorkflowTest {
                 null, null), resourceARHoming2String);
         assertEquals(homingSolutionCloud("cloud", "aic",
                 "testCloudRegionId3",
-                "\"91d563e8-e714-4393-8f99-cc480144a05e\", \"21d563e8-e714-4393-8f99-cc480144a05e\"",
+                false, "\"91d563e8-e714-4393-8f99-cc480144a05e\", \"21d563e8-e714-4393-8f99-cc480144a05e\"",
                 "\"31d563e8-e714-4393-8f99-cc480144a05e\", \"71d563e8-e714-4393-8f99-cc480144a05e\""),
                 resourceVNFHomingString);
         assertEquals(verifyOofRequestExistingLicense(), oofRequest);
@@ -625,43 +629,6 @@ public class OofHomingTest extends WorkflowTest {
 
     }
 
-    /*private String homingSolutionService(String resourceModuleName, String serviceInstanceId, String vnfHostname, String cloudOwner,
-                                         String cloudRegionId, String licenseList) {
-        String solution = "";
-        if (licenseList == null || licenseList == "") {
-            solution = "{\n" +
-                    "  \"resourceModuleName\": \"" + resourceModuleName + "\",\n" +
-                    "  \"serviceResourceId\": \"some_resource_id\",\n" +
-                    "  \"solution\": {\n" +
-                    "  \"identifierType\": \"serviceInstanceId\",\n" +
-                    "  \"identifiers\": [\"" + serviceInstanceId + "\"]\n" +
-                    "  }\n" +
-                    "  \"assignmentInfo\": [\n" +
-                    "    { \"key\": \"cloudOwner\", \"value\": \"" + cloudOwner + "\" },\n" +
-                    "    { \"key\": \"vnfHostName\", \"value\": \"" + vnfHostname + "\" },\n" +
-                    "    { \"key\": \"isRehome\", \"value\": \"False\" },\n" +
-                    "    { \"key\": \"cloudRegionId\", \"value\": \"" + cloudRegionId + "\" }\n" +
-                    "    ]\n" +
-                    "  }";
-        } else {
-            solution = "{\n" +
-                    "  \"resourceModuleName\": \"" + resourceModuleName + "\",\n" +
-                    "  \"serviceResourceId\": \"some_resource_id\",\n" +
-                    "  \"solution\": {\n" +
-                    "    \"identifierType\": \"service_instance_id\",\n" +
-                    "    \"identifiers\": [\"" + serviceInstanceId + "\"]\n" +
-                    "  }\n" +
-                    "  \"assignmentInfo\": [\n" +
-                    "    { \"key\": \"cloudOwner\", \"value\": \"" + cloudOwner + "\" },\n" +
-                    "    { \"key\": \"vnfHostName\", \"value\": \"" + vnfHostname + "\" },\n" +
-                    "    { \"key\": \"isRehome\", \"value\": \"False\" },\n" +
-                    "    { \"key\": \"cloudRegionId\", \"value\": \"" + cloudRegionId + "\" }\n" +
-                    "    ], " +
-                    "  \"licenseSolutions\" : [ {\"licenseKeyGroupUUID\": [" + licenseList + "]} ] " +
-                    "}";
-        }
-        return solution;
-    }*/
     private String homingSolutionService(String type, String serviceInstanceId, String vnfHostname,
                                          String vnfResourceId, String cloudOwner,
                                          String cloudRegionId, String enList,
@@ -687,50 +654,28 @@ public class OofHomingTest extends WorkflowTest {
         return solution;
     }
 
-    /*private String homingSolutionCloud(String resourceModuleName, String cloudOwner,
-                                       String cloudRegionId, String licenseList) {
-        String solution = "";
-        if (licenseList == null || licenseList == "") {
-            solution = "{\n" +
-                    "  \"resourceModuleName\": \"" + resourceModuleName + "\",\n" +
-                    "  \"serviceResourceId\": \"some_resource_id\",\n" +
-                    "  \"solution\": {\n" +
-                    "    \"identifierType\": \"cloudRegionId\",\n" +
-                    "    \"cloudOwner\": \"" + cloudOwner + "\",\n" +
-                    "    \"identifiers\": [\"" + cloudRegionId + "\"]\n" +
-                    "  }\n" +
-                    "  \"assignmentInfo\": [\n" +
-                    "    { \"key\": \"cloudOwner\", \"value\": \"" + cloudOwner + "\" },\n" +
-                    "    { \"key\": \"cloudRegionId\", \"value\": \"" + cloudRegionId + "\" }\n" +
-                    "    ]\n" +
-                    "}";
-        } else {
-            solution = "{\n" +
-                    "  \"resourceModuleName\": \"" + resourceModuleName + "\",\n" +
-                    "  \"serviceResourceId\": \"some_resource_id\",\n" +
-                    "  \"solution\": {\n" +
-                    "    \"identifierType\": \"cloudRegionId\",\n" +
-                    "    \"cloudOwner\": \"" + cloudOwner + "\",\n" +
-                    "    \"identifiers\": [\"" + cloudRegionId + "\"]\n" +
-                    "  }\n" +
-                    "  \"assignmentInfo\": [\n" +
-                    "    { \"key\": \"cloudOwner\", \"value\": \"" + cloudOwner + "\" },\n" +
-                    "    { \"key\": \"cloudRegionId\", \"value\": \"" + cloudRegionId + "\" }\n" +
-                    "    ]," +
-                    "  \"licenseSolutions\" : [ {\"licenseKeyGroupUUID\": [" + licenseList + "]} ] } " +
-                    "}";
-        }
-        return solution;
-    }*/
     private String homingSolutionCloud(String type, String cloudOwner,
-                                       String cloudRegionId, String enList,
+                                       String cloudRegionId, Boolean flavors, String enList,
                                        String licenseList){
         String solution = "";
         if(enList == null){
             solution = "{ \"homingSolution\" : { \"inventoryType\" : \"" + type + "\", \"cloudOwner\" : \"" +
                     cloudOwner + "\", \"cloudRegionId\" : \"" + cloudRegionId +
                     "\", \"license\" : { }, \"rehome\" : false } }";
-        }else{
+        } else if (flavors && enList == null){
+            solution = "{ \"homingSolution\" : { \"inventoryType\" : \"" + type + "\", \"cloudOwner\" : \"" +
+                    cloudOwner + "\", \"cloudRegionId\" : \"" + cloudRegionId +
+                    "\", \"flavors\" : { \"flavorLabel2xxx\" : \"vimFlavorxxx\", \"flavorLabel1xxx\" : " +
+                    "\"vimFlavorxxx\" }, " +
+                    "\"license\" : { }, \"rehome\" : false } }";
+        } else if (flavors) {
+            solution = "{ \"homingSolution\" : { \"inventoryType\" : \"" + type + "\", \"cloudOwner\" : \"" +
+                    cloudOwner + "\", \"cloudRegionId\" : \"" + cloudRegionId +
+                    "\", \"flavors\" : { \"flavorLabel2xxx\" : \"vimFlavorxxx\", \"flavorLabel1xxx\" : " +
+                    "\"vimFlavorxxx\" }, " +
+                    "\"license\" : { \"entitlementPoolList\" : [ " + enList +  " ], \"licenseKeyGroupList\" : [ " +
+                    licenseList +  " ] }, \"rehome\" : false } }";
+        } else {
             solution = "{ \"homingSolution\" : { \"inventoryType\" : \"" + type + "\", \"cloudOwner\" : \"" +
                     cloudOwner + "\", \"cloudRegionId\" : \"" + cloudRegionId +
                     "\", \"license\" : { \"entitlementPoolList\" : [ " + enList +  " ], \"licenseKeyGroupList\" : [ " +
