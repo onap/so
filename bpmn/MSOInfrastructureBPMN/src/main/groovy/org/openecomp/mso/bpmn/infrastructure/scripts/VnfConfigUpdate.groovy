@@ -75,7 +75,8 @@ public class VnfConfigUpdate extends VnfCmBase {
 	public void initProcessVariables(DelegateExecution execution) {
 		execution.setVariable('prefix', 'VnfCU_')
 		execution.setVariable('Request', null)			
-		execution.setVariable('source', null)			
+		execution.setVariable('source', null)
+		execution.setVariable('controllerType', null)			
 		execution.setVariable('UpdateVnfSuccessIndicator', false)
 		execution.setVariable('serviceType', null)
 		execution.setVariable('nfRole', null)
@@ -128,7 +129,12 @@ public class VnfConfigUpdate extends VnfCmBase {
 			execution.setVariable('serviceType', 'Mobility')
 			execution.setVariable('payload', "")
 			execution.setVariable('actionHealthCheck', Action.HealthCheck)
-			execution.setVariable('actionConfigModify', Action.ConfigModify)			
+			execution.setVariable('actionConfigModify', Action.ConfigModify)
+			
+			def controllerType = reqMap.requestDetails?.requestParameters?.controllerType
+			execution.setVariable('controllerType', controllerType)
+			
+			utils.log("DEBUG", 'Controller Type: ' + controllerType, isDebugLogEnabled)			
 			
 			def payload = reqMap.requestDetails?.requestParameters?.payload
 			execution.setVariable('payload', payload)

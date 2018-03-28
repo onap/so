@@ -9,6 +9,7 @@
 "requestorId": "ab1234"
 },
 "requestParameters": {
+"controllerType": "",
 "payload":
 "{\"existing-software-version\": \"3.1\",\"new-software-version\": \"3.2\", \"operations-timeout\": \"3600\"}"
 }

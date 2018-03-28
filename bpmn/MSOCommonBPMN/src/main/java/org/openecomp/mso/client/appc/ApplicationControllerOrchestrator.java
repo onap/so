@@ -31,8 +31,8 @@ import org.onap.appc.client.lcm.model.Status;
 
 public class ApplicationControllerOrchestrator {
 
-	public Status vnfCommand(Action action, String requestId, String vnfId, Optional<String> request) throws ApplicationControllerOrchestratorException {
-		ApplicationControllerClient client = new ApplicationControllerClient();
+	public Status vnfCommand(Action action, String requestId, String vnfId, Optional<String> request, String controllerType) throws ApplicationControllerOrchestratorException {
+		ApplicationControllerClient client = new ApplicationControllerClient(controllerType);
 		Status status;
 		ActionIdentifiers actionIdentifiers = new ActionIdentifiers();
 		actionIdentifiers.setVnfId(vnfId);

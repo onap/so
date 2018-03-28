@@ -46,7 +46,7 @@ public class ApplicationControllerOrchestratorTest {
 		Status status;
 		try {
 			status = client.vnfCommand(Action.Lock, UUID.randomUUID().toString(),
-					"3ffdee3c-94d2-45fe-904d-fc1efa0f8b59", Optional.of(""));
+					"3ffdee3c-94d2-45fe-904d-fc1efa0f8b59", Optional.of(""), "appc");
 		} catch (ApplicationControllerOrchestratorException e) {
 			status = new Status();
 			status.setCode(e.getAppcCode());
@@ -62,7 +62,7 @@ public class ApplicationControllerOrchestratorTest {
 		Status status;
 		try {
 			status = client.vnfCommand(Action.Unlock, UUID.randomUUID().toString(),
-					"ca522254-2ba4-4fbd-b15b-0ef0d9cfda5f", Optional.of(""));
+					"ca522254-2ba4-4fbd-b15b-0ef0d9cfda5f", Optional.of(""), "appc");
 		} catch (ApplicationControllerOrchestratorException e) {
 			status = new Status();
 			status.setCode(e.getAppcCode());

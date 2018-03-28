@@ -43,7 +43,7 @@ public class ApplicationControllerClientTest {
 
 	@Test
 	public void createRequest_CheckLock_RequestBuilt() {
-		ApplicationControllerClient client = new ApplicationControllerClient();
+		ApplicationControllerClient client = new ApplicationControllerClient("appc");
 		ActionIdentifiers actionIdentifiers = new ActionIdentifiers();
 		actionIdentifiers.setVnfId("vnfId");
 		CheckLockInput checkLockInput = (CheckLockInput) client.createRequest(Action.CheckLock, actionIdentifiers, null,
@@ -54,7 +54,7 @@ public class ApplicationControllerClientTest {
 	@Test
 	@Ignore // 1802 merge
 	public void runCommand_liveAppc() {
-		ApplicationControllerClient client = new ApplicationControllerClient();
+		ApplicationControllerClient client = new ApplicationControllerClient("appc");
 		ActionIdentifiers actionIdentifiers = new ActionIdentifiers();
 		//actionIdentifiers.setVnfId("ca522254-2ba4-4fbd-b15b-0ef0d9cfda5f");
 		actionIdentifiers.setVnfId("2d2bf10e-81a5-");
@@ -72,7 +72,7 @@ public class ApplicationControllerClientTest {
 	@Test
 	@Ignore // 1802 merge
 	public void runCommand_CheckLock_RequestBuilt() {
-		ApplicationControllerClient client = new ApplicationControllerClient();
+		ApplicationControllerClient client = new ApplicationControllerClient("appc");
 		ActionIdentifiers actionIdentifiers = new ActionIdentifiers();
 		actionIdentifiers.setVnfId("fusion-vpp-vnf-001");
 		Status status;
@@ -88,14 +88,15 @@ public class ApplicationControllerClientTest {
 
 	@Test
 	public void test_getLCMPropertiesHelper() {
-		ApplicationControllerClient client = new ApplicationControllerClient();
-		Properties properties = client.getLCMProperties();
+		ApplicationControllerClient client = new ApplicationControllerClient("appc");
+		Properties properties = client.getLCMProperties("appc");
 		assertEquals(properties.get("topic.write"), "APPC-TEST-AMDOCS1-DEV3");
 		assertEquals(properties.get("topic.read.timeout"), "120000");
 		assertEquals(properties.get("client.response.timeout"), "120000");
 		assertEquals(properties.get("topic.read"), "APPC-TEST-AMDOCS2");
 		assertEquals(properties.get("poolMembers"),
 				"uebsb93kcdc.it.att.com:3904,uebsb92kcdc.it.att.com:3904,uebsb91kcdc.it.att.com:3904");
+		assertEquals(properties.get("client.controllerType"), "appc");
 		assertEquals(properties.get("client.key"), "iaEMAfjsVsZnraBP");
 		assertEquals(properties.get("client.secret"), "wcivUjsjXzmGFBfxMmyJu9dz");
 	}

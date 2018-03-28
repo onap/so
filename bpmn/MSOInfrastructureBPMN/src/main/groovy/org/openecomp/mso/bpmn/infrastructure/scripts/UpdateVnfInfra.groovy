@@ -74,7 +74,8 @@ public class UpdateVnfInfra extends VnfCmBase {
 		execution.setVariable('source', null)
 		execution.setVariable('vnfInputs', null)			
 		execution.setVariable('tenantId', null)		
-		execution.setVariable('vnfParams', null)		
+		execution.setVariable('vnfParams', null)
+		execution.setVariable('controllerType', null)		
 		execution.setVariable('UpdateVnfSuccessIndicator', false)
 		execution.setVariable('serviceType', null)
 		execution.setVariable('nfRole', null)
@@ -153,6 +154,11 @@ public class UpdateVnfInfra extends VnfCmBase {
 			
 			def vnfType = execution.getVariable('vnfType')
 			execution.setVariable('vnfType', vnfType)
+			
+			def controllerType = reqMap.requestDetails?.requestParameters?.controllerType
+			execution.setVariable('controllerType', controllerType)
+			
+			utils.log("DEBUG", 'Controller Type: ' + controllerType, isDebugLogEnabled)
 			
 			def userParams = reqMap.requestDetails?.requestParameters?.userParams					
 			

@@ -80,7 +80,8 @@ public class VnfInPlaceUpdate extends VnfCmBase {
 		execution.setVariable('source', null)
 		execution.setVariable('vnfInputs', null)	
 		execution.setVariable('tenantId', null)		
-		execution.setVariable('vnfParams', null)		
+		execution.setVariable('vnfParams', null)
+		execution.setVariable('controllerType', null)		
 		execution.setVariable('UpdateVnfSuccessIndicator', false)
 		execution.setVariable('serviceType', null)
 		execution.setVariable('nfRole', null)
@@ -140,6 +141,11 @@ public class VnfInPlaceUpdate extends VnfCmBase {
 			execution.setVariable('actionUpgradeBackup', Action.UpgradeBackup)
 			execution.setVariable('actionUpgradeSoftware', Action.UpgradeSoftware)
 			execution.setVariable('actionResumeTraffic', Action.ResumeTraffic)
+			
+			def controllerType = reqMap.requestDetails?.requestParameters?.controllerType
+			execution.setVariable('controllerType', controllerType)
+			
+			utils.log("DEBUG", 'Controller Type: ' + controllerType, isDebugLogEnabled)
 		
 			def payload = reqMap.requestDetails?.requestParameters?.payload
 			execution.setVariable('payload', payload)

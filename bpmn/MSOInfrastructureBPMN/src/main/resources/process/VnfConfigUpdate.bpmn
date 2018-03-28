@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_F0omAMXGEeW834CKd-K10Q" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.4.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_F0omAMXGEeW834CKd-K10Q" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.11.3" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
   <bpmn2:process id="VnfConfigUpdate" name="VnfConfigUpdate" isExecutable="true">
     <bpmn2:scriptTask id="ScriptTask_1" name="Send Synch Response" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_5</bpmn2:incoming>
@@ -109,6 +109,7 @@ uvfm.postProcessRollback(execution)]]></bpmn2:script>
           <camunda:in source="errorCode" target="errorCode" />
           <camunda:in source="rollbackQuiesceTraffic" target="rollbackQuiesceTraffic" />
           <camunda:out source="rollbackSuccessful" target="rollbackSuccessful" />
+          <camunda:in source="controllerType" target="controllerType" />
         </bpmn2:extensionElements>
         <bpmn2:incoming>SequenceFlow_1vxpbd0</bpmn2:incoming>
         <bpmn2:outgoing>SequenceFlow_03ayqeh</bpmn2:outgoing>
@@ -562,6 +563,7 @@ uvfm.setClosedLoopDisabledInAAI(execution, false)
         <camunda:out source="failedActivity" target="failedActivity" />
         <camunda:in source="vnfName" target="vnfName" />
         <camunda:in source="vnfHostIpAddress" target="vnfHostIpAddress" />
+        <camunda:in source="controllerType" target="controllerType" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_1cjiv6i</bpmn2:incoming>
       <bpmn2:incoming>SequenceFlow_1colra4</bpmn2:incoming>
@@ -581,6 +583,7 @@ uvfm.setClosedLoopDisabledInAAI(execution, false)
         <camunda:out source="failedActivity" target="failedActivity" />
         <camunda:in source="vnfName" target="vnfName" />
         <camunda:in source="vnfHostIpAddress" target="vnfHostIpAddress" />
+        <camunda:in source="controllerType" target="controllerType" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_16igl7b</bpmn2:incoming>
       <bpmn2:incoming>SequenceFlow_0q1skau</bpmn2:incoming>
@@ -597,6 +600,7 @@ uvfm.setClosedLoopDisabledInAAI(execution, false)
         <camunda:out source="errorText" target="errorText" />
         <camunda:out source="workStep" target="workStep" />
         <camunda:out source="failedActivity" target="failedActivity" />
+        <camunda:in source="controllerType" target="controllerType" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_188a7lk</bpmn2:incoming>
       <bpmn2:incoming>SequenceFlow_1wqinjh</bpmn2:incoming>
@@ -644,6 +648,7 @@ execution.getVariable(retryVariableName) < execution.getVariable("maxRetryCount"
         <camunda:in source="rollbackVnfLock" target="rollbackVnfLock" />
         <camunda:in source="errorCode" target="errorCode" />
         <camunda:out source="rollbackSuccessful" target="rollbackSuccessful" />
+        <camunda:in source="controllerType" target="controllerType" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_1qr8msw</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_18lemf9</bpmn2:outgoing>

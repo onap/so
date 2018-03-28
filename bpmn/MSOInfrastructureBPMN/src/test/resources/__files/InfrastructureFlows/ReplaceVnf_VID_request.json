@@ -34,6 +34,7 @@
 ],
 "requestParameters": {
 "usePreload": false,
+"controllerType" : "appc",
 "userParams" : [
 	{
 		"name" : "someUserParam",
