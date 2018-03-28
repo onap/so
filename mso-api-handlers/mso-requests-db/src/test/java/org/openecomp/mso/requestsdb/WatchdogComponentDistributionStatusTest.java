@@ -1,39 +1,50 @@
-/*-
- * ============LICENSE_START=======================================================
- * ONAP - SO
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
- */
-
+/*
+* ============LICENSE_START=======================================================
+* ONAP : SO
+* ================================================================================
+* Copyright 2018 TechMahindra
+*=================================================================================
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+* ============LICENSE_END=========================================================
+*/
 package org.openecomp.mso.requestsdb;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import java.sql.Timestamp;
-
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 public class WatchdogComponentDistributionStatusTest {
+    
+  WatchdogComponentDistributionStatus wcds=new WatchdogComponentDistributionStatus();
+  Timestamp time=new Timestamp(10);
+  
+  @Test
+  public void test(){
+      wcds.setComponentDistributionStatus("componentDistributionStatus");
+      wcds.setComponentName("componentName");
+      wcds.setCreateTime(time);
+      wcds.setDistributionId("distributionId");
+      wcds.setModifyTime(time);
+      
+      assertEquals(wcds.getComponentDistributionStatus(), "componentDistributionStatus");
+      assertEquals(wcds.getComponentName(), "componentName");
+      assertEquals(wcds.getCreateTime(), time);
+      assertEquals(wcds.getDistributionId(), "distributionId");
+      assertEquals(wcds.getModifyTime(), time);
+  }
+}
 		
-	WatchdogComponentDistributionStatus _watchdogComponentDistributionStatus;
+	/*WatchdogComponentDistributionStatus _watchdogComponentDistributionStatus;
 	
 	protected String _distributionId;
 	protected String _componentName;
@@ -65,9 +76,9 @@ public class WatchdogComponentDistributionStatusTest {
 		_watchdogComponentDistributionStatus = null;
 	}
 	
-	/**
+	*//**
 	 * Test of getDistributionId method
-	 */
+	 *//*
 	@Test
 	public void testGetDistributionId() {
 		_watchdogComponentDistributionStatus.setDistributionId(_distributionId);
@@ -75,18 +86,18 @@ public class WatchdogComponentDistributionStatusTest {
 
 	}
 
-	/**
+	*//**
 	 * Test setDistributionId  method
-	 */
+	 *//*
 	@Test
 	public void testSetDistributionId() {
 		_watchdogComponentDistributionStatus.setDistributionId(_distributionId);
 		verify(_watchdogComponentDistributionStatus).setDistributionId(_distributionId);
 	}
 	
-	/**
+	*//**
 	 * Test of getDistributionId method
-	 */
+	 *//*
 	@Test
 	public void testGetComponentName() {
 		_watchdogComponentDistributionStatus.setComponentName(_componentName);
@@ -94,18 +105,18 @@ public class WatchdogComponentDistributionStatusTest {
 
 	}
 
-	/**
+	*//**
 	 * Test setDistributionId  method
-	 */
+	 *//*
 	@Test
 	public void testSetComponentName() {
 		_watchdogComponentDistributionStatus.setComponentName(_componentName);
 		verify(_watchdogComponentDistributionStatus).setComponentName(_componentName);
 	}
 	
-	/**
+	*//**
 	 * Test of getDistributionId method
-	 */
+	 *//*
 	@Test
 	public void testGetComponentDistributionStatus() {
 		_watchdogComponentDistributionStatus.setComponentDistributionStatus(_componentDistributionStatus);
@@ -113,18 +124,18 @@ public class WatchdogComponentDistributionStatusTest {
 
 	}
 
-	/**
+	*//**
 	 * Test setDistributionId  method
-	 */
+	 *//*
 	@Test
 	public void testSetComponentDistributionStatus() {
 		_watchdogComponentDistributionStatus.setComponentDistributionStatus(_componentDistributionStatus);
 		verify(_watchdogComponentDistributionStatus).setComponentDistributionStatus(_componentDistributionStatus);
 	}
 	
-	/**
+	*//**
 	 * Test of getCreateTime method
-	 */
+	 *//*
 	@Test
 	public void testGetCreateTime() {
 		_watchdogComponentDistributionStatus.setCreateTime(_createTime);
@@ -133,18 +144,18 @@ public class WatchdogComponentDistributionStatusTest {
 
 	}
 
-	/**
+	*//**
 	 * Test setCreateTime method
-	 */
+	 *//*
 	@Test
 	public void testSetCreateTime() {
 		_watchdogComponentDistributionStatus.setCreateTime(_createTime);
 		verify(_watchdogComponentDistributionStatus).setCreateTime(_createTime);
 	}
 	
-	/**
+	*//**
 	 * Test of getModifyTime method
-	 */
+	 *//*
 	@Test
 	public void testGetModifyTime() {
 		_watchdogComponentDistributionStatus.setModifyTime(_modifyTime);
@@ -153,9 +164,9 @@ public class WatchdogComponentDistributionStatusTest {
 
 	}
 
-	/**
+	*//**
 	 * Test setModifyTime method
-	 */
+	 *//*
 	@Test
 	public void testSetModifyTime() {
 		_watchdogComponentDistributionStatus.setModifyTime(_modifyTime);
@@ -163,3 +174,4 @@ public class WatchdogComponentDistributionStatusTest {
 	}
 	
 }
+*/

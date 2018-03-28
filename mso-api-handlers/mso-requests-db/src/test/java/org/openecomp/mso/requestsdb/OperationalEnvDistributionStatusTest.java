@@ -1,40 +1,56 @@
-/*-
- * ============LICENSE_START=======================================================
- * ONAP - SO
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
- */
-
+/*
+* ============LICENSE_START=======================================================
+* ONAP : SO
+* ================================================================================
+* Copyright 2018 TechMahindra
+*=================================================================================
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+* ============LICENSE_END=========================================================
+*/
 package org.openecomp.mso.requestsdb;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 import java.sql.Timestamp;
 
 public class OperationalEnvDistributionStatusTest {
 
-	OperationalEnvDistributionStatus _operationalEnvDistributionStatus;
+	OperationalEnvDistributionStatus oeds=new OperationalEnvDistributionStatus();
+    Timestamp time=new Timestamp(10);
+	@Test
+	public void test(){
+	    oeds.setCreateTime(time);
+	    oeds.setDistributionId("distributionId");
+	    oeds.setDistributionIdErrorReason("distributionIdErrorReason");
+	    oeds.setDistributionIdStatus("distributionIdStatus");
+	    oeds.setModifyTime(time);
+	    oeds.setOperationalEnvId("operationalEnvId");
+	    oeds.setRequestId("requestId");
+	    oeds.setServiceModelVersionId("serviceModelVersionId");
+	    
+	    assertEquals(oeds.getCreateTime(), time);
+	    assertEquals(oeds.getDistributionId(), "distributionId");
+	    assertEquals(oeds.getDistributionIdErrorReason(), "distributionIdErrorReason");
+	    assertEquals(oeds.getDistributionIdStatus(), "distributionIdStatus");
+	    assertEquals(oeds.getModifyTime(),time);
+	    assertEquals(oeds.getOperationalEnvId(), "operationalEnvId");
+	    assertEquals(oeds.getRequestId(), "requestId");
+	    assertEquals(oeds.getServiceModelVersionId(), "serviceModelVersionId");
+	}
+}
 	
-	protected String _distributionId;
+	/*protected String _distributionId;
 	protected String _operationalEnvId;
 	protected String _serviceModelVersionId;
 	protected String _requestId;
@@ -74,9 +90,9 @@ public class OperationalEnvDistributionStatusTest {
 		_operationalEnvDistributionStatus = null;
 	}
 	
-	/**
+	*//**
 	 * Test of getDistributionId method
-	 */
+	 *//*
 	@Test
 	public void testGetDistributionId() {
 		_operationalEnvDistributionStatus.setDistributionId(_distributionId);
@@ -84,18 +100,18 @@ public class OperationalEnvDistributionStatusTest {
 
 	}
 
-	/**
+	*//**
 	 * Test setDistributionId  method
-	 */
+	 *//*
 	@Test
 	public void testSetDistributionId() {
 		_operationalEnvDistributionStatus.setDistributionId(_distributionId);
 		verify(_operationalEnvDistributionStatus).setDistributionId(_distributionId);
 	}
 	
-	/**
+	*//**
 	 * Test of getOperationalEnvId method
-	 */
+	 *//*
 	@Test
 	public void testGetOperationalEnvId() {
 		_operationalEnvDistributionStatus.setOperationalEnvId(_operationalEnvId);
@@ -103,18 +119,18 @@ public class OperationalEnvDistributionStatusTest {
 
 	}
 
-	/**
+	*//**
 	 * Test setOperationalEnvId method
-	 */
+	 *//*
 	@Test
 	public void testSetOperationalEnvId() {
 		_operationalEnvDistributionStatus.setOperationalEnvId(_operationalEnvId);
 		verify(_operationalEnvDistributionStatus).setOperationalEnvId(_operationalEnvId);
 	}
 	
-	/**
+	*//**
 	 * Test of getServiceModelVersionId method
-	 */
+	 *//*
 	@Test
 	public void testGetServiceModelVersionId() {
 		_operationalEnvDistributionStatus.setServiceModelVersionId(_serviceModelVersionId);
@@ -122,18 +138,18 @@ public class OperationalEnvDistributionStatusTest {
 
 	}
 
-	/**
+	*//**
 	 * Test setServiceModelVersionId method
-	 */
+	 *//*
 	@Test
 	public void testSetServiceModelVersionId() {
 		_operationalEnvDistributionStatus.setServiceModelVersionId(_serviceModelVersionId);
 		verify(_operationalEnvDistributionStatus).setServiceModelVersionId(_serviceModelVersionId);
 	}
 	
-	/**
+	*//**
 	 * Test of getRequestId method
-	 */
+	 *//*
 	@Test
 	public void testGetRequestId() {
 		_operationalEnvDistributionStatus.setRequestId(_requestId);
@@ -141,18 +157,18 @@ public class OperationalEnvDistributionStatusTest {
 
 	}
 
-	/**
+	*//**
 	 * Test setRequestId method
-	 */
+	 *//*
 	@Test
 	public void testSetRequestId() {
 		_operationalEnvDistributionStatus.setRequestId(_requestId);
 		verify(_operationalEnvDistributionStatus).setRequestId(_requestId);
 	}
 	
-	/**
+	*//**
 	 * Test of getDistributionIdStatus method
-	 */
+	 *//*
 	@Test
 	public void testGetDistributionIdStatus() {
 		_operationalEnvDistributionStatus.setDistributionIdStatus(_distributionIdStatus);
@@ -160,18 +176,18 @@ public class OperationalEnvDistributionStatusTest {
 
 	}
 
-	/**
+	*//**
 	 * Test setDistributionIdStatus method
-	 */
+	 *//*
 	@Test
 	public void testSetDistributionIdStatus() {
 		_operationalEnvDistributionStatus.setDistributionIdStatus(_distributionIdStatus);
 		verify(_operationalEnvDistributionStatus).setDistributionIdStatus(_distributionIdStatus);
 	}
 	
-	/**
+	*//**
 	 * Test of getDistributionIdErrorReason method
-	 */
+	 *//*
 	@Test
 	public void testGetDistributionIdErrorReason() {
 		_operationalEnvDistributionStatus.setDistributionIdErrorReason(_distributionIdErrorReason);
@@ -179,18 +195,18 @@ public class OperationalEnvDistributionStatusTest {
 
 	}
 
-	/**
+	*//**
 	 * Test setDistributionIdErrorReason method
-	 */
+	 *//*
 	@Test
 	public void testSetDistributionIdErrorReason() {
 		_operationalEnvDistributionStatus.setDistributionIdErrorReason(_distributionIdErrorReason);
 		verify(_operationalEnvDistributionStatus).setDistributionIdErrorReason(_distributionIdErrorReason);
 	}
 	
-	/**
+	*//**
 	 * Test of getCreateTime method
-	 */
+	 *//*
 	@Test
 	public void testGetCreateTime() {
 		_operationalEnvDistributionStatus.setCreateTime(_createTime);
@@ -199,18 +215,18 @@ public class OperationalEnvDistributionStatusTest {
 
 	}
 
-	/**
+	*//**
 	 * Test setCreateTime method
-	 */
+	 *//*
 	@Test
 	public void testSetCreateTime() {
 		_operationalEnvDistributionStatus.setCreateTime(_createTime);
 		verify(_operationalEnvDistributionStatus).setCreateTime(_createTime);
 	}
 	
-	/**
+	*//**
 	 * Test of getModifyTime method
-	 */
+	 *//*
 	@Test
 	public void testGetModifyTime() {
 		_operationalEnvDistributionStatus.setModifyTime(_modifyTime);
@@ -219,9 +235,9 @@ public class OperationalEnvDistributionStatusTest {
 
 	}
 
-	/**
+	*//**
 	 * Test setModifyTime method
-	 */
+	 *//*
 	@Test
 	public void testSetModifyTime() {
 		_operationalEnvDistributionStatus.setModifyTime(_modifyTime);
@@ -230,3 +246,4 @@ public class OperationalEnvDistributionStatusTest {
 	
 	
 }
+*/
