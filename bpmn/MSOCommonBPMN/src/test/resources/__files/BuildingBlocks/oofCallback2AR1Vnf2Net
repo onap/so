@@ -43,6 +43,7 @@
             },
         ],
         "placementSolutions": [
+            [
             {
                 "resourceModuleName": "ALLOTTED_RESOURCE",
                 "serviceResourceId": "testResourceIdAR",
@@ -108,9 +109,11 @@
                 },
                 "assignmentInfo": [
                     { "key": "cloudOwner", "value": "aic" },
-                    { "key": "cloudRegionId", "value": "testCloudRegionId3" }
+                    { "key": "cloudRegionId", "value": "testCloudRegionId3" },
+                    { "key":"flavors", "value":{ "flavorLabel1xxx":"vimFlavorxxx", "flavorLabel2xxx":"vimFlavorxxx"}}
                 ]
             }
+        ]
         ]
     }
 }
