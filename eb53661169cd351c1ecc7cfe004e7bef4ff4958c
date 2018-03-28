@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_c48bf01c",
+        "filename": "asdc-controller/src/test/java/org/openecomp/mso/asdc/client/tests/emulators/JsonArtifactInfoTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 519
+      },
+      "writtenOn": "2018-03-28T08:38:25Z",
+      "side": 1,
+      "message": "change to\nimport org.onap.sdc.api.notification.IArtifactInfo;",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 56
+      },
+      "revId": "eb53661169cd351c1ecc7cfe004e7bef4ff4958c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
