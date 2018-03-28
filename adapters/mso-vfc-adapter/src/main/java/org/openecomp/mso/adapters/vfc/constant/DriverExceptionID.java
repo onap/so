@@ -52,6 +52,11 @@ public class DriverExceptionID {
 
   public static final String FAIL_TO_QUERY_JOB_STATUS = "Fail to query job status";
 
+  public static final String FAIL_TO_SCALE_NS = "Fail to scale network service";
+
+  public static final String INVALID_RESPONSE_FROM_SCALE_OPERATION = "Invalid response from scale operation";
+
+
   private DriverExceptionID() {
 
   }

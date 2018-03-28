@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 CMCC Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,26 +17,33 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+package org.openecomp.mso.adapters.vfc.model;
 
-package org.openecomp.mso.apihandlerinfra;
+/**
+ * <br>
+ * <p>
+ * </p>
+ * request model for scale
+ * 
+ * @author
+ * @version ONAP Amsterdam Release 2017-9-26
+ */
+public class NsScaleReq extends NsScaleParameters {
 
-/*
- * Enum for Status values returned by API Handler to Tail-F
-*/
-public enum Action {
-	createInstance,
-	updateInstance,
-	deleteInstance,
-	configureInstance,
-	replaceInstance,
-	activateInstance,
-	deactivateInstance,
-	enablePort,
-	disablePort,
-	addRelationships,
-	removeRelationships,
-	inPlaceSoftwareUpdate,
-	applyUpdatedConfig,
-	compareModel,
-	scaleInstance
+    String nsInstanceId;
+
+    /**
+     * @return Returns the nsInstanceId.
+     */
+    public String getNsInstanceId() {
+        return nsInstanceId;
+    }
+
+    /**
+     * @param nsInstanceId The nsInstanceId to set.
+     */
+    public void setNsInstanceId(String nsInstanceId) {
+        this.nsInstanceId = nsInstanceId;
+    }
+
 }

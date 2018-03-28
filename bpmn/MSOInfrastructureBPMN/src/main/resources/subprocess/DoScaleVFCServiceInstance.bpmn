@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0">
+  <bpmn:process id="DoScaleVFCServiceInstance" name="DoScaleVFCServiceInstance" isExecutable="true">
+    <bpmn:startEvent id="scaleNS_StartEvent" name="scaleNS_StartEvent">
+      <bpmn:outgoing>SequenceFlow_00w1ntj</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:scriptTask id="PreprocessIncomingRequest_task" name="PreprocessIncomingRequest" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_00w1ntj</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0izumqq</bpmn:outgoing>
+      <bpmn:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
+def dcsi = new DoScaleVFCNetworkServiceInstance()
+dcsi.preProcessRequest(execution)]]></bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Task_0ia872k" name="Scale Network Service" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0izumqq</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0hzy01n</bpmn:outgoing>
+      <bpmn:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
+def dcsi = new DoScaleVFCNetworkServiceInstance()
+dcsi.scaleNetworkService(execution)]]></bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_00w1ntj" sourceRef="scaleNS_StartEvent" targetRef="PreprocessIncomingRequest_task" />
+    <bpmn:sequenceFlow id="SequenceFlow_0izumqq" sourceRef="PreprocessIncomingRequest_task" targetRef="Task_0ia872k" />
+    <bpmn:endEvent id="EndEvent_1r0dxhy">
+      <bpmn:incoming>SequenceFlow_18hdal9</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_18hdal9" sourceRef="finishNSScale_Task" targetRef="EndEvent_1r0dxhy" />
+    <bpmn:scriptTask id="finishNSScale_Task" name="Finish NS Scale" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0hzy01n</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_18hdal9</bpmn:outgoing>
+      <bpmn:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
+def dcsi = new DoScaleVFCNetworkServiceInstance()
+dcsi.finishNSScale(execution)]]></bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0hzy01n" sourceRef="Task_0ia872k" targetRef="finishNSScale_Task" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DoScaleVFCServiceInstance">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="scaleNS_StartEvent">
+        <dc:Bounds x="-33" y="182" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-56" y="218" width="83" height="24" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_0fxwmkv_di" bpmnElement="PreprocessIncomingRequest_task">
+        <dc:Bounds x="117" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_14ppugf_di" bpmnElement="Task_0ia872k">
+        <dc:Bounds x="739" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_00w1ntj_di" bpmnElement="SequenceFlow_00w1ntj">
+        <di:waypoint xsi:type="dc:Point" x="3" y="200" />
+        <di:waypoint xsi:type="dc:Point" x="117" y="200" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="15" y="179" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0izumqq_di" bpmnElement="SequenceFlow_0izumqq">
+        <di:waypoint xsi:type="dc:Point" x="217" y="200" />
+        <di:waypoint xsi:type="dc:Point" x="739" y="200" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="433" y="179" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_1r0dxhy_di" bpmnElement="EndEvent_1r0dxhy">
+        <dc:Bounds x="771" y="676" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="744" y="716" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_18hdal9_di" bpmnElement="SequenceFlow_18hdal9">
+        <di:waypoint xsi:type="dc:Point" x="789" y="451" />
+        <di:waypoint xsi:type="dc:Point" x="789" y="676" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="759" y="557.5" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_1elwlqc_di" bpmnElement="finishNSScale_Task">
+        <dc:Bounds x="739" y="371" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0hzy01n_di" bpmnElement="SequenceFlow_0hzy01n">
+        <di:waypoint xsi:type="dc:Point" x="789" y="240" />
+        <di:waypoint xsi:type="dc:Point" x="789" y="371" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="759" y="299.5" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

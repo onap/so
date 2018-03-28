@@ -56,6 +56,7 @@ import org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans.E2EServiceInsta
 import org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans.E2EServiceInstanceRequest;
 import org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans.E2EUserParam;
 import org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans.GetE2EServiceInstanceResponse;
+import org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans.*;
 import org.openecomp.mso.serviceinstancebeans.ModelInfo;
 import org.openecomp.mso.serviceinstancebeans.ModelType;
 import org.openecomp.mso.serviceinstancebeans.RequestDetails;
@@ -160,6 +161,23 @@ public class E2EServiceInstances {
 		return getE2EServiceInstances(serviceId, operationId);
 	}
 	
+    /**
+	 * Scale Requests for E2E Service scale Instance on a specified version 
+     */
+	 
+	@POST
+	@Path("/{version:[vV][3-5]}/{serviceId}/scale")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value="Scale E2E Service Instance on a specified version",response=Response.class)
+	public Response scaleE2EServiceInstance(String request,
+                                            @PathParam("version") String version,
+                                            @PathParam("serviceId") String serviceId) {
+
+		msoLogger.debug("------------------scale begin------------------");
+		instanceIdMap.put("serviceId", serviceId);
+		return scaleE2EserviceInstances(request, Action.scaleInstance, instanceIdMap, version);
+	}
 	/**
 	 * GET Requests for Comparing model of service instance with target version
 	 */
@@ -920,6 +938,174 @@ public class E2EServiceInstances {
 
 		return beplStatusUpdate(requestId, startTime, msoRequest, requestClient, respHandler, bpelStatus, action, instanceIdMap);
 	}
+
+   private Response scaleE2EserviceInstances(String requestJSON,
+                                               Action action, HashMap<String, String> instanceIdMap, String version) {
+
+        String requestId = instanceIdMap.get("serviceId");
+        long startTime = System.currentTimeMillis();
+        msoLogger.debug("requestId is: " + requestId);
+		E2EServiceInstanceScaleRequest e2eScaleReq = null;
+
+        MsoRequest msoRequest = new MsoRequest(requestId);
+
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+        	e2eScaleReq = mapper.readValue(requestJSON,
+					E2EServiceInstanceScaleRequest.class);
+
+        } catch (Exception e) {
+
+            msoLogger.debug("Mapping of request to JSON object failed : ", e);
+            Response response = msoRequest.buildServiceErrorResponse(
+                    HttpStatus.SC_BAD_REQUEST,
+                    MsoException.ServiceException,
+                    "Mapping of request to JSON object failed.  "
+                            + e.getMessage(), ErrorNumbers.SVC_BAD_PARAMETER,
+                    null);
+            msoLogger.error(MessageEnum.APIH_REQUEST_VALIDATION_ERROR,
+                    MSO_PROP_APIHANDLER_INFRA, "", "",
+                    MsoLogger.ErrorCode.SchemaError, requestJSON, e);
+            msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR,
+                    MsoLogger.ResponseCode.SchemaError,
+                    "Mapping of request to JSON object failed");
+            msoLogger.debug("End of the transaction, the final response is: "
+                    + (String) response.getEntity());
+            createOperationStatusRecordForError(action, requestId);
+            return response;
+        }
+
+        CatalogDatabase db = null;
+        RecipeLookupResult recipeLookupResult = null;
+        try {
+            db = CatalogDatabase.getInstance();
+			//TODO  Get the service template model version uuid from AAI.
+			recipeLookupResult = getServiceInstanceOrchestrationURI(db, null, action);
+        } catch (Exception e) {
+            msoLogger.error(MessageEnum.APIH_DB_ACCESS_EXC,
+                    MSO_PROP_APIHANDLER_INFRA, "", "",
+                    MsoLogger.ErrorCode.AvailabilityError,
+                    "Exception while communciate with Catalog DB", e);
+            msoRequest
+                    .setStatus(org.openecomp.mso.apihandlerinfra.vnfbeans.RequestStatusType.FAILED);
+            Response response = msoRequest.buildServiceErrorResponse(
+                    HttpStatus.SC_NOT_FOUND, MsoException.ServiceException,
+                    "No communication to catalog DB " + e.getMessage(),
+                    ErrorNumbers.SVC_NO_SERVER_RESOURCES, null);
+            alarmLogger.sendAlarm("MsoDatabaseAccessError",
+                    MsoAlarmLogger.CRITICAL, Messages.errors
+                            .get(ErrorNumbers.NO_COMMUNICATION_TO_CATALOG_DB));
+            msoRequest.createRequestRecord(Status.FAILED, action);
+            msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR,
+                    MsoLogger.ResponseCode.DBAccessError,
+                    "Exception while communciate with DB");
+            msoLogger.debug(END_OF_THE_TRANSACTION
+                    + (String) response.getEntity());
+            return response;
+        } finally {
+            closeCatalogDB(db);
+        }
+        if (recipeLookupResult == null) {
+            msoLogger.error(MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND,
+                    MSO_PROP_APIHANDLER_INFRA, "", "",
+                    MsoLogger.ErrorCode.DataError, "No recipe found in DB");
+            msoRequest
+                    .setStatus(org.openecomp.mso.apihandlerinfra.vnfbeans.RequestStatusType.FAILED);
+            Response response = msoRequest.buildServiceErrorResponse(
+                    HttpStatus.SC_NOT_FOUND, MsoException.ServiceException,
+                    "Recipe does not exist in catalog DB",
+                    ErrorNumbers.SVC_GENERAL_SERVICE_ERROR, null);
+            msoRequest.createRequestRecord(Status.FAILED, action);
+            msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR,
+                    MsoLogger.ResponseCode.DataNotFound,
+                    "No recipe found in DB");
+            msoLogger.debug(END_OF_THE_TRANSACTION
+                    + (String) response.getEntity());
+            createOperationStatusRecordForError(action, requestId);
+            return response;
+        }
+
+        RequestClient requestClient = null;
+        HttpResponse response = null;
+
+        long subStartTime = System.currentTimeMillis();
+        // String sirRequestJson = mapReqJsonToSvcInstReq(e2eSir, requestJSON);
+
+        try {
+            requestClient = RequestClientFactory.getRequestClient(
+                    recipeLookupResult.getOrchestrationURI(),
+                    MsoPropertiesUtils.loadMsoProperties());
+
+            JSONObject jjo = new JSONObject(requestJSON);
+            jjo.put("operationId", UUIDChecker.generateUUID(msoLogger));
+
+            String bpmnRequest = jjo.toString();
+
+            // Capture audit event
+            msoLogger
+                    .debug("MSO API Handler Posting call to BPEL engine for url: "
+                            + requestClient.getUrl());
+            String serviceId = instanceIdMap.get("serviceId");
+            String serviceInstanceType = e2eScaleReq.getService().getServiceType();
+            response = requestClient.post(requestId, false,
+					recipeLookupResult.getRecipeTimeout(), action.name(),
+					serviceId, null, null, null, null, null, serviceInstanceType,
+					null, null, null, bpmnRequest, recipeLookupResult.getRecipeParamXsd());
+
+            msoLogger.recordMetricEvent(subStartTime,
+                    MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
+                    "Successfully received response from BPMN engine", "BPMN",
+                    recipeLookupResult.getOrchestrationURI(), null);
+        } catch (Exception e) {
+            msoLogger.recordMetricEvent(subStartTime,
+                    MsoLogger.StatusCode.ERROR,
+                    MsoLogger.ResponseCode.CommunicationError,
+                    "Exception while communicate with BPMN engine", "BPMN",
+                    recipeLookupResult.getOrchestrationURI(), null);
+            Response resp = msoRequest.buildServiceErrorResponse(
+                    HttpStatus.SC_BAD_GATEWAY, MsoException.ServiceException,
+                    "Failed calling bpmn " + e.getMessage(),
+                    ErrorNumbers.SVC_NO_SERVER_RESOURCES, null);
+            alarmLogger.sendAlarm("MsoConfigurationError",
+                    MsoAlarmLogger.CRITICAL,
+                    Messages.errors.get(ErrorNumbers.NO_COMMUNICATION_TO_BPEL));
+            msoLogger.error(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR,
+                    MSO_PROP_APIHANDLER_INFRA, "", "",
+                    MsoLogger.ErrorCode.AvailabilityError,
+                    "Exception while communicate with BPMN engine");
+            msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR,
+                    MsoLogger.ResponseCode.CommunicationError,
+                    "Exception while communicate with BPMN engine");
+            msoLogger.debug("End of the transaction, the final response is: "
+                    + (String) resp.getEntity());
+            createOperationStatusRecordForError(action, requestId);
+            return resp;
+        }
+
+        if (response == null) {
+            Response resp = msoRequest.buildServiceErrorResponse(
+                    HttpStatus.SC_BAD_GATEWAY, MsoException.ServiceException,
+                    "bpelResponse is null",
+                    ErrorNumbers.SVC_NO_SERVER_RESOURCES, null);
+            msoLogger.error(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR,
+                    MSO_PROP_APIHANDLER_INFRA, "", "",
+                    MsoLogger.ErrorCode.BusinessProcesssError,
+                    "Null response from BPEL");
+            msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR,
+                    MsoLogger.ResponseCode.InternalError,
+                    "Null response from BPMN");
+            msoLogger.debug(END_OF_THE_TRANSACTION + (String) resp.getEntity());
+            createOperationStatusRecordForError(action, requestId);
+            return resp;
+        }
+
+        ResponseHandler respHandler = new ResponseHandler(response,
+                requestClient.getType());
+        int bpelStatus = respHandler.getStatus();
+
+        return beplStatusUpdate(requestId, startTime, msoRequest,
+                requestClient, respHandler, bpelStatus, action, instanceIdMap);
+    }
 
 	private void closeCatalogDB(CatalogDatabase db) {
 		if (db != null) {
