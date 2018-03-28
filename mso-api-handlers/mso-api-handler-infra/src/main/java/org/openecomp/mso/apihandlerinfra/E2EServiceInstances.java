@@ -687,7 +687,7 @@ public class E2EServiceInstances {
 			return response;
 		}
 
-		if (curStatus != null && !curStatus.getProgress().equals("100")) {
+		if (curStatus != null && curStatus.getResult() != null && curStatus.getResult().equalsIgnoreCase("processing")) {
 			String chkMessage = "Error: Locked instance - This " + requestScope + " (" + requestId + ") "
 					+ "now being worked with a status of " + curStatus.getProgress() + " (ServiceName - "
 					+ curStatus.getServiceName()

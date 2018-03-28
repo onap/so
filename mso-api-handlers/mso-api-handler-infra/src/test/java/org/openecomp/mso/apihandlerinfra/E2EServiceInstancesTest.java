@@ -719,6 +719,7 @@ public class E2EServiceInstancesTest {
 					String serviceID) {
 				OperationStatus operationStatus = new OperationStatus();
 				operationStatus.setProgress("100");
+				operationStatus.setResult("finish");
 				return operationStatus;
 			}
 		};
@@ -790,6 +791,7 @@ public class E2EServiceInstancesTest {
 			public OperationStatus getOperationStatusByServiceId(
 					String serviceID) {
 				OperationStatus operationStatus = new OperationStatus();
+				operationStatus.setResult("processing");
 				return operationStatus;
 			}
 		};
