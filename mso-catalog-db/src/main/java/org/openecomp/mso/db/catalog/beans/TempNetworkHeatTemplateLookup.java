@@ -22,12 +22,16 @@ package org.openecomp.mso.db.catalog.beans;
 
 import java.io.Serializable;
 
+import com.openpojo.business.annotation.BusinessKey;
+
 public class TempNetworkHeatTemplateLookup implements Serializable {
 
-	private String networkResourceModelName;
-	private String heatTemplateArtifactUuid;
-	private String aicVersionMin;
-	private String aicVersionMax;
+	@BusinessKey
+	private String networkResourceModelName = null;
+	@BusinessKey
+	private String heatTemplateArtifactUuid = null;
+	private String aicVersionMin = null;
+	private String aicVersionMax = null;
     public static final long serialVersionUID = -1322322139926390329L;
 
 	public TempNetworkHeatTemplateLookup() {

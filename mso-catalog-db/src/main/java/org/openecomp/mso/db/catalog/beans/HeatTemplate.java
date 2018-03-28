@@ -31,17 +31,17 @@ public class HeatTemplate extends MavenLikeVersioning implements Serializable {
 	
 	private static final long serialVersionUID = 768026109321305392L;
 
-    private String artifactUuid;
-    private String templateName;
+    private String artifactUuid = null;
+    private String templateName = null;
     private String templateBody = null;
     private int timeoutMinutes;
     private Set <HeatTemplateParam> parameters;
     private Set <HeatNestedTemplate> files;
-    private String description;
-    private String asdcUuid;
-    private String artifactChecksum;
+    private String description = null;
+    private String asdcUuid = null;
+    private String artifactChecksum = null;
 
-    private Timestamp created;
+    private Timestamp created = null;
 
     public enum TemplateStatus {
                                 PARENT, CHILD, PARENT_COMPLETE

@@ -32,16 +32,16 @@ public class VfModule extends MavenLikeVersioning implements Serializable {
 	
 	private static final long serialVersionUID = 768026109321305392L;
 
-	private String modelInvariantUUID;
-	private String modelName;
-	private String modelVersion;
-	private String description;
+	private String modelInvariantUUID = null;
+	private String modelName = null;
+	private String modelVersion = null;
+	private String description = null;
 	private int isBase;
-	private String heatTemplateArtifactUUId;
-	private String volHeatTemplateArtifactUUId;
-    private Timestamp created;
-	private String modelUUID;
-	private String vnfResourceModelUUId;
+	private String heatTemplateArtifactUUId = null;
+	private String volHeatTemplateArtifactUUId = null;
+    private Timestamp created = null;
+	private String modelUUID = null;
+	private String vnfResourceModelUUId = null;
 
     public VfModule() {
 		super();

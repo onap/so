@@ -82,10 +82,10 @@ public class QueryServiceMacroHolder extends CatalogQuery {
 	    subitem = new QueryServiceVnfs(serviceMacroHolder.getVnfResourceCustomizations()).JSON2(true, true); 
 	    valueMap.put("_SERVICEVNFS_",               subitem.replaceAll(LINE_BEGINNING, "\t"));
 
-		subitem = new QueryServiceNetworks(serviceMacroHolder.getNetworkResourceCustomization()).JSON2(true, true);
+		subitem = new QueryServiceNetworks(serviceMacroHolder.getNetworkResourceCustomizations()).JSON2(true, true);
 		valueMap.put("_SERVICENETWORKS_",           subitem.replaceAll(LINE_BEGINNING, "\t"));
 
-		subitem = new QueryAllottedResourceCustomization(serviceMacroHolder.getAllottedResourceCustomization()).JSON2(true, true);
+		subitem = new QueryAllottedResourceCustomization(serviceMacroHolder.getAllottedResourceCustomizations()).JSON2(true, true);
 		valueMap.put("_SERVICEALLOTTEDRESOURCES_",  subitem.replaceAll(LINE_BEGINNING, "\t"));
 
         buf.append(this.setTemplate(template, valueMap));

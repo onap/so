@@ -25,7 +25,7 @@ import java.io.Serializable;
 
 public class NetworkRecipe extends Recipe implements Serializable {
 	private static final long serialVersionUID = 768026109321305392L;
-	private String modelName;
+	private String modelName = null;
 	public NetworkRecipe() {}
 
 	public String getModelName() {

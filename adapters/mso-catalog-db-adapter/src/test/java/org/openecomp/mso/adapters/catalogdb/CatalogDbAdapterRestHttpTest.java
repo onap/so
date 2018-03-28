@@ -327,7 +327,7 @@ public class CatalogDbAdapterRestHttpTest {
             d1.setNetworkResourceModelUuid("0cb9b26a-9820-48a7-86e5-16c510e993d9");
             paramList.add(d1);
     		ServiceMacroHolder ret = new ServiceMacroHolder();
-    		ret.setNetworkResourceCustomization(paramList);
+    		ret.setNetworkResourceCustomizations(paramList);
 	    	PowerMockito.when(dbMock.getAllResourcesByServiceModelInvariantUuid(Mockito.anyString(),Mockito.anyString())).thenReturn (ret);
             // end
 			

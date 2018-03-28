@@ -52,7 +52,7 @@ public class QueryServiceMarcoHolderTest {
         d1.setNetworkResourceModelUuid("0cb9b26a-9820-48a7-86e5-16c510e993d9");
         paramList.add(d1);
 		ServiceMacroHolder ret = new ServiceMacroHolder(svc);
-		ret.setNetworkResourceCustomization(paramList);
+		ret.setNetworkResourceCustomizations(paramList);
 		QueryServiceMacroHolder holder = new QueryServiceMacroHolder(ret);
 		String s = holder.JSON2(true, true); 
 		

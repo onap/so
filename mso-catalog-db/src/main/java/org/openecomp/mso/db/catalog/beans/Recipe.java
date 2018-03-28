@@ -32,13 +32,13 @@ public class Recipe extends MavenLikeVersioning implements Serializable {
 	private static final long serialVersionUID = 768026109321305392L;
 
     private int id;
-    protected String action;
-    private String description;
-    protected String orchestrationUri;
+    protected String action = null;
+    private String description = null;
+    protected String orchestrationUri = null;
     private int recipeTimeout;
-    private String serviceType;
-    private String paramXSD;
-	private Timestamp created;
+    private String serviceType = null;
+    private String paramXSD = null;
+	private Timestamp created = null;
     
     public Recipe () {
         super ();

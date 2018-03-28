@@ -20,32 +20,34 @@
 
 package org.openecomp.mso.db.catalog.beans;
 
-import org.openecomp.mso.db.catalog.utils.MavenLikeVersioning;
-
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.text.DateFormat;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import org.openecomp.mso.db.catalog.utils.MavenLikeVersioning;
 
 public class Service extends MavenLikeVersioning implements Serializable {
 	
 	private static final long serialVersionUID = 768026109321305392L;
 
-	private String modelName;
-	private String description;
-	private String modelUUID;
-	private String modelInvariantUUID;
-	private Timestamp created;
-	private String toscaCsarArtifactUUID;
-	private String modelVersion;
-	private String category;
-	private String serviceType;
-	private String serviceRole;
-	private String environmentContext;
-	private String workloadContext;
-	private Map<String,ServiceRecipe> recipes;
-	private Set<ServiceToResourceCustomization> serviceResourceCustomizations;
+	private String modelName = null;
+	private String description = null;
+	private String modelUUID = null;
+	private String modelInvariantUUID = null;
+	private Timestamp created = null;
+	private String toscaCsarArtifactUUID = null;
+	private String modelVersion = null;
+	private String category = null;
+	private String serviceType = null;
+	private String serviceRole = null;
+	private String environmentContext = null;
+	private String workloadContext = null;
+	private Map<String,ServiceRecipe> recipes = new HashMap<>();
+	private Set<ServiceToResourceCustomization> serviceResourceCustomizations = new HashSet<>();
 	
 	public Service() {}
 	

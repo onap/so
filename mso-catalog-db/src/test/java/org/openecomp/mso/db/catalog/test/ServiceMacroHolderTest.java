@@ -40,7 +40,7 @@ public class ServiceMacroHolderTest {
 		assertTrue(serviceMacroHolder.getService() == null);
 		serviceMacroHolder.addVnfResource(new VnfResource());
 		serviceMacroHolder.addVnfResourceCustomizations(new VnfResourceCustomization());
-		serviceMacroHolder.addNetworkResourceCustomization(new NetworkResourceCustomization());
+		serviceMacroHolder.addNetworkResourceCustomizations(new NetworkResourceCustomization());
 		serviceMacroHolder.addAllottedResourceCustomization(new AllottedResourceCustomization());
 		assertTrue(serviceMacroHolder != null);
 	}

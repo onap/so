@@ -31,14 +31,14 @@ public class Model extends MavenLikeVersioning implements Serializable {
 	private static final long serialVersionUID = 768026109321305392L;
 
 	private int id;
-	private String modelCustomizationId;
-	private String modelCustomizationName;
-	private String modelInvariantId;
-	private String modelName;
-	private String modelType;
-	private String modelVersion;
-	private String modelVersionId;
-	private Timestamp created;
+	private String modelCustomizationId = null;
+	private String modelCustomizationName = null;
+	private String modelInvariantId = null;
+	private String modelName = null;
+	private String modelType = null;
+	private String modelVersion = null;
+	private String modelVersionId = null;
+	private Timestamp created = null;
 	private Map<String,ServiceRecipe> recipes;
 
 	/**

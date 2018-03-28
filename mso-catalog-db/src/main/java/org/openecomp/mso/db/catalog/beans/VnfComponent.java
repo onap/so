@@ -25,16 +25,20 @@ package org.openecomp.mso.db.catalog.beans;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 
+import com.openpojo.business.annotation.BusinessKey;
+
 import java.io.Serializable;
 
 public class VnfComponent implements Serializable {
-    private int vnfId;
+	@BusinessKey
+	private int vnfId;
+	@BusinessKey
     private String componentType = null;
     private Integer heatTemplateId;
     private Integer heatEnvironmentId;
     public static final long serialVersionUID = -1322322139926390329L;
 
-	private Timestamp created;
+	private Timestamp created = null;
     
     public VnfComponent() {}
 

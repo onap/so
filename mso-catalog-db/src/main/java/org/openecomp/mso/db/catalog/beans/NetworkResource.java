@@ -35,15 +35,15 @@ public class NetworkResource extends MavenLikeVersioning implements Serializable
 	private String neutronNetworkType = null;
 	private String aicVersionMin = null;
 	private String aicVersionMax = null;
-	private String modelName;
-	private String modelInvariantUUID;
-	private String modelVersion;
-	private String toscaNodeType;
-	private Timestamp created;
-	private String modelUUID;
-    private String category;
-    private String subCategory;
-	private String heatTemplateArtifactUUID;
+	private String modelName = null;
+	private String modelInvariantUUID = null;
+	private String modelVersion = null;
+	private String toscaNodeType = null;
+	private Timestamp created = null;
+	private String modelUUID = null;
+    private String category = null;
+    private String subCategory = null;
+	private String heatTemplateArtifactUUID = null;
 	
 	public NetworkResource() {}
 	

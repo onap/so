@@ -22,11 +22,15 @@ package org.openecomp.mso.db.catalog.beans;
 
 import java.io.Serializable;
 
+import com.openpojo.business.annotation.BusinessKey;
+
 // an embeddable class to represent the Composite key for NetworkResource in the 1707 db refactoring
 public class HeatTemplateArtifactUuidModelUuid implements Serializable {
 	
-	private String heatTemplateArtifactUuid;
-	private String modelUuid;
+	@BusinessKey
+	private String heatTemplateArtifactUuid = null;
+	@BusinessKey
+	private String modelUuid = null;
 	public static final long serialVersionUID = -1322322139926390329L;
 
 	public HeatTemplateArtifactUuidModelUuid() {

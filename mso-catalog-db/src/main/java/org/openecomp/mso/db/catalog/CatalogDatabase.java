@@ -2635,9 +2635,9 @@ public class CatalogDatabase implements Closeable {
 
         ServiceMacroHolder smh = new ServiceMacroHolder(service);
         ArrayList<NetworkResourceCustomization> nrcList = (ArrayList<NetworkResourceCustomization>) this.getAllNetworksByServiceModelUuid(serviceModelUuid);
-        smh.setNetworkResourceCustomization(nrcList);
+        smh.setNetworkResourceCustomizations(nrcList);
         ArrayList<AllottedResourceCustomization> arcList = (ArrayList<AllottedResourceCustomization>) this.getAllAllottedResourcesByServiceModelUuid(serviceModelUuid);
-        smh.setAllottedResourceCustomization(arcList);
+        smh.setAllottedResourceCustomizations(arcList);
         ArrayList<VnfResourceCustomization> vnfList = (ArrayList<VnfResourceCustomization>) this.getAllVnfsByServiceModelUuid(serviceModelUuid);
         smh.setVnfResourceCustomizations(vnfList);
 
@@ -2664,9 +2664,9 @@ public class CatalogDatabase implements Closeable {
 
         ServiceMacroHolder smh = new ServiceMacroHolder(service);
         ArrayList<NetworkResourceCustomization> nrcList = (ArrayList<NetworkResourceCustomization>) this.getAllNetworksByServiceModelUuid(service.getModelUUID());
-        smh.setNetworkResourceCustomization(nrcList);
+        smh.setNetworkResourceCustomizations(nrcList);
         ArrayList<AllottedResourceCustomization> arcList = (ArrayList<AllottedResourceCustomization>) this.getAllAllottedResourcesByServiceModelUuid(service.getModelUUID());
-        smh.setAllottedResourceCustomization(arcList);
+        smh.setAllottedResourceCustomizations(arcList);
         ArrayList<VnfResourceCustomization> vnfList = (ArrayList<VnfResourceCustomization>) this.getAllVnfsByServiceModelUuid(service.getModelUUID());
         smh.setVnfResourceCustomizations(vnfList);
 
@@ -2697,9 +2697,9 @@ public class CatalogDatabase implements Closeable {
 
         ServiceMacroHolder smh = new ServiceMacroHolder(service);
         ArrayList<NetworkResourceCustomization> nrcList = (ArrayList<NetworkResourceCustomization>) this.getAllNetworksByServiceModelUuid(service.getModelUUID());
-        smh.setNetworkResourceCustomization(nrcList);
+        smh.setNetworkResourceCustomizations(nrcList);
         ArrayList<AllottedResourceCustomization> arcList = (ArrayList<AllottedResourceCustomization>) this.getAllAllottedResourcesByServiceModelUuid(service.getModelUUID());
-        smh.setAllottedResourceCustomization(arcList);
+        smh.setAllottedResourceCustomizations(arcList);
         ArrayList<VnfResourceCustomization> vnfList = (ArrayList<VnfResourceCustomization>) this.getAllVnfsByServiceModelUuid(service.getModelUUID());
         smh.setVnfResourceCustomizations(vnfList);
 

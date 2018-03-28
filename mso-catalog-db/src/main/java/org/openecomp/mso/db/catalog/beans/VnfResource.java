@@ -35,23 +35,22 @@ public class VnfResource extends MavenLikeVersioning implements Serializable {
 	
 	private static final long serialVersionUID = 768026109321305392L;
 
-	private String modelUuid;
-	private String modelInvariantUuid;
-	private String modelName;
-    private String toscaNodeType;
-    private String description;
-    private String orchestrationMode;
-    private String aicVersionMin;
-    private String aicVersionMax;
-    private String category;
-    private String subCategory;
-    private String heatTemplateArtifactUUId;
-    private Timestamp created;
-    private String modelVersion;
-    private Set<VnfResourceCustomization> vnfResourceCustomizations;
-    private Set<VfModule> vfModules;
-    private List<VfModule> vfModuleList;
-    private List<VfModuleCustomization> vfModuleCustomizations;
+	private String modelUuid = null;
+	private String modelInvariantUuid = null;
+	private String modelName = null;
+    private String toscaNodeType = null;
+    private String description = null;
+    private String orchestrationMode = null;
+    private String aicVersionMin = null;
+    private String aicVersionMax = null;
+    private String category = null;
+    private String subCategory = null;
+    private String heatTemplateArtifactUUId = null;
+    private Timestamp created = null;
+    private String modelVersion = null;
+    private Set<VnfResourceCustomization> vnfResourceCustomizations = new HashSet<>();
+    private Set<VfModule> vfModules = new HashSet<>();
+    private List<VfModuleCustomization> vfModuleCustomizations = new ArrayList<>();
 
     public VnfResource () { }
 
@@ -197,7 +196,7 @@ public class VnfResource extends MavenLikeVersioning implements Serializable {
 	public List<VfModuleCustomization> getVfModuleCustomizations() {
 		return this.vfModuleCustomizations == null ? new ArrayList<>() : this.vfModuleCustomizations;
 	}
-	public void setVfModuleCustomizations(ArrayList<VfModuleCustomization> vfModuleCustomizations) {
+	public void setVfModuleCustomizations(List<VfModuleCustomization> vfModuleCustomizations) {
 		this.vfModuleCustomizations = vfModuleCustomizations;
 	}
 	public void addVfModuleCustomization(VfModuleCustomization vfmc) {

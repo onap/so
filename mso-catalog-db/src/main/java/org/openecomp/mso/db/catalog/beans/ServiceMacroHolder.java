@@ -19,11 +19,9 @@
  */
 package org.openecomp.mso.db.catalog.beans;
 
-import org.openecomp.mso.db.catalog.beans.Service;
-import org.openecomp.mso.db.catalog.beans.VnfResource;
-import org.openecomp.mso.db.catalog.beans.VfModule;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 /*
  * A simple holder for Service and its associated elements:
@@ -35,10 +33,10 @@ public class ServiceMacroHolder implements Serializable {
 	private static final long serialVersionUID = 768026109321305392L;
 
 	private Service service;
-	private ArrayList<VnfResource> vnfResources;
-	private ArrayList<NetworkResourceCustomization> networkResourceCustomizations;
-	private ArrayList<AllottedResourceCustomization> allottedResourceCustomizations;
-	private ArrayList<VnfResourceCustomization> vnfResourceCustomizations;
+	private List<VnfResource> vnfResources;
+	private List<NetworkResourceCustomization> networkResourceCustomizations;
+	private List<AllottedResourceCustomization> allottedResourceCustomizations;
+	private List<VnfResourceCustomization> vnfResourceCustomizations;
 
 	public ServiceMacroHolder() {
 		super();
@@ -60,10 +58,10 @@ public class ServiceMacroHolder implements Serializable {
 		this.service = service;
 	}
 
-	public void setVnfResources(ArrayList<VnfResource> vnfResources) {
+	public void setVnfResources(List<VnfResource> vnfResources) {
 		this.vnfResources = vnfResources;
 	}
-	public ArrayList<VnfResource> getVnfResources() {
+	public List<VnfResource> getVnfResources() {
 		return this.vnfResources;
 	}
 	public void addVnfResource(VnfResource vr) {
@@ -77,10 +75,10 @@ public class ServiceMacroHolder implements Serializable {
 		}
 	}
 
-	public void setVnfResourceCustomizations(ArrayList<VnfResourceCustomization> vnfResourceCustomizations) {
+	public void setVnfResourceCustomizations(List<VnfResourceCustomization> vnfResourceCustomizations) {
 		this.vnfResourceCustomizations = vnfResourceCustomizations;
 	}
-	public ArrayList<VnfResourceCustomization> getVnfResourceCustomizations() {
+	public List<VnfResourceCustomization> getVnfResourceCustomizations() {
 		return this.vnfResourceCustomizations;
 	}
 	public void addVnfResourceCustomizations(VnfResourceCustomization vrc) {
@@ -94,13 +92,13 @@ public class ServiceMacroHolder implements Serializable {
 		}
 	}
 	
-	public void setNetworkResourceCustomization(ArrayList<NetworkResourceCustomization> networkResourceCustomizations) {
+	public void setNetworkResourceCustomizations(List<NetworkResourceCustomization> networkResourceCustomizations) {
 		this.networkResourceCustomizations = networkResourceCustomizations;
 	}
-	public ArrayList<NetworkResourceCustomization> getNetworkResourceCustomization() {
+	public List<NetworkResourceCustomization> getNetworkResourceCustomizations() {
 		return this.networkResourceCustomizations;
 	}
-	public void addNetworkResourceCustomization(NetworkResourceCustomization nrc) {
+	public void addNetworkResourceCustomizations(NetworkResourceCustomization nrc) {
 		if (this.networkResourceCustomizations != null) {
 			this.networkResourceCustomizations.add(nrc);
 		} else {
@@ -109,10 +107,10 @@ public class ServiceMacroHolder implements Serializable {
 		}
 	}
 
-	public void setAllottedResourceCustomization(ArrayList<AllottedResourceCustomization> allottedResourceCustomizations) {
+	public void setAllottedResourceCustomizations(List<AllottedResourceCustomization> allottedResourceCustomizations) {
 		this.allottedResourceCustomizations = allottedResourceCustomizations;
 	}
-	public ArrayList<AllottedResourceCustomization> getAllottedResourceCustomization() {
+	public List<AllottedResourceCustomization> getAllottedResourceCustomizations() {
 		return this.allottedResourceCustomizations;
 	}
 	public void addAllottedResourceCustomization(AllottedResourceCustomization arc) {

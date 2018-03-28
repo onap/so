@@ -110,13 +110,13 @@ public class ToStringTest {
 		smh.addVnfResourceCustomizations(vrc);
 		
 		ArrayList<NetworkResourceCustomization> networkResourceCustomizations = new ArrayList<>();
-		smh.setNetworkResourceCustomization(networkResourceCustomizations);
+		smh.setNetworkResourceCustomizations(networkResourceCustomizations);
 		
 		NetworkResourceCustomization nrc = new NetworkResourceCustomization();
-		smh.addNetworkResourceCustomization(nrc);
+		smh.addNetworkResourceCustomizations(nrc);
 		
 		ArrayList<AllottedResourceCustomization> allottedResourceCustomizations = new ArrayList<>();
-		smh.setAllottedResourceCustomization(allottedResourceCustomizations);
+		smh.setAllottedResourceCustomizations(allottedResourceCustomizations);
 		
 		AllottedResourceCustomization arc = new AllottedResourceCustomization();
 		smh.addAllottedResourceCustomization(arc);

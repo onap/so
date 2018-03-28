@@ -32,19 +32,19 @@ public class VnfResourceCustomization extends MavenLikeVersioning implements Ser
 	private static final long serialVersionUID = 768026109321305392L;
 	
 	private String modelCustomizationUuid = null;
-	private String modelInstanceName;
-	private Timestamp created;
+	private String modelInstanceName = null;
+	private Timestamp created = null;
 	private String vnfResourceModelUuid = null;
-	private String vnfResourceModelUUID;
+	private String vnfResourceModelUUID = null;
 	private Integer minInstances;
 	private Integer maxInstances;
 	private Integer availabilityZoneMaxCount;
 	private VnfResource vnfResource;
-	private String nfFunction;
-	private String nfType;
-	private String nfRole;
-	private String nfNamingCode;
-	private String multiStageDesign;
+	private String nfFunction = null;
+	private String nfType = null;
+	private String nfRole = null;
+	private String nfNamingCode = null;
+	private String multiStageDesign = null;
     private List<VfModuleCustomization> vfModuleCustomizations;
     private Set<ServiceToResourceCustomization> serviceResourceCustomizations;
 
@@ -154,7 +154,7 @@ public class VnfResourceCustomization extends MavenLikeVersioning implements Ser
 	public List<VfModuleCustomization> getVfModuleCustomizations() {
 		return this.vfModuleCustomizations;
 	}
-	public void setVfModuleCustomizations(ArrayList<VfModuleCustomization> vfModuleCustomizations) {
+	public void setVfModuleCustomizations(List<VfModuleCustomization> vfModuleCustomizations) {
 		this.vfModuleCustomizations = vfModuleCustomizations;
 	}
 	public void addVfModuleCustomization(VfModuleCustomization vfmc) {
