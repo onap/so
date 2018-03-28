@@ -1052,6 +1052,18 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                 LOGGER.debug("no environment parameter found for this Type " + vfModuleType);
             }
 
+            // Replace flavors in environment with those returned by OOF
+            Map<String, Object> returnMap = updateFlavorsFromOof(heatEnvironmentString, inputs);
+            heatEnvironmentString = returnMap.get("heatEnvironmentString").toString();
+            LOGGER.debug("After OOF Update Heat Env String is: " + heatEnvironmentString);
+            if (returnMap.get("inputs") instanceof Map) {
+                inputs = (Map<String, String>) returnMap.get("inputs");
+                LOGGER.debug("After OOF Update inputs are: " + inputs.toString());
+            } else {
+                LOGGER.debug("inputs is not an instance of a Map: " + returnMap.get("inputs"));
+                throw new VnfException("Updating inputs using OOF info failed.", MsoExceptionCategory.INTERNAL);
+            }
+
             // 1510 - Add the files: for nested templates *if* there are any
             LOGGER.debug("In MsoVnfAdapterImpl, createVfModule about to call db.getNestedTemplates avec templateId="
                     + heatTemplate.getArtifactUuid());
@@ -2163,4 +2175,17 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         return CatalogDatabase.getInstance();
     }
 
+    private Map<String, Object> updateFlavorsFromOof(String heatEnvironmentString, Map<String, String> inputs) {
+        Map<String, Object> returnMap = new HashMap<>();
+        for (Map.Entry<String, String> input : inputs.entrySet()){
+            if (heatEnvironmentString.contains("label_" + input.getKey())){
+            heatEnvironmentString = heatEnvironmentString.replace("label_" + input.getKey(),
+            input.getValue());
+            inputs.remove("label_" + input.getKey());
+            }
+        }
+        returnMap.put("heatEnvironmentString", heatEnvironmentString);
+        returnMap.put("inputs", inputs);
+        return returnMap;
+    }
 }
