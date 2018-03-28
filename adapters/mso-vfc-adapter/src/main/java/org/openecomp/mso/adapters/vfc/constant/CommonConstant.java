@@ -42,6 +42,8 @@ public class CommonConstant {
 
     public static final String NFVO_QUERY_URL = "/api/nslcm/v1/jobs/%s";
 
+    public static final String NFVO_SCALE_URL = "/api/nslcm/v1/ns/%s/scale";
+
     /**
      * 
      * <br>
@@ -89,6 +91,8 @@ public class CommonConstant {
 
         public static final String DELETE = "delete";
 
+        public static final String SCALE = "scale";
+
         private Step() {
 
         }
@@ -121,6 +125,8 @@ public class CommonConstant {
         public static final String DELETE_NS_FAILED = "delete ns failed";
 
         public static final String CREATE_NS_FAILED = "create ns failed";
+
+        public static final String SCALE_NS_FAILED = "scale ns failed";
 
         private StatusDesc() {
 

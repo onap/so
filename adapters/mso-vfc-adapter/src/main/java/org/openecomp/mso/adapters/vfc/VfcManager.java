@@ -37,6 +37,7 @@ import org.openecomp.mso.adapters.vfc.model.NsParameters;
 import org.openecomp.mso.adapters.vfc.model.NsProgressStatus;
 import org.openecomp.mso.adapters.vfc.model.ResponseDescriptor;
 import org.openecomp.mso.adapters.vfc.model.RestfulResponse;
+import org.openecomp.mso.adapters.vfc.model.*;
 import org.openecomp.mso.adapters.vfc.util.JsonUtil;
 import org.openecomp.mso.adapters.vfc.util.RestfulUtil;
 import org.openecomp.mso.adapters.vfc.util.ValidateUtil;
@@ -70,6 +71,7 @@ public class VfcManager {
     nfvoUrlMap.put(Step.TERMINATE, CommonConstant.NFVO_TERMINATE_URL);
     nfvoUrlMap.put(Step.DELETE, CommonConstant.NFVO_DELETE_URL);
     nfvoUrlMap.put(Step.QUERY, CommonConstant.NFVO_QUERY_URL);
+	nfvoUrlMap.put(Step.SCALE, CommonConstant.NFVO_SCALE_URL);
   }
 
   public VfcManager() {
@@ -400,6 +402,73 @@ public class VfcManager {
     return rsp;
   }
 
+    /**
+     * Scale NS instance
+     * <br>
+     * 
+     * @param nsInstanceId The NS instance id
+     * @param segInput input parameters for current node from http request
+     * @return
+     * @since ONAP Amsterdam Release
+     */
+    public RestfulResponse scaleNs(String nsInstanceId, NSResourceInputParameter segInput)
+    		throws ApplicationException {
+    	// Call the NFVO to scale service
+        LOGGER.info("scale ns -> begin");
+
+        // Step1: Prepare restful parameters and options
+        VFCScaleData oRequest = new VFCScaleData();
+        oRequest.setNsInstanceId(nsInstanceId);
+        NsScaleParameters nsScaleParameters = segInput.getNsScaleParameters();
+        oRequest.setScaleType(nsScaleParameters.getScaleType());
+        oRequest.setScaleNsData(nsScaleParameters.getScaleNsByStepsData());
+        String scaleReq = JsonUtil.marshal(oRequest);
+        
+        // Step2: prepare url and method type
+        String url = getUrl(nsInstanceId, CommonConstant.Step.SCALE);
+        String methodType = CommonConstant.MethodType.POST;
+        LOGGER.info("scale ns request is {}", scaleReq);
+        // Step3: Call NFVO lcm to scale ns
+        RestfulResponse scaleRsp = RestfulUtil.send(url, methodType, scaleReq);
+        ResourceOperationStatus nsOperInfo = (RequestsDatabase.getInstance()).getResourceOperationStatus(
+                segInput.getNsOperationKey().getServiceId(), segInput.getNsOperationKey().getOperationId(),
+                segInput.getNsOperationKey().getNodeTemplateUUID());
+        ValidateUtil.assertObjectNotNull(scaleRsp);
+        if(!HttpCode.isSucess(scaleRsp.getStatus())) {
+            LOGGER.error("update segment operation status : fail to scale ns");
+            nsOperInfo.setStatus(RequestsDbConstant.Status.ERROR);
+            nsOperInfo.setErrorCode(String.valueOf(scaleRsp.getStatus()));
+            nsOperInfo.setStatusDescription(CommonConstant.StatusDesc.SCALE_NS_FAILED);
+            (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
+            throw new ApplicationException(HttpCode.INTERNAL_SERVER_ERROR, DriverExceptionID.FAIL_TO_SCALE_NS);
+        }
+        LOGGER.info("scale ns response status is {}", scaleRsp.getStatus());
+        LOGGER.info("scale ns response content is {}", scaleRsp.getResponseContent());
+
+        ValidateUtil.assertObjectNotNull(scaleRsp.getResponseContent());
+        @SuppressWarnings("unchecked")
+        Map<String, String> rsp = JsonUtil.unMarshal(scaleRsp.getResponseContent(), Map.class);
+        String jobId = rsp.get(CommonConstant.JOB_ID);
+        if(ValidateUtil.isStrEmpty(jobId)) {
+            LOGGER.error("Invalid jobId from scale operation");
+            nsOperInfo.setStatus(RequestsDbConstant.Status.ERROR);
+            nsOperInfo.setErrorCode(String.valueOf(scaleRsp.getStatus()));
+            nsOperInfo.setStatusDescription(CommonConstant.StatusDesc.SCALE_NS_FAILED);
+            (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
+            throw new ApplicationException(HttpCode.INTERNAL_SERVER_ERROR,
+                    DriverExceptionID.INVALID_RESPONSE_FROM_SCALE_OPERATION);
+        }
+
+        LOGGER.info("update resource operation status job id -> begin");
+        // Step 4: update segment operation job id
+        nsOperInfo.setJobId(jobId);
+        (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
+        LOGGER.info("update segment operation job id -> end");
+        LOGGER.info("scale ns -> end");
+		
+        return scaleRsp;
+    }
+	
   /**
    * get url for the operation <br>
    * 
