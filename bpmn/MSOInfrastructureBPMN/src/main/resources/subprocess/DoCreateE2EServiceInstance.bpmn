@@ -180,10 +180,6 @@ dcsi.prepareDecomposeService(execution)]]></bpmn2:script>
       <bpmn2:linkEventDefinition name="StartService" />
     </bpmn2:intermediateCatchEvent>
     <bpmn2:sequenceFlow id="SequenceFlow_1i7t9hq" sourceRef="IntermediateCatchEvent_0jrb3xu" targetRef="CustomE2EGetService" />
-    <bpmn2:intermediateThrowEvent id="IntermediateThrowEvent_0f2w7aj" name="GoTo ResourceLoop">
-      <bpmn2:incoming>SequenceFlow_032s0yi</bpmn2:incoming>
-      <bpmn2:linkEventDefinition name="ResourceLoop" />
-    </bpmn2:intermediateThrowEvent>
     <bpmn2:intermediateCatchEvent id="IntermediateCatchEvent_05dus9b" name="StartPrepareResource">
       <bpmn2:outgoing>SequenceFlow_1hbesp9</bpmn2:outgoing>
       <bpmn2:linkEventDefinition name="StartPrepareResource" />
@@ -222,7 +218,7 @@ csi.preProcessForAddResource(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:scriptTask id="ScriptTask_1y7jr4t" name="PostProcess for Add Resource" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_0d0c20n</bpmn2:incoming>
-      <bpmn2:outgoing>SequenceFlow_032s0yi</bpmn2:outgoing>
+      <bpmn2:outgoing>SequenceFlow_0a6vgsu</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
 def csi = new  DoCreateE2EServiceInstance()
 csi.postProcessForAddResource(execution)]]></bpmn2:script>
@@ -230,7 +226,10 @@ csi.postProcessForAddResource(execution)]]></bpmn2:script>
     <bpmn2:sequenceFlow id="SequenceFlow_13xfsff" sourceRef="Task_0raqlqc" targetRef="ScriptTask_04b21gb" />
     <bpmn2:sequenceFlow id="SequenceFlow_0bf6bzp" sourceRef="ScriptTask_04b21gb" targetRef="CallActivity_1ojtwas" />
     <bpmn2:sequenceFlow id="SequenceFlow_0d0c20n" sourceRef="CallActivity_1ojtwas" targetRef="ScriptTask_1y7jr4t" />
-    <bpmn2:sequenceFlow id="SequenceFlow_032s0yi" sourceRef="ScriptTask_1y7jr4t" targetRef="IntermediateThrowEvent_0f2w7aj" />
+    <bpmn2:endEvent id="EndEvent_0hzmoug">
+      <bpmn2:incoming>SequenceFlow_0a6vgsu</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="SequenceFlow_0a6vgsu" sourceRef="ScriptTask_1y7jr4t" targetRef="EndEvent_0hzmoug" />
   </bpmn2:process>
   <bpmn2:error id="Error_2" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
   <bpmn2:error id="Error_1" name="java.lang.Exception" errorCode="java.lang.Exception" />
@@ -450,12 +449,6 @@ csi.postProcessForAddResource(execution)]]></bpmn2:script>
           <dc:Bounds x="125" y="76" width="0" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="IntermediateThrowEvent_0f2w7aj_di" bpmnElement="IntermediateThrowEvent_0f2w7aj">
-        <dc:Bounds x="1315" y="282" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1299" y="323" width="73" height="24" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="IntermediateCatchEvent_05dus9b_di" bpmnElement="IntermediateCatchEvent_05dus9b">
         <dc:Bounds x="18" y="282" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -513,11 +506,19 @@ csi.postProcessForAddResource(execution)]]></bpmn2:script>
           <dc:Bounds x="1024" y="294" width="0" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_032s0yi_di" bpmnElement="SequenceFlow_032s0yi">
+      <bpmndi:BPMNShape id="EndEvent_0hzmoug_di" bpmnElement="EndEvent_0hzmoug">
+        <dc:Bounds x="1315" y="282.4076655052265" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1333" y="322.4076655052265" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0a6vgsu_di" bpmnElement="SequenceFlow_0a6vgsu">
         <di:waypoint xsi:type="dc:Point" x="1168" y="300" />
+        <di:waypoint xsi:type="dc:Point" x="1242" y="300" />
+        <di:waypoint xsi:type="dc:Point" x="1242" y="300" />
         <di:waypoint xsi:type="dc:Point" x="1315" y="300" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1241.5" y="279" width="0" height="12" />
+          <dc:Bounds x="1257" y="294" width="0" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
