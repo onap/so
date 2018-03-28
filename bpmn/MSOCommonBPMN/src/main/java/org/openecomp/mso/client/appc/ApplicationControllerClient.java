@@ -60,11 +60,11 @@ public class ApplicationControllerClient {
 	@Autowired
 	public ApplicationControllerSupport appCSupport;
 
-	private static LifeCycleManagerStateful client;
+	private static LifeCycleManagerStateful client;	
 
-	public ApplicationControllerClient() {
+	public ApplicationControllerClient(String controllerType) {
 		appCSupport = new ApplicationControllerSupport();
-		client = this.getAppCClient();
+		client = this.getAppCClient(controllerType);		
 	}
 
 	public Status runCommand(Action action, org.onap.appc.client.lcm.model.ActionIdentifiers actionIdentifiers, org.onap.appc.client.lcm.model.Payload payload, String requestID)
@@ -81,27 +81,31 @@ public class ApplicationControllerClient {
 		}
 	}
 
-	public LifeCycleManagerStateful getAppCClient() {
+	public LifeCycleManagerStateful getAppCClient(String controllerType) {
 		if (client == null)
 			try {
 				client = AppcClientServiceFactoryProvider.getFactory(AppcLifeCycleManagerServiceFactory.class)
-						.createLifeCycleManagerStateful(new ApplicationContext(), getLCMProperties());
+						.createLifeCycleManagerStateful(new ApplicationContext(), getLCMProperties(controllerType));
 			} catch (AppcClientException e) {
 				auditLogger.log(Level.ERROR, "Error in getting LifeCycleManagerStateful: ", e, e.getMessage());
 			}
 		return client;
 	}
 
-	protected Properties getLCMProperties() {
+	protected Properties getLCMProperties(String controllerType) {
 		Properties properties = new Properties();
 		Map<String, String> globalProperties = PropertyConfiguration.getInstance()
 				.getProperties("mso.bpmn.urn.properties");
-
+		String controllerTypeValue = controllerType;
+		if (controllerType == null) {			
+			controllerTypeValue = "";
+		}
 		properties.put("topic.read", globalProperties.get("appc.topic.read"));
 		properties.put("topic.read.timeout", globalProperties.get("appc.topic.read.timeout"));
 		properties.put("client.response.timeout", globalProperties.get("appc.client.response.timeout"));
 		properties.put("topic.write", globalProperties.get("appc.topic.write"));
 		properties.put("poolMembers", globalProperties.get("appc.poolMembers"));
+		properties.put("client.controllerType", controllerTypeValue);
 		properties.put("client.key", globalProperties.get("appc.client.key"));
 		properties.put("client.secret", globalProperties.get("appc.client.secret"));
 		properties.put("client.name", CLIENT_NAME);

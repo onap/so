@@ -27,6 +27,8 @@ import java.util.UUID;
  * @param - vnfId
  * @param - action
  * @param - payload
+ * @param - vnfName
+ * @param - controllerType
  *
  * Outputs:
  * @param - errorcode
@@ -72,7 +74,8 @@ public class AppCClient extends AbstractServiceTaskProcessor{
 			String vnfHostIpAddress = execution.getVariable('vnfHostIpAddress')
 			String vmIdList = execution.getVariable("vmIdList")
 			String identityUrl = execution.getVariable("identityUrl")
-			HashMap<String, String> payloadInfo = new HashMap<String, String>();
+			String controllerType = execution.getVariable("controllerType")			
+			HashMap<String, String> payloadInfo = new HashMap<String, String>();		
 			payloadInfo.put("vnfName", vnfName)
 			payloadInfo.put("aicIdentity", aicIdentity)
 			payloadInfo.put("vnfHostIpAddress", vnfHostIpAddress)
@@ -96,7 +99,7 @@ public class AppCClient extends AbstractServiceTaskProcessor{
 			ApplicationControllerAction client = new ApplicationControllerAction()
 			utils.log("DEBUG", "Created Application Controller Action Object", isDebugLogEnabled)
 			//PayloadInfo contains extra information that adds on to payload before making request to appc
-			client.runAppCCommand(action, msoRequestId, vnfId, payload, payloadInfo)
+			client.runAppCCommand(action, msoRequestId, vnfId, payload, payloadInfo, controllerType)
 			utils.log("DEBUG", "ran through the main method for Application Contoller", isDebugLogEnabled)
 			appcCode = client.getErrorCode()
 			appcMessage = client.getErrorMessage()

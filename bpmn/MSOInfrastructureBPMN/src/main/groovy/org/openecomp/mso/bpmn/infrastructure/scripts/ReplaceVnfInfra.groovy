@@ -76,6 +76,7 @@ public class ReplaceVnfInfra extends VnfCmBase {
 		execution.setVariable('vnfInputs', null)		
 		execution.setVariable('tenantId', null)		
 		execution.setVariable('vnfParams', null)
+		execution.setVariable('controllerType', null)
 		execution.setVariable('cloudConfiguration', null)		
 		execution.setVariable('ReplaceVnfSuccessIndicator', false)
 		execution.setVariable('serviceType', null)
@@ -164,7 +165,12 @@ public class ReplaceVnfInfra extends VnfCmBase {
 			logDebug("vnfModelInvariantUuid: " + vnfModelInvariantUuid, isDebugLogEnabled)	
 			
 			def vnfType = execution.getVariable('vnfType')
-			execution.setVariable('vnfType', vnfType)	
+			execution.setVariable('vnfType', vnfType)
+			
+			def controllerType = reqMap.requestDetails?.requestParameters?.controllerType
+			execution.setVariable('controllerType', controllerType)
+			
+			utils.log("DEBUG", 'Controller Type: ' + controllerType, isDebugLogEnabled)	
 			
 			def userParams = reqMap.requestDetails?.requestParameters?.userParams					
 			
