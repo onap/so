@@ -20,6 +20,11 @@
 
 package org.openecomp.mso.adapters.sdnc;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
@@ -74,14 +79,14 @@ public class ObjectFactoryTest {
             fail ();
         }
         String marshalled = writer.toString ();
-        assert(marshalled.contains ("<RequestId>reqid</RequestId>"));
+        assertThat(marshalled, containsString("<RequestId>reqid</RequestId>"));
         
         InputStream inputStream = new ByteArrayInputStream(marshalled.getBytes(Charset.forName("UTF-8")));
         try {
             RequestHeader res2 = (RequestHeader) jaxbUnmarshaller.unmarshal (inputStream);
-            assert(res2.getCallbackUrl ().equals ("callback"));
-            assert(res2.getMsoAction ().equals ("action"));
-            assert(res2.getSvcOperation ().equals ("op"));
+            assertEquals("callback", res2.getCallbackUrl ());
+            assertEquals("action", res2.getMsoAction ());
+            assertEquals("op", res2.getSvcOperation ());
         } catch (JAXBException e) {
             e.printStackTrace();
             fail();
@@ -95,6 +100,14 @@ public class ObjectFactoryTest {
     public final void testCreateSDNCAdapterResponse () {
         ObjectFactory of = new ObjectFactory ();
         SDNCAdapterResponse ar = of.createSDNCAdapterResponse ();
-        assert (ar != null);
+        assertNotNull(ar);
     }
+    
+    @Test
+    public final void testCreateSDNCAdapterRequest () {
+        ObjectFactory of = new ObjectFactory ();
+        SDNCAdapterRequest ar = of.createSDNCAdapterRequest ();
+        assertNotNull(ar);
+    }
+    
 }

@@ -20,8 +20,10 @@
 
 package org.openecomp.mso.adapters.sdnc.client;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import org.junit.Test;
-import org.openecomp.mso.adapters.sdnc.client.CallbackHeader;
 
 public class CallbackHeaderTest {
 
@@ -32,16 +34,16 @@ public class CallbackHeaderTest {
         cb.setRequestId("413658f4-7f42-482e-b834-23a5c15657da-1474471336781");
         cb.setResponseCode("200");
         cb.setResponseMessage("OK");
-        assert (cb.getRequestId() != null);
-        assert (cb.getResponseCode() != null);
-        assert (cb.getResponseMessage() != null);
-        assert (cb.getRequestId().equals("413658f4-7f42-482e-b834-23a5c15657da-1474471336781"));
-        assert (cb.getResponseCode().equals("200"));
-        assert (cb.getResponseMessage().equals("OK"));
+        assertNotNull(cb.getRequestId());
+        assertNotNull(cb.getResponseCode());
+        assertNotNull(cb.getResponseMessage());
+        assertEquals("413658f4-7f42-482e-b834-23a5c15657da-1474471336781", cb.getRequestId());
+        assertEquals("200", cb.getResponseCode());
+        assertEquals("OK", cb.getResponseMessage());
     }
 
     @Test
     public void testtoString() {
-        assert (cb.toString() != null);
+        assertNotNull(cb.toString());
     }
 }
