@@ -931,8 +931,8 @@ public class JsonUtils {
 		for (int i = 0; i < arr.length(); i++){
 			JSONObject jo = arr.getJSONObject(i);
 			String key = jo.getString(keyNode);
-			String value =jo.getString(valueNode);
-			map.put(key, value);
+			JSONObject value = jo.getJSONObject(valueNode);
+			map.put(key, value.toString());
 		}
 		msoLogger.debug("Outgoing Map is: " + map);
 		msoLogger.debug("Completed Entry Array To Map Util Method");

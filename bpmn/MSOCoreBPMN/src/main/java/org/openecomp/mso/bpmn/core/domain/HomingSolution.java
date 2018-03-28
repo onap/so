@@ -21,7 +21,9 @@
 package org.openecomp.mso.bpmn.core.domain;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonRootName;
@@ -45,6 +47,7 @@ public class HomingSolution extends JsonWrapper implements Serializable  {
 	private String aicVersion;
 	private String tenant;
 	private VnfResource vnf;
+	private HashMap<String, String> flavors;
 	private License license = new License();
 
 
@@ -124,6 +127,17 @@ public class HomingSolution extends JsonWrapper implements Serializable  {
 
 	public void setVnf(VnfResource vnf) {
 		this.vnf = vnf;
+	}
+
+	/**
+	 * @return a map<string, string> key is label name, value is any flavor
+	 */
+	public Map<String, String> getFlavors() {
+		return flavors;
+	}
+
+	public void setFlavors(Map<String, String> flavors) {
+		this.flavors = (HashMap<String, String>) flavors;
 	}
 
 	public License getLicense() {

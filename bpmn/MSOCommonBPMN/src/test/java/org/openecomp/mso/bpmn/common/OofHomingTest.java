@@ -123,6 +123,10 @@ public class OofHomingTest extends WorkflowTest {
         VnfResource vnf = new VnfResource();
         vnf.setResourceId("testResourceIdVNF");
         vnf.setResourceInstanceName("testVnfInstanceName");
+        HashMap<String, String> flavors = new HashMap<String, String>();
+        flavors.put("flavorLabel1xxx", "vimFlavorxxx");
+        flavors.put("flavorLabel2xxx", "vimFlavorxxx");
+        vnf.getHomingSolution().setFlavors(flavors);
         ModelInfo vnfModel = new ModelInfo();
         vnfModel.setModelCustomizationUuid("testModelCustomizationUuidVNF");
         vnfModel.setModelInvariantUuid("testModelInvariantIdVNF");

@@ -212,21 +212,29 @@ class OofHoming extends AbstractServiceTaskProcessor {
                             inventoryType = "service"
                         } else {
                             inventoryType = "cloud"
-
                         }
                         resource.getHomingSolution().setInventoryType(InventoryType.valueOf(inventoryType))
 
                         // TODO Deal with Placement Solutions & Assignment Info here
                         JSONArray assignmentArr = placement.getJSONArray("assignmentInfo")
                         Map<String, String> assignmentMap = jsonUtil.entryArrayToMap(execution, assignmentArr.toString(), "key", "value")
-                        resource.getHomingSolution().setCloudOwner(assignmentMap.get("cloudOwner"))
-                        resource.getHomingSolution().setCloudRegionId(assignmentMap.get("cloudRegionId"))
+                        def String cloudOwner = assignmentMap.get("cloudOwner")
+                        def String cloudRegionId = assignmentMap.get("cloudRegionId")
+                        resource.getHomingSolution().setCloudOwner(cloudOwner)
+                        resource.getHomingSolution().setCloudRegionId(cloudRegionId)
+
                         if (inventoryType.equalsIgnoreCase("service")) {
                             resource.getHomingSolution().setRehome(assignmentMap.get("isRehome").toBoolean())
                             VnfResource vnf = new VnfResource()
                             vnf.setVnfHostname(assignmentMap.get("vnfHostName"))
                             resource.getHomingSolution().setVnf(vnf)
                             resource.getHomingSolution().setServiceInstanceId(solution.getJSONArray("identifiers")[0].toString())
+                        }
+                        if (assignmentMap.get("flavors").toString() != "" &&
+                                assignmentMap.get("flavors").toString() != null) {
+                                resource.getHomingSolution().setFlavors(assignmentMap.get("flavors"))
+                                execution.setVariable(cloudRegionId + "_flavorMap",
+                                        assignmentMap.get("flavors"))
                         }
                     }
                 }
