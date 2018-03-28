@@ -20,48 +20,105 @@
 
 package org.openecomp.mso.requestsdb;
 
-import org.junit.Test;
-import org.mockito.Mockito;
-
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.openecomp.mso.db.AbstractSessionFactoryManager;
 
 public class WatchdogDistributionStatusDbTest {
 	
-	private static final String distributionId = "ff3514e3-5a33-55df-13ab-12abad84e7ff";
-	
-	@Test
-	public void testUpdateWatchdogDistributionIdStatus() {
-		WatchdogDistributionStatusDb wdds = Mockito.mock(WatchdogDistributionStatusDb.class);
-		
-		doNothing().when(wdds).updateWatchdogDistributionIdStatus("ff3514e3-5a33-55df-13ab-12abad84e7ff", "SENT");
-		wdds.updateWatchdogDistributionIdStatus(any(String.class), any(String.class));
-		verify(wdds, times(1)).updateWatchdogDistributionIdStatus(any(String.class), any(String.class));
-	}	
-	
-	@Test
-	public void testInsertWatchdogDistributionId() {
-	
-		WatchdogDistributionStatusDb wdds = mock(WatchdogDistributionStatusDb.class);
-		
-		wdds.insertWatchdogDistributionId(distributionId);		
-		doNothing().when(wdds).insertWatchdogDistributionId(any(String.class));       
-		verify(wdds, times(1)).insertWatchdogDistributionId(any(String.class));
-	
-	}
+    @Mock
+    private AbstractSessionFactoryManager sessionFactoryRequest;
+    @Mock
+    private SessionFactory sessionFactory;
+    @Mock
+    private Session session;
+    
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+    
+    @Before
+    public void setUp() {
+    	MockitoAnnotations.initMocks(this);
+    	when(sessionFactory.openSession()).thenReturn(session);
+    	when(sessionFactoryRequest.getSessionFactory()).thenReturn(sessionFactory);
+    	
+    }
 
 	@Test
+	public void insertFailure() {
+		WatchdogDistributionStatusDb wds = new WatchdogDistributionStatusDb(this.sessionFactoryRequest);
+		Query mockQuery = mock(Query.class);
+		when(session.createQuery(any(String.class))).thenReturn(mockQuery);
+		when(mockQuery.uniqueResult()).thenReturn(null);
+		when(session.isOpen()).thenReturn(true);
+		when(session.getTransaction()).thenThrow(Exception.class);
+		thrown.expect(Exception.class);
+		
+		wds.insertWatchdogDistributionId("myId");
+	}
+	
+	@Test
+	public void updateFailure() {
+		WatchdogDistributionStatusDb wds = new WatchdogDistributionStatusDb(this.sessionFactoryRequest);
+		Query mockQuery = mock(Query.class);
+		when(session.createQuery(any(String.class))).thenReturn(mockQuery);
+		when(session.isOpen()).thenReturn(true);
+		when(session.getTransaction()).thenThrow(Exception.class);
+		thrown.expect(Exception.class);
+		
+		wds.updateWatchdogDistributionIdStatus("myId", "myStatus");
+	}
+	
+	@Test
+	public void testGetWatchdogDistributionId() {
+		WatchdogDistributionStatusDb wds = new WatchdogDistributionStatusDb(this.sessionFactoryRequest);
+		Query mockQuery = mock(Query.class);
+		when(session.createQuery(any(String.class))).thenReturn(mockQuery);
+		when(mockQuery.uniqueResult()).thenReturn("myValue");
+		when(session.isOpen()).thenReturn(true);
+		assertEquals("myValue", wds.getWatchdogDistributionId("test"));
+	}
+	
+	@Test
+	public void testGetWatchdogDistributionIdNotFound() {
+		WatchdogDistributionStatusDb wds = new WatchdogDistributionStatusDb(this.sessionFactoryRequest);
+		Query mockQuery = mock(Query.class);
+		when(session.createQuery(any(String.class))).thenReturn(mockQuery);
+		when(mockQuery.uniqueResult()).thenReturn(null);
+		when(session.isOpen()).thenReturn(true);
+		assertEquals(null, wds.getWatchdogDistributionId("test"));
+	}
+	
+	@Test
 	public void testGetWatchdogDistributionIdStatus() {
-			
-		WatchdogDistributionStatusDb wdds = Mockito.mock(WatchdogDistributionStatusDb.class);
-		Mockito.when(wdds.getWatchdogDistributionIdStatus("ff305d54-75b4-431b-adb2-eb6b9e5ff001")).thenReturn("ff3514e3-5a33-55df-13ab-12abad84e7ff");
-		String actual = wdds.getWatchdogDistributionIdStatus("ff305d54-75b4-431b-adb2-eb6b9e5ff001");
-		assertEquals(actual, distributionId);
-		verify(wdds, times(1)).getWatchdogDistributionIdStatus(any(String.class));
+		WatchdogDistributionStatusDb wds = new WatchdogDistributionStatusDb(this.sessionFactoryRequest);
+		Query mockQuery = mock(Query.class);
+		when(session.createQuery(any(String.class))).thenReturn(mockQuery);
+		when(mockQuery.uniqueResult()).thenReturn("myValue");
+		when(session.isOpen()).thenReturn(true);
+		assertEquals("myValue", wds.getWatchdogDistributionIdStatus("test"));
+	}
+	
+	@Test
+	public void testGetWatchdogDistributionIdStatusNotFound() {
+		WatchdogDistributionStatusDb wds = new WatchdogDistributionStatusDb(this.sessionFactoryRequest);
+		Query mockQuery = mock(Query.class);
+		when(session.createQuery(any(String.class))).thenReturn(mockQuery);
+		when(mockQuery.uniqueResult()).thenReturn(null);
+		when(session.isOpen()).thenReturn(true);
+		assertEquals(null, wds.getWatchdogDistributionIdStatus("test"));
 	}
 	
 }

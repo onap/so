@@ -30,14 +30,14 @@ public class OperationalEnvDistributionStatus implements Serializable {
 	 */
 	private static final long serialVersionUID = 7398393659281364650L;
 
-	private String distributionId;
-	private String operationalEnvId;
-	private String serviceModelVersionId;
-	private String requestId;
-	private String distributionIdStatus;
-	private String distributionIdErrorReason;
-	private Timestamp createTime;
-	private Timestamp modifyTime;
+	private String distributionId = null;
+	private String operationalEnvId = null;
+	private String serviceModelVersionId = null;
+	private String requestId = null;
+	private String distributionIdStatus = null;
+	private String distributionIdErrorReason = null;
+	private Timestamp createTime = null;
+	private Timestamp modifyTime = null;
 	
 	public String getDistributionId() {
 		return distributionId;

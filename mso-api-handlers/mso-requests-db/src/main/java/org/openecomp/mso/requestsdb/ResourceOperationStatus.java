@@ -37,25 +37,25 @@ public class ResourceOperationStatus implements Serializable{
      */
     private static final long serialVersionUID = 1L;
 
-    private String serviceId;
+    private String serviceId = null;
     
-    private String operationId;
+    private String operationId = null;
     
-    private String resourceTemplateUUID;
+    private String resourceTemplateUUID = null;
     
-    private String operType;
+    private String operType = null;
     
-    private String resourceInstanceID;
+    private String resourceInstanceID = null;
     
-    private String jobId;
+    private String jobId = null;
     
-    private String status;
+    private String status = null;
     
     private String progress = "0";
     
-    private String errorCode;
+    private String errorCode = null;
     
-    private String statusDescription;
+    private String statusDescription = null;
 
     public ResourceOperationStatus(){
         

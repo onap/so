@@ -31,8 +31,8 @@ public class SiteStatus {
     private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.GENERAL);
 
     private boolean status;
-    private String siteName;
-    private Timestamp created;
+    private String siteName = null;
+    private Timestamp created = null;
 
     public SiteStatus() {
     }

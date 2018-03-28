@@ -31,10 +31,10 @@ public class WatchdogDistributionStatus implements Serializable {
 	private static final long serialVersionUID = -4449711060885719079L;
 
 
-	private String distributionId;
-	private String distributionIdStatus;
-	private Timestamp createTime;
-	private Timestamp modifyTime;
+	private String distributionId = null;
+	private String distributionIdStatus = null;
+	private Timestamp createTime = null;
+	private Timestamp modifyTime = null;
 	
 	
 	public String getDistributionId() {

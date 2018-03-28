@@ -27,62 +27,86 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
+
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.openecomp.mso.db.AbstractSessionFactoryManager;
 
 
 public class OperationalEnvDistributionStatusDbTest {
+	@Mock
+	private AbstractSessionFactoryManager sessionFactoryRequest;
+	@Mock
+	private SessionFactory sessionFactory;
+	@Mock
+	private Session session;
 
-	
-	private static final String distributionId = "ff3514e3-5a33-55df-13ab-12abad84e7ff";
-	private static final String operationalEnvId = "12abad84e7ff";
-	private static final String serviceModelVersionId = "ff305d54-75b4-431b-adb2-eb6b9e5ff001";
-	private static final String requestId = "431b-adb2-eb6b9e5ff001";
-	private static final String status = "SENT";
-	private OperationalEnvDistributionStatus operEnvDistStatus;
-	
-	
-	@Test
-	public void testGetOperationalEnvDistributionStatus() {
-			
-		OperationalEnvDistributionStatusDb oeds = Mockito.mock(OperationalEnvDistributionStatusDb.class);
-		Mockito.when(oeds.getOperationalEnvDistributionStatus("ff3514e3-5a33-55df-13ab-12abad84e7ff")).thenReturn(operEnvDistStatus);
-		OperationalEnvDistributionStatus actual = oeds.getOperationalEnvDistributionStatus(distributionId);
-		assertEquals(actual, operEnvDistStatus);
-		verify(oeds, times(1)).getOperationalEnvDistributionStatus(any(String.class));
+	@Rule
+	public ExpectedException thrown = ExpectedException.none();
+
+	@Before
+	public void setUp() {
+		MockitoAnnotations.initMocks(this);
+		when(sessionFactory.openSession()).thenReturn(session);
+		when(sessionFactoryRequest.getSessionFactory()).thenReturn(sessionFactory);
+
 	}
 
 	@Test
-	public void testGetOperationalEnvDistributionStatusPerReqId() {
-			
-		OperationalEnvDistributionStatusDb oeds = Mockito.mock(OperationalEnvDistributionStatusDb.class);
-		Mockito.when(oeds.getOperationalEnvDistributionStatusPerReqId("ff3514e3-5a33-55df-13ab-12abad84e7ff", "431b-adb2-eb6b9e5ff001")).thenReturn(operEnvDistStatus);
-		OperationalEnvDistributionStatus actual = oeds.getOperationalEnvDistributionStatusPerReqId(distributionId, requestId);
-		assertEquals(actual, operEnvDistStatus);
-		verify(oeds, times(1)).getOperationalEnvDistributionStatusPerReqId(any(String.class), any(String.class));
+	public void insertFailure() {
+		OperationalEnvDistributionStatusDb omsDB = new OperationalEnvDistributionStatusDb(this.sessionFactoryRequest);
+		Query mockQuery = mock(Query.class);
+		when(session.createQuery(any(String.class))).thenReturn(mockQuery);
+		when(mockQuery.uniqueResult()).thenReturn(null);
+		when(session.isOpen()).thenReturn(true);
+		when(session.getTransaction()).thenThrow(Exception.class);
+		thrown.expect(Exception.class);
+
+		omsDB.insertOperationalEnvDistributionStatus("myDistId", "myEnvId", "myModelVerId", "myDistIdStatus", "myReqId");
 	}
-	
+
 	@Test
-	public void testUpdateOperationalEnvDistributionStatus() {
-	
-		int val = 1;
-		OperationalEnvDistributionStatusDb oeds = Mockito.mock(OperationalEnvDistributionStatusDb.class);
-		Mockito.when(oeds.updateOperationalEnvDistributionStatus("OK", "ff3514e3-5a33", "ff3514e3-5a33", "ff3514e3-5a33-55df-13ab-12abad84e7ff")).thenReturn(val);
-		int actual = oeds.updateOperationalEnvDistributionStatus("OK", "ff3514e3-5a33", "ff3514e3-5a33", "ff3514e3-5a33-55df-13ab-12abad84e7ff");
-		assertEquals(actual, val);
-		verify(oeds, times(1)).updateOperationalEnvDistributionStatus(any(String.class), any(String.class), any(String.class), any(String.class));
-	}
-	
-	@Test
-	public void testInsertOperationalEnvDistributionStatus() {
-	
-		OperationalEnvDistributionStatusDb oeds = mock(OperationalEnvDistributionStatusDb.class);
+	public void updateFailureRetryCount() {
+		OperationalEnvDistributionStatusDb omsDB = new OperationalEnvDistributionStatusDb(this.sessionFactoryRequest);
+		Query mockQuery = mock(Query.class);
+		when(session.createQuery(any(String.class))).thenReturn(mockQuery);
+		when(session.isOpen()).thenReturn(true);
+		when(session.getTransaction()).thenThrow(Exception.class);
+		thrown.expect(Exception.class);
 		
-		oeds.insertOperationalEnvDistributionStatus(distributionId, operationalEnvId, serviceModelVersionId, status, requestId);	
-		doNothing().when(oeds).insertOperationalEnvDistributionStatus(any(String.class), any(String.class), any(String.class), any(String.class), any(String.class));  
-		verify(oeds, times(1)).insertOperationalEnvDistributionStatus(any(String.class), any(String.class), any(String.class), any(String.class), any(String.class));
-	
+		omsDB.updateOperationalEnvDistributionStatus("asdcStatus", "myDistId", "myEnvId", "myVerId");
+	}
+
+	@Test
+	public void getOperationalEnvIdStatusTest() {
+		OperationalEnvDistributionStatusDb omsDB = new OperationalEnvDistributionStatusDb(this.sessionFactoryRequest);
+		Query mockQuery = mock(Query.class);
+		OperationalEnvDistributionStatus status = new OperationalEnvDistributionStatus();
+		when(session.createQuery(any(String.class))).thenReturn(mockQuery);
+		when(mockQuery.uniqueResult()).thenReturn(status);
+		when(session.isOpen()).thenReturn(true);
+		assertEquals(status, omsDB.getOperationalEnvDistributionStatusPerReqId("myDistId", "myReqId"));
 	}
 	
+	@Test
+	public void getOperationalEnvServiceModelStatusTest() {
+		OperationalEnvDistributionStatusDb omsDB = new OperationalEnvDistributionStatusDb(this.sessionFactoryRequest);
+		OperationalEnvDistributionStatus status = new OperationalEnvDistributionStatus();
+		Query mockQuery = mock(Query.class);
+		when(session.createQuery(any(String.class))).thenReturn(mockQuery);
+		when(mockQuery.uniqueResult()).thenReturn(status);
+		when(session.isOpen()).thenReturn(true);
+		assertEquals(status, omsDB.getOperationalEnvDistributionStatus("myDistId"));
+	}
 }

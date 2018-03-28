@@ -23,41 +23,64 @@
  */
 package org.openecomp.mso.requestsdb;
 
-import org.junit.Test;
-import org.mockito.Mockito;
-
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.openecomp.mso.db.AbstractSessionFactoryManager;
 
 
 public class WatchdogServiceModVerIdLookupDbTest {
+	@Mock
+	private AbstractSessionFactoryManager sessionFactoryRequest;
+	@Mock
+	private SessionFactory sessionFactory;
+	@Mock
+	private Session session;
 
-	private static final String distributionId = "ff3514e3-5a33-55df-13ab-12abad84e7ff";
-	private static final String serviceModelVersionId = "SENT";
+	@Rule
+	public ExpectedException thrown = ExpectedException.none();
+
+	@Before
+	public void setUp() {
+		MockitoAnnotations.initMocks(this);
+		when(sessionFactory.openSession()).thenReturn(session);
+		when(sessionFactoryRequest.getSessionFactory()).thenReturn(sessionFactory);
+
+	}
 	
 	@Test
-	public void testInsertWatchdogServiceModVerIdLookup() {
+	public void getWatchdogServiceModVerIdTest() {
+		WatchdogServiceModVerIdLookupDb wds = new WatchdogServiceModVerIdLookupDb(this.sessionFactoryRequest);
+		Query mockQuery = mock(Query.class);
+		when(session.createQuery(any(String.class))).thenReturn(mockQuery);
+		when(mockQuery.uniqueResult()).thenReturn(null);
+		when(session.isOpen()).thenReturn(true);
+		assertEquals(null, wds.getWatchdogServiceModVerId("test"));
+	}
 	
-		WatchdogServiceModVerIdLookupDb wdsm = mock(WatchdogServiceModVerIdLookupDb.class);
+	@Test
+	public void insertWatchdogServiceModVerIdLookupTest() {
+		WatchdogServiceModVerIdLookupDb wds = new WatchdogServiceModVerIdLookupDb(this.sessionFactoryRequest);
+		Query mockQuery = mock(Query.class);
+		when(session.createQuery(any(String.class))).thenReturn(mockQuery);
+		when(mockQuery.uniqueResult()).thenReturn(null);
+		when(session.isOpen()).thenReturn(true);
+		when(session.getTransaction()).thenThrow(Exception.class);
+		thrown.expect(Exception.class);
 		
-		wdsm.insertWatchdogServiceModVerIdLookup(distributionId, serviceModelVersionId);		
-		doNothing().when(wdsm).insertWatchdogServiceModVerIdLookup(any(String.class), any(String.class));       
-		verify(wdsm, times(1)).insertWatchdogServiceModVerIdLookup(any(String.class), any(String.class));
-	
+		wds.insertWatchdogServiceModVerIdLookup("myId", "myModelVersion");
 	}
-	
-	@Test
-	public void testGetWatchdogServiceModVerId() {
-			
-		WatchdogServiceModVerIdLookupDb wdsm = Mockito.mock(WatchdogServiceModVerIdLookupDb.class);
-		Mockito.when(wdsm.getWatchdogServiceModVerId("ff305d54-75b4-431b-adb2-eb6b9e5ff001")).thenReturn("ff3514e3-5a33-55df-13ab-12abad84e7ff");
-		String actual = wdsm.getWatchdogServiceModVerId("ff305d54-75b4-431b-adb2-eb6b9e5ff001");
-		assertEquals(actual, "ff3514e3-5a33-55df-13ab-12abad84e7ff");
-		verify(wdsm, times(1)).getWatchdogServiceModVerId(any(String.class));
-	}
+
 	
 }

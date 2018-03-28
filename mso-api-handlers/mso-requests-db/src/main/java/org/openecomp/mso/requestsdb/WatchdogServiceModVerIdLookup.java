@@ -30,9 +30,9 @@ public class WatchdogServiceModVerIdLookup implements Serializable {
 	 */
 	private static final long serialVersionUID = 7783869906430250355L;
 	
-	private String distributionId;
-	private String serviceModelVersionId;
-	private Timestamp createTime;
+	private String distributionId = null;
+	private String serviceModelVersionId = null;
+	private Timestamp createTime = null;
 	
 	
 	public String getDistributionId() {

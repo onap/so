@@ -20,48 +20,108 @@
 
 package org.openecomp.mso.requestsdb;
 
-import org.junit.Test;
-import org.mockito.Mockito;
-
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
+
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.openecomp.mso.db.AbstractSessionFactoryManager;
 
 
 public class WatchdogComponentDistributionStatusDbTest {
 
-	private static final String distributionId = "ff3514e3-5a33-55df-13ab-12abad84e7ff";
-	private static final String componentName = "MSO";
-	private static final String componentDistributionStatus = "SENT";
-	
-	
+	@Mock
+	private AbstractSessionFactoryManager sessionFactoryRequest;
+	@Mock
+	private SessionFactory sessionFactory;
+	@Mock
+	private Session session;
+
+	@Rule
+	public ExpectedException thrown = ExpectedException.none();
+
+	@Before
+	public void setUp() {
+		MockitoAnnotations.initMocks(this);
+		when(sessionFactory.openSession()).thenReturn(session);
+		when(sessionFactoryRequest.getSessionFactory()).thenReturn(sessionFactory);
+
+	}
+
 	@Test
-	public void testGetWatchdogComponentDistributionStatus() {
-		List<WatchdogComponentDistributionStatus> watchDogCompDistStatus = new ArrayList<>();
-		WatchdogComponentDistributionStatusDb wdcds = Mockito.mock(WatchdogComponentDistributionStatusDb.class);
-		Mockito.when(wdcds.getWatchdogComponentDistributionStatus("ff3514e3-5a33-55df-13ab-12abad84e7ff")).thenReturn(watchDogCompDistStatus);
-		List<WatchdogComponentDistributionStatus> actual = wdcds.getWatchdogComponentDistributionStatus(distributionId);
-		
-		assertEquals(actual, watchDogCompDistStatus);
-		verify(wdcds, times(1)).getWatchdogComponentDistributionStatus(any(String.class));
+	public void insertFailure() {
+		WatchdogComponentDistributionStatusDb wds = new WatchdogComponentDistributionStatusDb(this.sessionFactoryRequest);
+		Query mockQuery = mock(Query.class);
+		when(session.createQuery(any(String.class))).thenReturn(mockQuery);
+		when(mockQuery.uniqueResult()).thenReturn(null);
+		when(session.isOpen()).thenReturn(true);
+		when(session.getTransaction()).thenThrow(Exception.class);
+		thrown.expect(Exception.class);
+
+		wds.insertWatchdogComponentDistributionStatus("myId", "myComponentName", "myStatus");
+	}
+
+
+	@Test
+	public void getWatchdogComponentNamesTest() {
+		WatchdogComponentDistributionStatusDb wds = new WatchdogComponentDistributionStatusDb(this.sessionFactoryRequest);
+		Query mockQuery = mock(Query.class);
+		when(session.createQuery(any(String.class))).thenReturn(mockQuery);
+		when(mockQuery.list()).thenReturn(Arrays.asList("myValue"));
+		when(session.isOpen()).thenReturn(true);
+		assertEquals("myValue", wds.getWatchdogComponentNames("myId").get(0));
+	}
+
+	@Test
+	public void getWatchdogComponentDistributionStatusTest() {
+		WatchdogComponentDistributionStatusDb wds = new WatchdogComponentDistributionStatusDb(this.sessionFactoryRequest);
+		Query mockQuery = mock(Query.class);
+		when(session.createQuery(any(String.class))).thenReturn(mockQuery);
+		when(mockQuery.list()).thenReturn(Arrays.asList("myValue"));
+		when(session.isOpen()).thenReturn(true);
+		assertEquals("myValue", wds.getWatchdogComponentDistributionStatus("myStatus").get(0));
+		assertEquals("myValue", wds.getWatchdogComponentDistributionStatus("myId", "myName").get(0));
 	}
 	
-	
 	@Test
-	public void testInsertWatchdogComponentDistributionStatus() {
-	
-		WatchdogComponentDistributionStatusDb wdcds = mock(WatchdogComponentDistributionStatusDb.class);
-		
-		wdcds.insertWatchdogComponentDistributionStatus(distributionId, componentName, componentDistributionStatus);		
-		doNothing().when(wdcds).insertWatchdogComponentDistributionStatus(any(String.class), any(String.class), any(String.class));       
-		verify(wdcds, times(1)).insertWatchdogComponentDistributionStatus(any(String.class), any(String.class), any(String.class));
-	
+	public void testGetWatchdogDistributionIdNotFound() {
+		WatchdogDistributionStatusDb wds = new WatchdogDistributionStatusDb(this.sessionFactoryRequest);
+		Query mockQuery = mock(Query.class);
+		when(session.createQuery(any(String.class))).thenReturn(mockQuery);
+		when(mockQuery.uniqueResult()).thenReturn(null);
+		when(session.isOpen()).thenReturn(true);
+		assertEquals(null, wds.getWatchdogDistributionId("test"));
 	}
-	
+
+	@Test
+	public void testGetWatchdogDistributionIdStatus() {
+		WatchdogDistributionStatusDb wds = new WatchdogDistributionStatusDb(this.sessionFactoryRequest);
+		Query mockQuery = mock(Query.class);
+		when(session.createQuery(any(String.class))).thenReturn(mockQuery);
+		when(mockQuery.uniqueResult()).thenReturn("myValue");
+		when(session.isOpen()).thenReturn(true);
+		assertEquals("myValue", wds.getWatchdogDistributionIdStatus("test"));
+	}
+
+	@Test
+	public void testGetWatchdogDistributionIdStatusNotFound() {
+		WatchdogDistributionStatusDb wds = new WatchdogDistributionStatusDb(this.sessionFactoryRequest);
+		Query mockQuery = mock(Query.class);
+		when(session.createQuery(any(String.class))).thenReturn(mockQuery);
+		when(mockQuery.uniqueResult()).thenReturn(null);
+		when(session.isOpen()).thenReturn(true);
+		assertEquals(null, wds.getWatchdogDistributionIdStatus("test"));
+	}
+
 }

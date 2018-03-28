@@ -37,15 +37,15 @@ public class OperationalEnvServiceModelStatus implements Serializable {
 	 */
 	private static final long serialVersionUID = 8197084996598869656L;
 	
-	private String requestId;
-	private String operationalEnvId;
-	private String serviceModelVersionId;
-	private String serviceModelVersionDistrStatus;
-	private String recoveryAction;
+	private String requestId = null;
+	private String operationalEnvId = null;
+	private String serviceModelVersionId = null;
+	private String serviceModelVersionDistrStatus = null;
+	private String recoveryAction = null;
 	private int retryCount;
-	private String workloadContext;
-	private Timestamp createTime;
-	private Timestamp modifyTime;
+	private String workloadContext = null;
+	private Timestamp createTime = null;
+	private Timestamp modifyTime = null;
 	
 	public String getRequestId() {
 		return requestId;

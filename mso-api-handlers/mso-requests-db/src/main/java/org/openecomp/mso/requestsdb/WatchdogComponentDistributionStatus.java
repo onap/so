@@ -31,11 +31,11 @@ public class WatchdogComponentDistributionStatus implements Serializable {
 	 */
 	private static final long serialVersionUID = -4344508954204488669L;
 	
-	private String distributionId;
-	private String componentName;
-	private String componentDistributionStatus;
-	private Timestamp createTime;
-	private Timestamp modifyTime;
+	private String distributionId = null;
+	private String componentName = null;
+	private String componentDistributionStatus = null;
+	private Timestamp createTime = null;
+	private Timestamp modifyTime = null;
 	
 	
 	public String getDistributionId() {

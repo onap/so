@@ -38,27 +38,27 @@ public class OperationStatus implements Serializable{
      */
     private static final long serialVersionUID = 1L;
 
-    private String serviceId;
+    private String serviceId = null;
     
-    private String operationId;
+    private String operationId = null;
     
-    private String serviceName;
+    private String serviceName = null;
     
-    private String operation;
+    private String operation = null;
     
-    private String userId;
+    private String userId = null;
     
-    private String result;
+    private String result = null;
     
-    private String operationContent;
+    private String operationContent = null;
     
     private String progress = "0";
     
-    private String reason;
+    private String reason = null;
 
-    private Timestamp operateAt;
+    private Timestamp operateAt = null;
     
-    private Timestamp finishedAt;
+    private Timestamp finishedAt = null;
 
     
     public String getServiceId() {
