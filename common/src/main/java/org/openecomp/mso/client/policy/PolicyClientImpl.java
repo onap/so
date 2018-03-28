@@ -57,11 +57,11 @@ public class PolicyClientImpl implements PolicyClient {
 		decisionAttributes.setWorkStep(workStep);
 		decisionAttributes.setErrorCode(errorCode);
 
-		return this.getDecision(decisionAttributes);
+		return this.getDecisionHelper(decisionAttributes);
 	}
 
-	private PolicyDecision getDecision(DecisionAttributes decisionAttributes) {
-		PolicyRestClient client = new PolicyRestClient(this.props, PolicyServiceType.GET_DECISION);
+	protected PolicyDecision getDecisionHelper(DecisionAttributes decisionAttributes) {
+		PolicyRestClient client = this.getPolicyRestClient(PolicyServiceType.GET_DECISION);
 		PolicyDecisionRequest decisionRequest = new PolicyDecisionRequest();
 		decisionRequest.setDecisionAttributes(decisionAttributes);
 		decisionRequest.setEcompcomponentName(RestClient.ECOMP_COMPONENT_NAME);
@@ -69,9 +69,13 @@ public class PolicyClientImpl implements PolicyClient {
 		return client.post(decisionRequest, PolicyDecision.class);
 	}
 	
+	protected PolicyRestClient getPolicyRestClient(PolicyServiceType serviceType) {
+		return new PolicyRestClient(this.props, serviceType);
+	}
+	
 	public DictionaryData getAllowedTreatments(String bbID, String workStep)
 	{
-		PolicyRestClient client = new PolicyRestClient(this.props, PolicyServiceType.GET_DICTIONARY_ITEMS);
+		PolicyRestClient client = this.getPolicyRestClient(PolicyServiceType.GET_DICTIONARY_ITEMS);
 		DictionaryItemsRequest dictionaryItemsRequest = new DictionaryItemsRequest();
 		dictionaryItemsRequest.setDictionaryType("Decision");
 		dictionaryItemsRequest.setDictionary("RainyDayTreatments");
