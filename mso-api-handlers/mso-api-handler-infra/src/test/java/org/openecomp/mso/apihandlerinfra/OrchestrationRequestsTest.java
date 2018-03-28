@@ -183,7 +183,8 @@ public class OrchestrationRequestsTest {
 			Response response = null;
 			try {
 				OrchestrationRequests requests = new OrchestrationRequests();
-				response = requests.getOrchestrationRequest(new ResteasyUriInfo(new URI("")),"v5");
+				final ResteasyUriInfo ui = new ResteasyUriInfo(new URI("", "", "", "filter=service-instance-id:EQUALS:abc", ""));
+				response = requests.getOrchestrationRequest(ui,"v5");
 			} finally {
 				mockUpRDB.tearDown();
 			}
