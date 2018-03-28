@@ -985,7 +985,7 @@ public class ServiceInstances {
 		}
 		//if an aLaCarte flag was sent in the request, throw an error if the recipe was not found
 		RequestParameters reqParam = msoRequest.getServiceInstancesRequest().getRequestDetails().getRequestParameters();
-		if(reqParam!=null && reqParam.isaLaCarte() && recipe==null){
+		if(reqParam!=null && reqParam.isaLaCarte()!=null && reqParam.isaLaCarte() && recipe==null){
 			return null;
 		}
 
