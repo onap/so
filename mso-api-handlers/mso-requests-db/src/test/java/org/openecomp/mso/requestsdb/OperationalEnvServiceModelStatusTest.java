@@ -1,39 +1,57 @@
-/*-
- * ============LICENSE_START=======================================================
- * ONAP - SO
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
- */
+/*
+* ============LICENSE_START=======================================================
+* ONAP : SO
+* ================================================================================
+* Copyright 2018 TechMahindra
+*=================================================================================
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+* ============LICENSE_END=========================================================
+*/
 
 package org.openecomp.mso.requestsdb;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import java.sql.Timestamp;
-
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 public class OperationalEnvServiceModelStatusTest {
 	
-	OperationalEnvServiceModelStatus _operationalEnvServiceModelStatus;
+	OperationalEnvServiceModelStatus oesms=new OperationalEnvServiceModelStatus();
+	Timestamp time=new Timestamp(10);
+	@Test
+	public void test(){
+		oesms.setCreateTime(time);
+		oesms.setModifyTime(time);
+		oesms.setOperationalEnvId("operationalEnvId");
+		oesms.setRecoveryAction("recoveryAction");
+		oesms.setRequestId("requestId");
+		oesms.setRetryCount(0);
+		oesms.setServiceModelVersionDistrStatus("serviceModelVersionDistrStatus");
+		oesms.setServiceModelVersionId("serviceModelVersionId");
+		oesms.setWorkloadContext("workloadContext");
+		
+		assertEquals(oesms.getCreateTime(), time);
+		assertEquals(oesms.getModifyTime(), time);
+		assertEquals(oesms.getOperationalEnvId(), "operationalEnvId");
+		assertEquals(oesms.getRecoveryAction(), "recoveryAction");
+		assertEquals(oesms.getRequestId(), "requestId");
+		assertEquals(oesms.getRetryCount(), 0);
+		assertEquals(oesms.getServiceModelVersionDistrStatus(), "serviceModelVersionDistrStatus");
+		assertEquals(oesms.getServiceModelVersionId(), "serviceModelVersionId");
+		assertEquals(oesms.getWorkloadContext(), "workloadContext");
+	}
+}
+	/*OperationalEnvServiceModelStatus _operationalEnvServiceModelStatus;
 	
 	protected String _requestId;
 	protected String _operationalEnvId;
@@ -79,9 +97,9 @@ public class OperationalEnvServiceModelStatusTest {
 		_operationalEnvServiceModelStatus = null;
 	}
 	
-	/**
+	*//**
 	 * Test of getRequestId method
-	 */
+	 *//*
 	@Test
 	public void testGetRequestId() {
 		_operationalEnvServiceModelStatus.setRequestId(_requestId);
@@ -89,18 +107,18 @@ public class OperationalEnvServiceModelStatusTest {
 
 	}
 
-	/**
+	*//**
 	 * Test setRequestId  method
-	 */
+	 *//*
 	@Test
 	public void testSetRequestId() {
 		_operationalEnvServiceModelStatus.setRequestId(_requestId);
 		verify(_operationalEnvServiceModelStatus).setRequestId(_requestId);
 	}
 
-	/**
+	*//**
 	 * Test of getOperationalEnvId method
-	 */
+	 *//*
 	@Test
 	public void testGetOperationalEnvId() {
 		_operationalEnvServiceModelStatus.setOperationalEnvId(_operationalEnvId);
@@ -108,18 +126,18 @@ public class OperationalEnvServiceModelStatusTest {
 
 	}
 
-	/**
+	*//**
 	 * Test setOperationalEnvId method
-	 */
+	 *//*
 	@Test
 	public void testSetOperationalEnvId() {
 		_operationalEnvServiceModelStatus.setOperationalEnvId(_operationalEnvId);
 		verify(_operationalEnvServiceModelStatus).setOperationalEnvId(_operationalEnvId);
 	}
 	
-	/**
+	*//**
 	 * Test of getServiceModelVersionId method
-	 */
+	 *//*
 	@Test
 	public void testGetServiceModelVersionId() {
 		_operationalEnvServiceModelStatus.setServiceModelVersionId(_serviceModelVersionId);
@@ -127,18 +145,18 @@ public class OperationalEnvServiceModelStatusTest {
 
 	}
 
-	/**
+	*//**
 	 * Test setServiceModelVersionId method
-	 */
+	 *//*
 	@Test
 	public void testSetServiceModelVersionId() {
 		_operationalEnvServiceModelStatus.setServiceModelVersionId(_serviceModelVersionId);
 		verify(_operationalEnvServiceModelStatus).setServiceModelVersionId(_serviceModelVersionId);
 	}
 	
-	/**
+	*//**
 	 * Test of getServiceModelVersionId method
-	 */
+	 *//*
 	@Test
 	public void testGetServiceModelVersionDistrStatus() {
 		_operationalEnvServiceModelStatus.setServiceModelVersionDistrStatus(_serviceModelVersionDistrStatus);
@@ -146,18 +164,18 @@ public class OperationalEnvServiceModelStatusTest {
 
 	}
 
-	/**
+	*//**
 	 * Test setServiceModelVersionId method
-	 */
+	 *//*
 	@Test
 	public void testSetServiceModelVersionDistrStatus() {
 		_operationalEnvServiceModelStatus.setServiceModelVersionDistrStatus(_serviceModelVersionDistrStatus);
 		verify(_operationalEnvServiceModelStatus).setServiceModelVersionDistrStatus(_serviceModelVersionDistrStatus);
 	}
 	
-	/**
+	*//**
 	 * Test of getOperationalEnvId method
-	 */
+	 *//*
 	@Test
 	public void testGetRecoveryAction() {
 		_operationalEnvServiceModelStatus.setRecoveryAction(_recoveryAction);
@@ -165,18 +183,18 @@ public class OperationalEnvServiceModelStatusTest {
 
 	}
 
-	/**
+	*//**
 	 * Test setOperationalEnvId method
-	 */
+	 *//*
 	@Test
 	public void testSetRecoveryAction() {
 		_operationalEnvServiceModelStatus.setRecoveryAction(_recoveryAction);
 		verify(_operationalEnvServiceModelStatus).setRecoveryAction(_recoveryAction);
 	}
 	
-	/**
+	*//**
 	 * Test of getOperationalEnvId method
-	 */
+	 *//*
 	@Test
 	public void testGetRetryCount() {
 		_operationalEnvServiceModelStatus.setRetryCount(_retryCount);
@@ -184,18 +202,18 @@ public class OperationalEnvServiceModelStatusTest {
 
 	}
 
-	/**
+	*//**
 	 * Test setOperationalEnvId method
-	 */
+	 *//*
 	@Test
 	public void testSetRetryCount() {
 		_operationalEnvServiceModelStatus.setRetryCount(_retryCount);
 		verify(_operationalEnvServiceModelStatus).setRetryCount(_retryCount);
 	}
 	
-	/**
+	*//**
 	 * Test of getOperationalEnvId method
-	 */
+	 *//*
 	@Test
 	public void testGetWorkloadContext() {
 		_operationalEnvServiceModelStatus.setWorkloadContext(_workloadContext);
@@ -203,18 +221,18 @@ public class OperationalEnvServiceModelStatusTest {
 
 	}
 
-	/**
+	*//**
 	 * Test setOperationalEnvId method
-	 */
+	 *//*
 	@Test
 	public void testSetWorkloadContext() {
 		_operationalEnvServiceModelStatus.setWorkloadContext(_workloadContext);
 		verify(_operationalEnvServiceModelStatus).setWorkloadContext(_workloadContext);
 	}
 	
-	/**
+	*//**
 	 * Test of getCreateTime method
-	 */
+	 *//*
 	@Test
 	public void testGetCreateTime() {
 		_operationalEnvServiceModelStatus.setCreateTime(_createTime);
@@ -222,18 +240,18 @@ public class OperationalEnvServiceModelStatusTest {
 
 	}
 
-	/**
+	*//**
 	 * Test setCreateTime method
-	 */
+	 *//*
 	@Test
 	public void testSetCreateTime() {
 		_operationalEnvServiceModelStatus.setCreateTime(_createTime);
 		verify(_operationalEnvServiceModelStatus).setCreateTime(_createTime);
 	}
 	
-	/**
+	*//**
 	 * Test of getModifyTime method
-	 */
+	 *//*
 	@Test
 	public void testGetModifyTime() {
 		_operationalEnvServiceModelStatus.setModifyTime(_modifyTime);
@@ -241,13 +259,13 @@ public class OperationalEnvServiceModelStatusTest {
 
 	}
 
-	/**
+	*//**
 	 * Test setModifyTime method
-	 */
+	 *//*
 	@Test
 	public void testSetModifyTime() {
 		_operationalEnvServiceModelStatus.setModifyTime(_modifyTime);
 		verify(_operationalEnvServiceModelStatus).setModifyTime(_modifyTime);
 	}
-	
-}
+	*/
+
