@@ -26,6 +26,7 @@ import groovy.json.*
 import org.openecomp.mso.bpmn.core.domain.ServiceDecomposition
 import org.openecomp.mso.bpmn.core.domain.ServiceInstance
 import org.openecomp.mso.bpmn.core.domain.ModelInfo
+import org.openecomp.mso.bpmn.core.domain.Resource
 import org.openecomp.mso.bpmn.core.json.JsonUtils
 import org.openecomp.mso.bpmn.common.scripts.AaiUtil
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
@@ -172,7 +173,7 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 			execution.setVariable("modelInvariantUuid", modelInvariantUuid)
 			execution.setVariable("model-invariant-id-target", modelInvariantUuid)
 			execution.setVariable("modelUuid", modelUuid)
-			execution.setVariable("model-version-id-target", modelUuid_target)
+			execution.setVariable("model-version-id-target", modelUuid)
 
 			//AAI PUT
 			String oStatus = execution.getVariable("initialStatus") ?: ""
@@ -388,7 +389,7 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
             String operationType = execution.getVariable("operationType")
             String resourceTemplateUUIDs = ""
             String result = "processing"
-            String progress = "0"
+            String progress = "10"
             String reason = ""
             String operationContent = "Prepare service updating"
             utils.log("INFO", "Generated new operation for Service Instance serviceId:" + serviceId + " operationId:" + operationId + " operationType:" + operationType, isDebugEnabled)
@@ -396,38 +397,38 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
             execution.setVariable("serviceInstanceId", serviceId)
             execution.setVariable("operationId", operationId)
             execution.setVariable("operationType", operationType)
-            
-            String serviceRelationShip = execution.getVariable("serviceRelationShip")
-            
-            def jsonSlurper = new JsonSlurper()
-            def jsonOutput = new JsonOutput()         
-            List relationShipList =  jsonSlurper.parseText(serviceRelationShip)
-                    
-            if (relationShipList != null) {
-                relationShipList.each {
-                    resourceTemplateUUIDs  = resourceTemplateUUIDs + it.resourceInstanceId + ":"
-                }
-            }           
-            execution.setVariable("URN_mso_openecomp_adapters_db_endpoint","http://mso.mso.testlab.openecomp.org:8080/dbadapters/RequestsDbAdapter")
 
-            String payload =
-                """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+			List<Resource> resourceList = new ArrayList<String>()
+			List<Resource> addResourceList =  execution.getVariable("addResourceList")
+			List<Resource> delResourceList =  execution.setVariable("delResourceList")
+			resourceList.addAll(addResourceList)
+			resourceList.addAll(delResourceList)
+			for(Resource resource : resourceList){
+				resourceTemplateUUIDs  = resourceTemplateUUIDs + resource.getModelInfo().getModelCustomizationUuid() + ":"
+			}
+			
+			def dbAdapterEndpoint = "http://mso.mso.testlab.openecomp.org:8080/dbadapters/RequestsDbAdapter"
+			execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
+			utils.log("INFO", "DB Adapter Endpoint is: " + dbAdapterEndpoint, isDebugEnabled)
+
+			String payload =
+				"""<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
                         xmlns:ns="http://org.openecomp.mso/requestsdb">
                         <soapenv:Header/>
                         <soapenv:Body>
                             <ns:initResourceOperationStatus xmlns:ns="http://org.openecomp.mso/requestsdb">
-                            <serviceId>${serviceId}</serviceId>
-                            <operationId>${operationId}</operationId>
-                            <operationType>${operationType}</operationType>
-                            <resourceTemplateUUIDs>${resourceTemplateUUIDs}</resourceTemplateUUIDs>
-                        </ns:initResourceOperationStatus>
-                    </soapenv:Body>
-                </soapenv:Envelope>"""
+								<serviceId>${serviceId}</serviceId>
+								<operationId>${operationId}</operationId>
+								<operationType>${operationType}</operationType>
+								<resourceTemplateUUIDs>${resourceTemplateUUIDs}</resourceTemplateUUIDs>
+                            </ns:initResourceOperationStatus>
+                    	</soapenv:Body>
+                	</soapenv:Envelope>"""
 
-            payload = utils.formatXml(payload)
-            execution.setVariable("CVFMI_initResOperStatusRequest", payload)
-            utils.log("INFO", "Outgoing initResourceOperationStatus: \n" + payload, isDebugEnabled)
-            utils.logAudit("CreateVfModuleInfra Outgoing initResourceOperationStatus Request: " + payload)
+			payload = utils.formatXml(payload)
+			execution.setVariable("CVFMI_initResOperStatusRequest", payload)
+			utils.log("INFO", "Outgoing initResourceOperationStatus: \n" + payload, isDebugEnabled)
+			utils.logAudit("CreateVfModuleInfra Outgoing initResourceOperationStatus Request: " + payload)
 
         }catch(Exception e){
             utils.log("ERROR", "Exception Occured Processing preInitResourcesOperStatus. Exception is:\n" + e, isDebugEnabled)
@@ -447,6 +448,7 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
         try{
             String serviceId = execution.getVariable("serviceInstanceId")
             String operationId = execution.getVariable("operationId")
+			String operationType = execution.getVariable("operationType")
             String serviceName = execution.getVariable("serviceInstanceName")
             String userId = ""
             String result = "processing"
@@ -523,7 +525,12 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 
     public void postProcessForAddResource(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+		utils.log("INFO"," ***** postProcessForAddResource ***** ", isDebugEnabled)
+		
+		ServiceDecomposition serviceDecomposition_Target = execution.getVariable("serviceDecomposition_Target")
+		execution.setVariable("serviceDecomposition", serviceDecomposition_Target)
     
+		utils.log("INFO"," *** Exit postProcessForAddResource *** ", isDebugEnabled)
     }
     
     public void preProcessForDeleteResource(DelegateExecution execution) {
