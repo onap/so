@@ -60,7 +60,7 @@ public class PolicyClientImpl implements PolicyClient {
 		return this.getDecision(decisionAttributes);
 	}
 
-	private PolicyDecision getDecision(DecisionAttributes decisionAttributes) {
+	protected PolicyDecision getDecision(DecisionAttributes decisionAttributes) {
 		PolicyRestClient client = new PolicyRestClient(this.props, PolicyServiceType.GET_DECISION);
 		PolicyDecisionRequest decisionRequest = new PolicyDecisionRequest();
 		decisionRequest.setDecisionAttributes(decisionAttributes);
