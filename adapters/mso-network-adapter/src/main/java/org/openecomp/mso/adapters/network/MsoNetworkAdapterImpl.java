@@ -71,6 +71,12 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 	MsoPropertiesFactory msoPropertiesFactory=new MsoPropertiesFactory();
 
 	CloudConfigFactory cloudConfigFactory=new CloudConfigFactory();
+	
+	protected MsoNeutronUtils neutron;
+    
+	protected MsoHeatUtils heat;
+    
+	protected MsoHeatUtilsWithUpdate heatWithUpdate;
 
 	private static final String AIC3_NW_PROPERTY= "org.openecomp.mso.adapters.network.aic3nw";
 	private static final String AIC3_NW="OS::ContrailV2::VirtualNetwork";
@@ -112,6 +118,10 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     	this.msoPropertiesFactory = msoPropFactory;
     	this.cloudConfigFactory=cloudConfigFact;
     	cloudConfig = cloudConfigFactory.getCloudConfig ();
+    	neutron = new MsoNeutronUtils(MSO_PROP_NETWORK_ADAPTER, cloudConfigFactory);
+    	heat = new MsoHeatUtils(MSO_PROP_NETWORK_ADAPTER, msoPropertiesFactory, cloudConfigFactory);
+    	heatWithUpdate = new MsoHeatUtilsWithUpdate(MSO_PROP_NETWORK_ADAPTER, msoPropertiesFactory,
+    		        cloudConfigFactory);
     }
 
     @Override
@@ -226,7 +236,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
      * the orchestration fails on a subsequent operation.
      */
 
-    private void createNetwork (String cloudSiteId,
+    protected void createNetwork (String cloudSiteId,
                                String tenantId,
                                String networkType,
                                String modelCustomizationUuid,
@@ -305,9 +315,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             NetworkType neutronNetworkType = NetworkType.valueOf(networkResource.getNeutronNetworkType());
 
             if (NEUTRON_MODE.equals(mode)) {
-
-                // Use an MsoNeutronUtils for all neutron commands
-                MsoNeutronUtils neutron = new MsoNeutronUtils(MSO_PROP_NETWORK_ADAPTER, cloudConfigFactory);
 
                 // See if the Network already exists (by name)
                 NetworkInfo netInfo = null;
@@ -405,10 +412,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 
                 LOGGER.debug("Network " + networkName + " created, id = " + netInfo.getId());
             } else if ("HEAT".equals(mode)) {
-
-                // Use an MsoHeatUtils for all Heat commands
-                MsoHeatUtils heat = new MsoHeatUtils(MSO_PROP_NETWORK_ADAPTER, msoPropertiesFactory,
-                    cloudConfigFactory);
 
                 //HeatTemplate heatTemplate = db.getHeatTemplate (networkResource.getTemplateId ());
                 HeatTemplate heatTemplate = db
@@ -857,9 +860,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             String mode = networkResource.getOrchestrationMode();
             NetworkType neutronNetworkType = NetworkType.valueOf(networkResource.getNeutronNetworkType());
 
-            // Use an MsoNeutronUtils for all Neutron commands
-            MsoNeutronUtils neutron = new MsoNeutronUtils(MSO_PROP_NETWORK_ADAPTER, cloudConfigFactory);
-
             if (NEUTRON_MODE.equals(mode)) {
 
                 // Verify that the Network exists
@@ -943,16 +943,12 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 LOGGER.debug("Network " + networkId + " updated, id = " + netInfo.getId());
             } else if ("HEAT".equals(mode)) {
 
-                // Use an MsoHeatUtils for all Heat commands
-                MsoHeatUtilsWithUpdate heat = new MsoHeatUtilsWithUpdate(MSO_PROP_NETWORK_ADAPTER, msoPropertiesFactory,
-                    cloudConfigFactory);
-
                 // First, look up to see that the Network already exists.
                 // For Heat-based orchestration, the networkId is the network Stack ID.
                 StackInfo heatStack = null;
                 long queryStackStarttime = System.currentTimeMillis();
                 try {
-                    heatStack = heat.queryStack(cloudSiteId, tenantId, networkName);
+                    heatStack = heatWithUpdate.queryStack(cloudSiteId, tenantId, networkName);
                     LOGGER.recordMetricEvent(queryStackStarttime, MsoLogger.StatusCode.COMPLETE,
                         MsoLogger.ResponseCode.Suc, "Successfully received response from Open Stack", "OpenStack",
                         "QueryStack", null);
@@ -1056,7 +1052,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 // Validate (and update) the input parameters against the DB definition
                 // Shouldn't happen unless DB config is wrong, since all networks use same inputs
                 try {
-                    stackParams = heat.validateStackParams(stackParams, heatTemplate);
+                    stackParams = heatWithUpdate.validateStackParams(stackParams, heatTemplate);
                 } catch (IllegalArgumentException e) {
                     String error = "UpdateNetwork: Configuration Error: Network Type=" + networkType;
                     LOGGER.error(MessageEnum.RA_CONFIG_EXC, "Network Type=" + networkType, "OpenStack", "",
@@ -1138,7 +1134,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 // Ignore MsoStackNotFound exception because we already checked.
                 long updateStackStarttime = System.currentTimeMillis();
                 try {
-                    heatStack = heat.updateStack(cloudSiteId,
+                    heatStack = heatWithUpdate.updateStack(cloudSiteId,
                         tenantId,
                         networkId,
                         template,
@@ -1202,7 +1198,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         return;
     }
 
-    private NetworkResource networkCheck (CatalogDatabase db,
+    protected NetworkResource networkCheck (CatalogDatabase db,
                                           long startTime,
                                           String networkType,
                                           String modelCustomizationUuid,
@@ -1403,10 +1399,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         	// Set the detailed error as the Exception 'message'
         	throw new NetworkException (error, MsoExceptionCategory.USERDATA);
         }
-
-        // Use MsoNeutronUtils for all NEUTRON commands
-        MsoHeatUtils heat = new MsoHeatUtils (MSO_PROP_NETWORK_ADAPTER,msoPropertiesFactory,cloudConfigFactory);
-        MsoNeutronUtils neutron = new MsoNeutronUtils (MSO_PROP_NETWORK_ADAPTER, cloudConfigFactory);
 
         String mode;
         String neutronId;
@@ -1807,7 +1799,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         return missing.toString ();
     }
 
-    private Map <String, Object> populateNetworkParams (NetworkType neutronNetworkType,
+    protected Map <String, Object> populateNetworkParams (NetworkType neutronNetworkType,
                                                         String networkName,
                                                         String physicalNetwork,
                                                         List <Integer> vlans,
