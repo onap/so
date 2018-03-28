@@ -22,13 +22,19 @@ package org.openecomp.mso.db.catalog.beans;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+
+import com.openpojo.business.annotation.BusinessKey;
+
 public class HeatTemplateParam implements Serializable {
 
-	private String heatTemplateArtifactUuid;
-	private String paramName;
+	@BusinessKey
+	private String heatTemplateArtifactUuid = null;
+	@BusinessKey
+	private String paramName = null;
 	private boolean required;
-	private String paramType;
-	private String paramAlias;
+	private String paramType = null;
+	private String paramAlias = null;
     public static final long serialVersionUID = -1322322139926390329L;
 	
 	public HeatTemplateParam() {}
@@ -71,21 +77,16 @@ public class HeatTemplateParam implements Serializable {
 	public String toString () {
 		return "Param=" + paramName + ",type=" + paramType + ",required=" + required + ",paramAlias=" + paramAlias + ", heatTemplateArtifactUuid=" + this.heatTemplateArtifactUuid;
 	}
-	
-    @Override
-    public boolean equals (Object o) {
-        if (!(o instanceof HeatTemplateParam)) {
-            return false;
-        }
-        if (this == o) {
-            return true;
-        }
-        HeatTemplateParam htp = (HeatTemplateParam) o;
-        if (htp.getHeatTemplateArtifactUuid().equals(this.heatTemplateArtifactUuid) && htp.getParamName().equalsIgnoreCase(this.paramName)) {
-            return true;
-        }
-        return false;
-    }
+
+	@Override
+	public boolean equals(final Object other) {
+		if (!(other instanceof HeatTemplateParam)) {
+			return false;
+		}
+		HeatTemplateParam castOther = (HeatTemplateParam) other;
+		return new EqualsBuilder().append(heatTemplateArtifactUuid, castOther.heatTemplateArtifactUuid)
+				.append(paramName, castOther.paramName).isEquals();
+	}
 
     @Override
     public int hashCode () {

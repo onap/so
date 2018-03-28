@@ -26,9 +26,9 @@ public class VnfComponentsRecipe extends Recipe implements Serializable {
 	
 	private static final long serialVersionUID = 768026109321305392L;
 
-	private String vnfType;
-	private String vnfComponentType;
-	private String vfModuleModelUUId; 
+	private String vnfType = null;
+	private String vnfComponentType = null;
+	private String vfModuleModelUUId = null; 
 
 	public VnfComponentsRecipe() {}
 

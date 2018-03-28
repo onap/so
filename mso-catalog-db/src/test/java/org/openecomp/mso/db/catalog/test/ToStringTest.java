@@ -113,7 +113,7 @@ public class ToStringTest {
 		smh.setNetworkResourceCustomization(networkResourceCustomizations);
 		
 		NetworkResourceCustomization nrc = new NetworkResourceCustomization();
-		smh.addNetworkResourceCustomization(nrc);
+		smh.addNetworkResourceCustomizations(nrc);
 		
 		ArrayList<AllottedResourceCustomization> allottedResourceCustomizations = new ArrayList<>();
 		smh.setAllottedResourceCustomization(allottedResourceCustomizations);

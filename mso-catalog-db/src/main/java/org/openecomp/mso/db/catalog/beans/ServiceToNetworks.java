@@ -22,13 +22,17 @@ package org.openecomp.mso.db.catalog.beans;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+import com.openpojo.business.annotation.BusinessKey;
+
 public class ServiceToNetworks implements Serializable {
 
 	// This maps to SERVICE.SERVICE_NAME_VERSION_ID / Service.serviceNameVersionId in SERVICE/Service table
-	private String serviceModelUuid;
+	@BusinessKey
+	private String serviceModelUuid = null;
 	// This maps to NETWORK_RESOURCE_CUSTOMIZATION.MODEL_CUSTOMIZATION_UUID / NetworkResourceCustomization.ModelCustomizationUuid
-	private String networkModelCustomizationUuid;
-	private Timestamp created;
+	@BusinessKey
+	private String networkModelCustomizationUuid = null;
+	private Timestamp created = null;
 	public static final long serialVersionUID = -1322322139926390329L;
 
 	public ServiceToNetworks() {

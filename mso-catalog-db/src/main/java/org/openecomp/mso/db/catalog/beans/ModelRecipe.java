@@ -31,13 +31,13 @@ public class ModelRecipe extends MavenLikeVersioning implements Serializable {
 	
 	private int id;
 	private Integer modelId;
-	private String action;
-	private String schemaVersion;
-	private String description;
-	private String orchestrationUri;
-	private String modelParamXSD;
+	private String action = null;
+	private String schemaVersion = null;
+	private String description = null;
+	private String orchestrationUri = null;
+	private String modelParamXSD = null;
 	private Integer recipeTimeout;
-	private Timestamp created;
+	private Timestamp created = null;
 
 	/**
 	 * @return the id
@@ -169,12 +169,12 @@ public class ModelRecipe extends MavenLikeVersioning implements Serializable {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("ModelRecipe: ");
-		sb.append("modelId=").append(modelId.toString());
+		sb.append("modelId=").append(modelId);
 		sb.append(",action=").append(action);
 		sb.append(",schemaVersion=").append(schemaVersion);
 		sb.append(",orchestrationUri=").append(orchestrationUri);
 		sb.append(",modelParamXSD=").append(modelParamXSD);
-		sb.append(",recipeTimeout=").append(recipeTimeout.toString());
+		sb.append(",recipeTimeout=").append(recipeTimeout);
         if (created != null) {
 	        sb.append (",created=");
 	        sb.append (DateFormat.getInstance().format(created));

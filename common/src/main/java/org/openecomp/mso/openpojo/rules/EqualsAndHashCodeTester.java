@@ -23,6 +23,7 @@ package org.openecomp.mso.openpojo.rules;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.anything;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -44,6 +45,7 @@ public class EqualsAndHashCodeTester implements Tester {
 
 	
 	private final Matcher m;
+	private boolean onlyDeclaredMethods = false;
 	public EqualsAndHashCodeTester() {
 		m = anything();
 	}
@@ -51,12 +53,33 @@ public class EqualsAndHashCodeTester implements Tester {
 	public EqualsAndHashCodeTester(Matcher m) {
 		this.m = m;
 	}
+	
+	public EqualsAndHashCodeTester onlyDeclaredMethods() {
+		this.onlyDeclaredMethods = true;
+		return this;
+	}
 	@Override
 	public void run(PojoClass pojoClass) {
 		Class<?> clazz = pojoClass.getClazz();
 		if (anyOf(m).matches(clazz)) {
 			final Object classInstanceOne = ValidationHelper.getBasicInstance(pojoClass);
 			final Object classInstanceTwo = ValidationHelper.getBasicInstance(pojoClass);
+			if (onlyDeclaredMethods) {
+				Method[] methods = classInstanceOne.getClass().getDeclaredMethods();
+				boolean hasEquals = false;
+				boolean hasHashcode = false;
+				for (Method method : methods) {
+					if (method.getName().equals("equals")) {
+						hasEquals = true;
+					} else if (method.getName().equals("hashCode")) {
+						hasHashcode = true;
+					}
+				}
+				
+				if (!(hasEquals && hasHashcode)) {
+					return;
+				}
+			}
 			Set<PojoField> identityFields = hasIdOrBusinessKey(pojoClass);
 			List<PojoField> otherFields = new ArrayList<>(pojoClass.getPojoFields());
 			otherFields.removeAll(identityFields);

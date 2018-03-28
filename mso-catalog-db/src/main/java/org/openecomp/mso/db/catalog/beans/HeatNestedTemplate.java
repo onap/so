@@ -23,11 +23,15 @@ package org.openecomp.mso.db.catalog.beans;
 
 import java.io.Serializable;
 
+import com.openpojo.business.annotation.BusinessKey;
+
 public class HeatNestedTemplate implements Serializable {
 
-    private String parentTemplateId;
-    private String childTemplateId;
-    private String providerResourceFile;
+	@BusinessKey
+    private String parentTemplateId = null;
+	@BusinessKey
+    private String childTemplateId = null;
+    private String providerResourceFile = null;
     public static final long serialVersionUID = -1322322139926390329L;
 
     public HeatNestedTemplate () {
@@ -91,7 +95,15 @@ public class HeatNestedTemplate implements Serializable {
         // hash code does not have to be a unique result - only that two objects that should be treated as equal
         // return the same value. so this should work.
         int result;
-        result = this.parentTemplateId.hashCode() + this.childTemplateId.hashCode();
+        int parentTemplateIdHash = 0;
+        int childTemplateIdHash = 0;
+        if (this.parentTemplateId != null) {
+        	parentTemplateIdHash = this.parentTemplateId.hashCode();
+        }
+        if (this.childTemplateId != null) {
+        	childTemplateIdHash = this.childTemplateId.hashCode();
+        }
+        result = parentTemplateIdHash + childTemplateIdHash;
         return result;
     }
 }

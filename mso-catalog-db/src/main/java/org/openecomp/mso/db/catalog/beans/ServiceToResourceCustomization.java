@@ -24,14 +24,21 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+
+import com.openpojo.business.annotation.BusinessKey;
+
 public class ServiceToResourceCustomization implements Serializable {
 
 	private static final long serialVersionUID = 768026109321305392L;
 	
-	private String modelType;
-	private String serviceModelUUID;
-	private Timestamp created;
-	private String resourceModelCustomizationUUID;
+	@BusinessKey
+	private String modelType = null;
+	@BusinessKey
+	private String serviceModelUUID = null;
+	private Timestamp created = null;
+	@BusinessKey
+	private String resourceModelCustomizationUUID = null;
 	
 	public ServiceToResourceCustomization() {}
 	
@@ -67,22 +74,16 @@ public class ServiceToResourceCustomization implements Serializable {
 		this.resourceModelCustomizationUUID = resourceModelCustomizationUUID;
 	}
 	
+
 	@Override
-	public boolean equals(Object o) {
-        if (!(o instanceof ServiceToResourceCustomization)) {
-            return false;
-        }
-        if (this == o) {
-            return true;
-        }
-        ServiceToResourceCustomization strc = (ServiceToResourceCustomization) o;
-        if (strc.getServiceModelUUID().equals(this.getServiceModelUUID()) 
-        		&& strc.getResourceModelCustomizationUUID().equals(this.getResourceModelCustomizationUUID())
-        		&& strc.getModelType().equals(this.getModelType())) {
-            return true;
-        }
-        return false;
-		
+	public boolean equals (final Object other) {
+		if (!(other instanceof ServiceToResourceCustomization)) {
+			return false;
+		}
+		ServiceToResourceCustomization castOther = (ServiceToResourceCustomization) other;
+		return new EqualsBuilder().append(modelType, castOther.modelType)
+				.append(serviceModelUUID, castOther.serviceModelUUID)
+				.append(resourceModelCustomizationUUID, castOther.resourceModelCustomizationUUID).isEquals();
 	}
 	
 	@Override 
@@ -94,9 +95,7 @@ public class ServiceToResourceCustomization implements Serializable {
 		
 		return code;
 		
-	}
-
-	@Override
+	}@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("ServiceToResourceCustomization: modelType=").append(modelType).append(",serviceModelUUID=")

@@ -22,11 +22,15 @@ package org.openecomp.mso.db.catalog.beans;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+import com.openpojo.business.annotation.BusinessKey;
+
 public class ServiceToAllottedResources implements Serializable {
 
-	private String serviceModelUuid;
-	private String arModelCustomizationUuid;
-	private Timestamp created;
+	@BusinessKey
+	private String serviceModelUuid = null;
+	@BusinessKey
+	private String arModelCustomizationUuid = null;
+	private Timestamp created = null;
 
 	public static final long serialVersionUID = -1322322139926390329L;
 

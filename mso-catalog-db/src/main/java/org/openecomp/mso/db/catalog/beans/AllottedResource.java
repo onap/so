@@ -29,14 +29,14 @@ public class AllottedResource extends MavenLikeVersioning implements Serializabl
 	
 	private static final long serialVersionUID = 768026109321305392L;
 	
-	private String modelUuid;
-	private String modelInvariantUuid;
-	private String modelVersion; 
-	private String modelName;
-	private String toscaNodeType;
-	private String subcategory;
-	private String description;
-	private Timestamp created;
+	private String modelUuid = null;
+	private String modelInvariantUuid = null;
+	private String modelVersion = null; 
+	private String modelName = null;
+	private String toscaNodeType = null;
+	private String subcategory = null;
+	private String description = null;
+	private Timestamp created = null;
 
 	public AllottedResource() {
 	}

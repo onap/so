@@ -20,20 +20,25 @@
 package org.openecomp.mso.db.catalog.beans;
 
 import java.sql.Timestamp;
+
+import com.openpojo.business.annotation.BusinessKey;
+
 import java.io.Serializable;
 
 public class NetworkResourceCustomization implements Serializable{
 
 	// modelCustomizationUuid and networkResourceModelUuid form a composite primary key
+	@BusinessKey
 	private String modelCustomizationUuid = null;
+	@BusinessKey
 	private String networkResourceModelUuid = null;
 	public static final long serialVersionUID = -1322322139926390329L;
-	private String modelInstanceName;
-	private Timestamp created;
-	private String networkTechnology;
+	private String modelInstanceName = null;
+	private Timestamp created = null;
+	private String networkTechnology = null;
 	private String networkType = null;
-	private String networkScope;
-	private String networkRole;
+	private String networkScope = null;
+	private String networkRole = null;
 
 	// These fields are not in the table directly - but I'm adding them here for storage in the objects we're dealing with
 	private NetworkResource networkResource = null;

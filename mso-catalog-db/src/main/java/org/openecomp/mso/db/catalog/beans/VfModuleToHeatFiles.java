@@ -26,8 +26,8 @@ import java.io.Serializable;
 
 public class VfModuleToHeatFiles implements Serializable {
 	
-    private String vfModuleModelUuid;
-    private String heatFilesArtifactUuid;
+    private String vfModuleModelUuid = null;
+    private String heatFilesArtifactUuid = null;
     public static final long serialVersionUID = -1322322139926390329L;
 
 	public VfModuleToHeatFiles() {

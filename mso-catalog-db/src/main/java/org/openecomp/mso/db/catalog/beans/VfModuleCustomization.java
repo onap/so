@@ -23,18 +23,22 @@ package org.openecomp.mso.db.catalog.beans;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+import com.openpojo.business.annotation.BusinessKey;
+
 public class VfModuleCustomization implements Serializable {
 	
-	private String modelCustomizationUuid;
-	private String vfModuleModelUuid;
-	private String label;
+	@BusinessKey
+	private String modelCustomizationUuid = null;
+	@BusinessKey
+	private String vfModuleModelUuid = null;
+	private String label = null;
     private Integer minInstances;
     private Integer maxInstances;
     private Integer initialCount;
     private Integer availabilityZoneCount;
-    private String heatEnvironmentArtifactUuid;
-    private String volEnvironmentArtifactUuid;
-    private Timestamp created;
+    private String heatEnvironmentArtifactUuid = null;
+    private String volEnvironmentArtifactUuid = null;
+    private Timestamp created = null;
     private VfModule vfModule;
     public static final long serialVersionUID = -1322322139926390329L;
 
