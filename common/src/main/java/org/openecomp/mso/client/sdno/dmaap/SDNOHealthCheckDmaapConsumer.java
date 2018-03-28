@@ -20,10 +20,8 @@
 
 package org.openecomp.mso.client.sdno.dmaap;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Optional;
-
 import org.openecomp.mso.client.dmaap.DmaapConsumer;
 import org.openecomp.mso.client.exceptions.SDNOException;
 import org.openecomp.mso.jsonpath.JsonPathUtil;
@@ -34,11 +32,11 @@ public class SDNOHealthCheckDmaapConsumer extends DmaapConsumer {
 	private boolean continuePolling = true;
 	private final static String healthDiagnosticPath = "body.output.*";
 
-	public SDNOHealthCheckDmaapConsumer() throws FileNotFoundException, IOException {
+	public SDNOHealthCheckDmaapConsumer() throws IOException {
 		this("none");
 	}
 	
-	public SDNOHealthCheckDmaapConsumer(String uuid) throws FileNotFoundException, IOException {
+	public SDNOHealthCheckDmaapConsumer(String uuid) throws IOException {
 		super();
 		this.uuid = uuid;
 	}
