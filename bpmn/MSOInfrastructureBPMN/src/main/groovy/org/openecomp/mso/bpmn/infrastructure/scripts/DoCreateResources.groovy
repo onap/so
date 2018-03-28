@@ -23,7 +23,6 @@ package org.openecomp.mso.bpmn.infrastructure.scripts
 import java.util.ArrayList
 import java.util.Iterator
 import java.util.List
-import javax.mail.Quota.Resource
 import org.apache.commons.lang3.StringUtils
 import org.apache.http.HttpResponse
 import org.camunda.bpm.engine.delegate.DelegateExecution
@@ -41,8 +40,11 @@ import org.openecomp.mso.bpmn.common.scripts.CatalogDbUtils
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
 import org.openecomp.mso.bpmn.core.domain.AllottedResource
 import org.openecomp.mso.bpmn.core.domain.NetworkResource
+import org.openecomp.mso.bpmn.core.domain.Resource
+import org.openecomp.mso.bpmn.core.domain.ServiceDecomposition
 import org.openecomp.mso.bpmn.core.domain.VnfResource
 import org.openecomp.mso.bpmn.core.json.JsonUtils
+import org.openecomp.mso.bpmn.common.resource.ResourceRequestBuilder
 
 /**
  * This groovy class supports the <class>DoCreateResources.bpmn</class> process.
@@ -66,6 +68,7 @@ public class DoCreateResources extends AbstractServiceTaskProcessor
 {
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
+	CatalogDbUtils cutils = new CatalogDbUtils()
 
     public void preProcessRequest(DelegateExecution execution)
     {
@@ -88,7 +91,7 @@ public class DoCreateResources extends AbstractServiceTaskProcessor
         utils.log("INFO", " ***** Exit preProcessRequest *****", isDebugEnabled)
     }
     
-    public void sequenceResoure(Object execution)
+    public void sequenceResoure(DelegateExecution execution)
     {
         def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
         utils.log("INFO", "======== Start sequenceResoure Process ======== ", isDebugEnabled)
@@ -111,9 +114,9 @@ public class DoCreateResources extends AbstractServiceTaskProcessor
         if (rc instanceof VnfResource) {
                 vnfResourceList.add(rc)
             } else if (rc instanceof NetworkResource) {
-                NetworkResource.add(rc)
+                networkResourceList.add(rc)
             } else if (rc instanceof AllottedResource) {
-                AllottedResource.add(rc)
+                arResourceList.add(rc)
             }
         }        
         sequencedResourceList.addAll(vnfResourceList)
@@ -128,7 +131,7 @@ public class DoCreateResources extends AbstractServiceTaskProcessor
         utils.log("INFO", "======== COMPLETED sequenceResoure Process ======== ", isDebugEnabled)
     }   
    
-    public void getCurrentResoure(execution){
+    public void getCurrentResoure(DelegateExecution execution){
 	    def isDebugEnabled=execution.getVariable("isDebugLogEnabled")   
         utils.log("INFO", "======== Start getCurrentResoure Process ======== ", isDebugEnabled)    
 	    def currentIndex = execution.getVariable("currentResourceIndex")
@@ -138,7 +141,7 @@ public class DoCreateResources extends AbstractServiceTaskProcessor
         utils.log("INFO", "======== COMPLETED getCurrentResoure Process ======== ", isDebugEnabled)  
     }
     
-    public void parseNextResource(execution){
+    public void parseNextResource(DelegateExecution execution){
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
         utils.log("INFO", "======== Start parseNextResource Process ======== ", isDebugEnabled)    
         def currentIndex = execution.getVariable("currentResourceIndex")
@@ -152,62 +155,59 @@ public class DoCreateResources extends AbstractServiceTaskProcessor
         }
         utils.log("INFO", "======== COMPLETED parseNextResource Process ======== ", isDebugEnabled)       
     }    
+
+	 public void prepareResourceRecipeRequest(DelegateExecution execution){
+		 def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+		 utils.log("INFO", "======== Start prepareResourceRecipeRequest Process ======== ", isDebugEnabled)
+		 ResourceInput resourceInput = new ResourceInput()
+		 String serviceInstanceName = execution.getVariable("serviceInstanceName")
+		 String resourceInstanceName = resourceType + "_" + serviceInstanceName
+		 resourceInput.setResourceInstanceName(resourceInstanceName)
+		 utils.log("INFO", "Prepare Resource Request resourceInstanceName:" + resourceInstanceName, isDebugEnabled)
+		 String globalSubscriberId = execution.getVariable("globalSubscriberId")
+		 String serviceType = execution.getVariable("serviceType")
+		 String serviceInstanceId = execution.getVariable("serviceInstanceId")
+		 String operationId = execution.getVariable("operationId")
+		 String operationType = execution.getVariable("operationType")
+		 resourceInput.setGlobalSubscriberId(globalSubscriberId)
+		 resourceInput.setServiceType(serviceType)
+		 resourceInput.setServiceInstanceId(serviceInstanceId)
+		 resourceInput.setOperationId(operationId)
+		 resourceInput.setOperationType(operationType);
+		 def currentIndex = execution.getVariable("currentResourceIndex")
+		 List<Resource> sequencedResourceList = execution.getVariable("sequencedResourceList")
+		 Resource currentResource = sequencedResourceList.get(currentIndex)
+		 resourceInput.setResourceModelInfo(currentResource.getModelInfo());
+		 ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
+		 resourceInput.setServiceModelInfo(serviceDecomposition.getModelInfo());
+		 
+		 String incomingRequest = execution.getVariable("uuiRequest")
+		 //set the requestInputs from tempalte  To Be Done
+		 String serviceModelUuid = execution.getVariable("modelUuid")		 
+		 String serviceParameters = jsonUtil.getJsonValue(incomingRequest, "service.parameters")
+		 String resourceParameters = ResourceRequestBuilder.buildResourceRequestParameters(execution, serviceModelUuid, resourceCustomizationUuid, serviceParameters)
+		 resourceInput.setResourceParameters(resourceParameters)
+		 execution.setVariable("resourceInput", resourceInput)
+		 utils.log("INFO", "======== COMPLETED prepareResourceRecipeRequest Process ======== ", isDebugEnabled)
+	 }
+	 
+	 public void executeResourceRecipe(DelegateExecution execution){
+		 def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+		 utils.log("INFO", "======== Start executeResourceRecipe Process ======== ", isDebugEnabled)
+		 String requestId = execution.getVariable("msoRequestId")
+		 String serviceInstanceId = execution.getVariable("serviceInstanceId")
+		 String serviceType = execution.getVariable("serviceType")
+		 ResourceInput resourceInput = execution.getVariable("resourceInput")
+		 String requestAction = resourceInput.getOperationType()
+		 JSONObject resourceRecipe = cutils.getResourceRecipe(execution, resourceInput.getResourceModelInfo().getModelUuid(), requestAction)
+		 String recipeUri = resourceRecipe.getString("orchestrationUri")
+		 String recipeTimeOut = resourceRecipe.getString("recipeTimeout")
+		 String recipeParamXsd = resourceRecipe.get("paramXSD")
+		 HttpResponse resp = BpmnRestClient.post(recipeUri, requestId, recipeTimeOut, requestAction, serviceInstanceId, serviceType, resourceInput.toString(), recipeParamXsd)
+		 
+	 }
     
-     public void prepareResourceRecipeRequest(execution){
-         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")                 
-         utils.log("INFO", "======== Start prepareResourceRecipeRequest Process ======== ", isDebugEnabled) 
-         ResourceInput resourceInput = new ResourceInput()         
-         String serviceInstanceName = execution.getVariable("serviceInstanceName")
-         String resourceInstanceName = resourceType + "_" + serviceInstanceName
-         resourceInput.setResourceInstanceName(resourceInstanceName)
-         utils.log("INFO", "Prepare Resource Request resourceInstanceName:" + resourceInstanceName, isDebugEnabled)
-         String globalSubscriberId = execution.getVariable("globalSubscriberId")
-         String serviceType = execution.getVariable("serviceType")
-         String serviceInstanceId = execution.getVariable("serviceInstanceId")
-         String operationId = execution.getVariable("operationId")
-         String operationType = execution.getVariable("operationType")
-         resourceInput.setGlobalSubscriberId(globalSubscriberId)
-         resourceInput.setServiceType(serviceType)
-         resourceInput.setServiceInstanceId(serviceInstanceId)
-         resourceInput.setOperationId(operationId)
-         resourceInput.setOperationType(operationType);
-         def currentIndex = execution.getVariable("currentResourceIndex")
-         List<Resource> sequencedResourceList = execution.getVariable("sequencedResourceList")  
-         Resource currentResource = sequencedResourceList.get(currentIndex)
-         String resourceCustomizationUuid = currentResource.getModelInfo().getModelCustomizationUuid()
-         resourceInput.setResourceCustomizationUuid(resourceCustomizationUuid);
-         String resourceInvariantUuid = currentResource.getModelInfo().getModelInvariantUuid()
-         resourceInput.setResourceInvariantUuid(resourceInvariantUuid)
-         String resourceUuid = currentResource.getModelInfo().getModelUuid()
-         resourceInput.setResourceUuid(resourceUuid)
-         
-         String incomingRequest = execution.getVariable("uuiRequest")
-         //set the requestInputs from tempalte  To Be Done
-         String serviceModelUuid = execution.getVariable("modelUuid")
-         String serviceParameters = jsonUtil.getJsonValue(incomingRequest, "service.parameters")
-         String resourceParameters = ResourceRequestBuilder.buildResourceRequestParameters(execution, serviceModelUuid, resourceCustomizationUuid, serviceParameters)
-         resourceInput.setResourceParameters(resourceParameters)
-         execution.setVariable("resourceInput", resourceInput)
-         utils.log("INFO", "======== COMPLETED prepareResourceRecipeRequest Process ======== ", isDebugEnabled)      
-     }
-     
-     public void executeResourceRecipe(execution){
-         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")                 
-         utils.log("INFO", "======== Start executeResourceRecipe Process ======== ", isDebugEnabled) 
-         String requestId = execution.getVariable("msoRequestId")
-         String serviceInstanceId = execution.getVariable("serviceInstanceId")
-         String serviceType = execution.getVariable("serviceType")
-         ResourceInput resourceInput = execution.getVariable("resourceInput")
-         String requestAction = resourceInput.getOperationType()
-         JSONObject resourceRecipe = cutils.getResourceRecipe(execution, resourceInput.getResourceUuid(), requestAction)
-         String recipeUri = resourceRecipe.getString("orchestrationUri")
-         String recipeTimeOut = resourceRecipe.getString("recipeTimeout")
-         String recipeParamXsd = resourceRecipe.get("paramXSD")
-         HttpResponse resp = BpmnRestClient.post(recipeUri, requestId, recipeTimeout, requestAction, serviceInstanceId, serviceType, resourceInput.toString(), recipeParamXsd)
-         
-     }
-    
-     public void postConfigRequest(execution){
+     public void postConfigRequest(DelegateExecution execution){
          //now do noting
      }
 }

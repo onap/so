@@ -172,7 +172,7 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 			execution.setVariable("modelInvariantUuid", modelInvariantUuid)
 			execution.setVariable("model-invariant-id-target", modelInvariantUuid)
 			execution.setVariable("modelUuid", modelUuid)
-			execution.setVariable("model-version-id-target", modelUuid_target)
+			execution.setVariable("model-version-id-target", modelUuid)
 
 			//AAI PUT
 			String oStatus = execution.getVariable("initialStatus") ?: ""
@@ -523,7 +523,12 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 
     public void postProcessForAddResource(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+		utils.log("INFO"," ***** postProcessForAddResource ***** ", isDebugEnabled)
+		
+		ServiceDecomposition serviceDecomposition_Target = execution.getVariable("serviceDecomposition_Target")
+		execution.setVariable("serviceDecomposition", serviceDecomposition_Target)
     
+		utils.log("INFO"," *** Exit postProcessForAddResource *** ", isDebugEnabled)
     }
     
     public void preProcessForDeleteResource(DelegateExecution execution) {
