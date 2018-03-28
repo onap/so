@@ -99,7 +99,6 @@ public class ServiceInstanceTest {
             "Locked instance - This service (testService) already has a request being worked with a status of null (RequestId - null). The existing request must finish or be cleaned up before proceeding."));
 	}
 	
-	@Ignore // 1802 merge
 	@Test
 	public void createServiceInstanceTestDBException(){
 		new MockUp<RequestsDatabase>() {
@@ -134,10 +133,9 @@ public class ServiceInstanceTest {
 				+ "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
 		Response resp = instance.createServiceInstance(requestJson, "v2");
 		String respBody = resp.getEntity().toString();
-		assertTrue(respBody.contains("Exception while creating record in DB null"));
+		assertTrue(respBody.contains("Exception while creating record in DB") && respBody.contains("NullPointerException"));
 	}
 	
-	@Ignore // 1802 merge
 	@Test
 	public void createServiceInstanceTestBpmnFail(){
 		new MockUp<RequestsDatabase>() {
@@ -179,10 +177,9 @@ public class ServiceInstanceTest {
 				+ "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\",\"instanceName\": \"testService\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\": \"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
 		Response resp = instance.createServiceInstance(requestJson, "v2");
 		String respBody = resp.getEntity().toString();
-		assertTrue(respBody.contains("Failed calling bpmn properties"));
+		assertTrue(respBody.contains("Request Failed due to BPEL error"));  // was: Failed calling bpmn properties
 	}
 	
-	@Ignore // 1802 merge
 	@Test(expected = Exception.class)
 	public void createServiceInstanceTest200Http(){
 		new MockUp<RequestsDatabase>() {
@@ -253,7 +250,6 @@ public class ServiceInstanceTest {
 		String respBody = resp.getEntity().toString();
 	}
 	
-	@Ignore // 1802 merge
 	@Test
 	public void createServiceInstanceTest500Http(){
 		new MockUp<RequestsDatabase>() {
@@ -396,7 +392,6 @@ public class ServiceInstanceTest {
 		assertTrue(respBody.contains("No valid modelVersionId is specified"));
 	}
 	
-	@Ignore // 1802 merge
 	@Test
 	public void createServiceInstanceTestNullHttpResp(){
 		new MockUp<RequestsDatabase>() {
@@ -592,7 +587,7 @@ public class ServiceInstanceTest {
 				+"\"networkInstanceId\":\"1882937\","
 				+"\"volumeGroupInstanceId\":\"1882935\","
 				+"\"vfModuleInstanceId\":\"1882934\","
-				+ "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\"},\"requestParameters\": { \"autoBuildVfModules\": false},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\"}}}";
+				+ "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\"},\"requestParameters\": { \"autoBuildVfModules\": false,\"subscriptionServiceType\":\"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\"}}}";
 		Response resp = instance.createServiceInstance(requestJson, "v2");
 		String respBody = resp.getEntity().toString();
 		assertTrue(respBody.contains("Error parsing request.") && respBody.contains("No valid modelName is specified"));
@@ -607,7 +602,7 @@ public class ServiceInstanceTest {
 				+"\"networkInstanceId\":\"1882937\","
 				+"\"volumeGroupInstanceId\":\"1882935\","
 				+"\"vfModuleInstanceId\":\"1882934\","
-				+ "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\"},\"requestParameters\": { \"autoBuildVfModules\": true},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
+				+ "\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"zz9999\"},\"requestParameters\": { \"autoBuildVfModules\": true,\"subscriptionServiceType\":\"test\"},\"modelInfo\":{\"modelInvariantId\": \"557ea944-c83e-43cf-9ed7-3a354abd6d34\",\"modelVersion\":\"v2\",\"modelType\":\"service\",\"modelName\":\"serviceModel\"}}}";
 		Response resp = instance.createServiceInstance(requestJson, "v2");
 		String respBody = resp.getEntity().toString();
 		assertTrue(respBody.contains("Error parsing request.") && respBody.contains("AutoBuildVfModule is not valid in the v2 version"));
@@ -689,7 +684,6 @@ public class ServiceInstanceTest {
 		assertTrue(respStr.contains("Error parsing request.") && respStr.contains("No valid serviceInstanceId matching the serviceInstanceId in request URI is specified"));
 	}
 
-	@Ignore // 1802 merge
 	@Test
 	public void activateServiceInstanceTestNormal(){
 		ServiceInstances instance = new ServiceInstances();
@@ -743,7 +737,6 @@ public class ServiceInstanceTest {
 		assertTrue(respStr.contains("Error parsing request.") && respStr.contains("No valid serviceInstanceId matching the serviceInstanceId in request URI is specified"));
 	}
 	
-	@Ignore // 1802 merge
 	@Test
 	public void deactivateServiceInstanceTestNormal(){
 		ServiceInstances instance = new ServiceInstances();
@@ -797,7 +790,6 @@ public class ServiceInstanceTest {
 		assertTrue(respStr.contains("Error parsing request.") && respStr.contains("No valid modelVersionId is specified"));
 	}
 	
-	@Ignore // 1802 merge
 	@Test
 	public void deleteServiceInstanceTestNormal(){
 		ServiceInstances instance = new ServiceInstances();
@@ -961,7 +953,6 @@ public class ServiceInstanceTest {
 	}
 	
 	/*** Replace Vnf Instance Test Cases ***/
-	@Ignore
 	@Test
 	public void replaceVNFInstanceTestNormal(){
 		ServiceInstances instance = new ServiceInstances();
@@ -996,7 +987,6 @@ public class ServiceInstanceTest {
 	
 	/*** Update Vnf Instance Test Cases ***/
 
-	@Ignore
 	@Test
 	public void deleteVNFInstanceTestNormal(){
 		ServiceInstances instance = new ServiceInstances();
