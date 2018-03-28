@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_7e6dc803",
+        "filename": "mso-api-handlers/mso-api-handler-infra/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 239,
+      "author": {
+        "id": 519
+      },
+      "writtenOn": "2018-03-28T14:19:09Z",
+      "side": 1,
+      "message": "added to change the classpath order of JMockit and JUnit. Tried it in main pom.xml but didn\u0027t work",
+      "range": {
+        "startLine": 228,
+        "startChar": 2,
+        "endLine": 239,
+        "endChar": 15
+      },
+      "revId": "1cfbb32f3ccebe534ab4bd306585ec7df0a4a211",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
