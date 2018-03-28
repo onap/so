@@ -46,8 +46,7 @@ public class ApplicationControllerAction {
 	private String errorMessage = "Unable to reach App C Servers";
 	protected final EELFLogger auditLogger = EELFManager.getInstance().getAuditLogger();
 	
-	public void runAppCCommand(Action action, String msoRequestId, String vnfId, Optional<String> payload, HashMap<String, String> payloadInfo){
-		Status appCStatus = null;
+	public void runAppCCommand(Action action, String msoRequestId, String vnfId, Optional<String> payload, HashMap<String, String> payloadInfo, String controllerType){		Status appCStatus = null;
 		try{
 			String vnfName = payloadInfo.getOrDefault("vnfName", "");
 			String aicIdentity = payloadInfo.getOrDefault("vnfName","");
@@ -56,21 +55,21 @@ public class ApplicationControllerAction {
 			String identityUrl = payloadInfo.getOrDefault("identityUrl", "");
 			switch(action){
 				case ResumeTraffic:
-					appCStatus = resumeTrafficAction(msoRequestId, vnfId, vnfName);
+					appCStatus = resumeTrafficAction(msoRequestId, vnfId, vnfName, controllerType);
 					break;
 			    case Start:
 			    case Stop:
-			    	appCStatus = startStopAction(action, msoRequestId, vnfId, aicIdentity);
+			    	appCStatus = startStopAction(action, msoRequestId, vnfId, aicIdentity, controllerType);
 			    	break;
 				case Unlock:
 				case Lock:
-					appCStatus = client.vnfCommand(action, msoRequestId, vnfId, Optional.empty());
+					appCStatus = client.vnfCommand(action, msoRequestId, vnfId, Optional.empty(), controllerType);
 					break;
 				case QuiesceTraffic:
-					appCStatus = quiesceTrafficAction(msoRequestId, vnfId, payload, vnfName);
+					appCStatus = quiesceTrafficAction(msoRequestId, vnfId, payload, vnfName, controllerType);
 					break;
 				case HealthCheck:
-					appCStatus = healthCheckAction(msoRequestId, vnfId, vnfName, vnfHostIpAddress);
+					appCStatus = healthCheckAction(msoRequestId, vnfId, vnfName, vnfHostIpAddress, controllerType);
 					break;
 				case Snapshot:
 					String vmIds = JsonUtils.getJsonValue(vmIdList, "vmIds");
@@ -80,18 +79,18 @@ public class ApplicationControllerAction {
 					int i = 0;
 					while(i < vmIdJsonList.size()){
 						vmId = vmIdJsonList.get(i);
-						appCStatus = snapshotAction(msoRequestId, vnfId, vmId, identityUrl);
+						appCStatus = snapshotAction(msoRequestId, vnfId, vmId, identityUrl, controllerType);
 						i++;
 					}
 					break;
 				case ConfigModify:
-					appCStatus = payloadAction(action, msoRequestId, vnfId, payload);
+					appCStatus = payloadAction(action, msoRequestId, vnfId, payload, controllerType);
 					break;
 				case UpgradePreCheck:
 				case UpgradePostCheck:
 				case UpgradeSoftware:
 				case UpgradeBackup:
-					appCStatus = upgradeAction(action,msoRequestId, vnfId, payload, vnfName);
+					appCStatus = upgradeAction(action,msoRequestId, vnfId, payload, vnfName, controllerType);
 					break;
 				default:
 					errorMessage = "Unable to idenify Action request for AppCClient";
@@ -125,47 +124,47 @@ public class ApplicationControllerAction {
 		}
 	}
 	
-	private Status payloadAction(Action action, String msoRequestId, String vnfId, Optional<String> payload) throws JsonProcessingException, Exception{
+	private Status payloadAction(Action action, String msoRequestId, String vnfId, Optional<String> payload, String controllerType) throws JsonProcessingException, Exception{
 		if(!(payload.isPresent())){
 			throw new IllegalArgumentException("Payload is not present for " + action.toString());
 		}
-		return client.vnfCommand(action, msoRequestId, vnfId, payload);
+		return client.vnfCommand(action, msoRequestId, vnfId, payload, controllerType);
 	}
 	
-	private Status quiesceTrafficAction(String msoRequestId, String vnfId, Optional<String> payload, String vnfName) throws JsonProcessingException, Exception{
+	private Status quiesceTrafficAction(String msoRequestId, String vnfId, Optional<String> payload, String vnfName, String controllerType) throws JsonProcessingException, Exception{
 		if(!(payload.isPresent())){
 			throw new IllegalArgumentException("Payload is not present for " + Action.QuiesceTraffic.toString());
 		}
 		payload = PayloadClient.quiesceTrafficFormat(payload, vnfName);
-		return client.vnfCommand(Action.QuiesceTraffic, msoRequestId, vnfId, payload);
+		return client.vnfCommand(Action.QuiesceTraffic, msoRequestId, vnfId, payload, controllerType);
 	}
 	
-	private Status upgradeAction(Action action, String msoRequestId, String vnfId, Optional<String> payload, String vnfName) throws JsonProcessingException, Exception{
+	private Status upgradeAction(Action action, String msoRequestId, String vnfId, Optional<String> payload, String vnfName, String controllerType) throws JsonProcessingException, Exception{
 		if(!(payload.isPresent())){
 			throw new IllegalArgumentException("Payload is not present for " + action.toString());
 		}
 		payload = PayloadClient.upgradeFormat(payload, vnfName);
-		return client.vnfCommand(action, msoRequestId, vnfId, payload);
+		return client.vnfCommand(action, msoRequestId, vnfId, payload, controllerType);
 	}
 	
-	private Status resumeTrafficAction(String msoRequestId, String vnfId, String vnfName)throws JsonProcessingException, Exception{
+	private Status resumeTrafficAction(String msoRequestId, String vnfId, String vnfName, String controllerType)throws JsonProcessingException, Exception{
 		Optional<String> payload = PayloadClient.resumeTrafficFormat(vnfName);
-		return client.vnfCommand(Action.ResumeTraffic, msoRequestId, vnfId, payload);
+		return client.vnfCommand(Action.ResumeTraffic, msoRequestId, vnfId, payload, controllerType);
 	}
 	
-	private Status startStopAction(Action action, String msoRequestId, String vnfId, String aicIdentity)throws JsonProcessingException, Exception{
+	private Status startStopAction(Action action, String msoRequestId, String vnfId, String aicIdentity, String controllerType)throws JsonProcessingException, Exception{
 		Optional<String> payload = PayloadClient.startStopFormat(aicIdentity);
-		return client.vnfCommand(action, msoRequestId, vnfId, payload);
+		return client.vnfCommand(action, msoRequestId, vnfId, payload, controllerType);
 	}
 	
-	private Status healthCheckAction(String msoRequestId, String vnfId, String vnfName, String vnfHostIpAddress)throws JsonProcessingException, Exception{
+	private Status healthCheckAction(String msoRequestId, String vnfId, String vnfName, String vnfHostIpAddress, String controllerType)throws JsonProcessingException, Exception{
 		Optional<String> payload = PayloadClient.healthCheckFormat(vnfName, vnfHostIpAddress);
-		return client.vnfCommand(Action.HealthCheck, msoRequestId, vnfId, payload);
+		return client.vnfCommand(Action.HealthCheck, msoRequestId, vnfId, payload, controllerType);
 	}
 	
-	private Status snapshotAction(String msoRequestId, String vnfId, String vmId, String identityUrl) throws JsonProcessingException, Exception{
+	private Status snapshotAction(String msoRequestId, String vnfId, String vmId, String identityUrl, String controllerType) throws JsonProcessingException, Exception{
 		Optional<String> payload = PayloadClient.snapshotFormat(vmId, identityUrl);
-		return client.vnfCommand(Action.Snapshot, msoRequestId, vnfId, payload);
+		return client.vnfCommand(Action.Snapshot, msoRequestId, vnfId, payload, controllerType);
 	}
 	
 	public String getErrorMessage(){

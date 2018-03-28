@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_F0omAMXGEeW834CKd-K10Q" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.4.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_F0omAMXGEeW834CKd-K10Q" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.11.3" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
   <bpmn2:process id="UpdateVnfInfra" name="UpdateVnfInfra" isExecutable="true">
     <bpmn2:scriptTask id="ScriptTask_1" name="Send Synch Response" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_5</bpmn2:incoming>
@@ -109,6 +109,7 @@ uvfm.postProcessRollback(execution)]]></bpmn2:script>
           <camunda:in source="errorCode" target="errorCode" />
           <camunda:in source="rollbackQuiesceTraffic" target="rollbackQuiesceTraffic" />
           <camunda:out source="rollbackSuccessful" target="rollbackSuccessful" />
+          <camunda:in source="controllerType" target="controllerType" />
         </bpmn2:extensionElements>
         <bpmn2:incoming>SequenceFlow_0a0lfh8</bpmn2:incoming>
         <bpmn2:outgoing>SequenceFlow_0r0o5yt</bpmn2:outgoing>
@@ -366,6 +367,7 @@ uvfm.prepDoUpdateVnfAndModules(execution)]]></bpmn2:script>
         <camunda:out source="workStep" target="workStep" />
         <camunda:out source="failedActivity" target="failedActivity" />
         <camunda:out source="rollbackVnfLock" target="rollbackVnfLock" />
+        <camunda:in source="controllerType" target="controllerType" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_1bkhs8m</bpmn2:incoming>
       <bpmn2:incoming>SequenceFlow_0qmpjgv</bpmn2:incoming>
@@ -385,6 +387,7 @@ uvfm.prepDoUpdateVnfAndModules(execution)]]></bpmn2:script>
         <camunda:out source="failedActivity" target="failedActivity" />
         <camunda:in source="vnfName" target="vnfName" />
         <camunda:in source="vnfHostIpAddress" target="vnfHostIpAddress" />
+        <camunda:in source="controllerType" target="controllerType" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_0qy68ib</bpmn2:incoming>
       <bpmn2:incoming>SequenceFlow_0tld38t</bpmn2:incoming>
@@ -402,6 +405,7 @@ uvfm.prepDoUpdateVnfAndModules(execution)]]></bpmn2:script>
         <camunda:out source="failedActivity" target="failedActivity" />
         <camunda:in source="aicIdentity" target="aicIdentity" />
         <camunda:out source="rollbackVnfStop" target="rollbackVnfStop" />
+        <camunda:in source="controllerType" target="controllerType" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_0q0qan8</bpmn2:incoming>
       <bpmn2:incoming>SequenceFlow_08dyt3l</bpmn2:incoming>
@@ -419,6 +423,7 @@ uvfm.prepDoUpdateVnfAndModules(execution)]]></bpmn2:script>
         <camunda:out source="failedActivity" target="failedActivity" />
         <camunda:in source="aicIdentity" target="aicIdentity" />
         <camunda:out source="rollbackVnfStop" target="rollbackVnfStop" />
+        <camunda:in source="controllerType" target="controllerType" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_04zwhw4</bpmn2:incoming>
       <bpmn2:incoming>SequenceFlow_0ye8oij</bpmn2:incoming>
@@ -438,6 +443,7 @@ uvfm.prepDoUpdateVnfAndModules(execution)]]></bpmn2:script>
         <camunda:out source="failedActivity" target="failedActivity" />
         <camunda:in source="vnfName" target="vnfName" />
         <camunda:in source="vnfHostIpAddress" target="vnfHostIpAddress" />
+        <camunda:in source="controllerType" target="controllerType" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_162mm0m</bpmn2:incoming>
       <bpmn2:incoming>SequenceFlow_08kn9ok</bpmn2:incoming>
@@ -454,6 +460,7 @@ uvfm.prepDoUpdateVnfAndModules(execution)]]></bpmn2:script>
         <camunda:out source="workStep" target="workStep" />
         <camunda:out source="failedActivity" target="failedActivity" />
         <camunda:out source="rollbackVnfLock" target="rollbackVnfLock" />
+        <camunda:in source="controllerType" target="controllerType" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_197t3qk</bpmn2:incoming>
       <bpmn2:incoming>SequenceFlow_02uiht9</bpmn2:incoming>
