@@ -21,6 +21,9 @@
 
 package org.openecomp.mso.adapters.sdnc;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openecomp.mso.adapters.sdnc.SDNCAdapterRequest;
@@ -46,9 +49,9 @@ public class SDNCAdapterRequestTest {
 	public final void testtoString(){
 		((SDNCAdapterRequest) sd).setRequestData("data");
 		((SDNCAdapterRequest) sd).setRequestHeader(rh);
-        assert (((SDNCAdapterRequest) sd).getRequestData()!= null) ;
-		assert(((SDNCAdapterRequest) sd).getRequestData().equals("data"));
-		assert(((SDNCAdapterRequest) sd).getRequestHeader().equals(rh));		
+        assertNotNull(((SDNCAdapterRequest) sd).getRequestData()) ;
+        assertEquals("data", ((SDNCAdapterRequest) sd).getRequestData());
+        assertEquals(rh, ((SDNCAdapterRequest) sd).getRequestHeader());
 	}
 
 }

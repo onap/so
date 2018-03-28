@@ -21,6 +21,9 @@
 
 package org.openecomp.mso.adapters.sdnc.client;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import org.junit.Test;
 import org.openecomp.mso.adapters.sdnc.client.CallbackHeader;
 import org.openecomp.mso.adapters.sdnc.client.SDNCAdapterCallbackRequest;
@@ -35,17 +38,18 @@ public class SDNCAdapterCallbackRequestTest {
    {
        sdc.setCallbackHeader(ch);
        sdc.setRequestData("data");
-       assert(sdc.getCallbackHeader()!=null);
-       assert(sdc.getRequestData()!=null);
-       assert(sdc.getCallbackHeader().equals(ch));
-       assert(sdc.getRequestData().equals("data"));
+       assertNotNull(sdc.getCallbackHeader());
+       assertNotNull(sdc.getRequestData());
+       assertEquals(ch, sdc.getCallbackHeader());
+       assertEquals("data", sdc.getRequestData());
 
    }
    
    @Test
    public void testtoString()
    {
-       assert(ch.toString()!=null);
+       assertNotNull(ch.toString());
+       assertNotNull(sdc.toString());
    }
    
 }
