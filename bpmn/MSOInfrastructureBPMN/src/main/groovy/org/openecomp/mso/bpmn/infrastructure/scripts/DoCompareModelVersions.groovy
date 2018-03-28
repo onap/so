@@ -136,7 +136,7 @@ public class DoCompareModelVersions extends AbstractServiceTaskProcessor {
 		utils.log("INFO"," ***** Exit preProcessRequest *****",  isDebugEnabled)
 	}
 	
-   public void prepareDecomposeService_Target(Execution execution) {
+   public void prepareDecomposeService_Target(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 
         try {
@@ -160,7 +160,7 @@ public class DoCompareModelVersions extends AbstractServiceTaskProcessor {
         }
      }
 
-    public void processDecomposition_Target(Execution execution) {
+    public void processDecomposition_Target(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
     
         utils.log("DEBUG", " ***** Inside processDecomposition_Target() of update generic e2e service flow ***** ", isDebugEnabled)    
@@ -174,7 +174,7 @@ public class DoCompareModelVersions extends AbstractServiceTaskProcessor {
         }
     }
  
-   public void prepareDecomposeService_Original(Execution execution) {
+   public void prepareDecomposeService_Original(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 
         try {
@@ -198,7 +198,7 @@ public class DoCompareModelVersions extends AbstractServiceTaskProcessor {
         }
      }
 
-    public void processDecomposition_Original(Execution execution) {
+    public void processDecomposition_Original(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
     
         utils.log("DEBUG", " ***** Inside processDecomposition_Original() of update generic e2e service flow ***** ", isDebugEnabled)    
@@ -212,7 +212,7 @@ public class DoCompareModelVersions extends AbstractServiceTaskProcessor {
         }
     } 	
 
-	public void doCompareModelVersions(execution){
+	public void doCompareModelVersions(DelegateExecution execution){
 	    def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
         utils.log("INFO", "======== Start doCompareModelVersions Process ======== ", isDebugEnabled)          
 
@@ -222,8 +222,8 @@ public class DoCompareModelVersions extends AbstractServiceTaskProcessor {
         List<Resource> allSR_target = serviceDecomposition_Target.getServiceResources();
         List<Resource> allSR_original = serviceDecomposition_Original.getServiceResources();
         
-        List<Resource> addedResource = new ArrayList<String>()
-        List<Resource> delResource = new ArrayList<String>()
+        List<Resource> addResourceList = new ArrayList<String>()
+        List<Resource> delResourceList = new ArrayList<String>()
         
         addResourceList.addAll(allSR_target)
         delResourceList.addAll(allSR_original)
