@@ -20,6 +20,8 @@
 
 package org.openecomp.mso.adapters.sdnc.impl;
 
+import static org.junit.Assert.*;
+
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,18 +56,31 @@ public class RequestTunablesTest {
     @Test
     public final void testRequestTunables () {
         RequestTunables rt = new RequestTunables (null, null, "op", null,msoPropertiesFactory);
-        assert(rt.getReqId ().length ()==0);
+        assertEquals(0, rt.getReqId ().length ());
         rt = new RequestTunables ("reqId", "msoAction", null, "query",msoPropertiesFactory);
         rt.setTunables ();
         System.out.println(rt.toString ());
       //  assert (rt.getReqMethod ().equals ("toto"));
-        assert (rt.getTimeout () != null);
-        assert (rt.getAction ().equals ("query"));
-        assert (rt.getMsoAction ().equals ("msoAction"));
-        assert (rt.getHeaderName ().equals ("sdnc-request-header"));
-        assert (rt.getOperation ().length () == 0);
-        assert (rt.getAsyncInd ().equals ("N"));
-        assert (rt.getReqId ().equals ("reqId"));
+        assertNotNull(rt.getTimeout ());
+        assertEquals("query", rt.getAction ());
+        assertEquals("msoAction", rt.getMsoAction ());
+        assertEquals("sdnc-request-header", rt.getHeaderName ());
+        assertEquals(0, rt.getOperation ().length ());
+        assertEquals("N", rt.getAsyncInd ());
+        assertEquals("reqId", rt.getReqId ());
+    }
+    
+    @Test
+    public final void testRequestTunablesSet() {
+    	RequestTunables rt = new RequestTunables("reqId", "gammainternet", "service-configuration-operation", "changeactivate", msoPropertiesFactory);
+    	 rt.setTunables ();
+    	 assertNotNull(rt.getTimeout ());
+         assertEquals("changeactivate", rt.getAction ());
+         assertEquals("gammainternet", rt.getMsoAction ());
+         assertEquals("sdnc-request-header", rt.getHeaderName ());
+         assertEquals("service-configuration-operation", rt.getOperation ());
+         assertEquals("N", rt.getAsyncInd ());
+         assertEquals("reqId", rt.getReqId ());
     }
 
 }

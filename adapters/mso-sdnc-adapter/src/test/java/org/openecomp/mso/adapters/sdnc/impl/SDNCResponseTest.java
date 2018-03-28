@@ -43,7 +43,7 @@ public class SDNCResponseTest {
    @Test
    public void testtoString()
    {
-       assert(sdncresponse.toString()!=null);
+       assertNotNull(sdncresponse.toString());
    }
 }
    

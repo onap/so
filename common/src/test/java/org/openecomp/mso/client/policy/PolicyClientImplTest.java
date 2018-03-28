@@ -45,7 +45,6 @@ public class PolicyClientImplTest {
 	}
 	
 	@Test
-	@Ignore
 	public void getDecisionTest() {
 		PolicyClient client = new PolicyClientImpl();
 		PolicyDecision decision = client.getDecision("S", "V", "BB1", "1", "123");
@@ -54,7 +53,6 @@ public class PolicyClientImplTest {
 	}
 	
 	@Test
-	@Ignore
 	public void getAllowedTreatmentsTest(){
 		PolicyClient client = new PolicyClientImpl();
 		DictionaryData dictClient = client.getAllowedTreatments("BB1", "1");

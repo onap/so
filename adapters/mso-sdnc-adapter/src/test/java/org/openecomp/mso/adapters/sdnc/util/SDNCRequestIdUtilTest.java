@@ -20,6 +20,8 @@
 
 package org.openecomp.mso.adapters.sdnc.util;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.UUID;
 import org.junit.Test;
 
@@ -35,8 +37,8 @@ public class SDNCRequestIdUtilTest {
     	String postfixedRequestId = originalRequestId + "-1466203712068";
     	String postfixedRequestId2 = originalRequestId + "-1466203712068-2";
 
-        assert(SDNCRequestIdUtil.getSDNCOriginalRequestId(postfixedRequestId).equals(originalRequestId));
-        assert(SDNCRequestIdUtil.getSDNCOriginalRequestId(postfixedRequestId2).equals(postfixedRequestId2));
+        assertEquals(originalRequestId, SDNCRequestIdUtil.getSDNCOriginalRequestId(postfixedRequestId));
+        assertEquals(postfixedRequestId2, SDNCRequestIdUtil.getSDNCOriginalRequestId(postfixedRequestId2));
        
     }
 
