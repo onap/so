@@ -22,7 +22,7 @@ package org.openecomp.mso.asdc.client.tests.emulators;
 import org.junit.Test;
 
 import org.openecomp.mso.asdc.client.test.emulators.JsonArtifactInfo;
-import org.openecomp.sdc.api.notification.IArtifactInfo;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,8 +57,8 @@ public class JsonArtifactInfoTest {
         final String artifactURL = jsonArtifactInfo.getArtifactURL();
         final String artifactUUID = jsonArtifactInfo.getArtifactUUID();
         final String artifactVersion = jsonArtifactInfo.getArtifactVersion();
-        IArtifactInfo generatedArtifact = jsonArtifactInfo.getGeneratedArtifact();
-        final List<IArtifactInfo> relatedArtifacts = jsonArtifactInfo.getRelatedArtifacts();
+        jsonArtifactInfo.getGeneratedArtifact();
+        jsonArtifactInfo.getRelatedArtifacts();
 
     }
 
