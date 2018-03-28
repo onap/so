@@ -112,6 +112,21 @@
 			<artifactId>snakeyaml</artifactId>
 			<version>1.15</version>
 		</dependency>
-
+	<dependency>
+			<groupId>com.shazam</groupId>
+			<artifactId>shazamcrest</artifactId>
+			<version>0.11</version>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+				<groupId>com.google.guava</groupId>
+				<artifactId>guava</artifactId>
+				</exclusion>
+				<exclusion>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-lang3</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 	</dependencies>
 </project>
