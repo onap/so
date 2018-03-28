@@ -17,40 +17,46 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.mso.asdc.client.test.emulators;
 
 import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 
-public class JsonNotificationDataTest {
+public class JsonResourceInfoTest {
+
 
     @Test
     public void setAttributeTest()
     {
-        JsonNotificationData jsonNotificationData = new JsonNotificationData();
-        jsonNotificationData.setWorkloadContext("test");
-        jsonNotificationData.setAttribute("distributionID","test");
-        jsonNotificationData.setAttribute("workloadContext","test");
-        String getWorkloadContextVal = jsonNotificationData.getWorkloadContext();
-        assertEquals("test",getWorkloadContextVal);
+        JsonResourceInfo jsonResourceInfo = new JsonResourceInfo();
+        jsonResourceInfo.setAttribute("resourceInstanceName","resourceInstanceName");
+        String resourceInstanceName = jsonResourceInfo.getResourceInstanceName();
+        assertEquals(resourceInstanceName,"resourceInstanceName");
     }
 
     @Test
     public void getAttributeTest()
     {
-        JsonNotificationData jsonNotificationData = new JsonNotificationData();
-        jsonNotificationData.setAttribute("workloadContext","test");;
-        jsonNotificationData.getArtifactMetadataByUUID("test");
-        jsonNotificationData.getDistributionID();
-        jsonNotificationData.getResources();
-        jsonNotificationData.getServiceArtifacts();
-        jsonNotificationData.getServiceDescription();
-        jsonNotificationData.getServiceInvariantUUID();
-        jsonNotificationData.getServiceName();
-        jsonNotificationData.getServiceUUID();
-        jsonNotificationData.getServiceVersion();
-        String getWorkloadContextVal = jsonNotificationData.getWorkloadContext();
-        assertEquals("test",getWorkloadContextVal);
+        JsonResourceInfo jsonResourceInfo = new JsonResourceInfo();
+        String resourceInstanceName = jsonResourceInfo.getResourceInstanceName();
+        assertEquals(resourceInstanceName,null);
     }
+
+    @Test
+    public void getAttributeTestOthers()
+    {
+        JsonResourceInfo jsonResourceInfo = new JsonResourceInfo();
+        String resourceInvariantUUID = jsonResourceInfo.getResourceInvariantUUID();
+        jsonResourceInfo.getResourceName();
+        jsonResourceInfo.getResourceType();
+        jsonResourceInfo.getResourceUUID();
+        jsonResourceInfo.getResourceVersion();
+        jsonResourceInfo.getSubcategory();
+        jsonResourceInfo.getCategory();
+        jsonResourceInfo.getResourceCustomizationUUID();
+        jsonResourceInfo.getArtifacts();
+        assertEquals(resourceInvariantUUID,null);
+    }
+
 }
