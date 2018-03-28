@@ -31,6 +31,7 @@
             }
         ],
         "placementSolutions": [
+            [
             {
                 "resourceModuleName": "ALLOTTED_RESOURCE",
                 "serviceInstanceId": "testSIID1",
@@ -101,9 +102,12 @@
                         {
                             "key": "cloudRegionId",
                             "value": "testCloudRegionId3"
-                        }
+                        },
+                        {   "key":"flavors",
+                            "value":{"flavorLabel1xxx":"vimFlavorxxx", "flavorLabel2xxx":"vimFlavorxxx"}}
                     ]
             }
+        ]
         ]
     }
 }

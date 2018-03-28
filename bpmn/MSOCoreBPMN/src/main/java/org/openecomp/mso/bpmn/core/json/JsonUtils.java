@@ -931,7 +931,7 @@ public class JsonUtils {
 		for (int i = 0; i < arr.length(); i++){
 			JSONObject jo = arr.getJSONObject(i);
 			String key = jo.getString(keyNode);
-			String value =jo.getString(valueNode);
+			String value = jo.getString(valueNode);
 			map.put(key, value);
 		}
 		msoLogger.debug("Outgoing Map is: " + map);
