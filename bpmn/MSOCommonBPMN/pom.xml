@@ -15,7 +15,7 @@
 	<properties>
 		<camunda.version>7.8.0</camunda.version>
 		<spring.version>4.3.2.RELEASE</spring.version>
-		<httpclient.version>3.1</httpclient.version>
+		<httpclient.version>4.5.5</httpclient.version>
 		<jax.ws.rs>2.0.1</jax.ws.rs>
 		<jackson.version>1.1.1</jackson.version>
 		<maven.compiler.target>1.8</maven.compiler.target>
@@ -386,8 +386,8 @@
 			<version>1.6.12</version>
 		</dependency>
 		<dependency>
-			<groupId>commons-httpclient</groupId>
-			<artifactId>commons-httpclient</artifactId>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
 			<version>${httpclient.version}</version>
 		</dependency>
 		<dependency>
@@ -415,13 +415,6 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
 			<version>${spring.version}</version>
-		</dependency>
-		-->
-		<!-- bwj: duplicated
-		<dependency>
-			<groupId>commons-httpclient</groupId>
-			<artifactId>commons-httpclient</artifactId>
-			<version>${httpclient.version}</version>
 		</dependency>
 		-->
 		<!-- bwj: added -->
