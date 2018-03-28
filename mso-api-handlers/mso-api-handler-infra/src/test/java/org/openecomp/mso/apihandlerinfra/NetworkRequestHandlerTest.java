@@ -34,14 +34,17 @@ import java.util.List;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import mockit.Expectations;
 import mockit.Mock;
 import mockit.MockUp;
 
+import mockit.Mocked;
 import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.entity.BasicHttpEntity;
 import org.apache.http.message.BasicHttpResponse;
+import org.hibernate.Session;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -50,6 +53,7 @@ import org.mockito.Mockito;
 
 import org.openecomp.mso.apihandler.common.CamundaClient;
 import org.openecomp.mso.apihandlerinfra.networkbeans.NetworkRequest;
+import org.openecomp.mso.db.AbstractSessionFactoryManager;
 import org.openecomp.mso.db.catalog.CatalogDatabase;
 import org.openecomp.mso.db.catalog.beans.NetworkRecipe;
 import org.openecomp.mso.db.catalog.beans.VfModule;
@@ -63,7 +67,6 @@ public class NetworkRequestHandlerTest {
 	private static final String REQ_XML = "<network-request xmlns=\"http://org.openecomp/mso/infra/network-request/v1\"> <request-info> <request-id>e1fc3ed3-31e5-48a8-913b-23184c1e9443</request-id><action>CREATE</action> <source>VID</source> <service-instance-id>e1fc3ed3-31e5-48a8-913b-23184c1e9443</service-instance-id></request-info> <network-inputs> <network-id>e1fc3ed3-31e5-48a8-913b-23184c1e9443</network-id> <network-name>nwInstanceName</network-name> <network-type>nwModelName</network-type><modelCustomizationId>e1fc3ed3-31e5-48a8-913b-23184c1e9443</modelCustomizationId> <aic-cloud-region>e1fc3ed3-31e5-48a8-913b-23184c1e9443</aic-cloud-region> <tenant-id>e1fc3ed3-31e5-48a8-913b-23184c1e9443</tenant-id><service-id>e1fc3ed3-31e5-48a8-913b-23184c1e9443</service-id> <backout-on-failure>false</backout-on-failure><sdncVersion>1802</sdncVersion><service-instance-id>e1fc3ed3-31e5-48a8-913b-23184c1e9443</service-instance-id></network-inputs> <network-params></network-params> </network-request>";
 
 	private static MockUp<RequestsDatabase> mockRDB;
-	private static MockUp<NetworkMsoInfraRequest> mockMsoRequest;
 	private static MockUp<CatalogDatabase> mockCDB;
 	private static MockUp<CamundaClient> mockCamundaClient;
 
@@ -104,13 +107,6 @@ public class NetworkRequestHandlerTest {
 			@Mock
 			public int updateInfraFinalStatus (String requestId, String requestStatus, String statusMessage, long progress, String responseBody, String lastModifiedBy) {
 				return 1;
-			}
-		};
-
-		mockMsoRequest = new MockUp<NetworkMsoInfraRequest>() {
-			@Mock
-			public void createRequestRecord (Status status) {
-				return;
 			}
 		};
 
@@ -157,50 +153,42 @@ public class NetworkRequestHandlerTest {
 	@AfterClass
 	public static void tearDown() {
 		mockRDB.tearDown();
-		mockMsoRequest.tearDown();
 		mockCDB.tearDown();
 		mockCamundaClient.tearDown();
 	}
 	
 	@Test
-	public void manageVnfRequestTest(){
+	public void manageVnfRequestTest(@Mocked AbstractSessionFactoryManager sessionFactoryManager,
+                                     @Mocked Session session){
+        new Expectations() {{
+            sessionFactoryManager.getSessionFactory().openSession(); result = session;
+        }};
 		Mockito.when(uriInfo.getRequestUri()).thenReturn(URI.create("http://localhost:8080/test"));
 		Response resp = handler.manageNetworkRequest(REQ_XML, "v2");
 		assertTrue(null != resp);
 	}
 
 	@Test
-	public void manageVnfRequestTestV1(){
+	public void manageVnfRequestTestV1(@Mocked AbstractSessionFactoryManager sessionFactoryManager,
+                                       @Mocked Session session){
+        new Expectations() {{
+            sessionFactoryManager.getSessionFactory().openSession(); result = session;
+        }};
 		Mockito.when(uriInfo.getRequestUri()).thenReturn(URI.create("http://localhost:8080/test"));
 		Response resp = handler.manageNetworkRequest(REQ_XML, "v1");
 		assertTrue(null != resp);
 	}
 	
 	@Test
-	public void manageVnfRequestTestV3(){
+	public void manageVnfRequestTestV3(@Mocked AbstractSessionFactoryManager sessionFactoryManager,
+                                       @Mocked Session session){
+        new Expectations() {{
+            sessionFactoryManager.getSessionFactory().openSession(); result = session;
+        }};
 		Mockito.when(uriInfo.getRequestUri()).thenReturn(URI.create("http://localhost:8080/test"));
 		Response resp = handler.manageNetworkRequest(REQ_XML, "v3");
 		assertTrue(null != resp);
 	}
-
-	/*@Test
-	public void manageNetworkRequestTestV3Duplicate(){
-
-		MockUp<RequestsDatabase> mockDuplicate = new MockUp<RequestsDatabase>() {
-			@Mock
-			public InfraActiveRequests checkDuplicateByVnfName(String vnfName, String action, String requestType) {
-				return new InfraActiveRequests();
-			}
-		};
-
-		try {
-			Mockito.when(uriInfo.getRequestUri()).thenReturn(URI.create("http://localhost:8080/test"));
-			Response resp = handler.manageNetworkRequest(REQ_XML, "v3");
-			assertTrue(null != resp);
-		} finally {
-			mockDuplicate.tearDown();
-		}
-	}*/
 	
 	@Test
 	public void manageVnfRequestTestInvalidVersion(){

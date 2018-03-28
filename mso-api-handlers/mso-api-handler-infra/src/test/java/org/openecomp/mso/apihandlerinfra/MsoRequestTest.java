@@ -25,18 +25,24 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 
+import mockit.Expectations;
+import mockit.Mocked;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.CharEncoding;
+import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.openecomp.mso.apihandler.common.ValidationException;
+import org.openecomp.mso.db.AbstractSessionFactoryManager;
+import org.openecomp.mso.properties.MsoJavaProperties;
 import org.openecomp.mso.serviceinstancebeans.ServiceInstancesRequest;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -597,4 +603,22 @@ public class MsoRequestTest {
 		assertNotNull(msoRequest.getRequestId());
 		assertEquals(msoRequest.getReqVersion(), 6);
 	}
+
+	@Test
+	public void createRequestRecord(@Mocked AbstractSessionFactoryManager sessionFactoryManager,
+									@Mocked Session session) throws ValidationException, IOException {
+
+		new Expectations() {{
+			sessionFactoryManager.getSessionFactory().openSession(); result = session;
+		}};
+
+		this.requestJSON = inputStream("/v6AddRelationships.json");
+		this.instanceIdMapTest.put("serviceInstanceId", "ff305d54-75b4-431b-adb2-eb6b9e5ff000");
+		this.sir  = mapper.readValue(requestJSON, ServiceInstancesRequest.class);
+		this.msoRequest = new MsoRequest ("V6RemoveRelationships");
+		msoRequest.parse(sir, instanceIdMapTest, Action.removeRelationships, "v6", originalRequestJSON);
+		msoRequest.createRequestRecord(Status.COMPLETE, Action.createInstance);
+
+	}
+
 }
