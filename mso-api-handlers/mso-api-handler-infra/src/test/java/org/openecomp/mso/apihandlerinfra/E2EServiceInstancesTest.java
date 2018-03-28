@@ -670,7 +670,7 @@ public class E2EServiceInstancesTest {
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
 		assertTrue(respStr
-            .contains("Mapping of request to JSON object failed.  No content to map to Object due to end of input"));
+            .contains("Mapping of request to JSON object failed.  No content to map due to end-of-input"));
 	}
 
 	@Ignore // 1802 merge

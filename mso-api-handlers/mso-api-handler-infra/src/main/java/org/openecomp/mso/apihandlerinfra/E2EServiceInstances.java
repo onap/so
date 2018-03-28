@@ -40,7 +40,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.Session;
 import org.json.JSONObject;
 import org.openecomp.mso.apihandler.common.ErrorNumbers;
