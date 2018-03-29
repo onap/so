@@ -25,30 +25,39 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
+
 import javax.xml.ws.Holder;
-import mockit.Mock;
-import mockit.MockUp;
-import org.junit.Ignore;
+
+import org.junit.After;
 import org.junit.Test;
-import org.openecomp.mso.adapters.vnf.MsoVnfAdapter;
-import org.openecomp.mso.adapters.vnf.MsoVnfAdapterImpl;
 import org.openecomp.mso.adapters.vnf.exceptions.VnfException;
+import org.openecomp.mso.cloud.CloudConfigFactory;
 import org.openecomp.mso.openstack.beans.HeatStatus;
 import org.openecomp.mso.openstack.beans.StackInfo;
 import org.openecomp.mso.openstack.beans.VnfStatus;
 import org.openecomp.mso.openstack.exceptions.MsoException;
 import org.openecomp.mso.openstack.utils.MsoHeatUtils;
-
-import org.openecomp.mso.cloud.CloudConfigFactory;
 import org.openecomp.mso.properties.MsoJavaProperties;
 import org.openecomp.mso.properties.MsoPropertiesFactory;
 
+import mockit.Mock;
+import mockit.MockUp;
+
 public class QueryTest {
 
+	private MockUp<MsoHeatUtils> mockUpHeatUtils1 = null;
+	private MockUp<MsoHeatUtils> mockUpHeatUtils2 = null;
+	
+	@After
+	 public void tearDown() {
+		 if (mockUpHeatUtils1!=null) { mockUpHeatUtils1.tearDown(); mockUpHeatUtils1 = null; }
+		 if (mockUpHeatUtils2!=null) { mockUpHeatUtils2.tearDown(); mockUpHeatUtils2 = null; }
+   }
+	
     @Test
     public void testQueryCreatedVnf() throws VnfException {
         {
-            new MockUp<MsoHeatUtils>() {
+        	mockUpHeatUtils1 = new MockUp<MsoHeatUtils>() {
                 @Mock
                 public StackInfo queryStack(String cloudSiteId, String tenantId, String stackName) throws MsoException {
                     StackInfo info = new StackInfo("stackName", HeatStatus.CREATED);
@@ -75,7 +84,7 @@ public class QueryTest {
     @Test
     public void testQueryNotFoundVnf() throws VnfException {
         {
-            new MockUp<MsoHeatUtils>() {
+        	mockUpHeatUtils2 = new MockUp<MsoHeatUtils>() {
                 @Mock
                 public StackInfo queryStack(String cloudSiteId, String tenantId, String stackName) throws MsoException {
                     StackInfo info = new StackInfo("stackName", HeatStatus.NOTFOUND);
