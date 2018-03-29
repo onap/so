@@ -75,6 +75,9 @@ public class CatalogDatabaseTest {
 		 if (mockCd!=null) { mockCd.tearDown(); mockCd = null; }
 		 if (mockedSession!=null) { mockedSession.tearDown(); mockedSession = null; }
 		 if (mockUpQuery!=null) { mockUpQuery.tearDown(); mockUpQuery = null; }
+		 if (mockUpQuery2!=null) { mockUpQuery2.tearDown(); mockUpQuery2 = null; }
+		 if (mockUpQuery3!=null) { mockUpQuery3.tearDown(); mockUpQuery3 = null; }
+		 if (mockUpQuery4!=null) { mockUpQuery4.tearDown(); mockUpQuery4 = null; }
     }
 
 
@@ -323,7 +326,37 @@ public class CatalogDatabaseTest {
     }
 
     @Test
-    @Ignore
+    public void getHeatTemplateByArtifactUuidNullTest(){
+
+        mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public Object uniqueResult() {
+                return null;
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        HeatTemplate ht = cd.getHeatTemplateByArtifactUuidRegularQuery("123-uuid");
+        assertNull(ht);
+
+
+    }
+
+    @Test
     public void getHeatTemplateByArtifactUuidHibernateErrorTest(){
 
         mockUpQuery = new MockUp<Query>() {
@@ -598,6 +631,36 @@ public class CatalogDatabaseTest {
     }
 
     @Test
+    public void getHeatEnvironmentByArtifactUuidNonUniqueTest(){
+
+        mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public Object uniqueResult() throws Exception {
+                throw new org.hibernate.NonUniqueResultException(2);
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        HeatEnvironment he = cd.getHeatEnvironmentByArtifactUuid("123");
+        assertNull(he);
+
+    }
+
+    @Test
     public void getServiceByInvariantUUIDTest(){
 
         mockUpQuery = new MockUp<Query>() {
@@ -690,6 +753,37 @@ public class CatalogDatabaseTest {
 
         Service service = cd.getService("123");
         assertEquals("123-uuid", service.getModelUUID());
+
+
+    }
+
+    @Test
+    public void getServiceNullTest(){
+
+        mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public Object uniqueResult() throws Exception {
+                return null;
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        Service service = cd.getService("123");
+        assertNull(service);
 
 
     }
@@ -854,6 +948,130 @@ public class CatalogDatabaseTest {
     }
 
     @Test
+    public void getService2NonUniqueTest(){
+        mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public Object uniqueResult() throws Exception {
+            	throw new org.hibernate.NonUniqueResultException(2);
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        HashMap<String, String> map = new HashMap<>();
+        map.put("serviceNameVersionId", "v2");
+
+        thrown.expect(org.hibernate.NonUniqueResultException.class);
+        Service service = cd.getService(map, "123");
+    }
+
+    @Test
+    public void getService2HibernateExceptionTest(){
+        mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public Object uniqueResult() throws Exception {
+            	throw new org.hibernate.HibernateException("test case");
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        HashMap<String, String> map = new HashMap<>();
+        map.put("serviceNameVersionId", "v2");
+        
+        thrown.expect(org.hibernate.HibernateException.class);
+        Service service = cd.getService(map, "123");
+    }
+
+    @Test
+    public void getService2ExceptionTest(){
+        mockUpQuery = new MockUp<Query>() {
+
+        	@Mock
+            public Object uniqueResult() throws Exception {
+            	throw new NullPointerException();
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        HashMap<String, String> map = new HashMap<>();
+        map.put("serviceNameVersionId", "v2");
+        
+        thrown.expect(NullPointerException.class);
+        Service service = cd.getService(map, "123");
+    }
+
+    @Test
+    public void getService2NullTest(){
+        mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public Object uniqueResult() throws Exception {
+                return null;
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        HashMap<String, String> map = new HashMap<>();
+        map.put("serviceNameVersionId", "v2");
+        
+        Service service = cd.getService(map, "123");
+        assertNull(service);
+    }
+
+    @Test
     public void getServiceByModelNameTest(){
 
         mockUpQuery = new MockUp<Query>() {
@@ -948,6 +1166,36 @@ public class CatalogDatabaseTest {
     }
 
     @Test
+    public void getServiceByVersionAndInvariantIdNullTest() throws Exception{
+
+        mockUpQuery = new MockUp<Query>() {
+
+            @Mock
+            public Object uniqueResult() throws Exception {
+                return null;
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+        Service service = cd.getServiceByVersionAndInvariantId("123","tetwe");
+        assertNull(service);
+
+
+    }
+
+    @Test
     public void getServiceByVersionAndInvariantIdNonUniqueResultTest() throws Exception{
 
         mockUpQuery = new MockUp<Query>() {
@@ -1010,7 +1258,8 @@ public class CatalogDatabaseTest {
         ServiceRecipe serviceRecipe = cd.getServiceRecipeByServiceModelUuid("123","tetwe");
         assertEquals(1, serviceRecipe.getId());
 
-
+        serviceRecipe = cd.getServiceRecipeByServiceModelUuid("123", null);
+        assertEquals(1, serviceRecipe.getId());
     }
 
     @Test
@@ -1097,6 +1346,35 @@ public class CatalogDatabaseTest {
         assertEquals(0, serviceRecipes.size());
 
 
+    }
+
+    @Test
+    public void getVnfComponentTest() throws Exception{
+        mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public Object uniqueResult() {
+            	VnfComponent vnfComponent = new VnfComponent();
+            	vnfComponent.setHeatTemplateId(1234);
+                return vnfComponent;
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        VnfComponent ht = cd.getVnfComponent(123,"vnf");
+        assertEquals(new Integer(1234), ht.getHeatTemplateId());
     }
 
     @Test
@@ -1371,6 +1649,39 @@ public class CatalogDatabaseTest {
 
     }
 
+
+    @Test
+    public void getServiceRecipeTest2() throws Exception{
+        mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public List <ServiceRecipe> list() throws Exception {
+                ServiceRecipe serviceRecipe = new ServiceRecipe();
+                serviceRecipe.setServiceModelUUID("123-uuid");
+                return Arrays.asList(serviceRecipe);
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        ServiceRecipe ht = cd.getServiceRecipe(1001,"3992");
+        assertEquals("123-uuid", ht.getServiceModelUUID());
+        
+        ht = cd.getServiceRecipe(1001, null);
+        assertEquals("123-uuid", ht.getServiceModelUUID());
+        
+    }
 
     @Test
     public void getServiceRecipeTest2Exception() throws Exception{
@@ -2346,20 +2657,177 @@ public class CatalogDatabaseTest {
     }
 
     @Test
-    public void getVfModuleByModelCustomizationUuidTestException(){
-    	thrown.expect(Exception.class);
+    public void getVfModuleByModelCustomizationUuidTest(){
+        mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public Object uniqueResult() {
+            	VfModuleCustomization vc = new VfModuleCustomization();
+                vc.setModelCustomizationUuid("4993493");
+                return vc;
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        VfModuleCustomization vnf = cd.getVfModuleByModelCustomizationUuid("4993493");
+        assertEquals("4993493", vnf.getModelCustomizationUuid());
+    }
+    
+    @Test
+    public void getVfModuleByModelCustomizationUuidNullTest(){
+        mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public Object uniqueResult() {
+            	return null;
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        VfModuleCustomization vnf = cd.getVfModuleByModelCustomizationUuid("4993493");
+        assertNull(vnf);
+    }
+    
+    @Test
+    public void getVfModuleByModelCustomizationUuidNonUniqueExceptionTest(){
+        mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public Object uniqueResult() {
+            	throw new org.hibernate.NonUniqueResultException(2);
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        thrown.expect(org.hibernate.NonUniqueResultException.class);
         VfModuleCustomization vnf = cd.getVfModuleByModelCustomizationUuid("4993493");
     }
+    
+    @Test
+    public void getVfModuleByModelCustomizationUuidHibernateExceptionTest(){
+        mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public Object uniqueResult() {
+            	throw new org.hibernate.HibernateException("test case");
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        thrown.expect(org.hibernate.HibernateException.class);
+        VfModuleCustomization vnf = cd.getVfModuleByModelCustomizationUuid("4993493");
+    }
+    
+    @Test
+    public void getVfModuleByModelCustomizationUuidExceptionTest(){
+        mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public Object uniqueResult() {
+                throw new NullPointerException();
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        thrown.expect(NullPointerException.class);
+        VfModuleCustomization vnf = cd.getVfModuleByModelCustomizationUuid("4993493");
+    }
+    
     @Test
     public void getVfModuleByModelInvariantUuidAndModelVersionTestException(){
     	thrown.expect(Exception.class);
         VfModule vnf = cd.getVfModuleByModelInvariantUuidAndModelVersion("4993493","vnf");
     }
+
     @Test
-    public void getVfModuleCustomizationByModelCustomizationIdTestException(){
-    	thrown.expect(Exception.class);
+    public void getVfModuleCustomizationByModelCustomizationIdTest(){
+        mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public Object uniqueResult() {
+            	VfModuleCustomization vm = new VfModuleCustomization();
+            	vm.setModelCustomizationUuid("4993493");
+                return vm;
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
         VfModuleCustomization vnf = cd.getVfModuleCustomizationByModelCustomizationId("4993493");
+        assertEquals("4993493", vnf.getModelCustomizationUuid());
     }
+
     @Test
     public void getVfModuleByModelUuidTestException(){
     	thrown.expect(Exception.class);
@@ -2513,11 +2981,144 @@ public class CatalogDatabaseTest {
     	thrown.expect(Exception.class);
         cd.getNetworkResourceById(4993493);
     }
+
     @Test
     public void getNetworkResourceByIdTest(){
-    	thrown.expect(Exception.class);
-        cd.getVfModuleTypeByUuid("4993493");
+        mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public Object uniqueResult() {
+            	VfModule vm = new VfModule();
+            	vm.setModelInvariantUuid("4993493");
+            	return vm;
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        VfModule vm = cd.getVfModuleTypeByUuid("4993493");
+        assertEquals("4993493", vm.getModelInvariantUuid());
     }
+
+    @Test
+    public void getNetworkResourceByIdNullTest(){
+        mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public Object uniqueResult() {
+            	return null;
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        VfModule vm = cd.getVfModuleTypeByUuid("4993493");
+        assertNull(null);
+    }
+
+    @Test
+    public void getNetworkResourceByIdNonUniqueTest(){
+        mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public Object uniqueResult() {
+            	throw new org.hibernate.NonUniqueResultException(2);
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        thrown.expect(org.hibernate.NonUniqueResultException.class);
+        VfModule vm = cd.getVfModuleTypeByUuid("4993493");
+    }
+
+    @Test
+    public void getNetworkResourceByIdHibernateExceptionTest(){
+        mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public Object uniqueResult() {
+            	throw new org.hibernate.HibernateException("test case");
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        thrown.expect(org.hibernate.HibernateException.class);
+        VfModule vm = cd.getVfModuleTypeByUuid("4993493");
+    }
+
+    @Test
+    public void getNetworkResourceByIdExceptionTest(){
+        mockUpQuery = new MockUp<Query>() {
+            @Mock
+            public Object uniqueResult() {
+            	throw new NullPointerException();
+            }
+        };
+
+        mockedSession = new MockUp<Session>() {
+            @Mock
+            public Query createQuery(String hql) {
+                return mockUpQuery.getMockInstance();
+            }
+        };
+
+        mockCd = new MockUp<CatalogDatabase>() {
+            @Mock
+            private Session getSession() {
+                return mockedSession.getMockInstance();
+            }
+        };
+
+        thrown.expect(NullPointerException.class);
+        VfModule vm = cd.getVfModuleTypeByUuid("4993493");
+    }
+
     @Test
     public void isEmptyOrNullTest(){
         boolean is = cd.isEmptyOrNull("4993493");
@@ -2581,12 +3182,6 @@ public class CatalogDatabaseTest {
         List<VnfResCustomToVfModuleCustom> vrCtoVFMC = cd.getVRCtoVFMC("4993493", "388492");
         assertFalse(vrCtoVFMC.isEmpty());
     }
-    @Test
-    public void getVfModuleTypeByUuidTestException(){
-    	thrown.expect(Exception.class);
-        cd.getVfModuleTypeByUuid("4993493");
-    }
-
     @Test
     public void getTempNetworkHeatTemplateLookupTest(){
         mockUpQuery = new MockUp<Query>() {
