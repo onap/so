@@ -80,6 +80,8 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 
     MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory();
 
+    protected MsoHeatUtils heat;
+
     private static final String MSO_PROP_VNF_ADAPTER = "MSO_PROP_VNF_ADAPTER";
     private static final String MSO_CONFIGURATION_ERROR = "MsoConfigurationError";
     private static final String VNF_ADAPTER_SERVICE_NAME = "MSO-BPMN:MSO-VnfAdapter.";
@@ -106,6 +108,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
     public MsoVnfAdapterImpl(MsoPropertiesFactory msoPropFactory, CloudConfigFactory cloudConfigFact) {
         this.msoPropertiesFactory = msoPropFactory;
         this.cloudConfigFactory = cloudConfigFact;
+        heat = new MsoHeatUtils(MSO_PROP_VNF_ADAPTER, this.msoPropertiesFactory, this.cloudConfigFactory);
     }
 
     /**
@@ -278,8 +281,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         // Will capture execution time for metrics
         long startTime = System.currentTimeMillis();
 
-        MsoHeatUtils heat = new MsoHeatUtils(MSO_PROP_VNF_ADAPTER, msoPropertiesFactory, cloudConfigFactory);
-
         StackInfo heatStack = null;
         long subStartTime = System.currentTimeMillis();
         try {
@@ -339,8 +340,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         // Will capture execution time for metrics
         long startTime = System.currentTimeMillis();
 
-        MsoHeatUtils heat = new MsoHeatUtils(MSO_PROP_VNF_ADAPTER, msoPropertiesFactory, cloudConfigFactory);
-
         // Use the MsoHeatUtils to delete the stack. Set the polling flag to true.
         // The possible outcomes of deleteStack are a StackInfo object with status
         // of NOTFOUND (on success) or FAILED (on error). Also, MsoOpenstackException
@@ -389,8 +388,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         MsoLogger.setLogContext(rollback.getMsoRequest());
 
         LOGGER.debug("Rolling Back VNF " + vnfId + " in " + cloudSiteId + "/" + tenantId);
-
-        MsoHeatUtils heat = new MsoHeatUtils(MSO_PROP_VNF_ADAPTER, msoPropertiesFactory, cloudConfigFactory);
 
         // Use the MsoHeatUtils to delete the stack. Set the polling flag to true.
         // The possible outcomes of deleteStack are a StackInfo object with status
@@ -701,8 +698,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         callHeatbridge(baseVfHeatStackId);
 
         // First, look up to see if the VF already exists.
-        MsoHeatUtils heat = new MsoHeatUtils(MSO_PROP_VNF_ADAPTER, msoPropertiesFactory, cloudConfigFactory);
-
         StackInfo heatStack = null;
         long subStartTime1 = System.currentTimeMillis();
         try {
@@ -839,7 +834,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 
         // Ready to deploy the new VNF
 
-        try (CatalogDatabase db = CatalogDatabase.getInstance()) {
+        try (CatalogDatabase db = getCatalogDatabase()) {
             // Retrieve the VF
             VfModule vf = null;
             VnfResource vnfResource = null;
@@ -1375,8 +1370,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         // Will capture execution time for metrics
         long startTime = System.currentTimeMillis();
 
-        MsoHeatUtils heat = new MsoHeatUtils(MSO_PROP_VNF_ADAPTER, msoPropertiesFactory, cloudConfigFactory);
-
         // 1702 capture the output parameters on a delete
         // so we'll need to query first
         Map<String, Object> stackOutputs = null;
@@ -1519,7 +1512,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         vfRollback.setModelCustomizationUuid(mcu);
 
         // First, look up to see if the VNF already exists.
-        MsoHeatUtils heat = new MsoHeatUtils(MSO_PROP_VNF_ADAPTER, msoPropertiesFactory, cloudConfigFactory);
         MsoHeatUtilsWithUpdate heatU = new MsoHeatUtilsWithUpdate(MSO_PROP_VNF_ADAPTER, msoPropertiesFactory, cloudConfigFactory);
 
         StackInfo heatStack = null;
@@ -1633,7 +1625,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         // Get a handle to the Catalog Database
 
         // Make sure DB session is closed
-        try (CatalogDatabase db = CatalogDatabase.getInstance()) {
+        try (CatalogDatabase db = ) {
             // Retrieve the VF definition
             VnfResource vnfResource = null;
             VfModule vf = null;
@@ -2168,6 +2160,10 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             vfModuleName = null;
         }
         return vfModuleName;
+    }
+    
+    private CatalogDatabase getCatalogDatabase(){
+        return 
     }
 
 }
