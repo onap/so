@@ -21,7 +21,7 @@ public class PnfReadyEventHandler {
             exceptionUtil.buildAndThrowWorkflowException(execution, 500, "correlationId variable is not String type");
         }
         String correlationId = (String) correlationIdVar;
-        DmaapConsumer dmaapConsumer = new PnfReadyEventConsumer(correlationId);
+        DmaapConsumer dmaapConsumer = new PnfReadyEventConsumer.Builder(correlationId).build();
         dmaapConsumer.consume();
         // TODO inform camunda process that event has been received
     }
