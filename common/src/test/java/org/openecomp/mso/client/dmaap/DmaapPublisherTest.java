@@ -27,7 +27,7 @@ import java.util.Optional;
 
 public class DmaapPublisherTest {
 
-    DmaapPublisher dmaapPublisher = new DmaapPublisher(120) {
+    DmaapPublisher dmaapPublisher = new DmaapPublisher() {
         @Override
         public String getUserName() {
             return "test";
@@ -54,6 +54,7 @@ public class DmaapPublisherTest {
 
     @Test(expected = ProcessingException.class)
     public void sendTest() throws Exception {
+            dmaapPublisher.initProperties();
             dmaapPublisher.send("{'key': 'value'}");
     }
 

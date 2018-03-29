@@ -22,12 +22,10 @@ package org.openecomp.mso.apihandlerinfra.tenantisolation.dmaap;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openecomp.mso.apihandlerinfra.tenantisolation.dmaap.OperationalEnvironmentPublisher;
 import org.openecomp.mso.properties.MsoJavaProperties;
 import org.openecomp.mso.properties.MsoPropertiesException;
 import org.openecomp.mso.properties.MsoPropertiesFactory;
@@ -44,8 +42,8 @@ public class OperationalEnvironmentPublisherTest {
 	}
 	
 	@Test
-	public void getProperties() throws FileNotFoundException, IOException {
-		OperationalEnvironmentPublisher publisher = new OperationalEnvironmentPublisher();
+	public void getProperties() throws IOException {
+		OperationalEnvironmentPublisher publisher = new OperationalEnvironmentPublisher.Builder().build();
 		
 		assertEquals("m97898@mso.ecomp.att.com", publisher.getUserName());
 		assertEquals("VjR5NDcxSzA=", publisher.getPassword());

@@ -138,12 +138,12 @@ public class SDNOHealthCheckClient {
 		return mapper.writeValueAsString(obj);
 	}
 	
-	protected DmaapPublisher getPublisher() throws FileNotFoundException, IOException {
-		return new SDNOHealthCheckDmaapPublisher();
+	protected DmaapPublisher getPublisher() throws IOException {
+		return new SDNOHealthCheckDmaapPublisher.Builder().build();
 	}
 	
-	protected DmaapConsumer getConsumer(String requestId) throws FileNotFoundException, IOException {
-		return new SDNOHealthCheckDmaapConsumer(requestId);
+	protected DmaapConsumer getConsumer(String requestId) throws IOException {
+		return new SDNOHealthCheckDmaapConsumer.Builder().setUuid(requestId).build();
 	}
 	
 	protected boolean execute(String requestId, String request) throws Exception {

@@ -32,13 +32,8 @@ public class SDNOHealthCheckDmaapConsumer extends DmaapConsumer {
 	private boolean continuePolling = true;
 	private final static String healthDiagnosticPath = "body.output.*";
 
-	public SDNOHealthCheckDmaapConsumer() throws IOException {
-		this("none");
-	}
-	
-	public SDNOHealthCheckDmaapConsumer(String uuid) throws IOException {
-		super();
-		this.uuid = uuid;
+	private SDNOHealthCheckDmaapConsumer(Builder builder){
+		this.uuid = builder.uuid;
 	}
 	
 	@Override
@@ -156,4 +151,20 @@ public class SDNOHealthCheckDmaapConsumer extends DmaapConsumer {
 	public int getMaximumElapsedTime() {
 		return 300000;
 	}
+
+	public static class Builder {
+		private String uuid;
+
+		public Builder setUuid(String uuid) {
+			this.uuid = uuid;
+			return this;
+		}
+
+		public SDNOHealthCheckDmaapConsumer build() throws IOException {
+			SDNOHealthCheckDmaapConsumer sdnoHealthCheckDmaapConsumer = new SDNOHealthCheckDmaapConsumer(this);
+			sdnoHealthCheckDmaapConsumer.initProperties();
+			return sdnoHealthCheckDmaapConsumer;
+		}
+	}
+
 }

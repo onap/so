@@ -33,8 +33,8 @@ public class PnfReadyEventConsumer extends DmaapConsumer {
     private boolean continuePolling = true;
     private String correlationId;
 
-    public PnfReadyEventConsumer(String correlationId) throws IOException {
-        this.correlationId = correlationId;
+    private PnfReadyEventConsumer(Builder builder){
+        this.correlationId = builder.correlationId;
     }
 
     @Override
@@ -90,4 +90,19 @@ public class PnfReadyEventConsumer extends DmaapConsumer {
     public Optional<String> getHost() {
         throw new NotSupportedException();
     }
+
+    public static class Builder {
+        private String correlationId;
+
+        public Builder(String correlationId){
+            this.correlationId = correlationId;
+        }
+
+        public PnfReadyEventConsumer build() throws IOException {
+            PnfReadyEventConsumer pnfReadyEventConsumer = new PnfReadyEventConsumer(this);
+            pnfReadyEventConsumer.initProperties();
+            return pnfReadyEventConsumer;
+        }
+    }
+
 }

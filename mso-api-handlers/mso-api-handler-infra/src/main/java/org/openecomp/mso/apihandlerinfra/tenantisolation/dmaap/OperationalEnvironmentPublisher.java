@@ -20,19 +20,14 @@
 
 package org.openecomp.mso.apihandlerinfra.tenantisolation.dmaap;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Optional;
-
 import org.openecomp.mso.client.dmaap.DmaapPublisher;
 
 public class OperationalEnvironmentPublisher extends DmaapPublisher {
 
-	
-	public OperationalEnvironmentPublisher() throws FileNotFoundException, IOException {
-		super();
-	}
-	
+	private OperationalEnvironmentPublisher(){}
+
 	@Override
 	public String getUserName() {
 
@@ -55,4 +50,14 @@ public class OperationalEnvironmentPublisher extends DmaapPublisher {
 	public Optional<String> getHost() {
 		return Optional.ofNullable(this.msoProperties.get("so.operational-environment.dmaap.host"));
 	}
+
+	public static class Builder {
+
+		public OperationalEnvironmentPublisher build() throws IOException {
+			OperationalEnvironmentPublisher operationalEnvironmentPublisher = new OperationalEnvironmentPublisher();
+			operationalEnvironmentPublisher.initProperties();
+			return operationalEnvironmentPublisher;
+		}
+	}
+
 }

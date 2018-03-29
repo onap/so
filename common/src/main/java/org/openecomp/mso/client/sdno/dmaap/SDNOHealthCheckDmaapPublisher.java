@@ -20,7 +20,6 @@
 
 package org.openecomp.mso.client.sdno.dmaap;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Optional;
 
@@ -28,9 +27,7 @@ import org.openecomp.mso.client.dmaap.DmaapPublisher;
 
 public class SDNOHealthCheckDmaapPublisher extends DmaapPublisher {
 	
-	public SDNOHealthCheckDmaapPublisher() throws FileNotFoundException, IOException {
-		super();
-	}
+	private SDNOHealthCheckDmaapPublisher() {}
 	
 	@Override
 	public String getUserName() {
@@ -50,6 +47,15 @@ public class SDNOHealthCheckDmaapPublisher extends DmaapPublisher {
 	@Override
 	public Optional<String> getHost() {
 		return Optional.ofNullable(msoProperties.get("sdno.health-check.dmaap.publisher.host"));
+	}
+
+	public static class Builder {
+
+		public SDNOHealthCheckDmaapPublisher build() throws IOException {
+			SDNOHealthCheckDmaapPublisher sdnoHealthCheckDmaapPublisher = new SDNOHealthCheckDmaapPublisher();
+			sdnoHealthCheckDmaapPublisher.initProperties();
+			return sdnoHealthCheckDmaapPublisher;
+		}
 	}
 
 }

@@ -73,7 +73,7 @@ public class RubyClient {
 	}
 	
 	protected DmaapPublisher getPublisher() throws IOException {
-		return new RubyCreateTicketRequestPublisher();
+		return new RubyCreateTicketRequestPublisher.Builder().build();
 	}	
 	
 	protected String getTime() {

@@ -20,6 +20,7 @@
  
 package org.openecomp.mso.client.dmaap;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.Map;
@@ -27,19 +28,18 @@ import java.util.Optional;
 import java.util.Properties;
 
 import org.openecomp.mso.client.defaultproperties.DefaultDmaapPropertiesImpl;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 
 import com.att.eelf.configuration.EELFLogger;
 import com.att.eelf.configuration.EELFManager;
 
 public abstract class DmaapClient {
-	
+
 	protected final EELFLogger auditLogger = EELFManager.getInstance().getAuditLogger();
-	protected final Map<String, String> msoProperties;
-	protected final Properties properties;
-	public DmaapClient(String filepath) throws IOException {
-		Resource resource = new ClassPathResource(filepath);
+	protected Map<String, String> msoProperties;
+	protected Properties properties;
+	private static final String PROPERTIES_FILE_PATH = "dmaap/default-consumer.properties";
+
+	protected void initProperties() throws IOException {
 		DmaapProperties dmaapProperties = DmaapPropertiesLoader.getInstance().getNewImpl();
 		if (dmaapProperties == null) {
 			auditLogger.error("No RestProperty implementation found on classpath, loading default");
@@ -47,7 +47,8 @@ public abstract class DmaapClient {
 		}
 		this.msoProperties = dmaapProperties.getProperties();
 		this.properties = new Properties();
-		this.properties.load(resource.getInputStream());
+		this.properties.load(new FileInputStream(this.getClass().getClassLoader()
+				.getResource(PROPERTIES_FILE_PATH).getPath()));
 		this.properties.put("password", this.deobfuscatePassword(this.getPassword()));
 		this.properties.put("username", this.getUserName());
 		this.properties.put("topic", this.getTopic());
@@ -55,17 +56,15 @@ public abstract class DmaapClient {
 			this.properties.put("host", this.getHost().get());
 		}
 	}
+
 	protected String deobfuscatePassword(String password) {
-		
 		try {
 			return new String(Base64.getDecoder().decode(password.getBytes()));
 		} catch(IllegalArgumentException iae) {
-			
 			return password;
 		}
 	}
-	
-	
+
 	public abstract String getUserName();
 	public abstract String getPassword();
 	public abstract String getTopic();

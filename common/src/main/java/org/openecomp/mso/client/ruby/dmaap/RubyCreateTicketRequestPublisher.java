@@ -20,16 +20,14 @@
 
 package org.openecomp.mso.client.ruby.dmaap;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Optional;
 
 import org.openecomp.mso.client.dmaap.DmaapPublisher;
 
 public class RubyCreateTicketRequestPublisher extends DmaapPublisher{
-	public RubyCreateTicketRequestPublisher() throws FileNotFoundException, IOException {
-		super();
-	}
+
+	private RubyCreateTicketRequestPublisher() {}
 	
 	@Override
 	public String getUserName() {
@@ -49,6 +47,15 @@ public class RubyCreateTicketRequestPublisher extends DmaapPublisher{
 	@Override
 	public Optional<String> getHost() {
 		return Optional.ofNullable(msoProperties.get("ruby.create-ticket-request.publisher.host"));
+	}
+
+	public static class Builder {
+
+		public RubyCreateTicketRequestPublisher build() throws IOException {
+			RubyCreateTicketRequestPublisher rubyCreateTicketRequestPublisher = new RubyCreateTicketRequestPublisher();
+			rubyCreateTicketRequestPublisher.initProperties();
+			return rubyCreateTicketRequestPublisher;
+		}
 	}
 	
 }

@@ -90,9 +90,8 @@ public class SDNOValidatorImpl implements SDNOValidator {
 		
 		return parentRequest;
 	}
-	protected void submitRequest(String json) throws FileNotFoundException, IOException, InterruptedException {
-		
-		DmaapPublisher publisher = new SDNOHealthCheckDmaapPublisher();
+	protected void submitRequest(String json) throws IOException {
+		DmaapPublisher publisher = new SDNOHealthCheckDmaapPublisher.Builder().build();
 		publisher.send(json);
 	}
 	protected boolean pollForResponse(String uuid) throws Exception {
@@ -102,8 +101,8 @@ public class SDNOValidatorImpl implements SDNOValidator {
 	
 
 	
-	protected DmaapConsumer getConsumer(String uuid) throws FileNotFoundException, IOException {
-		return new SDNOHealthCheckDmaapConsumer(uuid);
+	protected DmaapConsumer getConsumer(String uuid) throws IOException {
+		return new SDNOHealthCheckDmaapConsumer.Builder().setUuid(uuid).build();
 	}
 	
 

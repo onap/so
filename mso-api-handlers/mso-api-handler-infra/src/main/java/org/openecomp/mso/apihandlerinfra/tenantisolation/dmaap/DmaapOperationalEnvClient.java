@@ -52,7 +52,7 @@ public class DmaapOperationalEnvClient {
 	}
 	
 	protected DmaapPublisher getPublisher() throws IOException {
-		return new OperationalEnvironmentPublisher();
+		return new OperationalEnvironmentPublisher.Builder().build();
 	}
 	
 	public void dmaapPublishOperationalEnvRequest(String operationalEnvironmentId, String operationalEnvironmentName, String operationalEnvironmentType, 
