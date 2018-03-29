@@ -19,7 +19,7 @@
  */
 
 
-package org.openecomp.mso.asdc.client.tests;
+package org.openecomp.mso.asdc.client;
 
 
 

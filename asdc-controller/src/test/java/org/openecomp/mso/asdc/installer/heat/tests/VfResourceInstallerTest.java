@@ -38,7 +38,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.openecomp.mso.asdc.client.ASDCConfiguration;
 import org.openecomp.mso.asdc.client.exceptions.ArtifactInstallerException;
-import org.openecomp.mso.asdc.client.tests.ASDCControllerTest;
+import org.openecomp.mso.asdc.client.ASDCControllerTest;
 import org.openecomp.mso.asdc.installer.VfResourceStructure;
 import org.openecomp.mso.asdc.installer.heat.VfResourceInstaller;
 import org.openecomp.mso.db.catalog.CatalogDatabase;

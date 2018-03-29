@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.mso.asdc.client.tests;
+package org.openecomp.mso.asdc.client;
 
 
 import static org.junit.Assert.assertTrue;
