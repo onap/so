@@ -22,6 +22,7 @@ package org.openecomp.mso.openstack.utils;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +44,8 @@ import com.woorea.openstack.quantum.Quantum;
 import com.woorea.openstack.quantum.model.Network;
 import com.woorea.openstack.quantum.model.Segment;
 
-@RunWith(PowerMockRunner.class)
+
+//@RunWith(PowerMockRunner.class)
 @PrepareForTest({MsoNeutronUtils.class,MsoCommonUtils.class,NetworkInfo.class,CloudConfigFactory.class,CloudConfig.class,Segment.class,Network.class,Quantum.class})
 public class MsoNeutronUtilsTest{
 
@@ -79,6 +81,8 @@ CloudSite cloudSite;
 	public void testcreateNetwork() throws MsoException{
 	    List<Integer> vlans=new ArrayList();
 	    vlans.add(1);
+	    cloudConfigFactory = mock(CloudConfigFactory.class);
+	    ninfo = mock(NetworkInfo.class);
 	    MsoNeutronUtils mnu=PowerMockito.spy(new MsoNeutronUtils("msoProp",cloudConfigFactory));
         NetworkType type=NetworkType.PROVIDER;
         doReturn(ninfo).when(mnu).createNetwork("cloudSiteId", "tenantId", type, "networkName", "provider", vlans);
@@ -87,13 +91,17 @@ CloudSite cloudSite;
 	}
 	@Test
     public void testqueryNetwork() throws MsoException{
+	    cloudConfigFactory = mock(CloudConfigFactory.class);
+	    ninfo = mock(NetworkInfo.class);
 	    MsoNeutronUtils mnu=PowerMockito.spy(new MsoNeutronUtils("msoProp",cloudConfigFactory));
 	    doReturn(ninfo).when(mnu).queryNetwork("networkNameOrId", "tenantId", "cloudSiteId");
-	    assert(mnu.queryNetwork("networkNameOrId", "tenantId", "cloudSiteId")!=null);
+	    NetworkInfo ni = mnu.queryNetwork("networkNameOrId", "tenantId", "cloudSiteId");
+	    assert(ni!=null);
 	}
 	
 	@Test
 	public void testdeleteNetwork() throws MsoException{
+	    cloudConfigFactory = mock(CloudConfigFactory.class);
 	    MsoNeutronUtils mnu=PowerMockito.spy(new MsoNeutronUtils("msoProp",cloudConfigFactory));
 	    doReturn(true).when(mnu).deleteNetwork("networkId", "tenantId", "cloudSiteId");
 	    assertTrue(mnu.deleteNetwork("networkId", "tenantId", "cloudSiteId"));
@@ -104,6 +112,8 @@ CloudSite cloudSite;
 	    List<Integer> vlans=new ArrayList();
         vlans.add(1);
         NetworkType type=NetworkType.PROVIDER;
+	    cloudConfigFactory = mock(CloudConfigFactory.class);
+	    ninfo = mock(NetworkInfo.class);
         MsoNeutronUtils mnu=PowerMockito.spy(new MsoNeutronUtils("msoProp",cloudConfigFactory));
         doReturn(ninfo).when(mnu).updateNetwork("cloudSiteId", "tenantId", "Nid", type, "provider", vlans);
         assert(mnu.updateNetwork("cloudSiteId", "tenantId", "Nid", type, "provider", vlans)!=null);

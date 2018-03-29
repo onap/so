@@ -42,7 +42,7 @@ import static org.mockito.Mockito.mock;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 
-@RunWith(PowerMockRunner.class)
+//@RunWith(PowerMockRunner.class)
 @PrepareForTest({MsoCloudifyUtils.class})
 
 
@@ -109,13 +109,14 @@ public class MsoCloudifyUtilsTest {
 
     @Test(expected = MsoCloudifyManagerNotFound.class)
     public void testCloudifyClient() throws MsoException {
-
+    	msoPropertiesFactory = mock(MsoPropertiesFactory.class);
+    	cloudConfigFactory = mock(CloudConfigFactory.class);
+    	cloudSite = mock(CloudSite.class);
         MsoCloudifyUtils mcu = new MsoCloudifyUtils("msoPropID", msoPropertiesFactory, cloudConfigFactory);
         mcu.getCloudifyClient(cloudSite);
         assert (mcu.getCloudifyClient(cloudSite) != null);
 
     }
-
 
     @Test(expected = NullPointerException.class)
     public void testuploadBlueprint() throws MsoException {

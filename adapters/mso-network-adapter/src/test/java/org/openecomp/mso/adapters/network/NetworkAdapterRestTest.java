@@ -65,7 +65,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-@RunWith(PowerMockRunner.class)
+//@RunWith(PowerMockRunner.class)
 @PrepareForTest({NetworkAdapterRest.class, CreateNetworkTask.class, CreateNetworkRequest.class, DeleteNetworkTask.class, DeleteNetworkRequest.class})
 public class NetworkAdapterRestTest {
 	@Mock

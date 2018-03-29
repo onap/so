@@ -44,30 +44,25 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.doReturn;
 
-@RunWith(PowerMockRunner.class)
+//@RunWith(PowerMockRunner.class)
 @PrepareForTest({MsoHeatUtils.class})
 
 
 public class MsoHeatUtilsTest {
 
     @Mock
-
     StackInfo stackInfo;
 
     @Mock
-
     MsoPropertiesFactory msoPropertiesFactory;
 
     @Mock
-
     CloudConfigFactory cloudConfigFactory;
 
     @Mock
-
     Heat heatClient;
 
     @Mock
-
     CloudSite cloudSite;
 
     @Test(expected = NullPointerException.class)

@@ -44,7 +44,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import com.woorea.openstack.keystone.Keystone;
 import com.woorea.openstack.keystone.model.Tenant;
 
-@RunWith(PowerMockRunner.class)
+//@RunWith(PowerMockRunner.class)
 @PrepareForTest({MsoKeystoneUtils.class,CloudSite.class,CloudIdentity.class,Tenant.class,Keystone.class,MsoTenant.class,MsoJavaProperties.class})
 public class MsoKeystoneUtilsTest {
     
@@ -71,6 +71,7 @@ public class MsoKeystoneUtilsTest {
         MsoKeystoneUtils msk = PowerMockito.spy(new MsoKeystoneUtils("ID"));
         Map<String,String>metadata=new HashMap<>();
         metadata.put("1", "value");
+        tenant = mock(Tenant.class);
         PowerMockito.when(tenant.getId ()).thenReturn("ID");
        doReturn(tenant.getId ()).when(msk).createTenant("tenantName", "cloudSiteId", metadata, true);
        PowerMockito.spy(tenant.getId ());
@@ -95,6 +96,7 @@ public class MsoKeystoneUtilsTest {
         MsoKeystoneUtils msk = PowerMockito.spy(new MsoKeystoneUtils("ID"));
         Map<String,String>metadata=new HashMap<>();
         metadata.put("1", "value");  
+        mst = mock(MsoTenant.class);
        PowerMockito.when(mst.getTenantId()).thenReturn("tenantId");
        PowerMockito.when(mst.getMetadata()).thenReturn(metadata);
        PowerMockito.when(mst.getTenantName()).thenReturn("name");
@@ -107,6 +109,7 @@ public class MsoKeystoneUtilsTest {
         MsoKeystoneUtils msk = PowerMockito.spy(new MsoKeystoneUtils("ID"));
         Map<String,String>metadata=new HashMap<>();
         metadata.put("1", "value");  
+        mst = mock(MsoTenant.class);
         PowerMockito.when(mst.getTenantId()).thenReturn("tenantId");
         PowerMockito.when(mst.getMetadata()).thenReturn(metadata);
         PowerMockito.when(mst.getTenantName()).thenReturn("name");
@@ -117,6 +120,7 @@ public class MsoKeystoneUtilsTest {
     
     @Test
     public void testgetKeystoneAdminClient() throws MsoException{
+    	cloudIdentity = mock(CloudIdentity.class);
         Keystone keystone = new Keystone (cloudIdentity.getKeystoneUrl ("region", "msoPropID"));
         MsoKeystoneUtils msk = PowerMockito.spy(new MsoKeystoneUtils("ID"));
         doReturn(keystone).when(msk).getKeystoneAdminClient(cs);
