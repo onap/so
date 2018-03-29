@@ -50,23 +50,21 @@ import org.openecomp.mso.client.sdno.dmaap.SDNOHealthCheckDmaapConsumer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-
 public class SDNOValidatorTest {
 
-	
 	@Mock private Consumer mrConsumer;
-	@Spy private SDNOHealthCheckDmaapConsumer dmaapConsumer;
+	private SDNOHealthCheckDmaapConsumer dmaapConsumer;
 	private final String fileLocation = "src/test/resources/org/openecomp/mso/client/sdno/";
-	private final String uuid = "xyz123";
 	@Rule public ExpectedException thrown = ExpectedException.none();
 	
 	@Before
-	public void setUpTests() {
+	public void setUpTests() throws IOException {
 		MockitoAnnotations.initMocks(this);
+		dmaapConsumer = spy(new SDNOHealthCheckDmaapConsumer.Builder().build());
 	}
 	
 	@Test
-	public void success() throws IOException, Exception {
+	public void success() throws Exception {
 		when(dmaapConsumer.getConsumer()).thenReturn(mrConsumer);
 		when(mrConsumer.fetch()).thenReturn(Arrays.asList(new String[]{getJson("response.json"), getJson("output-success.json")}));
 		
@@ -79,7 +77,7 @@ public class SDNOValidatorTest {
 	}
 	
 	@Test
-	public void failure() throws IOException, Exception {
+	public void failure() throws Exception {
 		when(dmaapConsumer.getConsumer()).thenReturn(mrConsumer);
 		when(mrConsumer.fetch()).thenReturn(Arrays.asList(new String[]{getJson("response.json"), getJson("output-failure.json")}));
 		
@@ -90,7 +88,7 @@ public class SDNOValidatorTest {
 		thrown.expect(SDNOException.class);
 		thrown.expectMessage(new StringContains("my error message"));
 		boolean result = spy.pollForResponse("xyz123");
-		
+
 	}
 	@Ignore
 	@Test
@@ -110,6 +108,7 @@ public class SDNOValidatorTest {
 		System.out.println(json);
 
 	}
+
 	private String getJson(String filename) throws IOException {
 		return new String(Files.readAllBytes(Paths.get(fileLocation + filename)));
 	}

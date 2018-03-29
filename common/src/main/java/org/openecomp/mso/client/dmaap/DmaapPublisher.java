@@ -20,29 +20,13 @@
 
 package org.openecomp.mso.client.dmaap;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
 import org.openecomp.mso.client.dmaap.rest.RestPublisher;
 
 public abstract class DmaapPublisher extends DmaapClient {
-	
-	private long seconds;
-	private final Publisher publisher;
-	public DmaapPublisher() throws FileNotFoundException, IOException {
-		super("dmaap/default-consumer.properties");
-		this.publisher = new RestPublisher(properties);
-		this.seconds = 20;
-		
-	}
-	
-	public DmaapPublisher(long seconds) throws FileNotFoundException, IOException {
-		this();
-		this.seconds = seconds;
-	}
-	
-	public void send(String json) throws IOException, InterruptedException {
+
+	public void send(String json) {
 		auditLogger.info("publishing message to dmaap topic " + this.getTopic() + ": " + json);
+		Publisher publisher = new RestPublisher(properties);
 		publisher.send(json);
 		//publisher.close(seconds, TimeUnit.SECONDS);
 	}

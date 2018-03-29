@@ -21,17 +21,12 @@
 package org.openecomp.mso.client.dmaap;
 
 import com.google.common.base.Stopwatch;
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import org.openecomp.mso.client.dmaap.exceptions.DMaaPConsumerFailure;
 import org.openecomp.mso.client.dmaap.exceptions.ExceededMaximumPollingTime;
 import org.openecomp.mso.client.dmaap.rest.RestConsumer;
 
 public abstract class DmaapConsumer extends DmaapClient {
-
-	public DmaapConsumer() throws IOException {
-		super("dmaap/default-consumer.properties");
-	}
 
 	public Consumer getConsumer() {
 		return new RestConsumer(this.properties);
@@ -120,7 +115,5 @@ public abstract class DmaapConsumer extends DmaapClient {
 	public int getMaximumElapsedTime() {
 		return 180000;
 	}
-
-
 
 }

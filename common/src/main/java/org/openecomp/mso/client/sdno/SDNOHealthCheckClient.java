@@ -142,8 +142,8 @@ public class SDNOHealthCheckClient {
 		return new SDNOHealthCheckDmaapPublisher();
 	}
 	
-	protected DmaapConsumer getConsumer(String requestId) throws FileNotFoundException, IOException {
-		return new SDNOHealthCheckDmaapConsumer(requestId);
+	protected DmaapConsumer getConsumer(String requestId) throws IOException {
+		return new SDNOHealthCheckDmaapConsumer.Builder().setUuid(requestId).build();
 	}
 	
 	protected boolean execute(String requestId, String request) throws Exception {

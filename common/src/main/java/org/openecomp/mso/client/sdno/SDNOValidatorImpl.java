@@ -102,8 +102,8 @@ public class SDNOValidatorImpl implements SDNOValidator {
 	
 
 	
-	protected DmaapConsumer getConsumer(String uuid) throws FileNotFoundException, IOException {
-		return new SDNOHealthCheckDmaapConsumer(uuid);
+	protected DmaapConsumer getConsumer(String uuid) throws IOException {
+		return new SDNOHealthCheckDmaapConsumer.Builder().setUuid(uuid).build();
 	}
 	
 
