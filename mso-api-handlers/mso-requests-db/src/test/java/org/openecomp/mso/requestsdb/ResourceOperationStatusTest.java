@@ -40,7 +40,6 @@ public class ResourceOperationStatusTest {
 	ros.setServiceId("serviceId");
 	ros.setStatus("101");
 	ros.setStatusDescription("statusDescription");
-	
 	assertEquals(ros.getErrorCode(), "errorCode");
 	assertEquals(ros.getJobId(), "jobId");
 	assertEquals(ros.getOperationId(), "operationId");

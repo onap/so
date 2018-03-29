@@ -41,7 +41,6 @@ public class OperationStatusTest {
 		os.setServiceId("serviceId");
 		os.setServiceName("serviceName");
 		os.setUserId("userId");
-		
 		assertEquals(os.getFinishedAt(), time);
 		assertEquals(os.getOperateAt(), time);
 		assertEquals(os.getOperation(), "operation");

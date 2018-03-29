@@ -34,7 +34,6 @@ public class WatchdogDistributionStatusTest {
 	wds.setDistributionId("distributionId");
 	wds.setDistributionIdStatus("distributionIdStatus");
 	wds.setModifyTime(time);
-	
 	assertEquals(wds.getCreateTime(), time);
 	assertEquals(wds.getDistributionId(), "distributionId");
 	assertEquals(wds.getDistributionIdStatus(), "distributionIdStatus");

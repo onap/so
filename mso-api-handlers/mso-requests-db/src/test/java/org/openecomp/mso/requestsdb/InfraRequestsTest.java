@@ -77,7 +77,6 @@ public class InfraRequestsTest {
 		ir.setVnfType("vnfType");
 		ir.setVolumeGroupId("volumeGroupId");
 		ir.setVolumeGroupName("volumeGroupName");
-		
 		assertEquals(ir.getAaiServiceId(), "aaiServiceId");
 		assertEquals(ir.getAction(),"action");
 		assertEquals(ir.getAicCloudRegion(),"aicCloudRegion");

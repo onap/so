@@ -38,7 +38,6 @@ public class OperationalEnvDistributionStatusTest {
 	    oeds.setOperationalEnvId("operationalEnvId");
 	    oeds.setRequestId("requestId");
 	    oeds.setServiceModelVersionId("serviceModelVersionId");
-	    
 	    assertEquals(oeds.getCreateTime(), time);
 	    assertEquals(oeds.getDistributionId(), "distributionId");
 	    assertEquals(oeds.getDistributionIdErrorReason(), "distributionIdErrorReason");

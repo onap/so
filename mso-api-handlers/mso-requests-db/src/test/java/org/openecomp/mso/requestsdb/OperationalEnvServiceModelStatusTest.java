@@ -39,7 +39,6 @@ public class OperationalEnvServiceModelStatusTest {
 		oesms.setServiceModelVersionDistrStatus("serviceModelVersionDistrStatus");
 		oesms.setServiceModelVersionId("serviceModelVersionId");
 		oesms.setWorkloadContext("workloadContext");
-		
 		assertEquals(oesms.getCreateTime(), time);
 		assertEquals(oesms.getModifyTime(), time);
 		assertEquals(oesms.getOperationalEnvId(), "operationalEnvId");

@@ -32,7 +32,6 @@ public class SiteStatusTest {
       ss.setCreated(time);
       ss.setSiteName("siteName");
       ss.setStatus(true);
-      
       assertEquals(ss.getCreated(), time);
       assertEquals(ss.getSiteName(), "siteName");
       assertEquals(ss.getStatus(), true);

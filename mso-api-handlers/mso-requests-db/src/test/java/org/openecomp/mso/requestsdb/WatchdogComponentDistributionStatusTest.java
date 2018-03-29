@@ -35,7 +35,6 @@ public class WatchdogComponentDistributionStatusTest {
       wcds.setCreateTime(time);
       wcds.setDistributionId("distributionId");
       wcds.setModifyTime(time);
-      
       assertEquals(wcds.getComponentDistributionStatus(), "componentDistributionStatus");
       assertEquals(wcds.getComponentName(), "componentName");
       assertEquals(wcds.getCreateTime(), time);

@@ -33,7 +33,6 @@ public class WatchdogServiceModVerIdLookupTest {
         wsmil.setCreateTime(time);
         wsmil.setDistributionId("distributionId");
         wsmil.setServiceModelVersionId("serviceModelVersionId");
-        
         assertEquals(wsmil.getCreateTime(),time);
         assertEquals(wsmil.getDistributionId(), "distributionId");
         assertEquals(wsmil.getServiceModelVersionId(), "serviceModelVersionId");
