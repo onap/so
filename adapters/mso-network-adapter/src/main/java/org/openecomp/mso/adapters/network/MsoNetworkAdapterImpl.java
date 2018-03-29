@@ -1574,9 +1574,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             }
 
             if (NEUTRON_MODE.equals(mode)) {
-
-                // Use MsoNeutronUtils for all NEUTRON commands
-                MsoNeutronUtils neutron = new MsoNeutronUtils(MSO_PROP_NETWORK_ADAPTER, cloudConfigFactory);
                 long deleteNetworkStarttime = System.currentTimeMillis();
                 try {
                     // The deleteNetwork function in MsoNeutronUtils returns success if the network
@@ -1605,9 +1602,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 }
             } else { // DEFAULT to ("HEAT".equals (mode))
                 long deleteStackStarttime = System.currentTimeMillis();
-                // Use MsoHeatUtils for all HEAT commands
-                MsoHeatUtils heat = new MsoHeatUtils(MSO_PROP_NETWORK_ADAPTER, msoPropertiesFactory,
-                    cloudConfigFactory);
 
                 try {
                     // The deleteStack function in MsoHeatUtils returns NOTFOUND if the stack was not found or if the stack was deleted.
