@@ -20,117 +20,102 @@
 
 package org.openecomp.mso.adapters.vnf;
 
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 import java.util.Map;
+
 import javax.xml.ws.Holder;
-import mockit.Mock;
-import mockit.MockUp;
-import org.junit.Ignore;
+
 import org.junit.Test;
-import org.openecomp.mso.adapters.vnf.MsoVnfAdapter;
-import org.openecomp.mso.adapters.vnf.MsoVnfAdapterImpl;
+import org.mockito.Mockito;
 import org.openecomp.mso.adapters.vnf.exceptions.VnfException;
+import org.openecomp.mso.cloud.CloudConfigFactory;
 import org.openecomp.mso.openstack.beans.HeatStatus;
 import org.openecomp.mso.openstack.beans.StackInfo;
 import org.openecomp.mso.openstack.beans.VnfStatus;
 import org.openecomp.mso.openstack.exceptions.MsoException;
 import org.openecomp.mso.openstack.utils.MsoHeatUtils;
-
-import org.openecomp.mso.cloud.CloudConfigFactory;
 import org.openecomp.mso.properties.MsoJavaProperties;
 import org.openecomp.mso.properties.MsoPropertiesFactory;
 
 public class QueryTest {
 
-    @Test
-    public void testQueryCreatedVnf() throws VnfException {
-        {
-            new MockUp<MsoHeatUtils>() {
-                @Mock
-                public StackInfo queryStack(String cloudSiteId, String tenantId, String stackName) throws MsoException {
-                    StackInfo info = new StackInfo("stackName", HeatStatus.CREATED);
-                    return info;
-                }
-            };
+	@Test
+	public void testQueryCreatedVnf() throws VnfException, MsoException {
+		{
+			StackInfo info = new StackInfo("stackName", HeatStatus.CREATED);
+			MsoVnfAdapterImpl vnfAdapter = new MsoVnfAdapterImpl();
+			vnfAdapter.heat = Mockito.mock(MsoHeatUtils.class);
+			when(vnfAdapter.heat.queryStack(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(info);
+			String cloudId = "MT";
+			String tenantId = "MSO_Test";
+			String vnfName = "VNF_TEST1";
+			Holder<Boolean> vnfExists = new Holder<>();
+			Holder<String> vnfId = new Holder<>();
+			Holder<VnfStatus> status = new Holder<>();
+			Holder<Map<String, String>> outputs = new Holder<>();
 
-            MsoVnfAdapter vnfAdapter = new MsoVnfAdapterImpl();
-            String cloudId = "MT";
-            String tenantId = "MSO_Test";
-            String vnfName = "VNF_TEST1";
-            Holder<Boolean> vnfExists = new Holder<>();
-            Holder<String> vnfId = new Holder<>();
-            Holder<VnfStatus> status = new Holder<>();
-            Holder<Map<String, String>> outputs = new Holder<>();
+			vnfAdapter.queryVnf(cloudId, tenantId, vnfName, null, vnfExists, vnfId, status, outputs);
 
-            vnfAdapter.queryVnf(cloudId, tenantId, vnfName, null,
-                    vnfExists, vnfId, status, outputs);
+			assertTrue(vnfExists.value);
+		}
+	}
 
-            assertTrue(vnfExists.value);
-        }
-    }
+	@Test
+	public void testQueryNotFoundVnf() throws VnfException, MsoException {
+		{
+			StackInfo info = new StackInfo("stackName", HeatStatus.NOTFOUND);
+			MsoVnfAdapterImpl vnfAdapter = new MsoVnfAdapterImpl();
+			vnfAdapter.heat = Mockito.mock(MsoHeatUtils.class);
+			when(vnfAdapter.heat.queryStack(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(info);
+			String cloudId = "MT";
+			String tenantId = "MSO_Test";
+			String vnfName = "VNF_TEST1";
+			Holder<Boolean> vnfExists = new Holder<>();
+			Holder<String> vnfId = new Holder<>();
+			Holder<VnfStatus> status = new Holder<>();
+			Holder<Map<String, String>> outputs = new Holder<>();
 
-    @Test
-    public void testQueryNotFoundVnf() throws VnfException {
-        {
-            new MockUp<MsoHeatUtils>() {
-                @Mock
-                public StackInfo queryStack(String cloudSiteId, String tenantId, String stackName) throws MsoException {
-                    StackInfo info = new StackInfo("stackName", HeatStatus.NOTFOUND);
-                    return info;
-                }
-            };
+			vnfAdapter.queryVnf(cloudId, tenantId, vnfName, null, vnfExists, vnfId, status, outputs);
 
-            MsoVnfAdapter vnfAdapter = new MsoVnfAdapterImpl();
-            String cloudId = "MT";
-            String tenantId = "MSO_Test";
-            String vnfName = "VNF_TEST1";
-            Holder<Boolean> vnfExists = new Holder<>();
-            Holder<String> vnfId = new Holder<>();
-            Holder<VnfStatus> status = new Holder<>();
-            Holder<Map<String, String>> outputs = new Holder<>();
+			assertFalse(vnfExists.value);
+		}
+	}
 
-            vnfAdapter.queryVnf(cloudId, tenantId, vnfName, null,
-                    vnfExists, vnfId, status, outputs);
+	@Test(expected = VnfException.class)
+	// @Ignore // 1802 merge
+	public void testQueryVnfWithException() throws VnfException {
+		{
+			String propFile = MsoJavaProperties.class.getClassLoader().getResource("mso.properties").getPath();
+			String cloudConfigJsonFilePath = MsoJavaProperties.class.getClassLoader().getResource("cloud_config.json")
+					.getPath();
 
-            assertFalse(vnfExists.value);
-        }
-    }
+			MsoPropertiesFactory msoPropFactory = new MsoPropertiesFactory();
+			CloudConfigFactory cloudConfigFact = new CloudConfigFactory();
+			try {
+				msoPropFactory.initializeMsoProperties("MSO_PROP_VNF_ADAPTER", propFile);
+				cloudConfigFact.initializeCloudConfig(cloudConfigJsonFilePath, 1);
+			} catch (org.openecomp.mso.properties.MsoPropertiesException e) {
+				// System.err.println("!?!?!?!! mso config exception: " + e);
+				// e.printStackTrace();
+			} catch (org.openecomp.mso.openstack.exceptions.MsoCloudIdentityNotFound e) {
+				// System.err.println("!?!?!?!! cloud config exception: " + e);
+				// e.printStackTrace();
+			}
 
-    @Test(expected = VnfException.class)
-    //    @Ignore // 1802 merge
-    public void testQueryVnfWithException() throws VnfException {
-        {
-	    String propFile = MsoJavaProperties.class.getClassLoader().getResource("mso.properties").getPath();
-	    String cloudConfigJsonFilePath = MsoJavaProperties.class.getClassLoader().getResource("cloud_config.json").getPath();
+			MsoVnfAdapter vnfAdapter = new MsoVnfAdapterImpl(msoPropFactory, cloudConfigFact);
 
-	    MsoPropertiesFactory msoPropFactory = new MsoPropertiesFactory();
-	    CloudConfigFactory cloudConfigFact = new CloudConfigFactory();
-	    try {
-		msoPropFactory.initializeMsoProperties("MSO_PROP_VNF_ADAPTER", propFile);
-		cloudConfigFact.initializeCloudConfig(cloudConfigJsonFilePath, 1);
-	    } catch (org.openecomp.mso.properties.MsoPropertiesException e) {
-		//		System.err.println("!?!?!?!! mso config exception: " + e);
-		//		e.printStackTrace();
-	    } catch (org.openecomp.mso.openstack.exceptions.MsoCloudIdentityNotFound e) {
-		//		System.err.println("!?!?!?!! cloud config exception: " + e);
-		//		e.printStackTrace();
-	    }
+			String cloudId = "MT";
+			String tenantId = "MSO_Test";
+			String vnfName = "VNF_TEST1";
+			Holder<Boolean> vnfExists = new Holder<>();
+			Holder<String> vnfId = new Holder<>();
+			Holder<VnfStatus> status = new Holder<>();
+			Holder<Map<String, String>> outputs = new Holder<>();
 
-            MsoVnfAdapter vnfAdapter = new MsoVnfAdapterImpl(msoPropFactory, cloudConfigFact);
-
-            String cloudId = "MT";
-            String tenantId = "MSO_Test";
-            String vnfName = "VNF_TEST1";
-            Holder<Boolean> vnfExists = new Holder<>();
-            Holder<String> vnfId = new Holder<>();
-            Holder<VnfStatus> status = new Holder<>();
-            Holder<Map<String, String>> outputs = new Holder<>();
-
-            vnfAdapter.queryVnf(cloudId, tenantId, vnfName, null,
-                    vnfExists, vnfId, status, outputs);
-        }
-    }
+			vnfAdapter.queryVnf(cloudId, tenantId, vnfName, null, vnfExists, vnfId, status, outputs);
+		}
+	}
 }
