@@ -48,6 +48,7 @@ public class BeansTest {
 	public void pojoStructure() {	
 		test("org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans");		
 		test("org.openecomp.mso.apihandlerinfra.tasksbeans");
+		test("org.openecomp.mso.apihandlerinfra.vnfbeans");
 	}
 
 	private void test(String pojoPackage) {
