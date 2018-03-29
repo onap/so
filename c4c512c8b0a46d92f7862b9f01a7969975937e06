@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_c1375daf",
+        "filename": "bpmn/MSOCommonBPMN/src/main/groovy/org/openecomp/mso/bpmn/common/scripts/OofHoming.groovy",
+        "patchSetId": 10
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3667
+      },
+      "writtenOn": "2018-03-29T15:56:44Z",
+      "side": 1,
+      "message": "why did you delete homing class and create this one??",
+      "revId": "c4c512c8b0a46d92f7862b9f01a7969975937e06",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_c15e7de9",
+        "filename": "bpmn/MSOCommonBPMN/src/main/groovy/org/openecomp/mso/bpmn/common/scripts/OofHoming.groovy",
+        "patchSetId": 10
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 3667
+      },
+      "writtenOn": "2018-03-29T15:56:44Z",
+      "side": 1,
+      "message": "your making this required but it wont always be passed",
+      "range": {
+        "startLine": 90,
+        "startChar": 1,
+        "endLine": 90,
+        "endChar": 56
+      },
+      "revId": "c4c512c8b0a46d92f7862b9f01a7969975937e06",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_016c659b",
+        "filename": "bpmn/MSOCommonBPMN/src/main/groovy/org/openecomp/mso/bpmn/common/scripts/OofHoming.groovy",
+        "patchSetId": 10
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 3667
+      },
+      "writtenOn": "2018-03-29T15:56:44Z",
+      "side": 1,
+      "message": "same with these",
+      "range": {
+        "startLine": 91,
+        "startChar": 0,
+        "endLine": 92,
+        "endChar": 43
+      },
+      "revId": "c4c512c8b0a46d92f7862b9f01a7969975937e06",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
