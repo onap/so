@@ -24,6 +24,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
@@ -44,6 +45,7 @@ import org.openecomp.mso.cloud.CloudSite;
 import org.openecomp.mso.db.catalog.CatalogDatabase;
 import org.openecomp.mso.db.catalog.beans.HeatTemplate;
 import org.openecomp.mso.db.catalog.beans.NetworkResource;
+import org.openecomp.mso.openstack.beans.HeatStatus;
 import org.openecomp.mso.openstack.beans.NetworkInfo;
 import org.openecomp.mso.openstack.beans.NetworkRollback;
 import org.openecomp.mso.openstack.beans.NetworkStatus;
@@ -854,6 +856,336 @@ public class MsoNetworkAdapterImplTest {
 		try {
 			impl.queryNetwork("cloudSiteId", "tenantId", "networkNameOrId", null, networkExists, networkId,
 					neutronNetworkId, status, vlans, subnetIdMap);
+		} catch (Exception e) {
+
+		}
+	}
+
+	@Test
+	public void queryNetworkImplTest_CloudSitePresent_NeutronMode_QueryNetworkHeatStackNull()
+			throws NetworkException, MsoException {
+		Holder<Boolean> networkExists = new Holder<>();
+		Holder<String> networkId = new Holder<>();
+		Holder<String> neutronNetworkId = new Holder<>();
+		Holder<NetworkStatus> status = new Holder<>();
+		Holder<List<Integer>> vlans = new Holder<>();
+		Holder<Map<String, String>> subnetIdMap = new Holder<>();
+		MsoNetworkAdapterImpl impl = Mockito.spy(MsoNetworkAdapterImpl.class);
+		impl.cloudConfigFactory = Mockito.mock(CloudConfigFactory.class);
+		CloudConfig cloudConfig = Mockito.mock(CloudConfig.class);
+		when(impl.cloudConfigFactory.getCloudConfig()).thenReturn(cloudConfig);
+		CloudSite cloudSite = new CloudSite();
+		Optional<CloudSite> cloudSiteOpt = Optional.ofNullable(cloudSite);
+		when(cloudConfig.getCloudSite(any())).thenReturn(cloudSiteOpt);
+		impl.msoPropertiesFactory = Mockito.mock(MsoPropertiesFactory.class);
+		CatalogDatabase catalogDB = Mockito.mock(CatalogDatabase.class);
+		NetworkResource networkResource = Mockito.mock(NetworkResource.class);
+		when(networkResource.getOrchestrationMode()).thenReturn("NEUTRON");
+		when(networkResource.getNeutronNetworkType()).thenReturn("BASIC");
+		doReturn(catalogDB).when(impl).getCatalogDB();
+		doReturn(networkResource).when(impl).networkCheck(any(), anyLong(), anyString(), anyString(), anyString(),
+				anyString(), anyList(), anyList(), any());
+		impl.heat = Mockito.mock(MsoHeatUtils.class);
+		when(impl.heat.queryStack(any(), any(), any())).thenReturn(null);
+		try {
+			impl.queryNetwork("cloudSiteId", "tenantId", "networkNameOrId", null, networkExists, networkId,
+					neutronNetworkId, status, vlans, subnetIdMap);
+		} catch (Exception e) {
+
+		}
+	}
+
+	@Test
+	public void queryNetworkImplTest_CloudSitePresent_NeutronMode_QueryNetworkHeatStackReturned()
+			throws NetworkException, MsoException {
+		Holder<Boolean> networkExists = new Holder<>();
+		Holder<String> networkId = new Holder<>();
+		Holder<String> neutronNetworkId = new Holder<>();
+		Holder<NetworkStatus> status = new Holder<>();
+		Holder<List<Integer>> vlans = new Holder<>();
+		Holder<Map<String, String>> subnetIdMap = new Holder<>();
+		MsoNetworkAdapterImpl impl = Mockito.spy(MsoNetworkAdapterImpl.class);
+		impl.cloudConfigFactory = Mockito.mock(CloudConfigFactory.class);
+		CloudConfig cloudConfig = Mockito.mock(CloudConfig.class);
+		when(impl.cloudConfigFactory.getCloudConfig()).thenReturn(cloudConfig);
+		CloudSite cloudSite = new CloudSite();
+		Optional<CloudSite> cloudSiteOpt = Optional.ofNullable(cloudSite);
+		when(cloudConfig.getCloudSite(any())).thenReturn(cloudSiteOpt);
+		impl.msoPropertiesFactory = Mockito.mock(MsoPropertiesFactory.class);
+		CatalogDatabase catalogDB = Mockito.mock(CatalogDatabase.class);
+		NetworkResource networkResource = Mockito.mock(NetworkResource.class);
+		when(networkResource.getOrchestrationMode()).thenReturn("NEUTRON");
+		when(networkResource.getNeutronNetworkType()).thenReturn("BASIC");
+		doReturn(catalogDB).when(impl).getCatalogDB();
+		doReturn(networkResource).when(impl).networkCheck(any(), anyLong(), anyString(), anyString(), anyString(),
+				anyString(), anyList(), anyList(), any());
+		impl.heat = Mockito.mock(MsoHeatUtils.class);
+		StackInfo stackInfo = Mockito.mock(StackInfo.class);
+		when(stackInfo.getStatus()).thenReturn(HeatStatus.CREATED);
+		when(impl.heat.queryStack(any(), any(), any())).thenReturn(stackInfo);
+		try {
+			impl.queryNetwork("cloudSiteId", "tenantId", "networkNameOrId", null, networkExists, networkId,
+					neutronNetworkId, status, vlans, subnetIdMap);
+		} catch (Exception e) {
+
+		}
+	}
+
+	@Test
+	public void queryNetworkImplTest_CloudSitePresent_NeutronMode_QueryNetworkHeatStackNull_QueryNeutronNetworkThrows()
+			throws NetworkException, MsoException {
+		Holder<Boolean> networkExists = new Holder<>();
+		Holder<String> networkId = new Holder<>();
+		Holder<String> neutronNetworkId = new Holder<>();
+		Holder<NetworkStatus> status = new Holder<>();
+		Holder<List<Integer>> vlans = new Holder<>();
+		Holder<Map<String, String>> subnetIdMap = new Holder<>();
+		MsoNetworkAdapterImpl impl = Mockito.spy(MsoNetworkAdapterImpl.class);
+		impl.cloudConfigFactory = Mockito.mock(CloudConfigFactory.class);
+		CloudConfig cloudConfig = Mockito.mock(CloudConfig.class);
+		when(impl.cloudConfigFactory.getCloudConfig()).thenReturn(cloudConfig);
+		CloudSite cloudSite = new CloudSite();
+		Optional<CloudSite> cloudSiteOpt = Optional.ofNullable(cloudSite);
+		when(cloudConfig.getCloudSite(any())).thenReturn(cloudSiteOpt);
+		impl.msoPropertiesFactory = Mockito.mock(MsoPropertiesFactory.class);
+		CatalogDatabase catalogDB = Mockito.mock(CatalogDatabase.class);
+		NetworkResource networkResource = Mockito.mock(NetworkResource.class);
+		when(networkResource.getOrchestrationMode()).thenReturn("NEUTRON");
+		when(networkResource.getNeutronNetworkType()).thenReturn("BASIC");
+		doReturn(catalogDB).when(impl).getCatalogDB();
+		doReturn(networkResource).when(impl).networkCheck(any(), anyLong(), anyString(), anyString(), anyString(),
+				anyString(), anyList(), anyList(), any());
+		impl.heat = Mockito.mock(MsoHeatUtils.class);
+		when(impl.heat.queryStack(any(), any(), any())).thenReturn(null);
+		impl.neutron = Mockito.mock(MsoNeutronUtils.class);
+		MsoException exception = Mockito.mock(MsoException.class);
+		when(impl.neutron.queryNetwork(any(), any(), any())).thenThrow(exception);
+		try {
+			impl.queryNetwork("cloudSiteId", "tenantId", "networkNameOrId", null, networkExists, networkId,
+					neutronNetworkId, status, vlans, subnetIdMap);
+		} catch (Exception e) {
+
+		}
+	}
+
+	@Test
+	public void queryNetworkImplTest_CloudSitePresent_NeutronMode_QueryNetworkHeatStackNull_QueryNeutronNetworkReturns()
+			throws NetworkException, MsoException {
+		Holder<Boolean> networkExists = new Holder<>();
+		Holder<String> networkId = new Holder<>();
+		Holder<String> neutronNetworkId = new Holder<>();
+		Holder<NetworkStatus> status = new Holder<>();
+		Holder<List<Integer>> vlans = new Holder<>();
+		Holder<Map<String, String>> subnetIdMap = new Holder<>();
+		MsoNetworkAdapterImpl impl = Mockito.spy(MsoNetworkAdapterImpl.class);
+		impl.cloudConfigFactory = Mockito.mock(CloudConfigFactory.class);
+		CloudConfig cloudConfig = Mockito.mock(CloudConfig.class);
+		when(impl.cloudConfigFactory.getCloudConfig()).thenReturn(cloudConfig);
+		CloudSite cloudSite = new CloudSite();
+		Optional<CloudSite> cloudSiteOpt = Optional.ofNullable(cloudSite);
+		when(cloudConfig.getCloudSite(any())).thenReturn(cloudSiteOpt);
+		impl.msoPropertiesFactory = Mockito.mock(MsoPropertiesFactory.class);
+		CatalogDatabase catalogDB = Mockito.mock(CatalogDatabase.class);
+		NetworkResource networkResource = Mockito.mock(NetworkResource.class);
+		when(networkResource.getOrchestrationMode()).thenReturn("NEUTRON");
+		when(networkResource.getNeutronNetworkType()).thenReturn("BASIC");
+		doReturn(catalogDB).when(impl).getCatalogDB();
+		doReturn(networkResource).when(impl).networkCheck(any(), anyLong(), anyString(), anyString(), anyString(),
+				anyString(), anyList(), anyList(), any());
+		impl.heat = Mockito.mock(MsoHeatUtils.class);
+		when(impl.heat.queryStack(any(), any(), any())).thenReturn(null);
+		impl.neutron = Mockito.mock(MsoNeutronUtils.class);
+		NetworkInfo networkInfo = Mockito.mock(NetworkInfo.class);
+		when(impl.neutron.queryNetwork(any(), any(), any())).thenReturn(networkInfo);
+		try {
+			impl.queryNetwork("cloudSiteId", "tenantId", "networkNameOrId", null, networkExists, networkId,
+					neutronNetworkId, status, vlans, subnetIdMap);
+		} catch (Exception e) {
+
+		}
+	}
+
+	@Test
+	public void queryNetworkImplTest_CloudSitePresent_NeutronMode_QueryNetworkHeatStackNull_QueryNeutronNetworkNull()
+			throws NetworkException, MsoException {
+		Holder<Boolean> networkExists = new Holder<>();
+		Holder<String> networkId = new Holder<>();
+		Holder<String> neutronNetworkId = new Holder<>();
+		Holder<NetworkStatus> status = new Holder<>();
+		Holder<List<Integer>> vlans = new Holder<>();
+		Holder<Map<String, String>> subnetIdMap = new Holder<>();
+		MsoNetworkAdapterImpl impl = Mockito.spy(MsoNetworkAdapterImpl.class);
+		impl.cloudConfigFactory = Mockito.mock(CloudConfigFactory.class);
+		CloudConfig cloudConfig = Mockito.mock(CloudConfig.class);
+		when(impl.cloudConfigFactory.getCloudConfig()).thenReturn(cloudConfig);
+		CloudSite cloudSite = new CloudSite();
+		Optional<CloudSite> cloudSiteOpt = Optional.ofNullable(cloudSite);
+		when(cloudConfig.getCloudSite(any())).thenReturn(cloudSiteOpt);
+		impl.msoPropertiesFactory = Mockito.mock(MsoPropertiesFactory.class);
+		CatalogDatabase catalogDB = Mockito.mock(CatalogDatabase.class);
+		NetworkResource networkResource = Mockito.mock(NetworkResource.class);
+		when(networkResource.getOrchestrationMode()).thenReturn("NEUTRON");
+		when(networkResource.getNeutronNetworkType()).thenReturn("BASIC");
+		doReturn(catalogDB).when(impl).getCatalogDB();
+		doReturn(networkResource).when(impl).networkCheck(any(), anyLong(), anyString(), anyString(), anyString(),
+				anyString(), anyList(), anyList(), any());
+		impl.heat = Mockito.mock(MsoHeatUtils.class);
+		when(impl.heat.queryStack(any(), any(), any())).thenReturn(null);
+		impl.neutron = Mockito.mock(MsoNeutronUtils.class);
+		when(impl.neutron.queryNetwork(any(), any(), any())).thenReturn(null);
+		try {
+			impl.queryNetwork("cloudSiteId", "tenantId", "networkNameOrId", null, networkExists, networkId,
+					neutronNetworkId, status, vlans, subnetIdMap);
+		} catch (Exception e) {
+
+		}
+	}
+	
+	@Test
+	public void deleteNetworkImplTest_CloudSiteNotPresent_NullOrNotPresentCondition() throws NetworkException {
+		Holder<Boolean> networkDeleted = new Holder<>();
+		MsoNetworkAdapterImpl impl = Mockito.spy(MsoNetworkAdapterImpl.class);
+		impl.cloudConfigFactory = Mockito.mock(CloudConfigFactory.class);
+		CloudConfig cloudConfig = Mockito.mock(CloudConfig.class);
+		when(impl.cloudConfigFactory.getCloudConfig()).thenReturn(cloudConfig);
+		Optional<CloudSite> cloudSiteOpt = Optional.ofNullable(null);
+		when(cloudConfig.getCloudSite(any())).thenReturn(cloudSiteOpt);
+		impl.msoPropertiesFactory = Mockito.mock(MsoPropertiesFactory.class);
+		try {
+			impl.deleteNetwork(null, null, "networkType", "modelCustomizationUuid", null, null,
+					networkDeleted);
+		} catch (Exception e) {
+
+		}
+	}
+
+	@Test
+	public void deleteNetworkImplTest_CloudSiteNotPresent() throws NetworkException {
+		Holder<Boolean> networkDeleted = new Holder<>();
+		MsoNetworkAdapterImpl impl = Mockito.spy(MsoNetworkAdapterImpl.class);
+		impl.cloudConfigFactory = Mockito.mock(CloudConfigFactory.class);
+		CloudConfig cloudConfig = Mockito.mock(CloudConfig.class);
+		when(impl.cloudConfigFactory.getCloudConfig()).thenReturn(cloudConfig);
+		Optional<CloudSite> cloudSiteOpt = Optional.ofNullable(null);
+		when(cloudConfig.getCloudSite(any())).thenReturn(cloudSiteOpt);
+		impl.msoPropertiesFactory = Mockito.mock(MsoPropertiesFactory.class);
+		
+		try {
+			impl.deleteNetwork("cloudSiteId", "tenantId", "networkType", "modelCustomizationUuid", "networkId", null,
+					networkDeleted);
+		} catch (Exception e) {
+
+		}
+	}
+	
+	@Test
+	public void deleteNetworkImplTest_CloudSiteNotPresent_DBGetNetworkResource_DeleteNetworkThrows() throws NetworkException, MsoException {
+		Holder<Boolean> networkDeleted = new Holder<>();
+		MsoNetworkAdapterImpl impl = Mockito.spy(MsoNetworkAdapterImpl.class);
+		impl.cloudConfigFactory = Mockito.mock(CloudConfigFactory.class);
+		CloudConfig cloudConfig = Mockito.mock(CloudConfig.class);
+		when(impl.cloudConfigFactory.getCloudConfig()).thenReturn(cloudConfig);
+		Optional<CloudSite> cloudSiteOpt = Optional.ofNullable(null);
+		when(cloudConfig.getCloudSite(any())).thenReturn(cloudSiteOpt);
+		impl.msoPropertiesFactory = Mockito.mock(MsoPropertiesFactory.class);
+		CatalogDatabase db = Mockito.mock(CatalogDatabase.class);
+		when(impl.getCatalogDB()).thenReturn(db);
+		NetworkResource resource = Mockito.mock(NetworkResource.class);
+		when(resource.getOrchestrationMode()).thenReturn("NEUTRON");
+		when(db.getNetworkResource(any())).thenReturn(resource);
+		MsoException exception = Mockito.mock(MsoException.class);
+		impl.neutron = Mockito.mock(MsoNeutronUtils.class);
+		when(impl.neutron.deleteNetwork(any(), any(), any())).thenThrow(exception);
+		try {
+			impl.deleteNetwork("cloudSiteId", "tenantId", "networkType", null, "networkId", null,
+					networkDeleted);
+		} catch (Exception e) {
+
+		}
+	}
+	
+	@Test
+	public void deleteNetworkImplTest_CloudSiteNotPresent_DBGetNetworkResource_NeutronDeleteNetwork() throws NetworkException, MsoException {
+		Holder<Boolean> networkDeleted = new Holder<>();
+		MsoNetworkAdapterImpl impl = Mockito.spy(MsoNetworkAdapterImpl.class);
+		impl.cloudConfigFactory = Mockito.mock(CloudConfigFactory.class);
+		CloudConfig cloudConfig = Mockito.mock(CloudConfig.class);
+		when(impl.cloudConfigFactory.getCloudConfig()).thenReturn(cloudConfig);
+		Optional<CloudSite> cloudSiteOpt = Optional.ofNullable(null);
+		when(cloudConfig.getCloudSite(any())).thenReturn(cloudSiteOpt);
+		impl.msoPropertiesFactory = Mockito.mock(MsoPropertiesFactory.class);
+		CatalogDatabase db = Mockito.mock(CatalogDatabase.class);
+		when(impl.getCatalogDB()).thenReturn(db);
+		NetworkResource resource = Mockito.mock(NetworkResource.class);
+		when(resource.getOrchestrationMode()).thenReturn("NEUTRON");
+		when(db.getNetworkResource(any())).thenReturn(resource);
+		impl.neutron = Mockito.mock(MsoNeutronUtils.class);
+		when(impl.neutron.deleteNetwork(any(), any(), any())).thenReturn(true);
+		try {
+			impl.deleteNetwork("cloudSiteId", "tenantId", "networkType", null, "networkId", null,
+					networkDeleted);
+		} catch (Exception e) {
+
+		}
+	}
+	
+	@Test
+	public void deleteNetworkImplTest_CloudSiteNotPresent_DBGetNetworkResource_ModeHeat_QueryStack_DeleteStack() throws NetworkException, MsoException {
+		Holder<Boolean> networkDeleted = new Holder<>();
+		MsoNetworkAdapterImpl impl = Mockito.spy(MsoNetworkAdapterImpl.class);
+		impl.cloudConfigFactory = Mockito.mock(CloudConfigFactory.class);
+		CloudConfig cloudConfig = Mockito.mock(CloudConfig.class);
+		when(impl.cloudConfigFactory.getCloudConfig()).thenReturn(cloudConfig);
+		Optional<CloudSite> cloudSiteOpt = Optional.ofNullable(null);
+		when(cloudConfig.getCloudSite(any())).thenReturn(cloudSiteOpt);
+		impl.msoPropertiesFactory = Mockito.mock(MsoPropertiesFactory.class);
+		CatalogDatabase db = Mockito.mock(CatalogDatabase.class);
+		when(impl.getCatalogDB()).thenReturn(db);
+		NetworkResource resource = Mockito.mock(NetworkResource.class);
+		when(resource.getOrchestrationMode()).thenReturn("HEAT");
+		when(db.getNetworkResource(any())).thenReturn(resource);
+		impl.neutron = Mockito.mock(MsoNeutronUtils.class);
+		when(impl.neutron.deleteNetwork(any(), any(), any())).thenReturn(true);
+		impl.heat = Mockito.mock(MsoHeatUtils.class);
+		StackInfo stackInfo = new StackInfo();
+		stackInfo.setStatus(HeatStatus.CREATED);
+		when(impl.heat.queryStack(any(), any(), any())).thenReturn(stackInfo);
+		StackInfo stackInfoDeleted = new StackInfo();
+		stackInfo.setStatus(HeatStatus.DELETING);
+		when(impl.heat.deleteStack(any(), any(), any(), anyBoolean())).thenReturn(stackInfoDeleted);
+		try {
+			impl.deleteNetwork("cloudSiteId", "tenantId", "networkType", null, "networkId", null,
+					networkDeleted);
+		} catch (Exception e) {
+
+		}
+	}
+	
+	@Test
+	public void deleteNetworkImplTest_CloudSiteNotPresent_DBGetNetworkResource_ModeHeat_QueryStackException() throws NetworkException, MsoException {
+		Holder<Boolean> networkDeleted = new Holder<>();
+		MsoNetworkAdapterImpl impl = Mockito.spy(MsoNetworkAdapterImpl.class);
+		impl.cloudConfigFactory = Mockito.mock(CloudConfigFactory.class);
+		CloudConfig cloudConfig = Mockito.mock(CloudConfig.class);
+		when(impl.cloudConfigFactory.getCloudConfig()).thenReturn(cloudConfig);
+		Optional<CloudSite> cloudSiteOpt = Optional.ofNullable(null);
+		when(cloudConfig.getCloudSite(any())).thenReturn(cloudSiteOpt);
+		impl.msoPropertiesFactory = Mockito.mock(MsoPropertiesFactory.class);
+		CatalogDatabase db = Mockito.mock(CatalogDatabase.class);
+		when(impl.getCatalogDB()).thenReturn(db);
+		NetworkResource resource = Mockito.mock(NetworkResource.class);
+		when(resource.getOrchestrationMode()).thenReturn("HEAT");
+		when(db.getNetworkResource(any())).thenReturn(resource);
+		impl.neutron = Mockito.mock(MsoNeutronUtils.class);
+		when(impl.neutron.deleteNetwork(any(), any(), any())).thenReturn(true);
+		impl.heat = Mockito.mock(MsoHeatUtils.class);
+		StackInfo stackInfo = new StackInfo();
+		stackInfo.setStatus(HeatStatus.CREATED);
+		MsoException exception = Mockito.mock(MsoException.class);
+		when(impl.heat.queryStack(any(), any(), any())).thenThrow(exception);
+		try {
+			impl.deleteNetwork("cloudSiteId", "tenantId", "networkType", null, "networkId", null,
+					networkDeleted);
 		} catch (Exception e) {
 
 		}
