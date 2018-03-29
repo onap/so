@@ -95,5 +95,9 @@ public class VnfTypes {
         }
         return this.vnfType;
     }
+    
+    public void setVnfType(List<VnfType> vnfType) {
+       this.vnfType = vnfType;
+    }
 
 }

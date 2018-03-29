@@ -95,5 +95,9 @@ public class VnfRequests {
         }
         return this.vnfRequest;
     }
+    
+    public void setVnfRequest(List<VnfRequest> vnfRequest) {
+    	this.vnfRequest=vnfRequest;
+    }
 
 }

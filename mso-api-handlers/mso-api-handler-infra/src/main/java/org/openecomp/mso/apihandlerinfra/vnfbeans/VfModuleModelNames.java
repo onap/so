@@ -95,5 +95,9 @@ public class VfModuleModelNames {
         }
         return this.vfModuleModelName;
     }
+    
+    public void setVfModuleModelName(List<VfModuleModelName> vfModuleModelName) {
+       this.vfModuleModelName=vfModuleModelName;
+    }
 
 }
