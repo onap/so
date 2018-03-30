@@ -25,6 +25,7 @@ import groovy.json.JsonOutput
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.onap.appc.client.lcm.model.Action
 import org.apache.commons.lang3.*
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor;
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil;
@@ -212,6 +213,11 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 			def newVfModuleId = UUID.randomUUID().toString()
 			execution.setVariable("newVfModuleId", newVfModuleId)
 			execution.setVariable(prefix + 'vfModuleId', newVfModuleId)
+			execution.setVariable('actionHealthCheck', Action.HealthCheck)
+			execution.setVariable('actionConfigScaleOut', Action.ConfigScaleOut)
+			def controllerType = execution.getVariable('controllerType')
+			execution.setVariable(prefix + 'controllerType', controllerType)
+			execution.setVariable('healthCheckIndex0', 0)
 
 			logDebug('RequestInfo: ' + execution.getVariable("CVFMI_requestInfo"), isDebugLogEnabled)			
 			

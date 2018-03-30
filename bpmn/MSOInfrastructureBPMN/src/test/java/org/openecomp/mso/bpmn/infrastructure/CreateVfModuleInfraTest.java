@@ -65,6 +65,7 @@ public class CreateVfModuleInfraTest extends WorkflowTest {
 	@Test	
 	@Deployment(resources = {
 			"process/CreateVfModuleInfra.bpmn",
+			"subprocess/BuildingBlock/AppCClient.bpmn",
 			"subprocess/DoCreateVfModule.bpmn",
 			"subprocess/GenericGetVnf.bpmn",
 			"subprocess/SDNCAdapterV1.bpmn",
@@ -123,6 +124,7 @@ public class CreateVfModuleInfraTest extends WorkflowTest {
 	@Test	
 	@Deployment(resources = {
 			"process/CreateVfModuleInfra.bpmn",
+			"subprocess/BuildingBlock/AppCClient.bpmn",
 			"subprocess/DoCreateVfModule.bpmn",
 			"subprocess/GenericGetVnf.bpmn",
 			"subprocess/SDNCAdapterV1.bpmn",
@@ -208,6 +210,7 @@ public class CreateVfModuleInfraTest extends WorkflowTest {
 		@Ignore
 		@Deployment(resources = {
 				"process/CreateVfModuleInfra.bpmn",
+				"subprocess/BuildingBlock/AppCClient.bpmn",
 				"subprocess/DoCreateVfModule.bpmn",
 				"subprocess/GenericGetVnf.bpmn",
 				"subprocess/SDNCAdapterV1.bpmn",
@@ -294,6 +297,7 @@ public class CreateVfModuleInfraTest extends WorkflowTest {
 			@Test	
 			@Deployment(resources = {
 					"process/CreateVfModuleInfra.bpmn",
+					"subprocess/BuildingBlock/AppCClient.bpmn",
 					"subprocess/DoCreateVfModule.bpmn",
 					"subprocess/GenericGetVnf.bpmn",
 					"subprocess/SDNCAdapterV1.bpmn",
