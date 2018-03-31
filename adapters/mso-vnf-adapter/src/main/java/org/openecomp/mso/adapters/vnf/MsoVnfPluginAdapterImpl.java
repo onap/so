@@ -1227,6 +1227,8 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
     		if (orchestrator.equalsIgnoreCase("CLOUDIFY")) {
     			return cloudifyUtils;   			
     		}
+		else if (orchestrator.equalsIgnoreCase("ARIA")) {
+			return ariaUtils
     		else if (orchestrator.equalsIgnoreCase("HEAT")) {
     			return heatUtils;
     		}

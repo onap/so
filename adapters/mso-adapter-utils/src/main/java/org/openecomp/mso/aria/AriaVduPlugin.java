@@ -33,14 +33,25 @@ import com.gigaspaces.aria.rest.client.Output;
 import com.gigaspaces.aria.rest.client.Service;
 import com.gigaspaces.aria.rest.client.ServiceTemplate;
 import com.gigaspaces.aria.rest.client.ServiceTemplateImpl;
+import org.openecomp.mso.adapters.vdu.CloudInfo;
+import org.openecomp.mso.adapters.vdu.PluginAction;
+import org.openecomp.mso.adapters.vdu.VduArtifact;
+import org.openecomp.mso.adapters.vdu.VduArtifact.ArtifactType;
+import org.openecomp.mso.adapters.vdu.VduException;
+import org.openecomp.mso.adapters.vdu.VduInstance;
+import org.openecomp.mso.adapters.vdu.VduModelInfo;
+import org.openecomp.mso.adapters.vdu.VduPlugin;
+import org.openecomp.mso.adapters.vdu.VduStateType;
+import org.openecomp.mso.adapters.vdu.VduStatus;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
-import org.openecomp.mso.openstack.exceptions.MsoAdapterException;
+import org.openecomp.mso.cloud.CloudConfig;
+import org.openecomp.mso.cloud.CloudConfigFactory;
+import org.openecomp.mso.cloud.CloudSite;
 import org.openecomp.mso.openstack.exceptions.MsoException;
-import org.openecomp.mso.vdu.utils.VduBlueprint;
-import org.openecomp.mso.vdu.utils.VduInfo;
-import org.openecomp.mso.vdu.utils.VduPlugin;
-import org.openecomp.mso.vdu.utils.VduStatus;
+import org.openecomp.mso.openstack.exceptions.MsoExceptionCategory;
+
+
 
 /**
  * ARIA VDU Plugin.  Pluggable interface for the ARIA REST API to support TOSCA
@@ -71,25 +82,33 @@ public class AriaVduPlugin implements VduPlugin {
 	}
 
 	/**
-	 * Instantiate VDU in ARIA. <code>vduInstanceName</code> is used for both service template
-	 * name and service name.< 
+	 * Instantiate VDU in ARIA. <code>instanceName</code> is used for both service template
+	 * name and service name. 
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public VduInfo instantiateVdu(String cloudSiteId, String tenantId, String vduInstanceName,
-			VduBlueprint vduBlueprint, Map<String, ? extends Object> inputs, String environmentFile, int timeoutMinutes,
-			boolean suppressBackout) throws MsoException {
+	public VduInstance instantiateVdu (
+    			CloudInfo cloudInfo,
+    			String instanceName,
+    			Map<String,Object> inputs,
+    			VduModelInfo vduModel,
+    			boolean rollbackOnFailure) throws VduException
+ 		{
 
-		VduInfo vinfo = new VduInfo(vduInstanceName);
-		byte[] csar = new CSAR(vduBlueprint).create();
-		ServiceTemplate template = new ServiceTemplateImpl( vduInstanceName, csar);
+		String cloudSiteId = cloudInfo.getCloudSiteId();
+		String tenantId = cloudInfo.getTenantId();
+
+      // Currently only support simple CSAR with single main template
+		byte[] csar = new CSAR(vduModel).create();
+
+		ServiceTemplate template = new ServiceTemplateImpl( instanceName, csar);
 		try {
 			client.install_service_template(template);
 		}
 		catch(Exception e) {
-			logger.error(MessageEnum.RA_CREATE_VNF_ERR, "","","","", vduInstanceName, MsoLogger.ErrorCode.BusinessProcesssError,
+			logger.error(MessageEnum.RA_CREATE_VNF_ERR, "","","","", instanceName, MsoLogger.ErrorCode.BusinessProcesssError,
 					"instantiate vdu via csar failed", e);
-			throw new MsoAdapterException(e.getMessage());
+			throw new VduException(e.getMessage());
 		}
 
 		/**
@@ -99,7 +118,7 @@ public class AriaVduPlugin implements VduPlugin {
 		try {
 			int templateId=-1;
 			for(ServiceTemplate stemplate:(List<ServiceTemplate>)client.list_service_templates()) {
-				if(stemplate.getName().equals(vduInstanceName)) {
+				if(stemplate.getName().equals(instanceName)) {
 					templateId = stemplate.getId();
 				}
 			}
@@ -108,17 +127,17 @@ public class AriaVduPlugin implements VduPlugin {
 				Input inp = new InputImpl(entry.getKey(),entry.getValue().toString(),"");
 				sinputs.add(inp);
 			}
-			client.create_service(templateId, vduInstanceName, sinputs);
+			client.create_service(templateId, instanceName, sinputs);
 		}
 		catch(Exception e) {
-			logger.error(MessageEnum.RA_CREATE_VNF_ERR, "","","","", vduInstanceName, MsoLogger.ErrorCode.BusinessProcesssError,
+			logger.error(MessageEnum.RA_CREATE_VNF_ERR, "","","","", instanceName, MsoLogger.ErrorCode.BusinessProcesssError,
 					"aria service creation failed", e);
-			throw new MsoAdapterException(e.getMessage());
+			throw new VduException(e.getMessage());
 		}
 		
 		// Get the service ID and cache it
-		int sid = getServiceId(vduInstanceName);
-		serviceIds.put(vduInstanceName, sid);
+		int sid = getServiceId(instanceName);
+		serviceIds.put(instanceName, sid);
 
 		/**
 		 * Run install
@@ -128,9 +147,9 @@ public class AriaVduPlugin implements VduPlugin {
 			client.start_execution( sid, "install", new ExecutionDetails());
 		}
 		catch(Exception e) {
-			logger.error(MessageEnum.RA_CREATE_VNF_ERR, "","","","", vduInstanceName, MsoLogger.ErrorCode.BusinessProcesssError,
+			logger.error(MessageEnum.RA_CREATE_VNF_ERR, "","","","", instanceName, MsoLogger.ErrorCode.BusinessProcesssError,
 					"aria install workflow failed", e);
-			throw new MsoAdapterException(e.getMessage());
+			throw new VduException(e.getMessage());
 		}
 
 		/**
@@ -140,63 +159,66 @@ public class AriaVduPlugin implements VduPlugin {
 		try {
 			Map<String,Object> voutputs = getOutputs(sid);
 
-			VduInfo vi = new VduInfo(vduInstanceName);
+			VduInstance vi = new VduInstance();
+			vi.setVduInstanceName(instanceName);
 			vi.setInputs((Map<String,Object>)inputs);
-			inputsCache.put(vduInstanceName,vi.getInputs());
+			inputsCache.put(instanceName,vi.getInputs());
 			vi.setOutputs(voutputs);
-			vi.setStatus(VduStatus.INSTANTIATED);
+			vi.setStatus(new VduStatus(VduStateType.INSTANTIATED));
 			return vi;
 		}
 		catch(Exception e) {
-			logger.error(MessageEnum.RA_CREATE_VNF_ERR, "","","","", vduInstanceName, MsoLogger.ErrorCode.BusinessProcesssError,
-					"aria service output fetch failed", e);
-			throw new MsoAdapterException(e.getMessage());
+			logger.error(MessageEnum.RA_CREATE_VNF_ERR, "","","","", instanceName, MsoLogger.ErrorCode.BusinessProcesssError, "aria service output fetch failed", e);
+			throw new VduException(e.getMessage());
 		}
 
 	}
 
 	/**
-	 * Queries ARIA for VDU status.  vduInstanceId used as template and service name in ARIA (by convention).
+	 * Queries ARIA for VDU status.  instanceId used as template and service name in ARIA (by convention).
 	 */
 	@Override
-	public VduInfo queryVdu(String cloudSiteId, String tenantId, String vduInstanceId) throws MsoException {
+	public VduInstance queryVdu( CloudInfo cloudInfo, String instanceId) throws VduException
+	{
 		if(client == null) {
-			throw new MsoAdapterException("Internal error: no ARIA connection found");
+			throw new VduException("Internal error: no ARIA connection found");
 		}
 
-		VduInfo vif = new VduInfo(vduInstanceId);
-		Integer sid = serviceIds.get(vduInstanceId);
+		VduInstance vif = new VduInstance();
+		vif.setVduInstanceId(instanceId);
+		Integer sid = serviceIds.get(instanceId);
 		if(sid == null) {
 			// service doesn't exist
-			vif.setStatus(VduStatus.NOTFOUND);
+			vif.setStatus(new VduStatus(VduStateType.NOTFOUND));
 			return vif;
 		}
 		Service service = client.get_service(sid);
 		if(service == null) {
-			throw new MsoAdapterException(String.format("Internal error: cached service id %s not found in ARIA",sid)); 
+			throw new VduException(String.format("Internal error: cached service id %s not found in ARIA",sid)); 
 		}
 		Map<String,Object> voutputs = getOutputs(sid);
 		vif.setOutputs(voutputs);
-		vif.setInputs(inputsCache.get(vduInstanceId));
-		vif.setStatus(VduStatus.INSTANTIATED);
+		vif.setInputs(inputsCache.get(instanceId));
+		vif.setStatus(new VduStatus(VduStateType.INSTANTIATED));
 		return vif;
 	}
 
 	@Override
-	public VduInfo deleteVdu(String cloudSiteId, String tenantId, String vduInstanceId, int timeoutMinutes,
-			boolean keepBlueprintLoaded) throws MsoException {
+	public VduInstance deleteVdu( CloudInfo cloudInfo, String instanceId, int timeoutMinutes) throws VduException
+	{
+		VduInstance vif = new VduInstance();
+		vif.setVduInstanceId(instanceId);
 		
 		if(client == null) {
-			throw new MsoAdapterException("Internal error: no ARIA connection found");
+			throw new VduException("Internal error: no ARIA connection found");
 		}
-		Integer sid = serviceIds.get(vduInstanceId);
-		VduInfo vif = new VduInfo(vduInstanceId);
+		Integer sid = serviceIds.get(instanceId);
 		if(sid == null) {
 			// service doesn't exist
-			vif.setStatus(VduStatus.NOTFOUND);
+			vif.setStatus(new VduStatus(VduStateType.NOTFOUND));
 			return vif;
 		}
-		
+
 		/**
 		 * Run uninstall
 		 */
@@ -204,9 +226,9 @@ public class AriaVduPlugin implements VduPlugin {
 			client.start_execution( sid, "uninstall", new ExecutionDetails());
 		}
 		catch(Exception e) {
-			logger.error(MessageEnum.RA_CREATE_VNF_ERR, "","","","", vduInstanceId, MsoLogger.ErrorCode.BusinessProcesssError,
+			logger.error(MessageEnum.RA_CREATE_VNF_ERR, "","","","", instanceId, MsoLogger.ErrorCode.BusinessProcesssError,
 					"aria uninstall workflow failed", e);
-			throw new MsoAdapterException(e.getMessage());
+			throw new VduException(e.getMessage());
 		}
 
 		/**
@@ -216,24 +238,24 @@ public class AriaVduPlugin implements VduPlugin {
 			client.delete_service(sid);
 		}
 		catch(Exception e) {
-			logger.error(MessageEnum.RA_CREATE_VNF_ERR, "","","","", vduInstanceId, MsoLogger.ErrorCode.BusinessProcesssError,
+			logger.error(MessageEnum.RA_CREATE_VNF_ERR, "","","","", instanceId, MsoLogger.ErrorCode.BusinessProcesssError,
 					String.format("aria service delete failed. Service id: %d",sid), e);
-			throw new MsoAdapterException(e.getMessage());
+			throw new VduException(e.getMessage());
 		}
 		
 		/**
 		 * Delete the blueprint
 		 */
 		try {
-			client.delete_service_template(templateIds.get(vduInstanceId));
+			client.delete_service_template(templateIds.get(instanceId));
 		}
 		catch(Exception e) {
-			logger.error(MessageEnum.RA_CREATE_VNF_ERR, "","","","", vduInstanceId, MsoLogger.ErrorCode.BusinessProcesssError,
+			logger.error(MessageEnum.RA_CREATE_VNF_ERR, "","","","", instanceId, MsoLogger.ErrorCode.BusinessProcesssError,
 					"aria template delete failed", e);
-			throw new MsoAdapterException(e.getMessage());
+			throw new VduException(e.getMessage());
 		}
 		
-		vif.setStatus(VduStatus.DELETED);
+		vif.setStatus(new VduStatus(VduStateType.DELETED));
 		return vif;
 	}
 
@@ -241,32 +263,11 @@ public class AriaVduPlugin implements VduPlugin {
 	 * Deployment update not possible with ARIA
 	 */
 	@Override
-	public VduInfo updateVdu(String cloudSiteId, String tenantId, String vduInstanceId, VduBlueprint vduBlueprint,
-			Map<String, ? extends Object> inputs, String environmentFile, int timeoutMinutes) throws MsoException {
-		throw new MsoAdapterException("NOT IMPLEMENTED");
+	public VduInstance updateVdu(CloudInfo cloudInfo, String instanceId, Map<String,Object> inputs, VduModelInfo vduModel, boolean rollbackOnFailure) throws VduException
+	{
+		throw new VduException("NOT IMPLEMENTED");
 	}
 
-	/**
-	 * Nonsensical in the context of ARIA: blueprint lifespan = vdulifespan
-	 */
-	@Override
-	public boolean isBlueprintLoaded(String cloudSiteId, String vduModelId) throws MsoException {
-		throw new MsoAdapterException("NOT IMPLEMENTED");
-	}
-
-	/**
-	 * Nonsensical in the context of ARIA: blueprint lifespan = vdulifespan
-	 */
-	@Override
-	public void uploadBlueprint(String cloudSiteId, VduBlueprint vduBlueprint, boolean failIfExists)
-			throws MsoException {
-		throw new MsoAdapterException("NOT IMPLEMENTED");
-	}
-
-	@Override
-	public boolean blueprintUploadSupported() {
-		return false;
-	}
 
 	/**
 	 * Private
@@ -288,7 +289,7 @@ public class AriaVduPlugin implements VduPlugin {
 	}
 
 	@SuppressWarnings("unchecked")
-	private int getServiceId(String service_name) throws MsoAdapterException{
+	private int getServiceId(String service_name) throws VduException{
 		int sid = -1;
 		List<Service> services = (List<Service>)client.list_services();
 		for(Service service:services) {
@@ -297,7 +298,7 @@ public class AriaVduPlugin implements VduPlugin {
 			}
 		}
 		if(sid == -1) {
-			throw new MsoAdapterException(String.format("Internal error: just created service not found: %s",service_name));
+			throw new VduException(String.format("Internal error: just created service not found: %s",service_name));
 		}
 		return sid;
 	}
