@@ -20,10 +20,21 @@
  */
 package org.openecomp.mso.bpmn.infrastructure.scripts
 
-import org.json.JSONArray;
+import org.json.JSONArray
+import org.openecomp.mso.bpmn.common.resource.ResourceRequestBuilder
+import org.openecomp.mso.bpmn.core.domain.ModelInfo
+import org.openecomp.mso.bpmn.core.domain.Resource
+import org.openecomp.mso.bpmn.core.domain.ServiceDecomposition
+import org.openecomp.mso.bpmn.core.domain.ServiceInstance
+import org.openecomp.mso.bpmn.infrastructure.properties.BPMNProperties;
+import org.apache.http.HttpResponse
+import org.json.JSONArray
+import org.openecomp.mso.bpmn.common.recipe.BpmnRestClient
+import org.openecomp.mso.bpmn.common.recipe.ResourceInput;
 
 import static org.apache.commons.lang3.StringUtils.*;
 import groovy.xml.XmlUtil
+import org.openecomp.mso.bpmn.common.scripts.CatalogDbUtils;
 import groovy.json.*
 
 import org.openecomp.mso.bpmn.core.json.JsonUtils
@@ -78,6 +89,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 	String Prefix="DDELSI_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
+	CatalogDbUtils cutils = new CatalogDbUtils()
 
 	public void preProcessRequest (DelegateExecution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
@@ -153,159 +165,6 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 		}
 		utils.log("INFO"," ***** Exit preProcessRequest *****",  isDebugEnabled)
 	}
-	
-
-	public void preProcessVFCDelete (DelegateExecution execution) {
-	}
-	
-	public void postProcessVFCDelete(DelegateExecution execution, String response, String method) {
-	}
-	
-	public void preProcessSDNCDelete (DelegateExecution execution) {
-		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-		utils.log("INFO"," ***** preProcessSDNCDelete *****", isDebugEnabled)
-		String msg = ""
-
-		try {
-			def serviceInstanceId = execution.getVariable("serviceInstanceId")
-			def serviceInstanceName = execution.getVariable("serviceInstanceName")
-			def callbackURL = execution.getVariable("sdncCallbackUrl")
-			def requestId = execution.getVariable("msoRequestId")
-			def serviceId = execution.getVariable("productFamilyId")
-			def subscriptionServiceType = execution.getVariable("subscriptionServiceType")
-			def globalSubscriberId = execution.getVariable("globalSubscriberId") //globalCustomerId
-
-			String serviceModelInfo = execution.getVariable("serviceModelInfo")
-			def modelInvariantUuid = ""
-			def modelVersion = ""
-			def modelUuid = ""
-			def modelName = ""
-			if (!isBlank(serviceModelInfo))
-			{
-				modelInvariantUuid = jsonUtil.getJsonValue(serviceModelInfo, "modelInvariantUuid")
-				modelVersion = jsonUtil.getJsonValue(serviceModelInfo, "modelVersion")
-				modelUuid = jsonUtil.getJsonValue(serviceModelInfo, "modelUuid")
-				modelName = jsonUtil.getJsonValue(serviceModelInfo, "modelName")
-
-				if (modelInvariantUuid == null) {
-					modelInvariantUuid = ""
-				}
-				if (modelVersion == null) {
-					modelVersion = ""
-				}
-				if (modelUuid == null) {
-					modelUuid = ""
-				}
-				if (modelName == null) {
-					modelName = ""
-				}
-			}
-			if (serviceInstanceName == null) {
-				serviceInstanceName = ""
-			}
-			if (serviceId == null) {
-				serviceId = ""
-			}
-
-			def siParamsXml = execution.getVariable("siParamsXml")
-			def serviceType = execution.getVariable("serviceType")
-			if (serviceType == null)
-			{
-				serviceType = ""
-			}
-
-			def sdncRequestId = UUID.randomUUID().toString()
-
-			String sdncDelete =
-					"""<sdncadapterworkflow:SDNCAdapterWorkflowRequest xmlns:ns5="http://org.openecomp/mso/request/types/v1"
-													xmlns:sdncadapterworkflow="http://org.openecomp/mso/workflow/schema/v1"
-													xmlns:sdncadapter="http://org.openecomp/workflow/sdnc/adapter/schema/v1">
-				   <sdncadapter:RequestHeader>
-							<sdncadapter:RequestId>${sdncRequestId}</sdncadapter:RequestId>
-							<sdncadapter:SvcInstanceId>${serviceInstanceId}</sdncadapter:SvcInstanceId>
-							<sdncadapter:SvcAction>delete</sdncadapter:SvcAction>
-							<sdncadapter:SvcOperation>service-topology-operation</sdncadapter:SvcOperation>
-							<sdncadapter:CallbackUrl>${callbackURL}</sdncadapter:CallbackUrl>
-							<sdncadapter:MsoAction>${serviceType}</sdncadapter:MsoAction>
-					</sdncadapter:RequestHeader>
-				<sdncadapterworkflow:SDNCRequestData>
-					<request-information>
-						<request-id>${requestId}</request-id>
-						<source>MSO</source>
-						<notification-url/>
-						<order-number/>
-						<order-version/>
-						<request-action>DeleteServiceInstance</request-action>
-					</request-information>
-					<service-information>
-						<service-id>${serviceId}</service-id>
-						<subscription-service-type>${subscriptionServiceType}</subscription-service-type>
-						<onap-model-information>
-					         <model-invariant-uuid>${modelInvariantUuid}</model-invariant-uuid>
-					         <model-uuid>${modelUuid}</model-uuid>
-					         <model-version>${modelVersion}</model-version>
-					         <model-name>${modelName}</model-name>
-					    </onap-model-information>
-						<service-instance-id>${serviceInstanceId}</service-instance-id>
-						<subscriber-name/>
-						<global-customer-id>${globalSubscriberId}</global-customer-id>
-					</service-information>
-					<service-request-input>
-						<service-instance-name>${serviceInstanceName}</service-instance-name>
-						${siParamsXml}
-					</service-request-input>
-				</sdncadapterworkflow:SDNCRequestData>
-				</sdncadapterworkflow:SDNCAdapterWorkflowRequest>"""
-
-			sdncDelete = utils.formatXml(sdncDelete)
-			def sdncRequestId2 = UUID.randomUUID().toString()
-			String sdncDeactivate = sdncDelete.replace(">delete<", ">deactivate<").replace(">${sdncRequestId}<", ">${sdncRequestId2}<")
-			execution.setVariable("sdncDelete", sdncDelete)
-			execution.setVariable("sdncDeactivate", sdncDeactivate)
-			utils.log("INFO","sdncDeactivate:\n" + sdncDeactivate, isDebugEnabled)
-			utils.log("INFO","sdncDelete:\n" + sdncDelete, isDebugEnabled)
-
-		} catch (BpmnError e) {
-			throw e;
-		} catch(Exception ex) {
-			msg = "Exception in preProcessSDNCDelete. " + ex.getMessage()
-			utils.log("INFO", msg, isDebugEnabled)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "Exception Occured in preProcessSDNCDelete.\n" + ex.getMessage())
-		}
-		utils.log("INFO"," *****Exit preProcessSDNCDelete *****", isDebugEnabled)
-	}
-
-	public void postProcessSDNCDelete(DelegateExecution execution, String response, String method) {
-
-		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		utils.log("INFO"," ***** postProcessSDNC " + method + " *****", isDebugEnabled)
-		String msg = ""
-
-		/*try {
-			WorkflowException workflowException = execution.getVariable("WorkflowException")
-			boolean successIndicator = execution.getVariable("SDNCA_SuccessIndicator")
-			utils.log("INFO", "SDNCResponse: " + response, isDebugEnabled)
-			utils.log("INFO", "workflowException: " + workflowException, isDebugEnabled)
-
-			SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
-			sdncAdapterUtils.validateSDNCResponse(execution, response, workflowException, successIndicator)
-			if(execution.getVariable(Prefix + 'sdncResponseSuccess') == "true"){
-				utils.log("INFO","Good response from SDNC Adapter for service-instance " + method + "response:\n" + response, isDebugEnabled)
-
-			}else{
-				msg = "Bad Response from SDNC Adapter for service-instance " + method
-				utils.log("INFO", msg, isDebugEnabled)
-				exceptionUtil.buildAndThrowWorkflowException(execution, 3500, msg)
-			}
-		} catch (BpmnError e) {
-			throw e;
-		} catch(Exception ex) {
-			msg = "Exception in postProcessSDNC " + method + " Exception:" + ex.getMessage()
-			utils.log("INFO", msg, isDebugEnabled)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
-		}*/
-		utils.log("INFO"," *** Exit postProcessSDNC " + method + " ***", isDebugEnabled)
-	}
 
 	public void postProcessAAIGET(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
@@ -330,6 +189,18 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 				}
 				else
 				{
+					// get model invariant id
+					// Get Template uuid and version
+					if (utils.nodeExists(siData, "model-invariant-id") && utils.nodeExists(siData, "model-version-id") ) {
+						utils.log("INFO", "SI Data model-invariant-id and model-version-id exist:", isDebugEnabled)
+						def modelInvariantId  = serviceXml.getElementsByTagName("model-invariant-id").item(0).getTextContent()
+						def modelVersionId  = serviceXml.getElementsByTagName("model-version-id").item(0).getTextContent()
+
+						// Set Original Template info
+						execution.setVariable("model-invariant-id-original", modelInvariantId)
+						execution.setVariable("model-version-id-original", modelVersionId)
+					}
+
 					utils.log("INFO", "SI Data" + siData, isDebugEnabled)
 					//Confirm there are no related service instances (vnf/network or volume)
 					if (utils.nodeExists(siData, "relationship-list")) {
@@ -439,6 +310,8 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 		utils.log("INFO"," *** Exit postProcessAAIGET *** ", isDebugEnabled)
 	}
 
+
+
 	public void postProcessAAIDEL(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO"," ***** postProcessAAIDEL ***** ", isDebugEnabled)
@@ -545,117 +418,25 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
         utils.log("INFO", "======== COMPLETED preInitResourcesOperStatus Process ======== ", isDebugEnabled)  
     }
     
-   /**
-    * prepare delete parameters
-    */
-   public void preResourceDelete(execution, resourceName){
-       // we use resource instance ids for delete flow as resourceTemplateUUIDs
-       /*[
-        {
-            "resourceInstanceId":"1111",
-            "resourceType":"vIMS"
-        },
-        {
-            "resourceInstanceId":"222",
-            "resourceType":"vEPC"
-        },
-        {
-            "resourceInstanceId":"3333",
-            "resourceType":"overlay"
-        },
-        {
-            "resourceInstanceId":"4444",
-            "resourceType":"underlay"
-        }
-    ]*/
-       def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 
-       utils.log("INFO", " ======== STARTED preResourceDelete Process ======== ", isDebugEnabled)
-       String serviceRelationShip = execution.getVariable("serviceRelationShip")       
-       def jsonSlurper = new JsonSlurper()
-       def jsonOutput = new JsonOutput()         
-       List relationShipList =  jsonSlurper.parseText(serviceRelationShip)
-               
-       if (relationShipList != null) {
-           relationShipList.each {
-               if(StringUtils.containsIgnoreCase(it.resourceType, resourceName)) {
-				   String resourceInstanceUUID = it.resourceInstanceId
-				   String resourceTemplateUUID = it.resourceInstanceId
-				   execution.setVariable("resourceTemplateId", resourceTemplateUUID)
-				   execution.setVariable("resourceInstanceId", resourceInstanceUUID)
-				   execution.setVariable("resourceType", resourceName)
-			       utils.log("INFO", "Delete Resource Info resourceTemplate Id :" + resourceTemplateUUID + "  resourceInstanceId: " + resourceInstanceUUID + " resourceType: " + resourceName, isDebugEnabled)
-			   }
-           }
-       }    
-       utils.log("INFO", " ======== END preResourceDelete Process ======== ", isDebugEnabled)
-   }
-   
-   public void sequenceResource(execution){
-       def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 
-       utils.log("INFO", " ======== STARTED sequenceResource Process ======== ", isDebugEnabled)
-       List<String> nsResources = new ArrayList<String>()
-       List<String> wanResources = new ArrayList<String>()
-       List<String> resourceSequence = new  ArrayList<String>()
-       
-       String serviceRelationShip = execution.getVariable("serviceRelationShip")
-               
-       
-       def jsonSlurper = new JsonSlurper()
-       def jsonOutput = new JsonOutput()         
-       List relationShipList =  jsonSlurper.parseText(serviceRelationShip)
-               
-       if (relationShipList != null) {
-           relationShipList.each {
-               if(StringUtils.containsIgnoreCase(it.resourceType, "overlay") || StringUtils.containsIgnoreCase(it.resourceType, "underlay")){
-                   wanResources.add(it.resourceType)
-               }else{
-                   nsResources.add(it.resourceType)
-               }
-           }
-       }     
-       resourceSequence.addAll(wanResources)
-       resourceSequence.addAll(nsResources)
-       String isContainsWanResource = wanResources.isEmpty() ? "false" : "true"
-       execution.setVariable("isContainsWanResource", isContainsWanResource)
-       execution.setVariable("currentResourceIndex", 0)
-       execution.setVariable("resourceSequence", resourceSequence)
-       utils.log("INFO", "resourceSequence: " + resourceSequence, isDebugEnabled)  
-       execution.setVariable("wanResources", wanResources)
-       utils.log("INFO", " ======== END sequenceResource Process ======== ", isDebugEnabled)
-   }
+
    
-   public void getCurrentResource(execution){
-       def isDebugEnabled=execution.getVariable("isDebugLogEnabled")   
-       utils.log("INFO", "======== Start getCurrentResoure Process ======== ", isDebugEnabled)    
-       def currentIndex = execution.getVariable("currentResourceIndex")
-       List<String> resourceSequence = execution.getVariable("resourceSequence")  
-       List<String> wanResources = execution.getVariable("wanResources")  
-       String resourceName =  resourceSequence.get(currentIndex)
-       execution.setVariable("resourceType",resourceName)
-       if(wanResources.contains(resourceName)){
-           execution.setVariable("controllerInfo", "SDN-C")
-       }else{
-           execution.setVariable("controllerInfo", "VF-C")
-       }
-       utils.log("INFO", "======== COMPLETED getCurrentResoure Process ======== ", isDebugEnabled)  
-   }
-   
-   public void parseNextResource(execution){
-       def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-       utils.log("INFO", "======== Start parseNextResource Process ======== ", isDebugEnabled)    
-       def currentIndex = execution.getVariable("currentResourceIndex")
-       def nextIndex =  currentIndex + 1
-       execution.setVariable("currentResourceIndex", nextIndex)
-       List<String> resourceSequence = execution.getVariable("resourceSequence")    
-       if(nextIndex >= resourceSequence.size()){
-           execution.setVariable("allResourceFinished", "true")
-       }else{
-           execution.setVariable("allResourceFinished", "false")
-       }
-       utils.log("INFO", "======== COMPLETED parseNextResource Process ======== ", isDebugEnabled)            
-   }
+//   public void getCurrentResource(execution){
+//       def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+//       utils.log("INFO", "======== Start getCurrentResoure Process ======== ", isDebugEnabled)
+//       def currentIndex = execution.getVariable("currentResourceIndex")
+//       List<Resource> resourceSequence = execution.getVariable("resourceSequence")
+////       List<String> wanResources = execution.getVariable("wanResources")
+////       String resourceName =  resourceSequence.get(currentIndex)
+////       execution.setVariable("resourceType",resourceName)
+////       if(wanResources.contains(resourceName)){
+////           execution.setVariable("controllerInfo", "SDN-C")
+////       }else{
+////           execution.setVariable("controllerInfo", "VF-C")
+////       }
+//       utils.log("INFO", "======== COMPLETED getCurrentResoure Process ======== ", isDebugEnabled)
+//   }
    
 }
  
