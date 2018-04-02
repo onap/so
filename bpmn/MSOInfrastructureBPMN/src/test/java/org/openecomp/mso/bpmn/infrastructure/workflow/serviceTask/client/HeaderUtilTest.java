@@ -30,6 +30,5 @@ public class HeaderUtilTest {
     	String authorization = HeaderUtil.getAuthorization(HeaderUtil.USER, HeaderUtil.PASS);
     	assertEquals("Basic YWRtaW46S3A4Yko0U1hzek0wV1hsaGFrM2VIbGNzZTJnQXc4NHZhb0dHbUp2VXkyVQ==", authorization);
     }
-    
 
 }
