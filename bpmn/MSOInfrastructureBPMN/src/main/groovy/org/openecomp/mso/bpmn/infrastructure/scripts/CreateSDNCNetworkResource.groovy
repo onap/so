@@ -47,7 +47,7 @@ import org.openecomp.mso.rest.APIResponse;
  * This groovy class supports the <class>CreateSDNCCNetworkResource.bpmn</class> process.
  * flow for SDNC Network Resource Create
  */
-public class CreateSDNCCNetworkResource extends AbstractServiceTaskProcessor {
+public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
 
     String Prefix="CRESDNCRES_"
             
