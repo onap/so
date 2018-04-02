@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_d68dcfd4",
+        "filename": "adapters/mso-vnf-adapter/src/main/java/org/openecomp/mso/adapters/vnf/MsoVnfAdapterImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 678,
+      "author": {
+        "id": 991
+      },
+      "writtenOn": "2018-04-02T21:40:39Z",
+      "side": 1,
+      "message": "We can remove this since we are passing HPA flavor info as inputs and not in requestType.",
+      "range": {
+        "startLine": 671,
+        "startChar": 8,
+        "endLine": 678,
+        "endChar": 11
+      },
+      "revId": "934e6fdb7b16a6f401fac25ef0cf50785971e66a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_76c71b13",
+        "filename": "adapters/mso-vnf-adapter/src/main/java/org/openecomp/mso/adapters/vnf/MsoVnfAdapterImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1055,
+      "author": {
+        "id": 991
+      },
+      "writtenOn": "2018-04-02T21:40:39Z",
+      "side": 1,
+      "message": "I think I understood this. It seem like flavors labels obtained from OOF in Groovy in [1] are passed as \u0027inputs\u0027 and then those inputs are set in the heatEnvironmentString directly which then is just passed southbound as usual.\n\n[1] - https://gerrit.onap.org/r/#/c/40557/1/bpmn/MSOInfrastructureBPMN/src/main/groovy/org/openecomp/mso/bpmn/infrastructure/scripts/DoCreateVfModule.groovy@975",
+      "revId": "934e6fdb7b16a6f401fac25ef0cf50785971e66a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_36d193cd",
+        "filename": "adapters/mso-vnf-adapter/src/main/java/org/openecomp/mso/adapters/vnf/MsoVnfAdapterImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1186,
+      "author": {
+        "id": 991
+      },
+      "writtenOn": "2018-04-02T21:40:39Z",
+      "side": 1,
+      "message": "Same as above, this can be removed since we won\u0027t be needing it anymore.",
+      "range": {
+        "startLine": 1182,
+        "startChar": 16,
+        "endLine": 1186,
+        "endChar": 17
+      },
+      "revId": "934e6fdb7b16a6f401fac25ef0cf50785971e66a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
