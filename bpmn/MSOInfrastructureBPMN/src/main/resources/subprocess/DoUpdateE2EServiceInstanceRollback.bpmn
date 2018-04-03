@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.11.3" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
-  <bpmn2:process id="DoCreateE2EServiceInstanceRollback" name="DoCreateE2EServiceInstanceRollback" isExecutable="true">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+  <bpmn2:process id="DoUpdateE2EServiceInstanceRollback" name="DoUpdateE2EServiceInstanceRollback" isExecutable="true">
     <bpmn2:startEvent id="createSIRollback_startEvent" name="Start Flow">
       <bpmn2:outgoing>SequenceFlow_1</bpmn2:outgoing>
     </bpmn2:startEvent>
@@ -71,7 +71,7 @@ rbk.processRollbackJavaException(execution)]]></bpmn2:script>
     <bpmn2:sequenceFlow id="SequenceFlow_1rzlaoy" name="yes" sourceRef="ExclusiveGateway_19tbjgn" targetRef="PostProcess_ScriptTask">
       <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{execution.getVariable("skipRollback" )  == true}]]></bpmn2:conditionExpression>
     </bpmn2:sequenceFlow>
-    <bpmn2:exclusiveGateway id="ExclusiveGateway_0ii31dq" name="RollBack Deleted Resources?">
+    <bpmn2:exclusiveGateway id="ExclusiveGateway_0ii31dq" name="RollBack Deleted Resources?" default="SequenceFlow_055b52t">
       <bpmn2:documentation>rollback Deleted Resources</bpmn2:documentation>
       <bpmn2:incoming>SequenceFlow_1uw2p9a</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0drjj7b</bpmn2:outgoing>
@@ -148,7 +148,7 @@ csi.preProcessForDeleteResource(execution)]]></bpmn2:script>
 def csi = new  DoUpdateE2EServiceInstanceRollback()
 csi.postProcessForAddResource(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
-    <bpmn2:exclusiveGateway id="ExclusiveGateway_0ybxh3b" name="RollBackAAI?">
+    <bpmn2:exclusiveGateway id="ExclusiveGateway_0ybxh3b" name="RollBackAAI?" default="SequenceFlow_0a83f6m">
       <bpmn2:documentation>rollback AAI</bpmn2:documentation>
       <bpmn2:incoming>SequenceFlow_055b52t</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0a83f6m</bpmn2:outgoing>
@@ -215,7 +215,7 @@ dcsi.postProcessAAIPUT(execution)]]></bpmn2:script>
     <bpmn2:sequenceFlow id="SequenceFlow_1a65s3k" sourceRef="IntermediateCatchEvent_0546q5i" targetRef="ScriptTask_13h2onn" />
     <bpmn2:sequenceFlow id="SequenceFlow_1lppnhy" sourceRef="ScriptTask_0gj4dj5" targetRef="CallActivity_0zs5y0x" />
     <bpmn2:sequenceFlow id="SequenceFlow_0kbisn8" sourceRef="CallActivity_0zs5y0x" targetRef="ScriptTask_1p96syr" />
-    <bpmn2:exclusiveGateway id="ExclusiveGateway_1k16vgh" name="RollBackAAI?">
+    <bpmn2:exclusiveGateway id="ExclusiveGateway_1k16vgh" name="RollBackAAI?" default="SequenceFlow_161uzhj">
       <bpmn2:documentation>rollback AAI</bpmn2:documentation>
       <bpmn2:incoming>SequenceFlow_08p4pkv</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0cbnwwi</bpmn2:outgoing>
@@ -226,7 +226,9 @@ dcsi.postProcessAAIPUT(execution)]]></bpmn2:script>
       <bpmn2:incoming>SequenceFlow_0cbnwwi</bpmn2:incoming>
       <bpmn2:linkEventDefinition name="UpdateAAI" />
     </bpmn2:intermediateThrowEvent>
-    <bpmn2:sequenceFlow id="SequenceFlow_0cbnwwi" sourceRef="ExclusiveGateway_1k16vgh" targetRef="IntermediateThrowEvent_0x32fw8" />
+    <bpmn2:sequenceFlow id="SequenceFlow_0cbnwwi" name="yes" sourceRef="ExclusiveGateway_1k16vgh" targetRef="IntermediateThrowEvent_0x32fw8">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{(execution.getVariable("RollbackAAI" )  == "true" )}]]></bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
     <bpmn2:scriptTask id="ScriptTask_1c3q8hc" name="Post Process Request" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_161uzhj</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_13r4lij</bpmn2:outgoing>
@@ -239,7 +241,7 @@ rbk.postProcessRequest(execution)]]></bpmn2:script>
       <bpmn2:incoming>SequenceFlow_13r4lij</bpmn2:incoming>
     </bpmn2:endEvent>
     <bpmn2:sequenceFlow id="SequenceFlow_13r4lij" sourceRef="ScriptTask_1c3q8hc" targetRef="EndEvent_0knjkkx" />
-    <bpmn2:exclusiveGateway id="ExclusiveGateway_0g7wcmb" name="RollBackAAI?">
+    <bpmn2:exclusiveGateway id="ExclusiveGateway_0g7wcmb" name="RollBackAAI?" default="SequenceFlow_1isdxh1">
       <bpmn2:documentation>rollback AAI</bpmn2:documentation>
       <bpmn2:incoming>SequenceFlow_1bp5oce</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0bkvqao</bpmn2:outgoing>
@@ -259,7 +261,9 @@ rbk.postProcessRequest(execution)]]></bpmn2:script>
     <bpmn2:endEvent id="EndEvent_0yzh2qs">
       <bpmn2:incoming>SequenceFlow_0a9xori</bpmn2:incoming>
     </bpmn2:endEvent>
-    <bpmn2:sequenceFlow id="SequenceFlow_0bkvqao" sourceRef="ExclusiveGateway_0g7wcmb" targetRef="IntermediateThrowEvent_0q76lxg" />
+    <bpmn2:sequenceFlow id="SequenceFlow_0bkvqao" name="yes" sourceRef="ExclusiveGateway_0g7wcmb" targetRef="IntermediateThrowEvent_0q76lxg">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{(execution.getVariable("RollbackAAI" )  == "true" )}]]></bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
     <bpmn2:sequenceFlow id="SequenceFlow_1isdxh1" sourceRef="ExclusiveGateway_0g7wcmb" targetRef="ScriptTask_1y4us3g" />
     <bpmn2:sequenceFlow id="SequenceFlow_0a9xori" sourceRef="ScriptTask_1y4us3g" targetRef="EndEvent_0yzh2qs" />
     <bpmn2:intermediateThrowEvent id="IntermediateThrowEvent_1et42wh" name="GoTo UpdateAAI">
@@ -319,7 +323,7 @@ dcsi.postProcessAAIGET(execution)]]></bpmn2:script>
   <bpmn2:error id="Error_2" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
   <bpmn2:error id="Error_1" name="java.lang.Exception" errorCode="java.lang.Exception" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DoCreateE2EServiceInstanceRollback">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DoUpdateE2EServiceInstanceRollback">
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_47" bpmnElement="createSIRollback_startEvent">
         <dc:Bounds x="151" y="79" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -442,7 +446,7 @@ dcsi.postProcessAAIGET(execution)]]></bpmn2:script>
       <bpmndi:BPMNShape id="ExclusiveGateway_0ii31dq_di" bpmnElement="ExclusiveGateway_0ii31dq" isMarkerVisible="true">
         <dc:Bounds x="687" y="72" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="670" y="39" width="83" height="24" />
+          <dc:Bounds x="668" y="39" width="87" height="24" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ExclusiveGateway_09wkav2_di" bpmnElement="ExclusiveGateway_09wkav2" isMarkerVisible="true">
@@ -500,7 +504,7 @@ dcsi.postProcessAAIGET(execution)]]></bpmn2:script>
       <bpmndi:BPMNShape id="ExclusiveGateway_0ybxh3b_di" bpmnElement="ExclusiveGateway_0ybxh3b" isMarkerVisible="true">
         <dc:Bounds x="864" y="72" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="896" y="44" width="66" height="12" />
+          <dc:Bounds x="894" y="44" width="70" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0drjj7b_di" bpmnElement="SequenceFlow_0drjj7b">
@@ -539,7 +543,7 @@ dcsi.postProcessAAIGET(execution)]]></bpmn2:script>
         <di:waypoint xsi:type="dc:Point" x="889" y="-22" />
         <di:waypoint xsi:type="dc:Point" x="704" y="-22" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="838" y="19.000000000000007" width="12" height="12" />
+          <dc:Bounds x="837" y="19" width="15" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1fih4h0_di" bpmnElement="SequenceFlow_1fih4h0">
@@ -622,7 +626,7 @@ dcsi.postProcessAAIGET(execution)]]></bpmn2:script>
       <bpmndi:BPMNShape id="ExclusiveGateway_1k16vgh_di" bpmnElement="ExclusiveGateway_1k16vgh" isMarkerVisible="true">
         <dc:Bounds x="778" y="360" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="721" y="358" width="66" height="12" />
+          <dc:Bounds x="719" y="358" width="70" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_08p4pkv_di" bpmnElement="SequenceFlow_08p4pkv">
@@ -642,7 +646,7 @@ dcsi.postProcessAAIGET(execution)]]></bpmn2:script>
         <di:waypoint xsi:type="dc:Point" x="803" y="410" />
         <di:waypoint xsi:type="dc:Point" x="803" y="454" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="773" y="426" width="90" height="12" />
+          <dc:Bounds x="808" y="426" width="20" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_1c3q8hc_di" bpmnElement="ScriptTask_1c3q8hc">
@@ -671,7 +675,7 @@ dcsi.postProcessAAIGET(execution)]]></bpmn2:script>
       <bpmndi:BPMNShape id="ExclusiveGateway_0g7wcmb_di" bpmnElement="ExclusiveGateway_0g7wcmb" isMarkerVisible="true">
         <dc:Bounds x="778" y="548" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="721" y="546" width="66" height="12" />
+          <dc:Bounds x="719" y="546" width="70" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="IntermediateThrowEvent_0q76lxg_di" bpmnElement="IntermediateThrowEvent_0q76lxg">
@@ -693,7 +697,7 @@ dcsi.postProcessAAIGET(execution)]]></bpmn2:script>
         <di:waypoint xsi:type="dc:Point" x="803" y="598" />
         <di:waypoint xsi:type="dc:Point" x="803" y="647" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="773" y="616.5" width="90" height="12" />
+          <dc:Bounds x="808" y="617" width="20" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1isdxh1_di" bpmnElement="SequenceFlow_1isdxh1">
@@ -757,7 +761,7 @@ dcsi.postProcessAAIGET(execution)]]></bpmn2:script>
         <di:waypoint xsi:type="dc:Point" x="737" y="97" />
         <di:waypoint xsi:type="dc:Point" x="864" y="97" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="770" y="106" width="12" height="12" />
+          <dc:Bounds x="769" y="106" width="15" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_13h2onn_di" bpmnElement="ScriptTask_13h2onn">
