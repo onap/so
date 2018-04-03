@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_5c7d5de6",
+        "filename": "adapters/mso-vnf-adapter/src/main/java/org/openecomp/mso/adapters/vnf/MsoVnfAdapterImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1056,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2018-04-03T12:37:30Z",
+      "side": 1,
+      "message": "Can you move this to its own function?  This method is already large enough.",
+      "range": {
+        "startLine": 1056,
+        "startChar": 0,
+        "endLine": 1056,
+        "endChar": 12
+      },
+      "revId": "a96cbb7883d98444aa7c5dd6052717cea5756b1a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_9c720510",
+        "filename": "bpmn/MSOCoreBPMN/src/main/java/org/openecomp/mso/bpmn/core/domain/HomingSolution.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2018-04-03T12:37:30Z",
+      "side": 1,
+      "message": "Would it be better to have a list of POJOs that contained the flavor name/values?  Seems to obscure the data a bit using a map of String,String",
+      "range": {
+        "startLine": 50,
+        "startChar": 1,
+        "endLine": 50,
+        "endChar": 8
+      },
+      "revId": "a96cbb7883d98444aa7c5dd6052717cea5756b1a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
