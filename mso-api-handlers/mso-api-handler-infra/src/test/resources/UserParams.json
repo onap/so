@@ -46,6 +46,7 @@
 	}],
 	"requestParameters": {
 		"usePreload": true,
+		"controllerType": "appc",
 		"userParams": [{
 		"name": "vlc_sctp_b_route_prefixes",
 		"value": [

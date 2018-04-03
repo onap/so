@@ -51,6 +51,8 @@ public class RequestParameters implements Serializable {
 	private Boolean rebuildVolumeGroups;
 	@JsonProperty("payload")
 	private String payload;
+	@JsonProperty("controllerType")
+	private String controllerType;
 
 	public String getSubscriptionServiceType() {
 		return subscriptionServiceType;
@@ -132,13 +134,19 @@ public class RequestParameters implements Serializable {
 		this.payload = value;
 	}
 	
+	public String getControllerType() {
+		return controllerType;
+	}
+
+	public void setControllerType(String controllerType) {
+		this.controllerType = controllerType;
+	}
+
 	@Override
 	public String toString() {
-		return "RequestParameters [subscriptionServiceType="
-				+ subscriptionServiceType + ", userParams=" + userParams
-				+ ", aLaCarte=" + aLaCarte + ", autoBuildVfModules="
-				+ autoBuildVfModules + ", usePreload="
-				+ usePreload + ", rebuildVolumeGroups="
-				+ rebuildVolumeGroups + ", payload=" + payload + "]";
+		return "RequestParameters [subscriptionServiceType=" + subscriptionServiceType + ", userParams=" + userParams
+				+ ", aLaCarte=" + aLaCarte + ", autoBuildVfModules=" + autoBuildVfModules + ", cascadeDelete="
+				+ cascadeDelete + ", usePreload=" + usePreload + ", rebuildVolumeGroups=" + rebuildVolumeGroups
+				+ ", payload=" + payload + ", controllerType=" + controllerType + "]";
 	}
 }
