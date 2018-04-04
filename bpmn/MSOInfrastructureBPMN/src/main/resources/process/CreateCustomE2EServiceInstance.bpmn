@@ -41,6 +41,7 @@ ex.processJavaException(execution)]]></bpmn:script>
         <camunda:in sourceExpression="1610" target="sdncVersion" />
         <camunda:in source="initialStatus" target="initialStatus" />
         <camunda:in source="serviceType" target="serviceType" />
+        <camunda:in source="uuiRequest" target="uuiRequest" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_19eilro</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0klbpxx</bpmn:outgoing>

@@ -129,17 +129,20 @@ public class CreateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			Map reqMap = jsonSlurper.parseText(siRequest)
 
 			//InputParams
-			def userParams = reqMap.requestDetails?.requestParameters?.userParams
+			def userParamsList = reqMap.requestDetails?.requestParameters?.userParams
 
 			Map<String, String> inputMap = [:]
-			if (userParams) {
-				userParams.each {
-					userParam -> inputMap.put(userParam.name, userParam.value.toString())
+			if (userParamsList) {
+				for (def i=0; i<userParamsList.size(); i++) {
+					def userParams1 = userParamsList.get(i)
+					userParams1.each { param -> inputMap.put(param.key, param.value)}
 				}
 			}
+
 			
-			utils.log("DEBUG", "User Input Parameters map: " + userParams.toString(), isDebugEnabled)
+			utils.log("DEBUG", "User Input Parameters map: " + inputMap.toString(), isDebugEnabled)
 			execution.setVariable("serviceInputParams", inputMap)
+			execution.setVariable("uuiRequest", inputMap.get("UUIRequest"))
 			execution.setVariable("URN_mso_adapters_openecomp_db_endpoint","http://mso.mso.testlab.openecomp.org:8080/dbadapters/RequestsDbAdapter")
 			//TODO
 			//execution.setVariable("serviceInputParams", jsonUtil.getJsonValue(siRequest, "requestDetails.requestParameters.userParams"))
