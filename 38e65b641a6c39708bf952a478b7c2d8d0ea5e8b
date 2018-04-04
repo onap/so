@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_9802083d",
+        "filename": "adapters/mso-adapter-utils/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-04-04T22:12:04Z",
+      "side": 1,
+      "message": "This should be \"1.2.0\"",
+      "range": {
+        "startLine": 7,
+        "startChar": 11,
+        "endLine": 7,
+        "endChar": 25
+      },
+      "revId": "38e65b641a6c39708bf952a478b7c2d8d0ea5e8b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
