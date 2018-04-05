@@ -24,6 +24,8 @@
 		<mso.chef.git.url.suffix.chef.repo>so/chef-repo</mso.chef.git.url.suffix.chef.repo>
 		<mso.chef.git.url.suffix.chef.config>so/so-config</mso.chef.git.url.suffix.chef.config>
 		<mso.project.version>${project.version}</mso.project.version>
+		<docker.pull.registry>nexus3.onap.org:10001</docker.pull.registry>
+		<docker.push.registry>nexus3.onap.org:10003</docker.push.registry>
 	</properties>
 
 	<build>
@@ -100,11 +102,13 @@
 			<plugin>
 				<groupId>io.fabric8</groupId>
 				<artifactId>docker-maven-plugin</artifactId>
-				<version>0.16.5</version>
+				<version>0.19.1</version>
 
 				<configuration>
 					<verbose>true</verbose>
 					<apiVersion>1.23</apiVersion>
+					<pullRegistry>${docker.pull.registry}</pullRegistry>
+					<pushRegistry>${docker.push.registry}</pushRegistry>
 
 					<images>
 						<image>
@@ -113,7 +117,7 @@
 							<build>
 								<cleanup>try</cleanup>
 								<dockerFileDir>docker-files</dockerFileDir>
-								<dockerFile>docker-files/Dockerfile.jacoco</dockerFile>
+								<dockerFile>Dockerfile.jacoco</dockerFile>
 
 							</build>
 						</image>
@@ -124,7 +128,7 @@
 
 								<cleanup>try</cleanup>
 								<dockerFileDir>docker-files</dockerFileDir>
-								<dockerFile>docker-files/Dockerfile.ubuntu-16.04-update</dockerFile>
+								<dockerFile>Dockerfile.ubuntu-16.04-update</dockerFile>
 
 							</build>
 						</image>
@@ -135,7 +139,7 @@
 
 								<cleanup>try</cleanup>
 								<dockerFileDir>docker-files</dockerFileDir>
-								<dockerFile>docker-files/Dockerfile.wildfly-10</dockerFile>
+								<dockerFile>Dockerfile.wildfly-10</dockerFile>
 
 							</build>
 						</image>
@@ -149,7 +153,7 @@
 								</tags>
 								<cleanup>try</cleanup>
 								<dockerFileDir>docker-files</dockerFileDir>
-								<dockerFile>docker-files/Dockerfile.mso-arquillian</dockerFile>
+								<dockerFile>Dockerfile.mso-arquillian</dockerFile>
 
 							</build>
 						</image>
@@ -163,7 +167,7 @@
 								</tags>
 								<cleanup>try</cleanup>
 								<dockerFileDir>docker-files</dockerFileDir>
-								<dockerFile>docker-files/Dockerfile.mso-chef-final</dockerFile>
+								<dockerFile>Dockerfile.mso-chef-final</dockerFile>
 								<assembly>
 									<basedir>/</basedir>
 
