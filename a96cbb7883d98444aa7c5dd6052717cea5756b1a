@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_a7af9de2",
+        "filename": "adapters/mso-vnf-adapter/src/main/java/org/openecomp/mso/adapters/vnf/MsoVnfAdapterImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1056,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-04-05T22:24:22Z",
+      "side": 1,
+      "message": "Done. Let me know any thoughts on implementation.",
+      "parentUuid": "5a93c517_a25d5817",
+      "range": {
+        "startLine": 1056,
+        "startChar": 0,
+        "endLine": 1056,
+        "endChar": 12
+      },
+      "revId": "a96cbb7883d98444aa7c5dd6052717cea5756b1a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_9c720510",
         "filename": "bpmn/MSOCoreBPMN/src/main/java/org/openecomp/mso/bpmn/core/domain/HomingSolution.java",
         "patchSetId": 2
@@ -84,6 +108,30 @@
       "side": 1,
       "message": "Sounds like a reasonable idea. Let me look into it a bit more.",
       "parentUuid": "5a93c517_9c720510",
+      "range": {
+        "startLine": 50,
+        "startChar": 1,
+        "endLine": 50,
+        "endChar": 8
+      },
+      "revId": "a96cbb7883d98444aa7c5dd6052717cea5756b1a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_c7aae9d1",
+        "filename": "bpmn/MSOCoreBPMN/src/main/java/org/openecomp/mso/bpmn/core/domain/HomingSolution.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-04-05T22:24:22Z",
+      "side": 1,
+      "message": "Done. Let me know any thoughts on implementation.",
+      "parentUuid": "5a93c517_22a948df",
       "range": {
         "startLine": 50,
         "startChar": 1,
