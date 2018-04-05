@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_42833456",
+        "filename": "adapters/mso-vnf-adapter/src/main/java/org/openecomp/mso/adapters/vnf/MsoVnfAdapterImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 678,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-04-05T22:24:22Z",
+      "side": 1,
+      "message": "Agreed.",
+      "parentUuid": "5a93c517_d68dcfd4",
+      "range": {
+        "startLine": 671,
+        "startChar": 8,
+        "endLine": 678,
+        "endChar": 11
+      },
+      "revId": "934e6fdb7b16a6f401fac25ef0cf50785971e66a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_76c71b13",
         "filename": "adapters/mso-vnf-adapter/src/main/java/org/openecomp/mso/adapters/vnf/MsoVnfAdapterImpl.java",
         "patchSetId": 1
@@ -76,6 +100,30 @@
       "writtenOn": "2018-04-02T21:40:39Z",
       "side": 1,
       "message": "Same as above, this can be removed since we won\u0027t be needing it anymore.",
+      "range": {
+        "startLine": 1182,
+        "startChar": 16,
+        "endLine": 1186,
+        "endChar": 17
+      },
+      "revId": "934e6fdb7b16a6f401fac25ef0cf50785971e66a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_82b93c30",
+        "filename": "adapters/mso-vnf-adapter/src/main/java/org/openecomp/mso/adapters/vnf/MsoVnfAdapterImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1186,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-04-05T22:24:22Z",
+      "side": 1,
+      "message": "Agreed.",
+      "parentUuid": "5a93c517_36d193cd",
       "range": {
         "startLine": 1182,
         "startChar": 16,
