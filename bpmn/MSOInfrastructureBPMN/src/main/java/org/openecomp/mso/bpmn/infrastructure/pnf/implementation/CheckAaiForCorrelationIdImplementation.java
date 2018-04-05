@@ -29,15 +29,14 @@ public class CheckAaiForCorrelationIdImplementation {
     public AaiResponse check(String correlationId, AaiConnection aaiConnection) throws IOException {
         Optional<Pnf> pnf = aaiConnection.getEntryFor(correlationId);
         if (!pnf.isPresent()) {
-            return new AaiResponse(false, null, null);
+            return AaiResponse.NO_ENTRY;
         }
 
-        Optional<String> ip = extractIp(pnf.get());
-        return ip.map(
-                s -> new AaiResponse(true, true, s)
-        ).orElseGet(
-                () -> new AaiResponse(true, false, null)
-        );
+        if(extractIp(pnf.get()).isPresent()) {
+            return AaiResponse.ENTRY_WITH_IP;
+        } else {
+            return AaiResponse.ENTRY_NO_IP;
+        }
     }
 
     private Optional<String> extractIp(Pnf pnf) {

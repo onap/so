@@ -24,28 +24,25 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 
-public class AaiResponse {
+public enum AaiResponse {
+    NO_ENTRY(false, false),
+    ENTRY_NO_IP(true, false),
+    ENTRY_WITH_IP(true, true);
 
     private Boolean containsInfoAboutPnf;
     private Boolean containsInfoAboutIp;
-    private String ipAddress;
 
-    public AaiResponse(@NotNull Boolean containsInfoAboutPnf, @Nullable Boolean containsInfoAboutIp,
-            @Nullable String ipAddress) {
+    AaiResponse(boolean containsInfoAboutPnf, boolean containsInfoAboutIp) {
         this.containsInfoAboutPnf = containsInfoAboutPnf;
         this.containsInfoAboutIp = containsInfoAboutIp;
-        this.ipAddress = ipAddress;
     }
 
-    public Boolean getContainsInfoAboutPnf() {
+    public boolean getContainsInfoAboutPnf() {
         return containsInfoAboutPnf;
     }
 
-    public Optional<Boolean> getContainsInfoAboutIp() {
-        return Optional.ofNullable(containsInfoAboutIp);
+    public boolean getContainsInfoAboutIp() {
+        return containsInfoAboutIp;
     }
 
-    public Optional<String> getIpAddress() {
-        return Optional.ofNullable(ipAddress);
-    }
 }
