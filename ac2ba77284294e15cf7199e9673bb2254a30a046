@@ -2,6 +2,75 @@
   "comments": [
     {
       "key": {
+        "uuid": "5a93c517_b67cb521",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/aria/AriaVduPlugin.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-04-05T12:10:41Z",
+      "side": 1,
+      "message": "According to ONAP code style indent should be 4 spaces, not 1 tab.",
+      "range": {
+        "startLine": 64,
+        "startChar": 0,
+        "endLine": 64,
+        "endChar": 1
+      },
+      "revId": "ac2ba77284294e15cf7199e9673bb2254a30a046",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_96717946",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/aria/AriaVduPlugin.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-04-05T12:10:41Z",
+      "side": 1,
+      "message": "Please format this file correctly.",
+      "range": {
+        "startLine": 66,
+        "startChar": 26,
+        "endLine": 66,
+        "endChar": 27
+      },
+      "revId": "ac2ba77284294e15cf7199e9673bb2254a30a046",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d677013a",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/aria/AriaVduPlugin.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-04-05T12:10:41Z",
+      "side": 1,
+      "message": "Constructors shouldn\u0027t throw exceptions.",
+      "range": {
+        "startLine": 78,
+        "startChar": 0,
+        "endLine": 81,
+        "endChar": 3
+      },
+      "revId": "ac2ba77284294e15cf7199e9673bb2254a30a046",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_b6959541",
         "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/aria/AriaVduPlugin.java",
         "patchSetId": 3
@@ -18,6 +87,52 @@
         "startChar": 8,
         "endLine": 90,
         "endChar": 19
+      },
+      "revId": "ac2ba77284294e15cf7199e9673bb2254a30a046",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_169d6959",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/aria/AriaVduPlugin.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-04-05T12:10:41Z",
+      "side": 1,
+      "message": "Don\u0027t use javadoc comments (/**) for normal comments.",
+      "range": {
+        "startLine": 114,
+        "startChar": 2,
+        "endLine": 114,
+        "endChar": 5
+      },
+      "revId": "ac2ba77284294e15cf7199e9673bb2254a30a046",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_1686c913",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/aria/AriaVduPlugin.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 303,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-04-05T12:10:41Z",
+      "side": 1,
+      "message": "Why not just return inside if in for and throw exception without if? You can get rid of this ugly \"sid \u003d\u003d -1\" check and make ocde more readable",
+      "range": {
+        "startLine": 295,
+        "startChar": 0,
+        "endLine": 303,
+        "endChar": 13
       },
       "revId": "ac2ba77284294e15cf7199e9673bb2254a30a046",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
