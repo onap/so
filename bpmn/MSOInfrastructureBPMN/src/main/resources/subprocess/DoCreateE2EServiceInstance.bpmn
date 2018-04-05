@@ -207,6 +207,8 @@ dcsi.doServiceHoming(execution)]]></bpmn2:script>
         <camunda:in source="resourceParameters" target="resourceParameters" />
         <camunda:in source="operationType" target="operationType" />
         <camunda:in source="addResourceList" target="addResourceList" />
+        <camunda:in source="serviceInstanceName" target="serviceInstanceName" />
+        <camunda:in source="serviceDecomposition" target="serviceDecomposition" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_0bf6bzp</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0d0c20n</bpmn2:outgoing>
