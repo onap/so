@@ -21,10 +21,11 @@
 package org.openecomp.mso.bpmn.infrastructure.pnf.delegate;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.openecomp.mso.bpmn.infrastructure.pnf.delegate.AaiConnectionTestImpl.DEFAULT_IP;
 import static org.openecomp.mso.bpmn.infrastructure.pnf.delegate.AaiConnectionTestImpl.ID_WITHOUT_ENTRY;
 import static org.openecomp.mso.bpmn.infrastructure.pnf.delegate.AaiConnectionTestImpl.ID_WITH_ENTRY_AND_IP;
 import static org.openecomp.mso.bpmn.infrastructure.pnf.delegate.AaiConnectionTestImpl.ID_WITH_ENTRY_NO_IP;
@@ -38,6 +39,7 @@ import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
+import org.openecomp.mso.bpmn.core.WorkflowException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -60,8 +62,7 @@ public class CheckAaiForCorrelationIdDelegateTest {
             when(execution.getVariable("testProcessKey")).thenReturn("testProcessKeyValue");
             // when, then
             assertThatThrownBy(() -> delegate.execute(execution)).isInstanceOf(BpmnError.class);
-            // todo: uncomment line below after fixing Execution -> DelecateExecution in groovy scripts
-//        verify(execution).setVariable(eq("WorkflowException"), any(WorkflowException.class));
+            verify(execution).setVariable(eq("WorkflowException"), any(WorkflowException.class));
         }
 
         @Test
@@ -118,12 +119,14 @@ public class CheckAaiForCorrelationIdDelegateTest {
         private CheckAaiForCorrelationIdDelegate delegate;
 
         @Test
-        public void shouldThrowExceptionWhenSSADFDSADSFDS() throws Exception {
+        public void shouldThrowExceptionWhenIoExceptionOnConnectionToAai() throws Exception {
             // given
             DelegateExecution execution = mock(DelegateExecution.class);
             when(execution.getVariable(CORRELATION_ID)).thenReturn(ID_WITH_ENTRY_NO_IP);
+            when(execution.getVariable("testProcessKey")).thenReturn("testProcessKey");
             // when, then
             assertThatThrownBy(() -> delegate.execute(execution)).isInstanceOf(BpmnError.class);
+            verify(execution).setVariable(eq("WorkflowException"), any(WorkflowException.class));
         }
     }
 }
