@@ -24,6 +24,8 @@
 		<mso.chef.git.url.suffix.chef.repo>so/chef-repo</mso.chef.git.url.suffix.chef.repo>
 		<mso.chef.git.url.suffix.chef.config>so/so-config</mso.chef.git.url.suffix.chef.config>
 		<mso.project.version>${project.version}</mso.project.version>
+		<docker.pull.registry>nexus3.onap.org:10001</docker.pull.registry>
+		<docker.push.registry>nexus3.onap.org:10003</docker.push.registry>
 	</properties>
 
 	<build>
@@ -100,11 +102,13 @@
 			<plugin>
 				<groupId>io.fabric8</groupId>
 				<artifactId>docker-maven-plugin</artifactId>
-				<version>0.16.5</version>
+				<version>0.19.1</version>
 
 				<configuration>
 					<verbose>true</verbose>
 					<apiVersion>1.23</apiVersion>
+					<pullRegistry>${docker.pull.registry}</pullRegistry>
+					<pushRegistry>${docker.push.registry}</pushRegistry>
 
 					<images>
 						<image>
