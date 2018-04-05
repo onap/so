@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_b6959541",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/aria/AriaVduPlugin.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2018-04-05T11:58:31Z",
+      "side": 1,
+      "message": "This Method seems rather large, can we split out your commented sections to methods?",
+      "range": {
+        "startLine": 90,
+        "startChar": 8,
+        "endLine": 90,
+        "endChar": 19
+      },
+      "revId": "ac2ba77284294e15cf7199e9673bb2254a30a046",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
