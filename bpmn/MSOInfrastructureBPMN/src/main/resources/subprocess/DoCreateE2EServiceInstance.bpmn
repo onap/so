@@ -194,7 +194,7 @@ dcsi.prepareDecomposeService(execution)]]></bpmn2:script>
 def dcsi= new DoCreateE2EServiceInstance()
 dcsi.doServiceHoming(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
-    <bpmn2:callActivity id="CallActivity_1ojtwas" name="Call DoCreateResources" calledElement="DoCreateResources">
+    <bpmn2:callActivity id="CallActivity_1ojtwas" name="Call DoCreateResources" calledElement="DoCreateResourcesV3">
       <bpmn2:extensionElements>
         <camunda:in source="nsServiceName" target="nsServiceName" />
         <camunda:in source="nsServiceDescription" target="nsServiceDescription" />
@@ -206,6 +206,7 @@ dcsi.doServiceHoming(execution)]]></bpmn2:script>
         <camunda:in source="resourceUUID" target="resourceUUID" />
         <camunda:in source="resourceParameters" target="resourceParameters" />
         <camunda:in source="operationType" target="operationType" />
+        <camunda:in source="addResourceList" target="addResourceList" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_0bf6bzp</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0d0c20n</bpmn2:outgoing>
