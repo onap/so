@@ -74,13 +74,15 @@ public class AppCClient extends AbstractServiceTaskProcessor{
 			String vnfHostIpAddress = execution.getVariable('vnfHostIpAddress')
 			String vmIdList = execution.getVariable("vmIdList")
 			String identityUrl = execution.getVariable("identityUrl")
-			String controllerType = execution.getVariable("controllerType")			
+			String controllerType = execution.getVariable("controllerType")	
+			String vfModuleId = execution.getVariable("vfModuleId")		
 			HashMap<String, String> payloadInfo = new HashMap<String, String>();		
 			payloadInfo.put("vnfName", vnfName)
 			payloadInfo.put("aicIdentity", aicIdentity)
 			payloadInfo.put("vnfHostIpAddress", vnfHostIpAddress)
 			payloadInfo.put("vmIdList", vmIdList)
 			payloadInfo.put("identityUrl", identityUrl)
+			payloadInfo.put("vfModuleId",vfModuleId)
 			Optional<String> payload
 			logDebug("Running APP-C action: " + action.toString(), isDebugLogEnabled)
 			utils.log("DEBUG", "VNFID: " + vnfId, isDebugLogEnabled)
