@@ -48,7 +48,7 @@
     <swm.version>2.19.3-1</swm.version>
 	<openstack.version>1.2.1</openstack.version>
     <nexusproxy>https://nexus.onap.org</nexusproxy>
-    <maven.build.timestamp.format>yyyyMMdd'T'HHmm</maven.build.timestamp.format>
+    <maven.build.timestamp.format>yyyyMMdd'T'HHmmss'Z'</maven.build.timestamp.format>
     <resteasy.version>3.0.19.Final</resteasy.version>
   </properties>
   <distributionManagement>
