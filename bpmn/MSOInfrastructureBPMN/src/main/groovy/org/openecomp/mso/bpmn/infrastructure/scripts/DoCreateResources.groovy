@@ -185,8 +185,8 @@ public class DoCreateResources extends AbstractServiceTaskProcessor
 		 
 		 String incomingRequest = execution.getVariable("uuiRequest")
 		 //set the requestInputs from tempalte  To Be Done
-		 String serviceModelUuid = execution.getVariable("modelUuid")		 
-		 String serviceParameters = jsonUtil.getJsonValue(incomingRequest, "service.parameters")
+		 String serviceModelUuid = jsonUtil.getJsonValue(incomingRequest,"service.serviceUuid")
+         String serviceParameters = jsonUtil.getJsonValue(incomingRequest, "service.parameters")
 		 String resourceParameters = ResourceRequestBuilder.buildResourceRequestParameters(execution, serviceModelUuid, resourceCustomizationUuid, serviceParameters)
 		 resourceInput.setResourceParameters(resourceParameters)
 		 execution.setVariable("resourceInput", resourceInput)
