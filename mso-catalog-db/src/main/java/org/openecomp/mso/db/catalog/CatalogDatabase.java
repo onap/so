@@ -1216,7 +1216,7 @@ public class CatalogDatabase implements Closeable {
             return null;
         }
         
-        VnfRecipe recipe = this.getVnfRecipeByNameVersion(vnfResource.getModelName(), vnfResource.getModelVersion(), action);
+        VnfRecipe recipe = this.getVnfRecipeByNameVersion(vnfResource.getModelName(), vnfResource.getVersion(), action);
         return recipe;        
     }
 
