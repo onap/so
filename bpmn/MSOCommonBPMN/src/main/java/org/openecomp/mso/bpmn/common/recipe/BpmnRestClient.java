@@ -189,6 +189,7 @@ public class BpmnRestClient {
             recipeRequest.setServiceInstanceId(serviceInstanceIdInput);
             recipeRequest.setServiceType(serviceTypeInput);
             recipeRequest.setRecipeParams(recipeParamsInput);
+            recipeRequest.setResourceInput(resourceInput);
             jsonReq = recipeRequest.toString();
             msoLogger.debug("request body is " + jsonReq);
         } catch(Exception e) {
