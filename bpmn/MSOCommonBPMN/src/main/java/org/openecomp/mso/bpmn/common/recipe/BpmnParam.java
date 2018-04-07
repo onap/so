@@ -41,7 +41,7 @@ public class BpmnParam {
 		return value;
 	}
 	
-	@JsonProperty("type")
+	@JsonProperty("value")
 	public void setValue(String value) {
 		this.value = value;
 	}
