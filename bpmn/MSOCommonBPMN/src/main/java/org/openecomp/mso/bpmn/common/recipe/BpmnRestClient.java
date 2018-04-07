@@ -181,6 +181,7 @@ public class BpmnRestClient {
             requestIdInput.setValue(requestId);
             requestActionInput.setValue(requestAction);
             serviceInstanceIdInput.setValue(serviceInstanceId);
+            serviceTypeInput.setValue(serviceType);
             recipeParamsInput.setValue(recipeParams);
             resourceInput.setValue(requestDetails);
             recipeRequest.setHost(host);
