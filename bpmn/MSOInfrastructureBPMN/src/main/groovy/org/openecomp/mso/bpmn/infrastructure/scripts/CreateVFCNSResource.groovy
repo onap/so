@@ -28,7 +28,6 @@ import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
 import org.openecomp.mso.bpmn.core.WorkflowException 
 import org.openecomp.mso.bpmn.core.json.JsonUtils 
 import org.openecomp.mso.rest.APIResponse
-
 import java.util.UUID;
 
 import org.camunda.bpm.engine.delegate.BpmnError 
@@ -62,24 +61,36 @@ public class CreateVFCNSResource extends AbstractServiceTaskProcessor {
      * generate the nsParameters
      */
     public void preProcessRequest (DelegateExecution execution) {
+        JsonUtils jsonUtil = new JsonUtils()
+
 	   def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
        String msg = ""
        utils.log("INFO", " *** preProcessRequest() *** ", isDebugEnabled)
        try {
            //deal with nsName and Description
-           String nsServiceName = execution.getVariable("nsServiceName")
+           String resourceInput = execution.getVariable("resourceInput")
+
+           // get service name
+           String resourceName = jsonUtil.getJsonValue(resourceInput, "resourceInstanceName")
+           String nsServiceName = resourceName.substring(resourceName.indexOf("_") + 1)
+           execution.setVariable("nsServiceName", nsServiceName)
+
            String nsServiceDescription = execution.getVariable("nsServiceDescription")
            utils.log("INFO", "nsServiceName:" + nsServiceName + " nsServiceDescription:" + nsServiceDescription, isDebugEnabled)
            //deal with operation key
-           String globalSubscriberId = execution.getVariable("globalSubscriberId")
+           String globalSubscriberId = jsonUtil.getJsonValue(resourceInput, "globalSubscriberId")
            utils.log("INFO", "globalSubscriberId:" + globalSubscriberId, isDebugEnabled)
+
            String serviceType = execution.getVariable("serviceType")
            utils.log("INFO", "serviceType:" + serviceType, isDebugEnabled)
-           String serviceId = execution.getVariable("serviceId")
+
+           String serviceId = execution.getVariable("serviceInstanceId")
            utils.log("INFO", "serviceId:" + serviceId, isDebugEnabled)
-           String operationId = execution.getVariable("operationId")
+
+           String operationId = execution.getVariable("mso-request-id")
            utils.log("INFO", "serviceType:" + serviceType, isDebugEnabled)
-           String nodeTemplateUUID = execution.getVariable("resourceUUID")
+
+           String nodeTemplateUUID = jsonUtil.getJsonValue(resourceInput, "resourceModelInfo.modelUuid")
            utils.log("INFO", "nodeTemplateUUID:" + nodeTemplateUUID, isDebugEnabled)
            /*
             * segmentInformation needed as a object of segment
