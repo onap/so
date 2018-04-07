@@ -200,7 +200,7 @@ dcsi.doServiceHoming(execution)]]></bpmn2:script>
         <camunda:in source="nsServiceDescription" target="nsServiceDescription" />
         <camunda:in source="globalSubscriberId" target="globalSubscriberId" />
         <camunda:in source="serviceType" target="serviceType" />
-        <camunda:in source="serviceId" target="serviceId" />
+        <camunda:in source="serviceInstanceId" target="serviceInstanceId" />
         <camunda:in source="operationId" target="operationId" />
         <camunda:in source="resourceType" target="resourceType" />
         <camunda:in source="resourceUUID" target="resourceUUID" />
@@ -210,6 +210,7 @@ dcsi.doServiceHoming(execution)]]></bpmn2:script>
         <camunda:in source="serviceInstanceName" target="serviceInstanceName" />
         <camunda:in source="serviceDecomposition" target="serviceDecomposition" />
         <camunda:in source="uuiRequest" target="uuiRequest" />
+        <camunda:in source="msoRequestId" target="msoRequestId" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_0bf6bzp</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0d0c20n</bpmn2:outgoing>
