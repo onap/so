@@ -137,8 +137,8 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 			String serviceInstanceName = execution.getVariable("serviceInstanceName")
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
 			String uuiRequest = execution.getVariable("uuiRequest")
-			String modelInvariantUuid = jsonUtil.getJsonValue(uuiRequest, "service.serviceDefId")
-			String modelUuid = jsonUtil.getJsonValue(uuiRequest, "service.templateId")
+			String modelInvariantUuid = jsonUtil.getJsonValue(uuiRequest, "service.serviceInvariantUuid")
+			String modelUuid = jsonUtil.getJsonValue(uuiRequest, "service.serviceUuid")
 			String serviceModelName = jsonUtil.getJsonValue(uuiRequest, "service.parameters.templateName")
 			execution.setVariable("serviceModelName", serviceModelName)
 			//aai serviceType and Role can be setted as fixed value now.
@@ -189,7 +189,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 
         try {
-            utils.log("DEBUG", " ***** Inside prepareDecomposeService of create generic e2e service ***** ", isDebugEnabled)
+            utils.log("INFO", " ***** Inside prepareDecomposeService of create generic e2e service ***** ", isDebugEnabled)
             String modelInvariantUuid = execution.getVariable("modelInvariantUuid")
             String modelUuid = execution.getVariable("modelUuid")
             //here modelVersion is not set, we use modelUuid to decompose the service.
@@ -211,12 +211,12 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
     public void processDecomposition(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
     
-        utils.log("DEBUG", " ***** Inside processDecomposition() of  create generic e2e service flow ***** ", isDebugEnabled)    
+        utils.log("INFO", " ***** Inside processDecomposition() of  create generic e2e service flow ***** ", isDebugEnabled)
         try {
             ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
         } catch (Exception ex) {
             String exceptionMessage = "Bpmn error encountered in  create generic e2e service flow. processDecomposition() - " + ex.getMessage()
-            utils.log("DEBUG", exceptionMessage, isDebugEnabled)
+            utils.log("INFO", exceptionMessage, isDebugEnabled)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
         }
     }
