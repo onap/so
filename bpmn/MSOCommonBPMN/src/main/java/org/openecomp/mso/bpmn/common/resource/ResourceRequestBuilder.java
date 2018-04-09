@@ -55,7 +55,7 @@ public class ResourceRequestBuilder {
 
     public static String CUSTOMIZATION_UUID = "customizationUUID";
 
-    public static String SERVICE_URL_TOSCA_CSAR = "http://localhost:8080/ecomp/mso/catalog/v3/serviceToscaCsar?serviceModelUuid=";
+    public static String SERVICE_URL_TOSCA_CSAR = "http://mso:8080/ecomp/mso/catalog/v3/serviceToscaCsar?serviceModelUuid=";
 
     private static MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
 
@@ -69,9 +69,10 @@ public class ResourceRequestBuilder {
      *     "requestInputs":{K,V}
      * }
      * <br>
-     * 
+     *
+     * @param execution Execution context
      * @param serviceUuid The service template uuid
-     * @param resourceucstomizationUuid The resource customization uuid
+     * @param resourceCustomizationUuid The resource customization uuid
      * @param serviceParameters the service parameters passed from the API
      * @return the resource instantiate parameters
      * @since ONAP Beijing Release
