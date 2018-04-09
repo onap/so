@@ -103,7 +103,7 @@ public class CreateVFCNSResource extends AbstractServiceTaskProcessor {
             *     }
             * }
             */
-           String nsParameters = execution.getVariable("resourceParameters")
+           String nsParameters = jsonUtil.getJsonValue(resourceInput, "resourceParameters")
            utils.log("INFO", "nsParameters:" + nsParameters, isDebugEnabled)
            String nsOperationKey = """{
                    "globalSubscriberId":"${globalSubscriberId}",
@@ -136,11 +136,16 @@ public class CreateVFCNSResource extends AbstractServiceTaskProcessor {
         String nsParameters = execution.getVariable("nsParameters");
         String nsServiceName = execution.getVariable("nsServiceName")
         String nsServiceDescription = execution.getVariable("nsServiceDescription")
+        String locationConstraints = jsonUtil.getJsonValue(nsParameters, "locationConstraints")
+        String requestInputs = jsonUtil.getJsonValue(nsParameters, "requestInputs")
         String reqBody ="""{
                 "nsServiceName":"${nsServiceName}",
                 "nsServiceDescription":"${nsServiceDescription}",
                 "nsOperationKey":${nsOperationKey},
-                "nsParameters":${nsParameters}
+                "nsParameters":{
+                     "locationConstraints":${locationConstraints},
+                     "additionalParamForNs":${requestInputs}
+                }
                }"""
         APIResponse apiResponse = postRequest(execution, host + vfcUrl + "/ns", reqBody)
         String returnCode = apiResponse.getStatusCode()
