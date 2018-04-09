@@ -25,6 +25,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
+import com.github.tomakehurst.wiremock.http.Fault;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;
@@ -41,8 +42,16 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.assertEquals;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+
+import org.openecomp.mso.cloudify.base.client.CloudifyConnectException;
 import org.openecomp.mso.cloudify.base.client.CloudifyRequest;
 import org.openecomp.mso.cloudify.base.client.CloudifyResponseException;
+import org.openecomp.mso.cloudify.base.client.Entity;
 import org.openecomp.mso.cloudify.base.client.HttpMethod;
 import org.openecomp.mso.cloudify.v3.model.Deployment;
 
@@ -53,7 +62,7 @@ public class HttpClientConnectorTest {
 	
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
-	
+
 	@Test
 	public void sunnyDay_POST(){			
 		wireMockRule.stubFor(post(urlPathEqualTo("/testUrl")).willReturn(aResponse()
@@ -71,8 +80,8 @@ public class HttpClientConnectorTest {
 		conector.request(request);
 		verify(postRequestedFor(urlEqualTo("/testUrl")));
 	}
-	
-	
+
+
 	@Test
 	public void sunnyDay_GET(){			
 		wireMockRule.stubFor(get(urlPathEqualTo("/testUrl")).willReturn(aResponse()
@@ -118,7 +127,7 @@ public class HttpClientConnectorTest {
 	
 	
 	@Test
-	public void rainydDay_PATCH(){			 
+	public void rainyDay_PATCH(){			 
 		thrown.expect(HttpClientException.class);
 		thrown.expectMessage("Unrecognized HTTP Method: PATCH");
 		HttpClientConnector conector = new HttpClientConnector();
@@ -130,9 +139,8 @@ public class HttpClientConnectorTest {
 	
 	}
 	
-	
 	@Test
-	public void rainydDay_RunTimeException(){	
+	public void rainyDayRunTimeException(){	
 		wireMockRule.stubFor(post(urlEqualTo("/503")).willReturn(
                 aResponse().withStatus(503).withHeader("Content-Type", "text/plain").withBody("failure")));
 		thrown.expect(RuntimeException.class);
@@ -145,6 +153,99 @@ public class HttpClientConnectorTest {
 		conector.request(request);
 	
 	}
+	
+	@Test
+	public void rainyDayBadUri() {
+		wireMockRule.stubFor(post(urlPathEqualTo("/testUrl")).willReturn(aResponse()
+				.withHeader("Content-Type", "application/json").withBody("TEST").withStatus(HttpStatus.SC_OK)));
+		thrown.expect(HttpClientException.class);
+		int port = wireMockRule.port();
+		HttpClientConnector conector = new HttpClientConnector();
+		CloudifyRequest<Deployment> request = new CloudifyRequest<Deployment>();
+		Deployment deployment = new Deployment();
+		deployment.setId("id");
+		request.entity(deployment, "application/json");
+		request.endpoint("(@#$@(#*$&asfasdf");
+		request.setBasicAuthentication("USER","PASSWORD");
+		request.header("Content-Type","application/json");
+		request.method(HttpMethod.POST);
+		conector.request(request);
+	}
 
+	@Test
+	public void sunnyDayWithJsonEntity_POST(){			
+		wireMockRule.stubFor(post(urlPathEqualTo("/testUrl")).willReturn(aResponse()
+				.withHeader("Content-Type", "application/json").withBody("TEST").withStatus(HttpStatus.SC_OK)));
+		int port = wireMockRule.port();
+		HttpClientConnector conector = new HttpClientConnector();
+		
+		Deployment deployment = new Deployment();
+		deployment.setId("id");
+
+		CloudifyRequest<Deployment> request = new CloudifyRequest<Deployment>(null, HttpMethod.POST, "/", Entity.json(deployment), null);
+
+		request.endpoint("http://localhost:"+port);
+		request.path("testUrl");
+		request.header("Content-Type","application/json");
+		request.header("Content-Type",  null);
+		
+		request.returnType(Deployment.class);
+		assertEquals(Deployment.class, request.returnType());
+		
+		Entity<Deployment> t = request.json(deployment);
+		assertEquals(t.getEntity().getId(), "id");
+
+		request.queryParam("test", "one").queryParam("test",  "two");
+		
+		conector.request(request);
+
+		verify(postRequestedFor(urlEqualTo("/testUrl?test=two")));
+	}
+
+	@Test
+	public void sunnyDayWithStreamEntity_POST() {			
+		wireMockRule.stubFor(post(urlPathEqualTo("/testUrl")).willReturn(aResponse()
+				.withHeader("Content-Type", "application/json").withBody("TEST").withStatus(HttpStatus.SC_OK)));
+		int port = wireMockRule.port();
+		HttpClientConnector conector = new HttpClientConnector();
+
+		InputStream is = new ByteArrayInputStream("{}".getBytes(StandardCharsets.UTF_8));
+
+		CloudifyRequest<Deployment> request = new CloudifyRequest<Deployment>(null, HttpMethod.POST, "/testUrl", Entity.stream(is), null);
+		
+		request.endpoint("http://localhost:"+port);
+		request.setBasicAuthentication("USER","PASSWORD");
+		request.header("Content-Type","application/json");
+
+		conector.request(request);
+		verify(postRequestedFor(urlEqualTo("/testUrl")));
+	}
+
+	@Test
+	public void rainyDayGarbageData(){			
+		wireMockRule.stubFor(get(urlPathEqualTo("/testUrl")).willReturn(
+				aResponse().withFault(Fault.RANDOM_DATA_THEN_CLOSE)));
+		thrown.expect(CloudifyConnectException.class);
+		int port = wireMockRule.port();
+		HttpClientConnector conector = new HttpClientConnector();
+		CloudifyRequest<Deployment> request = new CloudifyRequest<Deployment>();
+		request.endpoint("http://localhost:"+port+"/testUrl");
+		request.setBasicAuthentication("USER","PASSWORD");
+		request.method(HttpMethod.GET);
+		conector.request(request);
+	}
+
+	@Test
+	public void rainyDayEmptyResponse(){			
+		thrown.expect(HttpClientException.class);
+		int port = wireMockRule.port();
+		HttpClientConnector conector = new HttpClientConnector();
+		CloudifyRequest<Deployment> request = new CloudifyRequest<Deployment>();
+		request.endpoint("http://localhost:"+port+"/testUrl");
+		request.setBasicAuthentication("USER","PASSWORD");
+		request.method(HttpMethod.GET);
+		conector.request(request);  // gets down to "Get here on an error response (4XX-5XX)", then tries to throw a CloudifyResponseException, which calls getEntity, which tries to parse an HTML error page as a JSON, which causes the HttpClientException.
+	}
+	
 
 }
