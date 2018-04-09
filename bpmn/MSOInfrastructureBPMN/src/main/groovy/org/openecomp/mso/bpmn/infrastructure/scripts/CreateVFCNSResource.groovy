@@ -87,10 +87,10 @@ public class CreateVFCNSResource extends AbstractServiceTaskProcessor {
            String serviceId = execution.getVariable("serviceInstanceId")
            utils.log("INFO", "serviceId:" + serviceId, isDebugEnabled)
 
-           String operationId = execution.getVariable("mso-request-id")
+           String operationId = execution.getVariable("requestId")
            utils.log("INFO", "serviceType:" + serviceType, isDebugEnabled)
 
-           String nodeTemplateUUID = jsonUtil.getJsonValue(resourceInput, "resourceModelInfo.modelUuid")
+           String nodeTemplateUUID = jsonUtil.getJsonValue(resourceInput, "resourceModelInfo.modelCustomizationUuid")
            utils.log("INFO", "nodeTemplateUUID:" + nodeTemplateUUID, isDebugEnabled)
            /*
             * segmentInformation needed as a object of segment
