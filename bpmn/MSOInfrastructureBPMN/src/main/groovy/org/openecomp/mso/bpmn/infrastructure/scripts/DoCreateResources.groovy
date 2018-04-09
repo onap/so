@@ -182,6 +182,7 @@ public class DoCreateResources extends AbstractServiceTaskProcessor
 		 resourceInput.setResourceModelInfo(currentResource.getModelInfo());
 		 ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
 		 resourceInput.setServiceModelInfo(serviceDecomposition.getModelInfo());
+         def String resourceCustomizationUuid = currentResource.getModelInfo().getModelCustomizationUuid();
 		 
 		 String incomingRequest = execution.getVariable("uuiRequest")
 		 //set the requestInputs from tempalte  To Be Done
