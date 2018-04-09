@@ -22,6 +22,7 @@ dcsi.preProcessRequest(execution)
         <camunda:out source="GENGS_SuccessIndicator" target="GENGS_SuccessIndicator" />
         <camunda:out source="WorkflowException" target="WorkflowException" />
         <camunda:in source="serviceType" target="GENGS_serviceType" />
+        <camunda:in source="serviceInstanceId" target="GENGS_serviceInstanceId" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_1i7t9hq</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_4</bpmn2:outgoing>
