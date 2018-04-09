@@ -50,7 +50,7 @@ dcsi.processDecomposition_Target(execution)]]></bpmn2:script>
       <bpmn2:extensionElements>
         <camunda:in source="msoRequestId" target="msoRequestId" />
         <camunda:in source="serviceInstanceId" target="serviceInstanceId" />
-        <camunda:in source="serviceModelInfo" target="serviceModelInfo" />
+        <camunda:in source="serviceModelInfo_Target" target="serviceModelInfo" />
         <camunda:in source="isDebugLogEnabled" target="isDebugLogEnabled" />
         <camunda:out source="serviceDecomposition" target="serviceDecomposition" />
         <camunda:out source="WorkflowException" target="WorkflowException" />
@@ -88,7 +88,7 @@ dcsi.processDecomposition_Original(execution)]]></bpmn2:script>
       <bpmn2:extensionElements>
         <camunda:in source="msoRequestId" target="msoRequestId" />
         <camunda:in source="serviceInstanceId" target="serviceInstanceId" />
-        <camunda:in source="serviceModelInfo" target="serviceModelInfo" />
+        <camunda:in source="serviceModelInfo_Original" target="serviceModelInfo" />
         <camunda:in source="isDebugLogEnabled" target="isDebugLogEnabled" />
         <camunda:out source="serviceDecomposition" target="serviceDecomposition" />
         <camunda:out source="WorkflowException" target="WorkflowException" />

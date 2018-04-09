@@ -40,10 +40,16 @@ ex.processJavaException(execution)]]></bpmn2:script>
       <bpmn2:extensionElements>
         <camunda:in source="msoRequestId" target="msoRequestId" />
         <camunda:in source="serviceInstanceId" target="serviceInstanceId" />
-        <camunda:in source="serviceModelInfo" target="serviceModelInfo" />
         <camunda:in source="isDebugLogEnabled" target="isDebugLogEnabled" />
-        <camunda:out source="serviceDecomposition" target="serviceDecomposition" />
+        <camunda:out source="serviceDecomposition_Target" target="serviceDecomposition_Target" />
         <camunda:out source="WorkflowException" target="WorkflowException" />
+        <camunda:in source="model-invariant-id-target" target="model-invariant-id-target" />
+        <camunda:in source="model-version-id-target" target="model-version-id-target" />
+        <camunda:in source="model-invariant-id-original" target="model-invariant-id-original" />
+        <camunda:in source="model-version-id-original" target="model-version-id-original" />
+        <camunda:out source="addResourceList" target="addResourceList" />
+        <camunda:out source="delResourceList" target="delResourceList" />
+        <camunda:out source="serviceDecomposition_Original" target="serviceDecomposition_Original" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_1rebkae</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_1pe6r93</bpmn2:outgoing>
