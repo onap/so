@@ -137,6 +137,7 @@ public class DoCreateResources extends AbstractServiceTaskProcessor
 	    def currentIndex = execution.getVariable("currentResourceIndex")
 	    List<Resource> sequencedResourceList = execution.getVariable("sequencedResourceList")  
 	    Resource currentResource = sequencedResourceList.get(currentIndex)
+        execution.setVariable("resourceType", currentResource.getModelInfo().getModelName())
 	    utils.log("INFO", "Now we deal with resouce:" + currentResource.getModelInfo().getModelName(), isDebugEnabled)  
         utils.log("INFO", "======== COMPLETED getCurrentResoure Process ======== ", isDebugEnabled)  
     }
@@ -161,6 +162,7 @@ public class DoCreateResources extends AbstractServiceTaskProcessor
 		 utils.log("INFO", "======== Start prepareResourceRecipeRequest Process ======== ", isDebugEnabled)
 		 ResourceInput resourceInput = new ResourceInput()
 		 String serviceInstanceName = execution.getVariable("serviceInstanceName")
+         String resourceType = execution.getVariable("resourceType")
 		 String resourceInstanceName = resourceType + "_" + serviceInstanceName
 		 resourceInput.setResourceInstanceName(resourceInstanceName)
 		 utils.log("INFO", "Prepare Resource Request resourceInstanceName:" + resourceInstanceName, isDebugEnabled)
