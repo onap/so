@@ -182,7 +182,7 @@ public class E2EServiceInstances {
 	 * GET Requests for Comparing model of service instance with target version
 	 */
 	
-	@GET
+	@POST
 	@Path("/{version:[vV][3-5]}/{serviceId}/modeldifferences")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
