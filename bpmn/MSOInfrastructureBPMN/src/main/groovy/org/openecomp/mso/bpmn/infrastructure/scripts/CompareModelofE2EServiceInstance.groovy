@@ -101,32 +101,49 @@ public class CompareModelofE2EServiceInstance extends AbstractServiceTaskProcess
 			if (isBlank(serviceInstanceId)) {
 				msg = "Input serviceInstanceId' is null"
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-			}	
-
-			/*
-			 * Extracting User Parameters from incoming Request and converting into a Map
-			 */
-			def jsonSlurper = new JsonSlurper()
-			def jsonOutput = new JsonOutput()
-	
-			Map reqMap = jsonSlurper.parseText(siRequest)
-	
-			//InputParams
-			def userParams = reqMap.requestDetails?.requestParameters?.userParams
-	
-			Map<String, String> inputMap = [:]
-			if (userParams) {
-				userParams.each {
-					userParam -> inputMap.put(userParam.name, userParam.value.toString())
-				}
 			}
-			execution.setVariable("operationType", "CompareModel") 
 			
-			utils.log("DEBUG", "User Input Parameters map: " + userParams.toString(), isDebugEnabled)
-			execution.setVariable("serviceInputParams", inputMap)
-	
-		} catch (BpmnError e) {
-			throw e;
+			//subscriberInfo
+			String globalSubscriberId = jsonUtil.getJsonValue(siRequest, "globalSubscriberId")
+			if (isBlank(globalSubscriberId)) {
+				msg = "Input globalSubscriberId' is null"
+				utils.log("INFO", msg, isDebugEnabled)
+			} else {
+				execution.setVariable("globalSubscriberId", globalSubscriberId)
+			}
+			
+			//subscriptionServiceType
+			String subscriptionServiceType = jsonUtil.getJsonValue(siRequest, "serviceType")
+			if (isBlank(subscriptionServiceType)) {
+				msg = "Input subscriptionServiceType is null"
+				utils.log("DEBUG", msg, isDebugEnabled)
+				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+			} else {
+				execution.setVariable("serviceType", subscriptionServiceType)
+			}
+			
+			//modelInvariantIdTarget
+			String modelInvariantIdTarget = jsonUtil.getJsonValue(siRequest, "modelInvariantIdTarget")
+			if (isBlank(modelInvariantIdTarget)) {
+				msg = "Input modelInvariantIdTarget' is null"
+				utils.log("INFO", msg, isDebugEnabled)
+				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+			} else {
+				execution.setVariable("modelInvariantIdTarget", modelInvariantIdTarget)
+			}
+			
+			//modelVersionIdTarget
+			String modelVersionIdTarget = jsonUtil.getJsonValue(siRequest, "modelVersionIdTarget")
+			if (isBlank(modelVersionIdTarget)) {
+				msg = "Input modelVersionIdTarget is null"
+				utils.log("DEBUG", msg, isDebugEnabled)
+				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+			} else {
+				execution.setVariable("modelVersionIdTarget", modelVersionIdTarget)
+			}
+
+			execution.setVariable("operationType", "CompareModel") 	
+
 		} catch (Exception ex){
 			msg = "Exception in preProcessRequest " + ex.getMessage()
 			utils.log("INFO", msg, isDebugEnabled)
@@ -143,13 +160,13 @@ public class CompareModelofE2EServiceInstance extends AbstractServiceTaskProcess
 			CompareModelsResult compareModelsResult = execution.getVariable("compareModelsResult")
 			
 			// RESTResponse (for API Handler(APIH) Reply Task)
-			String syncResponse = compareModelsResult.toString()
+			String syncResponse = compareModelsResult.toJsonStringNoRootName()
 			utils.log("INFO", " sendSynchResponse: xmlSyncResponse - " + "\n" + syncResponse, isDebugEnabled)
 			sendWorkflowResponse(execution, 202, syncResponse)
 
 		} catch (Exception ex) {
 			String msg  = "Exception in sendSyncResponse: " + ex.getMessage()
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
 		utils.log("INFO"," ***** Exit sendSyncResopnse *****",  isDebugEnabled)
 	}
