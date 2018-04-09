@@ -34,6 +34,7 @@ import org.openecomp.mso.bpmn.common.scripts.AaiUtil
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
 import org.openecomp.mso.bpmn.common.scripts.SDNCAdapterUtils
+import org.openecomp.mso.bpmn.common.resource.ResourceRequestBuilder
 import org.openecomp.mso.bpmn.core.RollbackData
 import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.rest.APIResponse;
@@ -84,13 +85,12 @@ public class DoCompareModelofE2EServiceInstance extends AbstractServiceTaskProce
 	JsonUtils jsonUtil = new JsonUtils()
 
 	public void preProcessRequest (DelegateExecution execution) {
-		execution.setVariable("isDebugLogEnabled","true")
 
 		def method = getClass().getSimpleName() + '.preProcessRequest(' +'execution=' + execution.getId() +')'
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO","Entered " + method, isDebugEnabled)
 		String msg = ""
-		utils.log("INFO"," ***** Enter CompareModelofE2EServiceInstance preProcessRequest *****",  isDebugEnabled)
+		utils.log("INFO"," ***** Enter DoCompareModelofE2EServiceInstance preProcessRequest *****",  isDebugEnabled)
 
 		execution.setVariable("prefix", Prefix)
 		//Inputs
@@ -121,14 +121,14 @@ public class DoCompareModelofE2EServiceInstance extends AbstractServiceTaskProce
 			exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 		}
 
-		String modelInvariantUuid = execution.getVariable('modelInvariantIdTarget')
+		String modelInvariantUuid = execution.getVariable("modelInvariantIdTarget")
 		if (isBlank(modelInvariantUuid)){
 			msg = "Input modelInvariantUuid is null"
 			utils.log("INFO", msg, isDebugEnabled)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 		}
 
-		String modelUuid = execution.getVariable('modelVersionIdTarget')
+		String modelUuid = execution.getVariable("modelVersionIdTarget")
 		if (isBlank(modelUuid)){
 			msg = "Input modelUuid is null"
 			utils.log("INFO", msg, isDebugEnabled)
@@ -238,7 +238,7 @@ public class DoCompareModelofE2EServiceInstance extends AbstractServiceTaskProce
 			requestInputs.addAll(resourceParameters.keySet())			
 		}
 		
-		for(Resource rc : deletedResourceList) {
+		for(Resource rc : delResourceList) {
 			mi = rc.getModelInfo()
 			String resourceCustomizationUuid = mi.getModelCustomizationUuid()
 			ResourceModelInfo rmodel = new ResourceModelInfo()

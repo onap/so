@@ -149,7 +149,7 @@ public class DoCompareModelVersions extends AbstractServiceTaskProcessor {
             "modelUuid":"${modelUuid}",
             "modelVersion":""
              }"""
-            execution.setVariable("serviceModelInfo", serviceModelInfo)
+            
             execution.setVariable("serviceModelInfo_Target", serviceModelInfo)
 
             utils.log("DEBUG", " ***** Completed prepareDecomposeService_Target of update generic e2e service ***** ", isDebugEnabled)
@@ -187,7 +187,7 @@ public class DoCompareModelVersions extends AbstractServiceTaskProcessor {
             "modelUuid":"${modelUuid}",
             "modelVersion":""
              }"""
-            execution.setVariable("serviceModelInfo", serviceModelInfo)
+            
             execution.setVariable("serviceModelInfo_Original", serviceModelInfo)
 
             utils.log("DEBUG", " ***** Completed prepareDecomposeService_Original of update generic e2e service ***** ", isDebugEnabled)
