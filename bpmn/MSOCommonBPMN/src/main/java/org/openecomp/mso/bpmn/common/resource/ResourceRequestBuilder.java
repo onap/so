@@ -93,6 +93,15 @@ public class ResourceRequestBuilder {
         }
         Map<String, Object> serviceInput =getJsonObject((String)JsonUtils.getJsonValue(serviceParameters, "requestInputs"), Map.class);
         Map<String, Object> resourceInputsFromUuiMap = getJsonObject(resourceInputsFromUui, Map.class);
+
+        if (serviceInput == null) {
+            serviceInput = new HashMap();
+        }
+
+        if (resourceInputsFromUuiMap == null) {
+            resourceInputsFromUuiMap = new HashMap();
+        }
+
         try {
             Map<String, Object> resourceInputsFromServiceDeclaredLevel = buildResouceRequest(serviceUuid, resourceCustomizationUuid, serviceInput);
             resourceInputsFromUuiMap.putAll(resourceInputsFromServiceDeclaredLevel);
