@@ -14,4 +14,18 @@
     <property name="aaiConnection" ref="aaiConnection"/>
   </bean>
 
+  <bean id="pnfEventReadyConsumer" class="org.openecomp.mso.bpmn.infrastructure.pnf.dmaap.PnfEventReadyConsumer">
+    <property name="dmaapHost" value="${dmaapHost}" />
+    <property name="dmaapPort" value="${dmaapPort}"/>
+    <property name="dmaapProtocol" value="${dmaapProtocol}"/>
+    <property name="dmaapUriPathPrefix" value="${dmaapUriPathPrefix}"/>
+    <property name="dmaapTopicName" value="${eventReadyTopicName}"/>
+    <property name= "consumerGroup" value="${consumerGroup}"/>
+    <property name="consumerId" value="${consumerId}"/>
+  </bean>
+
+  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <property name="locations" value="classpath:dmaap.properties"/>
+  </bean>
+
 </beans>
