@@ -133,7 +133,7 @@ public class ServiceMacroHolder implements Serializable {
 		}
 		if (this.vnfResourceCustomizations != null && this.vnfResourceCustomizations.size() > 0) {
 			int i=0;
-			sb.append("VnfResources: ");
+			sb.append("vnfResourceCustomization: ");
 			for (VnfResourceCustomization vrc : this.vnfResourceCustomizations) {
 				sb.append(", vnfResourceCustomization[").append(i++).append("]:").append(vrc.toString());
 			}
