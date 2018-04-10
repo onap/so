@@ -28,6 +28,7 @@ import java.io.IOException;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
+import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil;
 import org.openecomp.mso.bpmn.infrastructure.pnf.implementation.AaiConnection;
 import org.openecomp.mso.bpmn.infrastructure.pnf.implementation.AaiResponse;
 import org.openecomp.mso.bpmn.infrastructure.pnf.implementation.CheckAaiForCorrelationIdImplementation;
@@ -58,21 +59,16 @@ public class CheckAaiForCorrelationIdDelegate implements JavaDelegate {
     public void execute(DelegateExecution execution) throws Exception {
         String correlationId = (String) execution.getVariable(CORRELATION_ID);
         if (correlationId == null) {
-            //todo: fix Execution -> DelegateExecution in ALL groovy scripts
-//            new ExceptionUtil().buildAndThrowWorkflowException(execution, 500, CORRELATION_ID + " is not set");
-            throw new BpmnError("MSOWorkflowException");
+            new ExceptionUtil().buildAndThrowWorkflowException(execution, 500, CORRELATION_ID + " is not set");
         }
 
         try {
             AaiResponse aaiResponse = implementation.check(correlationId, aaiConnection);
 
             execution.setVariableLocal(AAI_CONTAINS_INFO_ABOUT_PNF, aaiResponse.getContainsInfoAboutPnf());
-            aaiResponse.getContainsInfoAboutIp().ifPresent(
-                    isIp -> execution.setVariableLocal(AAI_CONTAINS_INFO_ABOUT_IP, isIp)
-            );
+            execution.setVariableLocal(AAI_CONTAINS_INFO_ABOUT_IP, aaiResponse.getContainsInfoAboutIp());
         } catch (IOException e) {
-            //todo: log this
-            throw new BpmnError("MSOWorkflowException");
+            new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999, e.getMessage());
         }
     }
 }
