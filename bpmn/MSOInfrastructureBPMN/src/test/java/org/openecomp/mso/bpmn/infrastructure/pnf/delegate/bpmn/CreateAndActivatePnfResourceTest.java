@@ -75,7 +75,8 @@ public class CreateAndActivatePnfResourceTest {
                 "CreateAndActivatePnf_StartEvent",
                 "CheckAiiForCorrelationId",
                 "DoesAaiContainInfoAboutPnf",
-                "DoesAaiContainInfoAboutIp"
+                "DoesAaiContainInfoAboutIp",
+                "AaiEntryAlreadyUpToDate"
         );
     }
 
@@ -102,7 +103,9 @@ public class CreateAndActivatePnfResourceTest {
                 "DoesAaiContainInfoAboutPnf",
                 "DoesAaiContainInfoAboutIp",
                 "AaiEntryExists",
-                "WaitForDmaapPnfReadyNotification"
+                "InformDmaapClient",
+                "WaitForDmaapPnfReadyNotification",
+                "AaiEntryUpdated"
         );
     }
 
@@ -129,7 +132,9 @@ public class CreateAndActivatePnfResourceTest {
                 "DoesAaiContainInfoAboutPnf",
                 "CreateAndActivatePnf_CreateAaiEntry",
                 "AaiEntryExists",
-                "WaitForDmaapPnfReadyNotification"
+                "InformDmaapClient",
+                "WaitForDmaapPnfReadyNotification",
+                "AaiEntryUpdated"
         );
         assertThat(aaiConnection.getCreated()).containsExactly(ID_WITHOUT_ENTRY);
     }
