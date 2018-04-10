@@ -128,5 +128,20 @@ public class BlueprintsResourceTest {
 		assertEquals("123", b.getId());
 	}
 
+	@Test
+	public void cloudifyClientBlueprintGetMetadataById() {
+		wireMockRule.stubFor(get(urlPathEqualTo("/api/v3/blueprints/")).willReturn(aResponse().withHeader("Content-Type", "application/json")
+				.withBody("{\"id\": \"123\"}")
+				.withStatus(HttpStatus.SC_OK)));
+		
+		int port = wireMockRule.port();
+
+		Cloudify c = new Cloudify("http://localhost:"+port, "tenant");
+		BlueprintsResource br = c.blueprints();
+		GetBlueprint gb = br.getMetadataById("123");
+		Blueprint b = gb.execute();
+		assertEquals("123", b.getId());
+	}
+
 
 }
