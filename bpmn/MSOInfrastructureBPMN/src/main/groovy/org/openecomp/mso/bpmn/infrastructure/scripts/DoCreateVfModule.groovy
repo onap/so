@@ -18,7 +18,9 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.mso.bpmn.infrastructure.scripts;
+package org.openecomp.mso.bpmn.infrastructure.scripts
+
+import org.openecomp.mso.bpmn.core.domain.CloudFlavor
 
 import java.util.Map
 import java.util.Currency.CurrencyNameGetter
@@ -174,6 +176,12 @@ public class DoCreateVfModule extends VfModuleBase {
 				execution.setVariable("DCVFM_serviceInstanceId", serviceInstanceId)
 				rollbackData.put("VFMODULE", "serviceInstanceId", serviceInstanceId)
 				logDebug("serviceInstanceId: " + serviceInstanceId, isDebugLogEnabled)
+				//flavorList
+				ArrayList<CloudFlavor> flavorList = execution.getVariable(cloudSiteId + "_flavorList")
+				if (flavorList != null) {
+					execution.setVariable("DCVFM_flavorList", flavorList)
+					logDebug("flavorList is: " + flavorList, isDebugLogEnabled)
+				}
 				//source - HARDCODED
 				def source = "VID"
 				execution.setVariable("DCVFM_source", source)
@@ -927,6 +935,8 @@ public class DoCreateVfModule extends VfModuleBase {
 		def serviceId = execution.getVariable("DCVFM_serviceId")
 		//serviceInstanceId
 		def serviceInstanceId = execution.getVariable("DCVFM_serviceInstanceId")
+		//flavorList
+		ArrayList<CloudFlavor> flavorList = execution.getVariable("DCVFM_flavorList")
 		//backoutOnFailure
 		def backoutOnFailure = execution.getVariable("DCVFM_backoutOnFailure")
 		//volumeGroupId
@@ -962,6 +972,10 @@ public class DoCreateVfModule extends VfModuleBase {
 		}
 
 		Map<String, String> vnfParamsMap = execution.getVariable("DCVFM_vnfParamsMap")
+		// Add flavorLabel List to vnfParamsMap
+		flavorList.each { cloudFlavor ->
+			vnfParamsMap.put("label_" + cloudFlavor.getFlavorLabel(), cloudFlavor.getFlavor())
+		}
 		String vfModuleParams = ""
 		//Get SDNC Response Data for VF Module Topology
 		String vfModuleSdncGetResponse = execution.getVariable('DCVFM_getSDNCAdapterResponse')

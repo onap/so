@@ -311,7 +311,7 @@ class OofUtils {
             sb.append(",\n" +
                     "  \"existingCandidates\": [\n")
             def existingCandidateJson = ""
-            existingCandidates.each {
+            existingCandidates.each { existingCandidate ->
                 type = existingCandidate.get('identifierType')
                 if (type == 'vimId') {
                     def cloudOwner = existingCandidate.get('cloudOwner')
@@ -342,7 +342,7 @@ class OofUtils {
             sb.append(",\n" +
                     "  \"excludedCandidates\": [\n")
             def excludedCandidateJson = ""
-            excludedCandidates.each {
+            excludedCandidates.each { excludedCandidate ->
                 type = excludedCandidate.get('identifierType')
                 if (type == 'vimId') {
                     def cloudOwner = excludedCandidate.get('cloudOwner')
@@ -373,7 +373,7 @@ class OofUtils {
             sb.append(",\n" +
                     "  \"requiredCandidates\": [\n")
             def requiredCandidatesJson = ""
-            requiredCandidates.each {
+            requiredCandidates.each { requiredCandidate ->
                 type = requiredCandidate.get('identifierType')
                 if (type == 'vimId') {
                     def cloudOwner = requiredCandidate.get('cloudOwner')
