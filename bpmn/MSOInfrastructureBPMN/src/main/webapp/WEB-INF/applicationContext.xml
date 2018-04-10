@@ -14,6 +14,11 @@
     <property name="aaiConnection" ref="aaiConnection"/>
   </bean>
 
+  <bean id="informDmaapClient" class="org.openecomp.mso.bpmn.infrastructure.pnf.delegate.InformDmaapClient">
+    <!--TODO: uncommend line below after DmaapClient is pushed to master-->
+    <!--<property name="dmaapClient" ref="dmaapClient"/>-->
+  </bean>
+
   <bean id="pnfEventReadyConsumer" class="org.openecomp.mso.bpmn.infrastructure.pnf.dmaap.PnfEventReadyConsumer">
     <property name="dmaapHost" value="${dmaapHost}" />
     <property name="dmaapPort" value="${dmaapPort}"/>
