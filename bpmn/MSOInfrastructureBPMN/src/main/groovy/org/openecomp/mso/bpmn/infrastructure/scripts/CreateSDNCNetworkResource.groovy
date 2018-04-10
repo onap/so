@@ -65,7 +65,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
             String requestAction = execution.getVariable("requestAction")
             utils.log("INFO","The requestAction is: " + requestAction,  isDebugEnabled)
             String recipeParamsFromRequest = execution.getVariable("recipeParams")
-            utils.log("INFO","The recipeParams is: " + recipeParams,  isDebugEnabled)
+            utils.log("INFO","The recipeParams is: " + recipeParamsFromRequest,  isDebugEnabled)
             String resourceInput = execution.getVariable("requestInput")
             utils.log("INFO","The resourceInput is: " + resourceInput,  isDebugEnabled)
             //Get ResourceInput Object
