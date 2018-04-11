@@ -201,10 +201,10 @@ public class DoCreateResources extends AbstractServiceTaskProcessor
 		 ResourceInput resourceInput = execution.getVariable("resourceInput")
 		 String requestAction = resourceInput.getOperationType()
 		 JSONObject resourceRecipe = cutils.getResourceRecipe(execution, resourceInput.getResourceModelInfo().getModelUuid(), requestAction)
-		 String recipeUri = resourceRecipe.getString("orchestrationUri")
+         String recipeURL = BPMNProperties.getProperty("bpelURL", "http://mso:8080") + resourceRecipe.getString("orchestrationUri")
 		 int recipeTimeOut = resourceRecipe.getInt("recipeTimeout")
 		 String recipeParamXsd = resourceRecipe.get("paramXSD")
-		 HttpResponse resp = BpmnRestClient.post(recipeUri, requestId, recipeTimeOut, requestAction, serviceInstanceId, serviceType, resourceInput.toString(), recipeParamXsd)
+		 HttpResponse resp = BpmnRestClient.post(recipeURL, requestId, recipeTimeOut, requestAction, serviceInstanceId, serviceType, resourceInput.toString(), recipeParamXsd)
          utils.log("INFO", "======== end executeResourceRecipe Process ======== ", isDebugEnabled)
 	 }
     
