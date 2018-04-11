@@ -25,7 +25,11 @@ public class VduStatus {
 	private VduStateType state;	
 	private String errorMessage;
 	private PluginAction lastAction;	
-	
+
+	public VduStatus(){}
+	public VduStatus( VduStateType state) {
+		this.state = state;
+	}
 	public VduStateType getState() {
 		return state;
 	}
