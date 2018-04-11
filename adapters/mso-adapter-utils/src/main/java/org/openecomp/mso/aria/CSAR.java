@@ -15,7 +15,7 @@
  * the License.
  * ============LICENSE_END====================================================
 */
-package org.openecomp.mso.adapters.vnf;
+package org.openecomp.mso.aria;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -25,10 +25,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Map;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import org.openecomp.mso.vdu.utils.VduBlueprint;
+import org.openecomp.mso.adapters.vdu.VduModelInfo;
+import org.openecomp.mso.adapters.vdu.VduArtifact;
+import org.openecomp.mso.adapters.vdu.VduArtifact.ArtifactType;
 
 import com.google.common.io.Files;
 
@@ -41,12 +44,10 @@ import com.google.common.io.Files;
  */
 public class CSAR {
 	private static final String MANIFEST_FILENAME = "MANIFEST.MF";
+	private VduModelInfo vduModel;
 
-	private VduBlueprint blueprint;
-
-
-	public CSAR(VduBlueprint blueprint) {
-		this.blueprint = blueprint;
+	public CSAR(VduModelInfo model){
+	   this.vduModel = model;
 	}
 
 	/**
@@ -67,37 +68,39 @@ public class CSAR {
 		}
 
 		/**
+		 * Organize model info for consumption
+		 */
+		VduArtifact mainTemplate = null;
+		List<VduArtifact> extraFiles = null;
+		for(VduArtifact artifact: vduModel.getArtifacts()){
+				  if( artifact.getType() == ArtifactType.MAIN_TEMPLATE ){
+					 mainTemplate = artifact;
+				  }
+				  else{
+				    extraFiles.add(artifact);
+				  }
+		}	  
+
+		/**
 		 * Write template files
 		 */
 		OutputStream ofs = null;
 		try {
-			ofs = new FileOutputStream(new File(dir, blueprint.getMainTemplateName()));
-			ofs.write(blueprint.getTemplateFiles().get(blueprint.getMainTemplateName()));
+			ofs = new FileOutputStream(new File(dir, mainTemplate.getName()));
+			ofs.write(mainTemplate.getContent());
 			ofs.close();
 
 			/**
 			 * Write other files
 			 */
-			if (blueprint.getTemplateFiles() != null) {
-				for (Map.Entry<String, byte[]> entry : blueprint.getTemplateFiles().entrySet()) {
-					if (!entry.getKey().equals(blueprint.getMainTemplateName())) {
-						ofs = new FileOutputStream(new File(dir, entry.getKey()));
-						ofs.write(entry.getValue());
-						ofs.close();
-					}
-				}
-			}
-
-			/**
-			 * Write attached files
-			 */
-			if (blueprint.getAttachedFiles() != null) {
-				for (Map.Entry<String, byte[]> entry : blueprint.getAttachedFiles().entrySet()) {
-					ofs = new FileOutputStream(new File(dir, entry.getKey()));
-					ofs.write(entry.getValue());
+			if (extraFiles != null) {
+				for (VduArtifact artifact: extraFiles){
+					ofs = new FileOutputStream(new File(dir, artifact.getName()));
+					ofs.write(artifact.getContent());
 					ofs.close();
 				}
 			}
+
 
 			/**
 			 * Create manifest
@@ -106,7 +109,7 @@ public class CSAR {
 			mfstream.println("TOSCA-Meta-File-Version: 1.0");
 			mfstream.println("CSAR-Version: 1.1");
 			mfstream.println("Created-by: ONAP");
-			mfstream.println("Entry-Definitions: " + blueprint.getMainTemplateName());
+			mfstream.println("Entry-Definitions: " + mainTemplate.getName());
 			mfstream.close();
 
 			/**
