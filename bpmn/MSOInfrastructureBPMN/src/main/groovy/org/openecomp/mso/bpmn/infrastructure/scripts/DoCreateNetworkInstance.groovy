@@ -264,7 +264,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			} catch (IOException ex) {
 				String exceptionMessage = "Exception Encountered in DoCreateNetworkInstance, PreProcessRequest() - "
 				String dataErrorMessage = exceptionMessage + " Unable to encode PO/SDNC user/password string - " + ex.getMessage()
-				utils.log("DEBUG", dataErrorMessage, , isDebugEnabled)
+				utils.log("DEBUG", dataErrorMessage, isDebugEnabled)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
 			}
 
