@@ -56,4 +56,10 @@
   <bean id="createAaiEntryWithPnfIdDelegate" class="org.openecomp.mso.bpmn.infrastructure.pnf.delegate.CreateAaiEntryWithPnfIdDelegate">
     <property name="aaiConnection" ref="aaiConnection"/>
   </bean>
+
+  <bean id="informDmaapClient" class="org.openecomp.mso.bpmn.infrastructure.pnf.delegate.InformDmaapClient">
+    <property name="dmaapClient" ref="dmaapClient"/>
+  </bean>
+
+  <bean id="dmaapClient" class="org.openecomp.mso.bpmn.infrastructure.pnf.delegate.DmaapClientTestImpl"/>
 </beans>
