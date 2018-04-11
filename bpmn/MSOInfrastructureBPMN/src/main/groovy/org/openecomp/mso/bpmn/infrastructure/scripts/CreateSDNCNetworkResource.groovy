@@ -31,6 +31,7 @@ import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.bpmn.core.json.JsonUtils
 import org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.client.builder.AbstractBuilder
 import org.openecomp.mso.rest.APIResponse
+import org.openecomp.mso.bpmn.common.scripts.SDNCAdapterUtils
 
 import java.util.UUID;
 
@@ -54,6 +55,8 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
     ExceptionUtil exceptionUtil = new ExceptionUtil()
 
     JsonUtils jsonUtil = new JsonUtils()
+
+    SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils()
     
     public void preProcessRequest(DelegateExecution execution){
         def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
