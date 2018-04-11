@@ -20,6 +20,8 @@
  
 package org.openecomp.mso.bpmn.infrastructure.scripts
 
+import org.openecomp.mso.bpmn.infrastructure.properties.BPMNProperties
+
 import java.util.ArrayList
 import java.util.Iterator
 import java.util.List
@@ -100,29 +102,25 @@ public class DoCreateResources extends AbstractServiceTaskProcessor
                
         List<Resource> addResourceList = execution.getVariable("addResourceList")        
 
-        //we use VF to define a network service
-        List<VnfResource> vnfResourceList = new ArrayList<VnfResource>()
-        //here wan is defined as a network resource
         List<NetworkResource> networkResourceList = new ArrayList<NetworkResource>()
-        //allotted resource      
-        List<AllottedResource> arResourceList = new ArrayList<AllottedResource>()
 
         //define sequenced resource list, we deploy vf first and then network and then ar 
         //this is defaule sequence
         List<Resource> sequencedResourceList = new ArrayList<Resource>()
-        for (Resource rc : addResourceList){
-        if (rc instanceof VnfResource) {
-                vnfResourceList.add(rc)
-            } else if (rc instanceof NetworkResource) {
-                networkResourceList.add(rc)
-            } else if (rc instanceof AllottedResource) {
-                arResourceList.add(rc)
+        def resourceSequence = BPMNProperties.getResourceSequenceProp()
+
+        for (resourceType in resourceSequence) {
+            for (resource in addResourceList) {
+                if (StringUtils.containsIgnoreCase(resource.getModelInfo().getModelName(), resourceType)) {
+                    sequencedResourceList.add(resource)
+
+                    if (resource instanceof NetworkResource) {
+                        networkResourceList.add(resource)
+                    }
+                }
             }
-        }        
-        sequencedResourceList.addAll(vnfResourceList)
-        sequencedResourceList.addAll(networkResourceList)
-        sequencedResourceList.addAll(arResourceList)
-        
+        }
+
         String isContainsWanResource = networkResourceList.isEmpty() ? "false" : "true"
         execution.setVariable("isContainsWanResource", isContainsWanResource)
         execution.setVariable("currentResourceIndex", 0)
