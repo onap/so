@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_a7578659",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/aria/AriaVduPlugin.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-04-11T16:14:52Z",
+      "side": 1,
+      "message": "I believe this should be package org.openecomp.mso.aria",
+      "range": {
+        "startLine": 20,
+        "startChar": 8,
+        "endLine": 20,
+        "endChar": 38
+      },
+      "revId": "ccc20956a2d179f73f6f525ea1cca07c699f7c22",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_c75c1280",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/aria/CSAR.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-04-11T16:14:52Z",
+      "side": 1,
+      "message": "I believe this should be package org.openecomp.mso.aria",
+      "range": {
+        "startLine": 18,
+        "startChar": 8,
+        "endLine": 18,
+        "endChar": 38
+      },
+      "revId": "ccc20956a2d179f73f6f525ea1cca07c699f7c22",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
