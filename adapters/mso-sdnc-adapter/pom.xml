@@ -1,30 +1,30 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.onap.so</groupId>
-		<artifactId>adapters</artifactId>
-		<version>1.2.0-SNAPSHOT</version>
-	</parent>
-	<groupId>org.onap.so.adapters</groupId>
-	<artifactId>mso-sdnc-adapter</artifactId>
-	<packaging>war</packaging>
-	<name>mso-sdnc-adapter</name>
-	<description>mso sdnc adapter</description>
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.onap.so</groupId>
+        <artifactId>adapters</artifactId>
+        <version>1.2.0-SNAPSHOT</version>
+    </parent>
+    <groupId>org.onap.so.adapters</groupId>
+    <artifactId>mso-sdnc-adapter</artifactId>
+    <packaging>war</packaging>
+    <name>mso-sdnc-adapter</name>
+    <description>mso sdnc adapter</description>
 
-	<build>
-		<finalName>${project.artifactId}-${project.version}</finalName>
-		<plugins>
+    <build>
+        <finalName>${project.artifactId}-${project.version}</finalName>
+        <plugins>
 
-			<plugin>
-				<artifactId>maven-war-plugin</artifactId>
-				<version>2.4</version>
-				<configuration>
-					<warSourceDirectory>${basedir}/WebContent</warSourceDirectory>
-					<failOnMissingWebXml>false</failOnMissingWebXml>
-					<attachClasses>true</attachClasses>
-				</configuration>
-			</plugin>
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <warSourceDirectory>${basedir}/WebContent</warSourceDirectory>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                    <attachClasses>true</attachClasses>
+                </configuration>
+            </plugin>
 <!-- 			<plugin> -->
 <!-- 				<groupId>org.jboss.as.plugins</groupId> -->
 <!-- 				<artifactId>jboss-as-maven-plugin</artifactId> -->
@@ -63,48 +63,48 @@
 <!-- 					</execution> -->
 <!-- 				</executions> -->
 <!-- 			</plugin> -->
-		</plugins>
-	</build>
-	<dependencies>
-		<dependency>
-			<groupId>org.onap.so.adapters</groupId>
-			<artifactId>mso-adapter-utils</artifactId>
-			<version>${project.version}</version>
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>org.onap.so.adapters</groupId>
+            <artifactId>mso-adapter-utils</artifactId>
+            <version>${project.version}</version>
 
-		</dependency>
-		<dependency>
-			<groupId>javax</groupId>
-			<artifactId>javaee-web-api</artifactId>
-			<version>6.0</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.spec.javax.ejb</groupId>
-			<artifactId>jboss-ejb-api_3.2_spec</artifactId>
-			<version>1.0.0.Final</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.ejb3</groupId>
-			<artifactId>jboss-ejb3-ext-api</artifactId>
-			<version>2.2.0.Final</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.onap.so</groupId>
-			<artifactId>status-control</artifactId>
-			<version>${project.version}</version>
-		</dependency>
+        </dependency>
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-web-api</artifactId>
+            <version>6.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.spec.javax.ejb</groupId>
+            <artifactId>jboss-ejb-api_3.2_spec</artifactId>
+            <version>1.0.0.Final</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.ejb3</groupId>
+            <artifactId>jboss-ejb3-ext-api</artifactId>
+            <version>2.2.0.Final</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.onap.so</groupId>
+            <artifactId>status-control</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.onap.so.adapters</groupId>
             <artifactId>mso-adapters-rest-interface</artifactId>
             <version>${project.version}</version>
         </dependency>
-		<!-- For UriUtils which does URL encoding according to RFC 3986 Section 2 -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-web</artifactId>
-			<version>4.3.2.RELEASE</version>
-		</dependency>
-	</dependencies>
+        <!-- For UriUtils which does URL encoding according to RFC 3986 Section 2 -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>4.3.2.RELEASE</version>
+        </dependency>
+    </dependencies>
 </project>
