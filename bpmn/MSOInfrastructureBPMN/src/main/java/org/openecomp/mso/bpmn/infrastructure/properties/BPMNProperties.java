@@ -29,29 +29,28 @@ import java.util.List;
 
 public class BPMNProperties {
 
-    public static String MSO_PROP_BPMN = "MSO_PROP_BPMN";
+    public static String MSO_PROP_APIHANDLER_INFRA = "MSO_PROP_APIHANDLER_INFRA";
 
     private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
 
     public static String getProperty(String key, String defaultValue) {
         String value;
         try {
-            value =  new MsoPropertiesFactory().getMsoJavaProperties(MSO_PROP_BPMN).getProperty(key, defaultValue);
+            value =  new MsoPropertiesFactory().getMsoJavaProperties(MSO_PROP_APIHANDLER_INFRA).getProperty(key, defaultValue);
         } catch (MsoPropertiesException e) {
              msoLogger.error (MessageEnum.NO_PROPERTIES, "Unknown. Mso Properties ID not found in cache: "
-                     + MSO_PROP_BPMN, "BPMN", "", MsoLogger.ErrorCode.DataError,
+                     + MSO_PROP_APIHANDLER_INFRA, "BPMN", "", MsoLogger.ErrorCode.DataError,
                      "Exception - Mso Properties ID not found in cache", e);
             return null;
         }
-        msoLogger.debug("Config read for " + MSO_PROP_BPMN + " - key:" + key + " value:" + value);
+        msoLogger.debug("Config read for " + MSO_PROP_APIHANDLER_INFRA + " - key:" + key + " value:" + value);
         return value;
     }
 
     public static List<String> getResourceSequenceProp() {
-        String resource_sequence = getProperty("resource_sequence", null);
-        if (resource_sequence != null) {
-            String[] resourceSequence = resource_sequence.split(",");
-            return Arrays.asList(resource_sequence);
+        String resourceSequence = getProperty("mso.workflow.default.resource.sequence", null);
+        if (resourceSequence != null) {
+            return Arrays.asList(resourceSequence.split(","));
         }
         return Arrays.asList(ResourceSequence.RESOURCE_EPC,
                 ResourceSequence.RESOURCE_IMS,
