@@ -21,48 +21,154 @@
 package org.openecomp.mso.bpmn.infrastructure.pnf.dmaap;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledExecutorService;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.ProtocolVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.message.BasicHttpResponse;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringRunner.class)
-@ContextConfiguration({"classpath:springConfig_PnfEventReadyConsumer.xml"})
 public class PnfEventReadyConsumerTest {
 
-    @Autowired
-    private PnfEventReadyConsumer pnfEventReadyConsumer;
+    private static final String CORRELATION_ID = "corrTestId";
+    private static final String CORRELATION_ID_NOT_FOUND_IN_MAP = "otherCorrId";
+    private static final String JSON_EXAMPLE_WITH_CORRELATION_ID =
+            "{\"pnfRegistrationFields\":{\"correlationId\":\"%s\"}}";
+    private static final String JSON_EXAMPLE_WITH_NO_CORRELATION_ID =
+            "{\"pnfRegistrationFields\":{\"field\":\"value\"}}";
 
+    private static final String HOST = "hostTest";
+    private static final int PORT = 1234;
+    private static final String PROTOCOL = "http";
+    private static final String URI_PATH_PREFIX = "eventsForTesting";
+    private static final String EVENT_TOPIC_TEST = "eventTopicTest";
+    private static final String CONSUMER_ID = "consumerTestId";
+    private static final String CONSUMER_GROUP = "consumerGroupTest";
+
+    private PnfEventReadyConsumer testedObject;
     private HttpClient httpClientMock;
+    private Runnable threadMockToNotifyCamundaFlow;
+    private ScheduledExecutorService executorMock;
 
     @Before
     public void init() throws NoSuchFieldException, IllegalAccessException {
+        testedObject = new PnfEventReadyConsumer();
+        testedObject.setDmaapHost(HOST);
+        testedObject.setDmaapPort(PORT);
+        testedObject.setDmaapProtocol(PROTOCOL);
+        testedObject.setDmaapUriPathPrefix(URI_PATH_PREFIX);
+        testedObject.setDmaapTopicName(EVENT_TOPIC_TEST);
+        testedObject.setConsumerId(CONSUMER_ID);
+        testedObject.setConsumerGroup(CONSUMER_GROUP);
+        testedObject.setDmaapClientInitialDelayInSeconds(1);
+        testedObject.setDmaapClientDelayInSeconds(1);
+        testedObject.init();
         httpClientMock = mock(HttpClient.class);
+        threadMockToNotifyCamundaFlow = mock(Runnable.class);
+        executorMock = mock(ScheduledExecutorService.class);
         setPrivateField();
     }
 
+    /**
+     * Test run method, where the are following conditions:
+     * <p> - DmaapThreadListener is running, flag is set to true
+     * <p> - map is filled with one entry with the key that we get from response
+     * <p> run method should invoke thread from map to notify camunda process, remove element from the map (map is empty)
+     * and shutdown the executor because of empty map
+     */
     @Test
-    public void restClientInvokesWithProperURI() throws Exception {
+    public void correlationIdIsFoundInHttpResponse_notifyAboutPnfReady()
+            throws IOException {
+        when(httpClientMock.execute(any(HttpGet.class))).
+                thenReturn(createResponse(String.format(JSON_EXAMPLE_WITH_CORRELATION_ID, CORRELATION_ID)));
+        testedObject.run();
         ArgumentCaptor<HttpGet> captor1 = ArgumentCaptor.forClass(HttpGet.class);
-        pnfEventReadyConsumer.notifyWhenPnfReady("correlationId");
         verify(httpClientMock).execute(captor1.capture());
-        assertThat(captor1.getValue().getURI()).hasHost("hostTest").hasPort(1234).hasScheme("http")
-                .hasPath("/eventsForTesting/eventTopicTest/consumerGroupTest/consumerTestId");
+        assertThat(captor1.getValue().getURI()).hasHost(HOST).hasPort(PORT).hasScheme(PROTOCOL)
+                .hasPath(
+                        "/" + URI_PATH_PREFIX + "/" + EVENT_TOPIC_TEST + "/" + CONSUMER_GROUP + "/" + CONSUMER_ID + "");
+        verify(threadMockToNotifyCamundaFlow).run();
+        verify(executorMock).shutdownNow();
+    }
+
+    /**
+     * Test run method, where the are following conditions:
+     * <p> - DmaapThreadListener is running, flag is set to true
+     * <p> - map is filled with one entry with the correlationId that does not match to correlationId
+     * taken from http response. run method should not do anything with the map not run any thread to
+     * notify camunda process
+     */
+    @Test
+    public void correlationIdIsFoundInHttpResponse_NotFoundInMap()
+            throws IOException {
+        when(httpClientMock.execute(any(HttpGet.class))).
+                thenReturn(createResponse(
+                        String.format(JSON_EXAMPLE_WITH_CORRELATION_ID, CORRELATION_ID_NOT_FOUND_IN_MAP)));
+        testedObject.run();
+        verifyZeroInteractions(threadMockToNotifyCamundaFlow, executorMock);
+    }
+
+    /**
+     * Test run method, where the are following conditions:
+     * <p> - DmaapThreadListener is running, flag is set to true
+     * <p> - map is filled with one entry with the correlationId but no correlation id is taken from HttpResponse
+     * run method should not do anything with the map and not run any thread to notify camunda process
+     */
+    @Test
+    public void correlationIdIsNotFoundInHttpResponse() throws IOException {
+        when(httpClientMock.execute(any(HttpGet.class))).
+                thenReturn(createResponse(JSON_EXAMPLE_WITH_NO_CORRELATION_ID));
+        testedObject.run();
+        verifyZeroInteractions(threadMockToNotifyCamundaFlow, executorMock);
     }
 
     private void setPrivateField() throws NoSuchFieldException, IllegalAccessException {
-        Field field = pnfEventReadyConsumer.getClass().getDeclaredField("httpClient");
-        field.setAccessible(true);
-        field.set(pnfEventReadyConsumer, httpClientMock);
+        Field httpClientField = testedObject.getClass().getDeclaredField("httpClient");
+        httpClientField.setAccessible(true);
+        httpClientField.set(testedObject, httpClientMock);
+        httpClientField.setAccessible(false);
+
+        Field executorField = testedObject.getClass().getDeclaredField("executor");
+        executorField.setAccessible(true);
+        executorField.set(testedObject, executorMock);
+        executorField.setAccessible(false);
+
+        Field pnfCorrelationToThreadMapField = testedObject.getClass()
+                .getDeclaredField("pnfCorrelationIdToThreadMap");
+        pnfCorrelationToThreadMapField.setAccessible(true);
+        Map<String, Runnable> pnfCorrelationToThreadMap = new ConcurrentHashMap<>();
+        pnfCorrelationToThreadMap.put(CORRELATION_ID, threadMockToNotifyCamundaFlow);
+        pnfCorrelationToThreadMapField.set(testedObject, pnfCorrelationToThreadMap);
+
+        Field threadRunFlag = testedObject.getClass().getDeclaredField("dmaapThreadListenerIsRunning");
+        threadRunFlag.setAccessible(true);
+        threadRunFlag.set(testedObject, true);
+        threadRunFlag.setAccessible(false);
+    }
+
+    private HttpResponse createResponse(String json) throws UnsupportedEncodingException {
+        HttpEntity entity = new StringEntity(json);
+        ProtocolVersion protocolVersion = new ProtocolVersion("", 1, 1);
+        HttpResponse response = new BasicHttpResponse(protocolVersion, 1, "");
+        response.setEntity(entity);
+        response.setStatusCode(200);
+        return response;
     }
 
 }
