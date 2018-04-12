@@ -279,6 +279,16 @@ public class MsoLogger {
         logger.debug(msg, t);
     }
 
+    /**
+     * Log error message with the details of the exception that caused the error.
+     * @param msg
+     * @param throwable
+     */
+    public void error(String msg, Throwable throwable) {
+        prepareMsg(ERROR_LEVEL);
+        logger.error(msg, throwable);
+    }
+
     // Info methods
     /**
      * Record the Info event
