@@ -38,7 +38,7 @@
   </context-param>
   <context-param>
     <param-name>mso.configuration</param-name>
-    <param-value>MSO_PROP_TOPOLOGY=topology.properties</param-value>
+    <param-value>MSO_PROP_TOPOLOGY=topology.properties,MSO_PROP_APIHANDLER_INFRA=mso.apihandler-infra.properties</param-value>
   </context-param>
   <context-param>
     <param-name>log.configuration</param-name>
@@ -47,10 +47,6 @@
   <context-param>
     <param-name>resteasy.resources</param-name>
     <param-value>org.openecomp.mso.logger.MsoLoggingServlet,org.openecomp.mso.bpmn.core.HealthCheckHandler</param-value>
-  </context-param>
-  <context-param>
-    <param-name>mso.configuration</param-name>
-    <param-value>MSO_PROP_APIHANDLER_INFRA=mso.apihandler-infra.properties</param-value>
   </context-param>
   <listener>
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
