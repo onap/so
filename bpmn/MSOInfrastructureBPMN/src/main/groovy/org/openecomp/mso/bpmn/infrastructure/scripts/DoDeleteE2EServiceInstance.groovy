@@ -187,6 +187,11 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
                 }
                 else
                 {
+                    InputSource source = new InputSource(new StringReader(siData));
+                    DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+                    DocumentBuilder docBuilder = docFactory.newDocumentBuilder()
+                    Document serviceXml = docBuilder.parse(source)
+                    serviceXml.getDocumentElement().normalize()
                     // get model invariant id
                     // Get Template uuid and version
                     if (utils.nodeExists(siData, "model-invariant-id") && utils.nodeExists(siData, "model-version-id") ) {
@@ -203,13 +208,8 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
                     //Confirm there are no related service instances (vnf/network or volume)
                     if (utils.nodeExists(siData, "relationship-list")) {
                         utils.log("INFO", "SI Data relationship-list exists:", isDebugEnabled)
-                        InputSource source = new InputSource(new StringReader(siData));
-                        DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-                        DocumentBuilder docBuilder = docFactory.newDocumentBuilder()
-                        Document serviceXml = docBuilder.parse(source)
-                        serviceXml.getDocumentElement().normalize()
                         //test(siData)
-                        NodeList nodeList = serviceXml.getElementsByTagName("relationship")
+                        NodeList nodeList = serviceXml.getElementsByTagName("relationship").item(0).getChildNodes()
                         JSONArray jArray = new JSONArray()
                         for (int x = 0; x < nodeList.getLength(); x++) {
                             Node node = nodeList.item(x)
@@ -225,12 +225,20 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
                                         for (int i = 0; i < dataList.getLength(); i++) {
                                             Node dNode = dataList.item(i)
                                             if(dNode.getNodeName() == "relationship-data") {
-                                                Element rDataEle = (Element)dNode
-                                                def eKey =  rDataEle.getElementsByTagName("relationship-key").item(0).getTextContent()
-                                                def eValue = rDataEle.getElementsByTagName("relationship-value").item(0).getTextContent()
-                                                if(eKey.equals("service-instance.service-instance-id")){
-                                                    jObj.put("resourceInstanceId", eValue)
+
+                                                NodeList rdNodes = dNode.getChildNodes()
+                                                for(int j = 0; j < rdNodes.getLength(); j++) {
+                                                    Node rdNode = rdNodes.item(j);
+                                                    if (rdNode instanceof Element) {
+                                                        Element rDataEle = (Element) rdNode
+                                                        def eKey = rDataEle.getElementsByTagName("relationship-key").item(0).getTextContent()
+                                                        def eValue = rDataEle.getElementsByTagName("relationship-value").item(0).getTextContent()
+                                                        if (eKey.equals("service-instance.service-instance-id")) {
+                                                            jObj.put("resourceInstanceId", eValue)
+                                                        }
+                                                    }
                                                 }
+
                                             }
                                             else if(dNode.getNodeName() == "related-to-property"){
                                                 Element rDataEle = (Element)dNode
