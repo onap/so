@@ -15,6 +15,11 @@
             "camundaAuth": "5119D1AF37F671FC01FFAD2151D93EFB2BBB503E879FD07104D024EDDF118FD1"
         },
 
+        "mso-asdc-controller-config":
+        {
+          "aaiEndpoint": "https://aai.api.simpledemo.openecomp.org:8443"
+        },
+
         "asdc-connections":
         {
             "asdc-controller1":
