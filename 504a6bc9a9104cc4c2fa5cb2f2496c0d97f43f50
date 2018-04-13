@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_a000c734",
+        "filename": "bpmn/MSOInfrastructureBPMN/src/main/groovy/org/openecomp/mso/bpmn/infrastructure/scripts/CreateSDNCNetworkResource.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2018-04-13T07:16:05Z",
+      "side": 1,
+      "message": "its always better to add the prefix to the execution variables.\nThis ideally should be added to entire flow objects in this context.",
+      "revId": "504a6bc9a9104cc4c2fa5cb2f2496c0d97f43f50",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
