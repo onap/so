@@ -157,8 +157,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
             //here convert json string to xml string
             String netowrkInputParameters = jsonUtil.json2xml(netowrkInputParametersJson)
             // 1. prepare assign topology via SDNC Adapter SUBFLOW call
-            String sndcTopologyCreateRequest = sdncAdapterUtils.sdncTopologyRequestRsrc(execution, createNetworkInput, serviceInstanceId, sdncCallback, sdnc_svcAction, sdnc_requestAction, null, null, null)
-                    String content =
+            String sndcTopologyCreateRequest =
                     """<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://org.openecomp/mso/workflow/schema/v1"
                                                               xmlns:sdncadapter="http://org.openecomp.mso/workflow/sdnc/adapter/schema/v1" 
                                                               xmlns:sdncadapterworkflow="http://org.openecomp/mso/workflow/schema/v1">
@@ -208,8 +207,8 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
             
             String sndcTopologyCreateRequesAsString = utils.formatXml(sndcTopologyCreateRequest)
             utils.logAudit(sndcTopologyCreateRequesAsString)
-            execution.setVariable(Prefix + "createSDNCRequest", sndcTopologyCreateRequesAsString)
-            utils.log("DEBUG", Prefix + "createSDNCRequest - " + "\n" +  sndcTopologyCreateRequesAsString, isDebugEnabled)
+            execution.setVariable("sdncAdapterWorkflowRequest", sndcTopologyCreateRequesAsString)
+            utils.log("DEBUG","sdncAdapterWorkflowRequest - " + "\n" +  sndcTopologyCreateRequesAsString, isDebugEnabled)
 
         } catch (Exception ex) {
             String exceptionMessage = " Bpmn error encountered in CreateSDNCCNetworkResource flow. prepareSDNCRequest() - " + ex.getMessage()
