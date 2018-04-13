@@ -81,36 +81,23 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 				msg = "Input serviceInstanceId' is null"
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
-		
-			//String xmlRequestDetails = vidUtils.getJsonRequestDetailstoXml(siRequest)
-			//execution.setVariable("requestDetails", xmlRequestDetails)
-			
-			//modelInfo
-			String serviceModelInfo = jsonUtil.getJsonValue(siRequest, "requestDetails.modelInfo")
-			if (isBlank(serviceModelInfo)) {
-				msg = "Input serviceModelInfo is null"
-				utils.log("DEBUG", msg, isDebugEnabled)
-			} else
-			{
-				execution.setVariable("serviceModelInfo", serviceModelInfo)
-				//utils.log("DEBUG", "modelInfo" + serviceModelInfo,  isDebugEnabled)
-			}
+
 			
 			//requestInfo
-			String productFamilyId = jsonUtil.getJsonValue(siRequest, "requestDetails.requestInfo.productFamilyId")
-			if (isBlank(productFamilyId))
-			{
-				msg = "Input productFamilyId is null"
-				utils.log("INFO", msg, isDebugEnabled)
-				//exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-			} else {
-				execution.setVariable("productFamilyId", productFamilyId)
-			}
-			String source = jsonUtil.getJsonValue(siRequest, "requestDetails.requestInfo.source")
+//			String productFamilyId = jsonUtil.getJsonValue(siRequest, "requestDetails.requestInfo.productFamilyId")
+//			if (isBlank(productFamilyId))
+//			{
+//				msg = "Input productFamilyId is null"
+//				utils.log("INFO", msg, isDebugEnabled)
+//				//exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+//			} else {
+//				execution.setVariable("productFamilyId", productFamilyId)
+//			}
+			String source = jsonUtil.getJsonValue(siRequest, "source")
 			execution.setVariable("source", source)
 			
 			//subscriberInfo
-			String globalSubscriberId = jsonUtil.getJsonValue(siRequest, "requestDetails.subscriberInfo.globalSubscriberId")
+			String globalSubscriberId = jsonUtil.getJsonValue(siRequest, "globalSubscriberId")
 			if (isBlank(globalSubscriberId)) {
 				msg = "Input globalSubscriberId' is null"
 				utils.log("INFO", msg, isDebugEnabled)
@@ -119,7 +106,7 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			}
 			
 			//requestParameters
-			String subscriptionServiceType = jsonUtil.getJsonValue(siRequest, "requestDetails.requestParameters.subscriptionServiceType")
+			String subscriptionServiceType = jsonUtil.getJsonValue(siRequest, "serviceType")
 			if (isBlank(subscriptionServiceType)) {
 				msg = "Input subscriptionServiceType is null"
 				utils.log("DEBUG", msg, isDebugEnabled)
@@ -127,29 +114,8 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			} else {
 				execution.setVariable("subscriptionServiceType", subscriptionServiceType)
 			}
-			
-			/*
-			 * Extracting User Parameters from incoming Request and converting into a Map
-			 */
-			def jsonSlurper = new JsonSlurper()
-			def jsonOutput = new JsonOutput()
 
-			Map reqMap = jsonSlurper.parseText(siRequest)
-
-			//InputParams
-			def userParams = reqMap.requestDetails?.requestParameters?.userParams
-
-			Map<String, String> inputMap = [:]
-			if (userParams) {
-				userParams.each {
-					userParam -> inputMap.put(userParam.name, userParam.value.toString())
-				}
-			}
-			execution.setVariable("operationType", "DELETE") 
-			
-			utils.log("DEBUG", "User Input Parameters map: " + userParams.toString(), isDebugEnabled)
-			execution.setVariable("serviceInputParams", inputMap)
-
+			execution.setVariable("operationType", "DELETE")
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception ex){
