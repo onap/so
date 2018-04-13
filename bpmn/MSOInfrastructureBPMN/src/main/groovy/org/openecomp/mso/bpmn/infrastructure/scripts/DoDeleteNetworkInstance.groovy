@@ -211,7 +211,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 	
 			} catch (IOException ex) {
 				String dataErrorMessage = " Unable to encode PO/SDNC user/password string - " + ex.getMessage()
-				utils.log("DEBUG", dataErrorMessage, , isDebugEnabled)
+				utils.log("DEBUG", dataErrorMessage, isDebugEnabled)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
 			}
 
