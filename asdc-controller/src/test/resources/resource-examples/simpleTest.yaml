@@ -20,7 +20,7 @@ parameters:
     default: testCorDirectNet
   ip_port_snmp_manager:
     type: string
-    default: 162
+    default: 16222
     description: SNMP manager IP port
 
 
