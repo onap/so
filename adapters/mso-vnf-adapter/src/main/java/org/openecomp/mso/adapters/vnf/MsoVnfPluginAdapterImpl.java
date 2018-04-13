@@ -62,6 +62,7 @@ import org.openecomp.mso.cloud.CloudConfig;
 import org.openecomp.mso.cloud.CloudConfigFactory;
 import org.openecomp.mso.cloud.CloudSite;
 import org.openecomp.mso.cloudify.utils.MsoCloudifyUtils;
+import org.openecomp.mso.aria.AriaVduPlugin;
 import org.openecomp.mso.db.catalog.CatalogDatabase;
 import org.openecomp.mso.db.catalog.beans.HeatEnvironment;
 import org.openecomp.mso.db.catalog.beans.HeatTemplate;
@@ -95,6 +96,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 	protected MsoHeatUtils heatUtils;
 	protected VfModuleCustomizationToVduMapper vduMapper;
 	protected MsoCloudifyUtils cloudifyUtils;
+	protected AriaVduPlugin ariaVduPlugin;
 	
 	MsoPropertiesFactory msoPropertiesFactory=new MsoPropertiesFactory();
 
@@ -131,6 +133,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
     	heatUtils = new MsoHeatUtils(MSO_PROP_VNF_ADAPTER, msoPropertiesFactory, cloudConfigFactory);
     	vduMapper = new VfModuleCustomizationToVduMapper();
     	cloudifyUtils = new MsoCloudifyUtils (MSO_PROP_VNF_ADAPTER, msoPropertiesFactory,cloudConfigFactory);
+	ariaVduPlugin = new AriaVduPlugin("localhost", 5000);
     }
 
     /**
@@ -1227,6 +1230,9 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
     		if (orchestrator.equalsIgnoreCase("CLOUDIFY")) {
     			return cloudifyUtils;   			
     		}
+		else if (orchestrator.equalsIgnoreCase("ARIA")) {
+			return ariaVduPlugin;
+                }
     		else if (orchestrator.equalsIgnoreCase("HEAT")) {
     			return heatUtils;
     		}
