@@ -337,12 +337,13 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
 
         try {
             utils.log("DEBUG", " ***** Inside prepareDecomposeService of create generic e2e service ***** ", isDebugEnabled)
-            String modelInvariantUuid = execution.getVariable("model-invariant-id")
+            String modelInvariantUuid = execution.getVariable("model-invariant-id-original")
+            String modelVersionId = execution.getVariable("model-version-id-original")
             //here modelVersion is not set, we use modelUuid to decompose the service.
             String serviceModelInfo = """{
             "modelInvariantUuid":"${modelInvariantUuid}",
-            "modelUuid":"${modelUuid}",
-            "modelVersion":""
+            "modelUuid":"",
+            "modelVersion":"${modelVersionId}"
              }"""
             execution.setVariable("serviceModelInfo", serviceModelInfo)
 
