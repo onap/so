@@ -65,7 +65,6 @@ ex.processJavaException(execution)]]></bpmn:script>
     <bpmn:sequenceFlow id="SequenceFlow_11e6bfy" sourceRef="ScriptTask_06phzgv" targetRef="CallActivity_076pc2z" />
     <bpmn:sequenceFlow id="SequenceFlow_0e7inkl" sourceRef="ScriptTask_01erufg" targetRef="EndEvent_1uqzt26" />
     <bpmn:sequenceFlow id="SequenceFlow_0g6bxqw" sourceRef="CallActivity_06izbke" targetRef="ScriptTask_01erufg" />
-    <bpmn:sequenceFlow id="SequenceFlow_0vi0sv6" sourceRef="ScriptTask_1rtnsh8" targetRef="StartEvent_1qh5a34" />
     <bpmn:scriptTask id="ScriptTask_146jt8v" name="Prepare Resource Oper Status" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_1961633</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1ym9otf</bpmn:outgoing>
@@ -113,11 +112,6 @@ ddsi.preInitResourcesOperStatus(execution)]]></bpmn:script>
     </bpmn:callActivity>
     <bpmn:sequenceFlow id="SequenceFlow_188ejvu" sourceRef="CallActivity_076pc2z" targetRef="ScriptTask_1rtnsh8" />
     <bpmn:sequenceFlow id="SequenceFlow_1j08ko3" sourceRef="ServiceTask_00tg69u" targetRef="Task_1f5dlsv" />
-    <bpmn:intermediateCatchEvent id="StartEvent_1irom2x" name="Decompose Service">
-      <bpmn:outgoing>SequenceFlow_1q2mqnm</bpmn:outgoing>
-      <bpmn:linkEventDefinition name="DecomposeService" />
-    </bpmn:intermediateCatchEvent>
-    <bpmn:sequenceFlow id="SequenceFlow_1q2mqnm" sourceRef="StartEvent_1irom2x" targetRef="Task_1ldvug1" />
     <bpmn:sequenceFlow id="SequenceFlow_0fo5vw5" sourceRef="Task_1ldvug1" targetRef="Task_0mhdfuu" />
     <bpmn:sequenceFlow id="SequenceFlow_0orw2f8" sourceRef="Task_0mhdfuu" targetRef="Task_1yx1n05" />
     <bpmn:sequenceFlow id="SequenceFlow_0ha8ix9" sourceRef="Task_1yx1n05" targetRef="IntermediateThrowEvent_0ve5ukt" />
@@ -129,12 +123,8 @@ ddsi.preInitResourcesOperStatus(execution)]]></bpmn:script>
       <bpmn:outgoing>SequenceFlow_1961633</bpmn:outgoing>
       <bpmn:linkEventDefinition name="StartDeleteResource" />
     </bpmn:intermediateCatchEvent>
-    <bpmn:intermediateThrowEvent id="StartEvent_1qh5a34" name="Go to Decompse Service">
-      <bpmn:incoming>SequenceFlow_0vi0sv6</bpmn:incoming>
-      <bpmn:linkEventDefinition name="DecomposeService" />
-    </bpmn:intermediateThrowEvent>
     <bpmn:sequenceFlow id="SequenceFlow_1961633" sourceRef="StartEvent_09zdoq6" targetRef="ScriptTask_146jt8v" />
-    <bpmn:scriptTask id="Task_1ldvug1" name="Prepare Decompose Service">
+    <bpmn:scriptTask id="Task_1ldvug1" name="Prepare Decompose Service" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_1q2mqnm</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0fo5vw5</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
@@ -157,6 +147,16 @@ dcsi.postDecomposeService(execution)]]></bpmn:script>
       <bpmn:outgoing>SequenceFlow_1cevtpy</bpmn:outgoing>
     </bpmn:callActivity>
     <bpmn:sequenceFlow id="SequenceFlow_1cevtpy" sourceRef="Task_1f5dlsv" targetRef="CallActivity_06izbke" />
+    <bpmn:intermediateCatchEvent id="StartEvent_1irom2x" name="Decompose Service">
+      <bpmn:outgoing>SequenceFlow_1q2mqnm</bpmn:outgoing>
+      <bpmn:linkEventDefinition name="DecomposeService" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1q2mqnm" sourceRef="StartEvent_1irom2x" targetRef="Task_1ldvug1" />
+    <bpmn:intermediateThrowEvent id="StartEvent_1qh5a34" name="Go to Decompse Service">
+      <bpmn:incoming>SequenceFlow_0vi0sv6</bpmn:incoming>
+      <bpmn:linkEventDefinition name="DecomposeService" />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0vi0sv6" sourceRef="ScriptTask_1rtnsh8" targetRef="StartEvent_1qh5a34" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DoDeleteE2EServiceInstance">
@@ -221,15 +221,6 @@ dcsi.postDecomposeService(execution)]]></bpmn:script>
           <dc:Bounds x="377" y="478" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0vi0sv6_di" bpmnElement="SequenceFlow_0vi0sv6">
-        <di:waypoint xsi:type="dc:Point" x="-9" y="-33" />
-        <di:waypoint xsi:type="dc:Point" x="14" y="-33" />
-        <di:waypoint xsi:type="dc:Point" x="14" y="-33" />
-        <di:waypoint xsi:type="dc:Point" x="71" y="-33" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="-16" y="-39" width="90" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="StartEvent_0sf5lpt_di" bpmnElement="StartEvent_0sf5lpt">
         <dc:Bounds x="-98" y="739" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -291,19 +282,6 @@ dcsi.postDecomposeService(execution)]]></bpmn:script>
           <dc:Bounds x="-110" y="469" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="IntermediateCatchEvent_0s6bb2d_di" bpmnElement="StartEvent_1irom2x">
-        <dc:Bounds x="-537" y="180" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="-550" y="220" width="61" height="24" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_1q2mqnm_di" bpmnElement="SequenceFlow_1q2mqnm">
-        <di:waypoint xsi:type="dc:Point" x="-501" y="198" />
-        <di:waypoint xsi:type="dc:Point" x="-378" y="198" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="-484" y="177" width="90" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0fo5vw5_di" bpmnElement="SequenceFlow_0fo5vw5">
         <di:waypoint xsi:type="dc:Point" x="-278" y="198" />
         <di:waypoint xsi:type="dc:Point" x="-254" y="198" />
@@ -343,12 +321,6 @@ dcsi.postDecomposeService(execution)]]></bpmn:script>
           <dc:Bounds x="-549" y="512" width="60" height="24" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="IntermediateThrowEvent_1j1awcj_di" bpmnElement="StartEvent_1qh5a34">
-        <dc:Bounds x="71" y="-51" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="46" y="-11" width="85" height="24" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1961633_di" bpmnElement="SequenceFlow_1961633">
         <di:waypoint xsi:type="dc:Point" x="-501" y="490" />
         <di:waypoint xsi:type="dc:Point" x="-422" y="490" />
@@ -373,6 +345,34 @@ dcsi.postDecomposeService(execution)]]></bpmn:script>
         <di:waypoint xsi:type="dc:Point" x="259" y="490" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="134" y="469" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_0s6bb2d_di" bpmnElement="StartEvent_1irom2x">
+        <dc:Bounds x="-537" y="180" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-550" y="220" width="61" height="24" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1q2mqnm_di" bpmnElement="SequenceFlow_1q2mqnm">
+        <di:waypoint xsi:type="dc:Point" x="-501" y="198" />
+        <di:waypoint xsi:type="dc:Point" x="-378" y="198" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-484" y="177" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateThrowEvent_1j1awcj_di" bpmnElement="StartEvent_1qh5a34">
+        <dc:Bounds x="71" y="-51" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="46" y="-11" width="85" height="24" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0vi0sv6_di" bpmnElement="SequenceFlow_0vi0sv6">
+        <di:waypoint xsi:type="dc:Point" x="-9" y="-33" />
+        <di:waypoint xsi:type="dc:Point" x="14" y="-33" />
+        <di:waypoint xsi:type="dc:Point" x="14" y="-33" />
+        <di:waypoint xsi:type="dc:Point" x="71" y="-33" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-16" y="-39" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
