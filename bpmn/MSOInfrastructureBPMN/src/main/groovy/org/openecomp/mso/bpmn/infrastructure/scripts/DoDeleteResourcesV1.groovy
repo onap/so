@@ -41,6 +41,23 @@ import org.openecomp.mso.bpmn.infrastructure.properties.BPMNProperties
 import static org.apache.commons.lang3.StringUtils.isBlank
 import static org.apache.commons.lang3.StringUtils.isBlank
 
+
+/**
+ * input for script :
+ * msoRequestId
+ * isDebugLogEnabled
+ * globalSubscriberId
+ * serviceType
+ * serviceInstanceId
+ * URN_mso_workflow_sdncadapter_callback
+ * serviceInputParams
+ * deleteResourceList
+ * resourceInstanceIDs
+ *
+ * output from script:
+ *
+ */
+
 public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
 
     String Prefix="DDR_"
@@ -132,7 +149,7 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
         List<String> resourceSequence = new  ArrayList<String>()
 
         // get delete resource list and order list
-        List<Resource> delResourceList = execution.getVariable("delResourceList")
+        List<Resource> delResourceList = execution.getVariable("deleteResourceList")
         // existing resource list
         List<ServiceInstance> existResourceList = execution.getVariable("realNSRessources")
 
