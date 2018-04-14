@@ -132,17 +132,39 @@ def dcsi= new DoDeleteE2EServiceInstance()
 dcsi.prepareDecomposeService(execution)]]></bpmn:script>
     </bpmn:scriptTask>
     <bpmn:callActivity id="Task_0mhdfuu" name="Call Decompose Service" calledElement="DecomposeService">
+      <bpmn:extensionElements>
+        <camunda:in source="msoRequestId" target="msoRequestId" />
+        <camunda:in source="isDebugLogEnabled" target="isDebugLogEnabled" />
+        <camunda:in source="serviceInstanceId" target="serviceInstanceId" />
+        <camunda:in source="serviceModelInfo" target="serviceModelInfo" />
+        <camunda:in source="requestParameters" target="requestParameters" />
+        <camunda:out source="rollbackData" target="rollbackData" />
+        <camunda:out source="rolledBack" target="rolledBack" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+        <camunda:out source="serviceDecomposition" target="serviceDecomposition" />
+      </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_0fo5vw5</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0orw2f8</bpmn:outgoing>
     </bpmn:callActivity>
-    <bpmn:scriptTask id="Task_1yx1n05" name="Post Decompose Service">
+    <bpmn:scriptTask id="Task_1yx1n05" name="Post Decompose Service" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_0orw2f8</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0ha8ix9</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
 def dcsi= new DoDeleteE2EServiceInstance()
 dcsi.postDecomposeService(execution)]]></bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:callActivity id="Task_1f5dlsv" name="Delete Resources" calledElement="DoDeleteResource" camunda:calledElementTenantId="DoDeleteResources">
+    <bpmn:callActivity id="Task_1f5dlsv" name="Delete Resources" calledElement="DoDeleteResourceV1">
+      <bpmn:extensionElements>
+        <camunda:in source="msoRequestId" target="msoRequestId" />
+        <camunda:in source="isDebugLogEnabled" target="isDebugLogEnabled" />
+        <camunda:in source="globalSubscriberId" target="globalSubscriberId" />
+        <camunda:in source="serviceType" target="serviceType" />
+        <camunda:in source="serviceInstanceId" target="serviceInstanceId" />
+        <camunda:in source="URN_mso_workflow_sdncadapter_callback" target="URN_mso_workflow_sdncadapter_callback" />
+        <camunda:in source="serviceInputParams" target="serviceInputParams" />
+        <camunda:in source="deleteResourceList" target="deleteResourceList" />
+        <camunda:in source="resourceInstanceIDs" target="resourceInstanceIDs" />
+      </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1j08ko3</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1cevtpy</bpmn:outgoing>
     </bpmn:callActivity>
