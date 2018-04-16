@@ -19,14 +19,17 @@
     <!--<property name="dmaapClient" ref="dmaapClient"/>-->
   </bean>
 
-  <bean id="pnfEventReadyConsumer" class="org.openecomp.mso.bpmn.infrastructure.pnf.dmaap.PnfEventReadyConsumer">
-    <property name="dmaapHost" value="${dmaapHost}" />
-    <property name="dmaapPort" value="${dmaapPort}"/>
-    <property name="dmaapProtocol" value="${dmaapProtocol}"/>
-    <property name="dmaapUriPathPrefix" value="${dmaapUriPathPrefix}"/>
+  <bean id="pnfEventReadyConsumer" class="org.openecomp.mso.bpmn.infrastructure.pnf.dmaap.PnfEventReadyConsumer"
+    init-method="init">
+    <property name="dmaapHost" value="${host}"/>
+    <property name="dmaapPort" value="${port}"/>
+    <property name="dmaapProtocol" value="${protocol}"/>
+    <property name="dmaapUriPathPrefix" value="${uriPathPrefix}"/>
     <property name="dmaapTopicName" value="${eventReadyTopicName}"/>
-    <property name= "consumerGroup" value="${consumerGroup}"/>
+    <property name="consumerGroup" value="${consumerGroup}"/>
     <property name="consumerId" value="${consumerId}"/>
+    <property name="dmaapClientInitialDelayInSeconds" value="${clientThreadInitialDelayInSeconds}"/>
+    <property name="dmaapClientDelayInSeconds" value="${clientThreadDelayInSeconds}"/>
   </bean>
 
   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
