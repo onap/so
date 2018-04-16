@@ -153,7 +153,7 @@ dcsi.prepareDecomposeService(execution)]]></bpmn:script>
 def dcsi= new DoDeleteE2EServiceInstance()
 dcsi.postDecomposeService(execution)]]></bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:callActivity id="Task_1f5dlsv" name="Delete Resources" calledElement="DoDeleteResourceV1">
+    <bpmn:callActivity id="Task_1f5dlsv" name="Delete Resources" calledElement="DoDeleteResourcesV1">
       <bpmn:extensionElements>
         <camunda:in source="msoRequestId" target="msoRequestId" />
         <camunda:in source="isDebugLogEnabled" target="isDebugLogEnabled" />
