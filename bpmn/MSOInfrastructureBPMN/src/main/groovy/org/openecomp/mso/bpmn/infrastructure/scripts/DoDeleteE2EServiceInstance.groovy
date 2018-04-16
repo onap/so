@@ -358,16 +358,18 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
     public void postDecomposeService(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 
-        utils.log("DEBUG", " ***** Inside processDecomposition() of  create generic e2e service flow ***** ", isDebugEnabled)
+        utils.log("DEBUG", " ***** Inside processDecomposition() of  delete generic e2e service flow ***** ", isDebugEnabled)
         try {
             ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
             List<Resource> deleteResourceList = serviceDecomposition.getServiceResources()
             execution.setVariable("deleteResourceList", deleteResourceList)
+            execution.setVariable("resourceInstanceIDs", execution.getVariable("serviceRelationShip"))
         } catch (Exception ex) {
             String exceptionMessage = "Bpmn error encountered in  create generic e2e service flow. processDecomposition() - " + ex.getMessage()
             utils.log("DEBUG", exceptionMessage, isDebugEnabled)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
         }
+        utils.log("DEBUG", " ***** exit processDecomposition() of  delete generic e2e service flow ***** ", isDebugEnabled)
     }
 
     public void preInitResourcesOperStatus(DelegateExecution execution){
