@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.11.3">
-  <bpmn:process id="DoDeleteResourceV1" name="DoDeleteResourceV1" isExecutable="true">
+  <bpmn:process id="DoDeleteResourcesV1" name="DoDeleteResourcesV1" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1" name="Start Resource Delete">
       <bpmn:outgoing>SequenceFlow_0stqur4</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:scriptTask id="ScriptTask_0ngvt9d" name="Prepare Delete Resource Recipe">
+    <bpmn:scriptTask id="ScriptTask_0ngvt9d" name="Prepare Delete Resource Recipe" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_1oil1t3</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_13nyd1j</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1qm7owo</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
 String resourceName = execution.getVariable("resourceType")
-def ddrs = new DoDeleteResource()
+def ddrs = new DoDeleteResourcesV1()
 ddrs.preResourceDelete(execution, resourceName )]]></bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:scriptTask id="ScriptTask_15zy0jf" name="Execute Delete Resource Recipe">
+    <bpmn:scriptTask id="ScriptTask_15zy0jf" name="Execute Delete Resource Recipe" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_1qm7owo</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1ly5jrs</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
 String resourceName = execution.getVariable("resourceType")
-def ddr = new DoDeleteResource()
+def ddr = new DoDeleteResourcesV1()
 ddr.executeResourceDelete(execution, resourceName )]]></bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="ScriptTask_1gf78zz" name="Parse Next Resource" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_1ly5jrs</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0i1gez5</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
-def ddr = new DoDeleteResource()
-ddsr.parseNextResource(execution)]]></bpmn:script>
+def ddr = new DoDeleteResourcesV1()
+ddr.parseNextResource(execution)]]></bpmn:script>
     </bpmn:scriptTask>
     <bpmn:exclusiveGateway id="ExclusiveGateway_0rtr0n7" name="Is All Resource Deleted">
       <bpmn:incoming>SequenceFlow_0i1gez5</bpmn:incoming>
@@ -97,21 +97,21 @@ ex.processJavaException(execution)]]></bpmn:script>
       <bpmn:incoming>SequenceFlow_14dezx8</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_13nyd1j</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
-def ddrs = new DoDeleteResource()
+def ddrs = new DoDeleteResourcesV1()
 ddrs.sequenceResource(execution)]]></bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_13nyd1j" sourceRef="ScriptTask_12460xo" targetRef="ScriptTask_0ngvt9d" />
     <bpmn:sequenceFlow id="SequenceFlow_14dezx8" sourceRef="Task_1ue68b0" targetRef="ScriptTask_12460xo" />
-    <bpmn:scriptTask id="Task_1ue68b0" name="Preprocess Incoming Request">
+    <bpmn:scriptTask id="Task_1ue68b0" name="Preprocess Incoming Request" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_0stqur4</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_14dezx8</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
-def ddrs = new DoDeleteResource()
+def ddrs = new DoDeleteResourcesV1()
 ddrs.preProcessRequest(execution)]]></bpmn:script>
     </bpmn:scriptTask>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DoDeleteResourceV1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DoDeleteResourcesV1">
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
         <dc:Bounds x="-70" y="255" width="36" height="36" />
         <bpmndi:BPMNLabel>
