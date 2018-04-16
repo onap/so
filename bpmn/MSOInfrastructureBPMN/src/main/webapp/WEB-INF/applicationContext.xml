@@ -15,8 +15,7 @@
   </bean>
 
   <bean id="informDmaapClient" class="org.openecomp.mso.bpmn.infrastructure.pnf.delegate.InformDmaapClient">
-    <!--TODO: uncommend line below after DmaapClient is pushed to master-->
-    <!--<property name="dmaapClient" ref="dmaapClient"/>-->
+    <property name="dmaapClient" ref="pnfEventReadyConsumer"/>
   </bean>
 
   <bean id="pnfEventReadyConsumer" class="org.openecomp.mso.bpmn.infrastructure.pnf.dmaap.PnfEventReadyConsumer"
