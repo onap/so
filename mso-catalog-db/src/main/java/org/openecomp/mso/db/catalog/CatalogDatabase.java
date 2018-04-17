@@ -94,6 +94,7 @@ public class CatalogDatabase implements Closeable {
     private static final String MODEL_VERSION_ID = "modelVersionId";
     private static final String MODEL_CUSTOMIZATION_UUID = "modelCustomizationUuid";
 	private static final String VF_MODULE_MODEL_UUID = "vfModuleModelUUId";
+	private static final String NETWORK_SERVICE = "network service";
 
     protected static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.GENERAL);
 
@@ -1202,7 +1203,7 @@ public class CatalogDatabase implements Closeable {
     /**
      * Return a Network recipe that matches a given MODEL_UUID and ACTION
      *
-     * @param modelName
+     * @param vnfModelUuid
      * @param action
      * @return NetworkRecipe object or null if none found
      */
@@ -1217,7 +1218,31 @@ public class CatalogDatabase implements Closeable {
         }
         
         VnfRecipe recipe = this.getVnfRecipeByNameVersion(vnfResource.getModelName(), vnfResource.getVersion(), action);
+
+        if (recipe == null && vnfResource.getSubCategory().equalsIgnoreCase(NETWORK_SERVICE)) {
+            recipe = getDefaultVnfRecipe(action);
+        }
         return recipe;        
+    }
+
+    private VnfRecipe getDefaultVnfRecipe(String action) {
+        long startTime = System.currentTimeMillis();
+        LOGGER.debug("Catalog database - get default VNF recipe with action: " + action);
+
+        Query query = getSession().createQuery("FROM VnfRecipe WHERE vnfType = :vnfType AND action = :action ");
+        query.setParameter(VNF_TYPE, "NS_DEFAULT");
+        query.setParameter(ACTION, action);
+
+        @SuppressWarnings("unchecked")
+        List <VnfRecipe> resultList = query.list();
+
+        if (resultList.isEmpty()) {
+            LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. VNF recipe not found", "CatalogDB", "getVnfRecipe", null);
+            return null;
+        }
+
+        LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVnfRecipe", null);
+        return resultList.get(0);
     }
 
     /**
