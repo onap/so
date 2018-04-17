@@ -70,13 +70,13 @@ public class CreateVFCNSResource extends AbstractServiceTaskProcessor {
            //deal with nsName and Description
            String resourceInput = execution.getVariable("resourceInput")
 
+           String resourceParameters = jsonUtil.getJsonValue(resourceInput, "resourceParameters")
            // get service name
            String resourceName = jsonUtil.getJsonValue(resourceInput, "resourceInstanceName")
-           String nsServiceName = resourceName.substring(resourceName.indexOf("_") + 1)
-           execution.setVariable("nsServiceName", nsServiceName)
+           execution.setVariable("nsServiceName", resourceName)
 
            String nsServiceDescription = execution.getVariable("nsServiceDescription")
-           utils.log("INFO", "nsServiceName:" + nsServiceName + " nsServiceDescription:" + nsServiceDescription, isDebugEnabled)
+           utils.log("INFO", "nsServiceName:" + resourceName + " nsServiceDescription:" + nsServiceDescription, isDebugEnabled)
            //deal with operation key
            String globalSubscriberId = jsonUtil.getJsonValue(resourceInput, "globalSubscriberId")
            utils.log("INFO", "globalSubscriberId:" + globalSubscriberId, isDebugEnabled)
@@ -90,7 +90,7 @@ public class CreateVFCNSResource extends AbstractServiceTaskProcessor {
            String operationId = execution.getVariable("requestId")
            utils.log("INFO", "serviceType:" + serviceType, isDebugEnabled)
 
-           String nodeTemplateUUID = jsonUtil.getJsonValue(resourceInput, "resourceModelInfo.modelCustomizationUuid")
+           String nodeTemplateUUID = jsonUtil.getJsonValue(resourceParameters, "requestInputs.nsd0_providing_service_uuid")
            utils.log("INFO", "nodeTemplateUUID:" + nodeTemplateUUID, isDebugEnabled)
            /*
             * segmentInformation needed as a object of segment
