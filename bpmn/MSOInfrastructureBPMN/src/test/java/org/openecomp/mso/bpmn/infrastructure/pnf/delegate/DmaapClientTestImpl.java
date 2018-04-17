@@ -20,7 +20,7 @@
 
 package org.openecomp.mso.bpmn.infrastructure.pnf.delegate;
 
-import org.openecomp.mso.bpmn.infrastructure.pnf.implementation.DmaapClient;
+import org.openecomp.mso.bpmn.infrastructure.pnf.dmaap.DmaapClient;
 
 public class DmaapClientTestImpl implements DmaapClient {
     private String correlationId;

@@ -20,6 +20,7 @@
 
 package org.openecomp.mso.bpmn.infrastructure.pnf.dmaap;
 
+import com.google.common.annotations.VisibleForTesting;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
@@ -34,11 +35,10 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
-import org.openecomp.mso.bpmn.infrastructure.pnf.implementation.DmaapClient;
 import org.openecomp.mso.jsonpath.JsonPathUtil;
 import org.openecomp.mso.logger.MsoLogger;
 
-public class PnfEventReadyConsumer implements Runnable, DmaapClient {
+public class PnfEventReadyConsumer implements DmaapClient {
 
     private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
 
@@ -54,9 +54,8 @@ public class PnfEventReadyConsumer implements Runnable, DmaapClient {
     private Map<String, Runnable> pnfCorrelationIdToThreadMap;
     private HttpGet getRequest;
     private ScheduledExecutorService executor;
-    private int dmaapClientInitialDelayInSeconds;
     private int dmaapClientDelayInSeconds;
-    private boolean dmaapThreadListenerIsRunning;
+    private volatile boolean dmaapThreadListenerIsRunning;
 
     public PnfEventReadyConsumer() {
         httpClient = HttpClientBuilder.create().build();
@@ -68,8 +67,9 @@ public class PnfEventReadyConsumer implements Runnable, DmaapClient {
         getRequest = new HttpGet(buildURI());
     }
 
-    @Override
-    public void run() {
+    //TODO: extract this logic to separate class and test it there to avoid using VisibleForTesting
+    @VisibleForTesting
+    void sendRequest() {
         try {
             HttpResponse response = httpClient.execute(getRequest);
             getCorrelationIdFromResponse(response).ifPresent(this::informAboutPnfReadyIfCorrelationIdFound);
@@ -79,21 +79,23 @@ public class PnfEventReadyConsumer implements Runnable, DmaapClient {
     }
 
     @Override
-    public void registerForUpdate(String correlationId, Runnable informConsumer) {
+    public synchronized void registerForUpdate(String correlationId, Runnable informConsumer) {
         pnfCorrelationIdToThreadMap.put(correlationId, informConsumer);
         if (!dmaapThreadListenerIsRunning) {
             startDmaapThreadListener();
         }
     }
 
-    private void startDmaapThreadListener() {
-        executor = Executors.newScheduledThreadPool(1);
-        executor.scheduleWithFixedDelay(this, dmaapClientInitialDelayInSeconds,
-                dmaapClientDelayInSeconds, TimeUnit.SECONDS);
-        dmaapThreadListenerIsRunning = true;
+    private synchronized void startDmaapThreadListener() {
+        if (!dmaapThreadListenerIsRunning) {
+            executor = Executors.newScheduledThreadPool(1);
+            executor.scheduleWithFixedDelay(this::sendRequest, 0,
+                    dmaapClientDelayInSeconds, TimeUnit.SECONDS);
+            dmaapThreadListenerIsRunning = true;
+        }
     }
 
-    private void stopDmaapThreadListener() {
+    private synchronized void stopDmaapThreadListener() {
         if (dmaapThreadListenerIsRunning) {
             executor.shutdownNow();
             dmaapThreadListenerIsRunning = false;
@@ -120,17 +122,14 @@ public class PnfEventReadyConsumer implements Runnable, DmaapClient {
     }
 
 
-    private void informAboutPnfReadyIfCorrelationIdFound(String correlationId) {
-        pnfCorrelationIdToThreadMap.keySet().stream().filter(key -> key.equals(correlationId)).findAny()
-                .ifPresent(this::informAboutPnfReady);
-    }
+    private synchronized void informAboutPnfReadyIfCorrelationIdFound(String correlationId) {
+        Runnable runnable = pnfCorrelationIdToThreadMap.remove(correlationId);
+        if (runnable != null) {
+            runnable.run();
 
-    private void informAboutPnfReady(String correlationId) {
-        pnfCorrelationIdToThreadMap.get(correlationId).run();
-        pnfCorrelationIdToThreadMap.remove(correlationId);
-
-        if (pnfCorrelationIdToThreadMap.isEmpty()) {
-            stopDmaapThreadListener();
+            if (pnfCorrelationIdToThreadMap.isEmpty()) {
+                stopDmaapThreadListener();
+            }
         }
     }
 
@@ -160,10 +159,6 @@ public class PnfEventReadyConsumer implements Runnable, DmaapClient {
 
     public void setConsumerGroup(String consumerGroup) {
         this.consumerGroup = consumerGroup;
-    }
-
-    public void setDmaapClientInitialDelayInSeconds(int dmaapClientInitialDelayInSeconds) {
-        this.dmaapClientInitialDelayInSeconds = dmaapClientInitialDelayInSeconds;
     }
 
     public void setDmaapClientDelayInSeconds(int dmaapClientDelayInSeconds) {

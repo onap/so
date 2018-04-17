@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.mso.bpmn.infrastructure.pnf.implementation;
+package org.openecomp.mso.bpmn.infrastructure.pnf.dmaap;
 
 public interface DmaapClient {
 
