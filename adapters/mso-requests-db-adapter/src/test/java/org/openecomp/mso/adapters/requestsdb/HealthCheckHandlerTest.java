@@ -20,16 +20,44 @@
 
 package org.openecomp.mso.adapters.requestsdb;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.openecomp.mso.HealthCheckUtils;
+import org.openecomp.mso.logger.MsoLogger;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
-public class HealthCheckHandlerTestException {
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
 
-    @Test(expected = NullPointerException.class)
-    public void testHealthCheckSiteNameNull() {
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(HealthCheckHandler.class)
+public class HealthCheckHandlerTest {
 
-        HealthCheckHandler hcH =  new HealthCheckHandler();
+    HealthCheckHandler hcH;
+
+    @Before
+    public void init(){
+
+        hcH = new HealthCheckHandler();
+    }
+
+    @Test
+    public void testHealthCheck() {
+
+        HealthCheckUtils test = PowerMockito.mock(HealthCheckUtils.class);
+        try {
+            PowerMockito.whenNew(HealthCheckUtils.class).withNoArguments().thenReturn(test);
+            when(test.siteStatusCheck(any(MsoLogger.class))).thenReturn(true);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         hcH.healthcheck("request");
     }
+
 }
 
 

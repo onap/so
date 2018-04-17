@@ -24,6 +24,9 @@ import org.junit.Test;
 import org.mockito.Mock;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Response;
+
+import static org.junit.Assert.assertEquals;
 
 public class SDNCNotifyResourceTest {
 
@@ -31,16 +34,18 @@ public class SDNCNotifyResourceTest {
     HttpServletRequest httpServletRequest;
 
     SDNCNotifyResource test = new SDNCNotifyResource();
-//These tests need a recheck for the class cast exception
- /*   @Test(expected = ClassFormatError.class)
-    public void testPrintMessageException() {
-        test.printMessage();
-        test.printMessageParam("msg");
+
+    @Test
+    public void testPrintMessage() {
+
+        Response response = test.printMessage();
+        assertEquals(200, response.getStatus());
+
+        response = test.printMessageParam("msg");
+        assertEquals(200, response.getStatus());
+
+        String reqXML = "<xml>test</xml>";
+        test.SDNCNotify(reqXML, httpServletRequest);
+
     }
-
-    @Test(expected = ClassFormatError.class)
-    public void testSDNCNotifyException() {
-        test.SDNCNotify("reqXML", httpServletRequest);
-
-    }*/
 }

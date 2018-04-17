@@ -20,43 +20,51 @@
 
 package org.openecomp.mso.adapters.sdnc.impl;
 
-import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.openecomp.mso.HealthCheckUtils;
+import org.openecomp.mso.logger.MsoLogger;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
+
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(SDNCAdapterRestImpl.class)
 public class SDNCAdapterRestImplTest {
 
-    SDNCAdapterRestImpl test = new SDNCAdapterRestImpl();
+    SDNCAdapterRestImpl test;
 
-   /*Need to revist this .. commenting for now to proceed
-   @Test(expected = ClassFormatError.class)
-    public void testMSORequestException() {
+    @Before
+    public void init(){
 
-        test.MSORequest("reqXML");
-        Assert.assertFalse(true);
-               
+        test = new SDNCAdapterRestImpl();
     }
 
-    @Test(expected = NoClassDefFoundError.class)
-    public void testHealthCheckException() {
+   @Test
+   public void testSDNCAdapterRestImpl() {
 
-        test.healthcheck("1a25a7c0-4c91-4f74-9a78-8c11b7a57f1a");
-        Assert.assertFalse(true);
-    }
+       HealthCheckUtils hCU = PowerMockito.mock(HealthCheckUtils.class);
+        try {
+            PowerMockito.whenNew(HealthCheckUtils.class).withNoArguments().thenReturn(hCU);
+            when(hCU.siteStatusCheck(any(MsoLogger.class))).thenReturn(true);
 
-    @Test(expected = ClassFormatError.class)
-    public void testglobalHealthcheckException() {
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        test.globalHealthcheck(true);
-        Assert.assertFalse(true);
-    }
+       String reqXML = "<xml>test</xml>";
+
+       test.MSORequest(reqXML);
+       test.healthcheck("1a25a7c0-4c91-4f74-9a78-8c11b7a57f1a");
+       test.globalHealthcheck(true);
+       test.nodeHealthcheck();
 
 
-    @Test(expected = NoClassDefFoundError.class)
-    public void testNodeHealthCheckException() {
-
-        test.nodeHealthcheck();
-        Assert.assertFalse(true);
-    }*/
+   }
 
 }
 
