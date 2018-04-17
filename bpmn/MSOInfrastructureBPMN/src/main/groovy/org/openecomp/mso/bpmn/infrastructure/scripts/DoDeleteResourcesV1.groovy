@@ -32,6 +32,8 @@ import org.openecomp.mso.bpmn.common.resource.ResourceRequestBuilder
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.openecomp.mso.bpmn.common.scripts.CatalogDbUtils
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
+import org.openecomp.mso.bpmn.core.domain.ModelInfo
+import org.openecomp.mso.bpmn.core.domain.NetworkResource
 import org.openecomp.mso.bpmn.core.domain.Resource
 import org.openecomp.mso.bpmn.core.domain.ServiceDecomposition
 import org.openecomp.mso.bpmn.core.domain.ServiceInstance
@@ -144,42 +146,28 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
         def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 
         utils.log("INFO", " ======== STARTED sequenceResource Process ======== ", isDebugEnabled)
-        List<String> nsResources = new ArrayList<String>()
+        List<Resource> sequencedResourceList = new ArrayList<Resource>()
         List<String> wanResources = new ArrayList<String>()
-        List<String> resourceSequence = new  ArrayList<String>()
 
         // get delete resource list and order list
         List<Resource> delResourceList = execution.getVariable("deleteResourceList")
         // existing resource list
         List<ServiceInstance> existResourceList = execution.getVariable("realNSRessources")
 
-        for(ServiceInstance rc_e : existResourceList){
+        def resourceSequence = BPMNProperties.getResourceSequenceProp()
 
-            String muuid = rc_e.getModelInfo().getModelUuid()
-            String mIuuid = rc_e.getModelInfo().getModelInvariantUuid()
-            String mCuuid = rc_e.getModelInfo().getModelCustomizationUuid()
-            rcType = rc_e.getInstanceName()
+        for (resourceType in resourceSequence) {
+            for (resource in delResourceList) {
+                if (StringUtils.containsIgnoreCase(resource.getModelInfo().getModelName(), resourceType)) {
+                    sequencedResourceList.add(resource)
 
-            for(Resource rc_d : delResourceList){
-
-                if(rc_d.getModelInfo().getModelUuid() == muuid
-                        && rc_d.getModelInfo().getModelInvariantUuid() == mIuuid
-                        && rc_d.getModelInfo().getModelCustomizationUuid() == mCuuid) {
-
-                    if(StringUtils.containsIgnoreCase(rcType, "overlay")
-                            || StringUtils.containsIgnoreCase(rcType, "underlay")){
-                        wanResources.add(rcType)
-                    }else{
-                        nsResources.add(rcType)
+                    if (resource instanceof NetworkResource) {
+                        wanResources.add(resource)
                     }
-
                 }
             }
-
         }
 
-        resourceSequence.addAll(wanResources)
-        resourceSequence.addAll(nsResources)
         String isContainsWanResource = wanResources.isEmpty() ? "false" : "true"
         execution.setVariable("isContainsWanResource", isContainsWanResource)
         execution.setVariable("currentResourceIndex", 0)
@@ -198,21 +186,19 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
 
         utils.log("INFO", " ======== STARTED preResourceDelete Process ======== ", isDebugEnabled)
 
-        List<ServiceInstance> existResourceList = execution.getVariable("realNSRessources")
+        List<Resource> existResourceList = execution.getVariable("deleteResourceList")
 
-        for(ServiceInstance rc_e : existResourceList){
+        int currentIndex = execution.getVariable("currentResourceIndex")
+        Resource curResource = existResourceList.get(currentIndex);
 
-            if(StringUtils.containsIgnoreCase(rc_e.getInstanceName(), resourceName)) {
-
-                String resourceInstanceUUID = rc_e.getInstanceId()
-                String resourceTemplateUUID = rc_e.getModelInfo().getModelUuid()
-                execution.setVariable("resourceInstanceId", resourceInstanceUUID)
-                execution.setVariable("resourceTemplateId", resourceTemplateUUID)
-                execution.setVariable("resourceType", resourceName)
-                utils.log("INFO", "Delete Resource Info resourceTemplate Id :" + resourceTemplateUUID + "  resourceInstanceId: "
-                        + resourceInstanceUUID + " resourceType: " + resourceName, isDebugEnabled)
-            }
-        }
+        String resourceInstanceUUID = curResource.getResourceId()
+        String resourceTemplateUUID = curResource.getModelInfo().getModelUuid()
+        execution.setVariable("resourceInstanceId", resourceInstanceUUID)
+        execution.setVariable("resourceUuid", resourceTemplateUUID)
+        execution.setVariable("resourceType", curResource.getModelInfo().getModelName())
+        execution.setVariable("currentResource", curResource)
+        utils.log("INFO", "Delete Resource Info resourceTemplate Id :" + resourceTemplateUUID + "  resourceInstanceId: "
+                + resourceInstanceUUID + " resourceType: " + resourceName, isDebugEnabled)
 
         utils.log("INFO", " ======== END preResourceDelete Process ======== ", isDebugEnabled)
     }
@@ -221,18 +207,35 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
     /**
      * Execute delete workflow for resource
      */
-    public void executeResourceDelete(execution) {
+    public void executeResourceDelete(execution, resourceName) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
         utils.log("INFO", "======== Start executeResourceDelete Process ======== ", isDebugEnabled)
         String requestId = execution.getVariable("msoRequestId")
         String serviceInstanceId = execution.getVariable("serviceInstanceId")
         String serviceType = execution.getVariable("serviceType")
-        ResourceInput resourceInput = execution.getVariable("resourceInput")
-        String requestAction = resourceInput.getOperationType()
-        JSONObject resourceRecipe = cutils.getResourceRecipe(execution, resourceInput.getResourceUuid(), requestAction)
+
+        String resourceInstanceId = execution.getVariable("resourceInstanceId")
+        String resourceUuid = execution.getVariable("resourceUuid")
+
+        String requestAction = execution.getVariable("operationType")
+        JSONObject resourceRecipe = cutils.getResourceRecipe(execution, resourceUuid, requestAction)
         String recipeUri = resourceRecipe.getString("orchestrationUri")
-        String recipeTimeOut = resourceRecipe.getString("recipeTimeout")
+        int recipeTimeout = resourceRecipe.getInt("recipeTimeout")
         String recipeParamXsd = resourceRecipe.get("paramXSD")
+
+        Resource currentResource = execution.getVariable("currentResource")
+
+        ResourceInput resourceInput = new ResourceInput();
+        resourceInput.setServiceInstanceId(serviceInstanceId)
+        resourceInput.setResourceInstanceName(currentResource.getResourceInstanceName())
+        resourceInput.setGlobalSubscriberId("globalSubscriberId")
+        ModelInfo modelInfo = new ModelInfo()
+        modelInfo.setModelCustomizationUuid(currentResource.getModelInfo().getModelCustomizationUuid())
+        modelInfo.setModelUuid(currentResource.getModelInfo().getModelCustomizationUuid())
+        modelInfo.setModelInvariantUuid(currentResource.getModelInfo().getModelInvariantUuid())
+        resourceInput.setServiceModelInfo(modelInfo)
+        resourceInput.setServiceType(serviceType)
+
         HttpResponse resp = BpmnRestClient.post(recipeUri, requestId, recipeTimeout, requestAction, serviceInstanceId, serviceType, resourceInput.toString(), recipeParamXsd)
         utils.log("INFO", " ======== END executeResourceDelete Process ======== ", isDebugEnabled)
     }

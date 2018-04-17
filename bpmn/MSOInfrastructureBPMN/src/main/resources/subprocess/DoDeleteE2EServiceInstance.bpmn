@@ -164,6 +164,7 @@ dcsi.postDecomposeService(execution)]]></bpmn:script>
         <camunda:in source="serviceInputParams" target="serviceInputParams" />
         <camunda:in source="deleteResourceList" target="deleteResourceList" />
         <camunda:in source="resourceInstanceIDs" target="resourceInstanceIDs" />
+        <camunda:in source="operationType" target="operationType" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1j08ko3</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1cevtpy</bpmn:outgoing>
