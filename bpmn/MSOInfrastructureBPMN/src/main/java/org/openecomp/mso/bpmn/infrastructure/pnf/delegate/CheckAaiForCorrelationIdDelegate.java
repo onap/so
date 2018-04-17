@@ -42,7 +42,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  * Outputs:
  * - AAI_CONTAINS_INFO_ABOUT_PNF - local Boolean
- * - aaiContainsInfoAboutIp - local Boolean (only present if AAI_CONTAINS_INFO_ABOUT_PNF is true)
+ * - aaiContainsInfoAboutIp - local Boolean
  */
 
 public class CheckAaiForCorrelationIdDelegate implements JavaDelegate {
