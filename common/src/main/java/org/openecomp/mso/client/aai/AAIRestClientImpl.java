@@ -170,6 +170,7 @@ public class AAIRestClientImpl implements AAIRestClientI {
         } catch (IllegalArgumentException e) {
             logger.warn("could not parse uuid: " + transactionLoggingUuid + " creating valid uuid automatically");
             requestId = UUID.randomUUID();
+            throw new RuntimeException(e);
         }
         Response response = new AAIResourcesClient(ENDPOINT_VERSION, requestId)
                 .getFullResponse(AAIUriFactory.createResourceUri(AAIObjectType.PNF, pnfId));
@@ -188,6 +189,7 @@ public class AAIRestClientImpl implements AAIRestClientI {
         } catch (IllegalArgumentException e) {
             logger.warn("could not parse uuid: " + transactionLoggingUuid + " creating valid uuid automatically");
             requestId = UUID.randomUUID();
+            throw new RuntimeException(e);
         }
         new AAIResourcesClient(ENDPOINT_VERSION, requestId)
                 .createIfNotExists(AAIUriFactory.createResourceUri(AAIObjectType.PNF, pnfId), Optional.of(pnf));
