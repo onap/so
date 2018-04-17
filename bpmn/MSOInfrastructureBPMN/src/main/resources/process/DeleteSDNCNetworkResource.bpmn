@@ -33,14 +33,14 @@ ex.processJavaException(execution)]]></bpmn:script>
     </bpmn:subProcess>
     <bpmn:sequenceFlow id="SequenceFlow_1twf9nk" sourceRef="Task_1t687g1" targetRef="Task_0i59nr9" />
     <bpmn:sequenceFlow id="SequenceFlow_1ba6i0r" sourceRef="Task_1cglzlg" targetRef="EndEvent_1x6k78c" />
-    <bpmn:scriptTask id="Task_1t687g1" name="Pre Resource Delete">
+    <bpmn:scriptTask id="Task_1t687g1" name="Pre Resource Delete" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_01medil</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1twf9nk</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
 def dsdncr = new DeleteSDNCNetworkResource()
-dsdncr.preProcessSDNCDelete(execution)]]></bpmn:script>
+dsdncr.preProcessRequest(execution)]]></bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:scriptTask id="Task_1cglzlg" name="Post Resource Delete">
+    <bpmn:scriptTask id="Task_1cglzlg" name="Post Resource Delete" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_092fygq</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1ba6i0r</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
@@ -48,7 +48,7 @@ def dsdncr = new DeleteSDNCNetworkResource()
 dsdncr.postProcessSDNCDelete(execution)]]></bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_01medil" sourceRef="Task_1d5rrfs" targetRef="Task_1t687g1" />
-    <bpmn:scriptTask id="Task_1d5rrfs" name="Set RecipeParam">
+    <bpmn:scriptTask id="Task_1d5rrfs" name="Set RecipeParam" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_1qo2pln</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_01medil</bpmn:outgoing>
       <bpmn:script><![CDATA[String recipeParamXsdDemo="""
