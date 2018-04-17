@@ -156,7 +156,7 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
 
         def resourceSequence = BPMNProperties.getResourceSequenceProp()
 
-        for (resourceType in resourceSequence) {
+        for (resourceType in resourceSequence.reverse()) {
             for (resource in delResourceList) {
                 if (StringUtils.containsIgnoreCase(resource.getModelInfo().getModelName(), resourceType)) {
                     sequencedResourceList.add(resource)
@@ -236,7 +236,9 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
         resourceInput.setServiceModelInfo(modelInfo)
         resourceInput.setServiceType(serviceType)
 
-        HttpResponse resp = BpmnRestClient.post(recipeUri, requestId, recipeTimeout, requestAction, serviceInstanceId, serviceType, resourceInput.toString(), recipeParamXsd)
+        String recipeURL = BPMNProperties.getProperty("bpelURL", "http://mso:8080") + recipeUri
+
+        HttpResponse resp = BpmnRestClient.post(recipeURL, requestId, recipeTimeout, requestAction, serviceInstanceId, serviceType, resourceInput.toString(), recipeParamXsd)
         utils.log("INFO", " ======== END executeResourceDelete Process ======== ", isDebugEnabled)
     }
 
