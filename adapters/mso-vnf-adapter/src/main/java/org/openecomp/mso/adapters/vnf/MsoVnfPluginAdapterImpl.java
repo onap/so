@@ -62,7 +62,6 @@ import org.openecomp.mso.cloud.CloudConfig;
 import org.openecomp.mso.cloud.CloudConfigFactory;
 import org.openecomp.mso.cloud.CloudSite;
 import org.openecomp.mso.cloudify.utils.MsoCloudifyUtils;
-import org.openecomp.mso.aria.AriaVduPlugin;
 import org.openecomp.mso.db.catalog.CatalogDatabase;
 import org.openecomp.mso.db.catalog.beans.HeatEnvironment;
 import org.openecomp.mso.db.catalog.beans.HeatTemplate;
@@ -96,7 +95,6 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 	protected MsoHeatUtils heatUtils;
 	protected VfModuleCustomizationToVduMapper vduMapper;
 	protected MsoCloudifyUtils cloudifyUtils;
-	protected AriaVduPlugin ariaVduPlugin;
 	
 	MsoPropertiesFactory msoPropertiesFactory=new MsoPropertiesFactory();
 
@@ -133,7 +131,6 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
     	heatUtils = new MsoHeatUtils(MSO_PROP_VNF_ADAPTER, msoPropertiesFactory, cloudConfigFactory);
     	vduMapper = new VfModuleCustomizationToVduMapper();
     	cloudifyUtils = new MsoCloudifyUtils (MSO_PROP_VNF_ADAPTER, msoPropertiesFactory,cloudConfigFactory);
-	ariaVduPlugin = new AriaVduPlugin("localhost", 5000);
     }
 
     /**
@@ -382,7 +379,10 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 			}
 			catch (Exception e) {
 				LOGGER.debug("Unable to convert " + inputValue + " to an integer!");
-				return null;
+				//LOGGER.info(e);
+				throw new RuntimeException(e);
+				//LOGGER.info
+			//	return null;
 			}
 		} else if (type.equalsIgnoreCase("json")) {
 			try {
@@ -391,7 +391,8 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 			}
 			catch (Exception e) {
 				LOGGER.debug("Unable to convert " + inputValue + " to a JsonNode!");
-				return null;
+				throw new RuntimeException(e);
+				//return null;
 			}
 		} else if (type.equalsIgnoreCase("boolean")) {
 			return new Boolean(inputValue);
@@ -412,6 +413,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
             		stringOutputs.put(key, str);
             	} catch (Exception e) {
             		LOGGER.debug("Unable to add " + key + " to outputs");
+            		throw new RuntimeException(e);
             	}
             } else if (stackOutputs.get(key) instanceof JsonNode) {
             	try {
@@ -419,6 +421,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
             		stringOutputs.put(key, str);
             	} catch (Exception e) {
             		LOGGER.debug("Unable to add " + key + " to outputs - exception converting JsonNode");
+            		throw new RuntimeException(e);
             	}
             } else if (stackOutputs.get(key) instanceof java.util.LinkedHashMap) {
             	try {
@@ -426,6 +429,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
             		stringOutputs.put(key, str);
             	} catch (Exception e) {
             		LOGGER.debug("Unable to add " + key + " to outputs - exception converting LinkedHashMap");
+            		throw new RuntimeException(e);
             	}
             } else {
             	try {
@@ -433,6 +437,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
             		stringOutputs.put(key, str);
             	} catch (Exception e) {
             		LOGGER.debug("Unable to add " + key + " to outputs - unable to call .toString() " + e.getMessage());
+            		throw new RuntimeException(e);
             	}
             }
         }
@@ -455,6 +460,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
     				outputString = inputs.get(str).toString();
     			} catch (Exception e) {
     				outputString = "Unable to call toString() on the value for " + str;
+    				throw new RuntimeException(e);
     			}
     			sb.append("\t\nitem " + i++ + ": '" + str + "'='" + outputString + "'");
     		}
@@ -487,10 +493,14 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
             return json;
         } catch (JsonParseException jpe) {
             LOGGER.debug("Error converting json to string " + jpe.getMessage());
+            throw new RuntimeException(jpe);
         } catch (Exception e) {
-            LOGGER.debug("Error converting json to string " + e.getMessage());
+            LOGGER.debug("Error converting json to string " + e.getMessage(),e);
+          //  throw new RuntimeException(e);
+            
         }
-        return "[Error converting json to string]";
+        return "[Error converting json to string]" ;
+        
     }
 
     private Map<String, String> convertMapStringObjectToStringString(Map<String, Object> objectMap) {
@@ -512,6 +522,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
                     } catch (Exception e) {
 						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value for JsonNode "+ key);
                         //okay in this instance - only string values (fqdn) are expected to be needed
+						throw new RuntimeException(e);
                     }
                 } else if (obj instanceof java.util.LinkedHashMap) {
                     LOGGER.debug("LinkedHashMap - this is showing up as a LinkedHashMap instead of JsonNode");
@@ -520,6 +531,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
                         stringMap.put(key, str);
                     } catch (Exception e) {
 						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value for LinkedHashMap "+ key);
+						throw new RuntimeException(e);
 					}
 				}  else if (obj instanceof Integer) {
 					try {
@@ -527,6 +539,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 						stringMap.put(key, str);
 					} catch (Exception e) {
 						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value for Integer "+ key);
+						throw new RuntimeException(e);
                     }
                 } else {
                     try {
@@ -534,6 +547,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
                         stringMap.put(key, str);
                     } catch (Exception e) {
 						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value "+ key + " (" + e.getMessage() + ")");
+						throw new RuntimeException(e);
                     }
                 }
             }
@@ -1230,9 +1244,6 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
     		if (orchestrator.equalsIgnoreCase("CLOUDIFY")) {
     			return cloudifyUtils;   			
     		}
-		else if (orchestrator.equalsIgnoreCase("ARIA")) {
-			return ariaVduPlugin;
-                }
     		else if (orchestrator.equalsIgnoreCase("HEAT")) {
     			return heatUtils;
     		}
