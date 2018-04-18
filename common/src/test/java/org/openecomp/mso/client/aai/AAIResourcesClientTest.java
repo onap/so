@@ -31,6 +31,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.openecomp.mso.client.aai.entities.AAIResultWrapper;
 import org.openecomp.mso.client.aai.entities.uri.AAIResourceUri;
 import org.openecomp.mso.client.aai.entities.uri.AAIUriFactory;
 
@@ -75,6 +76,21 @@ public class AAIResourcesClientTest {
 					.withStatus(204)));
 		AAIResourcesClient client = new AAIResourcesClient();
 		client.delete(path);
+	}
+	
+	@Test
+	public void verifyBasicAuth() {
+		AAIResourceUri path = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test3");
+		wireMockRule.stubFor(get(
+				urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build().toString()))
+				.withHeader("Authorization", equalTo("Basic TVNPOk1TTw=="))
+				.willReturn(
+					aResponse()
+					.withHeader("Content-Type", "application/json")
+					.withBodyFile("aai/resources/mockObject.json")
+					.withStatus(200)));
+		AAIResourcesClient client = new AAIResourcesClient();
+		client.get(path);
 	}
 	
 	@Test

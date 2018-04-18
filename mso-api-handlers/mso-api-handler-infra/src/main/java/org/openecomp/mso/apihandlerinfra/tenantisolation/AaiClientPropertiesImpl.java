@@ -49,4 +49,14 @@ public class AaiClientPropertiesImpl implements AAIProperties {
 	public AAIVersion getDefaultVersion() {
 		return AAIVersion.LATEST;
 	}
+
+	@Override
+	public String getAuth() {
+		return props.getProperty("aai.auth", null);
+	}
+
+	@Override
+	public String getKey() {
+		return props.getProperty("mso.msoKey", null);
+	}
 }

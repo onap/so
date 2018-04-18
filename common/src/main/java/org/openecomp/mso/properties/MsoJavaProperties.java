@@ -90,27 +90,6 @@ public class MsoJavaProperties extends AbstractMsoProperties {
 
 	}
 
-	/**
-	 * @param encryptedAuth: encrypted credentials from properties
-	 * @param msoKey: key to use to decrypt from properties
-	 * @return base 64 encoded basic auth credentials
-	 */
-	public synchronized String getBasicAuth(String encryptedAuth, String msoKey){
-		String encodedString = null;
-		if ((encryptedAuth == null || encryptedAuth.isEmpty()) || (msoKey == null || msoKey.isEmpty()))
-			return null;
-		try {
-			String auth = decrypt(encryptedAuth, msoKey);
-			byte[] encoded = Base64.encodeBase64(auth.getBytes());
-			encodedString = new String(encoded);
-			encodedString = "Basic " + encodedString;
-			
-		} catch (Exception ex) {
-			LOGGER.debug("Exception while getBasicAuth " + encryptedAuth, ex);
-		}
-		return encodedString;
-	}		
-	
 	public synchronized int size() {
 		return this.msoProperties.size();
 	}

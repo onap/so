@@ -65,4 +65,15 @@ public class DefaultAAIPropertiesImpl implements AAIProperties {
 		return AAIVersion.LATEST;
 	}
 
+	@Override
+	public String getAuth() {
+		Object value = props.get("aai.auth");
+		return value == null ? null : value.toString();
+	}
+
+	@Override
+	public String getKey() {
+		Object value = props.get("mso.msoKey");
+		return value == null ? null : value.toString();
+	}
 }
