@@ -28,22 +28,31 @@ import java.util.UUID;
 import javax.ws.rs.client.ClientResponseFilter;
 import javax.ws.rs.ext.ContextResolver;
 
-import org.openecomp.mso.client.RestProperties;
 import org.openecomp.mso.client.policy.RestClient;
 import org.openecomp.mso.client.policy.RestClientSSL;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class AAIRestClient extends RestClientSSL {
+	
+	private final AAIProperties props;
 
-	protected AAIRestClient(RestProperties props, UUID requestId, URI uri) {
+	protected AAIRestClient(AAIProperties props, UUID requestId, URI uri) {
 		super(props, requestId, Optional.of(uri));
+		this.props = props;
 		headerMap.put("X-TransactionId", requestId.toString());
 	}
 
 	@Override
 	protected void initializeHeaderMap(Map<String, String> headerMap) {
 		headerMap.put("X-FromAppId", "MSO");
+
+		String auth = props.getAuth();
+		String key = props.getKey();
+
+		if (auth != null && !auth.isEmpty() && key != null && !key.isEmpty()) {
+			addBasicAuthHeader(auth, key);
+		}
 	}
 
 	@Override
