@@ -25,4 +25,6 @@ import org.openecomp.mso.client.RestProperties;
 public interface AAIProperties extends RestProperties {
 
 	public AAIVersion getDefaultVersion();
+	public String getAuth();
+	public String getKey();
 }

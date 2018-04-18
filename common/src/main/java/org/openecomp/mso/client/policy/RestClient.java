@@ -23,6 +23,7 @@ package org.openecomp.mso.client.policy;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -41,9 +42,11 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.ext.ContextResolver;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.openecomp.mso.client.RestProperties;
 import org.openecomp.mso.logger.MsoLogger;
+import org.openecomp.mso.utils.CryptoUtils;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -84,8 +87,6 @@ public abstract class RestClient {
 		this(props, requestId, path);
 		this.accept = accept;
 		this.contentType = contentType;
-		this.requestId = requestId;
-
 	}
 
 	protected RestClient(URL host, UUID requestId, String contentType) {
@@ -134,6 +135,21 @@ public abstract class RestClient {
 	protected abstract Optional<ClientResponseFilter> addResponseFilter();
 
 	public abstract RestClient addRequestId(UUID requestId);
+	
+	/**
+	 * Adds a basic authentication header to the request.
+	 * @param auth the encrypted credentials
+	 * @param key the key for decrypting the credentials
+	 */
+	protected void addBasicAuthHeader(String auth, String key) {
+		try {
+			byte[] decryptedAuth = CryptoUtils.decrypt(auth, key).getBytes();
+			String authHeaderValue = "Basic " + new String(Base64.encodeBase64(decryptedAuth));
+			headerMap.put("Authorization", authHeaderValue);
+		} catch (GeneralSecurityException e) {
+			logger.warn(e.getMessage(), e);
+		}
+	}
 
 	protected ContextResolver<ObjectMapper> getMapper() {
 		return new CommonObjectMapperProvider();
