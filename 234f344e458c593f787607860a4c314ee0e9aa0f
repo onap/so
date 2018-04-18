@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_c9388ed5",
+        "filename": "adapters/mso-requests-db-adapter/src/test/java/org/openecomp/mso/adapters/requestsdb/HealthCheckHandlerTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2018-04-18T10:17:57Z",
+      "side": 1,
+      "message": "please correct the name of method to specify the purpose of test case.",
+      "range": {
+        "startLine": 51,
+        "startChar": 16,
+        "endLine": 51,
+        "endChar": 31
+      },
+      "revId": "234f344e458c593f787607860a4c314ee0e9aa0f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_69313aec",
+        "filename": "adapters/mso-sdnc-adapter/src/test/java/org/openecomp/mso/adapters/sdnc/impl/SDNCAdapterRestImplTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2018-04-18T10:17:57Z",
+      "side": 1,
+      "message": "purpose should be specified in test case name",
+      "range": {
+        "startLine": 51,
+        "startChar": 15,
+        "endLine": 51,
+        "endChar": 38
+      },
+      "revId": "234f344e458c593f787607860a4c314ee0e9aa0f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
