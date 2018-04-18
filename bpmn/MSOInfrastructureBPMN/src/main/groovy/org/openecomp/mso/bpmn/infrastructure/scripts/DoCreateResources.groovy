@@ -100,25 +100,44 @@ public class DoCreateResources extends AbstractServiceTaskProcessor
         
         String serviceModelUUID = execution.getVariable("modelUuid")      
                
-        List<Resource> addResourceList = execution.getVariable("addResourceList")        
-
+        List<Resource> addResourceList = execution.getVariable("addResourceList")
         List<NetworkResource> networkResourceList = new ArrayList<NetworkResource>()
 
-        //define sequenced resource list, we deploy vf first and then network and then ar 
-        //this is defaule sequence
         List<Resource> sequencedResourceList = new ArrayList<Resource>()
         def resourceSequence = BPMNProperties.getResourceSequenceProp()
 
-        for (resourceType in resourceSequence) {
-            for (resource in addResourceList) {
-                if (StringUtils.containsIgnoreCase(resource.getModelInfo().getModelName(), resourceType)) {
-                    sequencedResourceList.add(resource)
+        if(resourceSequence != null) {
+            // sequence is defined in config file
+            for (resourceType in resourceSequence) {
+                for (resource in addResourceList) {
+                    if (StringUtils.containsIgnoreCase(resource.getModelInfo().getModelName(), resourceType)) {
+                        sequencedResourceList.add(resource)
 
-                    if (resource instanceof NetworkResource) {
-                        networkResourceList.add(resource)
+                        if (resource instanceof NetworkResource) {
+                            networkResourceList.add(resource)
+                        }
                     }
                 }
             }
+        } else {
+
+        //define sequenced resource list, we deploy vf first and then network and then ar
+        //this is defaule sequence
+        List<VnfResource> vnfResourceList = new ArrayList<VnfResource>()
+        List<AllottedResource> arResourceList = new ArrayList<AllottedResource>()
+
+        for (Resource rc : addResourceList){
+            if (rc instanceof VnfResource) {
+                vnfResourceList.add(rc)
+            } else if (rc instanceof NetworkResource) {
+                networkResourceList.add(rc)
+            } else if (rc instanceof AllottedResource) {
+                arResourceList.add(rc)
+            }
+        }
+        sequencedResourceList.addAll(vnfResourceList)
+        sequencedResourceList.addAll(networkResourceList)
+        sequencedResourceList.addAll(arResourceList)
         }
 
         String isContainsWanResource = networkResourceList.isEmpty() ? "false" : "true"
@@ -156,7 +175,7 @@ public class DoCreateResources extends AbstractServiceTaskProcessor
     }    
 
 	 public void prepareResourceRecipeRequest(DelegateExecution execution){
-		 def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+ 		 def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		 utils.log("INFO", "======== Start prepareResourceRecipeRequest Process ======== ", isDebugEnabled)
 		 ResourceInput resourceInput = new ResourceInput()
 		 String serviceInstanceName = execution.getVariable("serviceInstanceName")

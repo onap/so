@@ -32,11 +32,13 @@ import org.openecomp.mso.bpmn.common.resource.ResourceRequestBuilder
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.openecomp.mso.bpmn.common.scripts.CatalogDbUtils
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
+import org.openecomp.mso.bpmn.core.domain.AllottedResource
 import org.openecomp.mso.bpmn.core.domain.ModelInfo
 import org.openecomp.mso.bpmn.core.domain.NetworkResource
 import org.openecomp.mso.bpmn.core.domain.Resource
 import org.openecomp.mso.bpmn.core.domain.ServiceDecomposition
 import org.openecomp.mso.bpmn.core.domain.ServiceInstance
+import org.openecomp.mso.bpmn.core.domain.VnfResource
 import org.openecomp.mso.bpmn.core.json.JsonUtils
 import org.openecomp.mso.bpmn.infrastructure.properties.BPMNProperties
 
@@ -156,16 +158,37 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
 
         def resourceSequence = BPMNProperties.getResourceSequenceProp()
 
-        for (resourceType in resourceSequence.reverse()) {
-            for (resource in delResourceList) {
-                if (StringUtils.containsIgnoreCase(resource.getModelInfo().getModelName(), resourceType)) {
-                    sequencedResourceList.add(resource)
+        if(resourceSequence != null) {
+            for (resourceType in resourceSequence.reverse()) {
+                for (resource in delResourceList) {
+                    if (StringUtils.containsIgnoreCase(resource.getModelInfo().getModelName(), resourceType)) {
+                        sequencedResourceList.add(resource)
 
-                    if (resource instanceof NetworkResource) {
-                        wanResources.add(resource)
+                        if (resource instanceof NetworkResource) {
+                            wanResources.add(resource)
+                        }
                     }
                 }
             }
+        }else {
+            //define sequenced resource list, we deploy vf first and then network and then ar
+            //this is defaule sequence
+            List<VnfResource> vnfResourceList = new ArrayList<VnfResource>()
+            List<AllottedResource> arResourceList = new ArrayList<AllottedResource>()
+
+            for (Resource rc : delResourceList) {
+                if (rc instanceof VnfResource) {
+                    vnfResourceList.add(rc)
+                } else if (rc instanceof NetworkResource) {
+                    networkResourceList.add(rc)
+                } else if (rc instanceof AllottedResource) {
+                    arResourceList.add(rc)
+                }
+            }
+
+            sequencedResourceList.addAll(arResourceList)
+            sequencedResourceList.addAll(networkResourceList)
+            sequencedResourceList.addAll(vnfResourceList)
         }
 
         String isContainsWanResource = wanResources.isEmpty() ? "false" : "true"

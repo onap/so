@@ -52,9 +52,6 @@ public class BPMNProperties {
         if (resourceSequence != null) {
             return Arrays.asList(resourceSequence.split(","));
         }
-        return Arrays.asList(ResourceSequence.RESOURCE_EPC,
-                ResourceSequence.RESOURCE_IMS,
-                ResourceSequence.RESOUCE_OVERLAY,
-                ResourceSequence.RESOURCE_UNDERLAY);
+        return null;
     }
 }
