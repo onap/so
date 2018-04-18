@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_8efdacb3",
+        "filename": "adapters/mso-requests-db-adapter/src/test/java/org/openecomp/mso/adapters/requestsdb/HealthCheckHandlerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2018-04-18T04:20:35Z",
+      "side": 1,
+      "message": "check expected value for response.",
+      "range": {
+        "startLine": 58,
+        "startChar": 8,
+        "endLine": 58,
+        "endChar": 35
+      },
+      "revId": "43d29a57c7bc7be64891466b5cd775e06199b534",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_2e2ed843",
+        "filename": "adapters/mso-sdnc-adapter/src/test/java/org/openecomp/mso/adapters/sdnc/impl/SDNCAdapterRestImplTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2018-04-18T04:20:35Z",
+      "side": 1,
+      "message": "you can put assert to make test more meaningful.",
+      "range": {
+        "startLine": 61,
+        "startChar": 6,
+        "endLine": 64,
+        "endChar": 30
+      },
+      "revId": "43d29a57c7bc7be64891466b5cd775e06199b534",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ee231056",
+        "filename": "adapters/mso-sdnc-adapter/src/test/java/org/openecomp/mso/adapters/sdnc/notify/SDNCNotifyResourceTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2018-04-18T04:20:35Z",
+      "side": 1,
+      "message": "there should be some expected value.",
+      "range": {
+        "startLine": 48,
+        "startChar": 7,
+        "endLine": 48,
+        "endChar": 52
+      },
+      "revId": "43d29a57c7bc7be64891466b5cd775e06199b534",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
