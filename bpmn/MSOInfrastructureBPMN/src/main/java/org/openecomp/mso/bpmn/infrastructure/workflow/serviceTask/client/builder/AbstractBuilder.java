@@ -110,7 +110,7 @@ public abstract class AbstractBuilder<IN, OUT> {
      protected String getRequestActoin(DelegateExecution execution) {
           String action = /*RequestInformation.*/RequestAction.CreateNetworkInstance.getName();
           String operType = (String) execution.getVariable(OPERATION_TYPE);
-          String resourceType = ((String) execution.getVariable(RESOURCE_TYPE)).toLowerCase();
+          String resourceType = (String)execution.getVariable(RESOURCE_TYPE);
           if (!StringUtils.isBlank(operType)) {
                if (RequestsDbConstant.OperationType.DELETE.equalsIgnoreCase(operType)) {
                     if (isOverlay(resourceType)) {
@@ -134,17 +134,17 @@ public abstract class AbstractBuilder<IN, OUT> {
      }
 
      private boolean isOverlay(String resourceType) {
-          return !StringUtils.isBlank(resourceType) && resourceType.contains("overlay");
+          return !StringUtils.isBlank(resourceType) && resourceType.toLowerCase().contains("overlay");
      }
 
      private boolean isUnderlay(String resourceType) {
-          return !StringUtils.isBlank(resourceType) && resourceType.contains("underlay");
+          return !StringUtils.isBlank(resourceType) && resourceType.toLowerCase().contains("underlay");
      }
 
      protected String getSvcAction(DelegateExecution execution) {
           String action = /*SdncRequestHeader.*/SvcAction.Create.getName();
           String operType = (String) execution.getVariable(OPERATION_TYPE);
-          String resourceType = ((String) execution.getVariable(RESOURCE_TYPE)).toLowerCase();
+          String resourceType = (String)execution.getVariable(RESOURCE_TYPE);
           if (!StringUtils.isBlank(operType)) {
                if (RequestsDbConstant.OperationType.DELETE.equalsIgnoreCase(operType)) {
                     if (isOverlay(resourceType)) {
