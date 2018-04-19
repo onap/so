@@ -52,4 +52,13 @@ public class AAIPropertiesImpl implements AAIProperties {
 		return AAIVersion.LATEST;
 	}
 
+	@Override
+	public String getAuth() {
+		return props.get("aai.auth");
+	}
+
+	@Override
+	public String getKey() {
+		return props.get("mso.msoKey");
+	}
 }
