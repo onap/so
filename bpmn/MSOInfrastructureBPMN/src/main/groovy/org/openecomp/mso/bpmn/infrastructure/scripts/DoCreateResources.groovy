@@ -20,6 +20,7 @@
  
 package org.openecomp.mso.bpmn.infrastructure.scripts
 
+import org.codehaus.jackson.map.ObjectMapper
 import org.openecomp.mso.bpmn.infrastructure.properties.BPMNProperties
 
 import java.util.ArrayList
@@ -146,7 +147,28 @@ public class DoCreateResources extends AbstractServiceTaskProcessor
         execution.setVariable("sequencedResourceList", sequencedResourceList)
         utils.log("INFO", "sequencedResourceList: " + sequencedResourceList, isDebugEnabled) 
         utils.log("INFO", "======== COMPLETED sequenceResoure Process ======== ", isDebugEnabled)
-    }   
+    }
+
+    public prepareServiceTopologyRequest(DelegateExecution execution) {
+
+        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
+        utils.log("INFO", "======== Start prepareServiceTopologyRequest Process ======== ", isDebugEnabled)
+
+        String serviceDecompose = execution.getVariable("serviceDecomposition")
+
+        execution.setVariable("operationType", "create")
+        execution.setVariable("resourceType", "")
+
+        String serviceInvariantUuid = jsonUtil.getJsonValue(serviceDecompose, "serviceResources.modelInfo.modelInvariantUuid")
+        String serviceUuid = jsonUtil.getJsonValue(serviceDecompose, "serviceResources.modelInfo.modelUuid")
+        String serviceModelName = jsonUtil.getJsonValue(serviceDecompose, "serviceResources.modelInfo.modelName")
+
+        execution.setVariable("modelInvariantUuid", serviceInvariantUuid)
+        execution.setVariable("modelUuid", serviceUuid)
+        execution.setVariable("serviceModelName", serviceModelName)
+
+        utils.log("INFO", "======== End prepareServiceTopologyRequest Process ======== ", isDebugEnabled)
+    }
    
     public void getCurrentResoure(DelegateExecution execution){
 	    def isDebugEnabled=execution.getVariable("isDebugLogEnabled")   
