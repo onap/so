@@ -255,7 +255,9 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
         serviceId = StringUtils.isBlank(serviceId) ? (String) execution.getVariable("serviceInstanceId") : serviceId;
         String operationId = (String) execution.getVariable("operationId");
         String resourceTemplateUUID = (String) execution.getVariable("resourceUUID");
-        resourceTemplateUUID = StringUtils.isBlank(resourceTemplateUUID) ? (String) execution.getVariable("resourceTemplateId") : resourceTemplateUUID;
+        String resourceTemplateId = (String) execution.getVariable("resourceTemplateId");
+        resourceTemplateId = StringUtils.isBlank(resourceTemplateId) ? "" : resourceTemplateUUID;
+        resourceTemplateUUID = StringUtils.isBlank(resourceTemplateUUID) ? resourceTemplateId : resourceTemplateUUID;
         try {
             ResourceOperationStatus resourceOperationStatus = getResourceOperationStatus(serviceId, operationId, resourceTemplateUUID);
             if (!StringUtils.isBlank(status)) {
