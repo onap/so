@@ -93,8 +93,8 @@ public class CatalogDatabase implements Closeable {
     private static final String MODEL_TYPE = "modelType";
     private static final String MODEL_VERSION_ID = "modelVersionId";
     private static final String MODEL_CUSTOMIZATION_UUID = "modelCustomizationUuid";
-	private static final String VF_MODULE_MODEL_UUID = "vfModuleModelUUId";
-	private static final String NETWORK_SERVICE = "network service";
+    private static final String VF_MODULE_MODEL_UUID = "vfModuleModelUUId";
+    private static final String NETWORK_SERVICE = "network service";
 
     protected static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.GENERAL);
 
@@ -4469,7 +4469,7 @@ public class CatalogDatabase implements Closeable {
     /**
      * Return a Network recipe that matches a given MODEL_UUID and ACTION
      *
-     * @param modelName
+     * @param networkModelUuid
      * @param action
      * @return NetworkRecipe object or null if none found
      */
@@ -4484,7 +4484,17 @@ public class CatalogDatabase implements Closeable {
         }
         
         NetworkRecipe recipe = getNetworkRecipeByNameVersion(networkResource.getModelName(), networkResource.getModelVersion(), action);
-        return recipe;        
+
+        if (recipe == null) {
+            recipe = getDefaultNetworkReceipe(action);
+        }
+
+        return recipe;
+    }
+
+    private NetworkRecipe getDefaultNetworkReceipe(String action) {
+        String modelName = "SDNC_DEFAULT";
+        return getNetworkRecipe(modelName, action);
     }
     
     /**
