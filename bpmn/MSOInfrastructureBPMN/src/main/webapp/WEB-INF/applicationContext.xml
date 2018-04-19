@@ -27,7 +27,6 @@
     <property name="dmaapTopicName" value="${eventReadyTopicName}"/>
     <property name="consumerGroup" value="${consumerGroup}"/>
     <property name="consumerId" value="${consumerId}"/>
-    <property name="dmaapClientInitialDelayInSeconds" value="${clientThreadInitialDelayInSeconds}"/>
     <property name="dmaapClientDelayInSeconds" value="${clientThreadDelayInSeconds}"/>
   </bean>
 

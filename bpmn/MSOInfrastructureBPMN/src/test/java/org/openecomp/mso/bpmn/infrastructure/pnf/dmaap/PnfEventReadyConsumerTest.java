@@ -76,7 +76,6 @@ public class PnfEventReadyConsumerTest {
         testedObject.setDmaapTopicName(EVENT_TOPIC_TEST);
         testedObject.setConsumerId(CONSUMER_ID);
         testedObject.setConsumerGroup(CONSUMER_GROUP);
-        testedObject.setDmaapClientInitialDelayInSeconds(1);
         testedObject.setDmaapClientDelayInSeconds(1);
         testedObject.init();
         httpClientMock = mock(HttpClient.class);
@@ -97,7 +96,7 @@ public class PnfEventReadyConsumerTest {
             throws IOException {
         when(httpClientMock.execute(any(HttpGet.class))).
                 thenReturn(createResponse(String.format(JSON_EXAMPLE_WITH_CORRELATION_ID, CORRELATION_ID)));
-        testedObject.run();
+        testedObject.sendRequest();
         ArgumentCaptor<HttpGet> captor1 = ArgumentCaptor.forClass(HttpGet.class);
         verify(httpClientMock).execute(captor1.capture());
         assertThat(captor1.getValue().getURI()).hasHost(HOST).hasPort(PORT).hasScheme(PROTOCOL)
@@ -120,7 +119,7 @@ public class PnfEventReadyConsumerTest {
         when(httpClientMock.execute(any(HttpGet.class))).
                 thenReturn(createResponse(
                         String.format(JSON_EXAMPLE_WITH_CORRELATION_ID, CORRELATION_ID_NOT_FOUND_IN_MAP)));
-        testedObject.run();
+        testedObject.sendRequest();
         verifyZeroInteractions(threadMockToNotifyCamundaFlow, executorMock);
     }
 
@@ -134,7 +133,7 @@ public class PnfEventReadyConsumerTest {
     public void correlationIdIsNotFoundInHttpResponse() throws IOException {
         when(httpClientMock.execute(any(HttpGet.class))).
                 thenReturn(createResponse(JSON_EXAMPLE_WITH_NO_CORRELATION_ID));
-        testedObject.run();
+        testedObject.sendRequest();
         verifyZeroInteractions(threadMockToNotifyCamundaFlow, executorMock);
     }
 

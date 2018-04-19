@@ -22,7 +22,7 @@ package org.openecomp.mso.bpmn.infrastructure.pnf.delegate;
 
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
-import org.openecomp.mso.bpmn.infrastructure.pnf.implementation.DmaapClient;
+import org.openecomp.mso.bpmn.infrastructure.pnf.dmaap.DmaapClient;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class InformDmaapClient implements JavaDelegate {
