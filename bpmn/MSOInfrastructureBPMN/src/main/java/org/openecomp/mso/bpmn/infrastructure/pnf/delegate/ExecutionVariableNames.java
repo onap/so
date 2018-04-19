@@ -23,8 +23,7 @@ package org.openecomp.mso.bpmn.infrastructure.pnf.delegate;
 @SuppressWarnings("ALL")
 public class ExecutionVariableNames {
 
-    private ExecutionVariableNames() {
-    }
+    private ExecutionVariableNames() {}
 
     public final static String CORRELATION_ID = "correlationId";
     public final static String AAI_CONTAINS_INFO_ABOUT_PNF = "aaiContainsInfoAboutPnf";

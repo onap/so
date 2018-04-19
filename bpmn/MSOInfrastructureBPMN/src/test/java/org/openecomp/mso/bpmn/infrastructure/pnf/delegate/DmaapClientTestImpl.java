@@ -21,8 +21,10 @@
 package org.openecomp.mso.bpmn.infrastructure.pnf.delegate;
 
 import org.openecomp.mso.bpmn.infrastructure.pnf.dmaap.DmaapClient;
+import java.util.Objects;
 
 public class DmaapClientTestImpl implements DmaapClient {
+
     private String correlationId;
     private Runnable informConsumer;
 
@@ -32,11 +34,26 @@ public class DmaapClientTestImpl implements DmaapClient {
         this.informConsumer = informConsumer;
     }
 
+    @Override
+    public Runnable unregister(String correlationId) {
+        if (Objects.equals(this.correlationId, correlationId)) {
+            this.correlationId = null;
+            Runnable informConsumer = this.informConsumer;
+            this.informConsumer = null;
+            return informConsumer;
+        }
+        return null;
+    }
+
     public String getCorrelationId() {
         return correlationId;
     }
 
     public Runnable getInformConsumer() {
         return informConsumer;
+    }
+
+    public boolean haveRegisteredConsumer() {
+        return correlationId != null;
     }
 }
