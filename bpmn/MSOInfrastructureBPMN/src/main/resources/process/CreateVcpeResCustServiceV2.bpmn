@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.11.3" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
-  <bpmn2:process id="CreateVcpeResCustService" name="CreateVcpeResCustService" isExecutable="true">
+  <bpmn2:process id="CreateVcpeResCustServiceV2" name="CreateVcpeResCustServiceV2" isExecutable="true">
     <bpmn2:scriptTask id="sendSyncAckResponse_ScriptTask" name="Send Sync Ack Response" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_7</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_3</bpmn2:outgoing>
@@ -592,7 +592,7 @@ CreateVcpeResCustService.validateVnfCreate(execution)]]></bpmn2:script>
   <bpmn2:error id="Error_2" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
   <bpmn2:error id="Error_1" name="java.lang.Exception" errorCode="java.lang.Exception" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="CreateVcpeResCustService">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="CreateVcpeResCustServiceV2">
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_47" bpmnElement="createVCPE_startEvent">
         <dc:Bounds x="87" y="215" width="36" height="36" />
         <bpmndi:BPMNLabel>
