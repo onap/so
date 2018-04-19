@@ -33,6 +33,7 @@ import org.junit.runner.RunWith;
 import org.openecomp.mso.db.AbstractSessionFactoryManager;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -237,8 +238,8 @@ public class RequestsDatabaseTest {
                                                   @Mocked Query query) throws Exception {
         new Expectations() {{
             sessionFactoryManager.getSessionFactory().openSession(); result = session;
-            session.createQuery("FROM OperationStatus WHERE SERVICE_ID = :service_id"); result = query;
-            query.uniqueResult(); result = new OperationStatus();
+            session.createQuery("FROM OperationStatus WHERE SERVICE_ID = :service_id" order by OPERATE_AT desc); result = query;
+            List<Object>list = query.list(); result = new OperationStatus();
         }};
         assertEquals(OperationStatus.class,
                 requestsDatabase.getOperationStatusByServiceId("123").getClass());
