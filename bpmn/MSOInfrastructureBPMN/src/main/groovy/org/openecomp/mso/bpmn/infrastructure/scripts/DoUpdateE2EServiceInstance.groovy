@@ -22,6 +22,7 @@ package org.openecomp.mso.bpmn.infrastructure.scripts;
 import static org.apache.commons.lang3.StringUtils.*;
 import groovy.xml.XmlUtil
 import groovy.json.*
+import groovy.util.XmlParser
 
 import org.openecomp.mso.bpmn.core.domain.ServiceDecomposition
 import org.openecomp.mso.bpmn.core.domain.ServiceInstance
@@ -50,11 +51,7 @@ import org.apache.commons.lang3.*
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.web.util.UriUtils;
 
-import org.w3c.dom.Document
-import org.w3c.dom.Element
-import org.w3c.dom.Node
-import org.w3c.dom.NodeList
-import org.xml.sax.InputSource
+
 /**
  * This groovy class supports the <class>DoUpdateE2EServiceInstance.bpmn</class> process.
  *
@@ -89,18 +86,12 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 	JsonUtils jsonUtil = new JsonUtils()
 
 	public void preProcessRequest (DelegateExecution execution) {
-	    //only for dug
-		execution.setVariable("isDebugLogEnabled","true")
-		execution.setVariable("unit_test", "true")
-		execution.setVariable("skipVFC", "true")
-		
-		def method = getClass().getSimpleName() + '.preProcessRequest(' +'execution=' + execution.getId() +')'
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
+		
+		def method = getClass().getSimpleName() + '.preProcessRequest(' +'execution=' + execution.getId() +')'		
 		utils.log("INFO","Entered " + method, isDebugEnabled)
 		String msg = ""
 		utils.log("INFO"," ***** Enter DoUpdateE2EServiceInstance preProcessRequest *****",  isDebugEnabled)
-		
-		utils.log("INFO","  unit test : " + execution.getVariable("unit_test"),  isDebugEnabled)	
 
 		try {
 			execution.setVariable("prefix", Prefix)
@@ -139,89 +130,28 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 			if (productFamilyId == null) {
 				execution.setVariable("productFamilyId", "")
 			}
-			
-			String sdncCallbackUrl = execution.getVariable('URN_mso_workflow_sdncadapter_callback')
-			if (isBlank(sdncCallbackUrl)) {
-				msg = "URN_mso_workflow_sdncadapter_callback is null"
-				utils.log("INFO", msg, isDebugEnabled)
-				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-			}
-			execution.setVariable("sdncCallbackUrl", sdncCallbackUrl)
-			utils.log("INFO","SDNC Callback URL: " + sdncCallbackUrl, isDebugEnabled)
 
-			//requestDetails.modelInfo.for AAI PUT servieInstanceData 			
-			//requestDetails.requestInfo. for AAI GET/PUT serviceInstanceData 
 			String serviceInstanceName = execution.getVariable("serviceInstanceName")
-			//String serviceInstanceId = execution.getVariable("serviceInstanceId")
 			String uuiRequest = execution.getVariable("uuiRequest")
 			utils.log("INFO","uuiRequest: " + uuiRequest, isDebugEnabled)
 			
-			String modelInvariantUuid = jsonUtil.getJsonValue(uuiRequest, "service.serviceDefId")
+			String modelInvariantUuid = jsonUtil.getJsonValue(uuiRequest, "service.serviceInvariantUuid")
 			utils.log("INFO","modelInvariantUuid: " + modelInvariantUuid, isDebugEnabled)
+			execution.setVariable("modelInvariantUuid", modelInvariantUuid)
+			execution.setVariable("model-invariant-id-target", modelInvariantUuid)
 			
-			String modelUuid = jsonUtil.getJsonValue(uuiRequest, "service.templateId")
+			String modelUuid = jsonUtil.getJsonValue(uuiRequest, "service.serviceUuid")
 			utils.log("INFO","modelUuid: " + modelUuid, isDebugEnabled)
+			execution.setVariable("modelUuid", modelUuid)
+			execution.setVariable("model-version-id-target", modelUuid)
 			
 			String serviceModelName = jsonUtil.getJsonValue(uuiRequest, "service.parameters.templateName")
 			utils.log("INFO","serviceModelName: " + serviceModelName, isDebugEnabled)
-			execution.setVariable("serviceModelName", serviceModelName)
-			
-            //aai serviceType and Role can be setted as fixed value now.
-			String aaiServiceType = serviceType
-			String aaiServiceRole = serviceType+"Role"
-			
-			execution.setVariable("modelInvariantUuid", modelInvariantUuid)
-			execution.setVariable("model-invariant-id-target", modelInvariantUuid)
-			execution.setVariable("modelUuid", modelUuid)
-			execution.setVariable("model-version-id-target", modelUuid)
-
-			//AAI PUT
-			String oStatus = execution.getVariable("initialStatus") ?: ""
-			utils.log("INFO","oStatus: " + oStatus, isDebugEnabled)
-			if ("TRANSPORT".equalsIgnoreCase(serviceType))
-			{
-				oStatus = "Update"
+			if(serviceModelName == null) {
+				serviceModelName = ""
 			}
-
-			String statusLine = isBlank(oStatus) ? "" : "<orchestration-status>${oStatus}</orchestration-status>"
-			utils.log("INFO","statusLine: " + statusLine, isDebugEnabled)	
-			AaiUtil aaiUriUtil = new AaiUtil(this)
-			utils.log("INFO","start create aai uri: " + aaiUriUtil, isDebugEnabled)	
-			String aai_uri = aaiUriUtil.getBusinessCustomerUri(execution)
-			utils.log("INFO","aai_uri: " + aai_uri, isDebugEnabled)
-			String namespace = aaiUriUtil.getNamespaceFromUri(aai_uri)
-			utils.log("INFO","namespace: " + namespace, isDebugEnabled)
-			/*
-			String serviceInstanceData =
-					"""<service-instance xmlns=\"${namespace}\">
-			        <service-instance-id>${serviceInstanceId}</service-instance-id>
-			        <service-instance-name>${serviceInstanceName}</service-instance-name>
-					<service-type>${aaiServiceType}</service-type>
-					<service-role>${aaiServiceRole}</service-role>
-					${statusLine}
-				    <model-invariant-id>${modelInvariantUuid}</model-invariant-id>
-				    <model-version-id>${modelUuid}</model-version-id>
-					</service-instance>""".trim()
-            */
-            //begin only for test
-			String serviceInstanceData =
-					"""<service-instance xmlns=\"${namespace}\">
-			        <service-instance-id>${serviceInstanceId}</service-instance-id>
-			        <service-instance-name>${serviceInstanceName}</service-instance-name>
-					<service-type>${aaiServiceType}</service-type>
-					<service-role>${aaiServiceRole}</service-role>
-					${statusLine}
-					</service-instance>""".trim()
-			//end only for test
-			execution.setVariable("serviceInstanceData", serviceInstanceData)
-			utils.log("INFO","serviceInstanceData: " + serviceInstanceData, isDebugEnabled)
-			utils.logAudit(serviceInstanceData)
-			utils.log("INFO", " aai_uri " + aai_uri + " namespace:" + namespace, isDebugEnabled)
-			utils.log("INFO", " 'payload' to create Service Instance in AAI - " + "\n" + serviceInstanceData, isDebugEnabled)
-			
-			execution.setVariable("serviceSDNCCreate", "false")
-			execution.setVariable("operationStatus", "Waiting deploy resource...")			
-
+			execution.setVariable("serviceModelName", serviceModelName)
+				
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception ex){
@@ -253,101 +183,38 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 					utils.log("INFO", msg, isDebugEnabled)
 					exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 				}
-				else
-				{
-					utils.log("INFO", "SI Data" + siData, isDebugEnabled)
-					
-					InputSource source = new InputSource(new StringReader(siData));
-					DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-					DocumentBuilder docBuilder = docFactory.newDocumentBuilder()
-					Document serviceXml = docBuilder.parse(source)
-					serviceXml.getDocumentElement().normalize()
-					
-					// Get Template uuid and version
-					if (utils.nodeExists(siData, "model-invariant-id") && utils.nodeExists(siData, "model-version-id") ) {
-					    utils.log("INFO", "SI Data model-invariant-id and model-version-id exist:", isDebugEnabled)
-					    def modelInvariantId  = serviceXml.getElementsByTagName("model-invariant-id").item(0).getTextContent()
-					    def modelVersionId  = serviceXml.getElementsByTagName("model-version-id").item(0).getTextContent()
-					    
-					    // Set Original Template info
-					    execution.setVariable("model-invariant-id-original", modelInvariantId)
-					    execution.setVariable("model-version-id-original", modelVersionId)					
+
+				utils.log("INFO", "SI Data" + siData, isDebugEnabled)				
+
+				// Get Template uuid and version
+				if (utils.nodeExists(siData, "model-invariant-id") && utils.nodeExists(siData, "model-version-id") ) {
+					utils.log("INFO", "SI Data model-invariant-id and model-version-id exist:", isDebugEnabled)
+
+					def modelInvariantId  = utils.getNodeText1(siData, "model-invariant-id")
+					def modelVersionId  = utils.getNodeText1(siData, "model-version-id")
+
+					// Set Original Template info
+					execution.setVariable("model-invariant-id-original", modelInvariantId)
+					execution.setVariable("model-version-id-original", modelVersionId)
+				}
+				
+				//get related service instances (vnf/network or volume) for delete
+				if (utils.nodeExists(siData, "relationship-list")) {
+					utils.log("INFO", "SI Data relationship-list exists:", isDebugEnabled)
+
+					JSONArray jArray = new JSONArray()
+
+					XmlParser xmlParser = new XmlParser()
+					Node root = xmlParser.parseText(siData)
+					def relation_list = utils.getChildNode(root, 'relationship-list')
+					def relationships = utils.getIdenticalChildren(relation_list, 'relationship')					
+
+					for (def relation: relationships) {
+						def jObj = getRelationShipData(relation, isDebugEnabled)
+						jArray.put(jObj)
 					}
-					
-					//Confirm there are no related service instances (vnf/network or volume)
-					if (utils.nodeExists(siData, "relationship-list")) {
-						utils.log("INFO", "SI Data relationship-list exists:", isDebugEnabled)
-						
-						//test(siData)
-						NodeList nodeList = serviceXml.getElementsByTagName("relationship")
-	                    JSONArray jArray = new JSONArray()
-						for (int x = 0; x < nodeList.getLength(); x++) {
-							Node node = nodeList.item(x)
-							if (node.getNodeType() == Node.ELEMENT_NODE) {
-								Element eElement = (Element) node
-								def e = eElement.getElementsByTagName("related-to").item(0).getTextContent()    								//for ns
-								if(e.equals("service-instance")){
-								    def relatedObject = eElement.getElementsByTagName("related-link").item(0).getTextContent()
-									utils.log("INFO", "ServiceInstance Related NS :" + relatedObject, isDebugEnabled)
-                                    NodeList dataList = node.getChildNodes()
-                                    if(null != dataList) {
-                                        JSONObject jObj = new JSONObject()
-                                        for (int i = 0; i < dataList.getLength(); i++) {
-                                            Node dNode = dataList.item(i)
-                                            if(dNode.getNodeName() == "relationship-data") {
-                                                Element rDataEle = (Element)dNode
-                                                def eKey =  rDataEle.getElementsByTagName("relationship-key").item(0).getTextContent()
-                                                def eValue = rDataEle.getElementsByTagName("relationship-value").item(0).getTextContent()
-                                                if(eKey.equals("service-instance.service-instance-id")){
-                                                    jObj.put("resourceInstanceId", eValue)
-                                                }
-                                            }
-                                            else if(dNode.getNodeName() == "related-to-property"){
-                                                 Element rDataEle = (Element)dNode
-                                                 def eKey =  rDataEle.getElementsByTagName("property-key").item(0).getTextContent()
-                                                 def eValue = rDataEle.getElementsByTagName("property-value").item(0).getTextContent()
-                                                 if(eKey.equals("service-instance.service-instance-name")){
-                                                        jObj.put("resourceType", eValue)
-                                                    }
-                                            }
-                                        }
-                                        utils.log("INFO", "Relationship related to Resource:" + jObj.toString(), isDebugEnabled)
-                                        jArray.put(jObj)
-                                    }
-						        //for overlay/underlay
-								}else if (e.equals("configuration")){
-                                    def relatedObject = eElement.getElementsByTagName("related-link").item(0).getTextContent()
-                                    utils.log("INFO", "ServiceInstance Related Configuration :" + relatedObject, isDebugEnabled)
-									NodeList dataList = node.getChildNodes()
-									if(null != dataList) {
-										JSONObject jObj = new JSONObject()
-										for (int i = 0; i < dataList.getLength(); i++) {
-											Node dNode = dataList.item(i)
-											if(dNode.getNodeName() == "relationship-data") {
-												Element rDataEle = (Element)dNode
-												def eKey =  rDataEle.getElementsByTagName("relationship-key").item(0).getTextContent()
-												def eValue = rDataEle.getElementsByTagName("relationship-value").item(0).getTextContent()
-												if(eKey.equals("configuration.configuration-id")){
-												    jObj.put("resourceInstanceId", eValue)
-												}
-											}
-											else if(dNode.getNodeName() == "related-to-property"){
-	                                             Element rDataEle = (Element)dNode
-	                                             def eKey =  rDataEle.getElementsByTagName("property-key").item(0).getTextContent()
-	                                             def eValue = rDataEle.getElementsByTagName("property-value").item(0).getTextContent()
-	                                             if(eKey.equals("configuration.configuration-type")){
-	                                                    jObj.put("resourceType", eValue)
-	                                                }
-											}
-										}
-										utils.log("INFO", "Relationship related to Resource:" + jObj.toString(), isDebugEnabled)
-                                        jArray.put(jObj)
-									}									
-								}
-							}
-						}
-                        execution.setVariable("serviceRelationShip", jArray.toString())
-					}
+
+					execution.setVariable("serviceRelationShip", jArray.toString())
 				}
 			}else{
 				boolean succInAAI = execution.getVariable("GENGS_SuccessIndicator")
@@ -378,6 +245,42 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		utils.log("INFO"," *** Exit postProcessAAIGET *** ", isDebugEnabled)
 	}
 	
+	private JSONObject getRelationShipData(node, isDebugEnabled){		
+		JSONObject jObj = new JSONObject()
+		
+		def relation  = utils.nodeToString(node)
+		def rt  = utils.getNodeText1(relation, "related-to")
+		
+		def rl  = utils.getNodeText1(relation, "related-link")
+		utils.log("INFO", "ServiceInstance Related NS/Configuration :" + rl, isDebugEnabled)
+		
+		def rl_datas = utils.getIdenticalChildren(node, "relationship-data")	
+		for(def rl_data : rl_datas) {
+			def eKey =  utils.getChildNodeText(rl_data, "relationship-key")
+			def eValue = utils.getChildNodeText(rl_data, "relationship-value")
+
+			if ((rt == "service-instance" && eKey.equals("service-instance.service-instance-id"))
+			//for overlay/underlay
+			|| (rt == "configuration" && eKey.equals("configuration.configuration-id"))){
+				jObj.put("resourceInstanceId", eValue)
+			}
+		}
+
+		def rl_props = utils.getIdenticalChildren(node, "related-to-property")
+		for(def rl_prop : rl_props) {
+			def eKey =  utils.getChildNodeText(rl_prop, "property-key")
+			def eValue = utils.getChildNodeText(rl_prop, "property-value")
+			if((rt == "service-instance" && eKey.equals("service-instance.service-instance-name"))
+			//for overlay/underlay
+			|| (rt == "configuration" && eKey.equals("configuration.configuration-type"))){
+				jObj.put("resourceType", eValue)
+			}
+		}
+
+		utils.log("INFO", "Relationship related to Resource:" + jObj.toString(), isDebugEnabled)		
+
+		return jObj
+	}
 	
 	public void preInitResourcesOperStatus(DelegateExecution execution){
         def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
@@ -400,7 +303,7 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 
 			List<Resource> resourceList = new ArrayList<String>()
 			List<Resource> addResourceList =  execution.getVariable("addResourceList")
-			List<Resource> delResourceList =  execution.setVariable("delResourceList")
+			List<Resource> delResourceList =  execution.getVariable("delResourceList")
 			resourceList.addAll(addResourceList)
 			resourceList.addAll(delResourceList)
 			for(Resource resource : resourceList){
@@ -520,27 +423,39 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
     
     public void preProcessForAddResource(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-
+		utils.log("INFO"," ***** preProcessForAddResource ***** ", isDebugEnabled)
+		
+	    execution.setVariable("operationType", "create")
+	
+		utils.log("INFO"," *** Exit preProcessForAddResource *** ", isDebugEnabled)
     }
 
     public void postProcessForAddResource(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO"," ***** postProcessForAddResource ***** ", isDebugEnabled)
 		
-		ServiceDecomposition serviceDecomposition_Target = execution.getVariable("serviceDecomposition_Target")
-		execution.setVariable("serviceDecomposition", serviceDecomposition_Target)
-    
+		execution.setVariable("operationType", "update")
+
 		utils.log("INFO"," *** Exit postProcessForAddResource *** ", isDebugEnabled)
     }
     
     public void preProcessForDeleteResource(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+		utils.log("INFO"," ***** preProcessForDeleteResource ***** ", isDebugEnabled)
+		
+		execution.setVariable("operationType", "delete")
+		
+		utils.log("INFO"," *** Exit preProcessForDeleteResource *** ", isDebugEnabled)
 
     }
 
     public void postProcessForDeleteResource(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-    
+		utils.log("INFO"," ***** postProcessForDeleteResource ***** ", isDebugEnabled)
+		
+		execution.setVariable("operationType", "update")
+
+		utils.log("INFO"," *** Exit postProcessForDeleteResource *** ", isDebugEnabled)
     } 
     
 	public void preProcessAAIGET2(DelegateExecution execution) {

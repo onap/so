@@ -109,8 +109,8 @@ public class UpdateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 
 			utils.log("INFO", "uuiRequest:\n" + uuiRequest,  isDebugEnabled)
 
-			//requestParameters
-			String serviceType = jsonUtil.getJsonValue(uuiRequest, "service.parameters.serviceType")
+			//serviceType for aai
+			String serviceType = jsonUtil.getJsonValue(uuiRequest, "service.serviceType")
 			if (isBlank(serviceType)) {
 				msg = "Input serviceType is null"
 				utils.log("INFO", msg, isDebugEnabled)
@@ -118,6 +118,29 @@ public class UpdateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			} else {
 				execution.setVariable("serviceType", serviceType)
 			}
+			
+			/*
+			 * Extracting User Parameters from incoming Request and converting into a Map
+			 */
+			def jsonSlurper = new JsonSlurper()
+			def jsonOutput = new JsonOutput()
+
+			Map reqMap = jsonSlurper.parseText(siRequest)
+
+			//InputParams
+			def userParamsList = reqMap.requestDetails?.requestParameters?.userParams
+
+			Map<String, String> inputMap = [:]
+			if (userParamsList) {
+				for (def i=0; i<userParamsList.size(); i++) {
+					def userParams1 = userParamsList.get(i)
+					userParams1.each { param -> inputMap.put(param.key, param.value)}
+				}
+			}
+			
+			utils.log("DEBUG", "User Input Parameters map: " + inputMap.toString(), isDebugEnabled)
+			execution.setVariable("serviceInputParams", inputMap)
+			execution.setVariable("uuiRequest", inputMap.get("UUIRequest"))
 			
 			//operationId
 			String operationId = jsonUtil.getJsonValue(siRequest, "operationId")
@@ -147,7 +170,7 @@ public class UpdateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 		utils.log("DEBUG", " ======== STARTED prepareInitServiceOperationStatus Process ======== ", isDebugEnabled)
 		try{
 			String serviceId = execution.getVariable("serviceInstanceId")
-			String operationId = UUID.randomUUID().toString()
+			String operationId = execution.getVariable("operationId")
 			String operationType = execution.getVariable("operationType")
 			String userId = ""
 			String result = "processing"
@@ -202,9 +225,9 @@ public class UpdateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			String operationId = execution.getVariable("operationId")
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
 			// RESTResponse for API Handler (APIH) Reply Task
-			String updateServiceRestRequest = """{"service":{"serviceId":"${serviceInstanceId}","operationId":"${operationId}"}}""".trim()
-			utils.log("INFO", " sendSyncResponse to APIH:" + "\n" + updateServiceRestRequest, isDebugEnabled)
-			sendWorkflowResponse(execution, 202, updateServiceRestRequest)
+			String updateServiceResp = """{"operationId":"${operationId}"}""".trim()
+			utils.log("INFO", " sendSyncResponse to APIH:" + "\n" + updateServiceResp, isDebugEnabled)
+			sendWorkflowResponse(execution, 202, updateServiceResp)
 			execution.setVariable("sentSyncResponse", true)
 
 		} catch (Exception ex) {
