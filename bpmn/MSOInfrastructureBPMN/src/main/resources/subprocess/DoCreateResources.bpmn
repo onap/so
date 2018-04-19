@@ -20,7 +20,7 @@ def csi = new  DoCreateResources()
 csi.postConfigRequest(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:serviceTask id="Task_0io5qby" name="Call Sync SDNC service Create " camunda:class="org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.SdncServiceTopologyOperationTask">
-      <bpmn2:incoming>SequenceFlow_1vprtt9</bpmn2:incoming>
+      <bpmn2:incoming>SequenceFlow_0k0f7lm</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_11f2zuu</bpmn2:outgoing>
     </bpmn2:serviceTask>
     <bpmn2:sequenceFlow id="SequenceFlow_11f2zuu" sourceRef="Task_0io5qby" targetRef="IntermediateThrowEvent_0f2w7aj" />
@@ -85,7 +85,7 @@ ddsi.executeResourceRecipe(execution)]]></bpmn2:script>
       <bpmn2:incoming>SequenceFlow_11f2zuu</bpmn2:incoming>
       <bpmn2:linkEventDefinition name="ResourceLoop" />
     </bpmn2:intermediateThrowEvent>
-    <bpmn2:sequenceFlow id="SequenceFlow_1vprtt9" name="yes" sourceRef="ExclusiveGateway_07rr3wp" targetRef="Task_0io5qby">
+    <bpmn2:sequenceFlow id="SequenceFlow_1vprtt9" name="yes" sourceRef="ExclusiveGateway_07rr3wp" targetRef="Task_1blaq0f">
       <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{(execution.getVariable("isContainsWanResource" )  == "true" )}]]></bpmn2:conditionExpression>
     </bpmn2:sequenceFlow>
     <bpmn2:intermediateCatchEvent id="IntermediateCatchEvent_05dus9b" name="StartPrepareResource">
@@ -126,6 +126,14 @@ ex.processJavaException(execution)]]></bpmn2:script>
       <bpmn2:sequenceFlow id="SequenceFlow_0gr9xqj" name="" sourceRef="StartEvent_0x7o2ug" targetRef="ScriptTask_1648adp" />
       <bpmn2:sequenceFlow id="SequenceFlow_0a6l29p" name="" sourceRef="ScriptTask_1648adp" targetRef="EndEvent_0lgdyyb" />
     </bpmn2:subProcess>
+    <bpmn2:scriptTask id="Task_1blaq0f" name="Prepare SDNC service Create" scriptFormat="groovy">
+      <bpmn2:incoming>SequenceFlow_1vprtt9</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_0k0f7lm</bpmn2:outgoing>
+      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
+def ddsi = new DoCreateResources()
+ddsi.prepareServiceTopologyRequest(execution)]]></bpmn2:script>
+    </bpmn2:scriptTask>
+    <bpmn2:sequenceFlow id="SequenceFlow_0k0f7lm" sourceRef="Task_1blaq0f" targetRef="Task_0io5qby" />
   </bpmn2:process>
   <bpmn2:error id="Error_2" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
   <bpmn2:error id="Error_1" name="java.lang.Exception" errorCode="java.lang.Exception" />
@@ -144,15 +152,15 @@ ex.processJavaException(execution)]]></bpmn2:script>
         <dc:Bounds x="1119" y="485" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_0qi8cgg_di" bpmnElement="Task_0io5qby">
-        <dc:Bounds x="944" y="353" width="100" height="80" />
+        <dc:Bounds x="1047" y="353" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_11f2zuu_di" bpmnElement="SequenceFlow_11f2zuu">
-        <di:waypoint xsi:type="dc:Point" x="1044" y="393" />
-        <di:waypoint xsi:type="dc:Point" x="1090" y="393" />
-        <di:waypoint xsi:type="dc:Point" x="1090" y="300" />
+        <di:waypoint xsi:type="dc:Point" x="1147" y="393" />
+        <di:waypoint xsi:type="dc:Point" x="1219" y="393" />
+        <di:waypoint xsi:type="dc:Point" x="1219" y="300" />
         <di:waypoint xsi:type="dc:Point" x="1315" y="300" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1060" y="340.5" width="90" height="12" />
+          <dc:Bounds x="1189" y="340.5" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_1y0los4_di" bpmnElement="ScriptTask_1y0los4">
@@ -243,7 +251,7 @@ ex.processJavaException(execution)]]></bpmn2:script>
       <bpmndi:BPMNEdge id="SequenceFlow_1vprtt9_di" bpmnElement="SequenceFlow_1vprtt9">
         <di:waypoint xsi:type="dc:Point" x="778" y="325" />
         <di:waypoint xsi:type="dc:Point" x="778" y="393" />
-        <di:waypoint xsi:type="dc:Point" x="944" y="393" />
+        <di:waypoint xsi:type="dc:Point" x="861" y="394" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="784" y="353" width="20" height="12" />
         </bpmndi:BPMNLabel>
@@ -345,6 +353,16 @@ ex.processJavaException(execution)]]></bpmn2:script>
         <di:waypoint xsi:type="dc:Point" x="700" y="903" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="567.5" y="888" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_0dh2mj1_di" bpmnElement="Task_1blaq0f">
+        <dc:Bounds x="861" y="354" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0k0f7lm_di" bpmnElement="SequenceFlow_0k0f7lm">
+        <di:waypoint xsi:type="dc:Point" x="961" y="394" />
+        <di:waypoint xsi:type="dc:Point" x="1047" y="393" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1004" y="372.5" width="0" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
