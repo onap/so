@@ -22,6 +22,30 @@
       "revId": "8743f5be48b032046406513f0b49f92a949ef73a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_5a843d0a",
+        "filename": "common/src/main/java/org/openecomp/mso/client/aai/AAIRestClientImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 801
+      },
+      "writtenOn": "2018-04-19T09:05:57Z",
+      "side": 1,
+      "message": "Agree Steve. Have changed and committed the code again\nhttps://gerrit.onap.org/r/#/c/43705/",
+      "parentUuid": "5a93c517_7d525cdf",
+      "range": {
+        "startLine": 173,
+        "startChar": 18,
+        "endLine": 173,
+        "endChar": 21
+      },
+      "revId": "8743f5be48b032046406513f0b49f92a949ef73a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
