@@ -381,7 +381,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 				return Integer.valueOf(inputValue);
 			}
 			catch (Exception e) {
-				LOGGER.debug("Unable to convert " + inputValue + " to an integer!");
+				LOGGER.debug("Unable to convert " + inputValue + " to an integer!" , e);
 				return null;
 			}
 		} else if (type.equalsIgnoreCase("json")) {
@@ -390,7 +390,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 				return jsonNode;
 			}
 			catch (Exception e) {
-				LOGGER.debug("Unable to convert " + inputValue + " to a JsonNode!");
+				LOGGER.debug("Unable to convert " + inputValue + " to a JsonNode!", e);
 				return null;
 			}
 		} else if (type.equalsIgnoreCase("boolean")) {
@@ -411,28 +411,28 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
             		String str = "" + stackOutputs.get(key);
             		stringOutputs.put(key, str);
             	} catch (Exception e) {
-            		LOGGER.debug("Unable to add " + key + " to outputs");
+            		LOGGER.debug("Unable to add " + key + " to outputs", e);
             	}
             } else if (stackOutputs.get(key) instanceof JsonNode) {
             	try {
             		String str = this.convertNode((JsonNode) stackOutputs.get(key));
             		stringOutputs.put(key, str);
             	} catch (Exception e) {
-            		LOGGER.debug("Unable to add " + key + " to outputs - exception converting JsonNode");
+            		LOGGER.debug("Unable to add " + key + " to outputs - exception converting JsonNode", e);
             	}
             } else if (stackOutputs.get(key) instanceof java.util.LinkedHashMap) {
             	try {
 					String str = JSON_MAPPER.writeValueAsString(stackOutputs.get(key));
             		stringOutputs.put(key, str);
             	} catch (Exception e) {
-            		LOGGER.debug("Unable to add " + key + " to outputs - exception converting LinkedHashMap");
+            		LOGGER.debug("Unable to add " + key + " to outputs - exception converting LinkedHashMap", e);
             	}
             } else {
             	try {
             		String str = stackOutputs.get(key).toString();
             		stringOutputs.put(key, str);
             	} catch (Exception e) {
-            		LOGGER.debug("Unable to add " + key + " to outputs - unable to call .toString() " + e.getMessage());
+            		LOGGER.debug("Unable to add " + key + " to outputs - unable to call .toString() " + e.getMessage(), e);
             	}
             }
         }
@@ -510,7 +510,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
                         String str = this.convertNode((JsonNode) obj);
                         stringMap.put(key, str);
                     } catch (Exception e) {
-						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value for JsonNode "+ key);
+						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value for JsonNode "+ key, e);
                         //okay in this instance - only string values (fqdn) are expected to be needed
                     }
                 } else if (obj instanceof java.util.LinkedHashMap) {
@@ -519,21 +519,21 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
                         String str = JSON_MAPPER.writeValueAsString(obj);
                         stringMap.put(key, str);
                     } catch (Exception e) {
-						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value for LinkedHashMap "+ key);
+						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value for LinkedHashMap "+ key, e);
 					}
 				}  else if (obj instanceof Integer) {
 					try {
 						String str = "" + obj;
 						stringMap.put(key, str);
 					} catch (Exception e) {
-						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value for Integer "+ key);
+						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value for Integer "+ key, e);
                     }
                 } else {
                     try {
 						String str = obj.toString();
                         stringMap.put(key, str);
                     } catch (Exception e) {
-						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value "+ key + " (" + e.getMessage() + ")");
+						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value "+ key + " (" + e.getMessage() + ")", e);
                     }
                 }
             }
