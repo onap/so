@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_9a53a516",
+        "filename": "bpmn/MSOInfrastructureBPMN/src/main/groovy/org/openecomp/mso/bpmn/infrastructure/scripts/DoCreateResources.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 224,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2018-04-19T04:13:57Z",
+      "side": 1,
+      "message": "this is set by the API handler\nreturn processE2EserviceInstances(request, Action.createInstance, null,\n\t\t\t\tversion);\n\nAction.createInstance is propagated as request action -\u003e operationType.",
+      "range": {
+        "startLine": 221,
+        "startChar": 0,
+        "endLine": 224,
+        "endChar": 42
+      },
+      "revId": "fc1fbd456e3a2d9e4619d01452c45f985337564f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
