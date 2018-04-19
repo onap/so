@@ -643,13 +643,17 @@ public class RequestsDatabase {
         msoLogger.debug("Execute query on infra active request table");
 
         OperationStatus operStatus = null;
+        List<Object> list = null;
         Session session = sessionFactoryRequestDB.getSessionFactory().openSession();
         try {
             session.beginTransaction();
-            String hql = "FROM OperationStatus WHERE SERVICE_ID = :service_id";
+            String hql = "FROM OperationStatus WHERE SERVICE_ID = :service_id order by OPERATE_AT desc";
             Query query = session.createQuery(hql);
             query.setParameter("service_id", serviceId);
-            operStatus = (OperationStatus)query.uniqueResult();
+            list = query.list();
+            if(list != null && list.size() >= 1) {
+            	operStatus = (OperationStatus) list.get(0);
+            }
 
         } finally {
             if(session != null && session.isOpen()) {
