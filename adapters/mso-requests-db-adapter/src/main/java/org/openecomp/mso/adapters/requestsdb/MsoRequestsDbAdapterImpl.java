@@ -311,6 +311,7 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
         operStatus.setOperation(operationType);
         operStatus.setReason(reason);
         operStatus.setProgress(progress);
+        operStatus.setResult(result);
         operStatus.setOperationContent(operationContent);
         RequestsDatabase.getInstance().updateOperationStatus(operStatus);
     }
