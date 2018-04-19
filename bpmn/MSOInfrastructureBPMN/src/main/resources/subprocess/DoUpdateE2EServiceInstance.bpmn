@@ -30,16 +30,18 @@ csi.preProcessForAddResource(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:callActivity id="Task_1wyyy33" name="Call DoCreateResources" calledElement="DoCreateResources">
       <bpmn2:extensionElements>
-        <camunda:in source="nsServiceName" target="nsServiceName" />
-        <camunda:in source="nsServiceDescription" target="nsServiceDescription" />
+        <camunda:in source="serviceInstanceName" target="serviceInstanceName" />
+        <camunda:in source="serviceDescription" target="nsServiceDescription" />
+        <camunda:in source="serviceInstanceId" target="serviceInstanceId" />
         <camunda:in source="globalSubscriberId" target="globalSubscriberId" />
         <camunda:in source="serviceType" target="serviceType" />
-        <camunda:in source="serviceId" target="serviceId" />
+        <camunda:in source="msoRequestId" target="msoRequestId" />
         <camunda:in source="operationId" target="operationId" />
         <camunda:in source="resourceType" target="resourceType" />
-        <camunda:in source="resourceUUID" target="resourceUUID" />
-        <camunda:in source="resourceParameters" target="resourceParameters" />
+        <camunda:in source="uuiRequest" target="uuiRequest" />
+        <camunda:in source="serviceDecomposition_Target" target="serviceDecomposition" />
         <camunda:in source="operationType" target="operationType" />
+        <camunda:in source="addResourceList" target="addResourceList" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_0yztz2p</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0lblyhi</bpmn2:outgoing>
@@ -71,16 +73,16 @@ csi.preProcessForDeleteResource(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:callActivity id="CallActivity_0yphqzk" name="Call DoDeleteResources" calledElement="DoDeleteResources">
       <bpmn2:extensionElements>
-        <camunda:in source="nsServiceName" target="nsServiceName" />
-        <camunda:in source="nsServiceDescription" target="nsServiceDescription" />
+        <camunda:in source="serviceInstanceName" target="serviceInstanceName" />
+        <camunda:in source="serviceInstanceId" target="serviceInstanceId" />
         <camunda:in source="globalSubscriberId" target="globalSubscriberId" />
         <camunda:in source="serviceType" target="serviceType" />
         <camunda:in source="serviceId" target="serviceId" />
         <camunda:in source="operationId" target="operationId" />
-        <camunda:in source="resourceType" target="resourceType" />
-        <camunda:in source="resourceUUID" target="resourceUUID" />
-        <camunda:in source="resourceParameters" target="resourceParameters" />
+        <camunda:in source="serviceDecomposition_Original" target="serviceDecomposition" />
         <camunda:in source="operationType" target="operationType" />
+        <camunda:in source="delResourceList" target="delResourceList" />
+        <camunda:in source="serviceRelationShip" target="serviceRelationShip" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_14rubz2</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0tm9bw9</bpmn2:outgoing>
@@ -121,6 +123,18 @@ ddsi.preCompareModelVersions(execution)]]></bpmn2:script>
     <bpmn2:sequenceFlow id="SequenceFlow_1vtlt1v" sourceRef="IntermediateCatchEvent_0gk8ige" targetRef="ScriptTask_1afvv50" />
     <bpmn2:sequenceFlow id="SequenceFlow_0h40pn8" sourceRef="ScriptTask_1afvv50" targetRef="ServiceTask_02u5iza" />
     <bpmn2:callActivity id="ServiceTask_02u5iza" name="Call DoCompareModelVersions" calledElement="DoCompareModelVersions">
+      <bpmn2:extensionElements>
+        <camunda:in source="msoRequestId" target="msoRequestId" />
+        <camunda:in source="isDebugLogEnabled" target="isDebugLogEnabled" />
+        <camunda:in source="model-invariant-id-target" target="model-invariant-id-target" />
+        <camunda:in source="model-version-id-target" target="model-version-id-target" />
+        <camunda:in source="model-invariant-id-original" target="model-invariant-id-original" />
+        <camunda:in source="model-version-id-original" target="model-version-id-original" />
+        <camunda:out source="serviceDecomposition_Target" target="serviceDecomposition_Target" />
+        <camunda:out source="serviceDecomposition_Original" target="serviceDecomposition_Original" />
+        <camunda:out source="addResourceList" target="addResourceList" />
+        <camunda:out source="delResourceList" target="delResourceList" />
+      </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_0h40pn8</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_02d5ibj</bpmn2:outgoing>
     </bpmn2:callActivity>
@@ -284,17 +298,6 @@ ddsi.preUpdateServiceOperationStatus(execution)]]></bpmn2:script>
       <bpmn2:endEvent id="EndEvent_014jyvb">
         <bpmn2:incoming>SequenceFlow_02znk15</bpmn2:incoming>
       </bpmn2:endEvent>
-      <bpmn2:callActivity id="CallActivity_1lu6rx0" name="Call DoUpdateE2EServiceInstanceRollback" calledElement="DoUpdateE2EServiceInstanceRollback">
-        <bpmn2:extensionElements>
-          <camunda:in source="msoRequestId" target="mso-request-id" />
-          <camunda:in source="rollbackData" target="rollbackData" />
-          <camunda:out source="rolledBack" target="rolledBack" />
-          <camunda:in source="disableRollback" target="disableRollback" />
-          <camunda:out source="rollbackError" target="rollbackErrror" />
-        </bpmn2:extensionElements>
-        <bpmn2:incoming>SequenceFlow_19ly8h7</bpmn2:incoming>
-        <bpmn2:outgoing>SequenceFlow_0jsdqmq</bpmn2:outgoing>
-      </bpmn2:callActivity>
       <bpmn2:scriptTask id="ScriptTask_1awrp72" name="Pre Process Rollback" scriptFormat="groovy">
         <bpmn2:incoming>SequenceFlow_05j3sat</bpmn2:incoming>
         <bpmn2:outgoing>SequenceFlow_19ly8h7</bpmn2:outgoing>
@@ -304,7 +307,7 @@ dcsi.preProcessRollback(execution)
 ]]></bpmn2:script>
       </bpmn2:scriptTask>
       <bpmn2:scriptTask id="ScriptTask_0vc9jgo" name="Post Process Rollback" scriptFormat="groovy">
-        <bpmn2:incoming>SequenceFlow_0jsdqmq</bpmn2:incoming>
+        <bpmn2:incoming>SequenceFlow_0utvwkh</bpmn2:incoming>
         <bpmn2:outgoing>SequenceFlow_02znk15</bpmn2:outgoing>
         <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
 def dcsi = new DoCreateResources()
@@ -313,8 +316,39 @@ dcsi.postProcessRollback(execution)
       </bpmn2:scriptTask>
       <bpmn2:sequenceFlow id="SequenceFlow_05j3sat" sourceRef="StartEvent_06768u3" targetRef="ScriptTask_1awrp72" />
       <bpmn2:sequenceFlow id="SequenceFlow_02znk15" sourceRef="ScriptTask_0vc9jgo" targetRef="EndEvent_014jyvb" />
-      <bpmn2:sequenceFlow id="SequenceFlow_19ly8h7" sourceRef="ScriptTask_1awrp72" targetRef="CallActivity_1lu6rx0" />
-      <bpmn2:sequenceFlow id="SequenceFlow_0jsdqmq" sourceRef="CallActivity_1lu6rx0" targetRef="ScriptTask_0vc9jgo" />
+      <bpmn2:sequenceFlow id="SequenceFlow_19ly8h7" sourceRef="ScriptTask_1awrp72" targetRef="ScriptTask_1bb9adn" />
+      <bpmn2:serviceTask id="ServiceTask_1kw189j" name="Update Service Oper Status">
+        <bpmn2:extensionElements>
+          <camunda:connector>
+            <camunda:inputOutput>
+              <camunda:inputParameter name="url">${URN_mso_openecomp_adapters_db_endpoint}</camunda:inputParameter>
+              <camunda:inputParameter name="headers">
+                <camunda:map>
+                  <camunda:entry key="content-type">application/soap+xml</camunda:entry>
+                  <camunda:entry key="Authorization">Basic QlBFTENsaWVudDpwYXNzd29yZDEk</camunda:entry>
+                </camunda:map>
+              </camunda:inputParameter>
+              <camunda:inputParameter name="payload">${CVFMI_updateServiceOperStatusRequest}</camunda:inputParameter>
+              <camunda:inputParameter name="method">POST</camunda:inputParameter>
+              <camunda:outputParameter name="CVFMI_dbResponseCode">${statusCode}</camunda:outputParameter>
+              <camunda:outputParameter name="CVFMI_dbResponse">${response}</camunda:outputParameter>
+            </camunda:inputOutput>
+            <camunda:connectorId>http-connector</camunda:connectorId>
+          </camunda:connector>
+        </bpmn2:extensionElements>
+        <bpmn2:incoming>SequenceFlow_1lqzi94</bpmn2:incoming>
+        <bpmn2:outgoing>SequenceFlow_0utvwkh</bpmn2:outgoing>
+      </bpmn2:serviceTask>
+      <bpmn2:sequenceFlow id="SequenceFlow_0utvwkh" sourceRef="ServiceTask_1kw189j" targetRef="ScriptTask_0vc9jgo" />
+      <bpmn2:scriptTask id="ScriptTask_1bb9adn" name="Prepare Update Service Oper Status(error)" scriptFormat="groovy">
+        <bpmn2:incoming>SequenceFlow_19ly8h7</bpmn2:incoming>
+        <bpmn2:outgoing>SequenceFlow_1lqzi94</bpmn2:outgoing>
+        <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
+execution.setVariable("operationStatus", "error")
+def ddsi = new DoUpdateE2EServiceInstance()
+ddsi.preUpdateServiceOperationStatus(execution)]]></bpmn2:script>
+      </bpmn2:scriptTask>
+      <bpmn2:sequenceFlow id="SequenceFlow_1lqzi94" sourceRef="ScriptTask_1bb9adn" targetRef="ServiceTask_1kw189j" />
     </bpmn2:subProcess>
     <bpmn2:scriptTask id="ScriptTask_195nptq" name="Pre Process AAI GET 2" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_1demy08</bpmn2:incoming>
@@ -700,9 +734,6 @@ dcsi.preProcessAAIPUT(execution)]]></bpmn2:script>
           <dc:Bounds x="1554" y="1936" width="0" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="CallActivity_1lu6rx0_di" bpmnElement="CallActivity_1lu6rx0">
-        <dc:Bounds x="923" y="1873" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ScriptTask_1awrp72_di" bpmnElement="ScriptTask_1awrp72">
         <dc:Bounds x="557" y="1873" width="100" height="80" />
       </bpmndi:BPMNShape>
@@ -713,7 +744,7 @@ dcsi.preProcessAAIPUT(execution)]]></bpmn2:script>
         <di:waypoint xsi:type="dc:Point" x="302" y="1913" />
         <di:waypoint xsi:type="dc:Point" x="557" y="1913" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="385.5" y="1898" width="0" height="12" />
+          <dc:Bounds x="384.5" y="1892" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_02znk15_di" bpmnElement="SequenceFlow_02znk15">
@@ -725,16 +756,9 @@ dcsi.preProcessAAIPUT(execution)]]></bpmn2:script>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_19ly8h7_di" bpmnElement="SequenceFlow_19ly8h7">
         <di:waypoint xsi:type="dc:Point" x="657" y="1913" />
-        <di:waypoint xsi:type="dc:Point" x="923" y="1913" />
+        <di:waypoint xsi:type="dc:Point" x="786" y="1913" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="745" y="1898" width="0" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0jsdqmq_di" bpmnElement="SequenceFlow_0jsdqmq">
-        <di:waypoint xsi:type="dc:Point" x="1023" y="1913" />
-        <di:waypoint xsi:type="dc:Point" x="1248" y="1913" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1091.5" y="1898" width="0" height="12" />
+          <dc:Bounds x="676.5" y="1892" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_195nptq_di" bpmnElement="ScriptTask_195nptq">
@@ -779,6 +803,26 @@ dcsi.preProcessAAIPUT(execution)]]></bpmn2:script>
         <di:waypoint xsi:type="dc:Point" x="1410" y="1373" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1331" y="1352" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_1kw189j_di" bpmnElement="ServiceTask_1kw189j">
+        <dc:Bounds x="1005" y="1873" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0utvwkh_di" bpmnElement="SequenceFlow_0utvwkh">
+        <di:waypoint xsi:type="dc:Point" x="1105" y="1913" />
+        <di:waypoint xsi:type="dc:Point" x="1248" y="1913" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1176.5" y="1892" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_1bb9adn_di" bpmnElement="ScriptTask_1bb9adn">
+        <dc:Bounds x="786" y="1873" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1lqzi94_di" bpmnElement="SequenceFlow_1lqzi94">
+        <di:waypoint xsi:type="dc:Point" x="886" y="1913" />
+        <di:waypoint xsi:type="dc:Point" x="1005" y="1913" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="945.5" y="1892" width="0" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
