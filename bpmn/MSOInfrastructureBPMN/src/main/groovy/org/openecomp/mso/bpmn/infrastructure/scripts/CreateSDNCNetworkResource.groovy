@@ -219,6 +219,77 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
        utils.log("INFO"," ***** Exit prepareSDNCRequest *****",  isDebugEnabled)
 	}
 
+    private void setProgressUpdateVariables(DelegateExecution execution, String body) {
+        def dbAdapterEndpoint = execution.getVariable("URN_mso_adapters_openecomp_db_endpoint")
+        execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
+        execution.setVariable("CVFMI_updateResOperStatusRequest", body)
+    }
+
+    public void prepareUpdateBeforeCreateSDNCResource(DelegateExecution execution) {
+        ResourceInput resourceInputObj = execution.getVariable(Prefix + "resourceInput")
+        String operType = resourceInputObj.getOperationType()
+        String resourceCustomizationUuid = resourceInputObj.getResourceModelInfo().getModelCustomizationUuid()
+        String ServiceInstanceId = resourceInputObj.getServiceInstanceId()
+        String operationId = resourceInputObj.getOperationId()
+        String progress = "20"
+        String status = "processing"
+        String statusDescription = "SDCN resource creation invoked"
+
+        execution.getVariable("operationId")
+
+        String body = """
+                <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                        xmlns:ns="http://org.openecomp.mso/requestsdb">
+                        <soapenv:Header/>
+                <soapenv:Body>
+                    <ns:updateResourceOperationStatus>
+                               <operType>${operType}</operType>
+                               <operationId>${operationId}</operationId>
+                               <progress>${progress}</progress>
+                               <resourceTemplateUUID>${resourceCustomizationUuid}</resourceTemplateUUID>
+                               <serviceId>${ServiceInstanceId}</serviceId>
+                               <status>${status}</status>
+                               <statusDescription>${statusDescription}</statusDescription>
+                    </ns:updateResourceOperationStatus>
+                </soapenv:Body>
+                </soapenv:Envelope>""";
+
+        setProgressUpdateVariables(execution, body)
+
+    }
+
+    public void prepareUpdateAfterCreateSDNCResource(execution) {
+        ResourceInput resourceInputObj = execution.getVariable(Prefix + "resourceInput")
+        String operType = resourceInputObj.getOperationType()
+        String resourceCustomizationUuid = resourceInputObj.getResourceModelInfo().getModelCustomizationUuid()
+        String ServiceInstanceId = resourceInputObj.getServiceInstanceId()
+        String operationId = resourceInputObj.getOperationId()
+        String progress = "100"
+        String status = "Created"
+        String statusDescription = "SDCN resource creation completed"
+
+        execution.getVariable("operationId")
+
+        String body = """
+                <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                        xmlns:ns="http://org.openecomp.mso/requestsdb">
+                        <soapenv:Header/>
+                <soapenv:Body>
+                    <ns:updateResourceOperationStatus>
+                               <operType>${operType}</operType>
+                               <operationId>${operationId}</operationId>
+                               <progress>${progress}</progress>
+                               <resourceTemplateUUID>${resourceCustomizationUuid}</resourceTemplateUUID>
+                               <serviceId>${ServiceInstanceId}</serviceId>
+                               <status>${status}</status>
+                               <statusDescription>${statusDescription}</statusDescription>
+                    </ns:updateResourceOperationStatus>
+                </soapenv:Body>
+                </soapenv:Envelope>""";
+
+        setProgressUpdateVariables(execution, body)
+    }
+
     public void postCreateSDNCCall(DelegateExecution execution){
         def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
         utils.log("INFO"," ***** Started prepareSDNCRequest *****",  isDebugEnabled)

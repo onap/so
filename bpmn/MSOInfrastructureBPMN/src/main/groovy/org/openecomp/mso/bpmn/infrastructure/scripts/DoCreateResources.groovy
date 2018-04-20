@@ -209,7 +209,7 @@ public class DoCreateResources extends AbstractServiceTaskProcessor
 		 String serviceType = execution.getVariable("serviceType")
 		 String serviceInstanceId = execution.getVariable("serviceInstanceId")
 		 String operationId = execution.getVariable("operationId")
-		 String operationType = execution.getVariable("operationType")
+		 String operationType = "createInstance"
 		 resourceInput.setGlobalSubscriberId(globalSubscriberId)
 		 resourceInput.setServiceType(serviceType)
 		 resourceInput.setServiceInstanceId(serviceInstanceId)
