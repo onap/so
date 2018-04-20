@@ -310,12 +310,12 @@ public class AbstractBuilderTest {
         abstractBuilder.build(null, null);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void getRequestActoinTest() throws Exception {
         abstractBuilder.getRequestActoin(delegateExecution);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void getSvcActionTest() throws Exception {
         abstractBuilder.getSvcAction(delegateExecution);
     }
@@ -340,7 +340,7 @@ public class AbstractBuilderTest {
         abstractBuilder.getParamEntities(new HashMap<>());
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void getRequestInformationEntityTest() throws Exception {
         abstractBuilder.getRequestInformationEntity(delegateExecution);
     }
