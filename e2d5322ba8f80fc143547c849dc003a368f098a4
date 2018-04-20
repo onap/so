@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_ebff7900",
+        "filename": "adapters/mso-sdnc-adapter/src/test/java/org/openecomp/mso/adapters/sdnc/notify/SDNCNotifyResourceTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2018-04-20T05:33:21Z",
+      "side": 1,
+      "message": "what is this mock doing here ?",
+      "revId": "e2d5322ba8f80fc143547c849dc003a368f098a4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
