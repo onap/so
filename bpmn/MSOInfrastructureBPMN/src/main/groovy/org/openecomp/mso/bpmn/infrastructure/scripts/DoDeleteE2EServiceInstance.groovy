@@ -316,7 +316,7 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
         utils.log("INFO"," *** Exit postProcessAAIGET *** ", isDebugEnabled)
     }
 
-   public void getCurrentNS(execution){
+   public void getCurrentNS(DelegateExecution execution){
        def isDebugEnabled=execution.getVariable("isDebugLogEnabled")   
        utils.log("INFO", "======== Start getCurrentNS Process ======== ", isDebugEnabled)    
        

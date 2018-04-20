@@ -43,8 +43,6 @@ import org.openecomp.mso.bpmn.core.json.JsonUtils
 import org.openecomp.mso.bpmn.infrastructure.properties.BPMNProperties
 
 import static org.apache.commons.lang3.StringUtils.isBlank
-import static org.apache.commons.lang3.StringUtils.isBlank
-
 
 /**
  * input for script :
@@ -144,7 +142,7 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
         utils.log("INFO"," ***** Exit preProcessRequest *****",  isDebugEnabled)
     }
 
-    public void sequenceResource(execution){
+    public void sequenceResource(DelegateExecution execution){
         def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 
         utils.log("INFO", " ======== STARTED sequenceResource Process ======== ", isDebugEnabled)
@@ -175,6 +173,7 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
             //this is defaule sequence
             List<VnfResource> vnfResourceList = new ArrayList<VnfResource>()
             List<AllottedResource> arResourceList = new ArrayList<AllottedResource>()
+			List<NetworkResource> networkResourceList = new ArrayList<NetworkResource>()
 
             for (Resource rc : delResourceList) {
                 if (rc instanceof VnfResource) {
@@ -203,7 +202,7 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
     /**
      * prepare delete parameters
      */
-    public void preResourceDelete(execution, resourceName){
+    public void preResourceDelete(DelegateExecution execution, String resourceName){
 
         def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 
@@ -230,7 +229,7 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
     /**
      * Execute delete workflow for resource
      */
-    public void executeResourceDelete(execution, resourceName) {
+    public void executeResourceDelete(DelegateExecution execution, String resourceName) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
         utils.log("INFO", "======== Start executeResourceDelete Process ======== ", isDebugEnabled)
         String requestId = execution.getVariable("msoRequestId")
@@ -266,7 +265,7 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
     }
 
 
-    public void parseNextResource(execution){
+    public void parseNextResource(DelegateExecution execution){
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
         utils.log("INFO", "======== Start parseNextResource Process ======== ", isDebugEnabled)
         def currentIndex = execution.getVariable("currentResourceIndex")

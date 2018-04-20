@@ -58,24 +58,21 @@ import org.springframework.web.util.UriUtils;
  * Inputs:
  * @param - msoRequestId
  * @param - globalSubscriberId
- * @param - subscriptionServiceType
+ * @param - serviceType
  * @param - serviceInstanceId
- * @param - serviceInstanceName - O
+ * @param - serviceInstanceName
  * @param - serviceModelInfo
  * @param - productFamilyId
- * @param - disableRollback
- * @param - failExists - TODO
- * @param - serviceInputParams (should contain aic_zone for serviceTypes TRANSPORT,ATM)
- * @param - sdncVersion ("1610")
- * @param - serviceDecomposition - Decomposition for R1710 
- * (if macro provides serviceDecompsition then serviceModelInfo, serviceInstanceId & serviceInstanceName will be ignored)
- *
+ * @param - uuiRequest
+ * @param - serviceDecomposition_Target
+ * @param - serviceDecomposition_Original
+ * @param - addResourceList
+ * @param - delResourceList
+ * 
  * Outputs:
  * @param - rollbackData (localRB->null)
  * @param - rolledBack (no localRB->null, localRB F->false, localRB S->true)
  * @param - WorkflowException
- * @param - serviceInstanceName - (GET from AAI if null in input)
- *
  */
 public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 
@@ -87,24 +84,22 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 
 	public void preProcessRequest (DelegateExecution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-		
-		def method = getClass().getSimpleName() + '.preProcessRequest(' +'execution=' + execution.getId() +')'		
-		utils.log("INFO","Entered " + method, isDebugEnabled)
-		String msg = ""
 		utils.log("INFO"," ***** Enter DoUpdateE2EServiceInstance preProcessRequest *****",  isDebugEnabled)
+		
+		String msg = ""	
 
 		try {
 			execution.setVariable("prefix", Prefix)
 			//Inputs
-			//requestDetails.subscriberInfo. for AAI GET & PUT & SDNC assignToplology
+			//for AAI GET & PUT & SDNC assignToplology
 			String globalSubscriberId = execution.getVariable("globalSubscriberId") //globalCustomerId
 			utils.log("INFO"," ***** globalSubscriberId *****" + globalSubscriberId,  isDebugEnabled)
 			
-			//requestDetails.requestParameters. for AAI PUT & SDNC assignTopology
+			//for AAI PUT & SDNC assignTopology
 			String serviceType = execution.getVariable("serviceType")
 			utils.log("INFO"," ***** serviceType *****" + serviceType,  isDebugEnabled)
 			
-			//requestDetails.requestParameters. for SDNC assignTopology
+			//for SDNC assignTopology
 			String productFamilyId = execution.getVariable("productFamilyId") //AAI productFamilyId
 
 			if (isBlank(globalSubscriberId)) {
@@ -126,31 +121,12 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 				utils.log("INFO", msg, isDebugEnabled)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
-			
-			if (productFamilyId == null) {
-				execution.setVariable("productFamilyId", "")
-			}
 
 			String serviceInstanceName = execution.getVariable("serviceInstanceName")
+			
+			// user params
 			String uuiRequest = execution.getVariable("uuiRequest")
 			utils.log("INFO","uuiRequest: " + uuiRequest, isDebugEnabled)
-			
-			String modelInvariantUuid = jsonUtil.getJsonValue(uuiRequest, "service.serviceInvariantUuid")
-			utils.log("INFO","modelInvariantUuid: " + modelInvariantUuid, isDebugEnabled)
-			execution.setVariable("modelInvariantUuid", modelInvariantUuid)
-			execution.setVariable("model-invariant-id-target", modelInvariantUuid)
-			
-			String modelUuid = jsonUtil.getJsonValue(uuiRequest, "service.serviceUuid")
-			utils.log("INFO","modelUuid: " + modelUuid, isDebugEnabled)
-			execution.setVariable("modelUuid", modelUuid)
-			execution.setVariable("model-version-id-target", modelUuid)
-			
-			String serviceModelName = jsonUtil.getJsonValue(uuiRequest, "service.parameters.templateName")
-			utils.log("INFO","serviceModelName: " + serviceModelName, isDebugEnabled)
-			if(serviceModelName == null) {
-				serviceModelName = ""
-			}
-			execution.setVariable("serviceModelName", serviceModelName)
 				
 		} catch (BpmnError e) {
 			throw e;
@@ -159,128 +135,9 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 			utils.log("INFO", msg, isDebugEnabled)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		utils.log("INFO", "Exited " + method, isDebugEnabled)
+		utils.log("INFO", "======== COMPLETED preProcessRequest Process ======== ", isDebugEnabled)  
 	}
-	
-	public void postProcessAAIGET(DelegateExecution execution) {
-		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		utils.log("INFO"," ***** postProcessAAIGET ***** ", isDebugEnabled)
-		String msg = ""
 
-		try {
-			String serviceInstanceId = execution.getVariable("serviceInstanceId")
-			boolean foundInAAI = execution.getVariable("GENGS_FoundIndicator")
-			String serviceType = ""
-
-			if(foundInAAI){
-				utils.log("INFO","Found Service-instance in AAI", isDebugEnabled)
-
-				String siData = execution.getVariable("GENGS_service")
-				utils.log("INFO", "SI Data", isDebugEnabled)
-				if (isBlank(siData))
-				{
-					msg = "Could not retrive ServiceInstance data from AAI, Id:" + serviceInstanceId
-					utils.log("INFO", msg, isDebugEnabled)
-					exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-				}
-
-				utils.log("INFO", "SI Data" + siData, isDebugEnabled)				
-
-				// Get Template uuid and version
-				if (utils.nodeExists(siData, "model-invariant-id") && utils.nodeExists(siData, "model-version-id") ) {
-					utils.log("INFO", "SI Data model-invariant-id and model-version-id exist:", isDebugEnabled)
-
-					def modelInvariantId  = utils.getNodeText1(siData, "model-invariant-id")
-					def modelVersionId  = utils.getNodeText1(siData, "model-version-id")
-
-					// Set Original Template info
-					execution.setVariable("model-invariant-id-original", modelInvariantId)
-					execution.setVariable("model-version-id-original", modelVersionId)
-				}
-				
-				//get related service instances (vnf/network or volume) for delete
-				if (utils.nodeExists(siData, "relationship-list")) {
-					utils.log("INFO", "SI Data relationship-list exists:", isDebugEnabled)
-
-					JSONArray jArray = new JSONArray()
-
-					XmlParser xmlParser = new XmlParser()
-					Node root = xmlParser.parseText(siData)
-					def relation_list = utils.getChildNode(root, 'relationship-list')
-					def relationships = utils.getIdenticalChildren(relation_list, 'relationship')					
-
-					for (def relation: relationships) {
-						def jObj = getRelationShipData(relation, isDebugEnabled)
-						jArray.put(jObj)
-					}
-
-					execution.setVariable("serviceRelationShip", jArray.toString())
-				}
-			}else{
-				boolean succInAAI = execution.getVariable("GENGS_SuccessIndicator")
-				if(!succInAAI){
-					utils.log("INFO","Error getting Service-instance from AAI", + serviceInstanceId, isDebugEnabled)
-					WorkflowException workflowException = execution.getVariable("WorkflowException")
-					utils.logAudit("workflowException: " + workflowException)
-					if(workflowException != null){
-						exceptionUtil.buildAndThrowWorkflowException(execution, workflowException.getErrorCode(), workflowException.getErrorMessage())
-					}
-					else
-					{
-						msg = "Failure in postProcessAAIGET GENGS_SuccessIndicator:" + succInAAI
-						utils.log("INFO", msg, isDebugEnabled)
-						exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
-					}
-				}
-
-				utils.log("INFO","Service-instance NOT found in AAI. Silent Success", isDebugEnabled)
-			}
-		}catch (BpmnError e) {
-			throw e;
-		} catch (Exception ex) {
-			msg = "Exception in DoDeleteE2EServiceInstance.postProcessAAIGET. " + ex.getMessage()
-			utils.log("INFO", msg, isDebugEnabled)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
-		}
-		utils.log("INFO"," *** Exit postProcessAAIGET *** ", isDebugEnabled)
-	}
-	
-	private JSONObject getRelationShipData(node, isDebugEnabled){		
-		JSONObject jObj = new JSONObject()
-		
-		def relation  = utils.nodeToString(node)
-		def rt  = utils.getNodeText1(relation, "related-to")
-		
-		def rl  = utils.getNodeText1(relation, "related-link")
-		utils.log("INFO", "ServiceInstance Related NS/Configuration :" + rl, isDebugEnabled)
-		
-		def rl_datas = utils.getIdenticalChildren(node, "relationship-data")	
-		for(def rl_data : rl_datas) {
-			def eKey =  utils.getChildNodeText(rl_data, "relationship-key")
-			def eValue = utils.getChildNodeText(rl_data, "relationship-value")
-
-			if ((rt == "service-instance" && eKey.equals("service-instance.service-instance-id"))
-			//for overlay/underlay
-			|| (rt == "configuration" && eKey.equals("configuration.configuration-id"))){
-				jObj.put("resourceInstanceId", eValue)
-			}
-		}
-
-		def rl_props = utils.getIdenticalChildren(node, "related-to-property")
-		for(def rl_prop : rl_props) {
-			def eKey =  utils.getChildNodeText(rl_prop, "property-key")
-			def eValue = utils.getChildNodeText(rl_prop, "property-value")
-			if((rt == "service-instance" && eKey.equals("service-instance.service-instance-name"))
-			//for overlay/underlay
-			|| (rt == "configuration" && eKey.equals("configuration.configuration-type"))){
-				jObj.put("resourceType", eValue)
-			}
-		}
-
-		utils.log("INFO", "Relationship related to Resource:" + jObj.toString(), isDebugEnabled)		
-
-		return jObj
-	}
 	
 	public void preInitResourcesOperStatus(DelegateExecution execution){
         def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
@@ -292,7 +149,7 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
             String operationType = execution.getVariable("operationType")
             String resourceTemplateUUIDs = ""
             String result = "processing"
-            String progress = "10"
+            String progress = "0"
             String reason = ""
             String operationContent = "Prepare service updating"
             utils.log("INFO", "Generated new operation for Service Instance serviceId:" + serviceId + " operationId:" + operationId + " operationType:" + operationType, isDebugEnabled)
@@ -340,92 +197,20 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
         utils.log("INFO", "======== COMPLETED preInitResourcesOperStatus Process ======== ", isDebugEnabled)  
     }
     
-    /**
-	 * Init the service Operation Status
-	 */
-	public void preUpdateServiceOperationStatus(DelegateExecution execution){
-        def method = getClass().getSimpleName() + '.preUpdateServiceOperationStatus(' +'execution=' + execution.getId() +')'
-		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-		utils.log("INFO","Entered " + method, isDebugEnabled)
-        
-        try{
-            String serviceId = execution.getVariable("serviceInstanceId")
-            String operationId = execution.getVariable("operationId")
-			String operationType = execution.getVariable("operationType")
-            String serviceName = execution.getVariable("serviceInstanceName")
-            String userId = ""
-            String result = "processing"
-            String progress = execution.getVariable("progress")
-			utils.log("INFO", "progress: " + progress , isDebugEnabled)
-			if ("100".equalsIgnoreCase(progress))
-			{
-				result = "finished"
-			}
-            String reason = ""
-            String operationContent = "Prepare service : " + execution.getVariable("operationStatus")
-			
-            utils.log("INFO", "Generated new operation for Service Instance serviceId:" + serviceId + " operationId:" + operationId, isDebugEnabled)
-            serviceId = UriUtils.encode(serviceId,"UTF-8")
-            execution.setVariable("serviceInstanceId", serviceId)
-            execution.setVariable("operationId", operationId)
-            execution.setVariable("operationType", operationType)
 
-            def dbAdapterEndpoint = "http://mso.mso.testlab.openecomp.org:8080/dbadapters/RequestsDbAdapter"
-            execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
-            utils.log("INFO", "DB Adapter Endpoint is: " + dbAdapterEndpoint, isDebugEnabled)
-
-            execution.setVariable("URN_mso_openecomp_adapters_db_endpoint","http://mso.mso.testlab.openecomp.org:8080/dbadapters/RequestsDbAdapter")
-			String payload =
-                """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-                        xmlns:ns="http://org.openecomp.mso/requestsdb">
-                        <soapenv:Header/>
-                        <soapenv:Body>
-                            <ns:updateServiceOperationStatus xmlns:ns="http://org.openecomp.mso/requestsdb">
-                            <serviceId>${serviceId}</serviceId>
-                            <operationId>${operationId}</operationId>
-                            <serviceName>${serviceName}</serviceName>
-                            <operationType>${operationType}</operationType>
-                            <userId>${userId}</userId>
-                            <result>${result}</result>
-                            <operationContent>${operationContent}</operationContent>
-                            <progress>${progress}</progress>
-                            <reason>${reason}</reason>
-                        </ns:updateServiceOperationStatus>
-                    </soapenv:Body>
-                </soapenv:Envelope>"""
-
-            payload = utils.formatXml(payload)
-            execution.setVariable("CVFMI_updateServiceOperStatusRequest", payload)
-            utils.log("INFO", "Outgoing preUpdateServiceOperationStatus: \n" + payload, isDebugEnabled)
-           
-
-        }catch(Exception e){
-            utils.log("ERROR", "Exception Occured Processing preUpdateServiceOperationStatus. Exception is:\n" + e, isDebugEnabled)
-            execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during preUpdateServiceOperationStatus Method:\n" + e.getMessage())
-        }
-        utils.log("INFO", "======== COMPLETED preUpdateServiceOperationStatus Process ======== ", isDebugEnabled)  
-        utils.log("INFO", "Exited " + method, isDebugEnabled)
-	}
-    
-    public void postResourcesOperStatus(DelegateExecution execution) {
-        def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-    
-    }
-    
-    public void preCompareModelVersions(DelegateExecution execution) {
-        def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-
-    }
-
-    public void postCompareModelVersions(DelegateExecution execution) {
-        def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-    }
-    
     public void preProcessForAddResource(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO"," ***** preProcessForAddResource ***** ", isDebugEnabled)
 		
 	    execution.setVariable("operationType", "create")
+		
+		def hasResourcetoAdd = false
+		List<Resource> addResourceList =  execution.getVariable("addResourceList")
+		if(addResourceList != null && !addResourceList.isEmpty()) {
+			hasResourcetoAdd = true			
+		}
+		execution.setVariable("hasResourcetoAdd", hasResourcetoAdd)
+		
 	
 		utils.log("INFO"," *** Exit preProcessForAddResource *** ", isDebugEnabled)
     }
@@ -445,6 +230,15 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		
 		execution.setVariable("operationType", "delete")
 		
+		def hasResourcetoDelete = false
+		List<Resource> delResourceList =  execution.getVariable("delResourceList")
+		if(delResourceList != null && !delResourceList.isEmpty()) {
+			hasResourcetoDelete = true
+		}
+		execution.setVariable("hasResourcetoDelete", hasResourcetoDelete)
+		
+		execution.setVariable("resourceInstanceIDs", execution.getVariable("serviceRelationShip"))
+		
 		utils.log("INFO"," *** Exit preProcessForDeleteResource *** ", isDebugEnabled)
 
     }
@@ -458,20 +252,20 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		utils.log("INFO"," *** Exit postProcessForDeleteResource *** ", isDebugEnabled)
     } 
     
-	public void preProcessAAIGET2(DelegateExecution execution) {
+	public void preProcessAAIGET(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")	
 	}
     	
-	public void postProcessAAIGET2(DelegateExecution execution) {
+	public void postProcessAAIGET(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		utils.log("INFO"," ***** postProcessAAIGET2 ***** ", isDebugEnabled)
+		utils.log("INFO"," ***** postProcessAAIGET ***** ", isDebugEnabled)
 		String msg = ""
 
 		try {
 			String serviceInstanceName = execution.getVariable("serviceInstanceName")
 			boolean succInAAI = execution.getVariable("GENGS_SuccessIndicator")
 			if(!succInAAI){
-				utils.log("INFO","Error getting Service-instance from AAI in postProcessAAIGET2", + serviceInstanceName, isDebugEnabled)
+				utils.log("INFO","Error getting Service-instance from AAI in postProcessAAIGET", + serviceInstanceName, isDebugEnabled)
 				WorkflowException workflowException = execution.getVariable("WorkflowException")
 				utils.logAudit("workflowException: " + workflowException)
 				if(workflowException != null){
@@ -479,7 +273,7 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 				}
 				else
 				{
-					msg = "Failure in postProcessAAIGET2 GENGS_SuccessIndicator:" + succInAAI
+					msg = "Failure in postProcessAAIGET GENGS_SuccessIndicator:" + succInAAI
 					utils.log("INFO", msg, isDebugEnabled)
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
 				}
@@ -498,11 +292,11 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception ex) {
-			msg = "Exception in DoCreateServiceInstance.postProcessAAIGET2 " + ex.getMessage()
+			msg = "Exception in DoUpdateE2EServiceInstance.postProcessAAIGET " + ex.getMessage()
 			utils.log("INFO", msg, isDebugEnabled)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		utils.log("INFO"," *** Exit postProcessAAIGET2 *** ", isDebugEnabled)
+		utils.log("INFO"," *** Exit postProcessAAIGET *** ", isDebugEnabled)
 	}
 
 	public void preProcessAAIPUT(DelegateExecution execution) {		
@@ -510,7 +304,7 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO","Entered " + method, isDebugEnabled)
 		String msg = ""
-		utils.log("INFO"," ***** preProcessAAIPUTt *****",  isDebugEnabled)
+		utils.log("INFO"," ***** preProcessAAIPUT *****",  isDebugEnabled)
 
 		String modelUuid = execution.getVariable("modelUuid")
 		String serviceInstanceVersion = execution.getVariable("serviceInstanceVersion")
@@ -560,7 +354,7 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 				rollbackData.put("SERVICEINSTANCE", "disableRollback", disableRollback.toString())
 				rollbackData.put("SERVICEINSTANCE", "rollbackAAI", "true")
 				rollbackData.put("SERVICEINSTANCE", "serviceInstanceId", serviceInstanceId)
-				rollbackData.put("SERVICEINSTANCE", "subscriptionServiceType", execution.getVariable("subscriptionServiceType"))
+				rollbackData.put("SERVICEINSTANCE", "serviceType", execution.getVariable("serviceType"))
 				rollbackData.put("SERVICEINSTANCE", "globalSubscriberId", execution.getVariable("globalSubscriberId"))
 				execution.setVariable("rollbackData", rollbackData)
 			}
