@@ -168,7 +168,7 @@ public class AAIRestClientImpl implements AAIRestClientI {
         try {
             requestId = UUID.fromString(transactionLoggingUuid);
         } catch (IllegalArgumentException e) {
-            logger.warn("could not parse uuid: " + transactionLoggingUuid + " creating valid uuid automatically");
+            logger.warn("could not parse uuid: " + transactionLoggingUuid + " creating valid uuid automatically", e);
             requestId = UUID.randomUUID();
         }
         Response response = new AAIResourcesClient(ENDPOINT_VERSION, requestId)
@@ -186,7 +186,7 @@ public class AAIRestClientImpl implements AAIRestClientI {
         try {
             requestId = UUID.fromString(transactionLoggingUuid);
         } catch (IllegalArgumentException e) {
-            logger.warn("could not parse uuid: " + transactionLoggingUuid + " creating valid uuid automatically");
+            logger.warn("could not parse uuid: " + transactionLoggingUuid + " creating valid uuid automatically", e);
             requestId = UUID.randomUUID();
         }
         new AAIResourcesClient(ENDPOINT_VERSION, requestId)
