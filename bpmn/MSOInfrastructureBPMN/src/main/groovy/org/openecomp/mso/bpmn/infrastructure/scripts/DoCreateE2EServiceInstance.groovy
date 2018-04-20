@@ -396,7 +396,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
         utils.log("INFO", " ======== STARTED preInitResourcesOperStatus Process ======== ", isDebugEnabled)
         try{
             String serviceId = execution.getVariable("serviceInstanceId")
-            String operationId = execution.getVariable("msoRequestId")
+            String operationId = execution.getVariable("operationId")
             String operationType = execution.getVariable("operationType")
             String resourceTemplateUUIDs = ""
             String result = "processing"
