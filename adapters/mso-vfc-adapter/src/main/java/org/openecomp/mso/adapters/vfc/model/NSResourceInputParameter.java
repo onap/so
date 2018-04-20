@@ -45,6 +45,8 @@ public class NSResourceInputParameter {
     private String nsServiceName;
 
     private String nsServiceDescription;
+    
+    private String nsServiceModelUUID;
 
     private NsParameters nsParameters;
 
@@ -136,4 +138,15 @@ public class NSResourceInputParameter {
     public void setNsScaleParameters(NsScaleParameters nsScaleParameters) {
         this.nsScaleParameters = nsScaleParameters;
     }
+
+
+	public String getNsServiceModelUUID() {
+		return nsServiceModelUUID;
+	}
+
+
+	public void setNsServiceModelUUID(String nsServiceModelUUID) {
+		this.nsServiceModelUUID = nsServiceModelUUID;
+	}
+    
 }

@@ -115,9 +115,6 @@ public class BpmnRestClient {
 
         HttpPost post = new HttpPost(recipeUri);
         MsoJavaProperties props = loadMsoProperties();
-        RequestConfig requestConfig =
-                RequestConfig.custom().setSocketTimeout(recipeTimeout).setConnectTimeout(recipeTimeout).setConnectionRequestTimeout(recipeTimeout).build();
-        post.setConfig(requestConfig);
         msoLogger.debug("call the bpmn,  url:" + recipeUri);
         String jsonReq = wrapResourceRequest(requestId, recipeTimeout, requestAction, serviceInstanceId, serviceType, requestDetails, recipeParamXsd);
 
@@ -177,6 +174,8 @@ public class BpmnRestClient {
             BpmnParam serviceInstanceIdInput = new BpmnParam();
             BpmnParam serviceTypeInput = new BpmnParam();
             BpmnParam recipeParamsInput = new BpmnParam();
+            BpmnIntegerParam recipeTimeoutInput = new BpmnIntegerParam();
+            recipeTimeoutInput.setValue(recipeTimeout);
             // host.setValue(parseURL());
             requestIdInput.setValue(requestId);
             requestActionInput.setValue(requestAction);
@@ -191,6 +190,7 @@ public class BpmnRestClient {
             recipeRequest.setServiceType(serviceTypeInput);
             recipeRequest.setRecipeParams(recipeParamsInput);
             recipeRequest.setResourceInput(resourceInput);
+            recipeRequest.setRecipeTimeout(recipeTimeoutInput);
             jsonReq = recipeRequest.toString();
             msoLogger.debug("request body is " + jsonReq);
         } catch(Exception e) {

@@ -56,6 +56,9 @@ public class ResourceRecipeRequest {
     @JsonProperty("recipeParams")
     private BpmnParam recipeParams;
 
+    @JsonProperty("recipeTimeout")
+    private BpmnIntegerParam recipeTimeout;
+    
     @JsonProperty("resourceInput")
     public BpmnParam getResourceInput() {
         return resourceInput;
@@ -126,7 +129,17 @@ public class ResourceRecipeRequest {
         this.recipeParams = recipeParams;
     }
 
-    @Override
+    @JsonProperty("recipeTimeout")
+    public BpmnIntegerParam getRecipeTimeout() {
+		return recipeTimeout;
+	}
+    
+    @JsonProperty("recipeTimeout")
+	public void setRecipeTimeout(BpmnIntegerParam recipeTimeout) {
+		this.recipeTimeout = recipeTimeout;
+	}
+
+	@Override
     public String toString() {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
