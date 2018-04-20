@@ -22,6 +22,7 @@ package org.openecomp.mso.bpmn.common.resource;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -120,7 +121,7 @@ public class ResourceRequestBuilder {
             throws SdcToscaParserException {
 
         Map<String, Object> resouceRequest = new HashMap<>();
-
+        List<Map<String, Object>> param = new ArrayList<>();
         String csarpath = null;
         try {
             csarpath = getCsarFromUuid(serviceUuid);
@@ -144,9 +145,13 @@ public class ResourceRequestBuilder {
                 Property property = resourceProperties.get(key);
 
                 Object value = getValue(property.getValue(), serviceInputs, serInput);
-                resouceRequest.put(key, value);
+                HashMap<String, Object> parameter = new HashMap<>();
+                parameter.put("name", key);
+                parameter.put("value", value);
+                param.add(parameter);
             }
         }
+        resouceRequest.put("param", param);
         return resouceRequest;
     }
 
