@@ -1001,7 +1001,7 @@ public class E2EServiceInstancesTest {
 		String request = jsonBody;
 		Response resp = instance.updateE2EServiceInstance(request, "v3", "12345");
 		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.contains("SVC2000"));
+		assertTrue(!respStr.contains("SVC2000"));
 	}
 
     @Test
