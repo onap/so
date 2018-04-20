@@ -87,10 +87,11 @@ public class CreateVFCNSResource extends AbstractServiceTaskProcessor {
            String serviceId = execution.getVariable("serviceInstanceId")
            utils.log("INFO", "serviceId:" + serviceId, isDebugEnabled)
 
-           String operationId = execution.getVariable("requestId")
+           String operationId = jsonUtil.getJsonValue(resourceInput, "operationId")
            utils.log("INFO", "serviceType:" + serviceType, isDebugEnabled)
 
-           String nodeTemplateUUID = jsonUtil.getJsonValue(resourceParameters, "requestInputs.nsd0_providing_service_uuid")
+           String nodeTemplateUUID = jsonUtil.getJsonValue(resourceInput, "resourceModelInfo.modelCustomizationUuid")
+           String nsServiceModelUUID = jsonUtil.getJsonValue(resourceParameters, "requestInputs.nsd0_providing_service_uuid")
            utils.log("INFO", "nodeTemplateUUID:" + nodeTemplateUUID, isDebugEnabled)
            /*
             * segmentInformation needed as a object of segment
@@ -114,6 +115,7 @@ public class CreateVFCNSResource extends AbstractServiceTaskProcessor {
                     }"""
            execution.setVariable("nsOperationKey", nsOperationKey);
            execution.setVariable("nsParameters", nsParameters)
+           execution.setVariable("nsServiceModelUUID", nsServiceModelUUID);
            
 
        } catch (BpmnError e) {
@@ -133,6 +135,7 @@ public class CreateVFCNSResource extends AbstractServiceTaskProcessor {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
         utils.log("INFO"," *****  createNetworkService *****",  isDebugEnabled)
         String nsOperationKey = execution.getVariable("nsOperationKey");
+        String nsServiceModelUUID = execution.getVariable("nsServiceModelUUID");
         String nsParameters = execution.getVariable("nsParameters");
         String nsServiceName = execution.getVariable("nsServiceName")
         String nsServiceDescription = execution.getVariable("nsServiceDescription")
@@ -141,6 +144,7 @@ public class CreateVFCNSResource extends AbstractServiceTaskProcessor {
         String reqBody ="""{
                 "nsServiceName":"${nsServiceName}",
                 "nsServiceDescription":"${nsServiceDescription}",
+                "nsServiceModelUUID":"${nsServiceModelUUID}",
                 "nsOperationKey":${nsOperationKey},
                 "nsParameters":{
                      "locationConstraints":${locationConstraints},
@@ -305,4 +309,26 @@ public class CreateVFCNSResource extends AbstractServiceTaskProcessor {
         }        
         return apiResponse
     }
+    
+	public void sendSyncResponse (DelegateExecution execution) {
+		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+		utils.log("DEBUG", " *** sendSyncResponse *** ", isDebugEnabled)
+
+		try {
+			String nsInstanceId = execution.getVariable("nsInstanceId")
+			String operationStatus = execution.getVariable("operationStatus")
+			// RESTResponse for main flow
+			String createVFCResourceRestRsp = """{"nsInstanceId":"${nsInstanceId}","operationStatus":"${operationStatus}"}""".trim()
+			utils.log("DEBUG", " sendSyncResponse to APIH:" + "\n" + createVFCResourceRestRsp, isDebugEnabled)
+			sendWorkflowResponse(execution, 202, createVFCResourceRestRsp)
+			execution.setVariable("sentSyncResponse", true)
+
+		} catch (Exception ex) {
+			String msg = "Exceptuion in sendSyncResponse:" + ex.getMessage()
+			utils.log("DEBUG", msg, isDebugEnabled)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+		}
+		utils.log("DEBUG"," ***** Exit sendSyncResopnse *****",  isDebugEnabled)
+	}
+
 }
