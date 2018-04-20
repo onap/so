@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.mso.adapters.sdnc.impl;
+package org.openecomp.mso.adapters.requestsdb;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -36,44 +36,32 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(SDNCAdapterRestImpl.class)
-public class SDNCAdapterRestImplTest {
+@PrepareForTest(HealthCheckHandler.class)
+public class HealthCheckHandlerTest {
 
-    SDNCAdapterRestImpl test;
+    HealthCheckHandler hcH;
 
     @Before
     public void init(){
 
-        test = new SDNCAdapterRestImpl();
+        hcH = new HealthCheckHandler();
     }
 
-   @Test
-   public void testBadReqNoServiceRsp() {
+    @Test
+    public void testNoServiceResp() {
 
-       HealthCheckUtils hCU = PowerMockito.mock(HealthCheckUtils.class);
+        HealthCheckUtils test = PowerMockito.mock(HealthCheckUtils.class);
         try {
-            PowerMockito.whenNew(HealthCheckUtils.class).withNoArguments().thenReturn(hCU);
-            when(hCU.siteStatusCheck(any(MsoLogger.class))).thenReturn(true);
+            PowerMockito.whenNew(HealthCheckUtils.class).withNoArguments().thenReturn(test);
+            when(test.siteStatusCheck(any(MsoLogger.class))).thenReturn(true);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-       String reqXML = "<xml>test</xml>";
-
-       Response response = test.MSORequest(reqXML);
-       assertEquals(400,response.getStatus());
-
-       response = test.healthcheck("1a25a7c0-4c91-4f74-9a78-8c11b7a57f1a");
+       Response response =  hcH.healthcheck("request");
        assertEquals(503,response.getStatus());
-
-       response = test.globalHealthcheck(true);
-       assertEquals(503,response.getStatus());
-
-       response = test.nodeHealthcheck();
-       assertEquals(503,response.getStatus());
-
-   }
+    }
 
 }
+
 
