@@ -270,7 +270,7 @@ public class E2EServiceInstances {
 			alarmLogger.sendAlarm("MsoConfigurationError", MsoAlarmLogger.CRITICAL,
 					Messages.errors.get(ErrorNumbers.NO_COMMUNICATION_TO_BPEL));
 			msoLogger.error(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "",
-					MsoLogger.ErrorCode.AvailabilityError, "Exception while communicate with BPMN engine");
+					MsoLogger.ErrorCode.AvailabilityError, "Exception while communicate with BPMN engine",e);
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError,
 					"Exception while communicate with BPMN engine");
 			msoLogger.debug("End of the transaction, the final response is: " + resp.getEntity().toString());
@@ -1072,7 +1072,7 @@ public class E2EServiceInstances {
             msoLogger.error(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR,
                     MSO_PROP_APIHANDLER_INFRA, "", "",
                     MsoLogger.ErrorCode.AvailabilityError,
-                    "Exception while communicate with BPMN engine");
+                    "Exception while communicate with BPMN engine",e);
             msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR,
                     MsoLogger.ResponseCode.CommunicationError,
                     "Exception while communicate with BPMN engine");

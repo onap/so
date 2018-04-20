@@ -341,7 +341,7 @@ public class OrchestrationRequests {
        	requestDetails = mapper.readValue(requestBody, RequestDetails.class);
 
        }catch(Exception e){
-       	msoLogger.debug("Exception caught mapping requestBody to RequestDetails");
+       	msoLogger.debug("Exception caught mapping requestBody to RequestDetails",e);
        }
 
        request.setRequestDetails(requestDetails);

@@ -27,6 +27,7 @@ import java.util.Optional;
 import java.util.Properties;
 
 import org.openecomp.mso.client.defaultproperties.DefaultDmaapPropertiesImpl;
+import org.openecomp.mso.logger.MsoLogger;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
@@ -34,7 +35,7 @@ import com.att.eelf.configuration.EELFLogger;
 import com.att.eelf.configuration.EELFManager;
 
 public abstract class DmaapClient {
-	
+	private MsoLogger logger=MsoLogger.getMsoLogger(MsoLogger.Catalog.GENERAL);
 	protected final EELFLogger auditLogger = EELFManager.getInstance().getAuditLogger();
 	protected final Map<String, String> msoProperties;
 	protected final Properties properties;
@@ -60,7 +61,7 @@ public abstract class DmaapClient {
 		try {
 			return new String(Base64.getDecoder().decode(password.getBytes()));
 		} catch(IllegalArgumentException iae) {
-			
+			logger.debug("Illegal Arguments", iae);
 			return password;
 		}
 	}

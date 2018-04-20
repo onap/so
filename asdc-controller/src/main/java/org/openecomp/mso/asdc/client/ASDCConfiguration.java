@@ -31,6 +31,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.openecomp.mso.asdc.client.exceptions.ASDCParametersException;
+import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.properties.MsoJsonProperties;
 import org.openecomp.mso.properties.MsoPropertiesException;
 import org.openecomp.mso.properties.MsoPropertiesFactory;
@@ -80,6 +81,7 @@ public class ASDCConfiguration implements IConfiguration {
     public static final String TOSCA_CSAR="TOSCA_CSAR";
     public static final String VF_MODULES_METADATA="VF_MODULES_METADATA";
 
+    private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.GENERAL);
 
     private static final String[] SUPPORTED_ARTIFACT_TYPES = {HEAT,
     		HEAT_ARTIFACT,
@@ -284,6 +286,7 @@ public class ASDCConfiguration implements IConfiguration {
             return null;
         }
 		} catch (IOException e) {
+			msoLogger.debug("IOException occured", e);
 			 return null;
 		}
     }
@@ -376,6 +379,7 @@ public class ASDCConfiguration implements IConfiguration {
 			return null;
 		}
 		} catch (IOException e) {
+			msoLogger.debug("IOException occured", e);
 			return null;
 		}
 	}
