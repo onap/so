@@ -88,7 +88,7 @@ public class VfcManager {
   public RestfulResponse createNs(NSResourceInputParameter segInput) throws ApplicationException {
 
     // Step1: get service template by node type
-    String csarId = segInput.getNsOperationKey().getNodeTemplateUUID();
+    String csarId = segInput.getNsServiceModelUUID();
     // nsdId for NFVO is "id" in the response, while for SDNO is "servcice template id"
     LOGGER.info("serviceTemplateId is {}, id is {}", csarId);
 

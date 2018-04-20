@@ -34,9 +34,6 @@ import org.camunda.bpm.engine.runtime.Execution;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
-import org.openecomp.mso.bpmn.core.json.JsonUtils;
-import org.openecomp.mso.logger.MessageEnum;
-import org.openecomp.mso.logger.MsoLogger;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.tosca.parser.exceptions.SdcToscaParserException;
 import org.onap.sdc.tosca.parser.impl.SdcToscaParserFactory;
@@ -44,6 +41,10 @@ import org.onap.sdc.toscaparser.api.NodeTemplate;
 import org.onap.sdc.toscaparser.api.Property;
 import org.onap.sdc.toscaparser.api.functions.GetInput;
 import org.onap.sdc.toscaparser.api.parameters.Input;
+import org.openecomp.mso.bpmn.core.PropertyConfiguration;
+import org.openecomp.mso.bpmn.core.json.JsonUtils;
+import org.openecomp.mso.logger.MessageEnum;
+import org.openecomp.mso.logger.MsoLogger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -55,10 +56,11 @@ public class ResourceRequestBuilder {
 
     public static String CUSTOMIZATION_UUID = "customizationUUID";
 
-    public static String SERVICE_URL_TOSCA_CSAR = "http://mso:8080/ecomp/mso/catalog/v3/serviceToscaCsar?serviceModelUuid=";
+    public static String SERVICE_URL_TOSCA_CSAR = "/v3/serviceToscaCsar?serviceModelUuid=";
 
     private static MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
 
+   
     static JsonUtils jsonUtil = new JsonUtils();
 
         /**
@@ -179,7 +181,9 @@ public class ResourceRequestBuilder {
     private static String getCsarFromUuid(String uuid) throws Exception {
 
         ResteasyClient client = new ResteasyClientBuilder().build();
-        ResteasyWebTarget target = client.target(SERVICE_URL_TOSCA_CSAR + uuid);
+		Map<String, String> properties = PropertyConfiguration.getInstance().getProperties("mso.bpmn.urn.properties");
+		String catalogEndPoint = properties.get("mso.catalog.db.endpoint");
+		ResteasyWebTarget target = client.target(catalogEndPoint + SERVICE_URL_TOSCA_CSAR + uuid);
         Response response = target.request().get();
         String value = response.readEntity(String.class);
 
