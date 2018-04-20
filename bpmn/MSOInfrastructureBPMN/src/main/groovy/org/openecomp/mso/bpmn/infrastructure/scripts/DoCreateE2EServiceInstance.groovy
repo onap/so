@@ -396,7 +396,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
         utils.log("INFO", " ======== STARTED preInitResourcesOperStatus Process ======== ", isDebugEnabled)
         try{
             String serviceId = execution.getVariable("serviceInstanceId")
-            String operationId = execution.getVariable("msoRequestId")
+            String operationId = execution.getVariable("operationId")
             String operationType = execution.getVariable("operationType")
             String resourceTemplateUUIDs = ""
             String result = "processing"
@@ -446,8 +446,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 	}
 
 	// prepare input param for using DoCreateResources.bpmn
-	public void preProcessForAddResource(DelegateExecution execution) {
-		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+	public void preProcessForAddResource(DelegateExecution execution) { 	def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO", " ======== STARTED preProcessForAddResource Process ======== ", isDebugEnabled)
 		
 		ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")

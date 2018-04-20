@@ -43,6 +43,7 @@ ex.processJavaException(execution)]]></bpmn:script>
         <camunda:in source="serviceType" target="serviceType" />
         <camunda:in source="uuiRequest" target="uuiRequest" />
         <camunda:in source="requestAction" target="operationType" />
+        <camunda:in source="operationId" target="operationId" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_19eilro</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0klbpxx</bpmn:outgoing>
