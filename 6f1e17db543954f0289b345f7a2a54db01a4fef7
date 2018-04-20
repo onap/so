@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_7a533417",
+        "filename": "adapters/mso-sdnc-adapter/src/main/java/org/openecomp/mso/adapters/sdnc/impl/SDNCAdapterRestImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2018-04-20T12:07:46Z",
+      "side": 1,
+      "message": "Its usually used to monitor the time it took for the operation while debugging the code.\nEither add the startTime to the debug log while exit, or remove the entire call.",
+      "revId": "6f1e17db543954f0289b345f7a2a54db01a4fef7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_1a5470fc",
+        "filename": "mso-catalog-db/src/main/java/org/openecomp/mso/db/catalog/CatalogDatabase.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 5009,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2018-04-20T12:07:46Z",
+      "side": 1,
+      "message": "same comment as above",
+      "revId": "6f1e17db543954f0289b345f7a2a54db01a4fef7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_3a592c35",
+        "filename": "mso-catalog-db/src/main/java/org/openecomp/mso/db/catalog/CatalogDatabase.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 5015,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2018-04-20T12:07:46Z",
+      "side": 1,
+      "message": "we might need to list the size of the output in the log later, that would help to know what the query has resulted in.",
+      "revId": "6f1e17db543954f0289b345f7a2a54db01a4fef7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
