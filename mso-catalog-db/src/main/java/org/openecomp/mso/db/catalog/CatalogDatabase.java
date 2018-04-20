@@ -4741,7 +4741,7 @@ public class CatalogDatabase implements Closeable {
 
         LOGGER.debug ("Catalog database - save VnfComponent where vnfId="+ vnfComponent.getVnfId()+ " AND componentType="+ vnfComponent.getComponentType());
 
-        VnfComponent vnfComponentDb = this.getVnfComponent(vnfComponent.getVnfId(), vnfComponent.getComponentType());
+        this.getVnfComponent(vnfComponent.getVnfId(), vnfComponent.getComponentType());
 
         try {
 
@@ -5006,13 +5006,13 @@ public class CatalogDatabase implements Closeable {
      * @return boolean value indicate whether DB is healthy
      */
     public boolean healthCheck () {
-        long startTime = System.currentTimeMillis ();
+        System.currentTimeMillis ();
         Session session = this.getSession ();
 
         // Query query = session.createQuery (" from ActiveRequests ");
         Query query = session.createSQLQuery (" show tables ");
 
-        List<?> list = query.list();
+        query.list();
         LOGGER.debug("healthCheck CatalogDB - Successful");
         return true;
     }

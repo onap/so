@@ -147,7 +147,7 @@ public class SDNCAdapterRestImpl {
 	@Path("/globalhealthcheck")
 	@Produces("text/html")
 	public Response globalHealthcheck (@DefaultValue("true") @QueryParam("enableBpmn") boolean enableBpmn) {
-		long startTime = System.currentTimeMillis ();
+		System.currentTimeMillis ();
 		MsoLogger.setServiceName ("GlobalHealthcheck");
 		// Generate a Request Id
 		String requestId = UUIDChecker.generateUUID(msoLogger);
@@ -170,7 +170,7 @@ public class SDNCAdapterRestImpl {
 	@Path("/nodehealthcheck")
 	@Produces("text/html")
 	public Response nodeHealthcheck () {
-		long startTime = System.currentTimeMillis ();
+		System.currentTimeMillis ();
 		MsoLogger.setServiceName ("NodeHealthcheck");
 		// Generate a Request Id
 		String requestId = UUIDChecker.generateUUID(msoLogger);

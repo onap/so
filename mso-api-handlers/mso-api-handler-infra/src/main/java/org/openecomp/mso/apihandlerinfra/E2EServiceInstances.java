@@ -1323,7 +1323,7 @@ public class E2EServiceInstances {
 		requestParameters.setSubscriptionServiceType("MOG");
 
 		// Userparams
-		List<E2EUserParam> userParams;
+		//List<E2EUserParam> userParams;
 		// userParams =
 		// e2eSir.getService().getParameters().getRequestParameters().getUserParams();
 		List<Map<String, Object>> userParamList = new ArrayList<>();
