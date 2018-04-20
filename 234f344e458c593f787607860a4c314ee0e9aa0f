@@ -25,6 +25,23 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_6e038010",
+        "filename": "adapters/mso-requests-db-adapter/src/test/java/org/openecomp/mso/adapters/requestsdb/HealthCheckHandlerTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2018-04-20T05:33:21Z",
+      "side": 1,
+      "message": "Its always better to assert failure if exception occurs which is not expected.",
+      "revId": "234f344e458c593f787607860a4c314ee0e9aa0f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_69313aec",
         "filename": "adapters/mso-sdnc-adapter/src/test/java/org/openecomp/mso/adapters/sdnc/impl/SDNCAdapterRestImplTest.java",
         "patchSetId": 2
