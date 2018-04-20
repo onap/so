@@ -533,7 +533,7 @@ public class E2EServiceInstances {
 	private Response updateE2EserviceInstances(String requestJSON, Action action,
 			HashMap<String, String> instanceIdMap, String version) {
 
-		String requestId = UUIDChecker.generateUUID(msoLogger);
+		String requestId = instanceIdMap.get("serviceId");
 		long startTime = System.currentTimeMillis();
 		msoLogger.debug("requestId is: " + requestId);
 		E2EServiceInstanceRequest e2eSir = null;
@@ -627,7 +627,7 @@ public class E2EServiceInstances {
 
 		String serviceInstanceType = e2eSir.getService().getServiceType();
 
-		String serviceId = instanceIdMap.get("serviceId");
+		String serviceId = "";
 		RequestClient requestClient = null;
 		HttpResponse response = null;
 
@@ -675,7 +675,6 @@ public class E2EServiceInstances {
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.InternalError,
 					"Null response from BPMN");
 			msoLogger.debug(END_OF_THE_TRANSACTION + (String) getBPMNResp.getEntity());
-			this.createOperationStatusRecordForError(action, requestId);
 			return getBPMNResp;
 		}
 
@@ -708,8 +707,9 @@ public class E2EServiceInstances {
 
 		if (curStatus != null && curStatus.getResult() != null && curStatus.getResult().equalsIgnoreCase("processing")) {
 			String chkMessage = "Error: Locked instance - This " + requestScope + " (" + requestId + ") "
-					+ "now being worked with a status of " + curStatus.getResult() 
-					+ ". The latest workflow of instance must be finished or cleaned up.";
+					+ "now being worked with a status of " + curStatus.getProgress() + " (ServiceName - "
+					+ curStatus.getServiceName()
+					+ "). The existing request must finish or be cleaned up before proceeding.";
 
 			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_CONFLICT,
 					MsoException.ServiceException, chkMessage, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR, null);
@@ -1323,9 +1323,9 @@ public class E2EServiceInstances {
 		requestParameters.setSubscriptionServiceType("MOG");
 
 		// Userparams
-		List<E2EUserParam> userParams;
-		// userParams =
-		// e2eSir.getService().getParameters().getRequestParameters().getUserParams();
+		//List<E2EUserParam> userParams;
+		//userParams =
+	    //e2eSir.getService().getParameters().getRequestParameters().getUserParams();
 		List<Map<String, Object>> userParamList = new ArrayList<>();
 		Map<String, Object> userParamMap = new HashMap<>();
 		// complete json request updated in the camunda

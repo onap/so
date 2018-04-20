@@ -93,8 +93,7 @@ public class CatalogDatabase implements Closeable {
     private static final String MODEL_TYPE = "modelType";
     private static final String MODEL_VERSION_ID = "modelVersionId";
     private static final String MODEL_CUSTOMIZATION_UUID = "modelCustomizationUuid";
-    private static final String VF_MODULE_MODEL_UUID = "vfModuleModelUUId";
-    private static final String NETWORK_SERVICE = "network service";
+	private static final String VF_MODULE_MODEL_UUID = "vfModuleModelUUId";
 
     protected static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.GENERAL);
 
@@ -1203,7 +1202,7 @@ public class CatalogDatabase implements Closeable {
     /**
      * Return a Network recipe that matches a given MODEL_UUID and ACTION
      *
-     * @param vnfModelUuid
+     * @param modelName
      * @param action
      * @return NetworkRecipe object or null if none found
      */
@@ -1218,31 +1217,7 @@ public class CatalogDatabase implements Closeable {
         }
         
         VnfRecipe recipe = this.getVnfRecipeByNameVersion(vnfResource.getModelName(), vnfResource.getVersion(), action);
-
-        if (recipe == null && vnfResource.getSubCategory().equalsIgnoreCase(NETWORK_SERVICE)) {
-            recipe = getDefaultVnfRecipe(action);
-        }
         return recipe;        
-    }
-
-    private VnfRecipe getDefaultVnfRecipe(String action) {
-        long startTime = System.currentTimeMillis();
-        LOGGER.debug("Catalog database - get default VNF recipe with action: " + action);
-
-        Query query = getSession().createQuery("FROM VnfRecipe WHERE vnfType = :vnfType AND action = :action ");
-        query.setParameter(VNF_TYPE, "NS_DEFAULT");
-        query.setParameter(ACTION, action);
-
-        @SuppressWarnings("unchecked")
-        List <VnfRecipe> resultList = query.list();
-
-        if (resultList.isEmpty()) {
-            LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. VNF recipe not found", "CatalogDB", "getVnfRecipe", null);
-            return null;
-        }
-
-        LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVnfRecipe", null);
-        return resultList.get(0);
     }
 
     /**
@@ -4469,7 +4444,7 @@ public class CatalogDatabase implements Closeable {
     /**
      * Return a Network recipe that matches a given MODEL_UUID and ACTION
      *
-     * @param networkModelUuid
+     * @param modelName
      * @param action
      * @return NetworkRecipe object or null if none found
      */
@@ -4484,17 +4459,7 @@ public class CatalogDatabase implements Closeable {
         }
         
         NetworkRecipe recipe = getNetworkRecipeByNameVersion(networkResource.getModelName(), networkResource.getModelVersion(), action);
-
-        if (recipe == null) {
-            recipe = getDefaultNetworkReceipe(action);
-        }
-
-        return recipe;
-    }
-
-    private NetworkRecipe getDefaultNetworkReceipe(String action) {
-        String modelName = "SDNC_DEFAULT";
-        return getNetworkRecipe(modelName, action);
+        return recipe;        
     }
     
     /**
@@ -4741,7 +4706,7 @@ public class CatalogDatabase implements Closeable {
 
         LOGGER.debug ("Catalog database - save VnfComponent where vnfId="+ vnfComponent.getVnfId()+ " AND componentType="+ vnfComponent.getComponentType());
 
-        VnfComponent vnfComponentDb = this.getVnfComponent(vnfComponent.getVnfId(), vnfComponent.getComponentType());
+        //VnfComponent vnfComponentDb = this.getVnfComponent(vnfComponent.getVnfId(), vnfComponent.getComponentType());
 
         try {
 
@@ -5006,13 +4971,13 @@ public class CatalogDatabase implements Closeable {
      * @return boolean value indicate whether DB is healthy
      */
     public boolean healthCheck () {
-        long startTime = System.currentTimeMillis ();
+        //long startTime = System.currentTimeMillis ();
         Session session = this.getSession ();
 
         // Query query = session.createQuery (" from ActiveRequests ");
         Query query = session.createSQLQuery (" show tables ");
 
-        List<?> list = query.list();
+        //List<?> list = query.list();
         LOGGER.debug("healthCheck CatalogDB - Successful");
         return true;
     }

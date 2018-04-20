@@ -1885,7 +1885,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             // Also new in 1510 - don't flag missing parameters if there's an environment - because they might be there.
             // And also new - add parameter to turn off checking all together if we find we're blocking orders we
             // shouldn't
-            boolean haveEnvironmentParameters = false;
+            //boolean haveEnvironmentParameters = false;
             boolean checkRequiredParameters = true;
             try {
                 String propertyString = msoPropertiesFactory.getMsoJavaProperties(MSO_PROP_VNF_ADAPTER)
