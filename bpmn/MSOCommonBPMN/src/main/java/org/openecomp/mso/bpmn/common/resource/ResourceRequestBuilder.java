@@ -123,7 +123,6 @@ public class ResourceRequestBuilder {
             throws SdcToscaParserException {
 
         Map<String, Object> resouceRequest = new HashMap<>();
-        List<Map<String, Object>> param = new ArrayList<>();
         String csarpath = null;
         try {
             csarpath = getCsarFromUuid(serviceUuid);
@@ -147,13 +146,9 @@ public class ResourceRequestBuilder {
                 Property property = resourceProperties.get(key);
 
                 Object value = getValue(property.getValue(), serviceInputs, serInput);
-                HashMap<String, Object> parameter = new HashMap<>();
-                parameter.put("name", key);
-                parameter.put("value", value);
-                param.add(parameter);
+                resouceRequest.put(key, value);
             }
         }
-        resouceRequest.put("param", param);
         return resouceRequest;
     }
 

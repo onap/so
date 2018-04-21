@@ -120,7 +120,23 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
     }
-    
+
+    String customizeResourceParam(String netowrkInputParametersJson) {
+        List<Map<String, Object>> paramList = new ArrayList();
+        JSONObject jsonObject = new JSONObject(netowrkInputParametersJson);
+        Iterator iterator = jsonObject.keys();
+        while (iterator.hasNext()) {
+            String key = iterator.next();
+            HashMap<String, String> hashMap = new HashMap();
+            hashMap.put("name", key);
+            hashMap.put("value", jsonObject.get(key))
+            paramList.add(hashMap)
+        }
+        Map<String, List<Map<String, Object>>> paramMap = new HashMap();
+        paramMap.put("param", paramList);
+
+        return  new JSONObject(paramMap).toString();
+    }
     
     /**
      * Pre Process the BPMN Flow Request
@@ -158,7 +174,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
             String resourceInputPrameters = resourceInputObj.getResourceParameters()
             String netowrkInputParametersJson = jsonUtil.getJsonValue(resourceInputPrameters, "requestInputs")
             //here convert json string to xml string
-            String netowrkInputParameters = XML.toString(new JSONObject(netowrkInputParametersJson))
+            String netowrkInputParameters = XML.toString(new JSONObject(customizeResourceParam(netowrkInputParametersJson)))
             // 1. prepare assign topology via SDNC Adapter SUBFLOW call
             String sndcTopologyCreateRequest =
                     """<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://org.openecomp/mso/workflow/schema/v1"
