@@ -80,6 +80,8 @@ public class CreateVFCNSResource extends AbstractServiceTaskProcessor {
            //deal with operation key
            String globalSubscriberId = jsonUtil.getJsonValue(resourceInput, "globalSubscriberId")
            utils.log("INFO", "globalSubscriberId:" + globalSubscriberId, isDebugEnabled)
+           //set local globalSubscriberId variable
+           execution.setVariable("globalSubscriberId", globalSubscriberId);
 
            String serviceType = execution.getVariable("serviceType")
            utils.log("INFO", "serviceType:" + serviceType, isDebugEnabled)

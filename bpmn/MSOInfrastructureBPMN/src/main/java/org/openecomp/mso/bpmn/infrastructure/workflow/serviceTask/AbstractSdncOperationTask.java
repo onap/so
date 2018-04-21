@@ -84,13 +84,14 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
 
     private void updateResOperStatus(ResourceOperationStatus resourceOperationStatus) throws RouteException {
         logger.info("AbstractSdncOperationTask.updateResOperStatus begin!");
-        String url = "http://mso:8080/dbadapters/RequestsDbAdapter";
-        HttpPost httpPost = new HttpPost(url);
+		Map<String, String> properties = PropertyConfiguration.getInstance().getProperties("mso.bpmn.urn.properties");
+		String requestsdbEndPoint = properties.get("mso.adapters.openecomp.db.endpoint");
+        HttpPost httpPost = new HttpPost(requestsdbEndPoint);
         httpPost.addHeader("Authorization", "Basic QlBFTENsaWVudDpwYXNzd29yZDEk");
         httpPost.addHeader("Content-type", "application/soap+xml");
         String postBody = getPostStringBody(resourceOperationStatus);
         httpPost.setEntity(new StringEntity(postBody, ContentType.APPLICATION_XML));
-        httpPost(url, httpPost);
+        httpPost(requestsdbEndPoint, httpPost);
         logger.info("AbstractSdncOperationTask.updateResOperStatus end!");
     }
 
@@ -165,13 +166,14 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
 
     private ResourceOperationStatus getResourceOperationStatus(String serviceId, String operationId, String resourceTemplateUUID) throws RouteException {
         logger.info("AbstractSdncOperationTask.getResourceOperationStatus begin!");
-        String url = "http://mso:8080/dbadapters/RequestsDbAdapter";
-        HttpPost httpPost = new HttpPost(url);
+		Map<String, String> properties = PropertyConfiguration.getInstance().getProperties("mso.bpmn.urn.properties");
+		String requestsdbEndPoint = properties.get("mso.adapters.openecomp.db.endpoint");
+        HttpPost httpPost = new HttpPost(requestsdbEndPoint);
         httpPost.addHeader("Authorization", "Basic QlBFTENsaWVudDpwYXNzd29yZDEk");
         httpPost.addHeader("Content-type", "application/soap+xml");
         String getBody = getGetStringBody(serviceId, operationId, resourceTemplateUUID);
         httpPost.setEntity(new StringEntity(getBody, ContentType.APPLICATION_XML));
-        String result = httpPost(url, httpPost);
+        String result = httpPost(requestsdbEndPoint, httpPost);
         ResourceOperationStatus resourceOperationStatus = getResourceOperationStatusFromXmlString(result);
         logger.info("AbstractSdncOperationTask.getResourceOperationStatus end!");
         return resourceOperationStatus;
