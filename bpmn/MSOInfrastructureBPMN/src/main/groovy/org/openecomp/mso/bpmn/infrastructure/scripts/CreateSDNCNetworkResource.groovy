@@ -18,7 +18,10 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.mso.bpmn.infrastructure.scripts;
+package org.openecomp.mso.bpmn.infrastructure.scripts
+
+import org.json.JSONObject
+import org.json.XML;
 
 import static org.apache.commons.lang3.StringUtils.*;
 import groovy.xml.XmlUtil
@@ -144,8 +147,8 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
             String serviceType = resourceInputObj.getServiceType()
             String serviceModelInvariantUuid = resourceInputObj.getServiceModelInfo().getModelInvariantUuid()
             String serviceModelUuid = resourceInputObj.getServiceModelInfo().getModelUuid()
-            String serviceModelVersion = resourceInputObj.getServiceModelInfo().getModelName()
-            String serviceModelName = resourceInputObj.getServiceModelInfo().getModelVersion()
+            String serviceModelVersion = resourceInputObj.getServiceModelInfo().getModelVersion()
+            String serviceModelName = resourceInputObj.getServiceModelInfo().getModelName()
             String globalCustomerId = resourceInputObj.getGlobalSubscriberId()
             String modelInvariantUuid = resourceInputObj.getResourceModelInfo().getModelInvariantUuid();
             String modelCustomizationUuid = resourceInputObj.getResourceModelInfo().getModelCustomizationUuid()
@@ -155,7 +158,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
             String resourceInputPrameters = resourceInputObj.getResourceParameters()
             String netowrkInputParametersJson = jsonUtil.getJsonValue(resourceInputPrameters, "requestInputs")
             //here convert json string to xml string
-            String netowrkInputParameters = jsonUtil.json2xml(netowrkInputParametersJson)
+            String netowrkInputParameters = XML.toString(new JSONObject(netowrkInputParametersJson))
             // 1. prepare assign topology via SDNC Adapter SUBFLOW call
             String sndcTopologyCreateRequest =
                     """<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://org.openecomp/mso/workflow/schema/v1"
@@ -179,7 +182,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                                         <order-version></order-version>
                                      </request-information>
                                      <service-information>
-                                        <service-id>${sdnc_service_id}</service-id>
+                                        <service-id>${serviceInstanceId}</service-id>
                                         <subscription-service-type>${serviceType}</subscription-service-type>
                                         <ecomp-model-information>
                                              <model-invariant-uuid>${serviceModelInvariantUuid}</model-invariant-uuid>
