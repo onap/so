@@ -24,6 +24,10 @@ import java.util.Map;
 
 import org.openecomp.mso.db.catalog.beans.Recipe;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
 /**
  * serivce csar query support 
  * <br>
@@ -41,16 +45,6 @@ public class QueryResourceRecipe extends CatalogQuery{
         this.resourceRecipe =resourceRecipe;
     }
 
-    private final String template =
-            "\t{\n"+
-            "\t\t\"id\"                     : <ID>,\n"+
-            "\t\t\"action\"                 : <ACTION>,\n"+
-            "\t\t\"orchestrationUri\"       : <ORCHESTRATION_URI>,\n"+
-            "\t\t\"recipeTimeout\"          : <RECIPE_TIMEOUT>,\n"+
-            "\t\t\"paramXSD\"               : <PARAM_XSD>,\n"+
-            "\t\t\"description\"            : <DESCRIPTION>\n"+
-            "\t}";
-    
     @Override
     public String toString() {
 
@@ -58,15 +52,25 @@ public class QueryResourceRecipe extends CatalogQuery{
     }
 
     @Override
-    public String JSON2(boolean isArray, boolean isEmbed) {
+    public String JSON2(boolean isArray, boolean isEmbed) {    	
+    	
         Map<String, String> valueMap = new HashMap<>();
-        put(valueMap, "ID", null == resourceRecipe ? null : resourceRecipe.getId());
-        put(valueMap, "ACTION", null == resourceRecipe ? null : resourceRecipe.getAction());
-        put(valueMap, "ORCHESTRATION_URI", null == resourceRecipe ? null : resourceRecipe.getOrchestrationUri());
-        put(valueMap, "RECIPE_TIMEOUT", null == resourceRecipe ? null : resourceRecipe.getRecipeTimeout());
-        put(valueMap, "PARAM_XSD", null == resourceRecipe ? null : resourceRecipe.getParamXSD());
-        put(valueMap, "DESCRIPTION", null == resourceRecipe ? null : resourceRecipe.getDescription());
-        return this.setTemplate(template, valueMap);
+        valueMap.put("id",  null == resourceRecipe ? null :String.valueOf(resourceRecipe.getId()));
+        valueMap.put("action",  null == resourceRecipe ? null :resourceRecipe.getAction());
+        valueMap.put("orchestrationUri", null == resourceRecipe ? null : resourceRecipe.getOrchestrationUri());
+        valueMap.put("recipeTimeout", null == resourceRecipe ? null : String.valueOf(resourceRecipe.getRecipeTimeout()));
+        valueMap.put("paramXSD", null == resourceRecipe ? null : resourceRecipe.getParamXSD());
+        valueMap.put("description", null == resourceRecipe ? null : resourceRecipe.getDescription());
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        String jsonStr = "";
+        try {
+            jsonStr = mapper.writeValueAsString(valueMap);
+        } catch(JsonProcessingException e) {
+
+            e.printStackTrace();
+        }
+        return jsonStr;
     }
 
 }
