@@ -158,7 +158,7 @@ csi.sendSyncError(execution)]]></bpmn:script>
 def csi = new  UpdateCustomE2EServiceInstance()
 csi.sendSyncResponse(execution)]]></bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:exclusiveGateway id="ExclusiveGateway_0aqn64l" name="Success?">
+    <bpmn:exclusiveGateway id="ExclusiveGateway_0aqn64l" name="Success?" default="SequenceFlow_1fueo69">
       <bpmn:incoming>SequenceFlow_0klbpxx</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_14zu6wr</bpmn:outgoing>
       <bpmn:outgoing>SequenceFlow_1fueo69</bpmn:outgoing>
@@ -174,9 +174,7 @@ csi.sendSyncResponse(execution)]]></bpmn:script>
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[#{execution.getVariable("WorkflowException") == null}]]></bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_0je30si" sourceRef="ScriptTask_0ttvn8r" targetRef="CallActivity_02fyxz0" />
-    <bpmn:sequenceFlow id="SequenceFlow_1fueo69" name="no" sourceRef="ExclusiveGateway_0aqn64l" targetRef="EndEvent_07uk5iy">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[#{execution.getVariable("WorkflowException") != null}]]></bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_1fueo69" name="no" sourceRef="ExclusiveGateway_0aqn64l" targetRef="EndEvent_07uk5iy" />
     <bpmn:callActivity id="CallActivity_1vejucv" name="Call AAI Generic GetService" calledElement="GenericGetService">
       <bpmn:extensionElements>
         <camunda:in source="serviceInstanceId" target="GENGS_serviceInstanceId" />
@@ -233,10 +231,10 @@ ddsi.preCompareModelVersions(execution)]]></bpmn:script>
     <bpmn:sequenceFlow id="SequenceFlow_03i6zhx" sourceRef="ScriptTask_0cx1y0g" targetRef="ScriptTask_0hixtxc" />
     <bpmn:sequenceFlow id="SequenceFlow_1pdv4qj" sourceRef="ScriptTask_0hixtxc" targetRef="CallActivity_1rkoyc5" />
     <bpmn:sequenceFlow id="SequenceFlow_0xhbobd" sourceRef="CallActivity_1rkoyc5" targetRef="ScriptTask_11y3uq6" />
-    <bpmn:exclusiveGateway id="ExclusiveGateway_0mc34qe" name="HasResourcetoUpdate?">
+    <bpmn:exclusiveGateway id="ExclusiveGateway_0mc34qe" name="HasResourcetoUpdate?" default="SequenceFlow_1n8h3zt">
       <bpmn:incoming>SequenceFlow_0secadm</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_1n8h3zt</bpmn:outgoing>
       <bpmn:outgoing>SequenceFlow_0zmd4rt</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_1n8h3zt</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="SequenceFlow_0az1n4y" sourceRef="ScriptTask_1s09c7d" targetRef="CallActivity_1vejucv" />
     <bpmn:intermediateCatchEvent id="IntermediateCatchEvent_0m01dm3" name="StartDoUpdate">
@@ -301,9 +299,6 @@ csi.prepareInitServiceOperationStatus(execution)]]></bpmn:script>
       <bpmn:incoming>SequenceFlow_1wzk6tu</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0kvl23y</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="SequenceFlow_1n8h3zt" name="No" sourceRef="ExclusiveGateway_0mc34qe" targetRef="ScriptTask_04a0t3p">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[#{execution.getVariable("hasResourcetoUpdate")== false}]]></bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
     <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_08mk8h9" name="GoToOperStatusInit">
       <bpmn:incoming>SequenceFlow_0t7zinj</bpmn:incoming>
       <bpmn:linkEventDefinition name="StartOperStatusInit" />
@@ -331,7 +326,10 @@ ddsi.preUpdateServiceOperationStatus(execution)]]></bpmn:script>
       <bpmn:linkEventDefinition name="StartDoUpdate" />
     </bpmn:intermediateThrowEvent>
     <bpmn:sequenceFlow id="SequenceFlow_0kvl23y" sourceRef="ServiceTask_0mj3kf2" targetRef="EndEvent_1jvqhkf" />
-    <bpmn:sequenceFlow id="SequenceFlow_0zmd4rt" name="Yes" sourceRef="ExclusiveGateway_0mc34qe" targetRef="IntermediateThrowEvent_1k72hze" />
+    <bpmn:sequenceFlow id="SequenceFlow_0zmd4rt" name="Yes" sourceRef="ExclusiveGateway_0mc34qe" targetRef="IntermediateThrowEvent_1k72hze">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[#{execution.getVariable("hasResourcetoUpdate") == true}]]></bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_1n8h3zt" name="No" sourceRef="ExclusiveGateway_0mc34qe" targetRef="ScriptTask_04a0t3p" />
   </bpmn:process>
   <bpmn:error id="Error_0nbdy47" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
@@ -606,13 +604,6 @@ ddsi.preUpdateServiceOperationStatus(execution)]]></bpmn:script>
       <bpmndi:BPMNShape id="ServiceTask_0mj3kf2_di" bpmnElement="ServiceTask_0mj3kf2">
         <dc:Bounds x="959" y="337" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_1n8h3zt_di" bpmnElement="SequenceFlow_1n8h3zt">
-        <di:waypoint xsi:type="dc:Point" x="689" y="377" />
-        <di:waypoint xsi:type="dc:Point" x="782" y="377" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="729" y="356" width="14" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="IntermediateThrowEvent_08mk8h9_di" bpmnElement="IntermediateThrowEvent_08mk8h9">
         <dc:Bounds x="1192" y="180" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -687,6 +678,13 @@ ddsi.preUpdateServiceOperationStatus(execution)]]></bpmn:script>
         <di:waypoint xsi:type="dc:Point" x="664" y="447" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="670" y="419" width="19" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1n8h3zt_di" bpmnElement="SequenceFlow_1n8h3zt">
+        <di:waypoint xsi:type="dc:Point" x="689" y="377" />
+        <di:waypoint xsi:type="dc:Point" x="782" y="377" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="729" y="356" width="14" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>

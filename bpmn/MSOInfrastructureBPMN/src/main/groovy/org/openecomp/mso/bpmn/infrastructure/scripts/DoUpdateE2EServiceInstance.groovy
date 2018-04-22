@@ -126,7 +126,11 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 			
 			// user params
 			String uuiRequest = execution.getVariable("uuiRequest")
-			utils.log("INFO","uuiRequest: " + uuiRequest, isDebugEnabled)
+			// target model uuid
+			String modelUuid = jsonUtil.getJsonValue(uuiRequest, "service.serviceUuid")
+			execution.setVariable("modelUuid", modelUuid)
+			
+			utils.log("INFO","modelUuid: " + modelUuid, isDebugEnabled)
 				
 		} catch (BpmnError e) {
 			throw e;
@@ -204,13 +208,11 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		
 	    execution.setVariable("operationType", "create")
 		
-		def hasResourcetoAdd = false
+		execution.setVariable("hasResourcetoAdd", false)
 		List<Resource> addResourceList =  execution.getVariable("addResourceList")
 		if(addResourceList != null && !addResourceList.isEmpty()) {
-			hasResourcetoAdd = true			
+			execution.setVariable("hasResourcetoAdd", true)			
 		}
-		execution.setVariable("hasResourcetoAdd", hasResourcetoAdd)
-		
 	
 		utils.log("INFO"," *** Exit preProcessForAddResource *** ", isDebugEnabled)
     }
@@ -230,12 +232,11 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		
 		execution.setVariable("operationType", "delete")
 		
-		def hasResourcetoDelete = false
+		execution.setVariable("hasResourcetoDelete", false)
 		List<Resource> delResourceList =  execution.getVariable("delResourceList")
 		if(delResourceList != null && !delResourceList.isEmpty()) {
-			hasResourcetoDelete = true
-		}
-		execution.setVariable("hasResourcetoDelete", hasResourcetoDelete)
+			execution.setVariable("hasResourcetoDelete", true)
+		}			
 		
 		execution.setVariable("resourceInstanceIDs", execution.getVariable("serviceRelationShip"))
 		
@@ -317,6 +318,7 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		String namespace = aaiUriUtil.getNamespaceFromUri(aai_uri)
 		utils.log("INFO","namespace: " + namespace, isDebugEnabled)
 
+		//update target model to aai
 		String serviceInstanceData =
 				"""<service-instance xmlns=\"${namespace}\">
 			       <model-version-id">${modelUuid}</model-version-id>
