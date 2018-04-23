@@ -209,7 +209,7 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
                     if (utils.nodeExists(siData, "relationship-list")) {
                         utils.log("INFO", "SI Data relationship-list exists:", isDebugEnabled)
                         //test(siData)
-                        NodeList nodeList = serviceXml.getElementsByTagName("relationship").item(0).getChildNodes()
+                        NodeList nodeList = serviceXml.getElementsByTagName("relationship")
                         JSONArray jArray = new JSONArray()
                         for (int x = 0; x < nodeList.getLength(); x++) {
                             Node node = nodeList.item(x)
@@ -225,18 +225,11 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
                                         for (int i = 0; i < dataList.getLength(); i++) {
                                             Node dNode = dataList.item(i)
                                             if(dNode.getNodeName() == "relationship-data") {
-
-                                                NodeList rdNodes = dNode.getChildNodes()
-                                                for(int j = 0; j < rdNodes.getLength(); j++) {
-                                                    Node rdNode = rdNodes.item(j);
-                                                    if (rdNode instanceof Element) {
-                                                        Element rDataEle = (Element) rdNode
-                                                        def eKey = rDataEle.getElementsByTagName("relationship-key").item(0).getTextContent()
-                                                        def eValue = rDataEle.getElementsByTagName("relationship-value").item(0).getTextContent()
-                                                        if (eKey.equals("service-instance.service-instance-id")) {
-                                                            jObj.put("resourceInstanceId", eValue)
-                                                        }
-                                                    }
+                                                Element rDataEle = (Element)dNode
+                                                def eKey =  rDataEle.getElementsByTagName("relationship-key").item(0).getTextContent()
+                                                def eValue = rDataEle.getElementsByTagName("relationship-value").item(0).getTextContent()
+                                                if(eKey.equals("service-instance.service-instance-id")){
+                                                    jObj.put("resourceInstanceId", eValue)
                                                 }
 
                                             }
@@ -342,8 +335,8 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
             //here modelVersion is not set, we use modelUuid to decompose the service.
             String serviceModelInfo = """{
             "modelInvariantUuid":"${modelInvariantUuid}",
-            "modelUuid":"",
-            "modelVersion":"${modelVersionId}"
+            "modelUuid":"${modelVersionId}",
+            "modelVersion":""
              }"""
             execution.setVariable("serviceModelInfo", serviceModelInfo)
 
@@ -390,18 +383,14 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
             execution.setVariable("serviceInstanceId", serviceId)
             execution.setVariable("operationId", operationId)
             execution.setVariable("operationType", operationType)
+            List<Resource> deleteResourceList = execution.getVariable("deleteResourceList")
 
-            String serviceRelationShip = execution.getVariable("serviceRelationShip")
-
-            def jsonSlurper = new JsonSlurper()
-            def jsonOutput = new JsonOutput()
-            List relationShipList =  jsonSlurper.parseText(serviceRelationShip)
-
-            if (relationShipList != null) {
-                relationShipList.each {
-                    resourceTemplateUUIDs  = resourceTemplateUUIDs + it.resourceInstanceId + ":"
-                }
-            }
+            String serviceRelationShip = execution.getVariable("serviceRelationShip")                    
+            for(Resource resource : deleteResourceList){
+                    resourceTemplateUUIDs  = resourceTemplateUUIDs + resource.getModelInfo().getModelCustomizationUuid() + ":"
+            }   
+            
+            
             execution.setVariable("URN_mso_adapters_openecomp_db_endpoint","http://mso.mso.testlab.openecomp.org:8080/dbadapters/RequestsDbAdapter")
 
             String payload =
