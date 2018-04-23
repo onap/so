@@ -20,6 +20,7 @@
 package org.openecomp.mso.bpmn.common.recipe;
 
 import org.openecomp.mso.bpmn.core.domain.ModelInfo;
+import org.openecomp.mso.logger.MsoLogger;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -41,6 +42,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 @JsonRootName("variables")
 public class ResourceInput {
 
+	private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.GENERAL);
+	
     @JsonProperty("resourceInstanceName")
     private String resourceInstanceName;
     
@@ -285,7 +288,7 @@ public class ResourceInput {
         try {
             jsonStr = mapper.writeValueAsString(this);
         } catch(JsonProcessingException e) {
-
+        	msoLogger.debug("JsonProcessingException", e);
             e.printStackTrace();
         }
         return jsonStr;
