@@ -18,11 +18,25 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.mso.bpmn.infrastructure.pnf.dmaap;
+package org.openecomp.mso.bpmn.infrastructure.pnf.delegate;
 
-public interface DmaapClient {
+import org.camunda.bpm.engine.delegate.DelegateExecution;
+import org.camunda.bpm.engine.delegate.JavaDelegate;
+import org.openecomp.mso.bpmn.infrastructure.pnf.dmaap.DmaapClient;
+import org.springframework.beans.factory.annotation.Autowired;
 
-    void registerForUpdate(String correlationId, Runnable informConsumer);
+public class CancelDmaapSubscription implements JavaDelegate {
 
-    Runnable unregister(String correlationId);
+    private DmaapClient dmaapClient;
+
+    @Override
+    public void execute(DelegateExecution execution) throws Exception {
+        String correlationId = (String) execution.getVariable(ExecutionVariableNames.CORRELATION_ID);
+        dmaapClient.unregister(correlationId);
+    }
+
+    @Autowired
+    public void setDmaapClient(DmaapClient dmaapClient) {
+        this.dmaapClient = dmaapClient;
+    }
 }

@@ -86,6 +86,15 @@ public class PnfEventReadyConsumer implements DmaapClient {
         }
     }
 
+    @Override
+    public synchronized Runnable unregister(String correlationId) {
+        Runnable runnable = pnfCorrelationIdToThreadMap.remove(correlationId);
+        if (pnfCorrelationIdToThreadMap.isEmpty()) {
+            stopDmaapThreadListener();
+        }
+        return runnable;
+    }
+
     private synchronized void startDmaapThreadListener() {
         if (!dmaapThreadListenerIsRunning) {
             executor = Executors.newScheduledThreadPool(1);
@@ -123,13 +132,9 @@ public class PnfEventReadyConsumer implements DmaapClient {
 
 
     private synchronized void informAboutPnfReadyIfCorrelationIdFound(String correlationId) {
-        Runnable runnable = pnfCorrelationIdToThreadMap.remove(correlationId);
+        Runnable runnable = unregister(correlationId);
         if (runnable != null) {
             runnable.run();
-
-            if (pnfCorrelationIdToThreadMap.isEmpty()) {
-                stopDmaapThreadListener();
-            }
         }
     }
 

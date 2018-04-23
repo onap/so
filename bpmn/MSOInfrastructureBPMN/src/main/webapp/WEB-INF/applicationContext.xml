@@ -18,6 +18,10 @@
     <property name="dmaapClient" ref="pnfEventReadyConsumer"/>
   </bean>
 
+  <bean id="cancelDmaapSubscription" class="org.openecomp.mso.bpmn.infrastructure.pnf.delegate.CancelDmaapSubscription">
+    <property name="dmaapClient" ref="pnfEventReadyConsumer"/>
+  </bean>
+
   <bean id="pnfEventReadyConsumer" class="org.openecomp.mso.bpmn.infrastructure.pnf.dmaap.PnfEventReadyConsumer"
     init-method="init">
     <property name="dmaapHost" value="${host}"/>
