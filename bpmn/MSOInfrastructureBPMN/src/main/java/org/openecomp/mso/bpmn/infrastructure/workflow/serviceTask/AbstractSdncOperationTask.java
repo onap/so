@@ -359,7 +359,7 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
                 return vlaue;
             }
         } catch (Exception e) {
-            msoLogger.error(MessageEnum.GENERAL_EXCEPTION, " getMsbIp catch exception: ", "", this.getTaskName(), MsoLogger.ErrorCode.UnknownError, e.getClass().toString());
+            msoLogger.error(MessageEnum.GENERAL_EXCEPTION, " getMsbIp catch exception: ", "", this.getTaskName(), MsoLogger.ErrorCode.UnknownError, e.getClass().toString(),e);
         }
         return defaultValue;
     }

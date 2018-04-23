@@ -60,7 +60,7 @@ public abstract class DmaapClient {
 		try {
 			return new String(Base64.getDecoder().decode(password.getBytes()));
 		} catch(IllegalArgumentException iae) {
-			
+			auditLogger.error("llegal Arguments",iae);
 			return password;
 		}
 	}

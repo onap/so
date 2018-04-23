@@ -83,7 +83,7 @@ public class RestfulUtil {
                 msbPort = msoPropertiesFactory.getMsoJavaProperties("MSO_PROP_TOPOLOGY").getProperty("msb-port", DEFAULT_MSB_PORT);
             }
         } catch(MsoPropertiesException e) {
-            LOGGER.error(MessageEnum.RA_NS_EXC, "VFC Adapter", "", MsoLogger.ErrorCode.AvailabilityError, "Get msb properties failed");
+            LOGGER.error(MessageEnum.RA_NS_EXC, "VFC Adapter", "", MsoLogger.ErrorCode.AvailabilityError, "Get msb properties failed",e);
             e.printStackTrace();
         }
         return "http://" + msbIp + ":" + msbPort;

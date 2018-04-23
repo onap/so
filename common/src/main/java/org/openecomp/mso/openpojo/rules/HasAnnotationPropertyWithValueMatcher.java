@@ -28,10 +28,12 @@ import java.lang.reflect.Method;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
+import org.openecomp.mso.logger.MsoLogger;
 
 import com.openpojo.reflection.PojoField;
 
 public class HasAnnotationPropertyWithValueMatcher<T extends PojoField> extends TypeSafeDiagnosingMatcher<T> {
+	private MsoLogger logger=MsoLogger.getMsoLogger(MsoLogger.Catalog.GENERAL);
 	private final String attribute;
 	private final Matcher<?> annotationMatcher;
 	private final Class<? extends Annotation> annotationClass;
@@ -59,6 +61,7 @@ public class HasAnnotationPropertyWithValueMatcher<T extends PojoField> extends 
 			}
 		} catch (NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			mismatchDescription.appendText("does not have property ").appendText(attribute);
+			logger.debug("Error occured", e);
 			return false;
 		}
 		return true;
