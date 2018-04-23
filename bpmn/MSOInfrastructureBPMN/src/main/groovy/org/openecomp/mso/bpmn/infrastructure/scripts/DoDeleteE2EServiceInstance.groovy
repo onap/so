@@ -355,8 +355,26 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
         try {
             ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
             List<Resource> deleteResourceList = serviceDecomposition.getServiceResources()
+            String serviceRelationShip = execution.getVariable("serviceRelationShip")
+            def jsonSlurper = new JsonSlurper()
+            def jsonOutput = new JsonOutput()         
+            List relationShipList =  jsonSlurper.parseText(serviceRelationShip)
+                            
+ 
+            //Set the real resource instance id to the decomosed resource list
+            for(Resource resource: deleteResourceList){
+            	//reset the resource instance id , because in the decompose flow ,its a random one.
+            	resource.setResourceId("");
+                //match the resource-instance-name and the model name
+                if (relationShipList != null) {
+                    relationShipList.each {
+                	   if(StringUtils.containsIgnoreCase(it.resourceType, resource.getModelInfo().getModelName())){
+                	       resource.setResourceId(it.resourceInstanceId);
+                	   }                        
+                    }
+                }
+            }
             execution.setVariable("deleteResourceList", deleteResourceList)
-            execution.setVariable("resourceInstanceIDs", execution.getVariable("serviceRelationShip"))
         } catch (Exception ex) {
             String exceptionMessage = "Bpmn error encountered in  create generic e2e service flow. processDecomposition() - " + ex.getMessage()
             utils.log("DEBUG", exceptionMessage, isDebugEnabled)

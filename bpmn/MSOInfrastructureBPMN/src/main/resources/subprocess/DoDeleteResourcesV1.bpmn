@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.11.3">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0">
   <bpmn:process id="DoDeleteResourcesV1" name="DoDeleteResourcesV1" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1" name="Start Resource Delete">
       <bpmn:outgoing>SequenceFlow_0stqur4</bpmn:outgoing>
@@ -9,9 +9,8 @@
       <bpmn:incoming>SequenceFlow_13nyd1j</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1qm7owo</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
-String resourceName = execution.getVariable("resourceType")
 def ddrs = new DoDeleteResourcesV1()
-ddrs.preResourceDelete(execution, resourceName )]]></bpmn:script>
+ddrs.preResourceDelete(execution)]]></bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="ScriptTask_15zy0jf" name="Execute Delete Resource Recipe" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_1qm7owo</bpmn:incoming>
