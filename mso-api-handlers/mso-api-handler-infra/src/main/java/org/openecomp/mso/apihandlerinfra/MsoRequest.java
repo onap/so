@@ -913,9 +913,8 @@ public class MsoRequest {
     }
 
     public void updateFinalStatus (Status status) {
-        int result = 0;
         try {
-            result = (RequestsDatabase.getInstance()).updateInfraFinalStatus (requestId,
+            (RequestsDatabase.getInstance()).updateInfraFinalStatus (requestId,
                                                               status.toString (),
                                                               this.errorMessage,
                                                               this.progress,
