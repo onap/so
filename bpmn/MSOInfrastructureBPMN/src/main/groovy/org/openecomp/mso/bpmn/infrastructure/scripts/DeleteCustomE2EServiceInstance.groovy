@@ -73,9 +73,9 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			
 
 			String requestId = execution.getVariable("mso-request-id")
-			execution.setVariable("msoRequestId", requestId)
+			execution.setVariable("msoRequestId", requestId)			
 			utils.log("INFO", "Input Request:" + siRequest + " reqId:" + requestId, isDebugEnabled)
-			
+		
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
 			if (isBlank(serviceInstanceId)) {
 				msg = "Input serviceInstanceId' is null"
@@ -114,7 +114,9 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			} else {
 				execution.setVariable("subscriptionServiceType", subscriptionServiceType)
 			}
-
+			String operationId = jsonUtil.getJsonValue(siRequest, "operationId")
+			execution.setVariable("operationId", operationId)
+					
 			execution.setVariable("operationType", "DELETE")
 		} catch (BpmnError e) {
 			throw e;
@@ -129,13 +131,9 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 	public void sendSyncResponse (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO", " *** sendSyncResponse  *** ", isDebugEnabled)
-
 		try {
-			String requestId = execution.getVariable("msoRequestId")
-			String serviceInstanceId = execution.getVariable("serviceInstanceId")
-
-			// RESTResponse (for API Handler (APIH) Reply Task)
-			String syncResponse = """{"requestReferences":{"instanceId":"${serviceInstanceId}","requestId":"${requestId}"}}""".trim()
+			String operationId = execution.getVariable("operationId")
+			String syncResponse = """{"operationId":"${operationId}"}""".trim()
 			utils.log("INFO", " sendSynchResponse: xmlSyncResponse - " + "\n" + syncResponse, isDebugEnabled)
 			sendWorkflowResponse(execution, 202, syncResponse)
 
