@@ -451,7 +451,7 @@ public class UpdateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 				updateServiceResp = """{"operationId":"${operationId}"}""".trim()
 			}
 			else {
-				updateServiceResp =  """{"OperationResult":"No Resource to Add or Delete"}"""
+				updateServiceResp =  """{"OperationResult":"No Resource to Add or Delete or Service Instance not found in AAI."}"""
 			}
 			
 			utils.log("INFO", " sendSyncResponse to APIH:" + "\n" + updateServiceResp, isDebugEnabled)
