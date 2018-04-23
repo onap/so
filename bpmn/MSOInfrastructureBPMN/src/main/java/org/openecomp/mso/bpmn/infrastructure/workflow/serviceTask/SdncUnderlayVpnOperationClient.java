@@ -67,7 +67,7 @@ public class SdncUnderlayVpnOperationClient {
         NetworkRpcInputEntityBuilder builder = new NetworkRpcInputEntityBuilder();
         RpcNetworkTopologyOperationInputEntity body = builder.build(null, inputs);
         updateProgress(null, null, "50", "RequestBody build finished!");
-        RpcNetworkTopologyOperationOutputEntity networkRpcOutputEntiy = null;
+       // RpcNetworkTopologyOperationOutputEntity networkRpcOutputEntiy = null;
         try {
             genericResourceApiClient.postNetworkTopologyOperation(HeaderUtil.DefaulAuth ,body).execute().body();
         } catch (Exception e) {
