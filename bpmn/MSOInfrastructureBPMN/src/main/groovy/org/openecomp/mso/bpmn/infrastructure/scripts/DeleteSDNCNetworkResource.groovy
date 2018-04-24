@@ -23,6 +23,7 @@ package org.openecomp.mso.bpmn.infrastructure.scripts
 
 import org.json.JSONArray
 import org.openecomp.mso.bpmn.common.resource.ResourceRequestBuilder
+import org.openecomp.mso.bpmn.core.domain.ModelInfo
 import org.openecomp.mso.bpmn.core.domain.Resource
 import org.openecomp.mso.bpmn.core.domain.ServiceDecomposition
 import org.openecomp.mso.bpmn.infrastructure.properties.BPMNProperties;
@@ -75,26 +76,39 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
         String msg = ""
 
         try {
+            ResourceInput resourceInput = new ObjectMapper().readValue(execution.getVariable("resourceInput"), ResourceInput.class)
+
+            ModelInfo resourceModelInfo = resourceInput.getResourceModelInfo()
+            execution.setVariable("resourceInvariantUUID", resourceModelInfo.getModelInvariantUuid())
+            execution.setVariable("modelVersion", resourceModelInfo.getModelVersion())
+            execution.setVariable("resourceUUID", resourceModelInfo.getModelUuid())
+            execution.setVariable("resourceType", resourceModelInfo.getModelType())
+
             String serviceInstanceId = execution.getVariable("serviceInstanceId")
             String serviceInstanceName = execution.getVariable("serviceInstanceName")
             String callbackURL = execution.getVariable("sdncCallbackUrl")
             String requestId = execution.getVariable("msoRequestId")
-            String serviceId = execution.getVariable("productFamilyId")
-            String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
-            String globalSubscriberId = execution.getVariable("globalSubscriberId") //globalCustomerId
+            String subscriptionServiceType = execution.getVariable("serviceType")
+            String globalSubscriberId = resourceInput.getGlobalSubscriberId()
             String recipeParamsFromRequest = execution.getVariable("recipeParams")
-            String serviceModelInfo = execution.getVariable("serviceModelInfo")
+            String serviceId = resourceInput.getServiceInstanceId()
+            ModelInfo serviceModelInfo = resourceInput.getServiceModelInfo()
             String modelInvariantUuid = ""
             String modelVersion = ""
             String modelUuid = ""
             String modelName = ""
 
-            if (!isBlank(serviceModelInfo))
+            if (serviceModelInfo != null)
             {
-                modelInvariantUuid = jsonUtil.getJsonValue(serviceModelInfo, "modelInvariantUuid")
-                modelVersion = jsonUtil.getJsonValue(serviceModelInfo, "modelVersion")
-                modelUuid = jsonUtil.getJsonValue(serviceModelInfo, "modelUuid")
-                modelName = jsonUtil.getJsonValue(serviceModelInfo, "modelName")
+                modelInvariantUuid = serviceModelInfo.getModelInvariantUuid()
+                modelVersion = serviceModelInfo.getModelVersion()
+                modelUuid = serviceModelInfo.getModelUuid()
+                modelName = serviceModelInfo.getModelName()
+
+                execution.setVariable("modelInvariantUuid", serviceModelInfo.getModelInvariantUuid())
+                execution.setVariable("modelVersion", serviceModelInfo.getModelVersion())
+                execution.setVariable("modelUuid", serviceModelInfo.getModelUuid())
+                execution.setVariable("serviceModelName", serviceModelInfo.getModelName())
 
                 if (modelInvariantUuid == null) {
                     modelInvariantUuid = ""
@@ -141,7 +155,6 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
 
             operationType = "delete" + operationType + "Instance"
 
-            ResourceInput resourceInput = new ObjectMapper().readValue(execution.getVariable("resourceInput"), ResourceInput.class)
             if(StringUtils.containsIgnoreCase(resourceInput.getResourceModelInfo().getModelName(), "overlay")){
                 //This will be resolved in R3.
                 sdnc_svcAction ="deactivate"
@@ -194,6 +207,11 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
 				</sdncadapterworkflow:SDNCAdapterWorkflowRequest>"""
 
             sdncDelete = utils.formatXml(sdncDelete)
+
+            // set operation type and resource type is required to form request body
+            execution.setVariable("operationType", "DELETE")
+            execution.setVariable("resourceType", resourceModelInfo.getModelName())
+
             //def sdncRequestId2 = UUID.randomUUID().toString()
             //String sdncDeactivate = sdncDelete.replace(">delete<", ">deactivate<").replace(">${sdncRequestId}<", ">${sdncRequestId2}<")
             execution.setVariable("sdncDelete", sdncDelete)

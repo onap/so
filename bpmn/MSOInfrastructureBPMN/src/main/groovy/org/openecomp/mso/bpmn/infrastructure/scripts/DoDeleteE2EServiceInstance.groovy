@@ -354,6 +354,10 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
         utils.log("DEBUG", " ***** Inside processDecomposition() of  delete generic e2e service flow ***** ", isDebugEnabled)
         try {
             ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
+
+            // service model info
+            execution.setVariable("serviceModelInfo", serviceDecomposition.getModelInfo())
+
             List<Resource> deleteResourceList = serviceDecomposition.getServiceResources()
             String serviceRelationShip = execution.getVariable("serviceRelationShip")
             def jsonSlurper = new JsonSlurper()
