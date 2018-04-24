@@ -202,7 +202,7 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
     /**
      * prepare delete parameters
      */
-    public void preResourceDelete(DelegateExecution execution, String resourceName){
+    public void preResourceDelete(DelegateExecution execution){
 
         def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 
@@ -220,7 +220,7 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
         execution.setVariable("resourceType", curResource.getModelInfo().getModelName())
         execution.setVariable("currentResource", curResource)
         utils.log("INFO", "Delete Resource Info resourceTemplate Id :" + resourceTemplateUUID + "  resourceInstanceId: "
-                + resourceInstanceUUID + " resourceType: " + resourceName, isDebugEnabled)
+                + resourceInstanceUUID, isDebugEnabled)
 
         utils.log("INFO", " ======== END preResourceDelete Process ======== ", isDebugEnabled)
     }
@@ -245,12 +245,16 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
         int recipeTimeout = resourceRecipe.getInt("recipeTimeout")
         String recipeParamXsd = resourceRecipe.isNull("paramXSD") ? "" : resourceRecipe.get("paramXSD")
 
-        Resource currentResource = execution.getVariable("currentResource")
-
         ResourceInput resourceInput = new ResourceInput();
+
+        ModelInfo serviceModelInfo = execution.getVariable("serviceModelInfo")
+        resourceInput.setServiceModelInfo(serviceModelInfo)
+
+        Resource currentResource = execution.getVariable("currentResource")
         resourceInput.setServiceInstanceId(serviceInstanceId)
         resourceInput.setResourceInstanceName(currentResource.getResourceInstanceName())
-        resourceInput.setGlobalSubscriberId("globalSubscriberId")
+        resourceInput.setGlobalSubscriberId(execution.getVariable("globalSubscriberId"))
+
         ModelInfo modelInfo = new ModelInfo()
         modelInfo.setModelCustomizationUuid(currentResource.getModelInfo().getModelCustomizationUuid())
         modelInfo.setModelUuid(currentResource.getModelInfo().getModelCustomizationUuid())
@@ -264,7 +268,7 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
 
         String recipeURL = BPMNProperties.getProperty("bpelURL", "http://mso:8080") + recipeUri
 
-        HttpResponse resp = BpmnRestClient.post(recipeURL, requestId, recipeTimeout, requestAction, serviceInstanceId, serviceType, resourceInput.toString(), recipeParamXsd)
+        HttpResponse resp = BpmnRestClient.post(recipeURL, requestId, recipeTimeout, action, serviceInstanceId, serviceType, resourceInput.toString(), recipeParamXsd)
         utils.log("INFO", " ======== END executeResourceDelete Process ======== ", isDebugEnabled)
     }
 
