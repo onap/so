@@ -17,7 +17,7 @@
 
         "mso-asdc-controller-config":
         {
-          "aaiEndpoint": "https://aai.api.simpledemo.openecomp.org:8443"
+          "aaiEndpoint": "https://aai.api.simpledemo.onap.org:8443"
         },
 
         "asdc-connections":
