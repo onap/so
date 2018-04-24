@@ -21,6 +21,7 @@
 package org.openecomp.mso.client.appc;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.Properties;
 import java.util.UUID;
@@ -28,7 +29,6 @@ import java.util.UUID;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-
 import org.onap.appc.client.lcm.model.Action;
 import org.onap.appc.client.lcm.model.ActionIdentifiers;
 import org.onap.appc.client.lcm.model.CheckLockInput;
@@ -39,6 +39,13 @@ public class ApplicationControllerClientTest {
 	@BeforeClass
 	public static void beforeClass() {
 		System.setProperty("mso.config.path", "src/test/resources");
+	}
+
+	@Test
+	public void testClientCreation() {
+		ApplicationControllerClient client = new ApplicationControllerClient("appc");
+		assertEquals(client.getControllerType(), "appc");
+		assertNotNull(client.getAppCClient());
 	}
 
 	@Test
@@ -89,14 +96,13 @@ public class ApplicationControllerClientTest {
 	@Test
 	public void test_getLCMPropertiesHelper() {
 		ApplicationControllerClient client = new ApplicationControllerClient("appc");
-		Properties properties = client.getLCMProperties("appc");
+		Properties properties = client.getLCMProperties();
 		assertEquals(properties.get("topic.write"), "APPC-TEST-AMDOCS1-DEV3");
 		assertEquals(properties.get("topic.read.timeout"), "120000");
 		assertEquals(properties.get("client.response.timeout"), "120000");
 		assertEquals(properties.get("topic.read"), "APPC-TEST-AMDOCS2");
 		assertEquals(properties.get("poolMembers"),
 				"uebsb93kcdc.it.att.com:3904,uebsb92kcdc.it.att.com:3904,uebsb91kcdc.it.att.com:3904");
-		assertEquals(properties.get("client.controllerType"), "appc");
 		assertEquals(properties.get("client.key"), "iaEMAfjsVsZnraBP");
 		assertEquals(properties.get("client.secret"), "wcivUjsjXzmGFBfxMmyJu9dz");
 	}
