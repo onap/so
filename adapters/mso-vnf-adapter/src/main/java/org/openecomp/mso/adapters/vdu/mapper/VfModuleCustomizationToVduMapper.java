@@ -20,9 +20,9 @@
 
 package org.openecomp.mso.adapters.vdu.mapper;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
-
 import org.openecomp.mso.adapters.vdu.VduArtifact;
 import org.openecomp.mso.adapters.vdu.VduArtifact.ArtifactType;
 import org.openecomp.mso.adapters.vdu.VduModelInfo;
@@ -39,7 +39,7 @@ public class VfModuleCustomizationToVduMapper {
 
 	private static MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
 
-	public VduModelInfo mapVfModuleCustomizationToVdu(VfModuleCustomization vfModuleCustom) throws Exception {
+	public VduModelInfo mapVfModuleCustomizationToVdu(VfModuleCustomization vfModuleCustom) throws SQLException {
 		CatalogDatabase db = CatalogDatabase.getInstance();
 		VduModelInfo vduModel = new VduModelInfo();
 		vduModel.setModelCustomizationUUID(vfModuleCustom.getModelCustomizationUuid());
@@ -51,9 +51,9 @@ public class VfModuleCustomizationToVduMapper {
 			mapCloudFiles(vfModuleCustom, vduModel);
 			mapEnvironment(db.getHeatEnvironmentByArtifactUuid(vfModuleCustom.getHeatEnvironmentArtifactUuid()),
 					vduModel);
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			LOGGER.debug("unhandled exception in mapVfModuleCustomizationToVdu", e);
-			throw new Exception("Exception during mapVfModuleCustomizationToVdu " + e.getMessage());
+			throw new SQLException("Exception during mapVfModuleCustomizationToVdu " + e.getMessage());
 		} finally {
 			// Make sure DB session is closed
 			db.close();
@@ -62,7 +62,7 @@ public class VfModuleCustomizationToVduMapper {
 		return vduModel;
 	}
 
-	public VduModelInfo mapVfModuleCustVolumeToVdu(VfModuleCustomization vfModuleCustom) throws Exception {
+	public VduModelInfo mapVfModuleCustVolumeToVdu(VfModuleCustomization vfModuleCustom) throws SQLException {
 		CatalogDatabase db = CatalogDatabase.getInstance();
 		VduModelInfo vduModel = new VduModelInfo();
 		vduModel.setModelCustomizationUUID(vfModuleCustom.getModelCustomizationUuid());
@@ -74,9 +74,9 @@ public class VfModuleCustomizationToVduMapper {
 			mapCloudFiles(vfModuleCustom, vduModel);
 			mapEnvironment(db.getHeatEnvironmentByArtifactUuid(vfModuleCustom.getVolEnvironmentArtifactUuid()),
 					vduModel);
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			LOGGER.debug("unhandled exception in mapVfModuleCustVolumeToVdu", e);
-			throw new Exception("Exception during mapVfModuleCustVolumeToVdu " + e.getMessage());
+			throw new SQLException("Exception during mapVfModuleCustVolumeToVdu " + e.getMessage());
 		} finally {
 			// Make sure DB session is closed
 			db.close();
@@ -85,7 +85,7 @@ public class VfModuleCustomizationToVduMapper {
 		return vduModel;
 	}
 
-	private void mapCloudTemplates(HeatTemplate heatTemplate, VduModelInfo vduModel) throws Exception {
+	private void mapCloudTemplates(HeatTemplate heatTemplate, VduModelInfo vduModel) throws SQLException {
 		// TODO: These catalog objects will be refactored to be
 		// non-Heat-specific
 		CatalogDatabase db = CatalogDatabase.getInstance();
@@ -107,9 +107,9 @@ public class VfModuleCustomizationToVduMapper {
 				}
 			}
 			
-		} catch (Exception e) {
+		} catch (IllegalArgumentException e) {
 			LOGGER.debug("unhandled exception in mapCloudTemplates", e);
-			throw new Exception("Exception during mapCloudTemplates " + e.getMessage());
+			throw new IllegalArgumentException("Exception during mapCloudTemplates " + e.getMessage());
 		} finally {
 			// Make sure DB session is closed
 			db.close();
@@ -124,7 +124,7 @@ public class VfModuleCustomizationToVduMapper {
 		return vduArtifact;
 	}
 
-	private void mapCloudFiles(VfModuleCustomization vfModuleCustom, VduModelInfo vduModel) throws Exception {
+	private void mapCloudFiles(VfModuleCustomization vfModuleCustom, VduModelInfo vduModel) throws SQLException {
 		// TODO: These catalog objects will be refactored to be
 		// non-Heat-specific
 		CatalogDatabase db = CatalogDatabase.getInstance();
@@ -136,9 +136,9 @@ public class VfModuleCustomizationToVduMapper {
 					mapCloudFileToVduArtifact(heatFile, ArtifactType.TEXT_FILE);
 				}
 			}
-		} catch (Exception e) {
+		} catch (IllegalArgumentException e) {
 			LOGGER.debug("unhandled exception in mapCloudFiles", e);
-			throw new Exception("Exception during mapCloudFiles " + e.getMessage());
+			throw new IllegalArgumentException("Exception during mapCloudFiles " + e.getMessage());
 		} finally {
 			// Make sure DB session is closed
 			db.close();
