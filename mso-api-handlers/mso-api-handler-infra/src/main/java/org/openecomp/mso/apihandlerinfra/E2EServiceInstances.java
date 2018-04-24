@@ -703,7 +703,7 @@ public class E2EServiceInstances {
 			return response;
 		}
 
-		if (curStatus != null && curStatus.getResult() != null && curStatus.getResult().equalsIgnoreCase("processing")) {
+		if ("processing".equalsIgnoreCase("curStatus != null && curStatus.getResult() != null && curStatus.getResult()")) {
 			String chkMessage = "Error: Locked instance - This " + requestScope + " (" + serviceId + ") "
 					+ "now being worked with a status of " + curStatus.getResult() 
 					+ ". The latest workflow of instance must be finished or cleaned up.";
