@@ -210,13 +210,13 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                                         <global-customer-id>${globalCustomerId}</global-customer-id>
                                      </service-information>
                                      <network-information>
-                                        <ecomp-model-information>
+                                        <onap-model-information>
                                              <model-invariant-uuid>${modelInvariantUuid}</model-invariant-uuid>
                                              <model-customization-uuid>${modelCustomizationUuid}</model-customization-uuid>
                                              <model-uuid>${modelUuid}</model-uuid>
                                              <model-version>${modelVersion}</model-version>
                                              <model-name>${modelName}</model-name>
-                                        </ecomp-model-information>
+                                        </onap-model-information>
                                      </network-information>
                                      <network-request-input>
                                        <network-input-parameters>${netowrkInputParameters}</network-input-parameters>
