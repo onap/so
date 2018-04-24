@@ -193,7 +193,7 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
         String isContainsWanResource = wanResources.isEmpty() ? "false" : "true"
         execution.setVariable("isContainsWanResource", isContainsWanResource)
         execution.setVariable("currentResourceIndex", 0)
-        execution.setVariable("resourceSequence", resourceSequence)
+        execution.setVariable("resourceSequence", sequencedResourceList)
         utils.log("INFO", "resourceSequence: " + resourceSequence, isDebugEnabled)
         execution.setVariable("wanResources", wanResources)
         utils.log("INFO", " ======== END sequenceResource Process ======== ", isDebugEnabled)
@@ -208,7 +208,7 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
 
         utils.log("INFO", " ======== STARTED preResourceDelete Process ======== ", isDebugEnabled)
 
-        List<Resource> existResourceList = execution.getVariable("deleteResourceList")
+        List<Resource> existResourceList = execution.getVariable("resourceSequence")
 
         int currentIndex = execution.getVariable("currentResourceIndex")
         Resource curResource = existResourceList.get(currentIndex);
