@@ -239,8 +239,8 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
         String resourceInstanceId = execution.getVariable("resourceInstanceId")
         String resourceUuid = execution.getVariable("resourceUuid")
 
-        String requestAction = execution.getVariable("operationType")
-        JSONObject resourceRecipe = cutils.getResourceRecipe(execution, resourceUuid, requestAction)
+        String action = "deleteInstance"
+        JSONObject resourceRecipe = cutils.getResourceRecipe(execution, resourceUuid, action)
         String recipeUri = resourceRecipe.getString("orchestrationUri")
         int recipeTimeout = resourceRecipe.getInt("recipeTimeout")
         String recipeParamXsd = resourceRecipe.get("paramXSD")
