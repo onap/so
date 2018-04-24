@@ -26,10 +26,13 @@ import java.util.concurrent.TimeUnit;
 import javax.ws.rs.core.Response;
 
 import org.jboss.resteasy.spi.AsynchronousResponse;
-import org.slf4j.MDC;
-
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
+import org.slf4j.MDC;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 /**
  * Workflow Context Holder instance which can be accessed elsewhere either in groovy scripts or Java
@@ -133,7 +136,16 @@ public class WorkflowContextHolder {
 			WorkflowResponse workflowResponse) {
 		msoLogger.debug(logMarker + "Sending the response for request id: " + workflowContext.getRequestId());
 		recordEvents(processKey, workflowResponse, workflowContext.getStartTime());
-		Response response = Response.status(workflowResponse.getMessageCode()).entity(workflowResponse).build();
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        String jsonStr = "";
+        try {
+            jsonStr = mapper.writeValueAsString(workflowResponse);
+        } catch(JsonProcessingException e) {
+
+            e.printStackTrace();
+        }
+		Response response = Response.status(workflowResponse.getMessageCode()).entity(jsonStr).build();
 		AsynchronousResponse asyncResp = workflowContext.getAsynchronousResponse();
 		asyncResp.setResponse(response);
 	}
