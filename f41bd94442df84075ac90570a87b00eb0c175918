@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_bfbd256a",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/openecomp/mso/bpmn/common/workflow/service/WorkflowContextHolder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 146,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2018-04-24T11:35:19Z",
+      "side": 1,
+      "message": "please log the stack trace trace and error using mso logger, not print stack trace",
+      "revId": "f41bd94442df84075ac90570a87b00eb0c175918",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
