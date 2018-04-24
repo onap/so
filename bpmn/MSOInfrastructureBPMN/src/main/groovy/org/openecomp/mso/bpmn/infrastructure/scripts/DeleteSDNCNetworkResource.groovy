@@ -29,7 +29,6 @@ import org.openecomp.mso.bpmn.infrastructure.properties.BPMNProperties;
 import org.apache.http.HttpResponse
 import org.json.JSONArray
 import org.openecomp.mso.bpmn.common.recipe.BpmnRestClient
-import org.openecomp.mso.bpmn.common.recipe.ResourceInput;
 
 import static org.apache.commons.lang3.StringUtils.*;
 import groovy.xml.XmlUtil
@@ -44,6 +43,8 @@ import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.rest.APIResponse;
 import org.openecomp.mso.rest.RESTClient
 import org.openecomp.mso.rest.RESTConfig
+import org.openecomp.mso.bpmn.common.recipe.ResourceInput
+import com.fasterxml.jackson.databind.ObjectMapper
 
 import java.util.List;
 import java.util.UUID;
@@ -74,19 +75,19 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
         String msg = ""
 
         try {
-            serviceInstanceId = execution.getVariable("serviceInstanceId")
-            serviceInstanceName = execution.getVariable("serviceInstanceName")
-            callbackURL = execution.getVariable("sdncCallbackUrl")
-            requestId = execution.getVariable("msoRequestId")
-            serviceId = execution.getVariable("productFamilyId")
-            subscriptionServiceType = execution.getVariable("subscriptionServiceType")
-            globalSubscriberId = execution.getVariable("globalSubscriberId") //globalCustomerId
+            String serviceInstanceId = execution.getVariable("serviceInstanceId")
+            String serviceInstanceName = execution.getVariable("serviceInstanceName")
+            String callbackURL = execution.getVariable("sdncCallbackUrl")
+            String requestId = execution.getVariable("msoRequestId")
+            String serviceId = execution.getVariable("productFamilyId")
+            String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
+            String globalSubscriberId = execution.getVariable("globalSubscriberId") //globalCustomerId
             String recipeParamsFromRequest = execution.getVariable("recipeParams")
             String serviceModelInfo = execution.getVariable("serviceModelInfo")
-            modelInvariantUuid = ""
-            modelVersion = ""
-            modelUuid = ""
-            modelName = ""
+            String modelInvariantUuid = ""
+            String modelVersion = ""
+            String modelUuid = ""
+            String modelName = ""
 
             if (!isBlank(serviceModelInfo))
             {
@@ -122,7 +123,7 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
                 serviceType = ""
             }
 
-            sdncRequestId = UUID.randomUUID().toString()
+            String sdncRequestId = UUID.randomUUID().toString()
 
             String recipeParamsFromWf = execution.getVariable("recipeParamXsd")
 
@@ -140,12 +141,13 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
 
             operationType = "delete" + operationType + "Instance"
 
-            if(StringUtils.containsIgnoreCase(resourceInputObj.getResourceInstanceName(), "overlay")){
+            ResourceInput resourceInput = new ObjectMapper().readValue(execution.getVariable("resourceInput"), ResourceInput.class)
+            if(StringUtils.containsIgnoreCase(resourceInput.getResourceModelInfo().getModelName(), "overlay")){
                 //This will be resolved in R3.
                 sdnc_svcAction ="deactivate"
                 operationType = "DeActivateDCINetworkInstance"
             }
-            if(StringUtils.containsIgnoreCase(resourceInputObj.getResourceInstanceName(), "underlay")){
+            if(StringUtils.containsIgnoreCase(resourceInput.getResourceModelInfo().getModelName(), "underlay")){
                 //This will be resolved in R3.
                 operationType ="DeleteNetworkInstance"
             }
@@ -195,8 +197,8 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
             //def sdncRequestId2 = UUID.randomUUID().toString()
             //String sdncDeactivate = sdncDelete.replace(">delete<", ">deactivate<").replace(">${sdncRequestId}<", ">${sdncRequestId2}<")
             execution.setVariable("sdncDelete", sdncDelete)
-            execution.setVariable("sdncDeactivate", sdncDeactivate)
-            utils.log("INFO","sdncDeactivate:\n" + sdncDeactivate, isDebugEnabled)
+//            execution.setVariable("sdncDeactivate", sdncDeactivate)
+//            utils.log("INFO","sdncDeactivate:\n" + sdncDeactivate, isDebugEnabled)
             utils.log("INFO","sdncDelete:\n" + sdncDelete, isDebugEnabled)
 
         } catch (BpmnError e) {
