@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.11.3">
   <bpmn:process id="DoDeleteResourcesV1" name="DoDeleteResourcesV1" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1" name="Start Resource Delete">
       <bpmn:outgoing>SequenceFlow_0stqur4</bpmn:outgoing>
@@ -58,7 +58,7 @@ ex.processJavaException(execution)]]></bpmn:script>
       <bpmn:sequenceFlow id="SequenceFlow_117fiux" name="" sourceRef="ScriptTask_0plexin" targetRef="EndEvent_0gh3mcj" />
     </bpmn:subProcess>
     <bpmn:serviceTask id="ServiceTask_176j3rl" name="Call Delete SDNC Service Topology" camunda:class="org.openecomp.mso.bpmn.infrastructure.workflow.serviceTask.SdncServiceTopologyOperationTask">
-      <bpmn:incoming>SequenceFlow_1s1nnmj</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1l7fbhk</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_174yrgl</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:exclusiveGateway id="ExclusiveGateway_1x63i6w" name="Is SDNC Service Contained">
@@ -70,7 +70,7 @@ ex.processJavaException(execution)]]></bpmn:script>
     <bpmn:endEvent id="EndEvent_17bzayo" name="End Resource Deletion">
       <bpmn:incoming>SequenceFlow_0o21fg8</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="SequenceFlow_1s1nnmj" name="yes" sourceRef="ExclusiveGateway_1x63i6w" targetRef="ServiceTask_176j3rl">
+    <bpmn:sequenceFlow id="SequenceFlow_1s1nnmj" name="yes" sourceRef="ExclusiveGateway_1x63i6w" targetRef="prepareServiceTopologyDeletion">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[#{(execution.getVariable("isContainsWanResource" )  == "true" )}]]></bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_174yrgl" sourceRef="ServiceTask_176j3rl" targetRef="ExclusiveGateway_1jybr0n" />
@@ -107,6 +107,14 @@ ddrs.sequenceResource(execution)]]></bpmn:script>
       <bpmn:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
 def ddrs = new DoDeleteResourcesV1()
 ddrs.preProcessRequest(execution)]]></bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1l7fbhk" sourceRef="prepareServiceTopologyDeletion" targetRef="ServiceTask_176j3rl" />
+    <bpmn:scriptTask id="prepareServiceTopologyDeletion" name="Prepare Service Topology deletion" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1s1nnmj</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1l7fbhk</bpmn:outgoing>
+      <bpmn:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
+def ddr = new DoDeleteResourcesV1()
+ddr.prepareServiceTopologyDeletion(execution)]]></bpmn:script>
     </bpmn:scriptTask>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
@@ -202,7 +210,7 @@ ddrs.preProcessRequest(execution)]]></bpmn:script>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ServiceTask_176j3rl_di" bpmnElement="ServiceTask_176j3rl">
-        <dc:Bounds x="604" y="566" width="100" height="80" />
+        <dc:Bounds x="688" y="566" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ExclusiveGateway_1x63i6w_di" bpmnElement="ExclusiveGateway_1x63i6w" isMarkerVisible="true">
         <dc:Bounds x="396" y="581" width="50" height="50" />
@@ -225,16 +233,16 @@ ddrs.preProcessRequest(execution)]]></bpmn:script>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1s1nnmj_di" bpmnElement="SequenceFlow_1s1nnmj">
         <di:waypoint xsi:type="dc:Point" x="446" y="606" />
-        <di:waypoint xsi:type="dc:Point" x="604" y="606" />
+        <di:waypoint xsi:type="dc:Point" x="507" y="606" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="516" y="585" width="20" height="12" />
+          <dc:Bounds x="466.8860759493671" y="585" width="20" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_174yrgl_di" bpmnElement="SequenceFlow_174yrgl">
-        <di:waypoint xsi:type="dc:Point" x="704" y="606" />
+        <di:waypoint xsi:type="dc:Point" x="788" y="606" />
         <di:waypoint xsi:type="dc:Point" x="827" y="606" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="765.5" y="585" width="0" height="12" />
+          <dc:Bounds x="762.5" y="585" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0lk19rm_di" bpmnElement="SequenceFlow_0lk19rm">
@@ -297,6 +305,16 @@ ddrs.preProcessRequest(execution)]]></bpmn:script>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_1tdnal8_di" bpmnElement="Task_1ue68b0">
         <dc:Bounds x="38" y="233" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1l7fbhk_di" bpmnElement="SequenceFlow_1l7fbhk">
+        <di:waypoint xsi:type="dc:Point" x="607" y="606" />
+        <di:waypoint xsi:type="dc:Point" x="688" y="606" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="647.5" y="585" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_1027jyn_di" bpmnElement="prepareServiceTopologyDeletion">
+        <dc:Bounds x="507" y="566" width="100" height="80" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
