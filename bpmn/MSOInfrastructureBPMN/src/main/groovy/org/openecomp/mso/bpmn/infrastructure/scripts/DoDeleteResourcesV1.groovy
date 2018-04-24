@@ -243,7 +243,7 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
         JSONObject resourceRecipe = cutils.getResourceRecipe(execution, resourceUuid, action)
         String recipeUri = resourceRecipe.getString("orchestrationUri")
         int recipeTimeout = resourceRecipe.getInt("recipeTimeout")
-        String recipeParamXsd = resourceRecipe.get("paramXSD")
+        String recipeParamXsd = resourceRecipe.isNull("paramXSD") ? "" : resourceRecipe.get("paramXSD")
 
         Resource currentResource = execution.getVariable("currentResource")
 
@@ -255,7 +255,11 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
         modelInfo.setModelCustomizationUuid(currentResource.getModelInfo().getModelCustomizationUuid())
         modelInfo.setModelUuid(currentResource.getModelInfo().getModelCustomizationUuid())
         modelInfo.setModelInvariantUuid(currentResource.getModelInfo().getModelInvariantUuid())
-        resourceInput.setServiceModelInfo(modelInfo)
+        modelInfo.setModelName(currentResource.getModelInfo().getModelName())
+        modelInfo.setModelVersion(currentResource.getModelInfo().getModelVersion())
+        modelInfo.setModelType(currentResource.getModelInfo().getModelType())
+        modelInfo.setModelInstanceName(currentResource.getModelInfo().getModelInstanceName())
+        resourceInput.setResourceModelInfo(modelInfo)
         resourceInput.setServiceType(serviceType)
 
         String recipeURL = BPMNProperties.getProperty("bpelURL", "http://mso:8080") + recipeUri
