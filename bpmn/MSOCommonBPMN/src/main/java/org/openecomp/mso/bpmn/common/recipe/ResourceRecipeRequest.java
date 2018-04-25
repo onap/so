@@ -45,7 +45,7 @@ public class ResourceRecipeRequest {
     @JsonProperty("host")
     private BpmnParam host;
 
-    @JsonProperty("requestId")
+    @JsonProperty("mso-request-id")
     private BpmnParam requestId;
 
     @JsonProperty("requestAction")
@@ -60,8 +60,8 @@ public class ResourceRecipeRequest {
     @JsonProperty("recipeParams")
     private BpmnParam recipeParams;
 
-    @JsonProperty("recipeTimeout")
-    private BpmnIntegerParam recipeTimeout;
+    @JsonProperty("mso-service-request-timeout")
+    private BpmnParam recipeTimeout;
     
     @JsonProperty("resourceInput")
     public BpmnParam getResourceInput() {
@@ -83,12 +83,12 @@ public class ResourceRecipeRequest {
         this.host = host;
     }
 
-    @JsonProperty("requestId")
+    @JsonProperty("mso-request-id")
     public BpmnParam getRequestId() {
         return requestId;
     }
 
-    @JsonProperty("requestId")
+    @JsonProperty("mso-request-id")
     public void setRequestId(BpmnParam requestId) {
         this.requestId = requestId;
     }
@@ -133,13 +133,13 @@ public class ResourceRecipeRequest {
         this.recipeParams = recipeParams;
     }
 
-    @JsonProperty("recipeTimeout")
-    public BpmnIntegerParam getRecipeTimeout() {
+    @JsonProperty("mso-service-request-timeout")
+    public BpmnParam getRecipeTimeout() {
 		return recipeTimeout;
 	}
     
-    @JsonProperty("recipeTimeout")
-	public void setRecipeTimeout(BpmnIntegerParam recipeTimeout) {
+    @JsonProperty("mso-service-request-timeout")
+	public void setRecipeTimeout(BpmnParam recipeTimeout) {
 		this.recipeTimeout = recipeTimeout;
 	}
 
