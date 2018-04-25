@@ -15,14 +15,14 @@
   </bean>
 
   <bean id="informDmaapClient" class="org.openecomp.mso.bpmn.infrastructure.pnf.delegate.InformDmaapClient">
-    <property name="dmaapClient" ref="pnfEventReadyConsumer"/>
+    <property name="dmaapClient" ref="pnfEventReadyDmaapClient"/>
   </bean>
 
   <bean id="cancelDmaapSubscription" class="org.openecomp.mso.bpmn.infrastructure.pnf.delegate.CancelDmaapSubscription">
-    <property name="dmaapClient" ref="pnfEventReadyConsumer"/>
+    <property name="dmaapClient" ref="pnfEventReadyDmaapClient"/>
   </bean>
 
-  <bean id="pnfEventReadyConsumer" class="org.openecomp.mso.bpmn.infrastructure.pnf.dmaap.PnfEventReadyConsumer"
+  <bean id="pnfEventReadyDmaapClient" class="org.openecomp.mso.bpmn.infrastructure.pnf.dmaap.PnfEventReadyDmaapClient"
     init-method="init">
     <property name="dmaapHost" value="${host}"/>
     <property name="dmaapPort" value="${port}"/>
