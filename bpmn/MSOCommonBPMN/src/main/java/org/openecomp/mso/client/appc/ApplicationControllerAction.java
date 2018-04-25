@@ -124,14 +124,14 @@ public class ApplicationControllerAction {
 		}
 	}
 	
-	private Status payloadAction(Action action, String msoRequestId, String vnfId, Optional<String> payload, String controllerType) throws JsonProcessingException, Exception{
+	private Status payloadAction(Action action, String msoRequestId, String vnfId, Optional<String> payload, String controllerType) throws JsonProcessingException, IllegalArgumentException,ApplicationControllerOrchestratorException{
 		if(!(payload.isPresent())){
 			throw new IllegalArgumentException("Payload is not present for " + action.toString());
 		}
 		return client.vnfCommand(action, msoRequestId, vnfId, payload, controllerType);
 	}
 	
-	private Status quiesceTrafficAction(String msoRequestId, String vnfId, Optional<String> payload, String vnfName, String controllerType) throws JsonProcessingException, Exception{
+	private Status quiesceTrafficAction(String msoRequestId, String vnfId, Optional<String> payload, String vnfName, String controllerType) throws JsonProcessingException, IllegalArgumentException,ApplicationControllerOrchestratorException{
 		if(!(payload.isPresent())){
 			throw new IllegalArgumentException("Payload is not present for " + Action.QuiesceTraffic.toString());
 		}
@@ -139,7 +139,7 @@ public class ApplicationControllerAction {
 		return client.vnfCommand(Action.QuiesceTraffic, msoRequestId, vnfId, payload, controllerType);
 	}
 	
-	private Status upgradeAction(Action action, String msoRequestId, String vnfId, Optional<String> payload, String vnfName, String controllerType) throws JsonProcessingException, Exception{
+	private Status upgradeAction(Action action, String msoRequestId, String vnfId, Optional<String> payload, String vnfName, String controllerType) throws JsonProcessingException, IllegalArgumentException,ApplicationControllerOrchestratorException{
 		if(!(payload.isPresent())){
 			throw new IllegalArgumentException("Payload is not present for " + action.toString());
 		}
@@ -147,22 +147,22 @@ public class ApplicationControllerAction {
 		return client.vnfCommand(action, msoRequestId, vnfId, payload, controllerType);
 	}
 	
-	private Status resumeTrafficAction(String msoRequestId, String vnfId, String vnfName, String controllerType)throws JsonProcessingException, Exception{
+	private Status resumeTrafficAction(String msoRequestId, String vnfId, String vnfName, String controllerType)throws JsonProcessingException, ApplicationControllerOrchestratorException{
 		Optional<String> payload = PayloadClient.resumeTrafficFormat(vnfName);
 		return client.vnfCommand(Action.ResumeTraffic, msoRequestId, vnfId, payload, controllerType);
 	}
 	
-	private Status startStopAction(Action action, String msoRequestId, String vnfId, String aicIdentity, String controllerType)throws JsonProcessingException, Exception{
+	private Status startStopAction(Action action, String msoRequestId, String vnfId, String aicIdentity, String controllerType)throws JsonProcessingException, ApplicationControllerOrchestratorException{
 		Optional<String> payload = PayloadClient.startStopFormat(aicIdentity);
 		return client.vnfCommand(action, msoRequestId, vnfId, payload, controllerType);
 	}
 	
-	private Status healthCheckAction(String msoRequestId, String vnfId, String vnfName, String vnfHostIpAddress, String controllerType)throws JsonProcessingException, Exception{
+	private Status healthCheckAction(String msoRequestId, String vnfId, String vnfName, String vnfHostIpAddress, String controllerType)throws JsonProcessingException, ApplicationControllerOrchestratorException{
 		Optional<String> payload = PayloadClient.healthCheckFormat(vnfName, vnfHostIpAddress);
 		return client.vnfCommand(Action.HealthCheck, msoRequestId, vnfId, payload, controllerType);
 	}
 	
-	private Status snapshotAction(String msoRequestId, String vnfId, String vmId, String identityUrl, String controllerType) throws JsonProcessingException, Exception{
+	private Status snapshotAction(String msoRequestId, String vnfId, String vmId, String identityUrl, String controllerType) throws JsonProcessingException, ApplicationControllerOrchestratorException{
 		Optional<String> payload = PayloadClient.snapshotFormat(vmId, identityUrl);
 		return client.vnfCommand(Action.Snapshot, msoRequestId, vnfId, payload, controllerType);
 	}
