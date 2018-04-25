@@ -35,29 +35,29 @@ Request Body:
 
 RequestDetails Object 
 
-+-------------------+-------------------------+-------------------------------------------------+
-|Attribute          |Content                  |Description                                      |
-+===================+=========================+=================================================+
-|modelInfo          |modelInfo Object         |Content of modelInfo object.                     |
-+-------------------+-------------------------+-------------------------------------------------+
-|subscriberInfo     |subscriberInfo Object    |Content of subscriberInfo object.                |
-+-------------------+-------------------------+-------------------------------------------------+
-|requestInfo        |requestInfo Object       |Content of requestInfo object.                   |
-+-------------------+-------------------------+-------------------------------------------------+
-|requestParameters  |requestParameters Object |Content of requestParameters object.             |
-+-------------------+-------------------------+-------------------------------------------------+
-|relatedInstanceList|relatedInstanceList Object|Content of relatedInstanceList object.          |
-+-------------------+-------------------------+-------------------------------------------------+
-|cloudConfiguration |cloudConfiguration Object|Content of cloudConfiguration object.            |
-+-------------------+-------------------------+-------------------------------------------------+
-|project            |project Object           |Content of project object.                       |
-+-------------------+-------------------------+-------------------------------------------------+
-|owningEntity       |owningEntity Object      |Content of owningEntity object.                  |
-+-------------------+-------------------------+-------------------------------------------------+
-|platform      		|platform Object     	  |Content of platform object.                      |
-+-------------------+-------------------------+-------------------------------------------------+
-|lineOfBusiness     |lineOfBusiness Object    |Content of lineOfBusiness object.                |
-+-------------------+-------------------------+-------------------------------------------------+
++-------------------+--------------------------+-------------------------------------------------+
+|Attribute          |Content                   |Description                                      |
++===================+==========================+=================================================+
+|modelInfo          |modelInfo Object          |Content of modelInfo object.                     |
++-------------------+--------------------------+-------------------------------------------------+
+|subscriberInfo     |subscriberInfo Object     |Content of subscriberInfo object.                |
++-------------------+--------------------------+-------------------------------------------------+
+|requestInfo        |requestInfo Object        |Content of requestInfo object.                   |
++-------------------+--------------------------+-------------------------------------------------+
+|requestParameters  |requestParameters Object  |Content of requestParameters object.             |
++-------------------+--------------------------+-------------------------------------------------+
+|relatedInstanceList|relatedInstanceList Object|Content of relatedInstanceList object.           |
++-------------------+--------------------------+-------------------------------------------------+
+|cloudConfiguration |cloudConfiguration Object |Content of cloudConfiguration object.            |
++-------------------+--------------------------+-------------------------------------------------+
+|project            |project Object            |Content of project object.                       |
++-------------------+--------------------------+-------------------------------------------------+
+|owningEntity       |owningEntity Object       |Content of owningEntity object.                  |
++-------------------+--------------------------+-------------------------------------------------+
+|platform           |platform Object           |Content of platform object.                      |
++-------------------+--------------------------+-------------------------------------------------+
+|lineOfBusiness     |lineOfBusiness Object     |Content of lineOfBusiness object.                |
++-------------------+--------------------------+-------------------------------------------------+
 
 ModelInfo Object 
 
