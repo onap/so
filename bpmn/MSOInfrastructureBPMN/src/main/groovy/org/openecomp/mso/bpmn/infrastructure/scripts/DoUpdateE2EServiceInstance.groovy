@@ -226,23 +226,43 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		utils.log("INFO"," *** Exit postProcessForAddResource *** ", isDebugEnabled)
     }
     
-    public void preProcessForDeleteResource(DelegateExecution execution) {
-        def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+	public void preProcessForDeleteResource(DelegateExecution execution) {
+		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO"," ***** preProcessForDeleteResource ***** ", isDebugEnabled)
-		
+
 		execution.setVariable("operationType", "delete")
-		
-		execution.setVariable("hasResourcetoDelete", false)
+
+		def  hasResourcetoDelete = false
 		List<Resource> delResourceList =  execution.getVariable("delResourceList")
 		if(delResourceList != null && !delResourceList.isEmpty()) {
-			execution.setVariable("hasResourcetoDelete", true)
-		}			
-		
-		execution.setVariable("resourceInstanceIDs", execution.getVariable("serviceRelationShip"))
-		
-		utils.log("INFO"," *** Exit preProcessForDeleteResource *** ", isDebugEnabled)
+			hasResourcetoDelete = true
+		}
+		execution.setVariable("hasResourcetoDelete", hasResourcetoDelete)
 
-    }
+		if(hasResourcetoDelete) {
+			def jsonSlurper = new JsonSlurper()
+			String serviceRelationShip = execution.getVariable("serviceRelationShip")			
+			List relationShipList =  jsonSlurper.parseText(serviceRelationShip)
+
+			//Set the real resource instance id to the decomosed resource list
+			for(Resource resource: delResourceList){
+				//reset the resource instance id , because in the decompose flow ,its a random one.
+				resource.setResourceId("");
+				//match the resource-instance-name and the model name
+				if (relationShipList != null) {
+					relationShipList.each {
+						if(StringUtils.containsIgnoreCase(it.resourceType, resource.getModelInfo().getModelName())){
+							resource.setResourceId(it.resourceInstanceId);
+						}
+					}
+				}
+			}
+		}
+		
+		execution.setVariable("deleteResourceList", delResourceList)
+
+		utils.log("INFO"," *** Exit preProcessForDeleteResource *** ", isDebugEnabled)
+	}
 
     public void postProcessForDeleteResource(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")

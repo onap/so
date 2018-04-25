@@ -240,11 +240,10 @@ dcsi.preProcessAAIPUT(execution)]]></bpmn2:script>
         <camunda:in source="serviceType" target="serviceType" />
         <camunda:in source="serviceInstanceId" target="serviceInstanceId" />
         <camunda:in source="URN_mso_workflow_sdncadapter_callback" target="URN_mso_workflow_sdncadapter_callback" />
-        <camunda:in source="serviceInputParams" target="serviceInputParams" />
-        <camunda:in source="delResourceList" target="deleteResourceList" />
-        <camunda:in source="resourceInstanceIDs" target="resourceInstanceIDs" />
+        <camunda:in source="deleteResourceList" target="deleteResourceList" />
         <camunda:in source="operationType" target="operationType" />
         <camunda:in source="operationId" target="operationId" />
+        <camunda:in source="serviceDecomposition_Original" target="serviceDecomposition" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_0ur34hv</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0w4t4ao</bpmn2:outgoing>
@@ -252,15 +251,11 @@ dcsi.preProcessAAIPUT(execution)]]></bpmn2:script>
     <bpmn2:sequenceFlow id="SequenceFlow_0w4t4ao" sourceRef="CallActivity_11obqi0" targetRef="ScriptTask_00wgfrc" />
     <bpmn2:callActivity id="CallActivity_07pl1uw" name="Call DoCreateResources" calledElement="DoCreateResourcesV3">
       <bpmn2:extensionElements>
-        <camunda:in source="nsServiceName" target="nsServiceName" />
         <camunda:in source="serviceDescription" target="nsServiceDescription" />
         <camunda:in source="globalSubscriberId" target="globalSubscriberId" />
         <camunda:in source="serviceType" target="serviceType" />
         <camunda:in source="serviceInstanceId" target="serviceInstanceId" />
         <camunda:in source="operationId" target="operationId" />
-        <camunda:in source="resourceType" target="resourceType" />
-        <camunda:in source="resourceUUID" target="resourceUUID" />
-        <camunda:in source="resourceParameters" target="resourceParameters" />
         <camunda:in source="operationType" target="operationType" />
         <camunda:in source="addResourceList" target="addResourceList" />
         <camunda:in source="serviceInstanceName" target="serviceInstanceName" />

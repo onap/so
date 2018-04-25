@@ -44,6 +44,7 @@ ex.processJavaException(execution)]]></bpmn:script>
         <camunda:in source="serviceDecomposition_Original" target="serviceDecomposition_Original" />
         <camunda:in source="addResourceList" target="addResourceList" />
         <camunda:in source="delResourceList" target="delResourceList" />
+        <camunda:in source="serviceRelationShip" target="serviceRelationShip" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_04qwbbf</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0klbpxx</bpmn:outgoing>
