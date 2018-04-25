@@ -147,13 +147,11 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
 
         utils.log("INFO", " ======== STARTED sequenceResource Process ======== ", isDebugEnabled)
         List<Resource> sequencedResourceList = new ArrayList<Resource>()
-        List<String> wanResources = new ArrayList<String>()
+        List<Resource> wanResources = new ArrayList<Resource>()
 
         // get delete resource list and order list
         List<Resource> delResourceList = execution.getVariable("deleteResourceList")
-        // existing resource list
-        List<ServiceInstance> existResourceList = execution.getVariable("realNSRessources")
-
+        
         def resourceSequence = BPMNProperties.getResourceSequenceProp()
 
         if(resourceSequence != null) {
@@ -173,29 +171,26 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
             //this is defaule sequence
             List<VnfResource> vnfResourceList = new ArrayList<VnfResource>()
             List<AllottedResource> arResourceList = new ArrayList<AllottedResource>()
-			List<NetworkResource> networkResourceList = new ArrayList<NetworkResource>()
-
             for (Resource rc : delResourceList) {
                 if (rc instanceof VnfResource) {
                     vnfResourceList.add(rc)
                 } else if (rc instanceof NetworkResource) {
-                    networkResourceList.add(rc)
+                	wanResources.add(rc)
                 } else if (rc instanceof AllottedResource) {
                     arResourceList.add(rc)
                 }
             }
 
             sequencedResourceList.addAll(arResourceList)
-            sequencedResourceList.addAll(networkResourceList)
+            sequencedResourceList.addAll(wanResources)
             sequencedResourceList.addAll(vnfResourceList)
         }
 
         String isContainsWanResource = wanResources.isEmpty() ? "false" : "true"
         execution.setVariable("isContainsWanResource", isContainsWanResource)
         execution.setVariable("currentResourceIndex", 0)
-        execution.setVariable("resourceSequence", sequencedResourceList)
+        execution.setVariable("sequencedResourceList", sequencedResourceList)
         utils.log("INFO", "resourceSequence: " + resourceSequence, isDebugEnabled)
-        execution.setVariable("wanResources", wanResources)
         utils.log("INFO", " ======== END sequenceResource Process ======== ", isDebugEnabled)
     }
 
@@ -208,19 +203,17 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
 
         utils.log("INFO", " ======== STARTED preResourceDelete Process ======== ", isDebugEnabled)
 
-        List<Resource> existResourceList = execution.getVariable("resourceSequence")
+        List<Resource> sequencedResourceList = execution.getVariable("sequencedResourceList")
 
         int currentIndex = execution.getVariable("currentResourceIndex")
-        Resource curResource = existResourceList.get(currentIndex);
+        Resource curResource = sequencedResourceList.get(currentIndex);
 
         String resourceInstanceUUID = curResource.getResourceId()
         String resourceTemplateUUID = curResource.getModelInfo().getModelUuid()
         execution.setVariable("resourceInstanceId", resourceInstanceUUID)
-        execution.setVariable("resourceUuid", resourceTemplateUUID)
-        execution.setVariable("resourceType", curResource.getModelInfo().getModelName())
         execution.setVariable("currentResource", curResource)
         utils.log("INFO", "Delete Resource Info resourceTemplate Id :" + resourceTemplateUUID + "  resourceInstanceId: "
-                + resourceInstanceUUID, isDebugEnabled)
+                + resourceInstanceUUID + " resourceModelName: " + curResource.getModelInfo().getModelName(), isDebugEnabled)
 
         utils.log("INFO", " ======== END preResourceDelete Process ======== ", isDebugEnabled)
     }
@@ -229,7 +222,7 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
     /**
      * Execute delete workflow for resource
      */
-    public void executeResourceDelete(DelegateExecution execution, String resourceName) {
+    public void executeResourceDelete(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
         utils.log("INFO", "======== Start executeResourceDelete Process ======== ", isDebugEnabled)
         String requestId = execution.getVariable("msoRequestId")
@@ -237,33 +230,23 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
         String serviceType = execution.getVariable("serviceType")
 
         String resourceInstanceId = execution.getVariable("resourceInstanceId")
-        String resourceUuid = execution.getVariable("resourceUuid")
-
-        String action = "deleteInstance"
-        JSONObject resourceRecipe = cutils.getResourceRecipe(execution, resourceUuid, action)
-        String recipeUri = resourceRecipe.getString("orchestrationUri")
-        int recipeTimeout = resourceRecipe.getInt("recipeTimeout")
-        String recipeParamXsd = resourceRecipe.isNull("paramXSD") ? "" : resourceRecipe.get("paramXSD")
-
-        ResourceInput resourceInput = new ResourceInput();
-
-        ModelInfo serviceModelInfo = execution.getVariable("serviceModelInfo")
-        resourceInput.setServiceModelInfo(serviceModelInfo)
 
         Resource currentResource = execution.getVariable("currentResource")
+        String action = "deleteInstance"
+        JSONObject resourceRecipe = cutils.getResourceRecipe(execution, currentResource.getModelInfo().getModelUuid(), action)
+        String recipeUri = resourceRecipe.getString("orchestrationUri")
+        int recipeTimeout = resourceRecipe.getInt("recipeTimeout")
+        String recipeParamXsd = resourceRecipe.get("paramXSD")
+
+
+        ResourceInput resourceInput = new ResourceInput();
         resourceInput.setServiceInstanceId(serviceInstanceId)
         resourceInput.setResourceInstanceName(currentResource.getResourceInstanceName())
-        resourceInput.setGlobalSubscriberId(execution.getVariable("globalSubscriberId"))
-
-        ModelInfo modelInfo = new ModelInfo()
-        modelInfo.setModelCustomizationUuid(currentResource.getModelInfo().getModelCustomizationUuid())
-        modelInfo.setModelUuid(currentResource.getModelInfo().getModelCustomizationUuid())
-        modelInfo.setModelInvariantUuid(currentResource.getModelInfo().getModelInvariantUuid())
-        modelInfo.setModelName(currentResource.getModelInfo().getModelName())
-        modelInfo.setModelVersion(currentResource.getModelInfo().getModelVersion())
-        modelInfo.setModelType(currentResource.getModelInfo().getModelType())
-        modelInfo.setModelInstanceName(currentResource.getModelInfo().getModelInstanceName())
-        resourceInput.setResourceModelInfo(modelInfo)
+        String globalSubscriberId = execution.getVariable("globalSubscriberId") 
+        resourceInput.setGlobalSubscriberId(globalSubscriberId)
+        resourceInput.setResourceModelInfo(currentResource.getModelInfo());
+   	    ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
+   		resourceInput.setServiceModelInfo(serviceDecomposition.getModelInfo());
         resourceInput.setServiceType(serviceType)
 
         String recipeURL = BPMNProperties.getProperty("bpelURL", "http://mso:8080") + recipeUri
@@ -279,12 +262,47 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
         def currentIndex = execution.getVariable("currentResourceIndex")
         def nextIndex =  currentIndex + 1
         execution.setVariable("currentResourceIndex", nextIndex)
-        List<String> resourceSequence = execution.getVariable("resourceSequence")
-        if(nextIndex >= resourceSequence.size()){
+        List<String> sequencedResourceList = execution.getVariable("sequencedResourceList")
+        if(nextIndex >= sequencedResourceList.size()){
             execution.setVariable("allResourceFinished", "true")
         }else{
             execution.setVariable("allResourceFinished", "false")
         }
         utils.log("INFO", "======== COMPLETED parseNextResource Process ======== ", isDebugEnabled)
+    }
+    
+    public void prepareFinishedProgressForResource(execution) {
+        String serviceInstanceId = execution.getVariable("serviceInstanceId")
+        String serviceType = execution.getVariable("serviceType")
+        String resourceInstanceId = execution.getVariable("resourceInstanceId")
+        Resource currentResource = execution.getVariable("currentResource")
+        String resourceCustomizationUuid = currentResource.getModelInfo().getModelCustomizationUuid()
+        String resourceModelName = currentResource.getModelInfo().getModelName()
+        String operationType = execution.getVariable("operationType")
+        String progress = "100"
+        String status = "finished"
+        String statusDescription = "The resource instance does not exist for " + resourceModelName
+        String operationId = execution.getVariable("operationId")
+
+        String body = """
+                <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                        xmlns:ns="http://org.openecomp.mso/requestsdb">
+                        <soapenv:Header/>
+                <soapenv:Body>
+                    <ns:updateResourceOperationStatus>
+                               <operType>${operationType}</operType>
+                               <operationId>${operationId}</operationId>
+                               <progress>${progress}</progress>
+                               <resourceTemplateUUID>${resourceCustomizationUuid}</resourceTemplateUUID>
+                               <serviceId>${ServiceInstanceId}</serviceId>
+                               <status>${status}</status>
+                               <statusDescription>${statusDescription}</statusDescription>
+                    </ns:updateResourceOperationStatus>
+                </soapenv:Body>
+                </soapenv:Envelope>""";
+
+        def dbAdapterEndpoint = execution.getVariable("URN_mso_adapters_openecomp_db_endpoint")
+        execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
+        execution.setVariable("CVFMI_updateResOperStatusRequest", body)
     }
 }

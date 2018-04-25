@@ -335,8 +335,8 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
 
             String serviceModelInfo = """{
             "modelInvariantUuid":"${modelInvariantUuid}",
-            "modelUuid":"",
-            "modelVersion":"${modelVersionId}"
+            "modelUuid":"${modelVersionId}",
+            "modelVersion":""
              }"""
             execution.setVariable("serviceModelInfo", serviceModelInfo)
 

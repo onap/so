@@ -284,7 +284,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
         String ServiceInstanceId = resourceInputObj.getServiceInstanceId()
         String operationId = resourceInputObj.getOperationId()
         String progress = "100"
-        String status = "Created"
+        String status = "finished"
         String statusDescription = "SDCN resource creation completed"
 
         execution.getVariable("operationId")
