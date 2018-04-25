@@ -272,6 +272,7 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
     }
     
     public void prepareFinishedProgressForResource(execution) {
+
         String serviceInstanceId = execution.getVariable("serviceInstanceId")
         String serviceType = execution.getVariable("serviceType")
         String resourceInstanceId = execution.getVariable("resourceInstanceId")
@@ -304,5 +305,23 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
         def dbAdapterEndpoint = execution.getVariable("URN_mso_adapters_openecomp_db_endpoint")
         execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
         execution.setVariable("CVFMI_updateResOperStatusRequest", body)
+    }
+
+    public void prepareServiceTopologyDeletion(DelegateExecution execution) {
+        def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+        utils.log("INFO"," ***** prepareServiceTopologyDeletion "  + " *****", isDebugEnabled)
+
+        ModelInfo serviceModelInfo = execution.getVariable("serviceModelInfo")
+
+        execution.setVariable("modelInvariantUuid", serviceModelInfo.getModelInvariantUuid())
+        execution.setVariable("modelVersion", serviceModelInfo.getModelVersion())
+        execution.setVariable("modelUuid", serviceModelInfo.getModelUuid())
+        execution.setVariable("serviceModelName", serviceModelInfo.getModelName())
+
+        // set operation type and resource type is required to form request body
+        execution.setVariable("operationType", "DELETE")
+        execution.setVariable("resourceType", "SDNC-SERVICE-TOPOLOGY")
+
+        utils.log("INFO"," ***** prepareServiceTopologyDeletion "  + " *****", isDebugEnabled)
     }
 }
