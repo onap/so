@@ -20,7 +20,6 @@
 
 package org.openecomp.mso.bpmn.infrastructure.pnf.dmaap;
 
-import com.google.common.annotations.VisibleForTesting;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
@@ -38,7 +37,7 @@ import org.apache.http.util.EntityUtils;
 import org.openecomp.mso.jsonpath.JsonPathUtil;
 import org.openecomp.mso.logger.MsoLogger;
 
-public class PnfEventReadyConsumer implements DmaapClient {
+public class PnfEventReadyDmaapClient implements DmaapClient {
 
     private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
 
@@ -57,7 +56,7 @@ public class PnfEventReadyConsumer implements DmaapClient {
     private int dmaapClientDelayInSeconds;
     private volatile boolean dmaapThreadListenerIsRunning;
 
-    public PnfEventReadyConsumer() {
+    public PnfEventReadyDmaapClient() {
         httpClient = HttpClientBuilder.create().build();
         pnfCorrelationIdToThreadMap = new ConcurrentHashMap<>();
         executor = null;
@@ -65,17 +64,6 @@ public class PnfEventReadyConsumer implements DmaapClient {
 
     public void init() {
         getRequest = new HttpGet(buildURI());
-    }
-
-    //TODO: extract this logic to separate class and test it there to avoid using VisibleForTesting
-    @VisibleForTesting
-    void sendRequest() {
-        try {
-            HttpResponse response = httpClient.execute(getRequest);
-            getCorrelationIdFromResponse(response).ifPresent(this::informAboutPnfReadyIfCorrelationIdFound);
-        } catch (IOException e) {
-            LOGGER.error("Exception caught during sending rest request to dmaap for listening event topic", e);
-        }
     }
 
     @Override
@@ -98,7 +86,7 @@ public class PnfEventReadyConsumer implements DmaapClient {
     private synchronized void startDmaapThreadListener() {
         if (!dmaapThreadListenerIsRunning) {
             executor = Executors.newScheduledThreadPool(1);
-            executor.scheduleWithFixedDelay(this::sendRequest, 0,
+            executor.scheduleWithFixedDelay(new DmaapTopicListenerThread(), 0,
                     dmaapClientDelayInSeconds, TimeUnit.SECONDS);
             dmaapThreadListenerIsRunning = true;
         }
@@ -118,24 +106,6 @@ public class PnfEventReadyConsumer implements DmaapClient {
                 .host(dmaapHost)
                 .port(dmaapPort).path(dmaapTopicName)
                 .path(consumerGroup).path(consumerId).build();
-    }
-
-    private Optional<String> getCorrelationIdFromResponse(HttpResponse response) throws IOException {
-        if (response.getStatusLine().getStatusCode() == 200) {
-            String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
-            if (responseString != null) {
-                return JsonPathUtil.getInstance().locateResult(responseString, JSON_PATH_CORRELATION_ID);
-            }
-        }
-        return Optional.empty();
-    }
-
-
-    private synchronized void informAboutPnfReadyIfCorrelationIdFound(String correlationId) {
-        Runnable runnable = unregister(correlationId);
-        if (runnable != null) {
-            runnable.run();
-        }
     }
 
     public void setDmaapHost(String dmaapHost) {
@@ -168,6 +138,36 @@ public class PnfEventReadyConsumer implements DmaapClient {
 
     public void setDmaapClientDelayInSeconds(int dmaapClientDelayInSeconds) {
         this.dmaapClientDelayInSeconds = dmaapClientDelayInSeconds;
+    }
+
+    class DmaapTopicListenerThread implements Runnable {
+
+        @Override
+        public void run() {
+            try {
+                HttpResponse response = httpClient.execute(getRequest);
+                getCorrelationIdFromResponse(response).ifPresent(this::informAboutPnfReadyIfCorrelationIdFound);
+            } catch (IOException e) {
+                LOGGER.error("Exception caught during sending rest request to dmaap for listening event topic", e);
+            }
+        }
+
+        private Optional<String> getCorrelationIdFromResponse(HttpResponse response) throws IOException {
+            if (response.getStatusLine().getStatusCode() == 200) {
+                String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
+                if (responseString != null) {
+                    return JsonPathUtil.getInstance().locateResult(responseString, JSON_PATH_CORRELATION_ID);
+                }
+            }
+            return Optional.empty();
+        }
+
+        private synchronized void informAboutPnfReadyIfCorrelationIdFound(String correlationId) {
+            Runnable runnable = unregister(correlationId);
+            if (runnable != null) {
+                runnable.run();
+            }
+        }
     }
 
 }
