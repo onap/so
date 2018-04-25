@@ -529,6 +529,24 @@
       <version>${resteasy.version}</version>
       <scope>test</scope>
     </dependency>
+    <!-- For CVE-2016-1000031 -->
+    <dependency>
+      <groupId>commons-fileupload</groupId>
+      <artifactId>commons-fileupload</artifactId>
+      <version>1.3.3</version>
+    </dependency>
+    <!-- For CVE-2017-5929 -->
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-core</artifactId>
+      <version>1.1.11</version>
+    </dependency>
+    <!-- For CVE-2014-0225 CVE-2015-5211 -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+      <version>4.3.14.RELEASE</version>
+    </dependency>
   </dependencies>
   <dependencyManagement>
     <dependencies>
