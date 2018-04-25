@@ -242,6 +242,8 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
         ResourceInput resourceInput = new ResourceInput();
         resourceInput.setServiceInstanceId(serviceInstanceId)
         resourceInput.setResourceInstanceName(currentResource.getResourceInstanceName())
+        resourceInput.setResourceInstancenUuid(currentResource.getResourceId())
+        resourceInput.setOperationId(execution.getVariable("operationId"))
         String globalSubscriberId = execution.getVariable("globalSubscriberId") 
         resourceInput.setGlobalSubscriberId(globalSubscriberId)
         resourceInput.setResourceModelInfo(currentResource.getModelInfo());

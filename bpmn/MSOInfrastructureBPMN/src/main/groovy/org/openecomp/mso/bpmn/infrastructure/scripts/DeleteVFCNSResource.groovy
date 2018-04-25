@@ -20,6 +20,8 @@
  */
 package org.openecomp.mso.bpmn.infrastructure.scripts
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import org.openecomp.mso.bpmn.common.recipe.ResourceInput
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.openecomp.mso.bpmn.core.json.JsonUtils
@@ -35,6 +37,22 @@ public class DeleteVFCNSResource extends AbstractServiceTaskProcessor {
     public void preProcessRequest (DelegateExecution execution) {
         def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
         utils.log("INFO"," ***** start preProcessRequest *****",  isDebugEnabled)
+
+        String resourceInputStr = execution.getVariable("resourceInput")
+        ResourceInput resourceInput = new ObjectMapper().readValue(resourceInputStr, ResourceInput.class)
+
+        String globalSubscriberId = resourceInput.getGlobalSubscriberId()
+        String serviceType = execution.getVariable("serviceType")
+        String operationId = resourceInput.getOperationId()
+        String resourceModeluuid = resourceInput.getResourceModelInfo().getModelCustomizationUuid()
+        String resourceInstanceId = resourceInput.getResourceInstancenUuid()
+
+
+        execution.setVariable("globalSubscriberId",globalSubscriberId)
+        execution.setVariable("serviceType", serviceType)
+        execution.setVariable("operationId", operationId)
+        execution.setVariable("resourceTemplateId", resourceModeluuid)
+        execution.setVariable("resourceInstanceId", resourceInstanceId)
 
         utils.log("INFO"," ***** end preProcessRequest *****",  isDebugEnabled)
     }
