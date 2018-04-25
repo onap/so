@@ -67,7 +67,7 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
         try {           
             
             //get bpmn inputs from resource request.
-            String requestId = execution.getVariable("requestId")
+            String requestId = execution.getVariable("mso-request-id")
             String requestAction = execution.getVariable("requestAction")
             utils.log("INFO","The requestAction is: " + requestAction,  isDebugEnabled)
             String recipeParamsFromRequest = execution.getVariable("recipeParams")
@@ -297,4 +297,24 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
         utils.log("INFO","response from sdnc, response code :" + responseCode + "  response object :" + responseObj,  isDebugEnabled)
         utils.log("INFO"," ***** Exit prepareSDNCRequest *****",  isDebugEnabled)
     }
+    
+	public void sendSyncResponse (DelegateExecution execution) {
+		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+		utils.log("DEBUG", " *** sendSyncResponse *** ", isDebugEnabled)
+
+		try {
+			String operationStatus = "finished"
+			// RESTResponse for main flow
+			String resourceOperationResp = """{"operationStatus":"${operationStatus}"}""".trim()
+			utils.log("DEBUG", " sendSyncResponse to APIH:" + "\n" + resourceOperationResp, isDebugEnabled)
+			sendWorkflowResponse(execution, 202, resourceOperationResp)
+			execution.setVariable("sentSyncResponse", true)
+
+		} catch (Exception ex) {
+			String msg = "Exceptuion in sendSyncResponse:" + ex.getMessage()
+			utils.log("DEBUG", msg, isDebugEnabled)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+		}
+		utils.log("DEBUG"," ***** Exit sendSyncResopnse *****",  isDebugEnabled)
+	}
 }

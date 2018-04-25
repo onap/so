@@ -58,13 +58,16 @@ public class BpmnRestClient {
 
     public static final String CAMUNDA_AUTH = "camundaAuth";
 
-    private final static String MSO_PROP_APIHANDLER_INFRA = "MSO_PROP_APIHANDLER_INFRA";
+    private static final  String MSO_PROP_APIHANDLER_INFRA = "MSO_PROP_APIHANDLER_INFRA";
 
     private static MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory();
 
     private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
 
     private static boolean noProperties = true;
+    
+    //because for NS it will take a long time the time out of the resouce will be 2 hours.
+    private static final String DEFAULT_TIME_OUT = "7200";
 
     public synchronized static MsoJavaProperties loadMsoProperties() {
         MsoJavaProperties msoProperties;
@@ -174,8 +177,8 @@ public class BpmnRestClient {
             BpmnParam serviceInstanceIdInput = new BpmnParam();
             BpmnParam serviceTypeInput = new BpmnParam();
             BpmnParam recipeParamsInput = new BpmnParam();
-            BpmnIntegerParam recipeTimeoutInput = new BpmnIntegerParam();
-            recipeTimeoutInput.setValue(recipeTimeout);
+            BpmnParam recipeTimeoutInput = new BpmnParam();
+            recipeTimeoutInput.setValue(DEFAULT_TIME_OUT);
             // host.setValue(parseURL());
             requestIdInput.setValue(requestId);
             requestActionInput.setValue(requestAction);

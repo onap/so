@@ -269,7 +269,7 @@ public class CreateVFCNSResource extends AbstractServiceTaskProcessor {
         utils.log("INFO", " ======== Started Execute AAI Put Process ======== ",  isDebugEnabled) 
         APIResponse apiResponse = null
         try{
-            String uuid = utils.getRequestID()
+            String uuid = execution.getVariable("mso-request-id");
             utils.log("INFO","Generated uuid is: " + uuid,  isDebugEnabled) 
             utils.log("INFO","URL to be used is: " + url,  isDebugEnabled) 
             String userName = execution.getVariable("URN_aai_auth")
@@ -317,12 +317,11 @@ public class CreateVFCNSResource extends AbstractServiceTaskProcessor {
 		utils.log("DEBUG", " *** sendSyncResponse *** ", isDebugEnabled)
 
 		try {
-			String nsInstanceId = execution.getVariable("nsInstanceId")
 			String operationStatus = execution.getVariable("operationStatus")
 			// RESTResponse for main flow
-			String createVFCResourceRestRsp = """{"nsInstanceId":"${nsInstanceId}","operationStatus":"${operationStatus}"}""".trim()
-			utils.log("DEBUG", " sendSyncResponse to APIH:" + "\n" + createVFCResourceRestRsp, isDebugEnabled)
-			sendWorkflowResponse(execution, 202, createVFCResourceRestRsp)
+			String resourceOperationResp = """{"operationStatus":"${operationStatus}"}""".trim()
+			utils.log("DEBUG", " sendSyncResponse to APIH:" + "\n" + resourceOperationResp, isDebugEnabled)
+			sendWorkflowResponse(execution, 202, resourceOperationResp)
 			execution.setVariable("sentSyncResponse", true)
 
 		} catch (Exception ex) {
