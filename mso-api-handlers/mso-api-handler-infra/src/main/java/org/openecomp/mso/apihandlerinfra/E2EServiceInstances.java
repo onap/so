@@ -21,7 +21,6 @@
 package org.openecomp.mso.apihandlerinfra;
 
 import java.io.IOException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,23 +39,24 @@ import javax.ws.rs.core.Response;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.hibernate.Session;
 import org.json.JSONObject;
 import org.openecomp.mso.apihandler.common.ErrorNumbers;
 import org.openecomp.mso.apihandler.common.RequestClient;
 import org.openecomp.mso.apihandler.common.RequestClientFactory;
 import org.openecomp.mso.apihandler.common.ResponseHandler;
-import org.openecomp.mso.apihandlerinfra.Messages;
-import org.openecomp.mso.apihandlerinfra.MsoException;
-import org.openecomp.mso.apihandlerinfra.MsoRequest;
 import org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans.CompareModelsRequest;
-import org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans.DelE2ESvcResp;
 import org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans.E2EServiceInstanceDeleteRequest;
 import org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans.E2EServiceInstanceRequest;
-import org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans.E2EUserParam;
+import org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans.E2EServiceInstanceScaleRequest;
 import org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans.GetE2EServiceInstanceResponse;
-import org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans.*;
+import org.openecomp.mso.db.catalog.CatalogDatabase;
+import org.openecomp.mso.db.catalog.beans.Service;
+import org.openecomp.mso.db.catalog.beans.ServiceRecipe;
+import org.openecomp.mso.logger.MessageEnum;
+import org.openecomp.mso.logger.MsoAlarmLogger;
+import org.openecomp.mso.logger.MsoLogger;
+import org.openecomp.mso.requestsdb.OperationStatus;
+import org.openecomp.mso.requestsdb.RequestsDatabase;
 import org.openecomp.mso.serviceinstancebeans.ModelInfo;
 import org.openecomp.mso.serviceinstancebeans.ModelType;
 import org.openecomp.mso.serviceinstancebeans.RequestDetails;
@@ -64,19 +64,9 @@ import org.openecomp.mso.serviceinstancebeans.RequestInfo;
 import org.openecomp.mso.serviceinstancebeans.RequestParameters;
 import org.openecomp.mso.serviceinstancebeans.ServiceInstancesRequest;
 import org.openecomp.mso.serviceinstancebeans.SubscriberInfo;
-import org.openecomp.mso.db.AbstractSessionFactoryManager;
-import org.openecomp.mso.db.catalog.CatalogDatabase;
-import org.openecomp.mso.db.catalog.beans.Service;
-import org.openecomp.mso.db.catalog.beans.ServiceRecipe;
-import org.openecomp.mso.logger.MessageEnum;
-import org.openecomp.mso.logger.MsoAlarmLogger;
-import org.openecomp.mso.logger.MsoLogger;
-import org.openecomp.mso.properties.MsoDatabaseException;
-import org.openecomp.mso.requestsdb.OperationStatus;
-import org.openecomp.mso.requestsdb.RequestsDatabase;
-import org.openecomp.mso.requestsdb.RequestsDbSessionFactoryManager;
 import org.openecomp.mso.utils.UUIDChecker;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 
@@ -199,7 +189,7 @@ public class E2EServiceInstances {
 	private Response compareModelwithTargetVersion(String requestJSON, Action action,
 			HashMap<String, String> instanceIdMap, String version) {
 
-		String requestId = instanceIdMap.get("serviceId");
+		String requestId = UUIDChecker.generateUUID(msoLogger);
 		long startTime = System.currentTimeMillis();
 		msoLogger.debug("requestId is: " + requestId);
 
@@ -365,7 +355,7 @@ public class E2EServiceInstances {
 	private Response deleteE2EserviceInstances(String requestJSON,
 			Action action, HashMap<String, String> instanceIdMap, String version) {
 		// TODO should be a new one or the same service instance Id
-		String requestId = instanceIdMap.get("serviceId");
+		String requestId = UUIDChecker.generateUUID(msoLogger);
 		long startTime = System.currentTimeMillis();
 		msoLogger.debug("requestId is: " + requestId);
 		E2EServiceInstanceDeleteRequest e2eDelReq = null;
@@ -394,7 +384,6 @@ public class E2EServiceInstances {
 					"Mapping of request to JSON object failed");
 			msoLogger.debug("End of the transaction, the final response is: "
 					+ (String) response.getEntity());
-			createOperationStatusRecordForError(action, requestId);
 			return response;
 		}
 
@@ -444,7 +433,6 @@ public class E2EServiceInstances {
 					"No recipe found in DB");
 			msoLogger.debug(END_OF_THE_TRANSACTION
 					+ (String) response.getEntity());
-			createOperationStatusRecordForError(action, requestId);
 			return response;
 		}
 
@@ -501,7 +489,6 @@ public class E2EServiceInstances {
 					"Exception while communicate with BPMN engine");
 			msoLogger.debug("End of the transaction, the final response is: "
 					+ (String) resp.getEntity());
-			createOperationStatusRecordForError(action, requestId);
 			return resp;
 		}
 
@@ -518,7 +505,6 @@ public class E2EServiceInstances {
 					MsoLogger.ResponseCode.InternalError,
 					"Null response from BPMN");
 			msoLogger.debug(END_OF_THE_TRANSACTION + (String) resp.getEntity());
-			createOperationStatusRecordForError(action, requestId);
 			return resp;
 		}
 
@@ -682,46 +668,6 @@ public class E2EServiceInstances {
 		return beplStatusUpdate(serviceId, startTime, msoRequest, requestClient, respHandler, bpelStatus, action, instanceIdMap);
 	}
 
-	private Response checkE2ESvcInstStatus(Action action, String serviceId, long startTime, MsoRequest msoRequest) {
-		OperationStatus curStatus = null;
-//		String instanceName = sir.getRequestDetails().getRequestInfo().getInstanceName();
-		String requestScope = sir.getRequestDetails().getModelInfo().getModelType().name();
-		try {
-			if (!(serviceId == null && "service".equals(requestScope) && (action == Action.updateInstance))) {			    
-				curStatus = chkSvcInstOperStatusbySvcId(serviceId);
-			}
-		} catch (Exception e) {
-			msoLogger.error(MessageEnum.APIH_DUPLICATE_CHECK_EXC, MSO_PROP_APIHANDLER_INFRA, "", "",
-					MsoLogger.ErrorCode.DataError, "Error during current operation status check ", e);
-
-			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_INTERNAL_SERVER_ERROR,
-					MsoException.ServiceException, e.getMessage(), ErrorNumbers.SVC_DETAILED_SERVICE_ERROR, null);
-
-			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError,
-					"Error during current operation status check");
-			msoLogger.debug("End of the transaction, the final response is: " + (String) response.getEntity());
-			return response;
-		}
-
-		if ("processing".equalsIgnoreCase("curStatus != null && curStatus.getResult() != null && curStatus.getResult()")) {
-			String chkMessage = "Error: Locked instance - This " + requestScope + " (" + serviceId + ") "
-					+ "now being worked with a status of " + curStatus.getResult() 
-					+ ". The latest workflow of instance must be finished or cleaned up.";
-
-			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_CONFLICT,
-					MsoException.ServiceException, chkMessage, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR, null);
-
-			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.Conflict,
-					chkMessage);
-
-			msoLogger.debug("End of the transaction, the final response is: " + (String) response.getEntity());
-
-			return response;
-		}
-		
-		return Response.status(200).entity(null).build();
-	}
-	
 	private Response processE2EserviceInstances(String requestJSON, Action action,
 			HashMap<String, String> instanceIdMap, String version) {
 
@@ -736,9 +682,7 @@ public class E2EServiceInstances {
 			e2eSir = mapper.readValue(requestJSON, E2EServiceInstanceRequest.class);
 
 		} catch (Exception e) {
-          //TODO update the service name
-          this.createOperationStatusRecordForError(action, requestId);
-		  
+	  
 			msoLogger.debug("Mapping of request to JSON object failed : ", e);
 			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_REQUEST,
 					MsoException.ServiceException, "Mapping of request to JSON object failed.  " + e.getMessage(),
@@ -762,8 +706,6 @@ public class E2EServiceInstances {
 					ErrorNumbers.SVC_BAD_PARAMETER, null);
 			if (msoRequest.getRequestId() != null) {
 				msoLogger.debug("Logging failed message to the database");
-				//TODO update the service name
-		          this.createOperationStatusRecordForError(action, requestId);
 			}
 			msoLogger.error(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "",
 					MsoLogger.ErrorCode.SchemaError, requestJSON, e);
@@ -771,57 +713,8 @@ public class E2EServiceInstances {
 					"Validation of the input request failed");
 			msoLogger.debug("End of the transaction, the final response is: " + (String) response.getEntity());
 			return response;
-		}
-		
-		OperationStatus dup = null;
-		String instanceName = sir.getRequestDetails().getRequestInfo().getInstanceName();
-		String requestScope = sir.getRequestDetails().getModelInfo().getModelType().name();
-		try {
-			if (!(instanceName == null && "service".equals(requestScope)
-					&& (action == Action.createInstance || action == Action.activateInstance))) {
-			  //TODO : Need to check for the duplicate record from the operation status,
-			  //TODO : commenting this check for unblocking current testing for now...  induces dead code...
-				dup = chkDuplicateServiceNameInOperStatus( instanceName);
-			}
-		} catch (Exception e) {
-			msoLogger.error(MessageEnum.APIH_DUPLICATE_CHECK_EXC, MSO_PROP_APIHANDLER_INFRA, "", "",
-					MsoLogger.ErrorCode.DataError, "Error during duplicate check ", e);
+		}		
 
-			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_INTERNAL_SERVER_ERROR,
-					MsoException.ServiceException, e.getMessage(), ErrorNumbers.SVC_DETAILED_SERVICE_ERROR, null);
-
-			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError,
-					"Error during duplicate check");
-			msoLogger.debug("End of the transaction, the final response is: " + (String) response.getEntity());
-			return response;
-		}
-
-		if (dup != null) {
-			// Found the duplicate record. Return the appropriate error.
-			String instance = null;
-			if (instanceName != null) {
-				instance = instanceName;
-			} else {
-				instance = instanceIdMap.get(requestScope + "InstanceId");
-			}
-			String dupMessage = "Error: Locked instance - This " + requestScope + " (" + instance + ") "
-					+ "already has a request being worked with a status of " + dup.getProgress() + " (ServiceId - "
-					+ dup.getServiceId() + "). The existing request must finish or be cleaned up before proceeding.";
-
-			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_CONFLICT,
-					MsoException.ServiceException, dupMessage, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR, null);
-
-			msoLogger.warn(MessageEnum.APIH_DUPLICATE_FOUND, dupMessage, "", "", MsoLogger.ErrorCode.SchemaError,
-					"Duplicate request - Subscriber already has a request for this service");
-			
-			
-			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.Conflict,
-					dupMessage);
-			msoLogger.debug("End of the transaction, the final response is: " + (String) response.getEntity());
-			createOperationStatusRecordForError(action, requestId);
-			return response;
-		}
-		
 		CatalogDatabase db = null;
 		RecipeLookupResult recipeLookupResult = null;
 		try {
@@ -840,7 +733,6 @@ public class E2EServiceInstances {
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError,
 					"Exception while communciate with DB");
 			msoLogger.debug(END_OF_THE_TRANSACTION + (String) response.getEntity());
-			createOperationStatusRecordForError(action, requestId);
 			return response;
 		} finally {
 			closeCatalogDB(db);
@@ -857,24 +749,8 @@ public class E2EServiceInstances {
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataNotFound,
 					"No recipe found in DB");
 			msoLogger.debug(END_OF_THE_TRANSACTION + (String) response.getEntity());
-			createOperationStatusRecordForError(action, requestId);
 			return response;
 		}
-//		try {
-//			msoRequest.createRequestRecord(Status.PENDING, action);
-//			//createOperationStatusRecord(action, requestId);
-//		} catch (Exception e) {
-//			msoLogger.error(MessageEnum.APIH_DB_ACCESS_EXC_REASON, "Exception while creating record in DB", "", "",
-//					MsoLogger.ErrorCode.SchemaError, "Exception while creating record in DB", e);
-//			msoRequest.setStatus(org.openecomp.mso.apihandlerinfra.vnfbeans.RequestStatusType.FAILED);
-//			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_INTERNAL_SERVER_ERROR,
-//					MsoException.ServiceException, "Exception while creating record in DB " + e.getMessage(),
-//					ErrorNumbers.SVC_BAD_PARAMETER, null);
-//			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError,
-//					"Exception while creating record in DB");
-//			msoLogger.debug("End of the transaction, the final response is: " + (String) response.getEntity());
-//			return response;
-//		}
 
 		String serviceInstanceType = e2eSir.getService().getServiceType();
 
@@ -913,7 +789,6 @@ public class E2EServiceInstances {
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError,
 					"Exception while communicate with BPMN engine");
 			msoLogger.debug("End of the transaction, the final response is: " + (String) resp.getEntity());
-			createOperationStatusRecordForError(action, requestId);
 			return resp;
 		}
 
@@ -937,7 +812,7 @@ public class E2EServiceInstances {
    private Response scaleE2EserviceInstances(String requestJSON,
                                                Action action, HashMap<String, String> instanceIdMap, String version) {
 
-        String requestId = instanceIdMap.get("serviceId");
+        String requestId = UUIDChecker.generateUUID(msoLogger);
         long startTime = System.currentTimeMillis();
         msoLogger.debug("requestId is: " + requestId);
 		E2EServiceInstanceScaleRequest e2eScaleReq = null;
@@ -966,7 +841,6 @@ public class E2EServiceInstances {
                     "Mapping of request to JSON object failed");
             msoLogger.debug("End of the transaction, the final response is: "
                     + (String) response.getEntity());
-            createOperationStatusRecordForError(action, requestId);
             return response;
         }
 
@@ -1016,7 +890,6 @@ public class E2EServiceInstances {
                     "No recipe found in DB");
             msoLogger.debug(END_OF_THE_TRANSACTION
                     + (String) response.getEntity());
-            createOperationStatusRecordForError(action, requestId);
             return response;
         }
 
@@ -1073,7 +946,6 @@ public class E2EServiceInstances {
                     "Exception while communicate with BPMN engine");
             msoLogger.debug("End of the transaction, the final response is: "
                     + (String) resp.getEntity());
-            createOperationStatusRecordForError(action, requestId);
             return resp;
         }
 
@@ -1090,7 +962,6 @@ public class E2EServiceInstances {
                     MsoLogger.ResponseCode.InternalError,
                     "Null response from BPMN");
             msoLogger.debug(END_OF_THE_TRANSACTION + (String) resp.getEntity());
-            createOperationStatusRecordForError(action, requestId);
             return resp;
         }
 
@@ -1116,25 +987,6 @@ public class E2EServiceInstances {
 		if (bpelStatus == HttpStatus.SC_ACCEPTED) {
 			String camundaJSONResponseBody = respHandler.getResponseBody();
 			msoLogger.debug("Received from Camunda: " + camundaJSONResponseBody);
-
-			// currently only for delete case we update the status here
-			if (action == Action.deleteInstance) {
-				ObjectMapper mapper = new ObjectMapper();
-				try {
-					DelE2ESvcResp jo = mapper.readValue(
-							camundaJSONResponseBody, DelE2ESvcResp.class);
-					String operationId = jo.getOperationId();
-    				this.createOperationStatusRecord("DELETE", serviceId,
-								operationId);
-				} catch (Exception ex) {
-					msoLogger.error(MessageEnum.APIH_BPEL_RESPONSE_ERROR,
-							requestClient.getUrl(), "", "",
-							MsoLogger.ErrorCode.BusinessProcesssError,
-							"Response from BPEL engine is failed with HTTP Status="
-									+ bpelStatus);
-				}
-			}
-			
 			msoLogger.recordAuditEvent(startTime,
 					MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
 					"BPMN accepted the request, the request is in progress");
@@ -1353,103 +1205,4 @@ public class E2EServiceInstances {
 		return returnString;
 	}
 
-	private void createOperationStatusRecordForError(Action action,
-			String serviceId) throws MsoDatabaseException {
-
-		AbstractSessionFactoryManager requestsDbSessionFactoryManager = new RequestsDbSessionFactoryManager();
-
-		Session session = null;
-		try {
-
-			session = requestsDbSessionFactoryManager.getSessionFactory()
-					.openSession();
-			session.beginTransaction();
-
-			OperationStatus os = new OperationStatus();
-			os.setOperation(action.name());
-			os.setOperationContent("");
-			os.setOperationId("");
-			os.setProgress("100");
-			os.setReason("");
-			os.setResult("error");
-			os.setServiceId(serviceId);
-			os.setUserId("");
-			Timestamp startTimeStamp = new Timestamp(System.currentTimeMillis());
-			Timestamp endTimeStamp = new Timestamp(System.currentTimeMillis());
-			os.setFinishedAt(endTimeStamp);
-			os.setOperateAt(startTimeStamp);
-
-			session.save(os);
-			session.getTransaction().commit();
-
-		} catch (Exception e) {
-			msoLogger.error(MessageEnum.APIH_DB_INSERT_EXC, "", "",
-					MsoLogger.ErrorCode.DataError,
-					"Exception when creation record request in Operation", e);
-			throw new MsoDatabaseException(
-					"Data did inserted in Operatus Status Table for failure", e);
-		} finally {
-			if (null != session) {
-				session.close();
-			}
-		}
-	}
-
-	private void createOperationStatusRecord(String actionNm, String serviceId,
-			String operationId) throws MsoDatabaseException {
-
-		AbstractSessionFactoryManager requestsDbSessionFactoryManager = new RequestsDbSessionFactoryManager();
-
-		Session session = null;
-		try {
-
-			session = requestsDbSessionFactoryManager.getSessionFactory()
-					.openSession();
-			session.beginTransaction();
-
-			OperationStatus os = new OperationStatus();
-			os.setOperation(actionNm);
-			os.setOperationContent("");
-			os.setOperationId(operationId);
-			os.setProgress("0");
-			os.setReason("");
-			os.setResult("processing");
-			os.setServiceId(serviceId);
-			// TODO : to be updated...
-			os.setUserId("");
-			Timestamp startTimeStamp = new Timestamp(System.currentTimeMillis());
-			Timestamp endTimeStamp = new Timestamp(System.currentTimeMillis());
-			os.setFinishedAt(endTimeStamp);
-			os.setOperateAt(startTimeStamp);
-
-			session.save(os);
-			session.getTransaction().commit();
-
-		} catch (Exception e) {
-			msoLogger.error(MessageEnum.APIH_DB_INSERT_EXC, "", "",
-					MsoLogger.ErrorCode.DataError,
-					"Exception when creation record request in Operation", e);
-			throw new MsoDatabaseException(
-					"Data did inserted in Operatus Status Table", e);
-		} finally {
-			if (null != session) {
-				session.close();
-			}
-		}
-	}
-
-	private OperationStatus chkSvcInstOperStatusbySvcId(String serviceId) {
-		OperationStatus svcInstanceOperStatus = (RequestsDatabase.getInstance())
-				.getOperationStatusByServiceId(serviceId);
-
-		return svcInstanceOperStatus;
-	}
-
-	private OperationStatus chkDuplicateServiceNameInOperStatus(
-			String serviceName) {
-		OperationStatus dupServiceName = (RequestsDatabase.getInstance())
-				.getOperationStatusByServiceName(serviceName);
-
-		return dupServiceName;
-	}
 }
