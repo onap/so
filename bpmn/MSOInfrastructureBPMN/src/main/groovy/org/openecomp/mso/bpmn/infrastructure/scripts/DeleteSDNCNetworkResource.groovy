@@ -80,7 +80,7 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
             
             //Deal with recipeParams
             String recipeParamsFromWf = execution.getVariable("recipeParamXsd")
-            String resourceName = resourceInputObj.getResourceInstanceName()            
+            String resourceModelName = resourceInputObj.getResourceModelInfo().getModelName()            
             //For sdnc requestAction default is "NetworkInstance"
             String operationType = "Network"    
             if(!StringUtils.isBlank(recipeParamsFromRequest)){
@@ -95,12 +95,12 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
             
             //For sdnc, generate svc_action and request_action
             String sdnc_svcAction = "delete"
-            if(StringUtils.containsIgnoreCase(resourceInputObj.getResourceInstanceName(), "overlay")){
+            if(StringUtils.containsIgnoreCase(resourceModelName, "overlay")){
                 //This will be resolved in R3.
                 sdnc_svcAction ="deactivate"
                 operationType = "NCINetwork"        
             }
-            if(StringUtils.containsIgnoreCase(resourceInputObj.getResourceInstanceName(), "underlay")){
+            if(StringUtils.containsIgnoreCase(resourceModelName, "underlay")){
                 //This will be resolved in R3.
                 operationType ="Network"
             }        
