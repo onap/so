@@ -68,7 +68,7 @@ RUN apt-get -y install \
     zlib1g=1:1.2.11.dfsg-0ubuntu2 \
     libexpat1=2.2.5-3 \
     libc-bin=2.26-0ubuntu2.1 libc6=2.26-0ubuntu2.1 \
-    openssl=1.1.0g-2ubuntu3 \
+    openssl=1.1.0g-2ubuntu4 \
     libpcre3=2:8.39-5ubuntu3
 
 RUN apt-get install -y netcat curl && curl -LO  https://packages.chef.io/files/stable/chefdk/2.5.3/ubuntu/16.04/chefdk_2.5.3-1_amd64.deb && curl -LO http://central.maven.org/maven2/org/mariadb/jdbc/mariadb-java-client/1.5.4/mariadb-java-client-1.5.4.jar && apt-get remove --purge -y curl && apt-get autoremove -y
