@@ -58,6 +58,7 @@ public class DeleteVFCNSResource extends AbstractServiceTaskProcessor {
     }
 
     public void postProcessRequest (DelegateExecution execution) {
+        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
         utils.log("INFO"," ***** start postProcessRequest *****",  isDebugEnabled)
 
         utils.log("INFO"," ***** end postProcessRequest *****",  isDebugEnabled)
