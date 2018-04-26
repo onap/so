@@ -341,4 +341,54 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 	public void processJavaException(DelegateExecution execution) {
 		//TODO:
 	}
+
+	/**
+	 * Init the service Operation Status
+	 */
+	public void prepareInitServiceOperationStatus(DelegateExecution execution){
+		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
+		utils.log("DEBUG", " ======== STARTED prepareInitServiceOperationStatus Process ======== ", isDebugEnabled)
+		try{
+			String serviceId = execution.getVariable("serviceInstanceId")
+			String operationId = execution.getVariable("operationId")
+			String userId = ""
+			String result = "processing"
+			String progress = "0"
+			String reason = ""
+			String operationContent = "Prepare service creation"
+			utils.log("DEBUG", "Generated new operation for Service Instance serviceId:" + serviceId + " operationId:" + operationId, isDebugEnabled)
+			serviceId = UriUtils.encode(serviceId,"UTF-8")
+
+			def dbAdapterEndpoint = execution.getVariable("URN_mso_adapters_openecomp_db_endpoint")
+			execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
+			utils.log("DEBUG", "DB Adapter Endpoint is: " + dbAdapterEndpoint, isDebugEnabled)
+
+			String payload =
+					"""<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                        xmlns:ns="http://org.openecomp.mso/requestsdb">
+                        <soapenv:Header/>
+                        <soapenv:Body>
+                            <ns:updateServiceOperationStatus xmlns:ns="http://org.openecomp.mso/requestsdb">
+                            <serviceId>${serviceId}</serviceId>
+                            <operationId>${operationId}</operationId>
+                            <operationType>DELETE</operationType>
+                            <userId>${userId}</userId>
+                            <result>${result}</result>
+                            <operationContent>${operationContent}</operationContent>
+                            <progress>${progress}</progress>
+                            <reason>${reason}</reason>
+                        </ns:updateServiceOperationStatus>
+                    </soapenv:Body>
+                </soapenv:Envelope>"""
+
+			payload = utils.formatXml(payload)
+			execution.setVariable("CVFMI_updateServiceOperStatusRequest", payload)
+			utils.log("DEBUG", "Outgoing updateServiceOperStatusRequest: \n" + payload, isDebugEnabled)
+
+		}catch(Exception e){
+			utils.log("ERROR", "Exception Occured Processing prepareInitServiceOperationStatus. Exception is:\n" + e, isDebugEnabled)
+			execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during prepareInitServiceOperationStatus Method:\n" + e.getMessage())
+		}
+		utils.log("DEBUG", "======== COMPLETED prepareInitServiceOperationStatus Process ======== ", isDebugEnabled)
+	}
 }
