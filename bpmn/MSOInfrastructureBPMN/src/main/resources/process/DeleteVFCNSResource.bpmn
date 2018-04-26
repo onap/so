@@ -35,6 +35,8 @@ ddsi.postProcessRequest(execution)]]></bpmn:script>
         <camunda:in source="resourceInstanceId" target="resourceInstanceId" />
         <camunda:in source="resourceType" target="resourceType" />
         <camunda:in source="operationType" target="operationType" />
+        <camunda:out source="operationStatus" target="operationStatus" />
+        <camunda:out source="nsInstanceId" target="nsInstanceId" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_00vpfm3</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1s4cyms</bpmn:outgoing>
