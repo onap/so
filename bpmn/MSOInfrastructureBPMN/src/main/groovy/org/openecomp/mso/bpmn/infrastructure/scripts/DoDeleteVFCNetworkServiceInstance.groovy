@@ -20,7 +20,7 @@
 
 package org.openecomp.mso.bpmn.infrastructure.scripts;
 
-import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.*
 import groovy.xml.XmlUtil
 import groovy.json.*
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor 
@@ -39,6 +39,10 @@ import org.springframework.web.util.UriUtils
 import org.openecomp.mso.rest.RESTClient 
 import org.openecomp.mso.rest.RESTConfig
 import org.openecomp.mso.rest.APIResponse;
+import org.openecomp.mso.rest.RESTConfig
+import org.openecomp.mso.rest.RESTClient
+
+
 
 /**
  * This groovy class supports the <class>DoDeleteVFCNetworkServiceInstance.bpmn</class> process.
@@ -97,6 +101,71 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
         }
         utils.log("INFO"," ***** Exit preProcessRequest *****",  isDebugEnabled)
 	}
+
+    /**
+     * unwind NS from AAI relationship
+     */
+    public void deleteNSRelationship(DelegateExecution execution) {
+        def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+        utils.log("INFO"," ***** addNSRelationship *****",  isDebugEnabled)
+        String nsInstanceId = execution.getVariable("resourceInstanceId")
+        if(nsInstanceId == null || nsInstanceId == ""){
+            utils.log("INFO"," Delete NS failed",  isDebugEnabled)
+            return
+        }
+        String globalSubscriberId = execution.getVariable("globalSubscriberId")
+        String serviceType = execution.getVariable("serviceType")
+        String serviceId = execution.getVariable("serviceId")
+        String deleteRelationPayload = """<relationship xmlns="http://org.openecomp.aai.inventory/v11">
+                                            <related-to>service-instance</related-to>
+                                            <related-link>/aai/v11/business/customers/customer/${globalSubscriberId}/service-subscriptions/service-subscription/${serviceType}/service-instances/service-instance/${nsInstanceId}</related-link>
+                                            <relationship-data>
+                                                <relationship-key>customer.global-customer-id</relationship-key>
+                                                <relationship-value>${globalSubscriberId}</relationship-value>
+                                            </relationship-data>
+                                            <relationship-data>
+                                                <relationship-key>service-subscription.service-type</relationship-key>
+                                                <relationship-value>${serviceType}</relationship-value>
+                                            </relationship-data>
+                                           <relationship-data>
+                                                <relationship-key>service-instance.service-instance-id</relationship-key>
+                                                <relationship-value>${nsInstanceId}</relationship-value>
+                                            </relationship-data>           
+                                        </relationship>"""
+        String endpoint = execution.getVariable("URN_aai_endpoint")
+        utils.log("INFO","Add Relationship req:\n" + deleteRelationPayload,  isDebugEnabled)
+        String url = endpoint + "/aai/v11/business/customers/customer/" + globalSubscriberId + "/service-subscriptions/service-subscription/" + serviceType + "/service-instances/service-instance/" + serviceId + "/relationship-list/relationship"
+
+        APIResponse aaiRsp = executeAAIDeleteCall(execution, url, deleteRelationPayload)
+        utils.log("INFO","aai response status code:" + aaiRsp.getStatusCode(),  isDebugEnabled)
+        utils.log("INFO","aai response content:" + aaiRsp.getResponseBodyAsString(),  isDebugEnabled)
+        utils.log("INFO"," *****Exit addNSRelationship *****",  isDebugEnabled)
+    }
+
+    public APIResponse executeAAIDeleteCall(DelegateExecution execution, String url, String payload){
+        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
+        utils.log("INFO", " ======== Started Execute AAI Delete Process ======== ",  isDebugEnabled)
+        APIResponse apiResponse = null
+        try{
+            String uuid = utils.getRequestID()
+            utils.log("INFO","Generated uuid is: " + uuid,  isDebugEnabled)
+            utils.log("INFO","URL to be used is: " + url,  isDebugEnabled)
+            String userName = execution.getVariable("URN_aai_auth")
+            String password = execution.getVariable("URN_mso_msoKey")
+            String basicAuthCred = utils.getBasicAuth(userName,password)
+            RESTConfig config = new RESTConfig(url);
+            RESTClient client = new RESTClient(config).addHeader("X-FromAppId", "MSO").addHeader("X-TransactionId", uuid).addHeader("Content-Type", "application/xml").addHeader("Accept","application/xml");
+            if (basicAuthCred != null && !"".equals(basicAuthCred)) {
+                client.addAuthorizationHeader(basicAuthCred)
+            }
+            apiResponse = client.httpDelete(payload)
+            utils.log("INFO","======== Completed Execute AAI Delete Process ======== ",  isDebugEnabled)
+        }catch(Exception e){
+            utils.log("ERROR","Exception occured while executing AAI Put Call. Exception is: \n" + e,  isDebugEnabled)
+            throw new BpmnError("MSOWorkflowException")
+        }
+        return apiResponse
+    }
 
     /**
      * delete NS task
