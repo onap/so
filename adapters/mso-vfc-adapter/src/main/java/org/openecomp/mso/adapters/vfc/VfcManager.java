@@ -380,8 +380,6 @@ public class VfcManager {
         && RequestsDbConstant.Status.FINISHED.equals(rspDesc.getStatus())) {
       LOGGER.info("job result is succeeded, operType is {}", nsOperInfo.getOperType());
       nsOperInfo.setErrorCode(String.valueOf(rsp.getStatus()));
-      nsOperInfo.setStatusDescription(CommonConstant.StatusDesc.QUERY_JOB_STATUS_FAILED);
-
             if(RequestsDbConstant.OperationType.CREATE.equalsIgnoreCase(nsOperInfo.getOperType())) {
         nsOperInfo.setStatus(RequestsDbConstant.Status.FINISHED);
       }
