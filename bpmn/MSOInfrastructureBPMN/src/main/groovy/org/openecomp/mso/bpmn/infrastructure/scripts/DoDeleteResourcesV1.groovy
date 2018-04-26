@@ -313,12 +313,11 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
         utils.log("INFO"," ***** prepareServiceTopologyDeletion "  + " *****", isDebugEnabled)
 
-        ModelInfo serviceModelInfo = execution.getVariable("serviceModelInfo")
-
-        execution.setVariable("modelInvariantUuid", serviceModelInfo.getModelInvariantUuid())
-        execution.setVariable("modelVersion", serviceModelInfo.getModelVersion())
-        execution.setVariable("modelUuid", serviceModelInfo.getModelUuid())
-        execution.setVariable("serviceModelName", serviceModelInfo.getModelName())
+        ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
+        execution.setVariable("modelInvariantUuid", serviceDecomposition.getModelInfo().getModelInvariantUuid())
+        execution.setVariable("modelVersion", serviceDecomposition.getModelInfo().getModelVersion())
+        execution.setVariable("modelUuid", serviceDecomposition.getModelInfo().getModelUuid())
+        execution.setVariable("serviceModelName", serviceDecomposition.getModelInfo().getModelName())
 
         // set operation type and resource type is required to form request body
         execution.setVariable("operationType", "DELETE")

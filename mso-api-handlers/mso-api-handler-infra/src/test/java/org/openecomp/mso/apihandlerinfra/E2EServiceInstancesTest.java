@@ -164,13 +164,7 @@ public class E2EServiceInstancesTest {
 				return operationStatus;
 			}
 		};
-		new MockUp<E2EServiceInstances>() {
-			@Mock
-			private void createOperationStatusRecordForError(Action action,
-					String requestId) throws MsoDatabaseException {
 
-			}
-		};
 		new MockUp<CatalogDatabase>() {
 			@Mock
 			public Service getServiceByModelName(String modelName) {
@@ -222,7 +216,7 @@ public class E2EServiceInstancesTest {
 		String request = jsonBody;
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.contains("SVC2000"));
+		assertTrue(respStr.contains("success"));
 	}
 
 	@Test
@@ -233,13 +227,6 @@ public class E2EServiceInstancesTest {
 					String serviceName) {
 				OperationStatus operationStatus = new OperationStatus();
 				return operationStatus;
-			}
-		};
-		new MockUp<E2EServiceInstances>() {
-			@Mock
-			private void createOperationStatusRecordForError(Action action,
-					String requestId) throws MsoDatabaseException {
-
 			}
 		};
 		new MockUp<CatalogDatabase>() {
@@ -306,13 +293,7 @@ public class E2EServiceInstancesTest {
 				return operationStatus;
 			}
 		};
-		new MockUp<E2EServiceInstances>() {
-			@Mock
-			private void createOperationStatusRecordForError(Action action,
-					String requestId) throws MsoDatabaseException {
 
-			}
-		};
 		new MockUp<CatalogDatabase>() {
 			@Mock
 			public Service getServiceByModelName(String modelName) {
@@ -377,13 +358,7 @@ public class E2EServiceInstancesTest {
 				return operationStatus;
 			}
 		};
-		new MockUp<E2EServiceInstances>() {
-			@Mock
-			private void createOperationStatusRecordForError(Action action,
-					String requestId) throws MsoDatabaseException {
 
-			}
-		};
 		new MockUp<CatalogDatabase>() {
 			@Mock
 			public Service getServiceByModelName(String modelName) {
@@ -428,7 +403,7 @@ public class E2EServiceInstancesTest {
 		String request = jsonBody;
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.contains("SVC2000"));
+		assertTrue(respStr.contains("serviceException"));
 	}
 
 	@Test
@@ -441,13 +416,7 @@ public class E2EServiceInstancesTest {
 				return operationStatus;
 			}
 		};
-		new MockUp<E2EServiceInstances>() {
-			@Mock
-			private void createOperationStatusRecordForError(Action action,
-					String requestId) throws MsoDatabaseException {
 
-			}
-		};
 		new MockUp<CatalogDatabase>() {
 			@Mock
 			public Service getServiceByModelName(String modelName) {
@@ -488,7 +457,7 @@ public class E2EServiceInstancesTest {
 		String request = jsonBody;
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.contains("SVC2000"));
+		assertTrue(respStr.contains("serviceException"));
 	}
 
 	@Test
@@ -502,13 +471,7 @@ public class E2EServiceInstancesTest {
 			}
 		};
 
-		new MockUp<E2EServiceInstances>() {
-			@Mock
-			private void createOperationStatusRecordForError(Action action,
-					String requestId) throws MsoDatabaseException {
 
-			}
-		};
 		new MockUp<CatalogDatabase>() {
 			@Mock
 			public Service getServiceByModelName(String modelName) {
@@ -530,7 +493,7 @@ public class E2EServiceInstancesTest {
         ;
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.contains("SVC2000"));
+		assertTrue(respStr.contains("serviceException"));
 	}
 
 	@Test
@@ -543,19 +506,12 @@ public class E2EServiceInstancesTest {
 				return operationStatus;
 			}
 		};
-		new MockUp<E2EServiceInstances>() {
-			@Mock
-			private void createOperationStatusRecordForError(Action action,
-					String requestId) throws MsoDatabaseException {
-
-			}
-		};
 
 		E2EServiceInstances instance = new E2EServiceInstances();
 		String request = jsonBody;
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.contains("SVC2000"));
+		assertTrue(respStr.contains("serviceException"));
 	}
 
 	@Test
@@ -569,19 +525,13 @@ public class E2EServiceInstancesTest {
 				return operationStatus;
 			}
 		};
-		new MockUp<E2EServiceInstances>() {
-			@Mock
-			private void createOperationStatusRecordForError(Action action,
-					String requestId) throws MsoDatabaseException {
 
-			}
-		};
 
 		E2EServiceInstances instance = new E2EServiceInstances();
 		String request = jsonBody;
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.contains("SVC2000"));
+		assertTrue(respStr.contains("serviceException"));
 	}
 
 	@Test
@@ -595,35 +545,23 @@ public class E2EServiceInstancesTest {
 			}
 		};
 
-		new MockUp<E2EServiceInstances>() {
-			@Mock
-			private void createOperationStatusRecordForError(Action action,
-					String requestId) throws MsoDatabaseException {
 
-			}
-		};
 		E2EServiceInstances instance = new E2EServiceInstances();
 		String request = jsonBody;
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.contains("SVC2000"));
+		assertTrue(respStr.contains("serviceException"));
 	}
 
 	@Test
 	public void createE2EServiceInstanceTestEmptyDBQuery() {
-		new MockUp<E2EServiceInstances>() {
-			@Mock
-			private void createOperationStatusRecordForError(Action action,
-					String requestId) throws MsoDatabaseException {
 
-			}
-		};
 
 		E2EServiceInstances instance = new E2EServiceInstances();
 		String request = jsonBody;
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.contains("SVC2000"));
+		assertTrue(respStr.contains("serviceException"));
 		// assertTrue(true);
 	}
 
@@ -638,30 +576,18 @@ public class E2EServiceInstancesTest {
 			}
 		};
 
-		new MockUp<E2EServiceInstances>() {
-			@Mock
-			private void createOperationStatusRecordForError(Action action,
-					String requestId) throws MsoDatabaseException {
 
-			}
-		};
 		E2EServiceInstances instance = new E2EServiceInstances();
 		String request = jsonBody;
 		Response resp = instance.createE2EServiceInstance(request, "v3");
 		String respStr = resp.getEntity().toString();
-		assertTrue(respStr.contains("SVC2000"));
+		assertTrue(respStr.contains("serviceException"));
 	}
 
 	@Test
 	public void createE2EServiceInstanceTestForEmptyRequest() {
 
-		new MockUp<E2EServiceInstances>() {
-			@Mock
-			private void createOperationStatusRecordForError(Action action,
-					String requestId) throws MsoDatabaseException {
 
-			}
-		};
 		E2EServiceInstances instance = new E2EServiceInstances();
 		String request = "";
 		Response resp = instance.createE2EServiceInstance(request, "v3");
@@ -795,11 +721,6 @@ public class E2EServiceInstancesTest {
             }
         };
 
-        new Expectations() {{
-            sessionFactoryManager.getSessionFactory().openSession();
-            result = session;
-        }};
-
         E2EServiceInstances instance = new E2EServiceInstances();
         String request = "{\"globalSubscriberId\":\"299392392\",\"serviceType\":\"VoLTE\"}";
 
@@ -871,13 +792,7 @@ public class E2EServiceInstancesTest {
 				return operationStatus;
 			}
 		};
-		new MockUp<E2EServiceInstances>() {
-			@Mock
-			private void createOperationStatusRecordForError(Action action,
-					String requestId) throws MsoDatabaseException {
 
-			}
-		};
 		new MockUp<CatalogDatabase>() {
 			@Mock
 			public Service getServiceByModelName(String modelName) {
@@ -943,13 +858,7 @@ public class E2EServiceInstancesTest {
 				return operationStatus;
 			}
 		};
-		new MockUp<E2EServiceInstances>() {
-			@Mock
-			private void createOperationStatusRecordForError(Action action,
-					String requestId) throws MsoDatabaseException {
 
-			}
-		};
 		new MockUp<CatalogDatabase>() {
 			@Mock
 			public Service getServiceByModelName(String modelName) {
@@ -1016,13 +925,7 @@ public class E2EServiceInstancesTest {
                 return operationStatus;
             }
         };
-        new MockUp<E2EServiceInstances>() {
-            @Mock
-            private void createOperationStatusRecordForError(Action action,
-                                                             String requestId) throws MsoDatabaseException {
 
-            }
-        };
         new MockUp<CatalogDatabase>() {
             @Mock
             public Service getServiceByModelName(String modelName) {
@@ -1095,13 +998,7 @@ public class E2EServiceInstancesTest {
                 return operationStatus;
             }
         };
-        new MockUp<E2EServiceInstances>() {
-            @Mock
-            private void createOperationStatusRecordForError(Action action,
-                                                             String requestId) throws MsoDatabaseException {
 
-            }
-        };
         MockUp<CatalogDatabase> catalog = new MockUp<CatalogDatabase>() {
             @Mock
             public Service getServiceByModelName(String modelName) throws Exception {
@@ -1167,13 +1064,7 @@ public class E2EServiceInstancesTest {
                 return operationStatus;
             }
         };
-        new MockUp<E2EServiceInstances>() {
-            @Mock
-            private void createOperationStatusRecordForError(Action action,
-                                                             String requestId) throws MsoDatabaseException {
 
-            }
-        };
         new MockUp<CatalogDatabase>() {
             @Mock
             public Service getServiceByModelName(String modelName) {
@@ -1239,13 +1130,7 @@ public class E2EServiceInstancesTest {
                 return operationStatus;
             }
         };
-        new MockUp<E2EServiceInstances>() {
-            @Mock
-            private void createOperationStatusRecordForError(Action action,
-                                                             String requestId) throws MsoDatabaseException {
 
-            }
-        };
         new MockUp<CatalogDatabase>() {
             @Mock
             public Service getServiceByModelName(String modelName) {
@@ -1363,10 +1248,6 @@ public class E2EServiceInstancesTest {
     public void scaleE2EserviceInstancesTestFailInvalidRequest(@Mocked AbstractSessionFactoryManager sessionFactoryManager,
                                                                @Mocked Session session ) {
 
-        new Expectations() {{
-            sessionFactoryManager.getSessionFactory().openSession(); result = session;
-        }};
-
         E2EServiceInstances instance = new E2EServiceInstances();
         Response response = instance.scaleE2EServiceInstance(jsonBody, "v3", "12345");
     }
@@ -1439,10 +1320,6 @@ public class E2EServiceInstancesTest {
     @Test
     public void scaleE2EserviceInstancesTestFailCamundaClient(@Mocked AbstractSessionFactoryManager sessionFactoryManager,
                                                               @Mocked Session session) {
-
-        new Expectations() {{
-            sessionFactoryManager.getSessionFactory().openSession(); result = session;
-        }};
 
         final MockUp<MsoRequest> mockMsoRequest = new MockUp<MsoRequest>() {
             @Mock
