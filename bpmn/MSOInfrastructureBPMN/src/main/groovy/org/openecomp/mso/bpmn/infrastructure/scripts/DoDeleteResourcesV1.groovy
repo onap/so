@@ -273,7 +273,7 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
         utils.log("INFO", "======== COMPLETED parseNextResource Process ======== ", isDebugEnabled)
     }
     
-    public void prepareFinishedProgressForResource(execution) {
+    public void prepareFinishedProgressForResource(DelegateExecution execution) {
 
         String serviceInstanceId = execution.getVariable("serviceInstanceId")
         String serviceType = execution.getVariable("serviceType")
@@ -297,7 +297,7 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
                                <operationId>${operationId}</operationId>
                                <progress>${progress}</progress>
                                <resourceTemplateUUID>${resourceCustomizationUuid}</resourceTemplateUUID>
-                               <serviceId>${ServiceInstanceId}</serviceId>
+                               <serviceId>${serviceInstanceId}</serviceId>
                                <status>${status}</status>
                                <statusDescription>${statusDescription}</statusDescription>
                     </ns:updateResourceOperationStatus>
