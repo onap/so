@@ -83,7 +83,7 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
             String resourceModelName = resourceInputObj.getResourceModelInfo().getModelName()            
             //For sdnc requestAction default is "NetworkInstance"
             String operationType = "Network"    
-            if(!StringUtils.isBlank(recipeParamsFromRequest)){
+            if(!StringUtils.isBlank(recipeParamsFromRequest) && "null" != recipeParamsFromRequest){
                 //the operationType from worflow(first node) is second priority.
                 operationType = jsonUtil.getJsonValue(recipeParamsFromRequest, "operationType")
             }
@@ -227,13 +227,13 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
         ResourceInput resourceInputObj = execution.getVariable(Prefix + "resourceInput")
         String operType = resourceInputObj.getOperationType()
         String resourceCustomizationUuid = resourceInputObj.getResourceModelInfo().getModelCustomizationUuid()
-        String ServiceInstanceId = resourceInputObj.getServiceInstanceId()
-        String operationId = resourceInputObj.getOperationId()
+        String serviceInstanceId = resourceInputObj.getServiceInstanceId()
+        //String operationId = resourceInputObj.getOperationId()
         String progress = "20"
         String status = "processing"
         String statusDescription = "SDCN resource delete invoked"
 
-        execution.getVariable("operationId")
+        String operationId = execution.getVariable("operationId")
 
         String body = """
                 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
@@ -245,7 +245,7 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
                                <operationId>${operationId}</operationId>
                                <progress>${progress}</progress>
                                <resourceTemplateUUID>${resourceCustomizationUuid}</resourceTemplateUUID>
-                               <serviceId>${ServiceInstanceId}</serviceId>
+                               <serviceId>${serviceInstanceId}</serviceId>
                                <status>${status}</status>
                                <statusDescription>${statusDescription}</statusDescription>
                     </ns:updateResourceOperationStatus>
@@ -256,17 +256,17 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
 
     }
 
-    public void prepareUpdateAfterDeleteSDNCResource(execution) {
+    public void prepareUpdateAfterDeleteSDNCResource(DelegateExecution execution) {
         ResourceInput resourceInputObj = execution.getVariable(Prefix + "resourceInput")
         String operType = resourceInputObj.getOperationType()
         String resourceCustomizationUuid = resourceInputObj.getResourceModelInfo().getModelCustomizationUuid()
-        String ServiceInstanceId = resourceInputObj.getServiceInstanceId()
-        String operationId = resourceInputObj.getOperationId()
+        String serviceInstanceId = resourceInputObj.getServiceInstanceId()
+        //String operationId = resourceInputObj.getOperationId()
         String progress = "100"
         String status = "finished"
         String statusDescription = "SDCN resource delete completed"
 
-        execution.getVariable("operationId")
+        String operationId = execution.getVariable("operationId")
 
         String body = """
                 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
@@ -278,7 +278,7 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
                                <operationId>${operationId}</operationId>
                                <progress>${progress}</progress>
                                <resourceTemplateUUID>${resourceCustomizationUuid}</resourceTemplateUUID>
-                               <serviceId>${ServiceInstanceId}</serviceId>
+                               <serviceId>${serviceInstanceId}</serviceId>
                                <status>${status}</status>
                                <statusDescription>${statusDescription}</statusDescription>
                     </ns:updateResourceOperationStatus>
