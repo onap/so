@@ -309,20 +309,84 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
         execution.setVariable("CVFMI_updateResOperStatusRequest", body)
     }
 
-    public void prepareServiceTopologyDeletion(DelegateExecution execution) {
-        def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-        utils.log("INFO"," ***** prepareServiceTopologyDeletion "  + " *****", isDebugEnabled)
-
-        ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
-        execution.setVariable("modelInvariantUuid", serviceDecomposition.getModelInfo().getModelInvariantUuid())
-        execution.setVariable("modelVersion", serviceDecomposition.getModelInfo().getModelVersion())
-        execution.setVariable("modelUuid", serviceDecomposition.getModelInfo().getModelUuid())
-        execution.setVariable("serviceModelName", serviceDecomposition.getModelInfo().getModelName())
-
-        // set operation type and resource type is required to form request body
-        execution.setVariable("operationType", "DELETE")
-        execution.setVariable("resourceType", "SDNC-SERVICE-TOPOLOGY")
-
-        utils.log("INFO"," ***** prepareServiceTopologyDeletion "  + " *****", isDebugEnabled)
+    public void prepareSDNCServiceDeactivateRequest (DelegateExecution execution) {
+    	prepareSDNCServiceRequest (execution, "deactivate")
     }
+    
+    public void prepareSDNCServiceDeleteRequest (DelegateExecution execution) {
+    	prepareSDNCServiceRequest (execution, "delete")
+    }
+    
+    public void prepareSDNCServiceRequest (DelegateExecution execution, String svcAction) {
+        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
+        utils.log("INFO"," ***** Started prepareSDNCServiceRequest for " + svcAction +  "*****",  isDebugEnabled)
+
+        try {
+            // get variables
+            String sdnc_svcAction = svcAction        
+            String sdncCallback = execution.getVariable("URN_mso_workflow_sdncadapter_callback")            
+            String hdrRequestId = execution.getVariable("msoRequestId")
+            String serviceInstanceId = execution.getVariable("serviceInstanceId")
+            String source = execution.getVariable("source")
+            String sdnc_service_id = serviceInstanceId
+            ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
+            String serviceType = execution.getVariable("serviceType")
+            String globalCustomerId = execution.getVariable("globalSubscriberId")
+            String serviceModelInvariantUuid = serviceDecomposition.getModelInfo().getModelInvariantUuid()
+            String serviceModelUuid = serviceDecomposition.getModelInfo().getModelUuid()
+            String serviceModelVersion = serviceDecomposition.getModelInfo().getModelVersion()
+            String serviceModelName = serviceDecomposition.getModelInfo().getModelName()
+
+            // 1. prepare assign topology via SDNC Adapter SUBFLOW call
+            String sndcTopologyDeleteRequest =
+                    """<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://org.openecomp/mso/workflow/schema/v1"
+                                                              xmlns:sdncadapter="http://org.openecomp.mso/workflow/sdnc/adapter/schema/v1" 
+                                                              xmlns:sdncadapterworkflow="http://org.openecomp/mso/workflow/schema/v1">
+                                 <sdncadapter:RequestHeader>
+                                    <sdncadapter:RequestId>${hdrRequestId}</sdncadapter:RequestId>
+                                    <sdncadapter:SvcInstanceId>${serviceInstanceId}</sdncadapter:SvcInstanceId>
+                                    <sdncadapter:SvcAction>${sdnc_svcAction}</sdncadapter:SvcAction>
+                                    <sdncadapter:SvcOperation>service-topology-operation</sdncadapter:SvcOperation>
+                                    <sdncadapter:CallbackUrl>sdncCallback</sdncadapter:CallbackUrl>
+                                    <sdncadapter:MsoAction>generic-resource</sdncadapter:MsoAction>
+                                 </sdncadapter:RequestHeader>
+                                 <sdncadapterworkflow:SDNCRequestData>
+                                     <request-information>
+                                        <request-id>${hdrRequestId}</request-id>
+                                        <request-action>DeleteServiceInstance</request-action>
+                                        <source>${source}</source>
+                                        <notification-url></notification-url>
+                                        <order-number></order-number>
+                                        <order-version></order-version>
+                                     </request-information>
+                                     <service-information>
+                                        <service-id>${serviceInstanceId}</service-id>
+                                        <subscription-service-type>${serviceType}</subscription-service-type>
+                                        <onap-model-information>
+                                             <model-invariant-uuid>${serviceModelInvariantUuid}</model-invariant-uuid>
+                                             <model-uuid>${serviceModelUuid}</model-uuid>
+                                             <model-version>${serviceModelVersion}</model-version>
+                                             <model-name>${serviceModelName}</model-name>
+                                        </onap-model-information>
+                                        <service-instance-id>${serviceInstanceId}</service-instance-id>
+                                        <global-customer-id>${globalCustomerId}</global-customer-id>
+                                     </service-information>
+                                     <service-request-input>
+                                     </service-request-input>
+                                </sdncadapterworkflow:SDNCRequestData>
+                             </aetgt:SDNCAdapterWorkflowRequest>""".trim()
+            
+            String sndcTopologyDeleteRequesAsString = utils.formatXml(sndcTopologyDeleteRequest)
+            utils.logAudit(sndcTopologyDeleteRequesAsString)
+            execution.setVariable("sdncAdapterWorkflowRequest", sndcTopologyDeleteRequesAsString)
+            utils.log("INFO","sdncAdapterWorkflowRequest - " + "\n" +  sndcTopologyDeleteRequesAsString, isDebugEnabled)
+
+        } catch (Exception ex) {
+            String exceptionMessage = " Bpmn error encountered in DoDeleteResourcesV1 flow. prepareSDNCServiceRequest() - " + ex.getMessage()
+            utils.log("DEBUG", exceptionMessage, isDebugEnabled)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
+
+        }
+       utils.log("INFO","***** Exit prepareSDNCServiceRequest for " + svcAction +  "*****",  isDebugEnabled)
+	}
 }
