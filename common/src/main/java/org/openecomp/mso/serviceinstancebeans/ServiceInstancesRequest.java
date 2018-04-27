@@ -41,6 +41,8 @@ public class ServiceInstancesRequest implements Serializable {
 	private String vfModuleInstanceId;
 	@JsonProperty("configurationId")
 	private String configurationId;
+	@JsonProperty("correlationId")
+	private String correlationId;
 
 	public RequestDetails getRequestDetails() {
 		return requestDetails;
@@ -98,15 +100,26 @@ public class ServiceInstancesRequest implements Serializable {
 		this.configurationId = configurationId;
 	}
 
-	@Override
-	public String toString() {
-		return "ServiceInstancesRequest [requestDetails=" + requestDetails
-				+ ", serviceInstanceId=" + serviceInstanceId
-				+ ", vnfInstanceId=" + vnfInstanceId + ", networkInstanceId="
-				+ networkInstanceId + ", volumeGroupInstanceId="
-				+ volumeGroupInstanceId + ", vfModuleInstanceId="
-				+ vfModuleInstanceId + ", configurationId="
-				+ configurationId + ",]";
+	public String getCorrelationId() {
+		return correlationId;
 	}
 
+	public void setCorrelationId(String correlationId) {
+		this.correlationId = correlationId;
+	}
+
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder("ServiceInstancesRequest{");
+		sb.append("requestDetails=").append(requestDetails);
+		sb.append(", serviceInstanceId='").append(serviceInstanceId).append('\'');
+		sb.append(", vnfInstanceId='").append(vnfInstanceId).append('\'');
+		sb.append(", networkInstanceId='").append(networkInstanceId).append('\'');
+		sb.append(", volumeGroupInstanceId='").append(volumeGroupInstanceId).append('\'');
+		sb.append(", vfModuleInstanceId='").append(vfModuleInstanceId).append('\'');
+		sb.append(", configurationId='").append(configurationId).append('\'');
+		sb.append(", correlationId='").append(correlationId).append('\'');
+		sb.append('}');
+		return sb.toString();
+	}
 }

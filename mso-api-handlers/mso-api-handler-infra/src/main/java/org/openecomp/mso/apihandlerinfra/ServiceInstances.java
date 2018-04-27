@@ -77,7 +77,6 @@ import com.wordnik.swagger.annotations.ApiOperation;
 @Api(value="/serviceInstances",description="API Requests for Service Instances")
 public class ServiceInstances {
 
-	private HashMap<String, String> instanceIdMap = new HashMap<>();
 	private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH);
 	private static MsoAlarmLogger alarmLogger = new MsoAlarmLogger ();
 
@@ -508,7 +507,7 @@ public class ServiceInstances {
 		MsoRequest msoRequest = new MsoRequest (requestId);
 
 		try {
-			sir = convertJsonToServiceInstanceRequest(requestJSON, action, startTime, sir, msoRequest);
+			sir = convertJsonToServiceInstanceRequest(requestJSON, action, startTime, msoRequest);
 		} catch(Exception e) {
 			msoLogger.debug("Exception occurred while mapping of request to JSON object ", e);
 			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_REQUEST, MsoException.ServiceException,
@@ -907,11 +906,10 @@ public class ServiceInstances {
 	}
 
 	private ServiceInstancesRequest convertJsonToServiceInstanceRequest(String requestJSON, Action action, long startTime,
-																		ServiceInstancesRequest sir, MsoRequest msoRequest) throws Exception {
+			MsoRequest msoRequest) throws Exception {
 		try{
 			ObjectMapper mapper = new ObjectMapper();
-			sir = mapper.readValue(requestJSON, ServiceInstancesRequest.class);
-
+			return mapper.readValue(requestJSON, ServiceInstancesRequest.class);
 		} catch(Exception e){
 			msoLogger.debug ("Mapping of request to JSON object failed : ", e);
 			if (msoRequest.getRequestId () != null) {
@@ -922,7 +920,6 @@ public class ServiceInstances {
 			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.SchemaError, "Mapping of request to JSON object failed");
 			throw new Exception(e);
 		}
-		return sir;
 	}
 
 	private RecipeLookupResult getServiceInstanceOrchestrationURI (CatalogDatabase db, MsoRequest msoRequest, Action action) throws Exception {
@@ -1233,7 +1230,7 @@ public class ServiceInstances {
 		MsoRequest msoRequest = new MsoRequest (requestId);
 
 		try {
-			sir = convertJsonToServiceInstanceRequest(requestJSON, action, startTime, sir, msoRequest);
+			sir = convertJsonToServiceInstanceRequest(requestJSON, action, startTime, msoRequest);
 		} catch(Exception e) {
 			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_REQUEST, MsoException.ServiceException,
 					"Mapping of request to JSON object failed.  " + e.getMessage(),
