@@ -238,7 +238,7 @@ public class CreateVFCNSResource extends AbstractServiceTaskProcessor {
         }
         String globalSubscriberId = execution.getVariable("globalSubscriberId")
         String serviceType = execution.getVariable("serviceType")
-        String serviceId = execution.getVariable("serviceId")
+        String serviceId = execution.getVariable("serviceInstanceId")
         String addRelationPayload = """<relationship xmlns="http://org.openecomp.aai.inventory/v11">
                                             <related-to>service-instance</related-to>
                                             <related-link>/aai/v11/business/customers/customer/${globalSubscriberId}/service-subscriptions/service-subscription/${serviceType}/service-instances/service-instance/${nsInstanceId}</related-link>
