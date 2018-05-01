@@ -57,13 +57,13 @@ public class CloudConfigFactory implements Serializable {
 
     private static final long serialVersionUID = 2956662716453261085L;
 
-    private CloudConfig cloudConfigCache = new CloudConfig();
+    private static final CloudConfig cloudConfigCache = new CloudConfig();
 
     protected static String prefixMsoPropertiesPath = System.getProperty ("mso.config.path");
 
     private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
 
-    private int refreshTimer;
+    private static int refreshTimer;
 
     private static final ReentrantReadWriteLock rwl = new ReentrantReadWriteLock ();
 
@@ -72,7 +72,7 @@ public class CloudConfigFactory implements Serializable {
             prefixMsoPropertiesPath = "";
         }
     }
-
+    
     public void initializeCloudConfig (String filePath, int refreshTimer) throws MsoCloudIdentityNotFound {
         rwl.writeLock ().lock ();
         try {
@@ -105,8 +105,6 @@ public class CloudConfigFactory implements Serializable {
     /**
      * This method is not intended to be called, it's used to refresh the config
      * automatically
-     *
-     * @return true if Properties have been reloaded, false otherwise
      */
     @Schedule(minute = "*/1", hour = "*", persistent = false)
     public void reloadCloudConfig () {
