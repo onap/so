@@ -91,7 +91,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     private static final String NEUTRON_MODE = "NEUTRON";
     private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
     private static MsoAlarmLogger alarmLogger = new MsoAlarmLogger ();
-    protected CloudConfig cloudConfig;
 
     /**
      * Health Check web method. Does nothing but return to show the adapter is deployed.
@@ -117,7 +116,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     public MsoNetworkAdapterImpl(MsoPropertiesFactory msoPropFactory,CloudConfigFactory cloudConfigFact) {
     	this.msoPropertiesFactory = msoPropFactory;
     	this.cloudConfigFactory=cloudConfigFact;
-    	cloudConfig = cloudConfigFactory.getCloudConfig ();
     	neutron = new MsoNeutronUtils(MSO_PROP_NETWORK_ADAPTER, cloudConfigFactory);
     	heat = new MsoHeatUtils(MSO_PROP_NETWORK_ADAPTER, msoPropertiesFactory, cloudConfigFactory);
     	heatWithUpdate = new MsoHeatUtilsWithUpdate(MSO_PROP_NETWORK_ADAPTER, msoPropertiesFactory,
@@ -282,7 +280,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         // If the tenant doesn’t exist, the Heat calls will fail anyway (when the HeatUtils try to obtain a token).
         // So this is just catching that error in a bit more obvious way up front.
 
-        cloudConfig = cloudConfigFactory.getCloudConfig ();
+        CloudConfig cloudConfig = getCloudConfigFactory().getCloudConfig ();
         Optional<CloudSite> cloudSiteOpt = cloudConfig.getCloudSite(cloudSiteId);
         if (!cloudSiteOpt.isPresent())
         {
@@ -829,7 +827,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         networkRollback.setTenantId (tenantId);
         networkRollback.setMsoRequest (msoRequest);
 
-        cloudConfig = cloudConfigFactory.getCloudConfig ();
+        CloudConfig cloudConfig = getCloudConfigFactory().getCloudConfig ();
         Optional<CloudSite> cloudSiteOpt = cloudConfig.getCloudSite (cloudSiteId);
         if (!cloudSiteOpt.isPresent()) {
         	   String error = "UpdateNetwork: Configuration Error. Stack " + networkName + " in "
@@ -1384,7 +1382,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             throw new NetworkException (error, MsoExceptionCategory.USERDATA);
         }
 
-        cloudConfig = cloudConfigFactory.getCloudConfig();
+        CloudConfig cloudConfig = getCloudConfigFactory().getCloudConfig();
         Optional<CloudSite> cloudSiteOpt = cloudConfig.getCloudSite(cloudSiteId);
         if (!cloudSiteOpt.isPresent())
         {
@@ -1646,6 +1644,10 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         return CatalogDatabase.getInstance();
     }
 
+    public CloudConfigFactory getCloudConfigFactory() {
+        return cloudConfigFactory;
+    }
+
     /**
      * This web service endpoint will rollback a previous Create VNF operation.
      * A rollback object is returned to the client in a successful creation
@@ -1703,7 +1705,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 // Rolling back a newly created network, so delete it.
                 if (NEUTRON_MODE.equals(mode)) {
                     // Use MsoNeutronUtils for all NEUTRON commands
-                    MsoNeutronUtils neutron = new MsoNeutronUtils(MSO_PROP_NETWORK_ADAPTER, cloudConfigFactory);
+                    MsoNeutronUtils neutron = new MsoNeutronUtils(MSO_PROP_NETWORK_ADAPTER, getCloudConfigFactory());
                     long deleteNetworkStarttime = System.currentTimeMillis();
                     try {
                         // The deleteNetwork function in MsoNeutronUtils returns success if the network
@@ -1734,7 +1736,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 } else { // DEFAULT to if ("HEAT".equals (mode))
                     // Use MsoHeatUtils for all HEAT commands
                     MsoHeatUtils heat = new MsoHeatUtils(MSO_PROP_NETWORK_ADAPTER, msoPropertiesFactory,
-                        cloudConfigFactory);
+                        getCloudConfigFactory());
                     long deleteStackStarttime = System.currentTimeMillis();
                     try {
                         // The deleteStack function in MsoHeatUtils returns success if the stack

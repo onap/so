@@ -22,7 +22,6 @@ package org.openecomp.mso.openstack.utils;
 
 
 import java.util.Map;
-import org.openecomp.mso.cloud.CloudConfig;
 import org.openecomp.mso.cloud.CloudConfigFactory;
 import org.openecomp.mso.cloud.CloudIdentity;
 import org.openecomp.mso.logger.MessageEnum;
@@ -40,12 +39,10 @@ public abstract class MsoTenantUtils extends MsoCommonUtils {
 	protected MsoPropertiesFactory msoPropFactory;
 	protected static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
 	protected MsoJavaProperties msoProps;
-    protected CloudConfig cloudConfig;
 
     public MsoTenantUtils (String msoPropID) {
     	cloudConfigFactory = new CloudConfigFactory();
     	msoPropFactory = new MsoPropertiesFactory();
-    	cloudConfig = cloudConfigFactory.getCloudConfig ();
 
     	LOGGER.debug("msoTenantUtils:" + msoPropID);
 		
