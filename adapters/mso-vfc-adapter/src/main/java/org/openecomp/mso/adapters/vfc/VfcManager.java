@@ -120,6 +120,8 @@ public class VfcManager {
             segInput.getNsOperationKey().getOperationId(),
             segInput.getNsOperationKey().getNodeTemplateUUID());
     nsOperInfo.setStatus(RequestsDbConstant.Status.PROCESSING);
+    nsOperInfo.setProgress("40");
+    nsOperInfo.setStatusDescription("NS is created");
     (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
 
     if (!HttpCode.isSucess(createRsp.getStatus())) {
@@ -191,6 +193,8 @@ public class VfcManager {
     // Step4: update service segment operation status
     nsOperInfo.setStatus(RequestsDbConstant.Status.FINISHED);
     nsOperInfo.setErrorCode(String.valueOf(deleteRsp.getStatus()));
+    nsOperInfo.setProgress("100");
+    nsOperInfo.setStatusDescription("VFC resource deletion finished");
     (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
     LOGGER.info("update segment operaton status for delete -> end");
 
@@ -256,6 +260,8 @@ public class VfcManager {
     // Step 3: update segment operation job id
     LOGGER.info("update resource operation status job id -> begin");
     nsOperInfo.setJobId(jobId);
+    nsOperInfo.setProgress("100");
+    nsOperInfo.setStatusDescription("NS initiation completed.");
     (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
     LOGGER.info("update segment operation job id -> end");
 
@@ -322,6 +328,8 @@ public class VfcManager {
     LOGGER.info("terminate ns -> end");
 
     LOGGER.info("update segment job id -> begin");
+    nsOperInfo.setProgress("60");
+    nsOperInfo.setStatusDescription("NS is termination completed");
     nsOperInfo.setJobId(jobId);
     (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
     LOGGER.info("update segment job id -> end");
