@@ -29,9 +29,11 @@ import static org.mockito.Mockito.mock;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.openecomp.mso.cloud.CloudConfigFactory;
 import org.openecomp.mso.cloud.CloudIdentity;
 import org.openecomp.mso.cloud.CloudSite;
 import org.openecomp.mso.openstack.beans.MsoTenant;
@@ -65,6 +67,13 @@ public class MsoKeystoneUtilsTest {
     
     @Mock
     MsoJavaProperties msoProps;
+
+    @BeforeClass
+    public static void init() throws Exception {
+        String cloudConfigJson = MsoKeystoneUtilsTest.class.getClassLoader()
+            .getResource("cloud_config.json").getPath();
+        (new CloudConfigFactory()).initializeCloudConfig(cloudConfigJson, 0);
+    }
 
     @Test
      public  void testcreateTenant() throws MsoException{

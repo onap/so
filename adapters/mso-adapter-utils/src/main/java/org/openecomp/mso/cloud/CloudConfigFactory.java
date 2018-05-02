@@ -92,11 +92,11 @@ public class CloudConfigFactory implements Serializable {
     public CloudConfig getCloudConfig () {
         rwl.readLock ().lock ();
         try {
-            if (cloudConfigCache.isValidCloudConfig()) {
-                return cloudConfigCache.clone ();
-            } else {
-                return new CloudConfig();
+            if (!cloudConfigCache.isValidCloudConfig()) {
+            	// Not ideal, but better than returning an invalid object
+            	throw new IllegalStateException("No valid CloudConfig is loaded");
             }
+            return cloudConfigCache.clone ();
         } finally {
             rwl.readLock ().unlock ();
         }

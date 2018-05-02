@@ -280,6 +280,7 @@ public class NetworkAdapterRestTest {
         
 		MsoNetworkAdapterImpl mockImpl = Mockito.mock(MsoNetworkAdapterImpl.class);
 		CloudConfigFactory cloudConfigMock = Mockito.mock(CloudConfigFactory.class);
+		cloudConfigMock.getCloudConfig();
 		MsoPropertiesFactory msoPropertiesFactoryMock = Mockito.mock(MsoPropertiesFactory.class);
 		
 		try {

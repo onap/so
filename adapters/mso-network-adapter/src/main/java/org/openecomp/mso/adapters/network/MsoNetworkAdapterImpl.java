@@ -91,7 +91,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     private static final String NEUTRON_MODE = "NEUTRON";
     private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
     private static MsoAlarmLogger alarmLogger = new MsoAlarmLogger ();
-    protected CloudConfig cloudConfig;
 
     /**
      * Health Check web method. Does nothing but return to show the adapter is deployed.
@@ -117,7 +116,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     public MsoNetworkAdapterImpl(MsoPropertiesFactory msoPropFactory,CloudConfigFactory cloudConfigFact) {
     	this.msoPropertiesFactory = msoPropFactory;
     	this.cloudConfigFactory=cloudConfigFact;
-    	cloudConfig = cloudConfigFactory.getCloudConfig ();
     	neutron = new MsoNeutronUtils(MSO_PROP_NETWORK_ADAPTER, cloudConfigFactory);
     	heat = new MsoHeatUtils(MSO_PROP_NETWORK_ADAPTER, msoPropertiesFactory, cloudConfigFactory);
     	heatWithUpdate = new MsoHeatUtilsWithUpdate(MSO_PROP_NETWORK_ADAPTER, msoPropertiesFactory,
@@ -282,7 +280,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         // If the tenant doesn’t exist, the Heat calls will fail anyway (when the HeatUtils try to obtain a token).
         // So this is just catching that error in a bit more obvious way up front.
 
-        cloudConfig = cloudConfigFactory.getCloudConfig ();
+        CloudConfig cloudConfig = cloudConfigFactory.getCloudConfig ();
         Optional<CloudSite> cloudSiteOpt = cloudConfig.getCloudSite(cloudSiteId);
         if (!cloudSiteOpt.isPresent())
         {
@@ -829,7 +827,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         networkRollback.setTenantId (tenantId);
         networkRollback.setMsoRequest (msoRequest);
 
-        cloudConfig = cloudConfigFactory.getCloudConfig ();
+        CloudConfig cloudConfig = cloudConfigFactory.getCloudConfig ();
         Optional<CloudSite> cloudSiteOpt = cloudConfig.getCloudSite (cloudSiteId);
         if (!cloudSiteOpt.isPresent()) {
         	   String error = "UpdateNetwork: Configuration Error. Stack " + networkName + " in "
@@ -1384,7 +1382,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             throw new NetworkException (error, MsoExceptionCategory.USERDATA);
         }
 
-        cloudConfig = cloudConfigFactory.getCloudConfig();
+        CloudConfig cloudConfig = cloudConfigFactory.getCloudConfig();
         Optional<CloudSite> cloudSiteOpt = cloudConfig.getCloudSite(cloudSiteId);
         if (!cloudSiteOpt.isPresent())
         {
