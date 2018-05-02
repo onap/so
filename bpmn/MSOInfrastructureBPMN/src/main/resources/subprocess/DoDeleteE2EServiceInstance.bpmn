@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.11.3">
   <bpmn:process id="DoDeleteE2EServiceInstance" name="All Resources Deleted" isExecutable="true">
     <bpmn:startEvent id="StartEvent_0212h2r" name="Start Flow">
       <bpmn:outgoing>SequenceFlow_0vz7cd9</bpmn:outgoing>
@@ -119,11 +119,11 @@ ddsi.preInitResourcesOperStatus(execution)]]></bpmn:script>
       <bpmn:incoming>SequenceFlow_0ha8ix9</bpmn:incoming>
       <bpmn:linkEventDefinition name="StartDeleteResource" />
     </bpmn:intermediateThrowEvent>
-    <bpmn:intermediateCatchEvent id="StartEvent_09zdoq6" name="Start Delete Resources">
+    <bpmn:intermediateCatchEvent id="startDeleteResources" name="Start Delete Resources">
       <bpmn:outgoing>SequenceFlow_1961633</bpmn:outgoing>
       <bpmn:linkEventDefinition name="StartDeleteResource" />
     </bpmn:intermediateCatchEvent>
-    <bpmn:sequenceFlow id="SequenceFlow_1961633" sourceRef="StartEvent_09zdoq6" targetRef="ScriptTask_146jt8v" />
+    <bpmn:sequenceFlow id="SequenceFlow_1961633" sourceRef="startDeleteResources" targetRef="ScriptTask_146jt8v" />
     <bpmn:scriptTask id="Task_1ldvug1" name="Prepare Decompose Service" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_1q2mqnm</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0fo5vw5</bpmn:outgoing>
@@ -172,11 +172,11 @@ dcsi.postDecomposeService(execution)]]></bpmn:script>
       <bpmn:outgoing>SequenceFlow_1cevtpy</bpmn:outgoing>
     </bpmn:callActivity>
     <bpmn:sequenceFlow id="SequenceFlow_1cevtpy" sourceRef="Task_1f5dlsv" targetRef="CallActivity_06izbke" />
-    <bpmn:intermediateCatchEvent id="StartEvent_1irom2x" name="Decompose Service">
+    <bpmn:intermediateCatchEvent id="DecomposeService" name="Decompose Service">
       <bpmn:outgoing>SequenceFlow_1q2mqnm</bpmn:outgoing>
       <bpmn:linkEventDefinition name="DecomposeService" />
     </bpmn:intermediateCatchEvent>
-    <bpmn:sequenceFlow id="SequenceFlow_1q2mqnm" sourceRef="StartEvent_1irom2x" targetRef="Task_1ldvug1" />
+    <bpmn:sequenceFlow id="SequenceFlow_1q2mqnm" sourceRef="DecomposeService" targetRef="Task_1ldvug1" />
     <bpmn:intermediateThrowEvent id="StartEvent_1qh5a34" name="Go to Decompse Service">
       <bpmn:incoming>SequenceFlow_0vi0sv6</bpmn:incoming>
       <bpmn:linkEventDefinition name="DecomposeService" />
@@ -340,7 +340,7 @@ dcsi.postDecomposeService(execution)]]></bpmn:script>
           <dc:Bounds x="233" y="220" width="64" height="24" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="IntermediateCatchEvent_1jcfnjr_di" bpmnElement="StartEvent_09zdoq6">
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_1jcfnjr_di" bpmnElement="startDeleteResources">
         <dc:Bounds x="-537" y="472" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="-549" y="512" width="60" height="24" />
@@ -372,7 +372,7 @@ dcsi.postDecomposeService(execution)]]></bpmn:script>
           <dc:Bounds x="134" y="469" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="IntermediateCatchEvent_0s6bb2d_di" bpmnElement="StartEvent_1irom2x">
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_0s6bb2d_di" bpmnElement="DecomposeService">
         <dc:Bounds x="-537" y="180" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="-550" y="220" width="61" height="24" />
