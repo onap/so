@@ -65,8 +65,7 @@ public class MsoNeutronUtils extends MsoCommonUtils
 	// The cache key is "tenantId:cloudId"
 	private static Map<String,NeutronCacheEntry> neutronClientCache = new HashMap<>();
 
-	// Fetch cloud configuration each time (may be cached in CloudConfig class)
-	private CloudConfig cloudConfig;
+	private CloudConfigFactory cloudConfigFactory;
 
 	private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
 	private String msoPropID;
@@ -76,8 +75,12 @@ public class MsoNeutronUtils extends MsoCommonUtils
 	};
 
 	public MsoNeutronUtils(String msoPropID, CloudConfigFactory cloudConfigFactory) {
-		cloudConfig = cloudConfigFactory.getCloudConfig();
+		this.cloudConfigFactory = cloudConfigFactory;
 		this.msoPropID = msoPropID;
+	}
+	
+	protected CloudConfigFactory getCloudConfigFactory() {
+		return cloudConfigFactory;
 	}
 
 	/**
@@ -101,7 +104,7 @@ public class MsoNeutronUtils extends MsoCommonUtils
             throws MsoException
 	{
 		// Obtain the cloud site information where we will create the stack
-        CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
+        CloudSite cloudSite = getCloudConfigFactory().getCloudConfig().getCloudSite(cloudSiteId).orElseThrow(
                 () -> new MsoCloudSiteNotFound(cloudSiteId));
 
 		Quantum neutronClient = getNeutronClient (cloudSite, tenantId);
@@ -179,7 +182,7 @@ public class MsoNeutronUtils extends MsoCommonUtils
 		LOGGER.debug("In queryNetwork");
 
 		// Obtain the cloud site information
-        CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
+        CloudSite cloudSite = getCloudConfigFactory().getCloudConfig().getCloudSite(cloudSiteId).orElseThrow(
                 () -> new MsoCloudSiteNotFound(cloudSiteId));
 
 		Quantum neutronClient = getNeutronClient (cloudSite, tenantId);
@@ -219,7 +222,7 @@ public class MsoNeutronUtils extends MsoCommonUtils
     public boolean deleteNetwork(String networkId, String tenantId, String cloudSiteId) throws MsoException
 	{
 		// Obtain the cloud site information where we will create the stack
-        CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
+        CloudSite cloudSite = getCloudConfigFactory().getCloudConfig().getCloudSite(cloudSiteId).orElseThrow(
                 () -> new MsoCloudSiteNotFound(cloudSiteId));
 		Quantum neutronClient = getNeutronClient (cloudSite, tenantId);
 		try {
@@ -276,7 +279,7 @@ public class MsoNeutronUtils extends MsoCommonUtils
             throws MsoException
 	{
 		// Obtain the cloud site information where we will create the stack
-        CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
+        CloudSite cloudSite = getCloudConfigFactory().getCloudConfig().getCloudSite(cloudSiteId).orElseThrow(
                 () -> new MsoCloudSiteNotFound(cloudSiteId));
 		Quantum neutronClient = getNeutronClient (cloudSite, tenantId);
 		// Check that the network exists

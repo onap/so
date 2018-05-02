@@ -22,7 +22,6 @@ package org.openecomp.mso.openstack.utils;
 
 
 import java.util.Map;
-import org.openecomp.mso.cloud.CloudConfig;
 import org.openecomp.mso.cloud.CloudConfigFactory;
 import org.openecomp.mso.cloud.CloudIdentity;
 import org.openecomp.mso.logger.MessageEnum;
@@ -36,16 +35,14 @@ import org.openecomp.mso.properties.MsoPropertiesFactory;
 
 public abstract class MsoTenantUtils extends MsoCommonUtils {
 
-    protected CloudConfigFactory cloudConfigFactory;
+    private CloudConfigFactory cloudConfigFactory;
 	protected MsoPropertiesFactory msoPropFactory;
 	protected static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
 	protected MsoJavaProperties msoProps;
-    protected CloudConfig cloudConfig;
 
-    public MsoTenantUtils (String msoPropID) {
-    	cloudConfigFactory = new CloudConfigFactory();
+    public MsoTenantUtils (String msoPropID, CloudConfigFactory cloudConfigFactory) {
+    	this.cloudConfigFactory = cloudConfigFactory;
     	msoPropFactory = new MsoPropertiesFactory();
-    	cloudConfig = cloudConfigFactory.getCloudConfig ();
 
     	LOGGER.debug("msoTenantUtils:" + msoPropID);
 		
@@ -54,6 +51,10 @@ public abstract class MsoTenantUtils extends MsoCommonUtils {
 		} catch (MsoPropertiesException e) {
 			LOGGER.error (MessageEnum.LOAD_PROPERTIES_FAIL, "Unknown. Mso Properties ID not found in cache: " + msoPropID, "", "", MsoLogger.ErrorCode.DataError, "Exception - Mso Properties ID not found in cache", e);
 		}
+    }
+
+    public CloudConfigFactory getCloudConfigFactory() {
+    	return cloudConfigFactory;
     }
 
     public abstract String createTenant (String tenantName, String cloudSiteId, Map <String, String> metadata, boolean backout) 
