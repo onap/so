@@ -70,9 +70,9 @@ public class MsoHeatUtilsTest extends MsoCommonUtils {
 
 	@BeforeClass
 	public static final void loadClasses() throws MsoCloudIdentityNotFound, MsoPropertiesException {
-		ClassLoader classLoader = CloudConfigTest.class.getClassLoader();
-		String config = classLoader.getResource("cloud_config.json").toString().substring(5);
-		cloudConfigFactory.initializeCloudConfig(config, 1);
+		ClassLoader classLoader = MsoHeatUtilsTest.class.getClassLoader();
+		String cloudConfigJson = classLoader.getResource("cloud_config.json").getPath();
+		cloudConfigFactory.initializeCloudConfig(cloudConfigJson, 1);
 		msoPropertiesFactory.initializeMsoProperties("NO_PROP", classLoader.getResource("mso.properties").getPath());
 		msoHeatUtils = new MsoHeatUtils("NO_PROP", msoPropertiesFactory, cloudConfigFactory);
 	}

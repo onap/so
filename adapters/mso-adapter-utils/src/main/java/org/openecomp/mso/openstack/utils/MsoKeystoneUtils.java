@@ -93,7 +93,7 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
                                 Map <String, String> metadata,
                                 boolean backout) throws MsoException {
         // Obtain the cloud site information where we will create the tenant
-        Optional<CloudSite> cloudSiteOpt = cloudConfig.getCloudSite(cloudSiteId);
+        Optional<CloudSite> cloudSiteOpt = cloudConfigFactory.getCloudConfig().getCloudSite(cloudSiteId);
         if (!cloudSiteOpt.isPresent()) {
         	LOGGER.error(MessageEnum.RA_CREATE_TENANT_ERR, "MSOCloudSite not found", "", "", MsoLogger.ErrorCode.DataError, "MSOCloudSite not found");
             throw new MsoCloudSiteNotFound (cloudSiteId);
@@ -197,7 +197,7 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
      */
     public MsoTenant queryTenant (String tenantId, String cloudSiteId) throws MsoException {
         // Obtain the cloud site information where we will query the tenant
-        CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
+        CloudSite cloudSite = cloudConfigFactory.getCloudConfig().getCloudSite(cloudSiteId).orElseThrow(
                 () -> new MsoCloudSiteNotFound(cloudSiteId));
 
         Keystone keystoneAdminClient = getKeystoneAdminClient (cloudSite);
@@ -245,7 +245,7 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
      */
     public MsoTenant queryTenantByName (String tenantName, String cloudSiteId) throws MsoException {
         // Obtain the cloud site information where we will query the tenant
-        CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
+        CloudSite cloudSite = cloudConfigFactory.getCloudConfig().getCloudSite(cloudSiteId).orElseThrow(
                 () -> new MsoCloudSiteNotFound(cloudSiteId));
         Keystone keystoneAdminClient = getKeystoneAdminClient (cloudSite);
 
@@ -290,7 +290,7 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
      */
     public boolean deleteTenant (String tenantId, String cloudSiteId) throws MsoException {
         // Obtain the cloud site information where we will query the tenant
-        CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
+        CloudSite cloudSite = cloudConfigFactory.getCloudConfig().getCloudSite(cloudSiteId).orElseThrow(
                 () -> new MsoCloudSiteNotFound(cloudSiteId));
         Keystone keystoneAdminClient = getKeystoneAdminClient (cloudSite);
 
