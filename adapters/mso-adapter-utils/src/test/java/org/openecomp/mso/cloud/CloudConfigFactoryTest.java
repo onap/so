@@ -30,6 +30,7 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import javax.ws.rs.core.Response;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.mso.openstack.exceptions.MsoCloudIdentityNotFound;
@@ -41,12 +42,23 @@ public class CloudConfigFactoryTest {
 
     private CloudConfigFactory testedObject;
     private CloudConfig cloudConfigMock;
+    private CloudConfig savedCloudConfig;
 
     @Before
     public void init() throws NoSuchFieldException, IllegalAccessException {
         cloudConfigMock = mock(CloudConfig.class);
         testedObject = new CloudConfigFactory();
-        setCloudConfig();
+        Field field = CloudConfigFactory.class.getDeclaredField(CLOUD_CONFIG_FIELD_NAME);
+        field.setAccessible(true);
+        savedCloudConfig = (CloudConfig) field.get(null);
+        field.set(null, cloudConfigMock);
+    }
+
+    @After
+    public void reset() throws NoSuchFieldException, IllegalAccessException {
+        Field field = CloudConfigFactory.class.getDeclaredField(CLOUD_CONFIG_FIELD_NAME);
+        field.setAccessible(true);
+        field.set(null, savedCloudConfig);
     }
 
     @Test
@@ -64,17 +76,6 @@ public class CloudConfigFactoryTest {
         testedObject.getCloudConfig();
 
         verify(cloudConfigMock).clone();
-    }
-
-    @Test
-    public void getNotValidCloudConfig() {
-        when(cloudConfigMock.isValidCloudConfig()).thenReturn(false);
-
-        CloudConfig result = testedObject.getCloudConfig();
-
-        assertThat(result).isNotNull();
-        assertThat(result.getCloudSites()).isEmpty();
-        assertThat(result.getIdentityServices()).isEmpty();
     }
 
     @Test
@@ -156,9 +157,6 @@ public class CloudConfigFactoryTest {
 
     private void setCloudConfig()
             throws NoSuchFieldException, IllegalAccessException {
-        Field field = testedObject.getClass().getDeclaredField(CLOUD_CONFIG_FIELD_NAME);
-        field.setAccessible(true);
-        field.set(testedObject, cloudConfigMock);
     }
 
 }

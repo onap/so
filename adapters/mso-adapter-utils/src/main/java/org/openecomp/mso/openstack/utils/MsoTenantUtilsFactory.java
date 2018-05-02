@@ -33,18 +33,25 @@ import org.openecomp.mso.openstack.exceptions.MsoCloudSiteNotFound;
 public class MsoTenantUtilsFactory {
 
 	private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
-	private CloudConfigFactory cloudConfigFactory= new CloudConfigFactory(); 
-	private CloudConfig cloudConfig;
+	private CloudConfigFactory cloudConfigFactory = new CloudConfigFactory();
 	private String msoPropID;
 	
 	public MsoTenantUtilsFactory (String msoPropID) {
 		this.msoPropID = msoPropID;
 	}
 
+	public void setCloudConfigFactory(CloudConfigFactory cloudConfigFactory) {
+		this.cloudConfigFactory = cloudConfigFactory;
+	}
+
+	public CloudConfigFactory getCloudConfigFactory() {
+		return cloudConfigFactory;
+	}
+
 	//based on Cloud IdentityServerType returns ORM or KEYSTONE Utils
 	public MsoTenantUtils getTenantUtils(String cloudSiteId) throws MsoCloudSiteNotFound {
 		// Obtain the cloud site information 
-		cloudConfig = cloudConfigFactory.getCloudConfig();
+		CloudConfig cloudConfig = getCloudConfigFactory().getCloudConfig();
 		CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
 				() -> new MsoCloudSiteNotFound(cloudSiteId));
 		return getTenantUtilsByServerType(cloudSite.getIdentityService().getIdentityServerType().toString());
@@ -54,10 +61,11 @@ public class MsoTenantUtilsFactory {
 
 		MsoTenantUtils tenantU = null;
 		if (CloudIdentity.IdentityServerType.KEYSTONE.toString().equals(serverType)) {
-			tenantU = new MsoKeystoneUtils (msoPropID);
+			tenantU = new MsoKeystoneUtils(msoPropID, getCloudConfigFactory());
 		} else {
 			try {
-				tenantU = CloudIdentity.IdentityServerType.valueOf(serverType).getMsoTenantUtilsClass().getConstructor(String.class).newInstance(msoPropID);
+				tenantU = CloudIdentity.IdentityServerType.valueOf(serverType).getMsoTenantUtilsClass()
+					.getConstructor(String.class, CloudConfigFactory.class).newInstance(msoPropID, getCloudConfigFactory());
 			} catch (InvocationTargetException | InstantiationException | NoSuchMethodException | IllegalAccessException e) {
 				throw new RuntimeException("Could not instantiate an MsoTenantUtils class for " + serverType, e);
 			}

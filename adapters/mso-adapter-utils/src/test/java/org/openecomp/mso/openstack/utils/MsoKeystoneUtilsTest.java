@@ -29,9 +29,13 @@ import static org.mockito.Mockito.mock;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.openecomp.mso.cloud.CloudConfig;
+import org.openecomp.mso.cloud.CloudConfigFactory;
 import org.openecomp.mso.cloud.CloudIdentity;
 import org.openecomp.mso.cloud.CloudSite;
 import org.openecomp.mso.openstack.beans.MsoTenant;
@@ -66,9 +70,19 @@ public class MsoKeystoneUtilsTest {
     @Mock
     MsoJavaProperties msoProps;
 
+    @Mock
+	private static CloudConfigFactory cloudConfigFactory;
+
+    @BeforeClass
+    public static final void prepare () {
+        cloudConfigFactory = Mockito.mock(CloudConfigFactory.class);
+        CloudConfig cloudConfig = Mockito.mock(CloudConfig.class);
+        Mockito.when(cloudConfigFactory.getCloudConfig()).thenReturn(cloudConfig);
+    }
+
     @Test
      public  void testcreateTenant() throws MsoException{
-        MsoKeystoneUtils msk = PowerMockito.spy(new MsoKeystoneUtils("ID"));
+        MsoKeystoneUtils msk = PowerMockito.spy(new MsoKeystoneUtils("ID", cloudConfigFactory));
         Map<String,String>metadata=new HashMap<>();
         metadata.put("1", "value");
         tenant = mock(Tenant.class);
@@ -81,19 +95,19 @@ public class MsoKeystoneUtilsTest {
     }
     @Test
     public  void testdeleteTenant() throws MsoException{
-        MsoKeystoneUtils msk = PowerMockito.spy(new MsoKeystoneUtils("ID"));
+        MsoKeystoneUtils msk = PowerMockito.spy(new MsoKeystoneUtils("ID", cloudConfigFactory));
         doReturn(true).when(msk).deleteTenant("tenantId", "cloudSiteId");
        assertTrue(msk.deleteTenant("tenantId", "cloudSiteId"));
     }
     @Test
     public  void testfindTenantByName() throws Exception{
-        MsoKeystoneUtils msk = PowerMockito.spy(new MsoKeystoneUtils("ID"));
+        MsoKeystoneUtils msk = PowerMockito.spy(new MsoKeystoneUtils("ID", cloudConfigFactory));
        doReturn(null).when(msk).findTenantByName(adminClient, "tenantName");
        assertNull(msk.findTenantByName(adminClient, "tenantName"));
     }
     @Test
     public  void testqueryTenant() throws MsoException{
-        MsoKeystoneUtils msk = PowerMockito.spy(new MsoKeystoneUtils("ID"));
+        MsoKeystoneUtils msk = PowerMockito.spy(new MsoKeystoneUtils("ID", cloudConfigFactory));
         Map<String,String>metadata=new HashMap<>();
         metadata.put("1", "value");  
         mst = mock(MsoTenant.class);
@@ -106,7 +120,7 @@ public class MsoKeystoneUtilsTest {
         
     @Test
     public  void testqueryTenantByName()throws MsoException {
-        MsoKeystoneUtils msk = PowerMockito.spy(new MsoKeystoneUtils("ID"));
+        MsoKeystoneUtils msk = PowerMockito.spy(new MsoKeystoneUtils("ID", cloudConfigFactory));
         Map<String,String>metadata=new HashMap<>();
         metadata.put("1", "value");  
         mst = mock(MsoTenant.class);
@@ -122,9 +136,8 @@ public class MsoKeystoneUtilsTest {
     public void testgetKeystoneAdminClient() throws MsoException{
     	cloudIdentity = mock(CloudIdentity.class);
         Keystone keystone = new Keystone (cloudIdentity.getKeystoneUrl ("region", "msoPropID"));
-        MsoKeystoneUtils msk = PowerMockito.spy(new MsoKeystoneUtils("ID"));
+        MsoKeystoneUtils msk = PowerMockito.spy(new MsoKeystoneUtils("ID", cloudConfigFactory));
         doReturn(keystone).when(msk).getKeystoneAdminClient(cs);
         assertNotNull(msk.getKeystoneAdminClient(cs));
     }
-    
-    }
+}

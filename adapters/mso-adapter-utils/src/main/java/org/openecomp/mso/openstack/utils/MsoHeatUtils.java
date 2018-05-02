@@ -100,9 +100,6 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
     // The cache key is "tenantId:cloudId"
     private static Map <String, HeatCacheEntry> heatClientCache = new HashMap <> ();
 
-    // Fetch cloud configuration each time (may be cached in CloudConfig class)
-    protected CloudConfig cloudConfig;
-
     private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
 
     protected MsoJavaProperties msoProps = null;
@@ -145,11 +142,12 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 		} catch (MsoPropertiesException e) {
 			LOGGER.error (MessageEnum.LOAD_PROPERTIES_FAIL, "Unknown. Mso Properties ID not found in cache: " + msoPropID, "", "", MsoLogger.ErrorCode.DataError, "Exception - Mso Properties ID not found in cache", e);
 		}
-        cloudConfig = cloudConfigFactory.getCloudConfig ();
         LOGGER.debug("MsoHeatUtils:" + msoPropID);
-
     }
 
+    protected CloudConfigFactory getCloudConfigFactory() {
+    	return cloudConfigFactory;
+    }
 
     /**
      * keep this old method signature here to maintain backwards compatibility. keep others as well.
@@ -325,7 +323,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
         }
 
         // Obtain the cloud site information where we will create the stack
-        CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
+        CloudSite cloudSite = getCloudConfigFactory().getCloudConfig().getCloudSite(cloudSiteId).orElseThrow(
                 () -> new MsoCloudSiteNotFound(cloudSiteId));
         LOGGER.debug("Found: " + cloudSite.toString());
         // Get a Heat client. They are cached between calls (keyed by tenantId:cloudId)
@@ -661,7 +659,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
         LOGGER.debug ("Query HEAT stack: " + stackName + " in tenant " + tenantId);
 
         // Obtain the cloud site information where we will create the stack
-        CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
+        CloudSite cloudSite = getCloudConfigFactory().getCloudConfig().getCloudSite(cloudSiteId).orElseThrow(
                 () -> new MsoCloudSiteNotFound(cloudSiteId));
         LOGGER.debug("Found: " + cloudSite.toString());
 
@@ -723,7 +721,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
                                   String stackName,
                                   boolean pollForCompletion) throws MsoException {
         // Obtain the cloud site information where we will create the stack
-        CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
+        CloudSite cloudSite = getCloudConfigFactory().getCloudConfig().getCloudSite(cloudSiteId).orElseThrow(
                 () -> new MsoCloudSiteNotFound(cloudSiteId));
         LOGGER.debug("Found: " + cloudSite.toString());
 
@@ -863,7 +861,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
      */
     public List <StackInfo> queryAllStacks (String tenantId, String cloudSiteId) throws MsoException {
         // Obtain the cloud site information where we will create the stack
-        CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
+        CloudSite cloudSite = getCloudConfigFactory().getCloudConfig().getCloudSite(cloudSiteId).orElseThrow(
                 () -> new MsoCloudSiteNotFound(cloudSiteId));
         // Get a Heat client. They are cached between calls (keyed by tenantId:cloudId)
         Heat heatClient = getHeatClient (cloudSite, tenantId);

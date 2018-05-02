@@ -22,6 +22,7 @@ package org.openecomp.mso.cloud.servertype;
 
 import java.util.Map;
 
+import org.openecomp.mso.cloud.CloudConfigFactory;
 import org.openecomp.mso.cloud.CloudIdentity;
 import org.openecomp.mso.openstack.beans.MsoTenant;
 import org.openecomp.mso.openstack.exceptions.MsoCloudSiteNotFound;
@@ -31,11 +32,8 @@ import org.openecomp.mso.openstack.utils.MsoTenantUtils;
 
 public class NewServerTypeUtils extends MsoTenantUtils {
 
-	/**
-	 * @param msoPropID
-	 */
-	public NewServerTypeUtils(String msoPropID) {
-		super(msoPropID);
+	public NewServerTypeUtils(String msoPropID, CloudConfigFactory cloudConfigFactory) {
+		super(msoPropID, cloudConfigFactory);
 	}
 
 	@Override

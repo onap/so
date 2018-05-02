@@ -58,6 +58,11 @@ public class MsoTenantAdapterImpl implements MsoTenantAdapter {
     WebServiceContext wsContext;
 
     private static MsoLogger logger = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
+
+    protected MsoTenantUtilsFactory getTenantUtilsFactory() {
+    	return tFactory;
+    }
+
     /**
      * Health Check web method. Does nothing but return to show the adapter is deployed.
      */
