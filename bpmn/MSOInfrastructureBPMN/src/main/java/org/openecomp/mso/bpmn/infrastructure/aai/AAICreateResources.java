@@ -24,8 +24,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import org.onap.aai.domain.yang.v12.GenericVnf;
 import org.openecomp.mso.client.aai.AAIObjectType;
 import org.openecomp.mso.client.aai.AAIResourcesClient;
+import org.openecomp.mso.client.aai.entities.AAIResultWrapper;
 import org.openecomp.mso.client.aai.entities.uri.AAIResourceUri;
 import org.openecomp.mso.client.aai.entities.uri.AAIUriFactory;
 
@@ -79,6 +81,18 @@ public class AAICreateResources {
 		AAIResourceUri serviceInstanceURI = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, globalCustomerId,serviceType,serviceInstanceId);
 		AAIResourcesClient aaiRC = new AAIResourcesClient();	  
 		aaiRC.createIfNotExists(serviceInstanceURI, Optional.empty());
+	}
+	
+	public Optional<GenericVnf> getVnfInstance(String vnfId){
+		try{
+			AAIResourceUri vnfURI = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId);
+			AAIResourcesClient aaiRC = new AAIResourcesClient();
+			AAIResultWrapper aaiResponse = aaiRC.get(vnfURI);
+			Optional<GenericVnf> vnf = aaiResponse.asBean(GenericVnf.class);
+			return vnf;
+		} catch (Exception ex){
+			return Optional.empty();
+		}
 	}
 	
 }

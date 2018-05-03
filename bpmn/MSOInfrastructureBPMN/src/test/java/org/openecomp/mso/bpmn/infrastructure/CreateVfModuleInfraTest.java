@@ -21,6 +21,7 @@
 package org.openecomp.mso.bpmn.infrastructure;
 
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPatchGenericVnf;
+import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockGetGenericVnfsByVnfId;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockPatchVfModuleId;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockAAIVfModule;
 import static org.openecomp.mso.bpmn.mock.StubResponseAAI.MockSDNCAdapterVfModule;
@@ -87,6 +88,7 @@ public class CreateVfModuleInfraTest extends WorkflowTest {
 		logStart();
 		
 		MockAAIVfModule();
+		MockGetGenericVnfsByVnfId("skask","__files/AAI/AAI_genericVnfGet.json",200);
 		MockPatchGenericVnf("skask");
 		MockPatchVfModuleId("skask", ".*");
 		MockSDNCAdapterVfModule();		
@@ -148,6 +150,7 @@ public class CreateVfModuleInfraTest extends WorkflowTest {
 		logStart();
 		
 		MockAAIVfModule();
+		MockGetGenericVnfsByVnfId("skask","__files/AAI/AAI_genericVnfGet.json",200);
 		MockPatchGenericVnf("skask");
 		MockPatchVfModuleId("skask", ".*");
 		MockSDNCAdapterVfModule();		
@@ -239,6 +242,7 @@ public class CreateVfModuleInfraTest extends WorkflowTest {
 			
 
 			MockAAIVfModule();
+			MockGetGenericVnfsByVnfId("skask","__files/AAI/AAI_genericVnfGet.json",200);
 			MockPatchGenericVnf("skask");
 			MockPatchVfModuleId("skask", ".*");
 			MockSDNCAdapterVfModule();		
@@ -325,6 +329,7 @@ public class CreateVfModuleInfraTest extends WorkflowTest {
 				logStart();
 				
 				MockAAIVfModule();
+				MockGetGenericVnfsByVnfId("skask","__files/AAI/AAI_genericVnfGet.json",200);
 				MockPatchGenericVnf("skask");
 				MockPatchVfModuleId("skask", ".*");
 				MockSDNCAdapterVfModule();		
