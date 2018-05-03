@@ -200,7 +200,7 @@ public class DoDeleteAllottedResourceBRG extends AbstractServiceTaskProcessor{
 					<service-information>
 						<service-id></service-id>
 						<subscription-service-type>${subscriptionServiceType}</subscription-service-type>
-						<ecomp-model-information></ecomp-model-information>
+						<onap-model-information></onap-model-information>
 						<service-instance-id>${serviceInstanceId}</service-instance-id>
 						<subscriber-name/>
 						<global-customer-id>${globalCustomerId}</global-customer-id>
@@ -209,13 +209,13 @@ public class DoDeleteAllottedResourceBRG extends AbstractServiceTaskProcessor{
 						<allotted-resource-id>${allottedResourceId}</allotted-resource-id>    
 						<allotted-resource-type>brg</allotted-resource-type>
 						<parent-service-instance-id>${parentServiceInstanceId}</parent-service-instance-id>   
-						<ecomp-model-information>
+						<onap-model-information>
 							<model-invariant-uuid>${modelInvariantId}</model-invariant-uuid>
 							<model-uuid>${modelUUId}</model-uuid>
 							<model-customization-uuid>${modelCustomizationId}</model-customization-uuid>
 							<model-version>${modelVersion}</model-version>
 							<model-name>${modelName}</model-name>
-						</ecomp-model-information>
+						</onap-model-information>
 					</allotted-resource-information>
 					<brg-request-input>
 					</brg-request-input>
