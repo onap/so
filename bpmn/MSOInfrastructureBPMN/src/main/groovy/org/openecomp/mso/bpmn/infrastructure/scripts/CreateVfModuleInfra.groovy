@@ -35,6 +35,8 @@ import org.openecomp.mso.bpmn.common.scripts.VidUtils;
 import org.openecomp.mso.bpmn.core.RollbackData
 import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.bpmn.core.json.JsonUtils
+import org.openecomp.mso.bpmn.infrastructure.aai.AAICreateResources;
+import org.onap.aai.domain.yang.v12.GenericVnf;
 
 public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 
@@ -285,6 +287,25 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 		} catch (Exception e) {
 			logError('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in sendResponse(): ' + e.getMessage())
+		}
+	}
+	
+	/**
+	 * Query AAI for vnf orchestration status to determine if health check and config scaling should be run
+	 */
+	public void queryAAIForVnfOrchestrationStatus(DelegateExecution execution) {
+		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
+		def vnfId = execution.getVariable("CVFMI_vnfId")
+		execution.setVariable("runHealthCheck", false);
+		execution.setVariable("runConfigScaleOut", false);
+		AAICreateResources aaiCreateResources = new AAICreateResources();
+		Optional<GenericVnf> vnf = aaiCreateResources.getVnfInstance(vnfId);
+		if(vnf.isPresent()){
+			def vnfOrchestrationStatus = vnf.get().getOrchestrationStatus();
+			if("active".equalsIgnoreCase(vnfOrchestrationStatus)){
+				execution.setVariable("runHealthCheck", true);
+				execution.setVariable("runConfigScaleOut", true);
+			}
 		}
 	}
 
