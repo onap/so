@@ -22,7 +22,8 @@ package org.openecomp.mso.bpmn.common.scripts;
 
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.camunda.bpm.engine.delegate.DelegateExecution
+
 import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.bpmn.core.json.JsonUtils;
 import org.springframework.web.util.UriUtils
@@ -43,7 +44,8 @@ class SDNCAdapterUtils {
 		this.taskProcessor = taskProcessor
 	}
 
-	String SDNCAdapterFeatureRequest(DelegateExecution execution, String requestName, String action, String callbackURL, String serviceOperation, String timeoutValueInMinutes) {
+	String SDNCAdapterFeatureRequest(DelegateExecution execution, String requestName, String action, String callbackURL, String serviceOperation, String timeoutValueInMinutes) {
+
 		def utils=new MsoUtils()
 
 		def prefix = execution.getVariable('prefix')
@@ -88,7 +90,8 @@ class SDNCAdapterUtils {
 		return sdncAdapterFeatureRequest
 	}
 
-	String SDNCAdapterActivateVnfRequest(DelegateExecution execution, String action, String callbackURL, String serviceOperation, String msoAction, String timeoutValueInMinutes) {
+	String SDNCAdapterActivateVnfRequest(DelegateExecution execution, String action, String callbackURL, String serviceOperation, String msoAction, String timeoutValueInMinutes) {
+
 		def utils=new MsoUtils()
 
 		def prefix = execution.getVariable('prefix')
@@ -131,7 +134,8 @@ class SDNCAdapterUtils {
 		return sdncAdapterActivateVnfRequest
 	}
 
-	String SDNCAdapterL3ToHigherLayerRequest(DelegateExecution execution, String action, String callbackURL, String serviceOperation, String timeoutValueInMinutes) {
+	String SDNCAdapterL3ToHigherLayerRequest(DelegateExecution execution, String action, String callbackURL, String serviceOperation, String timeoutValueInMinutes) {
+
 		def utils=new MsoUtils()
 
 		def prefix = execution.getVariable('prefix')
@@ -230,7 +234,8 @@ class SDNCAdapterUtils {
 
 
 
-	private void SDNCAdapterActivateRequest(DelegateExecution execution, String resultVar, String svcAction,
+	private void SDNCAdapterActivateRequest(DelegateExecution execution, String resultVar, String svcAction,
+
 			String svcOperation, String additionalData) {
 			def utils=new MsoUtils()
 
@@ -329,7 +334,8 @@ class SDNCAdapterUtils {
 	 * @param resultVar the execution variable in which the result will be stored
 	 * @param isAic3 boolean to indicate whether request is for AIC3.0
 	 */
-	public void sdncReservePrep(DelegateExecution execution, String action, String resultVar, boolean isAic3) {
+	public void sdncReservePrep(DelegateExecution execution, String action, String resultVar, boolean isAic3) {
+
 		sdncPrep(execution, resultVar, action , 'service-configuration-operation', null, isAic3, this.taskProcessor)
 	}
 
@@ -356,7 +362,8 @@ class SDNCAdapterUtils {
 	 * @param additionalData additional XML content to be inserted into the RequestData element (may be null)
 	 * @param isAic3 boolean to indicate whether request is for AIC3.0
 	 */
-	public void sdncPrep(DelegateExecution execution, String resultVar, String svcAction,
+	public void sdncPrep(DelegateExecution execution, String resultVar, String svcAction,
+
 			String svcOperation, String additionalData, boolean isAic3, AbstractServiceTaskProcessor taskProcessor) {
 		def method = getClass().getSimpleName() + '.sdncPrep(' +
 			'execution=' + execution.getId() +
@@ -489,7 +496,8 @@ class SDNCAdapterUtils {
 	 * @param additionalData additional XML content to be inserted into the
 	 *   RequestData element (may be null)
 	 */
-	 public String sdncTopologyRequestV2 (DelegateExecution execution, String requestXML, String serviceInstanceId, String callbackUrl, String action, String requestAction, String cloudRegionId, networkId, String queryAAIResponse, String additionalData) {
+	 public String sdncTopologyRequestV2 (DelegateExecution execution, String requestXML, String serviceInstanceId, String callbackUrl, String action, String requestAction, String cloudRegionId, networkId, String queryAAIResponse, String additionalData) {
+
 		 def utils=new MsoUtils()
 
 		 // SNDC is expecting request Id for header as unique each call.
@@ -607,7 +615,8 @@ class SDNCAdapterUtils {
 	  * @param additionalData additional XML content to be inserted into the
 	  *   RequestData element (may be null)
 	  */
-	  public String sdncTopologyRequestRsrc (DelegateExecution execution, String requestXML, String serviceInstanceId, String callbackUrl, String action, String requestAction, String cloudRegionId, networkId, String additionalData) {
+	  public String sdncTopologyRequestRsrc (DelegateExecution execution, String requestXML, String serviceInstanceId, String callbackUrl, String action, String requestAction, String cloudRegionId, networkId, String additionalData) {
+
 		  def utils=new MsoUtils()
 
 		  // SNDC is expecting request Id for header as unique each call.
@@ -729,12 +738,12 @@ class SDNCAdapterUtils {
 						   <service-information>
 						      <service-id>${serviceId}</service-id>
 						      <subscription-service-type>${subscriptionServiceType}</subscription-service-type>
-							  <ecomp-model-information>
+							  <onap-model-information>
 								   <model-invariant-uuid>${serviceModelInvariantUuid}</model-invariant-uuid>
 								   <model-uuid>${serviceModelUuid}</model-uuid>
 								   <model-version>${serviceModelVersion}</model-version>
 								   <model-name>${serviceModelName}</model-name>
-                              </ecomp-model-information>
+                              </onap-model-information>
 						      <service-instance-id>${serviceInstanceId}</service-instance-id>
 						      <global-customer-id>${globalCustomerId}</global-customer-id>
 						      <subscriber-name>${subscriberName}</subscriber-name>
@@ -742,13 +751,13 @@ class SDNCAdapterUtils {
 						   <network-information>
 						      <network-id>${networkId}</network-id>
 						      <network-type>${networkType}</network-type>
-							  <ecomp-model-information>
+							  <onap-model-information>
 								   <model-invariant-uuid>${modelInvariantUuid}</model-invariant-uuid>
 								   <model-customization-uuid>${modelCustomizationUuid}</model-customization-uuid>
 								   <model-uuid>${modelUuid}</model-uuid>
 								   <model-version>${modelVersion}</model-version>
 								   <model-name>${modelName}</model-name>
-							  </ecomp-model-information>
+							  </onap-model-information>
 						   </network-information>
 						   <network-request-input>
 						     <network-name>${networkName}</network-name>
@@ -769,7 +778,8 @@ class SDNCAdapterUtils {
 			 * @param responseVar the execution variable in which the response is stored
 			 * @param workflowException the WorkflowException Object returned from sdnc call
 			 */
-	public void validateSDNCResponse(DelegateExecution execution, String response, WorkflowException workflowException, boolean successIndicator){
+	public void validateSDNCResponse(DelegateExecution execution, String response, WorkflowException workflowException, boolean successIndicator){
+
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		taskProcessor.utils.log("DEBUG", "SDNC Response is: " + response, isDebugLogEnabled)
 		taskProcessor.utils.log("DEBUG", "SuccessIndicator is: " + successIndicator, isDebugLogEnabled)
@@ -883,7 +893,8 @@ class SDNCAdapterUtils {
 			 * @param responseCodeVar the execution variable in which the response code is stored
 			 * @param errorResponseVar the execution variable in which the error response is stored
 			 */
-			public void validateL3BondingSDNCResp(DelegateExecution execution, String response, WorkflowException workflowException, boolean success) {
+			public void validateL3BondingSDNCResp(DelegateExecution execution, String response, WorkflowException workflowException, boolean success) {
+
 				def method = getClass().getSimpleName() + '.validateL3BondingSDNCResp(' +
 					'execution=' + execution.getId() +
 					', response=' + response +
@@ -1006,13 +1017,13 @@ class SDNCAdapterUtils {
 		}		
 		String modelName = jsonUtil.getJsonValue(jsonModelInfo, "modelName")
 		String ecompModelInformation =
-				"""<ecomp-model-information>
+				"""<onap-model-information>
 						<model-invariant-uuid>${modelInvariantUuid}</model-invariant-uuid>
 						<model-uuid>${modelUuid}</model-uuid>
 						${modelCustomizationString}
 						<model-version>${modelVersion}</model-version>
 						<model-name>${modelName}</model-name>
-				</ecomp-model-information>"""
+				</onap-model-information>"""
 
 		return ecompModelInformation		
 	} 

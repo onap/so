@@ -858,12 +858,12 @@ String aaiResponseWithRelationship =
       <service-information>
          <service-id>a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb</service-id>
          <subscription-service-type>MSO-dev-service-type</subscription-service-type>
-         <ecomp-model-information>
+         <onap-model-information>
             <model-invariant-uuid>fcc85cb0-ad74-45d7-a5a1-17c8744fdb71</model-invariant-uuid>
             <model-uuid>36a3a8ea-49a6-4ac8-b06c-89a54544b9b6</model-uuid>
             <model-version>1.0</model-version>
             <model-name>HNGW Protected OAM</model-name>
-         </ecomp-model-information>
+         </onap-model-information>
          <service-instance-id>f70e927b-6087-4974-9ef8-c5e4d5847ca4</service-instance-id>
          <global-customer-id>globalId_45678905678</global-customer-id>
          <subscriber-name/>
@@ -871,13 +871,13 @@ String aaiResponseWithRelationship =
       <network-information>
          <network-id>networkId</network-id>
          <network-type>CONTRAIL_EXTERNAL</network-type>
-         <ecomp-model-information>
+         <onap-model-information>
             <model-invariant-uuid>sn5256d1-5a33-55df-13ab-12abad84e764</model-invariant-uuid>
             <model-customization-uuid>sn5256d1-5a33-55df-13ab-12abad84e222</model-customization-uuid>
             <model-uuid>sn5256d1-5a33-55df-13ab-12abad84e111</model-uuid>
             <model-version>1</model-version>
             <model-name>CONTRAIL_EXTERNAL</model-name>
-         </ecomp-model-information>
+         </onap-model-information>
       </network-information>
       <network-request-input>
          <network-name>MNS-25180-L-01-dmz_direct_net_1</network-name>
@@ -912,12 +912,12 @@ String aaiResponseWithRelationship =
       <service-information>
          <service-id>a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb</service-id>
          <subscription-service-type>MSO-dev-service-type</subscription-service-type>
-         <ecomp-model-information>
+         <onap-model-information>
             <model-invariant-uuid>fcc85cb0-ad74-45d7-a5a1-17c8744fdb71</model-invariant-uuid>
             <model-uuid>36a3a8ea-49a6-4ac8-b06c-89a54544b9b6</model-uuid>
             <model-version>1.0</model-version>
             <model-name>HNGW Protected OAM</model-name>
-         </ecomp-model-information>
+         </onap-model-information>
          <service-instance-id>f70e927b-6087-4974-9ef8-c5e4d5847ca4</service-instance-id>
          <global-customer-id>globalId_45678905678</global-customer-id>
          <subscriber-name/>
@@ -925,13 +925,13 @@ String aaiResponseWithRelationship =
       <network-information>
          <network-id>bdc5efe8-404a-409b-85f6-0dcc9eebae30</network-id>
          <network-type>CONTRAIL_EXTERNAL</network-type>
-         <ecomp-model-information>
+         <onap-model-information>
             <model-invariant-uuid>sn5256d1-5a33-55df-13ab-12abad84e764</model-invariant-uuid>
             <model-customization-uuid>sn5256d1-5a33-55df-13ab-12abad84e222</model-customization-uuid>
             <model-uuid>sn5256d1-5a33-55df-13ab-12abad84e111</model-uuid>
             <model-version>1</model-version>
             <model-name>CONTRAIL_EXTERNAL</model-name>
-         </ecomp-model-information>
+         </onap-model-information>
       </network-information>
       <network-request-input>
          <network-name>MNS-25180-L-01-dmz_direct_net_1</network-name>
