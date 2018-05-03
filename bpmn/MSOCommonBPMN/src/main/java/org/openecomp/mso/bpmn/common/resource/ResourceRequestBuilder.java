@@ -20,17 +20,11 @@
 
 package org.openecomp.mso.bpmn.common.resource;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import javax.ws.rs.core.Response;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.camunda.bpm.engine.runtime.Execution;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
@@ -47,11 +41,14 @@ import org.openecomp.mso.bpmn.core.json.JsonUtils;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import javax.ws.rs.core.Response;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class ResourceRequestBuilder {
 
@@ -135,7 +132,6 @@ public class ResourceRequestBuilder {
         SdcToscaParserFactory toscaParser = SdcToscaParserFactory.getInstance();
         ISdcCsarHelper iSdcCsarHelper = toscaParser.getSdcCsarHelper(csarpath);
 
-        List<Input> serInput = iSdcCsarHelper.getServiceInputs();
         Optional<NodeTemplate> nodeTemplateOpt = iSdcCsarHelper.getServiceNodeTemplates().stream()
                 .filter(e -> e.getMetaData().getValue(CUSTOMIZATION_UUID).equals(resourceCustomizationUuid)).findFirst();
 
@@ -146,13 +142,26 @@ public class ResourceRequestBuilder {
             for(String key : resourceProperties.keySet()) {
                 Property property = resourceProperties.get(key);
 
-                Object value = getValue(property.getValue(), serviceInputs, serInput);
+                Object value = property.getValue();
                 resouceRequest.put(key, value);
             }
         }
-        return resouceRequest;
+        return replaceWithServiceInputs(resouceRequest, serviceInputs);
     }
 
+    public static Map<String, Object> replaceWithServiceInputs(Map<String, Object> requestInput, Map<String, Object> serviceInput) {
+        Map<String, Object> valueMap = new HashMap();
+        for (String key: requestInput.keySet()) {
+            Object value = requestInput.get(key);
+
+            if (value instanceof String && serviceInput.containsKey(value)) {
+                value = serviceInput.get(value);
+            }
+            valueMap.put(key, value);
+        }
+        return valueMap;
+    }
+    
     private static Object getValue(Object value, Map<String, Object> serviceInputs, List<Input> servInputs) {
         if(value instanceof Map) {
             Map<String, Object> valueMap = new HashMap<>();
