@@ -133,7 +133,7 @@ public class ResourceRequestBuilder {
         }
 
         SdcToscaParserFactory toscaParser = SdcToscaParserFactory.getInstance();
-        ISdcCsarHelper iSdcCsarHelper = toscaParser.getSdcCsarHelper(csarpath);
+        ISdcCsarHelper iSdcCsarHelper = toscaParser.getSdcCsarHelper(csarpath, false);
 
         List<Input> serInput = iSdcCsarHelper.getServiceInputs();
         Optional<NodeTemplate> nodeTemplateOpt = iSdcCsarHelper.getServiceNodeTemplates().stream()
