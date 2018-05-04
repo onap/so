@@ -193,7 +193,7 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
         }
 
         // Obtain the cloud site information where we will create the stack
-        CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
+        CloudSite cloudSite = getCloudConfigFactory().getCloudConfig().getCloudSite(cloudSiteId).orElseThrow(
                 () -> new MsoCloudSiteNotFound(cloudSiteId));
         // Get a Heat client. They are cached between calls (keyed by tenantId:cloudId)
         // This could throw MsoTenantNotFound or MsoOpenstackException (both propagated)

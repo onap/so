@@ -42,6 +42,7 @@ import org.openecomp.mso.adapters.vdu.VduModelInfo;
 import org.openecomp.mso.adapters.vdu.VduStateType;
 import org.openecomp.mso.adapters.vdu.VduStatus;
 import org.openecomp.mso.cloud.CloudConfig;
+import org.openecomp.mso.cloud.CloudConfigFactory;
 import org.openecomp.mso.cloud.CloudSite;
 import org.openecomp.mso.cloudify.beans.DeploymentInfo;
 import org.openecomp.mso.cloudify.beans.DeploymentStatus;
@@ -68,7 +69,9 @@ public class MsoHeatUtilsTest2 {
 		CloudSite site = new CloudSite();
 		Optional<CloudSite> opSite = Optional.ofNullable(site);
 		CloudConfig config = Mockito.mock(CloudConfig.class);
-		heatUtils.cloudConfig = config;
+		CloudConfigFactory cloudConfigFactory = Mockito.mock(CloudConfigFactory.class);
+		when(cloudConfigFactory.getCloudConfig()).thenReturn(config);
+		when(heatUtils.getCloudConfigFactory()).thenReturn(cloudConfigFactory);
 		CloudInfo cloudInfo = new CloudInfo();
 		cloudInfo.setCloudSiteId("cloudSiteId");
 		cloudInfo.setTenantId("tenantId");

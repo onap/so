@@ -27,6 +27,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import java.util.Optional;
+
+import org.openecomp.mso.cloud.CloudConfigFactory;
 import org.openecomp.mso.cloud.CloudIdentity;
 import org.openecomp.mso.cloud.CloudSite;
 import org.openecomp.mso.logger.MsoAlarmLogger;
@@ -64,8 +66,8 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
 	private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
 	String msoPropID;
 	
-    public MsoKeystoneUtils (String msoPropID) {
-		super(msoPropID);
+    public MsoKeystoneUtils(String msoPropID, CloudConfigFactory cloudConfigFactory) {
+		super(msoPropID, cloudConfigFactory);
 		this.msoPropID = msoPropID;
 		LOGGER.debug("MsoKeyStoneUtils:" + msoPropID);
 	}
@@ -93,7 +95,7 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
                                 Map <String, String> metadata,
                                 boolean backout) throws MsoException {
         // Obtain the cloud site information where we will create the tenant
-        Optional<CloudSite> cloudSiteOpt = cloudConfig.getCloudSite(cloudSiteId);
+        Optional<CloudSite> cloudSiteOpt = getCloudConfigFactory().getCloudConfig().getCloudSite(cloudSiteId);
         if (!cloudSiteOpt.isPresent()) {
         	LOGGER.error(MessageEnum.RA_CREATE_TENANT_ERR, "MSOCloudSite not found", "", "", MsoLogger.ErrorCode.DataError, "MSOCloudSite not found");
             throw new MsoCloudSiteNotFound (cloudSiteId);
@@ -197,7 +199,7 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
      */
     public MsoTenant queryTenant (String tenantId, String cloudSiteId) throws MsoException {
         // Obtain the cloud site information where we will query the tenant
-        CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
+        CloudSite cloudSite = getCloudConfigFactory().getCloudConfig().getCloudSite(cloudSiteId).orElseThrow(
                 () -> new MsoCloudSiteNotFound(cloudSiteId));
 
         Keystone keystoneAdminClient = getKeystoneAdminClient (cloudSite);
@@ -245,7 +247,7 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
      */
     public MsoTenant queryTenantByName (String tenantName, String cloudSiteId) throws MsoException {
         // Obtain the cloud site information where we will query the tenant
-        CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
+        CloudSite cloudSite = getCloudConfigFactory().getCloudConfig().getCloudSite(cloudSiteId).orElseThrow(
                 () -> new MsoCloudSiteNotFound(cloudSiteId));
         Keystone keystoneAdminClient = getKeystoneAdminClient (cloudSite);
 
@@ -290,7 +292,7 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
      */
     public boolean deleteTenant (String tenantId, String cloudSiteId) throws MsoException {
         // Obtain the cloud site information where we will query the tenant
-        CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
+        CloudSite cloudSite = getCloudConfigFactory().getCloudConfig().getCloudSite(cloudSiteId).orElseThrow(
                 () -> new MsoCloudSiteNotFound(cloudSiteId));
         Keystone keystoneAdminClient = getKeystoneAdminClient (cloudSite);
 

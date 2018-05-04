@@ -19,8 +19,13 @@
  */
 package org.openecomp.mso.adapters.tenant;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.openecomp.mso.adapters.tenantrest.TenantRollback;
+import org.openecomp.mso.cloud.CloudConfig;
+import org.openecomp.mso.cloud.CloudConfigFactory;
 import org.openecomp.mso.entity.MsoRequest;
 
 import javax.validation.constraints.Null;
@@ -28,11 +33,24 @@ import javax.xml.ws.Holder;
 import java.util.HashMap;
 
 public class MsoTenantAdapterImplTest {
+	
+    @Mock
+    private static MsoTenantAdapterImpl msoTenantAdapter;
 
+    @Mock
+	private static CloudConfigFactory cloudConfigFactory;
+    
     // TODO: following test case is done for coverage
     // later it should be modified for proper test.
-
-    MsoTenantAdapterImpl msoTenantAdapter = new MsoTenantAdapterImpl();
+    
+    @BeforeClass
+    public static final void prepare () {
+        msoTenantAdapter = Mockito.spy (new MsoTenantAdapterImpl());
+        cloudConfigFactory = Mockito.mock(CloudConfigFactory.class);
+        CloudConfig cloudConfig = Mockito.mock(CloudConfig.class);
+        Mockito.when(cloudConfigFactory.getCloudConfig()).thenReturn(cloudConfig);
+        msoTenantAdapter.getTenantUtilsFactory().setCloudConfigFactory(cloudConfigFactory);
+    }
 
     @Test
     public void healthCheck() throws Exception {

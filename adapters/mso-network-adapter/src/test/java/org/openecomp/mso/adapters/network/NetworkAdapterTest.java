@@ -34,6 +34,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.openecomp.mso.adapters.network.exceptions.NetworkException;
+import org.openecomp.mso.cloud.CloudConfig;
+import org.openecomp.mso.cloud.CloudConfigFactory;
 import org.openecomp.mso.db.catalog.CatalogDatabase;
 import org.openecomp.mso.db.catalog.beans.NetworkResource;
 import org.openecomp.mso.db.catalog.beans.NetworkResourceCustomization;
@@ -50,11 +52,15 @@ public class NetworkAdapterTest {
 
     @Mock
     private static CatalogDatabase db;
+    
+    @Mock
+	private static CloudConfigFactory cloudConfigFactory;
 
     @BeforeClass
     public static final void prepare () {
         adapter = Mockito.spy (new MsoNetworkAdapterImpl ());
         db = Mockito.mock (CatalogDatabase.class);
+        cloudConfigFactory = Mockito.mock(CloudConfigFactory.class);
         NetworkResource networkResource = new NetworkResource ();
         NetworkResourceCustomization nrc = new NetworkResourceCustomization();
         nrc.setNetworkResource(networkResource);
@@ -65,6 +71,9 @@ public class NetworkAdapterTest {
         networkResource.setOrchestrationMode ("toto");
         Mockito.when (db.getNetworkResource ("PROVIDER")).thenReturn (networkResource);
         Mockito.when (adapter.getCatalogDB ()).thenReturn (db);
+        CloudConfig cloudConfig = Mockito.mock(CloudConfig.class);
+        Mockito.when(cloudConfigFactory.getCloudConfig()).thenReturn(cloudConfig);
+        Mockito.when (adapter.getCloudConfigFactory()).thenReturn(cloudConfigFactory);
     }
 
     @Test

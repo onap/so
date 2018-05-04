@@ -33,7 +33,6 @@ import javax.xml.ws.Holder;
 
 import org.openecomp.mso.adapters.vnf.exceptions.VnfAlreadyExists;
 import org.openecomp.mso.adapters.vnf.exceptions.VnfException;
-import org.openecomp.mso.cloud.CloudConfig;
 import org.openecomp.mso.cloud.CloudConfigFactory;
 import org.openecomp.mso.cloud.CloudSite;
 import org.openecomp.mso.cloudify.beans.DeploymentInfo;
@@ -72,7 +71,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
 
 	CloudConfigFactory cloudConfigFactory = new CloudConfigFactory();
-	protected CloudConfig cloudConfig = cloudConfigFactory.getCloudConfig();
 
 	MsoPropertiesFactory msoPropertiesFactory=new MsoPropertiesFactory();
 
@@ -310,7 +308,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
         try {
         	// KLUDGE - Cloudify requires Tenant Name for Openstack.  We have the ID.
         	//          Go directly to Keystone until APIs could be updated to supply the name.
-        	MsoKeystoneUtils keystone = new MsoKeystoneUtils(MSO_PROP_VNF_ADAPTER);
+        	MsoKeystoneUtils keystone = new MsoKeystoneUtils(MSO_PROP_VNF_ADAPTER, cloudConfigFactory);
         	MsoTenant msoTenant = keystone.queryTenant(tenantId, cloudSiteId);
         	String tenantName = (msoTenant != null? msoTenant.getTenantName() : tenantId);
         	
@@ -655,7 +653,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
 
         //  Perform a version check against cloudSite
         // Obtain the cloud site information where we will create the VF Module
-        Optional<CloudSite> cloudSite = cloudConfig.getCloudSite (cloudSiteId);
+        Optional<CloudSite> cloudSite = cloudConfigFactory.getCloudConfig().getCloudSite(cloudSiteId);
         if (!cloudSite.isPresent()) {
             throw new VnfException (new MsoCloudSiteNotFound (cloudSiteId));
         }
@@ -1117,7 +1115,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
             try {
             	// KLUDGE - Cloudify requires Tenant Name for Openstack.  We have the ID.
             	//          Go directly to Keystone until APIs could be updated to supply the name.
-            	MsoKeystoneUtils keystone = new MsoKeystoneUtils(MSO_PROP_VNF_ADAPTER);
+            	MsoKeystoneUtils keystone = new MsoKeystoneUtils(MSO_PROP_VNF_ADAPTER, cloudConfigFactory);
             	MsoTenant msoTenant = keystone.queryTenant(tenantId, cloudSiteId);
             	String tenantName = (msoTenant != null? msoTenant.getTenantName() : tenantId);
             	

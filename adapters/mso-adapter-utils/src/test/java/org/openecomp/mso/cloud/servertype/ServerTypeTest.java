@@ -24,14 +24,24 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.openecomp.mso.cloud.CloudConfigFactory;
 import org.openecomp.mso.cloud.CloudIdentity;
 import org.openecomp.mso.cloud.CloudIdentity.IdentityServerType;
 import org.openecomp.mso.cloud.IdentityServerTypeAbstract;
 import org.openecomp.mso.openstack.exceptions.MsoException;
+import org.openecomp.mso.openstack.utils.MsoKeystoneUtilsTest;
 
 public class ServerTypeTest {
+	
+    @BeforeClass
+    public static void init() throws Exception {
+        String cloudConfigJson = ServerTypeTest.class.getClassLoader()
+            .getResource("cloud_config.json").getPath();
+        (new CloudConfigFactory()).initializeCloudConfig(cloudConfigJson, 0);
+    }
 
     @Test
     @Ignore // IGNORED FOR 1710 MERGE TO ONAP
