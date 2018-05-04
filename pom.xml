@@ -50,6 +50,7 @@
     <nexusproxy>https://nexus.onap.org</nexusproxy>
     <maven.build.timestamp.format>yyyyMMdd'T'HHmmss'Z'</maven.build.timestamp.format>
     <resteasy.version>3.0.19.Final</resteasy.version>
+    <enforcer.skip>true</enforcer.skip>
   </properties>
   <distributionManagement>
     <repository>
