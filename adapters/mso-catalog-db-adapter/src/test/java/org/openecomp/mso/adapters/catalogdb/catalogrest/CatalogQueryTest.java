@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,93 +20,136 @@
 
 package org.openecomp.mso.adapters.catalogdb.catalogrest;
 
-import java.io.StringReader;
-import java.util.ArrayList;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
-
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.openecomp.mso.db.catalog.beans.VnfResourceCustomization;
 
-import static org.junit.Assert.*;
-
-
-@RunWith(MockitoJUnitRunner.class)
 public class CatalogQueryTest {
+	private static final String MAP_KEY = "keyTest";
+	private static final String VALUE_MAP = "valueTest";
+	private CatalogQuery testedObject;
 
-	
-	@Test
-	public void catalogQuerySetTemplateImpl_Test(){
-		CatalogQuery mockCatalogQuery = Mockito.mock(CatalogQuery.class);
-		Mockito.doCallRealMethod().when(mockCatalogQuery).setTemplate(Mockito.anyString(), Mockito.anyMapOf(String.class, String.class));
-		
-		Map<String,String> valueMap = new HashMap<>();
-		valueMap.put("somekey", "somevalue");
-		
-		String ret = mockCatalogQuery.setTemplate("<somekey>", valueMap);
-		
-		assertTrue(ret.equalsIgnoreCase("somevalue"));
+	@Before
+	public void init() {
+		testedObject = new CatalogQueryForTesting();
 	}
-	
+
 	@Test
-	public void smartToJson_Test()
-	{
-        List<VnfResourceCustomization> paramList = new ArrayList<>();
-        VnfResourceCustomization d1 = new VnfResourceCustomization();
-        d1.setModelCustomizationUuid("16ea3e56-a8ce-4ad7-8edd-4d2eae095391");
-        d1.setModelInstanceName("RG_6-26_mog11 0");
-        d1.setVersion("v1");
-        paramList.add(d1);
-        
-        QueryServiceVnfs qryResp = new QueryServiceVnfs(paramList);
-        QueryServiceVnfs mockCatalogQuery = Mockito.spy(qryResp);
-        Mockito.doCallRealMethod().when(mockCatalogQuery).smartToJSON();
-		String ret = qryResp.smartToJSON();
-		// System.out.println(ret);
-		
-        JsonReader reader = Json.createReader(new StringReader(ret.replaceAll("\r?\n", "")));
-        JsonObject respObj = reader.readObject();
-        reader.close();
-        JsonArray jArray = respObj.getJsonArray("serviceVnfs");
-		assertEquals(jArray.size(), 1);
-		assertEquals(jArray.getJsonObject(0).getString("modelCustomizationUuid"), "16ea3e56-a8ce-4ad7-8edd-4d2eae095391");
-	}	
-	
+	public void putStringValueToMap() {
+		Map<String, String> valueMap = new HashMap<>();
+		testedObject.put(valueMap, MAP_KEY, VALUE_MAP);
+		assertThat(valueMap).hasSize(1).containsEntry(MAP_KEY, "\"valueTest\"");
+	}
+
 	@Test
-	public void toJsonString_Test()
-	{
-		CatalogQueryExtendedTest mockCatalogQuery = Mockito.mock(CatalogQueryExtendedTest.class);
-		Mockito.doCallRealMethod().when(mockCatalogQuery).JSON2(Mockito.anyBoolean(), Mockito.anyBoolean());
-		String ret = mockCatalogQuery.JSON2(true, true);
-		
-		// System.out.println(ret);
-		
-        JsonReader reader = Json.createReader(new StringReader(ret.replaceAll("\r?\n", "")));
-        JsonObject respObj = reader.readObject();
-        reader.close();
-        JsonArray jArray = respObj.getJsonArray("serviceVnfs");
-		assertEquals(jArray.size(), 1);
-		assertEquals(jArray.getJsonObject(0).getString("modelCustomizationUuid"), "16ea3e56-a8ce-4ad7-8edd-4d2eae095391");
-		assertEquals(jArray.getJsonObject(0).getString("version"), "v2");
-	}	
-	
-	class CatalogQueryExtendedTest extends CatalogQuery{
+	public void putNullStringValueToMap() {
+		Map<String, String> valueMap = new HashMap<>();
+		String value = null;
+		testedObject.put(valueMap, MAP_KEY, value);
+		assertThat(valueMap).hasSize(1).containsEntry(MAP_KEY, "null");
+	}
+
+	@Test
+	public void putIntegerValueToMap() {
+		Map<String, String> valueMap = new HashMap<>();
+		testedObject.put(valueMap, MAP_KEY, 1);
+		assertThat(valueMap).hasSize(1).containsEntry(MAP_KEY, "1");
+	}
+
+	@Test
+	public void putNullIntegerValueToMap() {
+		Map<String, String> valueMap = new HashMap<>();
+		Integer value = null;
+		testedObject.put(valueMap, MAP_KEY, value);
+		assertThat(valueMap).hasSize(1).containsEntry(MAP_KEY, "null");
+	}
+
+	@Test
+	public void putTrueBooleanValueToMap() {
+		Map<String, String> valueMap = new HashMap<>();
+		testedObject.put(valueMap, MAP_KEY, true);
+		assertThat(valueMap).hasSize(1).containsEntry(MAP_KEY, "true");
+	}
+
+	@Test
+	public void putFalseBooleanValueToMap() {
+		Map<String, String> valueMap = new HashMap<>();
+		testedObject.put(valueMap, MAP_KEY, false);
+		assertThat(valueMap).hasSize(1).containsEntry(MAP_KEY, "false");
+	}
+
+	@Test
+	public void putNullBooleanValueToMap() {
+		Map<String, String> valueMap = new HashMap<>();
+		Boolean value = null;
+		testedObject.put(valueMap, MAP_KEY, value);
+		assertThat(valueMap).hasSize(1).containsEntry(MAP_KEY, "null");
+	}
+
+	@Test
+	public void setTemplate_keyFindInMap() {
+		Map<String, String> valueMap = new HashMap<>();
+		valueMap.put(MAP_KEY, VALUE_MAP);
+		String template = "<keyTest>";
+		String result = testedObject.setTemplate(template, valueMap);
+		assertThat(result).isEqualTo(VALUE_MAP);
+	}
+
+	@Test
+	public void setTemplate_keyNotFindInMap() {
+		Map<String, String> valueMap = new HashMap<>();
+		String template = "<keyTest>";
+		String result = testedObject.setTemplate(template, valueMap);
+		assertThat(result).isEqualTo("\"TBD\"");
+	}
+
+	@Test
+	public void setTemplate_templateDoesNotMatch() {
+		Map<String, String> valueMap = new HashMap<>();
+		String template = "key";
+		String result = testedObject.setTemplate(template, valueMap);
+		assertThat(result).isEqualTo("key");
+	}
+
+	@Test
+	public void smartToJson(){
+		String expectedResult = "{\"s\":\"s1\"}";
+		assertThat(testedObject.smartToJSON()).isEqualTo(expectedResult);
+	}
+
+	@Test
+	public void toJsonString_withVersion1() {
+		String expectedResult = "{\"s\":\"s1\"}";
+		assertThat(testedObject.toJsonString("v1",true)).isEqualTo(expectedResult);
+	}
+
+	@Test
+	public void toJsonString_withVersion2() {
+		assertThat(testedObject.toJsonString("v2",true)).isEqualTo("json2");
+	}
+
+	@Test
+	public void toJsonString_withInvalidVersion() {
+		assertThat(testedObject.toJsonString("ver77",true)).isEqualTo("invalid version: ver77");
+	}
+
+	private class CatalogQueryForTesting extends CatalogQuery {
+
+		private String s = "s1";
+
+		public String getS() {
+			return s;
+		}
+
 		@Override
 		public String JSON2(boolean isArray, boolean isEmbed) {
-			return "{\"serviceVnfs\":[{\"version\":\"v2\",\"modelCustomizationUuid\":\"16ea3e56-a8ce-4ad7-8edd-4d2eae095391\",\"modelInstanceName\":\"ciVFOnboarded-FNAT-aab06c41 1\",\"created\":null,\"vnfResourceModelUuid\":null,\"vnfResourceModelUUID\":null,\"minInstances\":null,\"maxInstances\":null,\"availabilityZoneMaxCount\":null,\"vnfResource\":null,\"nfFunction\":null,\"nfType\":null,\"nfRole\":null,\"nfNamingCode\":null,\"multiStageDesign\":null,\"vfModuleCustomizations\":null,\"serviceResourceCustomizations\":null,\"creationTimestamp\":null}]}";
+			return "json2";
 		}
-		
-	}	
-	
+	}
+
 }
 
 
