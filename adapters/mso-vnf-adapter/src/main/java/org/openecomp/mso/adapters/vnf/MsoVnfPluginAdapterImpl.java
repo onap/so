@@ -58,7 +58,6 @@ import org.openecomp.mso.adapters.vdu.VduStatus;
 import org.openecomp.mso.adapters.vdu.mapper.VfModuleCustomizationToVduMapper;
 import org.openecomp.mso.adapters.vnf.exceptions.VnfAlreadyExists;
 import org.openecomp.mso.adapters.vnf.exceptions.VnfException;
-import org.openecomp.mso.cloud.CloudConfig;
 import org.openecomp.mso.cloud.CloudConfigFactory;
 import org.openecomp.mso.cloud.CloudSite;
 import org.openecomp.mso.cloudify.utils.MsoCloudifyUtils;
@@ -92,7 +91,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 
 	CloudConfigFactory cloudConfigFactory = new CloudConfigFactory();
-	protected CloudConfig cloudConfig = cloudConfigFactory.getCloudConfig();
 	protected MsoHeatUtils heatUtils;
 	protected VfModuleCustomizationToVduMapper vduMapper;
 	protected MsoCloudifyUtils cloudifyUtils;
@@ -694,7 +692,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 
         //  Perform a version check against cloudSite
         // Obtain the cloud site information where we will create the VF Module
-        Optional<CloudSite> cloudSite = cloudConfig.getCloudSite (cloudSiteId);
+        Optional<CloudSite> cloudSite = cloudConfigFactory.getCloudConfig().getCloudSite (cloudSiteId);
         if (!cloudSite.isPresent()) {
             throw new VnfException (new MsoCloudSiteNotFound (cloudSiteId));
         }
@@ -1223,7 +1221,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
      * but we don't currently have access to that in Query and Delete cases.
      */
     private VduPlugin getVduPlugin (String cloudSiteId) {
-    	Optional<CloudSite> cloudSite = cloudConfig.getCloudSite(cloudSiteId);
+    	Optional<CloudSite> cloudSite = cloudConfigFactory.getCloudConfig().getCloudSite(cloudSiteId);
     	if (cloudSite.isPresent()) {
     		String orchestrator = cloudSite.get().getOrchestrator();
     		
