@@ -87,7 +87,7 @@ public class MsoLoggerTest {
 	public final void cleanAuditLogFile() throws FileNotFoundException {
 		URL url = this.getClass().getClassLoader().getResource("logback-test.xml");
 		String logFile = url.getFile().substring(0, url.getFile().indexOf("test-classes"))
-				+ "/MSO/Test/auditjbo                                                                                                                           ss.server.name_IS_UNDEFINED.log";
+				+ "/MSO/Test/auditjbo.server.name_IS_UNDEFINED.log";
 		PrintWriter asdcConfigFileWriter = new PrintWriter(logFile);
 		asdcConfigFileWriter.print("");
 		asdcConfigFileWriter.flush();
