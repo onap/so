@@ -20,13 +20,12 @@
 
 package org.openecomp.mso.apihandler.common;
 
-
 import java.io.IOException;
 
 import javax.xml.bind.DatatypeConverter;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.openecomp.mso.apihandler.camundabeans.CamundaBooleanInput;
@@ -51,8 +50,7 @@ public class CamundaClient extends RequestClient{
 
 	@Override
 	public HttpResponse post(String camundaReqXML, String requestId,
-			String requestTimeout, String schemaVersion, String serviceInstanceId, String action)
-					throws ClientProtocolException, IOException{
+			String requestTimeout, String schemaVersion, String serviceInstanceId, String action) throws IOException {
 		HttpPost post = new HttpPost(url);
 		msoLogger.debug(CAMUNDA_URL_MESAGE + url);
 		String jsonReq = wrapRequest(camundaReqXML, requestId, serviceInstanceId, requestTimeout,  schemaVersion);
@@ -77,7 +75,7 @@ public class CamundaClient extends RequestClient{
 	}
 
 	@Override
-	public HttpResponse post(String jsonReq) throws ClientProtocolException, IOException{
+	public HttpResponse post(String jsonReq) throws IOException {
 		HttpPost post = new HttpPost(url);
 		msoLogger.debug(CAMUNDA_URL_MESAGE + url);
 
@@ -102,21 +100,13 @@ public class CamundaClient extends RequestClient{
 	}
 
 	@Override
-	public HttpResponse post(String requestId, boolean isBaseVfModule,
-			int recipeTimeout, String requestAction, String serviceInstanceId,
-			String vnfId, String vfModuleId, String volumeGroupId, String networkId, String configurationId,
-			String serviceType, String vnfType, String vfModuleType, String networkType,
-			String requestDetails, String recipeParamXsd)
-					throws ClientProtocolException, IOException{
+	public HttpResponse post(RequestClientParamater params) throws IOException {
 		HttpPost post = new HttpPost(url);
 		msoLogger.debug(CAMUNDA_URL_MESAGE + url);
-		String jsonReq = wrapVIDRequest(requestId, isBaseVfModule, recipeTimeout, requestAction,
-				serviceInstanceId, vnfId, vfModuleId, volumeGroupId, networkId, configurationId,
-				serviceType, vnfType, vfModuleType, networkType, requestDetails, recipeParamXsd);
+		String jsonReq = wrapVIDRequest(params);
 
 		StringEntity input = new StringEntity(jsonReq);
 		input.setContentType(CommonConstants.CONTENT_TYPE_JSON);
-
 		String encryptedCredentials;
 		if(props!=null){
 			encryptedCredentials = props.getProperty(CommonConstants.CAMUNDA_AUTH,null);
@@ -128,12 +118,10 @@ public class CamundaClient extends RequestClient{
 				}
 			}
 		}
-
 		post.setEntity(input);
-
         return client.execute(post);
 	}
-	
+
 	@Override
     public HttpResponse get() {
         return null;
@@ -150,8 +138,6 @@ public class CamundaClient extends RequestClient{
 		if(schemaVersion == null){
 			schemaVersion = "";
 		}
-
-
 		try{
 			CamundaRequest camundaRequest = new CamundaRequest();
 			CamundaInput camundaInput = new CamundaInput();
@@ -183,52 +169,8 @@ public class CamundaClient extends RequestClient{
 		return jsonReq;
 	}
 
-	private String wrapVIDRequest(String requestId, boolean isBaseVfModule,
-			int recipeTimeout, String requestAction, String serviceInstanceId,
-			String vnfId, String vfModuleId, String volumeGroupId, String networkId, String configurationId,
-			String serviceType, String vnfType, String vfModuleType, String networkType,
-			String requestDetails, String recipeParams){
+	private String wrapVIDRequest(RequestClientParamater requestClientParamater) {
 		String jsonReq = null;
-		if(requestId == null){
-			requestId ="";
-		}
-		if(requestAction == null){
-			requestAction ="";
-		}
-		if(serviceInstanceId == null){
-			serviceInstanceId ="";
-		}
-		if(vnfId == null){
-			vnfId ="";
-		}
-		if(vfModuleId == null){
-			vfModuleId ="";
-		}
-		if(volumeGroupId == null){
-			volumeGroupId ="";
-		}
-		if(networkId == null){
-			networkId ="";
-		}
-		if(configurationId == null){
-			configurationId ="";
-		}
-		if(serviceType == null){
-			serviceType ="";
-		}
-		if(vnfType == null){
-			vnfType ="";
-		}
-		if(vfModuleType == null){
-			vfModuleType ="";
-		}
-		if(networkType == null){
-			networkType ="";
-		}
-		if(requestDetails == null){
-			requestDetails ="";
-		}
-
 		try{
 			CamundaVIDRequest camundaRequest = new CamundaVIDRequest();
 			CamundaInput serviceInput = new CamundaInput();
@@ -248,23 +190,22 @@ public class CamundaClient extends RequestClient{
 			CamundaInput vfModuleTypeInput = new CamundaInput();
 			CamundaInput networkTypeInput = new CamundaInput();
 			CamundaInput recipeParamsInput = new CamundaInput();
-			host.setValue(parseURL());
-			requestIdInput.setValue(requestId);
-			isBaseVfModuleInput.setValue(isBaseVfModule);
-			recipeTimeoutInput.setValue(recipeTimeout);
-			requestActionInput.setValue(requestAction);
-			serviceInstanceIdInput.setValue(serviceInstanceId);
-			vnfIdInput.setValue(vnfId);
-			vfModuleIdInput.setValue(vfModuleId);
-			volumeGroupIdInput.setValue(volumeGroupId);
-			networkIdInput.setValue(networkId);
-			configurationIdInput.setValue(configurationId);
-			serviceTypeInput.setValue(serviceType);
-			vnfTypeInput.setValue(vnfType);
-			vfModuleTypeInput.setValue(vfModuleType);
-			networkTypeInput.setValue(networkType);
-			recipeParamsInput.setValue(recipeParams);
-			serviceInput.setValue(requestDetails);
+			requestIdInput.setValue(StringUtils.defaultString(requestClientParamater.getRequestId()));
+			isBaseVfModuleInput.setValue(requestClientParamater.isBaseVfModule());
+			recipeTimeoutInput.setValue(requestClientParamater.getRecipeTimeout());
+			requestActionInput.setValue(StringUtils.defaultString(requestClientParamater.getRequestAction()));
+			serviceInstanceIdInput.setValue(StringUtils.defaultString(requestClientParamater.getServiceInstanceId()));
+			vnfIdInput.setValue(StringUtils.defaultString(requestClientParamater.getVnfId()));
+			vfModuleIdInput.setValue(StringUtils.defaultString(requestClientParamater.getVfModuleId()));
+			volumeGroupIdInput.setValue(StringUtils.defaultString(requestClientParamater.getVolumeGroupId()));
+			networkIdInput.setValue(StringUtils.defaultString(requestClientParamater.getNetworkId()));
+			configurationIdInput.setValue(StringUtils.defaultString(requestClientParamater.getConfigurationId()));
+			serviceTypeInput.setValue(StringUtils.defaultString(requestClientParamater.getServiceType()));
+			vnfTypeInput.setValue(StringUtils.defaultString(requestClientParamater.getVnfType()));
+			vfModuleTypeInput.setValue(StringUtils.defaultString(requestClientParamater.getVfModuleType()));
+			networkTypeInput.setValue(StringUtils.defaultString(requestClientParamater.getNetworkType()));
+			recipeParamsInput.setValue(requestClientParamater.getRecipeParamXsd());
+			serviceInput.setValue(StringUtils.defaultString(requestClientParamater.getRequestDetails()));
 			camundaRequest.setServiceInput(serviceInput);
 			camundaRequest.setHost(host);
 			camundaRequest.setRequestId(requestIdInput);
@@ -305,6 +246,5 @@ public class CamundaClient extends RequestClient{
 		}
 		return host;
 	}
-
 
 }

@@ -20,6 +20,7 @@
  */
 package org.openecomp.mso.apihandlerinfra;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,6 +43,7 @@ import org.openecomp.mso.apihandler.common.CommonConstants;
 import org.openecomp.mso.apihandler.common.ErrorNumbers;
 import org.openecomp.mso.apihandler.common.RequestClient;
 import org.openecomp.mso.apihandler.common.RequestClientFactory;
+import org.openecomp.mso.apihandler.common.RequestClientParamater;
 import org.openecomp.mso.apihandler.common.ResponseHandler;
 import org.openecomp.mso.apihandler.common.ValidationException;
 import org.openecomp.mso.serviceinstancebeans.ModelInfo;
@@ -690,37 +692,7 @@ public class ServiceInstances {
 		}
 
 		db.close();
-
-		String serviceInstanceId = "";
-		String vnfId = "";
-		String vfModuleId = "";
-		String volumeGroupId = "";
-		String networkId = "";
-		ServiceInstancesRequest siReq = msoRequest.getServiceInstancesRequest();
-
-		if(siReq.getServiceInstanceId () != null){
-			serviceInstanceId = siReq.getServiceInstanceId ();
-		}
-
-		if(siReq.getVnfInstanceId () != null){
-			vnfId = siReq.getVnfInstanceId ();
-		}
-
-		if(siReq.getVfModuleInstanceId () != null){
-			vfModuleId = siReq.getVfModuleInstanceId ();
-		}
-
-		if(siReq.getVolumeGroupInstanceId () != null){
-			volumeGroupId = siReq.getVolumeGroupInstanceId ();
-		}
-
-		if(siReq.getNetworkInstanceId () != null){
-			networkId = siReq.getNetworkInstanceId ();
-		}
-
-
-		requestId = msoRequest.getRequestId ();
-		msoLogger.debug ("requestId is: " + requestId);
+		msoLogger.debug ("requestId is: " + msoRequest.getRequestId());
 		msoLogger.debug ("About to insert a record");
 
 		try {
@@ -736,15 +708,31 @@ public class ServiceInstances {
 			return response;
 		}
 		
-		return postBPELRequest(action, requestId, startTime, msoRequest, recipeLookupResult.getOrchestrationURI(), recipeLookupResult.getRecipeTimeout(), 
-								isBaseVfModule, serviceInstanceId, vnfId, vfModuleId, volumeGroupId, networkId, null,
-								msoRequest.getServiceInstanceType(), msoRequest.getVnfType(), msoRequest.getVfModuleType(), msoRequest.getNetworkType());
+		return postBPELRequest(action, startTime, msoRequest, recipeLookupResult.getOrchestrationURI(),
+				recipeLookupResult.getRecipeTimeout(), isBaseVfModule);
 	}
 
-	private Response postBPELRequest(Action action, String requestId, long startTime, MsoRequest msoRequest,
-									String orchestrationUri, int timeOut, Boolean isBaseVfModule,
-									String serviceInstanceId, String vnfId, String vfModuleId, String volumeGroupId, String networkId,
-									String configurationId, String serviceInstanceType, String vnfType, String vfModuleType, String networkType) {
+	private RequestClientParamater buildRequestClientParameter(MsoRequest msoRequest, boolean isBaseVfModule,
+			int timeOut, String requestAction) throws IOException {
+		return new RequestClientParamater.Builder().
+				setRequestId(msoRequest.getRequestId()).
+				setBaseVfModule(isBaseVfModule).setRecipeTimeout(timeOut).
+				setRequestAction(requestAction).
+				setServiceInstanceId(msoRequest.getServiceInstancesRequest().getServiceInstanceId()).
+				setVnfId(msoRequest.getServiceInstancesRequest().getVnfInstanceId()).
+				setVfModuleId(msoRequest.getServiceInstancesRequest().getVfModuleInstanceId()).
+				setVolumeGroupId(msoRequest.getServiceInstancesRequest().getVolumeGroupInstanceId()).
+				setNetworkId(msoRequest.getServiceInstancesRequest().getNetworkInstanceId()).
+				setConfigurationId(msoRequest.getServiceInstancesRequest().getConfigurationId()).
+				setServiceType(msoRequest.getServiceInstanceType()).
+				setVnfType(msoRequest.getVnfType()).
+				setVfModuleType(msoRequest.getVfModuleType()).
+				setNetworkType(msoRequest.getNetworkType()).
+				setRequestDetails(msoRequest.getRequestJSON()).build();
+	}
+
+	private Response postBPELRequest(Action action, long startTime, MsoRequest msoRequest,
+			String orchestrationUri, int timeOut, Boolean isBaseVfModule) {
 		RequestClient requestClient = null;
 		HttpResponse response = null;
 		long subStartTime = System.currentTimeMillis();
@@ -754,12 +742,7 @@ public class ServiceInstances {
 
 			System.out.println("URL : " + requestClient.getUrl ());
 
-			response = requestClient.post(requestId, isBaseVfModule, timeOut, action.name (),
-					serviceInstanceId, vnfId, vfModuleId, volumeGroupId, networkId, configurationId,
-					msoRequest.getServiceInstanceType (),
-					msoRequest.getVnfType (), msoRequest.getVfModuleType (),
-					msoRequest.getNetworkType (), msoRequest.getRequestJSON(), null);
-
+			response = requestClient.post(buildRequestClientParameter(msoRequest, isBaseVfModule, timeOut, action.name()));
 			msoLogger.recordMetricEvent (subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from BPMN engine", "BPMN", orchestrationUri, null);
 		} catch (Exception e) {
 			msoLogger.recordMetricEvent (subStartTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, "Exception while communicate with BPMN engine", "BPMN", orchestrationUri, null);
@@ -1191,7 +1174,6 @@ public class ServiceInstances {
 		return new RecipeLookupResult (vnfRecipe.getOrchestrationUri(), vnfRecipe.getRecipeTimeout());		
 	}
 
-
 	private RecipeLookupResult getNetworkUri (CatalogDatabase db, MsoRequest msoRequest, Action action) throws Exception {
 
 		String defaultNetworkType = msoRequest.getRequestInfo().getSource() + "_DEFAULT";
@@ -1299,18 +1281,6 @@ public class ServiceInstances {
 			return response;
 			
 		}
-		
-		String serviceInstanceId = "";
-		String configurationId = "";
-		ServiceInstancesRequest siReq = msoRequest.getServiceInstancesRequest();
-
-		if(siReq.getServiceInstanceId () != null){
-			serviceInstanceId = siReq.getServiceInstanceId ();
-		}
-
-		if(siReq.getConfigurationId() != null){
-			configurationId = siReq.getConfigurationId();
-		}
 
 		requestId = msoRequest.getRequestId ();
 		msoLogger.debug ("requestId is: " + requestId);
@@ -1328,7 +1298,6 @@ public class ServiceInstances {
 			return response;
 		}
 
-		return postBPELRequest(action, requestId, startTime, msoRequest, orchestrationUri, Integer.parseInt(timeOut), false, 
-								serviceInstanceId, null, null, null, null, configurationId, null, null, null, null);
+		return postBPELRequest(action, startTime, msoRequest, orchestrationUri, Integer.parseInt(timeOut), false);
 	}
 }
