@@ -120,7 +120,7 @@ public class WorkflowContextHolder {
 		workflowResponse.setMessageCode(callbackResponse.getStatusCode());
 		workflowResponse.setMessage(callbackResponse.getMessage());
 		sendWorkflowResponseToClient(processKey, workflowContext, workflowResponse);
-		return Response.ok().entity(workflowResponse).build();
+		return Response.ok().entity(workflowResponse.getResponse()).build();
 	}
 	
 	/**
@@ -133,7 +133,7 @@ public class WorkflowContextHolder {
 			WorkflowResponse workflowResponse) {
 		msoLogger.debug(logMarker + "Sending the response for request id: " + workflowContext.getRequestId());
 		recordEvents(processKey, workflowResponse, workflowContext.getStartTime());
-		Response response = Response.status(workflowResponse.getMessageCode()).entity(workflowResponse).build();
+		Response response = Response.status(workflowResponse.getMessageCode()).entity(workflowResponse.getResponse()).build();
 		AsynchronousResponse asyncResp = workflowContext.getAsynchronousResponse();
 		asyncResp.setResponse(response);
 	}
