@@ -473,6 +473,12 @@ public class WorkflowTest {
 						(entity == null ? "null" : entity.getClass().getName()) +
 						", expected WorkflowResponse";
 					System.out.println(msg);
+					
+					if (entity instanceof String) {
+						WorkflowResponse toRet = new WorkflowResponse();
+						toRet.setResponse((String)entity);
+						return toRet;
+					}
 					fail(msg);
 					return null; // unreachable
 				}
