@@ -21,8 +21,10 @@
 package org.openecomp.mso.bpmn.infrastructure.pnf.delegate;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import org.onap.aai.domain.yang.Pnf;
@@ -37,7 +39,7 @@ public class AaiConnectionTestImpl implements AaiConnection {
     public static final String DEFAULT_IP = "1.2.3.4";
     public static final String DEFAULT_IP_V6 = "2001:db8::ff00:42:8329";
 
-    private List<String> created = new LinkedList<>();
+    private Map<String, Pnf> created = new HashMap<>();
 
     @Override
     public Optional<Pnf> getEntryFor(String correlationId) throws IOException {
@@ -58,10 +60,10 @@ public class AaiConnectionTestImpl implements AaiConnection {
 
     @Override
     public void createEntry(String correlationId, Pnf entry) throws IOException {
-        created.add(correlationId);
+        created.put(correlationId, entry);
     }
 
-    public List<String> getCreated() {
+    public Map<String, Pnf> getCreated() {
         return created;
     }
 

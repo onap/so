@@ -49,6 +49,7 @@ public class CreateAaiEntryWithPnfIdDelegate implements JavaDelegate {
         Pnf pnf = new Pnf();
         pnf.setInMaint(true);
         pnf.setPnfId(correlationId);
+        pnf.setPnfName(correlationId);
         aaiConnection.createEntry(correlationId, pnf);
     }
 }
