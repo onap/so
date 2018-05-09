@@ -17,39 +17,31 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.mso.bpmn.infrastructure.pnf.delegate;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.openecomp.mso.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.CORRELATION_ID;
 
 import org.camunda.bpm.engine.delegate.DelegateExecution;
-import org.camunda.bpm.engine.delegate.JavaDelegate;
-import org.onap.aai.domain.yang.Pnf;
-import org.openecomp.mso.bpmn.infrastructure.pnf.implementation.AaiConnection;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.junit.Test;
 
-/**
- * Implementation of "Create AAI entry with pnf-id = correlation_id" task in CreateAndActivatePnfResource.bpmn
- *
- * Inputs:
- *  - correlationId - String
- */
-public class CreateAaiEntryWithPnfIdDelegate implements JavaDelegate {
+public class CreateAaiEntryWithPnfIdDelegateTest {
 
-    private AaiConnection aaiConnection;
-
-    @Autowired
-    public void setAaiConnection(AaiConnection aaiConnection) {
-        this.aaiConnection = aaiConnection;
-    }
-
-    @Override
-    public void execute(DelegateExecution execution) throws Exception {
-        String correlationId = (String) execution.getVariable(CORRELATION_ID);
-        Pnf pnf = new Pnf();
-        pnf.setInMaint(true);
-        pnf.setPnfId(correlationId);
-        pnf.setPnfName(correlationId);
-        aaiConnection.createEntry(correlationId, pnf);
+    @Test
+    public void shouldSetPnfIdAndPnfName() throws Exception {
+        // given
+        CreateAaiEntryWithPnfIdDelegate delegate = new CreateAaiEntryWithPnfIdDelegate();
+        AaiConnectionTestImpl aaiConnection = new AaiConnectionTestImpl();
+        delegate.setAaiConnection(aaiConnection);
+        DelegateExecution execution = mock(DelegateExecution.class);
+        when(execution.getVariable(eq(CORRELATION_ID))).thenReturn("testCorrelationId");
+        // when
+        delegate.execute(execution);
+        // then
+        assertThat(aaiConnection.getCreated().get("testCorrelationId").getPnfId()).isEqualTo("testCorrelationId");
+        assertThat(aaiConnection.getCreated().get("testCorrelationId").getPnfName()).isEqualTo("testCorrelationId");
     }
 }
