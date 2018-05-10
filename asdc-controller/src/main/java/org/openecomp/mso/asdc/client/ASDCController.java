@@ -488,13 +488,13 @@ public class ASDCController {
     	  	
     	
     	byte[] payloadBytes = resultArtifact.getArtifactPayload();
-    	
+        
+        FileOutputStream outFile = null;
     	try {
     		LOGGER.info(MessageEnum.ASDC_RECEIVE_SERVICE_NOTIF, "***WRITE FILE ARTIFACT NAME", "ASDC", artifact.getArtifactName());
 
-    		FileOutputStream outFile = new FileOutputStream(System.getProperty("mso.config.path") + "/ASDC" + "/" + artifact.getArtifactName());
+    		outFile = new FileOutputStream(System.getProperty("mso.config.path") + "/ASDC" + "/" + artifact.getArtifactName());
     		outFile.write(payloadBytes, 0, payloadBytes.length);
-    		outFile.close();
     		} catch (Exception e) { 
     			LOGGER.debug("Exception :",e);
                 LOGGER.error(MessageEnum.ASDC_ARTIFACT_DOWNLOAD_FAIL,
@@ -502,7 +502,9 @@ public class ASDCController {
         				artifact.getArtifactURL (),
         				artifact.getArtifactUUID (),
         				resultArtifact.getDistributionMessageResult (), "", "", MsoLogger.ErrorCode.DataError, "ASDC write to file failed"); 
-            } 
+            } finally {
+                try {outFile.close();} catch (Exception e) {}
+            }
     	
     }
 
