@@ -159,7 +159,9 @@
 						</image>
 						<image>
 							<name>openecomp/mso:%l</name>
+							<alias>onap/so:%1</alias>
 							<alias>mso</alias>
+							<alias>so</alias>
 							<build>
 								<tags>
 									<tag>${project.version}-STAGING-${maven.build.timestamp}</tag>
