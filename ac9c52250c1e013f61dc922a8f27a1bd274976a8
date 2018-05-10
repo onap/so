@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_23478aa4",
+        "filename": "bpmn/MSOInfrastructureBPMN/src/main/java/org/openecomp/mso/bpmn/infrastructure/pnf/delegate/CreateAaiEntryWithPnfIdDelegate.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2018-05-10T06:13:45Z",
+      "side": 1,
+      "message": "was it decided to keep the PNF name and id both as co-relation id??\nUser would not be knowing the id and he might only go with the name...",
+      "revId": "ac9c52250c1e013f61dc922a8f27a1bd274976a8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
