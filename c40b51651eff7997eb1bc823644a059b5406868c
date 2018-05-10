@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_fe69398c",
+        "filename": "mso-api-handlers/mso-api-handler-common/src/main/java/org/openecomp/mso/apihandler/common/BPELRestClient.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-05-10T09:08:24Z",
+      "side": 1,
+      "message": "I know it\u0027s not your code, but maybe throwing UnsupportedOperation would be better than returning null?",
+      "range": {
+        "startLine": 82,
+        "startChar": 0,
+        "endLine": 95,
+        "endChar": 5
+      },
+      "revId": "c40b51651eff7997eb1bc823644a059b5406868c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
