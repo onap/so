@@ -38,7 +38,7 @@ public class PolicyRestPropertiesImpl implements PolicyRestProperties {
 	final Map<Object, Object> props;
 	public PolicyRestPropertiesImpl() {
 		File initialFile = new File("src/test/resources/policy.properties");
-		InputStream targetStream;
+		InputStream targetStream = null;
 		Map<Object, Object> temp;
 		try {
 			targetStream = new FileInputStream(initialFile);
@@ -47,6 +47,8 @@ public class PolicyRestPropertiesImpl implements PolicyRestProperties {
 			temp = properties;
 		} catch (IOException e) {
 			temp = new HashMap<>();
+		} finally {
+			try {targetStream.close();} catch (Exception e) {}
 		}
 		this.props = temp;
 		

@@ -40,13 +40,16 @@ public class DefaultAAIPropertiesImpl implements AAIProperties {
 	public DefaultAAIPropertiesImpl() {
 		File initialFile = new File("src/test/resources/aai.properties");
 		Map<Object, Object> temp;
+		InputStream targetStream = null;
 		try {
-		    InputStream targetStream = new FileInputStream(initialFile);
+		    targetStream = new FileInputStream(initialFile);
 			Properties properties = new Properties();
 			properties.load(targetStream);
 			temp = properties;
 		} catch (IOException e) {
 			temp = new HashMap<>();
+		} finally {
+			try {targetStream.close();} catch (Exception e) {}
 		}
 		this.props = temp;
 

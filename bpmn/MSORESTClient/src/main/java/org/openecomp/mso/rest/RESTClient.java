@@ -186,6 +186,7 @@ public class RESTClient {
         //TODO - we may want to trust self signed certificate at some point - add implementation here
         HttpClientBuilder clientBuilder;
 
+        PoolingHttpClientConnectionManager manager = null;
 		try {
 			SSLConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(
 					(SSLSocketFactory) SSLSocketFactory.getDefault(),
@@ -195,14 +196,16 @@ public class RESTClient {
 					.register("http",
 							PlainConnectionSocketFactory.getSocketFactory())
 					.register("https", sslSocketFactory).build();
-			PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(
+			manager = new PoolingHttpClientConnectionManager(
 					registry);
 			clientBuilder = HttpClientBuilder.create().setConnectionManager(
 					manager);
 		} catch (Exception ex) {
 			LOGGER.debug("Exception :", ex);
 			throw new RESTException(ex.getMessage());
-		}
+		} finally {
+            try {manager.close();} catch (Exception e) {}
+        }
 		clientBuilder.disableRedirectHandling();
 
 		if ((this.proxyHost != null) && (this.proxyPort != -1)) {

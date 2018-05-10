@@ -85,6 +85,8 @@ public class CSAR {
 		 * Write template files
 		 */
 		OutputStream ofs = null;
+		PrintStream mfstream = null;
+		ZipOutputStream zos = null;
 		try {
 			ofs = new FileOutputStream(new File(dir, mainTemplate.getName()));
 			ofs.write(mainTemplate.getContent());
@@ -105,26 +107,26 @@ public class CSAR {
 			/**
 			 * Create manifest
 			 */
-			PrintStream mfstream = new PrintStream(new File(metadir.getAbsolutePath() + "/" + MANIFEST_FILENAME));
+			mfstream = new PrintStream(new File(metadir.getAbsolutePath() + "/" + MANIFEST_FILENAME));
 			mfstream.println("TOSCA-Meta-File-Version: 1.0");
 			mfstream.println("CSAR-Version: 1.1");
 			mfstream.println("Created-by: ONAP");
 			mfstream.println("Entry-Definitions: " + mainTemplate.getName());
-			mfstream.close();
 
 			/**
 			 * ZIP it up
 			 */
 			ByteArrayOutputStream zipbytes = new ByteArrayOutputStream();
-			ZipOutputStream zos = new ZipOutputStream(zipbytes);
+			zos = new ZipOutputStream(zipbytes);
 			compressTree(zos, "", dir, dir);
-			zos.close();
 			return zipbytes.toByteArray();
 
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to create CSAR: " + e.getMessage());
 		} finally {
-
+			try {ofs.close();} catch (Exception e) {}
+			try {mfstream.close();} catch (Exception e) {}
+			try {zos.close();} catch (Exception e) {}
 			/**
 			 * Clean up tmpdir
 			 */
@@ -147,25 +149,32 @@ public class CSAR {
 			return;
 
 		for (File f : dir.listFiles()) {
-			if (f.isDirectory()) {
-				String newpath = path + f.getName() + "/";
-				ZipEntry entry = new ZipEntry(newpath);
-				zos.putNextEntry(entry);
-				zos.closeEntry();
-				compressTree(zos, newpath, basedir, f);
-			} else {
-				ZipEntry ze = new ZipEntry(
-						f.getAbsolutePath().substring(basedir.getAbsolutePath().length() + 1).replaceAll("\\\\", "/"));
-				zos.putNextEntry(ze);
-				// read the file and write to ZipOutputStream
-				FileInputStream fis = new FileInputStream(f);
-				byte[] buffer = new byte[1024];
-				int len;
-				while ((len = fis.read(buffer)) > 0) {
-					zos.write(buffer, 0, len);
+			FileInputStream fis = null;
+			try {
+				if (f.isDirectory()) {
+					String newpath = path + f.getName() + "/";
+					ZipEntry entry = new ZipEntry(newpath);
+					zos.putNextEntry(entry);
+					zos.closeEntry();
+					compressTree(zos, newpath, basedir, f);
+				} else {
+					ZipEntry ze = new ZipEntry(
+							f.getAbsolutePath().substring(basedir.getAbsolutePath().length() + 1).replaceAll("\\\\", "/"));
+					zos.putNextEntry(ze);
+					// read the file and write to ZipOutputStream
+					fis = new FileInputStream(f);
+					byte[] buffer = new byte[1024];
+					int len;
+					while ((len = fis.read(buffer)) > 0) {
+						zos.write(buffer, 0, len);
+					}
+					zos.closeEntry();
 				}
-				zos.closeEntry();
-				fis.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw e;
+			} finally {
+				try {fis.close();} catch (Exception e) {}
 			}
 		}
 	}
