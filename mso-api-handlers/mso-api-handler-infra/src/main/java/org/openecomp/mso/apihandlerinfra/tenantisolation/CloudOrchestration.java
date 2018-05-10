@@ -281,10 +281,11 @@ public class CloudOrchestration {
 	
 	private CloudOrchestrationRequest convertJsonToCloudOrchestrationRequest(String requestJSON, Action action, long startTime,
 		CloudOrchestrationRequest cor) throws Exception {
+		CloudOrchestrationRequest new_cor = null;
 		try{
 			msoLogger.debug("Converting incoming JSON request to Object");
 			ObjectMapper mapper = new ObjectMapper();
-			cor = mapper.readValue(requestJSON, CloudOrchestrationRequest.class);
+			new_cor = mapper.readValue(requestJSON, CloudOrchestrationRequest.class);
 		} catch(Exception e){
 			msoLogger.debug ("Mapping of request to JSON object failed : ", e);
 			if (getTenantIsolationRequest().getRequestId () != null) {
@@ -295,7 +296,7 @@ public class CloudOrchestration {
 			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.SchemaError, "Mapping of request to JSON object failed");
 			throw new Exception(e);
 		}
-		return cor;
+		return new_cor;
 	}
 	
 	public TenantIsolationRequest getTenantIsolationRequest() {
