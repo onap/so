@@ -203,6 +203,7 @@ public class OrchestrationRequestsTest {
 			throws JsonParseException, JsonMappingException, IOException, ValidationException {
 		ObjectMapper mapper = new ObjectMapper();
 		String requestJSON = " {\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"ab1234\"}}}";
+		//String requestJSON = "{\"requestDetails\":{\"requestInfo\":{\"instanceName\":\"Vfmodule_vLB-0514-1\",\"source\":\"VID\",\"suppressRollback\":false,\"requestorId\":\"demo\"},\"modelInfo\":{\"modelType\":\"vfModule\",\"modelInvariantId\":\"80d62376-2d6d-4618-b666-bf00d0e58296\",\"modelVersionId\":\"578b52e5-4572-444d-8de7-2c140ec2e6e5\",\"modelName\":\"Vloadbalancer..base_vlb..module-0\",\"modelVersion\":\"1\",\"modelCustomizationId\":\"bf87db73-2854-4cd1-adfd-8cd08e12befe\",\"modelCustomizationName\":\"Vloadbalancer..base_vlb..module-0\"},\"requestParameters\":{\"usePreload\":true},\"cloudConfiguration\":{\"lcpCloudRegionId\":\"RegionOne\",\"tenantId\":\"ebb0ea7144004bacac1e39ff23105fa7\"},\"relatedInstanceList\":[{\"relatedInstance\":{\"instanceId\":\"60e28eb9-2808-4a5a-830f-ec982f01dcfe\",\"modelInfo\":{\"modelType\":\"service\",\"modelName\":\"vLoadBalancer\",\"modelInvariantId\":\"3f95e3ed-394d-4301-8c9b-c5f39ff89cfd\",\"modelVersion\":\"1.0\",\"modelVersionId\":\"da1b5347-7bcb-4cc4-8c29-d18dafdb1a47\"}}},{\"relatedInstance\":{\"instanceId\":\"338811a1-f7cd-4093-9903-d0f69b7cb176\",\"modelInfo\":{\"modelType\":\"vnf\",\"modelName\":\"vLoadBalancer\",\"modelInvariantId\":\"040740de-1ce8-4737-ad39-970684b0e3e8\",\"modelVersion\":\"1.0\",\"modelVersionId\":\"5fd1ce25-c414-4baf-903b-5042a60cfb02\",\"modelCustomizationId\":\"5801ace5-7cc7-4011-b677-165a0e8a2a27\",\"modelCustomizationName\":\"vLoadBalancer 0\"}}}]}}";
 		
 		MsoRequest msoRequest = new MsoRequest("rq1234d1-5a33-55df-13ab-12abad84e333");
 		ServiceInstancesRequest sir = mapper.readValue(requestJSON, ServiceInstancesRequest.class);
@@ -222,6 +223,7 @@ public class OrchestrationRequestsTest {
 				infraRequests.setServiceInstanceId("ea4d5374-d28d-4bbf-9691-22985f088b12");
 				infraRequests.setRequestStatus(Status.IN_PROGRESS.name());
 				infraRequests.setStartTime(Timestamp.valueOf(LocalDateTime.now()));
+				infraRequests.setRequestBody(requestJSON);
 				return infraRequests;
 			}
 

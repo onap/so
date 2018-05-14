@@ -37,6 +37,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.http.HttpStatus;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openecomp.mso.apihandler.common.ErrorNumbers;
 import org.openecomp.mso.logger.MessageEnum;
@@ -300,7 +302,7 @@ public class OrchestrationRequests {
         Request request = new Request();
 
         ObjectMapper mapper = new ObjectMapper();
-       // mapper.configure(Feature.WRAP_ROOT_VALUE, true);
+        mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
 
        request.setRequestId(requestDB.getRequestId());
        request.setRequestScope(requestDB.getRequestScope());
