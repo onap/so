@@ -56,7 +56,7 @@ public class GenericGetVnfTest extends WorkflowTest {
 		setVariables(variables, "testVnfId123", "testVnfName123", "generic-vnf");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericGetVnf", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_SuccessIndicator");
 		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_FoundIndicator");
@@ -83,7 +83,7 @@ public class GenericGetVnfTest extends WorkflowTest {
 		setVariables(variables, "testVnfId123", "testVnfName123", "vce");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericGetVnf", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_SuccessIndicator");
 		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_FoundIndicator");
@@ -110,7 +110,7 @@ public class GenericGetVnfTest extends WorkflowTest {
 		setVariables(variables, "", "testVnfName123", "generic-vnf");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericGetVnf", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_SuccessIndicator");
 		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_FoundIndicator");
@@ -137,7 +137,7 @@ public class GenericGetVnfTest extends WorkflowTest {
 		setVariables(variables, null, "testVnfName123", "vce");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericGetVnf", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_SuccessIndicator");
 		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_FoundIndicator");
@@ -166,7 +166,7 @@ public class GenericGetVnfTest extends WorkflowTest {
 		setVariables(variables, "testVnfId123", "testVnfName123", "generic-vnf");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericGetVnf", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_SuccessIndicator");
 		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetVnf", "GENGV_FoundIndicator");

@@ -22,26 +22,37 @@ package org.openecomp.mso.apihandler.common;
 
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.util.EntityUtils;
+
+import com.fasterxml.jackson.annotation.JsonRootName;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import org.openecomp.mso.apihandler.camundabeans.CamundaResponse;
 import org.openecomp.mso.logger.MsoLogger;
+import org.openecomp.mso.utils.RootIgnoringJsonDeserializer;
+import org.openecomp.mso.utils.RootIgnoringObjectMapper;
 import org.openecomp.mso.logger.MessageEnum;
 
 public class ResponseHandler {
 
 	private CamundaResponse response;
 	private int status;
-	private String responseBody="";
+	private String content = "";
 	private HttpResponse httpResponse;
 	private int type;
 	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.APIH);
-    private static final String RESPONSE_BODY_MSG = "response body is: ";
+    private static final String RESPONSE_CONTENT_MSG = "response content is: ";
 
 	public ResponseHandler(HttpResponse httpResponse, int type) {
 		this.httpResponse = httpResponse;
@@ -67,29 +78,31 @@ public class ResponseHandler {
 	
 
 	
+	@SuppressWarnings("unchecked")
 	private void parseCamunda(){
 		try{
-				HttpEntity entity = httpResponse.getEntity();
-				responseBody = EntityUtils.toString(entity);
-			} catch (IOException e) {
-				msoLogger.debug("IOException getting Camunda response body", e);
-			}
-		
-			ObjectMapper mapper = new ObjectMapper(); 
-			try {
-				response = mapper.readValue(responseBody, CamundaResponse.class);
-			} catch (IOException e) {
-				msoLogger.debug("IOException getting Camunda response body", e);
-			}
-			msoLogger.debug("json response is: " + responseBody);
-			if(response!=null){
-				responseBody = response.getResponse();
-			}
-			msoLogger.debug(RESPONSE_BODY_MSG + responseBody);
-			
-		
+			HttpEntity entity = httpResponse.getEntity();
+			content = EntityUtils.toString(entity);
+		} catch (IOException e) {
+			msoLogger.debug("IOException getting Camunda response content", e);
+		}
+
+		ObjectMapper mapper = new RootIgnoringObjectMapper<CamundaResponse>(CamundaResponse.class);
+
+		try {
+			response = mapper.readValue(content, CamundaResponse.class);
+		} catch (IOException e) {
+			msoLogger.debug("IOException getting Camunda response content", e);
+		}
+		msoLogger.debug("json response is: " + content);
+		if(response!=null){
+			content = response.getContent();
+		}
+		msoLogger.debug(RESPONSE_CONTENT_MSG + content);
+
+
 		if(status!=HttpStatus.SC_ACCEPTED){
-			msoLogger.error(MessageEnum.APIH_ERROR_FROM_BPEL_SERVER, "Camunda", String.valueOf(status), responseBody, "Camunda", "parseCamunda", MsoLogger.ErrorCode.BusinessProcesssError, "Error in APIH from Camunda");
+			msoLogger.error(MessageEnum.APIH_ERROR_FROM_BPEL_SERVER, "Camunda", String.valueOf(status), content, "Camunda", "parseCamunda", MsoLogger.ErrorCode.BusinessProcesssError, "Error in APIH from Camunda");
 		}
 	}
 	
@@ -99,16 +112,16 @@ public class ResponseHandler {
 
 		try {
 			if (bpelEntity!=null) {
-				responseBody = EntityUtils.toString(bpelEntity);
-				msoLogger.debug(RESPONSE_BODY_MSG + responseBody);
+				content = EntityUtils.toString(bpelEntity);
+				msoLogger.debug(RESPONSE_CONTENT_MSG + content);
 
 			}
 			if(status!=HttpStatus.SC_ACCEPTED){
-				msoLogger.error(MessageEnum.APIH_ERROR_FROM_BPEL_SERVER, "BPEL", String.valueOf(status), responseBody, "BPEL", "parseBpel", MsoLogger.ErrorCode.BusinessProcesssError, "Error in APIH from BPEL");
+				msoLogger.error(MessageEnum.APIH_ERROR_FROM_BPEL_SERVER, "BPEL", String.valueOf(status), content, "BPEL", "parseBpel", MsoLogger.ErrorCode.BusinessProcesssError, "Error in APIH from BPEL");
 			}
 		} 
 		catch (IOException e) {
-			msoLogger.debug("IOException getting BPEL response body", e);
+			msoLogger.debug("IOException getting BPEL response content", e);
 		}
 	}
 	
@@ -118,16 +131,16 @@ public class ResponseHandler {
 
 		try {
 			if (camundataskEntity!=null) {
-				responseBody = EntityUtils.toString(camundataskEntity);
-				msoLogger.debug(RESPONSE_BODY_MSG + responseBody);
+				content = EntityUtils.toString(camundataskEntity);
+				msoLogger.debug(RESPONSE_CONTENT_MSG + content);
 
 			}
 			if(status!=HttpStatus.SC_NO_CONTENT && status != HttpStatus.SC_ACCEPTED){
-				msoLogger.error(MessageEnum.APIH_ERROR_FROM_BPEL_SERVER, "CAMUNDATASK", String.valueOf(status), responseBody, "CAMUNDATASK", "parseCamundaTask", MsoLogger.ErrorCode.BusinessProcesssError, "Error in APIH from Camunda Task");
+				msoLogger.error(MessageEnum.APIH_ERROR_FROM_BPEL_SERVER, "CAMUNDATASK", String.valueOf(status), content, "CAMUNDATASK", "parseCamundaTask", MsoLogger.ErrorCode.BusinessProcesssError, "Error in APIH from Camunda Task");
 			}
 		} 
 		catch (IOException e) {
-			msoLogger.debug("IOException getting Camunda Task response body", e);
+			msoLogger.debug("IOException getting Camunda Task response content", e);
 		}
 	}
 
@@ -175,18 +188,17 @@ public class ResponseHandler {
 	}
 
 
-	public String getResponseBody() {
-		return responseBody;
+	public String getContent() {
+		return content;
 	}
 
 
-	public void setResponseBody(String responseBody) {
-		this.responseBody = responseBody;
+	public void setContent(String content) {
+		this.content = content;
 	}
 
 
 	public int getStatus() {
 		return status;
 	}
-
 }

@@ -55,7 +55,7 @@ public class GenericPutVnfTest extends WorkflowTest {
 		setVariables(variables, "testVnfId123", genericVnfPayload, "generic-vnf");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericPutVnf", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericPutVnf", "GENPV_SuccessIndicator");
 		String workflowException = BPMNUtil.getVariable(processEngineRule, "GenericPutVnf", "WorkflowException");
@@ -75,7 +75,7 @@ public class GenericPutVnfTest extends WorkflowTest {
 		setVariables(variables, "testVnfId123", vcePayload, "vce");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericPutVnf", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericPutVnf", "GENPV_SuccessIndicator");
 		String workflowException = BPMNUtil.getVariable(processEngineRule, "GenericPutVnf", "WorkflowException");
@@ -95,7 +95,7 @@ public class GenericPutVnfTest extends WorkflowTest {
 		setVariables(variables, "testVnfId123", genericVnfPayload, "");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericPutVnf", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericPutVnf", "GENPV_SuccessIndicator");
 		String workflowException = BPMNUtil.getVariable(processEngineRule, "GenericPutVnf", "WorkflowException");
@@ -117,7 +117,7 @@ public class GenericPutVnfTest extends WorkflowTest {
 		setVariables(variables, "testVnfId123", genericVnfPayload, "");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericPutVnf", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericPutVnf", "GENPV_SuccessIndicator");
 		String workflowException = BPMNUtil.getVariable(processEngineRule, "GenericPutVnf", "WorkflowException");
@@ -137,7 +137,7 @@ public class GenericPutVnfTest extends WorkflowTest {
 		setVariables(variables, "testVnfId123", genericVnfPayload, "generic-vnf");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericPutVnf", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericPutVnf", "GENPV_SuccessIndicator");
 		String workflowException = BPMNUtil.getVariable(processEngineRule, "GenericPutVnf", "WorkflowException");
@@ -158,7 +158,7 @@ public class GenericPutVnfTest extends WorkflowTest {
 		setVariables(variables, "testVnfId123", genericVnfPayload, "generic-vnf");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericPutVnf", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericPutVnf", "GENPV_SuccessIndicator");
 		String workflowException = BPMNUtil.getVariable(processEngineRule, "GenericPutVnf", "WorkflowException");

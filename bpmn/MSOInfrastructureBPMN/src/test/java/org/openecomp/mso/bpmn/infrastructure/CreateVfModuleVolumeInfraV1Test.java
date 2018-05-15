@@ -98,7 +98,7 @@ public class CreateVfModuleVolumeInfraV1Test extends WorkflowTest {
 		TestAsyncResponse asyncResponse = invokeAsyncProcess("CreateVfModuleVolumeInfraV1", "v1", businessKey, createVfModuleVolRequest, testVariables);
 		WorkflowResponse response = receiveResponse(businessKey, asyncResponse, 1000000);
 
-		String responseBody = response.getResponse();
+		String responseBody = response.getContent();
 		System.out.println("Workflow (Synch) Response:\n" + responseBody);
 		
 		injectVNFRestCallbacks(callbacks, "volumeGroupCreate");
@@ -148,7 +148,7 @@ public class CreateVfModuleVolumeInfraV1Test extends WorkflowTest {
 		TestAsyncResponse asyncResponse = invokeAsyncProcess("CreateVfModuleVolumeInfraV1", "v1", businessKey, createVfModuleVolRequest, testVariables);
 		WorkflowResponse response = receiveResponse(businessKey, asyncResponse, 1000000);
 
-		String responseBody = response.getResponse();
+		String responseBody = response.getContent();
 		System.out.println("Workflow (Synch) Response:\n" + responseBody);
 		
 		injectVNFRestCallbacks(callbacks, "volumeGroupCreate");
@@ -192,7 +192,7 @@ public class CreateVfModuleVolumeInfraV1Test extends WorkflowTest {
 		TestAsyncResponse asyncResponse = invokeAsyncProcess("CreateVfModuleVolumeInfraV1", "v1", businessKey, createVfModuleVolRequest, testVariables);
 		WorkflowResponse response = receiveResponse(businessKey, asyncResponse, 1000000);
 
-		String responseBody = response.getResponse();
+		String responseBody = response.getContent();
 		System.out.println("Workflow (Synch) Response:\n" + responseBody);
 		
 		//injectVNFRestCallbacks(callbacks, "volumeGroupCreate");
@@ -239,7 +239,7 @@ public class CreateVfModuleVolumeInfraV1Test extends WorkflowTest {
 		TestAsyncResponse asyncResponse = invokeAsyncProcess("CreateVfModuleVolumeInfraV1", "v1", businessKey, createVfModuleVolRequest, testVariables);
 		WorkflowResponse response = receiveResponse(businessKey, asyncResponse, 1000000);
 
-		String responseBody = response.getResponse();
+		String responseBody = response.getContent();
 		System.out.println("Workflow (Synch) Response:\n" + responseBody);
 		
 		injectVNFRestCallbacks(callbacks, "volumeGroupException");
@@ -280,7 +280,7 @@ public class CreateVfModuleVolumeInfraV1Test extends WorkflowTest {
 		TestAsyncResponse asyncResponse = invokeAsyncProcess("CreateVfModuleVolumeInfraV1", "v1", businessKey, createVfModuleVolRequest, testVariables);
 		WorkflowResponse response = receiveResponse(businessKey, asyncResponse, 1000000);
 
-		String responseBody = response.getResponse();
+		String responseBody = response.getContent();
 		System.out.println("Workflow (Synch) Response:\n" + responseBody);
 		
 		//injectVNFRestCallbacks(callbacks, "volumeGroupCreate");
@@ -320,7 +320,7 @@ public class CreateVfModuleVolumeInfraV1Test extends WorkflowTest {
 		TestAsyncResponse asyncResponse = invokeAsyncProcess("CreateVfModuleVolumeInfraV1", "v1", businessKey, createVfModuleVolRequest, testVariables);
 		WorkflowResponse response = receiveResponse(businessKey, asyncResponse, 1000000);
 
-		String responseBody = response.getResponse();
+		String responseBody = response.getContent();
 		System.out.println("Workflow (Synch) Response:\n" + responseBody);
 		waitForProcessEnd(businessKey, 100000);
 		checkVariable(businessKey, "CVMVINFRAV1_SuccessIndicator", false);
@@ -358,7 +358,7 @@ public class CreateVfModuleVolumeInfraV1Test extends WorkflowTest {
 		TestAsyncResponse asyncResponse = invokeAsyncProcess("CreateVfModuleVolumeInfraV1", "v1", businessKey, createVfModuleVolRequest, testVariables);
 		WorkflowResponse response = receiveResponse(businessKey, asyncResponse, 1000000);
 
-		String responseBody = response.getResponse();
+		String responseBody = response.getContent();
 		System.out.println("Workflow (Synch) Response:\n" + responseBody);
 		waitForProcessEnd(businessKey, 100000);
 		checkVariable(businessKey, "CVMVINFRAV1_SuccessIndicator", false);

@@ -254,7 +254,7 @@ public class DeleteNetworkInstanceTest extends WorkflowTest {
 
 		executeAsyncWorkflow(processEngineRule, "DeleteNetworkInstance", variables);
 		//WorkflowResponse workflowResponse = executeAsyncWorkflow(processEngineRule, "DeleteNetworkInstance", variables);
-		//waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		//waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		String workflowResp = BPMNUtil.getVariable(processEngineRule, "DeleteNetworkInstance", "WorkflowResponse");
 		Assert.assertNotNull(workflowResp);

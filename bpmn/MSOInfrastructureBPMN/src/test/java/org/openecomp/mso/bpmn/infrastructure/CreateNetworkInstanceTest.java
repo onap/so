@@ -105,7 +105,7 @@ public class CreateNetworkInstanceTest extends WorkflowTest {
 		System.out.println("----------------------------------------------------------");
 		System.out.println("- got workflow response -");
 		System.out.println("----------------------------------------------------------");
-		//waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		//waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 	    assertEquals("true", getVariable(processEngineRule, "CreateNetworkInstance", "CRENI_Success"));
 	    assertEquals("true", getVariable(processEngineRule, "DoCreateNetworkInstance", "CRENWKI_Success"));
@@ -156,7 +156,7 @@ public class CreateNetworkInstanceTest extends WorkflowTest {
 		Map<String, String> variables = setupVariables2();
 		//WorkflowResponse workflowResponse = executeAsyncWorkflow(processEngineRule, "CreateNetworkInstance", variables);
 		executeAsyncWorkflow(processEngineRule, "CreateNetworkInstance", variables);
-		//waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		//waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 	    assertEquals("true", getVariable(processEngineRule, "CreateNetworkInstance", "CRENI_Success"));
 	    assertEquals("true", getVariable(processEngineRule, "DoCreateNetworkInstance", "CRENWKI_Success"));
@@ -219,7 +219,7 @@ public class CreateNetworkInstanceTest extends WorkflowTest {
 		Map<String, String> variables = setupVariablesVID1();
 		executeAsyncWorkflow(processEngineRule, "CreateNetworkInstance", variables);
 		//WorkflowResponse workflowResponse = executeAsyncWorkflow(processEngineRule, "CreateNetworkInstance", variables);
-		//waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		//waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 	    assertEquals("false", getVariable(processEngineRule, "CreateNetworkInstance", "CRENI_Success"));
 	    assertEquals("false", getVariable(processEngineRule, "DoCreateNetworkInstance", "CRENWKI_Success"));
@@ -269,7 +269,7 @@ public class CreateNetworkInstanceTest extends WorkflowTest {
 		Map<String, String> variables = setupVariables1();
 		executeAsyncWorkflow(processEngineRule, "CreateNetworkInstance", variables);
 		//WorkflowResponse workflowResponse = executeAsyncWorkflow(processEngineRule, "CreateNetworkInstance", variables);
-		//waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		//waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 	    assertEquals("false", getVariable(processEngineRule, "CreateNetworkInstance", "CRENI_Success"));
 	    assertEquals("false", getVariable(processEngineRule, "DoCreateNetworkInstance", "CRENWKI_Success"));
@@ -308,7 +308,7 @@ public class CreateNetworkInstanceTest extends WorkflowTest {
 		Map<String, String> variables = setupVariables2();
 		//WorkflowResponse workflowResponse = executeAsyncWorkflow(processEngineRule, "CreateNetworkInstance", variables);
 		executeAsyncWorkflow(processEngineRule, "CreateNetworkInstance", variables);
-		//waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		//waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 	    assertEquals("false", getVariable(processEngineRule, "CreateNetworkInstance", "CRENI_Success"));
 	    assertEquals("false", getVariable(processEngineRule, "DoCreateNetworkInstance", "CRENWKI_Success"));
@@ -345,7 +345,7 @@ public class CreateNetworkInstanceTest extends WorkflowTest {
 		Map<String, String> variables = setupVariables2();
 		//WorkflowResponse workflowResponse = executeAsyncWorkflow(processEngineRule, "CreateNetworkInstance", variables);
 		executeAsyncWorkflow(processEngineRule, "CreateNetworkInstance", variables);
-		//waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		//waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 	
 		assertEquals("false", getVariable(processEngineRule, "CreateNetworkInstance", "CRENI_Success"));
 		assertEquals("false", getVariable(processEngineRule, "DoCreateNetworkInstance", "CRENWKI_Success"));
@@ -395,7 +395,7 @@ public class CreateNetworkInstanceTest extends WorkflowTest {
 		System.out.println("----------------------------------------------------------");
 		System.out.println("- got workflow response -");
 		System.out.println("----------------------------------------------------------");
-		//waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		//waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 	    assertEquals("true", getVariable(processEngineRule, "CreateNetworkInstance", "CRENI_Success"));
 	    Assert.assertNotNull("CRENI_CompleteMsoProcessRequest - ", getVariable(processEngineRule, "CreateNetworkInstance", "CRENI_CompleteMsoProcessRequest"));

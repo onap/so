@@ -99,7 +99,7 @@ public class CreateGenericALaCarteServiceInstanceTest extends WorkflowTest {
 
 		Map<String, String> variables = setupVariables();
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "CreateGenericALaCarteServiceInstance", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		String workflowResp = BPMNUtil.getVariable(processEngineRule, "CreateGenericALaCarteServiceInstance", "WorkflowResponse");
 		//assertNotNull(workflowResp);

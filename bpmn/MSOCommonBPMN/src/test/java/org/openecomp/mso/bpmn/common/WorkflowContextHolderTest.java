@@ -69,7 +69,6 @@ public class WorkflowContextHolderTest {
 		Assert.assertNull(context2);
 	}
 
-	@Ignore // broken by SO-586
 	@Test
 	public void testProcessCallback() {
 		WorkflowContextHolder contextHolder = WorkflowContextHolder.getInstance();
@@ -88,7 +87,7 @@ public class WorkflowContextHolderTest {
 		Assert.assertNotNull(response1.getMessage());
 		Assert.assertEquals(200,response1.getMessageCode());
 		Assert.assertEquals("Success", response1.getMessage());
-		Assert.assertEquals("Successfully processed request", response1.getResponse());
+		Assert.assertEquals("Successfully processed request", response1.getContent());
 		verify(asyncResponse).setResponse(any(Response.class));
 
 		WorkflowContext context1 = contextHolder.getWorkflowContext(workflowContext.getRequestId());

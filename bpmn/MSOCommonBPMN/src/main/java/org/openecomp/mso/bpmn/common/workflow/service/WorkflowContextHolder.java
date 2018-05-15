@@ -108,19 +108,19 @@ public class WorkflowContextHolder {
 				+ ":process key:" + processKey);
 			workflowResponse.setMessage("Fail");
 			workflowResponse.setMessageCode(400);
-			workflowResponse.setResponse("Unable to correlate workflow context, bad request. Request Id: " + requestId);
+			workflowResponse.setContent("Unable to correlate workflow context, bad request. Request Id: " + requestId);
 			return Response.serverError().entity(workflowResponse).build();
 		}
 
 		responseQueue.remove(workflowContext);
 
 		msoLogger.debug("Using callback response for request id: " + requestId);
-		workflowResponse.setResponse(callbackResponse.getResponse());
-		workflowResponse.setProcessInstanceID(processInstanceId);
+		workflowResponse.setContent(callbackResponse.getResponse());
+		workflowResponse.setProcessInstanceId(processInstanceId);
 		workflowResponse.setMessageCode(callbackResponse.getStatusCode());
 		workflowResponse.setMessage(callbackResponse.getMessage());
 		sendWorkflowResponseToClient(processKey, workflowContext, workflowResponse);
-		return Response.ok().entity(workflowResponse.getResponse()).build();
+		return Response.ok().entity(workflowResponse).build();
 	}
 	
 	/**
@@ -133,7 +133,7 @@ public class WorkflowContextHolder {
 			WorkflowResponse workflowResponse) {
 		msoLogger.debug(logMarker + "Sending the response for request id: " + workflowContext.getRequestId());
 		recordEvents(processKey, workflowResponse, workflowContext.getStartTime());
-		Response response = Response.status(workflowResponse.getMessageCode()).entity(workflowResponse.getResponse()).build();
+		Response response = Response.status(workflowResponse.getMessageCode()).entity(workflowResponse).build();
 		AsynchronousResponse asyncResp = workflowContext.getAsynchronousResponse();
 		asyncResp.setResponse(response);
 	}
@@ -152,7 +152,7 @@ public class WorkflowContextHolder {
 					msoLogger.debug("Preparing timeout response for " + requestObject.getProcessKey() + ":" + ":" + requestObject.getRequestId());
 					WorkflowResponse response = new WorkflowResponse();
 					response.setMessage("Fail");
-					response.setResponse("Request timedout, request id:" + requestObject.getRequestId());
+					response.setContent("Request timedout, request id:" + requestObject.getRequestId());
 					//response.setProcessInstanceID(requestObject.getProcessInstance().getProcessInstanceId());
 					recordEvents(requestObject.getProcessKey(), response, requestObject.getStartTime());
 					response.setMessageCode(500);
@@ -178,11 +178,11 @@ public class WorkflowContextHolder {
 
 		msoLogger.recordMetricEvent ( startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, 
 				logMarker + response.getMessage() + " for processKey: "
-				+ processKey + " with response: " + response.getResponse(), "BPMN", MDC.get(processKey), null);
+				+ processKey + " with content: " + response.getContent(), "BPMN", MDC.get(processKey), null);
 		
 		msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, logMarker 
 				+ response.getMessage() + " for processKey: " 
-				+ processKey + " with response: " + response.getResponse());
+				+ processKey + " with content: " + response.getContent());
 		
 	}
 }

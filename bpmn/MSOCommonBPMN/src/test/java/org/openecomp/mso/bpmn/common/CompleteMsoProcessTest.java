@@ -46,7 +46,7 @@ public class CompleteMsoProcessTest extends WorkflowTest {
 		variables.put("CompleteMsoProcessRequest",inputRequestFile);
 		
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "CompleteMsoProcess", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 		logEnd();
 	}	
 	

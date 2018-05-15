@@ -109,13 +109,13 @@ public class WorkflowAsyncResource extends ProcessEngineAwareService {
 			msoLogger.debug(logMarker + "Exception in startProcessInstance by key");
 	        WorkflowResponse response = new WorkflowResponse();
 			response.setMessage("Fail" );
-			response.setResponse("Error occurred while executing the process: " + e);
+			response.setContent("Error occurred while executing the process: " + e);
 			response.setMessageCode(500);
 			recordEvents(processKey, response, startTime);
 			
 			msoLogger.error (MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, logMarker 
 					+ response.getMessage() + " for processKey: " 
-					+ processKey + " with response: " + response.getResponse());
+					+ processKey + " with content: " + response.getContent());
 			
 			Response errorResponse = Response.serverError().entity(response).build();
 			asyncResponse.setResponse(errorResponse);
@@ -245,10 +245,10 @@ public class WorkflowAsyncResource extends ProcessEngineAwareService {
 		
 		msoLogger.recordMetricEvent ( startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, 
 				logMarker + response.getMessage() + " for processKey: "
-				+ processKey + " with response: " + response.getResponse(), "BPMN", MDC.get(processKey), null);
+				+ processKey + " with content: " + response.getContent(), "BPMN", MDC.get(processKey), null);
 		
 		msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, 
-				logMarker + response.getMessage() + "for processKey: " + processKey + " with response: " + response.getResponse());
+				logMarker + response.getMessage() + "for processKey: " + processKey + " with content: " + response.getContent());
 		
 	}
 

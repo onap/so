@@ -74,7 +74,7 @@ public class DeleteVfModuleVolumeInfraV1Test extends WorkflowTest {
 			"v1", businessKey, deleteVfModuleVolRequest, testVariables);
 		WorkflowResponse response = receiveResponse(businessKey, asyncResponse, 100000);
 
-		String responseBody = response.getResponse();
+		String responseBody = response.getContent();
 		System.out.println("Workflow (Synch) Response:\n" + responseBody);
 		
 		injectVNFRestCallbacks(callbacks, "volumeGroupDelete");
@@ -113,7 +113,7 @@ public class DeleteVfModuleVolumeInfraV1Test extends WorkflowTest {
 			"v1", businessKey, deleteVfModuleVolRequest, testVariables);
 		WorkflowResponse response = receiveResponse(businessKey, asyncResponse, 100000);
 
-		String responseBody = response.getResponse();
+		String responseBody = response.getContent();
 		System.out.println("Workflow (Synch) Response:\n" + responseBody);
 		
 		//injectVNFRestCallbacks(callbacks, "volumeGroupDelete");
@@ -153,7 +153,7 @@ public class DeleteVfModuleVolumeInfraV1Test extends WorkflowTest {
 			"v1", businessKey, deleteVfModuleVolRequest, testVariables);
 		WorkflowResponse response = receiveResponse(businessKey, asyncResponse, 100000);
 
-		String responseBody = response.getResponse();
+		String responseBody = response.getContent();
 		System.out.println("Workflow (Synch) Response:\n" + responseBody);
 		
 		//injectVNFRestCallbacks(callbacks, "volumeGroupDelete");

@@ -798,7 +798,7 @@ public class ServiceInstances {
 
 		// BPEL accepted the request, the request is in progress
 		if (bpelStatus == HttpStatus.SC_ACCEPTED) {
-			String camundaJSONResponseBody = respHandler.getResponseBody ();
+			String camundaJSONResponseBody = respHandler.getContent();
 			msoLogger.debug ("Received from Camunda: " + camundaJSONResponseBody);
 			msoRequest.setStatus (org.openecomp.mso.apihandlerinfra.vnfbeans.RequestStatusType.IN_PROGRESS);
 			(RequestsDatabase.getInstance()).updateInfraStatus (msoRequest.getRequestId (),
@@ -811,7 +811,7 @@ public class ServiceInstances {
 		} else {
 			List<String> variables = new ArrayList<>();
 			variables.add(bpelStatus + "");
-			String camundaJSONResponseBody = respHandler.getResponseBody ();
+			String camundaJSONResponseBody = respHandler.getContent();
 			if (camundaJSONResponseBody != null && !camundaJSONResponseBody.isEmpty ()) {
 				msoRequest.setStatus (org.openecomp.mso.apihandlerinfra.vnfbeans.RequestStatusType.FAILED);
 				Response resp =  msoRequest.buildServiceErrorResponse(bpelStatus,

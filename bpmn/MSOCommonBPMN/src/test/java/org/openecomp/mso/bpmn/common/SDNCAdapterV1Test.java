@@ -95,7 +95,7 @@ public class SDNCAdapterV1Test extends WorkflowTest {
 		Response response = workflowResource.startProcessInstanceByKey("sdncAdapter", varMap);
 		WorkflowResponse workflowResponse = (WorkflowResponse) response.getEntity();
 
-		//String pid = workflowResponse.getProcessInstanceID();
+		//String pid = workflowResponse.getProcessInstanceId();
 		//System.out.println("Back from executing process instance with pid=" + pid);
 		return workflowResponse;
 	}
@@ -364,7 +364,7 @@ public class SDNCAdapterV1Test extends WorkflowTest {
 		WorkflowResponse response = thread.workflowResponse;
 		Assert.assertNotNull(response);
 		Assert.assertEquals("404 error", response.getMessageCode(),7000);
-//		assertProcessInstanceFinished(response.getProcessInstanceID());
+//		assertProcessInstanceFinished(response.getProcessInstanceId());
 		//System.out.println("SDNCAdapter bad synchronous response flow Completed!");
 	}
 
@@ -442,7 +442,7 @@ public class SDNCAdapterV1Test extends WorkflowTest {
 
 		public void run() {
 			workflowResponse = invokeFlow(workflowRequest);
-			workflowResponse.getProcessInstanceID();
+			workflowResponse.getProcessInstanceId();
 		}
 	}
 

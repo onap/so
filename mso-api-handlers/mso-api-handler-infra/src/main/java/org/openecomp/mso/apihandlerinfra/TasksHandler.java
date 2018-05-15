@@ -176,7 +176,7 @@ public class TasksHandler {
 			msoLogger.debug ("Received good response from Camunda");
 						
 			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "BPMN completed the request");
-			String respBody = respHandler.getResponseBody();		
+			String respBody = respHandler.getContent();		
 			if (respBody != null) {				
 				JSONArray data = new JSONArray(respBody);
 				
@@ -276,7 +276,7 @@ public class TasksHandler {
 			msoLogger.debug ("Received good response from Camunda");
 						
 			msoLogger.recordAuditEvent (subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "BPMN completed the request");
-			String respBody = respHandler.getResponseBody();		
+			String respBody = respHandler.getContent();		
 			if (respBody != null) {
 				taskList = buildTaskList(taskId, respBody);				
 			}

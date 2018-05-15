@@ -107,7 +107,7 @@ public class CreateVfModuleInfraTest extends WorkflowTest {
 				
 		WorkflowResponse response = receiveResponse(businessKey, asyncResponse, 10000);
 		
-		String responseBody = response.getResponse();
+		String responseBody = response.getContent();
 		System.out.println("Workflow (Synch) Response:\n" + responseBody);
 		
 		injectSDNCCallbacks(callbacks, "assign, query");
@@ -169,7 +169,7 @@ public class CreateVfModuleInfraTest extends WorkflowTest {
 				
 		WorkflowResponse response = receiveResponse(businessKey, asyncResponse, 10000);
 		
-		String responseBody = response.getResponse();
+		String responseBody = response.getContent();
 		System.out.println("Workflow (Synch) Response:\n" + responseBody);
 		
 		injectSDNCCallbacks(callbacks, "assign, query");
@@ -261,7 +261,7 @@ public class CreateVfModuleInfraTest extends WorkflowTest {
 					
 			WorkflowResponse response = receiveResponse(businessKey, asyncResponse, 10000);
 			
-			String responseBody = response.getResponse();
+			String responseBody = response.getContent();
 			System.out.println("Workflow (Synch) Response:\n" + responseBody);
 			
 			injectSDNCCallbacks(callbacks, "assign, query");
@@ -348,7 +348,7 @@ public class CreateVfModuleInfraTest extends WorkflowTest {
 						
 				WorkflowResponse response = receiveResponse(businessKey, asyncResponse, 10000);
 				
-				String responseBody = response.getResponse();
+				String responseBody = response.getContent();
 				System.out.println("Workflow (Synch) Response:\n" + responseBody);
 				
 				injectSDNCCallbacks(callbacks, "assign, query");

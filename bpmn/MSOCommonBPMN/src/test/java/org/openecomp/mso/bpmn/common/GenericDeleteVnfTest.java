@@ -55,7 +55,7 @@ public class GenericDeleteVnfTest extends WorkflowTest {
 		setVariables(variables, "testVnfId123", "generic-vnf", "testReVer123");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericDeleteVnf", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		assertVariables("true", "true", "true", null);
 
@@ -70,7 +70,7 @@ public class GenericDeleteVnfTest extends WorkflowTest {
 		setVariables(variables, "testVnfId123", "vce", "testReVer123");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericDeleteVnf", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		assertVariables("true", "true", "true", null);
 
@@ -87,7 +87,7 @@ public class GenericDeleteVnfTest extends WorkflowTest {
 		setVariables(variables, "testVnfId123", "generic-vnf", "");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericDeleteVnf", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		assertVariables("true", "true", "false", null);
 
@@ -103,7 +103,7 @@ public class GenericDeleteVnfTest extends WorkflowTest {
 		setVariables(variables, "testVnfId123", "vce", null);
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericDeleteVnf", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		assertVariables("true", "true", "false", null);
 
@@ -118,7 +118,7 @@ public class GenericDeleteVnfTest extends WorkflowTest {
 		setVariables(variables, "testVnfId123", "generic-vnf", "testReVer123");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericDeleteVnf", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		assertVariables("true", "false", "true", null);
 
@@ -133,7 +133,7 @@ public class GenericDeleteVnfTest extends WorkflowTest {
 		setVariables(variables, "testVnfId123", "vce", "testReVer123");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericDeleteVnf", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		assertVariables("true", "false", "true", null);
 
@@ -148,7 +148,7 @@ public class GenericDeleteVnfTest extends WorkflowTest {
 		setVariables(variables, "testVnfId123", "generic-vnf", "");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericDeleteVnf", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		assertVariables("true", "false", "false", null);
 
@@ -162,7 +162,7 @@ public class GenericDeleteVnfTest extends WorkflowTest {
 		setVariables(variables, "testVnfId123", "", "testReVer123");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericDeleteVnf", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		assertVariables("false", "false", "true", "WorkflowException[processKey=GenericDeleteVnf,errorCode=500,errorMessage=Incoming Required Variable is Missing or Null!]");
 
@@ -177,7 +177,7 @@ public class GenericDeleteVnfTest extends WorkflowTest {
 		setVariables(variables, "testVnfId123", "generic-vnf", "testReVer123");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericDeleteVnf", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		assertVariables("false", "false", "true", "WorkflowException[processKey=GenericDeleteVnf,errorCode=500,errorMessage=Received a bad response from AAI]");
 
@@ -192,7 +192,7 @@ public class GenericDeleteVnfTest extends WorkflowTest {
 		setVariables(variables, "testVnfId123", "generic-vnf", "testReVer123");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericDeleteVnf", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		assertVariables("false", "false", "true", "WorkflowException[processKey=GenericDeleteVnf,errorCode=412,errorMessage=Delete Vnf Received a resource-version Mismatch Error Response from AAI]");
 

@@ -20,53 +20,41 @@
 
 package org.openecomp.mso.apihandler.camundabeans;
 
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRootName;
+
+// This class must be 100% JSON-compatible with the BPMN WorkflowResponse class.
+// TODO: BPMN and the API-H should use a common class.
 
 /**
- * JavaBean JSON class for a "variables" which contains the xml payload that
- * will be passed to the Camunda process
- * 
+ * A synchronous response from a workflow.
  */
-
+@JsonRootName(value = "WorkflowResponse")
 public class CamundaResponse {
-	
-	@JsonProperty("response")
-	private String response;
+
+	@JsonProperty("processInstanceId")
+	private String processInstanceId;
+
 	@JsonProperty("messageCode")
 	private int messageCode;
+
 	@JsonProperty("message")
 	private String message;
-	@JsonProperty("processInstanceID")
-	private String processInstanceID;
+
 	@JsonProperty("variables")
-	private String variables;
+	private Map<String,String> variables;
 
-	public String getProcessInstanceID() {
-		return processInstanceID;
+	@JsonProperty("content")
+	private String content;
+
+	public String getProcessInstanceId() {
+		return processInstanceId;
 	}
 
-	public void setProcessInstanceID(String processInstanceID) {
-		this.processInstanceID = processInstanceID;
-	}
-
-	public String getVariables() {
-		return variables;
-	}
-
-	public void setVariables(String variables) {
-		this.variables = variables;
-	}
-
-	public CamundaResponse() {
-	}
-
-	public String getResponse() {
-		return response;
-	}
-
-	public void setResponse(String response) {
-		this.response = response;
+	public void setProcessInstanceId(String processInstanceId) {
+		this.processInstanceId = processInstanceId;
 	}
 
 	public int getMessageCode() {
@@ -85,13 +73,30 @@ public class CamundaResponse {
 		this.message = message;
 	}
 
-	@Override
-	public String toString() {
-		return "CamundaResponse [response=" + response + ", messageCode="
-				+ messageCode + ", message=" + message + "]";
+	public Map<String,String> getVariables() {
+		return variables;
 	}
 
-	
-	
-	
+	public void setVariables(Map<String,String> variables) {
+		this.variables = variables;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + "["
+			+ "processInstanceId=" + processInstanceId
+			+ ",messageCode=" + messageCode
+			+ ",message=" + message
+			+ ",variables=" + variables
+			+ ",content=" + content
+			+ "]";
+	}
 }

@@ -132,7 +132,7 @@ public class VnfInPlaceUpdateTest extends WorkflowTest {
 		
 		WorkflowResponse response = receiveResponse(businessKey, asyncResponse, 100000);
 		
-		String responseBody = response.getResponse();
+		String responseBody = response.getContent();
 		System.out.println("Workflow (Synch) Response:\n" + responseBody);		
 	
 		// TODO add appropriate assertions

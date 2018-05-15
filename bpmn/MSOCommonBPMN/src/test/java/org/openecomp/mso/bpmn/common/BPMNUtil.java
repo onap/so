@@ -238,14 +238,7 @@ public class BPMNUtil {
 			doAnswer(new Answer<Void>() {
 			    public Void answer(InvocationOnMock invocation) {
 			      Response response = (Response) invocation.getArguments()[0];
-			      try {
-			    	  workflowResponse = (WorkflowResponse) response.getEntity();
-			      } catch (ClassCastException e) {
-			    	  String workflowResponseString = (String)response.getEntity();
-			    	  workflowResponse = new WorkflowResponse();
-			    	  workflowResponse.setResponse(workflowResponseString);
-			    	  workflowResponse.setMessageCode(200);
-			      }
+			      workflowResponse = (WorkflowResponse) response.getEntity();
 			      return null;
 			    }
 			}).when(asyncResponse).setResponse(any(Response.class));		

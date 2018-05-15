@@ -233,7 +233,7 @@ public class ServiceInstanceTest {
             	ProtocolVersion pv = new ProtocolVersion("HTTP",1,1);
             	HttpResponse resp = new BasicHttpResponse(pv,200, "test response");
             	BasicHttpEntity entity = new BasicHttpEntity();
-            	String body = "{\"response\":\"success\",\"message\":\"success\"}";
+            	String body = "{\"content\":\"success\",\"message\":\"success\"}";
             	InputStream instream = new ByteArrayInputStream(body.getBytes());
             	entity.setContent(instream);
             	resp.setEntity(entity);
@@ -303,7 +303,7 @@ public class ServiceInstanceTest {
             	ProtocolVersion pv = new ProtocolVersion("HTTP",1,1);
             	HttpResponse resp = new BasicHttpResponse(pv,500, "test response");
             	BasicHttpEntity entity = new BasicHttpEntity();
-            	String body = "{\"response\":\"success\",\"message\":\"success\"}";
+            	String body = "{\"content\":\"success\",\"message\":\"success\"}";
             	InputStream instream = new ByteArrayInputStream(body.getBytes());
             	entity.setContent(instream);
             	resp.setEntity(entity);
@@ -374,7 +374,7 @@ public class ServiceInstanceTest {
             	ProtocolVersion pv = new ProtocolVersion("HTTP",1,1);
             	HttpResponse resp = new BasicHttpResponse(pv,500, "test response");
             	BasicHttpEntity entity = new BasicHttpEntity();
-            	String body = "{\"response\":\"success\",\"message\":\"success\"}";
+            	String body = "{\"content\":\"success\",\"message\":\"success\"}";
             	InputStream instream = new ByteArrayInputStream(body.getBytes());
             	entity.setContent(instream);
             	resp.setEntity(entity);
@@ -932,7 +932,7 @@ public class ServiceInstanceTest {
 				HttpResponse resp = new BasicHttpResponse(pv,200, "test response");
 				BasicHttpEntity entity = new BasicHttpEntity();
 
-				final String body = "{\"response\":\"success\",\"message\":\"success\"}";
+				final String body = "{\"content\":\"success\",\"message\":\"success\"}";
 				InputStream instream = new ByteArrayInputStream(body.getBytes());
 				entity.setContent(instream);
 				resp.setEntity(entity);
@@ -1101,7 +1101,7 @@ public class ServiceInstanceTest {
 				HttpResponse resp = new BasicHttpResponse(pv,200, "test response");
 				BasicHttpEntity entity = new BasicHttpEntity();
 
-				final String body = "{\"response\":\"success\",\"message\":\"success\"}";
+				final String body = "{\"content\":\"success\",\"message\":\"success\"}";
 				InputStream instream = new ByteArrayInputStream(body.getBytes());
 				entity.setContent(instream);
 				resp.setEntity(entity);
@@ -1152,7 +1152,7 @@ public class ServiceInstanceTest {
 				HttpResponse resp = new BasicHttpResponse(pv,200, "test response");
 				BasicHttpEntity entity = new BasicHttpEntity();
 
-				final String body = "{\"response\":\"success\",\"message\":\"success\"}";
+				final String body = "{\"content\":\"success\",\"message\":\"success\"}";
 				InputStream instream = new ByteArrayInputStream(body.getBytes());
 				entity.setContent(instream);
 				resp.setEntity(entity);

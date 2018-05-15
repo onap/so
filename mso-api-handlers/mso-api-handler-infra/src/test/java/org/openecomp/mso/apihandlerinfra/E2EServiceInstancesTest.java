@@ -204,7 +204,7 @@ public class E2EServiceInstancesTest {
 				HttpResponse resp = new BasicHttpResponse(pv, 202,
 						"test response");
 				BasicHttpEntity entity = new BasicHttpEntity();
-				String body = "{\"response\":\"success\",\"message\":\"success\"}";
+				String body = "{\"content\":\"success\",\"message\":\"success\"}";
 				InputStream instream = new ByteArrayInputStream(body.getBytes());
 				entity.setContent(instream);
 				resp.setEntity(entity);
@@ -268,7 +268,7 @@ public class E2EServiceInstancesTest {
 				HttpResponse resp = new BasicHttpResponse(pv, 500,
 						"test response");
 				BasicHttpEntity entity = new BasicHttpEntity();
-				String body = "{\"response\":\"success\",\"message\":\"success\"}";
+				String body = "{\"content\":\"success\",\"message\":\"success\"}";
 				InputStream instream = new ByteArrayInputStream(body.getBytes());
 				entity.setContent(instream);
 				resp.setEntity(entity);
@@ -333,7 +333,7 @@ public class E2EServiceInstancesTest {
 				HttpResponse resp = new BasicHttpResponse(pv, 500,
 						"test response");
 				BasicHttpEntity entity = new BasicHttpEntity();
-				String body = "{\"response\":\"\",\"message\":\"success\"}";
+				String body = "{\"content\":\"\",\"message\":\"success\"}";
 				InputStream instream = new ByteArrayInputStream(body.getBytes());
 				entity.setContent(instream);
 				resp.setEntity(entity);
@@ -634,7 +634,7 @@ public class E2EServiceInstancesTest {
                 ProtocolVersion pv = new ProtocolVersion("HTTP", 1, 1);
                 HttpResponse resp = new BasicHttpResponse(pv, 200, "test response");
                 BasicHttpEntity entity = new BasicHttpEntity();
-                String body = "{\"response\":\"success\",\"message\":\"success\"}";
+                String body = "{\"content\":\"success\",\"message\":\"success\"}";
                 InputStream instream = new ByteArrayInputStream(body.getBytes());
                 entity.setContent(instream);
                 resp.setEntity(entity);
@@ -832,7 +832,7 @@ public class E2EServiceInstancesTest {
 				HttpResponse resp = new BasicHttpResponse(pv, 202,
 						"test response");
 				BasicHttpEntity entity = new BasicHttpEntity();
-				String body = "{\"response\":\"success\",\"message\":\"success\"}";
+				String body = "{\"content\":\"success\",\"message\":\"success\"}";
 				InputStream instream = new ByteArrayInputStream(body.getBytes());
 				entity.setContent(instream);
 				resp.setEntity(entity);
@@ -898,7 +898,7 @@ public class E2EServiceInstancesTest {
 				HttpResponse resp = new BasicHttpResponse(pv, 202,
 						"test response");
 				BasicHttpEntity entity = new BasicHttpEntity();
-				String body = "{\"response\":\"success\",\"message\":\"success\"}";
+				String body = "{\"content\":\"success\",\"message\":\"success\"}";
 				InputStream instream = new ByteArrayInputStream(body.getBytes());
 				entity.setContent(instream);
 				resp.setEntity(entity);
@@ -965,7 +965,7 @@ public class E2EServiceInstancesTest {
                 HttpResponse resp = new BasicHttpResponse(pv, 202,
                         "test response");
                 BasicHttpEntity entity = new BasicHttpEntity();
-                String body = "{\"response\":\"success\",\"message\":\"success\"}";
+                String body = "{\"content\":\"success\",\"message\":\"success\"}";
                 InputStream instream = new ByteArrayInputStream(body.getBytes());
                 entity.setContent(instream);
                 resp.setEntity(entity);
@@ -1037,7 +1037,7 @@ public class E2EServiceInstancesTest {
                 HttpResponse resp = new BasicHttpResponse(pv, 202,
                         "test response");
                 BasicHttpEntity entity = new BasicHttpEntity();
-                String body = "{\"response\":\"success\",\"message\":\"success\"}";
+                String body = "{\"content\":\"success\",\"message\":\"success\"}";
                 InputStream instream = new ByteArrayInputStream(body.getBytes());
                 entity.setContent(instream);
                 resp.setEntity(entity);
@@ -1103,7 +1103,7 @@ public class E2EServiceInstancesTest {
                 HttpResponse resp = new BasicHttpResponse(pv, 202,
                         "test response");
                 BasicHttpEntity entity = new BasicHttpEntity();
-                String body = "{\"response\":\"success\",\"message\":\"success\"}";
+                String body = "{\"content\":\"success\",\"message\":\"success\"}";
                 InputStream instream = new ByteArrayInputStream(body.getBytes());
                 entity.setContent(instream);
                 resp.setEntity(entity);
@@ -1227,7 +1227,7 @@ public class E2EServiceInstancesTest {
                 HttpResponse resp = new BasicHttpResponse(pv, 202,
                         "compareModelwithTargetVersion, test response");
                 BasicHttpEntity entity = new BasicHttpEntity();
-                String body = "{\"response\":\"success\",\"message\":\"success\"}";
+                String body = "{\"content\":\"success\",\"message\":\"success\"}";
                 InputStream instream = new ByteArrayInputStream(body.getBytes());
                 entity.setContent(instream);
                 resp.setEntity(entity);
@@ -1301,7 +1301,7 @@ public class E2EServiceInstancesTest {
                 HttpResponse resp = new BasicHttpResponse(pv, 202,
                         "test response");
                 BasicHttpEntity entity = new BasicHttpEntity();
-                String body = "{\"response\":\"success\",\"message\":\"success\"}";
+                String body = "{\"content\":\"success\",\"message\":\"success\"}";
                 InputStream instream = new ByteArrayInputStream(body.getBytes());
                 entity.setContent(instream);
                 resp.setEntity(entity);
