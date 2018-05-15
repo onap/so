@@ -84,7 +84,7 @@ public class UpdateVfModuleVolumeInfraV1Test extends WorkflowTest {
 		TestAsyncResponse asyncResponse = invokeAsyncProcess("UpdateVfModuleVolumeInfraV1",	"v1", businessKey, updaetVfModuleVolRequest, testVariables);
 		WorkflowResponse response = receiveResponse(businessKey, asyncResponse, 10000);
 
-		String responseBody = response.getResponse();
+		String responseBody = response.getContent();
 		System.out.println("Workflow (Synch) Response:\n" + responseBody);
 		
 		injectVNFRestCallbacks(callbacks, "volumeGroupUpdate");
@@ -130,7 +130,7 @@ public class UpdateVfModuleVolumeInfraV1Test extends WorkflowTest {
 		TestAsyncResponse asyncResponse = invokeAsyncProcess("UpdateVfModuleVolumeInfraV1",	"v1", businessKey, updaetVfModuleVolRequest, testVariables);
 		WorkflowResponse response = receiveResponse(businessKey, asyncResponse, 10000);
 
-		String responseBody = response.getResponse();
+		String responseBody = response.getContent();
 		System.out.println("Workflow (Synch) Response:\n" + responseBody);
 		
 		injectVNFRestCallbacks(callbacks, "volumeGroupUpdate");

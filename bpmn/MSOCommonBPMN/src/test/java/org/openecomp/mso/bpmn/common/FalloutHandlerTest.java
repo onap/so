@@ -62,7 +62,7 @@ public class FalloutHandlerTest extends WorkflowTest {
 		variables.put("FalloutHandlerRequest",inputRequestFile);
 		
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "FalloutHandler", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 		System.out.println("ENDED TEST: " + method);
 	}	
 	

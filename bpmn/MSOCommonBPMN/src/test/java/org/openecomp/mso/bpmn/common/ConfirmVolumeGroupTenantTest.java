@@ -50,7 +50,7 @@ public class ConfirmVolumeGroupTenantTest extends WorkflowTest {
 		setVariables(variables);
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "ConfirmVolumeGroupTenant", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		String actualNameMatch = BPMNUtil.getVariable(processEngineRule, "ConfirmVolumeGroupTenant", "groupNamesMatch");
 		String actualIdMatch = BPMNUtil.getVariable(processEngineRule, "ConfirmVolumeGroupTenant", "tenantIdsMatch");
@@ -70,7 +70,7 @@ public class ConfirmVolumeGroupTenantTest extends WorkflowTest {
 		setVariables(variables);
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "ConfirmVolumeGroupTenant", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		String actualNameMatch = BPMNUtil.getVariable(processEngineRule, "ConfirmVolumeGroupTenant", "groupNamesMatch");
 		String actualIdMatch = BPMNUtil.getVariable(processEngineRule, "ConfirmVolumeGroupTenant", "tenantIdsMatch");

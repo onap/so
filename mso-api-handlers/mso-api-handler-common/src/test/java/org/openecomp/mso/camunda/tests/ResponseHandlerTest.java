@@ -47,13 +47,15 @@ public class ResponseHandlerTest {
 
     @Test
     public void tesParseCamundaResponse () throws JsonGenerationException, JsonMappingException, IOException {
-        // String body
-        // ="{\"links\":[{\"method\":\"GET\",\"href\":\"http://localhost:9080/engine-rest/process-instance/2047c658-37ae-11e5-9505-7a1020524153\",\"rel\":\"self\"}],\"id\":\"2047c658-37ae-11e5-9505-7a1020524153\",\"definitionId\":\"dummy:10:73298961-37ad-11e5-9505-7a1020524153\",\"businessKey\":null,\"caseInstanceId\":null,\"ended\":true,\"suspended\":false}";
 
-        String body = "{ \"response\": \"<xml>xml</xml>\"," + "\"messageCode\": 200,"
-                      + "\"message\": \"Successfully started the process\"}";
+		String content = "{\"WorkflowResponse\":{"
+				+ "\"messageCode\":202"
+				+ ",\"message\":\"Successfully started the process\""
+				+ ",\"content\":\"<xml>xml</xml>\""
+				+ ",\"processInstanceId\":\"4d3b3201a7ce\""
+				+ "}}";
 
-        HttpResponse response = createResponse (200, body, "application/json");
+        HttpResponse response = createResponse (200, content, "application/json");
 
         ResponseHandler respHandler = new ResponseHandler (response, 1);
 
@@ -81,7 +83,7 @@ public class ResponseHandlerTest {
 
         int status = respHandler.getStatus ();
         assertEquals (status, HttpStatus.SC_ACCEPTED);
-        assertTrue (respHandler.getResponseBody () != null);
+        assertTrue (respHandler.getContent() != null);
     }
 
     @Test
@@ -100,17 +102,21 @@ public class ResponseHandlerTest {
     @Test
     public void tesGenricErrorResponse () throws JsonGenerationException, JsonMappingException, IOException {
 
-        String body = "{ \"response\": \"<xml>xml</xml>\"," + "\"messageCode\": 500,"
-                      + "\"message\": \"Something went wrong\"}";
+		String content = "{\"WorkflowResponse\":{"
+				+ "\"messageCode\":500"
+				+ ",\"message\":\"Something went wrong\""
+				+ ",\"content\":\"<xml>xml</xml>\""
+				+ ",\"processInstanceId\":\"4d3b3201a7ce\""
+				+ "}}";
 
-        HttpResponse response = createResponse (500, body, "application/json");
+        HttpResponse response = createResponse (500, content, "application/json");
 
         ResponseHandler respHandler = new ResponseHandler (response, 1);
 
         int status = respHandler.getStatus ();
         assertEquals (HttpStatus.SC_BAD_GATEWAY, status);
         assertEquals (respHandler.getResponse ().getMessage (), "Something went wrong");
-        System.out.println (respHandler.getResponseBody ());
+        System.out.println (respHandler.getContent());
 
     }
 

@@ -99,7 +99,7 @@ public class UpdateNetworkInstanceTest extends WorkflowTest {
 		System.out.println("----------------------------------------------------------");
 		System.out.println("- got workflow response -");
 		System.out.println("----------------------------------------------------------");
-		//waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		//waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 	    assertEquals("true", getVariable(processEngineRule, "UpdateNetworkInstance", "UPDNI_Success"));
 	    Assert.assertNotNull("UPDNI_CompleteMsoProcessRequest - ", getVariable(processEngineRule, "UpdateNetworkInstance", "UPDNI_CompleteMsoProcessRequest"));
@@ -146,7 +146,7 @@ public class UpdateNetworkInstanceTest extends WorkflowTest {
 		Map<String, String> variables = setupVariablesVIPER1();
 		//WorkflowResponse workflowResponse = executeAsyncWorkflow(processEngineRule, "UpdateNetworkInstance", variables);
 		executeAsyncWorkflow(processEngineRule, "UpdateNetworkInstance", variables);
-		//waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		//waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 	    assertEquals("true", getVariable(processEngineRule, "UpdateNetworkInstance", "UPDNI_Success"));
 	    Assert.assertNotNull("UPDNI_CompleteMsoProcessRequest - ", getVariable(processEngineRule, "UpdateNetworkInstance", "UPDNI_CompleteMsoProcessRequest"));
@@ -196,7 +196,7 @@ public class UpdateNetworkInstanceTest extends WorkflowTest {
 		Map<String, String> variables = setupVariablesMissingNetworkId();
 		//WorkflowResponse workflowResponse = executeAsyncWorkflow(processEngineRule, "UpdateNetworkInstance", variables);
 		executeAsyncWorkflow(processEngineRule, "UpdateNetworkInstance", variables);
-		//waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		//waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 	    assertEquals("false", getVariable(processEngineRule, "UpdateNetworkInstance", "UPDNI_Success"));
 	    Assert.assertNotNull("UPDNI_FalloutHandlerRequest - ", getVariable(processEngineRule, "UpdateNetworkInstance", "UPDNI_FalloutHandlerRequest"));
@@ -260,7 +260,7 @@ public class UpdateNetworkInstanceTest extends WorkflowTest {
 		Map<String, String> variables = setupVariablesVID1();
 		//WorkflowResponse workflowResponse = executeAsyncWorkflow(processEngineRule, "UpdateNetworkInstance", variables);
 		executeAsyncWorkflow(processEngineRule, "UpdateNetworkInstance", variables);
-		//waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		//waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 	    assertEquals("false", getVariable(processEngineRule, "UpdateNetworkInstance", "UPDNI_Success"));
 	    Assert.assertNotNull("UPDNI_FalloutHandlerRequest - ", getVariable(processEngineRule, "UpdateNetworkInstance", "UPDNI_FalloutHandlerRequest"));

@@ -96,7 +96,7 @@ public class CreateVnfInfraTest extends WorkflowTest {
 
 			WorkflowResponse response = receiveResponse(businessKey, asyncResponse, 10000);
 
-			String responseBody = response.getResponse();
+			String responseBody = response.getContent();
 			System.out.println("Workflow (Synch) Response:\n" + responseBody);
 
 			//injectSDNCCallbacks(callbacks, "assign, query");
@@ -114,7 +114,7 @@ public class CreateVnfInfraTest extends WorkflowTest {
 	//	injectSDNCCallbacks(callbacks, "assign");
 	//	injectSDNCCallbacks(callbacks, "activate");
 		//waitForProcessEnd(businessKey, 10000);
-		//waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		//waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		//assertVariables("true", "true", "false", "true", "Success", null);
 
@@ -130,7 +130,7 @@ public class CreateVnfInfraTest extends WorkflowTest {
 		setVariables(variables, null, "testRequestId123", "MIS%2F1604%2F0026%2FSW_INTERNET");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "CreateVnfInfra", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		assertVariables(null, null, null, null, null, "WorkflowException[processKey=CreateVnfInfra,errorCode=2500,errorMessage=Internal Error - WorkflowException Object and/or RequestInfo is null! CreateVnfInfra]");
 
@@ -148,7 +148,7 @@ public class CreateVnfInfraTest extends WorkflowTest {
 		setVariables(variables, createVnfInfraRequest, "testRequestId123", "MIS%2F1604%2F0026%2FSW_INTERNET");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "CreateVnfInfra", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		assertVariables(null, null, null, null, null, "WorkflowException[processKey=DoCreateVnf,errorCode=404,errorMessage=Service Instance Not Found]");
 
@@ -180,7 +180,7 @@ public class CreateVnfInfraTest extends WorkflowTest {
 		setVariables(variables, createVnfInfraRequest, "testRequestId123", "MIS%2F1604%2F0026%2FSW_INTERNET");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "CreateVnfInfra", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		assertVariables(null, null, null, null, null, "WorkflowException[processKey=DoCreateVnf,errorCode=5000,errorMessage=Generic Vnf Already Exist.]");
 

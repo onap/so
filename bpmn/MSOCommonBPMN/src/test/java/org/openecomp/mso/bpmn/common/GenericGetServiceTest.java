@@ -59,7 +59,7 @@ public class GenericGetServiceTest extends WorkflowTest {
 		Map<String, String> variables = new HashMap<>();
 		setVariablesInstance(variables, "MIS%2F1604%2F0026%2FSW_INTERNET", null, "SDN-ETHERNET-INTERNET", "123456789");
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericGetService", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_SuccessIndicator");
 		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_FoundIndicator");
 		String obtainUrl = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_obtainObjectsUrl");
@@ -85,7 +85,7 @@ public class GenericGetServiceTest extends WorkflowTest {
 		setVariablesSubscription(variables, "", null , "1604-MVM-26", "SDN-ETHERNET-INTERNET");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericGetService", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_SuccessIndicator");
 		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_FoundIndicator");
@@ -113,7 +113,7 @@ public class GenericGetServiceTest extends WorkflowTest {
 		setVariablesInstance(variables, null, "1604-MVM-26", null, null);
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericGetService", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_SuccessIndicator");
 		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_FoundIndicator");
@@ -143,7 +143,7 @@ public class GenericGetServiceTest extends WorkflowTest {
 		setVariablesInstance(variables, "MIS%2F1604%2F0026%2FSW_INTERNET", null, null, null);
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericGetService", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_SuccessIndicator");
 		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_FoundIndicator");
@@ -172,7 +172,7 @@ public class GenericGetServiceTest extends WorkflowTest {
 		setVariablesInstance(variables, "MIS%2F1604%2F0026%2FSW_INTERNET", null, "SDN-ETHERNET-INTERNET", "123456789");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericGetService", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_SuccessIndicator");
 		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_FoundIndicator");
@@ -196,7 +196,7 @@ public class GenericGetServiceTest extends WorkflowTest {
 		setVariablesSubscription(variables, "", "", "SDN-ETHERNET-INTERNET", "1604-MVM-26");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericGetService", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_SuccessIndicator");
 		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_FoundIndicator");
@@ -223,7 +223,7 @@ public class GenericGetServiceTest extends WorkflowTest {
 		setVariablesInstance(variables, "", "1604-MVM-26", null, null);
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericGetService", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_SuccessIndicator");
 		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_FoundIndicator");
@@ -250,7 +250,7 @@ public class GenericGetServiceTest extends WorkflowTest {
 		setVariablesInstance(variables, "MIS%2F1604%2F0026%2FSW_INTERNET", null, null, null);
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericGetService", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_SuccessIndicator");
 		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_FoundIndicator");
@@ -277,7 +277,7 @@ public class GenericGetServiceTest extends WorkflowTest {
 		setVariablesInstance(variables, "MIS%2F1604%2F0026%2FSW_INTERNET", null, "SDN-ETHERNET-INTERNET", "123456789");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericGetService", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_SuccessIndicator");
 		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_FoundIndicator");
@@ -301,7 +301,7 @@ public class GenericGetServiceTest extends WorkflowTest {
 		setVariablesInstance(variables, "", "1604-MVM-26", null, null);
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericGetService", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_SuccessIndicator");
 		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_FoundIndicator");
@@ -328,7 +328,7 @@ public class GenericGetServiceTest extends WorkflowTest {
 		setVariablesInstance(variables, "MIS%2F1604%2F0026%2FSW_INTERNET", null, null, null);
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericGetService", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_SuccessIndicator");
 		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_FoundIndicator");
@@ -354,7 +354,7 @@ public class GenericGetServiceTest extends WorkflowTest {
 		setVariablesInstance(variables, null, null, "SDN-ETHERNET-INTERNET", null);
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericGetService", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_SuccessIndicator");
 		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_FoundIndicator");
@@ -379,7 +379,7 @@ public class GenericGetServiceTest extends WorkflowTest {
 		setVariablesSubscription(variables, "", "", "SDN-ETHERNET-INTERNET", null);
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericGetService", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_SuccessIndicator");
 		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_FoundIndicator");
@@ -407,7 +407,7 @@ public class GenericGetServiceTest extends WorkflowTest {
 		setVariablesInstance(variables, "MIS%2F1604%2F0026%2FSW_INTERNET", "1604-MVM-26", "SDN-ETHERNET-INTERNET", "123456789");
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericGetService", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_SuccessIndicator");
 		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_FoundIndicator");
@@ -434,7 +434,7 @@ public class GenericGetServiceTest extends WorkflowTest {
 		setVariablesInstance(variables, "MIS%2F1604%2F0026%2FSW_INTERNET", null, null, null);
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericGetService", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_SuccessIndicator");
 		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_FoundIndicator");
@@ -463,7 +463,7 @@ public class GenericGetServiceTest extends WorkflowTest {
 		setVariablesInstance(variables, null, "1604-MVM-26", null, null);
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericGetService", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_SuccessIndicator");
 		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_FoundIndicator");
@@ -493,7 +493,7 @@ public class GenericGetServiceTest extends WorkflowTest {
         setVariablesInstance(variables, null, "1604-MVM-26", "XyCorporation", null);
 
         WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericGetService", variables);
-        waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+        waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
         String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_SuccessIndicator");
         String found = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_FoundIndicator");
@@ -521,7 +521,7 @@ public class GenericGetServiceTest extends WorkflowTest {
 		setVariablesInstance(variables, null, "1604-MVM-26", "CorporationNotPresent", null);
 
 		WorkflowResponse workflowResponse = executeWorkFlow(processEngineRule, "GenericGetService", variables);
-		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceID());
+		waitForWorkflowToFinish(processEngineRule, workflowResponse.getProcessInstanceId());
 
 		String successIndicator = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_SuccessIndicator");
 		String found = BPMNUtil.getVariable(processEngineRule, "GenericGetService", "GENGS_FoundIndicator");

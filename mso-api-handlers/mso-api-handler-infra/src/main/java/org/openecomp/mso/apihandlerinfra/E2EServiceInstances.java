@@ -985,7 +985,7 @@ public class E2EServiceInstances {
 			HashMap<String, String> instanceIdMap) {
 		// BPMN accepted the request, the request is in progress
 		if (bpelStatus == HttpStatus.SC_ACCEPTED) {
-			String camundaJSONResponseBody = respHandler.getResponseBody();
+			String camundaJSONResponseBody = respHandler.getContent();
 			msoLogger.debug("Received from Camunda: " + camundaJSONResponseBody);
 			msoLogger.recordAuditEvent(startTime,
 					MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
@@ -996,7 +996,7 @@ public class E2EServiceInstances {
 		} else {
 			List<String> variables = new ArrayList<>();
 			variables.add(bpelStatus + "");
-			String camundaJSONResponseBody = respHandler.getResponseBody();
+			String camundaJSONResponseBody = respHandler.getContent();
 			if (camundaJSONResponseBody != null
 					&& !camundaJSONResponseBody.isEmpty()) {
 				Response resp = msoRequest.buildServiceErrorResponse(

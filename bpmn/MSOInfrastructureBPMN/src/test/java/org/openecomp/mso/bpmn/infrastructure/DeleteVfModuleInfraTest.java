@@ -546,7 +546,7 @@ public class DeleteVfModuleInfraTest extends WorkflowTest {
 		TestAsyncResponse asyncResponse = invokeAsyncProcess("DeleteVfModuleInfra",
 				"v1", businessKey, deleteVfModuleRequest, variables);
 		WorkflowResponse response = receiveResponse(businessKey, asyncResponse, 10000);
-		String responseBody = response.getResponse();
+		String responseBody = response.getContent();
 		System.out.println("Workflow (Synch) Response:\n" + responseBody);
 
 		// "changedelete" operation not required for deleting a Vf Module
