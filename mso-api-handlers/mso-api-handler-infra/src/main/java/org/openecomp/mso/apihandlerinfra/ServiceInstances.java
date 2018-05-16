@@ -984,15 +984,15 @@ public class ServiceInstances {
 		RequestParameters reqParam = msoRequest.getServiceInstancesRequest().getRequestDetails().getRequestParameters();
 		if(reqParam!=null && reqParam.isaLaCarte()!=null && reqParam.isaLaCarte() && recipe==null){
 			return null;
+		} else if (recipe==null) {
+			//aLaCarte wasn't sent, so we'll try the default
+			serviceRecord = db.getServiceByModelName(defaultSourceServiceModelName);
+			if (serviceRecord == null) {
+				serviceRecord = db.getServiceByModelName(defaultServiceModelName);
+			}
+			recipe = db.getServiceRecipeByModelUUID(serviceRecord.getModelUUID(), action.name());
 		}
 
-		//aLaCarte wasn't sent, so we'll try the default
-		serviceRecord = db.getServiceByModelName(defaultSourceServiceModelName);
-		if (serviceRecord == null) {
-			serviceRecord = db.getServiceByModelName(defaultServiceModelName);
-		}
-
-		recipe = db.getServiceRecipeByModelUUID(serviceRecord.getModelUUID(), action.name());
 		if(modelInfo.getModelVersionId() == null) {
 			modelInfo.setModelVersionId(serviceRecord.getModelUUID());
 		}
