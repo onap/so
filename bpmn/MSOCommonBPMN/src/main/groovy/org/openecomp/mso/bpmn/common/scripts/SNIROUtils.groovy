@@ -294,8 +294,8 @@ class SNIROUtils{
 		if(isBlank(response)){
 			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, "Sniro Async Callback Response is Empty")
 		}else{
-			if(JsonUtils.jsonElementExist(response, "solutionInfo.placementInfo")){
-				placements = jsonUtil.getJsonValue(response, "solutionInfo.placementInfo")
+			if(JsonUtils.jsonElementExist(response, "solutionInfo.placement")){
+				placements = jsonUtil.getJsonValue(response, "solutionInfo.placement")
 				if(isBlank(placements) || placements.equalsIgnoreCase("[]")){
 					String statusMessage = jsonUtil.getJsonValue(response, "statusMessage")
 					if(isBlank(statusMessage)){
