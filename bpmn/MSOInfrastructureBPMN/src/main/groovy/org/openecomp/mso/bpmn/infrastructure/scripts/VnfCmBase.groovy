@@ -277,11 +277,19 @@ public abstract class VnfCmBase extends AbstractServiceTaskProcessor {
 				}
 			}
 						
-			if (cloudRegionId != null) {			
-				AAIUri cloudRegionUri = AAIUriFactory.createResourceUri(AAIObjectType.DEFAULT_CLOUD_REGION, cloudRegionId)				
+			if (cloudRegionId != null) {
+				String cloudOwnerId = "att-aic"; 
+				try {
+				    cloudOwnerId = execution.getVariable("URN_mso_default_cloud_owner_id");
+				    if (cloudOwnerId == null) cloudOwnerId = "att-aic";
+				} catch (RuntimeException e) {
+					cloudOwnerId = "att-aic"; 
+				}
+				
+				AAIUri cloudRegionUri = AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION, cloudOwnerId, cloudRegionId)				
 				// Check if this client region exists
 				if (!client.exists(cloudRegionUri)) {
-					logDebug("Cloud Region with cloudRegionId " + cloudRegionId + " does not exist in A&AI", isDebugLogEnabled)
+					logDebug("Cloud Region with cloudOwner ID " + cloudOwnerId + " and cloudRegionId " + cloudRegionId + " does not exist in A&AI", isDebugLogEnabled)
 					exceptionUtil.buildAndThrowWorkflowException(execution, 404, "Cloud Region with cloudRegionId " + cloudRegionId + " does not exist in A&AI")
 				}
 			
