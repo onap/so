@@ -38,4 +38,12 @@
     <property name="locations" value="classpath:dmaap.properties"/>
   </bean>
 
+  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <property name="locations" value="classpath:pnf.properties"/>
+  </bean>
+
+  <bean id="pnfCheckInputs" class="org.openecomp.mso.bpmn.infrastructure.pnf.delegate.PnfCheckInputs">
+    <property name="defaultTimeout" value="${defaultTimeout}"/>
+  </bean>
+
 </beans>
