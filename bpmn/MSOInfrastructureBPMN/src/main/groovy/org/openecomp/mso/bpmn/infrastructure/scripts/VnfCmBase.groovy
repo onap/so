@@ -278,11 +278,14 @@ public abstract class VnfCmBase extends AbstractServiceTaskProcessor {
 			}
 						
 			if (cloudRegionId != null) {			
-				AAIUri cloudRegionUri = AAIUriFactory.createResourceUri(AAIObjectType.DEFAULT_CLOUD_REGION, cloudRegionId)				
+				AAIUri cloudRegionUri = AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION, cloudRegionId)				
 				// Check if this client region exists
 				if (!client.exists(cloudRegionUri)) {
-					logDebug("Cloud Region with cloudRegionId " + cloudRegionId + " does not exist in A&AI", isDebugLogEnabled)
-					exceptionUtil.buildAndThrowWorkflowException(execution, 404, "Cloud Region with cloudRegionId " + cloudRegionId + " does not exist in A&AI")
+					AAIUri defaultCloudRegionId = AAIUriFactory.createResourceUri(AAIObjectType.DEFAULT_CLOUD_REGION, cloudRegionId)
+					if (!client.exists(defaultCloudRegionId)) {
+						logDebug("Cloud Region with cloudRegionId " + cloudRegionId + " does not exist in A&AI", isDebugLogEnabled)
+						exceptionUtil.buildAndThrowWorkflowException(execution, 404, "Cloud Region with cloudRegionId " + cloudRegionId + " does not exist in A&AI")
+					}
 				}
 			
 				AAIResultWrapper aaiRWCloud = client.get(cloudRegionUri)
