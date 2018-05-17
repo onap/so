@@ -596,23 +596,34 @@ public class ToscaResourceInstaller {// implements IVfResourceInstaller {
             
             List<NodeTemplate> allottedResourceList = toscaResourceStruct.getSdcCsarHelper().getAllottedResources();
         	
-        		if(allottedResourceList != null){
-        		
-        			for(NodeTemplate allottedNode : allottedResourceList){
-					
-        				createAllottedResource(allottedNode, toscaResourceStruct);
-					
-        				catalogDB.saveAllottedResource(toscaResourceStruct.getAllottedResource());
-					
-        				catalogDB.saveAllottedResourceCustomization(toscaResourceStruct.getCatalogAllottedResourceCustomization());
-        				
-        				catalogDB.saveServiceToResourceCustomization(toscaResourceStruct.getCatalogAllottedServiceToResourceCustomization());
-					
-        			}
-        		}
-        		
+			if(allottedResourceList != null){
 
-        	List<NodeTemplate> nodeTemplatesVLList = toscaResourceStruct.getSdcCsarHelper().getServiceVlList();
+				for(NodeTemplate allottedNode : allottedResourceList){
+
+					createAllottedResource(allottedNode, toscaResourceStruct);
+
+					catalogDB.saveAllottedResource(toscaResourceStruct.getAllottedResource());
+
+					catalogDB.saveAllottedResourceCustomization(toscaResourceStruct.getCatalogAllottedResourceCustomization());
+
+					catalogDB.saveServiceToResourceCustomization(toscaResourceStruct.getCatalogAllottedServiceToResourceCustomization());
+
+				}
+			}
+
+			// handle VF resource
+			List<NodeTemplate> serviceVfList = toscaResourceStruct.getSdcCsarHelper().getServiceVfList();
+			if (serviceVfList != null) {
+				for (NodeTemplate vfNode : serviceVfList) {
+					createVnfResource(vfNode, toscaResourceStruct);
+					catalogDB.saveVnfResource(toscaResourceStruct.getCatalogVnfResource());
+					catalogDB.saveVnfResourceCustomization(toscaResourceStruct.getCatalogVnfResourceCustomization());
+					catalogDB.saveServiceToResourceCustomization(toscaResourceStruct.getCatalogVfServiceToResourceCustomization());
+				}
+			}
+
+
+			List<NodeTemplate> nodeTemplatesVLList = toscaResourceStruct.getSdcCsarHelper().getServiceVlList();
 				
         		if(nodeTemplatesVLList != null){
 				
