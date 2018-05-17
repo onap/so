@@ -52,7 +52,7 @@ public class JsonUtilsTest {
 	public void entryArrayToMapTest() throws IOException {
 		JsonUtils utils = new JsonUtils();
 		String response = this.getJson("SNIROExample.json");
-		String entry = utils.getJsonValue(response, "solutionInfo.placementInfo");
+		String entry = utils.getJsonValue(response, "solutionInfo.placement");
 		JSONArray arr = new JSONArray(entry);
 		JSONObject homingDataJson = arr.getJSONObject(0);
 		JSONArray assignmentInfo = homingDataJson.getJSONArray("assignmentInfo");

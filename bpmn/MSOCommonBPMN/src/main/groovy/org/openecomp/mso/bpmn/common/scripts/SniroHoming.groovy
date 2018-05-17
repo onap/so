@@ -182,7 +182,7 @@ class SniroHoming extends AbstractServiceTaskProcessor {
             utils.logAudit("Sniro Async Callback Response is: " + response)
 
             sniroUtils.validateCallbackResponse(execution, response)
-            String placements = jsonUtil.getJsonValue(response, "solutionInfo.placementInfo")
+            String placements = jsonUtil.getJsonValue(response, "solutionInfo.placement")
 
             ServiceDecomposition decomposition = execution.getVariable("serviceDecomposition")
             utils.log("DEBUG", "Service Decomposition: " + decomposition, isDebugEnabled)
