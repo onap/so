@@ -3826,6 +3826,22 @@ public class CatalogDatabase implements Closeable {
             LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "saveOrUpdateAllottedResourceCustomization", null);
         }
     }
+
+    public void saveVnfResource (VnfResource vnfResource) {
+        long startTime = System.currentTimeMillis ();
+        LOGGER.debug ("Catalog database - save vnf Resource with Name " + vnfResource.getModelName());
+        try {
+            VnfResource existing = this.getVnfResourceByModelUuid(vnfResource.getModelUuid());
+            if (existing == null) {
+                this.getSession().save(vnfResource);
+            } else {
+                LOGGER.debug("Found existing vnfResource with this modelUuid - no need to save");
+            }
+
+        } finally {
+            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "saveOrUpdateVnfResourceCustomization", null);
+        }
+    }
     
     public void saveNetworkResource (NetworkResource networkResource) throws RecordNotFoundException {
         long startTime = System.currentTimeMillis ();
