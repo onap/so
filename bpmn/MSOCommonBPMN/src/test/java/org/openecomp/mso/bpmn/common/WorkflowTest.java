@@ -1526,7 +1526,7 @@ public class WorkflowTest {
 				}
 				else {
 					try {
-						String homingList = getJsonValue(content, "solutionInfo.placementInfo");
+						String homingList = getJsonValue(content, "solutionInfo.placement");
 						String licenseInfoList = getJsonValue(content, "solutionInfo.licenseInfo");
 						JSONArray placementArr = new JSONArray(homingList);
 						JSONArray licenseArr = new JSONArray(licenseInfoList);
@@ -1558,7 +1558,7 @@ public class WorkflowTest {
 						}
 						String newPlacementInfos = placementArr.toString();
 						String newLicenseInfos = licenseArr.toString();
-						content = updJsonValue(content, "solutionInfo.placementInfo", newPlacementInfos);
+						content = updJsonValue(content, "solutionInfo.placement", newPlacementInfos);
 						content = updJsonValue(content, "solutionInfo.licenseInfo", newLicenseInfos);
 					}
 					catch(Exception e) {
