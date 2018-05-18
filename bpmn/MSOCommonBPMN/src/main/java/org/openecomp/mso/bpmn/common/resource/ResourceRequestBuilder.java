@@ -94,7 +94,11 @@ public class ResourceRequestBuilder {
                 resourceInputsFromUui = JsonUtils.getJsonValue(resourceParameters, "requestInputs");
             }
         }
-        Map<String, Object> serviceInput =getJsonObject((String)JsonUtils.getJsonValue(serviceParameters, "requestInputs"), Map.class);
+        Map<String, Object> serviceInput = null;
+        if (JsonUtils.getJsonValue(serviceParameters, "requestInputs") != null) {
+            serviceInput = getJsonObject((String)JsonUtils.getJsonValue(serviceParameters, "requestInputs"), Map.class);
+        }
+
         Map<String, Object> resourceInputsFromUuiMap = getJsonObject(resourceInputsFromUui, Map.class);
 
         if (serviceInput == null) {
