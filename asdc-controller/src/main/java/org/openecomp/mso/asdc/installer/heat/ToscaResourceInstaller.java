@@ -1115,6 +1115,8 @@ public class ToscaResourceInstaller {// implements IVfResourceInstaller {
 		vnfResource.setToscaNodeType(testNull(vfNodeTemplate.getType()));
 		vnfResource.setAicVersionMax(testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_MAXINSTANCES)));
 		vnfResource.setAicVersionMin(testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_MININSTANCES)));
+		vnfResource.setCategory(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CATEGORY));
+		vnfResource.setCategory(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_SUBCATEGORY));
 		//vnfResource.setHeatTemplateArtifactUUId(toscaResourceStructure.getHeatTemplateUUID());
 		
 	//	vfNodeTemplate.getProperties()
