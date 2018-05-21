@@ -62,4 +62,9 @@
   </bean>
 
   <bean id="dmaapClient" class="org.openecomp.mso.bpmn.infrastructure.pnf.delegate.DmaapClientTestImpl"/>
+
+
+  <bean id="pnfCheckInputs" class="org.openecomp.mso.bpmn.infrastructure.pnf.delegate.PnfCheckInputs">
+    <property name="defaultTimeout" value="PT1S"/>
+  </bean>
 </beans>
