@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_12771a3d",
+        "filename": "adapters/mso-vfc-adapter/src/main/java/org/openecomp/mso/adapters/vfc/VfcManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 376,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2018-05-22T12:59:04Z",
+      "side": 1,
+      "message": "please use space character instead tab characters",
+      "range": {
+        "startLine": 348,
+        "startChar": 0,
+        "endLine": 376,
+        "endChar": 3
+      },
+      "revId": "77c3b7dbf5300f2d4e255a115a11afe1eefb61a0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
