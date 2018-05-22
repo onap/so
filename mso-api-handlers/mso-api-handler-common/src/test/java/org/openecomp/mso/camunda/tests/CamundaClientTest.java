@@ -24,7 +24,6 @@ package org.openecomp.mso.camunda.tests;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
-import java.util.UUID;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -42,11 +41,8 @@ import org.mockito.MockitoAnnotations;
 import org.openecomp.mso.apihandler.common.CommonConstants;
 import org.openecomp.mso.apihandler.common.RequestClient;
 import org.openecomp.mso.apihandler.common.RequestClientFactory;
+import org.openecomp.mso.apihandler.common.RequestClientParamater;
 import org.openecomp.mso.properties.MsoJavaProperties;
-
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
 
 /**
  * This class implements test methods of Camunda Beans.
@@ -66,8 +62,7 @@ public class CamundaClientTest {
     }
 
     @Test
-    public void tesCamundaPost() throws JsonGenerationException,
-    JsonMappingException, IOException {
+    public void tesCamundaPost() throws IOException {
         String responseBody ="{\"links\":[{\"method\":\"GET\",\"href\":\"http://localhost:9080/engine-rest/process-instance/2047c658-37ae-11e5-9505-7a1020524153\",\"rel\":\"self\"}],\"id\":\"2047c658-37ae-11e5-9505-7a1020524153\",\"definitionId\":\"dummy:10:73298961-37ad-11e5-9505-7a1020524153\",\"businessKey\":null,\"caseInstanceId\":null,\"ended\":true,\"suspended\":false}";
 
         HttpResponse mockResponse = createResponse(200, responseBody);
@@ -106,8 +101,6 @@ public class CamundaClientTest {
         mockHttpClient = Mockito.mock(HttpClient.class);
         Mockito.when(mockHttpClient.execute(Mockito.any(HttpPost.class)))
                 .thenReturn(mockResponse);
-
-        String reqXML = "<xml>test</xml>";
         String orchestrationURI = "/engine-rest/process-definition/key/dummy/start";
 
         MsoJavaProperties props = new MsoJavaProperties();
@@ -115,9 +108,7 @@ public class CamundaClientTest {
 
         RequestClient requestClient = RequestClientFactory.getRequestClient(orchestrationURI, props);
         requestClient.setClient(mockHttpClient);
-        HttpResponse response = requestClient.post("mso-req-id", false, 180,
-                "createInstance", "svc-inst-id", "vnf-id", "vf-module-id", "vg-id", "nw-id", "conf-id", "svc-type",
-                "vnf-type", "vf-module-type", "nw-type", "", "");
+        HttpResponse response = requestClient.post(createParams());
         assertEquals(requestClient.getType(), CommonConstants.CAMUNDA);
         assertEquals(response.getStatusLine().getStatusCode(), HttpStatus.SC_OK);
     }
@@ -135,6 +126,15 @@ public class CamundaClientTest {
             e.printStackTrace();
         }
         return response;
+    }
+
+    private RequestClientParamater createParams(){
+        return new RequestClientParamater.Builder().setRequestId("mso-req-id").setBaseVfModule(false).
+                setRecipeTimeout(180).setRequestAction("createInstance").setServiceInstanceId("svc-inst-id").
+                setVnfId("vnf-id").setVfModuleId("vf-module-id").setVolumeGroupId("vg-id").setNetworkId("nw-id").
+                setConfigurationId("conf-id").setServiceType("svc-type").setVnfType("vnf-type").
+                setVfModuleType("vf-module-type").setNetworkType("nw-type").setRequestDetails("").
+                setRecipeParamXsd("").build();
     }
 
 
