@@ -136,7 +136,7 @@ public class CreateAndActivatePnfResourceTest {
                 "WaitForDmaapPnfReadyNotification",
                 "AaiEntryUpdated"
         );
-        assertThat(aaiConnection.getCreated()).containsExactly(ID_WITHOUT_ENTRY);
+        assertThat(aaiConnection.getCreated()).containsOnlyKeys(ID_WITHOUT_ENTRY);
     }
 
     private List<HistoricVariableInstance> getVariables(ProcessInstance instance) {
