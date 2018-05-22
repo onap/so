@@ -83,7 +83,7 @@ public class ApplicationControllerClient {
 	
 	/**
 	 * Creates an ApplicationControllerClient for the specified controller type.
-	 * @param controllerType the controller type: "appc" or "sndnc".
+	 * @param controllerType the controller type: "appc" or "sdnc".
 	 */
 	public ApplicationControllerClient(String controllerType) {
 		this.controllerType = controllerType;
@@ -110,7 +110,7 @@ public class ApplicationControllerClient {
 	protected LifeCycleManagerStateful createAppCClient(String controllerType) {
 		try {
 			return AppcClientServiceFactoryProvider.getFactory(AppcLifeCycleManagerServiceFactory.class)
-					.createLifeCycleManagerStateful(new ApplicationContext(), getLCMProperties());
+					.createLifeCycleManagerStateful(new ApplicationContext(), getLCMProperties(controllerType));
 		} catch (AppcClientException e) {
 			auditLogger.log(Level.ERROR, "Error in getting LifeCycleManagerStateful: ", e, e.getMessage());
 			// This null value will cause NullPointerException when used later.
@@ -135,6 +135,10 @@ public class ApplicationControllerClient {
 	}
 
 	protected Properties getLCMProperties() {
+		return getLCMProperties("appc");
+	}
+	
+	protected Properties getLCMProperties(String controllerType) {
 		Properties properties = new Properties();
 		Map<String, String> globalProperties = PropertyConfiguration.getInstance()
 				.getProperties("mso.bpmn.urn.properties");
@@ -145,6 +149,7 @@ public class ApplicationControllerClient {
 		properties.put("topic.read.timeout", globalProperties.get("appc.client.topic.read.timeout"));
 		properties.put("client.response.timeout", globalProperties.get("appc.client.response.timeout"));
 		properties.put("poolMembers", globalProperties.get("appc.client.poolMembers"));
+		properties.put("client.controllerType", controllerType);
 		properties.put("client.key", globalProperties.get("appc.client.key"));
 		properties.put("client.secret", globalProperties.get("appc.client.secret"));
 		properties.put("client.name", CLIENT_NAME);
