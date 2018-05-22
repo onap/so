@@ -345,68 +345,65 @@ public class VfcManager {
    * @return
    * @since ONAP Amsterdam Release
    */
-  public RestfulResponse getNsProgress(NsOperationKey nsOperationKey, String jobId)
-      throws ApplicationException {
+	public RestfulResponse getNsProgress(NsOperationKey nsOperationKey, String jobId) throws ApplicationException {
 
-    ValidateUtil.assertObjectNotNull(jobId);
-    // Step 1: query the current resource operation status
-    ResourceOperationStatus nsOperInfo =
-        (RequestsDatabase.getInstance()).getResourceOperationStatus(nsOperationKey.getServiceId(),
-            nsOperationKey.getOperationId(), nsOperationKey.getNodeTemplateUUID());
+		ValidateUtil.assertObjectNotNull(jobId);
+		// Step 1: query the current resource operation status
+		ResourceOperationStatus nsOperInfo = (RequestsDatabase.getInstance()).getResourceOperationStatus(
+				nsOperationKey.getServiceId(), nsOperationKey.getOperationId(), nsOperationKey.getNodeTemplateUUID());
 
-    // Step 2: start query
-    LOGGER.info("query ns status -> begin");
-    String url = getUrl(jobId, CommonConstant.Step.QUERY);
-    String methodType = CommonConstant.MethodType.GET;
-    // prepare restful parameters and options
-    RestfulResponse rsp = RestfulUtil.send(url, methodType, "");
-    ValidateUtil.assertObjectNotNull(rsp);
-    LOGGER.info("query ns progress response status is : {}", rsp.getStatus());
-    LOGGER.info("query ns progress response content is : {}", rsp.getResponseContent());
-    // Step 3:check the response staus
-    if (!HttpCode.isSucess(rsp.getStatus())) {
-      LOGGER.info("fail to query job status");
-      nsOperInfo.setErrorCode(String.valueOf(rsp.getStatus()));
-      nsOperInfo.setStatus(RequestsDbConstant.Status.ERROR);
-      nsOperInfo.setStatusDescription(CommonConstant.StatusDesc.QUERY_JOB_STATUS_FAILED);
-      (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
-      throw new ApplicationException(HttpCode.INTERNAL_SERVER_ERROR,
-          DriverExceptionID.FAIL_TO_QUERY_JOB_STATUS);
-    }
-    // Step 4: Process Network Service Instantiate Response
-    NsProgressStatus nsProgress =
-        JsonUtil.unMarshal(rsp.getResponseContent(), NsProgressStatus.class);
-    ResponseDescriptor rspDesc = nsProgress.getResponseDescriptor();
-    // Step 5: update segment operation progress
+		// Step 2: start query
+		LOGGER.info("query ns status -> begin");
+		String url = getUrl(jobId, CommonConstant.Step.QUERY);
+		String methodType = CommonConstant.MethodType.GET;
+		// prepare restful parameters and options
+		RestfulResponse rsp = RestfulUtil.send(url, methodType, "");
+		ValidateUtil.assertObjectNotNull(rsp);
+		LOGGER.info("query ns progress response status is : {}", rsp.getStatus());
+		LOGGER.info("query ns progress response content is : {}", rsp.getResponseContent());
+		// Step 3:check the response staus
+		if (!HttpCode.isSucess(rsp.getStatus())) {
+			LOGGER.info("fail to query job status");
+			nsOperInfo.setErrorCode(String.valueOf(rsp.getStatus()));
+			nsOperInfo.setStatus(RequestsDbConstant.Status.ERROR);
+			nsOperInfo.setStatusDescription(CommonConstant.StatusDesc.QUERY_JOB_STATUS_FAILED);
+			(RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
+			throw new ApplicationException(HttpCode.INTERNAL_SERVER_ERROR, DriverExceptionID.FAIL_TO_QUERY_JOB_STATUS);
+		}
+		// Step 4: Process Network Service Instantiate Response
+		NsProgressStatus nsProgress = JsonUtil.unMarshal(rsp.getResponseContent(), NsProgressStatus.class);
+		ResponseDescriptor rspDesc = nsProgress.getResponseDescriptor();
+		// Step 5: update segment operation progress
 
-    nsOperInfo.setProgress(rspDesc.getProgress());
-    nsOperInfo.setStatusDescription(rspDesc.getStatusDescription());
-    (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
+		nsOperInfo.setProgress(rspDesc.getProgress());
+		nsOperInfo.setStatusDescription(rspDesc.getStatusDescription());
+		(RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
 
-    // Step 6: update segment operation status
-    if (RequestsDbConstant.Progress.ONE_HUNDRED.equals(rspDesc.getProgress())
-        && RequestsDbConstant.Status.FINISHED.equals(rspDesc.getStatus())) {
-      LOGGER.info("job result is succeeded, operType is {}", nsOperInfo.getOperType());
-      nsOperInfo.setErrorCode(String.valueOf(rsp.getStatus()));
-            if(RequestsDbConstant.OperationType.CREATE.equalsIgnoreCase(nsOperInfo.getOperType())) {
-        nsOperInfo.setStatus(RequestsDbConstant.Status.FINISHED);
-      }
-      (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
-    } else if (RequestsDbConstant.Status.ERROR.equals(rspDesc.getStatus())) {
-      LOGGER.error("job result is failed, operType is {}", nsOperInfo.getOperType());
-      nsOperInfo.setErrorCode(String.valueOf(rsp.getStatus()));
-      nsOperInfo.setStatusDescription(CommonConstant.StatusDesc.QUERY_JOB_STATUS_FAILED);
-      nsOperInfo.setStatus(RequestsDbConstant.Status.ERROR);
-      (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
-      throw new ApplicationException(HttpCode.INTERNAL_SERVER_ERROR,
-          DriverExceptionID.JOB_STATUS_ERROR);
-    } else {
-      LOGGER.error("unexcepted response status");
-    }
-    LOGGER.info("query ns status -> end");
+		// Step 6: update segment operation status
+		if (RequestsDbConstant.Progress.ONE_HUNDRED.equals(rspDesc.getProgress())
+				&& RequestsDbConstant.Status.FINISHED.equals(rspDesc.getStatus())) {
+			LOGGER.info("job result is succeeded, operType is {}", nsOperInfo.getOperType());
+			nsOperInfo.setErrorCode(String.valueOf(rsp.getStatus()));
+			String operType = nsOperInfo.getOperType();
+			if (RequestsDbConstant.OperationType.CREATE.equalsIgnoreCase(operType)
+					|| "createInstance".equalsIgnoreCase(operType)) {
+				nsOperInfo.setStatus(RequestsDbConstant.Status.FINISHED);
+			}
+			(RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
+		} else if (RequestsDbConstant.Status.ERROR.equals(rspDesc.getStatus())) {
+			LOGGER.error("job result is failed, operType is {}", nsOperInfo.getOperType());
+			nsOperInfo.setErrorCode(String.valueOf(rsp.getStatus()));
+			nsOperInfo.setStatusDescription(CommonConstant.StatusDesc.QUERY_JOB_STATUS_FAILED);
+			nsOperInfo.setStatus(RequestsDbConstant.Status.ERROR);
+			(RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
+			throw new ApplicationException(HttpCode.INTERNAL_SERVER_ERROR, DriverExceptionID.JOB_STATUS_ERROR);
+		} else {
+			LOGGER.error("unexcepted response status");
+		}
+		LOGGER.info("query ns status -> end");
 
-    return rsp;
-  }
+		return rsp;
+	}
 
     /**
      * Scale NS instance
