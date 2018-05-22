@@ -373,40 +373,40 @@ public class VfcManager {
       throw new ApplicationException(HttpCode.INTERNAL_SERVER_ERROR,
           DriverExceptionID.FAIL_TO_QUERY_JOB_STATUS);
     }
-    // Step 4: Process Network Service Instantiate Response
-    NsProgressStatus nsProgress =
-        JsonUtil.unMarshal(rsp.getResponseContent(), NsProgressStatus.class);
-    ResponseDescriptor rspDesc = nsProgress.getResponseDescriptor();
-    // Step 5: update segment operation progress
+		// Step 4: Process Network Service Instantiate Response
+		NsProgressStatus nsProgress = JsonUtil.unMarshal(rsp.getResponseContent(), NsProgressStatus.class);
+		ResponseDescriptor rspDesc = nsProgress.getResponseDescriptor();
+		// Step 5: update segment operation progress
 
-    nsOperInfo.setProgress(rspDesc.getProgress());
-    nsOperInfo.setStatusDescription(rspDesc.getStatusDescription());
-    (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
+		nsOperInfo.setProgress(rspDesc.getProgress());
+		nsOperInfo.setStatusDescription(rspDesc.getStatusDescription());
+		(RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
 
-    // Step 6: update segment operation status
-    if (RequestsDbConstant.Progress.ONE_HUNDRED.equals(rspDesc.getProgress())
-        && RequestsDbConstant.Status.FINISHED.equals(rspDesc.getStatus())) {
-      LOGGER.info("job result is succeeded, operType is {}", nsOperInfo.getOperType());
-      nsOperInfo.setErrorCode(String.valueOf(rsp.getStatus()));
-            if(RequestsDbConstant.OperationType.CREATE.equalsIgnoreCase(nsOperInfo.getOperType())) {
-        nsOperInfo.setStatus(RequestsDbConstant.Status.FINISHED);
-      }
-      (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
-    } else if (RequestsDbConstant.Status.ERROR.equals(rspDesc.getStatus())) {
-      LOGGER.error("job result is failed, operType is {}", nsOperInfo.getOperType());
-      nsOperInfo.setErrorCode(String.valueOf(rsp.getStatus()));
-      nsOperInfo.setStatusDescription(CommonConstant.StatusDesc.QUERY_JOB_STATUS_FAILED);
-      nsOperInfo.setStatus(RequestsDbConstant.Status.ERROR);
-      (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
-      throw new ApplicationException(HttpCode.INTERNAL_SERVER_ERROR,
-          DriverExceptionID.JOB_STATUS_ERROR);
-    } else {
-      LOGGER.error("unexcepted response status");
-    }
-    LOGGER.info("query ns status -> end");
+		// Step 6: update segment operation status
+		if (RequestsDbConstant.Progress.ONE_HUNDRED.equals(rspDesc.getProgress())
+				&& RequestsDbConstant.Status.FINISHED.equals(rspDesc.getStatus())) {
+			LOGGER.info("job result is succeeded, operType is {}", nsOperInfo.getOperType());
+			nsOperInfo.setErrorCode(String.valueOf(rsp.getStatus()));
+			String operType = nsOperInfo.getOperType();
+			if (RequestsDbConstant.OperationType.CREATE.equalsIgnoreCase(operType)
+					|| "createInstance".equalsIgnoreCase(operType)) {
+				nsOperInfo.setStatus(RequestsDbConstant.Status.FINISHED);
+			}
+			(RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
+		} else if (RequestsDbConstant.Status.ERROR.equals(rspDesc.getStatus())) {
+			LOGGER.error("job result is failed, operType is {}", nsOperInfo.getOperType());
+			nsOperInfo.setErrorCode(String.valueOf(rsp.getStatus()));
+			nsOperInfo.setStatusDescription(CommonConstant.StatusDesc.QUERY_JOB_STATUS_FAILED);
+			nsOperInfo.setStatus(RequestsDbConstant.Status.ERROR);
+			(RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
+			throw new ApplicationException(HttpCode.INTERNAL_SERVER_ERROR, DriverExceptionID.JOB_STATUS_ERROR);
+		} else {
+			LOGGER.error("unexcepted response status");
+		}
+		LOGGER.info("query ns status -> end");
 
-    return rsp;
-  }
+		return rsp;
+	}
 
     /**
      * Scale NS instance
