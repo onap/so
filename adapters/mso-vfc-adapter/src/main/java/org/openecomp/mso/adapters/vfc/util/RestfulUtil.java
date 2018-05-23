@@ -38,11 +38,11 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.openecomp.mso.adapters.vfc.model.RestfulResponse;
-import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoAlarmLogger;
-import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.properties.MsoPropertiesException;
 import org.openecomp.mso.properties.MsoPropertiesFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <br>
@@ -58,7 +58,7 @@ public class RestfulUtil {
     /**
      * Log service
      */
-    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
+    private static final Logger LOGGER =  LoggerFactory.getLogger(RestfulUtil.class);
 
     private static final MsoAlarmLogger ALARMLOGGER = new MsoAlarmLogger();
 
@@ -83,7 +83,7 @@ public class RestfulUtil {
                 msbPort = msoPropertiesFactory.getMsoJavaProperties("MSO_PROP_TOPOLOGY").getProperty("msb-port", DEFAULT_MSB_PORT);
             }
         } catch(MsoPropertiesException e) {
-            LOGGER.error(MessageEnum.RA_NS_EXC, "VFC Adapter", "", MsoLogger.ErrorCode.AvailabilityError, "Get msb properties failed",e);
+            LOGGER.error("Get msb properties failed",e);
             e.printStackTrace();
         }
         return "http://" + msbIp + ":" + msbPort;
@@ -95,7 +95,7 @@ public class RestfulUtil {
 
     public static RestfulResponse send(String url, String methodType, String content) {
         String msbUrl = getMsbHost() + url;
-        LOGGER.info(MessageEnum.RA_NS_EXC, "Begin to sent message " + methodType +": " + msbUrl, "org.openecomp.mso.adapters.vfc.util.RestfulUtil","VFC Adapter");
+        LOGGER.info("Begin to sent message " + methodType +": " + msbUrl);
 
         HttpRequestBase method = null;
         HttpResponse httpResponse = null;
@@ -196,12 +196,12 @@ public class RestfulUtil {
     }
 
     private static void logError(String errMsg, Throwable t) {
-        LOGGER.error(MessageEnum.RA_NS_EXC, "VFC Adapter", "", MsoLogger.ErrorCode.AvailabilityError, errMsg, t);
+        LOGGER.error(errMsg, t);
         ALARMLOGGER.sendAlarm("MsoInternalError", MsoAlarmLogger.CRITICAL, errMsg);
     }
 
     private static void logError(String errMsg) {
-        LOGGER.error(MessageEnum.RA_NS_EXC, "VFC Adapter", "", MsoLogger.ErrorCode.AvailabilityError, errMsg);
+        LOGGER.error(errMsg);
         ALARMLOGGER.sendAlarm("MsoInternalError", MsoAlarmLogger.CRITICAL, errMsg);
     }
 
