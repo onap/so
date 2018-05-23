@@ -123,7 +123,7 @@ public class DoScaleVFCNetworkServiceInstance extends AbstractServiceTaskProcess
             String isScaleFinished = ""
 
             // query the requested network service scale status, if finished, then start the next one, otherwise, wait
-            while (isScaleFinished != "finished"){
+            while (isScaleFinished != "finished" && isScaleFinished != "error"){
                 timeDelay()
                 queryNSProgress(execution)
                 isScaleFinished = execution.getVariable("operationStatus")
