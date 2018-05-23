@@ -12,7 +12,7 @@ Get the Ubuntu ISO image from ubuntu.com. The recommended version is 16.04.3 LTS
 Get VirtualBox and VirtualBox Guest Additions
 ---------------------------------------------
 Make sure you have the VirtualBox Guest Additions ISO for your version of VirtualBox.  I'm using VirtualBox 5.1.28.  Save the Guest Additions ISO on your host computer along with the Ubuntu ISO.  Get the Guest Additions ISO from here:
-	http://download.virtualbox.org/virtualbox
+    http://download.virtualbox.org/virtualbox
 *NOTE*: Guest Additions versions prior to 5.1 will not work with Ubuntu 16.04.3.  If you have an earlier version of VirtualBox, you should upgrade to the latest 5.1 version.
 
 Create a new VM in VirtualBox for Ubuntu

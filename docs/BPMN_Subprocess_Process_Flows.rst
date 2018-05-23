@@ -22,7 +22,7 @@ Characteristics
 
     The current best practice for reporting errors from subprocess is described here:
 	
-	* The subprocess should create a WorkflowException object and store it in an execution called WorkflowException.
+    * The subprocess should create a WorkflowException object and store it in an execution called WorkflowException.
     * The WorkflowException object contains an error code and an error message.
     * The subprocess should then throw an MSOWorkflowException BPMN event which may be handled by the calling flow.
 	
