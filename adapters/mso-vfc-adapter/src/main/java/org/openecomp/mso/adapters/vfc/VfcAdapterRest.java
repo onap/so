@@ -180,6 +180,33 @@ public class VfcAdapterRest {
         }
     }
 
+	  /**
+     * Scale NS instance
+     * <br>
+     * 
+     * @param servletReq The http request
+     * @param nsInstanceId The NS instance id
+     * @return
+     * @since ONAP Amsterdam Release
+     */
+    @POST
+    @Path("/ns/{nsInstanceId}/scale")
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public Response scaleNfvoNs(String data, @PathParam("nsInstanceId") String nsInstanceId) {
+    	try {
+    		ValidateUtil.assertObjectNotNull(data);
+            LOGGER.debug("Scale Ns Request Received.Body from request is {}" + data);
+    		NSResourceInputParameter nsInput = JsonUtil.unMarshal(data, NSResourceInputParameter.class);
+    		RestfulResponse rsp = driverMgr.scaleNs(nsInstanceId, nsInput);
+    		return buildResponse(rsp);
+    	} catch(ApplicationException e) {
+		    LOGGER.debug("ApplicationException: ", e);
+    		return e.buildErrorResponse();
+    	}
+    }
+
+
     /**
      * build response from restful response <br>
      * 
