@@ -731,11 +731,7 @@ public class OofHomingTest extends WorkflowTest {
                 "\"serviceName\":\"null\",\"modelInfo\":{\"modelType\":\"\",\"modelInvariantId\":" +
                 "\"testModelInvariantId\",\"modelVersionId\":\"testModelUuid\",\"modelName\":\"testModelName\"," +
                 "\"modelVersion\":\"testModelVersion\",\"modelCustomizationName\":\"" +
-                "\"}},\"licenseInfo\":{\"licenseDemands\":[{\"resourceModuleName\":\"VNF\",\"serviceResourceId\":" +
-                "\"testResourceIdVNF\",\"resourceInstanceType\":\"VNF\",\"resourceModelInfo\":{\"modelInvariantId\":" +
-                "\"testModelInvariantIdVNF\",\"modelVersionId\":\"testVnfModelUuid\",\"modelName\":" +
-                "\"testModelNameVNF\",\"modelType\":\"testModelTypeVNF\",\"modelVersion\":\"testModelVersionVNF\"," +
-                "\"modelCustomizationName\":\"\"}}]}}";
+                "\"}}}";
         return request;
     }
 

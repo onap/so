@@ -143,6 +143,7 @@ class OofUtils {
             placementDemands = placementDemands.substring(0, placementDemands.length() - 1)
         }
 
+        /* Commenting Out Licensing as OOF doesn't support for Beijing
         String licenseDemands = ""
         sb = new StringBuilder()
         if (vnfResourceList.isEmpty() || vnfResourceList == null) {
@@ -185,7 +186,7 @@ class OofUtils {
                 licenseDemands = sb.append(licenseDemand)
             }
             licenseDemands = licenseDemands.substring(0, licenseDemands.length() - 1)
-        }
+        }*/
 
         String request =
                 "{\n" +
@@ -225,12 +226,7 @@ class OofUtils {
                 "      \"modelVersion\": \"${modelVersion}\",\n" +
                 "      \"modelCustomizationName\": \"\"\n" +
                 "    }\n" +
-                "  },\n" +
-                "  \"licenseInfo\": {\n" +
-                "    \"licenseDemands\": [\n" +
-                "      ${licenseDemands}\n" +
-                "      }]\n" +
-                "    }\n" +
+                "  }\n" +
                 "}"
 
 
