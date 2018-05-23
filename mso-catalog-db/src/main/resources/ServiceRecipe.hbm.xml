@@ -44,7 +44,7 @@
           <column name="CREATION_TIMESTAMP" default="CURRENT_TIMESTAMP"/>
         </property>
 
-		<property name="action" 				column="ACTION" 					type="string" 			length="20" insert="false" update="false" />
+		<property name="action" 				column="ACTION" 					type="string" 			length="40" insert="false" update="false" />
 		<property name="version" 				column="VERSION_STR" 				type="string" 			length="20"/>
 		<property name="description" 			column="DESCRIPTION" 				type="string" 			length="1200"/>
 		<property name="serviceParamXSD" 		column="SERVICE_PARAM_XSD" 			type="string" 			length="2048"/>

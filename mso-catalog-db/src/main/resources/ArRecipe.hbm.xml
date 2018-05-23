@@ -37,7 +37,7 @@
 			     <column name="MODEL_NAME" not-null="true" length="20"/>
 			</property>
 			<property name="action" type="string" >
-			     <column name="ACTION" not-null="true" length="20"/>
+			     <column name="ACTION" not-null="true" length="40"/>
 			</property>
 			<property name="version" type="string">
 			     <column name="VERSION_STR" not-null="true" length="20"/>

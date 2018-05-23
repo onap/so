@@ -37,7 +37,7 @@
 				<column name="VNF_COMPONENT_TYPE" not-null="true" length="45"/>
 			</property>
 			<property name="action" type="string">
-			     <column name="ACTION" not-null="true" length="20"/>
+			     <column name="ACTION" not-null="true" length="40"/>
 			</property>
 			<property name="serviceType" column="SERVICE_TYPE" type="string" length="45"/>
 			<property name="version" column="VERSION" type="string" length="20"/>
