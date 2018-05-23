@@ -70,7 +70,7 @@
 			     <column name="MODEL_ID" not-null="true"/>
 			</property>
 			<property name="action" type="string" >
-			     <column name="ACTION" not-null="true" length="20"/>
+			     <column name="ACTION" not-null="true" length="40"/>
 			</property>
 		</properties>
 		<property name="schemaVersion" column="SCHEMA_VERSION" type="string" length="20"/>
