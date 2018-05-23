@@ -142,8 +142,13 @@ public class ApplicationControllerClient {
 		Properties properties = new Properties();
 		Map<String, String> globalProperties = PropertyConfiguration.getInstance()
 				.getProperties("mso.bpmn.urn.properties");
-		properties.put("topic.read", globalProperties.get("appc.client.topic.read"));
-		properties.put("topic.write", globalProperties.get("appc.client.topic.write"));
+		if (controllerType==null || controllerType.length()==0 || controllerType.equalsIgnoreCase("appc")) {
+			properties.put("topic.read", globalProperties.get("appc.client.topic.read"));
+			properties.put("topic.write", globalProperties.get("appc.client.topic.write"));
+		} else {
+			properties.put("topic.read", globalProperties.get("appc.client.topic." + controllerType + ".read"));
+			properties.put("topic.write", globalProperties.get("appc.client.topic." + controllerType + ".write"));
+		}
 		properties.put("topic.sdnc.read", globalProperties.get("appc.client.topic.sdnc.read"));
 		properties.put("topic.sdnc.write", globalProperties.get("appc.client.topic.sdnc.write"));
 		properties.put("sdnc-topic.read", globalProperties.get("appc.client.topic.sdnc.read"));
