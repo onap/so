@@ -139,29 +139,35 @@ public class MsoPropertiesFactory implements Serializable {
                                          String propertiesFilePath) throws MsoPropertiesException {
              
         rwl.writeLock ().lock ();
-        
-        String msoPropPath="none";
-        MsoPropertiesParameters msoPropertiesParams=new MsoPropertiesParameters();
         try {
-        	msoPropPath = prefixMsoPropertiesPath + propertiesFilePath; 
-        	if (msoPropertiesCache.get (msoPropertiesID) != null) {
-                throw new MsoPropertiesException ("The factory contains already an instance of this mso properties: "
-                                                  + msoPropPath);
+            tryInitializeMsoProperties(msoPropertiesID, propertiesFilePath);
+        }finally {
+            rwl.writeLock().unlock();
+        }
+    }
+
+    private void tryInitializeMsoProperties(String msoPropertiesID, String propertiesFilePath) throws MsoPropertiesException {
+        String msoPropPath = "none";
+        MsoPropertiesParameters msoPropertiesParams = new MsoPropertiesParameters();
+        try {
+            msoPropPath = prefixMsoPropertiesPath + propertiesFilePath;
+            if (msoPropertiesCache.get(msoPropertiesID) != null) {
+                throw new MsoPropertiesException("The factory contains already an instance of this mso properties: "
+                        + msoPropPath);
             }
-        	// Create the global MsoProperties object
-        	msoPropertiesParams = createObjectType(msoPropertiesParams, msoPropPath);
+            // Create the global MsoProperties object
+            msoPropertiesParams = createObjectType(msoPropertiesParams, msoPropPath);
 
         } catch (FileNotFoundException e) {
-            throw new MsoPropertiesException ("Unable to load the MSO properties file because it has not been found:"
-                                              + msoPropPath, e);
+            throw new MsoPropertiesException("Unable to load the MSO properties file because it has not been found:"
+                    + msoPropPath, e);
 
         } catch (IOException e) {
-            throw new MsoPropertiesException ("Unable to load the MSO properties file because IOException occurs: "
-                                              + msoPropPath, e);
+            throw new MsoPropertiesException("Unable to load the MSO properties file because IOException occurs: "
+                    + msoPropPath, e);
         } finally {
-        	// put it in all cases, just to not forget about him and attempt a default reload
-        	msoPropertiesCache.put (msoPropertiesID, msoPropertiesParams);
-            rwl.writeLock ().unlock ();
+            // put it in all cases, just to not forget about him and attempt a default reload
+            msoPropertiesCache.put(msoPropertiesID, msoPropertiesParams);
         }
     }
 
