@@ -74,6 +74,8 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
         execution.setVariable("brgWanMacAddress", "")
         execution.setVariable("customerLocation", "")
         execution.setVariable("homingService", "")
+        execution.setVariable("cloudOwner", "")
+        execution.setVariable("cloudRegionId", "")
 
         //TODO
         execution.setVariable("sdncVersion", "1707")
@@ -168,6 +170,17 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
             String subscriberInfo = jsonUtil.getJsonValue(createVcpeServiceRequest, "requestDetails.subscriberInfo")
             execution.setVariable("subscriberInfo", subscriberInfo)
             utils.log("DEBUG", "Incoming subscriberInfo is: " + subscriberInfo, isDebugEnabled)
+
+            // extract cloud configuration, split vid_ID into cloudOwner and cloudRegionId
+            String vimId = jsonUtil.getJsonValue(createVcpeServiceRequest,
+                    "requestDetails.cloudConfiguration.lcpCloudRegionId")
+            def cloudRegion = vimId.split("_")
+            def cloudOwner = cloudRegion[0].toString()
+            def cloudRegionId = cloudRegion[1].toString()
+            execution.setVariable("cloudOwner", cloudOwner)
+            utils.log("DEBUG","cloudOwner: " + cloudOwner, isDebugEnabled)
+            execution.setVariable("cloudRegionId", cloudRegionId)
+            utils.log("DEBUG","cloudRegionId: " + cloudRegionId, isDebugEnabled)
 
             /*
             * Extracting User Parameters from incoming Request and converting into a Map
