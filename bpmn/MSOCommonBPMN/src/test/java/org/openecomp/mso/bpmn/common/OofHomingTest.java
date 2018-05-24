@@ -549,7 +549,8 @@ public class OofHomingTest extends WorkflowTest {
         variables.put("isDebugLogEnabled", "true");
         //	variables.put("mso-request-id", "testRequestId");
         variables.put("msoRequestId", "testRequestId");
-        variables.put("serviceInstanceId", "testServiceInstanceId");
+        variables.put("serviceInstanceId", "testServiceInstanceId123");
+        variables.put("serviceInstanceName", "testServiceName");
         variables.put("serviceDecomposition", serviceDecomposition);
         variables.put("subscriberInfo", subscriber2);
     }
@@ -590,7 +591,8 @@ public class OofHomingTest extends WorkflowTest {
         variables.put("cloudRegionId", "TNZED");
         variables.put("isDebugLogEnabled", "true");
         variables.put("msoRequestId", "testRequestId");
-        variables.put("serviceInstanceId", "testServiceInstanceId");
+        variables.put("serviceInstanceId", "testServiceInstanceId123");
+        variables.put("serviceInstanceName", "testServiceName");
         variables.put("serviceDecomposition", serviceDecomposition);
         variables.put("subscriberInfo", subscriber2);
     }
@@ -610,7 +612,8 @@ public class OofHomingTest extends WorkflowTest {
         variables.put("isDebugLogEnabled", "true");
         //	variables.put("mso-request-id", "testRequestId");
         variables.put("msoRequestId", "testRequestId");
-        variables.put("serviceInstanceId", "testServiceInstanceId");
+        variables.put("serviceInstanceId", "testServiceInstanceId123");
+        variables.put("serviceInstanceName", "testServiceName");
         variables.put("serviceDecomposition", null);
         variables.put("subscriberInfo", subscriber2);
     }
@@ -719,16 +722,16 @@ public class OofHomingTest extends WorkflowTest {
                 "{\"globalSubscriberId\":\"SUB12_0322_DS_1201\",\"subscriberName\":\"SUB_12_0322_DS_1201\"," +
                 "\"subscriberCommonSiteId\":\"\"},\"placementDemands\":[{\"resourceModuleName\":\"ALLOTTED_RESOURCE\"" +
                 ",\"serviceResourceId\":\"testResourceIdAR\",\"tenantId\":" +
-                "\"null\",\"resourceModelInfo\":{\"modelInvariantId\":\"testModelInvariantIdAR\"," +
+                "\"\",\"resourceModelInfo\":{\"modelInvariantId\":\"testModelInvariantIdAR\"," +
                 "\"modelVersionId\":\"testARModelUuid\",\"modelName\":\"testModelNameAR\",\"modelType\":" +
                 "\"testModelTypeAR\",\"modelVersion\":\"testModelVersionAR\",\"modelCustomizationName\":\"\"}}," +
                 "{\"resourceModuleName\":\"ALLOTTED_RESOURCE\",\"serviceResourceId\":\"testResourceIdAR2\"," +
-                "\"tenantId\":\"null\",\"resourceModelInfo\":{\"modelInvariantId\":\"testModelInvariantIdAR2\"," +
+                "\"tenantId\":\"\",\"resourceModelInfo\":{\"modelInvariantId\":\"testModelInvariantIdAR2\"," +
                 "\"modelVersionId\":\"testAr2ModelUuid\",\"modelName\":\"testModelNameAR2\"," +
                 "\"modelType\":\"testModelTypeAR2\",\"modelVersion\":\"testModelVersionAR2\"," +
                 "\"modelCustomizationName\":\"\"}}]},\"serviceInfo\":" +
                 "{\"serviceInstanceId\":\"testServiceInstanceId123\"," +
-                "\"serviceName\":\"null\",\"modelInfo\":{\"modelType\":\"\",\"modelInvariantId\":" +
+                "\"serviceName\":\"testServiceName\",\"modelInfo\":{\"modelType\":\"\",\"modelInvariantId\":" +
                 "\"testModelInvariantId\",\"modelVersionId\":\"testModelUuid\",\"modelName\":\"testModelName\"," +
                 "\"modelVersion\":\"testModelVersion\",\"modelCustomizationName\":\"" +
                 "\"}}}";

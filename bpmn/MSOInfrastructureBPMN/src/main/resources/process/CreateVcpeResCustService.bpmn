@@ -451,6 +451,7 @@ CreateVcpeResCustService.prepareCreateAllottedResourceTXC(execution)]]></bpmn2:s
         <camunda:in source="customerLocation" target="customerLocation" />
         <camunda:in source="cloudOwner" target="cloudOwner" />
         <camunda:in source="cloudRegionId" target="cloudRegionId" />
+        <camunda:in source="serviceInstanceName" target="serviceInstanceName" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_11efpvh</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_1jbuf1t</bpmn2:outgoing>

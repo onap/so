@@ -129,6 +129,11 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
 
             serviceInstanceId = UriUtils.encode(serviceInstanceId, "UTF-8")
             execution.setVariable("serviceInstanceId", serviceInstanceId)
+            utils.log("DEBUG", "Incoming serviceInstanceId is: " + serviceInstanceId, isDebugEnabled)
+
+            String serviceInstanceName = jsonUtil.getJsonValue(createVcpeServiceRequest, "requestDetails.requestInfo.instanceName")
+            execution.setVariable("serviceInstanceName", serviceInstanceName)
+            utils.log("DEBUG", "Incoming serviceInstanceName is: " + serviceInstanceName, isDebugEnabled)
 
             String requestAction = execution.getVariable("requestAction")
             execution.setVariable("requestAction", requestAction)
