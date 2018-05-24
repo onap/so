@@ -40,12 +40,12 @@ import org.junit.Test;
 import org.openecomp.mso.apihandler.common.CamundaClient;
 import org.openecomp.mso.apihandler.common.RequestClient;
 import org.openecomp.mso.apihandler.common.RequestClientFactory;
-import org.openecomp.mso.apihandler.common.RequestClientParamater;
 import org.openecomp.mso.apihandler.common.ValidationException;
 import org.openecomp.mso.db.AbstractSessionFactoryManager;
 import org.openecomp.mso.db.catalog.CatalogDatabase;
 import org.openecomp.mso.db.catalog.beans.Service;
 import org.openecomp.mso.db.catalog.beans.ServiceRecipe;
+import org.openecomp.mso.properties.MsoDatabaseException;
 import org.openecomp.mso.properties.MsoJavaProperties;
 import org.openecomp.mso.properties.MsoPropertiesFactory;
 import org.openecomp.mso.requestsdb.OperationStatus;
@@ -194,7 +194,12 @@ public class E2EServiceInstancesTest {
 
 		new MockUp<CamundaClient>() {
 			@Mock
-			public HttpResponse post(RequestClientParamater requestClientParamater) {
+			public HttpResponse post(String requestId, boolean isBaseVfModule,
+					int recipeTimeout, String requestAction,
+					String serviceInstanceId, String vnfId, String vfModuleId,
+					String volumeGroupId, String networkId, String configurationId, String serviceType,
+					String vnfType, String vfModuleType, String networkType,
+					String requestDetails, String recipeParamXsd) {
 				ProtocolVersion pv = new ProtocolVersion("HTTP", 1, 1);
 				HttpResponse resp = new BasicHttpResponse(pv, 202,
 						"test response");
@@ -253,7 +258,12 @@ public class E2EServiceInstancesTest {
 
 		new MockUp<CamundaClient>() {
 			@Mock
-			public HttpResponse post(RequestClientParamater requestClientParamater) {
+			public HttpResponse post(String requestId, boolean isBaseVfModule,
+					int recipeTimeout, String requestAction,
+					String serviceInstanceId, String vnfId, String vfModuleId,
+					String volumeGroupId, String networkId, String configurationId, String serviceType,
+					String vnfType, String vfModuleType, String networkType,
+					String requestDetails, String recipeParamXsd) {
 				ProtocolVersion pv = new ProtocolVersion("HTTP", 1, 1);
 				HttpResponse resp = new BasicHttpResponse(pv, 500,
 						"test response");
@@ -313,7 +323,12 @@ public class E2EServiceInstancesTest {
 
 		new MockUp<CamundaClient>() {
 			@Mock
-			public HttpResponse post(RequestClientParamater requestClientParamater) {
+			public HttpResponse post(String requestId, boolean isBaseVfModule,
+					int recipeTimeout, String requestAction,
+					String serviceInstanceId, String vnfId, String vfModuleId,
+					String volumeGroupId, String networkId, String configurationId, String serviceType,
+					String vnfType, String vfModuleType, String networkType,
+					String requestDetails, String recipeParamXsd) {
 				ProtocolVersion pv = new ProtocolVersion("HTTP", 1, 1);
 				HttpResponse resp = new BasicHttpResponse(pv, 500,
 						"test response");
@@ -373,7 +388,12 @@ public class E2EServiceInstancesTest {
 
 		new MockUp<CamundaClient>() {
 			@Mock
-			public HttpResponse post(RequestClientParamater requestClientParamater) {
+			public HttpResponse post(String requestId, boolean isBaseVfModule,
+					int recipeTimeout, String requestAction,
+					String serviceInstanceId, String vnfId, String vfModuleId,
+					String volumeGroupId, String networkId, String configurationId, String serviceType,
+					String vnfType, String vfModuleType, String networkType,
+					String requestDetails, String recipeParamXsd) {
 				HttpResponse resp = null;
 				return resp;
 			}
@@ -605,7 +625,12 @@ public class E2EServiceInstancesTest {
 
         final MockUp<CamundaClient> mockCmaundaClient = new MockUp<CamundaClient>() {
             @Mock
-            public HttpResponse post(RequestClientParamater requestClientParamater) {
+            public HttpResponse post(String requestId, boolean isBaseVfModule,
+                                     int recipeTimeout, String requestAction, String serviceInstanceId,
+                                     String vnfId, String vfModuleId, String volumeGroupId, String networkId, String configurationId,
+                                     String serviceType, String vnfType, String vfModuleType, String networkType,
+                                     String requestDetails, String recipeParamXsd)
+                    throws ClientProtocolException, IOException {
                 ProtocolVersion pv = new ProtocolVersion("HTTP", 1, 1);
                 HttpResponse resp = new BasicHttpResponse(pv, 200, "test response");
                 BasicHttpEntity entity = new BasicHttpEntity();
@@ -797,7 +822,12 @@ public class E2EServiceInstancesTest {
 
 		new MockUp<CamundaClient>() {
 			@Mock
-			public HttpResponse post(RequestClientParamater requestClientParamater) {
+			public HttpResponse post(String requestId, boolean isBaseVfModule,
+					int recipeTimeout, String requestAction,
+					String serviceInstanceId, String vnfId, String vfModuleId,
+					String volumeGroupId, String networkId, String configurationId, String serviceType,
+					String vnfType, String vfModuleType, String networkType,
+					String requestDetails, String recipeParamXsd) {
 				ProtocolVersion pv = new ProtocolVersion("HTTP", 1, 1);
 				HttpResponse resp = new BasicHttpResponse(pv, 202,
 						"test response");
@@ -858,7 +888,12 @@ public class E2EServiceInstancesTest {
 
 		new MockUp<CamundaClient>() {
 			@Mock
-			public HttpResponse post(RequestClientParamater requestClientParamater) {
+			public HttpResponse post(String requestId, boolean isBaseVfModule,
+					int recipeTimeout, String requestAction,
+					String serviceInstanceId, String vnfId, String vfModuleId,
+					String volumeGroupId, String networkId, String configurationId, String serviceType,
+					String vnfType, String vfModuleType, String networkType,
+					String requestDetails, String recipeParamXsd) {
 				ProtocolVersion pv = new ProtocolVersion("HTTP", 1, 1);
 				HttpResponse resp = new BasicHttpResponse(pv, 202,
 						"test response");
@@ -920,7 +955,12 @@ public class E2EServiceInstancesTest {
 
         new MockUp<CamundaClient>() {
             @Mock
-            public HttpResponse post(RequestClientParamater requestClientParamater) {
+            public HttpResponse post(String requestId, boolean isBaseVfModule,
+                                     int recipeTimeout, String requestAction,
+                                     String serviceInstanceId, String vnfId, String vfModuleId,
+                                     String volumeGroupId, String networkId, String configurationId, String serviceType,
+                                     String vnfType, String vfModuleType, String networkType,
+                                     String requestDetails, String recipeParamXsd) {
                 ProtocolVersion pv = new ProtocolVersion("HTTP", 1, 1);
                 HttpResponse resp = new BasicHttpResponse(pv, 202,
                         "test response");
@@ -987,7 +1027,12 @@ public class E2EServiceInstancesTest {
 
         new MockUp<CamundaClient>() {
             @Mock
-            public HttpResponse post(RequestClientParamater requestClientParamater) {
+            public HttpResponse post(String requestId, boolean isBaseVfModule,
+                                     int recipeTimeout, String requestAction,
+                                     String serviceInstanceId, String vnfId, String vfModuleId,
+                                     String volumeGroupId, String networkId, String configurationId, String serviceType,
+                                     String vnfType, String vfModuleType, String networkType,
+                                     String requestDetails, String recipeParamXsd) {
                 ProtocolVersion pv = new ProtocolVersion("HTTP", 1, 1);
                 HttpResponse resp = new BasicHttpResponse(pv, 202,
                         "test response");
@@ -1048,7 +1093,12 @@ public class E2EServiceInstancesTest {
 
         new MockUp<CamundaClient>() {
             @Mock
-            public HttpResponse post(RequestClientParamater requestClientParamater) {
+            public HttpResponse post(String requestId, boolean isBaseVfModule,
+                                     int recipeTimeout, String requestAction,
+                                     String serviceInstanceId, String vnfId, String vfModuleId,
+                                     String volumeGroupId, String networkId, String configurationId, String serviceType,
+                                     String vnfType, String vfModuleType, String networkType,
+                                     String requestDetails, String recipeParamXsd) {
                 ProtocolVersion pv = new ProtocolVersion("HTTP", 1, 1);
                 HttpResponse resp = new BasicHttpResponse(pv, 202,
                         "test response");
@@ -1110,7 +1160,12 @@ public class E2EServiceInstancesTest {
 
         MockUp<CamundaClient> client = new MockUp<CamundaClient>() {
             @Mock
-            public HttpResponse post(RequestClientParamater requestClientParamater) throws Exception {
+            public HttpResponse post(String requestId, boolean isBaseVfModule,
+                                     int recipeTimeout, String requestAction,
+                                     String serviceInstanceId, String vnfId, String vfModuleId,
+                                     String volumeGroupId, String networkId, String configurationId, String serviceType,
+                                     String vnfType, String vfModuleType, String networkType,
+                                     String requestDetails, String recipeParamXsd) throws Exception {
                 throw new Exception();
             }
         };
@@ -1137,7 +1192,13 @@ public class E2EServiceInstancesTest {
 
         new MockUp<CamundaClient>() {
             @Mock
-            public HttpResponse post(RequestClientParamater requestClientParamater) throws IOException {
+            public HttpResponse post(String requestId, boolean isBaseVfModule,
+                 int recipeTimeout, String requestAction, String serviceInstanceId,
+                 String vnfId, String vfModuleId, String volumeGroupId, String networkId, String configurationId,
+                 String serviceType, String vnfType, String vfModuleType, String networkType,
+                 String requestDetails, String recipeParamXsd)
+                    throws ClientProtocolException, IOException {
+
                 throw new ClientProtocolException();
             }
         };
@@ -1155,7 +1216,13 @@ public class E2EServiceInstancesTest {
 
         new MockUp<CamundaClient>() {
             @Mock
-            public HttpResponse post(RequestClientParamater requestClientParamater) {
+            public HttpResponse post(String requestId, boolean isBaseVfModule,
+                                     int recipeTimeout, String requestAction, String serviceInstanceId,
+                                     String vnfId, String vfModuleId, String volumeGroupId, String networkId, String configurationId,
+                                     String serviceType, String vnfType, String vfModuleType, String networkType,
+                                     String requestDetails, String recipeParamXsd)
+                    throws ClientProtocolException, IOException {
+
                 ProtocolVersion pv = new ProtocolVersion("HTTP", 1, 1);
                 HttpResponse resp = new BasicHttpResponse(pv, 202,
                         "compareModelwithTargetVersion, test response");
@@ -1224,7 +1291,12 @@ public class E2EServiceInstancesTest {
 
         final MockUp<CamundaClient> mockCamundaClient = new MockUp<CamundaClient>() {
             @Mock
-            public HttpResponse post(RequestClientParamater requestClientParamater) {
+            public HttpResponse post(String requestId, boolean isBaseVfModule,
+                                     int recipeTimeout, String requestAction,
+                                     String serviceInstanceId, String vnfId, String vfModuleId,
+                                     String volumeGroupId, String networkId, String configurationId, String serviceType,
+                                     String vnfType, String vfModuleType, String networkType,
+                                     String requestDetails, String recipeParamXsd) {
                 ProtocolVersion pv = new ProtocolVersion("HTTP", 1, 1);
                 HttpResponse resp = new BasicHttpResponse(pv, 202,
                         "test response");
