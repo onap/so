@@ -60,34 +60,26 @@ public class URNResource extends AbstractCockpitPluginResource{
   public List<URNData> getUrnDataMap() 
   {  
 	  List<URNData> list = new ArrayList();
-	  PreparedStatement psData = null;
-	  ResultSet r = null;
 	  try {
-			
 		    conn = getDBConnection();
-			    psData = conn
-						.prepareStatement("select * from MSO_URN_MAPPING order by NAME_");
-			    
-			    r = psData.executeQuery();
-			    
-				while(r.next()) 
-				{
-					URNData d = new URNData();
-					d.setURNName(r.getString("NAME_"));
-					d.setURNValue(r.getString("VALUE_"));
-					d.setVer_( r.getString("REV_"));
-					
-					list.add(d);					
+		    try (PreparedStatement psData = conn
+						.prepareStatement("select * from MSO_URN_MAPPING order by NAME_")) {
+				try (ResultSet r = psData.executeQuery()) {
+					while (r.next()) {
+						URNData d = new URNData();
+						d.setURNName(r.getString("NAME_"));
+						d.setURNValue(r.getString("VALUE_"));
+						d.setVer_(r.getString("REV_"));
+
+						list.add(d);
+					}
 				}
-			
-		} catch (Exception e) 
+			}
+		} catch (Exception e)
 		{
-			
 			e.printStackTrace();
 		} finally {
-			try { r.close(); } catch (Exception e) { /* ignored */ }
-			try { psData.close(); } catch (Exception e) { /* ignored */ }
-			try { conn.close(); } catch (Exception e) { /* ignored */ }
+			try { conn.close(); } catch (Exception ignored) {}
 		}
      
     for(URNData d: list)
@@ -158,28 +150,19 @@ public class URNResource extends AbstractCockpitPluginResource{
        msoLogger.debug("AddNewRow: XXXXXXXXXXXXXXXXX ---> key: " + key_ + " , Value: " + value_);
  	  final URNData nRow = new URNData();
  	  nRow.setVer_("1"); 	
- 	  final String myKey = key_;
- 	  final String myValue = value_;
-	   
-	    PreparedStatement psData = null;
+
 		msoLogger.debug("----------- START ----------------------");
 		try {
-			
   		    conn = getDBConnection();
-				psData = conn
-						.prepareStatement("Insert into MSO_URN_MAPPING values ('" + key_ + "', '" + value_  + "', '1')");
-			    
+  		    try (PreparedStatement psData = conn
+						.prepareStatement("Insert into MSO_URN_MAPPING values ('" + key_ + "', '" + value_  + "', '1')")) {
 			    psData.executeUpdate();
-			    
-			//}			 
-			
-		} catch (Exception e) 
+			}
+		} catch (Exception e)
 		{
-			
 			e.printStackTrace();
 		} finally {
-			try { psData.close(); } catch (Exception e) { /* ignored */ }
-			try { conn.close(); } catch (Exception e) { /* ignored */ }
+			try { conn.close(); } catch (Exception ignored) {}
 		}
  	// getQueryService().executeQuery("cockpit.urnMap.insertNewRow", nRow, URNData.class);
    }
@@ -188,22 +171,18 @@ public class URNResource extends AbstractCockpitPluginResource{
   public void getPersistData(URNData d) {  
 	  
 	    	//getQueryService().executeQuery("cockpit.urnMap.persistURNData", d, URNData.class);
-	  PreparedStatement psData = null;
 	  try {
-			
 		    conn = getDBConnection();
-				psData = conn
-						.prepareStatement("UPDATE MSO_URN_MAPPING set VALUE_ ='"+ d.getURNValue() + "' WHERE NAME_='" + d.getURNName() + "'");
-			    
-			    psData.executeUpdate();
-			    
+		    try (PreparedStatement psData = conn
+						.prepareStatement("UPDATE MSO_URN_MAPPING set VALUE_ ='"+ d.getURNValue() + "' WHERE NAME_='" + d.getURNName() + "'")) {
+				psData.executeUpdate();
+			}
 		} catch (Exception e) 
 		{
 			
 			e.printStackTrace();
 		} finally {
-			try { psData.close(); } catch (Exception e) { /* ignored */ }
-			try { conn.close(); } catch (Exception e) { /* ignored */ }
+			try { conn.close(); } catch (Exception ignored) {}
 		}
 	 
   	}
