@@ -51,6 +51,8 @@ import org.junit.Test;
 public class PropertyConfigurationTest {
 	@Before
 	public void beforeTest() throws IOException {
+		PropertyConfiguration.resetPropertyConfigurationSingletonInstance();
+
 		Map<String, String> defaultProperties = PropertyConfigurationSetup.createBpmnProperties();
 		defaultProperties.put("testValue", "testKey");
 		PropertyConfigurationSetup.init(defaultProperties);
