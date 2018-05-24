@@ -60,13 +60,19 @@ class OofUtils {
         ServiceInstance serviceInstance = decomposition.getServiceInstance()
         def serviceInstanceId = ""
         def serviceInstanceName = ""
-        if (serviceInstance == null) {
-            utils.log("DEBUG", "Unable to obtain Service Instance Id, ServiceInstance Object is null", isDebugEnabled)
+
+        serviceInstanceId = execution.getVariable("serviceInstanceId")
+        serviceInstanceName = execution.getVariable("serviceInstanceName")
+
+        if (serviceInstanceId == null || serviceInstanceId == "null") {
+            utils.log("DEBUG", "Unable to obtain Service Instance Id", isDebugEnabled)
             exceptionUtil.buildAndThrowWorkflowException(execution, 400, "Internal Error - Unable to " +
-                    "obtain Service Instance Id, ServiceInstance Object is null")
-        } else {
-            serviceInstanceId = serviceInstance.getInstanceId()
-            serviceInstanceName = serviceInstance.getInstanceName()
+                    "obtain Service Instance Id, execution.getVariable(\"serviceInstanceName\") is null")
+        }
+        if (serviceInstanceName == null || serviceInstanceName == "null") {
+            utils.log("DEBUG", "Unable to obtain Service Instance Name", isDebugEnabled)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 400, "Internal Error - Unable to " +
+                    "obtain Service Instance Name, execution.getVariable(\"serviceInstanceName\") is null")
         }
         //Model Info
         ModelInfo model = decomposition.getModelInfo()
@@ -115,7 +121,7 @@ class OofUtils {
                 def resouceModelVersion = resourceModelInfo.getModelVersion()
                 def resouceModelVersionId = resourceModelInfo.getModelUuid()
                 def resouceModelType = resourceModelInfo.getModelType()
-                def tenantId = execution.getTenantId()
+                def tenantId = "" //Optional
                 def requiredCandidatesJson = ""
 
                 requiredCandidatesJson = createCandidateJson(
