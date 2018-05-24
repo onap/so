@@ -223,7 +223,7 @@ public class HttpClientConnector implements CloudifyClientConnector {
 		}
 		catch (Exception e) {
 			// Catchall for anything else, must throw as a RuntimeException
-			e.printStackTrace();
+			LOGGER.error("Client exception", e);
 			throw new RuntimeException("Unexpected client exception", e);
 		}
 		finally {

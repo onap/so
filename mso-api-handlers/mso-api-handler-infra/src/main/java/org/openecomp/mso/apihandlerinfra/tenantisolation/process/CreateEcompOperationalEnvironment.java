@@ -67,7 +67,7 @@ public class CreateEcompOperationalEnvironment extends OperationalEnvironmentPro
 			getRequestDb().updateInfraSuccessCompletion("SUCCESSFULLY Created ECOMP OperationalEnvironment.", getRequestId(), getRequest().getOperationalEnvironmentId()); 
 		} 
 		catch (Exception e) {
-			e.printStackTrace();
+			msoLogger.error("exception while publishing operational environment", e);
 			msoLogger.error(MessageEnum.APIH_GENERAL_EXCEPTION, "", "", "", MsoLogger.ErrorCode.UnknownError, e.getMessage());
 			getRequestDb().updateInfraFailureCompletion(e.getMessage(), getRequestId(), getRequest().getOperationalEnvironmentId());
 		}	

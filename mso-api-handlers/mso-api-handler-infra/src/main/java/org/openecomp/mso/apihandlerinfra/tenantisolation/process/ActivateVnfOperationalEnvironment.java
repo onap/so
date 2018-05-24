@@ -217,17 +217,13 @@ public class ActivateVnfOperationalEnvironment extends OperationalEnvironmentPro
 			AAIResultWrapper aaiResult = aaiHelper.getAaiOperationalEnvironment(operationalEnvironmentId);
 			operationalEnv = aaiResult.asBean(AAIOperationalEnvironment.class).get();
 		} catch (JsonParseException e) {
-			msoLogger.debug(" **** JsonParseException: " + e.getMessage());
-			e.printStackTrace();
+			msoLogger.error(" **** JsonParseException: ", e);
 		} catch (JsonMappingException e) {
-			msoLogger.debug(" **** JsonMappingException: " + e.getMessage());
-			e.printStackTrace();
+			msoLogger.error(" **** JsonMappingException: ", e);
 		} catch (IOException e) {
-			msoLogger.debug(" **** IOException: " + e.getMessage());
-			e.printStackTrace();
+			msoLogger.error(" **** IOException: ", e);
 		} catch (Exception e) {
-			msoLogger.debug(" **** Exception: " + e.getMessage());
-			e.printStackTrace();
+			msoLogger.error(" **** Exception: ", e);
 		}
 		
 		return operationalEnv;
