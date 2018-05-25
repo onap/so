@@ -40,6 +40,10 @@ import org.openecomp.mso.db.catalog.beans.HeatTemplateParam;
 public class YamlEditor {
 
     private static final String REFER_PATTERN = "file:///";
+    private static final String PARAMETERS = "parameters";
+    private static final String RESOURCES = "resources";
+    private static final String TYPE = "type";
+    private static final String DEFAULT = "default";
     private Map <String, Object> yml;
     private Yaml yaml = new Yaml ();
 
@@ -61,13 +65,13 @@ public class YamlEditor {
         List <String> typeList = new ArrayList<>();
 
         @SuppressWarnings("unchecked")
-        Map <String, Object> resourceMap = (Map <String, Object>) yml.get ("resources");
+        Map <String, Object> resourceMap = (Map <String, Object>) yml.get (RESOURCES);
         Iterator <Entry <String, Object>> it = resourceMap.entrySet ().iterator ();
         while (it.hasNext ()) {
             Map.Entry <String, Object> pair = it.next ();
             @SuppressWarnings("unchecked")
             Map <String, String> resourceEntry = (Map <String, String>) pair.getValue ();
-            String type = resourceEntry.get ("type");
+            String type = resourceEntry.get (TYPE);
 
             if (type.contains (REFER_PATTERN)) {
                 typeList.add (type);
@@ -81,11 +85,11 @@ public class YamlEditor {
         List <String> typeList = new ArrayList<>();
 
         @SuppressWarnings("unchecked")
-        Map <String, Object> resourceMap = (Map <String, Object>) yml.get ("resources");
+        Map <String, Object> resourceMap = (Map <String, Object>) yml.get (RESOURCES);
         for (Entry<String, Object> pair : resourceMap.entrySet()) {
             @SuppressWarnings("unchecked")
             Map<String, String> resourceEntry = (Map<String, String>) pair.getValue();
-            typeList.add(resourceEntry.get("type"));
+            typeList.add(resourceEntry.get(TYPE));
         }
         return typeList;
     }    
@@ -95,9 +99,9 @@ public class YamlEditor {
     // Within Heat Template, under parameters catalog, it might indicate the default value of the parameter
     // If default value exist, the parameter is not mandatory, otherwise its value should be set
     public synchronized Set <HeatTemplateParam> getParameterList (String artifactUUID) {
-        Set <HeatTemplateParam> paramSet = new HashSet<>();
+        Set<HeatTemplateParam> paramSet = new HashSet<>();
         @SuppressWarnings("unchecked")
-        Map <String, Object> resourceMap = (Map <String, Object>) yml.get ("parameters");
+        Map<String, Object> resourceMap = (Map<String, Object>) yml.get(PARAMETERS);
 
         for (Entry<String, Object> stringObjectEntry : resourceMap.entrySet()) {
             HeatTemplateParam param = new HeatTemplateParam();
@@ -106,14 +110,13 @@ public class YamlEditor {
             Map<String, String> resourceEntry = (Map<String, String>) pair.getValue();
 
             param.setParamName(pair.getKey());
-            // System.out.println(pair.getKey()+":"+type);
-            if (resourceEntry.containsKey("default")) {
+            if (resourceEntry.containsKey(DEFAULT)) {
                 param.setRequired(false);
             } else {
                 param.setRequired(true);
             }
             // Now set the type
-            String value = resourceEntry.get("type");
+            String value = resourceEntry.get(TYPE);
             param.setParamType(value);
 
             param.setHeatTemplateArtifactUuid(artifactUUID);
@@ -128,19 +131,18 @@ public class YamlEditor {
     public synchronized void addParameterList (Set <HeatTemplateParam> heatSet) {
 
         @SuppressWarnings("unchecked")
-        Map <String, Object> resourceMap = (Map <String, Object>) yml.get ("parameters");
+        Map <String, Object> resourceMap = (Map <String, Object>) yml.get (PARAMETERS);
         if (resourceMap == null) {
             resourceMap = new LinkedHashMap<>();
-            this.yml.put ("parameters", resourceMap);
+            this.yml.put (PARAMETERS, resourceMap);
         }
         for (HeatTemplateParam heatParam : heatSet) {
             Map <String, Object> paramInfo = new HashMap<>();
-            paramInfo.put ("type", heatParam.getParamType ());
+            paramInfo.put (TYPE, heatParam.getParamType ());
 
             resourceMap.put (heatParam.getParamName (), paramInfo);
         }
 
-        // this.yml.put("parameters", resourceMap);
 
     }
 
@@ -164,7 +166,7 @@ public class YamlEditor {
     }
 
     /**
-     * This method return the YAml file as a string.
+     * This method return the YAML file as a string.
      * 
      */
     @Override
