@@ -17,7 +17,6 @@
 */
 package com.gigaspaces.aria.rest.client;
 
-import java.net.URI;
 import java.util.Date;
 
 /**
@@ -27,8 +26,11 @@ import java.util.Date;
  */
 public class ServiceImpl implements Service {
     private int id;
-    private String description, name, template;
-    private Date created, updated;
+    private String description;
+    private String name;
+    private String template;
+    private Date created;
+    private Date updated;
 
     public int getId(){
         return id;
