@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_7aae679a",
+        "filename": "aria/aria-rest-java-client/src/main/java/com/gigaspaces/aria/rest/client/ServiceImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 3433
+      },
+      "writtenOn": "2018-05-25T11:45:07Z",
+      "side": 1,
+      "message": "make separate declarations.\nFor example: private String name;\nprivate String template;",
+      "revId": "7c174937f3a39c4d61e0a03839def3324b85683c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
