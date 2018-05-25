@@ -27,14 +27,13 @@ import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.gigaspaces.aria.rest.client.exceptions.RequestProcessingError;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
 import org.codehaus.jackson.map.ObjectMapper;
 import com.gigaspaces.aria.rest.client.exceptions.StorageException;
 import com.gigaspaces.aria.rest.client.exceptions.ValidationException;
-
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * Created by DeWayne on 7/12/2017.
@@ -55,7 +54,7 @@ public class AriaRestClient implements AriaClient {
 	 * @param version
 	 *            the api version
 	 */
-	public AriaRestClient(String protocol, String address, int port, String version) {
+	AriaRestClient(String protocol, String address, int port, String version) {
 		this.client = ClientBuilder.newBuilder().register(JacksonJsonProvider.class).build();
 		base_target = client.target(protocol + "://" + address + ":" + port + "/api/" + version);
 	}
@@ -69,7 +68,7 @@ public class AriaRestClient implements AriaClient {
 	 * @throws StorageException
 	 */
 	public void install_service_template(ServiceTemplate template)
-			throws ValidationException, StorageException, Exception {
+			throws ValidationException, StorageException, RequestProcessingError {
 
 		byte[] csarBytes = template.getCSARBytes();
 		Response response = null;
@@ -81,7 +80,6 @@ public class AriaRestClient implements AriaClient {
 							MediaType.APPLICATION_JSON));
 		}
 		else {
-			
 			response = base_target.path("templates/" + template.getName()).request("application/zip")
 					.put(Entity.entity(csarBytes, "application/zip"));
 		}
@@ -90,15 +88,15 @@ public class AriaRestClient implements AriaClient {
 			throw new StorageException(response.readEntity(String.class));
 		} else if (response.getStatus() == 400) {
 			throw new ValidationException(response.readEntity(String.class));
-		} else if (response.getStatus() > 199 && response.getStatus() < 300) {
+		} else if (responseOK(response)) {
 			return;
 		} else {
-			throw new Exception(
+			throw new RequestProcessingError(
 					"Error installing template: " + response.getStatus() + " " + response.readEntity(String.class));
 		}
 	}
 
-	public ValidationResult validate_service_template(ServiceTemplate template) throws Exception {
+	public ValidationResult validate_service_template(ServiceTemplate template) throws RequestProcessingError {
 		Response response = base_target.path("templates").request(MediaType.APPLICATION_JSON)
 				.post(Entity.entity(
 						"{\"service-template-path\":\"" + template.getURI().toString() + "\""
@@ -106,16 +104,15 @@ public class AriaRestClient implements AriaClient {
 						MediaType.APPLICATION_JSON));
 
 		ValidationResultImpl result = new ValidationResultImpl();
-		if (response.getStatus() >= 200 && response.getStatus() < 300) {
+		if (responseOK(response)) {
 			result.setFailed(false);
 		} else if (response.getStatus() == 400) {
 			result.setFailed(true);
 		} else {
-			throw new Exception(
-					"received error response '" + response.getStatus() + "':" + response.readEntity(String.class));
+			throw new RequestProcessingError(
+					"Received error response '" + response.getStatus() + "':" + response.readEntity(String.class));
 		}
 		return result;
-
 	}
 
 	/**
@@ -123,11 +120,8 @@ public class AriaRestClient implements AriaClient {
 	 * @return a list of service templates
 	 */
 	public List<? extends ServiceTemplate> list_service_templates() {
-		List<? extends ServiceTemplate> templates = base_target.path("templates").request(MediaType.APPLICATION_JSON)
-				.get(new GenericType<List<ServiceTemplateImpl>>() {
-				});
-
-		return templates;
+		return base_target.path("templates").request(MediaType.APPLICATION_JSON)
+				.get(new GenericType<List<ServiceTemplateImpl>>() {});
 	}
 
 	/**
@@ -142,15 +136,15 @@ public class AriaRestClient implements AriaClient {
 	 * @throws Exception
 	 *             other server side errors
 	 */
-	public void delete_service_template(int template_id) throws IllegalArgumentException, Exception {
+	public void delete_service_template(int template_id) throws Exception {
 		Response response = base_target.path("templates/" + template_id).request(MediaType.APPLICATION_JSON).delete();
 
-		if (response.getStatus() >= 200 && response.getStatus() < 300) {
+		if (responseOK(response)) {
 			return;
 		} else if (response.getStatus() == 400) {
 			throw new IllegalArgumentException("Error deleting template '" + template_id + "'");
 		} else {
-			throw new Exception("Error processing request. Return code = " + response.getStatus());
+			throw new RequestProcessingError("Error processing request. Return code = " + response.getStatus());
 		}
 	}
 
@@ -161,10 +155,8 @@ public class AriaRestClient implements AriaClient {
 	 * @return
 	 */
 	public List<? extends NodeTemplate> list_nodes(int template_id) {
-		List<? extends NodeTemplate> nodes = base_target.path("templates/" + template_id + "/nodes")
-				.request(MediaType.APPLICATION_JSON).get(new GenericType<List<NodeTemplateImpl>>() {
-				});
-		return nodes;
+		return base_target.path("templates/" + template_id + "/nodes")
+				.request(MediaType.APPLICATION_JSON).get(new GenericType<List<NodeTemplateImpl>>() {});
 	}
 
 	/**
@@ -176,34 +168,27 @@ public class AriaRestClient implements AriaClient {
 	 * @throws IllegalArgumentException
 	 */
 	public NodeTemplate get_node(int node_id) throws IllegalArgumentException {
-		NodeTemplate node = base_target.path("nodes/" + node_id).request(MediaType.APPLICATION_JSON)
+		return base_target.path("nodes/" + node_id).request(MediaType.APPLICATION_JSON)
 				.get(NodeTemplateImpl.class);
-		return node;
 	}
 
 	public List<? extends Service> list_services() {
-		List<? extends Service> services = base_target.path("services").request(MediaType.APPLICATION_JSON)
-				.get(new GenericType<List<ServiceImpl>>() {
-				});
-		return services;
+		return base_target.path("services").request(MediaType.APPLICATION_JSON)
+				.get(new GenericType<List<ServiceImpl>>() {});
 	}
 
 	public Service get_service(int service_id) throws IllegalArgumentException {
-		throw new NotImplementedException();
+		throw new UnsupportedOperationException("Not implemented");
 	}
 
 	public List<? extends Output> list_service_outputs(int service_id) throws IllegalArgumentException {
-		List<? extends Output> outputs = base_target.path("services").request(MediaType.APPLICATION_JSON)
-				.get(new GenericType<List<OutputImpl>>() {
-				});
-		return outputs;
+		return base_target.path("services").request(MediaType.APPLICATION_JSON)
+				.get(new GenericType<List<OutputImpl>>() {});
 	}
 
 	public List<? extends Input> list_service_inputs(int service_id) throws IllegalArgumentException {
-		List<? extends Input> inputs = base_target.path("services").request(MediaType.APPLICATION_JSON)
-				.get(new GenericType<List<InputImpl>>() {
-				});
-		return inputs;
+		return base_target.path("services").request(MediaType.APPLICATION_JSON)
+				.get(new GenericType<List<InputImpl>>() {});
 	}
 
 	/**
@@ -224,17 +209,17 @@ public class AriaRestClient implements AriaClient {
 		Response response = base_target.path("templates/" + template_id + "/services/" + service_name)
 				.request(MediaType.APPLICATION_JSON).post(Entity.entity(json, MediaType.APPLICATION_JSON));
 
-		if (response.getStatus() < 200 || response.getStatus() > 299) {
-			throw new Exception(
-					"create service failed:" + response.getStatus() + " " + response.readEntity(String.class));
+		if (!responseOK(response)) {
+			throw new RequestProcessingError(
+					"Create service failed:" + response.getStatus() + " " + response.readEntity(String.class));
 		}
 	}
 
 	public void delete_service(int service_id) throws Exception {
 		Response response = base_target.path("services/" + service_id).request(MediaType.APPLICATION_JSON).delete();
 		if (!responseOK(response)) {
-			throw new Exception(
-					"delete service failed: " + response.getStatus() + " " + response.readEntity(String.class));
+			throw new RequestProcessingError(
+					"Delete service failed: " + response.getStatus() + " " + response.readEntity(String.class));
 		}
 	}
 
@@ -247,13 +232,12 @@ public class AriaRestClient implements AriaClient {
 	 */
 	public List<? extends Workflow> list_workflows(int service_id) throws IllegalArgumentException {
 		List<? extends Workflow> workflows = base_target.path("services/" + service_id + "/workflows")
-				.request(MediaType.APPLICATION_JSON).get(new GenericType<List<WorkflowImpl>>() {
-				});
+				.request(MediaType.APPLICATION_JSON).get(new GenericType<List<WorkflowImpl>>() {});
 		return workflows;
 	}
 
 	public Workflow get_workflow(int workflow_id) throws IllegalArgumentException {
-		throw new NotImplementedException();
+		throw new UnsupportedOperationException("Not implemented");
 	}
 
 	/**
@@ -263,10 +247,8 @@ public class AriaRestClient implements AriaClient {
 	 * @throws Exception
 	 */
 	public List<? extends Execution> list_executions() throws Exception {
-		List<? extends Execution> executions = base_target.path("executions").request(MediaType.APPLICATION_JSON)
-				.get(new GenericType<List<ExecutionImpl>>() {
-				});
-		return executions;
+		return base_target.path("executions").request(MediaType.APPLICATION_JSON)
+				.get(new GenericType<List<ExecutionImpl>>() {});
 	}
 
 	/**
@@ -277,10 +259,8 @@ public class AriaRestClient implements AriaClient {
 	 * @throws Exception
 	 */
 	public List<? extends Execution> list_executions(int service_id) throws Exception {
-		List<? extends Execution> executions = base_target.path("services/" + service_id + "/executions")
-				.request(MediaType.APPLICATION_JSON).get(new GenericType<List<ExecutionImpl>>() {
-				});
-		return executions;
+		return base_target.path("services/" + service_id + "/executions")
+				.request(MediaType.APPLICATION_JSON).get(new GenericType<List<ExecutionImpl>>() {});
 	}
 
 	/**
@@ -291,9 +271,8 @@ public class AriaRestClient implements AriaClient {
 	 * @throws IllegalArgumentException
 	 */
 	public Execution get_execution(int execution_id) throws IllegalArgumentException {
-		Execution execution = base_target.path("executions/" + execution_id).request(MediaType.APPLICATION_JSON)
+		return base_target.path("executions/" + execution_id).request(MediaType.APPLICATION_JSON)
 				.get(ExecutionImpl.class);
-		return execution;
 	}
 
 	/**
@@ -325,8 +304,8 @@ public class AriaRestClient implements AriaClient {
 				.request(MediaType.APPLICATION_JSON).post(Entity.entity(json.toString(), MediaType.APPLICATION_JSON));
 
 		if (!responseOK(response)) {
-			throw new Exception(
-					"start execution failed: " + response.getStatus() + " " + response.readEntity(String.class));
+			throw new RequestProcessingError(
+					"Start execution failed: " + response.getStatus() + " " + response.readEntity(String.class));
 		}
 
 		ObjectMapper mapper = new ObjectMapper(new JsonFactory());
@@ -341,21 +320,17 @@ public class AriaRestClient implements AriaClient {
 			json.append("\"executor\":\"").append(details.getExecutor()).append("\",");
 		}
 		json.append("\"retry_failed_tasks\":").append(details.isRetry_failed_tasks()).append("}");
-		Response response = base_target.path("executions/" + execution_id).request(MediaType.APPLICATION_JSON)
+		base_target.path("executions/" + execution_id).request(MediaType.APPLICATION_JSON)
 				.post(Entity.entity(json.toString(), MediaType.APPLICATION_JSON));
 	}
 
-	public void cancel_execution(int execution_id) throws Exception {
+	public void cancel_execution(int execution_id) throws RequestProcessingError {
 		Response response = base_target.path("executions/" + execution_id).request(MediaType.APPLICATION_JSON).delete();
 		if (!responseOK(response)) {
-			throw new Exception(
-					"delete service failed: " + response.getStatus() + " " + response.readEntity(String.class));
+			throw new RequestProcessingError(
+					"Delete service failed: " + response.getStatus() + " " + response.readEntity(String.class));
 		}
 	}
-
-	/**
-	 * ----- ----- PRIVATE METHODS -----
-	 */
 
 	private boolean responseOK(Response response) {
 		return response.getStatus() > 199 && response.getStatus() < 300;
@@ -369,7 +344,7 @@ public class AriaRestClient implements AriaClient {
 		for (Input input : inputs) {
 			sb.append("\"").append(input.getName()).append("\":\"").append(input.getValue()).append("\",");
 		}
-		if (inputs.size() > 0)
+		if (!inputs.isEmpty())
 			sb.deleteCharAt(sb.length() - 1); // trim comma
 
 		return sb.toString();
