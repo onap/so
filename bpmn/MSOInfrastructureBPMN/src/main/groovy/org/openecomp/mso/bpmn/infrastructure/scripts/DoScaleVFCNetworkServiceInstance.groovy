@@ -20,7 +20,6 @@
 
 package org.openecomp.mso.bpmn.infrastructure.scripts
 
-import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.json.JSONArray
 import org.json.JSONObject;
 
@@ -69,7 +68,7 @@ public class DoScaleVFCNetworkServiceInstance extends AbstractServiceTaskProcess
      * generate the nsOperationKey
      * generate the nsParameters
      */
-    public void preProcessRequest(DelegateExecution execution) {
+    public void preProcessRequest(Execution execution) {
         def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
         utils.log("DEBUG", " *** preProcessRequest() *** ", isDebugEnabled)
 
@@ -84,6 +83,7 @@ public class DoScaleVFCNetworkServiceInstance extends AbstractServiceTaskProcess
             } else {
                 requestJsonStr += objectToJsonStr(nsRIP) + "|"
             }
+
         }
 
         execution.setVariable("reqBody", requestJsonStr)
@@ -94,7 +94,7 @@ public class DoScaleVFCNetworkServiceInstance extends AbstractServiceTaskProcess
     /**
      * scale NS task
      */
-    public void scaleNetworkService(DelegateExecution execution) {
+    public void scaleNetworkService(Execution execution) {
 
         String saleNsRequest = execution.getVariable("reqBody")
         String[] nsReqStr = saleNsRequest.split("\\|")
@@ -114,7 +114,7 @@ public class DoScaleVFCNetworkServiceInstance extends AbstractServiceTaskProcess
             String returnCode = apiResponse.getStatusCode()
             String aaiResponseAsString = apiResponse.getResponseBodyAsString()
             String jobId = "";
-            if (returnCode == "200") {
+            if (returnCode == "200" || returnCode == "202") {
                 jobId = jsonUtil.getJsonValue(aaiResponseAsString, "jobId")
             }
 
@@ -134,7 +134,7 @@ public class DoScaleVFCNetworkServiceInstance extends AbstractServiceTaskProcess
     /**
      * query NS task
      */
-    private void queryNSProgress(DelegateExecution execution) {
+    private void queryNSProgress(Execution execution) {
         String jobId = execution.getVariable("jobId")
         String url = host + queryJobUrl.replaceAll("\\{jobId\\}", jobId)
 
@@ -176,7 +176,7 @@ public class DoScaleVFCNetworkServiceInstance extends AbstractServiceTaskProcess
     /**
      * finish NS task
      */
-    public void finishNSScale(DelegateExecution execution) {
+    public void finishNSScale(Execution execution) {
         //no need to do anything util now
         System.out.println("Scale finished.")
     }
@@ -186,7 +186,7 @@ public class DoScaleVFCNetworkServiceInstance extends AbstractServiceTaskProcess
      * url: the url of the request
      * requestBody: the body of the request
      */
-    private APIResponse postRequest(DelegateExecution execution, String url, String requestBody){
+    private APIResponse postRequest(Execution execution, String url, String requestBody){
         def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
         utils.log("INFO"," ***** Started Execute VFC adapter Post Process *****",  isDebugEnabled)
         utils.log("INFO","url:"+url +"\nrequestBody:"+ requestBody,  isDebugEnabled)
@@ -263,7 +263,7 @@ public class DoScaleVFCNetworkServiceInstance extends AbstractServiceTaskProcess
      * create a NSResourceInputParameter list from a Scale Network request Json string
      * @return
      */
-    private List<NSResourceInputParameter> convertScaleNsReq2NSResInputParamList(DelegateExecution execution) {
+    private List<NSResourceInputParameter> convertScaleNsReq2NSResInputParamList(Execution execution) {
         String saleNsRequest = execution.getVariable("bpmnRequest")
 
         //String requestId = execution.getVariable("msoRequestId")
@@ -278,6 +278,14 @@ public class DoScaleVFCNetworkServiceInstance extends AbstractServiceTaskProcess
 
         String resource = JsonUtils.getJsonValue(saleNsRequest, "service.resources")
 
+        // Start to convert class
+        NsParameters nsParameters = new NsParameters()
+        NsScaleParameters nsScaleParameters = new NsScaleParameters()
+
+        // set nsParameters properties
+        nsParameters.setLocationConstraints(new ArrayList<LocationConstraint>())
+        nsParameters.setAdditionalParamForNs(new HashMap<String, Object>())
+
         // set nsScaleParameters properties
         List<ScaleResource> scaleResourcesList = jsonGetNsResourceList(saleNsRequest)
         List<NSResourceInputParameter> nsResourceInputParameterList = new ArrayList<NSResourceInputParameter>()
@@ -285,10 +293,6 @@ public class DoScaleVFCNetworkServiceInstance extends AbstractServiceTaskProcess
         for (ScaleResource sr : scaleResourcesList) {
             NSResourceInputParameter nsResourceInputParameter = new NSResourceInputParameter()
             NsOperationKey nsOperationKey = new NsOperationKey()
-            NsParameters nsParameters = new NsParameters()
-            NsScaleParameters nsScaleParameters = new NsScaleParameters()
-            nsParameters.setLocationConstraints(new ArrayList<LocationConstraint>())
-            nsParameters.setAdditionalParamForNs(new HashMap<String, Object>())
 
             // set NsOperationKey properties
             nsOperationKey.setGlobalSubscriberId(globalSubscriberId)
@@ -320,5 +324,7 @@ public class DoScaleVFCNetworkServiceInstance extends AbstractServiceTaskProcess
         }
         return nsResourceInputParameterList
     }
+
+
 }
 
