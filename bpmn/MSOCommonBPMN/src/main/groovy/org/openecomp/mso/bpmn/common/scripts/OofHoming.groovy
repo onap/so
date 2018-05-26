@@ -73,6 +73,8 @@ class OofHoming extends AbstractServiceTaskProcessor {
             utils.log("DEBUG", "Incoming Request Id is: " + requestId, isDebugEnabled)
             String serviceInstanceId = execution.getVariable("serviceInstanceId")
             utils.log("DEBUG", "Incoming Service Instance Id is: " + serviceInstanceId, isDebugEnabled)
+            String serviceInstanceName = execution.getVariable("serviceInstanceName")
+            utils.log("DEBUG", "Incoming Service Instance Name is: " + serviceInstanceName, isDebugEnabled)
             ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
             utils.log("DEBUG", "Incoming Service Decomposition is: " + serviceDecomposition, isDebugEnabled)
             String subscriberInfo = execution.getVariable("subscriberInfo")
@@ -86,21 +88,24 @@ class OofHoming extends AbstractServiceTaskProcessor {
 
             if (isBlank(requestId) ||
                     isBlank(serviceInstanceId) ||
+                    isBlank(serviceInstanceName) ||
                     isBlank(serviceDecomposition.toString()) ||
-                    isBlank(subscriberInfo) ||
-                    isBlank(customerLocation.toString()) ||
-                    isBlank(cloudOwner) ||
-                    isBlank(cloudRegionId)) {
+                    isBlank(customerLocation.toString())) {
                 exceptionUtil.buildAndThrowWorkflowException(execution, 4000,
                         "A required input variable is missing or null")
             } else {
-                String subId = jsonUtil.getJsonValue(subscriberInfo, "globalSubscriberId")
-                String subName = jsonUtil.getJsonValue(subscriberInfo, "subscriberName")
-                String subCommonSiteId = ""
-                if (jsonUtil.jsonElementExist(subscriberInfo, "subscriberCommonSiteId")) {
-                    subCommonSiteId = jsonUtil.getJsonValue(subscriberInfo, "subscriberCommonSiteId")
+                Subscriber subscriber = null
+                if (isBlank(subscriberInfo)) {
+                    subscriber = new Subscriber("", "", "")
+                } else {
+                    String subId = jsonUtil.getJsonValue(subscriberInfo, "globalSubscriberId")
+                    String subName = jsonUtil.getJsonValue(subscriberInfo, "subscriberName")
+                    String subCommonSiteId = ""
+                    if (jsonUtil.jsonElementExist(subscriberInfo, "subscriberCommonSiteId")) {
+                        subCommonSiteId = jsonUtil.getJsonValue(subscriberInfo, "subscriberCommonSiteId")
+                    }
+                    subscriber = new Subscriber(subId, subName, subCommonSiteId)
                 }
-                Subscriber subscriber = new Subscriber(subId, subName, subCommonSiteId)
 
                 //Authentication
                 def authHeader = ""

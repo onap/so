@@ -1,18 +1,20 @@
 package org.openecomp.mso.bpmn.common.scripts
 
-import org.apache.commons.lang3.StringUtils
-import org.camunda.bpm.engine.delegate.DelegateExecution;
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
 import org.openecomp.mso.bpmn.common.scripts.MsoUtils
 import org.openecomp.mso.bpmn.core.domain.HomingSolution
 import org.openecomp.mso.bpmn.core.domain.ModelInfo
 import org.openecomp.mso.bpmn.core.domain.Resource
+import org.openecomp.mso.bpmn.core.domain.AllottedResource
 import org.openecomp.mso.bpmn.core.domain.ServiceDecomposition
 import org.openecomp.mso.bpmn.core.domain.ServiceInstance
 import org.openecomp.mso.bpmn.core.domain.Subscriber
 import org.openecomp.mso.bpmn.core.domain.VnfResource
 import org.openecomp.mso.bpmn.core.json.JsonUtils
+
+import java.lang.reflect.Array
 
 import static org.openecomp.mso.bpmn.common.scripts.GenericUtils.*
 
@@ -47,7 +49,7 @@ class OofUtils {
     String buildRequest(DelegateExecution execution,
                         String requestId,
                         ServiceDecomposition decomposition,
-                        Subscriber subscriber,
+                        Subscriber subscriber = null,
                         Map customerLocation,
                         ArrayList existingCandidates = null,
                         ArrayList excludedCandidates = null,
@@ -82,9 +84,14 @@ class OofUtils {
         String modelName = model.getModelName()
         String modelVersion = model.getModelVersion()
         //Subscriber Info
-        String subscriberId = subscriber.getGlobalId()
-        String subscriberName = subscriber.getName()
-        String commonSiteId = subscriber.getCommonSiteId()
+        String subscriberId = ""
+        String subscriberName = ""
+        String commonSiteId = ""
+        if (subscriber != null){
+            subscriberId = subscriber.getGlobalId()
+            subscriberName = subscriber.getName()
+            commonSiteId = subscriber.getCommonSiteId()
+        }
 
         //Determine RequestType
         //TODO Figure out better way to determine this
@@ -100,27 +107,39 @@ class OofUtils {
         //Demands
         String placementDemands = ""
         StringBuilder sb = new StringBuilder()
-        List<Resource> resourceList = decomposition.getServiceAllottedResources()
+        List<AllottedResource> allottedResourceList = decomposition.getServiceAllottedResources()
         List<VnfResource> vnfResourceList = decomposition.getServiceVnfs()
 
-        if (resourceList.isEmpty() || resourceList == null) {
+        if (allottedResourceList.isEmpty() || allottedResourceList == null) {
             utils.log("DEBUG", "Allotted Resources List is empty - will try to get service VNFs instead.",
                     isDebugEnabled)
-            resourceList = decomposition.getServiceVnfs()
+            allottedResourceList = decomposition.getServiceVnfs()
         }
 
-        if (resourceList.isEmpty() || resourceList == null) {
+        if (allottedResourceList.isEmpty() || allottedResourceList == null) {
             utils.log("DEBUG", "Resources List is Empty", isDebugEnabled)
         } else {
-            for (Resource resource : resourceList) {
-                ModelInfo resourceModelInfo = resource.getModelInfo()
+            for (AllottedResource resource : allottedResourceList) {
+                utils.log("DEBUG", "Allotted Resource: " + resource.toString(),
+                        isDebugEnabled)
                 def serviceResourceId = resource.getResourceId()
-                def resourceModuleName = resource.getResourceType()
-                def resouceModelInvariantId = resourceModelInfo.getModelInvariantUuid()
-                def resouceModelName = resourceModelInfo.getModelName()
-                def resouceModelVersion = resourceModelInfo.getModelVersion()
-                def resouceModelVersionId = resourceModelInfo.getModelUuid()
-                def resouceModelType = resourceModelInfo.getModelType()
+                def resourceModuleName = resource.getNfFunction()
+                utils.log("DEBUG", "resourceModuleName: " + resourceModuleName,
+                        isDebugEnabled)
+                def resourceModelInvariantId = "no-resourceModelInvariantId"
+                def resourceModelVersionId = "no-resourceModelVersionId"
+
+                List modelIdLst = execution.getVariable("homingModelIds")
+                utils.log("DEBUG", "Incoming modelIdLst is: " + modelIdLst.toString(), isDebugEnabled)
+                for (Map modelId : modelIdLst )
+                    if (resourceModuleName == modelId.resourceModuleName) {
+                        resourceModelInvariantId = modelId.resourceModelInvariantId
+                        resourceModelVersionId = modelId.resourceModelVersionId
+                    }
+
+                def resourceModelName = "" //Optional
+                def resourceModelVersion = "" //Optional
+                def resourceModelType = "" //Optional
                 def tenantId = "" //Optional
                 def requiredCandidatesJson = ""
 
@@ -130,21 +149,55 @@ class OofUtils {
                         requiredCandidates)
 
                 String demand =
-                        "{\n" +
-                        "\"resourceModuleName\": \"${resourceModuleName}\",\n" +
-                        "\"serviceResourceId\": \"${serviceResourceId}\",\n" +
-                        "\"tenantId\": \"${tenantId}\",\n" +
-                        "\"resourceModelInfo\": {\n" +
-                        "  \"modelInvariantId\": \"${resouceModelInvariantId}\",\n" +
-                        "  \"modelVersionId\": \"${resouceModelVersionId}\",\n" +
-                        "  \"modelName\": \"${resouceModelName}\",\n" +
-                        "  \"modelType\": \"${resouceModelType}\",\n" +
-                        "  \"modelVersion\": \"${resouceModelVersion}\",\n" +
-                        "  \"modelCustomizationName\": \"\"\n" +
-                        "  }" + requiredCandidatesJson + "\n" +
-                        "},"
+                        "      {\n" +
+                        "      \"resourceModuleName\": \"${resourceModuleName}\",\n" +
+                        "      \"serviceResourceId\": \"${serviceResourceId}\",\n" +
+                        "      \"tenantId\": \"${tenantId}\",\n" +
+                        "      \"resourceModelInfo\": {\n" +
+                        "        \"modelInvariantId\": \"${resourceModelInvariantId}\",\n" +
+                        "        \"modelVersionId\": \"${resourceModelVersionId}\",\n" +
+                        "        \"modelName\": \"${resourceModelName}\",\n" +
+                        "        \"modelType\": \"${resourceModelType}\",\n" +
+                        "        \"modelVersion\": \"${resourceModelVersion}\",\n" +
+                        "        \"modelCustomizationName\": \"\"\n" +
+                        "        }" + requiredCandidatesJson + "\n" +
+                        "      },"
 
                 placementDemands = sb.append(demand)
+            }
+            for (VnfResource vnfResource : vnfResourceList) {
+                utils.log("DEBUG", "VNF Resource: " + vnfResource.toString(),
+                        isDebugEnabled)
+                ModelInfo vnfResourceModelInfo = vnfResource.getModelInfo()
+                def serviceResourceId = vnfResource.getResourceId()
+                def resourceModuleName = vnfResource.getNfFunction()
+                utils.log("DEBUG", "resourceModuleName: " + resourceModuleName,
+                        isDebugEnabled)
+                def resourceModelInvariantId = vnfResourceModelInfo.getModelInvariantUuid()
+                def resourceModelName = vnfResourceModelInfo.getModelName()
+                def resourceModelVersion = vnfResourceModelInfo.getModelVersion()
+                def resourceModelVersionId = vnfResourceModelInfo.getModelUuid()
+                def resourceModelType = vnfResourceModelInfo.getModelType()
+                def tenantId = "" //Optional
+                def requiredCandidatesJson = ""
+
+
+                String placementDemand =
+                        "      {\n" +
+                        "      \"resourceModuleName\": \"${resourceModuleName}\",\n" +
+                        "      \"serviceResourceId\": \"${serviceResourceId}\",\n" +
+                        "      \"tenantId\": \"${tenantId}\",\n" +
+                        "      \"resourceModelInfo\": {\n" +
+                        "        \"modelInvariantId\": \"${resourceModelInvariantId}\",\n" +
+                        "        \"modelVersionId\": \"${resourceModelVersionId}\",\n" +
+                        "        \"modelName\": \"${resourceModelName}\",\n" +
+                        "        \"modelType\": \"${resourceModelType}\",\n" +
+                        "        \"modelVersion\": \"${resourceModelVersion}\",\n" +
+                        "        \"modelCustomizationName\": \"\"\n" +
+                        "        }" + requiredCandidatesJson + "\n" +
+                        "      },"
+
+                placementDemands = sb.append(placementDemand)
             }
             placementDemands = placementDemands.substring(0, placementDemands.length() - 1)
         }
@@ -271,11 +324,14 @@ class OofUtils {
                 } else {
                     return
                 }
-            } else if (JsonUtils.jsonElementExist(response, "requestError") == true) {
+            } else if (response.contains("error") || response.contains("Error") ) {
                 String errorMessage = ""
                 if (response.contains("policyException")) {
                     String text = jsonUtil.getJsonValue(response, "requestError.policyException.text")
                     errorMessage = "OOF Async Callback Response contains a Request Error Policy Exception: " + text
+                } else if (response.contains("Unable to find any candidate for demand")) {
+                    errorMessage = "OOF Async Callback Response contains error: Unable to find any candidate for " +
+                            "demand *** Response: " + response.toString()
                 } else if (response.contains("serviceException")) {
                     String text = jsonUtil.getJsonValue(response, "requestError.serviceException.text")
                     errorMessage = "OOF Async Callback Response contains a Request Error Service Exception: " + text
