@@ -1,10 +1,18 @@
 {
-  "solutions": {
-    "placementSolutions": [],
-    "licenseSolutions": []
-  },
-  "transactionId": "08e1b8cf-144a-4bac-b293-d5e2eedc97e8",
-  "requestId": "02c2e322-5839-4c97-9d46-0a5fa6bb642e",
-  "requestStatus": "completed",
-  "statusMessage": "No solution found for plan 08e1b8cf-144a-4bac-b293-d5e2eedc97e8"
+  "plans":[
+    {
+      "name":"356fdb73-cef2-4dda-8865-31fd6733d6e4",
+      "message":"Unable to find any candidate for demand vGW",
+      "links":[
+        [
+          {
+            "rel":"self",
+            "href":"http://172.17.0.6:8091/v1/plans/1c15e194-6df5-43fe-a5ff-42e6093b8ddd"
+          }
+        ]
+      ],
+      "id":"1c15e194-6df5-43fe-a5ff-42e6093b8ddd",
+      "status":"error"
+    }
+  ]
 }
