@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_6e80edf7",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/aria/CSAR.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 3433
+      },
+      "writtenOn": "2018-05-28T06:26:16Z",
+      "side": 1,
+      "message": "Pls change methods order",
+      "revId": "01c0c1bca1dd86e7b68d7740e315bf719a068638",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ce8b411d",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/aria/CSAR.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 3433
+      },
+      "writtenOn": "2018-05-28T06:26:16Z",
+      "side": 1,
+      "message": "It will be better if you returns bytes array, not output stream",
+      "revId": "01c0c1bca1dd86e7b68d7740e315bf719a068638",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ae86f514",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/aria/CSAR.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 3433
+      },
+      "writtenOn": "2018-05-28T06:26:16Z",
+      "side": 1,
+      "message": "This exception should not be handled here",
+      "revId": "01c0c1bca1dd86e7b68d7740e315bf719a068638",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
