@@ -85,7 +85,6 @@ public class MsoRequest {
 
     private String requestId;
     private String requestXML;
-    private String requestJSON;
     private String requestUri;
     private VnfRequest vnfReq;
     private RequestInfo requestInfo;
@@ -118,8 +117,6 @@ public class MsoRequest {
     private OwningEntity owningEntity;
 
     private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH);
-    private static final String NOT_PROVIDED = "not provided";
-
     protected AbstractSessionFactoryManager requestsDbSessionFactoryManager = new RequestsDbSessionFactoryManager ();
 
     MsoRequest (String requestId) {
@@ -1153,7 +1150,7 @@ public class MsoRequest {
     	mapper.setSerializationInclusion(Include.NON_NULL);
     	//mapper.configure(Feature.WRAP_ROOT_VALUE, true);
     	msoLogger.debug ("building sir from object " + sir);
-    	requestJSON = mapper.writeValueAsString(sir);
+    	String requestJSON = mapper.writeValueAsString(sir);
     	
     	// Perform mapping from VID-style modelInfo fields to ASDC-style modelInfo fields
     	
