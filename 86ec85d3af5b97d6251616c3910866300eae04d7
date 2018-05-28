@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_6aaa10d4",
+        "filename": "aria/aria-rest-java-client/src/main/java/com/gigaspaces/aria/rest/client/exceptions/RequestProcessingError.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 3433
+      },
+      "writtenOn": "2018-05-28T06:08:03Z",
+      "side": 1,
+      "message": "It should be Exception.\nError connote with JVM errors.",
+      "revId": "86ec85d3af5b97d6251616c3910866300eae04d7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
