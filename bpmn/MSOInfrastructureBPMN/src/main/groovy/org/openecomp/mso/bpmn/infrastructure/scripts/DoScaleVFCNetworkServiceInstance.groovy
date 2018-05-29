@@ -95,11 +95,10 @@ public class DoScaleVFCNetworkServiceInstance extends AbstractServiceTaskProcess
      * scale NS task
      */
     public void scaleNetworkService(DelegateExecution execution) {
+        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 
         String saleNsRequest = execution.getVariable("reqBody")
         String[] nsReqStr = saleNsRequest.split("\\|")
-
-        def jobIdArray = ['jobId001', 'jobId002'] as String[]
 
         for (int i = 0; i < nsReqStr.length; i++) {
             JSONObject reqBodyJsonObj = new JSONObject(nsReqStr[i])
@@ -114,11 +113,11 @@ public class DoScaleVFCNetworkServiceInstance extends AbstractServiceTaskProcess
             String returnCode = apiResponse.getStatusCode()
             String aaiResponseAsString = apiResponse.getResponseBodyAsString()
             String jobId = "";
-            if (returnCode == "200") {
+            if (returnCode == "200" || returnCode == "202") {
                 jobId = jsonUtil.getJsonValue(aaiResponseAsString, "jobId")
             }
-
-            execution.setVariable("jobId", jobIdArray[i])
+            utils.log("INFO", "scaleNetworkService get a ns scale job Id:" + jobId, isDebugEnabled)
+            execution.setVariable("jobId", jobId)
 
             String isScaleFinished = ""
 
