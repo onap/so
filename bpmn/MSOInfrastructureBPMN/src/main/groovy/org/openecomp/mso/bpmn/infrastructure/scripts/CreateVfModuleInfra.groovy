@@ -330,7 +330,7 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 	
 	public void retreiveConfigScaleOutData(DelegateExecution execution){
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-		def vfModuleName = execution.getVariable("CVFMI_vfModuleName")
+		def vfModuleId = execution.getVariable("CVFMI_vfModuleId")
 		String ipAddress = "";
 		String oamIpAddress = "";
 		String vnfHostIpAddress = "";
@@ -364,7 +364,7 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 			}
 		}
 
-		String payload = "{\"request-parameters\":{\"vnf-host-ip-address\":" + vnfHostIpAddress + ",\"vf-module-id\":" + vfModuleName + "},\"configuration-parameters\":{\"ip-addr\":" + ipAddress +", \"oam-ip-addr\":"+ oamIpAddress +",\"enabled\":\"true\"}}"
+		String payload = "{\"request-parameters\":{\"vnf-host-ip-address\":" + vnfHostIpAddress + ",\"vf-module-id\":" + vfModuleId + "},\"configuration-parameters\":{\"ip-addr\":" + ipAddress +", \"oam-ip-addr\":"+ oamIpAddress +",\"enabled\":\"true\"}}"
 		execution.setVariable("payload", payload);
 	}
 
