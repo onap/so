@@ -63,8 +63,8 @@
 				"modelInstanceName"      : "Pri_IP_MUX_Demux 1"
 			},
 			"toscaNodeType"              : null,
-			"allottedResourceType"              : "TunnelXConn",
-			"allottedResourceRole"              : "TunnelXConn",
+			"allottedResourceType"              : "Tunnel XConn",
+			"allottedResourceRole"              : "Tunnel XConn",
 			"providingServiceModelInvariantUuid"              : null,
 			"nfFunction"              : null,
 			"nfType"              : null,
