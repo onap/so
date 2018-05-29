@@ -25,7 +25,6 @@ import java.io.IOException;
 import javax.xml.bind.DatatypeConverter;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -39,8 +38,7 @@ public class CamundaTaskClient extends RequestClient{
 	}
 	
 	@Override
-	public HttpResponse post(String jsonReq)
-					throws ClientProtocolException, IOException{
+	public HttpResponse post(String jsonReq) throws IOException{
 		HttpPost post = new HttpPost(url);
 		msoLogger.debug("Camunda Task url is: "+ url);		
 
@@ -65,25 +63,18 @@ public class CamundaTaskClient extends RequestClient{
 	
 	@Override
 	public HttpResponse post(String camundaReqXML, String requestId,
-			String requestTimeout, String schemaVersion, String serviceInstanceId, String action)
-					throws ClientProtocolException, IOException{
+			String requestTimeout, String schemaVersion, String serviceInstanceId, String action) {
 		msoLogger.debug("Method not supported");
 		return null;
 	}
-	
+
 	@Override
-	public HttpResponse post(String requestId, boolean isBaseVfModule,
-			int recipeTimeout, String requestAction, String serviceInstanceId,
-			String vnfId, String vfModuleId, String volumeGroupId, String networkId, String configurationId,
-			String serviceType, String vnfType, String vfModuleType, String networkType,
-			String requestDetails, String recipeParamXsd)
-					throws ClientProtocolException, IOException{
-		msoLogger.debug("Method not supported");
+	public HttpResponse post(RequestClientParamater params) {
 		return null;
 	}
-	
+
 	@Override
-	public HttpResponse get() throws ClientProtocolException, IOException{
+	public HttpResponse get() throws IOException{
 		HttpGet get = new HttpGet(url);
 		msoLogger.debug("Camunda Task url is: "+ url);	
 		String encryptedCredentials;
@@ -97,7 +88,6 @@ public class CamundaTaskClient extends RequestClient{
 				}
 			}
 		}
-		
 		return client.execute(get);
 	}
 

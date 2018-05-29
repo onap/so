@@ -34,7 +34,7 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 	CommonConstants.REQUEST_ID_HEADER,
 	CommonConstants.IS_BASE_VF_MODULE_VARIABLE, CommonConstants.RECIPE_TIMEOUT_VARIABLE,
 	CommonConstants.REQUEST_ACTION_VARIABLE, CommonConstants.SERVICE_INSTANCE_ID_VARIABLE,
-	CommonConstants.VNF_ID_VARIABLE, CommonConstants.VF_MODULE_ID_VARIABLE,
+	CommonConstants.CORRELATION_ID, CommonConstants.VNF_ID_VARIABLE, CommonConstants.VF_MODULE_ID_VARIABLE,
 	CommonConstants.VOLUME_GROUP_ID_VARIABLE, CommonConstants.NETWORK_ID_VARIABLE,
 	CommonConstants.CONFIGURATION_ID_VARIABLE, CommonConstants.SERVICE_TYPE_VARIABLE, 
 	CommonConstants.VNF_TYPE_VARIABLE, CommonConstants.VF_MODULE_TYPE_VARIABLE, 
@@ -55,7 +55,6 @@ public class CamundaVIDRequest {
 	@JsonProperty(CommonConstants.REQUEST_ID_HEADER)
 	private CamundaInput msoRequestId;
 
-
 	@JsonProperty(CommonConstants.IS_BASE_VF_MODULE_VARIABLE)
 	private CamundaBooleanInput isBaseVfModule;
 
@@ -67,6 +66,9 @@ public class CamundaVIDRequest {
 
 	@JsonProperty(CommonConstants.SERVICE_INSTANCE_ID_VARIABLE)
 	private CamundaInput serviceInstanceId;
+
+	@JsonProperty(CommonConstants.CORRELATION_ID)
+	private CamundaInput correlationId;
 
 	@JsonProperty(CommonConstants.VNF_ID_VARIABLE)
 	private CamundaInput vnfId;
@@ -175,6 +177,16 @@ public class CamundaVIDRequest {
 	@JsonProperty(CommonConstants.SERVICE_INSTANCE_ID_VARIABLE)
 	public void setServiceInstanceId(CamundaInput serviceInstanceId) {
 		this.serviceInstanceId = serviceInstanceId;
+	}
+
+	@JsonProperty(CommonConstants.CORRELATION_ID)
+	public CamundaInput getCorrelationId() {
+		return correlationId;
+	}
+
+	@JsonProperty(CommonConstants.CORRELATION_ID)
+	public void setCorrelationId(CamundaInput correlationId) {
+		this.correlationId = correlationId;
 	}
 
 	@JsonProperty(CommonConstants.VNF_ID_VARIABLE)
