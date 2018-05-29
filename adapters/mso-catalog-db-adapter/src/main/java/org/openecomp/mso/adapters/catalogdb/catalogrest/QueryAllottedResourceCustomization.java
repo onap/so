@@ -96,8 +96,8 @@ public class QueryAllottedResourceCustomization extends CatalogQuery {
 		    put(valueMap, "MODEL_CUSTOMIZATION_UUID", o.getModelCustomizationUuid());
 		    put(valueMap, "MODEL_INSTANCE_NAME",      o.getModelInstanceName());
 			    put(valueMap, "TOSCA_NODE_TYPE",      arNull ? null : o.getAllottedResource().getToscaNodeType());
-			    put(valueMap, "ALLOTTED_RESOURCE_TYPE",     arNull ? null : o.getAllottedResource().getSubcategory());
-			    put(valueMap, "ALLOTTED_RESOURCE_ROLE",     o.getTargetNetworkRole());
+			    put(valueMap, "ALLOTTED_RESOURCE_TYPE",     o.getNfType());
+			    put(valueMap, "ALLOTTED_RESOURCE_ROLE",     o.getNfRole());
 			    put(valueMap, "NF_TYPE",     o.getNfType());
 			    put(valueMap, "NF_ROLE",     o.getNfRole());
 			    put(valueMap, "NF_FUNCTION",     o.getNfFunction());
