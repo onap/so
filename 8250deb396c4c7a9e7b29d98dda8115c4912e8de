@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_08ab5476",
+        "filename": "bpmn/MSOInfrastructureBPMN/src/main/groovy/org/openecomp/mso/bpmn/infrastructure/scripts/CreateVfModuleInfra.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 367,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2018-05-29T14:12:31Z",
+      "side": 1,
+      "message": "Please properly map to vf-module-id, the sample appc gave us was not valid",
+      "range": {
+        "startLine": 367,
+        "startChar": 0,
+        "endLine": 367,
+        "endChar": 2
+      },
+      "revId": "8250deb396c4c7a9e7b29d98dda8115c4912e8de",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
