@@ -23,6 +23,15 @@ package org.openecomp.mso.bpmn.infrastructure.scripts;
 import groovy.json.JsonSlurper
 import groovy.json.JsonOutput
 
+import javax.xml.parsers.DocumentBuilder
+import javax.xml.parsers.DocumentBuilderFactory
+
+import org.w3c.dom.Document
+import org.w3c.dom.Element
+import org.w3c.dom.Node
+import org.w3c.dom.NodeList
+import org.xml.sax.InputSource
+
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.appc.client.lcm.model.Action
@@ -42,6 +51,12 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
+	
+	private AbstractServiceTaskProcessor taskProcessor
+	
+	public SDNCAdapterUtils(AbstractServiceTaskProcessor taskProcessor) {
+		this.taskProcessor = taskProcessor
+	}	
 
 	/**
 	 * Validates the request message and sets up the workflow.
@@ -307,6 +322,50 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 				execution.setVariable("runConfigScaleOut", true);
 			}
 		}
+	}
+	
+	/**
+	 * Retrieve data for ConfigScaleOut from SDNC topology
+	 */
+	
+	public void retreiveConfigScaleOutData(DelegateExecution execution){
+		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
+		def vfModuleName = execution.getVariable("CVFMI_vfModuleName")
+		String ipAddress = "";
+		String oamIpAddress = "";
+		String vnfHostIpAddress = "";
+
+		String vnfGetSDNC = execution.getVariable("DCVFM_getSDNCAdapterResponse");
+
+		String data = utils.getNodeXml(vnfGetSDNC, "response-data")
+		data = data.replaceAll("&lt;", "<")
+		data = data.replaceAll("&gt;", ">")
+
+		InputSource source = new InputSource(new StringReader(data));
+		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+		docFactory.setNamespaceAware(true)
+		DocumentBuilder docBuilder = docFactory.newDocumentBuilder()
+		Document responseXml = docBuilder.parse(source)
+
+		NodeList paramsList = responseXml.getElementsByTagNameNS("*", "vnf-parameters")
+		for (int z = 0; z < paramsList.getLength(); z++) {
+			Node node = paramsList.item(z)
+			Element eElement = (Element) node
+			String vnfParameterName = utils.getElementText(eElement, "vnf-parameter-name")
+			String vnfParameterValue = utils.getElementText(eElement, "vnf-parameter-value")
+			if (vnfParameterName.equals("vlb_private_ip_1")) {
+				vnfHostIpAddress = vnfParameterValue
+			}
+			else if (vnfParameterName.equals("vdns_private_ip_0")) {
+				ipAddress = vnfParameterValue
+			}
+			else if (vnfParameterName.equals("vdns_private_ip_1")) {			
+				oamIpAddress = vnfParameterValue
+			}
+		}
+
+		String payload = "{\"request-parameters\":{\"vnf-host-ip-address\":" + vnfHostIpAddress + ",\"vf-module-id\":" + vfModuleName + "},\"configuration-parameters\":{\"ip-addr\":" + ipAddress +", \"oam-ip-addr\":"+ oamIpAddress +",\"enabled\":\"true\"}}"
+		execution.setVariable("payload", payload);
 	}
 
 	/**
