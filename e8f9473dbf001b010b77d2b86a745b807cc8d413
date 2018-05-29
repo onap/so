@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_a37043dd",
+        "filename": "bpmn/MSOInfrastructureBPMN/src/main/groovy/org/openecomp/mso/bpmn/vcpe/scripts/CreateVcpeResCustService.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 464,
+      "author": {
+        "id": 29
+      },
+      "writtenOn": "2018-05-29T22:16:05Z",
+      "side": 1,
+      "message": "Did you fix that AllottedResourcRole is null so this throws an error ?",
+      "range": {
+        "startLine": 464,
+        "startChar": 73,
+        "endLine": 464,
+        "endChar": 115
+      },
+      "revId": "e8f9473dbf001b010b77d2b86a745b807cc8d413",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
