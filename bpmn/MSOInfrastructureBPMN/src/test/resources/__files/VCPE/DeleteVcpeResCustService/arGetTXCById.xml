@@ -1,9 +1,9 @@
 <allotted-resource xmlns="http://org.openecomp.aai.inventory/v9">
    <id>ar-txcA</id>
    <orchestration-status>Active</orchestration-status>
-   <role>TunnelXConn</role>
-   <type>TunnelXConn</type>
-   <description>TunnelXConn</description>
+   <role>Tunnel XConn</role>
+   <type>Tunnel XConn</type>
+   <description>Tunnel XConn</description>
    <selflink/>
    <resource-version>1490627351232</resource-version>
    <relationship-list>

@@ -469,7 +469,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 		verify(mex).setVariable("createTXCAR", true)
 		verify(mex).setVariable("allottedResourceModelInfoTXC", "modelB")
 		verify(mex).setVariable("allottedResourceRoleTXC", "TXCr")
-		verify(mex).setVariable("allottedResourceTypeTXC", "TunnelXConn")
+		verify(mex).setVariable("allottedResourceTypeTXC", "Tunnel XConn")
 		verify(mex).setVariable("parentServiceInstanceIdTXC", "homeB")
 	}
 			
@@ -489,7 +489,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 		verify(mex, never()).setVariable("createTXCAR", true)
 		verify(mex, never()).setVariable("allottedResourceModelInfoTXC", "modelB")
 		verify(mex, never()).setVariable("allottedResourceRoleTXC", "TXCr")
-		verify(mex, never()).setVariable("allottedResourceTypeTXC", "TunnelXConn")
+		verify(mex, never()).setVariable("allottedResourceTypeTXC", "Tunnel XConn")
 		verify(mex, never()).setVariable("parentServiceInstanceIdTXC", "homeB")
 	}
 			
@@ -1087,7 +1087,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	private ServiceDecomposition initFilterVnfs(ExecutionEntity mex) {
 		List<VnfResource> vnflst = new LinkedList<>()
 		vnflst.add(makeVnf("", "BRG"))
-		vnflst.add(makeVnf("2", "TunnelXConn"))
+		vnflst.add(makeVnf("2", "Tunnel XConn"))
 		vnflst.add(makeVnf("3", ""))
 		vnflst.add(makeVnf("4", "BRG"))
 		vnflst.add(makeVnf("5", "other"))
@@ -1149,7 +1149,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 		HomingSolution home = mock(HomingSolution.class)
 		
 		when(ar.toJsonStringNoRootName()).thenReturn("json"+id)
-		when(ar.getAllottedResourceType()).thenReturn("TunnelXConn")
+		when(ar.getAllottedResourceType()).thenReturn("Tunnel XConn")
 		when(ar.getModelInfo()).thenReturn(mod)
 		when(ar.getAllottedResourceRole()).thenReturn("TXCr")
 		when(ar.getHomingSolution()).thenReturn(home)
@@ -1186,7 +1186,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 		vnflst.add(makeVnf("A", "BRG"))
 		vnflst.add(makeVnf("B", ""))
 		vnflst.add(makeVnf("C", ""))
-		vnflst.add(makeVnf("D", "TunnelXConn"))
+		vnflst.add(makeVnf("D", "Tunnel XConn"))
 		
 		when(mex.getVariable(DBGFLAG)).thenReturn("true")
 		when(mex.getVariable("createVcpeServiceRequest")).thenReturn(request)

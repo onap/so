@@ -242,8 +242,8 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 					
 					if(isBlank(type) || isBlank(id)) {
 						
-					} else if(type == "TunnelXConn") {
-						utils.log("DEBUG","TunnelXConn AR found", isDebugEnabled)
+					} else if(type == "TunnelXConn" || type == "Tunnel XConn") {
+						utils.log("DEBUG","Tunnel XConn AR found", isDebugEnabled)
 						TXC_found = true
 						TXC_id = id
 						
