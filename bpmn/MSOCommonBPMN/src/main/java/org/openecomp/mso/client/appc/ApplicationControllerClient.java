@@ -156,7 +156,7 @@ public class ApplicationControllerClient {
 		properties.put("topic.read.timeout", globalProperties.get("appc.client.topic.read.timeout"));
 		properties.put("client.response.timeout", globalProperties.get("appc.client.response.timeout"));
 		properties.put("poolMembers", globalProperties.get("appc.client.poolMembers"));
-		properties.put("client.controllerType", controllerType);
+		properties.put("controllerType", controllerType);
 		properties.put("client.key", globalProperties.get("appc.client.key"));
 		properties.put("client.secret", globalProperties.get("appc.client.secret"));
 		properties.put("client.name", CLIENT_NAME);
