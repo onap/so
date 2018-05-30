@@ -318,14 +318,8 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 		if(vnf.isPresent()){
 			def vnfOrchestrationStatus = vnf.get().getOrchestrationStatus();
 			if("active".equalsIgnoreCase(vnfOrchestrationStatus)){
-				execution.setVariable("runHealthCheck", true);
+				execution.setVariable("runHealthCheck", false);
 				execution.setVariable("runConfigScaleOut", true);
-			}
-			try{
-				def l3InterfaceIpV4Address = vnf.get().getLInterfaces().getLInterface().get(0).getL3InterfaceIpv4AddressList().get(0).getL3InterfaceIpv4Address();
-				execution.setVariable("vnfHostIpAddress", l3InterfaceIpV4Address);
-			} catch (Exception ex){
-				execution.setVariable("vnfHostIpAddress", "");
 			}
 		}
 	}
