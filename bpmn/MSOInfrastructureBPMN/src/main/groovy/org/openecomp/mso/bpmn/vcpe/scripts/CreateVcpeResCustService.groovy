@@ -442,7 +442,7 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
             VnfResource vr = it.next()
 
             String role = vr.getNfRole()
-            if (role == "BRG" || role == "TunnelXConn") {
+            if (role == "BRG" || role == "TunnelXConn" || role == "Tunnel XConn") {
                 it.remove()
             }
         }
@@ -476,7 +476,7 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
 
                     utils.log("DEBUG", " getting model info for AllottedResource # :" + allottedResource.toJsonStringNoRootName(), isDebugEnabled)
                     utils.log("DEBUG", " allottedResource.getAllottedResourceType() :" + allottedResource.getAllottedResourceType(), isDebugEnabled)
-                    if ("TunnelXConn".equalsIgnoreCase(allottedResource.getAllottedResourceType())) {
+                    if ("TunnelXConn".equalsIgnoreCase(allottedResource.getAllottedResourceType()) || "Tunnel XConn".equalsIgnoreCase(allottedResource.getAllottedResourceType())) {
                         //set create flag to true
                         execution.setVariable("createTXCAR", true)
                         ModelInfo allottedResourceModelInfo = allottedResource.getModelInfo()
