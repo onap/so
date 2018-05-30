@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_3ee52a0a",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/aria/TreeCompressor.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 3433
+      },
+      "writtenOn": "2018-05-30T05:55:35Z",
+      "side": 1,
+      "message": "It will be better if you change the name of class to TreeCompressorStream",
+      "revId": "f1b6fe7b001bb2fe7271caaad0917eb7459531f0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_5ee27602",
+        "filename": "adapters/mso-adapter-utils/src/test/java/org/openecomp/mso/aria/TreeCompressorTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 3433
+      },
+      "writtenOn": "2018-05-30T05:55:35Z",
+      "side": 1,
+      "message": "If this is new file then pls change company name ;)",
+      "revId": "f1b6fe7b001bb2fe7271caaad0917eb7459531f0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
