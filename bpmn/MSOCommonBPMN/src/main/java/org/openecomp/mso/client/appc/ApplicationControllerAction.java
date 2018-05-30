@@ -84,6 +84,7 @@ public class ApplicationControllerAction {
 					}
 					break;
 				case ConfigModify:
+				case ConfigScaleOut:
 					appCStatus = payloadAction(action, msoRequestId, vnfId, payload, controllerType);
 					break;
 				case UpgradePreCheck:
