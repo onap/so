@@ -41,6 +41,7 @@ import org.openecomp.mso.bpmn.mock.FileUtil;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -97,7 +98,7 @@ public class OofHomingTest extends WorkflowTest {
         List<AllottedResource> arList = new ArrayList<AllottedResource>();
         AllottedResource ar = new AllottedResource();
         ar.setResourceId("testResourceIdAR");
-        ar.setResourceInstanceName("testARInstanceName");
+        ar.setNfFunction("testARFunctionName");
         ModelInfo arModel = new ModelInfo();
         arModel.setModelCustomizationUuid("testModelCustomizationUuidAR");
         arModel.setModelInvariantUuid("testModelInvariantIdAR");
@@ -108,7 +109,7 @@ public class OofHomingTest extends WorkflowTest {
         ar.setModelInfo(arModel);
         AllottedResource ar2 = new AllottedResource();
         ar2.setResourceId("testResourceIdAR2");
-        ar2.setResourceInstanceName("testAR2InstanceName");
+        ar2.setNfFunction("testAR2FunctionName");
         ModelInfo arModel2 = new ModelInfo();
         arModel2.setModelCustomizationUuid("testModelCustomizationUuidAR2");
         arModel2.setModelInvariantUuid("testModelInvariantIdAR2");
@@ -123,7 +124,7 @@ public class OofHomingTest extends WorkflowTest {
         List<VnfResource> vnfList = new ArrayList<VnfResource>();
         VnfResource vnf = new VnfResource();
         vnf.setResourceId("testResourceIdVNF");
-        vnf.setResourceInstanceName("testVnfInstanceName");
+        vnf.setNfFunction("testVnfFunctionName");
         ArrayList<CloudFlavor> flavors = new ArrayList<>();
         CloudFlavor flavor1 = new CloudFlavor("flavorLabel1xxx", "vimFlavorxxx");
         CloudFlavor flavor2 = new CloudFlavor("flavorLabel2xxx", "vimFlavorxxx");
@@ -478,9 +479,9 @@ public class OofHomingTest extends WorkflowTest {
         //Get Variables
         WorkflowException workflowException = (WorkflowException) getVariableFromHistory(businessKey,
                 "WorkflowException");
-
-        assertEquals("WorkflowException[processKey=Homing,errorCode=400,errorMessage=No solution found " +
-                "for plan 08e1b8cf-144a-4bac-b293-d5e2eedc97e8]", workflowException.toString());
+        Boolean errorMatch = workflowException.toString().contains("WorkflowException[processKey=Homing,errorCode=400,errorMessage=OOF Async Callback " +
+                        "Response contains error: Unable to find any candidate for demand *** Response:");
+        assert(errorMatch);
     }
 
     @Test
@@ -546,7 +547,8 @@ public class OofHomingTest extends WorkflowTest {
         variables.put("customerLocation", customerLocation);
         variables.put("cloudOwner", "amazon");
         variables.put("cloudRegionId", "TNZED");
-        variables.put("isDebugLogEnabled", "true");
+        variables.put("vgMuxInfraModelInvariantId", "testModelInvariantIdAR");
+        variables.put("vgMuxInfraModelId", "testArModelUuid");
         //	variables.put("mso-request-id", "testRequestId");
         variables.put("msoRequestId", "testRequestId");
         variables.put("serviceInstanceId", "testServiceInstanceId123");
@@ -589,6 +591,8 @@ public class OofHomingTest extends WorkflowTest {
         variables.put("customerLocation", customerLocation);
         variables.put("cloudOwner", "amazon");
         variables.put("cloudRegionId", "TNZED");
+        variables.put("vgMuxInfraModelInvariantId", "testModelInvariantIdAR");
+        variables.put("vgMuxInfraModelId", "testArModelUuid");
         variables.put("isDebugLogEnabled", "true");
         variables.put("msoRequestId", "testRequestId");
         variables.put("serviceInstanceId", "testServiceInstanceId123");
@@ -609,6 +613,8 @@ public class OofHomingTest extends WorkflowTest {
         variables.put("customerLocation", customerLocation);
         variables.put("cloudOwner", "amazon");
         variables.put("cloudRegionId", "TNZED");
+        variables.put("vgMuxInfraModelInvariantId", "testModelInvariantIdAR");
+        variables.put("vgMuxInfraModelId", "testArModelUuid");
         variables.put("isDebugLogEnabled", "true");
         //	variables.put("mso-request-id", "testRequestId");
         variables.put("msoRequestId", "testRequestId");
@@ -720,16 +726,20 @@ public class OofHomingTest extends WorkflowTest {
                 "\"timeout\":600},\"placementInfo\":{\"requestParameters\":{\"customerLatitude\":" +
                 "\"32.89748\",\"customerLongitude\":\"-97.040443\",\"customerName\":\"xyz\"},\"subscriberInfo\":" +
                 "{\"globalSubscriberId\":\"SUB12_0322_DS_1201\",\"subscriberName\":\"SUB_12_0322_DS_1201\"," +
-                "\"subscriberCommonSiteId\":\"\"},\"placementDemands\":[{\"resourceModuleName\":\"ALLOTTED_RESOURCE\"" +
+                "\"subscriberCommonSiteId\":\"\"},\"placementDemands\":[{\"resourceModuleName\":\"testARFunctionName\"" +
                 ",\"serviceResourceId\":\"testResourceIdAR\",\"tenantId\":" +
-                "\"\",\"resourceModelInfo\":{\"modelInvariantId\":\"testModelInvariantIdAR\"," +
-                "\"modelVersionId\":\"testARModelUuid\",\"modelName\":\"testModelNameAR\",\"modelType\":" +
-                "\"testModelTypeAR\",\"modelVersion\":\"testModelVersionAR\",\"modelCustomizationName\":\"\"}}," +
-                "{\"resourceModuleName\":\"ALLOTTED_RESOURCE\",\"serviceResourceId\":\"testResourceIdAR2\"," +
-                "\"tenantId\":\"\",\"resourceModelInfo\":{\"modelInvariantId\":\"testModelInvariantIdAR2\"," +
-                "\"modelVersionId\":\"testAr2ModelUuid\",\"modelName\":\"testModelNameAR2\"," +
-                "\"modelType\":\"testModelTypeAR2\",\"modelVersion\":\"testModelVersionAR2\"," +
-                "\"modelCustomizationName\":\"\"}}]},\"serviceInfo\":" +
+                "\"\",\"resourceModelInfo\":{\"modelInvariantId\":\"no-resourceModelInvariantId\"," +
+                "\"modelVersionId\":\"no-resourceModelVersionId\",\"modelName\":\"\",\"modelType\":" +
+                "\"\",\"modelVersion\":\"\",\"modelCustomizationName\":\"\"}}," +
+                "{\"resourceModuleName\":\"testAR2FunctionName\",\"serviceResourceId\":\"testResourceIdAR2\"," +
+                "\"tenantId\":\"\",\"resourceModelInfo\":{\"modelInvariantId\":\"no-resourceModelInvariantId\"," +
+                "\"modelVersionId\":\"no-resourceModelVersionId\",\"modelName\":\"\"," +
+                "\"modelType\":\"\",\"modelVersion\":\"\"," +
+                "\"modelCustomizationName\":\"\"}},{\"resourceModuleName\":\"testVnfFunctionName\",\"serviceResourceId\":\"" +
+                "testResourceIdVNF\",\"tenantId\":\"\",\"resourceModelInfo\":{\"modelInvariantId\"" +
+                ":\"testModelInvariantIdVNF\",\"modelVersionId\":\"testVnfModelUuid\",\"modelName\":\"" +
+                "testModelNameVNF\",\"modelType\":\"testModelTypeVNF\",\"modelVersion\":\"testModelVersionVNF\"" +
+                ",\"modelCustomizationName\":\"\"}}]},\"serviceInfo\":" +
                 "{\"serviceInstanceId\":\"testServiceInstanceId123\"," +
                 "\"serviceName\":\"testServiceName\",\"modelInfo\":{\"modelType\":\"\",\"modelInvariantId\":" +
                 "\"testModelInvariantId\",\"modelVersionId\":\"testModelUuid\",\"modelName\":\"testModelName\"," +

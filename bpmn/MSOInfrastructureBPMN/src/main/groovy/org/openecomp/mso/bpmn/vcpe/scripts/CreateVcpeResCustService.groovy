@@ -76,6 +76,7 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
         execution.setVariable("homingService", "")
         execution.setVariable("cloudOwner", "")
         execution.setVariable("cloudRegionId", "")
+        execution.setVariable("homingModelIds", "")
 
         //TODO
         execution.setVariable("sdncVersion", "1707")
@@ -199,28 +200,47 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
             def userParams = reqMap.requestDetails?.requestParameters?.userParams
 
             Map<String, String> inputMap = [:]
-
-          if (userParams) {
+            if (userParams) {
                 userParams.each {
-                                userParam ->
-                                if("BRG_WAN_MAC_Address".equals(userParam?.name)) {
-                                                execution.setVariable("brgWanMacAddress", userParam.value)
-                                                inputMap.put("BRG_WAN_MAC_Address", userParam.value)
-                                }
-                                if("Customer_Location".equals(userParam?.name)) {
-                                    execution.setVariable("customerLocation", userParam.value)
-                                    userParam.value.each {
-                                        customerLocParam ->
-                                        inputMap.put(customerLocParam.key, customerLocParam.value)
+                    userParam ->
+                        if ("Customer_Location".equals(userParam?.name)) {
+                            execution.setVariable("customerLocation", userParam.value)
+                            userParam.value.each {
+                                param ->
+                                    inputMap.put(param.key, param.value)
+                            }
+                        }
+                        if ("Homing_Model_Ids".equals(userParam?.name)) {
+                            utils.log("DEBUG", "Homing_Model_Ids: " + userParam.value.toString() + "  ---- Type is:" +
+                                    userParam.value.getClass() , isDebugEnabled)
+                            def modelIdLst = []
+                            userParam.value.each {
+                                param ->
+                                    def valueMap = [:]
+                                    param.each {
+                                        entry ->
+                                            valueMap.put(entry.key, entry.value)
                                     }
-                                }
-                                if("Homing_Solution".equals(userParam?.name)) {
-                                    execution.setVariable("homingService", userParam.value)
-                                    inputMap.put("Homing_Solution", userParam.value)
-                                } else {
-                                    execution.setVariable("homingService", "oof")
-                                }
-                }
+                                    modelIdLst.add(valueMap)
+                                    utils.log("DEBUG", "Param: " + param.toString() + "  ---- Type is:" +
+                                            param.getClass() , isDebugEnabled)
+                            }
+                            execution.setVariable("homingModelIds", modelIdLst)
+                        }
+                        if ("BRG_WAN_MAC_Address".equals(userParam?.name)) {
+                            execution.setVariable("brgWanMacAddress", userParam.value)
+                            inputMap.put("BRG_WAN_MAC_Address", userParam.value)
+                        }
+                        if ("Homing_Solution".equals(userParam?.name)) {
+                            execution.setVariable("homingService", userParam.value)
+                            inputMap.put("Homing_Solution", userParam.value)
+                        }
+                  }
+            }
+
+            if (execution.getVariable("homingService") == "") {
+                // Set Default Homing to OOF if not set
+                execution.setVariable("homingService", "oof")
             }
 
             utils.log("DEBUG", "User Input Parameters map: " + userParams.toString(), isDebugEnabled)
