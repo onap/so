@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_61ed52b7",
+        "filename": "bpmn/MSOInfrastructureBPMN/src/main/groovy/org/openecomp/mso/bpmn/infrastructure/scripts/CreateVfModuleInfra.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 317,
+      "author": {
+        "id": 97
+      },
+      "writtenOn": "2018-05-30T19:01:22Z",
+      "side": 1,
+      "message": "what depth is this object retrieved at?",
+      "revId": "195aa8d3b68e9d94c55c72250a3d8829690f8c30",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_212f4af8",
+        "filename": "bpmn/MSOInfrastructureBPMN/src/main/groovy/org/openecomp/mso/bpmn/infrastructure/scripts/CreateVfModuleInfra.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 325,
+      "author": {
+        "id": 97
+      },
+      "writtenOn": "2018-05-30T19:01:22Z",
+      "side": 1,
+      "message": "Needs null checks to perform this lookup",
+      "revId": "195aa8d3b68e9d94c55c72250a3d8829690f8c30",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
