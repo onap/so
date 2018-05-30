@@ -143,8 +143,8 @@ public class ApplicationControllerClient {
 		Map<String, String> globalProperties = PropertyConfiguration.getInstance()
 				.getProperties("mso.bpmn.urn.properties");
 		
-		properties.put("topic.read", globalProperties.get("appc.client.topic.sdnc.read"));
-		properties.put("topic.write", globalProperties.get("appc.client.topic.sdnc.write"));
+		properties.put("topic.read", globalProperties.get("appc.client.topic.read"));
+		properties.put("topic.write", globalProperties.get("appc.client.topic.write"));
 		properties.put("sdnc-topic.read", globalProperties.get("appc.client.topic.sdnc.read"));
 		properties.put("sdnc-topic.write", globalProperties.get("appc.client.topic.sdnc.write"));
 		properties.put("topic.read.timeout", globalProperties.get("appc.client.topic.read.timeout"));
