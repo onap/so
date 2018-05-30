@@ -318,7 +318,7 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 		if(vnf.isPresent()){
 			def vnfOrchestrationStatus = vnf.get().getOrchestrationStatus();
 			if("active".equalsIgnoreCase(vnfOrchestrationStatus)){
-				execution.setVariable("runHealthCheck", true);
+				execution.setVariable("runHealthCheck", false);
 				execution.setVariable("runConfigScaleOut", true);
 			}
 		}
